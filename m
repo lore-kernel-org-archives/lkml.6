@@ -1,151 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751778AbeCUCpN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:45:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59656 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751018AbeCUCpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 22:45:09 -0400
-Date: Tue, 20 Mar 2018 21:45:07 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH 2/2] x86/unwind: Make CONFIG_UNWINDER_ORC=y the default
- in kconfig for 64-bit
-Message-ID: <20180321024507.ud4lu4xndr5jfpkd@treble>
-References: <20171013052544.euk7yawni47lhmdq@gmail.com>
- <9b1237bbe7244ed9cdf8db2dcb1253e37e1c341e.1507924831.git.jpoimboe@redhat.com>
- <20180319185732.GD37438@google.com>
- <20180319192910.wfbi656bxkrlurgf@treble>
- <20180319203130.GE37438@google.com>
- <20180319212053.e77dc3vmemfazt3b@treble>
- <20180319232255.GF37438@google.com>
+        id S1751969AbeCUCqJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:46:09 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58276 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751786AbeCUCqG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 22:46:06 -0400
+Date: Wed, 21 Mar 2018 10:45:56 +0800
+From: Mark Brown <broonie@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Message-ID: <20180321024556.GX2186@sirena.org.uk>
+References: <20180321133040.6754c372@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7v2SkOxZkOkgWk1E"
 Content-Disposition: inline
-In-Reply-To: <20180319232255.GF37438@google.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <20180321133040.6754c372@canb.auug.org.au>
+X-Cookie: Am I SHOPLIFTING?
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 04:22:55PM -0700, Matthias Kaehlcke wrote:
-> arch/x86/mm/pti.o: warning: objtool: pti_init() falls through to next
-> function pti_user_pagetable_walk_pmd()
-> s/debugfs/file.o: warning: objtool: full_proxy_llseek() falls through to next function full_proxy_read()
-> fs/debugfs/file.o: warning: objtool: full_proxy_read() falls through to next function full_proxy_write()
-> fs/debugfs/file.o: warning: objtool: full_proxy_write() falls through to next function full_proxy_poll()
-> fs/debugfs/file.o: warning: objtool: full_proxy_poll() falls through to next function full_proxy_unlocked_ioctl()
-> fs/debugfs/file.o: warning: objtool: full_proxy_unlocked_ioctl() falls
-> through to next function fops_u8_open()
 
-Ok, I did a little more digging.  Surprise, these objtool warnings are
-actually correct.  Somehow the WARN macros are causing Clang to produce
-bad code.  In some cases, Clang is assuming that a WARN is "noreturn",
-i.e. that the UD2 doesn't return from the exception.
+--7v2SkOxZkOkgWk1E
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-As an example, here's the full_proxy_llseek() function and its compiled
-code:
+On Wed, Mar 21, 2018 at 01:30:40PM +1100, Stephen Rothwell wrote:
 
-#define FULL_PROXY_FUNC(name, ret_type, filp, proto, args)		\
-static ret_type full_proxy_ ## name(proto)				\
-{									\
-	struct dentry *dentry = F_DENTRY(filp);			\
-	const struct file_operations *real_fops;			\
-	ret_type r;							\
-									\
-	r = debugfs_file_get(dentry);					\
-	if (unlikely(r))						\
-		return r;						\
-	real_fops = debugfs_real_fops(filp);				\
-	r = real_fops->name(args);					\
-	debugfs_file_put(dentry);					\
-	return r;							\
-}
+> Caused by commit
 
-FULL_PROXY_FUNC(llseek, loff_t, filp,
-		PROTO(struct file *filp, loff_t offset, int whence),
-		ARGS(filp, offset, whence));
+>   363fe37948e2 ("ASoC: amd: dma driver changes for BT I2S controller instance")
 
+> I have used the sound-asoc tree from next-20180320 for today.
 
-0000000000000ca0 <full_proxy_llseek>:
-     ca0:       55                      push   %rbp
-     ca1:       41 57                   push   %r15
-     ca3:       41 56                   push   %r14
-     ca5:       53                      push   %rbx
-     ca6:       48 83 ec 10             sub    $0x10,%rsp
-     caa:       41 89 d6                mov    %edx,%r14d
-     cad:       49 89 f7                mov    %rsi,%r15
-     cb0:       48 89 fd                mov    %rdi,%rbp
-     cb3:       65 48 8b 04 25 28 00    mov    %gs:0x28,%rax
-     cba:       00 00
-     cbc:       48 89 44 24 08          mov    %rax,0x8(%rsp)
-     cc1:       48 8b 5d 18             mov    0x18(%rbp),%rbx
-     cc5:       48 89 df                mov    %rbx,%rdi
-     cc8:       e8 00 00 00 00          callq  ccd <full_proxy_llseek+0x2d>
-                        cc9: R_X86_64_PC32      debugfs_file_get-0x4
-     ccd:       85 c0                   test   %eax,%eax
-     ccf:       75 65                   jne    d36 <full_proxy_llseek+0x96>
-     cd1:       48 8b 45 18             mov    0x18(%rbp),%rax
-     cd5:       48 8b 40 78             mov    0x78(%rax),%rax
-     cd9:       a8 01                   test   $0x1,%al
-     cdb:       75 63                   jne    d40 <full_proxy_llseek+0xa0>
-     ...
-     d40:       0f 0b                   ud2
-     d42:       0f 1f 40 00             nopl   0x0(%rax)
-     d46:       66 2e 0f 1f 84 00 00    nopw   %cs:0x0(%rax,%rax,1)
-     d4d:       00 00 00
+Dropped.
 
-0000000000000d50 <full_proxy_read>:
+--7v2SkOxZkOkgWk1E
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-After the debugfs_file_get() call, the debugfs_real_fops() call is
-inlined.  Here it is:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqxx2QACgkQJNaLcl1U
+h9Admgf9FMvVqJ0CxkBfS+tBa//MpqHCPZFOiG/NJHelkPyHCIBO1XwPUKJ3DNla
+W8gEWNm4h7wUHhbHL6J9jdpTipjprUYSD61xoFGIsLAN6O0kL83P5FF/AjijVI92
+FibS82IOfpz22kg3gUktZgLh9N6m+FpJfyuTBcmwcw6iBhHImA/eCi5YBG4c2a9r
+0kbc5CKXk2OzIqtolMDPThUO7ZAkgLStc4rHONSKquDMae2FlI1M5YnNord19eL8
+veBNu4kIm5bdmo7BnMyPudLQfeWN/xCIGW+HdcisGGJvBuRnzkC+KEXr4s8MZZ4Q
+ZFraxWoZdpO4XF/ed0njP4E54u1qwA==
+=bB3A
+-----END PGP SIGNATURE-----
 
-const struct file_operations *debugfs_real_fops(const struct file *filp)
-{
-	struct debugfs_fsdata *fsd = F_DENTRY(filp)->d_fsdata;
-
-	if ((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT) {
-		/*
-		 * Urgh, we've been called w/o a protecting
-		 * debugfs_file_get().
-		 */
-		WARN_ON(1);
-		return NULL;
-	}
-
-	return fsd->real_fops;
-}
-
-The WARN_ON() is the UD2 at offset d40.  Notice that, as objtool found,
-it just falls through to the next function instead of "returning" to
-full_proxy_llseek().
-
-
-At first I thought this might be some kind of "optimization", since, if
-you look closely, you'll see that the warning can never happen in this
-situation.  But no, I downloaded the Clang binary, changed the 
-
-  if ((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT) /* DEBUGFS_FSDATA_IS_REAL_FOPS_BIT == 1 */
-
-to
-
-  if ((unsigned long)fsd & 0x2)
-
-and still got the same issue.
-
-
-Then I figured that Clang must be peeking into the inline asm, and is
-assuming that UD2 is a dead end.  But no, I changed ASM_UD2 to a 2-byte
-NOP, and got the same issue.
-
-
-So unless I'm missing some "undefined behavior", this looks like a Clang
-bug to me.  Somehow it doesn't like the WARN macros (but apparently only
-in a small number of cases).
-
--- 
-Josh
+--7v2SkOxZkOkgWk1E--
