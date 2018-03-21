@@ -1,28 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751581AbeCUBdi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:33:38 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49400 "EHLO
+        id S1751734AbeCUBeM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:34:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50396 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751456AbeCUBdg (ORCPT
+        with ESMTP id S1751018AbeCUBeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:33:36 -0400
+        Tue, 20 Mar 2018 21:34:10 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Masanari Iida <standby24x7@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: mediatek: mt2701: Fix a typo in printk" to the asoc tree
-In-Reply-To: <20180320123309.12333-1-standby24x7@gmail.com>
-Message-Id: <20180321013331.3344844007A@finisterre.ee.mobilebroadband>
-Date: Wed, 21 Mar 2018 01:33:31 +0000 (GMT)
+To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rsnd: set pm_ops in hibernate-compatible way" to the asoc tree
+In-Reply-To: <20180320084115.23880-1-nikita.yoush@cogentembedded.com>
+Message-Id: <20180321013354.DBB4544007A@finisterre.ee.mobilebroadband>
+Date: Wed, 21 Mar 2018 01:33:54 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: mediatek: mt2701: Fix a typo in printk
+   ASoC: rsnd: set pm_ops in hibernate-compatible way
 
 has been applied to the asoc tree at
 
@@ -47,31 +51,35 @@ to this mail.
 Thanks,
 Mark
 
->From 9260f873684fb1cfb9ea10a10be3e8b888da3c0e Mon Sep 17 00:00:00 2001
-From: Masanari Iida <standby24x7@gmail.com>
-Date: Tue, 20 Mar 2018 21:33:09 +0900
-Subject: [PATCH] ASoC: mediatek: mt2701: Fix a typo in printk
+>From f8a9a29c4fe9dd0dd2206cc4368efec95dc9defb Mon Sep 17 00:00:00 2001
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Date: Tue, 20 Mar 2018 11:41:15 +0300
+Subject: [PATCH] ASoC: rsnd: set pm_ops in hibernate-compatible way
 
-This patch fixes a spelling typo in printk
+Use SET_SYSTEM_SLEEP_PM_OPS() macro instead of direct assignment to
+.suspend and .resume fields.
 
-Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+This makes driver working after restore from hibernation.
+
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/mediatek/mt2701/mt2701-afe-pcm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/sh/rcar/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-index d68b53f7cefe..e96028c06557 100644
---- a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-+++ b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-@@ -336,7 +336,7 @@ static int mt2701_btmrg_hw_params(struct snd_pcm_substream *substream,
- 	stream_fs = params_rate(params);
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 5aafc37f5119..96526c91a94b 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1569,8 +1569,7 @@ static int rsnd_resume(struct device *dev)
+ }
  
- 	if ((stream_fs != 8000) && (stream_fs != 16000)) {
--		dev_err(afe->dev, "%s() btmgr not supprt this stream_fs %d\n",
-+		dev_err(afe->dev, "%s() btmgr not support this stream_fs %d\n",
- 			__func__, stream_fs);
- 		return -EINVAL;
- 	}
+ static const struct dev_pm_ops rsnd_pm_ops = {
+-	.suspend		= rsnd_suspend,
+-	.resume			= rsnd_resume,
++	SET_SYSTEM_SLEEP_PM_OPS(rsnd_suspend, rsnd_resume)
+ };
+ 
+ static struct platform_driver rsnd_driver = {
 -- 
 2.16.2
