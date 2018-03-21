@@ -1,118 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751531AbeCUF00 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 01:26:26 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:40559 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751343AbeCUF0X (ORCPT
+        id S1751699AbeCUF3l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 01:29:41 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:54340 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbeCUF3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 01:26:23 -0400
-X-Google-Smtp-Source: AG47ELsnKKBsE7MYLEGhE5oKrhwHlsinjnZ1ELMfLbUpCnU5RsIr0/3XQTSwVIgyGrX3CMGV3InH4g==
-Subject: Re: [PATCH] ARM: dts: db600c: add support to pcie refclk
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
-        david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180320092840.4600-1-srinivas.kandagatla@linaro.org>
- <20180321033518.GB1403@tuxbook-pro>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <831e8c3b-06e1-8653-df0b-2c1de05834be@linaro.org>
-Date: Wed, 21 Mar 2018 13:26:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 21 Mar 2018 01:29:36 -0400
+Subject: Re: [PATCH v4 1/5] PCI: endpoint: BAR width should not depend on
+ sizeof dma_addr_t
+To: Niklas Cassel <niklas.cassel@axis.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Sekhar Nori <nsekhar@ti.com>,
+        John Keeping <john@metanate.com>, Shawn Lin <shawn.lin@rock-chips.com>,
+        Niklas Cassel <niklass@axis.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
+References: <20180308133331.19464-1-niklas.cassel@axis.com>
+ <20180308133331.19464-2-niklas.cassel@axis.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <825d8376-915c-ee4d-1a1e-d3430e5d0928@ti.com>
+Date: Wed, 21 Mar 2018 10:59:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180321033518.GB1403@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180308133331.19464-2-niklas.cassel@axis.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Bjorn for the review comments,
 
-On 21/03/18 11:35, Bjorn Andersson wrote:
-> On Tue 20 Mar 17:28 HKT 2018, Srinivas Kandagatla wrote:
-> 
->> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>
->> This patch adds support to external pcie refclk.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   arch/arm/boot/dts/qcom-apq8064-db600c.dts | 27 +++++++++++++++++++++++++++
->>   1 file changed, 27 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/qcom-apq8064-db600c.dts b/arch/arm/boot/dts/qcom-apq8064-db600c.dts
->> index 50151ef6e912..7587088c122f 100644
->> --- a/arch/arm/boot/dts/qcom-apq8064-db600c.dts
->> +++ b/arch/arm/boot/dts/qcom-apq8064-db600c.dts
->> @@ -45,6 +45,18 @@
->>   
->>   	};
->>   
->> +	clocks {
->> +		compatible = "simple-bus";
->> +		pcie_refclk: pcie-refclk {
-> 
-> As the si53154 is used to acquire 3 different clocks (2 pcie and 1 sata)
-> it would be nice to accurately represent this in the DT. That said,
-> exposing this as a clock allow us to change the representation here
-> later. (Both pcie_core_clk and pcie_eth_clk use the same gpio pin as
-> enable pin, so I don't know how to represent this...)
-> 
-This is a refclk, which should be always same for both PCIe Controllers 
-and connected PCIe endpoints.
 
-For sata we should have one more refclk entry of its own.
+On Thursday 08 March 2018 07:03 PM, Niklas Cassel wrote:
+> If a BAR supports 64-bit width or not depends on the hardware,
+> and should thus not depend on sizeof(dma_addr_t).
+> 
+> Since this driver is generic, default to always using BAR width
+> of 32-bits. 64-bit BARs can easily be tested by replacing
+> PCI_BASE_ADDRESS_MEM_TYPE_32 with PCI_BASE_ADDRESS_MEM_TYPE_64
+> in bar_flags.
+> 
+> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 
-> So for now, please name this "pcie_core_clk", per the schematics.
-
-This is pcie refclk, if you follow the line in the schematics should see 
-that it terminates to pcie refclk.
-
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+> Note to Lorenzo/Bjorn:
+> It is not trivial to convert the bar_size + bar_flags +
+> struct pci_epf->bar member array to an array of struct resources,
+> since we need to be able to store the addresses returned
+> by dma_alloc_coherent(), which is of type dma_addr_t.
+> struct resource uses resource_size_t, which is defined as phys_addr_t.
+> E.g. ARTPEC-7 uses 64-bit dma_addr_t, but only 32-bit phys_addr_t.
 > 
->> +			pinctrl-0 = <&pcie_pins>;
->> +			pinctrl-names = "default";
->> +			compatible = "gpio-gate-clock";
->> +	                clocks = <&rpmcc 27>;
->> +			#clock-cells = <0>;
->> +			enable-gpios = <&pm8921_gpio 22 GPIO_ACTIVE_HIGH>;
->> +		};
->> +	};
->> +
->>   	hdmi-out {
->>   		compatible = "hdmi-connector";
->>   		type = "a";
->> @@ -140,6 +152,16 @@
->>   
->>   		qcom,ssbi@500000 {
->>   			pmic@0 {
->> +				gpio@150 {
->> +					pcie_pins: pcie_pins {
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
 > 
-> Please label this "pcie_clk_en_pin" and don't use '_' in the name of the
-> node.
-> 
-I agree, Will fix it.
->> +						pios {
-> 
-> You can omit this level and just put the properties in directly in the
-> pcie-clk-en node.
-Okay.
-
-thanks,
-srini
-> 
->> +							pins = "gpio22";
->> +							function = "normal";
->> +							power-source = <PM8921_GPIO_VPH>;
->> +						};
->> +					};
->> +				};
->> +
-> 
-> Regards,
-> Bjorn
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 800da09d9005..7c70433b11a7 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -71,6 +71,14 @@ struct pci_epf_test_data {
+>  };
+>  
+>  static int bar_size[] = { 512, 512, 1024, 16384, 131072, 1048576 };
+> +static int bar_flags[] = {
+> +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32,
+> +	PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32
+> +};
+>  
+>  static int pci_epf_test_copy(struct pci_epf_test *epf_test)
+>  {
+> @@ -358,7 +366,6 @@ static void pci_epf_test_unbind(struct pci_epf *epf)
+>  
+>  static int pci_epf_test_set_bar(struct pci_epf *epf)
+>  {
+> -	int flags;
+>  	int bar;
+>  	int ret;
+>  	struct pci_epf_bar *epf_bar;
+> @@ -367,15 +374,11 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+>  	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+>  	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
+>  
+> -	flags = PCI_BASE_ADDRESS_SPACE_MEMORY | PCI_BASE_ADDRESS_MEM_TYPE_32;
+> -	if (sizeof(dma_addr_t) == 0x8)
+> -		flags |= PCI_BASE_ADDRESS_MEM_TYPE_64;
+> -
+>  	for (bar = BAR_0; bar <= BAR_5; bar++) {
+>  		epf_bar = &epf->bar[bar];
+>  		ret = pci_epc_set_bar(epc, epf->func_no, bar,
+>  				      epf_bar->phys_addr,
+> -				      epf_bar->size, flags);
+> +				      epf_bar->size, bar_flags[bar]);
+>  		if (ret) {
+>  			pci_epf_free_space(epf, epf_test->reg[bar], bar);
+>  			dev_err(dev, "failed to set BAR%d\n", bar);
 > 
