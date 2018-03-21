@@ -1,50 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751765AbeCUKYT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 06:24:19 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44918 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbeCUKYS (ORCPT
+        id S1752095AbeCUKbF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 06:31:05 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39071 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751670AbeCUKbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 06:24:18 -0400
-From: Colin King <colin.king@canonical.com>
-To: Vinod Koul <vinod.koul@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        dmaengine@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] dmaengine: dw-axi-dmac: fix spelling mistake: "catched" -> "caught"
-Date: Wed, 21 Mar 2018 10:24:13 +0000
-Message-Id: <20180321102413.29621-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Wed, 21 Mar 2018 06:31:01 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: kernel test robot <xiaolong.ye@intel.com>
+Cc: Edgar Thier <info@edgarthier.net>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
+Subject: Re: [lkp-robot] [media]  859086ae36: kmsg.uvcvideo:Failed_to_query(GET_INFO)UVC_control#on_unit#:-#(exp.#)
+Date: Wed, 21 Mar 2018 12:32:07 +0200
+Message-ID: <1637940.NKPajzO43a@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180316020039.GU8942@yexl-desktop>
+References: <20180316020039.GU8942@yexl-desktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hello,
 
-Trivial fix to spelling mistake in dev_err error message text
+On Friday, 16 March 2018 04:00:39 EET kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-7):
+> 
+> commit: 859086ae3636eae0bf9f0fbbce2daf4d41ae9474 ("media: uvcvideo: Apply
+> flags from device to actual properties")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> in testcase: netperf
+> with following parameters:
+> 
+> 	ip: ipv4
+> 	runtime: 300s
+> 	nr_threads: 1
+> 	cluster: cs-localhost
+> 	test: SCTP_STREAM
+> 	cpufreq_governor: performance
+> 
+> test-description: Netperf is a benchmark that can be use to measure various
+> aspect of networking performance. test-url: http://www.netperf.org/netperf/
+> 
+> 
+> on test machine: 4 threads Intel(R) Core(TM) i5-3317U CPU @ 1.70GHz with 4G
+> memory
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire
+> log/backtrace):
+> 
+> 
+> [   76.108373] uvcvideo: Failed to query (GET_INFO) UVC control 11 on unit
+> 1: -32 (exp. 1).
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just for the record, Kieran is working on this.
 
-diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-index dbe7312c15c6..c4eb55e3011c 100644
---- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-+++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-@@ -574,7 +574,7 @@ static void axi_chan_block_xfer_complete(struct axi_dma_chan *chan)
- 
- 	spin_lock_irqsave(&chan->vc.lock, flags);
- 	if (unlikely(axi_chan_is_hw_enable(chan))) {
--		dev_err(chan2dev(chan), "BUG: %s catched DWAXIDMAC_IRQ_DMA_TRF, but channel not idle!\n",
-+		dev_err(chan2dev(chan), "BUG: %s caught DWAXIDMAC_IRQ_DMA_TRF, but channel not idle!\n",
- 			axi_chan_name(chan));
- 		axi_chan_disable(chan);
- 	}
+> To reproduce:
+> 
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp install job.yaml  # job file is attached in this email
+>         bin/lkp run     job.yaml
+
 -- 
-2.15.1
+Regards,
+
+Laurent Pinchart
