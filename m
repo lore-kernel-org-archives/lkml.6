@@ -1,135 +1,95 @@
-Return-Path: <kernel-hardening-return-12659-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELtTJmog8ceamgduI5lplLgDCHyv+9/un9kY7gxmLQx4nVWiLmxYc5Pmm3+l6AxEDcsi0+K3
-ARC-Seal: i=1; a=rsa-sha256; t=1521174400; cv=none;
-        d=google.com; s=arc-20160816;
-        b=phYkhetylKzGYhEN5mFH7VXYIAlXAbrCE/kXlLmT9QLAw7nhEIkCDyo4sj4Xdci+YH
-         BxWcslBmFD7Lat6qmQWxbsmROvEMIeogKyO7OAezF48lUwo92rOavH85FS2G+JVop3k8
-         7eyPIe/KSoEkpQNFzjuxItOQ5pcslje4mlBgOSNPTzn6AYK5JywV1z3FCAF+x5oTZjxx
-         BjP+LBkPtHXJAYKmajf8OmwOk288T+2h05NVpdUIh958E+5BaGnCMGgJDJrqpTD40sJM
-         yHKp9nPO/1y/47nZHdBLC6HlwsMtqdzD6d3zhKRnhLQ0+wJHxsuFDLQbke1drv7VmUT/
-         u4lA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=eNbhngV0sTnspfoX+8GgHF02vVphrEUurDkfyZCcFFU=;
-        b=g394dAeSvPIGurEdYK6adGeOwnoteJktZw7h1/VSKnYvsaXTibN1Mss0n3I4GmR2BX
-         5OA5+PgvC0T/98kd+jswwCQvBy+UI2P2RXCOc4EnYlw3nIaNtlvuHR+jt8+AgMBZzMD4
-         FVBoWb39T/ZGmsBzBh8j8lLIwMKlvMh4CmFSPrRh4QbMGB+8rhQGD1Xeuy5pyJJdxTMp
-         iWh1h9TdT9lpJLKVRXqXR5tzVbY9qvPElYED7Lp3WpH1ATISlABvBdOE/gHrDI8H7ydl
-         yvV07pO5lix/Pen2Jdh0VtmHjy9nhLOVlvEsu/pu7sQY4C7nSiyZyXV2+4rRaaJzAbPk
-         1Lcw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=JQDZayrv;
-       spf=pass (google.com: domain of kernel-hardening-return-12659-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12659-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=JQDZayrv;
-       spf=pass (google.com: domain of kernel-hardening-return-12659-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12659-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kees Cook <keescook@chromium.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	David Laight <David.Laight@aculab.com>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	linux-input@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com
-Subject: [PATCH v5 1/2] kernel.h: Introduce const_max_t() for VLA removal
-Date: Thu, 15 Mar 2018 21:25:58 -0700
-Message-Id: <1521174359-46392-2-git-send-email-keescook@chromium.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521174359-46392-1-git-send-email-keescook@chromium.org>
-References: <1521174359-46392-1-git-send-email-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3291645-1521617563-2-2179327839360819962
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521617563; b=TEPUPI7j6pRYH/uSidCok69Sk6WVrH5DLcYGM/fihBWxeTj
+    jgzI/6wj9BEU0qURqoEQF2pWMD71+OVV/VoGCwkNbSIOYO96WNcQLMpfZigfgArw
+    vaLm8Mjfdnc3JPbW3n663B3/DAzO9pnmpiIahS7u1RGUU650tiZ4RmvdLgpp69WU
+    SMI9GwOuTIISVHak2gAWuyANweHoF4tEr2PwM/j3j9Q7CdGFFnnHsohC4zTFp4X8
+    dpmXj6D2AYaT2lGcsTp/lzpp3X/oYqtDxhSQSlLhJMAME/+CnlIgMtjfOj2UA+Fm
+    QcFHMTyls2rxxhMiCMKAJ3gSo0wGKqlKaRo+a9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521617563; bh=N6Xl/6CB5sC2T9SR0icv19QOTi
+    k40oHYNnWIdvJEKcg=; b=EhTba/n6gAMyheFOBU+St6dklI6NsV/ZzFpfjQuTn/
+    iq8akMKY1TbZ06iIyf/n78ScON/LwnFWB8LBG1WOHJeTlTs7+9ZI2Y7rhlNbnEQg
+    wpDGB2GoXk3GMynF26YGZDziVDTXnXmFUdieoG1eZIKhNLBnH74kbp3rNFDoG7JL
+    lvSnX3yQ7h8pRA8eex/05k46IYXMx1ruzkK3fkcM0IHM3sMfgyoK59PPIvG6ne/G
+    HrrSqunSvjcnwx81rwQDTC06KHhzMZzExpig/6mHQWc7aEdAef8blr24lv1RQ256
+    oBV+tSxtaEJQZa9kmVINRgq3AUbdfcmHPOudnKUp8fAA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Z4fQX1DA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Z4fQX1DA x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751600AbeCUHcl (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 03:32:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46618 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751542AbeCUHck (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:32:40 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: viro@zeniv.linux.org.uk
+Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: io_pgetevents & aio fsync
+Date: Wed, 21 Mar 2018 08:32:23 +0100
+Message-Id: <20180321073232.13366-1-hch@lst.de>
+X-Mailer: git-send-email 2.14.2
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595066967873848023?=
-X-GMAIL-MSGID: =?utf-8?q?1595066967873848023?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-In the effort to remove all VLAs from the kernel[1], it is desirable to
-build with -Wvla. However, this warning is overly pessimistic, in that
-it is only happy with stack array sizes that are declared as constant
-expressions, and not constant values. One case of this is the evaluation
-of the max() macro which, due to its construction, ends up converting
-constant expression arguments into a constant value result. Attempts
-to adjust the behavior of max() ran afoul of version-dependent compiler
-behavior[2].
+Hi all,
 
-To work around this and still gain -Wvla coverage, this patch introduces
-a new macro, const_max_t(), for use in these cases of stack array size
-declaration, where the constant expressions are retained. Since this means
-losing the double-evaluation protections of the max() macro, this macro is
-designed to explicitly fail if used on non-constant arguments.
+this patch adds workqueue based fsync offload.  Version of this
+patch have been floating around for a couple years, but we now
+have a user with seastar used by ScyllaDB (who sponsored this
+work) that really wants this in addition to the aio poll support.
+More details are in the patch itself.
 
-Older compilers will fail with the unhelpful message:
+Because the iocb types have been defined sine day one (and probably
+were supported by RHEL3) libaio already supports these calls as-is.
 
-    error: first argument to ‘__builtin_choose_expr’ not a constant
+This also pulls in the aio cleanups and io_pgetevents support previously
+submitted and review as part of the aio poll series.  The aio poll
+series will be resubmitted on top of this series
 
-Newer compilers will fail with a hopefully more helpful message:
+A git tree is available here:
 
-    error: call to ‘__error_non_const_arg’ declared with attribute error: const_max_t() used with non-constant expression
+    git://git.infradead.org/users/hch/vfs.git aio-fsync.2
 
-To gain the ability to compare differing types, the desired type must
-be explicitly declared, as with the existing max_t() macro. This is
-needed when comparing different enum types and to allow things like:
+Gitweb:
 
-    int foo[const_max_t(size_t, 6, sizeof(something))];
-
-[1] https://lkml.org/lkml/2018/3/7/621
-[2] https://lkml.org/lkml/2018/3/10/170
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/kernel.h | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 3fd291503576..e14531781568 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -820,6 +820,25 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
- 	      x, y)
- 
- /**
-+ * const_max_t - return maximum of two compile-time constant expressions
-+ * @type: type used for evaluation
-+ * @x: first compile-time constant expression
-+ * @y: second compile-time constant expression
-+ *
-+ * This has no multi-evaluation defenses, and must only ever be used with
-+ * compile-time constant expressions (for example when calculating a stack
-+ * array size).
-+ */
-+size_t __error_non_const_arg(void) \
-+__compiletime_error("const_max_t() used with non-constant expression");
-+#define const_max_t(type, x, y)					\
-+	__builtin_choose_expr(__builtin_constant_p(x) &&	\
-+			      __builtin_constant_p(y),		\
-+			      (type)(x) > (type)(y) ?		\
-+				(type)(x) : (type)(y),		\
-+			      __error_non_const_arg())
-+
-+/**
-  * min3 - return minimum of three values
-  * @x: first value
-  * @y: second value
--- 
-2.7.4
+    http://git.infradead.org/users/hch/vfs.git/shortlog/refs/heads/aio-fsync.2
