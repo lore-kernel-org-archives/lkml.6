@@ -1,79 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752347AbeCUOH5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 10:07:57 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:61429 "EHLO pegase1.c-s.fr"
+        id S1752426AbeCUOII (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 10:08:08 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:41437 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751805AbeCUOHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 10:07:51 -0400
-Message-Id: <00a43265a2759dc284a17b042df633f0717c9dcb.1521641042.git.christophe.leroy@c-s.fr>
+        id S1752173AbeCUOHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 10:07:55 -0400
+Message-Id: <4fe13c13918bb6c42e4c2e61add9a6937e674da9.1521641042.git.christophe.leroy@c-s.fr>
 In-Reply-To: <03c175e506e88e57f48f01de9120768e1b942c6e.1521641042.git.christophe.leroy@c-s.fr>
 References: <03c175e506e88e57f48f01de9120768e1b942c6e.1521641042.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH  2/4] powerpc/mm: Avoid unnecessary test and reduce code size
+Subject: [PATCH  4/4] powerpc/mm: Remove stale_map[] handling on non SMP
+ processors
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 21 Mar 2018 15:07:49 +0100 (CET)
+Date: Wed, 21 Mar 2018 15:07:53 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-no_selective_tlbil hence the use of either steal_all_contexts()
-or steal_context_up() depends on the subarch, it won't change
-during run. Only the 8xx uses steal_all_contexts and CONFIG_PPC_8xx
-is exclusive of other processors.
-
-This patch replaces the test of no_selective_tlbil global var by
-a test of CONFIG_PPC_8xx selection. It avoids the test and
-removes unnecessary code.
+stale_map[] bits are only set in steal_context_smp() so
+on UP processors this map is useless. Only manage it for SMP
+processors.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/mm/mmu_context_nohash.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ arch/powerpc/mm/mmu_context_nohash.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
 diff --git a/arch/powerpc/mm/mmu_context_nohash.c b/arch/powerpc/mm/mmu_context_nohash.c
-index 5051c9363f8c..3fbe36266838 100644
+index 625c17049483..3f13f07f64dd 100644
 --- a/arch/powerpc/mm/mmu_context_nohash.c
 +++ b/arch/powerpc/mm/mmu_context_nohash.c
-@@ -62,7 +62,6 @@ static unsigned long *context_map;
+@@ -88,7 +88,9 @@
+ 
+ static unsigned int next_context, nr_free_contexts;
+ static unsigned long *context_map;
++#ifdef CONFIG_SMP
  static unsigned long *stale_map[NR_CPUS];
++#endif
  static struct mm_struct **context_mm;
  static DEFINE_RAW_SPINLOCK(context_lock);
--static bool no_selective_tlbil;
  
- #define CTX_MAP_SIZE	\
- 	(sizeof(unsigned long) * (last_context / BITS_PER_LONG + 1))
-@@ -279,7 +278,7 @@ void switch_mmu_context(struct mm_struct *prev, struct mm_struct *next,
- 			goto stolen;
+@@ -169,7 +171,9 @@ static unsigned int steal_context_smp(unsigned int id)
+ static unsigned int steal_all_contexts(void)
+ {
+ 	struct mm_struct *mm;
++#ifdef CONFIG_SMP
+ 	int cpu = smp_processor_id();
++#endif
+ 	unsigned int id;
+ 
+ 	for (id = FIRST_CONTEXT; id <= LAST_CONTEXT; id++) {
+@@ -187,7 +191,9 @@ static unsigned int steal_all_contexts(void)
+ 			mm->context.active = 0;
+ #endif
  		}
- #endif /* CONFIG_SMP */
--		if (no_selective_tlbil)
-+		if (IS_ENABLED(CONFIG_PPC_8xx))
- 			id = steal_all_contexts();
- 		else
- 			id = steal_context_up(id);
-@@ -440,16 +439,12 @@ void __init mmu_context_init(void)
- 	 * present if needed.
- 	 *      -- BenH
- 	 */
--	if (mmu_has_feature(MMU_FTR_TYPE_8xx)) {
-+	if (mmu_has_feature(MMU_FTR_TYPE_8xx))
- 		last_context = 16;
--		no_selective_tlbil = true;
--	} else if (mmu_has_feature(MMU_FTR_TYPE_47x)) {
-+	else if (mmu_has_feature(MMU_FTR_TYPE_47x))
- 		last_context = 65535;
--		no_selective_tlbil = false;
--	} else {
-+	else
- 		last_context = 255;
--		no_selective_tlbil = false;
--	}
++#ifdef CONFIG_SMP
+ 		__clear_bit(id, stale_map[cpu]);
++#endif
+ 	}
  
- #ifdef DEBUG_CLAMP_LAST_CONTEXT
- 	last_context = DEBUG_CLAMP_LAST_CONTEXT;
+ 	/* Flush the TLB for all contexts (not to be used on SMP) */
+@@ -206,7 +212,9 @@ static unsigned int steal_all_contexts(void)
+ static unsigned int steal_context_up(unsigned int id)
+ {
+ 	struct mm_struct *mm;
++#ifdef CONFIG_SMP
+ 	int cpu = smp_processor_id();
++#endif
+ 
+ 	/* Pick up the victim mm */
+ 	mm = context_mm[id];
+@@ -220,7 +228,9 @@ static unsigned int steal_context_up(unsigned int id)
+ 	mm->context.id = MMU_NO_CONTEXT;
+ 
+ 	/* XXX This clear should ultimately be part of local_flush_tlb_mm */
++#ifdef CONFIG_SMP
+ 	__clear_bit(id, stale_map[cpu]);
++#endif
+ 
+ 	return id;
+ }
+@@ -259,7 +269,10 @@ static void context_check_map(void) { }
+ void switch_mmu_context(struct mm_struct *prev, struct mm_struct *next,
+ 			struct task_struct *tsk)
+ {
+-	unsigned int i, id, cpu = smp_processor_id();
++	unsigned int id;
++#ifdef CONFIG_SMP
++	unsigned int i, cpu = smp_processor_id();
++#endif
+ 	unsigned long *map;
+ 
+ 	/* No lockless fast path .. yet */
+@@ -333,6 +346,7 @@ void switch_mmu_context(struct mm_struct *prev, struct mm_struct *next,
+ 	/* If that context got marked stale on this CPU, then flush the
+ 	 * local TLB for it and unmark it before we use it
+ 	 */
++#ifdef CONFIG_SMP
+ 	if (test_bit(id, stale_map[cpu])) {
+ 		pr_hardcont(" | stale flush %d [%d..%d]",
+ 			    id, cpu_first_thread_sibling(cpu),
+@@ -347,6 +361,7 @@ void switch_mmu_context(struct mm_struct *prev, struct mm_struct *next,
+ 				__clear_bit(id, stale_map[i]);
+ 		}
+ 	}
++#endif
+ 
+ 	/* Flick the MMU and release lock */
+ 	pr_hardcont(" -> %d\n", id);
+@@ -452,9 +467,7 @@ void __init mmu_context_init(void)
+ 	 */
+ 	context_map = memblock_virt_alloc(CTX_MAP_SIZE, 0);
+ 	context_mm = memblock_virt_alloc(sizeof(void *) * (LAST_CONTEXT + 1), 0);
+-#ifndef CONFIG_SMP
+-	stale_map[0] = memblock_virt_alloc(CTX_MAP_SIZE, 0);
+-#else
++#ifdef CONFIG_SMP
+ 	stale_map[boot_cpuid] = memblock_virt_alloc(CTX_MAP_SIZE, 0);
+ 
+ 	cpuhp_setup_state_nocalls(CPUHP_POWERPC_MMU_CTX_PREPARE,
 -- 
 2.13.3
