@@ -1,241 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754231AbeCUXyK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 19:54:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60190 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753793AbeCUXyF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:54:05 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 813FE60271
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-Subject: Re: [PATCH 2/2] dt-bindings: regulator: add QCOM RPMh regulator
- bindings
-To: Doug Anderson <dianders@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, sboyd@kernel.org
-References: <cover.1521246069.git.collinsd@codeaurora.org>
- <b718873e5ad53a2e8df6a5103828a4c04881d564.1521246069.git.collinsd@codeaurora.org>
- <CAD=FV=VQQG423wVFMymFyp1XdvVEiM40Qm1AL4e3524_8bWPcw@mail.gmail.com>
-From: David Collins <collinsd@codeaurora.org>
-Message-ID: <418c551d-6036-8a5d-cf82-df72614c3f64@codeaurora.org>
-Date: Wed, 21 Mar 2018 16:54:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        id S1754119AbeCUX6b (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 19:58:31 -0400
+Received: from mail-eopbgr30088.outbound.protection.outlook.com ([40.107.3.88]:17408
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753485AbeCUX63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 19:58:29 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=petrm@mellanox.com;
+From: Petr Machata <petrm@mellanox.com>
+To: linux-kernel@vger.kernel.org
+CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Petr Machata <petrm@mellanox.com>
+Subject: [PATCH] perf: python: Reference Py_None before
+ returning it
+Message-Id: <b1e565ecccf68064d8d54f37db5d028dda8fa522.1521675563.git.petrm@mellanox.com>
+Date: Thu, 22 Mar 2018 00:57:32 +0100
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=VQQG423wVFMymFyp1XdvVEiM40Qm1AL4e3524_8bWPcw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [89.176.83.59]
+X-ClientProxiedBy: LO2P265CA0152.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9::20) To VI1PR0502MB3024.eurprd05.prod.outlook.com
+ (2603:10a6:800:b3::9)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 4d3b792b-3515-48f9-3d07-08d58f87a30a
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0502MB3024;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3024;3:EK06PGYLGeiWfmjhKFHzsfFLhqxdy8JtX0Zmtfolt7CVL9BAznmS82YjFh7TeNX7vc7EHggPhv+357lDMaYSQwhkltLk9ZSgRMiZctk+d6n+GSNlbi/O2LtSsJLiw7MtgvTeBBrZDESHt8cROsX0uAntpOvmzGbr2V4Uby4rPDQmpYGJXr3wY+nPWpJ1cy51ClzZZAGdRvCNrdKJQbcaUVrRsUeJDDPXI2OHUFxvnr9pHKi8TuzBMPOvahVR6z2S;25:SkrXtc9UxqTghuxvJVjRdrxZ7n3ho1Wl35axHlzpRF9iEWGOTOUXMAs4Wv0PrnHs1VQ4BUGt21eM+p4T+LGYliuGdD7czqrNFfwa/c4igpkpn5b6fxW5kA8LiU+91Jhe6nAw4Y4BwyLszsc81ut0CKy7yPsrHMSWSZWiRu4LkMG/6ei88y/r0YXnIqtJg5ZfS78pqCC0qUCSdHSNtTOIwtfSZqG1hkQCsiahePg+r51WrVBWUZuLbkR+y0Wz9IUA/7n/KCZhy8KXgkr1Adw5g8Lc28/PYyXqHSjObHDdnua3FqBbp+r50ojENvJquDHuqJmma/NVH04Q2g7gIqQrOw==;31:uS/yKGoIIM+1USK+4CfGGOY5vYFgIVQtuDx/5iPSNve4tNUS+xKfZsYf4gUb1zJg8rnXIIQi5+KlmrfRTnopzGfEpMsl2Gopo/LF+0+6nx/jKfCW5CiDNvfiUv8CfI9CPBUYolQtwwMwfzlurD2WNhPqzzawRRscPwsiZQ4tQi+JT3GdeU7HnwUgLha1gtmGXuMMxzAg0pyr0/eQww37QuKLVnhUA9rOYxs30RwRalc=
+X-MS-TrafficTypeDiagnostic: VI1PR0502MB3024:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3024;20:moUOqkWQKKxEB6B6Kgwv5RbWlpXO+fNxohY6wQbGei07IQaFCgSl6xSBRXB6jJdN/ascPcRia1RJ2GNwIYYgcWnT2JipVWo6KSGH2m6rw2jSHo/JLfFegj4sj0kkJJBs2y1jjfz7vIy4jy6n3TDxDRaGd7lIcncJHugFcMmgLFcjT6d5ZfALAViamWhREmvl3GKoEpTq6HmzzXk/t3vTgRDQFNbsR5ZlBeNvDr894fuUlJFCHq02sJ2ZqoGJp1+vtRGssJMFhPQFtTHcM/1nDYzbBkpik3D7F2OmdpsSiQ7vFCWuVx7vaoGwnZ+z20clKgKGjSKnfjhtvbPa7SmGRwLZZZkbBdfgX3FtFssl29+J82KpdeRCijGVU0zRgk7BJcHk4maS/1+vstSpoRaPUv+i5o5ZnhLFH28RuCni7P4MgV7vAIqETLzPfwOcwRxwC6nHRKIiXtxX0qVahjzWEd9ix8nAn0u1a3W1Q3+TtvOY4cTppYQ745Y0RP0ticMv;4:SFIH/YFETP78YBBf8My+vnvoEJvRneZ9Rb2MlxQtBvSdAb6flIrjp+zflHD1HjEn7R/PvXiGSM7an8EeUZA5PBIlG1e5R33knDyQIZN+Yz9ZhPCbghZEtGl7daEtjgxDEOaCnEbwsgaQjAbf3Nc14YHbE9+NRF2NwhXmipPXeyArvL1SHAGksietkHIeNIGa7Y985/vakA33slbcE5y68+mR1Qrqrae3YZ077JydevaTdgOKHhXCGzUXLvjAJm8UeEAH5ll9zmF1+l7JS1YVFQ==
+X-Microsoft-Antispam-PRVS: <VI1PR0502MB3024B32247885FBC6F1260C2DBAA0@VI1PR0502MB3024.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:VI1PR0502MB3024;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0502MB3024;
+X-Forefront-PRVS: 0618E4E7E1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(366004)(346002)(376002)(396003)(189003)(199004)(105586002)(5660300001)(16526019)(1857600001)(58126008)(54906003)(6486002)(6116002)(3846002)(8936002)(4326008)(86362001)(81156014)(53936002)(8676002)(25786009)(81166006)(305945005)(7736002)(2906002)(66066001)(47776003)(48376002)(50466002)(2361001)(36756003)(106356001)(2351001)(68736007)(59450400001)(51416003)(6496006)(52116002)(478600001)(6916009)(26005)(6666003)(316002)(97736004)(16586007)(386003)(107886003)(118296001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0502MB3024;H:t540p;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0502MB3024;23:Wr10T19aayiGNzBCG5w2Nc/Xtuwuvrv1i0+2XM3?=
+ =?us-ascii?Q?/9zgPvsGlXUZFGff9392mntf8HBhPs/VSgdNTX4cUnsq5j+/sjGVzxkqfyDX?=
+ =?us-ascii?Q?ZM/JMKfamSaX/JgUwjQw5cWoJnJO23pw94Q0xCDf92Fq4b0/kwbju+0f/OBc?=
+ =?us-ascii?Q?D3sKVK629Jzb9vxQx81FhlpV2GexCjOoJ/KmqNnZ/Ah23iJ0AbdvCnZkxtEI?=
+ =?us-ascii?Q?1+Exv61GH/WWP8cFHzDmmEGz/P68Ks9jlc3D27/7R6RisPnrQmbTTuY1+qjx?=
+ =?us-ascii?Q?firc3di39DRHkCqqRNqofgZD8UyYHSFUP87riGgqCQUh2D1OTvD4XRVyILIu?=
+ =?us-ascii?Q?DiTxnIEsVE9OcvWod0yjLTY19lhv9nmRTG+LgSo++lf6g6J86IVAny6h9XBW?=
+ =?us-ascii?Q?407wRG3tiLxgjQ0kw5WV2ho+TiDsMpI/meyYzyhY21rWJrIIuymtNPFWxYVY?=
+ =?us-ascii?Q?M4a7832wb+A3TrlqP6HpRXrGARC53rRp6mz0vGIjzhVUOr/t9Au80xm+c1ZX?=
+ =?us-ascii?Q?wfb4polLiKBcnmM5PpsHqwcpiCr367uxsRgVx0BjMGFuDTriXOEztwJZ3quf?=
+ =?us-ascii?Q?O7D78chcv6F4JDSe6DD9jt2beWj2orcAo6T+I/gDfv5FsxFKZBm4E9/sTVwI?=
+ =?us-ascii?Q?MO7eJ8iDGl8iloVFBnYDDHkr385HhVf+ERt99VWpNZJz9hVE5nKGWVci6YWh?=
+ =?us-ascii?Q?4iMYrmX25DcNoWW7qI6cjhdfUi9rCKjuhUDefRRG5yCmdWE/DXc/UVgVQNEO?=
+ =?us-ascii?Q?O3Ln7TbLKdOHWShjVkGkm3ovTQR5ukoSqLgc1V4Ho1Pb2CgCNQCoWJpbMvi2?=
+ =?us-ascii?Q?9xc3+en8+JXigNOT2U3R0tPcup2w7ooRypxxgKtXm7TPAFeqWXbf2rUh/bLa?=
+ =?us-ascii?Q?jsu8eiabr4ZNNx9u856afFBMsOLDX4BdzSgPxe73tYul7z1MbJO0S1cYDvYZ?=
+ =?us-ascii?Q?TC5sD+4wBgb7RuSFB14GxE7W85IpWYQ/529YqbiocTvlHubhX+w48+ZeDg9G?=
+ =?us-ascii?Q?MdNFKkFI8P3KlsiT1cuwzQmeiB2INnJ108n0cxqbRh+6dbvz/NcxeFZ6SfmO?=
+ =?us-ascii?Q?FlvKIw4z9pljJTpX15lsPXls98JJkUEjJEfwsZxVt6vRpmBaWjvmkxjb7By9?=
+ =?us-ascii?Q?rJC+fvM9Amip85MWLhDJOE4efZaOPYZ1n2E2HvEGkvKwlvxh7PknlJA=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: e6/bv6wDlDNZSiLq/NGe1X0NWY8cCybf7BZDWmdjwyn9qjs41IqOftM5r13jLoB1C7M9TdqvAdv1wGFwz/yOIhpKO5prnGhjCEH0OD0uQiG1xTCFkhmbinFtUKsBpDPA/Y4ENIHc+vBIqBYzbDEVsf85C7c/4ERvdyp320pLtMVJRCKPS90KaB0S5oJ8ZYba
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3024;6:xpoYAmTYsi1nwizws/dYIaPjTcr8qNWVjhD8XqRWF7kkwrmw84wlGdE2KF3hh9eVl2EZXq3cfzIl6FTiHGjCAI9Wh/P0+GksIIFR0xDdDHwCih/DFrHc7txRSEnNQ7zZYCpGG0cxtphRcGtNuq3J3/0NHrVTBMcW5IOKRQVZjmuyx3hj4arl4IGJKHc9hQ2Q5WL4Wpc1+tsJxVM+yGwcWw64o4sjypqOc4olBfE5EQjA4NbcFqu4qpKTz7RI5VfIobiv6LeQS1mwGYITLdMCp+XuqkTR3mt9grIHFqScuB1v3cl/PGPL61F2498Edrjt/LakcqyS163HJkN1Onu30/PP1x4iepFb9um6Wkr0/VU=;5:vl/OKjg19UBHy0VcjpZUNj2DmvW+TlnuXYUK+TE4aiueum5147Bj+vSGLT4DGDYixi1r18Jd3pWVCrbYFt+FTXZqwE7KC24tHNC0C9iEluGmLf7Wl4q1kshe9N8US3mQ35RahAX3KFrElUbRw59Et0CopPDT06bawm4ACWVaMgI=;24:8UHwfHIlk30pd/dubF/xASX6DDJ/l459KIO+uxfQfN/GwO4mPS8koYzu8Bv2XboakdhJ9HxMxPdZao3r7rp+tfYrgfk0j/y3mSufhBVmoGs=;7:Ga4WH9/JzPR9YT/4FEgsbA19vu9q35Ry+3OXsOtZCsYvBd0aAPteDnaKp1LcupVNJLjD4r9FgHsnB8lyJVT7SakngtEpmf5dxhqtS5z28Ko6yyDhMdVodndTk8IoxuerNfTPHrLKxltptUJAPs96ZC4n5LfMBobNZactKdJkIysesq+X7AKAb4Vbehdff/+UZFoKo2Ejj18Q8YuaMkQXdSeAmY/lqxBCKgVBmubYVCHRDe2HRcfBSwDndMybpGu/
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2018 23:58:25.3851
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d3b792b-3515-48f9-3d07-08d58f87a30a
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0502MB3024
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Doug,
+Python None objects are handled just like all the other objects with
+respect to their reference counting. Before returning Py_None, its
+reference count thus needs to be bumped.
 
-On 03/20/2018 07:16 PM, Doug Anderson wrote:
->> +Qualcomm Technologies, Inc. RPMh Regulators
->> +
->> +rpmh-regulator devices support PMIC regulator management via the VRM and XOB
->> +RPMh accelerators.  The APPS processor communicates with these hardware blocks
->> +via an RSC using command packets.  The VRM allows changing four parameters for a
->> +given regulator: enable state, output voltage, operating mode, and minimum
->> +headroom voltage.  The XOB allows changing only a single parameter for a given
->> +regulator: its enable state.
-> 
-> Somewhere in here can you give some context of what VRM and XOB stand
-> for.  From the other patch desc it's "voltage regulator manager (VRM)
-> and oscillator buffer (XOB)", but nice to sprinkle that around the
-> first time it's used in documents.
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+---
+ tools/perf/util/python.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Sure, I'll added a more detailed description in the binding file.
-
-> ...and, ummmmm, what's an oscillator buffer?  Is this really a
-> regulator?  It sounds a lot more like a clock enable knob.  Are you
-> sure this shouldn't be exposed through the common clock framework?
-> Many other PMICs expose oscillator clocks through CCF.  MAX77686 comes
-> to mind.
-
-The XOB hardware naming is unfortunate as it leads to confusion.  I kept
-the name in DT bindings and the driver so that it matches hardware
-documentation.  Functionally, the XOB block in RPMh provides an interface
-to enable and disable *any* PMIC peripheral, not just oscillator clock
-buffers.
-
-When this hardware feature was initially designed, it's primary use case
-was PMIC clock buffer control so it was designated "XOB".  However, other
-use cases have come up since that point.  One use case that is explicitly
-described in the qcom_rpmh-regulator driver is control of PM8998
-low-voltage switches (LVS) 1 and 2.  These switches physically only
-support enabling and disabling so it is better to control them via XOB and
-VRM.
-
-A second regulator XOB use case is management of regulators which could be
-controlled via VRM (as they support voltage and mode configuration) but
-which must be handled via XOB as all VRM indices in RPMh hardware are
-already used by other regulators.  This case is board specific (as opposed
-to PMIC specific) which is why there needs to be a way to specify that a
-given regulator is XOB controlled from device tree.  This case comes up on
-later targets which use multiple PMICs.  When it does, the set of LDO/SMPS
-regulators to be controlled via XOB is carefully chosen at a system level
-to be sure that a single voltage and mode is acceptable for each regulator.
-
-As a side note, there are several PMIC clock buffers which are controlled
-via XOB.  A separate RPMh clock driver will soon be submitted for these.
-The MSM register space and hardware control logic for each XOB (or VRM)
-resource is independent so there is no concern about having multiple
-software entities using XOB to control different resources (regulators vs
-clocks).
-
-
->> +- regulator-name
->> +       Usage:      optional
->> +       Value type: <string>
->> +       Definition: Specifies the name for this RPMh regulator.  If not
->> +                   specified, then the regulator's name is equal to its subnode
->> +                   name.
-> 
-> Probably don't need to include "regulator-name" since you say below
-> "Other properties defined in regulator.txt may also be used" and this
-> isn't anything special for your regulator.
-
-Sure, I'll remove this.
-
-
->> +- regulator-min-microvolt
->> +       Usage:      required
->> +       Value type: <u32>
->> +       Definition: For VRM resources, this is the minimum supported voltage in
->> +                   microvolts.  For XOB resources, this is the fixed output
->> +                   voltage.
->> +
->> +- regulator-max-microvolt
->> +       Usage:      required
->> +       Value type: <u32>
->> +       Definition: For VRM resources, this is the maximum supported voltage in
->> +                   microvolts.  For XOB resources, this is the fixed output
->> +                   voltage.
-> 
-> regulator-min-microvolt / regulator-max-microvolt are really required?
->  What happens if you leave them off?  In general the regulator
-> framework supports this concept--it just lets you enable/disable
-> without changing voltage.
-
-I'll test with these properties not specified.  Assuming that nothing bad
-happens, I'll remove mention of them in this file.
-
-
->> +- qcom,regulator-initial-voltage
->> +       Usage:      optional; VRM regulators only
->> +       Value type: <u32>
->> +       Definition: Specifies the initial voltage in microvolts to request for a
->> +                   VRM regulator.  Supported values are 0 to 8191000.
-> 
-> The "supported values" here is a strange statement to make.  Not all
-> regulators will support all those voltages, right?  Do you really need
-> to list this here?
-
-My intention was to list the set of values that the VRM voltage control
-register will physically accept.  As you said, the meaningful/useful range
-for a given PMIC regulator will be a small subset of this range.  I'll
-remove the "supported values" sentence.
-
-
->> +- regulator-initial-mode
->> +       Usage:      optional; VRM regulators only
->> +       Value type: <u32>
->> +       Definition: Specifies the initial mode to request for a VRM regulator.
->> +                   Supported values are RPMH_REGULATOR_MODE_* which are defined
->> +                   in [1] (i.e. 0 to 4).
-> 
-> Explicitly state whether this is allowed even if
-> "regulator-allow-set-load" is not set.
-
-Will do.  It is allowed without regulator-allow-set-load.  This allows a
-mode to be selected for a regulator even if there isn't a meaningful way
-to configure the mode dynamically at runtime based on load current.
-
-
->> +- regulator-allow-set-load
->> +       Usage:      optional
->> +       Value type: <empty>
->> +       Definition: Boolean flag indicating that the the mode of this regulator
->> +                   may be configured at runtime based upon consumer load needs.
->> +
->> +- qcom,allowed-modes
-> 
-> It would be up to Mark Brown, but my guess is that he will say "please
-> add this to the core".  The regulator core already has the concept of
-> modes and you're already using the standard core concepts in most
-> places.  Get rid of the special case code in your driver and add this
-> to the core.
-
-I'd prefer to keep this specific to RPMh regulators unless there is a
-major objection.
-
-
->> +       Usage:      required if regulator-allow-set-load is specified;
->> +                   VRM regulators only
->> +       Value type: <prop-encoded-array>
->> +       Definition: A list of integers specifying the PMIC regulator modes which
->> +                   can be configured at runtime based upon consumer load needs.
->> +                   Supported values are RPMH_REGULATOR_MODE_* which are defined
->> +                   in [1] (i.e. 0 to 4).  Elements must be specified in order
->> +                   from lowest to highest value.
-> 
-> As far as I can tell this sorting constraint should be removed.
-> Really the constraints should be:
-> 
-> * qcom,mode-threshold-currents should be sorted from lowest to highest
-> * qcom,allowed-modes must match qcom,mode-threshold-currents
-> 
-> Sure, today it happens that the numbers are always lower for lower
-> currents, but it doesn't seem like something you'd have to encode into
-> the dt.
-
-I'll update the description.
-
-
->> +- qcom,headroom-voltage
->> +       Usage:      optional; VRM regulators only
->> +       Value type: <u32>
->> +       Definition: Specifies the headroom voltage in microvolts to request for
->> +                   a VRM regulator.  RPMh hardware automatically ensures that
->> +                   the parent of this regulator outputs a voltage high enough
->> +                   to satisfy the requested headroom.  Supported values are
->> +                   0 to 511000.
-> 
-> Is this just "regulator-microvolt-offset", but supported in hardware?
-
-No, it is equivalent to struct regulator_desc.min_dropout_uV, but handled
-in hardware.
-
-
->> +- qcom,rpmh-resource-type
->> +       Usage:      optional
->> +       Value type: <string>
->> +       Definition: RPMh accelerator type for this regulator.  If not specified,
->> +                   then the default type associated with this regulator will be
->> +                   used.  Supported values: "vrm" or "xob".
-> 
-> I still don't have the big picture I guess, but it seems weird that
-> you can override this.  You're saying that someone might stick an
-> oscillator buffer the place of something that's normally a regulator?
-> ...or a regulator in the place of something that's usually an
-> oscillator buffer?  When would you use this?
-
-Yes, there are specific board level use cases requiring the use of XOB
-instead of VRM for regulators which could be managed via VRM.  I explained
-this in more detail above.
-
-Take care,
-David
-
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index b1e999b..762d429 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -967,8 +967,10 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
+ 			return PyErr_NoMemory();
+ 
+ 		evsel = perf_evlist__event2evsel(evlist, event);
+-		if (!evsel)
++		if (!evsel) {
++			Py_INCREF(Py_None);
+ 			return Py_None;
++		}
+ 
+ 		pevent->evsel = evsel;
+ 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.4.3
