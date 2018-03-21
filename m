@@ -1,90 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752735AbeCUPaz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 11:30:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47240 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752305AbeCUPas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 11:30:48 -0400
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH 01/10] drm/sun4i: Disable frontend video channel before enabling a layer
-Date: Wed, 21 Mar 2018 16:28:55 +0100
-Message-Id: <20180321152904.22411-2-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
-References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
+        id S1752848AbeCUPcN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 11:32:13 -0400
+Received: from mail-qk0-f182.google.com ([209.85.220.182]:36221 "EHLO
+        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752833AbeCUPcE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 11:32:04 -0400
+X-Google-Smtp-Source: AG47ELuk8Zbo89FTj7XBObZHgXb+cwj8iVgZq0ScaZPRbrBYMCrkfJ6TiM0Yi9JUbIV7DvNHXRhx3l+aA/28fzZAm2Q=
+MIME-Version: 1.0
+In-Reply-To: <486eb9bad0440ed305a78d9fc990728cbeb7d43e.1521301345.git.vilhelm.gray@gmail.com>
+References: <cover.1521301345.git.vilhelm.gray@gmail.com> <486eb9bad0440ed305a78d9fc990728cbeb7d43e.1521301345.git.vilhelm.gray@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 21 Mar 2018 17:32:03 +0200
+Message-ID: <CAHp75VcdimgN3u5O5zye2=pXvCkWuZzCf3e0wOQozQoKz7W8yA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/8] gpio: 104-idio-16: Implement get_multiple callback
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a dedicated function for disabling the layer video channel
-from the frontend to the backend. It is called automatically on an
-atomic update, as to disable the frontend by default (it will be enabled
-later on in the atomic update if necessary).
+On Sat, Mar 17, 2018 at 5:50 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
+> The ACCES I/O 104-IDIO-16 series of devices provides 16
+> optically-isolated digital inputs accessed via two 8-bit ports. Since
+> eight input lines are acquired on a single port input read, the
+> 104-IDIO-16 GPIO driver may improve multiple input reads by utilizing a
+> get_multiple callback. This patch implements the
+> idio_16_gpio_get_multiple function which serves as the respective
+> get_multiple callback.
 
-It fixes an issue when enabling a layer that uses the frontend (e.g. for
-scaling) and then reusing the same layer without the frontend. Since the
-video channel to the frontend was never disabled, the backend was still
-trying to get data from there.
+> +static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
+> +       unsigned long *mask, unsigned long *bits)
+> +{
+> +       struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
+> +
+> +       *bits = 0;
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- drivers/gpu/drm/sun4i/sun4i_backend.c | 8 ++++++++
- drivers/gpu/drm/sun4i/sun4i_backend.h | 2 ++
- drivers/gpu/drm/sun4i/sun4i_layer.c   | 2 ++
- 3 files changed, 12 insertions(+)
+> +       if (*mask & 0xFF0000)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index 7e647044cbed..e07a33adc51d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -395,6 +395,14 @@ int sun4i_backend_update_layer_zpos(struct sun4i_backend *backend, int layer,
- 	return 0;
- }
- 
-+void sun4i_backend_disable_layer_frontend(struct sun4i_backend *backend,
-+					  int layer)
-+{
-+	regmap_update_bits(backend->engine.regs,
-+			   SUN4I_BACKEND_ATTCTL_REG0(layer),
-+			   SUN4I_BACKEND_ATTCTL_REG0_LAY_VDOEN, 0);
-+}
-+
- static bool sun4i_backend_plane_uses_scaler(struct drm_plane_state *state)
- {
- 	u16 src_h = state->src_h >> 16;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.h b/drivers/gpu/drm/sun4i/sun4i_backend.h
-index 316f2179e9e1..7ae0f0ffec8c 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.h
-@@ -204,5 +204,7 @@ int sun4i_backend_update_layer_frontend(struct sun4i_backend *backend,
- 					int layer, uint32_t in_fmt);
- int sun4i_backend_update_layer_zpos(struct sun4i_backend *backend,
- 				    int layer, struct drm_plane *plane);
-+void sun4i_backend_disable_layer_frontend(struct sun4i_backend *backend,
-+					  int layer);
- 
- #endif /* _SUN4I_BACKEND_H_ */
-diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
-index 2949a3c912c1..224bb1811e0a 100644
---- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-@@ -93,6 +93,8 @@ static void sun4i_backend_layer_atomic_update(struct drm_plane *plane,
- 	struct sun4i_backend *backend = layer->backend;
- 	struct sun4i_frontend *frontend = backend->frontend;
- 
-+	sun4i_backend_disable_layer_frontend(backend, layer->id);
-+
- 	if (layer_state->uses_frontend) {
- 		sun4i_frontend_init(frontend);
- 		sun4i_frontend_update_coord(frontend, plane);
+GENMASK(23, 16) ?
+
+> +               *bits |= (unsigned long)inb(idio16gpio->base + 1) << 16;
+
+Do you need casting?
+
+> +       if (*mask & 0xFF000000)
+
+GENMASK(31, 24) ?
+
+Alternative (and for above):
+
+(*mask >> 24) & 0xff
+
+(*mask >> 16) & 0xff
+
+
+> +               *bits |= (unsigned long)inb(idio16gpio->base + 5) << 24;
+
+Do you need casting?
+
+> +
+> +       return 0;
+> +}
+> +
+>  static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+>  {
+>         struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
+> @@ -244,6 +258,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
+>         idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
+>         idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
+>         idio16gpio->chip.get = idio_16_gpio_get;
+> +       idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
+>         idio16gpio->chip.set = idio_16_gpio_set;
+>         idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+>         idio16gpio->base = base[id];
+> --
+> 2.16.2
+>
+
+
+
 -- 
-2.16.2
+With Best Regards,
+Andy Shevchenko
