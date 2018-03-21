@@ -1,69 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752829AbeCUPse (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 11:48:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40098 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752432AbeCUPsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 11:48:30 -0400
-Date: Wed, 21 Mar 2018 23:48:09 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Marta Rybczynska <mrybczyn@kalray.eu>
-Cc: keith busch <keith.busch@intel.com>, axboe@fb.com, hch@lst.de,
-        sagi@grimberg.me, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
-Subject: Re: [RFC PATCH] nvme: avoid race-conditions when enabling devices
-Message-ID: <20180321154807.GD22254@ming.t460p>
-References: <744877924.5841545.1521630049567.JavaMail.zimbra@kalray.eu>
- <20180321115037.GA26083@ming.t460p>
- <464125757.5843583.1521634231341.JavaMail.zimbra@kalray.eu>
+        id S1752720AbeCUPtH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 11:49:07 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:45123 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752512AbeCUPtE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 11:49:04 -0400
+X-Google-Smtp-Source: AG47ELvC6Fds+Wf+IQLLYxzx9FPv0TZI7QVNwyNlrWvn4pddwD0Ha6QBUBhYG9t6rkLgZ4yW/xJ8v5iKnpUYuFnN3kU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <464125757.5843583.1521634231341.JavaMail.zimbra@kalray.eu>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <e372c38adc4d2f43ff45b411b8a6b61c9b71b086.1521620371.git.rgb@redhat.com>
+References: <cover.1521620371.git.rgb@redhat.com> <e372c38adc4d2f43ff45b411b8a6b61c9b71b086.1521620371.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 21 Mar 2018 11:49:02 -0400
+Message-ID: <CAHC9VhTFqY7p2zfX4y91cGpFg832sgyf7RRKw9YY3mARgz2GbA@mail.gmail.com>
+Subject: Re: [PATCH ghak21 V4 2/2] audit: add refused symlink to audit_names
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 01:10:31PM +0100, Marta Rybczynska wrote:
-> > On Wed, Mar 21, 2018 at 12:00:49PM +0100, Marta Rybczynska wrote:
-> >> NVMe driver uses threads for the work at device reset, including enabling
-> >> the PCIe device. When multiple NVMe devices are initialized, their reset
-> >> works may be scheduled in parallel. Then pci_enable_device_mem can be
-> >> called in parallel on multiple cores.
-> >> 
-> >> This causes a loop of enabling of all upstream bridges in
-> >> pci_enable_bridge(). pci_enable_bridge() causes multiple operations
-> >> including __pci_set_master and architecture-specific functions that
-> >> call ones like and pci_enable_resources(). Both __pci_set_master()
-> >> and pci_enable_resources() read PCI_COMMAND field in the PCIe space
-> >> and change it. This is done as read/modify/write.
-> >> 
-> >> Imagine that the PCIe tree looks like:
-> >> A - B - switch -  C - D
-> >>                \- E - F
-> >> 
-> >> D and F are two NVMe disks and all devices from B are not enabled and bus
-> >> mastering is not set. If their reset work are scheduled in parallel the two
-> >> modifications of PCI_COMMAND may happen in parallel without locking and the
-> >> system may end up with the part of PCIe tree not enabled.
-> > 
-> > Then looks serialized reset should be used, and I did see the commit
-> > 79c48ccf2fe ("nvme-pci: serialize pci resets") fixes issue of 'failed
-> > to mark controller state' in reset stress test.
-> > 
-> > But that commit only covers case of PCI reset from sysfs attribute, and
-> > maybe other cases need to be dealt with in similar way too.
-> > 
-> 
-> It seems to me that the serialized reset works for multiple resets of the
-> same device, doesn't it? Our problem is linked to resets of different devices
-> that share the same PCIe tree.
+On Wed, Mar 21, 2018 at 4:42 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Audit link denied events for symlinks had duplicate PATH records rather
+> than just updating the existing PATH record.  Update the symlink's PATH
+> record with the current dentry and inode information.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/21
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  fs/namei.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Given reset shouldn't be a frequent action, it might be fine to serialize all
-reset from different devices.
+Merged.  Thanks for the audit log examples.
 
-Thanks,
-Ming
+> diff --git a/fs/namei.c b/fs/namei.c
+> index e3682bb..5f8e8e2 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -945,6 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
+>         if (nd->flags & LOOKUP_RCU)
+>                 return -ECHILD;
+>
+> +       audit_inode(nd->name, nd->stack[0].link.dentry, 0);
+>         audit_log_link_denied("follow_link");
+>         return -EACCES;
+>  }
+> --
+> 1.8.3.1
+
+-- 
+paul moore
+www.paul-moore.com
