@@ -1,220 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752302AbeCUNww (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 09:52:52 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:11739 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752031AbeCUNwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 09:52:38 -0400
-Message-Id: <d253b71638e2af1cac9eb804c935810d0e021841.1521639065.git.christophe.leroy@c-s.fr>
-In-Reply-To: <fbbdc0bcff276190ea8619b3070d971f2ca76abd.1521639065.git.christophe.leroy@c-s.fr>
-References: <fbbdc0bcff276190ea8619b3070d971f2ca76abd.1521639065.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH  2/2] powerpc/time: Only set ARCH_HAS_SCALED_CPUTIME on PPC64
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 21 Mar 2018 14:52:36 +0100 (CET)
+        id S1752115AbeCUNzM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 09:55:12 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49067 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751714AbeCUNzL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 09:55:11 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Rik van Riel <riel@surriel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFT][PATCH v7 0/8] sched/cpuidle: Idle loop rework
+Date: Wed, 21 Mar 2018 14:55:36 +0100
+Message-ID: <4584935.MPnHlxh7Zu@aspire.rjw.lan>
+In-Reply-To: <1521635467.6308.13.camel@surriel.com>
+References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <1521635467.6308.13.camel@surriel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-scaled cputime is only meaningfull when the processor has
-SPURR and/or PURR, which means only on PPC64.
+On Wednesday, March 21, 2018 1:31:07 PM CET Rik van Riel wrote:
+> On Tue, 2018-03-20 at 16:12 +0100, Rafael J. Wysocki wrote:
+> > Hi All,
+> > 
+> > Thanks a lot for the feedback so far!
+> > 
+> > Respin after recent comments from Peter.
+> > 
+> > Patches [1-3] unmodified since v5, patch 4 is new and the other ones
+> > have been updated to address feedback.
+> > 
+> > The previous summary that still applies:
 
-Removing it on PPC32 significantly reduces the size of
-vtime_account_system() and vtime_account_idle() on an 8xx:
+Thanks for the testing!
+ 
+> For some reason I see increased CPU utilization
+> with this patch series (75% -> 85%) with the same
+> rate of requests being handled by the vanilla
+> kernel and a kernel with these patches applied.
+> 
+> I am running a bisect in the series to see what
+> change could possibly cause that,
 
-Before:
-00000114 l     F .text	000000a8 vtime_delta
-000004c0 g     F .text	00000100 vtime_account_system
-000005c0 g     F .text	00000048 vtime_account_idle
+The first 4 patches in the v7 should not change functionality by
+themselves.
 
-After:
-(vtime_delta gets inlined in the two functions)
-00000418 g     F .text	000000a0 vtime_account_system
-000004b8 g     F .text	00000054 vtime_account_idle
+If you replace the original [5/8] with the v7.2 of it I've just
+posted (https://patchwork.kernel.org/patch/10299429/), then it
+should not change functionality by itself too.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/Kconfig                  |  2 +-
- arch/powerpc/include/asm/accounting.h |  4 ++++
- arch/powerpc/include/asm/cputime.h    |  2 ++
- arch/powerpc/kernel/time.c            | 29 +++++++++++++++++++++++------
- 4 files changed, 30 insertions(+), 7 deletions(-)
+Then you only have 3 patches to check. :-)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 0c76d93d5da5..8c9f54779ff1 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -142,7 +142,7 @@ config PPC
- 	select ARCH_HAS_PHYS_TO_DMA
- 	select ARCH_HAS_PMEM_API                if PPC64
- 	select ARCH_HAS_MEMBARRIER_CALLBACKS
--	select ARCH_HAS_SCALED_CPUTIME		if VIRT_CPU_ACCOUNTING_NATIVE
-+	select ARCH_HAS_SCALED_CPUTIME		if VIRT_CPU_ACCOUNTING_NATIVE && PPC64
- 	select ARCH_HAS_SG_CHAIN
- 	select ARCH_HAS_STRICT_KERNEL_RWX	if ((PPC_BOOK3S_64 || PPC32) && !RELOCATABLE && !HIBERNATION)
- 	select ARCH_HAS_TICK_BROADCAST		if GENERIC_CLOCKEVENTS_BROADCAST
-diff --git a/arch/powerpc/include/asm/accounting.h b/arch/powerpc/include/asm/accounting.h
-index 3abcf98ed2e0..f1096d4cc658 100644
---- a/arch/powerpc/include/asm/accounting.h
-+++ b/arch/powerpc/include/asm/accounting.h
-@@ -15,8 +15,10 @@ struct cpu_accounting_data {
- 	/* Accumulated cputime values to flush on ticks*/
- 	unsigned long utime;
- 	unsigned long stime;
-+#ifdef ARCH_HAS_SCALED_CPUTIME
- 	unsigned long utime_scaled;
- 	unsigned long stime_scaled;
-+#endif
- 	unsigned long gtime;
- 	unsigned long hardirq_time;
- 	unsigned long softirq_time;
-@@ -25,8 +27,10 @@ struct cpu_accounting_data {
- 	/* Internal counters */
- 	unsigned long starttime;	/* TB value snapshot */
- 	unsigned long starttime_user;	/* TB value on exit to usermode */
-+#ifdef ARCH_HAS_SCALED_CPUTIME
- 	unsigned long startspurr;	/* SPURR value snapshot */
- 	unsigned long utime_sspurr;	/* ->user_time when ->startspurr set */
-+#endif
- };
- 
- #endif
-diff --git a/arch/powerpc/include/asm/cputime.h b/arch/powerpc/include/asm/cputime.h
-index 36345341dd70..c11d4fd27028 100644
---- a/arch/powerpc/include/asm/cputime.h
-+++ b/arch/powerpc/include/asm/cputime.h
-@@ -61,7 +61,9 @@ static inline void arch_vtime_task_switch(struct task_struct *prev)
- 	struct cpu_accounting_data *acct = get_accounting(current);
- 
- 	acct->starttime = get_accounting(prev)->starttime;
-+#ifdef ARCH_HAS_SCALED_CPUTIME
- 	acct->startspurr = get_accounting(prev)->startspurr;
-+#endif
- }
- #endif
- 
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index aa6aa5d4a60c..09e5eb9f0e81 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -175,6 +175,7 @@ static void calc_cputime_factors(void)
-  * Read the SPURR on systems that have it, otherwise the PURR,
-  * or if that doesn't exist return the timebase value passed in.
-  */
-+#ifdef ARCH_HAS_SCALED_CPUTIME
- static unsigned long read_spurr(unsigned long tb)
- {
- 	if (cpu_has_feature(CPU_FTR_SPURR))
-@@ -183,6 +184,7 @@ static unsigned long read_spurr(unsigned long tb)
- 		return mfspr(SPRN_PURR);
- 	return tb;
- }
-+#endif
- 
- #ifdef CONFIG_PPC_SPLPAR
- 
-@@ -282,22 +284,28 @@ static unsigned long vtime_delta(struct task_struct *tsk,
- 				 unsigned long *stime_scaled,
- 				 unsigned long *steal_time)
- {
--	unsigned long now, nowscaled, deltascaled;
-+	unsigned long now;
- 	unsigned long stime;
-+#ifdef ARCH_HAS_SCALED_CPUTIME
-+	unsigned long nowscaled, deltascaled;
- 	unsigned long utime, utime_scaled;
-+#endif
- 	struct cpu_accounting_data *acct = get_accounting(tsk);
- 
- 	WARN_ON_ONCE(!irqs_disabled());
- 
- 	now = mftb();
-+#ifdef ARCH_HAS_SCALED_CPUTIME
- 	nowscaled = read_spurr(now);
-+#endif
- 	stime = now - acct->starttime;
- 	acct->starttime = now;
--	deltascaled = nowscaled - acct->startspurr;
--	acct->startspurr = nowscaled;
- 
- 	*steal_time = calculate_stolen_time(now);
- 
-+#ifdef ARCH_HAS_SCALED_CPUTIME
-+	deltascaled = nowscaled - acct->startspurr;
-+	acct->startspurr = nowscaled;
- 	utime = acct->utime - acct->utime_sspurr;
- 	acct->utime_sspurr = acct->utime;
- 
-@@ -322,6 +330,7 @@ static unsigned long vtime_delta(struct task_struct *tsk,
- 		}
- 	}
- 	acct->utime_scaled += utime_scaled;
-+#endif
- 
- 	return stime;
- }
-@@ -338,7 +347,9 @@ void vtime_account_system(struct task_struct *tsk)
- 
- 	if ((tsk->flags & PF_VCPU) && !irq_count()) {
- 		acct->gtime += stime;
-+#ifdef ARCH_HAS_SCALED_CPUTIME
- 		acct->utime_scaled += stime_scaled;
-+#endif
- 	} else {
- 		if (hardirq_count())
- 			acct->hardirq_time += stime;
-@@ -347,7 +358,9 @@ void vtime_account_system(struct task_struct *tsk)
- 		else
- 			acct->stime += stime;
- 
-+#ifdef ARCH_HAS_SCALED_CPUTIME
- 		acct->stime_scaled += stime_scaled;
-+#endif
- 	}
- }
- EXPORT_SYMBOL_GPL(vtime_account_system);
-@@ -375,8 +388,12 @@ void vtime_flush(struct task_struct *tsk)
- 	if (acct->utime)
- 		account_user_time(tsk, cputime_to_nsecs(acct->utime));
- 
-+#ifdef ARCH_HAS_SCALED_CPUTIME
- 	if (acct->utime_scaled)
- 		tsk->utimescaled += cputime_to_nsecs(acct->utime_scaled);
-+	if (acct->stime_scaled)
-+		tsk->stimescaled += cputime_to_nsecs(acct->stime_scaled);
-+#endif
- 
- 	if (acct->gtime)
- 		account_guest_time(tsk, cputime_to_nsecs(acct->gtime));
-@@ -390,8 +407,6 @@ void vtime_flush(struct task_struct *tsk)
- 	if (acct->stime)
- 		account_system_index_time(tsk, cputime_to_nsecs(acct->stime),
- 					  CPUTIME_SYSTEM);
--	if (acct->stime_scaled)
--		tsk->stimescaled += cputime_to_nsecs(acct->stime_scaled);
- 
- 	if (acct->hardirq_time)
- 		account_system_index_time(tsk, cputime_to_nsecs(acct->hardirq_time),
-@@ -401,13 +416,15 @@ void vtime_flush(struct task_struct *tsk)
- 					  CPUTIME_SOFTIRQ);
- 
- 	acct->utime = 0;
-+#ifdef ARCH_HAS_SCALED_CPUTIME
- 	acct->utime_scaled = 0;
- 	acct->utime_sspurr = 0;
-+	acct->stime_scaled = 0;
-+#endif
- 	acct->gtime = 0;
- 	acct->steal_time = 0;
- 	acct->idle_time = 0;
- 	acct->stime = 0;
--	acct->stime_scaled = 0;
- 	acct->hardirq_time = 0;
- 	acct->softirq_time = 0;
- }
--- 
-2.13.3
+> and also digging
+> through system statistics to see whether it might
+> be something as perverse as not mistakenly choosing
+> deeper C-states on one core causing other cores to
+> miss out on turbo mode...
+
+I have no idea ATM.  And what's the workload?
