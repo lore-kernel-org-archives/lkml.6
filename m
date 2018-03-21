@@ -1,111 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752735AbeCUQbm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:31:42 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:34435 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752104AbeCUQbi (ORCPT
+        id S1752847AbeCUQcR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:32:17 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35359 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751832AbeCUQcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:31:38 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SzrTq6-_1521649886;
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-To: Michal Hocko <mhocko@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321130833.GM23100@dhcp22.suse.cz>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
-Date: Wed, 21 Mar 2018 09:31:22 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180321130833.GM23100@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Wed, 21 Mar 2018 12:32:15 -0400
+X-Google-Smtp-Source: AG47ELvDiHGHNTOAsKO1oGmvuDMUbVk9x63BT5nNsoQ5It37zjbwsTmgQhvpl/deAv+oQ6ht5bxAQQ==
+From: jason.vas.dias@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org, andi@firstfloor.org
+Subject: [PATCH v4.16-rc6 (1)] x86/vdso: VDSO should handle clock_gettime(CLOCK_MONOTONIC_RAW) without syscall
+Date: Wed, 21 Mar 2018 16:32:04 +0000
+Message-Id: <1521649925-13804-1-git-send-email-jason.vas.dias@gmail.com>
+X-Mailer: git-send-email 2.8.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+  Resent to address reviewer comments, and allow builds with compilers
+  that support -DRETPOLINE to succeed.
+  
+  Currently, the VDSO does not handle
+     clock_gettime( CLOCK_MONOTONIC_RAW, &ts )
+  on Intel / AMD - it calls
+     vdso_fallback_gettime()
+  for this clock, which issues a syscall, having an unacceptably high
+  latency (minimum measurable time or time between measurements)
+  of 300-700ns on 2 2.8-3.9ghz Haswell x86_64 Family'_'Model : 06_3C
+  machines under various versions of Linux.
+  
+  Sometimes, particularly when correlating elapsed time to performance
+  counter values, user-space  code needs to know elapsed time from the
+  perspective of the CPU no matter how "hot" / fast or "cold" / slow it
+  might be running wrt NTP / PTP "real" time; when code needs this,
+  the latencies associated with a syscall are often unacceptably high.
+  
+  I reported this as Bug #198161 :
+    'https://bugzilla.kernel.org/show_bug.cgi?id=198961'
+  and in previous posts with subjects matching 'CLOCK_MONOTONIC_RAW' .
+  
+  This patch handles CLOCK_MONOTONIC_RAW clock_gettime() in the VDSO ,
+  by exporting the raw clock calibration, last cycles, last xtime_nsec,
+  and last raw_sec value in the vsyscall_gtod_data during vsyscall_update() .
+  Now the new do_monotonic_raw() function in the vDSO has a latency of @ 20ns
+  on average, and the test program:
+   tools/testing/selftest/timers/inconsistency-check.c
+  succeeds with arguments: '-c 4 -t 120' or any arbitrary -t value.
+  
+  The patch is against Linus' latest 4.16-rc6 tree,
+  current HEAD of :
+    git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+  .
+  
+  This patch affects only files:
+   arch/x86/include/asm/vgtod.h
+   arch/x86/entry/vdso/vclock_gettime.c
+   arch/x86/entry/vsyscall/vsyscall_gtod.c
+   
+  Patches for kernels 3.10.0-21 and 4.9.65-rt23 (ARM) are attached to bug
+  #198161,
+  as is the test program, timer_latency.c, to demonstrate the problem.
+  
+  Before the patch a latency of 200-1000ns was measured for
+    clock_gettime(CLOCK_MONOTONIC_RAW,&ts)
+  calls - after the patch, the same call on the same machine
+  has a latency of @ 20ns.
+  
+  Please consider applying something like this patch to a future Linux release.
 
-On 3/21/18 6:08 AM, Michal Hocko wrote:
-> On Wed 21-03-18 05:31:19, Yang Shi wrote:
->> When running some mmap/munmap scalability tests with large memory (i.e.
->>> 300GB), the below hung task issue may happen occasionally.
->> INFO: task ps:14018 blocked for more than 120 seconds.
->>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->> message.
->>   ps              D    0 14018      1 0x00000004
->>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>   Call Trace:
->>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>    [<ffffffff817159e6>] schedule+0x36/0x80
->>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>    [<ffffffff81717db0>] down_read+0x20/0x40
->>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
->>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->>    [<ffffffff81242266>] vfs_read+0x96/0x130
->>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
->>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
->>
->> It is because munmap holds mmap_sem from very beginning to all the way
->> down to the end, and doesn't release it in the middle. When unmapping
->> large mapping, it may take long time (take ~18 seconds to unmap 320GB
->> mapping with every single page mapped on an idle machine).
-> Yes, this definitely sucks. One way to work that around is to split the
-> unmap to two phases. One to drop all the pages. That would only need
-> mmap_sem for read and then tear down the mapping with the mmap_sem for
-> write. This wouldn't help for parallel mmap_sem writers but those really
-> need a different approach (e.g. the range locking).
+  This patch is being resent because it has slight improvements to vclock_gettime
+  static function attributes wrt. the previous version.
 
-page fault might sneak in to map a page which has been unmapped before?
+  It also supersedes all previous patches with subject matching
+     '.*VDSO should handle.*clock_gettime.*MONOTONIC_RAW'
+  that I have sent previously - sorry for the resends.
 
-range locking should help a lot on manipulating small sections of a 
-large mapping in parallel or multiple small mappings. It may not achieve 
-too much for single large mapping.
+  Please apply this patch so we stop getting emails from
+  intel build bot trying to build previous version, with
+  subject :
+    '[PATCH v4.16-rc5 1/2] x86/vdso: VDSO should handle \
+     clock_gettime(CLOCK_MONOTONIC_RAW) without syscall'
+  , which only fails to build because its patch 2/2 , which
+  removed -DRETPOLINE from the VDSO build, and is now the
+  subject of https://bugzilla.kernel.org/show_bug.cgi?id=199129,
+  raised by H.J. Liu, was not applied first - Sorry! 
 
->
->> Since unmapping does't require any atomicity, so here unmap large
-> How come? Could you be more specific why? Once you drop the lock the
-> address space might change under your feet and you might be unmapping a
-> completely different vma. That would require userspace doing nasty
-> things of course (e.g. MAP_FIXED) but I am worried that userspace really
-> depends on mmap/munmap atomicity these days.
-
-Sorry for the ambiguity. The statement does look misleading. munmap does 
-need certain atomicity, particularly for the below sequence:
-
-splitting vma
-unmap region
-free pagetables
-free vmas
-
-Otherwise it may run into the below race condition:
-
-           CPU A                             CPU B
-        ----------                     ----------
-        do_munmap
-      zap_pmd_range
-        up_write                        do_munmap
-                                             down_write
-                                             ......
-                                             remove_vma_list
-                                             up_write
-       down_write
-      access vmas  <-- use-after-free bug
-
-This is why I do the range unmap in do_munmap() rather than doing it in 
-deeper location, i.e. zap_pmd_range(). I elaborated this in the cover 
-letter.
-
-Thanks,
-Yang
+Thanks & Best Regards,
+Jason Vas Dias
