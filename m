@@ -1,64 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753935AbeCUV5q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:57:46 -0400
-Received: from muru.com ([72.249.23.125]:33096 "EHLO muru.com"
+        id S1753830AbeCUWC2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 18:02:28 -0400
+Received: from hall.aurel32.net ([163.172.24.10]:33246 "EHLO hall.aurel32.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753816AbeCUV5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:57:37 -0400
-Date: Wed, 21 Mar 2018 14:57:33 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sre@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net
-Subject: Re: 4.16-rc5 on Motorola Droid 4
-Message-ID: <20180321215733.GE5799@atomide.com>
-References: <20180318220418.GA22880@amd>
- <20180320140322.GU5799@atomide.com>
- <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
- <20180321203137.GA23637@amd>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180321203137.GA23637@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1753534AbeCUWC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 18:02:27 -0400
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: linux-riscv@lists.infradead.org
+Cc: Aurelien Jarno <aurelien@aurel32.net>,
+        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] RISC-V: build vdso-dummy.o with -no-pie
+Date: Wed, 21 Mar 2018 22:26:31 +0100
+Message-Id: <20180321212631.20449-1-aurelien@aurel32.net>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180321 20:32]:
-> Hi!
-> 
-> > > Maybe get somebody to help you locally with the debug cable
-> > > soldering? :)
-> > 
-> > I suppose people from your hackerspace can help you. It's really
-> > easy to do. Soldering can be avoided btw. You can just use a pair
-> > of scissors to cut a USB -> Micro USB cable and use a knife to remove
-> > isolation. Then screw each of the 4 wires into a terminal strip.
-> > There are USB-TTL adapters available, that have an attached cable.
-> > If you also cut the connector from such a cable and connect it to
-> > the other side of the terminal strip you are done. No soldering
-> > involved ;)
-> 
-> Hm. How big no-no is connecting USB-TTL adapter to D+/D- pins? Because
-> that's what I could do "easily" and seems to work ;-).
+Debian toolcahin defaults to PIE, and I guess that will also be the case
+of most distributions. This causes the following build failure:
 
-Well if the VBUS line is not connected the PMIC is muxed
-to USB carkit mode so the lines go to the UART on the SoC
-through some level shifter. If it works it should not cause
-any issues, the symptoms I saw earlier was corrupted UART
-console and noticed that what worked best for me was 3.3V
-ftdi based devices out of the collection of random pl2303
-and ftdi cables I had around.
+  AS      arch/riscv/kernel/vdso/getcpu.o
+  AS      arch/riscv/kernel/vdso/flush_icache.o
+  VDSOLD  arch/riscv/kernel/vdso/vdso.so.dbg
+  OBJCOPY arch/riscv/kernel/vdso/vdso.so
+  AS      arch/riscv/kernel/vdso/vdso.o
+  VDSOLD  arch/riscv/kernel/vdso/vdso-dummy.o
+  LD      arch/riscv/kernel/vdso/vdso-syms.o
+riscv64-linux-gnu-ld: attempted static link of dynamic object `arch/riscv/kernel/vdso/vdso-dummy.o'
+make[2]: *** [arch/riscv/kernel/vdso/Makefile:43: arch/riscv/kernel/vdso/vdso-syms.o] Error 1
+make[1]: *** [scripts/Makefile.build:575: arch/riscv/kernel/vdso] Error 2
+make: *** [Makefile:1018: arch/riscv/kernel] Error 2
 
-I guess somebody could try to measure the uart lines with
-a scope with nothing connected and sending out data from
-droid 4. Or look at the carkit spec for the UART voltage
-levels.
+While the root Makefile correctly passes "-fno-PIE" to build individual
+object files, the RISC-V kernel also builds vdso-dummy.o as an
+executable, which is therefore linked as PIE. Fix that by updating this
+specific link rule to also include "-no-pie".
 
-Regards,
+Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+---
+ arch/riscv/kernel/vdso/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tony
+diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
+index 324568d33921..f6561b783b61 100644
+--- a/arch/riscv/kernel/vdso/Makefile
++++ b/arch/riscv/kernel/vdso/Makefile
+@@ -52,7 +52,7 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
+ # Add -lgcc so rv32 gets static muldi3 and lshrdi3 definitions.
+ # Make sure only to export the intended __vdso_xxx symbol offsets.
+ quiet_cmd_vdsold = VDSOLD  $@
+-      cmd_vdsold = $(CC) $(KCFLAGS) -nostdlib $(SYSCFLAGS_$(@F)) \
++      cmd_vdsold = $(CC) $(KCFLAGS) $(call cc-option, -no-pie) -nostdlib $(SYSCFLAGS_$(@F)) \
+                            -Wl,-T,$(filter-out FORCE,$^) -o $@.tmp -lgcc && \
+                    $(CROSS_COMPILE)objcopy \
+                            $(patsubst %, -G __vdso_%, $(vdso-syms)) $@.tmp $@
+-- 
+2.16.1
