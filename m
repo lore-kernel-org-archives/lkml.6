@@ -1,82 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753198AbeCUQuq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:50:46 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:34682 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751880AbeCUQun (ORCPT
+        id S1753226AbeCUQvL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:51:11 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64667 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751966AbeCUQtW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:50:43 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SzrTt7Q_1521651036;
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-To: Michal Hocko <mhocko@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321131449.GN23100@dhcp22.suse.cz>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
-Date: Wed, 21 Mar 2018 09:50:31 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
+        Wed, 21 Mar 2018 12:49:22 -0400
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v2 6/6] i2c: i2c-stm32f7: Implement I2C recovery mechanism
+Date: Wed, 21 Mar 2018 17:49:00 +0100
+Message-ID: <1521650940-11651-7-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180321131449.GN23100@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Feature prevents I2C lock-ups. Mechanism resets I2C state machine
+and releases SCL/SDA signals but preserves I2C registers.
 
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+---
+  Version history:
+    v1:
+       * Initial
+    v2:
+       * Don't use i2c engine recovery mechanism since driver
+         procedure only recover master and not the slave.
+---
+---
+ drivers/i2c/busses/i2c-stm32f7.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
 
-On 3/21/18 6:14 AM, Michal Hocko wrote:
-> On Wed 21-03-18 05:31:19, Yang Shi wrote:
->> When running some mmap/munmap scalability tests with large memory (i.e.
->>> 300GB), the below hung task issue may happen occasionally.
->> INFO: task ps:14018 blocked for more than 120 seconds.
->>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->> message.
->>   ps              D    0 14018      1 0x00000004
->>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>   Call Trace:
->>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>    [<ffffffff817159e6>] schedule+0x36/0x80
->>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>    [<ffffffff81717db0>] down_read+0x20/0x40
->>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
-> Slightly off-topic:
-> Btw. this sucks as well. Do we really need to take mmap_sem here? Do any
-> of
-> 	arg_start = mm->arg_start;
-> 	arg_end = mm->arg_end;
-> 	env_start = mm->env_start;
-> 	env_end = mm->env_end;
->
-> change after exec or while the pid is already visible in proc? If yes
-> maybe we can use a dedicated lock.
-
-Actually, Alexey Dobriyan had the same comment when he reviewed my very 
-first patch (which changes down_read to down_read_killable at that place).
-
-Those 4 values might be changed by prctl_set_mm() and prctl_set_mm_map() 
-concurrently. They used to use down_read() to protect the change, but it 
-looks not good enough to protect concurrent writing. So, Mateusz Guzik's 
-commit ddf1d398e517e660207e2c807f76a90df543a217 ("prctl: take mmap sem 
-for writing to protect against others") change it to down_write().
-
-It seems mmap_sem can be replaced to a dedicated lock. How about 
-defining a rwlock in mm_struct to protect those data? I will come up 
-with a RFC patch for this.
-
-However, this dedicated lock just can work around this specific case. I 
-believe solving mmap_sem scalability issue aimed by the patch series is 
-still our consensus.
-
-Thanks,
-Yang
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index 91f73e0..9a9c469 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -718,6 +718,20 @@ static void stm32f7_i2c_smbus_reload(struct stm32f7_i2c_dev *i2c_dev)
+ 	writel_relaxed(cr2, i2c_dev->base + STM32F7_I2C_CR2);
+ }
+ 
++static int stm32f7_i2c_recover_bus(struct i2c_adapter *i2c_adap)
++{
++	struct stm32f7_i2c_dev *i2c_dev = i2c_get_adapdata(i2c_adap);
++
++	dev_info(i2c_dev->dev, "Trying to recover bus\n");
++
++	stm32f7_i2c_clr_bits(i2c_dev->base + STM32F7_I2C_CR1,
++			     STM32F7_I2C_CR1_PE);
++
++	stm32f7_i2c_hw_config(i2c_dev);
++
++	return 0;
++}
++
+ static int stm32f7_i2c_wait_free_bus(struct stm32f7_i2c_dev *i2c_dev)
+ {
+ 	u32 status;
+@@ -727,12 +741,18 @@ static int stm32f7_i2c_wait_free_bus(struct stm32f7_i2c_dev *i2c_dev)
+ 					 status,
+ 					 !(status & STM32F7_I2C_ISR_BUSY),
+ 					 10, 1000);
++	if (!ret)
++		return 0;
++
++	dev_info(i2c_dev->dev, "bus busy\n");
++
++	ret = stm32f7_i2c_recover_bus(&i2c_dev->adap);
+ 	if (ret) {
+-		dev_dbg(i2c_dev->dev, "bus busy\n");
+-		ret = -EBUSY;
++		dev_err(i2c_dev->dev, "Failed to recover the bus (%d)\n", ret);
++		return ret;
+ 	}
+ 
+-	return ret;
++	return -EBUSY;
+ }
+ 
+ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
+@@ -1474,6 +1494,7 @@ static irqreturn_t stm32f7_i2c_isr_error(int irq, void *data)
+ 	if (status & STM32F7_I2C_ISR_BERR) {
+ 		dev_err(dev, "<%s>: Bus error\n", __func__);
+ 		writel_relaxed(STM32F7_I2C_ICR_BERRCF, base + STM32F7_I2C_ICR);
++		stm32f7_i2c_recover_bus(&i2c_dev->adap);
+ 		f7_msg->result = -EIO;
+ 	}
+ 
+-- 
+2.7.4
