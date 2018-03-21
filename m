@@ -1,74 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752569AbeCUPCV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 11:02:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56420 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752539AbeCUPCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 11:02:16 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc: lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>
-Subject: [PATCH 2/2] bpftool: Adjust to new print_bpf_insn interface
-Date: Wed, 21 Mar 2018 16:02:12 +0100
-Message-Id: <20180321150212.5586-2-jolsa@kernel.org>
-In-Reply-To: <20180321150212.5586-1-jolsa@kernel.org>
-References: <20180321150212.5586-1-jolsa@kernel.org>
+        id S1752437AbeCUPHU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 11:07:20 -0400
+Received: from foss.arm.com ([217.140.101.70]:54634 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752105AbeCUPHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 11:07:19 -0400
+Date: Wed, 21 Mar 2018 15:07:14 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        robin.murphy@arm.com, shankerd@codeaurora.org
+Subject: Re: [PATCH v4 11/22] arm64: capabilities: Group handling of features
+ and errata workarounds
+Message-ID: <20180321150712.GB16308@e103592.cambridge.arm.com>
+References: <20180313115120.17256-1-suzuki.poulose@arm.com>
+ <20180313115120.17256-12-suzuki.poulose@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313115120.17256-12-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change bpftool to skip the removed struct bpf_verifier_env
-argument in print_bpf_insn. It was passed as NULL anyway.
+On Tue, Mar 13, 2018 at 11:51:09AM +0000, Suzuki K Poulose wrote:
+> Now that the features and errata workarounds have the same
+> rules and flow, group the handling of the tables.
+> 
+> Cc: Dave Martin <dave.martin@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-No functional change intended.
+It looks like nothing signifcant has changed since v3 [1], and I was
+reasonably happy with this last time around [2], so
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/bpf/bpftool/prog.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Reviewed-by: Dave Martin <Dave.Martin@arm.com>
 
-diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-index e549e329be82..108001d974ee 100644
---- a/tools/bpf/bpftool/prog.c
-+++ b/tools/bpf/bpftool/prog.c
-@@ -489,7 +489,7 @@ static struct kernel_sym *kernel_syms_search(struct dump_data *dd,
- 		       sizeof(*dd->sym_mapping), kernel_syms_cmp) : NULL;
- }
- 
--static void print_insn(struct bpf_verifier_env *env, const char *fmt, ...)
-+static void print_insn(void *private_data, const char *fmt, ...)
- {
- 	va_list args;
- 
-@@ -576,7 +576,7 @@ static void dump_xlated_plain(struct dump_data *dd, void *buf,
- 		double_insn = insn[i].code == (BPF_LD | BPF_IMM | BPF_DW);
- 
- 		printf("% 4d: ", i);
--		print_bpf_insn(&cbs, NULL, insn + i, true);
-+		print_bpf_insn(&cbs, insn + i, true);
- 
- 		if (opcodes) {
- 			printf("       ");
-@@ -590,7 +590,7 @@ static void dump_xlated_plain(struct dump_data *dd, void *buf,
- 	}
- }
- 
--static void print_insn_json(struct bpf_verifier_env *env, const char *fmt, ...)
-+static void print_insn_json(void *private_data, const char *fmt, ...)
- {
- 	unsigned int l = strlen(fmt);
- 	char chomped_fmt[l];
-@@ -628,7 +628,7 @@ static void dump_xlated_json(struct dump_data *dd, void *buf,
- 
- 		jsonw_start_object(json_wtr);
- 		jsonw_name(json_wtr, "disasm");
--		print_bpf_insn(&cbs, NULL, insn + i, true);
-+		print_bpf_insn(&cbs, insn + i, true);
- 
- 		if (opcodes) {
- 			jsonw_name(json_wtr, "opcodes");
--- 
-2.13.6
+[...]
+
+Cheers
+---Dave
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/558742.html
+[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-February/558763.html
