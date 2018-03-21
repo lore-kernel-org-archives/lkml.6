@@ -1,73 +1,68 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3952077-1521899183-2-16726844262015253365
+X-Cyrus-Session-Id: sloti22d1t05-3734533-1521628182-2-658266018791067550
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES roen, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521899183; b=hiAOr4zIVH6F6YX73O5HvBp4w1M5HN2V0R+i1mRa+iECPvh
-    GkMm0OLm7uko+ZBl9pnGhRdvTvLvnn/lqbnN1xKpw7CfIBONxj2WOyi2q2Tw4y6Z
-    trv4iQDQ+I919bE83H7EPMv+krkwfiP4CnN/soB35GXJSv/aUebn91FRbrK0I5gY
-    8tjmNMTC7zUzA3fs3Yhh6F2JXnc3uBnYH09XwfBDTldT7NfMiH9cuu4FLmlVtIQe
-    pC5WH/31AnzwWUwVDoZ1RHZ42i9NqyUnONfR0338zM2fNrmFS6IrnVUE7EoGBMVv
-    NNJT1t6CYKhHKtL9LgY3sUrzGES9v0oyjhv2P4A==
+    t=1521628181; b=vILtrvM+T41XCpTR8TzL83fK15Yb4nPjxq9eysFRyfG7UCl
+    m80hj22IaFIaQ9vcm/su6G56SR1IVTMuUgdMZcWMVm8nt8tBTN6Weh+K9w7LcFbs
+    wDMtxlIDuxOZ/j33s2kxEdBu2r7L35Ie5QqWF+dW5HxV/gWiP95T5Kr4hw//Rgbl
+    W0Dry48S/sdX5SRxIEFVEGXbjif1hcYmA+8nVyKllFmyHzgpFw2qR2fXxGOB4SXn
+    mP/Jj75rE+saAIC7zLHJKKGoGNLj9dWyYQKxOa+JFNpWh14DXVkPYCkj8mNtqbT4
+    L5Ba4JOEsCCwEqsRjZZxbPSoX5dRqtLZNGb7CxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521899183; bh=6
-    VgoqDNIWYC9emyvhKqvXZYtWHz85Wb7aSBm6mdG2WA=; b=O7gCPkqShuS//K4fp
-    LKUyZMEKRGVl4ln6Zjd73bglQaSNVJJJvqQIF5DQm2UTVviSuM2Ybr3cERf/1x4R
-    amsMMbWf5J+MZg+shmVc0utrv2coMotHHGqaGO0tNIy0btuBCpgC0sBNpGfUF7Iz
-    8ZL1rstCsX7VI96kuMJHqJuHzAVMX5om9HOD1iPQFG0DvJ9lgZWBi7YnZIB+eEv3
-    Xxqnp+9pQMsTTIXso/Em6McDwTLLL+rPrIcCKJe9ePEwwDmm+zEiLi5VcJ2nSd8w
-    sfInMKiPyIiOLRuRkkvkaglnnkIZg/ms8Dl1HTNP0rxafpV1wJiIwtqPI2SQ22cX
-    e2gxA==
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521628181; bh=R
+    vCfDa76fg8iiyxE+Rq/avKSbgMbQdcQbzijd486NKE=; b=ppEs8d5Z7EcaFDjHO
+    F7zjQ2mXZuObuC3VgqgxSuh/QxCuP/kpd1EUxTCs58NNeYnh9IRQBNXQ4mFcYkfV
+    biq2NzswIYKNn2msHig2RfQRfk7OV1c5VGg3zPeHlzxjUdrl+UoG1GeEFZJv7pMq
+    EYVYVX52y0XUEyiJtmsTP//i/35f6KhI0/I2BPdS1KAHiuCvGQjJ9p0hFvjzaDFg
+    5S9I5gQcvstFhEwTVyaQje0WowHLu7gIb0A1G/8oTYJqwNuvLCVlF58HRXNw9Rkd
+    PVuRIjvZBtHWiP9Yb/XteBWCuIwhhoBN0p7gCmGlRaNMW+bpS4PNcuDdc0UNkS7b
+    Fby3g==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=kxD8hLPR x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=onstation.org header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=kxD8hLPR x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=onstation.org header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACA0C21772
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 24 Mar 2018 13:46:11 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH 11/11] staging: iio: tsl2x7x: add copyright
-Message-ID: <20180324134611.271b173f@archlinux>
-In-Reply-To: <20180321102912.5130-12-masneyb@onstation.org>
+From: Brian Masney <masneyb@onstation.org>
+To: jic23@kernel.org,
+	linux-iio@vger.kernel.org
+Subject: [PATCH 10/11] staging: iio: tsl2x7x: put local variables in reverse
+ Christmas tree order
+Date: Wed, 21 Mar 2018 06:29:11 -0400
+Message-Id: <20180321102912.5130-11-masneyb@onstation.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180321102912.5130-1-masneyb@onstation.org>
 References: <20180321102912.5130-1-masneyb@onstation.org>
- <20180321102912.5130-12-masneyb@onstation.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -78,9 +73,10 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, lars@metafoo.de, linux-iio@vger.kernel.org,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, Jon.Brenner@ams.com,
- pmeerw@pmeerw.net, knaack.h@gmx.de
+Cc: devel@driverdev.osuosl.org, lars@metafoo.de, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, Jon.Brenner@ams.com, pmeerw@pmeerw.net,
+ knaack.h@gmx.de
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -89,46 +85,76 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 21 Mar 2018 06:29:12 -0400
-Brian Masney <masneyb@onstation.org> wrote:
+This patch ensures that all of the local variable declarations are in
+reverse Christmas tree order where possible to increase code
+readability.
 
-> Add Brian Masney's copyright and to the list of module authors for all
-> of the staging cleanups. This patch also update's Jon Brenner's current
-> work email address since AMS now owns TAOS.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-Applied to the togreg branch of iio.git and pushed out as testing.
-Likely these will be going upstream after the coming merge window.
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+---
+ drivers/staging/iio/light/tsl2x7x.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/staging/iio/light/tsl2x7x.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/iio/light/tsl2x7x.c b/drivers/staging/iio/light/tsl2x7x.c
-> index 5f78664d2b0e..77a81d75af4f 100644
-> --- a/drivers/staging/iio/light/tsl2x7x.c
-> +++ b/drivers/staging/iio/light/tsl2x7x.c
-> @@ -3,6 +3,7 @@
->   * and proximity detection (prox) within the TAOS TSL2X7X family of devices.
->   *
->   * Copyright (c) 2012, TAOS Corporation.
-> + * Copyright (c) 2017-2018 Brian Masney <masneyb@onstation.org>
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License as published by
-> @@ -1744,6 +1745,7 @@ static struct i2c_driver tsl2x7x_driver = {
->  
->  module_i2c_driver(tsl2x7x_driver);
->  
-> -MODULE_AUTHOR("J. August Brenner<jbrenner@taosinc.com>");
-> +MODULE_AUTHOR("J. August Brenner <Jon.Brenner@ams.com>");
-> +MODULE_AUTHOR("Brian Masney <masneyb@onstation.org>");
->  MODULE_DESCRIPTION("TAOS tsl2x7x ambient and proximity light sensor driver");
->  MODULE_LICENSE("GPL");
+diff --git a/drivers/staging/iio/light/tsl2x7x.c b/drivers/staging/iio/light/tsl2x7x.c
+index 65b7fbca8c5d..5f78664d2b0e 100644
+--- a/drivers/staging/iio/light/tsl2x7x.c
++++ b/drivers/staging/iio/light/tsl2x7x.c
+@@ -336,13 +336,12 @@ static int tsl2x7x_write_control_reg(struct tsl2X7X_chip *chip, u8 data)
+  */
+ static int tsl2x7x_get_lux(struct iio_dev *indio_dev)
+ {
+-	u32 lux; /* raw lux calculated from device data */
+-	u64 lux64;
+-	u32 ratio;
+-	u8 buf[4];
+-	struct tsl2x7x_lux *p;
+ 	struct tsl2X7X_chip *chip = iio_priv(indio_dev);
++	struct tsl2x7x_lux *p;
++	u32 lux, ratio;
+ 	int i, ret;
++	u64 lux64;
++	u8 buf[4];
+ 
+ 	mutex_lock(&chip->als_mutex);
+ 
+@@ -589,13 +588,9 @@ static int tsl2x7x_als_calibrate(struct iio_dev *indio_dev)
+ 
+ static int tsl2x7x_chip_on(struct iio_dev *indio_dev)
+ {
+-	int i;
+-	int ret = 0;
+-	u8 *dev_reg;
+-	int als_count;
+-	int als_time;
+ 	struct tsl2X7X_chip *chip = iio_priv(indio_dev);
+-	u8 reg_val = 0;
++	int ret, i, als_count, als_time;
++	u8 *dev_reg, reg_val;
+ 
+ 	/* Non calculated parameters */
+ 	chip->tsl2x7x_config[TSL2X7X_PRX_TIME] = chip->settings.prx_time;
+@@ -1121,8 +1116,8 @@ static int tsl2x7x_read_raw(struct iio_dev *indio_dev,
+ 			    int *val2,
+ 			    long mask)
+ {
+-	int ret = -EINVAL;
+ 	struct tsl2X7X_chip *chip = iio_priv(indio_dev);
++	int ret = -EINVAL;
+ 
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_PROCESSED:
+@@ -1583,9 +1578,9 @@ static const struct tsl2x7x_chip_info tsl2x7x_chip_info_tbl[] = {
+ static int tsl2x7x_probe(struct i2c_client *clientp,
+ 			 const struct i2c_device_id *id)
+ {
+-	int ret;
+ 	struct iio_dev *indio_dev;
+ 	struct tsl2X7X_chip *chip;
++	int ret;
+ 
+ 	indio_dev = devm_iio_device_alloc(&clientp->dev, sizeof(*chip));
+ 	if (!indio_dev)
+-- 
+2.14.3
 
 _______________________________________________
 devel mailing list
