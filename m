@@ -1,64 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753367AbeCUUbW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 16:31:22 -0400
-Received: from mga02.intel.com ([134.134.136.20]:53283 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753021AbeCUUbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 16:31:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
-   d="scan'208";a="210238097"
-Message-ID: <1521664274.23017.92.camel@linux.intel.com>
-Subject: Re: [PATCH v3 2/3] gpiolib: Support 'gpio-reserved-ranges' property
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <swboyd@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Timur Tabi <timur@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date: Wed, 21 Mar 2018 22:31:14 +0200
-In-Reply-To: <152166234504.91116.14942145962035607739@swboyd.mtv.corp.google.com>
-References: <20180321165848.89751-1-swboyd@chromium.org>
-         <20180321165848.89751-3-swboyd@chromium.org>
-         <1521655150.23017.79.camel@linux.intel.com>
-         <152166234504.91116.14942145962035607739@swboyd.mtv.corp.google.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1753406AbeCUUbn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 16:31:43 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60878 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753087AbeCUUbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 16:31:39 -0400
+Date: Wed, 21 Mar 2018 21:31:37 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Tony Lindgren <tony@atomide.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net
+Subject: Re: 4.16-rc5 on Motorola Droid 4
+Message-ID: <20180321203137.GA23637@amd>
+References: <20180318220418.GA22880@amd>
+ <20180320140322.GU5799@atomide.com>
+ <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+Content-Disposition: inline
+In-Reply-To: <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-21 at 12:59 -0700, Stephen Boyd wrote:
-> Quoting Andy Shevchenko (2018-03-21 10:59:10)
-> > On Wed, 2018-03-21 at 09:58 -0700, Stephen Boyd wrote:
-> > > 
 
-> > 
-> > > +     gpiochip->valid_mask = kcalloc(BITS_TO_LONGS(gpiochip-
-> > > > ngpio),
-> > > 
-> > > +                                    sizeof(long), GFP_KERNEL);
-> > 
-> > Just noticed that kcalloc is superfluous here.
-> > kmalloc_array() would be enough.
-> > 
-> 
-> Ok. I was copying the irqchip style. Should I fold them together into
-> a
-> helper function and also update to kmalloc_array?
+--OXfL5xGRrasGEqWY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Not sure about first part, but definitely makes sense the second one (as
-a separate patch perhaps).
+Hi!
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> > Maybe get somebody to help you locally with the debug cable
+> > soldering? :)
+>=20
+> I suppose people from your hackerspace can help you. It's really
+> easy to do. Soldering can be avoided btw. You can just use a pair
+> of scissors to cut a USB -> Micro USB cable and use a knife to remove
+> isolation. Then screw each of the 4 wires into a terminal strip.
+> There are USB-TTL adapters available, that have an attached cable.
+> If you also cut the connector from such a cable and connect it to
+> the other side of the terminal strip you are done. No soldering
+> involved ;)
+
+Hm. How big no-no is connecting USB-TTL adapter to D+/D- pins? Because
+that's what I could do "easily" and seems to work ;-).
+
+								Pavel
+							=09
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--OXfL5xGRrasGEqWY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqywSkACgkQMOfwapXb+vIpVgCfZPvfOkG+K38fIky6WCLZeUJE
+/F8AoJY42jl/mj9Vaal2iOvU2FdlhTt0
+=PGR+
+-----END PGP SIGNATURE-----
+
+--OXfL5xGRrasGEqWY--
