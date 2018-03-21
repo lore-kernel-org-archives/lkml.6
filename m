@@ -1,58 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751851AbeCULvE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 07:51:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41718 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751789AbeCULvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 07:51:01 -0400
-Date: Wed, 21 Mar 2018 19:50:43 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Marta Rybczynska <mrybczyn@kalray.eu>
-Cc: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, linux-pci@vger.kernel.org,
-        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
-Subject: Re: [RFC PATCH] nvme: avoid race-conditions when enabling devices
-Message-ID: <20180321115037.GA26083@ming.t460p>
-References: <744877924.5841545.1521630049567.JavaMail.zimbra@kalray.eu>
+        id S1751694AbeCULwY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 07:52:24 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:43732 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751423AbeCULwW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 07:52:22 -0400
+X-Google-Smtp-Source: AG47ELvrvhJ0qQnqVOhUrABfRxZcaDrhTKNnr8cctBY0EXkeSgaOfdR4JX+1k5CP5STuDpT2XndYFu1UjmYne7/0WIo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <744877924.5841545.1521630049567.JavaMail.zimbra@kalray.eu>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <2111949.c172CzMuf8@aspire.rjw.lan>
+References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <1635957.yuHkCe9oyz@aspire.rjw.lan>
+ <2111949.c172CzMuf8@aspire.rjw.lan>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 21 Mar 2018 12:52:21 +0100
+X-Google-Sender-Auth: iQJrAQGWE_pnigLti7Sq6-II7Mw
+Message-ID: <CAJZ5v0i7AE=HEp1guNdpSV7=a-GS=e00+K1kG7Q6SYnK2g6cZA@mail.gmail.com>
+Subject: Re: [RFT][PATCH v7.1 5/8] cpuidle: Return nohz hint from cpuidle_select()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 12:00:49PM +0100, Marta Rybczynska wrote:
-> NVMe driver uses threads for the work at device reset, including enabling
-> the PCIe device. When multiple NVMe devices are initialized, their reset
-> works may be scheduled in parallel. Then pci_enable_device_mem can be
-> called in parallel on multiple cores.
-> 
-> This causes a loop of enabling of all upstream bridges in
-> pci_enable_bridge(). pci_enable_bridge() causes multiple operations
-> including __pci_set_master and architecture-specific functions that
-> call ones like and pci_enable_resources(). Both __pci_set_master()
-> and pci_enable_resources() read PCI_COMMAND field in the PCIe space
-> and change it. This is done as read/modify/write.
-> 
-> Imagine that the PCIe tree looks like:
-> A - B - switch -  C - D
->                \- E - F
-> 
-> D and F are two NVMe disks and all devices from B are not enabled and bus
-> mastering is not set. If their reset work are scheduled in parallel the two
-> modifications of PCI_COMMAND may happen in parallel without locking and the
-> system may end up with the part of PCIe tree not enabled.
+On Wed, Mar 21, 2018 at 7:48 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Add a new pointer argument to cpuidle_select() and to the ->select
+> cpuidle governor callback to allow a boolean value indicating
+> whether or not the tick should be stopped before entering the
+> selected state to be returned from there.
+>
+> Make the ladder governor ignore that pointer (to preserve its
+> current behavior) and make the menu governor return 'false" through
+> it if:
+>  (1) the idle exit latency is constrained at 0, or
+>  (2) the selected state is a polling one, or
+>  (3) the expected idle period duration is within the tick period
+>      range.
+>
+> In addition to that, the correction factor computations in the menu
+> governor need to take the possibility that the tick may not be
+> stopped into account to avoid artificially small correction factor
+> values.  To that end, add a mechanism to record tick wakeups, as
+> suggested by Peter Zijlstra, and use it to modify the menu_reflect()
+> behavior when tick wakeup occurs.  Namely, if the CPU is woken up by
+> the tick, the predicted idle duration is likely too short, so make
+> menu_reflect() try to compensate by bumping up the correction factor
+> with a (sufficiently large) constant value.
+>
+> Since the value returned through the new argument pointer of
+> cpuidle_select() is not used by its caller yet, this change by
+> itself is not expected to alter the functionality of the code.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>
+> Another variant of patch [5/8] to test.
+>
+> This one doesn't run menu_update() at all on tick wakeups, but simply
+> bumps up the correction factor alone then.
 
-Then looks serialized reset should be used, and I did see the commit
-79c48ccf2fe ("nvme-pci: serialize pci resets") fixes issue of 'failed
-to mark controller state' in reset stress test.
+I have overlooked one thing in this patch and in the original v7 of it.
 
-But that commit only covers case of PCI reset from sysfs attribute, and
-maybe other cases need to be dealt with in similar way too.
+Namely, tick wakeups occurring when the return value of
+tick_nohz_get_sleep_length() is within the tick boundary should be
+treated as normal wakeups, because the nohz code itself doesn't stop
+the tick then even without this patch series.
 
-Thanks,
-Ming
+I'll rework this patch for that and will send an update shortly.
+
+Thanks!
