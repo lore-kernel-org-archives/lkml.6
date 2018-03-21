@@ -1,69 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752991AbeCUQwm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:52:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55978 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752610AbeCUQwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:52:35 -0400
-Date: Wed, 21 Mar 2018 12:42:25 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Jens Axboe <axboe@kernel.dk>, Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Mike Snitzer <msnitzer@redhat.com>
-cc: linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-alpha@vger.kernel.org
-Subject: [PATCH] block: use 32-bit blk_status_t on Alpha
-Message-ID: <alpine.LRH.2.02.1803211239490.23314@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1753016AbeCUQxs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:53:48 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:56936 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751729AbeCUQxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 12:53:46 -0400
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Steve Wise <swise@opengridcomputing.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-12-logang@deltatee.com> <20180321092702.GC7098@lst.de>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <a75f5bce-8ab5-7d99-bb27-908d0cc7c6f6@deltatee.com>
+Date: Wed, 21 Mar 2018 10:52:25 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180321092702.GC7098@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: swise@opengridcomputing.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 11/11] nvmet: Optionally use PCI P2P memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Early alpha processors cannot write a single byte or word; they read 8
-bytes, modify the value in registers and write back 8 bytes.
 
-The type blk_status_t is defined as one byte, it is often written
-asynchronously by I/O completion routines, this asynchronous modification
-can corrupt content of nearby bytes if these nearby bytes can be written
-simultaneously by another CPU.
 
-- one example of such corruption is the structure dm_io where
-  "blk_status_t status" is written by an asynchronous completion routine
-  and "atomic_t io_count" is modified synchronously
-- another example is the structure dm_buffer where "unsigned hold_count"
-  is modified synchronously from process context and "blk_status_t
-  write_error" is modified asynchronously from bio completion routine
+On 21/03/18 03:27 AM, Christoph Hellwig wrote:
+>> +				  const char *page, size_t count)
+>> +{
+>> +	struct nvmet_port *port = to_nvmet_port(item);
+>> +	struct device *dev;
+>> +	struct pci_dev *p2p_dev = NULL;
+>> +	bool use_p2pmem;
+>> +
+>> +	switch (page[0]) {
+>> +	case 'y':
+>> +	case 'Y':
+>> +	case 'a':
+>> +	case 'A':
+>> +		use_p2pmem = true;
+>> +		break;
+>> +	case 'n':
+>> +	case 'N':
+>> +		use_p2pmem = false;
+>> +		break;
+>> +	default:
+>> +		dev = bus_find_device_by_name(&pci_bus_type, NULL, page);
+>> +		if (!dev) {
+>> +			pr_err("No such PCI device: %s\n", page);
+>> +			return -ENODEV;
+>> +		}
+>> +
+>> +		use_p2pmem = true;
+>> +		p2p_dev = to_pci_dev(dev);
+>> +
+>> +		if (!pci_has_p2pmem(p2p_dev)) {
+>> +			pr_err("PCI device has no peer-to-peer memory: %s\n",
+>> +			       page);
+>> +			pci_dev_put(p2p_dev);
+>> +			return -ENODEV;
+>> +		}
+>> +	}
+> 
+> Yikes.  Shouldn't auto just be the normal yes case instead of this
+> string parsing mess?
 
-This patch fixes the bug by changing the type blk_status_t to 32 bits if
-we are on Alpha and if we are compiling for a processor that doesn't have
-the byte-word-extension.
+Sorry, I don't follow. The code, as is, should automatically select the
+device if the user  sets it to "yes" or "auto" or "y" or similar.
+(Roughly similar to how kstrtobool() works, except '0' or '1' are not
+accepted seeing they could overlap with PCI device names). In other
+cases, it looks for the specific PCI device name to use exactly.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org	# 4.13+
+Are you saying it shouldn't work this way or are you saying the code to
+implement it is too messy?
 
----
- include/linux/blk_types.h |    5 +++++
- 1 file changed, 5 insertions(+)
+>> +	if (rsp->req.sg != &rsp->cmd->inline_sg) {
+>> +		if (rsp->req.p2p_dev)
+>> +			pci_p2pmem_free_sgl(rsp->req.p2p_dev, rsp->req.sg,
+>> +					    rsp->req.sg_cnt);
+>> +		else
+>> +			sgl_free(rsp->req.sg);
+>> +	}
+> 
+> Can we factor this into a helper, as the other target drivers (fc for now,
+> tcp soon) using sgl allocatins should share the code?
+> 
+> (same for the alloc side)
 
-Index: linux-2.6/include/linux/blk_types.h
-===================================================================
---- linux-2.6.orig/include/linux/blk_types.h	2018-02-14 20:24:42.038255000 +0100
-+++ linux-2.6/include/linux/blk_types.h	2018-03-21 15:04:54.969999000 +0100
-@@ -20,8 +20,13 @@ typedef void (bio_end_io_t) (struct bio
- 
- /*
-  * Block error status values.  See block/blk-core:blk_errors for the details.
-+ * Alpha cannot write a byte atomically, so we need to use 32-bit value.
-  */
-+#if defined(CONFIG_ALPHA) && !defined(__alpha_bwx__)
-+typedef u32 __bitwise blk_status_t;
-+#else
- typedef u8 __bitwise blk_status_t;
-+#endif
- #define	BLK_STS_OK 0
- #define BLK_STS_NOTSUPP		((__force blk_status_t)1)
- #define BLK_STS_TIMEOUT		((__force blk_status_t)2)
+Sure. Would the helpers belong in core.c?
+
+Thanks,
+
+Logan
