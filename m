@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeCUL2G (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 07:28:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33532 "EHLO
+        id S1751940AbeCUL2L (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 07:28:11 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53888 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751553AbeCUL2B (ORCPT
+        by vger.kernel.org with ESMTP id S1751581AbeCUL2E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 07:28:01 -0400
+        Wed, 21 Mar 2018 07:28:04 -0400
 From: Philipp Rudo <prudo@linux.vnet.ibm.com>
 To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
@@ -18,19 +18,16 @@ Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
         Dave Young <dyoung@redhat.com>,
         AKASHI Takahiro <takahiro.akashi@linaro.org>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v2 01/11] kexec_file: Silence compile warnings
-Date: Wed, 21 Mar 2018 12:27:41 +0100
+Subject: [PATCH v2 03/11] kexec_file: Make purgatory_info->ehdr const
+Date: Wed, 21 Mar 2018 12:27:43 +0100
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180321112751.22196-1-prudo@linux.vnet.ibm.com>
 References: <20180321112751.22196-1-prudo@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18032111-0020-0000-0000-00000407BADC
+x-cbid: 18032111-0020-0000-0000-00000407BADF
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032111-0021-0000-0000-0000429BD8F2
-Message-Id: <20180321112751.22196-2-prudo@linux.vnet.ibm.com>
+x-cbparentid: 18032111-0021-0000-0000-0000429BD8F6
+Message-Id: <20180321112751.22196-4-prudo@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -42,33 +39,69 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building the kernel with CONFIG_KEXEC_FILE enabled gcc prints a
-compile warning multiple times.
-
-In file included from <path>/linux/init/initramfs.c:526:0:
-<path>/include/linux/kexec.h:120:9: warning: ‘struct kimage’ declared inside parameter list [enabled by default]
-         unsigned long cmdline_len);
-         ^
-This is because the typedefs for kexec_file_load uses struct kimage before
-it is declared. Fix this by simply forward declaring struct kimage.
+The kexec_purgatory buffer is read-only. Thus all pointers into
+kexec_purgatory are read-only, too. Point this out by explicitly marking
+purgatory_info->ehdr as 'const' and update the comments in purgatory_info.
 
 Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
 ---
- include/linux/kexec.h | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/kexec.h | 17 +++++++++++------
+ kernel/kexec_file.c   |  4 ++--
+ 2 files changed, 13 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index f16f6ceb3875..7bae5e87bf0d 100644
+index 7bae5e87bf0d..10842eece180 100644
 --- a/include/linux/kexec.h
 +++ b/include/linux/kexec.h
-@@ -114,6 +114,8 @@ struct purgatory_info {
- 	unsigned long purgatory_load_addr;
- };
+@@ -99,14 +99,19 @@ struct compat_kexec_segment {
  
-+struct kimage;
-+
- typedef int (kexec_probe_t)(const char *kernel_buf, unsigned long kernel_size);
- typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
- 			     unsigned long kernel_len, char *initrd,
+ #ifdef CONFIG_KEXEC_FILE
+ struct purgatory_info {
+-	/* Pointer to elf header of read only purgatory */
+-	Elf_Ehdr *ehdr;
+-
+-	/* Pointer to purgatory sechdrs which are modifiable */
++	/*
++	 * Pointer to elf header at the beginning of kexec_purgatory.
++	 * Note: kexec_purgatory is read only
++	 */
++	const Elf_Ehdr *ehdr;
++	/*
++	 * Temporary, modifiable buffer for sechdrs used for relocation.
++	 * This memory can be freed post image load.
++	 */
+ 	Elf_Shdr *sechdrs;
+ 	/*
+-	 * Temporary buffer location where purgatory is loaded and relocated
+-	 * This memory can be freed post image load
++	 * Temporary, modifiable buffer for stripped purgatory used for
++	 * relocation. This memory can be freed post image load.
+ 	 */
+ 	void *purgatory_buf;
+ 
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 0f044457b40c..06fc9fdd2474 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -880,7 +880,7 @@ int kexec_load_purgatory(struct kimage *image, unsigned long min,
+ 	if (kexec_purgatory_size <= 0)
+ 		return -EINVAL;
+ 
+-	pi->ehdr = (Elf_Ehdr *)kexec_purgatory;
++	pi->ehdr = (const Elf_Ehdr *)kexec_purgatory;
+ 
+ 	ret = __kexec_load_purgatory(image, min, max, top_down);
+ 	if (ret)
+@@ -904,9 +904,9 @@ int kexec_load_purgatory(struct kimage *image, unsigned long min,
+ static Elf_Sym *kexec_purgatory_find_symbol(struct purgatory_info *pi,
+ 					    const char *name)
+ {
++	const Elf_Ehdr *ehdr;
+ 	Elf_Sym *syms;
+ 	Elf_Shdr *sechdrs;
+-	Elf_Ehdr *ehdr;
+ 	int i, k;
+ 	const char *strtab;
+ 
 -- 
 2.13.5
