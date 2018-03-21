@@ -1,52 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751856AbeCULPA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 07:15:00 -0400
-Received: from 8bytes.org ([81.169.241.247]:46614 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751551AbeCULO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 07:14:59 -0400
-Date: Wed, 21 Mar 2018 06:14:55 -0500
-From: Joerg Roedel <joro@8bytes.org>
-To: Yong Wu <yong.wu@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Tomasz Figa <tfiga@google.com>, linux-mediatek@lists.infradead.org,
-        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org,
-        arnd@arndb.de, honghui.zhang@mediatek.com, youlin.pei@mediatek.com
-Subject: Re: [PATCH] iommu/mediatek: Fix protect memory setting
-Message-ID: <20180321111455.djllpdsj35vu5cxc@8bytes.org>
-References: <1521337974-22112-1-git-send-email-yong.wu@mediatek.com>
- <20180320185716.ldxs2vvfcchznpnb@8bytes.org>
- <1521609504.24119.5.camel@mhfsdcap03>
+        id S1751701AbeCULTA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 07:19:00 -0400
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:43647 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751477AbeCULS5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 07:18:57 -0400
+X-Google-Smtp-Source: AG47ELv9fA/dQpB0gxAYcFEnnwGo3x77iqy3FFPQ2WRZSTNUuYhYxe5CmEp0HSVFurBgnRINg40GjGiz+qoG4W0H2Cc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521609504.24119.5.camel@mhfsdcap03>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180321143120.6d9bbe0f@canb.auug.org.au>
+References: <20180321143120.6d9bbe0f@canb.auug.org.au>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 21 Mar 2018 07:18:55 -0400
+Message-ID: <CAHC9VhTfHja9-NYG2boM6mv+5FSBSBEEX8E3tLNLNyaJm4c4TQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the security tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Morris <jmorris@namei.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, selinux@tycho.nsa.gov
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 01:18:24PM +0800, Yong Wu wrote:
-> On Tue, 2018-03-20 at 13:57 -0500, Joerg Roedel wrote:
-> > On Sun, Mar 18, 2018 at 09:52:54AM +0800, Yong Wu wrote:
-> > > To avoid adding this complex macro or a new function, I put
-> > > it in the code and backup its value in the suspend registers.
-> > 
-> > Missing Signed-off-by.
-> 
-> Signed-off-by and Reported-by have been added above.
-> 
-> ====
-> Reported-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> ====
+On Tue, Mar 20, 2018 at 11:31 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Paul,
+>
+> Today's linux-next merge of the selinux tree got a conflict in:
+>
+>   security/selinux/hooks.c
+>
+> between commit:
+>
+>   6b4f3d01052a ("usb, signal, security: only pass the cred, not the secid, to kill_pid_info_as_cred and security_task_kill")
+>
+> from the security tree and commit:
+>
+>   6b6bc6205d98 ("selinux: wrap AVC state")
+>
+> from the selinux tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc security/selinux/hooks.c
+> index fdd523e575e3,21b377aef69a..000000000000
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@@ -4050,11 -4164,10 +4170,12 @@@ static int selinux_task_kill(struct tas
+>                 perm = PROCESS__SIGNULL; /* null signal; existence test */
+>         else
+>                 perm = signal_to_av(sig);
+>  -      if (!secid)
+>  +      if (!cred)
+>                 secid = current_sid();
+>  +      else
+>  +              secid = cred_sid(cred);
+> -       return avc_has_perm(secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
+> +       return avc_has_perm(&selinux_state,
+> +                           secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
+>   }
+>
+>   static void selinux_task_to_inode(struct task_struct *p,
 
-Right, sorry. I was in a hurry and missed it. Patch is now applied.
+Thanks Stephen, that looks correct to me.
 
-
-Thanks,
-
-	Joerg
+-- 
+paul moore
+www.paul-moore.com
