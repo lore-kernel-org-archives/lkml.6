@@ -1,159 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752651AbeCUQbY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:31:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60826 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752104AbeCUQbV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:31:21 -0400
-Date: Wed, 21 Mar 2018 10:31:12 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "xuwei5@hisilicon.com" <xuwei5@hisilicon.com>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
- update iova list
-Message-ID: <20180321103112.229d4bf1@w520.home>
-In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D191089B3B@SHSMSX101.ccr.corp.intel.com>
-References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
-        <20180315163509.17740-3-shameerali.kolothum.thodi@huawei.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D1910857ED@SHSMSX101.ccr.corp.intel.com>
-        <20180320163744.3c09fde0@t450s.home>
-        <AADFC41AFE54684AB9EE6CBC0274A5D191089B3B@SHSMSX101.ccr.corp.intel.com>
+        id S1752735AbeCUQbm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:31:42 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:34435 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752104AbeCUQbi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 12:31:38 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SzrTq6-_1521649886;
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+To: Michal Hocko <mhocko@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321130833.GM23100@dhcp22.suse.cz>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
+Date: Wed, 21 Mar 2018 09:31:22 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180321130833.GM23100@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018 03:30:29 +0000
-"Tian, Kevin" <kevin.tian@intel.com> wrote:
 
-> > From: Alex Williamson [mailto:alex.williamson@redhat.com]
-> > Sent: Wednesday, March 21, 2018 6:38 AM
-> > 
-> > On Mon, 19 Mar 2018 07:51:58 +0000
-> > "Tian, Kevin" <kevin.tian@intel.com> wrote:
-> >   
-> > > > From: Shameer Kolothum
-> > > > Sent: Friday, March 16, 2018 12:35 AM
-> > > >
-> > > > This retrieves the reserved regions associated with dev group and
-> > > > checks for conflicts with any existing dma mappings. Also update
-> > > > the iova list excluding the reserved regions.
-> > > >
-> > > > Signed-off-by: Shameer Kolothum
-> > > > <shameerali.kolothum.thodi@huawei.com>
-> > > > ---
-> > > >  drivers/vfio/vfio_iommu_type1.c | 90
-> > > > +++++++++++++++++++++++++++++++++++++++++
-> > > >  1 file changed, 90 insertions(+)
-> > > >
-> > > > diff --git a/drivers/vfio/vfio_iommu_type1.c
-> > > > b/drivers/vfio/vfio_iommu_type1.c
-> > > > index 1123c74..cfe2bb2 100644
-> > > > --- a/drivers/vfio/vfio_iommu_type1.c
-> > > > +++ b/drivers/vfio/vfio_iommu_type1.c
-> > > > @@ -1313,6 +1313,82 @@ static int vfio_iommu_aper_resize(struct
-> > > > list_head *iova,
-> > > >  	return 0;
-> > > >  }
-> > > >
-> > > > +/*
-> > > > + * Check reserved region conflicts with existing dma mappings
-> > > > + */
-> > > > +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
-> > > > +				struct list_head *resv_regions)
-> > > > +{
-> > > > +	struct iommu_resv_region *region;
-> > > > +
-> > > > +	/* Check for conflict with existing dma mappings */
-> > > > +	list_for_each_entry(region, resv_regions, list) {
-> > > > +		if (vfio_find_dma(iommu, region->start, region->length))
-> > > > +			return true;
-> > > > +	}
-> > > > +
-> > > > +	return false;
-> > > > +}
-> > > > +
-> > > > +/*
-> > > > + * Check iova region overlap with  reserved regions and
-> > > > + * exclude them from the iommu iova range
-> > > > + */
-> > > > +static int vfio_iommu_resv_exclude(struct list_head *iova,
-> > > > +					struct list_head *resv_regions)
-> > > > +{
-> > > > +	struct iommu_resv_region *resv;
-> > > > +	struct vfio_iova *n, *next;
-> > > > +
-> > > > +	list_for_each_entry(resv, resv_regions, list) {
-> > > > +		phys_addr_t start, end;
-> > > > +
-> > > > +		start = resv->start;
-> > > > +		end = resv->start + resv->length - 1;
-> > > > +
-> > > > +		list_for_each_entry_safe(n, next, iova, list) {
-> > > > +			int ret = 0;
-> > > > +
-> > > > +			/* No overlap */
-> > > > +			if ((start > n->end) || (end < n->start))
-> > > > +				continue;
-> > > > +			/*
-> > > > +			 * Insert a new node if current node overlaps with
-> > > > the
-> > > > +			 * reserve region to exlude that from valid iova
-> > > > range.
-> > > > +			 * Note that, new node is inserted before the
-> > > > current
-> > > > +			 * node and finally the current node is deleted
-> > > > keeping
-> > > > +			 * the list updated and sorted.
-> > > > +			 */
-> > > > +			if (start > n->start)
-> > > > +				ret = vfio_iommu_iova_insert(&n->list,
-> > > > +							n->start, start - 1);
-> > > > +			if (!ret && end < n->end)
-> > > > +				ret = vfio_iommu_iova_insert(&n->list,
-> > > > +							end + 1, n->end);
-> > > > +			if (ret)
-> > > > +				return ret;  
-> > >
-> > > Is it safer to delete the 1st node here in case of failure of the 2nd node?
-> > > There is no problem with current logic since upon error iova_copy will
-> > > be released anyway. However this function alone doesn't assume the
-> > > fact of a temporary list, thus it's better to keep the list clean w/o garbage
-> > > left from any error handling.  
-> > 
-> > I don't think the proposal makes the list notably more sane on failure
-> > than we have here.  If the function returns an error and the list is
-> > modified in any way, how can the caller recover?  We're operating on a
-> > principle of modify a copy and throw it away on error, the only
-> > function level solution to the problem you're noting is to make each
-> > function generate a working copy, which is clearly inefficient.  This
-> > is a static function, not intended for general use, so I think a
-> > sufficient approach to address your concern is to simply note the error
-> > behavior in the comment above the function, the list is in an
-> > unknown/inconsistent state on error.  Thanks,
-> >   
-> 
-> 'static' doesn't mean it cannot be used for general purpose in the same
-> file.
 
-Obviously this is true, but expecting robust error handling, as might
-be found in an exported general purpose function, from a static
-specific purpose helper, is a bit absurd.  The strategy is therefore,
-a) can we make it more general purpose without compromising the intent
-of the function; probably not without adding overhead of using a local
-copy of the list, b) can we modify the API, function name, arg names,
-etc to make the behavior more intuitive; maybe, c) Can we at least add
-a comment to make the potentially non-intuitive behavior obvious; of
-course.  Thanks,
+On 3/21/18 6:08 AM, Michal Hocko wrote:
+> On Wed 21-03-18 05:31:19, Yang Shi wrote:
+>> When running some mmap/munmap scalability tests with large memory (i.e.
+>>> 300GB), the below hung task issue may happen occasionally.
+>> INFO: task ps:14018 blocked for more than 120 seconds.
+>>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+>> message.
+>>   ps              D    0 14018      1 0x00000004
+>>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>>   Call Trace:
+>>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>>    [<ffffffff817159e6>] schedule+0x36/0x80
+>>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>>    [<ffffffff81717db0>] down_read+0x20/0x40
+>>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>>    [<ffffffff81242266>] vfs_read+0x96/0x130
+>>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+>>
+>> It is because munmap holds mmap_sem from very beginning to all the way
+>> down to the end, and doesn't release it in the middle. When unmapping
+>> large mapping, it may take long time (take ~18 seconds to unmap 320GB
+>> mapping with every single page mapped on an idle machine).
+> Yes, this definitely sucks. One way to work that around is to split the
+> unmap to two phases. One to drop all the pages. That would only need
+> mmap_sem for read and then tear down the mapping with the mmap_sem for
+> write. This wouldn't help for parallel mmap_sem writers but those really
+> need a different approach (e.g. the range locking).
 
-Alex
+page fault might sneak in to map a page which has been unmapped before?
+
+range locking should help a lot on manipulating small sections of a 
+large mapping in parallel or multiple small mappings. It may not achieve 
+too much for single large mapping.
+
+>
+>> Since unmapping does't require any atomicity, so here unmap large
+> How come? Could you be more specific why? Once you drop the lock the
+> address space might change under your feet and you might be unmapping a
+> completely different vma. That would require userspace doing nasty
+> things of course (e.g. MAP_FIXED) but I am worried that userspace really
+> depends on mmap/munmap atomicity these days.
+
+Sorry for the ambiguity. The statement does look misleading. munmap does 
+need certain atomicity, particularly for the below sequence:
+
+splitting vma
+unmap region
+free pagetables
+free vmas
+
+Otherwise it may run into the below race condition:
+
+           CPU A                             CPU B
+        ----------                     ----------
+        do_munmap
+      zap_pmd_range
+        up_write                        do_munmap
+                                             down_write
+                                             ......
+                                             remove_vma_list
+                                             up_write
+       down_write
+      access vmas  <-- use-after-free bug
+
+This is why I do the range unmap in do_munmap() rather than doing it in 
+deeper location, i.e. zap_pmd_range(). I elaborated this in the cover 
+letter.
+
+Thanks,
+Yang
