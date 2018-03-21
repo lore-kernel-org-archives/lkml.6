@@ -1,31 +1,31 @@
 Return-Path: <rrajk@nvidia.com>
-X-Google-Smtp-Source: AG47ELuHHhOJwoa+UI+QkljBZRUIFNXLlQ6xunQx6/FwNEUspUlKkdI0cVtxfI4YZaTuGVglHic8
-ARC-Seal: i=1; a=rsa-sha256; t=1521607333; cv=none;
+X-Google-Smtp-Source: AG47ELsEkmdrVTKa97l80S6ZPu98YmglySIudhuGzoAUUpo0VJMtwV+DDXwIrhyl/6zEallmfr3c
+ARC-Seal: i=1; a=rsa-sha256; t=1521607315; cv=none;
         d=google.com; s=arc-20160816;
-        b=iq6/enTUQtJXia0aEZsh2gqEkLm/dJ84jGtcXjLm3kGjLMsv0vHZqSkDchK5NCHp7e
-         ZfBOwmlxJtlJgrQew4oukFNirnvKF8IQcyY509759cljUbvR3cJulks8UahXp/52e27z
-         EiRDAYrc+JyGxatAxU33ZTr6BLgp5Xs3Qz3U2IVRr9KphoGndGLMvcIuZ9suSooFTSSC
-         QqAzVm96gN63zzGOTcjnuZvi1ITj9VsnwuLM0d/1ot7LbttXKif2uUbHc3CNGm0/NIQY
-         FXYe8nkvkvT0Dm0y4i8Yvu0c5kGE22CZYa4GEifHS37uQdd9evvpQ1OA6DkEjR77QgDP
-         W/yg==
+        b=kbFiIcbNkHHaflD6qwZbxljWf1dd6wALDTnEt3nhv6yDWv6etXirCUs/wPydB00F9Z
+         aM6vALJRSzHNKvGmsAQyqYVwe/YGIUBarTiuMkPhHKT26WLyj++zP4H+YoDP7SLcHAuV
+         j3qJB9SeXJ1U2Gmunxtf7YdN+/Wa8i5bvCqlXXmPKG9OtrLRPdYIJfXUDEkSX9/t5oLm
+         aF3ef+EbOdxArCUEUSEepD3rzVVA9JtUiBl7w9WWkCFB1Q7bK2hatZgC+8r9qq4UhNeW
+         0g72VFl/Zb2j9qum3QGxLOS66KhMhl+1C+2P6SiBnEP8KJI/qJarXXhtj5sEBSWhNlYa
+         dYHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:arc-authentication-results;
-        bh=MtTk59JajEbZBOppSgzQNyLgpXSUDLXgx+zkgz33RT4=;
-        b=yQaGe495nyAbFEpeFK0iHlH8BgM7dRPE2X4FCou/yBovsYuM0AbQ1iOQeiN2cEg9Os
-         lZsH8v2uQsdB1MWY+ePhZlen/zWd594CD+AsB1kUAGtIaBLxBTOthLJRzwQw7eZMPM2t
-         19yhE0e89QkETNNNnjvhcCxN5rrnFFWduIB0fBCm65A4OudMnLpmqHPbi3h/JhjTce7K
-         DV3GMa9knNr14SrQT3jfojWljtJ3W2a1w3OzFyH5A2LWHYMkdqZVf8ElYLP4JIvRQKhv
-         JB19c4MwumiYzmQHwK0Y+RNhppnEJJQwE2YVj/Aw6/i2ZmKk423i+mTAEwMcwVZZKQEJ
-         T56A==
+        bh=0VOeSeP4cusJ8mtTUqTQkz3lEYPAEneFJctHBhWhSKM=;
+        b=KwtflCi3jtn+y5jCxBV4kWSHvWzcmXvLw6XN9tHl+Wtwqbb6bjOKZt/+ZmHxn6jBkd
+         Z+yg9Z+QWXDyRn6dtSYMQ9GNHqIylJ2xznSMRcCI9HL1nmXgIe66PV9PqECwuhNogC1b
+         tFiG7myPKLG/p6ZurNLfcfvnDapfpBe8YY5C/UgeuOhdzLQD6AIjilXtaD3j+g9iN8po
+         BOjc6CgIe8+kEziEYQC2FqWm2kSqmIPkvCslAl3/wnqu/5UCKl++hURfcq43fYjFOdzo
+         gom20bCNiILnJeqs4IdFgv11LyYCiCy+s1kf8dR6aWqPokCe+BO4RhaCUXVVKB2gpfmk
+         w4qA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 203.18.50.4 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 203.18.50.4 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
 X-PGP-Universal: processed;
-	by hqpgpgate101.nvidia.com on Tue, 20 Mar 2018 21:42:12 -0700
+	by hkpgpgate101.nvidia.com on Tue, 20 Mar 2018 21:41:53 -0700
 From: Rajkumar Rampelli <rrajk@nvidia.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
 	<jonathanh@nvidia.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
@@ -40,42 +40,45 @@ CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <ldewangan@nvidia.com>,
 	<rrajk@nvidia.com>
-Subject: [PATCH V2 8/9] arm64: defconfig: enable Nvidia Tegra Tachometer as a module
-Date: Wed, 21 Mar 2018 10:10:43 +0530
-Message-ID: <1521607244-29734-9-git-send-email-rrajk@nvidia.com>
+Subject: [PATCH V2 6/9] arm64: tegra: Add pwm based fan support on Tegra186
+Date: Wed, 21 Mar 2018 10:10:41 +0530
+Message-ID: <1521607244-29734-7-git-send-email-rrajk@nvidia.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
 References: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595520931528091677?=
-X-GMAIL-MSGID: =?utf-8?q?1595520931528091677?=
+X-GMAIL-THRID: =?utf-8?q?1595520912881725218?=
+X-GMAIL-MSGID: =?utf-8?q?1595520912881725218?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Tegra Tachometer driver implements PWM capture to measure
-period. Enable this driver as a module in the ARM64 defconfig.
+Add pwm fan driver support on Tegra186 SoC.
 
 Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
 ---
 
-V2: No changes in this patch
+V2: Removed generic-pwm-tachometer driver dt node and using pwm-fan driver
+    for reading fan speed.
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 634b373..8b2bda7 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -550,6 +550,7 @@ CONFIG_PWM_MESON=m
- CONFIG_PWM_ROCKCHIP=y
- CONFIG_PWM_SAMSUNG=y
- CONFIG_PWM_TEGRA=m
-+CONFIG_PWM_TEGRA_TACHOMETER=m
- CONFIG_PHY_RCAR_GEN3_USB2=y
- CONFIG_PHY_HI6220_USB=y
- CONFIG_PHY_QCOM_USB_HS=y
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 19e1afc..27ae73e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -1053,4 +1053,10 @@
+ 		reset-names = "tachometer";
+ 		status = "disabled";
+ 	};
++
++	pwm_fan {
++		compatible = "pwm-fan";
++		pwms = <&tegra_tachometer 0 1000000>;
++		status = "disabled";
++	};
+ };
 -- 
 2.1.4
