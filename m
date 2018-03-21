@@ -1,86 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752048AbeCUCJj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:09:39 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39880 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751521AbeCUCIc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 22:08:32 -0400
-From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: cohuck@redhat.com, borntraeger@de.ibm.com, bjsdjshi@linux.vnet.ibm.com,
-        pasic@linux.vnet.ibm.com, pmorel@linux.vnet.ibm.com
-Subject: [PATCH 1/4] vfio: ccw: fix cleanup if cp_prefetch fails
-Date: Wed, 21 Mar 2018 03:08:19 +0100
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
-References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18032102-0028-0000-0000-000009544C9D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008713; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000254; SDB=6.01006058; UDB=6.00512229; IPR=6.00785341;
- MB=3.00020153; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-21 02:08:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032102-0029-0000-0000-00003A0C01A0
-Message-Id: <20180321020822.86255-2-bjsdjshi@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803210024
+        id S1751630AbeCUCLO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:11:14 -0400
+Received: from mga01.intel.com ([192.55.52.88]:18994 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751448AbeCUCLM (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 22:11:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
+   d="scan'208";a="29820779"
+Subject: Re: [PATCH] perf util: Display warning when perf report/annotate is
+ missing some libs
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+References: <1515668586-14327-1-git-send-email-yao.jin@linux.intel.com>
+ <20180111153028.GB20406@krava>
+ <ef52d9de-54b6-88a6-625d-bd048a098222@linux.intel.com>
+Message-ID: <42a90e87-f2fd-293d-bd25-591fcdff14e1@linux.intel.com>
+Date: Wed, 21 Mar 2018 10:11:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <ef52d9de-54b6-88a6-625d-bd048a098222@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Halil Pasic <pasic@linux.vnet.ibm.com>
+Hi Jiri,
 
-If the translation of a channel program fails, we may end up attempting
-to clean up (free, unpin) stuff that never got translated (and allocated,
-pinned) in the first place.
+I'm still thinking it's worth displaying the warning when perf missing 
+some libraries.
 
-By adjusting the lengths of the chains accordingly (so the element that
-failed, and all subsequent elements are excluded) cleanup activities
-based on false assumptions can be avoided.
+Somebody just told me that perf didn't work well. While after some 
+investigations, I found it's just missing some libraries when building 
+the perf.
 
-Let's make sure cp_free works properly after cp_prefetch returns with an
-error by setting ch_len to 0 for the ccw chains those are not prefetched.
+But I have spent some time on getting the root cause. If with this 
+patch, it should be very easily to know that.
 
-Acked-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Reviewed-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
----
- drivers/s390/cio/vfio_ccw_cp.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Thanks
+Jin Yao
 
-diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-index d9a2fffd034b..2be114db02f9 100644
---- a/drivers/s390/cio/vfio_ccw_cp.c
-+++ b/drivers/s390/cio/vfio_ccw_cp.c
-@@ -749,11 +749,18 @@ int cp_prefetch(struct channel_program *cp)
- 		for (idx = 0; idx < len; idx++) {
- 			ret = ccwchain_fetch_one(chain, idx, cp);
- 			if (ret)
--				return ret;
-+				goto out_err;
- 		}
- 	}
- 
- 	return 0;
-+out_err:
-+	/* Only cleanup the chain elements that where actually translated. */
-+	chain->ch_len = idx;
-+	list_for_each_entry_continue(chain, &cp->ccwchain_list, next) {
-+		chain->ch_len = 0;
-+	}
-+	return ret;
- }
- 
- /**
--- 
-2.13.5
+On 1/12/2018 10:22 AM, Jin, Yao wrote:
+> 
+> 
+> On 1/11/2018 11:30 PM, Jiri Olsa wrote:
+>> On Thu, Jan 11, 2018 at 07:03:06PM +0800, Jin Yao wrote:
+>>> We keep having bug reports that when users build perf on their own,
+>>
+>> we already have same warnings during the build
+>>
+> 
+> Yes, there will be warnings displayed during the build if some libraries 
+> are missing.
+> 
+> While I do find the users (especially the new perf user) don't notice 
+> the warning. They only care about the success of build.
+> 
+> Once they use this perf version and find something working strangely, 
+> they will say that perf may have bug. :(
+> 
+>>> but they don't install some needed libraries like libelf, 
+>>> libbfd/libibery.
+>>
+>> how about saying that in the symbol column,
+>> instead of poluting report's output, like:
+>>
+>>     $ perf report --stdio
+>>
+>>     # Overhead  Command  Shared Object     Symbol (disabled)
+>>     # ........  .......  ................  ......................
+>>
+> 
+> I just think it'd better provide some hints to user. For example, 
+> "symbol is disabled and you need to install libelf/xxx", say something 
+> like that.
+> 
+> But it looks the column can't contain too much information (i.e. no more 
+> space to contain the entire hints).
+> 
+> Any idea? Or just add this warning in verbose mode?
+> 
+>> also your change does not affect tui mode
+>>
+>> annotation for some reason does not start at all.. could be
+>> little more verbose ;-)
+>>
+>> jirka
+>>
+> 
+> Yes, it doesn't affect tui mode.
+> 
+> Or we just add this warning in verbose mode?
+> 
+> e.g. perf report -v?
+> 
+> Thanks
+> Jin Yao
