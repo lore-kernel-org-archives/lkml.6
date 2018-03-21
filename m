@@ -1,135 +1,55 @@
-Return-Path: <aishpant@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1519968624; cv=none;
+Return-Path: <corbet@lwn.net>
+X-Google-Smtp-Source: AG47ELsYjoSmLY/IpjjKTwgXUsG30HCbfOGJi7Em9VA/qe6GK/mgAL3YY1pjuuV4wgShpXlq7c/1
+ARC-Seal: i=1; a=rsa-sha256; t=1521646087; cv=none;
         d=google.com; s=arc-20160816;
-        b=uzTxZRXDG6kHkX7cYROlVsVig4JkivxB5WJH39J/U1ay7c3YUzdVus6aFxnte4wgdk
-         nL7ceYN89FVc8ldOUwnpnZi/gZBYJfweT3528LRWTk97aTn5rPfW11lqxndJbt42M8TX
-         x84ZdPpd6voj1Yct0HnHWzocQNH8TzTpWM90PSZ6kQajwAHnGWQH0fzVOgmNuyM8bypT
-         yV/V/d6oL5mDShEBCZatqeXsFiir0KmYiff+HgKYrpqwwVbrYS9Dj/0Lri53Oc9wTt2Y
-         x5fLRRpoO9Movc15tzW63JcgEziQ/4THEuinyIuo0iEGrcuUxeHXPrI/7rVPLfq2iQoz
-         OR3Q==
+        b=xfmS42sWrU0RxKHUAAncduIRMpFn4O8Z7ExuJ+N1TFgV68gX6NDn1Wt2YjCSJFn4a7
+         nbrtztKrGdRDsHeM2OxbdrQ+kyPUU5UlFo7ULoO4mQqpS1za8b+3XwLOnh6QNHGUNHA0
+         Z5N9BouwjtHfxp4or3RG61VylTjW2Z/Ozmv/cvc8oAf/MdmdEWe9kL4QF4Ct5Do9dqcB
+         SHGfvsw15SM/KZDENaMDU8BaQ/x5PKBC8BxPCRkS6zd7SRzKGl9CQ4Qg6caHuGrpOZN6
+         lrjRbjTB4iTdMAklmotKm17AmYvdrlnE3IOlk7llZytUEf+itEblWn2SyiKcy1+kzyQm
+         dRjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=EKWbNuOaB7J+Nkp4GsAVxPYK91Ek95LW31erYN7HkVE=;
-        b=AOGP3t6zjDALreO/LNWJ1k7ug8OmeTovu2anZ9/K/V3f0hLNk7VK1ihH35u4zNa7oZ
-         NMWslXDFRKSOxemM5j692DoUKfXkCIjL6wyL+NTcRIPjK8LUAIwmQB7eEJZVDP3ffBA4
-         6f1Diw6i9Uo7XjRpDZNv3uQnlh8yzWD/gmJJeCQeBFMfkcmnMX+3ONknqXLyggHo+KY9
-         MVFvgafJVg2sl2N+H56+cDKrwQVJOqJAiDrqchMgU3x7jvQIfLmYy93GKFUqJCSzTJuU
-         mlY+MDZvF8fQS1oXG9plEvngCd3eNBzES7k1bjlqqu2kgBnIuiUHNluuoF5V8BOV11OW
-         c3lg==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=71Pt4j34gCoA9DW2YOdVfcm2N4VEHkeUhP0NwCC60mg=;
+        b=Bw5PhiO/0o6rDd8uuJY7C+TO/q+2Zw0hGzv1go7ZK6XAtUHtcu+PwJx3G4ONAEqzsX
+         6cHtDQ9uF0DidJ2j4MTQ9OR1s3Cjtw41T3bjH5T4/g23nf8xseHpRA1eyFSvbFmG7jlr
+         u8KsOvGbZtmPJNj8Wwwi+vyO3E2F9mpn6iBjSXd55FkCkeDkphMLstRnNqb1Rco5q+qm
+         +EnLZuDpMmiy++CihUvLSOx/PMZ0bJ2TUtEHenz4byeYuep8qVXjOB3iNkYiSYTGV1Ec
+         sLaSoL23CneN/4x/bPdcogG6fcNhSraeqaFT0k/QD3/8BI9uymiIBEY+vLylQkI7KMa/
+         wVsQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Sgw5VvCc;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Sgw5VvCc;
-       spf=pass (google.com: domain of aishpant@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=aishpant@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELsbq85IhgmMn9W7PEEwB9eO109LFup3U+V+2Zt5jXmegS7owg+qxwUlHb6ctQB+h6WocFgbfQ==
-Date: Fri, 2 Mar 2018 11:00:17 +0530
-From: Aishwarya Pant <aishpant@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg KH <gregkh@linuxfoundation.org>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org
-Subject: [PATCH] HID: ntrig: document sysfs interface
-Message-ID: <20180302053017.GA23123@mordor.localdomain>
+       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
+Date: Wed, 21 Mar 2018 09:28:05 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Aishwarya Pant <aishpant@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
+ <benjamin.tissoires@redhat.com>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Julia
+ Lawall <julia.lawall@lip6.fr>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] HID: ntrig: document sysfs interface
+Message-ID: <20180321092805.279a8dde@lwn.net>
+In-Reply-To: <20180302053017.GA23123@mordor.localdomain>
+References: <20180302053017.GA23123@mordor.localdomain>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1593802620168296630?=
-X-GMAIL-MSGID: =?utf-8?q?1593802620168296630?=
+X-GMAIL-MSGID: =?utf-8?q?1595561567617527087?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add sysfs documentation for N-Trig touchscreens under Documentation/ABI.
-Descriptions have been collected from code comments.
+On Fri, 2 Mar 2018 11:00:17 +0530
+Aishwarya Pant <aishpant@gmail.com> wrote:
 
-Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
----
- Documentation/ABI/testing/sysfs-driver-hid-ntrig | 70 ++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-ntrig
+> Add sysfs documentation for N-Trig touchscreens under Documentation/ABI.
+> Descriptions have been collected from code comments.
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-hid-ntrig b/Documentation/ABI/testing/sysfs-driver-hid-ntrig
-new file mode 100644
-index 000000000000..e574a5625efe
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-driver-hid-ntrig
-@@ -0,0 +1,70 @@
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/activate_slack
-+Date:		May, 2010
-+KernelVersion:	2.6.35
-+Contact:	linux-input@vger.kernel.org
-+Description:
-+		(RW) Number of contact frames ignored before acknowledging the
-+		start of activity (activating touch).
-+
-+
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/decativate_slack
-+Date:		May, 2010
-+KernelVersion:	2.6.35
-+Contact:	linux-input@vger.kernel.org
-+Description:
-+		(RW) Number of empty (no contact) frames ignored before
-+		acknowledging the end of activity (deactivating touch).
-+
-+		When the last finger is removed from the device, it sends a
-+		number of empty frames. By holding off on deactivation for a few
-+		frames false erroneous disconnects can be tolerated, where the
-+		sensor may mistakenly not detect a finger that is still present.
-+
-+
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/activation_width
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/activation_height
-+Date:		May, 2010
-+KernelVersion:	2.6.35
-+Contact:	linux-input@vger.kernel.org
-+Description:
-+		Threholds to override activation slack.
-+
-+		activation_width:	(RW) Width threshold to immediately
-+					start processing touch events.
-+
-+		activation_height:	(RW) Height threshold to immediately
-+					start processing touch events.
-+
-+
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/min_width
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/min_height
-+Date:		May, 2010
-+KernelVersion:	2.6.35
-+Contact:	linux-input@vger.kernel.org
-+Description:
-+		Minimum size contact accepted.
-+
-+		min_width:	(RW) Minimum touch contact width to decide
-+				activation and activity.
-+
-+		min_height:	(RW) Minimum touch contact height to decide
-+				activation and activity.
-+
-+
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/sensor_physical_width
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/sensor_physical_height
-+Date:		May, 2010
-+KernelVersion:	2.6.35
-+Contact:	linux-input@vger.kernel.org
-+Description:
-+		(RO) These are internal ranges not used for normal events but
-+		useful for tuning.
-+
-+
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/sensor_logical_width
-+What:		/sys/bus/hid/drivers/ntrig/<dev>/sensor_logical_height
-+Date:		May, 2010
-+KernelVersion:	2.6.35
-+Contact:	linux-input@vger.kernel.org
-+Description:
-+		(RO) The range for positions reported during activity.
--- 
-2.16.2
+Applied to the docs tree, thanks.
+
+jon
