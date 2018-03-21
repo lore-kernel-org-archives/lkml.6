@@ -1,120 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751545AbeCUIAE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:00:04 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37258 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751464AbeCUIAA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:00:00 -0400
-X-Google-Smtp-Source: AG47ELvIqkF+4MRu/I7fIJKrYsRmJ7ohsWIzHFXveRg4ngef+2PX8YE26kDOqIwo57XmGtUxJ0Zrn6ORcf22EBTDQeg=
+        id S1751615AbeCUIB0 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:01:26 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36200 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751396AbeCUIBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 04:01:25 -0400
+Date: Wed, 21 Mar 2018 09:01:23 +0100
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Arushi Singhal <arushisinghal19971997@gmail.com>
+Cc: dwmw2@infradead.org,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Brian Norris <computersforpeace@gmail.com>
+Subject: Re: [PATCH] mtd: devices: check mtd_device_register() return code
+Message-ID: <20180321090123.07d55e32@xps13>
+In-Reply-To: <20180321053709.GA5611@seema-Inspiron-15-3567>
+References: <20180321053709.GA5611@seema-Inspiron-15-3567>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180318224736.GK5626@tuxbook-pro>
-References: <1515590259-24304-1-git-send-email-anup@brainfault.org> <20180318224736.GK5626@tuxbook-pro>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 21 Mar 2018 13:29:58 +0530
-Message-ID: <CAAhSdy31EEJYHn2qoWiCeRJfhLqPmyxVKU83RSrzozgWig86tw@mail.gmail.com>
-Subject: Re: [PATCH RESEND] rpmsg: Add driver_override device attribute for rpmsg_device
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 4:17 AM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Wed 10 Jan 05:17 PST 2018, Anup Patel wrote:
->
->> This patch adds "driver_override" device attribute for rpmsg_device which
->> will allow users to explicitly specify the rpmsg_driver to be used via
->> sysfs entry.
->>
->> The "driver_override" device attribute implemented here is very similar
->> to "driver_override" implemented for platform, pci, and amba bus types.
->>
->> One important use-case of "driver_override" device attribute is to force
->> use of rpmsg_chrdev driver for certain rpmsg_device instances.
->>
->
-> I assume you mean specifically for the case where you want to prevent
-> some kernel driver to probe for some given channel?
+Hi Arushi,
 
-Yes, there are few use-cases where we want to prevent kernel
-driver and rather access rpmsg device from user-space using
-rpmsg_chrdev driver.
+On Wed, 21 Mar 2018 11:07:09 +0530, Arushi Singhal
+<arushisinghal19971997@gmail.com> wrote:
 
->
-> The intention with rpmsg_char is that you through the rpmsg_ctrlX
-> interface create and destroy endpoints dynamically, so you wouldn't need
-> to use this mechanism to bind some specific channel to rpmsg_char.
->
->
-> That said, this does make sense for completeness sake.
->
-> [..]
->> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
->> index dffa3aa..9a25e42 100644
->> --- a/drivers/rpmsg/rpmsg_core.c
->> +++ b/drivers/rpmsg/rpmsg_core.c
->> @@ -321,11 +321,11 @@ struct device *rpmsg_find_device(struct device *parent,
->>  }
->>  EXPORT_SYMBOL(rpmsg_find_device);
->>
->> -/* sysfs show configuration fields */
->> +/* sysfs configuration fields */
->>  #define rpmsg_show_attr(field, path, format_string)                  \
->>  static ssize_t                                                               \
->>  field##_show(struct device *dev,                                     \
->> -                     struct device_attribute *attr, char *buf)       \
->> +          struct device_attribute *attr, char *buf)                  \
->
-> Seems unnecessary.
+> stfsm_probe() misses error handling of mtd_device_register().
+> 
+> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+> ---
+>  drivers/mtd/devices/st_spi_fsm.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/devices/st_spi_fsm.c b/drivers/mtd/devices/st_spi_fsm.c
+> index 7bc29d7..e1aa4f8 100644
+> --- a/drivers/mtd/devices/st_spi_fsm.c
+> +++ b/drivers/mtd/devices/st_spi_fsm.c
+> @@ -2125,7 +2125,13 @@ static int stfsm_probe(struct platform_device *pdev)
+>  		(long long)fsm->mtd.size, (long long)(fsm->mtd.size >> 20),
+>  		fsm->mtd.erasesize, (fsm->mtd.erasesize >> 10));
+>  
+> -	return mtd_device_register(&fsm->mtd, NULL, 0);
+> +	ret = mtd_device_register(&fsm->mtd, NULL, 0);
+> +	if (ret) {
+> +		pr_err("Failed to register device\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
 
-OK, I will drop these changes.
+I don't think this bring anything. However, if you want to fix
+something you should jump below on error to disable the clock instead
+of returning 'ret' directly.
 
->
->>  {                                                                    \
->>       struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
->>                                                                       \
->> @@ -333,11 +333,52 @@ field##_show(struct device *dev,                                        \
->>  }                                                                    \
->>  static DEVICE_ATTR_RO(field);
->>
->> +#define rpmsg_string_attr(field, path)                                       \
->
-> "path" is an odd name for these, I think it's a "member".
->
->> +static ssize_t                                                               \
->> +field##_store(struct device *dev,                                    \
->> +           struct device_attribute *attr, const char *buf, size_t sz)\
->
-> field##_store(struct device *dev, struct device_attribute *attr,        \
->               const char *buf, size_t sz)                               \
->
-> Is prettier
-
-OK, I will update this.
-
->
->> +{                                                                    \
->> +     struct rpmsg_device *rpdev = to_rpmsg_device(dev);              \
->> +     char *new, *old, *cp;                                           \
->> +                                                                     \
->> +     new = kstrndup(buf, sz, GFP_KERNEL);                            \
->> +     if (!new)                                                       \
->> +             return -ENOMEM;                                         \
->> +                                                                     \
->> +     cp = strchr(new, '\n');                                         \
->> +     if (cp)                                                         \
->> +             *cp = '\0';                                             \
->
-> I prefer
->
->         new[strcspn(new, "\n")] = '\0';
-
-Sure, I will update this.
+>  
+>  err_clk_unprepare:
+>  	clk_disable_unprepare(fsm->clk);
 
 Thanks,
-Anup
+Miquèl
+
+-- 
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
