@@ -1,100 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751877AbeCUKGM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 06:06:12 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38723 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751545AbeCUKGJ (ORCPT
+        id S1751551AbeCUKOH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 06:14:07 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36680 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeCUKOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 06:06:09 -0400
-X-Google-Smtp-Source: AG47ELs3N80U4lI4NmlxevMf4cARnPp960WgOA/0bHoSFEUbDuD1Fa3aikuNkiudv7fW/NCPwtxJDQ==
-Subject: Re: [PATCH 08/12] lightnvm: implement get log report chunk helpers
-Cc: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Sagi Grimberg <sagi@grimberg.me>
-References: <1520004080-27760-1-git-send-email-javier@cnexlabs.com>
- <1520004080-27760-9-git-send-email-javier@cnexlabs.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <8a0a3bad-26a4-ca2f-4bd8-5c71858f6d00@lightnvm.io>
-Date: Wed, 21 Mar 2018 11:06:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Wed, 21 Mar 2018 06:14:06 -0400
+Date: Wed, 21 Mar 2018 11:14:01 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Qixuan Wu <qixuan.wu@linux.alibaba.com>
+cc: John Stultz <john.stultz@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: About dmesg time and uptime
+In-Reply-To: <5AB13ECE.2090005@linux.alibaba.com>
+Message-ID: <alpine.DEB.2.21.1803211107560.3754@nanos.tec.linutronix.de>
+References: <5AB13ECE.2090005@linux.alibaba.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1520004080-27760-9-git-send-email-javier@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-To: unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/02/2018 04:21 PM, Javier González wrote:
-> The 2.0 spec provides a report chunk log page that can be retrieved
-> using the stangard nvme get log page. This replaces the dedicated
-> get/put bad block table in 1.2.
+On Wed, 21 Mar 2018, Qixuan Wu wrote:
+>    I have a doubt in kernel 4.9 about dmesg time and uptime. Would you
+> please to help to clarify whether it's bug or not.
+>    Below is our log. The dmesg time second is large than uptime second.
 > 
-> This patch implements the helper functions to allow targets retrieve the
-> chunk metadata using get log page. It makes nvme_get_log_ext available
-> outside of nvme core so that we can use it form lightnvm.
+> [25049978.919097] bond0.700: port 9(veth4e77160) entered forwarding state
+> [25049978.926455] bond0.700: port 9(veth4e77160) entered forwarding state
+> [chenggang.qcg@e80g10383 ~]$ cat /proc/uptime
+> 25023128.55 1416627078.34
 > 
-> Signed-off-by: Javier González <javier@cnexlabs.com>
-> ---
->   drivers/lightnvm/core.c      | 11 +++++++
->   drivers/nvme/host/core.c     |  6 ++--
->   drivers/nvme/host/lightnvm.c | 74 ++++++++++++++++++++++++++++++++++++++++++++
->   drivers/nvme/host/nvme.h     |  3 ++
->   include/linux/lightnvm.h     | 24 ++++++++++++++
->   5 files changed, 115 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 2e9e9f973a75..af642ce6ba69 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -2127,9 +2127,9 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
->   	return ret;
->   }
->   
-> -static int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-> -			    u8 log_page, void *log,
-> -			    size_t size, size_t offset)
-> +int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-> +		     u8 log_page, void *log,
-> +		     size_t size, size_t offset)
->   {
->   	struct nvme_command c = { };
->   	unsigned long dwlen = size / 4 - 1;
-> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-> index 08f0f6b5bc06..ffd64a83c8c3 100644
-> --- a/drivers/nvme/host/lightnvm.c
-> +++ b/drivers/nvme/host/lightnvm.c
-> @@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
->   	nvme_nvm_admin_set_bb_tbl	= 0xf1,
->   };
->   
+>    I found dmesg second is just directly get from tsc (x86 64 platform).
+> While the uptime is get by a complicated computation.
 
-<snip>
+Well it's not a complicated computation. It simply uses the timekeeping
+infrastructure.
 
->   
-> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> index 1ca08f4993ba..505f797f8c6c 100644
-> --- a/drivers/nvme/host/nvme.h
-> +++ b/drivers/nvme/host/nvme.h
-> @@ -396,6 +396,9 @@ int nvme_reset_ctrl(struct nvme_ctrl *ctrl);
->   int nvme_delete_ctrl(struct nvme_ctrl *ctrl);
->   int nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
->   
-> +int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
-> +		     u8 log_page, void *log, size_t size, size_t offset);
-> +
->   extern const struct attribute_group nvme_ns_id_attr_group;
->   extern const struct block_device_operations nvme_ns_head_ops;
->   
+The dmesg timestamp comes from sched_clock() which is TSC based and it is
+using a coarse calibration value obtained at boot time.
 
+The timekeeping infrastructure is using a fine grained calibration which
+can be further adjusted by NTP/PTP.
 
-Keith, Christoph, Sagi, Is it okay that these two changes that exposes 
-the nvme_get_log_ext fn are carried through Jens' tree after the nvme 
-tree for 4.17 has been pulled?
+So yes, this can drift apart. The error from your numbers above is about
+0.1% which is not an unusual value.
+
+There is a patch is mainline which feed the fine grained calibration value
+into sched_clock to make this slighty better, but it wont be perfect. See:
+
+     aa7b630ea023 ("x86/tsc: Feed refined TSC calibration into sched_clock()")
+
+There is also an effort to base dmesg time stamps on monotonic time, which
+will fix this problem completely, but that's still work in progress.
+
+Thanks,
+
+	tglx
