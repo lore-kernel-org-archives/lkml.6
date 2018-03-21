@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753625AbeCUT2V (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 15:28:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56438 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753470AbeCUTYr (ORCPT
+        id S1753665AbeCUT3C (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 15:29:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33710 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753089AbeCUTYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 15:24:47 -0400
+        Wed, 21 Mar 2018 15:24:44 -0400
 From: Mike Rapoport <rppt@linux.vnet.ibm.com>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
@@ -21,16 +21,16 @@ Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
         linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 23/32] docs/vm: split_page_table_lock: convert to ReST format
-Date: Wed, 21 Mar 2018 21:22:39 +0200
+Subject: [PATCH 22/32] docs/vm: soft-dirty.txt: convert to ReST format
+Date: Wed, 21 Mar 2018 21:22:38 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
 References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18032119-0040-0000-0000-00000425821B
+x-cbid: 18032119-0044-0000-0000-0000053E734A
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032119-0041-0000-0000-00002628877D
-Message-Id: <1521660168-14372-24-git-send-email-rppt@linux.vnet.ibm.com>
+x-cbparentid: 18032119-0045-0000-0000-0000287D78ED
+Message-Id: <1521660168-14372-23-git-send-email-rppt@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -44,68 +44,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- Documentation/vm/split_page_table_lock | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ Documentation/vm/soft-dirty.txt | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/vm/split_page_table_lock b/Documentation/vm/split_page_table_lock
-index 62842a8..889b00b 100644
---- a/Documentation/vm/split_page_table_lock
-+++ b/Documentation/vm/split_page_table_lock
-@@ -1,3 +1,6 @@
-+.. _split_page_table_lock:
+diff --git a/Documentation/vm/soft-dirty.txt b/Documentation/vm/soft-dirty.txt
+index 55684d1..cb0cfd6 100644
+--- a/Documentation/vm/soft-dirty.txt
++++ b/Documentation/vm/soft-dirty.txt
+@@ -1,34 +1,38 @@
+-                            SOFT-DIRTY PTEs
++.. _soft_dirty:
+ 
+-  The soft-dirty is a bit on a PTE which helps to track which pages a task
++===============
++Soft-Dirty PTEs
++===============
 +
-+=====================
- Split page table lock
- =====================
++The soft-dirty is a bit on a PTE which helps to track which pages a task
+ writes to. In order to do this tracking one should
  
-@@ -11,6 +14,7 @@ access to the table. At the moment we use split lock for PTE and PMD
- tables. Access to higher level tables protected by mm->page_table_lock.
+   1. Clear soft-dirty bits from the task's PTEs.
  
- There are helpers to lock/unlock a table and other accessor functions:
-+
-  - pte_offset_map_lock()
- 	maps pte and takes PTE table lock, returns pointer to the taken
- 	lock;
-@@ -34,12 +38,13 @@ Split page table lock for PMD tables is enabled, if it's enabled for PTE
- tables and the architecture supports it (see below).
+-     This is done by writing "4" into the /proc/PID/clear_refs file of the
++     This is done by writing "4" into the ``/proc/PID/clear_refs`` file of the
+      task in question.
  
- Hugetlb and split page table lock
-----------------------------------
-+=================================
+   2. Wait some time.
  
- Hugetlb can support several page sizes. We use split lock only for PMD
- level, but not for PUD.
+   3. Read soft-dirty bits from the PTEs.
  
- Hugetlb-specific helpers:
-+
-  - huge_pte_lock()
- 	takes pmd split lock for PMD_SIZE page, mm->page_table_lock
- 	otherwise;
-@@ -47,7 +52,7 @@ Hugetlb-specific helpers:
- 	returns pointer to table lock;
+-     This is done by reading from the /proc/PID/pagemap. The bit 55 of the
++     This is done by reading from the ``/proc/PID/pagemap``. The bit 55 of the
+      64-bit qword is the soft-dirty one. If set, the respective PTE was
+      written to since step 1.
  
- Support of split page table lock by an architecture
-----------------------------------------------------
-+===================================================
  
- There's no need in special enabling of PTE split page table lock:
- everything required is done by pgtable_page_ctor() and pgtable_page_dtor(),
-@@ -73,7 +78,7 @@ NOTE: pgtable_page_ctor() and pgtable_pmd_page_ctor() can fail -- it must
- be handled properly.
+-  Internally, to do this tracking, the writable bit is cleared from PTEs
++Internally, to do this tracking, the writable bit is cleared from PTEs
+ when the soft-dirty bit is cleared. So, after this, when the task tries to
+ modify a page at some virtual address the #PF occurs and the kernel sets
+ the soft-dirty bit on the respective PTE.
  
- page->ptl
-----------
-+=========
+-  Note, that although all the task's address space is marked as r/o after the
++Note, that although all the task's address space is marked as r/o after the
+ soft-dirty bits clear, the #PF-s that occur after that are processed fast.
+ This is so, since the pages are still mapped to physical memory, and thus all
+ the kernel does is finds this fact out and puts both writable and soft-dirty
+ bits on the PTE.
  
- page->ptl is used to access split page table lock, where 'page' is struct
- page of page containing the table. It shares storage with page->private
-@@ -81,6 +86,7 @@ page of page containing the table. It shares storage with page->private
+-  While in most cases tracking memory changes by #PF-s is more than enough
++While in most cases tracking memory changes by #PF-s is more than enough
+ there is still a scenario when we can lose soft dirty bits -- a task
+ unmaps a previously mapped memory region and then maps a new one at exactly
+ the same place. When unmap is called, the kernel internally clears PTE values
+@@ -36,7 +40,7 @@ including soft dirty bits. To notify user space application about such
+ memory region renewal the kernel always marks new memory regions (and
+ expanded regions) as soft dirty.
  
- To avoid increasing size of struct page and have best performance, we use a
- trick:
-+
-  - if spinlock_t fits into long, we use page->ptr as spinlock, so we
-    can avoid indirect access and save a cache line.
-  - if size of spinlock_t is bigger then size of long, we use page->ptl as
+-  This feature is actively used by the checkpoint-restore project. You
++This feature is actively used by the checkpoint-restore project. You
+ can find more details about it on http://criu.org
+ 
+ 
 -- 
 2.7.4
