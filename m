@@ -1,119 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753372AbeCUUxM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 16:53:12 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:42236 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753209AbeCUUxC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 16:53:02 -0400
-X-Google-Smtp-Source: AG47ELv42YcG24devEdq2EDsfHAjUwcITrTA65rB6GqG/lp+dR8TeoKiWeV28jlAbodiONeUmMl9Bw==
-Subject: Re: [bug, bisected] pfifo_fast causes packet reordering
-To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
-        Dave Taht <dave.taht@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        Martin Elshuber <martin.elshuber@theobroma-systems.com>
-References: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com>
- <CAA93jw5FSbvg8AZ=EmneW8juqd8LCgp=xUrSxYm2GBEucKkT3w@mail.gmail.com>
- <95844480-d020-9000-53ef-0da8b965ce6e@gmail.com>
- <3a959e50-8656-5d9c-97b9-227d733948f8@theobroma-systems.com>
- <5aeb54ba-2d96-4ab5-53c4-2d3691be7acc@gmail.com>
- <340a6c54-6031-5522-98f5-eafdd3a37a38@theobroma-systems.com>
- <00cc2d41-6861-9a9c-603f-ba8013b2e2ce@theobroma-systems.com>
- <4e33aae4-9e87-22b4-7f09-008183ea553a@gmail.com>
- <983427eb-2e25-f201-c953-4cff22569deb@theobroma-systems.com>
-From: John Fastabend <john.fastabend@gmail.com>
-Message-ID: <ffdc6ca9-bf64-5514-bac9-7b107f9b443b@gmail.com>
-Date: Wed, 21 Mar 2018 13:52:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753509AbeCUUxZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 16:53:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55468 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753320AbeCUUxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 16:53:10 -0400
+Date: Wed, 21 Mar 2018 21:53:07 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch] mm, thp: do not cause memcg oom for thp
+Message-ID: <20180321204921.GP23100@dhcp22.suse.cz>
+References: <alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com>
+ <20180320071624.GB23100@dhcp22.suse.cz>
+ <alpine.DEB.2.20.1803201321430.167205@chino.kir.corp.google.com>
+ <20180321082228.GC23100@dhcp22.suse.cz>
+ <alpine.DEB.2.20.1803211212490.92011@chino.kir.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <983427eb-2e25-f201-c953-4cff22569deb@theobroma-systems.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1803211212490.92011@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/21/2018 12:44 PM, Jakob Unterwurzacher wrote:
-> On 21.03.18 19:43, John Fastabend wrote:
->> Thats my theory at least. Are you able to test a patch if I generate
->> one to fix this?
+On Wed 21-03-18 12:37:10, David Rientjes wrote:
+> On Wed, 21 Mar 2018, Michal Hocko wrote:
 > 
-> Yes, no problem.
-
-Can you try this,
-
-diff --git a/include/net/sch_generic.h b/include/net/sch_generic.h
-index d4907b5..1e596bd 100644
---- a/include/net/sch_generic.h
-+++ b/include/net/sch_generic.h
-@@ -30,6 +30,7 @@ struct qdisc_rate_table {
- enum qdisc_state_t {
-        __QDISC_STATE_SCHED,
-        __QDISC_STATE_DEACTIVATED,
-+       __QDISC_STATE_RUNNING,
- };
- 
- struct qdisc_size_table {
-diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
-index 190570f..cf7c37d 100644
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -377,20 +377,26 @@ static inline bool qdisc_restart(struct Qdisc *q, int *packets)
-        struct netdev_queue *txq;
-        struct net_device *dev;
-        struct sk_buff *skb;
--       bool validate;
-+       bool more, validate;
- 
-        /* Dequeue packet */
-+       if (test_and_set_bit(__QDISC_STATE_RUNNING, &q->state))
-+               return false;
-+
-        skb = dequeue_skb(q, &validate, packets);
--       if (unlikely(!skb))
-+       if (unlikely(!skb)) {
-+               clear_bit(__QDISC_STATE_RUNNING, &q->state);
-                return false;
-+       }
- 
-        if (!(q->flags & TCQ_F_NOLOCK))
-                root_lock = qdisc_lock(q);
- 
-        dev = qdisc_dev(q);
-        txq = skb_get_tx_queue(dev, skb);
--
--       return sch_direct_xmit(skb, q, dev, txq, root_lock, validate);
-+       more = sch_direct_xmit(skb, q, dev, txq, root_lock, validate);
-+       clear_bit(__QDISC_STATE_RUNNING, &q->state);
-+       return more;
- }
-
-
+> > > I'm not sure of the expectation of high-order memcg charging without 
+> > > __GFP_NORETRY,
+> > 
+> > It should be semantically compatible with the allocation path.
+> > 
 > 
-> I just tested with the flag change you suggested (see below, I had to keep TCQ_F_CPUSTATS to prevent a crash) and I have NOT seen OOO so far.
-> 
+> That doesn't make sense, the allocation path needs to allocate contiguous 
+> memory for the high order, the charging path just needs to charge a number 
+> of pages.  Why would the allocation and charging path be compatible when 
+> one needs to reclaim contiguous memory or compact memory and the the other 
+> just needs to reclaim any memory?
 
-Right because the code expects per cpu stats if the CPUSTATS flag is
-removed it will crash.
+Because you do not want to see surprises. E.g. seeing unexpected OOMs
+for large allocatations. Just think about it. Do you really want to have
+a different reclaim policy for the allocation and charging for all
+allocating paths? THP is by no means special. We do have different gfp
+masks for THP to express how hard to try. Why should the charge path
+behave any different?
 
-> Thanks,
-> Jakob
+You are right that the allocation path involves compaction and that is
+different from the charging path. But that is an implementation detail
+of the current implementation. Semantically, it is the gfp mask to tell
+how hard to try and treating just because of how the current code works
+is simply wrong.
+
+> > > I only know that khugepaged can now cause memcg oom kills 
+> > > when trying to collapse memory, and then subsequently found that the same 
+> > > situation exists for faulting instead of falling back to small pages.
+> > 
+> > And that is clearly a bug because page allocator doesn't oom kill while
+> > the memcg charge does for the same gfp flag. That should be fixed.
+> > 
 > 
-> 
-> diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
-> index 190570f21b20..51b68ef4977b 100644
-> --- a/net/sched/sch_generic.c
-> +++ b/net/sched/sch_generic.c
-> @@ -792,7 +792,7 @@ struct Qdisc_ops pfifo_fast_ops __read_mostly = {
->         .dump           =       pfifo_fast_dump,
->         .change_tx_queue_len =  pfifo_fast_change_tx_queue_len,
->         .owner          =       THIS_MODULE,
-> -       .static_flags   =       TCQ_F_NOLOCK | TCQ_F_CPUSTATS,
-> +       .static_flags   =       TCQ_F_CPUSTATS,
->  };
->  EXPORT_SYMBOL(pfifo_fast_ops);
+> It's fixed with my patch, yes.
+
+Your patch only fixes up the current situation. Anytime a new THP
+allocation emerges that code path has to be careful to add
+__GFP_NORETRY to not regress again. That is just too error prone.
+
+> The page allocator doesn't oom kill for 
+> orders over PAGE_ALLOC_COSTLY_ORDER only because it is unlikely to free 
+> order-4 and higher contiguous memory as a result; it's in the name, it's a 
+> costly order for the page allocator.  Using it as a heuristic in the memcg 
+> charging path seems strange.
+
+It is not strange at all. We have the concept that large allocations are
+OK to fail rather than cause disruptive actions. And the same applies
+for charges as well. There is no reason to over reclaim or even OOM kill
+for a large charge if we have a fallback.
+
+Seriously. Making different polices to the allocation and the memcg
+charge will lead to both unexpected behavior and a maintenance mess.
+And there is no good reason for that.
+-- 
+Michal Hocko
+SUSE Labs
