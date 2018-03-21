@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3454413-1521618388-2-15979755262017397158
+X-Cyrus-Session-Id: sloti22d1t05-3454413-1521618383-2-9120479826698360216
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521618387; b=shswxhu+GoNhRPzf++5SYKAqVWkDF77QYejbrI+IfGcljAW
-    d2OYkWYp4KcIHQkDO3gxhtO+MpAzkd1Fogv7pRwFmOMCKtFtdZNjN0cxeWFWtUiS
-    AmdDxz02b7Eg0+XkmiPkDuBv3u8V6X7A5EkHql9Uw1yX/jgT66dWmde9ppXdocbY
-    3+7Kxzlts/fOW1XN4g4ypEjD+AED1Q8N/9xdPWwl7piq52QIUZu4qdevgUboVaph
-    g5Kg3ZhW7xnqzTARusGCJW/qdPqiBQchgps23jMKZCh1ryE6jTB38C6Bryyj0HgR
-    G2VweOS1Olune/s/n4Icrnc8779IrNiG8SO7E6A==
+    t=1521618381; b=W7JF+fqlhuJfaEcvU+2um7y1crrwcEQzAW9Bsj5dAtIUwRz
+    l2slWwMXr8mPhE1Igh+F0Sk5OdJYFGBqDYC2CeibCnpo1L1gDq4BmbW1LzvHWxv6
+    UWhrStYh/8C4LTkXyVlZ1w8CjWwgIXClXws0JManQe3XdMLGhJo4JNjiuLiUeJ9l
+    lEjAiWAWhGwI8IpyAwO+rWDU0asPE+VB3RDAzizZ0LzcDk8ApsT392FgNnxJFyjr
+    IefEYZOIuE0oWCfJy7O7D5q9B9MZRa+eweuF6sPHMONzWZce5teFh7d+ydn7cC0T
+    tX6oFgSvisPGPA82vLkDWSa/uKEXR1F5ZZOFRoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1521618387;
-    bh=aKd5ZpTCDtU0moo+lYC5cAK3IDI8vm2kvmtKRS/Pgvo=; b=VvuLvYySByDI
-    N4t+dIgbJ8qEvdfAS7wYiYNgZOkE+UPx8zFvlpr1yiRXa3qSAyg8iy0a0EgbUnwO
-    OiQos+2DmnBi8qgXmkGT9EIWk12B69vFaB7mTPU0GZbPjbaYGHPoGl+R4pBwzq+v
-    I/S+GnFRIs/PTXmGe6FHM4XWikiGXgumvoZbNv3mFF54Pwtv0+GmlwRzkgYVOh2X
-    RwoE/9ee0We2c8GL5ZVTXfCJ4TvvlMF8zIsLSqRKvT3hi4vJP+dK0OUhwRZgFQyL
-    1ABa9JaRnR4sjUcjl1KzT/pWeHHVB/XmPYxD/AJhFD2jnZfpIQ+pkFzTdf2UhSzp
-    fzu5jDpvNg==
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521618381;
+    bh=/3+Qhd3Ju2YEidUX+M/ffcXKzQMzxaZdsGVrWFQtNz8=; b=TLvH2gjYdf7t
+    mDap3lcTX3NllwyfUr7t+VwHSQa3brsAyPWSBc7YEP/dupu11QNg1QQETE4+GFUs
+    0azIq+Pb+LyTrGFvKfyTo1ydigGm1VkkCd7i4OaNJ46T37k1VK0ntLT/XXqDUQsl
+    bcqh5Pc2WRPFC/XTqrDvTAeFueJ7XpT4sh0ltxKg72eVKk1YOpghonBS/VCSM03W
+    TwB/cL0VDGlF0FO6wNRbHTm5GDr4XJeghf5Qgu2hWjAdlETcNVmS7xuNvtXb2n7Y
+    8xRwTpyLBxpPyLTFfJMxDIWN3Au6FRpnLq5saYneaMF8MzlKmT3VCLoOhYAiQeL3
+    Y97/1KUrVA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=btxidiLG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=ifuGyDMO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-vs=clean score=0 state=0
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=btxidiLG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=ifuGyDMO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,20 +50,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeCUHlr (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Mar 2018 03:41:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48144 "EHLO
+        id S1752454AbeCUHpg (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 03:45:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48164 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752166AbeCUHlo (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:41:44 -0400
+        with ESMTP id S1752200AbeCUHlt (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:41:49 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 17/28] net/sctp: convert to ->poll_mask
-Date: Wed, 21 Mar 2018 08:40:21 +0100
-Message-Id: <20180321074032.14211-18-hch@lst.de>
+Subject: [PATCH 18/28] net/bluetooth: convert to ->poll_mask
+Date: Wed, 21 Mar 2018 08:40:22 +0100
+Message-Id: <20180321074032.14211-19-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180321074032.14211-1-hch@lst.de>
 References: <20180321074032.14211-1-hch@lst.de>
@@ -76,72 +76,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/net/sctp/sctp.h | 3 +--
- net/sctp/ipv6.c         | 2 +-
- net/sctp/protocol.c     | 2 +-
- net/sctp/socket.c       | 4 +---
- 4 files changed, 4 insertions(+), 7 deletions(-)
+ include/net/bluetooth/bluetooth.h | 2 +-
+ net/bluetooth/af_bluetooth.c      | 7 ++-----
+ net/bluetooth/l2cap_sock.c        | 2 +-
+ net/bluetooth/rfcomm/sock.c       | 2 +-
+ net/bluetooth/sco.c               | 2 +-
+ 5 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/include/net/sctp/sctp.h b/include/net/sctp/sctp.h
-index f7ae6b0a21d0..37abd5ba4a3f 100644
---- a/include/net/sctp/sctp.h
-+++ b/include/net/sctp/sctp.h
-@@ -107,8 +107,7 @@ int sctp_backlog_rcv(struct sock *sk, struct sk_buff *skb);
- int sctp_inet_listen(struct socket *sock, int backlog);
- void sctp_write_space(struct sock *sk);
- void sctp_data_ready(struct sock *sk);
--__poll_t sctp_poll(struct file *file, struct socket *sock,
--		poll_table *wait);
-+__poll_t sctp_poll_mask(struct socket *sock, __poll_t events);
- void sctp_sock_rfree(struct sk_buff *skb);
- void sctp_copy_sock(struct sock *newsk, struct sock *sk,
- 		    struct sctp_association *asoc);
-diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
-index e35d4f73d2df..6b0b8fc5b75a 100644
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -976,7 +976,7 @@ static const struct proto_ops inet6_seqpacket_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = inet_accept,
- 	.getname	   = sctp_getname,
--	.poll		   = sctp_poll,
-+	.poll_mask	   = sctp_poll_mask,
- 	.ioctl		   = inet6_ioctl,
- 	.listen		   = sctp_inet_listen,
- 	.shutdown	   = inet_shutdown,
-diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-index 91813e686c67..20c544890e80 100644
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -1024,7 +1024,7 @@ static const struct proto_ops inet_seqpacket_ops = {
- 	.socketpair	   = sock_no_socketpair,
- 	.accept		   = inet_accept,
- 	.getname	   = inet_getname,	/* Semantics are different.  */
--	.poll		   = sctp_poll,
-+	.poll_mask	   = sctp_poll_mask,
- 	.ioctl		   = inet_ioctl,
- 	.listen		   = sctp_inet_listen,
- 	.shutdown	   = inet_shutdown,	/* Looks harmless.  */
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index bf271f8c2dc9..097454740929 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -7587,14 +7587,12 @@ int sctp_inet_listen(struct socket *sock, int backlog)
-  * here, again, by modeling the current TCP/UDP code.  We don't have
-  * a good way to test with it yet.
-  */
--__poll_t sctp_poll(struct file *file, struct socket *sock, poll_table *wait)
-+__poll_t sctp_poll_mask(struct socket *sock, __poll_t events)
+diff --git a/include/net/bluetooth/bluetooth.h b/include/net/bluetooth/bluetooth.h
+index ec9d6bc65855..53ce8176c313 100644
+--- a/include/net/bluetooth/bluetooth.h
++++ b/include/net/bluetooth/bluetooth.h
+@@ -271,7 +271,7 @@ int  bt_sock_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 		     int flags);
+ int  bt_sock_stream_recvmsg(struct socket *sock, struct msghdr *msg,
+ 			    size_t len, int flags);
+-__poll_t bt_sock_poll(struct file *file, struct socket *sock, poll_table *wait);
++__poll_t bt_sock_poll_mask(struct socket *sock, __poll_t events);
+ int  bt_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg);
+ int  bt_sock_wait_state(struct sock *sk, int state, unsigned long timeo);
+ int  bt_sock_wait_ready(struct sock *sk, unsigned long flags);
+diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
+index 84d92a077834..80033a7e1de2 100644
+--- a/net/bluetooth/af_bluetooth.c
++++ b/net/bluetooth/af_bluetooth.c
+@@ -437,16 +437,13 @@ static inline __poll_t bt_accept_poll(struct sock *parent)
+ 	return 0;
+ }
+ 
+-__poll_t bt_sock_poll(struct file *file, struct socket *sock,
+-			  poll_table *wait)
++__poll_t bt_sock_poll_mask(struct socket *sock, __poll_t events)
  {
  	struct sock *sk = sock->sk;
- 	struct sctp_sock *sp = sctp_sk(sk);
- 	__poll_t mask;
+ 	__poll_t mask = 0;
+ 
+ 	BT_DBG("sock %p, sk %p", sock, sk);
  
 -	poll_wait(file, sk_sleep(sk), wait);
 -
- 	sock_rps_record_flow(sk);
+ 	if (sk->sk_state == BT_LISTEN)
+ 		return bt_accept_poll(sk);
  
- 	/* A TCP-style listening socket becomes readable when the accept queue
+@@ -478,7 +475,7 @@ __poll_t bt_sock_poll(struct file *file, struct socket *sock,
+ 
+ 	return mask;
+ }
+-EXPORT_SYMBOL(bt_sock_poll);
++EXPORT_SYMBOL(bt_sock_poll_mask);
+ 
+ int bt_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ {
+diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+index 67a8642f57ea..d20b33daa80f 100644
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@ -1654,7 +1654,7 @@ static const struct proto_ops l2cap_sock_ops = {
+ 	.getname	= l2cap_sock_getname,
+ 	.sendmsg	= l2cap_sock_sendmsg,
+ 	.recvmsg	= l2cap_sock_recvmsg,
+-	.poll		= bt_sock_poll,
++	.poll_mask	= bt_sock_poll_mask,
+ 	.ioctl		= bt_sock_ioctl,
+ 	.mmap		= sock_no_mmap,
+ 	.socketpair	= sock_no_socketpair,
+diff --git a/net/bluetooth/rfcomm/sock.c b/net/bluetooth/rfcomm/sock.c
+index 1aaccf637479..b4dc96481d92 100644
+--- a/net/bluetooth/rfcomm/sock.c
++++ b/net/bluetooth/rfcomm/sock.c
+@@ -1049,7 +1049,7 @@ static const struct proto_ops rfcomm_sock_ops = {
+ 	.setsockopt	= rfcomm_sock_setsockopt,
+ 	.getsockopt	= rfcomm_sock_getsockopt,
+ 	.ioctl		= rfcomm_sock_ioctl,
+-	.poll		= bt_sock_poll,
++	.poll_mask	= bt_sock_poll_mask,
+ 	.socketpair	= sock_no_socketpair,
+ 	.mmap		= sock_no_mmap
+ };
+diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+index 08df57665e1f..b2bf5c767b3e 100644
+--- a/net/bluetooth/sco.c
++++ b/net/bluetooth/sco.c
+@@ -1198,7 +1198,7 @@ static const struct proto_ops sco_sock_ops = {
+ 	.getname	= sco_sock_getname,
+ 	.sendmsg	= sco_sock_sendmsg,
+ 	.recvmsg	= sco_sock_recvmsg,
+-	.poll		= bt_sock_poll,
++	.poll_mask	= bt_sock_poll_mask,
+ 	.ioctl		= bt_sock_ioctl,
+ 	.mmap		= sock_no_mmap,
+ 	.socketpair	= sock_no_socketpair,
 -- 
 2.14.2
 
