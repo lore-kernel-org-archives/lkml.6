@@ -1,201 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751801AbeCUB6g (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:58:36 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34918 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751671AbeCUB6b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:58:31 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        erick.chen@spreadtrum.com, baolin.wang@linaro.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sprd: Simplify the transfer function" to the spi tree
-In-Reply-To: <e458e920e9a425dfa23f13cf55b2fbcd7081997f.1521512297.git.baolin.wang@linaro.org>
-Message-Id: <20180321015826.26A3E44007A@finisterre.ee.mobilebroadband>
-Date: Wed, 21 Mar 2018 01:58:26 +0000 (GMT)
+        id S1751895AbeCUB7G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:59:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:2189 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751699AbeCUB7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 21:59:04 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
+   d="scan'208";a="35508780"
+Date: Wed, 21 Mar 2018 09:59:45 +0800
+From: Aaron Lu <aaron.lu@intel.com>
+To: "Figo.zhang" <figo1802@gmail.com>
+Cc: Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [RFC PATCH v2 2/4] mm/__free_one_page: skip merge for order-0
+ page unless compaction failed
+Message-ID: <20180321015944.GB28705@intel.com>
+References: <20180320085452.24641-1-aaron.lu@intel.com>
+ <20180320085452.24641-3-aaron.lu@intel.com>
+ <CAF7GXvovKsabDw88icK5c5xBqg6g0TomQdspfi4ikjtbg=XzGQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAF7GXvovKsabDw88icK5c5xBqg6g0TomQdspfi4ikjtbg=XzGQ@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, Mar 20, 2018 at 03:58:51PM -0700, Figo.zhang wrote:
+> 2018-03-20 1:54 GMT-07:00 Aaron Lu <aaron.lu@intel.com>:
+> 
+> > Running will-it-scale/page_fault1 process mode workload on a 2 sockets
+> > Intel Skylake server showed severe lock contention of zone->lock, as
+> > high as about 80%(42% on allocation path and 35% on free path) CPU
+> > cycles are burnt spinning. With perf, the most time consuming part inside
+> > that lock on free path is cache missing on page structures, mostly on
+> > the to-be-freed page's buddy due to merging.
+> >
+> > One way to avoid this overhead is not do any merging at all for order-0
+> > pages. With this approach, the lock contention for zone->lock on free
+> > path dropped to 1.1% but allocation side still has as high as 42% lock
+> > contention. In the meantime, the dropped lock contention on free side
+> > doesn't translate to performance increase, instead, it's consumed by
+> > increased lock contention of the per node lru_lock(rose from 5% to 37%)
+> > and the final performance slightly dropped about 1%.
+> >
+> > Though performance dropped a little, it almost eliminated zone lock
+> > contention on free path and it is the foundation for the next patch
+> > that eliminates zone lock contention for allocation path.
+> >
+> > A new document file called "struct_page_filed" is added to explain
+> > the newly reused field in "struct page".
+> >
+> > Suggested-by: Dave Hansen <dave.hansen@intel.com>
+> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> > ---
+> >  Documentation/vm/struct_page_field |  5 +++
+> >  include/linux/mm_types.h           |  1 +
+> >  mm/compaction.c                    | 13 +++++-
+> >  mm/internal.h                      | 27 ++++++++++++
+> >  mm/page_alloc.c                    | 89 ++++++++++++++++++++++++++++++
+> > +++-----
+> >  5 files changed, 122 insertions(+), 13 deletions(-)
+> >  create mode 100644 Documentation/vm/struct_page_field
+> >
+> > diff --git a/Documentation/vm/struct_page_field b/Documentation/vm/struct_
+> > page_field
+> > new file mode 100644
+> > index 000000000000..1ab6c19ccc7a
+> > --- /dev/null
+> > +++ b/Documentation/vm/struct_page_field
+> > @@ -0,0 +1,5 @@
+> > +buddy_merge_skipped:
+> > +Used to indicate this page skipped merging when added to buddy. This
+> > +field only makes sense if the page is in Buddy and is order zero.
+> > +It's a bug if any higher order pages in Buddy has this field set.
+> > +Shares space with index.
+> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > index fd1af6b9591d..7edc4e102a8e 100644
+> > --- a/include/linux/mm_types.h
+> > +++ b/include/linux/mm_types.h
+> > @@ -91,6 +91,7 @@ struct page {
+> >                 pgoff_t index;          /* Our offset within mapping. */
+> >                 void *freelist;         /* sl[aou]b first free object */
+> >                 /* page_deferred_list().prev    -- second tail page */
+> > +               bool buddy_merge_skipped; /* skipped merging when added to
+> > buddy */
+> >         };
+> >
+> >         union {
+> > diff --git a/mm/compaction.c b/mm/compaction.c
+> > index 2c8999d027ab..fb9031fdca41 100644
+> > --- a/mm/compaction.c
+> > +++ b/mm/compaction.c
+> > @@ -776,8 +776,19 @@ isolate_migratepages_block(struct compact_control
+> > *cc, unsigned long low_pfn,
+> >                  * potential isolation targets.
+> >                  */
+> >                 if (PageBuddy(page)) {
+> > -                       unsigned long freepage_order =
+> > page_order_unsafe(page);
+> > +                       unsigned long freepage_order;
+> >
+> > +                       /*
+> > +                        * If this is a merge_skipped page, do merge now
+> > +                        * since high-order pages are needed. zone lock
+> > +                        * isn't taken for the merge_skipped check so the
+> > +                        * check could be wrong but the worst case is we
+> > +                        * lose a merge opportunity.
+> > +                        */
+> > +                       if (page_merge_was_skipped(page))
+> > +                               try_to_merge_page(page);
+> > +
+> > +                       freepage_order = page_order_unsafe(page);
+> >                         /*
+> >                          * Without lock, we cannot be sure that what we
+> > got is
+> >                          * a valid page order. Consider only values in the
+> >
+> 
+> when the system memory is very very low and try a lot of failures and then
 
-   spi: sprd: Simplify the transfer function
+If the system memory is very very low, it doesn't appear there is a need
+to do compaction since compaction needs to have enough order 0 pages to
+make a high order one.
 
-has been applied to the spi tree at
+> go into
+> __alloc_pages_direct_compact() to has a opportunity to do your
+> try_to_merge_page(), is it the best timing for here to
+> do order-0 migration?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From a61aa683655f3182aca6e38404ae9aac03e771ae Mon Sep 17 00:00:00 2001
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Tue, 20 Mar 2018 10:42:13 +0800
-Subject: [PATCH] spi: sprd: Simplify the transfer function
-
-We can move the hardware spinlock protection into the ADI read/write
-functions to simplify the sprd_adi_transfer_one() function. Moreover
-this optimization can also help to access PMIC without considering
-the hardware spinlock using sprd_adi_read/write() functions.
-
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-sprd-adi.c | 64 +++++++++++++++++++++++++---------------------
- 1 file changed, 35 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
-index 5993bdbf79e4..74bbd045aac0 100644
---- a/drivers/spi/spi-sprd-adi.c
-+++ b/drivers/spi/spi-sprd-adi.c
-@@ -123,7 +123,17 @@ static int sprd_adi_fifo_is_full(struct sprd_adi *sadi)
- static int sprd_adi_read(struct sprd_adi *sadi, u32 reg_paddr, u32 *read_val)
- {
- 	int read_timeout = ADI_READ_TIMEOUT;
-+	unsigned long flags;
- 	u32 val, rd_addr;
-+	int ret;
-+
-+	ret = hwspin_lock_timeout_irqsave(sadi->hwlock,
-+					  ADI_HWSPINLOCK_TIMEOUT,
-+					  &flags);
-+	if (ret) {
-+		dev_err(sadi->dev, "get the hw lock failed\n");
-+		return ret;
-+	}
- 
- 	/*
- 	 * Set the physical register address need to read into RD_CMD register,
-@@ -147,7 +157,8 @@ static int sprd_adi_read(struct sprd_adi *sadi, u32 reg_paddr, u32 *read_val)
- 
- 	if (read_timeout == 0) {
- 		dev_err(sadi->dev, "ADI read timeout\n");
--		return -EBUSY;
-+		ret = -EBUSY;
-+		goto out;
- 	}
- 
- 	/*
-@@ -161,21 +172,35 @@ static int sprd_adi_read(struct sprd_adi *sadi, u32 reg_paddr, u32 *read_val)
- 	if (rd_addr != (reg_paddr & REG_ADDR_LOW_MASK)) {
- 		dev_err(sadi->dev, "read error, reg addr = 0x%x, val = 0x%x\n",
- 			reg_paddr, val);
--		return -EIO;
-+		ret = -EIO;
-+		goto out;
- 	}
- 
- 	*read_val = val & RD_VALUE_MASK;
--	return 0;
-+
-+out:
-+	hwspin_unlock_irqrestore(sadi->hwlock, &flags);
-+	return ret;
- }
- 
--static int sprd_adi_write(struct sprd_adi *sadi, unsigned long reg, u32 val)
-+static int sprd_adi_write(struct sprd_adi *sadi, u32 reg_paddr, u32 val)
- {
-+	unsigned long reg = sprd_adi_to_vaddr(sadi, reg_paddr);
- 	u32 timeout = ADI_FIFO_DRAIN_TIMEOUT;
-+	unsigned long flags;
- 	int ret;
- 
-+	ret = hwspin_lock_timeout_irqsave(sadi->hwlock,
-+					  ADI_HWSPINLOCK_TIMEOUT,
-+					  &flags);
-+	if (ret) {
-+		dev_err(sadi->dev, "get the hw lock failed\n");
-+		return ret;
-+	}
-+
- 	ret = sprd_adi_drain_fifo(sadi);
- 	if (ret < 0)
--		return ret;
-+		goto out;
- 
- 	/*
- 	 * we should wait for write fifo is empty before writing data to PMIC
-@@ -192,10 +217,12 @@ static int sprd_adi_write(struct sprd_adi *sadi, unsigned long reg, u32 val)
- 
- 	if (timeout == 0) {
- 		dev_err(sadi->dev, "write fifo is full\n");
--		return -EBUSY;
-+		ret = -EBUSY;
- 	}
- 
--	return 0;
-+out:
-+	hwspin_unlock_irqrestore(sadi->hwlock, &flags);
-+	return ret;
- }
- 
- static int sprd_adi_transfer_one(struct spi_controller *ctlr,
-@@ -203,7 +230,6 @@ static int sprd_adi_transfer_one(struct spi_controller *ctlr,
- 				 struct spi_transfer *t)
- {
- 	struct sprd_adi *sadi = spi_controller_get_devdata(ctlr);
--	unsigned long flags, virt_reg;
- 	u32 phy_reg, val;
- 	int ret;
- 
-@@ -214,16 +240,7 @@ static int sprd_adi_transfer_one(struct spi_controller *ctlr,
- 		if (ret)
- 			return ret;
- 
--		ret = hwspin_lock_timeout_irqsave(sadi->hwlock,
--						  ADI_HWSPINLOCK_TIMEOUT,
--						  &flags);
--		if (ret) {
--			dev_err(sadi->dev, "get the hw lock failed\n");
--			return ret;
--		}
--
- 		ret = sprd_adi_read(sadi, phy_reg, &val);
--		hwspin_unlock_irqrestore(sadi->hwlock, &flags);
- 		if (ret)
- 			return ret;
- 
-@@ -241,19 +258,8 @@ static int sprd_adi_transfer_one(struct spi_controller *ctlr,
- 		if (ret)
- 			return ret;
- 
--		virt_reg = sprd_adi_to_vaddr(sadi, phy_reg);
- 		val = *p;
--
--		ret = hwspin_lock_timeout_irqsave(sadi->hwlock,
--						  ADI_HWSPINLOCK_TIMEOUT,
--						  &flags);
--		if (ret) {
--			dev_err(sadi->dev, "get the hw lock failed\n");
--			return ret;
--		}
--
--		ret = sprd_adi_write(sadi, virt_reg, val);
--		hwspin_unlock_irqrestore(sadi->hwlock, &flags);
-+		ret = sprd_adi_write(sadi, phy_reg, val);
- 		if (ret)
- 			return ret;
- 	} else {
--- 
-2.16.2
+try_to_merge_page(), as I added in this patch, doesn't do any page
+migration but merging. It will not cause page migration.
