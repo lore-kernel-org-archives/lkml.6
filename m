@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752720AbeCUQtY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:49:24 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:23968 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751959AbeCUQtV (ORCPT
+        id S1752911AbeCUQtb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:49:31 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:49995 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751959AbeCUQt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:49:21 -0400
+        Wed, 21 Mar 2018 12:49:27 -0400
 From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 To: Wolfram Sang <wsa@the-dreams.de>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
@@ -14,14 +14,16 @@ To: Wolfram Sang <wsa@the-dreams.de>,
         <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v2 0/6] Add different features for I2C
-Date: Wed, 21 Mar 2018 17:48:54 +0100
-Message-ID: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+Subject: [PATCH v2 1/6] i2c: i2c-stm32f7: Add 10-bit address support
+Date: Wed, 21 Mar 2018 17:48:55 +0100
+Message-ID: <1521650940-11651-2-git-send-email-pierre-yves.mordret@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG5NODE2.st.com
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG5NODE2.st.com
  (10.75.127.14)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_08:,,
  signatures=0
@@ -29,33 +31,80 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Append new I2C STM32F7 feature set. This includes 10 bit support, slave
-support, SMBBus protocols support, DMA Support and eventually an I2C recovery
-mechanism.
+This patch adds support for 10-bit device address for STM32F7 I2C
 
+Signed-off-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
   Version history:
-    v1:
+     v1:
         * Initial
-    v2:
-        * Kbuild test robot issue
-        * I2C master recovery mechanism 
+     v2:
 ---
-Pierre-Yves MORDRET (6):
-  i2c: i2c-stm32f7: Add 10-bit address support
-  i2c: i2c-stm32f7: Add slave support
-  i2c: i2c-stm32f7: Add initial SMBus protocols support
-  i2c: i2c-stm32: Add generic DMA API
-  i2c: i2c-stm32f7: Add DMA support
-  i2c: i2c-stm32f7: Implement I2C recovery mechanism
+---
+ drivers/i2c/busses/i2c-stm32f7.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
- drivers/i2c/busses/Kconfig       |    1 +
- drivers/i2c/busses/Makefile      |    3 +-
- drivers/i2c/busses/i2c-stm32.c   |  153 ++++++
- drivers/i2c/busses/i2c-stm32.h   |   37 ++
- drivers/i2c/busses/i2c-stm32f7.c | 1040 +++++++++++++++++++++++++++++++++++++-
- 5 files changed, 1207 insertions(+), 27 deletions(-)
- create mode 100644 drivers/i2c/busses/i2c-stm32.c
-
+diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
+index f273e28..ae0d15c 100644
+--- a/drivers/i2c/busses/i2c-stm32f7.c
++++ b/drivers/i2c/busses/i2c-stm32f7.c
+@@ -65,7 +65,12 @@
+ #define STM32F7_I2C_CR2_NACK			BIT(15)
+ #define STM32F7_I2C_CR2_STOP			BIT(14)
+ #define STM32F7_I2C_CR2_START			BIT(13)
++#define STM32F7_I2C_CR2_HEAD10R			BIT(12)
++#define STM32F7_I2C_CR2_ADD10			BIT(11)
+ #define STM32F7_I2C_CR2_RD_WRN			BIT(10)
++#define STM32F7_I2C_CR2_SADD10_MASK		GENMASK(9, 0)
++#define STM32F7_I2C_CR2_SADD10(n)		(((n) & \
++						STM32F7_I2C_CR2_SADD10_MASK))
+ #define STM32F7_I2C_CR2_SADD7_MASK		GENMASK(7, 1)
+ #define STM32F7_I2C_CR2_SADD7(n)		(((n) & 0x7f) << 1)
+ 
+@@ -176,14 +181,14 @@ struct stm32f7_i2c_timings {
+ 
+ /**
+  * struct stm32f7_i2c_msg - client specific data
+- * @addr: 8-bit slave addr, including r/w bit
++ * @addr: 8-bit or 10-bit slave addr, including r/w bit
+  * @count: number of bytes to be transferred
+  * @buf: data buffer
+  * @result: result of the transfer
+  * @stop: last I2C msg to be sent, i.e. STOP to be generated
+  */
+ struct stm32f7_i2c_msg {
+-	u8 addr;
++	u16 addr;
+ 	u32 count;
+ 	u8 *buf;
+ 	int result;
+@@ -629,8 +634,15 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
+ 		cr2 |= STM32F7_I2C_CR2_RD_WRN;
+ 
+ 	/* Set slave address */
+-	cr2 &= ~STM32F7_I2C_CR2_SADD7_MASK;
+-	cr2 |= STM32F7_I2C_CR2_SADD7(f7_msg->addr);
++	cr2 &= ~(STM32F7_I2C_CR2_HEAD10R | STM32F7_I2C_CR2_ADD10);
++	if (msg->flags & I2C_M_TEN) {
++		cr2 &= ~STM32F7_I2C_CR2_SADD10_MASK;
++		cr2 |= STM32F7_I2C_CR2_SADD10(f7_msg->addr);
++		cr2 |= STM32F7_I2C_CR2_ADD10;
++	} else {
++		cr2 &= ~STM32F7_I2C_CR2_SADD7_MASK;
++		cr2 |= STM32F7_I2C_CR2_SADD7(f7_msg->addr);
++	}
+ 
+ 	/* Set nb bytes to transfer and reload if needed */
+ 	cr2 &= ~(STM32F7_I2C_CR2_NBYTES_MASK | STM32F7_I2C_CR2_RELOAD);
+@@ -798,7 +810,7 @@ static int stm32f7_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 
+ static u32 stm32f7_i2c_func(struct i2c_adapter *adap)
+ {
+-	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR;
+ }
+ 
+ static struct i2c_algorithm stm32f7_i2c_algo = {
 -- 
 2.7.4
