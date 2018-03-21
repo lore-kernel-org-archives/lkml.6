@@ -1,81 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753894AbeCUV4z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:56:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39523 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753772AbeCUV4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:56:54 -0400
-Subject: Re: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases on
- paranoid_entry
-To: Andy Lutomirski <luto@kernel.org>
-Cc: David Laight <David.Laight@aculab.com>,
-        "Chang S. Bae" <chang.seok.bae@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "markus.t.metzger@intel.com" <markus.t.metzger@intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "ravi.v.shankar@intel.com" <ravi.v.shankar@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
- <1521481767-22113-14-git-send-email-chang.seok.bae@intel.com>
- <eb30911b621144fe92e77fd2d9da7efe@AcuMS.aculab.com>
- <191d8212-6740-3131-1653-d057f522843c@zytor.com>
- <CALCETrX0ew6xcbxiKDkpGw8CJsF0TWNZc=GHuVEPbDpfZ-X3ww@mail.gmail.com>
-From: "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <9aa3ef0a-84b5-9806-4213-1b63023e6c5a@zytor.com>
-Date: Wed, 21 Mar 2018 14:56:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753935AbeCUV5q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:57:46 -0400
+Received: from muru.com ([72.249.23.125]:33096 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753816AbeCUV5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:57:37 -0400
+Date: Wed, 21 Mar 2018 14:57:33 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net
+Subject: Re: 4.16-rc5 on Motorola Droid 4
+Message-ID: <20180321215733.GE5799@atomide.com>
+References: <20180318220418.GA22880@amd>
+ <20180320140322.GU5799@atomide.com>
+ <20180320170029.rv3u5wlvqxfl7z2v@earth.universe>
+ <20180321203137.GA23637@amd>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrX0ew6xcbxiKDkpGw8CJsF0TWNZc=GHuVEPbDpfZ-X3ww@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180321203137.GA23637@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/20/18 17:36, Andy Lutomirski wrote:
->>
->> But we also don't need swapgs when we have rdgsbase/wrgsbase available.
->> We can indeed just unconditionally save it (via rdgsbase) into the stack
->> frame and wrgsbase the correct percpu value.  In that case it might be
->> necessary in order to avoid insane complexity to also save/restore the
->> gs selector.
+* Pavel Machek <pavel@ucw.cz> [180321 20:32]:
+> Hi!
 > 
-> This is exactly what the old code did.  I liked the old code better.
+> > > Maybe get somebody to help you locally with the debug cable
+> > > soldering? :)
+> > 
+> > I suppose people from your hackerspace can help you. It's really
+> > easy to do. Soldering can be avoided btw. You can just use a pair
+> > of scissors to cut a USB -> Micro USB cable and use a knife to remove
+> > isolation. Then screw each of the 4 wires into a terminal strip.
+> > There are USB-TTL adapters available, that have an attached cable.
+> > If you also cut the connector from such a cable and connect it to
+> > the other side of the terminal strip you are done. No soldering
+> > involved ;)
 > 
->>
->> Is it going to be faster?  *Probably* not as swapgs is designed to be
->> fast; it does, however, eliminate the need to RDMSR/WRMSR inside the
->> kernel task switch as the user space gsbase will simply live on the
->> stack.  (This is assuming we do this unconditionally on every method of
->> kernel entry, including non-paranoid.  I'm not sure if we ever care
->> about the userspace GS/GSBASE inside a paranoid handler, but if we do it
->> would be rather messy to find if we do this conditionally.
->>
->> Now...
->>
->> +       ALTERNATIVE "jmp .Lparanoid_entry_no_fsgsbase", \
->> +               "RDGSBASE %rdx", X86_FEATURE_FSGSBASE
->> +       READ_KERNEL_GSBASE %rax
->>
->> READ_KERNEL_GSBASE here seems like a Really Bad Name[TM] for this macro,
->> since it seems to imply reading MSR_KERNEL_GS_BASE, rather than finding
->> the current percpu offset.  I would prefer calling it something like
->> FIND_PERCPU_BASE or something like that.
-> 
-> I think we should revert to what the old patches did here.
-> 
+> Hm. How big no-no is connecting USB-TTL adapter to D+/D- pins? Because
+> that's what I could do "easily" and seems to work ;-).
 
-I don't really understand why you want to do it this way.
+Well if the VBUS line is not connected the PMIC is muxed
+to USB carkit mode so the lines go to the UART on the SoC
+through some level shifter. If it works it should not cause
+any issues, the symptoms I saw earlier was corrupted UART
+console and noticed that what worked best for me was 3.3V
+ftdi based devices out of the collection of random pl2303
+and ftdi cables I had around.
 
-1. It means that the location of the user space gs_base is ill-defined,
-   whereas with the SWAPGS it is *always* in the same place.
+I guess somebody could try to measure the uart lines with
+a scope with nothing connected and sending out data from
+droid 4. Or look at the carkit spec for the UART voltage
+levels.
 
-2. It is most likely slower, although I obviously haven't benchmarked
-   it.
+Regards,
 
-	-hpa
+Tony
