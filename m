@@ -1,169 +1,701 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751992AbeCUEjh convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 00:39:37 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:7373 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751680AbeCUEj3 (ORCPT
+        id S1752173AbeCUEl5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 00:41:57 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:27484 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751721AbeCUElw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 00:39:29 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 20 Mar 2018 21:39:28 -0700
-Subject: Re: [PATCH 15/15] mm/hmm: use device driver encoding for HMM pfn v2
-To: <jglisse@redhat.com>, <linux-mm@kvack.org>
-CC: Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>
-References: <20180320020038.3360-1-jglisse@redhat.com>
- <20180320020038.3360-16-jglisse@redhat.com>
-X-Nvconfidentiality: public
-From: John Hubbard <jhubbard@nvidia.com>
-Message-ID: <0a46cec4-3c39-bc2c-90f5-da33981cb8f2@nvidia.com>
-Date: Tue, 20 Mar 2018 21:39:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180320020038.3360-16-jglisse@redhat.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
+        Wed, 21 Mar 2018 00:41:52 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180321044151epoutp01dfc56351fa111f15ee404db40525e9c6~d1cmrWAOW0306603066epoutp01N
+X-AuditID: b6c32a4a-de3ff70000001125-7f-5ab1e28e101c
+From: Maninder Singh <maninder1.s@samsung.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net, minchan@kernel.org,
+        ngupta@vflare.org, sergey.senozhatsky.work@gmail.com,
+        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com, akpm@linux-foundation.org,
+        colin.king@canonical.com
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pankaj.m@samsung.com, a.sahrawat@samsung.com, v.narang@samsung.com,
+        Maninder Singh <maninder1.s@samsung.com>
+Subject: [PATCH 1/1] lz4: Implement lz4 with dynamic offset length.
+Date: Wed, 21 Mar 2018 10:10:42 +0530
+Message-Id: <1521607242-3968-2-git-send-email-maninder1.s@samsung.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNJsWRmVeSWpSXmKPExsWy7bCmum7fo41RBvtfc1hc3J1qMWf9GjaL
+        g1s1LbZv/MZq8Xt1L5vFnPMtLBbdr2QsznTnWty/95PJ4vKuOWwWh+e3sVgs+/qe3WJDyyx2
+        i3tvtjJZPJowicnizYV7LBaHTs5ldBD02LZ7G6vHrIZeNo/ZDRdZPLasvMnkMaH/E6PHzll3
+        2T22HVD1WLznJZPHplWdbB4nZvxm8ejbsgoo+Wkzq8fnTXIBvFGpNhmpiSmpRQqpecn5KZl5
+        6bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAvykplCXmlAKFAhKLi5X07WyK8ktL
+        UhUy8otLbJWiDQ2N9AwNzPWMjIz0TExjrYxMgUoSUjNeXvzNVvBkBWPFmZu/WRoYv7UxdjFy
+        ckgImEg87P3O1sXIxSEksJtR4vyBM0wgCSGBT4wS3XcLIOxvjBJvz1TBNFx6cIUFomEvo8T9
+        1kYo5wujxI8zHWwgVWwCehKrdu0BS4gIdDNJbL17AGwHs8AGRonV1w6zgFQJCzhLrLzQxgpi
+        swioSszd18YOYvMKuEk8X/qbBWKfnMTJY5PBajgF3CXe3l7CCDJIQmAeu8S/R+/YIYpcJP43
+        r2WCsIUlXh3fAhWXknjZDzIUpKGZUeLOiq/MEM4URolPcx9CrbCXeHDjKFAVB9B9mhLrd+lD
+        hG0l5rXNZgaxmQX4JHp/P2ECKZEQ4JXoaBOCKFGVaLm5gRXClpb4/PEjC0SJh8SCF2YQYUeJ
+        tX9uMUOCaBajxNePR5knMMrPQli2gJFxFaNkakFxbnpqsWmBUV5quV5xYm5xaV66XnJ+7iZG
+        cELW8trBuOyczyFGAQ5GJR5eC7GNUUKsiWXFlbmHGCU4mJVEeA9FAIV4UxIrq1KL8uOLSnNS
+        iw8xmgJDdiKzlGhyPjBb5JXEG5pYGpiYmZkbGhhYmiiJ8zoGukQJCaQnlqRmp6YWpBbB9DFx
+        cEo1MKZNOqN6keNp8YKVErfVrzzmCl565tkc5pSdNtfEdn1amW1TwdtwRqTy+7+9j+u/vVHs
+        /+gkb5AbtNCH/2Cz8Ica+2lqqXcPn/k8ncdvicn1Xj0fuwlb7xRdllBcb/ROutr/mfIxsZvq
+        U9NqhSpePH3378uq8Oju0/r1AgLRR77qc85cZL6//6wSS3FGoqEWc1FxIgCqbRK/3gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsWy7bCSvG7vo41RBqtXqFhc3J1qMWf9GjaL
+        g1s1LbZv/MZq8Xt1L5vFnPMtLBbdr2QsznTnWty/95PJ4vKuOWwWh+e3sVgs+/qe3WJDyyx2
+        i3tvtjJZPJowicnizYV7LBaHTs5ldBD02LZ7G6vHrIZeNo/ZDRdZPLasvMnkMaH/E6PHzll3
+        2T22HVD1WLznJZPHplWdbB4nZvxm8ejbsgoo+Wkzq8fnTXIBvFFcNimpOZllqUX6dglcGS8v
+        /mYreLKCseLMzd8sDYzf2hi7GDk5JARMJC49uMLSxcjFISSwm1Fi5ZO97BAJaYmf/96zQNjC
+        Eiv/PQeLCwl8YpS4uTQSxGYT0JNYtWsPWLOIwEwmiZ0ntzODOMwC2xgldtxaANYhLOAssfJC
+        GyuIzSKgKjF3XxtYnFfATeL50t9QG+QkTh6bDFbDKeAu8fb2EkaIbW4SPyZeZJ/AyLeAkWEV
+        o2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7uJkZwnGhp7mC8vCT+EKMAB6MSD+8EiY1RQqyJ
+        ZcWVuYcYJTiYlUR4D0UAhXhTEiurUovy44tKc1KLDzFKc7AoifM+zTsWKSSQnliSmp2aWpBa
+        BJNl4uCUamCUvfM3qaEpzHyb/+NDL9y6TezebHq+daetYcuCDm8N3UjGK9u+/jnb898gvHXT
+        ybLzHW13H8ZJWglqv3t04aqz0jMP67Xr1t1YHrHw/arL9r3Xc85NjVpq63oj5s8xl5k1pc/8
+        xF13i384xDxh27zK/tQ960zDnkwWz0zbEq10JmLFFPUDvzb3KbEUZyQaajEXFScCAAVw5qmP
+        AgAA
+X-CMS-MailID: 20180321044149epcas5p12cba1afa5fc0f493a47fe20c4a7394bd
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+X-MTR: 20180321044149epcas5p12cba1afa5fc0f493a47fe20c4a7394bd
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180321044149epcas5p12cba1afa5fc0f493a47fe20c4a7394bd
+X-RootMTR: 20180321044149epcas5p12cba1afa5fc0f493a47fe20c4a7394bd
+References: <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
+        <CGME20180321044149epcas5p12cba1afa5fc0f493a47fe20c4a7394bd@epcas5p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/19/2018 07:00 PM, jglisse@redhat.com wrote:
-> From: Jérôme Glisse <jglisse@redhat.com>
-> 
-> User of hmm_vma_fault() and hmm_vma_get_pfns() provide a flags array
-> and pfn shift value allowing them to define their own encoding for HMM
-> pfn that are fill inside the pfns array of the hmm_range struct. With
-> this device driver can get pfn that match their own private encoding
-> out of HMM without having to do any conversion.
-> 
-> Changed since v1:
->   - Split flags and special values for clarification
->   - Improved comments and provide examples
-> 
-> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> ---
->  include/linux/hmm.h | 130 +++++++++++++++++++++++++++++++++++++---------------
->  mm/hmm.c            |  85 +++++++++++++++++++---------------
->  2 files changed, 142 insertions(+), 73 deletions(-)
-> 
-> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-> index 0f7ea3074175..5d26e0a223d9 100644
-> --- a/include/linux/hmm.h
-> +++ b/include/linux/hmm.h
-> @@ -80,68 +80,145 @@
->  struct hmm;
->  
->  /*
-> + * hmm_pfn_flag_e - HMM flag enums
-> + *
->   * Flags:
->   * HMM_PFN_VALID: pfn is valid. It has, at least, read permission.
->   * HMM_PFN_WRITE: CPU page table has write permission set
-> + * HMM_PFN_DEVICE_PRIVATE: private device memory (ZONE_DEVICE)
-> + *
-> + * The driver provide a flags array, if driver valid bit for an entry is bit
-> + * 3 ie (entry & (1 << 3)) is true if entry is valid then driver must provide
-> + * an array in hmm_range.flags with hmm_range.flags[HMM_PFN_VALID] == 1 << 3.
-> + * Same logic apply to all flags. This is same idea as vm_page_prot in vma
-> + * except that this is per device driver rather than per architecture.
+LZ4 specification defines 2 byte offset length for 64 KB data.
+But in case of ZRAM we compress data per page and in most of
+architecture PAGE_SIZE is 4KB. So we can decide offset length based
+on actual offset value. For this we can reserve 1 bit to decide offset
+length (1 byte or 2 byte). 2 byte required only if ofsset is greater than 127,
+else 1 byte is enough.
 
-Hi Jerome,
+With this new implementation new offset value can be at MAX 32 KB.
 
-If we go with this approach--and I hope not, I'll try to talk you down from the
-ledge, in a moment--then maybe we should add the following to the comments: 
+Thus we can save more memory for compressed data.
 
-"There is only one bit ever set in each hmm_range.flags[entry]." 
+results checked with new implementation:-
+LZO
+=======
+orig_data_size: 78917632
+compr_data_size: 15894668
+mem_used_total: 17117184
 
-Or maybe we'll get pushback, that the code shows that already, but IMHO this is 
-strange way to do things (especially when there is a much easier way), and deserves 
-that extra bit of helpful documentation.
+LZ4
+========
+orig_data_size: 78917632
+compr_data_size: 16310717
+mem_used_total: 17592320
 
-More below...
+LZ4_DYN
+=======
+orig_data_size: 78917632
+compr_data_size: 15520506
+mem_used_total: 16748544
 
-> + */
-> +enum hmm_pfn_flag_e {
-> +	HMM_PFN_VALID = 0,
-> +	HMM_PFN_WRITE,
-> +	HMM_PFN_DEVICE_PRIVATE,
-> +	HMM_PFN_FLAG_MAX
-> +};
-> +
-> +/*
-> + * hmm_pfn_value_e - HMM pfn special value
-> + *
-> + * Flags:
->   * HMM_PFN_ERROR: corresponding CPU page table entry points to poisoned memory
-> + * HMM_PFN_NONE: corresponding CPU page table entry is pte_none()
->   * HMM_PFN_SPECIAL: corresponding CPU page table entry is special; i.e., the
->   *      result of vm_insert_pfn() or vm_insert_page(). Therefore, it should not
->   *      be mirrored by a device, because the entry will never have HMM_PFN_VALID
->   *      set and the pfn value is undefined.
-> - * HMM_PFN_DEVICE_PRIVATE: unaddressable device memory (ZONE_DEVICE)
-> + *
-> + * Driver provide entry value for none entry, error entry and special entry,
-> + * driver can alias (ie use same value for error and special for instance). It
-> + * should not alias none and error or special.
-> + *
-> + * HMM pfn value returned by hmm_vma_get_pfns() or hmm_vma_fault() will be:
-> + * hmm_range.values[HMM_PFN_ERROR] if CPU page table entry is poisonous,
-> + * hmm_range.values[HMM_PFN_NONE] if there is no CPU page table
-> + * hmm_range.values[HMM_PFN_SPECIAL] if CPU page table entry is a special one
->   */
-> -#define HMM_PFN_VALID (1 << 0)
-> -#define HMM_PFN_WRITE (1 << 1)
-> -#define HMM_PFN_ERROR (1 << 2)
-> -#define HMM_PFN_SPECIAL (1 << 3)
-> -#define HMM_PFN_DEVICE_PRIVATE (1 << 4)
-> -#define HMM_PFN_SHIFT 5
-> +enum hmm_pfn_value_e {
-> +	HMM_PFN_ERROR,
-> +	HMM_PFN_NONE,
-> +	HMM_PFN_SPECIAL,
-> +	HMM_PFN_VALUE_MAX
-> +};
+Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+Signed-off-by: Vaneet Narang <v.narang@samsung.com>
+---
+ crypto/lz4.c               |   64 ++++++++++++++++++++++++++++++++-
+ drivers/block/zram/zcomp.c |    4 ++
+ fs/pstore/platform.c       |    2 +-
+ include/linux/lz4.h        |   15 ++++++--
+ lib/decompress_unlz4.c     |    2 +-
+ lib/lz4/lz4_compress.c     |   84 +++++++++++++++++++++++++++++++++++--------
+ lib/lz4/lz4_decompress.c   |   56 ++++++++++++++++++++---------
+ lib/lz4/lz4defs.h          |   11 ++++++
+ 8 files changed, 197 insertions(+), 41 deletions(-)
 
-I can think of perhaps two good solid ways to get what you want, without
-moving to what I consider an unnecessary excursion into arrays of flags. 
-If I understand correctly, you want to let each architecture
-specify which bit to use for each of the above HMM_PFN_* flags. 
-
-The way you have it now, the code does things like this:
-
-        cpu_flags & range->flags[HMM_PFN_WRITE]
-
-but that array entry is mostly empty space, and it's confusing. It would
-be nicer to see:
-
-        cpu_flags & HMM_PFN_WRITE
-
-...which you can easily do, by defining HMM_PFN_WRITE and friends in an
-arch-specific header file.
-
-The other way to make this more readable would be to use helper routines
-similar to what the vm_pgprot* routines do:
-
-static pgprot_t vm_pgprot_modify(pgprot_t oldprot, unsigned long vm_flags)
-{
-	return pgprot_modify(oldprot, vm_get_page_prot(vm_flags));
-}
-
-...but that's also unnecessary.
-
-Let's just keep it simple, and go back to the bitmap flags!
-
-thanks,
+diff --git a/crypto/lz4.c b/crypto/lz4.c
+index 2ce2660..f1a8a20 100644
+--- a/crypto/lz4.c
++++ b/crypto/lz4.c
+@@ -67,7 +67,20 @@ static int __lz4_compress_crypto(const u8 *src, unsigned int slen,
+ 				 u8 *dst, unsigned int *dlen, void *ctx)
+ {
+ 	int out_len = LZ4_compress_default(src, dst,
+-		slen, *dlen, ctx);
++		slen, *dlen, ctx, false);
++
++	if (!out_len)
++		return -EINVAL;
++
++	*dlen = out_len;
++	return 0;
++}
++
++static int __lz4_compress_crypto_dynamic(const u8 *src, unsigned int slen,
++				 u8 *dst, unsigned int *dlen, void *ctx)
++{
++	int out_len = LZ4_compress_default(src, dst,
++		slen, *dlen, ctx, true);
+ 
+ 	if (!out_len)
+ 		return -EINVAL;
+@@ -91,10 +104,30 @@ static int lz4_compress_crypto(struct crypto_tfm *tfm, const u8 *src,
+ 	return __lz4_compress_crypto(src, slen, dst, dlen, ctx->lz4_comp_mem);
+ }
+ 
++static int lz4_compress_crypto_dynamic(struct crypto_tfm *tfm, const u8 *src,
++			       unsigned int slen, u8 *dst, unsigned int *dlen)
++{
++	struct lz4_ctx *ctx = crypto_tfm_ctx(tfm);
++
++	return __lz4_compress_crypto_dynamic(src, slen, dst, dlen, ctx->lz4_comp_mem);
++}
++
+ static int __lz4_decompress_crypto(const u8 *src, unsigned int slen,
+ 				   u8 *dst, unsigned int *dlen, void *ctx)
+ {
+-	int out_len = LZ4_decompress_safe(src, dst, slen, *dlen);
++	int out_len = LZ4_decompress_safe(src, dst, slen, *dlen, false);
++
++	if (out_len < 0)
++		return -EINVAL;
++
++	*dlen = out_len;
++	return 0;
++}
++
++static int __lz4_decompress_crypto_dynamic(const u8 *src, unsigned int slen,
++				   u8 *dst, unsigned int *dlen, void *ctx)
++{
++	int out_len = LZ4_decompress_safe(src, dst, slen, *dlen, true);
+ 
+ 	if (out_len < 0)
+ 		return -EINVAL;
+@@ -117,6 +150,13 @@ static int lz4_decompress_crypto(struct crypto_tfm *tfm, const u8 *src,
+ 	return __lz4_decompress_crypto(src, slen, dst, dlen, NULL);
+ }
+ 
++static int lz4_decompress_crypto_dynamic(struct crypto_tfm *tfm, const u8 *src,
++				 unsigned int slen, u8 *dst,
++				 unsigned int *dlen)
++{
++	return __lz4_decompress_crypto_dynamic(src, slen, dst, dlen, NULL);
++}
++
+ static struct crypto_alg alg_lz4 = {
+ 	.cra_name		= "lz4",
+ 	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
+@@ -130,6 +170,19 @@ static int lz4_decompress_crypto(struct crypto_tfm *tfm, const u8 *src,
+ 	.coa_decompress		= lz4_decompress_crypto } }
+ };
+ 
++static struct crypto_alg alg_lz4_dyn = {
++	.cra_name		= "lz4_dyn",
++	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
++	.cra_ctxsize		= sizeof(struct lz4_ctx),
++	.cra_module		= THIS_MODULE,
++	.cra_list		= LIST_HEAD_INIT(alg_lz4_dyn.cra_list),
++	.cra_init		= lz4_init,
++	.cra_exit		= lz4_exit,
++	.cra_u			= { .compress = {
++	.coa_compress		= lz4_compress_crypto_dynamic,
++	.coa_decompress		= lz4_decompress_crypto_dynamic } }
++};
++
+ static struct scomp_alg scomp = {
+ 	.alloc_ctx		= lz4_alloc_ctx,
+ 	.free_ctx		= lz4_free_ctx,
+@@ -150,9 +203,16 @@ static int __init lz4_mod_init(void)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = crypto_register_alg(&alg_lz4_dyn);
++	if (ret) {
++		crypto_unregister_alg(&alg_lz4);
++		return ret;
++	}
++
+ 	ret = crypto_register_scomp(&scomp);
+ 	if (ret) {
+ 		crypto_unregister_alg(&alg_lz4);
++		crypto_unregister_alg(&alg_lz4_dyn);
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
+index 4ed0a78..5bc5aab 100644
+--- a/drivers/block/zram/zcomp.c
++++ b/drivers/block/zram/zcomp.c
+@@ -17,11 +17,15 @@
+ #include <linux/crypto.h>
+ 
+ #include "zcomp.h"
++#define KB	(1 << 10)
+ 
+ static const char * const backends[] = {
+ 	"lzo",
+ #if IS_ENABLED(CONFIG_CRYPTO_LZ4)
+ 	"lz4",
++#if (PAGE_SIZE < (32 * KB))
++	"lz4_dyn",
++#endif
+ #endif
+ #if IS_ENABLED(CONFIG_CRYPTO_LZ4HC)
+ 	"lz4hc",
+diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+index 6910321..2b03449 100644
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -342,7 +342,7 @@ static int compress_lz4(const void *in, void *out, size_t inlen, size_t outlen)
+ {
+ 	int ret;
+ 
+-	ret = LZ4_compress_default(in, out, inlen, outlen, workspace);
++	ret = LZ4_compress_default(in, out, inlen, outlen, workspace, false);
+ 	if (!ret) {
+ 		pr_err("LZ4_compress_default error; compression failed!\n");
+ 		return -EIO;
+diff --git a/include/linux/lz4.h b/include/linux/lz4.h
+index 394e3d9..08bb95d 100644
+--- a/include/linux/lz4.h
++++ b/include/linux/lz4.h
+@@ -181,6 +181,9 @@ static inline int LZ4_compressBound(size_t isize)
+  *	which must be already allocated
+  * @wrkmem: address of the working memory.
+  *	This requires 'workmem' of LZ4_MEM_COMPRESS.
++ * @dynoffset: 1 or 0.
++ *  1 specifies dynamic offset. (1 byte or 2 byte based on offset value),
++ *  0 specifies normal offset.  (2 bytes for each offset value).
+  *
+  * Compresses 'sourceSize' bytes from buffer 'source'
+  * into already allocated 'dest' buffer of size 'maxOutputSize'.
+@@ -195,7 +198,7 @@ static inline int LZ4_compressBound(size_t isize)
+  *	(necessarily <= maxOutputSize) or 0 if compression fails
+  */
+ int LZ4_compress_default(const char *source, char *dest, int inputSize,
+-	int maxOutputSize, void *wrkmem);
++	int maxOutputSize, void *wrkmem, bool dynOffset);
+ 
+ /**
+  * LZ4_compress_fast() - As LZ4_compress_default providing an acceleration param
+@@ -207,6 +210,9 @@ int LZ4_compress_default(const char *source, char *dest, int inputSize,
+  * @acceleration: acceleration factor
+  * @wrkmem: address of the working memory.
+  *	This requires 'workmem' of LZ4_MEM_COMPRESS.
++ * @dynoffset: 1 or 0.
++ *  1 specifies dynamic offset. (1 byte or 2 byte based on offset value),
++ *  0 specifies normal offset.  (2 bytes for each offset value).
+  *
+  * Same as LZ4_compress_default(), but allows to select an "acceleration"
+  * factor. The larger the acceleration value, the faster the algorithm,
+@@ -219,7 +225,7 @@ int LZ4_compress_default(const char *source, char *dest, int inputSize,
+  *	(necessarily <= maxOutputSize) or 0 if compression fails
+  */
+ int LZ4_compress_fast(const char *source, char *dest, int inputSize,
+-	int maxOutputSize, int acceleration, void *wrkmem);
++	int maxOutputSize, int acceleration, void *wrkmem, bool dynOffset);
+ 
+ /**
+  * LZ4_compress_destSize() - Compress as much data as possible
+@@ -277,6 +283,9 @@ int LZ4_compress_destSize(const char *source, char *dest, int *sourceSizePtr,
+  *	which must be already allocated
+  * @compressedSize: is the precise full size of the compressed block
+  * @maxDecompressedSize: is the size of 'dest' buffer
++ * @dynoffset: 1 or 0.
++ *  1 specifies dynamic offset. (1 byte or 2 byte based on offset value),
++ *  0 specifies normal offset.  (2 bytes for each offset value).
+  *
+  * Decompresses data fom 'source' into 'dest'.
+  * If the source stream is detected malformed, the function will
+@@ -290,7 +299,7 @@ int LZ4_compress_destSize(const char *source, char *dest, int *sourceSizePtr,
+  *	or a negative result in case of error
+  */
+ int LZ4_decompress_safe(const char *source, char *dest, int compressedSize,
+-	int maxDecompressedSize);
++	int maxDecompressedSize, bool dynOffset);
+ 
+ /**
+  * LZ4_decompress_safe_partial() - Decompress a block of size 'compressedSize'
+diff --git a/lib/decompress_unlz4.c b/lib/decompress_unlz4.c
+index 1b0baf3..8be2faa 100644
+--- a/lib/decompress_unlz4.c
++++ b/lib/decompress_unlz4.c
+@@ -158,7 +158,7 @@ STATIC inline int INIT unlz4(u8 *input, long in_len,
+ #else
+ 		dest_len = uncomp_chunksize;
+ 
+-		ret = LZ4_decompress_safe(inp, outp, chunksize, dest_len);
++		ret = LZ4_decompress_safe(inp, outp, chunksize, dest_len, false);
+ 		dest_len = ret;
+ #endif
+ 		if (ret < 0) {
+diff --git a/lib/lz4/lz4_compress.c b/lib/lz4/lz4_compress.c
+index cc7b6d4..185c358 100644
+--- a/lib/lz4/lz4_compress.c
++++ b/lib/lz4/lz4_compress.c
+@@ -183,7 +183,8 @@ static FORCE_INLINE int LZ4_compress_generic(
+ 	const tableType_t tableType,
+ 	const dict_directive dict,
+ 	const dictIssue_directive dictIssue,
+-	const U32 acceleration)
++	const U32 acceleration,
++	const Dynamic_Offset dynOffset)
+ {
+ 	const BYTE *ip = (const BYTE *) source;
+ 	const BYTE *base;
+@@ -199,6 +200,7 @@ static FORCE_INLINE int LZ4_compress_generic(
+ 
+ 	BYTE *op = (BYTE *) dest;
+ 	BYTE * const olimit = op + maxOutputSize;
++	int max_distance = dynOffset ? MAX_DISTANCE_DYN : MAX_DISTANCE;
+ 
+ 	U32 forwardH;
+ 	size_t refDelta = 0;
+@@ -245,6 +247,7 @@ static FORCE_INLINE int LZ4_compress_generic(
+ 	for ( ; ; ) {
+ 		const BYTE *match;
+ 		BYTE *token;
++		int curr_offset;
+ 
+ 		/* Find a match */
+ 		{
+@@ -285,7 +288,7 @@ static FORCE_INLINE int LZ4_compress_generic(
+ 					: 0)
+ 				|| ((tableType == byU16)
+ 					? 0
+-					: (match + MAX_DISTANCE < ip))
++					: (match + max_distance < ip))
+ 				|| (LZ4_read32(match + refDelta)
+ 					!= LZ4_read32(ip)));
+ 		}
+@@ -328,8 +331,26 @@ static FORCE_INLINE int LZ4_compress_generic(
+ 
+ _next_match:
+ 		/* Encode Offset */
+-		LZ4_writeLE16(op, (U16)(ip - match));
+-		op += 2;
++		if (dynOffset) {
++			curr_offset = (U16)(ip - match);
++
++			/*
++			 * If Ofsset is greater than 127, we need 2 bytes
++			 * to store it. Otherwise 1 byte is enough.
++			 */
++			if (curr_offset > 127) {
++				curr_offset = (curr_offset << 1) | DYN_BIT;
++				LZ4_writeLE16(op, (U16)curr_offset);
++				op += 2;
++			} else {
++				curr_offset = curr_offset << 1;
++				*op = (BYTE)curr_offset;
++				op++;
++			}
++		} else {
++			LZ4_writeLE16(op, (U16)(ip - match));
++			op += 2;
++		}
+ 
+ 		/* Encode MatchLength */
+ 		{
+@@ -480,39 +501,70 @@ static int LZ4_compress_fast_extState(
+ 			return LZ4_compress_generic(ctx, source,
+ 				dest, inputSize, 0,
+ 				noLimit, byU16, noDict,
+-				noDictIssue, acceleration);
++				noDictIssue, acceleration, NoDynOffset);
+ 		else
+ 			return LZ4_compress_generic(ctx, source,
+ 				dest, inputSize, 0,
+ 				noLimit, tableType, noDict,
+-				noDictIssue, acceleration);
++				noDictIssue, acceleration, NoDynOffset);
+ 	} else {
+ 		if (inputSize < LZ4_64Klimit)
+ 			return LZ4_compress_generic(ctx, source,
+ 				dest, inputSize,
+ 				maxOutputSize, limitedOutput, byU16, noDict,
+-				noDictIssue, acceleration);
++				noDictIssue, acceleration, NoDynOffset);
+ 		else
+ 			return LZ4_compress_generic(ctx, source,
+ 				dest, inputSize,
+ 				maxOutputSize, limitedOutput, tableType, noDict,
+-				noDictIssue, acceleration);
++				noDictIssue, acceleration, NoDynOffset);
+ 	}
+ }
+ 
++static int LZ4_compress_fast_extState_dynamic(
++	void *state,
++	const char *source,
++	char *dest,
++	int inputSize,
++	int maxOutputSize,
++	int acceleration)
++{
++	LZ4_stream_t_internal *ctx = &((LZ4_stream_t *)state)->internal_donotuse;
++
++	LZ4_resetStream((LZ4_stream_t *)state);
++
++	if (acceleration < 1)
++		acceleration = LZ4_ACCELERATION_DEFAULT;
++
++	if (maxOutputSize >= LZ4_COMPRESSBOUND(inputSize))
++		return LZ4_compress_generic(ctx, source,
++			dest, inputSize, 0,
++			noLimit, byU16, noDict,
++			noDictIssue, acceleration, DynOffset);
++	else
++		return LZ4_compress_generic(ctx, source,
++			dest, inputSize,
++			maxOutputSize, limitedOutput, byU16, noDict,
++			noDictIssue, acceleration, DynOffset);
++}
++
+ int LZ4_compress_fast(const char *source, char *dest, int inputSize,
+-	int maxOutputSize, int acceleration, void *wrkmem)
++	int maxOutputSize, int acceleration, void *wrkmem, bool dynOffset)
+ {
+-	return LZ4_compress_fast_extState(wrkmem, source, dest, inputSize,
++	if (!dynOffset)
++		return LZ4_compress_fast_extState(wrkmem, source, dest, inputSize,
++			maxOutputSize, acceleration);
++
++	return LZ4_compress_fast_extState_dynamic(wrkmem, source, dest, inputSize,
+ 		maxOutputSize, acceleration);
+ }
+ EXPORT_SYMBOL(LZ4_compress_fast);
+ 
+ int LZ4_compress_default(const char *source, char *dest, int inputSize,
+-	int maxOutputSize, void *wrkmem)
++	int maxOutputSize, void *wrkmem, bool dynOffset)
+ {
+ 	return LZ4_compress_fast(source, dest, inputSize,
+-		maxOutputSize, LZ4_ACCELERATION_DEFAULT, wrkmem);
++		maxOutputSize, LZ4_ACCELERATION_DEFAULT, wrkmem, dynOffset);
+ }
+ EXPORT_SYMBOL(LZ4_compress_default);
+ 
+@@ -900,12 +952,12 @@ int LZ4_compress_fast_continue(LZ4_stream_t *LZ4_stream, const char *source,
+ 			result = LZ4_compress_generic(
+ 				streamPtr, source, dest, inputSize,
+ 				maxOutputSize, limitedOutput, byU32,
+-				withPrefix64k, dictSmall, acceleration);
++				withPrefix64k, dictSmall, acceleration, NoDynOffset);
+ 		} else {
+ 			result = LZ4_compress_generic(
+ 				streamPtr, source, dest, inputSize,
+ 				maxOutputSize, limitedOutput, byU32,
+-				withPrefix64k, noDictIssue, acceleration);
++				withPrefix64k, noDictIssue, acceleration, NoDynOffset);
+ 		}
+ 		streamPtr->dictSize += (U32)inputSize;
+ 		streamPtr->currentOffset += (U32)inputSize;
+@@ -921,12 +973,12 @@ int LZ4_compress_fast_continue(LZ4_stream_t *LZ4_stream, const char *source,
+ 			result = LZ4_compress_generic(
+ 				streamPtr, source, dest, inputSize,
+ 				maxOutputSize, limitedOutput, byU32,
+-				usingExtDict, dictSmall, acceleration);
++				usingExtDict, dictSmall, acceleration, NoDynOffset);
+ 		} else {
+ 			result = LZ4_compress_generic(
+ 				streamPtr, source, dest, inputSize,
+ 				maxOutputSize, limitedOutput, byU32,
+-				usingExtDict, noDictIssue, acceleration);
++				usingExtDict, noDictIssue, acceleration, NoDynOffset);
+ 		}
+ 		streamPtr->dictionary = (const BYTE *)source;
+ 		streamPtr->dictSize = (U32)inputSize;
+diff --git a/lib/lz4/lz4_decompress.c b/lib/lz4/lz4_decompress.c
+index 141734d..337a828 100644
+--- a/lib/lz4/lz4_decompress.c
++++ b/lib/lz4/lz4_decompress.c
+@@ -71,7 +71,9 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 	 /* only if dict == usingExtDict */
+ 	 const BYTE * const dictStart,
+ 	 /* note : = 0 if noDict */
+-	 const size_t dictSize
++	 const size_t dictSize,
++	 /* offset == 1; dynamic offset */
++	 const Dynamic_Offset dynOffset
+ 	 )
+ {
+ 	/* Local Variables */
+@@ -141,8 +143,8 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 		/* copy literals */
+ 		cpy = op + length;
+ 		if (((endOnInput) && ((cpy > (partialDecoding ? oexit : oend - MFLIMIT))
+-			|| (ip + length > iend - (2 + 1 + LASTLITERALS))))
+-			|| ((!endOnInput) && (cpy > oend - WILDCOPYLENGTH))) {
++			|| (ip + length > iend - (2 + LASTLITERALS))))
++			|| ((!endOnInput) && (cpy > oend - WILDCOPYLENGTH - 1))) {
+ 			if (partialDecoding) {
+ 				if (cpy > oend) {
+ 					/*
+@@ -188,13 +190,31 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ 			break;
+ 		}
+ 
+-		LZ4_wildCopy(op, ip, cpy);
++		if (dynOffset && length < 4)
++			LZ4_copy4(op, ip);
++		else
++			LZ4_wildCopy(op, ip, cpy);
++
+ 		ip += length;
+ 		op = cpy;
+ 
+ 		/* get offset */
+-		offset = LZ4_readLE16(ip);
+-		ip += 2;
++		if (dynOffset) {
++			/*
++			 * Check if DYN_BIT is set, means 2 Byte Offset,
++			 * else 1 Byte Offset.
++			 */
++			if (*ip & DYN_BIT) {
++				offset = LZ4_readLE16(ip) >> 1;
++				ip += 2;
++			} else {
++				offset = *ip >> 1;
++				ip += 1;
++			}
++		} else {
++			offset = LZ4_readLE16(ip);
++			ip += 2;
++		}
+ 		match = op - offset;
+ 
+ 		if ((checkOffset) && (unlikely(match < lowLimit))) {
+@@ -335,11 +355,11 @@ static FORCE_INLINE int LZ4_decompress_generic(
+ }
+ 
+ int LZ4_decompress_safe(const char *source, char *dest,
+-	int compressedSize, int maxDecompressedSize)
++	int compressedSize, int maxDecompressedSize, bool dynOffset)
+ {
+ 	return LZ4_decompress_generic(source, dest, compressedSize,
+ 		maxDecompressedSize, endOnInputSize, full, 0,
+-		noDict, (BYTE *)dest, NULL, 0);
++		noDict, (BYTE *)dest, NULL, 0, dynOffset);
+ }
+ 
+ int LZ4_decompress_safe_partial(const char *source, char *dest,
+@@ -347,14 +367,14 @@ int LZ4_decompress_safe_partial(const char *source, char *dest,
+ {
+ 	return LZ4_decompress_generic(source, dest, compressedSize,
+ 		maxDecompressedSize, endOnInputSize, partial,
+-		targetOutputSize, noDict, (BYTE *)dest, NULL, 0);
++		targetOutputSize, noDict, (BYTE *)dest, NULL, 0, NoDynOffset);
+ }
+ 
+ int LZ4_decompress_fast(const char *source, char *dest, int originalSize)
+ {
+ 	return LZ4_decompress_generic(source, dest, 0, originalSize,
+ 		endOnOutputSize, full, 0, withPrefix64k,
+-		(BYTE *)(dest - 64 * KB), NULL, 64 * KB);
++		(BYTE *)(dest - 64 * KB), NULL, 64 * KB, NoDynOffset);
+ }
+ 
+ int LZ4_setStreamDecode(LZ4_streamDecode_t *LZ4_streamDecode,
+@@ -392,7 +412,7 @@ int LZ4_decompress_safe_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+ 			endOnInputSize, full, 0,
+ 			usingExtDict, lz4sd->prefixEnd - lz4sd->prefixSize,
+ 			lz4sd->externalDict,
+-			lz4sd->extDictSize);
++			lz4sd->extDictSize, NoDynOffset);
+ 
+ 		if (result <= 0)
+ 			return result;
+@@ -406,7 +426,7 @@ int LZ4_decompress_safe_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+ 			compressedSize, maxOutputSize,
+ 			endOnInputSize, full, 0,
+ 			usingExtDict, (BYTE *)dest,
+-			lz4sd->externalDict, lz4sd->extDictSize);
++			lz4sd->externalDict, lz4sd->extDictSize, NoDynOffset);
+ 		if (result <= 0)
+ 			return result;
+ 		lz4sd->prefixSize = result;
+@@ -427,7 +447,7 @@ int LZ4_decompress_fast_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+ 			endOnOutputSize, full, 0,
+ 			usingExtDict,
+ 			lz4sd->prefixEnd - lz4sd->prefixSize,
+-			lz4sd->externalDict, lz4sd->extDictSize);
++			lz4sd->externalDict, lz4sd->extDictSize, NoDynOffset);
+ 
+ 		if (result <= 0)
+ 			return result;
+@@ -440,7 +460,7 @@ int LZ4_decompress_fast_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+ 		result = LZ4_decompress_generic(source, dest, 0, originalSize,
+ 			endOnOutputSize, full, 0,
+ 			usingExtDict, (BYTE *)dest,
+-			lz4sd->externalDict, lz4sd->extDictSize);
++			lz4sd->externalDict, lz4sd->extDictSize, NoDynOffset);
+ 		if (result <= 0)
+ 			return result;
+ 		lz4sd->prefixSize = originalSize;
+@@ -463,19 +483,19 @@ static FORCE_INLINE int LZ4_decompress_usingDict_generic(const char *source,
+ 	if (dictSize == 0)
+ 		return LZ4_decompress_generic(source, dest,
+ 			compressedSize, maxOutputSize, safe, full, 0,
+-			noDict, (BYTE *)dest, NULL, 0);
++			noDict, (BYTE *)dest, NULL, 0, NoDynOffset);
+ 	if (dictStart + dictSize == dest) {
+ 		if (dictSize >= (int)(64 * KB - 1))
+ 			return LZ4_decompress_generic(source, dest,
+ 				compressedSize, maxOutputSize, safe, full, 0,
+-				withPrefix64k, (BYTE *)dest - 64 * KB, NULL, 0);
++				withPrefix64k, (BYTE *)dest - 64 * KB, NULL, 0, NoDynOffset);
+ 		return LZ4_decompress_generic(source, dest, compressedSize,
+ 			maxOutputSize, safe, full, 0, noDict,
+-			(BYTE *)dest - dictSize, NULL, 0);
++			(BYTE *)dest - dictSize, NULL, 0, NoDynOffset);
+ 	}
+ 	return LZ4_decompress_generic(source, dest, compressedSize,
+ 		maxOutputSize, safe, full, 0, usingExtDict,
+-		(BYTE *)dest, (const BYTE *)dictStart, dictSize);
++		(BYTE *)dest, (const BYTE *)dictStart, dictSize, NoDynOffset);
+ }
+ 
+ int LZ4_decompress_safe_usingDict(const char *source, char *dest,
+diff --git a/lib/lz4/lz4defs.h b/lib/lz4/lz4defs.h
+index 00a0b58..9451a73 100644
+--- a/lib/lz4/lz4defs.h
++++ b/lib/lz4/lz4defs.h
+@@ -75,6 +75,7 @@
+ #define WILDCOPYLENGTH 8
+ #define LASTLITERALS 5
+ #define MFLIMIT (WILDCOPYLENGTH + MINMATCH)
++#define DYN_BIT 0x1
+ 
+ /* Increase this value ==> compression run slower on incompressible data */
+ #define LZ4_SKIPTRIGGER 6
+@@ -87,6 +88,7 @@
+ 
+ #define MAXD_LOG 16
+ #define MAX_DISTANCE ((1 << MAXD_LOG) - 1)
++#define MAX_DISTANCE_DYN ((1 << (MAXD_LOG - 1)) - 1)
+ #define STEPSIZE sizeof(size_t)
+ 
+ #define ML_BITS	4
+@@ -147,6 +149,13 @@ static FORCE_INLINE void LZ4_copy8(void *dst, const void *src)
+ #endif
+ }
+ 
++static FORCE_INLINE void LZ4_copy4(void *dst, const void *src)
++{
++	U32 a = get_unaligned((const U32 *)src);
++
++	put_unaligned(a, (U32 *)dst);
++}
++
+ /*
+  * customized variant of memcpy,
+  * which can overwrite up to 7 bytes beyond dstEnd
+@@ -224,4 +233,6 @@ static FORCE_INLINE unsigned int LZ4_count(
+ typedef enum { endOnOutputSize = 0, endOnInputSize = 1 } endCondition_directive;
+ typedef enum { full = 0, partial = 1 } earlyEnd_directive;
+ 
++typedef enum { NoDynOffset = 0, DynOffset = 1 } Dynamic_Offset;
++
+ #endif
 -- 
-John Hubbard
-NVIDIA
+1.7.1
