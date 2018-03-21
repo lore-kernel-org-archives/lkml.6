@@ -1,72 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeCUMKg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 08:10:36 -0400
-Received: from zimbra1.kalray.eu ([92.103.151.219]:40052 "EHLO
-        zimbra1.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751712AbeCUMKd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 08:10:33 -0400
-DKIM-Filter: OpenDKIM Filter v2.9.2 zimbra1.kalray.eu 8331F2800C0
-Date: Wed, 21 Mar 2018 13:10:31 +0100 (CET)
-From: Marta Rybczynska <mrybczyn@kalray.eu>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: keith busch <keith.busch@intel.com>, axboe@fb.com, hch@lst.de,
-        sagi@grimberg.me, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
-Message-ID: <464125757.5843583.1521634231341.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <20180321115037.GA26083@ming.t460p>
-References: <744877924.5841545.1521630049567.JavaMail.zimbra@kalray.eu> <20180321115037.GA26083@ming.t460p>
-Subject: Re: [RFC PATCH] nvme: avoid race-conditions when enabling devices
+        id S1751714AbeCUMOE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 08:14:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52482 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751587AbeCUMOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 08:14:02 -0400
+Subject: Re: [PATCH 3/5] ARM: trusted_foundations: do not use naked function
+To: Stefan Agner <stefan@agner.ch>, linux@armlinux.org.uk,
+        ard.biesheuvel@linaro.org, arnd@arndb.de
+Cc: nicolas.pitre@linaro.org, keescook@chromium.org, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, mka@chromium.org,
+        linux-arm-kernel@lists.infradead.org, Bernhard.Rosenkranzer@linaro.org
+References: <20180320230206.25289-1-stefan@agner.ch>
+ <20180320230206.25289-4-stefan@agner.ch>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <124e16c9-b8ca-9c7e-ade5-b033eed76e14@arm.com>
+Date: Wed, 21 Mar 2018 12:13:58 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180320230206.25289-4-stefan@agner.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.40.201]
-X-Mailer: Zimbra 8.6.0_GA_1182 (ZimbraWebClient - FF45 (Linux)/8.6.0_GA_1182)
-Thread-Topic: nvme: avoid race-conditions when enabling devices
-Thread-Index: wnfMsSM1imrqGZKFoiQyJor/pqOrIQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Wed, Mar 21, 2018 at 12:00:49PM +0100, Marta Rybczynska wrote:
->> NVMe driver uses threads for the work at device reset, including enabling
->> the PCIe device. When multiple NVMe devices are initialized, their reset
->> works may be scheduled in parallel. Then pci_enable_device_mem can be
->> called in parallel on multiple cores.
->> 
->> This causes a loop of enabling of all upstream bridges in
->> pci_enable_bridge(). pci_enable_bridge() causes multiple operations
->> including __pci_set_master and architecture-specific functions that
->> call ones like and pci_enable_resources(). Both __pci_set_master()
->> and pci_enable_resources() read PCI_COMMAND field in the PCIe space
->> and change it. This is done as read/modify/write.
->> 
->> Imagine that the PCIe tree looks like:
->> A - B - switch -  C - D
->>                \- E - F
->> 
->> D and F are two NVMe disks and all devices from B are not enabled and bus
->> mastering is not set. If their reset work are scheduled in parallel the two
->> modifications of PCI_COMMAND may happen in parallel without locking and the
->> system may end up with the part of PCIe tree not enabled.
+On 20/03/18 23:02, Stefan Agner wrote:
+> As documented in GCC naked functions should only use Basic asm
+> syntax. The Extended asm or mixture of Basic asm and "C" code is
+> not guaranteed. Currently this works because it was hard coded
+> to follow and check GCC behavior for arguments and register
+> placement.
 > 
-> Then looks serialized reset should be used, and I did see the commit
-> 79c48ccf2fe ("nvme-pci: serialize pci resets") fixes issue of 'failed
-> to mark controller state' in reset stress test.
+> Furthermore with clang using parameters in Extended asm in a
+> naked function is not supported:
+>    arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
+>            references not allowed in naked functions
+>                  : "r" (type), "r" (arg1), "r" (arg2)
+>                         ^
 > 
-> But that commit only covers case of PCI reset from sysfs attribute, and
-> maybe other cases need to be dealt with in similar way too.
+> Use a regular function to be more portable. This aligns also with
+> the other smc call implementations e.g. in qcom_scm-32.c and
+> bcm_kona_smc.c.
 > 
+> Additionally also make sure all callee-saved registers get saved
+> as it has been done before.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>   arch/arm/firmware/trusted_foundations.c | 12 +++++++-----
+>   1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm/firmware/trusted_foundations.c b/arch/arm/firmware/trusted_foundations.c
+> index 3fb1b5a1dce9..426d732e6591 100644
+> --- a/arch/arm/firmware/trusted_foundations.c
+> +++ b/arch/arm/firmware/trusted_foundations.c
+> @@ -31,21 +31,23 @@
+>   
+>   static unsigned long cpu_boot_addr;
+>   
+> -static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
+> +static void tf_generic_smc(u32 type, u32 arg1, u32 arg2)
+>   {
+> +	register u32 r0 asm("r0") = type;
+> +	register u32 r1 asm("r1") = arg1;
+> +	register u32 r2 asm("r2") = arg2;
+> +
+>   	asm volatile(
+>   		".arch_extension	sec\n\t"
+> -		"stmfd	sp!, {r4 - r11, lr}\n\t"
+>   		__asmeq("%0", "r0")
+>   		__asmeq("%1", "r1")
+>   		__asmeq("%2", "r2")
+>   		"mov	r3, #0\n\t"
+>   		"mov	r4, #0\n\t"
+>   		"smc	#0\n\t"
+> -		"ldmfd	sp!, {r4 - r11, pc}"
+>   		:
+> -		: "r" (type), "r" (arg1), "r" (arg2)
+> -		: "memory");
+> +		: "r" (r0), "r" (r1), "r" (r2)
+> +		: "memory", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10");
 
-It seems to me that the serialized reset works for multiple resets of the
-same device, doesn't it? Our problem is linked to resets of different devices
-that share the same PCIe tree.
+I may be missing a subtlety, but it looks like we no longer have a 
+guarantee that r11 will be caller-saved as it was previously. I don't 
+know the Trusted Foundations ABI to say whether that matters or not, but 
+if it is the case that it never needed preserving anyway, that might be 
+worth calling out in the commit message.
 
-You're right that the problem we face might also come with manual resets
-under certain conditions (I think that all devices in a subtree would need
-to be disabled).
+Robin.
 
-Thanks,
-Marta
+>   }
+>   
+>   static int tf_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+> 
