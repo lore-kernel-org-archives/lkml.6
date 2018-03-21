@@ -1,121 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751480AbeCUGHP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 02:07:15 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:56405 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751040AbeCUGHN (ORCPT
+        id S1751541AbeCUGID (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 02:08:03 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:47396 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751317AbeCUGIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 02:07:13 -0400
-Subject: Re: [PATCH v4 4/5] PCI: endpoint: Make pci_epc_set_bar() return the
- BAR width that was set-up
-To: Niklas Cassel <niklas.cassel@axis.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sekhar Nori <nsekhar@ti.com>, Shawn Lin <shawn.lin@rock-chips.com>,
-        Niklas Cassel <niklass@axis.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
-References: <20180308133331.19464-1-niklas.cassel@axis.com>
- <20180308133331.19464-5-niklas.cassel@axis.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <001f10ee-d2cd-a1ae-5524-75a1e0b8c92e@ti.com>
-Date: Wed, 21 Mar 2018 11:36:56 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180308133331.19464-5-niklas.cassel@axis.com>
-Content-Type: text/plain; charset="windows-1252"
+        Wed, 21 Mar 2018 02:08:02 -0400
+X-UUID: e14c575aa01c46be98a7a3af3705fd9a-20180321
+Message-ID: <1521612477.12038.4.camel@mtkswgap22>
+Subject: Re: update vruntime incorrectly When use rt_mutex
+From: Kathleen Chang <yt.chang@mediatek.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: <mingo@redhat.com>, <matthias.bgg@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <Jonathan.JMChen@mediatek.com>,
+        <wsd_upstream@mediatek.com>, Matt Fleming <matt@codeblueprint.co.uk>,
+        <En-Ron.Chang@mediatek.com>
+Date: Wed, 21 Mar 2018 14:07:57 +0800
+In-Reply-To: <1521611526.11277.2.camel@mtkswgap22>
+References: <1521099370.7712.4.camel@mtkswgap22>
+         <20180316095113.GA4064@hirez.programming.kicks-ass.net>
+         <1521611526.11277.2.camel@mtkswgap22>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Niklas,
-
-On Thursday 08 March 2018 07:03 PM, Niklas Cassel wrote:
-> In order to properly handle 64-bit BARs, we need to know what BAR width
-> that was actually set-up by specific pci_epc_set_bar() implementations.
+On Wed, 2018-03-21 at 13:52 +0800, Kathleen Chang wrote:
+>  
 > 
-> This is done so that we can know if we need to skip a BAR,
-> since a 64-bit BAR consists of a BAR pair.
-> 
-> It is important to know the BAR width that was actually set-up,
-> since some drivers, like the Cadence EP controller, does not
-> simply look at PCI_BASE_ADDRESS_MEM_TYPE_64, as it configures
-> all BARs larger than 2G as 64-bit.
-> 
-> Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-> ---
->  drivers/pci/cadence/pcie-cadence-ep.c         | 2 +-
->  drivers/pci/dwc/pcie-designware-ep.c          | 4 ++--
->  drivers/pci/endpoint/functions/pci-epf-test.c | 7 ++++++-
->  3 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
-> index 3c3a97743453..0e4cc4cca56d 100644
-> --- a/drivers/pci/cadence/pcie-cadence-ep.c
-> +++ b/drivers/pci/cadence/pcie-cadence-ep.c
-> @@ -135,7 +135,7 @@ static int cdns_pcie_ep_set_bar(struct pci_epc *epc, u8 fn, enum pci_barno bar,
->  		CDNS_PCIE_LM_EP_FUNC_BAR_CFG_BAR_CTRL(b, ctrl));
->  	cdns_pcie_writel(pcie, reg, cfg);
->  
-> -	return 0;
-> +	return is_64bits ? 1 : 0;
->  }
->  
->  static void cdns_pcie_ep_clear_bar(struct pci_epc *epc, u8 fn,
-> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
-> index b20b2651caf9..f3c19f8ff8e5 100644
-> --- a/drivers/pci/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/dwc/pcie-designware-ep.c
-> @@ -139,7 +139,7 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
->  		as_type = DW_PCIE_AS_IO;
->  
->  	ret = dw_pcie_ep_inbound_atu(ep, bar, bar_phys, as_type);
-> -	if (ret)
-> +	if (ret < 0)
->  		return ret;
->  
->  	dw_pcie_dbi_ro_wr_en(pci);
-> @@ -154,7 +154,7 @@ static int dw_pcie_ep_set_bar(struct pci_epc *epc, u8 func_no,
->  	}
->  	dw_pcie_dbi_ro_wr_dis(pci);
->  
-> -	return 0;
-> +	return (flags & PCI_BASE_ADDRESS_MEM_TYPE_64) ? 1 : 0;
->  }
->  
->  static int dw_pcie_find_index(struct dw_pcie_ep *ep, phys_addr_t addr,
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index 7c70433b11a7..09878e011284 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -379,12 +379,17 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
->  		ret = pci_epc_set_bar(epc, epf->func_no, bar,
->  				      epf_bar->phys_addr,
->  				      epf_bar->size, bar_flags[bar]);
-> -		if (ret) {
-> +		if (ret < 0) {
->  			pci_epf_free_space(epf, epf_test->reg[bar], bar);
->  			dev_err(dev, "failed to set BAR%d\n", bar);
->  			if (bar == test_reg_bar)
->  				return ret;
->  		}
-> +		/*
-> +		 * pci_epc_set_bar() returns 1 if a 64-bit BAR was set-up,
-> +		 * or 0 if a 32-bit BAR was set-up.
-> +		 */
-> +		bar += ret;
+> On Fri, 2018-03-16 at 10:51 +0100, Peter Zijlstra wrote:
+> > On Thu, Mar 15, 2018 at 03:36:10PM +0800, Kathleen Chang wrote:
+> > > hi,  
+> > > 
+> > > We found the vruntime might update incorrectly when use rt_mutex.
+> > 
+> > That's nice, on what kernel?
 
-I'd prefer having a new argument bool *is_64bit in set_bar rather than having
-to work with return value of set_bar.
+kernel-4.9 
+> > 
+> > Also, your email is very hard to make sense of.
+> > 
+> > > <<abnormal case>>
+> > > When the Task is waking, update vruntime incorrectly.
+> > > 1.  When there is a CFS task (A) hold  rt_mutex_lock and the state is
+> > > TASK_WAKING (on_rq=0),  a RT task (B) want to hold this rt_mutex_lock.
+> > > Update vruntime incorrectly.
+> > > 
+> > >   RT task (B)
+> > >      rt_mutex_setprio  (cfs->RT)  ->  Task is waking , and update
+> > > vruntime
+> > > 
+> > >        queued = task_on_rq_queued(p); // task is waking, queued=0
+> > >        running = task_current(rq, p);
+> > >        if (queued)      /*   don't update vruntime here!   */
+> > >                 dequeue_task(rq, p, queue_flag);                      
+> > >        if (running)
+> > >                 put_prev_task(rq, p);
+> > >        
+> > >        check_class_changed(rq, p, prev_class, oldprio);   -> 
+> > >                 switched_from_fair -> 
+> > >                       detach_task_cfs_rq  
+> > >           ( due to task is waking, and bypass
+> > > vruntime-=cfs_rq.min_vruntime) 
+> > > 
+> > > static void detach_task_cfs_rq(struct task_struct *p)
+> > > {
+> > >         struct sched_entity *se = &p->se;
+> > >         struct cfs_rq *cfs_rq = cfs_rq_of(se);
+> > > 
+> > >         if (!vruntime_normalized(p)) {   // return 1, then p->state is
+> > > TASK_WAKING
+> > >                 /*
+> > >                  * Fix up our vruntime so that the current sleep doesn't
+> > >                  * cause 'unlimited' sleep bonus.
+> > >                  */
+> > >                 place_entity(cfs_rq, se, 0);
+> > >                 check_vruntime(8, se, cfs_rq->min_vruntime);
+> > >                 se->vruntime -= cfs_rq->min_vruntime;
+> > 
+> > So here we subtract min_vruntime,
+> 
 
-Even otherwise, can't we set PCI_BASE_ADDRESS_MEM_TYPE_64 based on size in
-pci-epf-test itself?
+When the p->state is TASK_WAKING, vruntime_normlized will return 1 
+and if(!vruntime_normalized(p)) will be 0
 
-Thanks
-Kishon
+in this case, doesn't subtract min_vruntime. 
+
+> 
+> 
+> > 
+> > >                 se->normalized = true;
+> > 
+> > this doesn't exist.. which makes me wonder what you're looking at,
+> > 
+> > >         }
+> > > 
+> > >         detach_entity_cfs_rq(se);
+> > > }
+> > > 
+> > > // when p->state is TASK_WAKING, the task's vruntime is normalized 
+> > > static inline bool vruntime_normalized(struct task_struct *p)
+> > > {
+> > > .....
+> > >         if (!se->sum_exec_runtime || p->state == TASK_WAKING)
+> > >                 return true;
+> > > 
+> > > }
+> > > 
+> > > 2.  When the task (A) which holds the rt_muex_lock unlock the
+> > > rt_mutex_lock.
+> > >      Task (A) must be on_rq=1 
+> > > 
+> > >     rt_mutex_setprio (RT->CFS)     
+> > >        if (queued)
+> > >                 enqueue_task(rq, p, queue_flag);    );     
+> > >                     /* vruntime += cfs_rq.min_vruntime */
+> > 
+> > And here we're adding min_vruntime.
+> > 
+> > >        if (running)
+> > >                 set_curr_task(rq, p);
+> > > 
+> > >     that result in vruntime accumulates
+> > 
+> > So what exactly is the problem?
+> > 
+
+When the p->state is TASK_WAKING,  detach_task_cfs_rq doesn't subtract
+min_vruntime and adding min_vruntime in  enqueue_task, 
+
+
+That result in vruntime accumulates to a extreme large number.  
+
+
+
+>  
+> 
