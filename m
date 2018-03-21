@@ -1,28 +1,28 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AG47ELvm0C7relOyCDZpoSYfvYTvHRgLA0RnOf2lF4oQLWePy4cIwpVa41G2wGSAQ+f0ESJD65Vw
-ARC-Seal: i=1; a=rsa-sha256; t=1521671677; cv=none;
+X-Google-Smtp-Source: AG47ELslBMigNOF42XJj4yg7q0Io2e1inNINc8TiKz7LIksW1e5X0I/+mOk1g0ggCG1d7HZV7VW+
+ARC-Seal: i=1; a=rsa-sha256; t=1521671676; cv=none;
         d=google.com; s=arc-20160816;
-        b=thUroqjwiRQrSXAjuSt952l8MO1/rty3nA+D+kSeITsF/XKJf5VmeGTqCel4Yrj+X2
-         VvziLJgMHlU7UtOh9RAQdMJf0M1HXVWz2Qgp93KFvgc22KUXHQ/4w2CnM6HmLby6WMNg
-         bVq66eB8dVqQQpqErRXPAwj0bcc+FMbRH4kYCbSnOo0Q8Xji2kzW13dANdhmIuyuDfLn
-         VUvc/0uyQZhYyxVmHqCQ7eXQ1tZVLdVbUDV6fxTHgMDSGhi6s4mZX+0SSbEWvPkRUhXl
-         fhw77WSUSAE65s7/0SaUj+BNqv3iWJY+ihwSAG4WrqHWM/fBaZNXp3RH+Lx2RwB4coyR
-         LvEg==
+        b=B+x/xf+D/us/RAbZQJTHAoXnJLS7j/jjVsK1NrAkjI/VPhrPEKf6sJtpUrcA9jPYQi
+         WJdbFiSmHwG026fRyNQ7cNpuVOyW8XIrZqdVj6ZDJc/6wCoCoZhy5rb2FoC1vBatzfvz
+         0WpoK0d+nVjrnAvRihd+e3Am60Hq8pDX5VU0HxgJJH7Bpj+g88j+TvCOqx4O93xqhNf6
+         2X2l+7enVBuM5d89syBPmgsbYpZtnS8vJc9x1BI1K1ZS1CxbrnrntVfGDiTQLgUK4GLb
+         PtKP/6F5DC0dpmbPCgwqLRWgU63nIftlLH6nkqQC/Xl1QTUfPKnPB/2r1xaXEIT/EVnX
+         uI4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dmarc-filter:arc-authentication-results;
-        bh=VhtwOMh/23N22KUPBuePjUWPON0u2KbDIRpsklmQsIo=;
-        b=hQbb1wgw0lXvEUkwSh80R4iGpNwafqa6rooRzHzwNdGvim82J1YsTDP1pEuHWl1ziA
-         Eud20nOsVeHhvKPIPqIwqipCsqa0oCea5MtdnvaapRePZ/vjsDI0osVRXpItL3uMFcsK
-         p6XaHp7LnjqWldhUBZ4UpFNSkYJdF7o9A+INi2rplr/LOwrK1CPrOL4DtYJ0Vncqxfq0
-         5Q1c+0bTktwkcGg4P7NUtQ2jBDUrmwqNVKZGgBvcknjDPQ7tejYaq/ggOG/THxOFbkNN
-         rL7AR76iwW6hOP4bPYOO7V52EuV4tVxiL5IYeVcjVLaBzQFYRBgaYi9lywwLfBmgvlM+
-         GUJw==
+        bh=v5VzdUhRQpOxuCUniazD3uoQNKii9ppe7ZuN66umjuI=;
+        b=jkA1Cy01VTZHyJhZB5BY3/oLw2yLSNkVIOPM59+eHKBzvlxJtDrWeAktWR+0CMKSoZ
+         RaWaz7r2u7pwcRfAsR7NRW6nTjL0/og8unPMPuGzQNs/q+a1baFSuieHdPJJxJT02YsS
+         qe376WIhKIqe0GeHLTB9WbmD4ZL6SN6VVXr33wuR8WljoSNAQjLIZcpObUFxj8bL/TYg
+         e+vmfLVpNdE7AjhVHMEkrCuTE7xyKyB27z9dNWdomF9yJdpVx5gIuPGki5okU/Aoyysi
+         yiwmp8vu4bk4Eo4R1hNnOzJXh30Xk0Ca/Eh8xuv/Z2BLEEeDEzki6ofQVnle6NhfSbcd
+         nsiw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4444E2183B
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15CEE21839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -55,46 +55,106 @@ Cc: akpm@linux-foundation.org,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v4 3/3] mt7601u: use firmware_request_cache() to address cache on reboot
-Date: Wed, 21 Mar 2018 15:34:30 -0700
-Message-Id: <20180321223430.21388-4-mcgrof@kernel.org>
+Subject: [PATCH v4 2/3] firmware: add firmware_request_cache() to help with cache on reboot
+Date: Wed, 21 Mar 2018 15:34:29 -0700
+Message-Id: <20180321223430.21388-3-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20180321223430.21388-1-mcgrof@kernel.org>
 References: <20180321223430.21388-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595588401280675569?=
-X-GMAIL-MSGID: =?utf-8?q?1595588401280675569?=
+X-GMAIL-THRID: =?utf-8?q?1595588399900715995?=
+X-GMAIL-MSGID: =?utf-8?q?1595588399900715995?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-request_firmware_cache() will ensure the firmware is available on resume
-from suspend if on reboot the device retains the firmware.
+Some devices have an optimization in place to enable the firmware to
+be retaineed during a system reboot, so after reboot the device can skip
+requesting and loading the firmware. This can save up to 1s in load
+time. The mt7601u 802.11 device happens to be such a device.
 
-This optimization is in place given otherwise on reboot we have to
-reload the firmware, the opmization saves us about max 1s, minimum 10ms.
+When these devices retain the firmware on a reboot and then suspend
+they can miss looking for the firmware on resume. To help with this we
+need a way to cache the firmware when such an optimization has taken
+place.
 
-Cantabile has reported back this fixes his woes with both suspend and
-hibernation.
-
-Reported-by: Cantabile <cantabile.desu@gmail.com>
-Tested-by: Cantabile <cantabile.desu@gmail.com>
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- drivers/net/wireless/mediatek/mt7601u/mcu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../driver-api/firmware/request_firmware.rst       | 14 +++++++++++++
+ drivers/base/firmware_loader/main.c                | 24 ++++++++++++++++++++++
+ include/linux/firmware.h                           |  3 +++
+ 3 files changed, 41 insertions(+)
 
-diff --git a/drivers/net/wireless/mediatek/mt7601u/mcu.c b/drivers/net/wireless/mediatek/mt7601u/mcu.c
-index d9d6fd7eff5e..61705f679856 100644
---- a/drivers/net/wireless/mediatek/mt7601u/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt7601u/mcu.c
-@@ -420,7 +420,7 @@ static int mt7601u_load_firmware(struct mt7601u_dev *dev)
- 					 MT_USB_DMA_CFG_TX_BULK_EN));
+diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
+index cc0aea880824..cf4516dfbf96 100644
+--- a/Documentation/driver-api/firmware/request_firmware.rst
++++ b/Documentation/driver-api/firmware/request_firmware.rst
+@@ -44,6 +44,20 @@ request_firmware_nowait
+ .. kernel-doc:: drivers/base/firmware_class.c
+    :functions: request_firmware_nowait
  
- 	if (firmware_running(dev))
--		return 0;
-+		return firmware_request_cache(dev->dev, MT7601U_FIRMWARE);
++Special optimizations on reboot
++===============================
++
++Some devices have an optimization in place to enable the firmware to be
++retained during system reboot. When such optimizations are used the driver
++author must ensure the firmware is still available on resume from suspend,
++this can be done with firmware_request_cache() insted of requesting for the
++firmare to be loaded.
++
++firmware_request_cache()
++-----------------------
++.. kernel-doc:: drivers/base/firmware_class.c
++   :functions: firmware_request_cache
++
+ request firmware API expected driver use
+ ========================================
  
- 	ret = request_firmware(&fw, MT7601U_FIRMWARE, dev->dev);
- 	if (ret)
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index 2913bb0e5e7b..eb34089e4299 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -656,6 +656,30 @@ int request_firmware_direct(const struct firmware **firmware_p,
+ }
+ EXPORT_SYMBOL_GPL(request_firmware_direct);
+ 
++/**
++ * firmware_request_cache: - cache firmware for suspend so resume can use it
++ * @name: name of firmware file
++ * @device: device for which firmware should be cached for
++ *
++ * There are some devices with an optimization that enables the device to not
++ * require loading firmware on system reboot. This optimization may still
++ * require the firmware present on resume from suspend. This routine can be
++ * used to ensure the firmware is present on resume from suspend in these
++ * situations. This helper is not compatible with drivers which use
++ * request_firmware_into_buf() or request_firmware_nowait() with no uevent set.
++ **/
++int firmware_request_cache(struct device *device, const char *name)
++{
++	int ret;
++
++	mutex_lock(&fw_lock);
++	ret = fw_add_devm_name(device, name);
++	mutex_unlock(&fw_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(firmware_request_cache);
++
+ /**
+  * request_firmware_into_buf - load firmware into a previously allocated buffer
+  * @firmware_p: pointer to firmware image
+diff --git a/include/linux/firmware.h b/include/linux/firmware.h
+index d4508080348d..41050417cafb 100644
+--- a/include/linux/firmware.h
++++ b/include/linux/firmware.h
+@@ -85,4 +85,7 @@ static inline int request_firmware_into_buf(const struct firmware **firmware_p,
+ }
+ 
+ #endif
++
++int firmware_request_cache(struct device *device, const char *name);
++
+ #endif
 -- 
 2.16.2
