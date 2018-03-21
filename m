@@ -1,147 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751895AbeCUB7G (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:59:06 -0400
-Received: from mga11.intel.com ([192.55.52.93]:2189 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751699AbeCUB7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:59:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
-   d="scan'208";a="35508780"
-Date: Wed, 21 Mar 2018 09:59:45 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: "Figo.zhang" <figo1802@gmail.com>
-Cc: Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [RFC PATCH v2 2/4] mm/__free_one_page: skip merge for order-0
- page unless compaction failed
-Message-ID: <20180321015944.GB28705@intel.com>
-References: <20180320085452.24641-1-aaron.lu@intel.com>
- <20180320085452.24641-3-aaron.lu@intel.com>
- <CAF7GXvovKsabDw88icK5c5xBqg6g0TomQdspfi4ikjtbg=XzGQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAF7GXvovKsabDw88icK5c5xBqg6g0TomQdspfi4ikjtbg=XzGQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751728AbeCUCId (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:08:33 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56100 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751459AbeCUCIb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 22:08:31 -0400
+From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: cohuck@redhat.com, borntraeger@de.ibm.com, bjsdjshi@linux.vnet.ibm.com,
+        pasic@linux.vnet.ibm.com, pmorel@linux.vnet.ibm.com
+Subject: [PATCH 0/4] vfio: ccw: error handling fixes and improvements
+Date: Wed, 21 Mar 2018 03:08:18 +0100
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18032102-0012-0000-0000-000015EDBA46
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008713; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000254; SDB=6.01006058; UDB=6.00512229; IPR=6.00785341;
+ MB=3.00020153; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-21 02:08:27
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032102-0013-0000-0000-000051F466D1
+Message-Id: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803210024
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 03:58:51PM -0700, Figo.zhang wrote:
-> 2018-03-20 1:54 GMT-07:00 Aaron Lu <aaron.lu@intel.com>:
-> 
-> > Running will-it-scale/page_fault1 process mode workload on a 2 sockets
-> > Intel Skylake server showed severe lock contention of zone->lock, as
-> > high as about 80%(42% on allocation path and 35% on free path) CPU
-> > cycles are burnt spinning. With perf, the most time consuming part inside
-> > that lock on free path is cache missing on page structures, mostly on
-> > the to-be-freed page's buddy due to merging.
-> >
-> > One way to avoid this overhead is not do any merging at all for order-0
-> > pages. With this approach, the lock contention for zone->lock on free
-> > path dropped to 1.1% but allocation side still has as high as 42% lock
-> > contention. In the meantime, the dropped lock contention on free side
-> > doesn't translate to performance increase, instead, it's consumed by
-> > increased lock contention of the per node lru_lock(rose from 5% to 37%)
-> > and the final performance slightly dropped about 1%.
-> >
-> > Though performance dropped a little, it almost eliminated zone lock
-> > contention on free path and it is the foundation for the next patch
-> > that eliminates zone lock contention for allocation path.
-> >
-> > A new document file called "struct_page_filed" is added to explain
-> > the newly reused field in "struct page".
-> >
-> > Suggested-by: Dave Hansen <dave.hansen@intel.com>
-> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-> > ---
-> >  Documentation/vm/struct_page_field |  5 +++
-> >  include/linux/mm_types.h           |  1 +
-> >  mm/compaction.c                    | 13 +++++-
-> >  mm/internal.h                      | 27 ++++++++++++
-> >  mm/page_alloc.c                    | 89 ++++++++++++++++++++++++++++++
-> > +++-----
-> >  5 files changed, 122 insertions(+), 13 deletions(-)
-> >  create mode 100644 Documentation/vm/struct_page_field
-> >
-> > diff --git a/Documentation/vm/struct_page_field b/Documentation/vm/struct_
-> > page_field
-> > new file mode 100644
-> > index 000000000000..1ab6c19ccc7a
-> > --- /dev/null
-> > +++ b/Documentation/vm/struct_page_field
-> > @@ -0,0 +1,5 @@
-> > +buddy_merge_skipped:
-> > +Used to indicate this page skipped merging when added to buddy. This
-> > +field only makes sense if the page is in Buddy and is order zero.
-> > +It's a bug if any higher order pages in Buddy has this field set.
-> > +Shares space with index.
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index fd1af6b9591d..7edc4e102a8e 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -91,6 +91,7 @@ struct page {
-> >                 pgoff_t index;          /* Our offset within mapping. */
-> >                 void *freelist;         /* sl[aou]b first free object */
-> >                 /* page_deferred_list().prev    -- second tail page */
-> > +               bool buddy_merge_skipped; /* skipped merging when added to
-> > buddy */
-> >         };
-> >
-> >         union {
-> > diff --git a/mm/compaction.c b/mm/compaction.c
-> > index 2c8999d027ab..fb9031fdca41 100644
-> > --- a/mm/compaction.c
-> > +++ b/mm/compaction.c
-> > @@ -776,8 +776,19 @@ isolate_migratepages_block(struct compact_control
-> > *cc, unsigned long low_pfn,
-> >                  * potential isolation targets.
-> >                  */
-> >                 if (PageBuddy(page)) {
-> > -                       unsigned long freepage_order =
-> > page_order_unsafe(page);
-> > +                       unsigned long freepage_order;
-> >
-> > +                       /*
-> > +                        * If this is a merge_skipped page, do merge now
-> > +                        * since high-order pages are needed. zone lock
-> > +                        * isn't taken for the merge_skipped check so the
-> > +                        * check could be wrong but the worst case is we
-> > +                        * lose a merge opportunity.
-> > +                        */
-> > +                       if (page_merge_was_skipped(page))
-> > +                               try_to_merge_page(page);
-> > +
-> > +                       freepage_order = page_order_unsafe(page);
-> >                         /*
-> >                          * Without lock, we cannot be sure that what we
-> > got is
-> >                          * a valid page order. Consider only values in the
-> >
-> 
-> when the system memory is very very low and try a lot of failures and then
+Hi Conny,
 
-If the system memory is very very low, it doesn't appear there is a need
-to do compaction since compaction needs to have enough order 0 pages to
-make a high order one.
+Halil reported a host crash when using vfio-ccw. The root cause of the problem
+is that vfio_pin_pages fails with EINVAL for reasons unknown. He has
+experienced such failures after online-ing a dasd in the guest (the dasd has 3
+partitions, hat may or may not have any significance). The problem isn't
+experienced on every attempt to online the dasd, and breaking at css_do_ssch
+seems to make things work.
 
-> go into
-> __alloc_pages_direct_compact() to has a opportunity to do your
-> try_to_merge_page(), is it the best timing for here to
-> do order-0 migration?
+One thing is sure: the host kernel should not crash under the described
+circumstances.
 
-try_to_merge_page(), as I added in this patch, doesn't do any page
-migration but merging. It will not cause page migration.
+To fix the problem, the first patch of this series fixes the cleanup when
+cp_prefetch fails in the higher level. The 2nd and the 3rd patches provide
+correctness and denfensive actions for the interfaces in the lower level.
+
+The 4th patch is trying to add tracepoints for vfio-ccw, so that we can debug
+such issue easier in future.
+
+For details see the commit message portions of the inividual patches.
+
+Thanks.
+
+Dong Jia Shi (2):
+  vfio: ccw: refactor and improve pfn_array_alloc_pin()
+  vfio: ccw: set ccw->cda to NULL defensively
+
+Halil Pasic (2):
+  vfio: ccw: fix cleanup if cp_prefetch fails
+  vfio: ccw: add traceponits for interesting error paths
+
+ drivers/s390/cio/Makefile         |   1 +
+ drivers/s390/cio/vfio_ccw_cp.c    | 121 ++++++++++++++++++++------------------
+ drivers/s390/cio/vfio_ccw_fsm.c   |  13 ++++
+ drivers/s390/cio/vfio_ccw_trace.h |  86 +++++++++++++++++++++++++++
+ 4 files changed, 163 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/s390/cio/vfio_ccw_trace.h
+
+-- 
+2.13.5
