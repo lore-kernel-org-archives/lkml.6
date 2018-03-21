@@ -1,26 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753581AbeCUVMq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:12:46 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:53062 "EHLO
+        id S1753628AbeCUVN2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:13:28 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:53490 "EHLO
         aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753306AbeCUVMo (ORCPT
+        with ESMTP id S1753306AbeCUVNY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:12:44 -0400
-Subject: Re: [PATCH] x86/xen: Delay get_cpu_cap until stack canary is
- established
-To: Jason Andryuk <jandryuk@gmail.com>, Juergen Gross <jgross@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20180319165804.10636-1-jandryuk@gmail.com>
+        Wed, 21 Mar 2018 17:13:24 -0400
+Subject: Re: [PATCH v3] xen/acpi: upload _PSD info for non Dom0 CPUs too
+To: Joao Martins <joao.m.martins@oracle.com>, linux-kernel@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
+        devel@acpica.org
+References: <20180315142205.15839-1-joao.m.martins@oracle.com>
 From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <c3075b0c-a60b-0809-e34b-223701a53b84@oracle.com>
-Date: Wed, 21 Mar 2018 17:14:21 -0400
+Message-ID: <4b9b40ce-a19c-758f-9a0b-451fadecf347@oracle.com>
+Date: Wed, 21 Mar 2018 17:15:06 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180319165804.10636-1-jandryuk@gmail.com>
+In-Reply-To: <20180315142205.15839-1-joao.m.martins@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -33,30 +35,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/19/2018 12:58 PM, Jason Andryuk wrote:
-> Commit 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings") introduced a
-> call to get_cpu_cap, which is fstack-protected.  This is works on x86-64
-> as commit 4f277295e54c ("x86/xen: init %gs very early to avoid page
-> faults with stack protector") ensures the stack protector is configured,
-> but it it did not cover x86-32.
+On 03/15/2018 10:22 AM, Joao Martins wrote:
+> All uploaded PM data from non-dom0 CPUs takes the info from vCPU 0 and
+> changing only the acpi_id. For processors which P-state coordination type
+> is HW_ALL (0xFD) it is OK to upload bogus P-state dependency information
+> (_PSD), because Xen will ignore any cpufreq domains created for past CPUs.
 >
-> Delay calling get_cpu_cap until after xen_setup_gdt has initialized the
-> stack canary.  Without this, a 32bit PV machine crashes early
-> in boot.
-> (XEN) Domain 0 (vcpu#0) crashed on cpu#0:
-> (XEN) ----[ Xen-4.6.6-xc  x86_64  debug=n  Tainted:    C ]----
-> (XEN) CPU:    0
-> (XEN) RIP:    e019:[<00000000c10362f8>]
+> Albeit for platforms which expose coordination types as SW_ANY or SW_ALL,
+> this will have some unintended side effects. Effectively, it will look at
+> the P-state domain existence and *if it already exists* it will skip the
+> acpi-cpufreq initialization and thus inherit the policy from the first CPU
+> in the cpufreq domain. This will finally lead to the original cpu not
+> changing target freq to P0 other than the first in the domain. Which will
+> make turbo boost not getting enabled (e.g. for 'performance' governor) for
+> all cpus.
 >
-> And the PV kernel IP corresponds to init_scattered_cpuid_features
->    0xc10362f8 <+24>:    mov    %gs:0x14,%eax
+> This patch fixes that, by also evaluating _PSD when we enumerate all ACPI
+> processors and thus always uploading the correct info to Xen. We export
+> acpi_processor_get_psd() for that this purpose, but change signature
+> to not assume an existent of acpi_processor given that ACPI isn't creating
+> an acpi_processor for non-dom0 CPUs.
 >
-> Fixes 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
->
-> Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
->
+> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+
 
 
 Applied to for-linus-4.17
+
 
 -boris
