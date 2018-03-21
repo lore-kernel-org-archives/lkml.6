@@ -1,249 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753147AbeCUTX3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 15:23:29 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44906 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753098AbeCUTXV (ORCPT
+        id S1753496AbeCUTYx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 15:24:53 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54881 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752975AbeCUTYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 15:23:21 -0400
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 03/32] docs/vm: cleancache.txt: convert to ReST format
-Date: Wed, 21 Mar 2018 21:22:19 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18032119-0008-0000-0000-000004E0DF6C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032119-0009-0000-0000-00001E7403DF
-Message-Id: <1521660168-14372-4-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803210221
+        Wed, 21 Mar 2018 15:24:46 -0400
+Subject: Re: [PATCH] drm/i915/gvt: don't dereference 'workload' before null
+ checking it
+To: Chris Wilson <chris@chris-wilson.co.uk>, Joe Perches <joe@perches.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180321190653.3829-1-colin.king@canonical.com>
+ <1521659361.7999.27.camel@perches.com>
+ <a0309d42-a2ab-9270-b486-2325522256b6@canonical.com>
+ <152166020495.4865.8856861326837841719@mail.alporthouse.com>
+From: Colin Ian King <colin.king@canonical.com>
+Message-ID: <1c98c69b-694e-2e1e-ed96-748552c7d6d9@canonical.com>
+Date: Wed, 21 Mar 2018 19:24:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <152166020495.4865.8856861326837841719@mail.alporthouse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- Documentation/vm/cleancache.txt | 105 ++++++++++++++++++++++++----------------
- 1 file changed, 62 insertions(+), 43 deletions(-)
-
-diff --git a/Documentation/vm/cleancache.txt b/Documentation/vm/cleancache.txt
-index e4b49df..68cba91 100644
---- a/Documentation/vm/cleancache.txt
-+++ b/Documentation/vm/cleancache.txt
-@@ -1,4 +1,11 @@
--MOTIVATION
-+.. _cleancache:
-+
-+==========
-+Cleancache
-+==========
-+
-+Motivation
-+==========
- 
- Cleancache is a new optional feature provided by the VFS layer that
- potentially dramatically increases page cache effectiveness for
-@@ -21,9 +28,10 @@ Transcendent memory "drivers" for cleancache are currently implemented
- in Xen (using hypervisor memory) and zcache (using in-kernel compressed
- memory) and other implementations are in development.
- 
--FAQs are included below.
-+:ref:`FAQs <faq>` are included below.
- 
--IMPLEMENTATION OVERVIEW
-+Implementation Overview
-+=======================
- 
- A cleancache "backend" that provides transcendent memory registers itself
- to the kernel's cleancache "frontend" by calling cleancache_register_ops,
-@@ -80,22 +88,33 @@ different Linux threads are simultaneously putting and invalidating a page
- with the same handle, the results are indeterminate.  Callers must
- lock the page to ensure serial behavior.
- 
--CLEANCACHE PERFORMANCE METRICS
-+Cleancache Performance Metrics
-+==============================
- 
- If properly configured, monitoring of cleancache is done via debugfs in
--the /sys/kernel/debug/cleancache directory.  The effectiveness of cleancache
-+the `/sys/kernel/debug/cleancache` directory.  The effectiveness of cleancache
- can be measured (across all filesystems) with:
- 
--succ_gets	- number of gets that were successful
--failed_gets	- number of gets that failed
--puts		- number of puts attempted (all "succeed")
--invalidates	- number of invalidates attempted
-+``succ_gets``
-+	number of gets that were successful
-+
-+``failed_gets``
-+	number of gets that failed
-+
-+``puts``
-+	number of puts attempted (all "succeed")
-+
-+``invalidates``
-+	number of invalidates attempted
- 
- A backend implementation may provide additional metrics.
- 
-+.. _faq:
-+
- FAQ
-+===
- 
--1) Where's the value? (Andrew Morton)
-+* Where's the value? (Andrew Morton)
- 
- Cleancache provides a significant performance benefit to many workloads
- in many environments with negligible overhead by improving the
-@@ -137,8 +156,8 @@ device that stores pages of data in a compressed state.  And
- the proposed "RAMster" driver shares RAM across multiple physical
- systems.
- 
--2) Why does cleancache have its sticky fingers so deep inside the
--   filesystems and VFS? (Andrew Morton and Christoph Hellwig)
-+* Why does cleancache have its sticky fingers so deep inside the
-+  filesystems and VFS? (Andrew Morton and Christoph Hellwig)
- 
- The core hooks for cleancache in VFS are in most cases a single line
- and the minimum set are placed precisely where needed to maintain
-@@ -168,9 +187,9 @@ filesystems in the future.
- The total impact of the hooks to existing fs and mm files is only
- about 40 lines added (not counting comments and blank lines).
- 
--3) Why not make cleancache asynchronous and batched so it can
--   more easily interface with real devices with DMA instead
--   of copying each individual page? (Minchan Kim)
-+* Why not make cleancache asynchronous and batched so it can more
-+  easily interface with real devices with DMA instead of copying each
-+  individual page? (Minchan Kim)
- 
- The one-page-at-a-time copy semantics simplifies the implementation
- on both the frontend and backend and also allows the backend to
-@@ -182,8 +201,8 @@ are avoided.  While the interface seems odd for a "real device"
- or for real kernel-addressable RAM, it makes perfect sense for
- transcendent memory.
- 
--4) Why is non-shared cleancache "exclusive"?  And where is the
--   page "invalidated" after a "get"? (Minchan Kim)
-+* Why is non-shared cleancache "exclusive"?  And where is the
-+  page "invalidated" after a "get"? (Minchan Kim)
- 
- The main reason is to free up space in transcendent memory and
- to avoid unnecessary cleancache_invalidate calls.  If you want inclusive,
-@@ -193,7 +212,7 @@ be easily extended to add a "get_no_invalidate" call.
- 
- The invalidate is done by the cleancache backend implementation.
- 
--5) What's the performance impact?
-+* What's the performance impact?
- 
- Performance analysis has been presented at OLS'09 and LCA'10.
- Briefly, performance gains can be significant on most workloads,
-@@ -206,7 +225,7 @@ single-core systems with slow memory-copy speeds, cleancache
- has little value, but in newer multicore machines, especially
- consolidated/virtualized machines, it has great value.
- 
--6) How do I add cleancache support for filesystem X? (Boaz Harrash)
-+* How do I add cleancache support for filesystem X? (Boaz Harrash)
- 
- Filesystems that are well-behaved and conform to certain
- restrictions can utilize cleancache simply by making a call to
-@@ -217,26 +236,26 @@ not enable the optional cleancache.
- 
- Some points for a filesystem to consider:
- 
--- The FS should be block-device-based (e.g. a ram-based FS such
--  as tmpfs should not enable cleancache)
--- To ensure coherency/correctness, the FS must ensure that all
--  file removal or truncation operations either go through VFS or
--  add hooks to do the equivalent cleancache "invalidate" operations
--- To ensure coherency/correctness, either inode numbers must
--  be unique across the lifetime of the on-disk file OR the
--  FS must provide an "encode_fh" function.
--- The FS must call the VFS superblock alloc and deactivate routines
--  or add hooks to do the equivalent cleancache calls done there.
--- To maximize performance, all pages fetched from the FS should
--  go through the do_mpag_readpage routine or the FS should add
--  hooks to do the equivalent (cf. btrfs)
--- Currently, the FS blocksize must be the same as PAGESIZE.  This
--  is not an architectural restriction, but no backends currently
--  support anything different.
--- A clustered FS should invoke the "shared_init_fs" cleancache
--  hook to get best performance for some backends.
--
--7) Why not use the KVA of the inode as the key? (Christoph Hellwig)
-+  - The FS should be block-device-based (e.g. a ram-based FS such
-+    as tmpfs should not enable cleancache)
-+  - To ensure coherency/correctness, the FS must ensure that all
-+    file removal or truncation operations either go through VFS or
-+    add hooks to do the equivalent cleancache "invalidate" operations
-+  - To ensure coherency/correctness, either inode numbers must
-+    be unique across the lifetime of the on-disk file OR the
-+    FS must provide an "encode_fh" function.
-+  - The FS must call the VFS superblock alloc and deactivate routines
-+    or add hooks to do the equivalent cleancache calls done there.
-+  - To maximize performance, all pages fetched from the FS should
-+    go through the do_mpag_readpage routine or the FS should add
-+    hooks to do the equivalent (cf. btrfs)
-+  - Currently, the FS blocksize must be the same as PAGESIZE.  This
-+    is not an architectural restriction, but no backends currently
-+    support anything different.
-+  - A clustered FS should invoke the "shared_init_fs" cleancache
-+    hook to get best performance for some backends.
-+
-+* Why not use the KVA of the inode as the key? (Christoph Hellwig)
- 
- If cleancache would use the inode virtual address instead of
- inode/filehandle, the pool id could be eliminated.  But, this
-@@ -251,7 +270,7 @@ of cleancache would be lost because the cache of pages in cleanache
- is potentially much larger than the kernel pagecache and is most
- useful if the pages survive inode cache removal.
- 
--8) Why is a global variable required?
-+* Why is a global variable required?
- 
- The cleancache_enabled flag is checked in all of the frequently-used
- cleancache hooks.  The alternative is a function call to check a static
-@@ -262,14 +281,14 @@ global variable allows cleancache to be enabled by default at compile
- time, but have insignificant performance impact when cleancache remains
- disabled at runtime.
- 
--9) Does cleanache work with KVM?
-+* Does cleanache work with KVM?
- 
- The memory model of KVM is sufficiently different that a cleancache
- backend may have less value for KVM.  This remains to be tested,
- especially in an overcommitted system.
- 
--10) Does cleancache work in userspace?  It sounds useful for
--   memory hungry caches like web browsers.  (Jamie Lokier)
-+* Does cleancache work in userspace?  It sounds useful for
-+  memory hungry caches like web browsers.  (Jamie Lokier)
- 
- No plans yet, though we agree it sounds useful, at least for
- apps that bypass the page cache (e.g. O_DIRECT).
--- 
-2.7.4
+On 21/03/18 19:23, Chris Wilson wrote:
+> Quoting Colin Ian King (2018-03-21 19:18:28)
+>> On 21/03/18 19:09, Joe Perches wrote:
+>>> On Wed, 2018-03-21 at 19:06 +0000, Colin King wrote:
+>>>> From: Colin Ian King <colin.king@canonical.com>
+>>>>
+>>>> The pointer workload is dereferenced before it is null checked, hence
+>>>> there is a potential for a null pointer dereference on workload. Fix
+>>>> this by only dereferencing workload after it is null checked.
+>>>>
+>>>> Detected by CoverityScan, CID#1466017 ("Dereference before null check")
+>>>
+>>> Maybe true, but is it possible for workload to be null?
+>>> Maybe the null test should be removed instead.
+>>
+>> From what I understand from the static analysis, there may be a
+>> potential for workload to be null, I couldn't rule it out so I went with
+>> the more paranoid stance of keeping the null check in.
+> 
+> Not sr_oa_regs() problem if workload is NULL, that's the callers. I
+> reviewed the identical patch yesterday, and we ended up with removing
+> the NULL checks, just keeping the workload->id != RCS.
+> -Chris
+> 
+Ah, OK, thanks for the clarification Chris.
