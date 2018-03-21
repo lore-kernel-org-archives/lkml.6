@@ -1,61 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751912AbeCUIak (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:30:40 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:50108 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751658AbeCUIai (ORCPT
+        id S1751633AbeCUIhy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:37:54 -0400
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:32950 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeCUIhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:30:38 -0400
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <vinod.koul@intel.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <dan.j.williams@intel.com>
-Subject: [PATCH] dmaengine: edma: Check the memory allocation for the memcpy dma device
-Date: Wed, 21 Mar 2018 10:30:22 +0200
-Message-ID: <20180321083022.32616-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.16.2
+        Wed, 21 Mar 2018 04:37:48 -0400
+X-Google-Smtp-Source: AG47ELs6gJNHcLK5zJAjR4veYd38Qu6S0k/PKTrJecasQeJp/zCSwR2UkkYVckZnlD9vqs5FdSCzfQ==
+Subject: Re: [PATCH RESEND v2 1/2] drm/xen-front: Add support for Xen PV
+ display frontend
+To: xen-devel@lists.xenproject.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Gustavo Padovan <gustavo@padovan.org>, Juergen Gross <jgross@suse.com>,
+        boris.ostrovsky@oracle.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
+References: <1520958066-22875-1-git-send-email-andr2000@gmail.com>
+ <1520958066-22875-2-git-send-email-andr2000@gmail.com>
+ <20180316082330.GF25297@phenom.ffwll.local>
+ <b466004a-821e-60b7-787b-526e10a67505@gmail.com>
+ <20180319135141.GK14155@phenom.ffwll.local>
+ <0808bf3b-7301-cc28-1cb5-40a4c8aad5cc@gmail.com>
+ <CAKMK7uFrCt026VfjyKA1TS6XcP=s4S-RX0hxtLXL53OmdjgHfw@mail.gmail.com>
+ <7c4e0f8f-9ec0-e38b-7b37-264241df4ba5@gmail.com>
+ <20180320134715.GT14155@phenom.ffwll.local>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <ee57d7c8-a2fc-445c-8ee4-03c426a93d53@gmail.com>
+Date: Wed, 21 Mar 2018 10:37:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180320134715.GT14155@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the allocation fails then disable the memcpy support.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/dma/edma.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/dma/edma.c b/drivers/dma/edma.c
-index 5b197473106b..519e69e81fca 100644
---- a/drivers/dma/edma.c
-+++ b/drivers/dma/edma.c
-@@ -1899,6 +1899,11 @@ static void edma_dma_init(struct edma_cc *ecc, bool legacy_mode)
- 
- 	if (memcpy_channels) {
- 		m_ddev = devm_kzalloc(ecc->dev, sizeof(*m_ddev), GFP_KERNEL);
-+		if (!m_ddev) {
-+			dev_warn(ecc->dev, "memcpy is disabled due to OoM\n");
-+			memcpy_channels = NULL;
-+			goto ch_setup;
-+		}
- 		ecc->dma_memcpy = m_ddev;
- 
- 		dma_cap_zero(m_ddev->cap_mask);
-@@ -1926,6 +1931,7 @@ static void edma_dma_init(struct edma_cc *ecc, bool legacy_mode)
- 		dev_info(ecc->dev, "memcpy is disabled\n");
- 	}
- 
-+ch_setup:
- 	for (i = 0; i < ecc->num_channels; i++) {
- 		struct edma_chan *echan = &ecc->slave_chans[i];
- 		echan->ch_num = EDMA_CTLR_CHAN(ecc->id, i);
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+On 03/20/2018 03:47 PM, Daniel Vetter wrote:
+> On Tue, Mar 20, 2018 at 01:58:01PM +0200, Oleksandr Andrushchenko wrote:
+>> On 03/19/2018 05:28 PM, Daniel Vetter wrote:
+>>> There should be no difference between immediate removal and delayed
+>>> removal of the drm_device from the xenbus pov. The lifetimes of the
+>>> front-end (drm_device) and backend (the xen bus thing) are entirely
+>>> decoupled:
+>> Well, they are not decoupled for simplicity of handling,
+>> please see below
+>>> So for case 2 you only have 1 case:
+>>>
+>>> - drm_dev_unplug
+>>> - tear down the entire xenbus backend completely
+>>> - all xenbus access will be caught with drm_dev_entre/exit (well right
+>>> now drm_dev_is_unplugged) checks, including any access to your private
+>>> drm_device data
+>>> - once drm_device->open_count == 0 the core will tear down the
+>>> drm_device instance and call your optional drm_driver->release
+>>> callback.
+>>>
+>>> So past drm_dev_unplug the drm_device is in zombie state and the only
+>>> thing that will happen is a) it rejects all ioctls and anything else
+>>> userspace might ask it to do and b) gets releases once the last
+>>> userspace reference is gone.
+>> I have re-worked the driver with this in mind [1]
+>> So, I now use drm_dev_unplug and destroy the DRM device
+>> on drm_driver.release.
+>> In context of unplug work I also merged xen_drm_front_drv.c and
+>> xen_drm_front.c as these are too coupled together now.
+>>
+>> Could you please take a look and tell me if this is what you mean?
+>>> If the backend comes up again, you create a _new_ drm_device instance
+>>> (while the other one is still in the process of eventually getting
+>>> released).
+>> We only have a single xenbus instance, so this way I'll need
+>> to handle list of such zombies. For that reason I prefer to
+>> wait until the DRM device is destroyed, telling the backend
+>> to hold on until then (via going into XenbusStateReconfiguring state).
+> Why exactly do you need to keep track of your drm_devices from the xenbus?
+> Once unplugged, there should be no connection with the "hw" for your
+> device, in neither direction. Maybe I need to look again, but this still
+> smells funny and not like something you should ever do.
+Ok, probably new reworked code will make things cleaner and answer
+your concerns. I also removed some obsolete stuff, e.g. platform device,
+so this path became even cleaner now ;)
+>> Another drawback of such approach is that I'll have different
+>> minors at run-time, e.g. card0, card1, etc.
+>> For software which has /dev/dri/card0 hardcoded it may be a problem.
+>> But this is minor, IMO
+> Fix userspace :-)
+>
+> But yeah unlikely this is a problem, hotplugging is fairly old thing.
+>
+>>> In short, your driver code should never have a need to look at
+>>> drm_device->open_count. I hope this explains it a bit better.
+>>> -Daniel
+>>>
+>> Yes, you are correct: at [1] I am not touching drm_device->open_count
+>> anymore and everything just happens synchronously
+>> [1] https://github.com/andr2000/linux/commits/drm_tip_pv_drm_v3
+> Please just resend, makes it easier to comment inline.
+I need to wait for Xen community reviewers before resending, so this
+is why I hoped you can take a look before that, so I have a chance to
+address more of your comments in v4
+> -Daniel
+Thank you,
+Oleksandr
