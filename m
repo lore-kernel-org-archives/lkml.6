@@ -1,87 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751666AbeCUArq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 20:47:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751448AbeCUArm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 20:47:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F85F2177B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AG47ELumRgyRryk3vSmMdM3wxK8ObKn4iMDDYFsU95cYk1RpFu5QW6JQPmVBiHr+rTnj85tJxxz/heN4NyVvULMzs/Q=
+        id S1751589AbeCUA6F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 20:58:05 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.119]:11114 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751455AbeCUA6E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 20:58:04 -0400
+Subject: Re: [PATCH] Bluetooth: Remove VLA usage in aes_cmac
+To: "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180320233444.GA14446@embeddedor.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <1d334ec6-5188-f786-f136-fd7d418acbd8@embeddedor.com>
+Date: Tue, 20 Mar 2018 19:57:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <C78DE381-C618-4370-9B06-F6E25C850661@intel.com>
-References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
- <1521481767-22113-15-git-send-email-chang.seok.bae@intel.com>
- <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com> <C78DE381-C618-4370-9B06-F6E25C850661@intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Wed, 21 Mar 2018 00:47:21 +0000
-X-Gmail-Original-Message-ID: <CALCETrX03_AG-OuJdmfmsbvEt0UTdUpaUVDRQgbDZWGY7WD-Xw@mail.gmail.com>
-Message-ID: <CALCETrX03_AG-OuJdmfmsbvEt0UTdUpaUVDRQgbDZWGY7WD-Xw@mail.gmail.com>
-Subject: Re: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when FS/GS
- updated by ptracer
-To: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180320233444.GA14446@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.24.133
+X-Source-L: No
+X-Exim-ID: 1eyS4n-001Zq8-AO
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-24-133.static.axtel.net ([192.168.3.30]) [187.162.24.133]:16602
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 4:33 PM, Bae, Chang Seok
-<chang.seok.bae@intel.com> wrote:
-> On 3/20/18, 08:05, "Andy Lutomirski" <luto@kernel.org> wrote:
->> I've also suggested something like this myself, but this approach is
->> far more complicated than the older approach.  Was there something
->> that the old approach would break?  If so, what?
-> Sorry, I don't know your suggestion. Can you elaborate your suggestion?
+Hi,
 
-What the old code did.
+I've just discovered an issue in this patch. Please, drop it. I'll send 
+v2 shortly.
 
-If I've understood all your emails right, when you looked at existing
-ptrace users, you found that all of them that write to gs and/or
-gs_base do it as part of a putregs call that writes them at the same
-time.  If so, then your patch does exactly the same thing that my old
-patches did, but your patch is much more complicated.  So why did you
-add all that complexity?
+Thanks
+--
+Gustavo
 
->
->>> +               /*
->>> +                * %fs setting goes to reload its base, when tracee
->>> +                * resumes without FSGSBASE (legacy). Here with FSGSBASE
->>> +                * FS base is (manually) fetched from GDT/LDT when needed.
->>> +                */
->>> +               else if (static_cpu_has(X86_FEATURE_FSGSBASE) &&
->>> +                        (value != 0) && (task->thread.fsindex != value))
->>> +                       task->thread.fsbase = task_seg_base(task, value);
->
->> The comment above should explain why you're checking this particular
->> condition.  I find the fsindex != value check to be *very* surprising.
->>  On a real CPU, writing some nonzero value to %fs does the same thing
->>  regardless of what the old value of %fs was.
->
-> With FSGSBASE, when both index and base are not changed, base will
-> be (always) fetched from GDT/LDT. This is not thought as legacy behavior
-> we need to support, AFAIK.
->
->> This is_fully_covered thing is IMO overcomplicated.  Why not just make
->> a separate helper set_fsgs_index_and_base() and have putregs() call it
->> when both are set at once?
->
-> Using helper function here is exactly what I did at first. I thought this
-> tag is simple enough and straightforward at the end. But I'm open to
-> factor it out.
->
->
-
-I retract this particular comment.  But I still think that all this
-complexity needs to be more clearly justified.  My objection to the
-old approach wasn't that I thought it was obviously wrong -- I thought
-that someone needed to survey existing ptrace() users and see if
-anyone needed the fancier code that you're adding.  Did you find
-something that needs this fancy code?
+On 03/20/2018 06:34 PM, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wvla, remove VLA and replace it
+> with dynamic memory allocation instead.
+> 
+> The use of stack Variable Length Arrays needs to be avoided, as they
+> can be a vector for stack exhaustion, which can be both a runtime bug
+> or a security flaw. Also, in general, as code evolves it is easy to
+> lose track of how big a VLA can get. Thus, we can end up having runtime
+> failures that are hard to debug.
+> 
+> Also, fixed as part of the directive to remove all VLAs from
+> the kernel: https://lkml.org/lkml/2018/3/7/621
+> 
+> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+> ---
+>   net/bluetooth/smp.c | 16 +++++++++++-----
+>   1 file changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
+> index a2ddae2..23c694d 100644
+> --- a/net/bluetooth/smp.c
+> +++ b/net/bluetooth/smp.c
+> @@ -173,7 +173,7 @@ static int aes_cmac(struct crypto_shash *tfm, const u8 k[16], const u8 *m,
+>   		    size_t len, u8 mac[16])
+>   {
+>   	uint8_t tmp[16], mac_msb[16], msg_msb[CMAC_MSG_MAX];
+> -	SHASH_DESC_ON_STACK(desc, tfm);
+> +	struct shash_desc *shash;
+>   	int err;
+>   
+>   	if (len > CMAC_MSG_MAX)
+> @@ -184,8 +184,13 @@ static int aes_cmac(struct crypto_shash *tfm, const u8 k[16], const u8 *m,
+>   		return -EINVAL;
+>   	}
+>   
+> -	desc->tfm = tfm;
+> -	desc->flags = 0;
+> +	shash = kzalloc(sizeof(*shash) + crypto_shash_descsize(tfm),
+> +			GFP_KERNEL);
+> +	if (!shash)
+> +		return -ENOMEM;
+> +
+> +	shash->tfm = tfm;
+> +	shash->flags = 0;
+>   
+>   	/* Swap key and message from LSB to MSB */
+>   	swap_buf(k, tmp, 16);
+> @@ -200,8 +205,9 @@ static int aes_cmac(struct crypto_shash *tfm, const u8 k[16], const u8 *m,
+>   		return err;
+>   	}
+>   
+> -	err = crypto_shash_digest(desc, msg_msb, len, mac_msb);
+> -	shash_desc_zero(desc);
+> +	err = crypto_shash_digest(shash, msg_msb, len, mac_msb);
+> +	shash_desc_zero(shash);
+> +	kfree(shash);
+>   	if (err) {
+>   		BT_ERR("Hash computation error %d", err);
+>   		return err;
+> 
