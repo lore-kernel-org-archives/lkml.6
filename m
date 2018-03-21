@@ -1,133 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751583AbeCUJqE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 05:46:04 -0400
-Received: from m15-112.126.com ([220.181.15.112]:55695 "EHLO m15-112.126.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751396AbeCUJqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 05:46:01 -0400
-From: Zhang Zhuoyu <zhangzhuoyu@cmss.chinamobile.com>
-To: nab@linux-iscsi.org
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Zhang Zhuoyu <zhangzhuoyu@cmss.chinamobile.com>
-Subject: [PATCH 1/1] target:separate tx/rx cmd_puds
-Date: Wed, 21 Mar 2018 17:52:43 +0800
-Message-Id: <1521625963-657195-1-git-send-email-zhangzhuoyu@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.8.3.1
-X-CM-TRANSID: DMmowAB3lJHMKbJa_6tFBQ--.63447S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCr1xCw4kXFy5Aw15Cr1Dtrb_yoWrWFW3pa
-        1UJF9xJrWDJay8Ar1DJF4qv34rXw1UW347XayxW3WfXa1UtrW3Kw1UCFWayFn8ZryxGryf
-        Ga9FyFn0k3ykXrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jcjjgUUUUU=
-X-Originating-IP: [223.105.0.130]
-X-CM-SenderInfo: xkhoz05221imiyy6ij2wof0z/1tbi2g8Q1FpD3dd3AwAAs2
+        id S1751744AbeCUJwD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 05:52:03 -0400
+Received: from mail1.med.uni-goettingen.de ([134.76.103.230]:32138 "EHLO
+        mail1.med.uni-goettingen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751464AbeCUJwA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 05:52:00 -0400
+From: "Uecker, Martin" <Martin.Uecker@med.uni-goettingen.de>
+To: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: detecting integer constant expressions in macros
+Thread-Topic: detecting integer constant expressions in macros
+Thread-Index: AQHTwJiwGR/EgJUmakKV29wYTwhXcaPZrsMAgAARXwCAAAWUAIAAnNEA
+Date: Wed, 21 Mar 2018 09:51:55 +0000
+Message-ID: <1521625914.3034.1.camel@med.uni-goettingen.de>
+References: <1521584015.31174.3.camel@med.uni-goettingen.de>
+         <CA+55aFyRgq7hbmxK9471xY-eja4X=gKHSjF4Q+a0FJjxVB1TYQ@mail.gmail.com>
+         <1521591040.508.2.camel@med.uni-goettingen.de>
+         <CA+55aFyfW7kA_72vNifyxBV7gc_fkKjVC3j1WBJzx1R3GpApOQ@mail.gmail.com>
+In-Reply-To: <CA+55aFyfW7kA_72vNifyxBV7gc_fkKjVC3j1WBJzx1R3GpApOQ@mail.gmail.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [134.76.125.21]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <266536CD73102A4B9776A31B3D435A48@ads.local.med.uni-goettingen.de>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2L9q9a0029159
 
-Separate tx/rx cmd_pdus in order to distinguish LUN read/write IOPS.
 
-Signed-off-by: Zhang Zhuoyu <zhangzhuoyu@cmss.chinamobile.com>
----
- drivers/target/target_core_stat.c      | 26 ++++++++++++++++++++++----
- drivers/target/target_core_transport.c | 11 ++++++++++-
- include/target/target_core_base.h      |  3 ++-
- 3 files changed, 34 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/target/target_core_stat.c b/drivers/target/target_core_stat.c
-index f0db91e..9099494 100644
---- a/drivers/target/target_core_stat.c
-+++ b/drivers/target/target_core_stat.c
-@@ -636,7 +636,7 @@ static ssize_t target_stat_tgt_port_port_index_show(struct config_item *item,
- 	return ret;
- }
- 
--static ssize_t target_stat_tgt_port_in_cmds_show(struct config_item *item,
-+static ssize_t target_stat_tgt_port_tx_cmds_show(struct config_item *item,
- 		char *page)
- {
- 	struct se_lun *lun = to_stat_tgt_port(item);
-@@ -647,7 +647,23 @@ static ssize_t target_stat_tgt_port_in_cmds_show(struct config_item *item,
- 	dev = rcu_dereference(lun->lun_se_dev);
- 	if (dev)
- 		ret = snprintf(page, PAGE_SIZE, "%lu\n",
--			       atomic_long_read(&lun->lun_stats.cmd_pdus));
-+			       atomic_long_read(&lun->lun_stats.tx_cmd_pdus));
-+	rcu_read_unlock();
-+	return ret;
-+}
-+
-+static ssize_t target_stat_tgt_port_rx_cmds_show(struct config_item *item,
-+		char *page)
-+{
-+	struct se_lun *lun = to_stat_tgt_port(item);
-+	struct se_device *dev;
-+	ssize_t ret = -ENODEV;
-+
-+	rcu_read_lock();
-+	dev = rcu_dereference(lun->lun_se_dev);
-+	if (dev)
-+		ret = snprintf(page, PAGE_SIZE, "%lu\n",
-+			       atomic_long_read(&lun->lun_stats.rx_cmd_pdus));
- 	rcu_read_unlock();
- 	return ret;
- }
-@@ -706,7 +722,8 @@ static ssize_t target_stat_tgt_port_hs_in_cmds_show(struct config_item *item,
- CONFIGFS_ATTR_RO(target_stat_tgt_port_, indx);
- CONFIGFS_ATTR_RO(target_stat_tgt_port_, name);
- CONFIGFS_ATTR_RO(target_stat_tgt_port_, port_index);
--CONFIGFS_ATTR_RO(target_stat_tgt_port_, in_cmds);
-+CONFIGFS_ATTR_RO(target_stat_tgt_port_, tx_cmds);
-+CONFIGFS_ATTR_RO(target_stat_tgt_port_, rx_cmds);
- CONFIGFS_ATTR_RO(target_stat_tgt_port_, write_mbytes);
- CONFIGFS_ATTR_RO(target_stat_tgt_port_, read_mbytes);
- CONFIGFS_ATTR_RO(target_stat_tgt_port_, hs_in_cmds);
-@@ -717,7 +734,8 @@ static ssize_t target_stat_tgt_port_hs_in_cmds_show(struct config_item *item,
- 	&target_stat_tgt_port_attr_indx,
- 	&target_stat_tgt_port_attr_name,
- 	&target_stat_tgt_port_attr_port_index,
--	&target_stat_tgt_port_attr_in_cmds,
-+	&target_stat_tgt_port_attr_tx_cmds,
-+	&target_stat_tgt_port_attr_rx_cmds,
- 	&target_stat_tgt_port_attr_write_mbytes,
- 	&target_stat_tgt_port_attr_read_mbytes,
- 	&target_stat_tgt_port_attr_hs_in_cmds,
-diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
-index 74b646f..79cb96f 100644
---- a/drivers/target/target_core_transport.c
-+++ b/drivers/target/target_core_transport.c
-@@ -1356,7 +1356,16 @@ void transport_init_se_cmd(
- 		return ret;
- 
- 	cmd->se_cmd_flags |= SCF_SUPPORTED_SAM_OPCODE;
--	atomic_long_inc(&cmd->se_lun->lun_stats.cmd_pdus);
-+	switch (cmd->data_direction) {
-+	case DMA_FROM_DEVICE:
-+		atomic_long_inc(&cmd->se_lun->lun_stats.tx_cmd_pdus);
-+		break;
-+	case DMA_TO_DEVICE:
-+		atomic_long_inc(&cmd->se_lun->lun_stats.rx_cmd_pdus);
-+		break;
-+	default:
-+		break;
-+	}
- 	return 0;
- }
- EXPORT_SYMBOL(target_setup_cmd_from_cdb);
-diff --git a/include/target/target_core_base.h b/include/target/target_core_base.h
-index 9f9f590..6a0a2a7 100644
---- a/include/target/target_core_base.h
-+++ b/include/target/target_core_base.h
-@@ -698,7 +698,8 @@ struct se_port_stat_grps {
- };
- 
- struct scsi_port_stats {
--	atomic_long_t	cmd_pdus;
-+	atomic_long_t	tx_cmd_pdus;
-+	atomic_long_t	rx_cmd_pdus;
- 	atomic_long_t	tx_data_octets;
- 	atomic_long_t	rx_data_octets;
- };
--- 
-1.8.3.1
+Am Dienstag, den 20.03.2018, 17:30 -0700 schrieb Linus Torvalds:
+> On Tue, Mar 20, 2018 at 5:10 PM, Uecker, Martin
+> <Martin.Uecker@med.uni-goettingen.de> wrote:
+
+> 
+> > But one could also use __builtin_types_compatible_p instead.
+> 
+> That might be the right approach, even if I like how it only used
+> standard C (although _disgusting_ standard C) without it apart from
+> the small issue of sizeof(void)
+> 
+> So something like
+> 
+>   #define __is_constant(a) \
+>         __builtin_types_compatible_p(int *, typeof(1 ? ((void*)((a) *
+> 0l)) : (int*)1 ) )
+> 
+> if I counted the parentheses right..
+
+This seems to work fine on all recent compilers. Sadly, it
+produces false positives on 4.4.7 and earlier when
+tested on godbolt.org
+
+Surprisingly, the MAX macro as defined below still seems
+to do the right thing with respect to avoiding the VLA
+even on the old compilers.
+
+I am probably missing something... or there are two
+compiler bugs cancelling out, or the __builting_choose_expr
+changes things.
+
+Martin
+
+My test code:
+
+#define ICE_P(x) (__builtin_types_compatible_p(int*, __typeof__(1 ?
+((void*)((x) * 0l)) : (int*)1)))
+
+#define SIMPLE_MAX(a, b) ((a) > (b) ? (a) : (b))
+#define SAFE_MAX(a, b) ({ __typeof(a) _a = (a); __typeof(b) _b = (b);
+SIMPLE_MAX(_a, _b); })
+#define MAX(a, b) (__builtin_choose_expr(ICE_P(a) && ICE_P(b),
+SIMPLE_MAX(a, b), SAFE_MAX(a, b)))
+
+
+
+int foo(int x)
+{
+    int a[MAX(3, 4)];
+    //int a[MAX(3, x)];
+    //int a[SAFE_MAX(3, 4)];
+    //return ICE_P(MAX(3, 4));
+    return ICE_P(MAX(3, x));
+}
