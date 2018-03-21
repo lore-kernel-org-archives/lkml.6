@@ -1,97 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752296AbeCUCbW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:31:22 -0400
-Received: from ozlabs.org ([103.22.144.67]:47783 "EHLO ozlabs.org"
+        id S1752567AbeCUCaL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:30:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751905AbeCUCbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 22:31:19 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 21 Mar 2018 13:30:40 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20180321133040.6754c372@canb.auug.org.au>
+        id S1751676AbeCUCVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 22:21:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA75217DF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Message-Id: <20180321022124.021503383@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Tue, 20 Mar 2018 22:20:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [for-next][PATCH 07/46] tracing: Add timestamp_mode trace file
+References: <20180321022052.030055576@goodmis.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9GBRwumKv_kUus_VfHV7B_K"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0007-tracing-Add-timestamp_mode-trace-file.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9GBRwumKv_kUus_VfHV7B_K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Hi all,
+Add a new option flag indicating whether or not the ring buffer is in
+'absolute timestamp' mode.
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Currently this is only set/unset by hist triggers that make use of a
+common_timestamp.  As such, there's no reason to make this writeable
+for users - its purpose is only to allow users to determine
+unequivocally whether or not the ring buffer is in that mode (although
+absolute timestamps can coexist with the normal delta timestamps, when
+the ring buffer is in absolute mode, timestamps written while absolute
+mode is in effect take up more space in the buffer, and are not as
+efficient).
 
-sound/soc/amd/acp-pcm-dma.c: In function 'acp_dma_open':
-sound/soc/amd/acp-pcm-dma.c:714:35: error: 'struct dw_i2s_dev' has no membe=
-r named 'i2s_instance'; did you mean 'i2s_base'?
-   adata->i2s_play_instance =3D dev->i2s_instance;
-                                   ^~~~~~~~~~~~
-                                   i2s_base
-sound/soc/amd/acp-pcm-dma.c:715:35: error: 'I2S_SP_INSTANCE' undeclared (fi=
-rst use in this function); did you mean 'SS_ONSTACK'?
-   if (adata->i2s_play_instance =3D=3D I2S_SP_INSTANCE)
-                                   ^~~~~~~~~~~~~~~
-                                   SS_ONSTACK
-sound/soc/amd/acp-pcm-dma.c:715:35: note: each undeclared identifier is rep=
-orted only once for each function it appears in
-sound/soc/amd/acp-pcm-dma.c:717:40: error: 'I2S_BT_INSTANCE' undeclared (fi=
-rst use in this function); did you mean 'I2S_SP_INSTANCE'?
-   else if (adata->i2s_play_instance =3D=3D I2S_BT_INSTANCE)
-                                        ^~~~~~~~~~~~~~~
-                                        I2S_SP_INSTANCE
-sound/soc/amd/acp-pcm-dma.c:722:38: error: 'struct dw_i2s_dev' has no membe=
-r named 'i2s_instance'; did you mean 'i2s_base'?
-   adata->i2s_capture_instance =3D dev->i2s_instance;
-                                      ^~~~~~~~~~~~
-                                      i2s_base
-sound/soc/amd/acp-pcm-dma.c: In function 'acp_dma_close':
-sound/soc/amd/acp-pcm-dma.c:1046:8: error: 'I2S_BT_INSTANCE' undeclared (fi=
-rst use in this function)
-   case I2S_BT_INSTANCE:
-        ^~~~~~~~~~~~~~~
-sound/soc/amd/acp-pcm-dma.c:1049:8: error: 'I2S_SP_INSTANCE' undeclared (fi=
-rst use in this function); did you mean 'I2S_BT_INSTANCE'?
-   case I2S_SP_INSTANCE:
-        ^~~~~~~~~~~~~~~
-        I2S_BT_INSTANCE
+Link: http://lkml.kernel.org/r/e8aa7b1cde1cf15014e66545d06ac6ef2ebba456.1516069914.git.tom.zanussi@linux.intel.com
 
-Caused by commit
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ Documentation/trace/ftrace.txt | 24 +++++++++++++++++++++
+ kernel/trace/trace.c           | 47 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
 
-  363fe37948e2 ("ASoC: amd: dma driver changes for BT I2S controller instan=
-ce")
-
-I have used the sound-asoc tree from next-20180320 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9GBRwumKv_kUus_VfHV7B_K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxw9AACgkQAVBC80lX
-0Gwf0Af/bF9Ix2oPc9rY2e/QDU2AlUmkn651wPFz4DZJO8CJJ/qV/kF1Dp0NC0we
-miZ7e5f5dZsUIpfo6UBFvn0Fk6zV55dyWiY9q/B9gFqf1WAJih4ymncysUcFbt6b
-xBsFABOBEp88A9MDpsUb7aKYfCzLYgS1a5zd9RfxntZ77Rg6VUf+Wf4yuaxNorko
-N9/6NRpd6vEHnJAOPCdikPeAt0X4rVTKXPmae9QxWyfbwdsxxag02R4b+rLR8Q9p
-lVnzvkxUcpKaCpJJkrAPEv5i7YGYiYHRDcsWDUbu9Q3LjXlDs+vlOXIczX7dgyhJ
-NiF7n2UBobDZ9Wa+gI0fSmULmCKVYw==
-=KSNR
------END PGP SIGNATURE-----
-
---Sig_/9GBRwumKv_kUus_VfHV7B_K--
+diff --git a/Documentation/trace/ftrace.txt b/Documentation/trace/ftrace.txt
+index d4601df6e72e..54213e5c23f6 100644
+--- a/Documentation/trace/ftrace.txt
++++ b/Documentation/trace/ftrace.txt
+@@ -539,6 +539,30 @@ of ftrace. Here is a list of some of the key files:
+ 
+ 	See events.txt for more information.
+ 
++  timestamp_mode:
++
++	Certain tracers may change the timestamp mode used when
++	logging trace events into the event buffer.  Events with
++	different modes can coexist within a buffer but the mode in
++	effect when an event is logged determines which timestamp mode
++	is used for that event.  The default timestamp mode is
++	'delta'.
++
++	Usual timestamp modes for tracing:
++
++	  # cat timestamp_mode
++	  [delta] absolute
++
++	  The timestamp mode with the square brackets around it is the
++	  one in effect.
++
++	  delta: Default timestamp mode - timestamp is a delta against
++	         a per-buffer timestamp.
++
++	  absolute: The timestamp is a full timestamp, not a delta
++                 against some other value.  As such it takes up more
++                 space and is less efficient.
++
+   hwlat_detector:
+ 
+ 	Directory for the Hardware Latency Detector.
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index cba003f0362e..988d94a05e81 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4515,6 +4515,9 @@ static const char readme_msg[] =
+ #ifdef CONFIG_X86_64
+ 	"     x86-tsc:   TSC cycle counter\n"
+ #endif
++	"\n  timestamp_mode\t-view the mode used to timestamp events\n"
++	"       delta:   Delta difference against a buffer-wide timestamp\n"
++	"    absolute:   Absolute (standalone) timestamp\n"
+ 	"\n  trace_marker\t\t- Writes into this file writes into the kernel buffer\n"
+ 	"\n  trace_marker_raw\t\t- Writes into this file writes binary data into the kernel buffer\n"
+ 	"  tracing_cpumask\t- Limit which CPUs to trace\n"
+@@ -6282,6 +6285,40 @@ static int tracing_clock_open(struct inode *inode, struct file *file)
+ 	return ret;
+ }
+ 
++static int tracing_time_stamp_mode_show(struct seq_file *m, void *v)
++{
++	struct trace_array *tr = m->private;
++
++	mutex_lock(&trace_types_lock);
++
++	if (ring_buffer_time_stamp_abs(tr->trace_buffer.buffer))
++		seq_puts(m, "delta [absolute]\n");
++	else
++		seq_puts(m, "[delta] absolute\n");
++
++	mutex_unlock(&trace_types_lock);
++
++	return 0;
++}
++
++static int tracing_time_stamp_mode_open(struct inode *inode, struct file *file)
++{
++	struct trace_array *tr = inode->i_private;
++	int ret;
++
++	if (tracing_disabled)
++		return -ENODEV;
++
++	if (trace_array_get(tr))
++		return -ENODEV;
++
++	ret = single_open(file, tracing_time_stamp_mode_show, inode->i_private);
++	if (ret < 0)
++		trace_array_put(tr);
++
++	return ret;
++}
++
+ int tracing_set_time_stamp_abs(struct trace_array *tr, bool abs)
+ {
+ 	int ret = 0;
+@@ -6560,6 +6597,13 @@ static const struct file_operations trace_clock_fops = {
+ 	.write		= tracing_clock_write,
+ };
+ 
++static const struct file_operations trace_time_stamp_mode_fops = {
++	.open		= tracing_time_stamp_mode_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= tracing_single_release_tr,
++};
++
+ #ifdef CONFIG_TRACER_SNAPSHOT
+ static const struct file_operations snapshot_fops = {
+ 	.open		= tracing_snapshot_open,
+@@ -7882,6 +7926,9 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
+ 	trace_create_file("tracing_on", 0644, d_tracer,
+ 			  tr, &rb_simple_fops);
+ 
++	trace_create_file("timestamp_mode", 0444, d_tracer, tr,
++			  &trace_time_stamp_mode_fops);
++
+ 	create_trace_options_dir(tr);
+ 
+ #if defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)
+-- 
+2.15.1
