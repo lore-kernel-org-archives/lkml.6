@@ -1,168 +1,118 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4050712-1521637576-2-13835699697946835366
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3996454-1521637096-2-11970809855603631182
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='iso-8859-1'
+X-Spam-charsets: plain='US-ASCII'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521637575; b=gN0BkBUgWKH9TRxZdOKiuc++pYqqp7egW37ceu3rCtpCRmH
-    rqEyE4Fdbghy5+DFg6ZV+QM6ZMri3UIekaVEOaH4Tm/KrKv7jqYPrUhOFCDSzHF2
-    WuakhzbhXHNwj3xjxhE3VpBA0bSWk09MmcoFar1rvw2JRelReVFFTL2dKl4/nvEG
-    iBnWUYDBjD8SKpfBk66ODq6nAUIS9e8gfaRQDQskA7kWvs7d2OKWOZAtwbyBmx6j
-    9ztYsOQRRFxdOQlYvrCqUZfmKBdzkMFZXMibsNU3V4lXWgRlFs9J+2GJY3ybR/zB
-    Sgl1Ut15PKMsCaSmDkkl7riNtqJFkYAeMYXyPdQ==
+    t=1521637095; b=HMcPDlHKsIt5kcFIvhFKWiwzsaUCDUokDVUgd4kkPS8lkNo
+    1MLftTP30Xpby0/cLizoxph7CQzkE8VOBfmNmmYOY1/Qx9tzhgIgpTwnhfEceEn7
+    yXcLxv3c+tGgqsrxyRTiECzjp1aJqjAXjJchMhktV2dFDppvbDmO2ew0d6wRz1gA
+    e5YvIDJsMD52eVB8MPff9kO0ivMs6l1tyC8aNVXpXgvtMi7NjiUIuNDaDuN+fE8f
+    NdwyrDj4l5ImufR5V9l6iSFWlNQhRJ24byiGTJXicteXvUgb2W7x8n8LMwWqX2CV
+    CD0fYTkkxS2Q5z2gwF5epXP9FeASl40W38Wy12Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:date:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521637575; bh=O
-    9DlR0erK3Dz+9qoO0zb8P6M8Z2V/fLSqBV2cu8xBEU=; b=hcaGIlkHlVfGWG2/I
-    BRkpjrq9F1g6pl25EZY/+7v84g5jyuiKxrC4g8uQWqfp/QLTWJvnGSeAvQGpL9Ib
-    cAgQzwQi5laUe/MGrF1q+GtjCaWKL1W23VKbjQX6IfJg+/wMbrtL/muXB7m+qXyD
-    bQVsIL0p7IUlZTm7Vl0ddOW8rrEYKEUNio4asEbrRPoJcxX0JQ9+v3Zqz2vDYCc3
-    M0EXJO23W+hkkfMT3/jpbzzTpqxqy2GvOfNyVqBWD6WbnH5Go4T5XcTIgT0Kt6JG
-    PHbDECnIpPBGtKxAJBvSNeb8R6fKPyM1rKguTNj0A8fcEvmNbntP0y2es1JIAyeY
-    S0XEg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=IMkEF/g0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1521637095; bh=m9dQ9a//DaArNUj5u7KrZVbMVa1tTmg9UzrVouuoyXM=; b=h
+    P9iu9mdxBKKi57eJDtICimo/IvIdBQZCD6F+ddlhzDokTtDWs5PDYKqqGay8WlVZ
+    aed07FCKCIHLKx9Th0NEv1n5o/eCRq+f+uWoiCiQlRzpDrtC2ed6iTS6tmkknxej
+    dG1g7LUkHUjAlY5Dvko38tELzkFev9BsUK6V8Yvugt0ryshrAlRQLdruyisxgwgO
+    7h6lv6b/FMwCtwrA+1Mp5FMDggOIPB1vWVx8+ulD/PQlVmMKq48g2jhlG5fSh8Yi
+    JskD2O/esEcwzGZmYIGgG+l3NWDaY/6bL7n0iyXqc+i6L01NaxzvlX9iO04kvj3C
+    G/VaLKtsqWjWwt/DLDxWQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=iATInzvc;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=IMkEF/g0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=iATInzvc;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELsW67mzFqbwAGqVejgItk1/1GYPdbjeMC0n4kwem4own3eHFdSTbdqv6oSV5yZ45WSAK3ZghQ==
-From: "<Hariprasath Elango>" <hariprasath.elango@gmail.com>
-X-Google-Original-From: "<Hariprasath Elango>" <hariprasath.elango>
-Date: Wed, 21 Mar 2018 18:35:57 +0530
-To: Denis Kirjanov <kirjanov@gmail.com>
-Subject: Re: [PATCH] staging: fsl-dpaa2: replace simple switch case by if
- statement
-Message-ID: <20180321130411.GA11639@hariprasath>
-References: <20180321111604.9902-1-hariprasath.elango@gmail.com>
- <faa92f0e20fc44019ee0b64b04413d69@AcuMS.aculab.com>
- <CAHj3AVkQMn26EGtYzu3R2TgDMAaijXoJXnAV3f94eUui6kWtJA@mail.gmail.com>
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751502AbeCUM6M (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 08:58:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38600 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751464AbeCUM6M (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 21 Mar 2018 08:58:12 -0400
+Date: Wed, 21 Mar 2018 06:58:04 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: intel-gvt-dev@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, stable@vger.kernel.org,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/i915/gvt: throw error on unhandled vfio ioctls
+Message-ID: <20180321065804.5f818765@t450s.home>
+In-Reply-To: <20180321090804.22430-1-kraxel@redhat.com>
+References: <20180321090804.22430-1-kraxel@redhat.com>
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <CAHj3AVkQMn26EGtYzu3R2TgDMAaijXoJXnAV3f94eUui6kWtJA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "hariprasath.elango@gmail.com" <hariprasath.elango@gmail.com>,
- David Laight <David.Laight@aculab.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 21, 2018 at 03:17:51PM +0300, Denis Kirjanov wrote:
-> On 3/21/18, David Laight <David.Laight@aculab.com> wrote:
-> > From: > hariprasath.elango@gmail.com
-> >> Sent: 21 March 2018 11:16
-> >> From: HariPrasath Elango <hariprasath.elango@gmail.com>
-> >>
-> >> Replace a couple of simple switch cases by if condition
-> >
-> > Why?
-> > In principle extra 'case' might be needed in the future.
-> =
+On Wed, 21 Mar 2018 10:08:03 +0100
+Gerd Hoffmann <kraxel@redhat.com> wrote:
 
-> I had the same question when saw it.
-> It's better to keep things as is.
-> >
-> > ...
+> On unknown/unhandled ioctls the driver should return an error, so
+> userspace knows it tried to use something unsupported.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/i915/gvt/kvmgt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kvmgt.c
+> index 021f722e24..be881d53c2 100644
+> --- a/drivers/gpu/drm/i915/gvt/kvmgt.c
+> +++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+> @@ -1284,7 +1284,7 @@ static long intel_vgpu_ioctl(struct mdev_device *mdev, unsigned int cmd,
+>  
+>  	}
+>  
+> -	return 0;
+> +	return -EINVAL;
+>  }
+>  
+>  static ssize_t
 
- Hi, since the switch statement had only one case,I thought of doing
- this. If there are plans to add more cases, we can leave it like
- that.
+Absolutely, but I'd prefer to continue the standard behavior among
+other vfio drivers, and adopted from elsewhere in the kernel, to use
+-ENOTTY for an unhandled ioctl, reserving -EINVAL as an error in
+options for a supported ioctl.  Thanks,
 
- thanks,
- hari
-
-> >> diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
-> >> b/drivers/staging/fsl-
-> >> dpaa2/ethernet/dpaa2-ethtool.c
-> >> index 070a3f2..fb517cb 100644
-> >> --- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
-> >> +++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
-> >> @@ -171,8 +171,7 @@ static void dpaa2_eth_get_strings(struct net_device
-> >> *netdev, u32 stringset,
-> >>  	u8 *p =3D data;
-> >>  	int i;
-> >>
-> >> -	switch (stringset) {
-> >> -	case ETH_SS_STATS:
-> >> +	if (stringset =3D=3D ETH_SS_STATS) {
-> >>  		for (i =3D 0; i < DPAA2_ETH_NUM_STATS; i++) {
-> >>  			strlcpy(p, dpaa2_ethtool_stats[i], ETH_GSTRING_LEN);
-> >>  			p +=3D ETH_GSTRING_LEN;
-> >> @@ -181,18 +180,16 @@ static void dpaa2_eth_get_strings(struct net_dev=
-ice
-> >> *netdev, u32 stringset,
-> >>  			strlcpy(p, dpaa2_ethtool_extras[i], ETH_GSTRING_LEN);
-> >>  			p +=3D ETH_GSTRING_LEN;
-> >>  		}
-> >> -		break;
-> >>  	}
-> >>  }
-> > ...
-> >
-> > 	David
-> >
-> > _______________________________________________
-> > devel mailing list
-> > devel@linuxdriverproject.org
-> > http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-> >
-> =
-
-> =
-
-> -- =
-
-> Regards / Mit besten Gr=FC=DFen,
-> Denis
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Alex
