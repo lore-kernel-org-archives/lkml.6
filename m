@@ -1,23 +1,23 @@
 Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AG47ELvL9L84M/yqA1t70rVoFHTDLG1nUk1x5QerUh/BkyXTzpzU7DeAhmy3bs2zz1gEdJpPefu/
-ARC-Seal: i=1; a=rsa-sha256; t=1521650277; cv=none;
+X-Google-Smtp-Source: AG47ELvYaYNqiWruW3Z5LsKu801NHDwaLt/1iXrhftW/dD6td+plJp2yZ9LYR4V+y5rlAT9wSB2M
+ARC-Seal: i=1; a=rsa-sha256; t=1521650276; cv=none;
         d=google.com; s=arc-20160816;
-        b=n+CXFQtvo9QAetO8FCafm3Eiollk5/DvFWLDv+Jn/Zv56kcoXsaH1gQj+sURLru2UH
-         v39RLYcNvu82niwdKS/M3Gr3nE9XhQFT3aS8mIJJQM/WPY02SxrDzYA5XJwHkh3I2thl
-         4l2DNkcxdrHlm70g6M3fwC37lsieN7O/4txy1qDRU22WZhbuEfAdi09bJH7hiFtNdiG0
-         hKqyEwOMVQOMGVA5mFqK5Ur0RCszp3iYutwC0jZhRxSs6QJ+rAu7vYNRQ3ns2gjYPD+R
-         eg5IovZ3vPiZZ0/5PRw5TzSvFCOspVrOGTvvsdbOkGKtLsVycXr/ZYksqYMgnY1twhgh
-         NfGg==
+        b=EqoYjGonpAzxGQOGKyjGgy4YrASc5ajk6IqHQUisa1ZUOlfn0Auu45f43ieXKic5y9
+         2HwEhhRwjUYccmhVCjYuOCa/HWJptZnn4hq0cfa78EkplY3du0YKN9WIr1dJesMnb8RV
+         xGFOB3Vd9xMg4yCOO7MDwCPQnNUVfRc4SxsoOR177pTwDabmI+mpAQzN7CyBZgBfrBvE
+         3SC2MtL4BDEu6TDNJeyAkE5Im4PlXiVpb+5f2UNxCDxvv7Q7IIpHonafTUcyXIOWXY61
+         crRIe26bNOJAeVCY+qHmv6uZzOr+ojorrEk8nRRoOWJfTWKG0z4iNc1rxYR2vcxuiIb3
+         L0jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=subject:references:in-reply-to:message-id:date:cc:to:from
          :arc-authentication-results;
-        bh=ZResSvF71S4b9JnFuePZhxuGdTdkgn2/HrjfNWEuCO4=;
-        b=Q0v8/ISIvUYd6H6xBptHtaiBLFOx+wnmPG/MgPiy/tTgmut86m3Ew+drq7/KHU9IwQ
-         hLm8yto7VIurqIpBt8IR6ExGFq0xndEkEB44n/c9yzEvGkKRsV6/MnPf6eOhXCUkaCC8
-         lBU2r3OWhcj2xmHPYyFyh7+T87lWRnqPjF8zQl/nHbqT2Y1PXaHiy6ya2jOKfQjasbpM
-         f7e0V3GC7qUIcwrStm1otCzxvcyGZ2Lep7+RPNVritCToMLdOqd5uNwAss7qp3NIU4mQ
-         BmdQptRUJzPDXHHYGyZptG7qeK91f74RuxIVb9WOTi5q6whvHPdb9yFoqOQcIhULPeal
-         9fDA==
+        bh=lZVuHHhC+13V9POSc1MvwQ6pVMrqydkL5QxEgOrODn4=;
+        b=JBW3uUqOzSEyJA+suzmyOWx5Z5ZNu+A5F3rO9NywqUZ0TiU65cpFdFYgRbWniFDFza
+         zFKX8jeKfmSzQlupLQiH0OKiVDOT4NGfIVpbdyDHNl4afi3K7p2avaD4/IZY1Mjcy0sw
+         nQL/McDwyoSeFq3zV+f8ff2OFDE1pZ8EfEqi3/LxNZtfWpsbfIgZ6I4u04jYoPCDLW4G
+         1HC5Li98nXcxP6mN5Rd0QBhoU9oOi/w5VXXbEibCRQ/13RgQw87JifWAxa+XyojQCnV4
+         VhXrvgq7TpOfcy2c24V2mpM3lfr3pTE3g+4p6B9xPZ8PsbekGwwEdVjAiRmRDDQOT7ww
+         KFPQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
@@ -32,68 +32,92 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
 	Logan Gunthorpe <logang@deltatee.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Paul Mackerras <paulus@samba.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Suresh Warrier <warrier@linux.vnet.ibm.com>,
-	"Oliver O'Halloran" <oohall@gmail.com>
-Date: Wed, 21 Mar 2018 10:37:39 -0600
-Message-Id: <20180321163745.12286-5-logang@deltatee.com>
+	Jon Mason <jdmason@kudzu.us>
+Date: Wed, 21 Mar 2018 10:37:45 -0600
+Message-Id: <20180321163745.12286-11-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180321163745.12286-1-logang@deltatee.com>
 References: <20180321163745.12286-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, horia.geanta@nxp.com, logang@deltatee.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, warrier@linux.vnet.ibm.com, andy.shevchenko@gmail.com, npiggin@gmail.com, oohall@gmail.com
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, jdmason@kudzu.us
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v13 04/10] powerpc: io.h: move iomap.h include so that it can use readq/writeq defs
+Subject: [PATCH v13 10/10] ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common header
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595565960977950848?=
-X-GMAIL-MSGID: =?utf-8?q?1595565960977950848?=
+X-GMAIL-THRID: =?utf-8?q?1595565960735025009?=
+X-GMAIL-MSGID: =?utf-8?q?1595565960735025009?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Subsequent patches in this series makes use of the readq and writeq
-defines in iomap.h. However, as is, they get missed on the powerpc
-platform seeing the include comes before the define. This patch
-moves the include down to fix this.
+Clean up the ifdefs which conditionally defined the io{read|write}64
+functions in favour of the new common io-64-nonatomic-lo-hi header.
+
+Per a nit from Andy Shevchenko, the include list is also made
+alphabetical.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Suresh Warrier <warrier@linux.vnet.ibm.com>
-Cc: "Oliver O'Halloran" <oohall@gmail.com>
+Cc: Jon Mason <jdmason@kudzu.us>
 ---
- arch/powerpc/include/asm/io.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 36 ++++------------------------------
+ 1 file changed, 4 insertions(+), 32 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index 422f99cf9924..af074923d598 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -33,8 +33,6 @@ extern struct pci_dev *isa_bridge_pcidev;
- #include <asm/mmu.h>
- #include <asm/ppc_asm.h>
+diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+index f624ae27eabe..f403da24b833 100644
+--- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
++++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
+@@ -13,12 +13,13 @@
+  *
+  */
  
--#include <asm-generic/iomap.h>
+-#include <linux/switchtec.h>
+-#include <linux/module.h>
++#include <linux/interrupt.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/delay.h>
+ #include <linux/kthread.h>
+-#include <linux/interrupt.h>
++#include <linux/module.h>
+ #include <linux/ntb.h>
++#include <linux/switchtec.h>
+ 
+ MODULE_DESCRIPTION("Microsemi Switchtec(tm) NTB Driver");
+ MODULE_VERSION("0.1");
+@@ -35,35 +36,6 @@ module_param(use_lut_mws, bool, 0644);
+ MODULE_PARM_DESC(use_lut_mws,
+ 		 "Enable the use of the LUT based memory windows");
+ 
+-#ifndef ioread64
+-#ifdef readq
+-#define ioread64 readq
+-#else
+-#define ioread64 _ioread64
+-static inline u64 _ioread64(void __iomem *mmio)
+-{
+-	u64 low, high;
 -
- #ifdef CONFIG_PPC64
- #include <asm/paca.h>
- #endif
-@@ -663,6 +661,8 @@ static inline void name at					\
- #define writel_relaxed(v, addr)	writel(v, addr)
- #define writeq_relaxed(v, addr)	writeq(v, addr)
+-	low = ioread32(mmio);
+-	high = ioread32(mmio + sizeof(u32));
+-	return low | (high << 32);
+-}
+-#endif
+-#endif
+-
+-#ifndef iowrite64
+-#ifdef writeq
+-#define iowrite64 writeq
+-#else
+-#define iowrite64 _iowrite64
+-static inline void _iowrite64(u64 val, void __iomem *mmio)
+-{
+-	iowrite32(val, mmio);
+-	iowrite32(val >> 32, mmio + sizeof(u32));
+-}
+-#endif
+-#endif
+-
+ #define SWITCHTEC_NTB_MAGIC 0x45CC0001
+ #define MAX_MWS     128
  
-+#include <asm-generic/iomap.h>
-+
- #ifdef CONFIG_PPC32
- #define mmiowb()
- #else
 -- 
 2.11.0
