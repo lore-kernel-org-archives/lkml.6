@@ -1,77 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeCUNr6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 09:47:58 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34368 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751897AbeCUNrb (ORCPT
+        id S1752237AbeCUNsV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 09:48:21 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:36552 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751666AbeCUNsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 09:47:31 -0400
-X-Google-Smtp-Source: AG47ELt0T/8CQtZvYVCnScnWPoHR6ZfehC6McS59ebQJZ4AUTQ3uTcZfCgZ+aImIIdSEbAolH095wQ==
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
-        linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Aleksander Morgado <aleksander@aleksander.es>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
-Date: Wed, 21 Mar 2018 06:47:09 -0700
-Message-Id: <20180321134710.29757-2-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180321134710.29757-1-andrew.smirnov@gmail.com>
-References: <20180321134710.29757-1-andrew.smirnov@gmail.com>
+        Wed, 21 Mar 2018 09:48:19 -0400
+Message-ID: <1521640094.2645.29.camel@sipsolutions.net>
+Subject: Re: [PATCH] mac80211: aes-cmac: remove VLA usage
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 21 Mar 2018 14:48:14 +0100
+In-Reply-To: <20180321134247.GA1275@embeddedgus>
+References: <20180321134247.GA1275@embeddedgus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Device Tree bindings for RAVE SP EEPROM driver - an MFD cell of
-parent RAVE SP driver (documented in
-Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
+On Wed, 2018-03-21 at 08:42 -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wvla, remove VLAs and replace them
+> with dynamic memory allocation instead.
+> 
+> The use of stack Variable Length Arrays needs to be avoided, as they
+> can be a vector for stack exhaustion, which can be both a runtime bug
+> or a security flaw. Also, in general, as code evolves it is easy to
+> lose track of how big a VLA can get. Thus, we can end up having runtime
+> failures that are hard to debug.
+> 
+> Also, fixed as part of the directive to remove all VLAs from
+> the kernel: https://lkml.org/lkml/2018/3/7/621
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  net/mac80211/aes_cmac.c | 36 ++++++++++++++++++++++++------------
+>  1 file changed, 24 insertions(+), 12 deletions(-)
+> 
+> diff --git a/net/mac80211/aes_cmac.c b/net/mac80211/aes_cmac.c
+> index 2fb6558..c9444bf 100644
+> --- a/net/mac80211/aes_cmac.c
+> +++ b/net/mac80211/aes_cmac.c
+> @@ -27,30 +27,42 @@ static const u8 zero[CMAC_TLEN_256];
+>  void ieee80211_aes_cmac(struct crypto_shash *tfm, const u8 *aad,
+>  			const u8 *data, size_t data_len, u8 *mic)
+>  {
+> -	SHASH_DESC_ON_STACK(desc, tfm);
+> +	struct shash_desc *shash;
+>  	u8 out[AES_BLOCK_SIZE];
+>  
+> -	desc->tfm = tfm;
+> +	shash = kmalloc(sizeof(*shash) + crypto_shash_descsize(tfm),
+> +			GFP_KERNEL);
+> +	if (!shash)
+> +		return;
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Aleksander Morgado <aleksander@aleksander.es>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- .../bindings/nvmem/zii,rave-sp-eeprom.txt          | 23 ++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+Honestly, this seems like a really bad idea - you're now hitting
+kmalloc for every TX/RX frame here.
 
-diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
-new file mode 100644
-index 000000000000..556abfa70524
---- /dev/null
-+++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
-@@ -0,0 +1,23 @@
-+Zodiac Inflight Innovations RAVE EEPROM Bindings
-+
-+RAVE SP EEPROM device is a "MFD cell" device exposing physical EEPROM
-+attached to RAVE Supervisory Processor. It is expected that its Device
-+Tree node is specified as a child of the node corresponding to the
-+parent RAVE SP device (as documented in
-+Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
-+
-+Required properties:
-+
-+- compatible: Should be "zii,rave-sp-eeprom"
-+
-+Example:
-+
-+	rave-sp {
-+		compatible = "zii,rave-sp-rdu1";
-+		current-speed = <38400>;
-+
-+		dds-eeprom {
-+			compatible = "zii,rave-sp-eeprom";
-+			reg = <0xA3 0x2000>;
-+		};
-+	}
--- 
-2.14.3
+SHA_DESC_ON_STACK() should just be fixed to not need a VLA, but take
+some sort of maximum, I guess?
+
+johannes
