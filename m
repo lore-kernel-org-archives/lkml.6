@@ -1,68 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753709AbeCUV1N (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:27:13 -0400
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:34348 "EHLO
-        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753565AbeCUV1M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:27:12 -0400
-X-Google-Smtp-Source: AG47ELt3SJY3DFoJx8MkJ8EnNqTkGkbnb/RfKLhEIBKFJ8RZVbpCOgQFDEM72P8akPLdmmk+YDDIKg==
-Date: Wed, 21 Mar 2018 14:27:10 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Michal Hocko <mhocko@kernel.org>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, thp: do not cause memcg oom for thp
-In-Reply-To: <20180321204921.GP23100@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.20.1803211422510.107059@chino.kir.corp.google.com>
-References: <alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com> <20180320071624.GB23100@dhcp22.suse.cz> <alpine.DEB.2.20.1803201321430.167205@chino.kir.corp.google.com> <20180321082228.GC23100@dhcp22.suse.cz> <alpine.DEB.2.20.1803211212490.92011@chino.kir.corp.google.com>
- <20180321204921.GP23100@dhcp22.suse.cz>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1753803AbeCUVhZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:37:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753777AbeCUVhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:37:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67DC217D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Wed, 21 Mar 2018 16:37:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jay Fang <f.fangjian@huawei.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Support PCIe 4.0 data rate(16.0 GT/s)
+Message-ID: <20180321213721.GG38649@bhelgaas-glaptop.roam.corp.google.com>
+References: <1520846012-8294-1-git-send-email-f.fangjian@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520846012-8294-1-git-send-email-f.fangjian@huawei.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018, Michal Hocko wrote:
-
-> > That doesn't make sense, the allocation path needs to allocate contiguous 
-> > memory for the high order, the charging path just needs to charge a number 
-> > of pages.  Why would the allocation and charging path be compatible when 
-> > one needs to reclaim contiguous memory or compact memory and the the other 
-> > just needs to reclaim any memory?
+On Mon, Mar 12, 2018 at 05:13:32PM +0800, Jay Fang wrote:
+> PCIe 4.0 provides an effective 16.0 GT/second/lane/direction of raw
+> bandwidth. Current PCI driver does not support this new feature.
+> For example, when you read a PCIe 4.0 EP's link data rate by sysfs, it
+> will return "Unknown speed", not the expected "16.0 GT/s".
 > 
-> Because you do not want to see surprises. E.g. seeing unexpected OOMs
-> for large allocatations. Just think about it. Do you really want to have
-> a different reclaim policy for the allocation and charging for all
-> allocating paths?
+> Signed-off-by: Jay Fang <f.fangjian@huawei.com>
+> Reviewed-by: Dongdong Liu <liudongdong3@huawei.com>
 
-It depends on the use of __GFP_NORETRY.  If the high-order charge is 
-__GFP_NORETRY, it does not oom kill.  It is left to the caller.  Just 
-because thp allocations have been special cased in the page allocator to 
-be able to remove __GFP_NORETRY without fixing the memcg charge path does 
-not mean memcg needs a special heuristic for high-order memory when it 
-does not require contiguous memory.  You say you don't want any surprises, 
-but now you are changing behavior needlessly for all charges with
-order > PAGE_ALLOC_COSTLY_ORDER that do not use __GFP_NORETRY.
+Applied to pci/enumeration for v4.17, thanks!
 
-> You are right that the allocation path involves compaction and that is
-> different from the charging path. But that is an implementation detail
-> of the current implementation.
+> ---
+>  drivers/pci/pci-sysfs.c       | 6 ++++++
+>  drivers/pci/probe.c           | 2 +-
+>  drivers/pci/slot.c            | 1 +
+>  include/linux/pci.h           | 1 +
+>  include/uapi/linux/pci_regs.h | 2 ++
+>  5 files changed, 11 insertions(+), 1 deletion(-)
 > 
-
-Lol, the fact that the page allocator requires contiguous memory is not an 
-implementation detail of the current implementation.
-
-> Your patch only fixes up the current situation. Anytime a new THP
-> allocation emerges that code path has to be careful to add
-> __GFP_NORETRY to not regress again. That is just too error prone.
+> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+> index eb6bee8..7dc5be5 100644
+> --- a/drivers/pci/pci-sysfs.c
+> +++ b/drivers/pci/pci-sysfs.c
+> @@ -168,6 +168,9 @@ static ssize_t max_link_speed_show(struct device *dev,
+>  		return -EINVAL;
+>  
+>  	switch (linkcap & PCI_EXP_LNKCAP_SLS) {
+> +	case PCI_EXP_LNKCAP_SLS_16_0GB:
+> +		speed = "16 GT/s";
+> +		break;
+>  	case PCI_EXP_LNKCAP_SLS_8_0GB:
+>  		speed = "8 GT/s";
+>  		break;
+> @@ -213,6 +216,9 @@ static ssize_t current_link_speed_show(struct device *dev,
+>  		return -EINVAL;
+>  
+>  	switch (linkstat & PCI_EXP_LNKSTA_CLS) {
+> +	case PCI_EXP_LNKSTA_CLS_16_0GB:
+> +		speed = "16 GT/s";
+> +		break;
+>  	case PCI_EXP_LNKSTA_CLS_8_0GB:
+>  		speed = "8 GT/s";
+>  		break;
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index ef53774..86bf045 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -592,7 +592,7 @@ const unsigned char pcie_link_speed[] = {
+>  	PCIE_SPEED_2_5GT,		/* 1 */
+>  	PCIE_SPEED_5_0GT,		/* 2 */
+>  	PCIE_SPEED_8_0GT,		/* 3 */
+> -	PCI_SPEED_UNKNOWN,		/* 4 */
+> +	PCIE_SPEED_16_0GT,		/* 4 */
+>  	PCI_SPEED_UNKNOWN,		/* 5 */
+>  	PCI_SPEED_UNKNOWN,		/* 6 */
+>  	PCI_SPEED_UNKNOWN,		/* 7 */
+> diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
+> index d10f556..191893e 100644
+> --- a/drivers/pci/slot.c
+> +++ b/drivers/pci/slot.c
+> @@ -76,6 +76,7 @@ static const char *pci_bus_speed_strings[] = {
+>  	"2.5 GT/s PCIe",	/* 0x14 */
+>  	"5.0 GT/s PCIe",	/* 0x15 */
+>  	"8.0 GT/s PCIe",	/* 0x16 */
+> +	"16.0 GT/s PCIe",	/* 0x17 */
+>  };
+>  
+>  static ssize_t bus_speed_read(enum pci_bus_speed speed, char *buf)
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 5adabe2..44ce439 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -259,6 +259,7 @@ enum pci_bus_speed {
+>  	PCIE_SPEED_2_5GT		= 0x14,
+>  	PCIE_SPEED_5_0GT		= 0x15,
+>  	PCIE_SPEED_8_0GT		= 0x16,
+> +	PCIE_SPEED_16_0GT		= 0x17,
+>  	PCI_SPEED_UNKNOWN		= 0xff,
+>  };
+>  
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index 0c79eac..c1c4109 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -520,6 +520,7 @@
+>  #define  PCI_EXP_LNKCAP_SLS_2_5GB 0x00000001 /* LNKCAP2 SLS Vector bit 0 */
+>  #define  PCI_EXP_LNKCAP_SLS_5_0GB 0x00000002 /* LNKCAP2 SLS Vector bit 1 */
+>  #define  PCI_EXP_LNKCAP_SLS_8_0GB 0x00000003 /* LNKCAP2 SLS Vector bit 2 */
+> +#define  PCI_EXP_LNKCAP_SLS_16_0GB 0x00000004 /* LNKCAP2 SLS Vector bit 3 */
+>  #define  PCI_EXP_LNKCAP_MLW	0x000003f0 /* Maximum Link Width */
+>  #define  PCI_EXP_LNKCAP_ASPMS	0x00000c00 /* ASPM Support */
+>  #define  PCI_EXP_LNKCAP_L0SEL	0x00007000 /* L0s Exit Latency */
+> @@ -547,6 +548,7 @@
+>  #define  PCI_EXP_LNKSTA_CLS_2_5GB 0x0001 /* Current Link Speed 2.5GT/s */
+>  #define  PCI_EXP_LNKSTA_CLS_5_0GB 0x0002 /* Current Link Speed 5.0GT/s */
+>  #define  PCI_EXP_LNKSTA_CLS_8_0GB 0x0003 /* Current Link Speed 8.0GT/s */
+> +#define  PCI_EXP_LNKSTA_CLS_16_0GB 0x0004 /* Current Link Speed 16.0GT/s */
+>  #define  PCI_EXP_LNKSTA_NLW	0x03f0	/* Negotiated Link Width */
+>  #define  PCI_EXP_LNKSTA_NLW_X1	0x0010	/* Current Link Width x1 */
+>  #define  PCI_EXP_LNKSTA_NLW_X2	0x0020	/* Current Link Width x2 */
+> -- 
+> 2.7.4
 > 
-
-We could certainly handle it by adding helpers similar to 
-alloc_hugepage_direct_gfpmask() and alloc_hugepage_khugepaged_gfpmask() 
-which are employed for the same purpose for the page allocator gfp mask.
