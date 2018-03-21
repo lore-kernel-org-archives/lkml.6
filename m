@@ -1,60 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753678AbeCUVWU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:22:20 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39464 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753495AbeCUVWP (ORCPT
+        id S1753752AbeCUVXI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:23:08 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40910 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753210AbeCUVXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:22:15 -0400
-X-Google-Smtp-Source: AG47ELvQ+QBEexO4xdW1G9u1z/AU4OjLLlk7wfQq/YOqgMl+VLxjO7hVbPhUpOaPRbnlJLKQiP46xw==
-Date: Wed, 21 Mar 2018 14:22:13 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Michal Hocko <mhocko@kernel.org>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH] memcg, thp: do not invoke oom killer on thp charges
-In-Reply-To: <20180321205928.22240-1-mhocko@kernel.org>
-Message-ID: <alpine.DEB.2.20.1803211418170.107059@chino.kir.corp.google.com>
-References: <20180321205928.22240-1-mhocko@kernel.org>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Wed, 21 Mar 2018 17:23:04 -0400
+X-Google-Smtp-Source: AG47ELvFyeSEGakJ57UXJA66KjL7pugGT+63aUy4V5HiDbi5mxinau/m6FMRMoL7LNkiP1f171MlRim4mEEcBP1C840=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180321193458.4451-1-colin.king@canonical.com>
+References: <20180321193458.4451-1-colin.king@canonical.com>
+From: William Tu <u9012063@gmail.com>
+Date: Wed, 21 Mar 2018 14:22:23 -0700
+Message-ID: <CALDO+SYL=TpwG68cYp2UeopW+P-p5P5H0mXQk9-JySxS47TO4g@mail.gmail.com>
+Subject: Re: [PATCH][next] gre: fix TUNNEL_SEQ bit check on sequence numbering
+To: Colin King <colin.king@canonical.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018, Michal Hocko wrote:
+On Wed, Mar 21, 2018 at 12:34 PM, Colin King <colin.king@canonical.com> wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The current logic of flags | TUNNEL_SEQ is always non-zero and hence
+> sequence numbers are always incremented no matter the setting of the
+> TUNNEL_SEQ bit.  Fix this by using & instead of |.
+>
+> Detected by CoverityScan, CID#1466039 ("Operands don't affect result")
+>
+> Fixes: 77a5196a804e ("gre: add sequence number for collect md mode.")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index d1a917b5b7b7..08accbcd1a18 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1493,7 +1493,7 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
->  
->  static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
->  {
-> -	if (!current->memcg_may_oom)
-> +	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
->  		return;
->  	/*
->  	 * We are in the middle of the charge context here, so we
+Thanks for the fix!
+btw, how can I access the CoverityScan result with this CID?
 
-What bug reports have you received about order-4 and higher order non thp 
-charges that this fixes?
+Acked-by: William Tu <u9012063@gmail.com>
 
-The patch title and the changelog specifically single out thp, which I've 
-fixed, since it has sane fallback behavior and everything else uses 
-__GFP_NORETRY.  I think this is misusing a page allocator heuristic that 
-hasn't been applied to the memcg charge path before to address a thp 
-regression but generalizing it for all charges.
 
-PAGE_ALLOC_COSTLY_ORDER is a heuristic used by the page allocator because 
-it cannot free high-order contiguous memory.  Memcg just needs to reclaim 
-a number of pages.  Two order-3 charges can cause a memcg oom kill but now 
-an order-4 charge cannot.  It's an unfair bias against high-order charges 
-that are not explicitly using __GFP_NORETRY.
+> ---
+>  net/ipv4/ip_gre.c  | 2 +-
+>  net/ipv6/ip6_gre.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
+> index 2fa2ef2e2af9..9ab1aa2f7660 100644
+> --- a/net/ipv4/ip_gre.c
+> +++ b/net/ipv4/ip_gre.c
+> @@ -550,7 +550,7 @@ static void gre_fb_xmit(struct sk_buff *skb, struct net_device *dev,
+>                 (TUNNEL_CSUM | TUNNEL_KEY | TUNNEL_SEQ);
+>         gre_build_header(skb, tunnel_hlen, flags, proto,
+>                          tunnel_id_to_key32(tun_info->key.tun_id),
+> -                        (flags | TUNNEL_SEQ) ? htonl(tunnel->o_seqno++) : 0);
+> +                        (flags & TUNNEL_SEQ) ? htonl(tunnel->o_seqno++) : 0);
+>
+>         df = key->tun_flags & TUNNEL_DONT_FRAGMENT ?  htons(IP_DF) : 0;
+>
+> diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
+> index 0bcefc480aeb..3a98c694da5f 100644
+> --- a/net/ipv6/ip6_gre.c
+> +++ b/net/ipv6/ip6_gre.c
+> @@ -725,7 +725,7 @@ static netdev_tx_t __gre6_xmit(struct sk_buff *skb,
+>                 gre_build_header(skb, tunnel->tun_hlen,
+>                                  flags, protocol,
+>                                  tunnel_id_to_key32(tun_info->key.tun_id),
+> -                                (flags | TUNNEL_SEQ) ? htonl(tunnel->o_seqno++)
+> +                                (flags & TUNNEL_SEQ) ? htonl(tunnel->o_seqno++)
+>                                                       : 0);
+>
+>         } else {
+> --
+> 2.15.1
+>
