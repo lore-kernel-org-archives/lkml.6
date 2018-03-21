@@ -1,63 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751969AbeCUCqJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:46:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58276 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751786AbeCUCqG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 22:46:06 -0400
-Date: Wed, 21 Mar 2018 10:45:56 +0800
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20180321024556.GX2186@sirena.org.uk>
-References: <20180321133040.6754c372@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7v2SkOxZkOkgWk1E"
-Content-Disposition: inline
-In-Reply-To: <20180321133040.6754c372@canb.auug.org.au>
-X-Cookie: Am I SHOPLIFTING?
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751677AbeCUCtG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:49:06 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:52705 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751448AbeCUCtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 22:49:01 -0400
+From: Icenowy Zheng <icenowy@aosc.io>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v2] clk: sunxi-ng: add missing hdmi-slow clock for H6 CCU
+Date: Wed, 21 Mar 2018 10:46:25 +0800
+Message-Id: <20180321024625.18516-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The Allwinner H6 CCU has a "HDMI Slow Clock", which is currently missing
+in the ccu-sun50i-h6 driver.
 
---7v2SkOxZkOkgWk1E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Add this missing clock to the driver.
 
-On Wed, Mar 21, 2018 at 01:30:40PM +1100, Stephen Rothwell wrote:
+Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes in v2:
+- Rearrange clock slice numbers.
 
-> Caused by commit
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c      |  4 ++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.h      |  2 +-
+ include/dt-bindings/clock/sun50i-h6-ccu.h | 27 ++++++++++++++-------------
+ 3 files changed, 19 insertions(+), 14 deletions(-)
 
->   363fe37948e2 ("ASoC: amd: dma driver changes for BT I2S controller instance")
-
-> I have used the sound-asoc tree from next-20180320 for today.
-
-Dropped.
-
---7v2SkOxZkOkgWk1E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqxx2QACgkQJNaLcl1U
-h9Admgf9FMvVqJ0CxkBfS+tBa//MpqHCPZFOiG/NJHelkPyHCIBO1XwPUKJ3DNla
-W8gEWNm4h7wUHhbHL6J9jdpTipjprUYSD61xoFGIsLAN6O0kL83P5FF/AjijVI92
-FibS82IOfpz22kg3gUktZgLh9N6m+FpJfyuTBcmwcw6iBhHImA/eCi5YBG4c2a9r
-0kbc5CKXk2OzIqtolMDPThUO7ZAkgLStc4rHONSKquDMae2FlI1M5YnNord19eL8
-veBNu4kIm5bdmo7BnMyPudLQfeWN/xCIGW+HdcisGGJvBuRnzkC+KEXr4s8MZZ4Q
-ZFraxWoZdpO4XF/ed0njP4E54u1qwA==
-=bB3A
------END PGP SIGNATURE-----
-
---7v2SkOxZkOkgWk1E--
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index d5eab49e6350..bdbfe78fe133 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -643,6 +643,8 @@ static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents, 0xb00,
+ 				 BIT(31),	/* gate */
+ 				 0);
+ 
++static SUNXI_CCU_GATE(hdmi_slow_clk, "hdmi-slow", "osc24M", 0xb04, BIT(31), 0);
++
+ static const char * const hdmi_cec_parents[] = { "osc32k", "pll-periph0-2x" };
+ static const struct ccu_mux_fixed_prediv hdmi_cec_predivs[] = {
+ 	{ .index = 1, .div = 36621 },
+@@ -876,6 +878,7 @@ static struct ccu_common *sun50i_h6_ccu_clks[] = {
+ 	&pcie_aux_clk.common,
+ 	&bus_pcie_clk.common,
+ 	&hdmi_clk.common,
++	&hdmi_slow_clk.common,
+ 	&hdmi_cec_clk.common,
+ 	&bus_hdmi_clk.common,
+ 	&bus_tcon_top_clk.common,
+@@ -1017,6 +1020,7 @@ static struct clk_hw_onecell_data sun50i_h6_hw_clks = {
+ 		[CLK_PCIE_AUX]		= &pcie_aux_clk.common.hw,
+ 		[CLK_BUS_PCIE]		= &bus_pcie_clk.common.hw,
+ 		[CLK_HDMI]		= &hdmi_clk.common.hw,
++		[CLK_HDMI_SLOW]		= &hdmi_slow_clk.common.hw,
+ 		[CLK_HDMI_CEC]		= &hdmi_cec_clk.common.hw,
+ 		[CLK_BUS_HDMI]		= &bus_hdmi_clk.common.hw,
+ 		[CLK_BUS_TCON_TOP]	= &bus_tcon_top_clk.common.hw,
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.h b/drivers/clk/sunxi-ng/ccu-sun50i-h6.h
+index ad6da4aa733c..2ccfe4428260 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.h
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.h
+@@ -51,6 +51,6 @@
+ 
+ #define CLK_BUS_DRAM		60
+ 
+-#define CLK_NUMBER		137
++#define CLK_NUMBER		(CLK_BUS_HDCP + 1)
+ 
+ #endif /* _CCU_SUN50I_H6_H_ */
+diff --git a/include/dt-bindings/clock/sun50i-h6-ccu.h b/include/dt-bindings/clock/sun50i-h6-ccu.h
+index 6045735a2821..a1545cd60e75 100644
+--- a/include/dt-bindings/clock/sun50i-h6-ccu.h
++++ b/include/dt-bindings/clock/sun50i-h6-ccu.h
+@@ -107,18 +107,19 @@
+ #define CLK_PCIE_AUX		121
+ #define CLK_BUS_PCIE		122
+ #define CLK_HDMI		123
+-#define CLK_HDMI_CEC		124
+-#define CLK_BUS_HDMI		125
+-#define CLK_BUS_TCON_TOP	126
+-#define CLK_TCON_LCD0		127
+-#define CLK_BUS_TCON_LCD0	128
+-#define CLK_TCON_TV0		129
+-#define CLK_BUS_TCON_TV0	130
+-#define CLK_CSI_CCI		131
+-#define CLK_CSI_TOP		132
+-#define CLK_CSI_MCLK		133
+-#define CLK_BUS_CSI		134
+-#define CLK_HDCP		135
+-#define CLK_BUS_HDCP		136
++#define CLK_HDMI_SLOW		124
++#define CLK_HDMI_CEC		125
++#define CLK_BUS_HDMI		126
++#define CLK_BUS_TCON_TOP	127
++#define CLK_TCON_LCD0		128
++#define CLK_BUS_TCON_LCD0	129
++#define CLK_TCON_TV0		130
++#define CLK_BUS_TCON_TV0	131
++#define CLK_CSI_CCI		132
++#define CLK_CSI_TOP		133
++#define CLK_CSI_MCLK		134
++#define CLK_BUS_CSI		135
++#define CLK_HDCP		136
++#define CLK_BUS_HDCP		137
+ 
+ #endif /* _DT_BINDINGS_CLK_SUN50I_H6_H_ */
+-- 
+2.15.1
