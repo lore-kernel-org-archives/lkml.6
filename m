@@ -1,143 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752658AbeCUSTC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 14:19:02 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39531 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752517AbeCUSS7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 14:18:59 -0400
-X-Google-Smtp-Source: AG47ELvjBjyg7TTPAhzNlrEAa0N836bQiVI3w4dxGVedFlpzRfM39ZgKLVJIVZeCmSfnPL0zFW1Q1g==
-Date: Wed, 21 Mar 2018 11:18:56 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: =?utf-8?B?546L6YeR5rWm?= <jinpuwang@gmail.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "v3.14+, only the raid10 part" <stable@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH 4.4 29/63] watchdog: hpwdt: fix unused variable warning
-Message-ID: <20180321181856.GA7890@roeck-us.net>
-References: <20180316152259.964532775@linuxfoundation.org>
- <20180316152303.262268098@linuxfoundation.org>
- <20180316225537.GA5989@anatevka.americas.hpqcorp.net>
- <20180318101416.GD13276@kroah.com>
- <1521587979.23626.117.camel@codethink.co.uk>
- <CAD9gYJLVS2UVUgqsaJynNjeUcg9oDxhPX26narY6eXW_2kwPAA@mail.gmail.com>
+        id S1752596AbeCUSXa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 14:23:30 -0400
+Received: from cmta16.telus.net ([209.171.16.89]:39563 "EHLO cmta16.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752431AbeCUSX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 14:23:27 -0400
+X-Authority-Analysis: v=2.2 cv=EJrp6xRC c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8
+ a=HLEhOUT7AAAA:8 a=MJ2xowUNjgiAORS1SgoA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=73WewclNby-GrhdgABwy:22
+From: "Doug Smythies" <dsmythies@telus.net>
+To: "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
+        "'Rafael J. Wysocki'" <rafael@kernel.org>
+Cc: "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
+        "'Rik van Riel'" <riel@surriel.com>,
+        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
+        "'Mike Galbraith'" <mgalbraith@suse.de>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "Doug Smythies" <dsmythies@telus.net>
+References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <1635957.yuHkCe9oyz@aspire.rjw.lan> <CAJZ5v0j-CnEms-Wm0Op=386ceuG2GfAouVLXO48rbD_pUPJhMg@mail.gmail.com> yi2qeYpqCpApsyi2ve5qq1
+In-Reply-To: yi2qeYpqCpApsyi2ve5qq1
+Subject: RE: [RFT][PATCH v7 5/8] cpuidle: Return nohz hint from cpuidle_select()
+Date: Wed, 21 Mar 2018 11:23:22 -0700
+Message-ID: <002201d3c141$b3f9bd80$1bed3880$@net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD9gYJLVS2UVUgqsaJynNjeUcg9oDxhPX26narY6eXW_2kwPAA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Content-Language: en-ca
+Thread-Index: AdPBPplr9X1Z2E22Szmp7z6qfTxehwAARzCA
+X-CMAE-Envelope: MS4wfLt/N0jltyLRKLDV/AEEe0F8IMt82t6FuBzZwzPG+lJmkA1xEchwFggrQ/RyVJpgI4nnBJwakIjnYqacAfOvjAInv9DYYsu8UxALPej3FEBAjKaiPR5F
+ zJR00CHLzk41CQoDqaz/eIea1VuQjynKZRmqZ4emUzIbjKY9wczDXtlrRXcEp81fUM5a+pmKq38YM1emiiYglkzf3EaSs1hPAJGCN4Ct9uu4OKX/kzZqKRqi
+ LPEsj7C/3rlDvS93hf6EdNCswpdnQPYCR1lVZLJzsV4sMsaoGw1teCgFSgzd47F4kq7e8RrESvgjM84a73U/vaYYHfoqhCq0L662IAbW29GlOU/rOU19j9SC
+ ZVyEgvxe5FE8LbQnXC+JiVu/M0L4EcJld7Z8KK7TNiusDRVkIxyAufl7CtDqpaIbih1BTuW3W9P9hEuwL/WxC55uOG1F24nKY+fS075pHhMp2zO5LdM1tMrB
+ LLP2PEA0r+v8DSCX+MfOVRK7FRceeF+0W8N9ih4saFtQX83YTu3K6iPJSuQ=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 12:11:10PM +0100, 王金浦 wrote:
-> 2018-03-21 0:19 GMT+01:00 Ben Hutchings <ben.hutchings@codethink.co.uk>:
-> > On Sun, 2018-03-18 at 11:14 +0100, Greg Kroah-Hartman wrote:
-> >> On Fri, Mar 16, 2018 at 04:55:37PM -0600, Jerry Hoemann wrote:
-> >> >
-> >> > Greg,
-> >> >
-> >> > Sorry, if I'm missing something, but I see 3 patches for
-> >> > hpwdt queued up for 4.4:
-> >> >
-> >> >     queue-4.4/watchdog-hpwdt-fix-unused-variable-warning.patch
-> >> >     queue-4.4/watchdog-hpwdt-smbios-check.patch
-> >> >     queue-4.4/watchdog-hpwdt-check-source-of-nmi.patch
-> >> >
-> >> >
-> >> > Shouldn't there also be a 4.4 patch for
-> >> >
-> >> >     commit 2b3d89b402b085b08498e896c65267a145bed486
-> >> >     watchdog: hpwdt: Remove legacy NMI sourcing.
-> >> >
-> >> > As there was for 4.15, 4.14, and 4.9?
-> >>
-> >> It does not apply to the 4.4.y kernel branch.  If you feel it should be
-> >> there, please provide a working backport.
-> >>
-> >> > commit 2b3d89b40 is the Spectre related patch.
-> >>
-> >> If you look closely, not many Spectre-related patches are merged into
-> >> 4.4.y as no one has taken the time to do the backporting.  I thought
-> >> someone was working on this, but odds are they just moved to 4.9.y or
-> >> 4.14.y as everyone really should if they care about these issues with
-> >> their platforms.
-> >>
-> >> So if you care about Spectre, I strongly recommend using 4.14.y or
-> >> newer.
-> >
-> > I think you have most of the Spectre stuff aside from microcode
-> > supported fixes.  These are still missing on the 4.4 branch though:
-> >
-> > 8fa80c503b48 nospec: Move array_index_nospec() parameter checking into separate macro
-> > 1d91c1d2c80c nospec: Kill array_index_nospec_mask_check()
-> >
-> > I think there may also be some extra uaccess functions that didn't get
-> > the nospec treatment.
-> >
-> > I'll probably look into backporting the microcode stuff to the older
-> > branches (4.4, then 3.16 and 3.2) at some point.
-> >
-> > Ben.
-> >
-> > --
-> > Ben Hutchings
-> > Software Developer, Codethink Ltd.
-> >
-> Hi, Ben,
-> 
-> It will be great, if you can backport spectre fixes into 4.4, I'm
-> happy to test your port.
-> The patch list I gathered when I did porting to 4.4:
+On 2018.03.21 11:00 Thomas Ilsche wrote:
+> On 2018-03-21 15:36, Rafael J. Wysocki wrote:
+>> 
+>> So please disregard this one entirely and take the v7.2 replacement
+>> instead of it:https://patchwork.kernel.org/patch/10299429/
+>> 
+>> The current versions (including the above) is in the git branch at
+>> 
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>>   idle-loop-v7.2
+>
+> With v7.2 (tested on SKL-SP from git) I see similar behavior in idle
+> as with v5: several cores which just keep the sched tick enabled.
+> Worse yet, some go only in C1 (not even C1E!?) despite sleeping the
+> full sched tick.
+> The resulting power consumption is ~105 W instead of ~ 70 W.
+>
+> https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v7_2_skl_sp_idle.png
+>
+> I have briefly ran v7 and I believe it was also affected.
 
-If you completed the port to v4.4 already, can you make it available
-for others ?
+I am not able to repeat your issues anymore.
+Idle powers were fine with V7, on my test computer.
+I have not done thorough idle tests with V7.2, but they looked O.K.
 
-Thanks,
-Guenter
+As for the high frequency loop stuff, I no longer see any issues there
+either. I tried several loops frequencies, and did one for a couple of hours.
 
-> d3eba77440 x86/cpufeatures: Add CPUID_7_EDX CPUID leaf
-> 40532f65cc x86/cpufeatures: Add Intel feature bits for Speculatio
-> c26a6bea26 x86/cpufeatures: Add AMD feature bits for Speculation
->  Control
-> af57d43c908 x86/msr: Add definitions for new speculation control
-> a8799fd14d x86/pti: Do not enable PTI on CPUs which are not
->  vulnerable to Meltdown
-> 6c5e49150a x86/cpufeature: Blacklist SPEC_CTRL/PRED_CMD on early
->  Spectre v2 microcodes
-> 31fd9eda7f6 x86/speculation: Add basic IBPB (Indirect Branch
->  Prediction Barrier) support
-> 77b3b3ee238 x86/cpufeatures: Clean up Spectre v2 related CPUID
->  flags
-> 77d1424d2fb x86/retpoline: Simplify vmexit_fill_RSB()
-> d7f8d17406d x86/entry/64: Remove the SYSCALL64 fast path
-> 572e509178 x86/entry/64: Push extra regs right away
-> e06d7bfb223 x86: Introduce __uaccess_begin_nospec() and
->  uaccess_try_nospec
-> ae75f83e79 x86/usercopy: Replace open coded stac/clac with
->  __uaccess_{begin, end}
-> 065eae4be83 x86/uaccess: Use __uaccess_begin_nospec() and
->  uaccess_try_nospec
-> cda6b6074cc6f9 x86/cpuid: Fix up "virtual" IBRS/IBPB/STIBP feature
->  bits on Intel
-> 4b234a253e52 x86/pti: Mark constant arrays as __initconst
-> b7649e1776706 KVM: nVMX: mark vmcs12 pages dirty on L2 exit
-> 46e24dfc2df KVM: nVMX: Eliminate vmcs02 pool
-> ff546f9d83d3 KVM: VMX: introduce alloc_loaded_vmcs
-> 6236b782eba37 KVM: VMX: make MSR bitmaps per-VCPU
-> 7013129a403 KVM/x86: Add IBPB support
-> 755502f810c6 KVM/VMX: Emulate MSR_IA32_ARCH_CAPABILITIES
-> e5a83419c957 KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
-> fc00dde96099a1 KVM/SVM: Allow direct access to MSR_IA32_SPEC_CTRL
-> 
-> commit id is from linux-4.9.y
-> 
-> Might be more due to dependency.
-> 
-> Thanks,
-> Jack Wang
+I'll try again later today, as there is a test running now (frequency sweep)
+that takes about 4 hours.
+
+... Doug
