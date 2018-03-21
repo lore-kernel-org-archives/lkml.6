@@ -1,57 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751597AbeCUMKP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 08:10:15 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34073 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751717AbeCUMI2 (ORCPT
+        id S1752007AbeCUMKg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 08:10:36 -0400
+Received: from zimbra1.kalray.eu ([92.103.151.219]:40052 "EHLO
+        zimbra1.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751712AbeCUMKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 08:08:28 -0400
-X-Google-Smtp-Source: AG47ELv/Fmv7npRtlUUuBRQczwwbpl7wY/RIh2V0zGW6NpcUjCL6ZWhUXU+k2+fzZ8+8gTx5J0rSaw==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/8] ARM: davinci: dts: make psc0 a reset provider
-Date: Wed, 21 Mar 2018 13:08:01 +0100
-Message-Id: <20180321120807.18032-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180321120807.18032-1-brgl@bgdev.pl>
-References: <20180321120807.18032-1-brgl@bgdev.pl>
+        Wed, 21 Mar 2018 08:10:33 -0400
+DKIM-Filter: OpenDKIM Filter v2.9.2 zimbra1.kalray.eu 8331F2800C0
+Date: Wed, 21 Mar 2018 13:10:31 +0100 (CET)
+From: Marta Rybczynska <mrybczyn@kalray.eu>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: keith busch <keith.busch@intel.com>, axboe@fb.com, hch@lst.de,
+        sagi@grimberg.me, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
+Message-ID: <464125757.5843583.1521634231341.JavaMail.zimbra@kalray.eu>
+In-Reply-To: <20180321115037.GA26083@ming.t460p>
+References: <744877924.5841545.1521630049567.JavaMail.zimbra@kalray.eu> <20180321115037.GA26083@ming.t460p>
+Subject: Re: [RFC PATCH] nvme: avoid race-conditions when enabling devices
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.40.201]
+X-Mailer: Zimbra 8.6.0_GA_1182 (ZimbraWebClient - FF45 (Linux)/8.6.0_GA_1182)
+Thread-Topic: nvme: avoid race-conditions when enabling devices
+Thread-Index: wnfMsSM1imrqGZKFoiQyJor/pqOrIQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> On Wed, Mar 21, 2018 at 12:00:49PM +0100, Marta Rybczynska wrote:
+>> NVMe driver uses threads for the work at device reset, including enabling
+>> the PCIe device. When multiple NVMe devices are initialized, their reset
+>> works may be scheduled in parallel. Then pci_enable_device_mem can be
+>> called in parallel on multiple cores.
+>> 
+>> This causes a loop of enabling of all upstream bridges in
+>> pci_enable_bridge(). pci_enable_bridge() causes multiple operations
+>> including __pci_set_master and architecture-specific functions that
+>> call ones like and pci_enable_resources(). Both __pci_set_master()
+>> and pci_enable_resources() read PCI_COMMAND field in the PCIe space
+>> and change it. This is done as read/modify/write.
+>> 
+>> Imagine that the PCIe tree looks like:
+>> A - B - switch -  C - D
+>>                \- E - F
+>> 
+>> D and F are two NVMe disks and all devices from B are not enabled and bus
+>> mastering is not set. If their reset work are scheduled in parallel the two
+>> modifications of PCI_COMMAND may happen in parallel without locking and the
+>> system may end up with the part of PCIe tree not enabled.
+> 
+> Then looks serialized reset should be used, and I did see the commit
+> 79c48ccf2fe ("nvme-pci: serialize pci resets") fixes issue of 'failed
+> to mark controller state' in reset stress test.
+> 
+> But that commit only covers case of PCI reset from sysfs attribute, and
+> maybe other cases need to be dealt with in similar way too.
+> 
 
-The psc driver registers with the reset framework as a provider. Add
-the #reset-cells property to the psc0 node.
+It seems to me that the serialized reset works for multiple resets of the
+same device, doesn't it? Our problem is linked to resets of different devices
+that share the same PCIe tree.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+You're right that the problem we face might also come with manual resets
+under certain conditions (I think that all devices in a subtree would need
+to be disabled).
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index a3b9a99b43ca..89af749c5b6f 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -109,6 +109,7 @@
- 		interrupt-parent = <&intc>;
- 		interrupts = <28>;
- 		clocks = <&psc0 15>;
-+		resets = <&psc0 15>;
- 		status = "disabled";
- 	};
- 	soc@1c00000 {
--- 
-2.16.1
+Thanks,
+Marta
