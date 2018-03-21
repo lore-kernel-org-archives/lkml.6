@@ -1,131 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753803AbeCUVhZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:37:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753777AbeCUVhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:37:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67DC217D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Wed, 21 Mar 2018 16:37:21 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jay Fang <f.fangjian@huawei.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Support PCIe 4.0 data rate(16.0 GT/s)
-Message-ID: <20180321213721.GG38649@bhelgaas-glaptop.roam.corp.google.com>
-References: <1520846012-8294-1-git-send-email-f.fangjian@huawei.com>
+        id S1753762AbeCUVhK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:37:10 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:45231 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753720AbeCUVhG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:37:06 -0400
+X-Google-Smtp-Source: AG47ELu377EVTzxWZ+GN1hRUfsdMUgy2/rBQ+0k8jGUKmAUOMH1EOuarJp7vt0mqcF4yN/ZX1wF95hEr9LvqR5d9aK4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520846012-8294-1-git-send-email-f.fangjian@huawei.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20170510071511.GA31466@dhcp22.suse.cz>
+References: <20170510065328.9215-1-nick.desaulniers@gmail.com> <20170510071511.GA31466@dhcp22.suse.cz>
+From: Nick Desaulniers <nick.desaulniers@gmail.com>
+Date: Wed, 21 Mar 2018 14:37:04 -0700
+Message-ID: <CAH7mPvh0qG2R30ToKV=dX3YNc+0BQtnCH3cQUANJWmVdbn6sXw@mail.gmail.com>
+Subject: Re: [PATCH] mm/vmscan: fix unsequenced modification and access warning
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, mgorman@techsingularity.net,
+        vbabka@suse.cz, Minchan Kim <minchan@kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        paullawrence@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 12, 2018 at 05:13:32PM +0800, Jay Fang wrote:
-> PCIe 4.0 provides an effective 16.0 GT/second/lane/direction of raw
-> bandwidth. Current PCI driver does not support this new feature.
-> For example, when you read a PCIe 4.0 EP's link data rate by sysfs, it
-> will return "Unknown speed", not the expected "16.0 GT/s".
-> 
-> Signed-off-by: Jay Fang <f.fangjian@huawei.com>
-> Reviewed-by: Dongdong Liu <liudongdong3@huawei.com>
+Sorry to dig up an old thread but a coworker was asking about this
+patch. This is essentially the code that landed in commit
+f2f43e566a02a3bdde0a65e6a2e88d707c212a29 "mm/vmscan.c: fix unsequenced
+modification and access warning".
 
-Applied to pci/enumeration for v4.17, thanks!
+Is .reclaim_idx still correct in the case of try_to_free_pages()?  It
+looks like reclaim_idx is based on the original gfp_mask in
+__node_reclaim(), but in try_to_free_pages() it looks like it may have
+been based on current_gfp_context()? (The sequencing is kind of
+ambiguous, thus fixed in my patch)
 
+Was there a bug in the original try_to_free_pages() pre commit
+f2f43e566a0, or is .reclaim_idx supposed to be different between
+try_to_free_pages() and __node_reclaim()?
+
+On Wed, May 10, 2017 at 12:15 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Tue 09-05-17 23:53:28, Nick Desaulniers wrote:
+>> Clang flags this file with the -Wunsequenced error that GCC does not
+>> have.
+>>
+>> unsequenced modification and access to 'gfp_mask'
+>>
+>> It seems that gfp_mask is both read and written without a sequence point
+>> in between, which is undefined behavior.
+>
+> Hmm. This is rather news to me. I thought that a = foo(a) is perfectly
+> valid. Same as a = b = c where c = foo(b) or is the problem in the
+> following .reclaim_idx = gfp_zone(gfp_mask) initialization? If that is
+> the case then the current code is OKish because gfp_zone doesn't depend
+> on the gfp_mask modification. It is messy, right, but works as expected.
+>
+> Anyway, we have a similar construct __node_reclaim
+>
+> If you really want to change this code, and I would agree it would be
+> slightly less tricky, then I would suggest doing something like the
+> following instead
 > ---
->  drivers/pci/pci-sysfs.c       | 6 ++++++
->  drivers/pci/probe.c           | 2 +-
->  drivers/pci/slot.c            | 1 +
->  include/linux/pci.h           | 1 +
->  include/uapi/linux/pci_regs.h | 2 ++
->  5 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index eb6bee8..7dc5be5 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -168,6 +168,9 @@ static ssize_t max_link_speed_show(struct device *dev,
->  		return -EINVAL;
->  
->  	switch (linkcap & PCI_EXP_LNKCAP_SLS) {
-> +	case PCI_EXP_LNKCAP_SLS_16_0GB:
-> +		speed = "16 GT/s";
-> +		break;
->  	case PCI_EXP_LNKCAP_SLS_8_0GB:
->  		speed = "8 GT/s";
->  		break;
-> @@ -213,6 +216,9 @@ static ssize_t current_link_speed_show(struct device *dev,
->  		return -EINVAL;
->  
->  	switch (linkstat & PCI_EXP_LNKSTA_CLS) {
-> +	case PCI_EXP_LNKSTA_CLS_16_0GB:
-> +		speed = "16 GT/s";
-> +		break;
->  	case PCI_EXP_LNKSTA_CLS_8_0GB:
->  		speed = "8 GT/s";
->  		break;
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index ef53774..86bf045 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -592,7 +592,7 @@ const unsigned char pcie_link_speed[] = {
->  	PCIE_SPEED_2_5GT,		/* 1 */
->  	PCIE_SPEED_5_0GT,		/* 2 */
->  	PCIE_SPEED_8_0GT,		/* 3 */
-> -	PCI_SPEED_UNKNOWN,		/* 4 */
-> +	PCIE_SPEED_16_0GT,		/* 4 */
->  	PCI_SPEED_UNKNOWN,		/* 5 */
->  	PCI_SPEED_UNKNOWN,		/* 6 */
->  	PCI_SPEED_UNKNOWN,		/* 7 */
-> diff --git a/drivers/pci/slot.c b/drivers/pci/slot.c
-> index d10f556..191893e 100644
-> --- a/drivers/pci/slot.c
-> +++ b/drivers/pci/slot.c
-> @@ -76,6 +76,7 @@ static const char *pci_bus_speed_strings[] = {
->  	"2.5 GT/s PCIe",	/* 0x14 */
->  	"5.0 GT/s PCIe",	/* 0x15 */
->  	"8.0 GT/s PCIe",	/* 0x16 */
-> +	"16.0 GT/s PCIe",	/* 0x17 */
->  };
->  
->  static ssize_t bus_speed_read(enum pci_bus_speed speed, char *buf)
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 5adabe2..44ce439 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -259,6 +259,7 @@ enum pci_bus_speed {
->  	PCIE_SPEED_2_5GT		= 0x14,
->  	PCIE_SPEED_5_0GT		= 0x15,
->  	PCIE_SPEED_8_0GT		= 0x16,
-> +	PCIE_SPEED_16_0GT		= 0x17,
->  	PCI_SPEED_UNKNOWN		= 0xff,
->  };
->  
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index 0c79eac..c1c4109 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -520,6 +520,7 @@
->  #define  PCI_EXP_LNKCAP_SLS_2_5GB 0x00000001 /* LNKCAP2 SLS Vector bit 0 */
->  #define  PCI_EXP_LNKCAP_SLS_5_0GB 0x00000002 /* LNKCAP2 SLS Vector bit 1 */
->  #define  PCI_EXP_LNKCAP_SLS_8_0GB 0x00000003 /* LNKCAP2 SLS Vector bit 2 */
-> +#define  PCI_EXP_LNKCAP_SLS_16_0GB 0x00000004 /* LNKCAP2 SLS Vector bit 3 */
->  #define  PCI_EXP_LNKCAP_MLW	0x000003f0 /* Maximum Link Width */
->  #define  PCI_EXP_LNKCAP_ASPMS	0x00000c00 /* ASPM Support */
->  #define  PCI_EXP_LNKCAP_L0SEL	0x00007000 /* L0s Exit Latency */
-> @@ -547,6 +548,7 @@
->  #define  PCI_EXP_LNKSTA_CLS_2_5GB 0x0001 /* Current Link Speed 2.5GT/s */
->  #define  PCI_EXP_LNKSTA_CLS_5_0GB 0x0002 /* Current Link Speed 5.0GT/s */
->  #define  PCI_EXP_LNKSTA_CLS_8_0GB 0x0003 /* Current Link Speed 8.0GT/s */
-> +#define  PCI_EXP_LNKSTA_CLS_16_0GB 0x0004 /* Current Link Speed 16.0GT/s */
->  #define  PCI_EXP_LNKSTA_NLW	0x03f0	/* Negotiated Link Width */
->  #define  PCI_EXP_LNKSTA_NLW_X1	0x0010	/* Current Link Width x1 */
->  #define  PCI_EXP_LNKSTA_NLW_X2	0x0020	/* Current Link Width x2 */
-> -- 
-> 2.7.4
-> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 5ebf468c5429..ba4b695e810e 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -2965,7 +2965,7 @@ unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
+>         unsigned long nr_reclaimed;
+>         struct scan_control sc = {
+>                 .nr_to_reclaim = SWAP_CLUSTER_MAX,
+> -               .gfp_mask = (gfp_mask = current_gfp_context(gfp_mask)),
+> +               .gfp_mask = current_gfp_context(gfp_mask),
+>                 .reclaim_idx = gfp_zone(gfp_mask),
+>                 .order = order,
+>                 .nodemask = nodemask,
+> @@ -2980,12 +2980,12 @@ unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
+>          * 1 is returned so that the page allocator does not OOM kill at this
+>          * point.
+>          */
+> -       if (throttle_direct_reclaim(gfp_mask, zonelist, nodemask))
+> +       if (throttle_direct_reclaim(sc.gfp_mask, zonelist, nodemask))
+>                 return 1;
+>
+>         trace_mm_vmscan_direct_reclaim_begin(order,
+>                                 sc.may_writepage,
+> -                               gfp_mask,
+> +                               sc.gfp_mask,
+>                                 sc.reclaim_idx);
+>
+>         nr_reclaimed = do_try_to_free_pages(zonelist, &sc);
+> @@ -3772,17 +3772,16 @@ static int __node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned in
+>         const unsigned long nr_pages = 1 << order;
+>         struct task_struct *p = current;
+>         struct reclaim_state reclaim_state;
+> -       int classzone_idx = gfp_zone(gfp_mask);
+>         unsigned int noreclaim_flag;
+>         struct scan_control sc = {
+>                 .nr_to_reclaim = max(nr_pages, SWAP_CLUSTER_MAX),
+> -               .gfp_mask = (gfp_mask = current_gfp_context(gfp_mask)),
+> +               .gfp_mask = current_gfp_context(gfp_mask),
+>                 .order = order,
+>                 .priority = NODE_RECLAIM_PRIORITY,
+>                 .may_writepage = !!(node_reclaim_mode & RECLAIM_WRITE),
+>                 .may_unmap = !!(node_reclaim_mode & RECLAIM_UNMAP),
+>                 .may_swap = 1,
+> -               .reclaim_idx = classzone_idx,
+> +               .reclaim_idx = gfp_znoe(gfp_mask),
+>         };
+>
+>         cond_resched();
+> @@ -3793,7 +3792,7 @@ static int __node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned in
+>          */
+>         noreclaim_flag = memalloc_noreclaim_save();
+>         p->flags |= PF_SWAPWRITE;
+> -       lockdep_set_current_reclaim_state(gfp_mask);
+> +       lockdep_set_current_reclaim_state(sc.gfp_mask);
+>         reclaim_state.reclaimed_slab = 0;
+>         p->reclaim_state = &reclaim_state;
+>
+> --
+> Michal Hocko
+> SUSE Labs
