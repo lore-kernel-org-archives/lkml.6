@@ -1,61 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753519AbeCUVLa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:11:30 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35406 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753210AbeCUVL2 (ORCPT
+        id S1753581AbeCUVMq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:12:46 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:53062 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753306AbeCUVMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:11:28 -0400
-X-Google-Smtp-Source: AG47ELuxpVIGI0bvUOMxKC4xkFi3AN2CtsJ4EQeHnKtvnafCDxtx2nxypJxeJdz0OrO0xH2c+76Jng==
-From: Vasyl Gomonovych <gomonovych@gmail.com>
-To: mporter@kernel.crashing.org, alexandre.bounine@idt.com,
-        linux-kernel@vger.kernel.org, gomonovych@gmail.com
-Subject: [PATCH] rapidio: fix typo in comment
-Date: Wed, 21 Mar 2018 22:10:35 +0100
-Message-Id: <20180321211035.8904-1-gomonovych@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        Wed, 21 Mar 2018 17:12:44 -0400
+Subject: Re: [PATCH] x86/xen: Delay get_cpu_cap until stack canary is
+ established
+To: Jason Andryuk <jandryuk@gmail.com>, Juergen Gross <jgross@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180319165804.10636-1-jandryuk@gmail.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <c3075b0c-a60b-0809-e34b-223701a53b84@oracle.com>
+Date: Wed, 21 Mar 2018 17:14:21 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180319165804.10636-1-jandryuk@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8839 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix typo in the words 'receiver', 'specified', 'during'
+On 03/19/2018 12:58 PM, Jason Andryuk wrote:
+> Commit 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings") introduced a
+> call to get_cpu_cap, which is fstack-protected.  This is works on x86-64
+> as commit 4f277295e54c ("x86/xen: init %gs very early to avoid page
+> faults with stack protector") ensures the stack protector is configured,
+> but it it did not cover x86-32.
+>
+> Delay calling get_cpu_cap until after xen_setup_gdt has initialized the
+> stack canary.  Without this, a 32bit PV machine crashes early
+> in boot.
+> (XEN) Domain 0 (vcpu#0) crashed on cpu#0:
+> (XEN) ----[ Xen-4.6.6-xc  x86_64  debug=n  Tainted:    C ]----
+> (XEN) CPU:    0
+> (XEN) RIP:    e019:[<00000000c10362f8>]
+>
+> And the PV kernel IP corresponds to init_scattered_cpuid_features
+>    0xc10362f8 <+24>:    mov    %gs:0x14,%eax
+>
+> Fixes 2cc42bac1c79 ("x86-64/Xen: eliminate W+X mappings")
+>
+> Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+>
 
-Signed-off-by: Vasyl Gomonovych <gomonovych@gmail.com>
----
- drivers/rapidio/rio-scan.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/rapidio/rio-scan.c b/drivers/rapidio/rio-scan.c
-index 23429bdaca84..161b927d9de1 100644
---- a/drivers/rapidio/rio-scan.c
-+++ b/drivers/rapidio/rio-scan.c
-@@ -76,7 +76,7 @@ static u16 rio_destid_alloc(struct rio_net *net)
- }
- 
- /**
-- * rio_destid_reserve - Reserve the specivied destID
-+ * rio_destid_reserve - Reserve the specified destID
-  * @net: RIO network
-  * @destid: destID to reserve
-  *
-@@ -885,7 +885,7 @@ static struct rio_net *rio_scan_alloc_net(struct rio_mport *mport,
-  *
-  * For each enumerated device, ensure that each switch in a system
-  * has correct routing entries. Add routes for devices that where
-- * unknown dirung the first enumeration pass through the switch.
-+ * unknown during the first enumeration pass through the switch.
-  */
- static void rio_update_route_tables(struct rio_net *net)
- {
-@@ -983,7 +983,7 @@ static int rio_enum_mport(struct rio_mport *mport, u32 flags)
- 		/* reserve mport destID in new net */
- 		rio_destid_reserve(net, mport->host_deviceid);
- 
--		/* Enable Input Output Port (transmitter reviever) */
-+		/* Enable Input Output Port (transmitter receiver) */
- 		rio_enable_rx_tx_port(mport, 1, 0, 0, 0);
- 
- 		/* Set component tag for host */
--- 
-2.14.1
+Applied to for-linus-4.17
+
+-boris
