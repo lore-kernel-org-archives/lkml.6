@@ -1,118 +1,166 @@
-Return-Path: <kernel-hardening-return-12758-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4+cwHy1YnxvuhQMUgEqbhSFI7e39fO4Dc2QAJu+GG4XPDpS+FLm6MFXz+LbxkQpgWJfhcPN
-ARC-Seal: i=1; a=rsa-sha256; t=1522137916; cv=none;
-        d=google.com; s=arc-20160816;
-        b=f0DJQlJwU0TOvJYapa617I7hH0ZDdZz4HPkhBauXyWCRts224Ff21t+W05iDW/78iU
-         3r5EVX/GJdDlLJzMes57NTCIQ6xiFcVuWwRgn6EC7UAIbpCUMkzQrR2znwsL0KETW4ge
-         ctHANpzoTnY/gpecpZECPIjIPzWiKQSwEdupO0hepSwP0L+IZ/9fMlUl/Hx5j2KvgLUt
-         On4WUxdtCnZLFarGXADjFr+ijma89YyEz8iMTV1ON3u6OPZpf1yyl/vUkt9Sg87RL1Lq
-         EpDnKFI+LsuSaoe268LBtXPdXcHvGrBRU0gR6uvxBAPA9hUYyuRP3MlJ0RXkzjBCIvmz
-         0s/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=date:message-id:user-agent:cc:to:references:in-reply-to:from
-         :subject:content-transfer-encoding:mime-version:dmarc-filter
-         :dkim-signature:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=ZWTNbZFyAXaRpZTZUPsFDlRzWg6DYZy5uF1ZfWIAnIM=;
-        b=PzTbMBfPMHVxx5FuSie0vKk6H/x6SZZwaKPMnyC5okDjzytUmMQQTFPsg6l6dd0KAb
-         B/iO+6u7gALDOd2SQSso9WJDmLmpFgDyToAdj6o3g+hYXNRNQWLAOB/P6wQVzY4/HWNR
-         RLk2Z62guUts3oKfrE8XdMpW8x9Ry7myLZXsFYrUF36JOSJEIqaU/+i3ua4Uw/dqWV4u
-         ilDzxTYCZ2uqp68Vl1uTIWMyug6yM0Uh7YGYXx39g2RC05qhrmPHlvvwtCwTPs6LdXfx
-         mS9FsbNZmQCkswGBMnWkL0KYT9CFk1p34bfPe9XPo7F06mp0E/+afhzNFgbgbdY0O4tG
-         oYuA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=DmgCIQpS;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=QzQnCaXk;
-       spf=pass (google.com: domain of kernel-hardening-return-12758-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12758-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=DmgCIQpS;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=QzQnCaXk;
-       spf=pass (google.com: domain of kernel-hardening-return-12758-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12758-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C382602BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3029665-1521607169-2-9028268445448033497
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521607168; b=wtHhgPxSgccZK3fda77mHs1awW7rUBoZDx1t6EFGGMB41cS
+    36Gkt088zxWmo5PJ25Z/HrbT2VCB3uFZ2PbRgGMsb73vJpgK7DioSGSbLlVS2zCw
+    SOxh/hfxv1tIRTI+MQMMofGfgoLhnB0LY0wE2PoAGZlem0Ee2bCX8bYw8Z0mbGkE
+    LMQ+7noH9z+Sm0vuKA1m9Dh4w8RnqWAFjrm/3F1rzWZNdhhOMMLRfh6VI3/ku0m3
+    xLP830rIHZHt3r+Q3aCSYXzCw7UW3uR4+AQHAWAapPZKI/KXpjaCQXO1NBIc3c2D
+    Qq++NXTzuzxZmDBN9fKsza1jCMC7HOfBIkiEX1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :references:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521607168; bh=u
+    i/m/op1rpI5PsW5iWy8Q7ByuLRveACzNceJfV5qf7Q=; b=r0jdaXdemdL90Zijr
+    Ny3XktlWY5AM/rPtXu0SjRNwCGZIneb0JGOHZPE2F1fZSeNXBnvQLMyTJuoYAPVq
+    MnwkSptuh58+7oYPvGxPQ7JH0ZE1MtJlFfFU6MN1xvgfhhULvdSb2Sa58ANvd0r3
+    pIFgjimQmd7G0p4n6BzOL6/IX4Gqv4HgTwWc4aWFxY5ES651+gCQ6DkoVbL3u+E5
+    plDme8MZMeI6pIxYPuBX73Zjm332G3u4Iio5dWvY6YUWzbXDtAN4HLCcEUNSeA6y
+    S0n/ywcqfs8rb7CwgSMQnl+ge3pu04M1mLp0VKptUMMqFQGoWJ/Xqi6rMH5sTtHZ
+    1PoGw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=lsquGteU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=samsung.com header.i=@samsung.com header.b=lsquGteU x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail20170921;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com
+ 20180321043916epoutp01da106fb1e29ad2a2dac4b314a004a44e~d1aWrK35-0092400924epoutp01s
+X-AuditID: b6c32a35-891ff70000001031-79-5ab1e1f3cc94
+From: Ji-Hun Kim <ji_hun.kim@samsung.com>
+To: dan.carpenter@oracle.com, mchehab@kernel.org
+Subject: [PATCH v3 1/2] staging: media: davinci_vpfe: add error handling on
+ kmalloc failure
+Date: Wed, 21 Mar 2018 13:39:09 +0900
+Message-id: <1521607150-31307-1-git-send-email-ji_hun.kim@samsung.com>
+X-Mailer: git-send-email 1.9.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7bCmnu7nhxujDCY2mVhc613IbPH633QW
+ iz1nfrFbNC9ez2bRf3o7o8XWW9IWl3fNYbPo2bCV1WLZpj9MDpwe9/YdZvHYOesuu8emVZ1s
+ HvvnrmH3+Pj0FotH35ZVjB6fN8kFsEel2mSkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpa
+ WpgrKeQl5qbaKrn4BOi6ZeYAXaakUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVWKNjQ00jM0
+ MNczMjLSMzGPtTIyBSpJSM14secte0Ejd8W7G8INjP85uhg5OSQETCTeP5rD1sXIxSEksINR
+ 4v7u2SwQzndGidfrzrLDVG1795URIrGbUeLB4cOsEM4PRomdm2ayglSxCWhKbOy+xghiiwgY
+ SFy7+RasiFngPKNEz7FHzCAJYYFYiaezJ4DZLAKqEnt+NTCB2LwCbhLPpt1ngVgnJ3Hy2GSw
+ ZgmBHjaJhc9+M0EkXCRezrsPdZOwxKvjW4BsDiBbWuLSUVuIcLXEgis7oObUSNz8vxSq1Vii
+ t+cC2F5mAT6Jd197WCFaeSU62oQgSjwk/r/7wAhhO0pcmT0LbJMQ0MlL5rUzT2CUXMDIsIpR
+ LLWgODc9tdiwwFCvODG3uDQvXS85P3cTIzitaJnuYJxyzucQowAHoxIP7wSJjVFCrIllxZW5
+ hxglOJiVRHgPRQCFeFMSK6tSi/Lji0pzUosPMZoCQ2Mis5Rocj4w5eWVxBuaWBqYmBmZmhoa
+ WJgoifMGBLhECQmkJ5akZqemFqQWwfQxcXBKNTDuttswu0vtS/ZPNw+XL7GTNqtq8140XV+0
+ 72u64PYYoz89FtFTF3Gs0Z2Rx3pmdc69ixtutP42vrRqYUTfDo/MU4x9txWl3I7XGN73+i3z
+ J/rMSpPrPIrPEzmZIgNW+uSmvw7ZuOXmm6mHP7f9KrhW8q9F//3LUIfDAWIPX11XOJ14tUl0
+ wu+3SizFGYmGWsxFxYkABlEtfUEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjluLIzCtJLcpLzFFi42I5/e+xgO7nhxujDHoey1lc613IbPH633QW
+ iz1nfrFbNC9ez2bRf3o7o8XWW9IWl3fNYbPo2bCV1WLZpj9MDpwe9/YdZvHYOesuu8emVZ1s
+ HvvnrmH3+Pj0FotH35ZVjB6fN8kFsEdx2aSk5mSWpRbp2yVwZbzY85a9oJG74t0N4QbG/xxd
+ jJwcEgImEtvefWUEsYUEdjJKvFkR3cXIBWT/YJT4/OMUWIJNQFNiY/c1MFtEwEDi2s23rCBF
+ zALnGSXuzj7OApIQFoiVeDp7AjOIzSKgKrHnVwMTiM0r4CbxbNp9FohtchInj01mncDItYCR
+ YRWjZGpBcW56brFRgWFearlecWJucWleul5yfu4mRmDobDus1beD8f6S+EOMAhyMSjy8FmIb
+ o4RYE8uKK3MPMUpwMCuJ8B6KAArxpiRWVqUW5ccXleakFh9ilOZgURLnvZ13LFJIID2xJDU7
+ NbUgtQgmy8TBKdXA2PWb73tdCF//FC/RHS6XQ2WfaLXNmqYo+M+e0/T8xKk3lnqsE0/vD9QI
+ Kdt4M8/tJkf75LYFZe/Kz/o5cRU2/g9rXebVO6/ga94lo8Dv9wy8U+rT3Kb1+Yie4Im7YXTD
+ dMqcNZsfp9wu6jrz5+3nj8sC78tO26n89WfKn0+sNz/Vbvrlkj+nRImlOCPRUIu5qDgRALWq
+ k1wZAgAA
+X-CMS-MailID: 20180321043915epcas1p3955f5a57c6728cd1f386f805879fc3f2
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180321043915epcas1p3955f5a57c6728cd1f386f805879fc3f2
+X-RootMTR: 20180321043915epcas1p3955f5a57c6728cd1f386f805879fc3f2
+References: <CGME20180321043915epcas1p3955f5a57c6728cd1f386f805879fc3f2@epcas1p3.samsung.com>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ji_hun.kim@samsung.com, arvind.yadav.cs@gmail.com, linux-media@vger.kernel.org
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [v2] rsi: Remove stack VLA usage
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1521081085-16404-1-git-send-email-me@tobin.cc>
-References: <1521081085-16404-1-git-send-email-me@tobin.cc>
-To: "Tobin C. Harding" <me@tobin.cc>
-Cc: "Tobin C. Harding" <me@tobin.cc>, kernel-hardening@lists.openwall.com,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-wireless@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>,
- Kees Cook <keescook@chromium.org>, Larry Finger <Larry.Finger@lwfinger.net>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180327080453.5F80E60588@smtp.codeaurora.org>
-Date: Tue, 27 Mar 2018 08:04:53 +0000 (UTC)
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594441103492436943?=
-X-GMAIL-MSGID: =?utf-8?q?1596077287394328223?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-"Tobin C. Harding" <me@tobin.cc> wrote:
+There is no failure checking on the param value which will be allocated
+memory by kmalloc. Add a null pointer checking statement. Then goto error:
+and return -ENOMEM error code when kmalloc is failed.
 
-> The use of stack Variable Length Arrays needs to be avoided, as they
-> can be a vector for stack exhaustion, which can be both a runtime bug
-> (kernel Oops) or a security flaw (overwriting memory beyond the
-> stack). Also, in general, as code evolves it is easy to lose track of
-> how big a VLA can get. Thus, we can end up having runtime failures
-> that are hard to debug. As part of the directive[1] to remove all VLAs
-> from the kernel, and build with -Wvla.
-> 
-> Currently rsi code uses a VLA based on a function argument to
-> `rsi_sdio_load_data_master_write()`.  The function call chain is
-> 
-> Both these functions
-> 
-> 	rsi_sdio_reinit_device()
-> 	rsi_probe()
-> 
-> start the call chain:
-> 
-> 	rsi_hal_device_init()
-> 	rsi_load_fw()
-> 	auto_fw_upgrade()
-> 	ping_pong_write()
-> 	rsi_sdio_load_data_master_write()
-> 
-> [Without familiarity with the code] it appears that none of the 4 locks
-> 
-> 	mutex
-> 	rx_mutex
-> 	tx_mutex
-> 	tx_bus_mutex
-> 
-> are held when `rsi_sdio_load_data_master_write()` is called.  It is therefore
-> safe to use kmalloc with GFP_KERNEL.
-> 
-> We can avoid using the VLA by using `kmalloc()` and free'ing the memory on all
-> exit paths.
-> 
-> Change buffer from 'u8 array' to 'u8 *'.  Call `kmalloc()` to allocate memory for
-> the buffer.  Using goto statement to call `kfree()` on all return paths.
-> 
-> It can be expected that this patch will result in a small increase in overhead
-> due to the use of `kmalloc()` however this code is only called on initialization
-> (and re-initialization) so this overhead should not degrade performance.
-> 
-> [1] https://lkml.org/lkml/2018/3/7/621
-> 
-> Signed-off-by: Tobin C. Harding <me@tobin.cc>
+Signed-off-by: Ji-Hun Kim <ji_hun.kim@samsung.com>
+---
+Changes since v1:
+  - Return with -ENOMEM directly, instead of goto error: then return.
+  - [Patch v3 1/2] is same with [patch v2]
 
-Patch applied to wireless-drivers-next.git, thanks.
+ drivers/staging/media/davinci_vpfe/dm365_ipipe.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-44f98a9332e4 rsi: Remove stack VLA usage
-
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+index 6a3434c..ffcd86d 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+@@ -1280,6 +1280,9 @@ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
+ 
+ 			params = kmalloc(sizeof(struct ipipe_module_params),
+ 					 GFP_KERNEL);
++			if (!params)
++				return -ENOMEM;
++
+ 			to = (void *)params + module_if->param_offset;
+ 			size = module_if->param_size;
+ 
+@@ -1323,6 +1326,9 @@ static int ipipe_g_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
+ 
+ 			params =  kmalloc(sizeof(struct ipipe_module_params),
+ 						GFP_KERNEL);
++			if (!params)
++				return -ENOMEM;
++
+ 			from = (void *)params + module_if->param_offset;
+ 			size = module_if->param_size;
+ 
 -- 
-https://patchwork.kernel.org/patch/10283841/
+1.9.1
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
