@@ -1,119 +1,82 @@
-Return-Path: <groeck7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521612596; cv=none;
+Return-Path: <rrajk@nvidia.com>
+X-Google-Smtp-Source: AG47ELs7lJ+KrPASNKYDGH/Jay7rNgH7tzeGNKeB4oOAes0EsZL6aZRAzdXvZa0FxL2w21neHPhN
+ARC-Seal: i=1; a=rsa-sha256; t=1521607349; cv=none;
         d=google.com; s=arc-20160816;
-        b=A+cnInN9wYElSbBZZEdLljVGIAdTzjCHUT8dKrkIJza/Kquxs1POBpAwO6duuEHbbR
-         4v4h8VrYNW+d24pbteNQ6Q0jkEzuBnDhfGR3lJEwCqSgeBLinEFsfHVlNoIQH1vB3Bm8
-         boC+XYAwgLmtZc+VwvyP9p8aCexmd9FrGeUGf0EgXvKK8R7gitXQpUGQzNVgp05kyPZX
-         ZlLoCq2j5XHZynHvN7xAioHBZ++j1+xU5BP9vdeHEgsw8TD4M2pGlQzW4tTiVWfH7sTP
-         Ocj04oJszwhp7i4wBqRaUB9DigtLsd30dOTL15gOZlS04NGd34UNp8gppg/Ee50Y4tPW
-         Oe5g==
+        b=P1rn1/m5R7Bcad7CPZ13mpwIQkMuGcvifQtuntMu6hpr/Qemet5/GhRAmLOHgSVs0U
+         hEOZJj/tC97LggpRVzyH4C+nWq2czDWResnfrz8g5dm/pYSvNDphWKE/S1CQl0zI6dR1
+         5iimvry9L6SWxguOaridKTvpi3+0ApEueeNxfk9OpslrE+iszSBC0JEHZQhzdMJq0Wvy
+         4zxSxEci96WcmPiBOth6VVPqgsyViz9/hSeju6V34JV/k8po7DWqxgam8y9BVKv9kLgr
+         TKgnqWWLkwba2ipzWfhGDIl3rq6TO3RpZSLlgCApSJp1ZRlZFzsUnsa91t8rpjNgPPx4
+         zPPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:sender
-         :dkim-signature:arc-authentication-results;
-        bh=ertvYdK6iqR/JfTTa1x7BCp7s+I//ClF1xezB1zn3d0=;
-        b=SaOOLyNaI60FMs1wpaECsPFbLeyXhfs1PnDMCprc+kY/BCEH5HqU+WIPBmONquMtFI
-         saHPc4Hk4xapX/OushCbHbXVoLZDevj+rtJV1Le4KWazIbk7fkV6mBVVCXTQ/W9AGWq7
-         R99scQA9hztOoEZNHxSDfAq9AKJvWBkGbB/bDxUZ8xq+IDukoIjAG8YUnw90pSYAYlbO
-         6tbFDjLozrIXo2ZTOGdO/xndQnTcWgyAr7kHqRH4tnUKsr+gAs6iEpRTSPXzQpXn0Hcl
-         93INlMQaa7+/71+t4D0Ixp9sxksG/Lr2f0XtgnC+B5Bi/c1S9FhdATSMa9xsjharjJiG
-         Q01Q==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:arc-authentication-results;
+        bh=cF7rO+sRqwp4Jg+H8s4amQDMaMT6hekinylXglqx3Hg=;
+        b=T7Q69lzr+FHGBCaizplxXOLkC9whMaQH5s9GUyFwJvpgwC1FD7vXTHDSNCfxWiqE06
+         kfyt1fSdYWA5aERZ1JcpSxmBFyVJmB07Utx8yL3UMDWGfalQBeS57V0d0tMdavfeIFTp
+         lbcMwTchAHA4H+0Ljai7s0bQx+2ulEcxskOHny2JZQ4c1oop1I1+M3Tqf6knY60a54I7
+         pvsgBfuneXF4lzPjdUVroY0i4RUGqT6/XqveqVBAkEoQ6uEZ2ldH+cO3N904YG7HDS2u
+         I4xRAnGFdGrNBKEoVa5Y+Fju8GDbfvv5DY6Dv4xRhRX+kcAYEButwCtQ/R3RQJlHcW0h
+         Ju+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MtoDtYFm;
-       spf=pass (google.com: domain of groeck7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=groeck7@gmail.com
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.64 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=MtoDtYFm;
-       spf=pass (google.com: domain of groeck7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=groeck7@gmail.com
-X-Google-Smtp-Source: AG47ELumbqZ0oblAAePdt5zjgDxow7Voh5jvRDU4nsJBEdgo/m1gCJcV+ZCBFKhN3XqlJ2bvAvhhww==
-Sender: Guenter Roeck <groeck7@gmail.com>
-Subject: Re: [PATCH V2 7/9] hwmon: pwm-fan: add sysfs node to read rpm of fan
-To: Rajkumar Rampelli <rrajk@nvidia.com>, robh+dt@kernel.org,
- mark.rutland@arm.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
- jdelvare@suse.com, corbet@lwn.net, catalin.marinas@arm.com,
- will.deacon@arm.com, kstewart@linuxfoundation.org,
- gregkh@linuxfoundation.org, pombredanne@nexb.com, mmaddireddy@nvidia.com,
- mperttunen@nvidia.com, arnd@arndb.de, timur@codeaurora.org,
- andy.gross@linaro.org, xuwei5@hisilicon.com, elder@linaro.org,
- heiko@sntech.de, krzk@kernel.org, ard.biesheuvel@linaro.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, ldewangan@nvidia.com
+       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.64 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+X-PGP-Universal: processed;
+	by hqpgpgate101.nvidia.com on Tue, 20 Mar 2018 21:42:28 -0700
+From: Rajkumar Rampelli <rrajk@nvidia.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
+	<corbet@lwn.net>, <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+	<kstewart@linuxfoundation.org>, <gregkh@linuxfoundation.org>,
+	<pombredanne@nexb.com>, <mmaddireddy@nvidia.com>, <mperttunen@nvidia.com>,
+	<arnd@arndb.de>, <timur@codeaurora.org>, <andy.gross@linaro.org>,
+	<xuwei5@hisilicon.com>, <elder@linaro.org>, <heiko@sntech.de>,
+	<krzk@kernel.org>, <ard.biesheuvel@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pwm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <ldewangan@nvidia.com>,
+	<rrajk@nvidia.com>
+Subject: [PATCH V2 9/9] arm64: defconfig: enable pwm-fan as a loadable module
+Date: Wed, 21 Mar 2018 10:10:44 +0530
+Message-ID: <1521607244-29734-10-git-send-email-rrajk@nvidia.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
 References: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
- <1521607244-29734-8-git-send-email-rrajk@nvidia.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <0da71848-1f75-62a3-75cb-a9b5cd887798@roeck-us.net>
-Date: Tue, 20 Mar 2018 23:09:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1521607244-29734-8-git-send-email-rrajk@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595520919303322117?=
-X-GMAIL-MSGID: =?utf-8?q?1595526449868161895?=
+X-GMAIL-THRID: =?utf-8?q?1595520948397518341?=
+X-GMAIL-MSGID: =?utf-8?q?1595520948397518341?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/20/2018 09:40 PM, Rajkumar Rampelli wrote:
-> Add fan device attribute fan1_input in pwm-fan driver
-> to read speed of fan in rotations per minute.
-> 
-> Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
-> ---
-> 
-> V2: Removed generic-pwm-tachometer driver and using pwm-fan driver as per suggestions
->      to read fan speed.
->      Added fan device attribute to report speed of fan in rpms through hwmon sysfs.
-> 
->   drivers/hwmon/pwm-fan.c | 23 +++++++++++++++++++++++
->   1 file changed, 23 insertions(+)
-> 
-> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-> index 70cc0d1..8dda209 100644
-> --- a/drivers/hwmon/pwm-fan.c
-> +++ b/drivers/hwmon/pwm-fan.c
-> @@ -98,11 +98,34 @@ static ssize_t show_pwm(struct device *dev,
->   	return sprintf(buf, "%u\n", ctx->pwm_value);
->   }
->   
-> +static ssize_t show_rpm(struct device *dev, struct device_attribute *attr,
-> +			char *buf)
-> +{
-> +	struct pwm_fan_ctx *ptt = dev_get_drvdata(dev);
-> +	struct pwm_device *pwm = ptt->pwm;
-> +	struct pwm_capture result;
-> +	unsigned int rpm = 0;
-> +	int ret;
-> +
-> +	ret = pwm_capture(pwm, &result, 0);
-> +	if (ret < 0) {
-> +		pr_err("Failed to capture PWM: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	if (result.period)
-> +		rpm = DIV_ROUND_CLOSEST_ULL(60ULL * NSEC_PER_SEC,
-> +					    result.period);
-> +
-> +	return sprintf(buf, "%u\n", rpm);
-> +}
->   
->   static SENSOR_DEVICE_ATTR(pwm1, S_IRUGO | S_IWUSR, show_pwm, set_pwm, 0);
-> +static SENSOR_DEVICE_ATTR(fan1_input, 0444, show_rpm, NULL, 0);
->   
->   static struct attribute *pwm_fan_attrs[] = {
->   	&sensor_dev_attr_pwm1.dev_attr.attr,
-> +	&sensor_dev_attr_fan1_input.dev_attr.attr,
+Enable pwm-fan driver to make use of a PWM interface to
+read speed of a fan in rotations per minute.
 
-This doesn't make sense. The same pwm can not both control the fan speed
-and report it.
+Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
+---
 
-Guenter
+V2: Added pwm-fan driver support as a loadable module.
+    Removed generic-pwm-tachometer driver support which was added as part of v1
 
->   	NULL,
->   };
->   
-> 
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 8b2bda7..50aa3bce 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -320,6 +320,7 @@ CONFIG_SYSCON_REBOOT_MODE=y
+ CONFIG_BATTERY_BQ27XXX=y
+ CONFIG_SENSORS_ARM_SCPI=y
+ CONFIG_SENSORS_LM90=m
++CONFIG_SENSORS_PWM_FAN=m
+ CONFIG_SENSORS_INA2XX=m
+ CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
+ CONFIG_CPU_THERMAL=y
+-- 
+2.1.4
