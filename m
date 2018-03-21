@@ -1,368 +1,171 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754511AbeCUXI5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 19:08:57 -0400
-Received: from mga14.intel.com ([192.55.52.115]:12344 "EHLO mga14.intel.com"
+        id S1754521AbeCUXJW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 19:09:22 -0400
+Received: from mga06.intel.com ([134.134.136.31]:16553 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754287AbeCUXHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:07:05 -0400
+        id S1754241AbeCUXGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 19:06:48 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
-   d="scan'208";a="39501884"
-Subject: [PATCH v7 09/14] mm, dev_pagemap: introduce CONFIG_DEV_PAGEMAP_OPS
+   d="scan'208";a="184879101"
+Subject: [PATCH v7 06/14] ext2, dax: introduce ext2_dax_aops
 From: Dan Williams <dan.j.williams@intel.com>
 To: linux-nvdimm@lists.01.org
-Cc: Michal Hocko <mhocko@suse.com>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+Cc: Jan Kara <jack@suse.com>, kbuild test robot <lkp@intel.com>,
         david@fromorbit.com, hch@lst.de, linux-fsdevel@vger.kernel.org,
         linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, jack@suse.cz
-Date: Wed, 21 Mar 2018 15:57:59 -0700
-Message-ID: <152167307925.5268.8460609293976880720.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date: Wed, 21 Mar 2018 15:57:43 -0700
+Message-ID: <152167306296.5268.6656046711107190095.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HMM sub-system extended dev_pagemap to arrange a callback when a
-dev_pagemap managed page is freed. Since a dev_pagemap page is free /
-idle when its reference count is 1 it requires an additional branch to
-check the page-type at put_page() time. Given put_page() is a hot-path
-we do not want to incur that check if HMM is not in use, so a static
-branch is used to avoid that overhead when not necessary.
+In preparation for the dax implementation to start associating dax pages
+to inodes via page->mapping, we need to provide a 'struct
+address_space_operations' instance for dax. Otherwise, direct-I/O
+triggers incorrect page cache assumptions and warnings.
 
-Now, the FS_DAX implementation wants to reuse this mechanism for
-receiving dev_pagemap ->page_free() callbacks. Rework the HMM-specific
-static-key into a generic mechanism that either HMM or FS_DAX code paths
-can enable.
-
-Cc: Michal Hocko <mhocko@suse.com>
-Reviewed-by: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Jan Kara <jack@suse.com>
+Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/dax/super.c      |    2 ++
- fs/Kconfig               |    1 +
- include/linux/memremap.h |   20 ++-------------
- include/linux/mm.h       |   61 ++++++++++++++++++++++++++++++++--------------
- kernel/memremap.c        |   30 ++++++++++++++++++++---
- mm/Kconfig               |    5 ++++
- mm/hmm.c                 |   13 ++--------
- mm/swap.c                |    3 ++
- 8 files changed, 84 insertions(+), 51 deletions(-)
+ fs/ext2/ext2.h  |    1 +
+ fs/ext2/inode.c |   43 +++++++++++++++++++++++++++----------------
+ fs/ext2/namei.c |   18 ++----------------
+ 3 files changed, 30 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index ecefe9f7eb60..619b1ed6434c 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -191,6 +191,7 @@ struct dax_device *fs_dax_claim_bdev(struct block_device *bdev, void *owner)
- 		return NULL;
- 	}
+diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
+index 032295e1d386..cc40802ddfa8 100644
+--- a/fs/ext2/ext2.h
++++ b/fs/ext2/ext2.h
+@@ -814,6 +814,7 @@ extern const struct inode_operations ext2_file_inode_operations;
+ extern const struct file_operations ext2_file_operations;
  
-+	dev_pagemap_get_ops();
- 	pgmap->type = MEMORY_DEVICE_FS_DAX;
- 	pgmap->page_free = generic_dax_pagefree;
- 	pgmap->data = owner;
-@@ -215,6 +216,7 @@ void fs_dax_release(struct dax_device *dax_dev, void *owner)
- 	pgmap->type = MEMORY_DEVICE_HOST;
- 	pgmap->page_free = NULL;
- 	pgmap->data = NULL;
-+	dev_pagemap_put_ops();
- 	mutex_unlock(&devmap_lock);
+ /* inode.c */
++extern void ext2_set_file_ops(struct inode *inode);
+ extern const struct address_space_operations ext2_aops;
+ extern const struct address_space_operations ext2_nobh_aops;
+ extern const struct iomap_ops ext2_iomap_ops;
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 9b2ac55ac34f..8ea394c8ffce 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -952,17 +952,16 @@ ext2_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ static int
+ ext2_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ {
+-#ifdef CONFIG_FS_DAX
+-	if (dax_mapping(mapping)) {
+-		return dax_writeback_mapping_range(mapping,
+-						   mapping->host->i_sb->s_bdev,
+-						   wbc);
+-	}
+-#endif
+-
+ 	return mpage_writepages(mapping, wbc, ext2_get_block);
  }
- EXPORT_SYMBOL_GPL(fs_dax_release);
-diff --git a/fs/Kconfig b/fs/Kconfig
-index bc821a86d965..1f0832bbc32f 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -38,6 +38,7 @@ config FS_DAX
- 	bool "Direct Access (DAX) support"
- 	depends on MMU
- 	depends on !(ARM || MIPS || SPARC)
-+	select DEV_PAGEMAP_OPS
- 	select FS_IOMAP
- 	select DAX
- 	help
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 02d6d042ee7f..9faf25d6abef 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -1,7 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #ifndef _LINUX_MEMREMAP_H_
- #define _LINUX_MEMREMAP_H_
--#include <linux/mm.h>
- #include <linux/ioport.h>
- #include <linux/percpu-refcount.h>
  
-@@ -130,6 +129,9 @@ struct dev_pagemap {
- 	enum memory_type type;
++static int
++ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
++{
++	return dax_writeback_mapping_range(mapping,
++			mapping->host->i_sb->s_bdev, wbc);
++}
++
+ const struct address_space_operations ext2_aops = {
+ 	.readpage		= ext2_readpage,
+ 	.readpages		= ext2_readpages,
+@@ -990,6 +989,13 @@ const struct address_space_operations ext2_nobh_aops = {
+ 	.error_remove_page	= generic_error_remove_page,
  };
  
-+void dev_pagemap_get_ops(void);
-+void dev_pagemap_put_ops(void);
++static const struct address_space_operations ext2_dax_aops = {
++	.direct_IO		= ext2_direct_IO,
++	.writepages		= ext2_dax_writepages,
++	.set_page_dirty		= noop_set_page_dirty,
++	.invalidatepage		= noop_invalidatepage,
++};
 +
- #ifdef CONFIG_ZONE_DEVICE
- void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
- struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
-@@ -137,8 +139,6 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
+ /*
+  * Probably it should be a library function... search for first non-zero word
+  * or memcmp with zero_page, whatever is better for particular architecture.
+@@ -1388,6 +1394,18 @@ void ext2_set_inode_flags(struct inode *inode)
+ 		inode->i_flags |= S_DAX;
+ }
  
- unsigned long vmem_altmap_offset(struct vmem_altmap *altmap);
- void vmem_altmap_free(struct vmem_altmap *altmap, unsigned long nr_pfns);
--
--static inline bool is_zone_device_page(const struct page *page);
- #else
- static inline void *devm_memremap_pages(struct device *dev,
- 		struct dev_pagemap *pgmap)
-@@ -169,20 +169,6 @@ static inline void vmem_altmap_free(struct vmem_altmap *altmap,
- }
- #endif /* CONFIG_ZONE_DEVICE */
- 
--#if defined(CONFIG_DEVICE_PRIVATE) || defined(CONFIG_DEVICE_PUBLIC)
--static inline bool is_device_private_page(const struct page *page)
--{
--	return is_zone_device_page(page) &&
--		page->pgmap->type == MEMORY_DEVICE_PRIVATE;
--}
--
--static inline bool is_device_public_page(const struct page *page)
--{
--	return is_zone_device_page(page) &&
--		page->pgmap->type == MEMORY_DEVICE_PUBLIC;
--}
--#endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
--
- static inline void put_dev_pagemap(struct dev_pagemap *pgmap)
- {
- 	if (pgmap)
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ad06d42adb1a..088c76bce360 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -812,27 +812,55 @@ static inline bool is_zone_device_page(const struct page *page)
- }
- #endif
- 
--#if defined(CONFIG_DEVICE_PRIVATE) || defined(CONFIG_DEVICE_PUBLIC)
--void put_zone_device_private_or_public_page(struct page *page);
--DECLARE_STATIC_KEY_FALSE(device_private_key);
--#define IS_HMM_ENABLED static_branch_unlikely(&device_private_key)
--static inline bool is_device_private_page(const struct page *page);
--static inline bool is_device_public_page(const struct page *page);
--#else /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
--static inline void put_zone_device_private_or_public_page(struct page *page)
-+#ifdef CONFIG_DEV_PAGEMAP_OPS
-+void __put_devmap_managed_page(struct page *page);
-+DECLARE_STATIC_KEY_FALSE(devmap_managed_key);
-+static inline bool put_devmap_managed_page(struct page *page)
- {
-+	if (!static_branch_unlikely(&devmap_managed_key))
-+		return false;
-+	if (!is_zone_device_page(page))
-+		return false;
-+	switch (page->pgmap->type) {
-+	case MEMORY_DEVICE_PRIVATE:
-+	case MEMORY_DEVICE_PUBLIC:
-+	case MEMORY_DEVICE_FS_DAX:
-+		__put_devmap_managed_page(page);
-+		return true;
-+	default:
-+		break;
-+	}
-+	return false;
- }
--#define IS_HMM_ENABLED 0
-+
- static inline bool is_device_private_page(const struct page *page)
- {
--	return false;
-+	return is_zone_device_page(page) &&
-+		page->pgmap->type == MEMORY_DEVICE_PRIVATE;
- }
-+
- static inline bool is_device_public_page(const struct page *page)
- {
-+	return is_zone_device_page(page) &&
-+		page->pgmap->type == MEMORY_DEVICE_PUBLIC;
++void ext2_set_file_ops(struct inode *inode)
++{
++	inode->i_op = &ext2_file_inode_operations;
++	inode->i_fop = &ext2_file_operations;
++	if (IS_DAX(inode))
++		inode->i_mapping->a_ops = &ext2_dax_aops;
++	else if (test_opt(inode->i_sb, NOBH))
++		inode->i_mapping->a_ops = &ext2_nobh_aops;
++	else
++		inode->i_mapping->a_ops = &ext2_aops;
 +}
 +
-+#else /* CONFIG_DEV_PAGEMAP_OPS */
-+static inline bool put_devmap_managed_page(struct page *page)
-+{
- 	return false;
- }
--#endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
- 
-+static inline bool is_device_private_page(const struct page *page)
-+{
-+	return false;
-+}
-+
-+static inline bool is_device_public_page(const struct page *page)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_DEV_PAGEMAP_OPS */
- 
- static inline void get_page(struct page *page)
+ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
  {
-@@ -850,16 +878,13 @@ static inline void put_page(struct page *page)
- 	page = compound_head(page);
+ 	struct ext2_inode_info *ei;
+@@ -1480,14 +1498,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ 		ei->i_data[n] = raw_inode->i_block[n];
  
- 	/*
--	 * For private device pages we need to catch refcount transition from
--	 * 2 to 1, when refcount reach one it means the private device page is
--	 * free and we need to inform the device driver through callback. See
-+	 * For devmap managed pages we need to catch refcount transition from
-+	 * 2 to 1, when refcount reach one it means the page is free and we
-+	 * need to inform the device driver through callback. See
- 	 * include/linux/memremap.h and HMM for details.
- 	 */
--	if (IS_HMM_ENABLED && unlikely(is_device_private_page(page) ||
--	    unlikely(is_device_public_page(page)))) {
--		put_zone_device_private_or_public_page(page);
-+	if (put_devmap_managed_page(page))
- 		return;
+ 	if (S_ISREG(inode->i_mode)) {
+-		inode->i_op = &ext2_file_inode_operations;
+-		if (test_opt(inode->i_sb, NOBH)) {
+-			inode->i_mapping->a_ops = &ext2_nobh_aops;
+-			inode->i_fop = &ext2_file_operations;
+-		} else {
+-			inode->i_mapping->a_ops = &ext2_aops;
+-			inode->i_fop = &ext2_file_operations;
+-		}
++		ext2_set_file_ops(inode);
+ 	} else if (S_ISDIR(inode->i_mode)) {
+ 		inode->i_op = &ext2_dir_inode_operations;
+ 		inode->i_fop = &ext2_dir_operations;
+diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+index e078075dc66f..55f7caadb093 100644
+--- a/fs/ext2/namei.c
++++ b/fs/ext2/namei.c
+@@ -107,14 +107,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, umode_t mode
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
+ 
+-	inode->i_op = &ext2_file_inode_operations;
+-	if (test_opt(inode->i_sb, NOBH)) {
+-		inode->i_mapping->a_ops = &ext2_nobh_aops;
+-		inode->i_fop = &ext2_file_operations;
+-	} else {
+-		inode->i_mapping->a_ops = &ext2_aops;
+-		inode->i_fop = &ext2_file_operations;
 -	}
- 
- 	if (put_page_testzero(page))
- 		__put_page(page);
-diff --git a/kernel/memremap.c b/kernel/memremap.c
-index 4dd4274cabe2..72d0bb6fc47d 100644
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -476,8 +476,30 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
++	ext2_set_file_ops(inode);
+ 	mark_inode_dirty(inode);
+ 	return ext2_add_nondir(dentry, inode);
  }
- #endif /* CONFIG_ZONE_DEVICE */
+@@ -125,14 +118,7 @@ static int ext2_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	if (IS_ERR(inode))
+ 		return PTR_ERR(inode);
  
--#if IS_ENABLED(CONFIG_DEVICE_PRIVATE) ||  IS_ENABLED(CONFIG_DEVICE_PUBLIC)
--void put_zone_device_private_or_public_page(struct page *page)
-+#ifdef CONFIG_DEV_PAGEMAP_OPS
-+DEFINE_STATIC_KEY_FALSE(devmap_managed_key);
-+EXPORT_SYMBOL_GPL(devmap_managed_key);
-+static atomic_t devmap_enable;
-+
-+/*
-+ * Toggle the static key for ->page_free() callbacks when dev_pagemap
-+ * pages go idle.
-+ */
-+void dev_pagemap_get_ops(void)
-+{
-+	if (atomic_inc_return(&devmap_enable) == 1)
-+		static_branch_enable(&devmap_managed_key);
-+}
-+EXPORT_SYMBOL_GPL(dev_pagemap_get_ops);
-+
-+void dev_pagemap_put_ops(void)
-+{
-+	if (atomic_dec_and_test(&devmap_enable))
-+		static_branch_disable(&devmap_managed_key);
-+}
-+EXPORT_SYMBOL_GPL(dev_pagemap_put_ops);
-+
-+void __put_devmap_managed_page(struct page *page)
- {
- 	int count = page_ref_dec_return(page);
- 
-@@ -497,5 +519,5 @@ void put_zone_device_private_or_public_page(struct page *page)
- 	} else if (!count)
- 		__put_page(page);
- }
--EXPORT_SYMBOL(put_zone_device_private_or_public_page);
--#endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
-+EXPORT_SYMBOL_GPL(__put_devmap_managed_page);
-+#endif /* CONFIG_DEV_PAGEMAP_OPS */
-diff --git a/mm/Kconfig b/mm/Kconfig
-index c782e8fb7235..dc32828984a3 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -700,6 +700,9 @@ config ARCH_HAS_HMM
- config MIGRATE_VMA_HELPER
- 	bool
- 
-+config DEV_PAGEMAP_OPS
-+	bool
-+
- config HMM
- 	bool
- 	select MIGRATE_VMA_HELPER
-@@ -720,6 +723,7 @@ config DEVICE_PRIVATE
- 	bool "Unaddressable device memory (GPU memory, ...)"
- 	depends on ARCH_HAS_HMM
- 	select HMM
-+	select DEV_PAGEMAP_OPS
- 
- 	help
- 	  Allows creation of struct pages to represent unaddressable device
-@@ -730,6 +734,7 @@ config DEVICE_PUBLIC
- 	bool "Addressable device memory (like GPU memory)"
- 	depends on ARCH_HAS_HMM
- 	select HMM
-+	select DEV_PAGEMAP_OPS
- 
- 	help
- 	  Allows creation of struct pages to represent addressable device
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 320545b98ff5..4aa554e76d06 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -35,15 +35,6 @@
- 
- #define PA_SECTION_SIZE (1UL << PA_SECTION_SHIFT)
- 
--#if defined(CONFIG_DEVICE_PRIVATE) || defined(CONFIG_DEVICE_PUBLIC)
--/*
-- * Device private memory see HMM (Documentation/vm/hmm.txt) or hmm.h
-- */
--DEFINE_STATIC_KEY_FALSE(device_private_key);
--EXPORT_SYMBOL(device_private_key);
--#endif /* CONFIG_DEVICE_PRIVATE || CONFIG_DEVICE_PUBLIC */
--
--
- #if IS_ENABLED(CONFIG_HMM_MIRROR)
- static const struct mmu_notifier_ops hmm_mmu_notifier_ops;
- 
-@@ -996,7 +987,7 @@ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
- 	resource_size_t addr;
- 	int ret;
- 
--	static_branch_enable(&device_private_key);
-+	dev_pagemap_get_ops();
- 
- 	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
- 				   GFP_KERNEL, dev_to_node(device));
-@@ -1090,7 +1081,7 @@ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
- 	if (res->desc != IORES_DESC_DEVICE_PUBLIC_MEMORY)
- 		return ERR_PTR(-EINVAL);
- 
--	static_branch_enable(&device_private_key);
-+	dev_pagemap_get_ops();
- 
- 	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
- 				   GFP_KERNEL, dev_to_node(device));
-diff --git a/mm/swap.c b/mm/swap.c
-index 0f17330dd0e5..eed846cfc8b8 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -29,6 +29,7 @@
- #include <linux/cpu.h>
- #include <linux/notifier.h>
- #include <linux/backing-dev.h>
-+#include <linux/memremap.h>
- #include <linux/memcontrol.h>
- #include <linux/gfp.h>
- #include <linux/uio.h>
-@@ -744,7 +745,7 @@ void release_pages(struct page **pages, int nr)
- 						       flags);
- 				locked_pgdat = NULL;
- 			}
--			put_zone_device_private_or_public_page(page);
-+			put_devmap_managed_page(page);
- 			continue;
- 		}
- 
+-	inode->i_op = &ext2_file_inode_operations;
+-	if (test_opt(inode->i_sb, NOBH)) {
+-		inode->i_mapping->a_ops = &ext2_nobh_aops;
+-		inode->i_fop = &ext2_file_operations;
+-	} else {
+-		inode->i_mapping->a_ops = &ext2_aops;
+-		inode->i_fop = &ext2_file_operations;
+-	}
++	ext2_set_file_ops(inode);
+ 	mark_inode_dirty(inode);
+ 	d_tmpfile(dentry, inode);
+ 	unlock_new_inode(inode);
