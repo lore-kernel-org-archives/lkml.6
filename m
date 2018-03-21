@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751985AbeCUJ12 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 05:27:28 -0400
-Received: from verein.lst.de ([213.95.11.211]:41257 "EHLO newverein.lst.de"
+        id S1752014AbeCUJ1k (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 05:27:40 -0400
+Received: from verein.lst.de ([213.95.11.211]:41274 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751794AbeCUJ1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 05:27:24 -0400
-Date: Wed, 21 Mar 2018 10:27:22 +0100
+        id S1751551AbeCUJ1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 05:27:37 -0400
+Date: Wed, 21 Mar 2018 10:27:36 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Logan Gunthorpe <logang@deltatee.com>
 Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
@@ -20,14 +20,14 @@ Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH v3 06/11] block: Introduce PCI P2P flags for request
-        and request queue
-Message-ID: <20180321092722.GD7098@lst.de>
-References: <20180312193525.2855-1-logang@deltatee.com> <20180312193525.2855-7-logang@deltatee.com>
+Subject: Re: [PATCH v3 07/11] IB/core: Ensure we map P2P memory correctly
+        in  rdma_rw_ctx_[init|destroy]()
+Message-ID: <20180321092736.GE7098@lst.de>
+References: <20180312193525.2855-1-logang@deltatee.com> <20180312193525.2855-8-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180312193525.2855-7-logang@deltatee.com>
+In-Reply-To: <20180312193525.2855-8-logang@deltatee.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
