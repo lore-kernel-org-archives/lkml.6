@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeCUD2W convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 23:28:22 -0400
-Received: from mga12.intel.com ([192.55.52.136]:63536 "EHLO mga12.intel.com"
+        id S1751970AbeCUDal convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 23:30:41 -0400
+Received: from mga12.intel.com ([192.55.52.136]:63608 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751521AbeCUD2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 23:28:19 -0400
+        id S1751581AbeCUDai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 23:30:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
-   d="scan'208";a="213220386"
+   d="scan'208";a="39233851"
 From: "Tian, Kevin" <kevin.tian@intel.com>
 To: Alex Williamson <alex.williamson@redhat.com>
 CC: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
@@ -21,23 +21,24 @@ CC: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
         "xuwei5@hisilicon.com" <xuwei5@hisilicon.com>,
         "linuxarm@huawei.com" <linuxarm@huawei.com>,
         "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: RE: [PATCH v5 0/7] vfio/type1: Add support for valid iova list
- management
-Thread-Topic: [PATCH v5 0/7] vfio/type1: Add support for valid iova list
- management
-Thread-Index: AQHTvHwRYozEvfc1wUWpRd1V/RZ8waPXOoPQgAIDbACAAM9S8A==
-Date: Wed, 21 Mar 2018 03:28:16 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191089B15@SHSMSX101.ccr.corp.intel.com>
+Subject: RE: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
+ update iova list
+Thread-Topic: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
+ update iova list
+Thread-Index: AQHTwJwcNZfimSid2kSB3RzWbTA2BqPaCCZw
+Date: Wed, 21 Mar 2018 03:30:29 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D191089B3B@SHSMSX101.ccr.corp.intel.com>
 References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
-        <AADFC41AFE54684AB9EE6CBC0274A5D19108585F@SHSMSX101.ccr.corp.intel.com>
- <20180320165514.0f4cd556@t450s.home>
-In-Reply-To: <20180320165514.0f4cd556@t450s.home>
+        <20180315163509.17740-3-shameerali.kolothum.thodi@huawei.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1910857ED@SHSMSX101.ccr.corp.intel.com>
+ <20180320163744.3c09fde0@t450s.home>
+In-Reply-To: <20180320163744.3c09fde0@t450s.home>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2U5OTU4ZjktMDBjNy00ZjkzLTljOGMtZWZlOWE3MWE1ZjI5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6Ilk3M2FzTE1RU3hCUm5YVEdRVjloWitwcEdpdTlJaTN3TDE3em1UejRRUnM9In0=
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmZlMTBmNmQtYmRjYy00N2I0LTg1MDktMTA2MDBhYzI5NzgwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6Imk2aEhtcldzbzJhR25WamxidGc3elFEXC9RYkNId20zMEt3b293RXU3K01VPSJ9
 dlp-product: dlpe-windows
 dlp-version: 11.0.0.116
 dlp-reaction: no-action
@@ -50,79 +51,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 > From: Alex Williamson [mailto:alex.williamson@redhat.com]
-> Sent: Wednesday, March 21, 2018 6:55 AM
+> Sent: Wednesday, March 21, 2018 6:38 AM
 > 
-> On Mon, 19 Mar 2018 08:28:32 +0000
+> On Mon, 19 Mar 2018 07:51:58 +0000
 > "Tian, Kevin" <kevin.tian@intel.com> wrote:
 > 
 > > > From: Shameer Kolothum
 > > > Sent: Friday, March 16, 2018 12:35 AM
 > > >
-> > > This series introduces an iova list associated with a vfio
-> > > iommu. The list is kept updated taking care of iommu apertures,
-> > > and reserved regions. Also this series adds checks for any conflict
-> > > with existing dma mappings whenever a new device group is attached
-> to
-> > > the domain.
+> > > This retrieves the reserved regions associated with dev group and
+> > > checks for conflicts with any existing dma mappings. Also update
+> > > the iova list excluding the reserved regions.
 > > >
-> > > User-space can retrieve valid iova ranges using
-> VFIO_IOMMU_GET_INFO
-> > > ioctl capability chains. Any dma map request outside the valid iova
-> > > range will be rejected.
+> > > Signed-off-by: Shameer Kolothum
+> > > <shameerali.kolothum.thodi@huawei.com>
+> > > ---
+> > >  drivers/vfio/vfio_iommu_type1.c | 90
+> > > +++++++++++++++++++++++++++++++++++++++++
+> > >  1 file changed, 90 insertions(+)
+> > >
+> > > diff --git a/drivers/vfio/vfio_iommu_type1.c
+> > > b/drivers/vfio/vfio_iommu_type1.c
+> > > index 1123c74..cfe2bb2 100644
+> > > --- a/drivers/vfio/vfio_iommu_type1.c
+> > > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > > @@ -1313,6 +1313,82 @@ static int vfio_iommu_aper_resize(struct
+> > > list_head *iova,
+> > >  	return 0;
+> > >  }
+> > >
+> > > +/*
+> > > + * Check reserved region conflicts with existing dma mappings
+> > > + */
+> > > +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
+> > > +				struct list_head *resv_regions)
+> > > +{
+> > > +	struct iommu_resv_region *region;
+> > > +
+> > > +	/* Check for conflict with existing dma mappings */
+> > > +	list_for_each_entry(region, resv_regions, list) {
+> > > +		if (vfio_find_dma(iommu, region->start, region->length))
+> > > +			return true;
+> > > +	}
+> > > +
+> > > +	return false;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Check iova region overlap with  reserved regions and
+> > > + * exclude them from the iommu iova range
+> > > + */
+> > > +static int vfio_iommu_resv_exclude(struct list_head *iova,
+> > > +					struct list_head *resv_regions)
+> > > +{
+> > > +	struct iommu_resv_region *resv;
+> > > +	struct vfio_iova *n, *next;
+> > > +
+> > > +	list_for_each_entry(resv, resv_regions, list) {
+> > > +		phys_addr_t start, end;
+> > > +
+> > > +		start = resv->start;
+> > > +		end = resv->start + resv->length - 1;
+> > > +
+> > > +		list_for_each_entry_safe(n, next, iova, list) {
+> > > +			int ret = 0;
+> > > +
+> > > +			/* No overlap */
+> > > +			if ((start > n->end) || (end < n->start))
+> > > +				continue;
+> > > +			/*
+> > > +			 * Insert a new node if current node overlaps with
+> > > the
+> > > +			 * reserve region to exlude that from valid iova
+> > > range.
+> > > +			 * Note that, new node is inserted before the
+> > > current
+> > > +			 * node and finally the current node is deleted
+> > > keeping
+> > > +			 * the list updated and sorted.
+> > > +			 */
+> > > +			if (start > n->start)
+> > > +				ret = vfio_iommu_iova_insert(&n->list,
+> > > +							n->start, start - 1);
+> > > +			if (!ret && end < n->end)
+> > > +				ret = vfio_iommu_iova_insert(&n->list,
+> > > +							end + 1, n->end);
+> > > +			if (ret)
+> > > +				return ret;
 > >
-> > GET_INFO is done at initialization time which is good for cold attached
-> > devices. If a hotplugged device may cause change of valid iova ranges
-> > at run-time, then there could be potential problem (which however is
-> > difficult for user space or orchestration stack to figure out in advance)
-> > Can we do some extension like below to make hotplug case cleaner?
+> > Is it safer to delete the 1st node here in case of failure of the 2nd node?
+> > There is no problem with current logic since upon error iova_copy will
+> > be released anyway. However this function alone doesn't assume the
+> > fact of a temporary list, thus it's better to keep the list clean w/o garbage
+> > left from any error handling.
 > 
-> Let's be clear what we mean by hotplug here, as I see it, the only
-> relevant hotplug would be a physical device, hot added to the host,
-> which becomes a member of an existing, in-use IOMMU group.  If, on the
-> other hand, we're talking about hotplug related to the user process,
-> there's nothing asynchronous about that.  For instance in the QEMU
-> case, QEMU must add the group to the container, at which point it can
-> evaluate the new iova list and remove the group from the container if
-> it doesn't like the result.  So what would be a case of the available
-> iova list for a group changing as a result of adding a device?
+> I don't think the proposal makes the list notably more sane on failure
+> than we have here.  If the function returns an error and the list is
+> modified in any way, how can the caller recover?  We're operating on a
+> principle of modify a copy and throw it away on error, the only
+> function level solution to the problem you're noting is to make each
+> function generate a working copy, which is clearly inefficient.  This
+> is a static function, not intended for general use, so I think a
+> sufficient approach to address your concern is to simply note the error
+> behavior in the comment above the function, the list is in an
+> unknown/inconsistent state on error.  Thanks,
+> 
 
-My original thought was about the latter case. At that moment 
-I was not sure whether the window between adding/removing 
-the group may cause some issue if there are right some IOVA 
-allocations happening in parallel. But looks Qemu can anyway
-handle it well as long as such scenario is considered.
-
-> 
-> > - An interface allowing user space to request VFIO rejecting further
-> > attach_group if doing so may cause iova range change. e.g. Qemu can
-> > do such request once completing initial GET_INFO;
-> 
-> For the latter case above, it seems unnecessary, QEMU can revert the
-> attach, we're only promising that the attach won't interfere with
-> existing mappings.  For the host hotplug case, the user has no control,
-> the new device is a member of the iommu group and therefore necessarily
-> becomes a part of container.  I imagine there are plenty of other holes
-> in this scenario already.
-> 
-> > - or an event notification to user space upon change of valid iova
-> > ranges when attaching a new device at run-time. It goes one step
-> > further - even attach may cause iova range change, it may still
-> > succeed as long as Qemu hasn't allocated any iova in impacted
-> > range
-> 
-> Same as above, in the QEMU hotplug case, the user is orchestrating the
-> adding of the group to the container, they can then check the iommu
-> info on their own and determine what, if any, changes are relevant to
-> them, knowing that the addition would not succeed if any current
-> mappings where affected.  In the host case, a notification would be
-> required, but we'd first need to identify exactly how the iova list can
-> change asynchronous to the user doing anything.  Thanks,
-
-for host hotplug, possibly notification could be an opt-in model.
-meaning if user space doesn't explicitly request receiving notification 
-on such event, the device is just left in unused state (vfio-pci still
-claims the device, assuming it assigned to the container owner, but
-the owner doesn't use it)
+'static' doesn't mean it cannot be used for general purpose in the same
+file. Clarifying the expected behavior in comment is OK to me.
 
 Thanks
 Kevin
