@@ -1,141 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751817AbeCUIxQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:53:16 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:54119 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751514AbeCUIw6 (ORCPT
+        id S1751689AbeCUIyG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:54:06 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:37996 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751423AbeCUIyB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:52:58 -0400
-Subject: Re: [PATCH v3] MIPS: ralink: fix booting on mt7621
-To: NeilBrown <neil@brown.name>, John Crispin <john@phrozen.org>,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
-CC: <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
-References: <87efkf9z0o.fsf@notabene.neil.brown.name>
- <87605r9mwf.fsf@notabene.neil.brown.name>
- <871sge872l.fsf@notabene.neil.brown.name>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <364419e1-947b-2a87-526d-ccf3e77beb16@mips.com>
-Date: Wed, 21 Mar 2018 08:52:54 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 21 Mar 2018 04:54:01 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: Paul Menzel <pmenzel+linux-media@molgen.mpg.de>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        it+linux-media@molgen.mpg.de
+Subject: Re: uvcvideo: Unknown video format,00000032-0002-0010-8000-00aa00389b71
+Date: Wed, 21 Mar 2018 10:55:07 +0200
+Message-ID: <8273225.C6Qc70SQRM@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1521603539.27691.5.camel@ndufresne.ca>
+References: <8f7d4aef-84f7-ae22-8adc-cba4fa881675@molgen.mpg.de> <15529671.DGPDy3yHsE@avalon> <1521603539.27691.5.camel@ndufresne.ca>
 MIME-Version: 1.0
-In-Reply-To: <871sge872l.fsf@notabene.neil.brown.name>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.155.41]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1521622370-321457-2567-40066-1
-X-BESS-VER: 2018.3-r1803192001
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191261
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2L8sCJo023826
 
+Hi Nicolas,
 
+On Wednesday, 21 March 2018 05:38:59 EET Nicolas Dufresne wrote:
+> Le mardi 20 mars 2018 à 20:04 +0200, Laurent Pinchart a écrit :
+> > On Tuesday, 20 March 2018 19:45:51 EET Nicolas Dufresne wrote:
+> > > Le mardi 20 mars 2018 à 13:20 +0100, Paul Menzel a écrit :
+> > > > Dear Linux folks,
+> > > > 
+> > > > 
+> > > > On the Dell XPS 13 9370, Linux 4.16-rc6 outputs the messages below.
+> > > > 
+> > > > ```
+> > > > [    2.338094] calling  uvc_init+0x0/0x1000 [uvcvideo] @ 295
+> > > > [    2.338569] calling  iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt] @
+> > > > 280
+> > > > [    2.338570] iTCO_wdt: Intel TCO WatchDog Timer Driver v1.11
+> > > > [    2.338713] iTCO_wdt: Found a Intel PCH TCO device (Version=4,
+> > > > TCOBASE=0x0400)
+> > > > [    2.338755] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD
+> > > > (0bda:58f4)
+> > > > [    2.338827] iTCO_wdt: initialized. heartbeat=30 sec (nowayout=0)
+> > > > [    2.338851] initcall iTCO_wdt_init_module+0x0/0x1000 [iTCO_wdt]
+> > > > returned 0 after 271 usecs
+> > > > [    2.340669] uvcvideo 1-5:1.0: Entity type for entity Extension 4
+> > > > was
+> > > > not initialized!
+> > > > [    2.340670] uvcvideo 1-5:1.0: Entity type for entity Extension 7
+> > > > was
+> > > > not initialized!
+> > > > [    2.340672] uvcvideo 1-5:1.0: Entity type for entity Processing 2
+> > > > was
+> > > > not initialized!
+> > > > [    2.340673] uvcvideo 1-5:1.0: Entity type for entity Camera 1 was
+> > > > not
+> > > > initialized!
+> > > > [    2.340736] input: Integrated_Webcam_HD: Integrate as
+> > > > /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.0/input/input9
+> > > > [    2.341447] uvcvideo: Unknown video format
+> > > > 00000032-0002-0010-8000-00aa00389b71
+> > > 
+> > > While the 0002 is suspicious, this is pretty close to a color format.
+> > > I've recently come across of similar format using D3DFORMAT instead of
+> > > GUID. According to the vendor*, this camera module includes an infrared
+> > > camera (340x340), so I suspect this is to specify the format it
+> > > outputs. A good guess to start with would be that this is
+> > > D3DFMT_X8L8V8U8 (0x32).
+> > 
+> > Isn't 0x32 D3DFMT_L8, not D3DFMT_X8L8V8U8 ?
+> 
+> You are right, sorry about that, I totally miss-translate. It felt
+> weird. This is much more likely yes. So maybe it's the same mapping
+> (but with the -00002- instead) as what I added for the HoloLense
+> Camera.
+> 
+> > > To test it, you could map this
+> > > V4L2_PIX_FMT_YUV32/xRGB and see if the driver is happy with the buffer
+> > > size.
+> > 
+> > VideoStreaming Interface Descriptor:
+> >         bLength                            30
+> >         bDescriptorType                    36
+> >         bDescriptorSubtype                  5 (FRAME_UNCOMPRESSED)
+> >         bFrameIndex                         1
+> >         bmCapabilities                   0x00
+> >         
+> >           Still image unsupported
+> >         
+> >         wWidth                            340
+> >         wHeight                           340
+> >         dwMinBitRate                 55488000
+> >         dwMaxBitRate                 55488000
+> >         dwMaxVideoFrameBufferSize      115600
+> >         dwDefaultFrameInterval         166666
+> >         bFrameIntervalType                  1
+> >         dwFrameInterval( 0)            166666
+> > 
+> > 340*340 is 115600, so this should be a 8-bit format.
+> 
+> Indeed, that matches.
+> 
+> > > Then render it to make sure it looks some image of some sort. A
+> > > new format will need to be defined as this format is in the wrong
+> > > order, and is ambiguous (it may mean AYUV or xYUV). I'm not sure if we
+> > > need specific formats to differentiate infrared data from YUV images,
+> > > need to be discussed.
+> > 
+> > If the format is indeed D3DFMT_L8, it should map to V4L2_PIX_FMT_GREY
+> > (8-bit luminance). I suspect the camera transmits a depth map though.
+> 
+> I wonder if we should think of a way to tell userspace this is fnfrared
+> data rather then black and white ?
 
-On 21/03/18 03:02, NeilBrown wrote:
-> 
-> Since commit 3af5a67c86a3 ("MIPS: Fix early CM probing") the MT7621
-> has not been able to boot.
-> 
-> This patched caused mips_cm_probe() to be called before
-> mt7621.c::proc_soc_init().
-> 
-> prom_soc_init() has a comment explaining that mips_cm_probe()
-> "wipes out the bootloader config" and means that configuration
-> registers are no longer available.  It has some code to re-enable
-> this config.
-> 
-> Before this re-enable code is run, the sysc register cannot be
-> read, so when SYSC_REG_CHIP_NAME0 is read, a garbage value
-> is returned and panic() is called.
-> 
-> If we move the config-repair code to the top of prom_soc_init(),
-> the registers can be read and boot can proceed.
-> 
-> Very occasionally, the first register read after the reconfiguration
-> returns garbage.  So I added a call to __sync().
-> 
-> Fixes: 3af5a67c86a3 ("MIPS: Fix early CM probing")
-> Signed-off-by: NeilBrown <neil@brown.name>
+I think we need such a mechanism, yes. Would you like to propose one ? :-)
 
-Looks good to me
+I've found https://www.magnumdb.com/search?q=value%3A
+%2200000032-0002-0010-8000-00aa00389b71%22 and https://docs.microsoft.com/en-us/windows-hardware/drivers/stream/infrared-stream-support-in-uvc that confirm 
+this is a 8-bit IR format.
 
-Reviewed-by: Matt Redfearn <matt.redfearn@mips.com>
+> > > *https://dustinweb.azureedge.net/media/338953/xps-13-9370.pdf
+> > > 
+> > > > [    2.341450] uvcvideo: Found UVC 1.00 device Integrated_Webcam_HD
+> > > > (0bda:58f4)
+> > > > [    2.343371] uvcvideo: Unable to create debugfs 1-2 directory.
+> > > > [    2.343420] uvcvideo 1-5:1.2: Entity type for entity Extension 10
+> > > > was
+> > > > not initialized!
+> > > > [    2.343422] uvcvideo 1-5:1.2: Entity type for entity Extension 12
+> > > > was
+> > > > not initialized!
+> > > > [    2.343423] uvcvideo 1-5:1.2: Entity type for entity Processing 9
+> > > > was
+> > > > not initialized!
+> > > > [    2.343424] uvcvideo 1-5:1.2: Entity type for entity Camera 11 was
+> > > > not initialized!
+> > > > [    2.343472] input: Integrated_Webcam_HD: Integrate as
+> > > > /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.2/input/input10
+> > > > [    2.343496] usbcore: registered new interface driver uvcvideo
+> > > > [    2.343496] USB Video Class driver (1.1.1)
+> > > > [    2.343501] initcall uvc_init+0x0/0x1000 [uvcvideo] returned 0
+> > > > after
+> > > > 5275 usecs
+> > > > ```
+> > > > 
+> > > > Please tell me, what I can do to improve the situation.
 
-> ---
->   arch/mips/ralink/mt7621.c | 42 ++++++++++++++++++++++--------------------
->   1 file changed, 22 insertions(+), 20 deletions(-)
-> 
-> diff --git a/arch/mips/ralink/mt7621.c b/arch/mips/ralink/mt7621.c
-> index 1b274742077d..d2718de60b9b 100644
-> --- a/arch/mips/ralink/mt7621.c
-> +++ b/arch/mips/ralink/mt7621.c
-> @@ -170,6 +170,28 @@ void prom_soc_init(struct ralink_soc_info *soc_info)
->   	u32 n1;
->   	u32 rev;
->   
-> +	/* Early detection of CMP support */
-> +	mips_cm_probe();
-> +	mips_cpc_probe();
-> +
-> +	if (mips_cps_numiocu(0)) {
-> +		/*
-> +		 * mips_cm_probe() wipes out bootloader
-> +		 * config for CM regions and we have to configure them
-> +		 * again. This SoC cannot talk to pamlbus devices
-> +		 * witout proper iocu region set up.
-> +		 *
-> +		 * FIXME: it would be better to do this with values
-> +		 * from DT, but we need this very early because
-> +		 * without this we cannot talk to pretty much anything
-> +		 * including serial.
-> +		 */
-> +		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
-> +		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
-> +				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
-> +		__sync();
-> +	}
-> +
->   	n0 = __raw_readl(sysc + SYSC_REG_CHIP_NAME0);
->   	n1 = __raw_readl(sysc + SYSC_REG_CHIP_NAME1);
->   
-> @@ -194,26 +216,6 @@ void prom_soc_init(struct ralink_soc_info *soc_info)
->   
->   	rt2880_pinmux_data = mt7621_pinmux_data;
->   
-> -	/* Early detection of CMP support */
-> -	mips_cm_probe();
-> -	mips_cpc_probe();
-> -
-> -	if (mips_cps_numiocu(0)) {
-> -		/*
-> -		 * mips_cm_probe() wipes out bootloader
-> -		 * config for CM regions and we have to configure them
-> -		 * again. This SoC cannot talk to pamlbus devices
-> -		 * witout proper iocu region set up.
-> -		 *
-> -		 * FIXME: it would be better to do this with values
-> -		 * from DT, but we need this very early because
-> -		 * without this we cannot talk to pretty much anything
-> -		 * including serial.
-> -		 */
-> -		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
-> -		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
-> -				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
-> -	}
->   
->   	if (!register_cps_smp_ops())
->   		return;
-> 
+-- 
+Regards,
+
+Laurent Pinchart
