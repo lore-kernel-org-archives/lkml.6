@@ -1,140 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752439AbeCUPAg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 11:00:36 -0400
-Received: from mga09.intel.com ([134.134.136.24]:57136 "EHLO mga09.intel.com"
+        id S1752533AbeCUPCO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 11:02:14 -0400
+Received: from ms.lwn.net ([45.79.88.28]:49934 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752282AbeCUPAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 11:00:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,340,1517904000";
-   d="scan'208";a="39380612"
-Date: Wed, 21 Mar 2018 23:01:40 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [RFC PATCH v2 3/4] mm/rmqueue_bulk: alloc without touching
- individual page structure
-Message-ID: <20180321150140.GA1838@intel.com>
-References: <20180320085452.24641-1-aaron.lu@intel.com>
- <20180320085452.24641-4-aaron.lu@intel.com>
- <12a89171-27b8-af4f-450e-41e5775683c5@suse.cz>
+        id S1752305AbeCUPCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 11:02:11 -0400
+Date: Wed, 21 Mar 2018 09:02:09 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Martin Kepplinger <martink@posteo.de>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] README: Improve documentation descriptions
+Message-ID: <20180321090209.46b6e04f@lwn.net>
+In-Reply-To: <20180316155707.28426-1-martink@posteo.de>
+References: <20180316155707.28426-1-martink@posteo.de>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12a89171-27b8-af4f-450e-41e5775683c5@suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vlastimil,
+On Fri, 16 Mar 2018 16:57:07 +0100
+Martin Kepplinger <martink@posteo.de> wrote:
 
-Thanks for taking the time to reivew the patch, I appreciate that.
-
-On Wed, Mar 21, 2018 at 01:55:01PM +0100, Vlastimil Babka wrote:
-> On 03/20/2018 09:54 AM, Aaron Lu wrote:
-> > Profile on Intel Skylake server shows the most time consuming part
-> > under zone->lock on allocation path is accessing those to-be-returned
-> > page's "struct page" on the free_list inside zone->lock. One explanation
-> > is, different CPUs are releasing pages to the head of free_list and
-> > those page's 'struct page' may very well be cache cold for the allocating
-> > CPU when it grabs these pages from free_list' head. The purpose here
-> > is to avoid touching these pages one by one inside zone->lock.
-> > 
-> > One idea is, we just take the requested number of pages off free_list
-> > with something like list_cut_position() and then adjust nr_free of
-> > free_area accordingly inside zone->lock and other operations like
-> > clearing PageBuddy flag for these pages are done outside of zone->lock.
-> > 
-> > list_cut_position() needs to know where to cut, that's what the new
-> > 'struct cluster' meant to provide. All pages on order 0's free_list
-> > belongs to a cluster so when a number of pages is needed, the cluster
-> > to which head page of free_list belongs is checked and then tail page
-> > of the cluster could be found. With tail page, list_cut_position() can
-> > be used to drop the cluster off free_list. The 'struct cluster' also has
-> > 'nr' to tell how many pages this cluster has so nr_free of free_area can
-> > be adjusted inside the lock too.
-> > 
-> > This caused a race window though: from the moment zone->lock is dropped
-> > till these pages' PageBuddy flags get cleared, these pages are not in
-> > buddy but still have PageBuddy flag set.
-> > 
-> > This doesn't cause problems for users that access buddy pages through
-> > free_list. But there are other users, like move_freepages() which is
-> > used to move a pageblock pages from one migratetype to another in
-> > fallback allocation path, will test PageBuddy flag of a page derived
-> > from PFN. The end result could be that for pages in the race window,
-> > they are moved back to free_list of another migratetype. For this
-> > reason, a synchronization function zone_wait_cluster_alloc() is
-> > introduced to wait till all pages are in correct state. This function
-> > is meant to be called with zone->lock held, so after this function
-> > returns, we do not need to worry about new pages becoming racy state.
-> > 
-> > Another user is compaction, where it will scan a pageblock for
-> > migratable candidates. In this process, pages derived from PFN will
-> > be checked for PageBuddy flag to decide if it is a merge skipped page.
-> > To avoid a racy page getting merged back into buddy, the
-> > zone_wait_and_disable_cluster_alloc() function is introduced to:
-> > 1 disable clustered allocation by increasing zone->cluster.disable_depth;
-> > 2 wait till the race window pass by calling zone_wait_cluster_alloc().
-> > This function is also meant to be called with zone->lock held so after
-> > it returns, all pages are in correct state and no more cluster alloc
-> > will be attempted till zone_enable_cluster_alloc() is called to decrease
-> > zone->cluster.disable_depth.
+> "This file" indeed was moved once, but at some point "this file", the
+> top-level README, becomes a file in itself. Now that time has come :)
 > 
-> I'm sorry, but I feel the added complexity here is simply too large to
-> justify the change. Especially if the motivation seems to be just the
-> microbenchmark. It would be better if this was motivated by a real
-> workload where zone lock contention was identified as the main issue,
-> and we would see the improvements on the workload. We could also e.g.
-> find out that the problem can be avoided at a different level.
+> Let's describe how things are, and suggest reading "this file" first,
+> "this file" simply being a the admin-guide README file, not a file that
+> was once moved.
 
-One thing I'm aware of is there is some app that consumes a ton of
-memory and when it misbehaves or crashes, it takes some 10-20 minutes to
-have it exit(munmap() takes a long time to free all those consumed
-memory).
+OK, sure, applied.
 
-THP could help a lot, but it's beyond my understanding why they didn't
-use it.
+Maybe I'll tack on something pointing to
+https://www.kernel.org/doc/html/latest/ as well.
 
-> 
-> Besides complexity, it may also add overhead to the non-contended case,
-> i.e. the atomic operations on in_progress. This goes against recent page
-> allocation optimizations by Mel Gorman etc.
-> 
-> Would perhaps prefetching the next page in freelist (in
-> remove_from_buddy()) help here?
+Thanks,
 
-I'm afraid there isn't enough a window for prefetch() to actually make
-a difference, but I could give it a try.
-
-We also considered prefetching free_list before taking the lock but
-that prefetch could be useless(i.e. the prefetched page can be taken by
-another CPU and gone after we actually acquired the lock) and iterate
-the list outside lock can be dangerous.
-
-> > The two patches could eliminate zone->lock contention entirely but at
-> > the same time, pgdat->lru_lock contention rose to 82%. Final performance
-> > increased about 8.3%.
-> > 
-> > Suggested-by: Ying Huang <ying.huang@intel.com>
-> > Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-> > ---
-> >  Documentation/vm/struct_page_field |   5 +
-> >  include/linux/mm_types.h           |   2 +
-> >  include/linux/mmzone.h             |  35 +++++
-> >  mm/compaction.c                    |   4 +
-> >  mm/internal.h                      |  34 +++++
-> >  mm/page_alloc.c                    | 288 +++++++++++++++++++++++++++++++++++--
-> >  6 files changed, 360 insertions(+), 8 deletions(-)
+jon
