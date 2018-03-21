@@ -1,70 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751823AbeCUJ6z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 05:58:55 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39059 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751459AbeCUJ6w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 05:58:52 -0400
-X-Google-Smtp-Source: AG47ELsLLVwz8bfXYOSntHY16N5yAipQRYJEKWPZZokMtZD/RR5bEbxzMvKkhVaVctYZ3/MORXFVnYtoWfbmjBDJI2c=
+        id S1751863AbeCUJ7S (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 05:59:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56400 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751505AbeCUJ7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 05:59:16 -0400
+Date: Wed, 21 Mar 2018 10:59:13 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: David Rientjes <rientjes@google.com>,
+        "Li,Rongqing" <lirongqing@baidu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRD?= =?utf-8?Q?H=5D?=
+ mm/memcontrol.c: speed up to force empty a memory cgroup
+Message-ID: <20180321095913.GE23100@dhcp22.suse.cz>
+References: <20180319085355.GQ23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com>
+ <20180319103756.GV23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
+ <alpine.DEB.2.20.1803191044310.177918@chino.kir.corp.google.com>
+ <20180320083950.GD23100@dhcp22.suse.cz>
+ <alpine.DEB.2.20.1803201327060.167205@chino.kir.corp.google.com>
+ <56508bd0-e8d7-55fd-5109-c8dacf26b13e@virtuozzo.com>
+ <alpine.DEB.2.20.1803201514340.14003@chino.kir.corp.google.com>
+ <e265c518-968b-8669-ad22-671c781ad96e@virtuozzo.com>
 MIME-Version: 1.0
-In-Reply-To: <2291348c-7338-f335-88b8-10dc308e7f22@intel.com>
-References: <1521534986-21907-1-git-send-email-zhang.chunyan@linaro.org> <2291348c-7338-f335-88b8-10dc308e7f22@intel.com>
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
-Date: Wed, 21 Mar 2018 17:58:50 +0800
-Message-ID: <CAG2=9p94+qUfw_8Rj+1cfc9oatvpWm+kt98VHJro96ZdUyrnPg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] mmc: add support for sdhci 4.0
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>,
-        Billows Wu <billows.wu@spreadtrum.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e265c518-968b-8669-ad22-671c781ad96e@virtuozzo.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
+On Wed 21-03-18 01:35:05, Andrey Ryabinin wrote:
+> On 03/21/2018 01:15 AM, David Rientjes wrote:
+> > On Wed, 21 Mar 2018, Andrey Ryabinin wrote:
+> > 
+> >>>>> It would probably be best to limit the 
+> >>>>> nr_pages to the amount that needs to be reclaimed, though, rather than 
+> >>>>> over reclaiming.
+> >>>>
+> >>>> How do you achieve that? The charging path is not synchornized with the
+> >>>> shrinking one at all.
+> >>>>
+> >>>
+> >>> The point is to get a better guess at how many pages, up to 
+> >>> SWAP_CLUSTER_MAX, that need to be reclaimed instead of 1.
+> >>>
+> >>>>> If you wanted to be invasive, you could change page_counter_limit() to 
+> >>>>> return the count - limit, fix up the callers that look for -EBUSY, and 
+> >>>>> then use max(val, SWAP_CLUSTER_MAX) as your nr_pages.
+> >>>>
+> >>>> I am not sure I understand
+> >>>>
+> >>>
+> >>> Have page_counter_limit() return the number of pages over limit, i.e. 
+> >>> count - limit, since it compares the two anyway.  Fix up existing callers 
+> >>> and then clamp that value to SWAP_CLUSTER_MAX in 
+> >>> mem_cgroup_resize_limit().  It's a more accurate guess than either 1 or 
+> >>> 1024.
+> >>>
+> >>
+> >> JFYI, it's never 1, it's always SWAP_CLUSTER_MAX.
+> >> See try_to_free_mem_cgroup_pages():
+> >> ....	
+> >> 	struct scan_control sc = {
+> >> 		.nr_to_reclaim = max(nr_pages, SWAP_CLUSTER_MAX),
+> >>
+> > 
+> > Is SWAP_CLUSTER_MAX the best answer if I'm lowering the limit by 1GB?
+> > 
+> 
+> Absolutely not. I completely on your side here. 
+> I've tried to fix this recently - http://lkml.kernel.org/r/20180119132544.19569-2-aryabinin@virtuozzo.com
+> I guess that Andrew decided to not take my patch, because Michal wasn't
+> happy about it (see mail archives if you want more details).
 
-On 20 March 2018 at 17:18, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> On 20/03/18 10:36, Chunyan Zhang wrote:
->>>From the SD host controller version 4.0 on, SDHCI implementation either
->> is version 3 compatible or version 4 mode. This patch-set covers those
->> changes which are common for SDHCI 4.0 version, regardless of whether
->> they are used with SD or eMMC storage devices.
->
-> Why use v4 mode?
->
-> What driver is using v4 mode?  Can you also post those changes?
+I was unhappy about the explanation and justification of the patch. It
+is still not clear to me why try_to_free_mem_cgroup_pages with a single
+target should be slower than multiple calls of this function with
+smaller batches when the real reclaim is still SWAP_CLUSTER_MAX batched.
 
-I believe there must be some out-of-tree driver using v4 mode, at
-least Spreadtrum's sd host controller is, as I know, and they're
-planning on upstreaming that driver.
+There is also a theoretical risk of over reclaim. Especially with large
+targets.
 
-Those changes which this patch-set covers are just in the subject of
-each patch in this series :)
-
->
-> Are you planning on adding UHS-II support also?
-
-Yes, that's my preliminary plan.
-
-BTW, this patchset should have prefix "RFC", I just forgot to add that.
-
-Thanks for your comments,
-Chunyan
-
->
->>
->> Chunyan Zhang (3):
->>   mmc: sdhci: add sd host v4 mode
->>   mmc: sdhci: made changes for System Address register of SDMA
->>   mmc: sdhci: add ADMA2 64-bit addressing support for V4 mode
->>
->>  drivers/mmc/host/sdhci.c | 66 +++++++++++++++++++++++++++++++++++++-----------
->>  drivers/mmc/host/sdhci.h | 29 +++++++++++++++++----
->>  2 files changed, 75 insertions(+), 20 deletions(-)
->>
->
+-- 
+Michal Hocko
+SUSE Labs
