@@ -1,66 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751676AbeCUIGz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:06:55 -0400
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:47103 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751405AbeCUIGw (ORCPT
+        id S1751788AbeCUIHd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:07:33 -0400
+Received: from mail-io0-f180.google.com ([209.85.223.180]:40433 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751480AbeCUIH3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:06:52 -0400
-X-Google-Smtp-Source: AG47ELuFk26ksLJrfDYWHoR9cbmaFpWzzwU4IM0/3WCJrc53Q5D99N6LKfYCl+WOXMR438VJgEBWAjhJF0rmrrJFmuM=
+        Wed, 21 Mar 2018 04:07:29 -0400
+X-Google-Smtp-Source: AG47ELu4w87d1BiZ70Tb44qQr5XJNzJ3C4LBk1b1MSzUAnc9gkn4GC9513BtYC5Hq2CZgV8xepPLDI4Kkf5EPHqU3FU=
 MIME-Version: 1.0
-In-Reply-To: <20180319221622.16867-1-stefan@agner.ch>
-References: <20180319221622.16867-1-stefan@agner.ch>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 21 Mar 2018 09:06:50 +0100
-X-Google-Sender-Auth: jZiID-JHY402iCPy4RttDTYEE14
-Message-ID: <CAMuHMdUnLP4DU2-o6PBOJDZf9dBMGx6TTYN3rEdA5UxznZGxOw@mail.gmail.com>
-Subject: Re: [PATCH v2] spi: rspi: use correct enum for DMA transfer direction
-To: Stefan Agner <stefan@agner.ch>
-Cc: Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180226130558.7634-9-rf@opensource.cirrus.com>
+References: <20180226130558.7634-1-rf@opensource.cirrus.com> <20180226130558.7634-9-rf@opensource.cirrus.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 21 Mar 2018 09:07:28 +0100
+Message-ID: <CACRpkdaV=NK_wXyjHnwRZ44MN1dgdpu9vm-S4fa9swdi04iEvQ@mail.gmail.com>
+Subject: Re: [PATCH v8 8/9] pinctrl: madera: Add driver for Cirrus Logic
+ Madera codecs
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefan,
+On Mon, Feb 26, 2018 at 2:05 PM, Richard Fitzgerald
+<rf@opensource.cirrus.com> wrote:
 
-On Mon, Mar 19, 2018 at 11:16 PM, Stefan Agner <stefan@agner.ch> wrote:
-> Use enum dma_transfer_direction as required by dmaengine_prep_slave_sg
-> instead of enum dma_data_direction. This won't change behavior in
-> practice as the enum values are equivalent.
-
-Thanks for catching!
-
-BTW, spi-sh-msiof has the same issue. Will sent a fix.
-
-> This fixes two warnings when building with clang:
->   drivers/spi/spi-rspi.c:538:26: warning: implicit conversion from enumeration
->       type 'enum dma_data_direction' to different enumeration type
->       'enum dma_transfer_direction' [-Wenum-conversion]
->                                         rx->sgl, rx->nents, DMA_FROM_DEVICE,
->                                                             ^~~~~~~~~~~~~~~
->   drivers/spi/spi-rspi.c:558:26: warning: implicit conversion from enumeration
->       type 'enum dma_data_direction' to different enumeration type
->       'enum dma_transfer_direction' [-Wenum-conversion]
->                                         tx->sgl, tx->nents, DMA_TO_DEVICE,
->                                                             ^~~~~~~~~~~~~
+> These codecs have a variable number of I/O lines each of which
+> is individually selectable to a wide range of possible functions.
 >
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> The functionality is slightly different from the traditional muxed
+> GPIO since most of the functions can be mapped to any pin (and even
+> the same function to multiple pins). Most pins have a dedicated
+> "alternate" function that is only available on that pin. The
+> alternate functions are usually a group of signals, though it is
+> not always necessary to enable the full group, depending on the
+> alternate function and how it is to be used. The mapping between
+> alternate functions and GPIO pins varies between codecs depending
+> on the number of alternate functions and available pins.
+>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> There are some minor changes since LinusW last reviewed this patch but as
+> they are trivial I have carried forward Linus's Reviewed-by:
+> - SPDX license headers
+> - can now build it as a module
+> - avoided a minor checkpatch warning about an unnecessary else {} in
+>     madera_get_group_name()
 
-JFTR, as it's already applied
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+It's fine. Keep my Review tag.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
