@@ -1,209 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751687AbeCUChy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:37:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59470 "EHLO mx1.redhat.com"
+        id S1751855AbeCUCiH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:38:07 -0400
+Received: from mail-eopbgr30040.outbound.protection.outlook.com ([40.107.3.40]:35688
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751468AbeCUChw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 22:37:52 -0400
-Subject: Re: [PATCH] perf vendor events arm64: Enable JSON events for
- ThunderX2 B0
-To: John Garry <john.garry@huawei.com>,
-        Ganapatrao Kulkarni <gklkml16@gmail.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, mark.rutland@arm.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Will Deacon <Will.Deacon@arm.com>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Ingo Molnar <mingo@redhat.com>, jnair@caviumnetworks.com,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Jiri Olsa <jolsa@redhat.com>, linux-arm-kernel@lists.infradead.org
-References: <20180307110803.32418-1-ganapatrao.kulkarni@cavium.com>
- <3384d33f-c927-740a-97f1-b20775ef2c7b@redhat.com>
- <20180307143832.GJ3701@kernel.org>
- <CAKTKpr4zMcRLykw8xwWJKf2eiuCrf2RuJ7kexGRQNN7_OdJ=uQ@mail.gmail.com>
- <52328144-3a2a-af03-273b-3a2f3bdadda6@redhat.com>
- <CAKTKpr7HgsdZ90k0_evSq_aZW-uGSKwLndHOQ2Jahajj3Gkc0Q@mail.gmail.com>
- <2a84ec0e-dc8c-7e2e-64e5-4ea48ba6da49@redhat.com>
- <5b918449-b7b1-dbe1-e6e2-46486116dc65@huawei.com>
-From: William Cohen <wcohen@redhat.com>
-Message-ID: <6bfce413-0fb8-e89c-7400-0704f29f236e@redhat.com>
-Date: Tue, 20 Mar 2018 22:37:51 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751745AbeCUCiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 22:38:03 -0400
+From: Robin Gong <yibin.gong@nxp.com>
+To: shawnguo@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, kernel@pengutronix.de, fabio.estevam@nxp.com,
+        aisheng.dong@nxp.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: [PATCH v1] ARM: dts: imx6qdl-sabreauto: add ecspi dts for sabreauto board
+Date: Wed, 21 Mar 2018 18:38:18 +0800
+Message-Id: <1521628698-1178-1-git-send-email-yibin.gong@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <5b918449-b7b1-dbe1-e6e2-46486116dc65@huawei.com>
-Content-Type: multipart/mixed;
- boundary="------------27D292F513ED30942EE03486"
-Content-Language: en-MW
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: HK2PR02CA0199.apcprd02.prod.outlook.com
+ (2603:1096:201:20::11) To AM5PR04MB3217.eurprd04.prod.outlook.com
+ (2603:10a6:206:7::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 63c54119-c665-475a-0c14-08d58ed4c3e9
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM5PR04MB3217;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3217;3:p9jTyvZR3LkvRK6yxrbpveINjt6T1E1UXdB3+Afwsp8naTzhO3sTN+xzQM3V3osnVDILXGx7Z+X7pyrWaoiWyg1DuY4dhGJYpyEGTbKOm6YBImN0DridkHgg4S2HfAxRV83BqXa7qzBLaPZKAusekcO0SxDgOvsosAB1t1d1d9mlI1qkfgdnlOIzA8zNL62gKvnAM8ot7xKV3BPtOsrhbSjQwcbdVlMAsn6uoIkllMMim7GAxmSY23cRptwyWNOM;25:TcrhsByMY4KiEWr/obnhl45Wbdnyq31CH/ScgkModASw4UXlD74SQkkfMCgS19Lf0wRl5TrCYf4f/Is7m0+TaYn93HALAT/DWhHZVE0BKPmkVD8jYhxz0WL8Wzfk55EKnss/jqgct8EjIklRxrVvOBNhKrVKl5wSttULipk0D4brJ+KYLe2mWNYgf/EwxP1i02bmX5b1oBw8szjO0cjaY9BKs49qUoTNsGfWCFzSpSkNLWG/7k9V92nqgEkCy1Cvn0AIYtUaesUIE7jF/OKABmyMjaC1Yp+ZT6XN34MxrWg05upfEvlDF7r9lsmpkJQSxu9wrnZ67+CQ/WvlQwOWYg==;31:AmiDqTPR2sWHIgqZqQqVzTy4poUkA3QkqCqUXf1UZd97QBKY0PVglD+2RwCjH11yYCvPBF3J22umYZATIexw43/kXASPBi+W9agPqyog0dr2EYMmOXdD3GCZqnv1dJPHvyb2S/DrwVlEdKL97N6d7jfMots0Is3Rf/aCcIYJD4TZsEmv2bP+fB/RfQGS67kguEtJSPHizwqqEI2ce0GHQa2GFUlvaWeFEA6S2NkDiuI=
+X-MS-TrafficTypeDiagnostic: AM5PR04MB3217:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=yibin.gong@nxp.com;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3217;20:te7Q5rJAvEORguor47cPAZhh/0++NJTIQGyOnE3EAZu/Avuo7yULLYIfySRlDqOroM9dt3KNjavURzgFVJyOC5qP3V/vXyJusDuqxuAOhnoSgME97i+5K0g+qk7gazh6GTgJkilFMq//qbhBnQv2h+ErX8B+T9thKbXX5gwfCUkaHEBy2ZUC49NYjOSR7GfRbMeAVrqxO2MjGjbROOdUO/+a7MDZkRBWzRnMtp1nUNKPGeJYsV1JRqgc8yXZ9eN1lD9WqleWYAs9qPrMgN6H0Kn7D4CAIlaNRLYWQBZK+sarLcVES5znXEZiV1X6j8H6d1/qXm36E/Pbg6lt/3PTl3BWhnoqk3In8nCY3x5UgTMxi3AHDf35sNSIrcUBD4qcUW2V/Tlez7cNNlCRHP5stLIxRWOvCNwLFFeKqj+kRgb+QaxZz43ir7d1sEmBWgeF7zt7me+47rQ96t0pbe4ddCac78+QCXe9qokICjBtRsCuWp4NBNzkCMWDbiVpOdBR;4:iD/xgo47Th+8lR7KjJPV04Ynga7bNR1XGABpLjJBJx1YCrgHuzhu9bEMvowjm/sKCay4G8cNmlGVLGtuAUY4AtsygjDngtjLPptccAaI327DpRtR+BfpRxl5uRznz64NRW/Qyip+uURrBvCxC+bJfQ3sEPSHVJ9etINwwmLrOe+xSB/8dGScEwdq4nvRU7Hfv2mMQfZDX4PPOqYtGK7PUeLe5G5hTh/He9PNIa6J5JsosPMTmmN2qd3nTUTERQ6Ka4zqlsGSskPgzyACX7RGf9LDeSOR+Jq3ch2A2RFkgHdAPhs/yeFaCnqEhIapArnD
+X-Microsoft-Antispam-PRVS: <AM5PR04MB32173BF1FEB4E0D49742421B89AA0@AM5PR04MB3217.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501317)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:AM5PR04MB3217;BCL:0;PCL:0;RULEID:;SRVR:AM5PR04MB3217;
+X-Forefront-PRVS: 0618E4E7E1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(39380400002)(39860400002)(346002)(189003)(199004)(47776003)(6636002)(6512007)(6116002)(3846002)(105586002)(86362001)(6666003)(51416003)(52116002)(478600001)(50466002)(7736002)(50226002)(2906002)(305945005)(48376002)(316002)(8936002)(68736007)(26005)(4326008)(386003)(6506007)(16586007)(59450400001)(8676002)(81166006)(25786009)(6486002)(106356001)(5660300001)(81156014)(66066001)(16526019)(97736004)(53936002)(186003)(36756003)(2004002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR04MB3217;H:robin-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR04MB3217;23:n1Kni1uFU8rQIef/kJP0jvgBfkFOB1MlgPkle2u8L?=
+ =?us-ascii?Q?EVXCq884AX7wHQVH7tUzWyd9wE9f9T/Z3MvBybKq+A0kF/iYAuQk3FNLZYT7?=
+ =?us-ascii?Q?z/4PMxqi3oL+N3/KHww9JtA3h1Jp90fs51RPC90dvqhTn2Dyd+0zlSDCWZ6c?=
+ =?us-ascii?Q?wiZ2ikkOLs3HcPmyU1NVp7Ssd8U7BygiMF2Ncm/2i7JbmGCrsazDG0eZdQ22?=
+ =?us-ascii?Q?WlJx9bxWc7pwkB3oth2q+7l6QMknkX5JPfye2GRnGEiGZ0JkIVQV2tvAip62?=
+ =?us-ascii?Q?oBgrbhnFwtWZ2QfLeAgoIalQCy/U1z21C9JM9I455EQ6cpr310U+/lhgrCQm?=
+ =?us-ascii?Q?SurZBNKQz9xGIvR355/cI8Ssdn23ZwI34I5addtHNqd82WUaglJSAd7an8Ek?=
+ =?us-ascii?Q?rUjef4fVBwmDyNVLAHb+JGz3nDRyA21NPG8vC/k5Wn/Mu8mCghF9fqntR2XD?=
+ =?us-ascii?Q?z1VauXPM5O/3/1srQDrpJnCC10YfioOYBqQUZk1penvHpE3wUJVFuo31NrOI?=
+ =?us-ascii?Q?gFboV3oRSNzX9uxTf8nCacCT2oXk1X6E01kWZVFEAXwe7myyjKnLDyx4Uxg3?=
+ =?us-ascii?Q?J6b7CF16/iPPpXRZTNOKW5nxIvYVppb4YcmcptUTweAy2rf5AzbC6c8HIYst?=
+ =?us-ascii?Q?xIJMG4GzVxnM7FnRMG6CVelMspgPuLB6NHvVa3Gsc15MGYEhe6Lb0Xc3iZQ1?=
+ =?us-ascii?Q?+0wqqq0yKQt9PWYPR+N+RwAfMVjlmgMX/uRM/irfJBp7aESenLzoCrMKNTOo?=
+ =?us-ascii?Q?uvwHLPiyKHjEtYbCDnWgP05EeOLVodkWoxpEZv6Qp/PbJxnE3/NttWd1JjbX?=
+ =?us-ascii?Q?zF/t/sby6ejiTon0OAEExQiqbVxBC31SdeDQnanWv0/e5Vyo7wfcE8qpbdTm?=
+ =?us-ascii?Q?ClwbRpScyrISmNiv59I8WVCJjuIeqQc2lXo1L5Bq+o0orPLtSC5LTtYQTUid?=
+ =?us-ascii?Q?jwxVxDbyD5s6FLr8ry6vcQUtn3JQZ8M/KH7AYU7eZ9t4IdLLtB0aU0/NlgvA?=
+ =?us-ascii?Q?7t8764JbfOZDjLX8+Vh5XWl+0sv0leov/amhfmMsRkFEhhxoro2E2C8VIcFT?=
+ =?us-ascii?Q?A2Sq8aqXwVfFKXqZo0JdIsgqtdch6UbytVwlp3vqU5jkxsO+YD5W5eWoaD5k?=
+ =?us-ascii?Q?Wzmpb5STyE=3D?=
+X-Microsoft-Antispam-Message-Info: rBSYaY2m6pwJ3H7pjzo0PPpBUrKhX1Lb+Xcg/QdxmmWOeYE3kCYz7Q16gSUAUDs/uB/uFvQ9WWoU5XM0pPxUuZappvenCpZ3jV6+5BvUDwVuKacZjq+bEL0rxtVBexWRcq26cEyvVgawDN0onhwuZ+la/Qw/aTxgqJD1lqdexNOqUMkyDGetHOl80aVd0bs4
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3217;6:kMz1Wkd3hubVpjrnc/93/6+pQLsZaFFewp6kMCyxtKuRDRrcAaF0V7YM3KpB4HWZoKCm+Ct0ZOgdm0QnLJ4z9wHSof/lrO4w7a6QUkJw9NaAiOZHOJVGeur00F8e99/pYTdOtepsNfNgJfYew5+AIdxdm/IQLXVxty20HEqClzEqeYUjcpEFNfXN7SiagF1HVvXWd+Rr3jbiPR2WNIu+RZTTODUmOsvdHc5IHke0OoWCMN2bQqSgNB3LHpZ8eoOPhAMm1c6zFA+pIom8KHqbWLhfAfYSHVDpRUBqGDB8MiLYlDUSHUidSOvefIxWGQ1uDcdeSoNhIv0PNv3KFFplM8hlLXoyvpGwAWcj/aROQh1C1jfUxTlvGObShPeNpwL+vOswfVswc0PGkF11Ez5wbqIxdrwitVz5IhiGC/IzKmhrzJKZJ/e46hwDokmV9jR7Htxh2qT0g8U62ZkvPHtdCQ==;5:b9mEOf5JVdDsfoOPyUIfFgO6/BTKeDCd5etoTe+T7ctmThaCwDYLEkdtjZxWnoIzZFzvnXRUTlMyV59qcOwbKlr9pKJXT3NYu6jIEfIEs6xpXmCsLSuVLntxLjKoezYKMEA57ZZrpOIjB8zwizIufCu6yVIaUZOEsvECyQ4XLs4=;24:qLgdxXNlAJWDzW2JBQC8WZn8w5+vb7AT4IOTVfxMqxvPRwFyHdVMXHox3b8zMX6oeYo8N0nFsWWUDe2+3Wo5Fk5cB3eB8YQ69UrVFR6humc=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3217;7:xIE4cHYWSo5MjJB6qnZ++xMxZHFKKnir6euZlQU6uQjYxhnkSYm5JsY7Ie0wXOFoh9CUomHHDVXqi4+KzGb4e/UyPrlATniBiSjf4GOUi26q8kkM/HPqTzY49pZUhl0wuhyOj6CgqP/2JLwkzLyBMqpvTklXpuEMorUhcYYRrOcfFK5HfKU7CzZ07GERt5//T/pA9ox5Eh/XqfaQ3UzwU0dyH4Iggnrw8/h+WXsYa/Qdk71EBLOnfZz0IMBM5zjO
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2018 02:37:58.0652 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63c54119-c665-475a-0c14-08d58ed4c3e9
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR04MB3217
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------27D292F513ED30942EE03486
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+DIN pin of SPI-NOR muxed with I2C3_SDA which connected to one gpio expand
+chip, thus have to disable all those module which compacted by those gpios
+if enable SPI-NOR support on Sabreauto board.
 
-On 03/15/2018 12:47 PM, John Garry wrote:
-> On 15/03/2018 15:53, William Cohen wrote:
->> On 03/07/2018 11:14 PM, Ganapatrao Kulkarni wrote:
->>> On Thu, Mar 8, 2018 at 12:01 AM, William Cohen <wcohen@redhat.com> wrote:
->>>> On 03/07/2018 12:35 PM, Ganapatrao Kulkarni wrote:
->>>>> Hi Will Cohen,
->>>>>
->>>>> On Wed, Mar 7, 2018 at 8:08 PM, Arnaldo Carvalho de Melo
->>>>> <acme@kernel.org> wrote:
->>>>>> Em Wed, Mar 07, 2018 at 09:32:05AM -0500, William Cohen escreveu:
->>>>>>> On 03/07/2018 06:08 AM, Ganapatrao Kulkarni wrote:
->>>>>>>> There is MIDR change on ThunderX2 B0, adding an entry to mapfile
->>>>>>>> to enable JSON events for B0.
->>>>>>>>
->>>>>>>> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
->>>>>>
->>>>>> Ganapatrao, can you please take this in consideration and if agreeing
->>>>>> send a v2 patch?
->>>>>>
->>>>>> With that I can add an Acked-by: wcohen, Right?
->>>>>>
->>>>>> - Arnaldo
->>>>>>>> ---
->>>>>>>>  tools/perf/pmu-events/arch/arm64/mapfile.csv | 1 +
->>>>>>>>  1 file changed, 1 insertion(+)
->>>>>>>>
->>>>>>>> diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>>>> index e61c9ca..93c5d14 100644
->>>>>>>> --- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>>>> +++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
->>>>>>>> @@ -13,4 +13,5 @@
->>>>>>>>  #
->>>>>>>>  #Family-model,Version,Filename,EventType
->>>>>>>>  0x00000000420f5160,v1,cavium,core
->>>>>>>> +0x00000000430f0af0,v1,cavium,core
->>>>>>>>  0x00000000410fd03[[:xdigit:]],v1,cortex-a53,core
->>>>>>>>
->>>>>>>
->>>>>>> Hi,
->>>>>>> Like the cortex-a53 the last digit '0' of the match for the MIDR should be replaced with [[:xdigit:]] to allow for possible future revisions of chip:
->>>>>
->>>>> for arm64 implementation,  bits 3:0(Revision) and bits 23:20(Variant)
->>>>> are ignored/dont-care.
->>>>
->>>> Thanks for pointing that out.  See the code masking out those bits in linux/toos/perf/arch/util/header.c. For the ppc64 it just copies the equivalent of the MIDR including the revision bits. Thus, the need for regular expression matching to avoid having to create a new entry for each revision.
->>>
->>> It is same for arm64 too, there is no need to add an entry for every
->>> revision change,  need to add when part number changes.
->>> This patch is not intended to add entry for revision change, the fact
->>> of the matter is that, there  is complete MIDR change (vulcan to
->>> thunderx2) in B0.
->>> as per current arm64
->>> implementation(.tools/perf/arch/arm64/util/header.c), it is not
->>> required to have any dontcare marking in mapfile for revision/variant
->>> bits.
->>>
->>> thanks
->>> Ganapat
->>
->> Hi Ganapat,
->>
->> Would it make more sense to pass the MIDR value unmodified and then use regular expressions in mapfile.csv to match the values?  If an event on a particular processor revision is broken or unusable it can be excluded from the list of events with a corrected list of events.  There certainly have been errata listing events that do not work on specific revisions of armv8 processor implementations.
->>
-> 
-> Then there are vendors who do not always properly implemenent MIDR or IIDRs (people who live in glass houses...).
-> 
-> Btw, topic originally discussed here:
-> https://lkml.org/lkml/2017/5/2/113
-> 
-> Thanks,
-> John
-> 
->> -Will
-
-Hi John,
-
-Attached is a patch that leaves the MIDR value unmodified and uses regular expressions in the mapfile.csv instead to ignore those bits.  I have verified that the changes work on ARM Cortex a53 processor.  Does it look reasonable?
-
--Will Cohen
-
---------------27D292F513ED30942EE03486
-Content-Type: text/x-patch;
- name="0001-perf-vendor-events-arm64-Use-regular-expressions-for.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-perf-vendor-events-arm64-Use-regular-expressions-for.pa";
- filename*1="tch"
-
->From b407d0bb7077b23675185a3e9a78f24e775f4e50 Mon Sep 17 00:00:00 2001
-From: William Cohen <wcohen@redhat.com>
-Date: Tue, 20 Mar 2018 22:20:24 -0400
-Subject: [PATCH] perf vendor events arm64: Use regular expressions for
- matching MIDR
-
-The arm64 MIDR includes bits that identifying the silicon revision and
-patch version of the processor.  Previously the identification code
-would mask out those bits making it impossible to have the map file
-address any errata related to particular pmu events being unavailable
-for a specific patch level of the silicon.  Using the available
-regular expression matching allows handling of these special cases.
-
-Signed-off-by: William Cohen <wcohen@redhat.com>
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
 ---
- tools/perf/arch/arm64/util/header.c          | 7 -------
- tools/perf/pmu-events/arch/arm64/mapfile.csv | 9 ++++-----
- 2 files changed, 4 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/Makefile                   |  2 ++
+ arch/arm/boot/dts/imx6dl-sabreauto-ecspi.dts | 47 +++++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6q-sabreauto-ecspi.dts  | 48 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/imx6qdl-sabreauto.dtsi     |  1 +
+ 4 files changed, 98 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6dl-sabreauto-ecspi.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-sabreauto-ecspi.dts
 
-diff --git a/tools/perf/arch/arm64/util/header.c b/tools/perf/arch/arm64/util/header.c
-index 534cd2507d83..05d1439c2cff 100644
---- a/tools/perf/arch/arm64/util/header.c
-+++ b/tools/perf/arch/arm64/util/header.c
-@@ -5,9 +5,6 @@
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 4fe209c..4a814bb 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -406,6 +406,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+ 	imx6dl-rex-basic.dtb \
+ 	imx6dl-riotboard.dtb \
+ 	imx6dl-sabreauto.dtb \
++	imx6dl-sabreauto-ecspi.dtb \
+ 	imx6dl-sabrelite.dtb \
+ 	imx6dl-sabresd.dtb \
+ 	imx6dl-savageboard.dtb \
+@@ -478,6 +479,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
+ 	imx6q-pistachio.dtb \
+ 	imx6q-rex-pro.dtb \
+ 	imx6q-sabreauto.dtb \
++	imx6q-sabreauto-ecspi.dtb \
+ 	imx6q-sabrelite.dtb \
+ 	imx6q-sabresd.dtb \
+ 	imx6q-savageboard.dtb \
+diff --git a/arch/arm/boot/dts/imx6dl-sabreauto-ecspi.dts b/arch/arm/boot/dts/imx6dl-sabreauto-ecspi.dts
+new file mode 100644
+index 0000000..80d018d
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6dl-sabreauto-ecspi.dts
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (C) 2014 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6dl-sabreauto.dts"
++
++&gpio5 {
++	eim_d18_steered {
++		gpio-hog;
++		gpios = <4 GPIO_ACTIVE_LOW>;
++		output-high;
++		line-name = "ecspi1_din";
++	};
++};
++
++&ecspi1 {
++	status = "okay";
++};
++
++&can2 {
++	/* max7310_c on i2c3 is gone */
++	status = "disabled";
++};
++
++&i2c3 {
++	/* pin conflict with ecspi1 */
++	status = "disabled";
++};
++
++&uart3 {
++	/* the uart3 depends on the i2c3, so disable it too. */
++	status = "disabled";
++};
++
++&usbh1 {
++	/* max7310_b on i2c3 is gone */
++	status = "disabled";
++};
++
++&usbotg {
++	dr_mode = "peripheral";
++	status = "okay";
++};
+diff --git a/arch/arm/boot/dts/imx6q-sabreauto-ecspi.dts b/arch/arm/boot/dts/imx6q-sabreauto-ecspi.dts
+new file mode 100644
+index 0000000..cb7f38e
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6q-sabreauto-ecspi.dts
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (C) 2014 Freescale Semiconductor, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "imx6q-sabreauto.dts"
++
++&gpio5 {
++	eim_d18_steered {
++		gpio-hog;
++		gpios = <4 GPIO_ACTIVE_LOW>;
++		output-high;
++		line-name = "ecspi1_din";
++	};
++};
++
++&ecspi1 {
++	status = "okay";
++};
++
++&can2 {
++	/* max7310_c on i2c3 is gone */
++	status = "disabled";
++};
++
++&i2c3 {
++	/* pin conflict with ecspi1 */
++	status = "disabled";
++};
++
++&uart3 {
++	/* the uart3 depends on the i2c3, so disable it too. */
++	status = "disabled";
++};
++
++&usbh1 {
++	/* max7310_b on i2c3 is gone */
++	status = "disabled";
++};
++
++&usbotg {
++	/* max7310_c on i2c3 is gone */
++	status = "okay";
++	dr_mode = "peripheral";
++};
+diff --git a/arch/arm/boot/dts/imx6qdl-sabreauto.dtsi b/arch/arm/boot/dts/imx6qdl-sabreauto.dtsi
+index 54b0139..b83efc3 100644
+--- a/arch/arm/boot/dts/imx6qdl-sabreauto.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-sabreauto.dtsi
+@@ -375,6 +375,7 @@
+ 				MX6QDL_PAD_NANDF_CS2__GPIO6_IO15 0x80000000
+ 				MX6QDL_PAD_SD2_DAT2__GPIO1_IO13  0x80000000
+ 				MX6QDL_PAD_GPIO_18__SD3_VSELECT 0x17059
++				MX6QDL_PAD_EIM_A24__GPIO5_IO04   0x80000000
+ 			>;
+ 		};
  
- #define MIDR "/regs/identification/midr_el1"
- #define MIDR_SIZE 19
--#define MIDR_REVISION_MASK      0xf
--#define MIDR_VARIANT_SHIFT      20
--#define MIDR_VARIANT_MASK       (0xf << MIDR_VARIANT_SHIFT)
- 
- char *get_cpuid_str(struct perf_pmu *pmu)
- {
-@@ -44,11 +41,7 @@ char *get_cpuid_str(struct perf_pmu *pmu)
- 		}
- 		fclose(file);
- 
--		/* Ignore/clear Variant[23:20] and
--		 * Revision[3:0] of MIDR
--		 */
- 		midr = strtoul(buf, NULL, 16);
--		midr &= (~(MIDR_VARIANT_MASK | MIDR_REVISION_MASK));
- 		scnprintf(buf, MIDR_SIZE, "0x%016lx", midr);
- 		/* got midr break loop */
- 		break;
-diff --git a/tools/perf/pmu-events/arch/arm64/mapfile.csv b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-index f03e26ecb658..4b3403147819 100644
---- a/tools/perf/pmu-events/arch/arm64/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/arm64/mapfile.csv
-@@ -3,7 +3,6 @@
- #
- # where
- #	MIDR	Processor version
--#		Variant[23:20] and Revision [3:0] should be zero.
- #	Version could be used to track version of of JSON file
- #		but currently unused.
- #	JSON/file/pathname is the path to JSON file, relative
-@@ -12,7 +11,7 @@
- #
- #
- #Family-model,Version,Filename,EventType
--0x00000000410fd03[[:xdigit:]],v1,arm/cortex-a53,core
--0x00000000420f5160,v1,cavium/thunderx2,core
--0x00000000430f0af0,v1,cavium/thunderx2,core
--0x00000000480fd010,v1,hisilicon/hip08,core
-+0x0000000041[[:xdigit:]]fd03[[:xdigit:]],v1,arm/cortex-a53,core
-+0x0000000042[[:xdigit:]]f516[[:xdigit:]],v1,cavium/thunderx2,core
-+0x0000000043[[:xdigit:]]f0af[[:xdigit:]],v1,cavium/thunderx2,core
-+0x0000000048[[:xdigit:]]fd01[[:xdigit:]],v1,hisilicon/hip08,core
 -- 
-2.14.3
-
-
---------------27D292F513ED30942EE03486--
+2.7.4
