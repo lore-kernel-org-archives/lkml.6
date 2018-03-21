@@ -1,79 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754123AbeCUWgG convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 18:36:06 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10987 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753972AbeCUWgD (ORCPT
+        id S1754126AbeCUWgc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 18:36:32 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:34523 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753927AbeCUWgb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 18:36:03 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 21 Mar 2018 15:36:02 -0700
-Subject: Re: [PATCH 13/15] mm/hmm: factor out pte and pmd handling to simplify
- hmm_vma_walk_pmd()
-To: Jerome Glisse <jglisse@redhat.com>
-CC: <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>
-References: <20180320020038.3360-1-jglisse@redhat.com>
- <20180320020038.3360-14-jglisse@redhat.com>
- <e0fd4348-8b8c-90b2-a9d8-91a30768fddc@nvidia.com>
- <20180321150819.GC3214@redhat.com>
-X-Nvconfidentiality: public
-From: John Hubbard <jhubbard@nvidia.com>
-Message-ID: <6ded8a12-1522-3270-602c-bafc7e823758@nvidia.com>
-Date: Wed, 21 Mar 2018 15:36:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 21 Mar 2018 18:36:31 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04421;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SzsJRII_1521671773;
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+To: Michal Hocko <mhocko@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321131449.GN23100@dhcp22.suse.cz>
+ <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
+ <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
+ <20180321212355.GR23100@dhcp22.suse.cz>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
+Date: Wed, 21 Mar 2018 15:36:12 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180321150819.GC3214@redhat.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180321212355.GR23100@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/21/2018 08:08 AM, Jerome Glisse wrote:
-> On Tue, Mar 20, 2018 at 10:07:29PM -0700, John Hubbard wrote:
->> On 03/19/2018 07:00 PM, jglisse@redhat.com wrote:
->>> From: Jérôme Glisse <jglisse@redhat.com>
 
-<snip>
- 
->>> +static int hmm_vma_handle_pmd(struct mm_walk *walk,
->>> +			      unsigned long addr,
->>> +			      unsigned long end,
->>> +			      uint64_t *pfns,
+
+On 3/21/18 2:23 PM, Michal Hocko wrote:
+> On Wed 21-03-18 10:16:41, Yang Shi wrote:
 >>
->> Hi Jerome,
->>
->> Nice cleanup, it makes it much easier to follow the code now.
->>
->> Let's please rename the pfns argument above to "pfn", because in this
->> helper (and the _pte helper too), there is only one pfn involved, rather
->> than an array of them.
-> 
-> This is only true to handle_pte, for handle_pmd it will go over several
-> pfn entries. But they will all get fill with same value modulo pfn which
-> will increase monotically (ie same flag as pmd permissions apply to all
-> entries).
+>> On 3/21/18 9:50 AM, Yang Shi wrote:
+>>>
+>>> On 3/21/18 6:14 AM, Michal Hocko wrote:
+>>>> On Wed 21-03-18 05:31:19, Yang Shi wrote:
+>>>>> When running some mmap/munmap scalability tests with large memory (i.e.
+>>>>>> 300GB), the below hung task issue may happen occasionally.
+>>>>> INFO: task ps:14018 blocked for more than 120 seconds.
+>>>>>          Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>>>>>    "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+>>>>> message.
+>>>>>    ps              D    0 14018      1 0x00000004
+>>>>>     ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>>>>>     ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>>>>>     00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>>>>>    Call Trace:
+>>>>>     [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>>>>>     [<ffffffff817159e6>] schedule+0x36/0x80
+>>>>>     [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>>>>>     [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>>>>>     [<ffffffff81717db0>] down_read+0x20/0x40
+>>>>>     [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>>>> Slightly off-topic:
+>>>> Btw. this sucks as well. Do we really need to take mmap_sem here? Do any
+>>>> of
+>>>>      arg_start = mm->arg_start;
+>>>>      arg_end = mm->arg_end;
+>>>>      env_start = mm->env_start;
+>>>>      env_end = mm->env_end;
+>>>>
+>>>> change after exec or while the pid is already visible in proc? If yes
+>>>> maybe we can use a dedicated lock.
+>> BTW, this is not the only place to acquire mmap_sem in
+>> proc_pid_cmdline_read(), it calls access_remote_vm() which need acquire
+>> mmap_sem too, so the mmap_sem scalability issue will be hit sooner or later.
+> Ohh, absolutely. mmap_sem is unfortunatelly abused and it would be great
+> to remove that. munmap should perform much better. How to do that safely
 
-oops, yes you are right about handle_pmd.
+Yes, agree. We are on the same page.
 
-> 
-> Note sure s/pfns/pfn for hmm_vma_handle_pte() warrant a respin.
+> is a different question. I am not yet convinced that tearing down a vma
+> in batches is safe. The vast majority of time is spent on tearing down
 
-Probably not, unless there is some other reason to respin. Anyway, this patch
-looks good either way, I think, so you can still add:
+You can try my patches. I did full LTP test and running multiple kernel 
+build in parallel. It survives.
 
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> pages and that is quite easy to move out of the write lock. That would
+> be an improvement already and it should be risk safe. If even that is
+> not sufficient then using range locking should help a lot. There
+> shouldn't be really any other address space operations within the range
+> most of the time so this would be basically non-contended access.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+It might depend on how the range is defined. Too big range may lead to 
+surprisingly more contention, but too small range may bring in too much 
+lock/unlock operations.
+
+Thanks,
+Yang
