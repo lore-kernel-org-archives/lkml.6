@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753527AbeCUTZT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 15:25:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58110 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753524AbeCUTZG (ORCPT
+        id S1753683AbeCUT1B (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 15:27:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36880 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753282AbeCUTZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 15:25:06 -0400
+        Wed, 21 Mar 2018 15:25:15 -0400
 From: Mike Rapoport <rppt@linux.vnet.ibm.com>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
@@ -21,16 +21,16 @@ Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
         linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 27/32] docs/vm: userfaultfd.txt: convert to ReST format
-Date: Wed, 21 Mar 2018 21:22:43 +0200
+Subject: [PATCH 29/32] docs/vm: zsmalloc.txt: convert to ReST format
+Date: Wed, 21 Mar 2018 21:22:45 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
 References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18032119-0044-0000-0000-0000053E7354
+x-cbid: 18032119-0044-0000-0000-0000053E7359
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032119-0045-0000-0000-0000287D78F8
-Message-Id: <1521660168-14372-28-git-send-email-rppt@linux.vnet.ibm.com>
+x-cbparentid: 18032119-0045-0000-0000-0000287D78FA
+Message-Id: <1521660168-14372-30-git-send-email-rppt@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -44,118 +44,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 ---
- Documentation/vm/userfaultfd.txt | 66 ++++++++++++++++++++++++----------------
- 1 file changed, 39 insertions(+), 27 deletions(-)
+ Documentation/vm/zsmalloc.txt | 60 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 36 insertions(+), 24 deletions(-)
 
-diff --git a/Documentation/vm/userfaultfd.txt b/Documentation/vm/userfaultfd.txt
-index bb2f945..5048cf6 100644
---- a/Documentation/vm/userfaultfd.txt
-+++ b/Documentation/vm/userfaultfd.txt
-@@ -1,6 +1,11 @@
--= Userfaultfd =
-+.. _userfaultfd:
- 
--== Objective ==
-+===========
-+Userfaultfd
-+===========
+diff --git a/Documentation/vm/zsmalloc.txt b/Documentation/vm/zsmalloc.txt
+index 64ed63c..6e79893 100644
+--- a/Documentation/vm/zsmalloc.txt
++++ b/Documentation/vm/zsmalloc.txt
+@@ -1,5 +1,8 @@
++.. _zsmalloc:
 +
-+Objective
-+=========
- 
- Userfaults allow the implementation of on-demand paging from userland
- and more generally they allow userland to take control of various
-@@ -9,7 +14,8 @@ memory page faults, something otherwise only the kernel code could do.
- For example userfaults allows a proper and more optimal implementation
- of the PROT_NONE+SIGSEGV trick.
- 
--== Design ==
-+Design
-+======
- 
- Userfaults are delivered and resolved through the userfaultfd syscall.
- 
-@@ -41,7 +47,8 @@ different processes without them being aware about what is going on
- themselves on the same region the manager is already tracking, which
- is a corner case that would currently return -EBUSY).
- 
--== API ==
-+API
-+===
- 
- When first opened the userfaultfd must be enabled invoking the
- UFFDIO_API ioctl specifying a uffdio_api.api value set to UFFD_API (or
-@@ -101,7 +108,8 @@ UFFDIO_COPY. They're atomic as in guaranteeing that nothing can see an
- half copied page since it'll keep userfaulting until the copy has
- finished.
- 
--== QEMU/KVM ==
-+QEMU/KVM
++========
+ zsmalloc
+---------
 +========
  
- QEMU/KVM is using the userfaultfd syscall to implement postcopy live
- migration. Postcopy live migration is one form of memory
-@@ -163,7 +171,8 @@ sending the same page twice (in case the userfault is read by the
- postcopy thread just before UFFDIO_COPY|ZEROPAGE runs in the migration
- thread).
+ This allocator is designed for use with zram. Thus, the allocator is
+ supposed to work well under low memory conditions. In particular, it
+@@ -31,40 +34,49 @@ be mapped using zs_map_object() to get a usable pointer and subsequently
+ unmapped using zs_unmap_object().
  
--== Non-cooperative userfaultfd ==
-+Non-cooperative userfaultfd
-+===========================
+ stat
+-----
++====
  
- When the userfaultfd is monitored by an external manager, the manager
- must be able to track changes in the process virtual memory
-@@ -172,27 +181,30 @@ the same read(2) protocol as for the page fault notifications. The
- manager has to explicitly enable these events by setting appropriate
- bits in uffdio_api.features passed to UFFDIO_API ioctl:
+ With CONFIG_ZSMALLOC_STAT, we could see zsmalloc internal information via
+-/sys/kernel/debug/zsmalloc/<user name>. Here is a sample of stat output:
++``/sys/kernel/debug/zsmalloc/<user name>``. Here is a sample of stat output::
  
--UFFD_FEATURE_EVENT_FORK - enable userfaultfd hooks for fork(). When
--this feature is enabled, the userfaultfd context of the parent process
--is duplicated into the newly created process. The manager receives
--UFFD_EVENT_FORK with file descriptor of the new userfaultfd context in
--the uffd_msg.fork.
--
--UFFD_FEATURE_EVENT_REMAP - enable notifications about mremap()
--calls. When the non-cooperative process moves a virtual memory area to
--a different location, the manager will receive UFFD_EVENT_REMAP. The
--uffd_msg.remap will contain the old and new addresses of the area and
--its original length.
--
--UFFD_FEATURE_EVENT_REMOVE - enable notifications about
--madvise(MADV_REMOVE) and madvise(MADV_DONTNEED) calls. The event
--UFFD_EVENT_REMOVE will be generated upon these calls to madvise. The
--uffd_msg.remove will contain start and end addresses of the removed
--area.
--
--UFFD_FEATURE_EVENT_UNMAP - enable notifications about memory
--unmapping. The manager will get UFFD_EVENT_UNMAP with uffd_msg.remove
--containing start and end addresses of the unmapped area.
-+UFFD_FEATURE_EVENT_FORK
-+	enable userfaultfd hooks for fork(). When this feature is
-+	enabled, the userfaultfd context of the parent process is
-+	duplicated into the newly created process. The manager
-+	receives UFFD_EVENT_FORK with file descriptor of the new
-+	userfaultfd context in the uffd_msg.fork.
+-# cat /sys/kernel/debug/zsmalloc/zram0/classes
++ # cat /sys/kernel/debug/zsmalloc/zram0/classes
+ 
+  class  size almost_full almost_empty obj_allocated   obj_used pages_used pages_per_zspage
+-    ..
+-    ..
++    ...
++    ...
+      9   176           0            1           186        129          8                4
+     10   192           1            0          2880       2872        135                3
+     11   208           0            1           819        795         42                2
+     12   224           0            1           219        159         12                4
+-    ..
+-    ..
++    ...
++    ...
 +
-+UFFD_FEATURE_EVENT_REMAP
-+	enable notifications about mremap() calls. When the
-+	non-cooperative process moves a virtual memory area to a
-+	different location, the manager will receive
-+	UFFD_EVENT_REMAP. The uffd_msg.remap will contain the old and
-+	new addresses of the area and its original length.
-+
-+UFFD_FEATURE_EVENT_REMOVE
-+	enable notifications about madvise(MADV_REMOVE) and
-+	madvise(MADV_DONTNEED) calls. The event UFFD_EVENT_REMOVE will
-+	be generated upon these calls to madvise. The uffd_msg.remove
-+	will contain start and end addresses of the removed area.
-+
-+UFFD_FEATURE_EVENT_UNMAP
-+	enable notifications about memory unmapping. The manager will
-+	get UFFD_EVENT_UNMAP with uffd_msg.remove containing start and
-+	end addresses of the unmapped area.
  
- Although the UFFD_FEATURE_EVENT_REMOVE and UFFD_FEATURE_EVENT_UNMAP
- are pretty similar, they quite differ in the action expected from the
++class
++	index
++size
++	object size zspage stores
++almost_empty
++	the number of ZS_ALMOST_EMPTY zspages(see below)
++almost_full
++	the number of ZS_ALMOST_FULL zspages(see below)
++obj_allocated
++	the number of objects allocated
++obj_used
++	the number of objects allocated to the user
++pages_used
++	the number of pages allocated for the class
++pages_per_zspage
++	the number of 0-order pages to make a zspage
+ 
+-class: index
+-size: object size zspage stores
+-almost_empty: the number of ZS_ALMOST_EMPTY zspages(see below)
+-almost_full: the number of ZS_ALMOST_FULL zspages(see below)
+-obj_allocated: the number of objects allocated
+-obj_used: the number of objects allocated to the user
+-pages_used: the number of pages allocated for the class
+-pages_per_zspage: the number of 0-order pages to make a zspage
++We assign a zspage to ZS_ALMOST_EMPTY fullness group when n <= N / f, where
+ 
+-We assign a zspage to ZS_ALMOST_EMPTY fullness group when:
+-      n <= N / f, where
+-n = number of allocated objects
+-N = total number of objects zspage can store
+-f = fullness_threshold_frac(ie, 4 at the moment)
++* n = number of allocated objects
++* N = total number of objects zspage can store
++* f = fullness_threshold_frac(ie, 4 at the moment)
+ 
+ Similarly, we assign zspage to:
+-      ZS_ALMOST_FULL  when n > N / f
+-      ZS_EMPTY        when n == 0
+-      ZS_FULL         when n == N
++
++* ZS_ALMOST_FULL  when n > N / f
++* ZS_EMPTY        when n == 0
++* ZS_FULL         when n == N
 -- 
 2.7.4
