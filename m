@@ -1,57 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752695AbeCUPWc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 11:22:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54822 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752200AbeCUPWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 11:22:31 -0400
-Date: Wed, 21 Mar 2018 15:22:27 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
-        robin.murphy@arm.com, shankerd@codeaurora.org
-Subject: Re: [PATCH v4 21/22] arm64: Delay enabling hardware DBM feature
-Message-ID: <20180321152226.GD16308@e103592.cambridge.arm.com>
-References: <20180313115120.17256-1-suzuki.poulose@arm.com>
- <20180313115120.17256-22-suzuki.poulose@arm.com>
+        id S1752620AbeCUPYO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 11:24:14 -0400
+Received: from muru.com ([72.249.23.125]:33012 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752309AbeCUPYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 11:24:12 -0400
+Date: Wed, 21 Mar 2018 08:24:06 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: pali.rohar@gmail.com, sre@kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
+        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
+        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
+        sakari.ailus@linux.intel.com,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Dave Gerlach <d-gerlach@ti.com>
+Subject: Re: Nokia N900: insecure W+X mapping at 0xd0050000
+Message-ID: <20180321152406.GC5799@atomide.com>
+References: <20180308142818.GA9439@amd>
+ <20180308162446.GK5799@atomide.com>
+ <20180308164652.GL5799@atomide.com>
+ <20180308180516.GB16940@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180313115120.17256-22-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180308180516.GB16940@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 11:51:19AM +0000, Suzuki K Poulose wrote:
-> We enable hardware DBM bit in a capable CPU, very early in the
-> boot via __cpu_setup. This doesn't give us a flexibility of
-> optionally disable the feature, as the clearing the bit
-> is a bit costly as the TLB can cache the settings. Instead,
-> we delay enabling the feature until the CPU is brought up
-> into the kernel. We use the feature capability mechanism
-> to handle it.
+* Pavel Machek <pavel@ucw.cz> [180308 18:06]:
+> Hi!
 > 
-> The hardware DBM is a non-conflicting feature. i.e, the kernel
-> can safely run with a mix of CPUs with some using the feature
-> and the others don't. So, it is safe for a late CPU to have
-> this capability and enable it, even if the active CPUs don't.
+> > > * Pavel Machek <pavel@ucw.cz> [180308 06:29]:
+> > > > Insecure W+X mappings, who cares about those? I have 7 pages...
+> > > 
+> > > Is this with CONFIG_DEBUG_WX=y?
+> > > 
+> > > My guess is that it's for mapping the PM assembly to SRAM. This
+> > > is already fixed for am335x that is using drivers/misc/sram*.c.
+> > > I think omap2 - omap4 still need fixing if this is the culprit.
+> > 
+> > Adding Dave to Cc, here's a quick fix for this one.
 > 
-> To get this handled properly by the infrastructure, we
-> unconditionally set the capability and only enable it
-> on CPUs which really have the feature. Also, we print the
-> feature detection from the "matches" call back to make sure
-> we don't mislead the user when none of the CPUs could use the
-> feature.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Dave Martin <dave.martin@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> I did a quick testing and warning is gone. Thanks!
 
-[...]
+Turns out init time configuration is not enough here.
+It causes an oops on omap3 after off mode coming back
+from idle. So we need to reconfigure things when
+omap_sram_push() is called after idle too.
 
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+Below is an updated patch.
+
+Regards,
+
+Tony
+
+8< ----------------------
+>From tony Mon Sep 17 00:00:00 2001
+From: Tony Lindgren <tony@atomide.com>
+Date: Wed, 21 Mar 2018 08:16:29 -0700
+Subject: [PATCH] ARM: OMAP: Fix SRAM W+X mapping
+
+We are still using custom SRAM code for some SoCs and are not marking
+the PM code mapped to SRAM as read-only and executable after we're
+done. With CONFIG_DEBUG_WX=y, we will get "Found insecure W+X mapping
+at address" warning.
+
+Let's fix this issue the same way as commit 728bbe75c82f ("misc: sram:
+Introduce support code for protect-exec sram type") is doing for
+drivers/misc/sram-exec.c.
+
+On omap3, we need to restore SRAM when returning from off mode after
+idle, so init time configuration is not enough.
+
+And as we no longer have users for omap_sram_push_address() we can
+make it static while at it.
+
+Note that eventually we should be using sram-exec.c for all SoCs.
+
+Cc: stable@vger.kernel.org	# v4.12+
+Cc: Dave Gerlach <d-gerlach@ti.com>
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ arch/arm/plat-omap/include/plat/sram.h | 11 +----------
+ arch/arm/plat-omap/sram.c              | 36 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 36 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/plat-omap/include/plat/sram.h b/arch/arm/plat-omap/include/plat/sram.h
+--- a/arch/arm/plat-omap/include/plat/sram.h
++++ b/arch/arm/plat-omap/include/plat/sram.h
+@@ -5,13 +5,4 @@ void omap_map_sram(unsigned long start, unsigned long size,
+ 			unsigned long skip, int cached);
+ void omap_sram_reset(void);
+ 
+-extern void *omap_sram_push_address(unsigned long size);
+-
+-/* Macro to push a function to the internal SRAM, using the fncpy API */
+-#define omap_sram_push(funcp, size) ({				\
+-	typeof(&(funcp)) _res = NULL;				\
+-	void *_sram_address = omap_sram_push_address(size);	\
+-	if (_sram_address)					\
+-		_res = fncpy(_sram_address, &(funcp), size);	\
+-	_res;							\
+-})
++extern void *omap_sram_push(void *funcp, unsigned long size);
+diff --git a/arch/arm/plat-omap/sram.c b/arch/arm/plat-omap/sram.c
+--- a/arch/arm/plat-omap/sram.c
++++ b/arch/arm/plat-omap/sram.c
+@@ -23,6 +23,7 @@
+ #include <asm/fncpy.h>
+ #include <asm/tlb.h>
+ #include <asm/cacheflush.h>
++#include <asm/set_memory.h>
+ 
+ #include <asm/mach/map.h>
+ 
+@@ -42,7 +43,7 @@ static void __iomem *omap_sram_ceil;
+  * Note that fncpy requires the returned address to be aligned
+  * to an 8-byte boundary.
+  */
+-void *omap_sram_push_address(unsigned long size)
++static void *omap_sram_push_address(unsigned long size)
+ {
+ 	unsigned long available, new_ceil = (unsigned long)omap_sram_ceil;
+ 
+@@ -60,6 +61,30 @@ void *omap_sram_push_address(unsigned long size)
+ 	return (void *)omap_sram_ceil;
+ }
+ 
++void *omap_sram_push(void *funcp, unsigned long size)
++{
++	void *sram;
++	unsigned long base;
++	int pages;
++	void *dst = NULL;
++
++	sram = omap_sram_push_address(size);
++	if (!sram)
++		return NULL;
++
++	base = (unsigned long)sram & PAGE_MASK;
++	pages = PAGE_ALIGN(size) / PAGE_SIZE;
++
++	set_memory_rw(base, pages);
++
++	dst = fncpy(sram, funcp, size);
++
++	set_memory_ro(base, pages);
++	set_memory_x(base, pages);
++
++	return dst;
++}
++
+ /*
+  * The SRAM context is lost during off-idle and stack
+  * needs to be reset.
+@@ -75,6 +100,9 @@ void omap_sram_reset(void)
+ void __init omap_map_sram(unsigned long start, unsigned long size,
+ 				 unsigned long skip, int cached)
+ {
++	unsigned long base;
++	int pages;
++
+ 	if (size == 0)
+ 		return;
+ 
+@@ -95,4 +123,10 @@ void __init omap_map_sram(unsigned long start, unsigned long size,
+ 	 */
+ 	memset_io(omap_sram_base + omap_sram_skip, 0,
+ 		  omap_sram_size - omap_sram_skip);
++
++	base = (unsigned long)omap_sram_base;
++	pages = PAGE_ALIGN(omap_sram_size) / PAGE_SIZE;
++
++	set_memory_ro(base, pages);
++	set_memory_x(base, pages);
+ }
+-- 
+2.16.2
