@@ -1,121 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753864AbeCUVxP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:53:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753715AbeCUVxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:53:13 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1261E21736
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Wed, 21 Mar 2018 16:53:08 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Marta Rybczynska <mrybczyn@kalray.eu>
-Cc: Keith Busch <keith.busch@intel.com>, Ming Lei <ming.lei@redhat.com>,
-        axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, linux-pci@vger.kernel.org,
-        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: Re: [RFC PATCH] nvme: avoid race-conditions when enabling devices
-Message-ID: <20180321215308.GH38649@bhelgaas-glaptop.roam.corp.google.com>
-References: <744877924.5841545.1521630049567.JavaMail.zimbra@kalray.eu>
- <20180321115037.GA26083@ming.t460p>
- <464125757.5843583.1521634231341.JavaMail.zimbra@kalray.eu>
- <20180321154807.GD22254@ming.t460p>
- <20180321160238.GF12909@localhost.localdomain>
- <1220434088.5871933.1521648656789.JavaMail.zimbra@kalray.eu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1220434088.5871933.1521648656789.JavaMail.zimbra@kalray.eu>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1753932AbeCUVyf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:54:35 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:47202 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753796AbeCUVyc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:54:32 -0400
+Date: Wed, 21 Mar 2018 17:54:27 -0400 (EDT)
+Message-Id: <20180321.175427.1419929873765406157.davem@davemloft.net>
+To: jeffrey.t.kirsher@intel.com
+Cc: okaya@codeaurora.org, netdev@vger.kernel.org, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, intel-wired-lan@lists.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH REPOST v4 5/7] ixgbevf: keep writel() closer to wmb()
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1521668888.12746.32.camel@intel.com>
+References: <1521658572-26354-1-git-send-email-okaya@codeaurora.org>
+        <1521658572-26354-6-git-send-email-okaya@codeaurora.org>
+        <1521668888.12746.32.camel@intel.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Srinath]
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Date: Wed, 21 Mar 2018 14:48:08 -0700
 
-On Wed, Mar 21, 2018 at 05:10:56PM +0100, Marta Rybczynska wrote:
-> > On Wed, Mar 21, 2018 at 11:48:09PM +0800, Ming Lei wrote:
-> >> On Wed, Mar 21, 2018 at 01:10:31PM +0100, Marta Rybczynska wrote:
-> >> > > On Wed, Mar 21, 2018 at 12:00:49PM +0100, Marta Rybczynska wrote:
-> >> > >> NVMe driver uses threads for the work at device reset, including enabling
-> >> > >> the PCIe device. When multiple NVMe devices are initialized, their reset
-> >> > >> works may be scheduled in parallel. Then pci_enable_device_mem can be
-> >> > >> called in parallel on multiple cores.
-> >> > >> 
-> >> > >> This causes a loop of enabling of all upstream bridges in
-> >> > >> pci_enable_bridge(). pci_enable_bridge() causes multiple operations
-> >> > >> including __pci_set_master and architecture-specific functions that
-> >> > >> call ones like and pci_enable_resources(). Both __pci_set_master()
-> >> > >> and pci_enable_resources() read PCI_COMMAND field in the PCIe space
-> >> > >> and change it. This is done as read/modify/write.
-> >> > >> 
-> >> > >> Imagine that the PCIe tree looks like:
-> >> > >> A - B - switch -  C - D
-> >> > >>                \- E - F
-> >> > >> 
-> >> > >> D and F are two NVMe disks and all devices from B are not enabled and bus
-> >> > >> mastering is not set. If their reset work are scheduled in parallel the two
-> >> > >> modifications of PCI_COMMAND may happen in parallel without locking and the
-> >> > >> system may end up with the part of PCIe tree not enabled.
-> >> > > 
-> >> > > Then looks serialized reset should be used, and I did see the commit
-> >> > > 79c48ccf2fe ("nvme-pci: serialize pci resets") fixes issue of 'failed
-> >> > > to mark controller state' in reset stress test.
-> >> > > 
-> >> > > But that commit only covers case of PCI reset from sysfs attribute, and
-> >> > > maybe other cases need to be dealt with in similar way too.
-> >> > > 
-> >> > 
-> >> > It seems to me that the serialized reset works for multiple resets of the
-> >> > same device, doesn't it? Our problem is linked to resets of different devices
-> >> > that share the same PCIe tree.
-> >> 
-> >> Given reset shouldn't be a frequent action, it might be fine to serialize all
-> >> reset from different devices.
-> > 
-> > The driver was much simpler when we had serialized resets in line with
-> > probe, but that had a bigger problems with certain init systems when
-> > you put enough nvme devices in your server, making them unbootable.
-> > 
-> > Would it be okay to serialize just the pci_enable_device across all
-> > other tasks messing with the PCI topology?
-> > 
-> > ---
-> > diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> > index cef5ce851a92..e0a2f6c0f1cf 100644
-> > --- a/drivers/nvme/host/pci.c
-> > +++ b/drivers/nvme/host/pci.c
-> > @@ -2094,8 +2094,11 @@ static int nvme_pci_enable(struct nvme_dev *dev)
-> >	int result = -ENOMEM;
-> >	struct pci_dev *pdev = to_pci_dev(dev->dev);
-> > 
-> > -	if (pci_enable_device_mem(pdev))
-> > -		return result;
-> > +	pci_lock_rescan_remove();
-> > +	result = pci_enable_device_mem(pdev);
-> > +	pci_unlock_rescan_remove();
-> > +	if (result)
-> > +		return -ENODEV;
-> > 
-> >	pci_set_master(pdev);
+> On Wed, 2018-03-21 at 14:56 -0400, Sinan Kaya wrote:
+>> Remove ixgbevf_write_tail() in favor of moving writel() close to
+>> wmb().
+>> 
+>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>> Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+>> ---
+>>  drivers/net/ethernet/intel/ixgbevf/ixgbevf.h      | 5 -----
+>>  drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 4 ++--
+>>  2 files changed, 2 insertions(+), 7 deletions(-)
 > 
-> The problem may happen also with other device doing its probe and
-> nvme running its workqueue (and we probably have seen it in practice
-> too). We were thinking about a lock in the pci generic code too,
-> that's why I've put the linux-pci@ list in copy.
+> This patch fails to compile because there is a call to
+> ixgbevf_write_tail() which you missed cleaning up.
 
-Yes, this is a generic problem in the PCI core.  We've tried to fix it
-in the past but haven't figured it out yet.
+For a change with delicate side effects, it doesn't create much
+confidence if the code does not even compile.
 
-See 40f11adc7cd9 ("PCI: Avoid race while enabling upstream bridges")
-and 0f50a49e3008 ("Revert "PCI: Avoid race while enabling upstream
-bridges"").
+Sinan, please put more care into the changes you are making.
 
-It's not trivial, but if you figure out a good way to fix this, I'd be
-thrilled.
-
-Bjorn
+Thank you.
