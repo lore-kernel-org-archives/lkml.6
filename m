@@ -1,45 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754096AbeCUWsD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 18:48:03 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59248 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753845AbeCUWsB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 18:48:01 -0400
-To: Ching Huang <ching2048@areca.com.tw>
-Cc: martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dan.carpenter@oracle.com, hch@infradead.org, colin.king@canonical.com
-Subject: Re: [PATCH 0/4] scsi: arcmsr: Support Areca thunderbolt devices hot-plug
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1521095129.31371.25.camel@Centos6.3-64>
-Date: Wed, 21 Mar 2018 18:47:22 -0400
-In-Reply-To: <1521095129.31371.25.camel@Centos6.3-64> (Ching Huang's message
-        of "Thu, 15 Mar 2018 14:25:29 +0800")
-Message-ID: <yq17eq5rqpx.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1754111AbeCUWs1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 18:48:27 -0400
+Received: from mga02.intel.com ([134.134.136.20]:63960 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753845AbeCUWsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 18:48:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
+   d="scan'208";a="30121874"
+Subject: [PATCH] libnvdimm, nfit: fix persistence domain reporting
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Dave Jiang <dave.jiang@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 21 Mar 2018 15:39:18 -0700
+Message-ID: <152167195887.4609.5407001869524973776.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8839 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=373
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The persistence domain is a point in the platform where once writes
+reach that destination the platform claims it will make them persistent
+relative to power loss. In the ACPI NFIT this is currently communicated
+as 2 bits in the "NFIT - Platform Capabilities Structure". The bits
+comprise a hierarchy, i.e. bit0 "CPU Cache Flush to NVDIMM Durability on
+Power Loss Capable" implies bit1 "Memory Controller Flush to NVDIMM
+Durability on Power Loss Capable".
 
-Ching,
+Commit 96c3a239054a "libnvdimm: expose platform persistence attr..."
+shows the persistence domain as flags, but it's really an enumerated
+hierarchy.
 
-> 1. Rename ACB_F_BUS_HANG_ON to ACB_F_ADAPTER_REMOVED for adapter hot-plug
-> 2. Handle adapter removed due to thunderbolt cable disconnection.
-> 3. Sleep to avoid CPU stuck too long for waiting adapter ready
-> 4. Change driver version to v1.40.00.05-20180309
+Fix this newly introduced user ABI to show the closest available
+persistence domain before userspace develops dependencies on seeing, or
+needing to develop code to tolerate, the raw NFIT flags communicated
+through the libnvdimm-generic region attribute.
 
-Applied to 4.17/scsi-queue. Thank you!
+Fixes: 96c3a239054a ("libnvdimm: expose platform persistence attr...")
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ drivers/acpi/nfit/core.c     |   10 +++++++---
+ drivers/nvdimm/region_devs.c |   10 ++++++----
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index bbe48ad20886..eb09ef55c38a 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -2675,10 +2675,14 @@ static int acpi_nfit_register_region(struct acpi_nfit_desc *acpi_desc,
+ 	else
+ 		ndr_desc->numa_node = NUMA_NO_NODE;
+ 
+-	if(acpi_desc->platform_cap & ACPI_NFIT_CAPABILITY_CACHE_FLUSH)
++	/*
++	 * Persistence domain bits are hierarchical, if
++	 * ACPI_NFIT_CAPABILITY_CACHE_FLUSH is set then
++	 * ACPI_NFIT_CAPABILITY_MEM_FLUSH is implied.
++	 */
++	if (acpi_desc->platform_cap & ACPI_NFIT_CAPABILITY_CACHE_FLUSH)
+ 		set_bit(ND_REGION_PERSIST_CACHE, &ndr_desc->flags);
+-
+-	if (acpi_desc->platform_cap & ACPI_NFIT_CAPABILITY_MEM_FLUSH)
++	else if (acpi_desc->platform_cap & ACPI_NFIT_CAPABILITY_MEM_FLUSH)
+ 		set_bit(ND_REGION_PERSIST_MEMCTRL, &ndr_desc->flags);
+ 
+ 	list_for_each_entry(nfit_memdev, &acpi_desc->memdevs, list) {
+diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+index a8e9d428c0a5..1593e1806b16 100644
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -532,11 +532,13 @@ static ssize_t persistence_domain_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+ 	struct nd_region *nd_region = to_nd_region(dev);
+-	unsigned long flags = nd_region->flags;
+ 
+-	return sprintf(buf, "%s%s\n",
+-			flags & BIT(ND_REGION_PERSIST_CACHE) ? "cpu_cache " : "",
+-			flags & BIT(ND_REGION_PERSIST_MEMCTRL) ? "memory_controller " : "");
++	if (test_bit(ND_REGION_PERSIST_CACHE, &nd_region->flags))
++		return sprintf(buf, "cpu_cache\n");
++	else if (test_bit(ND_REGION_PERSIST_MEMCTRL, &nd_region->flags))
++		return sprintf(buf, "memory_controller\n");
++	else
++		return sprintf(buf, "\n");
+ }
+ static DEVICE_ATTR_RO(persistence_domain);
+ 
