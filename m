@@ -1,105 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752620AbeCUQB6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:01:58 -0400
-Received: from vern.gendns.com ([206.190.152.46]:34809 "EHLO vern.gendns.com"
+        id S1752406AbeCUQDq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:03:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59576 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751817AbeCUQBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:01:55 -0400
-Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180321120807.18032-1-brgl@bgdev.pl>
- <20180321120807.18032-5-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com>
-Date: Wed, 21 Mar 2018 11:01:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180321120807.18032-5-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1751416AbeCUQDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 12:03:41 -0400
+From: Takashi Iwai <tiwai@suse.de>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] trace-cmd: Documentation: Fix title markers
+Date: Wed, 21 Mar 2018 17:03:34 +0100
+Message-Id: <20180321160334.16050-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> In order to be able to use the reset framework in legacy boot mode as
-> well, add the reset lookup table to the psc driver for da850 variant.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   drivers/clk/davinci/psc-da850.c | 8 ++++++++
->   drivers/clk/davinci/psc.c       | 1 +
->   2 files changed, 9 insertions(+)
-> 
-> diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
-> index ccc7eb17bf3a..395db4b2c0ee 100644
-> --- a/drivers/clk/davinci/psc-da850.c
-> +++ b/drivers/clk/davinci/psc-da850.c
-> @@ -6,6 +6,7 @@
->    */
->   
->   #include <linux/clk-provider.h>
-> +#include <linux/reset-controller.h>
->   #include <linux/clk.h>
->   #include <linux/clkdev.h>
->   #include <linux/init.h>
-> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
->   				"fck",	"ecap.1",
->   				"fck",	"ecap.2");
->   
-> +static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
-> +	RESET_LOOKUP("davinci-rproc.0", NULL, 15),
-> +};
-> +
->   static int da850_psc0_init(struct device *dev, void __iomem *base)
->   {
-> +	reset_controller_add_lookup("da850-psc0",
-> +				    da850_psc0_reset_lookup_table,
-> +				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
+Fix the title markers that aren't aligned with the previous lines.
+This was caught by processing via asciidoctor, which is picker than
+asciidoc and aborts as an error.
 
-Could there be a race condition here since you are adding the lookup *before*
-you are adding the actual provider? It seems like reset_controller_add_lookup()
-should be after davinci_psc_register_clocks().
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ Documentation/trace-cmd-extract.1.txt  | 2 +-
+ Documentation/trace-cmd-hist.1.txt     | 2 +-
+ Documentation/trace-cmd-list.1.txt     | 2 +-
+ Documentation/trace-cmd-listen.1.txt   | 2 +-
+ Documentation/trace-cmd-mem.1.txt      | 2 +-
+ Documentation/trace-cmd-options.1.txt  | 2 +-
+ Documentation/trace-cmd-profile.1.txt  | 2 +-
+ Documentation/trace-cmd-show.1.txt     | 2 +-
+ Documentation/trace-cmd-snapshot.1.txt | 2 +-
+ Documentation/trace-cmd-start.1.txt    | 2 +-
+ Documentation/trace-cmd-stat.1.txt     | 2 +-
+ Documentation/trace-cmd-stop.1.txt     | 2 +-
+ Documentation/trace-cmd.dat.5.txt      | 2 +-
+ 13 files changed, 13 insertions(+), 13 deletions(-)
 
->   	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
->   }
->   
-> diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-> index 3b0e59dfbdd7..063df62381ea 100644
-> --- a/drivers/clk/davinci/psc.c
-> +++ b/drivers/clk/davinci/psc.c
-> @@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
->   
->   	psc->rcdev.ops = &davinci_psc_reset_ops;
->   	psc->rcdev.owner = THIS_MODULE;
-> +	psc->rcdev.dev = dev;
->   	psc->rcdev.of_node = dev->of_node;
->   	psc->rcdev.of_reset_n_cells = 1;
->   	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
-> 
+diff --git a/Documentation/trace-cmd-extract.1.txt b/Documentation/trace-cmd-extract.1.txt
+index 73eda4ed235d..917a63718b3b 100644
+--- a/Documentation/trace-cmd-extract.1.txt
++++ b/Documentation/trace-cmd-extract.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-EXTRACT(1)
+-===================
++====================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-hist.1.txt b/Documentation/trace-cmd-hist.1.txt
+index 96a5b8216202..b17936d0f612 100644
+--- a/Documentation/trace-cmd-hist.1.txt
++++ b/Documentation/trace-cmd-hist.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-HIST(1)
+-==================
++=================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-list.1.txt b/Documentation/trace-cmd-list.1.txt
+index a83c001c698e..ea6bd86bc317 100644
+--- a/Documentation/trace-cmd-list.1.txt
++++ b/Documentation/trace-cmd-list.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-LIST(1)
+-==================
++=================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-listen.1.txt b/Documentation/trace-cmd-listen.1.txt
+index c9bafcd9fd70..a242c49edfbe 100644
+--- a/Documentation/trace-cmd-listen.1.txt
++++ b/Documentation/trace-cmd-listen.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-LISTEN(1)
+-==================
++===================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-mem.1.txt b/Documentation/trace-cmd-mem.1.txt
+index 3f4a7ca6a316..9e811b91eea0 100644
+--- a/Documentation/trace-cmd-mem.1.txt
++++ b/Documentation/trace-cmd-mem.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-MEM(1)
+-==================
++================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-options.1.txt b/Documentation/trace-cmd-options.1.txt
+index 23735540e5ea..e7faf320a5da 100644
+--- a/Documentation/trace-cmd-options.1.txt
++++ b/Documentation/trace-cmd-options.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-OPTIONS(1)
+-===================
++====================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-profile.1.txt b/Documentation/trace-cmd-profile.1.txt
+index f0fa30eedc61..3ffce86b803d 100644
+--- a/Documentation/trace-cmd-profile.1.txt
++++ b/Documentation/trace-cmd-profile.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-PROFILE(1)
+-===================
++====================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-show.1.txt b/Documentation/trace-cmd-show.1.txt
+index 046c06717447..b17851ef5c80 100644
+--- a/Documentation/trace-cmd-show.1.txt
++++ b/Documentation/trace-cmd-show.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-SHOW(1)
+-===================
++=================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-snapshot.1.txt b/Documentation/trace-cmd-snapshot.1.txt
+index 98b8924dca9d..6d94ada033b1 100644
+--- a/Documentation/trace-cmd-snapshot.1.txt
++++ b/Documentation/trace-cmd-snapshot.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-SNAPSHOT(1)
+-===================
++=====================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-start.1.txt b/Documentation/trace-cmd-start.1.txt
+index 3264abf1ca00..2b027b01be35 100644
+--- a/Documentation/trace-cmd-start.1.txt
++++ b/Documentation/trace-cmd-start.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-START(1)
+-===================
++==================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-stat.1.txt b/Documentation/trace-cmd-stat.1.txt
+index 7e4263ea149d..4a29b143122c 100644
+--- a/Documentation/trace-cmd-stat.1.txt
++++ b/Documentation/trace-cmd-stat.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-STAT(1)
+-==================
++=================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd-stop.1.txt b/Documentation/trace-cmd-stop.1.txt
+index 9d4093ee503c..1955fa7140b1 100644
+--- a/Documentation/trace-cmd-stop.1.txt
++++ b/Documentation/trace-cmd-stop.1.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD-STOP(1)
+-===================
++=================
+ 
+ NAME
+ ----
+diff --git a/Documentation/trace-cmd.dat.5.txt b/Documentation/trace-cmd.dat.5.txt
+index 4d0cce5aa4a6..d849439bb3c7 100644
+--- a/Documentation/trace-cmd.dat.5.txt
++++ b/Documentation/trace-cmd.dat.5.txt
+@@ -1,5 +1,5 @@
+ TRACE-CMD.DAT(5)
+-===============
++================
+ 
+ NAME
+ ----
+-- 
+2.16.2
