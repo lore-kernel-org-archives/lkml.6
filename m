@@ -1,70 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752384AbeCUOaT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 10:30:19 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:37010 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752300AbeCUOaI (ORCPT
+        id S1752523AbeCUOc5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 10:32:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36890 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751937AbeCUOcw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 10:30:08 -0400
-X-Google-Smtp-Source: AG47ELvhaJF2YgBMaAPJdVt20LEvGd90iJCAl9BJmbaL06KqDuddSKBmGctbDcjDicP1mAzTnotTJw==
-From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
-To: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hernan@vanguardiasur.com.ar
-Subject: [PATCH 04/11] staging: iio: ad7746: Reorder variable declarations
-Date: Wed, 21 Mar 2018 11:28:52 -0300
-Message-Id: <1521642539-4845-5-git-send-email-hernan@vanguardiasur.com.ar>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
-References: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
+        Wed, 21 Mar 2018 10:32:52 -0400
+Date: Wed, 21 Mar 2018 10:32:09 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Konrad Rzeszutek Wilk <konrad@darnok.org>,
+        Ingo Molnar <mingo@kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        Muli Ben-Yehuda <mulix@mulix.org>, iommu@lists.linux-foundation.org,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: use generic dma-direct and swiotlb code for x86 V3
+Message-ID: <20180321143209.GN1110@char.us.oracle.com>
+References: <20180319103826.12853-1-hch@lst.de>
+ <20180319152737.GK1110@char.us.oracle.com>
+ <20180319152840.GA28041@lst.de>
+ <20180320083751.nrpt64dsmpqbhzc6@gmail.com>
+ <20180320084412.GA16337@lst.de>
+ <20180320090351.2qnwcsauhodrqxdj@gmail.com>
+ <CAPbh3rspsGE3i=WzxC4DL=EDTEbhVZVb29j-fyhAXZRwk=Xncg@mail.gmail.com>
+ <20180320151600.GA23920@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180320151600.GA23920@lst.de>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8838 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=666
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reorder some variable declarations in an inverse-pyramid scheme.
+On Tue, Mar 20, 2018 at 04:16:00PM +0100, Christoph Hellwig wrote:
+> On Tue, Mar 20, 2018 at 11:25:21AM +0000, Konrad Rzeszutek Wilk wrote:
+> > Are you testing with swiotlb=force?
+> 
+> I've done swiotlb=force testing with earlier versions, and otherwise
+> relied on a VM with more the 4gb of memory and emulated devices
+> without 64-bit capability.
 
-Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
----
- drivers/staging/iio/cdc/ad7746.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Awesome! I also did my testing so all good. Ingo, if you want to
+you can add 'Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>'
+on the patches that don't have my tag.
 
-diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
-index 86919e8..57623db 100644
---- a/drivers/staging/iio/cdc/ad7746.c
-+++ b/drivers/staging/iio/cdc/ad7746.c
-@@ -220,8 +220,8 @@ static int ad7746_select_channel(struct iio_dev *indio_dev,
- 				 struct iio_chan_spec const *chan)
- {
- 	struct ad7746_chip_info *chip = iio_priv(indio_dev);
--	int ret, delay, idx;
- 	u8 vt_setup, cap_setup;
-+	int ret, delay, idx;
- 
- 	switch (chan->type) {
- 	case IIO_CAPACITANCE:
-@@ -289,8 +289,8 @@ static inline ssize_t ad7746_start_calib(struct device *dev,
- {
- 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
- 	struct ad7746_chip_info *chip = iio_priv(indio_dev);
--	bool doit;
- 	int ret, timeout = 10;
-+	bool doit;
- 
- 	ret = strtobool(buf, &doit);
- 	if (ret < 0)
-@@ -681,8 +681,8 @@ static int ad7746_probe(struct i2c_client *client,
- 	struct ad7746_platform_data *pdata = client->dev.platform_data;
- 	struct ad7746_chip_info *chip;
- 	struct iio_dev *indio_dev;
--	int ret = 0;
- 	unsigned char regval = 0;
-+	int ret = 0;
- 
- 	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*chip));
- 	if (!indio_dev)
--- 
-2.7.4
+Christoph, thank you for cleaning up this swamp!
