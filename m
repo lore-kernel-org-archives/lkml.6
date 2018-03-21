@@ -1,171 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754521AbeCUXJW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 19:09:22 -0400
-Received: from mga06.intel.com ([134.134.136.31]:16553 "EHLO mga06.intel.com"
+        id S1754456AbeCUXJm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 19:09:42 -0400
+Received: from mga01.intel.com ([192.55.52.88]:30924 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754241AbeCUXGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:06:48 -0400
+        id S1754404AbeCUXJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 19:09:36 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
-   d="scan'208";a="184879101"
-Subject: [PATCH v7 06/14] ext2, dax: introduce ext2_dax_aops
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Jan Kara <jack@suse.com>, kbuild test robot <lkp@intel.com>,
-        david@fromorbit.com, hch@lst.de, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, jack@suse.cz
-Date: Wed, 21 Mar 2018 15:57:43 -0700
-Message-ID: <152167306296.5268.6656046711107190095.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+   d="scan'208";a="26467400"
+Message-ID: <1521673774.6961.4.camel@tzanussi-mobl.amr.corp.intel.com>
+Subject: Re: linux-next: manual merge of the ftrace tree with the jc_docs
+ tree
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Changbin Du <changbin.du@intel.com>
+Date: Wed, 21 Mar 2018 18:09:34 -0500
+In-Reply-To: <20180322092108.0d821abc@canb.auug.org.au>
+References: <20180321153127.23737f6e@canb.auug.org.au>
+         <20180321153715.3a571e5b@canb.auug.org.au>
+         <20180321091554.2b38ee57@gandalf.local.home>
+         <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
+         <20180322092108.0d821abc@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for the dax implementation to start associating dax pages
-to inodes via page->mapping, we need to provide a 'struct
-address_space_operations' instance for dax. Otherwise, direct-I/O
-triggers incorrect page cache assumptions and warnings.
+Hi Stephen,
 
-Cc: Jan Kara <jack@suse.com>
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- fs/ext2/ext2.h  |    1 +
- fs/ext2/inode.c |   43 +++++++++++++++++++++++++++----------------
- fs/ext2/namei.c |   18 ++----------------
- 3 files changed, 30 insertions(+), 32 deletions(-)
+On Thu, 2018-03-22 at 09:21 +1100, Stephen Rothwell wrote:
+> Hi Tom,
+> 
+> On Wed, 21 Mar 2018 15:55:52 -0500 Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+> >
+> > Yeah, linux-next has changes to Documentation/trace/* that converts
+> > those files to .rst, which linux-trace/frace/core doesn't have.
+> > 
+> > I've rebased the inter-event patches to linux-next/next-20180320 to
+> > reflect those changes, which affect 9 of the files in the patchset.  The
+> > updated patchset is here:
+> > 
+> > https://github.com/tzanussi/linux-trace-inter-event.git tzanussi/next-20180320-inter-event-v10                                               
+> > https://github.com/tzanussi/linux-trace-inter-event/tree/tzanussi/next-20180320-inter-event-v10
+> > 
+> > I can repost the whole thing as v10, or whatever makes sense here.
+> 
+> Thanks, I assume that they apply on top of the jc_docs tree as well
+> (git://git.lwn.net/linux.git#docs-next).  If so, then I can use them as
+> merge resolutions, or Steve can rebase his tree (minus your old
+> patches) on top of the (hopefully unchanging) jc_docs tree and then he
+> could apply your patches there.
+> 
 
-diff --git a/fs/ext2/ext2.h b/fs/ext2/ext2.h
-index 032295e1d386..cc40802ddfa8 100644
---- a/fs/ext2/ext2.h
-+++ b/fs/ext2/ext2.h
-@@ -814,6 +814,7 @@ extern const struct inode_operations ext2_file_inode_operations;
- extern const struct file_operations ext2_file_operations;
- 
- /* inode.c */
-+extern void ext2_set_file_ops(struct inode *inode);
- extern const struct address_space_operations ext2_aops;
- extern const struct address_space_operations ext2_nobh_aops;
- extern const struct iomap_ops ext2_iomap_ops;
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 9b2ac55ac34f..8ea394c8ffce 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -952,17 +952,16 @@ ext2_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- static int
- ext2_writepages(struct address_space *mapping, struct writeback_control *wbc)
- {
--#ifdef CONFIG_FS_DAX
--	if (dax_mapping(mapping)) {
--		return dax_writeback_mapping_range(mapping,
--						   mapping->host->i_sb->s_bdev,
--						   wbc);
--	}
--#endif
--
- 	return mpage_writepages(mapping, wbc, ext2_get_block);
- }
- 
-+static int
-+ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
-+{
-+	return dax_writeback_mapping_range(mapping,
-+			mapping->host->i_sb->s_bdev, wbc);
-+}
-+
- const struct address_space_operations ext2_aops = {
- 	.readpage		= ext2_readpage,
- 	.readpages		= ext2_readpages,
-@@ -990,6 +989,13 @@ const struct address_space_operations ext2_nobh_aops = {
- 	.error_remove_page	= generic_error_remove_page,
- };
- 
-+static const struct address_space_operations ext2_dax_aops = {
-+	.direct_IO		= ext2_direct_IO,
-+	.writepages		= ext2_dax_writepages,
-+	.set_page_dirty		= noop_set_page_dirty,
-+	.invalidatepage		= noop_invalidatepage,
-+};
-+
- /*
-  * Probably it should be a library function... search for first non-zero word
-  * or memcmp with zero_page, whatever is better for particular architecture.
-@@ -1388,6 +1394,18 @@ void ext2_set_inode_flags(struct inode *inode)
- 		inode->i_flags |= S_DAX;
- }
- 
-+void ext2_set_file_ops(struct inode *inode)
-+{
-+	inode->i_op = &ext2_file_inode_operations;
-+	inode->i_fop = &ext2_file_operations;
-+	if (IS_DAX(inode))
-+		inode->i_mapping->a_ops = &ext2_dax_aops;
-+	else if (test_opt(inode->i_sb, NOBH))
-+		inode->i_mapping->a_ops = &ext2_nobh_aops;
-+	else
-+		inode->i_mapping->a_ops = &ext2_aops;
-+}
-+
- struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
- {
- 	struct ext2_inode_info *ei;
-@@ -1480,14 +1498,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
- 		ei->i_data[n] = raw_inode->i_block[n];
- 
- 	if (S_ISREG(inode->i_mode)) {
--		inode->i_op = &ext2_file_inode_operations;
--		if (test_opt(inode->i_sb, NOBH)) {
--			inode->i_mapping->a_ops = &ext2_nobh_aops;
--			inode->i_fop = &ext2_file_operations;
--		} else {
--			inode->i_mapping->a_ops = &ext2_aops;
--			inode->i_fop = &ext2_file_operations;
--		}
-+		ext2_set_file_ops(inode);
- 	} else if (S_ISDIR(inode->i_mode)) {
- 		inode->i_op = &ext2_dir_inode_operations;
- 		inode->i_fop = &ext2_dir_operations;
-diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
-index e078075dc66f..55f7caadb093 100644
---- a/fs/ext2/namei.c
-+++ b/fs/ext2/namei.c
-@@ -107,14 +107,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, umode_t mode
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
--	inode->i_op = &ext2_file_inode_operations;
--	if (test_opt(inode->i_sb, NOBH)) {
--		inode->i_mapping->a_ops = &ext2_nobh_aops;
--		inode->i_fop = &ext2_file_operations;
--	} else {
--		inode->i_mapping->a_ops = &ext2_aops;
--		inode->i_fop = &ext2_file_operations;
--	}
-+	ext2_set_file_ops(inode);
- 	mark_inode_dirty(inode);
- 	return ext2_add_nondir(dentry, inode);
- }
-@@ -125,14 +118,7 @@ static int ext2_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
- 
--	inode->i_op = &ext2_file_inode_operations;
--	if (test_opt(inode->i_sb, NOBH)) {
--		inode->i_mapping->a_ops = &ext2_nobh_aops;
--		inode->i_fop = &ext2_file_operations;
--	} else {
--		inode->i_mapping->a_ops = &ext2_aops;
--		inode->i_fop = &ext2_file_operations;
--	}
-+	ext2_set_file_ops(inode);
- 	mark_inode_dirty(inode);
- 	d_tmpfile(dentry, inode);
- 	unlock_new_inode(inode);
+Yes, just checked and they do apply on top of the jc_docs branch
+mentioned.
+
+Thanks,
+
+Tom 
