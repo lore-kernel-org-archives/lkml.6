@@ -1,86 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754069AbeCUWzz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 18:55:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753715AbeCUWzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 18:55:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37C1A2172C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 21 Mar 2018 22:55:48 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/6] MIPS: add support for Microsemi MIPS SoCs
-Message-ID: <20180321225547.GB13126@saruman>
-References: <20180320130801.9247-1-alexandre.belloni@bootlin.com>
+        id S1754106AbeCUW4f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 18:56:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38172 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753715AbeCUW4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 18:56:34 -0400
+Date: Wed, 21 Mar 2018 18:56:32 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: mm/hmm: a simple question regarding devm_request_mem_region()
+Message-ID: <20180321225632.GI3214@redhat.com>
+References: <20180321222357.GA31089@Asurada-Nvidia>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3lcZGd9BuhuYXNfi"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180320130801.9247-1-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180321222357.GA31089@Asurada-Nvidia>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 21, 2018 at 03:23:57PM -0700, Nicolin Chen wrote:
+> Hello Jerome,
+> 
+> I started to looking at the mm/hmm code and having a question at the
+> devm_request_mem_region() call in the hmm_devmem_add() implementation:
+> 
+> >	addr = min((unsigned long)iomem_resource.end,
+> >		   (1UL << MAX_PHYSMEM_BITS) - 1);
+> 
+> The main question is here as I am a bit confused by this addr. The code
+> is trying to get an addr from the end of memory space. However, I have
+> tried on an ARM64 platform where ioport_resource.end is -1, so it takes
+> "(1UL << MAX_PHYSMEM_BITS) - 1" as the addr base, while this addr is way
+> beyond the actual main memory size that's available on my board. Is HMM
+> supposed to get an memory region like this? Would it be possible for you
+> to give some hint to help me understand it?
 
---3lcZGd9BuhuYXNfi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What are you trying to do ? hmm_devmem_add() is use either for device
+private memory or device public memory. Device private memory is memory
+that is not accessible by the CPU, the code you are pointing to is for
+that case where i try to find a range of physical address not currently
+use (memory not being accessible means that there is not any valid
+physical address reserved for it). On x86 MAX_PHYSMEM_BITS is defined
+to something that make sense, but as it is often the case for those
+define, it seems that arm define an unreal value. My advice fix the
+definition for ARM iirc it depends on the SOC dunno if you can know
+that at build time. You can probably know the biggest one at build time
+(1 << 47 or something like that).
 
-On Tue, Mar 20, 2018 at 02:07:55PM +0100, Alexandre Belloni wrote:
-> Hi,
->=20
-> This patch series adds initial support for the Microsemi MIPS SoCs. It
-> is currently focusing on the Microsemi Ocelot (VSC7513, VSC7514).
->=20
-> Changes in v6:
->  - Fixup SPDX identifiers
->  - remove unit-address for cpuintc
->  - add unit-address for ahb
->  - remove CONFIG_32BIT requirement (implied by CONFIG_CPU_MIPS32_R2)
->  - Add TLB entry lookup provided by James
->  - Readd vendor prefix addition
->=20
->=20
-> Alexandre Belloni (6):
->   dt-bindings: Add vendor prefix for Microsemi Corporation
->   dt-bindings: mips: Add bindings for Microsemi SoCs
->   MIPS: mscc: add ocelot dtsi
->   MIPS: mscc: add ocelot PCB123 device tree
->   MIPS: generic: Add support for Microsemi Ocelot
->   MAINTAINERS: Add entry for Microsemi MIPS SoCs
+But this all assume that you have a device with its own memory that is
+not accessible from the CPU. Which is very uncommon on ARM, only case
+i know of is regular PCIE GPU on a ARM system with PCIE.
 
-Thanks Alexandre, I've now applied these 6 patches for 4.17.
-
-Cheers
-James
-
---3lcZGd9BuhuYXNfi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqy4vMACgkQbAtpk944
-dnrWSQ/9G3R2jl494WIl6nbqk/95tvveya0g9OL86xQhjs0lyUPxbPJxvFpA4Gra
-227J8v4LzBzXhec5MbpfXV4cLP6HSvOqeXk8GRmUMMzw+ZBgiGYN3caig421x4sR
-1+RXOO9UPxELhqUVJPHx6u3hUV5OpitT1YLZRdCNutzE+Mqi4xYM8ZUKCO/fOSZh
-yOMpJjPB6FZX7zb8UJNNn6+QpF1RvFgETJlLtnbk0SkQRjhYUHzdGwnPDkLkIDvE
-wui5P4LpWCu1VqaB0c7HY7a9hiTVbT0+tGK8+nq4DBZQawF+AoI90uStcEUxYkQG
-8YicB5AiO6XbSuB8GRTednAgMyvnnTmVFsgtaMNPxlsE2u2PxOv6N2feE7ybGhuC
-qreHj6n9Z3XALROAZR2nMCZgG9QwVN/hp1PIH4WtlLqsQ/EEg9IdqaMYM2lK2LCY
-cNOPFZHQy8ufXFIwnTQ2Y1U4haF2PgWEk48K3qewkp5bqCfb5QyKMYL9fbvMIh/G
-uuY7ST8c7EcDea5QdW0vZFv1qeLDPAMvVLJtkUP03B/50cqwqciV48NVBhq3EuAm
-3daFhAAY4OcvCWxTaZZbv5/UtJHm/Ly4yBC1NGjwtvaivNM7Xm+lxQqgK9NvEDvs
-T8DE/rFcJcS0L/p01SFmee9hsysOF8vD9Qo2b2S6FpRIsHdSViY=
-=ddab
------END PGP SIGNATURE-----
-
---3lcZGd9BuhuYXNfi--
+Hope this helps,
+Jérôme
