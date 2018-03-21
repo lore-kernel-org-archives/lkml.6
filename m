@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751548AbeCUHSS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 03:18:18 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6658 "EHLO huawei.com"
+        id S1752043AbeCUHUu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 03:20:50 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6666 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751040AbeCUHSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 03:18:15 -0400
+        id S1751545AbeCUHST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 03:18:19 -0400
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 06/11] net: hns3: change GL update rate
-Date: Wed, 21 Mar 2018 15:49:25 +0800
-Message-ID: <1521618570-129694-7-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 07/11] net: hns3: change the time interval of int_gl calculating
+Date: Wed, 21 Mar 2018 15:49:26 +0800
+Message-ID: <1521618570-129694-8-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1521618570-129694-1-git-send-email-lipeng321@huawei.com>
 References: <1521618570-129694-1-git-send-email-lipeng321@huawei.com>
@@ -27,63 +27,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fuyun Liang <liangfuyun1@huawei.com>
 
-The interrupt coalescing self-adaptive function updates the int_gl every
-interrupt. The GL update rate is too faster to get a better new GL value.
-This patch changes the GL update rate to every one hundred interrupts.
-The GL update rate is defined by HNS3_INT_ADAPT_DOWN_START.
+Since we change the update rate of int_gl from every interrupt to every
+one hundred interrupts, the old way to get time interval by int_gl value
+is not accurate. This patch calculates the time interval using the jiffies
+value.
 
 Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 8 ++++++++
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h | 2 ++
- 2 files changed, 10 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 46 ++++++++++++++++---------
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h |  1 +
+ 2 files changed, 30 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index f700ec1..e7cf7b4 100644
+index e7cf7b4..0b4a676 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -214,6 +214,7 @@ static void hns3_vector_gl_rl_init(struct hns3_enet_tqp_vector *tqp_vector,
- 	/* Default: disable RL */
- 	h->kinfo.int_rl_setting = 0;
+@@ -2406,15 +2406,15 @@ int hns3_clean_rx_ring(
  
-+	tqp_vector->int_adapt_down = HNS3_INT_ADAPT_DOWN_START;
- 	tqp_vector->rx_group.coal.flow_level = HNS3_FLOW_LOW;
- 	tqp_vector->tx_group.coal.flow_level = HNS3_FLOW_LOW;
- }
-@@ -2492,6 +2493,11 @@ static void hns3_update_new_int_gl(struct hns3_enet_tqp_vector *tqp_vector)
- 	struct hns3_enet_ring_group *tx_group = &tqp_vector->tx_group;
- 	bool rx_update, tx_update;
+ static bool hns3_get_new_int_gl(struct hns3_enet_ring_group *ring_group)
+ {
+-#define HNS3_RX_ULTRA_PACKET_RATE 40000
++	struct hns3_enet_tqp_vector *tqp_vector =
++					ring_group->ring->tqp_vector;
+ 	enum hns3_flow_level_range new_flow_level;
+-	struct hns3_enet_tqp_vector *tqp_vector;
+-	int packets_per_secs;
+-	int bytes_per_usecs;
++	int packets_per_msecs;
++	int bytes_per_msecs;
++	u32 time_passed_ms;
+ 	u16 new_int_gl;
+-	int usecs;
  
-+	if (tqp_vector->int_adapt_down > 0) {
-+		tqp_vector->int_adapt_down--;
-+		return;
-+	}
+-	if (!ring_group->coal.int_gl)
++	if (!ring_group->coal.int_gl || !tqp_vector->last_jiffies)
+ 		return false;
+ 
+ 	if (ring_group->total_packets == 0) {
+@@ -2431,33 +2431,44 @@ static bool hns3_get_new_int_gl(struct hns3_enet_ring_group *ring_group)
+ 	 */
+ 	new_flow_level = ring_group->coal.flow_level;
+ 	new_int_gl = ring_group->coal.int_gl;
+-	tqp_vector = ring_group->ring->tqp_vector;
+-	usecs = (ring_group->coal.int_gl << 1);
+-	bytes_per_usecs = ring_group->total_bytes / usecs;
+-	/* 1000000 microseconds */
+-	packets_per_secs = ring_group->total_packets * 1000000 / usecs;
++	time_passed_ms =
++		jiffies_to_msecs(jiffies - tqp_vector->last_jiffies);
 +
- 	if (rx_group->coal.gl_adapt_enable) {
- 		rx_update = hns3_get_new_int_gl(rx_group);
- 		if (rx_update)
-@@ -2505,6 +2511,8 @@ static void hns3_update_new_int_gl(struct hns3_enet_tqp_vector *tqp_vector)
- 			hns3_set_vector_coalesce_tx_gl(tqp_vector,
++	if (!time_passed_ms)
++		return false;
++
++	do_div(ring_group->total_packets, time_passed_ms);
++	packets_per_msecs = ring_group->total_packets;
++
++	do_div(ring_group->total_bytes, time_passed_ms);
++	bytes_per_msecs = ring_group->total_bytes;
++
++#define HNS3_RX_LOW_BYTE_RATE 10000
++#define HNS3_RX_MID_BYTE_RATE 20000
+ 
+ 	switch (new_flow_level) {
+ 	case HNS3_FLOW_LOW:
+-		if (bytes_per_usecs > 10)
++		if (bytes_per_msecs > HNS3_RX_LOW_BYTE_RATE)
+ 			new_flow_level = HNS3_FLOW_MID;
+ 		break;
+ 	case HNS3_FLOW_MID:
+-		if (bytes_per_usecs > 20)
++		if (bytes_per_msecs > HNS3_RX_MID_BYTE_RATE)
+ 			new_flow_level = HNS3_FLOW_HIGH;
+-		else if (bytes_per_usecs <= 10)
++		else if (bytes_per_msecs <= HNS3_RX_LOW_BYTE_RATE)
+ 			new_flow_level = HNS3_FLOW_LOW;
+ 		break;
+ 	case HNS3_FLOW_HIGH:
+ 	case HNS3_FLOW_ULTRA:
+ 	default:
+-		if (bytes_per_usecs <= 20)
++		if (bytes_per_msecs <= HNS3_RX_MID_BYTE_RATE)
+ 			new_flow_level = HNS3_FLOW_MID;
+ 		break;
+ 	}
+ 
+-	if ((packets_per_secs > HNS3_RX_ULTRA_PACKET_RATE) &&
+-	    (&tqp_vector->rx_group == ring_group))
++#define HNS3_RX_ULTRA_PACKET_RATE 40
++
++	if (packets_per_msecs > HNS3_RX_ULTRA_PACKET_RATE &&
++	    &tqp_vector->rx_group == ring_group)
+ 		new_flow_level = HNS3_FLOW_ULTRA;
+ 
+ 	switch (new_flow_level) {
+@@ -2512,6 +2523,7 @@ static void hns3_update_new_int_gl(struct hns3_enet_tqp_vector *tqp_vector)
  						       tx_group->coal.int_gl);
  	}
-+
-+	tqp_vector->int_adapt_down = HNS3_INT_ADAPT_DOWN_START;
+ 
++	tqp_vector->last_jiffies = jiffies;
+ 	tqp_vector->int_adapt_down = HNS3_INT_ADAPT_DOWN_START;
  }
  
- static int hns3_nic_common_poll(struct napi_struct *napi, int budget)
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index c313780..2fe870b 100644
+index 2fe870b..39daa01 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -462,6 +462,8 @@ enum hns3_link_mode_bits {
- #define HNS3_INT_RL_MAX			0x00EC
- #define HNS3_INT_RL_ENABLE_MASK		0x40
+@@ -499,6 +499,7 @@ struct hns3_enet_tqp_vector {
  
-+#define HNS3_INT_ADAPT_DOWN_START	100
-+
- struct hns3_enet_coalesce {
- 	u16 int_gl;
- 	u8 gl_adapt_enable;
+ 	/* when 0 should adjust interrupt coalesce parameter */
+ 	u8 int_adapt_down;
++	unsigned long last_jiffies;
+ } ____cacheline_internodealigned_in_smp;
+ 
+ enum hns3_udp_tnl_type {
 -- 
 2.9.3
