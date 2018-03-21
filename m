@@ -1,57 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752123AbeCUNpt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 09:45:49 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:34091 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751597AbeCUNpr (ORCPT
+        id S1752064AbeCUNre (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 09:47:34 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38066 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751597AbeCUNra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 09:45:47 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH v2] Bluetooth: Remove VLA usage in aes_cmac
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180321010527.GA16616@embeddedor.com>
-Date: Wed, 21 Mar 2018 14:45:44 +0100
-Cc: Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <8448C1B0-A2A9-4376-9CC3-7643F0FFC0FB@holtmann.org>
-References: <20180321010527.GA16616@embeddedor.com>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Wed, 21 Mar 2018 09:47:30 -0400
+X-Google-Smtp-Source: AG47ELtlwPpSksVgkHqUXZdExi+wrqV4EkIDpP4uiCOB1MT97M2HdD7cOmv1+fhS6v6VAWIR5n0JsQ==
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aleksander Morgado <aleksander@aleksander.es>
+Subject: [PATCH 0/2] RAVE SP EEPROM driver
+Date: Wed, 21 Mar 2018 06:47:08 -0700
+Message-Id: <20180321134710.29757-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+Srinivas:
 
-> In preparation to enabling -Wvla, remove VLA and replace it
-> with dynamic memory allocation instead.
-> 
-> The use of stack Variable Length Arrays needs to be avoided, as they
-> can be a vector for stack exhaustion, which can be both a runtime bug
-> or a security flaw. Also, in general, as code evolves it is easy to
-> lose track of how big a VLA can get. Thus, we can end up having runtime
-> failures that are hard to debug.
-> 
-> Also, fixed as part of the directive to remove all VLAs from
-> the kernel: https://lkml.org/lkml/2018/3/7/621
-> 
-> Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-> ---
-> Changes in v2:
-> - Fix memory leak in previous patch.
-> 
-> net/bluetooth/smp.c | 17 ++++++++++++-----
-> 1 file changed, 12 insertions(+), 5 deletions(-)
+This series is a first iteration of the patchset adding NVMEM support
+for EEPROMs connected to RAVE SP MFD device (support for which landed
+in 4.15).
 
-patch has been applied to bluetooth-next tree.
+NOTE: This patchset depends on the following patches:
 
-Regards
+"nvmem: Document struct nvmem_config"
+"nvmem: core: Allow specifying device name verbatim"
+"nvmem: Introduce devm_nvmem_(un)register()"
 
-Marcel
+which are still trickling down from 'char-misc' to Linus' tree.
+
+Feedback is wellcome!
+
+Thanks,
+Andrey Smirnov
+
+Andrey Smirnov (2):
+  dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
+  nvmem: Add RAVE SP EEPROM driver
+
+ .../bindings/nvmem/zii,rave-sp-eeprom.txt          |  23 ++
+ drivers/nvmem/Kconfig                              |   6 +
+ drivers/nvmem/Makefile                             |   3 +
+ drivers/nvmem/rave-sp-eeprom.c                     | 356 +++++++++++++++++++++
+ 4 files changed, 388 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+ create mode 100644 drivers/nvmem/rave-sp-eeprom.c
+
+-- 
+2.14.3
