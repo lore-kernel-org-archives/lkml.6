@@ -1,81 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751891AbeCUJl4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 05:41:56 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:19123 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751728AbeCUJlx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 05:41:53 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="38036313"
-Subject: Re: [PATCH 1/5] x86/smpboot: Add the missing description of
- possible_cpus
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <corbet@lwn.net>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>, <hpa@zytor.com>
-References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
- <20180320110432.28127-2-douly.fnst@cn.fujitsu.com>
- <20180320123712.GR4043@hirez.programming.kicks-ass.net>
- <f64cb207-3851-9a26-2001-653fc0068540@cn.fujitsu.com>
- <20180321090826.GW4043@hirez.programming.kicks-ass.net>
- <076196e1-c181-ba44-f912-61bd279b345b@cn.fujitsu.com>
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <1dfcdb3d-6a92-8654-7cc4-ef262ddb0915@cn.fujitsu.com>
-Date: Wed, 21 Mar 2018 17:41:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <076196e1-c181-ba44-f912-61bd279b345b@cn.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: 5D67F4D0EFC9.AE15B
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
+        id S1751583AbeCUJqE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 05:46:04 -0400
+Received: from m15-112.126.com ([220.181.15.112]:55695 "EHLO m15-112.126.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751396AbeCUJqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 05:46:01 -0400
+From: Zhang Zhuoyu <zhangzhuoyu@cmss.chinamobile.com>
+To: nab@linux-iscsi.org
+Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Zhang Zhuoyu <zhangzhuoyu@cmss.chinamobile.com>
+Subject: [PATCH 1/1] target:separate tx/rx cmd_puds
+Date: Wed, 21 Mar 2018 17:52:43 +0800
+Message-Id: <1521625963-657195-1-git-send-email-zhangzhuoyu@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.8.3.1
+X-CM-TRANSID: DMmowAB3lJHMKbJa_6tFBQ--.63447S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCr1xCw4kXFy5Aw15Cr1Dtrb_yoWrWFW3pa
+        1UJF9xJrWDJay8Ar1DJF4qv34rXw1UW347XayxW3WfXa1UtrW3Kw1UCFWayFn8ZryxGryf
+        Ga9FyFn0k3ykXrUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jcjjgUUUUU=
+X-Originating-IP: [223.105.0.130]
+X-CM-SenderInfo: xkhoz05221imiyy6ij2wof0z/1tbi2g8Q1FpD3dd3AwAAs2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Separate tx/rx cmd_pdus in order to distinguish LUN read/write IOPS.
 
+Signed-off-by: Zhang Zhuoyu <zhangzhuoyu@cmss.chinamobile.com>
+---
+ drivers/target/target_core_stat.c      | 26 ++++++++++++++++++++++----
+ drivers/target/target_core_transport.c | 11 ++++++++++-
+ include/target/target_core_base.h      |  3 ++-
+ 3 files changed, 34 insertions(+), 6 deletions(-)
 
-At 03/21/2018 05:34 PM, Dou Liyang wrote:
-> Hi Peter,
-> 
-> At 03/21/2018 05:08 PM, Peter Zijlstra wrote:
->> On Wed, Mar 21, 2018 at 01:33:24PM +0800, Dou Liyang wrote:
->>> How about:
->>>
->>> possible_cpus=    [s390,x86_64] Set the number of possible CPUs which
->>>         are determined by the ACPI tables MADT or mptables by
->>>         default. possible_cpus=n : n >= 1 enforces the possible
->>>         number to be 'n'.
->>>         While nr_cpus is also be set: nr_cpus=m, choice the
->>>         minimum one for the number of possible CPUs.
->>
->> So what is the exact difference between possible_cpus and nr_cpus ? I
-> 
-> the possible_cpus= can reset the number of possible CPUs, even bigger
-> than 'num_processors + disabled_cpus', But nr_cpus= can't.
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-       the maximum number kernel gets from ACPI/mptables, no matter what
-number nr_cpus= is, the number of possible CPUs will not bigger than it.
-
->
->> konw maxcpus= limits the number of CPUs we bring up, and possible_cpus
->> limits the possible_map, but I'm not entirely sure what nr_cpus does
->> here.
->>
-> 
-> nr_cpus can limited the maximum CPUs that the kernel could support.
-> 
-> Here is a double check in case of using them at the same time, even if I
-> think just using possible_cpus= is enough. :-)
-> 
-> Thanks,
->      dou.
->>
->>
+diff --git a/drivers/target/target_core_stat.c b/drivers/target/target_core_stat.c
+index f0db91e..9099494 100644
+--- a/drivers/target/target_core_stat.c
++++ b/drivers/target/target_core_stat.c
+@@ -636,7 +636,7 @@ static ssize_t target_stat_tgt_port_port_index_show(struct config_item *item,
+ 	return ret;
+ }
+ 
+-static ssize_t target_stat_tgt_port_in_cmds_show(struct config_item *item,
++static ssize_t target_stat_tgt_port_tx_cmds_show(struct config_item *item,
+ 		char *page)
+ {
+ 	struct se_lun *lun = to_stat_tgt_port(item);
+@@ -647,7 +647,23 @@ static ssize_t target_stat_tgt_port_in_cmds_show(struct config_item *item,
+ 	dev = rcu_dereference(lun->lun_se_dev);
+ 	if (dev)
+ 		ret = snprintf(page, PAGE_SIZE, "%lu\n",
+-			       atomic_long_read(&lun->lun_stats.cmd_pdus));
++			       atomic_long_read(&lun->lun_stats.tx_cmd_pdus));
++	rcu_read_unlock();
++	return ret;
++}
++
++static ssize_t target_stat_tgt_port_rx_cmds_show(struct config_item *item,
++		char *page)
++{
++	struct se_lun *lun = to_stat_tgt_port(item);
++	struct se_device *dev;
++	ssize_t ret = -ENODEV;
++
++	rcu_read_lock();
++	dev = rcu_dereference(lun->lun_se_dev);
++	if (dev)
++		ret = snprintf(page, PAGE_SIZE, "%lu\n",
++			       atomic_long_read(&lun->lun_stats.rx_cmd_pdus));
+ 	rcu_read_unlock();
+ 	return ret;
+ }
+@@ -706,7 +722,8 @@ static ssize_t target_stat_tgt_port_hs_in_cmds_show(struct config_item *item,
+ CONFIGFS_ATTR_RO(target_stat_tgt_port_, indx);
+ CONFIGFS_ATTR_RO(target_stat_tgt_port_, name);
+ CONFIGFS_ATTR_RO(target_stat_tgt_port_, port_index);
+-CONFIGFS_ATTR_RO(target_stat_tgt_port_, in_cmds);
++CONFIGFS_ATTR_RO(target_stat_tgt_port_, tx_cmds);
++CONFIGFS_ATTR_RO(target_stat_tgt_port_, rx_cmds);
+ CONFIGFS_ATTR_RO(target_stat_tgt_port_, write_mbytes);
+ CONFIGFS_ATTR_RO(target_stat_tgt_port_, read_mbytes);
+ CONFIGFS_ATTR_RO(target_stat_tgt_port_, hs_in_cmds);
+@@ -717,7 +734,8 @@ static ssize_t target_stat_tgt_port_hs_in_cmds_show(struct config_item *item,
+ 	&target_stat_tgt_port_attr_indx,
+ 	&target_stat_tgt_port_attr_name,
+ 	&target_stat_tgt_port_attr_port_index,
+-	&target_stat_tgt_port_attr_in_cmds,
++	&target_stat_tgt_port_attr_tx_cmds,
++	&target_stat_tgt_port_attr_rx_cmds,
+ 	&target_stat_tgt_port_attr_write_mbytes,
+ 	&target_stat_tgt_port_attr_read_mbytes,
+ 	&target_stat_tgt_port_attr_hs_in_cmds,
+diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
+index 74b646f..79cb96f 100644
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -1356,7 +1356,16 @@ void transport_init_se_cmd(
+ 		return ret;
+ 
+ 	cmd->se_cmd_flags |= SCF_SUPPORTED_SAM_OPCODE;
+-	atomic_long_inc(&cmd->se_lun->lun_stats.cmd_pdus);
++	switch (cmd->data_direction) {
++	case DMA_FROM_DEVICE:
++		atomic_long_inc(&cmd->se_lun->lun_stats.tx_cmd_pdus);
++		break;
++	case DMA_TO_DEVICE:
++		atomic_long_inc(&cmd->se_lun->lun_stats.rx_cmd_pdus);
++		break;
++	default:
++		break;
++	}
+ 	return 0;
+ }
+ EXPORT_SYMBOL(target_setup_cmd_from_cdb);
+diff --git a/include/target/target_core_base.h b/include/target/target_core_base.h
+index 9f9f590..6a0a2a7 100644
+--- a/include/target/target_core_base.h
++++ b/include/target/target_core_base.h
+@@ -698,7 +698,8 @@ struct se_port_stat_grps {
+ };
+ 
+ struct scsi_port_stats {
+-	atomic_long_t	cmd_pdus;
++	atomic_long_t	tx_cmd_pdus;
++	atomic_long_t	rx_cmd_pdus;
+ 	atomic_long_t	tx_data_octets;
+ 	atomic_long_t	rx_data_octets;
+ };
+-- 
+1.8.3.1
