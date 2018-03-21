@@ -1,102 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751545AbeCULnF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 07:43:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36463 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751405AbeCULnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 07:43:04 -0400
-Date: Wed, 21 Mar 2018 12:43:01 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH 6/6] mm/vmscan: Don't mess with pgdat->flags in memcg
- reclaim.
-Message-ID: <20180321114301.GH23100@dhcp22.suse.cz>
-References: <20180315164553.17856-1-aryabinin@virtuozzo.com>
- <20180315164553.17856-6-aryabinin@virtuozzo.com>
- <20180320152903.GA23100@dhcp22.suse.cz>
- <c3405049-222d-a045-4ce5-8e51817d89b6@virtuozzo.com>
+        id S1751745AbeCULuv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 07:50:51 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:51609 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751688AbeCULur (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 07:50:47 -0400
+X-Google-Smtp-Source: AG47ELtXFUohrNHNwjyyKBQLJ5wji4iHNxOaAXNVHB7Vk1bOxgbld6ck03m9gDCCunTfOew9bbcR3w==
+Reply-To: monstr@monstr.eu
+Subject: Re: linux-next: Signed-off-bys missing for commit in the microblaze
+ tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180321075251.49f3c1a3@canb.auug.org.au>
+From: Michal Simek <monstr@monstr.eu>
+Message-ID: <31dbebc4-8889-85de-aa12-7dab4cc0494f@monstr.eu>
+Date: Wed, 21 Mar 2018 12:50:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3405049-222d-a045-4ce5-8e51817d89b6@virtuozzo.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180321075251.49f3c1a3@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21-03-18 14:14:35, Andrey Ryabinin wrote:
-> 
-> 
-> On 03/20/2018 06:29 PM, Michal Hocko wrote:
-> 
-> >> Leave all pgdat->flags manipulations to kswapd. kswapd scans the whole
-> >> pgdat, so it's reasonable to leave all decisions about node stat
-> >> to kswapd. Also add per-cgroup congestion state to avoid needlessly
-> >> burning CPU in cgroup reclaim if heavy congestion is observed.
-> >>
-> >> Currently there is no need in per-cgroup PGDAT_WRITEBACK and PGDAT_DIRTY
-> >> bits since they alter only kswapd behavior.
-> >>
-> >> The problem could be easily demonstrated by creating heavy congestion
-> >> in one cgroup:
-> >>
-> >>     echo "+memory" > /sys/fs/cgroup/cgroup.subtree_control
-> >>     mkdir -p /sys/fs/cgroup/congester
-> >>     echo 512M > /sys/fs/cgroup/congester/memory.max
-> >>     echo $$ > /sys/fs/cgroup/congester/cgroup.procs
-> >>     /* generate a lot of diry data on slow HDD */
-> >>     while true; do dd if=/dev/zero of=/mnt/sdb/zeroes bs=1M count=1024; done &
-> >>     ....
-> >>     while true; do dd if=/dev/zero of=/mnt/sdb/zeroes bs=1M count=1024; done &
-> >>
-> >> and some job in another cgroup:
-> >>
-> >>     mkdir /sys/fs/cgroup/victim
-> >>     echo 128M > /sys/fs/cgroup/victim/memory.max
-> >>
-> >>     # time cat /dev/sda > /dev/null
-> >>     real    10m15.054s
-> >>     user    0m0.487s
-> >>     sys     1m8.505s
-> >>
-> >> According to the tracepoint in wait_iff_congested(), the 'cat' spent 50%
-> >> of the time sleeping there.
-> >>
-> >> With the patch, cat don't waste time anymore:
-> >>
-> >>     # time cat /dev/sda > /dev/null
-> >>     real    5m32.911s
-> >>     user    0m0.411s
-> >>     sys     0m56.664s
-> >>
-> >> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> >> ---
-> >>  include/linux/backing-dev.h |  2 +-
-> >>  include/linux/memcontrol.h  |  2 ++
-> >>  mm/backing-dev.c            | 19 ++++------
-> >>  mm/vmscan.c                 | 84 ++++++++++++++++++++++++++++++++-------------
-> >>  4 files changed, 70 insertions(+), 37 deletions(-)
-> > 
-> > This patch seems overly complicated. Why don't you simply reduce the whole
-> > pgdat_flags handling to global_reclaim()?
-> > 
-> 
-> In that case cgroup2 reclaim wouldn't have any way of throttling if
-> cgroup is full of congested dirty pages.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4
+Content-Type: multipart/mixed; boundary="yskl06NdrmMUJpHyP1fgvyRXHe8refFJX";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <31dbebc4-8889-85de-aa12-7dab4cc0494f@monstr.eu>
+Subject: Re: linux-next: Signed-off-bys missing for commit in the microblaze
+ tree
+References: <20180321075251.49f3c1a3@canb.auug.org.au>
+In-Reply-To: <20180321075251.49f3c1a3@canb.auug.org.au>
 
-It's been some time since I've looked into the throttling code so pardon
-my ignorance. Don't cgroup v2 users get throttled in the write path to
-not dirty too many pages in the first place?
+--yskl06NdrmMUJpHyP1fgvyRXHe8refFJX
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-In other words, is your patch trying to fix two different things? One is
-per-memcg reclaim influencing the global pgdat state, which is clearly
-wrng, and cgroup v2 reclaim throttling that is not pgdat based?
+Hi Stephen,
 
--- 
-Michal Hocko
-SUSE Labs
+On 20.3.2018 21:52, Stephen Rothwell wrote:
+> Hi Michal,
+>=20
+> Commit
+>=20
+>   39a21eefea04 ("MICROBLAZE")
+>=20
+> is missing any Signed-off-bys.  In fact, it is a very strange commit
+> message.
+>=20
+
+Thanks for reporting it. It was just my testing commit not it shouldn't
+be there. I have fixed that just now. Interesting is that my local
+branch showed that this commit is not there.
+Anyway thank you so much for reporting.
+
+Thanks,
+Michal
+
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
+
+
+
+--yskl06NdrmMUJpHyP1fgvyRXHe8refFJX--
+
+--pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAlqyRw8ACgkQykllyylKDCEu3wCdEf6dvOJRS/+Svx2OjjK8HWsG
+OlcAoIDQ6hyJe7mNLSDn2v4myuDAN0x3
+=Ac5b
+-----END PGP SIGNATURE-----
+
+--pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4--
