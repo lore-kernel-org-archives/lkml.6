@@ -1,102 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751508AbeCUH26 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 03:28:58 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41750 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751040AbeCUH25 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 03:28:57 -0400
-X-Google-Smtp-Source: AG47ELv1MF7T/N8Q1oXRuxKoNQBEqFgoN+VbDe0JXDQ+RnXJd5+wC7O6EraB8/QO2bBTaOJtD8YKjg==
-Date: Wed, 21 Mar 2018 16:28:51 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: bugzilla-daemon@bugzilla.kernel.org
-Cc: sergey.senozhatsky@gmail.com, Steven Rostedt <rostedt@goodmis.org>,
-        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [Bug 199003] console stalled, cause Hard LOCKUP.
-Message-ID: <20180321072851.GB468@jagdpanzerIV>
-References: <bug-199003-14532@https.bugzilla.kernel.org/>
- <bug-199003-14532-4aWzZJgGHz@https.bugzilla.kernel.org/>
+        id S1751531AbeCUHcQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 03:32:16 -0400
+Received: from mga12.intel.com ([192.55.52.136]:50962 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751040AbeCUHcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 03:32:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,339,1517904000";
+   d="scan'208";a="210044630"
+Date: Wed, 21 Mar 2018 15:30:38 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [PATCH RFC 2/2] virtio_ring: support packed ring
+Message-ID: <20180321073038.gukl2pxqszuudv4t@debian>
+References: <20180223111801.15240-1-tiwei.bie@intel.com>
+ <20180223111801.15240-3-tiwei.bie@intel.com>
+ <8f73267a-e20e-de64-d8e0-3fd608dbf368@redhat.com>
+ <20180316061047.o2xdyuqhak3mzjyw@debian>
+ <0a0ecf42-8f7f-9387-8ca4-cb65d0835b56@redhat.com>
+ <20180316074028.lun2jy45qqnfeymw@debian>
+ <02a3da02-8226-ba4e-1b47-d25755b2c429@redhat.com>
+ <20180316100413.vtqwatregzrmhvt3@debian>
+ <094ca28b-d8af-bf7a-ea7e-0d0bf7518bda@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <bug-199003-14532-4aWzZJgGHz@https.bugzilla.kernel.org/>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <094ca28b-d8af-bf7a-ea7e-0d0bf7518bda@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/20/18 09:34), bugzilla-daemon@bugzilla.kernel.org wrote:
-[..]
-> Thanks very much.
-> commit e480af09c49736848f749a43dff2c902104f6691 avoided the NMI watchdog
-> trigger.
-
-Hm, okay... But "touch_nmi_watchdog() everywhere printk/console-related"
-is not exactly where I wanted us to be.
-
-By the way e480af09c49736848f749a43dff2c902104f6691 is from 2006.
-Are you sure you meant exactly that commit? What kernel do you use?
-
-
-Are you saying that none of Steven's patches helped on your setups?
-
-
-> And this patch may  avdoid long time blocking:
-> https://lkml.org/lkml/2018/3/8/584
+On Fri, Mar 16, 2018 at 07:36:47PM +0800, Jason Wang wrote:
+> On 2018年03月16日 18:04, Tiwei Bie wrote:
+> > On Fri, Mar 16, 2018 at 04:34:28PM +0800, Jason Wang wrote:
+> > > On 2018年03月16日 15:40, Tiwei Bie wrote:
+> > > > On Fri, Mar 16, 2018 at 02:44:12PM +0800, Jason Wang wrote:
+> > > > > On 2018年03月16日 14:10, Tiwei Bie wrote:
+> > > > > > On Fri, Mar 16, 2018 at 12:03:25PM +0800, Jason Wang wrote:
+> > > > > > > On 2018年02月23日 19:18, Tiwei Bie wrote:
+> > > > > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > > > > > > > ---
+> > > > > > > >      drivers/virtio/virtio_ring.c | 699 +++++++++++++++++++++++++++++++++++++------
+> > > > > > > >      include/linux/virtio_ring.h  |   8 +-
+> > > > > > > >      2 files changed, 618 insertions(+), 89 deletions(-)
+[...]
+> > > @@ -1096,17 +1599,21 @@ struct virtqueue *vring_create_virtqueue(
+> > > > > > > >      	if (!queue) {
+> > > > > > > >      		/* Try to get a single page. You are my only hope! */
+> > > > > > > > -		queue = vring_alloc_queue(vdev, vring_size(num, vring_align),
+> > > > > > > > +		queue = vring_alloc_queue(vdev, __vring_size(num, vring_align,
+> > > > > > > > +							     packed),
+> > > > > > > >      					  &dma_addr, GFP_KERNEL|__GFP_ZERO);
+> > > > > > > >      	}
+> > > > > > > >      	if (!queue)
+> > > > > > > >      		return NULL;
+> > > > > > > > -	queue_size_in_bytes = vring_size(num, vring_align);
+> > > > > > > > -	vring_init(&vring, num, queue, vring_align);
+> > > > > > > > +	queue_size_in_bytes = __vring_size(num, vring_align, packed);
+> > > > > > > > +	if (packed)
+> > > > > > > > +		vring_packed_init(&vring.vring_packed, num, queue, vring_align);
+> > > > > > > > +	else
+> > > > > > > > +		vring_init(&vring.vring_split, num, queue, vring_align);
+> > > > > > > Let's rename vring_init to vring_init_split() like other helpers?
+> > > > > > The vring_init() is a public API in include/uapi/linux/virtio_ring.h.
+> > > > > > I don't think we can rename it.
+> > > > > I see, then this need more thoughts to unify the API.
+> > > > My thought is to keep the old API as is, and introduce
+> > > > new types and helpers for packed ring.
+> > > I admit it's not a fault of this patch. But we'd better think of this in the
+> > > future, consider we may have new kinds of ring.
+> > > 
+> > > > More details can be found in this patch:
+> > > > https://lkml.org/lkml/2018/2/23/243
+> > > > (PS. The type which has bit fields is just for reference,
+> > > >    and will be changed in next version.)
+> > > > 
+> > > > Do you have any other suggestions?
+> > > No.
+> > Hmm.. Sorry, I didn't describe my question well.
+> > I mean do you have any suggestions about the API
+> > design for packed ring in uapi header? Currently
+> > I introduced below two new helpers:
+> > 
+> > static inline void vring_packed_init(struct vring_packed *vr, unsigned int num,
+> > 				     void *p, unsigned long align);
+> > static inline unsigned vring_packed_size(unsigned int num, unsigned long align);
+> > 
+> > When new rings are introduced in the future, above
+> > helpers can't be reused. Maybe we should make the
+> > helpers be able to determine the ring type?
 > 
-> We've test it several days.
+> Let's wait for Michael's comment here. Generally, I fail to understand why
+> vring_init() become a part of uapi. Git grep shows the only use cases are
+> virtio_test/vringh_test.
 
-Hm, printk_deferred is a bit dangerous; it moves console_unlock() to
-IRQ. So you still can have the problem of stuck CPUs, it's just now
-you shut up the watchdog. Did you test Steven's patches?
+Thank you very much for the review on this patch!
+I'll send out a new version ASAP to address these
+comments. :)
 
-
-A tricky part about printk_deferred() is that it does not use hand off
-mechanism. And even more...  What we have with "printk vs printk"
-sceanrio
-
-	CPU0			CPU1		...		CPUN
-
-	printk			printk
-	 console_unlock 	 hand off			printk
-	 			  console_unlock		 hand off
-								  console_unlock
-
-turns into a good old "one CPU prints it all" when we have "printk vs
-printk_deferred" case. Because printk_deferred just log_store messages
-and then _may be_ it grabs the console_sem from IRQ and invokes
-console_unlock().
-
-So it's something like this
-
-	CPU0			CPU1		...		CPUN
-
-	printk			printk_deffered
-	 console_unlock						printk_deferred
-	 console_unlock
-	 console_unlock
-	...			...				...
-				printk_deffered			printk_deferred
-	 console_unlock
-	 console_unlock
-
-
-// offtopic  "I can has printk_kthread?"
-
-
-
-You now touch_nmi_watchdog() from the console driver [well... at least this
-is what e480af09c4973 is doing, but I'm not sure I see how come you didn't
-have it applied], so that's why you don't see hard lockups on that CPU0. But
-your printing CPU still can stuck, which will defer RCUs on that CPU, etc.
-etc. etc. So I'd say that those two approaches
-
-		printk_deferred + touch_nmi_watchdog
-
-combined can do quite some harm. One thing for sure - they don't really fix
-any problems.
-
-	-ss
+Best regards,
+Tiwei Bie
