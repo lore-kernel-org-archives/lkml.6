@@ -1,57 +1,61 @@
 Return-Path: <corbet@lwn.net>
-X-Google-Smtp-Source: AG47ELuMy2ETAU63eEV07FgLZ4Hun14vYTpXIcTlYbpxl/f4kMwt2GZHOkeEYHhXTLXhKNjiiXP4
-ARC-Seal: i=1; a=rsa-sha256; t=1521645922; cv=none;
+X-Google-Smtp-Source: AG47ELvfq5anaiA4MCSvoiTQvHqSGdCtcLBP08oszLSPc+6u/uGMia6cbGfXZ24FHwrgUt52XTRg
+ARC-Seal: i=1; a=rsa-sha256; t=1521645665; cv=none;
         d=google.com; s=arc-20160816;
-        b=oV2hzv0TJrg7w+Wni32+AAAq+zj4DaCXH5RiyuyCi49PwZnHxEw/TIBDMd+afxAISz
-         DwNtTXILJn92GtA1iOVC2Xhx4pUYq8wvKpYJ7IhARnbiEvrb8InqS8ivx2Gb0EW6m5xr
-         st7O2WSnTLmDClbB9L1IwCoN49R2n0dFXviEv96LbmeU8CINP+pk2fQY4TKWskN3GwNP
-         QObA8L7LK4QgV0FVGQ0S6uKp20AWrZIO6bx2o4tPfBkur0vYqvElb1bivPT3ZHtnc3/+
-         cKceCGC0zwUENYviItGI99GL8ezwRbuFfKM8++fHo8XhigszV9YB9DIh75QodyM1K1iS
-         naCg==
+        b=yxnVL51eFQpktbujnMiSOa5A7FSYXRIV7xuwZivEsjC4bhEjww6mzC8+odveaW1ATJ
+         zSv/PO+Dfn8If9oA6BMTGOfaV2R1cOBKAVqr3p1ttT6+7Tf00YNBo7FlCDGuP18fYdsD
+         7Jh+XNzub5+RNp2OYHVaOrQmK/MT3/wD4mEQ4ZPhpG3TfYmOOE5JNaqWdcQWXTJggYTG
+         NemaqxcG6zDzAo6EenROGNy8lpJ6pIIPHO9mFWbJj08yRWeRTLap2M7uK2khMnG7XvSU
+         NFbVqeR0MxooBAi2w5WvrILw780JLunuhGwQcitR+7IuNZubUeTuVTjx/QE13T/9gD+T
+         qEbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:organization:references
          :in-reply-to:message-id:subject:cc:to:from:date
          :arc-authentication-results;
-        bh=tYCC4nqW8fSotET/0xIu20TsLTKj6m+yT2tXDNgzyY8=;
-        b=ZylxDC8X7y3QP7ynm7i4l/J0jhIyVhhCXxDNGfeSjgpPXfH1J4CXad5VwLfoMOoTd4
-         EUQxtsHQ4TwCUttZrMGyfRC5wJsgCScIRgK94ZAYxzIUBZSB6Z8EPaZGJqirGlTNsHnd
-         5ZQKUD7pr+QIRYNtM9LvoKXAq6/sS/j6oCamFOkyWOyURnwkPI9QF2cXgs3JauL1cdFe
-         phrmo4yQzW8On7gnazEBP3cu4AE4W7lSV+B8P51EMdAhg/8qPzXkXEa56UrtvjOMnAg5
-         eMiEZFlIRrguUvCYz0IVJPj6SQDxKvXUraSw6DPggLNL8EU7+6RS4A6rl4Yg5yfBL6tc
-         /5hQ==
+        bh=qJ67ToT5dcXsvPnr9cW7DeP4PlfkTDrbQrTYEjNP39c=;
+        b=xvML5q7LPEPhjsMpvlRnsZRNErrQvKKdR/cs022L4jFoOnfb4z2GbYa2IYhipcozQQ
+         wNnowqBDbiBNx7/OCdfq3yd22UQ1C5AoZRJtNVy2YpGdUCs1eZaayy2NTsdxjaEDl8FD
+         607hJf+/dLPn+iH/kpXk2zhK29YYZRrbWrK371I7tSKbdlaBtytVLNopEg5Zkjo/qdLQ
+         O9HKRPepHi0/kyvcQx1gvKPPTGiaTUalQHO5NkHmHOQb5kDy5xhCupDdCI+zg/06dRHj
+         arduhqX1Uwqv+hjVWrtkfgvDftbJY6/AzghQ9iFLe6yEP2ouftD+xLZssF2uY4+RXvKJ
+         2Jjg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
-Date: Wed, 21 Mar 2018 09:25:20 -0600
+Date: Wed, 21 Mar 2018 09:21:03 -0600
 From: Jonathan Corbet <corbet@lwn.net>
 To: Aishwarya Pant <aishpant@gmail.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, "Rafael J. Wysocki"
- <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
- linux-nvdimm@lists.01.org, linux-acpi@vger.kernel.org,
+Cc: Ilya Dryomov <idryomov@gmail.com>, Sage Weil <sage@redhat.com>, Alex
+ Elder <elder@kernel.org>, ceph-devel@vger.kernel.org,
  linux-kernel@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Julia
  Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH v2] acpi: nfit: document sysfs interface
-Message-ID: <20180321092520.43b53f36@lwn.net>
-In-Reply-To: <20180223125448.GA16909@mordor.localdomain>
-References: <20180223125448.GA16909@mordor.localdomain>
+Subject: Re: [PATCH v2] block: rbd: update sysfs interface
+Message-ID: <20180321092103.786a4db8@lwn.net>
+In-Reply-To: <20180223101959.GA4441@mordor.localdomain>
+References: <20180223101959.GA4441@mordor.localdomain>
 Organization: LWN.net
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1593196408980037383?=
-X-GMAIL-MSGID: =?utf-8?q?1595561395460285836?=
+X-GMAIL-THRID: =?utf-8?q?1593186668051125162?=
+X-GMAIL-MSGID: =?utf-8?q?1595561124681457584?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 23 Feb 2018 18:24:48 +0530
+On Fri, 23 Feb 2018 15:49:59 +0530
 Aishwarya Pant <aishpant@gmail.com> wrote:
 
-> This is an attempt to document the nfit sysfs interface. The
-> descriptions have been collected from git commit logs and the ACPI
-> specification 6.2.
+> The existing sysfs interface has been updated to be in the same format
+> as described in Documentation/ABI/README. This will be useful for
+> scripting and tracking changes in the ABI. Attributes have been grouped
+> by functionality and/or the date on which they were added.
+> 
+> There are a couple of more changes:
+> - The attributes have been annotated with file permissions RO/RW/WO.
+> - Added description of the bus attribute supported_features
 
-Applied to the docs tree, thanks.
+I've applied this one to the docs tree, thanks.
 
 jon
