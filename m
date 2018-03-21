@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-716958-1521532230-2-7770605227772477287
+X-Cyrus-Session-Id: sloti22d1t05-3996454-1521638328-2-10840044617925641079
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521532229; b=ARTv7M5EQyB3rbbIcEoBAbtIy9/30gyQOvsMJ+KeYsaV+8+
-    cgAlUCGICMSzz1Sk451Lpps2PKsTFwLy1mUj7bAJCEla6LarIm4fUaHk5GXc+sPZ
-    sUNRMgwnlaIc8gJgjwpSh3oq4ltLCHE8QcNVl9y5m6NA8VkRqDH9H4Epnaa2gw9y
-    6+ntGpVOp0QsynBAXq4buvKu3R+4egH8+eQcPcVvEyb8Fy7lx5DGybF94gVIR+9Y
-    eZ3df+7ydkM51NIIlydG3AhpQ80heW07Z9J03c/3/KbEzlrYhObS6pBP+fTpMCyK
-    0kTuMxPB0bl85XGxTGkTs2d5h7GltxTIoMKzFvw==
+    t=1521638328; b=NmwdfFk1UM5xVHDl/zN51mgHXGcitaFuKUESLLmpBkNy4Qz
+    QocqxGdx0dEbnj1bglV7gyS9SnGJQRRXI/xGDZdDxUouXhaTPnhaL7pZSSFr5TMA
+    FetYMyB35u0hGzCczdsTDtvGrQeOOHKhU/K35sVlzKKFKH/OG49HhH/rbF0hwmZe
+    aJplrnzRidav9HMm2pwwHsQqOQJnw8Z9HdJXX+NXCDJcQkJk8olSrYv0t8okiPAb
+    GeuZZ9InuDVnOnv9DuLzW8rLBrxYTSkibUw1YWOx39rg4bSGKlINUHLMOtZ6iLDJ
+    LbyLkgE5zdeuX3uciXNYqo/ntBkYKX3Kw5J5Mzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521532229; bh=V+TxFC/4kwMVUdfCFRqfp61tzA
-    5hE6/XGWcamELOtow=; b=qEfkKhvqOSfUXXc2HB64bfl/EDDRoq8uspRMUvibUm
-    LVKTP+SI0866/w6Pv3VGmzrTaYmHaiVeCB1ERN068GdMGOZmjt7igF2MaFroRKdV
-    rbkKOwqrzllFYWD8HlCpOWMvCE3bA1RPNmBvKzodCZgVwmw/OeYrZrI/XebW0c22
-    i/hQaWItfnJxaG3M9PMZ47hx/ovqq52xkI6C4pXL7m4ZQdcd36YNtFQvSXE4Icql
-    OtDR4B2RAxav6+h7kvAhrl8fc4KstBZrOtnxe/A7DF8ptBg9qea33bkJpo3jJK4w
-    AN00fyQieGBhD9VTHCkzjUzbqmilCvcZSc1IN6AvK0wQ==
+    :list-id; s=arctest; t=1521638328; bh=s0LoSSgK6yGJzPGWnwNsieZecY
+    eEOJkMXdsmX//euJ0=; b=ZTePDyO7MxtB1ZldaF+H813pB++g2KPxfouKrh8lgB
+    wrp76+ARRa6HpmZ+YcadW9XaKcE8DEMEaP06fhcKmINvrl7kHQNR4eBLdEBn5uH9
+    CxSwLH1lmW4azPREpDNyOI1o/aEL3RWgyVu6ZR0v+DSldHERenGSgYtoFIk2m/Af
+    R9ZHgfbTe47N34Zl4wEuoScEreIcNZEYnj/FkN/YdcwvSPNmI/29E8hUaXh8Ykya
+    GEWgGzyzcEaoduGIsYr0ek3YjHT3MYe/c6n4XfI5bluHCU52uuhqeD0lsCAZKYve
+    BJ0EkDEPQo+j+YG/kKnpArX856PHrpyZBcOO/wcGfmlg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,13 +50,13 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeCTHu0 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 20 Mar 2018 03:50:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40492 "EHLO
+        id S1751657AbeCUNSp (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 09:18:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37900 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751826AbeCTHuO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 20 Mar 2018 03:50:14 -0400
-Date: Tue, 20 Mar 2018 08:50:12 +0100
+        with ESMTP id S1751597AbeCUNSp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Mar 2018 09:18:45 -0400
+Date: Wed, 21 Mar 2018 14:18:43 +0100
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
@@ -64,12 +64,13 @@ Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
 Subject: Re: [PATCH 4.4 000/134] 4.4.123-stable review
-Message-ID: <20180320075012.GB10034@kroah.com>
+Message-ID: <20180321131843.GA27151@kroah.com>
 References: <20180319171849.024066323@linuxfoundation.org>
+ <20180320075012.GB10034@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180319171849.024066323@linuxfoundation.org>
+In-Reply-To: <20180320075012.GB10034@kroah.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -77,20 +78,26 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 07:04:43PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.123 release.
-> There are 134 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Mar 20, 2018 at 08:50:12AM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Mar 19, 2018 at 07:04:43PM +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.4.123 release.
+> > There are 134 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Mar 21 17:18:04 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.123-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> > and the diffstat can be found below.
 > 
-> Responses should be made by Wed Mar 21 17:18:04 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.123-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
+> -rc2 is out to fix a build error that was in -rc1:
+>  	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.123-rc2.gz
 
--rc2 is out to fix a build error that was in -rc1:
- 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.123-rc2.gz
+And now -rc3 is out to hopefully resolve the last of the reported
+problems:
+
+  	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.123-rc3.gz
