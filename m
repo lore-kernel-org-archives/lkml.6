@@ -1,58 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751721AbeCUKBa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 06:01:30 -0400
-Received: from vegas.theobroma-systems.com ([144.76.126.164]:45021 "EHLO
-        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751459AbeCUKB1 (ORCPT
+        id S1751877AbeCUKGM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 06:06:12 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38723 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751545AbeCUKGJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 06:01:27 -0400
-Subject: Re: [bug, bisected] pfifo_fast causes packet reordering
-From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-To: John Fastabend <john.fastabend@gmail.com>,
-        Dave Taht <dave.taht@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        Martin Elshuber <martin.elshuber@theobroma-systems.com>
-References: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com>
- <CAA93jw5FSbvg8AZ=EmneW8juqd8LCgp=xUrSxYm2GBEucKkT3w@mail.gmail.com>
- <95844480-d020-9000-53ef-0da8b965ce6e@gmail.com>
- <3a959e50-8656-5d9c-97b9-227d733948f8@theobroma-systems.com>
- <5aeb54ba-2d96-4ab5-53c4-2d3691be7acc@gmail.com>
- <340a6c54-6031-5522-98f5-eafdd3a37a38@theobroma-systems.com>
-Message-ID: <00cc2d41-6861-9a9c-603f-ba8013b2e2ce@theobroma-systems.com>
-Date: Wed, 21 Mar 2018 11:01:17 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.6.0
+        Wed, 21 Mar 2018 06:06:09 -0400
+X-Google-Smtp-Source: AG47ELs3N80U4lI4NmlxevMf4cARnPp960WgOA/0bHoSFEUbDuD1Fa3aikuNkiudv7fW/NCPwtxJDQ==
+Subject: Re: [PATCH 08/12] lightnvm: implement get log report chunk helpers
+Cc: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Sagi Grimberg <sagi@grimberg.me>
+References: <1520004080-27760-1-git-send-email-javier@cnexlabs.com>
+ <1520004080-27760-9-git-send-email-javier@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <8a0a3bad-26a4-ca2f-4bd8-5c71858f6d00@lightnvm.io>
+Date: Wed, 21 Mar 2018 11:06:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <340a6c54-6031-5522-98f5-eafdd3a37a38@theobroma-systems.com>
+In-Reply-To: <1520004080-27760-9-git-send-email-javier@cnexlabs.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.03.18 11:26, Jakob Unterwurzacher wrote:
-> On 15.03.18 23:30, John Fastabend wrote:
->>> I have reproduced it using two USB network cards connected to each 
->>> other. The test tool sends UDP packets containing a counter and 
->>> listens on the other interface, it is available at
->>> https://github.com/jakob-tsd/pfifo_stress/blob/master/pfifo_stress.py
->>
->> Great thanks, can you also run this with taskset to bind to
->> a single CPU,
->>
->>   # taskset 0x1 ./pifof_stress.py
->>
->> And let me know if you still see the OOO.
+On 03/02/2018 04:21 PM, Javier González wrote:
+> The 2.0 spec provides a report chunk log page that can be retrieved
+> using the stangard nvme get log page. This replaces the dedicated
+> get/put bad block table in 1.2.
 > 
-> Interesting. Looks like it depends on which core it runs on. CPU0 is 
-> clean, CPU1 is not.
+> This patch implements the helper functions to allow targets retrieve the
+> chunk metadata using get log page. It makes nvme_get_log_ext available
+> outside of nvme core so that we can use it form lightnvm.
+> 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/lightnvm/core.c      | 11 +++++++
+>   drivers/nvme/host/core.c     |  6 ++--
+>   drivers/nvme/host/lightnvm.c | 74 ++++++++++++++++++++++++++++++++++++++++++++
+>   drivers/nvme/host/nvme.h     |  3 ++
+>   include/linux/lightnvm.h     | 24 ++++++++++++++
+>   5 files changed, 115 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index 2e9e9f973a75..af642ce6ba69 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -2127,9 +2127,9 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+>   	return ret;
+>   }
+>   
+> -static int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+> -			    u8 log_page, void *log,
+> -			    size_t size, size_t offset)
+> +int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+> +		     u8 log_page, void *log,
+> +		     size_t size, size_t offset)
+>   {
+>   	struct nvme_command c = { };
+>   	unsigned long dwlen = size / 4 - 1;
+> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+> index 08f0f6b5bc06..ffd64a83c8c3 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
+>   	nvme_nvm_admin_set_bb_tbl	= 0xf1,
+>   };
+>   
 
-So we are at v4.16-rc6 now - have you managed to reproduce this is or 
-should I try to get the revert correct?
+<snip>
 
-Best regards,
-Jakob
+>   
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index 1ca08f4993ba..505f797f8c6c 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -396,6 +396,9 @@ int nvme_reset_ctrl(struct nvme_ctrl *ctrl);
+>   int nvme_delete_ctrl(struct nvme_ctrl *ctrl);
+>   int nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
+>   
+> +int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
+> +		     u8 log_page, void *log, size_t size, size_t offset);
+> +
+>   extern const struct attribute_group nvme_ns_id_attr_group;
+>   extern const struct block_device_operations nvme_ns_head_ops;
+>   
+
+
+Keith, Christoph, Sagi, Is it okay that these two changes that exposes 
+the nvme_get_log_ext fn are carried through Jens' tree after the nvme 
+tree for 4.17 has been pulled?
