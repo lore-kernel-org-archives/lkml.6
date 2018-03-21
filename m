@@ -1,46 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751929AbeCUJIr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 05:08:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44634 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeCUJIp (ORCPT
+        id S1751790AbeCUJKs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 05:10:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33908 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751586AbeCUJKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 05:08:45 -0400
-Date: Wed, 21 Mar 2018 10:08:26 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, corbet@lwn.net,
-        rjw@rjwysocki.net, lenb@kernel.org, hpa@zytor.com
-Subject: Re: [PATCH 1/5] x86/smpboot: Add the missing description of
- possible_cpus
-Message-ID: <20180321090826.GW4043@hirez.programming.kicks-ass.net>
-References: <20180320110432.28127-1-douly.fnst@cn.fujitsu.com>
- <20180320110432.28127-2-douly.fnst@cn.fujitsu.com>
- <20180320123712.GR4043@hirez.programming.kicks-ass.net>
- <f64cb207-3851-9a26-2001-653fc0068540@cn.fujitsu.com>
+        Wed, 21 Mar 2018 05:10:44 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f64cb207-3851-9a26-2001-653fc0068540@cn.fujitsu.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 21 Mar 2018 14:40:43 +0530
+From: sricharan@codeaurora.org
+To: Richard Cochran <richardcochran@gmail.com>
+Cc: mark.rutland@arm.com, robh@kernel.org, devicetree@vger.kernel.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux@armlinux.org.uk, bjorn.andersson@linaro.org,
+        david.brown@linaro.org, absahu@codeaurora.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        andy.gross@linaro.org, linux-soc@vger.kernel.org, sboyd@codeaurora.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 04/13] ARM: dts: ipq4019: Update ipq4019-dk01.1 board
+ data
+In-Reply-To: <20180320143131.4eenixtbhciq5fwc@localhost>
+References: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
+ <1521518336-5467-5-git-send-email-sricharan@codeaurora.org>
+ <20180320143131.4eenixtbhciq5fwc@localhost>
+Message-ID: <78806c70c85e3cecaadfc94b173cb139@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 01:33:24PM +0800, Dou Liyang wrote:
-> How about:
+On 2018-03-20 20:01, Richard Cochran wrote:
+> On Tue, Mar 20, 2018 at 09:28:47AM +0530, Sricharan R wrote:
+>> Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+>> Adds missing memory, reserved-memory nodes.
+>> 
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi | 28 
+>> +++++++++++++++++++++++++++
 > 
-> possible_cpus=	[s390,x86_64] Set the number of possible CPUs which
-> 		are determined by the ACPI tables MADT or mptables by
-> 		default. possible_cpus=n : n >= 1 enforces the possible
-> 		number to be 'n'.
-> 		While nr_cpus is also be set: nr_cpus=m, choice the
-> 		minimum one for the number of possible CPUs.
+> Q: Does mainline Linux even boot on the DK?
+> 
+> A: No, it doesn't.
 
-So what is the exact difference between possible_cpus and nr_cpus ? I
-konw maxcpus= limits the number of CPUs we bring up, and possible_cpus
-limits the possible_map, but I'm not entirely sure what nr_cpus does
-here.
+  Yes, i saw that it was booting out of mainline.
+  Both DK01 and DK04 boards boots out of mainline.
+
+cat /proc/version
+Linux version 4.16.0-rc6 (srichara@srichara-linux) (gcc version 6.3.1 
+20170109 (Linaro GCC 6.3-2017.02)) #1677 SMP PREEMPT Wed Mar 21 12:58:14 
+IST 2018
+
+  If it does not boot for you, then can you check if your bootloader is 
+passing this bootarg ?
+
+     bootargs=console=ttyMSM0,115200n8
+
+   This is the only one required from bootloader to boot.
+   That said, there should have been a default 'chosen' node in DTS
+   for the serial console atleast which is not there today. I will add 
+this
+   in my v4 along with other changes.
+
+Regards,
+  Sricharan
+
+> 
+> Please add the missing basic board support before hacking random stuff
+> into the DTS.
+> 
