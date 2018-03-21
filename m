@@ -1,104 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753619AbeCUT2C (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 15:28:02 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44268 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753490AbeCUT15 (ORCPT
+        id S1753625AbeCUT2V (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 15:28:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56438 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753470AbeCUTYr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 15:27:57 -0400
-X-Google-Smtp-Source: AG47ELsYU2ex6iY/ya8wbsOoRMhrA9MDDBE9+/JcAIvjmOfp+wm2SxkYLlrRdgbensW23YCDmRNvdw==
-Subject: Re: [PATCH 08/12] lightnvm: implement get log report chunk helpers
-To: Keith Busch <keith.busch@intel.com>
-Cc: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Sagi Grimberg <sagi@grimberg.me>
-References: <1520004080-27760-1-git-send-email-javier@cnexlabs.com>
- <1520004080-27760-9-git-send-email-javier@cnexlabs.com>
- <8a0a3bad-26a4-ca2f-4bd8-5c71858f6d00@lightnvm.io>
- <20180321143617.GD12909@localhost.localdomain>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <67b77f5d-fa35-1199-10c5-12fb8a324a64@lightnvm.io>
-Date: Wed, 21 Mar 2018 20:27:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <20180321143617.GD12909@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        Wed, 21 Mar 2018 15:24:47 -0400
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH 23/32] docs/vm: split_page_table_lock: convert to ReST format
+Date: Wed, 21 Mar 2018 21:22:39 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18032119-0040-0000-0000-00000425821B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032119-0041-0000-0000-00002628877D
+Message-Id: <1521660168-14372-24-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803210221
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/21/2018 03:36 PM, Keith Busch wrote:
-> On Wed, Mar 21, 2018 at 03:06:05AM -0700, Matias Bjørling wrote:
->>> outside of nvme core so that we can use it form lightnvm.
->>>
->>> Signed-off-by: Javier González <javier@cnexlabs.com>
->>> ---
->>>    drivers/lightnvm/core.c      | 11 +++++++
->>>    drivers/nvme/host/core.c     |  6 ++--
->>>    drivers/nvme/host/lightnvm.c | 74 ++++++++++++++++++++++++++++++++++++++++++++
->>>    drivers/nvme/host/nvme.h     |  3 ++
->>>    include/linux/lightnvm.h     | 24 ++++++++++++++
->>>    5 files changed, 115 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
->>> index 2e9e9f973a75..af642ce6ba69 100644
->>> --- a/drivers/nvme/host/core.c
->>> +++ b/drivers/nvme/host/core.c
->>> @@ -2127,9 +2127,9 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
->>>    	return ret;
->>>    }
->>>    
->>> -static int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
->>> -			    u8 log_page, void *log,
->>> -			    size_t size, size_t offset)
->>> +int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
->>> +		     u8 log_page, void *log,
->>> +		     size_t size, size_t offset)
->>>    {
->>>    	struct nvme_command c = { };
->>>    	unsigned long dwlen = size / 4 - 1;
->>> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
->>> index 08f0f6b5bc06..ffd64a83c8c3 100644
->>> --- a/drivers/nvme/host/lightnvm.c
->>> +++ b/drivers/nvme/host/lightnvm.c
->>> @@ -35,6 +35,10 @@ enum nvme_nvm_admin_opcode {
->>>    	nvme_nvm_admin_set_bb_tbl	= 0xf1,
->>>    };
->>>    
->>
->> <snip>
->>
->>>    
->>> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
->>> index 1ca08f4993ba..505f797f8c6c 100644
->>> --- a/drivers/nvme/host/nvme.h
->>> +++ b/drivers/nvme/host/nvme.h
->>> @@ -396,6 +396,9 @@ int nvme_reset_ctrl(struct nvme_ctrl *ctrl);
->>>    int nvme_delete_ctrl(struct nvme_ctrl *ctrl);
->>>    int nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
->>>    
->>> +int nvme_get_log_ext(struct nvme_ctrl *ctrl, struct nvme_ns *ns,
->>> +		     u8 log_page, void *log, size_t size, size_t offset);
->>> +
->>>    extern const struct attribute_group nvme_ns_id_attr_group;
->>>    extern const struct block_device_operations nvme_ns_head_ops;
->>>    
->>
->>
->> Keith, Christoph, Sagi, Is it okay that these two changes that exposes
->> the nvme_get_log_ext fn are carried through Jens' tree after the nvme
->> tree for 4.17 has been pulled?
-> 
-> That's okay with me. Alteratively, if you want to split the generic nvme
-> part out, I can apply that immediately and the API will be in the first
-> nvme-4.17 pull request.
-> 
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ Documentation/vm/split_page_table_lock | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-Will do. I've sent the patch in another mail. Thanks! :)
+diff --git a/Documentation/vm/split_page_table_lock b/Documentation/vm/split_page_table_lock
+index 62842a8..889b00b 100644
+--- a/Documentation/vm/split_page_table_lock
++++ b/Documentation/vm/split_page_table_lock
+@@ -1,3 +1,6 @@
++.. _split_page_table_lock:
++
++=====================
+ Split page table lock
+ =====================
+ 
+@@ -11,6 +14,7 @@ access to the table. At the moment we use split lock for PTE and PMD
+ tables. Access to higher level tables protected by mm->page_table_lock.
+ 
+ There are helpers to lock/unlock a table and other accessor functions:
++
+  - pte_offset_map_lock()
+ 	maps pte and takes PTE table lock, returns pointer to the taken
+ 	lock;
+@@ -34,12 +38,13 @@ Split page table lock for PMD tables is enabled, if it's enabled for PTE
+ tables and the architecture supports it (see below).
+ 
+ Hugetlb and split page table lock
+----------------------------------
++=================================
+ 
+ Hugetlb can support several page sizes. We use split lock only for PMD
+ level, but not for PUD.
+ 
+ Hugetlb-specific helpers:
++
+  - huge_pte_lock()
+ 	takes pmd split lock for PMD_SIZE page, mm->page_table_lock
+ 	otherwise;
+@@ -47,7 +52,7 @@ Hugetlb-specific helpers:
+ 	returns pointer to table lock;
+ 
+ Support of split page table lock by an architecture
+----------------------------------------------------
++===================================================
+ 
+ There's no need in special enabling of PTE split page table lock:
+ everything required is done by pgtable_page_ctor() and pgtable_page_dtor(),
+@@ -73,7 +78,7 @@ NOTE: pgtable_page_ctor() and pgtable_pmd_page_ctor() can fail -- it must
+ be handled properly.
+ 
+ page->ptl
+----------
++=========
+ 
+ page->ptl is used to access split page table lock, where 'page' is struct
+ page of page containing the table. It shares storage with page->private
+@@ -81,6 +86,7 @@ page of page containing the table. It shares storage with page->private
+ 
+ To avoid increasing size of struct page and have best performance, we use a
+ trick:
++
+  - if spinlock_t fits into long, we use page->ptr as spinlock, so we
+    can avoid indirect access and save a cache line.
+  - if size of spinlock_t is bigger then size of long, we use page->ptl as
+-- 
+2.7.4
