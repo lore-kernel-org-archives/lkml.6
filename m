@@ -1,93 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751961AbeCUKc7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 06:32:59 -0400
-Received: from smtprelay0061.hostedemail.com ([216.40.44.61]:38906 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751464AbeCUKc5 (ORCPT
+        id S1751671AbeCUKfF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 06:35:05 -0400
+Received: from smtp-out4.electric.net ([192.162.216.184]:51143 "EHLO
+        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751464AbeCUKfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 06:32:57 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:800:960:968:973:988:989:1260:1345:1437:1534:1542:1711:1730:1747:1777:1792:1981:2194:2198:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3353:3865:3867:3868:4250:4321:4419:4605:5007:6261:8603:9165:9592:10004:10848:11026:11473:11657:11658:11914:12043:12048:12296:12438:12555:12895:14096:14181:14394:14721:21080:21451:21627:30003:30054,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: tin01_3693de274ce2e
-X-Filterd-Recvd-Size: 3408
-From: Joe Perches <joe@perches.com>
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>,
-        Jiri Slaby <jirislaby@gmail.com>,
-        Nick Kossifidis <mickflemm@gmail.com>,
-        QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ath: Remove unnecessary ath_bcast_mac and use eth_broadcast_addr
-Date: Wed, 21 Mar 2018 03:32:52 -0700
-Message-Id: <3ed8112986ba6f538cb45df6ea67e0c027a3dc12.1521628278.git.joe@perches.com>
-X-Mailer: git-send-email 2.15.0
+        Wed, 21 Mar 2018 06:35:04 -0400
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'Uecker, Martin'" <Martin.Uecker@med.uni-goettingen.de>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: detecting integer constant expressions in macros
+Thread-Topic: detecting integer constant expressions in macros
+Thread-Index: AQHTwJiwGR/EgJUmakKV29wYTwhXcaPZrsMAgAARXwCAAAWUAIAAnNEAgAAIcgCAABNMwA==
+Date: Wed, 21 Mar 2018 10:35:58 +0000
+Message-ID: <a930db420e404d15a6c4435ac182911a@AcuMS.aculab.com>
+References: <1521584015.31174.3.camel@med.uni-goettingen.de>
+         <CA+55aFyRgq7hbmxK9471xY-eja4X=gKHSjF4Q+a0FJjxVB1TYQ@mail.gmail.com>
+         <1521591040.508.2.camel@med.uni-goettingen.de>
+         <CA+55aFyfW7kA_72vNifyxBV7gc_fkKjVC3j1WBJzx1R3GpApOQ@mail.gmail.com>
+         <1521625914.3034.1.camel@med.uni-goettingen.de>
+ <1521627728.3354.1.camel@med.uni-goettingen.de>
+In-Reply-To: <1521627728.3354.1.camel@med.uni-goettingen.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2LAZD2K029413
 
-Remove the static array and use the generic routine to set the
-Ethernet broadcast address.
+From: Uecker, Martin
+> Sent: 21 March 2018 10:22
+> Am Mittwoch, den 21.03.2018, 10:51 +0100 schrieb Martin Uecker:
+> >
+> > Am Dienstag, den 20.03.2018, 17:30 -0700 schrieb Linus Torvalds:
+> > > On Tue, Mar 20, 2018 at 5:10 PM, Uecker, Martin
+> > > <Martin.Uecker@med.uni-goettingen.de> wrote:
+> > >
+> > > > But one could also use __builtin_types_compatible_p instead.
+> > >
+> > > That might be the right approach, even if I like how it only used
+> > > standard C (although _disgusting_ standard C) without it apart from
+> > > the small issue of sizeof(void)
+> > >
+> > > So something like
+> > >
+> > >   #define __is_constant(a) \
+> > >         __builtin_types_compatible_p(int *, typeof(1 ? ((void*)((a) * 0l)) : (int*)1 ) )
+> > >
+> > > if I counted the parentheses right..
+> >
+> > This seems to work fine on all recent compilers. Sadly, it
+> > produces false positives on 4.4.7 and earlier when
+> > tested on godbolt.org
+> >
+> > Surprisingly, the MAX macro as defined below still seems
+> > to do the right thing with respect to avoiding the VLA
+> > even on the old compilers.
+> >
+> > I am probably missing something... or there are two
+> > compiler bugs cancelling out, or the __builting_choose_expr
+> > changes things.
+> 
+> Nevermind, of course it avoids the VLA if it produces a false
+> positive and uses the simple version. So it is unsafe to use
+> on very old compilers.
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- drivers/net/wireless/ath/ath.h                | 2 --
- drivers/net/wireless/ath/ath5k/attach.c       | 2 +-
- drivers/net/wireless/ath/ath9k/htc_drv_init.c | 2 +-
- drivers/net/wireless/ath/ath9k/init.c         | 2 +-
- 4 files changed, 3 insertions(+), 5 deletions(-)
+False positives with old compilers don't matter when max() is being used
+for an on-stack array.
+The compilations with a new compiler will detect real VLA, the old compiler
+will generate valid code with a constant sized VLA.
 
-diff --git a/drivers/net/wireless/ath/ath.h b/drivers/net/wireless/ath/ath.h
-index f3f2784f6ebd..7a364eca46d6 100644
---- a/drivers/net/wireless/ath/ath.h
-+++ b/drivers/net/wireless/ath/ath.h
-@@ -33,8 +33,6 @@
-  */
- #define	ATH_KEYMAX	        128     /* max key cache size we handle */
- 
--static const u8 ath_bcast_mac[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
--
- struct ath_ani {
- 	bool caldone;
- 	unsigned int longcal_timer;
-diff --git a/drivers/net/wireless/ath/ath5k/attach.c b/drivers/net/wireless/ath/ath5k/attach.c
-index 233054bd6b52..12d3a6c92ba4 100644
---- a/drivers/net/wireless/ath/ath5k/attach.c
-+++ b/drivers/net/wireless/ath/ath5k/attach.c
-@@ -327,7 +327,7 @@ int ath5k_hw_init(struct ath5k_hw *ah)
- 	ath5k_hw_set_lladdr(ah, zero_mac);
- 
- 	/* Set BSSID to bcast address: ff:ff:ff:ff:ff:ff for now */
--	memcpy(common->curbssid, ath_bcast_mac, ETH_ALEN);
-+	eth_broadcast_addr(common->curbssid);
- 	ath5k_hw_set_bssid(ah);
- 	ath5k_hw_set_opmode(ah, ah->opmode);
- 
-diff --git a/drivers/net/wireless/ath/ath9k/htc_drv_init.c b/drivers/net/wireless/ath/ath9k/htc_drv_init.c
-index e89e5ef2c2a4..bf36bb2821b4 100644
---- a/drivers/net/wireless/ath/ath9k/htc_drv_init.c
-+++ b/drivers/net/wireless/ath/ath9k/htc_drv_init.c
-@@ -591,7 +591,7 @@ static void ath9k_init_misc(struct ath9k_htc_priv *priv)
- {
- 	struct ath_common *common = ath9k_hw_common(priv->ah);
- 
--	memcpy(common->bssidmask, ath_bcast_mac, ETH_ALEN);
-+	eth_broadcast_addr(common->bssidmask);
- 
- 	common->last_rssi = ATH_RSSI_DUMMY_MARKER;
- 	priv->ah->opmode = NL80211_IFTYPE_STATION;
-diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wireless/ath/ath9k/init.c
-index e479fae5aab9..748becee3ecf 100644
---- a/drivers/net/wireless/ath/ath9k/init.c
-+++ b/drivers/net/wireless/ath/ath9k/init.c
-@@ -427,7 +427,7 @@ static void ath9k_init_misc(struct ath_softc *sc)
- 	timer_setup(&common->ani.timer, ath_ani_calibrate, 0);
- 
- 	common->last_rssi = ATH_RSSI_DUMMY_MARKER;
--	memcpy(common->bssidmask, ath_bcast_mac, ETH_ALEN);
-+	eth_broadcast_addr(common->bssidmask);
- 	sc->beacon.slottime = 9;
- 
- 	for (i = 0; i < ARRAY_SIZE(sc->beacon.bslot); i++)
--- 
-2.15.0
+OTOH these horrid:
+	long buf[max(sizeof (struct foo), sizeof (struct bar)) + 7 / 8];
+would be better replaced with:
+	union buf { struct foo foo; struct bar bar; };
+
+	David
