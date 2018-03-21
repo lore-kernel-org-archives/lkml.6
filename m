@@ -1,69 +1,291 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752006AbeCUCnW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:43:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53642 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751833AbeCUCnV (ORCPT
+        id S1752096AbeCUCne (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:43:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58324 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751833AbeCUCn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 22:43:21 -0400
-Date: Wed, 21 Mar 2018 10:43:11 +0800
-From: Mark Brown <broonie@kernel.org>
-To: David Collins <collinsd@codeaurora.org>
-Cc: lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rnayak@codeaurora.org, sboyd@kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: regulator: add QCOM RPMh regulator
- bindings
-Message-ID: <20180321024311.GW2186@sirena.org.uk>
-References: <cover.1521246069.git.collinsd@codeaurora.org>
- <b718873e5ad53a2e8df6a5103828a4c04881d564.1521246069.git.collinsd@codeaurora.org>
+        Tue, 20 Mar 2018 22:43:29 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rK7ir9GIO0YQrgt+"
-Content-Disposition: inline
-In-Reply-To: <b718873e5ad53a2e8df6a5103828a4c04881d564.1521246069.git.collinsd@codeaurora.org>
-X-Cookie: Am I SHOPLIFTING?
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 21 Mar 2018 10:42:56 +0800
+From: cang@codeaurora.org
+To: subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        vivek.gautam@codeaurora.org, mgautam@codeaurora.org, kishon@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] phy: Add QMP phy based UFS phy support for sdm845
+In-Reply-To: <20180320113051.14444-2-cang@codeaurora.org>
+References: <20180320113051.14444-1-cang@codeaurora.org>
+ <20180320113051.14444-2-cang@codeaurora.org>
+Message-ID: <ab5d13f9a544d9f68a7e666d825f7a99@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---rK7ir9GIO0YQrgt+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Mar 16, 2018 at 06:09:11PM -0700, David Collins wrote:
-> Introduce bindings for RPMh regulator devices found on some
-> Qualcomm Technlogies, Inc. SoCs.  These devices allow a given
-
-Please use subject lines matching the style for the subsystem.  This
-makes it easier for people to identify relevant patches.
-
-> +=========================================
-> +Second Level Nodes - Regulators
-> +=========================================
+On 2018-03-20 19:30, Can Guo wrote:
+> Add UFS PHY support to make SDM845 UFS work with common PHY framework.
+> 
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp.c | 120 
+> +++++++++++++++++++++++++++++++++++-
+>  drivers/phy/qualcomm/phy-qcom-qmp.h |   8 +++
+>  2 files changed, 126 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c
+> b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> index 6470c5d..aeb2377 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> @@ -156,6 +156,11 @@ enum qphy_reg_layout {
+>  	[QPHY_PCS_LFPS_RXTERM_IRQ_STATUS] = 0x170,
+>  };
+> 
+> +static const unsigned int sdm845_ufsphy_regs_layout[] = {
+> +	[QPHY_START_CTRL]		= 0x00,
+> +	[QPHY_PCS_READY_STATUS]		= 0x168,
+> +};
 > +
-> +- regulator-name
-
-This document appears to be reproducing the standard regulator bindings;
-there is no need to do that, just reference them.
-
---rK7ir9GIO0YQrgt+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqxxr4ACgkQJNaLcl1U
-h9DLiQf/Q8ERePDXGrWJlqwYQG9rsHnVP1PRk0PKR9znv+BLDavwr6/eTzv07Bpg
-q/b3baaG5X1X2tgGHSf8mBvMTjYb0di2kkHrt3JqWOFuzBOZXmvfN4+puzFlKNH6
-urygn7u3wn9KNpavzNpdrhVVDyn5JMujEU0O7i1ob6vZcnLvqatF/QGb9x835igR
-LGeakmDERXCEE6ZelPLQeXqfvpTIXL8/6szJHSLMNLjdLzClfOuf8+wlc4Sa8l1E
-rxrUFczZe/1qx5en6BqOomthCF6vmTTODsTKwFvtaQTZzA1q/ZP75S2AM/7y07vk
-wGgEKIqv/cc4pm0ysYgrMrWq4bLw8g==
-=nBpg
------END PGP SIGNATURE-----
-
---rK7ir9GIO0YQrgt+--
+>  static const struct qmp_phy_init_tbl msm8996_pcie_serdes_tbl[] = {
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x1c),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_ENABLE1, 0x10),
+> @@ -490,6 +495,74 @@ enum qphy_reg_layout {
+>  	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
+>  };
+> 
+> +static const struct qmp_phy_init_tbl sdm845_ufsphy_serdes_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYS_CLK_CTRL, 0x02),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_BG_TIMER, 0x0a),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_IVCO, 0x0f),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CMN_CONFIG, 0x06),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYSCLK_EN_SEL, 0xd5),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_RESETSM_CNTRL, 0x20),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CLK_SELECT, 0x30),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_HSCLK_SEL, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP_EN, 0x01),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_CTRL, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CORE_CLK_EN, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SVS_MODE_CLK_SEL, 0x05),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_INITVAL1, 0xff),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_INITVAL2, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE0, 0x82),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE0, 0x06),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE0, 0x16),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE0, 0x36),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE0, 0x3f),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE0, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE0, 0xda),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE0, 0x01),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE0, 0xff),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE0, 0x0c),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE1, 0x98),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE1, 0x06),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE1, 0x16),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE1, 0x36),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE1, 0x3f),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE1, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE1, 0xc1),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE1, 0x00),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE1, 0x32),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE1, 0x0f),
+> +
+> +	/* Rate B */
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x44),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl sdm845_ufsphy_tx_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_LANE_MODE_1, 0x06),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl sdm845_ufsphy_rx_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_LVL, 0x24),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_CNTRL, 0x0f),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_DEGLITCH_CNTRL, 0x1e),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_INTERFACE_MODE, 0x40),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_TERM_BW, 0x5b),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2, 0x06),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL3, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL4, 0x1d),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN_HALF, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN_QUARTER, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE, 0x4b),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_PI_CONTROLS, 0x81),
+> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW, 0x80),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl sdm845_ufsphy_pcs_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QPHY_V3_PCS_POWER_DOWN_CONTROL, 0x01),
+> +	QMP_PHY_INIT_CFG(QPHY_V3_PCS_MULTI_LANE_CTRL1, 0x02),
+> +};
+> +
+>  /* struct qmp_phy_cfg - per-PHY initialization config */
+>  struct qmp_phy_cfg {
+>  	/* phy-type - PCIE/UFS/USB */
+> @@ -540,6 +613,9 @@ struct qmp_phy_cfg {
+>  	/* Register offset of secondary tx/rx lanes for USB DP combo PHY */
+>  	unsigned int tx_b_lane_offset;
+>  	unsigned int rx_b_lane_offset;
+> +
+> +	/* true, if PCS block has a separate SW_RESET register */
+> +	bool has_sw_rst;
+>  };
+> 
+>  /**
+> @@ -636,6 +712,10 @@ static inline void qphy_clrbits(void __iomem
+> *base, u32 offset, u32 val)
+>  	"aux", "cfg_ahb", "ref", "com_aux",
+>  };
+> 
+> +static const char * const sdm845_ufs_phy_clk_l[] = {
+> +	"ref_clk", "ref_aux_clk",
+> +};
+> +
+>  /* list of resets */
+>  static const char * const msm8996_pciephy_reset_l[] = {
+>  	"phy", "common", "cfg",
+> @@ -650,6 +730,10 @@ static inline void qphy_clrbits(void __iomem
+> *base, u32 offset, u32 val)
+>  	"vdda-phy", "vdda-pll",
+>  };
+> 
+> +static const char * const sdm845_phy_vreg_l[] = {
+> +	"vdda-phy", "vdda-pll",
+> +};
+> +
+>  static const struct qmp_phy_cfg msm8996_pciephy_cfg = {
+>  	.type			= PHY_TYPE_PCIE,
+>  	.nlanes			= 3,
+> @@ -679,6 +763,7 @@ static inline void qphy_clrbits(void __iomem
+> *base, u32 offset, u32 val)
+>  	.has_pwrdn_delay	= true,
+>  	.pwrdn_delay_min	= POWER_DOWN_DELAY_US_MIN,
+>  	.pwrdn_delay_max	= POWER_DOWN_DELAY_US_MAX,
+> +	.has_sw_rst		= true,
+>  };
+> 
+>  static const struct qmp_phy_cfg msm8996_usb3phy_cfg = {
+> @@ -704,6 +789,7 @@ static inline void qphy_clrbits(void __iomem
+> *base, u32 offset, u32 val)
+>  	.start_ctrl		= SERDES_START | PCS_START,
+>  	.pwrdn_ctrl		= SW_PWRDN,
+>  	.mask_pcs_ready		= PHYSTATUS,
+> +	.has_sw_rst		= true,
+>  };
+> 
+>  /* list of resets */
+> @@ -740,6 +826,7 @@ static inline void qphy_clrbits(void __iomem
+> *base, u32 offset, u32 val)
+>  	.has_pwrdn_delay	= true,
+>  	.pwrdn_delay_min	= 995,		/* us */
+>  	.pwrdn_delay_max	= 1005,		/* us */
+> +	.has_sw_rst		= true,
+>  };
+> 
+>  static const struct qmp_phy_cfg qmp_v3_usb3phy_cfg = {
+> @@ -772,6 +859,30 @@ static inline void qphy_clrbits(void __iomem
+> *base, u32 offset, u32 val)
+>  	.has_phy_dp_com_ctrl	= true,
+>  	.tx_b_lane_offset	= 0x400,
+>  	.rx_b_lane_offset	= 0x400,
+> +	.has_sw_rst		= true,
+> +};
+> +
+> +static const struct qmp_phy_cfg sdm845_ufsphy_cfg = {
+> +	.type			= PHY_TYPE_UFS,
+> +	.nlanes			= 2,
+> +
+> +	.serdes_tbl		= sdm845_ufsphy_serdes_tbl,
+> +	.serdes_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_serdes_tbl),
+> +	.tx_tbl			= sdm845_ufsphy_tx_tbl,
+> +	.tx_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_tx_tbl),
+> +	.rx_tbl			= sdm845_ufsphy_rx_tbl,
+> +	.rx_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_rx_tbl),
+> +	.pcs_tbl		= sdm845_ufsphy_pcs_tbl,
+> +	.pcs_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_pcs_tbl),
+> +	.clk_list		= sdm845_ufs_phy_clk_l,
+> +	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
+> +	.vreg_list		= sdm845_phy_vreg_l,
+> +	.num_vregs		= ARRAY_SIZE(sdm845_phy_vreg_l),
+> +	.regs			= sdm845_ufsphy_regs_layout,
+> +
+> +	.start_ctrl		= SERDES_START,
+> +	.pwrdn_ctrl		= SW_PWRDN,
+> +	.mask_pcs_ready		= PCS_READY,
+>  };
+> 
+>  static void qcom_qmp_phy_configure(void __iomem *base,
+> @@ -998,7 +1109,8 @@ static int qcom_qmp_phy_init(struct phy *phy)
+>  		usleep_range(cfg->pwrdn_delay_min, cfg->pwrdn_delay_max);
+> 
+>  	/* Pull PHY out of reset state */
+> -	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+> +	if (cfg->has_sw_rst)
+> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>  	if (cfg->has_phy_dp_com_ctrl)
+>  		qphy_clrbits(dp_com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
+> 
+> @@ -1036,7 +1148,8 @@ static int qcom_qmp_phy_exit(struct phy *phy)
+>  	clk_disable_unprepare(qphy->pipe_clk);
+> 
+>  	/* PHY reset */
+> -	qphy_setbits(qphy->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+> +	if (cfg->has_sw_rst)
+> +		qphy_setbits(qphy->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+> 
+>  	/* stop SerDes and Phy-Coding-Sublayer */
+>  	qphy_clrbits(qphy->pcs, cfg->regs[QPHY_START_CTRL], cfg->start_ctrl);
+> @@ -1383,6 +1496,9 @@ int qcom_qmp_phy_create(struct device *dev,
+> struct device_node *np, int id)
+>  	}, {
+>  		.compatible = "qcom,qmp-v3-usb3-phy",
+>  		.data = &qmp_v3_usb3phy_cfg,
+> +	}, {
+> +		.compatible = "qcom,sdm845-qmp-ufs-phy",
+> +		.data = &sdm845_ufsphy_cfg,
+>  	},
+>  	{ },
+>  };
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.h
+> b/drivers/phy/qualcomm/phy-qcom-qmp.h
+> index d1c6905..ea4b4dc 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp.h
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.h
+> @@ -184,6 +184,8 @@
+>  #define QSERDES_V3_COM_VCO_TUNE2_MODE0			0x0f8
+>  #define QSERDES_V3_COM_VCO_TUNE1_MODE1			0x0fc
+>  #define QSERDES_V3_COM_VCO_TUNE2_MODE1			0x100
+> +#define QSERDES_V3_COM_VCO_TUNE_INITVAL1		0x104
+> +#define QSERDES_V3_COM_VCO_TUNE_INITVAL2		0x108
+>  #define QSERDES_V3_COM_VCO_TUNE_TIMER1			0x11c
+>  #define QSERDES_V3_COM_VCO_TUNE_TIMER2			0x120
+>  #define QSERDES_V3_COM_CLK_SELECT			0x138
+> @@ -211,8 +213,13 @@
+>  /* Only for QMP V3 PHY - RX registers */
+>  #define QSERDES_V3_RX_UCDR_SO_GAIN_HALF			0x00c
+>  #define QSERDES_V3_RX_UCDR_SO_GAIN			0x014
+> +#define QSERDES_V3_RX_UCDR_SVS_SO_GAIN_HALF		0x024
+> +#define QSERDES_V3_RX_UCDR_SVS_SO_GAIN_QUARTER		0x028
+> +#define QSERDES_V3_RX_UCDR_SVS_SO_GAIN			0x02c
+>  #define QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN		0x030
+>  #define QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE	0x034
+> +#define QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW		0x03c
+> +#define QSERDES_V3_RX_UCDR_PI_CONTROLS			0x044
+>  #define QSERDES_V3_RX_RX_TERM_BW			0x07c
+>  #define QSERDES_V3_RX_RX_EQ_GAIN2_LSB			0x0c8
+>  #define QSERDES_V3_RX_RX_EQ_GAIN2_MSB			0x0cc
+> @@ -272,6 +279,7 @@
+>  #define QPHY_V3_PCS_FLL_CNT_VAL_L			0x0cc
+>  #define QPHY_V3_PCS_FLL_CNT_VAL_H_TOL			0x0d0
+>  #define QPHY_V3_PCS_FLL_MAN_CODE			0x0d4
+> +#define QPHY_V3_PCS_MULTI_LANE_CTRL1			0x1c4
+>  #define QPHY_V3_PCS_RX_SIGDET_LVL			0x1d8
+> 
+>  /* Only for QMP V3 PHY - PCS_MISC registers */
