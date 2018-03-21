@@ -1,82 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751548AbeCUJ5z (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 05:57:55 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38925 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751455AbeCUJ5v (ORCPT
+        id S1751737AbeCUJ6H (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 05:58:07 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:36624 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751671AbeCUJ6E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 05:57:51 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Frank.Rowand@sony.com, David Airlie <airlied@linux.ie>,
-        niklas.soderlund+renesas@ragnatech.se,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH] [RFC] drm: rcar-du: keep temporary dtb files around during build
-Date: Wed, 21 Mar 2018 11:58:57 +0200
-Message-ID: <2654454.izifTNoijI@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAK8P3a2zoGCi2k8gy5QZ0Ddn1pZGMmMAWusdq7c=x_SJ9Lq3LA@mail.gmail.com>
-References: <20180315153730.3798004-1-arnd@arndb.de> <8748007.hiNNEuVPPY@avalon> <CAK8P3a2zoGCi2k8gy5QZ0Ddn1pZGMmMAWusdq7c=x_SJ9Lq3LA@mail.gmail.com>
+        Wed, 21 Mar 2018 05:58:04 -0400
+Date: Wed, 21 Mar 2018 10:57:58 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Cao jin <caoj.fnst@cn.fujitsu.com>
+cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: questions about header.S
+In-Reply-To: <b47b8ad8-4015-9437-d6b6-6e2d17ea117b@cn.fujitsu.com>
+Message-ID: <alpine.DEB.2.21.1803211052110.3754@nanos.tec.linutronix.de>
+References: <ac02a918-0c7a-2376-569d-c53a87bc1a42@cn.fujitsu.com> <b47b8ad8-4015-9437-d6b6-6e2d17ea117b@cn.fujitsu.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/mixed; boundary="8323329-2081520870-1521626278=:3754"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Wednesday, 21 March 2018 09:38:35 EET Arnd Bergmann wrote:
-> On Tue, Mar 20, 2018 at 9:15 PM, Laurent Pinchart wrote:
-> > On Friday, 16 March 2018 10:25:25 EET Arnd Bergmann wrote:
-> >> On Fri, Mar 16, 2018 at 2:39 AM,  <Frank.Rowand@sony.com> wrote:
-> >>> On Thursday, March 15, 2018 8:37 AM, Arnd Bergmann wrote:
-> >>>> The *.dtb and *.dtb.S files get removed by 'make' during the build
-> >>>> process, and later seem to be missed during the 'modpost' stage:
-> >>>> 
-> >>>> rm drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb.S
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb.S
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb.S
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb.S
-> >>>> WARNING: could not open
-> >>>> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S: No such file or
-> >>>> directory
-> >>>> 
-> >>>> As a workaround, this adds all those files to the 'extra-y' target
-> >>>> list, but that's really ugly. Any ideas for a better fix?
-> >>> 
-> >>> Does this work for you (untested, but the way it is done in
-> >>> drivers/of/unittest-data/Makefile):
-> >>> 
-> >>> .PRECIOUS: \
-> >>>         $(obj)/%.dtb.S \
-> >>>         $(obj)/%.dtb
-> >> 
-> >> Yes, that works and looks much better than my version.
+--8323329-2081520870-1521626278=:3754
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+
+On Wed, 21 Mar 2018, Cao jin wrote:
+> On 03/17/2018 06:01 PM, Cao jin wrote:
+> >   I find two small questions which confuse me a little.
 > > 
-> > Thank you for your patch, and sorry for breaking the build. Do you plan to
-> > submit a new version based on Frank's approach ?
-> 
-> I'm currently at Linaro Connect and won't be able to send a tested patch
-> before mid next week. If you want it earlier, feel free to apply that patch
-> with my original description and 'Reported-by: Arnd Bergmann
-> <arnd@arndb.de>'.
+> > 1.
+> > # Check signature at end of setup
+> >        cmpl    $0x5a5aaa55, setup_sig
+> >        jne     setup_bad
+> > 
+> > setup_sig is defined in setup.ld, which points to the constant also
+> > defined in setup.ld, so I don't figure out in which case they don't
+> > equal and jump to setup_bad?
 
-I was about to do so, but realized I can't reproduce the problem here. If you 
-don't mind I'll let you submit a v2. Alternatively I can work on it if you 
-give me instruction to reproduce the issue.
+That's a lame sanity check to make sure that nothing overwrote the loader.
 
--- 
-Regards,
+> > In my test, drop these 2 lines seems fine, system can boot without any
+> > obvious error.
 
-Laurent Pinchart
+Sure it does as long as you have no corruption.
+
+> > 2.
+> > # Zero the bss
+> > 	movw	$__bss_start, %di
+> > 	movw	$_end+3, %cx
+> > 	xorl	%eax, %eax
+> > 	subw	%di, %cx
+> > 	shrw	$2, %cx
+> > 	rep; stosl
+> > 
+> > It is not a big deal, but I think replace "_end" with "__bss_end" make
+> > more sense, and "_end" is already aligned to word length. And, there is
+> > no other code use symbol "__bss_end". So I don't know is there any
+> > reason to use "_end" here?
+
+It doesn't matter at all. But its also pointless to change it.
+
+Thanks,
+
+	tglx
+--8323329-2081520870-1521626278=:3754--
