@@ -1,100 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753159AbeCUQnC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:43:02 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37004 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752970AbeCUQmj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:42:39 -0400
-Date: Wed, 21 Mar 2018 09:41:29 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Eric Sandeen <sandeen@sandeen.net>,
-        Masanari Iida <standby24x7@gmail.com>, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] xfs: Change URL for the project in xfs.txt
-Message-ID: <20180321164129.GA4818@magnolia>
-References: <20180302133013.9744-1-standby24x7@gmail.com>
- <20180302172401.GT19312@magnolia>
- <20180302215731.GT30854@dastard>
- <27d9f522-fa75-6766-3ca6-79f99522e861@sandeen.net>
- <20180302224310.GV30854@dastard>
+        id S1753083AbeCUQnj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:43:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55636 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752610AbeCUQn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 12:43:26 -0400
+Date: Wed, 21 Mar 2018 17:43:24 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Quentin Monnet <quentin.monnet@netronome.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+Subject: Re: [PATCH 2/2] bpftool: Adjust to new print_bpf_insn interface
+Message-ID: <20180321164324.GD2707@krava>
+References: <20180321150212.5586-1-jolsa@kernel.org>
+ <20180321150212.5586-2-jolsa@kernel.org>
+ <c27c5c1c-79ee-3ed2-d1c3-a011ead4edea@netronome.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180302224310.GV30854@dastard>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8839 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+In-Reply-To: <c27c5c1c-79ee-3ed2-d1c3-a011ead4edea@netronome.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 03, 2018 at 09:43:10AM +1100, Dave Chinner wrote:
-> On Fri, Mar 02, 2018 at 04:08:24PM -0600, Eric Sandeen wrote:
+On Wed, Mar 21, 2018 at 04:39:09PM +0000, Quentin Monnet wrote:
+> 2018-03-21 16:02 UTC+0100 ~ Jiri Olsa <jolsa@kernel.org>
+> > Change bpftool to skip the removed struct bpf_verifier_env
+> > argument in print_bpf_insn. It was passed as NULL anyway.
 > > 
+> > No functional change intended.
 > > 
-> > On 3/2/18 3:57 PM, Dave Chinner wrote:
-> > > On Fri, Mar 02, 2018 at 09:24:01AM -0800, Darrick J. Wong wrote:
-> > >> On Fri, Mar 02, 2018 at 10:30:13PM +0900, Masanari Iida wrote:
-> > >>> The oss.sgi.com doesn't exist any more.
-> > >>> Change it to current project URL, https://xfs.wiki.kernel.org/
-> > >>>
-> > >>> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
-> > >>> ---
-> > >>>  Documentation/filesystems/xfs.txt | 2 +-
-> > >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >>>
-> > >>> diff --git a/Documentation/filesystems/xfs.txt b/Documentation/filesystems/xfs.txt
-> > >>> index 3b9b5c149f32..4d9ff0a7f8e1 100644
-> > >>> --- a/Documentation/filesystems/xfs.txt
-> > >>> +++ b/Documentation/filesystems/xfs.txt
-> > >>> @@ -9,7 +9,7 @@ variable block sizes, is extent based, and makes extensive use of
-> > >>>  Btrees (directories, extents, free space) to aid both performance
-> > >>>  and scalability.
-> > >>>  
-> > >>> -Refer to the documentation at http://oss.sgi.com/projects/xfs/
-> > >>> +Refer to the documentation at https://xfs.wiki.kernel.org/
-> > > 
-> > > Did I miss a memo?
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  tools/bpf/bpftool/prog.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
 > > 
-> > About which part, the loss of oss.sgi or the addition of the kernel.org wiki?
+> > diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+> > index e549e329be82..108001d974ee 100644
+> > --- a/tools/bpf/bpftool/prog.c
+> > +++ b/tools/bpf/bpftool/prog.c
+> > @@ -489,7 +489,7 @@ static struct kernel_sym *kernel_syms_search(struct dump_data *dd,
+> >  		       sizeof(*dd->sym_mapping), kernel_syms_cmp) : NULL;
+> >  }
+> >  
+> > -static void print_insn(struct bpf_verifier_env *env, const char *fmt, ...)
+> > +static void print_insn(void *private_data, const char *fmt, ...)
+> >  {
+> >  	va_list args;
+> >  
+> > @@ -576,7 +576,7 @@ static void dump_xlated_plain(struct dump_data *dd, void *buf,
+> >  		double_insn = insn[i].code == (BPF_LD | BPF_IMM | BPF_DW);
+> >  
+> >  		printf("% 4d: ", i);
+> > -		print_bpf_insn(&cbs, NULL, insn + i, true);
+> > +		print_bpf_insn(&cbs, insn + i, true);
+> >  
+> >  		if (opcodes) {
+> >  			printf("       ");
+> > @@ -590,7 +590,7 @@ static void dump_xlated_plain(struct dump_data *dd, void *buf,
+> >  	}
+> >  }
+> >  
+> > -static void print_insn_json(struct bpf_verifier_env *env, const char *fmt, ...)
+> > +static void print_insn_json(void *private_data, const char *fmt, ...)
+> >  {
+> >  	unsigned int l = strlen(fmt);
+> >  	char chomped_fmt[l];
+> > @@ -628,7 +628,7 @@ static void dump_xlated_json(struct dump_data *dd, void *buf,
+> >  
+> >  		jsonw_start_object(json_wtr);
+> >  		jsonw_name(json_wtr, "disasm");
+> > -		print_bpf_insn(&cbs, NULL, insn + i, true);
+> > +		print_bpf_insn(&cbs, insn + i, true);
+> >  
+> >  		if (opcodes) {
+> >  			jsonw_name(json_wtr, "opcodes");
 > > 
-> > The kernel.org wiki is pretty bare though.  OTOH xfs.org is a bit less
-> > official.  We really need to resolve this issue.
 > 
-> Moving everything to kernel.org wiki. As I mentioned on IRC, I'd
-> much prefer we move away from wiki's to something we can edit
-> locally, review via email, has proper revision control and a
-> "publish" mechanism that pushes built documentation out to the
-> public website.
+> Hi Jiri, this code has changed in the tree. It was moved to
+> tools/bpf/bpftool/xlated_dumper.c, and there is now a third function to
+> update: print_insn_for_graph(). Could you please rebase the patch?
 
-Makes sense, it's sort of annoying to have to build the pdfs from
-documentation repo and kup them to k.org manually.  In the meantime I'd
-rather have a scribble-me-elmo wiki over a dead url.
+sure.. I was over perf tree, I'll check on bpf tree
 
-Also afaik the only people who actually have write access to that wiki
-are Luis, Eric, and me, so hopefully we won't have to deal with
-vandalism in the interim.
-
-I wonder if we could just make the existing dokiwiki use
-xfs-documentation.git as its backend and control the publishing that
-way...?
-
---D
-
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+thanks,
+jirka
