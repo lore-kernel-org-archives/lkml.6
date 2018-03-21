@@ -1,49 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751794AbeCUIEx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:04:53 -0400
-Received: from mail-io0-f169.google.com ([209.85.223.169]:39235 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751673AbeCUIEp (ORCPT
+        id S1751676AbeCUIGz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:06:55 -0400
+Received: from mail-qk0-f180.google.com ([209.85.220.180]:47103 "EHLO
+        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751405AbeCUIGw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:04:45 -0400
-X-Google-Smtp-Source: AG47ELtvAFtzITFFq3JBEEb2ka0mUPW1mQXJ1ArCo3rmzjNFWDwyBBoTlPHu9ckycPtpInci85TEx0GF1fojNkV57BA=
+        Wed, 21 Mar 2018 04:06:52 -0400
+X-Google-Smtp-Source: AG47ELuFk26ksLJrfDYWHoR9cbmaFpWzzwU4IM0/3WCJrc53Q5D99N6LKfYCl+WOXMR438VJgEBWAjhJF0rmrrJFmuM=
 MIME-Version: 1.0
-In-Reply-To: <20180226130558.7634-8-rf@opensource.cirrus.com>
-References: <20180226130558.7634-1-rf@opensource.cirrus.com> <20180226130558.7634-8-rf@opensource.cirrus.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 21 Mar 2018 09:04:44 +0100
-Message-ID: <CACRpkdaRm84UZw1K5cOsp9wAt5tkMEtiLxz20Gg3a3QSO-+MYw@mail.gmail.com>
-Subject: Re: [PATCH v8 7/9] pinctrl: madera: Add DT bindings for Cirrus Logic
- Madera codecs
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, patches@opensource.cirrus.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180319221622.16867-1-stefan@agner.ch>
+References: <20180319221622.16867-1-stefan@agner.ch>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Mar 2018 09:06:50 +0100
+X-Google-Sender-Auth: jZiID-JHY402iCPy4RttDTYEE14
+Message-ID: <CAMuHMdUnLP4DU2-o6PBOJDZf9dBMGx6TTYN3rEdA5UxznZGxOw@mail.gmail.com>
+Subject: Re: [PATCH v2] spi: rspi: use correct enum for DMA transfer direction
+To: Stefan Agner <stefan@agner.ch>
+Cc: Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 26, 2018 at 2:05 PM, Richard Fitzgerald
-<rf@opensource.cirrus.com> wrote:
+Hi Stefan,
 
-> This is the binding description of the pinctrl driver for Cirrus Logic
-> Madera codecs. The binding uses the generic pinctrl binding so  the main
-> purpose here is to describe the device-specific names for groups and
-> functions.
+On Mon, Mar 19, 2018 at 11:16 PM, Stefan Agner <stefan@agner.ch> wrote:
+> Use enum dma_transfer_direction as required by dmaengine_prep_slave_sg
+> instead of enum dma_data_direction. This won't change behavior in
+> practice as the enum values are equivalent.
+
+Thanks for catching!
+
+BTW, spi-sh-msiof has the same issue. Will sent a fix.
+
+> This fixes two warnings when building with clang:
+>   drivers/spi/spi-rspi.c:538:26: warning: implicit conversion from enumeration
+>       type 'enum dma_data_direction' to different enumeration type
+>       'enum dma_transfer_direction' [-Wenum-conversion]
+>                                         rx->sgl, rx->nents, DMA_FROM_DEVICE,
+>                                                             ^~~~~~~~~~~~~~~
+>   drivers/spi/spi-rspi.c:558:26: warning: implicit conversion from enumeration
+>       type 'enum dma_data_direction' to different enumeration type
+>       'enum dma_transfer_direction' [-Wenum-conversion]
+>                                         tx->sgl, tx->nents, DMA_TO_DEVICE,
+>                                                             ^~~~~~~~~~~~~
 >
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+JFTR, as it's already applied
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Tell me if you want me to just merge this patch to get your patch stack
-smaller.
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
