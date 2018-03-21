@@ -1,93 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753999AbeCUWPI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 18:15:08 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:38844 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753826AbeCUWPD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 18:15:03 -0400
-X-Google-Smtp-Source: AG47ELv6YtQO9W2K8sRo6C5Dr5by7M1fOn4ixRUhHiwLf/aXdhk/rib+yQM1R1I/Clo3JFaucV+Hq79SgTwCc1hGR9I=
+        id S1753968AbeCUWWR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 18:22:17 -0400
+Received: from ozlabs.org ([103.22.144.67]:48163 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753744AbeCUWWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 18:22:13 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 22 Mar 2018 09:21:08 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Changbin Du <changbin.du@intel.com>
+Subject: Re: linux-next: manual merge of the ftrace tree with the jc_docs
+ tree
+Message-ID: <20180322092108.0d821abc@canb.auug.org.au>
+In-Reply-To: <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
+References: <20180321153127.23737f6e@canb.auug.org.au>
+ <20180321153715.3a571e5b@canb.auug.org.au>
+ <20180321091554.2b38ee57@gandalf.local.home>
+ <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <b05c00e7-b5d8-0bcb-0b38-a91324ec597a@tu-dresden.de>
-References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <1635957.yuHkCe9oyz@aspire.rjw.lan>
- <CAJZ5v0j-CnEms-Wm0Op=386ceuG2GfAouVLXO48rbD_pUPJhMg@mail.gmail.com> <b05c00e7-b5d8-0bcb-0b38-a91324ec597a@tu-dresden.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 21 Mar 2018 23:15:01 +0100
-X-Google-Sender-Auth: SThFWxlApilA4ju_xd7Wh0w7XuY
-Message-ID: <CAJZ5v0iThFDEjnwTbpAhwHY_vF_KDdAUyhDL1CdB4GJsG5eNRQ@mail.gmail.com>
-Subject: Re: [RFT][PATCH v7 5/8] cpuidle: Return nohz hint from cpuidle_select()
-To: Thomas Ilsche <thomas.ilsche@tu-dresden.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000c6f8890567f3852b"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jukMgl9Tr8iGmeWA19hTRO5"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000c6f8890567f3852b
-Content-Type: text/plain; charset="UTF-8"
+--Sig_/jukMgl9Tr8iGmeWA19hTRO5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 21, 2018 at 6:59 PM, Thomas Ilsche
-<thomas.ilsche@tu-dresden.de> wrote:
-> On 2018-03-21 15:36, Rafael J. Wysocki wrote:
->>
->>
->> So please disregard this one entirely and take the v7.2 replacement
->> instead of it:https://patchwork.kernel.org/patch/10299429/
->>
->> The current versions (including the above) is in the git branch at
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
->>   idle-loop-v7.2
+Hi Tom,
+
+On Wed, 21 Mar 2018 15:55:52 -0500 Tom Zanussi <tom.zanussi@linux.intel.com=
+> wrote:
 >
->
-> With v7.2 (tested on SKL-SP from git) I see similar behavior in idle
-> as with v5: several cores which just keep the sched tick enabled.
-> Worse yet, some go only in C1 (not even C1E!?) despite sleeping the
-> full sched tick.
-> The resulting power consumption is ~105 W instead of ~ 70 W.
->
-> https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v7_2_skl_sp_idle.png
->
-> I have briefly ran v7 and I believe it was also affected.
+> Yeah, linux-next has changes to Documentation/trace/* that converts
+> those files to .rst, which linux-trace/frace/core doesn't have.
+>=20
+> I've rebased the inter-event patches to linux-next/next-20180320 to
+> reflect those changes, which affect 9 of the files in the patchset.  The
+> updated patchset is here:
+>=20
+> https://github.com/tzanussi/linux-trace-inter-event.git tzanussi/next-201=
+80320-inter-event-v10                                              =20
+> https://github.com/tzanussi/linux-trace-inter-event/tree/tzanussi/next-20=
+180320-inter-event-v10
+>=20
+> I can repost the whole thing as v10, or whatever makes sense here.
 
-Then it looks like menu_select() stubbornly thinks that the idle
-duration will be within the tick boundary on those cores.
+Thanks, I assume that they apply on top of the jc_docs tree as well
+(git://git.lwn.net/linux.git#docs-next).  If so, then I can use them as
+merge resolutions, or Steve can rebase his tree (minus your old
+patches) on top of the (hopefully unchanging) jc_docs tree and then he
+could apply your patches there.
 
-That may be because the bumping up of the correction factor in
-menu_reflect() is too conservative or it may be necessary to do
-something radical to measured_us in menu_update() in case of a tick
-wakeup combined with a large next_timer_us value.
+--=20
+Cheers,
+Stephen Rothwell
 
-For starters, please see if the attached patch (on top of the
-idle-loop-v7.2 git branch) changes this behavior in any way.
+--Sig_/jukMgl9Tr8iGmeWA19hTRO5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
---000000000000c6f8890567f3852b
-Content-Type: text/x-patch; charset="US-ASCII"; name="cpuidle-menu-menu_reflect-debug.patch"
-Content-Disposition: attachment;
-	filename="cpuidle-menu-menu_reflect-debug.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jf1n9a0y0
+-----BEGIN PGP SIGNATURE-----
 
-LS0tCiBkcml2ZXJzL2NwdWlkbGUvZ292ZXJub3JzL21lbnUuYyB8ICAgIDIgKy0KIDEgZmlsZSBj
-aGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQoKSW5kZXg6IGxpbnV4LXBtL2Ry
-aXZlcnMvY3B1aWRsZS9nb3Zlcm5vcnMvbWVudS5jCj09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KLS0tIGxpbnV4LXBtLm9y
-aWcvZHJpdmVycy9jcHVpZGxlL2dvdmVybm9ycy9tZW51LmMKKysrIGxpbnV4LXBtL2RyaXZlcnMv
-Y3B1aWRsZS9nb3Zlcm5vcnMvbWVudS5jCkBAIC00OTgsNyArNDk4LDcgQEAgc3RhdGljIHZvaWQg
-bWVudV9yZWZsZWN0KHN0cnVjdCBjcHVpZGxlXwogCQkgKiBjb3JyZWN0aW9uIGZhY3Rvci4gIFVz
-ZSAwLjc1ICogUkVTT0xVVElPTiAod2hpY2ggaXMgZWFzeQogCQkgKiBlbm91Z2ggdG8gZ2V0KSB0
-aGF0IHNob3VsZCB3b3JrIGZpbmUgb24gdGhlIGF2ZXJhZ2UuCiAJCSAqLwotCQluZXdfZmFjdG9y
-ICs9IFJFU09MVVRJT04gLyAyICsgUkVTT0xVVElPTiAvIDQ7CisJCW5ld19mYWN0b3IgKz0gUkVT
-T0xVVElPTjsKIAkJZGF0YS0+Y29ycmVjdGlvbl9mYWN0b3JbZGF0YS0+YnVja2V0XSA9IG5ld19m
-YWN0b3I7CiAJfSBlbHNlIHsKIAkJZGF0YS0+bmVlZHNfdXBkYXRlID0gMTsK
---000000000000c6f8890567f3852b--
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqy2tQACgkQAVBC80lX
+0GwUpwf9FLZBeLWijBIpDrFJxrpwmgOwLHcRWbL2y3tjl/oudJ0z8RQrm2JLBdP2
+4yRubYErBOWW9C9qzJrncNmiGzy2dz29HgJ9QPlvQdk/30robC6iex7Y4oT1aYd/
+BiqY9ZKG9IKEeKhNgo2JFboo16jIFp6juP7YWKOofL/i/cckfuQbMBx8jzB9Hfz4
+CRiWSPR5czra7J6WtUninx1eUH6RZp2m6m9su4/mfpvxrCofygieigxBgTW24M5V
+RNbJA0fyzLYe7Aw/rBDct9OKTa7QSA17BKhhyS/g69x4M53WULLrhaJtJRyaleMD
+USAs+uP0wybMcpufAZIQGHztSfhQ3g==
+=Yo4m
+-----END PGP SIGNATURE-----
+
+--Sig_/jukMgl9Tr8iGmeWA19hTRO5--
