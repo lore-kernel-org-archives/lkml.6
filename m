@@ -1,225 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeCUCac (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:30:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45004 "EHLO mail.kernel.org"
+        id S1752606AbeCUCaT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:30:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751514AbeCUCVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751551AbeCUCVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Mar 2018 22:21:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A830621837
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC95421838
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180321022123.560912024@goodmis.org>
+Message-Id: <20180321022123.701682929@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Tue, 20 Mar 2018 22:20:56 -0400
+Date: Tue, 20 Mar 2018 22:20:57 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Vedang Patel <vedang.patel@intel.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [for-next][PATCH 04/46] tracing: Remove code which merges duplicates
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Baohong Liu <baohong.liu@intel.com>
+Subject: [for-next][PATCH 05/46] ring-buffer: Add interface for setting absolute time stamps
 References: <20180321022052.030055576@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0004-tracing-Remove-code-which-merges-duplicates.patch
+Content-Disposition: inline; filename=0005-ring-buffer-Add-interface-for-setting-absolute-time-.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vedang Patel <vedang.patel@intel.com>
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-We now have the logic to detect and remove duplicates in the
-tracing_map hash table. The code which merges duplicates in the
-histogram is redundant now. So, modify this code just to detect
-duplicates. The duplication detection code is still kept to ensure
-that any rare race condition which might cause duplicates does not go
-unnoticed.
+Define a new function, tracing_set_time_stamp_abs(), which can be used
+to enable or disable the use of absolute timestamps rather than time
+deltas for a trace array.
 
-Link: http://lkml.kernel.org/r/55215cf59e2674391bdaf772fdafc4c393352b03.1516069914.git.tom.zanussi@linux.intel.com
+Only the interface is added here; a subsequent patch will add the
+underlying implementation.
 
-Signed-off-by: Vedang Patel <vedang.patel@intel.com>
+Link: http://lkml.kernel.org/r/ce96119de44c7fe0ee44786d15254e9b493040d3.1516069914.git.tom.zanussi@linux.intel.com
+
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Baohong Liu <baohong.liu@intel.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_events_hist.c | 11 ------
- kernel/trace/tracing_map.c       | 83 +++-------------------------------------
- kernel/trace/tracing_map.h       |  7 ----
- 3 files changed, 6 insertions(+), 95 deletions(-)
+ include/linux/ring_buffer.h |  2 ++
+ kernel/trace/ring_buffer.c  | 11 +++++++++++
+ kernel/trace/trace.c        | 33 ++++++++++++++++++++++++++++++++-
+ kernel/trace/trace.h        |  3 +++
+ 4 files changed, 48 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 1e1558c99d56..712260e72be5 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -340,16 +340,6 @@ static int hist_trigger_elt_comm_alloc(struct tracing_map_elt *elt)
- 	return 0;
- }
+diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
+index 7d9eb39fa76a..025159e17e1b 100644
+--- a/include/linux/ring_buffer.h
++++ b/include/linux/ring_buffer.h
+@@ -178,6 +178,8 @@ void ring_buffer_normalize_time_stamp(struct ring_buffer *buffer,
+ 				      int cpu, u64 *ts);
+ void ring_buffer_set_clock(struct ring_buffer *buffer,
+ 			   u64 (*clock)(void));
++void ring_buffer_set_time_stamp_abs(struct ring_buffer *buffer, bool abs);
++bool ring_buffer_time_stamp_abs(struct ring_buffer *buffer);
  
--static void hist_trigger_elt_comm_copy(struct tracing_map_elt *to,
--				       struct tracing_map_elt *from)
--{
--	char *comm_from = from->private_data;
--	char *comm_to = to->private_data;
--
--	if (comm_from)
--		memcpy(comm_to, comm_from, TASK_COMM_LEN + 1);
--}
--
- static void hist_trigger_elt_comm_init(struct tracing_map_elt *elt)
- {
- 	char *comm = elt->private_data;
-@@ -360,7 +350,6 @@ static void hist_trigger_elt_comm_init(struct tracing_map_elt *elt)
+ size_t ring_buffer_page_len(void *page);
  
- static const struct tracing_map_ops hist_trigger_elt_comm_ops = {
- 	.elt_alloc	= hist_trigger_elt_comm_alloc,
--	.elt_copy	= hist_trigger_elt_comm_copy,
- 	.elt_free	= hist_trigger_elt_comm_free,
- 	.elt_init	= hist_trigger_elt_comm_init,
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index dcf1c4dd3efe..2a03e069bbc6 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -488,6 +488,7 @@ struct ring_buffer {
+ 	u64				(*clock)(void);
+ 
+ 	struct rb_irq_work		irq_work;
++	bool				time_stamp_abs;
  };
-diff --git a/kernel/trace/tracing_map.c b/kernel/trace/tracing_map.c
-index b30f3439f27f..f47a4d54bcf0 100644
---- a/kernel/trace/tracing_map.c
-+++ b/kernel/trace/tracing_map.c
-@@ -847,67 +847,15 @@ create_sort_entry(void *key, struct tracing_map_elt *elt)
- 	return sort_entry;
+ 
+ struct ring_buffer_iter {
+@@ -1382,6 +1383,16 @@ void ring_buffer_set_clock(struct ring_buffer *buffer,
+ 	buffer->clock = clock;
  }
  
--static struct tracing_map_elt *copy_elt(struct tracing_map_elt *elt)
--{
--	struct tracing_map_elt *dup_elt;
--	unsigned int i;
--
--	dup_elt = tracing_map_elt_alloc(elt->map);
--	if (IS_ERR(dup_elt))
--		return NULL;
--
--	if (elt->map->ops && elt->map->ops->elt_copy)
--		elt->map->ops->elt_copy(dup_elt, elt);
--
--	dup_elt->private_data = elt->private_data;
--	memcpy(dup_elt->key, elt->key, elt->map->key_size);
--
--	for (i = 0; i < elt->map->n_fields; i++) {
--		atomic64_set(&dup_elt->fields[i].sum,
--			     atomic64_read(&elt->fields[i].sum));
--		dup_elt->fields[i].cmp_fn = elt->fields[i].cmp_fn;
--	}
--
--	return dup_elt;
--}
--
--static int merge_dup(struct tracing_map_sort_entry **sort_entries,
--		     unsigned int target, unsigned int dup)
--{
--	struct tracing_map_elt *target_elt, *elt;
--	bool first_dup = (target - dup) == 1;
--	int i;
--
--	if (first_dup) {
--		elt = sort_entries[target]->elt;
--		target_elt = copy_elt(elt);
--		if (!target_elt)
--			return -ENOMEM;
--		sort_entries[target]->elt = target_elt;
--		sort_entries[target]->elt_copied = true;
--	} else
--		target_elt = sort_entries[target]->elt;
--
--	elt = sort_entries[dup]->elt;
--
--	for (i = 0; i < elt->map->n_fields; i++)
--		atomic64_add(atomic64_read(&elt->fields[i].sum),
--			     &target_elt->fields[i].sum);
--
--	sort_entries[dup]->dup = true;
--
--	return 0;
--}
--
--static int merge_dups(struct tracing_map_sort_entry **sort_entries,
-+static void detect_dups(struct tracing_map_sort_entry **sort_entries,
- 		      int n_entries, unsigned int key_size)
- {
- 	unsigned int dups = 0, total_dups = 0;
--	int err, i, j;
-+	int i;
- 	void *key;
++void ring_buffer_set_time_stamp_abs(struct ring_buffer *buffer, bool abs)
++{
++	buffer->time_stamp_abs = abs;
++}
++
++bool ring_buffer_time_stamp_abs(struct ring_buffer *buffer)
++{
++	return buffer->time_stamp_abs;
++}
++
+ static void rb_reset_cpu(struct ring_buffer_per_cpu *cpu_buffer);
  
- 	if (n_entries < 2)
--		return total_dups;
-+		return;
+ static inline unsigned long rb_page_entries(struct buffer_page *bpage)
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 20a2300ae4e8..cba003f0362e 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2269,7 +2269,7 @@ trace_event_buffer_lock_reserve(struct ring_buffer **current_rb,
  
- 	sort(sort_entries, n_entries, sizeof(struct tracing_map_sort_entry *),
- 	     (int (*)(const void *, const void *))cmp_entries_dup, NULL);
-@@ -916,30 +864,14 @@ static int merge_dups(struct tracing_map_sort_entry **sort_entries,
- 	for (i = 1; i < n_entries; i++) {
- 		if (!memcmp(sort_entries[i]->key, key, key_size)) {
- 			dups++; total_dups++;
--			err = merge_dup(sort_entries, i - dups, i);
--			if (err)
--				return err;
- 			continue;
- 		}
- 		key = sort_entries[i]->key;
- 		dups = 0;
- 	}
+ 	*current_rb = trace_file->tr->trace_buffer.buffer;
  
--	if (!total_dups)
--		return total_dups;
--
--	for (i = 0, j = 0; i < n_entries; i++) {
--		if (!sort_entries[i]->dup) {
--			sort_entries[j] = sort_entries[i];
--			if (j++ != i)
--				sort_entries[i] = NULL;
--		} else {
--			destroy_sort_entry(sort_entries[i]);
--			sort_entries[i] = NULL;
--		}
--	}
--
--	return total_dups;
-+	WARN_ONCE(total_dups > 0,
-+		  "Duplicates detected: %d\n", total_dups);
+-	if ((trace_file->flags &
++	if (!ring_buffer_time_stamp_abs(*current_rb) && (trace_file->flags &
+ 	     (EVENT_FILE_FL_SOFT_DISABLED | EVENT_FILE_FL_FILTERED)) &&
+ 	    (entry = this_cpu_read(trace_buffered_event))) {
+ 		/* Try to use the per cpu buffer first */
+@@ -6282,6 +6282,37 @@ static int tracing_clock_open(struct inode *inode, struct file *file)
+ 	return ret;
  }
  
- static bool is_key(struct tracing_map *map, unsigned int field_idx)
-@@ -1065,10 +997,7 @@ int tracing_map_sort_entries(struct tracing_map *map,
- 		return 1;
- 	}
++int tracing_set_time_stamp_abs(struct trace_array *tr, bool abs)
++{
++	int ret = 0;
++
++	mutex_lock(&trace_types_lock);
++
++	if (abs && tr->time_stamp_abs_ref++)
++		goto out;
++
++	if (!abs) {
++		if (WARN_ON_ONCE(!tr->time_stamp_abs_ref)) {
++			ret = -EINVAL;
++			goto out;
++		}
++
++		if (--tr->time_stamp_abs_ref)
++			goto out;
++	}
++
++	ring_buffer_set_time_stamp_abs(tr->trace_buffer.buffer, abs);
++
++#ifdef CONFIG_TRACER_MAX_TRACE
++	if (tr->max_buffer.buffer)
++		ring_buffer_set_time_stamp_abs(tr->max_buffer.buffer, abs);
++#endif
++ out:
++	mutex_unlock(&trace_types_lock);
++
++	return ret;
++}
++
+ struct ftrace_buffer_info {
+ 	struct trace_iterator	iter;
+ 	void			*spare;
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 2a6d0325a761..477341710ebf 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -273,6 +273,7 @@ struct trace_array {
+ 	/* function tracing enabled */
+ 	int			function_enabled;
+ #endif
++	int			time_stamp_abs_ref;
+ };
  
--	ret = merge_dups(entries, n_entries, map->key_size);
--	if (ret < 0)
--		goto free;
--	n_entries -= ret;
-+	detect_dups(entries, n_entries, map->key_size);
+ enum {
+@@ -286,6 +287,8 @@ extern struct mutex trace_types_lock;
+ extern int trace_array_get(struct trace_array *tr);
+ extern void trace_array_put(struct trace_array *tr);
  
- 	if (is_key(map, sort_keys[0].field_idx))
- 		cmp_entries_fn = cmp_entries_key;
-diff --git a/kernel/trace/tracing_map.h b/kernel/trace/tracing_map.h
-index 5b5bbf8ae550..de57887c0670 100644
---- a/kernel/trace/tracing_map.h
-+++ b/kernel/trace/tracing_map.h
-@@ -215,11 +215,6 @@ struct tracing_map {
-  *	Element allocation occurs before tracing begins, when the
-  *	tracing_map_init() call is made by client code.
-  *
-- * @elt_copy: At certain points in the lifetime of an element, it may
-- *	need to be copied.  The copy should include a copy of the
-- *	client-allocated data, which can be copied into the 'to'
-- *	element from the 'from' element.
-- *
-  * @elt_free: When a tracing_map_elt is freed, this function is called
-  *	and allows client-allocated per-element data to be freed.
-  *
-@@ -233,8 +228,6 @@ struct tracing_map {
-  */
- struct tracing_map_ops {
- 	int			(*elt_alloc)(struct tracing_map_elt *elt);
--	void			(*elt_copy)(struct tracing_map_elt *to,
--					    struct tracing_map_elt *from);
- 	void			(*elt_free)(struct tracing_map_elt *elt);
- 	void			(*elt_clear)(struct tracing_map_elt *elt);
- 	void			(*elt_init)(struct tracing_map_elt *elt);
++extern int tracing_set_time_stamp_abs(struct trace_array *tr, bool abs);
++
+ /*
+  * The global tracer (top) should be the first trace array added,
+  * but we check the flag anyway.
 -- 
 2.15.1
