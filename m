@@ -1,98 +1,157 @@
-Return-Path: <robherring2@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522103062; cv=none;
+Return-Path: <gunthorp@deltatee.com>
+X-Google-Smtp-Source: AG47ELvw3CN/MnZQugZxK4y13IP/kcj4SdBSr6+rnajNb67m1F1eKISM35ovpYAOWdGsNL+7xBU8
+ARC-Seal: i=1; a=rsa-sha256; t=1521650277; cv=none;
         d=google.com; s=arc-20160816;
-        b=Oumc30BZBeDPz3DKVi/LqCuGylRkP3N8QayWLYOPLSPh4XXTTWh6iYpUTz3G7B0jhi
-         fhrUtJpF3wmx1n1Qfakrfj33YQGJMlqereDe/pbe/xiKnrw0FqvN5BL5YJP4oP+L8zEj
-         8RapLBb4jfqTKsi2QMaVFlzMp2xYz+OFjVHnqSJLHN/SdqYRSrs6MwbP2ge6IHZg6x0I
-         NlQCw74xGVtLzeDOfbXwiB13yelCX1eFoLFn5mU2b/tRmJYLfnofliRO7L1NgO6/8i+s
-         kcr3V9Z/s+M2yxveKGf0ykCn8/5BP9MaHhfcBESSxXXbfvxHUwcu7f7fsgWZyl969Z2V
-         wWGA==
+        b=knycmzEHEYhd9PQFY1+lyINYeUCkGxyrn2Q8CG8OSw7PZDGtKNi1XizjLKKJ1Z2QWx
+         c+m8x3RtuG/475U8kK5glMEyy8wfD9puoL1FqaB/KKh6W0AMhT49xI5z3KYj9AajEsbO
+         2iKOD8mK51qKXXfokYsqUt8+sqsPDGB97fU/HNKhXbncawFnINd5MLCzUwq4sE9gDgOp
+         JQ1wwzaLOMyJqU+k4S3YFUeh90P42m330KYIY1UetXn8gE+nb+BskA07YzP+ZYLaYaQL
+         srLao28oMGoiBvHMQziipapOem7LyfOL3dKFxqzSkWwVPVsRefOF/e0ItiW8orj2hHGm
+         KjAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=DlOQg58aI0nTuYcfPXvjNvCI3X/7vuPvZ++EvHcaNh0=;
-        b=CHMiP1yZWWoFjlPPhvwrjoV1exX+nvCDs9Mhd7g1cpXX1q8PhXRC0TijStT6uF1mJB
-         fy2iPQ/C2XkYofvICvFMjQD7i4Tv7ncGfTiDGeEsebbjJ6DF5YQUnYFF6enYp5jB0HQ7
-         nO1LfAhmNpxOqSbdobN/CCYjiFRGsJdwXSfL1r9wnmFHs8FR8ghAj3af3LMXCbk6l/e3
-         UNiktgD8h0zFdfOjKFAOOeXsBrcXS0hXkFicw9AWmH9JCsacYJanG1zR4Jt4SKSBLNxm
-         9A0SwCBT3g1+fDtIs8dLxltJI60/z5mWI3+7ulSs+gkDFJmJ0XA1DLlzDghtL/Uy/q/G
-         R9Iw==
+        h=subject:content-transfer-encoding:mime-version:message-id:date:cc
+         :to:from:arc-authentication-results;
+        bh=T937nb43jefmndgeU6upOFPVj6yJE2Hz6L/iuchzcsQ=;
+        b=k5WhUhTk+yvCtwQeOS7/tI4OWnNoe9ovtfo0UX1mgnO0pU0r7OZJz1zsbLW2U26ebu
+         l9kv0X02706uwYvXAzmoB7igdmnFxXfKgCV7w2AzBMTn3RQ0vb8GBcSg3g0cE7KM7OqF
+         rEn2kqvv9v2513oEJ1JIgeN1QGb3O3ZEfiwGRqo9/xzzQc+yjqm6+UyJz38cTNl/+5Ie
+         j+qMKZoUZAY8qBDDGAVtmaDnExn7CHAI4oUpo7lI+x/CNq6DJF1xE18q6HmNI53FdhwN
+         Ovk89uTOfsbzfT83reW1Tzwidmxy52ik6hALsICVv1pvq85mp22APxxaktAKXZM7oaBO
+         klmw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
-X-Google-Smtp-Source: AIpwx49MIhmdoslo9Es96b+gapT1xHwBNC2bzjlSARzuC1m4xenyvqsUFy5a5Mhk25xQUqSVSCS4iQ==
-Date: Mon, 26 Mar 2018 17:24:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Guenter Roeck <groeck@chromium.org>, adurbin@chromium.org,
-	linux-kernel@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>,
-	Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" <devicetree@vger.kernel.org>,
-	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-	"open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH v5] earlycon: Use a pointer table to fix __earlycon_table
- stride
-Message-ID: <20180326222421.bwkdakaofoixp562@rob-hp-laptop>
-References: <20180320220536.20245-1-djkurtz@chromium.org>
+       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
+From: Logan Gunthorpe <logang@deltatee.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-ntb@googlegroups.com,
+	linux-crypto@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+	Logan Gunthorpe <logang@deltatee.com>
+Date: Wed, 21 Mar 2018 10:37:35 -0600
+Message-Id: <20180321163745.12286-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180320220536.20245-1-djkurtz@chromium.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v13 00/10] Add io{read|write}64 to io-64-atomic headers
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595495759683242537?=
-X-GMAIL-MSGID: =?utf-8?q?1596040740818910338?=
+X-GMAIL-THRID: =?utf-8?q?1595565960791638927?=
+X-GMAIL-MSGID: =?utf-8?q?1595565960791638927?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 20, 2018 at 04:05:36PM -0600, Daniel Kurtz wrote:
-> Commit 99492c39f39f ("earlycon: Fix __earlycon_table stride") tried to fix
-> __earlycon_table stride by forcing the earlycon_id struct alignment to 32
-> and asking the linker to 32-byte align the __earlycon_table symbol.  This
-> fix was based on commit 07fca0e57fca92 ("tracing: Properly align linker
-> defined symbols") which tried a similar fix for the tracing subsystem.
-> 
-> However, this fix doesn't quite work because there is no guarantee that
-> gcc will place structures packed into an array format.  In fact, gcc 4.9
-> chooses to 64-byte align these structs by inserting additional padding
-> between the entries because it has no clue that they are supposed to be in
-> an array.  If we are unlucky, the linker will assign symbol
-> "__earlycon_table" to a 32-byte aligned address which does not correspond
-> to the 64-byte aligned contents of section "__earlycon_table".
-> 
-> To address this same problem, the fix to the tracing system was
-> subsequently re-implemented using a more robust table of pointers approach
-> by commits:
->  3d56e331b653 ("tracing: Replace syscall_meta_data struct array with pointer array")
->  654986462939 ("tracepoints: Fix section alignment using pointer array")
->  e4a9ea5ee7c8 ("tracing: Replace trace_event struct array with pointer array")
-> 
-> Let's use this same "array of pointers to structs" approach for
-> EARLYCON_TABLE.
 
-Wouldn't every use of linker sections with structs have this problem? We 
-use them for clocks, irqs, timers unless those have been fixed.
+This is v13 of my cleanup series to push a number of instances of people
+defining their own io{read|write}64 functions into common headers seing
+they don't exist in non-64bit systems. This series adds inline functions to the
+io-64-nonatomic headers and then cleans up the drivers that defined their
+own copies.
 
-> 
-> Fixes: 99492c39f39f ("earlycon: Fix __earlycon_table stride")
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> Suggested-by: Aaron Durbin <adurbin@chromium.org>
-> ---
-> Changes since v2:
->  * Use __initconst instead of __initdata to avoid h8300 and alpha kbuild errors
-> 
-> Changes since v3:
->  * Fixed typos in commit message
-> 
-> Changes since v4:
->  * removed Change-Id: from commit message
-> 
->  drivers/of/fdt.c                  |  7 +++++--
->  drivers/tty/serial/earlycon.c     |  6 ++++--
->  include/asm-generic/vmlinux.lds.h |  2 +-
->  include/linux/serial_core.h       | 21 ++++++++++++++-------
->  4 files changed, 24 insertions(+), 12 deletions(-)
+This cleanup was originally requested by Greg after he reviewed my
+Switchtec NTB code. And I hope someone can pick it up or at least give
+feedback on it soon as it's been around relatively unchanged for a few
+cycles now and I'm getting a bit tired of resubmitting it with little to
+no interest.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thanks,
+
+Logan
+
+--
+
+Changes since v12:
+- Rebased onto v4.16-rc6
+- Split patch 0001 into two and reworked the commit log as requested
+  by Luc Van Oostenryck
+
+Changes since v11:
+- Rebased onto v4.16-rc5
+- Added a patch (0001) to fix some old and new sparse warnings
+  that the kbuild robot warned about this cycle. The latest version
+  of sparse was required to reproduce these.
+- Added a patch (0002) to add io{read|write}64 to parisc which the kbuild
+  robot also found errors for this cycle
+
+Changes since v10:
+- Rebased onto v4.16-rc4, this droped the drm/tilcdc patch which was
+  picked up by that tree and is already in 4.16.
+
+Changes since v9:
+- Rebased onto v4.15-rc6
+- Fixed a couple of issues in the new version of the CAAM patch as
+  pointed out by Horia
+
+Changes since v8:
+- Rebased onto v4.15-rc2, as a result rewrote patch 7 seeing someone did
+  some similar cleanup in that area.
+- Added a patch to clean up the Switchtec NTB driver which landed in
+  v4.15-rc1
+
+Changes since v7:
+- Fix minor nits from Andy Shevchenko
+- Rebased onto v4.14-rc1
+
+Changes since v6:
+ ** none **
+
+Changes since v5:
+- Added a fix to the tilcdc driver to ensure it doesn't use the
+  non-atomic operation. (This includes adding io{read|write}64[be]_is_nonatomic
+  defines).
+
+Changes since v4:
+- Add functions so the powerpc implementation of iomap.c compiles. (As
+  noticed by Horia)
+
+Changes since v3:
+
+- I noticed powerpc didn't use the appropriate functions seeing
+  readq/writeq were not defined when iomap.h was included. Thus I've
+  included a patch to adjust this
+- Fixed some mistakes with a couple of the defines in io-64-nonatomic*
+  headers
+- Fixed a typo noticed by Horia.
+
+(earlier versions were drastically different)
+
+--
+
+Logan Gunthorpe (10):
+  iomap: Use correct endian conversion function in mmio_writeXXbe
+  iomap: Fix sparse endian check warnings
+  parisc: iomap: introduce io{read|write}64
+  powerpc: io.h: move iomap.h include so that it can use readq/writeq
+    defs
+  powerpc: iomap.c: introduce io{read|write}64_{lo_hi|hi_lo}
+  iomap: introduce io{read|write}64_{lo_hi|hi_lo}
+  io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
+  ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
+  crypto: caam: cleanup CONFIG_64BIT ifdefs when using io{read|write}64
+  ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common
+    header
+
+ arch/parisc/include/asm/io.h           |   9 +++
+ arch/parisc/lib/iomap.c                |  64 +++++++++++++++
+ arch/powerpc/include/asm/io.h          |   6 +-
+ arch/powerpc/kernel/iomap.c            |  40 ++++++++++
+ drivers/crypto/caam/regs.h             |  30 +------
+ drivers/ntb/hw/intel/ntb_hw_intel.c    |  30 +------
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  36 +--------
+ include/asm-generic/iomap.h            |  26 ++++--
+ include/linux/io-64-nonatomic-hi-lo.h  |  64 +++++++++++++++
+ include/linux/io-64-nonatomic-lo-hi.h  |  64 +++++++++++++++
+ lib/iomap.c                            | 140 ++++++++++++++++++++++++++++++++-
+ 11 files changed, 409 insertions(+), 100 deletions(-)
+
+--
+2.11.0
