@@ -1,61 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753830AbeCUWC2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 18:02:28 -0400
-Received: from hall.aurel32.net ([163.172.24.10]:33246 "EHLO hall.aurel32.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753534AbeCUWC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 18:02:27 -0400
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: linux-riscv@lists.infradead.org
-Cc: Aurelien Jarno <aurelien@aurel32.net>,
-        Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] RISC-V: build vdso-dummy.o with -no-pie
-Date: Wed, 21 Mar 2018 22:26:31 +0100
-Message-Id: <20180321212631.20449-1-aurelien@aurel32.net>
-X-Mailer: git-send-email 2.16.1
+        id S1753889AbeCUWDF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 18:03:05 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:43071 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753744AbeCUWDC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 18:03:02 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, Edgar Thier <info@edgarthier.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: uvcvideo: Prevent setting unavailable flags
+Date: Thu, 22 Mar 2018 00:04:07 +0200
+Message-ID: <3340488.XSnhISeh4i@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1521646988-803-1-git-send-email-kieran.bingham@ideasonboard.com>
+References: <1521646988-803-1-git-send-email-kieran.bingham@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Debian toolcahin defaults to PIE, and I guess that will also be the case
-of most distributions. This causes the following build failure:
+Hi Kieran,
 
-  AS      arch/riscv/kernel/vdso/getcpu.o
-  AS      arch/riscv/kernel/vdso/flush_icache.o
-  VDSOLD  arch/riscv/kernel/vdso/vdso.so.dbg
-  OBJCOPY arch/riscv/kernel/vdso/vdso.so
-  AS      arch/riscv/kernel/vdso/vdso.o
-  VDSOLD  arch/riscv/kernel/vdso/vdso-dummy.o
-  LD      arch/riscv/kernel/vdso/vdso-syms.o
-riscv64-linux-gnu-ld: attempted static link of dynamic object `arch/riscv/kernel/vdso/vdso-dummy.o'
-make[2]: *** [arch/riscv/kernel/vdso/Makefile:43: arch/riscv/kernel/vdso/vdso-syms.o] Error 1
-make[1]: *** [scripts/Makefile.build:575: arch/riscv/kernel/vdso] Error 2
-make: *** [Makefile:1018: arch/riscv/kernel] Error 2
+Thank you for the patch.
 
-While the root Makefile correctly passes "-fno-PIE" to build individual
-object files, the RISC-V kernel also builds vdso-dummy.o as an
-executable, which is therefore linked as PIE. Fix that by updating this
-specific link rule to also include "-no-pie".
+On Wednesday, 21 March 2018 17:43:08 EET Kieran Bingham wrote:
+> The addition of an extra operation to use the GET_INFO command
+> overwrites all existing flags from the uvc_ctrls table. This includes
+> setting all controls as supporting  GET_MIN, GET_MAX, GET_RES, and
+> GET_DEF regardless of whether they do or not.
+> 
+> Move the initialisation of these control capabilities directly to the
+> uvc_ctrl_fill_xu_info() call where they were originally located in that
+> use case, and ensure that the new functionality in uvc_ctrl_get_flags()
+> will only set flags based on their reported capability from the GET_INFO
+> call.
+> 
+> Fixes: 859086ae3636 ("media: uvcvideo: Apply flags from device to actual
+> properties")
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
----
- arch/riscv/kernel/vdso/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
-index 324568d33921..f6561b783b61 100644
---- a/arch/riscv/kernel/vdso/Makefile
-+++ b/arch/riscv/kernel/vdso/Makefile
-@@ -52,7 +52,7 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
- # Add -lgcc so rv32 gets static muldi3 and lshrdi3 definitions.
- # Make sure only to export the intended __vdso_xxx symbol offsets.
- quiet_cmd_vdsold = VDSOLD  $@
--      cmd_vdsold = $(CC) $(KCFLAGS) -nostdlib $(SYSCFLAGS_$(@F)) \
-+      cmd_vdsold = $(CC) $(KCFLAGS) $(call cc-option, -no-pie) -nostdlib $(SYSCFLAGS_$(@F)) \
-                            -Wl,-T,$(filter-out FORCE,$^) -o $@.tmp -lgcc && \
-                    $(CROSS_COMPILE)objcopy \
-                            $(patsubst %, -G __vdso_%, $(vdso-syms)) $@.tmp $@
+And applied to my tree.
+
+Mauro, this fixes a regression in your master branch queued for v4.17. Do you 
+want a pull request now, or after the merge window for -rc2 ?
+
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c
+> b/drivers/media/usb/uvc/uvc_ctrl.c index 1daf444371be..4042cbdb721b 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1607,14 +1607,12 @@ static int uvc_ctrl_get_flags(struct uvc_device
+> *dev, ret = uvc_query_ctrl(dev, UVC_GET_INFO, ctrl->entity->id,
+> dev->intfnum, info->selector, data, 1);
+>  	if (!ret)
+> -		info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
+> -			    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF
+> -			    | (data[0] & UVC_CONTROL_CAP_GET ?
+> -			       UVC_CTRL_FLAG_GET_CUR : 0)
+> -			    | (data[0] & UVC_CONTROL_CAP_SET ?
+> -			       UVC_CTRL_FLAG_SET_CUR : 0)
+> -			    | (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
+> -			       UVC_CTRL_FLAG_AUTO_UPDATE : 0);
+> +		info->flags |= (data[0] & UVC_CONTROL_CAP_GET ?
+> +				UVC_CTRL_FLAG_GET_CUR : 0)
+> +			    |  (data[0] & UVC_CONTROL_CAP_SET ?
+> +				UVC_CTRL_FLAG_SET_CUR : 0)
+> +			    |  (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
+> +				UVC_CTRL_FLAG_AUTO_UPDATE : 0);
+> 
+>  	kfree(data);
+>  	return ret;
+> @@ -1689,6 +1687,9 @@ static int uvc_ctrl_fill_xu_info(struct uvc_device
+> *dev,
+> 
+>  	info->size = le16_to_cpup((__le16 *)data);
+> 
+> +	info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
+> +		    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF;
+> +
+>  	ret = uvc_ctrl_get_flags(dev, ctrl, info);
+>  	if (ret < 0) {
+>  		uvc_trace(UVC_TRACE_CONTROL,
+
+
 -- 
-2.16.1
+Regards,
+
+Laurent Pinchart
