@@ -1,52 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752435AbeCURbV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 13:31:21 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52953 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751548AbeCURbT (ORCPT
+        id S1752315AbeCURfd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 13:35:33 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33185 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751548AbeCURf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 13:31:19 -0400
-From: Colin King <colin.king@canonical.com>
-To: "David S . Miller" <davem@davemloft.net>,
-        Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: mvpp2: use correct index on array mvpp2_pools
-Date: Wed, 21 Mar 2018 17:31:15 +0000
-Message-Id: <20180321173115.1820-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Wed, 21 Mar 2018 13:35:29 -0400
+X-Google-Smtp-Source: AG47ELv+EIqLVUMEBBmVDiCwAeK5SPgibLjoCUGRD6DWwYT9nrR6WLdh/53vEA4B1pcVLSZgW7HDjA==
+From: Paolo Pisati <p.pisati@gmail.com>
+To: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2 v7] Lattice MachXO2 Slave SPI FPGA Manager support
+Date: Wed, 21 Mar 2018 18:35:24 +0100
+Message-Id: <1521653726-24625-1-git-send-email-p.pisati@gmail.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi all,
+this series adds support for the Lattice MachXO2 FPGA chip, programmed
+over Slave SPI.
 
-Array mvpp2_pools is being indexed by long_log_pool, however this
-looks like a cut-n-paste bug and in fact should be short_log_pool.
+Tested on a raspberry pi3, beaglebone black (little endian mode) and imx6
+hummingboard (big endian mode) + bugblat's pif2 fpga hat (machxo2 7000HC) or
+tinyfpga A1/A2 (machxo2 256HC / 1200HC), in SPI slave mode with varying bus
+speed.
 
-Detected by CoverityScan, CID#1466113 ("Copy-paste error")
+Changes since v6:
+* added the SPDX boilerplate
+* switched to pr_debug() and renamed MACHXO2_DEBUG to DEBUG
 
-Fixes: 576193f2d579 ("net: mvpp2: jumbo frames support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/marvell/mvpp2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 9bd35f2291d6..f8bc3d4a39ff 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -4632,7 +4632,7 @@ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
- 	if (!port->pool_short) {
- 		port->pool_short =
- 			mvpp2_bm_pool_use(port, short_log_pool,
--					  mvpp2_pools[long_log_pool].pkt_size);
-+					  mvpp2_pools[short_log_pool].pkt_size);
- 		if (!port->pool_short)
- 			return -ENOMEM;
- 
+Paolo Pisati (2):
+  dt: bindings: fpga: add lattice machxo2 slave spi binding description
+  fpga: lattice machxo2: Add Lattice MachXO2 support
+
+ .../bindings/fpga/lattice-machxo2-spi.txt          |  29 ++
+ drivers/fpga/Kconfig                               |   8 +
+ drivers/fpga/Makefile                              |   1 +
+ drivers/fpga/machxo2-spi.c                         | 405 +++++++++++++++++++++
+ 4 files changed, 443 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
+ create mode 100644 drivers/fpga/machxo2-spi.c
+
 -- 
-2.15.1
+2.7.4
