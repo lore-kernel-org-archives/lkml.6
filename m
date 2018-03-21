@@ -1,191 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752327AbeCUCZJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:25:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45850 "EHLO mail.kernel.org"
+        id S1752504AbeCUCZM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:25:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752003AbeCUCVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751999AbeCUCVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Mar 2018 22:21:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9B621851
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87DDF21852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180321022129.056153500@goodmis.org>
+Message-Id: <20180321022129.551521939@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Tue, 20 Mar 2018 22:21:22 -0400
+Date: Tue, 20 Mar 2018 22:21:25 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [for-next][PATCH 30/46] tracing: Add hist trigger support for variable reference aliases
+Subject: [for-next][PATCH 33/46] tracing: Make tracing_set_clock() non-static
 References: <20180321022052.030055576@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0030-tracing-Add-hist-trigger-support-for-variable-refere.patch
+Content-Disposition: inline; filename=0033-tracing-Make-tracing_set_clock-non-static.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add support for alias=$somevar where alias can be used as
-onmatch.xxx($alias).
+Allow tracing code outside of trace.c to access tracing_set_clock().
 
-Aliases are a way of creating a new name for an existing variable, for
-flexibly in making naming more clear in certain cases.  For example in
-the below the user perhaps feels that using $new_lat in the synthetic
-event invocation is opaque or doesn't fit well stylistically with
-previous triggers, so creates an alias of $new_lat named $latency and
-uses that in the call instead:
+Some applications may require a particular clock in order to function
+properly, such as latency calculations.
 
-  # echo 'hist:keys=next_pid:new_lat=common_timestamp.usecs' >
-    /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
+Also, add an accessor returning the current clock string.
 
-  # echo 'hist:keys=pid:latency=$new_lat:
-    onmatch(sched.sched_switch).wake2($latency,pid)' >
-    /sys/kernel/debug/tracing/events/synthetic/wake1/trigger
-
-Link: http://lkml.kernel.org/r/ef20a65d921af3a873a6f1e8c71407c926d5586f.1516069914.git.tom.zanussi@linux.intel.com
+Link: http://lkml.kernel.org/r/6d1c53e9ee2163f54e1849f5376573f54f0e6009.1516069914.git.tom.zanussi@linux.intel.com
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_events_hist.c | 74 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 67 insertions(+), 7 deletions(-)
+ kernel/trace/trace.c | 2 +-
+ kernel/trace/trace.h | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 98be6ad883eb..32af523501bc 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -228,6 +228,7 @@ enum hist_field_flags {
- 	HIST_FIELD_FL_EXPR		= 1 << 13,
- 	HIST_FIELD_FL_VAR_REF		= 1 << 14,
- 	HIST_FIELD_FL_CPU		= 1 << 15,
-+	HIST_FIELD_FL_ALIAS		= 1 << 16,
- };
- 
- struct var_defs {
-@@ -1609,7 +1610,8 @@ static const char *hist_field_name(struct hist_field *field,
- 
- 	if (field->field)
- 		field_name = field->field->name;
--	else if (field->flags & HIST_FIELD_FL_LOG2)
-+	else if (field->flags & HIST_FIELD_FL_LOG2 ||
-+		 field->flags & HIST_FIELD_FL_ALIAS)
- 		field_name = hist_field_name(field->operands[0], ++level);
- 	else if (field->flags & HIST_FIELD_FL_TIMESTAMP)
- 		field_name = "common_timestamp";
-@@ -2080,7 +2082,7 @@ static struct hist_field *create_hist_field(struct hist_trigger_data *hist_data,
- 
- 	hist_field->hist_data = hist_data;
- 
--	if (flags & HIST_FIELD_FL_EXPR)
-+	if (flags & HIST_FIELD_FL_EXPR || flags & HIST_FIELD_FL_ALIAS)
- 		goto out; /* caller will populate */
- 
- 	if (flags & HIST_FIELD_FL_VAR_REF) {
-@@ -2217,10 +2219,18 @@ static int init_var_ref(struct hist_field *ref_field,
- 		}
- 	}
- 
--	ref_field->name = kstrdup(var_field->var.name, GFP_KERNEL);
--	if (!ref_field->name) {
--		err = -ENOMEM;
--		goto free;
-+	if (var_field->var.name) {
-+		ref_field->name = kstrdup(var_field->var.name, GFP_KERNEL);
-+		if (!ref_field->name) {
-+			err = -ENOMEM;
-+			goto free;
-+		}
-+	} else if (var_field->name) {
-+		ref_field->name = kstrdup(var_field->name, GFP_KERNEL);
-+		if (!ref_field->name) {
-+			err = -ENOMEM;
-+			goto free;
-+		}
- 	}
- 
- 	ref_field->type = kstrdup(var_field->type, GFP_KERNEL);
-@@ -2382,6 +2392,28 @@ parse_field(struct hist_trigger_data *hist_data, struct trace_event_file *file,
- 	return field;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 68f8702af9fb..551a7cd0d705 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -6214,7 +6214,7 @@ static int tracing_clock_show(struct seq_file *m, void *v)
+ 	return 0;
  }
  
-+static struct hist_field *create_alias(struct hist_trigger_data *hist_data,
-+				       struct hist_field *var_ref,
-+				       char *var_name)
-+{
-+	struct hist_field *alias = NULL;
-+	unsigned long flags = HIST_FIELD_FL_ALIAS | HIST_FIELD_FL_VAR;
-+
-+	alias = create_hist_field(hist_data, NULL, flags, var_name);
-+	if (!alias)
-+		return NULL;
-+
-+	alias->fn = var_ref->fn;
-+	alias->operands[0] = var_ref;
-+
-+	if (init_var_ref(alias, var_ref, var_ref->system, var_ref->event_name)) {
-+		destroy_hist_field(alias, 0);
-+		return NULL;
-+	}
-+
-+	return alias;
-+}
-+
- static struct hist_field *parse_atom(struct hist_trigger_data *hist_data,
- 				     struct trace_event_file *file, char *str,
- 				     unsigned long *flags, char *var_name)
-@@ -2415,6 +2447,13 @@ static struct hist_field *parse_atom(struct hist_trigger_data *hist_data,
- 		if (hist_field) {
- 			hist_data->var_refs[hist_data->n_var_refs] = hist_field;
- 			hist_field->var_ref_idx = hist_data->n_var_refs++;
-+			if (var_name) {
-+				hist_field = create_alias(hist_data, hist_field, var_name);
-+				if (!hist_field) {
-+					ret = -ENOMEM;
-+					goto out;
-+				}
-+			}
- 			return hist_field;
- 		}
- 	} else
-@@ -2515,6 +2554,26 @@ static int check_expr_operands(struct hist_field *operand1,
- 	unsigned long operand1_flags = operand1->flags;
- 	unsigned long operand2_flags = operand2->flags;
+-static int tracing_set_clock(struct trace_array *tr, const char *clockstr)
++int tracing_set_clock(struct trace_array *tr, const char *clockstr)
+ {
+ 	int i;
  
-+	if ((operand1_flags & HIST_FIELD_FL_VAR_REF) ||
-+	    (operand1_flags & HIST_FIELD_FL_ALIAS)) {
-+		struct hist_field *var;
-+
-+		var = find_var_field(operand1->var.hist_data, operand1->name);
-+		if (!var)
-+			return -EINVAL;
-+		operand1_flags = var->flags;
-+	}
-+
-+	if ((operand2_flags & HIST_FIELD_FL_VAR_REF) ||
-+	    (operand2_flags & HIST_FIELD_FL_ALIAS)) {
-+		struct hist_field *var;
-+
-+		var = find_var_field(operand2->var.hist_data, operand2->name);
-+		if (!var)
-+			return -EINVAL;
-+		operand2_flags = var->flags;
-+	}
-+
- 	if ((operand1_flags & HIST_FIELD_FL_TIMESTAMP_USECS) !=
- 	    (operand2_flags & HIST_FIELD_FL_TIMESTAMP_USECS))
- 		return -EINVAL;
-@@ -4646,7 +4705,8 @@ static void hist_field_print(struct seq_file *m, struct hist_field *hist_field)
- 	else if (hist_field->flags & HIST_FIELD_FL_CPU)
- 		seq_puts(m, "cpu");
- 	else if (field_name) {
--		if (hist_field->flags & HIST_FIELD_FL_VAR_REF)
-+		if (hist_field->flags & HIST_FIELD_FL_VAR_REF ||
-+		    hist_field->flags & HIST_FIELD_FL_ALIAS)
- 			seq_putc(m, '$');
- 		seq_printf(m, "%s", field_name);
- 	}
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 99b7ee7ed127..9de3e2a2f042 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -289,6 +289,7 @@ extern int trace_array_get(struct trace_array *tr);
+ extern void trace_array_put(struct trace_array *tr);
+ 
+ extern int tracing_set_time_stamp_abs(struct trace_array *tr, bool abs);
++extern int tracing_set_clock(struct trace_array *tr, const char *clockstr);
+ 
+ extern bool trace_clock_in_ns(struct trace_array *tr);
+ 
 -- 
 2.15.1
