@@ -1,147 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeCUCYa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:24:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45046 "EHLO mail.kernel.org"
+        id S1752457AbeCUCY0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:24:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752006AbeCUCVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752010AbeCUCVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Mar 2018 22:21:38 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB83521859
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 348FE21857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180321022129.876137373@goodmis.org>
+Message-Id: <20180321022130.195605219@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Tue, 20 Mar 2018 22:21:27 -0400
+Date: Tue, 20 Mar 2018 22:21:29 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 35/46] ring-buffer: Add nesting for adding events within events
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [for-next][PATCH 37/46] tracing: Add inter-event blurb to HIST_TRIGGERS config option
 References: <20180321022052.030055576@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0035-ring-buffer-Add-nesting-for-adding-events-within-eve.patch
+Content-Disposition: inline; filename=0037-tracing-Add-inter-event-blurb-to-HIST_TRIGGERS-confi.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-The ring-buffer code has recusion protection in case tracing ends up tracing
-itself, the ring-buffer will detect that it was called at the same context
-(normal, softirq, interrupt or NMI), and not continue to record the event.
+So that users know that inter-event tracing is supported as part of
+the HIST_TRIGGERS option, include text to that effect in the help
+text.
 
-With the histogram synthetic events, they are called while tracing another
-event at the same context. The recusion protection triggers because it
-detects tracing at the same context and stops it.
+Link: http://lkml.kernel.org/r/a38e24231d8d980be636b56d35814570acfd167a.1516069914.git.tom.zanussi@linux.intel.com
 
-Add ring_buffer_nest_start() and ring_buffer_nest_end() that will notify the
-ring buffer that a trace is about to happen within another trace and that it
-is intended, and not to trigger the recursion blocking.
-
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/ring_buffer.h |  3 +++
- kernel/trace/ring_buffer.c  | 57 ++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 57 insertions(+), 3 deletions(-)
+ kernel/trace/Kconfig | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
-index 7cb84774c20d..a0233edc0718 100644
---- a/include/linux/ring_buffer.h
-+++ b/include/linux/ring_buffer.h
-@@ -117,6 +117,9 @@ int ring_buffer_unlock_commit(struct ring_buffer *buffer,
- int ring_buffer_write(struct ring_buffer *buffer,
- 		      unsigned long length, void *data);
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 0b249e2f0c3c..c4f0f2e4126e 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -606,7 +606,10 @@ config HIST_TRIGGERS
+ 	  event activity as an initial guide for further investigation
+ 	  using more advanced tools.
  
-+void ring_buffer_nest_start(struct ring_buffer *buffer);
-+void ring_buffer_nest_end(struct ring_buffer *buffer);
+-	  See Documentation/trace/events.txt.
++	  Inter-event tracing of quantities such as latencies is also
++	  supported using hist triggers under this option.
 +
- struct ring_buffer_event *
- ring_buffer_peek(struct ring_buffer *buffer, int cpu, u64 *ts,
- 		 unsigned long *lost_events);
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 33073cdebb26..a2fd3893cc02 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -477,6 +477,7 @@ struct ring_buffer_per_cpu {
- 	struct buffer_page		*reader_page;
- 	unsigned long			lost_events;
- 	unsigned long			last_overrun;
-+	unsigned long			nest;
- 	local_t				entries_bytes;
- 	local_t				entries;
- 	local_t				overrun;
-@@ -2624,10 +2625,10 @@ trace_recursive_lock(struct ring_buffer_per_cpu *cpu_buffer)
- 		bit = pc & NMI_MASK ? RB_CTX_NMI :
- 			pc & HARDIRQ_MASK ? RB_CTX_IRQ : RB_CTX_SOFTIRQ;
++	  See Documentation/trace/histogram.txt.
+ 	  If in doubt, say N.
  
--	if (unlikely(val & (1 << bit)))
-+	if (unlikely(val & (1 << (bit + cpu_buffer->nest))))
- 		return 1;
- 
--	val |= (1 << bit);
-+	val |= (1 << (bit + cpu_buffer->nest));
- 	cpu_buffer->current_context = val;
- 
- 	return 0;
-@@ -2636,7 +2637,57 @@ trace_recursive_lock(struct ring_buffer_per_cpu *cpu_buffer)
- static __always_inline void
- trace_recursive_unlock(struct ring_buffer_per_cpu *cpu_buffer)
- {
--	cpu_buffer->current_context &= cpu_buffer->current_context - 1;
-+	cpu_buffer->current_context &=
-+		cpu_buffer->current_context - (1 << cpu_buffer->nest);
-+}
-+
-+/* The recursive locking above uses 4 bits */
-+#define NESTED_BITS 4
-+
-+/**
-+ * ring_buffer_nest_start - Allow to trace while nested
-+ * @buffer: The ring buffer to modify
-+ *
-+ * The ring buffer has a safty mechanism to prevent recursion.
-+ * But there may be a case where a trace needs to be done while
-+ * tracing something else. In this case, calling this function
-+ * will allow this function to nest within a currently active
-+ * ring_buffer_lock_reserve().
-+ *
-+ * Call this function before calling another ring_buffer_lock_reserve() and
-+ * call ring_buffer_nest_end() after the nested ring_buffer_unlock_commit().
-+ */
-+void ring_buffer_nest_start(struct ring_buffer *buffer)
-+{
-+	struct ring_buffer_per_cpu *cpu_buffer;
-+	int cpu;
-+
-+	/* Enabled by ring_buffer_nest_end() */
-+	preempt_disable_notrace();
-+	cpu = raw_smp_processor_id();
-+	cpu_buffer = buffer->buffers[cpu];
-+	/* This is the shift value for the above recusive locking */
-+	cpu_buffer->nest += NESTED_BITS;
-+}
-+
-+/**
-+ * ring_buffer_nest_end - Allow to trace while nested
-+ * @buffer: The ring buffer to modify
-+ *
-+ * Must be called after ring_buffer_nest_start() and after the
-+ * ring_buffer_unlock_commit().
-+ */
-+void ring_buffer_nest_end(struct ring_buffer *buffer)
-+{
-+	struct ring_buffer_per_cpu *cpu_buffer;
-+	int cpu;
-+
-+	/* disabled by ring_buffer_nest_start() */
-+	cpu = raw_smp_processor_id();
-+	cpu_buffer = buffer->buffers[cpu];
-+	/* This is the shift value for the above recusive locking */
-+	cpu_buffer->nest -= NESTED_BITS;
-+	preempt_enable_notrace();
- }
- 
- /**
+ config MMIOTRACE_TEST
 -- 
 2.15.1
