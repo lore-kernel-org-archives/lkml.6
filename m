@@ -1,107 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752800AbeCUSnX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 14:43:23 -0400
-Received: from mail-pl0-f49.google.com ([209.85.160.49]:44035 "EHLO
-        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752616AbeCUSnT (ORCPT
+        id S1752847AbeCUSoC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 14:44:02 -0400
+Received: from mail-io0-f180.google.com ([209.85.223.180]:41245 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752816AbeCUSn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 14:43:19 -0400
-X-Google-Smtp-Source: AG47ELs1nRdeCWfEjJ4ZI99cuwbrED0KjfRmsrbmoNbulNNbNl0tq7lK78PHgKqSvWkZHVTnxDXNRw==
-Subject: Re: [bug, bisected] pfifo_fast causes packet reordering
-To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
-        Dave Taht <dave.taht@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        Martin Elshuber <martin.elshuber@theobroma-systems.com>
-References: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com>
- <CAA93jw5FSbvg8AZ=EmneW8juqd8LCgp=xUrSxYm2GBEucKkT3w@mail.gmail.com>
- <95844480-d020-9000-53ef-0da8b965ce6e@gmail.com>
- <3a959e50-8656-5d9c-97b9-227d733948f8@theobroma-systems.com>
- <5aeb54ba-2d96-4ab5-53c4-2d3691be7acc@gmail.com>
- <340a6c54-6031-5522-98f5-eafdd3a37a38@theobroma-systems.com>
- <00cc2d41-6861-9a9c-603f-ba8013b2e2ce@theobroma-systems.com>
-From: John Fastabend <john.fastabend@gmail.com>
-Message-ID: <4e33aae4-9e87-22b4-7f09-008183ea553a@gmail.com>
-Date: Wed, 21 Mar 2018 11:43:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 21 Mar 2018 14:43:59 -0400
+X-Google-Smtp-Source: AG47ELsj3tdLqZtGq6IFZ1F1o8N2BgqCdZPavEdpaQptJKSucdtoOByj05Sg438QBTjEUX0pB4vNXg4AxI/4BjuNLkM=
 MIME-Version: 1.0
-In-Reply-To: <00cc2d41-6861-9a9c-603f-ba8013b2e2ce@theobroma-systems.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180321153854.GB24312@kernel.org>
+References: <20180321153854.GB24312@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 21 Mar 2018 11:43:58 -0700
+X-Google-Sender-Auth: mv5_ssJRqfrV7nCCK0aIRTYB9mk
+Message-ID: <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
+Subject: Re: [PATCH] target: Use WARNON_NON_RT(!irqs_disabled())
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Daniel Bristot de Oliveira <daniel@bristot.me>,
+        =?UTF-8?Q?Luis_Claudio_R=2E_Gon=C3=A7alves?= <lclaudio@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        target-devel <target-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/21/2018 03:01 AM, Jakob Unterwurzacher wrote:
-> On 16.03.18 11:26, Jakob Unterwurzacher wrote:
->> On 15.03.18 23:30, John Fastabend wrote:
->>>> I have reproduced it using two USB network cards connected to each other. The test tool sends UDP packets containing a counter and listens on the other interface, it is available at
->>>> https://github.com/jakob-tsd/pfifo_stress/blob/master/pfifo_stress.py
->>>
->>> Great thanks, can you also run this with taskset to bind to
->>> a single CPU,
->>>
->>>   # taskset 0x1 ./pifof_stress.py
->>>
->>> And let me know if you still see the OOO.
->>
->> Interesting. Looks like it depends on which core it runs on. CPU0 is clean, CPU1 is not.
-> 
-> So we are at v4.16-rc6 now - have you managed to reproduce this is or should I try to get the revert correct?
+[ Adding PeterZ to participants due to query about lockdep_assert() ]
 
-I have a theory on what is going on here. Because we now run without
-locks we can have multiple qdisc_run() calls running in parallel. Possible
-if we send packets using multiple cores.
+On Wed, Mar 21, 2018 at 8:38 AM, Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+>         assert_spin_locked(&cmd->t_state_lock);
+> -       WARN_ON_ONCE(!irqs_disabled());
+> +       WARN_ON_ONCE_NONRT(!irqs_disabled());
 
-   --- application ---
-     cpu0    cpu1
-        |     |
-        |     |
-    enqueue enqueue   
-        |     |
-      pfifo_fast
-        |     |
-    dequeue   dequeue
-         \    /
-        ndo_xmit
+Ugh.
 
-The skb->ooo_okay flag will keep the enqueue side packets in
-order. So that is covered.
+Can't we just replace both of those with a lockdep annotation?
 
-But on the dequeue side if two cores dequeue in parallel we will
-race to ndo ops to ensure packets are in order. Rarely, I guess the
-second dequeue could actually call ndo hook before first dequeued
-packet. Because usually the dequeue happens on the same queue the
-enqueue happened on we don't see this very often. But there seems
-to be a case where the driver calls netif_tx_wake_queue() on a
-different core (from the rx interrupt context). The wake queue call
-then eventually runs the dequeue on a different core. So when taskset
-is aligned with the interrupt everything is in-order when it is moved
-to a different core we see the OOO.
+Does "lockdep_assert_held()" already verify the irq contextr, or do we
+need lockdep_assert_irqs_disabled() too?
 
-Thats my theory at least. Are you able to test a patch if I generate
-one to fix this?
+Honestly, the old-fashioned way of doing verification of state by hand
+is understandable, but it's legacy and kind of pointless when we have
+much better tools these days.
 
-FWIW the revert on this is trivial, but I think we can fix this
-without too much work. Also, if you had a driver tx queue per core
-this would not be an issue. 
+I'm perfectly willing to leave old assertions in place, but if they
+need fixing anyway, I'd damn well want to fix them *right* instead of
+starting to just add more piles of hacks on top of the old model.
 
-diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
-index 190570f..171f470 100644
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -792,7 +792,6 @@ struct Qdisc_ops pfifo_fast_ops __read_mostly = {
-        .dump           =       pfifo_fast_dump,
-        .change_tx_queue_len =  pfifo_fast_change_tx_queue_len,
-        .owner          =       THIS_MODULE,
--       .static_flags   =       TCQ_F_NOLOCK | TCQ_F_CPUSTATS,
- };
- EXPORT_SYMBOL(pfifo_fast_ops);
+Because when the details of the locking rules depend on RT vs non-RT,
+I want the checks to make sense.  And presumably lockdep is the thing
+that really knows what the status of a lock is, no?
 
-> 
-> Best regards,
-> Jakob
+                  Linus
