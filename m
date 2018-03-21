@@ -1,69 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753261AbeCUS6R (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 14:58:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58970 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753008AbeCUS40 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 14:56:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 487FB60817
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: jeffrey.t.kirsher@intel.com
-Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>, intel-wired-lan@lists.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH REPOST v4 4/7] igb: eliminate duplicate barriers on weakly-ordered archs
-Date: Wed, 21 Mar 2018 14:56:08 -0400
-Message-Id: <1521658572-26354-5-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521658572-26354-1-git-send-email-okaya@codeaurora.org>
-References: <1521658572-26354-1-git-send-email-okaya@codeaurora.org>
+        id S1752864AbeCUTB7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 15:01:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752527AbeCUTB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 15:01:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBA7421770
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 21 Mar 2018 15:01:54 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        linux-scsi@vger.kernel.org,
+        Daniel Bristot de Oliveira <daniel@bristot.me>,
+        "Luis Claudio R. =?UTF-8?B?R29uw6dhbHZlcw==?=" <lclaudio@redhat.com>,
+        Clark Williams <williams@redhat.com>, target-devel@vger.kernel.org
+Subject: Re: [PATCH] target: Use WARNON_NON_RT(!irqs_disabled())
+Message-ID: <20180321150154.282ce8d7@gandalf.local.home>
+In-Reply-To: <20180321185001.GB11249@infradead.org>
+References: <20180321153854.GB24312@kernel.org>
+        <20180321185001.GB11249@infradead.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a barrier
-on some architectures like arm64.
+On Wed, 21 Mar 2018 11:50:01 -0700
+Christoph Hellwig <hch@infradead.org> wrote:
 
-This ends up CPU observing two barriers back to back before executing the
-register write.
+> On Wed, Mar 21, 2018 at 12:38:54PM -0300, Arnaldo Carvalho de Melo wrote:
+> >  	assert_spin_locked(&cmd->t_state_lock);
+> > -	WARN_ON_ONCE(!irqs_disabled());
+> > +	WARN_ON_ONCE_NONRT(!irqs_disabled());  
+> 
+> I can't find where WARN_ON_ONCE_NONRT is defined.
 
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
+It's only in the RT patch set. But that may be changing soon.
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
----
- drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> That being said I think we can just kill these asserts.  If we have irqs
+> disabled spin_unlock_irq a few lines below should already warn.
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index b88fae7..82aea92 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -5671,7 +5671,7 @@ static int igb_tx_map(struct igb_ring *tx_ring,
- 	igb_maybe_stop_tx(tx_ring, DESC_NEEDED);
- 
- 	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
--		writel(i, tx_ring->tail);
-+		writel_relaxed(i, tx_ring->tail);
- 
- 		/* we need this if more than one processor can write to our tail
- 		 * at a time, it synchronizes IO on IA64/Altix systems
-@@ -8072,7 +8072,7 @@ void igb_alloc_rx_buffers(struct igb_ring *rx_ring, u16 cleaned_count)
- 		 * such as IA-64).
- 		 */
- 		wmb();
--		writel(i, rx_ring->tail);
-+		writel_relaxed(i, rx_ring->tail);
- 	}
- }
- 
--- 
-2.7.4
+I agree with Linus. This should just be some kind of
+lockdep_assert_held_irqs_disabeld() or something like that.
+
+-- Steve
