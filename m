@@ -1,122 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753849AbeCUVnY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:43:24 -0400
-Received: from mga05.intel.com ([192.55.52.43]:10469 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753834AbeCUVnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:43:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
-   d="scan'208";a="27754369"
-Date: Wed, 21 Mar 2018 14:35:29 -0700
-From: Ivan Gorinov <ivan.gorinov@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v7 2/2] x86/devicetree: Use CPU description from Device Tree
-Message-ID: <7aca5ef736b6bf761133f282e022dd819c76e9c6.1521667677.git.ivan.gorinov@intel.com>
-References: <cover.1521667677.git.ivan.gorinov@intel.com>
+        id S1753820AbeCUVqF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:46:05 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:38214 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753704AbeCUVqE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:46:04 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R841e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Szs3x6X_1521668745;
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321130833.GM23100@dhcp22.suse.cz>
+ <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
+ <20180321172932.GE4780@bombadil.infradead.org>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <f057a634-7e0a-1b51-eede-dcb6f128b18e@linux.alibaba.com>
+Date: Wed, 21 Mar 2018 14:45:44 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1521667677.git.ivan.gorinov@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180321172932.GE4780@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current x86 Device Tree implementation does not support multiprocessing.
-Use new DT bindings to describe the processors.
 
-Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
----
- arch/x86/kernel/devicetree.c | 39 ++++++++++++++++++++++++++++-----------
- 1 file changed, 28 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
-index 25de5f6..62fd5c9 100644
---- a/arch/x86/kernel/devicetree.c
-+++ b/arch/x86/kernel/devicetree.c
-@@ -130,31 +130,46 @@ static void __init dtb_setup_hpet(void)
- #endif
- }
- 
-+static void __init dtb_cpu_setup(void)
-+{
-+	struct device_node *dn;
-+	u32 apic_id, version;
-+	int ret;
-+
-+	version = GET_APIC_VERSION(apic_read(APIC_LVR));
-+	for_each_node_by_type(dn, "cpu") {
-+		ret = of_property_read_u32(dn, "reg", &apic_id);
-+		if (ret < 0) {
-+			pr_warn("%pOF: missing local APIC ID\n", dn);
-+			continue;
-+		}
-+		generic_processor_info(apic_id, version);
-+	}
-+}
-+
- static void __init dtb_lapic_setup(void)
- {
- #ifdef CONFIG_X86_LOCAL_APIC
- 	struct device_node *dn;
- 	struct resource r;
-+	unsigned long lapic_addr = APIC_DEFAULT_PHYS_BASE;
- 	int ret;
- 
- 	dn = of_find_compatible_node(NULL, NULL, "intel,ce4100-lapic");
--	if (!dn)
--		return;
--
--	ret = of_address_to_resource(dn, 0, &r);
--	if (WARN_ON(ret))
--		return;
-+	if (dn) {
-+		ret = of_address_to_resource(dn, 0, &r);
-+		if (WARN_ON(ret))
-+			return;
-+		lapic_addr = r.start;
-+	}
- 
- 	/* Did the boot loader setup the local APIC ? */
- 	if (!boot_cpu_has(X86_FEATURE_APIC)) {
--		if (apic_force_enable(r.start))
-+		if (apic_force_enable(lapic_addr))
- 			return;
- 	}
--	smp_found_config = 1;
- 	pic_mode = 1;
--	register_lapic_address(r.start);
--	generic_processor_info(boot_cpu_physical_apicid,
--			       GET_APIC_VERSION(apic_read(APIC_LVR)));
-+	register_lapic_address(lapic_addr);
- #endif
- }
- 
-@@ -256,6 +271,7 @@ static void __init dtb_ioapic_setup(void) {}
- static void __init dtb_apic_setup(void)
- {
- 	dtb_lapic_setup();
-+	dtb_cpu_setup();
- 	dtb_ioapic_setup();
- }
- 
-@@ -292,6 +308,7 @@ void __init x86_dtb_init(void)
- 	if (!of_have_populated_dt())
- 		return;
- 
-+	smp_found_config = 1;
- 	dtb_setup_hpet();
- 	dtb_apic_setup();
- }
--- 
-2.7.4
+On 3/21/18 10:29 AM, Matthew Wilcox wrote:
+> On Wed, Mar 21, 2018 at 09:31:22AM -0700, Yang Shi wrote:
+>> On 3/21/18 6:08 AM, Michal Hocko wrote:
+>>> Yes, this definitely sucks. One way to work that around is to split the
+>>> unmap to two phases. One to drop all the pages. That would only need
+>>> mmap_sem for read and then tear down the mapping with the mmap_sem for
+>>> write. This wouldn't help for parallel mmap_sem writers but those really
+>>> need a different approach (e.g. the range locking).
+>> page fault might sneak in to map a page which has been unmapped before?
+>>
+>> range locking should help a lot on manipulating small sections of a large
+>> mapping in parallel or multiple small mappings. It may not achieve too much
+>> for single large mapping.
+> I don't think we need range locking.  What if we do munmap this way:
+>
+> Take the mmap_sem for write
+> Find the VMA
+>    If the VMA is large(*)
+>      Mark the VMA as deleted
+>      Drop the mmap_sem
+>      zap all of the entries
+>      Take the mmap_sem
+>    Else
+>      zap all of the entries
+> Continue finding VMAs
+> Drop the mmap_sem
+>
+> Now we need to change everywhere which looks up a VMA to see if it needs
+> to care the the VMA is deleted (page faults, eg will need to SIGBUS; mmap
+
+Marking vma as deleted sounds good. The problem for my current approach 
+is the concurrent page fault may succeed if it access the not yet 
+unmapped section. Marking deleted vma could tell page fault the vma is 
+not valid anymore, then return SIGSEGV.
+
+> does not care; munmap will need to wait for the existing munmap operation
+
+Why mmap doesn't care? How about MAP_FIXED? It may fail unexpectedly, right?
+
+Thanks,
+Yang
+
+> to complete), but it gives us the atomicity, at least on a per-VMA basis.
+>
+> We could also do:
+>
+> Take the mmap_sem for write
+> Mark all VMAs in the range as deleted & modify any partial VMAs
+> Drop mmap_sem
+> zap pages from deleted VMAs
+>
+> That would give us the same atomicity that we have today.
+>
+> Deleted VMAs would need a pointer to a completion, so operations that
+> need to wait can queue themselves up.  I'd recommend we use the low bit
+> of vm_file and treat it as a pointer to a struct completion if set.
