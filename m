@@ -1,121 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeCUNmw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 09:42:52 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.209]:34657 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751597AbeCUNmu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 09:42:50 -0400
-Date: Wed, 21 Mar 2018 08:42:47 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mac80211: aes-cmac: remove VLA usage
-Message-ID: <20180321134247.GA1275@embeddedgus>
+        id S1752002AbeCUNo1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 09:44:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751502AbeCUNoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 09:44:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF742175B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 21 Mar 2018 09:44:22 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: bugzilla-daemon@bugzilla.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, wen.yang99@zte.com.cn
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [Bug 199003] console stalled, cause Hard LOCKUP.
+Message-ID: <20180321094422.6e099480@gandalf.local.home>
+In-Reply-To: <bug-199003-8243-Txkdkdv5Cm@https.bugzilla.kernel.org/>
+References: <bug-199003-8243@https.bugzilla.kernel.org/>
+        <bug-199003-8243-Txkdkdv5Cm@https.bugzilla.kernel.org/>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1eye0v-000H1e-0p
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.145.54.187]:43252
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wvla, remove VLAs and replace them
-with dynamic memory allocation instead.
+[ Adding LKML too ]
 
-The use of stack Variable Length Arrays needs to be avoided, as they
-can be a vector for stack exhaustion, which can be both a runtime bug
-or a security flaw. Also, in general, as code evolves it is easy to
-lose track of how big a VLA can get. Thus, we can end up having runtime
-failures that are hard to debug.
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199003
 
-Also, fixed as part of the directive to remove all VLAs from
-the kernel: https://lkml.org/lkml/2018/3/7/621
+>From the bugzilla report:
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/mac80211/aes_cmac.c | 36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+> Watchdog detected hard LOCKUP on cpu 16:
+> [  557.369547] Kernel panic - not syncing: Hard LOCKUP
+> [  557.369548] CPU: 16 PID: 11511 Comm: kubelet Tainted: G        W  OE  ------------ T 3.10.0-514.26.2.el7.x86_64 #1
+> [  557.369548] Hardware name: ZTE EC600G3/XH20G2, BIOS UBF03.11.67_SVN65859 12/29/2016
+> [  557.369549]  ffffffff818daafa 0000000061eaf60c ffff88407d485b18 ffffffff816873ff
+> [  557.369550]  ffff88407d485b98 ffffffff816807ea 0000000b00000010 ffff88407d485ba8
+> [  557.369551]  ffff88407d485b48 0000000061eaf60c ffff88407d485b88 ffffffff818da800
+> [  557.369551] Call Trace:
+> [  557.369552]  <NMI>  [<ffffffff816873ff>] dump_stack+0x19/0x1b
+> [  557.369555]  [<ffffffff816807ea>] panic+0xe3/0x1f2
+> [  557.369558]  [<ffffffff81085abf>] nmi_panic+0x3f/0x40
+> [  557.369559]  [<ffffffff8112f999>] watchdog_overflow_callback+0xf9/0x100
+> [  557.369560]  [<ffffffff81174e4e>] __perf_event_overflow+0x8e/0x1f0
+> [  557.369562]  [<ffffffff81175a94>] perf_event_overflow+0x14/0x20
+> [  557.369563]  [<ffffffff81009d88>] intel_pmu_handle_irq+0x1f8/0x4e0
+> [  557.369564]  [<ffffffff8131ab2c>] ? ioremap_page_range+0x27c/0x3e0
+> [  557.369565]  [<ffffffff811bf774>] ? vunmap_page_range+0x1c4/0x310
+> [  557.369566]  [<ffffffff811bf8d1>] ? unmap_kernel_range_noflush+0x11/0x20
+> [  557.369567]  [<ffffffff813ca434>] ? ghes_copy_tofrom_phys+0x124/0x210
+> [  557.369568]  [<ffffffff813ca5c0>] ? ghes_read_estatus+0xa0/0x190
+> [  557.369569]  [<ffffffff8168f02b>] perf_event_nmi_handler+0x2b/0x50
+> [  557.369571]  [<ffffffff81690477>] nmi_handle.isra.0+0x87/0x160
+> [  557.369572]  [<ffffffff8130f380>] ? cfqg_print_leaf_weight_device+0x40/0x40
+> [  557.369573]  [<ffffffff81690723>] do_nmi+0x1d3/0x410
+> [  557.369574]  [<ffffffff8130f380>] ? cfqg_print_leaf_weight_device+0x40/0x40
+> [  557.369575]  [<ffffffff8168f893>] end_repeat_nmi+0x1e/0x2e
+> [  557.369576]  [<ffffffff8130f380>] ? cfqg_print_leaf_weight_device+0x40/0x40
+> [  557.369577]  [<ffffffff8168ee6a>] ? _raw_spin_lock_irq+0x3a/0x60
+> [  557.369577]  [<ffffffff8168ee6a>] ? _raw_spin_lock_irq+0x3a/0x60
+> [  557.369579]  [<ffffffff8168ee6a>] ? _raw_spin_lock_irq+0x3a/0x60
+> [  557.369580]  <<EOE>>  [<ffffffff81309336>] blkcg_print_blkgs+0x76/0xf0   ----》 wait for blkg->q->queue_lock
+> [  557.369581]  [<ffffffff8130f236>] cfqg_print_rwstat_recursive+0x36/0x40
+> [  557.369583]  [<ffffffff81109393>] cgroup_seqfile_show+0x73/0x80
+> [  557.369584]  [<ffffffff81222b57>] ? seq_buf_alloc+0x17/0x40
+> [  557.369585]  [<ffffffff8122305a>] seq_read+0x10a/0x3b0
+> [  557.369586]  [<ffffffff811fe9be>] vfs_read+0x9e/0x170
+> [  557.369587]  [<ffffffff811ff58f>] SyS_read+0x7f/0xe0
+> [  557.369588]  [<ffffffff81697ac9>] system_call_fastpath+0x16/0x1b
+> 
+> source code:
+> void blkcg_print_blkgs(struct seq_file *sf, struct blkcg *blkcg,
+> 		       u64 (*prfill)(struct seq_file *,
+> 				     struct blkg_policy_data *, int),
+> 		       const struct blkcg_policy *pol, int data,
+> 		       bool show_total)
+> {
+> 	struct blkcg_gq *blkg;
+> 	u64 total = 0;
+> 
+> 	rcu_read_lock();
+> 	hlist_for_each_entry_rcu(blkg, &blkcg->blkg_list, blkcg_node) {
+> 		spin_lock_irq(blkg->q->queue_lock);
+> 	......
+> }
+> 	
+> 
+> Another process,  "kworker/u113:1" acquired q->queue_lock and wait for console_write to finish:
+> 
+> PID: 319    TASK: ffff881ffb09edd0  CPU: 7   COMMAND: "kworker/u113:1"
+>  #0 [ffff881fffbc5e48] crash_nmi_callback at ffffffff8104d342
+>  #1 [ffff881fffbc5e58] nmi_handle at ffffffff81690477
+>  #2 [ffff881fffbc5eb0] do_nmi at ffffffff81690683
+>  #3 [ffff881fffbc5ef0] end_repeat_nmi at ffffffff8168f893
+>     [exception RIP: delay_tsc+68]
+>     RIP: ffffffff81326724  RSP: ffff881ffb0b7540  RFLAGS: 00000046
+>     RAX: 0000000000000007  RBX: ffffffff81f89080  RCX: 0066a7d6eb5cfc9d
+>     RDX: 0066a7d6eb5d0629  RSI: 0000000000000007  RDI: 0000000000000a23
+>     RBP: ffff881ffb0b7540   R8: 0000000000000000   R9: 00000000ffffffff
+>     R10: 00000000000003ff  R11: 0000000000000001  R12: 00000000000026f3
+>     R13: 0000000000000020  R14: ffffffff81d3c0fb  R15: 000000000000003b
+>     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+> --- <NMI exception stack> ---
+>  #4 [ffff881ffb0b7540] delay_tsc at ffffffff81326724
+>  #5 [ffff881ffb0b7548] __const_udelay at ffffffff81326678
+>  #6 [ffff881ffb0b7558] wait_for_xmitr at ffffffff814056e0
+>  #7 [ffff881ffb0b7580] serial8250_console_putchar at ffffffff814058ac
+>  #8 [ffff881ffb0b75a0] uart_console_write at ffffffff8140035a
+>  #9 [ffff881ffb0b75d0] serial8250_console_write at ffffffff814057fe
+> #10 [ffff881ffb0b7618] call_console_drivers.constprop.17 at ffffffff81087011
+> #11 [ffff881ffb0b7640] console_unlock at ffffffff810889e9
+> #12 [ffff881ffb0b7680] vprintk_emit at ffffffff81088df4
+> #13 [ffff881ffb0b76f0] dev_vprintk_emit at ffffffff81428e72
+> #14 [ffff881ffb0b77a8] dev_printk_emit at ffffffff81428eee
+> #15 [ffff881ffb0b7808] __dev_printk at ffffffff8142937e
+> #16 [ffff881ffb0b7818] dev_printk at ffffffff8142942d
+> #17 [ffff881ffb0b7888] sdev_prefix_printk at ffffffff81463771
+> #18 [ffff881ffb0b7918] scsi_prep_state_check at ffffffff814598e4
+> #19 [ffff881ffb0b7928] scsi_prep_fn at ffffffff8145992d
+> #20 [ffff881ffb0b7960] blk_peek_request at ffffffff812f0826
+> #21 [ffff881ffb0b7988] scsi_request_fn at ffffffff8145b588
+> #22 [ffff881ffb0b79f0] __blk_run_queue at ffffffff812ebd63
+> #23 [ffff881ffb0b7a08] blk_queue_bio at ffffffff812f1013        -----》acquired q->queue_lock and wait for console_write to finish
 
-diff --git a/net/mac80211/aes_cmac.c b/net/mac80211/aes_cmac.c
-index 2fb6558..c9444bf 100644
---- a/net/mac80211/aes_cmac.c
-+++ b/net/mac80211/aes_cmac.c
-@@ -27,30 +27,42 @@ static const u8 zero[CMAC_TLEN_256];
- void ieee80211_aes_cmac(struct crypto_shash *tfm, const u8 *aad,
- 			const u8 *data, size_t data_len, u8 *mic)
- {
--	SHASH_DESC_ON_STACK(desc, tfm);
-+	struct shash_desc *shash;
- 	u8 out[AES_BLOCK_SIZE];
- 
--	desc->tfm = tfm;
-+	shash = kmalloc(sizeof(*shash) + crypto_shash_descsize(tfm),
-+			GFP_KERNEL);
-+	if (!shash)
-+		return;
- 
--	crypto_shash_init(desc);
--	crypto_shash_update(desc, aad, AAD_LEN);
--	crypto_shash_update(desc, data, data_len - CMAC_TLEN);
--	crypto_shash_finup(desc, zero, CMAC_TLEN, out);
-+	shash->tfm = tfm;
-+
-+	crypto_shash_init(shash);
-+	crypto_shash_update(shash, aad, AAD_LEN);
-+	crypto_shash_update(shash, data, data_len - CMAC_TLEN);
-+	crypto_shash_finup(shash, zero, CMAC_TLEN, out);
- 
- 	memcpy(mic, out, CMAC_TLEN);
-+	kfree(shash);
- }
- 
- void ieee80211_aes_cmac_256(struct crypto_shash *tfm, const u8 *aad,
- 			    const u8 *data, size_t data_len, u8 *mic)
- {
--	SHASH_DESC_ON_STACK(desc, tfm);
-+	struct shash_desc *shash;
-+
-+	shash = kmalloc(sizeof(*shash) + crypto_shash_descsize(tfm),
-+			GFP_KERNEL);
-+	if (!shash)
-+		return;
- 
--	desc->tfm = tfm;
-+	shash->tfm = tfm;
- 
--	crypto_shash_init(desc);
--	crypto_shash_update(desc, aad, AAD_LEN);
--	crypto_shash_update(desc, data, data_len - CMAC_TLEN_256);
--	crypto_shash_finup(desc, zero, CMAC_TLEN_256, mic);
-+	crypto_shash_init(shash);
-+	crypto_shash_update(shash, aad, AAD_LEN);
-+	crypto_shash_update(shash, data, data_len - CMAC_TLEN_256);
-+	crypto_shash_finup(shash, zero, CMAC_TLEN_256, mic);
-+	kfree(shash);
- }
- 
- struct crypto_shash *ieee80211_aes_cmac_key_setup(const u8 key[],
--- 
-2.7.4
+What do you mean by "wait for console_write to finish" here?
+
+There may be an underlining bug here and printk causing issues may just
+be a symptom.
+
+-- Steve
+
+
+> #24 [ffff881ffb0b7a50] generic_make_request at ffffffff812ef209
+> #25 [ffff881ffb0b7a98] submit_bio at ffffffff812ef351
+> #26 [ffff881ffb0b7af0] xfs_submit_ioend_bio at ffffffffa0146a63 [xfs]
+> #27 [ffff881ffb0b7b00] xfs_submit_ioend at ffffffffa0146b31 [xfs]
+> #28 [ffff881ffb0b7b40] xfs_vm_writepages at ffffffffa0146e18 [xfs]
+> #29 [ffff881ffb0b7bb8] do_writepages at ffffffff8118da6e
+> #30 [ffff881ffb0b7bc8] __writeback_single_inode at ffffffff812293a0
+> #31 [ffff881ffb0b7c08] writeback_sb_inodes at ffffffff8122a08e
+> #32 [ffff881ffb0b7cb0] __writeback_inodes_wb at ffffffff8122a2ef
+> #33 [ffff881ffb0b7cf8] wb_writeback at ffffffff8122ab33
+> #34 [ffff881ffb0b7d70] bdi_writeback_workfn at ffffffff8122cb2b
+> #35 [ffff881ffb0b7e20] process_one_work at ffffffff810a851b
+> #36 [ffff881ffb0b7e68] worker_thread at ffffffff810a9356
+> #37 [ffff881ffb0b7ec8] kthread at ffffffff810b0b6f
+> #38 [ffff881ffb0b7f50] ret_from_fork at ffffffff81697a18
+> 
+> source code:
+> void blk_queue_bio(struct request_queue *q, struct bio *bio)
+> {
+> ...
+> 	} else {
+> 		spin_lock_irq(q->queue_lock);
+> 		add_acct_request(q, req, where);
+> 		__blk_run_queue(q);
+> out_unlock:
+> 		spin_unlock_irq(q->queue_lock);
+> 	}
+> }
+> 
+> void console_unlock(void)
+> {
+> 	static char text[LOG_LINE_MAX + PREFIX_MAX];
+> ...
+> 	call_console_drivers(level, text, len);
+> ...
+> }	
+> 	
+> I also analysis this vmcore, and found static char text[LOG_LINE_MAX + PREFIX_MAX]:
+> 
+> crash> rd 0xffffffff81d3c0c0 100
+> ffffffff81d3c0c0:  322e36343520205b 73205d3538313031   [  546.210185] s
+> ffffffff81d3c0d0:  3a303a313a302064 63656a6572203a30   d 0:1:0:0: rejec
+> ffffffff81d3c0e0:  4f2f4920676e6974 6c66666f206f7420   ting I/O to offl
+> ffffffff81d3c0f0:  6976656420656e69 5345525f440a6563   ine device.D_RES
+> ffffffff81d3c100:  6576697264205445 52443d6574796272   ET driverbyte=DR
+> ffffffff81d3c110:  0a4b4f5f52455649 286e6f0a4b0a0a65   IVER_OK.e..K.on(
+> ffffffff81d3c120:  30302e30302e3431 6564690a2930302e   14.00.00.00).ide
+> ffffffff81d3c130:  656d75636f642064 206e6f697461746e   d documentation
+> ffffffff81d3c140:  696d696c20726f66 2e736e6f69746174   for limitations.
+> ffffffff81d3c150:  4c54554e472b200a 2b204c43412b2053   . +GNUTLS +ACL +
+> ffffffff81d3c160:  20345a4c2d205a58 504d4f434345532d   XZ -LZ4 -SECCOMP
+> ffffffff81d3c170:  2044494b4c422b20 4c495455464c452b    +BLKID +ELFUTIL
+> ffffffff81d3c180:  20444f4d4b2b2053 6e650a294e44492b   S +KMOD +IDN).en
+> ffffffff81d3c190:  2d4654552e53555f 0000000000000a38   _US.UTF-8.......
+> ffffffff81d3c1a0:  0000000000000000 0000000000000000   ................
+> ffffffff81d3c1b0:  0000000000000000 0000000000000000   ................
+> ffffffff81d3c1c0:  0000000000000000 0000000000000000   ................
+> ffffffff81d3c1d0:  0000000000000000 0000000000000000   ................
+> 
+> 
+> So, the "kworker/u113:1"‘s wait time  after acquired  q->queue_lock  is:
+> 557 - 546 = 11
+> cause  Hard LOCKUP.
