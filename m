@@ -1,98 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753513AbeCUUFx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 16:05:53 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:45388 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753309AbeCUUD6 (ORCPT
+        id S1753277AbeCUUIE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 16:08:04 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38583 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753021AbeCUUH6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 16:03:58 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.9
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@linux.ie>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH 2/7] drm/panel: add panel CDTech S070_WV95_CT16 to panel-simple
-Date: Wed, 21 Mar 2018 21:03:08 +0100
-Message-Id: <1521662593-25468-2-git-send-email-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
-References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
+        Wed, 21 Mar 2018 16:07:58 -0400
+X-Google-Smtp-Source: AG47ELtpFehlWRZjAQKR/W73e9pdK87e3ypHLbjpbZIdaPY4h8Fp7uIdWavmiMn+wY1VGAZL2pcpzg==
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Masaki Ota <masaki.ota@jp.alps.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: alps - Report pressure of v3 and v7 trackstick
+Date: Wed, 21 Mar 2018 21:07:36 +0100
+Message-Id: <20180321200736.32406-1-pali.rohar@gmail.com>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- .../display/panel/cdtech,s070wv95-ct16.txt         |  7 ++++++
- drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/cdtech,s070wv95-ct16.txt
+ALPS v3 and v7 packet formats reports trackstick pressure. This information
+is already parsed in unused "z" variable.
 
-diff --git a/Documentation/devicetree/bindings/display/panel/cdtech,s070wv95-ct16.txt b/Documentation/devicetree/bindings/display/panel/cdtech,s070wv95-ct16.txt
-new file mode 100644
-index 0000000..b00d6c7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/cdtech,s070wv95-ct16.txt
-@@ -0,0 +1,7 @@
-+CDTech(H.K.) Electronics Limited 7" 800x480 color TFT-LCD panel
-+
-+Required properties:
-+- compatible: should be "cdtech,s070wv95-ct16"
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 5591984..714fbdd 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -764,6 +764,30 @@ static const struct panel_desc boe_nv101wxmn51 = {
- 	},
+ALPS SS4 S2 devices already reports trackstick pressure as ABS_PRESSURE
+attribute, therefore reports pressure in the same way also for v3 and v7.
+
+This patch also updates parsing v3 pressure information, it is also stored
+in 7 bits.
+
+Signed-off-by: Pali Rohár <pali.rohar@gmail.com>
+---
+ drivers/input/mouse/alps.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
+index 010c1bcdb06d..0a9e6a3a2f9f 100644
+--- a/drivers/input/mouse/alps.c
++++ b/drivers/input/mouse/alps.c
+@@ -139,11 +139,11 @@ static const struct alps_model_info alps_model_data[] = {
  };
  
-+static const struct drm_display_mode cdtech_s070wv95_ct16_mode = {
-+	.clock = 35000,
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 40,
-+	.hsync_end = 800 + 40 + 40,
-+	.htotal = 800 + 40 + 40 + 48,
-+	.vdisplay = 480,
-+	.vsync_start = 480 + 29,
-+	.vsync_end = 480 + 29 + 13,
-+	.vtotal = 480 + 29 + 13 + 3,
-+	.vrefresh = 60,
-+	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
-+};
-+
-+static const struct panel_desc cdtech_s070wv95_ct16 = {
-+	.modes = &cdtech_s070wv95_ct16_mode,
-+	.num_modes = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 154,
-+		.height = 85,
-+	},
-+};
-+
- static const struct drm_display_mode chunghwa_claa070wp03xg_mode = {
- 	.clock = 66770,
- 	.hdisplay = 800,
-@@ -2067,6 +2091,9 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "boe,nv101wxmn51",
- 		.data = &boe_nv101wxmn51,
- 	}, {
-+		.compatible = "cdtech,s070wv95-ct16",
-+		.data = &cdtech_s070wv95_ct16,
-+	}, {
- 		.compatible = "chunghwa,claa070wp03xg",
- 		.data = &chunghwa_claa070wp03xg,
- 	}, {
+ static const struct alps_protocol_info alps_v3_protocol_data = {
+-	ALPS_PROTO_V3, 0x8f, 0x8f, ALPS_DUALPOINT
++	ALPS_PROTO_V3, 0x8f, 0x8f, ALPS_DUALPOINT | ALPS_DUALPOINT_WITH_PRESSURE
+ };
+ 
+ static const struct alps_protocol_info alps_v3_rushmore_data = {
+-	ALPS_PROTO_V3_RUSHMORE, 0x8f, 0x8f, ALPS_DUALPOINT
++	ALPS_PROTO_V3_RUSHMORE, 0x8f, 0x8f, ALPS_DUALPOINT | ALPS_DUALPOINT_WITH_PRESSURE
+ };
+ 
+ static const struct alps_protocol_info alps_v4_protocol_data = {
+@@ -155,7 +155,7 @@ static const struct alps_protocol_info alps_v5_protocol_data = {
+ };
+ 
+ static const struct alps_protocol_info alps_v7_protocol_data = {
+-	ALPS_PROTO_V7, 0x48, 0x48, ALPS_DUALPOINT
++	ALPS_PROTO_V7, 0x48, 0x48, ALPS_DUALPOINT | ALPS_DUALPOINT_WITH_PRESSURE
+ };
+ 
+ static const struct alps_protocol_info alps_v8_protocol_data = {
+@@ -583,7 +583,7 @@ static void alps_process_trackstick_packet_v3(struct psmouse *psmouse)
+ 
+ 	x = (s8)(((packet[0] & 0x20) << 2) | (packet[1] & 0x7f));
+ 	y = (s8)(((packet[0] & 0x10) << 3) | (packet[2] & 0x7f));
+-	z = (packet[4] & 0x7c) >> 2;
++	z = packet[4] & 0x7c;
+ 
+ 	/*
+ 	 * The x and y values tend to be quite large, and when used
+@@ -595,6 +595,7 @@ static void alps_process_trackstick_packet_v3(struct psmouse *psmouse)
+ 
+ 	input_report_rel(dev, REL_X, x);
+ 	input_report_rel(dev, REL_Y, -y);
++	input_report_abs(dev, ABS_PRESSURE, z);
+ 
+ 	/*
+ 	 * Most ALPS models report the trackstick buttons in the touchpad
+@@ -1118,6 +1119,7 @@ static void alps_process_trackstick_packet_v7(struct psmouse *psmouse)
+ 
+ 	input_report_rel(dev2, REL_X, (char)x);
+ 	input_report_rel(dev2, REL_Y, -((char)y));
++	input_report_abs(dev2, ABS_PRESSURE, z);
+ 
+ 	input_report_key(dev2, BTN_LEFT, left);
+ 	input_report_key(dev2, BTN_RIGHT, right);
 -- 
-2.7.4
+2.11.0
