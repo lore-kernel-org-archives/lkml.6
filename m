@@ -1,66 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753628AbeCUVN2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:13:28 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:53490 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753306AbeCUVNY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:13:24 -0400
-Subject: Re: [PATCH v3] xen/acpi: upload _PSD info for non Dom0 CPUs too
-To: Joao Martins <joao.m.martins@oracle.com>, linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        xen-devel@lists.xenproject.org, linux-acpi@vger.kernel.org,
-        devel@acpica.org
-References: <20180315142205.15839-1-joao.m.martins@oracle.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <4b9b40ce-a19c-758f-9a0b-451fadecf347@oracle.com>
-Date: Wed, 21 Mar 2018 17:15:06 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753576AbeCUVO4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:14:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57663 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753306AbeCUVOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:14:52 -0400
+Date: Wed, 21 Mar 2018 22:14:48 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Yan Markman <ymarkman@marvell.com>
+Cc: "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        "Stefan Chulski" <stefanc@marvell.com>,
+        "mw@semihalf.com" <mw@semihalf.com>
+Subject: Re: [PATCH net-next v2] net: mvpp2: Don't use dynamic allocs for
+ local variables
+Message-ID: <20180321221448.7b3ecae8@bootlin.com>
+In-Reply-To: <b97e76e64d494912ae09efcc64d612ff@IL-EXCH01.marvell.com>
+References: <20180321151400.6658-1-maxime.chevallier@bootlin.com>
+        <b97e76e64d494912ae09efcc64d612ff@IL-EXCH01.marvell.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180315142205.15839-1-joao.m.martins@oracle.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8839 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 10:22 AM, Joao Martins wrote:
-> All uploaded PM data from non-dom0 CPUs takes the info from vCPU 0 and
-> changing only the acpi_id. For processors which P-state coordination type
-> is HW_ALL (0xFD) it is OK to upload bogus P-state dependency information
-> (_PSD), because Xen will ignore any cpufreq domains created for past CPUs.
->
-> Albeit for platforms which expose coordination types as SW_ANY or SW_ALL,
-> this will have some unintended side effects. Effectively, it will look at
-> the P-state domain existence and *if it already exists* it will skip the
-> acpi-cpufreq initialization and thus inherit the policy from the first CPU
-> in the cpufreq domain. This will finally lead to the original cpu not
-> changing target freq to P0 other than the first in the domain. Which will
-> make turbo boost not getting enabled (e.g. for 'performance' governor) for
-> all cpus.
->
-> This patch fixes that, by also evaluating _PSD when we enumerate all ACPI
-> processors and thus always uploading the correct info to Xen. We export
-> acpi_processor_get_psd() for that this purpose, but change signature
-> to not assume an existent of acpi_processor given that ACPI isn't creating
-> an acpi_processor for non-dom0 CPUs.
->
-> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+Hello Yan,
 
+On Wed, 21 Mar 2018 19:57:47 +0000,
+Yan Markman <ymarkman@marvell.com> wrote :
 
+> Hi Maxime
 
-Applied to for-linus-4.17
+Please avoid top-posting on this list.
 
+> Please check the TWO points:
+> 
+> 1). The mvpp2_prs_flow_find() returns TID if found
+>     The TID=0 is valid FOUND value
+>     For Not-found use -ENOENT (just like your mvpp2_prs_vlan_find)
 
--boris
+This is actually what is used in this patch. You might be refering to
+a previous draft version of this patch.
+
+> 2). The original code always uses "mvpp2_prs_entry *pe" storage
+> Zero-Allocated Please check the correctnes of new "mvpp2_prs_entry
+> pe" without memset(pe, 0, sizeof(pe));
+>    in all procedures where pe=kzalloc() has been replaced
+
+I think we're good on that regard. On places where I didn't memset the
+prs_entry, the pe.index field is set, and this is followed by a read
+from TCAM that will initialize the prs_entry to the correct value :
+
+		pe.index = tid;
+		mvpp2_prs_hw_read(priv, &pe);
+
+> Thanks
+> Yan Markman
+
+[...]
+
+Thanks,
+
+Maxime
