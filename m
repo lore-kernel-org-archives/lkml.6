@@ -1,86 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753236AbeCUQl5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:41:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55588 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753158AbeCUQlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:41:51 -0400
-Date: Wed, 21 Mar 2018 17:41:48 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/3] perf report: extend raw dump (-D) out with switch
- out event type
-Message-ID: <20180321164148.GC2707@krava>
-References: <4857e3ba-a42f-a9a2-2668-91ca9b44727c@linux.intel.com>
- <86313484-3601-b218-48b8-1f54843e52de@linux.intel.com>
+        id S1753159AbeCUQnC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:43:02 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37004 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752970AbeCUQmj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 12:42:39 -0400
+Date: Wed, 21 Mar 2018 09:41:29 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Eric Sandeen <sandeen@sandeen.net>,
+        Masanari Iida <standby24x7@gmail.com>, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] xfs: Change URL for the project in xfs.txt
+Message-ID: <20180321164129.GA4818@magnolia>
+References: <20180302133013.9744-1-standby24x7@gmail.com>
+ <20180302172401.GT19312@magnolia>
+ <20180302215731.GT30854@dastard>
+ <27d9f522-fa75-6766-3ca6-79f99522e861@sandeen.net>
+ <20180302224310.GV30854@dastard>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <86313484-3601-b218-48b8-1f54843e52de@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180302224310.GV30854@dastard>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8839 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=8 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 04:05:17PM +0300, Alexey Budankov wrote:
-> Print additional 'yield' tag for PERF_RECORD_SWITCH[_CPU_WIDE] OUT records when
-> event header misc field contains PERF_RECORD_MISC_SWITCH_OUT_YIELD bit set 
-> designating synchronization context switch out event:
+On Sat, Mar 03, 2018 at 09:43:10AM +1100, Dave Chinner wrote:
+> On Fri, Mar 02, 2018 at 04:08:24PM -0600, Eric Sandeen wrote:
+> > 
+> > 
+> > On 3/2/18 3:57 PM, Dave Chinner wrote:
+> > > On Fri, Mar 02, 2018 at 09:24:01AM -0800, Darrick J. Wong wrote:
+> > >> On Fri, Mar 02, 2018 at 10:30:13PM +0900, Masanari Iida wrote:
+> > >>> The oss.sgi.com doesn't exist any more.
+> > >>> Change it to current project URL, https://xfs.wiki.kernel.org/
+> > >>>
+> > >>> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+> > >>> ---
+> > >>>  Documentation/filesystems/xfs.txt | 2 +-
+> > >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >>>
+> > >>> diff --git a/Documentation/filesystems/xfs.txt b/Documentation/filesystems/xfs.txt
+> > >>> index 3b9b5c149f32..4d9ff0a7f8e1 100644
+> > >>> --- a/Documentation/filesystems/xfs.txt
+> > >>> +++ b/Documentation/filesystems/xfs.txt
+> > >>> @@ -9,7 +9,7 @@ variable block sizes, is extent based, and makes extensive use of
+> > >>>  Btrees (directories, extents, free space) to aid both performance
+> > >>>  and scalability.
+> > >>>  
+> > >>> -Refer to the documentation at http://oss.sgi.com/projects/xfs/
+> > >>> +Refer to the documentation at https://xfs.wiki.kernel.org/
+> > > 
+> > > Did I miss a memo?
+> > 
+> > About which part, the loss of oss.sgi or the addition of the kernel.org wiki?
+> > 
+> > The kernel.org wiki is pretty bare though.  OTOH xfs.org is a bit less
+> > official.  We really need to resolve this issue.
 > 
-> perf report -D -i system-wide.perf: 
-> 
-> 0x1b9c50 [0x30]: event: 15
-> .
-> . ... raw event: size 48 bytes
-> .  0000:  0f 00 00 00 00 20 30 00 01 1e 00 00 01 1e 00 00  ..... 0.........
-> .  0010:  00 00 00 00 00 00 00 00 85 ae d4 e3 3e 0e 00 00  ............>...
-> .  0020:  54 00 00 00 00 00 00 00 05 00 00 00 00 00 00 00  T...............
-> 
-> 5 15663273127557 0x1b9c50 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT  next pid/tid:  7681/7681 
-> 
-> 0x2646c0 [0x30]: event: 15
-> .
-> . ... raw event: size 48 bytes
-> .  0000:  0f 00 00 00 00 60 30 00 00 00 00 00 00 00 00 00  .....`0.........
-> .  0010:  00 1e 00 00 00 1e 00 00 29 1e d5 e3 3e 0e 00 00  ........)...>...
-> .  0020:  56 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00  V...............
-> 
-> 7 15663273156137 0x2646c0 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
-> 
-> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> ---
->  tools/perf/util/event.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-> index f0a6cbd033cc..af5a85d56446 100644
-> --- a/tools/perf/util/event.c
-> +++ b/tools/perf/util/event.c
-> @@ -1421,7 +1421,9 @@ size_t perf_event__fprintf_itrace_start(union perf_event *event, FILE *fp)
->  size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp)
->  {
->  	bool out = event->header.misc & PERF_RECORD_MISC_SWITCH_OUT;
-> -	const char *in_out = out ? "OUT" : "IN ";
-> +	const char *in_out = !out ? "IN " :
-> +		!(event->header.misc & PERF_RECORD_MISC_SWITCH_OUT_YIELD) ?
-> +				"OUT" : "OUT yield";
+> Moving everything to kernel.org wiki. As I mentioned on IRC, I'd
+> much prefer we move away from wiki's to something we can edit
+> locally, review via email, has proper revision control and a
+> "publish" mechanism that pushes built documentation out to the
+> public website.
 
-I'm getting:
+Makes sense, it's sort of annoying to have to build the pdfs from
+documentation repo and kup them to k.org manually.  In the meantime I'd
+rather have a scribble-me-elmo wiki over a dead url.
 
-       rcu_sched     9 [004] Sy     1303.392349: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
-         swapper     0 [004]        1303.392350: PERF_RECORD_SWITCH_CPU_WIDE IN   prev pid/tid:     9/9
+Also afaik the only people who actually have write access to that wiki
+are Luis, Eric, and me, so hopefully we won't have to deal with
+vandalism in the interim.
 
-could you plase format the 'OUT yield' line so the rest of the
-fields are in line with 'IN' and 'OUT' lines like:
+I wonder if we could just make the existing dokiwiki use
+xfs-documentation.git as its backend and control the publishing that
+way...?
 
-       rcu_sched     9 [004] Sy     1303.392349: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
-         swapper     0 [004]        1303.392350: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid:     9/9
+--D
 
-thanks,
-jirka
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
