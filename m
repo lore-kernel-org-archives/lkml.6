@@ -1,23 +1,23 @@
 Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AG47ELutpUBI07FXmL1oh//gz2ufo4R3oHNndrDeRyTETbn3tonBGH51zZcMGfDnScZYGo5p1yPq
-ARC-Seal: i=1; a=rsa-sha256; t=1521650287; cv=none;
+X-Google-Smtp-Source: AG47ELuXxrZW6fLVPQHLdNGY76UnSxOhNDmuoUhxb9XJ63RZ/grcCOOCL9FsPlgr86G3GDzqx95V
+ARC-Seal: i=1; a=rsa-sha256; t=1521650278; cv=none;
         d=google.com; s=arc-20160816;
-        b=YU1V5U52o1+tQrEZ+OUkSJf4ylxhm59ZOcDaitVGtpoVJIkSsoJYa1kKCaktwbqV5M
-         hhve9ITJr20QikgPx9dAiBieJBqqL+tfcBAJ8JVLXoOM/OsuT1uKru73Bsi0nQ/XBg6q
-         iY6vkA+83lT9xPkIzK1Yl951QvScou/zOaP/qrZFcFUhUbFXt1Y/1xoNHefUlsC7fX4Y
-         TI47XJoxU0AfRf7RKdUImq6St3vpt0ocoDKzCajYcWJx6dXkkhr0sxyVbVvMkZ6ZOoFD
-         nSSjcmrxtC3k/nmlBtZf+YVYhWY2DK5RCt1yEL5y4hJeZe/5V8/QvXHedH5q02jIVzya
-         QOvA==
+        b=jl6gVnf+FtB9JqO4Sq2+pzmW+bfWx2uTZhB0kKJtQd9gjR30Cr3Y2wVjV1XQXBEiIP
+         zTffXVvOQgDB9BBP1uuOcE2k5Z1g8XNqxsgdQKRCZ15DOssOvckScoA3a0Mvg54RlFFb
+         r/HPV0wgoUPf46J4Gp82eH3cE9z8s3YyhgX2GGQUw5A3f0pSAuUvo4yYiVuMMY1A8S9f
+         nsfe8Klfaouxl/Gv0hQaDMyQQdugzvyV2JP5monuGLPR7xN7mmU2fPmY/o1WJRWQjdCk
+         cZEPD7N0Fqmrizp/10fJ68mp4rLqnsSIiDFfYk3o+VczRms6XZAu+ggxSrX8/hEJcTX7
+         2bUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:references:in-reply-to:message-id:date:cc:to:from
-         :arc-authentication-results;
-        bh=FbLv3yzRDWK0P8UoILoPWTpMAlXcsa9tn/ZRapLmFiU=;
-        b=Ca500X0eGZw9mX5YOv+fXQN2f9CTjFwAwv4vcvjQy8tzhO7RhIShd2JpRe50738bhu
-         26mCQq3zszacohDnXvrbjN6a7CoDpmPgyJolYCmjSQP1F1P12d/f9YvkxTkg0aDOrI7I
-         O1Z+X4PwINSQJq3PdE6w/K1DT2H1oOMQDeX11++od0Jeq75FRqEgmhpPKlM6VQ1/iPA9
-         Lw8H8In7wdVp5dZw+eghB/w3asJtvgmp0zdoTZKDYM4aE2xugVClqePMJjCLlKhnxpsB
-         OReRbBqtPNpdQ6s66/kGBK4Ag36TaQGUrgUe6TdSYnIwiSyOYGPCbPbHeK44Ccuwe1ll
-         M7Vg==
+        h=subject:content-transfer-encoding:mime-version:references
+         :in-reply-to:message-id:date:cc:to:from:arc-authentication-results;
+        bh=VScL5+GQvjqTdu4kyTkUM9KO2YStlRE5s+DVLwEW3V0=;
+        b=IxqZsgx+j3yJfai8uo3foI48X0toMPUpbrJllicj7jbIyewmls5x9Fff17QCSwpk4d
+         SME5NqHT8Vtvjb1V3DmecgXV6LrRlHwJMyJCTqfby8pFla3Y78Gv3chGWX1gPozHv/eU
+         gVC8N+WJFVW/9pczzCsKou3LCDOVPZsy1OKcl+x2nNfr2KvUkHx94OadMbZa1DKqFbKj
+         xiJWw5FV2VNsFsidOy2ae4WiEkqBiOT+FTFUr2GNI5x03nYF1FqzmyV7G5rOlG8pylJM
+         gdfyGNgcrh7OFWp4f67Q9Ijlw35DY2BzwX8oKRrOO/ECZhhdKsongXmjVBD5HBgs1oa4
+         KJuw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
@@ -32,89 +32,110 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
 	Logan Gunthorpe <logang@deltatee.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Date: Wed, 21 Mar 2018 10:37:37 -0600
-Message-Id: <20180321163745.12286-3-logang@deltatee.com>
+	Dan Douglass <dan.douglass@nxp.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Date: Wed, 21 Mar 2018 10:37:44 -0600
+Message-Id: <20180321163745.12286-10-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180321163745.12286-1-logang@deltatee.com>
 References: <20180321163745.12286-1-logang@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, arnd@arndb.de, horia.geanta@nxp.com, logang@deltatee.com, tglx@linutronix.de, pombredanne@nexb.com, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, andy.shevchenko@gmail.com, luc.vanoostenryck@gmail.com
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, logang@deltatee.com, horia.geanta@nxp.com, dan.douglass@nxp.com, herbert@gondor.apana.org.au, davem@davemloft.net
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v13 02/10] iomap: Fix sparse endian check warnings
+Subject: [PATCH v13 09/10] crypto: caam: cleanup CONFIG_64BIT ifdefs when using io{read|write}64
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595565972198859637?=
-X-GMAIL-MSGID: =?utf-8?q?1595565972198859637?=
+X-GMAIL-THRID: =?utf-8?q?1595565962484190744?=
+X-GMAIL-MSGID: =?utf-8?q?1595565962484190744?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Newer version of sparse produce a few warnings of the form:
+Clean up the extra ifdefs which defined the wr_reg64 and rd_reg64
+functions in non-64bit cases in favour of the new common
+io-64-nonatomic-lo-hi header.
 
-lib/iomap.c:84:9: warning: cast to restricted __be16
-
-when run with:
-
-make C=2 CF=-D__CHECK_ENDIAN__
-
-(The kbuild robot has recently started running such checks)
-
-The warning is not valid because the __raw_readX() and __raw_writeX()
-functions have an endianess determined by the semantics of whichever
-register they are operating on (which is intern dependant on the address
-passed to the function).
-
-In the iomap case, the register being operated on is known,
-semantically, to be Big Endian when an ioXXbe() function is used
-by the caller. These functions wrap a raw read or write function
-in an endianness conversion function.
-
-Sparse enforces that all values that aren't in CPU endianness
-be marked with types like __be16 and similar and said types cannot
-be mixed with other types. However, per above, the raw functions
-cannot be marked as such seeing the endianness is indeterminate.
-Thus, the output of __raw_readX() and the input of __raw_writeX()
-must be cast with the __force keyword to supress the invalid warning.
+To be consistent with CAAM engine HW spec: in case of 64-bit registers,
+irrespective of device endianness, the lower address should be read from
+/ written to first, followed by the upper address. Indeed the I/O
+accessors in CAAM driver currently don't follow the spec, however this
+is a good opportunity to fix the code.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Dan Douglass <dan.douglass@nxp.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
 ---
- lib/iomap.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/crypto/caam/regs.h | 30 +++---------------------------
+ 1 file changed, 3 insertions(+), 27 deletions(-)
 
-diff --git a/lib/iomap.c b/lib/iomap.c
-index be120c13d6cc..44645c4b516c 100644
---- a/lib/iomap.c
-+++ b/lib/iomap.c
-@@ -65,8 +65,8 @@ static void bad_io_access(unsigned long port, const char *access)
- #endif
+diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
+index fee363865d88..f887b371040f 100644
+--- a/drivers/crypto/caam/regs.h
++++ b/drivers/crypto/caam/regs.h
+@@ -10,7 +10,7 @@
  
- #ifndef mmio_read16be
--#define mmio_read16be(addr) be16_to_cpu(__raw_readw(addr))
--#define mmio_read32be(addr) be32_to_cpu(__raw_readl(addr))
-+#define mmio_read16be(addr) be16_to_cpu((__be16 __force)__raw_readw(addr))
-+#define mmio_read32be(addr) be32_to_cpu((__be32 __force)__raw_readl(addr))
- #endif
+ #include <linux/types.h>
+ #include <linux/bitops.h>
+-#include <linux/io.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
  
- unsigned int ioread8(void __iomem *addr)
-@@ -106,8 +106,8 @@ EXPORT_SYMBOL(ioread32be);
- #endif
+ /*
+  * Architecture-specific register access methods
+@@ -136,10 +136,9 @@ static inline void clrsetbits_32(void __iomem *reg, u32 clear, u32 set)
+  *    base + 0x0000 : least-significant 32 bits
+  *    base + 0x0004 : most-significant 32 bits
+  */
+-#ifdef CONFIG_64BIT
+ static inline void wr_reg64(void __iomem *reg, u64 data)
+ {
+-	if (caam_little_end)
++	if (!caam_imx && caam_little_end)
+ 		iowrite64(data, reg);
+ 	else
+ 		iowrite64be(data, reg);
+@@ -147,35 +146,12 @@ static inline void wr_reg64(void __iomem *reg, u64 data)
  
- #ifndef mmio_write16be
--#define mmio_write16be(val,port) __raw_writew(cpu_to_be16(val),port)
--#define mmio_write32be(val,port) __raw_writel(cpu_to_be32(val),port)
-+#define mmio_write16be(val,port) __raw_writew((u16 __force)cpu_to_be16(val),port)
-+#define mmio_write32be(val,port) __raw_writel((u32 __force)cpu_to_be32(val),port)
- #endif
+ static inline u64 rd_reg64(void __iomem *reg)
+ {
+-	if (caam_little_end)
++	if (!caam_imx && caam_little_end)
+ 		return ioread64(reg);
+ 	else
+ 		return ioread64be(reg);
+ }
  
- void iowrite8(u8 val, void __iomem *addr)
+-#else /* CONFIG_64BIT */
+-static inline void wr_reg64(void __iomem *reg, u64 data)
+-{
+-	if (!caam_imx && caam_little_end) {
+-		wr_reg32((u32 __iomem *)(reg) + 1, data >> 32);
+-		wr_reg32((u32 __iomem *)(reg), data);
+-	} else {
+-		wr_reg32((u32 __iomem *)(reg), data >> 32);
+-		wr_reg32((u32 __iomem *)(reg) + 1, data);
+-	}
+-}
+-
+-static inline u64 rd_reg64(void __iomem *reg)
+-{
+-	if (!caam_imx && caam_little_end)
+-		return ((u64)rd_reg32((u32 __iomem *)(reg) + 1) << 32 |
+-			(u64)rd_reg32((u32 __iomem *)(reg)));
+-
+-	return ((u64)rd_reg32((u32 __iomem *)(reg)) << 32 |
+-		(u64)rd_reg32((u32 __iomem *)(reg) + 1));
+-}
+-#endif /* CONFIG_64BIT  */
+-
+ static inline u64 cpu_to_caam_dma64(dma_addr_t value)
+ {
+ 	if (caam_imx)
 -- 
 2.11.0
