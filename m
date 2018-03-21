@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752052AbeCUMJ2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 08:09:28 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40250 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751736AbeCUMIe (ORCPT
+        id S1752024AbeCUMJY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 08:09:24 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:47097 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751883AbeCUMIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 08:08:34 -0400
-X-Google-Smtp-Source: AG47ELubidwFSrZKXgRDds3rbwWIcm3wX8oBsGeq/J0d+BOYANry9pdrxcLBbtn37hMIV57gKfo3RQ==
+        Wed, 21 Mar 2018 08:08:36 -0400
+X-Google-Smtp-Source: AG47ELtH8s8pBsuVOrRQbhj1Bd01g2CktdHBkJfv+DudDvFSaDN5urtda1sKqasAaiH4Uu1UMZpZMg==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -21,9 +21,9 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 5/8] remoteproc: da8xx: add the missing checke for clk_enable()
-Date: Wed, 21 Mar 2018 13:08:04 +0100
-Message-Id: <20180321120807.18032-6-brgl@bgdev.pl>
+Subject: [PATCH 6/8] remoteproc: da8xx: prepare and unprepare the clock where needed
+Date: Wed, 21 Mar 2018 13:08:05 +0100
+Message-Id: <20180321120807.18032-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180321120807.18032-1-brgl@bgdev.pl>
 References: <20180321120807.18032-1-brgl@bgdev.pl>
@@ -33,39 +33,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The davinci platform is being switched to using the common clock
-framework, where clk_enable() can fail. Add the return value check.
+We're currently switching the platform to using the common clock
+framework. We need to explicitly prepare and unprepare the rproc
+clock.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/remoteproc/da8xx_remoteproc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index bf3b9034c319..592bf0fc52e8 100644
+index 592bf0fc52e8..83f2d66ad3a9 100644
 --- a/drivers/remoteproc/da8xx_remoteproc.c
 +++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	int rv;
- 
- 	/* hw requires the start (boot) address be on 1KB boundary */
- 	if (rproc->bootaddr & 0x3ff) {
-@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+@@ -149,9 +149,9 @@ static int da8xx_rproc_start(struct rproc *rproc)
  
  	writel(rproc->bootaddr, drproc->bootreg);
  
--	clk_enable(dsp_clk);
-+	rv = clk_enable(dsp_clk);
-+	if (rv) {
-+		dev_err(dev, "clk_enable() failed: %d\n", rv);
-+		return rv;
-+	}
-+
- 	davinci_clk_reset_deassert(dsp_clk);
+-	rv = clk_enable(dsp_clk);
++	rv = clk_prepare_enable(dsp_clk);
+ 	if (rv) {
+-		dev_err(dev, "clk_enable() failed: %d\n", rv);
++		dev_err(dev, "clk_prepare_enable() failed: %d\n", rv);
+ 		return rv;
+ 	}
+ 
+@@ -165,7 +165,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
+ 	struct da8xx_rproc *drproc = rproc->priv;
+ 
+ 	davinci_clk_reset_assert(drproc->dsp_clk);
+-	clk_disable(drproc->dsp_clk);
++	clk_disable_unprepare(drproc->dsp_clk);
  
  	return 0;
+ }
 -- 
 2.16.1
