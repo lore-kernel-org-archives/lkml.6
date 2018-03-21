@@ -1,90 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753509AbeCUUxZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 16:53:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55468 "EHLO mx2.suse.de"
+        id S1753397AbeCUUz7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 16:55:59 -0400
+Received: from mga14.intel.com ([192.55.52.115]:6263 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753320AbeCUUxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 16:53:10 -0400
-Date: Wed, 21 Mar 2018 21:53:07 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch] mm, thp: do not cause memcg oom for thp
-Message-ID: <20180321204921.GP23100@dhcp22.suse.cz>
-References: <alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com>
- <20180320071624.GB23100@dhcp22.suse.cz>
- <alpine.DEB.2.20.1803201321430.167205@chino.kir.corp.google.com>
- <20180321082228.GC23100@dhcp22.suse.cz>
- <alpine.DEB.2.20.1803211212490.92011@chino.kir.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1803211212490.92011@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1753210AbeCUUzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 16:55:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
+   d="scan'208";a="27740398"
+Message-ID: <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
+Subject: Re: linux-next: manual merge of the ftrace tree with the jc_docs
+ tree
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Changbin Du <changbin.du@intel.com>
+Date: Wed, 21 Mar 2018 15:55:52 -0500
+In-Reply-To: <20180321091554.2b38ee57@gandalf.local.home>
+References: <20180321153127.23737f6e@canb.auug.org.au>
+         <20180321153715.3a571e5b@canb.auug.org.au>
+         <20180321091554.2b38ee57@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21-03-18 12:37:10, David Rientjes wrote:
-> On Wed, 21 Mar 2018, Michal Hocko wrote:
+On Wed, 2018-03-21 at 09:15 -0400, Steven Rostedt wrote:
+> On Wed, 21 Mar 2018 15:37:15 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> > > I'm not sure of the expectation of high-order memcg charging without 
-> > > __GFP_NORETRY,
+> > Hi all,
 > > 
-> > It should be semantically compatible with the allocation path.
+> > On Wed, 21 Mar 2018 15:31:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > Today's linux-next merge of the ftrace tree got a conflict in:
+> > > 
+> > >   Documentation/trace/ftrace.txt
+> > >   (converted to Documentation/trace/ftrace.rst)  
 > > 
-> 
-> That doesn't make sense, the allocation path needs to allocate contiguous 
-> memory for the high order, the charging path just needs to charge a number 
-> of pages.  Why would the allocation and charging path be compatible when 
-> one needs to reclaim contiguous memory or compact memory and the the other 
-> just needs to reclaim any memory?
-
-Because you do not want to see surprises. E.g. seeing unexpected OOMs
-for large allocatations. Just think about it. Do you really want to have
-a different reclaim policy for the allocation and charging for all
-allocating paths? THP is by no means special. We do have different gfp
-masks for THP to express how hard to try. Why should the charge path
-behave any different?
-
-You are right that the allocation path involves compaction and that is
-different from the charging path. But that is an implementation detail
-of the current implementation. Semantically, it is the gfp mask to tell
-how hard to try and treating just because of how the current code works
-is simply wrong.
-
-> > > I only know that khugepaged can now cause memcg oom kills 
-> > > when trying to collapse memory, and then subsequently found that the same 
-> > > situation exists for faulting instead of falling back to small pages.
+> > There was another conflict involving
 > > 
-> > And that is clearly a bug because page allocator doesn't oom kill while
-> > the memcg charge does for the same gfp flag. That should be fixed.
+> >   Documentation/trace/events.{txt,rst}
+> > 
+> > Unfortunately, I accidentally deleted the report email before sending
+> > it :-(
 > > 
 > 
-> It's fixed with my patch, yes.
+> Ug yeah. All the histogram code was ripped out of the events.txt and
+> a new file was created called histogram.txt. I'm guessing that should
+> also be converted into an .rst file.
+> 
 
-Your patch only fixes up the current situation. Anytime a new THP
-allocation emerges that code path has to be careful to add
-__GFP_NORETRY to not regress again. That is just too error prone.
+Yeah, linux-next has changes to Documentation/trace/* that converts
+those files to .rst, which linux-trace/frace/core doesn't have.
 
-> The page allocator doesn't oom kill for 
-> orders over PAGE_ALLOC_COSTLY_ORDER only because it is unlikely to free 
-> order-4 and higher contiguous memory as a result; it's in the name, it's a 
-> costly order for the page allocator.  Using it as a heuristic in the memcg 
-> charging path seems strange.
+I've rebased the inter-event patches to linux-next/next-20180320 to
+reflect those changes, which affect 9 of the files in the patchset.  The
+updated patchset is here:
 
-It is not strange at all. We have the concept that large allocations are
-OK to fail rather than cause disruptive actions. And the same applies
-for charges as well. There is no reason to over reclaim or even OOM kill
-for a large charge if we have a fallback.
+https://github.com/tzanussi/linux-trace-inter-event.git tzanussi/next-20180320-inter-event-v10                                               
+https://github.com/tzanussi/linux-trace-inter-event/tree/tzanussi/next-20180320-inter-event-v10
 
-Seriously. Making different polices to the allocation and the memcg
-charge will lead to both unexpected behavior and a maintenance mess.
-And there is no good reason for that.
--- 
-Michal Hocko
-SUSE Labs
+I can repost the whole thing as v10, or whatever makes sense here.
+
+Thanks,
+
+Tom
+
+> -- Steve
