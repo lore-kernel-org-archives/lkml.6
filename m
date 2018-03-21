@@ -1,90 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751662AbeCUIwU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:52:20 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:52639 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbeCUIwP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:52:15 -0400
-Subject: Re: [PATCH v2] MIPS: ralink: fix booting on mt7621
-To: NeilBrown <neil@brown.name>, John Crispin <john@phrozen.org>,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>
-CC: <linux-mips@linux-mips.org>, <linux-kernel@vger.kernel.org>
-References: <87efkf9z0o.fsf@notabene.neil.brown.name>
- <87605r9mwf.fsf@notabene.neil.brown.name>
- <cc33f000-16ed-b331-53b7-d767e20a4a9c@mips.com>
- <874lla874z.fsf@notabene.neil.brown.name>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <a27180db-4fcf-7b6d-2cac-03aab25a71a6@mips.com>
-Date: Wed, 21 Mar 2018 08:51:58 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751737AbeCUIxA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:53:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43406 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751539AbeCUIw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 04:52:56 -0400
+Date: Wed, 21 Mar 2018 04:47:58 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH ghak21 V3 2/2] audit: add refused symlink to audit_names
+Message-ID: <20180321084758.ncpjmvlvkbsgfgra@madcap2.tricolour.ca>
+References: <cover.1521005283.git.rgb@redhat.com>
+ <b55492688f43df914037c48314db483a3c6ad05b.1521005283.git.rgb@redhat.com>
+ <CAHC9VhQSjhjEkdrXhFVgMmnhAeR3EB_LB8nc2QtXuySqrUSmLQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <874lla874z.fsf@notabene.neil.brown.name>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.155.41]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1521622325-321459-16024-41654-1
-X-BESS-VER: 2018.3-r1803192001
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191261
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQSjhjEkdrXhFVgMmnhAeR3EB_LB8nc2QtXuySqrUSmLQ@mail.gmail.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
-
-On 21/03/18 03:00, NeilBrown wrote:
-> On Tue, Mar 20 2018, Matt Redfearn wrote:
+On 2018-03-20 16:11, Paul Moore wrote:
+> On Wed, Mar 14, 2018 at 1:43 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Audit link denied events for symlinks had duplicate PATH records rather
+> > than just updating the existing PATH record.  Update the symlink's PATH
+> > record with the current dentry and inode information.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/21
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  fs/namei.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 50d2533..00f5041 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -945,6 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
+> >         if (nd->flags & LOOKUP_RCU)
+> >                 return -ECHILD;
+> >
+> > +       audit_inode(nd->name, nd->stack[0].link.dentry, 0);
+> >         audit_log_link_denied("follow_link", &nd->stack[0].link);
 > 
->> Hi Neil,
->>
->>
->> On 20/03/18 08:22, NeilBrown wrote:
->>>
->>> Further testing showed that the original version of this
->>> patch wasn't 100% reliable.  Very occasionally the read
->>> of SYSC_REG_CHIP_NAME0 returns garbage.  Repeating the
->>> read seems to be reliable, but it hasn't happened enough
->>> for me to be completely confident.
->>> So this version repeats that first read.
->>
->> You almost certainly need a sync() to ensure that the write to gcr_reg0
->> has completed before attempting to read sysc + SYSC_REG_CHIP_NAME0.
+> That's the one, right above this comment ...
 > 
-> That sound like exactly the right sort of thing to do, though
-> I assume you mean __sync().
+> Be honest, this never compiled did it?
 
-Indeed I did :-)
+As far as your view is concerned it wasn't.  It was compiled and tested,
+but the fix ended up in the following patch in the branch that wasn't
+included in this patchset so it effectively failed this bisection test.
+The sample records were copied from the test and not cooked.  git add -p
+and/or git rebase -i fumble.
 
+> My confidence for these patches is really low right now, which is not
+> good for something asking to go in at this stage in the -rcX
+> development cycle.  There have been some delays due to review, so I'm
+> willing to be a little flexible on timelines and accept stuff this
+> week, but for the v4 patchset please provide before and after audit
+> logs for both hard and soft links both where CWD is the same as the
+> parent as well as different (eight logs total if I did the math
+> right).  You can include them in the 0/2 patch as it's probably a bit
+> much for the individual patches.
+
+I'm very sorry to have wasted your time.  I know it is precious right now.
+
+> >         return -EACCES;
+> >  }
 > 
-> I tried to reproduce the problem so I could test the fix, and of course
-> I failed. Over 700 reboot cycles and never read any garbage from
-> SYSC_REG_CHIP_NAME0.
+> paul moore
 
-Funny how things conspire like that :-) __sync() is definitely the 
-correct barrier required to ensure the write completes before the read 
-begins and will guarantee that the memory operations are ordered.
+- RGB
 
-Thanks,
-Matt
-
-> 
-> So I cannot test that this works, but I have tested that it doesn't
-> cause any obvious regression.
-> I'll send the v3 patch separately.
-> 
-> Thanks a lot,
-> NeilBrown
-> 
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
