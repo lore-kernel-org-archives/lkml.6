@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752417AbeCUOaY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 10:30:24 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:47095 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752347AbeCUOaQ (ORCPT
+        id S1752430AbeCUOa2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 10:30:28 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:35659 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752300AbeCUOaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 10:30:16 -0400
-X-Google-Smtp-Source: AG47ELuXwVAbPS3qewNgsTAV1fKN3lnLonClr20qEgrCXvX/5E2I9yUnnPsT0teLfADKAaxjWjf/Ng==
+        Wed, 21 Mar 2018 10:30:21 -0400
+X-Google-Smtp-Source: AG47ELuVnwDRgvb1D5FB/0X2eK5tmHb1aSJhuHconm4sgvBH10KiLASg3n7WWrRnPjokwjqtHBkHag==
 From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
 To: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
         knaack.h@gmx.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
         linux-kernel@vger.kernel.org, hernan@vanguardiasur.com.ar
-Subject: [PATCH 05/11] staging: iio: ad7746: Remove unused defines
-Date: Wed, 21 Mar 2018 11:28:53 -0300
-Message-Id: <1521642539-4845-6-git-send-email-hernan@vanguardiasur.com.ar>
+Subject: [PATCH 06/11] staging: iio: ad7746: Add dt-bindings
+Date: Wed, 21 Mar 2018 11:28:54 -0300
+Message-Id: <1521642539-4845-7-git-send-email-hernan@vanguardiasur.com.ar>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
 References: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
@@ -25,82 +25,100 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch adds dt bindings by populating a pdata struct in order to
+modify as little as possible the existing code. It supports both
+platform_data and dt-bindings but uses only one depending on
+CONFIG_OF's value.
+
 Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
 ---
- drivers/staging/iio/cdc/ad7746.c | 16 ----------------
- drivers/staging/iio/cdc/ad7746.h |  5 -----
- 2 files changed, 21 deletions(-)
+ drivers/staging/iio/cdc/ad7746.c | 55 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
-index 57623db..cba8cd1 100644
+index cba8cd1..815573c 100644
 --- a/drivers/staging/iio/cdc/ad7746.c
 +++ b/drivers/staging/iio/cdc/ad7746.c
-@@ -25,7 +25,6 @@
-  * AD7746 Register Definition
+@@ -658,6 +658,44 @@ static const struct iio_info ad7746_info = {
+ /*
+  * device probe and remove
   */
++#ifdef CONFIG_OF
++static struct ad7746_platform_data *ad7746_parse_dt(struct device *dev)
++{
++	struct device_node *np = dev->of_node;
++	struct ad7746_platform_data *pdata;
++	unsigned int tmp;
++	int ret;
++
++	/* The default excitation outputs are not inverted, it should be stated
++	 * in the dt if needed.
++	 */
++
++	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return NULL;
++
++	tmp = 0;
++	ret = of_property_read_u32(np, "adi,exclvl", &tmp);
++	if (ret || tmp > 3) {
++		dev_warn(dev, "Wrong exclvl value, using default\n");
++		pdata->exclvl = 3; /* default value */
++	} else {
++		pdata->exclvl = tmp;
++	}
++
++	pdata->exca_inv_en = of_property_read_bool(np, "adi,nexca_en");
++	pdata->excb_inv_en = of_property_read_bool(np, "adi,nexcb_en");
++	pdata->exca_en = !pdata->exca_inv_en;
++	pdata->excb_en = !pdata->excb_inv_en;
++
++	return pdata;
++}
++#else
++static struct ad7746_platform_data *ad7746_parse_dt(struct device *dev)
++{
++	return NULL;
++}
++#endif
  
--#define AD7746_REG_STATUS		0
- #define AD7746_REG_CAP_DATA_HIGH	1
- #define AD7746_REG_VT_DATA_HIGH		4
- #define AD7746_REG_CAP_SETUP		7
-@@ -38,17 +37,10 @@
- #define AD7746_REG_CAP_GAINH		15
- #define AD7746_REG_VOLT_GAINH		17
+ static int ad7746_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
+@@ -668,6 +706,11 @@ static int ad7746_probe(struct i2c_client *client,
+ 	unsigned char regval = 0;
+ 	int ret = 0;
  
--/* Status Register Bit Designations (AD7746_REG_STATUS) */
--#define AD7746_STATUS_EXCERR		BIT(3)
--#define AD7746_STATUS_RDY		BIT(2)
--#define AD7746_STATUS_RDYVT		BIT(1)
--#define AD7746_STATUS_RDYCAP		BIT(0)
++	if (client->dev.of_node)
++		pdata = ad7746_parse_dt(&client->dev);
++	else
++		pdata = client->dev.platform_data;
++
+ 	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*chip));
+ 	if (!indio_dev)
+ 		return -ENOMEM;
+@@ -731,12 +774,22 @@ static const struct i2c_device_id ad7746_id[] = {
+ 	{ "ad7747", 7747 },
+ 	{}
+ };
 -
- /* Capacitive Channel Setup Register Bit Designations (AD7746_REG_CAP_SETUP) */
- #define AD7746_CAPSETUP_CAPEN		BIT(7)
- #define AD7746_CAPSETUP_CIN2		BIT(6) /* AD7746 only */
- #define AD7746_CAPSETUP_CAPDIFF		BIT(5)
--#define AD7746_CAPSETUP_CACHOP		BIT(0)
+ MODULE_DEVICE_TABLE(i2c, ad7746_id);
  
- /* Voltage/Temperature Setup Register Bit Designations (AD7746_REG_VT_SETUP) */
- #define AD7746_VTSETUP_VTEN		(1 << 7)
-@@ -56,13 +48,8 @@
- #define AD7746_VTSETUP_VTMD_EXT_TEMP	(1 << 5)
- #define AD7746_VTSETUP_VTMD_VDD_MON	(2 << 5)
- #define AD7746_VTSETUP_VTMD_EXT_VIN	(3 << 5)
--#define AD7746_VTSETUP_EXTREF		BIT(4)
--#define AD7746_VTSETUP_VTSHORT		BIT(1)
--#define AD7746_VTSETUP_VTCHOP		BIT(0)
- 
- /* Excitation Setup Register Bit Designations (AD7746_REG_EXC_SETUP) */
--#define AD7746_EXCSETUP_CLKCTRL		BIT(7)
--#define AD7746_EXCSETUP_EXCON		BIT(6)
- #define AD7746_EXCSETUP_EXCB		BIT(5)
- #define AD7746_EXCSETUP_NEXCB		BIT(4)
- #define AD7746_EXCSETUP_EXCA		BIT(3)
-@@ -74,10 +61,7 @@
- #define AD7746_CONF_CAPFS_SHIFT		3
- #define AD7746_CONF_VTFS_MASK		GENMASK(7, 6)
- #define AD7746_CONF_CAPFS_MASK		GENMASK(5, 3)
--#define AD7746_CONF_MODE_IDLE		(0 << 0)
--#define AD7746_CONF_MODE_CONT_CONV	(1 << 0)
- #define AD7746_CONF_MODE_SINGLE_CONV	(2 << 0)
--#define AD7746_CONF_MODE_PWRDN		(3 << 0)
- #define AD7746_CONF_MODE_OFFS_CAL	(5 << 0)
- #define AD7746_CONF_MODE_GAIN_CAL	(6 << 0)
- 
-diff --git a/drivers/staging/iio/cdc/ad7746.h b/drivers/staging/iio/cdc/ad7746.h
-index ea8572d..2fbcee8 100644
---- a/drivers/staging/iio/cdc/ad7746.h
-+++ b/drivers/staging/iio/cdc/ad7746.h
-@@ -13,11 +13,6 @@
-  * TODO: struct ad7746_platform_data needs to go into include/linux/iio
-  */
- 
--#define AD7466_EXCLVL_0		0 /* +-VDD/8 */
--#define AD7466_EXCLVL_1		1 /* +-VDD/4 */
--#define AD7466_EXCLVL_2		2 /* +-VDD * 3/8 */
--#define AD7466_EXCLVL_3		3 /* +-VDD/2 */
--
- struct ad7746_platform_data {
- 	unsigned char exclvl;	/*Excitation Voltage Level */
- 	bool exca_en;		/* enables EXCA pin as the excitation output */
++#ifdef CONFIG_OF
++static const struct of_device_id ad7746_of_match[] = {
++	{ .compatible = "adi,ad7745" },
++	{ .compatible = "adi,ad7746" },
++	{ .compatible = "adi,ad7747" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, ad7746_of_match);
++#endif
++
+ static struct i2c_driver ad7746_driver = {
+ 	.driver = {
+ 		.name = KBUILD_MODNAME,
++		.of_match_table = of_match_ptr(ad7746_of_match),
+ 	},
+ 	.probe = ad7746_probe,
+ 	.id_table = ad7746_id,
 -- 
 2.7.4
