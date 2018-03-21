@@ -1,96 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754126AbeCUWgc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 18:36:32 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:34523 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753927AbeCUWgb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 18:36:31 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04421;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SzsJRII_1521671773;
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-To: Michal Hocko <mhocko@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321131449.GN23100@dhcp22.suse.cz>
- <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
- <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
- <20180321212355.GR23100@dhcp22.suse.cz>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
-Date: Wed, 21 Mar 2018 15:36:12 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
+        id S1754046AbeCUWjn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 18:39:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33634 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753865AbeCUWjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 18:39:40 -0400
+Subject: [PATCH v2] vfio/pci: Quiet broken INTx whining when INTx is
+ unsupported by device
+From: Alex Williamson <alex.williamson@redhat.com>
+To: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, aik@ozlabs.ru,
+        alex.williamson@redhat.com, leedom@chelsio.com, ganeshgr@chelsio.com,
+        arjun@chelsio.com, indranil@chelsio.com, nirranjan@chelsio.com
+Date: Wed, 21 Mar 2018 16:39:36 -0600
+Message-ID: <20180321223147.1305.30569.stgit@gimli.home>
+User-Agent: StGit/0.18-102-gdf9f
 MIME-Version: 1.0
-In-Reply-To: <20180321212355.GR23100@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The intent of commit 2170dd04316e ("vfio-pci: Mask INTx if a device is
+not capabable of enabling it") was to disallow the user from seeing
+that the device supports INTx if the platform is incapable of enabling
+it.  The detection of this case however incorrectly includes devices
+which natively do not support INTx, such as SR-IOV VFs.  We don't need
+the nointx handling code for such devices, nor do we want to issue a
+broken INTx masking warning.  Check whether the device supports INTx
+before enabling nointx and remove the free pass for non-i40e Intel
+devices.
 
+Reported-by: Arjun Vynipadath <arjun@chelsio.com>
+Fixes: 2170dd04316e ("vfio-pci: Mask INTx if a device is not capabable of enabling it")
+Acked-by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+---
 
-On 3/21/18 2:23 PM, Michal Hocko wrote:
-> On Wed 21-03-18 10:16:41, Yang Shi wrote:
->>
->> On 3/21/18 9:50 AM, Yang Shi wrote:
->>>
->>> On 3/21/18 6:14 AM, Michal Hocko wrote:
->>>> On Wed 21-03-18 05:31:19, Yang Shi wrote:
->>>>> When running some mmap/munmap scalability tests with large memory (i.e.
->>>>>> 300GB), the below hung task issue may happen occasionally.
->>>>> INFO: task ps:14018 blocked for more than 120 seconds.
->>>>>          Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>>>>    "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->>>>> message.
->>>>>    ps              D    0 14018      1 0x00000004
->>>>>     ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>>>>     ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>>>>     00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>>>>    Call Trace:
->>>>>     [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>>>>     [<ffffffff817159e6>] schedule+0x36/0x80
->>>>>     [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>>>>     [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>>>>     [<ffffffff81717db0>] down_read+0x20/0x40
->>>>>     [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->>>> Slightly off-topic:
->>>> Btw. this sucks as well. Do we really need to take mmap_sem here? Do any
->>>> of
->>>>      arg_start = mm->arg_start;
->>>>      arg_end = mm->arg_end;
->>>>      env_start = mm->env_start;
->>>>      env_end = mm->env_end;
->>>>
->>>> change after exec or while the pid is already visible in proc? If yes
->>>> maybe we can use a dedicated lock.
->> BTW, this is not the only place to acquire mmap_sem in
->> proc_pid_cmdline_read(), it calls access_remote_vm() which need acquire
->> mmap_sem too, so the mmap_sem scalability issue will be hit sooner or later.
-> Ohh, absolutely. mmap_sem is unfortunatelly abused and it would be great
-> to remove that. munmap should perform much better. How to do that safely
+v2:
 
-Yes, agree. We are on the same page.
+One more quick spin on this, barring issues I'd like to get a pull
+request in for rc7.  The regression was originally masked because I
+generally test on Intel SR-IOV, which doesn't exhibit the problem
+because it traps in the switch case above, as vendor quirks were the
+original intent of this funciton.  v2 drops that default case so that
+all vendors reach the pdev->irq test, which I think was also the
+original intent of 2170dd04316e.  Leaving Casey's ack since it
+shouldn't affect testing on non-Intel parts.
 
-> is a different question. I am not yet convinced that tearing down a vma
-> in batches is safe. The vast majority of time is spent on tearing down
+ drivers/vfio/pci/vfio_pci.c |   17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-You can try my patches. I did full LTP test and running multiple kernel 
-build in parallel. It survives.
-
-> pages and that is quite easy to move out of the write lock. That would
-> be an improvement already and it should be risk safe. If even that is
-> not sufficient then using range locking should help a lot. There
-> shouldn't be really any other address space operations within the range
-> most of the time so this would be basically non-contended access.
-
-It might depend on how the range is defined. Too big range may lead to 
-surprisingly more contention, but too small range may bring in too much 
-lock/unlock operations.
-
-Thanks,
-Yang
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index b0f759476900..dccc2feca6ec 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -192,6 +192,8 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev);
+  */
+ static bool vfio_pci_nointx(struct pci_dev *pdev)
+ {
++	u8 pin;
++
+ 	switch (pdev->vendor) {
+ 	case PCI_VENDOR_ID_INTEL:
+ 		switch (pdev->device) {
+@@ -202,12 +204,21 @@ static bool vfio_pci_nointx(struct pci_dev *pdev)
+ 		case 0x1583 ... 0x158b:
+ 		case 0x37d0 ... 0x37d2:
+ 			return true;
+-		default:
+-			return false;
+ 		}
+ 	}
+ 
+-	if (!pdev->irq)
++	pci_read_config_byte(pdev, PCI_INTERRUPT_PIN, &pin);
++
++	/*
++	 * If the device supports INTx, but it cannot be enabled, invoke
++	 * nointx to mask the pin value and INTx IRQ_INFO to the user.
++	 *
++	 * NB. Generally nointx depends on at least being able to prevent the
++	 * device from generating INTx, so ideally we might check if INTx
++	 * masking is supported, but perhaps we can interpret lack of an irq
++	 * as lack of routing and presume the INTx line is unwired.
++	 */
++	if (pin && !pdev->irq)
+ 		return true;
+ 
+ 	return false;
