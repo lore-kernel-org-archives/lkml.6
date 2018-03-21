@@ -1,124 +1,118 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3497624-1521619470-2-15576156287401052258
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521619468; b=oFR4qRQUAJGfFkc/eALYhDGqfQyEk3HpK57188qLO8Ru2G5
-    cuQ0SrJ+smSKcV7H3nKTnOZSPxKQBRPROwvk6Q5VbfIuqJj/SA4zlMXjoTjHY8oK
-    gt/DeRpb1sHoSn1+Uh/cAMwaS8n60/ATya6ZiAXYs++0dnFW6+iGQ43xWXXAPCYE
-    OqFm4C0acTjvnOpd2kyVh8ErEvfhWTutBPGjG28icuY8QrRIK5IDVPlRG8BYV4pZ
-    4Sq/A/R8NWWoNlFe3gA1EjX/0g4O1KQkup6gLVNBKRDrBDo4RAoOKgX7FbIGIjfC
-    66sbwE8bjUlkWDSbO/9g30XFoay1RWWBLdC2THg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1521619468; bh=dk3sNsssVuFfZqnQNry9GgReqATE5uId6Int5a
-    EKCMY=; b=FoUSTzenoSlibD1FEo7o7hVx9iKjYW0yP5+3Gl9ySCpSJ2X0A2QAQQ
-    UlpCnD/6R9bIWhYY1oRnR0epJjY+5s/geTJDQA6IPbLFt6Yp9RJFz5HcDGEcZza3
-    Zvyp27qKEwk9kbjSvuV/Weu0BoA7FycdngASSq/HJgpAkiibPMaLimOlDBVbuklQ
-    9T+CKNHNjH1M6ClIx3jgy3+LkWTIncakRFG6bb336n5seRYICIpdMjvK6UE/ZYx7
-    j2RSoGELTkbOa29s1fi9dU/jsYlXMEJbvePiay7uhJP/6TS2yA2F3a5CaIzdHbFm
-    vptKnS29Y3o0IAuf6/hooq1LramJDc5w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b=XiKmBycD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brainfault.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ZD+ZZ7bP;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=brainfault.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b=XiKmBycD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brainfault.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ZD+ZZ7bP;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=brainfault.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751522AbeCUIEZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Mar 2018 04:04:25 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41573 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751343AbeCUIEV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 21 Mar 2018 04:04:21 -0400
-X-Google-Smtp-Source: AG47ELuFkBY/MEL140LQgcK4x8iDZ6fcutzbGBKZZyuO7nZMOkHpg0PgsE5eEwGNzZMFBMq3FTi+dpkfozLMcEPaVrg=
+Return-Path: <devang.panchal@softnautics.com>
+X-Google-Smtp-Source: AG47ELuBHzJDX32JkMloUX3eK7wPMX7a4jSbU0tHmUe3yyILLofVf5m8HoTXxjWNbDJAoAqKIX/X
+ARC-Seal: i=1; a=rsa-sha256; t=1521610487; cv=none;
+        d=google.com; s=arc-20160816;
+        b=aEa3bEhg1QS5O01Qn1DnzlN1uz20I4KxPqZhAjb0EJzP2Dg8FDqlYCJ72EQIVGcTuo
+         ar8HtB5GfG0HkucQ1kyIo01qjidg5Ii6J/9EpglWRP5QECzU0aJTso+zvkqD7i5RSWzx
+         PxjVGnUkoUjij0wlhPzm/QXRN315IpAZ+4cXn0svGDIgw4Zta8UnmZk7i4tdRXukANaK
+         uSfGb6SfBUWQGYN6mR/t/Ue0KSxGkUYaclwEJQ74tNCga1q4kol4NoYfJsEDHxs8L5tj
+         xg5ksld+DSgS6YOXzoz20sw26hKx3kt46eRvqkvF9XL0jiO4X9dxiAbEFApC4xZ3lw+S
+         8cyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:message-id
+         :date:subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=AhvPVYo/Z/QlVoueEzoWLG+EUze4s3UuUrJfkqC70+g=;
+        b=DOeVMxJh09dkPeK2ZoswH8PvAtbnwPBOA/YYjDeNa9xobZ1GrtjE1LPgYGf1RbE8Bg
+         MLUHof92aAhy3mMzZEpU9buuS9qbyTIBjNmhOFcWBmxVT8W4xtefsDLWDRPkxcupQV+w
+         BX+S4KVblDujjVl+kje+Yd8CEQREDVPQMMzlPSb98WaY4oSGYMvPRmnn3nvt5o+0eItU
+         Boq9AfMSNBCLO923TFyBWR67kDqJ2seIY2Z5xgmfiHyCkU6w0S6qCTaudRrkPYDBgKZe
+         8D5wRPGHnnVja7DnkuGjX9cdGBGOUB8f0SvP2I7Cvfw+jRhQrCicEvksBGE7aagbvpLf
+         9GSA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@softnautics.com header.s=selector1 header.b=oXGFmvsU;
+       spf=pass (google.com: domain of devang.panchal@softnautics.com designates 104.47.101.103 as permitted sender) smtp.mailfrom=devang.panchal@softnautics.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=softnautics.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@softnautics.com header.s=selector1 header.b=oXGFmvsU;
+       spf=pass (google.com: domain of devang.panchal@softnautics.com designates 104.47.101.103 as permitted sender) smtp.mailfrom=devang.panchal@softnautics.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=softnautics.com
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=devang.panchal@softnautics.com;
+From: Devang Panchal <devang.panchal@softnautics.com>
+To: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	geert+renesas@glider.be,
+	robh@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Devang Panchal <devang.panchal@softnautics.com>
+Subject: [PATCH] eeprom: at25: sizeof t should be sizeof(t)
+Date: Wed, 21 Mar 2018 11:04:35 +0530
+Message-Id: <20180321053435.9080-1-devang.panchal@softnautics.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-In-Reply-To: <20180318224744.GL5626@tuxbook-pro>
-References: <1515590217-24256-1-git-send-email-anup@brainfault.org> <20180318224744.GL5626@tuxbook-pro>
-From: Anup Patel <anup@brainfault.org>
-Date: Wed, 21 Mar 2018 13:34:18 +0530
-Message-ID: <CAAhSdy2JcXTkbtO95yjp4eYQ7cTwS62hh_U1qk3k7taN2ySWgw@mail.gmail.com>
-Subject: Re: [PATCH RESEND] rpmsg: virtio_rpmsg_bus: fix rpmsg_probe() for
- virtio-mmio transport
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [219.65.63.222]
+X-ClientProxiedBy: SG2PR0401CA0014.apcprd04.prod.outlook.com
+ (2603:1096:3:1::24) To PN1PR0101MB1310.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c00:12::8)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 85773643-a03a-4c48-3288-08d58eed7333
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:PN1PR0101MB1310;
+X-Microsoft-Exchange-Diagnostics: 1;PN1PR0101MB1310;3:xp3scw0Ee0ZgHm4obEk8VD8UExr3wluA8vflpreFCjQNroXxIwJTQch+lBkTSN2qdsfYMXLJXWjSQ8T1RjplvwSeq/ZJCQcP1Qs8LirJD7JTe67nO87EuJA6d2p8vyR5XZtsm7rOfL6M2l/5apnwKH311lZhZotFoVo0HVc6fFOTrEucdhNCgOkYKYVMDuHyrtXeaKnMiovXfWadcuC3o6/uTcNmN0DwscCO9yUEl8+9JvEpIi2k3JQjRkOvKcuk;25:CVRd4b6bwrTaDPT88cBjqUdPLQAKmyYEgQq9cpf/lZr8Ujttm9uw2iN6KwUVGJCJiF8xtew9Iijlu8QvpCApKHymJ5OwgpJ5chf6vklwWr452fZa3JwKr4ktveRWJjzGcDfekbpfBEqFKTKHgwHi/n1pqmVGvl+2z40sxcp24cyHja2/DgAgVVJ0r1mMeA7lPnpva7iMlK/pMY9XtHmPA6Z4sqCczn3WgwCGsjW9UaG480cwmQd5rPupD9OIhTh6Ge/pK0v9yxO/NLPbEQVk76lrgV26GzWmUNAGTH9usAtwyiathinUs+JQ7HlMIotzp4OQ6Bu7n5bn6k5g2uJ6yQ==;31:a819TOUa3gw8uJ7Xw/4/DSXWwPgmAkJzbhKmNa0IeWHkf0FzLSattaUBSlouUkiTmd+1g4WpvfuoZdPg/k5OztOdywUP3nInRGZQuTZQjk8+EwRYrtgmD1ftCfIivlL4Sy+z1b+lErsb9r4MA9t65niYK9E98XIldMMMFhiVELa0YDd72xlaWf7hrJtIM48+NxqJHFHrwuZTtNvUgyYiWkP0nJNHFlJUjEuZn/5ta9M=
+X-MS-TrafficTypeDiagnostic: PN1PR0101MB1310:
+X-Microsoft-Antispam-PRVS: <PN1PR0101MB131069FBC1E0524538E55D2084AA0@PN1PR0101MB1310.INDPRD01.PROD.OUTLOOK.COM>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501319)(52105095)(3002001)(10201501046)(6041310)(20161123564045)(20161123558120)(20161123560045)(2016111802025)(20161123562045)(6072148)(6043046)(201708071742011);SRVR:PN1PR0101MB1310;BCL:0;PCL:0;RULEID:;SRVR:PN1PR0101MB1310;
+X-Microsoft-Exchange-Diagnostics: 1;PN1PR0101MB1310;4:skjIA+f+uYHRQDOWDGFbHsn6xDEAncWy1mHsfnFbH46sdGIB+a5g+cRELUW0tg92dmVvLg5s25WWbcNZTEZMTF8pYSaKmqOAudfjCC6+zbO3uxUJNbAJOClJLKFGTWaSK5UcoATtqy0XqCX2EMFKUXQYabAC1C+3FZ7jBfq/TUTULIpBejgQIMv03ursJU3XORVKEZTorQuIxSQR0XMo07B+vjEDsg8VqWrK1EWJw+jphgS3JQ8kEKiAlXwLP10TlAkZsuPv9o1xOiLep3+kow==
+X-Forefront-PRVS: 0618E4E7E1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39380400002)(346002)(396003)(39830400003)(199004)(189003)(53936002)(2906002)(81166006)(36756003)(81156014)(107886003)(8676002)(52116002)(305945005)(7736002)(51416003)(50226002)(386003)(4326008)(86362001)(6512007)(66066001)(5660300001)(6666003)(47776003)(53416004)(59450400001)(6486002)(6116002)(8936002)(68736007)(26005)(1857600001)(6506007)(3846002)(25786009)(478600001)(97736004)(16526019)(16586007)(186003)(1076002)(48376002)(316002)(50466002)(69596002)(106356001)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:PN1PR0101MB1310;H:devang.sibshivalik.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;PN1PR0101MB1310;23:T5wCfqbWW0qlNvmL9Owo/sefAkKeA0P17Zeb9kY?=
+ =?us-ascii?Q?dAjsz/44ZJH0AYFwRrYQdkcZkpkxrADLFht+5p97C7TCB9gtqqqKPsRBp62t?=
+ =?us-ascii?Q?83vEtp3Qm12oPjcgPlyPNlRRjE8zOmrn6NsgTayhXl0JN03cXlNjjdZetk5l?=
+ =?us-ascii?Q?Gpe4P7J1OiuzqVgXe8NYiOaUEu+E7wu6yT/9cBnsDCcurxKMowRcdId3Ytmw?=
+ =?us-ascii?Q?xnO/9EgqXtj3SxrQ2AqEyw9ZqcFth8MeOaud7uhLUllWwZBjP+MsEP37g3Ne?=
+ =?us-ascii?Q?gLGRN8aohHYl6XTGMYqFwMvvgB1Egt8xs502zvhYubXdQCPhNYTQkZyMIq6x?=
+ =?us-ascii?Q?MvJyzcn/EMc2kek72LjImWOHAG+Tj9koF9mbK5qbVC0msJnSJVcgOcktBgaV?=
+ =?us-ascii?Q?QqgGcXJwFEcd/lMYlPRZ1nmoJqZc1ZE4pZsF6y9WeClrSQUmEf+n2p4Ctfg1?=
+ =?us-ascii?Q?uC3gqW/BGyoiMobbnkHXQGlTkSSpMXpFziN9wjAWM8JS0E4ll29Ow6tC72c+?=
+ =?us-ascii?Q?Vak+MSQjNASu69pCl5ID6xWPsdVWuQleaT+RYjWjLAi0Ha3YB+yi2HVfZoTD?=
+ =?us-ascii?Q?y+84939FxvI2cx9yj/Kx1mY2iyallf8UVjx1MWVUDFO4Gq9FmVM4wLf0j6vU?=
+ =?us-ascii?Q?CFDIHsTg+OxNCQZcEv9MJrrJBtFRnk6WO69VX7oVvWbXFhqGnWA67XPWisLl?=
+ =?us-ascii?Q?IHMMYzW6m51mDFpGtiMO1GRixk38+HchtEWMFQQ6/k/ooqhdqtd2trPNzYis?=
+ =?us-ascii?Q?jIlO6Ay2dPmnZYIVxKvwA0IoHf/YkeA1Au79na8Cs8ew+6SNNP8RIyNi4qFn?=
+ =?us-ascii?Q?qFqEBWvcfcxTq/CPeyVpcpKUgoCp/zXYMG8Z5HTZxrITdwBYB4XcPqnu7f/M?=
+ =?us-ascii?Q?cFvfqGFQhh94vhrxAHjdJfNYHOapOaBvo/Zh88fwtv8FJ/yUwWT8F12Vv0tN?=
+ =?us-ascii?Q?4JIg7qXKY1FlzNI7qCyujypEWmOemC6hI1tf4MVCDeRTxpkBzzoAeMcdxvue?=
+ =?us-ascii?Q?4q1jGnZNTFA7QR5VXErww7DHzeZlLXjAzD1WnTbMl5fc82yhMVF6zojL3dVZ?=
+ =?us-ascii?Q?wXU2T57MsAeJuH0EsF5nGdVuNdEjFjqP1hVOg9caYoE7ENHO5RG7Cx7PinNv?=
+ =?us-ascii?Q?OBKNYqz/8TCh3ULkQEh5DEODTCgtzn4Dnxc9S3W2oCrNXZ9hLF2eROQ=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: 4hp+o5i/xtPqn6Bm0NW+4GC3ShIBYUHrVPWAJDXGcI+u5ECZ/h7DmWsU+TtOE+cIRyC0+Q0kA600bBJh8VI/cd5BCJluOjmQr/TivJDh8E/RtNMrNuCKjOOU2E4GOgAIWSxB+iTHqUnV8sZ0zJhYeWWvuV/YiuVQy6aFt91Dwrg7FGFiwi3IW+qCniXf9q9u
+X-Microsoft-Exchange-Diagnostics: 1;PN1PR0101MB1310;6:qivjOm6PS7WZ8A8I2Ns8i1pU9ZZ23tu7z/1sb/5mEa1Szwh7ol/Fcjgy7/UO6bZifj4cXLzPaM5Q8bZT8uTNTsyoJ83KG6TP1FnhZeS0XWhMvSXfLHVZ5Ip2LcJV2HVWlj6f4PE0Ajozb87WAkHTudXyjG/otLAP4KqRkP1px9VGRUFo+ENbQ1sQxMv67/9uV5ybAHnJLCxTwW//UFPVATp7AGzxF/3HRY3zJ+OmNBFYNXS/+LPxxWWEhYT6A2IHtho7YCk+ggozZ2F6UDuUWwinohnAmiFQvSRelPbsMNNbEg2magcsAsQEflpwKl/gNXgggy4rgHnbud6EUctX7rnfNU0wu2zBZpsP2aVVX/E=;5:IJsxuJWzlA1vhHmlWFNSIYnTZQvXu8QI3JzTwSe3b8oy28Cry9RjCKBkT/swfjGfXqo4egxa00e/fh+CoqvIkw8QdLbsqCcFXNwYM/sfsjuhxRv7HWmAKPuCbENBg51rB2XqeUCoydcLCl0We5UWIrItqUVSXfQlKUMMJGyCxNQ=;24:y5tYyr3lLqZYd+yN0Qwxihe/Hlir10qced1TZ01J1fQydAhkDWUIpVsnRs2PWOLl1To/MWMifd1dffkdnvnqy6No8OixwCS0eCrTkWRV5xk=;7:U/u+lu9yADnZy3GvWnrL2g//6X9gVil3UiNjY0qoQff9pPTc+wyfUpuVlItF05mtYPiVO/MSJ5N+cu/yiWZedmShUdE8ACvwffhZj4mmXSmy3PvBgrXPiZLsIScf+8jUj56YIchHgdbL3nNARfldYgCblPFoMUJSNzbp7Tzptoqg+jCFZS8p2Gu+w/F3T9MtMBsdRUpsYq9M7Vl7LC1qOCxU8VQoZ2lWHGRJ9zYwJ3WqYgkYv/jjP0bzLVdd3gfc
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: softnautics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2018 05:34:42.3296 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85773643-a03a-4c48-3288-08d58eed7333
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 17b76cff-50c6-4f7a-9198-dd4afc5f8bea
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN1PR0101MB1310
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595524238464606092?=
+X-GMAIL-MSGID: =?utf-8?q?1595524238464606092?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 4:17 AM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Wed 10 Jan 05:16 PST 2018, Anup Patel wrote:
->> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> [..]
->> @@ -924,9 +925,16 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>                                    total_buf_space, &vrp->bufs_dma,
->>                                    GFP_KERNEL);
->>       if (!bufs_va) {
->> -             err = -ENOMEM;
->> -             goto vqs_del;
->> -     }
->> +             bufs_va = dma_alloc_coherent(vdev->dev.parent,
->> +                                          total_buf_space, &vrp->bufs_dma,
->> +                                          GFP_KERNEL);
->> +             if (!bufs_va) {
->> +                     err = -ENOMEM;
->> +                     goto vqs_del;
->> +             } else
->> +                     vrp->bufs_dev = vdev->dev.parent;
->> +     } else
->> +             vrp->bufs_dev = vdev->dev.parent->parent;
->
-> I really don't fancy the idea of us allocating on behalf of our
-> grandparent here, as you show it's not certain that our grandparent is
-> what someone originally expected it to be.
->
-> With the purpose of being able to control these allocations there is an
-> ongoing discussion related to this, which I believe will result in this
-> being changed to at least vdev->dev.parent..
->
->
-> I do expect that this discussion will be brought up during Linaro
-> Connect the coming week.
->
+Resolved checkpatch warning "sizeof t should be sizeof(t)"
+issue found by checkpatch.
 
-Currently, rpmsg_probe() is broken for virtio-mmio transport
-hence I send this patch as a stable fix.
+Signed-off-by: Devang Panchal <devang.panchal@softnautics.com>
+---
+ drivers/misc/eeprom/at25.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In general, I am fine if we are eventually going towards
-vdev->dev.parent usage.
-
-Regards,
-Anup
+diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
+index 9282ffd..6a7d4a2 100644
+--- a/drivers/misc/eeprom/at25.c
++++ b/drivers/misc/eeprom/at25.c
+@@ -102,7 +102,7 @@ static int at25_ee_read(void *priv, unsigned int offset,
+ 	}
+ 
+ 	spi_message_init(&m);
+-	memset(t, 0, sizeof t);
++	memset(t, 0, sizeof(t));
+ 
+ 	t[0].tx_buf = command;
+ 	t[0].len = at25->addrlen + 1;
+-- 
+1.9.1
