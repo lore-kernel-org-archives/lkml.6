@@ -1,466 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753083AbeCUTu2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 15:50:28 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43784 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752833AbeCUTuW (ORCPT
+        id S1753037AbeCUT4l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 15:56:41 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:33316 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752637AbeCUT4j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 15:50:22 -0400
-X-Google-Smtp-Source: AG47ELun2MeZxAXVb58aQuUUsGNHq77ApylCkvLPo+StvDNz+1itoYaqlwB850mNQRN5EjyTzyU6Dg==
-From: Junio C Hamano <gitster@pobox.com>
-To: git@vger.kernel.org
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: [ANNOUNCE] Git v2.17.0-rc1
-Date: Wed, 21 Mar 2018 12:50:18 -0700
-Message-ID: <xmqqtvt9nr7p.fsf@gitster-ct.c.googlers.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
+        Wed, 21 Mar 2018 15:56:39 -0400
+From: Nick Terrell <terrelln@fb.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+CC: Maninder Singh <maninder1.s@samsung.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "ngupta@vflare.org" <ngupta@vflare.org>,
+        Kees Cook <keescook@chromium.org>,
+        "anton@enomsg.org" <anton@enomsg.org>,
+        "ccross@android.com" <ccross@android.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "colin.king@canonical.com" <colin.king@canonical.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pankaj.m@samsung.com" <pankaj.m@samsung.com>,
+        "a.sahrawat@samsung.com" <a.sahrawat@samsung.com>,
+        "v.narang@samsung.com" <v.narang@samsung.com>,
+        Yann Collet <cyan@fb.com>
+Subject: Re: [PATCH 0/1] cover-letter/lz4: Implement lz4 with dynamic offset
+ length.
+Thread-Topic: [PATCH 0/1] cover-letter/lz4: Implement lz4 with dynamic offset
+ length.
+Thread-Index: AQHTwO5jt8QdQWvsxEiscfHuXN/+16PbG3KA
+Date: Wed, 21 Mar 2018 19:56:10 +0000
+Message-ID: <1663C9A3-7DAC-4A11-894C-C99E07BEDAD2@fb.com>
+References: <CGME20180321044137epcas5p221e7ee4a0b7464eaa00dad8320f0251d@epcas5p2.samsung.com>
+ <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
+ <20180321082628.GB2746@jagdpanzerIV>
+In-Reply-To: <20180321082628.GB2746@jagdpanzerIV>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:200::5:3299]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR15MB1350;7:+TQyh9k8+h6rbcIkjdLlOogB8XOd88MuLcpJlMLcIA8pewy1A5n8NFePRNVTl/1Z3A/pfofKDWSPJuxYgWyqR09eIqR1bhxZkpj/rRlcumh6FyF9Inp1m/xJQ5HAzV+8SHiZEEI/RxaaczatAdKnZjiDj2Rg6kmcRbfSH3Z8Pkkrq2unEX1P2DdnUDKDFHcNPDLnmfbxlgtnlVreyvI31JdkhL3/DDb8wJy6+gwO6GtaRNASr1UlN9zE+xWXU2F1;20:NRvhTWxZ4j/u0MF7pMPQx3sVJq9qblhdJCyUt+41YFeypKarQD7cItnWQlnsmwulRJaV0ZRk78kCRPu45zKVC8Mk/U3s9Qq6e/n+YRjtdu1NsInUSUROTEbWNXmVjQ4ghhlJ/Jg6YSbRbdWMxV8taUKPfSB4C5nvSWJxHaYKWfU=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(346002)(39860400002)(376002)(366004)(39380400002)(396003)(189003)(199004)(81166006)(83716003)(5660300001)(39060400002)(186003)(316002)(82746002)(14454004)(76176011)(5250100002)(6116002)(6486002)(36756003)(2900100001)(6512007)(6916009)(54906003)(3280700002)(106356001)(3660700001)(97736004)(7416002)(81156014)(86362001)(8676002)(2906002)(4326008)(8936002)(7736002)(33656002)(99286004)(478600001)(46003)(2950100002)(105586002)(53936002)(25786009)(305945005)(6246003)(229853002)(6506007)(6436002)(102836004)(68736007)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1350;H:CY4PR15MB1543.namprd15.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-ms-office365-filtering-correlation-id: 851569e2-8750-4d20-c585-08d58f65cb1a
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY4PR15MB1350;
+x-ms-traffictypediagnostic: CY4PR15MB1350:
+x-microsoft-antispam-prvs: <CY4PR15MB1350DEE1FFD9B95B7AF7DFBEABAA0@CY4PR15MB1350.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(11241501184)(944501326)(52105095)(3002001)(10201501046)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:CY4PR15MB1350;BCL:0;PCL:0;RULEID:;SRVR:CY4PR15MB1350;
+x-forefront-prvs: 0618E4E7E1
+x-microsoft-antispam-message-info: crRTWOjMblf2XR18o6+vCQhTvra/dTkiUNm7kjbDyVthQzlzP3nyR8N3RtZSpcxBXJvHEP7IyPc1bnaYxArc+1gcwFq6cObWyoLKeLvgedEZV8Vs3privaVmY12rVrv7JU8LDpzyO4VUQexXNdBzRfDNY64aQFMCthwkLwQcSv/j/zuEgy5cP7JZlXGUZtMrFf1VZtQUM8og1Wo0Cn5DB/Fim2KcX46VrPSjs02zkFxM/KPAuxwYLquCoPk1DPZ+qjT5uBRTpOZZwGM6/fM2XMk/tiNgvfjZ54t6X1S0E/JI8WXd6tsmRxGa8eddo7CXU22jCvxiqJdIAgi4Dv9BiQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <AE61E8E61085A24C990A2A0D8471A8C7@namprd15.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 851569e2-8750-4d20-c585-08d58f65cb1a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Mar 2018 19:56:10.3228
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1350
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-A release candidate Git v2.17.0-rc1 is now available for testing
-at the usual places.  It is comprised of 493 non-merge commits
-since v2.16.0, contributed by 62 people, 19 of which are new faces.
-
-The tarballs are found at:
-
-    https://www.kernel.org/pub/software/scm/git/testing/
-
-The following public repositories all have a copy of the
-'v2.17.0-rc1' tag and the 'master' branch that the tag points at:
-
-  url = https://kernel.googlesource.com/pub/scm/git/git
-  url = git://repo.or.cz/alt-git.git
-  url = https://github.com/gitster/git
-
-New contributors whose contributions weren't in v2.16.0 are as follows.
-Welcome to the Git development community!
-
-  Adam Borowski, Alban Gruin, Andreas G. Schacker, Bernhard
-  M. Wiedemann, Christian Ludwig, Gargi Sharma, Genki Sky,
-  Gregory Herrero, Jon Simons, Juan F. Codagnone, Kim Gybels,
-  Lucas Werkmeister, Mathias Rav, Michele Locati, Motoki Seki,
-  Stefan Moch, Stephen R Guglielmo, Tatyana Krasnukha, and Thomas
-  Levesque.
-
-Returning contributors who helped this release are as follows.
-Thanks for your continued support.
-
-  Ævar Arnfjörð Bjarmason, Alexander Shopov, Alex Bennée, Ben
-  Peart, Brandon Williams, brian m. carlson, Christian Couder,
-  Daniel Knittl-Frank, David Pursehouse, Derrick Stolee, Elijah
-  Newren, Eric Sunshine, Eric Wong, Jason Merrill, Jeff Hostetler,
-  Jeff King, Johannes Schindelin, Jonathan Nieder, Jonathan Tan,
-  Junio C Hamano, Kaartic Sivaraam, Mårten Kongstad, Martin
-  Ågren, Matthieu Moy, Michael Haggerty, Nathan Payre, Nguyễn
-  Thái Ngọc Duy, Nicolas Morey-Chaisemartin, Olga Telezhnaya,
-  Patryk Obara, Phillip Wood, Prathamesh Chavan, Ramsay Jones,
-  Randall S. Becker, Rasmus Villemoes, René Scharfe, Robert
-  P. J. Day, Stefan Beller, SZEDER Gábor, Thomas Gummerer,
-  Todd Zullinger, Torsten Bögershausen, and Yasushi SHOJI.
-
-----------------------------------------------------------------
-
-Git 2.17 Release Notes (draft)
-==============================
-
-Updates since v2.16
--------------------
-
-UI, Workflows & Features
-
- * "diff" family of commands learned "--find-object=<object-id>" option
-   to limit the findings to changes that involve the named object.
-
- * "git format-patch" learned to give 72-cols to diffstat, which is
-   consistent with other line length limits the subcommand uses for
-   its output meant for e-mails.
-
- * The log from "git daemon" can be redirected with a new option; one
-   relevant use case is to send the log to standard error (instead of
-   syslog) when running it from inetd.
-
- * "git rebase" learned to take "--allow-empty-message" option.
-
- * "git am" has learned the "--quit" option, in addition to the
-   existing "--abort" option; having the pair mirrors a few other
-   commands like "rebase" and "cherry-pick".
-
- * "git worktree add" learned to run the post-checkout hook, just like
-   "git clone" runs it upon the initial checkout.
-
- * "git tag" learned an explicit "--edit" option that allows the
-   message given via "-m" and "-F" to be further edited.
-
- * "git fetch --prune-tags" may be used as a handy short-hand for
-   getting rid of stale tags that are locally held.
-
- * The new "--show-current-patch" option gives an end-user facing way
-   to get the diff being applied when "git rebase" (and "git am")
-   stops with a conflict.
-
- * "git add -p" used to offer "/" (look for a matching hunk) as a
-   choice, even there was only one hunk, which has been corrected.
-   Also the single-key help is now given only for keys that are
-   enabled (e.g. help for '/' won't be shown when there is only one
-   hunk).
-
- * Since Git 1.7.9, "git merge" defaulted to --no-ff (i.e. even when
-   the side branch being merged is a descendant of the current commit,
-   create a merge commit instead of fast-forwarding) when merging a
-   tag object.  This was appropriate default for integrators who pull
-   signed tags from their downstream contributors, but caused an
-   unnecessary merges when used by downstream contributors who
-   habitually "catch up" their topic branches with tagged releases
-   from the upstream.  Update "git merge" to default to --no-ff only
-   when merging a tag object that does *not* sit at its usual place in
-   refs/tags/ hierarchy, and allow fast-forwarding otherwise, to
-   mitigate the problem.
-
- * "git status" can spend a lot of cycles to compute the relation
-   between the current branch and its upstream, which can now be
-   disabled with "--no-ahead-behind" option.
-
- * "git diff" and friends learned funcname patterns for Go language
-   source files.
-
- * "git send-email" learned "--reply-to=<address>" option.
-
- * Funcname pattern used for C# now recognizes "async" keyword.
-
- * In a way similar to how "git tag" learned to honor the pager
-   setting only in the list mode, "git config" learned to ignore the
-   pager setting when it is used for setting values (i.e. when the
-   purpose of the operation is not to "show").
-
-
-Performance, Internal Implementation, Development Support etc.
-
- * More perf tests for threaded grep
-
- * "perf" test output can be sent to codespeed server.
-
- * The build procedure for perl/ part has been greatly simplified by
-   weaning ourselves off of MakeMaker.
-
- * Perl 5.8 or greater has been required since Git 1.7.4 released in
-   2010, but we continued to assume some core modules may not exist and
-   used a conditional "eval { require <<module>> }"; we no longer do
-   this.  Some platforms (Fedora/RedHat/CentOS, for example) ship Perl
-   without all core modules by default (e.g. Digest::MD5, File::Temp,
-   File::Spec, Net::Domain, Net::SMTP).  Users on such platforms may
-   need to install these additional modules.
-
- * As a convenience, we install copies of Perl modules we require which
-   are not part of the core Perl distribution (e.g. Error and
-   Mail::Address).  Users and packagers whose operating system provides
-   these modules can set NO_PERL_CPAN_FALLBACKS to avoid installing the
-   bundled modules.
-
- * In preparation for implementing narrow/partial clone, the machinery
-   for checking object connectivity used by gc and fsck has been
-   taught that a missing object is OK when it is referenced by a
-   packfile specially marked as coming from trusted repository that
-   promises to make them available on-demand and lazily.
-
- * The machinery to clone & fetch, which in turn involves packing and
-   unpacking objects, has been told how to omit certain objects using
-   the filtering mechanism introduced by another topic.  It now knows
-   to mark the resulting pack as a promisor pack to tolerate missing
-   objects, laying foundation for "narrow" clones.
-
- * The first step to getting rid of mru API and using the
-   doubly-linked list API directly instead.
-
- * Retire mru API as it does not give enough abstraction over
-   underlying list API to be worth it.
-
- * Rewrite two more "git submodule" subcommands in C.
-
- * The tracing machinery learned to report tweaking of environment
-   variables as well.
-
- * Update Coccinelle rules to catch and optimize strbuf_addf(&buf, "%s", str)
-
- * Prevent "clang-format" from breaking line after function return type.
-
- * The sequencer infrastructure is shared across "git cherry-pick",
-   "git rebase -i", etc., and has always spawned "git commit" when it
-   needs to create a commit.  It has been taught to do so internally,
-   when able, by reusing the codepath "git commit" itself uses, which
-   gives performance boost for a few tens of percents in some sample
-   scenarios.
-
- * Push the submodule version of collision-detecting SHA-1 hash
-   implementation a bit harder on builders.
-
- * Avoid mmapping small files while using packed refs (especially ones
-   with zero size, which would cause later munmap() to fail).
-
- * Conversion from uchar[20] to struct object_id continues.
-
- * More tests for wildmatch functions.
-
- * The code to binary search starting from a fan-out table (which is
-   how the packfile is indexed with object names) has been refactored
-   into a reusable helper.
-
- * We now avoid using identifiers that clash with C++ keywords.  Even
-   though it is not a goal to compile Git with C++ compilers, changes
-   like this help use of code analysis tools that targets C++ on our
-   codebase.
-
- * The executable is now built in 'script' phase in Travis CI integration,
-   to follow the established practice, rather than during 'before_script'
-   phase.  This allows the CI categorize the failures better ('failed'
-   is project's fault, 'errored' is build environment's).
-   (merge 3c93b82920 sg/travis-build-during-script-phase later to maint).
-
- * Writing out the index file when the only thing that changed in it
-   is the untracked cache information is often wasteful, and this has
-   been optimized out.
-
- * Various pieces of Perl code we have have been cleaned up.
-
- * Internal API clean-up to allow write_locked_index() optionally skip
-   writing the in-core index when it is not modified.
-
-
-Also contains various documentation updates and code clean-ups.
-
-
-Fixes since v2.16
------------------
-
- * An old regression in "git describe --all $annotated_tag^0" has been
-   fixed.
-
- * "git status" after moving a path in the working tree (hence making
-   it appear "removed") and then adding with the -N option (hence
-   making that appear "added") detected it as a rename, but did not
-   report the  old and new pathnames correctly.
-
- * "git svn dcommit" did not take into account the fact that a
-   svn+ssh:// URL with a username@ (typically used for pushing) refers
-   to the same SVN repository without the username@ and failed when
-   svn.pushmergeinfo option is set.
-
- * API clean-up around revision traversal.
-
- * "git merge -Xours/-Xtheirs" learned to use our/their version when
-   resolving a conflicting updates to a symbolic link.
-
- * "git clone $there $here" is allowed even when here directory exists
-   as long as it is an empty directory, but the command incorrectly
-   removed it upon a failure of the operation.
-
- * "git commit --fixup" did not allow "-m<message>" option to be used
-   at the same time; allow it to annotate resulting commit with more
-   text.
-
- * When resetting the working tree files recursively, the working tree
-   of submodules are now also reset to match.
-
- * "git stash -- <pathspec>" incorrectly blew away untracked files in
-   the directory that matched the pathspec, which has been corrected.
-
- * Instead of maintaining home-grown email address parsing code, ship
-   a copy of reasonably recent Mail::Address to be used as a fallback
-   in 'git send-email' when the platform lacks it.
-   (merge d60be8acab mm/send-email-fallback-to-local-mail-address later to maint).
-
- * "git add -p" was taught to ignore local changes to submodules as
-   they do not interfere with the partial addition of regular changes
-   anyway.
-
- * Avoid showing a warning message in the middle of a line of "git
-   diff" output.
-   (merge 4e056c989f nd/diff-flush-before-warning later to maint).
-
- * The http tracing code, often used to debug connection issues,
-   learned to redact potentially sensitive information from its output
-   so that it can be more safely sharable.
-   (merge 8ba18e6fa4 jt/http-redact-cookies later to maint).
-
- * Crash fix for a corner case where an error codepath tried to unlock
-   what it did not acquire lock on.
-   (merge 81fcb698e0 mr/packed-ref-store-fix later to maint).
-
- * The split-index mode had a few corner case bugs fixed.
-   (merge ae59a4e44f tg/split-index-fixes later to maint).
-
- * Assorted fixes to "git daemon".
-   (merge ed15e58efe jk/daemon-fixes later to maint).
-
- * Completion of "git merge -s<strategy>" (in contrib/) did not work
-   well in non-C locale.
-   (merge 7cc763aaa3 nd/list-merge-strategy later to maint).
-
- * Workaround for segfault with more recent versions of SVN.
-   (merge 7f6f75e97a ew/svn-branch-segfault-fix later to maint).
-
- * Plug recently introduced leaks in fsck.
-   (merge ba3a08ca0e jt/fsck-code-cleanup later to maint).
-
- * "git pull --rebase" did not pass verbosity setting down when
-   recursing into a submodule.
-   (merge a56771a668 sb/pull-rebase-submodule later to maint).
-
- * The way "git reset --hard" reports the commit the updated HEAD
-   points at is made consistent with the way how the commit title is
-   generated by the other parts of the system.  This matters when the
-   title is spread across physically multiple lines.
-   (merge 1cf823fb68 tg/reset-hard-show-head-with-pretty later to maint).
-
- * Test fixes.
-   (merge 63b1a175ee sg/test-i18ngrep later to maint).
-
- * Some bugs around "untracked cache" feature have been fixed.  This
-   will notice corrupt data in the untracked cache left by old and
-   buggy code and issue a warning---the index can be fixed by clearing
-   the untracked cache from it.
-   (merge 0cacebf099 nd/fix-untracked-cache-invalidation later to maint).
-   (merge 7bf0be7501 ab/untracked-cache-invalidation-docs later to maint).
-
- * "git blame HEAD COPYING" in a bare repository failed to run, while
-   "git blame HEAD -- COPYING" run just fine.  This has been corrected.
-
- * "git add" files in the same directory, but spelling the directory
-   path in different cases on case insensitive filesystem, corrupted
-   the name hash data structure and led to unexpected results.  This
-   has been corrected.
-   (merge c95525e90d bp/name-hash-dirname-fix later to maint).
-
- * "git rebase -p" mangled log messages of a merge commit, which is
-   now fixed.
-   (merge ed5144d7eb js/fix-merge-arg-quoting-in-rebase-p later to maint).
-
- * Some low level protocol codepath could crash when they get an
-   unexpected flush packet, which is now fixed.
-   (merge bb1356dc64 js/packet-read-line-check-null later to maint).
-
- * "git check-ignore" with multiple paths got confused when one is a
-   file and the other is a directory, which has been fixed.
-   (merge d60771e930 rs/check-ignore-multi later to maint).
-
- * "git describe $garbage" stopped giving any errors when the garbage
-   happens to be a string with 40 hexadecimal letters.
-   (merge a8e7a2bf0f sb/describe-blob later to maint).
-
- * Code to unquote single-quoted string (used in the parser for
-   configuration files, etc.) did not diagnose bogus input correctly
-   and produced bogus results instead.
-   (merge ddbbf8eb25 jk/sq-dequote-on-bogus-input later to maint).
-
- * Many places in "git apply" knew that "/dev/null" that signals
-   "there is no such file on this side of the diff" can be followed by
-   whitespace and garbage when parsing a patch, except for one, which
-   made an otherwise valid patch (e.g. ones from subversion) rejected.
-   (merge e454ad4bec tk/apply-dev-null-verify-name-fix later to maint).
-
- * We no longer create any *.spec file, so "make clean" should not
-   remove it.
-   (merge 4321bdcabb tz/do-not-clean-spec-file later to maint).
-
- * "git push" over http transport did not unquote the push-options
-   correctly.
-   (merge 90dce21eb0 jk/push-options-via-transport-fix later to maint).
-
- * "git send-email" learned to complain when the batch-size option is
-   not defined when the relogin-delay option is, since these two are
-   mutually required.
-   (merge 9caa70697b xz/send-email-batch-size later to maint).
-
- * Y2k20 fix ;-) for our perl scripts.
-   (merge a40e06ee33 bw/perl-timegm-timelocal-fix later to maint).
-
- * Threaded "git grep" has been optimized to avoid allocation in code
-   section that is covered under a mutex.
-   (merge 38ef24dccf rv/grep-cleanup later to maint).
-
- * "git subtree" script (in contrib/) scripted around "git log", whose
-   output got affected by end-user configuration like log.showsignature
-   (merge 8841b5222c sg/subtree-signed-commits later to maint).
-
- * While finding unique object name abbreviation, the code may
-   accidentally have read beyond the end of the array of object names
-   in a pack.
-   (merge 21abed500c ds/find-unique-abbrev-optim later to maint).
-
- * Micro optimization in revision traversal code.
-   (merge ebbed3ba04 ds/mark-parents-uninteresting-optim later to maint).
-
- * "git commit" used to run "gc --auto" near the end, which was lost
-   when the command was reimplemented in C by mistake.
-   (merge 095c741edd ab/gc-auto-in-commit later to maint).
-
- * Allow running a couple of tests with "sh -x".
-   (merge c20bf94abc sg/cvs-tests-with-x later to maint).
-
- * The codepath to replace an existing entry in the index had a bug in
-   updating the name hash structure, which has been fixed.
-   (merge 0e267b7a24 bp/refresh-cache-ent-rehash-fix later to maint).
-
- * The transfer.fsckobjects configuration tells "git fetch" to
-   validate the data and connected-ness of objects in the received
-   pack; the code to perform this check has been taught about the
-   narrow clone's convention that missing objects that are reachable
-   from objects in a pack that came from a promissor remote is OK.
-
- * There was an unused file-scope static variable left in http.c when
-   building for versions of libCURL that is older than 7.19.4, which
-   has been fixed.
-   (merge b8fd6008ec rj/http-code-cleanup later to maint).
-
- * Shell script portability fix.
-   (merge 206a6ae013 ml/filter-branch-portability-fix later to maint).
-
- * Other minor doc, test and build updates and code cleanups.
-   (merge e2a5a028c7 bw/oidmap-autoinit later to maint).
-   (merge ec3b4b06f8 cl/t9001-cleanup later to maint).
-   (merge e1b3f3dd38 ks/submodule-doc-updates later to maint).
-   (merge fbac558a9b rs/describe-unique-abbrev later to maint).
-   (merge 8462ff43e4 tb/crlf-conv-flags later to maint).
-   (merge 7d68bb0766 rb/hashmap-h-compilation-fix later to maint).
-   (merge 3449847168 cc/sha1-file-name later to maint).
-   (merge ad622a256f ds/use-get-be64 later to maint).
-   (merge f919ffebed sg/cocci-move-array later to maint).
-   (merge 4e801463c7 jc/mailinfo-cleanup-fix later to maint).
-   (merge ef5b3a6c5e nd/shared-index-fix later to maint).
-   (merge 9f5258cbb8 tz/doc-show-defaults-to-head later to maint).
-   (merge b780e4407d jc/worktree-add-short-help later to maint).
-   (merge ae239fc8e5 rs/cocci-strbuf-addf-to-addstr later to maint).
-   (merge 2e22a85e5c nd/ignore-glob-doc-update later to maint).
-   (merge 3738031581 jk/gettext-poison later to maint).
-   (merge 54360a1956 rj/sparse-updates later to maint).
-   (merge 12e31a6b12 sg/doc-test-must-fail-args later to maint).
-   (merge 760f1ad101 bc/doc-interpret-trailers-grammofix later to maint).
-   (merge 4ccf461f56 bp/fsmonitor later to maint).
-   (merge a6119f82b1 jk/test-hashmap-updates later to maint).
-   (merge 5aea9fe6cc rd/typofix later to maint).
-   (merge e4e5da2796 sb/status-doc-fix later to maint).
-   (merge 7976e901c8 gs/test-unset-xdg-cache-home later to maint).
-   (merge d023df1ee6 tg/worktree-create-tracking later to maint).
-   (merge 4cbe92fd41 sm/mv-dry-run-update later to maint).
-   (merge 75e5e9c3f7 sb/color-h-cleanup later to maint).
-   (merge 2708ef4af6 sg/t6300-modernize later to maint).
-   (merge d88e92d4e0 bw/doc-submodule-recurse-config-with-clone later to maint).
-   (merge f74bbc8dd2 jk/cached-commit-buffer later to maint).
-   (merge 1316416903 ms/non-ascii-ticks later to maint).
-   (merge 878056005e rs/strbuf-read-file-or-whine later to maint).
-   (merge 79f0ba1547 jk/strbuf-read-file-close-error later to maint).
-   (merge edfb8ba068 ot/ref-filter-cleanup later to maint).
-   (merge 11395a3b4b jc/test-must-be-empty later to maint).
-   (merge 768b9d6db7 mk/doc-pretty-fill later to maint).
-   (merge 2caa7b8d27 ab/man-sec-list later to maint).
-   (merge 40c17eb184 ks/t3200-typofix later to maint).
-   (merge bd9958c358 dp/merge-strategy-doc-fix later to maint).
-   (merge 9ee0540a40 js/ming-strftime later to maint).
-   (merge 1775e990f7 tz/complete-tag-delete-tagname later to maint).
-   (merge 00a4b03501 rj/warning-uninitialized-fix later to maint).
-   (merge b635ed97a0 jk/attributes-path-doc later to maint).
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2LJuojb028321
+
+On (03/21/18 10:10), Maninder Singh wrote:
+> LZ4 specification defines 2 byte offset length for 64 KB data.
+> But in case of ZRAM we compress data per page and in most of
+> architecture PAGE_SIZE is 4KB. So we can decide offset length based
+> on actual offset value. For this we can reserve 1 bit to decide offset
+> length (1 byte or 2 byte). 2 byte required only if ofsset is greater than 127,
+> else 1 byte is enough.
+> 
+> With this new implementation new offset value can be at MAX 32 KB.
+> 
+> Thus we can save more memory for compressed data.
+> 
+> results checked with new implementation:-
+> 
+> comression size for same input source
+> (LZ4_DYN < LZO < LZ4)
+> 
+> LZO
+> =======
+> orig_data_size: 78917632
+> compr_data_size: 15894668
+> mem_used_total: 17117184
+> 
+> LZ4
+> ========
+> orig_data_size: 78917632
+> compr_data_size: 16310717
+> mem_used_total: 17592320
+> 
+> LZ4_DYN
+> =======
+> orig_data_size: 78917632
+> compr_data_size: 15520506
+> mem_used_total: 16748544
+
+This seems like a reasonable extension to the algorithm, and it looks like
+LZ4_DYN is about a 5% improvement to compression ratio on your benchmark.
+The biggest question I have is if it is worthwhile to maintain a separate
+incompatible variant of LZ4 in the kernel without any upstream for a 5%
+gain? If we do want to go forward with this, we should perform more
+benchmarks.
+
+I commented in the patch, but because the `dynOffset` variable isn't a
+compile time static in LZ4_decompress_generic(), I suspect that the patch
+causes a regression in decompression speed for both LZ4 and LZ4_DYN. You'll
+need to re-run the benchmarks to first show that LZ4 before the patch
+performs the same as LZ4 after the patch. Then re-run the LZ4 vs LZ4_DYN
+benchmarks.
+
+I would also like to see a benchmark in user-space (with the code), so we
+can see the performance of LZ4 before and after the patch, as well as LZ4
+vs LZ4_DYN without anything else going on. I expect the extra branches in
+the decoding loop to have an impact on speed, and I would like to see how
+big the impact is without noise. 
+
+CC-ing Yann Collet, the author of LZ4
