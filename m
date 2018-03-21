@@ -1,100 +1,239 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751734AbeCUBvt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:51:49 -0400
-Received: from mga11.intel.com ([192.55.52.93]:1861 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751459AbeCUBvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:51:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
-   d="scan'208";a="36746927"
-Date: Wed, 21 Mar 2018 09:52:23 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: "Figo.zhang" <figo1802@gmail.com>
-Cc: Linux MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [RFC PATCH v2 3/4] mm/rmqueue_bulk: alloc without touching
- individual page structure
-Message-ID: <20180321015223.GA28705@intel.com>
-References: <20180320085452.24641-1-aaron.lu@intel.com>
- <20180320085452.24641-4-aaron.lu@intel.com>
- <CAF7GXvpzgc0vsJemUYQPhPFte8b8a4nBFo=iwZBTdM1Y2eoHYw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAF7GXvpzgc0vsJemUYQPhPFte8b8a4nBFo=iwZBTdM1Y2eoHYw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751658AbeCUB63 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:58:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34798 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751459AbeCUB62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 21:58:28 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        erick.chen@spreadtrum.com, baolin.wang@linaro.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: sprd: Add the support of restarting the system" to the spi tree
+In-Reply-To: <8d23126707fa8ac81a46288e08864aca0fc0e906.1521512297.git.baolin.wang@linaro.org>
+Message-Id: <20180321015815.C62E144007A@finisterre.ee.mobilebroadband>
+Date: Wed, 21 Mar 2018 01:58:15 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 03:29:33PM -0700, Figo.zhang wrote:
-> 2018-03-20 1:54 GMT-07:00 Aaron Lu <aaron.lu@intel.com>:
-> 
-> > Profile on Intel Skylake server shows the most time consuming part
-> > under zone->lock on allocation path is accessing those to-be-returned
-> > page's "struct page" on the free_list inside zone->lock. One explanation
-> > is, different CPUs are releasing pages to the head of free_list and
-> > those page's 'struct page' may very well be cache cold for the allocating
-> > CPU when it grabs these pages from free_list' head. The purpose here
-> > is to avoid touching these pages one by one inside zone->lock.
-> >
-> > One idea is, we just take the requested number of pages off free_list
-> > with something like list_cut_position() and then adjust nr_free of
-> > free_area accordingly inside zone->lock and other operations like
-> > clearing PageBuddy flag for these pages are done outside of zone->lock.
-> >
-> 
-> sounds good!
-> your idea is reducing the lock contention in rmqueue_bulk() function by
+The patch
 
-Right, the idea is to reduce the lock held time.
+   spi: sprd: Add the support of restarting the system
 
-> split the order-0
-> freelist into two list, one is without zone->lock, other is need zone->lock?
+has been applied to the spi tree at
 
-But not by splitting freelist into two lists, I didn't do that.
-I moved part of the things done previously inside the lock outside, i.e.
-clearing PageBuddy flag etc. is now done outside so that we do not need
-to take the penalty of cache miss on those "struct page"s inside the
-lock and have all other CPUs waiting.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-> 
-> it seems that it is a big lock granularity holding the zone->lock in
-> rmqueue_bulk() ,
-> why not we change like it?
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-It is believed frequently taking and dropping lock is worse than taking
-it and do all needed things and then drop.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> 
-> static int rmqueue_bulk(struct zone *zone, unsigned int order,
->             unsigned long count, struct list_head *list,
->             int migratetype, bool cold)
-> {
-> 
->     for (i = 0; i < count; ++i) {
->         spin_lock(&zone->lock);
->         struct page *page = __rmqueue(zone, order, migratetype);
->        spin_unlock(&zone->lock);
->        ...
->     }
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-In this case, spin_lock() and spin_unlock() should be outside the loop.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
->     __mod_zone_page_state(zone, NR_FREE_PAGES, -(i << order));
-> 
->     return i;
-> }
+Thanks,
+Mark
+
+>From ac1775012058e13ef1522938e27f5973d9e3f053 Mon Sep 17 00:00:00 2001
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Tue, 20 Mar 2018 10:42:14 +0800
+Subject: [PATCH] spi: sprd: Add the support of restarting the system
+
+On Spreadtrum platform, we use one PMIC watchdog to reset the whole system
+with loading one suitable timeout value (usually 50ms) for the watchdog.
+
+In theory, we should implement the restart function in drivers/power/reset
+subsystem to access the PMIC watchdog with regmap. When restart the system,
+other cores will be stopped by IPI, but if other cores were accessing PMIC
+with holding the regmap mutex lock, that will cause dead-lock issue if we
+try to access the PMIC watchdog with regmap to restart the whole system.
+Thus we can implement the restart function in ADI driver to avoid this
+issue.
+
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-sprd-adi.c | 112 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 112 insertions(+)
+
+diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
+index 74bbd045aac0..197d4b0d81af 100644
+--- a/drivers/spi/spi-sprd-adi.c
++++ b/drivers/spi/spi-sprd-adi.c
+@@ -4,6 +4,7 @@
+  * SPDX-License-Identifier: GPL-2.0
+  */
+ 
++#include <linux/delay.h>
+ #include <linux/hwspinlock.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+@@ -12,6 +13,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/reboot.h>
+ #include <linux/spi/spi.h>
+ #include <linux/sizes.h>
+ 
+@@ -67,6 +69,40 @@
+ #define ADI_READ_TIMEOUT		2000
+ #define REG_ADDR_LOW_MASK		GENMASK(11, 0)
+ 
++/* Registers definitions for PMIC watchdog controller */
++#define REG_WDG_LOAD_LOW		0x80
++#define REG_WDG_LOAD_HIGH		0x84
++#define REG_WDG_CTRL			0x88
++#define REG_WDG_LOCK			0xa0
++
++/* Bits definitions for register REG_WDG_CTRL */
++#define BIT_WDG_RUN			BIT(1)
++#define BIT_WDG_RST			BIT(3)
++
++/* Registers definitions for PMIC */
++#define PMIC_RST_STATUS			0xee8
++#define PMIC_MODULE_EN			0xc08
++#define PMIC_CLK_EN			0xc18
++#define BIT_WDG_EN			BIT(2)
++
++/* Definition of PMIC reset status register */
++#define HWRST_STATUS_RECOVERY		0x20
++#define HWRST_STATUS_NORMAL		0x40
++#define HWRST_STATUS_ALARM		0x50
++#define HWRST_STATUS_SLEEP		0x60
++#define HWRST_STATUS_FASTBOOT		0x30
++#define HWRST_STATUS_SPECIAL		0x70
++#define HWRST_STATUS_PANIC		0x80
++#define HWRST_STATUS_CFTREBOOT		0x90
++#define HWRST_STATUS_AUTODLOADER	0xa0
++#define HWRST_STATUS_IQMODE		0xb0
++#define HWRST_STATUS_SPRDISK		0xc0
++
++/* Use default timeout 50 ms that converts to watchdog values */
++#define WDG_LOAD_VAL			((50 * 1000) / 32768)
++#define WDG_LOAD_MASK			GENMASK(15, 0)
++#define WDG_UNLOCK_KEY			0xe551
++
+ struct sprd_adi {
+ 	struct spi_controller	*ctlr;
+ 	struct device		*dev;
+@@ -74,6 +110,7 @@ struct sprd_adi {
+ 	struct hwspinlock	*hwlock;
+ 	unsigned long		slave_vbase;
+ 	unsigned long		slave_pbase;
++	struct notifier_block	restart_handler;
+ };
+ 
+ static int sprd_adi_check_paddr(struct sprd_adi *sadi, u32 paddr)
+@@ -270,6 +307,72 @@ static int sprd_adi_transfer_one(struct spi_controller *ctlr,
+ 	return 0;
+ }
+ 
++static int sprd_adi_restart_handler(struct notifier_block *this,
++				    unsigned long mode, void *cmd)
++{
++	struct sprd_adi *sadi = container_of(this, struct sprd_adi,
++					     restart_handler);
++	u32 val, reboot_mode = 0;
++
++	if (!cmd)
++		reboot_mode = HWRST_STATUS_NORMAL;
++	else if (!strncmp(cmd, "recovery", 8))
++		reboot_mode = HWRST_STATUS_RECOVERY;
++	else if (!strncmp(cmd, "alarm", 5))
++		reboot_mode = HWRST_STATUS_ALARM;
++	else if (!strncmp(cmd, "fastsleep", 9))
++		reboot_mode = HWRST_STATUS_SLEEP;
++	else if (!strncmp(cmd, "bootloader", 10))
++		reboot_mode = HWRST_STATUS_FASTBOOT;
++	else if (!strncmp(cmd, "panic", 5))
++		reboot_mode = HWRST_STATUS_PANIC;
++	else if (!strncmp(cmd, "special", 7))
++		reboot_mode = HWRST_STATUS_SPECIAL;
++	else if (!strncmp(cmd, "cftreboot", 9))
++		reboot_mode = HWRST_STATUS_CFTREBOOT;
++	else if (!strncmp(cmd, "autodloader", 11))
++		reboot_mode = HWRST_STATUS_AUTODLOADER;
++	else if (!strncmp(cmd, "iqmode", 6))
++		reboot_mode = HWRST_STATUS_IQMODE;
++	else if (!strncmp(cmd, "sprdisk", 7))
++		reboot_mode = HWRST_STATUS_SPRDISK;
++	else
++		reboot_mode = HWRST_STATUS_NORMAL;
++
++	/* Record the reboot mode */
++	sprd_adi_read(sadi, sadi->slave_pbase + PMIC_RST_STATUS, &val);
++	val |= reboot_mode;
++	sprd_adi_write(sadi, sadi->slave_pbase + PMIC_RST_STATUS, val);
++
++	/* Enable the interface clock of the watchdog */
++	sprd_adi_read(sadi, sadi->slave_pbase + PMIC_MODULE_EN, &val);
++	val |= BIT_WDG_EN;
++	sprd_adi_write(sadi, sadi->slave_pbase + PMIC_MODULE_EN, val);
++
++	/* Enable the work clock of the watchdog */
++	sprd_adi_read(sadi, sadi->slave_pbase + PMIC_CLK_EN, &val);
++	val |= BIT_WDG_EN;
++	sprd_adi_write(sadi, sadi->slave_pbase + PMIC_CLK_EN, val);
++
++	/* Unlock the watchdog */
++	sprd_adi_write(sadi, sadi->slave_pbase + REG_WDG_LOCK, WDG_UNLOCK_KEY);
++
++	/* Load the watchdog timeout value, 50ms is always enough. */
++	sprd_adi_write(sadi, sadi->slave_pbase + REG_WDG_LOAD_LOW,
++		       WDG_LOAD_VAL & WDG_LOAD_MASK);
++	sprd_adi_write(sadi, sadi->slave_pbase + REG_WDG_LOAD_HIGH, 0);
++
++	/* Start the watchdog to reset system */
++	sprd_adi_read(sadi, sadi->slave_pbase + REG_WDG_CTRL, &val);
++	val |= BIT_WDG_RUN | BIT_WDG_RST;
++	sprd_adi_write(sadi, sadi->slave_pbase + REG_WDG_CTRL, val);
++
++	mdelay(1000);
++
++	dev_emerg(sadi->dev, "Unable to restart system\n");
++	return NOTIFY_DONE;
++}
++
+ static void sprd_adi_hw_init(struct sprd_adi *sadi)
+ {
+ 	struct device_node *np = sadi->dev->of_node;
+@@ -383,6 +486,14 @@ static int sprd_adi_probe(struct platform_device *pdev)
+ 		goto free_hwlock;
+ 	}
+ 
++	sadi->restart_handler.notifier_call = sprd_adi_restart_handler;
++	sadi->restart_handler.priority = 128;
++	ret = register_restart_handler(&sadi->restart_handler);
++	if (ret) {
++		dev_err(&pdev->dev, "can not register restart handler\n");
++		goto free_hwlock;
++	}
++
+ 	return 0;
+ 
+ free_hwlock:
+@@ -397,6 +508,7 @@ static int sprd_adi_remove(struct platform_device *pdev)
+ 	struct spi_controller *ctlr = dev_get_drvdata(&pdev->dev);
+ 	struct sprd_adi *sadi = spi_controller_get_devdata(ctlr);
+ 
++	unregister_restart_handler(&sadi->restart_handler);
+ 	hwspin_lock_free(sadi->hwlock);
+ 	return 0;
+ }
+-- 
+2.16.2
