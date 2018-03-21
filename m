@@ -1,191 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752064AbeCUCVk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:21:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45500 "EHLO mail.kernel.org"
+        id S1752123AbeCUCVo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:21:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751921AbeCUCVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751920AbeCUCVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Mar 2018 22:21:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76F132177B
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA66217D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180321022125.464498045@goodmis.org>
+Message-Id: <20180321022125.290784423@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Tue, 20 Mar 2018 22:21:06 -0400
+Date: Tue, 20 Mar 2018 22:21:05 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [for-next][PATCH 14/46] tracing: Add usecs modifier for hist trigger timestamps
+Subject: [for-next][PATCH 13/46] tracing: Add hist_data member to hist_field
 References: <20180321022052.030055576@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0014-tracing-Add-usecs-modifier-for-hist-trigger-timestam.patch
+Content-Disposition: inline; filename=0013-tracing-Add-hist_data-member-to-hist_field.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Appending .usecs onto a common_timestamp field will cause the
-timestamp value to be in microseconds instead of the default
-nanoseconds.  A typical latency histogram using usecs would look like
-this:
+Allow hist_data access via hist_field.  Some users of hist_fields
+require or will require more access to the associated hist_data.
 
-   # echo 'hist:keys=pid,prio:ts0=common_timestamp.usecs ...
-   # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0 ...
-
-This also adds an external trace_clock_in_ns() to trace.c for the
-timestamp conversion.
-
-Link: http://lkml.kernel.org/r/4e813705a170b3e13e97dc3135047362fb1a39f3.1516069914.git.tom.zanussi@linux.intel.com
+Link: http://lkml.kernel.org/r/d04cd0768f5228ebb4ac0ba4a847bc4d14d4826f.1516069914.git.tom.zanussi@linux.intel.com
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/trace/histogram.txt |  1 +
- kernel/trace/trace.c              | 13 +++++++++++--
- kernel/trace/trace.h              |  2 ++
- kernel/trace/trace_events_hist.c  | 28 ++++++++++++++++++++++------
- 4 files changed, 36 insertions(+), 8 deletions(-)
+ kernel/trace/trace_events_hist.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/trace/histogram.txt b/Documentation/trace/histogram.txt
-index a4143f04a097..25c94730d3fe 100644
---- a/Documentation/trace/histogram.txt
-+++ b/Documentation/trace/histogram.txt
-@@ -74,6 +74,7 @@
- 	.syscall    display a syscall id as a system call name
- 	.execname   display a common_pid as a program name
- 	.log2       display log2 value rather than raw number
-+	.usecs      display a common_timestamp in microseconds
- 
-   Note that in general the semantics of a given field aren't
-   interpreted when applying a modifier to it, but there are some
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 988d94a05e81..82cc8891fda6 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1168,6 +1168,14 @@ static struct {
- 	ARCH_TRACE_CLOCKS
- };
- 
-+bool trace_clock_in_ns(struct trace_array *tr)
-+{
-+	if (trace_clocks[tr->clock_id].in_ns)
-+		return true;
-+
-+	return false;
-+}
-+
- /*
-  * trace_parser_get_init - gets the buffer for trace parser
-  */
-@@ -4694,8 +4702,9 @@ static const char readme_msg[] =
- 	"\t            .sym        display an address as a symbol\n"
- 	"\t            .sym-offset display an address as a symbol and offset\n"
- 	"\t            .execname   display a common_pid as a program name\n"
--	"\t            .syscall    display a syscall id as a syscall name\n\n"
--	"\t            .log2       display log2 value rather than raw number\n\n"
-+	"\t            .syscall    display a syscall id as a syscall name\n"
-+	"\t            .log2       display log2 value rather than raw number\n"
-+	"\t            .usecs      display a common_timestamp in microseconds\n\n"
- 	"\t    The 'pause' parameter can be used to pause an existing hist\n"
- 	"\t    trigger or to start a hist trigger but not log any events\n"
- 	"\t    until told to do so.  'continue' can be used to start or\n"
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 99060f7eebbd..89771b4f16df 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -289,6 +289,8 @@ extern void trace_array_put(struct trace_array *tr);
- 
- extern int tracing_set_time_stamp_abs(struct trace_array *tr, bool abs);
- 
-+extern bool trace_clock_in_ns(struct trace_array *tr);
-+
- /*
-  * The global tracer (top) should be the first trace array added,
-  * but we check the flag anyway.
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 77ebe6b410ba..7f5f0b8f6558 100644
+index a793f8c04830..77ebe6b410ba 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -90,12 +90,6 @@ static u64 hist_field_log2(struct hist_field *hist_field, void *event,
- 	return (u64) ilog2(roundup_pow_of_two(val));
+@@ -39,6 +39,7 @@ struct hist_field {
+ 	unsigned int			offset;
+ 	unsigned int                    is_signed;
+ 	struct hist_field		*operands[HIST_FIELD_OPERANDS_MAX];
++	struct hist_trigger_data	*hist_data;
+ };
+ 
+ static u64 hist_field_none(struct hist_field *field, void *event,
+@@ -420,7 +421,8 @@ static void destroy_hist_field(struct hist_field *hist_field,
+ 	kfree(hist_field);
  }
  
--static u64 hist_field_timestamp(struct hist_field *hist_field, void *event,
--				struct ring_buffer_event *rbe)
--{
--	return ring_buffer_event_time_stamp(rbe);
--}
--
- #define DEFINE_HIST_FIELD_FN(type)					\
- 	static u64 hist_field_##type(struct hist_field *hist_field,	\
- 				     void *event,			\
-@@ -143,6 +137,7 @@ enum hist_field_flags {
- 	HIST_FIELD_FL_STACKTRACE	= 1 << 8,
- 	HIST_FIELD_FL_LOG2		= 1 << 9,
- 	HIST_FIELD_FL_TIMESTAMP		= 1 << 10,
-+	HIST_FIELD_FL_TIMESTAMP_USECS	= 1 << 11,
- };
- 
- struct hist_trigger_attrs {
-@@ -153,6 +148,7 @@ struct hist_trigger_attrs {
- 	bool		pause;
- 	bool		cont;
- 	bool		clear;
-+	bool		ts_in_usecs;
- 	unsigned int	map_bits;
- };
- 
-@@ -170,6 +166,20 @@ struct hist_trigger_data {
- 	bool				enable_timestamps;
- };
- 
-+static u64 hist_field_timestamp(struct hist_field *hist_field, void *event,
-+				struct ring_buffer_event *rbe)
-+{
-+	struct hist_trigger_data *hist_data = hist_field->hist_data;
-+	struct trace_array *tr = hist_data->event_file->tr;
-+
-+	u64 ts = ring_buffer_event_time_stamp(rbe);
-+
-+	if (hist_data->attrs->ts_in_usecs && trace_clock_in_ns(tr))
-+		ts = ns2usecs(ts);
-+
-+	return ts;
-+}
-+
- static const char *hist_field_name(struct hist_field *field,
- 				   unsigned int level)
+-static struct hist_field *create_hist_field(struct ftrace_event_field *field,
++static struct hist_field *create_hist_field(struct hist_trigger_data *hist_data,
++					    struct ftrace_event_field *field,
+ 					    unsigned long flags)
  {
-@@ -634,6 +644,8 @@ static int create_key_field(struct hist_trigger_data *hist_data,
- 				flags |= HIST_FIELD_FL_SYSCALL;
- 			else if (strcmp(field_str, "log2") == 0)
- 				flags |= HIST_FIELD_FL_LOG2;
-+			else if (strcmp(field_str, "usecs") == 0)
-+				flags |= HIST_FIELD_FL_TIMESTAMP_USECS;
- 			else {
- 				ret = -EINVAL;
- 				goto out;
-@@ -643,6 +655,8 @@ static int create_key_field(struct hist_trigger_data *hist_data,
- 		if (strcmp(field_name, "common_timestamp") == 0) {
- 			flags |= HIST_FIELD_FL_TIMESTAMP;
- 			hist_data->enable_timestamps = true;
-+			if (flags & HIST_FIELD_FL_TIMESTAMP_USECS)
-+				hist_data->attrs->ts_in_usecs = true;
- 			key_size = sizeof(u64);
- 		} else {
- 			field = trace_find_event_field(file->event_call, field_name);
-@@ -1241,6 +1255,8 @@ static const char *get_hist_field_flags(struct hist_field *hist_field)
- 		flags_str = "syscall";
- 	else if (hist_field->flags & HIST_FIELD_FL_LOG2)
- 		flags_str = "log2";
-+	else if (hist_field->flags & HIST_FIELD_FL_TIMESTAMP_USECS)
-+		flags_str = "usecs";
+ 	struct hist_field *hist_field;
+@@ -432,6 +434,8 @@ static struct hist_field *create_hist_field(struct ftrace_event_field *field,
+ 	if (!hist_field)
+ 		return NULL;
  
- 	return flags_str;
- }
++	hist_field->hist_data = hist_data;
++
+ 	if (flags & HIST_FIELD_FL_HITCOUNT) {
+ 		hist_field->fn = hist_field_counter;
+ 		goto out;
+@@ -445,7 +449,7 @@ static struct hist_field *create_hist_field(struct ftrace_event_field *field,
+ 	if (flags & HIST_FIELD_FL_LOG2) {
+ 		unsigned long fl = flags & ~HIST_FIELD_FL_LOG2;
+ 		hist_field->fn = hist_field_log2;
+-		hist_field->operands[0] = create_hist_field(field, fl);
++		hist_field->operands[0] = create_hist_field(hist_data, field, fl);
+ 		hist_field->size = hist_field->operands[0]->size;
+ 		goto out;
+ 	}
+@@ -498,7 +502,7 @@ static void destroy_hist_fields(struct hist_trigger_data *hist_data)
+ static int create_hitcount_val(struct hist_trigger_data *hist_data)
+ {
+ 	hist_data->fields[HITCOUNT_IDX] =
+-		create_hist_field(NULL, HIST_FIELD_FL_HITCOUNT);
++		create_hist_field(hist_data, NULL, HIST_FIELD_FL_HITCOUNT);
+ 	if (!hist_data->fields[HITCOUNT_IDX])
+ 		return -ENOMEM;
+ 
+@@ -544,7 +548,7 @@ static int create_val_field(struct hist_trigger_data *hist_data,
+ 		}
+ 	}
+ 
+-	hist_data->fields[val_idx] = create_hist_field(field, flags);
++	hist_data->fields[val_idx] = create_hist_field(hist_data, field, flags);
+ 	if (!hist_data->fields[val_idx]) {
+ 		ret = -ENOMEM;
+ 		goto out;
+@@ -654,7 +658,7 @@ static int create_key_field(struct hist_trigger_data *hist_data,
+ 		}
+ 	}
+ 
+-	hist_data->fields[key_idx] = create_hist_field(field, flags);
++	hist_data->fields[key_idx] = create_hist_field(hist_data, field, flags);
+ 	if (!hist_data->fields[key_idx]) {
+ 		ret = -ENOMEM;
+ 		goto out;
 -- 
 2.15.1
