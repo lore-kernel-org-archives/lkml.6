@@ -1,90 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751914AbeCUQVH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:21:07 -0400
-Received: from vern.gendns.com ([206.190.152.46]:35596 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751594AbeCUQVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:21:04 -0400
-Subject: Re: [PATCH 5/8] remoteproc: da8xx: add the missing checke for
- clk_enable()
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180321120807.18032-1-brgl@bgdev.pl>
- <20180321120807.18032-6-brgl@bgdev.pl>
-From: David Lechner <david@lechnology.com>
-Message-ID: <f528a120-d6e8-ff6f-243a-256ce4c392a9@lechnology.com>
-Date: Wed, 21 Mar 2018 11:21:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180321120807.18032-6-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1752587AbeCUQWn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:22:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59702 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751595AbeCUQWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 12:22:31 -0400
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>, Waiman Long <longman@redhat.com>
+Subject: [PATCH v6 2/2] cpuset: Add cpuset.sched_load_balance to v2
+Date: Wed, 21 Mar 2018 12:21:49 -0400
+Message-Id: <1521649309-26690-3-git-send-email-longman@redhat.com>
+In-Reply-To: <1521649309-26690-1-git-send-email-longman@redhat.com>
+References: <1521649309-26690-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The davinci platform is being switched to using the common clock
-> framework, where clk_enable() can fail. Add the return value check.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index bf3b9034c319..592bf0fc52e8 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
->   	struct device *dev = rproc->dev.parent;
->   	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
->   	struct clk *dsp_clk = drproc->dsp_clk;
-> +	int rv;
+The sched_load_balance flag is needed to enable CPU isolation similar
+to what can be done with the "isolcpus" kernel boot parameter.
 
-For style points, you could use ret instead of rv to be consistent with
-the rest of this driver.
+The sched_load_balance flag implies an implicit !cpu_exclusive as
+it doesn't make sense to have an isolated CPU being load-balanced in
+another cpuset.
 
->   
->   	/* hw requires the start (boot) address be on 1KB boundary */
->   	if (rproc->bootaddr & 0x3ff) {
-> @@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
->   
->   	writel(rproc->bootaddr, drproc->bootreg);
->   
-> -	clk_enable(dsp_clk);
-> +	rv = clk_enable(dsp_clk);
-> +	if (rv) {
-> +		dev_err(dev, "clk_enable() failed: %d\n", rv);
-> +		return rv;
-> +	}
-> +
->   	davinci_clk_reset_deassert(dsp_clk);
->   
->   	return 0;
-> 
+For v2, this flag is hierarchical and is inherited by child cpusets. It
+is not allowed to have this flag turn off in a parent cpuset, but on
+in a child cpuset.
+
+This flag is set by the parent and is not delegatable.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ Documentation/cgroup-v2.txt | 22 ++++++++++++++++++
+ kernel/cgroup/cpuset.c      | 56 +++++++++++++++++++++++++++++++++++++++------
+ 2 files changed, 71 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+index ed8ec66..c970bd7 100644
+--- a/Documentation/cgroup-v2.txt
++++ b/Documentation/cgroup-v2.txt
+@@ -1514,6 +1514,28 @@ Cpuset Interface Files
+ 	it is a subset of "cpuset.mems".  Its value will be affected
+ 	by memory nodes hotplug events.
+ 
++  cpuset.sched_load_balance
++	A read-write single value file which exists on non-root cgroups.
++	The default is "1" (on), and the other possible value is "0"
++	(off).
++
++	When it is on, tasks within this cpuset will be load-balanced
++	by the kernel scheduler.  Tasks will be moved from CPUs with
++	high load to other CPUs within the same cpuset with less load
++	periodically.
++
++	When it is off, there will be no load balancing among CPUs on
++	this cgroup.  Tasks will stay in the CPUs they are running on
++	and will not be moved to other CPUs.
++
++	This flag is hierarchical and is inherited by child cpusets. It
++	can be turned off only when the CPUs in this cpuset aren't
++	listed in the cpuset.cpus of other sibling cgroups, and all
++	the child cpusets, if present, have this flag turned off.
++
++	Once it is off, it cannot be turned back on as long as the
++	parent cgroup still has this flag in the off state.
++
+ 
+ Device controller
+ -----------------
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 419b758..d675c4f 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -407,15 +407,22 @@ static void cpuset_update_task_spread_flag(struct cpuset *cs,
+  *
+  * One cpuset is a subset of another if all its allowed CPUs and
+  * Memory Nodes are a subset of the other, and its exclusive flags
+- * are only set if the other's are set.  Call holding cpuset_mutex.
++ * are only set if the other's are set (on legacy hierarchy) or
++ * its sched_load_balance flag is only set if the other is set
++ * (on default hierarchy).  Caller holding cpuset_mutex.
+  */
+ 
+ static int is_cpuset_subset(const struct cpuset *p, const struct cpuset *q)
+ {
+-	return	cpumask_subset(p->cpus_allowed, q->cpus_allowed) &&
+-		nodes_subset(p->mems_allowed, q->mems_allowed) &&
+-		is_cpu_exclusive(p) <= is_cpu_exclusive(q) &&
+-		is_mem_exclusive(p) <= is_mem_exclusive(q);
++	if (!cpumask_subset(p->cpus_allowed, q->cpus_allowed) ||
++	    !nodes_subset(p->mems_allowed, q->mems_allowed))
++		return false;
++
++	if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys))
++		return is_sched_load_balance(p) <= is_sched_load_balance(q);
++	else
++		return is_cpu_exclusive(p) <= is_cpu_exclusive(q) &&
++		       is_mem_exclusive(p) <= is_mem_exclusive(q);
+ }
+ 
+ /**
+@@ -498,7 +505,7 @@ static int validate_change(struct cpuset *cur, struct cpuset *trial)
+ 
+ 	par = parent_cs(cur);
+ 
+-	/* On legacy hiearchy, we must be a subset of our parent cpuset. */
++	/* On legacy hierarchy, we must be a subset of our parent cpuset. */
+ 	ret = -EACCES;
+ 	if (!is_in_v2_mode() && !is_cpuset_subset(trial, par))
+ 		goto out;
+@@ -1327,6 +1334,19 @@ static int update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
+ 	else
+ 		clear_bit(bit, &trialcs->flags);
+ 
++	/*
++	 * On default hierarchy, turning off sched_load_balance flag implies
++	 * an implicit cpu_exclusive. Turning on sched_load_balance will
++	 * clear the cpu_exclusive flag.
++	 */
++	if ((bit == CS_SCHED_LOAD_BALANCE) &&
++	    cgroup_subsys_on_dfl(cpuset_cgrp_subsys)) {
++		if (turning_on)
++			clear_bit(CS_CPU_EXCLUSIVE, &trialcs->flags);
++		else
++			set_bit(CS_CPU_EXCLUSIVE, &trialcs->flags);
++	}
++
+ 	err = validate_change(cs, trialcs);
+ 	if (err < 0)
+ 		goto out;
+@@ -1966,6 +1986,14 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+ 	},
+ 
++	{
++		.name = "sched_load_balance",
++		.read_u64 = cpuset_read_u64,
++		.write_u64 = cpuset_write_u64,
++		.private = FILE_SCHED_LOAD_BALANCE,
++		.flags = CFTYPE_NOT_ON_ROOT,
++	},
++
+ 	{ }	/* terminate */
+ };
+ 
+@@ -1991,7 +2019,21 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ 	if (!alloc_cpumask_var(&cs->effective_cpus, GFP_KERNEL))
+ 		goto free_cpus;
+ 
+-	set_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
++	/*
++	 * On default hierarchy, inherit parent's CS_SCHED_LOAD_BALANCE and
++	 * CS_CPU_EXCLUSIVE flag.
++	 */
++	if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys)) {
++		struct cpuset *parent = css_cs(parent_css);
++
++		if (test_bit(CS_SCHED_LOAD_BALANCE, &parent->flags))
++			set_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
++		else
++			set_bit(CS_CPU_EXCLUSIVE, &cs->flags);
++	} else {
++		set_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
++	}
++
+ 	cpumask_clear(cs->cpus_allowed);
+ 	nodes_clear(cs->mems_allowed);
+ 	cpumask_clear(cs->effective_cpus);
+-- 
+1.8.3.1
