@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752136AbeCUL32 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 07:29:28 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44448 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751899AbeCUL2T (ORCPT
+        id S1752161AbeCUL3v (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 07:29:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53466 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751915AbeCUL2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 07:28:19 -0400
+        Wed, 21 Mar 2018 07:28:10 -0400
 From: Philipp Rudo <prudo@linux.vnet.ibm.com>
 To: kexec@lists.infradead.org, linux-s390@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
@@ -18,16 +18,16 @@ Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
         Dave Young <dyoung@redhat.com>,
         AKASHI Takahiro <takahiro.akashi@linaro.org>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v2 11/11] kexec_file: Move purgatories sha256 to common code
-Date: Wed, 21 Mar 2018 12:27:51 +0100
+Subject: [PATCH v2 07/11] kexec_file: Remove unneeded for-loop in kexec_purgatory_setup_sechdrs
+Date: Wed, 21 Mar 2018 12:27:47 +0100
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180321112751.22196-1-prudo@linux.vnet.ibm.com>
 References: <20180321112751.22196-1-prudo@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18032111-0012-0000-0000-000005C1B40B
+x-cbid: 18032111-0040-0000-0000-00000443B66B
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032111-0013-0000-0000-0000193DD66A
-Message-Id: <20180321112751.22196-12-prudo@linux.vnet.ibm.com>
+x-cbparentid: 18032111-0041-0000-0000-000020E6D8DB
+Message-Id: <20180321112751.22196-8-prudo@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -39,121 +39,128 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code to verify the new kernels sha digest is applicable for all
-architectures. Move it to common code.
+To update the entry point there is an extra loop over all section headers
+although this can be done in the main loop. So move it there and eliminate
+the extra loop and variable to store the 'entry section index'.
 
-One problem is the string.c implementation on x86. Currently sha256
-includes x86/boot/string.h which defines memcpy and memset to be gcc
-builtins. By moving the sha256 implementation to common code and changing
-the include to linux/string.h both functions are no longer defined. Thus
-definitions have to be provided in x86/purgatory/string.c
+Also, in the main loop, move the usual case, i.e. non-bss section, out of
+the extra if-block.
 
 Signed-off-by: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 ---
- arch/x86/purgatory/Makefile                    |  3 +++
- arch/x86/purgatory/purgatory.c                 |  2 +-
- arch/x86/purgatory/string.c                    | 12 ++++++++++++
- {arch/x86/purgatory => include/linux}/sha256.h | 11 ++++++++++-
- {arch/x86/purgatory => lib}/sha256.c           |  4 ++--
- 5 files changed, 28 insertions(+), 4 deletions(-)
- rename {arch/x86/purgatory => include/linux}/sha256.h (62%)
- rename {arch/x86/purgatory => lib}/sha256.c (99%)
+ kernel/kexec_file.c | 76 +++++++++++++++++++++--------------------------------
+ 1 file changed, 30 insertions(+), 46 deletions(-)
 
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 2f15a2ac4209..414eed6b5065 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup-x86_$(BITS).o sha256.o entry64.o string
- targets += $(purgatory-y)
- PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index d1c3ec8dc6b1..4938f7aacd09 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -731,7 +731,6 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+ 	unsigned char *buf_addr;
+ 	unsigned char *src;
+ 	Elf_Shdr *sechdrs;
+-	int entry_sidx = -1;
+ 	int i;
  
-+$(obj)/sha256.o: $(srctree)/lib/sha256.c
-+	$(call if_changed_rule,cc_o_c)
+ 	sechdrs = vzalloc(pi->ehdr->e_shnum * sizeof(Elf_Shdr));
+@@ -763,32 +762,11 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+ 						sechdrs[i].sh_offset;
+ 	}
+ 
+-	/*
+-	 * Identify entry point section and make entry relative to section
+-	 * start.
+-	 */
+-	kbuf->image->start = pi->ehdr->e_entry;
+-	for (i = 0; i < pi->ehdr->e_shnum; i++) {
+-		if (!(sechdrs[i].sh_flags & SHF_ALLOC))
+-			continue;
+-
+-		if (!(sechdrs[i].sh_flags & SHF_EXECINSTR))
+-			continue;
+-
+-		/* Make entry section relative */
+-		if (sechdrs[i].sh_addr <= pi->ehdr->e_entry &&
+-		    ((sechdrs[i].sh_addr + sechdrs[i].sh_size) >
+-		     pi->ehdr->e_entry)) {
+-			entry_sidx = i;
+-			kbuf->image->start -= sechdrs[i].sh_addr;
+-			break;
+-		}
+-	}
+-
+ 	/* Load SHF_ALLOC sections */
+ 	buf_addr = kbuf->buffer;
+ 	load_addr = curr_load_addr = kbuf->mem;
+ 	bss_addr = load_addr + kbuf->bufsz;
++	kbuf->image->start = pi->ehdr->e_entry;
+ 
+ 	for (i = 0; i < pi->ehdr->e_shnum; i++) {
+ 		unsigned long align;
+@@ -797,34 +775,40 @@ static int kexec_purgatory_setup_sechdrs(struct purgatory_info *pi,
+ 			continue;
+ 
+ 		align = sechdrs[i].sh_addralign;
+-		if (sechdrs[i].sh_type != SHT_NOBITS) {
+-			curr_load_addr = ALIGN(curr_load_addr, align);
+-			offset = curr_load_addr - load_addr;
+-			/* We already modifed ->sh_offset to keep src addr */
+-			src = (char *) sechdrs[i].sh_offset;
+-			memcpy(buf_addr + offset, src, sechdrs[i].sh_size);
+-
+-			/* Store load address and source address of section */
+-			sechdrs[i].sh_addr = curr_load_addr;
+-
+-			/*
+-			 * This section got copied to temporary buffer. Update
+-			 * ->sh_offset accordingly.
+-			 */
+-			sechdrs[i].sh_offset = (unsigned long)(buf_addr + offset);
+-
+-			/* Advance to the next address */
+-			curr_load_addr += sechdrs[i].sh_size;
+-		} else {
 +
- LDFLAGS_purgatory.ro := -e purgatory_start -r --no-undefined -nostdlib -z nodefaultlib
- targets += purgatory.ro
- 
-diff --git a/arch/x86/purgatory/purgatory.c b/arch/x86/purgatory/purgatory.c
-index 470edad96bb9..025c34ac0d84 100644
---- a/arch/x86/purgatory/purgatory.c
-+++ b/arch/x86/purgatory/purgatory.c
-@@ -11,9 +11,9 @@
-  */
- 
- #include <linux/bug.h>
-+#include <linux/sha256.h>
- #include <asm/purgatory.h>
- 
--#include "sha256.h"
- #include "../boot/string.h"
- 
- unsigned long purgatory_backup_dest __section(.kexec-purgatory);
-diff --git a/arch/x86/purgatory/string.c b/arch/x86/purgatory/string.c
-index d886b1fa36f0..795ca4f2cb3c 100644
---- a/arch/x86/purgatory/string.c
-+++ b/arch/x86/purgatory/string.c
-@@ -10,4 +10,16 @@
-  * Version 2.  See the file COPYING for more details.
-  */
- 
-+#include <linux/types.h>
++		if (sechdrs[i].sh_type == SHT_NOBITS) {
+ 			bss_addr = ALIGN(bss_addr, align);
+ 			sechdrs[i].sh_addr = bss_addr;
+ 			bss_addr += sechdrs[i].sh_size;
++			continue;
++		}
 +
- #include "../boot/string.c"
++		curr_load_addr = ALIGN(curr_load_addr, align);
++		offset = curr_load_addr - load_addr;
++		/* We already modifed ->sh_offset to keep src addr */
++		src = (char *)sechdrs[i].sh_offset;
++		memcpy(buf_addr + offset, src, sechdrs[i].sh_size);
 +
-+void *memcpy(void *dst, const void *src, size_t len)
-+{
-+	return __builtin_memcpy(dst, src, len);
-+}
++		if (sechdrs[i].sh_flags & SHF_EXECINSTR &&
++		    pi->ehdr->e_entry >= sechdrs[i].sh_addr &&
++		    pi->ehdr->e_entry < (sechdrs[i].sh_addr
++					 + sechdrs[i].sh_size)) {
++			kbuf->image->start -= sechdrs[i].sh_addr;
++			kbuf->image->start += curr_load_addr;
+ 		}
+-	}
+ 
+-	/* Update entry point based on load address of text section */
+-	if (entry_sidx >= 0)
+-		kbuf->image->start += sechdrs[entry_sidx].sh_addr;
++		/* Store load address and source address of section */
++		sechdrs[i].sh_addr = curr_load_addr;
 +
-+void *memset(void *dst, int c, size_t len)
-+{
-+	return __builtin_memset(dst, c, len);
-+}
-diff --git a/arch/x86/purgatory/sha256.h b/include/linux/sha256.h
-similarity index 62%
-rename from arch/x86/purgatory/sha256.h
-rename to include/linux/sha256.h
-index 2867d9825a57..244fe01a65fb 100644
---- a/arch/x86/purgatory/sha256.h
-+++ b/include/linux/sha256.h
-@@ -13,9 +13,18 @@
- #include <linux/types.h>
- #include <crypto/sha.h>
- 
-+/*
-+ * Stand-alone implementation of the SHA256 algorithm. It is designed to
-+ * have as little dependencies as possible so it can be used in the
-+ * kexec_file purgatory. In other cases you should use the implementation in
-+ * crypto/.
-+ *
-+ * For details see lib/sha256.c
-+ */
++		/*
++		 * This section got copied to temporary buffer. Update
++		 * ->sh_offset accordingly.
++		 */
++		sechdrs[i].sh_offset = (unsigned long)(buf_addr + offset);
 +
- extern int sha256_init(struct sha256_state *sctx);
- extern int sha256_update(struct sha256_state *sctx, const u8 *input,
--				unsigned int length);
-+			 unsigned int length);
- extern int sha256_final(struct sha256_state *sctx, u8 *hash);
++		/* Advance to the next address */
++		curr_load_addr += sechdrs[i].sh_size;
++	}
  
- #endif /* SHA256_H */
-diff --git a/arch/x86/purgatory/sha256.c b/lib/sha256.c
-similarity index 99%
-rename from arch/x86/purgatory/sha256.c
-rename to lib/sha256.c
-index 548ca675a14a..4400c832e2aa 100644
---- a/arch/x86/purgatory/sha256.c
-+++ b/lib/sha256.c
-@@ -16,9 +16,9 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/sha256.h>
-+#include <linux/string.h>
- #include <asm/byteorder.h>
--#include "sha256.h"
--#include "../boot/string.h"
- 
- static inline u32 Ch(u32 x, u32 y, u32 z)
- {
+ 	return 0;
+ }
 -- 
 2.13.5
