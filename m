@@ -1,63 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753905AbeCUVx0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:53:26 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:43599 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753881AbeCUVxS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:53:18 -0400
-X-Google-Smtp-Source: AG47ELv1lW4AZrDwyUJlJL66EbVn7275oapVqkc1uIO7ea7Xv/pasP+Ld3AQ/wP16TmvZ8ycS6HyfMR1bzd2eR3YUtw=
+        id S1753894AbeCUV4z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:56:55 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39523 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753772AbeCUV4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:56:54 -0400
+Subject: Re: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases on
+ paranoid_entry
+To: Andy Lutomirski <luto@kernel.org>
+Cc: David Laight <David.Laight@aculab.com>,
+        "Chang S. Bae" <chang.seok.bae@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "markus.t.metzger@intel.com" <markus.t.metzger@intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "ravi.v.shankar@intel.com" <ravi.v.shankar@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+ <1521481767-22113-14-git-send-email-chang.seok.bae@intel.com>
+ <eb30911b621144fe92e77fd2d9da7efe@AcuMS.aculab.com>
+ <191d8212-6740-3131-1653-d057f522843c@zytor.com>
+ <CALCETrX0ew6xcbxiKDkpGw8CJsF0TWNZc=GHuVEPbDpfZ-X3ww@mail.gmail.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <9aa3ef0a-84b5-9806-4213-1b63023e6c5a@zytor.com>
+Date: Wed, 21 Mar 2018 14:56:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <c2ce63d1213b5145f77bf70f57c3360d@codeaurora.org>
-References: <1521658572-26354-1-git-send-email-okaya@codeaurora.org>
- <1521658572-26354-6-git-send-email-okaya@codeaurora.org> <1521668888.12746.32.camel@intel.com>
- <c2ce63d1213b5145f77bf70f57c3360d@codeaurora.org>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Wed, 21 Mar 2018 14:53:16 -0700
-Message-ID: <CAKgT0UcvtszFWLUWS_4KYaBn7QnKNtgiwgPzqV24Bb-jOncrfw@mail.gmail.com>
-Subject: Re: [Intel-wired-lan] [PATCH REPOST v4 5/7] ixgbevf: keep writel()
- closer to wmb()
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>, sulrich@codeaurora.org,
-        Netdev <netdev@vger.kernel.org>, Timur Tabi <timur@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CALCETrX0ew6xcbxiKDkpGw8CJsF0TWNZc=GHuVEPbDpfZ-X3ww@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 2:51 PM,  <okaya@codeaurora.org> wrote:
-> On 2018-03-21 17:48, Jeff Kirsher wrote:
+On 03/20/18 17:36, Andy Lutomirski wrote:
 >>
->> On Wed, 2018-03-21 at 14:56 -0400, Sinan Kaya wrote:
->>>
->>> Remove ixgbevf_write_tail() in favor of moving writel() close to
->>> wmb().
->>>
->>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->>> Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
->>> ---
->>>  drivers/net/ethernet/intel/ixgbevf/ixgbevf.h      | 5 -----
->>>  drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 4 ++--
->>>  2 files changed, 2 insertions(+), 7 deletions(-)
+>> But we also don't need swapgs when we have rdgsbase/wrgsbase available.
+>> We can indeed just unconditionally save it (via rdgsbase) into the stack
+>> frame and wrgsbase the correct percpu value.  In that case it might be
+>> necessary in order to avoid insane complexity to also save/restore the
+>> gs selector.
+> 
+> This is exactly what the old code did.  I liked the old code better.
+> 
 >>
+>> Is it going to be faster?  *Probably* not as swapgs is designed to be
+>> fast; it does, however, eliminate the need to RDMSR/WRMSR inside the
+>> kernel task switch as the user space gsbase will simply live on the
+>> stack.  (This is assuming we do this unconditionally on every method of
+>> kernel entry, including non-paranoid.  I'm not sure if we ever care
+>> about the userspace GS/GSBASE inside a paranoid handler, but if we do it
+>> would be rather messy to find if we do this conditionally.
 >>
->> This patch fails to compile because there is a call to
->> ixgbevf_write_tail() which you missed cleaning up.
->
->
-> Hah, I did a compile test but maybe I missed something. I will get v6 of
-> this patch only and leave the rest of the series as it is.
+>> Now...
+>>
+>> +       ALTERNATIVE "jmp .Lparanoid_entry_no_fsgsbase", \
+>> +               "RDGSBASE %rdx", X86_FEATURE_FSGSBASE
+>> +       READ_KERNEL_GSBASE %rax
+>>
+>> READ_KERNEL_GSBASE here seems like a Really Bad Name[TM] for this macro,
+>> since it seems to imply reading MSR_KERNEL_GS_BASE, rather than finding
+>> the current percpu offset.  I would prefer calling it something like
+>> FIND_PERCPU_BASE or something like that.
+> 
+> I think we should revert to what the old patches did here.
+> 
 
-Actually you might want to just pull Jeff's tree and rebase before you
-submit your patches. I suspect the difference is the ixgbevf XDP code
-that is present in Jeff's tree and not in Dave's. The alternative is
-to wait for Jeff to push the ixgbevf code and then once Dave has
-pulled it you could rebase your patches.
+I don't really understand why you want to do it this way.
 
-Thanks.
+1. It means that the location of the user space gs_base is ill-defined,
+   whereas with the SWAPGS it is *always* in the same place.
 
-- Alex
+2. It is most likely slower, although I obviously haven't benchmarked
+   it.
+
+	-hpa
