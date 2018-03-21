@@ -1,64 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754345AbeCUXKT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 19:10:19 -0400
-Received: from mga05.intel.com ([192.55.52.43]:14149 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754200AbeCUXGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:06:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
-   d="scan'208";a="26466592"
-Subject: [PATCH v7 03/14] block, dax: remove dead code in blkdev_writepages()
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: Jeff Moyer <jmoyer@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jack@suse.cz
-Date: Wed, 21 Mar 2018 15:57:27 -0700
-Message-ID: <152167304720.5268.4517441516790980453.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1754157AbeCUXQw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 19:16:52 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14954 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754032AbeCUXQv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 19:16:51 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 21 Mar 2018 16:16:51 -0700
+Subject: Re: [PATCH 10/15] mm/hmm: do not differentiate between empty entry or
+ missing directory v2
+To: Jerome Glisse <jglisse@redhat.com>
+CC: <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>
+References: <20180320020038.3360-1-jglisse@redhat.com>
+ <20180320020038.3360-11-jglisse@redhat.com>
+ <4b0da5bb-4e44-798c-f4dd-cabc93cfeb99@nvidia.com>
+ <20180321144826.GA3214@redhat.com>
+X-Nvconfidentiality: public
+From: John Hubbard <jhubbard@nvidia.com>
+Message-ID: <85bd655c-c161-bf2e-c94f-9bac60483366@nvidia.com>
+Date: Wed, 21 Mar 2018 16:16:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180321144826.GA3214@redhat.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Block device inodes never have S_DAX set, so kill the check for DAX and
-diversion to dax_writeback_mapping_range().
+On 03/21/2018 07:48 AM, Jerome Glisse wrote:
+> On Tue, Mar 20, 2018 at 10:24:34PM -0700, John Hubbard wrote:
+>> On 03/19/2018 07:00 PM, jglisse@redhat.com wrote:
+>>> From: Jérôme Glisse <jglisse@redhat.com>
+>>>
 
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dave Chinner <david@fromorbit.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- fs/block_dev.c |    5 -----
- 1 file changed, 5 deletions(-)
+<snip>
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index fe09ef9c21f3..846ee2d31781 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1946,11 +1946,6 @@ static int blkdev_releasepage(struct page *page, gfp_t wait)
- static int blkdev_writepages(struct address_space *mapping,
- 			     struct writeback_control *wbc)
- {
--	if (dax_mapping(mapping)) {
--		struct block_device *bdev = I_BDEV(mapping->host);
--
--		return dax_writeback_mapping_range(mapping, bdev, wbc);
--	}
- 	return generic_writepages(mapping, wbc);
- }
- 
+>>
+>> <snip>
+>>
+>>> @@ -438,7 +423,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+>>>  		pfns[i] = 0;
+>>>  
+>>>  		if (pte_none(pte)) {
+>>> -			pfns[i] = HMM_PFN_EMPTY;
+>>> +			pfns[i] = 0;
+>>
+>> This works, but why not keep HMM_PFN_EMPTY, and just define it as zero?
+>> Symbols are better than raw numbers here.
+>>
+> 
+> The last patch do that so i don't think it is worth respinning
+> just to make this intermediate state prettier.
+> 
+
+Yes, you're right, of course. And, no other problems found, so:
+
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
