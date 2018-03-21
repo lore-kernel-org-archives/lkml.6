@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3454413-1521618194-2-17030855936864525761
+X-Cyrus-Session-Id: sloti22d1t05-3454413-1521618104-2-5025923434361676584
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES roen, BAYES_USED global,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
   MailFrom='org'
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521618193; b=C5Eb2Vsb7qYbzebCy5pSIrKaUVYym3EOFpW2TnCi0T6wn14
-    JP+UQfJzK8Cm/5WghxDQfgN6uDhJetoOjXxfr5+7fZKX7e1wZcAjVry6ITOtYXSj
-    MROU5G1A+xZxgh2D/eR/1l7ShTN42T7vB0ZaIgAEe4N7gguV4gCQy+xRjTiSQycY
-    ESBaWchrZXwhV6jwx2mKoF450ij6LRR+9HURNrkWiKE8RTEhO4H4H87ZeWJh5M+u
-    5NVM2aNvaix05rVVU+PSwxlo7f7L6mpywOcdlv2NZmZLVd1H88osBGCJFKamKUXm
-    vAomiEZjenavhKVdzrxgzssfglzy+7Qt7IFDftQ==
+    t=1521618103; b=nV3+hg4RxRsGD+rRFxik3BXrulUCsdmVlbdxRO8offocp4w
+    ynLrVDTmpPGvjKh1nKt9AayicaFJGQRwkAtYyWD5SdSKy5Xl+Y0cTJVBme6IjT8o
+    ojn8MRcjev7MqzBdY44cHpeEsmh6IXGqvpdEVH4pBxe0dN9I5A9gJMdDXdd7HBty
+    wywHCWVSiEyVNmDQw8dhAO1+w71Os3MGcJt0sOl6dg3lGVoVq4fGcX/goSQJphAF
+    hSkJXAFgMTZzXWgxYvynrKeoK1eM/JkJmyYgd9t0OrLAwIoOrW4SjxWMd77Hb8ag
+    H30sb9Gf+o7LEIDRxGi0MIFnvICrhpyhllCJ3Xw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1521618193;
-    bh=uo2eln1VlZAV26umCN+rr36lsCXD1wCmgus6dYJl8r4=; b=djvBE5BYifXs
-    YaIlzv0rSKRreBqJcK9NvumLyNRuWh0ud3It8/+dvp0QycebeeiR7KaJLPjiXOCi
-    ofDQ7b6tWxpjry8ZjuiTMQmlFzQnLdNlHtBuqy+75rNRywG8eyhtShAeXZrMkJ+I
-    sOcNZqL/ObUD873uM3y67Lz0XA9JFBxsrPqharodkkjYqVDjc/Oupo1aykkvMBjl
-    8dhPZwDz8edpBG6OX7JG2LLEKlW2APInQ6+1YgQiXu5qhW/cAoKdpwHg4QVW1C6V
-    0nXPrv+l0ouom7d0FyRC736nyaSU/P+bbTQf2BMcaMFSezr+FzZfNqqzYOgLY7Dy
-    1Wy2ftHasw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=DEUv+0Zh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521618103;
+    bh=1p7l/B0qizGynkbosMja/QlZ9F4hcVlLlfiedQ14Iao=; b=YehvhEnE/l88
+    REKcW2mnPqLjyhQYrH1As9oR/GKOY3kAN3ptw/butkOCAL2vFSxdVFfYnjkSraz1
+    0noqQgdruHsrhezGt0WcXBlKZlxFw9g4XssEGsftiB5AH7qvitOtSgWSWTU2VctA
+    lrkXn5D24+zTTlzxBb5BTgGU06Mjs51PFQ72BIE7j2jkG0ewcuw6xHVWAYZrG3ar
+    bnJxN0h5+qncm+ylBdvwWZbzDvRGQ+XAjgF9Ftl/3VIKqeJ/JUtyZ1TX6hQvm/2O
+    xtoiEfk30/qy0UmV1bsLhk8VEIiUp8V+94VHuiT+hnntafEc5oqkDT8134G9fnvi
+    vLG/uMigvw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Ibck1fcK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -38,9 +38,9 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=DEUv+0Zh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Ibck1fcK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,20 +50,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752357AbeCUHma (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Mar 2018 03:42:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48340 "EHLO
+        id S1752123AbeCUHlm (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 03:41:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48106 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752355AbeCUHm0 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:42:26 -0400
+        with ESMTP id S1752104AbeCUHld (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:41:33 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 27/28] timerfd: convert to ->poll_mask
-Date: Wed, 21 Mar 2018 08:40:31 +0100
-Message-Id: <20180321074032.14211-28-hch@lst.de>
+Subject: [PATCH 14/28] net/atm: convert to ->poll_mask
+Date: Wed, 21 Mar 2018 08:40:18 +0100
+Message-Id: <20180321074032.14211-15-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180321074032.14211-1-hch@lst.de>
 References: <20180321074032.14211-1-hch@lst.de>
@@ -76,54 +76,75 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/timerfd.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ net/atm/common.c | 11 +++--------
+ net/atm/common.h |  2 +-
+ net/atm/pvc.c    |  2 +-
+ net/atm/svc.c    |  2 +-
+ 4 files changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/fs/timerfd.c b/fs/timerfd.c
-index cdad49da3ff7..d84a2bee4f82 100644
---- a/fs/timerfd.c
-+++ b/fs/timerfd.c
-@@ -226,21 +226,20 @@ static int timerfd_release(struct inode *inode, struct file *file)
- 	kfree_rcu(ctx, rcu);
- 	return 0;
+diff --git a/net/atm/common.c b/net/atm/common.c
+index fc78a0508ae1..1f2af59935db 100644
+--- a/net/atm/common.c
++++ b/net/atm/common.c
+@@ -648,16 +648,11 @@ int vcc_sendmsg(struct socket *sock, struct msghdr *m, size_t size)
+ 	return error;
  }
--
--static __poll_t timerfd_poll(struct file *file, poll_table *wait)
-+	
-+static struct wait_queue_head *timerfd_get_poll_head(struct file *file,
-+		__poll_t eventmask)
+ 
+-__poll_t vcc_poll(struct file *file, struct socket *sock, poll_table *wait)
++__poll_t vcc_poll_mask(struct socket *sock, __poll_t events)
  {
- 	struct timerfd_ctx *ctx = file->private_data;
--	__poll_t events = 0;
--	unsigned long flags;
+ 	struct sock *sk = sock->sk;
+-	struct atm_vcc *vcc;
+-	__poll_t mask;
+-
+-	sock_poll_wait(file, sk_sleep(sk), wait);
+-	mask = 0;
+-
+-	vcc = ATM_SD(sock);
++	struct atm_vcc *vcc = ATM_SD(sock);
++	__poll_t mask = 0;
  
--	poll_wait(file, &ctx->wqh, wait);
-+	return &ctx->wqh;
-+}
- 
--	spin_lock_irqsave(&ctx->wqh.lock, flags);
--	if (ctx->ticks)
--		events |= EPOLLIN;
--	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
-+static __poll_t timerfd_poll_mask(struct file *file, __poll_t eventmask)
-+{
-+	struct timerfd_ctx *ctx = file->private_data;
- 
--	return events;
-+	return ctx->ticks ? EPOLLIN : 0;
- }
- 
- static ssize_t timerfd_read(struct file *file, char __user *buf, size_t count,
-@@ -364,7 +363,8 @@ static long timerfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg
- 
- static const struct file_operations timerfd_fops = {
- 	.release	= timerfd_release,
--	.poll		= timerfd_poll,
-+	.get_poll_head	= timerfd_get_poll_head,
-+	.poll_mask	= timerfd_poll_mask,
- 	.read		= timerfd_read,
- 	.llseek		= noop_llseek,
- 	.show_fdinfo	= timerfd_show,
+ 	/* exceptional events */
+ 	if (sk->sk_err)
+diff --git a/net/atm/common.h b/net/atm/common.h
+index 5850649068bb..526796ad230f 100644
+--- a/net/atm/common.h
++++ b/net/atm/common.h
+@@ -17,7 +17,7 @@ int vcc_connect(struct socket *sock, int itf, short vpi, int vci);
+ int vcc_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+ 		int flags);
+ int vcc_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len);
+-__poll_t vcc_poll(struct file *file, struct socket *sock, poll_table *wait);
++__poll_t vcc_poll_mask(struct socket *sock, __poll_t events);
+ int vcc_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg);
+ int vcc_compat_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg);
+ int vcc_setsockopt(struct socket *sock, int level, int optname,
+diff --git a/net/atm/pvc.c b/net/atm/pvc.c
+index e1140b3bdcaa..930651c5e77c 100644
+--- a/net/atm/pvc.c
++++ b/net/atm/pvc.c
+@@ -114,7 +114,7 @@ static const struct proto_ops pvc_proto_ops = {
+ 	.socketpair =	sock_no_socketpair,
+ 	.accept =	sock_no_accept,
+ 	.getname =	pvc_getname,
+-	.poll =		vcc_poll,
++	.poll_mask =	vcc_poll_mask,
+ 	.ioctl =	vcc_ioctl,
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl = vcc_compat_ioctl,
+diff --git a/net/atm/svc.c b/net/atm/svc.c
+index c458adcbc177..ad0e6ffb9cfe 100644
+--- a/net/atm/svc.c
++++ b/net/atm/svc.c
+@@ -637,7 +637,7 @@ static const struct proto_ops svc_proto_ops = {
+ 	.socketpair =	sock_no_socketpair,
+ 	.accept =	svc_accept,
+ 	.getname =	svc_getname,
+-	.poll =		vcc_poll,
++	.poll_mask =	vcc_poll_mask,
+ 	.ioctl =	svc_ioctl,
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl =	svc_compat_ioctl,
 -- 
 2.14.2
 
