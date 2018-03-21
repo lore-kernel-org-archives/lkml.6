@@ -1,101 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752553AbeCUQAe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:00:34 -0400
-Received: from mga09.intel.com ([134.134.136.24]:60458 "EHLO mga09.intel.com"
+        id S1752620AbeCUQB6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:01:58 -0400
+Received: from vern.gendns.com ([206.190.152.46]:34809 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751981AbeCUQA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:00:26 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,340,1517904000";
-   d="scan'208";a="36928481"
-Date: Wed, 21 Mar 2018 10:02:39 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Marta Rybczynska <mrybczyn@kalray.eu>, axboe@fb.com, hch@lst.de,
-        sagi@grimberg.me, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
-Subject: Re: [RFC PATCH] nvme: avoid race-conditions when enabling devices
-Message-ID: <20180321160238.GF12909@localhost.localdomain>
-References: <744877924.5841545.1521630049567.JavaMail.zimbra@kalray.eu>
- <20180321115037.GA26083@ming.t460p>
- <464125757.5843583.1521634231341.JavaMail.zimbra@kalray.eu>
- <20180321154807.GD22254@ming.t460p>
+        id S1751817AbeCUQBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 12:01:55 -0400
+Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180321120807.18032-1-brgl@bgdev.pl>
+ <20180321120807.18032-5-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Message-ID: <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com>
+Date: Wed, 21 Mar 2018 11:01:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180321154807.GD22254@ming.t460p>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180321120807.18032-5-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 11:48:09PM +0800, Ming Lei wrote:
-> On Wed, Mar 21, 2018 at 01:10:31PM +0100, Marta Rybczynska wrote:
-> > > On Wed, Mar 21, 2018 at 12:00:49PM +0100, Marta Rybczynska wrote:
-> > >> NVMe driver uses threads for the work at device reset, including enabling
-> > >> the PCIe device. When multiple NVMe devices are initialized, their reset
-> > >> works may be scheduled in parallel. Then pci_enable_device_mem can be
-> > >> called in parallel on multiple cores.
-> > >> 
-> > >> This causes a loop of enabling of all upstream bridges in
-> > >> pci_enable_bridge(). pci_enable_bridge() causes multiple operations
-> > >> including __pci_set_master and architecture-specific functions that
-> > >> call ones like and pci_enable_resources(). Both __pci_set_master()
-> > >> and pci_enable_resources() read PCI_COMMAND field in the PCIe space
-> > >> and change it. This is done as read/modify/write.
-> > >> 
-> > >> Imagine that the PCIe tree looks like:
-> > >> A - B - switch -  C - D
-> > >>                \- E - F
-> > >> 
-> > >> D and F are two NVMe disks and all devices from B are not enabled and bus
-> > >> mastering is not set. If their reset work are scheduled in parallel the two
-> > >> modifications of PCI_COMMAND may happen in parallel without locking and the
-> > >> system may end up with the part of PCIe tree not enabled.
-> > > 
-> > > Then looks serialized reset should be used, and I did see the commit
-> > > 79c48ccf2fe ("nvme-pci: serialize pci resets") fixes issue of 'failed
-> > > to mark controller state' in reset stress test.
-> > > 
-> > > But that commit only covers case of PCI reset from sysfs attribute, and
-> > > maybe other cases need to be dealt with in similar way too.
-> > > 
-> > 
-> > It seems to me that the serialized reset works for multiple resets of the
-> > same device, doesn't it? Our problem is linked to resets of different devices
-> > that share the same PCIe tree.
+On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Given reset shouldn't be a frequent action, it might be fine to serialize all
-> reset from different devices.
+> In order to be able to use the reset framework in legacy boot mode as
+> well, add the reset lookup table to the psc driver for da850 variant.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   drivers/clk/davinci/psc-da850.c | 8 ++++++++
+>   drivers/clk/davinci/psc.c       | 1 +
+>   2 files changed, 9 insertions(+)
+> 
+> diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
+> index ccc7eb17bf3a..395db4b2c0ee 100644
+> --- a/drivers/clk/davinci/psc-da850.c
+> +++ b/drivers/clk/davinci/psc-da850.c
+> @@ -6,6 +6,7 @@
+>    */
+>   
+>   #include <linux/clk-provider.h>
+> +#include <linux/reset-controller.h>
+>   #include <linux/clk.h>
+>   #include <linux/clkdev.h>
+>   #include <linux/init.h>
+> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
+>   				"fck",	"ecap.1",
+>   				"fck",	"ecap.2");
+>   
+> +static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
+> +	RESET_LOOKUP("davinci-rproc.0", NULL, 15),
+> +};
+> +
+>   static int da850_psc0_init(struct device *dev, void __iomem *base)
+>   {
+> +	reset_controller_add_lookup("da850-psc0",
+> +				    da850_psc0_reset_lookup_table,
+> +				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
 
-The driver was much simpler when we had serialized resets in line with
-probe, but that had a bigger problems with certain init systems when
-you put enough nvme devices in your server, making them unbootable.
+Could there be a race condition here since you are adding the lookup *before*
+you are adding the actual provider? It seems like reset_controller_add_lookup()
+should be after davinci_psc_register_clocks().
 
-Would it be okay to serialize just the pci_enable_device across all
-other tasks messing with the PCI topology?
-
----
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index cef5ce851a92..e0a2f6c0f1cf 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2094,8 +2094,11 @@ static int nvme_pci_enable(struct nvme_dev *dev)
-	int result = -ENOMEM;
-	struct pci_dev *pdev = to_pci_dev(dev->dev);
-
--	if (pci_enable_device_mem(pdev))
--		return result;
-+	pci_lock_rescan_remove();
-+	result = pci_enable_device_mem(pdev);
-+	pci_unlock_rescan_remove();
-+	if (result)
-+		return -ENODEV;
-
-	pci_set_master(pdev);
-
---
+>   	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
+>   }
+>   
+> diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+> index 3b0e59dfbdd7..063df62381ea 100644
+> --- a/drivers/clk/davinci/psc.c
+> +++ b/drivers/clk/davinci/psc.c
+> @@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
+>   
+>   	psc->rcdev.ops = &davinci_psc_reset_ops;
+>   	psc->rcdev.owner = THIS_MODULE;
+> +	psc->rcdev.dev = dev;
+>   	psc->rcdev.of_node = dev->of_node;
+>   	psc->rcdev.of_reset_n_cells = 1;
+>   	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
+> 
