@@ -1,78 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753751AbeCUVlI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:41:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59341 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753574AbeCUVlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:41:07 -0400
-Date: Wed, 21 Mar 2018 22:41:04 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memcg, thp: do not invoke oom killer on thp charges
-Message-ID: <20180321214104.GT23100@dhcp22.suse.cz>
-References: <20180321205928.22240-1-mhocko@kernel.org>
- <alpine.DEB.2.20.1803211418170.107059@chino.kir.corp.google.com>
+        id S1753814AbeCUVle (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:41:34 -0400
+Received: from mail-wr0-f173.google.com ([209.85.128.173]:33951 "EHLO
+        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753720AbeCUVld (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:41:33 -0400
+X-Google-Smtp-Source: AG47ELuFj0w2iExu/FSl218Jva0NzmaiAVL9ApxLTyqZpfbmZDJC+7Tc7obVqms/MsI01HtZUC3jEw==
+Subject: Re: [PATCH] MAINTAINERS: update maintainers for MTD and SPI NOR
+ subsystems
+To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        computersforpeace@gmail.com, dwmw2@infradead.org, richard@nod.at,
+        boris.brezillon@free-electrons.com, linux-mtd@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+References: <20180315190438.4832-1-cyrille.pitchen@wedev4u.fr>
+ <c7722fa4-992e-717d-2b46-51f906a8978f@gmail.com>
+ <309adb80-217b-1328-e462-d4596231bb25@wedev4u.fr>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <a4407023-0482-8a98-5bb2-9114ac8a8e2f@gmail.com>
+Date: Wed, 21 Mar 2018 22:33:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1803211418170.107059@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <309adb80-217b-1328-e462-d4596231bb25@wedev4u.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21-03-18 14:22:13, David Rientjes wrote:
-> On Wed, 21 Mar 2018, Michal Hocko wrote:
+On 03/18/2018 06:14 PM, Cyrille Pitchen wrote:
+> Hi Marek,
+
+Hi,
+
+> Le 18/03/2018 à 00:41, Marek Vasut a écrit :
+>> On 03/15/2018 08:04 PM, Cyrille Pitchen wrote:
+>>> remove myself as MTD and SPI NOR maintainer.
+>>>
+>>> Signed-off-by: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+>>
+>> What happened ?
+>>
 > 
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index d1a917b5b7b7..08accbcd1a18 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -1493,7 +1493,7 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
-> >  
-> >  static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
-> >  {
-> > -	if (!current->memcg_may_oom)
-> > +	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
-> >  		return;
-> >  	/*
-> >  	 * We are in the middle of the charge context here, so we
+> Nothing to worry. Since I was hired for a new job, I've been facing issues
+> to do spi-nor reviews in a reasonable delay. I have to admit that I took
+> more and more time before replying to people and I suspect it won't go
+> better soon.
 > 
-> What bug reports have you received about order-4 and higher order non thp 
-> charges that this fixes?
-
-We do not have any costly _OOM killable_ allocations but THP AFAIR. Or
-am I missing any?
-
-> The patch title and the changelog specifically single out thp, which I've 
-> fixed, since it has sane fallback behavior and everything else uses 
-> __GFP_NORETRY.  I think this is misusing a page allocator heuristic that 
-> hasn't been applied to the memcg charge path before to address a thp 
-> regression but generalizing it for all charges.
-
-Yes, which is the whole point! We do not want a THP specific workaround.
-Just look at the bug your original patch was fixing. The regression was
-caused by a change which generalizes gfp masks for THP because different
-policies imply a different effort. As a side effect THP charges got OOM
-killable. I would call it quite non intuitive and error prone.
-
-> PAGE_ALLOC_COSTLY_ORDER is a heuristic used by the page allocator because 
-> it cannot free high-order contiguous memory.  Memcg just needs to reclaim 
-> a number of pages.  Two order-3 charges can cause a memcg oom kill but now 
-> an order-4 charge cannot.  It's an unfair bias against high-order charges 
-> that are not explicitly using __GFP_NORETRY.
-
-PAGE_ALLOC_COSTLY_ORDER is documented and people know what to expect
-from such a request. Diverging from that behavior just comes as a
-surprise. There is no reason for that and as the above outlines it is
-error prone.
+> So I've talked about it with Boris hence he suggested that I remove my name
+> from MAINTAINERS to avoid confusion so people are not surprised or
+> frustrated that I don't review their series on time.
+> 
+> I really don't know yet whether I could go back again later to help
+> reviewing mtd/spi-nor patches but for now I just have to admit that about mtd
+> topcis, I'm off-line almost all the time :(
+> 
+> Sorry guys and thanks for your concern, Marek! :)
+That's kinda sad, I'd like to NAK this patch.
+Thanks for all the help!
 
 -- 
-Michal Hocko
-SUSE Labs
+Best regards,
+Marek Vasut
