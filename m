@@ -1,70 +1,71 @@
-Return-Path: <ben.hutchings@codethink.co.uk>
-X-Google-Smtp-Source: AG47ELvj/DieTL1pKbFH2ODeBBlFTz4TxGd8XWSUX59pHxEvq3PpZhrDWLzcTWWAzf+uZh/wbmAM
-ARC-Seal: i=1; a=rsa-sha256; t=1521649864; cv=none;
+Return-Path: <lsorense@csclub.uwaterloo.ca>
+X-Google-Smtp-Source: AIpwx49eE2yJ3UB4FRVlGhAuL83E6dBndxpJD/12VuMMzvwqJfs0VVxXD0D9ssk7JMHzt2mIoZCu
+ARC-Seal: i=1; a=rsa-sha256; t=1521650080; cv=none;
         d=google.com; s=arc-20160816;
-        b=QTLMo9ZFhfu+0agIHwZW0K9kclY95Y0hrTVE9VdDe3xE+HSyjZdfbB+pXKUOaQY5B0
-         U7gGyjQawbknGKmDHmoGEJTye/5lwBOip182M47N1uKHERaPXojCq0nBKY+hzdKCOCtK
-         NR+i+t0qZZdB9DZEe6L3C71Oi+Y0amaxj0FZEQ5x3O/8n1joMh8gTjMYWuj53vMfJl51
-         /spyv03wDqWAQsGPyK/mpXtbnykq0RXDeWLpjTEq37qOOIauK0N8DEvr5nFUsbHIHrUG
-         j8vaM+mgGb1mXplcCTYn3DRkKhO9D/v6hTS27c9DS3ZB3foVOb8CB7KlLLJaCbU1YsU2
-         ZzKg==
+        b=PCwb4E/E+9UQOYu3yQ5imDU/UA/JkI+j1Ll9UbBycEYLlSEiWZCXBan8JPTZEGYgKM
+         h36ASXaQHCwqb+UN1ZJ2iDQkdChqufWGkRiJaF5DlghIkq4gptxB41f3G/BeU3Isv5t5
+         jWfTYxflwzi+3hyZ8gDlRd0hpRax7mAbeSwVioDGLdlBjc5fUv/5RCka/qosI/0f31Gm
+         nKaGtoYvKD7jxg/OvWUn/gUkx0RRz5Hv3zv3j0TNhn2pLNYswlt0TvFvQZEZ/jUibIOl
+         BpVqpP5ynYq4k2MAhppvTZWtsW0Ld/aPt3X11Mov+jGvQ+ZE+34ugwwu7Kadg7Tzy2hV
+         AA/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:date:cc:to:from:subject:message-id
-         :arc-authentication-results;
-        bh=9ACobZ30SYH1hh7KjVAZ1EodkiMxUL3jEeJHlQhwDoM=;
-        b=qkq8iBOkxpVWItOUkGsq00Xy09NiwwaYrBCfVLRg/u+LFV6iICuhXGrBm4usjZQYNN
-         EWL0qn0ROjzJIh26oufUvvOoOrEmgY3Uss+TRuG790c6lbfgEQKfNYq+iSARc9wPRQ4n
-         gep4n/eaTzCPTEfdQxjxg/i4inwgSHgx3mgzEeZeoWmyqrKd4VEUoDR0rfp5B9mw8Ojx
-         nIkPzXfoRVwR03jBTnGCzizF3W0dIdEzNORj59K3qCHj20SJB6Xzu6y0iZ/h1RsrQywP
-         XPB5Xi7u9Y04mbf4A66NNRkNAWliv+Mq8BdPQDVEQErFSYFcjEzyHzZ/gewfb0pqz9mg
-         aYcQ==
+        h=from:user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:date:arc-authentication-results;
+        bh=rWfWRKfMqq2ya0lyF2r3sO9syTxzaewUJRObHdpnIpY=;
+        b=SqcvDVtqwS8EyG9hAyU63wJYCP301CR18K7k41xj2kW1no7cXdQoyml/BAFfp4UVjZ
+         6DlpaoAq4j+QhjkgkdZKqPaPBQ5xnjW5H37PKc/55dV1DUSb73lbC8N/RpwdD8c6VD7Y
+         GBZs02isDEtkly5IMZnAsCf0fRgPLuNipJCfLjb8E0wVlfXYXvcuH5fqeW0TmIKmNwW+
+         A+ctQsg18c7uebKHFYJtbGh7oVVCrAn+/S4dKdo1i60vJn+h4DytRR7n+dOID9a2etXn
+         pzkTkEvNYZMaaNuDqtU/m73lpeklc9C8WmPt/FdZHA+x6+S4v1yhmZldO34qJkpsb3VC
+         wkUA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+       spf=pass (google.com: domain of lsorense@csclub.uwaterloo.ca designates 129.97.134.17 as permitted sender) smtp.mailfrom=lsorense@csclub.uwaterloo.ca;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=csclub.uwaterloo.ca
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ben.hutchings@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=ben.hutchings@codethink.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
-Message-ID: <1521649863.23626.130.camel@codethink.co.uk>
+       spf=pass (google.com: domain of lsorense@csclub.uwaterloo.ca designates 129.97.134.17 as permitted sender) smtp.mailfrom=lsorense@csclub.uwaterloo.ca;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=csclub.uwaterloo.ca
+Date: Wed, 21 Mar 2018 12:34:38 -0400
+To: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	LKML <linux-kernel@vger.kernel.org>
 Subject: Re: 4.9.80 compile failure with X86_VSYSCALL_EMULATION=n due to
  9a0be5af
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lennart Sorensen
-	 <lsorense@csclub.uwaterloo.ca>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Date: Wed, 21 Mar 2018 16:31:03 +0000
-In-Reply-To: <20180321160424.GF18454@kroah.com>
+Message-ID: <20180321163438.7q37vh7pncljib2a@csclub.uwaterloo.ca>
 References: <20180212154325.ge4walt2m6u3ef7g@csclub.uwaterloo.ca>
-	 <20180321160424.GF18454@kroah.com>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+ <20180321160424.GF18454@kroah.com>
+ <1521649863.23626.130.camel@codethink.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1521649863.23626.130.camel@codethink.co.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
+From: lsorense@csclub.uwaterloo.ca (Lennart Sorensen)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1592210444043385757?=
-X-GMAIL-MSGID: =?utf-8?q?1595565528116333314?=
+X-GMAIL-MSGID: =?utf-8?q?1595565754263528723?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 2018-03-21 at 17:04 +0100, Greg Kroah-Hartman wrote:
-> On Mon, Feb 12, 2018 at 10:43:25AM -0500, Lennart Sorensen wrote:
-> > Commit 9a0be5af added a reference to vsyscall_pgprot in
-> > arch/x86/mm/kaiser.c but that is undefined if X86_VSYSCALL_EMULATION=n
-> > which on an embedded system where you know how all your software is
-> > compiled is quite likely.
+On Wed, Mar 21, 2018 at 04:31:03PM +0000, Ben Hutchings wrote:
+> On Wed, 2018-03-21 at 17:04 +0100, Greg Kroah-Hartman wrote:
+> > On Mon, Feb 12, 2018 at 10:43:25AM -0500, Lennart Sorensen wrote:
+> > > Commit 9a0be5af added a reference to vsyscall_pgprot in
+> > > arch/x86/mm/kaiser.c but that is undefined if X86_VSYSCALL_EMULATION=n
+> > > which on an embedded system where you know how all your software is
+> > > compiled is quite likely.
+> > > 
+> > > Of course the condition is always false with that config so the code
+> > > will never be run, but the compiler is unhappy.
 > > 
-> > Of course the condition is always false with that config so the code
-> > will never be run, but the compiler is unhappy.
+> > What is the compiler error?  I have not had any reports of this with all
+> > of the varied builds that we currently run on the stable trees.
 > 
-> What is the compiler error?  I have not had any reports of this with all
-> of the varied builds that we currently run on the stable trees.
+> You already applied a fix for this ("kaiser: fix compile error without
+> vsyscall").
 
-You already applied a fix for this ("kaiser: fix compile error without
-vsyscall").
-
-Ben.
+Yeah the fix certainly works fine.  I was not the only one reporting it.
 
 -- 
-Ben Hutchings
-Software Developer, Codethink Ltd.
+Len Sorensen
