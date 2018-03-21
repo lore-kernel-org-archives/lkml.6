@@ -1,93 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754046AbeCUWjn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 18:39:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33634 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753865AbeCUWjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 18:39:40 -0400
-Subject: [PATCH v2] vfio/pci: Quiet broken INTx whining when INTx is
- unsupported by device
-From: Alex Williamson <alex.williamson@redhat.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, aik@ozlabs.ru,
-        alex.williamson@redhat.com, leedom@chelsio.com, ganeshgr@chelsio.com,
-        arjun@chelsio.com, indranil@chelsio.com, nirranjan@chelsio.com
-Date: Wed, 21 Mar 2018 16:39:36 -0600
-Message-ID: <20180321223147.1305.30569.stgit@gimli.home>
-User-Agent: StGit/0.18-102-gdf9f
+        id S1754072AbeCUWk3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 18:40:29 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:51182 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754050AbeCUWk1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 18:40:27 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Szs43U6_1521672009;
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321130833.GM23100@dhcp22.suse.cz>
+ <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
+ <20180321172932.GE4780@bombadil.infradead.org>
+ <f057a634-7e0a-1b51-eede-dcb6f128b18e@linux.alibaba.com>
+ <20180321221502.GA3969@bombadil.infradead.org>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <274f9d37-3dee-2bff-b1fd-1ca7fa41f1ca@linux.alibaba.com>
+Date: Wed, 21 Mar 2018 15:40:09 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180321221502.GA3969@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The intent of commit 2170dd04316e ("vfio-pci: Mask INTx if a device is
-not capabable of enabling it") was to disallow the user from seeing
-that the device supports INTx if the platform is incapable of enabling
-it.  The detection of this case however incorrectly includes devices
-which natively do not support INTx, such as SR-IOV VFs.  We don't need
-the nointx handling code for such devices, nor do we want to issue a
-broken INTx masking warning.  Check whether the device supports INTx
-before enabling nointx and remove the free pass for non-i40e Intel
-devices.
 
-Reported-by: Arjun Vynipadath <arjun@chelsio.com>
-Fixes: 2170dd04316e ("vfio-pci: Mask INTx if a device is not capabable of enabling it")
-Acked-by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
----
 
-v2:
+On 3/21/18 3:15 PM, Matthew Wilcox wrote:
+> On Wed, Mar 21, 2018 at 02:45:44PM -0700, Yang Shi wrote:
+>> On 3/21/18 10:29 AM, Matthew Wilcox wrote:
+>>> On Wed, Mar 21, 2018 at 09:31:22AM -0700, Yang Shi wrote:
+>>>> On 3/21/18 6:08 AM, Michal Hocko wrote:
+>>>>> Yes, this definitely sucks. One way to work that around is to split the
+>>>>> unmap to two phases. One to drop all the pages. That would only need
+>>>>> mmap_sem for read and then tear down the mapping with the mmap_sem for
+>>>>> write. This wouldn't help for parallel mmap_sem writers but those really
+>>>>> need a different approach (e.g. the range locking).
+>>>> page fault might sneak in to map a page which has been unmapped before?
+>>>>
+>>>> range locking should help a lot on manipulating small sections of a large
+>>>> mapping in parallel or multiple small mappings. It may not achieve too much
+>>>> for single large mapping.
+>>> I don't think we need range locking.  What if we do munmap this way:
+>>>
+>>> Take the mmap_sem for write
+>>> Find the VMA
+>>>     If the VMA is large(*)
+>>>       Mark the VMA as deleted
+>>>       Drop the mmap_sem
+>>>       zap all of the entries
+>>>       Take the mmap_sem
+>>>     Else
+>>>       zap all of the entries
+>>> Continue finding VMAs
+>>> Drop the mmap_sem
+>>>
+>>> Now we need to change everywhere which looks up a VMA to see if it needs
+>>> to care the the VMA is deleted (page faults, eg will need to SIGBUS; mmap
+>> Marking vma as deleted sounds good. The problem for my current approach is
+>> the concurrent page fault may succeed if it access the not yet unmapped
+>> section. Marking deleted vma could tell page fault the vma is not valid
+>> anymore, then return SIGSEGV.
+>>
+>>> does not care; munmap will need to wait for the existing munmap operation
+>> Why mmap doesn't care? How about MAP_FIXED? It may fail unexpectedly, right?
+> Oh, I forgot about MAP_FIXED.  Yes, MAP_FIXED should wait for the munmap
+> to finish.  But a regular mmap can just pretend that it happened before
+> the munmap call and avoid the deleted VMAs.
 
-One more quick spin on this, barring issues I'd like to get a pull
-request in for rc7.  The regression was originally masked because I
-generally test on Intel SR-IOV, which doesn't exhibit the problem
-because it traps in the switch case above, as vendor quirks were the
-original intent of this funciton.  v2 drops that default case so that
-all vendors reach the pdev->irq test, which I think was also the
-original intent of 2170dd04316e.  Leaving Casey's ack since it
-shouldn't affect testing on non-Intel parts.
+But, my test shows race condition for reduced size mmap which calls 
+do_munmap(). It may need wait for the munmap finish too.
 
- drivers/vfio/pci/vfio_pci.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+So, in my patches, I just make the do_munmap() called from mmap() hold 
+mmap_sem all the time.
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index b0f759476900..dccc2feca6ec 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -192,6 +192,8 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev);
-  */
- static bool vfio_pci_nointx(struct pci_dev *pdev)
- {
-+	u8 pin;
-+
- 	switch (pdev->vendor) {
- 	case PCI_VENDOR_ID_INTEL:
- 		switch (pdev->device) {
-@@ -202,12 +204,21 @@ static bool vfio_pci_nointx(struct pci_dev *pdev)
- 		case 0x1583 ... 0x158b:
- 		case 0x37d0 ... 0x37d2:
- 			return true;
--		default:
--			return false;
- 		}
- 	}
- 
--	if (!pdev->irq)
-+	pci_read_config_byte(pdev, PCI_INTERRUPT_PIN, &pin);
-+
-+	/*
-+	 * If the device supports INTx, but it cannot be enabled, invoke
-+	 * nointx to mask the pin value and INTx IRQ_INFO to the user.
-+	 *
-+	 * NB. Generally nointx depends on at least being able to prevent the
-+	 * device from generating INTx, so ideally we might check if INTx
-+	 * masking is supported, but perhaps we can interpret lack of an irq
-+	 * as lack of routing and presume the INTx line is unwired.
-+	 */
-+	if (pin && !pdev->irq)
- 		return true;
- 
- 	return false;
+Thanks,
+Yang
