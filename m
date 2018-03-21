@@ -1,69 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754456AbeCUXJm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 19:09:42 -0400
-Received: from mga01.intel.com ([192.55.52.88]:30924 "EHLO mga01.intel.com"
+        id S1754535AbeCUXJ6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 19:09:58 -0400
+Received: from mga12.intel.com ([192.55.52.136]:29485 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754404AbeCUXJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:09:36 -0400
+        id S1754209AbeCUXGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 19:06:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
-   d="scan'208";a="26467400"
-Message-ID: <1521673774.6961.4.camel@tzanussi-mobl.amr.corp.intel.com>
-Subject: Re: linux-next: manual merge of the ftrace tree with the jc_docs
- tree
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Changbin Du <changbin.du@intel.com>
-Date: Wed, 21 Mar 2018 18:09:34 -0500
-In-Reply-To: <20180322092108.0d821abc@canb.auug.org.au>
-References: <20180321153127.23737f6e@canb.auug.org.au>
-         <20180321153715.3a571e5b@canb.auug.org.au>
-         <20180321091554.2b38ee57@gandalf.local.home>
-         <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
-         <20180322092108.0d821abc@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
-Mime-Version: 1.0
+   d="scan'208";a="44201732"
+Subject: [PATCH v7 04/14] xfs, dax: introduce xfs_dax_aops
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: Jeff Moyer <jmoyer@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, jack@suse.cz
+Date: Wed, 21 Mar 2018 15:57:32 -0700
+Message-ID: <152167305269.5268.2789359915651914497.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+In preparation for the dax implementation to start associating dax pages
+to inodes via page->mapping, we need to provide a 'struct
+address_space_operations' instance for dax. Otherwise, direct-I/O
+triggers incorrect page cache assumptions and warnings like the
+following:
 
-On Thu, 2018-03-22 at 09:21 +1100, Stephen Rothwell wrote:
-> Hi Tom,
-> 
-> On Wed, 21 Mar 2018 15:55:52 -0500 Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
-> >
-> > Yeah, linux-next has changes to Documentation/trace/* that converts
-> > those files to .rst, which linux-trace/frace/core doesn't have.
-> > 
-> > I've rebased the inter-event patches to linux-next/next-20180320 to
-> > reflect those changes, which affect 9 of the files in the patchset.  The
-> > updated patchset is here:
-> > 
-> > https://github.com/tzanussi/linux-trace-inter-event.git tzanussi/next-20180320-inter-event-v10                                               
-> > https://github.com/tzanussi/linux-trace-inter-event/tree/tzanussi/next-20180320-inter-event-v10
-> > 
-> > I can repost the whole thing as v10, or whatever makes sense here.
-> 
-> Thanks, I assume that they apply on top of the jc_docs tree as well
-> (git://git.lwn.net/linux.git#docs-next).  If so, then I can use them as
-> merge resolutions, or Steve can rebase his tree (minus your old
-> patches) on top of the (hopefully unchanging) jc_docs tree and then he
-> could apply your patches there.
-> 
+ WARNING: CPU: 27 PID: 1783 at fs/xfs/xfs_aops.c:1468
+ xfs_vm_set_page_dirty+0xf3/0x1b0 [xfs]
+ [..]
+ CPU: 27 PID: 1783 Comm: dma-collision Tainted: G           O 4.15.0-rc2+ #984
+ [..]
+ Call Trace:
+  set_page_dirty_lock+0x40/0x60
+  bio_set_pages_dirty+0x37/0x50
+  iomap_dio_actor+0x2b7/0x3b0
+  ? iomap_dio_zero+0x110/0x110
+  iomap_apply+0xa4/0x110
+  iomap_dio_rw+0x29e/0x3b0
+  ? iomap_dio_zero+0x110/0x110
+  ? xfs_file_dio_aio_read+0x7c/0x1a0 [xfs]
+  xfs_file_dio_aio_read+0x7c/0x1a0 [xfs]
+  xfs_file_read_iter+0xa0/0xc0 [xfs]
+  __vfs_read+0xf9/0x170
+  vfs_read+0xa6/0x150
+  SyS_pread64+0x93/0xb0
+  entry_SYSCALL_64_fastpath+0x1f/0x96
 
-Yes, just checked and they do apply on top of the jc_docs branch
-mentioned.
+...where the default set_page_dirty() handler assumes that dirty state
+is being tracked in 'struct page' flags.
 
-Thanks,
+Cc: Jeff Moyer <jmoyer@redhat.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Suggested-by: Jan Kara <jack@suse.cz>
+Suggested-by: Dave Chinner <david@fromorbit.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ fs/xfs/xfs_aops.c |   21 +++++++++++++++++----
+ fs/xfs/xfs_aops.h |    1 +
+ fs/xfs/xfs_iops.c |    5 ++++-
+ 3 files changed, 22 insertions(+), 5 deletions(-)
 
-Tom 
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 9c6a830da0ee..5f1f5948ecc2 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -1194,16 +1194,22 @@ xfs_vm_writepages(
+ 	int			ret;
+ 
+ 	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+-	if (dax_mapping(mapping))
+-		return dax_writeback_mapping_range(mapping,
+-				xfs_find_bdev_for_inode(mapping->host), wbc);
+-
+ 	ret = write_cache_pages(mapping, wbc, xfs_do_writepage, &wpc);
+ 	if (wpc.ioend)
+ 		ret = xfs_submit_ioend(wbc, wpc.ioend, ret);
+ 	return ret;
+ }
+ 
++STATIC int
++xfs_dax_writepages(
++	struct address_space	*mapping,
++	struct writeback_control *wbc)
++{
++	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
++	return dax_writeback_mapping_range(mapping,
++			xfs_find_bdev_for_inode(mapping->host), wbc);
++}
++
+ /*
+  * Called to move a page into cleanable state - and from there
+  * to be released. The page should already be clean. We always
+@@ -1505,3 +1511,10 @@ const struct address_space_operations xfs_address_space_operations = {
+ 	.is_partially_uptodate  = block_is_partially_uptodate,
+ 	.error_remove_page	= generic_error_remove_page,
+ };
++
++const struct address_space_operations xfs_dax_aops = {
++	.direct_IO		= xfs_vm_direct_IO,
++	.writepages		= xfs_dax_writepages,
++	.set_page_dirty		= noop_set_page_dirty,
++	.invalidatepage		= noop_invalidatepage,
++};
+diff --git a/fs/xfs/xfs_aops.h b/fs/xfs/xfs_aops.h
+index 88c85ea63da0..69346d460dfa 100644
+--- a/fs/xfs/xfs_aops.h
++++ b/fs/xfs/xfs_aops.h
+@@ -54,6 +54,7 @@ struct xfs_ioend {
+ };
+ 
+ extern const struct address_space_operations xfs_address_space_operations;
++extern const struct address_space_operations xfs_dax_aops;
+ 
+ int	xfs_setfilesize(struct xfs_inode *ip, xfs_off_t offset, size_t size);
+ 
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 56475fcd76f2..951e84df5576 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1272,7 +1272,10 @@ xfs_setup_iops(
+ 	case S_IFREG:
+ 		inode->i_op = &xfs_inode_operations;
+ 		inode->i_fop = &xfs_file_operations;
+-		inode->i_mapping->a_ops = &xfs_address_space_operations;
++		if (IS_DAX(inode))
++			inode->i_mapping->a_ops = &xfs_dax_aops;
++		else
++			inode->i_mapping->a_ops = &xfs_address_space_operations;
+ 		break;
+ 	case S_IFDIR:
+ 		if (xfs_sb_version_hasasciici(&XFS_M(inode->i_sb)->m_sb))
