@@ -1,102 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751763AbeCUBqw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:46:52 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38872 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751459AbeCUBqn (ORCPT
+        id S1751915AbeCUBsI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:48:08 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:45714 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751891AbeCUBsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:46:43 -0400
-X-Google-Smtp-Source: AG47ELsmZ97QloDZg/T0F6BSr3LtZu9RuNGSKBuJAVM3aoq9VAzDhT2I0r+ESmo4YR9KAkL1WjPNVQ==
-From: Laura Abbott <labbott@redhat.com>
-To: Andy Lutomirski <luto@kernel.org>, mjw@fedoraproject.org,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Laura Abbott <labbott@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org,
-        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>
-Subject: [RFC PATCH 1/3] kbuild: Introduce build-salt generated header
-Date: Tue, 20 Mar 2018 18:46:33 -0700
-Message-Id: <20180321014635.29113-2-labbott@redhat.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180321014635.29113-1-labbott@redhat.com>
-References: <20180321014635.29113-1-labbott@redhat.com>
+        Tue, 20 Mar 2018 21:48:03 -0400
+X-Google-Smtp-Source: AG47ELufoeQ7c6vPMWgp7Vd7YcJ6lpioYX4lvAUPeEZCU+kmdDviyfWS+FWvqSlMRS1hnlsdxMnebX0J21w/zATUtZo=
+MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu-7MP9OqsQpR+AKzn=yHTH5qv5pa4THy0X5JGr-O+XLDg@mail.gmail.com>
+References: <20180302083123.7259-1-ard.biesheuvel@linaro.org>
+ <CAKv+Gu_hRsJGT-inrzXmAmabaZiUTL7BowdUrxwSWHJecjeVsg@mail.gmail.com> <CAKv+Gu-7MP9OqsQpR+AKzn=yHTH5qv5pa4THy0X5JGr-O+XLDg@mail.gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Wed, 21 Mar 2018 09:48:02 +0800
+Message-ID: <CAKv+Gu-SEYwM1CF3-9YPVK4xNMy8hUt=JNTCA4GbP5j1Ts3_2w@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] add support for Socionext SynQuacer I2C controller
+To: Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 17 March 2018 at 00:19, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 10 March 2018 at 15:01, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>> On 2 March 2018 at 08:31, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>>> Add a binding and a driver for the I2C IP found in the Socionext SynQuacer
+>>> SoC, which is essentially a rebranded version of the Fujitsu F_I2C controller.
+>>>
+>>> I think this is good to go now. Wolfram?
+>>>
+>>
+>> Ping?
+>>
+>
+> Ping?
+>
 
-The build id generated from --build-id can be generated in several different
-ways, with the default being the sha1 on the output of the linked file. For
-distributions, it can be useful to make sure this ID is unique, even if the
-actual file contents don't change. The easiest way to do this is to insert
-a comment section with some data.
+Hello Wolfram,
 
-Introduce a header which is generated from an environment varible, BUILD_TAG.
-If this variable is set, an appropriate .comment section is generated. If
-the environment variable isn't set, the define is simply empty and there
-is no change to the build.
+Do you intend to queue this for v4.17? Or are there any issues that
+need to be addressed first?
 
-Suggested-by: Nick Clifton <nickc@redhat.com>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
- Makefile           |  9 ++++++++-
- scripts/gencomment | 19 +++++++++++++++++++
- 2 files changed, 27 insertions(+), 1 deletion(-)
- create mode 100755 scripts/gencomment
+Thanks,
+Ard.
 
-diff --git a/Makefile b/Makefile
-index d65e2e229017..de360625aec5 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1087,7 +1087,7 @@ endif
- prepare2: prepare3 prepare-compiler-check outputmakefile asm-generic
- 
- prepare1: prepare2 $(version_h) include/generated/utsrelease.h \
--                   include/config/auto.conf
-+                   include/config/auto.conf include/generated/build-salt.h
- 	$(cmd_crmodverdir)
- 
- archprepare: archheaders archscripts prepare1 scripts_basic
-@@ -1175,6 +1175,13 @@ $(version_h): $(srctree)/Makefile FORCE
- include/generated/utsrelease.h: include/config/kernel.release FORCE
- 	$(call filechk,utsrelease.h)
- 
-+define filechk_build-salt.h
-+	($(CONFIG_SHELL) $(srctree)/scripts/gencomment)
-+endef
-+
-+include/generated/build-salt.h: $(srctree)/Makefile FORCE
-+	$(call filechk,build-salt.h)
-+
- PHONY += headerdep
- headerdep:
- 	$(Q)find $(srctree)/include/ -name '*.h' | xargs --max-args 1 \
-diff --git a/scripts/gencomment b/scripts/gencomment
-new file mode 100755
-index 000000000000..13b6e7739ef7
---- /dev/null
-+++ b/scripts/gencomment
-@@ -0,0 +1,19 @@
-+#!/bin/sh
-+
-+if [ -z $BUILD_TAG ]; then
-+	echo "#define ID_TAG"
-+	exit 0
-+fi
-+
-+echo "#define ID_TAG \\"
-+echo ".comment (INFO) : \\"
-+echo " { \\"
-+
-+_TAG=`echo $BUILD_TAG | sed -e 's/\(.\)/\1 /g'`
-+for c in $_TAG; do
-+	_HEX=`echo -n $c | od -A n -t x1 | tr -d ' ' `
-+	echo "BYTE(0x$_HEX); \\"
-+done
-+echo "BYTE(0x00); \\"
-+
-+echo " } "
--- 
-2.16.2
+
+>>> v5:
+>>> - add Rob's ack to #1
+>>> - drop unnecessary 'platform_set_drvdata(pdev, NULL)' in remove path (#2)
+>>>
+>>> v4:
+>>> - clarify binding that only a single interrupt specifier is expected (#1)
+>>> - check return value of clk_prepare_enable() on probe path (#2)
+>>> - add Andy's R-b to patch #2
+>>>
+>>> v3:
+>>> - incorporate more of Andy's review comments (#2), especially regarding the
+>>>   bus speed and clock source handling for ACPI
+>>> - patch #1 unchanged.
+>>>
+>>> v2:
+>>> - incorporate Andy's review comments (#2)
+>>> - patch #1 unchanged.
+>>>
+>>> Ard Biesheuvel (2):
+>>>   dt-bindings: i2c: add binding for Socionext SynQuacer I2C
+>>>   i2c: add support for Socionext SynQuacer I2C controller
+>>>
+>>>  Documentation/devicetree/bindings/i2c/i2c-synquacer.txt |  29 +
+>>>  drivers/i2c/busses/Kconfig                              |  10 +
+>>>  drivers/i2c/busses/Makefile                             |   1 +
+>>>  drivers/i2c/busses/i2c-synquacer.c                      | 791 ++++++++++++++++++++
+>>>  4 files changed, 831 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-synquacer.txt
+>>>  create mode 100644 drivers/i2c/busses/i2c-synquacer.c
+>>>
+>>> --
+>>> 2.11.0
+>>>
