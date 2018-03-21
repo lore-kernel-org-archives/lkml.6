@@ -1,99 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752066AbeCURQ6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 13:16:58 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:54550 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751680AbeCURQ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 13:16:57 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SzrS3Ks_1521652606;
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-From: Yang Shi <yang.shi@linux.alibaba.com>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321131449.GN23100@dhcp22.suse.cz>
- <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
-Message-ID: <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
-Date: Wed, 21 Mar 2018 10:16:41 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
+        id S1751963AbeCURZ3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 13:25:29 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56778 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751680AbeCURZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 13:25:28 -0400
+Subject: Re: Why two irq chips for MSI
+To: valmiki <valmikibow@gmail.com>, linux-pci <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>
+References: <81eb7191-1c5c-ad27-2714-9563e4ef7c68@gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <adf13928-d1da-e8af-5b32-efc199ac6ba9@arm.com>
+Date: Wed, 21 Mar 2018 17:25:25 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <81eb7191-1c5c-ad27-2714-9563e4ef7c68@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21/03/18 17:12, valmiki wrote:
+> Hi,
+> 
+> In most of the RP drivers, why two irq chips are being used for MSI ?
+> 
+> One at irq_domain_set_info (which uses irq_compose_msi_msg and 
+> irq_set_affinity methods) and another being registered with struct 
+> msi_domain_info (which uses irq_mask/irq_unmask methods).
+> 
+> When will each chip be used w.r.t to virq ?
 
+A simple way to think of it is that you have two pieces of HW involved:
+an end-point that generates an interrupt, and a controller that receives it.
 
-On 3/21/18 9:50 AM, Yang Shi wrote:
->
->
-> On 3/21/18 6:14 AM, Michal Hocko wrote:
->> On Wed 21-03-18 05:31:19, Yang Shi wrote:
->>> When running some mmap/munmap scalability tests with large memory (i.e.
->>>> 300GB), the below hung task issue may happen occasionally.
->>> INFO: task ps:14018 blocked for more than 120 seconds.
->>>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->>> message.
->>>   ps              D    0 14018      1 0x00000004
->>>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>>   Call Trace:
->>>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>>    [<ffffffff817159e6>] schedule+0x36/0x80
->>>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>>    [<ffffffff81717db0>] down_read+0x20/0x40
->>>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->> Slightly off-topic:
->> Btw. this sucks as well. Do we really need to take mmap_sem here? Do any
->> of
->>     arg_start = mm->arg_start;
->>     arg_end = mm->arg_end;
->>     env_start = mm->env_start;
->>     env_end = mm->env_end;
->>
->> change after exec or while the pid is already visible in proc? If yes
->> maybe we can use a dedicated lock.
+Transpose this to the kernel view of things: one chip implements the PCI
+MSI, with the PCI semantics attached to it (how to program the
+payload/doorbell into the end-point, for example). The other implements
+the MSI controller part of it, talking to the HW that deals with the
+interrupt.
 
-BTW, this is not the only place to acquire mmap_sem in 
-proc_pid_cmdline_read(), it calls access_remote_vm() which need acquire 
-mmap_sem too, so the mmap_sem scalability issue will be hit sooner or later.
+Does it makes sense? Admittedly, this is not always that simple, but
+that the general approach.
 
-Yang
+Thanks,
 
->
-> Actually, Alexey Dobriyan had the same comment when he reviewed my 
-> very first patch (which changes down_read to down_read_killable at 
-> that place).
->
-> Those 4 values might be changed by prctl_set_mm() and 
-> prctl_set_mm_map() concurrently. They used to use down_read() to 
-> protect the change, but it looks not good enough to protect concurrent 
-> writing. So, Mateusz Guzik's commit 
-> ddf1d398e517e660207e2c807f76a90df543a217 ("prctl: take mmap sem for 
-> writing to protect against others") change it to down_write().
->
-> It seems mmap_sem can be replaced to a dedicated lock. How about 
-> defining a rwlock in mm_struct to protect those data? I will come up 
-> with a RFC patch for this.
->
-> However, this dedicated lock just can work around this specific case. 
-> I believe solving mmap_sem scalability issue aimed by the patch series 
-> is still our consensus.
->
-> Thanks,
-> Yang
->
->
->
->
+	M.
+-- 
+Jazz is not dead. It just smells funny...
