@@ -1,106 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753226AbeCUQvL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:51:11 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64667 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751966AbeCUQtW (ORCPT
+        id S1753263AbeCUQvN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:51:13 -0400
+Received: from smtp-1b.atlantis.sk ([80.94.52.26]:50206 "EHLO
+        smtp-1b.atlantis.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752640AbeCUQvJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:49:22 -0400
-From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v2 6/6] i2c: i2c-stm32f7: Implement I2C recovery mechanism
-Date: Wed, 21 Mar 2018 17:49:00 +0100
-Message-ID: <1521650940-11651-7-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
-References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+        Wed, 21 Mar 2018 12:51:09 -0400
+From: Ondrej Zary <linux@rainbow-software.org>
+To: Robert Munteanu <rombert@apache.org>
+Subject: Re: [PATCH v3] Fix modifier keys for Redragon Asura Keyboard
+Date: Wed, 21 Mar 2018 17:51:04 +0100
+User-Agent: KMail/1.9.10 (enterprise35 0.20100827.1168748)
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+References: <20180321104331.22783-1-rombert@apache.org>
+In-Reply-To: <20180321104331.22783-1-rombert@apache.org>
+X-KMail-QuotePrefix: > 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG4NODE1.st.com (10.75.127.10) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-21_08:,,
- signatures=0
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Message-Id: <201803211751.04734.linux@rainbow-software.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Feature prevents I2C lock-ups. Mechanism resets I2C state machine
-and releases SCL/SDA signals but preserves I2C registers.
+On Wednesday 21 March 2018 11:43:31 Robert Munteanu wrote:
+> +#define USB_VENDOR_ID_MICRODIA          0x0c45
+> +#define USB_DEVICE_ID_REDRAGON_ASURA    0x760b
 
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
----
-  Version history:
-    v1:
-       * Initial
-    v2:
-       * Don't use i2c engine recovery mechanism since driver
-         procedure only recover master and not the slave.
----
----
- drivers/i2c/busses/i2c-stm32f7.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
+Microdia is most probably an incorrect name. The 0c45 id probably belongs 
+to "Sonix Technology Co., Ltd."
 
-diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-index 91f73e0..9a9c469 100644
---- a/drivers/i2c/busses/i2c-stm32f7.c
-+++ b/drivers/i2c/busses/i2c-stm32f7.c
-@@ -718,6 +718,20 @@ static void stm32f7_i2c_smbus_reload(struct stm32f7_i2c_dev *i2c_dev)
- 	writel_relaxed(cr2, i2c_dev->base + STM32F7_I2C_CR2);
- }
- 
-+static int stm32f7_i2c_recover_bus(struct i2c_adapter *i2c_adap)
-+{
-+	struct stm32f7_i2c_dev *i2c_dev = i2c_get_adapdata(i2c_adap);
-+
-+	dev_info(i2c_dev->dev, "Trying to recover bus\n");
-+
-+	stm32f7_i2c_clr_bits(i2c_dev->base + STM32F7_I2C_CR1,
-+			     STM32F7_I2C_CR1_PE);
-+
-+	stm32f7_i2c_hw_config(i2c_dev);
-+
-+	return 0;
-+}
-+
- static int stm32f7_i2c_wait_free_bus(struct stm32f7_i2c_dev *i2c_dev)
- {
- 	u32 status;
-@@ -727,12 +741,18 @@ static int stm32f7_i2c_wait_free_bus(struct stm32f7_i2c_dev *i2c_dev)
- 					 status,
- 					 !(status & STM32F7_I2C_ISR_BUSY),
- 					 10, 1000);
-+	if (!ret)
-+		return 0;
-+
-+	dev_info(i2c_dev->dev, "bus busy\n");
-+
-+	ret = stm32f7_i2c_recover_bus(&i2c_dev->adap);
- 	if (ret) {
--		dev_dbg(i2c_dev->dev, "bus busy\n");
--		ret = -EBUSY;
-+		dev_err(i2c_dev->dev, "Failed to recover the bus (%d)\n", ret);
-+		return ret;
- 	}
- 
--	return ret;
-+	return -EBUSY;
- }
- 
- static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
-@@ -1474,6 +1494,7 @@ static irqreturn_t stm32f7_i2c_isr_error(int irq, void *data)
- 	if (status & STM32F7_I2C_ISR_BERR) {
- 		dev_err(dev, "<%s>: Bus error\n", __func__);
- 		writel_relaxed(STM32F7_I2C_ICR_BERRCF, base + STM32F7_I2C_ICR);
-+		stm32f7_i2c_recover_bus(&i2c_dev->adap);
- 		f7_msg->result = -EIO;
- 	}
- 
 -- 
-2.7.4
+Ondrej Zary
