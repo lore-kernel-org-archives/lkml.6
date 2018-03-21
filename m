@@ -1,101 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753889AbeCUWDF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 18:03:05 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:43071 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753744AbeCUWDC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 18:03:02 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, Edgar Thier <info@edgarthier.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: uvcvideo: Prevent setting unavailable flags
-Date: Thu, 22 Mar 2018 00:04:07 +0200
-Message-ID: <3340488.XSnhISeh4i@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1521646988-803-1-git-send-email-kieran.bingham@ideasonboard.com>
-References: <1521646988-803-1-git-send-email-kieran.bingham@ideasonboard.com>
+        id S1753881AbeCUWFr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 18:05:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54435 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753715AbeCUWFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 18:05:46 -0400
+Subject: Re: [PATCH 13/15] x86/fsgsbase/64: With FSGSBASE, compare GS bases on
+ paranoid_entry
+To: Andy Lutomirski <luto@kernel.org>,
+        "Chang S. Bae" <chang.seok.bae@intel.com>
+Cc: X86 ML <x86@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+ <1521481767-22113-14-git-send-email-chang.seok.bae@intel.com>
+ <CALCETrXes+XRLWQfKO+jmzyTAxncZAm0WReuKFvNDcFGERqyeA@mail.gmail.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <cc9b0ef1-79c6-7a21-dc70-6f922ec45db4@zytor.com>
+Date: Wed, 21 Mar 2018 15:03:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CALCETrXes+XRLWQfKO+jmzyTAxncZAm0WReuKFvNDcFGERqyeA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
-
-Thank you for the patch.
-
-On Wednesday, 21 March 2018 17:43:08 EET Kieran Bingham wrote:
-> The addition of an extra operation to use the GET_INFO command
-> overwrites all existing flags from the uvc_ctrls table. This includes
-> setting all controls as supporting  GET_MIN, GET_MAX, GET_RES, and
-> GET_DEF regardless of whether they do or not.
+On 03/20/18 07:58, Andy Lutomirski wrote:
+>> On Mar 19, 2018, at 10:49 AM, Chang S. Bae <chang.seok.bae@intel.com> wrote:
+>>
+>> When FSGSBASE is enabled, SWAPGS needs if and only if (current)
+>> GS base is not the kernel's.
+>>
+>> FSGSBASE instructions allow user to write any value on GS base;
+>> even negative. Sign check on the current GS base is not
+>> sufficient. Fortunately, reading GS base is fast. Kernel GS
+>> base is also known from the offset table with the CPU number.
 > 
-> Move the initialisation of these control capabilities directly to the
-> uvc_ctrl_fill_xu_info() call where they were originally located in that
-> use case, and ensure that the new functionality in uvc_ctrl_get_flags()
-> will only set flags based on their reported capability from the GET_INFO
-> call.
+> The original version of these patches (mine and Andi’s) didn’t have
+> this comparison, didn’t need RDMSR, and didn’t allow malicious user
+> programs to cause the kernel to run decently large chunks of code with
+> the reverse of the expected GS convention. Why did you change it?
 > 
-> Fixes: 859086ae3636 ("media: uvcvideo: Apply flags from device to actual
-> properties")
+> I really really don't like having a corner case like this that can and
+> will be triggered by malicious user code but that is hard to write a
+> self-test for because it involves guessing a 64-bit magic number.
+> Untestable corner cases in the x86 entry code are bad.
 > 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+What corner case are you talking about?
 
-And applied to my tree.
+If user GS_BASE and kernel GS_BASE happen to be identical, then SWAPGS
+is a nop and it does not matter one iota which is is user space and
+which is kernel space.  They are just numbers, and swapping one number
+with itself doesn't do anything (in fact, opcode 0x90 was used for NOP
+because it aliased to xchg [e]ax,[e]ax on pre-64-bit hardware.)
 
-Mauro, this fixes a regression in your master branch queued for v4.17. Do you 
-want a pull request now, or after the merge window for -rc2 ?
+As far as running "decently large chunks" this is *exactly* the same
+amount of code that is run on non-FSGSBASE hardware, so it Has To
+Work[TM] anyway.  If anything this may help catch problems sooner.
 
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c
-> b/drivers/media/usb/uvc/uvc_ctrl.c index 1daf444371be..4042cbdb721b 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1607,14 +1607,12 @@ static int uvc_ctrl_get_flags(struct uvc_device
-> *dev, ret = uvc_query_ctrl(dev, UVC_GET_INFO, ctrl->entity->id,
-> dev->intfnum, info->selector, data, 1);
->  	if (!ret)
-> -		info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
-> -			    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF
-> -			    | (data[0] & UVC_CONTROL_CAP_GET ?
-> -			       UVC_CTRL_FLAG_GET_CUR : 0)
-> -			    | (data[0] & UVC_CONTROL_CAP_SET ?
-> -			       UVC_CTRL_FLAG_SET_CUR : 0)
-> -			    | (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
-> -			       UVC_CTRL_FLAG_AUTO_UPDATE : 0);
-> +		info->flags |= (data[0] & UVC_CONTROL_CAP_GET ?
-> +				UVC_CTRL_FLAG_GET_CUR : 0)
-> +			    |  (data[0] & UVC_CONTROL_CAP_SET ?
-> +				UVC_CTRL_FLAG_SET_CUR : 0)
-> +			    |  (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
-> +				UVC_CTRL_FLAG_AUTO_UPDATE : 0);
-> 
->  	kfree(data);
->  	return ret;
-> @@ -1689,6 +1687,9 @@ static int uvc_ctrl_fill_xu_info(struct uvc_device
-> *dev,
-> 
->  	info->size = le16_to_cpup((__le16 *)data);
-> 
-> +	info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
-> +		    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF;
-> +
->  	ret = uvc_ctrl_get_flags(dev, ctrl, info);
->  	if (ret < 0) {
->  		uvc_trace(UVC_TRACE_CONTROL,
+This minimizes the difference between the FSGSBASE and non-FSGSBASE
+flows, which I would consider a significant win.
 
-
--- 
-Regards,
-
-Laurent Pinchart
+	-hpa
