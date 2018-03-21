@@ -1,75 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeCUHuB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 03:50:01 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35445 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751940AbeCUHty (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 03:49:54 -0400
-X-Google-Smtp-Source: AG47ELu4w6xvVq5wLSB/HI8d/8Znp3vBAfB0jFL0bqmKnwLrH2JD3kYkhB14QPwyEgWkz1cWdO03Gw==
-Date: Wed, 21 Mar 2018 16:49:48 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Maninder Singh <maninder1.s@samsung.com>
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, minchan@kernel.org,
-        ngupta@vflare.org, sergey.senozhatsky.work@gmail.com,
-        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com, akpm@linux-foundation.org,
-        colin.king@canonical.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pankaj.m@samsung.com,
-        a.sahrawat@samsung.com, v.narang@samsung.com
-Subject: Re: [PATCH 1/1] lz4: Implement lz4 with dynamic offset length.
-Message-ID: <20180321074948.GA2746@jagdpanzerIV>
-References: <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
- <CGME20180321044149epcas5p12cba1afa5fc0f493a47fe20c4a7394bd@epcas5p1.samsung.com>
- <1521607242-3968-2-git-send-email-maninder1.s@samsung.com>
+        id S1751549AbeCUHzU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 03:55:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43184 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751040AbeCUHzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 03:55:19 -0400
+Subject: Re: [RFC PATCH v2 2/4] mm/__free_one_page: skip merge for order-0
+ page unless compaction failed
+To: Aaron Lu <aaron.lu@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+References: <20180320085452.24641-1-aaron.lu@intel.com>
+ <20180320085452.24641-3-aaron.lu@intel.com>
+ <7b1988e9-7d50-d55e-7590-20426fb257af@suse.cz>
+ <20180320141101.GB2033@intel.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <5b1f7ef5-0dca-c35f-aba9-3b55f81740b2@suse.cz>
+Date: Wed, 21 Mar 2018 08:53:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521607242-3968-2-git-send-email-maninder1.s@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180320141101.GB2033@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/21/18 10:10), Maninder Singh wrote:
-[..]
-> +static struct crypto_alg alg_lz4_dyn = {
-> +	.cra_name		= "lz4_dyn",
-> +	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
-> +	.cra_ctxsize		= sizeof(struct lz4_ctx),
-> +	.cra_module		= THIS_MODULE,
-> +	.cra_list		= LIST_HEAD_INIT(alg_lz4_dyn.cra_list),
-> +	.cra_init		= lz4_init,
-> +	.cra_exit		= lz4_exit,
-> +	.cra_u			= { .compress = {
-> +	.coa_compress		= lz4_compress_crypto_dynamic,
-> +	.coa_decompress		= lz4_decompress_crypto_dynamic } }
-> +};
+On 03/20/2018 03:11 PM, Aaron Lu wrote:
+> On Tue, Mar 20, 2018 at 12:45:50PM +0100, Vlastimil Babka wrote:
+>> But why, with all the prefetching in place?
+> 
+> The prefetch is just for its order 0 buddy, if merge happens, then its
+> order 1 buddy will also be checked and on and on, so the cache misses
+> are much more in merge mode.
 
-[..]
+I see.
 
-> diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
-> index 4ed0a78..5bc5aab 100644
-> --- a/drivers/block/zram/zcomp.c
-> +++ b/drivers/block/zram/zcomp.c
-> @@ -17,11 +17,15 @@
->  #include <linux/crypto.h>
->  
->  #include "zcomp.h"
-> +#define KB	(1 << 10)
->  
->  static const char * const backends[] = {
->  	"lzo",
->  #if IS_ENABLED(CONFIG_CRYPTO_LZ4)
->  	"lz4",
-> +#if (PAGE_SIZE < (32 * KB))
-> +	"lz4_dyn",
-> +#endif
+>> Not thrilled about such disruptive change in the name of a
+>> microbenchmark :/ Shouldn't normally the pcplists hide the overhead?
+> 
+> Sadly, with the default pcp count, it didn't avoid the lock contention.
+> We can of course increase pcp->count to a large enough value to avoid
+> entering buddy and thus avoid zone->lock contention, but that would
+> require admin to manually change the value on a per-machine per-workload
+> basis I believe.
 
-This is not the list of supported algorithms. It's the list of
-recommended algorithms. You can configure zram to use any of
-available and known to Crypto API algorithms. Including lz4_dyn
-on PAGE_SIZE > 32K systems.
+Well, anyone who really cares about performance has to invest some time
+to tuning anyway, I believe?
 
-	-ss
+>> If not, wouldn't it make more sense to turn zone->lock into a range lock?
+> 
+> Not familiar with range lock, will need to take a look at it, thanks for
+> the pointer.
+
+The suggestion was rather quick and not well thought-out. Range lock
+itself is insufficient - for merging/splitting buddies it's ok for
+working with struct pages because the candidate buddies are within a
+MAX_ORDER range. But the freelists contain pages from the whole zone.
+
+>>
+>>> A new document file called "struct_page_filed" is added to explain
+>>> the newly reused field in "struct page".
+>>
+>> Sounds rather ad-hoc for a single field, I'd rather document it via
+>> comments.
+> 
+> Dave would like to have a document to explain all those "struct page"
+> fields that are repurposed under different scenarios and this is the
+> very start of the document :-)
+
+Oh, I see.
+
+> I probably should have explained the intent of the document more.
+> 
+> Thanks for taking a look at this.
+> 
+>>> Suggested-by: Dave Hansen <dave.hansen@intel.com>
+>>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+>>> ---
+>>>  Documentation/vm/struct_page_field |  5 +++
+>>>  include/linux/mm_types.h           |  1 +
+>>>  mm/compaction.c                    | 13 +++++-
+>>>  mm/internal.h                      | 27 ++++++++++++
+>>>  mm/page_alloc.c                    | 89 +++++++++++++++++++++++++++++++++-----
+>>>  5 files changed, 122 insertions(+), 13 deletions(-)
+>>>  create mode 100644 Documentation/vm/struct_page_field
+>>>
