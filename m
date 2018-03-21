@@ -1,80 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeCUBLe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 21:11:34 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19664 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751557AbeCUBLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 21:11:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,338,1517904000";
-   d="scan'208";a="39779373"
-From: Luwei Kang <luwei.kang@intel.com>
-To: kvm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, Chao Peng <chao.p.peng@linux.intel.com>,
-        Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v6 06/11] KVM: x86: Add Intel processor trace context for each vcpu
-Date: Tue, 20 Mar 2018 19:21:53 +0800
-Message-Id: <1521544918-31084-7-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
-References: <1521544918-31084-1-git-send-email-luwei.kang@intel.com>
+        id S1752147AbeCUBMc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 21:12:32 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45013 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752124AbeCUBMY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 21:12:24 -0400
+X-Google-Smtp-Source: AG47ELsK3q7sIilA41cIxiqI9s83deToPWCiOqgOf3D3GhiLJlSmYSBGVOW3iTp+uD4mpzGhLcCGtw==
+Date: Tue, 20 Mar 2018 18:12:22 -0700 (PDT)
+X-Google-Original-Date: Tue, 20 Mar 2018 18:07:09 PDT (-0700)
+Subject: Re: [PATCH] of: Respect CONFIG_CMDLINE{,_EXTENED,_FORCE) with no chosen node
+In-Reply-To: <20180318125150.3i54r7i5edefbhfq@rob-hp-laptop>
+CC: frowand.list@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Michael Clark <mjc@sifive.com>,
+        trung.tran@ettus.com, mdf@kernel.org
+From: Palmer Dabbelt <palmer@sifive.com>
+To: robh@kernel.org
+Message-ID: <mhng-82331622-3097-4ae7-9b87-4e2d0e3053db@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
+On Sun, 18 Mar 2018 05:51:50 PDT (-0700), robh@kernel.org wrote:
+> On Wed, Mar 14, 2018 at 09:31:05AM -0700, Palmer Dabbelt wrote:
+>> Systems that boot without a chosen node in the device tree should still
+>> respect the command lines that are built into the kernel.  This patch
+>> avoids bailing out of the command line argument parsing code when there
+>> is no chosen node in the device tree.  This is necessary to boot
+>> straight to a root file system (ie, without an initramfs)
+>>
+>> The intent here is that the only functional change is to copy
+>> CONFIG_CMDLINE into data if both of them are valid (ie, CONFIG_CMDLINE
+>> is defined and data is non-null) on systems where there is no chosen
+>> device tree node.  I don't actually know what the return values do so I
+>> just preserved them.
+>>
+>> Thanks to Trung and Moritz for finding the bug during our ELC hackathon
+>> (and providing the first fix), and Michal for suggesting this fix (which
+>> is cleaner than what I was doing).  I've given this very minimal
+>> testing: it fixes the RISC-V bug (in conjunction with a patch to move
+>> from COMMANDLINE_OVERRIDE to COMMANDLINE_FORCE), still works on systems
+>> with and without the chosen node, and builds on ARM64.
+>>
+>> CC: Michael J Clark <mjc@sifive.com>
+>> CC: Trung Tran <trung.tran@ettus.com>
+>> CC: Moritz Fischer <mdf@kernel.org>
+>> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+>> ---
+>>  drivers/of/fdt.c | 14 ++++++++++++--
+>>  1 file changed, 12 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+>> index 84aa9d676375..60241b1cb024 100644
+>> --- a/drivers/of/fdt.c
+>> +++ b/drivers/of/fdt.c
+>> @@ -1084,9 +1084,12 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
+>>
+>>  	pr_debug("search \"chosen\", depth: %d, uname: %s\n", depth, uname);
+>>
+>> -	if (depth != 1 || !data ||
+>> +	if (!data)
+>> +		goto no_data;
+>
+> Just "return 0" here.
+>
+>> +
+>> +	if (depth != 1 ||
+>>  	    (strcmp(uname, "chosen") != 0 && strcmp(uname, "chosen@0") != 0))
+>> -		return 0;
+>> +		goto no_chosen;
+>>
+>>  	early_init_dt_check_for_initrd(node);
+>>
+>> @@ -1117,6 +1120,13 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
+>>
+>>  	/* break now */
+>>  	return 1;
+>> +
+>> +no_chosen:
+>> +#ifdef CONFIG_CMDLINE
+>> +	strlcpy(data, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
+>
+> Best case, this is going to needlessly copy the string on every single
+> node that is not /chosen.
+>
+> Worst case, I think this changes behavior. For example, first you copy
+> CONFIG_CMDLINE into data, then on a later iteration, you strlcat
+> CONFIG_CMDLINE into data if CONFIG_CMDLINE_EXTEND is enable. There could
+> also be some unintended behavior if data has a string to start with.
 
-Add a data structure to save Intel Processor Trace context.
-It mainly include the value of Intel PT host/guest MSRs
-and guest CPUID information.
+Ah, sorry, I guess I wasn't paying attention -- I assumed this was only called
+for the relevant node (like the rest of the device tree stuff), and that chosel
+was just somewhere inside it.  
 
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
----
- arch/x86/kvm/vmx.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+> I'd really like to see this function re-written to just find the /chosen
+> node and then handle each property one by one. The iterating approach is
+> silly. I assume it predates libfdt and we didn't have nice functions to
+> find nodes by path (or any other way).
+>
+> I'm working on a patch to re-structure this function. Will send it out
+> in the next day.
+>
+>> +#endif
+>> +no_data:
+>> +	return 0;
+>>  }
+>>
+>>  #ifdef CONFIG_HAVE_MEMBLOCK
+>> --
+>> 2.16.1
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 84c4c6d..940df0e 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -596,6 +596,23 @@ static inline int pi_test_sn(struct pi_desc *pi_desc)
- 			(unsigned long *)&pi_desc->control);
- }
- 
-+struct pt_ctx {
-+	u64 ctl;
-+	u64 status;
-+	u64 output_base;
-+	u64 output_mask;
-+	u64 cr3_match;
-+	u64 addrs[MSR_IA32_RTIT_ADDR_COUNT];
-+};
-+
-+struct pt_desc {
-+	u64 ctl_bitmask;
-+	u32 range_cnt;
-+	u32 caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
-+	struct pt_ctx host;
-+	struct pt_ctx guest;
-+};
-+
- struct vcpu_vmx {
- 	struct kvm_vcpu       vcpu;
- 	unsigned long         host_rsp;
-@@ -692,6 +709,8 @@ struct vcpu_vmx {
- 	 */
- 	u64 msr_ia32_feature_control;
- 	u64 msr_ia32_feature_control_valid_bits;
-+
-+	struct pt_desc pt_desc;
- };
- 
- enum segment_cache_field {
--- 
-1.8.3.1
+Thanks.  Do you mind CCing me on it?  Then I'll figure out a way to make sure
+our command lines still work.
