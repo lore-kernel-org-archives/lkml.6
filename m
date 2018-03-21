@@ -1,101 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754415AbeCUXZZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 19:25:25 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:60640 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754380AbeCUXZT (ORCPT
+        id S1754363AbeCUXZQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 19:25:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42044 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754328AbeCUXZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:25:19 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: [PATCH] ARM: multi_v7_defconfig: Enable missing drivers for supported Chromebooks.
-Date: Thu, 22 Mar 2018 00:25:10 +0100
-Message-Id: <20180321232510.5882-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.16.2
+        Wed, 21 Mar 2018 19:25:12 -0400
+Date: Wed, 21 Mar 2018 16:25:07 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Cc: Jonathan Woithe <jwoithe@just42.net>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] fujitsu-laptop: Consistent naming of constants
+Message-ID: <20180321232507.GA24138@fury>
+References: <20180227211539.5708-1-kernel@kempniu.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180227211539.5708-1-kernel@kempniu.pl>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable following drivers for merged devices:
-- Batteries with BQ27XXX chips for Minnie boards.
-- Elan eKTH I2C touchscreen for Minnie boards.
-- GPIO charger for all Veyron boards..
-- Rockchip SARADC driver for all rk3288 boards.
-- Rockchip eFUSE driver for all rk3288 boards.
-- TPM security chip for all Veyron boards.
-- ChromeOS EC userspace interface for all chromebooks boards.
-- ChromeOS EC light and proximity sensors for some chromebooks.
+On Tue, Feb 27, 2018 at 10:15:32PM +0100, Michał Kępień wrote:
+> This patch series is an attempt to organize all the named constants used
+> throughout fujitsu-laptop so that their names more clearly convey their
+> purpose: a set of prefixes is introduced to "map" constant names to
+> call_fext_func() parameters.
+> 
+> The chosen constant naming patterns are a compromise between readability
+> and enabling longer conditional expressions to fit into the 80-character
+> line length limit.  Some changes (like those in patches 4/7 and 5/7) may
+> be perceived as bikeshedding, so please just think of them as proposals,
+> not fixes.
+> 
+> Finally, patch 7/7 again [1] proposes a set of helper functions which
+> seem to be making quite a difference in terms of code readability in
+> certain places (especially in long conditional expressions).  YMMV,
+> though, feel free to disagree.
+> 
+> This patch series should be applied on top of for-next as it builds on
+> the previous patch series I submitted.
+> 
+> [1] https://www.spinics.net/lists/platform-driver-x86/msg11633.html
+> 
+>  drivers/platform/x86/fujitsu-laptop.c | 228 +++++++++++++++++++---------------
+>  1 file changed, 127 insertions(+), 101 deletions(-)
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
- arch/arm/configs/multi_v7_defconfig | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+What I see here is an agreement on a simple integer listing for patch 1/7 per
+Andy's latest reply. 7/7 appears to address Andy's concerns in 6/7. I agree they
+KEY vs EVENT_HK is a bit of bikeshedding - but I don't have a preference and I
+think overall the code is more readable for this series.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index da7387689b88..a0254b9659a0 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -299,6 +299,7 @@ CONFIG_MOUSE_CYAPA=m
- CONFIG_MOUSE_ELAN_I2C=y
- CONFIG_INPUT_TOUCHSCREEN=y
- CONFIG_TOUCHSCREEN_ATMEL_MXT=m
-+CONFIG_TOUCHSCREEN_ELAN=m
- CONFIG_TOUCHSCREEN_MMS114=m
- CONFIG_TOUCHSCREEN_ST1232=m
- CONFIG_TOUCHSCREEN_STMPE=y
-@@ -439,8 +440,10 @@ CONFIG_GPIO_TPS6586X=y
- CONFIG_GPIO_TPS65910=y
- CONFIG_BATTERY_ACT8945A=y
- CONFIG_BATTERY_SBS=y
-+CONFIG_BATTERY_BQ27XXX=m
- CONFIG_BATTERY_MAX17040=m
- CONFIG_BATTERY_MAX17042=m
-+CONFIG_CHARGER_GPIO=m
- CONFIG_CHARGER_MAX14577=m
- CONFIG_CHARGER_MAX77693=m
- CONFIG_CHARGER_MAX8997=m
-@@ -500,6 +503,7 @@ CONFIG_MFD_AXP20X_RSB=y
- CONFIG_MFD_CROS_EC=m
- CONFIG_MFD_CROS_EC_I2C=m
- CONFIG_MFD_CROS_EC_SPI=m
-+CONFIG_MFD_CROS_EC_CHARDEV=m
- CONFIG_MFD_DA9063=m
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
-@@ -877,10 +881,14 @@ CONFIG_AT91_ADC=m
- CONFIG_AT91_SAMA5D2_ADC=m
- CONFIG_BERLIN2_ADC=m
- CONFIG_EXYNOS_ADC=m
-+CONFIG_ROCKCHIP_SARADC=m
- CONFIG_VF610_ADC=m
- CONFIG_XILINX_XADC=y
-+CONFIG_IIO_CROS_EC_SENSORS_CORE=m
-+CONFIG_IIO_CROS_EC_SENSORS=m
- CONFIG_MPU3050_I2C=y
- CONFIG_CM36651=m
-+CONFIG_IIO_CROS_EC_LIGHT_PROX=m
- CONFIG_AK8975=y
- CONFIG_RASPBERRYPI_POWER=y
- CONFIG_IIO_HRTIMER_TRIGGER=y
-@@ -917,6 +925,7 @@ CONFIG_PHY_SAMSUNG_USB2=m
- CONFIG_PHY_TEGRA_XUSB=y
- CONFIG_PHY_BRCM_SATA=y
- CONFIG_NVMEM=y
-+CONFIG_ROCKCHIP_EFUSE=m
- CONFIG_NVMEM_SUNXI_SID=y
- CONFIG_BCM2835_MBOX=y
- CONFIG_RASPBERRYPI_FIRMWARE=y
-@@ -954,6 +963,8 @@ CONFIG_CPUFREQ_DT=y
- CONFIG_KEYSTONE_IRQ=y
- CONFIG_HW_RANDOM=y
- CONFIG_HW_RANDOM_ST=y
-+CONFIG_TCG_TPM=m
-+CONFIG_TCG_TIS_I2C_INFINEON=m
- CONFIG_CRYPTO_USER=m
- CONFIG_CRYPTO_USER_API_HASH=m
- CONFIG_CRYPTO_USER_API_SKCIPHER=m
+Based on feedback on a couple of the patches, a respin appears to be pending, so
+I'm marking this series as "changes requested" and will await the v2.
+
+Thanks,
+
 -- 
-2.16.2
+Darren Hart
+VMware Open Source Technology Center
