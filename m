@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751680AbeCUHSZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 03:18:25 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6660 "EHLO huawei.com"
+        id S1752001AbeCUHUL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 03:20:11 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6663 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751319AbeCUHSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 03:18:15 -0400
+        id S1751539AbeCUHSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 03:18:20 -0400
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 03/11] net: hns3: fix for vlan table lost problem when resetting
-Date: Wed, 21 Mar 2018 15:49:22 +0800
-Message-ID: <1521618570-129694-4-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 01/11] net: hns3: reallocate tx/rx buffer after changing mtu
+Date: Wed, 21 Mar 2018 15:49:20 +0800
+Message-ID: <1521618570-129694-2-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1521618570-129694-1-git-send-email-lipeng321@huawei.com>
 References: <1521618570-129694-1-git-send-email-lipeng321@huawei.com>
@@ -25,105 +25,91 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Fuyun Liang <liangfuyun1@huawei.com>
 
-The vlan table in hardware is clear after PF/Core/IMP/Global
-reset, which will cause vlan tagged packets not being received
-problem.
+When changing the mtu, the max frame size also will be changed. The tx
+buffer size and the rx buffer size to be allocated are determined by max
+frame size. So when max frame size is changed, the tx buffer and rx buffer
+need to be reallocated.
 
-This patch fixes it by restoring the vlan table after reset.
+When the tc_num is changed, the tx buffer and rx buffer need to be
+reallocated too. So calling set_mtu and buffer_alloc separately is better.
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 26 +++++++++++++++++++++++++
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h |  3 +++
- 2 files changed, 29 insertions(+)
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 36 +++++++++++++---------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 94f0b92..f700ec1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1404,11 +1404,15 @@ static int hns3_vlan_rx_add_vid(struct net_device *netdev,
- 				__be16 proto, u16 vid)
- {
- 	struct hnae3_handle *h = hns3_get_handle(netdev);
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
- 	int ret = -EIO;
- 
- 	if (h->ae_algo->ops->set_vlan_filter)
- 		ret = h->ae_algo->ops->set_vlan_filter(h, proto, vid, false);
- 
-+	if (!ret)
-+		set_bit(vid, priv->active_vlans);
-+
- 	return ret;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index d70619b..e110c65 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -4772,11 +4772,9 @@ static int hclge_en_hw_strip_rxvtag(struct hnae3_handle *handle, bool enable)
+ 	return hclge_set_vlan_rx_offload_cfg(vport);
  }
  
-@@ -1416,14 +1420,32 @@ static int hns3_vlan_rx_kill_vid(struct net_device *netdev,
- 				 __be16 proto, u16 vid)
+-static int hclge_set_mtu(struct hnae3_handle *handle, int new_mtu)
++static int hclge_set_mac_mtu(struct hclge_dev *hdev, int new_mtu)
  {
- 	struct hnae3_handle *h = hns3_get_handle(netdev);
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
- 	int ret = -EIO;
- 
- 	if (h->ae_algo->ops->set_vlan_filter)
- 		ret = h->ae_algo->ops->set_vlan_filter(h, proto, vid, true);
- 
-+	if (!ret)
-+		clear_bit(vid, priv->active_vlans);
-+
- 	return ret;
+-	struct hclge_vport *vport = hclge_get_vport(handle);
+ 	struct hclge_config_max_frm_size_cmd *req;
+-	struct hclge_dev *hdev = vport->back;
+ 	struct hclge_desc desc;
+ 	int max_frm_size;
+ 	int ret;
+@@ -4805,6 +4803,27 @@ static int hclge_set_mtu(struct hnae3_handle *handle, int new_mtu)
+ 	return 0;
  }
  
-+static void hns3_restore_vlan(struct net_device *netdev)
++static int hclge_set_mtu(struct hnae3_handle *handle, int new_mtu)
 +{
-+	struct hns3_nic_priv *priv = netdev_priv(netdev);
-+	u16 vid;
++	struct hclge_vport *vport = hclge_get_vport(handle);
++	struct hclge_dev *hdev = vport->back;
 +	int ret;
 +
-+	for_each_set_bit(vid, priv->active_vlans, VLAN_N_VID) {
-+		ret = hns3_vlan_rx_add_vid(netdev, htons(ETH_P_8021Q), vid);
-+		if (ret)
-+			netdev_warn(netdev, "Restore vlan: %d filter, ret:%d\n",
-+				    vid, ret);
++	ret = hclge_set_mac_mtu(hdev, new_mtu);
++	if (ret) {
++		dev_err(&hdev->pdev->dev,
++			"Change mtu fail, ret =%d\n", ret);
++		return ret;
 +	}
++
++	ret = hclge_buffer_alloc(hdev);
++	if (ret)
++		dev_err(&hdev->pdev->dev,
++			"Allocate buffer fail, ret =%d\n", ret);
++
++	return ret;
 +}
 +
- static int hns3_ndo_set_vf_vlan(struct net_device *netdev, int vf, u16 vlan,
- 				u8 qos, __be16 vlan_proto)
+ static int hclge_send_reset_tqp_cmd(struct hclge_dev *hdev, u16 queue_id,
+ 				    bool enable)
  {
-@@ -3341,6 +3363,10 @@ static int hns3_reset_notify_init_enet(struct hnae3_handle *handle)
- 	hns3_nic_set_rx_mode(netdev);
- 	hns3_recover_hw_addr(netdev);
+@@ -5392,11 +5411,6 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 		dev_err(&pdev->dev, "Mac init error, ret = %d\n", ret);
+ 		return ret;
+ 	}
+-	ret = hclge_buffer_alloc(hdev);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Buffer allocate fail, ret =%d\n", ret);
+-		return  ret;
+-	}
  
-+	/* Hardware table is only clear when pf resets */
-+	if (!(handle->flags & HNAE3_SUPPORT_VF))
-+		hns3_restore_vlan(netdev);
-+
- 	/* Carrier off reporting is important to ethtool even BEFORE open */
- 	netif_carrier_off(netdev);
+ 	ret = hclge_config_tso(hdev, HCLGE_TSO_MSS_MIN, HCLGE_TSO_MSS_MAX);
+ 	if (ret) {
+@@ -5503,12 +5517,6 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 		return ret;
+ 	}
  
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index a5f4550..c313780 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -10,6 +10,8 @@
- #ifndef __HNS3_ENET_H
- #define __HNS3_ENET_H
- 
-+#include <linux/if_vlan.h>
-+
- #include "hnae3.h"
- 
- extern const char hns3_driver_version[];
-@@ -539,6 +541,7 @@ struct hns3_nic_priv {
- 	struct notifier_block notifier_block;
- 	/* Vxlan/Geneve information */
- 	struct hns3_udp_tunnel udp_tnl[HNS3_UDP_TNL_MAX];
-+	unsigned long active_vlans[BITS_TO_LONGS(VLAN_N_VID)];
- };
- 
- union l3_hdr_info {
+-	ret = hclge_buffer_alloc(hdev);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Buffer allocate fail, ret =%d\n", ret);
+-		return ret;
+-	}
+-
+ 	ret = hclge_config_tso(hdev, HCLGE_TSO_MSS_MIN, HCLGE_TSO_MSS_MAX);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Enable tso fail, ret =%d\n", ret);
 -- 
 2.9.3
