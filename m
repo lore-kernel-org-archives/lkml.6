@@ -1,73 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751481AbeCUEKH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 00:10:07 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:36274 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750750AbeCUEKE (ORCPT
+        id S1751686AbeCUEYp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 00:24:45 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6877 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751040AbeCUEYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 00:10:04 -0400
-Date: Wed, 21 Mar 2018 05:10:02 +0100
-From: Niklas Cassel <niklas.cassel@axis.com>
-To: kishon@ti.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lorenzo.pieralisi@arm.com
-Subject: Re: [PATCH v4 0/5] PCI endpoint 64-bit BAR fixes
-Message-ID: <20180321041001.GA29527@axis.com>
-References: <20180308133331.19464-1-niklas.cassel@axis.com>
- <20180319165234.GA12486@e107981-ln.cambridge.arm.com>
+        Wed, 21 Mar 2018 00:24:43 -0400
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 20 Mar 2018 21:24:42 -0700
+Subject: Re: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM
+ client quit
+To: <jglisse@redhat.com>, <linux-mm@kvack.org>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>
+References: <20180320020038.3360-1-jglisse@redhat.com>
+ <20180320020038.3360-5-jglisse@redhat.com>
+X-Nvconfidentiality: public
+From: John Hubbard <jhubbard@nvidia.com>
+Message-ID: <55b8cf9f-2a81-19f3-ff4f-70d5a411baaa@nvidia.com>
+Date: Tue, 20 Mar 2018 21:24:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180319165234.GA12486@e107981-ln.cambridge.arm.com>
-User-Agent: Mutt/1.9.1+16 (8a41d1c2f267) (2017-09-22)
-X-TM-AS-GCONF: 00
+In-Reply-To: <20180320020038.3360-5-jglisse@redhat.com>
+X-Originating-IP: [10.110.48.28]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 19, 2018 at 04:52:34PM +0000, Lorenzo Pieralisi wrote:
-> On Thu, Mar 08, 2018 at 02:33:25PM +0100, Niklas Cassel wrote:
-> > PCI endpoint fixes to improve the way 64-bit BARs are handled.
-> > 
-> > 
-> > There are still future improvements that could be made:
-> > 
-> > pci-epf-test.c always allocates space for
-> > 6 BARs, even when using 64-bit BARs (which
-> > really only requires us to allocate 3 BARs).
-> > 
-> > pcitest.sh will print "NOT OKAY" for BAR1,
-> > BAR3, and BAR5 when using 64-bit BARs.
-> > This could probably be improved to say
-> > something like "N/A (64-bit BAR)".
-> > 
-> > Niklas Cassel (5):
-> >   PCI: endpoint: BAR width should not depend on sizeof dma_addr_t
-> >   PCI: designware-ep: Make dw_pcie_ep_set_bar() handle 64-bit BARs
-> >     properly
-> >   PCI: designware-ep: Make dw_pcie_ep_reset_bar() handle 64-bit BARs
-> >     properly
-> >   PCI: endpoint: Make pci_epc_set_bar() return the BAR width that was
-> >     set-up
-> >   misc: pci_endpoint_test: Handle 64-bit BARs properly
-> > 
-> >  drivers/misc/pci_endpoint_test.c              | 12 +++++++-----
-> >  drivers/pci/cadence/pcie-cadence-ep.c         |  2 +-
-> >  drivers/pci/dwc/pcie-designware-ep.c          | 22 ++++++++++++++++++----
-> >  drivers/pci/endpoint/functions/pci-epf-test.c | 22 +++++++++++++++-------
-> >  4 files changed, 41 insertions(+), 17 deletions(-)
+On 03/19/2018 07:00 PM, jglisse@redhat.com wrote:
+> From: Jérôme Glisse <jglisse@redhat.com>
 > 
-> Niklas,
+> This code was lost in translation at one point. This properly call
+> mmu_notifier_unregister_no_release() once last user is gone. This
+> fix the zombie mm_struct as without this patch we do not drop the
+> refcount we have on it.
 > 
-> I am fine with the series but I'd need Kishon ACKs (and Greg's for the
-> last patch), I am ready to queue them then.
+> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: Mark Hairgrove <mhairgrove@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  mm/hmm.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index 6088fa6ed137..667944630dc9 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -244,10 +244,29 @@ EXPORT_SYMBOL(hmm_mirror_register);
+>  void hmm_mirror_unregister(struct hmm_mirror *mirror)
+>  {
+>  	struct hmm *hmm = mirror->hmm;
+> +	struct mm_struct *mm = NULL;
+> +	bool unregister = false;
+>  
+>  	down_write(&hmm->mirrors_sem);
+>  	list_del_init(&mirror->list);
+> +	unregister = list_empty(&hmm->mirrors);
+
+Hi Jerome,
+
+This first minor point may be irrelevant, depending on how you fix 
+the other problem below, but: tiny naming idea: rename unregister 
+to either "should_unregister", or "mirror_snapshot_empty"...the 
+latter helps show that this is stale information, once the lock is 
+dropped. 
+
+>  	up_write(&hmm->mirrors_sem);
+> +
+> +	if (!unregister)
+> +		return;
+
+Whee, here I am, lock-free, in the middle of a race condition
+window. :)  Right here, someone (hmm_mirror_register) could be adding
+another mirror.
+
+It's not immediately clear to me what the best solution is.
+I'd be happier if we didn't have to drop one lock and take
+another like this, but if we do, then maybe rechecking that
+the list hasn't changed...safely, somehow, is a way forward here.
 
 
-Hello Kishon,
+> +
+> +	spin_lock(&hmm->mm->page_table_lock);
+> +	if (hmm->mm->hmm == hmm) {
+> +		mm = hmm->mm;
+> +		mm->hmm = NULL;
+> +	}
+> +	spin_unlock(&hmm->mm->page_table_lock);
+> +
+> +	if (mm == NULL)
+> +		return;
+> +
+> +	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
+> +	kfree(hmm);
+>  }
+>  EXPORT_SYMBOL(hmm_mirror_unregister);
+>  
 
-could you please have a look at this series?
-
-
-Kind regards,
-Niklas
+thanks,
+-- 
+John Hubbard
+NVIDIA
+ 
