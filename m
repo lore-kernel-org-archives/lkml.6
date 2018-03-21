@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3454413-1521618104-2-5025923434361676584
+X-Cyrus-Session-Id: sloti22d1t05-3454413-1521618091-2-10168228469870917477
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521618103; b=nV3+hg4RxRsGD+rRFxik3BXrulUCsdmVlbdxRO8offocp4w
-    ynLrVDTmpPGvjKh1nKt9AayicaFJGQRwkAtYyWD5SdSKy5Xl+Y0cTJVBme6IjT8o
-    ojn8MRcjev7MqzBdY44cHpeEsmh6IXGqvpdEVH4pBxe0dN9I5A9gJMdDXdd7HBty
-    wywHCWVSiEyVNmDQw8dhAO1+w71Os3MGcJt0sOl6dg3lGVoVq4fGcX/goSQJphAF
-    hSkJXAFgMTZzXWgxYvynrKeoK1eM/JkJmyYgd9t0OrLAwIoOrW4SjxWMd77Hb8ag
-    H30sb9Gf+o7LEIDRxGi0MIFnvICrhpyhllCJ3Xw==
+    t=1521618091; b=HfuYcoJ4vUrd9yuSAcfQ9GVKhjlX9BVGyF88cyKfrMeOrUB
+    uj1Huret+70vHFwU5PSXr4Z2Zl7mDkm9MB4tTppTdWvDu/i+6A/pd2Tqu9xTJc8Q
+    CHpVZf5VrKykofNkHQ1U1NiK4/DaP0K4PlqKhLjQAerTV5P1q404W1i0iAk2hpGF
+    FbrFvpW0ZFaQI6MshfqS9iHVlz8M27LgT8lrjet+cQiKqxT/YzK4w8QVlFBbY2Cg
+    WlSivuPXVD4hzwrLV6xDong6YKqKSjvIJ2IVseMJ0pfEqlLl6CBzJaqrfH3/asuE
+    d+pJwNldlWRrL5RWL5Lv2Dvm6uFb5bHZU4yryvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1521618103;
-    bh=1p7l/B0qizGynkbosMja/QlZ9F4hcVlLlfiedQ14Iao=; b=YehvhEnE/l88
-    REKcW2mnPqLjyhQYrH1As9oR/GKOY3kAN3ptw/butkOCAL2vFSxdVFfYnjkSraz1
-    0noqQgdruHsrhezGt0WcXBlKZlxFw9g4XssEGsftiB5AH7qvitOtSgWSWTU2VctA
-    lrkXn5D24+zTTlzxBb5BTgGU06Mjs51PFQ72BIE7j2jkG0ewcuw6xHVWAYZrG3ar
-    bnJxN0h5+qncm+ylBdvwWZbzDvRGQ+XAjgF9Ftl/3VIKqeJ/JUtyZ1TX6hQvm/2O
-    xtoiEfk30/qy0UmV1bsLhk8VEIiUp8V+94VHuiT+hnntafEc5oqkDT8134G9fnvi
-    vLG/uMigvw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Ibck1fcK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521618091;
+    bh=RnI9TunZRwaInxM1h3S7Ojnyp7igoVfatdeZ3krk3j0=; b=QYlw2ROv9GIm
+    pILUyIaE8FSlb/TGuHUocYYXrCO3Hk81wq0wPB+PYdBqgfQ/TxMjKscWG3nVYmRK
+    G7X68ZPECQ9gOAQAdRQR86LccWLwmx0pR5/V3Zp0kRJPhm44oq8pbQ/gn+/J2zs3
+    24+5KJaK/vXbEKHrY6zm3tv+luKECzDs35Kf7YJ07LGZ1DwJExYYrqvOcmpkhjsi
+    6MeqWCRxjJx577nBmxyrjUcUy9N/cAv4fH+UoHM51yPiDoD6fH1ETj0NbHZp4jb+
+    44LpI6YiyOPhNUDMaCfJ8+gIy7G7tn417kxeq4uM/MfeMznI5SNLHVdrPGE0UxkR
+    m9DIyiKJDw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=ISVcWjCN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -38,9 +38,9 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Ibck1fcK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=ISVcWjCN x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,20 +50,20 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752123AbeCUHlm (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Mar 2018 03:41:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48106 "EHLO
+        id S1752061AbeCUHl2 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 03:41:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48010 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752104AbeCUHld (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:41:33 -0400
+        with ESMTP id S1752009AbeCUHlT (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:41:19 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 14/28] net/atm: convert to ->poll_mask
-Date: Wed, 21 Mar 2018 08:40:18 +0100
-Message-Id: <20180321074032.14211-15-hch@lst.de>
+Subject: [PATCH 10/28] net/tcp: convert to ->poll_mask
+Date: Wed, 21 Mar 2018 08:40:14 +0100
+Message-Id: <20180321074032.14211-11-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180321074032.14211-1-hch@lst.de>
 References: <20180321074032.14211-1-hch@lst.de>
@@ -76,75 +76,115 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/atm/common.c | 11 +++--------
- net/atm/common.h |  2 +-
- net/atm/pvc.c    |  2 +-
- net/atm/svc.c    |  2 +-
- 4 files changed, 6 insertions(+), 11 deletions(-)
+ include/net/tcp.h   |  4 ++--
+ net/ipv4/af_inet.c  |  3 ++-
+ net/ipv4/tcp.c      | 31 ++++++++++++++-----------------
+ net/ipv6/af_inet6.c |  3 ++-
+ 4 files changed, 20 insertions(+), 21 deletions(-)
 
-diff --git a/net/atm/common.c b/net/atm/common.c
-index fc78a0508ae1..1f2af59935db 100644
---- a/net/atm/common.c
-+++ b/net/atm/common.c
-@@ -648,16 +648,11 @@ int vcc_sendmsg(struct socket *sock, struct msghdr *m, size_t size)
- 	return error;
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index e3fc667f9ac2..fb52f93d556c 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -387,8 +387,8 @@ bool tcp_peer_is_proven(struct request_sock *req, struct dst_entry *dst);
+ void tcp_close(struct sock *sk, long timeout);
+ void tcp_init_sock(struct sock *sk);
+ void tcp_init_transfer(struct sock *sk, int bpf_op);
+-__poll_t tcp_poll(struct file *file, struct socket *sock,
+-		      struct poll_table_struct *wait);
++struct wait_queue_head *tcp_get_poll_head(struct socket *sock, __poll_t events);
++__poll_t tcp_poll_mask(struct socket *sock, __poll_t events);
+ int tcp_getsockopt(struct sock *sk, int level, int optname,
+ 		   char __user *optval, int __user *optlen);
+ int tcp_setsockopt(struct sock *sk, int level, int optname,
+diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+index e4329e161943..ec32cc263b18 100644
+--- a/net/ipv4/af_inet.c
++++ b/net/ipv4/af_inet.c
+@@ -952,7 +952,8 @@ const struct proto_ops inet_stream_ops = {
+ 	.socketpair	   = sock_no_socketpair,
+ 	.accept		   = inet_accept,
+ 	.getname	   = inet_getname,
+-	.poll		   = tcp_poll,
++	.get_poll_head	   = tcp_get_poll_head,
++	.poll_mask	   = tcp_poll_mask,
+ 	.ioctl		   = inet_ioctl,
+ 	.listen		   = inet_listen,
+ 	.shutdown	   = inet_shutdown,
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 48636aee23c3..ad8e281066a0 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -484,33 +484,30 @@ static void tcp_tx_timestamp(struct sock *sk, u16 tsflags)
+ 	}
  }
  
--__poll_t vcc_poll(struct file *file, struct socket *sock, poll_table *wait)
-+__poll_t vcc_poll_mask(struct socket *sock, __poll_t events)
++struct wait_queue_head *tcp_get_poll_head(struct socket *sock, __poll_t events)
++{
++	sock_poll_busy_loop(sock, events);
++	sock_rps_record_flow(sock->sk);
++	return sk_sleep(sock->sk);
++}
++EXPORT_SYMBOL(tcp_get_poll_head);
++
+ /*
+- *	Wait for a TCP event.
+- *
+- *	Note that we don't need to lock the socket, as the upper poll layers
+- *	take care of normal races (between the test and the event) and we don't
+- *	go look at any of the socket buffers directly.
++ * Socket is not locked. We are protected from async events by poll logic and
++ * correct handling of state changes made by other threads is impossible in
++ * any case.
+  */
+-__poll_t tcp_poll(struct file *file, struct socket *sock, poll_table *wait)
++__poll_t tcp_poll_mask(struct socket *sock, __poll_t events)
  {
- 	struct sock *sk = sock->sk;
--	struct atm_vcc *vcc;
 -	__poll_t mask;
--
+ 	struct sock *sk = sock->sk;
+ 	const struct tcp_sock *tp = tcp_sk(sk);
++	__poll_t mask = 0;
+ 	int state;
+ 
 -	sock_poll_wait(file, sk_sleep(sk), wait);
+-
+ 	state = inet_sk_state_load(sk);
+ 	if (state == TCP_LISTEN)
+ 		return inet_csk_listen_poll(sk);
+ 
+-	/* Socket is not locked. We are protected from async events
+-	 * by poll logic and correct handling of state changes
+-	 * made by other threads is impossible in any case.
+-	 */
+-
 -	mask = 0;
 -
--	vcc = ATM_SD(sock);
-+	struct atm_vcc *vcc = ATM_SD(sock);
-+	__poll_t mask = 0;
+ 	/*
+ 	 * EPOLLHUP is certainly not done right. But poll() doesn't
+ 	 * have a notion of HUP in just one direction, and for a
+@@ -591,7 +588,7 @@ __poll_t tcp_poll(struct file *file, struct socket *sock, poll_table *wait)
  
- 	/* exceptional events */
- 	if (sk->sk_err)
-diff --git a/net/atm/common.h b/net/atm/common.h
-index 5850649068bb..526796ad230f 100644
---- a/net/atm/common.h
-+++ b/net/atm/common.h
-@@ -17,7 +17,7 @@ int vcc_connect(struct socket *sock, int itf, short vpi, int vci);
- int vcc_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 		int flags);
- int vcc_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len);
--__poll_t vcc_poll(struct file *file, struct socket *sock, poll_table *wait);
-+__poll_t vcc_poll_mask(struct socket *sock, __poll_t events);
- int vcc_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg);
- int vcc_compat_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg);
- int vcc_setsockopt(struct socket *sock, int level, int optname,
-diff --git a/net/atm/pvc.c b/net/atm/pvc.c
-index e1140b3bdcaa..930651c5e77c 100644
---- a/net/atm/pvc.c
-+++ b/net/atm/pvc.c
-@@ -114,7 +114,7 @@ static const struct proto_ops pvc_proto_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	sock_no_accept,
- 	.getname =	pvc_getname,
--	.poll =		vcc_poll,
-+	.poll_mask =	vcc_poll_mask,
- 	.ioctl =	vcc_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl = vcc_compat_ioctl,
-diff --git a/net/atm/svc.c b/net/atm/svc.c
-index c458adcbc177..ad0e6ffb9cfe 100644
---- a/net/atm/svc.c
-+++ b/net/atm/svc.c
-@@ -637,7 +637,7 @@ static const struct proto_ops svc_proto_ops = {
- 	.socketpair =	sock_no_socketpair,
- 	.accept =	svc_accept,
- 	.getname =	svc_getname,
--	.poll =		vcc_poll,
-+	.poll_mask =	vcc_poll_mask,
- 	.ioctl =	svc_ioctl,
- #ifdef CONFIG_COMPAT
- 	.compat_ioctl =	svc_compat_ioctl,
+ 	return mask;
+ }
+-EXPORT_SYMBOL(tcp_poll);
++EXPORT_SYMBOL(tcp_poll_mask);
+ 
+ int tcp_ioctl(struct sock *sk, int cmd, unsigned long arg)
+ {
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index 416917719a6f..c470549d6ef9 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -547,7 +547,8 @@ const struct proto_ops inet6_stream_ops = {
+ 	.socketpair	   = sock_no_socketpair,	/* a do nothing	*/
+ 	.accept		   = inet_accept,		/* ok		*/
+ 	.getname	   = inet6_getname,
+-	.poll		   = tcp_poll,			/* ok		*/
++	.get_poll_head	   = tcp_get_poll_head,
++	.poll_mask	   = tcp_poll_mask,		/* ok		*/
+ 	.ioctl		   = inet6_ioctl,		/* must change  */
+ 	.listen		   = inet_listen,		/* ok		*/
+ 	.shutdown	   = inet_shutdown,		/* ok		*/
 -- 
 2.14.2
 
