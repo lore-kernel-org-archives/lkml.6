@@ -1,73 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751728AbeCUMGi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 08:06:38 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52308 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751502AbeCUMGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 08:06:37 -0400
-Date: Wed, 21 Mar 2018 12:06:27 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: linux-next: manual merge of the arm64 tree with the asm-generic
- tree
-Message-ID: <20180321120612.GA16308@e103592.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1751857AbeCUMIb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 08:08:31 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45872 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeCUMIZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 08:08:25 -0400
+X-Google-Smtp-Source: AG47ELuoDslTI27abxWqj5MaR4XMM0CA1/0oJcN7Sz0EDuWvd058Dc03M0RmzhhmP+DQ8jWlBmuqyA==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/8] ARM: davinci: complete the conversion to using the reset framework
+Date: Wed, 21 Mar 2018 13:07:59 +0100
+Message-Id: <20180321120807.18032-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 09:38:28AM +0000, Arnd Bergmann wrote:
-> On Wed, Mar 21, 2018 at 6:50 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > Today's linux-next merge of the arm64 tree got a conflict in:
-> >
-> >   include/uapi/asm-generic/siginfo.h
-> >
-> > between commit:
-> >
-> >   0d7d2a23a347 ("asm-generic: siginfo: define ia64 si_codes unconditionally")
-> >
-> > from the asm-generic tree and commit:
-> >
-> >   266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp exceptions")
-> >
-> > from the arm64 tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> 
-> >  +#define __FPE_INVDEC  13      /* invalid decimal digit */
-> > - #define NSIGFPE               13
-> > + #define FPE_FLTUNK    14      /* undiagnosed floating-point exception */
-> > + #define NSIGFPE               14
-> 
-> The merge looks correct to me. I'm still rebasing my asm-generic tree
-> to integrate incoming Acks, so I think we're stuck with this one for a
-> bit.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Ack.
+This series converts the only user of the handcoded, mach-specific reset
+routines in the davinci platform to using the reset framework.
 
-There are some overlapping patches here due to Eric's signal rework,
-related arch fixes and apparently some other unrelated updates.
+Patch 1 modifies the way lookup entries are registered with the reset
+framework.
 
-IIUC, some patches overlap between arm64's and Eric's -next trees for
-dependency reasons, but I believe the affected arm64 patches are due to
-merge via Eric's tree for v4.17.
+Patches 2-4 add necessary lookups/DT-properties.
 
-Cheers
----Dave
+Patches 5-7 convert the davinci-rproc driver to the reset framework.
+
+Patch 8 removes now dead code.
+
+Philipp: it turned out that it's indeed better to use the reset
+controller's device name for the entry lookup.
+
+Tested both in DT and legacy modes by booting the examples from
+ti-ipc-rtos recipe in meta-ti.
+
+This series applies on top of David Lechner's common-clk-v9 branch[1]
+with Philipp Zabel's reset/next branch[2] pulled in.
+
+It can be found in my github tree as well[3].
+
+[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
+[2] git://git.pengutronix.de/git/pza/linux reset/next
+[3] git@github.com:brgl/linux.git topic/davinci-reset
+
+Bartosz Golaszewski (8):
+  reset: modify the way reset lookup works for board files
+  ARM: davinci: dts: make psc0 a reset provider
+  ARM: davinci: dts: add a reset control to the dsp node
+  clk: davinci: add a reset lookup table for psc0
+  remoteproc: da8xx: add the missing checke for clk_enable()
+  remoteproc: da8xx: prepare and unprepare the clock where needed
+  remoteproc: da8xx: use the reset framework
+  clk: davinci: kill davinci_clk_reset_assert/deassert()
+
+ arch/arm/boot/dts/da850.dtsi               |  2 ++
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ----------------
+ drivers/clk/davinci/psc-da850.c            |  8 ++++++
+ drivers/clk/davinci/psc.c                  | 19 +-------------
+ drivers/remoteproc/da8xx_remoteproc.c      | 40 ++++++++++++++++++++++++------
+ drivers/reset/core.c                       | 33 +++++++++++++++++++++---
+ include/linux/reset-controller.h           |  8 +++---
+ 7 files changed, 78 insertions(+), 53 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
+
+-- 
+2.16.1
