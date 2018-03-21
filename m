@@ -1,104 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751594AbeCTX4M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 19:56:12 -0400
-Received: from gateway20.websitewelcome.com ([192.185.55.25]:46814 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751018AbeCTX4L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 19:56:11 -0400
-Date: Tue, 20 Mar 2018 18:34:44 -0500
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] Bluetooth: Remove VLA usage in aes_cmac
-Message-ID: <20180320233444.GA14446@embeddedor.com>
+        id S1751502AbeCUAMY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 20:12:24 -0400
+Received: from ozlabs.org ([103.22.144.67]:60903 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751343AbeCUAMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 20:12:22 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 21 Mar 2018 11:11:40 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trond.myklebust@fys.uio.no>,
+        NFS Mailing List <linux-nfs@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: please clean up the nfs-anna tree
+Message-ID: <20180321111140.618e1e6c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.24.133
-X-Source-L: No
-X-Exim-ID: 1eyQmD-000ULO-IA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-24-133.static.axtel.net (embeddedor) [187.162.24.133]:63567
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WLFs3oQvoBhVVy2EDOm/H.0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wvla, remove VLA and replace it
-with dynamic memory allocation instead.
+--Sig_/WLFs3oQvoBhVVy2EDOm/H.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The use of stack Variable Length Arrays needs to be avoided, as they
-can be a vector for stack exhaustion, which can be both a runtime bug
-or a security flaw. Also, in general, as code evolves it is easy to
-lose track of how big a VLA can get. Thus, we can end up having runtime
-failures that are hard to debug.
+Hi all,
 
-Also, fixed as part of the directive to remove all VLAs from
-the kernel: https://lkml.org/lkml/2018/3/7/621
+It only seems to contain commits that have been upsreamed as different
+commits and is causing conflicts:
 
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
----
- net/bluetooth/smp.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+CONFLICT (content): Merge conflict in net/sunrpc/xprtrdma/transport.c
+CONFLICT (content): Merge conflict in net/sunrpc/xprt.c
 
-diff --git a/net/bluetooth/smp.c b/net/bluetooth/smp.c
-index a2ddae2..23c694d 100644
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -173,7 +173,7 @@ static int aes_cmac(struct crypto_shash *tfm, const u8 k[16], const u8 *m,
- 		    size_t len, u8 mac[16])
- {
- 	uint8_t tmp[16], mac_msb[16], msg_msb[CMAC_MSG_MAX];
--	SHASH_DESC_ON_STACK(desc, tfm);
-+	struct shash_desc *shash;
- 	int err;
- 
- 	if (len > CMAC_MSG_MAX)
-@@ -184,8 +184,13 @@ static int aes_cmac(struct crypto_shash *tfm, const u8 k[16], const u8 *m,
- 		return -EINVAL;
- 	}
- 
--	desc->tfm = tfm;
--	desc->flags = 0;
-+	shash = kzalloc(sizeof(*shash) + crypto_shash_descsize(tfm),
-+			GFP_KERNEL);
-+	if (!shash)
-+		return -ENOMEM;
-+
-+	shash->tfm = tfm;
-+	shash->flags = 0;
- 
- 	/* Swap key and message from LSB to MSB */
- 	swap_buf(k, tmp, 16);
-@@ -200,8 +205,9 @@ static int aes_cmac(struct crypto_shash *tfm, const u8 k[16], const u8 *m,
- 		return err;
- 	}
- 
--	err = crypto_shash_digest(desc, msg_msb, len, mac_msb);
--	shash_desc_zero(desc);
-+	err = crypto_shash_digest(shash, msg_msb, len, mac_msb);
-+	shash_desc_zero(shash);
-+	kfree(shash);
- 	if (err) {
- 		BT_ERR("Hash computation error %d", err);
- 		return err;
--- 
-2.7.4
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/WLFs3oQvoBhVVy2EDOm/H.0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxozwACgkQAVBC80lX
+0GwrPAf/ebBneh78TQ4IIol/aYP56kfjR2m63E03h4qzJi1R4PFH4tZwP7MnfvlQ
+U9lqke8kwBWFnzUM0lMOMZtF7VKodfWvrfGejqO0eg0qmf3DjXNhSjuW8OW4tTEt
+t2kPgSSi2aOMyDfCR4qooDBFnB9HKdYGfaDqyMPyjKTObDjwStyhtNOCJcKYBaWz
+T1QN24g03n0/7TGpYQaVwpDd0aV9Tlvg79kn87/6YNNtIb05ZVo32/pIA4lhNCWR
+cleFoWfb3kSfCcvA0azAckIPzM4CcP32QB11qbQWtdSbRzcC5WU2Ogo33dX9+/Pl
+TxDEtj0yZYx27lQZU/K/VLwfNCXumg==
+=0kRP
+-----END PGP SIGNATURE-----
+
+--Sig_/WLFs3oQvoBhVVy2EDOm/H.0--
