@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3454413-1521618251-2-14140119268870929703
+X-Cyrus-Session-Id: sloti22d1t05-3333851-1521618241-2-6911218148708411110
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521618251; b=i4bjG9CtwqwLURXWGdm0rKV0m4ZVbNuI63+EQOp5s1T9hJ+
-    QBtRGMlY78hjGBcgFEvv0ZWin2zVdUept5NtXSpsJEeZp1EJn7iVkalADcyYfZrb
-    XNSN+hTHWEUxmRwVBBORjcNF+VBthWpUC9G1SsT65mcJAG4NqiapgtYlxkOJc5Cn
-    eKgtpgMEoC/If3H6iitz9MVgW/SpjBFSLuusxh+0aSDgfiuKEQO0vYP2hfZtgOyd
-    2R3+NNuT6Q8luZFlzSbEGHFBr8zTJ9FqUa7ipyDty8CEuNpfSbEj1dfqPkNluKkd
-    ogO/+f/dpUaqHCqUtbpTtuttrYchzBJ17nXktyw==
+    t=1521618240; b=lawrh2Ct0552m34OsoYyGH9mPT26yqjGEWkRmnysipIs+KY
+    Bz/jIyNl8JH8bFzA56tGHgqDR4jzSVW2uWjcwiyOwerA+qoGDVm4LWSuBTbXxbgc
+    FsPKzA14QxqyVzE8Cxl1Hu6Zhv9JoMDuiNq3NaiXjafGI5lGeksIIFW0zpR/FH2y
+    BwrNHE00qQKBmKtJU5jgQR684KLNfPvcT5rwHXpReRO6Das4eFMhdymXpybfuz2I
+    +ym+md80uFY1cvb+ggRqNulgv67Hx6j2jFDC6C2uArLWt4Jv7TvJFB/Il5foekrm
+    BtWQN5bF/dn4HMPLOg//mC7hptqLOhpauELXj6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1521618251;
-    bh=OHZ4aktvZgwBFU9y32htmcYpxVzm3/zUzCsSiAFBoU4=; b=mSTwYQrimOIe
-    kMgWeuYvZje/fIq1IePxnW/bdHBjC6DFs39b2mfd61yhEuIVKC6594CU2pkt/ych
-    4uPNlcQGV93ShMeP9EBBoAmYMCRVCrwlXBnwrGL8uKfmxUEH9BKSuGVpCvDDh27d
-    rr6rdVAo8qp3T7i2lq6RlN/kGdyqqRkyhP2FFymy/kaOBINSRu1n1VRirpHw5SN+
-    sMneLPw0z2suFJCy4FWibW5Pzwkz0Np2yUCnfWzqCUIBUaRfU2u/+yxPJpMdJ2BB
-    NaPi5IxvkGzv8J5clYEr5sy7VwmgB8hp22tkwj9ptuD9Pjstm0qukqg7bMj2pVO1
-    BtB5WSrgcw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=QIKWKKmd x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    :in-reply-to:references:sender:list-id; s=arctest; t=1521618240;
+    bh=fWCLq16GNBjwDaSIqAACJDC6F2S+jYWRtJKqSXFhZjw=; b=MTq/EV6zw5Qx
+    3OyFaeImoR87uaT+b46OV9sOLuRFUqMDNqdcMwHvEeMaGVK3jzcV5YM0ZuhHcz5X
+    zoyg1dgpqgV9MKDfCJEo7cMaaeR7wxZ5X3cZPDTDWaTu+sHUEb/euhSkyXgu8JqA
+    mMc3UzIOKhG1M8xZhrBDPuTv8iQ6OcaOHZK4wcnzixCMm2wDdouX/vkqPr4NUqvA
+    RrlkrHg4546fRrXA4H7I2Tzaooe4Js0qiRfl1gW6g7yJXLLUz0hWPD/MW95e9Ips
+    fzSciPqcYLwkTVp0+bnq3rnGZ/ZY3TBLzmxReEVs2ppdKaqOoUx5AdtUErqTbjbH
+    6L8kZwcd/w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=hGQLScB7 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -38,9 +38,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=QIKWKKmd x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=hGQLScB7 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -50,20 +50,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752115AbeCUHmH (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Mar 2018 03:42:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48244 "EHLO
+        id S1752455AbeCUHnj (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 03:43:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48300 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752236AbeCUHmE (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:42:04 -0400
+        with ESMTP id S1751343AbeCUHmQ (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:42:16 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 22/28] net/iucv: convert to ->poll_mask
-Date: Wed, 21 Mar 2018 08:40:26 +0100
-Message-Id: <20180321074032.14211-23-hch@lst.de>
+Subject: [PATCH 25/28] pipe: convert to ->poll_mask
+Date: Wed, 21 Mar 2018 08:40:29 +0100
+Message-Id: <20180321074032.14211-26-hch@lst.de>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180321074032.14211-1-hch@lst.de>
 References: <20180321074032.14211-1-hch@lst.de>
@@ -76,52 +76,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/net/iucv/af_iucv.h | 2 --
- net/iucv/af_iucv.c         | 7 ++-----
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ fs/pipe.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/include/net/iucv/af_iucv.h b/include/net/iucv/af_iucv.h
-index f4c21b5a1242..b0eaeb02d46d 100644
---- a/include/net/iucv/af_iucv.h
-+++ b/include/net/iucv/af_iucv.h
-@@ -153,8 +153,6 @@ struct iucv_sock_list {
- 	atomic_t	  autobind_name;
- };
- 
--__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
--			    poll_table *wait);
- void iucv_sock_link(struct iucv_sock_list *l, struct sock *s);
- void iucv_sock_unlink(struct iucv_sock_list *l, struct sock *s);
- void iucv_accept_enqueue(struct sock *parent, struct sock *sk);
-diff --git a/net/iucv/af_iucv.c b/net/iucv/af_iucv.c
-index 1e8cc7bcbca3..539a312dc481 100644
---- a/net/iucv/af_iucv.c
-+++ b/net/iucv/af_iucv.c
-@@ -1489,14 +1489,11 @@ static inline __poll_t iucv_accept_poll(struct sock *parent)
- 	return 0;
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 7b1954caf388..81937590ea0a 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -509,19 +509,22 @@ static long pipe_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	}
  }
  
--__poll_t iucv_sock_poll(struct file *file, struct socket *sock,
--			    poll_table *wait)
-+static __poll_t iucv_sock_poll_mask(struct socket *sock, __poll_t events)
+-/* No kernel lock held - fine */
+-static __poll_t
+-pipe_poll(struct file *filp, poll_table *wait)
++static struct wait_queue_head *
++pipe_get_poll_head(struct file *filp, __poll_t events)
  {
- 	struct sock *sk = sock->sk;
- 	__poll_t mask = 0;
+-	__poll_t mask;
+ 	struct pipe_inode_info *pipe = filp->private_data;
+-	int nrbufs;
  
--	sock_poll_wait(file, sk_sleep(sk), wait);
--
- 	if (sk->sk_state == IUCV_LISTEN)
- 		return iucv_accept_poll(sk);
+-	poll_wait(filp, &pipe->wait, wait);
++	return &pipe->wait;
++}
++
++/* No kernel lock held - fine */
++static __poll_t pipe_poll_mask(struct file *filp, __poll_t events)
++{
++	struct pipe_inode_info *pipe = filp->private_data;
++	int nrbufs = pipe->nrbufs;
++	__poll_t mask = 0;
  
-@@ -2389,7 +2386,7 @@ static const struct proto_ops iucv_sock_ops = {
- 	.getname	= iucv_sock_getname,
- 	.sendmsg	= iucv_sock_sendmsg,
- 	.recvmsg	= iucv_sock_recvmsg,
--	.poll		= iucv_sock_poll,
-+	.poll_mask	= iucv_sock_poll_mask,
- 	.ioctl		= sock_no_ioctl,
- 	.mmap		= sock_no_mmap,
- 	.socketpair	= sock_no_socketpair,
+ 	/* Reading only -- no need for acquiring the semaphore.  */
+-	nrbufs = pipe->nrbufs;
+-	mask = 0;
+ 	if (filp->f_mode & FMODE_READ) {
+ 		mask = (nrbufs > 0) ? EPOLLIN | EPOLLRDNORM : 0;
+ 		if (!pipe->writers && filp->f_version != pipe->w_counter)
+@@ -1015,7 +1018,8 @@ const struct file_operations pipefifo_fops = {
+ 	.llseek		= no_llseek,
+ 	.read_iter	= pipe_read,
+ 	.write_iter	= pipe_write,
+-	.poll		= pipe_poll,
++	.get_poll_head	= pipe_get_poll_head,
++	.poll_mask	= pipe_poll_mask,
+ 	.unlocked_ioctl	= pipe_ioctl,
+ 	.release	= pipe_release,
+ 	.fasync		= pipe_fasync,
 -- 
 2.14.2
 
