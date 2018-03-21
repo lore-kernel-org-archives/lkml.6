@@ -1,291 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeCUCne (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:43:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58324 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751833AbeCUCn3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 22:43:29 -0400
+        id S1751778AbeCUCpN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:45:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59656 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751018AbeCUCpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 22:45:09 -0400
+Date: Tue, 20 Mar 2018 21:45:07 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH 2/2] x86/unwind: Make CONFIG_UNWINDER_ORC=y the default
+ in kconfig for 64-bit
+Message-ID: <20180321024507.ud4lu4xndr5jfpkd@treble>
+References: <20171013052544.euk7yawni47lhmdq@gmail.com>
+ <9b1237bbe7244ed9cdf8db2dcb1253e37e1c341e.1507924831.git.jpoimboe@redhat.com>
+ <20180319185732.GD37438@google.com>
+ <20180319192910.wfbi656bxkrlurgf@treble>
+ <20180319203130.GE37438@google.com>
+ <20180319212053.e77dc3vmemfazt3b@treble>
+ <20180319232255.GF37438@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 21 Mar 2018 10:42:56 +0800
-From: cang@codeaurora.org
-To: subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org, mgautam@codeaurora.org, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] phy: Add QMP phy based UFS phy support for sdm845
-In-Reply-To: <20180320113051.14444-2-cang@codeaurora.org>
-References: <20180320113051.14444-1-cang@codeaurora.org>
- <20180320113051.14444-2-cang@codeaurora.org>
-Message-ID: <ab5d13f9a544d9f68a7e666d825f7a99@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180319232255.GF37438@google.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-20 19:30, Can Guo wrote:
-> Add UFS PHY support to make SDM845 UFS work with common PHY framework.
-> 
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp.c | 120 
-> +++++++++++++++++++++++++++++++++++-
->  drivers/phy/qualcomm/phy-qcom-qmp.h |   8 +++
->  2 files changed, 126 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c
-> b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> index 6470c5d..aeb2377 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> @@ -156,6 +156,11 @@ enum qphy_reg_layout {
->  	[QPHY_PCS_LFPS_RXTERM_IRQ_STATUS] = 0x170,
->  };
-> 
-> +static const unsigned int sdm845_ufsphy_regs_layout[] = {
-> +	[QPHY_START_CTRL]		= 0x00,
-> +	[QPHY_PCS_READY_STATUS]		= 0x168,
-> +};
-> +
->  static const struct qmp_phy_init_tbl msm8996_pcie_serdes_tbl[] = {
->  	QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x1c),
->  	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_ENABLE1, 0x10),
-> @@ -490,6 +495,74 @@ enum qphy_reg_layout {
->  	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
->  };
-> 
-> +static const struct qmp_phy_init_tbl sdm845_ufsphy_serdes_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYS_CLK_CTRL, 0x02),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_BG_TIMER, 0x0a),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_IVCO, 0x0f),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CMN_CONFIG, 0x06),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYSCLK_EN_SEL, 0xd5),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_RESETSM_CNTRL, 0x20),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CLK_SELECT, 0x30),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_HSCLK_SEL, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP_EN, 0x01),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_CTRL, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CORE_CLK_EN, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x04),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SVS_MODE_CLK_SEL, 0x05),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_INITVAL1, 0xff),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_INITVAL2, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE0, 0x82),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE0, 0x06),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE0, 0x16),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE0, 0x36),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE0, 0x3f),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE0, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE0, 0xda),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE0, 0x01),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE0, 0xff),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE0, 0x0c),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE1, 0x98),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE1, 0x06),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE1, 0x16),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE1, 0x36),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE1, 0x3f),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE1, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE1, 0xc1),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE1, 0x00),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE1, 0x32),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE1, 0x0f),
-> +
-> +	/* Rate B */
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x44),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sdm845_ufsphy_tx_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_TX_LANE_MODE_1, 0x06),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sdm845_ufsphy_rx_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_LVL, 0x24),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_CNTRL, 0x0f),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_DEGLITCH_CNTRL, 0x1e),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_INTERFACE_MODE, 0x40),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_TERM_BW, 0x5b),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2, 0x06),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL3, 0x04),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL4, 0x1d),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN_HALF, 0x04),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN_QUARTER, 0x04),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN, 0x04),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE, 0x4b),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_PI_CONTROLS, 0x81),
-> +	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW, 0x80),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl sdm845_ufsphy_pcs_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QPHY_V3_PCS_POWER_DOWN_CONTROL, 0x01),
-> +	QMP_PHY_INIT_CFG(QPHY_V3_PCS_MULTI_LANE_CTRL1, 0x02),
-> +};
-> +
->  /* struct qmp_phy_cfg - per-PHY initialization config */
->  struct qmp_phy_cfg {
->  	/* phy-type - PCIE/UFS/USB */
-> @@ -540,6 +613,9 @@ struct qmp_phy_cfg {
->  	/* Register offset of secondary tx/rx lanes for USB DP combo PHY */
->  	unsigned int tx_b_lane_offset;
->  	unsigned int rx_b_lane_offset;
-> +
-> +	/* true, if PCS block has a separate SW_RESET register */
-> +	bool has_sw_rst;
->  };
-> 
->  /**
-> @@ -636,6 +712,10 @@ static inline void qphy_clrbits(void __iomem
-> *base, u32 offset, u32 val)
->  	"aux", "cfg_ahb", "ref", "com_aux",
->  };
-> 
-> +static const char * const sdm845_ufs_phy_clk_l[] = {
-> +	"ref_clk", "ref_aux_clk",
-> +};
-> +
->  /* list of resets */
->  static const char * const msm8996_pciephy_reset_l[] = {
->  	"phy", "common", "cfg",
-> @@ -650,6 +730,10 @@ static inline void qphy_clrbits(void __iomem
-> *base, u32 offset, u32 val)
->  	"vdda-phy", "vdda-pll",
->  };
-> 
-> +static const char * const sdm845_phy_vreg_l[] = {
-> +	"vdda-phy", "vdda-pll",
-> +};
-> +
->  static const struct qmp_phy_cfg msm8996_pciephy_cfg = {
->  	.type			= PHY_TYPE_PCIE,
->  	.nlanes			= 3,
-> @@ -679,6 +763,7 @@ static inline void qphy_clrbits(void __iomem
-> *base, u32 offset, u32 val)
->  	.has_pwrdn_delay	= true,
->  	.pwrdn_delay_min	= POWER_DOWN_DELAY_US_MIN,
->  	.pwrdn_delay_max	= POWER_DOWN_DELAY_US_MAX,
-> +	.has_sw_rst		= true,
->  };
-> 
->  static const struct qmp_phy_cfg msm8996_usb3phy_cfg = {
-> @@ -704,6 +789,7 @@ static inline void qphy_clrbits(void __iomem
-> *base, u32 offset, u32 val)
->  	.start_ctrl		= SERDES_START | PCS_START,
->  	.pwrdn_ctrl		= SW_PWRDN,
->  	.mask_pcs_ready		= PHYSTATUS,
-> +	.has_sw_rst		= true,
->  };
-> 
->  /* list of resets */
-> @@ -740,6 +826,7 @@ static inline void qphy_clrbits(void __iomem
-> *base, u32 offset, u32 val)
->  	.has_pwrdn_delay	= true,
->  	.pwrdn_delay_min	= 995,		/* us */
->  	.pwrdn_delay_max	= 1005,		/* us */
-> +	.has_sw_rst		= true,
->  };
-> 
->  static const struct qmp_phy_cfg qmp_v3_usb3phy_cfg = {
-> @@ -772,6 +859,30 @@ static inline void qphy_clrbits(void __iomem
-> *base, u32 offset, u32 val)
->  	.has_phy_dp_com_ctrl	= true,
->  	.tx_b_lane_offset	= 0x400,
->  	.rx_b_lane_offset	= 0x400,
-> +	.has_sw_rst		= true,
-> +};
-> +
-> +static const struct qmp_phy_cfg sdm845_ufsphy_cfg = {
-> +	.type			= PHY_TYPE_UFS,
-> +	.nlanes			= 2,
-> +
-> +	.serdes_tbl		= sdm845_ufsphy_serdes_tbl,
-> +	.serdes_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_serdes_tbl),
-> +	.tx_tbl			= sdm845_ufsphy_tx_tbl,
-> +	.tx_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_tx_tbl),
-> +	.rx_tbl			= sdm845_ufsphy_rx_tbl,
-> +	.rx_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_rx_tbl),
-> +	.pcs_tbl		= sdm845_ufsphy_pcs_tbl,
-> +	.pcs_tbl_num		= ARRAY_SIZE(sdm845_ufsphy_pcs_tbl),
-> +	.clk_list		= sdm845_ufs_phy_clk_l,
-> +	.num_clks		= ARRAY_SIZE(sdm845_ufs_phy_clk_l),
-> +	.vreg_list		= sdm845_phy_vreg_l,
-> +	.num_vregs		= ARRAY_SIZE(sdm845_phy_vreg_l),
-> +	.regs			= sdm845_ufsphy_regs_layout,
-> +
-> +	.start_ctrl		= SERDES_START,
-> +	.pwrdn_ctrl		= SW_PWRDN,
-> +	.mask_pcs_ready		= PCS_READY,
->  };
-> 
->  static void qcom_qmp_phy_configure(void __iomem *base,
-> @@ -998,7 +1109,8 @@ static int qcom_qmp_phy_init(struct phy *phy)
->  		usleep_range(cfg->pwrdn_delay_min, cfg->pwrdn_delay_max);
-> 
->  	/* Pull PHY out of reset state */
-> -	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-> +	if (cfg->has_sw_rst)
-> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->  	if (cfg->has_phy_dp_com_ctrl)
->  		qphy_clrbits(dp_com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
-> 
-> @@ -1036,7 +1148,8 @@ static int qcom_qmp_phy_exit(struct phy *phy)
->  	clk_disable_unprepare(qphy->pipe_clk);
-> 
->  	/* PHY reset */
-> -	qphy_setbits(qphy->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-> +	if (cfg->has_sw_rst)
-> +		qphy_setbits(qphy->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-> 
->  	/* stop SerDes and Phy-Coding-Sublayer */
->  	qphy_clrbits(qphy->pcs, cfg->regs[QPHY_START_CTRL], cfg->start_ctrl);
-> @@ -1383,6 +1496,9 @@ int qcom_qmp_phy_create(struct device *dev,
-> struct device_node *np, int id)
->  	}, {
->  		.compatible = "qcom,qmp-v3-usb3-phy",
->  		.data = &qmp_v3_usb3phy_cfg,
-> +	}, {
-> +		.compatible = "qcom,sdm845-qmp-ufs-phy",
-> +		.data = &sdm845_ufsphy_cfg,
->  	},
->  	{ },
->  };
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.h
-> b/drivers/phy/qualcomm/phy-qcom-qmp.h
-> index d1c6905..ea4b4dc 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp.h
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.h
-> @@ -184,6 +184,8 @@
->  #define QSERDES_V3_COM_VCO_TUNE2_MODE0			0x0f8
->  #define QSERDES_V3_COM_VCO_TUNE1_MODE1			0x0fc
->  #define QSERDES_V3_COM_VCO_TUNE2_MODE1			0x100
-> +#define QSERDES_V3_COM_VCO_TUNE_INITVAL1		0x104
-> +#define QSERDES_V3_COM_VCO_TUNE_INITVAL2		0x108
->  #define QSERDES_V3_COM_VCO_TUNE_TIMER1			0x11c
->  #define QSERDES_V3_COM_VCO_TUNE_TIMER2			0x120
->  #define QSERDES_V3_COM_CLK_SELECT			0x138
-> @@ -211,8 +213,13 @@
->  /* Only for QMP V3 PHY - RX registers */
->  #define QSERDES_V3_RX_UCDR_SO_GAIN_HALF			0x00c
->  #define QSERDES_V3_RX_UCDR_SO_GAIN			0x014
-> +#define QSERDES_V3_RX_UCDR_SVS_SO_GAIN_HALF		0x024
-> +#define QSERDES_V3_RX_UCDR_SVS_SO_GAIN_QUARTER		0x028
-> +#define QSERDES_V3_RX_UCDR_SVS_SO_GAIN			0x02c
->  #define QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN		0x030
->  #define QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE	0x034
-> +#define QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW		0x03c
-> +#define QSERDES_V3_RX_UCDR_PI_CONTROLS			0x044
->  #define QSERDES_V3_RX_RX_TERM_BW			0x07c
->  #define QSERDES_V3_RX_RX_EQ_GAIN2_LSB			0x0c8
->  #define QSERDES_V3_RX_RX_EQ_GAIN2_MSB			0x0cc
-> @@ -272,6 +279,7 @@
->  #define QPHY_V3_PCS_FLL_CNT_VAL_L			0x0cc
->  #define QPHY_V3_PCS_FLL_CNT_VAL_H_TOL			0x0d0
->  #define QPHY_V3_PCS_FLL_MAN_CODE			0x0d4
-> +#define QPHY_V3_PCS_MULTI_LANE_CTRL1			0x1c4
->  #define QPHY_V3_PCS_RX_SIGDET_LVL			0x1d8
-> 
->  /* Only for QMP V3 PHY - PCS_MISC registers */
+On Mon, Mar 19, 2018 at 04:22:55PM -0700, Matthias Kaehlcke wrote:
+> arch/x86/mm/pti.o: warning: objtool: pti_init() falls through to next
+> function pti_user_pagetable_walk_pmd()
+> s/debugfs/file.o: warning: objtool: full_proxy_llseek() falls through to next function full_proxy_read()
+> fs/debugfs/file.o: warning: objtool: full_proxy_read() falls through to next function full_proxy_write()
+> fs/debugfs/file.o: warning: objtool: full_proxy_write() falls through to next function full_proxy_poll()
+> fs/debugfs/file.o: warning: objtool: full_proxy_poll() falls through to next function full_proxy_unlocked_ioctl()
+> fs/debugfs/file.o: warning: objtool: full_proxy_unlocked_ioctl() falls
+> through to next function fops_u8_open()
+
+Ok, I did a little more digging.  Surprise, these objtool warnings are
+actually correct.  Somehow the WARN macros are causing Clang to produce
+bad code.  In some cases, Clang is assuming that a WARN is "noreturn",
+i.e. that the UD2 doesn't return from the exception.
+
+As an example, here's the full_proxy_llseek() function and its compiled
+code:
+
+#define FULL_PROXY_FUNC(name, ret_type, filp, proto, args)		\
+static ret_type full_proxy_ ## name(proto)				\
+{									\
+	struct dentry *dentry = F_DENTRY(filp);			\
+	const struct file_operations *real_fops;			\
+	ret_type r;							\
+									\
+	r = debugfs_file_get(dentry);					\
+	if (unlikely(r))						\
+		return r;						\
+	real_fops = debugfs_real_fops(filp);				\
+	r = real_fops->name(args);					\
+	debugfs_file_put(dentry);					\
+	return r;							\
+}
+
+FULL_PROXY_FUNC(llseek, loff_t, filp,
+		PROTO(struct file *filp, loff_t offset, int whence),
+		ARGS(filp, offset, whence));
+
+
+0000000000000ca0 <full_proxy_llseek>:
+     ca0:       55                      push   %rbp
+     ca1:       41 57                   push   %r15
+     ca3:       41 56                   push   %r14
+     ca5:       53                      push   %rbx
+     ca6:       48 83 ec 10             sub    $0x10,%rsp
+     caa:       41 89 d6                mov    %edx,%r14d
+     cad:       49 89 f7                mov    %rsi,%r15
+     cb0:       48 89 fd                mov    %rdi,%rbp
+     cb3:       65 48 8b 04 25 28 00    mov    %gs:0x28,%rax
+     cba:       00 00
+     cbc:       48 89 44 24 08          mov    %rax,0x8(%rsp)
+     cc1:       48 8b 5d 18             mov    0x18(%rbp),%rbx
+     cc5:       48 89 df                mov    %rbx,%rdi
+     cc8:       e8 00 00 00 00          callq  ccd <full_proxy_llseek+0x2d>
+                        cc9: R_X86_64_PC32      debugfs_file_get-0x4
+     ccd:       85 c0                   test   %eax,%eax
+     ccf:       75 65                   jne    d36 <full_proxy_llseek+0x96>
+     cd1:       48 8b 45 18             mov    0x18(%rbp),%rax
+     cd5:       48 8b 40 78             mov    0x78(%rax),%rax
+     cd9:       a8 01                   test   $0x1,%al
+     cdb:       75 63                   jne    d40 <full_proxy_llseek+0xa0>
+     ...
+     d40:       0f 0b                   ud2
+     d42:       0f 1f 40 00             nopl   0x0(%rax)
+     d46:       66 2e 0f 1f 84 00 00    nopw   %cs:0x0(%rax,%rax,1)
+     d4d:       00 00 00
+
+0000000000000d50 <full_proxy_read>:
+
+
+After the debugfs_file_get() call, the debugfs_real_fops() call is
+inlined.  Here it is:
+
+const struct file_operations *debugfs_real_fops(const struct file *filp)
+{
+	struct debugfs_fsdata *fsd = F_DENTRY(filp)->d_fsdata;
+
+	if ((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT) {
+		/*
+		 * Urgh, we've been called w/o a protecting
+		 * debugfs_file_get().
+		 */
+		WARN_ON(1);
+		return NULL;
+	}
+
+	return fsd->real_fops;
+}
+
+The WARN_ON() is the UD2 at offset d40.  Notice that, as objtool found,
+it just falls through to the next function instead of "returning" to
+full_proxy_llseek().
+
+
+At first I thought this might be some kind of "optimization", since, if
+you look closely, you'll see that the warning can never happen in this
+situation.  But no, I downloaded the Clang binary, changed the 
+
+  if ((unsigned long)fsd & DEBUGFS_FSDATA_IS_REAL_FOPS_BIT) /* DEBUGFS_FSDATA_IS_REAL_FOPS_BIT == 1 */
+
+to
+
+  if ((unsigned long)fsd & 0x2)
+
+and still got the same issue.
+
+
+Then I figured that Clang must be peeking into the inline asm, and is
+assuming that UD2 is a dead end.  But no, I changed ASM_UD2 to a 2-byte
+NOP, and got the same issue.
+
+
+So unless I'm missing some "undefined behavior", this looks like a Clang
+bug to me.  Somehow it doesn't like the WARN macros (but apparently only
+in a small number of cases).
+
+-- 
+Josh
