@@ -1,66 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754363AbeCUXZQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 19:25:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42044 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754328AbeCUXZM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:25:12 -0400
-Date: Wed, 21 Mar 2018 16:25:07 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Jonathan Woithe <jwoithe@just42.net>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] fujitsu-laptop: Consistent naming of constants
-Message-ID: <20180321232507.GA24138@fury>
-References: <20180227211539.5708-1-kernel@kempniu.pl>
+        id S1754140AbeCUXaV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 19:30:21 -0400
+Received: from mga17.intel.com ([192.55.52.151]:32097 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753980AbeCUXaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 19:30:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
+   d="scan'208";a="27773929"
+Subject: Re: [PATCH] x86/speculation: Fill the RSB on context switch also on
+ non-IBPB CPUs
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>
+References: <9eb945bd-f77e-0301-d977-d1acf931b19d@maciej.szmigiero.name>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>, Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, thomas.lendacky@amd.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <757282b8-8b59-bcc6-1f6b-3383ae8a8575@intel.com>
+Date: Wed, 21 Mar 2018 16:30:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180227211539.5708-1-kernel@kempniu.pl>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <9eb945bd-f77e-0301-d977-d1acf931b19d@maciej.szmigiero.name>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 27, 2018 at 10:15:32PM +0100, Michał Kępień wrote:
-> This patch series is an attempt to organize all the named constants used
-> throughout fujitsu-laptop so that their names more clearly convey their
-> purpose: a set of prefixes is introduced to "map" constant names to
-> call_fext_func() parameters.
+On 03/20/2018 04:17 AM, Maciej S. Szmigiero wrote:
+> Since it is unlikely that existing RSB entries from the previous task match
+> the new task call stack we can use the existing unconditional
+> RSB-filling-on-context-switch infrastructure to protect against such
+> userspace-to-userspace attacks.
 > 
-> The chosen constant naming patterns are a compromise between readability
-> and enabling longer conditional expressions to fit into the 80-character
-> line length limit.  Some changes (like those in patches 4/7 and 5/7) may
-> be perceived as bikeshedding, so please just think of them as proposals,
-> not fixes.
+> This patch brings a change in behavior only for the following CPU types:
+> * Intel pre-Skylake CPUs without updated microcode,
+> * AMD Family 15h model >60h, Family 17h CPUs without updated microcode.
 > 
-> Finally, patch 7/7 again [1] proposes a set of helper functions which
-> seem to be making quite a difference in terms of code readability in
-> certain places (especially in long conditional expressions).  YMMV,
-> though, feel free to disagree.
-> 
-> This patch series should be applied on top of for-next as it builds on
-> the previous patch series I submitted.
-> 
-> [1] https://www.spinics.net/lists/platform-driver-x86/msg11633.html
-> 
->  drivers/platform/x86/fujitsu-laptop.c | 228 +++++++++++++++++++---------------
->  1 file changed, 127 insertions(+), 101 deletions(-)
+> Other CPU types either already do the RSB filling on context switch for
+> other reasons or do support IBPB for more complete userspace-to-userspace
+> protection.
 
-What I see here is an agreement on a simple integer listing for patch 1/7 per
-Andy's latest reply. 7/7 appears to address Andy's concerns in 6/7. I agree they
-KEY vs EVENT_HK is a bit of bikeshedding - but I don't have a preference and I
-think overall the code is more readable for this series.
+I think I misunderstood your reasoning a bit.  Let me see if I can
+restate the problem a bit.
 
-Based on feedback on a couple of the patches, a respin appears to be pending, so
-I'm marking this series as "changes requested" and will await the v2.
+IBPB provides provides userspace-to-userspace protection because it
+prevents all indirect branch predictions after the barrier from being
+controlled by software executed before the barrier.  We only use IBPB
+for KVM and when processes clear their dumpable flag.
 
-Thanks,
+You're saying that, even if we don't have IBPB, we can do *some*
+userspace-to-userspace protection with RSB manipulation.  The RSB
+manipulation obviously only helps 'RET' instructions and not JMP/CALL,
+but it does do *something* useful.
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+Is that right?
+
+Do you really want this behavior on all context switches?  We don't do
+IBPB on all context switches, only the ones where we are switching *to*
+a non-dumpable process.
+
+Do you perhaps want to do RSB manipulation in lieu of IBPB when
+switching *to* a non-dumpable process and IBPB is not available?
