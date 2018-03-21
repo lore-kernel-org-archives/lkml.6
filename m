@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753237AbeCUUEO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 16:04:14 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:45424 "EHLO
+        id S1753463AbeCUUEt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 16:04:49 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:45548 "EHLO
         mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753369AbeCUUEE (ORCPT
+        with ESMTP id S1753271AbeCUUED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 16:04:04 -0400
+        Wed, 21 Mar 2018 16:04:03 -0400
 Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
         reason="pass (just generated, assumed good)" header.d=micronovasrl.com
 X-Spam-Flag: NO
@@ -19,9 +19,9 @@ Cc: David Airlie <airlied@linux.ie>,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org,
         Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH 7/7] ARM: dts: sun7i: Add dts file for the A20-linova1-7 HMI
-Date: Wed, 21 Mar 2018 21:03:13 +0100
-Message-Id: <1521662593-25468-7-git-send-email-giulio.benetti@micronovasrl.com>
+Subject: [PATCH 6/7] ARM: dts: sun7i: Add dts file for the A20-linova1-4_3 HMI
+Date: Wed, 21 Mar 2018 21:03:12 +0100
+Message-Id: <1521662593-25468-6-git-send-email-giulio.benetti@micronovasrl.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
 References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
@@ -29,8 +29,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A20-Linova1-7 HMI, also called Q027_2_F which is printed on production
-label, is an industrial Human Machine Interface.
+The A20-Linova1-4_3 HMI, also called Q027_2_A which is printed on
+production label, is an industrial Human Machine Interface.
 It features:
 - 512MB DDR RAM
 - 1 Sd-card >= 4GB
@@ -40,7 +40,7 @@ It features:
 - 1 Input for LiPo
 - 1 Relay to signal absence of power supply
 - 1 External Rtc with 56 bytes of ram + CR2032 battery
-- 1 7" 24-bits Tft 800x480 with PCap on
+- 1 4.3" 24-bits Tft 480x272 with PCap on
 - 1 Mono audio 1-watt amplifier
 - 1 RS485 port
 - 1 Power On Line through +12Vdc reaching 57.600baud,
@@ -55,44 +55,45 @@ umounted features as requested by customers.
 
 Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 ---
- .../devicetree/bindings/arm/micronova.txt          |   4 +
+ .../devicetree/bindings/arm/micronova.txt          |   6 +
  arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/sun7i-a20-linova1-ctp-7i.dts     | 192 +++++++++++++++++++++
- 3 files changed, 197 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun7i-a20-linova1-ctp-7i.dts
+ arch/arm/boot/dts/sun7i-a20-linova1-ctp-4_3i.dts   | 192 +++++++++++++++++++++
+ 3 files changed, 199 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/micronova.txt
+ create mode 100644 arch/arm/boot/dts/sun7i-a20-linova1-ctp-4_3i.dts
 
 diff --git a/Documentation/devicetree/bindings/arm/micronova.txt b/Documentation/devicetree/bindings/arm/micronova.txt
-index 35c4127..9f5ac72 100644
---- a/Documentation/devicetree/bindings/arm/micronova.txt
+new file mode 100644
+index 0000000..35c4127
+--- /dev/null
 +++ b/Documentation/devicetree/bindings/arm/micronova.txt
-@@ -4,3 +4,7 @@ Micronova Device Tree Bindings
- A20-LiNova1-4_3 HMI
- Required root node properties:
-     - compatible = "micronova,a20-linova1-ctp-4_3i", "allwinner,sun7i-a20";
+@@ -0,0 +1,6 @@
++Micronova Device Tree Bindings
++---------------------------
 +
-+A20-LiNova1-7 HMI
++A20-LiNova1-4_3 HMI
 +Required root node properties:
-+    - compatible = "micronova,a20-linova1-ctp-7i", "allwinner,sun7i-a20";
++    - compatible = "micronova,a20-linova1-ctp-4_3i", "allwinner,sun7i-a20";
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index c45a4f25..eafa7cb 100644
+index ade7a38..c45a4f25 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -942,6 +942,7 @@ dtb-$(CONFIG_MACH_SUN7I) += \
+@@ -941,6 +941,7 @@ dtb-$(CONFIG_MACH_SUN7I) += \
+ 	sun7i-a20-lamobo-r1.dtb \
  	sun7i-a20-m3.dtb \
  	sun7i-a20-mk808c.dtb \
- 	sun7i-a20-linova1-ctp-4_3i.dtb\
-+	sun7i-a20-linova1-ctp-7i.dtb\
++	sun7i-a20-linova1-ctp-4_3i.dtb\
  	sun7i-a20-olimex-som-evb.dtb \
  	sun7i-a20-olinuxino-lime.dtb \
  	sun7i-a20-olinuxino-lime2.dtb \
-diff --git a/arch/arm/boot/dts/sun7i-a20-linova1-ctp-7i.dts b/arch/arm/boot/dts/sun7i-a20-linova1-ctp-7i.dts
+diff --git a/arch/arm/boot/dts/sun7i-a20-linova1-ctp-4_3i.dts b/arch/arm/boot/dts/sun7i-a20-linova1-ctp-4_3i.dts
 new file mode 100644
-index 0000000..7fd0d98
+index 0000000..cd4ac73
 --- /dev/null
-+++ b/arch/arm/boot/dts/sun7i-a20-linova1-ctp-7i.dts
++++ b/arch/arm/boot/dts/sun7i-a20-linova1-ctp-4_3i.dts
 @@ -0,0 +1,192 @@
 +/*
-+ * This is based on sun7i-a20-linova1-ctp-7i.dts
++ * This is based on sun7i-a20-linova1-ctp-4_3i.dts
 + *
 + * Copyright 2014 - Hans de Goede <hdegoede@redhat.com>
 + * Copyright (c) 2014 FUKAUMI Naoki <naobsd@gmail.com>
@@ -145,8 +146,8 @@ index 0000000..7fd0d98
 +#include <dt-bindings/interrupt-controller/irq.h>
 +
 +/ {
-+	model = "Micronova srl LiNova1 CTP 7i";
-+	compatible = "micronova,a20-linova1-ctp-7i", "allwinner,sun7i-a20";
++	model = "Micronova srl LiNova1 CTP 4.3i";
++	compatible = "micronova,a20-linova1-ctp-4_3i", "allwinner,sun7i-a20";
 +
 +	aliases {
 +		serial0 = &uart0;
@@ -157,7 +158,7 @@ index 0000000..7fd0d98
 +	};
 +
 +	panel: panel {
-+		compatible = "cdtech,s070wv95-ct16", "simple-panel";
++		compatible = "cdtech,s043wq26h-ct7", "simple-panel";
 +		power-supply = <&reg_vcc3v3>;
 +		#address-cells = <1>;
 +		#size-cells = <0>;
@@ -205,13 +206,13 @@ index 0000000..7fd0d98
 +	status = "okay";
 +
 +	ft5x: touchscreen@38 {
-+		compatible = "edt,edt-ft5206";
++		compatible = "edt,edt-ft5306";
 +		reg = <0x38>;
 +		interrupt-parent = <&pio>;
 +		interrupts = <7 2 IRQ_TYPE_EDGE_FALLING>; /* PH2 */
 +		reset-gpios = <&pio 7 3 GPIO_ACTIVE_LOW>; /* PH3 */
-+		touchscreen-size-x = <800>;
-+		touchscreen-size-y = <480>;
++		touchscreen-size-x = <480>;
++		touchscreen-size-y = <272>;
 +	};
 +};
 +
