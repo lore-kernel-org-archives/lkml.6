@@ -1,112 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751633AbeCUIhy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:37:54 -0400
-Received: from mail-lf0-f49.google.com ([209.85.215.49]:32950 "EHLO
-        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbeCUIhs (ORCPT
+        id S1751828AbeCUIiw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:38:52 -0400
+Received: from mail-ot0-f179.google.com ([74.125.82.179]:42302 "EHLO
+        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751481AbeCUIir (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:37:48 -0400
-X-Google-Smtp-Source: AG47ELs6gJNHcLK5zJAjR4veYd38Qu6S0k/PKTrJecasQeJp/zCSwR2UkkYVckZnlD9vqs5FdSCzfQ==
-Subject: Re: [PATCH RESEND v2 1/2] drm/xen-front: Add support for Xen PV
- display frontend
-To: xen-devel@lists.xenproject.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Gustavo Padovan <gustavo@padovan.org>, Juergen Gross <jgross@suse.com>,
-        boris.ostrovsky@oracle.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
-References: <1520958066-22875-1-git-send-email-andr2000@gmail.com>
- <1520958066-22875-2-git-send-email-andr2000@gmail.com>
- <20180316082330.GF25297@phenom.ffwll.local>
- <b466004a-821e-60b7-787b-526e10a67505@gmail.com>
- <20180319135141.GK14155@phenom.ffwll.local>
- <0808bf3b-7301-cc28-1cb5-40a4c8aad5cc@gmail.com>
- <CAKMK7uFrCt026VfjyKA1TS6XcP=s4S-RX0hxtLXL53OmdjgHfw@mail.gmail.com>
- <7c4e0f8f-9ec0-e38b-7b37-264241df4ba5@gmail.com>
- <20180320134715.GT14155@phenom.ffwll.local>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <ee57d7c8-a2fc-445c-8ee4-03c426a93d53@gmail.com>
-Date: Wed, 21 Mar 2018 10:37:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 21 Mar 2018 04:38:47 -0400
+X-Google-Smtp-Source: AG47ELtBEVrY8gpk64fkpXIhEg4BJF9tNAXyBaiTo6Scg0LOeOy/1wLrz8PdLTBa5UalJlAGKfnM58AM8bl8zFtJs4w=
 MIME-Version: 1.0
-In-Reply-To: <20180320134715.GT14155@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <87tvta38lu.fsf@xmission.com>
+References: <cover.1512741134.git.dongsu@kinvolk.io> <878tbmf5vl.fsf@xmission.com>
+ <87po4rz4ui.fsf_-_@xmission.com> <87r2p287i8.fsf_-_@xmission.com>
+ <87ina6ntx0.fsf_-_@xmission.com> <CAOssrKebhX-nm06RAwep8HUUV4QpsAa=ZOgxdRyP=WF9p-=4Tw@mail.gmail.com>
+ <87tvta38lu.fsf@xmission.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Wed, 21 Mar 2018 09:38:46 +0100
+Message-ID: <CAOssrKf8_zhw+J_B59wkJ9zj-adRj_f3B4hDUq1CPSF30mX0nQ@mail.gmail.com>
+Subject: Re: [PATCH v9 0/4] fuse: mounts from non-init user namespaces
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/20/2018 03:47 PM, Daniel Vetter wrote:
-> On Tue, Mar 20, 2018 at 01:58:01PM +0200, Oleksandr Andrushchenko wrote:
->> On 03/19/2018 05:28 PM, Daniel Vetter wrote:
->>> There should be no difference between immediate removal and delayed
->>> removal of the drm_device from the xenbus pov. The lifetimes of the
->>> front-end (drm_device) and backend (the xen bus thing) are entirely
->>> decoupled:
->> Well, they are not decoupled for simplicity of handling,
->> please see below
->>> So for case 2 you only have 1 case:
->>>
->>> - drm_dev_unplug
->>> - tear down the entire xenbus backend completely
->>> - all xenbus access will be caught with drm_dev_entre/exit (well right
->>> now drm_dev_is_unplugged) checks, including any access to your private
->>> drm_device data
->>> - once drm_device->open_count == 0 the core will tear down the
->>> drm_device instance and call your optional drm_driver->release
->>> callback.
->>>
->>> So past drm_dev_unplug the drm_device is in zombie state and the only
->>> thing that will happen is a) it rejects all ioctls and anything else
->>> userspace might ask it to do and b) gets releases once the last
->>> userspace reference is gone.
->> I have re-worked the driver with this in mind [1]
->> So, I now use drm_dev_unplug and destroy the DRM device
->> on drm_driver.release.
->> In context of unplug work I also merged xen_drm_front_drv.c and
->> xen_drm_front.c as these are too coupled together now.
->>
->> Could you please take a look and tell me if this is what you mean?
->>> If the backend comes up again, you create a _new_ drm_device instance
->>> (while the other one is still in the process of eventually getting
->>> released).
->> We only have a single xenbus instance, so this way I'll need
->> to handle list of such zombies. For that reason I prefer to
->> wait until the DRM device is destroyed, telling the backend
->> to hold on until then (via going into XenbusStateReconfiguring state).
-> Why exactly do you need to keep track of your drm_devices from the xenbus?
-> Once unplugged, there should be no connection with the "hw" for your
-> device, in neither direction. Maybe I need to look again, but this still
-> smells funny and not like something you should ever do.
-Ok, probably new reworked code will make things cleaner and answer
-your concerns. I also removed some obsolete stuff, e.g. platform device,
-so this path became even cleaner now ;)
->> Another drawback of such approach is that I'll have different
->> minors at run-time, e.g. card0, card1, etc.
->> For software which has /dev/dri/card0 hardcoded it may be a problem.
->> But this is minor, IMO
-> Fix userspace :-)
+On Tue, Mar 20, 2018 at 7:27 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> Miklos Szeredi <mszeredi@redhat.com> writes:
+
+>> I did just one modification to "fuse: Fail all requests with invalid
+>> uids or gids": instead of zeroing out the context for the nofail case,
+>> continue to use the "_munged" variants. I don't think this hurts and
+>> is better for backward compatibility (I guess the only relevant use
+>> would be for debugging output, but we don't want to regress even for
+>> that if not necessary)
 >
-> But yeah unlikely this is a problem, hotplugging is fairly old thing.
+> Hmm...
 >
->>> In short, your driver code should never have a need to look at
->>> drm_device->open_count. I hope this explains it a bit better.
->>> -Daniel
->>>
->> Yes, you are correct: at [1] I am not touching drm_device->open_count
->> anymore and everything just happens synchronously
->> [1] https://github.com/andr2000/linux/commits/drm_tip_pv_drm_v3
-> Please just resend, makes it easier to comment inline.
-I need to wait for Xen community reviewers before resending, so this
-is why I hoped you can take a look before that, so I have a chance to
-address more of your comments in v4
-> -Daniel
-Thank you,
-Oleksandr
+> The thing is the failure doesn't come in the difference between the
+> _munged and the normal variants.  The difference between
+> munged and non-munged variants is how they handled failure ((uid16_t)-2)
+> aka 0xfffe for munged and -1 for the non-munged case.
+>
+> The failures are introduced by changing &init_user_ns to fc->user_ns.
+
+Right.
+
+> The operations in question are iop->flush and fuse_force_forget (on an
+> error).   I don't know what value having ids on those paths will do
+> they are operations that must succeed, and they should not change the
+> on-disk ids.  I was thinking saying the most privileged id was asking
+> for the oepration would seem to make sense.
+
+I don't think anybody should actually *care* about the id's in flush,
+but I'd still not change the current behavior for change's sake.
+
+>
+> With the munged variants we will get (uid16_t)-2 aka 0xfffe aka
+> nobody asking for the operation if things don't map.  In practice
+> the don't map case is new.
+>
+> Since the id's should not be looked at anyway I don't see it makes
+> much difference which ids we use so the munged case seems at least
+> plausible.
+>
+> It might be better to use the non-munghed variant and do:
+>         if (req->in.h.uid == (uid_t)-1)
+>                 req.in.h.uid = 0;
+>         if (req->in.h.gid == (gid_t)-1)
+>                 req.in.h.gid = 0;
+>
+> That might be less surprising to userspace.  As I don't think the
+> unmapped case has ever occurred in practice yet.
+
+Right, that would work too, but I don't think it actually matters, so
+unless you can think of an actual security issue arising from using
+the munged variants, I'd just leave it as it is.
+
+Thanks,
+Miklos
