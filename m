@@ -1,118 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751778AbeCUJYk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 05:24:40 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:38659 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751630AbeCUJYg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 05:24:36 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Paul Menzel <pmenzel+linux-media@molgen.mpg.de>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        it+linux-media@molgen.mpg.de,
-        Mario Limonciello <mario.limonciello@dell.com>
-Subject: Re: uvcvideo: Unknown video format,00000032-0002-0010-8000-00aa00389b71
-Date: Wed, 21 Mar 2018 11:25:42 +0200
-Message-ID: <2929738.Pf5m835D8F@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <2b332247-72f6-d9ad-306d-d900759ea5a8@molgen.mpg.de>
-References: <8f7d4aef-84f7-ae22-8adc-cba4fa881675@molgen.mpg.de> <6647791.pjJyibMGYG@avalon> <2b332247-72f6-d9ad-306d-d900759ea5a8@molgen.mpg.de>
+        id S1751736AbeCUJ1G (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 05:27:06 -0400
+Received: from verein.lst.de ([213.95.11.211]:41249 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751551AbeCUJ1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 05:27:04 -0400
+Date: Wed, 21 Mar 2018 10:27:02 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Steve Wise <swise@opengridcomputing.com>
+Subject: Re: [PATCH v3 11/11] nvmet: Optionally use PCI P2P memory
+Message-ID: <20180321092702.GC7098@lst.de>
+References: <20180312193525.2855-1-logang@deltatee.com> <20180312193525.2855-12-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180312193525.2855-12-logang@deltatee.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2L9Olxu024931
 
-Hi Paul,
+> +				  const char *page, size_t count)
+> +{
+> +	struct nvmet_port *port = to_nvmet_port(item);
+> +	struct device *dev;
+> +	struct pci_dev *p2p_dev = NULL;
+> +	bool use_p2pmem;
+> +
+> +	switch (page[0]) {
+> +	case 'y':
+> +	case 'Y':
+> +	case 'a':
+> +	case 'A':
+> +		use_p2pmem = true;
+> +		break;
+> +	case 'n':
+> +	case 'N':
+> +		use_p2pmem = false;
+> +		break;
+> +	default:
+> +		dev = bus_find_device_by_name(&pci_bus_type, NULL, page);
+> +		if (!dev) {
+> +			pr_err("No such PCI device: %s\n", page);
+> +			return -ENODEV;
+> +		}
+> +
+> +		use_p2pmem = true;
+> +		p2p_dev = to_pci_dev(dev);
+> +
+> +		if (!pci_has_p2pmem(p2p_dev)) {
+> +			pr_err("PCI device has no peer-to-peer memory: %s\n",
+> +			       page);
+> +			pci_dev_put(p2p_dev);
+> +			return -ENODEV;
+> +		}
+> +	}
 
-On Tuesday, 20 March 2018 18:46:24 EET Paul Menzel wrote:
-> On 03/20/18 14:30, Laurent Pinchart wrote:
-> > On Tuesday, 20 March 2018 14:20:14 EET Paul Menzel wrote:
-> >> On the Dell XPS 13 9370, Linux 4.16-rc6 outputs the messages below.
-> >> 
-> >> ```
-> 
-> […]
-> 
-> >> [    2.340736] input: Integrated_Webcam_HD: Integrate as
-> >> /devices/pci0000:00/0000:00:14.0/usb1/1-5/1-5:1.0/input/input9
-> >> [    2.341447] uvcvideo: Unknown video format
-> >> 00000032-0002-0010-8000-00aa00389b71 >> [    2.341450] uvcvideo: Found
-> >> UVC 1.00 device Integrated_Webcam_HD (0bda:58f4)
-> 
-> […]
-> 
-> >> ```
-> >> 
-> >> Please tell me, what I can do to improve the situation.
-> > 
-> > Some vendors routinely implement new formats without bothering to send a
-> > patch for the uvcvideo driver. It would be easy to do so, but it requires
-> > knowing which format is meant by the GUID. Most format GUIDs are of the
-> > form 32595559-0000-0010-8000-00aa00389b71 that starts with a 4CC, but
-> > that's not the case here.
-> 
-> I am adding Mario to the receiver list, though he is currently on vacation.
-> 
-> > Could you send me the output of
-> > 
-> > lsusb -v -d 0bda:58f4
-> > 
-> > running as root if possible ?
-> 
-> Sure, please find it attached.
+Yikes.  Shouldn't auto just be the normal yes case instead of this
+string parsing mess?
 
-Thank you.
+> +	if (rsp->req.sg != &rsp->cmd->inline_sg) {
+> +		if (rsp->req.p2p_dev)
+> +			pci_p2pmem_free_sgl(rsp->req.p2p_dev, rsp->req.sg,
+> +					    rsp->req.sg_cnt);
+> +		else
+> +			sgl_free(rsp->req.sg);
+> +	}
 
-Could you please try the following patch ?
+Can we factor this into a helper, as the other target drivers (fc for now,
+tcp soon) using sgl allocatins should share the code?
 
-commit 7b3dea984b380f5b4b5c1956a9c6c23966af2149
-Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date:   Wed Mar 21 11:16:40 2018 +0200
-
-    media: uvcvideo: Add KSMedia 8-bit IR format support
-    
-    Add support for the 8-bit IR format GUID defined in the Microsoft Kernel
-    Streaming Media API.
-    
-    Reported-by: Paul Menzel <pmenzel+linux-media@molgen.mpg.de>
-    Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 2469b49b2b30..3691d87ef869 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -99,6 +99,11 @@ static struct uvc_format_desc uvc_fmts[] = {
- 		.guid		= UVC_GUID_FORMAT_D3DFMT_L8,
- 		.fcc		= V4L2_PIX_FMT_GREY,
- 	},
-+	{
-+		.name		= "IR 8-bit (L8_IR)",
-+		.guid		= UVC_GUID_FORMAT_KSMEDIA_L8_IR,
-+		.fcc		= V4L2_PIX_FMT_GREY,
-+	},
- 	{
- 		.name		= "Greyscale 10-bit (Y10 )",
- 		.guid		= UVC_GUID_FORMAT_Y10,
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index be5cf179228b..6b955e0dd956 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -157,6 +157,9 @@
- #define UVC_GUID_FORMAT_D3DFMT_L8 \
- 	{0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, \
- 	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
-+#define UVC_GUID_FORMAT_KSMEDIA_L8_IR \
-+	{0x32, 0x00, 0x00, 0x00, 0x02, 0x00, 0x10, 0x00, \
-+	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
- 
- 
- /* ------------------------------------------------------------------------
-
--- 
-Regards,
-
-Laurent Pinchart
+(same for the alloc side)
