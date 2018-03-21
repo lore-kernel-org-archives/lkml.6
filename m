@@ -1,88 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751828AbeCUIiw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:38:52 -0400
-Received: from mail-ot0-f179.google.com ([74.125.82.179]:42302 "EHLO
-        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751481AbeCUIir (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:38:47 -0400
-X-Google-Smtp-Source: AG47ELtBEVrY8gpk64fkpXIhEg4BJF9tNAXyBaiTo6Scg0LOeOy/1wLrz8PdLTBa5UalJlAGKfnM58AM8bl8zFtJs4w=
+        id S1751587AbeCUIlT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:41:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48453 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751319AbeCUIlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 04:41:16 -0400
+Date: Wed, 21 Mar 2018 09:41:13 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH] mm/hugetlb: prevent hugetlb VMA to be misaligned
+Message-ID: <20180321084113.GD23100@dhcp22.suse.cz>
+References: <1521566754-30390-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <86240c1a-d1f1-0f03-855e-c5196762ec0a@oracle.com>
+ <0d24f817-303a-7b4d-4603-b2d14e4b391a@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <87tvta38lu.fsf@xmission.com>
-References: <cover.1512741134.git.dongsu@kinvolk.io> <878tbmf5vl.fsf@xmission.com>
- <87po4rz4ui.fsf_-_@xmission.com> <87r2p287i8.fsf_-_@xmission.com>
- <87ina6ntx0.fsf_-_@xmission.com> <CAOssrKebhX-nm06RAwep8HUUV4QpsAa=ZOgxdRyP=WF9p-=4Tw@mail.gmail.com>
- <87tvta38lu.fsf@xmission.com>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Wed, 21 Mar 2018 09:38:46 +0100
-Message-ID: <CAOssrKf8_zhw+J_B59wkJ9zj-adRj_f3B4hDUq1CPSF30mX0nQ@mail.gmail.com>
-Subject: Re: [PATCH v9 0/4] fuse: mounts from non-init user namespaces
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alban Crequy <alban@kinvolk.io>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Sargun Dhillon <sargun@sargun.me>, Dongsu Park <dongsu@kinvolk.io>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d24f817-303a-7b4d-4603-b2d14e4b391a@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 7:27 PM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
-> Miklos Szeredi <mszeredi@redhat.com> writes:
+On Tue 20-03-18 14:35:28, Mike Kravetz wrote:
+> On 03/20/2018 02:26 PM, Mike Kravetz wrote:
+> > Thanks Laurent!
+> > 
+> > This bug was introduced by 31383c6865a5.  Dan's changes for 31383c6865a5
+> > seem pretty straight forward.  It simply replaces an explicit check when
+> > splitting a vma to a new vm_ops split callout.  Unfortunately, mappings
+> > created via shmget/shmat have their vm_ops replaced.  Therefore, this
+> > split callout is never made.
+> > 
+> > The shm vm_ops do indirectly call the original vm_ops routines as needed.
+> > Therefore, I would suggest a patch something like the following instead.
+> > If we move forward with the patch, we should include Laurent's BUG output
+> > and perhaps test program in the commit message.
+> 
+> Sorry, patch in previous mail was a mess
+> 
+> >From 7a19414319c7937fd2757c27f936258f16c1f61d Mon Sep 17 00:00:00 2001
+> From: Mike Kravetz <mike.kravetz@oracle.com>
+> Date: Tue, 20 Mar 2018 13:56:57 -0700
+> Subject: [PATCH] shm: add split function to shm_vm_ops
+> 
+> The split function was added to vm_operations_struct to determine
+> if a mapping can be split.  This was mostly for device-dax and
+> hugetlbfs mappings which have specific alignment constraints.
+> 
+> mappings initiated via shmget/shmat have their original vm_ops
+> overwritten with shm_vm_ops.  shm_vm_ops functions will call back
+> to the original vm_ops if needed.  Add such a split function.
+> 
+> Fixes: 31383c6865a5 ("mm, hugetlbfs: introduce ->split() to vm_operations_struct)
+> Reported by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 
->> I did just one modification to "fuse: Fail all requests with invalid
->> uids or gids": instead of zeroing out the context for the nofail case,
->> continue to use the "_munged" variants. I don't think this hurts and
->> is better for backward compatibility (I guess the only relevant use
->> would be for debugging output, but we don't want to regress even for
->> that if not necessary)
->
-> Hmm...
->
-> The thing is the failure doesn't come in the difference between the
-> _munged and the normal variants.  The difference between
-> munged and non-munged variants is how they handled failure ((uid16_t)-2)
-> aka 0xfffe for munged and -1 for the non-munged case.
->
-> The failures are introduced by changing &init_user_ns to fc->user_ns.
+Yes this looks much better than the original hugetlb specific code in
+the generic vma code.
 
-Right.
+Please add the original VM_BUG_ON report to the changelog
 
-> The operations in question are iop->flush and fuse_force_forget (on an
-> error).   I don't know what value having ids on those paths will do
-> they are operations that must succeed, and they should not change the
-> on-disk ids.  I was thinking saying the most privileged id was asking
-> for the oepration would seem to make sense.
+Cc: stable
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-I don't think anybody should actually *care* about the id's in flush,
-but I'd still not change the current behavior for change's sake.
+> ---
+>  ipc/shm.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/ipc/shm.c b/ipc/shm.c
+> index 7acda23430aa..50e88fc060b1 100644
+> --- a/ipc/shm.c
+> +++ b/ipc/shm.c
+> @@ -386,6 +386,17 @@ static int shm_fault(struct vm_fault *vmf)
+>  	return sfd->vm_ops->fault(vmf);
+>  }
+>  
+> +static int shm_split(struct vm_area_struct *vma, unsigned long addr)
+> +{
+> +	struct file *file = vma->vm_file;
+> +	struct shm_file_data *sfd = shm_file_data(file);
+> +
+> +	if (sfd->vm_ops && sfd->vm_ops->split)
+> +		return sfd->vm_ops->split(vma, addr);
+> +
+> +	return 0;
+> +}
+> +
+>  #ifdef CONFIG_NUMA
+>  static int shm_set_policy(struct vm_area_struct *vma, struct mempolicy *new)
+>  {
+> @@ -510,6 +521,7 @@ static const struct vm_operations_struct shm_vm_ops = {
+>  	.open	= shm_open,	/* callback for a new vm-area open */
+>  	.close	= shm_close,	/* callback for when the vm-area is released */
+>  	.fault	= shm_fault,
+> +	.split	= shm_split,
+>  #if defined(CONFIG_NUMA)
+>  	.set_policy = shm_set_policy,
+>  	.get_policy = shm_get_policy,
+> -- 
+> 2.13.6
 
->
-> With the munged variants we will get (uid16_t)-2 aka 0xfffe aka
-> nobody asking for the operation if things don't map.  In practice
-> the don't map case is new.
->
-> Since the id's should not be looked at anyway I don't see it makes
-> much difference which ids we use so the munged case seems at least
-> plausible.
->
-> It might be better to use the non-munghed variant and do:
->         if (req->in.h.uid == (uid_t)-1)
->                 req.in.h.uid = 0;
->         if (req->in.h.gid == (gid_t)-1)
->                 req.in.h.gid = 0;
->
-> That might be less surprising to userspace.  As I don't think the
-> unmapped case has ever occurred in practice yet.
-
-Right, that would work too, but I don't think it actually matters, so
-unless you can think of an actual security issue arising from using
-the munged variants, I'd just leave it as it is.
-
-Thanks,
-Miklos
+-- 
+Michal Hocko
+SUSE Labs
