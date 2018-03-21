@@ -1,631 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeCUPOn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 11:14:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46760 "EHLO mail.bootlin.com"
+        id S1752624AbeCUPPK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 11:15:10 -0400
+Received: from mga11.intel.com ([192.55.52.93]:36754 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752186AbeCUPOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 11:14:42 -0400
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next v2] net: mvpp2: Don't use dynamic allocs for local variables
-Date: Wed, 21 Mar 2018 16:14:00 +0100
-Message-Id: <20180321151400.6658-1-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.11.0
+        id S1752594AbeCUPPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 11:15:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,340,1517904000";
+   d="scan'208";a="40944494"
+Reply-To: thor.thayer@linux.intel.com
+Subject: Re: [PATCH] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
+To: Marek Vasut <marek.vasut@gmail.com>, cyrille.pitchen@wedev4u.fr,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        boris.brezillon@bootlin.com, richard@nod.at
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1521485124-24882-1-git-send-email-thor.thayer@linux.intel.com>
+ <cfadfbab-70bd-cb1c-c9a6-446cefd87e9e@gmail.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
+Message-ID: <f95ed3e9-00cb-3d7a-f25b-7915ac607ee1@linux.intel.com>
+Date: Wed, 21 Mar 2018 10:15:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <cfadfbab-70bd-cb1c-c9a6-446cefd87e9e@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some helper functions that search for given entries in the TCAM filter
-on PPv2 controller make use of dynamically alloced temporary variables,
-allocated with GFP_KERNEL. These functions can be called in atomic
-context, and dynamic alloc is not really needed in these cases anyways.
+Hi Marek,
 
-This commit gets rid of dynamic allocs and use stack allocation in the
-following functions, and where they're used :
- - mvpp2_prs_flow_find
- - mvpp2_prs_vlan_find
- - mvpp2_prs_double_vlan_find
- - mvpp2_prs_mac_da_range_find
-
-For all these functions, instead of returning an temporary object
-representing the TCAM entry, we simply return the TCAM id that matches
-the requested entry.
-
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-V2: Remove unnecessary brackets, following Antoine Tenart's review.
-
- drivers/net/ethernet/marvell/mvpp2.c | 289 +++++++++++++++--------------------
- 1 file changed, 127 insertions(+), 162 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
-index 9bd35f2291d6..28e33e139178 100644
---- a/drivers/net/ethernet/marvell/mvpp2.c
-+++ b/drivers/net/ethernet/marvell/mvpp2.c
-@@ -1913,16 +1913,11 @@ static void mvpp2_prs_sram_offset_set(struct mvpp2_prs_entry *pe,
- }
- 
- /* Find parser flow entry */
--static struct mvpp2_prs_entry *mvpp2_prs_flow_find(struct mvpp2 *priv, int flow)
-+static int mvpp2_prs_flow_find(struct mvpp2 *priv, int flow)
- {
--	struct mvpp2_prs_entry *pe;
-+	struct mvpp2_prs_entry pe;
- 	int tid;
- 
--	pe = kzalloc(sizeof(*pe), GFP_KERNEL);
--	if (!pe)
--		return NULL;
--	mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_FLOWS);
--
- 	/* Go through the all entires with MVPP2_PRS_LU_FLOWS */
- 	for (tid = MVPP2_PRS_TCAM_SRAM_SIZE - 1; tid >= 0; tid--) {
- 		u8 bits;
-@@ -1931,17 +1926,16 @@ static struct mvpp2_prs_entry *mvpp2_prs_flow_find(struct mvpp2 *priv, int flow)
- 		    priv->prs_shadow[tid].lu != MVPP2_PRS_LU_FLOWS)
- 			continue;
- 
--		pe->index = tid;
--		mvpp2_prs_hw_read(priv, pe);
--		bits = mvpp2_prs_sram_ai_get(pe);
-+		pe.index = tid;
-+		mvpp2_prs_hw_read(priv, &pe);
-+		bits = mvpp2_prs_sram_ai_get(&pe);
- 
- 		/* Sram store classification lookup ID in AI bits [5:0] */
- 		if ((bits & MVPP2_PRS_FLOW_ID_MASK) == flow)
--			return pe;
-+			return tid;
- 	}
--	kfree(pe);
- 
--	return NULL;
-+	return -ENOENT;
- }
- 
- /* Return first free tcam index, seeking from start to end */
-@@ -2189,16 +2183,12 @@ static void mvpp2_prs_dsa_tag_ethertype_set(struct mvpp2 *priv, int port,
- }
- 
- /* Search for existing single/triple vlan entry */
--static struct mvpp2_prs_entry *mvpp2_prs_vlan_find(struct mvpp2 *priv,
--						   unsigned short tpid, int ai)
-+static int mvpp2_prs_vlan_find(struct mvpp2 *priv, unsigned short tpid, int ai)
- {
--	struct mvpp2_prs_entry *pe;
-+	struct mvpp2_prs_entry pe;
- 	int tid;
- 
--	pe = kzalloc(sizeof(*pe), GFP_KERNEL);
--	if (!pe)
--		return NULL;
--	mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_VLAN);
-+	memset(&pe, 0, sizeof(pe));
- 
- 	/* Go through the all entries with MVPP2_PRS_LU_VLAN */
- 	for (tid = MVPP2_PE_FIRST_FREE_TID;
-@@ -2210,19 +2200,19 @@ static struct mvpp2_prs_entry *mvpp2_prs_vlan_find(struct mvpp2 *priv,
- 		    priv->prs_shadow[tid].lu != MVPP2_PRS_LU_VLAN)
- 			continue;
- 
--		pe->index = tid;
-+		pe.index = tid;
- 
--		mvpp2_prs_hw_read(priv, pe);
--		match = mvpp2_prs_tcam_data_cmp(pe, 0, swab16(tpid));
-+		mvpp2_prs_hw_read(priv, &pe);
-+		match = mvpp2_prs_tcam_data_cmp(&pe, 0, swab16(tpid));
- 		if (!match)
- 			continue;
- 
- 		/* Get vlan type */
--		ri_bits = mvpp2_prs_sram_ri_get(pe);
-+		ri_bits = mvpp2_prs_sram_ri_get(&pe);
- 		ri_bits &= MVPP2_PRS_RI_VLAN_MASK;
- 
- 		/* Get current ai value from tcam */
--		ai_bits = mvpp2_prs_tcam_ai_get(pe);
-+		ai_bits = mvpp2_prs_tcam_ai_get(&pe);
- 		/* Clear double vlan bit */
- 		ai_bits &= ~MVPP2_PRS_DBL_VLAN_AI_BIT;
- 
-@@ -2231,33 +2221,30 @@ static struct mvpp2_prs_entry *mvpp2_prs_vlan_find(struct mvpp2 *priv,
- 
- 		if (ri_bits == MVPP2_PRS_RI_VLAN_SINGLE ||
- 		    ri_bits == MVPP2_PRS_RI_VLAN_TRIPLE)
--			return pe;
-+			return tid;
- 	}
--	kfree(pe);
- 
--	return NULL;
-+	return -ENOENT;
- }
- 
- /* Add/update single/triple vlan entry */
- static int mvpp2_prs_vlan_add(struct mvpp2 *priv, unsigned short tpid, int ai,
- 			      unsigned int port_map)
- {
--	struct mvpp2_prs_entry *pe;
-+	struct mvpp2_prs_entry pe;
- 	int tid_aux, tid;
- 	int ret = 0;
- 
--	pe = mvpp2_prs_vlan_find(priv, tpid, ai);
-+	tid = mvpp2_prs_vlan_find(priv, tpid, ai);
- 
--	if (!pe) {
-+	if (tid < 0) {
- 		/* Create new tcam entry */
- 		tid = mvpp2_prs_tcam_first_free(priv, MVPP2_PE_LAST_FREE_TID,
- 						MVPP2_PE_FIRST_FREE_TID);
- 		if (tid < 0)
- 			return tid;
- 
--		pe = kzalloc(sizeof(*pe), GFP_KERNEL);
--		if (!pe)
--			return -ENOMEM;
-+		memset(&pe, 0, sizeof(pe));
- 
- 		/* Get last double vlan tid */
- 		for (tid_aux = MVPP2_PE_LAST_FREE_TID;
-@@ -2268,49 +2255,47 @@ static int mvpp2_prs_vlan_add(struct mvpp2 *priv, unsigned short tpid, int ai,
- 			    priv->prs_shadow[tid_aux].lu != MVPP2_PRS_LU_VLAN)
- 				continue;
- 
--			pe->index = tid_aux;
--			mvpp2_prs_hw_read(priv, pe);
--			ri_bits = mvpp2_prs_sram_ri_get(pe);
-+			pe.index = tid_aux;
-+			mvpp2_prs_hw_read(priv, &pe);
-+			ri_bits = mvpp2_prs_sram_ri_get(&pe);
- 			if ((ri_bits & MVPP2_PRS_RI_VLAN_MASK) ==
- 			    MVPP2_PRS_RI_VLAN_DOUBLE)
- 				break;
- 		}
- 
--		if (tid <= tid_aux) {
--			ret = -EINVAL;
--			goto free_pe;
--		}
-+		if (tid <= tid_aux)
-+			return -EINVAL;
- 
--		memset(pe, 0, sizeof(*pe));
--		mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_VLAN);
--		pe->index = tid;
-+		memset(&pe, 0, sizeof(pe));
-+		mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_VLAN);
-+		pe.index = tid;
- 
--		mvpp2_prs_match_etype(pe, 0, tpid);
-+		mvpp2_prs_match_etype(&pe, 0, tpid);
- 
- 		/* VLAN tag detected, proceed with VID filtering */
--		mvpp2_prs_sram_next_lu_set(pe, MVPP2_PRS_LU_VID);
-+		mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_VID);
- 
- 		/* Clear all ai bits for next iteration */
--		mvpp2_prs_sram_ai_update(pe, 0, MVPP2_PRS_SRAM_AI_MASK);
-+		mvpp2_prs_sram_ai_update(&pe, 0, MVPP2_PRS_SRAM_AI_MASK);
- 
- 		if (ai == MVPP2_PRS_SINGLE_VLAN_AI) {
--			mvpp2_prs_sram_ri_update(pe, MVPP2_PRS_RI_VLAN_SINGLE,
-+			mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_VLAN_SINGLE,
- 						 MVPP2_PRS_RI_VLAN_MASK);
- 		} else {
- 			ai |= MVPP2_PRS_DBL_VLAN_AI_BIT;
--			mvpp2_prs_sram_ri_update(pe, MVPP2_PRS_RI_VLAN_TRIPLE,
-+			mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_VLAN_TRIPLE,
- 						 MVPP2_PRS_RI_VLAN_MASK);
- 		}
--		mvpp2_prs_tcam_ai_update(pe, ai, MVPP2_PRS_SRAM_AI_MASK);
-+		mvpp2_prs_tcam_ai_update(&pe, ai, MVPP2_PRS_SRAM_AI_MASK);
- 
--		mvpp2_prs_shadow_set(priv, pe->index, MVPP2_PRS_LU_VLAN);
-+		mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_VLAN);
-+	} else {
-+		mvpp2_prs_hw_read(priv, &pe);
- 	}
- 	/* Update ports' mask */
--	mvpp2_prs_tcam_port_map_set(pe, port_map);
-+	mvpp2_prs_tcam_port_map_set(&pe, port_map);
- 
--	mvpp2_prs_hw_write(priv, pe);
--free_pe:
--	kfree(pe);
-+	mvpp2_prs_hw_write(priv, &pe);
- 
- 	return ret;
- }
-@@ -2329,17 +2314,14 @@ static int mvpp2_prs_double_vlan_ai_free_get(struct mvpp2 *priv)
- }
- 
- /* Search for existing double vlan entry */
--static struct mvpp2_prs_entry *mvpp2_prs_double_vlan_find(struct mvpp2 *priv,
--							  unsigned short tpid1,
--							  unsigned short tpid2)
-+static int mvpp2_prs_double_vlan_find(struct mvpp2 *priv, unsigned short tpid1,
-+				      unsigned short tpid2)
- {
--	struct mvpp2_prs_entry *pe;
-+	struct mvpp2_prs_entry pe;
- 	int tid;
- 
--	pe = kzalloc(sizeof(*pe), GFP_KERNEL);
--	if (!pe)
--		return NULL;
--	mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_VLAN);
-+	memset(&pe, 0, sizeof(pe));
-+	mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_VLAN);
- 
- 	/* Go through the all entries with MVPP2_PRS_LU_VLAN */
- 	for (tid = MVPP2_PE_FIRST_FREE_TID;
-@@ -2351,22 +2333,21 @@ static struct mvpp2_prs_entry *mvpp2_prs_double_vlan_find(struct mvpp2 *priv,
- 		    priv->prs_shadow[tid].lu != MVPP2_PRS_LU_VLAN)
- 			continue;
- 
--		pe->index = tid;
--		mvpp2_prs_hw_read(priv, pe);
-+		pe.index = tid;
-+		mvpp2_prs_hw_read(priv, &pe);
- 
--		match = mvpp2_prs_tcam_data_cmp(pe, 0, swab16(tpid1))
--			&& mvpp2_prs_tcam_data_cmp(pe, 4, swab16(tpid2));
-+		match = mvpp2_prs_tcam_data_cmp(&pe, 0, swab16(tpid1)) &&
-+			mvpp2_prs_tcam_data_cmp(&pe, 4, swab16(tpid2));
- 
- 		if (!match)
- 			continue;
- 
--		ri_mask = mvpp2_prs_sram_ri_get(pe) & MVPP2_PRS_RI_VLAN_MASK;
-+		ri_mask = mvpp2_prs_sram_ri_get(&pe) & MVPP2_PRS_RI_VLAN_MASK;
- 		if (ri_mask == MVPP2_PRS_RI_VLAN_DOUBLE)
--			return pe;
-+			return tid;
- 	}
--	kfree(pe);
- 
--	return NULL;
-+	return -ENOENT;
- }
- 
- /* Add or update double vlan entry */
-@@ -2374,28 +2355,24 @@ static int mvpp2_prs_double_vlan_add(struct mvpp2 *priv, unsigned short tpid1,
- 				     unsigned short tpid2,
- 				     unsigned int port_map)
- {
--	struct mvpp2_prs_entry *pe;
-+	struct mvpp2_prs_entry pe;
- 	int tid_aux, tid, ai, ret = 0;
- 
--	pe = mvpp2_prs_double_vlan_find(priv, tpid1, tpid2);
-+	tid = mvpp2_prs_double_vlan_find(priv, tpid1, tpid2);
- 
--	if (!pe) {
-+	if (tid < 0) {
- 		/* Create new tcam entry */
- 		tid = mvpp2_prs_tcam_first_free(priv, MVPP2_PE_FIRST_FREE_TID,
- 				MVPP2_PE_LAST_FREE_TID);
- 		if (tid < 0)
- 			return tid;
- 
--		pe = kzalloc(sizeof(*pe), GFP_KERNEL);
--		if (!pe)
--			return -ENOMEM;
-+		memset(&pe, 0, sizeof(pe));
- 
- 		/* Set ai value for new double vlan entry */
- 		ai = mvpp2_prs_double_vlan_ai_free_get(priv);
--		if (ai < 0) {
--			ret = ai;
--			goto free_pe;
--		}
-+		if (ai < 0)
-+			return ai;
- 
- 		/* Get first single/triple vlan tid */
- 		for (tid_aux = MVPP2_PE_FIRST_FREE_TID;
-@@ -2406,46 +2383,45 @@ static int mvpp2_prs_double_vlan_add(struct mvpp2 *priv, unsigned short tpid1,
- 			    priv->prs_shadow[tid_aux].lu != MVPP2_PRS_LU_VLAN)
- 				continue;
- 
--			pe->index = tid_aux;
--			mvpp2_prs_hw_read(priv, pe);
--			ri_bits = mvpp2_prs_sram_ri_get(pe);
-+			pe.index = tid_aux;
-+			mvpp2_prs_hw_read(priv, &pe);
-+			ri_bits = mvpp2_prs_sram_ri_get(&pe);
- 			ri_bits &= MVPP2_PRS_RI_VLAN_MASK;
- 			if (ri_bits == MVPP2_PRS_RI_VLAN_SINGLE ||
- 			    ri_bits == MVPP2_PRS_RI_VLAN_TRIPLE)
- 				break;
- 		}
- 
--		if (tid >= tid_aux) {
--			ret = -ERANGE;
--			goto free_pe;
--		}
-+		if (tid >= tid_aux)
-+			return -ERANGE;
- 
--		memset(pe, 0, sizeof(*pe));
--		mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_VLAN);
--		pe->index = tid;
-+		memset(&pe, 0, sizeof(pe));
-+		mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_VLAN);
-+		pe.index = tid;
- 
- 		priv->prs_double_vlans[ai] = true;
- 
--		mvpp2_prs_match_etype(pe, 0, tpid1);
--		mvpp2_prs_match_etype(pe, 4, tpid2);
-+		mvpp2_prs_match_etype(&pe, 0, tpid1);
-+		mvpp2_prs_match_etype(&pe, 4, tpid2);
- 
--		mvpp2_prs_sram_next_lu_set(pe, MVPP2_PRS_LU_VLAN);
-+		mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_VLAN);
- 		/* Shift 4 bytes - skip outer vlan tag */
--		mvpp2_prs_sram_shift_set(pe, MVPP2_VLAN_TAG_LEN,
-+		mvpp2_prs_sram_shift_set(&pe, MVPP2_VLAN_TAG_LEN,
- 					 MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
--		mvpp2_prs_sram_ri_update(pe, MVPP2_PRS_RI_VLAN_DOUBLE,
-+		mvpp2_prs_sram_ri_update(&pe, MVPP2_PRS_RI_VLAN_DOUBLE,
- 					 MVPP2_PRS_RI_VLAN_MASK);
--		mvpp2_prs_sram_ai_update(pe, ai | MVPP2_PRS_DBL_VLAN_AI_BIT,
-+		mvpp2_prs_sram_ai_update(&pe, ai | MVPP2_PRS_DBL_VLAN_AI_BIT,
- 					 MVPP2_PRS_SRAM_AI_MASK);
- 
--		mvpp2_prs_shadow_set(priv, pe->index, MVPP2_PRS_LU_VLAN);
-+		mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_VLAN);
-+	} else {
-+		mvpp2_prs_hw_read(priv, &pe);
- 	}
- 
- 	/* Update ports' mask */
--	mvpp2_prs_tcam_port_map_set(pe, port_map);
--	mvpp2_prs_hw_write(priv, pe);
--free_pe:
--	kfree(pe);
-+	mvpp2_prs_tcam_port_map_set(&pe, port_map);
-+	mvpp2_prs_hw_write(priv, &pe);
-+
- 	return ret;
- }
- 
-@@ -3528,7 +3504,7 @@ static int mvpp2_prs_vid_range_find(struct mvpp2 *priv, int pmap, u16 vid,
- 		return tid;
- 	}
- 
--	return 0;
-+	return -ENOENT;
- }
- 
- /* Write parser entry for VID filtering */
-@@ -3551,7 +3527,7 @@ static int mvpp2_prs_vid_entry_add(struct mvpp2_port *port, u16 vid)
- 		shift = MVPP2_VLAN_TAG_LEN;
- 
- 	/* No such entry */
--	if (!tid) {
-+	if (tid < 0) {
- 		memset(&pe, 0, sizeof(pe));
- 
- 		/* Go through all entries from first to last in vlan range */
-@@ -3604,7 +3580,7 @@ static void mvpp2_prs_vid_entry_remove(struct mvpp2_port *port, u16 vid)
- 	tid = mvpp2_prs_vid_range_find(priv, (1 << port->id), vid, 0xfff);
- 
- 	/* No such entry */
--	if (tid)
-+	if (tid < 0)
- 		return;
- 
- 	mvpp2_prs_hw_inv(priv, tid);
-@@ -3771,18 +3747,13 @@ static bool mvpp2_prs_mac_range_equals(struct mvpp2_prs_entry *pe,
- }
- 
- /* Find tcam entry with matched pair <MAC DA, port> */
--static struct mvpp2_prs_entry *
-+static int
- mvpp2_prs_mac_da_range_find(struct mvpp2 *priv, int pmap, const u8 *da,
- 			    unsigned char *mask, int udf_type)
- {
--	struct mvpp2_prs_entry *pe;
-+	struct mvpp2_prs_entry pe;
- 	int tid;
- 
--	pe = kzalloc(sizeof(*pe), GFP_ATOMIC);
--	if (!pe)
--		return NULL;
--	mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_MAC);
--
- 	/* Go through the all entires with MVPP2_PRS_LU_MAC */
- 	for (tid = MVPP2_PE_MAC_RANGE_START;
- 	     tid <= MVPP2_PE_MAC_RANGE_END; tid++) {
-@@ -3793,17 +3764,16 @@ mvpp2_prs_mac_da_range_find(struct mvpp2 *priv, int pmap, const u8 *da,
- 		    (priv->prs_shadow[tid].udf != udf_type))
- 			continue;
- 
--		pe->index = tid;
--		mvpp2_prs_hw_read(priv, pe);
--		entry_pmap = mvpp2_prs_tcam_port_map_get(pe);
-+		pe.index = tid;
-+		mvpp2_prs_hw_read(priv, &pe);
-+		entry_pmap = mvpp2_prs_tcam_port_map_get(&pe);
- 
--		if (mvpp2_prs_mac_range_equals(pe, da, mask) &&
-+		if (mvpp2_prs_mac_range_equals(&pe, da, mask) &&
- 		    entry_pmap == pmap)
--			return pe;
-+			return tid;
- 	}
--	kfree(pe);
- 
--	return NULL;
-+	return -ENOENT;
- }
- 
- /* Update parser's mac da entry */
-@@ -3813,15 +3783,15 @@ static int mvpp2_prs_mac_da_accept(struct mvpp2_port *port, const u8 *da,
- 	unsigned char mask[ETH_ALEN] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
- 	struct mvpp2 *priv = port->priv;
- 	unsigned int pmap, len, ri;
--	struct mvpp2_prs_entry *pe;
-+	struct mvpp2_prs_entry pe;
- 	int tid;
- 
- 	/* Scan TCAM and see if entry with this <MAC DA, port> already exist */
--	pe = mvpp2_prs_mac_da_range_find(priv, BIT(port->id), da, mask,
--					 MVPP2_PRS_UDF_MAC_DEF);
-+	tid = mvpp2_prs_mac_da_range_find(priv, BIT(port->id), da, mask,
-+					  MVPP2_PRS_UDF_MAC_DEF);
- 
- 	/* No such entry */
--	if (!pe) {
-+	if (tid < 0) {
- 		if (!add)
- 			return 0;
- 
-@@ -3833,39 +3803,39 @@ static int mvpp2_prs_mac_da_accept(struct mvpp2_port *port, const u8 *da,
- 		if (tid < 0)
- 			return tid;
- 
--		pe = kzalloc(sizeof(*pe), GFP_ATOMIC);
--		if (!pe)
--			return -ENOMEM;
--		mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_MAC);
--		pe->index = tid;
-+		memset(&pe, 0, sizeof(pe));
-+
-+		pe.index = tid;
- 
- 		/* Mask all ports */
--		mvpp2_prs_tcam_port_map_set(pe, 0);
-+		mvpp2_prs_tcam_port_map_set(&pe, 0);
-+	} else {
-+		mvpp2_prs_hw_read(priv, &pe);
- 	}
- 
-+	mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_MAC);
-+
- 	/* Update port mask */
--	mvpp2_prs_tcam_port_set(pe, port->id, add);
-+	mvpp2_prs_tcam_port_set(&pe, port->id, add);
- 
- 	/* Invalidate the entry if no ports are left enabled */
--	pmap = mvpp2_prs_tcam_port_map_get(pe);
-+	pmap = mvpp2_prs_tcam_port_map_get(&pe);
- 	if (pmap == 0) {
--		if (add) {
--			kfree(pe);
-+		if (add)
- 			return -EINVAL;
--		}
--		mvpp2_prs_hw_inv(priv, pe->index);
--		priv->prs_shadow[pe->index].valid = false;
--		kfree(pe);
-+
-+		mvpp2_prs_hw_inv(priv, pe.index);
-+		priv->prs_shadow[pe.index].valid = false;
- 		return 0;
- 	}
- 
- 	/* Continue - set next lookup */
--	mvpp2_prs_sram_next_lu_set(pe, MVPP2_PRS_LU_DSA);
-+	mvpp2_prs_sram_next_lu_set(&pe, MVPP2_PRS_LU_DSA);
- 
- 	/* Set match on DA */
- 	len = ETH_ALEN;
- 	while (len--)
--		mvpp2_prs_tcam_data_byte_set(pe, len, da[len], 0xff);
-+		mvpp2_prs_tcam_data_byte_set(&pe, len, da[len], 0xff);
- 
- 	/* Set result info bits */
- 	if (is_broadcast_ether_addr(da)) {
-@@ -3879,21 +3849,19 @@ static int mvpp2_prs_mac_da_accept(struct mvpp2_port *port, const u8 *da,
- 			ri |= MVPP2_PRS_RI_MAC_ME_MASK;
- 	}
- 
--	mvpp2_prs_sram_ri_update(pe, ri, MVPP2_PRS_RI_L2_CAST_MASK |
-+	mvpp2_prs_sram_ri_update(&pe, ri, MVPP2_PRS_RI_L2_CAST_MASK |
- 				 MVPP2_PRS_RI_MAC_ME_MASK);
--	mvpp2_prs_shadow_ri_set(priv, pe->index, ri, MVPP2_PRS_RI_L2_CAST_MASK |
-+	mvpp2_prs_shadow_ri_set(priv, pe.index, ri, MVPP2_PRS_RI_L2_CAST_MASK |
- 				MVPP2_PRS_RI_MAC_ME_MASK);
- 
- 	/* Shift to ethertype */
--	mvpp2_prs_sram_shift_set(pe, 2 * ETH_ALEN,
-+	mvpp2_prs_sram_shift_set(&pe, 2 * ETH_ALEN,
- 				 MVPP2_PRS_SRAM_OP_SEL_SHIFT_ADD);
- 
- 	/* Update shadow table and hw entry */
--	priv->prs_shadow[pe->index].udf = MVPP2_PRS_UDF_MAC_DEF;
--	mvpp2_prs_shadow_set(priv, pe->index, MVPP2_PRS_LU_MAC);
--	mvpp2_prs_hw_write(priv, pe);
--
--	kfree(pe);
-+	priv->prs_shadow[pe.index].udf = MVPP2_PRS_UDF_MAC_DEF;
-+	mvpp2_prs_shadow_set(priv, pe.index, MVPP2_PRS_LU_MAC);
-+	mvpp2_prs_hw_write(priv, &pe);
- 
- 	return 0;
- }
-@@ -4014,13 +3982,13 @@ static int mvpp2_prs_tag_mode_set(struct mvpp2 *priv, int port, int type)
- /* Set prs flow for the port */
- static int mvpp2_prs_def_flow(struct mvpp2_port *port)
- {
--	struct mvpp2_prs_entry *pe;
-+	struct mvpp2_prs_entry pe;
- 	int tid;
- 
--	pe = mvpp2_prs_flow_find(port->priv, port->id);
-+	tid = mvpp2_prs_flow_find(port->priv, port->id);
- 
- 	/* Such entry not exist */
--	if (!pe) {
-+	if (tid < 0) {
- 		/* Go through the all entires from last to first */
- 		tid = mvpp2_prs_tcam_first_free(port->priv,
- 						MVPP2_PE_LAST_FREE_TID,
-@@ -4028,24 +3996,21 @@ static int mvpp2_prs_def_flow(struct mvpp2_port *port)
- 		if (tid < 0)
- 			return tid;
- 
--		pe = kzalloc(sizeof(*pe), GFP_KERNEL);
--		if (!pe)
--			return -ENOMEM;
--
--		mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_FLOWS);
--		pe->index = tid;
-+		pe.index = tid;
- 
- 		/* Set flow ID*/
--		mvpp2_prs_sram_ai_update(pe, port->id, MVPP2_PRS_FLOW_ID_MASK);
--		mvpp2_prs_sram_bits_set(pe, MVPP2_PRS_SRAM_LU_DONE_BIT, 1);
-+		mvpp2_prs_sram_ai_update(&pe, port->id, MVPP2_PRS_FLOW_ID_MASK);
-+		mvpp2_prs_sram_bits_set(&pe, MVPP2_PRS_SRAM_LU_DONE_BIT, 1);
- 
- 		/* Update shadow table */
--		mvpp2_prs_shadow_set(port->priv, pe->index, MVPP2_PRS_LU_FLOWS);
-+		mvpp2_prs_shadow_set(port->priv, pe.index, MVPP2_PRS_LU_FLOWS);
-+	} else {
-+		mvpp2_prs_hw_read(port->priv, &pe);
- 	}
- 
--	mvpp2_prs_tcam_port_map_set(pe, (1 << port->id));
--	mvpp2_prs_hw_write(port->priv, pe);
--	kfree(pe);
-+	mvpp2_prs_tcam_lu_set(&pe, MVPP2_PRS_LU_FLOWS);
-+	mvpp2_prs_tcam_port_map_set(&pe, (1 << port->id));
-+	mvpp2_prs_hw_write(port->priv, &pe);
- 
- 	return 0;
- }
--- 
-2.11.0
+On 03/19/2018 05:33 PM, Marek Vasut wrote:
+> On 03/19/2018 07:45 PM, thor.thayer@linux.intel.com wrote:
+>> From: Thor Thayer <thor.thayer@linux.intel.com>
+>>
+>> The current Cadence QSPI driver caused a kernel panic when loading
+>> a Root Filesystem from QSPI. The problem was caused by reading more
+>> bytes than needed because the QSPI operated on 4 bytes at a time.
+>> <snip>
+>> [    7.947754] spi_nor_read[1048]:from 0x037cad74, len 1 [bfe07fff]
+>> [    7.956247] cqspi_read[910]:offset 0x58502516, buffer=bfe07fff
+>> [    7.956247]
+>> [    7.966046] Unable to handle kernel paging request at virtual
+>> address bfe08002
+>> [    7.973239] pgd = eebfc000
+>> [    7.975931] [bfe08002] *pgd=2fffb811, *pte=00000000, *ppte=00000000
+>> </snip>
+>> Notice above how only 1 byte needed to be read but by reading 4 bytes
+>> into the end of a mapped page, a unrecoverable page fault occurred.
+>>
+>> This patch uses a temporary buffer to hold the 4 bytes read and then
+>> copies only the bytes required into the buffer. A min() function is
+>> used to limit the length to prevent buffer overflows.
+>>
+>> Similar changes were made for the write routine.
+>>
+>> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+>> ---
+>>   drivers/mtd/spi-nor/cadence-quadspi.c | 39 ++++++++++++++++++++++++++++-------
+>>   1 file changed, 31 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+>> index 4b8e9183489a..b22ed982f896 100644
+>> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
+>> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+>> @@ -501,7 +501,8 @@ static int cqspi_indirect_read_execute(struct spi_nor *nor, u8 *rxbuf,
+>>   	void __iomem *reg_base = cqspi->iobase;
+>>   	void __iomem *ahb_base = cqspi->ahb_base;
+>>   	unsigned int remaining = n_rx;
+>> -	unsigned int bytes_to_read = 0;
+>> +	unsigned int mod_bytes, words_to_read, bytes_to_read = 0;
+>> +	u8 *rxbuf_end = rxbuf + n_rx;
+>>   	int ret = 0;
+>>   
+>>   	writel(from_addr, reg_base + CQSPI_REG_INDIRECTRDSTARTADDR);
+>> @@ -533,9 +534,21 @@ static int cqspi_indirect_read_execute(struct spi_nor *nor, u8 *rxbuf,
+>>   			bytes_to_read *= cqspi->fifo_width;
+>>   			bytes_to_read = bytes_to_read > remaining ?
+>>   					remaining : bytes_to_read;
+>> -			ioread32_rep(ahb_base, rxbuf,
+>> -				     DIV_ROUND_UP(bytes_to_read, 4));
+>> -			rxbuf += bytes_to_read;
+>> +			/* Read 4 byte chunks before using single byte mode */
+>> +			words_to_read = bytes_to_read / 4;
+>> +			mod_bytes = bytes_to_read % 4;
+>> +			if (words_to_read) {
+>> +				ioread32_rep(ahb_base, rxbuf, words_to_read);
+>> +				rxbuf += (words_to_read * 4);
+>> +			}
+>> +			if (mod_bytes) {
+>> +				unsigned int temp = ioread32(ahb_base);
+>> +
+>> +				memcpy(rxbuf, &temp, min((unsigned int)
+>> +							 (rxbuf_end - rxbuf),
+>> +							 mod_bytes));
+>> +				rxbuf += mod_bytes;
+>> +			}
+> 
+> Wouldn't it make more sense to read in 4 byte increments all the time
+> except for the one last read instead ? This code above where you always
+> check for trailing bytes can make the next read cycle do ioreaad32 into
+> unaligned memory address and thus cause slowdown. (consider the example
+> where the controller first reports it has 5 bytes ready, then reports it
+> has 7 bytes ready. If you read 4 bytes in the first cycle, wait a bit
+> and then check how much data the controller has in the next cycle, it
+> will be 8 bytes, all nicely aligned).
+> 
+> Does it make sense ?
+> 
+Ahh yes, Thanks for the example - I see your point. I'll look into that 
+change. Thanks.
