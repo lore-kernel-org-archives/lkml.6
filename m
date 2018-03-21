@@ -1,293 +1,92 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3454413-1521618645-2-14101398203188416620
+X-Cyrus-Session-Id: sloti22d1t05-3618868-1521623234-5-10972987769012402171
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: 
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521618644; b=PIEy5cdagHHffLvw7IEXJ82DF7zmAfUz6x8+1KFLuURF9gu
-    BM4wcbpO1Ro7VSwffnd1YH08gSctOC+n/Hm/JePqVrgn4QqJ8IwYEhHoFmGsST0x
-    0X9Ma9d7SlX/lDvhtTsop3o8IUbTqGXq8TxloV+tyh7XpWnJ7ST/t/N8HGx0LHNY
-    7Fh8EGC+73ay9NH+gZ1rbtEPGa+y6C98eBb19DwHfCIQ9vWnNILu/r1bPxhBVQiR
-    Gu2LRlpKxf8UoIEjPTw94ncBr4is6fLu4GsLPySRnZqBxjweQ1qeh8kn/mP9A76H
-    4WC8SZZoVs1jeP9GiwpzntPQcuhXQJymmHzgVIQ==
+    t=1521623234; b=fHQLS/QC1TBJZqrjs5xcKrr4mAz2ZBvmXWBN7FTOAh3b7K0
+    sPoRMAJU9O8uHtlGYDrm8tu1t7Reqx7SpnMQ1+T/YODd02HIbded4AM5ZNk3QOfT
+    wSou9p6JjvRV1hFnn2iqlZ1zOvYSlmvaVoZP23O77a8ZrKONBgtwPOjIcpnlyJQU
+    MOPDGcVugoMpvwzeG7Pk9iDv6RlbwHzBJ//zV/ZSd71Un+dBdDWD0hxquPETJpvn
+    DU1tFrtYELy1mIyOWCxArdoxZjdkCUkU6XzqU7ao/9fMVtOdijNoN0lQJhaHyRW2
+    OOFWc+YXs0gUzeg/jWX3rhobUYocz/93vetNiqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1521618644;
-    bh=hf9VhRc3QRhV7G7O4IsCqKTv8TFggvMfsKn5RJu79KI=; b=XN4mxSXNCbE4
-    CAA3yN2gHp0dW1ZGHrpFBkAuiqiIwzGsNQph4Ghva0w/0FviuDwoRB4bpnhh6RgU
-    ulqEVgU69FATWVSQEQES7Amd/51sC9Q1TPT28NPnATObbd7puZmL8uVQfhcHqYoQ
-    F3TkbRAudsNMtEl+LwdZwKmWUUOEbY5EvWXzxnN/L6C+xhW7hkeZVtkHeEQrCxsf
-    QbHNVJG+VeyP+IrXbw4djOOh6m1GLo9GzVIA/phbOqJGReK+FHD591nXyzpRnDkf
-    7jEO3Q6ELp3NkrzDAmYo8q77ifuEahvJ9hJAHpYIXf/CuD6Gt6NkjugD2m6KAeJn
-    XnSEvqiqEQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Zr4c+Bh5 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521623234; bh=rK8vGbmR3AQM8JlO6JpVZ0FxdN
+    /ugkBrBPr+FXhVKlA=; b=KyLR7JDqMpvRlf3+xscTghtrYPgSSbaK+ebr+bz4ai
+    Ddwkojf5QNB1Tkh3KUGHT5yJEdvwDppWyugT7h+HZBbSuvPnBkVpwDG372/KKp/3
+    dzGX+kWInzgdhDvzI8lz4OlC/NK87DC0KsfeJWj21V0SMbSXQg3aip2oZBmDgulx
+    jOW2usIWoC40400OZyNeMqws4n3Nycnoqc/70MAHls5Ldg4/IcJtfR/u0QUFwVwQ
+    HQuqv9lWXo6xjQ+HOnNpodnG3wJDVMjb37Bnci+p9eg56l93CY/km1p/ahAspP3d
+    BZ9ANEaJO12jS9PPmSXOkMP6VNTkYXysc5EIfnnTCfaw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=Zr4c+Bh5 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lst.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751464AbeCUHuk (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Mar 2018 03:50:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47786 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751820AbeCUHkx (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 03:40:53 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: viro@zeniv.linux.org.uk
-Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/28] fs: add new vfs_poll and file_can_poll helpers
-Date: Wed, 21 Mar 2018 08:40:08 +0100
-Message-Id: <20180321074032.14211-5-hch@lst.de>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180321074032.14211-1-hch@lst.de>
+        id S1751615AbeCUJHM (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 05:07:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60512 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751539AbeCUJHL (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 21 Mar 2018 05:07:11 -0400
+Date: Wed, 21 Mar 2018 10:07:07 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: viro@zeniv.linux.org.uk, Avi Kivity <avi@scylladb.com>,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/28] fs: add new vfs_poll and file_can_poll helpers
+Message-ID: <20180321090707.GD14085@kroah.com>
 References: <20180321074032.14211-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+ <20180321074032.14211-5-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180321074032.14211-5-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-These abstract out calls to the poll method in preparation for changes
-in how we poll.
+On Wed, Mar 21, 2018 at 08:40:08AM +0100, Christoph Hellwig wrote:
+> These abstract out calls to the poll method in preparation for changes
+> in how we poll.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- drivers/staging/comedi/drivers/serial2002.c |  4 ++--
- drivers/vfio/virqfd.c                       |  2 +-
- drivers/vhost/vhost.c                       |  2 +-
- fs/eventpoll.c                              |  5 ++---
- fs/select.c                                 | 23 ++++++++---------------
- include/linux/poll.h                        | 12 ++++++++++++
- mm/memcontrol.c                             |  2 +-
- net/9p/trans_fd.c                           | 18 ++++--------------
- virt/kvm/eventfd.c                          |  2 +-
- 9 files changed, 32 insertions(+), 38 deletions(-)
+Yeah!!!
 
-diff --git a/drivers/staging/comedi/drivers/serial2002.c b/drivers/staging/comedi/drivers/serial2002.c
-index b3f3b4a201af..5471b2212a62 100644
---- a/drivers/staging/comedi/drivers/serial2002.c
-+++ b/drivers/staging/comedi/drivers/serial2002.c
-@@ -113,7 +113,7 @@ static void serial2002_tty_read_poll_wait(struct file *f, int timeout)
- 		long elapsed;
- 		__poll_t mask;
- 
--		mask = f->f_op->poll(f, &table.pt);
-+		mask = vfs_poll(f, &table.pt);
- 		if (mask & (EPOLLRDNORM | EPOLLRDBAND | EPOLLIN |
- 			    EPOLLHUP | EPOLLERR)) {
- 			break;
-@@ -136,7 +136,7 @@ static int serial2002_tty_read(struct file *f, int timeout)
- 
- 	result = -1;
- 	if (!IS_ERR(f)) {
--		if (f->f_op->poll) {
-+		if (file_can_poll(f)) {
- 			serial2002_tty_read_poll_wait(f, timeout);
- 
- 			if (kernel_read(f, &ch, 1, &pos) == 1)
-diff --git a/drivers/vfio/virqfd.c b/drivers/vfio/virqfd.c
-index 085700f1be10..2a1be859ee71 100644
---- a/drivers/vfio/virqfd.c
-+++ b/drivers/vfio/virqfd.c
-@@ -166,7 +166,7 @@ int vfio_virqfd_enable(void *opaque,
- 	init_waitqueue_func_entry(&virqfd->wait, virqfd_wakeup);
- 	init_poll_funcptr(&virqfd->pt, virqfd_ptable_queue_proc);
- 
--	events = irqfd.file->f_op->poll(irqfd.file, &virqfd->pt);
-+	events = vfs_poll(irqfd.file, &virqfd->pt);
- 
- 	/*
- 	 * Check if there was an event already pending on the eventfd
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 1b3e8d2d5c8b..4d27e288bb1d 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -208,7 +208,7 @@ int vhost_poll_start(struct vhost_poll *poll, struct file *file)
- 	if (poll->wqh)
- 		return 0;
- 
--	mask = file->f_op->poll(file, &poll->table);
-+	mask = vfs_poll(file, &poll->table);
- 	if (mask)
- 		vhost_poll_wakeup(&poll->wait, 0, 0, poll_to_key(mask));
- 	if (mask & EPOLLERR) {
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 0f3494ed3ed0..2bebae5a38cf 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -884,8 +884,7 @@ static __poll_t ep_item_poll(const struct epitem *epi, poll_table *pt,
- 
- 	pt->_key = epi->event.events;
- 	if (!is_file_epoll(epi->ffd.file))
--		return epi->ffd.file->f_op->poll(epi->ffd.file, pt) &
--		       epi->event.events;
-+		return vfs_poll(epi->ffd.file, pt) & epi->event.events;
- 
- 	ep = epi->ffd.file->private_data;
- 	poll_wait(epi->ffd.file, &ep->poll_wait, pt);
-@@ -2020,7 +2019,7 @@ SYSCALL_DEFINE4(epoll_ctl, int, epfd, int, op, int, fd,
- 
- 	/* The target file descriptor must support poll */
- 	error = -EPERM;
--	if (!tf.file->f_op->poll)
-+	if (!file_can_poll(tf.file))
- 		goto error_tgt_fput;
- 
- 	/* Check if EPOLLWAKEUP is allowed */
-diff --git a/fs/select.c b/fs/select.c
-index c6c504a814f9..ba91103707ea 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -502,14 +502,10 @@ static int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time)
- 					continue;
- 				f = fdget(i);
- 				if (f.file) {
--					const struct file_operations *f_op;
--					f_op = f.file->f_op;
--					mask = DEFAULT_POLLMASK;
--					if (f_op->poll) {
--						wait_key_set(wait, in, out,
--							     bit, busy_flag);
--						mask = (*f_op->poll)(f.file, wait);
--					}
-+					wait_key_set(wait, in, out, bit,
-+						     busy_flag);
-+					mask = vfs_poll(f.file, wait);
-+
- 					fdput(f);
- 					if ((mask & POLLIN_SET) && (in & bit)) {
- 						res_in |= bit;
-@@ -819,13 +815,10 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
- 
- 	/* userland u16 ->events contains POLL... bitmap */
- 	filter = demangle_poll(pollfd->events) | EPOLLERR | EPOLLHUP;
--	mask = DEFAULT_POLLMASK;
--	if (f.file->f_op->poll) {
--		pwait->_key = filter | busy_flag;
--		mask = f.file->f_op->poll(f.file, pwait);
--		if (mask & busy_flag)
--			*can_busy_poll = true;
--	}
-+	pwait->_key = filter | busy_flag;
-+	mask = vfs_poll(f.file, pwait);
-+	if (mask & busy_flag)
-+		*can_busy_poll = true;
- 	mask &= filter;		/* Mask out unneeded events. */
- 	fdput(f);
- 
-diff --git a/include/linux/poll.h b/include/linux/poll.h
-index a3576da63377..7e0fdcf905d2 100644
---- a/include/linux/poll.h
-+++ b/include/linux/poll.h
-@@ -74,6 +74,18 @@ static inline void init_poll_funcptr(poll_table *pt, poll_queue_proc qproc)
- 	pt->_key   = ~(__poll_t)0; /* all events enabled */
- }
- 
-+static inline bool file_can_poll(struct file *file)
-+{
-+	return file->f_op->poll;
-+}
-+
-+static inline __poll_t vfs_poll(struct file *file, struct poll_table_struct *pt)
-+{
-+	if (unlikely(!file->f_op->poll))
-+		return DEFAULT_POLLMASK;
-+	return file->f_op->poll(file, pt);
-+}
-+
- struct poll_table_entry {
- 	struct file *filp;
- 	__poll_t key;
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 670e99b68aa6..8774ece5c3c3 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3849,7 +3849,7 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 	if (ret)
- 		goto out_put_css;
- 
--	efile.file->f_op->poll(efile.file, &event->pt);
-+	vfs_poll(efile.file, &event->pt);
- 
- 	spin_lock(&memcg->event_list_lock);
- 	list_add(&event->list, &memcg->event_list);
-diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
-index 0cfba919d167..3811775692d0 100644
---- a/net/9p/trans_fd.c
-+++ b/net/9p/trans_fd.c
-@@ -231,7 +231,7 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
- static __poll_t
- p9_fd_poll(struct p9_client *client, struct poll_table_struct *pt, int *err)
- {
--	__poll_t ret, n;
-+	__poll_t ret;
- 	struct p9_trans_fd *ts = NULL;
- 
- 	if (client && client->status == Connected)
-@@ -243,19 +243,9 @@ p9_fd_poll(struct p9_client *client, struct poll_table_struct *pt, int *err)
- 		return EPOLLERR;
- 	}
- 
--	if (!ts->rd->f_op->poll)
--		ret = DEFAULT_POLLMASK;
--	else
--		ret = ts->rd->f_op->poll(ts->rd, pt);
--
--	if (ts->rd != ts->wr) {
--		if (!ts->wr->f_op->poll)
--			n = DEFAULT_POLLMASK;
--		else
--			n = ts->wr->f_op->poll(ts->wr, pt);
--		ret = (ret & ~EPOLLOUT) | (n & ~EPOLLIN);
--	}
--
-+	ret = vfs_poll(ts->rd, pt);
-+	if (ts->rd != ts->wr)
-+		ret = (ret & ~EPOLLOUT) | (vfs_poll(ts->wr, pt) & ~EPOLLIN);
- 	return ret;
- }
- 
-diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
-index 6e865e8b5b10..90d30fbe95ae 100644
---- a/virt/kvm/eventfd.c
-+++ b/virt/kvm/eventfd.c
-@@ -397,7 +397,7 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
- 	 * Check if there was an event already pending on the eventfd
- 	 * before we registered, and trigger it as if we didn't miss it.
- 	 */
--	events = f.file->f_op->poll(f.file, &irqfd->pt);
-+	events = vfs_poll(f.file, &irqfd->pt);
- 
- 	if (events & EPOLLIN)
- 		schedule_work(&irqfd->inject);
--- 
-2.14.2
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
