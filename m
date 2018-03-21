@@ -1,190 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeCUHgu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 03:36:50 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44199 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751396AbeCUHgp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 03:36:45 -0400
-X-Google-Smtp-Source: AG47ELv2ZATnef8gvyVHAniGESGjmNLjvyMducLNUGXoYycz5j73qo3NWtPQU/XCxhsCFDCtzbHNP7QL2bIlQALdChM=
+        id S1751899AbeCUHhA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 03:37:00 -0400
+Received: from mga05.intel.com ([192.55.52.43]:34319 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751694AbeCUHgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 03:36:48 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,339,1517904000";
+   d="scan'208";a="26283297"
+Date: Wed, 21 Mar 2018 15:35:11 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [PATCH RFC 2/2] virtio_ring: support packed ring
+Message-ID: <20180321073511.evpf7mt7hdwnga4k@debian>
+References: <20180223111801.15240-1-tiwei.bie@intel.com>
+ <20180223111801.15240-3-tiwei.bie@intel.com>
+ <8f73267a-e20e-de64-d8e0-3fd608dbf368@redhat.com>
+ <20180316061047.o2xdyuqhak3mzjyw@debian>
+ <0a0ecf42-8f7f-9387-8ca4-cb65d0835b56@redhat.com>
+ <20180316074028.lun2jy45qqnfeymw@debian>
+ <02a3da02-8226-ba4e-1b47-d25755b2c429@redhat.com>
+ <20180316100413.vtqwatregzrmhvt3@debian>
+ <094ca28b-d8af-bf7a-ea7e-0d0bf7518bda@redhat.com>
+ <20180316145702-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180320131342.GA31542@guoren>
-References: <cover.1521399976.git.ren_guo@c-sky.com> <c15b1fce07d0a19616026dfb927bfcbd88102b12.1521399976.git.ren_guo@c-sky.com>
- <CAK8P3a1rzS+MmubYqTE-8H89QnULcGbKth=eWTA5mJ5VLRNL0Q@mail.gmail.com> <20180320131342.GA31542@guoren>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 21 Mar 2018 15:36:43 +0800
-X-Google-Sender-Auth: OFcZf1W-9aQ8bJcQOWm2WW8QJyQ
-Message-ID: <CAK8P3a3pat6wQ+9gbf_wtp6+dur_h=Zp1896rogZHnehVnqVNA@mail.gmail.com>
-Subject: Re: [PATCH 15/19] csky: Build infrastructure
-To: Guo Ren <ren_guo@c-sky.com>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180316145702-mutt-send-email-mst@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 9:13 PM, Guo Ren <ren_guo@c-sky.com> wrote:
-> Hi arnd,
->
-> On Mon, Mar 19, 2018 at 11:45:23PM +0800, Arnd Bergmann wrote:
->> Does your architecture provide a reliable high-reslution clocksource?
->> If yes, you
->> could use that for the delay, rather than a calibrated loop.
-> Currently, all boards have clocksource drivers and the reslution is depend on SOC.
-> I'll try to remove it.
+On Fri, Mar 16, 2018 at 04:30:02PM +0200, Michael S. Tsirkin wrote:
+> On Fri, Mar 16, 2018 at 07:36:47PM +0800, Jason Wang wrote:
+> > > > @@ -1096,17 +1599,21 @@ struct virtqueue *vring_create_virtqueue(
+> > > > > > > > >      	if (!queue) {
+> > > > > > > > >      		/* Try to get a single page. You are my only hope! */
+> > > > > > > > > -		queue = vring_alloc_queue(vdev, vring_size(num, vring_align),
+> > > > > > > > > +		queue = vring_alloc_queue(vdev, __vring_size(num, vring_align,
+> > > > > > > > > +							     packed),
+> > > > > > > > >      					  &dma_addr, GFP_KERNEL|__GFP_ZERO);
+> > > > > > > > >      	}
+> > > > > > > > >      	if (!queue)
+> > > > > > > > >      		return NULL;
+> > > > > > > > > -	queue_size_in_bytes = vring_size(num, vring_align);
+> > > > > > > > > -	vring_init(&vring, num, queue, vring_align);
+> > > > > > > > > +	queue_size_in_bytes = __vring_size(num, vring_align, packed);
+> > > > > > > > > +	if (packed)
+> > > > > > > > > +		vring_packed_init(&vring.vring_packed, num, queue, vring_align);
+> > > > > > > > > +	else
+> > > > > > > > > +		vring_init(&vring.vring_split, num, queue, vring_align);
+> > > > > > > > Let's rename vring_init to vring_init_split() like other helpers?
+> > > > > > > The vring_init() is a public API in include/uapi/linux/virtio_ring.h.
+> > > > > > > I don't think we can rename it.
+> > > > > > I see, then this need more thoughts to unify the API.
+> > > > > My thought is to keep the old API as is, and introduce
+> > > > > new types and helpers for packed ring.
+> > > > I admit it's not a fault of this patch. But we'd better think of this in the
+> > > > future, consider we may have new kinds of ring.
+> > > > 
+> > > > > More details can be found in this patch:
+> > > > > https://lkml.org/lkml/2018/2/23/243
+> > > > > (PS. The type which has bit fields is just for reference,
+> > > > >    and will be changed in next version.)
+> > > > > 
+> > > > > Do you have any other suggestions?
+> > > > No.
+> > > Hmm.. Sorry, I didn't describe my question well.
+> > > I mean do you have any suggestions about the API
+> > > design for packed ring in uapi header? Currently
+> > > I introduced below two new helpers:
+> > > 
+> > > static inline void vring_packed_init(struct vring_packed *vr, unsigned int num,
+> > > 				     void *p, unsigned long align);
+> > > static inline unsigned vring_packed_size(unsigned int num, unsigned long align);
+> > > 
+> > > When new rings are introduced in the future, above
+> > > helpers can't be reused. Maybe we should make the
+> > > helpers be able to determine the ring type?
+> > 
+> > Let's wait for Michael's comment here. Generally, I fail to understand why
+> > vring_init() become a part of uapi. Git grep shows the only use cases are
+> > virtio_test/vringh_test.
+> > 
+> > Thanks
+> 
+> For init - I think it's a mistake that stems from lguest which sometimes
+> made it less than obvious which code is where.  I don't see a reason to
+> add to it.
 
-If the clocksource depends on a driver rather than a feature of the
-architecture,
-this may not be worth optimizing though, so maybe leave it as it is for now.
+Got it! I'll move vring_packed_init() out of uapi. Many thanks! :)
 
->> Usually the kernel should allow multiple CPU types to be selected
->> together, or ask for a "minimum architecture" level to be selected
->> by allow newer cores to be used as a superset.
-> No, I need keep them seperate.
+Best regards,
+Tiwei Bie
 
-Can you explain? What is it that makes them all incompatible?
-
->> > +config CPU_TLB_SIZE
->> > +       int
->> > +       default "128"   if(CPU_CK610 || CPU_CK807 || CPU_CK810)
->> > +       default "1024"  if(CPU_CK860)
->> > +
->> > +config L1_CACHE_SHIFT
->> > +       int
->> > +       default "4"     if(CPU_CK610)
->> > +       default "5"     if(CPU_CK807 || CPU_CK810)
->> > +       default "6"     if(CPU_CK860)
->>
->> I think you then need to reverse the order of the list here: When e.g. CK860
->> and CK810 are both enabled, L1_CACHE_SHIFT should be the largest
->> possible size.
-> No, I use L1_CACHE_SHIFT to determine the size of cache_line.
-> When I flush cache for a range of memory, I need the size to loop flush cache line.
-
-This is still relatively easy to fix, you just need a cpu specific loop
-that uses the actual line size rather than the maximum size.
-
->> > +config SSEG0_BASE
->> > +       hex "Direct mapping physical address"
->> > +       default 0x0
->> > +       help
->> > +         There are MSAx regs can be used to change the base physical address
->> > +         of direct mapping. The default base physical address is 0x0.
->> > +
->> > +config RAM_BASE
->> > +       hex "DRAM base address offset from SSEG0_BASE, it must be the same with dts memory."
->> > +       default 0x08000000
->>
->> To allow one kernel to run on multiple boards, it's better to detect
->> these two at runtime.
-> CK-CPUs have a mips-like direct-mapping, and I use the macros to calculate the virtual-addr
-> in headers.
-
-On many architectures, we detect the offsets at boot time and pass
-them as variables. On
-ARM, we go as far as patching the kernel at boot time to have constant
-offsets, but usually
-it's not worth the effort.
-
->> > +config CSKY_NR_IRQS
->> > +       int "NR_IRQS to max virtual interrupt numbers of the whole system"
->> > +       range 64 8192
->> > +       default "128"
->> > +endmenu
->>
->> This should no longer be needed, with the IRQ domain code, any number
->> of interrupts
->> can be used without noticeable overhead.
-> Not I use it, some of our users need it to expand the GPIO irqs. Because
-> they don't use irq domain code properly. I move it to Kconfig.debug, OK?
-
-It sounds like your GPIO driver should get fixed to use irq domains right,
-it should not be too hard. The number of GPIOs is typically a compile
-time constant today, but we also try to turn it into a dynamic allocation
-that we have for IRQs on most targets.
-
->> > +config CSKY_BUILTIN_DTB
->> > +       bool "Use kernel builtin dtb"
->> > +       default n
->> > +
->> > +config CSKY_BUILTIN_DTB_NAME
->> > +       string "kernel builtin dtb name"
->> > +       depends on CSKY_BUILTIN_DTB
->>
->> It's generally better not to use a builtin dtb, but use the bootloader
->> to pass a dtb.
->>
->> If you need to support existing bootloaders, the best way is to allow
->> appending the dtb to the kernel.
-> Most of our boards use bootloader to pass the dtb, but Hangzhou
-> Nationalchip want dtb compiled in the vmlinux. So I keep it in
-> Kconfig.debug.
-
-What I meant here is that you can get the same behavior by
-appending the dtb to the kernel rather than linking it into the
-kernel. The reason for preferring the appended one is that you
-can more easily use the same kernel binary across boards with
-different bootloaders.
-
->> > +ifeq ($(VERSION)_$(PATCHLEVEL), 4_9)
->> > +COMPAT_KERNEL_4_9 = -DCOMPAT_KERNEL_4_9
->> > +endif
->>
->> Should not be needed
-> May I keep it? It's a very internal macro for arch/csky and I can
-> maintain the linux-4.9 together.
-
-I'd say it's better to get rid of it for the upstream port, more importantly
-getting rid of the code that checks for this symbol. Usually what happens
-with version checks like this one is that they get out of sync quickly
-as a new kernel version does things differently and diverges more
-from the old release you were comparing against. In device drivers,
-we tend to remove all those checks.
-
->> -fno-tree-dse?
-> This is from "gcc-4.5 compile linux-4.7" and it will cause wrong code without
-> -fno-tree-dse for list.h. Now we use gcc-6.3, so I will try to remove it.
-
-You can also use the cc-ifversion Makefile macro to apply it on
-the old compiler. That way you can still use gcc-4.5 as long as
-that remains relevant but don't get worse code generation on
-modern versions.
-
->> > +++ b/arch/csky/abiv1/Makefile
->> > @@ -0,0 +1,8 @@
->> > +obj-y +=       src/bswapdi.o
->> > +obj-y +=       src/bswapsi.o
->> > +obj-y +=       src/cacheflush.o
->> > +obj-y +=       src/memcpy.o
->> > +obj-y +=       src/mmap.o
->> > +
->> > +obj-$(CONFIG_CPU_NEED_SOFTALIGN) +=    src/alignment.o
->>
->> Better not use subdirectories like that.
-> Ok, I will change them like this:
->   obj-y +=      bswapdi.o
->   obj-y +=      bswapsi.o
->   ...
->
->> Can you explain why you need the alignement fixups?
-> For abiv1 ck610 couldn't handle the unalignment address access, so we
-> need soft-alignment exception to fixup. There is no problem in abiv2 cpus.
-
-Ok. Generally speaking, architectures that don't allow unaligned access
-should have all code built in a way that uses aligned access (gcc normally
-falls back to byte access when it encounters an unaligned pointer at
-compile time), but if this is just for old CPUs that are not used in future
-products, having the fixup does sound simpler, as it allows you to still
-run new binaries on the old machines. I haven't looked at the implementation
-for the fixup here, but I remember the same thing from the nds32 port.
-In that case, we ended up keeping the fixup as an option for old
-user space, but disabled to softalign fixups for kernel code. Can you do
-the same thing here?
-
-         Arnd
+> 
+> -- 
+> MST
