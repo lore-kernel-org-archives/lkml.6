@@ -1,91 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753820AbeCUVqF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:46:05 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:38214 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753704AbeCUVqE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:46:04 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R841e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0Szs3x6X_1521668745;
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321130833.GM23100@dhcp22.suse.cz>
- <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
- <20180321172932.GE4780@bombadil.infradead.org>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <f057a634-7e0a-1b51-eede-dcb6f128b18e@linux.alibaba.com>
-Date: Wed, 21 Mar 2018 14:45:44 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180321172932.GE4780@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1753846AbeCUVrf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:47:35 -0400
+Received: from mga14.intel.com ([192.55.52.115]:8740 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753730AbeCUVre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:47:34 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
+   d="asc'?scan'208";a="35757601"
+Message-ID: <1521668888.12746.32.camel@intel.com>
+Subject: Re: [PATCH REPOST v4 5/7] ixgbevf: keep writel() closer to wmb()
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reply-To: jeffrey.t.kirsher@intel.com
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
+Date: Wed, 21 Mar 2018 14:48:08 -0700
+In-Reply-To: <1521658572-26354-6-git-send-email-okaya@codeaurora.org>
+References: <1521658572-26354-1-git-send-email-okaya@codeaurora.org>
+         <1521658572-26354-6-git-send-email-okaya@codeaurora.org>
+Organization: Intel
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-3IEBpCqmepFDyHB6VJLB"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--=-3IEBpCqmepFDyHB6VJLB
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/21/18 10:29 AM, Matthew Wilcox wrote:
-> On Wed, Mar 21, 2018 at 09:31:22AM -0700, Yang Shi wrote:
->> On 3/21/18 6:08 AM, Michal Hocko wrote:
->>> Yes, this definitely sucks. One way to work that around is to split the
->>> unmap to two phases. One to drop all the pages. That would only need
->>> mmap_sem for read and then tear down the mapping with the mmap_sem for
->>> write. This wouldn't help for parallel mmap_sem writers but those really
->>> need a different approach (e.g. the range locking).
->> page fault might sneak in to map a page which has been unmapped before?
->>
->> range locking should help a lot on manipulating small sections of a large
->> mapping in parallel or multiple small mappings. It may not achieve too much
->> for single large mapping.
-> I don't think we need range locking.  What if we do munmap this way:
->
-> Take the mmap_sem for write
-> Find the VMA
->    If the VMA is large(*)
->      Mark the VMA as deleted
->      Drop the mmap_sem
->      zap all of the entries
->      Take the mmap_sem
->    Else
->      zap all of the entries
-> Continue finding VMAs
-> Drop the mmap_sem
->
-> Now we need to change everywhere which looks up a VMA to see if it needs
-> to care the the VMA is deleted (page faults, eg will need to SIGBUS; mmap
+On Wed, 2018-03-21 at 14:56 -0400, Sinan Kaya wrote:
+> Remove ixgbevf_write_tail() in favor of moving writel() close to
+> wmb().
+>=20
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> ---
+>  drivers/net/ethernet/intel/ixgbevf/ixgbevf.h      | 5 -----
+>  drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 4 ++--
+>  2 files changed, 2 insertions(+), 7 deletions(-)
 
-Marking vma as deleted sounds good. The problem for my current approach 
-is the concurrent page fault may succeed if it access the not yet 
-unmapped section. Marking deleted vma could tell page fault the vma is 
-not valid anymore, then return SIGSEGV.
+This patch fails to compile because there is a call to
+ixgbevf_write_tail() which you missed cleaning up.
+--=-3IEBpCqmepFDyHB6VJLB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> does not care; munmap will need to wait for the existing munmap operation
+-----BEGIN PGP SIGNATURE-----
 
-Why mmap doesn't care? How about MAP_FIXED? It may fail unexpectedly, right?
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlqy0xgACgkQ5W/vlVpL
+7c44GQ/+KOddeX1YUHmWUdmqpHpeWETTLjQ/eXJd51wNVcsq4oXusMcQnX77O+Lh
+/UYth8+BG/jhG6g9fJ9XyDuqqrlj/42UqpEYbfpISAVO0r6tCmXSrq2immxn80yo
+s/MtPta6F5n6oeTM8Qn0DboEah2xj4+fwVxrZT5jkgpymGIqWO3vcrJArZ7WvNo8
+EZfNP5fGiTQeSHCobkZSgJhmf+3/onLx+p0L0UnAas7sFgZCgXq3hipMtQ3fADPE
+pe0EPlSqb2pA21uCP7Fe/ZE7Vi9PexgDsLJNlVzcDvkSSAN7pn7cS6uwghIW/gf2
+mcOtkLCwL2h7fPD56YkLAj6q3iY0pqAofrv4uBsnrUf8B8uRPgq5uyrWp0kcOXV1
+FEn2mpJU31wm3xwkf5lTcPkreYaR+H/f+UndNuqvdi+cHyMpUMxNs3QXagRLbcuP
+oBdrTHti/vyB/aQ5XkVFPBv3PcDh7/o0YZ8nOl/S2NJbyZ9nlK9Tv7T4kP4syFjZ
+8k8OEpjws6+DQpVuXSjR7V0LZhLpD012Xgp5QjdWAVo54T4+JeVkseL4LMDF2QHU
+kHurW13e5sfjxi9tOlwb/PTWSHS3DAgSr9RfvCnVFGXvICdh50gwnc6c5W9+WQnk
+m9jtLSBVTIZNZfjhVWxtlTqbM4JnaLSF5iSFjE5Txnt0ygvvZ6Y=
+=+wNq
+-----END PGP SIGNATURE-----
 
-Thanks,
-Yang
-
-> to complete), but it gives us the atomicity, at least on a per-VMA basis.
->
-> We could also do:
->
-> Take the mmap_sem for write
-> Mark all VMAs in the range as deleted & modify any partial VMAs
-> Drop mmap_sem
-> zap pages from deleted VMAs
->
-> That would give us the same atomicity that we have today.
->
-> Deleted VMAs would need a pointer to a completion, so operations that
-> need to wait can queue themselves up.  I'd recommend we use the low bit
-> of vm_file and treat it as a pointer to a struct completion if set.
+--=-3IEBpCqmepFDyHB6VJLB--
