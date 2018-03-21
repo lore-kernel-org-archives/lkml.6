@@ -1,80 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753752AbeCUVXI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 17:23:08 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:40910 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753210AbeCUVXE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 17:23:04 -0400
-X-Google-Smtp-Source: AG47ELvFyeSEGakJ57UXJA66KjL7pugGT+63aUy4V5HiDbi5mxinau/m6FMRMoL7LNkiP1f171MlRim4mEEcBP1C840=
+        id S1753787AbeCUVYG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 17:24:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58287 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753549AbeCUVYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 17:24:03 -0400
+Date: Wed, 21 Mar 2018 22:23:56 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+Message-ID: <20180321212355.GR23100@dhcp22.suse.cz>
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321131449.GN23100@dhcp22.suse.cz>
+ <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
+ <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <20180321193458.4451-1-colin.king@canonical.com>
-References: <20180321193458.4451-1-colin.king@canonical.com>
-From: William Tu <u9012063@gmail.com>
-Date: Wed, 21 Mar 2018 14:22:23 -0700
-Message-ID: <CALDO+SYL=TpwG68cYp2UeopW+P-p5P5H0mXQk9-JySxS47TO4g@mail.gmail.com>
-Subject: Re: [PATCH][next] gre: fix TUNNEL_SEQ bit check on sequence numbering
-To: Colin King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 12:34 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The current logic of flags | TUNNEL_SEQ is always non-zero and hence
-> sequence numbers are always incremented no matter the setting of the
-> TUNNEL_SEQ bit.  Fix this by using & instead of |.
->
-> Detected by CoverityScan, CID#1466039 ("Operands don't affect result")
->
-> Fixes: 77a5196a804e ("gre: add sequence number for collect md mode.")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Wed 21-03-18 10:16:41, Yang Shi wrote:
+> 
+> 
+> On 3/21/18 9:50 AM, Yang Shi wrote:
+> > 
+> > 
+> > On 3/21/18 6:14 AM, Michal Hocko wrote:
+> > > On Wed 21-03-18 05:31:19, Yang Shi wrote:
+> > > > When running some mmap/munmap scalability tests with large memory (i.e.
+> > > > > 300GB), the below hung task issue may happen occasionally.
+> > > > INFO: task ps:14018 blocked for more than 120 seconds.
+> > > >         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+> > > >   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> > > > message.
+> > > >   ps              D    0 14018      1 0x00000004
+> > > >    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+> > > >    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+> > > >    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+> > > >   Call Trace:
+> > > >    [<ffffffff817154d0>] ? __schedule+0x250/0x730
+> > > >    [<ffffffff817159e6>] schedule+0x36/0x80
+> > > >    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+> > > >    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+> > > >    [<ffffffff81717db0>] down_read+0x20/0x40
+> > > >    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+> > > Slightly off-topic:
+> > > Btw. this sucks as well. Do we really need to take mmap_sem here? Do any
+> > > of
+> > >     arg_start = mm->arg_start;
+> > >     arg_end = mm->arg_end;
+> > >     env_start = mm->env_start;
+> > >     env_end = mm->env_end;
+> > > 
+> > > change after exec or while the pid is already visible in proc? If yes
+> > > maybe we can use a dedicated lock.
+> 
+> BTW, this is not the only place to acquire mmap_sem in
+> proc_pid_cmdline_read(), it calls access_remote_vm() which need acquire
+> mmap_sem too, so the mmap_sem scalability issue will be hit sooner or later.
 
-Thanks for the fix!
-btw, how can I access the CoverityScan result with this CID?
-
-Acked-by: William Tu <u9012063@gmail.com>
-
-
-> ---
->  net/ipv4/ip_gre.c  | 2 +-
->  net/ipv6/ip6_gre.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
-> index 2fa2ef2e2af9..9ab1aa2f7660 100644
-> --- a/net/ipv4/ip_gre.c
-> +++ b/net/ipv4/ip_gre.c
-> @@ -550,7 +550,7 @@ static void gre_fb_xmit(struct sk_buff *skb, struct net_device *dev,
->                 (TUNNEL_CSUM | TUNNEL_KEY | TUNNEL_SEQ);
->         gre_build_header(skb, tunnel_hlen, flags, proto,
->                          tunnel_id_to_key32(tun_info->key.tun_id),
-> -                        (flags | TUNNEL_SEQ) ? htonl(tunnel->o_seqno++) : 0);
-> +                        (flags & TUNNEL_SEQ) ? htonl(tunnel->o_seqno++) : 0);
->
->         df = key->tun_flags & TUNNEL_DONT_FRAGMENT ?  htons(IP_DF) : 0;
->
-> diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
-> index 0bcefc480aeb..3a98c694da5f 100644
-> --- a/net/ipv6/ip6_gre.c
-> +++ b/net/ipv6/ip6_gre.c
-> @@ -725,7 +725,7 @@ static netdev_tx_t __gre6_xmit(struct sk_buff *skb,
->                 gre_build_header(skb, tunnel->tun_hlen,
->                                  flags, protocol,
->                                  tunnel_id_to_key32(tun_info->key.tun_id),
-> -                                (flags | TUNNEL_SEQ) ? htonl(tunnel->o_seqno++)
-> +                                (flags & TUNNEL_SEQ) ? htonl(tunnel->o_seqno++)
->                                                       : 0);
->
->         } else {
-> --
-> 2.15.1
->
+Ohh, absolutely. mmap_sem is unfortunatelly abused and it would be great
+to remove that. munmap should perform much better. How to do that safely
+is a different question. I am not yet convinced that tearing down a vma
+in batches is safe. The vast majority of time is spent on tearing down
+pages and that is quite easy to move out of the write lock. That would
+be an improvement already and it should be risk safe. If even that is
+not sufficient then using range locking should help a lot. There
+shouldn't be really any other address space operations within the range
+most of the time so this would be basically non-contended access.
+-- 
+Michal Hocko
+SUSE Labs
