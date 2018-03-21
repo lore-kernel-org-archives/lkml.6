@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752001AbeCUHUL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 03:20:11 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6663 "EHLO huawei.com"
+        id S1751464AbeCUHUJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 03:20:09 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6669 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751539AbeCUHSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751589AbeCUHSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Mar 2018 03:18:20 -0400
 From: Peng Li <lipeng321@huawei.com>
 To: <davem@davemloft.net>
 CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, <salil.mehta@huawei.com>,
         <lipeng321@huawei.com>
-Subject: [PATCH net-next 01/11] net: hns3: reallocate tx/rx buffer after changing mtu
-Date: Wed, 21 Mar 2018 15:49:20 +0800
-Message-ID: <1521618570-129694-2-git-send-email-lipeng321@huawei.com>
+Subject: [PATCH net-next 08/11] net: hns3: fix for getting wrong link mode problem
+Date: Wed, 21 Mar 2018 15:49:27 +0800
+Message-ID: <1521618570-129694-9-git-send-email-lipeng321@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1521618570-129694-1-git-send-email-lipeng321@huawei.com>
 References: <1521618570-129694-1-git-send-email-lipeng321@huawei.com>
@@ -27,89 +27,336 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fuyun Liang <liangfuyun1@huawei.com>
 
-When changing the mtu, the max frame size also will be changed. The tx
-buffer size and the rx buffer size to be allocated are determined by max
-frame size. So when max frame size is changed, the tx buffer and rx buffer
-need to be reallocated.
+Fixed link mode is returned by hns3_get_link_ksettings. It is
+unreasonable.
 
-When the tc_num is changed, the tx buffer and rx buffer need to be
-reallocated too. So calling set_mtu and buffer_alloc separately is better.
+This patch fixes it by adding some related functions to get link
+mode from hardware.
 
 Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 36 +++++++++++++---------
- 1 file changed, 22 insertions(+), 14 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  4 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 98 ++--------------------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  2 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 83 ++++++++++++++++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  9 ++
+ 5 files changed, 107 insertions(+), 89 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index d70619b..e110c65 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -4772,11 +4772,9 @@ static int hclge_en_hw_strip_rxvtag(struct hnae3_handle *handle, bool enable)
- 	return hclge_set_vlan_rx_offload_cfg(vport);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index 70441d2..9daa88d 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -411,6 +411,10 @@ struct hnae3_ae_ops {
+ 				 u32 *flowctrl_adv);
+ 	int (*set_led_id)(struct hnae3_handle *handle,
+ 			  enum ethtool_phys_id_state status);
++	void (*get_link_mode)(struct hnae3_handle *handle,
++			      unsigned long *supported,
++			      unsigned long *advertising);
++	void (*get_port_type)(struct hnae3_handle *handle, u8 *port_type);
+ };
+ 
+ struct hnae3_dcb_ops {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+index 2db127c..502f347 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -74,19 +74,6 @@ struct hns3_link_mode_mapping {
+ 	u32 ethtool_link_mode;
+ };
+ 
+-static const struct hns3_link_mode_mapping hns3_lm_map[] = {
+-	{HNS3_LM_FIBRE_BIT, ETHTOOL_LINK_MODE_FIBRE_BIT},
+-	{HNS3_LM_AUTONEG_BIT, ETHTOOL_LINK_MODE_Autoneg_BIT},
+-	{HNS3_LM_TP_BIT, ETHTOOL_LINK_MODE_TP_BIT},
+-	{HNS3_LM_PAUSE_BIT, ETHTOOL_LINK_MODE_Pause_BIT},
+-	{HNS3_LM_BACKPLANE_BIT, ETHTOOL_LINK_MODE_Backplane_BIT},
+-	{HNS3_LM_10BASET_HALF_BIT, ETHTOOL_LINK_MODE_10baseT_Half_BIT},
+-	{HNS3_LM_10BASET_FULL_BIT, ETHTOOL_LINK_MODE_10baseT_Full_BIT},
+-	{HNS3_LM_100BASET_HALF_BIT, ETHTOOL_LINK_MODE_100baseT_Half_BIT},
+-	{HNS3_LM_100BASET_FULL_BIT, ETHTOOL_LINK_MODE_100baseT_Full_BIT},
+-	{HNS3_LM_1000BASET_FULL_BIT, ETHTOOL_LINK_MODE_1000baseT_Full_BIT},
+-};
+-
+ static int hns3_lp_setup(struct net_device *ndev, enum hnae3_loop loop)
+ {
+ 	struct hnae3_handle *h = hns3_get_handle(ndev);
+@@ -365,24 +352,6 @@ static void hns3_self_test(struct net_device *ndev,
+ 		dev_open(ndev);
  }
  
--static int hclge_set_mtu(struct hnae3_handle *handle, int new_mtu)
-+static int hclge_set_mac_mtu(struct hclge_dev *hdev, int new_mtu)
+-static void hns3_driv_to_eth_caps(u32 caps, struct ethtool_link_ksettings *cmd,
+-				  bool is_advertised)
+-{
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(hns3_lm_map); i++) {
+-		if (!(caps & hns3_lm_map[i].hns3_link_mode))
+-			continue;
+-
+-		if (is_advertised)
+-			__set_bit(hns3_lm_map[i].ethtool_link_mode,
+-				  cmd->link_modes.advertising);
+-		else
+-			__set_bit(hns3_lm_map[i].ethtool_link_mode,
+-				  cmd->link_modes.supported);
+-	}
+-}
+-
+ static int hns3_get_sset_count(struct net_device *netdev, int stringset)
  {
--	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_config_max_frm_size_cmd *req;
--	struct hclge_dev *hdev = vport->back;
- 	struct hclge_desc desc;
- 	int max_frm_size;
- 	int ret;
-@@ -4805,6 +4803,27 @@ static int hclge_set_mtu(struct hnae3_handle *handle, int new_mtu)
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+@@ -594,9 +563,6 @@ static int hns3_get_link_ksettings(struct net_device *netdev,
+ {
+ 	struct hnae3_handle *h = hns3_get_handle(netdev);
+ 	u32 flowctrl_adv = 0;
+-	u32 supported_caps;
+-	u32 advertised_caps;
+-	u8 media_type = HNAE3_MEDIA_TYPE_UNKNOWN;
+ 	u8 link_stat;
+ 
+ 	if (!h->ae_algo || !h->ae_algo->ops)
+@@ -619,62 +585,16 @@ static int hns3_get_link_ksettings(struct net_device *netdev,
+ 		cmd->base.duplex = DUPLEX_UNKNOWN;
+ 	}
+ 
+-	/* 2.media_type get from bios parameter block */
+-	if (h->ae_algo->ops->get_media_type) {
+-		h->ae_algo->ops->get_media_type(h, &media_type);
++	/* 2.get link mode and port type*/
++	if (h->ae_algo->ops->get_link_mode)
++		h->ae_algo->ops->get_link_mode(h,
++					       cmd->link_modes.supported,
++					       cmd->link_modes.advertising);
+ 
+-		switch (media_type) {
+-		case HNAE3_MEDIA_TYPE_FIBER:
+-			cmd->base.port = PORT_FIBRE;
+-			supported_caps = HNS3_LM_FIBRE_BIT |
+-					 HNS3_LM_AUTONEG_BIT |
+-					 HNS3_LM_PAUSE_BIT |
+-					 HNS3_LM_1000BASET_FULL_BIT;
+-
+-			advertised_caps = supported_caps;
+-			break;
+-		case HNAE3_MEDIA_TYPE_COPPER:
+-			cmd->base.port = PORT_TP;
+-			supported_caps = HNS3_LM_TP_BIT |
+-					 HNS3_LM_AUTONEG_BIT |
+-					 HNS3_LM_PAUSE_BIT |
+-					 HNS3_LM_1000BASET_FULL_BIT |
+-					 HNS3_LM_100BASET_FULL_BIT |
+-					 HNS3_LM_100BASET_HALF_BIT |
+-					 HNS3_LM_10BASET_FULL_BIT |
+-					 HNS3_LM_10BASET_HALF_BIT;
+-			advertised_caps = supported_caps;
+-			break;
+-		case HNAE3_MEDIA_TYPE_BACKPLANE:
+-			cmd->base.port = PORT_NONE;
+-			supported_caps = HNS3_LM_BACKPLANE_BIT |
+-					 HNS3_LM_PAUSE_BIT |
+-					 HNS3_LM_AUTONEG_BIT |
+-					 HNS3_LM_1000BASET_FULL_BIT |
+-					 HNS3_LM_100BASET_FULL_BIT |
+-					 HNS3_LM_100BASET_HALF_BIT |
+-					 HNS3_LM_10BASET_FULL_BIT |
+-					 HNS3_LM_10BASET_HALF_BIT;
+-
+-			advertised_caps = supported_caps;
+-			break;
+-		case HNAE3_MEDIA_TYPE_UNKNOWN:
+-		default:
+-			cmd->base.port = PORT_OTHER;
+-			supported_caps = 0;
+-			advertised_caps = 0;
+-			break;
+-		}
+-
+-		if (!cmd->base.autoneg)
+-			advertised_caps &= ~HNS3_LM_AUTONEG_BIT;
+-
+-		advertised_caps &= ~HNS3_LM_PAUSE_BIT;
+-
+-		/* now, map driver link modes to ethtool link modes */
+-		hns3_driv_to_eth_caps(supported_caps, cmd, false);
+-		hns3_driv_to_eth_caps(advertised_caps, cmd, true);
+-	}
++	cmd->base.port = PORT_NONE;
++	if (h->ae_algo->ops->get_port_type)
++		h->ae_algo->ops->get_port_type(h,
++					       &cmd->base.port);
+ 
+ 	/* 3.mdix_ctrl&mdix get from phy reg */
+ 	if (h->ae_algo->ops->get_mdix_mode)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index aae4abe..ee3cbac 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -414,6 +414,8 @@ struct hclge_pf_res_cmd {
+ #define HCLGE_CFG_DEFAULT_SPEED_M	GENMASK(23, 16)
+ #define HCLGE_CFG_RSS_SIZE_S	24
+ #define HCLGE_CFG_RSS_SIZE_M	GENMASK(31, 24)
++#define HCLGE_CFG_SPEED_ABILITY_S	0
++#define HCLGE_CFG_SPEED_ABILITY_M	GENMASK(7, 0)
+ 
+ struct hclge_cfg_param_cmd {
+ 	__le32 offset;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 869e98a..31e90b5 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -1026,6 +1026,45 @@ static int hclge_parse_speed(int speed_cmd, int *speed)
  	return 0;
  }
  
-+static int hclge_set_mtu(struct hnae3_handle *handle, int new_mtu)
++static void hclge_parse_fiber_link_mode(struct hclge_dev *hdev,
++					u8 speed_ability)
++{
++	unsigned long *supported = hdev->hw.mac.supported;
++
++	if (speed_ability & HCLGE_SUPPORT_1G_BIT)
++		set_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
++			supported);
++
++	if (speed_ability & HCLGE_SUPPORT_10G_BIT)
++		set_bit(ETHTOOL_LINK_MODE_10000baseSR_Full_BIT,
++			supported);
++
++	if (speed_ability & HCLGE_SUPPORT_25G_BIT)
++		set_bit(ETHTOOL_LINK_MODE_25000baseSR_Full_BIT,
++			supported);
++
++	if (speed_ability & HCLGE_SUPPORT_50G_BIT)
++		set_bit(ETHTOOL_LINK_MODE_50000baseSR2_Full_BIT,
++			supported);
++
++	if (speed_ability & HCLGE_SUPPORT_100G_BIT)
++		set_bit(ETHTOOL_LINK_MODE_100000baseSR4_Full_BIT,
++			supported);
++
++	set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, supported);
++	set_bit(ETHTOOL_LINK_MODE_Pause_BIT, supported);
++}
++
++static void hclge_parse_link_mode(struct hclge_dev *hdev, u8 speed_ability)
++{
++	u8 media_type = hdev->hw.mac.media_type;
++
++	if (media_type != HNAE3_MEDIA_TYPE_FIBER)
++		return;
++
++	hclge_parse_fiber_link_mode(hdev, speed_ability);
++}
++
+ static void hclge_parse_cfg(struct hclge_cfg *cfg, struct hclge_desc *desc)
+ {
+ 	struct hclge_cfg_param_cmd *req;
+@@ -1074,6 +1113,10 @@ static void hclge_parse_cfg(struct hclge_cfg *cfg, struct hclge_desc *desc)
+ 
+ 	req = (struct hclge_cfg_param_cmd *)desc[1].data;
+ 	cfg->numa_node_map = __le32_to_cpu(req->param[0]);
++
++	cfg->speed_ability = hnae_get_field(__le32_to_cpu(req->param[1]),
++					    HCLGE_CFG_SPEED_ABILITY_M,
++					    HCLGE_CFG_SPEED_ABILITY_S);
+ }
+ 
+ /* hclge_get_cfg: query the static parameter from flash
+@@ -1162,6 +1205,8 @@ static int hclge_configure(struct hclge_dev *hdev)
+ 		return ret;
+ 	}
+ 
++	hclge_parse_link_mode(hdev, cfg.speed_ability);
++
+ 	if ((hdev->tc_max > HNAE3_MAX_TC) ||
+ 	    (hdev->tc_max < 1)) {
+ 		dev_warn(&hdev->pdev->dev, "TC num = %d.\n",
+@@ -6061,6 +6106,42 @@ static int hclge_update_led_status(struct hclge_dev *hdev)
+ 					HCLGE_LED_NO_CHANGE);
+ }
+ 
++static void hclge_get_link_mode(struct hnae3_handle *handle,
++				unsigned long *supported,
++				unsigned long *advertising)
++{
++	unsigned int size = BITS_TO_LONGS(__ETHTOOL_LINK_MODE_MASK_NBITS);
++	struct hclge_vport *vport = hclge_get_vport(handle);
++	struct hclge_dev *hdev = vport->back;
++	unsigned int idx = 0;
++
++	for (; idx < size; idx++) {
++		supported[idx] = hdev->hw.mac.supported[idx];
++		advertising[idx] = hdev->hw.mac.advertising[idx];
++	}
++}
++
++static void hclge_get_port_type(struct hnae3_handle *handle,
++				u8 *port_type)
 +{
 +	struct hclge_vport *vport = hclge_get_vport(handle);
 +	struct hclge_dev *hdev = vport->back;
-+	int ret;
++	u8 media_type = hdev->hw.mac.media_type;
 +
-+	ret = hclge_set_mac_mtu(hdev, new_mtu);
-+	if (ret) {
-+		dev_err(&hdev->pdev->dev,
-+			"Change mtu fail, ret =%d\n", ret);
-+		return ret;
++	switch (media_type) {
++	case HNAE3_MEDIA_TYPE_FIBER:
++		*port_type = PORT_FIBRE;
++		break;
++	case HNAE3_MEDIA_TYPE_COPPER:
++		*port_type = PORT_TP;
++		break;
++	case HNAE3_MEDIA_TYPE_UNKNOWN:
++	default:
++		*port_type = PORT_OTHER;
++		break;
 +	}
-+
-+	ret = hclge_buffer_alloc(hdev);
-+	if (ret)
-+		dev_err(&hdev->pdev->dev,
-+			"Allocate buffer fail, ret =%d\n", ret);
-+
-+	return ret;
 +}
 +
- static int hclge_send_reset_tqp_cmd(struct hclge_dev *hdev, u16 queue_id,
- 				    bool enable)
- {
-@@ -5392,11 +5411,6 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
- 		dev_err(&pdev->dev, "Mac init error, ret = %d\n", ret);
- 		return ret;
- 	}
--	ret = hclge_buffer_alloc(hdev);
--	if (ret) {
--		dev_err(&pdev->dev, "Buffer allocate fail, ret =%d\n", ret);
--		return  ret;
--	}
+ static const struct hnae3_ae_ops hclge_ops = {
+ 	.init_ae_dev = hclge_init_ae_dev,
+ 	.uninit_ae_dev = hclge_uninit_ae_dev,
+@@ -6116,6 +6197,8 @@ static const struct hnae3_ae_ops hclge_ops = {
+ 	.get_regs_len = hclge_get_regs_len,
+ 	.get_regs = hclge_get_regs,
+ 	.set_led_id = hclge_set_led_id,
++	.get_link_mode = hclge_get_link_mode,
++	.get_port_type = hclge_get_port_type,
+ };
  
- 	ret = hclge_config_tso(hdev, HCLGE_TSO_MSS_MIN, HCLGE_TSO_MSS_MAX);
- 	if (ret) {
-@@ -5503,12 +5517,6 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
- 		return ret;
- 	}
+ static struct hnae3_ae_algo ae_algo = {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index edbcb73..8c14d10 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -106,6 +106,12 @@
+ #define HCLGE_MAC_MIN_FRAME		64
+ #define HCLGE_MAC_MAX_FRAME		9728
  
--	ret = hclge_buffer_alloc(hdev);
--	if (ret) {
--		dev_err(&pdev->dev, "Buffer allocate fail, ret =%d\n", ret);
--		return ret;
--	}
--
- 	ret = hclge_config_tso(hdev, HCLGE_TSO_MSS_MIN, HCLGE_TSO_MSS_MAX);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Enable tso fail, ret =%d\n", ret);
++#define HCLGE_SUPPORT_1G_BIT		BIT(0)
++#define HCLGE_SUPPORT_10G_BIT		BIT(1)
++#define HCLGE_SUPPORT_25G_BIT		BIT(2)
++#define HCLGE_SUPPORT_50G_BIT		BIT(3)
++#define HCLGE_SUPPORT_100G_BIT		BIT(4)
++
+ enum HCLGE_DEV_STATE {
+ 	HCLGE_STATE_REINITING,
+ 	HCLGE_STATE_DOWN,
+@@ -170,6 +176,8 @@ struct hclge_mac {
+ 	struct phy_device *phydev;
+ 	struct mii_bus *mdio_bus;
+ 	phy_interface_t phy_if;
++	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported);
++	__ETHTOOL_DECLARE_LINK_MODE_MASK(advertising);
+ };
+ 
+ struct hclge_hw {
+@@ -236,6 +244,7 @@ struct hclge_cfg {
+ 	u8 mac_addr[ETH_ALEN];
+ 	u8 default_speed;
+ 	u32 numa_node_map;
++	u8 speed_ability;
+ };
+ 
+ struct hclge_tm_info {
 -- 
 2.9.3
