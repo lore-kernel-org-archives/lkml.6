@@ -1,65 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752658AbeCUQEt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:04:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40674 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751662AbeCUQEs (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:04:48 -0400
-Date: Wed, 21 Mar 2018 17:04:46 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: "Jin, Yao" <yao.jin@linux.intel.com>, jolsa@kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH] perf util: Display warning when perf report/annotate is
- missing some libs
-Message-ID: <20180321160446.GB2707@krava>
-References: <1515668586-14327-1-git-send-email-yao.jin@linux.intel.com>
- <20180111153028.GB20406@krava>
- <ef52d9de-54b6-88a6-625d-bd048a098222@linux.intel.com>
- <42a90e87-f2fd-293d-bd25-591fcdff14e1@linux.intel.com>
- <20180321153807.GA2707@krava>
- <20180321154035.GC24312@kernel.org>
- <20180321154315.GD24312@kernel.org>
+        id S1752720AbeCUQFC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:05:02 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:38591 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751691AbeCUQE7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 12:04:59 -0400
+X-Google-Smtp-Source: AG47ELvdVEHvQ+sekJeqLvr5H01BtByaOcEsWjK1moLaDqGy/FRUrUx1KFg+EZLgjFA5fRcZs3l7xA==
+Date: Wed, 21 Mar 2018 12:04:50 -0400
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] gpio: 104-idio-16: Implement get_multiple callback
+Message-ID: <20180321160450.GA21405@sophia>
+References: <cover.1521301345.git.vilhelm.gray@gmail.com>
+ <486eb9bad0440ed305a78d9fc990728cbeb7d43e.1521301345.git.vilhelm.gray@gmail.com>
+ <CAHp75VcdimgN3u5O5zye2=pXvCkWuZzCf3e0wOQozQoKz7W8yA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180321154315.GD24312@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAHp75VcdimgN3u5O5zye2=pXvCkWuZzCf3e0wOQozQoKz7W8yA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 12:43:15PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Mar 21, 2018 at 12:40:35PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Wed, Mar 21, 2018 at 04:38:07PM +0100, Jiri Olsa escreveu:
-> > > On Wed, Mar 21, 2018 at 10:11:10AM +0800, Jin, Yao wrote:
-> > > > Hi Jiri,
-> > > > 
-> > > > I'm still thinking it's worth displaying the warning when perf missing some
-> > > > libraries.
-> > > > 
-> > > > Somebody just told me that perf didn't work well. While after some
-> > > > investigations, I found it's just missing some libraries when building the
-> > > > perf.
-> > > > 
-> > > > But I have spent some time on getting the root cause. If with this patch, it
-> > > > should be very easily to know that.
-> > > 
-> > > true.. Arnaldo, any feedback on this one?
-> > 
-> > Lemme re-read the thread...
-> 
-> Well, how about we make it harder to build without key libraries? I.e.
-> if we detect that what we consider a core set of libraries isn't found
-> in the system, then we stop the build, warn about it and ask the user to
-> confirm that the build should proceed by passing some explicit
-> -DI_KNOW_WHAT_I_AM_DOING___PROCEED=doit
+On Wed, Mar 21, 2018 at 05:32:03PM +0200, Andy Shevchenko wrote:
+>On Sat, Mar 17, 2018 at 5:50 PM, William Breathitt Gray
+><vilhelm.gray@gmail.com> wrote:
+>> The ACCES I/O 104-IDIO-16 series of devices provides 16
+>> optically-isolated digital inputs accessed via two 8-bit ports. Since
+>> eight input lines are acquired on a single port input read, the
+>> 104-IDIO-16 GPIO driver may improve multiple input reads by utilizing a
+>> get_multiple callback. This patch implements the
+>> idio_16_gpio_get_multiple function which serves as the respective
+>> get_multiple callback.
+>
+>> +static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
+>> +       unsigned long *mask, unsigned long *bits)
+>> +{
+>> +       struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
+>> +
+>> +       *bits = 0;
+>
+>> +       if (*mask & 0xFF0000)
+>
+>GENMASK(23, 16) ?
+>
+>> +               *bits |= (unsigned long)inb(idio16gpio->base + 1) << 16;
+>
+>Do you need casting?
+>
+>> +       if (*mask & 0xFF000000)
+>
+>GENMASK(31, 24) ?
+>
+>Alternative (and for above):
+>
+>(*mask >> 24) & 0xff
+>
+>(*mask >> 16) & 0xff
 
-hum, not sure we want to complicate the build even more than it
-is now :-\ and IMO it still won't help much in Jin's problem,
-if user forces the build anyway
+That's a good suggestion since GENMASK would be useful in making it
+clear which bits we are actually checking; the literal bitmasks such as
+0xFF000000 can be difficult to read at a glance. I'll incorporate
+GENMASK into a version 4 release of this patch.
 
-jirka
+>
+>
+>> +               *bits |= (unsigned long)inb(idio16gpio->base + 5) << 24;
+>
+>Do you need casting?
+
+The inb function returns a u8, which is typically a typedef of an
+unsigned char. Since u8 only guaranteed a range of 8 bits, we require a
+cast to unsigned long to guarantee that the left shifted value stays
+intact as a 32-bit unsigned value rather than wrap around an 8-bit
+unsigned range.
+
+William Breathitt Gray
+
+>
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>  static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+>>  {
+>>         struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
+>> @@ -244,6 +258,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
+>>         idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
+>>         idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
+>>         idio16gpio->chip.get = idio_16_gpio_get;
+>> +       idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
+>>         idio16gpio->chip.set = idio_16_gpio_set;
+>>         idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+>>         idio16gpio->base = base[id];
+>> --
+>> 2.16.2
+>>
+>
+>
+>
+>-- 
+>With Best Regards,
+>Andy Shevchenko
