@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752241AbeCUQ7X (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 12:59:23 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41689 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752048AbeCUQ6y (ORCPT
+        id S1752300AbeCUQ7q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 12:59:46 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37910 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752002AbeCUQ6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 12:58:54 -0400
-X-Google-Smtp-Source: AG47ELs7hLz4Lg7ZCBQLbMa7YhHj4qu+Nc9gOCl26K7mn/Pw9316i3ORNauNLF5U+caB3MWssRqKQw==
+        Wed, 21 Mar 2018 12:58:53 -0400
+X-Google-Smtp-Source: AG47ELu5F6wJygoLAfwake0JqlESWvfOZh+VGCO4U9zbs493yc2ZNZHfqvQods7IctovccctJ/RaEw==
 From: Stephen Boyd <swboyd@chromium.org>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
@@ -16,9 +16,9 @@ Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 3/3] pinctrl: qcom: Don't allow protected pins to be requested
-Date: Wed, 21 Mar 2018 09:58:48 -0700
-Message-Id: <20180321165848.89751-4-swboyd@chromium.org>
+Subject: [PATCH v3 2/3] gpiolib: Support 'gpio-reserved-ranges' property
+Date: Wed, 21 Mar 2018 09:58:47 -0700
+Message-Id: <20180321165848.89751-3-swboyd@chromium.org>
 X-Mailer: git-send-email 2.16.2.804.g6dcf76e118-goog
 In-Reply-To: <20180321165848.89751-1-swboyd@chromium.org>
 References: <20180321165848.89751-1-swboyd@chromium.org>
@@ -28,151 +28,186 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stephen Boyd <sboyd@codeaurora.org>
 
-Some qcom platforms make some GPIOs or pins unavailable for use
-by non-secure operating systems, and thus reading or writing the
-registers for those pins will cause access control issues and
-reset the device. With a DT/ACPI property to describe the set of
-pins that are available for use, parse the available pins and set
-the irq valid bits for gpiolib to know what to consider 'valid'.
-This should avoid any issues with gpiolib. Furthermore, implement
-the pinmux_ops::request function so that pinmux can also make
-sure to not use pins that are unavailable.
+Some qcom platforms make some GPIOs or pins unavailable for use by
+non-secure operating systems, and thus reading or writing the registers
+for those pins will cause access control issues. Add support for a DT
+property to describe the set of GPIOs that are available for use so that
+higher level OSes are able to know what pins to avoid reading/writing.
+Non-DT platforms can add support by directly updating the
+chip->valid_mask.
 
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c | 69 ++++++++++++++++++++++++++++--
- 1 file changed, 65 insertions(+), 4 deletions(-)
+ drivers/gpio/gpiolib-of.c   | 24 ++++++++++++++++++
+ drivers/gpio/gpiolib.c      | 50 +++++++++++++++++++++++++++++++++++++
+ include/linux/gpio/driver.h | 16 ++++++++++++
+ 3 files changed, 90 insertions(+)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 495432f3341b..bc9cda0da886 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -105,6 +105,17 @@ static const struct pinctrl_ops msm_pinctrl_ops = {
- 	.dt_free_map		= pinctrl_utils_free_map,
- };
- 
-+static int msm_pinmux_request(struct pinctrl_dev *pctldev, unsigned offset)
-+{
-+	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-+	struct gpio_chip *chip = &pctrl->chip;
-+
-+	if (gpiochip_line_is_valid(chip, offset))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
- static int msm_get_functions_count(struct pinctrl_dev *pctldev)
- {
- 	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-@@ -166,6 +177,7 @@ static int msm_pinmux_set_mux(struct pinctrl_dev *pctldev,
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 84e5a9df2344..ed81d9a6316f 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -511,6 +511,28 @@ void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
  }
+ EXPORT_SYMBOL(of_mm_gpiochip_remove);
  
- static const struct pinmux_ops msm_pinmux_ops = {
-+	.request		= msm_pinmux_request,
- 	.get_functions_count	= msm_get_functions_count,
- 	.get_function_name	= msm_get_function_name,
- 	.get_function_groups	= msm_get_function_groups,
-@@ -506,6 +518,9 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 		"pull up"
- 	};
- 
-+	if (!gpiochip_line_is_valid(chip, offset))
++static void of_gpiochip_init_valid_mask(struct gpio_chip *chip)
++{
++	int len, i;
++	u32 start, count;
++	struct device_node *np = chip->of_node;
++
++	len = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
++	if (len < 0 || len % 2 != 0)
 +		return;
 +
- 	g = &pctrl->soc->groups[offset];
- 	ctl_reg = readl(pctrl->regs + g->ctl_reg);
- 
-@@ -516,7 +531,7 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
- 
- 	seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", func);
- 	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
--	seq_printf(s, " %s", pulls[pull]);
-+	seq_printf(s, " %s\n", pulls[pull]);
- }
- 
- static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
-@@ -524,10 +539,8 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- 	unsigned gpio = chip->base;
- 	unsigned i;
- 
--	for (i = 0; i < chip->ngpio; i++, gpio++) {
-+	for (i = 0; i < chip->ngpio; i++, gpio++)
- 		msm_gpio_dbg_show_one(s, NULL, chip, i, gpio);
--		seq_puts(s, "\n");
--	}
- }
- 
- #else
-@@ -808,6 +821,46 @@ static void msm_gpio_irq_handler(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+static int msm_gpio_init_valid_mask(struct gpio_chip *chip,
-+				    struct msm_pinctrl *pctrl)
-+{
-+	int ret;
-+	unsigned int len, i;
-+	unsigned int max_gpios = pctrl->soc->ngpios;
++	for (i = 0; i < len; i += 2) {
++		of_property_read_u32_index(np, "gpio-reserved-ranges",
++					   i, &start);
++		of_property_read_u32_index(np, "gpio-reserved-ranges",
++					   i + 1, &count);
++		if (start >= chip->ngpio || start + count >= chip->ngpio)
++			continue;
 +
-+	/* The number of GPIOs in the ACPI tables */
-+	ret = device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0);
-+	if (ret > 0 && ret < max_gpios) {
-+		u16 *tmp;
-+
-+		len = ret;
-+		tmp = kmalloc_array(len, sizeof(tmp[0]), GFP_KERNEL);
-+		if (!tmp)
-+			return -ENOMEM;
-+
-+		ret = device_property_read_u16_array(pctrl->dev, "gpios", tmp,
-+						     len);
-+		if (ret < 0) {
-+			dev_err(pctrl->dev, "could not read list of GPIOs\n");
-+			kfree(tmp);
-+			return ret;
-+		}
-+
-+		bitmap_zero(chip->valid_mask, max_gpios);
-+		for (i = 0; i < len; i++)
-+			set_bit(tmp[i], chip->valid_mask);
-+
-+		return 0;
++		bitmap_clear(chip->valid_mask, start, count);
 +	}
++};
++
+ #ifdef CONFIG_PINCTRL
+ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ {
+@@ -615,6 +637,8 @@ int of_gpiochip_add(struct gpio_chip *chip)
+ 	if (chip->of_gpio_n_cells > MAX_PHANDLE_ARGS)
+ 		return -EINVAL;
+ 
++	of_gpiochip_init_valid_mask(chip);
++
+ 	status = of_gpiochip_add_pin_range(chip);
+ 	if (status)
+ 		return status;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d66de67ef307..5861984774ac 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -337,6 +337,47 @@ static int gpiochip_set_desc_names(struct gpio_chip *gc)
+ 	return 0;
+ }
+ 
++static int gpiochip_init_valid_mask(struct gpio_chip *gpiochip)
++{
++#ifdef CONFIG_OF_GPIO
++	int size;
++	struct device_node *np = gpiochip->of_node;
++
++	size = of_property_count_u32_elems(np,  "gpio-reserved-ranges");
++	if (size > 0 && size % 2 == 0)
++		gpiochip->need_valid_mask = true;
++#endif
++
++	if (!gpiochip->need_valid_mask)
++		return 0;
++
++	gpiochip->valid_mask = kcalloc(BITS_TO_LONGS(gpiochip->ngpio),
++				       sizeof(long), GFP_KERNEL);
++	if (!gpiochip->valid_mask)
++		return -ENOMEM;
++
++	/* Assume by default all GPIOs are valid */
++	bitmap_fill(gpiochip->valid_mask, gpiochip->ngpio);
 +
 +	return 0;
 +}
 +
-+static bool msm_gpio_needs_valid_mask(struct msm_pinctrl *pctrl)
++static void gpiochip_free_valid_mask(struct gpio_chip *gpiochip)
 +{
-+	return device_property_read_u16_array(pctrl->dev, "gpios", NULL, 0) > 0;
++	kfree(gpiochip->valid_mask);
++	gpiochip->valid_mask = NULL;
 +}
 +
- static int msm_gpio_init(struct msm_pinctrl *pctrl)
- {
- 	struct gpio_chip *chip;
-@@ -824,6 +877,7 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	chip->parent = pctrl->dev;
- 	chip->owner = THIS_MODULE;
- 	chip->of_node = pctrl->dev->of_node;
-+	chip->need_valid_mask = msm_gpio_needs_valid_mask(pctrl);
- 
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
-@@ -831,6 +885,13 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 		return ret;
- 	}
- 
-+	ret = msm_gpio_init_valid_mask(chip, pctrl);
-+	if (ret) {
-+		dev_err(pctrl->dev, "Failed to setup irq valid bits\n");
-+		gpiochip_remove(&pctrl->chip);
-+		return ret;
-+	}
++bool gpiochip_line_is_valid(const struct gpio_chip *gpiochip,
++				unsigned int offset)
++{
++	/* No mask means all valid */
++	if (likely(!gpiochip->valid_mask))
++		return true;
++	return test_bit(offset, gpiochip->valid_mask);
++}
++EXPORT_SYMBOL_GPL(gpiochip_line_is_valid);
 +
- 	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
- 	if (ret) {
- 		dev_err(pctrl->dev, "Failed to add pin range\n");
+ /*
+  * GPIO line handle management
+  */
+@@ -1261,6 +1302,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	if (status)
+ 		goto err_remove_from_list;
+ 
++	status = gpiochip_init_valid_mask(chip);
++	if (status)
++		goto err_remove_irqchip_mask;
++
+ 	status = gpiochip_add_irqchip(chip, lock_key, request_key);
+ 	if (status)
+ 		goto err_remove_chip;
+@@ -1290,6 +1335,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	acpi_gpiochip_remove(chip);
+ 	gpiochip_free_hogs(chip);
+ 	of_gpiochip_remove(chip);
++	gpiochip_free_valid_mask(chip);
++err_remove_irqchip_mask:
+ 	gpiochip_irqchip_free_valid_mask(chip);
+ err_remove_from_list:
+ 	spin_lock_irqsave(&gpio_lock, flags);
+@@ -1346,6 +1393,7 @@ void gpiochip_remove(struct gpio_chip *chip)
+ 	acpi_gpiochip_remove(chip);
+ 	gpiochip_remove_pin_ranges(chip);
+ 	of_gpiochip_remove(chip);
++	gpiochip_free_valid_mask(chip);
+ 	/*
+ 	 * We accept no more calls into the driver from this point, so
+ 	 * NULL the driver data pointer
+@@ -1526,6 +1574,8 @@ static void gpiochip_irqchip_free_valid_mask(struct gpio_chip *gpiochip)
+ bool gpiochip_irqchip_irq_valid(const struct gpio_chip *gpiochip,
+ 				unsigned int offset)
+ {
++	if (!gpiochip_line_is_valid(gpiochip, offset))
++		return false;
+ 	/* No mask means all valid */
+ 	if (likely(!gpiochip->irq.valid_mask))
+ 		return true;
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 1ba9a331ec51..5382b5183b7e 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -288,6 +288,21 @@ struct gpio_chip {
+ 	struct gpio_irq_chip irq;
+ #endif
+ 
++	/**
++	 * @need_valid_mask:
++	 *
++	 * If set core allocates @valid_mask with all bits set to one.
++	 */
++	bool need_valid_mask;
++
++	/**
++	 * @valid_mask:
++	 *
++	 * If not %NULL holds bitmask of GPIOs which are valid to be used
++	 * from the chip.
++	 */
++	unsigned long *valid_mask;
++
+ #if defined(CONFIG_OF_GPIO)
+ 	/*
+ 	 * If CONFIG_OF is enabled, then all GPIO controllers described in the
+@@ -384,6 +399,7 @@ bool gpiochip_line_is_open_source(struct gpio_chip *chip, unsigned int offset);
+ 
+ /* Sleep persistence inquiry for drivers */
+ bool gpiochip_line_is_persistent(struct gpio_chip *chip, unsigned int offset);
++bool gpiochip_line_is_valid(const struct gpio_chip *chip, unsigned int offset);
+ 
+ /* get driver data */
+ void *gpiochip_get_data(struct gpio_chip *chip);
 -- 
 Sent by a computer through tubes
