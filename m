@@ -1,81 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752107AbeCUM3p (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 08:29:45 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:37364 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751778AbeCUM3j (ORCPT
+        id S1752123AbeCUM34 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 08:29:56 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:30090 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751688AbeCUM3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 08:29:39 -0400
-X-Google-Smtp-Source: AG47ELtS4ZrUCau1re95Gz4+ifM3k7wlIG3v1fsmUSGCzTyf7nhs0iU2j46K8kGRhssCfE/s+44o6Q==
-From: Geliang Tang <geliangtang@gmail.com>
-To: Kees Cook <keescook@chromium.org>, Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>
-Cc: Geliang Tang <geliangtang@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] pstore: rename two compression functions
-Date: Wed, 21 Mar 2018 20:29:32 +0800
-Message-Id: <67c9e6bce3d13c70954fec17def66fad0d7a822c.1521626569.git.geliangtang@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <9c9416b2dff19f05fb4c35879aaa83d11ff72c92.1521626182.git.geliangtang@gmail.com>
-References: <9c9416b2dff19f05fb4c35879aaa83d11ff72c92.1521626182.git.geliangtang@gmail.com>
+        Wed, 21 Mar 2018 08:29:53 -0400
+Date: Wed, 21 Mar 2018 17:58:54 +0530
+From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Ganesh GR <ganeshgr@chelsio.com>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        Indranil Choudhury <indranil@chelsio.com>
+Subject: Re: [RFC PATCH 2/3] x86/io: implement 256-bit IO read and write
+Message-ID: <20180321122853.GC3245@chelsio.com>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <6ec3e7e0c70e85a804933f27bb4275d5363c044b.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <alpine.DEB.2.21.1803191525010.2010@nanos.tec.linutronix.de>
+ <20180320133206.GB25574@chelsio.com>
+ <CAKgT0UeTHPVrxEUbEszxm1MyJsQDSLfyM8txHq=r7GVkPD37nQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UeTHPVrxEUbEszxm1MyJsQDSLfyM8txHq=r7GVkPD37nQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have following five functions which deal with pstore compression.
-This patch renamed two functions to make the names of those functions
-consistent:
+On Tuesday, March 03/20/18, 2018 at 20:12:15 +0530, Alexander Duyck wrote:
+> On Tue, Mar 20, 2018 at 6:32 AM, Rahul Lakkireddy
+> <rahul.lakkireddy@chelsio.com> wrote:
+> > On Monday, March 03/19/18, 2018 at 20:13:10 +0530, Thomas Gleixner wrote:
+> >> On Mon, 19 Mar 2018, Rahul Lakkireddy wrote:
+> >>
+> >> > Use VMOVDQU AVX CPU instruction when available to do 256-bit
+> >> > IO read and write.
+> >>
+> >> That's not what the patch does. See below.
+> >>
+> >> > Signed-off-by: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+> >> > Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+> >>
+> >> That Signed-off-by chain is wrong....
+> >>
+> >> > +#ifdef CONFIG_AS_AVX
+> >> > +#include <asm/fpu/api.h>
+> >> > +
+> >> > +static inline u256 __readqq(const volatile void __iomem *addr)
+> >> > +{
+> >> > +   u256 ret;
+> >> > +
+> >> > +   kernel_fpu_begin();
+> >> > +   asm volatile("vmovdqu %0, %%ymm0" :
+> >> > +                : "m" (*(volatile u256 __force *)addr));
+> >> > +   asm volatile("vmovdqu %%ymm0, %0" : "=m" (ret));
+> >> > +   kernel_fpu_end();
+> >> > +   return ret;
+> >>
+> >> You _cannot_ assume that the instruction is available just because
+> >> CONFIG_AS_AVX is set. The availability is determined by the runtime
+> >> evaluated CPU feature flags, i.e. X86_FEATURE_AVX.
+> >>
+> >
+> > Ok.  Will add boot_cpu_has(X86_FEATURE_AVX) check as well.
+> >
+> >> Aside of that I very much doubt that this is faster than 4 consecutive
+> >> 64bit reads/writes as you have the full overhead of
+> >> kernel_fpu_begin()/end() for each access.
+> >>
+> >> You did not provide any numbers for this so its even harder to
+> >> determine.
+> >>
+> >
+> > Sorry about that.  Here are the numbers with and without this series.
+> >
+> > When reading up to 2 GB on-chip memory via MMIO, the time taken:
+> >
+> > Without Series        With Series
+> > (64-bit read)         (256-bit read)
+> >
+> > 52 seconds            26 seconds
+> >
+> > As can be seen, we see good improvement with doing 256-bits at a
+> > time.
+> 
+> Instead of framing this as an enhanced version of the read/write ops
+> why not look at replacing or extending something like the
+> memcpy_fromio or memcpy_toio operations? It would probably be more
+> comparable to what you are doing if you are wanting to move large
+> chunks of memory from one region to another, and it should translate
+> into something like AVX instructions once the CPU optimizations kick
+> in for a memcpy.
+> 
 
-allocate_buf_for_compression	-> 	pstore_init_compression
-free_buf_for_compression	-> 	pstore_free_compression
-pstore_choose_compression		pstore_choose_compression
-pstore_compress				pstore_compress
-pstore_decompress			pstore_decompress
+Ok. Will look into this approach.
 
-Signed-off-by: Geliang Tang <geliangtang@gmail.com>
----
- fs/pstore/platform.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index 1143ef351c58..03d16b6ed5ec 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -256,7 +256,7 @@ static int pstore_decompress(void *in, void *out,
- 	return outlen;
- }
- 
--static void allocate_buf_for_compression(void)
-+static void pstore_init_compression(void)
- {
- 	if (!zbackend)
- 		return;
-@@ -285,7 +285,7 @@ static void allocate_buf_for_compression(void)
- 	}
- }
- 
--static void free_buf_for_compression(void)
-+static void pstore_free_compression(void)
- {
- 	if (!IS_ERR_OR_NULL(tfm))
- 		crypto_free_comp(tfm);
-@@ -560,7 +560,7 @@ int pstore_register(struct pstore_info *psi)
- 		return -EINVAL;
- 	}
- 
--	allocate_buf_for_compression();
-+	pstore_init_compression();
- 
- 	if (pstore_is_mounted())
- 		pstore_get_records(0);
-@@ -611,7 +611,7 @@ void pstore_unregister(struct pstore_info *psi)
- 	if (psi->flags & PSTORE_FLAGS_DMESG)
- 		pstore_unregister_kmsg();
- 
--	free_buf_for_compression();
-+	pstore_free_compression();
- 
- 	psinfo = NULL;
- 	backend = NULL;
--- 
-2.14.1
+Thanks,
+Rahul
