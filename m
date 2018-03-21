@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751857AbeCUMIb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 08:08:31 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45872 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751531AbeCUMIZ (ORCPT
+        id S1751943AbeCUMIo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 08:08:44 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40239 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751864AbeCUMIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 08:08:25 -0400
-X-Google-Smtp-Source: AG47ELuoDslTI27abxWqj5MaR4XMM0CA1/0oJcN7Sz0EDuWvd058Dc03M0RmzhhmP+DQ8jWlBmuqyA==
+        Wed, 21 Mar 2018 08:08:32 -0400
+X-Google-Smtp-Source: AG47ELvY2jz7T5Ll1HGWX6p+4MCY76YpOMmvhWU/K/QOTf1iczprWIQtQ925pitY5OJuLlR++GctdA==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -21,62 +21,66 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 0/8] ARM: davinci: complete the conversion to using the reset framework
-Date: Wed, 21 Mar 2018 13:07:59 +0100
-Message-Id: <20180321120807.18032-1-brgl@bgdev.pl>
+Subject: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
+Date: Wed, 21 Mar 2018 13:08:03 +0100
+Message-Id: <20180321120807.18032-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180321120807.18032-1-brgl@bgdev.pl>
+References: <20180321120807.18032-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This series converts the only user of the handcoded, mach-specific reset
-routines in the davinci platform to using the reset framework.
+In order to be able to use the reset framework in legacy boot mode as
+well, add the reset lookup table to the psc driver for da850 variant.
 
-Patch 1 modifies the way lookup entries are registered with the reset
-framework.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/clk/davinci/psc-da850.c | 8 ++++++++
+ drivers/clk/davinci/psc.c       | 1 +
+ 2 files changed, 9 insertions(+)
 
-Patches 2-4 add necessary lookups/DT-properties.
-
-Patches 5-7 convert the davinci-rproc driver to the reset framework.
-
-Patch 8 removes now dead code.
-
-Philipp: it turned out that it's indeed better to use the reset
-controller's device name for the entry lookup.
-
-Tested both in DT and legacy modes by booting the examples from
-ti-ipc-rtos recipe in meta-ti.
-
-This series applies on top of David Lechner's common-clk-v9 branch[1]
-with Philipp Zabel's reset/next branch[2] pulled in.
-
-It can be found in my github tree as well[3].
-
-[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
-[2] git://git.pengutronix.de/git/pza/linux reset/next
-[3] git@github.com:brgl/linux.git topic/davinci-reset
-
-Bartosz Golaszewski (8):
-  reset: modify the way reset lookup works for board files
-  ARM: davinci: dts: make psc0 a reset provider
-  ARM: davinci: dts: add a reset control to the dsp node
-  clk: davinci: add a reset lookup table for psc0
-  remoteproc: da8xx: add the missing checke for clk_enable()
-  remoteproc: da8xx: prepare and unprepare the clock where needed
-  remoteproc: da8xx: use the reset framework
-  clk: davinci: kill davinci_clk_reset_assert/deassert()
-
- arch/arm/boot/dts/da850.dtsi               |  2 ++
- arch/arm/mach-davinci/include/mach/clock.h | 21 ----------------
- drivers/clk/davinci/psc-da850.c            |  8 ++++++
- drivers/clk/davinci/psc.c                  | 19 +-------------
- drivers/remoteproc/da8xx_remoteproc.c      | 40 ++++++++++++++++++++++++------
- drivers/reset/core.c                       | 33 +++++++++++++++++++++---
- include/linux/reset-controller.h           |  8 +++---
- 7 files changed, 78 insertions(+), 53 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
-
+diff --git a/drivers/clk/davinci/psc-da850.c b/drivers/clk/davinci/psc-da850.c
+index ccc7eb17bf3a..395db4b2c0ee 100644
+--- a/drivers/clk/davinci/psc-da850.c
++++ b/drivers/clk/davinci/psc-da850.c
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/clk-provider.h>
++#include <linux/reset-controller.h>
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/init.h>
+@@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,	"fck",	"ecap.0",
+ 				"fck",	"ecap.1",
+ 				"fck",	"ecap.2");
+ 
++static struct reset_control_lookup da850_psc0_reset_lookup_table[] = {
++	RESET_LOOKUP("davinci-rproc.0", NULL, 15),
++};
++
+ static int da850_psc0_init(struct device *dev, void __iomem *base)
+ {
++	reset_controller_add_lookup("da850-psc0",
++				    da850_psc0_reset_lookup_table,
++				    ARRAY_SIZE(da850_psc0_reset_lookup_table));
+ 	return davinci_psc_register_clocks(dev, da850_psc0_info, 16, base);
+ }
+ 
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 3b0e59dfbdd7..063df62381ea 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -425,6 +425,7 @@ __davinci_psc_register_clocks(struct device *dev,
+ 
+ 	psc->rcdev.ops = &davinci_psc_reset_ops;
+ 	psc->rcdev.owner = THIS_MODULE;
++	psc->rcdev.dev = dev;
+ 	psc->rcdev.of_node = dev->of_node;
+ 	psc->rcdev.of_reset_n_cells = 1;
+ 	psc->rcdev.of_xlate = davinci_psc_reset_of_xlate;
 -- 
 2.16.1
