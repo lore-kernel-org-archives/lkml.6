@@ -1,101 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeCUSHR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 14:07:17 -0400
-Received: from mga18.intel.com ([134.134.136.126]:25924 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752454AbeCUSHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 14:07:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,340,1517904000";
-   d="scan'208";a="26403894"
-Message-ID: <1521655629.23017.84.camel@linux.intel.com>
-Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Don't allow protected pins to be
- requested
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Boyd <swboyd@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org
-Date: Wed, 21 Mar 2018 20:07:09 +0200
-In-Reply-To: <20180321165848.89751-4-swboyd@chromium.org>
-References: <20180321165848.89751-1-swboyd@chromium.org>
-         <20180321165848.89751-4-swboyd@chromium.org>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752691AbeCUSMk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 14:12:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56546 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751416AbeCUSMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 14:12:38 -0400
+Date: Wed, 21 Mar 2018 14:12:36 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>
+Subject: Re: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM
+ client quit
+Message-ID: <20180321181235.GF3214@redhat.com>
+References: <20180320020038.3360-1-jglisse@redhat.com>
+ <20180320020038.3360-5-jglisse@redhat.com>
+ <55b8cf9f-2a81-19f3-ff4f-70d5a411baaa@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <55b8cf9f-2a81-19f3-ff4f-70d5a411baaa@nvidia.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-21 at 09:58 -0700, Stephen Boyd wrote:
-> From: Stephen Boyd <sboyd@codeaurora.org>
+On Tue, Mar 20, 2018 at 09:24:41PM -0700, John Hubbard wrote:
+> On 03/19/2018 07:00 PM, jglisse@redhat.com wrote:
+> > From: Jérôme Glisse <jglisse@redhat.com>
+> > 
+> > This code was lost in translation at one point. This properly call
+> > mmu_notifier_unregister_no_release() once last user is gone. This
+> > fix the zombie mm_struct as without this patch we do not drop the
+> > refcount we have on it.
+> > 
+> > Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> > Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+> > Cc: Ralph Campbell <rcampbell@nvidia.com>
+> > Cc: Mark Hairgrove <mhairgrove@nvidia.com>
+> > Cc: John Hubbard <jhubbard@nvidia.com>
+> > ---
+> >  mm/hmm.c | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> > 
+> > diff --git a/mm/hmm.c b/mm/hmm.c
+> > index 6088fa6ed137..667944630dc9 100644
+> > --- a/mm/hmm.c
+> > +++ b/mm/hmm.c
+> > @@ -244,10 +244,29 @@ EXPORT_SYMBOL(hmm_mirror_register);
+> >  void hmm_mirror_unregister(struct hmm_mirror *mirror)
+> >  {
+> >  	struct hmm *hmm = mirror->hmm;
+> > +	struct mm_struct *mm = NULL;
+> > +	bool unregister = false;
+> >  
+> >  	down_write(&hmm->mirrors_sem);
+> >  	list_del_init(&mirror->list);
+> > +	unregister = list_empty(&hmm->mirrors);
 > 
-> Some qcom platforms make some GPIOs or pins unavailable for use
-> by non-secure operating systems, and thus reading or writing the
-> registers for those pins will cause access control issues and
-> reset the device. With a DT/ACPI property to describe the set of
-> pins that are available for use, parse the available pins and set
-> the irq valid bits for gpiolib to know what to consider 'valid'.
-> This should avoid any issues with gpiolib. Furthermore, implement
-> the pinmux_ops::request function so that pinmux can also make
-> sure to not use pins that are unavailable.
+> Hi Jerome,
 > 
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> This first minor point may be irrelevant, depending on how you fix 
+> the other problem below, but: tiny naming idea: rename unregister 
+> to either "should_unregister", or "mirror_snapshot_empty"...the 
+> latter helps show that this is stale information, once the lock is 
+> dropped. 
 
-Hmm...
+First name make sense, second doesn't (at least to me), mirror is dead
+at this point, it does not have any implication respective to snapshot
+(the mm might still be very well alive and in active use).
 
-> +static int msm_pinmux_request(struct pinctrl_dev *pctldev, unsigned
-> offset)
-> +{
-> +	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-> +	struct gpio_chip *chip = &pctrl->chip;
-> +
-> +	if (gpiochip_line_is_valid(chip, offset))
-> +		return 0;
-> +
-> +	return -EINVAL;
 
-Perhaps traditional pattern
+> >  	up_write(&hmm->mirrors_sem);
+> > +
+> > +	if (!unregister)
+> > +		return;
+> 
+> Whee, here I am, lock-free, in the middle of a race condition
+> window. :)  Right here, someone (hmm_mirror_register) could be adding
+> another mirror.
+> 
+> It's not immediately clear to me what the best solution is.
+> I'd be happier if we didn't have to drop one lock and take
+> another like this, but if we do, then maybe rechecking that
+> the list hasn't changed...safely, somehow, is a way forward here.
+> 
 
-if (!...)
- return -EINVAL;
+First i want to stress this is very unlikely race, it can only happens
+if one hmm_mirror unregister and is last one while another new one try
+to register. Highly unlikely but i am sending a v2 which fix that any-
+way better safe than sorry. It makes the register side a bit ugly.
 
-return 0;
-
-?
-
-> +}
-
->  	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
-> -	seq_printf(s, " %s", pulls[pull]);
-> +	seq_printf(s, " %s\n", pulls[pull]);
-
-I had commented this once, but you ignored by some reason.
-
-I would rather just move 
- seq_puts(s, "\n");
-here.
-
-The rationale behind, besides making diff more neat, is to reduce
-possible burden in the future if someone would like to squeeze more data
-in between.
-
-> +		tmp = kmalloc_array(len, sizeof(tmp[0]), GFP_KERNEL);
-
-sizeof(*tmp) ?
-
-> +		if (!tmp)
-> +			return -ENOMEM;
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Cheers,
+Jérôme
