@@ -1,111 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751587AbeCUIlT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 04:41:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48453 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751319AbeCUIlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 04:41:16 -0400
-Date: Wed, 21 Mar 2018 09:41:13 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH] mm/hugetlb: prevent hugetlb VMA to be misaligned
-Message-ID: <20180321084113.GD23100@dhcp22.suse.cz>
-References: <1521566754-30390-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <86240c1a-d1f1-0f03-855e-c5196762ec0a@oracle.com>
- <0d24f817-303a-7b4d-4603-b2d14e4b391a@oracle.com>
+        id S1751739AbeCUIlr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 04:41:47 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:47473 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeCUIln (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 04:41:43 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d24f817-303a-7b4d-4603-b2d14e4b391a@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Wed, 21 Mar 2018 09:41:41 +0100
+From: Stefan Agner <stefan@agner.ch>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: ard.biesheuvel@linaro.org, arnd@arndb.de, nicolas.pitre@linaro.org,
+        marc.zyngier@arm.com, behanw@converseincode.com, keescook@chromium.org,
+        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] ARM: trusted_foundations: do not use naked function
+In-Reply-To: <20180320231309.GJ2743@n2100.armlinux.org.uk>
+References: <20180320230206.25289-1-stefan@agner.ch>
+ <20180320230206.25289-4-stefan@agner.ch>
+ <20180320231309.GJ2743@n2100.armlinux.org.uk>
+Message-ID: <98806397d62084bf01c475fd210cd186@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 20-03-18 14:35:28, Mike Kravetz wrote:
-> On 03/20/2018 02:26 PM, Mike Kravetz wrote:
-> > Thanks Laurent!
-> > 
-> > This bug was introduced by 31383c6865a5.  Dan's changes for 31383c6865a5
-> > seem pretty straight forward.  It simply replaces an explicit check when
-> > splitting a vma to a new vm_ops split callout.  Unfortunately, mappings
-> > created via shmget/shmat have their vm_ops replaced.  Therefore, this
-> > split callout is never made.
-> > 
-> > The shm vm_ops do indirectly call the original vm_ops routines as needed.
-> > Therefore, I would suggest a patch something like the following instead.
-> > If we move forward with the patch, we should include Laurent's BUG output
-> > and perhaps test program in the commit message.
+On 21.03.2018 00:13, Russell King - ARM Linux wrote:
+> On Wed, Mar 21, 2018 at 12:02:04AM +0100, Stefan Agner wrote:
+>> As documented in GCC naked functions should only use Basic asm
+>> syntax. The Extended asm or mixture of Basic asm and "C" code is
+>> not guaranteed. Currently this works because it was hard coded
+>> to follow and check GCC behavior for arguments and register
+>> placement.
 > 
-> Sorry, patch in previous mail was a mess
+> Those checks have nothing to do with that at all.  The whole point of
+> __asmeq() is to catch situations where you use register variables,
+> specifying which register you want them in, and GCC then ends up
+> passing them to assembly code in some other random register(s).
 > 
-> >From 7a19414319c7937fd2757c27f936258f16c1f61d Mon Sep 17 00:00:00 2001
-> From: Mike Kravetz <mike.kravetz@oracle.com>
-> Date: Tue, 20 Mar 2018 13:56:57 -0700
-> Subject: [PATCH] shm: add split function to shm_vm_ops
+> This was found with older GCCs, and the problem was fixed.  It has
+> nothing to do with naked functions per se.
 > 
-> The split function was added to vm_operations_struct to determine
-> if a mapping can be split.  This was mostly for device-dax and
-> hugetlbfs mappings which have specific alignment constraints.
-> 
-> mappings initiated via shmget/shmat have their original vm_ops
-> overwritten with shm_vm_ops.  shm_vm_ops functions will call back
-> to the original vm_ops if needed.  Add such a split function.
-> 
-> Fixes: 31383c6865a5 ("mm, hugetlbfs: introduce ->split() to vm_operations_struct)
-> Reported by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-Yes this looks much better than the original hugetlb specific code in
-the generic vma code.
+Ok, will reword that part to something like:
 
-Please add the original VM_BUG_ON report to the changelog
+As documented in GCC naked functions should only use Basic asm
+syntax. The Extended asm or mixture of Basic asm and "C" code cannot
+be depended upon.
 
-Cc: stable
-Acked-by: Michal Hocko <mhocko@suse.com>
+Furthermore with clang using parameters in Extended asm in a
+naked function is not supported:
+...
 
-> ---
->  ipc/shm.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/ipc/shm.c b/ipc/shm.c
-> index 7acda23430aa..50e88fc060b1 100644
-> --- a/ipc/shm.c
-> +++ b/ipc/shm.c
-> @@ -386,6 +386,17 @@ static int shm_fault(struct vm_fault *vmf)
->  	return sfd->vm_ops->fault(vmf);
->  }
->  
-> +static int shm_split(struct vm_area_struct *vma, unsigned long addr)
-> +{
-> +	struct file *file = vma->vm_file;
-> +	struct shm_file_data *sfd = shm_file_data(file);
-> +
-> +	if (sfd->vm_ops && sfd->vm_ops->split)
-> +		return sfd->vm_ops->split(vma, addr);
-> +
-> +	return 0;
-> +}
-> +
->  #ifdef CONFIG_NUMA
->  static int shm_set_policy(struct vm_area_struct *vma, struct mempolicy *new)
->  {
-> @@ -510,6 +521,7 @@ static const struct vm_operations_struct shm_vm_ops = {
->  	.open	= shm_open,	/* callback for a new vm-area open */
->  	.close	= shm_close,	/* callback for when the vm-area is released */
->  	.fault	= shm_fault,
-> +	.split	= shm_split,
->  #if defined(CONFIG_NUMA)
->  	.set_policy = shm_set_policy,
->  	.get_policy = shm_get_policy,
-> -- 
-> 2.13.6
+> In fact, as you're introducing further register variables, these
+> checks become more important to have than they were with the
+> previous code.
 
--- 
-Michal Hocko
-SUSE Labs
+Ok I see, so I definitely have to leave them in.
+
+You generally agree with the change otherwise?
+
+--
+Stefan
