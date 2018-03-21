@@ -1,115 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751475AbeCUCVa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 20 Mar 2018 22:21:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44944 "EHLO mail.kernel.org"
+        id S1752064AbeCUCVk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 20 Mar 2018 22:21:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751456AbeCUCVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Mar 2018 22:21:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C92F2177B
+        id S1751921AbeCUCVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Mar 2018 22:21:30 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76F132177B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180321022052.030055576@goodmis.org>
+Message-Id: <20180321022125.464498045@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Tue, 20 Mar 2018 22:20:52 -0400
+Date: Tue, 20 Mar 2018 22:21:06 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 00/46] tracing: Updates for v4.17
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [for-next][PATCH 14/46] tracing: Add usecs modifier for hist trigger timestamps
+References: <20180321022052.030055576@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0014-tracing-Add-usecs-modifier-for-hist-trigger-timestam.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-for-next
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Head SHA1: 80765597bc587feae8dbc8ce97a0f32e12a6e625
+Appending .usecs onto a common_timestamp field will cause the
+timestamp value to be in microseconds instead of the default
+nanoseconds.  A typical latency histogram using usecs would look like
+this:
 
+   # echo 'hist:keys=pid,prio:ts0=common_timestamp.usecs ...
+   # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0 ...
 
-Rajvi Jingar (1):
-      selftests: ftrace: Add inter-event hist triggers testcases
+This also adds an external trace_clock_in_ns() to trace.c for the
+timestamp conversion.
 
-Steven Rostedt (VMware) (10):
-      ring-buffer: Add nesting for adding events within events
-      tracing: Use the ring-buffer nesting to allow synthetic events to be traced
-      tracing: Remove BUG_ON() from append_filter_string()
-      tracing: Use trace_seq instead of open code string appending
-      tracing: Remove filter allocator helper
-      tracing: Only add filter list when needed
-      tracing: Embed replace_filter_string() helper function
-      tracing: Combine enum and arrays into single macro in filter code
-      tracing: Clean up and document pred_funcs_##type creation and use
-      tracing: Rewrite filter logic to be simpler and faster
+Link: http://lkml.kernel.org/r/4e813705a170b3e13e97dc3135047362fb1a39f3.1516069914.git.tom.zanussi@linux.intel.com
 
-Tom Zanussi (33):
-      tracing: Move hist trigger Documentation to histogram.txt
-      tracing: Add Documentation for log2 modifier
-      ring-buffer: Add interface for setting absolute time stamps
-      ring-buffer: Redefine the unimplemented RINGBUF_TYPE_TIME_STAMP
-      tracing: Add timestamp_mode trace file
-      tracing: Give event triggers access to ring_buffer_event
-      tracing: Add ring buffer event param to hist field functions
-      tracing: Break out hist trigger assignment parsing
-      tracing: Add hist trigger timestamp support
-      tracing: Add per-element variable support to tracing_map
-      tracing: Add hist_data member to hist_field
-      tracing: Add usecs modifier for hist trigger timestamps
-      tracing: Add variable support to hist triggers
-      tracing: Account for variables in named trigger compatibility
-      tracing: Move get_hist_field_flags()
-      tracing: Add simple expression support to hist triggers
-      tracing: Generalize per-element hist trigger data
-      tracing: Pass tracing_map_elt to hist_field accessor functions
-      tracing: Add hist_field 'type' field
-      tracing: Add variable reference handling to hist triggers
-      tracing: Add hist trigger action hook
-      tracing: Add support for 'synthetic' events
-      tracing: Add support for 'field variables'
-      tracing: Add 'onmatch' hist trigger action support
-      tracing: Add 'onmax' hist trigger action support
-      tracing: Allow whitespace to surround hist trigger filter
-      tracing: Add cpu field for hist triggers
-      tracing: Add hist trigger support for variable reference aliases
-      tracing: Add 'last error' error facility for hist triggers
-      tracing: Add inter-event hist trigger Documentation
-      tracing: Make tracing_set_clock() non-static
-      tracing: Add a clock attribute for hist triggers
-      tracing: Add inter-event blurb to HIST_TRIGGERS config option
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ Documentation/trace/histogram.txt |  1 +
+ kernel/trace/trace.c              | 13 +++++++++++--
+ kernel/trace/trace.h              |  2 ++
+ kernel/trace/trace_events_hist.c  | 28 ++++++++++++++++++++++------
+ 4 files changed, 36 insertions(+), 8 deletions(-)
 
-Vedang Patel (2):
-      tracing: Add support to detect and avoid duplicates
-      tracing: Remove code which merges duplicates
-
-----
- Documentation/trace/events.txt                     | 1548 +------
- Documentation/trace/ftrace.txt                     |   24 +
- Documentation/trace/histogram.txt                  | 1995 ++++++++
- include/linux/ring_buffer.h                        |   17 +-
- include/linux/trace_events.h                       |   14 +-
- kernel/trace/Kconfig                               |    5 +-
- kernel/trace/ring_buffer.c                         |  172 +-
- kernel/trace/trace.c                               |   97 +-
- kernel/trace/trace.h                               |   33 +-
- kernel/trace/trace_events_filter.c                 | 2487 +++++-----
- kernel/trace/trace_events_hist.c                   | 4770 ++++++++++++++++++--
- kernel/trace/trace_events_trigger.c                |   53 +-
- kernel/trace/tracing_map.c                         |  232 +-
- kernel/trace/tracing_map.h                         |   18 +-
- tools/testing/selftests/ftrace/test.d/functions    |    7 +
- .../inter-event/trigger-extended-error-support.tc  |   39 +
- .../inter-event/trigger-field-variable-support.tc  |   54 +
- .../trigger-inter-event-combined-hist.tc           |   58 +
- .../inter-event/trigger-onmatch-action-hist.tc     |   50 +
- .../trigger-onmatch-onmax-action-hist.tc           |   50 +
- .../inter-event/trigger-onmax-action-hist.tc       |   48 +
- .../trigger-synthetic-event-createremove.tc        |   54 +
- 22 files changed, 8348 insertions(+), 3477 deletions(-)
- create mode 100644 Documentation/trace/histogram.txt
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
+diff --git a/Documentation/trace/histogram.txt b/Documentation/trace/histogram.txt
+index a4143f04a097..25c94730d3fe 100644
+--- a/Documentation/trace/histogram.txt
++++ b/Documentation/trace/histogram.txt
+@@ -74,6 +74,7 @@
+ 	.syscall    display a syscall id as a system call name
+ 	.execname   display a common_pid as a program name
+ 	.log2       display log2 value rather than raw number
++	.usecs      display a common_timestamp in microseconds
+ 
+   Note that in general the semantics of a given field aren't
+   interpreted when applying a modifier to it, but there are some
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 988d94a05e81..82cc8891fda6 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1168,6 +1168,14 @@ static struct {
+ 	ARCH_TRACE_CLOCKS
+ };
+ 
++bool trace_clock_in_ns(struct trace_array *tr)
++{
++	if (trace_clocks[tr->clock_id].in_ns)
++		return true;
++
++	return false;
++}
++
+ /*
+  * trace_parser_get_init - gets the buffer for trace parser
+  */
+@@ -4694,8 +4702,9 @@ static const char readme_msg[] =
+ 	"\t            .sym        display an address as a symbol\n"
+ 	"\t            .sym-offset display an address as a symbol and offset\n"
+ 	"\t            .execname   display a common_pid as a program name\n"
+-	"\t            .syscall    display a syscall id as a syscall name\n\n"
+-	"\t            .log2       display log2 value rather than raw number\n\n"
++	"\t            .syscall    display a syscall id as a syscall name\n"
++	"\t            .log2       display log2 value rather than raw number\n"
++	"\t            .usecs      display a common_timestamp in microseconds\n\n"
+ 	"\t    The 'pause' parameter can be used to pause an existing hist\n"
+ 	"\t    trigger or to start a hist trigger but not log any events\n"
+ 	"\t    until told to do so.  'continue' can be used to start or\n"
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 99060f7eebbd..89771b4f16df 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -289,6 +289,8 @@ extern void trace_array_put(struct trace_array *tr);
+ 
+ extern int tracing_set_time_stamp_abs(struct trace_array *tr, bool abs);
+ 
++extern bool trace_clock_in_ns(struct trace_array *tr);
++
+ /*
+  * The global tracer (top) should be the first trace array added,
+  * but we check the flag anyway.
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 77ebe6b410ba..7f5f0b8f6558 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -90,12 +90,6 @@ static u64 hist_field_log2(struct hist_field *hist_field, void *event,
+ 	return (u64) ilog2(roundup_pow_of_two(val));
+ }
+ 
+-static u64 hist_field_timestamp(struct hist_field *hist_field, void *event,
+-				struct ring_buffer_event *rbe)
+-{
+-	return ring_buffer_event_time_stamp(rbe);
+-}
+-
+ #define DEFINE_HIST_FIELD_FN(type)					\
+ 	static u64 hist_field_##type(struct hist_field *hist_field,	\
+ 				     void *event,			\
+@@ -143,6 +137,7 @@ enum hist_field_flags {
+ 	HIST_FIELD_FL_STACKTRACE	= 1 << 8,
+ 	HIST_FIELD_FL_LOG2		= 1 << 9,
+ 	HIST_FIELD_FL_TIMESTAMP		= 1 << 10,
++	HIST_FIELD_FL_TIMESTAMP_USECS	= 1 << 11,
+ };
+ 
+ struct hist_trigger_attrs {
+@@ -153,6 +148,7 @@ struct hist_trigger_attrs {
+ 	bool		pause;
+ 	bool		cont;
+ 	bool		clear;
++	bool		ts_in_usecs;
+ 	unsigned int	map_bits;
+ };
+ 
+@@ -170,6 +166,20 @@ struct hist_trigger_data {
+ 	bool				enable_timestamps;
+ };
+ 
++static u64 hist_field_timestamp(struct hist_field *hist_field, void *event,
++				struct ring_buffer_event *rbe)
++{
++	struct hist_trigger_data *hist_data = hist_field->hist_data;
++	struct trace_array *tr = hist_data->event_file->tr;
++
++	u64 ts = ring_buffer_event_time_stamp(rbe);
++
++	if (hist_data->attrs->ts_in_usecs && trace_clock_in_ns(tr))
++		ts = ns2usecs(ts);
++
++	return ts;
++}
++
+ static const char *hist_field_name(struct hist_field *field,
+ 				   unsigned int level)
+ {
+@@ -634,6 +644,8 @@ static int create_key_field(struct hist_trigger_data *hist_data,
+ 				flags |= HIST_FIELD_FL_SYSCALL;
+ 			else if (strcmp(field_str, "log2") == 0)
+ 				flags |= HIST_FIELD_FL_LOG2;
++			else if (strcmp(field_str, "usecs") == 0)
++				flags |= HIST_FIELD_FL_TIMESTAMP_USECS;
+ 			else {
+ 				ret = -EINVAL;
+ 				goto out;
+@@ -643,6 +655,8 @@ static int create_key_field(struct hist_trigger_data *hist_data,
+ 		if (strcmp(field_name, "common_timestamp") == 0) {
+ 			flags |= HIST_FIELD_FL_TIMESTAMP;
+ 			hist_data->enable_timestamps = true;
++			if (flags & HIST_FIELD_FL_TIMESTAMP_USECS)
++				hist_data->attrs->ts_in_usecs = true;
+ 			key_size = sizeof(u64);
+ 		} else {
+ 			field = trace_find_event_field(file->event_call, field_name);
+@@ -1241,6 +1255,8 @@ static const char *get_hist_field_flags(struct hist_field *hist_field)
+ 		flags_str = "syscall";
+ 	else if (hist_field->flags & HIST_FIELD_FL_LOG2)
+ 		flags_str = "log2";
++	else if (hist_field->flags & HIST_FIELD_FL_TIMESTAMP_USECS)
++		flags_str = "usecs";
+ 
+ 	return flags_str;
+ }
+-- 
+2.15.1
