@@ -1,23 +1,23 @@
 Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AG47ELvw3CN/MnZQugZxK4y13IP/kcj4SdBSr6+rnajNb67m1F1eKISM35ovpYAOWdGsNL+7xBU8
-ARC-Seal: i=1; a=rsa-sha256; t=1521650277; cv=none;
+X-Google-Smtp-Source: AIpwx4+zE1uZD70G3QMlk2MsIoWl/vFRaW7HFLrAHu/9Z66cUaGBpJrWqrCzvhiAmuWRfTZ+QXE4
+ARC-Seal: i=1; a=rsa-sha256; t=1521650283; cv=none;
         d=google.com; s=arc-20160816;
-        b=knycmzEHEYhd9PQFY1+lyINYeUCkGxyrn2Q8CG8OSw7PZDGtKNi1XizjLKKJ1Z2QWx
-         c+m8x3RtuG/475U8kK5glMEyy8wfD9puoL1FqaB/KKh6W0AMhT49xI5z3KYj9AajEsbO
-         2iKOD8mK51qKXXfokYsqUt8+sqsPDGB97fU/HNKhXbncawFnINd5MLCzUwq4sE9gDgOp
-         JQ1wwzaLOMyJqU+k4S3YFUeh90P42m330KYIY1UetXn8gE+nb+BskA07YzP+ZYLaYaQL
-         srLao28oMGoiBvHMQziipapOem7LyfOL3dKFxqzSkWwVPVsRefOF/e0ItiW8orj2hHGm
-         KjAw==
+        b=H4cLSDVjwDJ06dZ4kfq/aX9RwkqwhCkQwH/XpNkamwHS7Jk31pPM6wcaw64Erm/vbC
+         6KVw/kUoed0I219liYxfgyJA8XpOIV5AtTNADGNHPv7UGNbd04yu9xcuH7yYn8CbywcT
+         CeF48EyES/UtKa0zR/a/qi5r8kGxdcFU7PBZEd/1Yk1qBNdLCiZ2IEDrEIMEe9YE2ZlL
+         RXNCD71X+S7MgEj3j3DL7NcLA/uBbFMERw4Xu74+peYxUTV4WuOonyUi0+KF+ftA3Wxf
+         5ddvYRB2miEwURh6mygnG9W2yWg9saLOrvOgACK9Rz2lZSAIhB41WOT5DJ7p1ZW8t8Dd
+         HuLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:content-transfer-encoding:mime-version:message-id:date:cc
-         :to:from:arc-authentication-results;
-        bh=T937nb43jefmndgeU6upOFPVj6yJE2Hz6L/iuchzcsQ=;
-        b=k5WhUhTk+yvCtwQeOS7/tI4OWnNoe9ovtfo0UX1mgnO0pU0r7OZJz1zsbLW2U26ebu
-         l9kv0X02706uwYvXAzmoB7igdmnFxXfKgCV7w2AzBMTn3RQ0vb8GBcSg3g0cE7KM7OqF
-         rEn2kqvv9v2513oEJ1JIgeN1QGb3O3ZEfiwGRqo9/xzzQc+yjqm6+UyJz38cTNl/+5Ie
-         j+qMKZoUZAY8qBDDGAVtmaDnExn7CHAI4oUpo7lI+x/CNq6DJF1xE18q6HmNI53FdhwN
-         Ovk89uTOfsbzfT83reW1Tzwidmxy52ik6hALsICVv1pvq85mp22APxxaktAKXZM7oaBO
-         klmw==
+        h=subject:references:in-reply-to:message-id:date:cc:to:from
+         :arc-authentication-results;
+        bh=zDd0dHsxvzmOzIsed0VBOVMeur4YS3i3EI50exLRTlY=;
+        b=kVFnwglWYGcOJcGffbiRhPHt2jmxFDPw8GWIy14+fxEogDbNZ+CGVgv91bCerJPyuO
+         70ykDRFGbtbRp72PUB/vZ4NwhzVSiID0rIP/Mh/mCGHAiMx0/hmxUVJcc8QeW5z5si/6
+         lzgrcxonHDgLgPdNGn1BxaNmSh9EmiObLocbmcdlBwsjXtOkGwwmqBPjqHITqR9yBenq
+         AtukJcfn9qaqxp1+ncChcvoYFq49tvJ6YzCNZHvVVR3aAziMgEMicAV6njS8zQp8YWkJ
+         PA2MnBOFMICueiycWW+PZ/6HxXZpEKe8AJPinBpbFeAgtAgQi3e+g1mwTtw8Bo/ve85G
+         8f1w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
@@ -31,127 +31,63 @@ To: linux-kernel@vger.kernel.org,
 Cc: Arnd Bergmann <arnd@arndb.de>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Logan Gunthorpe <logang@deltatee.com>
-Date: Wed, 21 Mar 2018 10:37:35 -0600
-Message-Id: <20180321163745.12286-1-logang@deltatee.com>
+	Logan Gunthorpe <logang@deltatee.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Date: Wed, 21 Mar 2018 10:37:36 -0600
+Message-Id: <20180321163745.12286-2-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180321163745.12286-1-logang@deltatee.com>
+References: <20180321163745.12286-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, arnd@arndb.de, horia.geanta@nxp.com, logang@deltatee.com, pombredanne@nexb.com, tglx@linutronix.de, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, andy.shevchenko@gmail.com, luc.vanoostenryck@gmail.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v13 00/10] Add io{read|write}64 to io-64-atomic headers
+Subject: [PATCH v13 01/10] iomap: Use correct endian conversion function in mmio_writeXXbe
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595565960791638927?=
-X-GMAIL-MSGID: =?utf-8?q?1595565960791638927?=
+X-GMAIL-THRID: =?utf-8?q?1595565968042571455?=
+X-GMAIL-MSGID: =?utf-8?q?1595565968042571455?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The semantics of the iowriteXXbe() functions are to write a
+value in CPU endianess to an IO register that is known by the
+caller to be in Big Endian. The mmio_writeXXbe() macro, which
+is called by iowriteXXbe(), should therefore use cpu_to_beXX()
+instead of beXX_to_cpu().
 
-This is v13 of my cleanup series to push a number of instances of people
-defining their own io{read|write}64 functions into common headers seing
-they don't exist in non-64bit systems. This series adds inline functions to the
-io-64-nonatomic headers and then cleans up the drivers that defined their
-own copies.
+Seeing both beXX_to_cpu() and cpu_to_beXX() are both functionally
+implemented as either null operations or swabXX operations there
+was no noticable bug here. But it is confusing for both developers
+and code analysis tools alike.
 
-This cleanup was originally requested by Greg after he reviewed my
-Switchtec NTB code. And I hope someone can pick it up or at least give
-feedback on it soon as it's been around relatively unchanged for a few
-cycles now and I'm getting a bit tired of resubmitting it with little to
-no interest.
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+---
+ lib/iomap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-
-Logan
-
---
-
-Changes since v12:
-- Rebased onto v4.16-rc6
-- Split patch 0001 into two and reworked the commit log as requested
-  by Luc Van Oostenryck
-
-Changes since v11:
-- Rebased onto v4.16-rc5
-- Added a patch (0001) to fix some old and new sparse warnings
-  that the kbuild robot warned about this cycle. The latest version
-  of sparse was required to reproduce these.
-- Added a patch (0002) to add io{read|write}64 to parisc which the kbuild
-  robot also found errors for this cycle
-
-Changes since v10:
-- Rebased onto v4.16-rc4, this droped the drm/tilcdc patch which was
-  picked up by that tree and is already in 4.16.
-
-Changes since v9:
-- Rebased onto v4.15-rc6
-- Fixed a couple of issues in the new version of the CAAM patch as
-  pointed out by Horia
-
-Changes since v8:
-- Rebased onto v4.15-rc2, as a result rewrote patch 7 seeing someone did
-  some similar cleanup in that area.
-- Added a patch to clean up the Switchtec NTB driver which landed in
-  v4.15-rc1
-
-Changes since v7:
-- Fix minor nits from Andy Shevchenko
-- Rebased onto v4.14-rc1
-
-Changes since v6:
- ** none **
-
-Changes since v5:
-- Added a fix to the tilcdc driver to ensure it doesn't use the
-  non-atomic operation. (This includes adding io{read|write}64[be]_is_nonatomic
-  defines).
-
-Changes since v4:
-- Add functions so the powerpc implementation of iomap.c compiles. (As
-  noticed by Horia)
-
-Changes since v3:
-
-- I noticed powerpc didn't use the appropriate functions seeing
-  readq/writeq were not defined when iomap.h was included. Thus I've
-  included a patch to adjust this
-- Fixed some mistakes with a couple of the defines in io-64-nonatomic*
-  headers
-- Fixed a typo noticed by Horia.
-
-(earlier versions were drastically different)
-
---
-
-Logan Gunthorpe (10):
-  iomap: Use correct endian conversion function in mmio_writeXXbe
-  iomap: Fix sparse endian check warnings
-  parisc: iomap: introduce io{read|write}64
-  powerpc: io.h: move iomap.h include so that it can use readq/writeq
-    defs
-  powerpc: iomap.c: introduce io{read|write}64_{lo_hi|hi_lo}
-  iomap: introduce io{read|write}64_{lo_hi|hi_lo}
-  io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
-  ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
-  crypto: caam: cleanup CONFIG_64BIT ifdefs when using io{read|write}64
-  ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common
-    header
-
- arch/parisc/include/asm/io.h           |   9 +++
- arch/parisc/lib/iomap.c                |  64 +++++++++++++++
- arch/powerpc/include/asm/io.h          |   6 +-
- arch/powerpc/kernel/iomap.c            |  40 ++++++++++
- drivers/crypto/caam/regs.h             |  30 +------
- drivers/ntb/hw/intel/ntb_hw_intel.c    |  30 +------
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  36 +--------
- include/asm-generic/iomap.h            |  26 ++++--
- include/linux/io-64-nonatomic-hi-lo.h  |  64 +++++++++++++++
- include/linux/io-64-nonatomic-lo-hi.h  |  64 +++++++++++++++
- lib/iomap.c                            | 140 ++++++++++++++++++++++++++++++++-
- 11 files changed, 409 insertions(+), 100 deletions(-)
-
---
+diff --git a/lib/iomap.c b/lib/iomap.c
+index 541d926da95e..be120c13d6cc 100644
+--- a/lib/iomap.c
++++ b/lib/iomap.c
+@@ -106,8 +106,8 @@ EXPORT_SYMBOL(ioread32be);
+ #endif
+ 
+ #ifndef mmio_write16be
+-#define mmio_write16be(val,port) __raw_writew(be16_to_cpu(val),port)
+-#define mmio_write32be(val,port) __raw_writel(be32_to_cpu(val),port)
++#define mmio_write16be(val,port) __raw_writew(cpu_to_be16(val),port)
++#define mmio_write32be(val,port) __raw_writel(cpu_to_be32(val),port)
+ #endif
+ 
+ void iowrite8(u8 val, void __iomem *addr)
+-- 
 2.11.0
