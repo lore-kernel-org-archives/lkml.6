@@ -1,85 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754291AbeCUXYw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 19:24:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57454 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754050AbeCUXYt (ORCPT
+        id S1754415AbeCUXZZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 19:25:25 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:60640 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754380AbeCUXZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:24:49 -0400
-Date: Wed, 21 Mar 2018 16:24:47 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Steven J. Hill" <steven.hill@cavium.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] mm/vmstat.c: Fix vmstat_update() preemption BUG.
-Message-Id: <20180321162447.ad8990ecb547f0e016d7cd12@linux-foundation.org>
-In-Reply-To: <1520881552-25659-1-git-send-email-steven.hill@cavium.com>
-References: <1520881552-25659-1-git-send-email-steven.hill@cavium.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 21 Mar 2018 19:25:19 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: [PATCH] ARM: multi_v7_defconfig: Enable missing drivers for supported Chromebooks.
+Date: Thu, 22 Mar 2018 00:25:10 +0100
+Message-Id: <20180321232510.5882-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Mar 2018 14:05:52 -0500 "Steven J. Hill" <steven.hill@cavium.com> wrote:
+Enable following drivers for merged devices:
+- Batteries with BQ27XXX chips for Minnie boards.
+- Elan eKTH I2C touchscreen for Minnie boards.
+- GPIO charger for all Veyron boards..
+- Rockchip SARADC driver for all rk3288 boards.
+- Rockchip eFUSE driver for all rk3288 boards.
+- TPM security chip for all Veyron boards.
+- ChromeOS EC userspace interface for all chromebooks boards.
+- ChromeOS EC light and proximity sensors for some chromebooks.
 
-> Attempting to hotplug CPUs with CONFIG_VM_EVENT_COUNTERS enabled
-> can cause vmstat_update() to report a BUG due to preemption not
-> being disabled around smp_processor_id(). Discovered on Ubiquiti
-> EdgeRouter Pro with Cavium Octeon II processor.
-> 
-> BUG: using smp_processor_id() in preemptible [00000000] code:
-> kworker/1:1/269
-> caller is vmstat_update+0x50/0xa0
-> CPU: 0 PID: 269 Comm: kworker/1:1 Not tainted
-> 4.16.0-rc4-Cavium-Octeon-00009-gf83bbd5-dirty #1
-> Workqueue: mm_percpu_wq vmstat_update
-> Stack : 0000002600000026 0000000010009ce0 0000000000000000 0000000000000001
->         0000000000000000 0000000000000000 0000000000000005 8001180000000800
->         00000000000000bf 0000000000000000 00000000000000bf 766d737461745f75
->         ffffffff83ad0000 0000000000000007 0000000000000000 0000000008000000
->         0000000000000000 ffffffff818d0000 0000000000000001 ffffffff81818a70
->         0000000000000000 0000000000000000 ffffffff8115bbb0 ffffffff818a0000
->         0000000000000005 ffffffff8144dc50 0000000000000000 0000000000000000
->         8000000088980000 8000000088983b30 0000000000000088 ffffffff813d3054
->         0000000000000000 ffffffff83ace622 00000000000000be 0000000000000000
->         00000000000000be ffffffff81121fb4 0000000000000000 0000000000000000
->         ...
-> Call Trace:
-> [<ffffffff81121fb4>] show_stack+0x94/0x128
-> [<ffffffff813d3054>] dump_stack+0xa4/0xe0
-> [<ffffffff813fcfb8>] check_preemption_disabled+0x118/0x120
-> [<ffffffff811eafd8>] vmstat_update+0x50/0xa0
-> [<ffffffff8115b954>] process_one_work+0x144/0x348
-> [<ffffffff8115bd00>] worker_thread+0x150/0x4b8
-> [<ffffffff811622a0>] kthread+0x110/0x140
-> [<ffffffff8111c304>] ret_from_kernel_thread+0x14/0x1c
-> 
-> ...
->
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1839,9 +1839,11 @@ static void vmstat_update(struct work_struct *w)
->  		 * to occur in the future. Keep on running the
->  		 * update worker thread.
->  		 */
-> +		preempt_disable();
->  		queue_delayed_work_on(smp_processor_id(), mm_percpu_wq,
->  				this_cpu_ptr(&vmstat_work),
->  				round_jiffies_relative(sysctl_stat_interval));
-> +		preempt_enable();
->  	}
->  }
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-hm, I suspect this warning is a false-positive.  vmstat_update() is
-called from a workqueue and so vmstat_update()'s execution is pinned to
-a particular CPU, so smp_processor_id()'s return will not be
-invalidated by a preemption-induced CPU switch.  Unless the workqueue
-code changed more than I think it did ;)
-
-The patch is OK and will work, but I wonder if a better fix is to use
-raw_smp_processor_id() and to add a little comment explaining why it's
-needed and is safe.
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index da7387689b88..a0254b9659a0 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -299,6 +299,7 @@ CONFIG_MOUSE_CYAPA=m
+ CONFIG_MOUSE_ELAN_I2C=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=m
++CONFIG_TOUCHSCREEN_ELAN=m
+ CONFIG_TOUCHSCREEN_MMS114=m
+ CONFIG_TOUCHSCREEN_ST1232=m
+ CONFIG_TOUCHSCREEN_STMPE=y
+@@ -439,8 +440,10 @@ CONFIG_GPIO_TPS6586X=y
+ CONFIG_GPIO_TPS65910=y
+ CONFIG_BATTERY_ACT8945A=y
+ CONFIG_BATTERY_SBS=y
++CONFIG_BATTERY_BQ27XXX=m
+ CONFIG_BATTERY_MAX17040=m
+ CONFIG_BATTERY_MAX17042=m
++CONFIG_CHARGER_GPIO=m
+ CONFIG_CHARGER_MAX14577=m
+ CONFIG_CHARGER_MAX77693=m
+ CONFIG_CHARGER_MAX8997=m
+@@ -500,6 +503,7 @@ CONFIG_MFD_AXP20X_RSB=y
+ CONFIG_MFD_CROS_EC=m
+ CONFIG_MFD_CROS_EC_I2C=m
+ CONFIG_MFD_CROS_EC_SPI=m
++CONFIG_MFD_CROS_EC_CHARDEV=m
+ CONFIG_MFD_DA9063=m
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+@@ -877,10 +881,14 @@ CONFIG_AT91_ADC=m
+ CONFIG_AT91_SAMA5D2_ADC=m
+ CONFIG_BERLIN2_ADC=m
+ CONFIG_EXYNOS_ADC=m
++CONFIG_ROCKCHIP_SARADC=m
+ CONFIG_VF610_ADC=m
+ CONFIG_XILINX_XADC=y
++CONFIG_IIO_CROS_EC_SENSORS_CORE=m
++CONFIG_IIO_CROS_EC_SENSORS=m
+ CONFIG_MPU3050_I2C=y
+ CONFIG_CM36651=m
++CONFIG_IIO_CROS_EC_LIGHT_PROX=m
+ CONFIG_AK8975=y
+ CONFIG_RASPBERRYPI_POWER=y
+ CONFIG_IIO_HRTIMER_TRIGGER=y
+@@ -917,6 +925,7 @@ CONFIG_PHY_SAMSUNG_USB2=m
+ CONFIG_PHY_TEGRA_XUSB=y
+ CONFIG_PHY_BRCM_SATA=y
+ CONFIG_NVMEM=y
++CONFIG_ROCKCHIP_EFUSE=m
+ CONFIG_NVMEM_SUNXI_SID=y
+ CONFIG_BCM2835_MBOX=y
+ CONFIG_RASPBERRYPI_FIRMWARE=y
+@@ -954,6 +963,8 @@ CONFIG_CPUFREQ_DT=y
+ CONFIG_KEYSTONE_IRQ=y
+ CONFIG_HW_RANDOM=y
+ CONFIG_HW_RANDOM_ST=y
++CONFIG_TCG_TPM=m
++CONFIG_TCG_TIS_I2C_INFINEON=m
+ CONFIG_CRYPTO_USER=m
+ CONFIG_CRYPTO_USER_API_HASH=m
+ CONFIG_CRYPTO_USER_API_SKCIPHER=m
+-- 
+2.16.2
