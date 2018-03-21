@@ -1,79 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753397AbeCUUz7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 16:55:59 -0400
-Received: from mga14.intel.com ([192.55.52.115]:6263 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753210AbeCUUzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 16:55:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,341,1517904000";
-   d="scan'208";a="27740398"
-Message-ID: <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
-Subject: Re: linux-next: manual merge of the ftrace tree with the jc_docs
- tree
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Changbin Du <changbin.du@intel.com>
-Date: Wed, 21 Mar 2018 15:55:52 -0500
-In-Reply-To: <20180321091554.2b38ee57@gandalf.local.home>
-References: <20180321153127.23737f6e@canb.auug.org.au>
-         <20180321153715.3a571e5b@canb.auug.org.au>
-         <20180321091554.2b38ee57@gandalf.local.home>
+        id S1753376AbeCUU6Q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 16:58:16 -0400
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:45812 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753254AbeCUU6L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 16:58:11 -0400
+X-Google-Smtp-Source: AG47ELsQW1/B4ZFw5bqg6VcwJVMoG6frHTqNny9rlTbUlUV1O0AgmyYCh4OkLxO8bVevHYMs+e26z+L42vzbpIarVUg=
+MIME-Version: 1.0
+In-Reply-To: <F4F10894-B101-4E46-A39D-7F09DEF2207D@informatik.uni-hamburg.de>
+References: <D7FA4547-4FA6-46EC-99D7-F08ACCD3F13D@informatik.uni-hamburg.de>
+ <CAOFm3uH1Nw3x6-T1yTMkoX2tpxiwjnerAXDh-WEpyFNROFwAYw@mail.gmail.com> <F4F10894-B101-4E46-A39D-7F09DEF2207D@informatik.uni-hamburg.de>
+From: Philippe Ombredanne <pombredanne@nexb.com>
+Date: Wed, 21 Mar 2018 13:57:30 -0700
+Message-ID: <CAOFm3uEpDh1jp1+ODzR=TFH0uq08LL2qjqrMLOe+_jE+4Sw_og@mail.gmail.com>
+Subject: Re: [PATCH 1/5 v4] add compression algorithm zBeWalgo
+To: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, minchan@kernel.org,
+        Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-03-21 at 09:15 -0400, Steven Rostedt wrote:
-> On Wed, 21 Mar 2018 15:37:15 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi all,
-> > 
-> > On Wed, 21 Mar 2018 15:31:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > Today's linux-next merge of the ftrace tree got a conflict in:
-> > > 
-> > >   Documentation/trace/ftrace.txt
-> > >   (converted to Documentation/trace/ftrace.rst)  
-> > 
-> > There was another conflict involving
-> > 
-> >   Documentation/trace/events.{txt,rst}
-> > 
-> > Unfortunately, I accidentally deleted the report email before sending
-> > it :-(
-> > 
-> 
-> Ug yeah. All the histogram code was ripped out of the events.txt and
-> a new file was created called histogram.txt. I'm guessing that should
-> also be converted into an .rst file.
-> 
+Benjamin,
 
-Yeah, linux-next has changes to Documentation/trace/* that converts
-those files to .rst, which linux-trace/frace/core doesn't have.
+On Wed, Mar 21, 2018 at 12:32 AM, Benjamin Warnke
+<4bwarnke@informatik.uni-hamburg.de> wrote:
+> Ok, I will use
+>
+> /* SPDX-License-Identifier: GPL-2.0 */
+> /*
+>  * Copyright (c) 2018 Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+> ...
+>
+> at the top of my files instead of that boilerplate text. And
+>
+> MODULE_LICENSE("GPL");
+>
+> at the bottom of the module-files.
 
-I've rebased the inter-event patches to linux-next/next-20180320 to
-reflect those changes, which affect 9 of the files in the patchset.  The
-updated patchset is here:
+<snip>
+>
+> I used the file "crypto/lz4.c" - since it is a compression algorithm too - as an example of how to format the licensing text.
+> Unfortunately there is the same 'error'.
+> I fixed this error in all of my files in all patches.
 
-https://github.com/tzanussi/linux-trace-inter-event.git tzanussi/next-20180320-inter-event-v10                                               
-https://github.com/tzanussi/linux-trace-inter-event/tree/tzanussi/next-20180320-inter-event-v10
+Actually to be consistent if you want to use GPL-2-0 (and not "or
+later") you should use:
 
-I can repost the whole thing as v10, or whatever makes sense here.
+1. at the top, for a c. file:
+// SPDX-License-Identifier: GPL-2.0
 
-Thanks,
+or for a .h file:
+/* SPDX-License-Identifier: GPL-2.0 */
 
-Tom
+The doc explains it all. Including the comment style (a topic that has
+been discussed also on list quite bit: Linus had the final word there)
 
-> -- Steve
+2. and in your MODULE_LICENSE macro:
+
+MODULE_LICENSE("GPL v2");
+
+.... because a MODULE_LICENSE("GPL"); would mean GPL-2.0+ (e.g. or any
+later version) and this would not match your top level license tag.
+
+I know this may seem confusing, but there is little hope we can change
+the MODULE_LICENSE tags that are used by many external module loaders.
+Comments in module.h explain it all.
+
+-- 
+Cordially
+Philippe Ombredanne
