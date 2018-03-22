@@ -1,120 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752850AbeCVIlb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 04:41:31 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:39444 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752597AbeCVIlY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 04:41:24 -0400
-X-Google-Smtp-Source: AG47ELuk6rclMq56y+g6PJGg79/kigtnzgFry1rYLlOWzqN2dPHeVxO8UMi5HX//A66wIOghuh6djA==
-Date: Thu, 22 Mar 2018 09:41:20 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v6 2/2] cpuset: Add cpuset.sched_load_balance to v2
-Message-ID: <20180322084120.GE7231@localhost.localdomain>
-References: <1521649309-26690-1-git-send-email-longman@redhat.com>
- <1521649309-26690-3-git-send-email-longman@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521649309-26690-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752858AbeCVIme (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 04:42:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35809 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752597AbeCVIma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 04:42:30 -0400
+Message-ID: <1521708064.1175.5.camel@bootlin.com>
+Subject: Re: [PATCH 03/10] drm/sun4i: Don't pretend to handle ARGB8888 with
+ the frontend
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: David Airlie <airlied@linux.ie>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Date: Thu, 22 Mar 2018 09:41:04 +0100
+In-Reply-To: <CAGb2v66ih3VaMcqUcuEQC9WKoULgFPUx8o7GjECGeuUv8a7d+g@mail.gmail.com>
+References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
+         <20180321152904.22411-4-paul.kocialkowski@bootlin.com>
+         <CAGb2v65JqT2go2kX+yEWeWiQX6U5PFoXEbbatBXRyLyujxyouw@mail.gmail.com>
+         <1521706988.1175.4.camel@bootlin.com>
+         <CAGb2v66ih3VaMcqUcuEQC9WKoULgFPUx8o7GjECGeuUv8a7d+g@mail.gmail.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-6eUPk+5IRoBh/tsAocFC"
+X-Mailer: Evolution 3.26.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Waiman,
 
-On 21/03/18 12:21, Waiman Long wrote:
-> The sched_load_balance flag is needed to enable CPU isolation similar
-> to what can be done with the "isolcpus" kernel boot parameter.
-> 
-> The sched_load_balance flag implies an implicit !cpu_exclusive as
-> it doesn't make sense to have an isolated CPU being load-balanced in
-> another cpuset.
-> 
-> For v2, this flag is hierarchical and is inherited by child cpusets. It
-> is not allowed to have this flag turn off in a parent cpuset, but on
-> in a child cpuset.
-> 
-> This flag is set by the parent and is not delegatable.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  Documentation/cgroup-v2.txt | 22 ++++++++++++++++++
->  kernel/cgroup/cpuset.c      | 56 +++++++++++++++++++++++++++++++++++++++------
->  2 files changed, 71 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
-> index ed8ec66..c970bd7 100644
-> --- a/Documentation/cgroup-v2.txt
-> +++ b/Documentation/cgroup-v2.txt
-> @@ -1514,6 +1514,28 @@ Cpuset Interface Files
->  	it is a subset of "cpuset.mems".  Its value will be affected
->  	by memory nodes hotplug events.
->  
-> +  cpuset.sched_load_balance
-> +	A read-write single value file which exists on non-root cgroups.
-> +	The default is "1" (on), and the other possible value is "0"
-> +	(off).
-> +
-> +	When it is on, tasks within this cpuset will be load-balanced
-> +	by the kernel scheduler.  Tasks will be moved from CPUs with
-> +	high load to other CPUs within the same cpuset with less load
-> +	periodically.
-> +
-> +	When it is off, there will be no load balancing among CPUs on
-> +	this cgroup.  Tasks will stay in the CPUs they are running on
-> +	and will not be moved to other CPUs.
-> +
-> +	This flag is hierarchical and is inherited by child cpusets. It
-> +	can be turned off only when the CPUs in this cpuset aren't
-> +	listed in the cpuset.cpus of other sibling cgroups, and all
-> +	the child cpusets, if present, have this flag turned off.
-> +
-> +	Once it is off, it cannot be turned back on as long as the
-> +	parent cgroup still has this flag in the off state.
-> +
+--=-6eUPk+5IRoBh/tsAocFC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I'm afraid that this will not work for SCHED_DEADLINE (at least for how
-it is implemented today). As you can see in Documentation [1] the only
-way a user has to perform partitioned/clustered scheduling is to create
-subset of exclusive cpusets and then assign deadline tasks to them. The
-other thing to take into account here is that a root_domain is created
-for each exclusive set and we use such root_domain to keep information
-about admitted bandwidth and speed up load balancing decisions (there is
-a max heap tracking deadlines of active tasks on each root_domain).
+Hi,
 
-Now, AFAIR distinct root_domain(s) are created when parent group has
-sched_load_balance disabled and cpus_exclusive set (in cgroup v1 that
-is). So, what we normally do is create, say, cpus_exclusive groups for
-the different clusters and then disable sched_load_balance at root level
-(so that each cluster gets its own root_domain). Also,
-sched_load_balance is enabled in children groups (as load balancing
-inside clusters is what we actually needed :).
+On Thu, 2018-03-22 at 16:37 +0800, Chen-Yu Tsai wrote:
+> On Thu, Mar 22, 2018 at 4:23 PM, Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+> > Hi Chen-Yu,
+> >=20
+> > On Thu, 2018-03-22 at 14:47 +0800, Chen-Yu Tsai wrote:
+> > > On Wed, Mar 21, 2018 at 11:28 PM, Paul Kocialkowski
+> > > <paul.kocialkowski@bootlin.com> wrote:
+> > > > It turns out that the frontend is not capable of preserving the
+> > > > alpha
+> > > > component (that is always set to 0xff), so only support XRGB8888
+> > > > instead.
+> > > >=20
+> > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > ---
+> > > >  drivers/gpu/drm/sun4i/sun4i_backend.c  | 4 ++++
+> > > >  drivers/gpu/drm/sun4i/sun4i_frontend.c | 3 +--
+> > > >  drivers/gpu/drm/sun4i/sun4i_layer.c    | 4 ++--
+> > > >  3 files changed, 7 insertions(+), 4 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > > > b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > > > index b98dafda52f8..274a1db6fa8e 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > > > @@ -440,6 +440,10 @@ static bool
+> > > > sun4i_backend_plane_uses_frontend(struct drm_plane_state *state)
+> > > >         if (IS_ERR(backend->frontend))
+> > > >                 return false;
+> > > >=20
+> > > > +       /*
+> > > > +        * TODO: Don't use the frontend for x2/x4 scaling and
+> > > > allow
+> > > > RGB formats
+> > > > +        * with an alpha component then.
+> > >=20
+> > > This and the commit log are kind of conflicting. Is it just the
+> > > scalar
+> > > that doesn't
+> > > work with an alpha component, or the whole frontend?
+> >=20
+> > It's the whole frontend that does not support alpha in its output
+> > formats. I'm talking about scaling here because that's still the
+> > main
+> > reason to use the frontend. On the other hand, the backend allows
+> > integer scaling with an alpha component, hence the comment.
+>=20
+> I see. I parsed the TODO note incorrectly.
+>=20
+> > Do you think I need to rework the comment/commit log?
+>=20
+> I think
+>=20
+>     Allow integer scaling with alpha using just the backend.
+>=20
+> would be slightly clearer.
 
-IIUC your proposal this will not be permitted with cgroup v2 because
-sched_load_balance won't be present at root level and children groups
-won't be able to set sched_load_balance back to 1 if that was set to 0
-in some parent. Is that true?
+I agree, will do in the next version!
 
-Look, the way things work today is most probably not perfect (just to
-say one thing, we need to disable load balancing for all classes at root
-level just because DEADLINE wants to set restricted affinities to his
-tasks :/) and we could probably think on how to change how this all
-work. So, let's first see if IIUC what you are proposing (and its
-implications). :)
+Cheers,
 
-Best,
+Paul
 
-- Juri
+> > Thanks for the review,
+> >=20
+> > Paul
+> >=20
+> > > > +        */
+> > > >         return sun4i_backend_plane_uses_scaler(state);
+> > > >  }
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c
+> > > > b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+> > > > index ddf6cfa6dd23..3ea925584891 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+> > > > @@ -107,7 +107,7 @@ EXPORT_SYMBOL(sun4i_frontend_update_buffer);
+> > > >  static int sun4i_frontend_drm_format_to_input_fmt(uint32_t fmt,
+> > > > u32
+> > > > *val)
+> > > >  {
+> > > >         switch (fmt) {
+> > > > -       case DRM_FORMAT_ARGB8888:
+> > > > +       case DRM_FORMAT_XRGB8888:
+> > > >                 *val =3D 5;
+> > > >                 return 0;
+> > > >=20
+> > > > @@ -120,7 +120,6 @@ static int
+> > > > sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
+> > > >  {
+> > > >         switch (fmt) {
+> > > >         case DRM_FORMAT_XRGB8888:
+> > > > -       case DRM_FORMAT_ARGB8888:
+> > > >                 *val =3D 2;
+> > > >                 return 0;
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c
+> > > > b/drivers/gpu/drm/sun4i/sun4i_layer.c
+> > > > index eb93df445a10..15238211a61a 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun4i_layer.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
+> > > > @@ -100,9 +100,9 @@ static void
+> > > > sun4i_backend_layer_atomic_update(struct drm_plane *plane,
+> > > >                 sun4i_frontend_update_coord(frontend, plane);
+> > > >                 sun4i_frontend_update_buffer(frontend, plane);
+> > > >                 sun4i_frontend_update_formats(frontend, plane,
+> > > > -                                             DRM_FORMAT_ARGB888
+> > > > 8);
+> > > > +                                             DRM_FORMAT_XRGB888
+> > > > 8);
+> > > >                 sun4i_backend_update_layer_frontend(backend,
+> > > > layer-
+> > > > > id, plane,
+> > > >=20
+> > > > -                                                   DRM_FORMAT_A
+> > > > RGB8
+> > > > 888);
+> > > > +                                                   DRM_FORMAT_X
+> > > > RGB8
+> > > > 888);
+> > > >                 sun4i_frontend_enable(frontend);
+> > > >         } else {
+> > > >                 sun4i_backend_update_layer_formats(backend,
+> > > > layer-
+> > > > > id, plane);
+> > > >=20
+> > > > --
+> > > > 2.16.2
+> > > >=20
+> > >=20
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> >=20
+> > --
+> > Paul Kocialkowski, Bootlin (formerly Free Electrons)
+> > Embedded Linux and kernel engineering
+> > https://bootlin.com
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-6eUPk+5IRoBh/tsAocFC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-[1] https://elixir.bootlin.com/linux/v4.16-rc6/source/Documentation/scheduler/sched-deadline.txt#L640
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlqzbCAACgkQ3cLmz3+f
+v9GaLgf9EnPfOVuClDJnlvI25X/gjTSOHNw6XK7TjQjs30UOaU7yng8gnRZkKZ2u
+RvNb6P+npWQrg72Sor2T/Bin9vx29qcY2+7ssX8wSkGicUKx/8/cYC8ZVFRRLfcA
+zSJzYdlqgsv7KSINeEkNdXUhwzSXvyVwexoiNg0XLQZX5uT8NHy9PTH/WFiQSdms
+I0JE+gmc/m5+3zb1XSqSj++vIyrF6HJJzPMyxSqbv8LgDFXGWeBmRAbTWLShObBf
+ELil5eAq/oAUB6rW93Rrbf7CovvTkPEZ/5nfQUfll9KB6eYnbFbe+fP7OrwMp12A
+SY8fFS+No5kIZQJH0Vn9tsXD0hMJSA==
+=6FFz
+-----END PGP SIGNATURE-----
+
+--=-6eUPk+5IRoBh/tsAocFC--
