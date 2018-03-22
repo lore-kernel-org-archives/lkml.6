@@ -1,95 +1,86 @@
-Return-Path: <jacek.anaszewski@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521487489; cv=none;
-        d=google.com; s=arc-20160816;
-        b=gAXhKBw9w/lbJcha+cTT1WlVspjKfkQ4Yzhi3aoxxXgz+DLN4J2Tpszqtdmck1TUX0
-         sr3Gc5C5/S38GD9GUazs/JjrOEXWHwX7ftgHeTefglENdVzA64gUvVPxw4i0/ELpWNS1
-         ZJIvd/oL++SpKCgwaJakusG6kh+u3xQdl3YhDGhW/G7FTIYZ4w+Vu0Z2U0CpGlldKkzK
-         51W0dNVF8Bg9UJYRKOwU2mRvQMszPqOoOuAEvJpt5m0CLralG+imEkqHEL9DNfrgBuWA
-         uf0pHvJ9nYjRY1pkqnIE4vhT2vHaNBQ7PGyYrdZIbuxxzvUYG0a9f6k+lbw1RO8AmX8M
-         rttg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=TK8xnJRx95UAlDRIlQbeTkjgeHKjgD3sTdDywchcPPM=;
-        b=fc3oYjFa9ft6+6bgJd1aHlV8rGbzMFPugqaaFlD2cdajgiGg25TzyO4U3OKAmUXuWh
-         cDePle4F5WKAH7uzaByaKDpimyRSUjQTRJAPoqCFx8IZf4uaW6dbhLfcsMuJ6keobGzt
-         fFaqyIzQxj/29YsqsbzISLWabSahDlmWjKcXdH/Vlu+cvLDl6WRAdzDu3ENbK+9sYTW9
-         FuMqpzgZbJQdxlb7GQxKaiG6u6GQHLzQt86APUQtzaEce8VLYXxkLktMikcorgQLzmWg
-         EGuOKT+TcnaxGP5SjX1PjCXV/x7smdwpWjBiqjMRExJpjN3CZAwNp9iGjf6l/ZJEe6Po
-         pt8A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=D/pRhALC;
-       spf=pass (google.com: domain of jacek.anaszewski@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jacek.anaszewski@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=D/pRhALC;
-       spf=pass (google.com: domain of jacek.anaszewski@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jacek.anaszewski@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuNNZ1altpZrUtBeV5IGJc/jZZ256PhwqBkKcJu/1KLOO8hstFn3h1N0W2tVTjhKSoOcYwRkw==
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	pavel@ucw.cz,
-	jacek.anaszewski@gmail.com,
-	Matthieu CASTET <matthieu.castet@parrot.com>
-Subject: [PATCH 4.9 v2 2/2] led: core: Clear LED_BLINK_SW flag in led_blink_set()
-Date: Mon, 19 Mar 2018 20:23:19 +0100
-Message-Id: <1521487399-10447-3-git-send-email-jacek.anaszewski@gmail.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1521487399-10447-1-git-send-email-jacek.anaszewski@gmail.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2465629-1521716298-2-2437173368013394719
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521716298; b=uxf+nWlqeiUSIJDKm6uhUgMZReSi6+ynuDntWQes3Pkml3o
+    V9AD7t3BV8w23J7Rk0jH7YzU8FLhXIekOpqwXpJaLZNmXjEvX1kQKLwvNmL/lwQ1
+    mP3rTLuVCV9eKWbgPWXA3NuY3P9Y8vogMXNumifymhN8ZeZpcBD2PqnE3yTBy0wk
+    usvtAQ9OCBUzdrhOxiX21XJYx48OVa46BBXd6DiuSxnObMZp0SFqwhomZ3znNqVE
+    lDy8/NgRd7MNJkJGU6i9p0nxJn+Re+oGAiecMYgMmpxSz2vwB305G6+rHQ4GoqSd
+    i8GpoGjc6bEI6s8IfVJq2CrhUwKIYY2pVHdZv/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521716298; bh=NapLw+5SQkZOrt8PrXADAILebV
+    nPPF9VKOHAhjpjoT0=; b=wcAlPvY1oj4K0OxUwLCx2JuQ62pZSuv8Ucx7wGCwCn
+    /mfVRMVU3oim8CQb1dz07oJ6In9Bu6Jj7zrkSJ5CftilZqFRV8ybZZv3tBT7kB8b
+    3YLWgKysx5n7M0xuwbWmUXJeZ/2woZb/oSiNm9paM0aZe5BSy+pw2zEzAdKVPXhx
+    njibxWylJ+g9zmi8R+QNuJimSqJlHy4H+1Cae7oTlqOUqpxze7wUimqh1NAI2BTU
+    CpO3G4C3CYp0h8Jbx9019KEvOtWYogMV8L+SAi18EW9WlxHUVo+KPZiMEoBMes8/
+    lsFrpQ2bO7NQdYETC7ozvUOMo+0diFlbXw1oMuRBycVg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752305AbeCVK6P (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Mar 2018 06:58:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33766 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754047AbeCVK6O (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 22 Mar 2018 06:58:14 -0400
+Date: Thu, 22 Mar 2018 11:58:11 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, pavel@ucw.cz
+Subject: Re: [PATCH 4.9 v2 0/2] Clear LED_BLINK_SW flag in led_blink_set()
+Message-ID: <20180322105811.GA24775@kroah.com>
 References: <1521487399-10447-1-git-send-email-jacek.anaszewski@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521487399-10447-1-git-send-email-jacek.anaszewski@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595395266160795891?=
-X-GMAIL-MSGID: =?utf-8?q?1595395266160795891?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-With the current code, the following sequence won't work :
-echo timer > trigger
+On Mon, Mar 19, 2018 at 08:23:17PM +0100, Jacek Anaszewski wrote:
+> The fix for brightness setting when setting delay_off=0 introduces
+> a regression and has truncated commit message. Revert that patch
+> and apply the one-line change required to fix the original issue
+> in the way appropriate for the 4.9 code base.
 
-echo 0 >  delay_off
-* at this point we call
-** led_delay_off_store
-** led_blink_set
-*** stop timer
-** led_blink_setup
-** led_set_software_blink
-*** if !delay_on, led off
-*** if !delay_off, set led_set_brightness_nosleep <--- LED_BLINK_SW
-is set but timer is stop
-*** otherwise start timer/set LED_BLINK_SW flag
+Thanks, now queued up.
 
-echo xxx > brightness
-* led_set_brightness
-** if LED_BLINK_SW
-*** if brightness=0, led off
-*** else apply brightness if next timer <--- timer is stop, and will
-never apply new setting
-** otherwise set led_set_brightness_nosleep
-
-To fix that, when we delete the timer, we should clear LED_BLINK_SW.
-
-Signed-off-by: Matthieu CASTET <matthieu.castet@parrot.com>
-Reported-by: Sasha Levin <Alexander.Levin@microsoft.com>
-Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
----
- drivers/leds/led-core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 3bce448..454ed4d 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -188,6 +188,7 @@ void led_blink_set(struct led_classdev *led_cdev,
- {
- 	del_timer_sync(&led_cdev->blink_timer);
- 
-+	led_cdev->flags &= ~LED_BLINK_SW;
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT;
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
- 
--- 
-2.1.4
+greg k-h
