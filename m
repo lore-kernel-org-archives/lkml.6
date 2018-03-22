@@ -1,90 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753929AbeCVK37 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 06:29:59 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36841 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753163AbeCVK3z (ORCPT
+        id S1753964AbeCVKfG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 06:35:06 -0400
+Received: from smtp-out4.electric.net ([192.162.216.184]:53778 "EHLO
+        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751792AbeCVKfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:29:55 -0400
-X-Google-Smtp-Source: AG47ELuGioVCd0RiHna3k4o2GaW4eSQe9yAIzG6xpCdBlYzzkfcYYsmEeM4aXzQprwk0zdmS4iU6DJj0jpluapTXK+k=
+        Thu, 22 Mar 2018 06:35:04 -0400
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'Linus Torvalds'" <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
+        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
+        "indranil@chelsio.com" <indranil@chelsio.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
+Subject: RE: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
+Thread-Topic: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
+Thread-Index: AQHTv43TjMVMzNQoikSg1VH837bpVaPXnqXggAAJp4CAAAH+gIADWB3UgAELVpA=
+Date: Thu, 22 Mar 2018 10:35:43 +0000
+Message-ID: <2f5cb27711e741fba77846574e72eb62@AcuMS.aculab.com>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
+ <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
+ <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
+ <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
+ <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
+ <CA+55aFybTvLz47mw=AG21jCJv_hE2vaVyiJP_F-4vAD-3Gnc7Q@mail.gmail.com>
+ <20180321074634.dzpyjz3ia46snodh@gmail.com>
+ <CA+55aFyK6uJopBjZGyeDz0O+qzCac6AwPkJyOpuaT69inPgVgw@mail.gmail.com>
+In-Reply-To: <CA+55aFyK6uJopBjZGyeDz0O+qzCac6AwPkJyOpuaT69inPgVgw@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <87po3zxe9n.fsf@kamboji.qca.qualcomm.com>
-References: <20180319014032.9394-1-alexey.roslyakov@gmail.com>
- <20180319014032.9394-3-alexey.roslyakov@gmail.com> <5AAF838D.2030105@broadcom.com>
- <CALFoz4YMKJr40fefczrbjXBROtZxnGikv0Jze-BnefofCB3dyg@mail.gmail.com>
- <817418fd-6446-57ea-b03d-383b4df9a979@gmail.com> <5AB044C0.9060701@broadcom.com>
- <87po3zxe9n.fsf@kamboji.qca.qualcomm.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 22 Mar 2018 11:29:53 +0100
-Message-ID: <CAPDyKFr2GVB0+UUpT3GgGBT17TMcrky6X4L_pw+ztTL6ejbCwQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 2/2] dt: bindings: add new dt entries for brcmfmac
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexey Roslyakov <alexey.roslyakov@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        brcm80211-dev-list.pdl@broadcom.com, brcm80211-dev-list@cypress.com
-Content-Type: text/plain; charset="UTF-8"
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2MAZDmh011853
 
-On 20 March 2018 at 10:55, Kalle Valo <kvalo@codeaurora.org> wrote:
-> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
->
->>>> If I get it right, you mean something like this:
->>>>
->>>> mmc3: mmc@1c12000 {
->>>> ...
->>>>          broken-sg-support;
->>>>          sd-head-align = 4;
->>>>          sd-sgentry-align = 512;
->>>>
->>>>          brcmf: wifi@1 {
->>>>                  ...
->>>>          };
->>>> };
->>>>
->>>> Where dt: bindings documentation for these entries should reside?
->>>> In generic MMC bindings? Well, this is the very special case and
->>>> mmc-linux maintainer will unlikely to accept these changes.
->>>> Also, extra kernel code modification might be required. It could make
->>>> quite trivial change much more complex.
->>>
->>> If the MMC maintainers are not copied on this patch series, it will
->>> likely be hard for them to identify this patch series and chime in...
->>
->> The main question is whether this is indeed a "very special case" as
->> Alexey claims it to be or that it is likely to be applicable to other
->> device and host combinations as you are suggesting.
->>
->> If these properties are imposed by the host or host controller it
->> would make sense to have these in the mmc bindings.
->
-> BTW, last year we were discussing something similar (I mean related to
-> alignment requirements) with ath10k SDIO patches and at the time the
-> patch submitter was proposing to have a bounce buffer in ath10k to
-> workaround that. I don't remember the details anymore, they are on the
-> ath10k mailing list archive if anyone is curious to know, but I would
-> not be surprised if they are similar as here. So there might be a need
-> to solve this in a generic way (but not sure of course as I haven't
-> checked the details).
+From: Sent: 21 March 2018 18:16
+> To: Ingo Molnar
+...
+> All this to do a 32-byte PIO access, with absolutely zero data right
+> now on what the win is?
+> 
+> Yes, yes, I can find an Intel white-paper that talks about setting WC
+> and then using xmm and ymm instructions to write a single 64-byte
+> burst over PCIe, and I assume that is where the code and idea came
+> from. But I don't actually see any reason why a burst of 8 regular
+> quad-word bytes wouldn't cause a 64-byte burst write too.
 
-I re-call something about these as well, here are the patches. Perhaps
-I should pick some of them up...
+The big gain is from wide PCIe reads, not writes.
+Writes to uncached locations (without WC) are almost certainly required
+to generate the 'obvious' PCIe TLP, otherwise things are likely to break.
 
-https://patchwork.kernel.org/patch/10123137/
-https://patchwork.kernel.org/patch/10123139/
-https://patchwork.kernel.org/patch/10123141/
-https://patchwork.kernel.org/patch/10123143/
+> So right now this is for _one_ odd rdma controller, with absolutely
+> _zero_ performance numbers, and a very high likelihood that it does
+> not matter in the least.
+> 
+> And if there are some atomicity concerns ("we need to guarantee a
+> single atomic access for race conditions with the hardware"), they are
+> probably bogus and misplaced anyway, since
+> 
+>  (a) we can't guarantee that AVX2 exists in the first place
 
-Kind regards
-Uffe
+Any code would need to be in memcpy_fromio(), not in every driver that
+might benefit.
+Then fallback code can be used if the registers aren't available.
+
+>  (b) we can't guarantee that %ymm register write will show up on any
+> bus as a single write transaction anyway
+
+Misaligned 8 byte accesses generate a single PCIe TLP.
+I can look at what happens for AVX2 transfers later.
+I've got code that mmap()s PCIe addresses into user space, and can
+look at the TLP (indirectly through tracing on an fpga target).
+Just need to set something up that uses AVX copies.
+
+> So as far as I can tell, there are basically *zero* upsides, and a lot
+> of potential downsides.
+
+There are some upsides.
+I'll do a performance measurement for reads.
+
+	David
