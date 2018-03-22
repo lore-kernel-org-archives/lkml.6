@@ -1,25 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752973AbeCVJ1k (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:27:40 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:38933 "EHLO
+        id S1753118AbeCVJ17 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:27:59 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38945 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751806AbeCVJ1f (ORCPT
+        with ESMTP id S1752592AbeCVJ15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:27:35 -0400
-Date: Thu, 22 Mar 2018 10:27:32 +0100 (CET)
+        Thu, 22 Mar 2018 05:27:57 -0400
+Date: Thu, 22 Mar 2018 10:27:54 +0100 (CET)
 From: Thomas Gleixner <tglx@linutronix.de>
 To: Dominik Brodowski <linux@dominikbrodowski.net>
 cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Jiri Slaby <jslaby@suse.com>, x86@kernel.org,
-        Michael Tautschnig <tautschn@amazon.co.uk>
-Subject: Re: [PATCH 42/45] x86: fix sys_sigreturn() return type to be long,
- not unsigned long
-In-Reply-To: <20180322090059.19361-43-linux@dominikbrodowski.net>
-Message-ID: <alpine.DEB.2.21.1803221027180.1579@nanos.tec.linutronix.de>
-References: <20180322090059.19361-1-linux@dominikbrodowski.net> <20180322090059.19361-43-linux@dominikbrodowski.net>
+        "Tautschnig, Michael" <tautschn@amazon.co.uk>,
+        Michael Tautschnig <tautschn@amazon.com>,
+        Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+        Jaswinder Singh <jaswinder@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>, x86@kernel.org
+Subject: Re: [PATCH 43/45] x86/sigreturn: use SYSCALL_DEFINE0
+In-Reply-To: <20180322090059.19361-44-linux@dominikbrodowski.net>
+Message-ID: <alpine.DEB.2.21.1803221027410.1579@nanos.tec.linutronix.de>
+References: <20180322090059.19361-1-linux@dominikbrodowski.net> <20180322090059.19361-44-linux@dominikbrodowski.net>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -29,15 +30,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, 22 Mar 2018, Dominik Brodowski wrote:
 
-> Same as with other system calls, sys_sigreturn() should return a value
-> of type long, not unsigned long. This also matches the behaviour for
-> IA32_EMULATION, see sys32_sigreturn() in arch/x86/ia32/ia32_signal.c .
+> From: "Tautschnig, Michael" <tautschn@amazon.co.uk>
 > 
-> Cc: Andi Kleen <ak@linux.intel.com>
+> All definitions of syscalls in x86 except for those patched here have
+> already been using the appropriate SYSCALL_DEFINE*.
+> 
+> Signed-off-by: Michael Tautschnig <tautschn@amazon.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
 > Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Jaswinder Singh <jaswinder@infradead.org>
+> Cc: Andi Kleen <ak@linux.intel.com>
 > Cc: x86@kernel.org
-> Cc: Michael Tautschnig <tautschn@amazon.co.uk>
 > Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
