@@ -1,114 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751879AbeCVVas (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:30:48 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54960 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbeCVVaq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:30:46 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT)
-Subject: [PATCH v6] ARM: dts: wheat: Fix ADV7513 address usage
-Date: Thu, 22 Mar 2018 21:30:40 +0000
-Message-Id: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751960AbeCVVbs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:31:48 -0400
+Received: from mga18.intel.com ([134.134.136.126]:5921 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751595AbeCVVbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:31:46 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
+   d="scan'208";a="210551782"
+Date: Fri, 23 Mar 2018 05:31:07 +0800
+From: kbuild test robot <fengguang.wu@intel.com>
+To: Salil Mehta <salil.mehta@huawei.com>
+Cc: kbuild-all@01.org, netdev@vger.kernel.org,
+        Yisen Zhuang <yisen.zhuang@huawei.com>, Peng Li <lipeng321@huawei.com>,
+        Fuyun Liang <liangfuyun1@huawei.com>,
+        Jian Shen <shenjian15@huawei.com>,
+        Yunsheng Lin <linyunsheng@huawei.com>, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH net-next] net: hns3: hclge_inform_reset_assert_to_vf()
+ can be static
+Message-ID: <20180322213107.GA29844@roam>
+References: <201803230525.jlwCIx4C%fengguang.wu@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201803230525.jlwCIx4C%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
-bus, however in low power mode the ADV7513 will reset it's slave maps to
-use the hardware defined default addresses.
 
-The ADV7511 driver was adapted to allow the two devices to be registered
-correctly - but it did not take into account the fault whereby the
-devices reset the addresses.
-
-This results in an address conflict between the device using the default
-addresses, and the other device if it is in low-power-mode.
-
-Repair this issue by moving both devices away from the default address
-definitions.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Fixes: 2bfbd35d8ecd ("net: hns3: Changes required in PF mailbox to support VF reset")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
 ---
-v2:
- - Addition to series
+ hclge_mbx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-v3:
- - Split map register addresses into individual declarations.
-
-v4:
- - Normalise I2C usage
-
-v5:
- - Repost without [RFT] now that it has been tested
-
-v6:
- - s/low power power/low power/ correction from Laurent.
-
-Testing on a wheat board shows the addresses correctly assigned, and the
-default addresses (0x38, 0x3e, 0x3f which would otherwise conflict) are
-shown as actively returning data in low power mode during the scan.
-(they return 0)
-
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:          -- -- -- -- -- -- -- -- -- -- -- -- --
-10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-20: -- -- -- -- -- -- -- -- -- UU -- -- -- UU -- --
-30: -- -- -- -- -- -- -- -- 38 UU -- -- -- UU 3e 3f
-40: -- -- -- -- -- -- -- -- -- UU -- -- -- UU -- --
-50: -- -- -- -- -- -- -- -- -- UU -- -- -- UU -- --
-60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-70: -- -- -- -- -- -- -- --
-
- arch/arm/boot/dts/r8a7792-wheat.dts | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index 293b9e3b3e70..db01de7a3811 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -245,9 +245,15 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
+index 3901333..a6f7ffa 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
+@@ -79,7 +79,7 @@ static int hclge_send_mbx_msg(struct hclge_vport *vport, u8 *msg, u16 msg_len,
+ 	return status;
+ }
  
-+	/*
-+	 * The adv75xx resets its addresses to defaults during low power mode.
-+	 * Because we have two ADV7513 devices on the same bus, we must change
-+	 * both of them away from the defaults so that they do not conflict.
-+	 */
- 	hdmi@3d {
- 		compatible = "adi,adv7513";
--		reg = <0x3d>;
-+		reg = <0x3d>, <0x2d>, <0x4d>, <0x5d>;
-+		reg-names = "main", "cec", "edid", "packet";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
-@@ -277,7 +283,8 @@
- 
- 	hdmi@39 {
- 		compatible = "adi,adv7513";
--		reg = <0x39>;
-+		reg = <0x39>, <0x29>, <0x49>, <0x59>;
-+		reg-names = "main", "cec", "edid", "packet";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
--- 
-2.7.4
+-int hclge_inform_reset_assert_to_vf(struct hclge_vport *vport)
++static int hclge_inform_reset_assert_to_vf(struct hclge_vport *vport)
+ {
+ 	u8 msg_data[2];
+ 	u8 dest_vfid;
