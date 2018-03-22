@@ -1,140 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751732AbeCVQWj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:22:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34926 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751553AbeCVQWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:22:34 -0400
-Date: Thu, 22 Mar 2018 10:21:48 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Cc: <eric.auger@redhat.com>, <pmorel@linux.vnet.ibm.com>,
-        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
-        <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
-        Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
- back into dma specific path.
-Message-ID: <20180322102148.29afce09@w520.home>
-In-Reply-To: <20180315163509.17740-8-shameerali.kolothum.thodi@huawei.com>
-References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
-        <20180315163509.17740-8-shameerali.kolothum.thodi@huawei.com>
+        id S1751632AbeCVQ07 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:26:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33602 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750863AbeCVQ05 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:26:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BF3460C64
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: linux-rdma@vger.kernel.org, timur@codeaurora.org,
+        sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/3] RDMA/bnxt_re: Eliminate duplicate barriers on weakly-ordered archs
+Date: Thu, 22 Mar 2018 12:26:47 -0400
+Message-Id: <1521736009-23387-2-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521736009-23387-1-git-send-email-okaya@codeaurora.org>
+References: <1521736009-23387-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018 16:35:09 +0000
-Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
+Code includes wmb() followed by writel(). writel() already has a barrier on
+some architectures like arm64.
 
-> This pretty much reverts commit 273df9635385 ("iommu/dma: Make PCI
-> window reservation generic")  by moving the PCI window region
-> reservation back into the dma specific path so that these regions
-> doesn't get exposed via the IOMMU API interface. With this change,
-> the vfio interface will report only iommu specific reserved regions
-> to the user space.
-> 
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> ---
+This ends up CPU observing two barriers back to back before executing the
+register write.
 
-As currently ordered, we expose the iova list to the user in 5/7 with
-the PCI window reservations still intact.  Isn't that a bisection
-problem?  This patch should come before the iova list is expose to the
-user.  This is otherwise independent, so I can pop it up in the stack on
-commit, but I'd need an ack from Joerg and Robin to take it via my
-tree.  Thanks,
+Since code already has an explicit barrier call, changing writel() to
+writel_relaxed().
 
-Alex
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ drivers/infiniband/hw/bnxt_re/qplib_rcfw.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
->  drivers/iommu/dma-iommu.c | 54 ++++++++++++++++++++++-------------------------
->  1 file changed, 25 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index f05f3cf..ddcbbdb 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -167,40 +167,16 @@ EXPORT_SYMBOL(iommu_put_dma_cookie);
->   * @list: Reserved region list from iommu_get_resv_regions()
->   *
->   * IOMMU drivers can use this to implement their .get_resv_regions callback
-> - * for general non-IOMMU-specific reservations. Currently, this covers host
-> - * bridge windows for PCI devices and GICv3 ITS region reservation on ACPI
-> - * based ARM platforms that may require HW MSI reservation.
-> + * for general non-IOMMU-specific reservations. Currently, this covers GICv3
-> + * ITS region reservation on ACPI based ARM platforms that may require HW MSI
-> + * reservation.
->   */
->  void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
->  {
-> -	struct pci_host_bridge *bridge;
-> -	struct resource_entry *window;
-> -
-> -	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode) &&
-> -		iort_iommu_msi_get_resv_regions(dev, list) < 0)
-> -		return;
-> -
-> -	if (!dev_is_pci(dev))
-> -		return;
-> -
-> -	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
-> -	resource_list_for_each_entry(window, &bridge->windows) {
-> -		struct iommu_resv_region *region;
-> -		phys_addr_t start;
-> -		size_t length;
-> -
-> -		if (resource_type(window->res) != IORESOURCE_MEM)
-> -			continue;
->  
-> -		start = window->res->start - window->offset;
-> -		length = window->res->end - window->res->start + 1;
-> -		region = iommu_alloc_resv_region(start, length, 0,
-> -				IOMMU_RESV_RESERVED);
-> -		if (!region)
-> -			return;
-> +	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode))
-> +		iort_iommu_msi_get_resv_regions(dev, list);
->  
-> -		list_add_tail(&region->list, list);
-> -	}
->  }
->  EXPORT_SYMBOL(iommu_dma_get_resv_regions);
->  
-> @@ -229,6 +205,23 @@ static int cookie_init_hw_msi_region(struct iommu_dma_cookie *cookie,
->  	return 0;
->  }
->  
-> +static void iova_reserve_pci_windows(struct pci_dev *dev,
-> +		struct iova_domain *iovad)
-> +{
-> +	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
-> +	struct resource_entry *window;
-> +	unsigned long lo, hi;
-> +
-> +	resource_list_for_each_entry(window, &bridge->windows) {
-> +		if (resource_type(window->res) != IORESOURCE_MEM)
-> +			continue;
-> +
-> +		lo = iova_pfn(iovad, window->res->start - window->offset);
-> +		hi = iova_pfn(iovad, window->res->end - window->offset);
-> +		reserve_iova(iovad, lo, hi);
-> +	}
-> +}
-> +
->  static int iova_reserve_iommu_regions(struct device *dev,
->  		struct iommu_domain *domain)
->  {
-> @@ -238,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device *dev,
->  	LIST_HEAD(resv_regions);
->  	int ret = 0;
->  
-> +	if (dev_is_pci(dev))
-> +		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
-> +
->  	iommu_get_resv_regions(dev, &resv_regions);
->  	list_for_each_entry(region, &resv_regions, list) {
->  		unsigned long lo, hi;
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+index 8329ec6..10f9a26 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
+@@ -181,10 +181,11 @@ static int __send_message(struct bnxt_qplib_rcfw *rcfw, struct cmdq_base *req,
+ 
+ 	/* ring CMDQ DB */
+ 	wmb();
+-	writel(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
+-	       rcfw->cmdq_bar_reg_prod_off);
+-	writel(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
+-	       rcfw->cmdq_bar_reg_trig_off);
++	writel_relaxed(cmdq_prod, rcfw->cmdq_bar_reg_iomem +
++		       rcfw->cmdq_bar_reg_prod_off);
++	writel_relaxed(RCFW_CMDQ_TRIG_VAL, rcfw->cmdq_bar_reg_iomem +
++		       rcfw->cmdq_bar_reg_trig_off);
++	mmiowb();
+ done:
+ 	spin_unlock_irqrestore(&cmdq->lock, flags);
+ 	/* Return the CREQ response pointer */
+-- 
+2.7.4
