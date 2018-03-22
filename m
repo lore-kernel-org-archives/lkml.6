@@ -1,98 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751756AbeCVSkx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 14:40:53 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47156 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751595AbeCVSkw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 14:40:52 -0400
-Subject: Re: [RFC PATCH v2 2/4] mm/__free_one_page: skip merge for order-0
- page unless compaction failed
-To: Matthew Wilcox <willy@infradead.org>, Aaron Lu <aaron.lu@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-References: <20180320085452.24641-1-aaron.lu@intel.com>
- <20180320085452.24641-3-aaron.lu@intel.com>
- <7b1988e9-7d50-d55e-7590-20426fb257af@suse.cz>
- <20180320141101.GB2033@intel.com>
- <20180322171503.GH28468@bombadil.infradead.org>
-From: Daniel Jordan <daniel.m.jordan@oracle.com>
-Organization: Oracle
-Message-ID: <9ab5a6dd-c1b2-8da3-31f1-dd2237ea0f44@oracle.com>
-Date: Thu, 22 Mar 2018 14:39:17 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751812AbeCVSnF convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 14:43:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751595AbeCVSnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 14:43:03 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 996E820685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180322171503.GH28468@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8840 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+Content-Transfer-Encoding: 8BIT
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Manu Gautam <mgautam@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521708646-5379-2-git-send-email-mgautam@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Varadarajan Narayanan <varada@codeaurora.org>,
+        smuthayy <smuthayy@codeaurora.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+References: <1521708646-5379-1-git-send-email-mgautam@codeaurora.org>
+ <1521708646-5379-2-git-send-email-mgautam@codeaurora.org>
+Message-ID: <152174418191.178046.10173529959609556848@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 1/6] phy: qcom-qmp: Enable pipe_clk before checking USB3
+ PHY_STATUS
+Date: Thu, 22 Mar 2018 11:43:01 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Manu Gautam (2018-03-22 01:50:41)
+> QMP PHY for USB mode requires pipe_clk for calibration and PLL lock
+> to take place. This lock is output from PHY to GCC clock_ctl and then
 
+s/lock/clock/
 
-On 03/22/2018 01:15 PM, Matthew Wilcox wrote:
-> On Tue, Mar 20, 2018 at 10:11:01PM +0800, Aaron Lu wrote:
->>>> A new document file called "struct_page_filed" is added to explain
->>>> the newly reused field in "struct page".
->>>
->>> Sounds rather ad-hoc for a single field, I'd rather document it via
->>> comments.
->>
->> Dave would like to have a document to explain all those "struct page"
->> fields that are repurposed under different scenarios and this is the
->> very start of the document :-)
->>
->> I probably should have explained the intent of the document more.
+> fed back to QMP PHY and is output from PHY only after PHY is reset
+> and initialized, hence it can't be enabled too early in initialization
+> sequence.
 > 
-> Dave and I are in agreement on "Shouldn't struct page be better documented".
-> I came up with this a few weeks ago; never quite got round to turning it
-> into a patch:
+> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 > 
-> +---+-----------+-----------+--------------+----------+--------+--------------+
-> | B | slab      | pagecache | tail 1       | anon     | tail 1 | hugetlb      |
-> +===+===========+===========+==============+==========+========+==============+
-> | 0 | flags                                                                   |
-> +---+                                                                         |
-> | 4 |                                                                         |
-> +---+-----------+-----------+--------------+----------+--------+--------------+
-> | 8 | s_mem     | mapping   | cmp_mapcount | anon_vma | defer  | mapping      |
-> +---+           |           +--------------+          | list   |              |
-> |12 |           |           |              |          |        |              |
-> +---+-----------+-----------+--------------+----------+        +--------------+
-> |16 | freelist  | index                               |        | index        |
-> +---+           |                                     |        | (shifted)    |
-> |20 |           |                                     |        |              |
-> +---+-----------+-------------------------------------+--------+--------------+
-> |24 | counters  | mapcount                                                    |
-> +---+           +-----------+--------------+----------+--------+--------------+
-> |28 |           | refcount  |              |          |        | refcount     |
-> +---+-----------+-----------+--------------+----------+--------+--------------+
-> |32 | next      | lru       | cmpd_head    |                   | lru          |
-> +---+           |           |              +-------------------+              +
-> |36 |           |           |              |                   |              |
-> +---+-----------+           +--------------+-------------------+              +
-> |40 | pages     |           | dtor / order |                   |              |
-> +---+-----------+           +--------------+-------------------+              +
-> |44 | pobjects  |           |              |                   |              |
-> +---+-----------+-----------+--------------+----------------------------------+
-> |48 | slb_cache | private   |              |                                  |
-> +---+           |           +--------------+----------------------------------+
-> |52 |           |           |              |                                  |
-> +---+-----------+-----------+--------------+----------------------------------+
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> index 6470c5d..73aa282 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> @@ -797,8 +797,13 @@ static int qcom_qmp_phy_poweron(struct phy *phy)
+>  {
+>         struct qmp_phy *qphy = phy_get_drvdata(phy);
+>         struct qcom_qmp *qmp = qphy->qmp;
+> +       const struct qmp_phy_cfg *cfg = qmp->cfg;
+>         int ret;
+>  
+> +       /* Not needed for USB3 PHY as pipe_clk is enabled from phy_init */
+> +       if (cfg->type == PHY_TYPE_USB3)
+> +               return 0;
 
-Shouldn't the anon column also contain lru?
+Would be nice to not even assign phy_poweron when the PHY is USB3 type.
+
+> +
+>         ret = clk_prepare_enable(qphy->pipe_clk);
+>         if (ret)
+>                 dev_err(qmp->dev, "pipe_clk enable failed, err=%d\n", ret);
+> @@ -1008,6 +1013,19 @@ static int qcom_qmp_phy_init(struct phy *phy)
+>         status = pcs + cfg->regs[QPHY_PCS_READY_STATUS];
+>         mask = cfg->mask_pcs_ready;
+>  
+> +       /* USB3 PHY requires pipe_clk for PLL lock and calibration */
+> +       if (cfg->type == PHY_TYPE_USB3) {
+> +               ret = clk_prepare_enable(qphy->pipe_clk);
+> +               if (ret)
+> +                       dev_err(qmp->dev, "pipe_clk enable err=%d\n", ret);
+> +               /*
+> +                * Ignore this error as pipe_clk might take some time to get
+> +                * enabled. In any case following check for PHY PLL lock would
+> +                * timeout below if there is a fatal error and clock is not fed
+> +                * to PHY
+> +                */
+> +
+
+This is odd. If clk_enable() fails then we don't keep parent clks (or
+the clk that's being operated on) up refcounted and enabled. How is that
+going to work?
