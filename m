@@ -1,125 +1,118 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1321235-1521685356-2-9063260692324811579
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1321235-1521684278-2-16561911086686270154
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES endasv, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521685356; b=I+hdFxPgN7a1YhPxuteIoJfcx5HEm7Xx0TWN1Cr/W5gkrpR
-    bEcJOmCEaiXohe4aWHq2KHVbVJVBWQsoEHijs5UwU3wkivkpyH92GQd799EfVoUR
-    wB7/vCkrCIZlbcs0Mq2GZDPfCbKhPhQAAHVH4YVomDCIRJX/udvQgL9OXzpvUxA4
-    FxI/RotjhLRYdfEuB51NoeJmU5IdYbNvE6eza1iwK+VENlI0u9I/tPqxa+YFeaUW
-    42Y0vQG9BGgXwqkUzKHEwR1IRmlylmTkvVly4OoQj/fuvq2SVCi/1sqLR+9xkbjc
-    mT9+d5qKt7ZKr8VRMtVCK3LR0CgkE57rMIe4fWg==
+    t=1521684278; b=rnjMcGNsl9y0PXgB1NnHznFV9ukjz8zHLHaHRfLS6mufZL0
+    HyCLo/KWfF+3TF7WFMlqcaRqPrBK/6l03XX+QmR3Jt1rGeXjZprDH+N8ikf5gRdR
+    y41Bmiek6ZQx+Qp+Cd88WF2zrEMFRyjBuU28E/g0hh3tMrOKB+DUnTeGYU4tOeKQ
+    VEiZQWTg9HJfAhDAym1uNPNbUGN65suGmT495NHwo/Z15cwa/ylsuYA74dA8PWph
+    z5Q2yH6kTjkhATmB8VM3VfHmdP46mxwQPNUyQ620CfkucGKIip2K9MWdA7m2rW3L
+    FOds9Z6ILYqpSbSMDdX6i1cDs1ygGefEJMjVWew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1521685356; bh=8xM9aPRJR+7igo0WJtxutYl//S
-    oEQPpcrskEcsWN1ec=; b=XSwfLEyEYoOvVg2UP59U8AeSVHWgwHVlWWX8YzTAxf
-    5gq3ASfSr4WURoZhVxvKkDd94gPrNy6ZSei67YKvLmxhEyLXIuZdoHpCfNShHTZb
-    LZSejm7DJqZMfGfgwUh0T+8Q1X3GUiklKw8z0lpFGyqOVdKquMVCiN+tNdwcgxf7
-    v2JQjUy8YTi35n5OW7SwTlLqp8NGfHRKEfs8OlViu/KGxp2jOLotKZw1DMXZvWgv
-    bDzghtjfVSgf6cs+lJv3nMmunp9yG7xsm3V30BBiJHqLZfE0roRs5Ac0zMV6M0Ba
-    po6FSmn0jB+tDcOz5Iz45AKYkAc58KnSRulsFZgev6jg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521684278; bh=Z
+    p88rNLVAHU+wZZhGtSONcNG3Psu/9FH0YmW866EFy0=; b=o3dq25kQRzGznfSZf
+    u9oPnuI62LRQkZJX2bpGsdZHU5Ev7sUK2Xl/cOeuYpttyAtuNczCnE3LDT65rCoc
+    VqFH3Ge1vRJghGm127vGVsdDKdbLbghQnN4ijKgiWz4mMqA5qB+5UZ4KXEEir+lW
+    tKsVmrVEwvqYpvR4IhwWc+KqqxZjGS+IFzr52kbwpNCdvcZX3bLlTiniVrrVtR3m
+    YCyrLn4d8sGzDNlCfRMK66eTarKOgBRzARYTUPPJhVXMH8mRZMKfqMmHPNhe04aV
+    lAbmiDsT7ClqrKo+zuWr3oMwWeKaBUdd5W2gN/bD6Dc/NiaGccAbFF8Avli9GNna
+    0BtQw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=huawei.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=0 state=0
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=huawei.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751908AbeCVCWX (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Mar 2018 22:22:23 -0400
-Received: from osg.samsung.com ([64.30.133.232]:62994 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751608AbeCVCWV (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Wed, 21 Mar 2018 22:22:21 -0400
-From: Shuah Khan <shuahkh@osg.samsung.com>
-To: valentina.manea.m@gmail.com, shuah@kernel.org,
-        gregkh@linuxfoundation.org
-Cc: Shuah Khan <shuahkh@osg.samsung.com>,
-        julien.boibessot@armadeus.com, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] usbip: tools: usbipd: exclude exported devices from exportable device list
-Date: Wed, 21 Mar 2018 20:21:56 -0600
-Message-Id: <20180322022156.27585-1-shuahkh@osg.samsung.com>
-X-Mailer: git-send-email 2.14.1
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Wei Yongjun <weiyongjun1@huawei.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, John Crispin <blogic@openwrt.org>, NeilBrown
+ <neil@brown.name>
+Subject: [PATCH -next] staging: mt7621-eth: fix return value check in
+ mt7621_gsw_probe()
+Date: Thu, 22 Mar 2018 02:10:07 +0000
+Message-ID: <1521684607-77277-1-git-send-email-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ Wei Yongjun <weiyongjun1@huawei.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-usbipd includes exported devices in response to exportable device list.
-Exclude exported devices from exportable device list to avoid:
+In case of error, the function devm_ioremap_resource() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check should
+be replaced with IS_ERR().
 
-- import requests for devices that are exported only to fail the request.
-- revealing devices that are imported by a client to another client.
-
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Fixes: f079b6406348 ("staging: mt7621-eth: add gigabit switch driver (GSW)")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- tools/usb/usbip/src/usbipd.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/staging/mt7621-eth/gsw_mt7621.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/usb/usbip/src/usbipd.c b/tools/usb/usbip/src/usbipd.c
-index f8ff735eb100..32864c52942d 100644
---- a/tools/usb/usbip/src/usbipd.c
-+++ b/tools/usb/usbip/src/usbipd.c
-@@ -175,10 +175,21 @@ static int send_reply_devlist(int connfd)
- 	struct list_head *j;
- 	int rc, i;
+diff --git a/drivers/staging/mt7621-eth/gsw_mt7621.c b/drivers/staging/mt7621-eth/gsw_mt7621.c
+index b49ee94..ce8d7d7 100644
+--- a/drivers/staging/mt7621-eth/gsw_mt7621.c
++++ b/drivers/staging/mt7621-eth/gsw_mt7621.c
+@@ -263,8 +263,8 @@ static int mt7621_gsw_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
-+	/*
-+	 * Exclude devices that are already exported to a client from
-+	 * the exportable device list to avoid:
-+	 *	- import requests for devices that are exported only to
-+	 *	  fail the request.
-+	 *	- revealing devices that are imported by a client to
-+	 *	  another client.
-+	 */
-+
- 	reply.ndev = 0;
- 	/* number of exported devices */
- 	list_for_each(j, &driver->edev_list) {
--		reply.ndev += 1;
-+		edev = list_entry(j, struct usbip_exported_device, node);
-+		if (edev->status != SDEV_ST_USED)
-+			reply.ndev += 1;
- 	}
- 	info("exportable devices: %d", reply.ndev);
+ 	gsw->base = devm_ioremap_resource(&pdev->dev, res);
+-	if (!gsw->base)
+-		return -EADDRNOTAVAIL;
++	if (IS_ERR(gsw->base))
++		return PTR_ERR(gsw->base);
  
-@@ -197,6 +208,9 @@ static int send_reply_devlist(int connfd)
- 
- 	list_for_each(j, &driver->edev_list) {
- 		edev = list_entry(j, struct usbip_exported_device, node);
-+		if (edev->status == SDEV_ST_USED)
-+			continue;
-+
- 		dump_usb_device(&edev->udev);
- 		memcpy(&pdu_udev, &edev->udev, sizeof(pdu_udev));
- 		usbip_net_pack_usb_device(1, &pdu_udev);
--- 
-2.14.1
+ 	gsw->dev = &pdev->dev;
+ 	gsw->irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
 
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
