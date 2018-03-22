@@ -1,110 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752025AbeCVCXG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 22:23:06 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:44733 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeCVCXD (ORCPT
+        id S1752046AbeCVCX7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 22:23:59 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:51017 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751736AbeCVCXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 22:23:03 -0400
-X-Google-Smtp-Source: AG47ELuP46XBfJgZmkg57WgNnCl2oHnXtpCqD+6/FGfuqnQTfMJAlAYR+RsjGiJDELzF5YKJb+AsM+kO0kbTBFtKvWQ=
+        Wed, 21 Mar 2018 22:23:55 -0400
+X-Google-Smtp-Source: AG47ELsMkFnK055hz5L+x5jrnKr1CCYowtM4qpbObgmBOAc0oKH0MM25/se6SnPM7NX5AP3CRtMzkA==
 MIME-Version: 1.0
-In-Reply-To: <20180321140422.GA10700@amd>
-References: <7ff55372818461feed4b0550d5f88edce2cc7d41.1521631678.git.baolin.wang@linaro.org>
- <20180321140422.GA10700@amd>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Thu, 22 Mar 2018 10:23:02 +0800
-Message-ID: <CAMz4kuK+w0GUyXOw8_35sxyxNix8Os5JPgiyaGNTFcWuzvn_nw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ACPI / PM: Use register_reboot_notifier() instead of pm_power_off_prepare
-To: Pavel Machek <pavel@ucw.cz>
-Cc: rjw@rjwysocki.net, Len Brown <lenb@kernel.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-acpi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
+In-Reply-To: <fbb4d14a83ed80e9740c042cd9df58b8132b4c91.1520344489.git-series.maxime.ripard@bootlin.com>
+References: <cover.14d017af44a2140bea674731b60a0dd7f992f5f6.1520344489.git-series.maxime.ripard@bootlin.com>
+ <fbb4d14a83ed80e9740c042cd9df58b8132b4c91.1520344489.git-series.maxime.ripard@bootlin.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 22 Mar 2018 10:23:32 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65AfHHUZ=fUB+TPUZaLdYb4mN3hZ=3n5GOAD39C42+Nag@mail.gmail.com>
+Message-ID: <CAGb2v65AfHHUZ=fUB+TPUZaLdYb4mN3hZ=3n5GOAD39C42+Nag@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] arm: dts: sun8i: a33: Add the DSI-related nodes
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
-
-On 21 March 2018 at 22:04, Pavel Machek <pavel@ucw.cz> wrote:
-> On Wed 2018-03-21 19:30:16, Baolin Wang wrote:
->> We can register one notifier through register_reboot_notifier() function to
->> prepare to power off the system, then we can remove the 'pm_power_off_prepare'
->> hook in following patch.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->> Note: Please help to review carefully, since I have no platform to test
->> this conversion.
->>
->> I saw there is another reboot notifier in this driver, I am not sure the
->> orders between them. I can change the priority of notifier to keep their
->> orders if it is necessary.
+On Tue, Mar 6, 2018 at 9:56 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> From: Maxime Ripard <maxime.ripard@free-electrons.com>
 >
-> I don't understand why this is good idea... and you should really test
-> it. I'm sure you can find PC or notebook somewhere...
-
-I want to test it, but I have no opensource board with x86
-architecture. But I will try to find one or ask other guys to help to
-test it. Thanks for your comments.
-
->>  drivers/acpi/sleep.c |   22 ++++++++++++++++------
->>  1 file changed, 16 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
->> index 46cde091..b3de894 100644
->> --- a/drivers/acpi/sleep.c
->> +++ b/drivers/acpi/sleep.c
->> @@ -1229,14 +1229,24 @@ static void acpi_sleep_hibernate_setup(void)
->>  static inline void acpi_sleep_hibernate_setup(void) {}
->>  #endif /* !CONFIG_HIBERNATION */
->>
->> -static void acpi_power_off_prepare(void)
->> +static int acpi_reboot_notify(struct notifier_block *this, unsigned long code,
->> +                           void *x)
->>  {
->> -     /* Prepare to power off the system */
->> -     acpi_sleep_prepare(ACPI_STATE_S5);
->> -     acpi_disable_all_gpes();
->> -     acpi_os_wait_events_complete();
->> +     if (code == SYSTEM_POWER_OFF) {
->> +             /* Prepare to power off the system */
->> +             acpi_sleep_prepare(ACPI_STATE_S5);
->> +             acpi_disable_all_gpes();
->> +             acpi_os_wait_events_complete();
->> +     }
->> +
->> +     return NOTIFY_DONE;
->>  }
->>
->> +static struct notifier_block acpi_reboot_notifier = {
->> +     .notifier_call  = acpi_reboot_notify,
->> +     .priority       = 0,
->> +};
->> +
->>  static void acpi_power_off(void)
->>  {
->>       /* acpi_sleep_prepare(ACPI_STATE_S5) should have already been called */
->> @@ -1261,7 +1271,7 @@ int __init acpi_sleep_init(void)
->>
->>       if (acpi_sleep_state_supported(ACPI_STATE_S5)) {
->>               sleep_states[ACPI_STATE_S5] = 1;
->> -             pm_power_off_prepare = acpi_power_off_prepare;
->> +             register_reboot_notifier(&acpi_reboot_notifier);
->>               pm_power_off = acpi_power_off;
->>       } else {
->>               acpi_no_s5 = true;
+> The A33 has a MIPI-DSI block, along with its D-PHY. Let's add it in order
+> to use it in the relevant boards.
 >
+> Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> ---
+>  arch/arm/boot/dts/sun8i-a33.dtsi | 44 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 44 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
+> index 50eb84fa246a..94cfa7b1bbfa 100644
+> --- a/arch/arm/boot/dts/sun8i-a33.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-a33.dtsi
+> @@ -236,6 +236,11 @@
+>                                         #address-cells = <1>;
+>                                         #size-cells = <0>;
+>                                         reg = <1>;
+> +
+> +                                       tcon0_out_dsi0: endpoint@1 {
+> +                                               reg = <1>;
+> +                                               remote-endpoint = <&dsi0_in_tcon0>;
+> +                                       };
+>                                 };
+>                         };
+>                 };
+> @@ -280,6 +285,45 @@
+>                         #io-channel-cells = <0>;
+>                 };
+>
+> +               dsi0: dsi@1ca0000 {
+
+Nit: There's only one so you don't need the numbered suffix. Also,
+is "dsi" specific enough, or should we use "mipi-dsi"
+
+> +                       compatible = "allwinner,sun6i-a31-mipi-dsi";
+> +                       reg = <0x01ca0000 0x1000>;
+> +                       interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_MIPI_DSI>,
+> +                                <&ccu CLK_DSI_SCLK>;
+> +                       clock-names = "bus", "mod";
+> +                       resets = <&ccu RST_BUS_MIPI_DSI>;
+> +                       phys = <&dphy0>;
+> +                       phy-names = "dphy";
+> +                       status = "disabled";
+> +
+> +                       ports {
+> +                               #address-cells = <1>;
+> +                               #size-cells = <0>;
+> +
+> +                               port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+> +                                       reg = <0>;
+> +
+> +                                       dsi0_in_tcon0: endpoint {
+> +                                               remote-endpoint = <&tcon0_out_dsi0>;
+> +                                       };
+> +                               };
+> +                       };
+> +               };
+> +
+> +               dphy0: d-phy@1ca1000 {
+
+Same nit, and "dsi-phy" would be better.
+
+Otherwise,
+
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+
+> +                       compatible = "allwinner,sun6i-a31-mipi-dphy";
+> +                       reg = <0x01ca1000 0x1000>;
+> +                       clocks = <&ccu CLK_BUS_MIPI_DSI>,
+> +                                <&ccu CLK_DSI_DPHY>;
+> +                       clock-names = "bus", "mod";
+> +                       resets = <&ccu RST_BUS_MIPI_DSI>;
+> +                       status = "disabled";
+> +                       #phy-cells = <0>;
+> +               };
+> +
+>                 fe0: display-frontend@1e00000 {
+>                         compatible = "allwinner,sun8i-a33-display-frontend";
+>                         reg = <0x01e00000 0x20000>;
 > --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-
-
-
--- 
-Baolin.wang
-Best Regards
+> git-series 0.9.1
