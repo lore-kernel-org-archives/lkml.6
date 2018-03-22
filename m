@@ -1,48 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751987AbeCVXAg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 19:00:36 -0400
-Received: from valbonne.lhuard.fr ([88.182.161.122]:49708 "EHLO mail.lhuard.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751715AbeCVXA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 19:00:28 -0400
-Authentication-Results: mail.lhuard.fr; dmarc=fail (p=quarantine dis=none) header.from=lhuard.fr
-From: =?UTF-8?q?L=C3=A9na=C3=AFc=20Huard?= <lenaic@lhuard.fr>
-To: "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Cc: virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?L=C3=A9na=C3=AFc=20Huard?= <lenaic@lhuard.fr>
-Subject: [PATCH] kvm_config: add CONFIG_VIRTIO_MENU
-Date: Thu, 22 Mar 2018 23:53:05 +0100
-Message-Id: <20180322225305.10780-1-lenaic@lhuard.fr>
-X-Mailer: git-send-email 2.16.2
+        id S1751797AbeCVXFX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 19:05:23 -0400
+Received: from mail-ot0-f181.google.com ([74.125.82.181]:46823 "EHLO
+        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeCVXFV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 19:05:21 -0400
+X-Google-Smtp-Source: AG47ELvcTEJYTQnZYhr+0ZbQNnR/0tO5wGPxSBE3ZWt3+Godx/mdi0poqDy0g0WhLxNo0yRkUoL4x5JvMb8CgYg9anQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 23 Mar 2018 00:05:20 +0100
+X-Google-Sender-Auth: Cva9Q2sLpzndlmjvObbXXtXeTYE
+Message-ID: <CAJZ5v0gT_p44NGUhkw7irDk-Uo8HnEYQ35+wJaBUo3ziLSbPsQ@mail.gmail.com>
+Subject: [GIT PULL] ACPI fixes for v4.16-rc7
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure that make kvmconfig enables all the virtio drivers even if it is
-preceded by a make allnoconfig.
+Hi Linus,
 
-Signed-off-by: Lénaïc Huard <lenaic@lhuard.fr>
----
- kernel/configs/kvm_guest.config | 1 +
- 1 file changed, 1 insertion(+)
+Please pull from the tag
 
-diff --git a/kernel/configs/kvm_guest.config b/kernel/configs/kvm_guest.config
-index 108fecc20fc1..208481d91090 100644
---- a/kernel/configs/kvm_guest.config
-+++ b/kernel/configs/kvm_guest.config
-@@ -20,6 +20,7 @@ CONFIG_PARAVIRT=y
- CONFIG_KVM_GUEST=y
- CONFIG_S390_GUEST=y
- CONFIG_VIRTIO=y
-+CONFIG_VIRTIO_MENU=y
- CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_BLK=y
- CONFIG_VIRTIO_CONSOLE=y
--- 
-2.16.2
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-4.16-rc4
+
+with top-most commit 594fdbaab739f82b3a712b88beb483ca1ca250ee
+
+ Merge branch 'acpi-wdat'
+
+on top of commit c698ca5278934c0ae32297a8725ced2e27585d7f
+
+ Linux 4.16-rc6
+
+to receive ACPI fixes for 4.16-rc7.
+
+These revert one recent commit that added incorrect battery quirks
+for some Asus systems and fix an off-by-one error in the watchdog
+driver based on the ACPI WDAT table.
+
+Specifics:
+
+ - Revert the recent change adding battery quirks for Asus GL502VSK
+   and UX305LA as these quirks turn out to be inadequate and possibly
+   premature (Daniel Drake).
+
+ - Fix an off-by-one error in the resource allocation part of the
+   watchdog driver based on the ACPI WDAT table (Takashi Iwai).
+
+Thanks!
+
+
+---------------
+
+Daniel Drake (1):
+      Revert "ACPI / battery: Add quirk for Asus GL502VSK and UX305LA"
+
+Takashi Iwai (1):
+      ACPI / watchdog: Fix off-by-one error at resource assignment
+
+---------------
+
+ drivers/acpi/acpi_watchdog.c |  4 ++--
+ drivers/acpi/battery.c       | 48 +++-----------------------------------------
+ drivers/watchdog/wdat_wdt.c  |  2 +-
+ 3 files changed, 6 insertions(+), 48 deletions(-)
