@@ -1,58 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751992AbeCVUSQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:18:16 -0400
-Received: from fieldses.org ([173.255.197.46]:48220 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751765AbeCVUSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:18:15 -0400
-Date: Thu, 22 Mar 2018 16:18:15 -0400
-From: "J. Bruce Fields" <bfields@fieldses.org>
-To: Stefan Agner <stefan@agner.ch>
-Cc: jlayton@kernel.org, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: use correct enum type in decode_cb_op_status
-Message-ID: <20180322201815.GC31914@fieldses.org>
-References: <20180319223705.28974-1-stefan@agner.ch>
+        id S1752041AbeCVUUb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:20:31 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:38893 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751771AbeCVUU3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 16:20:29 -0400
+X-Google-Smtp-Source: AG47ELtPgkd77yFq6/62+2GhRlQvRgLCb4Q9ljJW686RxWCbqq8BLpKgPWTHlCr2UIzOU5dcvTaYTQ==
+From: Mathieu Malaterre <malat@debian.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org
+Subject: [PATCH 00/19] powerpc/ppc32: make W=1 compilation errors free
+Date: Thu, 22 Mar 2018 21:19:46 +0100
+Message-Id: <20180322202007.23088-1-malat@debian.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180319223705.28974-1-stefan@agner.ch>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applying, thanks!--b.
+Here is another batch for warnings treated as error on ppc32. Tested with:
 
-On Mon, Mar 19, 2018 at 11:37:05PM +0100, Stefan Agner wrote:
-> Use enum nfs_cb_opnum4 in decode_cb_op_status. This fixes warnings
-> seen with clang:
->   fs/nfsd/nfs4callback.c:451:36: warning: implicit conversion from
->       enumeration type 'enum nfs_cb_opnum4' to different enumeration
->       type 'enum nfs_opnum4' [-Wenum-conversion]
->         status = decode_cb_op_status(xdr, OP_CB_SEQUENCE, &cb->cb_seq_status);
->                  ~~~~~~~~~~~~~~~~~~~      ^~~~~~~~~~~~~~
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
->  fs/nfsd/nfs4callback.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-> index 49b0a9e7ff18..1f04d2a70d25 100644
-> --- a/fs/nfsd/nfs4callback.c
-> +++ b/fs/nfsd/nfs4callback.c
-> @@ -223,8 +223,8 @@ static int nfs_cb_stat_to_errno(int status)
->  	return -status;
->  }
->  
-> -static int decode_cb_op_status(struct xdr_stream *xdr, enum nfs_opnum4 expected,
-> -			       int *status)
-> +static int decode_cb_op_status(struct xdr_stream *xdr,
-> +			       enum nfs_cb_opnum4 expected, int *status)
->  {
->  	__be32 *p;
->  	u32 op;
-> -- 
-> 2.16.2
+$ make ARCH=powerpc ppc32_defconfig
+$ make -j8 ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- W=1
+
+Using:
+
+$ powerpc-linux-gnu-gcc --version
+powerpc-linux-gnu-gcc (Debian 6.3.0-18) 6.3.0 20170516
+
+Mathieu Malaterre (19):
+  powerpc/powermac: Mark variable x as unused
+  powerpc/powermac: Mark variable x as unused
+  powerpc: Mark variables as unused
+  powerpc/kvm: Mark variable tmp unused
+  powerpc/chrp/setup: Add attribute unused and make some functions
+    static
+  powerpc: Make function btext_initialize static
+  powerpc/powermac: Make some functions static
+  powerpc/tau: Make some function static
+  powerpc/chrp/pci: Make some functions static
+  powerpc/chrp/time: Make some functions static, add missing header
+    include
+  powerpc/powermac: Move pmac_pfunc_base_install prototype to header
+    file
+  powerpc/powermac: Add missing prototype for note_bootable_part()
+  powerpc/52xx: Add missing functions prototypes
+  powerpc/altivec: Add missing prototypes for altivec
+  powerpc: Add missing prototype
+  powerpc/powermac: Add missing include of header pmac.h
+  powerpc/32: Add a missing include header
+  powerpc: Add a missing include header
+  powerpc/tau: Synchronize function prototypes and body
+
+ arch/powerpc/include/asm/mpc52xx.h           |  6 +++---
+ arch/powerpc/include/asm/pmac_pfunc.h        |  1 +
+ arch/powerpc/include/asm/rheap.h             |  3 +++
+ arch/powerpc/kernel/btext.c                  |  2 +-
+ arch/powerpc/kernel/irq.c                    |  2 +-
+ arch/powerpc/kernel/kvm.c                    |  2 +-
+ arch/powerpc/kernel/pci_32.c                 |  1 +
+ arch/powerpc/kernel/prom_init.c              |  4 ++--
+ arch/powerpc/kernel/setup-common.c           |  6 ------
+ arch/powerpc/kernel/setup.h                  |  6 ++++++
+ arch/powerpc/kernel/tau_6xx.c                | 15 +++++++++------
+ arch/powerpc/kernel/vecemu.c                 |  1 +
+ arch/powerpc/lib/xor_vmx.h                   | 14 ++++++++++++++
+ arch/powerpc/platforms/chrp/pci.c            |  8 ++++----
+ arch/powerpc/platforms/chrp/setup.c          | 10 +++++-----
+ arch/powerpc/platforms/chrp/time.c           |  6 ++++--
+ arch/powerpc/platforms/powermac/bootx_init.c |  2 +-
+ arch/powerpc/platforms/powermac/pci.c        | 10 +++++-----
+ arch/powerpc/platforms/powermac/setup.c      |  1 +
+ arch/powerpc/platforms/powermac/smp.c        |  1 -
+ arch/powerpc/platforms/powermac/time.c       |  4 +++-
+ arch/powerpc/platforms/powermac/udbg_scc.c   |  2 +-
+ 22 files changed, 67 insertions(+), 40 deletions(-)
+
+-- 
+2.11.0
