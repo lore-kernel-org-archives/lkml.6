@@ -1,63 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753428AbeCVJO7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:14:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48756 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752935AbeCVJOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:14:51 -0400
-Date: Thu, 22 Mar 2018 10:14:48 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: Petr Machata <petrm@mellanox.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH] perf: python: Reference Py_None before returning it
-Message-ID: <20180322091448.GA2972@krava>
-References: <b1e565ecccf68064d8d54f37db5d028dda8fa522.1521675563.git.petrm@mellanox.com>
+        id S1753483AbeCVJPV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:15:21 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38875 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752464AbeCVJNr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 05:13:47 -0400
+Date: Thu, 22 Mar 2018 10:13:19 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Daniel Bristot de Oliveira <daniel@bristot.me>,
+        =?ISO-8859-15?Q?Luis_Claudio_R=2E_Gon=E7alves?=
+        <lclaudio@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        target-devel <target-devel@vger.kernel.org>
+Subject: Re: [PATCH] target: Use WARNON_NON_RT(!irqs_disabled())
+In-Reply-To: <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1803221012160.1579@nanos.tec.linutronix.de>
+References: <20180321153854.GB24312@kernel.org> <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1e565ecccf68064d8d54f37db5d028dda8fa522.1521675563.git.petrm@mellanox.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 12:57:32AM +0100, Petr Machata wrote:
-> Python None objects are handled just like all the other objects with
-> respect to their reference counting. Before returning Py_None, its
-> reference count thus needs to be bumped.
+On Wed, 21 Mar 2018, Linus Torvalds wrote:
+> [ Adding PeterZ to participants due to query about lockdep_assert() ]
 > 
-> Signed-off-by: Petr Machata <petrm@mellanox.com>
-
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-
-thanks,
-jirka
-
-> ---
->  tools/perf/util/python.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> On Wed, Mar 21, 2018 at 8:38 AM, Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> >         assert_spin_locked(&cmd->t_state_lock);
+> > -       WARN_ON_ONCE(!irqs_disabled());
+> > +       WARN_ON_ONCE_NONRT(!irqs_disabled());
 > 
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index b1e999b..762d429 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -967,8 +967,10 @@ static PyObject *pyrf_evlist__read_on_cpu(struct pyrf_evlist *pevlist,
->  			return PyErr_NoMemory();
->  
->  		evsel = perf_evlist__event2evsel(evlist, event);
-> -		if (!evsel)
-> +		if (!evsel) {
-> +			Py_INCREF(Py_None);
->  			return Py_None;
-> +		}
->  
->  		pevent->evsel = evsel;
->  
-> -- 
-> 2.4.3
+> Ugh.
 > 
+> Can't we just replace both of those with a lockdep annotation?
+> 
+> Does "lockdep_assert_held()" already verify the irq contextr, or do we
+> need lockdep_assert_irqs_disabled() too?
+> 
+> Honestly, the old-fashioned way of doing verification of state by hand
+> is understandable, but it's legacy and kind of pointless when we have
+> much better tools these days.
+> 
+> I'm perfectly willing to leave old assertions in place, but if they
+> need fixing anyway, I'd damn well want to fix them *right* instead of
+> starting to just add more piles of hacks on top of the old model.
+> 
+> Because when the details of the locking rules depend on RT vs non-RT,
+> I want the checks to make sense.  And presumably lockdep is the thing
+> that really knows what the status of a lock is, no?
+
+We are working on replacing the _NONRT _RT variants with proper lockdep
+mechnisms which are aware of the RT vs. non-RT magic under the hood. Just
+not there yet.
+
+Thanks,
+
+	tglx
