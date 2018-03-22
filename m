@@ -1,74 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752048AbeCVXTq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 19:19:46 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43655 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752007AbeCVXTo (ORCPT
+        id S1751913AbeCVXUo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 19:20:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50844 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751694AbeCVXUn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 19:19:44 -0400
-X-Google-Smtp-Source: AG47ELtiY0dMpK9xoFiJo/0PtSiq1nsKhHG5eL8cWdAtoO71MtDuu8nTHAXYnQ92glm1bUnBW0f77Q==
-Subject: Re: [PATCH] arm/arm64: smccc: Use xN for arm64 register constraints
- with clang
-To: Matthias Kaehlcke <mka@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc: marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>, Dave.Martin@arm.com,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, Kostya Serebryany <kcc@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-References: <20180322212705.141175-1-mka@chromium.org>
- <CAKwvOdk4Tos1Q8dyQvic4PUX3cjy3q1hn3FkK=xiVSChht+gEg@mail.gmail.com>
- <20180322224456.GB78232@google.com>
-From: Greg Hackmann <ghackmann@google.com>
-Message-ID: <fc921bfb-1f49-08f9-515c-07bd442a1e11@google.com>
-Date: Thu, 22 Mar 2018 16:19:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 22 Mar 2018 19:20:43 -0400
+Date: Fri, 23 Mar 2018 00:20:30 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Luck@alison-desk.jf.intel.com, Tony <tony.luck@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86,sched: allow topologies where NUMA nodes share an
+ LLC
+Message-ID: <20180322232030.GA4043@hirez.programming.kicks-ass.net>
+References: <20180322204922.GA2337@alison-desk.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180322224456.GB78232@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180322204922.GA2337@alison-desk.jf.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/22/2018 03:44 PM, Matthias Kaehlcke wrote:
-> El Thu, Mar 22, 2018 at 10:26:18PM +0000 Nick Desaulniers ha dit:
-> 
->> Note that a patch in this form has previously been implemented by:
->>
->> Andrey Konovalov <andreyknvl@google.com>:
->> https://gist.github.com/xairy/ee11682ea86044a45c0291c528cd936f
->>
->> and another by:
->>
->> Greg Hackmann <ghackmann@google.com>:
->> https://android-review.googlesource.com/c/kernel/common/+/645181
->>
->> If you used either as a reference, you may want to credit them with a
->> `Suggested-by:` in the commit message.
-> 
-> Not really, but I think I prefer Greg's version over mine and might
-> use it in a respin if nobody raises objections.
+On Thu, Mar 22, 2018 at 01:49:22PM -0700, Alison Schofield wrote:
+> +	/*
+> +	 * Some Intel CPUs enumerate an LLC that is shared by
+> +	 * multiple NUMA nodes.  The LLC on these systems is
+> +	 * shared for off-package data access but private to the
+> +	 * NUMA node (half of the package) for on-package access.
+> +	 *
+> +	 * CPUID can only enumerate the cache as being shared *or*
+> +	 * unshared, but not this particular configuration.  The
+> +	 * CPU in this case enumerates the cache to be shared
+> +	 * across the entire package (spanning both NUMA nodes).
+> +	 */
+> +	if (!topology_same_node(c, o) &&
+> +	    (c->x86_vendor == X86_VENDOR_INTEL &&
+> +	     c->x86_model == INTEL_FAM6_SKYLAKE_X)) {
+> +		/* Use NUMA instead of coregroups for scheduling: */
+> +		x86_has_numa_in_package = true;
+> +
+> +		/*
+> +		 * Return value doesn't actually matter because we
+> +		 * are throwing away coregroups for scheduling anyway.
+> +		 * Return false to bypass topology broken bug messages
+> +		 * and fixups in sched_domain().
+> +		 */
+> +		return false;
 
-NAK.  There's a reason I didn't send my change upstream.
+IIRC that return value _does_ matter because the resulting mask still
+ends up user visible in sysfs.
 
-As Marc pointed out (https://lkml.org/lkml/2018/3/16/987), the "r"
-prefix tells gcc to pick the appropriate register width.  "x" makes it
-unconditionally use the entire 64-bit register width.  Just swapping out
-one for the other changes the macro's semantics.
-
-Unfortunately since this was breaking builds in android-4.14 and we
-didn't have an immediate-term fix, I bit the bullet and added the above
-commit -- but *only* as a short-term workaround.  For the one caller we
-currently have in 4.14.y, gcc was using the entire 64-bit width for all
-its inputs anyway, so "r" vs. "x" didn't make a difference.  But that
-might not be true if/when someone introduces other SMCCC 1.1 callers.
-
-Unfortunately I don't see a better way to deal with this than waiting
-for clang to support "r"-style constraints on ARM64.
+IIRC I went over with this dhansen a week or so ago, but I cannot now
+recall what we settled on as being the right return value and for what
+reason.
