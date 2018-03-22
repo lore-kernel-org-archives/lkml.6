@@ -1,74 +1,93 @@
-Return-Path: <logang@deltatee.com>
-X-Google-Smtp-Source: AG47ELtHQrHGvYKFa4uHwyAA2Fr5NUmzeJV4gkgv+9HCIKOEQQG0gj9EKOZo8IAvrVDt3UjDLwiI
-ARC-Seal: i=1; a=rsa-sha256; t=1521739732; cv=none;
+Return-Path: <gunthorp@deltatee.com>
+X-Google-Smtp-Source: AG47ELv7gfAqk9H2ITKZU7wfY0Z+gU8umxblE0e0uExCNe3R+gVGM9N1lVQiLdPMbVe+rlqWa1gj
+ARC-Seal: i=1; a=rsa-sha256; t=1521739043; cv=none;
         d=google.com; s=arc-20160816;
-        b=jYwIRHq7zRY/O+sG8IZ4K+4QZvB/leKhe+f0gFQFhJE9yD+a96YSgB4jRPnMGAkO67
-         q7lAtCLRQfRRJvMxtj9sTzK8sHi0PZ93FLdSwUpw/z/FOEbc8m/SF1ZZwFlW/wfy13xv
-         kpiVJksX0uCuWfrCcKkbyIpUHB9aRD0EZrsw/9OgGUD+UX3WkLRaSeBaL/rrxQovyEAt
-         5XF4KTbZCa5LYD0e5MvMrugpvyF/syuiKULt19kDPx0Eth5CtVIahvjW+nSC1u+tzi0q
-         UxJmA8q00oHQuf+ro95uLkXxmB9ryqC8VUILi+M7J3iWMbpsGDzkUrVNFMdpdeq92cKw
-         hzVA==
+        b=YoOs5t1FU6f17sxZiIFatcEDzGEpIZ4trS8hHJ0frbMv7w5JqenmEAj/YEQxWc300+
+         VJEHCVmR6U+t6ir4rj/ry9SexsBpSk/p525F+M6dKJ8JujkFQ5ikqyG4HB6V5wvTcISs
+         71/gcKAFpFGzo/NSx7bq4UHdeSEQQWhj7V7LSgEhni9JunsM5kYb7VbwnHHTM5Q4hW5K
+         iF9PvDvzKCZgM2doRnsoKF8b+mVquYJTDyQTbKW3f+X5aG4GAETpizKfCjQT7k2kD0L4
+         nKjy63JnpAaU1kFKnDoGhlf4uN1QCziKTaNrPtW5VXCIz0MxsSEwDINUnzdPcYJnvT8o
+         V6nw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:content-transfer-encoding:content-language:in-reply-to
-         :mime-version:user-agent:date:message-id:from:references:cc:to
+        h=subject:references:in-reply-to:message-id:date:cc:to:from
          :arc-authentication-results;
-        bh=toAissXb2V1UrlMGrRO4zd+Tn5Pql5nH72u9CEZRMqw=;
-        b=FUqNDDFDctJsGGA4zKLrB5U5mVl+xJZkKaDwo2bvo75d4c8fwR5vB5jRznlovOGqX5
-         5Wf34FhUoYvfsLUJfLkUBbWcCMugrrFK2kBO12lFuCYmIOcpb6elPSZ8au9o5VO4KD4s
-         dEcqL2/2peACxH1//YQoa5ksrUyqvbSjr4OqRT6zW5alCxgJ9Sr/PG64eJLPkqFC0BMJ
-         TCWfjDtHt6TmZNx8uGmhse7wU/QO1FzcGj+i6RXcoAXMJGwjkPazDzmAd0otf4ChBgL8
-         UuS05efcC7+rtUTXzkxGzrt7U4nKb7VumVdl3G+nOui4v/8TTMXcWMjob7DxUgBvHHrV
-         jMvQ==
+        bh=MpUIUUYzk3Gx2lrMkQ5H44tPcxcFgXxyzvaVC6cQa0A=;
+        b=N862+gUG3U5oiL3+i3U+yNsaTTHRQiFrQGZhE/itH2l/bpvlxK9e8hxU5kCpx++kXP
+         lyKqE3b1S5bRAAWVi0WCnagARoHjCtyLFYoE+jzaotfiZLpQJPXOFZTv9jmuUQUX58Sc
+         bzO5fJqeglHF6rplWXIawpZf+N/YGv/DVb7UHZzx4wUOJEaczEYoGSsC7kn15mpuYTFi
+         kCcTl3FdDFOJElj2frcZByFq6z9YyMgC0WJu0P460ammLgu4MsfuxpUhWCMgF2qhNrxs
+         O9zWLeOo/ffFTDzpfm4pOqQB0qCgUZaYjq0JBtqfh/wAO5dBn+6fvITbeLBJhQZ2ycAr
+         OmzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of logang@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=logang@deltatee.com
+       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of logang@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=logang@deltatee.com
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andy.shevchenko@gmail.com>,
- =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Kate Stewart <kstewart@linuxfoundation.org>
-References: <20180322171703.4300-1-logang@deltatee.com>
- <20180322171703.4300-3-logang@deltatee.com>
- <20180322172747.4rjped3gojfuhuh2@ltop.local>
+       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <e183ca6b-8148-1210-8f00-3415fbad7e77@deltatee.com>
-Date: Thu, 22 Mar 2018 11:28:44 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180322172747.4rjped3gojfuhuh2@ltop.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: kstewart@linuxfoundation.org, pombredanne@nexb.com, tglx@linutronix.de, horia.geanta@nxp.com, andy.shevchenko@gmail.com, arnd@arndb.de, gregkh@linuxfoundation.org, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, luc.vanoostenryck@gmail.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v14 02/10] iomap: Add big endian sparse annotations to
- mmio_{read|write}XXbe()
+To: linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-ntb@googlegroups.com,
+	linux-crypto@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kate Stewart <kstewart@linuxfoundation.org>
+Date: Thu, 22 Mar 2018 11:16:54 -0600
+Message-Id: <20180322171703.4300-2-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180322171703.4300-1-logang@deltatee.com>
+References: <20180322171703.4300-1-logang@deltatee.com>
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, pombredanne@nexb.com, tglx@linutronix.de, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v14 01/10] iomap: Use correct endian conversion function in mmio_writeXXbe
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595659036992994205?=
-X-GMAIL-MSGID: =?utf-8?q?1595659761347761340?=
+X-GMAIL-THRID: =?utf-8?q?1595659039151998005?=
+X-GMAIL-MSGID: =?utf-8?q?1595659039151998005?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 3/22/2018 11:27 AM, Luc Van Oostenryck wrote:
-> On Thu, Mar 22, 2018 at 11:16:55AM -0600, Logan Gunthorpe wrote:
->> Sparse produces a few warnings of the form:
->>
->> lib/iomap.c:84:9: warning: cast to restricted __be16
->>
->> (The kbuild robot has recently started running such checks)
-> 
-> Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> 
+The semantics of the iowriteXXbe() functions are to write a
+value in CPU endianess to an IO register that is known by the
+caller to be in Big Endian. The mmio_writeXXbe() macro, which
+is called by iowriteXXbe(), should therefore use cpu_to_beXX()
+instead of beXX_to_cpu().
 
-Thanks Luc!
+Seeing both beXX_to_cpu() and cpu_to_beXX() are both functionally
+implemented as either null operations or swabXX operations there
+was no noticable bug here. But it is confusing for both developers
+and code analysis tools alike.
 
-Logan
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ lib/iomap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/iomap.c b/lib/iomap.c
+index 541d926da95e..be120c13d6cc 100644
+--- a/lib/iomap.c
++++ b/lib/iomap.c
+@@ -106,8 +106,8 @@ EXPORT_SYMBOL(ioread32be);
+ #endif
+ 
+ #ifndef mmio_write16be
+-#define mmio_write16be(val,port) __raw_writew(be16_to_cpu(val),port)
+-#define mmio_write32be(val,port) __raw_writel(be32_to_cpu(val),port)
++#define mmio_write16be(val,port) __raw_writew(cpu_to_be16(val),port)
++#define mmio_write32be(val,port) __raw_writel(cpu_to_be32(val),port)
+ #endif
+ 
+ void iowrite8(u8 val, void __iomem *addr)
+-- 
+2.11.0
