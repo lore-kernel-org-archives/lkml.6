@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeCVVxw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:53:52 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36877 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751541AbeCVVxs (ORCPT
+        id S1752050AbeCVVyB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:54:01 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:43406 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751889AbeCVVxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:53:48 -0400
-X-Google-Smtp-Source: AG47ELu8Unuy3SsGSYAhecbiba7c/gLL06MFMdkaft6oDMJB1q2RRMD8h4lyaOWxM+xa03OaNcw7hQ==
-Date: Thu, 22 Mar 2018 14:53:46 -0700 (PDT)
+        Thu, 22 Mar 2018 17:53:55 -0400
+X-Google-Smtp-Source: AG47ELt+A1M+m64ro+9xeN7wTy19FVBpYtEuwqYiJYIFlhiLagDPvR8L3QWaAXWdy3wufozlzPvt4w==
+Date: Thu, 22 Mar 2018 14:53:53 -0700 (PDT)
 From: David Rientjes <rientjes@google.com>
 X-X-Sender: rientjes@chino.kir.corp.google.com
 To: Andrew Morton <akpm@linux-foundation.org>,
@@ -18,10 +18,12 @@ cc: Michal Hocko <mhocko@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [patch v2 -mm 0/6] rewrite cgroup aware oom killer for general use
-In-Reply-To: <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
+Subject: [patch v2 -mm 5/6] mm, memcg: separate oom_group from selection
+ criteria
+In-Reply-To: <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
+Message-ID: <alpine.DEB.2.20.1803221453110.17056@chino.kir.corp.google.com>
 References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803151351140.55261@chino.kir.corp.google.com> <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com>
+ <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
 User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -29,40 +31,92 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rewrite cgroup aware oom killer for general use
+With the current implementation of the cgroup-aware oom killer,
+memory.oom_group defines two behaviors:
 
-There are three significant concerns about the cgroup aware oom killer as
-it is implemented in -mm:
+ - consider the footprint of the "group" consisting of the mem cgroup
+   itself and all descendants for comparison with other cgroups, and
 
- (1) allows users to evade the oom killer by creating subcontainers or
-     using other controllers since scoring is done per cgroup and not
-     hierarchically,
+ - when selected as the victim mem cgroup, kill all processes attached to
+   it and its descendants that are eligible to be killed.
 
- (2) unfairly compares the root mem cgroup using completely different
-     criteria than leaf mem cgroups and allows wildly inaccurate results
-     if oom_score_adj is used, and
+Now that the memory.oom_policy of "tree" considers the memory footprint of
+the mem cgroup and all its descendants, separate the memory.oom_group
+setting from the selection criteria.
 
- (3) does not allow the user to influence the decisionmaking, such that
-     important subtrees cannot be preferred or biased.
+Now, memory.oom_group only controls whether all processes attached to the
+victim mem cgroup and its descendants are oom killed (when set to "1") or
+the single largest memory consuming process attached to the victim mem
+cgroup and its descendants is killed.
 
-This patchset fixes (1) and (2) completely and, by doing so, introduces a
-completely extensible user interface that can be expanded in the future.
+This is generally regarded as a property of the workload attached to the
+subtree: it depends on whether the workload can continue running and be
+useful if a single process is oom killed or whether it's better to kill
+all attached processes.
 
-Concern (3) could subsequently be addressed either before or after the
-cgroup-aware oom killer feature is merged.
-
-It preserves all functionality that currently exists in -mm and extends
-it to be generally useful outside of very specialized usecases.
-
-It eliminates the mount option for the cgroup aware oom killer entirely
-since it is now enabled through the root mem cgroup's oom policy.
+Signed-off-by: David Rientjes <rientjes@google.com>
 ---
- - Rebased to next-20180322
- - Fixed get_nr_swap_pages() build bug found by kbuild test robot
+ Documentation/cgroup-v2.txt | 21 ++++-----------------
+ mm/memcontrol.c             |  8 ++++----
+ 2 files changed, 8 insertions(+), 21 deletions(-)
 
- Documentation/cgroup-v2.txt | 100 ++++++++--------
- include/linux/cgroup-defs.h |   5 -
- include/linux/memcontrol.h  |  21 ++++
- kernel/cgroup/cgroup.c      |  13 +--
- mm/memcontrol.c             | 221 +++++++++++++++++++++---------------
- 5 files changed, 204 insertions(+), 156 deletions(-)
+diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+--- a/Documentation/cgroup-v2.txt
++++ b/Documentation/cgroup-v2.txt
+@@ -1045,25 +1045,12 @@ PAGE_SIZE multiple when read back.
+ 	A read-write single value file which exists on non-root
+ 	cgroups.  The default is "0".
+ 
+-	If set, OOM killer will consider the memory cgroup as an
+-	indivisible memory consumers and compare it with other memory
+-	consumers by it's memory footprint.
+-	If such memory cgroup is selected as an OOM victim, all
+-	processes belonging to it or it's descendants will be killed.
++	If such memory cgroup is selected as an OOM victim, all processes
++	attached to it and its descendants that are eligible for oom kill
++	(their /proc/pid/oom_score_adj is not oom disabled) will be killed.
+ 
+ 	This applies to system-wide OOM conditions and reaching
+ 	the hard memory limit of the cgroup and their ancestor.
+-	If OOM condition happens in a descendant cgroup with it's own
+-	memory limit, the memory cgroup can't be considered
+-	as an OOM victim, and OOM killer will not kill all belonging
+-	tasks.
+-
+-	Also, OOM killer respects the /proc/pid/oom_score_adj value -1000,
+-	and will never kill the unkillable task, even if memory.oom_group
+-	is set.
+-
+-	If cgroup-aware OOM killer is not enabled, ENOTSUPP error
+-	is returned on attempt to access the file.
+ 
+   memory.oom_policy
+ 
+@@ -1325,7 +1312,7 @@ When selecting a cgroup as a victim, the OOM killer will kill the process
+ with the largest memory footprint.  A user can control this behavior by
+ enabling the per-cgroup memory.oom_group option.  If set, it causes the
+ OOM killer to kill all processes attached to the cgroup, except processes
+-with /proc/pid/oom_score_adj set to -1000 (oom disabled).
++with /proc/pid/oom_score_adj set to OOM_SCORE_ADJ_MIN.
+ 
+ The root cgroup is treated as a leaf memory cgroup as well, so it is
+ compared with other leaf memory cgroups.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2732,11 +2732,11 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
+ 			continue;
+ 
+ 		/*
+-		 * We don't consider non-leaf non-oom_group memory cgroups
+-		 * without the oom policy of "tree" as OOM victims.
++		 * We don't consider non-leaf memory cgroups without the oom
++		 * policy of "tree" as OOM victims.
+ 		 */
+-		if (memcg_has_children(iter) && !mem_cgroup_oom_group(iter) &&
+-		    iter->oom_policy != MEMCG_OOM_POLICY_TREE)
++		if (iter->oom_policy != MEMCG_OOM_POLICY_TREE &&
++				memcg_has_children(iter))
+ 			continue;
+ 
+ 		/*
