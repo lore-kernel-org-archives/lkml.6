@@ -1,87 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755045AbeCVPeA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:34:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48041 "EHLO mail.bootlin.com"
+        id S1754624AbeCVPfl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:35:41 -0400
+Received: from foss.arm.com ([217.140.101.70]:39264 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754617AbeCVPds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:33:48 -0400
-Date: Thu, 22 Mar 2018 16:33:47 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-Message-ID: <20180322153347.GX3417@piout.net>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
+        id S1753438AbeCVPfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 11:35:38 -0400
+Subject: Re: [PATCH v3 2/2] irqchip: Add a driver for the Microsemi Ocelot
+ controller
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-kernel@vger.kernel.org
+References: <20180322151524.13902-1-alexandre.belloni@bootlin.com>
+ <20180322151524.13902-2-alexandre.belloni@bootlin.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <e7492bde-4a5f-8ae3-a5f3-5fc1168e2d87@arm.com>
+Date: Thu, 22 Mar 2018 15:35:35 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180322151524.13902-2-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On 22/03/18 15:15, Alexandre Belloni wrote:
+> The Microsemi Ocelot SoC has a pretty simple IRQ controller in its ICPU
+> block. Add a driver for it.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+> Changes in v3:
+>  - moved parent irq parsing to the top of init
+>  - reworked error path
+> 
+> 
+>  drivers/irqchip/Kconfig           |   5 ++
+>  drivers/irqchip/Makefile          |   1 +
+>  drivers/irqchip/irq-mscc-ocelot.c | 118 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 124 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-mscc-ocelot.c
+Queued both patches for 4.17. Thanks for the quick turnaround.
 
-I'd really like to get this in the kernel soon as we have platform that
-still can't boot with a mainline kernel because they don't have a PIT.
-
-On 23/02/2018 at 18:15:52 +0100, Alexandre Belloni wrote:
-> Hi,
-> 
-> This series gets back on the TCB drivers rework. It introduces a new driver to
-> handle the clocksource and clockevent devices.
-> 
-> As a reminder, this is necessary because:
->  - the current tcb_clksrc driver is probed too late to be able to be used at
->    boot and we now have SoCs that don't have a PIT. They currently are not able
->    to boot a mainline kernel.
->  - using the PIT doesn't work well with preempt-rt because its interrupt is
->    shared (in particular with the UART and their interrupt flags are
->    incompatible)
->  - the current solution is wasting some TCB channels
-> 
-> The plan is to get this driver upstream, then convert the TCB PWM driver to be
-> able to get rid of the tcb_clksrc driver along with atmel_tclib.
-> 
-> changes in v3:
->  - use SPDX tag in include/soc/at91/atmel_tcb.h
->  - rework option selection to make the clocksource option silent
-> 
-> Main changes in v2:
->  - use direct IO instead of regmap when accessing channel specific registers to
->    avoid the regmap locking
->  - implement suspend/resume
-> 
-> 
-> Alexandre Belloni (6):
->   ARM: at91: add TCB registers definitions
->   clocksource/drivers: Add a new driver for the Atmel ARM TC blocks
->   clocksource/drivers: atmel-pit: make option silent
->   ARM: at91: Implement clocksource selection
->   ARM: configs: at91: use new TCB timer driver
->   ARM: configs: at91: unselect PIT
-> 
->  arch/arm/configs/at91_dt_defconfig    |   2 +-
->  arch/arm/configs/sama5_defconfig      |   2 +-
->  arch/arm/mach-at91/Kconfig            |  25 ++
->  drivers/clocksource/Kconfig           |  13 +-
->  drivers/clocksource/Makefile          |   3 +-
->  drivers/clocksource/timer-atmel-tcb.c | 608 ++++++++++++++++++++++++++++++++++
->  include/soc/at91/atmel_tcb.h          | 216 ++++++++++++
->  7 files changed, 865 insertions(+), 4 deletions(-)
->  create mode 100644 drivers/clocksource/timer-atmel-tcb.c
->  create mode 100644 include/soc/at91/atmel_tcb.h
-> 
-> -- 
-> 2.16.1
-> 
-
+	M.
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Jazz is not dead. It just smells funny...
