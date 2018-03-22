@@ -1,102 +1,262 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751961AbeCVDwR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 23:52:17 -0400
-Received: from mail-db5eur01on0065.outbound.protection.outlook.com ([104.47.2.65]:49568
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        id S1751997AbeCVE2F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 00:28:05 -0400
+Received: from mail-dm3nam03on0041.outbound.protection.outlook.com ([104.47.41.41]:29312
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751843AbeCVDwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 23:52:14 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=xiaofeng.wei@nxp.com;
-From: Xiaofeng Wei <xiaofeng.wei@nxp.com>
-To: wim@iguana.be, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: linux@roeck-us.net, hongjun.chen@nxp.com,
-        Xiaofeng Wei <xiaofeng.wei@nxp.com>
-Subject: [PATCH] watchdog: booke_wdt: Disable the watchdog prior to setting a new timeout value in order to avoid the following situation
-Date: Thu, 22 Mar 2018 11:51:46 +0800
-Message-Id: <20180322035146.1236-1-xiaofeng.wei@nxp.com>
-X-Mailer: git-send-email 2.16.2.windows.1
+        id S1751291AbeCVE2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 00:28:03 -0400
+From: Naga Sureshkumar Relli <nagasure@xilinx.com>
+To: Randy Dunlap <rdunlap@infradead.org>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>
+CC: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        Punnaiah Choudary Kalluri <punnaia@xilinx.com>
+Subject: RE: [LINUX PATCH v8 1/2] Documentation: nand: pl353: Add
+ documentation for controller and driver
+Thread-Topic: [LINUX PATCH v8 1/2] Documentation: nand: pl353: Add
+ documentation for controller and driver
+Thread-Index: AQHTu4Idhk4n1pufpEiYEGYfTTnDrqPQaVUAgAtKUqA=
+Date: Thu, 22 Mar 2018 04:27:50 +0000
+Message-ID: <BY2PR02MB14116F392ED197B02FCB1384AFA90@BY2PR02MB1411.namprd02.prod.outlook.com>
+References: <1521024494-30632-1-git-send-email-nagasureshkumarrelli@gmail.com>
+ <0abb517f-6360-5b45-18a8-d049f3ab7a4e@infradead.org>
+In-Reply-To: <0abb517f-6360-5b45-18a8-d049f3ab7a4e@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com;
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR02MB1283;7:Upc7+il1ptJuugnhwsYaZVOKkp3U4N7bNkh+3MfVXxQE64NRYe2lKruR1P4IffL5CRzN0IyL8KCYtx2wA/fPQQUJHVRN0jpQEzSa/ebHIG5wvlfl1ZYrSNN1AgB5vJG5Pwm+n2qISkDQG+3ISLkv7G6lOvZFq6l/6I+L66Ac0tkDWnP4BUvut/FzM6bPIkpTijrohZ275m8WQr0Z+j6nyFdS68ELsa9CRPpEOvzqFbgWJkzB944nPf099h/EjYmN
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 848035d3-d6a0-4884-e811-08d58fad45cc
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BY2PR02MB1283;
+x-ms-traffictypediagnostic: BY2PR02MB1283:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <BY2PR02MB128367397F8779BAED8ADA51AFA90@BY2PR02MB1283.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(85827821059158)(258649278758335)(192813158149592);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:BY2PR02MB1283;BCL:0;PCL:0;RULEID:;SRVR:BY2PR02MB1283;
+x-forefront-prvs: 0619D53754
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(376002)(366004)(346002)(396003)(199004)(189003)(13464003)(25786009)(7696005)(316002)(2201001)(8676002)(81156014)(5660300001)(81166006)(53936002)(8936002)(7416002)(54906003)(97736004)(106356001)(6306002)(9686003)(6506007)(39060400002)(55236004)(2906002)(6246003)(107886003)(55016002)(76176011)(59450400001)(3846002)(229853002)(86362001)(99286004)(478600001)(6116002)(6436002)(110136005)(53546011)(3660700001)(14454004)(3280700002)(68736007)(102836004)(105586002)(2900100001)(7736002)(305945005)(74316002)(446003)(66066001)(33656002)(4326008)(5250100002)(186003)(2950100002)(26005)(2501003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR02MB1283;H:BY2PR02MB1411.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: m1D464mosiL9/DgaNBo0Tz2kLmNRVzos1kVBK5rihwP1c1W8/ZC7Z9+vNw0VS1gwoYXwrkijcPdBg1Hg0iGKr0ipT+91h1Or+tabqhXKunV5MORtN8XKaHIBq6l5D9CmmhxQX/WiB+F7rxBC8vzYlJGhZ8Y76Xuptkt7B39ZvazgTPDUPPRlzit55EnTiz6EvfGGetMUmT4LO8kAId/JObpilDTPrUe3frQvQQdWj8f2j6IOTbpIs7RuHqish8D4lYy7/xcBDm3VAJ6pNMttF39LL8GgTl+pvuax6KHDhC+8/ggVilwYxY2kRV3hYM73XgDytMjKLJbuXgVVAR1BXg==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [119.31.174.73]
-X-ClientProxiedBy: SG2PR06CA0145.apcprd06.prod.outlook.com
- (2603:1096:1:1f::23) To DB5PR04MB1381.eurprd04.prod.outlook.com
- (2a01:111:e400:58da::15)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 4775cda6-f493-4de9-73c8-08d58fa84aeb
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB1381;
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1381;3:JP0g+knkicNhA/pNpuJqTEa5QkcYBeCJKAJh1eaum32bMFxNmt4bCXa3qIUwC7QPEmo+FHA94Wp/JnQDyMFGIrmzrTc6oxGfVJrC2B8+UweICm2UZWQJWl2gctAv8t1GKdviq19lfjStuDH7WmVXQmAlRn8RIyaro0QsT5XkQX9V+j852EWtRWGJjCDqxgekg4yng7n5gwqhifD5hIR3Ptk9oDjEk6lMvQDXofZq3+D5m06/AfRxqJPbfh4kDgMd;25:DkcVyotaBtXjpIN11yb2WkTTfv2o54NYUcfbH1otkAIV9KZAtugYgi7yJ8pa5mrMrLDFXtFQ1of98WxZXCtoiAhOF6vG3mtIrbmF0TXib1v7Ambs1LCtlc1V4CB9Y/gjv9bLQEMaHuLShsu4/k1T2yawl1ucbz/bG8ksBn3Qyl8wxsN9BB9BLH+AexwWA+ObjI0C3SfDJvzKhtLvPsa9Ed7TP97hC9IPXIDJAFtVw9GpSvfWEfe6rPHzB/cWkdNeX3YSpM6lLu3Y1VrkXvNYeY0cKYgn6flHnrogJzzwScIF0krlKVRZadzEMroe1NzpzdC0OsO3Hc7wmO6XMwg0HQ==;31:P9pQaqd69qobJrr4RSjZDOsxxRA+IvCGgzgzcaZZTPqnYsdmg3Ubn7nMtrSxhpPrPry4hs33H8OACYHFa/Xbg78vZrupcz70TQZGVioTiFdN615HwzmSzObMMCvhkq6Pf9Ef+KkAthxZrqYCJQNMgNFyPh0wu8qYByFcpDuTtnDvNwwGExGUPCtAKLPm+VbxatiWBCvGv2DGXjHuVQcN2Z/egi5jzj2zWqrLvwqU3ac=
-X-MS-TrafficTypeDiagnostic: DB5PR04MB1381:
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1381;20:PhdK1byyTt04/8QpZL/HqoFQwp8zrZai/09IrSKPSjsFxMDORLiAP5RYWvnzSbpB78i+kn3q8XNyiQdwrIXT2jJNCg8IsF0h1GLKPCYBD7eGOAVXiPha/qqr0duyQr6MQuItn5JpaYawT2M+c2onx1nmNa1XK2kHKaXjFuKUnzO1jJr6TiRg9N35Dxfc0feD2D/8evYlfnmDJUD3swmTfEvL5tNOUYE12PeseFaSZNs3KgGQ1WXFeMSSCN/Xbcu9hRzMDkch1rYx2U9p4BPGpRU6/VjWsoEZNdNDkyxlzApCprJQpmxYu6LP0AQk84waTRHyLgiRkUVgD/7vOCQtynZZiIc6+Vjpm2bYstnL3s/c8TNT4puuSooB8sGvDyG4Qj0bN0yQbKqGyCFNCkpmUA1WfE0TbJkJRgQxCv5xDHh1vLmDOLrTvqXNYb7/Rwy0eJ3qmSs9mySbXBu/S+uPtxvKLm6LU6cYn6v5P1yvRaupFcqSLBUaxfWxumud6xN1;4:rFbagRjJ36MmBjuu6WolHQDEtaCG3UfEPkxEdGifIbzgerX+VPgSkHDQtUaCGLrFe1425l2kXtL6t9pM4uAzvLR0BKxr6L6x4FgmSj/nDKXDwECu2fGo6t3+xwdkgHAICojasgKpwBCpKTzIbaNXi7OrnjzLo0MU2RcL3LoBVrF8eL177Qojzr9rPJzPFEPJftRw3MvzZH44NaLyucigBsLdbkbjl+0BumB3xMMQ+GmWV8Xfq3/p/qDUOGjoWoVOZ5Fx/yFw6EWGXeCC2RaZGqEA+uNxWCM46Gygt7T51XcEwabKlNybFwBkvoXt9sg4
-X-Microsoft-Antispam-PRVS: <DB5PR04MB1381F0F3D254633E2C66FDFA93A90@DB5PR04MB1381.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:DB5PR04MB1381;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB1381;
-X-Forefront-PRVS: 0619D53754
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39380400002)(396003)(39860400002)(346002)(376002)(189003)(199004)(50466002)(48376002)(4326008)(316002)(51416003)(7696005)(52116002)(1076002)(6116002)(3846002)(5660300001)(68736007)(16586007)(105586002)(478600001)(106356001)(305945005)(81156014)(81166006)(86362001)(26005)(97736004)(8676002)(8936002)(386003)(6486002)(7736002)(50226002)(6666003)(36756003)(2906002)(47776003)(1857600001)(25786009)(66066001)(16526019)(53936002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1381;H:NXL65279.wbi.nxp.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB1381;23:2q6mUluyFNI8v0u3U/aF0C45lp2P5+qeoNasaikGy?=
- =?us-ascii?Q?PMBKGS7V22Y8FptSdfD5h+QCYYc4aPevUSQbUPCazxBbRRt2xQv52R2ukkSL?=
- =?us-ascii?Q?HIuf37lRex9nBelvv40qR+GNGrtFw4t+hCGsayCv/+rcFjPu/bUBjGMZKg76?=
- =?us-ascii?Q?uu8nkSTTO5PmVcE2wlYzCG983x+IvaZkajHcUFPPUdePay6WZ/CIZ+JuCAKh?=
- =?us-ascii?Q?+3PSe4qrIoexo6nwXcqJunY91lCcI9ec/1VY7xfJ0j/M4X7ZcLJDkckT5NS0?=
- =?us-ascii?Q?AmHqvfWFpeT3ETKprzUBnMbGrf5px0qzt5pMTjNm8RiLNT42bpkL54Nw9PGc?=
- =?us-ascii?Q?PxMYYqrqBlew9v3v4smMhrSBCDY9ow3qCVAAJXZJJm+JTxWyC94p7WRA8ssy?=
- =?us-ascii?Q?xKU6d9Cp1srwyZ28LaodAk8QiLCnFNB9B1i1vuzUojT9x9vDwj/jWbkRzldQ?=
- =?us-ascii?Q?DdxbkZA8AaqsxSzCaR91Qv8P1VGQrEUXV+neH9yyTta5fQJKg77hdHsrKTCe?=
- =?us-ascii?Q?qcgeqPlzMG9OXgR3YiqA9T2GyZW45fmXT3d6jYe4bulcedjmeEIPqXJV09Zr?=
- =?us-ascii?Q?2Wk7l7gZkSMkcNrCiSvlt7zGlWJH/8aUg+L5ex9MrS1Y5C8Zyy/syKc3w8co?=
- =?us-ascii?Q?sywfcwuvF3z/BGUZqMz2fZtbVwgOfwlOCZ8gI51sveoUbNadnv57M8DGfU1a?=
- =?us-ascii?Q?CQIa8PkjSNlgOhVJRlFGJh4fAK7Zibc+4BWgO4HJYzJggwLP5XkkMBSNA8bn?=
- =?us-ascii?Q?vuEsXODsvP1L1u6uPhJby6Nrp1PIJV/i5xJdv1RmEa7UUJ3nlismgiIXeDF6?=
- =?us-ascii?Q?pyxae7eAdX3Yec3lG8K1PG9i0UgjlCjXKIFM8qcgBFSfjEOYS7KiCip9NlyI?=
- =?us-ascii?Q?srd2fGVnS7fwCFYxTWEeB/R8EqSJ0XPFL0/A+y9xXQNzpvh/zg/Nb8/Uxnmx?=
- =?us-ascii?Q?4idBkPBYLWUfGN16EgPA9yFtbHwG9juQVCRWT+gGRY1PDn6u+HMxb/8lc3/U?=
- =?us-ascii?Q?tfSJ4Pu6M/UeqoOBNzlZmHWkHlydoYu41Z0vnVR6pXwQ7ox8F6zkWrE3wrfV?=
- =?us-ascii?Q?CBlCQc=3D?=
-X-Microsoft-Antispam-Message-Info: lBQX2tXfUShxV37duZvbw9DtcuA78zJUwipCygr62A4fS0MIc18czqu8r1hBXbP3NwRo6JDYCeOKcp2sdt+i+yKhPXWykt0HzFS+3eq2nRTWiDvH6kdV1/j9wFfb/YLtIIVSgp1EcC0EoEZLUdvFiJbSUUV8zDDW5k+/qrtsU3WlaEEhiWe+Cgh1OOxQxOMd
-X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB1381;6:XWo/TZODdLbFxihCOawjx0B/b1tKA0lN4LnztY8V8aFVcsR4rWYaXyTsoom2jS4Ca/r155E5AIbFT9nkbj+TNdoF3PXh7cX9n5mPGYMZ1ghkXu7d/w3YRI/5BTUa/ojj2zCL68uL4t7sJBuD5MDe/EfvFevYCIK7hHu86wsHlcKrecpv/IFLCaPFQFew7H5/Ey0qbps4bNlDv70X3RPyXMhrqfLIUxH5M7lx3mk4D3kpMwqA0a0zkx9y2so7py2iBWGLmjSw4wlfbJmgtMj6hOYI1FQR52yH0BIUMPEueYRG4NxwKpRWD8tDU2d6pzPeS1W55nhdmOHla/swlBQOE4JDLe0++cv7UAadK0Tg1W8=;5:h4Bn0Uwo0/trawKnAFvkHrajq6WY/yOOfM30CvRhiobjhzvrTiNGMleTQRPb9J+3XceML+nmN4Abg9zT0G0WT+O8jRIs931WeDZLDU7CtEbWMLgrAPGOt+woHSJMJOMD3BmlpkYRLqdfKsa4iVRi+ofHu+kU/XxzNXWDOtkTbrc=;24:umncVakEXT7TDTdidJXLC6wEhEldstXmEL2i8l8KoAhpzmq8++lRcqVJo9e7voM8iwjqtGvsiPYcemHs3Yfgv73bYxteg6788ECf/XgXs04=;7:QnwKK/CdHLEXSow1ganq2qpbvZwTW4o0qwcgIFwyL3bRB6s/5t91lOdFkwe2d7sXbak3HNK5K59ThUGGFPKk/ObKkcTsqyau2jOe1fnRTClu5TbAI8SXs8f7kA7fuAgXaz2gfHzvUXgywi3YM6K8Xgv17iq+tv+oS4OdBIb7N+qp8aHfOA2ZEQpkJyWZvQgd9Zk8Pla0z87FKmgh/NBGOewWMUEwr+LypFZ4Jc4bTsF8ff9zU2LmSX2rGe+9cqtk
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2018 03:52:09.4514
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 848035d3-d6a0-4884-e811-08d58fad45cc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Mar 2018 04:27:50.2213
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4775cda6-f493-4de9-73c8-08d58fa84aeb
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB1381
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR02MB1283
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2M4SJpJ010037
 
-A watchdog timer exception also occurs if the selected time base bit transitions from 0 to 1 due
-to an mtspr that writes a 1 to the bit when its previous value was 0.
+Hi Randy,
 
-Signed-off-by: Xiaofeng Wei <xiaofeng.wei@nxp.com>
----
- drivers/watchdog/booke_wdt.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thanks for reviewing the patch.
 
-diff --git a/drivers/watchdog/booke_wdt.c b/drivers/watchdog/booke_wdt.c
-index 3ad1e44..70e742c 100644
---- a/drivers/watchdog/booke_wdt.c
-+++ b/drivers/watchdog/booke_wdt.c
-@@ -186,9 +186,15 @@ static int booke_wdt_stop(struct watchdog_device *wdog)
- static int booke_wdt_set_timeout(struct watchdog_device *wdt_dev,
- 				 unsigned int timeout)
- {
-+	if (watchdog_active(wdt_dev))
-+		on_each_cpu(__booke_wdt_disable, NULL, 0);
-+
- 	wdt_dev->timeout = timeout;
- 	booke_wdt_set(wdt_dev);
- 
-+	if (watchdog_active(wdt_dev))
-+		on_each_cpu(__booke_wdt_enable, wdt_dev, 0);
-+
- 	return 0;
- }
- 
--- 
-2.9.3
+ I will address below mentioned comments in next version of patch.
+
+Thanks,
+Naga Sureshkumar Relli.
+
+> -----Original Message-----
+> From: Randy Dunlap [mailto:rdunlap@infradead.org]
+> Sent: Thursday, March 15, 2018 5:27 AM
+> To: nagasureshkumarrelli@gmail.com; boris.brezillon@bootlin.com;
+> richard@nod.at; dwmw2@infradead.org; computersforpeace@gmail.com;
+> marek.vasut@gmail.com; cyrille.pitchen@wedev4u.fr;
+> miquel.raynal@bootlin.com
+> Cc: linux-mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Michal Simek
+> <michals@xilinx.com>; Punnaiah Choudary Kalluri <punnaia@xilinx.com>; Naga
+> Sureshkumar Relli <nagasure@xilinx.com>
+> Subject: Re: [LINUX PATCH v8 1/2] Documentation: nand: pl353: Add
+> documentation for controller and driver
+> 
+> On 03/14/2018 03:48 AM, nagasureshkumarrelli@gmail.com wrote:
+> > From: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> >
+> > Added notes about the controller and driver
+> >
+> > Signed-off-by: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> > ---
+> 
+> Hi,
+> 
+> > ---
+> >  Documentation/mtd/nand/pl353-nand.txt | 92
+> > +++++++++++++++++++++++++++++++++++
+> >  1 file changed, 92 insertions(+)
+> >  create mode 100644 Documentation/mtd/nand/pl353-nand.txt
+> >
+> > diff --git a/Documentation/mtd/nand/pl353-nand.txt
+> > b/Documentation/mtd/nand/pl353-nand.txt
+> > new file mode 100644
+> > index 0000000..ac6fbd5
+> > --- /dev/null
+> > +++ b/Documentation/mtd/nand/pl353-nand.txt
+> > @@ -0,0 +1,92 @@
+> > +This documents provides some notes about the ARM pl353 smc controller
+> > +used in
+> 
+> s/smc/SMC/
+> 
+> > +Zynq SOC and confined to NAND specific details.
+> > +
+> > +Overview of the controller
+> > +==========================
+> > +	The SMC (PL353) supports two memory interfaces:
+> > +	Interface 0 type SRAM.
+> > +	Interface 1 type NAND.
+> > +	This configuration supports the following configurable options:
+> > +	   . 32-bit or 64-bit AXI data width
+> > +	   . 8-bit, 16-bit, or 32-bit memory data width for interface 0
+> > +	   . 8-bit, or 16-bit memory data width for interface 1
+> > +	   . 1-4 chip selects on each interface
+> > +	   . SLC ECC block for interface 1
+> > +
+> > +For more information, refer the below link for TRM
+> > +http://infocenter.arm.com/help/topic/com.arm.doc.ddi0380g/
+> > +DDI0380G_smc_pl350_series_r2p1_trm.pdf
+> > +
+> > +NAND memory accesses
+> > +====================
+> > +	. Two phase NAND accesses
+> > +	. NAND command phase transfers
+> > +	. NAND data phase transfers
+> > +
+> > +Two phase NAND accesses
+> > +	The SMC defines two phases of commands when transferring data to or
+> > +from NAND flash.
+> > +
+> > +Command phase
+> > +	Commands and optional address information are written to the NAND
+> flash.
+> > +The command and address can be associated with either a data phase
+> > +operation to write to or read from the array, or a status/ID register transfer.
+> > +
+> > +Data phase
+> > + Data is either written to or read from the NAND flash. This data can
+> > +be either data transferred to or from the array, or status/ID register
+> information.
+> > +
+> > +NAND AXI address setup
+> > +       AXI address      Command phase      Data phase
+> > +	[31:24]         Chip address       Chip address
+> > +	[23]            NoOfAddCycles_2    Reserved
+> > +	[22]            NoOfAddCycles_1    Reserved
+> > +	[21]            NoOfAddCycles_0    ClearCS
+> > +	[20]            End command valid  End command valid
+> > +	[19]            0                  1
+> > +	[18:11]         End command        End command
+> > +	[10:3]          Start command      [10] ECC Last
+> > +					   [9:3] Reserved
+> > +	[2:0]           Reserved           Reserved
+> > +
+> > +ECC
+> > +===
+> > +    It operates on a number of 512 byte blocks of NAND memory and can
+> > +be programmed to store the ECC codes after the data in memory. For
+> > +writes, the ECC is written to the spare area of the page. For reads,
+> > +the result of a block ECC check are made available to the device driver.
+> > +
+> > +---------------------------------------------------------------------
+> > +---
+> > +|               n * 512 blocks                  | extra  | ecc    |     |
+> > +|                                               | block  | codes  |     |
+> > +---------------------------------------------------------------------
+> > +---
+> > +
+> > +The ECC calculation uses a simple Hamming code, using 1-bit
+> > +correction 2-bit detection. It starts when a valid read or write
+> > +command with a 512 byte aligned address is detected on the memory
+> interface.
+> > +
+> > +Driver details
+> > +==============
+> > +	The NAND driver has dependency with the pl353_smc memory
+> controller
+> > +driver for intializing the nand timing parameters, bus width, ECC
+> > +modes,
+> 
+>               initializing the NAND
+> 
+> > +control and status information.
+> > +
+> > +Since the controller expects that the chipselect bit should be
+> > +cleared for the last data transfer i.e last 4 data bytes, the
+> > +existing nandbase page read/write routines for soft ecc and ecc none
+> > +modes will not work. So, inorder
+> 
+>                                                                           in order
+> 
+> > +to make this driver work, it always updates the ecc mode as HW ECC
+> > +and
+> 
+>                                                    ECC mode
+> 
+> > +implemented the page read/write functions for supporting the SW ECC.
+> 
+>    implements the
+> 
+> > +
+> > +HW ECC mode:
+> > +	Upto 2K page size is supported and beyond that it retuns
+> 
+> 	Up to                                             returns
+> 
+> > +-ENOSUPPORT error. If the flsh has ONDIE ecc controller then the
+> 
+>                              flash (?) has on-die ECC
+> 
+> > +priority has given to the ONDIE ecc controller. Also the current
+> 
+>             is               on-die ECC
+> 
+> > +implementation has support for upto 64 byte oob area
+> 
+>                                   up to            area.
+> 
+> > +
+> > +SW ECC mode:
+> > +	It supports all the pgae sizes. But since, zynq soc bootrom uses
+> 
+> 	                                           Zynq SOC
+> 
+> > +HW ECC for the devices that have pgae size <=2K so, to avoid any ecc
+> > +related
+> 
+>                                     page      <= 2K, to avoid any ECC-related
+> 
+> > +issues during boot, prefer HW ECC over SW ECC.
+> > +
+> > +For devicetree binding information please refer the below dt binding
+> > +file
+> 
+>                                       please refer to the below
+> 
+> > +Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt.
+> >
+> 
+> 
+> --
+> ~Randy
