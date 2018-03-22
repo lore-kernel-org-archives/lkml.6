@@ -1,103 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751717AbeCVQRe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:17:34 -0400
-Received: from mga01.intel.com ([192.55.52.88]:13411 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751286AbeCVQRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:17:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
-   d="scan'208";a="185106537"
-Subject: Re: [PATCH v1 2/3] perf report: extend raw dump (-D) out with switch
- out event type
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <4857e3ba-a42f-a9a2-2668-91ca9b44727c@linux.intel.com>
- <86313484-3601-b218-48b8-1f54843e52de@linux.intel.com>
- <20180321164148.GC2707@krava>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <6bbf67ed-2d16-98ee-03a0-11383b778655@linux.intel.com>
-Date: Thu, 22 Mar 2018 19:17:29 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1751714AbeCVQTE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:19:04 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45490 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751375AbeCVQTD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:19:03 -0400
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>,
+        Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321130833.GM23100@dhcp22.suse.cz>
+ <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
+ <20180321172932.GE4780@bombadil.infradead.org>
+ <f057a634-7e0a-1b51-eede-dcb6f128b18e@linux.alibaba.com>
+ <20180321224631.GB3969@bombadil.infradead.org>
+ <18a727fd-f006-9fae-d9ca-74b9004f0a8b@linux.vnet.ibm.com>
+ <20180322154055.GB28468@bombadil.infradead.org>
+ <0442fb0e-3da3-3f23-ce4d-0f6cbc3eac9a@linux.vnet.ibm.com>
+ <20180322160547.GC28468@bombadil.infradead.org>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Thu, 22 Mar 2018 17:18:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180321164148.GC2707@krava>
+In-Reply-To: <20180322160547.GC28468@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18032216-0008-0000-0000-000004E13F87
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032216-0009-0000-0000-00001E74686D
+Message-Id: <55ac947f-fd77-3754-ebfe-30d458c54403@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-22_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803220188
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.03.2018 19:41, Jiri Olsa wrote:
-> On Tue, Mar 20, 2018 at 04:05:17PM +0300, Alexey Budankov wrote:
->> Print additional 'yield' tag for PERF_RECORD_SWITCH[_CPU_WIDE] OUT records when
->> event header misc field contains PERF_RECORD_MISC_SWITCH_OUT_YIELD bit set 
->> designating synchronization context switch out event:
->>
->> perf report -D -i system-wide.perf: 
->>
->> 0x1b9c50 [0x30]: event: 15
->> .
->> . ... raw event: size 48 bytes
->> .  0000:  0f 00 00 00 00 20 30 00 01 1e 00 00 01 1e 00 00  ..... 0.........
->> .  0010:  00 00 00 00 00 00 00 00 85 ae d4 e3 3e 0e 00 00  ............>...
->> .  0020:  54 00 00 00 00 00 00 00 05 00 00 00 00 00 00 00  T...............
->>
->> 5 15663273127557 0x1b9c50 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT  next pid/tid:  7681/7681 
->>
->> 0x2646c0 [0x30]: event: 15
->> .
->> . ... raw event: size 48 bytes
->> .  0000:  0f 00 00 00 00 60 30 00 00 00 00 00 00 00 00 00  .....`0.........
->> .  0010:  00 1e 00 00 00 1e 00 00 29 1e d5 e3 3e 0e 00 00  ........)...>...
->> .  0020:  56 00 00 00 00 00 00 00 07 00 00 00 00 00 00 00  V...............
->>
->> 7 15663273156137 0x2646c0 [0x30]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  tools/perf/util/event.c | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
->> index f0a6cbd033cc..af5a85d56446 100644
->> --- a/tools/perf/util/event.c
->> +++ b/tools/perf/util/event.c
->> @@ -1421,7 +1421,9 @@ size_t perf_event__fprintf_itrace_start(union perf_event *event, FILE *fp)
->>  size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp)
->>  {
->>  	bool out = event->header.misc & PERF_RECORD_MISC_SWITCH_OUT;
->> -	const char *in_out = out ? "OUT" : "IN ";
->> +	const char *in_out = !out ? "IN " :
->> +		!(event->header.misc & PERF_RECORD_MISC_SWITCH_OUT_YIELD) ?
->> +				"OUT" : "OUT yield";
-> 
-> I'm getting:
-> 
->        rcu_sched     9 [004] Sy     1303.392349: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
->          swapper     0 [004]        1303.392350: PERF_RECORD_SWITCH_CPU_WIDE IN   prev pid/tid:     9/9
-> 
-> could you plase format the 'OUT yield' line so the rest of the
-> fields are in line with 'IN' and 'OUT' lines like:
-> 
->        rcu_sched     9 [004] Sy     1303.392349: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0
->          swapper     0 [004]        1303.392350: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid:     9/9
 
-Please find update in v2.
 
-Thanks,
-Alexey
+On 22/03/2018 17:05, Matthew Wilcox wrote:
+> On Thu, Mar 22, 2018 at 04:54:52PM +0100, Laurent Dufour wrote:
+>> On 22/03/2018 16:40, Matthew Wilcox wrote:
+>>> On Thu, Mar 22, 2018 at 04:32:00PM +0100, Laurent Dufour wrote:
+>>>> Regarding the page fault, why not relying on the PTE locking ?
+>>>>
+>>>> When munmap() will unset the PTE it will have to held the PTE lock, so this
+>>>> will serialize the access.
+>>>> If the page fault occurs before the mmap(MAP_FIXED), the page mapped will be
+>>>> removed when mmap(MAP_FIXED) would do the cleanup. Fair enough.
+>>>
+>>> The page fault handler will walk the VMA tree to find the correct
+>>> VMA and then find that the VMA is marked as deleted.  If it assumes
+>>> that the VMA has been deleted because of munmap(), then it can raise
+>>> SIGSEGV immediately.  But if the VMA is marked as deleted because of
+>>> mmap(MAP_FIXED), it must wait until the new VMA is in place.
+>>
+>> I'm wondering if such a complexity is required.
+>> If the user space process try to access the page being overwritten through
+>> mmap(MAP_FIXED) by another thread, there is no guarantee that it will
+>> manipulate the *old* page or *new* one.
+> 
+> Right; but it must return one or the other, it can't segfault.
+
+Good point, I missed that...
 
 > 
-> thanks,
-> jirka
+>> I'd think this is up to the user process to handle that concurrency.
+>> What needs to be guaranteed is that once mmap(MAP_FIXED) returns the old page
+>> are no more there, which is done through the mmap_sem and PTE locking.
 > 
+> Yes, and allowing the fault handler to return the *old* page risks the
+> old page being reinserted into the page tables after the unmapping task
+> has done its work.
+
+The PTE locking should prevent that.
+
+> It's *really* rare to page-fault on a VMA which is in the middle of
+> being replaced.  Why are you trying to optimise it?
+
+I was not trying to optimize it, but to not wait in the page fault handler.
+This could become tricky in the case the VMA is removed once mmap(MAP_FIXED) is
+done and before the waiting page fault got woken up. This means that the
+removed VMA structure will have to remain until all the waiters are woken up
+which implies ref_count or similar.
+
+> 
+>>> I think I was wrong to describe VMAs as being *deleted*.  I think we
+>>> instead need the concept of a *locked* VMA that page faults will block on.
+>>> Conceptually, it's a per-VMA rwsem, but I'd use a completion instead of
+>>> an rwsem since the only reason to write-lock the VMA is because it is
+>>> being deleted.
+>>
+>> Such a lock would only makes sense in the case of mmap(MAP_FIXED) since when
+>> the VMA is removed there is no need to wait. Isn't it ?
+> 
+> I can't think of another reason.  I suppose we could mark the VMA as
+> locked-for-deletion or locked-for-replacement and have the SIGSEGV happen
+> early.  But I'm not sure that optimising for SIGSEGVs is a worthwhile
+> use of our time.  Just always have the pagefault sleep for a deleted VMA.
