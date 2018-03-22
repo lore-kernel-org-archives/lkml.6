@@ -1,81 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752165AbeCVE5S (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 00:57:18 -0400
-Received: from guitar.tcltek.co.il ([192.115.133.116]:57000 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751945AbeCVE5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 00:57:15 -0400
-Date: Thu, 22 Mar 2018 06:57:10 +0200
-From: Baruch Siach <baruch@tkos.co.il>
-To: Ji Zhang <ji.zhang@mediatek.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>, Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Michael Weiser <michael.weiser@gmx.de>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Xie XiuQi <xiexiuqi@huawei.com>, wsd_upstream@mediatek.com,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        shadanji@163.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: avoid race condition issue in dump_backtrace
-Message-ID: <20180322045710.vmmjr2wcankea45o@sapphire.tkos.co.il>
-References: <1521687960-3744-1-git-send-email-ji.zhang@mediatek.com>
+        id S1752151AbeCVFCc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 01:02:32 -0400
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:21395 "EHLO
+        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751948AbeCVFCa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 01:02:30 -0400
+Date: Thu, 22 Mar 2018 16:01:52 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Michal Hocko <mhocko@kernel.org>, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH RFC] xfs, memcg: Call xfs_fs_nr_cached_objects() only in
+ case of global reclaim
+Message-ID: <20180322050152.GA18129@dastard>
+References: <20180315174903.GM23100@dhcp22.suse.cz>
+ <c6a9bf24-50e6-8e60-94af-28e99c51f516@virtuozzo.com>
+ <20180315230313.GM18129@dastard>
+ <6628c551-f607-367b-1ee6-f458266c1d92@virtuozzo.com>
+ <20180316213910.GF7000@dastard>
+ <18a031f3-2136-4ef9-6ede-05f5b835661c@virtuozzo.com>
+ <20180320001827.GB1150@dastard>
+ <ec116ce6-c22b-66e1-0e01-55f895997c7d@virtuozzo.com>
+ <20180320143452.GT18129@dastard>
+ <5eb88165-c108-5989-3cb5-1f260cec5e53@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1521687960-3744-1-git-send-email-ji.zhang@mediatek.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <5eb88165-c108-5989-3cb5-1f260cec5e53@virtuozzo.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ji Zhang,
-
-On Thu, Mar 22, 2018 at 11:06:00AM +0800, Ji Zhang wrote:
-> When we dump the backtrace of some specific task, there is a potential race
-> condition due to the task may be running on other cores if SMP enabled.
-> That is because for current implementation, if the task is not the current
-> task, we will get the registers used for unwind from cpu_context saved in
-> thread_info, which is the snapshot before context switch, but if the task
-> is running on other cores, the registers and the content of stack are
-> changed.
-> This may cause that we get the wrong backtrace or incomplete backtrace or
-> even crash the kernel.
-> To avoid this case, do not dump the backtrace of the tasks which are
-> running on other cores.
-> This patch cannot solve the issue completely but can shrink the window of
-> race condition.
+On Wed, Mar 21, 2018 at 07:15:14PM +0300, Kirill Tkhai wrote:
+> On 20.03.2018 17:34, Dave Chinner wrote:
+> > On Tue, Mar 20, 2018 at 04:15:16PM +0300, Kirill Tkhai wrote:
+> >> On 20.03.2018 03:18, Dave Chinner wrote:
+> >>> On Mon, Mar 19, 2018 at 02:06:01PM +0300, Kirill Tkhai wrote:
+> >>>> On 17.03.2018 00:39, Dave Chinner wrote:
+> >>> Actually, it is fair, because:
+> >>>
+> >>>         /* proportion the scan between the caches */
+> >>>         dentries = mult_frac(sc->nr_to_scan, dentries, total_objects);
+> >>>         inodes = mult_frac(sc->nr_to_scan, inodes, total_objects);
+> >>>         fs_objects = mult_frac(sc->nr_to_scan, fs_objects, total_objects);
+> >>>
+> >>> This means that if the number of objects in the memcg aware VFS
+> >>> caches are tiny compared to the global XFS inode cache, then they
+> >>> only get a tiny amount of the total scanning done by the shrinker.
+> >>
+> >> This is just wrong. If you have two memcgs, the first is charged
+> >> by xfs dentries and inodes, while the second is not charged by xfs
+> >> dentries and inodes, the second will response for xfs shrink as well
+> >> as the first.
+> > 
+> > That makes no sense to me. Shrinkers are per-sb, so they only
+> > shrink per-filesystem dentries and inodes. If your memcgs are on
+> > different filesystems, then they'll behave according to the size of
+> > that filesystem's caches, not the cache of some other filesystem.
 > 
-> Signed-off-by: Ji Zhang <ji.zhang@mediatek.com>
-> ---
->  arch/arm64/kernel/traps.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-> index eb2d151..95749364 100644
-> --- a/arch/arm64/kernel/traps.c
-> +++ b/arch/arm64/kernel/traps.c
-> @@ -113,6 +113,9 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
->  	if (tsk == current) {
->  		frame.fp = (unsigned long)__builtin_frame_address(0);
->  		frame.pc = (unsigned long)dump_backtrace;
-> +	else if (tsk->state == TASK_RUNNING) {
+> But this break the isolation purpose of memcg. When someone places
+> different services in different pairs of memcg and cpu cgroup, he
+> wants do not do foreign work.
 
-Missing closing brace. Does this build?
+Too bad. Filesystems *break memcg isolation all the time*.
 
-> +		pr_notice("Do not dump other running tasks\n");
-> +		return;
->  	} else {
->  		/*
->  		 * task blocked in __switch_to
+Think about it. The filesystem journal is owned by the filesystem,
+not the memcg that is writing a transaction to it.  If one memcg
+does lots of metadata modifications, it can use all the journal
+space and starve iitself and all other memcgs of journal space while
+the filesystem does writeback to clear it out.
 
-baruch
+Another example: if one memcg is manipulating free space in a
+particular allocation group, other memcgs that need to manipulate
+space in those allocation groups will block and be prevented from
+operating until the other memcg finishes it's work.
 
+Another example: inode IO in XFS are done in clusters of 32. read or
+write any inode in the cluster, and we read/write all the other
+inodes in that cluster, too. Hence if we need to read an inode and
+the cluster is busy because the filesystem journal needed flushing
+or another inode in the cluster is being unlinked (e.g. by a process
+in a different memcg), then the read in the first memcg will block
+until whatever is being done on the buffer is complete. IOWs, even
+at the physical on-disk inode level we violate memcg resource 
+isolation principles.
+
+I can go on, but I think you get the picture: Filesystems are full
+of global structures whose access arbitration mechanisms
+fundamentally break the concept of operational memcg isolation.
+
+With that in mind, we really don't care that the shrinker does
+global work and violate memcg isolation principles because we
+violately them everywhere. IOWs, if we try to enforce memcg
+isolation in the shrinker, then we can't guarantee forwards progress
+in memory reclaim because we end up with multi-dimensional memcg
+dependencies at the physical layers of the filesystem structure....
+
+I don't expect people who know nothing about XFS or filesystems to
+understand the complexity of the interactions we are dealing with
+here. Everything is a compromise when it comes to the memory reclaim
+code as tehre are so many corner cases we have to handle. In this
+situation, perfect is the enemy of good....
+
+Cheers,
+
+Dave.
 -- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
+Dave Chinner
+david@fromorbit.com
