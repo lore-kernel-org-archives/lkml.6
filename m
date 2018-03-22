@@ -1,70 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751925AbeCVRkk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 13:40:40 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36998 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751668AbeCVRka (ORCPT
+        id S1751734AbeCVRnI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 13:43:08 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:33884 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751416AbeCVRnH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 13:40:30 -0400
-X-Google-Smtp-Source: AG47ELuAaL00IkElPAjpmgCqGT7qKUGTd3C2J5jr8XXDdIlMpeFK2zYgO1lUS78ttdpIM7or9ibHSw==
-Date: Thu, 22 Mar 2018 10:40:25 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Laight <David.Laight@aculab.com>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Message-ID: <20180322174024.tuillc5ojh4oadf4@ast-mbp.dhcp.thefacebook.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
- <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
- <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
- <CA+55aFybTvLz47mw=AG21jCJv_hE2vaVyiJP_F-4vAD-3Gnc7Q@mail.gmail.com>
- <20180321074634.dzpyjz3ia46snodh@gmail.com>
- <CA+55aFyK6uJopBjZGyeDz0O+qzCac6AwPkJyOpuaT69inPgVgw@mail.gmail.com>
- <20180322093343.aatl3prhheha4dlm@gmail.com>
+        Thu, 22 Mar 2018 13:43:07 -0400
+Date: Thu, 22 Mar 2018 18:41:43 +0100
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 23/45] sched: add do_sched_yield() helper; remove
+ in-kernel call to sched_yield()
+Message-ID: <20180322174143.GA2433@light.dominikbrodowski.net>
+References: <20180322090059.19361-1-linux@dominikbrodowski.net>
+ <20180322090059.19361-24-linux@dominikbrodowski.net>
+ <20180322172959.GX4043@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180322093343.aatl3prhheha4dlm@gmail.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180322172959.GX4043@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 10:33:43AM +0100, Ingo Molnar wrote:
+On Thu, Mar 22, 2018 at 06:29:59PM +0100, Peter Zijlstra wrote:
+> On Thu, Mar 22, 2018 at 10:00:37AM +0100, Dominik Brodowski wrote:
+> > Using the sched-internal do_sched_yield() helper allows us to get rid of
+> > the sched-internal call to the sys_sched_yield() syscall.
+> > 
+> > This patch is part of a series which tries to remove in-kernel calls to
+> > syscalls. On this basis, the syscall entry path can be streamlined.
 > 
->  - I think the BPF JIT, whose byte code machine languge is used by an
->    increasing number of kernel subsystems, could benefit from having vector ops.
->    It would possibly allow the handling of floating point types.
+> But why !? Either Cc me on more of the series such that the whole makes
+> sense, or better yet, write a proper Changelog.
 
-this is on our todo list already.
-To process certain traffic inside BPF in XDP we'd like to have access to
-floating point. The current workaround is to precompute the math and do
-bpf map lookup instead.
-Since XDP processing of packets is batched (typically up to napi budget
-of 64 packets at a time), we can, in theory, wrap the loop with
-kernel_fpu_begin/end and it will be cleaner and faster,
-but the work hasn't started yet.
-The microbenchmark numbers you quoted for xsave/xrestore look promising,
-so we probably will focus on it soon.
+Well, the summary is right there in the changelog: Kernel code simply should
+not pretend to be userspace and call a syscall function. For a more
+detailled description, see, for instance, Linus' explanation in
+http://lkml.kernel.org/r/CA+55aFwo7yA1gm8AUYMEQA8ZNY-9GGF8Oup09jJFvEa4J7C+jA@mail.gmail.com :
 
-Another use case for vector insns is to accelerate fib/lpm lookups
-which is likely beneficial for kernel overall regardless of bpf usage.
+| On x86-64, we'd like to just pass the 'struct pt_regs *' pointer, and
+| have the sys_xyz() function itself just pick out the arguments it
+| needs from there.
+|
+| That has a few reasons for it:
+| 
+| - we can clear all registers at system call entry, which helps defeat
+| some of the "pass seldom used register with user-controlled value that
+| survives deep into the callchain" things that people used to leak
+| information
+| 
+|  - we can streamline the low-level system call code, which needs to
+| pass around 'struct pt_regs *' anyway, and the system call only picks
+| up the values it actually needs
+
+I can add such a long description to all these patches, but that seems to
+be a bit... longwinded.
+
+Thanks,
+	Dominik
