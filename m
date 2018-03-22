@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754241AbeCVJHW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:07:22 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37740 "EHLO
+        id S1754281AbeCVJJe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:09:34 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37724 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753062AbeCVJBy (ORCPT
+        with ESMTP id S1752959AbeCVJBu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:54 -0400
+        Thu, 22 Mar 2018 05:01:50 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
 Cc: Al Viro <viro@ZenIV.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 35/45] ipc: add shmdt syscall wrapper
-Date: Thu, 22 Mar 2018 10:00:49 +0100
-Message-Id: <20180322090059.19361-36-linux@dominikbrodowski.net>
+Subject: [PATCH 34/45] ipc: add shmget syscall wrapper
+Date: Thu, 22 Mar 2018 10:00:48 +0100
+Message-Id: <20180322090059.19361-35-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -22,10 +22,10 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide ksys_shmdt() wrapper to avoid in-kernel calls to this syscall.
+Provide ksys_shmget() wrapper to avoid in-kernel calls to this syscall.
 The ksys_ prefix denotes that this function is meant as a drop-in
 replacement for the syscall. In particular, it uses the same calling
-convention as sys_shmdt().
+convention as sys_shmget().
 
 This patch is part of a series which tries to remove in-kernel calls to
 syscalls. On this basis, the syscall entry path can be streamlined.
@@ -40,61 +40,61 @@ Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
  3 files changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/ipc/shm.c b/ipc/shm.c
-index 9f3cdb259a51..e5838e3328dc 100644
+index 4643865e9171..9f3cdb259a51 100644
 --- a/ipc/shm.c
 +++ b/ipc/shm.c
-@@ -1481,7 +1481,7 @@ COMPAT_SYSCALL_DEFINE3(shmat, int, shmid, compat_uptr_t, shmaddr, int, shmflg)
-  * detach and kill segment if marked destroyed.
-  * The work is done in shm_close.
-  */
--SYSCALL_DEFINE1(shmdt, char __user *, shmaddr)
-+long ksys_shmdt(char __user *shmaddr)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma;
-@@ -1588,6 +1588,11 @@ SYSCALL_DEFINE1(shmdt, char __user *, shmaddr)
- 	return retval;
+@@ -656,7 +656,7 @@ static inline int shm_more_checks(struct kern_ipc_perm *ipcp,
+ 	return 0;
  }
  
-+SYSCALL_DEFINE1(shmdt, char __user *, shmaddr)
+-SYSCALL_DEFINE3(shmget, key_t, key, size_t, size, int, shmflg)
++long ksys_shmget(key_t key, size_t size, int shmflg)
+ {
+ 	struct ipc_namespace *ns;
+ 	static const struct ipc_ops shm_ops = {
+@@ -675,6 +675,11 @@ SYSCALL_DEFINE3(shmget, key_t, key, size_t, size, int, shmflg)
+ 	return ipcget(ns, &shm_ids(ns), &shm_ops, &shm_params);
+ }
+ 
++SYSCALL_DEFINE3(shmget, key_t, key, size_t, size, int, shmflg)
 +{
-+	return ksys_shmdt(shmaddr);
++	return ksys_shmget(key, size, shmflg);
 +}
 +
- #ifdef CONFIG_PROC_FS
- static int sysvipc_shm_proc_show(struct seq_file *s, void *it)
+ static inline unsigned long copy_shmid_to_user(void __user *buf, struct shmid64_ds *in, int version)
  {
+ 	switch (version) {
 diff --git a/ipc/syscall.c b/ipc/syscall.c
-index 60bceb19b6f0..b3aa71564815 100644
+index 355c4a644bbf..60bceb19b6f0 100644
 --- a/ipc/syscall.c
 +++ b/ipc/syscall.c
-@@ -90,7 +90,7 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
- 			return -EINVAL;
- 		}
+@@ -92,7 +92,7 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
  	case SHMDT:
--		return sys_shmdt((char __user *)ptr);
-+		return ksys_shmdt((char __user *)ptr);
+ 		return sys_shmdt((char __user *)ptr);
  	case SHMGET:
- 		return ksys_shmget(first, second, third);
+-		return sys_shmget(first, second, third);
++		return ksys_shmget(first, second, third);
  	case SHMCTL:
-@@ -178,7 +178,7 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
- 		return put_user(raddr, (compat_ulong_t __user *)compat_ptr(third));
+ 		return sys_shmctl(first, second,
+ 				   (struct shmid_ds __user *) ptr);
+@@ -180,7 +180,7 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
+ 	case SHMDT:
+ 		return sys_shmdt(compat_ptr(ptr));
+ 	case SHMGET:
+-		return sys_shmget(first, (unsigned)second, third);
++		return ksys_shmget(first, (unsigned int)second, third);
+ 	case SHMCTL:
+ 		return compat_sys_shmctl(first, second, compat_ptr(ptr));
  	}
- 	case SHMDT:
--		return sys_shmdt(compat_ptr(ptr));
-+		return ksys_shmdt(compat_ptr(ptr));
- 	case SHMGET:
- 		return ksys_shmget(first, (unsigned int)second, third);
- 	case SHMCTL:
 diff --git a/ipc/util.h b/ipc/util.h
-index 51002c0b2a21..7770bcad1168 100644
+index b35c0dfe3bc3..51002c0b2a21 100644
 --- a/ipc/util.h
 +++ b/ipc/util.h
-@@ -244,6 +244,7 @@ long ksys_semget(key_t key, int nsems, int semflg);
+@@ -243,6 +243,7 @@ long ksys_semtimedop(int semid, struct sembuf __user *tsops,
+ long ksys_semget(key_t key, int nsems, int semflg);
  long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg);
  long ksys_msgget(key_t key, int msgflg);
- long ksys_shmget(key_t key, size_t size, int shmflg);
-+long ksys_shmdt(char __user *shmaddr);
++long ksys_shmget(key_t key, size_t size, int shmflg);
  
  /* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
  #ifdef CONFIG_COMPAT
