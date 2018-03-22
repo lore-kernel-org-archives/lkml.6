@@ -1,219 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752183AbeCVWLY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 18:11:24 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36240 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751714AbeCVWLT (ORCPT
+        id S1751739AbeCVWUs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 18:20:48 -0400
+Received: from mail-it0-f48.google.com ([209.85.214.48]:32880 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751303AbeCVWUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 18:11:19 -0400
-X-Google-Smtp-Source: AG47ELskUZFjWjVM7sJQ6FdcTR/Zu0Ze3AOouPrf3stc3q1TzJdoL/ISh0Jd0VzOeJmBgscesfkK8Q==
-From: Junio C Hamano <gitster@pobox.com>
-To: git@vger.kernel.org
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Subject: [ANNOUNCE] Git v2.16.3
-Date: Thu, 22 Mar 2018 15:11:16 -0700
-Message-ID: <xmqq4ll7lq0r.fsf@gitster-ct.c.googlers.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
+        Thu, 22 Mar 2018 18:20:47 -0400
+X-Google-Smtp-Source: AG47ELvUBu51HOzJbQETZr8TCXJQ9MpI3rr0g0OxP5weYNlGFjbnDV7qt0qoYCUtfZFGVeMjUvTCaNcs0m9Dckr9raQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACT4Y+YDqJMb4mC6c--Ku=ZL9MpELmUKMXe4uQJ6H0av2FJC9w@mail.gmail.com>
+References: <CACT4Y+babw_2NJa+oym2VN7-Z4Bt_rZx2sMi68AD+1KzNpr=KQ@mail.gmail.com>
+ <CA+55aFzxDYGLUPY802rJN=wgJ1aEZHLRE+W8J82eFz2nzKOMBg@mail.gmail.com> <CACT4Y+YDqJMb4mC6c--Ku=ZL9MpELmUKMXe4uQJ6H0av2FJC9w@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 22 Mar 2018 15:20:45 -0700
+X-Google-Sender-Auth: 9VvpeaWzFbzOSgre1Xx0RDUJJwg
+Message-ID: <CA+55aFyrLE5c0UZQxebfuPzKj4XYkAychwwiZgo0JTN0cZ1ZmQ@mail.gmail.com>
+Subject: Re: syzbot dashboard
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The latest maintenance release Git v2.16.3 is now available at
-the usual places.  It merges many small fixes and documentation
-updates that have been in the 'master' branch for a few weeks.
+On Thu, Mar 22, 2018 at 2:45 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> Do you mean to replace all attachments in syzbot emails with links to
+> web dashboard content?
 
-The tarballs are found at:
+Yes. I think the email should contain just the "report" and then a
+link to the full information.
 
-    https://www.kernel.org/pub/software/scm/git/
+That would seem to be a good enough summary to be legible, and
+sufficient for a developer to decide "am I intested, and does it look
+like I'm the right target".
 
-The following public repositories all have a copy of the 'v2.16.3'
-tag and the 'maint' branch that the tag points at:
+Of course, any web pointer in an email does mean that a lot of spam
+logic will immediately sit up and take notice, and I don't know how
+you'll avoid that.
 
-  url = https://kernel.googlesource.com/pub/scm/git/git
-  url = git://repo.or.cz/alt-git.git
-  url = https://github.com/gitster/git
+And then if/when a developer says "that looks interesting", following
+the one link gets him/her all the actual information.
 
-----------------------------------------------------------------
+Honestly, if somebody isn't willing to click on a link, that person
+clearly is too lazy to bother with the bug in the first place.
 
-Git v2.16.3 Release Notes
-=========================
+But at the same time, the email does need to have enough information
+that you can sanely make that "is it worth it to go click on a link"
+or not.
 
-Fixes since v2.16.2
--------------------
+In fact, it should be sufficient information that for an obvious bug,
+you don't even really have to click on the link at all.
 
- * "git status" after moving a path in the working tree (hence making
-   it appear "removed") and then adding with the -N option (hence
-   making that appear "added") detected it as a rename, but did not
-   report the  old and new pathnames correctly.
+I do think that that "report" dump is a fairly good approximation of
+just that: enough information that a clear bug doesn't even need any
+more, but also not so much information that the email report itself
+becomes illegible or annoying.
 
- * "git commit --fixup" did not allow "-m<message>" option to be used
-   at the same time; allow it to annotate resulting commit with more
-   text.
+But auto-generated emails are still likely to be an annoyance for
+people who get a lot of email (and we all do), so I'd want to make
+sure that
 
- * When resetting the working tree files recursively, the working tree
-   of submodules are now also reset to match.
+ (a) there's some reasonable ratelimiting. No more than once a week
+for the same report, for example, and some way for a developer to say
+"I'm not the right person for this report".
 
- * Fix for a commented-out code to adjust it to a rather old API change
-   around object ID.
+ (b) only send those emails if there really is enough information: a
+good report with a real WARNING or BUG with the whole file and line
+number information, _and_ it has been reproduced by the automation
+(which hopefully means that there is also a good C reproducer).
 
- * When there are too many changed paths, "git diff" showed a warning
-   message but in the middle of a line.
+but given that, I think it sounds like a good balance between "not too
+annoying" and "honestly useful".
 
- * The http tracing code, often used to debug connection issues,
-   learned to redact potentially sensitive information from its output
-   so that it can be more safely sharable.
+Will there be cases when automation does the wrong thing and is
+annoying? Yes. Unquestionably. Nothing is perfect. But make the "good
+report" succinct and useful enough, and make the false positives rare
+enough, and I think people will appreciate it.
 
- * Crash fix for a corner case where an error codepath tried to unlock
-   what it did not acquire lock on.
+And maybe practice then shows some other case that really annoys
+people, but that's more an issue of "this may need some tuning" than
+anything else.
 
- * The split-index mode had a few corner case bugs fixed.
-
- * Assorted fixes to "git daemon".
-
- * Completion of "git merge -s<strategy>" (in contrib/) did not work
-   well in non-C locale.
-
- * Workaround for segfault with more recent versions of SVN.
-
- * Recently introduced leaks in fsck have been plugged.
-
- * Travis CI integration now builds the executable in 'script' phase
-   to follow the established practice, rather than during
-   'before_script' phase.  This allows the CI categorize the failures
-   better ('failed' is project's fault, 'errored' is build
-   environment's).
-
-Also contains various documentation updates and code clean-ups.
-
-----------------------------------------------------------------
-
-Changes since v2.16.2 are as follows:
-
-Ben Peart (1):
-      fsmonitor: update documentation to remove reference to invalid config settings
-
-Brandon Williams (1):
-      oidmap: ensure map is initialized
-
-Christian Ludwig (1):
-      t9001: use existing helper in send-email test
-
-Eric Sunshine (2):
-      git-worktree.txt: fix missing ")" typo
-      git-worktree.txt: fix indentation of example and text of 'add' command
-
-Eric Wong (2):
-      fsck: fix leak when traversing trees
-      git-svn: control destruction order to avoid segfault
-
-Genki Sky (1):
-      test-lib.sh: unset XDG_CACHE_HOME
-
-Jeff King (10):
-      t5570: use ls-remote instead of clone for interp tests
-      t/lib-git-daemon: record daemon log
-      daemon: fix off-by-one in logging extended attributes
-      daemon: handle NULs in extended attribute string
-      t/lib-git-daemon: add network-protocol helpers
-      daemon: fix length computation in newline stripping
-      t0205: drop redundant test
-      git-sh-i18n: check GETTEXT_POISON before USE_GETTEXT_SCHEME
-      commit: drop uses of get_cached_commit_buffer()
-      revision: drop --show-all option
-
-Jonathan Tan (2):
-      http: support cookie redaction when tracing
-      http: support omitting data from traces
-
-Juan F. Codagnone (1):
-      mailinfo: avoid segfault when can't open files
-
-Junio C Hamano (2):
-      worktree: say that "add" takes an arbitrary commit in short-help
-      Git 2.16.3
-
-Kaartic Sivaraam (2):
-      Doc/gitsubmodules: make some changes to improve readability and syntax
-      Doc/git-submodule: improve readability and grammar of a sentence
-
-Mathias Rav (1):
-      files_initial_transaction_commit(): only unlock if locked
-
-Motoki Seki (1):
-      Documentation/gitsubmodules.txt: avoid non-ASCII apostrophes
-
-Nguyễn Thái Ngọc Duy (12):
-      t2203: test status output with porcelain v2 format
-      Use DIFF_DETECT_RENAME for detect_rename assignments
-      wt-status.c: coding style fix
-      wt-status.c: catch unhandled diff status codes
-      wt-status.c: rename rename-related fields in wt_status_change_data
-      wt-status.c: handle worktree renames
-      read-cache.c: change type of "temp" in write_shared_index()
-      read-cache.c: move tempfile creation/cleanup out of write_shared_index
-      diff.c: flush stdout before printing rename warnings
-      read-cache: don't write index twice if we can't write shared index
-      completion: fix completing merge strategies on non-C locales
-      gitignore.txt: elaborate shell glob syntax
-
-Ramsay Jones (2):
-      config.mak.uname: remove SPARSE_FLAGS setting for cygwin
-      Makefile: suppress a sparse warning for pack-revindex.c
-
-Randall S. Becker (1):
-      hashmap.h: remove unused variable
-
-René Scharfe (2):
-      describe: use strbuf_add_unique_abbrev() for adding short hashes
-      cocci: simplify check for trivial format strings
-
-Robert P. J. Day (2):
-      t/: correct obvious typo "detahced"
-      Correct mispellings of ".gitmodule" to ".gitmodules"
-
-SZEDER Gábor (11):
-      travis-ci: build Git during the 'script' phase
-      t5541: add 'test_i18ngrep's missing filename parameter
-      t5812: add 'test_i18ngrep's missing filename parameter
-      t6022: don't run 'git merge' upstream of a pipe
-      t4001: don't run 'git status' upstream of a pipe
-      t5510: consolidate 'grep' and 'test_i18ngrep' patterns
-      t5536: let 'test_i18ngrep' read the file without redirection
-      t: move 'test_i18ncmp' and 'test_i18ngrep' to 'test-lib-functions.sh'
-      t: validate 'test_i18ngrep's parameters
-      t: make 'test_i18ngrep' more informative on failure
-      t: document 'test_must_fail ok=<signal-name>'
-
-Stefan Beller (5):
-      t/lib-submodule-update.sh: clarify test
-      t/lib-submodule-update.sh: fix test ignoring ignored files in submodules
-      unpack-trees: oneway_merge to update submodules
-      submodule: submodule_move_head omits old argument in forced case
-      Documentation/git-status: clarify status table for porcelain mode
-
-Stefan Moch (2):
-      t7001: add test case for --dry-run
-      mv: remove unneeded 'if (!show_only)'
-
-Thomas Gummerer (3):
-      read-cache: fix reading the shared index for other repos
-      split-index: don't write cache tree with null oid entries
-      travis: run tests with GIT_TEST_SPLIT_INDEX
-
-Todd Zullinger (1):
-      doc: mention 'git show' defaults to HEAD
-
-Yasushi SHOJI (1):
-      bisect: debug: convert struct object to object_id
-
-brian m. carlson (1):
-      docs/interpret-trailers: fix agreement error
-
-Ævar Arnfjörð Bjarmason (2):
-      commit doc: document that -c, -C, -F and --fixup with -m error
-      commit: add support for --fixup <commit> -m"<extra message>"
+                Linus
