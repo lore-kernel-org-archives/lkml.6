@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754553AbeCVJK0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:10:26 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37640 "EHLO
+        id S1754570AbeCVJKe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:10:34 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37706 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752925AbeCVJBr (ORCPT
+        with ESMTP id S1752921AbeCVJBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:47 -0400
+        Thu, 22 Mar 2018 05:01:46 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Al Viro <viro@ZenIV.linux.org.uk>,
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-mm@kvack.org,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 38/45] ipc: add msgrcv syscall/compat_syscall wrappers
-Date: Thu, 22 Mar 2018 10:00:52 +0100
-Message-Id: <20180322090059.19361-39-linux@dominikbrodowski.net>
+Subject: [PATCH 27/45] mm: add kernel_mbind() helper; remove in-kernel call to syscall
+Date: Thu, 22 Mar 2018 10:00:41 +0100
+Message-Id: <20180322090059.19361-28-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -22,119 +22,59 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide ksys_msgrcv() and compat_ksys_msgrcv() wrappers to avoid in-kernel
-calls to these syscalls. The ksys_ prefix denotes that these functions are
-meant as a drop-in replacement for the syscalls. In particular, they use
-the same calling convention as sys_msgrcv() and compat_sys_msgrcv().
+Using the mm-internal kernel_mbind() helper allows us to get rid of the
+mm-internal call to the sys_mbind() syscall.
 
 This patch is part of a series which tries to remove in-kernel calls to
 syscalls. On this basis, the syscall entry path can be streamlined.
 
 Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- ipc/msg.c     | 19 ++++++++++++++++---
- ipc/syscall.c |  8 ++++----
- ipc/util.h    |  4 ++++
- 3 files changed, 24 insertions(+), 7 deletions(-)
+ mm/mempolicy.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/ipc/msg.c b/ipc/msg.c
-index 5b026868df07..abc5826270a6 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -1150,10 +1150,16 @@ static long do_msgrcv(int msqid, void __user *buf, size_t bufsz, long msgtyp, in
- 	return bufsz;
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 7399ede02b5f..e4d7d4c0b253 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1336,9 +1336,9 @@ static int copy_nodes_to_user(unsigned long __user *mask, unsigned long maxnode,
+ 	return copy_to_user(mask, nodes_addr(*nodes), copy) ? -EFAULT : 0;
  }
  
-+long ksys_msgrcv(int msqid, struct msgbuf __user *msgp, size_t msgsz,
-+		 long msgtyp, int msgflg)
+-SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
+-		unsigned long, mode, const unsigned long __user *, nmask,
+-		unsigned long, maxnode, unsigned, flags)
++static long kernel_mbind(unsigned long start, unsigned long len,
++			 unsigned long mode, const unsigned long __user *nmask,
++			 unsigned long maxnode, unsigned int flags)
+ {
+ 	nodemask_t nodes;
+ 	int err;
+@@ -1357,6 +1357,13 @@ SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
+ 	return do_mbind(start, len, mode, mode_flags, &nodes, flags);
+ }
+ 
++SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
++		unsigned long, mode, const unsigned long __user *, nmask,
++		unsigned long, maxnode, unsigned int, flags)
 +{
-+	return do_msgrcv(msqid, msgp, msgsz, msgtyp, msgflg, do_msg_fill);
++	return kernel_mbind(start, len, mode, nmask, maxnode, flags);
 +}
 +
- SYSCALL_DEFINE5(msgrcv, int, msqid, struct msgbuf __user *, msgp, size_t, msgsz,
- 		long, msgtyp, int, msgflg)
- {
--	return do_msgrcv(msqid, msgp, msgsz, msgtyp, msgflg, do_msg_fill);
-+	return ksys_msgrcv(msqid, msgp, msgsz, msgtyp, msgflg);
- }
- 
- #ifdef CONFIG_COMPAT
-@@ -1171,12 +1177,19 @@ static long compat_do_msg_fill(void __user *dest, struct msg_msg *msg, size_t bu
- 	return msgsz;
- }
- 
--COMPAT_SYSCALL_DEFINE5(msgrcv, int, msqid, compat_uptr_t, msgp,
--		       compat_ssize_t, msgsz, compat_long_t, msgtyp, int, msgflg)
-+long compat_ksys_msgrcv(int msqid, compat_uptr_t msgp, compat_ssize_t msgsz,
-+			compat_long_t msgtyp, int msgflg)
- {
- 	return do_msgrcv(msqid, compat_ptr(msgp), (ssize_t)msgsz, (long)msgtyp,
- 			 msgflg, compat_do_msg_fill);
- }
-+
-+COMPAT_SYSCALL_DEFINE5(msgrcv, int, msqid, compat_uptr_t, msgp,
-+		       compat_ssize_t, msgsz, compat_long_t, msgtyp,
-+		       int, msgflg)
-+{
-+	return compat_ksys_msgrcv(msqid, msgp, msgsz, msgtyp, msgflg);
-+}
- #endif
- 
- int msg_init_ns(struct ipc_namespace *ns)
-diff --git a/ipc/syscall.c b/ipc/syscall.c
-index aa29b0802e26..0228c7afd882 100644
---- a/ipc/syscall.c
-+++ b/ipc/syscall.c
-@@ -59,11 +59,11 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
- 					   (struct ipc_kludge __user *) ptr,
- 					   sizeof(tmp)))
- 				return -EFAULT;
--			return sys_msgrcv(first, tmp.msgp, second,
-+			return ksys_msgrcv(first, tmp.msgp, second,
- 					   tmp.msgtyp, third);
- 		}
- 		default:
--			return sys_msgrcv(first,
-+			return ksys_msgrcv(first,
- 					   (struct msgbuf __user *) ptr,
- 					   second, fifth, third);
- 		}
-@@ -156,10 +156,10 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
- 				return -EINVAL;
- 			if (copy_from_user(&ipck, uptr, sizeof(ipck)))
- 				return -EFAULT;
--			return compat_sys_msgrcv(first, ipck.msgp, second,
-+			return compat_ksys_msgrcv(first, ipck.msgp, second,
- 						 ipck.msgtyp, third);
- 		}
--		return compat_sys_msgrcv(first, ptr, second, fifth, third);
-+		return compat_ksys_msgrcv(first, ptr, second, fifth, third);
+ /* Set the process memory policy */
+ SYSCALL_DEFINE3(set_mempolicy, int, mode, const unsigned long __user *, nmask,
+ 		unsigned long, maxnode)
+@@ -1575,7 +1582,7 @@ COMPAT_SYSCALL_DEFINE6(mbind, compat_ulong_t, start, compat_ulong_t, len,
+ 			return -EFAULT;
  	}
- 	case MSGGET:
- 		return ksys_msgget(first, second);
-diff --git a/ipc/util.h b/ipc/util.h
-index 47837b4af3f2..c16aceb1bdec 100644
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -244,6 +244,8 @@ long ksys_semget(key_t key, int nsems, int semflg);
- long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg);
- long ksys_msgget(key_t key, int msgflg);
- long ksys_msgctl(int msqid, int cmd, struct msqid_ds __user *buf);
-+long ksys_msgrcv(int msqid, struct msgbuf __user *msgp, size_t msgsz,
-+		 long msgtyp, int msgflg);
- long ksys_shmget(key_t key, size_t size, int shmflg);
- long ksys_shmdt(char __user *shmaddr);
- long ksys_shmctl(int shmid, int cmd, struct shmid_ds __user *buf);
-@@ -255,6 +257,8 @@ long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
- 			    const struct compat_timespec __user *timeout);
- long compat_ksys_semctl(int semid, int semnum, int cmd, int arg);
- long compat_ksys_msgctl(int msqid, int cmd, void __user *uptr);
-+long compat_ksys_msgrcv(int msqid, compat_uptr_t msgp, compat_ssize_t msgsz,
-+			compat_long_t msgtyp, int msgflg);
- long compat_ksys_shmctl(int shmid, int cmd, void __user *uptr);
- #endif /* CONFIG_COMPAT */
  
+-	return sys_mbind(start, len, mode, nm, nr_bits+1, flags);
++	return kernel_mbind(start, len, mode, nm, nr_bits+1, flags);
+ }
+ 
+ COMPAT_SYSCALL_DEFINE4(migrate_pages, compat_pid_t, pid,
 -- 
 2.16.2
