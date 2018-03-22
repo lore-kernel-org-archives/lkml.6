@@ -1,117 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751733AbeCVQTo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:19:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49131 "EHLO mail.bootlin.com"
+        id S1751732AbeCVQWj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:22:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34926 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751319AbeCVQTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:19:41 -0400
-Message-ID: <1521735513.1175.51.camel@bootlin.com>
-Subject: Re: [PATCH 03/10] drm/sun4i: Don't pretend to handle ARGB8888 with
- the frontend
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>
-Date: Thu, 22 Mar 2018 17:18:33 +0100
-In-Reply-To: <20180322161204.dpi6puzvosesm5xt@flea>
-References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
-         <20180321152904.22411-4-paul.kocialkowski@bootlin.com>
-         <20180322161204.dpi6puzvosesm5xt@flea>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-u+t+ox8eIrFlVgv1hCs1"
-X-Mailer: Evolution 3.26.5 
-Mime-Version: 1.0
+        id S1751553AbeCVQWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:22:34 -0400
+Date: Thu, 22 Mar 2018 10:21:48 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc: <eric.auger@redhat.com>, <pmorel@linux.vnet.ibm.com>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
+        <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
+        Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
+ back into dma specific path.
+Message-ID: <20180322102148.29afce09@w520.home>
+In-Reply-To: <20180315163509.17740-8-shameerali.kolothum.thodi@huawei.com>
+References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
+        <20180315163509.17740-8-shameerali.kolothum.thodi@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 15 Mar 2018 16:35:09 +0000
+Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
 
---=-u+t+ox8eIrFlVgv1hCs1
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> This pretty much reverts commit 273df9635385 ("iommu/dma: Make PCI
+> window reservation generic")  by moving the PCI window region
+> reservation back into the dma specific path so that these regions
+> doesn't get exposed via the IOMMU API interface. With this change,
+> the vfio interface will report only iommu specific reserved regions
+> to the user space.
+> 
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> ---
 
-Hi,
+As currently ordered, we expose the iova list to the user in 5/7 with
+the PCI window reservations still intact.  Isn't that a bisection
+problem?  This patch should come before the iova list is expose to the
+user.  This is otherwise independent, so I can pop it up in the stack on
+commit, but I'd need an ack from Joerg and Robin to take it via my
+tree.  Thanks,
 
-On Thu, 2018-03-22 at 17:12 +0100, Maxime Ripard wrote:
-> Hi,
->=20
-> Beside the discussion with Chen-Yu,
->=20
-> On Wed, Mar 21, 2018 at 04:28:57PM +0100, Paul Kocialkowski wrote:
-> > It turns out that the frontend is not capable of preserving the
-> > alpha
-> > component (that is always set to 0xff), so only support XRGB8888
-> > instead.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
->=20
-> [...]
->=20
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c
-> > b/drivers/gpu/drm/sun4i/sun4i_layer.c
-> > index eb93df445a10..15238211a61a 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-> > @@ -100,9 +100,9 @@ static void
-> > sun4i_backend_layer_atomic_update(struct drm_plane *plane,
-> >  		sun4i_frontend_update_coord(frontend, plane);
-> >  		sun4i_frontend_update_buffer(frontend, plane);
-> >  		sun4i_frontend_update_formats(frontend, plane,
-> > -					      DRM_FORMAT_ARGB8888);
-> > +					      DRM_FORMAT_XRGB8888);
-> >  		sun4i_backend_update_layer_frontend(backend, layer-
-> > >id, plane,
-> > -						    DRM_FORMAT_ARGB
-> > 8888);
-> > +						    DRM_FORMAT_XRGB
-> > 8888);
->=20
-> Even though it's slightly related, these changes should be justified
-> in the commit log. From what you currently explain, this makes 0
-> difference, since XRGB and ARGB with an alpha component to 0xff is
-> exactly the same thing.
+Alex
 
-The point of this is mostly to fix
-sun4i_frontend_drm_format_to_input_fmt and
-sun4i_frontend_drm_format_to_output_fmt, that were reporting the wrong
-format (ARGB has never been supported).
-
-The change in the internal format used between the frontend and backend
-is a direct consequence of correcting the supported format, but brings
-no functional change.
-
-I will update the commit message in the next revision to make it clear
-what the nature of this change is.
-
-Thanks for the review!
-
-Paul
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-u+t+ox8eIrFlVgv1hCs1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlqz11kACgkQ3cLmz3+f
-v9Ft5Af/Z/afHbaScXXO7dowgWdS70diq+oLYr30SrdccGEORaE4Vhbqp+jU2XqS
-6f1DIufQtauV7KjOGTfB2oeb0452OBUqhmWs7lI0v6zase4UaznYwUIjs0aa+Njj
-ctaRn3Y4Va5PwSbDLzLPiS5NRvttQa+3JNGZr5+RzYzosJzKtu5v6DL0XCF+pSZA
-el64DuHPc2W50T9asWHMGB7Eg6iRvN8jhSZAvIoRwC04lPGkoTXMsf/OnL0M/KvS
-hjTxOrQZqe/i4HydJdqvjutscb76ZIw4ENjDKVHT3H+lBokH5T11wblbMsHdpyjM
-RtFnRbggljUSPQsFiEf7CzCFD67R8A==
-=7OUh
------END PGP SIGNATURE-----
-
---=-u+t+ox8eIrFlVgv1hCs1--
+>  drivers/iommu/dma-iommu.c | 54 ++++++++++++++++++++++-------------------------
+>  1 file changed, 25 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index f05f3cf..ddcbbdb 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -167,40 +167,16 @@ EXPORT_SYMBOL(iommu_put_dma_cookie);
+>   * @list: Reserved region list from iommu_get_resv_regions()
+>   *
+>   * IOMMU drivers can use this to implement their .get_resv_regions callback
+> - * for general non-IOMMU-specific reservations. Currently, this covers host
+> - * bridge windows for PCI devices and GICv3 ITS region reservation on ACPI
+> - * based ARM platforms that may require HW MSI reservation.
+> + * for general non-IOMMU-specific reservations. Currently, this covers GICv3
+> + * ITS region reservation on ACPI based ARM platforms that may require HW MSI
+> + * reservation.
+>   */
+>  void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
+>  {
+> -	struct pci_host_bridge *bridge;
+> -	struct resource_entry *window;
+> -
+> -	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode) &&
+> -		iort_iommu_msi_get_resv_regions(dev, list) < 0)
+> -		return;
+> -
+> -	if (!dev_is_pci(dev))
+> -		return;
+> -
+> -	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
+> -	resource_list_for_each_entry(window, &bridge->windows) {
+> -		struct iommu_resv_region *region;
+> -		phys_addr_t start;
+> -		size_t length;
+> -
+> -		if (resource_type(window->res) != IORESOURCE_MEM)
+> -			continue;
+>  
+> -		start = window->res->start - window->offset;
+> -		length = window->res->end - window->res->start + 1;
+> -		region = iommu_alloc_resv_region(start, length, 0,
+> -				IOMMU_RESV_RESERVED);
+> -		if (!region)
+> -			return;
+> +	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode))
+> +		iort_iommu_msi_get_resv_regions(dev, list);
+>  
+> -		list_add_tail(&region->list, list);
+> -	}
+>  }
+>  EXPORT_SYMBOL(iommu_dma_get_resv_regions);
+>  
+> @@ -229,6 +205,23 @@ static int cookie_init_hw_msi_region(struct iommu_dma_cookie *cookie,
+>  	return 0;
+>  }
+>  
+> +static void iova_reserve_pci_windows(struct pci_dev *dev,
+> +		struct iova_domain *iovad)
+> +{
+> +	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
+> +	struct resource_entry *window;
+> +	unsigned long lo, hi;
+> +
+> +	resource_list_for_each_entry(window, &bridge->windows) {
+> +		if (resource_type(window->res) != IORESOURCE_MEM)
+> +			continue;
+> +
+> +		lo = iova_pfn(iovad, window->res->start - window->offset);
+> +		hi = iova_pfn(iovad, window->res->end - window->offset);
+> +		reserve_iova(iovad, lo, hi);
+> +	}
+> +}
+> +
+>  static int iova_reserve_iommu_regions(struct device *dev,
+>  		struct iommu_domain *domain)
+>  {
+> @@ -238,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device *dev,
+>  	LIST_HEAD(resv_regions);
+>  	int ret = 0;
+>  
+> +	if (dev_is_pci(dev))
+> +		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
+> +
+>  	iommu_get_resv_regions(dev, &resv_regions);
+>  	list_for_each_entry(region, &resv_regions, list) {
+>  		unsigned long lo, hi;
