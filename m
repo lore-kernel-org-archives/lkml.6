@@ -1,79 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755313AbeCVNDC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 09:03:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36534 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754965AbeCVM75 (ORCPT
+        id S1755343AbeCVNDe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 09:03:34 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:46885 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754920AbeCVM7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:59:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F34BF60FEB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v4 06/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.1-c1 board file
-Date: Thu, 22 Mar 2018 18:28:45 +0530
-Message-Id: <1521723532-28361-7-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
-References: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
+        Thu, 22 Mar 2018 08:59:44 -0400
+X-Google-Smtp-Source: AG47ELu5XupfVZibCE2PL8Ek0RRq9WMOo4zD49T6gmcpA6MV5rr+2hBZcdcdeqNN4al7y2h5UMyCZQ==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v4 1/7] gpio: 104-idio-16: Implement get_multiple callback
+Date: Thu, 22 Mar 2018 08:59:37 -0400
+Message-Id: <1699105253cb33680bb27ca61e6fc9fb0bd2aaf8.1521723192.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
+References: <cover.1521723192.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm/boot/dts/Makefile                      |  1 +
- arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts | 20 ++++++++++++++++++++
- 2 files changed, 21 insertions(+)
- create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
+The ACCES I/O 104-IDIO-16 series of devices provides 16
+optically-isolated digital inputs accessed via two 8-bit ports. Since
+eight input lines are acquired on a single port input read, the
+104-IDIO-16 GPIO driver may improve multiple input reads by utilizing a
+get_multiple callback. This patch implements the
+idio_16_gpio_get_multiple function which serves as the respective
+get_multiple callback.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index ade7a38..b6c62c6 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -747,6 +747,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
- 	qcom-apq8084-ifc6540.dtb \
- 	qcom-apq8084-mtp.dtb \
- 	qcom-ipq4019-ap.dk01.1-c1.dtb \
-+	qcom-ipq4019-ap.dk04.1-c1.dtb \
- 	qcom-ipq8064-ap148.dtb \
- 	qcom-msm8660-surf.dtb \
- 	qcom-msm8960-cdp.dtb \
-diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
-new file mode 100644
-index 0000000..526b7f8
---- /dev/null
-+++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1-c1.dts
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/gpio/gpio-104-idio-16.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
+index 2f16638a0589..96700308c1e3 100644
+--- a/drivers/gpio/gpio-104-idio-16.c
++++ b/drivers/gpio/gpio-104-idio-16.c
+@@ -90,6 +90,20 @@ static int idio_16_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	return !!(inb(idio16gpio->base + 5) & (mask>>8));
+ }
+ 
++static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
++	unsigned long *mask, unsigned long *bits)
++{
++	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
 +
-+#include "qcom-ipq4019-ap.dk04.1.dtsi"
++	*bits = 0;
++	if (*mask & GENMASK(23, 16))
++		*bits |= (unsigned long)inb(idio16gpio->base + 1) << 16;
++	if (*mask & GENMASK(31, 24))
++		*bits |= (unsigned long)inb(idio16gpio->base + 5) << 24;
 +
-+/ {
-+	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK04.1-C1";
++	return 0;
++}
 +
-+	soc {
-+		dma@7984000 {
-+			status = "ok";
-+		};
-+
-+		qpic-nand@79b0000 {
-+			pinctrl-0 = <&nand_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+		};
-+	};
-+};
+ static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ {
+ 	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
+@@ -244,6 +258,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
+ 	idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
+ 	idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
+ 	idio16gpio->chip.get = idio_16_gpio_get;
++	idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
+ 	idio16gpio->chip.set = idio_16_gpio_set;
+ 	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
+ 	idio16gpio->base = base[id];
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.16.2
