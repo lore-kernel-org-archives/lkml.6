@@ -1,59 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752370AbeCVGxT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 02:53:19 -0400
-Received: from mailhost.informatik.uni-hamburg.de ([134.100.9.70]:54569 "EHLO
-        mailhost.informatik.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752024AbeCVGxO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 02:53:14 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH 1/5 v4] add compression algorithm zBeWalgo
-From: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-In-Reply-To: <CAOFm3uEpDh1jp1+ODzR=TFH0uq08LL2qjqrMLOe+_jE+4Sw_og@mail.gmail.com>
-Date: Thu, 22 Mar 2018 07:53:08 +0100
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, minchan@kernel.org,
-        Nitin Gupta <ngupta@vflare.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <D63776B2-09B1-428C-99B7-68F4BD9BC7E8@informatik.uni-hamburg.de>
-References: <D7FA4547-4FA6-46EC-99D7-F08ACCD3F13D@informatik.uni-hamburg.de>
- <CAOFm3uH1Nw3x6-T1yTMkoX2tpxiwjnerAXDh-WEpyFNROFwAYw@mail.gmail.com>
- <F4F10894-B101-4E46-A39D-7F09DEF2207D@informatik.uni-hamburg.de>
- <CAOFm3uEpDh1jp1+ODzR=TFH0uq08LL2qjqrMLOe+_jE+4Sw_og@mail.gmail.com>
-To: Philippe Ombredanne <pombredanne@nexb.com>
-X-Mailer: Apple Mail (2.3445.5.20)
+        id S1752449AbeCVGzI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 02:55:08 -0400
+Received: from ozlabs.org ([103.22.144.67]:50575 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752024AbeCVGzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 02:55:05 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 22 Mar 2018 17:54:24 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: linux-next: manual merge of the nvdimm tree with the xfs tree
+Message-ID: <20180322175424.032cf417@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/zhlqNwi8=c7E+bgT2RVlLmj"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
+--Sig_/zhlqNwi8=c7E+bgT2RVlLmj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Actually to be consistent if you want to use GPL-2-0 (and not "or
-> later") you should use:
-> 
-> 1. at the top, for a c. file:
-> // SPDX-License-Identifier: GPL-2.0
-> 
-> or for a .h file:
-> /* SPDX-License-Identifier: GPL-2.0 */
-> 
-> The doc explains it all. Including the comment style (a topic that has
-> been discussed also on list quite bit: Linus had the final word there)
-> 
-> 2. and in your MODULE_LICENSE macro:
-> 
-> MODULE_LICENSE("GPL v2");
-> 
-> .... because a MODULE_LICENSE("GPL"); would mean GPL-2.0+ (e.g. or any
-> later version) and this would not match your top level license tag.
+Hi Dan,
 
-Thanks, I have done this correctly in my files, but accidentally written it wrong in my mail.
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-Cordinally
-Benjamin Warnke
+  fs/xfs/xfs_inode.h
+
+between commit:
+
+  f5c54717bf2b ("xfs: remove xfs_zero_range")
+
+from the xfs tree and commit:
+
+  6ea4108852e9 ("xfs: prepare xfs_break_layouts() for another layout type")
+
+from the nvdimm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/xfs/xfs_inode.h
+index 132d8aa2afc4,6951d57aae71..000000000000
+--- a/fs/xfs/xfs_inode.h
++++ b/fs/xfs/xfs_inode.h
+@@@ -443,6 -457,12 +457,8 @@@ enum xfs_prealloc_flags=20
+ =20
+  int	xfs_update_prealloc_flags(struct xfs_inode *ip,
+  				  enum xfs_prealloc_flags flags);
+ -int	xfs_zero_eof(struct xfs_inode *ip, xfs_off_t offset,
+ -		     xfs_fsize_t isize, bool *did_zeroing);
+ -int	xfs_zero_range(struct xfs_inode *ip, xfs_off_t pos, xfs_off_t count,
+ -		bool *did_zero);
++ int	xfs_break_layouts(struct inode *inode, uint *iolock,
++ 		enum layout_break_reason reason);
+ =20
+  /* from xfs_iops.c */
+  extern void xfs_setup_inode(struct xfs_inode *ip);
+
+--Sig_/zhlqNwi8=c7E+bgT2RVlLmj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzUyAACgkQAVBC80lX
+0Gw9xAf/XuOHM+g8CadIj8I7WyuqazqOWlDHqJzlgTYJNkTLFAkBm1Z6JpxohFCl
+uEmbYfRwtq90appMzVbPpQeidXPaEAN56gDYQ1CP1ZDeLKbXJMm8DYkVXINx5Ucn
+shpeF+M1/uJPkpwiRrdiujhiErM7ECeGW84TCqWO4qJFtt4OVRK+gmLBSCU0VXy9
+jAKFC4qPR3wlBMQUcXvQczqo8qmIWXvd5HSbBP7TIkdqnasf6N/qv7pPgyur0gJs
+53YyvOrH6mI7fbyplT6981gFVzv/lF3LbnJFXEISIlkx61iyPGExKWHCPg9J0sKI
+oIo+LAwc79423uw8o6V8iuJGrA32GQ==
+=JL83
+-----END PGP SIGNATURE-----
+
+--Sig_/zhlqNwi8=c7E+bgT2RVlLmj--
