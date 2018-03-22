@@ -1,125 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753863AbeCVPK1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:10:27 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:35045 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751706AbeCVPKZ (ORCPT
+        id S1754780AbeCVPNQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:13:16 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35792 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754110AbeCVPNO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:10:25 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w2MFAMm3003149
-X-Nifty-SrcIP: [209.85.213.42]
-X-Google-Smtp-Source: AG47ELsporMIQ3tIqKzsGxvGmtUyWaoGgXM5H+KxSpY7UKkZEBzha10ch8CxOPnxByvtY/qcnAoE53WvpLrJ7QFnsp4=
+        Thu, 22 Mar 2018 11:13:14 -0400
+X-Google-Smtp-Source: AIpwx49ogfiU+KfFmi11Fde/PpcFcK7zZMwpAJaeE5MBhQKEKAyA46MM3PsaKdfbyziMu9HZmMrtIcuDmZPPO3YZFqc=
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNARD1yWA4uoFh0kF5nO2BzXopW2rtx9+LKHfC7--AFjcxw@mail.gmail.com>
-References: <20180216202255.25307-1-ulfalizer@gmail.com> <1518815662.13169.27.camel@perches.com>
- <CAFkk2KSRswP2FEV7mTMJwLe+WRDdVEUnZBOyh_XWrQu2tW07zg@mail.gmail.com>
- <CAK7LNAQjnCnPvFZEPR2YM9EsOALnPy=FeugZC_8PFrngb9AQgQ@mail.gmail.com>
- <CAFkk2KTUZYMc9poahUQMoQi=wSVnNHDt0SS8BTdRHs59m=qO4w@mail.gmail.com> <CAK7LNARD1yWA4uoFh0kF5nO2BzXopW2rtx9+LKHfC7--AFjcxw@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 23 Mar 2018 00:09:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATPFdFADwSfhcnXm0oXWBM1rgUrWGgT5sWdqfvPg4TG+Q@mail.gmail.com>
-Message-ID: <CAK7LNATPFdFADwSfhcnXm0oXWBM1rgUrWGgT5sWdqfvPg4TG+Q@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Improve and extend checkpatch.pl Kconfig help text checks
-To: Ulf Magnusson <ulfalizer@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Joe Perches <joe@perches.com>, Robo Bot <apw@canonical.com>,
+In-Reply-To: <1806382.Agy9d77yKa@avalon>
+References: <20180315153730.3798004-1-arnd@arndb.de> <ED290C750E1B324E972B0017C9D4BAB06479C421@USCULXMSG01.am.sony.com>
+ <CAMuHMdULWVXXSXrEBoomONQhF-Af3FGMijMnL6WL6P1XE-e7zA@mail.gmail.com> <1806382.Agy9d77yKa@avalon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Mar 2018 16:13:13 +0100
+X-Google-Sender-Auth: Ze3mA2r_lqlCbotxtGPgMbGTh5M
+Message-ID: <CAMuHMdUdsH3r7AZMB6NfNyrDdJecXx1JhGZFA=32VYZBtmGP5w@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] drm: rcar-du: keep temporary dtb files around
+ during build
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Frank.Rowand@sony.com, Arnd Bergmann <arnd@arndb.de>,
+        David Airlie <airlied@linux.ie>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+        Frank Rowand <frowand.list@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-06 14:13 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> (+To: Andrew)
->
-> 2018-03-06 13:52 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
->> On Sat, Feb 24, 2018 at 2:53 PM, Masahiro Yamada
->> <yamada.masahiro@socionext.com> wrote:
->>> 2018-02-23 10:30 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
->>>> On Fri, Feb 16, 2018 at 10:14 PM, Joe Perches <joe@perches.com> wrote:
->>>>> On Fri, 2018-02-16 at 21:22 +0100, Ulf Magnusson wrote:
->>>>>> Hello,
->>>>>>
->>>>>> This patchset contains some improvements for the Kconfig help text check in
->>>>>> scripts/checkconfig.pl:
->>>>>
->>>>> Seems sensible enough to me.
->>>>> Signed-off-by: Joe Perches <joe@perches.com>
->>>>
->>>> Will you be taking this in yourself?
->>>>
->>>> (Adding Masahiro on CC -- forgot when I sent the patchset.)
->>>>
->>>> Cheers,
->>>> Ulf
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>>
->>> I am not a perl expert, but I have no objection for this series.
->>>
->>>
->>> Thanks!
->>>
->>>
->>>
->>>
->>> --
->>> Best Regards
->>> Masahiro Yamada
+Hi Laurent,
+
+CC Yamada-san
+
+On Thu, Mar 22, 2018 at 3:50 PM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Thursday, 22 March 2018 16:26:22 EET Geert Uytterhoeven wrote:
+>> On Fri, Mar 16, 2018 at 2:39 AM,  <Frank.Rowand@sony.com> wrote:
+>> > On Thursday, March 15, 2018 8:37 AM, Arnd Bergmann wrote:
+>> >> The *.dtb and *.dtb.S files get removed by 'make' during the build
+>> >> process, and later seem to be missed during the 'modpost' stage:
+>> >>
+>> >> rm drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb.S
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb.S
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb.S
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb.S
+>> >> WARNING: could not open
+>> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S: No such file or
+>> >> directory
+>> >>
+>> >> As a workaround, this adds all those files to the 'extra-y' target list,
+>> >> but that's really ugly. Any ideas for a better fix?
+>> >
+>> > Does this work for you (untested, but the way it is done in
+>> > drivers/of/unittest-data/Makefile):
+>> >
+>> > .PRECIOUS: \
+>> >
+>> >         $(obj)/%.dtb.S \
+>> >         $(obj)/%.dtb
 >>
->> *Bump*
+>> Shouldn't that just be moved to scripts/Makefile.lib, just above the rule
+>> to make dtb.S, like is done for other precious objects?
 >
->
-> Who is addressed by "*Bump*" ?
->
->
->
-> I think patches for checkpatch.pl
-> are supposed to be taken care of by Andrew.
->
-> He forwards patches to Linus.
->
->
-> $ git log --no-merges --pretty=fuller scripts/checkpatch.pl  | grep
-> 'Commit:' | sort | uniq -c | sort -nr
->     555 Commit:     Linus Torvalds <torvalds@linux-foundation.org>
->      16 Commit:     Linus Torvalds <torvalds@woody.linux-foundation.org>
->       4 Commit:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->       4 Commit:     Michael S. Tsirkin <mst@redhat.com>
->       2 Commit:     Thomas Gleixner <tglx@linutronix.de>
->       2 Commit:     Ingo Molnar <mingo@kernel.org>
->       2 Commit:     Greg Kroah-Hartman <gregkh@suse.de>
->       1 Commit:     Tobin C. Harding <me@tobin.cc>
->       1 Commit:     Rob Herring <robh@kernel.org>
->       1 Commit:     Petr Mladek <pmladek@suse.com>
->       1 Commit:     Michal Marek <mmarek@suse.cz>
->       1 Commit:     Mauro Carvalho Chehab <mchehab@s-opensource.com>
->       1 Commit:     Masahiro Yamada <yamada.masahiro@socionext.com>
->       1 Commit:     Lucas De Marchi <lucas.demarchi@profusion.mobi>
->       1 Commit:     Jiri Kosina <jkosina@suse.cz>
->       1 Commit:     Dan Williams <dan.j.williams@intel.com>
->       1 Commit:     Bjorn Helgaas <bhelgaas@google.com>
->
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
+> Without any implied acknowledgment that keeping those intermediate files is
+> the right solution (I don't claim to master the kernel build system), I think
 
+Me neither, but I think it is.
 
-I thought Andrew would pick it up, but
-nobody is taking care of this after all.
+Cfr. .y => .tab.c => .tab.o with .tab.c marked PRECIOUS.
 
-I queued it up now.
+> such a rule would indeed be better in a core Makefile, as the rules to build
+> the .dtb.o file comes from the core too. Could another option be to create a
+> rule to compile a .dtb.o from the .dts file directly without going through
+> intermediate files that will be removed automatically ?
 
+Such a rules needs to execute two commands, which is more tricky, considering
+error handling.
+It's easier (to get right) to have two separate rules, and let make chain them
+automatically.
 
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Best Regards
-Masahiro Yamada
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
