@@ -1,73 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755343AbeCVNDe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 09:03:34 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:46885 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754920AbeCVM7o (ORCPT
+        id S1755358AbeCVNDh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 09:03:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36154 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754919AbeCVM7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Mar 2018 08:59:44 -0400
-X-Google-Smtp-Source: AG47ELu5XupfVZibCE2PL8Ek0RRq9WMOo4zD49T6gmcpA6MV5rr+2hBZcdcdeqNN4al7y2h5UMyCZQ==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: linus.walleij@linaro.org
-Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v4 1/7] gpio: 104-idio-16: Implement get_multiple callback
-Date: Thu, 22 Mar 2018 08:59:37 -0400
-Message-Id: <1699105253cb33680bb27ca61e6fc9fb0bd2aaf8.1521723192.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
-References: <cover.1521723192.git.vilhelm.gray@gmail.com>
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A3651610D6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v4 04/13] ARM: dts: ipq4019: Change the max opp frequency
+Date: Thu, 22 Mar 2018 18:28:43 +0530
+Message-Id: <1521723532-28361-5-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
+References: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ACCES I/O 104-IDIO-16 series of devices provides 16
-optically-isolated digital inputs accessed via two 8-bit ports. Since
-eight input lines are acquired on a single port input read, the
-104-IDIO-16 GPIO driver may improve multiple input reads by utilizing a
-get_multiple callback. This patch implements the
-idio_16_gpio_get_multiple function which serves as the respective
-get_multiple callback.
+The max opp frequency is 716MHZ. So update that.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/gpio/gpio-104-idio-16.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/qcom-ipq4019.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-104-idio-16.c b/drivers/gpio/gpio-104-idio-16.c
-index 2f16638a0589..96700308c1e3 100644
---- a/drivers/gpio/gpio-104-idio-16.c
-+++ b/drivers/gpio/gpio-104-idio-16.c
-@@ -90,6 +90,20 @@ static int idio_16_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return !!(inb(idio16gpio->base + 5) & (mask>>8));
- }
- 
-+static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
-+	unsigned long *mask, unsigned long *bits)
-+{
-+	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
-+
-+	*bits = 0;
-+	if (*mask & GENMASK(23, 16))
-+		*bits |= (unsigned long)inb(idio16gpio->base + 1) << 16;
-+	if (*mask & GENMASK(31, 24))
-+		*bits |= (unsigned long)inb(idio16gpio->base + 5) << 24;
-+
-+	return 0;
-+}
-+
- static void idio_16_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
-@@ -244,6 +258,7 @@ static int idio_16_probe(struct device *dev, unsigned int id)
- 	idio16gpio->chip.direction_input = idio_16_gpio_direction_input;
- 	idio16gpio->chip.direction_output = idio_16_gpio_direction_output;
- 	idio16gpio->chip.get = idio_16_gpio_get;
-+	idio16gpio->chip.get_multiple = idio_16_gpio_get_multiple;
- 	idio16gpio->chip.set = idio_16_gpio_set;
- 	idio16gpio->chip.set_multiple = idio_16_gpio_set_multiple;
- 	idio16gpio->base = base[id];
+diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+index f985518..1c3b0ff 100644
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -47,7 +47,7 @@
+ 				48000	1100000
+ 				200000	1100000
+ 				500000	1100000
+-				666000	1100000
++				716000  1100000
+ 			>;
+ 			clock-latency = <256000>;
+ 		};
 -- 
-2.16.2
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
