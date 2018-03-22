@@ -1,59 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754058AbeCVBY1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 21:24:27 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:44212 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751891AbeCVBYZ (ORCPT
+        id S1753119AbeCVB0M (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 21:26:12 -0400
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:41472 "EHLO
+        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752232AbeCVB0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 21:24:25 -0400
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Vinayak Holikatti <vinholikatti@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Szymon Mielczarek <szymonx.mielczarek@intel.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Alex Lemberg <Alex.Lemberg@sandisk.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH V3 0/1] scsi: ufs: Add support for Auto-Hibernate Idle Timer
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1521551258-4027-1-git-send-email-adrian.hunter@intel.com>
-Date: Wed, 21 Mar 2018 21:24:11 -0400
-In-Reply-To: <1521551258-4027-1-git-send-email-adrian.hunter@intel.com>
-        (Adrian Hunter's message of "Tue, 20 Mar 2018 15:07:37 +0200")
-Message-ID: <yq1zi30q4w4.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Wed, 21 Mar 2018 21:26:10 -0400
+X-Google-Smtp-Source: AG47ELtJuAsvjf9vr9v23ll/Hrc0R8Bk7kdfxjQuiqCUZ02mTz9+PHme/pSkSyAEWf3nuJ6m9DNF+g==
+Date: Thu, 22 Mar 2018 09:26:06 +0800
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, robdclark@gmail.com,
+        s.hauer@pengutronix.de, l.stach@pengutronix.de, shawnguo@kernel.org,
+        fabio.estevam@nxp.com, nm@ti.com, xuwei5@hisilicon.com,
+        robh+dt@kernel.org, olof@lixom.net, georgi.djakov@linaro.org
+Subject: Re: [PATCH V7 00/13] drivers: Boot Constraint core
+Message-ID: <20180322012606.vuaemu3pvpeojtwr@vireshk-mac-ubuntu>
+References: <cover.1519380923.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8839 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=727
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803200127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1519380923.git.viresh.kumar@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2M1P5Sk015244
 
+On 23-02-18, 15:53, Viresh Kumar wrote:
+> Problem statement:
+> 
+> Some devices are powered ON by the bootloader before the bootloader
+> handovers control to Linux. It maybe important for some of those devices
+> to keep working until the time a Linux device driver probes the device
+> and reconfigure its resources.
+> 
+> A typical example of that can be the LCD controller, which is used by
+> the bootloaders to show image(s) while the platform is booting into
+> Linux.  The LCD controller can be using some resources, like clk,
+> regulators, etc, that are shared between several devices. These shared
+> resources should be configured to satisfy need of all the users.  If
+> another device's (X) driver gets probed before the LCD controller driver
+> in this case, then it may end up disabling or reconfiguring these
+> resources to ranges satisfying the current users (only device X) and
+> that can make the LCD screen unstable.
+> 
+> Another case can be a debug serial port enabled from the bootloader.
+> 
+> Of course we can have more complex cases where the same resource is
+> getting used by two devices while the kernel boots and the order in
+> which devices get probed wouldn't matter as the other device will surely
+> break then.
 
-Adrian,
+And we have a _real_ use case for this complex scenario as well.
 
-> Here is V3, now re-based on top of patch "scsi: ufs: sysfs:reworking of the
-> rpm_lvl and spm_lvl entries".
->
-> Michał Potomski has previously sent a patch for Auto-Hibernate, but this
-> patch is slightly different, based on the latest ufs-sysfs changes, it also
-> takes care to restore auto-hibernate during resume, and otherwise avoids
-> updating the register if the device is runtime suspended.  Also a default
-> value of 150ms is set.
+Georgi (cc'd) is currently working[1] on implementing generic support for the
+interconnect bus, which tries to play with the bandwidth of the bus based on how
+much are the requirements from different parts of the SoC. The 4th version was
+posted recently by him, and things are looking good/positive.
 
-Applied to 4.17/scsi-queue. Thank you!
+The bootloader configures the interconnect to provide sufficient bandwidth for
+all the devices which are used during boot, few of them are the CPUs, serial and
+the LCD controller. As the kernel starts taking control of things, the drivers
+being probed start putting their requirements on the interconnect bus.  Because
+the interconnect doesn't have any representation from the devices which are not
+yet initialized by the kernel, the interconnect core incorrectly reduces the
+bandwidth of the bus to a level unacceptable to the devices running currently,
+like the CPUs and this makes kernel boot awfully slow. This is not an ordering
+problem as no matter which device we probe first, we are going to break
+something else.
+
+Georgi already tried using the boot constraint patches to solve this complex
+problem, and its a perfect fit.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+viresh
+
+[1] http://lkml.kernel.org/r/20180309210958.16672-1-georgi.djakov@linaro.org
