@@ -1,78 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751599AbeCVUeH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:34:07 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51550 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751286AbeCVUeG (ORCPT
+        id S1751668AbeCVUgL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:36:11 -0400
+Received: from gateway36.websitewelcome.com ([192.185.193.119]:48173 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751464AbeCVUgK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:34:06 -0400
-X-Google-Smtp-Source: AG47ELutezyCKOFCdh3BgzMJpUTmdE5cIbwBKYLmd+TgDsAcfvTAAz7YyMVLjlnKRQoy/Xhvv+RL0g==
-From: Mathieu Malaterre <malat@debian.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Wei Yang <weiyang@linux.vnet.ibm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH] PCI/IOV: Add missing prototype for powerpc specific
-Date: Thu, 22 Mar 2018 21:33:55 +0100
-Message-Id: <20180322203355.26448-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
+        Thu, 22 Mar 2018 16:36:10 -0400
+Date: Thu, 22 Mar 2018 15:13:32 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Paul Mackerras <paulus@samba.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] video: fbdev: aty128fb: use true and false for boolean values
+Message-ID: <20180322201332.GA28960@embeddedgus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1ez6ad-001J4R-CP
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.145.54.187]:54364
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some prototypes for weak functions were missing for powerpc specific
-functions. Add the missing prototypes to the CONFIG_PCI_IOV block. This
-fixes the following three warnings treated as error when using W=1:
+Assign true or false to boolean variables instead of an integer value.
 
-  arch/powerpc/kernel/pci-common.c:236:17: error: no previous prototype for ‘pcibios_default_alignment’ [-Werror=missing-prototypes]
-  arch/powerpc/kernel/pci-common.c:253:5: error: no previous prototype for ‘pcibios_sriov_enable’ [-Werror=missing-prototypes]
-  arch/powerpc/kernel/pci-common.c:261:5: error: no previous prototype for ‘pcibios_sriov_disable’ [-Werror=missing-prototypes]
+This issue was detected with the help of Coccinelle.
 
-Also in commit 978d2d683123 ("PCI: Add pcibios_iov_resource_alignment()
-interface") a new function was added but the prototype was located in the
-main header instead of the CONFIG_PCI_IOV specific section. Move this
-function next to the newly added ones.
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- include/linux/pci.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/aty/aty128fb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 024a1beda008..f43b43b9b643 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1295,7 +1295,6 @@ unsigned char pci_bus_max_busnr(struct pci_bus *bus);
- void pci_setup_bridge(struct pci_bus *bus);
- resource_size_t pcibios_window_alignment(struct pci_bus *bus,
- 					 unsigned long type);
--resource_size_t pcibios_iov_resource_alignment(struct pci_dev *dev, int resno);
- 
- #define PCI_VGA_STATE_CHANGE_BRIDGE (1 << 0)
- #define PCI_VGA_STATE_CHANGE_DECODES (1 << 1)
-@@ -1923,6 +1922,7 @@ void pcibios_release_device(struct pci_dev *dev);
- void pcibios_penalize_isa_irq(int irq, int active);
- int pcibios_alloc_irq(struct pci_dev *dev);
- void pcibios_free_irq(struct pci_dev *dev);
-+resource_size_t pcibios_default_alignment(void);
- 
- #ifdef CONFIG_HIBERNATE_CALLBACKS
- extern struct dev_pm_ops pcibios_pm_ops;
-@@ -1955,6 +1955,11 @@ int pci_sriov_set_totalvfs(struct pci_dev *dev, u16 numvfs);
- int pci_sriov_get_totalvfs(struct pci_dev *dev);
- resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno);
- void pci_vf_drivers_autoprobe(struct pci_dev *dev, bool probe);
-+
-+/* Arch may override these (weak) */
-+int pcibios_sriov_enable(struct pci_dev *pdev, u16 num_vfs);
-+int pcibios_sriov_disable(struct pci_dev *pdev);
-+resource_size_t pcibios_iov_resource_alignment(struct pci_dev *dev, int resno);
- #else
- static inline int pci_iov_virtfn_bus(struct pci_dev *dev, int id)
- {
+diff --git a/drivers/video/fbdev/aty/aty128fb.c b/drivers/video/fbdev/aty/aty128fb.c
+index db18474..09b0e55 100644
+--- a/drivers/video/fbdev/aty/aty128fb.c
++++ b/drivers/video/fbdev/aty/aty128fb.c
+@@ -1716,7 +1716,7 @@ static int aty128fb_setup(char *options)
+ 			continue;
+ 		}
+ 		if(!strncmp(this_opt, "nomtrr", 6)) {
+-			mtrr = 0;
++			mtrr = false;
+ 			continue;
+ 		}
+ #ifdef CONFIG_PPC_PMAC
 -- 
-2.11.0
+2.7.4
