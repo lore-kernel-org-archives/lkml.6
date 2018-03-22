@@ -1,85 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752253AbeCVGJv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 02:09:51 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:40005 "EHLO hermes.aosc.io"
+        id S1752400AbeCVGZs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 02:25:48 -0400
+Received: from ozlabs.org ([103.22.144.67]:50587 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752004AbeCVGJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 02:09:48 -0400
-Date: Thu, 22 Mar 2018 14:08:43 +0800
-In-Reply-To: <2866474.lRHIcLtROC@jernej-laptop>
-References: <20180316175354.21437-1-icenowy@aosc.io> <20180320184646.dynqv6qubzabroe4@flea> <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io> <2866474.lRHIcLtROC@jernej-laptop>
+        id S1752163AbeCVGZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 02:25:46 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 22 Mar 2018 17:25:03 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Darren Trapp <darren.trapp@cavium.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Quinn Tran <quinn.tran@cavium.com>
+Subject: linux-next: build failure after merge of the scsi-mkp tree
+Message-ID: <20180322172503.2d8e72ef@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] Re: [PATCH 2/7] dt-bindings: add binding for the Allwinner A64 DE2 bus
-To: jernej.skrabec@siol.net,
-        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi@googlegroups.com
-CC: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/.sejq5UpwT/Hp8Gk=6rRAqc"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/.sejq5UpwT/Hp8Gk=6rRAqc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Martin,
+
+After merging the scsi-mkp tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+drivers/scsi/qla2xxx/qla_gs.c: In function 'qla24xx_async_gnnft_done':
+drivers/scsi/qla2xxx/qla_gs.c:3974:7: error: 'fc4type' undeclared (first us=
+e in this function); did you mean 'fc4type_t'?
+  if ((fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
+       ^~~~~~~
+       fc4type_t
+drivers/scsi/qla2xxx/qla_gs.c:3974:7: note: each undeclared identifier is r=
+eported only once for each function it appears in
+drivers/scsi/qla2xxx/qla_gs.c:3975:3: error: too few arguments to function =
+'qla24xx_async_gpnft'
+   qla24xx_async_gpnft(vha, FC4_TYPE_NVME);
+   ^~~~~~~~~~~~~~~~~~~
+In file included from drivers/scsi/qla2xxx/qla_def.h:4633:0,
+                 from drivers/scsi/qla2xxx/qla_gs.c:7:
+drivers/scsi/qla2xxx/qla_gbl.h:661:5: note: declared here
+ int qla24xx_async_gpnft(scsi_qla_host_t *, u8, srb_t *);
+     ^~~~~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  33b28357dd00 ("scsi: qla2xxx: Fix Async GPN_FT for FCP and FC-NVMe scan")
+
+interacting with commit
+
+  2b5b96473efc ("scsi: qla2xxx: Fix FC-NVMe LUN discovery")
+
+from Linus' tree.
+
+I have added the following merge fix patch for today. Unfortunately it
+produces this warning, so a better merge resolution is needed ...
+
+drivers/scsi/qla2xxx/qla_gs.c: In function 'qla24xx_async_gnnft_done':
+drivers/scsi/qla2xxx/qla_gs.c:3974:9: warning: 'rp' may be used uninitializ=
+ed in this function [-Wmaybe-uninitialized]
+  if ((rp->fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
+       ~~^~~~~~~~~
 
 
-于 2018年3月22日 GMT+08:00 上午1:13:42, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
->Hi all,
->
->Dne sreda, 21. marec 2018 ob 03:18:13 CET je Icenowy Zheng napisal(a):
->> 于 2018年3月21日 GMT+08:00 上午2:46:46, Maxime Ripard
-><maxime.ripard@bootlin.com> 
->写到:
->> >On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
->> >> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64
->SoC
->> >
->> >to
->> >
->> >> be claimed, otherwise the whole DE2 space is inaccessible.
->> >> 
->> >> Add a device tree binding of the DE2 part as a sub-bus.
->> >
->> >Where did you get the info that it was a bus?
->> 
->> There's no direct evidence, just some guess.
->> 
->> The DE2 is a whole part that is just allocated a memory
->> space at the user manual, and the SRAM controls the
->> access to all modules in the DE2.
->> 
->> So it might be a bus.
->> 
->> Implement it as a bus is a clear representation on A64.
->
->Since there is already syscon for same mmio region, we migh as well use
->it 
->when loading ccu-sun8i-de2 driver on A64.
->
->Other options, like SRAM driver or bus driver, might better represent
->HW, but 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 22 Mar 2018 17:09:38 +1100
+Subject: [PATCH] scsi: qla2xxx: merge fix in qla_gs.c
 
-I think the device tree should properly represent the HW,
-it's a basic requirment.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/scsi/qla2xxx/qla_gs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->then we would have two DT nodes covering same mmio region, which I
->think is 
->not really acceptable.
+diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
+index f84807e850c3..d33f4619332e 100644
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -3971,8 +3971,8 @@ void qla24xx_async_gnnft_done(scsi_qla_host_t *vha, s=
+rb_t *sp)
+ 	vha->scan.scan_flags &=3D ~SF_SCANNING;
+ 	spin_unlock_irqrestore(&vha->work_lock, flags);
+=20
+-	if ((fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
+-		qla24xx_async_gpnft(vha, FC4_TYPE_NVME);
++	if ((rp->fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
++		qla24xx_async_gpnft(vha, FC4_TYPE_NVME, NULL);
+ }
+=20
+ static void qla2x00_find_free_fcp_nvme_slot(struct scsi_qla_host *vha,
+--=20
+2.16.1
 
-It's acceptable, and DE2 is not the only user of SRAM controller so far.
+--=20
+Cheers,
+Stephen Rothwell
 
-VE will also need a SRAM region to be claimed.
+--Sig_/.sejq5UpwT/Hp8Gk=6rRAqc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->
->Any suggestions?
->
->BTW, H6 has same design in this regard.
->
->Best regards,
->Jernej
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzTD8ACgkQAVBC80lX
+0GzcQAf9HN781CPZrW7AHoK7heULX0fNP0I6CzAQqTwz2g0Cwse3uoSv1SOKItGE
+PKOZG171mHvbRRs+YfKKr4GeS1L8YFesRnB8MmaK2IhtJVz3cfPFkHCseTlwmNdM
+EDBMpy14+nca3TWMLSmqrQOedEFUrAZeXoIZWQO0ni7rbRJ5YgXyTa0wNupsGATF
+XPlB+KIU+KgHQgCZcIDRFmiycKTPIYsNcyZuZtjydDfiTn+363KaLk4Y9whWNPiI
+gxy2s5lwc5ytaae+4K4TMlI7it6c9X3vam2W8cI6Inc4gB1b9LdiMtsBQRVzy2sK
+2PWLYd5h8SfkRGZs/5Z+4ABn0tD0mQ==
+=h5Ct
+-----END PGP SIGNATURE-----
+
+--Sig_/.sejq5UpwT/Hp8Gk=6rRAqc--
