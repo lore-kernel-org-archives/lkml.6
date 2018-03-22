@@ -1,39 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753414AbeCVJLn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:11:43 -0400
-Received: from mga12.intel.com ([192.55.52.136]:43480 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752787AbeCVJLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:11:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,343,1517904000";
-   d="scan'208";a="40206294"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Jonathan Corbet <corbet@lwn.net>, Gary R Hook <gary.hook@amd.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Documentation/CodingStyle: Add an example for braces
-In-Reply-To: <20180321091701.7d56445d@lwn.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <152114372879.3142.8833111074324091904.stgit@taos> <20180321091701.7d56445d@lwn.net>
-Date: Thu, 22 Mar 2018 11:12:29 +0200
-Message-ID: <87woy4iide.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1753439AbeCVJKL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:10:11 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37680 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752952AbeCVJBt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 05:01:49 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
+Cc: Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 07/45] fs: add do_vmsplice() helper; remove in-kernel call to syscall
+Date: Thu, 22 Mar 2018 10:00:21 +0100
+Message-Id: <20180322090059.19361-8-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
+References: <20180322090059.19361-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018, Jonathan Corbet <corbet@lwn.net> wrote:
-> To head that off, I think I'll apply your first version instead, sorry
-> Jani.
+Using the fs-internal do_vmsplice() helper allows us to get rid of the
+fs-internal call to the sys_vmsplice() syscall.
 
-No worries.
+This patch is part of a series which tries to remove in-kernel calls to
+syscalls. On this basis, the syscall entry path can be streamlined.
 
-BR,
-Jani.
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ fs/splice.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
+diff --git a/fs/splice.c b/fs/splice.c
+index 39e2dc01ac12..005d09cf3fa8 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1331,8 +1331,8 @@ static long vmsplice_to_pipe(struct file *file, const struct iovec __user *uiov,
+  * Currently we punt and implement it as a normal copy, see pipe_to_user().
+  *
+  */
+-SYSCALL_DEFINE4(vmsplice, int, fd, const struct iovec __user *, iov,
+-		unsigned long, nr_segs, unsigned int, flags)
++static long do_vmsplice(int fd, const struct iovec __user *iov,
++			unsigned long nr_segs, unsigned int flags)
+ {
+ 	struct fd f;
+ 	long error;
+@@ -1358,6 +1358,12 @@ SYSCALL_DEFINE4(vmsplice, int, fd, const struct iovec __user *, iov,
+ 	return error;
+ }
+ 
++SYSCALL_DEFINE4(vmsplice, int, fd, const struct iovec __user *, iov,
++		unsigned long, nr_segs, unsigned int, flags)
++{
++	return do_vmsplice(fd, iov, nr_segs, flags);
++}
++
+ #ifdef CONFIG_COMPAT
+ COMPAT_SYSCALL_DEFINE4(vmsplice, int, fd, const struct compat_iovec __user *, iov32,
+ 		    unsigned int, nr_segs, unsigned int, flags)
+@@ -1375,7 +1381,7 @@ COMPAT_SYSCALL_DEFINE4(vmsplice, int, fd, const struct compat_iovec __user *, io
+ 		    put_user(v.iov_len, &iov[i].iov_len))
+ 			return -EFAULT;
+ 	}
+-	return sys_vmsplice(fd, iov, nr_segs, flags);
++	return do_vmsplice(fd, iov, nr_segs, flags);
+ }
+ #endif
+ 
 -- 
-Jani Nikula, Intel Open Source Technology Center
+2.16.2
