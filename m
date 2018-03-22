@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752088AbeCVXVg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 19:21:36 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:62611 "EHLO
+        id S1751883AbeCVXZG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 19:25:06 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52606 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751531AbeCVXVf (ORCPT
+        with ESMTP id S1751734AbeCVXZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 19:21:35 -0400
+        Thu, 22 Mar 2018 19:25:05 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>
-Subject: Re: [PATCH] acpi: edit ACPI_PROCFS_POWER help text
-Date: Fri, 23 Mar 2018 00:21:59 +0100
-Message-ID: <2441397.Fxpz0x4M6m@aspire.rjw.lan>
-In-Reply-To: <dbb2b722-aa1e-04ca-1487-08984f68d91e@infradead.org>
-References: <dbb2b722-aa1e-04ca-1487-08984f68d91e@infradead.org>
+To: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Lee, Chun-Yi" <jlee@suse.com>, Len Brown <lenb@kernel.org>
+Subject: Re: [PATCH v2] ACPI / scan: Send the change uevent with offine environmental data
+Date: Fri, 23 Mar 2018 00:25:29 +0100
+Message-ID: <16547461.vlqm9ldVjj@aspire.rjw.lan>
+In-Reply-To: <20180320055126.8671-1-jlee@suse.com>
+References: <20180320055126.8671-1-jlee@suse.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -23,46 +23,55 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday, March 3, 2018 1:55:54 AM CET Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
+On Tuesday, March 20, 2018 6:51:26 AM CET Lee, Chun-Yi wrote:
+> In current design of ACPI container offline, Kernel emits
+> KOBJ_CHANGE uevent to user space to indidate that the ejection of
+> the container was triggered by platform. (caa73ea15 patch)
 > 
-> Fix grammar and punctuation (end sentences with a period) in the
-> Kconfig help text for ACPI_PROCFS_POWER.
+> A pure KOBJ_CHANGE uevent is not enough for user space to identify
+> the purpose. For example, a "udevadm trigger" command can also
+> be used to emit change event to all udev rules. A udev rule can not
+> identify that the event is from kernel for offline or from udevadm
+> for other purpose. Then the offline action in udev rule may also be
+> triggered by udevadm tool.
 > 
-> I was looking at this since it appears to be going away (again,
-> some day) and I have a working script that uses this info to tell me
-> battery usage. I can update the script to use /sys/class/power_supply
-> (in theory) but the contents (with units) should be documented in
-> Documentation/ABI/ before /proc/acpi/battery/ is removed (IMO).
+> So, similar to the change uevent of dock, kernel sends the
+> KOBJ_CHANGE uevent with a offline environmental data to indicate
+> purpose. It's useful by udev rule for using ENV{EVENT} filter.
+> 
+> v2:
+> Fix build warning for the environmental string
 > 
 > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 > Cc: Len Brown <lenb@kernel.org>
-> Cc: linux-acpi@vger.kernel.org
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Tested-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
 > ---
->  drivers/acpi/Kconfig |    8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/acpi/scan.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> --- linux-next-20180302.orig/drivers/acpi/Kconfig
-> +++ linux-next-20180302/drivers/acpi/Kconfig
-> @@ -105,14 +105,14 @@ config ACPI_PROCFS_POWER
->            deprecated power /proc/acpi/ directories to exist, even when
->            they have been replaced by functions in /sys.
->            The deprecated directories (and their replacements) include:
-> -	  /proc/acpi/battery/* (/sys/class/power_supply/*)
-> -	  /proc/acpi/ac_adapter/* (sys/class/power_supply/*)
-> +	  /proc/acpi/battery/* (/sys/class/power_supply/*) and
-> +	  /proc/acpi/ac_adapter/* (sys/class/power_supply/*).
->  	  This option has no effect on /proc/acpi/ directories
-> -	  and functions, which do not yet exist in /sys
-> +	  and functions which do not yet exist in /sys.
->  	  This option, together with the proc directories, will be
->  	  deleted in the future.
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index 8e63d93..490498e 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -116,6 +116,7 @@ bool acpi_scan_is_offline(struct acpi_device *adev, bool uevent)
+>  {
+>  	struct acpi_device_physical_node *pn;
+>  	bool offline = true;
+> +	char *envp[] = { "EVENT=offline", NULL };
 >  
-> -	  Say N to delete power /proc/acpi/ directories that have moved to /sys/
-> +	  Say N to delete power /proc/acpi/ directories that have moved to /sys.
+>  	/*
+>  	 * acpi_container_offline() calls this for all of the container's
+> @@ -126,7 +127,7 @@ bool acpi_scan_is_offline(struct acpi_device *adev, bool uevent)
+>  	list_for_each_entry(pn, &adev->physical_node_list, node)
+>  		if (device_supports_offline(pn->dev) && !pn->dev->offline) {
+>  			if (uevent)
+> -				kobject_uevent(&pn->dev->kobj, KOBJ_CHANGE);
+> +				kobject_uevent_env(&pn->dev->kobj, KOBJ_CHANGE, envp);
 >  
->  config ACPI_REV_OVERRIDE_POSSIBLE
->  	bool "Allow supported ACPI revision to be overridden"
+>  			offline = false;
+>  			break;
+> 
 
 Applied, thanks!
