@@ -1,335 +1,290 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3669447-1521753647-2-7160489904059269025
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enrosv, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521753645; b=Cv4tX9gjrnINYSkchDJrFLGEKoDDsiSE9ORGoKs6IXLqS0T
-    i01TKvj55EYdS4j3BCsTQDdi3OxeYaCd0FU3waPhcXAobYMYyJ6pl7ki3QzAI6F7
-    4Ga5ebEOPY6bOBkpCQnZmfEtx40Od/9/PHMWfFELNwtEeFjgePgiW14pPq8CFUb4
-    ilh85vKpdCoA/gtEqv3wOCpOIvN5sGWHaSof6tMdT3jfYQf5wHlzjFNSabMyXa25
-    gbVAdB4Pos4rw0/CzAdWPZnvMSpeek6C9q+gJUdX9BR8TMbVD1pRxykjXd/jCtj1
-    GWgzRfu/myweeDxi/sCeQQgYtZkV6fI0k/6ekTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521753645; bh=M
-    mObsj8hWTtUMmqpc4s1SwHVJgPLiZZE3lsn7wSw6RU=; b=bMbKNzrVsqv5VLMEL
-    OM+dDXnVdLTYtbxxGpAPpMynui8zQWGfURNh3S0WfDjl6s1M7Ii+R5YM6N8wg0oH
-    F3qGNHo0TQXpnfsbjHKefr882Hi/4aNyolDmtXlzVQ363xljM2mP6wYp0JYRlfsc
-    ovNYQlM4RhS4IPc+GXv6lUHT4SC9LohsXiKGE3zRzaWKXNYwE9WODtcz0L0ZDjLL
-    JvjLC+Ro+/cKTuNX5T7Bv6STwTz5edJ9i//eAevVlNykGnYxA0t9Ylrc3ebOx3+R
-    LAcKMMo7wHsJeflPSmFwESL+DptXcbytOXua5yokJvTddtIMeTZVfrh+0Wr7r5Ba
-    mOIVA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tq+zJJZV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oATsSTj4;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tq+zJJZV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oATsSTj4;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELsNw+9GO66tQEfvMhJoOz6vfAOm4cjlMPVvbwX9idWT/1wZz8PKO0LZb3GXOorAvHb9EAH3Vg==
-Subject: Re: [PATCH v3] staging: bcm2835-audio: Release resources on
- module_exit()
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <15cc84cc-a887-7473-d64c-00c23e930e0d@gmail.com>
- <20180321184827.1043-1-k.marinushkin@gmail.com>
- <CAHp75VcwFRVX7RTSWv2R_7Hr=gzrwK1aJA8Unypx6zQ49neGjA@mail.gmail.com>
+Return-Path: <k.marinushkin@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521754627; cv=none;
+        d=google.com; s=arc-20160816;
+        b=DJ//ZazVfOrmHtIGCzy8tS1FkIEFY0FaNy1tmipVAuOjISzQWB7cqJs4ftFeuQdYzc
+         s3gn3a51IcajyU/0kK6EmMH3ozAIpTIyoOJPSPhqRzzGNaForW7+tUR4gxHyA/Ao0nZX
+         +IO4GqzgEX0OZM1nGWBf6GDg/lZQ4gFQNsZAJq8rx3LlD5MSx18MhyDIcAlIPJ/7loi7
+         2hEnDoTV/7+qba8UwhapcDEblPPCyX94SShmMOnaOruOdslLMXc5dyA/Xdo+nlUJswef
+         YxzESngvcqKRiK+/6tghHtse/Ekn4wJpUiNOoFWEuj8M+g6w/OLQO05uALzCN6/ekuVf
+         x2Bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=vyRUIJAYwwWc5IerZ7V1nr89MidRm7oG+F2drdSjPSw=;
+        b=viWypAQZJx3f2pO5WgVQGp9h+UfidkJC0hvFRN5gyWBaaiYrXC+jTHIG05J3ihUY86
+         NX7S25lTsZDeHr9m3DScpT5KKZOzkEd1ALJQY3kPk+IPKucUwF4wMhq+OfB8b5znM7Jo
+         zFLr9+XO192F/dctFUWiPBGmFT3ay4OJNiLMPkW6zk3UejgJ3S1Hjg38weT47Nf2ZaNG
+         wOQ+zpceYFa/v6h7Gx4Likhkwod5do3m7j/+NdfrxRFqzYINVZvFWmBesjkV1cD22/B4
+         dvYmdcOsNyk1NZlM5XL1wI4frO3pWFK4vg14SKY+YRxWHo7jTPToofz7TKgrlOPkQXw1
+         Soiw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CzH896Ao;
+       spf=pass (google.com: domain of k.marinushkin@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=k.marinushkin@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=CzH896Ao;
+       spf=pass (google.com: domain of k.marinushkin@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=k.marinushkin@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELtnT8fuDmEJ5sn+9fR9duKAYurGfvpBehLs8SKoH4TF9iZWHS3SgrJ6oX5zsAlDbxzGQvXF+Q==
 From: Kirill Marinushkin <k.marinushkin@gmail.com>
-Message-ID: <f35d0f86-04b5-6edb-139f-4632edc493b3@gmail.com>
-Date: Thu, 22 Mar 2018 22:21:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VcwFRVX7RTSWv2R_7Hr=gzrwK1aJA8Unypx6zQ49neGjA@mail.gmail.com>
-Content-Language: en-US
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org,
- Florian Fainelli <f.fainelli@gmail.com>, Scott Branden <sbranden@broadcom.com>,
- Ray Jui <rjui@broadcom.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Eric Anholt <eric@anholt.net>, Michael Zoran <mzoran@crowfest.net>,
- bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
- linux-rpi-kernel@lists.infradead.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Michael Zoran <mzoran@crowfest.net>
+Cc: Kirill Marinushkin <k.marinushkin@gmail.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] staging: bcm2835-audio: Release resources on module_exit()
+Date: Thu, 22 Mar 2018 22:37:22 +0100
+Message-Id: <20180322213722.31822-1-k.marinushkin@gmail.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <f35d0f86-04b5-6edb-139f-4632edc493b3@gmail.com>
+References: <f35d0f86-04b5-6edb-139f-4632edc493b3@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1594075828670099193?=
+X-GMAIL-MSGID: =?utf-8?q?1595675380142873932?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gMDMvMjEvMTggMjA6MjQsIEFuZHkgU2hldmNoZW5rbyB3cm90ZToKPiBPbiBXZWQsIE1hciAy
-MSwgMjAxOCBhdCA4OjQ4IFBNLCBLaXJpbGwgTWFyaW51c2hraW4KPiA8ay5tYXJpbnVzaGtpbkBn
-bWFpbC5jb20+IHdyb3RlOgo+PiBJbiB0aGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiwgYHJtbW9k
-IHNuZF9iY20yODM1YCBkb2VzIG5vdCByZWxlYXNlCj4+IHJlc291cmNlcyBwcm9wZXJseS4gSXQg
-Y2F1c2VzIGFuIG9vcHMgd2hlbiB0cnlpbmcgdG8gbGlzdCBzb3VuZCBkZXZpY2VzLgo+Pgo+PiBU
-aGlzIGNvbW1pdCBmaXhlcyBpdC4KPj4KPj4gVGhlIGRldGFpbHMgV1JUIGFsbG9jYXRpb24gLyBm
-cmVlIGFyZSBkZXNjcmliZWQgYmVsb3cuCj4+Cj4+IERldmljZSBzdHJ1Y3R1cmUgV1JUIGFsbG9j
-YXRpb246Cj4+Cj4+IHBkZXYKPj4gICBcY2hpbGRkZXZbXQo+PiAgICAgXGNhcmQKPj4gICAgICAg
-XGNoaXAKPj4gICAgICAgICBccGNtCj4+ICAgICAgICAgXGN0bAo+Pgo+PiBBbGxvY2F0aW9uIC8g
-cmVnaXN0ZXIgc2VxdWVuY2U6Cj4+Cj4+ICogY2hpbGRkZXY6IGRldm1fa3phbGxvYyAgICAgIC0g
-ZnJlZWQgZHVyaW5nIGRyaXZlciBkZXRhY2gKPj4gKiBjaGlsZGRldjogZGV2aWNlX2luaXRpYWxp
-emUgLSBmcmVlZCBkdXJpbmcgZGV2aWNlX3VucmVnaXN0ZXIKPj4gKiBwZGV2OiBkZXZyZXNfYWxs
-b2MgICAgICAgICAgLSBmcmVlZCBkdXJpbmcgZHJpdmVyIGRldGFjaAo+PiAqIGNoaWxkZGV2OiBk
-ZXZpY2VfYWRkICAgICAgICAtIHJlbW92ZWQgZHVyaW5nIGRldmljZV91bnJlZ2lzdGVyCj4+ICog
-cGRldiwgY2hpbGRkZXY6IGRldnJlc19hZGQgIC0gZnJlZWQgZHVyaW5nIGRyaXZlciBkZXRhY2gK
-Pj4gKiBjYXJkOiBzbmRfY2FyZF9uZXcgICAgICAgICAgLSBmcmVlZCBkdXJpbmcgc25kX2NhcmRf
-ZnJlZQo+PiAqIGNoaXA6IGt6YWxsb2MgICAgICAgICAgICAgICAtIGZyZWVkIGR1cmluZyBrZnJl
-ZQo+PiAqIGNhcmQsIGNoaXA6IHNuZF9kZXZpY2VfbmV3ICAtIGZyZWVkIGR1cmluZyBzbmRfZGV2
-aWNlX2ZyZWUKPj4gKiBjaGlwOiBuZXdfcGNtICAgICAgICAgICAgICAgLSBUT0RPOiBmcmVlIHBj
-bQo+PiAqIGNoaXA6IG5ld19jdGwgICAgICAgICAgICAgICAtIFRPRE86IGZyZWUgY3RsCj4+ICog
-Y2FyZDogc25kX2NhcmRfcmVnaXN0ZXIgICAgIC0gdW5yZWdpc3RlcmVkIGR1cmluZyBzbmRfY2Fy
-ZF9mcmVlCj4+Cj4+IEZyZWUgLyB1bnJlZ2lzdGVyIHNlcXVlbmNlOgo+Pgo+PiAqIGNhcmQ6IHNu
-ZF9jYXJkX2ZyZWUKPj4gKiBjYXJkLCBjaGlwOiBzbmRfZGV2aWNlX2ZyZWUKPj4gKiBjaGlsZGRl
-djogZGV2aWNlX3VucmVnaXN0ZXIKPj4gKiBjaGlwOiBrZnJlZQo+Pgo+PiBTdGVwcyB0byByZXBy
-b2R1Y2UgdGhlIGlzc3VlIGJlZm9yZSB0aGlzIGNvbW1pdDoKPj4KPj4gfn5+fgo+PiAkIHJtbW9k
-IHNuZF9iY20yODM1Cj4+ICQgYXBsYXkgLUwKPj4gWyAgMTM4LjY0ODEzMF0gVW5hYmxlIHRvIGhh
-bmRsZSBrZXJuZWwgcGFnaW5nIHJlcXVlc3QgYXQgdmlydHVhbCBhZGRyZXNzIDdmMTM0M2MwCj4+
-IFsgIDEzOC42NjA0MTVdIHBnZCA9IGFkOGYwMDAwCj4+IFsgIDEzOC42NjU1NjddIFs3ZjEzNDNj
-MF0gKnBnZD0zODY0YzgxMSwgKnB0ZT0wMDAwMDAwMCwgKnBwdGU9MDAwMDAwMDAKPj4gWyAgMTM4
-LjY3NDg4N10gSW50ZXJuYWwgZXJyb3I6IE9vcHM6IDcgWyMxXSBTTVAgQVJNCj4+IFsgIDEzOC42
-ODM1NzFdIE1vZHVsZXMgbGlua2VkIGluOiBzaGEyNTZfZ2VuZXJpYyBjZmc4MDIxMSByZmtpbGwg
-c25kX3BjbSBzbmRfdGltZXIKPj4gIHNuZCBmaXhlZCB1aW9fcGRydl9nZW5pcnEgdWlvIGlwX3Rh
-YmxlcyB4X3RhYmxlcyBpcHY2IFtsYXN0IHVubG9hZGVkOiBzbmRfYmNtMjgzNQo+PiBdCj4+IFsg
-IDEzOC43MDY1OTRdIENQVTogMyBQSUQ6IDQ2MyBDb21tOiBhcGxheSBUYWludGVkOiBHICAgICAg
-ICBXQyAgICAgICA0LjE1LjAtcmMxLXYKPj4gNysgIzYKPj4gWyAgMTM4LjcxOTgzM10gSGFyZHdh
-cmUgbmFtZTogQkNNMjgzNQo+PiBbICAxMzguNzI2MDE2XSB0YXNrOiBiODc3YWMwMCB0YXNrLnN0
-YWNrOiBhZWJlYzAwMAo+PiBbICAxMzguNzMzNDA4XSBQQyBpcyBhdCB0cnlfbW9kdWxlX2dldCsw
-eDM4LzB4MjRjCj4+IFsgIDEzOC43NDA4MTNdIExSIGlzIGF0IHNuZF9jdGxfb3BlbisweDU4LzB4
-MTk0IFtzbmRdCj4+IFsgIDEzOC43NDg0ODVdIHBjIDogWzw4MDFjNGQ1Yz5dICAgIGxyIDogWzw3
-ZjBlNmIyYz5dICAgIHBzcjogMjAwMDAwMTMKPj4gWyAgMTM4Ljc1NzcwOV0gc3AgOiBhZWJlZGQ2
-MCAgaXAgOiBhZWJlZGQ4OCAgZnAgOiBhZWJlZGQ4NAo+PiBbICAxMzguNzY1ODg0XSByMTA6IDAw
-MDAwMDAwICByOSA6IDAwMDAwMDA0ICByOCA6IDdmMGVkNDQwCj4+IFsgIDEzOC43NzQwNDBdIHI3
-IDogYjdlNDY5YjAgIHI2IDogN2YwZTZiMmMgIHI1IDogYWZkOTE5MDAgIHI0IDogN2YxMzQzYzAK
-Pj4gWyAgMTM4Ljc4MzU3MV0gcjMgOiBhZWJlYzAwMCAgcjIgOiAwMDAwMDAwMSAgcjEgOiBiODc3
-YWMwMCAgcjAgOiA3ZjEzNDNjMAo+PiBbICAxMzguNzkzMDg0XSBGbGFnczogbnpDdiAgSVJRcyBv
-biAgRklRcyBvbiAgTW9kZSBTVkNfMzIgIElTQSBBUk0gIFNlZ21lbnQgdXNlcgo+PiBbICAxMzgu
-ODAzMzAwXSBDb250cm9sOiAxMGM1Mzg3ZCAgVGFibGU6IDJkOGYwMDZhICBEQUM6IDAwMDAwMDU1
-Cj4+IFsgIDEzOC44MTIwNjRdIFByb2Nlc3MgYXBsYXkgKHBpZDogNDYzLCBzdGFjayBsaW1pdCA9
-IDB4YWViZWMyMTApCj4+IFsgIDEzOC44MjA4NjhdIFN0YWNrOiAoMHhhZWJlZGQ2MCB0byAweGFl
-YmVlMDAwKQo+PiBbICAxMzguODI4MjA3XSBkZDYwOiAwMDAwMDAwMCBiODQ4ZDAwMCBhZmQ5MTkw
-MCAwMDAwMDAwMCBiN2U0NjliMCA3ZjBlZDQ0MCBhZWJlZGRhNCBhZWJlZGQ4OAo+PiBbICAxMzgu
-ODQyMzcxXSBkZDgwOiA3ZjBlNmIyYyA4MDFjNGQzMCBhZmQ5MTkwMCA3ZjBlYTRkYyAwMDAwMDAw
-MCBiN2U0NjliMCBhZWJlZGRjYyBhZWJlZGRhOAo+PiBbICAxMzguODU2NjExXSBkZGEwOiA3ZjBl
-MjUwYyA3ZjBlNmFlMCA3ZjBlMjQ2NCBiODQ3OGVjMCBiN2U0NjliMCBhZmQ5MTkwMCA3ZjBlYTM4
-OCAwMDAwMDAwMAo+PiBbICAxMzguODcwODY0XSBkZGMwOiBhZWJlZGRmNCBhZWJlZGRkMCA4MDJj
-ZTU5MCA3ZjBlMjQ3MCA4MDkwYWI2NCBhZmQ5MTkwMCBhZmQ5MTkwMCBiN2U0NjliMAo+PiBbICAx
-MzguODg1MzAxXSBkZGUwOiBhZmQ5MTkwOCA4MDJjZTRlNCBhZWJlZGUxYyBhZWJlZGRmOCA4MDJj
-NTdiNCA4MDJjZTRmMCBhZmQ5MTkwMCBhZWJlZGVhOAo+PiBbICAxMzguOTAwMTEwXSBkZTAwOiBi
-N2ZhNGMwMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwNCBhZWJlZGUzYyBhZWJlZGUyMCA4MDJj
-NmJhOCA4MDJjNTZiNAo+PiBbICAxMzguOTE1MjYwXSBkZTIwOiBhZWJlZGVhOCAwMDAwMDAwMCBh
-ZWJlZGY1YyAwMDAwMDAwMCBhZWJlZGVhNCBhZWJlZGU0MCA4MDJkOWE2OCA4MDJjNmI1OAo+PiBb
-ICAxMzguOTMwNjYxXSBkZTQwOiBiODc0ZGRkMCAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMSAw
-MDAwMDA0MSAwMDAwMDAwMCBhZmQ5MTkwMCBhZWJlZGU3MAo+PiBbICAxMzguOTQ2NDAyXSBkZTYw
-OiAwMDAwMDAwMCAwMDAwMDAwMCAwMDAwMDAwMiBiN2U0NjliMCBiOGE4NzYxMCBiOGQ2YWI4MCA4
-MDE4NTJmOCAwMDA4MDAwMAo+PiBbICAxMzguOTYyMzE0XSBkZTgwOiBhZWJlZGY1YyBhZWJlZGVh
-OCAwMDAwMDAwMSA4MDEwODQ2NCBhZWJlYzAwMCAwMDAwMDAwMCBhZWJlZGY0YyBhZWJlZGVhOAo+
-PiBbICAxMzguOTc4NDE0XSBkZWEwOiA4MDJkYWNkNCA4MDJkOTcwYyBiOGE4NzYxMCBiOGQ2YWI4
-MCBhNzk4MmJjNiAwMDAwMDAwOSBhZjM2MzAxOSBiOTIzMTQ4MAo+PiBbICAxMzguOTk0NjE3XSBk
-ZWMwOiAwMDAwMDAwMCBiOGMwMzhhMCBiN2U0NjliMCAwMDAwMDEwMSAwMDAwMDAwMiAwMDAwMDIz
-OCAwMDAwMDAwMCAwMDAwMDAwMAo+PiBbICAxMzkuMDEwODIzXSBkZWUwOiAwMDAwMDAwMCBhZWJl
-ZGVlOCAwMDA4MDAwMCAwMDAwMDAwZiBhZWJlZGYzYyBhZWJlZGYwMCA4MDJlZDdlNCA4MDg0M2Y5
-NAo+PiBbICAxMzkuMDI3MDI1XSBkZjAwOiAwMDAwMDAwMyAwMDA4MDAwMCBiOTIzMTQ5MCBiOTIz
-MTQ4MCAwMDAwMDAwMCAwMDA4MDAwMCBhZjM2MzAwMCAwMDAwMDAwMAo+PiBbICAxMzkuMDQzMjI5
-XSBkZjIwOiAwMDAwMDAwNSAwMDAwMDAwMiBmZmZmZmY5YyAwMDAwMDAwMCAwMDA4MDAwMCBmZmZm
-ZmY5YyBhZjM2MzAwMCAwMDAwMDAwMwo+PiBbICAxMzkuMDU5NDMwXSBkZjQwOiBhZWJlZGY5NCBh
-ZWJlZGY1MCA4MDJjNmY3MCA4MDJkYWM3MCBhZWJlYzAwMCAwMDAwMDAwMCAwMDAwMDAwMSAwMDAw
-MDAwMAo+PiBbICAxMzkuMDc1NjI5XSBkZjYwOiAwMDAyMDAwMCAwMDAwMDAwNCAwMDAwMDEwMCAw
-MDAwMDAwMSA3ZWJlNTc3YyAwMDAyZTAzOCAwMDAwMDAwMCAwMDAwMDAwNQo+PiBbICAxMzkuMDkx
-ODI4XSBkZjgwOiA4MDEwODQ2NCBhZWJlYzAwMCBhZWJlZGZhNCBhZWJlZGY5OCA4MDJjNzA2MCA4
-MDJjNmU2YyAwMDAwMDAwMCBhZWJlZGZhOAo+PiBbICAxMzkuMTA4MDI1XSBkZmEwOiA4MDEwODJj
-MCA4MDJjNzA0MCA3ZWJlNTc3YyAwMDAyZTAzOCA3ZWJlNTc3YyAwMDA4MDAwMCAwMDAwMGI5OCBl
-ODFjODQwMAo+PiBbICAxMzkuMTI0MjIyXSBkZmMwOiA3ZWJlNTc3YyAwMDAyZTAzOCAwMDAwMDAw
-MCAwMDAwMDAwNSA3ZWJlNTdlNCAwMGEyMGFmOCA3ZWJlNTdmMCA3NmY4NzM5NAo+PiBbICAxMzku
-MTQwNDE5XSBkZmUwOiAwMDAwMDAwMCA3ZWJlNTVjNCA3NmVjODhlOCA3NmRmMWQ5YyA2MDAwMDAx
-MCA3ZWJlNTc3YyAwMDAwMDAwMCAwMDAwMDAwMAo+PiBbICAxMzkuMTU2NzE1XSBbPDgwMWM0ZDVj
-Pl0gKHRyeV9tb2R1bGVfZ2V0KSBmcm9tIFs8N2YwZTZiMmM+XSAoc25kX2N0bF9vcGVuKzB4NTgv
-MHgxOTQgW3NuZF0pCj4+IFsgIDEzOS4xNzMyMjJdIFs8N2YwZTZiMmM+XSAoc25kX2N0bF9vcGVu
-IFtzbmRdKSBmcm9tIFs8N2YwZTI1MGM+XSAoc25kX29wZW4rMHhhOC8weDE0YyBbc25kXSkKPj4g
-WyAgMTM5LjE4OTY4M10gWzw3ZjBlMjUwYz5dIChzbmRfb3BlbiBbc25kXSkgZnJvbSBbPDgwMmNl
-NTkwPl0gKGNocmRldl9vcGVuKzB4YWMvMHgxODgpCj4+IFsgIDEzOS4yMDU0NjVdIFs8ODAyY2U1
-OTA+XSAoY2hyZGV2X29wZW4pIGZyb20gWzw4MDJjNTdiND5dIChkb19kZW50cnlfb3BlbisweDEw
-Yy8weDMxNCkKPj4gWyAgMTM5LjIyMTM0N10gWzw4MDJjNTdiND5dIChkb19kZW50cnlfb3Blbikg
-ZnJvbSBbPDgwMmM2YmE4Pl0gKHZmc19vcGVuKzB4NWMvMHg4OCkKPj4gWyAgMTM5LjIzNjc4OF0g
-Wzw4MDJjNmJhOD5dICh2ZnNfb3BlbikgZnJvbSBbPDgwMmQ5YTY4Pl0gKHBhdGhfb3BlbmF0KzB4
-MzY4LzB4OTQ0KQo+PiBbICAxMzkuMjQ4MjcwXSBbPDgwMmQ5YTY4Pl0gKHBhdGhfb3BlbmF0KSBm
-cm9tIFs8ODAyZGFjZDQ+XSAoZG9fZmlscF9vcGVuKzB4NzAvMHhjNCkKPj4gWyAgMTM5LjI2Mzcz
-MV0gWzw4MDJkYWNkND5dIChkb19maWxwX29wZW4pIGZyb20gWzw4MDJjNmY3MD5dIChkb19zeXNf
-b3BlbisweDExMC8weDFkNCkKPj4gWyAgMTM5LjI3OTM3OF0gWzw4MDJjNmY3MD5dIChkb19zeXNf
-b3BlbikgZnJvbSBbPDgwMmM3MDYwPl0gKFN5U19vcGVuKzB4MmMvMHgzMCkKPj4gWyAgMTM5LjI5
-MDY0N10gWzw4MDJjNzA2MD5dIChTeVNfb3BlbikgZnJvbSBbPDgwMTA4MmMwPl0gKHJldF9mYXN0
-X3N5c2NhbGwrMHgwLzB4MjgpCj4+IFsgIDEzOS4zMDYwMjFdIENvZGU6IGUzYzMzMDNmIGU1OTMy
-MDA0IGUyODIyMDAxIGU1ODMyMDA0IChlNTk0MzAwMCkKPj4gWyAgMTM5LjMxNjI2NV0gLS0tWyBl
-bmQgdHJhY2UgN2YzZjdmNjE5M2I2NjNlZCBdLS0tCj4+IFsgIDEzOS4zMjQ5NTZdIG5vdGU6IGFw
-bGF5WzQ2M10gZXhpdGVkIHdpdGggcHJlZW1wdF9jb3VudCAxCj4+IH5+fn4KPj4KPiBTb3JyeSwg
-anVzdCBub3RpY2VkIHRoYXQgZGV2bSBwYXJ0IGRvZXNuJ3QgbWFrZSBzZW5zZSBhZnRlciB5b3Vy
-IHBhdGNoCj4gYW5kIG1pc2xlYWRpbmcuCj4gU28sIGFmdGVyIGFkZHJlc3NpbmcgaXQsIEZXSVcs
-Cj4gUmV2aWV3ZWQtYnk6IEFuZHkgU2hldmNoZW5rbyA8YW5keS5zaGV2Y2hlbmtvQGdtYWlsLmNv
-bT4KCkkgY2hlY2tlZCB0aGF0IGFjdHVhbGx5IGRldm0gbWFrZXMgc2Vuc2UgYW5kIHdvcmtzIGFz
-IGV4cGVjdGVkLgpJIGRvbid0IGNhbGwgc25kX2Rldm1fcmVsZWFzZSgpIG1hbnVhbGx5LCBpdCBp
-cyBkb25lIGJ5IHRoZSBkZXZtIHJlc291cmNlIG1hbmFnZW1lbnQuCgpTbywgdGhlIGRldm0gcGFy
-dCBkb2VzIGl0J3Mgam9iIGNvcnJlY3RseSwgdGhhdCdzIHdoeSBJIHdpbGwga2VlcCBpdCBhcyBp
-dCBpcy4KCkJlbG93IGlzIHRoZSBiYWNrdHJhY2UsIHdoaWNoIGRlbW9uc3RyYXRlcyB0aGF0IGRl
-dm0gZG9lcyBhIHByb3BlciBhdXRvbWF0aWMgcmVzb3VyY2UgbWFuYWdlbWVudC4KCn5+fn4KW8Kg
-IDIwNy41Njk2OTRdIFs8N2YxMmYwNGM+XSAoc25kX2Rldm1fcmVsZWFzZSBbc25kX2JjbTI4MzVd
-KSBmcm9tIFs8ODA1YjUxOTg+XSAoZGV2aWNlX3JlbGVhc2UrMHgzYy8weGEwKQpbwqAgMjA3LjU4
-NjQ4Nl0gWzw4MDViNTE5OD5dIChkZXZpY2VfcmVsZWFzZSkgZnJvbSBbPDgwODJhYmU0Pl0gKGtv
-YmplY3RfcHV0KzB4OTQvMHhmMCkKW8KgIDIwNy42MDE1NjldIFs8ODA4MmFiZTQ+XSAoa29iamVj
-dF9wdXQpIGZyb20gWzw4MDViNjZhOD5dIChkZXZpY2VfdW5yZWdpc3RlcisweDJjLzB4MzApClvC
-oCAyMDcuNjE2OTQwXSBbPDgwNWI2NmE4Pl0gKGRldmljZV91bnJlZ2lzdGVyKSBmcm9tIFs8N2Yx
-MmYwOWM+XSAoc25kX2Rldm1fdW5yZWdpc3Rlcl9jaGlsZCsweDRjLzB4NWMgW3NuZF9iY20yODM1
-XSkKW8KgIDIwNy42MzQ5NjVdIFs8N2YxMmYwOWM+XSAoc25kX2Rldm1fdW5yZWdpc3Rlcl9jaGls
-ZCBbc25kX2JjbTI4MzVdKSBmcm9tIFs8ODA1YmRhNTg+XSAocmVsZWFzZV9ub2RlcysweDEyMC8w
-eDFlOCkKW8KgIDIwNy42NTI5MzBdIFs8ODA1YmRhNTg+XSAocmVsZWFzZV9ub2RlcykgZnJvbSBb
-PDgwNWJlNTVjPl0gKGRldnJlc19yZWxlYXNlX2FsbCsweDQwLzB4NWMpClvCoCAyMDcuNjY4ODI1
-XSBbPDgwNWJlNTVjPl0gKGRldnJlc19yZWxlYXNlX2FsbCkgZnJvbSBbPDgwNWJhYWY4Pl0gKGRl
-dmljZV9yZWxlYXNlX2RyaXZlcl9pbnRlcm5hbCsweDE3MC8weDIwMCkKW8KgIDIwNy42ODY1NzNd
-IFs8ODA1YmFhZjg+XSAoZGV2aWNlX3JlbGVhc2VfZHJpdmVyX2ludGVybmFsKSBmcm9tIFs8ODA1
-YmFiZjQ+XSAoZHJpdmVyX2RldGFjaCsweDQ4LzB4N2MpClvCoCAyMDcuNzAzODg3XSBbPDgwNWJh
-YmY0Pl0gKGRyaXZlcl9kZXRhY2gpIGZyb20gWzw4MDViOWI4OD5dIChidXNfcmVtb3ZlX2RyaXZl
-cisweDVjLzB4YjApClvCoCAyMDcuNzIwMDYzXSBbPDgwNWI5Yjg4Pl0gKGJ1c19yZW1vdmVfZHJp
-dmVyKSBmcm9tIFs8ODA1YmIwN2M+XSAoZHJpdmVyX3VucmVnaXN0ZXIrMHgzOC8weDU4KQpbwqAg
-MjA3LjczNjY2MF0gWzw4MDViYjA3Yz5dIChkcml2ZXJfdW5yZWdpc3RlcikgZnJvbSBbPDgwNWJj
-MmY0Pl0gKHBsYXRmb3JtX2RyaXZlcl91bnJlZ2lzdGVyKzB4MWMvMHgyMCkKW8KgIDIwNy43NTQw
-ODNdIFs8ODA1YmMyZjQ+XSAocGxhdGZvcm1fZHJpdmVyX3VucmVnaXN0ZXIpIGZyb20gWzw3ZjEy
-ZjZmYz5dIChiY20yODM1X2Fsc2FfZGV2aWNlX2V4aXQrMHgxYy8weDI0IFtzbmRfYmNtMjgzNV0p
-ClvCoCAyMDcuNzczMzk1XSBbPDdmMTJmNmZjPl0gKGJjbTI4MzVfYWxzYV9kZXZpY2VfZXhpdCBb
-c25kX2JjbTI4MzVdKSBmcm9tIFs8ODAxYzcyYjA+XSAoU3lTX2RlbGV0ZV9tb2R1bGUrMHgxN2Mv
-MHgxZDQpClvCoCAyMDcuNzkyMDY2XSBbPDgwMWM3MmIwPl0gKFN5U19kZWxldGVfbW9kdWxlKSBm
-cm9tIFs8ODAxMDgyYzA+XSAocmV0X2Zhc3Rfc3lzY2FsbCsweDAvMHgyOCkKfn5+fgoKPiBQLlMu
-IEkgZGlkbid0IGdldCB3aHkgZG8geW91IG5lZWQgYW4gZW1wdHkgLT5yZW1vdmUoKSBzdHViLiBE
-b2Vzbid0Cj4gd29yayB3aXRob3V0IGl0PwoKSSBjaGVja2VkOiBpdCByZWFsbHkgd29ya3MgZmlu
-ZSB3aXRob3V0IHRoZSBlbXB0eSByZW1vdmUoKSBmdW5jdGlvbi4KSSB3aWxsIGdldCByaWQgb2Yg
-aXQsIGFuZCBzZW5kIHRoZSByZXN1bHQgYXMgYSBwYXRjaCB2NC4KCj4KPj4gU2lnbmVkLW9mZi1i
-eTogS2lyaWxsIE1hcmludXNoa2luIDxrLm1hcmludXNoa2luQGdtYWlsLmNvbT4KPj4gQ2M6IEVy
-aWMgQW5ob2x0IDxlcmljQGFuaG9sdC5uZXQ+Cj4+IENjOiBTdGVmYW4gV2FocmVuIDxzdGVmYW4u
-d2FocmVuQGkyc2UuY29tPgo+PiBDYzogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhm
-b3VuZGF0aW9uLm9yZz4KPj4gQ2M6IEZsb3JpYW4gRmFpbmVsbGkgPGYuZmFpbmVsbGlAZ21haWwu
-Y29tPgo+PiBDYzogUmF5IEp1aSA8cmp1aUBicm9hZGNvbS5jb20+Cj4+IENjOiBTY290dCBCcmFu
-ZGVuIDxzYnJhbmRlbkBicm9hZGNvbS5jb20+Cj4+IENjOiBiY20ta2VybmVsLWZlZWRiYWNrLWxp
-c3RAYnJvYWRjb20uY29tCj4+IENjOiBNaWNoYWVsIFpvcmFuIDxtem9yYW5AY3Jvd2Zlc3QubmV0
-Pgo+PiBDYzogbGludXgtcnBpLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCj4+IENjOiBsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKPj4gQ2M6IGRldmVsQGRyaXZlcmRldi5v
-c3Vvc2wub3JnCj4+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCj4+IC0tLQo+PiAg
-Li4uL3N0YWdpbmcvdmMwNF9zZXJ2aWNlcy9iY20yODM1LWF1ZGlvL2JjbTI4MzUuYyAgfCA1NyAr
-KysrKysrKysrKystLS0tLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgMzAgaW5zZXJ0aW9ucygr
-KSwgMjcgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvdmMw
-NF9zZXJ2aWNlcy9iY20yODM1LWF1ZGlvL2JjbTI4MzUuYyBiL2RyaXZlcnMvc3RhZ2luZy92YzA0
-X3NlcnZpY2VzL2JjbTI4MzUtYXVkaW8vYmNtMjgzNS5jCj4+IGluZGV4IDhmMmQ1MDgxODNiMi4u
-MTI1ZWZjNTVlY2I5IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvdmMwNF9zZXJ2aWNl
-cy9iY20yODM1LWF1ZGlvL2JjbTI4MzUuYwo+PiArKysgYi9kcml2ZXJzL3N0YWdpbmcvdmMwNF9z
-ZXJ2aWNlcy9iY20yODM1LWF1ZGlvL2JjbTI4MzUuYwo+PiBAQCAtMzYsNiArMzYsMTAgQEAgTU9E
-VUxFX1BBUk1fREVTQyhlbmFibGVfY29tcGF0X2Fsc2EsCj4+ICBzdGF0aWMgdm9pZCBzbmRfZGV2
-bV91bnJlZ2lzdGVyX2NoaWxkKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqcmVzKQo+PiAgewo+
-PiAgICAgICAgIHN0cnVjdCBkZXZpY2UgKmNoaWxkZGV2ID0gKihzdHJ1Y3QgZGV2aWNlICoqKXJl
-czsKPj4gKyAgICAgICBzdHJ1Y3QgYmNtMjgzNV9jaGlwICpjaGlwID0gZGV2X2dldF9kcnZkYXRh
-KGNoaWxkZGV2KTsKPj4gKyAgICAgICBzdHJ1Y3Qgc25kX2NhcmQgKmNhcmQgPSBjaGlwLT5jYXJk
-Owo+PiArCj4+ICsgICAgICAgc25kX2NhcmRfZnJlZShjYXJkKTsKPj4KPj4gICAgICAgICBkZXZp
-Y2VfdW5yZWdpc3RlcihjaGlsZGRldik7Cj4+ICB9Cj4+IEBAIC02MSw2ICs2NSwxMyBAQCBzdGF0
-aWMgaW50IHNuZF9kZXZtX2FkZF9jaGlsZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZp
-Y2UgKmNoaWxkKQo+PiAgICAgICAgIHJldHVybiAwOwo+PiAgfQo+Pgo+PiArc3RhdGljIHZvaWQg
-c25kX2Rldm1fcmVsZWFzZShzdHJ1Y3QgZGV2aWNlICpkZXYpCj4+ICt7Cj4+ICsgICAgICAgc3Ry
-dWN0IGJjbTI4MzVfY2hpcCAqY2hpcCA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+PiArCj4+ICsg
-ICAgICAga2ZyZWUoY2hpcCk7Cj4+ICt9Cj4+ICsKPj4gIHN0YXRpYyBzdHJ1Y3QgZGV2aWNlICoK
-Pj4gIHNuZF9jcmVhdGVfZGV2aWNlKHN0cnVjdCBkZXZpY2UgKnBhcmVudCwKPj4gICAgICAgICAg
-ICAgICAgICAgc3RydWN0IGRldmljZV9kcml2ZXIgKmRyaXZlciwKPj4gQEAgLTc2LDYgKzg3LDcg
-QEAgc25kX2NyZWF0ZV9kZXZpY2Uoc3RydWN0IGRldmljZSAqcGFyZW50LAo+PiAgICAgICAgIGRl
-dmljZV9pbml0aWFsaXplKGRldmljZSk7Cj4+ICAgICAgICAgZGV2aWNlLT5wYXJlbnQgPSBwYXJl
-bnQ7Cj4+ICAgICAgICAgZGV2aWNlLT5kcml2ZXIgPSBkcml2ZXI7Cj4+ICsgICAgICAgZGV2aWNl
-LT5yZWxlYXNlID0gc25kX2Rldm1fcmVsZWFzZTsKPj4KPj4gICAgICAgICBkZXZfc2V0X25hbWUo
-ZGV2aWNlLCAiJXMiLCBuYW1lKTsKPj4KPj4gQEAgLTg2LDE4ICs5OCwxOSBAQCBzbmRfY3JlYXRl
-X2RldmljZShzdHJ1Y3QgZGV2aWNlICpwYXJlbnQsCj4+ICAgICAgICAgcmV0dXJuIGRldmljZTsK
-Pj4gIH0KPj4KPj4gLXN0YXRpYyBpbnQgc25kX2JjbTI4MzVfZnJlZShzdHJ1Y3QgYmNtMjgzNV9j
-aGlwICpjaGlwKQo+PiAtewo+PiAtICAgICAgIGtmcmVlKGNoaXApOwo+PiAtICAgICAgIHJldHVy
-biAwOwo+PiAtfQo+PiAtCj4+ICAvKiBjb21wb25lbnQtZGVzdHJ1Y3Rvcgo+PiAgICogKHNlZSAi
-TWFuYWdlbWVudCBvZiBDYXJkcyBhbmQgQ29tcG9uZW50cyIpCj4+ICAgKi8KPj4gIHN0YXRpYyBp
-bnQgc25kX2JjbTI4MzVfZGV2X2ZyZWUoc3RydWN0IHNuZF9kZXZpY2UgKmRldmljZSkKPj4gIHsK
-Pj4gLSAgICAgICByZXR1cm4gc25kX2JjbTI4MzVfZnJlZShkZXZpY2UtPmRldmljZV9kYXRhKTsK
-Pj4gKyAgICAgICBzdHJ1Y3QgYmNtMjgzNV9jaGlwICpjaGlwID0gZGV2aWNlLT5kZXZpY2VfZGF0
-YTsKPj4gKyAgICAgICBzdHJ1Y3Qgc25kX2NhcmQgKmNhcmQgPSBjaGlwLT5jYXJkOwo+PiArCj4+
-ICsgICAgICAgLyogVE9ETzogZnJlZSBwY20sIGN0bCAqLwo+PiArCj4+ICsgICAgICAgc25kX2Rl
-dmljZV9mcmVlKGNhcmQsIGNoaXApOwo+PiArCj4+ICsgICAgICAgcmV0dXJuIDA7Cj4+ICB9Cj4+
-Cj4+ICAvKiBjaGlwLXNwZWNpZmljIGNvbnN0cnVjdG9yCj4+IEBAIC0xMjIsNyArMTM1LDcgQEAg
-c3RhdGljIGludCBzbmRfYmNtMjgzNV9jcmVhdGUoc3RydWN0IHNuZF9jYXJkICpjYXJkLAo+Pgo+
-PiAgICAgICAgIGVyciA9IHNuZF9kZXZpY2VfbmV3KGNhcmQsIFNORFJWX0RFVl9MT1dMRVZFTCwg
-Y2hpcCwgJm9wcyk7Cj4+ICAgICAgICAgaWYgKGVycikgewo+PiAtICAgICAgICAgICAgICAgc25k
-X2JjbTI4MzVfZnJlZShjaGlwKTsKPj4gKyAgICAgICAgICAgICAgIGtmcmVlKGNoaXApOwo+PiAg
-ICAgICAgICAgICAgICAgcmV0dXJuIGVycjsKPj4gICAgICAgICB9Cj4+Cj4+IEBAIC0xMzAsMzEg
-KzE0MywxNCBAQCBzdGF0aWMgaW50IHNuZF9iY20yODM1X2NyZWF0ZShzdHJ1Y3Qgc25kX2NhcmQg
-KmNhcmQsCj4+ICAgICAgICAgcmV0dXJuIDA7Cj4+ICB9Cj4+Cj4+IC1zdGF0aWMgdm9pZCBzbmRf
-ZGV2bV9jYXJkX2ZyZWUoc3RydWN0IGRldmljZSAqZGV2LCB2b2lkICpyZXMpCj4+IC17Cj4+IC0g
-ICAgICAgc3RydWN0IHNuZF9jYXJkICpzbmRfY2FyZCA9ICooc3RydWN0IHNuZF9jYXJkICoqKXJl
-czsKPj4gLQo+PiAtICAgICAgIHNuZF9jYXJkX2ZyZWUoc25kX2NhcmQpOwo+PiAtfQo+PiAtCj4+
-ICBzdGF0aWMgc3RydWN0IHNuZF9jYXJkICpzbmRfZGV2bV9jYXJkX25ldyhzdHJ1Y3QgZGV2aWNl
-ICpkZXYpCj4+ICB7Cj4+IC0gICAgICAgc3RydWN0IHNuZF9jYXJkICoqZHI7Cj4+ICAgICAgICAg
-c3RydWN0IHNuZF9jYXJkICpjYXJkOwo+PiAgICAgICAgIGludCByZXQ7Cj4+Cj4+IC0gICAgICAg
-ZHIgPSBkZXZyZXNfYWxsb2Moc25kX2Rldm1fY2FyZF9mcmVlLCBzaXplb2YoKmRyKSwgR0ZQX0tF
-Uk5FTCk7Cj4+IC0gICAgICAgaWYgKCFkcikKPj4gLSAgICAgICAgICAgICAgIHJldHVybiBFUlJf
-UFRSKC1FTk9NRU0pOwo+PiAtCj4+ICAgICAgICAgcmV0ID0gc25kX2NhcmRfbmV3KGRldiwgLTEs
-IE5VTEwsIFRISVNfTU9EVUxFLCAwLCAmY2FyZCk7Cj4+IC0gICAgICAgaWYgKHJldCkgewo+PiAt
-ICAgICAgICAgICAgICAgZGV2cmVzX2ZyZWUoZHIpOwo+PiArICAgICAgIGlmIChyZXQpCj4+ICAg
-ICAgICAgICAgICAgICByZXR1cm4gRVJSX1BUUihyZXQpOwo+PiAtICAgICAgIH0KPj4gLQo+PiAt
-ICAgICAgICpkciA9IGNhcmQ7Cj4+IC0gICAgICAgZGV2cmVzX2FkZChkZXYsIGRyKTsKPj4KPj4g
-ICAgICAgICByZXR1cm4gY2FyZDsKPj4gIH0KPj4gQEAgLTMxMyw3ICszMDksNyBAQCBzdGF0aWMg
-aW50IHNuZF9hZGRfY2hpbGRfZGV2aWNlKHN0cnVjdCBkZXZpY2UgKmRldmljZSwKPj4gICAgICAg
-ICAgICAgICAgIHJldHVybiBlcnI7Cj4+ICAgICAgICAgfQo+Pgo+PiAtICAgICAgIGRldl9zZXRf
-ZHJ2ZGF0YShjaGlsZCwgY2FyZCk7Cj4+ICsgICAgICAgZGV2X3NldF9kcnZkYXRhKGNoaWxkLCBj
-aGlwKTsKPj4gICAgICAgICBkZXZfaW5mbyhjaGlsZCwgImNhcmQgY3JlYXRlZCB3aXRoICVkIGNo
-YW5uZWxzXG4iLCBudW1jaGFucyk7Cj4+Cj4+ICAgICAgICAgcmV0dXJuIDA7Cj4+IEBAIC00MTQs
-NiArNDEwLDEyIEBAIHN0YXRpYyBpbnQgc25kX2JjbTI4MzVfYWxzYV9wcm9iZV9kdChzdHJ1Y3Qg
-cGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+PiAgICAgICAgIHJldHVybiAwOwo+PiAgfQo+Pgo+PiAr
-c3RhdGljIGludCBzbmRfYmNtMjgzNV9hbHNhX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2KQo+PiArewo+PiArICAgICAgIC8qIHRyaWdnZXIgc25kX2Rldm1fdW5yZWdpc3Rlcl9j
-aGlsZCgpICovCj4+ICsgICAgICAgcmV0dXJuIDA7Cj4+ICt9Cj4+ICsKPj4gICNpZmRlZiBDT05G
-SUdfUE0KPj4KPj4gIHN0YXRpYyBpbnQgc25kX2JjbTI4MzVfYWxzYV9zdXNwZW5kKHN0cnVjdCBw
-bGF0Zm9ybV9kZXZpY2UgKnBkZXYsCj4+IEBAIC00MzcsNiArNDM5LDcgQEAgTU9EVUxFX0RFVklD
-RV9UQUJMRShvZiwgc25kX2JjbTI4MzVfb2ZfbWF0Y2hfdGFibGUpOwo+Pgo+PiAgc3RhdGljIHN0
-cnVjdCBwbGF0Zm9ybV9kcml2ZXIgYmNtMjgzNV9hbHNhMF9kcml2ZXIgPSB7Cj4+ICAgICAgICAg
-LnByb2JlID0gc25kX2JjbTI4MzVfYWxzYV9wcm9iZV9kdCwKPj4gKyAgICAgICAucmVtb3ZlID0g
-c25kX2JjbTI4MzVfYWxzYV9yZW1vdmUsCj4+ICAjaWZkZWYgQ09ORklHX1BNCj4+ICAgICAgICAg
-LnN1c3BlbmQgPSBzbmRfYmNtMjgzNV9hbHNhX3N1c3BlbmQsCj4+ICAgICAgICAgLnJlc3VtZSA9
-IHNuZF9iY20yODM1X2Fsc2FfcmVzdW1lLAo+PiAtLQo+PiAyLjEzLjYKPj4KPgo+CgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxp
-c3QKZGV2ZWxAbGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJp
-dmVycHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
+In the current implementation, `rmmod snd_bcm2835` does not release
+resources properly. It causes an oops when trying to list sound devices.
+
+This commit fixes it.
+
+The details WRT allocation / free are described below.
+
+Device structure WRT allocation:
+
+pdev
+  \childdev[]
+    \card
+      \chip
+        \pcm
+        \ctl
+
+Allocation / register sequence:
+
+* childdev: devm_kzalloc      - freed during driver detach
+* childdev: device_initialize - freed during device_unregister
+* pdev: devres_alloc          - freed during driver detach
+* childdev: device_add        - removed during device_unregister
+* pdev, childdev: devres_add  - freed during driver detach
+* card: snd_card_new          - freed during snd_card_free
+* chip: kzalloc               - freed during kfree
+* card, chip: snd_device_new  - freed during snd_device_free
+* chip: new_pcm               - TODO: free pcm
+* chip: new_ctl               - TODO: free ctl
+* card: snd_card_register     - unregistered during snd_card_free
+
+Free / unregister sequence:
+
+* card: snd_card_free
+* card, chip: snd_device_free
+* childdev: device_unregister
+* chip: kfree
+
+Steps to reproduce the issue before this commit:
+
+~~~~
+$ rmmod snd_bcm2835
+$ aplay -L
+[  138.648130] Unable to handle kernel paging request at virtual address 7f1343c0
+[  138.660415] pgd = ad8f0000
+[  138.665567] [7f1343c0] *pgd=3864c811, *pte=00000000, *ppte=00000000
+[  138.674887] Internal error: Oops: 7 [#1] SMP ARM
+[  138.683571] Modules linked in: sha256_generic cfg80211 rfkill snd_pcm snd_timer
+ snd fixed uio_pdrv_genirq uio ip_tables x_tables ipv6 [last unloaded: snd_bcm2835
+]
+[  138.706594] CPU: 3 PID: 463 Comm: aplay Tainted: G        WC       4.15.0-rc1-v
+7+ #6
+[  138.719833] Hardware name: BCM2835
+[  138.726016] task: b877ac00 task.stack: aebec000
+[  138.733408] PC is at try_module_get+0x38/0x24c
+[  138.740813] LR is at snd_ctl_open+0x58/0x194 [snd]
+[  138.748485] pc : [<801c4d5c>]    lr : [<7f0e6b2c>]    psr: 20000013
+[  138.757709] sp : aebedd60  ip : aebedd88  fp : aebedd84
+[  138.765884] r10: 00000000  r9 : 00000004  r8 : 7f0ed440
+[  138.774040] r7 : b7e469b0  r6 : 7f0e6b2c  r5 : afd91900  r4 : 7f1343c0
+[  138.783571] r3 : aebec000  r2 : 00000001  r1 : b877ac00  r0 : 7f1343c0
+[  138.793084] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
+[  138.803300] Control: 10c5387d  Table: 2d8f006a  DAC: 00000055
+[  138.812064] Process aplay (pid: 463, stack limit = 0xaebec210)
+[  138.820868] Stack: (0xaebedd60 to 0xaebee000)
+[  138.828207] dd60: 00000000 b848d000 afd91900 00000000 b7e469b0 7f0ed440 aebedda4 aebedd88
+[  138.842371] dd80: 7f0e6b2c 801c4d30 afd91900 7f0ea4dc 00000000 b7e469b0 aebeddcc aebedda8
+[  138.856611] dda0: 7f0e250c 7f0e6ae0 7f0e2464 b8478ec0 b7e469b0 afd91900 7f0ea388 00000000
+[  138.870864] ddc0: aebeddf4 aebeddd0 802ce590 7f0e2470 8090ab64 afd91900 afd91900 b7e469b0
+[  138.885301] dde0: afd91908 802ce4e4 aebede1c aebeddf8 802c57b4 802ce4f0 afd91900 aebedea8
+[  138.900110] de00: b7fa4c00 00000000 00000000 00000004 aebede3c aebede20 802c6ba8 802c56b4
+[  138.915260] de20: aebedea8 00000000 aebedf5c 00000000 aebedea4 aebede40 802d9a68 802c6b58
+[  138.930661] de40: b874ddd0 00000000 00000000 00000001 00000041 00000000 afd91900 aebede70
+[  138.946402] de60: 00000000 00000000 00000002 b7e469b0 b8a87610 b8d6ab80 801852f8 00080000
+[  138.962314] de80: aebedf5c aebedea8 00000001 80108464 aebec000 00000000 aebedf4c aebedea8
+[  138.978414] dea0: 802dacd4 802d970c b8a87610 b8d6ab80 a7982bc6 00000009 af363019 b9231480
+[  138.994617] dec0: 00000000 b8c038a0 b7e469b0 00000101 00000002 00000238 00000000 00000000
+[  139.010823] dee0: 00000000 aebedee8 00080000 0000000f aebedf3c aebedf00 802ed7e4 80843f94
+[  139.027025] df00: 00000003 00080000 b9231490 b9231480 00000000 00080000 af363000 00000000
+[  139.043229] df20: 00000005 00000002 ffffff9c 00000000 00080000 ffffff9c af363000 00000003
+[  139.059430] df40: aebedf94 aebedf50 802c6f70 802dac70 aebec000 00000000 00000001 00000000
+[  139.075629] df60: 00020000 00000004 00000100 00000001 7ebe577c 0002e038 00000000 00000005
+[  139.091828] df80: 80108464 aebec000 aebedfa4 aebedf98 802c7060 802c6e6c 00000000 aebedfa8
+[  139.108025] dfa0: 801082c0 802c7040 7ebe577c 0002e038 7ebe577c 00080000 00000b98 e81c8400
+[  139.124222] dfc0: 7ebe577c 0002e038 00000000 00000005 7ebe57e4 00a20af8 7ebe57f0 76f87394
+[  139.140419] dfe0: 00000000 7ebe55c4 76ec88e8 76df1d9c 60000010 7ebe577c 00000000 00000000
+[  139.156715] [<801c4d5c>] (try_module_get) from [<7f0e6b2c>] (snd_ctl_open+0x58/0x194 [snd])
+[  139.173222] [<7f0e6b2c>] (snd_ctl_open [snd]) from [<7f0e250c>] (snd_open+0xa8/0x14c [snd])
+[  139.189683] [<7f0e250c>] (snd_open [snd]) from [<802ce590>] (chrdev_open+0xac/0x188)
+[  139.205465] [<802ce590>] (chrdev_open) from [<802c57b4>] (do_dentry_open+0x10c/0x314)
+[  139.221347] [<802c57b4>] (do_dentry_open) from [<802c6ba8>] (vfs_open+0x5c/0x88)
+[  139.236788] [<802c6ba8>] (vfs_open) from [<802d9a68>] (path_openat+0x368/0x944)
+[  139.248270] [<802d9a68>] (path_openat) from [<802dacd4>] (do_filp_open+0x70/0xc4)
+[  139.263731] [<802dacd4>] (do_filp_open) from [<802c6f70>] (do_sys_open+0x110/0x1d4)
+[  139.279378] [<802c6f70>] (do_sys_open) from [<802c7060>] (SyS_open+0x2c/0x30)
+[  139.290647] [<802c7060>] (SyS_open) from [<801082c0>] (ret_fast_syscall+0x0/0x28)
+[  139.306021] Code: e3c3303f e5932004 e2822001 e5832004 (e5943000)
+[  139.316265] ---[ end trace 7f3f7f6193b663ed ]---
+[  139.324956] note: aplay[463] exited with preempt_count 1
+~~~~
+
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: Michael Zoran <mzoran@crowfest.net>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: devel@driverdev.osuosl.org
+Cc: linux-kernel@vger.kernel.org
+---
+ .../staging/vc04_services/bcm2835-audio/bcm2835.c  | 50 ++++++++++------------
+ 1 file changed, 23 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+index 8f2d508183b2..b224e0764ba6 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+@@ -36,6 +36,10 @@ MODULE_PARM_DESC(enable_compat_alsa,
+ static void snd_devm_unregister_child(struct device *dev, void *res)
+ {
+ 	struct device *childdev = *(struct device **)res;
++	struct bcm2835_chip *chip = dev_get_drvdata(childdev);
++	struct snd_card *card = chip->card;
++
++	snd_card_free(card);
+ 
+ 	device_unregister(childdev);
+ }
+@@ -61,6 +65,13 @@ static int snd_devm_add_child(struct device *dev, struct device *child)
+ 	return 0;
+ }
+ 
++static void snd_devm_release(struct device *dev)
++{
++	struct bcm2835_chip *chip = dev_get_drvdata(dev);
++
++	kfree(chip);
++}
++
+ static struct device *
+ snd_create_device(struct device *parent,
+ 		  struct device_driver *driver,
+@@ -76,6 +87,7 @@ snd_create_device(struct device *parent,
+ 	device_initialize(device);
+ 	device->parent = parent;
+ 	device->driver = driver;
++	device->release = snd_devm_release;
+ 
+ 	dev_set_name(device, "%s", name);
+ 
+@@ -86,18 +98,19 @@ snd_create_device(struct device *parent,
+ 	return device;
+ }
+ 
+-static int snd_bcm2835_free(struct bcm2835_chip *chip)
+-{
+-	kfree(chip);
+-	return 0;
+-}
+-
+ /* component-destructor
+  * (see "Management of Cards and Components")
+  */
+ static int snd_bcm2835_dev_free(struct snd_device *device)
+ {
+-	return snd_bcm2835_free(device->device_data);
++	struct bcm2835_chip *chip = device->device_data;
++	struct snd_card *card = chip->card;
++
++	/* TODO: free pcm, ctl */
++
++	snd_device_free(card, chip);
++
++	return 0;
+ }
+ 
+ /* chip-specific constructor
+@@ -122,7 +135,7 @@ static int snd_bcm2835_create(struct snd_card *card,
+ 
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
+ 	if (err) {
+-		snd_bcm2835_free(chip);
++		kfree(chip);
+ 		return err;
+ 	}
+ 
+@@ -130,31 +143,14 @@ static int snd_bcm2835_create(struct snd_card *card,
+ 	return 0;
+ }
+ 
+-static void snd_devm_card_free(struct device *dev, void *res)
+-{
+-	struct snd_card *snd_card = *(struct snd_card **)res;
+-
+-	snd_card_free(snd_card);
+-}
+-
+ static struct snd_card *snd_devm_card_new(struct device *dev)
+ {
+-	struct snd_card **dr;
+ 	struct snd_card *card;
+ 	int ret;
+ 
+-	dr = devres_alloc(snd_devm_card_free, sizeof(*dr), GFP_KERNEL);
+-	if (!dr)
+-		return ERR_PTR(-ENOMEM);
+-
+ 	ret = snd_card_new(dev, -1, NULL, THIS_MODULE, 0, &card);
+-	if (ret) {
+-		devres_free(dr);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+-
+-	*dr = card;
+-	devres_add(dev, dr);
+ 
+ 	return card;
+ }
+@@ -313,7 +309,7 @@ static int snd_add_child_device(struct device *device,
+ 		return err;
+ 	}
+ 
+-	dev_set_drvdata(child, card);
++	dev_set_drvdata(child, chip);
+ 	dev_info(child, "card created with %d channels\n", numchans);
+ 
+ 	return 0;
+-- 
+2.13.6
