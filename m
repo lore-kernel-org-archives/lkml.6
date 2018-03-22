@@ -1,46 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754651AbeCVMfN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:35:13 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40844 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751597AbeCVMfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:35:10 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Gregory Clement <gregory.clement@bootlin.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] pinctrl: ocelot: fix gpio direction
-Date: Thu, 22 Mar 2018 13:35:00 +0100
-Message-Id: <20180322123500.2379-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.2
+        id S1754676AbeCVMfX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:35:23 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51501 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbeCVMfU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 08:35:20 -0400
+Date: Thu, 22 Mar 2018 13:35:18 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: v4.16-rc5 on Motorola Droid 4
+Message-ID: <20180322123518.GA27004@amd>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bits have to be cleared in DEVCPU_GCB:GPIO:GPIO_OE for input and set for
-output. ocelot_gpio_set_direction() got it wrong and this went unnoticed
-when the driver was reworked.
 
-Reported-by: Gregory Clement <gregory.clement@bootlin.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/pinctrl/pinctrl-ocelot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index a9423238471e..b5b3547fdcb2 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -252,7 +252,7 @@ static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
- 
- 	regmap_update_bits(info->map, OCELOT_GPIO_OE, BIT(pin),
--			   input ? BIT(pin) : 0);
-+			   input ? 0 : BIT(pin));
- 
- 	return 0;
- }
--- 
-2.16.2
+Hi!
+
+Just... I got recent mainline to work on Motorola Droid 4. (Thanks for
+all the help).
+
+Tree is at kernel.org:
+
+kernel.org:pub/scm/linux/kernel/git/pavel/linux-n900.git all-v4.16:all-v4.16
+
+branch all-v4.16 contains config.4 (which is config I'm using) and the
+patches I used. (But I did not do anything special).
+
+What does _not_ yet work is battery charging, and I'm not sure if the
+phone will actually shut down itself or if it will drain & damage the
+battery.
+
+user@devuan:/my/unicsy_demo$ lib/hardware.py
+Battery 3.67V 3.67V 3.82V 15% 49% 0% 0/0 mAh Discharging -353/-1/-1 mA
+user@devuan:/my/unicsy_demo$ lib/hardware.py
+Battery 3.65V 3.65V 3.88V 15% 61% 0% 0/0 mAh Discharging -534/-1/-1 mA
+
+Usb networking works with that config, and I can boot useful system
+with maemo leste.
+
+Good luck,
+    	       	     	       	       	     	 			Pavel
+=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--EVF5PPMfhYS0aIcm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqzowYACgkQMOfwapXb+vKu+wCgnimN/qk9VJBWZKGFzc8H4raw
+Jt8AniWRv5sbvIAS2JJwl8Tq7CKsccCd
+=H1JN
+-----END PGP SIGNATURE-----
+
+--EVF5PPMfhYS0aIcm--
