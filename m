@@ -1,85 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751888AbeCVCbx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 22:31:53 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:3758 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751687AbeCVCbw (ORCPT
+        id S1751923AbeCVCfD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 22:35:03 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39527 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751716AbeCVCfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 22:31:52 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="38056902"
-Subject: Re: questions about header.S
-To: Thomas Gleixner <tglx@linutronix.de>
-CC: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        <x86@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <ac02a918-0c7a-2376-569d-c53a87bc1a42@cn.fujitsu.com>
- <b47b8ad8-4015-9437-d6b6-6e2d17ea117b@cn.fujitsu.com>
- <alpine.DEB.2.21.1803211052110.3754@nanos.tec.linutronix.de>
-From: Cao jin <caoj.fnst@cn.fujitsu.com>
-Message-ID: <a92e375b-0698-ebfc-4e80-7ccc76cb19ec@cn.fujitsu.com>
-Date: Thu, 22 Mar 2018 10:31:41 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Wed, 21 Mar 2018 22:35:02 -0400
+X-Google-Smtp-Source: AG47ELsgjchY1z+heynvPSSgyUPbGcUEVRr5mBNnjev896CofLxznn05SjptLYEn/hZGA+mzYm7T2A==
+Date: Thu, 22 Mar 2018 11:34:57 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        bugzilla-daemon@bugzilla.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, wen.yang99@zte.com.cn,
+        Petr Mladek <pmladek@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [Bug 199003] console stalled, cause Hard LOCKUP.
+Message-ID: <20180322023457.GB3181@jagdpanzerIV>
+References: <bug-199003-8243@https.bugzilla.kernel.org/>
+ <bug-199003-8243-Txkdkdv5Cm@https.bugzilla.kernel.org/>
+ <20180321094422.6e099480@gandalf.local.home>
+ <20180322021437.GA3181@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1803211052110.3754@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.226.60]
-X-yoursite-MailScanner-ID: 365F64D0EFF3.A7A74
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180322021437.GA3181@jagdpanzerIV>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks very much for you hint!
+On (03/22/18 11:14), Sergey Senozhatsky wrote:
+[..]
+> Looking at
+>  printk()->call_console_drivers()->serial8250_console_putchar()->wait_for_xmitr()
+> 
+> ... wait_for_xmitr() can spin for over 1 second waiting for the UART_MSR_CTS
+> bit.
 
-On 03/21/2018 05:57 PM, Thomas Gleixner wrote:
-> On Wed, 21 Mar 2018, Cao jin wrote:
->> On 03/17/2018 06:01 PM, Cao jin wrote:
->>>   I find two small questions which confuse me a little.
->>>
->>> 1.
->>> # Check signature at end of setup
->>>        cmpl    $0x5a5aaa55, setup_sig
->>>        jne     setup_bad
->>>
->>> setup_sig is defined in setup.ld, which points to the constant also
->>> defined in setup.ld, so I don't figure out in which case they don't
->>> equal and jump to setup_bad?
-> 
-> That's a lame sanity check to make sure that nothing overwrote the loader.
-> 
+[..]
 
-I see.
+> a 1+ second long busy loop in the console driver is quite close to
+> "problems guaranteed". But, wait, there is even more. This wait_for_xmitr()
+> busy wait is happening after every character we print on the console. So
+> printk("foo") will generate 5 * wait_for_xmitr() busy loops [foo + \r + \n].
+> They punch&touch watchdog a lot, so at the least the system won't get killed
+> by the hardlockup detector. But at the same time, it's still potentially a
+> 1+ second busy loop in the console driver * strlen(message).
 
->>> In my test, drop these 2 lines seems fine, system can boot without any
->>> obvious error.
-> 
-> Sure it does as long as you have no corruption.
-> 
->>> 2.
->>> # Zero the bss
->>> 	movw	$__bss_start, %di
->>> 	movw	$_end+3, %cx
->>> 	xorl	%eax, %eax
->>> 	subw	%di, %cx
->>> 	shrw	$2, %cx
->>> 	rep; stosl
->>>
->>> It is not a big deal, but I think replace "_end" with "__bss_end" make
->>> more sense, and "_end" is already aligned to word length. And, there is
->>> no other code use symbol "__bss_end". So I don't know is there any
->>> reason to use "_end" here?
-> 
-> It doesn't matter at all. But its also pointless to change it.
-> 
+One does not even need to have concurrent printk()-s in this case. A
+single CPU doing several direct printks under spin_lock is already
+enough:
 
-It does not matter and is pointless to change for kernel itself. It just
-may confuse a little for newbies who has interests.
+	CPUA						CPUB ~ CPUZ
+	spin_lock(&lock)
+	 printk->wait_for_xmitr				spin_lock(&lock)
+	 printk->wait_for_xmitr
+	 ...
+	 printk->wait_for_xmitr				<< lockups >>
+	 printk->wait_for_xmitr
+	spin_unlock(&lock)
 
--- 
-Sincerely,
-Cao jin
+> Sometimes I really wish we had detached consoles. Direct printk()->console
+> is nice and cool, but... we can't have it.
+
+And this is, basically, what they do with printk_deferred(). We usually
+use it to avoid deadlocks, but in this particular case it's used due to
+the fact that direct printk() is way too painful, so they are detaching
+printout and move it to another control path. Quite an interesting idea,
+I must say.
+
+	-ss
