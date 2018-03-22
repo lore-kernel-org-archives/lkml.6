@@ -1,66 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751890AbeCVSsJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 14:48:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54620 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751609AbeCVSsI (ORCPT
+        id S1751899AbeCVSsm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 14:48:42 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37216 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751729AbeCVSsj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 14:48:08 -0400
-Date: Thu, 22 Mar 2018 11:48:05 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-Message-ID: <20180322184805.GJ28468@bombadil.infradead.org>
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321130833.GM23100@dhcp22.suse.cz>
- <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
- <20180321172932.GE4780@bombadil.infradead.org>
- <af814bbe-b6b5-12f8-72e5-7935e767bd87@linux.alibaba.com>
+        Thu, 22 Mar 2018 14:48:39 -0400
+X-Google-Smtp-Source: AIpwx49LvEH5jFkZohIFvkE0Wxjs96V8OYR4fHYr/EZHNvUVrzPPPA5oXizL1d5auC28qifhLFue4g==
+Date: Thu, 22 Mar 2018 12:48:33 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: okaya@codeaurora.org
+Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-rdma@vger.kernel.org, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Steve Wise <swise@chelsio.com>,
+        Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers
+ on weakly-ordered archs
+Message-ID: <20180322184833.GB9469@ziepe.ca>
+References: <1521514068-8856-5-git-send-email-okaya@codeaurora.org>
+ <201803221430.P43GJl9U%fengguang.wu@intel.com>
+ <3664b253c730dbf83f4528acaedb3a88@codeaurora.org>
+ <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <af814bbe-b6b5-12f8-72e5-7935e767bd87@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 10:34:08AM -0700, Yang Shi wrote:
-> On 3/21/18 10:29 AM, Matthew Wilcox wrote:
-> > Take the mmap_sem for write
-> > Find the VMA
-> >    If the VMA is large(*)
-> >      Mark the VMA as deleted
-> >      Drop the mmap_sem
-> >      zap all of the entries
-> >      Take the mmap_sem
-> >    Else
-> >      zap all of the entries
-> > Continue finding VMAs
-> > Drop the mmap_sem
-> > 
-> > Now we need to change everywhere which looks up a VMA to see if it needs
-> > to care the the VMA is deleted (page faults, eg will need to SIGBUS; mmap
-> > does not care; munmap will need to wait for the existing munmap operation
+On Thu, Mar 22, 2018 at 08:48:35AM -0400, okaya@codeaurora.org wrote:
+> On 2018-03-22 08:24, okaya@codeaurora.org wrote:
+> >On 2018-03-22 02:44, kbuild test robot wrote:
+> >>Hi Sinan,
+> >>
+> >>Thank you for the patch! Yet something to improve:
+> >>
+> >>[auto build test ERROR on linus/master]
+> >>[also build test ERROR on v4.16-rc6 next-20180321]
+> >>[if your patch is applied to the wrong git tree, please drop us a note
+> >>to help improve the system]
+> >>
+> >>url:
+> >>https://github.com/0day-ci/linux/commits/Sinan-Kaya/ib-Eliminate-duplicate-barriers-on-weakly-ordered-archs/20180321-091659
+> >>config: xtensa-allyesconfig (attached as .config)
+> >>compiler: xtensa-linux-gcc (GCC) 7.2.0
+> >>reproduce:
+> >>        wget
+> >>https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+> >>-O ~/bin/make.cross
+> >>        chmod +x ~/bin/make.cross
+> >>        # save the attached .config to linux build tree
+> >>        make.cross ARCH=xtensa
+> >>
+> >
+> >Jason,
+> >
+> >Can you remove the writeq change if it is too late for me to fix?
+> >
+> >This is an infrastructural issue on xtensa arch.
+> >
+> >Probably, it won't get fixed today.
 > 
-> The other question is why munmap need wait? If the other parallel munmap
-> finds the vma has been marked as "deleted", it just need return 0 as it
-> doesn't find vma.
-> 
-> Currently do_munmap() does the below logic:
->     vma = find_vma(mm, start);
->     if (!vma)
->         return 0;
+> AFAIS, even writeq won't compile on this arch. I started questioning this
+> build test.
 
-At the point a munmap() returns, the area should be available for reuse.
-If another thread is still unmapping, it won't actually be available yet.
-We should wait for the other thread to finish before returning.
+I have the same confusion. Did you figure out an explanation?
 
-There may be some other corner cases; like what to do if there's a partial
-unmap of a VMA, or a MAP_FIXED over part of an existing VMA.  It's going
-to be safer to just wait for any conflicts to die down.  It's not like
-real programs call munmap() on conflicting areas at the same time.
+Jason
