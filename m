@@ -1,224 +1,343 @@
 Return-Path: <blackzert@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521827284; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521736613; cv=none;
         d=google.com; s=arc-20160816;
-        b=SCto+aqZKPHswJv+65Amz06XIOK62+r02XD55vaLrCbKL+vWvPUyfQOVnPlxFjzmr2
-         sbgatSvInYbdOVtTFMGRJcQvkN/19Zfd29KBl2xJP9LPtl392zwaojrRjc/zOn1VlFkq
-         2wr7dB7yew5zVBxkAo7lq6ewmzy/6du4L2GcbpGEjA5mwkcFZgwehtVQySgxhyrYlNsK
-         nNQAtTFz9P+TDGlZ6tPTgltdo0iHiwozAzpO0DrJULaLCEAq06JuB3tByJmciGuTotV0
-         C2qE24sPCRbPtzb3b1j5b5NSf/AOujx5WJO8v72g2qGHwWo97ImcSB7xvpl73GrG9wqK
-         s9Xg==
+        b=JAQ1x2xM/NMsTjf8IUSi3FToX7fbfUKEMD3D067QpcZMdex1iNbQckNz4tecHhAMWD
+         ldgqk0IrzlZdgMDf/B7mmCQ+4Hks5V3btRo31s2ydMq8xhseuilRy/4SBm8lScJHOxSg
+         BRfMjt2K83qTehbd/YELqz8PtFzddINRhphDfobza2S9JQefeZqa2Snhc9r7qaPYQ+F8
+         kTa8hrP/SkQSzB7dqq636sLrXixmwVyhG9mbQes40tkI0Qd78Fn1X6UF0S7QOgjIQVlY
+         ytcrzIhfqmIlsZkxSN0E27nwrteiTEuWiqEUbjT5RoiHkrODQhH269t0M5IOpctkPXs7
+         auzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:dkim-signature:arc-authentication-results;
-        bh=uetvGUCojhaZF1cGzHJVZuEIcoQzSG0BT2smcOYhyeQ=;
-        b=vAU/uX0JzBIdRF2h6FDqVgVKpLVY0iUdTLYU42iRzkc+5LuFC5KJ4nANkHfUTfSnC5
-         1CYQj44QJJjxfrlkJl1WdEz4tIu2lqBWQ/qIkgCl/SQn9RyenSPUurlWV9t/S9VmM+ng
-         W8LJZfBqrzDJWGYGATGvbqxMROg33yf2HvLoCJcY05xRBLIi7vCthENIrnTtSIVDp+gx
-         bCizeS0ICVs2IADVqPhVZTPSvBQZ9/cPhauzYD1hmn7PVZLmh9bsK4h9K1xtLQX6ZbBM
-         j3UPlWY35TblIM27wXXslH17hS8sGfroS+WwYFwg0jeibnir57b36m8Hhy+/4AO4Stiz
-         u/nw==
+        h=references:in-reply-to:message-id:date:subject:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=rbeOKq5V9eTRT8u5rfUzAgCdLtD99Cqf+/8TfHALzlA=;
+        b=e0U2pc+I+iBe51sCtEWIM64x3GE4IDIV9GChkxCcYuuDMeLh1pUMd5mdw3gHF07iwW
+         GcT0krXvDVNfG2FKLvqmgQJYlDKii4/AthT5WM9yZ+m65XfpfcLg23wflxMGP2sbQg5S
+         68tgOwL55Vt/soR8b8W2wI3Jju6guL9J1+NmMto2xT1UEelW2mUz2oGEE/Wz7pBbVOkQ
+         I5uF8/7yuewBTnyslxcEut0zS6IeYdB3Nw0aWk1PFoPc2GeTTdoONQnTIgvz942VKQMz
+         V7/zpIgrDC8EDYhG4LbDb8okhNfekITyOlty2+a5DEcLURDBwwNjeRs5nQNoU8/xeCns
+         bcCA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kPomwbVs;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HLlgqaEe;
        spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kPomwbVs;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HLlgqaEe;
        spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELvprX88V7gLuVZjyauKh2sGf/w8hTcCfNXTQOawcQ8luvrMZKgmu799Ex/UO4EerUiQDmWsxQ==
+X-Google-Smtp-Source: AIpwx494nudMk19aF0byhFwcLpnF6u66xKh6fxV5mTuYViQ5cN1BHb/El+EAFgvRhSo/wmJbdpz97g==
 From: Ilya Smith <blackzert@gmail.com>
-Message-Id: <5D55B1FC-1962-4941-BF56-1F83554FC64C@gmail.com>
-Content-Type: multipart/signed;
-	boundary="Apple-Mail=_B9437F76-CEDD-4524-828D-E63FF8E38C7F";
-	protocol="application/pgp-signature";
-	micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [RFC PATCH v2 2/2] Architecture defined limit on memory region
- random shift.
-Date: Fri, 23 Mar 2018 20:48:00 +0300
-In-Reply-To: <20180322135448.046ada120ecd1ab3dd8f94aa@linux-foundation.org>
-Cc: rth@twiddle.net,
- ink@jurassic.park.msu.ru,
- mattst88@gmail.com,
- vgupta@synopsys.com,
- linux@armlinux.org.uk,
- tony.luck@intel.com,
- fenghua.yu@intel.com,
- ralf@linux-mips.org,
- jejb@parisc-linux.org,
- Helge Deller <deller@gmx.de>,
- benh@kernel.crashing.org,
- paulus@samba.org,
- mpe@ellerman.id.au,
- schwidefsky@de.ibm.com,
- heiko.carstens@de.ibm.com,
- ysato@users.sourceforge.jp,
- dalias@libc.org,
- davem@davemloft.net,
- tglx@linutronix.de,
- mingo@redhat.com,
- hpa@zytor.com,
- x86@kernel.org,
- nyc@holomorphy.com,
- viro@zeniv.linux.org.uk,
- arnd@arndb.de,
- gregkh@linuxfoundation.org,
- deepa.kernel@gmail.com,
- Michal Hocko <mhocko@suse.com>,
- Hugh Dickins <hughd@google.com>,
- kstewart@linuxfoundation.org,
- pombredanne@nexb.com,
- steve.capper@arm.com,
- punit.agrawal@arm.com,
- aneesh.kumar@linux.vnet.ibm.com,
- npiggin@gmail.com,
- Kees Cook <keescook@chromium.org>,
- bhsharma@redhat.com,
- riel@redhat.com,
- nitin.m.gupta@oracle.com,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jan Kara <jack@suse.cz>,
- ross.zwisler@linux.intel.com,
- Jerome Glisse <jglisse@redhat.com>,
- Matthew Wilcox <willy@infradead.org>,
- Andrea Arcangeli <aarcange@redhat.com>,
- Oleg Nesterov <oleg@redhat.com>,
- linux-alpha@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- linux-snps-arc@lists.infradead.org,
- linux-ia64@vger.kernel.org,
- linux-metag@vger.kernel.org,
- linux-mips@linux-mips.org,
- linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org,
- Linux-MM <linux-mm@kvack.org>
-To: Andrew Morton <akpm@linux-foundation.org>
+To: rth@twiddle.net,
+	ink@jurassic.park.msu.ru,
+	mattst88@gmail.com,
+	vgupta@synopsys.com,
+	linux@armlinux.org.uk,
+	tony.luck@intel.com,
+	fenghua.yu@intel.com,
+	jhogan@kernel.org,
+	ralf@linux-mips.org,
+	jejb@parisc-linux.org,
+	deller@gmx.de,
+	benh@kernel.crashing.org,
+	paulus@samba.org,
+	mpe@ellerman.id.au,
+	schwidefsky@de.ibm.com,
+	heiko.carstens@de.ibm.com,
+	ysato@users.sourceforge.jp,
+	dalias@libc.org,
+	davem@davemloft.net,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	x86@kernel.org,
+	nyc@holomorphy.com,
+	viro@zeniv.linux.org.uk,
+	arnd@arndb.de,
+	blackzert@gmail.com,
+	gregkh@linuxfoundation.org,
+	deepa.kernel@gmail.com,
+	mhocko@suse.com,
+	hughd@google.com,
+	kstewart@linuxfoundation.org,
+	pombredanne@nexb.com,
+	akpm@linux-foundation.org,
+	steve.capper@arm.com,
+	punit.agrawal@arm.com,
+	paul.burton@mips.com,
+	aneesh.kumar@linux.vnet.ibm.com,
+	npiggin@gmail.com,
+	keescook@chromium.org,
+	bhsharma@redhat.com,
+	riel@redhat.com,
+	nitin.m.gupta@oracle.com,
+	kirill.shutemov@linux.intel.com,
+	dan.j.williams@intel.com,
+	jack@suse.cz,
+	ross.zwisler@linux.intel.com,
+	jglisse@redhat.com,
+	willy@infradead.org,
+	aarcange@redhat.com,
+	oleg@redhat.com,
+	linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-ia64@vger.kernel.org,
+	linux-metag@vger.kernel.org,
+	linux-mips@linux-mips.org,
+	linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH v2 1/2] Randomization of address chosen by mmap.
+Date: Thu, 22 Mar 2018 19:36:37 +0300
+Message-Id: <1521736598-12812-2-git-send-email-blackzert@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521736598-12812-1-git-send-email-blackzert@gmail.com>
 References: <1521736598-12812-1-git-send-email-blackzert@gmail.com>
- <1521736598-12812-3-git-send-email-blackzert@gmail.com>
- <20180322135448.046ada120ecd1ab3dd8f94aa@linux-foundation.org>
-X-Mailer: Apple Mail (2.3445.5.20)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595656493467338178?=
-X-GMAIL-MSGID: =?utf-8?q?1595751566509464944?=
+X-GMAIL-THRID: =?utf-8?q?1595656488556903336?=
+X-GMAIL-MSGID: =?utf-8?q?1595656490955535392?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Signed-off-by: Ilya Smith <blackzert@gmail.com>
+---
+ include/linux/mm.h |  16 ++++--
+ mm/mmap.c          | 164 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 175 insertions(+), 5 deletions(-)
 
---Apple-Mail=_B9437F76-CEDD-4524-828D-E63FF8E38C7F
-Content-Type: multipart/alternative;
-	boundary="Apple-Mail=_302D41D8-B8D8-4A57-A90C-AE132EC44462"
-
-
---Apple-Mail=_302D41D8-B8D8-4A57-A90C-AE132EC44462
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
-
-
-> On 22 Mar 2018, at 23:54, Andrew Morton <akpm@linux-foundation.org> =
-wrote:
->=20
->=20
-> Please add changelogs.  An explanation of what a "limit on memory
-> region random shift" is would be nice ;) Why does it exist, why are we
-> doing this, etc.  Surely there's something to be said - at present =
-this
-> is just a lump of random code?
->=20
-Sorry, my bad. The main idea of this limit is to decrease possible =
-memory
-fragmentation. This is not so big problem on 64bit process, but really =
-big for
-32 bit processes since may cause failure memory allocation. To control =
-memory
-fragmentation and protect 32 bit systems (or architectures) this limit =
-was
-introduce by this patch. It could be also moved to CONFIG_ as well.
-
-
-
---Apple-Mail=_302D41D8-B8D8-4A57-A90C-AE132EC44462
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/html;
-	charset=us-ascii
-
-<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; =
-charset=3Dus-ascii"></head><body style=3D"word-wrap: break-word; =
--webkit-nbsp-mode: space; line-break: after-white-space;" class=3D""><br =
-class=3D""><div><blockquote type=3D"cite" class=3D""><div class=3D"">On =
-22 Mar 2018, at 23:54, Andrew Morton &lt;<a =
-href=3D"mailto:akpm@linux-foundation.org" =
-class=3D"">akpm@linux-foundation.org</a>&gt; wrote:</div><br =
-class=3D"Apple-interchange-newline"><div class=3D""><div class=3D""><br =
-class=3D"">Please add changelogs. &nbsp;An explanation of what a "limit =
-on memory<br class=3D"">region random shift" is would be nice ;) Why =
-does it exist, why are we<br class=3D"">doing this, etc. &nbsp;Surely =
-there's something to be said - at present this<br class=3D"">is just a =
-lump of random code?<br class=3D""><br =
-class=3D""></div></div></blockquote><div style=3D"margin: 0px; =
-font-stretch: normal; font-size: 11px; line-height: normal; font-family: =
-Menlo; background-color: rgb(255, 255, 255);" class=3D""><span =
-style=3D"font-variant-ligatures: no-common-ligatures" class=3D"">Sorry, =
-my bad. The main idea of this limit is to decrease possible =
-memory&nbsp;</span></div><div style=3D"margin: 0px; font-stretch: =
-normal; font-size: 11px; line-height: normal; font-family: Menlo; =
-background-color: rgb(255, 255, 255);" class=3D""><span =
-style=3D"font-variant-ligatures: no-common-ligatures" =
-class=3D"">fragmentation. This is not so big problem on 64bit process, =
-but really big for&nbsp;</span></div><div style=3D"margin: 0px; =
-font-stretch: normal; font-size: 11px; line-height: normal; font-family: =
-Menlo; background-color: rgb(255, 255, 255);" class=3D""><span =
-style=3D"font-variant-ligatures: no-common-ligatures" class=3D"">32 bit =
-processes since may cause failure memory allocation. To control =
-memory&nbsp;</span></div><div style=3D"margin: 0px; font-stretch: =
-normal; font-size: 11px; line-height: normal; font-family: Menlo; =
-background-color: rgb(255, 255, 255);" class=3D""><span =
-style=3D"font-variant-ligatures: no-common-ligatures" =
-class=3D"">fragmentation and protect 32 bit systems (or architectures) =
-this limit was&nbsp;</span></div><div style=3D"margin: 0px; =
-font-stretch: normal; font-size: 11px; line-height: normal; font-family: =
-Menlo; background-color: rgb(255, 255, 255);" class=3D""><span =
-style=3D"font-variant-ligatures: no-common-ligatures" class=3D"">introduce=
- by this patch. It could be also moved to CONFIG_ as =
-well.</span></div><div style=3D"margin: 0px; font-stretch: normal; =
-font-size: 11px; line-height: normal; font-family: Menlo; =
-background-color: rgb(255, 255, 255);" class=3D""><span =
-style=3D"font-variant-ligatures: no-common-ligatures" class=3D""><br =
-class=3D""></span></div><div style=3D"margin: 0px; font-stretch: normal; =
-font-size: 11px; line-height: normal; font-family: Menlo; =
-background-color: rgb(255, 255, 255);" class=3D""><span =
-style=3D"font-variant-ligatures: no-common-ligatures" class=3D""><br =
-class=3D""></span></div></div></body></html>=
-
---Apple-Mail=_302D41D8-B8D8-4A57-A90C-AE132EC44462--
-
---Apple-Mail=_B9437F76-CEDD-4524-828D-E63FF8E38C7F
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEju7OBNw5xIMUzNy9WTzOquRR3DcFAlq1PdAACgkQWTzOquRR
-3Ddp9BAAmPUV7u9gSEqLavwAr5Hu+ZmmSJS7i95PzubMqxmQosuS52Z4/bUbBubG
-rpcg0eym8hpSfWnUs+SyF4od/d1elKMcF0Xy16b48F7xeGARHOBsxp2WXVdLDxVN
-veTQKZ5skp9MHHAPJZbrwJqslKksWdisVWxx14XXWt3o+LqeG5/O7XORxC4zqAEv
-wa4BvuDBg86I6/J+5+8aMVeucisrk/DKxG1sWWXWsRkQYDK8+V1pO0RUuxDSHu9K
-5YDyvXzdcXy1NML+LAmtPO9xDK+6jI0YVFY6Ifp1wbVYI5KwDLWiAchEYPnHTmcI
-719Wfy9aLBVnG8EyOCR1z86LegVJ0AKUidWovh+fhOZ3kO8rbmr9yv7FV0WXzf98
-1HUZBQWwW3UuDOb3t/83TMeNHtq/kb0NXD+bjb4NFJUnYS15lYDe9YPhO5MKCudT
-X0prbA/oipnJQojAzlITFNUt2N7N+53OxDEdXHzrQDuT0g/wdheM5q27VvQ+EdE5
-72YRH72brGkh+b/QhreLK3OjiGa6AWdWpqr+5ERn4TVt1IRBSfRAq5zHAxgDk97S
-81cRvJgLR0n2NEXHNrvyjIZebfLuc5CmPiTs4tLHpDYnrrUZtsuQyXk53hSiUmGs
-KzBn/WKQGxswsjPNqzFNDNIaf67VXSlf4QQmegh2Fl8GGC8v8pg=
-=6qWL
------END PGP SIGNATURE-----
-
---Apple-Mail=_B9437F76-CEDD-4524-828D-E63FF8E38C7F--
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad06d42..c716257 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -25,6 +25,7 @@
+ #include <linux/err.h>
+ #include <linux/page_ref.h>
+ #include <linux/memremap.h>
++#include <linux/sched.h>
+ 
+ struct mempolicy;
+ struct anon_vma;
+@@ -2253,6 +2254,13 @@ struct vm_unmapped_area_info {
+ 	unsigned long align_offset;
+ };
+ 
++#ifndef CONFIG_MMU
++#define randomize_va_space 0
++#else
++extern int randomize_va_space;
++#endif
++
++extern unsigned long unmapped_area_random(struct vm_unmapped_area_info *info);
+ extern unsigned long unmapped_area(struct vm_unmapped_area_info *info);
+ extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
+ 
+@@ -2268,6 +2276,9 @@ extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
+ static inline unsigned long
+ vm_unmapped_area(struct vm_unmapped_area_info *info)
+ {
++	/* How about 32 bit process?? */
++	if ((current->flags & PF_RANDOMIZE) && randomize_va_space > 3)
++		return unmapped_area_random(info);
+ 	if (info->flags & VM_UNMAPPED_AREA_TOPDOWN)
+ 		return unmapped_area_topdown(info);
+ 	else
+@@ -2529,11 +2540,6 @@ int drop_caches_sysctl_handler(struct ctl_table *, int,
+ void drop_slab(void);
+ void drop_slab_node(int nid);
+ 
+-#ifndef CONFIG_MMU
+-#define randomize_va_space 0
+-#else
+-extern int randomize_va_space;
+-#endif
+ 
+ const char * arch_vma_name(struct vm_area_struct *vma);
+ void print_vma_addr(char *prefix, unsigned long rip);
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 9efdc021..ba9cebb 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -45,6 +45,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/pkeys.h>
+ #include <linux/oom.h>
++#include <linux/random.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/cacheflush.h>
+@@ -1780,6 +1781,169 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	return error;
+ }
+ 
++unsigned long unmapped_area_random(struct vm_unmapped_area_info *info)
++{
++	struct mm_struct *mm = current->mm;
++	struct vm_area_struct *vma = NULL;
++	struct vm_area_struct *visited_vma = NULL;
++	unsigned long entropy[2];
++	unsigned long length, low_limit, high_limit, gap_start, gap_end;
++	unsigned long addr = 0;
++
++	/* get entropy with prng */
++	prandom_bytes(&entropy, sizeof(entropy));
++	/* small hack to prevent EPERM result */
++	info->low_limit = max(info->low_limit, mmap_min_addr);
++
++	/* Adjust search length to account for worst case alignment overhead */
++	length = info->length + info->align_mask;
++	if (length < info->length)
++		return -ENOMEM;
++
++	/*
++	 * Adjust search limits by the desired length.
++	 * See implementation comment at top of unmapped_area().
++	 */
++	gap_end = info->high_limit;
++	if (gap_end < length)
++		return -ENOMEM;
++	high_limit = gap_end - length;
++
++	low_limit = info->low_limit + info->align_mask;
++	if (low_limit >= high_limit)
++		return -ENOMEM;
++
++	/* Choose random addr in limit range */
++	addr = entropy[0] % ((high_limit - low_limit) >> PAGE_SHIFT);
++	addr = low_limit + (addr << PAGE_SHIFT);
++	addr += (info->align_offset - addr) & info->align_mask;
++
++	/* Check if rbtree root looks promising */
++	if (RB_EMPTY_ROOT(&mm->mm_rb))
++		return -ENOMEM;
++
++	vma = rb_entry(mm->mm_rb.rb_node, struct vm_area_struct, vm_rb);
++	if (vma->rb_subtree_gap < length)
++		return -ENOMEM;
++	/* use randomly chosen address to find closest suitable gap */
++	while (true) {
++		gap_start = vma->vm_prev ? vm_end_gap(vma->vm_prev) : 0;
++		gap_end = vm_start_gap(vma);
++		if (gap_end < low_limit)
++			break;
++		if (addr < vm_start_gap(vma)) {
++			/* random said check left */
++			if (vma->vm_rb.rb_left) {
++				struct vm_area_struct *left =
++					rb_entry(vma->vm_rb.rb_left,
++						 struct vm_area_struct, vm_rb);
++				if (addr <= vm_start_gap(left) &&
++				    left->rb_subtree_gap >= length) {
++					vma = left;
++					continue;
++				}
++			}
++		} else if (addr >= vm_end_gap(vma)) {
++			/* random said check right */
++			if (vma->vm_rb.rb_right) {
++				struct vm_area_struct *right =
++				rb_entry(vma->vm_rb.rb_right,
++					 struct vm_area_struct, vm_rb);
++				/* it want go to the right */
++				if (right->rb_subtree_gap >= length) {
++					vma = right;
++					continue;
++				}
++			}
++		}
++		if (gap_start < low_limit) {
++			if (gap_end <= low_limit)
++				break;
++			gap_start = low_limit;
++		} else if (gap_end > info->high_limit) {
++			if (gap_start >= info->high_limit)
++				break;
++			gap_end = info->high_limit;
++		}
++		if (gap_end > gap_start &&
++		    gap_end - gap_start >= length)
++			goto found;
++		visited_vma = vma;
++		break;
++	}
++	/* not found */
++	while (true) {
++		gap_start = vma->vm_prev ? vm_end_gap(vma->vm_prev) : 0;
++
++		if (gap_start <= high_limit && vma->vm_rb.rb_right) {
++			struct vm_area_struct *right =
++				rb_entry(vma->vm_rb.rb_right,
++					 struct vm_area_struct, vm_rb);
++			if (right->rb_subtree_gap >= length &&
++			    right != visited_vma) {
++				vma = right;
++				continue;
++			}
++		}
++
++check_current:
++		/* Check if current node has a suitable gap */
++		gap_end = vm_start_gap(vma);
++		if (gap_end <= low_limit)
++			goto go_back;
++
++		if (gap_start < low_limit)
++			gap_start = low_limit;
++
++		if (gap_start <= high_limit &&
++		    gap_end > gap_start && gap_end - gap_start >= length)
++			goto found;
++
++		/* Visit left subtree if it looks promising */
++		if (vma->vm_rb.rb_left) {
++			struct vm_area_struct *left =
++				rb_entry(vma->vm_rb.rb_left,
++					 struct vm_area_struct, vm_rb);
++			if (left->rb_subtree_gap >= length &&
++			    vm_end_gap(left) > low_limit &&
++				left != visited_vma) {
++				vma = left;
++				continue;
++			}
++		}
++go_back:
++		/* Go back up the rbtree to find next candidate node */
++		while (true) {
++			struct rb_node *prev = &vma->vm_rb;
++
++			if (!rb_parent(prev))
++				return -ENOMEM;
++			visited_vma = vma;
++			vma = rb_entry(rb_parent(prev),
++				       struct vm_area_struct, vm_rb);
++			if (prev == vma->vm_rb.rb_right) {
++				gap_start = vma->vm_prev ?
++					vm_end_gap(vma->vm_prev) : low_limit;
++				goto check_current;
++			}
++		}
++	}
++found:
++	/* We found a suitable gap. Clip it with the original high_limit. */
++	if (gap_end > info->high_limit)
++		gap_end = info->high_limit;
++	gap_end -= info->length;
++	gap_end -= (gap_end - info->align_offset) & info->align_mask;
++	/* only one suitable page */
++	if (gap_end ==  gap_start)
++		return gap_start;
++	addr = entropy[1] % (min((gap_end - gap_start) >> PAGE_SHIFT,
++							 0x10000UL));
++	addr = gap_end - (addr << PAGE_SHIFT);
++	addr += (info->align_offset - addr) & info->align_mask;
++	return addr;
++}
++
+ unsigned long unmapped_area(struct vm_unmapped_area_info *info)
+ {
+ 	/*
+-- 
+2.7.4
