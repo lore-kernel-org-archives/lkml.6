@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751734AbeCVUUs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:20:48 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37892 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752103AbeCVUUo (ORCPT
+        id S1752197AbeCVUUz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:20:55 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:42076 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752124AbeCVUUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:20:44 -0400
-X-Google-Smtp-Source: AG47ELsX6f/41o+sfS/ENRA+7xHtfdaj0M6W3WlT+RTBzCv8BYyyxxDPmk4LZzAp0w7ZIS0hbd7yeg==
+        Thu, 22 Mar 2018 16:20:47 -0400
+X-Google-Smtp-Source: AG47ELuDeeaY0LNAaNzNTiMRtI54uSJQVtXCOsDpLyvDWuisVHeURNMenKBJLsq8/hfbvXeyrPgUKg==
 From: Mathieu Malaterre <malat@debian.org>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Mathieu Malaterre <malat@debian.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org
-Subject: [PATCH 03/19] powerpc: Mark variables as unused
-Date: Thu, 22 Mar 2018 21:19:49 +0100
-Message-Id: <20180322202007.23088-4-malat@debian.org>
+Subject: [PATCH 05/19] powerpc/chrp/setup: Add attribute unused and make some functions static
+Date: Thu, 22 Mar 2018 21:19:51 +0100
+Message-Id: <20180322202007.23088-6-malat@debian.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180322202007.23088-1-malat@debian.org>
 References: <20180322202007.23088-1-malat@debian.org>
@@ -27,37 +27,70 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add gcc attribute unused for two variables. Fix warnings treated as errors
-with W=1:
+Add gcc attribute unused to silence a warning.
 
-  arch/powerpc/kernel/prom_init.c:1388:8: error: variable ‘path’ set but not used [-Werror=unused-but-set-variable]
+These functions can all be static, make it so. Fix warnings treated as
+errors with W=1:
+
+  arch/powerpc/platforms/chrp/setup.c:97:6: error: no previous prototype for ‘chrp_show_cpuinfo’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/setup.c:302:13: error: no previous prototype for ‘chrp_setup_arch’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/setup.c:385:16: error: variable ‘idu_size’ set but not used [-Werror=unused-but-set-variable]
+  arch/powerpc/platforms/chrp/setup.c:526:13: error: no previous prototype for ‘chrp_init_IRQ’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/setup.c:559:1: error: no previous prototype for ‘chrp_init2’ [-Werror=missing-prototypes]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/powerpc/kernel/prom_init.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/chrp/setup.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-index acf4b2e0530c..6a3ac4522144 100644
---- a/arch/powerpc/kernel/prom_init.c
-+++ b/arch/powerpc/kernel/prom_init.c
-@@ -603,7 +603,7 @@ static void __init early_cmdline_parse(void)
- 	const char *opt;
+diff --git a/arch/powerpc/platforms/chrp/setup.c b/arch/powerpc/platforms/chrp/setup.c
+index 481ed133e04b..85df479fd631 100644
+--- a/arch/powerpc/platforms/chrp/setup.c
++++ b/arch/powerpc/platforms/chrp/setup.c
+@@ -94,7 +94,7 @@ static const char *chrp_names[] = {
+ 	"Total Impact Briq"
+ };
  
- 	char *p;
--	int l = 0;
-+	int l __maybe_unused = 0;
- 
- 	prom_cmd_line[0] = 0;
- 	p = prom_cmd_line;
-@@ -1385,7 +1385,7 @@ static void __init reserve_mem(u64 base, u64 size)
- static void __init prom_init_mem(void)
+-void chrp_show_cpuinfo(struct seq_file *m)
++static void chrp_show_cpuinfo(struct seq_file *m)
  {
- 	phandle node;
--	char *path, type[64];
-+	char *path __maybe_unused, type[64];
- 	unsigned int plen;
- 	cell_t *p, *endp;
- 	__be32 val;
+ 	int i, sdramen;
+ 	unsigned int t;
+@@ -299,7 +299,7 @@ static __init void chrp_init(void)
+ 	of_node_put(node);
+ }
+ 
+-void __init chrp_setup_arch(void)
++static void __init chrp_setup_arch(void)
+ {
+ 	struct device_node *root = of_find_node_by_path("/");
+ 	const char *machine = NULL;
+@@ -382,7 +382,7 @@ static void __init chrp_find_openpic(void)
+ {
+ 	struct device_node *np, *root;
+ 	int len, i, j;
+-	int isu_size, idu_size;
++	int isu_size, idu_size __maybe_unused;
+ 	const unsigned int *iranges, *opprop = NULL;
+ 	int oplen = 0;
+ 	unsigned long opaddr;
+@@ -523,7 +523,7 @@ static void __init chrp_find_8259(void)
+ 	}
+ }
+ 
+-void __init chrp_init_IRQ(void)
++static void __init chrp_init_IRQ(void)
+ {
+ #if defined(CONFIG_VT) && defined(CONFIG_INPUT_ADBHID) && defined(CONFIG_XMON)
+ 	struct device_node *kbd;
+@@ -555,7 +555,7 @@ void __init chrp_init_IRQ(void)
+ #endif
+ }
+ 
+-void __init
++static void __init
+ chrp_init2(void)
+ {
+ #ifdef CONFIG_NVRAM
 -- 
 2.11.0
