@@ -1,23 +1,23 @@
 Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AG47ELt3EW5grIxcb7tFdBLAP5BqYHq8itl+VP2AbYqA60FNK3axrqvLbxOtRi9QF2YCtlV3EECW
-ARC-Seal: i=1; a=rsa-sha256; t=1521739035; cv=none;
+X-Google-Smtp-Source: AIpwx49Ac0papMTD+OmigxbM2zlALSwooTIxn4LIVshdCtTlRbP/pR8yWhPGuduuCcp5ormGq7OB
+ARC-Seal: i=1; a=rsa-sha256; t=1521739034; cv=none;
         d=google.com; s=arc-20160816;
-        b=lPb1COFpo4yPb4qFgN8yzmDQHIOMI5T0RIjlKbmmEJfHZKhotAh0HMGx7SKo3rUOv5
-         +KCChHQZham9EIKmChrttfDyQx7AISvt49YTcrlJTkyGTjGK7puDD2pEmr6QUl16zegb
-         GE6DkiUB7vduHCg3pzSSP5zWs57WS9UwBGOvcADskI/GzhJ+2ERtQmusAKHbBHNhBcgM
-         zi/LAN1fHlJJ51SlEqPGzHmimdYE+K4lug4xUvLPhL9UbWmiFxVh9SimPrFKtaoH7F/n
-         l72Ijt0GrQBCTPlBKSvdLIlHgGGhMfIfJbklJqIGEi9vA7RWUM6aqM98Ly0eRVBFqTt7
-         g+2g==
+        b=xjLPh32ZloKkniyxXq3L9j/bIzYa0WibnPu1ILRKFGd5tGTT2y9Nyb37vJcPPDzdnb
+         Ac41a26q75B4H6Gic+uwvwqbk8QfUobU5lTaVAILcmjORW0iTa5pS2iL3lkj4qRcqQ28
+         2Heafn68cpfV+nJTZAN7CcZ+ooH83BjT53z97qasZ7IOxZse5BzAR6MN/i2gbhM6Xsk1
+         djS/pvpN1KNy4T0znHCCz92eh0dGo9J97YtLkFxpr6lG5tYo40qtUj6ITQfCrHu/xoXE
+         SaoqefcOteKti+4tgVL5Vy6JuQ0FgpLq6IYUEevwVhd1Dtf5NTeU8EbKpVSTuw+TlX8i
+         2ZcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=subject:references:in-reply-to:message-id:date:cc:to:from
          :arc-authentication-results;
-        bh=p4iy3rPVmOtVhj5GevPWNkxQYLpkAqcgc8ZRuqw7tLQ=;
-        b=nbkordGJyhvLxXQHkzbfryr0XEn9T6VH90yYdWh/ao2QRVKG2+JaLxXkWe3yGxdkmX
-         8ZxvVsRJEriPtcJ+8RkcICFORxUK1o9dQ86PRQiiHCgdw2kM7ywfEapKNv2qvi9QlRfq
-         T7iOo+0rskFIsU8HcgC7eL/PeYRsWCO7cx2SF/GEM21/qe0D07tqJMuA5wpvkEzm2Kjh
-         6p0W4eeZApXAlqTIHgpazd/EO/khqbzrcY/dzokJWQbBWXyeVsuFltfCLOu4wV68NUA6
-         setetDLvgnefLUYfzgOYB+qvtzCQqSH/tKHwt6iBN+fJQnHv0ydM9NxlrtSTxJs7qCXr
-         px8g==
+        bh=5r7BVSMWLPf1poCuDJ+n+Y1NCPOdkr/DoAWOECkhpH0=;
+        b=zqNrOCzTAR91IFl9Nu3KqCVZjoiwdREphKj8etGj9ahuVp28H0pgFbIkbj2iWA6jkb
+         Pcj2BHiO9PS5QakJkZjU9FiKQQ5zhoA7wG59Ty3S4IahUmuVM2V6El7rMZFp6K4nwdhN
+         3L2WwanNekiQ9jJc6ex6wCkfh+Qv6zH0/kup1NeDfjNCXJvogvog3wEN8W5+aKlkxXct
+         +1SUfvVgNQiDFsw/eM/guUNdBCZCDN8QSqa69vlJHNXYOjryrY8NEgOYXUDq0x1vpBNh
+         WEiW1Hdbef/z4Gv6OmmXUUQolMWO9M2m6zr/sNCf4p0O7I76exRDYoFP0Z0FYT06UOo7
+         2oJw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
@@ -31,62 +31,52 @@ To: linux-kernel@vger.kernel.org,
 Cc: Arnd Bergmann <arnd@arndb.de>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Jon Mason <jdmason@kudzu.us>
-Date: Thu, 22 Mar 2018 11:17:03 -0600
-Message-Id: <20180322171703.4300-11-logang@deltatee.com>
+	Logan Gunthorpe <logang@deltatee.com>
+Date: Thu, 22 Mar 2018 11:17:01 -0600
+Message-Id: <20180322171703.4300-9-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180322171703.4300-1-logang@deltatee.com>
 References: <20180322171703.4300-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, jdmason@kudzu.us
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v14 10/10] ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common header
+Subject: [PATCH v14 08/10] ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595659030789018417?=
-X-GMAIL-MSGID: =?utf-8?q?1595659030789018417?=
+X-GMAIL-THRID: =?utf-8?q?1595659029235170172?=
+X-GMAIL-MSGID: =?utf-8?q?1595659029235170172?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Clean up the ifdefs which conditionally defined the io{read|write}64
-functions in favour of the new common io-64-nonatomic-lo-hi header.
-
-Per a nit from Andy Shevchenko, the include list is also made
-alphabetical.
+Now that ioread64 and iowrite64 are available in io-64-nonatomic,
+we can remove the hack at the top of ntb_hw_intel.c and replace it
+with an include.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jon Mason <jdmason@kudzu.us>
+Acked-by: Dave Jiang <dave.jiang@intel.com>
+Acked-by: Allen Hubbe <Allen.Hubbe@dell.com>
+Acked-by: Jon Mason <jdmason@kudzu.us>
 ---
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 36 ++++------------------------------
- 1 file changed, 4 insertions(+), 32 deletions(-)
+ drivers/ntb/hw/intel/ntb_hw_intel.c | 30 +-----------------------------
+ 1 file changed, 1 insertion(+), 29 deletions(-)
 
-diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-index f624ae27eabe..f403da24b833 100644
---- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-+++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -13,12 +13,13 @@
-  *
-  */
- 
--#include <linux/switchtec.h>
--#include <linux/module.h>
-+#include <linux/interrupt.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/delay.h>
- #include <linux/kthread.h>
--#include <linux/interrupt.h>
-+#include <linux/module.h>
+diff --git a/drivers/ntb/hw/intel/ntb_hw_intel.c b/drivers/ntb/hw/intel/ntb_hw_intel.c
+index 156b45cd4a19..5cf40ab21366 100644
+--- a/drivers/ntb/hw/intel/ntb_hw_intel.c
++++ b/drivers/ntb/hw/intel/ntb_hw_intel.c
+@@ -59,6 +59,7 @@
+ #include <linux/random.h>
+ #include <linux/slab.h>
  #include <linux/ntb.h>
-+#include <linux/switchtec.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
  
- MODULE_DESCRIPTION("Microsemi Switchtec(tm) NTB Driver");
- MODULE_VERSION("0.1");
-@@ -35,35 +36,6 @@ module_param(use_lut_mws, bool, 0644);
- MODULE_PARM_DESC(use_lut_mws,
- 		 "Enable the use of the LUT based memory windows");
+ #include "ntb_hw_intel.h"
+ 
+@@ -149,35 +150,6 @@ MODULE_PARM_DESC(xeon_b2b_dsd_bar5_addr32,
+ static inline enum ntb_topo xeon_ppd_topo(struct intel_ntb_dev *ndev, u8 ppd);
+ static int xeon_init_isr(struct intel_ntb_dev *ndev);
  
 -#ifndef ioread64
 -#ifdef readq
@@ -117,8 +107,8 @@ index f624ae27eabe..f403da24b833 100644
 -#endif
 -#endif
 -
- #define SWITCHTEC_NTB_MAGIC 0x45CC0001
- #define MAX_MWS     128
- 
+ static inline int pdev_is_xeon(struct pci_dev *pdev)
+ {
+ 	switch (pdev->device) {
 -- 
 2.11.0
