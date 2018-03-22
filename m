@@ -1,75 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754581AbeCVJKk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:10:40 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37704 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752912AbeCVJBp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:45 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 20/45] kernel: add do_compat_sigaltstack() helper; remove in-kernel call to compat syscall
-Date: Thu, 22 Mar 2018 10:00:34 +0100
-Message-Id: <20180322090059.19361-21-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
-References: <20180322090059.19361-1-linux@dominikbrodowski.net>
+        id S1753414AbeCVJLn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:11:43 -0400
+Received: from mga12.intel.com ([192.55.52.136]:43480 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752787AbeCVJLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 05:11:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,343,1517904000";
+   d="scan'208";a="40206294"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jonathan Corbet <corbet@lwn.net>, Gary R Hook <gary.hook@amd.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation/CodingStyle: Add an example for braces
+In-Reply-To: <20180321091701.7d56445d@lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <152114372879.3142.8833111074324091904.stgit@taos> <20180321091701.7d56445d@lwn.net>
+Date: Thu, 22 Mar 2018 11:12:29 +0200
+Message-ID: <87woy4iide.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using this helper allows us to avoid the in-kernel call to the
-compat_sys_sigaltstack() syscall.
+On Wed, 21 Mar 2018, Jonathan Corbet <corbet@lwn.net> wrote:
+> To head that off, I think I'll apply your first version instead, sorry
+> Jani.
 
-This patch is part of a series which tries to remove in-kernel calls to
-syscalls. On this basis, the syscall entry path can be streamlined.
+No worries.
 
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- kernel/signal.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+BR,
+Jani.
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 985c61749bcf..f04466655238 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -3573,9 +3573,8 @@ int __save_altstack(stack_t __user *uss, unsigned long sp)
- }
- 
- #ifdef CONFIG_COMPAT
--COMPAT_SYSCALL_DEFINE2(sigaltstack,
--			const compat_stack_t __user *, uss_ptr,
--			compat_stack_t __user *, uoss_ptr)
-+static int do_compat_sigaltstack(const compat_stack_t __user *uss_ptr,
-+				 compat_stack_t __user *uoss_ptr)
- {
- 	stack_t uss, uoss;
- 	int ret;
-@@ -3602,9 +3601,16 @@ COMPAT_SYSCALL_DEFINE2(sigaltstack,
- 	return ret;
- }
- 
-+COMPAT_SYSCALL_DEFINE2(sigaltstack,
-+			const compat_stack_t __user *, uss_ptr,
-+			compat_stack_t __user *, uoss_ptr)
-+{
-+	return do_compat_sigaltstack(uss_ptr, uoss_ptr);
-+}
-+
- int compat_restore_altstack(const compat_stack_t __user *uss)
- {
--	int err = compat_sys_sigaltstack(uss, NULL);
-+	int err = do_compat_sigaltstack(uss, NULL);
- 	/* squash all but -EFAULT for now */
- 	return err == -EFAULT ? err : 0;
- }
 -- 
-2.16.2
+Jani Nikula, Intel Open Source Technology Center
