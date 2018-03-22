@@ -1,238 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeCVVtx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:49:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32808 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751628AbeCVVtt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:49:49 -0400
-Subject: Re: [PATCH v6 02/12] PKCS#7: Introduce pkcs7_get_message_sig() and
- verify_pkcs7_message_sig()
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Date: Thu, 22 Mar 2018 17:49:38 -0400
-In-Reply-To: <20180316203837.10174-3-bauerman@linux.vnet.ibm.com>
-References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-         <20180316203837.10174-3-bauerman@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18032221-0012-0000-0000-000005C2555D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032221-0013-0000-0000-0000193E7FC6
-Message-Id: <1521755378.3848.295.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-22_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803220245
+        id S1751964AbeCVVux convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:50:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44288 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751464AbeCVVuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:50:51 -0400
+Subject: Re: [PATCH v6 2/2] cpuset: Add cpuset.sched_load_balance to v2
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+References: <1521649309-26690-1-git-send-email-longman@redhat.com>
+ <1521649309-26690-3-git-send-email-longman@redhat.com>
+ <20180322084120.GE7231@localhost.localdomain>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <e754e128-0a93-800e-e71b-2c8dc316ba8a@redhat.com>
+Date: Thu, 22 Mar 2018 17:50:48 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180322084120.GE7231@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thiago,
+On 03/22/2018 04:41 AM, Juri Lelli wrote:
+> Hi Waiman,
+>
+> On 21/03/18 12:21, Waiman Long wrote:
+>> The sched_load_balance flag is needed to enable CPU isolation similar
+>> to what can be done with the "isolcpus" kernel boot parameter.
+>>
+>> The sched_load_balance flag implies an implicit !cpu_exclusive as
+>> it doesn't make sense to have an isolated CPU being load-balanced in
+>> another cpuset.
+>>
+>> For v2, this flag is hierarchical and is inherited by child cpusets. It
+>> is not allowed to have this flag turn off in a parent cpuset, but on
+>> in a child cpuset.
+>>
+>> This flag is set by the parent and is not delegatable.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>  Documentation/cgroup-v2.txt | 22 ++++++++++++++++++
+>>  kernel/cgroup/cpuset.c      | 56 +++++++++++++++++++++++++++++++++++++++------
+>>  2 files changed, 71 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+>> index ed8ec66..c970bd7 100644
+>> --- a/Documentation/cgroup-v2.txt
+>> +++ b/Documentation/cgroup-v2.txt
+>> @@ -1514,6 +1514,28 @@ Cpuset Interface Files
+>>  	it is a subset of "cpuset.mems".  Its value will be affected
+>>  	by memory nodes hotplug events.
+>>  
+>> +  cpuset.sched_load_balance
+>> +	A read-write single value file which exists on non-root cgroups.
+>> +	The default is "1" (on), and the other possible value is "0"
+>> +	(off).
+>> +
+>> +	When it is on, tasks within this cpuset will be load-balanced
+>> +	by the kernel scheduler.  Tasks will be moved from CPUs with
+>> +	high load to other CPUs within the same cpuset with less load
+>> +	periodically.
+>> +
+>> +	When it is off, there will be no load balancing among CPUs on
+>> +	this cgroup.  Tasks will stay in the CPUs they are running on
+>> +	and will not be moved to other CPUs.
+>> +
+>> +	This flag is hierarchical and is inherited by child cpusets. It
+>> +	can be turned off only when the CPUs in this cpuset aren't
+>> +	listed in the cpuset.cpus of other sibling cgroups, and all
+>> +	the child cpusets, if present, have this flag turned off.
+>> +
+>> +	Once it is off, it cannot be turned back on as long as the
+>> +	parent cgroup still has this flag in the off state.
+>> +
+> I'm afraid that this will not work for SCHED_DEADLINE (at least for how
+> it is implemented today). As you can see in Documentation [1] the only
+> way a user has to perform partitioned/clustered scheduling is to create
+> subset of exclusive cpusets and then assign deadline tasks to them. The
+> other thing to take into account here is that a root_domain is created
+> for each exclusive set and we use such root_domain to keep information
+> about admitted bandwidth and speed up load balancing decisions (there is
+> a max heap tracking deadlines of active tasks on each root_domain).
+> Now, AFAIR distinct root_domain(s) are created when parent group has
+> sched_load_balance disabled and cpus_exclusive set (in cgroup v1 that
+> is). So, what we normally do is create, say, cpus_exclusive groups for
+> the different clusters and then disable sched_load_balance at root level
+> (so that each cluster gets its own root_domain). Also,
+> sched_load_balance is enabled in children groups (as load balancing
+> inside clusters is what we actually needed :).
 
-On Fri, 2018-03-16 at 17:38 -0300, Thiago Jung Bauermann wrote:
-> IMA will need to know the key that signed a given PKCS#7 message, so add
-> pkcs7_get_message_sig().
-> 
-> It will also need to verify an already parsed PKCS#7 message. For this
-> purpose, add verify_pkcs7_message_sig() which takes a struct pkcs7_message
-> for verification instead of the raw bytes that verify_pkcs7_signature()
-> takes.
+That looks like an undocumented side effect to me. I would rather see an
+explicit control file that enable root_domain and break it free from
+cpu_exclusive && !sched_load_balance, e.g. sched_root_domain(?).
 
-The title "PKCS#7: refactor verify_pkcs7_signature()" might be more
-appropriate.  The patch description would then explain why it needs to
-be refactored.  In this case, verify_pkcs7_signature() verifies the
-signature using keys on the builtin and secondary keyrings.  IMA-
-appraisal needs to verify the signature using keys on its keyring.
+> IIUC your proposal this will not be permitted with cgroup v2 because
+> sched_load_balance won't be present at root level and children groups
+> won't be able to set sched_load_balance back to 1 if that was set to 0
+> in some parent. Is that true?
 
-The patch itself looks good!
+Yes, that is the current plan.
 
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Look, the way things work today is most probably not perfect (just to
+> say one thing, we need to disable load balancing for all classes at root
+> level just because DEADLINE wants to set restricted affinities to his
+> tasks :/) and we could probably think on how to change how this all
+> work. So, let's first see if IIUC what you are proposing (and its
+> implications). :)
+>
+Cgroup v2 is supposed to allow us to have a fresh start to rethink what
+is a more sane way of partitioning resources without worrying about
+backward compatibility. So I think it is time to design a new way for
+deadline tasks to work with cpuset v2.
 
-
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> ---
->  certs/system_keyring.c                | 61 ++++++++++++++++++++++++++---------
->  crypto/asymmetric_keys/pkcs7_parser.c | 16 +++++++++
->  include/crypto/pkcs7.h                |  2 ++
->  include/linux/verification.h          | 10 ++++++
->  4 files changed, 73 insertions(+), 16 deletions(-)
-> 
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index 6251d1b27f0c..7ddc8b7a3062 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -190,33 +190,27 @@ late_initcall(load_system_certificate_list);
->  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
-> 
->  /**
-> - * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-> + * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
->   * @data: The data to be verified (NULL if expecting internal data).
->   * @len: Size of @data.
-> - * @raw_pkcs7: The PKCS#7 message that is the signature.
-> - * @pkcs7_len: The size of @raw_pkcs7.
-> + * @pkcs7: The PKCS#7 message that is the signature.
->   * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
->   *					(void *)1UL for all trusted keys).
->   * @usage: The use to which the key is being put.
->   * @view_content: Callback to gain access to content.
->   * @ctx: Context for callback.
->   */
-> -int verify_pkcs7_signature(const void *data, size_t len,
-> -			   const void *raw_pkcs7, size_t pkcs7_len,
-> -			   struct key *trusted_keys,
-> -			   enum key_being_used_for usage,
-> -			   int (*view_content)(void *ctx,
-> -					       const void *data, size_t len,
-> -					       size_t asn1hdrlen),
-> -			   void *ctx)
-> +int verify_pkcs7_message_sig(const void *data, size_t len,
-> +			     struct pkcs7_message *pkcs7,
-> +			     struct key *trusted_keys,
-> +			     enum key_being_used_for usage,
-> +			     int (*view_content)(void *ctx,
-> +						 const void *data, size_t len,
-> +						 size_t asn1hdrlen),
-> +			     void *ctx)
->  {
-> -	struct pkcs7_message *pkcs7;
->  	int ret;
-> 
-> -	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
-> -	if (IS_ERR(pkcs7))
-> -		return PTR_ERR(pkcs7);
-> -
->  	/* The data should be detached - so we need to supply it. */
->  	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
->  		pr_err("PKCS#7 signature with non-detached data\n");
-> @@ -258,6 +252,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
->  	}
-> 
->  error:
-> +	pr_devel("<==%s() = %d\n", __func__, ret);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
-> + * @data: The data to be verified (NULL if expecting internal data).
-> + * @len: Size of @data.
-> + * @raw_pkcs7: The PKCS#7 message that is the signature.
-> + * @pkcs7_len: The size of @raw_pkcs7.
-> + * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
-> + *					(void *)1UL for all trusted keys).
-> + * @usage: The use to which the key is being put.
-> + * @view_content: Callback to gain access to content.
-> + * @ctx: Context for callback.
-> + */
-> +int verify_pkcs7_signature(const void *data, size_t len,
-> +			   const void *raw_pkcs7, size_t pkcs7_len,
-> +			   struct key *trusted_keys,
-> +			   enum key_being_used_for usage,
-> +			   int (*view_content)(void *ctx,
-> +					       const void *data, size_t len,
-> +					       size_t asn1hdrlen),
-> +			   void *ctx)
-> +{
-> +	struct pkcs7_message *pkcs7;
-> +	int ret;
-> +
-> +	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
-> +	if (IS_ERR(pkcs7))
-> +		return PTR_ERR(pkcs7);
-> +
-> +	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
-> +				       view_content, ctx);
-> +
->  	pkcs7_free_message(pkcs7);
->  	pr_devel("<==%s() = %d\n", __func__, ret);
->  	return ret;
-> diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
-> index a6dcaa659aa8..456b803972b5 100644
-> --- a/crypto/asymmetric_keys/pkcs7_parser.c
-> +++ b/crypto/asymmetric_keys/pkcs7_parser.c
-> @@ -683,3 +683,19 @@ int pkcs7_note_signed_info(void *context, size_t hdrlen,
->  		return -ENOMEM;
->  	return 0;
->  }
-> +
-> +/**
-> + * pkcs7_get_message_sig - get signature in @pkcs7
-> + */
-> +const struct public_key_signature *pkcs7_get_message_sig(
-> +					const struct pkcs7_message *pkcs7)
-> +{
-> +	/*
-> +	 * This function doesn't support messages with more than one signature,
-> +	 * so don't return anything in that case.
-> +	 */
-> +	if (pkcs7->signed_infos == NULL || pkcs7->signed_infos->next != NULL)
-> +		return NULL;
-> +
-> +	return pkcs7->signed_infos->sig;
-> +}
-> diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-> index 583f199400a3..6f51d0cb6d12 100644
-> --- a/include/crypto/pkcs7.h
-> +++ b/include/crypto/pkcs7.h
-> @@ -28,6 +28,8 @@ extern void pkcs7_free_message(struct pkcs7_message *pkcs7);
->  extern int pkcs7_get_content_data(const struct pkcs7_message *pkcs7,
->  				  const void **_data, size_t *_datalen,
->  				  size_t *_headerlen);
-> +extern const struct public_key_signature *pkcs7_get_message_sig(
-> +					const struct pkcs7_message *pkcs7);
-> 
->  /*
->   * pkcs7_trust.c
-> diff --git a/include/linux/verification.h b/include/linux/verification.h
-> index a10549a6c7cd..f04dac2728ec 100644
-> --- a/include/linux/verification.h
-> +++ b/include/linux/verification.h
-> @@ -29,6 +29,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
->  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
-> 
->  struct key;
-> +struct pkcs7_message;
-> 
->  extern int verify_pkcs7_signature(const void *data, size_t len,
->  				  const void *raw_pkcs7, size_t pkcs7_len,
-> @@ -38,6 +39,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
->  						      const void *data, size_t len,
->  						      size_t asn1hdrlen),
->  				  void *ctx);
-> +extern int verify_pkcs7_message_sig(const void *data, size_t len,
-> +				    struct pkcs7_message *pkcs7,
-> +				    struct key *trusted_keys,
-> +				    enum key_being_used_for usage,
-> +				    int (*view_content)(void *ctx,
-> +							const void *data,
-> +							size_t len,
-> +							size_t asn1hdrlen),
-> +				    void *ctx);
-> 
->  #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
->  extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
-> 
+Cheers,
+Longman
