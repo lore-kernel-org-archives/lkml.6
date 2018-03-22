@@ -1,53 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754393AbeCVL7n (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 07:59:43 -0400
-Received: from mail9.hitachi.co.jp ([133.145.228.44]:39914 "EHLO
-        mail9.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753635AbeCVL7m (ORCPT
+        id S1754568AbeCVMEE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:04:04 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50813 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753578AbeCVMEC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 07:59:42 -0400
-From: =?utf-8?B?5LqA5LqV5LuB5b+XIC8gS0FNRUnvvIxISVRPU0hJ?=
-        <hitoshi.kamei.xm@hitachi.com>
-To: "dillaman@redhat.com" <dillaman@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-CC: Sage Weil <sage@redhat.com>, Alex Elder <elder@kernel.org>,
-        "Ceph Development" <ceph-devel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: Re: [PATCH 0/2] rbd: thick-provision image support
-Thread-Topic: [!]Re: [PATCH 0/2] rbd: thick-provision image support
-Thread-Index: AQHTwJstTIwmteaZT0Gs+F0W0M/bEKPcJiiQ
-Date: Thu, 22 Mar 2018 11:59:38 +0000
-Deferred-Delivery: Thu, 22 Mar 2018 11:59:35 +0000
-Message-ID: <C8603108370B1949BF3CC7742DDE5D35B8B3A037@GSjpTKYDCembx31.service.hitachi.net>
-References: <5AAFA661.60103@hitachi.com>
- <CAOi1vP8qz9GeP0Beypq1N8XFwzkPieEE1Qf6gJafPnngjNG86g@mail.gmail.com>
- <CA+aFP1AunD_KvE5JkFAzzEtu+D5dKS_nhEbyvS9COQM2PXuDCw@mail.gmail.com>
-In-Reply-To: <CA+aFP1AunD_KvE5JkFAzzEtu+D5dKS_nhEbyvS9COQM2PXuDCw@mail.gmail.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.232.29.202]
-Content-Type: text/plain; charset="utf-8"
+        Thu, 22 Mar 2018 08:04:02 -0400
+Date: Thu, 22 Mar 2018 13:04:00 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net
+Subject: v4.16-rc5 on droid4: external abort in l2c310_configure+0x38/0x160
+Message-ID: <20180322120359.GA12518@amd>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2MC0JXj019368
 
-Hi Jason,
 
-> However, given that's the intent of this change, why not name the
-> option along the lines of "discard_disbled"?
+--r5Pyd7+fXNt84Ff3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your comments.
-I would like to change the name of sysfs file to "discard_disabled".
-Also, I will add an option named discard_disabled to the rdb map command.
+Hi!
 
-Regards,
+I'm trying to get something to work on Droid 4.
 
--- 
-Hitoshi Kamei
+So far, v4.14 from leste project works, with the right config. I tried
+v4.16-rc5 next, and am stopped in early boot by:
+
+If someone knows what this is let me know, but I guess it is
+config-dependend and I'll just try different one...
+
+Best regards,
+							Pavel
+
+r=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BDL2=
+C-310 erratum 727915 enabled
+[    0.000000] L2C-310 enabling early BRESP for Cortex-A9
+[    0.000000] L2C-310 full line of zeros enabled for Cortex-A9
+[    0.000000] Unhandled fault: imprecise external abort (0xc06) at
+0x0209931c
+[    0.000000] pgd =3D (ptrval)
+[    0.000000] [0209931c] *pgd=3D00000000
+[    0.000000] Internal error: : c06 [#1] ARM
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Tainted: G        W
+4.16.0-rc4
+[    0.000000] Hardware name: Generic DT based system
+[    0.000000] PC is at l2c310_configure+0x38/0x160
+[    0.000000] LR is at l2c310_configure+0x10/0x160
+[    0.000000] pc : [<c0116128>]    lr : [<c0116100>]    psr: 60000093
+[    0.000000] sp : c0c01ec0  ip : 00000001  fp : 00000000
+[    0.000000] r10: c0b0666c  r9 : 00000000  r8 : 00000000
+[    0.000000] r7 : 00000008  r6 : c0a24030  r5 : c0c4cf48  r4 :
+f0800000
+[    0.000000] r3 : 00000000  r2 : 00000000  r1 : 00000008  r0 :
+00000000
+[    0.000000] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
+Segment noe
+[    0.000000] Control: 10c5387d  Table: 80004059  DAC: 00000051
+[    0.000000] Process swapper (pid: 0, stack limit =3D 0x(ptrval))
+[    0.000000] Stack: (0xc0c01ec0 to 0xc0c02000)
+[    0.000000] 1ec0: f0800000 c0c4cf48 c0a24030 c0115f14 c0c4cf48
+f0800000 5e474
+[    0.000000] 1ee0: 00000000 c0b06ac0 c0b3cf38 c015cbb0 efdca020
+00000008 00008
+[    0.000000] 1f00: 5e470000 00000010 410000c4 c0b075c0 ef7d4dd8
+c0c4cf48 ef7d8
+[    0.000000] 1f20: c0116020 c0116068 c011687c c0116280 c01160b0
+c0116d2c 00000
+[    0.000000] 1f40: c0b3cf38 410000c4 ffffffff c0b3cf38 00000000
+00000000 411f1
+[    0.000000] 1f60: 00000000 c0b07908 00000000 c0c01f7c ffffffff
+00000000 00002
+[    0.000000] 1f80: 48242000 48242fff ef7d4e30 00000200 00000000
+00000000 00000
+[    0.000000] 1fa0: c0b338c4 ffffffff c0c4ccc0 c0b338d4 ef7d3ec0
+c0b02180 0000c
+[    0.000000] 1fc0: ffffffff ffffffff 00000000 c0b0068c c0b338d4
+4e80ae6d 00000
+[    0.000000] 1fe0: 00000051 10c0387d ffffffff 81909000 10c5387d
+00000000 00000
+[    0.000000] [<c0116128>] (l2c310_configure) from [<c0115f14>]
+(l2c_enable+0x)
+[    0.000000] [<c0115f14>] (l2c_enable) from [<c0b06ac0>]
+(l2c310_enable+0x134)
+[    0.000000] [<c0b06ac0>] (l2c310_enable) from [<c0b075c0>]
+(__l2c_init.part.)
+[    0.000000] [<c0b075c0>] (__l2c_init.part.5) from [<c0b07908>]
+(l2x0_of_init)
+[    0.000000] [<c0b07908>] (l2x0_of_init) from [<c0b02180>]
+(init_IRQ+0x60/0x8)
+[    0.000000] [<c0b02180>] (init_IRQ) from [<c0b00b1c>]
+(start_kernel+0x23c/0x)
+[    0.000000] [<c0b00b1c>] (start_kernel) from [<00000000>] (
+(null))
+[    0.000000] Code: e3530000 0a000040 e3a01f42 e12fff33 (e595000c)
+[    0.000000] ---[ end trace e2e09be4641cfc91 ]---
+[    0.000000] Kernel panic - not syncing: Attempted to kill the idle
+task!
+
+
++
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--r5Pyd7+fXNt84Ff3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqzm68ACgkQMOfwapXb+vLgGgCgggi6pfIlAnsBCNfsMZF7n7AF
+4YsAnjEmhs4DA4oqySFLgiLpQPsBPX/t
+=Ql3/
+-----END PGP SIGNATURE-----
+
+--r5Pyd7+fXNt84Ff3--
