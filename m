@@ -1,85 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752921AbeCVKGC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 06:06:02 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:40031 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751441AbeCVKF6 (ORCPT
+        id S1752785AbeCVKJ5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 06:09:57 -0400
+Received: from mail-io0-f174.google.com ([209.85.223.174]:37704 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751817AbeCVKJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:05:58 -0400
-X-Google-Smtp-Source: AG47ELttsmM5wSzc5PYOYP46kJM8HUURCO9JR4bNCIMH8o4ImKWczupi3T9MiPk2sSTOGxcSriPS1A==
+        Thu, 22 Mar 2018 06:09:54 -0400
+X-Google-Smtp-Source: AG47ELsZAeh7DN/OQllDlTi5ViZY55TwLb1URT0hmin/pXG74VIKbjvF7oHUBetNtHyAinK1jJCAAkUmzlJj50zdqjY=
+MIME-Version: 1.0
+In-Reply-To: <20180322100024.xy2ipqzgluj6fhs4@vireshk-mac-ubuntu>
+References: <cover.1513926033.git.viresh.kumar@linaro.org> <596dd0d16dcb31fd35d6a38835d1a3d56254b6ce.1513926033.git.viresh.kumar@linaro.org>
+ <CAPDyKFontDwvpS97xBskNE-FLMo3HPDLthCEkviZv8rKdA8t=g@mail.gmail.com> <20180322100024.xy2ipqzgluj6fhs4@vireshk-mac-ubuntu>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v.4.16-rc7
-Date: Thu, 22 Mar 2018 11:05:52 +0100
-Message-Id: <1521713152-4201-1-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
+Date: Thu, 22 Mar 2018 11:09:53 +0100
+Message-ID: <CAPDyKFokfr+RJzL5zNL-mvEwDBF5+ReJRmo98pQV+oGkaDSM8g@mail.gmail.com>
+Subject: Re: [PATCH 4/7] PM / Domain: Add support to parse domain's OPP table
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Kevin Hilman <khilman@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nishanth Menon <nm@ti.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 22 March 2018 at 11:00, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 22-03-18, 10:31, Ulf Hansson wrote:
+>> Nitpick, perhaps change this to:
+>>
+>> if (gpd->set_performance_state)
+>>        dev_pm_opp_of_remove_table(&gpd->dev);
+>
+> I probably did that to save the 80 column thing. So crossing 80 columns in this
+> case is fine ?
 
-Here's a PR with a couple of MMC fixes intended for v4.16-rc7. Details about the
-highlights are as usual found in the signed tag.
-
-Please pull this in!
+If that is needed, then okay!
 
 Kind regards
-Ulf Hansson
-
-
-The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
-
-  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.16-rc4
-
-for you to fetch changes up to d58ac803cfbb92ede501409dd6afe9abb111d4f1:
-
-  mmc: sdhci-acpi: Fix IRQ 0 (2018-03-21 11:10:20 +0100)
-
-----------------------------------------------------------------
-MMC host:
- - dw_mmc: Fix the suspend/resume issue for Exynos5433
- - dw_mmc: Fix the DTO/CTO timeout overflow calculation for 32-bit systems
- - dw_mmc: Make PIO mode work when failing with idmac when dw_mci_reset occurs
- - sdhci-acpi: Re-allow IRQ 0 to fix broken probe
-
-MMC core:
- - Update EXT_CSD caches to correctly switch partition for ioctl calls
- - Fix tracepoint print of blk_addr and blksz
- - Disable HPI on broken Micron (Numonyx) eMMC cards
-
-----------------------------------------------------------------
-Adrian Hunter (2):
-      mmc: core: Fix tracepoint print of blk_addr and blksz
-      mmc: sdhci-acpi: Fix IRQ 0
-
-Bastian Stender (1):
-      mmc: block: fix updating ext_csd caches on ioctl call
-
-Dirk Behme (1):
-      mmc: core: Disable HPI for certain Micron (Numonyx) eMMC cards
-
-Evgeniy Didin (2):
-      mmc: dw_mmc: Fix the DTO/CTO timeout overflow calculation for 32-bit systems
-      mmc: dw_mmc: fix falling from idmac to PIO mode when dw_mci_reset occurs
-
-Jaehoon Chung (1):
-      mmc: dw_mmc: exynos: fix the suspend/resume issue for exynos5433
-
- drivers/mmc/core/block.c         | 19 +++++++++++++++++++
- drivers/mmc/core/card.h          |  1 +
- drivers/mmc/core/quirks.h        |  6 ++++++
- drivers/mmc/host/dw_mmc-exynos.c |  8 +++++++-
- drivers/mmc/host/dw_mmc.c        | 15 ++++++++++-----
- drivers/mmc/host/sdhci-acpi.c    |  2 +-
- include/trace/events/mmc.h       |  4 ++--
- 7 files changed, 46 insertions(+), 9 deletions(-)
+Uffe
