@@ -1,112 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751714AbeCVQTE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:19:04 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45490 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751375AbeCVQTD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:19:03 -0400
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>,
-        Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321130833.GM23100@dhcp22.suse.cz>
- <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
- <20180321172932.GE4780@bombadil.infradead.org>
- <f057a634-7e0a-1b51-eede-dcb6f128b18e@linux.alibaba.com>
- <20180321224631.GB3969@bombadil.infradead.org>
- <18a727fd-f006-9fae-d9ca-74b9004f0a8b@linux.vnet.ibm.com>
- <20180322154055.GB28468@bombadil.infradead.org>
- <0442fb0e-3da3-3f23-ce4d-0f6cbc3eac9a@linux.vnet.ibm.com>
- <20180322160547.GC28468@bombadil.infradead.org>
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date: Thu, 22 Mar 2018 17:18:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180322160547.GC28468@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18032216-0008-0000-0000-000004E13F87
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032216-0009-0000-0000-00001E74686D
-Message-Id: <55ac947f-fd77-3754-ebfe-30d458c54403@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-22_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803220188
+        id S1751733AbeCVQTo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:19:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49131 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751319AbeCVQTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:19:41 -0400
+Message-ID: <1521735513.1175.51.camel@bootlin.com>
+Subject: Re: [PATCH 03/10] drm/sun4i: Don't pretend to handle ARGB8888 with
+ the frontend
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>
+Date: Thu, 22 Mar 2018 17:18:33 +0100
+In-Reply-To: <20180322161204.dpi6puzvosesm5xt@flea>
+References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
+         <20180321152904.22411-4-paul.kocialkowski@bootlin.com>
+         <20180322161204.dpi6puzvosesm5xt@flea>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-u+t+ox8eIrFlVgv1hCs1"
+X-Mailer: Evolution 3.26.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--=-u+t+ox8eIrFlVgv1hCs1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/03/2018 17:05, Matthew Wilcox wrote:
-> On Thu, Mar 22, 2018 at 04:54:52PM +0100, Laurent Dufour wrote:
->> On 22/03/2018 16:40, Matthew Wilcox wrote:
->>> On Thu, Mar 22, 2018 at 04:32:00PM +0100, Laurent Dufour wrote:
->>>> Regarding the page fault, why not relying on the PTE locking ?
->>>>
->>>> When munmap() will unset the PTE it will have to held the PTE lock, so this
->>>> will serialize the access.
->>>> If the page fault occurs before the mmap(MAP_FIXED), the page mapped will be
->>>> removed when mmap(MAP_FIXED) would do the cleanup. Fair enough.
->>>
->>> The page fault handler will walk the VMA tree to find the correct
->>> VMA and then find that the VMA is marked as deleted.  If it assumes
->>> that the VMA has been deleted because of munmap(), then it can raise
->>> SIGSEGV immediately.  But if the VMA is marked as deleted because of
->>> mmap(MAP_FIXED), it must wait until the new VMA is in place.
->>
->> I'm wondering if such a complexity is required.
->> If the user space process try to access the page being overwritten through
->> mmap(MAP_FIXED) by another thread, there is no guarantee that it will
->> manipulate the *old* page or *new* one.
-> 
-> Right; but it must return one or the other, it can't segfault.
+Hi,
 
-Good point, I missed that...
+On Thu, 2018-03-22 at 17:12 +0100, Maxime Ripard wrote:
+> Hi,
+>=20
+> Beside the discussion with Chen-Yu,
+>=20
+> On Wed, Mar 21, 2018 at 04:28:57PM +0100, Paul Kocialkowski wrote:
+> > It turns out that the frontend is not capable of preserving the
+> > alpha
+> > component (that is always set to 0xff), so only support XRGB8888
+> > instead.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+>=20
+> [...]
+>=20
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c
+> > b/drivers/gpu/drm/sun4i/sun4i_layer.c
+> > index eb93df445a10..15238211a61a 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_layer.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
+> > @@ -100,9 +100,9 @@ static void
+> > sun4i_backend_layer_atomic_update(struct drm_plane *plane,
+> >  		sun4i_frontend_update_coord(frontend, plane);
+> >  		sun4i_frontend_update_buffer(frontend, plane);
+> >  		sun4i_frontend_update_formats(frontend, plane,
+> > -					      DRM_FORMAT_ARGB8888);
+> > +					      DRM_FORMAT_XRGB8888);
+> >  		sun4i_backend_update_layer_frontend(backend, layer-
+> > >id, plane,
+> > -						    DRM_FORMAT_ARGB
+> > 8888);
+> > +						    DRM_FORMAT_XRGB
+> > 8888);
+>=20
+> Even though it's slightly related, these changes should be justified
+> in the commit log. From what you currently explain, this makes 0
+> difference, since XRGB and ARGB with an alpha component to 0xff is
+> exactly the same thing.
 
-> 
->> I'd think this is up to the user process to handle that concurrency.
->> What needs to be guaranteed is that once mmap(MAP_FIXED) returns the old page
->> are no more there, which is done through the mmap_sem and PTE locking.
-> 
-> Yes, and allowing the fault handler to return the *old* page risks the
-> old page being reinserted into the page tables after the unmapping task
-> has done its work.
+The point of this is mostly to fix
+sun4i_frontend_drm_format_to_input_fmt and
+sun4i_frontend_drm_format_to_output_fmt, that were reporting the wrong
+format (ARGB has never been supported).
 
-The PTE locking should prevent that.
+The change in the internal format used between the frontend and backend
+is a direct consequence of correcting the supported format, but brings
+no functional change.
 
-> It's *really* rare to page-fault on a VMA which is in the middle of
-> being replaced.  Why are you trying to optimise it?
+I will update the commit message in the next revision to make it clear
+what the nature of this change is.
 
-I was not trying to optimize it, but to not wait in the page fault handler.
-This could become tricky in the case the VMA is removed once mmap(MAP_FIXED) is
-done and before the waiting page fault got woken up. This means that the
-removed VMA structure will have to remain until all the waiters are woken up
-which implies ref_count or similar.
+Thanks for the review!
 
-> 
->>> I think I was wrong to describe VMAs as being *deleted*.  I think we
->>> instead need the concept of a *locked* VMA that page faults will block on.
->>> Conceptually, it's a per-VMA rwsem, but I'd use a completion instead of
->>> an rwsem since the only reason to write-lock the VMA is because it is
->>> being deleted.
->>
->> Such a lock would only makes sense in the case of mmap(MAP_FIXED) since when
->> the VMA is removed there is no need to wait. Isn't it ?
-> 
-> I can't think of another reason.  I suppose we could mark the VMA as
-> locked-for-deletion or locked-for-replacement and have the SIGSEGV happen
-> early.  But I'm not sure that optimising for SIGSEGVs is a worthwhile
-> use of our time.  Just always have the pagefault sleep for a deleted VMA.
+Paul
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-u+t+ox8eIrFlVgv1hCs1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlqz11kACgkQ3cLmz3+f
+v9Ft5Af/Z/afHbaScXXO7dowgWdS70diq+oLYr30SrdccGEORaE4Vhbqp+jU2XqS
+6f1DIufQtauV7KjOGTfB2oeb0452OBUqhmWs7lI0v6zase4UaznYwUIjs0aa+Njj
+ctaRn3Y4Va5PwSbDLzLPiS5NRvttQa+3JNGZr5+RzYzosJzKtu5v6DL0XCF+pSZA
+el64DuHPc2W50T9asWHMGB7Eg6iRvN8jhSZAvIoRwC04lPGkoTXMsf/OnL0M/KvS
+hjTxOrQZqe/i4HydJdqvjutscb76ZIw4ENjDKVHT3H+lBokH5T11wblbMsHdpyjM
+RtFnRbggljUSPQsFiEf7CzCFD67R8A==
+=7OUh
+-----END PGP SIGNATURE-----
+
+--=-u+t+ox8eIrFlVgv1hCs1--
