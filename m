@@ -1,70 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeCVT62 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 15:58:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36352 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751682AbeCVT61 (ORCPT
+        id S1752097AbeCVT7a (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 15:59:30 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.196]:16754 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752042AbeCVT72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 15:58:27 -0400
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH 1/4] decompression: Rename malloc and free
-Date: Thu, 22 Mar 2018 12:58:16 -0700
-Message-Id: <20180322195819.24271-2-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180322195819.24271-1-willy@infradead.org>
-References: <20180322195819.24271-1-willy@infradead.org>
+        Thu, 22 Mar 2018 15:59:28 -0400
+Date: Thu, 22 Mar 2018 14:59:27 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Madalin Bucur <madalin.bucur@nxp.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] dpaa_eth: use true and false for boolean values
+Message-ID: <20180322195927.GA26854@embeddedgus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1ez6My-0017JY-6u
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.145.54.187]:54064
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Assign true or false to boolean variables instead of an integer value.
 
-Rename the trivial malloc and free implementations to tmalloc and tfree
-to avoid a namespace collision with an in-kernel free() function.
+This issue was detected with the help of Coccinelle.
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- include/linux/decompress/mm.h | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/decompress/mm.h b/include/linux/decompress/mm.h
-index 868e9eacd69e..0ac62b025c1b 100644
---- a/include/linux/decompress/mm.h
-+++ b/include/linux/decompress/mm.h
-@@ -31,7 +31,7 @@
- STATIC_RW_DATA unsigned long malloc_ptr;
- STATIC_RW_DATA int malloc_count;
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+index 85306d1..c7ea193 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+@@ -344,7 +344,7 @@ static void dpaa_get_ethtool_stats(struct net_device *net_dev,
  
--static void *malloc(int size)
-+static void *tmalloc(int size)
- {
- 	void *p;
- 
-@@ -52,15 +52,17 @@ static void *malloc(int size)
- 	return p;
- }
- 
--static void free(void *where)
-+static void tfree(void *where)
- {
- 	malloc_count--;
- 	if (!malloc_count)
- 		malloc_ptr = free_mem_ptr;
- }
- 
--#define large_malloc(a) malloc(a)
--#define large_free(a) free(a)
-+#define malloc(a) tmalloc(a)
-+#define free(a) tfree(a)
-+#define large_malloc(a) tmalloc(a)
-+#define large_free(a) tfree(a)
- 
- #define INIT
- 
+ 	/* gather congestion related counters */
+ 	cg_num    = 0;
+-	cg_status = 0;
++	cg_status = false;
+ 	cg_time   = jiffies_to_msecs(priv->cgr_data.congested_jiffies);
+ 	if (qman_query_cgr_congested(&priv->cgr_data.cgr, &cg_status) == 0) {
+ 		cg_num    = priv->cgr_data.cgr_congested_count;
 -- 
-2.16.2
+2.7.4
