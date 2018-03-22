@@ -1,59 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753659AbeCVB0l (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 21:26:41 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:39541 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751604AbeCVB0j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 21:26:39 -0400
-X-Google-Smtp-Source: AG47ELtXYe0P3g0VY/9isFwk6dIYDPqdcq4GTvBjct+BIkzZuOhodJT4yY2UfzBtlG6exXDOUicZU1bdUVwVsLs8DlQ=
+        id S1752862AbeCVB2z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 21:28:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59598 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752197AbeCVB2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 21:28:54 -0400
+From: jglisse@redhat.com
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 03/15] mm/hmm: HMM should have a callback before MM is destroyed v3
+Date: Wed, 21 Mar 2018 21:28:48 -0400
+Message-Id: <20180322012848.6936-1-jglisse@redhat.com>
+In-Reply-To: <20180320020038.3360-4-jglisse@redhat.com>
+References: <20180320020038.3360-4-jglisse@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UeTHPVrxEUbEszxm1MyJsQDSLfyM8txHq=r7GVkPD37nQ@mail.gmail.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <6ec3e7e0c70e85a804933f27bb4275d5363c044b.1521469118.git.rahul.lakkireddy@chelsio.com>
- <alpine.DEB.2.21.1803191525010.2010@nanos.tec.linutronix.de>
- <20180320133206.GB25574@chelsio.com> <CAKgT0UeTHPVrxEUbEszxm1MyJsQDSLfyM8txHq=r7GVkPD37nQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 21 Mar 2018 18:26:38 -0700
-X-Google-Sender-Auth: GgzyCmcNGrukB1tl8UGlMsdAu_8
-Message-ID: <CA+55aFydu4+MZ=-5L7wDr2LvNH6Dbmi4qLnfHAAOrHKZCb5wdA@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] x86/io: implement 256-bit IO read and write
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        Ganesh GR <ganeshgr@chelsio.com>,
-        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
-        Indranil Choudhury <indranil@chelsio.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 7:42 AM, Alexander Duyck
-<alexander.duyck@gmail.com> wrote:
->
-> Instead of framing this as an enhanced version of the read/write ops
-> why not look at replacing or extending something like the
-> memcpy_fromio or memcpy_toio operations?
+From: Ralph Campbell <rcampbell@nvidia.com>
 
-Yes, doing something like "memcpy_fromio_avx()" is much more
-palatable, in that it works like the crypto functions do - if you do
-big chunks, the "kernel_fpu_begin/end()" isn't nearly the issue it can
-be otherwise.
+The hmm_mirror_register() function registers a callback for when
+the CPU pagetable is modified. Normally, the device driver will
+call hmm_mirror_unregister() when the process using the device is
+finished. However, if the process exits uncleanly, the struct_mm
+can be destroyed with no warning to the device driver.
 
-Note that we definitely have seen hardware that *depends* on the
-regular memcpy_fromio()" not doing big reads. I don't know how
-hardware people screw it up, but it's clearly possible.
+Changed since v1:
+  - dropped VM_BUG_ON()
+  - cc stable
+Changed since v2:
+  - drop stable
+  - Split list removale and call to driver release callback. This
+    allow the release callback to wait on any pending fault handler
+    without deadlock.
 
-So it really needs to be an explicitly named function that basically a
-driver can use to say "my hardware really likes big aligned accesses"
-and explicitly ask for some AVX version if possible.
+Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+Cc: Mark Hairgrove <mhairgrove@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+---
+ include/linux/hmm.h | 10 ++++++++++
+ mm/hmm.c            | 29 ++++++++++++++++++++++++++++-
+ 2 files changed, 38 insertions(+), 1 deletion(-)
 
-                    Linus
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 36dd21fe5caf..fa7b51f65905 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -218,6 +218,16 @@ enum hmm_update_type {
+  * @update: callback to update range on a device
+  */
+ struct hmm_mirror_ops {
++	/* release() - release hmm_mirror
++	 *
++	 * @mirror: pointer to struct hmm_mirror
++	 *
++	 * This is called when the mm_struct is being released.
++	 * The callback should make sure no references to the mirror occur
++	 * after the callback returns.
++	 */
++	void (*release)(struct hmm_mirror *mirror);
++
+ 	/* sync_cpu_device_pagetables() - synchronize page tables
+ 	 *
+ 	 * @mirror: pointer to struct hmm_mirror
+diff --git a/mm/hmm.c b/mm/hmm.c
+index 320545b98ff5..34c16297f65e 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -160,6 +160,32 @@ static void hmm_invalidate_range(struct hmm *hmm,
+ 	up_read(&hmm->mirrors_sem);
+ }
+ 
++static void hmm_release(struct mmu_notifier *mn, struct mm_struct *mm)
++{
++	struct hmm_mirror *mirror;
++	struct hmm *hmm = mm->hmm;
++
++	down_write(&hmm->mirrors_sem);
++	mirror = list_first_entry_or_null(&hmm->mirrors, struct hmm_mirror,
++					  list);
++	while (mirror) {
++		list_del_init(&mirror->list);
++		if (mirror->ops->release) {
++			/*
++			 * Drop mirrors_sem so callback can wait on any pending
++			 * work that might itself trigger mmu_notifier callback
++			 * and thus would deadlock with us.
++			 */
++			up_write(&hmm->mirrors_sem);
++			mirror->ops->release(mirror);
++			down_write(&hmm->mirrors_sem);
++		}
++		mirror = list_first_entry_or_null(&hmm->mirrors, struct hmm_mirror,
++						  list);
++	}
++	up_write(&hmm->mirrors_sem);
++}
++
+ static void hmm_invalidate_range_start(struct mmu_notifier *mn,
+ 				       struct mm_struct *mm,
+ 				       unsigned long start,
+@@ -185,6 +211,7 @@ static void hmm_invalidate_range_end(struct mmu_notifier *mn,
+ }
+ 
+ static const struct mmu_notifier_ops hmm_mmu_notifier_ops = {
++	.release		= hmm_release,
+ 	.invalidate_range_start	= hmm_invalidate_range_start,
+ 	.invalidate_range_end	= hmm_invalidate_range_end,
+ };
+@@ -230,7 +257,7 @@ void hmm_mirror_unregister(struct hmm_mirror *mirror)
+ 	struct hmm *hmm = mirror->hmm;
+ 
+ 	down_write(&hmm->mirrors_sem);
+-	list_del(&mirror->list);
++	list_del_init(&mirror->list);
+ 	up_write(&hmm->mirrors_sem);
+ }
+ EXPORT_SYMBOL(hmm_mirror_unregister);
+-- 
+2.14.3
