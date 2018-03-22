@@ -1,49 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751902AbeCVXaH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 19:30:07 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:46769 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751541AbeCVXaF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 19:30:05 -0400
-X-Google-Smtp-Source: AG47ELu7dLJrBIOB5/QAz6hi7AcDohsIWM1DszrKHQOF5T7WAp1b7FEVozIjmWRBgpCwuukGxhp0GiuLqQGvnievlr8=
+        id S1751995AbeCVXad (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 19:30:33 -0400
+Received: from mga09.intel.com ([134.134.136.24]:54504 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751666AbeCVXac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 19:30:32 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,347,1517904000";
+   d="scan'208";a="40425298"
+Date: Thu, 22 Mar 2018 16:30:29 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Luck@alison-desk.jf.intel.com, Tim Chen <tim.c.chen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86,sched: allow topologies where NUMA nodes share an
+ LLC
+Message-ID: <20180322233027.bh6dp5vdcb4rdvqe@agluck-desk>
+References: <20180322204922.GA2337@alison-desk.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFwR_29JpVPUyyhnpJp=PBXk4nVO-8DBty6-vk2-8cgNFw@mail.gmail.com>
-References: <CAJZ5v0gT_p44NGUhkw7irDk-Uo8HnEYQ35+wJaBUo3ziLSbPsQ@mail.gmail.com>
- <CA+55aFwR_29JpVPUyyhnpJp=PBXk4nVO-8DBty6-vk2-8cgNFw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 23 Mar 2018 00:30:04 +0100
-X-Google-Sender-Auth: VhDHr-wXAIXAEO_txvRUmdZcXJM
-Message-ID: <CAJZ5v0gxY2ZndTrDh8H280SscX7iRsjOU5qZDBEjuO0O-RdDbQ@mail.gmail.com>
-Subject: Re: [GIT PULL] ACPI fixes for v4.16-rc7
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180322204922.GA2337@alison-desk.jf.intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 12:21 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Mar 22, 2018 at 4:05 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->>
->>  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
->>  acpi-4.16-rc4
->
-> I get
->
->   fatal: Couldn't find remote ref acpi-4.16-rc4
->
-> Forgot to push out?
->
-> Oh. No, I see what happened. You meant "rc7".
->
-> Didn't your script warn about the tag name not matching?
+On Thu, Mar 22, 2018 at 01:49:22PM -0700, Alison Schofield wrote:
+> +	if (!topology_same_node(c, o) &&
+> +	    (c->x86_vendor == X86_VENDOR_INTEL &&
+> +	     c->x86_model == INTEL_FAM6_SKYLAKE_X)) {
 
-Well, this was a manual one, sorry about that.
+Maybe make life easier in the future to add more models
+to the list by using x86_match_cpu() here?
 
-Rafael
+-Tony
