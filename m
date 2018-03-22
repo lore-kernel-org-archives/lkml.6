@@ -1,105 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751930AbeCVDKM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 23:10:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52386 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751716AbeCVDKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 23:10:11 -0400
-Date: Thu, 22 Mar 2018 05:10:09 +0200
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: Jonathan Helman <jonathan.helman@oracle.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
-Subject: Re: [virtio-dev] Re: [PATCH v2] virtio_balloon: export hugetlb page
- allocation counts
-Message-ID: <20180322050842-mutt-send-email-mst@kernel.org>
-References: <1521497654-24807-1-git-send-email-jonathan.helman@oracle.com>
- <db6371af-f93d-4409-c910-2ff712196c5b@redhat.com>
- <6ED6CAC9-FAD9-4A27-A9B1-C6EFC7627D68@oracle.com>
- <c09d3570-a8f9-7a84-5dd6-46d385da2e15@redhat.com>
+        id S1751921AbeCVDaU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 23:30:20 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46810 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751728AbeCVDaR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 23:30:17 -0400
+X-Google-Smtp-Source: AG47ELvUCriKIR7jn/fdh2I7336ces3UUq4SDG3egVyF7GgtPnftSqHMyM6WFIrjyLx0GqqAdMEplQ==
+Date: Thu, 22 Mar 2018 11:30:13 +0800
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Cc: rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: Re: [RFC PATCH] cpufreq: Calling init() of cpufreq_driver  when
+ policy inactive cpu online
+Message-ID: <20180322033013.3mqhf2fnbaqfdgay@vireshk-mac-ubuntu>
+References: <1521627703-7728-1-git-send-email-shunyong.yang@hxt-semitech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c09d3570-a8f9-7a84-5dd6-46d385da2e15@redhat.com>
+In-Reply-To: <1521627703-7728-1-git-send-email-shunyong.yang@hxt-semitech.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 09:52:18AM +0800, Jason Wang wrote:
+On 21-03-18, 18:21, Shunyong Yang wrote:
+> When multiple cpus are related in one cpufreq policy, the first online cpu
+> will be chosen by default to handle cpufreq operations. In a CPPC case,
+> let's take two related cpus, cpu0 and cpu1 as an example.
 > 
-> 
-> On 2018年03月20日 12:26, Jonathan Helman wrote:
-> > > On Mar 19, 2018, at 7:31 PM, Jason Wang <jasowang@redhat.com> wrote:
-> > > 
-> > > 
-> > > 
-> > > On 2018年03月20日 06:14, Jonathan Helman wrote:
-> > > > Export the number of successful and failed hugetlb page
-> > > > allocations via the virtio balloon driver. These 2 counts
-> > > > come directly from the vm_events HTLB_BUDDY_PGALLOC and
-> > > > HTLB_BUDDY_PGALLOC_FAIL.
-> > > > 
-> > > > Signed-off-by: Jonathan Helman <jonathan.helman@oracle.com>
-> > > Reviewed-by: Jason Wang <jasowang@redhat.com>
-> > Thanks.
-> > 
-> > > > ---
-> > > >   drivers/virtio/virtio_balloon.c     | 6 ++++++
-> > > >   include/uapi/linux/virtio_balloon.h | 4 +++-
-> > > >   2 files changed, 9 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> > > > index dfe5684..6b237e3 100644
-> > > > --- a/drivers/virtio/virtio_balloon.c
-> > > > +++ b/drivers/virtio/virtio_balloon.c
-> > > > @@ -272,6 +272,12 @@ static unsigned int update_balloon_stats(struct virtio_balloon *vb)
-> > > >   				pages_to_bytes(events[PSWPOUT]));
-> > > >   	update_stat(vb, idx++, VIRTIO_BALLOON_S_MAJFLT, events[PGMAJFAULT]);
-> > > >   	update_stat(vb, idx++, VIRTIO_BALLOON_S_MINFLT, events[PGFAULT]);
-> > > > +#ifdef CONFIG_HUGETLB_PAGE
-> > > > +	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGALLOC,
-> > > > +		    events[HTLB_BUDDY_PGALLOC]);
-> > > > +	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGFAIL,
-> > > > +		    events[HTLB_BUDDY_PGALLOC_FAIL]);
-> > > > +#endif
-> > > >   #endif
-> > > >   	update_stat(vb, idx++, VIRTIO_BALLOON_S_MEMFREE,
-> > > >   				pages_to_bytes(i.freeram));
-> > > > diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
-> > > > index 4e8b830..40297a3 100644
-> > > > --- a/include/uapi/linux/virtio_balloon.h
-> > > > +++ b/include/uapi/linux/virtio_balloon.h
-> > > > @@ -53,7 +53,9 @@ struct virtio_balloon_config {
-> > > >   #define VIRTIO_BALLOON_S_MEMTOT   5   /* Total amount of memory */
-> > > >   #define VIRTIO_BALLOON_S_AVAIL    6   /* Available memory as in /proc */
-> > > >   #define VIRTIO_BALLOON_S_CACHES   7   /* Disk caches */
-> > > > -#define VIRTIO_BALLOON_S_NR       8
-> > > > +#define VIRTIO_BALLOON_S_HTLB_PGALLOC  8  /* Hugetlb page allocations */
-> > > > +#define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page allocation failures */
-> > > > +#define VIRTIO_BALLOON_S_NR       10
-> > > >     /*
-> > > >    * Memory statistics structure.
-> > > Not for this patch, but it looks to me that exporting such nr through uapi is fragile.
-> > Sorry, can you explain what you mean here?
-> > 
-> > Jon
-> 
-> Spec said "Within an output buffer submitted to the statsq, the device MUST
-> ignore entries with tag values that it does not recognize". So exporting
-> VIRTIO_BALLOON_S_NR seems useless and device implementation can not depend
-> on such number in uapi.
-> 
-> Thanks
+> After system start, cpu0 is the first online cpu. Cpufreq policy will be
+> allocated and init() in cpufreq_driver will be called to initialize cpu0's
+> perf capabilities and policy parameters.
 
-Suggestions? I don't like to break build for people ...
+Not exactly. The init() is called to initialize stuff for all the CPUs that
+should be part of policy->related_cpus after init() has returned. So you should
+initialize perf capabilities for all of them.
 
-> > 
-> > > Thanks
-> > 
-> > ---------------------------------------------------------------------
-> > To unsubscribe, e-mail: virtio-dev-unsubscribe@lists.oasis-open.org
-> > For additional commands, e-mail: virtio-dev-help@lists.oasis-open.org
-> > 
+> When cpu1 is online, current code
+> will not call init() in cpufreq_driver as policy has been allocated and
+> activated by cpu0. So, cpu1's perf capabilities are not initialized
+> (all 0s).
+> 
+> When cpu0 is offline, policy->cpu will be shifted to cpu1. As cpu1's perf
+> capabilities are 0s, speed change will not take effect when setting
+> speed.
+> 
+> This patch adds calling init() of cpufreq_driver when policy inactive cpu
+> comes to online.
+
+No CPU should be inactive here, its just that you haven't initialized it
+properly.
+
+And we are not going to call init() multiple times for a group of CPUs. That's
+not what the purpose of init() is.
+
+-- 
+viresh
