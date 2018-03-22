@@ -1,58 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753294AbeCVIwi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 04:52:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39356 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753013AbeCVIvo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 04:51:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06A1C60F78
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-From: Manu Gautam <mgautam@codeaurora.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH v2 5/6] dt-bindings: phy-qcom-usb2: Update bindings for sdm845
-Date: Thu, 22 Mar 2018 14:20:45 +0530
-Message-Id: <1521708646-5379-6-git-send-email-mgautam@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521708646-5379-1-git-send-email-mgautam@codeaurora.org>
-References: <1521708646-5379-1-git-send-email-mgautam@codeaurora.org>
+        id S1752770AbeCVI4U (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 04:56:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42317 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752629AbeCVI4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 04:56:15 -0400
+Date: Thu, 22 Mar 2018 09:56:11 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] memcg, thp: do not invoke oom killer on thp charges
+Message-ID: <20180322085611.GY23100@dhcp22.suse.cz>
+References: <20180321205928.22240-1-mhocko@kernel.org>
+ <alpine.DEB.2.20.1803211418170.107059@chino.kir.corp.google.com>
+ <20180321214104.GT23100@dhcp22.suse.cz>
+ <alpine.DEB.2.20.1803220106010.175961@chino.kir.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1803220106010.175961@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update compatible strings for USB2 PHYs on sdm845.
-There are two QUSB2 PHYs present on sdm845. Few PHY registers
-programming is different for these PHYs related to electrical
-parameters, otherwise both are same.
+On Thu 22-03-18 01:26:13, David Rientjes wrote:
+> On Wed, 21 Mar 2018, Michal Hocko wrote:
+> 
+> > > > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > > index d1a917b5b7b7..08accbcd1a18 100644
+> > > > --- a/mm/memcontrol.c
+> > > > +++ b/mm/memcontrol.c
+> > > > @@ -1493,7 +1493,7 @@ static void memcg_oom_recover(struct mem_cgroup *memcg)
+> > > >  
+> > > >  static void mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+> > > >  {
+> > > > -	if (!current->memcg_may_oom)
+> > > > +	if (!current->memcg_may_oom || order > PAGE_ALLOC_COSTLY_ORDER)
+> > > >  		return;
+> > > >  	/*
+> > > >  	 * We are in the middle of the charge context here, so we
+> > > 
+> > > What bug reports have you received about order-4 and higher order non thp 
+> > > charges that this fixes?
+> > 
+> > We do not have any costly _OOM killable_ allocations but THP AFAIR. Or
+> > am I missing any?
+> > 
+> 
+> So now you're making a generalized policy change to the memcg charge path 
+> to fix what is obviously only thp and caused by removing the __GFP_NORETRY 
+> from thp allocations in commit 2516035499b9?
 
-Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
----
- Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yes, because relying on __GFP_NORETRY for the oom handling has proven to
+be subtle and error prone. And as I've repeated few times already there
+is _no_ reason why the oom policy for the memcg charge should be any
+different from the allocator's one.
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-index 42c9742..b99a57f 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-@@ -6,7 +6,9 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
- Required properties:
-  - compatible: compatible list, contains
- 	       "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
--	       "qcom,qusb2-v2-phy" for QUSB2 V2 PHY.
-+	       "qcom,qusb2-v2-phy" for QUSB2 V2 PHY,
-+	       "qcom,sdm845-qusb2-phy-1" for primary PHY on sdm845,
-+	       "qcom,sdm845-qusb2-phy-2" for secondary PHY on sdm845.
+> I don't know what orders 
+> people enforce for slub_min_order.  I assume that people who don't want to 
+> cause a memcg oom kill are using __GFP_NORETRY because that's how it has 
+> always worked.  The fact that the page allocator got more sophisticated 
+> logic for the various thp fault and defrag policies doesn't change that.
+
+They simply cannot because kmalloc performs the change under the cover.
+So you would have to use kmalloc(gfp|__GFP_NORETRY) to be absolutely
+sure to not trigger _any_ oom killer. This is just wrong thing to do.
+
+> You're implementing the exact same behavior that commit 2516035499b9 was 
+> trying to avoid; it's trying to avoid special-casing thp in general logic. 
+
+It is not trying to special case THP. It special cases _all_ costly
+charges.
+
+> order > PAGE_ALLOC_COSTLY_ORDER is a terrible heuristic to identify thp 
+> allocations.
+> 
+> > > PAGE_ALLOC_COSTLY_ORDER is a heuristic used by the page allocator because 
+> > > it cannot free high-order contiguous memory.  Memcg just needs to reclaim 
+> > > a number of pages.  Two order-3 charges can cause a memcg oom kill but now 
+> > > an order-4 charge cannot.  It's an unfair bias against high-order charges 
+> > > that are not explicitly using __GFP_NORETRY.
+> > 
+> > PAGE_ALLOC_COSTLY_ORDER is documented and people know what to expect
+> > from such a request. Diverging from that behavior just comes as a
+> > surprise. There is no reason for that and as the above outlines it is
+> > error prone.
+> > 
+> 
+> You're diverging from it because the memcg charge path has never had this 
+> heuristic.
+
+Which is arguably a bug which just didn't matter because we do not
+have costly order oom eligible charges in general and THP was subtly
+different and turned out to be error prone.
+
+> I'm somewhat stunned this has to be repeated: 
+> PAGE_ALLOC_COSTLY_ORDER is about the ability to allocate _contiguous_ 
+> memory, it's not about the _amount_ of memory.  Changing the memcg charge 
+> path to factor order into oom kill decisions is new, and should be 
+> proposed as a follow-up patch to my bug fix to describe what else is being 
+> impacted by your patch and what is fixed by it.
+> 
+> Yours is a heuristic change, mine is a bug fix.
+
+Nobody is really arguing about this. I have just pointed out my
+reservation that your bug fix is adding more special casing and a more
+generic solution is due. If you absolutely believe that your bugfix is
+so important to make it to rc7 I will not object. It is however strange
+that we haven't seen a _single_ bug report in last two years about this
+being a problem. So I am not really sure the urgency is due.
+
+> Look, commit 2516035499b9 pulled off __GFP_NORETRY for GFP_TRANSHUGE and 
+> forgot to fix it up for memcg charging.  I'm setting the bit again to 
+> prevent the oom kill.  It's what should be merged for rc7.  I can't make a 
+> stable case for it because the stable rules want it to impact more than 
+> one user and I haven't seen other bug reports.  It can be backported if 
+> others are affected to meet the rules.
+
+Exactly, so why the urgency and having half fix that will preserve the
+subtle behavior?
  
-  - reg: offset and length of the PHY register set.
-  - #phy-cells: must be 0.
+> Your change is broken and I wouldn't push it to Linus for rc7 if my life 
+> depended on it.  What is the response when someone complains that they 
+> start getting a ton of MEMCG_OOM notifications for every thp fallback?
+> They will, because yours is a broken implementation.
+
+I fail to see what is broken. Could you be more specific?
+ 
+> I'm trying to fix the problem introduced by commit 2516035499b9 wrt how 
+> memcg charges treat high order non-__GFP_NORETRY allocations, and fix it 
+> directly with something that is obviously right.  I'm specifically not 
+> trying to change heuristics as a bug fix.  Please feel free to send a 
+> follow-up patch for 4.17 that lays out why memcg doesn't want to oom kill 
+> for order-4 and above (why does memcg fail for 64KB charges when the 
+> caller specifically left off __GFP_NORETRY again?) as a policy change and 
+> why that is helpful.
+> 
+> Respectfully, allow the bugfix to fix what was obviously left off from 
+> commit 2516035499b9.
+
+I haven't nacked the patch AFAIR so nothing really prevents it from
+being merged.
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Michal Hocko
+SUSE Labs
