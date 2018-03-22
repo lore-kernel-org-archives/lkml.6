@@ -1,46 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751873AbeCVP5o (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:57:44 -0400
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:36298 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751765AbeCVP5l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:57:41 -0400
-X-Google-Smtp-Source: AG47ELvGIF4MiTLM8xJztXOgw9M4M+8jrMDbZ0Jgq9Ddxl+lthsdrLjYuxNHlPdw8UMaivRyMNVPNMi7xlDMfNaz948=
+        id S1751734AbeCVQCM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:02:12 -0400
+Received: from foss.arm.com ([217.140.101.70]:39552 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750992AbeCVQCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:02:09 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC, PATCH 08/22] mm: Introduce __GFP_ENCRYPT
+References: <20180305162610.37510-1-kirill.shutemov@linux.intel.com>
+        <20180305162610.37510-9-kirill.shutemov@linux.intel.com>
+Date: Thu, 22 Mar 2018 16:02:06 +0000
+In-Reply-To: <20180305162610.37510-9-kirill.shutemov@linux.intel.com> (Kirill
+        A. Shutemov's message of "Mon, 5 Mar 2018 19:25:56 +0300")
+Message-ID: <87sh8s14ld.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180322180756.3978942f@canb.auug.org.au>
-References: <20180322180756.3978942f@canb.auug.org.au>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Thu, 22 Mar 2018 08:57:40 -0700
-Message-ID: <CAPcyv4gLZk5Euy5ZbXag47jh5M8MeVeOQnn245R--_M5mO+LdA@mail.gmail.com>
-Subject: Re: linux-next: build warning after merge of the nvdimm tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ adding kbuild robot folks ]
+"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> writes:
 
-On Thu, Mar 22, 2018 at 12:07 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Dan,
+> The patch adds new gfp flag to indicate that we're allocating encrypted
+> page.
 >
-> After merging the nvdimm tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
+> Architectural code may need to do special preparation for encrypted
+> pages such as flushing cache to avoid aliasing.
 >
-> fs/xfs/xfs_file.c: In function 'xfs_break_layouts':
-> fs/xfs/xfs_file.c:759:20: warning: unused variable 'ip' [-Wunused-variable]
->   struct xfs_inode *ip = XFS_I(inode);
->                     ^~
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> ---
+>  include/linux/gfp.h            | 12 ++++++++++++
+>  include/linux/mm.h             |  2 ++
+>  include/trace/events/mmflags.h |  1 +
+>  mm/Kconfig                     |  3 +++
+>  mm/page_alloc.c                |  3 +++
+>  tools/perf/builtin-kmem.c      |  1 +
+>  6 files changed, 22 insertions(+)
 >
-> Introduced by commit
->
->   6ea4108852e9 ("xfs: prepare xfs_break_layouts() for another layout type")
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index 1a4582b44d32..43a93ca11c3c 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -24,6 +24,11 @@ struct vm_area_struct;
+>  #define ___GFP_HIGH		0x20u
+>  #define ___GFP_IO		0x40u
+>  #define ___GFP_FS		0x80u
+> +#ifdef CONFIG_ARCH_WANTS_GFP_ENCRYPT
+> +#define ___GFP_ENCYPT		0x100u
+> +#else
+> +#define ___GFP_ENCYPT		0
 
-Thanks for the report I'll clean this up. I did leave this on a branch
-for 0day for 24 hours before pushing to -next, but seems either the
-compilers are different, or 0day is having an outage?
+s/___GFP_ENCYPT/___GFP_ENCRYPT?
+
+Thanks,
+Punit
+
+[...]
