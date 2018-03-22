@@ -1,105 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755353AbeCVPZ2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:25:28 -0400
-Received: from mail-db5eur01on0047.outbound.protection.outlook.com ([104.47.2.47]:53088
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        id S1755376AbeCVPZs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:25:48 -0400
+Received: from mail-he1eur01on0076.outbound.protection.outlook.com ([104.47.0.76]:14656
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755318AbeCVPZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:25:14 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=leonro@mellanox.com;
-Date: Thu, 22 Mar 2018 17:24:59 +0200
+        id S1755183AbeCVPZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 11:25:31 -0400
+Date: Thu, 22 Mar 2018 17:25:15 +0200
 From: Leon Romanovsky <leonro@mellanox.com>
-To: syzbot <syzbot+06674559539eceb4d6f0@syzkaller.appspotmail.com>
+To: syzbot <syzbot+b9336dcb3661363ee088@syzkaller.appspotmail.com>
 Cc: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
         jgg@ziepe.ca, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
         markb@mellanox.com, monis@mellanox.com, parav@mellanox.com,
         syzkaller-bugs@googlegroups.com
-Subject: Re: general protection fault in rdma_resolve_addr
-Message-ID: <20180322152459.GI19440@mtr-leonro.local>
-References: <94eb2c03a2440a07af0566e73dcc@google.com>
+Subject: Re: general protection fault in rdma_reject
+Message-ID: <20180322152515.GJ19440@mtr-leonro.local>
+References: <001a114aa33405a4ad0566e73d18@google.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aiJlF+TB2UsRxGRQ"
+        protocol="application/pgp-signature"; boundary="kd7cwL6IYJrQFfWn"
 Content-Disposition: inline
-In-Reply-To: <94eb2c03a2440a07af0566e73dcc@google.com>
+In-Reply-To: <001a114aa33405a4ad0566e73d18@google.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Originating-IP: [193.47.165.251]
-X-ClientProxiedBy: DB6P193CA0020.EURP193.PROD.OUTLOOK.COM (2603:10a6:6:29::30)
- To AM0PR0502MB3907.eurprd05.prod.outlook.com (2603:10a6:208:20::25)
+X-ClientProxiedBy: CWLP265CA0025.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:11::13) To VI1PR0502MB3920.eurprd05.prod.outlook.com
+ (2603:10a6:803:11::29)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: d18f8efe-dcc1-40fc-1658-08d590091667
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM0PR0502MB3907;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;3:Fr7HW+/Yvpftbxo+cNJ/ORhCuqcWoW/zMdgKZPjTrZMd8sbQbOjXvIauxgol5LV5HfmL6VTlLSDl3LdjQjz8/WV7JSEHxwDpZ477a4s/iB0u/rR3yP3wfkfo5oZk/L4TMkykeGkyEXNVb9LIwZQvn3LXZuDcqP1bwA/98HhaDuQnq1vuLLvrTyGfY+PvoCDLpSxM6V6KtoBZGHghIY3w3HTvJgDLpB/Bd75aQivT51pDY4fbiGuD1ot1s5yg4F3p;25:d430O9pEhSBMMEmLM3igsZvbLLUpxgxTSSclux+zSseABrDWbzklawUsFLQcRxCCNHA/eqaatn1pCQgGEvV1jH8ncMb5XsbMNQagqjPhV8zoaJ4G8u8dohdfOrSRFC8/rQzecqDNSUvjWjQExJ5Pp2hhnSGA/g1OTJEieBv5HVAaCWR5fghCRtbJZd48BNuQkdfa67vyzs+z9t9gH/CWnTdwE1+jjI0x5mcxJZqt0FtCTcIx7eoBF7VLr52UesL8kljvN+eo+MhSB9rNIaS4KN63qR1LuWxQMizxli0jzTz5eNRaCfmEVj66YIwZ1XuB7eR3VxjZ3EULuXYhPPemLg==;31:6E3AVe9XXAaJVP8AWoz6EWSz08RVDYikAZxfnjVL79qkRZxZivTTc0lwpCY63/jdWIQo2viQqjz1T8aYyDqEXqUC/0SvvtHjsE03ANxfcQBgpWz4ArU9/KCf9wXpJziVbzEoZy26N2m0elCYI9NEYH2xLtLwn9dsD7Y9jPCPIu7H5ptmZdSmV6qfFGlHoag6qhqQEX5EmfRdGyfxnun5Sb/5xFKAL0xy8+cxCqyMW90=
-X-MS-TrafficTypeDiagnostic: AM0PR0502MB3907:
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;20:/Icy/bMqR6isCNijeWmRWChXZ31ag/fBwNKcGqHNxLhSJQMpcI1Jt3Ao1LutQFCMCLeRCWTmcf9EAArwiq/zZwToCcL8/5l59N2smSM81ga4+a/hAdcUel5EFn5sCe9HAsP++8IGMHC/MaMcuUEOoVhUz+/xj4epbPpunWa7eSUmjqaFR2QuiokdGy7NLeHbk8+jg9LY8bAeuLWnppyp58N38TzsiUSzGIccAGJyfeckHFIQceIi9LgDOgUxP2Sy/r+yRC5JIWZeWM2QfTWZ5BjFDl61SjD2qWPn/53wyMT4OXb7N+B0UA14obCs86wwr2PdW3I6UIxYEA0T8CZTEnBACmI12QT+ReZRr+Ve1wk5Z2QG0ych8IBE+ArCQYj8Kh/U1ksh/O2CcOtfL8ciUlRs5v3SHFqLa4j4FVGUUTlBwk7DNDDpVJ6y6igXgECpyXU8sQR8pRvViMJ/EmD3x2mykexf8bnX6c2ViMfOYR2dfn+9AoMJBn3GykbU4VUb
-X-Microsoft-Antispam-PRVS: <AM0PR0502MB3907CA1E757ECC5E183E02E9B0A90@AM0PR0502MB3907.eurprd05.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: da71a06f-bfa1-4e88-fecd-08d590091f9c
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0502MB3920;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3920;3:QBhZW/MiRGNCyCgpOQQQxeAPUvTBF7BtPlN+LrBX1GU9FFgGTgNNd6uQUE+Ou90GnppX2PZAi8nlsmNKFv9RiU5Xe9bb+fYi98o9OnI8Zfo2gbZO+pP59bv7tK9hlYU0c0WQ4kWfoi/Br9i1aLGL31T3aGuJMDa3Lg0FvfGSv7gAf4o2G1glEGHSdSD40jWk0UOWVXRM7FfSX2dSOexPu/mCfw/JynY0poj2BxH/lP6cR3PvKAIEpv/ql3uU0hD7;25:7WaZCzqEsyMMnN92jf0WzLpSOLW5kU2LTs0uNFhf6A4n1440RdW8HRqc9TMhknVDj86widtZh5E4lnZpmOUxME3ZC/jr39n7nEu06GfNZxhsd68u/fqY/xcc1ZAcNCpncGbIkn5gOCURZymmIIKNtkVmKsSkXMO2UdPreVizajWPKV5XdaqkRLj3yjV0ZTKGhfCUsnFCm7g5DIq2HpjvkpjLcAoQlK7ELpWotnCvZwW7U94gtvTi/1E07/diBeKJpUKZzkU9eWGvvLS9EkQvQWdHM1O5SOeDyLVnOb8k+YRt1oE0b8/0EYmej0+UnYYalEpQxGwe2sztmWpCPtMuUg==;31:nJZv2jaEFZLdUPdIwiJCYQ1RneZiP0twvI6FHipcGgmCE3ADt7GNYz/tZBkIUfuIF7XMythYhIj2VGbiHYvFJ5wUXvJnu2khbThJCfPjmh3GZh68qpL/qguy+r+pz1zE/4bSxCIKYLCRGY1mCdPFS2FUrFIXZ6WLQWsm3Bu+ciwg7W53JITJfdWCZ/EBz//PW5OD9cgUtVyzMuUGhc/tofBH9V8n0uO/DRIkEvb2NSY=
+X-MS-TrafficTypeDiagnostic: VI1PR0502MB3920:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=leonro@mellanox.com;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3920;20:vko6/0gK/guxv3NKx9iIZKOalzAIU2TZqPGoiMSnOXOcDnSYt0dAw+1gbgtNOjkuEt6XK6a53yr256K8xVbQvIxYUUWAGtHJm/diDIECC3gAbCHOAsq/lXH4hJRmDV9rLACho7sns3mrGbGgopU2nQxenyeAUT+x1EsEgRa9rpQ3mqfw7J8E90l/gNggbcITYm/xtYxT1Y6IJWWFMHVjoKQB4Ln7kT35GphrgOg6lBTwsw3DtEZj6KHYSnPua6V2wdyBT+RzqfiySEpTWfYPm/KCaNeJgixVxPEHIGcaenpCID+91/YNqBJXOL+C2CvPBjf56smDiKDxB1GWGr/1crR9vyMElSvqG0CE3kzpm6GAwBNWm0Ao8QfOl2Fxkh5xzOEp2qGyv1TcHbeLLOB5pZSh16T38LIbkixGthtPgmnrct8gWGbUaQHH77s7kba4m61eBr0BxeIGgGpkjMR4kxFyPwLX4ZJY4UDK4HVvcsqJItFioenyAXnpZbrFm0dC
+X-Microsoft-Antispam-PRVS: <VI1PR0502MB3920237F3DABD58F15B503A5B0A90@VI1PR0502MB3920.eurprd05.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(158342451672863)(72170088055959)(166708455590820)(192374486261705)(788757137089)(148501403981450)(84791874153150);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231221)(944501327)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:AM0PR0502MB3907;BCL:0;PCL:0;RULEID:;SRVR:AM0PR0502MB3907;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;4:1s/7EfisDtqmL8JQrchoWHSFPVC992eiDjEVwGM/SfuWQdEzr7cjwrg/bbdfZkvtOnUenaA3ttMcVAm+lE7MPkoly8YAOxIOq94SLk6JBqt216yj6v9IlDiwAS9YPvCXtNmskYvsaCrWT6Le2xsm/tpae0LKTuOgaLSahGTF+eRhLboroRx7/OAVS1g8sWHAjievVTA1jbAL4Q7brWTiZZli3kbwBDXokVn8Ks8kI34BzX+2lhCJDuFwpGk+JA6w2L9SNbd9zWnCr8YO3QIbA4lxiuyeD1pM62KUPgCGI44mlmFEFIAHsoarkkLJeuSlfcvZ7B9ahPey/nzd3gZF75uawj5RHKKsXA2oBzxPpkgvXvDU2pWQ/CQiLn6hIBQtVDY7MtwKcG0DCN8DTVKUSncPcE6erjptraNRKtfDsgkXxJ6L2T+iWlNEitsDFRKtsNX+81dZBMn+AFOHobXDzKAHGhIHhkwerEQsU2ZXYefd4G31VG1zml73h/ymWuLZc8V8jEvln0Q+XyDdlggFbQ==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:VI1PR0502MB3920;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0502MB3920;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3920;4:Xt9YfuG8PPV93nF0bxbOYc97TlGj3idMltUjdkJgu5hBfbN5BAzDv/AMvJuF0nzC3ifwIvrL+8oeb8vQgJwWKBFsaAmB4iz+dy5/2E8cWpO6NSjECnpl2TEQzg6/uqc/Ehii2ed3fFnyLWVuw8jxhCdUECwVVzdY0gWD6meOdZyAH5tMrAlvPxt8GnrRAUDStB/re87n2K93O95Sy5UI3iaKr+nk+UIpiSxmheAwTw+zz2GSVcyz1ez+SkSnKRsufiw5YGLDiDk6vnqCb5OQWgVPRd7bzdsC6lc5cJjSp2ZLU2WWUDkv1OIWY4UmjDj2J/XdgRathvmZiri8wCGZayRyk+uh+vdVe/IN/aBHLNu5qIaL/EudgFFIGfeYd2tMw5qQS3T5LK50BjyclGM9zcUui1NMqmpSgfiSk2rm/6RoMwXMjqx1tZvFqA8iEKUDEmGI+lNlUYhIiEjQaDeYVdME4/+3Zzor+FjchHyRBVuIeT0UvTykPiqIforr0gkqSzw4BCeRtPYi2+TPACrfVA==
 X-Forefront-PRVS: 0619D53754
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39380400002)(366004)(396003)(346002)(39860400002)(376002)(189003)(199004)(26005)(6486002)(33896004)(45080400002)(6246003)(76176011)(44144004)(63394003)(1076002)(98436002)(4326008)(33656002)(59450400001)(53376002)(11609785009)(16200700003)(53936002)(5660300001)(53946003)(52116002)(9686003)(58126008)(6306002)(97736004)(66066001)(8936002)(11346002)(2906002)(3846002)(6116002)(81166006)(6496006)(81156014)(7736002)(8676002)(305945005)(25786009)(76506005)(5890100001)(106356001)(68736007)(575784001)(86362001)(21480400003)(105586002)(186003)(478600001)(16586007)(6666003)(386003)(16526019)(966005)(84326002)(2950100002)(316002)(229853002)(446003)(18370500001)(2700100001)(559001)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0502MB3907;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR0502MB3907;23:7SQdG2iJMRlYwsBFBFRCNFcgdE1fEoZhGF1rmVJ?=
- =?us-ascii?Q?onu5eVaNuKeq30TcAm+yzl3eZ/tYIatQiF59kVfo7IxLGAr5KJceIiNVVQIO?=
- =?us-ascii?Q?vbnZkbUPEjY+QNR2lauzYNALt0rKK6ZQT1DbsrRbLU903AY27xfiz/RiPPat?=
- =?us-ascii?Q?h2KbGYoWBCn6PtqDSaRQpZoXXqMMewtzB5lM0LUoJfLcHWMGlft0W9GyOPi7?=
- =?us-ascii?Q?94XC2BSsb7uc/3oS5daha/Lm6OUcC5H3X2vq2FQR+1WJdVDFEVB+hrjAWLYd?=
- =?us-ascii?Q?7f5GaJ3zk3WpDjh9c7ZODILtVK5aQ5j3Smm2C+bSeqCeAyDkF1GTx9ETVu1O?=
- =?us-ascii?Q?gWMtYYZ0qNJEUKtq6ynscNffNltbp9LmGs8ZISItfdLeG7+Db/HrSA79I3Vd?=
- =?us-ascii?Q?Z1XPOLPtuGyAx7mvWA07Wg2M8CqtXY2GVQcWd3epdK8mJB27ReF3s+/9LWbf?=
- =?us-ascii?Q?2qAzfB1eHOKfNDkwSnh3RqruADIETaCciD5AZxnTE7en6ajAO3H2cXdXiTMv?=
- =?us-ascii?Q?TtzK7oXfP9uE8jC4EUFnxUtv333K0uwAUm40vfXjRRYhB8gWt0l5sfdac+IX?=
- =?us-ascii?Q?T7cDz60X9drj/q6P/if9nFCHIXaGGdmDN8N+Y8aWaJVKpnGCWs9tci/9fux+?=
- =?us-ascii?Q?4iwW3diPkzqg+/WkaDH1RVeWC3B/yPwcIXW+jUaZtUa7CNs4XGMZL8ObSAhR?=
- =?us-ascii?Q?vr+l2Wg3Iw08Y6cl8BPfa8tupn2ccnGSSXrJHclKOi8Lep+ba9J7KoPiFIFa?=
- =?us-ascii?Q?cITQO28tOSMgvx2G4tDaN6vLPNVeennofLh4pzm3uMw0L8s1x1R1KQm5cBIH?=
- =?us-ascii?Q?yOvblEbzqNe6FTUF2igtUVgi2mcfvSgMTyVRGUawTDdd7wU7Ks/xHzJ+4wMr?=
- =?us-ascii?Q?JsZ4gcMDEwn+4YQQHoMZohrk3Y7F8K8gjYteA/+vFAd2rAuDYhQl4faOp8l5?=
- =?us-ascii?Q?FFYfu7BQDW771zu8anpzhhCYtOhY3C8T2xjrii5Eq55jogvSbwcX+aUSjeZO?=
- =?us-ascii?Q?aIIHpv7FT6vrTUlhelGMv4nVCTnbpwg2hIdWf81btB2hrlpyrtmhaCswDKuD?=
- =?us-ascii?Q?nMA7wXB79aHHQNPcecq333DhHISAyZdbZey/Of/ptsL94xv7QSXHPEmNF9Rs?=
- =?us-ascii?Q?b8MYxptwHhR4zSp6hc0KK7gCOY4sLqCOtPFapyfRT1/f0jiji45HCpeBSyOE?=
- =?us-ascii?Q?rMs47/0Du/jz9fL/Mm1rGrRaxS62/8ditdFzbbbrrCeARZOn4gb+GthQFb2n?=
- =?us-ascii?Q?VmpCUSwqJxWXUgtf9awUoBJxJKlxzALtM3+Vo+e1N8XmYxvLGi5hdn9Jrw22?=
- =?us-ascii?Q?GWJJZaPfP5G6P/q2Df9QE1XDiEgam9vjV6lon8GB3l1PeP32L/ZPlwo18RMV?=
- =?us-ascii?Q?+UU9Dgmbs0rHtcsGRr2VsjQT6Wgc72yTu9CQ01zgQqAZQjbA8Qz9+OdgVpRs?=
- =?us-ascii?Q?4Yy2/THKeby8eZSdiaf6zTcP4k9LaFztoCEtIPG6vNssDXEQU61VYbuKy8cR?=
- =?us-ascii?Q?bkc7zp4tH+9KYmjtZasXaaai1R9V7veQuHM4+Qe49lWpGfmqk7L2G18oHI2L?=
- =?us-ascii?Q?Rfb7AqaNoSn2lrDyejpN49uGwKb1stFvffybVvrUEegbFUet2yQJrc6Dr4DG?=
- =?us-ascii?Q?7?=
-X-Microsoft-Antispam-Message-Info: /K8C+M0VhSwp7Mro6YL4RazB4C0EwvKuXC6ZkO8sw/7f26kq2YqeaXnjBPvh9JH9YGaC+foEgvDpWFJVyQKzn7CfCVb99rwMzgtaMCSZ+9YCvVVkc3X+TSnh5ereb+wA0FhSFCjm42wVUBJJfJfQMShpBfXuYf2l4Qkfrq4xj9hLgJQv/5iGAExgW/oNorTT
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;6:htfIZVpRC2NLlb9QxCGV3dzz3kpmv0m0e0imCOCFQ5RrIxxswLJcV5n8aOhAO4N5zy844gqHsEsJCMJ4a9AT7vaiJICsXGI+qkHtAOK0O0zILzsAo1gsm//gZcpusgHNPU1jpIs75g9twqPj9CRTnE9BB8KXJteBQvk92majONgZ/6OX7Ke6qO+D8uYmTyv2ZZ7ZTy4/dZ7aF/1Pms7HqiKH07+qjqZyPXra/hjr1fRn0YW2DaoW8+DOS0rEBc4hSt3Y9S6NttD7LLPeXFfYngU1Mf/DSUJvdMbYvDtBxfHfEhMIIhqJ5FRDHARIXi72UoNhgl2Mh5LelIkO0O+j1TQ0DChJfOeIjyFcV2/gWpcAZjXxu3vlbOSc/hLEfDOYrbtSkn0qn/pLXS3FVVuSiydszadGJ6ShNnH1WgCzuybFY2y4ra/mhho+kUs6gVRRRRnqrEaEVOJMcBxKYjFX1Q==;5:F40DvZO/P9ox5vkwiGZQTJfG+jH3ek1F1OSYgTBpjGDfdHgKC8qJ8QQYiRsQWW8xi8PiDMp/VPndZ5Rl9nAmoCnO2Gsa7tc5xw8jErujoJCC3jFicX6Zl4iAqIYgks6LEEy32Tc5D1bzRgJ1txQHyQ15GhIjZ8IlfZ1YJf4DzVc=;24:/wRbX6mq7JYVKxQlm9aEoOTXMUu3GBeHz0NgYTimu4GsL9YG2F12EvxNpr0LNDjrbZ4BCvQ+T+a9PlNHxi/KQ/FSfOU0TWwxDAJhHH9wZhE=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(366004)(396003)(39860400002)(39380400002)(376002)(346002)(189003)(199004)(58126008)(2906002)(105586002)(16586007)(7736002)(316002)(6116002)(106356001)(3846002)(386003)(2950100002)(6666003)(4326008)(1076002)(98436002)(21480400003)(26005)(68736007)(229853002)(25786009)(33656002)(76506005)(6486002)(97736004)(66066001)(11346002)(186003)(59450400001)(6496006)(81156014)(81166006)(44144004)(33896004)(8936002)(84326002)(11609785009)(76176011)(8676002)(966005)(9686003)(6246003)(575784001)(305945005)(52116002)(45080400002)(5660300001)(6306002)(63394003)(53946003)(16200700003)(5890100001)(16526019)(86362001)(53936002)(53376002)(478600001)(446003)(18370500001)(2700100001)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0502MB3920;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0502MB3920;23:iSpvdgMVgTCD4r9XZsQu8jTNLM9aA8sZ+NDGrJQ?=
+ =?us-ascii?Q?SGeQdnlrRMMc/DDb+mKSOevUcctGoePOypDSfhwpWndqnCHcTjgyn6s5EoD/?=
+ =?us-ascii?Q?DIOVzsvWB2VxRj0umDHxnGBkbsJXUpRtD7oPlamK3RkP6HXn0WpWTzZLmZ3m?=
+ =?us-ascii?Q?oyWJOvyQdm88QfeJ7vj9OML6fOpyBfVubMWu+DqxT/ox1ve3iK88agY/pCYV?=
+ =?us-ascii?Q?rlSEnvLphKyT+nl4NyCoKCUgeCPNRUMWmq2Lv+jjfn23mS3xZ0gkeFN+FxPR?=
+ =?us-ascii?Q?OfkaNIIsfIps8vJ+D/56o0XDqYSKZQICae+IHs96Ftmc+yC3RIVd1wWeVpoR?=
+ =?us-ascii?Q?gIfTBERTR6PTzPDSKAVFDNZUBAZ5xc+YOOuxZWQLQ8jgzYy6nwfXE3AfoULM?=
+ =?us-ascii?Q?RuPJNaSi3M5qxCWUI9HDax2BxCfIv8uDfkndBa28qINDT8ANv0niSoMBEf7d?=
+ =?us-ascii?Q?w/pJhNOD6RaDmBk6NfYMM/mXgpJMd+cLbQqKQLEXb4WRWG+/4HxU9VLKasRb?=
+ =?us-ascii?Q?1ypikKbN1usCeLduiQF7Y5uiiPsj7y+iigh407wpOnwJOIT+8gaGqi5huaVL?=
+ =?us-ascii?Q?gptX1+qQf1sMUJF7dqr4wiJu6EQEu12hLvuGDw/NOV3YUYrxcEqsy03FP9JL?=
+ =?us-ascii?Q?m0+0kYdH2fTILdYbt9lhndlytM5bUOt7bdDb6hM5ecxSSU4O4IrAxwsiy2iL?=
+ =?us-ascii?Q?rhPixuKVfyR/D2AbieqxFTgjp+roTXVBjYzQLw0tcV+cJr7MxtmFI1krH1Tp?=
+ =?us-ascii?Q?g9lmQekusYB+ejwrECzq63WNkl3ZgVEDHxe6c5dP1tFpc98ucogK5x9gYT0z?=
+ =?us-ascii?Q?eYOib2qvMOaXNMMaIXa1TwvqcXGdl1+KrmYsitgXQwVpBi4k3+mnTgqZJGRM?=
+ =?us-ascii?Q?vnRmPX5xZZuC0EKCph9EQI7ma/a/hYXMr0Qsgmkv6Ckzm8L2je5OJVr6x8fo?=
+ =?us-ascii?Q?KhRaYLQc47vDCIh7M8ZZq7M100kOJ2sKLjoTN+ZPBEQOoScKO/usuZ641sf1?=
+ =?us-ascii?Q?lUufjN8OJ5ZdHVcfpbMLkWFJbopHOglvr3AHX1jEJ6X/D7Kw2rassDIQYtNR?=
+ =?us-ascii?Q?dUQxXzbYDMtT9Uv9UPFGGBRWMxiOIEQSIjp0CPM+9TkeCJbqc0rtSA2GmnKp?=
+ =?us-ascii?Q?xdlldeouiAEOHr9RshyIZ70SET+OXjsc26ct0SF4Igp3bYPRNu4s+vSrhs0w?=
+ =?us-ascii?Q?GXs6Ztu4AQfeA/5iBwfMJRtKW1Gk2QCTAYM0nKxTTiGebzfDsHCkDHuNDZkC?=
+ =?us-ascii?Q?+gje6pFuOq4sAXQzv+dRmtVaiUNYwwDWrBuHL1VGjSvNaox4nub9IHJfkTPi?=
+ =?us-ascii?Q?bT2PJbdmiS7SvEPFTm+YgeziOVu6fnpIHEoLL6r5i5Gu7FaVsALOBJCs41dn?=
+ =?us-ascii?Q?jlvNQExc9xMP5QL6b3ZHXEcPI1tv5lQYmCxB4tDbTkCoyIbutPwi1xSLfSDs?=
+ =?us-ascii?Q?dOznqvre+hgH2wB1EKObMgCf3f2RAnWvUkDG9ECfeM5Rwr9m6bTGz+8rN1Hr?=
+ =?us-ascii?Q?nk3SiLpnnzF58kx1VBaNJgjDgSmWGjC3kYXoEp7G9uQyQgCiW6gJB/jUmvsf?=
+ =?us-ascii?Q?cCDTp8EyQGEiuZhaW9FjSoqiqwjIwO5Y6JX6UYOOwvF1r6/PNQhFE1s8jFwJ?=
+ =?us-ascii?Q?S?=
+X-Microsoft-Antispam-Message-Info: VjS0cTVfmvXq8SZb1d5bB1ohZWqA458Pr3AwsozW0WT55tC9O2LAc7XRWZ1CGLY5boKBknmYkQjbndKDZE+IMmXquugDjsnRKPGN3oevAGHsYabD2Ie5oiYVeVnCZtWpYtF/zrpXz1bX/hyh4XZ7XSla3j6tmounqo7j4f5saekXnwsb9xh2wgvDYDTBcEH0
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0502MB3920;6:YAvhrSoeOKHdo4iIeXAFtr7RLcTGHwj6O3RTC1JBqqs/3jhce+KGjdh/zo67TqyRvbz0nH5ktM3z71EcI7jvFfnE9v/ws82kuSdGmRQVo1fY7wSjQ3scC82uAGbXt59XiCXB3QPFuQjS/7lRdLCeF05umK4jtJ+owDdZAgBJ/cCJ9Wh0vRrZYkdw08ciGsqKwGyyGzxFZcP/x8To3aZdEoi7HAvQVV3wZ2BiHIUsyYzn6sATBvze4R000XAFGne6gFObStnD2OfRAESp5R510J0kNV+tWwKkpbPcyKop0Nc1aaS1RNdnVqUgK2sckAKwTLNzAA4zCoP8FWUYg6rpzO4U/au4t6MKgEDfEvTLWtc=;5:Ix5GdXOLC0bkwI0ln+YqjGfH8MHd6SnL1Ld92Mpvi2tl3AufQmB/CghGWhJ0gJE4nE3RzbCXuRfYxiS+VlRlZPrS5FufLoSRiSEtrXv4B9CLZO7NtV9bgKqGX714oVTklD/J39aF045M+t1q3ynsrkMS3kx2O74UqFWBrDghJzc=;24:RlCZUJkuSgr7huOCZZRov0pVu9hwJSNkSFSTQxnyhwEXz7WkYkiXqtwx5AwmJ9h7wfe6LqIhZvs6eZgZV9ZD/O8zUtPCrfFkkZgDwFX8Yqs=;7:IP82nEQlexL1YFH3Mb/Eyj9/KknGqKmyJE82Vjhk7Px0TfHAeBVCzbVoy47gXVeKiQ0dqjdZr5bWLizi/4DqYVq6QbkvurQDpA6Fqp20LzqlCdr0Y36AEexgZPs9ecs9uMOVsOOgZeawRZlrU/J07EUtmicR2hPwrmun5XJHBHPrh3ftkfY5jB8Co9J4RB0yS/x7xNnnpTpQkpGQcjdkf125ROwoScbHCGwouluoM2KqCpR+Ipnl5o/hquqeEQC7
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;7:XLLknOvkBcKiJBM0PgCPhGrbzyssck2GVUJhcoXVyzqdhUrGxJcOeY2YhZoT7kx1fbkv2SsBmfC54nUpcn7Q4umTWnhjy3qoddipHKplCED3aS7jx9PfxtS4sB54YA9arDCRUyq+22kXDIuFjhKng4SVpsEpTXCAIYZLQsib/SSbGo6arP7ppK+7DSXrAxBkWfdUe1eO+dOqKwF1YWyr1RS2hedzabCjCsrTnstQG48fHHeAOUbN1cbAwWuiVFpw
 X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2018 15:25:04.5878
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d18f8efe-dcc1-40fc-1658-08d590091667
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2018 15:25:19.9781 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: da71a06f-bfa1-4e88-fecd-08d590091f9c
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0502MB3907
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0502MB3920
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---aiJlF+TB2UsRxGRQ
+--kd7cwL6IYJrQFfWn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 #syz dup: KASAN: null-ptr-deref Write in rdma_resolve_addr
 
-On Thu, Mar 08, 2018 at 06:10:31AM -0800, syzbot wrote:
+On Thu, Mar 08, 2018 at 06:10:30AM -0800, syzbot wrote:
 > Hello,
 >
 > syzbot hit the following crash on upstream commit
-> 851710a8096131129ad1da79a47d385c4926d114 (Thu Mar 8 01:37:32 2018 +0000)
-> Merge branch 'for-linus' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
+> 1b88accf6a659c46d5c8e68912896f112bf882bb (Thu Mar 8 01:49:33 2018 +0000)
+> Merge tag 'for_linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost
 >
+> So far this crash happened 2 times on upstream.
 > C reproducer is attached.
 > syzkaller reproducer is attached.
 > Raw console output is attached.
@@ -107,7 +107,7 @@ On Thu, Mar 08, 2018 at 06:10:31AM -0800, syzbot wrote:
 > .config is attached.
 >
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+06674559539eceb4d6f0@syzkaller.appspotmail.com
+> Reported-by: syzbot+b9336dcb3661363ee088@syzkaller.appspotmail.com
 > It will help syzbot understand when the bug is fixed. See footer for
 > details.
 > If you forward the report, please keep this part and the footer.
@@ -118,25 +118,24 @@ On Thu, Mar 08, 2018 at 06:10:31AM -0800, syzbot wrote:
 > Dumping ftrace buffer:
 >    (ftrace buffer empty)
 > Modules linked in:
-> CPU: 0 PID: 10410 Comm: syzkaller958277 Not tainted 4.16.0-rc4+ #345
+> CPU: 0 PID: 6876 Comm: syzkaller888997 Not tainted 4.16.0-rc4+ #346
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
-> RIP: 0010:rdma_resolve_addr+0x13c/0x26c0 drivers/infiniband/core/cma.c:29=
-21
-> RSP: 0018:ffff8801b3807680 EFLAGS: 00010207
-> RAX: 0000000000000042 RBX: ffff8801b3807a44 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffff8801b3807a44 RDI: 0000000000000214
-> RBP: ffff8801b38079e0 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffff8801b38079f8 R11: 0000000000000000 R12: dffffc0000000000
-> R13: 00000000000000a0 R14: ffff8801b3807a28 R15: 0000000000000000
-> FS:  00007f2dc376e700(0000) GS:ffff8801db200000(0000) knlGS:0000000000000=
+> RIP: 0010:rdma_reject+0x37/0x220 drivers/infiniband/core/cma.c:3851
+> RSP: 0018:ffff8801b50bf8f8 EFLAGS: 00010206
+> RAX: dffffc0000000000 RBX: 1ffff10036a17f29 RCX: ffffffff841bb25f
+> RDX: 0000000000000078 RSI: ffff8801b50bf970 RDI: 00000000000003c0
+> RBP: ffff8801b50bf928 R08: 0000000000000000 R09: 0000000000000000
+> R10: ffffffff88613380 R11: 0000000000000000 R12: 0000000000000000
+> R13: ffff8801b50bfaa8 R14: ffff8801b50bf970 R15: 0000000000000000
+> FS:  00007f7d987bc700(0000) GS:ffff8801db200000(0000) knlGS:0000000000000=
 000
 > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020000140 CR3: 00000001c6e4e006 CR4: 00000000001606f0
+> CR2: 00000000006de0f8 CR3: 00000001bf0e0006 CR4: 00000000001606f0
 > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > Call Trace:
->  ucma_resolve_ip+0x142/0x1f0 drivers/infiniband/core/ucma.c:677
+>  ucma_reject+0x149/0x220 drivers/infiniband/core/ucma.c:1112
 >  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1627
 >  __vfs_write+0xef/0x970 fs/read_write.c:480
 >  vfs_write+0x189/0x510 fs/read_write.c:544
@@ -144,21 +143,20 @@ On Thu, Mar 08, 2018 at 06:10:31AM -0800, syzbot wrote:
 >  SyS_write+0xef/0x220 fs/read_write.c:581
 >  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
 >  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x446aa9
-> RSP: 002b:00007f2dc376dda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 0000000000446aa9
-> RDX: 0000000000000008 RSI: 0000000020007100 RDI: 0000000000000004
-> RBP: 00000000006e29f8 R08: 00007f2dc376e700 R09: 0000000000000000
-> R10: 00007f2dc376e700 R11: 0000000000000246 R12: 006d635f616d6472
-> R13: 2f646e6162696e69 R14: 666e692f7665642f R15: 0000000000000003
-> Code: 31 c0 e8 f8 b1 53 fd 48 89 df e8 70 f4 f5 ff 4c 89 ef 48 63 d0 48 89
-> de e8 02 df 8b fd 49 8d bf 14 02 00 00 48 89 f8 48 c1 e8 03 <42> 0f b6 14=
- 20
-> 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f
-> RIP: rdma_resolve_addr+0x13c/0x26c0 drivers/infiniband/core/cma.c:2921 RS=
-P:
-> ffff8801b3807680
-> ---[ end trace 35b5ca64e9e3cd3f ]---
+> RIP: 0033:0x4489a9
+> RSP: 002b:00007f7d987bbda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000700024 RCX: 00000000004489a9
+> RDX: 0000000000000008 RSI: 00000000200003c0 RDI: 0000000000000003
+> RBP: 0000000000700020 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 006d635f616d6472
+> R13: 2f646e6162696e69 R14: 666e692f7665642f R15: 0000000000000001
+> Code: 49 89 ff 53 41 89 d4 49 89 f6 48 83 ec 08 e8 b1 53 55 fd 49 8d bf c0
+> 03 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00=
+ 0f
+> 85 a0 01 00 00 4d 8b af c0 03 00 00 4d 85 ed 0f
+> RIP: rdma_reject+0x37/0x220 drivers/infiniband/core/cma.c:3851 RSP:
+> ffff8801b50bf8f8
+> ---[ end trace edcac9dcf5a05d54 ]---
 > Kernel panic - not syncing: Fatal exception
 > Dumping ftrace buffer:
 >    (ftrace buffer empty)
@@ -188,41 +186,197 @@ P:
 > Note: all commands must start from beginning of the line in the email bod=
 y.
 
+> [....] Starting enhanced syslogd: rsyslogd[   17.005786] audit: type=3D14=
+00 audit(1520516714.267:5): avc:  denied  { syslog } for  pid=3D4098 comm=
+=3D"rsyslogd" capability=3D34  scontext=3Dsystem_u:system_r:kernel_t:s0 tco=
+ntext=3Dsystem_u:system_r:kernel_t:s0 tclass=3Dcapability2 permissive=3D1
 > =1B[?25l=1B[?1c=1B7=1B[1G[=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
 > [....] Starting periodic command scheduler: cron=1B[?25l=1B[?1c=1B7=1B[1G=
 [=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
 > Starting mcstransd:
-> [....] Starting OpenBSD Secure Shell server: sshd=1B[?25l=1B[?1c=1B7=1B[1=
-G[=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
 > [....] Starting file context maintaining daemon: restorecond=1B[?25l=1B[?=
 1c=1B7=1B[1G[=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
-> [   19.110518] audit: type=3D1400 audit(1520479597.561:6): avc:  denied  =
-{ map } for  pid=3D4181 comm=3D"bash" path=3D"/bin/bash" dev=3D"sda1" ino=
-=3D1457 scontext=3Dunconfined_u:system_r:insmod_t:s0-s0:c0.c1023 tcontext=
-=3Dsystem_u:object_r:file_t:s0 tclass=3Dfile permissive=3D1
+> [....] Starting OpenBSD Secure Shell server: sshd=1B[?25l=1B[?1c=1B7=1B[1=
+G[=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
 >
 > Debian GNU/Linux 7 syzkaller ttyS0
 >
-> Warning: Permanently added '10.128.0.6' (ECDSA) to the list of known host=
-s.
-> syzkaller login: [   30.486227] audit: type=3D1400 audit(1520479608.937:7=
-): avc:  denied  { map } for  pid=3D4196 comm=3D"syzkaller958277" path=3D"/=
-root/syzkaller958277320" dev=3D"sda1" ino=3D16481 scontext=3Dunconfined_u:s=
-ystem_r:insmod_t:s0-s0:c0.c1023 tcontext=3Dunconfined_u:object_r:user_home_=
-t:s0 tclass=3Dfile permissive=3D1
-> [   30.502445] IPVS: ftp: loaded support on port[0] =3D 21
+> syzkaller login: [   23.295973] audit: type=3D1400 audit(1520516720.557:6=
+): avc:  denied  { map } for  pid=3D4238 comm=3D"bash" path=3D"/bin/bash" d=
+ev=3D"sda1" ino=3D1457 scontext=3Dunconfined_u:system_r:insmod_t:s0-s0:c0.c=
+1023 tcontext=3Dsystem_u:object_r:file_t:s0 tclass=3Dfile permissive=3D1
+> Warning: Permanently added '10.128.0.48' (ECDSA) to the list of known hos=
+ts.
+> [  184.150068] audit: type=3D1400 audit(1520516881.411:7): avc:  denied  =
+{ map } for  pid=3D4254 comm=3D"syzkaller888997" path=3D"/root/syzkaller888=
+997320" dev=3D"sda1" ino=3D16481 scontext=3Dunconfined_u:system_r:insmod_t:=
+s0-s0:c0.c1023 tcontext=3Dunconfined_u:object_r:user_home_t:s0 tclass=3Dfil=
+e permissive=3D1
+> [  184.167269] IPVS: ftp: loaded support on port[0] =3D 21
+> net.ipv6.conf.syz_tun.accept_dad =3D 0
+> net.ipv6.conf.syz_tun.accept_dad =3D 0
+> net.ipv6.conf.syz_tun.router_solicitations =3D 0
+> [  184.176044] audit: type=3D1400 audit(1520516881.412:8): avc:  denied  =
+{ sys_admin } for  pid=3D4262 comm=3D"syzkaller888997" capability=3D21  sco=
+ntext=3Dunconfined_u:system_r:insmod_t:s0-s0:c0.c1023 tcontext=3Dunconfined=
+_u:system_r:insmod_t:s0-s0:c0.c1023 tclass=3Dcap_userns permissive=3D1
+> [  184.200576] IPVS: ftp: loaded support on port[0] =3D 21
+> [  184.215269] audit: type=3D1400 audit(1520516881.474:9): avc:  denied  =
+{ net_admin } for  pid=3D4264 comm=3D"syzkaller888997" capability=3D12  sco=
+ntext=3Dunconfined_u:system_r:insmod_t:s0-s0:c0.c1023 tcontext=3Dunconfined=
+_u:system_r:insmod_t:s0-s0:c0.c1023 tclass=3Dcap_userns permissive=3D1
+> [  184.233321] IPVS: ftp: loaded support on port[0] =3D 21
+> net.ipv6.conf.syz_tun.router_solicitations =3D 0
+> net.ipv6.conf.syz_tun.accept_dad =3D 0
+> [  184.268785] IPVS: ftp: loaded support on port[0] =3D 21
+> net.ipv6.conf.syz_tun.accept_dad =3D 0
+> net.ipv6.conf.syz_tun.router_solicitations =3D 0
+> net.ipv6.conf.syz_tun.router_solicitations =3D 0
+> [  184.306475] IPVS: ftp: loaded support on port[0] =3D 21
+> net.ipv6.conf.syz_tun.accept_dad =3D 0
+> [  184.351868] IPVS: ftp: loaded support on port[0] =3D 21
+> net.ipv6.conf.syz_tun.router_solicitations =3D 0
+> net.ipv6.conf.syz_tun.accept_dad =3D 0
+> [  184.410597] IPVS: ftp: loaded support on port[0] =3D 21
+> net.ipv6.conf.syz_tun.router_solicitations =3D 0
+> net.ipv6.conf.syz_tun.accept_dad =3D 0
+> [  184.457288] IPVS: ftp: loaded support on port[0] =3D 21
+> net.ipv6.conf.syz_tun.router_solicitations =3D 0
+> net.ipv6.conf.syz_tun.accept_dad =3D 0
+> net.ipv6.conf.syz_tun.router_solicitations =3D 0
+> RTNETLINK answers: File exists
+> RTNETLINK answers: File exists
+> RTNETLINK answers: File exists
+> RTNETLINK answers: File exists
+> RTNETLINK answers: File exists
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: File exists
+> RTNETLINK answers: File exists
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: File exists
+> RTNETLINK answers: Operation not supported
+> [  185.058088] IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
+> RTNETLINK answers: No buffer space available
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> [  185.160172] IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: No buffer space available
+> [  185.217687] IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
+> [  185.224755] IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
+> RTNETLINK answers: No buffer space available
+> RTNETLINK answers: No buffer space available
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> [  185.394279] IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
+> [  185.421635] IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
+> [  185.434777] IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: No buffer space available
+> RTNETLINK answers: No buffer space available
+> RTNETLINK answers: No buffer space available
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> [  185.516874] IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
+> RTNETLINK answers: No buffer space available
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Operation not supported
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> RTNETLINK answers: Invalid argument
+> [  186.659588] IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
+> [  186.665716] 8021q: adding VLAN 0 to HW filter on device bond0
+> RTNETLINK answers: Invalid argument
+> [  186.759547] IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
+> [  186.765683] 8021q: adding VLAN 0 to HW filter on device bond0
+> [  186.779982] IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
+> [  186.786193] 8021q: adding VLAN 0 to HW filter on device bond0
+> [  186.873606] IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
+> [  186.879752] 8021q: adding VLAN 0 to HW filter on device bond0
+> [  186.945228] IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+> [  186.996640] IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+> [  187.038940] IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+> [  187.098589] IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
+> [  187.132865] IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
+> [  187.139107] 8021q: adding VLAN 0 to HW filter on device bond0
+> [  187.169780] IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
+> [  187.176031] 8021q: adding VLAN 0 to HW filter on device bond0
+> [  187.217724] IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+> [  187.223944] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> [  187.234916] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
 > executing program
+> [  187.255555] audit: type=3D1400 audit(1520516884.517:10): avc:  denied =
+ { sys_chroot } for  pid=3D4265 comm=3D"syzkaller888997" capability=3D18  s=
+context=3Dunconfined_u:system_r:insmod_t:s0-s0:c0.c1023 tcontext=3Dunconfin=
+ed_u:system_r:insmod_t:s0-s0:c0.c1023 tclass=3Dcap_userns permissive=3D1
+> [  187.261309] IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
+> [  187.286243] 8021q: adding VLAN 0 to HW filter on device bond0
 > executing program
 > executing program
+> [  187.316644] IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+> [  187.323413] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> [  187.333787] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
 > executing program
-> [   30.540985] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
+> [  187.364419] IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+> [  187.370753] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> [  187.384478] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
 > executing program
 > executing program
 > executing program
-> [   30.579193] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
+> [  187.409630] IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+> [  187.419055] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> [  187.435047] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+> [  187.456000] IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
 > executing program
 > executing program
 > executing program
@@ -230,8 +384,8 @@ t:s0 tclass=3Dfile permissive=3D1
 > executing program
 > executing program
 > executing program
+> [  187.474958] IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
 > executing program
-> [   30.635337] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
@@ -240,36 +394,44 @@ t:s0 tclass=3Dfile permissive=3D1
 > executing program
 > executing program
 > executing program
-> [   30.693344] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
+> [  187.569276] IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
 > executing program
 > executing program
 > executing program
 > executing program
 > executing program
-> [   30.743845] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
 > executing program
 > executing program
+> [  187.639857] IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
+> [  187.646189] 8021q: adding VLAN 0 to HW filter on device bond0
+> [  187.653990] IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+> [  187.661323] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> [  187.669966] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
 > executing program
 > executing program
 > executing program
-> [   30.792724] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
+> [  187.724511] IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+> [  187.730791] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> [  187.746937] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+> [  187.757440] IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
 > executing program
 > executing program
 > executing program
 > executing program
 > executing program
-> [   30.855563] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
 > executing program
 > executing program
+> [  187.772607] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> [  187.788609] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
 > executing program
 > executing program
 > executing program
@@ -290,6 +452,7 @@ t:s0 tclass=3Dfile permissive=3D1
 > executing program
 > executing program
 > executing program
+> [  187.888481] IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
 > executing program
 > executing program
 > executing program
@@ -317,6 +480,9 @@ t:s0 tclass=3Dfile permissive=3D1
 > executing program
 > executing program
 > executing program
+> [  188.038099] IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+> [  188.044283] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> [  188.051371] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
 > executing program
 > executing program
 > executing program
@@ -644,973 +810,163 @@ t:s0 tclass=3Dfile permissive=3D1
 > executing program
 > executing program
 > executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> [   36.151874] kasan: CONFIG_KASAN_INLINE enabled
-> [   36.156755] kasan: GPF could be caused by NULL-ptr deref or user memor=
+> [  189.437588] kasan: CONFIG_KASAN_INLINE enabled
+> [  189.442307] kasan: GPF could be caused by NULL-ptr deref or user memor=
 y access
-> [   36.164197] general protection fault: 0000 [#1] SMP KASAN
-> [   36.169729] Dumping ftrace buffer:
-> [   36.173267]    (ftrace buffer empty)
-> [   36.176970] Modules linked in:
-> [   36.180152] CPU: 0 PID: 10410 Comm: syzkaller958277 Not tainted 4.16.0=
--rc4+ #345
-> [   36.187665] Hardware name: Google Google Compute Engine/Google Compute=
+> [  189.449706] general protection fault: 0000 [#1] SMP KASAN
+> [  189.455228] Dumping ftrace buffer:
+> [  189.458749]    (ftrace buffer empty)
+> [  189.462447] Modules linked in:
+> [  189.465626] CPU: 0 PID: 6876 Comm: syzkaller888997 Not tainted 4.16.0-=
+rc4+ #346
+> [  189.473052] Hardware name: Google Google Compute Engine/Google Compute=
  Engine, BIOS Google 01/01/2011
-> [   36.197025] RIP: 0010:rdma_resolve_addr+0x13c/0x26c0
+> [  189.482397] RIP: 0010:rdma_reject+0x37/0x220
 > executing program
 > executing program
 > executing program
-> [   36.202117] RSP: 0018:ffff8801b3807680 EFLAGS: 00010207
-> [   36.207476] RAX: 0000000000000042 RBX: ffff8801b3807a44 RCX: 000000000=
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> [  189.486783] RSP: 0018:ffff8801b50bf8f8 EFLAGS: 00010206
+> [  189.492132] RAX: dffffc0000000000 RBX: 1ffff10036a17f29 RCX: ffffffff8=
+41bb25f
+> [  189.499392] RDX: 0000000000000078 RSI: ffff8801b50bf970 RDI: 000000000=
+00003c0
+> [  189.506647] RBP: ffff8801b50bf928 R08: 0000000000000000 R09: 000000000=
 0000000
-> [   36.214739] RDX: 0000000000000000 RSI: ffff8801b3807a44 RDI: 000000000=
-0000214
-> [   36.222006] RBP: ffff8801b38079e0 R08: 0000000000000000 R09: 000000000=
+> [  189.513899] R10: ffffffff88613380 R11: 0000000000000000 R12: 000000000=
 0000000
-> [   36.229272] R10: ffff8801b38079f8 R11: 0000000000000000 R12: dffffc000=
+> [  189.521154] R13: ffff8801b50bfaa8 R14: ffff8801b50bf970 R15: 000000000=
 0000000
-> [   36.236542] R13: 00000000000000a0 R14: ffff8801b3807a28 R15: 000000000=
-0000000
-> [   36.243810] FS:  00007f2dc376e700(0000) GS:ffff8801db200000(0000) knlG=
+> [  189.528413] FS:  00007f7d987bc700(0000) GS:ffff8801db200000(0000) knlG=
 S:0000000000000000
-> [   36.252032] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   36.257911] CR2: 0000000020000140 CR3: 00000001c6e4e006 CR4: 000000000=
+> [  189.536621] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  189.542488] CR2: 00000000006de0f8 CR3: 00000001bf0e0006 CR4: 000000000=
 01606f0
-> [   36.265178] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
+> [  189.550240] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
 0000000
-> [   36.272443] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
+> [  189.557498] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
 0000400
-> [   36.279704] Call Trace:
-> [   36.282298]  ? find_held_lock+0x35/0x1d0
-> [   36.286365]  ? rdma_bind_addr+0x1b50/0x1b50
-> [   36.290688]  ? lock_downgrade+0x980/0x980
-> [   36.294840]  ? __radix_tree_lookup+0x435/0x5e0
-> [   36.299435]  ? __mutex_unlock_slowpath+0xe9/0xac0
-> [   36.304285]  ? wait_for_completion+0x770/0x770
-> [   36.308878]  ? lock_release+0xa40/0xa40
-> [   36.312861]  ? check_same_owner+0x320/0x320
-> [   36.317184]  ? find_held_lock+0x35/0x1d0
-> [   36.321267]  ucma_resolve_ip+0x142/0x1f0
-> [   36.325329]  ? ucma_resolve_ip+0x142/0x1f0
-> [   36.329566]  ? ucma_resolve_addr+0x330/0x330
-> [   36.333984]  ? kasan_check_write+0x14/0x20
-> [   36.338227]  ucma_write+0x2d6/0x3d0
-> [   36.341860]  ? ucma_resolve_addr+0x330/0x330
-> [   36.346276]  ? ucma_resolve_route+0x1a0/0x1a0
-> [   36.350788]  ? ucma_resolve_route+0x1a0/0x1a0
-> [   36.355280]  __vfs_write+0xef/0x970
-> [   36.358908]  ? rcu_note_context_switch+0x710/0x710
-> [   36.363841]  ? kernel_read+0x120/0x120
-> [   36.367752]  ? __might_sleep+0x95/0x190
-> [   36.371737]  ? _cond_resched+0x14/0x30
-> [   36.375627]  ? __inode_security_revalidate+0xd9/0x130
-> [   36.380820]  ? avc_policy_seqno+0x9/0x20
-> [   36.384896]  ? selinux_file_permission+0x82/0x460
-> [   36.389743]  ? security_file_permission+0x89/0x1e0
-> [   36.394676]  ? rw_verify_area+0xe5/0x2b0
-> [   36.398735]  ? __fdget_raw+0x20/0x20
-> [   36.402452]  vfs_write+0x189/0x510
-> [   36.406007]  SyS_write+0xef/0x220
-> [   36.409468]  ? SyS_read+0x220/0x220
-> [   36.413096]  ? trace_hardirqs_on_caller+0x421/0x5c0
-> [   36.418110]  ? do_syscall_64+0xb7/0x940
-> [   36.422084]  ? SyS_read+0x220/0x220
-> [   36.425716]  do_syscall_64+0x281/0x940
-> [   36.429607]  ? syscall_return_slowpath+0x550/0x550
-> [   36.434536]  ? syscall_return_slowpath+0x2ac/0x550
-> [   36.439469]  ? prepare_exit_to_usermode+0x350/0x350
-> [   36.444491]  ? entry_SYSCALL_64_after_hwframe+0x52/0xb7
-> [   36.449865]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-> [   36.454735]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> [   36.459937] RIP: 0033:0x446aa9
-> [   36.463119] RSP: 002b:00007f2dc376dda8 EFLAGS: 00000246 ORIG_RAX: 0000=
+> [  189.564752] Call Trace:
+> [  189.567337]  ucma_reject+0x149/0x220
+> [  189.571050]  ? ucma_disconnect+0x150/0x150
+> [  189.575302]  ? kasan_check_write+0x14/0x20
+> [  189.579531]  ucma_write+0x2d6/0x3d0
+> [  189.583146]  ? ucma_disconnect+0x150/0x150
+> [  189.587366]  ? ucma_resolve_route+0x1a0/0x1a0
+> [  189.591850]  ? handle_mm_fault+0x35b/0xb10
+> [  189.596079]  ? ucma_resolve_route+0x1a0/0x1a0
+> [  189.600560]  __vfs_write+0xef/0x970
+> [  189.604183]  ? rcu_note_context_switch+0x710/0x710
+> [  189.609100]  ? kernel_read+0x120/0x120
+> [  189.612974]  ? __might_sleep+0x95/0x190
+> [  189.616946]  ? _cond_resched+0x14/0x30
+> [  189.620823]  ? __inode_security_revalidate+0xd9/0x130
+> [  189.626007]  ? avc_policy_seqno+0x9/0x20
+> [  189.630061]  ? selinux_file_permission+0x82/0x460
+> [  189.634897]  ? security_file_permission+0x89/0x1e0
+> [  189.639823]  ? rw_verify_area+0xe5/0x2b0
+> [  189.643875]  ? __fdget_raw+0x20/0x20
+> [  189.647586]  vfs_write+0x189/0x510
+> [  189.651119]  SyS_write+0xef/0x220
+> [  189.654560]  ? SyS_read+0x220/0x220
+> [  189.658178]  ? do_syscall_64+0xb7/0x940
+> [  189.662140]  ? SyS_read+0x220/0x220
+> [  189.665755]  do_syscall_64+0x281/0x940
+> [  189.669631]  ? __do_page_fault+0xc90/0xc90
+> [  189.673856]  ? _raw_spin_unlock_irq+0x27/0x70
+> [  189.678341]  ? finish_task_switch+0x1c1/0x7e0
+> [  189.682839]  ? syscall_return_slowpath+0x550/0x550
+> [  189.687775]  ? syscall_return_slowpath+0x2ac/0x550
+> [  189.692693]  ? prepare_exit_to_usermode+0x350/0x350
+> [  189.697700]  ? entry_SYSCALL_64_after_hwframe+0x52/0xb7
+> [  189.703056]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+> [  189.707894]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> [  189.713070] RIP: 0033:0x4489a9
+> [  189.716248] RSP: 002b:00007f7d987bbda8 EFLAGS: 00000246 ORIG_RAX: 0000=
 000000000001
-> [   36.470821] RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 000000000=
-0446aa9
-> [   36.478092] RDX: 0000000000000008 RSI: 0000000020007100 RDI: 000000000=
-0000004
-> [   36.485358] RBP: 00000000006e29f8 R08: 00007f2dc376e700 R09: 000000000=
-0000000
-> [   36.492626] R10: 00007f2dc376e700 R11: 0000000000000246 R12: 006d635f6=
-16d6472
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> executing program
-> [   36.499894] R13: 2f646e6162696e69 R14: 666e692f7665642f R15: 000000000=
+> [  189.723939] RAX: ffffffffffffffda RBX: 0000000000700024 RCX: 000000000=
+04489a9
+> [  189.731193] RDX: 0000000000000008 RSI: 00000000200003c0 RDI: 000000000=
 0000003
-> [   36.507165] Code: 31 c0 e8 f8 b1 53 fd 48 89 df e8 70 f4 f5 ff 4c 89 e=
-f 48 63 d0 48 89 de e8 02 df 8b fd 49 8d bf 14 02 00 00 48 89 f8 48 c1 e8 0=
-3 <42> 0f b6 14 20 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f
-> [   36.526604] RIP: rdma_resolve_addr+0x13c/0x26c0 RSP: ffff8801b3807680
-> [   36.533224] ---[ end trace 35b5ca64e9e3cd3f ]---
-> [   36.538007] Kernel panic - not syncing: Fatal exception
-> [   36.543817] Dumping ftrace buffer:
-> [   36.547350]    (ftrace buffer empty)
-> [   36.551032] Kernel Offset: disabled
-> [   36.554631] Rebooting in 86400 seconds..
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> [  189.738447] RBP: 0000000000700020 R08: 0000000000000000 R09: 000000000=
+0000000
+> [  189.745704] R10: 0000000000000000 R11: 0000000000000246 R12: 006d635f6=
+16d6472
+> [  189.752969] R13: 2f646e6162696e69 R14: 666e692f7665642f R15: 000000000=
+0000001
+> [  189.760240] Code: 49 89 ff 53 41 89 d4 49 89 f6 48 83 ec 08 e8 b1 53 5=
+5 fd 49 8d bf c0 03 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 0=
+3 <80> 3c 02 00 0f 85 a0 01 00 00 4d 8b af c0 03 00 00 4d 85 ed 0f
+> [  189.779413] RIP: rdma_reject+0x37/0x220 RSP: ffff8801b50bf8f8
+> [  189.785734] ---[ end trace edcac9dcf5a05d54 ]---
+> [  189.790506] Kernel panic - not syncing: Fatal exception
+> [  189.796263] Dumping ftrace buffer:
+> [  189.799776]    (ftrace buffer empty)
+> [  189.803455] Kernel Offset: disabled
+> [  189.807051] Rebooting in 86400 seconds..
 
 > # See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-> #{Threaded:true Collide:true Repeat:true Procs:8 Sandbox:none Fault:false=
- FaultCall:-1 FaultNth:0 EnableTun:false UseTmpDir:false HandleSegv:false W=
-aitRepeat:true Debug:false Repro:false}
-> r0 =3D openat$rdma_cm(0xffffffffffffff9c, &(0x7f0000000140)=3D'/dev/infin=
+> #{Threaded:true Collide:false Repeat:true Procs:8 Sandbox:namespace Fault=
+:false FaultCall:-1 FaultNth:0 EnableTun:true UseTmpDir:true HandleSegv:fal=
+se WaitRepeat:true Debug:false Repro:false}
+> r0 =3D openat$rdma_cm(0xffffffffffffff9c, &(0x7f0000000180)=3D'/dev/infin=
 iband/rdma_cm\x00', 0x2, 0x0)
-> write$rdma_cm(r0, &(0x7f00000070c0)=3D@create_id=3D{0x0, 0x18, 0xfa00, {0=
-x0, &(0x7f0000007080)=3D{<r1=3D>0xffffffff}, 0x13f}}, 0x20)
-> write$rdma_cm(r0, &(0x7f0000007100)=3DANY=3D[@ANYBLOB, @ANYRES32=3Dr1, @A=
-NYBLOB=3D'\x00\x00\x00\x00'], 0x8)
+> write$rdma_cm(r0, &(0x7f0000000000)=3D@create_id=3D{0x0, 0x18, 0xfa00, {0=
+x0, &(0x7f0000000f00), 0x106}}, 0x20)
+> write$rdma_cm(r0, &(0x7f00000003c0)=3DANY=3D[@ANYBLOB=3D"09000000000000fa=
+", @ANYBLOB], 0x8)
 
 > // autogenerated by syzkaller (http://github.com/google/syzkaller)
 >
 > #define _GNU_SOURCE
+> #include <arpa/inet.h>
+> #include <dirent.h>
 > #include <endian.h>
 > #include <errno.h>
 > #include <errno.h>
+> #include <errno.h>
+> #include <fcntl.h>
+> #include <fcntl.h>
+> #include <linux/capability.h>
 > #include <linux/futex.h>
+> #include <linux/if.h>
+> #include <linux/if_ether.h>
+> #include <linux/if_tun.h>
+> #include <linux/ip.h>
 > #include <linux/net.h>
+> #include <linux/tcp.h>
+> #include <net/if_arp.h>
 > #include <netinet/in.h>
 > #include <pthread.h>
 > #include <sched.h>
@@ -1618,17 +974,28 @@ NYBLOB=3D'\x00\x00\x00\x00'], 0x8)
 > #include <signal.h>
 > #include <stdarg.h>
 > #include <stdarg.h>
+> #include <stdarg.h>
+> #include <stdbool.h>
 > #include <stdbool.h>
 > #include <stdio.h>
 > #include <stdio.h>
+> #include <stdio.h>
 > #include <stdlib.h>
+> #include <stdlib.h>
+> #include <sys/ioctl.h>
+> #include <sys/mman.h>
+> #include <sys/mount.h>
+> #include <sys/mount.h>
 > #include <sys/prctl.h>
 > #include <sys/prctl.h>
 > #include <sys/resource.h>
 > #include <sys/socket.h>
+> #include <sys/stat.h>
+> #include <sys/stat.h>
 > #include <sys/syscall.h>
 > #include <sys/time.h>
 > #include <sys/time.h>
+> #include <sys/uio.h>
 > #include <sys/wait.h>
 > #include <sys/wait.h>
 > #include <time.h>
@@ -1645,7 +1012,9 @@ NYBLOB=3D'\x00\x00\x00\x00'], 0x8)
 > #include <stdarg.h>
 > #include <stdint.h>
 > #include <stdio.h>
+> #include <stdlib.h>
 > #include <string.h>
+> #include <sys/stat.h>
 >
 > const int kFailStatus =3D 67;
 > const int kRetryStatus =3D 69;
@@ -1662,6 +1031,17 @@ NYBLOB=3D'\x00\x00\x00\x00'], 0x8)
 s);
 > }
 >
+> static void exitf(const char* msg, ...)
+> {
+>   int e =3D errno;
+>   va_list args;
+>   va_start(args, msg);
+>   vfprintf(stderr, msg, args);
+>   va_end(args);
+>   fprintf(stderr, " (errno %d)\n", e);
+>   doexit(kRetryStatus);
+> }
+>
 > static uint64_t current_time_ms()
 > {
 >   struct timespec ts;
@@ -1669,6 +1049,185 @@ s);
 >   if (clock_gettime(CLOCK_MONOTONIC, &ts))
 >     fail("clock_gettime failed");
 >   return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
+> }
+>
+> static void use_temporary_dir()
+> {
+>   char tmpdir_template[] =3D "./syzkaller.XXXXXX";
+>   char* tmpdir =3D mkdtemp(tmpdir_template);
+>   if (!tmpdir)
+>     fail("failed to mkdtemp");
+>   if (chmod(tmpdir, 0777))
+>     fail("failed to chmod");
+>   if (chdir(tmpdir))
+>     fail("failed to chdir");
+> }
+>
+> static void vsnprintf_check(char* str, size_t size, const char* format,
+>                             va_list args)
+> {
+>   int rv;
+>
+>   rv =3D vsnprintf(str, size, format, args);
+>   if (rv < 0)
+>     fail("tun: snprintf failed");
+>   if ((size_t)rv >=3D size)
+>     fail("tun: string '%s...' doesn't fit into buffer", str);
+> }
+>
+> static void snprintf_check(char* str, size_t size, const char* format, ..=
+=2E)
+> {
+>   va_list args;
+>
+>   va_start(args, format);
+>   vsnprintf_check(str, size, format, args);
+>   va_end(args);
+> }
+>
+> #define COMMAND_MAX_LEN 128
+> #define PATH_PREFIX                                                      =
+      \
+>   "PATH=3D/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin "
+> #define PATH_PREFIX_LEN (sizeof(PATH_PREFIX) - 1)
+>
+> static void execute_command(bool panic, const char* format, ...)
+> {
+>   va_list args;
+>   char command[PATH_PREFIX_LEN + COMMAND_MAX_LEN];
+>   int rv;
+>
+>   va_start(args, format);
+>   memcpy(command, PATH_PREFIX, PATH_PREFIX_LEN);
+>   vsnprintf_check(command + PATH_PREFIX_LEN, COMMAND_MAX_LEN, format, arg=
+s);
+>   rv =3D system(command);
+>   if (panic && rv !=3D 0)
+>     fail("tun: command \"%s\" failed with code %d", &command[0], rv);
+>
+>   va_end(args);
+> }
+>
+> static int tunfd =3D -1;
+> static int tun_frags_enabled;
+>
+> #define SYZ_TUN_MAX_PACKET_SIZE 1000
+>
+> #define TUN_IFACE "syz_tun"
+>
+> #define LOCAL_MAC "aa:aa:aa:aa:aa:aa"
+> #define REMOTE_MAC "aa:aa:aa:aa:aa:bb"
+>
+> #define LOCAL_IPV4 "172.20.20.170"
+> #define REMOTE_IPV4 "172.20.20.187"
+>
+> #define LOCAL_IPV6 "fe80::aa"
+> #define REMOTE_IPV6 "fe80::bb"
+>
+> #define IFF_NAPI 0x0010
+> #define IFF_NAPI_FRAGS 0x0020
+>
+> static void initialize_tun(void)
+> {
+>   tunfd =3D open("/dev/net/tun", O_RDWR | O_NONBLOCK);
+>   if (tunfd =3D=3D -1) {
+>     printf("tun: can't open /dev/net/tun: please enable CONFIG_TUN=3Dy\n"=
+);
+>     printf("otherwise fuzzing or reproducing might not work as intended\n=
+");
+>     return;
+>   }
+>   const int kTunFd =3D 252;
+>   if (dup2(tunfd, kTunFd) < 0)
+>     fail("dup2(tunfd, kTunFd) failed");
+>   close(tunfd);
+>   tunfd =3D kTunFd;
+>
+>   struct ifreq ifr;
+>   memset(&ifr, 0, sizeof(ifr));
+>   strncpy(ifr.ifr_name, TUN_IFACE, IFNAMSIZ);
+>   ifr.ifr_flags =3D IFF_TAP | IFF_NO_PI | IFF_NAPI | IFF_NAPI_FRAGS;
+>   if (ioctl(tunfd, TUNSETIFF, (void*)&ifr) < 0) {
+>     ifr.ifr_flags =3D IFF_TAP | IFF_NO_PI;
+>     if (ioctl(tunfd, TUNSETIFF, (void*)&ifr) < 0)
+>       fail("tun: ioctl(TUNSETIFF) failed");
+>   }
+>   if (ioctl(tunfd, TUNGETIFF, (void*)&ifr) < 0)
+>     fail("tun: ioctl(TUNGETIFF) failed");
+>   tun_frags_enabled =3D (ifr.ifr_flags & IFF_NAPI_FRAGS) !=3D 0;
+>
+>   execute_command(1, "sysctl -w net.ipv6.conf.%s.accept_dad=3D0", TUN_IFA=
+CE);
+>
+>   execute_command(1, "sysctl -w net.ipv6.conf.%s.router_solicitations=3D0=
+",
+>                   TUN_IFACE);
+>
+>   execute_command(1, "ip link set dev %s address %s", TUN_IFACE, LOCAL_MA=
+C);
+>   execute_command(1, "ip addr add %s/24 dev %s", LOCAL_IPV4, TUN_IFACE);
+>   execute_command(1, "ip -6 addr add %s/120 dev %s", LOCAL_IPV6, TUN_IFAC=
+E);
+>   execute_command(1, "ip neigh add %s lladdr %s dev %s nud permanent",
+>                   REMOTE_IPV4, REMOTE_MAC, TUN_IFACE);
+>   execute_command(1, "ip -6 neigh add %s lladdr %s dev %s nud permanent",
+>                   REMOTE_IPV6, REMOTE_MAC, TUN_IFACE);
+>   execute_command(1, "ip link set dev %s up", TUN_IFACE);
+> }
+>
+> #define DEV_IPV4 "172.20.20.%d"
+> #define DEV_IPV6 "fe80::%02hx"
+> #define DEV_MAC "aa:aa:aa:aa:aa:%02hx"
+>
+> static void initialize_netdevices(void)
+> {
+>   unsigned i;
+>   const char* devtypes[] =3D {"ip6gretap", "bridge", "vcan", "bond", "vet=
+h"};
+>   const char* devnames[] =3D {"lo",       "sit0",    "bridge0", "vcan0",
+>                             "tunl0",    "gre0",    "gretap0", "ip_vti0",
+>                             "ip6_vti0", "ip6tnl0", "ip6gre0", "ip6gretap0=
+",
+>                             "erspan0",  "bond0",   "veth0",   "veth1"};
+>
+>   for (i =3D 0; i < sizeof(devtypes) / (sizeof(devtypes[0])); i++)
+>     execute_command(0, "ip link add dev %s0 type %s", devtypes[i], devtyp=
+es[i]);
+>   execute_command(0, "ip link add dev veth1 type veth");
+>   for (i =3D 0; i < sizeof(devnames) / (sizeof(devnames[0])); i++) {
+>     char addr[32];
+>     snprintf_check(addr, sizeof(addr), DEV_IPV4, i + 10);
+>     execute_command(0, "ip -4 addr add %s/24 dev %s", addr, devnames[i]);
+>     snprintf_check(addr, sizeof(addr), DEV_IPV6, i + 10);
+>     execute_command(0, "ip -6 addr add %s/120 dev %s", addr, devnames[i]);
+>     snprintf_check(addr, sizeof(addr), DEV_MAC, i + 10);
+>     execute_command(0, "ip link set dev %s address %s", devnames[i], addr=
+);
+>     execute_command(0, "ip link set dev %s up", devnames[i]);
+>   }
+> }
+>
+> static int read_tun(char* data, int size)
+> {
+>   if (tunfd < 0)
+>     return -1;
+>
+>   int rv =3D read(tunfd, data, size);
+>   if (rv < 0) {
+>     if (errno =3D=3D EAGAIN)
+>       return -1;
+>     if (errno =3D=3D EBADFD)
+>       return -1;
+>     fail("tun: read failed with %d", rv);
+>   }
+>   return rv;
+> }
+>
+> static void flush_tun()
+> {
+>   char data[SYZ_TUN_MAX_PACKET_SIZE];
+>   while (read_tun(&data[0], sizeof(data)) !=3D -1)
+>     ;
 > }
 >
 > static void loop();
@@ -1705,22 +1264,117 @@ s);
 >   }
 > }
 >
-> static int do_sandbox_none(void)
+> static bool write_file(const char* file, const char* what, ...)
 > {
->   if (unshare(CLONE_NEWPID)) {
->   }
->   int pid =3D fork();
->   if (pid < 0)
->     fail("sandbox fork failed");
->   if (pid)
->     return pid;
+>   char buf[1024];
+>   va_list args;
+>   va_start(args, what);
+>   vsnprintf(buf, sizeof(buf), what, args);
+>   va_end(args);
+>   buf[sizeof(buf) - 1] =3D 0;
+>   int len =3D strlen(buf);
 >
->   sandbox_common();
->   if (unshare(CLONE_NEWNET)) {
+>   int fd =3D open(file, O_WRONLY | O_CLOEXEC);
+>   if (fd =3D=3D -1)
+>     return false;
+>   if (write(fd, buf, len) !=3D len) {
+>     close(fd);
+>     return false;
 >   }
+>   close(fd);
+>   return true;
+> }
+>
+> static int real_uid;
+> static int real_gid;
+> __attribute__((aligned(64 << 10))) static char sandbox_stack[1 << 20];
+>
+> static int namespace_sandbox_proc(void* arg)
+> {
+>   sandbox_common();
+>
+>   write_file("/proc/self/setgroups", "deny");
+>   if (!write_file("/proc/self/uid_map", "0 %d 1\n", real_uid))
+>     fail("write of /proc/self/uid_map failed");
+>   if (!write_file("/proc/self/gid_map", "0 %d 1\n", real_gid))
+>     fail("write of /proc/self/gid_map failed");
+>
+>   if (unshare(CLONE_NEWNET))
+>     fail("unshare(CLONE_NEWNET)");
+>   initialize_tun();
+>   initialize_netdevices();
+>
+>   if (mkdir("./syz-tmp", 0777))
+>     fail("mkdir(syz-tmp) failed");
+>   if (mount("", "./syz-tmp", "tmpfs", 0, NULL))
+>     fail("mount(tmpfs) failed");
+>   if (mkdir("./syz-tmp/newroot", 0777))
+>     fail("mkdir failed");
+>   if (mkdir("./syz-tmp/newroot/dev", 0700))
+>     fail("mkdir failed");
+>   unsigned mount_flags =3D MS_BIND | MS_REC | MS_PRIVATE;
+>   if (mount("/dev", "./syz-tmp/newroot/dev", NULL, mount_flags, NULL))
+>     fail("mount(dev) failed");
+>   if (mkdir("./syz-tmp/newroot/proc", 0700))
+>     fail("mkdir failed");
+>   if (mount(NULL, "./syz-tmp/newroot/proc", "proc", 0, NULL))
+>     fail("mount(proc) failed");
+>   if (mkdir("./syz-tmp/newroot/selinux", 0700))
+>     fail("mkdir failed");
+>   const char* selinux_path =3D "./syz-tmp/newroot/selinux";
+>   if (mount("/selinux", selinux_path, NULL, mount_flags, NULL)) {
+>     if (errno !=3D ENOENT)
+>       fail("mount(/selinux) failed");
+>     if (mount("/sys/fs/selinux", selinux_path, NULL, mount_flags, NULL) &&
+>         errno !=3D ENOENT)
+>       fail("mount(/sys/fs/selinux) failed");
+>   }
+>   if (mkdir("./syz-tmp/pivot", 0777))
+>     fail("mkdir failed");
+>   if (syscall(SYS_pivot_root, "./syz-tmp", "./syz-tmp/pivot")) {
+>     if (chdir("./syz-tmp"))
+>       fail("chdir failed");
+>   } else {
+>     if (chdir("/"))
+>       fail("chdir failed");
+>     if (umount2("./pivot", MNT_DETACH))
+>       fail("umount failed");
+>   }
+>   if (chroot("./newroot"))
+>     fail("chroot failed");
+>   if (chdir("/"))
+>     fail("chdir failed");
+>
+>   struct __user_cap_header_struct cap_hdr =3D {};
+>   struct __user_cap_data_struct cap_data[2] =3D {};
+>   cap_hdr.version =3D _LINUX_CAPABILITY_VERSION_3;
+>   cap_hdr.pid =3D getpid();
+>   if (syscall(SYS_capget, &cap_hdr, &cap_data))
+>     fail("capget failed");
+>   cap_data[0].effective &=3D ~(1 << CAP_SYS_PTRACE);
+>   cap_data[0].permitted &=3D ~(1 << CAP_SYS_PTRACE);
+>   cap_data[0].inheritable &=3D ~(1 << CAP_SYS_PTRACE);
+>   if (syscall(SYS_capset, &cap_hdr, &cap_data))
+>     fail("capset failed");
 >
 >   loop();
 >   doexit(1);
+> }
+>
+> static int do_sandbox_namespace(void)
+> {
+>   int pid;
+>
+>   real_uid =3D getuid();
+>   real_gid =3D getgid();
+>   mprotect(sandbox_stack, 4096, PROT_NONE);
+>   pid =3D
+>       clone(namespace_sandbox_proc, &sandbox_stack[sizeof(sandbox_stack) =
+- 64],
+>             CLONE_NEWUSER | CLONE_NEWPID, 0);
+>   if (pid < 0)
+>     fail("sandbox clone failed");
+>   return pid;
 > }
 >
 > #define XT_TABLE_SIZE 1536
@@ -2127,6 +1781,70 @@ es[0]),
 >                  AF_INET6, SOL_IPV6);
 > }
 >
+> static void remove_dir(const char* dir)
+> {
+>   DIR* dp;
+>   struct dirent* ep;
+>   int iter =3D 0;
+> retry:
+>   dp =3D opendir(dir);
+>   if (dp =3D=3D NULL) {
+>     if (errno =3D=3D EMFILE) {
+>       exitf("opendir(%s) failed due to NOFILE, exiting", dir);
+>     }
+>     exitf("opendir(%s) failed", dir);
+>   }
+>   while ((ep =3D readdir(dp))) {
+>     if (strcmp(ep->d_name, ".") =3D=3D 0 || strcmp(ep->d_name, "..") =3D=
+=3D 0)
+>       continue;
+>     char filename[FILENAME_MAX];
+>     snprintf(filename, sizeof(filename), "%s/%s", dir, ep->d_name);
+>     struct stat st;
+>     if (lstat(filename, &st))
+>       exitf("lstat(%s) failed", filename);
+>     if (S_ISDIR(st.st_mode)) {
+>       remove_dir(filename);
+>       continue;
+>     }
+>     int i;
+>     for (i =3D 0;; i++) {
+>       if (unlink(filename) =3D=3D 0)
+>         break;
+>       if (errno =3D=3D EROFS) {
+>         break;
+>       }
+>       if (errno !=3D EBUSY || i > 100)
+>         exitf("unlink(%s) failed", filename);
+>       if (umount2(filename, MNT_DETACH))
+>         exitf("umount(%s) failed", filename);
+>     }
+>   }
+>   closedir(dp);
+>   int i;
+>   for (i =3D 0;; i++) {
+>     if (rmdir(dir) =3D=3D 0)
+>       break;
+>     if (i < 100) {
+>       if (errno =3D=3D EROFS) {
+>         break;
+>       }
+>       if (errno =3D=3D EBUSY) {
+>         if (umount2(dir, MNT_DETACH))
+>           exitf("umount(%s) failed", dir);
+>         continue;
+>       }
+>       if (errno =3D=3D ENOTEMPTY) {
+>         if (iter < 100) {
+>           iter++;
+>           goto retry;
+>         }
+>       }
+>     }
+>     exitf("rmdir(%s) failed", dir);
+>   }
+> }
+>
 > static void test();
 >
 > void loop()
@@ -2134,12 +1852,19 @@ es[0]),
 >   int iter;
 >   checkpoint_net_namespace();
 >   for (iter =3D 0;; iter++) {
+>     char cwdbuf[256];
+>     sprintf(cwdbuf, "./%d", iter);
+>     if (mkdir(cwdbuf, 0777))
+>       fail("failed to mkdir");
 >     int pid =3D fork();
 >     if (pid < 0)
 >       fail("loop fork failed");
 >     if (pid =3D=3D 0) {
 >       prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
 >       setpgrp();
+>       if (chdir(cwdbuf))
+>         fail("failed to chdir");
+>       flush_tun();
 >       test();
 >       doexit(0);
 >     }
@@ -2158,6 +1883,7 @@ es[0]),
 >         break;
 >       }
 >     }
+>     remove_dir(cwdbuf);
 >     reset_net_namespace();
 >   }
 > }
@@ -2170,7 +1896,6 @@ es[0]),
 > static struct thread_t threads[16];
 > static void execute_call(int call);
 > static int running;
-> static int collide;
 >
 > static void* thr(void* arg)
 > {
@@ -2206,8 +1931,6 @@ ead++) {
 >         __atomic_fetch_add(&running, 1, __ATOMIC_RELAXED);
 >         __atomic_store_n(&th->running, 1, __ATOMIC_RELEASE);
 >         syscall(SYS_futex, &th->running, FUTEX_WAKE);
->         if (collide && call % 2)
->           break;
 >         struct timespec ts;
 >         ts.tv_sec =3D 0;
 >         ts.tv_nsec =3D 20 * 1000 * 1000;
@@ -2220,39 +1943,36 @@ ead++) {
 >   }
 > }
 >
-> uint64_t r[2] =3D {0xffffffffffffffff, 0xffffffffffffffff};
+> uint64_t r[1] =3D {0xffffffffffffffff};
 > uint64_t procid;
 > void execute_call(int call)
 > {
 >   long res;
 >   switch (call) {
 >   case 0:
->     memcpy((void*)0x20000140, "/dev/infiniband/rdma_cm", 24);
->     res =3D syscall(__NR_openat, 0xffffffffffffff9c, 0x20000140, 2, 0);
+>     memcpy((void*)0x20000180, "/dev/infiniband/rdma_cm", 24);
+>     res =3D syscall(__NR_openat, 0xffffffffffffff9c, 0x20000180, 2, 0);
 >     if (res !=3D -1)
 >       r[0] =3D res;
 >     break;
 >   case 1:
->     *(uint32_t*)0x200070c0 =3D 0;
->     *(uint16_t*)0x200070c4 =3D 0x18;
->     *(uint16_t*)0x200070c6 =3D 0xfa00;
->     *(uint64_t*)0x200070c8 =3D 0;
->     *(uint64_t*)0x200070d0 =3D 0x20007080;
->     *(uint16_t*)0x200070d8 =3D 0x13f;
->     *(uint8_t*)0x200070da =3D 0;
->     *(uint8_t*)0x200070db =3D 0;
->     *(uint8_t*)0x200070dc =3D 0;
->     *(uint8_t*)0x200070dd =3D 0;
->     *(uint8_t*)0x200070de =3D 0;
->     *(uint8_t*)0x200070df =3D 0;
->     res =3D syscall(__NR_write, r[0], 0x200070c0, 0x20);
->     if (res !=3D -1)
->       r[1] =3D *(uint32_t*)0x20007080;
+>     *(uint32_t*)0x20000000 =3D 0;
+>     *(uint16_t*)0x20000004 =3D 0x18;
+>     *(uint16_t*)0x20000006 =3D 0xfa00;
+>     *(uint64_t*)0x20000008 =3D 0;
+>     *(uint64_t*)0x20000010 =3D 0x20000f00;
+>     *(uint16_t*)0x20000018 =3D 0x106;
+>     *(uint8_t*)0x2000001a =3D 0;
+>     *(uint8_t*)0x2000001b =3D 0;
+>     *(uint8_t*)0x2000001c =3D 0;
+>     *(uint8_t*)0x2000001d =3D 0;
+>     *(uint8_t*)0x2000001e =3D 0;
+>     *(uint8_t*)0x2000001f =3D 0;
+>     syscall(__NR_write, r[0], 0x20000000, 0x20);
 >     break;
 >   case 2:
->     *(uint32_t*)0x20007100 =3D r[1];
->     memcpy((void*)0x20007104, "\x00\x00\x00\x00", 4);
->     syscall(__NR_write, r[0], 0x20007100, 8);
+>     memcpy((void*)0x200003c0, "\x09\x00\x00\x00\x00\x00\x00\xfa", 8);
+>     syscall(__NR_write, r[0], 0x200003c0, 8);
 >     break;
 >   }
 > }
@@ -2260,17 +1980,19 @@ ead++) {
 > void test()
 > {
 >   execute(3);
->   collide =3D 1;
->   execute(3);
 > }
 >
 > int main()
 > {
 >   syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
+>   char* cwd =3D get_current_dir_name();
 >   for (procid =3D 0; procid < 8; procid++) {
 >     if (fork() =3D=3D 0) {
 >       for (;;) {
->         int pid =3D do_sandbox_none();
+>         if (chdir(cwd))
+>           fail("failed to chdir");
+>         use_temporary_dir();
+>         int pid =3D do_sandbox_namespace();
 >         int status =3D 0;
 >         while (waitpid(pid, &status, __WALL) !=3D pid) {
 >         }
@@ -7543,24 +7265,24 @@ r30,binder31"
 > # CONFIG_STRING_SELFTEST is not set
 
 
---aiJlF+TB2UsRxGRQ
+--kd7cwL6IYJrQFfWn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlqzyssACgkQ5GN7iDZy
-WKf+hQ/7BWXMjRvHAvWPdhl7HsFjz8Z1v6MgpxsdBZII06mn/K3DWjtrbv1UrAL9
-o8QSf6hAaBEVUFJJ0bN1KOG0gkLZMrOoG/cHXTVcY99yfNg+K1F/5D5chXNlP+ho
-laNwC7ouXeVeD8Aq+cMFfVCJT/Q24O3Ak4m14VN7tjdNMDxtwzRd3EDIWL8NnWtg
-7lEfUlZj6aI65AsqNrr3x15kTR5QmN1gPOdnzc8lataO7/l6Qfb8n+CIOnPlhc8D
-D0W2MLhVoclK62B5gpxL8Ebsaxg2YaCg5SCW8hOZSdfzWQbWkRBhZfxxwQiW2rq4
-48hb/6H4qP5mOYTBmKPFrgELzsk8tIfJN+FxblLo7K3++YFHc+kZ9/nzg8DSXfTJ
-FYaqpchIjt5nX8I8kj5WyEdSvS6GMEogRnI4E6zF6yO4ki/6jZiJxXlf39GjzpCG
-m0ovlLgIUgNFUQU0B5NRaE5GuFOsOLecfeY1M8c4SlrQi5vB5+BYiAK/x6ghEYxd
-s+GRfS5xyButDzhvvjfZA6tJl/DFn1fhdTtNtX5ly5H1NwNoOPQMX/42kUXchJ0r
-KhqZFOyZefWr7lGPtXxgKaGvas6NP+I9OUeLVIJaSrspEZyTF/zDX+m/d2jf4lFp
-jQHY9UZXO6lbJ9/UhAv3aaxQMyLacNS9yj3m0OyqKrjvuej8jpY=
-=mp1V
+iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlqzytoACgkQ5GN7iDZy
+WKejwQ//YGYDFYcMgNcSZCFHELIvIDIjnWEUgtYcsKZv3j1h4rJ56/d3CbHBv3Z+
+KkQtc8IikVWQJf+qiSAzg7pgSOtngBBgIZmfWrCTOIpDv26sA5hKfFtCoMCdvmua
+0Gubiet32CNzXFaK7SkfJPvba35chrN48NFi+Udl9QWJcCvdIjO22PWE6dyYMd60
+aM5DD8g21j9pYkZXPGbO0+EZ4wUkZGuedb93Zi+j2ET8fN93/7f3fRYv6iNkqaAP
+rUHCHSGzVdwY4fbJdZuRNbwg3+1/SWD0QN2dWTmPqIpgolq1AqZ7qO7ClaaK5FxK
+okunsvLI7nyks+qaiBLffYzZ0Fq/qYK1P5LmkA8d6H1yo1150Qj8DmKA3LzYNA5I
+4tL2vAK8gSWNHFaOUrYPJ54C76z98tqquWYYKVnMyXrjkoenvVuDzlN7VNDQ9axu
+eqqGtDzyBINme7D3yLjYSGUz7RDAEMwde4w23AvfLXj+FZEo6EWqSi8QXLC7HR3W
+agDdtqmgF47+BYP3HmXWCg2emxBlJnzCyx9N0oEg5AYXW+o5d09Y+VWTWnPOzzKh
+aHPo0RKHebmgINv7ELL3xkRYDFLI1XcsVjMo29KSLEYf367FW+UY4gk9nQEQWFFj
+EmB7IwngyIq7EMDsWldo0JDsUMgJMmBG4DLFKZBChBcOznKF9X4=
+=IfZj
 -----END PGP SIGNATURE-----
 
---aiJlF+TB2UsRxGRQ--
+--kd7cwL6IYJrQFfWn--
