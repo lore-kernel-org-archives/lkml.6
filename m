@@ -1,151 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751872AbeCVV2H (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:28:07 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34856 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751831AbeCVV2F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:28:05 -0400
-X-Google-Smtp-Source: AG47ELvZZHbFEZElKcmDs8wnPLuqi1WH+0f1lht7OObus99gZRuoXtAHGYorIcNhrNxaiCPDEIZu/w==
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, Kostya Serebryany <kcc@google.com>,
-        ard.biesheuvel@linaro.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] arm/arm64: smccc: Use xN for arm64 register constraints with clang
-Date: Thu, 22 Mar 2018 14:27:05 -0700
-Message-Id: <20180322212705.141175-1-mka@chromium.org>
-X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
+        id S1751921AbeCVV23 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:28:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51746 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751888AbeCVV22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:28:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6272183D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AG47ELudz44+G/xlsHZS3vPaWWnh6lv1r12TaAx1oMpKGPIK2CcCXs92LGMhXjpjRdb5XGh+J/QhgIA++gktVMXywuI=
+MIME-Version: 1.0
+In-Reply-To: <C9BB696F3A938947B10DCAD29FAB8FFA66AC932C@CRSMSX101.amr.corp.intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+ <1521481767-22113-15-git-send-email-chang.seok.bae@intel.com>
+ <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com>
+ <C78DE381-C618-4370-9B06-F6E25C850661@intel.com> <CALCETrX03_AG-OuJdmfmsbvEt0UTdUpaUVDRQgbDZWGY7WD-Xw@mail.gmail.com>
+ <E9221EFA-636C-4D36-AEBA-3A1EEBBF2F50@intel.com> <CALCETrUxQ1XOs7V1XKOsk-iQ-qOwn41sWGYkepkVOE7PtfX24A@mail.gmail.com>
+ <9C732DC6-F9CA-474F-B8F5-F8EBE406B12E@intel.com> <CALCETrWyuDC9Visx2-7rwpicVfS3wVMVFBykysaYcoBBe2y+tg@mail.gmail.com>
+ <E3872173-6EDB-4861-896E-4D636A5A9B55@intel.com> <CALCETrUZk0m2-aJpzBbUR1-rSZkKCX6hKS3K3O_3LQJSkKKKGg@mail.gmail.com>
+ <C9BB696F3A938947B10DCAD29FAB8FFA66AC932C@CRSMSX101.amr.corp.intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 22 Mar 2018 21:28:06 +0000
+X-Gmail-Original-Message-ID: <CALCETrU9mhVx8eCd0W6LbtGB9BXPWXOnMp0F9K4UTE738ZMPsA@mail.gmail.com>
+Message-ID: <CALCETrU9mhVx8eCd0W6LbtGB9BXPWXOnMp0F9K4UTE738ZMPsA@mail.gmail.com>
+Subject: Re: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when FS/GS
+ updated by ptracer
+To: "Bae, Chang Seok" <chang.seok.bae@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SMCCC v1.1 inline primitive code added by commit f2d3b2e8759a
-("arm/arm64: smccc: Implement SMCCC v1.1 inline primitive") uses
-register names r0, r1, ... for constraints. This breaks clang builds
-for arm64, since clang currently only accepts x0, x1, ... in this
-context. Use xN names for register constrains when building for arm64
-with clang.
+On Thu, Mar 22, 2018 at 9:17 PM, Bae, Chang Seok
+<chang.seok.bae@intel.com> wrote:
+>
+> ________________________________________
+> From: Andy Lutomirski [luto@kernel.org]
+> Sent: Thursday, March 22, 2018 09:53
+>>>> But your patch doesn't actually do this, since gdb will just do
+>>>> SETREGS anyway, right?
+>>> GDB does SETREGS on any exclusive (FS/GS) updates in inferior call.
+>
+>> This means that your patch has exactly the same effect as the code in
+>> my git tree, right?  Then let's stick with something like what's in my
+>> git tree, since it's far simpler.
+>
+> Difference is if flipping FS/GS multiple times, user may check the base from LDT.
+> But I don't have strong will to keep arguing this; Markus or somebody might
+> want to say something.
+>
+> The whole point as I understand is to avoid any regression on legacy ptracers.
+> If a strong confidence lies on the simple version, let me. My first thought bought
+> this in fact.
 
-Fixes: f2d3b2e8759a ("arm/arm64: smccc: Implement SMCCC v1.1 inline primitive")
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
-Note: Support for rN in future versions of clang is underway:
-  https://bugs.llvm.org/show_bug.cgi?id=36862
+I agree that we want to avoid regressions, but you seem to have
+discovered that basically all ptracers() use SETREGS.  Your patch
+behaves the same as the simple patch if SETREGS is used.
 
- include/linux/arm-smccc.h | 54 ++++++++++++++++++++++-----------------
- 1 file changed, 30 insertions(+), 24 deletions(-)
-
-diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-index a031897fca76..5c55d9e8c2ef 100644
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -155,6 +155,11 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
- 
- #define SMCCC_SMC_INST	"smc	#0"
- #define SMCCC_HVC_INST	"hvc	#0"
-+#ifndef __clang__
-+#define __reg__ "r"
-+#else
-+#define __reg__ "x"
-+#endif
- 
- #elif defined(CONFIG_ARM)
- #include <asm/opcodes-sec.h>
-@@ -162,6 +167,7 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
- 
- #define SMCCC_SMC_INST	__SMC(0)
- #define SMCCC_HVC_INST	__HVC(0)
-+#define __reg__ "r"
- 
- #endif
- 
-@@ -187,54 +193,54 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
- #define __constraint_read_1
- #define __constraint_read_2
- #define __constraint_read_3
--#define __constraint_read_4	"r" (r4)
--#define __constraint_read_5	__constraint_read_4, "r" (r5)
--#define __constraint_read_6	__constraint_read_5, "r" (r6)
--#define __constraint_read_7	__constraint_read_6, "r" (r7)
-+#define __constraint_read_4	__reg__ (r4)
-+#define __constraint_read_5	__constraint_read_4, __reg__ (r5)
-+#define __constraint_read_6	__constraint_read_5, __reg__ (r6)
-+#define __constraint_read_7	__constraint_read_6, __reg__ (r7)
- 
- #define __declare_arg_0(a0, res)					\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register unsigned long r1 asm("r1");				\
--	register unsigned long r2 asm("r2");				\
--	register unsigned long r3 asm("r3")
-+	register u32           r0 asm(__reg__"0") = a0;			\
-+	register unsigned long r1 asm(__reg__"1");			\
-+	register unsigned long r2 asm(__reg__"2");			\
-+	register unsigned long r3 asm(__reg__"3")
- 
- #define __declare_arg_1(a0, a1, res)					\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register typeof(a1)    r1 asm("r1") = a1;			\
--	register unsigned long r2 asm("r2");				\
--	register unsigned long r3 asm("r3")
-+	register u32           r0 asm(__reg__"0") = a0;			\
-+	register typeof(a1)    r1 asm(__reg__"1") = a1;			\
-+	register unsigned long r2 asm(__reg__"2");			\
-+	register unsigned long r3 asm(__reg__"3")
- 
- #define __declare_arg_2(a0, a1, a2, res)				\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register typeof(a1)    r1 asm("r1") = a1;			\
--	register typeof(a2)    r2 asm("r2") = a2;			\
--	register unsigned long r3 asm("r3")
-+	register u32           r0 asm(__reg__"0") = a0;			\
-+	register typeof(a1)    r1 asm(__reg__"1") = a1;			\
-+	register typeof(a2)    r2 asm(__reg__"2") = a2;			\
-+	register unsigned long r3 asm(__reg__"3")
- 
- #define __declare_arg_3(a0, a1, a2, a3, res)				\
- 	struct arm_smccc_res   *___res = res;				\
--	register u32           r0 asm("r0") = a0;			\
--	register typeof(a1)    r1 asm("r1") = a1;			\
--	register typeof(a2)    r2 asm("r2") = a2;			\
--	register typeof(a3)    r3 asm("r3") = a3
-+	register u32           r0 asm(__reg__"0") = a0;			\
-+	register typeof(a1)    r1 asm(__reg__"1") = a1;			\
-+	register typeof(a2)    r2 asm(__reg__"2") = a2;			\
-+	register typeof(a3)    r3 asm(__reg__"3") = a3
- 
- #define __declare_arg_4(a0, a1, a2, a3, a4, res)			\
- 	__declare_arg_3(a0, a1, a2, a3, res);				\
--	register typeof(a4) r4 asm("r4") = a4
-+	register typeof(a4) r4 asm(__reg__"4") = a4
- 
- #define __declare_arg_5(a0, a1, a2, a3, a4, a5, res)			\
- 	__declare_arg_4(a0, a1, a2, a3, a4, res);			\
--	register typeof(a5) r5 asm("r5") = a5
-+	register typeof(a5) r5 asm(__reg__"5") = a5
- 
- #define __declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res)		\
- 	__declare_arg_5(a0, a1, a2, a3, a4, a5, res);			\
--	register typeof(a6) r6 asm("r6") = a6
-+	register typeof(a6) r6 asm(__reg__"6") = a6
- 
- #define __declare_arg_7(a0, a1, a2, a3, a4, a5, a6, a7, res)		\
- 	__declare_arg_6(a0, a1, a2, a3, a4, a5, a6, res);		\
--	register typeof(a7) r7 asm("r7") = a7
-+	register typeof(a7) r7 asm(__reg__"7") = a7
- 
- #define ___declare_args(count, ...) __declare_arg_ ## count(__VA_ARGS__)
- #define __declare_args(count, ...)  ___declare_args(count, __VA_ARGS__)
--- 
-2.17.0.rc0.231.g781580f067-goog
+>
+> Thanks,
+> Chang
