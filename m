@@ -1,79 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756126AbeCVOaz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 10:30:55 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34364 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751753AbeCVOau (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:30:50 -0400
-X-Google-Smtp-Source: AG47ELvNDskzjPd/SOtPamYIN4++6qr4FA2/7QLCfCeauYOOD6eEOHw2NNmuu2dULKNmLjAGWMQ5FA==
-Date: Thu, 22 Mar 2018 15:30:46 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        Stefan Agner <stefan@agner.ch>, jonathanh@nvidia.com
-Subject: Re: [PATCH v2] drm/tegra: dc: use correct format array for Tegra124.
-Message-ID: <20180322143046.GB5853@ulmo>
-References: <20180320091144.22421-1-marcel@ziswiler.com>
+        id S1755436AbeCVObu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 10:31:50 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6260 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754583AbeCVOaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 10:30:12 -0400
+From: Salil Mehta <salil.mehta@huawei.com>
+To: <davem@davemloft.net>
+CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <mehta.salil.lnk@gmail.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
+Subject: [PATCH net-next 2/9] net: hns3: Add VF Reset Service Task to support event handling
+Date: Thu, 22 Mar 2018 14:28:53 +0000
+Message-ID: <20180322142900.22860-3-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20180322142900.22860-1-salil.mehta@huawei.com>
+References: <20180322142900.22860-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RASg3xLB4tUQ4RcS"
-Content-Disposition: inline
-In-Reply-To: <20180320091144.22421-1-marcel@ziswiler.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.47]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+VF reset would involve handling of different reset related events
+from the stack, physical function, mailbox etc. Reset service task
+would be used in servicing such reset event requests and later
+handling the hardware completions waits and initiating the stack
+resets.
 
---RASg3xLB4tUQ4RcS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 31 ++++++++++++++++++++++
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |  4 +++
+ 2 files changed, 35 insertions(+)
 
-On Tue, Mar 20, 2018 at 10:11:44AM +0100, Marcel Ziswiler wrote:
-> From: Stefan Agner <stefan@agner.ch>
->=20
-> Use tegra124_(primary|overlay)_formats for Tegra124.
->=20
-> Fixes: 511c7023cf23 ("drm/tegra: dc: Support more formats")
->=20
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> Acked-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->=20
-> ---
->=20
-> Changes in v2:
-> - re-based on top of today's next
-> - added my ACK
->=20
->  drivers/gpu/drm/tegra/dc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---RASg3xLB4tUQ4RcS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlqzvhYACgkQ3SOs138+
-s6HMSRAAsAJtTuoQGKKJRqLI27mnGs3elabEL5nZAHkSPAC9HUNvRdR8OjyxGBZE
-KBum6wWCuYbiu615YyoJwqj1DeGlp5YXFfiF5cWyvZUjL1z7Y1Nx5qjrTE0SCeuB
-l1x28zKv2t2KPAzRPjijczNjbhnhPpoHxD3HYvzSoYF9xW1LM7Mff3eFyWKMCyzx
-UNRQ1oR2W5HOrN9nV3/NqWRwWuE/cfrQE3zNDyjR/87WtdzJI+jwOZR/X7fa2a/3
-PbY7kytM3fFLaYPQnh89Z+tboOaqvJ2a46ugfqu99vvhZqA7hmKpyic6O7IJWoKN
-T6jn/LTlr9AFIcWmNDxNCxyH1xkOY2ephoxssTqUQgEA/ow1AB9zqMle9JeGg+X0
-Xjn1a8yOGI8MBRM3Z4zFxk6aI8LeOtbkhL7Az6mgZq9H8dgxM4YJ5OUa6+ouaROA
-988xAyFq/HR6cskeHYcbZDQoMNSkMICnT7xALKVHSR5Qeb3wCp8Q0pDEn7vZtOlF
-IM2rSnQvAtwd4Zpyp9NMW6onEct6oPvmsJAwkL0Lp93GP2f8+0Zthdy4Sk4ju2+5
-JlGlJxLC5LpsSlTUiRQRgqzl5FgyoiAmiz9HEFIb+DevgVWnv5LgOBhg78L0gyU8
-PxIvXE4MEULgGt/EiClfOgVke/lgFp1m9SvmNcWK4X7vS/bnF4M=
-=GEmo
------END PGP SIGNATURE-----
-
---RASg3xLB4tUQ4RcS--
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index 6c3881d..cdb6e7a 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -867,6 +867,15 @@ static void hclgevf_get_misc_vector(struct hclgevf_dev *hdev)
+ 	hdev->num_msi_used += 1;
+ }
+ 
++void hclgevf_reset_task_schedule(struct hclgevf_dev *hdev)
++{
++	if (!test_bit(HCLGEVF_STATE_RST_SERVICE_SCHED, &hdev->state) &&
++	    !test_bit(HCLGEVF_STATE_RST_HANDLING, &hdev->state)) {
++		set_bit(HCLGEVF_STATE_RST_SERVICE_SCHED, &hdev->state);
++		schedule_work(&hdev->rst_service_task);
++	}
++}
++
+ static void hclgevf_mbx_task_schedule(struct hclgevf_dev *hdev)
+ {
+ 	if (!test_and_set_bit(HCLGEVF_STATE_MBX_SERVICE_SCHED, &hdev->state))
+@@ -889,6 +898,24 @@ static void hclgevf_service_timer(struct timer_list *t)
+ 	hclgevf_task_schedule(hdev);
+ }
+ 
++static void hclgevf_reset_service_task(struct work_struct *work)
++{
++	struct hclgevf_dev *hdev =
++		container_of(work, struct hclgevf_dev, rst_service_task);
++
++	if (test_and_set_bit(HCLGEVF_STATE_RST_HANDLING, &hdev->state))
++		return;
++
++	clear_bit(HCLGEVF_STATE_RST_SERVICE_SCHED, &hdev->state);
++
++	/* body of the reset service task will constitute of hclge device
++	 * reset state handling. This code shall be added subsequently in
++	 * next patches.
++	 */
++
++	clear_bit(HCLGEVF_STATE_RST_HANDLING, &hdev->state);
++}
++
+ static void hclgevf_mailbox_service_task(struct work_struct *work)
+ {
+ 	struct hclgevf_dev *hdev;
+@@ -1097,6 +1124,8 @@ static void hclgevf_state_init(struct hclgevf_dev *hdev)
+ 	INIT_WORK(&hdev->service_task, hclgevf_service_task);
+ 	clear_bit(HCLGEVF_STATE_SERVICE_SCHED, &hdev->state);
+ 
++	INIT_WORK(&hdev->rst_service_task, hclgevf_reset_service_task);
++
+ 	mutex_init(&hdev->mbx_resp.mbx_mutex);
+ 
+ 	/* bring the device down */
+@@ -1113,6 +1142,8 @@ static void hclgevf_state_uninit(struct hclgevf_dev *hdev)
+ 		cancel_work_sync(&hdev->service_task);
+ 	if (hdev->mbx_service_task.func)
+ 		cancel_work_sync(&hdev->mbx_service_task);
++	if (hdev->rst_service_task.func)
++		cancel_work_sync(&hdev->rst_service_task);
+ 
+ 	mutex_destroy(&hdev->mbx_resp.mbx_mutex);
+ }
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+index 0eaea06..8b5fa67 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
+@@ -52,6 +52,8 @@ enum hclgevf_states {
+ 	HCLGEVF_STATE_DISABLED,
+ 	/* task states */
+ 	HCLGEVF_STATE_SERVICE_SCHED,
++	HCLGEVF_STATE_RST_SERVICE_SCHED,
++	HCLGEVF_STATE_RST_HANDLING,
+ 	HCLGEVF_STATE_MBX_SERVICE_SCHED,
+ 	HCLGEVF_STATE_MBX_HANDLING,
+ };
+@@ -146,6 +148,7 @@ struct hclgevf_dev {
+ 
+ 	struct timer_list service_timer;
+ 	struct work_struct service_task;
++	struct work_struct rst_service_task;
+ 	struct work_struct mbx_service_task;
+ 
+ 	struct hclgevf_tqp *htqp;
+@@ -165,4 +168,5 @@ void hclgevf_mbx_handler(struct hclgevf_dev *hdev);
+ void hclgevf_update_link_status(struct hclgevf_dev *hdev, int link_state);
+ void hclgevf_update_speed_duplex(struct hclgevf_dev *hdev, u32 speed,
+ 				 u8 duplex);
++void hclgevf_reset_task_schedule(struct hclgevf_dev *hdev);
+ #endif
+-- 
+2.7.4
