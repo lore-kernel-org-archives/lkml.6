@@ -1,65 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752097AbeCVT7a (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 15:59:30 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.196]:16754 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752042AbeCVT72 (ORCPT
+        id S1752115AbeCVT7r (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 15:59:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36364 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751771AbeCVT62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 15:59:28 -0400
-Date: Thu, 22 Mar 2018 14:59:27 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Madalin Bucur <madalin.bucur@nxp.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] dpaa_eth: use true and false for boolean values
-Message-ID: <20180322195927.GA26854@embeddedgus>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1ez6My-0017JY-6u
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.145.54.187]:54064
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Thu, 22 Mar 2018 15:58:28 -0400
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH 3/4] mm: Add free()
+Date: Thu, 22 Mar 2018 12:58:18 -0700
+Message-Id: <20180322195819.24271-4-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180322195819.24271-1-willy@infradead.org>
+References: <20180322195819.24271-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Assign true or false to boolean variables instead of an integer value.
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-This issue was detected with the help of Coccinelle.
+free() can free many different kinds of memory.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/kernel.h |  2 ++
+ mm/util.c              | 39 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-index 85306d1..c7ea193 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-@@ -344,7 +344,7 @@ static void dpaa_get_ethtool_stats(struct net_device *net_dev,
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 3fd291503576..8bb578938e65 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -933,6 +933,8 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+ 			 "pointer type mismatch in container_of()");	\
+ 	((type *)(__mptr - offsetof(type, member))); })
  
- 	/* gather congestion related counters */
- 	cg_num    = 0;
--	cg_status = 0;
-+	cg_status = false;
- 	cg_time   = jiffies_to_msecs(priv->cgr_data.congested_jiffies);
- 	if (qman_query_cgr_congested(&priv->cgr_data.cgr, &cg_status) == 0) {
- 		cg_num    = priv->cgr_data.cgr_congested_count;
++void free(const void *);
++
+ /* Rebuild everything on CONFIG_FTRACE_MCOUNT_RECORD */
+ #ifdef CONFIG_FTRACE_MCOUNT_RECORD
+ # define REBUILD_DUE_TO_FTRACE_MCOUNT_RECORD
+diff --git a/mm/util.c b/mm/util.c
+index dc4c7b551aaf..8aa2071059b0 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -26,6 +26,45 @@ static inline int is_kernel_rodata(unsigned long addr)
+ 		addr < (unsigned long)__end_rodata;
+ }
+ 
++/**
++ * free() - Free memory
++ * @ptr: Pointer to memory
++ *
++ * This function can free almost any type of memory.  It can safely be
++ * called on:
++ * * NULL pointers.
++ * * Pointers to read-only data (will do nothing).
++ * * Pointers to memory allocated from kmalloc().
++ * * Pointers to memory allocated from kmem_cache_alloc().
++ * * Pointers to memory allocated from vmalloc().
++ * * Pointers to memory allocated from alloc_percpu().
++ * * Pointers to memory allocated from __get_free_pages().
++ * * Pointers to memory allocated from page_frag_alloc().
++ *
++ * It cannot free memory allocated by dma_pool_alloc() or dma_alloc_coherent().
++ */
++void free(const void *ptr)
++{
++	struct page *page;
++
++	if (unlikely(ZERO_OR_NULL_PTR(ptr)))
++		return;
++	if (is_kernel_rodata((unsigned long)ptr))
++		return;
++
++	page = virt_to_head_page(ptr);
++	if (likely(PageSlab(page)))
++		return kmem_cache_free(page->slab_cache, (void *)ptr);
++
++	if (is_vmalloc_addr(ptr))
++		return vfree(ptr);
++	if (is_kernel_percpu_address((unsigned long)ptr))
++		free_percpu((void __percpu *)ptr);
++	if (put_page_testzero(page))
++		__put_page(page);
++}
++EXPORT_SYMBOL(free);
++
+ /**
+  * kfree_const - conditionally free memory
+  * @x: pointer to the memory
 -- 
-2.7.4
+2.16.2
