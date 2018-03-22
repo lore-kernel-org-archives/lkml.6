@@ -1,101 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751812AbeCVUsJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:48:09 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36711 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751599AbeCVUsH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:48:07 -0400
-Date: Thu, 22 Mar 2018 21:48:05 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCHv5,5/5] ARM: dts: omap4-droid4: add soundcard
-Message-ID: <20180322204804.GA26871@amd>
-References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
+        id S1751839AbeCVUs5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:48:57 -0400
+Received: from mga07.intel.com ([134.134.136.100]:43445 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751628AbeCVUs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 16:48:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
+   d="scan'208";a="26231313"
+Date: Thu, 22 Mar 2018 13:49:22 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+        Luck@alison-desk.jf.intel.com, Tony <tony.luck@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] x86,sched: allow topologies where NUMA nodes share an LLC
+Message-ID: <20180322204922.GA2337@alison-desk.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Alison Schofield <alison.schofield@intel.com>
 
---qDbXVdCdHGoSgWSk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Intel's Skylake Server CPUs have a different LLC topology than previous
+generations. When in Sub-NUMA-Clustering (SNC) mode, the package is
+divided into two "slices", each containing half the cores, half the LLC,
+and one memory controller and each slice is enumerated to Linux as a
+NUMA node. This is similar to how the cores and LLC were arranged
+for the Cluster-On-Die (CoD) feature.
 
-Hi!
+CoD allowed the same cache line to be present in each half of the LLC.
+But, with SNC, each line is only ever present in *one* slice. This
+means that the portion of the LLC *available* to a CPU depends on the
+data being accessed:
 
-> Add sound support to Motorola Droid 4 using simple-soundcard
-> and CPCAP's audio codec. This does not yet correctly represent
-> the whole audio routing, since McBSP3 is also connected to
-> Bluetooth and MDM6600 modem (and probably also 4G modem).
-> These extra DAI links are not yet supported and have not been
-> tested.
+    Remote socket: entire package LLC is shared
+    Local socket->local slice: data goes into local slice LLC
+    Local socket->remote slice: data goes into remote-slice LLC. Slightly
+                    		higher latency than local slice LLC.
 
-I applied the series on top v4.16-rc5, but I can't seem to get it
-to work:
+The biggest implication from this is that a process accessing all
+NUMA-local memory only sees half the LLC capacity.
 
-root@devuan:/sys/devices/platform/usb-phy@1# cat /proc/asound/cards
- 0 [H58006000encode]: HDMI_58006000_e - HDMI 58006000.encoder
-                       HDMI 58006000.encoder
-root@devuan:/sys/devices/platform/usb-phy@1#
-[   10.819122] ALSA device list:
-[   10.832641]   #0: HDMI 58006000.encoder
-[   10.842407] Waiting 10 sec before mounting root device...
+The CPU describes its cache hierarchy with the CPUID instruction. One
+of the CPUID leaves enumerates the "logical processors sharing this
+cache". This information is used for scheduling decisions so that tasks
+move more freely between CPUs sharing the cache.
 
-I think I should have the required options enabled...=20
+But, the CPUID for the SNC configuration discussed above enumerates
+the LLC as being shared by the entire package. This is not 100%
+precise because the entire cache is not usable by all accesses. But,
+it *is* the way the hardware enumerates itself, and this is not likely
+to change.
 
-CONFIG_SND_OMAP_SOC=3Dy
-CONFIG_SND_OMAP_SOC_DMIC=3Dy
-CONFIG_SND_OMAP_SOC_MCBSP=3Dy
-CONFIG_SND_OMAP_SOC_MCPDM=3Dy
-CONFIG_SND_OMAP_SOC_HDMI_AUDIO=3Dy
-# CONFIG_SND_OMAP_SOC_RX51 is not set
-# CONFIG_SND_OMAP_SOC_N9 is not set
-CONFIG_SND_OMAP_SOC_OMAP_TWL4030=3Dy
-CONFIG_SND_OMAP_SOC_OMAP_ABE_TWL6040=3Dy
-# CONFIG_SND_SOC_IMG is not set
+This breaks the sane_topology() check in the smpboot.c code because
+this topology is considered not-sane. To fix this, add a vendor and
+model specifc check to never call topology_sane() for these systems.
+Also, just like "Cluster-on-Die" we throw out the "coregroup"
+sched_domain_topology_level and use NUMA information from the SRAT
+alone.
 
-#
-# STMicroelectronics STM32 SOC audio support
-#
-# CONFIG_SND_SOC_XTFPGA_I2S is not set
-# CONFIG_ZX_TDM is not set
-CONFIG_SND_SOC_I2C_AND_SPI=3Dy
-CONFIG_SND_SOC_CPCAP=3Dy
+This is OK at least on the hardware we are immediately concerned about
+because the LLC sharing happens at both the slice and at the package
+level, which are also NUMA boundaries.
 
-Any ideas?
+This patch eliminates a warning that looks like this:
 
-Thanks,
-							Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+	sched: CPU #3's llc-sibling CPU #0 is not on the same node! [node: 1 != 0]. Ignoring dependency.
 
---qDbXVdCdHGoSgWSk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Luck, Tony <tony.luck@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Igor Mammedov <imammedo@redhat.com>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: brice.goglin@gmail.com
+Cc: Ingo Molnar <mingo@kernel.org>
+---
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Changes in v2:
 
-iEYEARECAAYFAlq0FoQACgkQMOfwapXb+vLRDQCfdMCTN0Ps3wd+sy9Si7gxD71x
-r7YAoLAOf9meT+w8TFBgSlMMz5EuLHDg
-=X8kF
------END PGP SIGNATURE-----
+ * Add vendor check (Intel) where we only had a model check (Skylake_X).
+   Considered the suggestion of adding a new flag here but thought that
+   to be overkill for this usage.
 
---qDbXVdCdHGoSgWSk--
+ * Return false, instead of true, from match_llc() per reviewer suggestion.
+   That also cleaned up a topology broken bug message in sched_domain().
+
+ * Updated the comments around the match_llc() return value, continuing to
+   note that the return value doesn't actually matter because we are throwing
+   away coregroups for scheduling.
+
+ * Changed submitter. I'm following up on this patch originally submitted
+   by Dave Hansen
+
+
+ arch/x86/kernel/smpboot.c | 52 ++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 42 insertions(+), 10 deletions(-)
+
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index ff99e2b..cffd181 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -77,6 +77,7 @@
+ #include <asm/i8259.h>
+ #include <asm/misc.h>
+ #include <asm/qspinlock.h>
++#include <asm/intel-family.h>
+ 
+ /* Number of siblings per CPU package */
+ int smp_num_siblings = 1;
+@@ -390,15 +391,52 @@ static bool match_smt(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+ 	return false;
+ }
+ 
++/*
++ * Set if a package/die has multiple NUMA nodes inside.
++ * AMD Magny-Cours, Intel Cluster-on-Die, and Intel
++ * Sub-NUMA Clustering have this.
++ */
++static bool x86_has_numa_in_package;
++
+ static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+ {
+ 	int cpu1 = c->cpu_index, cpu2 = o->cpu_index;
+ 
+-	if (per_cpu(cpu_llc_id, cpu1) != BAD_APICID &&
+-	    per_cpu(cpu_llc_id, cpu1) == per_cpu(cpu_llc_id, cpu2))
+-		return topology_sane(c, o, "llc");
++	/* Do not match if we do not have a valid APICID for cpu: */
++	if (per_cpu(cpu_llc_id, cpu1) == BAD_APICID)
++		return false;
+ 
+-	return false;
++	/* Do not match if LLC id does not match: */
++	if (per_cpu(cpu_llc_id, cpu1) != per_cpu(cpu_llc_id, cpu2))
++		return false;
++
++	/*
++	 * Some Intel CPUs enumerate an LLC that is shared by
++	 * multiple NUMA nodes.  The LLC on these systems is
++	 * shared for off-package data access but private to the
++	 * NUMA node (half of the package) for on-package access.
++	 *
++	 * CPUID can only enumerate the cache as being shared *or*
++	 * unshared, but not this particular configuration.  The
++	 * CPU in this case enumerates the cache to be shared
++	 * across the entire package (spanning both NUMA nodes).
++	 */
++	if (!topology_same_node(c, o) &&
++	    (c->x86_vendor == X86_VENDOR_INTEL &&
++	     c->x86_model == INTEL_FAM6_SKYLAKE_X)) {
++		/* Use NUMA instead of coregroups for scheduling: */
++		x86_has_numa_in_package = true;
++
++		/*
++		 * Return value doesn't actually matter because we
++		 * are throwing away coregroups for scheduling anyway.
++		 * Return false to bypass topology broken bug messages
++		 * and fixups in sched_domain().
++		 */
++		return false;
++	}
++
++	return topology_sane(c, o, "llc");
+ }
+ 
+ /*
+@@ -454,12 +492,6 @@ static struct sched_domain_topology_level x86_topology[] = {
+ 	{ NULL, },
+ };
+ 
+-/*
+- * Set if a package/die has multiple NUMA nodes inside.
+- * AMD Magny-Cours and Intel Cluster-on-Die have this.
+- */
+-static bool x86_has_numa_in_package;
+-
+ void set_cpu_sibling_map(int cpu)
+ {
+ 	bool has_smt = smp_num_siblings > 1;
+-- 
+2.7.4
