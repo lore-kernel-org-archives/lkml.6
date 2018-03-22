@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752510AbeCVUXo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:23:44 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40024 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752163AbeCVUUx (ORCPT
+        id S1752431AbeCVUYI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:24:08 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37902 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752103AbeCVUUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:20:53 -0400
-X-Google-Smtp-Source: AG47ELvmv07KpO2AdzvBaiSUPH2Vrjv6WzTIZshtuC7BOwDqT9tdsBjnpIBPEL7nCN5buHiakMK2PA==
+        Thu, 22 Mar 2018 16:20:51 -0400
+X-Google-Smtp-Source: AG47ELs3AC5PoMo9c6IAgSo4ZC+8/6huh4yK24FaADxxTnAyXWtJElcxr1Y5HDtylRdoP75il7zHeQ==
 From: Mathieu Malaterre <malat@debian.org>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Mathieu Malaterre <malat@debian.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org
-Subject: [PATCH 08/19] powerpc/tau: Make some function static
-Date: Thu, 22 Mar 2018 21:19:54 +0100
-Message-Id: <20180322202007.23088-9-malat@debian.org>
+Subject: [PATCH 07/19] powerpc/powermac: Make some functions static
+Date: Thu, 22 Mar 2018 21:19:53 +0100
+Message-Id: <20180322202007.23088-8-malat@debian.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180322202007.23088-1-malat@debian.org>
 References: <20180322202007.23088-1-malat@debian.org>
@@ -30,56 +30,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 These functions can all be static, make it so. Fix warnings treated as
 errors with W=1:
 
-  arch/powerpc/kernel/tau_6xx.c:53:6: error: no previous prototype for ‘set_thresholds’ [-Werror=missing-prototypes]
-  arch/powerpc/kernel/tau_6xx.c:73:6: error: no previous prototype for ‘TAUupdate’ [-Werror=missing-prototypes]
-  arch/powerpc/kernel/tau_6xx.c:208:13: error: no previous prototype for ‘TAU_init_smp’ [-Werror=missing-prototypes]
-  arch/powerpc/kernel/tau_6xx.c:220:12: error: no previous prototype for ‘TAU_init’ [-Werror=missing-prototypes]
-  arch/powerpc/kernel/tau_6xx.c:126:6: error: no previous prototype for ‘TAUException’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/powermac/pci.c:1022:6: error: no previous prototype for ‘pmac_pci_fixup_ohci’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/powermac/pci.c:1057:6: error: no previous prototype for ‘pmac_pci_fixup_cardbus’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/powermac/pci.c:1094:6: error: no previous prototype for ‘pmac_pci_fixup_pciata’ [-Werror=missing-prototypes]
+
+Also add gcc attribute unused to fix a warning treated as error with W=1:
+
+  arch/powerpc/platforms/powermac/pci.c:784:19: error: variable ‘has_address’ set but not used [-Werror=unused-but-set-variable]
+  arch/powerpc/platforms/powermac/pci.c:907:22: error: variable ‘ht’ set but not used [-Werror=unused-but-set-variable]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/powerpc/kernel/tau_6xx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/powerpc/platforms/powermac/pci.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/kernel/tau_6xx.c b/arch/powerpc/kernel/tau_6xx.c
-index 8cdd852aedd1..1fc6a89a978e 100644
---- a/arch/powerpc/kernel/tau_6xx.c
-+++ b/arch/powerpc/kernel/tau_6xx.c
-@@ -50,7 +50,7 @@ struct timer_list tau_timer;
- #define shrink_timer	2*HZ	/* period between shrinking the window */
- #define min_window	2	/* minimum window size, degrees C */
+diff --git a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
+index 0b8174a79993..d3b9818dd880 100644
+--- a/arch/powerpc/platforms/powermac/pci.c
++++ b/arch/powerpc/platforms/powermac/pci.c
+@@ -781,7 +781,7 @@ static int __init pmac_add_bridge(struct device_node *dev)
+ 	struct resource rsrc;
+ 	char *disp_name;
+ 	const int *bus_range;
+-	int primary = 1, has_address = 0;
++	int primary = 1, has_address __maybe_unused = 0;
  
--void set_thresholds(unsigned long cpu)
-+static void set_thresholds(unsigned long cpu)
+ 	DBG("Adding PCI host bridge %pOF\n", dev);
+ 
+@@ -904,7 +904,7 @@ static int pmac_pci_root_bridge_prepare(struct pci_host_bridge *bridge)
+ void __init pmac_pci_init(void)
  {
- #ifdef CONFIG_TAU_INT
- 	/*
-@@ -70,7 +70,7 @@ void set_thresholds(unsigned long cpu)
- #endif
+ 	struct device_node *np, *root;
+-	struct device_node *ht = NULL;
++	struct device_node *ht __maybe_unused = NULL;
+ 
+ 	pci_set_flags(PCI_CAN_SKIP_ISA_ALIGN);
+ 
+@@ -1019,7 +1019,7 @@ static bool pmac_pci_enable_device_hook(struct pci_dev *dev)
+ 	return true;
  }
  
--void TAUupdate(int cpu)
-+static void TAUupdate(int cpu)
+-void pmac_pci_fixup_ohci(struct pci_dev *dev)
++static void pmac_pci_fixup_ohci(struct pci_dev *dev)
  {
- 	unsigned thrm;
+ 	struct device_node *node = pci_device_to_OF_node(dev);
  
-@@ -205,7 +205,7 @@ static void tau_timeout_smp(struct timer_list *unused)
- 
- int tau_initialized = 0;
- 
--void __init TAU_init_smp(void * info)
-+static void __init TAU_init_smp(void *info)
- {
- 	unsigned long cpu = smp_processor_id();
- 
-@@ -217,7 +217,7 @@ void __init TAU_init_smp(void * info)
- 	set_thresholds(cpu);
+@@ -1054,7 +1054,7 @@ void __init pmac_pcibios_after_init(void)
+ 	}
  }
  
--int __init TAU_init(void)
-+static int __init TAU_init(void)
+-void pmac_pci_fixup_cardbus(struct pci_dev* dev)
++static void pmac_pci_fixup_cardbus(struct pci_dev *dev)
  {
- 	/* We assume in SMP that if one CPU has TAU support, they
- 	 * all have it --BenH
+ 	if (!machine_is(powermac))
+ 		return;
+@@ -1091,7 +1091,7 @@ void pmac_pci_fixup_cardbus(struct pci_dev* dev)
+ 
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_TI, PCI_ANY_ID, pmac_pci_fixup_cardbus);
+ 
+-void pmac_pci_fixup_pciata(struct pci_dev* dev)
++static void pmac_pci_fixup_pciata(struct pci_dev *dev)
+ {
+        u8 progif = 0;
+ 
 -- 
 2.11.0
