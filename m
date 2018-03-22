@@ -1,30 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752267AbeCVDAK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 23:00:10 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:17546 "EHLO
+        id S1751905AbeCVDGI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 23:06:08 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:63666 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751765AbeCVC64 (ORCPT
+        with ESMTP id S1751604AbeCVDGH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 22:58:56 -0400
-X-UUID: d5664642f0ad4ac9835454eb4fc84b87-20180322
-From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-To: <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>
-CC: <srv_heupstream@mediatek.com>, <liguo.zhang@mediatek.com>,
-        <yingjoe.chen@mediatek.com>, <hongkun.cao@mediatek.com>,
-        <biao.huang@mediatek.com>, <yt.shen@mediatek.com>,
-        <hongzhou.yang@mediatek.com>, <erin.lo@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-        Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: [PATCH v4 4/5] pintcrl: support bias-disable of generic and special pins simultaneously
-Date: Thu, 22 Mar 2018 10:58:42 +0800
-Message-ID: <1521687523-1604-5-git-send-email-zhiyong.tao@mediatek.com>
+        Wed, 21 Mar 2018 23:06:07 -0400
+X-UUID: 2787c780c0bc46a39345fba5e43671d7-20180322
+From: Ji Zhang <ji.zhang@mediatek.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Michael Weiser <michael.weiser@gmx.de>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Xie XiuQi <xiexiuqi@huawei.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Ji Zhang <ji.zhang@mediatek.com>, <shadanji@163.com>
+Subject: [PATCH] arm64: avoid race condition issue in dump_backtrace
+Date: Thu, 22 Mar 2018 11:06:00 +0800
+Message-ID: <1521687960-3744-1-git-send-email-ji.zhang@mediatek.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com>
-References: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK: N
@@ -32,43 +33,38 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For generic pins, parameter "arg" is 0 or 1.
-For special pins, bias-disable is set by R0R1,
-so we need transmited "00" to set bias-disable
-When we set "bias-disable" as high-z property,
-the parameter should be "MTK_PUPD_SET_R1R0_00".
+When we dump the backtrace of some specific task, there is a potential race
+condition due to the task may be running on other cores if SMP enabled.
+That is because for current implementation, if the task is not the current
+task, we will get the registers used for unwind from cpu_context saved in
+thread_info, which is the snapshot before context switch, but if the task
+is running on other cores, the registers and the content of stack are
+changed.
+This may cause that we get the wrong backtrace or incomplete backtrace or
+even crash the kernel.
+To avoid this case, do not dump the backtrace of the tasks which are
+running on other cores.
+This patch cannot solve the issue completely but can shrink the window of
+race condition.
 
-Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Signed-off-by: Ji Zhang <ji.zhang@mediatek.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/traps.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 3cf384f..f991ff3 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -293,7 +293,7 @@ static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
- 		unsigned int pin, bool enable, bool isup, unsigned int arg)
- {
- 	unsigned int bit;
--	unsigned int reg_pullen, reg_pullsel;
-+	unsigned int reg_pullen, reg_pullsel, r1r0;
- 	int ret;
- 
- 	/* Some pins' pull setting are very different,
-@@ -301,8 +301,12 @@ static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
- 	 * resistor bit, so we need this special handle.
- 	 */
- 	if (pctl->devdata->spec_pull_set) {
-+		/* For special pins, bias-disable is set by R1R0,
-+		 * the parameter should be "MTK_PUPD_SET_R1R0_00".
-+		 */
-+		r1r0 = enable ? arg : MTK_PUPD_SET_R1R0_00;
- 		ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
--			pin, pctl->devdata->port_align, isup, arg);
-+			pin, pctl->devdata->port_align, isup, r1r0);
- 		if (!ret)
- 			return 0;
- 	}
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index eb2d151..95749364 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -113,6 +113,9 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+ 	if (tsk == current) {
+ 		frame.fp = (unsigned long)__builtin_frame_address(0);
+ 		frame.pc = (unsigned long)dump_backtrace;
++	else if (tsk->state == TASK_RUNNING) {
++		pr_notice("Do not dump other running tasks\n");
++		return;
+ 	} else {
+ 		/*
+ 		 * task blocked in __switch_to
 -- 
 1.9.1
