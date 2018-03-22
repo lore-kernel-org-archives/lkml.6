@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754950AbeCVPPq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:15:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47241 "EHLO mail.bootlin.com"
+        id S1755316AbeCVPPw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:15:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47248 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751719AbeCVPPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:15:45 -0400
+        id S1753090AbeCVPPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 11:15:46 -0400
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Jason Cooper <jason@lakedaemon.net>,
@@ -13,55 +13,183 @@ Cc: Jason Cooper <jason@lakedaemon.net>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v3 1/2] dt-bindings: interrupt-controller: Add binding for the Microsemi Ocelot interrupt controller
-Date: Thu, 22 Mar 2018 16:15:23 +0100
-Message-Id: <20180322151524.13902-1-alexandre.belloni@bootlin.com>
+Subject: [PATCH v3 2/2] irqchip: Add a driver for the Microsemi Ocelot controller
+Date: Thu, 22 Mar 2018 16:15:24 +0100
+Message-Id: <20180322151524.13902-2-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180322151524.13902-1-alexandre.belloni@bootlin.com>
+References: <20180322151524.13902-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the Device Tree binding documentation for the Microsemi Ocelot
-interrupt controller that is part of the ICPU. It is connected directly to
-the MIPS core interrupt controller.
+The Microsemi Ocelot SoC has a pretty simple IRQ controller in its ICPU
+block. Add a driver for it.
 
-Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
-Changes since v2:
- - none
+Changes in v3:
+ - moved parent irq parsing to the top of init
+ - reworked error path
 
- .../interrupt-controller/mscc,ocelot-icpu-intr.txt | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/mscc,ocelot-icpu-intr.txt
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/mscc,ocelot-icpu-intr.txt b/Documentation/devicetree/bindings/interrupt-controller/mscc,ocelot-icpu-intr.txt
+ drivers/irqchip/Kconfig           |   5 ++
+ drivers/irqchip/Makefile          |   1 +
+ drivers/irqchip/irq-mscc-ocelot.c | 118 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 124 insertions(+)
+ create mode 100644 drivers/irqchip/irq-mscc-ocelot.c
+
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index d913aec85109..0270797765f9 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -286,6 +286,11 @@ config IRQ_MXS
+ 	select IRQ_DOMAIN
+ 	select STMP_DEVICE
+ 
++config MSCC_OCELOT_IRQ
++	bool
++	select IRQ_DOMAIN
++	select GENERIC_IRQ_CHIP
++
+ config MVEBU_GICP
+ 	bool
+ 
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index d27e3e3619e0..63d7bb434c33 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -72,6 +72,7 @@ obj-$(CONFIG_ARCH_SA1100)		+= irq-sa11x0.o
+ obj-$(CONFIG_INGENIC_IRQ)		+= irq-ingenic.o
+ obj-$(CONFIG_IMX_GPCV2)			+= irq-imx-gpcv2.o
+ obj-$(CONFIG_PIC32_EVIC)		+= irq-pic32-evic.o
++obj-$(CONFIG_MSCC_OCELOT_IRQ)		+= irq-mscc-ocelot.o
+ obj-$(CONFIG_MVEBU_GICP)		+= irq-mvebu-gicp.o
+ obj-$(CONFIG_MVEBU_ICU)			+= irq-mvebu-icu.o
+ obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
+diff --git a/drivers/irqchip/irq-mscc-ocelot.c b/drivers/irqchip/irq-mscc-ocelot.c
 new file mode 100644
-index 000000000000..b47a8a02b17b
+index 000000000000..b63e40c00a02
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/mscc,ocelot-icpu-intr.txt
-@@ -0,0 +1,22 @@
-+Microsemi Ocelot SoC ICPU Interrupt Controller
++++ b/drivers/irqchip/irq-mscc-ocelot.c
+@@ -0,0 +1,118 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Microsemi Ocelot IRQ controller driver
++ *
++ * Copyright (c) 2017 Microsemi Corporation
++ */
++#include <linux/bitops.h>
++#include <linux/irq.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/irqchip.h>
++#include <linux/irqchip/chained_irq.h>
++#include <linux/interrupt.h>
 +
-+Required properties:
++#define ICPU_CFG_INTR_INTR_STICKY	0x10
++#define ICPU_CFG_INTR_INTR_ENA		0x18
++#define ICPU_CFG_INTR_INTR_ENA_CLR	0x1c
++#define ICPU_CFG_INTR_INTR_ENA_SET	0x20
++#define ICPU_CFG_INTR_DST_INTR_IDENT(x)	(0x38 + 0x4 * (x))
++#define ICPU_CFG_INTR_INTR_TRIGGER(x)	(0x5c + 0x4 * (x))
 +
-+- compatible : should be "mscc,ocelot-icpu-intr"
-+- reg : Specifies base physical address and size of the registers.
-+- interrupt-controller : Identifies the node as an interrupt controller
-+- #interrupt-cells : Specifies the number of cells needed to encode an
-+  interrupt source. The value shall be 1.
-+- interrupt-parent : phandle of the CPU interrupt controller.
-+- interrupts : Specifies the CPU interrupt the controller is connected to.
++#define OCELOT_NR_IRQ 24
 +
-+Example:
++static void ocelot_irq_unmask(struct irq_data *data)
++{
++	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
++	struct irq_chip_type *ct = irq_data_get_chip_type(data);
++	unsigned int mask = data->mask;
++	u32 val;
 +
-+		intc: interrupt-controller@70000070 {
-+			compatible = "mscc,ocelot-icpu-intr";
-+			reg = <0x70000070 0x70>;
-+			#interrupt-cells = <1>;
-+			interrupt-controller;
-+			interrupt-parent = <&cpuintc>;
-+			interrupts = <2>;
-+		};
++	irq_gc_lock(gc);
++	val = irq_reg_readl(gc, ICPU_CFG_INTR_INTR_TRIGGER(0)) |
++	      irq_reg_readl(gc, ICPU_CFG_INTR_INTR_TRIGGER(1));
++	if (!(val & mask))
++		irq_reg_writel(gc, mask, ICPU_CFG_INTR_INTR_STICKY);
++
++	*ct->mask_cache &= ~mask;
++	irq_reg_writel(gc, mask, ICPU_CFG_INTR_INTR_ENA_SET);
++	irq_gc_unlock(gc);
++}
++
++static void ocelot_irq_handler(struct irq_desc *desc)
++{
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct irq_domain *d = irq_desc_get_handler_data(desc);
++	struct irq_chip_generic *gc = irq_get_domain_generic_chip(d, 0);
++	u32 reg = irq_reg_readl(gc, ICPU_CFG_INTR_DST_INTR_IDENT(0));
++
++	chained_irq_enter(chip, desc);
++
++	while (reg) {
++		u32 hwirq = __fls(reg);
++
++		generic_handle_irq(irq_find_mapping(d, hwirq));
++		reg &= ~(BIT(hwirq));
++	}
++
++	chained_irq_exit(chip, desc);
++}
++
++static int __init ocelot_irq_init(struct device_node *node,
++				  struct device_node *parent)
++{
++	struct irq_domain *domain;
++	struct irq_chip_generic *gc;
++	int parent_irq, ret;
++
++	parent_irq = irq_of_parse_and_map(node, 0);
++	if (!parent_irq)
++		return -EINVAL;
++
++	domain = irq_domain_add_linear(node, OCELOT_NR_IRQ,
++				       &irq_generic_chip_ops, NULL);
++	if (!domain) {
++		pr_err("%s: unable to add irq domain\n", node->name);
++		return -ENOMEM;
++	}
++
++	ret = irq_alloc_domain_generic_chips(domain, OCELOT_NR_IRQ, 1,
++					     "icpu", handle_level_irq,
++					     0, 0, 0);
++	if (ret) {
++		pr_err("%s: unable to alloc irq domain gc\n", node->name);
++		goto err_domain_remove;
++	}
++
++	gc = irq_get_domain_generic_chip(domain, 0);
++	gc->reg_base = of_iomap(node, 0);
++	if (!gc->reg_base) {
++		pr_err("%s: unable to map resource\n", node->name);
++		ret = -ENOMEM;
++		goto err_gc_free;
++	}
++
++	gc->chip_types[0].regs.ack = ICPU_CFG_INTR_INTR_STICKY;
++	gc->chip_types[0].regs.mask = ICPU_CFG_INTR_INTR_ENA_CLR;
++	gc->chip_types[0].chip.irq_ack = irq_gc_ack_set_bit;
++	gc->chip_types[0].chip.irq_mask = irq_gc_mask_set_bit;
++	gc->chip_types[0].chip.irq_unmask = ocelot_irq_unmask;
++
++	/* Mask and ack all interrupts */
++	irq_reg_writel(gc, 0, ICPU_CFG_INTR_INTR_ENA);
++	irq_reg_writel(gc, 0xffffffff, ICPU_CFG_INTR_INTR_STICKY);
++
++	irq_set_chained_handler_and_data(parent_irq, ocelot_irq_handler,
++					 domain);
++
++	return 0;
++
++err_gc_free:
++	irq_free_generic_chip(gc);
++
++err_domain_remove:
++	irq_domain_remove(domain);
++
++	return ret;
++}
++IRQCHIP_DECLARE(ocelot_icpu, "mscc,ocelot-icpu-intr", ocelot_irq_init);
 -- 
 2.16.2
