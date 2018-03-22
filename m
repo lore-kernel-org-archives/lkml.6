@@ -1,56 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754431AbeCVBlE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 21:41:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53002 "EHLO mail.kernel.org"
+        id S1754352AbeCVBog (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 21:44:36 -0400
+Received: from akagi.fsij.org ([217.70.189.144]:38138 "EHLO akagi.fsij.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752752AbeCVBlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 21:41:00 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881562183A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AG47ELtlkf/7CEQHiVe5eNxpYp1KRusvdRBTzMdt364Fh2GZ+3D8WisB3SEVNPl6H0jV3Yr69l1OgajAjVlOhwtOGjU=
-MIME-Version: 1.0
-In-Reply-To: <E9221EFA-636C-4D36-AEBA-3A1EEBBF2F50@intel.com>
-References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
- <1521481767-22113-15-git-send-email-chang.seok.bae@intel.com>
- <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com>
- <C78DE381-C618-4370-9B06-F6E25C850661@intel.com> <CALCETrX03_AG-OuJdmfmsbvEt0UTdUpaUVDRQgbDZWGY7WD-Xw@mail.gmail.com>
- <E9221EFA-636C-4D36-AEBA-3A1EEBBF2F50@intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 22 Mar 2018 01:40:38 +0000
-X-Gmail-Original-Message-ID: <CALCETrUxQ1XOs7V1XKOsk-iQ-qOwn41sWGYkepkVOE7PtfX24A@mail.gmail.com>
-Message-ID: <CALCETrUxQ1XOs7V1XKOsk-iQ-qOwn41sWGYkepkVOE7PtfX24A@mail.gmail.com>
-Subject: Re: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when FS/GS
- updated by ptracer
-To: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        id S1752752AbeCVBoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 21:44:34 -0400
+From: NIIBE Yutaka <gniibe@fsij.org>
+To: linux-kernel@vger.kernel.org
+Cc: NIIBE Yutaka <gniibe@fsij.org>
+Subject: [PATCH v2 0/4] Fix no signal delivery at do_signal
+Date: Thu, 22 Mar 2018 10:44:09 +0900
+Message-Id: <20180322014413.24099-1-gniibe@fsij.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 3:11 PM, Bae, Chang Seok
-<chang.seok.bae@intel.com> wrote:
-> On 3/20/18, 17:47, "Andy Lutomirski" <luto@kernel.org> wrote:
->>    If I've understood all your emails right, when you looked at existing
->>    ptrace users, you found that all of them that write to gs and/or
->>    gs_base do it as part of a putregs call that writes them at the same
->>    time.  If so, then your patch does exactly the same thing that my old
->>    patches did, but your patch is much more complicated.  So why did you
->>    add all that complexity?
->
-> What is tried to be provided is backward compatibility by emulating
-> “mov gs (fs) …” when index is only changed and preserve a (given) base value
-> in other cases.
+Hello,
 
-mov to gs changes GSBASE even if GS was unchanged.
+Background:
+I tried to fix my own problem in suspend-to-ram with USB devices (some
+device doesn't work well after suspend/resume).  I know it's common
+problems.  Well, while I identified some problems of USB devices and
+drivers, I did try my best.  I fixed a USB device implementation of
+mine.  Then, I also located and fixed bugs in a USB user space driver
+which I maintain.
 
-But it's not clear to me that you've identified any case where
-emulating this behavior is useful.
+Now, I think I found a kernel problem.  After suspend/resume, in my
+USB user space driver, a task sends a signal to another task, then,
+pselect is woken up by the signal.  In this situation, a signal
+handler is called correctly, but it seems that the pselect is
+restarted.  Expected behavior is woken pselect returning -EINTR.
+
+Looking the code, my theory is:
+It is a fake signal by suspend which wakes up pselect to be frozen,
+and after resume, real signal is sent.  When both of signals are
+handled in a single call of exit_to_usermode_loop, by two calls of
+do_signal, firstly for fake signal and secondly for real signal, the
+system call is restarted wrongly, where it should return -EINTR.
+
+Here is a patch series of mine for x86.  I'd suggest architecture
+maintainers to do similar if an architecture supports suspend/resume.
+
+I found that, in arch/arm, it does differently.  When it finds no
+signal delivery at do_signal, it restarts the system call soon,
+breaking the loop.  This approach also works.
+
+Changes from v1:
+* Title change of cover leter
+* Avoid User Mode Linux breakage
+* Only call nosig_restart_syscall when really needed
+* Add 'unlikely'.
+
+NIIBE Yutaka (4):
+  signal/x86: Factor out nosig handling.
+  signal/x86: do_signal: syscall restart should be done only once.
+  signal/x86: Move restore_saved_sigmask().
+  signal/x86: Move nosig handling at the end of exit_to_usermode_loop.
+
+ arch/x86/entry/common.c       |  6 +++++-
+ arch/x86/include/asm/signal.h |  5 ++++-
+ arch/x86/kernel/signal.c      | 22 ++++++++++++++--------
+ 3 files changed, 23 insertions(+), 10 deletions(-)
+
+-- 
+2.11.0
