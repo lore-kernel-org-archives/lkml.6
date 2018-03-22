@@ -1,111 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755207AbeCVNBb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 09:01:31 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:35567 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755104AbeCVNAi (ORCPT
+        id S1755233AbeCVNBx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 09:01:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38554 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755119AbeCVNAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 09:00:38 -0400
-X-Google-Smtp-Source: AG47ELuRpHYWMI6Z9UAxnVV3O0Jyt3ZZ88hi+bRX7stIHmQJoyih/7E1OlHvpkHh2EJ5Ds9GzfkGtw==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: linus.walleij@linaro.org
-Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v4 5/7] gpio: 104-idi-48: Implement get_multiple callback
-Date: Thu, 22 Mar 2018 09:00:31 -0400
-Message-Id: <a91859083599fe06a302eb336858d56ce8e8ea3d.1521723192.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
-References: <cover.1521723192.git.vilhelm.gray@gmail.com>
+        Thu, 22 Mar 2018 09:00:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71F3B6110B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v4 12/13] ARM: dts: ipq8074: Add pcie nodes
+Date: Thu, 22 Mar 2018 18:28:51 +0530
+Message-Id: <1521723532-28361-13-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
+References: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ACCES I/O 104-IDI-48 series of devices provides 48
-optically-isolated inputs accessed via six 8-bit ports. Since eight
-input lines are acquired on a single port input read, the 104-IDI-48
-GPIO driver may improve multiple input reads by utilizing a get_multiple
-callback. This patch implements the idi_48_gpio_get_multiple function
-which serves as the respective get_multiple callback.
+The driver/phy support for ipq8074 is available now.
+So enabling the nodes in DT.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/gpio/gpio-104-idi-48.c | 47 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi | 157 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 156 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
-index add859d59766..f35632609379 100644
---- a/drivers/gpio/gpio-104-idi-48.c
-+++ b/drivers/gpio/gpio-104-idi-48.c
-@@ -14,6 +14,7 @@
-  * This driver supports the following ACCES devices: 104-IDI-48A,
-  * 104-IDI-48AC, 104-IDI-48B, and 104-IDI-48BC.
-  */
-+#include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/errno.h>
-@@ -88,6 +89,51 @@ static int idi_48_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+index a8dbbf0..caf3485 100644
+--- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+@@ -24,7 +24,7 @@
+ 		ranges = <0 0 0 0xffffffff>;
+ 		compatible = "simple-bus";
  
-+static int idi_48_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-+	unsigned long *bits)
-+{
-+	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
-+	size_t i;
-+	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
-+	const unsigned int gpio_reg_size = 8;
-+	unsigned int bits_offset;
-+	size_t word_index;
-+	unsigned int word_offset;
-+	unsigned long word_mask;
-+	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
-+	unsigned long port_state;
+-		pinctrl@1000000 {
++		tlmm: pinctrl@1000000 {
+ 			compatible = "qcom,ipq8074-pinctrl";
+ 			reg = <0x1000000 0x300000>;
+ 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+@@ -229,6 +229,161 @@
+ 			dma-names = "tx", "rx", "cmd";
+ 			status = "disabled";
+ 		};
 +
-+	/* clear bits array to a clean slate */
-+	bitmap_zero(bits, chip->ngpio);
++		pcie_phy0: phy@86000 {
++			compatible = "qcom,ipq8074-qmp-pcie-phy";
++			reg = <0x86000 0x1000>;
++			#phy-cells = <0>;
++			clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
++			clock-names = "pipe_clk";
++			clock-output-names = "pcie20_phy0_pipe_clk";
 +
-+	/* get bits are evaluated a gpio port register at a time */
-+	for (i = 0; i < ARRAY_SIZE(ports); i++) {
-+		/* gpio offset in bits array */
-+		bits_offset = i * gpio_reg_size;
++			resets = <&gcc GCC_PCIE0_PHY_BCR>,
++				<&gcc GCC_PCIE0PHY_PHY_BCR>;
++			reset-names = "phy",
++				      "common";
++			status = "disabled";
++		};
 +
-+		/* word index for bits array */
-+		word_index = BIT_WORD(bits_offset);
++		pcie0: pci@20000000 {
++			compatible = "qcom,pcie-ipq8074";
++			reg =  <0x20000000 0xf1d
++				0x20000f20 0xa8
++				0x80000 0x2000
++				0x20100000 0x1000>;
++			reg-names = "dbi", "elbi", "parf", "config";
++			device_type = "pci";
++			linux,pci-domain = <0>;
++			bus-range = <0x00 0xff>;
++			num-lanes = <1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
 +
-+		/* gpio offset within current word of bits array */
-+		word_offset = bits_offset % BITS_PER_LONG;
++			phys = <&pcie_phy0>;
++			phy-names = "pciephy";
 +
-+		/* mask of get bits for current gpio within current word */
-+		word_mask = mask[word_index] & (port_mask << word_offset);
-+		if (!word_mask) {
-+			/* no get bits in this port so skip to next one */
-+			continue;
-+		}
++			ranges = <0x81000000 0 0x20200000 0x20200000
++				  0 0x100000   /* downstream I/O */
++				  0x82000000 0 0x20300000 0x20300000
++				  0 0xd00000>; /* non-prefetchable memory */
 +
-+		/* read bits from current gpio port */
-+		port_state = inb(idi48gpio->base + ports[i]);
++			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc 0 75
++					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
++					<0 0 0 2 &intc 0 78
++					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
++					<0 0 0 3 &intc 0 79
++					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
++					<0 0 0 4 &intc 0 83
++					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
 +
-+		/* store acquired bits at respective bits array offset */
-+		bits[word_index] |= port_state << word_offset;
-+	}
++			clocks = <&gcc GCC_SYS_NOC_PCIE0_AXI_CLK>,
++				 <&gcc GCC_PCIE0_AXI_M_CLK>,
++				 <&gcc GCC_PCIE0_AXI_S_CLK>,
++				 <&gcc GCC_PCIE0_AHB_CLK>,
++				 <&gcc GCC_PCIE0_AUX_CLK>;
 +
-+	return 0;
-+}
++			clock-names = "iface",
++				      "axi_m",
++				      "axi_s",
++				      "ahb",
++				      "aux";
++			resets = <&gcc GCC_PCIE0_PIPE_ARES>,
++				 <&gcc GCC_PCIE0_SLEEP_ARES>,
++				 <&gcc GCC_PCIE0_CORE_STICKY_ARES>,
++				 <&gcc GCC_PCIE0_AXI_MASTER_ARES>,
++				 <&gcc GCC_PCIE0_AXI_SLAVE_ARES>,
++				 <&gcc GCC_PCIE0_AHB_ARES>,
++				 <&gcc GCC_PCIE0_AXI_MASTER_STICKY_ARES>;
++			reset-names = "pipe",
++				      "sleep",
++				      "sticky",
++				      "axi_m",
++				      "axi_s",
++				      "ahb",
++				      "axi_m_sticky";
++			status = "disabled";
++		};
 +
- static void idi_48_irq_ack(struct irq_data *data)
- {
- }
-@@ -256,6 +302,7 @@ static int idi_48_probe(struct device *dev, unsigned int id)
- 	idi48gpio->chip.get_direction = idi_48_gpio_get_direction;
- 	idi48gpio->chip.direction_input = idi_48_gpio_direction_input;
- 	idi48gpio->chip.get = idi_48_gpio_get;
-+	idi48gpio->chip.get_multiple = idi_48_gpio_get_multiple;
- 	idi48gpio->base = base[id];
++		pcie_phy1: phy@8e000 {
++			compatible = "qcom,ipq8074-qmp-pcie-phy";
++			reg = <0x8e000 0x1000>;
++			#phy-cells = <0>;
++			clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
++			clock-names = "pipe_clk";
++			clock-output-names = "pcie20_phy1_pipe_clk";
++
++			resets = <&gcc GCC_PCIE1_PHY_BCR>,
++				<&gcc GCC_PCIE1PHY_PHY_BCR>;
++			reset-names = "phy",
++				      "common";
++			status = "disabled";
++		};
++
++		pcie1: pci@10000000 {
++			compatible = "qcom,pcie-ipq8074";
++			reg =  <0x10000000 0xf1d
++				0x10000f20 0xa8
++				0x88000 0x2000
++				0x10100000 0x1000>;
++			reg-names = "dbi", "elbi", "parf", "config";
++			device_type = "pci";
++			linux,pci-domain = <1>;
++			bus-range = <0x00 0xff>;
++			num-lanes = <1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++
++			phys = <&pcie_phy1>;
++			phy-names = "pciephy";
++
++			ranges = <0x81000000 0 0x10200000 0x10200000
++				  0 0x100000   /* downstream I/O */
++				  0x82000000 0 0x10300000 0x10300000
++				  0 0xd00000>; /* non-prefetchable memory */
++
++			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi";
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc 0 142
++					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
++					<0 0 0 2 &intc 0 143
++					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
++					<0 0 0 3 &intc 0 144
++					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
++					<0 0 0 4 &intc 0 145
++					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
++
++			clocks = <&gcc GCC_SYS_NOC_PCIE1_AXI_CLK>,
++				 <&gcc GCC_PCIE1_AXI_M_CLK>,
++				 <&gcc GCC_PCIE1_AXI_S_CLK>,
++				 <&gcc GCC_PCIE1_AHB_CLK>,
++				 <&gcc GCC_PCIE1_AUX_CLK>;
++			clock-names = "iface",
++				      "axi_m",
++				      "axi_s",
++				      "ahb",
++				      "aux";
++			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
++				 <&gcc GCC_PCIE1_SLEEP_ARES>,
++				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
++				 <&gcc GCC_PCIE1_AXI_MASTER_ARES>,
++				 <&gcc GCC_PCIE1_AXI_SLAVE_ARES>,
++				 <&gcc GCC_PCIE1_AHB_ARES>,
++				 <&gcc GCC_PCIE1_AXI_MASTER_STICKY_ARES>;
++			reset-names = "pipe",
++				      "sleep",
++				      "sticky",
++				      "axi_m",
++				      "axi_s",
++				      "ahb",
++				      "axi_m_sticky";
++			status = "disabled";
++		};
+ 	};
  
- 	raw_spin_lock_init(&idi48gpio->lock);
+ 	cpus {
 -- 
-2.16.2
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
