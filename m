@@ -1,151 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751937AbeCVWdC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 18:33:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40384 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751541AbeCVWdA (ORCPT
+        id S1752163AbeCVWeN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 18:34:13 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41881 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751976AbeCVWeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 18:33:00 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9833A60C54
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-Subject: Re: [PATCH v3 2/7] reset: qcom: AOSS (always on subsystem) reset
- controller
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: p.zabel@pengutronix.de, robh+dt@kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
-        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
-        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-References: <1521019283-32212-1-git-send-email-sibis@codeaurora.org>
- <1521019283-32212-3-git-send-email-sibis@codeaurora.org>
- <20180318224511.GD5626@tuxbook-pro>
-From: Sibi S <sibis@codeaurora.org>
-Message-ID: <386f26c8-2d7f-2066-758f-7bf1498cdaa6@codeaurora.org>
-Date: Fri, 23 Mar 2018 04:02:53 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <20180318224511.GD5626@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 22 Mar 2018 18:34:08 -0400
+X-Google-Smtp-Source: AG47ELuaLzGZnRQGkLFXab+iI+kwMSZ3ui+fxiVz+z1horoeNkUPTB8f7GSbrdy7TOrGyThabTZZDA==
+From: Mathias Kresin <dev@kresin.me>
+To: andrew@lunn.ch, f.fainelli@gmail.com, hauke@hauke-m.de
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] net: phy: intel-xway: add VR9 version number
+Date: Thu, 22 Mar 2018 23:31:38 +0100
+Message-Id: <1521757899-27813-1-git-send-email-dev@kresin.me>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-Thanks for the review.
+The VR9 phy ids are matching only for the SoC version 1.2. Rename the
+macros and change the names to take this into account.
 
-On 03/19/2018 04:15 AM, Bjorn Andersson wrote:
-> On Wed 14 Mar 02:21 PDT 2018, Sibi S wrote:
->> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
->> index 7fc7769..d06bd1d 100644
->> --- a/drivers/reset/Kconfig
->> +++ b/drivers/reset/Kconfig
->> @@ -81,6 +81,16 @@ config RESET_PISTACHIO
->>   	help
->>   	  This enables the reset driver for ImgTec Pistachio SoCs.
->>   
->> +config RESET_QCOM_AOSS
->> +	bool "Qcom AOSS Reset Driver"
->> +	depends on ARCH_QCOM || COMPILE_TEST
->> +	select MFD_SYSCON
-> 
-> Drop syscon
-> 
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+---
+ drivers/net/phy/intel-xway.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-will drop it
-
->> +	help
->> +	  This enables the AOSS (always on subsystem) reset driver
->> +	  for Qualcomm SDM845 SoCs. Say Y if you want to control
->> +	  reset signals provided by AOSS for Modem, Venus, ADSP,
->> +	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
->> +
-> [..]
->> diff --git a/drivers/reset/reset-qcom-aoss.c b/drivers/reset/reset-qcom-aoss.c
-> [..]
->> +static const struct regmap_config sdm845_aoss_regmap_config = {
->> +	.name		= "aoss-reset",
->> +	.reg_bits	= 32,
->> +	.reg_stride	= 4,
->> +	.val_bits	= 32,
->> +	.max_register	= 0x20000,
->> +	.fast_io	= true,
->> +};
-> 
-> Is there a particular reason why you're setting up a regmap and not just
-> operate on the ioremap region directly with readl/writel? It would save
-> you a few lines of code and some runtime memory.
-> 
-
-The idea here is to reuse the driver in modified configuration as
-pdc_sync restart controller which is to be used for adsp_pil. PDC sync
-reset register is a single register with multiple reset lines hence
-would warrant setting up a regmap. I can remove these changes and add
-them when I add pdc_sync reset controller though.
-
->> +
->> +static const struct qcom_aoss_reset_map sdm845_aoss_resets[] = {
->> +	[AOSS_CC_MSS_RESTART] = { 0x0, 0 },
->> +	[AOSS_CC_CAMSS_RESTART] = { 0x1000, 0 },
->> +	[AOSS_CC_VENUS_RESTART] = { 0x2000, 0 },
->> +	[AOSS_CC_GPU_RESTART] = { 0x3000, 0 },
->> +	[AOSS_CC_DISPSS_RESTART] = { 0x4000, 0 },
->> +	[AOSS_CC_WCSS_RESTART] = { 0x10000, 0 },
->> +	[AOSS_CC_LPASS_RESTART] = { 0x20000, 0 },
-> 
-> Do you have a case where bit != 0? If not please drop the bit until it's
-> necessary.
-> 
-
-had the bit variable for the above state reason.
-
->> +};
->> +
->> +static const struct qcom_aoss_desc sdm845_aoss_desc = {
->> +	.config = &sdm845_aoss_regmap_config,
->> +	.resets = sdm845_aoss_resets,
->> +	/* Wait 6 32kHz sleep cycles for reset */
->> +	.delay = 200,
-> 
-> Please move this constant into qcom_aoss_control_reset(), until there's
-> a need for it to be configurable.
-> 
->> +	.num_resets = ARRAY_SIZE(sdm845_aoss_resets),
->> +};
->> +
-> [..]
->> +static int qcom_aoss_control_reset(struct reset_controller_dev *rcdev,
->> +					unsigned long idx)
->> +{
->> +	struct qcom_aoss_reset_data *data = to_qcom_aoss_reset_data(rcdev);
->> +	int ret;
->> +
->> +	ret = qcom_aoss_control_assert(rcdev, idx);
->> +	if (ret)
->> +		return ret;
->> +
->> +	udelay(data->desc->delay);
-> 
-> Per Documentation/timers/timers-howto.txt please use usleep_range() when
-> delays are between 10us and 20ms.
-> 
-
-will replace them
-
->> +
->> +	return qcom_aoss_control_deassert(rcdev, idx);
->> +}
-> 
-> Regards,
-> Bjorn
-> 
-
+diff --git a/drivers/net/phy/intel-xway.c b/drivers/net/phy/intel-xway.c
+index a11f80c..c7eff67 100644
+--- a/drivers/net/phy/intel-xway.c
++++ b/drivers/net/phy/intel-xway.c
+@@ -149,8 +149,8 @@
+ #define PHY_ID_PHY22F_1_4		0xD565A410
+ #define PHY_ID_PHY11G_1_5		0xD565A401
+ #define PHY_ID_PHY22F_1_5		0xD565A411
+-#define PHY_ID_PHY11G_VR9		0xD565A409
+-#define PHY_ID_PHY22F_VR9		0xD565A419
++#define PHY_ID_PHY11G_VR9_1_2		0xD565A409
++#define PHY_ID_PHY22F_VR9_1_2		0xD565A419
+ 
+ static int xway_gphy_config_init(struct phy_device *phydev)
+ {
+@@ -312,9 +312,9 @@ static struct phy_driver xway_gphy[] = {
+ 		.suspend	= genphy_suspend,
+ 		.resume		= genphy_resume,
+ 	}, {
+-		.phy_id		= PHY_ID_PHY11G_VR9,
++		.phy_id		= PHY_ID_PHY11G_VR9_1_2,
+ 		.phy_id_mask	= 0xffffffff,
+-		.name		= "Intel XWAY PHY11G (xRX integrated)",
++		.name		= "Intel XWAY PHY11G (xRX v1.2 integrated)",
+ 		.features	= PHY_GBIT_FEATURES,
+ 		.flags		= PHY_HAS_INTERRUPT,
+ 		.config_init	= xway_gphy_config_init,
+@@ -324,9 +324,9 @@ static struct phy_driver xway_gphy[] = {
+ 		.suspend	= genphy_suspend,
+ 		.resume		= genphy_resume,
+ 	}, {
+-		.phy_id		= PHY_ID_PHY22F_VR9,
++		.phy_id		= PHY_ID_PHY22F_VR9_1_2,
+ 		.phy_id_mask	= 0xffffffff,
+-		.name		= "Intel XWAY PHY22F (xRX integrated)",
++		.name		= "Intel XWAY PHY22F (xRX v1.2 integrated)",
+ 		.features	= PHY_BASIC_FEATURES,
+ 		.flags		= PHY_HAS_INTERRUPT,
+ 		.config_init	= xway_gphy_config_init,
+@@ -346,8 +346,8 @@ static struct mdio_device_id __maybe_unused xway_gphy_tbl[] = {
+ 	{ PHY_ID_PHY22F_1_4, 0xffffffff },
+ 	{ PHY_ID_PHY11G_1_5, 0xffffffff },
+ 	{ PHY_ID_PHY22F_1_5, 0xffffffff },
+-	{ PHY_ID_PHY11G_VR9, 0xffffffff },
+-	{ PHY_ID_PHY22F_VR9, 0xffffffff },
++	{ PHY_ID_PHY11G_VR9_1_2, 0xffffffff },
++	{ PHY_ID_PHY22F_VR9_1_2, 0xffffffff },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(mdio, xway_gphy_tbl);
 -- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
