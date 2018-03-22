@@ -1,70 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755557AbeCVOdR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 10:33:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60780 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752199AbeCVOdO (ORCPT
+        id S1755601AbeCVOeo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 10:34:44 -0400
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:39327 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755184AbeCVOem (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:33:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1AFA560C64
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on
- weakly-ordered archs
-From: Sinan Kaya <okaya@codeaurora.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-rdma@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Steve Wise <swise@chelsio.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org
-References: <1521514068-8856-5-git-send-email-okaya@codeaurora.org>
- <201803221430.P43GJl9U%fengguang.wu@intel.com>
- <3664b253c730dbf83f4528acaedb3a88@codeaurora.org>
- <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
-Message-ID: <507571ad-b6a5-7020-45fa-609b44e0166b@codeaurora.org>
-Date: Thu, 22 Mar 2018 10:33:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 22 Mar 2018 10:34:42 -0400
+X-Google-Smtp-Source: AG47ELsLQE7A6V4P1KEqO8Wxnwo2G5nxA1dOd2OwtzLz1mtTraTufmDqa1FYrfPy0cNKZUTjP3s0fg==
+From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_7E61F688-60F6-4A74-827F-1A88F10C6422";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: problem with bio handling on raid5 and pblk
+Message-Id: <66350920-EC5E-447F-B5DF-0F3C2CDEAA65@javigon.com>
+Date: Thu, 22 Mar 2018 15:34:37 +0100
+Cc: linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Huaicheng Li <huaicheng@cs.uchicago.edu>
+To: Jens Axboe <axboe@kernel.dk>, shli@kernel.org
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One more time hopefully without HTML this time.
+
+--Apple-Mail=_7E61F688-60F6-4A74-827F-1A88F10C6422
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
+
+Hi,
+
+I have been looking into a bug report when using pblk and raid5 on top
+and I am having problems understanding if the problem is in pblk's bio
+handling or on raid5's bio assumptions on the completion path.
+
+The problem occurs on the read path. In pblk, we take a reference to
+every read bio as it enters, and release it after completing the bio.
+
+   generic_make_request()
+   pblk_submit_read()
+     bio_get()
+     ...
+     bio_endio()
+     bio_put()
+
+The problem seems to be that on raid5's bi_end_io completion path,
+raid5_end_read_request(), bio_reset() is called. When put together
+with pblk's bio handling:
+
+   generic_make_request()
+   pblk_submit_read()
+     bio_get()
+     ...
+     bio_endio()
+     raid5_end_read_request()
+       bio_reset()
+     bio_put()
+
+it results in the newly reset bio being put immediately, thus freed.
+When the bio is reused then, we have an invalid pointer. In the report
+we received things crash at BUG_ON(bio->bi_next) at
+generic_make_request().
+
+As far as I understand, it is part of the bio normal operation for
+drivers under generic_make_request() to be able to take references and
+release them after bio completion. Thus, in this case, the assumption
+made by raid5, that it can issue a bio_reset() is incorrect. But I might
+be missing an implicit cross layer rule that we are violating in pblk.
+Any ideas?
+
+This said, after analyzing the problem from pblk's perspective, I see
+not reason to use bio_get()/bio_put() in the read path as it is at the
+pblk level that we are submitting bio_endio(), thus we cannot risk the
+bio being freed underneath us. Is this reasoning correct? I remember I
+introduced these at the time there was a bug on the aio path, which was
+not cleaning up correctly and could trigger an early bio free, but
+revisiting it now, it seems unnecessary.
+
+Thanks for the help!
+
+Javier
 
 
-On 03/22/2018 08:48 AM, okaya@codeaurora.org wrote:
->> Can you remove the writeq change if it is too late for me to fix?
->>
->> This is an infrastructural issue on xtensa arch.
->>
->> Probably, it won't get fixed today.
->
-> AFAIS, even writeq won't compile on this arch. I started questioning 
-> this build test.
+--Apple-Mail=_7E61F688-60F6-4A74-827F-1A88F10C6422
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
-I found out that the solution is this:
+-----BEGIN PGP SIGNATURE-----
 
-#include <linux/io-64-nonatomic-hi-lo.h>
+iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlqzvv0ACgkQPEYBfS0l
+eOCKNw//QmOPW7HQftRvCqGo7EGFfnFPmtDbwrSwFBAKMv3QJtgONYGlw/jfGW5w
+w9Gm9smOTGzcpDNjZR6sYwgO28Tdg+dkce+CbR99tsLgxhlvVUQD7lDDD9g7elow
+N0Nf5O7o8Zrm2jks3fMIf6tkPMcJry/35wF1xtZX1ZQ25e3RwK0qzmhovkFuW9Od
+rfLlOrW32/pYjt5VeIy4JTiidmEhq86gpdF6gdU7adPqBoiCBSD0Xw44izkw0Ewh
+J8MvYO11dCwmBjAsufaqnUYc2nswqoP8/rCBSdYjCUBU71dCSp+65fSp8NhqKcfl
+ZlKmzf3WoflvExIp5lZnHgRIzLYILzHlQVrdotnM/qz3M5OHw1Sg9om3bfWR7Qwq
+9c3Q73U4m7Wsl99idrItSDjNFESUQoT+Zp1UIxF48CiA2uRdYC8o4ldI90IFxyeS
+7j0fDjtZZjXnDla5d1rlIAVIZr9Ehhl4O3zLldrKxfdNz9XrqiOhgFJAc27heCW3
+g1+ENKmojNrYmtONpV2i4466ieAShPd6ZhsYZM3VubuAhJebvsy6XHamuW5+TQvk
+k43stHv9NYXl1S6d9Z6kDt2I1GnZxk6hpDNqfEge8jAnG1+3y4trfr7Q8E1r4tE1
+7oqEuzpWFRZwJbsw66Rb3N01hVokQuW832j+RsU4/pXqIqTy8VM=
+=6EuD
+-----END PGP SIGNATURE-----
 
-https://patchwork.ozlabs.org/patch/511801/
-
-I did a compile test with this change on xtensa and it passed. I'll 
-repost with the added diff.
-
-+++ b/drivers/infiniband/hw/cxgb4/iw_cxgb4.h
-@@ -46,7 +46,7 @@
-  #include <linux/timer.h>
-  #include <linux/io.h>
-  #include <linux/workqueue.h>
--
-+#include <linux/io-64-nonatomic-hi-lo.h>
-  #include <asm/byteorder.h>
-
-  #include <net/net_namespace.h>
+--Apple-Mail=_7E61F688-60F6-4A74-827F-1A88F10C6422--
