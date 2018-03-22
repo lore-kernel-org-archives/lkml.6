@@ -1,100 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754606AbeCVJKv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:10:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43290 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754410AbeCVJKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:10:11 -0400
-Date: Thu, 22 Mar 2018 10:10:08 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-Message-ID: <20180322091008.GZ23100@dhcp22.suse.cz>
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321131449.GN23100@dhcp22.suse.cz>
- <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
- <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
- <20180321212355.GR23100@dhcp22.suse.cz>
- <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752443AbeCVJKq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:10:46 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37688 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752863AbeCVJBn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 05:01:43 -0400
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
+Cc: Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 37/45] ipc: add msgctl syscall/compat_syscall wrappers
+Date: Thu, 22 Mar 2018 10:00:51 +0100
+Message-Id: <20180322090059.19361-38-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
+References: <20180322090059.19361-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21-03-18 15:36:12, Yang Shi wrote:
-> 
-> 
-> On 3/21/18 2:23 PM, Michal Hocko wrote:
-> > On Wed 21-03-18 10:16:41, Yang Shi wrote:
-> > > 
-> > > On 3/21/18 9:50 AM, Yang Shi wrote:
-> > > > 
-> > > > On 3/21/18 6:14 AM, Michal Hocko wrote:
-> > > > > On Wed 21-03-18 05:31:19, Yang Shi wrote:
-> > > > > > When running some mmap/munmap scalability tests with large memory (i.e.
-> > > > > > > 300GB), the below hung task issue may happen occasionally.
-> > > > > > INFO: task ps:14018 blocked for more than 120 seconds.
-> > > > > >          Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
-> > > > > >    "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> > > > > > message.
-> > > > > >    ps              D    0 14018      1 0x00000004
-> > > > > >     ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
-> > > > > >     ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
-> > > > > >     00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
-> > > > > >    Call Trace:
-> > > > > >     [<ffffffff817154d0>] ? __schedule+0x250/0x730
-> > > > > >     [<ffffffff817159e6>] schedule+0x36/0x80
-> > > > > >     [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
-> > > > > >     [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
-> > > > > >     [<ffffffff81717db0>] down_read+0x20/0x40
-> > > > > >     [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
-> > > > > Slightly off-topic:
-> > > > > Btw. this sucks as well. Do we really need to take mmap_sem here? Do any
-> > > > > of
-> > > > >      arg_start = mm->arg_start;
-> > > > >      arg_end = mm->arg_end;
-> > > > >      env_start = mm->env_start;
-> > > > >      env_end = mm->env_end;
-> > > > > 
-> > > > > change after exec or while the pid is already visible in proc? If yes
-> > > > > maybe we can use a dedicated lock.
-> > > BTW, this is not the only place to acquire mmap_sem in
-> > > proc_pid_cmdline_read(), it calls access_remote_vm() which need acquire
-> > > mmap_sem too, so the mmap_sem scalability issue will be hit sooner or later.
-> > Ohh, absolutely. mmap_sem is unfortunatelly abused and it would be great
-> > to remove that. munmap should perform much better. How to do that safely
-> 
-> Yes, agree. We are on the same page.
-> 
-> > is a different question. I am not yet convinced that tearing down a vma
-> > in batches is safe. The vast majority of time is spent on tearing down
-> 
-> You can try my patches. I did full LTP test and running multiple kernel
-> build in parallel. It survives.
+Provide ksys_msgctl() and compat_ksys_msgctl() wrappers to avoid in-kernel
+calls to these syscalls. The ksys_ prefix denotes that these functions are
+meant as a drop-in replacement for the syscalls. In particular, they use
+the same calling convention as sys_msgctl() and compat_sys_msgctl().
 
-Which doesn't really mean anything. Those tests are likely to not hit
-corner cases where an application silently depends on the mmap locking
-and unmap atomicity.
+This patch is part of a series which tries to remove in-kernel calls to
+syscalls. On this basis, the syscall entry path can be streamlined.
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+---
+ ipc/msg.c     | 14 ++++++++++++--
+ ipc/syscall.c |  5 +++--
+ ipc/util.h    |  2 ++
+ 3 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/ipc/msg.c b/ipc/msg.c
+index 64e8276be164..5b026868df07 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -538,7 +538,7 @@ static int msgctl_stat(struct ipc_namespace *ns, int msqid,
+ 	return err;
+ }
  
-> > pages and that is quite easy to move out of the write lock. That would
-> > be an improvement already and it should be risk safe. If even that is
-> > not sufficient then using range locking should help a lot. There
-> > shouldn't be really any other address space operations within the range
-> > most of the time so this would be basically non-contended access.
-> 
-> It might depend on how the range is defined. Too big range may lead to
-> surprisingly more contention, but too small range may bring in too much
-> lock/unlock operations.
-
-The full vma will have to be range locked. So there is nothing small or large.
+-SYSCALL_DEFINE3(msgctl, int, msqid, int, cmd, struct msqid_ds __user *, buf)
++long ksys_msgctl(int msqid, int cmd, struct msqid_ds __user *buf)
+ {
+ 	int version;
+ 	struct ipc_namespace *ns;
+@@ -581,6 +581,11 @@ SYSCALL_DEFINE3(msgctl, int, msqid, int, cmd, struct msqid_ds __user *, buf)
+ 	}
+ }
+ 
++SYSCALL_DEFINE3(msgctl, int, msqid, int, cmd, struct msqid_ds __user *, buf)
++{
++	return ksys_msgctl(msqid, cmd, buf);
++}
++
+ #ifdef CONFIG_COMPAT
+ 
+ struct compat_msqid_ds {
+@@ -651,7 +656,7 @@ static int copy_compat_msqid_to_user(void __user *buf, struct msqid64_ds *in,
+ 	}
+ }
+ 
+-COMPAT_SYSCALL_DEFINE3(msgctl, int, msqid, int, cmd, void __user *, uptr)
++long compat_ksys_msgctl(int msqid, int cmd, void __user *uptr)
+ {
+ 	struct ipc_namespace *ns;
+ 	int err;
+@@ -692,6 +697,11 @@ COMPAT_SYSCALL_DEFINE3(msgctl, int, msqid, int, cmd, void __user *, uptr)
+ 		return -EINVAL;
+ 	}
+ }
++
++COMPAT_SYSCALL_DEFINE3(msgctl, int, msqid, int, cmd, void __user *, uptr)
++{
++	return compat_ksys_msgctl(msqid, cmd, uptr);
++}
+ #endif
+ 
+ static int testmsg(struct msg_msg *msg, long type, int mode)
+diff --git a/ipc/syscall.c b/ipc/syscall.c
+index 34bbabc9e672..aa29b0802e26 100644
+--- a/ipc/syscall.c
++++ b/ipc/syscall.c
+@@ -70,7 +70,8 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
+ 	case MSGGET:
+ 		return ksys_msgget((key_t) first, second);
+ 	case MSGCTL:
+-		return sys_msgctl(first, second, (struct msqid_ds __user *)ptr);
++		return ksys_msgctl(first, second,
++				   (struct msqid_ds __user *)ptr);
+ 
+ 	case SHMAT:
+ 		switch (version) {
+@@ -163,7 +164,7 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
+ 	case MSGGET:
+ 		return ksys_msgget(first, second);
+ 	case MSGCTL:
+-		return compat_sys_msgctl(first, second, compat_ptr(ptr));
++		return compat_ksys_msgctl(first, second, compat_ptr(ptr));
+ 
+ 	case SHMAT: {
+ 		int err;
+diff --git a/ipc/util.h b/ipc/util.h
+index 16e8b5b8c416..47837b4af3f2 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -243,6 +243,7 @@ long ksys_semtimedop(int semid, struct sembuf __user *tsops,
+ long ksys_semget(key_t key, int nsems, int semflg);
+ long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg);
+ long ksys_msgget(key_t key, int msgflg);
++long ksys_msgctl(int msqid, int cmd, struct msqid_ds __user *buf);
+ long ksys_shmget(key_t key, size_t size, int shmflg);
+ long ksys_shmdt(char __user *shmaddr);
+ long ksys_shmctl(int shmid, int cmd, struct shmid_ds __user *buf);
+@@ -253,6 +254,7 @@ long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
+ 			    unsigned int nsops,
+ 			    const struct compat_timespec __user *timeout);
+ long compat_ksys_semctl(int semid, int semnum, int cmd, int arg);
++long compat_ksys_msgctl(int msqid, int cmd, void __user *uptr);
+ long compat_ksys_shmctl(int shmid, int cmd, void __user *uptr);
+ #endif /* CONFIG_COMPAT */
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.16.2
