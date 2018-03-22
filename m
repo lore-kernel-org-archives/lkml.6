@@ -1,75 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeCVEvc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 00:51:32 -0400
-Received: from mga18.intel.com ([134.134.136.126]:32738 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751291AbeCVEva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 00:51:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,342,1517904000";
-   d="scan'208";a="210324753"
-Subject: [PATCH] nfit: skip region registration for incomplete control
- regions
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: linux-acpi@vger.kernel.org, ross.zwisler@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Date: Wed, 21 Mar 2018 21:42:24 -0700
-Message-ID: <152169374458.19742.14326187212131249042.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1752270AbeCVEw2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 00:52:28 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:53584 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751291AbeCVEw1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 00:52:27 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=jason.cai@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0SztKjhB_1521694336;
+From: "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
+To: alex.williamson@redhat.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc: gnehzuil@linux.alibaba.com, jason.cai@linux.alibaba.com
+Subject: [PATCH] vfio iommu type1: improve memory pinning process for raw PFN mapping
+Date: Thu, 22 Mar 2018 12:52:16 +0800
+Message-Id: <20180322045216.22220-1-jason.cai@linux.alibaba.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Per the ACPI specification the only functional purpose for a DIMM
-Control Region to be mapped into the system physical address space, from
-an OSPM perspective, is to support block-apertures. However, there are
-some BIOSen that publish DIMM Control Region SPA entries for pre-boot
-environment consumption.  Undo the kernel policy of generating disabled
-'ndblk' regions when this configuration is detected.
+When using vfio to pass through a PCIe device (e.g. a GPU card) that
+has a huge BAR (e.g. 16GB), a lot of cycles are wasted on memory
+pinning because PFNs of PCI BAR are not backed by struct page, and
+the corresponding VMA has flag VM_PFNMAP.
 
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+With this change, when pinning a region which is a raw PFN mapping,
+it can skip unnecessary user memory pinning process, and thus, can
+significantly improve VM's boot up time when passing through devices
+via VFIO. In my test on a Xeon E5 2.6GHz, the time mapping a 16GB
+BAR was reduced from about 0.4s to 1.5us.
+
+Signed-off-by: Jason Cai (Xiang Feng) <jason.cai@linux.alibaba.com>
 ---
- drivers/acpi/nfit/core.c |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/vfio/vfio_iommu_type1.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 39ad06143e78..4530d89044db 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -2578,7 +2578,7 @@ static int acpi_nfit_init_mapping(struct acpi_nfit_desc *acpi_desc,
- 	struct acpi_nfit_system_address *spa = nfit_spa->spa;
- 	struct nd_blk_region_desc *ndbr_desc;
- 	struct nfit_mem *nfit_mem;
--	int blk_valid = 0, rc;
-+	int rc;
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 45657e2b1ff7..0658f35318b8 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -397,7 +397,6 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ {
+ 	unsigned long pfn = 0;
+ 	long ret, pinned = 0, lock_acct = 0;
+-	bool rsvd;
+ 	dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
  
- 	if (!nvdimm) {
- 		dev_err(acpi_desc->dev, "spa%d dimm: %#x not found\n",
-@@ -2598,15 +2598,14 @@ static int acpi_nfit_init_mapping(struct acpi_nfit_desc *acpi_desc,
- 		if (!nfit_mem || !nfit_mem->bdw) {
- 			dev_dbg(acpi_desc->dev, "spa%d %s missing bdw\n",
- 					spa->range_index, nvdimm_name(nvdimm));
--		} else {
--			mapping->size = nfit_mem->bdw->capacity;
--			mapping->start = nfit_mem->bdw->start_address;
--			ndr_desc->num_lanes = nfit_mem->bdw->windows;
--			blk_valid = 1;
-+			break;
+ 	/* This code path is only user initiated */
+@@ -408,14 +407,22 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 	if (ret)
+ 		return ret;
+ 
++	if (is_invalid_reserved_pfn(*pfn_base)) {
++		struct vm_area_struct *vma;
++		down_read(&current->mm->mmap_sem);
++		vma = find_vma_intersection(current->mm, vaddr, vaddr + 1);
++		pinned = min(npage, (long)vma_pages(vma));
++		up_read(&current->mm->mmap_sem);
++		return pinned;
++	}
++
+ 	pinned++;
+-	rsvd = is_invalid_reserved_pfn(*pfn_base);
+ 
+ 	/*
+ 	 * Reserved pages aren't counted against the user, externally pinned
+ 	 * pages are already counted against the user.
+ 	 */
+-	if (!rsvd && !vfio_find_vpfn(dma, iova)) {
++	if (!vfio_find_vpfn(dma, iova)) {
+ 		if (!lock_cap && current->mm->locked_vm + 1 > limit) {
+ 			put_pfn(*pfn_base, dma->prot);
+ 			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
+@@ -435,13 +442,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 		if (ret)
+ 			break;
+ 
+-		if (pfn != *pfn_base + pinned ||
+-		    rsvd != is_invalid_reserved_pfn(pfn)) {
++		if (pfn != *pfn_base + pinned) {
+ 			put_pfn(pfn, dma->prot);
+ 			break;
  		}
  
-+		mapping->size = nfit_mem->bdw->capacity;
-+		mapping->start = nfit_mem->bdw->start_address;
-+		ndr_desc->num_lanes = nfit_mem->bdw->windows;
- 		ndr_desc->mapping = mapping;
--		ndr_desc->num_mappings = blk_valid;
-+		ndr_desc->num_mappings = 1;
- 		ndbr_desc = to_blk_region_desc(ndr_desc);
- 		ndbr_desc->enable = acpi_nfit_blk_region_enable;
- 		ndbr_desc->do_io = acpi_desc->blk_do_io;
+-		if (!rsvd && !vfio_find_vpfn(dma, iova)) {
++		if (!vfio_find_vpfn(dma, iova)) {
+ 			if (!lock_cap &&
+ 			    current->mm->locked_vm + lock_acct + 1 > limit) {
+ 				put_pfn(pfn, dma->prot);
+@@ -459,10 +465,8 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+ 
+ unpin_out:
+ 	if (ret) {
+-		if (!rsvd) {
+-			for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
+-				put_pfn(pfn, dma->prot);
+-		}
++		for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
++			put_pfn(pfn, dma->prot);
+ 
+ 		return ret;
+ 	}
+-- 
+2.13.6
