@@ -1,104 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752113AbeCVQrY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:47:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40674 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751840AbeCVQrU (ORCPT
+        id S1751870AbeCVQtU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:49:20 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:33040 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751692AbeCVQtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:47:20 -0400
-Subject: Re: [RFC PATCH v2 1/3] ima: extend clone() with IMA namespace support
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-References: <20180309201421.6150-1-stefanb@linux.vnet.ibm.com>
- <20180309201421.6150-2-stefanb@linux.vnet.ibm.com>
- <87vadxfwqj.fsf@xmission.com>
- <c18b6e92-57f0-5994-eb60-5fadc6671832@linux.vnet.ibm.com>
- <1521135192.5348.64.camel@HansenPartnership.com>
- <2183a3b4-6270-d2e9-70ad-a7399eb1681c@linux.vnet.ibm.com>
- <1521139535.5348.89.camel@HansenPartnership.com>
- <0dc5b856-8dc6-7b5a-eeac-febd19f6498c@linux.vnet.ibm.com>
- <1521140467.5348.94.camel@HansenPartnership.com>
-Cc: mkayaalp@cs.binghamton.edu,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>, sunyuqiong1988@gmail.com,
-        containers@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        david.safford@ge.com, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, zohar@linux.vnet.ibm.com
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-Date: Thu, 22 Mar 2018 12:47:14 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Thu, 22 Mar 2018 12:49:16 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0SzvRVmG_1521737344;
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+To: Matthew Wilcox <willy@infradead.org>,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321130833.GM23100@dhcp22.suse.cz>
+ <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
+ <20180321172932.GE4780@bombadil.infradead.org>
+ <f057a634-7e0a-1b51-eede-dcb6f128b18e@linux.alibaba.com>
+ <20180321224631.GB3969@bombadil.infradead.org>
+ <18a727fd-f006-9fae-d9ca-74b9004f0a8b@linux.vnet.ibm.com>
+ <20180322154055.GB28468@bombadil.infradead.org>
+ <0442fb0e-3da3-3f23-ce4d-0f6cbc3eac9a@linux.vnet.ibm.com>
+ <20180322160547.GC28468@bombadil.infradead.org>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <9adccd2e-9c1c-8da1-6098-9ebfdd9d3fc9@linux.alibaba.com>
+Date: Thu, 22 Mar 2018 09:49:01 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1521140467.5348.94.camel@HansenPartnership.com>
+In-Reply-To: <20180322160547.GC28468@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18032216-0052-0000-0000-000002CDA77D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008722; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01006823; UDB=6.00512660; IPR=6.00786111;
- MB=3.00020182; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-22 16:47:18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032216-0053-0000-0000-00005C148E95
-Message-Id: <8d9220d5-2acc-2818-c351-36b369e4b50e@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-22_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803220193
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/15/2018 03:01 PM, James Bottomley wrote:
-> On Thu, 2018-03-15 at 14:51 -0400, Stefan Berger wrote:
->> On 03/15/2018 02:45 PM, James Bottomley wrote:
-> [...]
->>>>> going to need some type of keyring namespace and there's
->>>>> already
->>>>> one hanging off the user_ns:
->>>>>
->>>>> commit f36f8c75ae2e7d4da34f4c908cebdb4aa42c977e
->>>>> Author: David Howells <dhowells@redhat.com>
->>>>> Date:   Tue Sep 24 10:35:19 2013 +0100
->>>>>
->>>>>        KEYS: Add per-user_namespace registers for persistent
->>>>> per-UID
->>>>> kerberos caches
->>>> The benefit for IMA would be that this would then tie the keys
->>>> needed for appraising to the IMA namespace's policy.
->>>> However, if you have an appraise policy in your IMA namespace,
->>>> which is now hooked to the user namespace, and you join that user
->>>> namespace but your files don't have signatures, nothing will
->>>> execute anymore. That's now a side effect of joining this user
->>>> namespace unless we have a magic  exception. My feeling is,
->>>> people may not like that...
->>> Agree, but I think the magic might be to populate the ima keyring
->>> with the parent on user_ns creation.  That way the user_ns owner
->>> can delete the parent keys if they don't like them, but by default
->>> the parent appraisal policy should just work.
->> That may add keys to your keyring but doesn't get you signatures on
->> your  files.
-> But it doesn't need to.  The only way we'd get a failure is if the file
-> is already being appraised and we lose access to the key.  If the
-> parent policy isn't appraisal, entering the IMA NS won't cause
-> appraisal to be turned on unless the owner asks for it, in which case
-> it's caveat emptor: As it works today, if as root I add a default
-> appraisal policy to IMA without either a key or xattrs, I get an
-> unusable system.
 
-When I post a next implementation for the spawning if an IMA namespace, 
-what shall be the criterion for accepting it?
 
-     Stefan
+On 3/22/18 9:05 AM, Matthew Wilcox wrote:
+> On Thu, Mar 22, 2018 at 04:54:52PM +0100, Laurent Dufour wrote:
+>> On 22/03/2018 16:40, Matthew Wilcox wrote:
+>>> On Thu, Mar 22, 2018 at 04:32:00PM +0100, Laurent Dufour wrote:
+>>>> Regarding the page fault, why not relying on the PTE locking ?
+>>>>
+>>>> When munmap() will unset the PTE it will have to held the PTE lock, so this
+>>>> will serialize the access.
+>>>> If the page fault occurs before the mmap(MAP_FIXED), the page mapped will be
+>>>> removed when mmap(MAP_FIXED) would do the cleanup. Fair enough.
+>>> The page fault handler will walk the VMA tree to find the correct
+>>> VMA and then find that the VMA is marked as deleted.  If it assumes
+>>> that the VMA has been deleted because of munmap(), then it can raise
+>>> SIGSEGV immediately.  But if the VMA is marked as deleted because of
+>>> mmap(MAP_FIXED), it must wait until the new VMA is in place.
+>> I'm wondering if such a complexity is required.
+>> If the user space process try to access the page being overwritten through
+>> mmap(MAP_FIXED) by another thread, there is no guarantee that it will
+>> manipulate the *old* page or *new* one.
+> Right; but it must return one or the other, it can't segfault.
+>
+>> I'd think this is up to the user process to handle that concurrency.
+>> What needs to be guaranteed is that once mmap(MAP_FIXED) returns the old page
+>> are no more there, which is done through the mmap_sem and PTE locking.
+> Yes, and allowing the fault handler to return the *old* page risks the
+> old page being reinserted into the page tables after the unmapping task
+> has done its work.
+>
+> It's *really* rare to page-fault on a VMA which is in the middle of
+> being replaced.  Why are you trying to optimise it?
+>
+>>> I think I was wrong to describe VMAs as being *deleted*.  I think we
+>>> instead need the concept of a *locked* VMA that page faults will block on.
+>>> Conceptually, it's a per-VMA rwsem, but I'd use a completion instead of
+>>> an rwsem since the only reason to write-lock the VMA is because it is
+>>> being deleted.
+>> Such a lock would only makes sense in the case of mmap(MAP_FIXED) since when
+>> the VMA is removed there is no need to wait. Isn't it ?
+> I can't think of another reason.  I suppose we could mark the VMA as
+> locked-for-deletion or locked-for-replacement and have the SIGSEGV happen
+> early.  But I'm not sure that optimising for SIGSEGVs is a worthwhile
+> use of our time.  Just always have the pagefault sleep for a deleted VMA.
 
->
-> James
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+It sounds worth to me. If we have every page fault sleep to wait for vma 
+deletion is done, it sounds equal to wait for mmap_sem all the time, right?
+
+Yang
