@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752903AbeCVJBo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:01:44 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37166 "EHLO
+        id S1753432AbeCVJCN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:02:13 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37728 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752819AbeCVJBi (ORCPT
+        with ESMTP id S1753008AbeCVJBv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:38 -0400
+        Thu, 22 Mar 2018 05:01:51 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH 17/45] fanotify: add do_fanotify_mark() helper; remove in-kernel call to syscall
-Date: Thu, 22 Mar 2018 10:00:31 +0100
-Message-Id: <20180322090059.19361-18-linux@dominikbrodowski.net>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 23/45] sched: add do_sched_yield() helper; remove in-kernel call to sched_yield()
+Date: Thu, 22 Mar 2018 10:00:37 +0100
+Message-Id: <20180322090059.19361-24-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -21,56 +21,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the fs-internal do_fanotify_mark() helper allows us to get rid of
-the fs-internal call to the sys_fanotify_mark() syscall.
+Using the sched-internal do_sched_yield() helper allows us to get rid of
+the sched-internal call to the sys_sched_yield() syscall.
 
 This patch is part of a series which tries to remove in-kernel calls to
 syscalls. On this basis, the syscall entry path can be streamlined.
 
-Cc: Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/notify/fanotify/fanotify_user.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ kernel/sched/core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index c07eb3d655ea..fa803a58a605 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -820,9 +820,8 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	return fd;
- }
- 
--SYSCALL_DEFINE5(fanotify_mark, int, fanotify_fd, unsigned int, flags,
--			      __u64, mask, int, dfd,
--			      const char  __user *, pathname)
-+static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
-+			    int dfd, const char  __user *pathname)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index e7c535eee0a6..8de4919c889a 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4892,7 +4892,7 @@ SYSCALL_DEFINE3(sched_getaffinity, pid_t, pid, unsigned int, len,
+  *
+  * Return: 0.
+  */
+-SYSCALL_DEFINE0(sched_yield)
++static void do_sched_yield(void)
  {
- 	struct inode *inode = NULL;
- 	struct vfsmount *mnt = NULL;
-@@ -928,13 +927,20 @@ SYSCALL_DEFINE5(fanotify_mark, int, fanotify_fd, unsigned int, flags,
- 	return ret;
- }
+ 	struct rq_flags rf;
+ 	struct rq *rq;
+@@ -4913,7 +4913,11 @@ SYSCALL_DEFINE0(sched_yield)
+ 	sched_preempt_enable_no_resched();
  
-+SYSCALL_DEFINE5(fanotify_mark, int, fanotify_fd, unsigned int, flags,
-+			      __u64, mask, int, dfd,
-+			      const char  __user *, pathname)
-+{
-+	return do_fanotify_mark(fanotify_fd, flags, mask, dfd, pathname);
+ 	schedule();
 +}
-+
- #ifdef CONFIG_COMPAT
- COMPAT_SYSCALL_DEFINE6(fanotify_mark,
- 				int, fanotify_fd, unsigned int, flags,
- 				__u32, mask0, __u32, mask1, int, dfd,
- 				const char  __user *, pathname)
+ 
++SYSCALL_DEFINE0(sched_yield)
++{
++	do_sched_yield();
+ 	return 0;
+ }
+ 
+@@ -4997,7 +5001,7 @@ EXPORT_SYMBOL(__cond_resched_softirq);
+ void __sched yield(void)
  {
--	return sys_fanotify_mark(fanotify_fd, flags,
-+	return do_fanotify_mark(fanotify_fd, flags,
- #ifdef __BIG_ENDIAN
- 				((__u64)mask0 << 32) | mask1,
- #else
+ 	set_current_state(TASK_RUNNING);
+-	sys_sched_yield();
++	do_sched_yield();
+ }
+ EXPORT_SYMBOL(yield);
+ 
 -- 
 2.16.2
