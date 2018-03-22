@@ -1,74 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752405AbeCVFzW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 01:55:22 -0400
-Received: from ozlabs.org ([103.22.144.67]:41753 "EHLO ozlabs.org"
+        id S1752261AbeCVF7v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 01:59:51 -0400
+Received: from foss.arm.com ([217.140.101.70]:33414 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752194AbeCVFzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 01:55:19 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 22 Mar 2018 16:54:38 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Darren Trapp <darren.trapp@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Quinn Tran <quinn.tran@cavium.com>
-Subject: linux-next: manual merge of the scsi-mkp tree with Linus' tree
-Message-ID: <20180322165438.3b928745@canb.auug.org.au>
+        id S1752024AbeCVF7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 01:59:50 -0400
+Date: Thu, 22 Mar 2018 05:59:41 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ji Zhang <ji.zhang@mediatek.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Michael Weiser <michael.weiser@gmx.de>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Xie XiuQi <xiexiuqi@huawei.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        wsd_upstream@mediatek.com, shadanji@163.com
+Subject: Re: [PATCH] arm64: avoid race condition issue in dump_backtrace
+Message-ID: <20180322055929.z25brvwlmdighz66@salmiak>
+References: <1521687960-3744-1-git-send-email-ji.zhang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/A8i/COzi_VNakG1=/PYJ6af"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521687960-3744-1-git-send-email-ji.zhang@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/A8i/COzi_VNakG1=/PYJ6af
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 22, 2018 at 11:06:00AM +0800, Ji Zhang wrote:
+> When we dump the backtrace of some specific task, there is a potential race
+> condition due to the task may be running on other cores if SMP enabled.
+> That is because for current implementation, if the task is not the current
+> task, we will get the registers used for unwind from cpu_context saved in
+> thread_info, which is the snapshot before context switch, but if the task
+> is running on other cores, the registers and the content of stack are
+> changed.
+> This may cause that we get the wrong backtrace or incomplete backtrace or
+> even crash the kernel.
 
-Hi Martin,
+When do we call dump_backtrace() on a running task that is not current?
 
-Today's linux-next merge of the scsi-mkp tree got a conflict in:
+AFAICT, we don't do that in the arm64-specific callers of dump_backtrace(), and
+this would have to be some caller of show_stack() in generic code.
 
-  drivers/scsi/qla2xxx/qla_os.c
+We pin the task's stack via try_get_task_stack(), so this cannot be unmapped
+while we walk it. In unwind_frame() we check that the frame record falls
+entirely within the task's stack. So AFAICT, we cannot crash the kernel here,
+though the backtrace may be misleading (and we could potentially get stuck in
+an infinite loop).
 
-between commit:
+> To avoid this case, do not dump the backtrace of the tasks which are
+> running on other cores.
+> This patch cannot solve the issue completely but can shrink the window of
+> race condition.
 
-  2b5b96473efc ("scsi: qla2xxx: Fix FC-NVMe LUN discovery")
+> @@ -113,6 +113,9 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+>  	if (tsk == current) {
+>  		frame.fp = (unsigned long)__builtin_frame_address(0);
+>  		frame.pc = (unsigned long)dump_backtrace;
+> +	else if (tsk->state == TASK_RUNNING) {
+> +		pr_notice("Do not dump other running tasks\n");
+> +		return;
 
-from Linus' tree and commit:
+As you note, if we can race with the task being scheduled, this doesn't help.
 
-  33b28357dd00 ("scsi: qla2xxx: Fix Async GPN_FT for FCP and FC-NVMe scan")
+Can we rule this out at a higher level?
 
-from the scsi-mkp tree.
-
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/A8i/COzi_VNakG1=/PYJ6af
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzRR4ACgkQAVBC80lX
-0Gz21gf/flwrouQUC4pfKoRZd2Qmm7dkvbOi9XzTfO9cfd3P6gta3OAwx6KxCPLM
-es2M6wK8sn6VNxGwduIHiWifnopJmB2YZ4z0WOrBOyO8kFRDil2SgNFN2vv22NY5
-eUDH4CM5k7SK6fowpm5FU3JwFEy8JDvHU+HD4imfvmrWB+s/PZQectmDcX3lmmJq
-//0J0dmZ9JpOVqOZnfXgbsbelKBIw+FB4bvNRJ3GLmScFrZaqj16AcuWl+8aqAtS
-VIUNaeQ4pm22q8LOBO6ivJfxQt59E/Af9J3lquWwVXcNfdIMHj/EQFbeND0B265D
-ELvPtUC1Syn2Ee+8Cn6kl8WclCTvKg==
-=sI+d
------END PGP SIGNATURE-----
-
---Sig_/A8i/COzi_VNakG1=/PYJ6af--
+Thanks,
+Mark.
