@@ -1,63 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751632AbeCVPpa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:45:30 -0400
-Received: from mga18.intel.com ([134.134.136.126]:47781 "EHLO mga18.intel.com"
+        id S1751688AbeCVPqW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:46:22 -0400
+Received: from mga18.intel.com ([134.134.136.126]:47844 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750863AbeCVPp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:45:29 -0400
+        id S1751319AbeCVPqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 11:46:20 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
-   d="scan'208";a="37229577"
-From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To: Andy Lutomirski <luto@kernel.org>
-CC: X86 ML <x86@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when
- FS/GS updated by ptracer
-Thread-Topic: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when
- FS/GS updated by ptracer
-Thread-Index: AQHTv61cgKpKrSnds0atXlLhYuaZSaPZns+A//+jdICAAP9OgIAAfB0AgAElGwCAAHavgA==
-Date: Thu, 22 Mar 2018 15:45:25 +0000
-Message-ID: <9C732DC6-F9CA-474F-B8F5-F8EBE406B12E@intel.com>
-References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
- <1521481767-22113-15-git-send-email-chang.seok.bae@intel.com>
- <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com>
- <C78DE381-C618-4370-9B06-F6E25C850661@intel.com>
- <CALCETrX03_AG-OuJdmfmsbvEt0UTdUpaUVDRQgbDZWGY7WD-Xw@mail.gmail.com>
- <E9221EFA-636C-4D36-AEBA-3A1EEBBF2F50@intel.com>
- <CALCETrUxQ1XOs7V1XKOsk-iQ-qOwn41sWGYkepkVOE7PtfX24A@mail.gmail.com>
-In-Reply-To: <CALCETrUxQ1XOs7V1XKOsk-iQ-qOwn41sWGYkepkVOE7PtfX24A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.b.0.180311
-x-originating-ip: [10.254.180.102]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <83758ABCBFAA3648BFA83C00F78E14FC@intel.com>
+   d="scan'208";a="210462241"
+Subject: Re: [PATCH] x86/speculation: Fill the RSB on context switch also on
+ non-IBPB CPUs
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+References: <9eb945bd-f77e-0301-d977-d1acf931b19d@maciej.szmigiero.name>
+ <757282b8-8b59-bcc6-1f6b-3383ae8a8575@intel.com>
+ <4d7cfea4-a86a-c8f2-aaff-c8429fc107b8@maciej.szmigiero.name>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>, Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, thomas.lendacky@amd.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+From: Dave Hansen <dave.hansen@intel.com>
+Message-ID: <9f9d0c1f-a889-d2bc-e9d9-d4ef9d99770b@intel.com>
+Date: Thu, 22 Mar 2018 08:46:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <4d7cfea4-a86a-c8f2-aaff-c8429fc107b8@maciej.szmigiero.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2MFjZTY001690
 
-On 3/21/18, 18:41, "Andy Lutomirski" <luto@kernel.org> wrote:
-> mov to gs changes GSBASE even if GS was unchanged.
-In GDB, ptrace (syscall) doesn't happen when FS/GS unchanged as 
-its (context) cache seems to be first checked. This does not allow to 
-preserve GSBASE as you know.
- 
-> But it's not clear to me that you've identified any case where
-> emulating this behavior is useful.
-One argument I heard is (if debugging a legacy application) user
-might want to (indirectly) access LDT during inferior call and this 
-mov to fs/gs has been useful (maybe needed).
- 
+On 03/21/2018 05:09 PM, Maciej S. Szmigiero wrote:
+> As far as I understand the issue this should provide a good protection
+> for userspace processes that were recompiled with retpolines as they
+> won't have any indirect jumps and calls.
+
+Instead of saying "good protection", let's just say that it could
+mitigate attacks that require consumption of attacker-placed RSB entries.
+
+>> Do you perhaps want to do RSB manipulation in lieu of IBPB when
+>> switching *to* a non-dumpable process and IBPB is not available?
+> 
+> Is it worth differentiating such processes in this case?
+> IBPB is supposed to be very expensive so certainly it is worthwhile
+> to do it only for high-value processes (=non-dumpable).
+> 
+> However, it is unlikely that existing RSB entries from the previous
+> task match the new task call stack anyway.
+> We already do unconditional RSB-filling-on-context-switch in many
+> cases.
+
+I think this case is a bit too obscure and theoretical to complicate the
+kernel with it.  You need an unmitigated processor, a
+userspace-to-userspace attack that manages to satisfy the five "exploit
+composition" steps of Spectre/V2[1], and an application that has been
+retpoline-mitigated.
+
+While RSB manipulation is almost certainly less onerous than IBPB, it's
+still going to hurt context-switch rates, especially if applied
+indiscriminately like this patch does.
+
+So, I totally agree with your analysis about the theoretical potential
+for an issue, I'm just not really convinced the fix is worth it.
+
+1.
+https://software.intel.com/sites/default/files/managed/1d/46/Retpoline-A-Branch-Target-Injection-Mitigation.pdf
