@@ -1,233 +1,81 @@
-Date: Fri, 23 Mar 2018 14:22:20 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Haiyue Wang <haiyue.wang@linux.intel.com>
-Cc: joel@jms.id.au, andrew@aj.id.au, arnd@arndb.de,
-	openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com
-Subject: Re: [PATCH arm/aspeed/ast2500 v3] eSPI: add ASPEED AST2500 eSPI
- driver to boot a host with PCH runs on eSPI
-Message-ID: <20180323132220.GA14571@kroah.com>
-References: <1519394897-6095-1-git-send-email-haiyue.wang@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1519394897-6095-1-git-send-email-haiyue.wang@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Return-Path: <mchehab@smtp.s-opensource.com>
+X-Google-Smtp-Source: AG47ELvewUDwx6jeRE7umNos/5Z2Y5SVwtnRTJ+Gz+hyPm78lsQm0o2+8PG/bG0e1rsDd/RbTALP
+ARC-Seal: i=1; a=rsa-sha256; t=1521712465; cv=none;
+        d=google.com; s=arc-20160816;
+        b=JndGgepn6arR90dFiFOiy/o/G6WE/0B7g9x3C+hVbUBinU/6vfCy2L7NAZXacQ1T2Z
+         yPdY9lkdGVnXTJEUpAJI0zawYlLgkN1HZvOGYLw+eZFNiHUXsx9/YCr+CjL0fh3eh40r
+         EVGfjiBDRLNPNpqTPTP+IMissqob+ET2dkV7OxWdfXmzYyR3kpRJ+a8e9XxAOeaOL7BT
+         fJsFkBF9YXVGYClIIK33dYqUKs4AIw0ManD8kW16y/SfCBdRDYZZvofY9SAL7MH/syHF
+         LqgOmOjdlXMQkmpOePShDgM6li3rd9n16Nenvw/BofjpeEX2Eq90qMVjrLwnlF5cwl5P
+         WsGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=sender:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=e7WeGvlKY2hiNQHk0Icm3lCtd+F1B5H6LmxCxWQZUcI=;
+        b=T5jybT+FxhoTf4je7bpOS8uB2kVUUrRBaXpL8N9jg/Bnn7JRfxujDg/x2UoL/2Sho5
+         PAXyQwNrlHdLzYX8zqoLqJNGc4QyzuitUoxf7GK3tlcGmSLYjsL1GEQKOMjPOLE45Dhu
+         fIvc850NqUOIAjFyEZf+GtqqXdkX1kCTIg6OKxsZ7iysHXXODrmR5ZLZa4oU/nbB2vP7
+         Pa658+Mmruii57RssXNt3qoKYdoNUvxjmZ91phTMcoKyKYEXM9hlBHLOdfPurOxO+Jcm
+         yznT1+FZ/+iSHTbshBnPQXg04b1f+Eucnd7R2uGILAmYs06GyDByVNFlTPrHQdlq7m6M
+         3oZA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux-doc <linux-doc@vger.kernel.org>,
+	Mauro Carvalho Chehab <mchehab@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jonas Oberg <jonas@fsfe.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>
+Subject: [PATCH 0/2] COPYING: create a new file with points to the Kernel license files
+Date: Thu, 22 Mar 2018 06:54:12 -0300
+Message-Id: <20180322095414.24019-1-mchehab@s-opensource.com>
+X-Mailer: git-send-email 2.14.3
+Sender: Mauro Carvalho Chehab <mchehab@smtp.s-opensource.com>
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595631169729056837?=
+X-GMAIL-MSGID: =?utf-8?q?1595631171171983405?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Feb 23, 2018 at 10:08:17PM +0800, Haiyue Wang wrote:
-> When PCH works under eSPI mode, the PMC (Power Management Controller) in
-> PCH is waiting for SUS_ACK from BMC after it alerts SUS_WARN. It is in
-> dead loop if no SUS_ACK assert. This is the basic requirement for the BMC
-> works as eSPI slave.
-> 
-> Also for the host power on / off actions, from BMC side, the following VW
-> (Virtual Wire) messages are done in firmware:
-> 1. SLAVE_BOOT_LOAD_DONE / SLAVE_BOOT_LOAD_STATUS
-> 2. SUS_ACK
-> 3. OOB_RESET_ACK
-> 4. HOST_RESET_ACK
-> 
-> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-> ---
-> v2 -> v3:
->  - Remove the unused header file reference.
->  - Change some code lines sequence.
-> 
-> v1 -> v2:
->  - Fix the checkpatch.pl warning in file espi-slave.rst
->    Missing or malformed SPDX-License-Identifier tag in line 1
->    #71: FILE: Documentation/misc-devices/espi-slave.rst:1:
->  - Make the Kconfig desciption to be more accurate.
-> ---
->  .../devicetree/bindings/misc/aspeed,espi-slave.txt |  20 ++
->  Documentation/misc-devices/espi-slave.rst          | 119 ++++++++++
->  drivers/misc/Kconfig                               |   8 +
->  drivers/misc/Makefile                              |   1 +
->  drivers/misc/aspeed-espi-slave.c                   | 261 +++++++++++++++++++++
->  5 files changed, 409 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/misc/aspeed,espi-slave.txt
->  create mode 100644 Documentation/misc-devices/espi-slave.rst
->  create mode 100644 drivers/misc/aspeed-espi-slave.c
-> 
-> diff --git a/Documentation/devicetree/bindings/misc/aspeed,espi-slave.txt b/Documentation/devicetree/bindings/misc/aspeed,espi-slave.txt
-> new file mode 100644
-> index 0000000..4f5d47e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/misc/aspeed,espi-slave.txt
-> @@ -0,0 +1,20 @@
-> +ASPEED eSPI Slave Controller
-> +
-> +Required properties:
-> + - compatible: must be one of:
-> +	- "aspeed,ast2500-espi-slave"
-> +
-> + - reg: physical base address of the controller and length of memory mapped
-> +   region
-> +
-> + - interrupts: interrupt generated by the controller
-> +
-> +Example:
-> +
-> +    espi: espi@1e6ee000 {
-> +        compatible = "aspeed,ast2500-espi-slave";
-> +        reg = <0x1e6ee000 0x100>;
-> +        interrupts = <23>;
-> +        status = "disabled";
-> +};
-> +
+The contents of COPYING file is now duplicated at two other
+files under LICENSE:
+	LICENSES/preferred/GPL-2.0
+	LICENSES/exceptions/Linux-syscall-note
 
-You need to split this up into a separate patch and get the device tree
-maintainers to ack it, right?
+Also, a new file was added, with describes how SPDX should work at
+the Kernel source files:
+	Documentation/process/license-rules.rst
 
-> diff --git a/Documentation/misc-devices/espi-slave.rst b/Documentation/misc-devices/espi-slave.rst
-> new file mode 100644
-> index 0000000..185acd7
-> --- /dev/null
-> +++ b/Documentation/misc-devices/espi-slave.rst
-> @@ -0,0 +1,119 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +==========
-> +eSPI Slave
-> +==========
-> +
-> +:Author: Haiyue Wang <haiyue.wang@linux.intel.com>
-> +
-> +The PCH (**eSPI master**) provides the eSPI to support connection of a
-> +BMC (**eSPI slave**) to the platform.
-> +
-> +The LPC and eSPI interfaces are mutually exclusive. Both use the same
-> +pins, but on power-up, a HW strap determines if the eSPI or the LPC bus
-> +is operational. Once selected, it’s not possible to change to the other
-> +interface.
-> +
-> +``eSPI Channels and Supported Transactions``
-> + +------+---------------------+----------------------+--------------------+
-> + | CH # | Channel             | Posted Cycles        | Non-Posted Cycles  |
-> + +======+=====================+======================+====================+
-> + |  0   | Peripheral          | Memory Write,        | Memory Read,       |
-> + |      |                     | Completions          | I/O Read/Write     |
-> + +------+---------------------+----------------------+--------------------+
-> + |  1   | Virtual Wire        | Virtual Wire GET/PUT | N/A                |
-> + +------+---------------------+----------------------+--------------------+
-> + |  2   | Out-of-Band Message | SMBus Packet GET/PUT | N/A                |
-> + +------+---------------------+----------------------+--------------------+
-> + |  3   | Flash Access        | N/A                  | Flash Read, Write, |
-> + |      |                     |                      | Erase              |
-> + +------+---------------------+----------------------+--------------------+
-> + |  N/A | General             | Register Accesses    | N/A                |
-> + +------+---------------------+----------------------+--------------------+
-> +
-> +Virtual Wire Channel (Channel 1) Overview
-> +-----------------------------------------
-> +
-> +The Virtual Wire channel uses a standard message format to communicate
-> +several types of signals between the components on the platform::
-> +
-> + - Sideband and GPIO Pins: System events and other dedicated signals
-> +   between the PCH and eSPI slave. These signals are tunneled between the
-> +   two components over eSPI.
-> +
-> + - Serial IRQ Interrupts: Interrupts are tunneled from the eSPI slave to
-> +   the PCH. Both edge and triggered interrupts are supported.
-> +
-> +When PCH runs on eSPI mode, from BMC side, the following VW messages are
-> +done in firmware::
-> +
-> + 1. SLAVE_BOOT_LOAD_DONE / SLAVE_BOOT_LOAD_STATUS
-> + 2. SUS_ACK
-> + 3. OOB_RESET_ACK
-> + 4. HOST_RESET_ACK
-> +
-> +``eSPI Virtual Wires (VW)``
-> + +----------------------+---------+---------------------------------------+
-> + |Virtual Wire          |PCH Pin  |Comments                               |
-> + |                      |Direction|                                       |
-> + +======================+=========+=======================================+
-> + |SUS_WARN#             |Output   |PCH pin is a GPIO when eSPI is enabled.|
-> + |                      |         |eSPI controller receives as VW message.|
-> + +----------------------+---------+---------------------------------------+
-> + |SUS_ACK#              |Input    |PCH pin is a GPIO when eSPI is enabled.|
-> + |                      |         |eSPI controller receives as VW message.|
-> + +----------------------+---------+---------------------------------------+
-> + |SLAVE_BOOT_LOAD_DONE  |Input    |Sent when the BMC has completed its    |
-> + |                      |         |boot process as an indication to       |
-> + |                      |         |eSPI-MC to continue with the G3 to S0  |
-> + |                      |         |exit.                                  |
-> + |                      |         |The eSPI Master waits for the assertion|
-> + |                      |         |of this virtual wire before proceeding |
-> + |                      |         |with the SLP_S5# deassertion.          |
-> + |                      |         |The intent is that it is never changed |
-> + |                      |         |except on a G3 exit - it is reset on a |
-> + |                      |         |G3 entry.                              |
-> + +----------------------+---------+---------------------------------------+
-> + |SLAVE_BOOT_LOAD_STATUS|Input    |Sent upon completion of the Slave Boot |
-> + |                      |         |Load from the attached flash. A stat of|
-> + |                      |         |1 indicates that the boot code load was|
-> + |                      |         |successful and that the integrity of   |
-> + |                      |         |the image is intact.                   |
-> + +----------------------+---------+---------------------------------------+
-> + |HOST_RESET_WARN       |Output   |Sent from the MC just before the Host  |
-> + |                      |         |is about to enter reset. Upon receiving|
-> + |                      |         |, the BMC must flush and quiesce its   |
-> + |                      |         |upstream Peripheral Channel request    |
-> + |                      |         |queues and assert HOST_RESET_ACK VWire.|
-> + |                      |         |The MC subsequently completes any      |
-> + |                      |         |outstanding posted transactions or     |
-> + |                      |         |completions and then disables the      |
-> + |                      |         |Peripheral Channel via a write to      |
-> + |                      |         |the Slave's Configuration Register.    |
-> + +----------------------+---------+---------------------------------------+
-> + |HOST_RESET_ACK        |Input    |ACK for the HOST_RESET_WARN message    |
-> + +----------------------+---------+---------------------------------------+
-> + |OOB_RESET_WARN        |Output   |Sent from the MC just before the OOB   |
-> + |                      |         |processor is about to enter reset. Upon|
-> + |                      |         |receiving, the BMC must flush and      |
-> + |                      |         |quiesce its OOB Channel upstream       |
-> + |                      |         |request queues and assert OOB_RESET_ACK|
-> + |                      |         |VWire. The-MC subsequently completes   |
-> + |                      |         |any outstanding posted transactions or |
-> + |                      |         |completions and then disables the OOB  |
-> + |                      |         |Channel via a write to the Slave's     |
-> + |                      |         |Configuration Register.                |
-> + +----------------------+---------+---------------------------------------+
-> + |OOB_RESET_ACK         |Input    |ACK for OOB_RESET_WARN message         |
-> + +----------------------+---------+---------------------------------------+
-> +
-> +`Intel C620 Series Chipset Platform Controller Hub
-> +<https://www.intel.com/content/www/us/en/chipsets/c620-series-chipset-datasheet.html>`_
-> +
-> +   -- 17. Enhanced Serial Peripheral Interface
+Instead fo having it copying the contents of two files, and not
+even mentioning the third one, replace it by a file whose content
+points to the other tree files, preserving the Kernel's license.
 
-What is this line for?  "17."?
+Adjust license-rules.rst accordingly.
 
-> +
-> +
-> +`Enhanced Serial Peripheral Interface (eSPI)
-> +- Interface Base Specification (for Client and Server Platforms)
-> +<https://www.intel.com/content/dam/support/us/en/documents/software/chipset-software/327432-004_espi_base_specification_rev1.0.pdf>`_
-> +
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index 03605f8..cf3e7a1 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -472,6 +472,14 @@ config VEXPRESS_SYSCFG
->  	  bus. System Configuration interface is one of the possible means
->  	  of generating transactions on this bus.
->  
-> +config ASPEED_ESPI_SLAVE
-> +	depends on ARCH_ASPEED || COMPILE_TEST
-> +	depends on REGMAP_MMIO
-> +	tristate "Aspeed ast2500 eSPI slave device driver"
-> +	---help---
-> +	  Control Aspeed ast2500 eSPI slave controller to handle event
-> +	  which needs the firmware's processing.
+No license changes.
 
-No module name and all that here?
+NOTE
+====
 
-thanks,
 
-greg k-h
+In order to make the diff easier to read, I broke it into two patches.
+Feel free to merge both when merging if you want.
+
+Mauro Carvalho Chehab (2):
+  COPYING: create a new file with points to the Kernel license files
+  COPYING: use the new text with points to the license files
+
+ COPYING                                 | 358 +-------------------------------
+ Documentation/process/license-rules.rst |  20 +-
+ 2 files changed, 21 insertions(+), 357 deletions(-)
+
+-- 
+2.14.3
