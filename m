@@ -1,70 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753452AbeCVKHN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 06:07:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51110 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750982AbeCVKHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:07:11 -0400
-Subject: Re: [PATCH] KVM: X86: Fix the decoding of segment overrides in 64bit
- mode
-To: Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1521707651-9375-1-git-send-email-wanpengli@tencent.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <aadc47c3-9d5f-b4d5-92d3-cb888a29563c@redhat.com>
-Date: Thu, 22 Mar 2018 11:07:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1521707651-9375-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752921AbeCVKGC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 06:06:02 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:40031 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751441AbeCVKF6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 06:05:58 -0400
+X-Google-Smtp-Source: AG47ELttsmM5wSzc5PYOYP46kJM8HUURCO9JR4bNCIMH8o4ImKWczupi3T9MiPk2sSTOGxcSriPS1A==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v.4.16-rc7
+Date: Thu, 22 Mar 2018 11:05:52 +0100
+Message-Id: <1521713152-4201-1-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/03/2018 09:34, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Explicit segment overides other than %fs and %gs are documented as ignored by
-> both Intel and AMD.
-> 
-> In practice, this means that:
-> 
->  * Explicit uses of %ss don't actually yield #SS[0] for non-canonical
->    memory references.
->  * Explicit uses of %{e,c,d}s don't override %rbp/%rsp-based memory references
->    to yield #GP[0] for non-canonical memory references.
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  arch/x86/kvm/emulate.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index dd88158..5091255 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -5148,8 +5148,10 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
->  		case 0x2e:	/* CS override */
->  		case 0x36:	/* SS override */
->  		case 0x3e:	/* DS override */
-> -			has_seg_override = true;
-> -			ctxt->seg_override = (ctxt->b >> 3) & 3;
-> +			if (mode != X86EMUL_MODE_PROT64) {
-> +				has_seg_override = true;
-> +				ctxt->seg_override = (ctxt->b >> 3) & 3;
-> +			}
->  			break;
->  		case 0x64:	/* FS override */
->  		case 0x65:	/* GS override */
-> 
+Hi Linus,
 
-Testcase, please...
+Here's a PR with a couple of MMC fixes intended for v4.16-rc7. Details about the
+highlights are as usual found in the signed tag.
 
-Paolo
+Please pull this in!
+
+Kind regards
+Ulf Hansson
+
+
+The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
+
+  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.16-rc4
+
+for you to fetch changes up to d58ac803cfbb92ede501409dd6afe9abb111d4f1:
+
+  mmc: sdhci-acpi: Fix IRQ 0 (2018-03-21 11:10:20 +0100)
+
+----------------------------------------------------------------
+MMC host:
+ - dw_mmc: Fix the suspend/resume issue for Exynos5433
+ - dw_mmc: Fix the DTO/CTO timeout overflow calculation for 32-bit systems
+ - dw_mmc: Make PIO mode work when failing with idmac when dw_mci_reset occurs
+ - sdhci-acpi: Re-allow IRQ 0 to fix broken probe
+
+MMC core:
+ - Update EXT_CSD caches to correctly switch partition for ioctl calls
+ - Fix tracepoint print of blk_addr and blksz
+ - Disable HPI on broken Micron (Numonyx) eMMC cards
+
+----------------------------------------------------------------
+Adrian Hunter (2):
+      mmc: core: Fix tracepoint print of blk_addr and blksz
+      mmc: sdhci-acpi: Fix IRQ 0
+
+Bastian Stender (1):
+      mmc: block: fix updating ext_csd caches on ioctl call
+
+Dirk Behme (1):
+      mmc: core: Disable HPI for certain Micron (Numonyx) eMMC cards
+
+Evgeniy Didin (2):
+      mmc: dw_mmc: Fix the DTO/CTO timeout overflow calculation for 32-bit systems
+      mmc: dw_mmc: fix falling from idmac to PIO mode when dw_mci_reset occurs
+
+Jaehoon Chung (1):
+      mmc: dw_mmc: exynos: fix the suspend/resume issue for exynos5433
+
+ drivers/mmc/core/block.c         | 19 +++++++++++++++++++
+ drivers/mmc/core/card.h          |  1 +
+ drivers/mmc/core/quirks.h        |  6 ++++++
+ drivers/mmc/host/dw_mmc-exynos.c |  8 +++++++-
+ drivers/mmc/host/dw_mmc.c        | 15 ++++++++++-----
+ drivers/mmc/host/sdhci-acpi.c    |  2 +-
+ include/trace/events/mmc.h       |  4 ++--
+ 7 files changed, 46 insertions(+), 9 deletions(-)
