@@ -1,67 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeCVDeX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 23:34:23 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:45890 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751728AbeCVDeV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 23:34:21 -0400
-X-UUID: 04ac4a54797d4b50a2d6e69912e03563-20180322
-From: Ji Zhang <ji.zhang@mediatek.com>
-To: Russell King <linux@armlinux.org.uk>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mickael GUENE <mickael.guene@st.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ji Zhang <ji.zhang@mediatek.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        <shadanji@163.com>
-Subject: [PATCH] arm: avoid race condition issue in dump_backtrace
-Date: Thu, 22 Mar 2018 11:34:16 +0800
-Message-ID: <1521689656-4694-1-git-send-email-ji.zhang@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+        id S1752021AbeCVDhi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 23:37:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39766 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751728AbeCVDhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 23:37:37 -0400
+From: Baoquan He <bhe@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: kexec@lists.infradead.org, akpm@linux-foundation.org,
+        takahiro.akashi@linaro.org, ebiederm@xmission.com, vgoyal@redhat.com,
+        dyoung@redhat.com, prudo@linux.vnet.ibm.com,
+        Baoquan He <bhe@redhat.com>
+Subject: [PATCH 0/2] Kexec_file: Load kernel at top of system ram
+Date: Thu, 22 Mar 2018 11:37:20 +0800
+Message-Id: <20180322033722.9279-1-bhe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we dump the backtrace of some specific task, there is a potential race
-condition due to the task may be running on other cores if SMP enabled.
-That is because for current implementation, if the task is not the current
-task, we will get the registers used for unwind from cpu_context saved in
-thread_info, which the snapshot before context switch, but if the task is
-running on other cores, the registers and the content of stack are changed.
-This may cause that we get the wrong backtrace or incomplete backtrace or
-even crash the kernel.
-To avoid this case, do not dump the backtrace of the task which is running
-on other cores.
-This patch cannot solve the issue completely but can shrink the window of
-race condition.
+The current kexec_file ignores kexec_buf.top_down value when call
+arch_kexec_walk_mem() to allocate memory for loading kernel/initrd
+stuffs. This is not supposed to be what kexec_buf.top_down is used
+for.
 
-Signed-off-by: Ji Zhang <ji.zhang@mediatek.com>
----
- arch/arm/kernel/traps.c | 4 ++++
- 1 file changed, 4 insertions(+)
+In patch 0001, introduce a new function walk_system_ram_res_rev()
+which is a variant of walk_system_ram_res(), walks through resources
+of System RAM from top to down. And patch 0001 is picked from AKASHI's
+patchset which adds arm64 kexec_file support. His next round of post
+won't need walk_system_ram_res_rev any more, so I take it into this
+patchset and use it in patch 0002.
 
-diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
-index 5e3633c..faa3d45 100644
---- a/arch/arm/kernel/traps.c
-+++ b/arch/arm/kernel/traps.c
-@@ -220,6 +220,10 @@ static void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
- 		fp = frame_pointer(regs);
- 		mode = processor_mode(regs);
- 	} else if (tsk != current) {
-+		if (tsk->state == TASK_RUNNING) {
-+			pr_notice("Do not dump other running tasks\n");
-+			return;
-+		}
- 		fp = thread_saved_fp(tsk);
- 		mode = 0x10;
- 	} else {
+In patch 0002, check kexec_buf.top_down in arch_kexec_walk_mem(),
+if its value is 'true', call walk_system_ram_res_rev(). Otherwise
+call walk_system_ram_res().
+
+AKASHI Takahiro (1):
+  resource: add walk_system_ram_res_rev()
+
+Baoquan He (1):
+  kexec_file: Load kernel at top of system RAM if required
+
+ include/linux/ioport.h |  3 +++
+ kernel/kexec_file.c    |  2 ++
+ kernel/resource.c      | 63 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 68 insertions(+)
+
 -- 
-1.9.1
+2.13.6
