@@ -1,157 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755133AbeCVNAh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 09:00:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38316 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755104AbeCVNAa (ORCPT
+        id S1755207AbeCVNBb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 09:01:31 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:35567 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755104AbeCVNAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 09:00:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EDA3E60F91
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v4 11/13] ARM: dts: ipq8074: Add peripheral nodes
-Date: Thu, 22 Mar 2018 18:28:50 +0530
-Message-Id: <1521723532-28361-12-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
-References: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
+        Thu, 22 Mar 2018 09:00:38 -0400
+X-Google-Smtp-Source: AG47ELuRpHYWMI6Z9UAxnVV3O0Jyt3ZZ88hi+bRX7stIHmQJoyih/7E1OlHvpkHh2EJ5Ds9GzfkGtw==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v4 5/7] gpio: 104-idi-48: Implement get_multiple callback
+Date: Thu, 22 Mar 2018 09:00:31 -0400
+Message-Id: <a91859083599fe06a302eb336858d56ce8e8ea3d.1521723192.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
+References: <cover.1521723192.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add serial, i2c, bam, spi, qpic peripheral nodes.
+The ACCES I/O 104-IDI-48 series of devices provides 48
+optically-isolated inputs accessed via six 8-bit ports. Since eight
+input lines are acquired on a single port input read, the 104-IDI-48
+GPIO driver may improve multiple input reads by utilizing a get_multiple
+callback. This patch implements the idi_48_gpio_get_multiple function
+which serves as the respective get_multiple callback.
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 105 ++++++++++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
+ drivers/gpio/gpio-104-idi-48.c | 47 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index 2bc5dec..a8dbbf0 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -124,6 +124,111 @@
- 			clock-names = "core", "iface";
- 			status = "disabled";
- 		};
-+
-+		blsp_dma: dma@7884000 {
-+			compatible = "qcom,bam-v1.7.0";
-+			reg = <0x7884000 0x2b000>;
-+			interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "bam_clk";
-+			#dma-cells = <1>;
-+			qcom,ee = <0>;
-+		};
-+
-+		serial_blsp0: serial@78af000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x78af000 0x200>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
-+				 <&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			status = "disabled";
-+		};
-+
-+		serial_blsp2: serial@78b1000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0x78b1000 0x200>;
-+			interrupts = <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_UART3_APPS_CLK>,
-+				<&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp_dma 4>,
-+				<&blsp_dma 5>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		spi_0: spi@78b5000 {
-+			compatible = "qcom,spi-qup-v2.2.1";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x78b5000 0x600>;
-+			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
-+			spi-max-frequency = <50000000>;
-+			clocks = <&gcc GCC_BLSP1_QUP1_SPI_APPS_CLK>,
-+				<&gcc GCC_BLSP1_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			dmas = <&blsp_dma 12>, <&blsp_dma 13>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
-+		i2c_0: i2c@78b6000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x78b6000 0x600>;
-+			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
-+				<&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
-+			clock-names = "iface", "core";
-+			clock-frequency = <400000>;
-+			dmas = <&blsp_dma 15>, <&blsp_dma 14>;
-+			dma-names = "rx", "tx";
-+			status = "disabled";
-+		};
-+
-+		i2c_1: i2c@78b7000 {
-+			compatible = "qcom,i2c-qup-v2.2.1";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x78b7000 0x600>;
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
-+				<&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>;
-+			clock-names = "iface", "core";
-+			clock-frequency = <100000>;
-+			dmas = <&blsp_dma 17>, <&blsp_dma 16>;
-+			dma-names = "rx", "tx";
-+			status = "disabled";
-+		};
-+
-+		qpic_bam: dma@7984000 {
-+			compatible = "qcom,bam-v1.7.0";
-+			reg = <0x7984000 0x1a000>;
-+			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&gcc GCC_QPIC_AHB_CLK>;
-+			clock-names = "bam_clk";
-+			#dma-cells = <1>;
-+			qcom,ee = <0>;
-+			status = "disabled";
-+		};
-+
-+		qpic_nand: nand@79b0000 {
-+			compatible = "qcom,ipq8074-nand";
-+			reg = <0x79b0000 0x10000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&gcc GCC_QPIC_CLK>,
-+				 <&gcc GCC_QPIC_AHB_CLK>;
-+			clock-names = "core", "aon";
-+
-+			dmas = <&qpic_bam 0>,
-+			       <&qpic_bam 1>,
-+			       <&qpic_bam 2>;
-+			dma-names = "tx", "rx", "cmd";
-+			status = "disabled";
-+		};
- 	};
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+index add859d59766..f35632609379 100644
+--- a/drivers/gpio/gpio-104-idi-48.c
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -14,6 +14,7 @@
+  * This driver supports the following ACCES devices: 104-IDI-48A,
+  * 104-IDI-48AC, 104-IDI-48B, and 104-IDI-48BC.
+  */
++#include <linux/bitmap.h>
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
+@@ -88,6 +89,51 @@ static int idi_48_gpio_get(struct gpio_chip *chip, unsigned offset)
+ 	return 0;
+ }
  
- 	cpus {
++static int idi_48_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
++	unsigned long *bits)
++{
++	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
++	size_t i;
++	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
++	const unsigned int gpio_reg_size = 8;
++	unsigned int bits_offset;
++	size_t word_index;
++	unsigned int word_offset;
++	unsigned long word_mask;
++	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
++	unsigned long port_state;
++
++	/* clear bits array to a clean slate */
++	bitmap_zero(bits, chip->ngpio);
++
++	/* get bits are evaluated a gpio port register at a time */
++	for (i = 0; i < ARRAY_SIZE(ports); i++) {
++		/* gpio offset in bits array */
++		bits_offset = i * gpio_reg_size;
++
++		/* word index for bits array */
++		word_index = BIT_WORD(bits_offset);
++
++		/* gpio offset within current word of bits array */
++		word_offset = bits_offset % BITS_PER_LONG;
++
++		/* mask of get bits for current gpio within current word */
++		word_mask = mask[word_index] & (port_mask << word_offset);
++		if (!word_mask) {
++			/* no get bits in this port so skip to next one */
++			continue;
++		}
++
++		/* read bits from current gpio port */
++		port_state = inb(idi48gpio->base + ports[i]);
++
++		/* store acquired bits at respective bits array offset */
++		bits[word_index] |= port_state << word_offset;
++	}
++
++	return 0;
++}
++
+ static void idi_48_irq_ack(struct irq_data *data)
+ {
+ }
+@@ -256,6 +302,7 @@ static int idi_48_probe(struct device *dev, unsigned int id)
+ 	idi48gpio->chip.get_direction = idi_48_gpio_get_direction;
+ 	idi48gpio->chip.direction_input = idi_48_gpio_direction_input;
+ 	idi48gpio->chip.get = idi_48_gpio_get;
++	idi48gpio->chip.get_multiple = idi_48_gpio_get_multiple;
+ 	idi48gpio->base = base[id];
+ 
+ 	raw_spin_lock_init(&idi48gpio->lock);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.16.2
