@@ -1,88 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeCVUIz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:08:55 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.111]:30996 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751771AbeCVUIy (ORCPT
+        id S1751909AbeCVUMV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:12:21 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:43359 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751765AbeCVUMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:08:54 -0400
-Date: Thu, 22 Mar 2018 15:08:49 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] qed: Use true and false for boolean values
-Message-ID: <20180322200849.GA28033@embeddedgus>
+        Thu, 22 Mar 2018 16:12:19 -0400
+X-ME-Sender: <xms:Ig60WvRKsGjuALTFAFrDLpOcUKu5315IrTOtogjOffDw1LFn32v53A>
+Date: Fri, 23 Mar 2018 07:12:14 +1100
+From: "Tobin C . Harding" <me@tobin.cc>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+        Michael Ellerman <mpe@ellerman.id.au>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: Mention why %p prints ptrval
+Message-ID: <20180322201214.GE3305@eros>
+References: <20180322052336.1001-1-joel@jms.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180322052336.1001-1-joel@jms.id.au>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1ez6W3-001FIK-N7
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedgus) [189.145.54.187]:54268
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Assign true or false to boolean variables instead of an integer value.
+On Thu, Mar 22, 2018 at 03:53:36PM +1030, Joel Stanley wrote:
+> When debugging recent kernels, people will see '(ptrval)' but there
+> isn't much information as to what that means. Briefly describe why it's
+> there.
+> 
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+>  Documentation/core-api/printk-formats.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+> index 934559b3c130..eb30efdd2e78 100644
+> --- a/Documentation/core-api/printk-formats.rst
+> +++ b/Documentation/core-api/printk-formats.rst
+> @@ -60,8 +60,8 @@ Plain Pointers
+>  Pointers printed without a specifier extension (i.e unadorned %p) are
+>  hashed to prevent leaking information about the kernel memory layout. This
+>  has the added benefit of providing a unique identifier. On 64-bit machines
+> -the first 32 bits are zeroed. If you *really* want the address see %px
+> -below.
+> +the first 32 bits are zeroed. The kernel will print ``(ptrval)`` until it
+> +gathers enough entropy. If you *really* want the address see %px below.
 
-This issue was detected with the help of Coccinelle.
+Acked-by: Tobin C. Harding <me@tobin.cc>
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/qlogic/qed/qed_dev.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index 553a6d1..cdb3eec 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -298,8 +298,8 @@ static void qed_init_qm_params(struct qed_hwfn *p_hwfn)
- 	qm_info->start_vport = (u8) RESC_START(p_hwfn, QED_VPORT);
- 
- 	/* rate limiting and weighted fair queueing are always enabled */
--	qm_info->vport_rl_en = 1;
--	qm_info->vport_wfq_en = 1;
-+	qm_info->vport_rl_en = true;
-+	qm_info->vport_wfq_en = true;
- 
- 	/* TC config is different for AH 4 port */
- 	four_port = p_hwfn->cdev->num_ports_in_engine == MAX_NUM_PORTS_K2;
-@@ -1276,9 +1276,9 @@ static int qed_hw_init_common(struct qed_hwfn *p_hwfn,
- 
- 	if (p_hwfn->mcp_info) {
- 		if (p_hwfn->mcp_info->func_info.bandwidth_max)
--			qm_info->pf_rl_en = 1;
-+			qm_info->pf_rl_en = true;
- 		if (p_hwfn->mcp_info->func_info.bandwidth_min)
--			qm_info->pf_wfq_en = 1;
-+			qm_info->pf_wfq_en = true;
- 	}
- 
- 	memset(&params, 0, sizeof(params));
-@@ -1630,7 +1630,7 @@ static int qed_vf_start(struct qed_hwfn *p_hwfn,
- 		qed_vf_pf_tunnel_param_update(p_hwfn, p_params->p_tunn);
- 	}
- 
--	p_hwfn->b_int_enabled = 1;
-+	p_hwfn->b_int_enabled = true;
- 
- 	return 0;
- }
--- 
-2.7.4
+thanks,
+Tobin.
