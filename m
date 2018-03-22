@@ -1,66 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751913AbeCVXUo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 19:20:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50844 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751694AbeCVXUn (ORCPT
+        id S1752008AbeCVXVO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 19:21:14 -0400
+Received: from mail-io0-f182.google.com ([209.85.223.182]:43006 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeCVXVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 19:20:43 -0400
-Date: Fri, 23 Mar 2018 00:20:30 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Luck@alison-desk.jf.intel.com, Tony <tony.luck@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
-        David Rientjes <rientjes@google.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86,sched: allow topologies where NUMA nodes share an
- LLC
-Message-ID: <20180322232030.GA4043@hirez.programming.kicks-ass.net>
-References: <20180322204922.GA2337@alison-desk.jf.intel.com>
+        Thu, 22 Mar 2018 19:21:11 -0400
+X-Google-Smtp-Source: AG47ELtAivhghEMi13kzy+UgMBh4paEC96sWdhwZEAGuHsQFixFIKCKWZmmRcT/LIzSbQ6x1hxhivNF20757X+u/LIU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180322204922.GA2337@alison-desk.jf.intel.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <CAJZ5v0gT_p44NGUhkw7irDk-Uo8HnEYQ35+wJaBUo3ziLSbPsQ@mail.gmail.com>
+References: <CAJZ5v0gT_p44NGUhkw7irDk-Uo8HnEYQ35+wJaBUo3ziLSbPsQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 22 Mar 2018 16:21:10 -0700
+X-Google-Sender-Auth: FonHMDPbBN7bOM30UBsnDB-9h1w
+Message-ID: <CA+55aFwR_29JpVPUyyhnpJp=PBXk4nVO-8DBty6-vk2-8cgNFw@mail.gmail.com>
+Subject: Re: [GIT PULL] ACPI fixes for v4.16-rc7
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 01:49:22PM -0700, Alison Schofield wrote:
-> +	/*
-> +	 * Some Intel CPUs enumerate an LLC that is shared by
-> +	 * multiple NUMA nodes.  The LLC on these systems is
-> +	 * shared for off-package data access but private to the
-> +	 * NUMA node (half of the package) for on-package access.
-> +	 *
-> +	 * CPUID can only enumerate the cache as being shared *or*
-> +	 * unshared, but not this particular configuration.  The
-> +	 * CPU in this case enumerates the cache to be shared
-> +	 * across the entire package (spanning both NUMA nodes).
-> +	 */
-> +	if (!topology_same_node(c, o) &&
-> +	    (c->x86_vendor == X86_VENDOR_INTEL &&
-> +	     c->x86_model == INTEL_FAM6_SKYLAKE_X)) {
-> +		/* Use NUMA instead of coregroups for scheduling: */
-> +		x86_has_numa_in_package = true;
-> +
-> +		/*
-> +		 * Return value doesn't actually matter because we
-> +		 * are throwing away coregroups for scheduling anyway.
-> +		 * Return false to bypass topology broken bug messages
-> +		 * and fixups in sched_domain().
-> +		 */
-> +		return false;
+On Thu, Mar 22, 2018 at 4:05 PM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+>  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>  acpi-4.16-rc4
 
-IIRC that return value _does_ matter because the resulting mask still
-ends up user visible in sysfs.
+I get
 
-IIRC I went over with this dhansen a week or so ago, but I cannot now
-recall what we settled on as being the right return value and for what
-reason.
+  fatal: Couldn't find remote ref acpi-4.16-rc4
+
+Forgot to push out?
+
+Oh. No, I see what happened. You meant "rc7".
+
+Didn't your script warn abou tthe tag name not matching?
+
+              Linus
