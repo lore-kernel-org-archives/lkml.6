@@ -1,262 +1,477 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751997AbeCVE2F (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 00:28:05 -0400
-Received: from mail-dm3nam03on0041.outbound.protection.outlook.com ([104.47.41.41]:29312
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751291AbeCVE2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 00:28:03 -0400
-From: Naga Sureshkumar Relli <nagasure@xilinx.com>
-To: Randy Dunlap <rdunlap@infradead.org>,
-        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>
-CC: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        id S1752077AbeCVE2m (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 00:28:42 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:40605 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752005AbeCVE2j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 00:28:39 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180322042837epoutp016fefb4e972ecb3cb026be4b1dbfbab88~eI6VYRtHU1788217882epoutp01F
+X-AuditID: b6c32a4a-de3ff70000001125-f2-5ab330f4b4f4
+Mime-Version: 1.0
+Subject: Re: [PATCH 1/1] lz4: Implement lz4 with dynamic offset length.
+Reply-To: maninder1.s@samsung.com
+From: Maninder Singh <maninder1.s@samsung.com>
+To: Yann Collet <cyan@fb.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+CC: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        Punnaiah Choudary Kalluri <punnaia@xilinx.com>
-Subject: RE: [LINUX PATCH v8 1/2] Documentation: nand: pl353: Add
- documentation for controller and driver
-Thread-Topic: [LINUX PATCH v8 1/2] Documentation: nand: pl353: Add
- documentation for controller and driver
-Thread-Index: AQHTu4Idhk4n1pufpEiYEGYfTTnDrqPQaVUAgAtKUqA=
-Date: Thu, 22 Mar 2018 04:27:50 +0000
-Message-ID: <BY2PR02MB14116F392ED197B02FCB1384AFA90@BY2PR02MB1411.namprd02.prod.outlook.com>
-References: <1521024494-30632-1-git-send-email-nagasureshkumarrelli@gmail.com>
- <0abb517f-6360-5b45-18a8-d049f3ab7a4e@infradead.org>
-In-Reply-To: <0abb517f-6360-5b45-18a8-d049f3ab7a4e@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=nagasure@xilinx.com;
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR02MB1283;7:Upc7+il1ptJuugnhwsYaZVOKkp3U4N7bNkh+3MfVXxQE64NRYe2lKruR1P4IffL5CRzN0IyL8KCYtx2wA/fPQQUJHVRN0jpQEzSa/ebHIG5wvlfl1ZYrSNN1AgB5vJG5Pwm+n2qISkDQG+3ISLkv7G6lOvZFq6l/6I+L66Ac0tkDWnP4BUvut/FzM6bPIkpTijrohZ275m8WQr0Z+j6nyFdS68ELsa9CRPpEOvzqFbgWJkzB944nPf099h/EjYmN
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 848035d3-d6a0-4884-e811-08d58fad45cc
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BY2PR02MB1283;
-x-ms-traffictypediagnostic: BY2PR02MB1283:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BY2PR02MB128367397F8779BAED8ADA51AFA90@BY2PR02MB1283.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(85827821059158)(258649278758335)(192813158149592);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:BY2PR02MB1283;BCL:0;PCL:0;RULEID:;SRVR:BY2PR02MB1283;
-x-forefront-prvs: 0619D53754
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(376002)(366004)(346002)(396003)(199004)(189003)(13464003)(25786009)(7696005)(316002)(2201001)(8676002)(81156014)(5660300001)(81166006)(53936002)(8936002)(7416002)(54906003)(97736004)(106356001)(6306002)(9686003)(6506007)(39060400002)(55236004)(2906002)(6246003)(107886003)(55016002)(76176011)(59450400001)(3846002)(229853002)(86362001)(99286004)(478600001)(6116002)(6436002)(110136005)(53546011)(3660700001)(14454004)(3280700002)(68736007)(102836004)(105586002)(2900100001)(7736002)(305945005)(74316002)(446003)(66066001)(33656002)(4326008)(5250100002)(186003)(2950100002)(26005)(2501003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR02MB1283;H:BY2PR02MB1411.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: m1D464mosiL9/DgaNBo0Tz2kLmNRVzos1kVBK5rihwP1c1W8/ZC7Z9+vNw0VS1gwoYXwrkijcPdBg1Hg0iGKr0ipT+91h1Or+tabqhXKunV5MORtN8XKaHIBq6l5D9CmmhxQX/WiB+F7rxBC8vzYlJGhZ8Y76Xuptkt7B39ZvazgTPDUPPRlzit55EnTiz6EvfGGetMUmT4LO8kAId/JObpilDTPrUe3frQvQQdWj8f2j6IOTbpIs7RuHqish8D4lYy7/xcBDm3VAJ6pNMttF39LL8GgTl+pvuax6KHDhC+8/ggVilwYxY2kRV3hYM73XgDytMjKLJbuXgVVAR1BXg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
+        Nick Terrell <terrelln@fb.com>, Vaneet Narang <v.narang@samsung.com>,
+        PANKAJ MISHRA <pankaj.m@samsung.com>,
+        AMIT SAHRAWAT <a.sahrawat@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20180321195906.1260480-1-terrelln@fb.com>
+X-Drm-Type: Y,confirm
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20180322042821epcms5p16b4dd6fc12a1563b5aea547f398dda40@epcms5p1>
+Date: Thu, 22 Mar 2018 09:58:21 +0530
+X-CMS-MailID: 20180322042821epcms5p16b4dd6fc12a1563b5aea547f398dda40
 Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 848035d3-d6a0-4884-e811-08d58fad45cc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Mar 2018 04:27:50.2213
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR02MB1283
+X-Sendblock-Type: REQ_APPROVE
+X-MTR: 20180322042821epcms5p16b4dd6fc12a1563b5aea547f398dda40
+CMS-TYPE: 105P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmpu4Xg81RBgd6dS0u7k612NqUZHH/
+        3k8mi8u75rBZ3Huzlcni0YRJTBav/l1jszh0ci6jA4fHxOZ37B47Z91l9+jbsorR4/MmuQCW
+        qFSbjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKAjlBTK
+        EnNKgUIBicXFSvp2NkX5pSWpChn5xSW2StGGhkZ6hgbmekZGRnomprFWRqZAJQmpGZfPz2Aq
+        uDOVqeLn1YXsDYxn+pi6GDk4JARMJM6uKOhi5OIQEtjNKNG7exMjSJxXQFDi7w7hLkZODmEB
+        d4n5k68wgthCAooSF2asASsRFjCQ+LVVAyTMJqAnsWrXHhYQW0QgXGLRlr1sICOZBWYxSSz7
+        1ssMkpAQ4JWY0f6UBcKWlti+fCvYHE4Bc4ktzYUQYVGJPw0wJaIS74/NZ4SwRSRa752FGiMo
+        8eDnbqi4jMTqzb0sILskBJoZJV4sbmGCcKYwSiw63soGUWUucf7kfLBuXgFfiUsntoHZLAKq
+        Eqduz4Ga6iJx6ugvdhCbGejJKd0P2UGOYxbQlFi/Sx+iRFZi6ql1TBC2rcS6fXeYIcr5JHp/
+        P2GC+XHHPBhbVaLl5gZWmH8/f/wI9ZiHxLm+s4wTGJVmIUJ6FpLFsxAWL2BkXsUomVpQnJue
+        WmxaYJSXWq5XnJhbXJqXrpecn7uJEZwatbx2MC4753OIUYCDUYmHNyNnU5QQa2JZcWXuIUYJ
+        DmYlEd5DmpujhHhTEiurUovy44tKc1KLDzGaAoNgIrOUaHI+MG3nlcQbmlgamJiZmRsaGFia
+        KInzOga6RAkJpCeWpGanphakFsH0MXFwSjUwyj/+5K9VIhV96dOXXfOsnlTxbrn55ljUV5uJ
+        LI5cj2evaXrbEPpl4y3flQozClqm3G2dbPXJdMPdR6Xmlh8/1DDuZ5sQtmnf6h7h9sfz/N79
+        zE55aFJbuq1vzuO1049LdZ1StEg7bSBpLjFTvnKd+bkfAeuZLauuiP9QP7nwT27AlMjqN5l7
+        CpRYijMSDbWYi4oTAX1nReujAwAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180321195916epcas4p1e89e1cc5fd242ee8c348f92f1d1740b0
+X-RootMTR: 20180321195916epcas4p1e89e1cc5fd242ee8c348f92f1d1740b0
+References: <20180321195906.1260480-1-terrelln@fb.com>
+        <1521607242-3968-2-git-send-email-maninder1.s@samsung.com>
+        <CGME20180321195916epcas4p1e89e1cc5fd242ee8c348f92f1d1740b0@epcms5p1>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2M4SJpJ010037
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2M4TWrH010440
 
-Hi Randy,
+CC: Vaneet Narang.
 
-Thanks for reviewing the patch.
-
- I will address below mentioned comments in next version of patch.
-
-Thanks,
-Naga Sureshkumar Relli.
-
-> -----Original Message-----
-> From: Randy Dunlap [mailto:rdunlap@infradead.org]
-> Sent: Thursday, March 15, 2018 5:27 AM
-> To: nagasureshkumarrelli@gmail.com; boris.brezillon@bootlin.com;
-> richard@nod.at; dwmw2@infradead.org; computersforpeace@gmail.com;
-> marek.vasut@gmail.com; cyrille.pitchen@wedev4u.fr;
-> miquel.raynal@bootlin.com
-> Cc: linux-mtd@lists.infradead.org; linux-kernel@vger.kernel.org; Michal Simek
-> <michals@xilinx.com>; Punnaiah Choudary Kalluri <punnaia@xilinx.com>; Naga
-> Sureshkumar Relli <nagasure@xilinx.com>
-> Subject: Re: [LINUX PATCH v8 1/2] Documentation: nand: pl353: Add
-> documentation for controller and driver
-> 
-> On 03/14/2018 03:48 AM, nagasureshkumarrelli@gmail.com wrote:
-> > From: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> >
-> > Added notes about the controller and driver
-> >
-> > Signed-off-by: Naga Sureshkumar Relli <nagasure@xilinx.com>
-> > ---
-> 
-> Hi,
-> 
-> > ---
-> >  Documentation/mtd/nand/pl353-nand.txt | 92
-> > +++++++++++++++++++++++++++++++++++
-> >  1 file changed, 92 insertions(+)
-> >  create mode 100644 Documentation/mtd/nand/pl353-nand.txt
-> >
-> > diff --git a/Documentation/mtd/nand/pl353-nand.txt
-> > b/Documentation/mtd/nand/pl353-nand.txt
-> > new file mode 100644
-> > index 0000000..ac6fbd5
-> > --- /dev/null
-> > +++ b/Documentation/mtd/nand/pl353-nand.txt
-> > @@ -0,0 +1,92 @@
-> > +This documents provides some notes about the ARM pl353 smc controller
-> > +used in
-> 
-> s/smc/SMC/
-> 
-> > +Zynq SOC and confined to NAND specific details.
-> > +
-> > +Overview of the controller
-> > +==========================
-> > +	The SMC (PL353) supports two memory interfaces:
-> > +	Interface 0 type SRAM.
-> > +	Interface 1 type NAND.
-> > +	This configuration supports the following configurable options:
-> > +	   . 32-bit or 64-bit AXI data width
-> > +	   . 8-bit, 16-bit, or 32-bit memory data width for interface 0
-> > +	   . 8-bit, or 16-bit memory data width for interface 1
-> > +	   . 1-4 chip selects on each interface
-> > +	   . SLC ECC block for interface 1
-> > +
-> > +For more information, refer the below link for TRM
-> > +http://infocenter.arm.com/help/topic/com.arm.doc.ddi0380g/
-> > +DDI0380G_smc_pl350_series_r2p1_trm.pdf
-> > +
-> > +NAND memory accesses
-> > +====================
-> > +	. Two phase NAND accesses
-> > +	. NAND command phase transfers
-> > +	. NAND data phase transfers
-> > +
-> > +Two phase NAND accesses
-> > +	The SMC defines two phases of commands when transferring data to or
-> > +from NAND flash.
-> > +
-> > +Command phase
-> > +	Commands and optional address information are written to the NAND
-> flash.
-> > +The command and address can be associated with either a data phase
-> > +operation to write to or read from the array, or a status/ID register transfer.
-> > +
-> > +Data phase
-> > + Data is either written to or read from the NAND flash. This data can
-> > +be either data transferred to or from the array, or status/ID register
-> information.
-> > +
-> > +NAND AXI address setup
-> > +       AXI address      Command phase      Data phase
-> > +	[31:24]         Chip address       Chip address
-> > +	[23]            NoOfAddCycles_2    Reserved
-> > +	[22]            NoOfAddCycles_1    Reserved
-> > +	[21]            NoOfAddCycles_0    ClearCS
-> > +	[20]            End command valid  End command valid
-> > +	[19]            0                  1
-> > +	[18:11]         End command        End command
-> > +	[10:3]          Start command      [10] ECC Last
-> > +					   [9:3] Reserved
-> > +	[2:0]           Reserved           Reserved
-> > +
-> > +ECC
-> > +===
-> > +    It operates on a number of 512 byte blocks of NAND memory and can
-> > +be programmed to store the ECC codes after the data in memory. For
-> > +writes, the ECC is written to the spare area of the page. For reads,
-> > +the result of a block ECC check are made available to the device driver.
-> > +
-> > +---------------------------------------------------------------------
-> > +---
-> > +|               n * 512 blocks                  | extra  | ecc    |     |
-> > +|                                               | block  | codes  |     |
-> > +---------------------------------------------------------------------
-> > +---
-> > +
-> > +The ECC calculation uses a simple Hamming code, using 1-bit
-> > +correction 2-bit detection. It starts when a valid read or write
-> > +command with a 512 byte aligned address is detected on the memory
-> interface.
-> > +
-> > +Driver details
-> > +==============
-> > +	The NAND driver has dependency with the pl353_smc memory
-> controller
-> > +driver for intializing the nand timing parameters, bus width, ECC
-> > +modes,
-> 
->               initializing the NAND
-> 
-> > +control and status information.
-> > +
-> > +Since the controller expects that the chipselect bit should be
-> > +cleared for the last data transfer i.e last 4 data bytes, the
-> > +existing nandbase page read/write routines for soft ecc and ecc none
-> > +modes will not work. So, inorder
-> 
->                                                                           in order
-> 
-> > +to make this driver work, it always updates the ecc mode as HW ECC
-> > +and
-> 
->                                                    ECC mode
-> 
-> > +implemented the page read/write functions for supporting the SW ECC.
-> 
->    implements the
-> 
-> > +
-> > +HW ECC mode:
-> > +	Upto 2K page size is supported and beyond that it retuns
-> 
-> 	Up to                                             returns
-> 
-> > +-ENOSUPPORT error. If the flsh has ONDIE ecc controller then the
-> 
->                              flash (?) has on-die ECC
-> 
-> > +priority has given to the ONDIE ecc controller. Also the current
-> 
->             is               on-die ECC
-> 
-> > +implementation has support for upto 64 byte oob area
-> 
->                                   up to            area.
-> 
-> > +
-> > +SW ECC mode:
-> > +	It supports all the pgae sizes. But since, zynq soc bootrom uses
-> 
-> 	                                           Zynq SOC
-> 
-> > +HW ECC for the devices that have pgae size <=2K so, to avoid any ecc
-> > +related
-> 
->                                     page      <= 2K, to avoid any ECC-related
-> 
-> > +issues during boot, prefer HW ECC over SW ECC.
-> > +
-> > +For devicetree binding information please refer the below dt binding
-> > +file
-> 
->                                       please refer to the below
-> 
-> > +Documentation/devicetree/bindings/memory-controllers/pl353-smc.txt.
-> >
-> 
-> 
-> --
-> ~Randy
+ 
+On (03/21/18 10:10), Maninder Singh wrote:
+> diff --git a/lib/lz4/lz4_compress.c b/lib/lz4/lz4_compress.c
+> index cc7b6d4..185c358 100644
+> --- a/lib/lz4/lz4_compress.c
+> +++ b/lib/lz4/lz4_compress.c
+> @@ -183,7 +183,8 @@ static FORCE_INLINE int LZ4_compress_generic(
+>          const tableType_t tableType,
+>          const dict_directive dict,
+>          const dictIssue_directive dictIssue,
+> -        const U32 acceleration)
+> +        const U32 acceleration,
+> +        const Dynamic_Offset dynOffset)
+>  {
+>          const BYTE *ip = (const BYTE *) source;
+>          const BYTE *base;
+> @@ -199,6 +200,7 @@ static FORCE_INLINE int LZ4_compress_generic(
+>
+>          BYTE *op = (BYTE *) dest;
+>          BYTE * const olimit = op + maxOutputSize;
+> +        int max_distance = dynOffset ? MAX_DISTANCE_DYN : MAX_DISTANCE;
+ 
+Lets mark this variable `const`. If the compiler doesn't realize that this
+variable and `dynOffset` are compile time constants, I expect the speed to
+be impacted.
+ 
+>
+>          U32 forwardH;
+>          size_t refDelta = 0;
+> @@ -245,6 +247,7 @@ static FORCE_INLINE int LZ4_compress_generic(
+>          for ( ; ; ) {
+>                  const BYTE *match;
+>                  BYTE *token;
+> +                int curr_offset;
+>
+>                  /* Find a match */
+>                  {
+> @@ -285,7 +288,7 @@ static FORCE_INLINE int LZ4_compress_generic(
+>                                          : 0)
+>                                  || ((tableType == byU16)
+>                                          ? 0
+> -                                        : (match + MAX_DISTANCE < ip))
+> +                                        : (match + max_distance < ip))
+>                                  || (LZ4_read32(match + refDelta)
+>                                          != LZ4_read32(ip)));
+>                  }
+> @@ -328,8 +331,26 @@ static FORCE_INLINE int LZ4_compress_generic(
+>
+>  _next_match:
+>                  /* Encode Offset */
+> -                LZ4_writeLE16(op, (U16)(ip - match));
+> -                op += 2;
+> +                if (dynOffset) {
+> +                        curr_offset = (U16)(ip - match);
+> +
+> +                        /*
+> +                         * If Ofsset is greater than 127, we need 2 bytes
+> +                         * to store it. Otherwise 1 byte is enough.
+> +                         */
+> +                        if (curr_offset > 127) {
+> +                                curr_offset = (curr_offset << 1) | DYN_BIT;
+> +                                LZ4_writeLE16(op, (U16)curr_offset);
+> +                                op += 2;
+> +                        } else {
+> +                                curr_offset = curr_offset << 1;
+> +                                *op = (BYTE)curr_offset;
+> +                                op++;
+> +                        }
+ 
+The standard way to do variable sized integers is to use the high-bit as
+the control bit, not the low-bit. Do you have benchmarks to show that using
+the low-bit is faster than using the high-bit? If so, lets comment in the
+code, if not lets use the high-bit.
+ 
+> +                } else {
+> +                        LZ4_writeLE16(op, (U16)(ip - match));
+> +                        op += 2;
+> +                }
+>
+>                  /* Encode MatchLength */
+>                  {
+> @@ -480,39 +501,70 @@ static int LZ4_compress_fast_extState(
+>                          return LZ4_compress_generic(ctx, source,
+>                                  dest, inputSize, 0,
+>                                  noLimit, byU16, noDict,
+> -                                noDictIssue, acceleration);
+> +                                noDictIssue, acceleration, NoDynOffset);
+>                  else
+>                          return LZ4_compress_generic(ctx, source,
+>                                  dest, inputSize, 0,
+>                                  noLimit, tableType, noDict,
+> -                                noDictIssue, acceleration);
+> +                                noDictIssue, acceleration, NoDynOffset);
+>          } else {
+>                  if (inputSize < LZ4_64Klimit)
+>                          return LZ4_compress_generic(ctx, source,
+>                                  dest, inputSize,
+>                                  maxOutputSize, limitedOutput, byU16, noDict,
+> -                                noDictIssue, acceleration);
+> +                                noDictIssue, acceleration, NoDynOffset);
+>                  else
+>                          return LZ4_compress_generic(ctx, source,
+>                                  dest, inputSize,
+>                                  maxOutputSize, limitedOutput, tableType, noDict,
+> -                                noDictIssue, acceleration);
+> +                                noDictIssue, acceleration, NoDynOffset);
+>          }
+>  }
+>
+> +static int LZ4_compress_fast_extState_dynamic(
+> +        void *state,
+> +        const char *source,
+> +        char *dest,
+> +        int inputSize,
+> +        int maxOutputSize,
+> +        int acceleration)
+> +{
+> +        LZ4_stream_t_internal *ctx = &((LZ4_stream_t *)state)->internal_donotuse;
+> +
+> +        LZ4_resetStream((LZ4_stream_t *)state);
+> +
+> +        if (acceleration < 1)
+> +                acceleration = LZ4_ACCELERATION_DEFAULT;
+> +
+> +        if (maxOutputSize >= LZ4_COMPRESSBOUND(inputSize))
+> +                return LZ4_compress_generic(ctx, source,
+> +                        dest, inputSize, 0,
+> +                        noLimit, byU16, noDict,
+> +                        noDictIssue, acceleration, DynOffset);
+> +        else
+> +                return LZ4_compress_generic(ctx, source,
+> +                        dest, inputSize,
+> +                        maxOutputSize, limitedOutput, byU16, noDict,
+> +                        noDictIssue, acceleration, DynOffset);
+> +}
+> +
+>  int LZ4_compress_fast(const char *source, char *dest, int inputSize,
+> -        int maxOutputSize, int acceleration, void *wrkmem)
+> +        int maxOutputSize, int acceleration, void *wrkmem, bool dynOffset)
+>  {
+> -        return LZ4_compress_fast_extState(wrkmem, source, dest, inputSize,
+> +        if (!dynOffset)
+> +                return LZ4_compress_fast_extState(wrkmem, source, dest, inputSize,
+> +                        maxOutputSize, acceleration);
+> +
+> +        return LZ4_compress_fast_extState_dynamic(wrkmem, source, dest, inputSize,
+>                  maxOutputSize, acceleration);
+>  }
+>  EXPORT_SYMBOL(LZ4_compress_fast);
+>
+>  int LZ4_compress_default(const char *source, char *dest, int inputSize,
+> -        int maxOutputSize, void *wrkmem)
+> +        int maxOutputSize, void *wrkmem, bool dynOffset)
+>  {
+>          return LZ4_compress_fast(source, dest, inputSize,
+> -                maxOutputSize, LZ4_ACCELERATION_DEFAULT, wrkmem);
+> +                maxOutputSize, LZ4_ACCELERATION_DEFAULT, wrkmem, dynOffset);
+>  }
+>  EXPORT_SYMBOL(LZ4_compress_default);
+>
+> @@ -900,12 +952,12 @@ int LZ4_compress_fast_continue(LZ4_stream_t *LZ4_stream, const char *source,
+>                          result = LZ4_compress_generic(
+>                                  streamPtr, source, dest, inputSize,
+>                                  maxOutputSize, limitedOutput, byU32,
+> -                                withPrefix64k, dictSmall, acceleration);
+> +                                withPrefix64k, dictSmall, acceleration, NoDynOffset);
+>                  } else {
+>                          result = LZ4_compress_generic(
+>                                  streamPtr, source, dest, inputSize,
+>                                  maxOutputSize, limitedOutput, byU32,
+> -                                withPrefix64k, noDictIssue, acceleration);
+> +                                withPrefix64k, noDictIssue, acceleration, NoDynOffset);
+>                  }
+>                  streamPtr->dictSize += (U32)inputSize;
+>                  streamPtr->currentOffset += (U32)inputSize;
+> @@ -921,12 +973,12 @@ int LZ4_compress_fast_continue(LZ4_stream_t *LZ4_stream, const char *source,
+>                          result = LZ4_compress_generic(
+>                                  streamPtr, source, dest, inputSize,
+>                                  maxOutputSize, limitedOutput, byU32,
+> -                                usingExtDict, dictSmall, acceleration);
+> +                                usingExtDict, dictSmall, acceleration, NoDynOffset);
+>                  } else {
+>                          result = LZ4_compress_generic(
+>                                  streamPtr, source, dest, inputSize,
+>                                  maxOutputSize, limitedOutput, byU32,
+> -                                usingExtDict, noDictIssue, acceleration);
+> +                                usingExtDict, noDictIssue, acceleration, NoDynOffset);
+>                  }
+>                  streamPtr->dictionary = (const BYTE *)source;
+>                  streamPtr->dictSize = (U32)inputSize;
+> diff --git a/lib/lz4/lz4_decompress.c b/lib/lz4/lz4_decompress.c
+> index 141734d..337a828 100644
+> --- a/lib/lz4/lz4_decompress.c
+> +++ b/lib/lz4/lz4_decompress.c
+> @@ -71,7 +71,9 @@ static FORCE_INLINE int LZ4_decompress_generic(
+>           /* only if dict == usingExtDict */
+>           const BYTE * const dictStart,
+>           /* note : = 0 if noDict */
+> -         const size_t dictSize
+> +         const size_t dictSize,
+> +         /* offset == 1; dynamic offset */
+> +         const Dynamic_Offset dynOffset
+>           )
+>  {
+>          /* Local Variables */
+> @@ -141,8 +143,8 @@ static FORCE_INLINE int LZ4_decompress_generic(
+>                  /* copy literals */
+>                  cpy = op + length;
+>                  if (((endOnInput) && ((cpy > (partialDecoding ? oexit : oend - MFLIMIT))
+> -                        || (ip + length > iend - (2 + 1 + LASTLITERALS))))
+> -                        || ((!endOnInput) && (cpy > oend - WILDCOPYLENGTH))) {
+> +                        || (ip + length > iend - (2 + LASTLITERALS))))
+> +                        || ((!endOnInput) && (cpy > oend - WILDCOPYLENGTH - 1))) {
+>                          if (partialDecoding) {
+>                                  if (cpy > oend) {
+>                                          /*
+> @@ -188,13 +190,31 @@ static FORCE_INLINE int LZ4_decompress_generic(
+>                          break;
+>                  }
+>
+> -                LZ4_wildCopy(op, ip, cpy);
+> +                if (dynOffset && length < 4)
+> +                        LZ4_copy4(op, ip);
+> +                else
+> +                        LZ4_wildCopy(op, ip, cpy);
+> +
+ 
+The LZ4 format enforces that the last 5 bytes are literals so that
+LZ4_wildCopy() can be used here. I suspect that having this extra branch
+here for `dynOffset` mode hurts decompression speed.
+ 
+>                  ip += length;
+>                  op = cpy;
+>
+>                  /* get offset */
+> -                offset = LZ4_readLE16(ip);
+> -                ip += 2;
+> +                if (dynOffset) {
+> +                        /*
+> +                         * Check if DYN_BIT is set, means 2 Byte Offset,
+> +                         * else 1 Byte Offset.
+> +                         */
+> +                        if (*ip & DYN_BIT) {
+> +                                offset = LZ4_readLE16(ip) >> 1;
+> +                                ip += 2;
+> +                        } else {
+> +                                offset = *ip >> 1;
+> +                                ip += 1;
+ 
+If we use the high-bit as the control bit, this branch simply becomes
+`offset = *ip`, though the long offset branch becomes a bit longer.
+ 
+> +                        }
+> +                } else {
+> +                        offset = LZ4_readLE16(ip);
+> +                        ip += 2;
+> +                }
+>                  match = op - offset;
+>
+>                  if ((checkOffset) && (unlikely(match < lowLimit))) {
+> @@ -335,11 +355,11 @@ static FORCE_INLINE int LZ4_decompress_generic(
+>  }
+>
+>  int LZ4_decompress_safe(const char *source, char *dest,
+> -        int compressedSize, int maxDecompressedSize)
+> +        int compressedSize, int maxDecompressedSize, bool dynOffset)
+>  {
+>          return LZ4_decompress_generic(source, dest, compressedSize,
+>                  maxDecompressedSize, endOnInputSize, full, 0,
+> -                noDict, (BYTE *)dest, NULL, 0);
+> +                noDict, (BYTE *)dest, NULL, 0, dynOffset);
+ 
+You'll need to use the same trick that LZ4_compress_fast() uses, by hard
+coding `dynOffset`. We want the compiler to generate too version of
+LZ4_decompress_generic(), one with `dynOffset` and one with `!dynOffset`.
+That way the tight loop won't the branches that check `dynOffset`.
+ 
+        if (dynOffset)
+                return LZ4_decompress_generic(..., true);
+        else
+                return LZ4_decompress_generic(..., false);
+ 
+Without this trick, I expect that this patch causes a regression to both
+LZ4 and LZ4_DYN decompression speed.
+ 
+>  }
+>
+>  int LZ4_decompress_safe_partial(const char *source, char *dest,
+> @@ -347,14 +367,14 @@ int LZ4_decompress_safe_partial(const char *source, char *dest,
+>  {
+>          return LZ4_decompress_generic(source, dest, compressedSize,
+>                  maxDecompressedSize, endOnInputSize, partial,
+> -                targetOutputSize, noDict, (BYTE *)dest, NULL, 0);
+> +                targetOutputSize, noDict, (BYTE *)dest, NULL, 0, NoDynOffset);
+>  }
+>
+>  int LZ4_decompress_fast(const char *source, char *dest, int originalSize)
+>  {
+>          return LZ4_decompress_generic(source, dest, 0, originalSize,
+>                  endOnOutputSize, full, 0, withPrefix64k,
+> -                (BYTE *)(dest - 64 * KB), NULL, 64 * KB);
+> +                (BYTE *)(dest - 64 * KB), NULL, 64 * KB, NoDynOffset);
+>  }
+>
+>  int LZ4_setStreamDecode(LZ4_streamDecode_t *LZ4_streamDecode,
+> @@ -392,7 +412,7 @@ int LZ4_decompress_safe_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+>                          endOnInputSize, full, 0,
+>                          usingExtDict, lz4sd->prefixEnd - lz4sd->prefixSize,
+>                          lz4sd->externalDict,
+> -                        lz4sd->extDictSize);
+> +                        lz4sd->extDictSize, NoDynOffset);
+>
+>                  if (result <= 0)
+>                          return result;
+> @@ -406,7 +426,7 @@ int LZ4_decompress_safe_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+>                          compressedSize, maxOutputSize,
+>                          endOnInputSize, full, 0,
+>                          usingExtDict, (BYTE *)dest,
+> -                        lz4sd->externalDict, lz4sd->extDictSize);
+> +                        lz4sd->externalDict, lz4sd->extDictSize, NoDynOffset);
+>                  if (result <= 0)
+>                          return result;
+>                  lz4sd->prefixSize = result;
+> @@ -427,7 +447,7 @@ int LZ4_decompress_fast_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+>                          endOnOutputSize, full, 0,
+>                          usingExtDict,
+>                          lz4sd->prefixEnd - lz4sd->prefixSize,
+> -                        lz4sd->externalDict, lz4sd->extDictSize);
+> +                        lz4sd->externalDict, lz4sd->extDictSize, NoDynOffset);
+>
+>                  if (result <= 0)
+>                          return result;
+> @@ -440,7 +460,7 @@ int LZ4_decompress_fast_continue(LZ4_streamDecode_t *LZ4_streamDecode,
+>                  result = LZ4_decompress_generic(source, dest, 0, originalSize,
+>                          endOnOutputSize, full, 0,
+>                          usingExtDict, (BYTE *)dest,
+> -                        lz4sd->externalDict, lz4sd->extDictSize);
+> +                        lz4sd->externalDict, lz4sd->extDictSize, NoDynOffset);
+>                  if (result <= 0)
+>                          return result;
+>                  lz4sd->prefixSize = originalSize;
+> @@ -463,19 +483,19 @@ static FORCE_INLINE int LZ4_decompress_usingDict_generic(const char *source,
+>          if (dictSize == 0)
+>                  return LZ4_decompress_generic(source, dest,
+>                          compressedSize, maxOutputSize, safe, full, 0,
+> -                        noDict, (BYTE *)dest, NULL, 0);
+> +                        noDict, (BYTE *)dest, NULL, 0, NoDynOffset);
+>          if (dictStart + dictSize == dest) {
+>                  if (dictSize >= (int)(64 * KB - 1))
+>                          return LZ4_decompress_generic(source, dest,
+>                                  compressedSize, maxOutputSize, safe, full, 0,
+> -                                withPrefix64k, (BYTE *)dest - 64 * KB, NULL, 0);
+> +                                withPrefix64k, (BYTE *)dest - 64 * KB, NULL, 0, NoDynOffset);
+>                  return LZ4_decompress_generic(source, dest, compressedSize,
+>                          maxOutputSize, safe, full, 0, noDict,
+> -                        (BYTE *)dest - dictSize, NULL, 0);
+> +                        (BYTE *)dest - dictSize, NULL, 0, NoDynOffset);
+>          }
+>          return LZ4_decompress_generic(source, dest, compressedSize,
+>                  maxOutputSize, safe, full, 0, usingExtDict,
+> -                (BYTE *)dest, (const BYTE *)dictStart, dictSize);
+> +                (BYTE *)dest, (const BYTE *)dictStart, dictSize, NoDynOffset);
+>  }
+>
+>  int LZ4_decompress_safe_usingDict(const char *source, char *dest,
+> diff --git a/lib/lz4/lz4defs.h b/lib/lz4/lz4defs.h
+> index 00a0b58..9451a73 100644
+> --- a/lib/lz4/lz4defs.h
+> +++ b/lib/lz4/lz4defs.h
+> @@ -75,6 +75,7 @@
+>  #define WILDCOPYLENGTH 8
+>  #define LASTLITERALS 5
+>  #define MFLIMIT (WILDCOPYLENGTH + MINMATCH)
+> +#define DYN_BIT 0x1
+>
+>  /* Increase this value ==> compression run slower on incompressible data */
+>  #define LZ4_SKIPTRIGGER 6
+> @@ -87,6 +88,7 @@
+>
+>  #define MAXD_LOG 16
+>  #define MAX_DISTANCE ((1 << MAXD_LOG) - 1)
+> +#define MAX_DISTANCE_DYN ((1 << (MAXD_LOG - 1)) - 1)
+>  #define STEPSIZE sizeof(size_t)
+>
+>  #define ML_BITS        4
+> @@ -147,6 +149,13 @@ static FORCE_INLINE void LZ4_copy8(void *dst, const void *src)
+>  #endif
+>  }
+>
+> +static FORCE_INLINE void LZ4_copy4(void *dst, const void *src)
+> +{
+> +        U32 a = get_unaligned((const U32 *)src);
+> +
+> +        put_unaligned(a, (U32 *)dst);
+> +}
+> +
+>  /*
+>   * customized variant of memcpy,
+>   * which can overwrite up to 7 bytes beyond dstEnd
+> @@ -224,4 +233,6 @@ static FORCE_INLINE unsigned int LZ4_count(
+>  typedef enum { endOnOutputSize = 0, endOnInputSize = 1 } endCondition_directive;
+>  typedef enum { full = 0, partial = 1 } earlyEnd_directive;
+>
+> +typedef enum { NoDynOffset = 0, DynOffset = 1 } Dynamic_Offset;
+> +
+>  #endif
+> --
+> 1.7.1
+ 
+ 
