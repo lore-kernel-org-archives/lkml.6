@@ -1,62 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753421AbeCVKSr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 06:18:47 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:59957 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752642AbeCVKSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:18:43 -0400
-From: Shaokun Zhang <zhangshaokun@hisilicon.com>
-To: <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
-CC: Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>
-Subject: [PATCH] iommu/vt-d, trivial: Remove unused variable
-Date: Thu, 22 Mar 2018 18:18:06 +0800
-Message-ID: <1521713886-87177-1-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: git-send-email 1.9.1
+        id S1753515AbeCVKTC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 06:19:02 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:53136 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752199AbeCVKS7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 06:18:59 -0400
+X-Google-Smtp-Source: AG47ELsfL30gV18jp4YLwA0kagHpAoEAIiJXrcYlDyMrBfq+n+3e57lGionubgAc++EZMjAx8Oxoa7aPUXIcdyezMIw=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180322095903.h7hgm3xylq3esjyf@vireshk-mac-ubuntu>
+References: <cover.1513926033.git.viresh.kumar@linaro.org> <a7867661e9bc6f5b1571f60398266ef678ccc1c0.1513926033.git.viresh.kumar@linaro.org>
+ <CAPDyKFprVsOd7_nKCXDCxDErh-K+vfaWojqDo0arzt0ZJKCPjQ@mail.gmail.com> <20180322095903.h7hgm3xylq3esjyf@vireshk-mac-ubuntu>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 22 Mar 2018 11:18:58 +0100
+Message-ID: <CAPDyKFqZeOvHy1oY0JnUau17vFTuRBzCjKp+zzpf=tWzAi3cEw@mail.gmail.com>
+Subject: Re: [PATCH 3/7] PM / Domain: Add struct device to genpd
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Kevin Hilman <khilman@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nishanth Menon <nm@ti.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unused after commit <42e8c186b595> ("iommu/vt-d: Simplify io/tlb flushing
-in intel_iommu_unmap"), cleanup it.
+On 22 March 2018 at 10:59, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 22-03-18, 10:30, Ulf Hansson wrote:
+>> On 22 December 2017 at 08:26, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>> > The power-domain core would be using the OPP core going forward and the
+>> > OPP core has the basic requirement of a device structure for its working.
+>>
+>> According to the OPP core also seems to require the ->dev.of_node to
+>> be set. Actually, it seems like that part belongs in patch4 instead,
+>> while starting to make use of the opp OF APIs. Could you please move
+>> it?
+>
+> You meaning setting of the of_node to the next patch? I can do that if that;s
+> what you want.
 
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
----
- drivers/iommu/intel-iommu.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Yes, please.
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 582fd01..d49e0d3 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5072,7 +5072,6 @@ static size_t intel_iommu_unmap(struct iommu_domain *domain,
- {
- 	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
- 	struct page *freelist = NULL;
--	struct intel_iommu *iommu;
- 	unsigned long start_pfn, last_pfn;
- 	unsigned int npages;
- 	int iommu_id, level = 0;
-@@ -5091,12 +5090,9 @@ static size_t intel_iommu_unmap(struct iommu_domain *domain,
- 
- 	npages = last_pfn - start_pfn + 1;
- 
--	for_each_domain_iommu(iommu_id, dmar_domain) {
--		iommu = g_iommus[iommu_id];
--
-+	for_each_domain_iommu(iommu_id, dmar_domain)
- 		iommu_flush_iotlb_psi(g_iommus[iommu_id], dmar_domain,
- 				      start_pfn, npages, !freelist, 0);
--	}
- 
- 	dma_free_pagelist(freelist);
- 
--- 
-1.9.1
+>
+>> > +static struct bus_type genpd_bus_type = {
+>> > +       .name =         "genpd",
+>> > +};
+>>
+>> This seems silly. Can't we just avoid having a bus type altogether,
+>> thus no need to call bus_register() as well?
+>
+> I thought we need a bus where we want to add the device, haven't tried with that
+> pointer being empty. Will try that and let you know.
+
+Great!
+
+>
+>> > +
+>> >  /**
+>> >   * pm_genpd_init - Initialize a generic I/O PM domain object.
+>> >   * @genpd: PM domain object to initialize.
+>> > @@ -1687,6 +1691,18 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
+>> >                         return ret;
+>> >         }
+>> >
+>> > +       genpd->dev.bus = &genpd_bus_type;
+>> > +       device_initialize(&genpd->dev);
+>> > +       dev_set_name(&genpd->dev, "%s", genpd->name);
+>> > +
+>> > +       ret = device_add(&genpd->dev);
+>>
+>> What's the point of adding the device? Can we skip this step, as I
+>> guess the opp core is only using the device as cookie rather actual
+>> using it? No?
+>
+> We also use it for the OPP debugfs stuff, so that would be required I believe.
+
+Right, however, isn't that only using the dev_name(dev), which you
+don't need to add the device to make use of.
+
+Or maybe I missing something around this...
+
+> We also use it for playing with clk/regulator stuff as well, though we may not
+> use it in genpd case for now.
+>
+> --
+> viresh
+
+Kind regards
+Uffe
