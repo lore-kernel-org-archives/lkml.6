@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3048368-1521734013-2-2073140192378962931
+X-Cyrus-Session-Id: sloti22d1t05-3039695-1521733957-2-11937737083823100005
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,22 +14,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521734012; b=utX4eVBa2oskRTtxyWTFGV9yWCCKF/uGswkSN5PgyZoD1t8
-    XeventgqFzwVDdVDR883SoCEq9rOuyrcz5hV2Fv0nXg7O8YPJ8H2yV4n0YnKt/bD
-    PE/mfsa581ntPU4lIy2yw6Yu6EBJ7myh0On428nX//kPcz5ReThEDSbS2qRd1Odd
-    q2EFDBZgj18dV0m6M0ssXovWIG6EX+VKIA35Iun+Qiq/Xc9LTIbYLabQ1qrcjihV
-    k090w38pio7ZeUZMzK8g3hNuEZOSx49Q39K/X54lj30ODagpzbsOsZagVDu3W2i2
-    amWVV4yM+7sTTDGmjyqlOBXiHxYglsSFzYrod/A==
+    t=1521733956; b=PkE6ModTq5z8CBLa92Cv3ucNn1niTeBgYaMhQ4joWjRTSnI
+    jV4PHQWflDFLsCzfQ56daVOu+gd7sEELlycFdJn8ml9vYAm66X/sT2mUNCQQsvZQ
+    qYsQTbGYTBUNunMMCi+3DWTT+Z/kwtKmCbn06uUqlxr6sXEel5v6pGRiW7Ri5KY+
+    s6L9gZLl/GwIcKSl3FLICaZBd1gVWrENReafvrM7l9B0yiJ0VgblZzQAfyXv49BI
+    QTtnSzDVGDwtciWcAsmXV3yo2u47m3IeOwWapbW9saNs+d49dtTsdVtsveI8eJje
+    mqaYzz7C5bMqV8sA7BolqvDVLJCVSzGZT9ujI9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=message-id:in-reply-to:references:from
     :date:subject:to:cc:mime-version:content-type:sender:list-id; s=
-    arctest; t=1521734012; bh=ChXn817dUKpwO+Cs+wl0QaELug5ceH7oxOnFCh
-    lSnZY=; b=CUjoIobC6BeKdEG1JIfIfg40z1G+2f9no6PcvhD60PjYNXmDbQUtT7
-    i7RRP4rmQaR0TEEFUYfIDL0sMNrg4TUAhCKVPn/D8SeE9MWXaIqxyOPVmmA68i3q
-    AoLRu4rsvJ2nzSyZRqW/elvggHRmnbnRhLXvE04YPRXRlOo1WepT+hbcOIdvQM+7
-    nFKpPrXyhbM/GF+QEkFFmRWRUJUGY8X/QVpI5tuyWF8gj2mW5Tdlhy2eqXLh3a10
-    hddI2j4oBarZjE62dixgt/6gs2ISiCDnBq0kt36kzjnezR+NjIYofy9b6wRqwDoZ
-    I9GTxpP5TZ5sHx/zH4lZWVCWvoXVnDnQ==
+    arctest; t=1521733956; bh=FdXPuuUF25YLzE4rwcExW1Jm9ic8yKiMs/Ma5K
+    O34ts=; b=NxoIcyTSF5rBpRi8EcilkahVeku0PC+xB0qtIkXjIK1OrMRjCdE8MX
+    OYahC0n8JMlCzeDOpupghVMsBqtyFOVCU1eO/Ub5kNg+Nld/jgMllQ6l/HLx13KV
+    dhqCfedDxJlSyTQBskxXWVr0weLYwX53VWedx92Iv57dW3fCgzVxcqbM77M/IlzZ
+    Haz8dmPo9JaNEoq5SzoRW/YAmSOKD7oCQf52SfCp34u1EDaAJSGSqK5Gr4GFc2bt
+    BVPr8RJqrr75MLgqz0AyNR93D2whDUKSwdO8ML95Zw/bKahBhPojOrEXK1n0wbaz
+    DK2fDIP+sbRgImL4Y0w0txxfJAG8Bh4w==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=diasemi.com;
@@ -51,40 +51,40 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751753AbeCVPx1 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 22 Mar 2018 11:53:27 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.5]:31082 "EHLO
+        id S1751972AbeCVPwd (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Mar 2018 11:52:33 -0400
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.3]:30715 "EHLO
         mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751752AbeCVPwG (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 22 Mar 2018 11:52:06 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCKsWRWlGSWpSXmKPExsUSt3Opsa7Kxc1
-  RBi+eCFs0L17PZvHm+HQmi67VO1ksrh3rZbK4vGsOm8Xn3iOMFouWtTJbPFl4hsni9O4SB06P
-  Tas62TzmnQz02D93DbvHxnc7mDze77vK5rHzewO7x+dNcgHsUayZeUn5FQmsGc86WAr+l1dsf
-  /yTvYHxcWoXIxeHkMB6RomDR4+xdjFyAjkVEl0LW9hBbF6BTImWk99YQGxOAXeJ+b++MEPUuE
-  nM2feSDcRmE7CQmHziAZjNIqAqMXP2YbAaYYEoiTNP2tlBFogIvGeU+PT4A9ggZoE6id7fb1k
-  gFghKnJz5BCouIXHwxQuoBQYSpxc0gsUlBOwlpr+/ChTnALL1JRqPxUKEDSW+z/oGVWIucXPR
-  HrYJjIKzkEydhWTqAkamVYwWSUWZ6RkluYmZObqGBga6hobGusa6puZ6iVW6iXqppbrJqXklR
-  YlASb3E8mK94src5JwUvbzUkk2MwBhiAIIdjAfPJh5ilORgUhLl/fRiU5QQX1J+SmVGYnFGfF
-  FpTmrxIUYZDg4lCV6GC5ujhASLUtNTK9Iyc4DRDJOW4OBREuEtPw+U5i0uSMwtzkyHSJ1i1OW
-  48eJ1G7MQS15+XqqUOO9VkCIBkKKM0jy4EbDEcolRVkqYlxHoKCGegtSi3MwSVPlXjOIcjErC
-  vE9ApvBk5pXAbXoFdAQT0BHZMzeAHFGSiJCSamAM/8Z52GvGPOkpEVHVl0Me/t97bNO8B349l
-  SZyblPbH060n3XZ4MkVp/OfIpc1+5e6eKmH+RXHtixTUbR3lFT9d/zWK1VBy+L1ub0PlzEZdT
-  7dlJf03HP9++05/c8Ny+dN+LUrZ/UNgWvvD2vuvNmh73pnTdOv3ZmL9+znnOhxcknvR8WLD2P
-  uK7EUZyQaajEXFScCAKOAuSInAwAA
+        by vger.kernel.org with ESMTP id S1751840AbeCVPwI (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 22 Mar 2018 11:52:08 -0400
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKKsWRWlGSWpSXmKPExsUSt3Opsa7axc1
+  RBudXclo0L17PZvHm+HQmi67VO1ksrh3rZbK4vGsOm8Xn3iOMFouWtTJbPFl4hsni9O4SB06P
+  Tas62TzmnQz02D93DbvHxnc7mDze77vK5rHzewO7x+dNcgHsUayZeUn5FQmsGS9fbmUveGxeM
+  Wn2CuYGxq36XYycHEIC6xklXk11hLArJN7cv8UMYvMKZEqc/TiJEcTmFHCXmP/rCzNEjZvEnH
+  0v2UBsNgELicknHoDZLAKqElM/HGUFsYUFgiWedH4CinNxiAi8Z5T49PgDC0iCWaBOovf3Wxa
+  IBYISJ2c+gYpLSBx88QJqgYHE6QWNYHEJAXuJ6e+vAsU5gGx9icZjsRBhQ4nvs75BlZhL3Fy0
+  h20Co+AsJFNnIZm6gJFpFaNlUlFmekZJbmJmjq6hgYGuoaGxrpGukaGxXmKVbqJeaqlucmpeS
+  VEiUFYvsbxYr7gyNzknRS8vtWQTIzCKGIBgB+Phs4mHGCU5mJREeT+92BQlxJeUn1KZkVicEV
+  9UmpNafIhRhoNDSYLX+8LmKCHBotT01Iq0zBxgPMOkJTh4lER4U0DSvMUFibnFmekQqVOMuhw
+  3XrxuYxZiycvPS5US5w0BKRIAKcoozYMbAUstlxhlpYR5GYGOEuIpSC3KzSxBlX/FKM7BqCTM
+  Kw8yhSczrwRu0yugI5iAjsieuQHkiJJEhJRUA2Pt5urEybvLzucH7HBQ7t0udFt5YrFQReV98
+  7xHswtTony1Uo4Wys+v/+e/Jsjthlt2yJbJOgIN5hcin/EfPv7j0LM1dhes0p74S9uZLPuzgW
+  +G7gn2pUVvcy9sdfj1PH/56/v81z2K6r+HN4v+ThSsytKYveTd0XPJX/dtmBOTtWNjnMg55XQ
+  lluKMREMt5qLiRAChl9cMKAMAAA==
 X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-5.tower-223.messagelabs.com!1521733923!638150!1
+X-Msg-Ref: server-46.tower-223.messagelabs.com!1521733925!637796!1
 X-Originating-IP: [94.185.165.51]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.9.15; banners=-,-,-
 X-VirusChecked: Checked
-Message-ID: <3f4cb5e3e32464cd44579dac3504aa2ecc626777.1521732966.git.Adam.Thomson.Opensource@diasemi.com>
+Message-ID: <48b526624feacbb01829c92ce3231a630f482ad3.1521732966.git.Adam.Thomson.Opensource@diasemi.com>
 In-Reply-To: <cover.1521732966.git.Adam.Thomson.Opensource@diasemi.com>
 References: <cover.1521732966.git.Adam.Thomson.Opensource@diasemi.com>
 From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Thu, 22 Mar 2018 15:52:03 +0000
-Subject: [PATCH v6 2/6] Documentation: power: Initial effort to document
- power_supply ABI
+Date: Thu, 22 Mar 2018 15:52:05 +0000
+Subject: [PATCH v6 4/6] power: supply: Add 'usb_type' property and supporting
+ code
 To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Guenter Roeck <linux@roeck-us.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -104,480 +104,203 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit adds generic ABI information regarding power_supply
-properties. This is an initial attempt to try and align the usage
-of these properties between drivers. As part of this commit,
-common Battery and USB related properties have been listed.
+This commit adds the 'usb_type' property to represent USB supplies
+which can report a number of different types based on a connection
+event.
+
+Examples of this already exist in drivers whereby the existing 'type'
+property is updated, based on an event, to represent what was
+connected (e.g. USB, USB_DCP, USB_ACA, ...). Current implementations
+however don't show all supported connectable types, so this knowledge
+has to be exlicitly known for each driver that supports this.
+
+The 'usb_type' property is intended to fill this void and show users
+all possible USB types supported by a driver. The property, when read,
+shows all available types for the driver, and the one currently chosen
+is highlighted/bracketed. It is expected that the 'type' property
+would then just show the top-level type 'USB', and this would be
+static.
+
+Currently the 'usb_type' enum contains all of the USB variant types
+that exist for the 'type' enum at this time, and in addition has
+SDP and PPS types. The mirroring is intentional so as to not impact
+existing usage of the 'type' property.
 
 Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 ---
- Documentation/ABI/testing/sysfs-class-power | 443 ++++++++++++++++++++++++++++
- MAINTAINERS                                 |   1 +
- 2 files changed, 444 insertions(+)
+ Documentation/ABI/testing/sysfs-class-power | 12 ++++++++
+ drivers/power/supply/power_supply_core.c    |  8 ++++-
+ drivers/power/supply/power_supply_sysfs.c   | 45 +++++++++++++++++++++++++++++
+ include/linux/power_supply.h                | 16 ++++++++++
+ 4 files changed, 80 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentation/ABI/testing/sysfs-class-power
-index f85ce9e..e046566 100644
+index e046566..5e23e22 100644
 --- a/Documentation/ABI/testing/sysfs-class-power
 +++ b/Documentation/ABI/testing/sysfs-class-power
-@@ -1,3 +1,446 @@
-+===== General Properties =====
-+
-+What:		/sys/class/power_supply/<supply_name>/manufacturer
-+Date:		May 2007
+@@ -409,6 +409,18 @@ Description:
+ 		Access: Read
+ 		Valid values: Represented in 1/10 Degrees Celsius
+ 
++What: 		/sys/class/power_supply/<supply_name>/usb_type
++Date:		March 2018
 +Contact:	linux-pm@vger.kernel.org
 +Description:
-+		Reports the name of the device manufacturer.
-+
-+		Access: Read
-+		Valid values: Represented as string
-+
-+What:		/sys/class/power_supply/<supply_name>/model_name
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the name of the device model.
-+
-+		Access: Read
-+		Valid values: Represented as string
-+
-+What:		/sys/class/power_supply/<supply_name>/serial_number
-+Date:		January 2008
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the serial number of the device.
-+
-+		Access: Read
-+		Valid values: Represented as string
-+
-+What:		/sys/class/power_supply/<supply_name>/type
-+Date:		May 2010
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Describes the main type of the supply.
-+
-+		Access: Read
-+		Valid values: "Battery", "UPS", "Mains", "USB"
-+
-+===== Battery Properties =====
-+
-+What:		/sys/class/power_supply/<supply_name>/capacity
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Fine grain representation of battery capacity.
-+		Access: Read
-+		Valid values: 0 - 100 (percent)
-+
-+What:		/sys/class/power_supply/<supply_name>/capacity_alert_max
-+Date:		July 2012
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Maximum battery capacity trip-wire value where the supply will
-+		notify user-space of the event. This is normally used for the
-+		battery discharging scenario where user-space needs to know the
-+		battery has dropped to an upper level so it can take
-+		appropriate action (e.g. warning user that battery level is
-+		low).
-+
-+		Access: Read, Write
-+		Valid values: 0 - 100 (percent)
-+
-+What:		/sys/class/power_supply/<supply_name>/capacity_alert_min
-+Date:		July 2012
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Minimum battery capacity trip-wire value where the supply will
-+		notify user-space of the event. This is normally used for the
-+		battery discharging scenario where user-space needs to know the
-+		battery has dropped to a lower level so it can take
-+		appropriate action (e.g. warning user that battery level is
-+		critically low).
-+
-+		Access: Read, Write
-+		Valid values: 0 - 100 (percent)
-+
-+What:		/sys/class/power_supply/<supply_name>/capacity_level
-+Date:		June 2009
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Coarse representation of battery capacity.
-+
-+		Access: Read
-+		Valid values: "Unknown", "Critical", "Low", "Normal", "High",
-+			      "Full"
-+
-+What:		/sys/class/power_supply/<supply_name>/current_avg
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports an average IBAT current reading for the battery, over a
-+		fixed period. Normally devices will provide a fixed interval in
-+		which they average readings to smooth out the reported value.
-+
-+		Access: Read
-+		Valid values: Represented in microamps
-+
-+What:		/sys/class/power_supply/<supply_name>/current_max
-+Date:		October 2010
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the maximum IBAT current allowed into the battery.
-+
-+		Access: Read
-+		Valid values: Represented in microamps
-+
-+What:		/sys/class/power_supply/<supply_name>/current_now
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports an instant, single IBAT current reading for the battery.
-+		This value is not averaged/smoothed.
-+
-+		Access: Read
-+		Valid values: Represented in microamps
-+
-+What:		/sys/class/power_supply/<supply_name>/charge_type
-+Date:		July 2009
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Represents the type of charging currently being applied to the
-+		battery.
-+
-+		Access: Read
-+		Valid values: "Unknown", "N/A", "Trickle", "Fast"
-+
-+What:		/sys/class/power_supply/<supply_name>/charge_term_current
-+Date:		July 2014
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the charging current value which is used to determine
-+		when the battery is considered full and charging should end.
-+
-+		Access: Read
-+		Valid values: Represented in microamps
-+
-+What:		/sys/class/power_supply/<supply_name>/health
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the health of the battery or battery side of charger
-+		functionality.
-+
-+		Access: Read
-+		Valid values: "Unknown", "Good", "Overheat", "Dead",
-+			      "Over voltage", "Unspecified failure", "Cold",
-+			      "Watchdog timer expire", "Safety timer expire"
-+
-+What:		/sys/class/power_supply/<supply_name>/precharge_current
-+Date:		June 2017
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the charging current applied during pre-charging phase
-+		for a battery charge cycle.
-+
-+		Access: Read
-+		Valid values: Represented in microamps
-+
-+What:		/sys/class/power_supply/<supply_name>/present
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports whether a battery is present or not in the system.
-+
-+		Access: Read
-+		Valid values:
-+			0: Absent
-+			1: Present
-+
-+What:		/sys/class/power_supply/<supply_name>/status
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Represents the charging status of the battery. Normally this
-+		is read-only reporting although for some supplies this can be
-+		used to enable/disable charging to the battery.
-+
-+		Access: Read, Write
-+		Valid values: "Unknown", "Charging", "Discharging",
-+			      "Not charging", "Full"
-+
-+What:		/sys/class/power_supply/<supply_name>/technology
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Describes the battery technology supported by the supply.
-+
-+		Access: Read
-+		Valid values: "Unknown", "NiMH", "Li-ion", "Li-poly", "LiFe",
-+			      "NiCd", "LiMn"
-+
-+What:		/sys/class/power_supply/<supply_name>/temp
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the current TBAT battery temperature reading.
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What:		/sys/class/power_supply/<supply_name>/temp_alert_max
-+Date:		July 2012
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Maximum TBAT temperature trip-wire value where the supply will
-+		notify user-space of the event. This is normally used for the
-+		battery charging scenario where user-space needs to know the
-+		battery temperature has crossed an upper threshold so it can
-+		take appropriate action (e.g. warning user that battery level is
-+		critically high, and charging has stopped).
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What:		/sys/class/power_supply/<supply_name>/temp_alert_min
-+Date:		July 2012
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Minimum TBAT temperature trip-wire value where the supply will
-+		notify user-space of the event. This is normally used for the
-+		battery charging scenario where user-space needs to know the
-+		battery temperature has crossed a lower threshold so it can take
-+		appropriate action (e.g. warning user that battery level is
-+		high, and charging current has been reduced accordingly to
-+		remedy the situation).
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What:		/sys/class/power_supply/<supply_name>/temp_max
-+Date:		July 2014
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the maximum allowed TBAT battery temperature for
-+		charging.
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What:		/sys/class/power_supply/<supply_name>/temp_min
-+Date:		July 2014
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the minimum allowed TBAT battery temperature for
-+		charging.
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What:		/sys/class/power_supply/<supply_name>/voltage_avg,
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports an average VBAT voltage reading for the battery, over a
-+		fixed period. Normally devices will provide a fixed interval in
-+		which they average readings to smooth out the reported value.
-+
-+		Access: Read
-+		Valid values: Represented in microvolts
-+
-+What:		/sys/class/power_supply/<supply_name>/voltage_max,
-+Date:		January 2008
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the maximum safe VBAT voltage permitted for the battery,
-+		during charging.
-+
-+		Access: Read
-+		Valid values: Represented in microvolts
-+
-+What:		/sys/class/power_supply/<supply_name>/voltage_min,
-+Date:		January 2008
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the minimum safe VBAT voltage permitted for the battery,
-+		during discharging.
-+
-+		Access: Read
-+		Valid values: Represented in microvolts
-+
-+What:		/sys/class/power_supply/<supply_name>/voltage_now,
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports an instant, single VBAT voltage reading for the battery.
-+		This value is not averaged/smoothed.
-+
-+		Access: Read
-+		Valid values: Represented in microvolts
-+
-+===== USB Properties =====
-+
-+What: 		/sys/class/power_supply/<supply_name>/current_avg
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports an average IBUS current reading over a fixed period.
-+		Normally devices will provide a fixed interval in which they
-+		average readings to smooth out the reported value.
-+
-+		Access: Read
-+		Valid values: Represented in microamps
-+
-+
-+What: 		/sys/class/power_supply/<supply_name>/current_max
-+Date:		October 2010
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the maximum IBUS current the supply can support.
-+
-+		Access: Read
-+		Valid values: Represented in microamps
-+
-+What: 		/sys/class/power_supply/<supply_name>/current_now
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the IBUS current supplied now. This value is generally
-+		read-only reporting, unless the 'online' state of the supply
-+		is set to be programmable, in which case this value can be set
-+		within the reported min/max range.
-+
-+		Access: Read, Write
-+		Valid values: Represented in microamps
-+
-+What:		/sys/class/power_supply/<supply_name>/input_current_limit
-+Date:		July 2014
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Details the incoming IBUS current limit currently set in the
-+		supply. Normally this is configured based on the type of
-+		connection made (e.g. A configured SDP should output a maximum
-+		of 500mA so the input current limit is set to the same value).
-+
-+		Access: Read, Write
-+		Valid values: Represented in microamps
-+
-+What:		/sys/class/power_supply/<supply_name>/online,
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Indicates if VBUS is present for the supply. When the supply is
-+		online, and the supply allows it, then it's possible to switch
-+		between online states (e.g. Fixed -> Programmable for a PD_PPS
-+		USB supply so voltage and current can be controlled).
-+
-+		Access: Read, Write
-+		Valid values:
-+			0: Offline
-+			1: Online Fixed - Fixed Voltage Supply
-+			2: Online Programmable - Programmable Voltage Supply
-+
-+What:		/sys/class/power_supply/<supply_name>/temp
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the current supply temperature reading. This would
-+		normally be the internal temperature of the device itself (e.g
-+		TJUNC temperature of an IC)
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What:		/sys/class/power_supply/<supply_name>/temp_alert_max
-+Date:		July 2012
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Maximum supply temperature trip-wire value where the supply will
-+		notify user-space of the event. This is normally used for the
-+		charging scenario where user-space needs to know the supply
-+		temperature has crossed an upper threshold so it can take
-+		appropriate action (e.g. warning user that the supply
-+		temperature is critically high, and charging has stopped to
-+		remedy the situation).
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What:		/sys/class/power_supply/<supply_name>/temp_alert_min
-+Date:		July 2012
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Minimum supply temperature trip-wire value where the supply will
-+		notify user-space of the event. This is normally used for the
-+		charging scenario where user-space needs to know the supply
-+		temperature has crossed a lower threshold so it can take
-+		appropriate action (e.g. warning user that the supply
-+		temperature is high, and charging current has been reduced
-+		accordingly to remedy the situation).
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What:		/sys/class/power_supply/<supply_name>/temp_max
-+Date:		July 2014
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the maximum allowed supply temperature for operation.
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What:		/sys/class/power_supply/<supply_name>/temp_min
-+Date:		July 2014
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the mainimum allowed supply temperature for operation.
-+
-+		Access: Read
-+		Valid values: Represented in 1/10 Degrees Celsius
-+
-+What: 		/sys/class/power_supply/<supply_name>/voltage_max
-+Date:		January 2008
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the maximum VBUS voltage the supply can support.
-+
-+		Access: Read
-+		Valid values: Represented in microvolts
-+
-+What: 		/sys/class/power_supply/<supply_name>/voltage_min
-+Date:		January 2008
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the minimum VBUS voltage the supply can support.
-+
-+		Access: Read
-+		Valid values: Represented in microvolts
-+
-+What: 		/sys/class/power_supply/<supply_name>/voltage_now
-+Date:		May 2007
-+Contact:	linux-pm@vger.kernel.org
-+Description:
-+		Reports the VBUS voltage supplied now. This value is generally
-+		read-only reporting, unless the 'online' state of the supply
-+		is set to be programmable, in which case this value can be set
-+		within the reported min/max range.
-+
-+		Access: Read, Write
-+		Valid values: Represented in microvolts
-+
-+===== Device Specific Properties =====
-+
- What:		/sys/class/power/ds2760-battery.*/charge_now
- Date:		May 2010
- KernelVersion:	2.6.35
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2bee7ac..5bb0a10 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11098,6 +11098,7 @@ M:	Sebastian Reichel <sre@kernel.org>
- L:	linux-pm@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
- S:	Maintained
-+F:	Documentation/ABI/testing/sysfs-class-power
- F:	Documentation/devicetree/bindings/power/supply/
- F:	include/linux/power_supply.h
- F:	drivers/power/supply/
++		Reports what type of USB connection is currently active for
++		the supply, for example it can show if USB-PD capable source
++		is attached.
++
++		Access: Read-Only
++		Valid values: "Unknown", "SDP", "DCP", "CDP", "ACA", "C", "PD",
++			      "PD_DRP", "PD_PPS", "BrickID"
++
+ What: 		/sys/class/power_supply/<supply_name>/voltage_max
+ Date:		January 2008
+ Contact:	linux-pm@vger.kernel.org
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index 64f6449..dff2bbb 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -843,7 +843,7 @@ static void psy_unregister_cooler(struct power_supply *psy)
+ {
+ 	struct device *dev;
+ 	struct power_supply *psy;
+-	int rc;
++	int i, rc;
+ 
+ 	if (!parent)
+ 		pr_warn("%s: Expected proper parent device for '%s'\n",
+@@ -852,6 +852,12 @@ static void psy_unregister_cooler(struct power_supply *psy)
+ 	if (!desc || !desc->name || !desc->properties || !desc->num_properties)
+ 		return ERR_PTR(-EINVAL);
+ 
++	for (i = 0; i < desc->num_properties; ++i) {
++		if ((desc->properties[i] == POWER_SUPPLY_PROP_USB_TYPE) &&
++		    (!desc->usb_types || !desc->num_usb_types))
++			return ERR_PTR(-EINVAL);
++	}
++
+ 	psy = kzalloc(sizeof(*psy), GFP_KERNEL);
+ 	if (!psy)
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+index 5204f11..1350068 100644
+--- a/drivers/power/supply/power_supply_sysfs.c
++++ b/drivers/power/supply/power_supply_sysfs.c
+@@ -46,6 +46,11 @@
+ 	"USB_PD", "USB_PD_DRP", "BrickID"
+ };
+ 
++static const char * const power_supply_usb_type_text[] = {
++	"Unknown", "SDP", "DCP", "CDP", "ACA", "C",
++	"PD", "PD_DRP", "PD_PPS", "BrickID"
++};
++
+ static const char * const power_supply_status_text[] = {
+ 	"Unknown", "Charging", "Discharging", "Not charging", "Full"
+ };
+@@ -73,6 +78,41 @@
+ 	"Unknown", "System", "Device"
+ };
+ 
++static ssize_t power_supply_show_usb_type(struct device *dev,
++					  enum power_supply_usb_type *usb_types,
++					  ssize_t num_usb_types,
++					  union power_supply_propval *value,
++					  char *buf)
++{
++	enum power_supply_usb_type usb_type;
++	ssize_t count = 0;
++	bool match = false;
++	int i;
++
++	for (i = 0; i < num_usb_types; ++i) {
++		usb_type = usb_types[i];
++
++		if (value->intval == usb_type) {
++			count += sprintf(buf + count, "[%s] ",
++					 power_supply_usb_type_text[usb_type]);
++			match = true;
++		} else {
++			count += sprintf(buf + count, "%s ",
++					 power_supply_usb_type_text[usb_type]);
++		}
++	}
++
++	if (!match) {
++		dev_warn(dev, "driver reporting unsupported connected type\n");
++		return -EINVAL;
++	}
++
++	if (count)
++		buf[count - 1] = '\n';
++
++	return count;
++}
++
+ static ssize_t power_supply_show_property(struct device *dev,
+ 					  struct device_attribute *attr,
+ 					  char *buf) {
+@@ -115,6 +155,10 @@ static ssize_t power_supply_show_property(struct device *dev,
+ 	else if (off == POWER_SUPPLY_PROP_TYPE)
+ 		return sprintf(buf, "%s\n",
+ 			       power_supply_type_text[value.intval]);
++	else if (off == POWER_SUPPLY_PROP_USB_TYPE)
++		return power_supply_show_usb_type(dev, psy->desc->usb_types,
++						  psy->desc->num_usb_types,
++						  &value, buf);
+ 	else if (off == POWER_SUPPLY_PROP_SCOPE)
+ 		return sprintf(buf, "%s\n",
+ 			       power_supply_scope_text[value.intval]);
+@@ -241,6 +285,7 @@ static ssize_t power_supply_store_property(struct device *dev,
+ 	POWER_SUPPLY_ATTR(time_to_full_now),
+ 	POWER_SUPPLY_ATTR(time_to_full_avg),
+ 	POWER_SUPPLY_ATTR(type),
++	POWER_SUPPLY_ATTR(usb_type),
+ 	POWER_SUPPLY_ATTR(scope),
+ 	POWER_SUPPLY_ATTR(precharge_current),
+ 	POWER_SUPPLY_ATTR(charge_term_current),
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 79e90b3..4ca8876 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -145,6 +145,7 @@ enum power_supply_property {
+ 	POWER_SUPPLY_PROP_TIME_TO_FULL_NOW,
+ 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
+ 	POWER_SUPPLY_PROP_TYPE, /* use power_supply.type instead */
++	POWER_SUPPLY_PROP_USB_TYPE,
+ 	POWER_SUPPLY_PROP_SCOPE,
+ 	POWER_SUPPLY_PROP_PRECHARGE_CURRENT,
+ 	POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
+@@ -170,6 +171,19 @@ enum power_supply_type {
+ 	POWER_SUPPLY_TYPE_APPLE_BRICK_ID,	/* Apple Charging Method */
+ };
+ 
++enum power_supply_usb_type {
++	POWER_SUPPLY_USB_TYPE_UNKNOWN = 0,
++	POWER_SUPPLY_USB_TYPE_SDP,		/* Standard Downstream Port */
++	POWER_SUPPLY_USB_TYPE_DCP,		/* Dedicated Charging Port */
++	POWER_SUPPLY_USB_TYPE_CDP,		/* Charging Downstream Port */
++	POWER_SUPPLY_USB_TYPE_ACA,		/* Accessory Charger Adapters */
++	POWER_SUPPLY_USB_TYPE_C,		/* Type C Port */
++	POWER_SUPPLY_USB_TYPE_PD,		/* Power Delivery Port */
++	POWER_SUPPLY_USB_TYPE_PD_DRP,		/* PD Dual Role Port */
++	POWER_SUPPLY_USB_TYPE_PD_PPS,		/* PD Programmable Power Supply */
++	POWER_SUPPLY_USB_TYPE_APPLE_BRICK_ID,	/* Apple Charging Method */
++};
++
+ enum power_supply_notifier_events {
+ 	PSY_EVENT_PROP_CHANGED,
+ };
+@@ -196,6 +210,8 @@ struct power_supply_config {
+ struct power_supply_desc {
+ 	const char *name;
+ 	enum power_supply_type type;
++	enum power_supply_usb_type *usb_types;
++	size_t num_usb_types;
+ 	enum power_supply_property *properties;
+ 	size_t num_properties;
+ 
 -- 
 1.9.1
 
