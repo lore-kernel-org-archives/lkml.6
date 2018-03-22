@@ -1,41 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932405AbeCVOUg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 10:20:36 -0400
-Received: from mail-ot0-f177.google.com ([74.125.82.177]:45887 "EHLO
-        mail-ot0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754571AbeCVOUd (ORCPT
+        id S932494AbeCVOWj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 10:22:39 -0400
+Received: from forward106p.mail.yandex.net ([77.88.28.109]:56167 "EHLO
+        forward106p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932482AbeCVOWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:20:33 -0400
-X-Google-Smtp-Source: AG47ELugXkSU8f7IJPw8FCSLKKQzn9grGxXlp3U6mDzH5Xj3DHQ2oaL7JJpCya9KzvZsRfVOAyB4ZnI5bO7/sAe45Q4=
-MIME-Version: 1.0
-In-Reply-To: <1521712529-632-2-git-send-email-abel.vesa@nxp.com>
-References: <1521712529-632-1-git-send-email-abel.vesa@nxp.com> <1521712529-632-2-git-send-email-abel.vesa@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 22 Mar 2018 11:20:32 -0300
-Message-ID: <CAOMZO5DdBv0oisdRt01O-VnF_5b1oL6d2a0JGyieOiNvrut=Qg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] arm: imx: Update clk driver API
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Yongcai Huang <anson.huang@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 22 Mar 2018 10:22:35 -0400
+Authentication-Results: smtp2j.mail.yandex.net; dkim=pass header.i=@flygoat.com
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+To: jhogan@kernel.org
+Cc: chenhc@lemote.com, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v2 1/2] MIPS: Introduce has_cpu_mips*_user in cpu-features.h
+Date: Thu, 22 Mar 2018 22:22:14 +0800
+Message-Id: <20180322142215.7705-1-jiaxun.yang@flygoat.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180321145304.4639-1-jiaxun.yang@flygoat.com>
+References: <20180321145304.4639-1-jiaxun.yang@flygoat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 6:55 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
-> This adds the following new wrappers:
->  - imx_clk_gate2_flag
->  - imx_clk_set_parent
->
-> It also updates the flags for the old wrappers.
+Some processors support user mode instructions ISA level which is
+different with the ISA level it should be treated in kernel, such
+as Loongson 3A1000 3B1000 3A1500 3B1500 support all mips64r2 user
+mode instructions however, they should be treated as mips64r1 in
+kernel.
 
-This flag update should also be a separate patch and you should
-explain the reason for it.
+So we introduce has_cpu_mips*_user to decide which level should be
+displayed in cpuinfo to prevent misleading userspace programs.
+
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ arch/mips/include/asm/cpu-features.h | 39 ++++++++++++++++++++++++++++++++++++
+ arch/mips/kernel/proc.c              | 22 ++++++++++----------
+ 2 files changed, 50 insertions(+), 11 deletions(-)
+
+diff --git a/arch/mips/include/asm/cpu-features.h b/arch/mips/include/asm/cpu-features.h
+index 721b698bfe3c..0eff1956e229 100644
+--- a/arch/mips/include/asm/cpu-features.h
++++ b/arch/mips/include/asm/cpu-features.h
+@@ -251,6 +251,45 @@
+ # define cpu_has_mips64r6	(cpu_data[0].isa_level & MIPS_CPU_ISA_M64R6)
+ #endif
+ 
++/*
++ * For the CPU that has a user mode instructions ISA level which is different
++ * from the ISA level it should be treated in kernel, this ISA level will
++ * be displayed in cpuinfo as a reference for userspace programs.
++ */
++#ifndef cpu_has_mips_1_user
++# define cpu_has_mips_1_user		(cpu_has_mips_1)
++#endif
++#ifndef cpu_has_mips_2_user
++# define cpu_has_mips_2_user		(cpu_has_mips_2)
++#endif
++#ifndef cpu_has_mips_3_user
++# define cpu_has_mips_3_user		(cpu_has_mips_3)
++#endif
++#ifndef cpu_has_mips_4_user
++# define cpu_has_mips_4_user		(cpu_has_mips_4)
++#endif
++#ifndef cpu_has_mips_5_user
++# define cpu_has_mips_5_user		(cpu_has_mips_5)
++#endif
++#ifndef cpu_has_mips32r1_user
++# define cpu_has_mips32r1_user	(cpu_has_mips32r1)
++#endif
++#ifndef cpu_has_mips32r2_user
++# define cpu_has_mips32r2_user	(cpu_has_mips32r2)
++#endif
++#ifndef cpu_has_mips32r6_user
++# define cpu_has_mips32r6_user	(cpu_has_mips32r6)
++#endif
++#ifndef cpu_has_mips64r1_user
++# define cpu_has_mips64r1_user	(cpu_has_mips64r1)
++#endif
++#ifndef cpu_has_mips64r2_user
++# define cpu_has_mips64r2_user	(cpu_has_mips64r2)
++#endif
++#ifndef cpu_has_mips64r6_user
++# define cpu_has_mips64r6_user	(cpu_has_mips64r6)
++#endif
++
+ /*
+  * Shortcuts ...
+  */
+diff --git a/arch/mips/kernel/proc.c b/arch/mips/kernel/proc.c
+index b2de408a259e..65a9a695af3c 100644
+--- a/arch/mips/kernel/proc.c
++++ b/arch/mips/kernel/proc.c
+@@ -84,27 +84,27 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+ 	}
+ 
+ 	seq_printf(m, "isa\t\t\t:"); 
+-	if (cpu_has_mips_1)
++	if (cpu_has_mips_1_user)
+ 		seq_printf(m, " mips1");
+-	if (cpu_has_mips_2)
++	if (cpu_has_mips_2_user)
+ 		seq_printf(m, "%s", " mips2");
+-	if (cpu_has_mips_3)
++	if (cpu_has_mips_3_user)
+ 		seq_printf(m, "%s", " mips3");
+-	if (cpu_has_mips_4)
++	if (cpu_has_mips_4_user)
+ 		seq_printf(m, "%s", " mips4");
+-	if (cpu_has_mips_5)
++	if (cpu_has_mips_5_user)
+ 		seq_printf(m, "%s", " mips5");
+-	if (cpu_has_mips32r1)
++	if (cpu_has_mips32r1_user)
+ 		seq_printf(m, "%s", " mips32r1");
+-	if (cpu_has_mips32r2)
++	if (cpu_has_mips32r2_user)
+ 		seq_printf(m, "%s", " mips32r2");
+-	if (cpu_has_mips32r6)
++	if (cpu_has_mips32r6_user)
+ 		seq_printf(m, "%s", " mips32r6");
+-	if (cpu_has_mips64r1)
++	if (cpu_has_mips64r1_user)
+ 		seq_printf(m, "%s", " mips64r1");
+-	if (cpu_has_mips64r2)
++	if (cpu_has_mips64r2_user)
+ 		seq_printf(m, "%s", " mips64r2");
+-	if (cpu_has_mips64r6)
++	if (cpu_has_mips64r6_user)
+ 		seq_printf(m, "%s", " mips64r6");
+ 	seq_printf(m, "\n");
+ 
+-- 
+2.16.2
