@@ -1,98 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751883AbeCVRBA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 13:01:00 -0400
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:44958 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751375AbeCVRA6 (ORCPT
+        id S1751943AbeCVRBT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 13:01:19 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:47772 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751898AbeCVRBQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 13:00:58 -0400
-X-Google-Smtp-Source: AG47ELtI4YLmDUeN6qOlsFLDwZ2nIXTiV859ckB87iRSEURmTuemZk4RjPBizwPcBwAIbY/sf+hdjg==
-Subject: Re: problem with bio handling on raid5 and pblk
-To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>,
-        Jens Axboe <axboe@kernel.dk>, shli@kernel.org
-Cc: linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Huaicheng Li <huaicheng@cs.uchicago.edu>
-References: <66350920-EC5E-447F-B5DF-0F3C2CDEAA65@javigon.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <97678ddd-140f-5a8b-75ee-cbb584308260@lightnvm.io>
-Date: Thu, 22 Mar 2018 18:00:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <66350920-EC5E-447F-B5DF-0F3C2CDEAA65@javigon.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        Thu, 22 Mar 2018 13:01:16 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2MH0Mr2012430
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Michal Marek <michal.lkml@markovi.net>,
+        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] kconfig: remove duplicated file name and lineno of recursive inclusion
+Date: Fri, 23 Mar 2018 02:00:12 +0900
+Message-Id: <1521738014-18895-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/22/2018 03:34 PM, Javier González wrote:
-> Hi,
-> 
-> I have been looking into a bug report when using pblk and raid5 on top
-> and I am having problems understanding if the problem is in pblk's bio
-> handling or on raid5's bio assumptions on the completion path.
-> 
-> The problem occurs on the read path. In pblk, we take a reference to
-> every read bio as it enters, and release it after completing the bio.
-> 
->     generic_make_request()
->     pblk_submit_read()
->       bio_get()
->       ...
->       bio_endio()
->       bio_put()
-> 
-> The problem seems to be that on raid5's bi_end_io completion path,
-> raid5_end_read_request(), bio_reset() is called. When put together
-> with pblk's bio handling:
-> 
->     generic_make_request()
->     pblk_submit_read()
->       bio_get()
->       ...
->       bio_endio()
->       raid5_end_read_request()
->         bio_reset()
->       bio_put()
-> 
-> it results in the newly reset bio being put immediately, thus freed.
-> When the bio is reused then, we have an invalid pointer. In the report
-> we received things crash at BUG_ON(bio->bi_next) at
-> generic_make_request().
-> 
-> As far as I understand, it is part of the bio normal operation for
-> drivers under generic_make_request() to be able to take references and
-> release them after bio completion. Thus, in this case, the assumption
-> made by raid5, that it can issue a bio_reset() is incorrect. But I might
-> be missing an implicit cross layer rule that we are violating in pblk.
-> Any ideas?
-> 
-> This said, after analyzing the problem from pblk's perspective, I see
-> not reason to use bio_get()/bio_put() in the read path as it is at the
-> pblk level that we are submitting bio_endio(), thus we cannot risk the
-> bio being freed underneath us. Is this reasoning correct? I remember I
-> introduced these at the time there was a bug on the aio path, which was
-> not cleaning up correctly and could trigger an early bio free, but
-> revisiting it now, it seems unnecessary.
-> 
-> Thanks for the help!
-> 
-> Javier
-> 
+As in the unit test, the error message for the recursive inclusion
+looks like this:
 
-I think I sent a longer e-mail to you and Huaicheng about this a while 
-back.
+  Kconfig.inc1:4: recursive inclusion detected. Inclusion path:
+    current file : 'Kconfig.inc1'
+    included from: 'Kconfig.inc3:1'
+    included from: 'Kconfig.inc2:3'
+    included from: 'Kconfig.inc1:4'
 
-The problem is that the pblk encapsulates the bio in its own request. So 
-the bio's are freed before the struct request completion is done (as you 
-identify). If you can make the completion path (as bio's are completed 
-before the struct request completion fn is called) to not use the bio, 
-then the bio_get/put code can be removed.
+The 'Kconfig.inc1:4' is duplicated in the first and last lines.
+Also, the single quotes do not help readability.
 
-If it needs the bio on the completion path (e.g., for partial reads, and 
-if needed in the struct request completion path), one should clone the 
-bio, submit, and complete the original bio afterwards.
+Change the message like follows:
+
+  Recursive inclusion detected.
+  Inclusion path:
+    current file : Kconfig.inc1
+    included from: Kconfig.inc3:1
+    included from: Kconfig.inc2:3
+    included from: Kconfig.inc1:4
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/kconfig/tests/err_recursive_inc/expected_stderr | 11 ++++++-----
+ scripts/kconfig/zconf.l                                 |  9 ++++-----
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/scripts/kconfig/tests/err_recursive_inc/expected_stderr b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
+index a15dbed..6b582ee 100644
+--- a/scripts/kconfig/tests/err_recursive_inc/expected_stderr
++++ b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
+@@ -1,5 +1,6 @@
+-Kconfig.inc1:4: recursive inclusion detected. Inclusion path:
+-  current file : 'Kconfig.inc1'
+-  included from: 'Kconfig.inc3:1'
+-  included from: 'Kconfig.inc2:3'
+-  included from: 'Kconfig.inc1:4'
++Recursive inclusion detected.
++Inclusion path:
++  current file : Kconfig.inc1
++  included from: Kconfig.inc3:1
++  included from: Kconfig.inc2:3
++  included from: Kconfig.inc1:4
+diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
+index 88b650e..6f139d2 100644
+--- a/scripts/kconfig/zconf.l
++++ b/scripts/kconfig/zconf.l
+@@ -328,14 +328,13 @@ void zconf_nextfile(const char *name)
+ 	for (iter = current_file->parent; iter; iter = iter->parent ) {
+ 		if (!strcmp(current_file->name,iter->name) ) {
+ 			fprintf(stderr,
+-				"%s:%d: recursive inclusion detected. "
+-				"Inclusion path:\n  current file : '%s'\n",
+-				zconf_curname(), zconf_lineno(),
+-				zconf_curname());
++				"Recursive inclusion detected.\n"
++				"Inclusion path:\n"
++				"  current file : %s\n", zconf_curname());
+ 			iter = current_file;
+ 			do {
+ 				iter = iter->parent;
+-				fprintf(stderr, "  included from: '%s:%d'\n",
++				fprintf(stderr, "  included from: %s:%d\n",
+ 					iter->name, iter->lineno - 1);
+ 			} while (strcmp(iter->name, current_file->name));
+ 			exit(1);
+-- 
+2.7.4
