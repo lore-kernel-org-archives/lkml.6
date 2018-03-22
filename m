@@ -1,251 +1,153 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2400037-1521186817-2-7952730827338502070
+X-Cyrus-Session-Id: sloti22d1t05-3841162-1521757289-2-10600966794892762228
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  RCVD_IN_SBL 0.141, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521186816; b=qEErV+FD7zoKRdLjabRsyR4lAAuKRSB7PvNASxBjjVcrmYD
-    n5CToAQzP3eJ1jBO1cK8S81MhEu5EblpORP2z1c9V+FB0+GK9Xw4xKfeFxz/Iaz8
-    lpVOo7C204r9ULKrInUhnAeuR2b21d7Q7yg6kXyDlEx6HoEr9+VAN4P9pXHjv6ji
-    zlLY8NHB+sdWH5pR+cwgIoMaljmUVMVWGzGYvtdnddDD8Ba5edVhDqER/+ltt9q+
-    KCJabz11EIDZIQoJ+fmLulySnLSkB+drbz7y0sR9F+RAUFXPd/LPx0KJ9YCD4f23
-    dWGSM+sXan7knrwRw04kulKHiGYM01yctnxXEFg==
+    t=1521757289; b=riIKxzRzC49wRi/IkTRg68Of8kPznyRy3Ie2zxOWJgJ7dYi
+    amnISxLQBuRdFZox9lmISn1OYWnPStAxzvQmmhdgEO+sqP42W8yCFoFKKrIlmMMM
+    9V+gMv5CpaL7io8LKoNM32fr1DMhZmLTr9fThC+kliUg9L6YoZIE2W2BawLGuOzs
+    ZSKMre7kdGuui6HiDXWGJyNbCYfUnd5+j1f5VZ8emdwoJ/VpzGGdDJxrAnmIfaxm
+    tV5P5ImzbVGlIP4zXC1jLqLAJaD18aQfeb7kwjHahLk8JQXFqjiD4c8GqEAr/Q6j
+    xJc3GBZeUptANpGNKI/zcTFqt5s8hJ1va6mCZnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=arctest; t=1521186816; bh=YZECEmSH1FB2QZl184sOHadjXb
-    lm6aatIV8GIgxd6jI=; b=oeh7qPtvJcgDICqFULc0nXokZ0wmnUr9pSyyNcwtDN
-    mY2A2pdvZdHNjiIUU/DAzwwf4ayDcli8koo1pkAJRxSrsGGuCp7BAgXKTTmnYMWl
-    dXw3DRU2LTZ5Qm8bVuQuXHkchFRSonVHH38BZ8KgYGOf3P+Zm4OTLHg0T7+xN/+s
-    yXywG74ljk+v2urbqmT1TySe2zHLkDFkGl5ZQM5bja0d0SbSjx4azbc1jamUbuQV
-    s9g5KSQ3/LMcQn6YPrytFq4e1JvVz6XkOOoPUJc7gkGtpNMYzbt2lBAF42APHQSc
-    q2LKR4WLNQpv+BDwJew5/XZYOtRaMH0DO0gNwgL6BAMA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=VsGB52IV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lemote.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521757289; bh=oilQoWjz2zoSNG71uKFtBPp+If
+    2CgjgKwfS3OeDeY5E=; b=NpVjGtPGjT67zCsgBYgzWZCIND2F1e6+HFcZkLtyxF
+    SPwNvOVOCBzPzIuOC1fIdtbzJV99161uNjggh39XoYbAxrR8fYLV+H3AfRE4xkgD
+    x3TrcDTbhKmTNZH8qfgicPD77VSbccZhi1RhmCCmaYljqepN9RZPXsmRtNEa4JrH
+    S2tKW1qqjf2XW5Tu1nru4dOR8G9R6X80y4xXTRtzY8bN3janI0j0fcSg+Np5vA8s
+    Mk7/KtMvDxmCVzrBRXBxfDh9VHteiJx2gtBXBKaHRkW6ysOVF4ryYfjcEXZx4Drc
+    4acJ/CUz1Y3YH4jElwTUxZFNFHVqiYUn4wRCzO1o4omg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SqQH9Nu+;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lemote.com header.result=pass header_is_org_domain=yes
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered; 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=VsGB52IV x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lemote.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
-    x-google-dkim=fail (message has been altered; 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=SqQH9Nu+;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=lemote.com header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752565AbeCPHxW (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 03:53:22 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33830 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752538AbeCPHxV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 03:53:21 -0400
-X-Google-Smtp-Source: AG47ELsKZQLvfvTaqiwZmswd3huEQq9MAXcvrW43tW3ygizmg3l7tdH4l2tjgSeivds154OlKEhryw==
-From: Huacai Chen <chenhc@lemote.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <james.hogan@mips.com>, linux-mips@linux-mips.org,
-        Russell King <linux@arm.linux.org.uk>,
+        id S1751884AbeCVWVQ (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Mar 2018 18:21:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751872AbeCVWVO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 22 Mar 2018 18:21:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E3F21837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Thu, 22 Mar 2018 22:21:08 +0000
+From: James Hogan <jhogan@kernel.org>
+To: Huacai Chen <chenhc@lemote.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org, Russell King <linux@arm.linux.org.uk>,
         linux-arm-kernel@lists.infradead.org,
         Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        Huacai Chen <chenhc@lemote.com>, stable@vger.kernel.org
-Subject: [PATCH V3] ZBOOT: fix stack protector in compressed boot phase
-Date: Fri, 16 Mar 2018 15:55:16 +0800
-Message-Id: <1521186916-13745-1-git-send-email-chenhc@lemote.com>
-X-Mailer: git-send-email 2.7.0
+        stable@vger.kernel.org
+Subject: Re: [PATCH V3] ZBOOT: fix stack protector in compressed boot phase
+Message-ID: <20180322222107.GJ13126@saruman>
+References: <1521186916-13745-1-git-send-email-chenhc@lemote.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="I/5syFLg1Ed7r+1G"
+Content-Disposition: inline
+In-Reply-To: <1521186916-13745-1-git-send-email-chenhc@lemote.com>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Call __stack_chk_guard_setup() in decompress_kernel() is too late that
-stack checking always fails for decompress_kernel() itself. So remove
-__stack_chk_guard_setup() and initialize __stack_chk_guard before we
-call decompress_kernel().
 
-Original code comes from ARM but also used for MIPS and SH, so fix them
-together. If without this fix, compressed booting of these archs will
-fail because stack checking is enabled by default (>=4.16).
+--I/5syFLg1Ed7r+1G
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-V2: Fix build on ARM.
-V3: Fix build on SuperH.
+On Fri, Mar 16, 2018 at 03:55:16PM +0800, Huacai Chen wrote:
+> diff --git a/arch/mips/boot/compressed/decompress.c b/arch/mips/boot/comp=
+ressed/decompress.c
+> index fdf99e9..5ba431c 100644
+> --- a/arch/mips/boot/compressed/decompress.c
+> +++ b/arch/mips/boot/compressed/decompress.c
+> @@ -78,11 +78,6 @@ void error(char *x)
+> =20
+>  unsigned long __stack_chk_guard;
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
----
- arch/arm/boot/compressed/head.S        | 4 ++++
- arch/arm/boot/compressed/misc.c        | 7 -------
- arch/mips/boot/compressed/decompress.c | 7 -------
- arch/mips/boot/compressed/head.S       | 4 ++++
- arch/sh/boot/compressed/head_32.S      | 8 ++++++++
- arch/sh/boot/compressed/head_64.S      | 4 ++++
- arch/sh/boot/compressed/misc.c         | 7 -------
- 7 files changed, 20 insertions(+), 21 deletions(-)
+=2E..
 
-diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-index 45c8823..bae1fc6 100644
---- a/arch/arm/boot/compressed/head.S
-+++ b/arch/arm/boot/compressed/head.S
-@@ -547,6 +547,10 @@ not_relocated:	mov	r0, #0
- 		bic	r4, r4, #1
- 		blne	cache_on
- 
-+		ldr	r0, =__stack_chk_guard
-+		ldr	r1, =0x000a0dff
-+		str	r1, [r0]
-+
- /*
-  * The C runtime environment should now be setup sufficiently.
-  * Set up some pointers, and start decompressing.
-diff --git a/arch/arm/boot/compressed/misc.c b/arch/arm/boot/compressed/misc.c
-index 16a8a80..e518ef5 100644
---- a/arch/arm/boot/compressed/misc.c
-+++ b/arch/arm/boot/compressed/misc.c
-@@ -130,11 +130,6 @@ asmlinkage void __div0(void)
- 
- unsigned long __stack_chk_guard;
- 
--void __stack_chk_guard_setup(void)
--{
--	__stack_chk_guard = 0x000a0dff;
--}
--
- void __stack_chk_fail(void)
- {
- 	error("stack-protector: Kernel stack is corrupted\n");
-@@ -150,8 +145,6 @@ decompress_kernel(unsigned long output_start, unsigned long free_mem_ptr_p,
- {
- 	int ret;
- 
--	__stack_chk_guard_setup();
--
- 	output_data		= (unsigned char *)output_start;
- 	free_mem_ptr		= free_mem_ptr_p;
- 	free_mem_end_ptr	= free_mem_ptr_end_p;
-diff --git a/arch/mips/boot/compressed/decompress.c b/arch/mips/boot/compressed/decompress.c
-index fdf99e9..5ba431c 100644
---- a/arch/mips/boot/compressed/decompress.c
-+++ b/arch/mips/boot/compressed/decompress.c
-@@ -78,11 +78,6 @@ void error(char *x)
- 
- unsigned long __stack_chk_guard;
- 
--void __stack_chk_guard_setup(void)
--{
--	__stack_chk_guard = 0x000a0dff;
--}
--
- void __stack_chk_fail(void)
- {
- 	error("stack-protector: Kernel stack is corrupted\n");
-@@ -92,8 +87,6 @@ void decompress_kernel(unsigned long boot_heap_start)
- {
- 	unsigned long zimage_start, zimage_size;
- 
--	__stack_chk_guard_setup();
--
- 	zimage_start = (unsigned long)(&__image_begin);
- 	zimage_size = (unsigned long)(&__image_end) -
- 	    (unsigned long)(&__image_begin);
-diff --git a/arch/mips/boot/compressed/head.S b/arch/mips/boot/compressed/head.S
-index 409cb48..00d0ee0 100644
---- a/arch/mips/boot/compressed/head.S
-+++ b/arch/mips/boot/compressed/head.S
-@@ -32,6 +32,10 @@ start:
- 	bne	a2, a0, 1b
- 	 addiu	a0, a0, 4
- 
-+	PTR_LA	a0, __stack_chk_guard
-+	PTR_LI	a1, 0x000a0dff
-+	sw	a1, 0(a0)
-+
- 	PTR_LA	a0, (.heap)	     /* heap address */
- 	PTR_LA	sp, (.stack + 8192)  /* stack address */
- 
-diff --git a/arch/sh/boot/compressed/head_32.S b/arch/sh/boot/compressed/head_32.S
-index 7bb1681..e84237d 100644
---- a/arch/sh/boot/compressed/head_32.S
-+++ b/arch/sh/boot/compressed/head_32.S
-@@ -76,6 +76,10 @@ l1:
- 	mov.l	init_stack_addr, r0
- 	mov.l	@r0, r15
- 
-+	mov.l	__stack_chk_guard_addr, r0
-+	mov.l	__stack_chk_guard_val, r1
-+	mov.l	r1, @r0
-+
- 	/* Decompress the kernel */
- 	mov.l	decompress_kernel_addr, r0
- 	jsr	@r0
-@@ -97,6 +101,10 @@ kexec_magic:
- 	.long	0x400000F0	/* magic used by kexec to parse zImage format */
- init_stack_addr:
- 	.long	stack_start
-+__stack_chk_guard_val:
-+	.long	0x000A0DFF
-+__stack_chk_guard_addr:
-+	.long	__stack_chk_guard
- decompress_kernel_addr:
- 	.long	decompress_kernel
- kernel_start_addr:
-diff --git a/arch/sh/boot/compressed/head_64.S b/arch/sh/boot/compressed/head_64.S
-index 9993113..8b4d540 100644
---- a/arch/sh/boot/compressed/head_64.S
-+++ b/arch/sh/boot/compressed/head_64.S
-@@ -132,6 +132,10 @@ startup:
- 	addi	r22, 4, r22
- 	bne	r22, r23, tr1
- 
-+	movi	datalabel __stack_chk_guard, r0
-+	movi	0x000a0dff, r1
-+	st.l	r0, 0, r1
-+
- 	/*
- 	 * Decompress the kernel.
- 	 */
-diff --git a/arch/sh/boot/compressed/misc.c b/arch/sh/boot/compressed/misc.c
-index 627ce8e..fe4c079 100644
---- a/arch/sh/boot/compressed/misc.c
-+++ b/arch/sh/boot/compressed/misc.c
-@@ -106,11 +106,6 @@ static void error(char *x)
- 
- unsigned long __stack_chk_guard;
- 
--void __stack_chk_guard_setup(void)
--{
--	__stack_chk_guard = 0x000a0dff;
--}
--
- void __stack_chk_fail(void)
- {
- 	error("stack-protector: Kernel stack is corrupted\n");
-@@ -130,8 +125,6 @@ void decompress_kernel(void)
- {
- 	unsigned long output_addr;
- 
--	__stack_chk_guard_setup();
--
- #ifdef CONFIG_SUPERH64
- 	output_addr = (CONFIG_MEMORY_START + 0x2000);
- #else
--- 
-2.7.0
+> diff --git a/arch/mips/boot/compressed/head.S b/arch/mips/boot/compressed=
+/head.S
+> index 409cb48..00d0ee0 100644
+> --- a/arch/mips/boot/compressed/head.S
+> +++ b/arch/mips/boot/compressed/head.S
+> @@ -32,6 +32,10 @@ start:
+>  	bne	a2, a0, 1b
+>  	 addiu	a0, a0, 4
+> =20
+> +	PTR_LA	a0, __stack_chk_guard
+> +	PTR_LI	a1, 0x000a0dff
+> +	sw	a1, 0(a0)
+
+Should that not be LONG_S? Otherwise big endian MIPS64 would get a
+word-swapped canary (which is probably mostly harmless, but still).
+
+Also I think it worth mentioning in the commit message the MIPS
+configuration you hit this with, presumably a Loongson one? For me
+decompress_kernel() gets a stack guard on loongson3_defconfig, but not
+malta_defconfig or malta_defconfig + 64-bit. I presume its sensitive to
+the compiler inlining stuff into decompress_kernel() or something such
+that it suddenly qualifies for a stack guard.
+
+Cheers
+James
+
+--I/5syFLg1Ed7r+1G
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlq0LFMACgkQbAtpk944
+dnrmTQ/+JqSPbejJsFyxpccmWIyLBtYPujNEeohQv5ZthOfaooKRy7NvUQqirXxG
+HKpHT1EqQtZsXxir/BZxdpo0rN+M/7kMWU9XKLtFqkiz88k1i+k4o7dlrdQcZOqy
+HFBPtJnkchJrgBxxzPNxmHnWCxOFoYbK2HBxsn0cBGDm9sgLgXPkMwkAk29fG3uT
+ViYFSUhnlmNAo4GBgUkxSFK3rDZZQWq7DFHaMrTEKeJo0SdLtmCt7YD25grSOp0K
+klBR1sdHe+oIXQAcowD3xdsLNSNeRoRgtan2Y6ByBLs00+dE7A6D8buruvohh/m4
+B37/oeHOEg65kmOVVSnhseaW92YfUyBEkGosJHgV0a9/BoNeN8r1deLgKGb/VYCC
+bzOiN0pTzDzPZXvIsWEKibOMrrcm/2Et6Gkh4VawwFEKXZ2ZQAkvwUXFvBjXFwuq
+3/V3+bLsrS6mdkvDGe3HcqNEdRhGcjt9uISxGhQtPe30aK9EgtTYH/Ol9GNe/R2l
+b/1eEo5RGf0FAko1+xeE81q+xAUPoR4IECl5wj9LQy/KEP7rBSSJj2Ixxl2YMZGg
+osFHqfdRh1ihHViu8OMMsT0/qTCH/H953rgGZySpK4twyChK92FMfF2uO7z18NHC
+uAylLlojOuGKA0t6HsAEuB64oWg3HV2bYGu1p1yQK5XolLuLrWk=
+=1hrp
+-----END PGP SIGNATURE-----
+
+--I/5syFLg1Ed7r+1G--
