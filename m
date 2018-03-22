@@ -1,63 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752966AbeCVBGB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 21:06:01 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:44311 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751883AbeCVBF7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 21:05:59 -0400
-X-Google-Smtp-Source: AG47ELsE3yb4Fi/5aUU9hVdcjVtda5516AbGy7rawmVRh+8VI0LSdDoBkz7AAjpOEq1d9ziKjMybVw==
-To: linux-kernel@vger.kernel.org
-From: Stuart Hayes <stuart.w.hayes@gmail.com>
-Subject: [PATCH] dell_rbu: make firmware payload memory uncachable
-Message-ID: <40006403-999f-fde5-316a-63e9a48ce11c@gmail.com>
-Date: Wed, 21 Mar 2018 20:05:52 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1752417AbeCVBLR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 21:11:17 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:48872 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752105AbeCVBLQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 21:11:16 -0400
+Subject: Re: [PATCH] f2fs: no need to initialize zero value for GFP_F2FS_ZERO
+To: Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1521635131-137071-1-git-send-email-yunlong.song@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <2bd0b193-c2de-503e-0379-cf4abe645bd9@huawei.com>
+Date: Thu, 22 Mar 2018 09:11:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1521635131-137071-1-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dell_rbu driver takes firmware update payloads and puts them in memory so
-the system BIOS can find them after a reboot.  This sometimes fails (though
-rarely), because the memory containing the payload is in the CPU cache but
-never gets written back to main memory before the system is rebooted (CPU
-cache contents are lost on reboot).
+On 2018/3/21 20:25, Yunlong Song wrote:
+> Since f2fs_inode_info is allocated with flag GFP_F2FS_ZERO, so we do not
+> need to initialize zero value for its member any more.
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/super.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 0c1fe9b..3a7fa03 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -825,9 +825,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+>  	init_once((void *) fi);
+>  
+>  	/* Initialize f2fs-specific inode info */
+> -	atomic_set(&fi->dirty_pages, 0);
 
-With this patch, the payload memory will be changed to uncachable to ensure
-that the payload is actually in main memory before the system is rebooted.
+We'd better to keep atomic_set function as it is since how it initialize
+.dirty_pages field is completely depend on locking sub module itself.
 
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
----
-Note that there is no maintainer for this driver, so I'd be grateful if
-someone could apply this... thank you!
+Thanks,
 
-diff --git a/drivers/firmware/dell_rbu.c b/drivers/firmware/dell_rbu.c
-index 2f452f1..6b84814 100644
---- a/drivers/firmware/dell_rbu.c
-+++ b/drivers/firmware/dell_rbu.c
-@@ -180,6 +180,11 @@ static int create_packet(void *data, size_t length)
- 			invalid_addr_packet_array[idx++] = packet_data_temp_buf;
- 			packet_data_temp_buf = NULL;
- 		}
-+		/*
-+		 * set to uncachable or it may never get written back before
-+		 * reboot
-+		 */
-+		set_memory_uc(packet_data_temp_buf, 1 << (ordernum));
- 	}
- 	spin_lock(&rbu_data.lock);
- 
-@@ -349,6 +354,7 @@ static void packet_empty_list(void)
- 		 * to make sure there are no stale RBU packets left in memory
- 		 */
- 		memset(newpacket->data, 0, rbu_data.packetsize);
-+		set_memory_wb(newpacket->data, (1 << newpacket->ordernum));
- 		free_pages((unsigned long) newpacket->data,
- 			newpacket->ordernum);
- 		kfree(newpacket);
+>  	fi->i_current_depth = 1;
+> -	fi->i_advise = 0;
+>  	init_rwsem(&fi->i_sem);
+>  	INIT_LIST_HEAD(&fi->dirty_list);
+>  	INIT_LIST_HEAD(&fi->gdirty_list);
+> @@ -839,10 +837,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+>  	init_rwsem(&fi->i_mmap_sem);
+>  	init_rwsem(&fi->i_xattr_sem);
+>  
+> -#ifdef CONFIG_QUOTA
+> -	memset(&fi->i_dquot, 0, sizeof(fi->i_dquot));
+> -	fi->i_reserved_quota = 0;
+> -#endif
+>  	/* Will be used by directory only */
+>  	fi->i_dir_level = F2FS_SB(sb)->dir_level;
+>  
+> 
