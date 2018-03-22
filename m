@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeCVVna (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:43:30 -0400
-Received: from mga05.intel.com ([192.55.52.43]:15755 "EHLO mga05.intel.com"
+        id S1752004AbeCVVn5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:43:57 -0400
+Received: from mga05.intel.com ([192.55.52.43]:15762 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751632AbeCVVn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:43:28 -0400
+        id S1751926AbeCVVno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:43:44 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
-   d="scan'208";a="214031802"
-Date: Thu, 22 Mar 2018 14:35:33 -0700
+   d="scan'208";a="27251987"
+Date: Thu, 22 Mar 2018 14:35:47 -0700
 From: Ivan Gorinov <ivan.gorinov@intel.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Frank Rowand <frowand.list@gmail.com>,
@@ -20,8 +20,8 @@ To: Thomas Gleixner <tglx@linutronix.de>,
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Ingo Molnar <mingo@redhat.com>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v8 1/2] of: Documentation: Specify local APIC ID in "reg"
-Message-ID: <4b1a471a56ac0ebd7510f4759afce9104595d6da.1521753738.git.ivan.gorinov@intel.com>
+Subject: [PATCH v8 2/2] x86/devicetree: Use CPU description from Device Tree
+Message-ID: <c291fb2cef51b730b59916d7745be0eaa4378c6c.1521753738.git.ivan.gorinov@intel.com>
 References: <cover.1521753738.git.ivan.gorinov@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -32,69 +32,93 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the "reg" property to specify the processor's local APIC ID instead of
-setting it to the CPU node index in Device Tree.
-
-Local APIC ID is assigned by hardware and visible in the APIC ID register.
-Some processor models allow APIC ID to be changed by software, but CPUID
-instruction executed with %eax = 0x0b always returns the initial ID in %edx.
-
-Local APIC ID does not match the node index in many systems.
+Current x86 Device Tree implementation does not support multiprocessing.
+Use new DT bindings to describe the processors.
 
 Signed-off-by: Ivan Gorinov <ivan.gorinov@intel.com>
 ---
- Documentation/devicetree/bindings/x86/ce4100.txt | 37 ++++++++++++++++++------
- 1 file changed, 28 insertions(+), 9 deletions(-)
+ arch/x86/kernel/devicetree.c | 45 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 33 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/x86/ce4100.txt b/Documentation/devicetree/bindings/x86/ce4100.txt
-index b49ae59..4bbfed1 100644
---- a/Documentation/devicetree/bindings/x86/ce4100.txt
-+++ b/Documentation/devicetree/bindings/x86/ce4100.txt
-@@ -7,17 +7,36 @@ Many of the "generic" devices like HPET or IO APIC have the ce4100
- name in their compatible property because they first appeared in this
- SoC.
+diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
+index 25de5f6..cca6742 100644
+--- a/arch/x86/kernel/devicetree.c
++++ b/arch/x86/kernel/devicetree.c
+@@ -130,34 +130,52 @@ static void __init dtb_setup_hpet(void)
+ #endif
+ }
  
--The CPU node
--------------
--	cpu@0 {
--		device_type = "cpu";
--		compatible = "intel,ce4100";
--		reg = <0>;
--		lapic = <&lapic0>;
-+The CPU nodes
-+-------------
++#ifdef CONFIG_X86_LOCAL_APIC
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++static void __init dtb_cpu_setup(void)
++{
++	struct device_node *dn;
++	u32 apic_id, version;
++	int ret;
 +
-+		cpu@0x00 {
-+			device_type = "cpu";
-+			compatible = "intel,ce4100";
-+			reg = <0x00>;
-+		};
++	version = GET_APIC_VERSION(apic_read(APIC_LVR));
++	for_each_node_by_type(dn, "cpu") {
++		ret = of_property_read_u32(dn, "reg", &apic_id);
++		if (ret < 0) {
++			pr_warn("%pOF: missing local APIC ID\n", dn);
++			continue;
++		}
++		generic_processor_info(apic_id, version);
++	}
++}
 +
-+		cpu@0x02 {
-+			device_type = "cpu";
-+			compatible = "intel,ce4100";
-+			reg = <0x02>;
-+		};
- 	};
+ static void __init dtb_lapic_setup(void)
+ {
+-#ifdef CONFIG_X86_LOCAL_APIC
+ 	struct device_node *dn;
+ 	struct resource r;
++	unsigned long lapic_addr = APIC_DEFAULT_PHYS_BASE;
+ 	int ret;
  
--The reg property describes the CPU number. The lapic property points to
--the local APIC timer.
-+A "cpu" node describes one logical processor (hardware thread).
-+
-+Required properties:
-+
-+- device_type
-+	Device type, must be "cpu".
-+
-+- reg
-+	Local APIC ID, the unique number assigned to each processor by
-+	system hardware.
+ 	dn = of_find_compatible_node(NULL, NULL, "intel,ce4100-lapic");
+-	if (!dn)
+-		return;
+-
+-	ret = of_address_to_resource(dn, 0, &r);
+-	if (WARN_ON(ret))
+-		return;
++	if (dn) {
++		ret = of_address_to_resource(dn, 0, &r);
++		if (WARN_ON(ret))
++			return;
++		lapic_addr = r.start;
++	}
  
- The SoC node
- ------------
+ 	/* Did the boot loader setup the local APIC ? */
+ 	if (!boot_cpu_has(X86_FEATURE_APIC)) {
+-		if (apic_force_enable(r.start))
++		if (apic_force_enable(lapic_addr))
+ 			return;
+ 	}
+ 	smp_found_config = 1;
+ 	pic_mode = 1;
+-	register_lapic_address(r.start);
+-	generic_processor_info(boot_cpu_physical_apicid,
+-			       GET_APIC_VERSION(apic_read(APIC_LVR)));
+-#endif
++	register_lapic_address(lapic_addr);
+ }
+ 
++#endif /* CONFIG_X86_LOCAL_APIC */
++
+ #ifdef CONFIG_X86_IO_APIC
+ static unsigned int ioapic_id;
+ 
+@@ -255,7 +273,10 @@ static void __init dtb_ioapic_setup(void) {}
+ 
+ static void __init dtb_apic_setup(void)
+ {
++#ifdef CONFIG_X86_LOCAL_APIC
+ 	dtb_lapic_setup();
++	dtb_cpu_setup();
++#endif
+ 	dtb_ioapic_setup();
+ }
+ 
 -- 
 2.7.4
