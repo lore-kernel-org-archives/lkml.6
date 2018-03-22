@@ -1,79 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751765AbeCVShe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 14:37:34 -0400
-Received: from gateway23.websitewelcome.com ([192.185.49.124]:41437 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751686AbeCVShd (ORCPT
+        id S1751756AbeCVSkx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 14:40:53 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47156 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeCVSkw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 14:37:33 -0400
-Subject: Re: [PATCH] net/mlx5/core/fpga/ipsec: Fix use-after-free
-To: Yuval Shaia <yuval.shaia@oracle.com>
-Cc: Ilan Tayari <ilant@mellanox.com>, Boris Pismenny <borisp@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180322180342.GA18505@embeddedgus>
- <20180322183225.GA24009@yuvallap>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <b19ec4fc-03fa-385f-a9d6-40b9d7b42830@embeddedor.com>
-Date: Thu, 22 Mar 2018 13:37:29 -0500
+        Thu, 22 Mar 2018 14:40:52 -0400
+Subject: Re: [RFC PATCH v2 2/4] mm/__free_one_page: skip merge for order-0
+ page unless compaction failed
+To: Matthew Wilcox <willy@infradead.org>, Aaron Lu <aaron.lu@intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>
+References: <20180320085452.24641-1-aaron.lu@intel.com>
+ <20180320085452.24641-3-aaron.lu@intel.com>
+ <7b1988e9-7d50-d55e-7590-20426fb257af@suse.cz>
+ <20180320141101.GB2033@intel.com>
+ <20180322171503.GH28468@bombadil.infradead.org>
+From: Daniel Jordan <daniel.m.jordan@oracle.com>
+Organization: Oracle
+Message-ID: <9ab5a6dd-c1b2-8da3-31f1-dd2237ea0f44@oracle.com>
+Date: Thu, 22 Mar 2018 14:39:17 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180322183225.GA24009@yuvallap>
+In-Reply-To: <20180322171503.GH28468@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.145.54.187
-X-Source-L: No
-X-Exim-ID: 1ez55g-004L6E-5R
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.67]) [189.145.54.187]:55004
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 28
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8840 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803200127
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yuval,
 
-On 03/22/2018 01:32 PM, Yuval Shaia wrote:
-> On Thu, Mar 22, 2018 at 01:03:42PM -0500, Gustavo A. R. Silva wrote:
->> _rule_ is being freed and then dereferenced by accessing rule->ctx
+
+On 03/22/2018 01:15 PM, Matthew Wilcox wrote:
+> On Tue, Mar 20, 2018 at 10:11:01PM +0800, Aaron Lu wrote:
+>>>> A new document file called "struct_page_filed" is added to explain
+>>>> the newly reused field in "struct page".
+>>>
+>>> Sounds rather ad-hoc for a single field, I'd rather document it via
+>>> comments.
 >>
->> Fix this by copying the value returned by PTR_ERR(rule->ctx) into a local
->> variable for its safe use after freeing _rule_
+>> Dave would like to have a document to explain all those "struct page"
+>> fields that are repurposed under different scenarios and this is the
+>> very start of the document :-)
 >>
->> Addresses-Coverity-ID: 1466041 ("Read from pointer after free")
->> Fixes: 05564d0ae075 ("net/mlx5: Add flow-steering commands for FPGA IPSec implementation")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> I probably should have explained the intent of the document more.
 > 
-> Prefix should not be that long, a short one as this is enough.
+> Dave and I are in agreement on "Shouldn't struct page be better documented".
+> I came up with this a few weeks ago; never quite got round to turning it
+> into a patch:
 > 
+> +---+-----------+-----------+--------------+----------+--------+--------------+
+> | B | slab      | pagecache | tail 1       | anon     | tail 1 | hugetlb      |
+> +===+===========+===========+==============+==========+========+==============+
+> | 0 | flags                                                                   |
+> +---+                                                                         |
+> | 4 |                                                                         |
+> +---+-----------+-----------+--------------+----------+--------+--------------+
+> | 8 | s_mem     | mapping   | cmp_mapcount | anon_vma | defer  | mapping      |
+> +---+           |           +--------------+          | list   |              |
+> |12 |           |           |              |          |        |              |
+> +---+-----------+-----------+--------------+----------+        +--------------+
+> |16 | freelist  | index                               |        | index        |
+> +---+           |                                     |        | (shifted)    |
+> |20 |           |                                     |        |              |
+> +---+-----------+-------------------------------------+--------+--------------+
+> |24 | counters  | mapcount                                                    |
+> +---+           +-----------+--------------+----------+--------+--------------+
+> |28 |           | refcount  |              |          |        | refcount     |
+> +---+-----------+-----------+--------------+----------+--------+--------------+
+> |32 | next      | lru       | cmpd_head    |                   | lru          |
+> +---+           |           |              +-------------------+              +
+> |36 |           |           |              |                   |              |
+> +---+-----------+           +--------------+-------------------+              +
+> |40 | pages     |           | dtor / order |                   |              |
+> +---+-----------+           +--------------+-------------------+              +
+> |44 | pobjects  |           |              |                   |              |
+> +---+-----------+-----------+--------------+----------------------------------+
+> |48 | slb_cache | private   |              |                                  |
+> +---+           |           +--------------+----------------------------------+
+> |52 |           |           |              |                                  |
+> +---+-----------+-----------+--------------+----------------------------------+
 
-Yeah. Actually, I was suspicious about it.
-
-> net/mlx5: Fix use-after-free
-> 
-> Besides that - lgtm.
-> 
-> Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-> 
-
-I'll send v2 with a short prefix and add your Reviewed-by.
-
-Thanks for the feedback.
---
-Gustavo
+Shouldn't the anon column also contain lru?
