@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752311AbeCVUVK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:21:10 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34851 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752241AbeCVUVD (ORCPT
+        id S1752383AbeCVUVU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:21:20 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40054 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752317AbeCVUVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:21:03 -0400
-X-Google-Smtp-Source: AG47ELvNqKEs5LkXiRqY3KTqQ0CyZSr3miLaNnw1i7zZOpQ4FP2mg/srn+ulL+WR0ig/88DQrfFcOg==
+        Thu, 22 Mar 2018 16:21:14 -0400
+X-Google-Smtp-Source: AG47ELswrI0VBHmtWchCXOka+8EUPVZMAH13pmXGH++DEqrAs2l+ugGI66QOAOyGkjRu5Uaecp4SVg==
 From: Mathieu Malaterre <malat@debian.org>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Mathieu Malaterre <malat@debian.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org
-Subject: [PATCH 13/19] powerpc/52xx: Add missing functions prototypes
-Date: Thu, 22 Mar 2018 21:19:59 +0100
-Message-Id: <20180322202007.23088-14-malat@debian.org>
+Subject: [PATCH 19/19] powerpc/tau: Synchronize function prototypes and body
+Date: Thu, 22 Mar 2018 21:20:05 +0100
+Message-Id: <20180322202007.23088-20-malat@debian.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180322202007.23088-1-malat@debian.org>
 References: <20180322202007.23088-1-malat@debian.org>
@@ -27,41 +27,99 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function prototypes were declared within a `#ifdef CONFIG_PPC_LITE5200`
-block which would prevent them from being visible when compiling
-`mpc52xx_pm.c`. Move the prototypes outside of the `#ifdef` block to fix
-the following warnings treated as errors with W=1:
+Some function prototypes and body for Thermal Assist Units were not in
+sync. Update the function definition to match the existing function
+declaration found in `setup-common.c`, changing an `int` return type to a
+`u32` return type. Move the prototypes to a header file. Fix the following
+warnings, treated as error with W=1:
 
-  arch/powerpc/platforms/52xx/mpc52xx_pm.c:58:5: error: no previous prototype for ‘mpc52xx_pm_prepare’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/52xx/mpc52xx_pm.c:113:5: error: no previous prototype for ‘mpc52xx_pm_enter’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/52xx/mpc52xx_pm.c:181:6: error: no previous prototype for ‘mpc52xx_pm_finish’ [-Werror=missing-prototypes]
+  arch/powerpc/kernel/tau_6xx.c:257:5: error: no previous prototype for ‘cpu_temp_both’ [-Werror=missing-prototypes]
+  arch/powerpc/kernel/tau_6xx.c:262:5: error: no previous prototype for ‘cpu_temp’ [-Werror=missing-prototypes]
+  arch/powerpc/kernel/tau_6xx.c:267:5: error: no previous prototype for ‘tau_interrupts’ [-Werror=missing-prototypes]
+
+Compile tested with CONFIG_TAU_INT.
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/powerpc/include/asm/mpc52xx.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/irq.c          | 2 +-
+ arch/powerpc/kernel/setup-common.c | 6 ------
+ arch/powerpc/kernel/setup.h        | 6 ++++++
+ arch/powerpc/kernel/tau_6xx.c      | 7 +++++--
+ 4 files changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/mpc52xx.h b/arch/powerpc/include/asm/mpc52xx.h
-index e94cede14522..0f6b3cbb119f 100644
---- a/arch/powerpc/include/asm/mpc52xx.h
-+++ b/arch/powerpc/include/asm/mpc52xx.h
-@@ -350,14 +350,14 @@ extern struct mpc52xx_suspend mpc52xx_suspend;
- extern int __init mpc52xx_pm_init(void);
- extern int mpc52xx_set_wakeup_gpio(u8 pin, u8 level);
+diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
+index f88038847790..3777b6e09142 100644
+--- a/arch/powerpc/kernel/irq.c
++++ b/arch/powerpc/kernel/irq.c
+@@ -89,7 +89,7 @@ atomic_t ppc_n_lost_interrupts;
  
--#ifdef CONFIG_PPC_LITE5200
--extern int __init lite5200_pm_init(void);
--
- /* lite5200 calls mpc5200 suspend functions, so here they are */
- extern int mpc52xx_pm_prepare(void);
- extern int mpc52xx_pm_enter(suspend_state_t);
- extern void mpc52xx_pm_finish(void);
- extern char saved_sram[0x4000]; /* reuse buffer from mpc52xx suspend */
-+
-+#ifdef CONFIG_PPC_LITE5200
-+extern int __init lite5200_pm_init(void);
+ #ifdef CONFIG_TAU_INT
+ extern int tau_initialized;
+-extern int tau_interrupts(int);
++extern u32 tau_interrupts(unsigned long cpu);
  #endif
- #endif /* CONFIG_PM */
+ #endif /* CONFIG_PPC32 */
  
+diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+index d73ec518ef80..bd3675c3984b 100644
+--- a/arch/powerpc/kernel/setup-common.c
++++ b/arch/powerpc/kernel/setup-common.c
+@@ -192,12 +192,6 @@ void machine_halt(void)
+ 	machine_hang();
+ }
+ 
+-
+-#ifdef CONFIG_TAU
+-extern u32 cpu_temp(unsigned long cpu);
+-extern u32 cpu_temp_both(unsigned long cpu);
+-#endif /* CONFIG_TAU */
+-
+ #ifdef CONFIG_SMP
+ DEFINE_PER_CPU(unsigned int, cpu_pvr);
+ #endif
+diff --git a/arch/powerpc/kernel/setup.h b/arch/powerpc/kernel/setup.h
+index d768023a04bd..3c9c19430439 100644
+--- a/arch/powerpc/kernel/setup.h
++++ b/arch/powerpc/kernel/setup.h
+@@ -70,4 +70,10 @@ void kvm_cma_reserve(void);
+ static inline void kvm_cma_reserve(void) { };
+ #endif
+ 
++#ifdef CONFIG_TAU
++extern u32 cpu_temp(unsigned long cpu);
++extern u32 cpu_temp_both(unsigned long cpu);
++extern u32 tau_interrupts(unsigned long cpu);
++#endif /* CONFIG_TAU */
++
+ #endif /* __ARCH_POWERPC_KERNEL_SETUP_H */
+diff --git a/arch/powerpc/kernel/tau_6xx.c b/arch/powerpc/kernel/tau_6xx.c
+index 1fc6a89a978e..e2ab8a111b69 100644
+--- a/arch/powerpc/kernel/tau_6xx.c
++++ b/arch/powerpc/kernel/tau_6xx.c
+@@ -27,6 +27,9 @@
+ #include <asm/cache.h>
+ #include <asm/8xx_immap.h>
+ #include <asm/machdep.h>
++#include <asm/asm-prototypes.h>
++
++#include "setup.h"
+ 
+ static struct tau_temp
+ {
+@@ -259,12 +262,12 @@ u32 cpu_temp_both(unsigned long cpu)
+ 	return ((tau[cpu].high << 16) | tau[cpu].low);
+ }
+ 
+-int cpu_temp(unsigned long cpu)
++u32 cpu_temp(unsigned long cpu)
+ {
+ 	return ((tau[cpu].high + tau[cpu].low) / 2);
+ }
+ 
+-int tau_interrupts(unsigned long cpu)
++u32 tau_interrupts(unsigned long cpu)
+ {
+ 	return (tau[cpu].interrupts);
+ }
 -- 
 2.11.0
