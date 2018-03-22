@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753648AbeCVJiE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:38:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35746 "EHLO mail.kernel.org"
+        id S1753701AbeCVJlR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:41:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753573AbeCVJh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:37:59 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1E620838
+        id S1752477AbeCVJlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 05:41:13 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01BB820838
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Thu, 22 Mar 2018 06:37:45 -0300
+Date: Thu, 22 Mar 2018 06:40:24 -0300
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -26,35 +26,53 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
         Clark Williams <williams@redhat.com>,
         target-devel <target-devel@vger.kernel.org>
 Subject: Re: [PATCH] target: Use WARNON_NON_RT(!irqs_disabled())
-Message-ID: <20180322093745.GC4229@kernel.org>
+Message-ID: <20180322094024.GD4229@kernel.org>
 References: <20180321153854.GB24312@kernel.org>
  <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
+ <20180322093745.GC4229@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
+In-Reply-To: <20180322093745.GC4229@kernel.org>
 X-Url: http://acmel.wordpress.com
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Mar 21, 2018 at 11:43:58AM -0700, Linus Torvalds escreveu:
-> [ Adding PeterZ to participants due to query about lockdep_assert() ]
+Em Thu, Mar 22, 2018 at 06:37:45AM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Wed, Mar 21, 2018 at 11:43:58AM -0700, Linus Torvalds escreveu:
+> > [ Adding PeterZ to participants due to query about lockdep_assert() ]
+> > 
+> > On Wed, Mar 21, 2018 at 8:38 AM, Arnaldo Carvalho de Melo
+> > <acme@kernel.org> wrote:
+> > >
+> > >         assert_spin_locked(&cmd->t_state_lock);
+> > > -       WARN_ON_ONCE(!irqs_disabled());
+> > > +       WARN_ON_ONCE_NONRT(!irqs_disabled());
+> > 
+> > Ugh.
+> > 
+> > Can't we just replace both of those with a lockdep annotation?
 > 
-> On Wed, Mar 21, 2018 at 8:38 AM, Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> >         assert_spin_locked(&cmd->t_state_lock);
-> > -       WARN_ON_ONCE(!irqs_disabled());
-> > +       WARN_ON_ONCE_NONRT(!irqs_disabled());
-> 
-> Ugh.
-> 
-> Can't we just replace both of those with a lockdep annotation?
+> Huh, even better, when that feature gets finished (tglx said it was
+> being developed, not there yet tho) it'll allow further reduction of the
+> PREEMPT_RT_FULL patchkit.
 
-Huh, even better, when that feature gets finished (tglx said it was
-being developed, not there yet tho) it'll allow further reduction of the
-PREEMPT_RT_FULL patchkit.
+We'd get rid of these:
+
+[acme@jouet patches-4.11.12-rt15]$ grep "^+[[:space:]]\+.*NONRT" *.patch
+dm-make-rt-aware.patch:+		BUG_ON_NONRT(!irqs_disabled());
+fs-block-rt-support.patch:+	WARN_ON_NONRT(!irqs_disabled());
+i915-bogus-warning-from-i915-when-running-on-PREEMPT.patch:+	WARN_ON_NONRT(!in_interrupt());
+iommu-amd--Use-WARN_ON_NORT.patch:+	WARN_ON_NONRT(!irqs_disabled());
+iommu-amd--Use-WARN_ON_NORT.patch:+	WARN_ON_NONRT(!irqs_disabled());
+irqwork-push_most_work_into_softirq_context.patch:+	BUG_ON_NONRT(!irqs_disabled());
+net-wireless-warn-nort.patch:+	WARN_ON_ONCE_NONRT(softirq_count() == 0);
+posix-timers-thread-posix-cpu-timers-on-rt.patch:+	WARN_ON_ONCE_NONRT(!irqs_disabled());
+posix-timers-thread-posix-cpu-timers-on-rt.patch:+	WARN_ON_ONCE_NONRT(!irqs_disabled());
+posix-timers-thread-posix-cpu-timers-on-rt.patch:+	WARN_ON_ONCE_NONRT(!irqs_disabled());
+workqueue-use-locallock.patch:+	WARN_ON_ONCE_NONRT(!irqs_disabled());
+[acme@jouet patches-4.11.12-rt15]$
 
 - Arnaldo
