@@ -1,60 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754688AbeCVMgT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:36:19 -0400
-Received: from tartarus.angband.pl ([89.206.35.136]:54204 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751835AbeCVMgQ (ORCPT
+        id S1754692AbeCVMhP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:37:15 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:44452 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753177AbeCVMhJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:36:16 -0400
-Date: Thu, 22 Mar 2018 13:35:57 +0100
-From: Adam Borowski <kilobyte@angband.pl>
-To: =?iso-8859-1?Q?Ren=E9?= Rebe <rene@exactcode.com>
-Cc: Nick Terrell <terrelln@fb.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, kernel-team@fb.com,
-        Chris Mason <clm@fb.com>,
-        Julian Andres Klode <julian.klode@canonical.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [RESEND PATCH v2 0/2] Add support for ZSTD-compressed kernel
-Message-ID: <20180322123557.4eu4huhldqn6bid6@angband.pl>
-References: <20180322012943.4145794-1-terrelln@fb.com>
- <C0384AAE-FF89-4BAA-8EFC-FB3B0A8F02AB@exactcode.com>
+        Thu, 22 Mar 2018 08:37:09 -0400
+X-Google-Smtp-Source: AG47ELsk6Nup4+0w3VOe+zdo7qsk73xCyifgVuACK4AHNSduOSZD8wJIcrFAKTLdmupMk5eb3J272TBxR7G+O8Ifk1U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <C0384AAE-FF89-4BAA-8EFC-FB3B0A8F02AB@exactcode.com>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+In-Reply-To: <1521719091-25157-4-git-send-email-michel.pollet@bp.renesas.com>
+References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com> <1521719091-25157-4-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Mar 2018 13:37:07 +0100
+X-Google-Sender-Auth: JOH1J4eDUY9m59Tw-8XCEAhZA_M
+Message-ID: <CAMuHMdXaRarxors3E-Jv7TLjka-p9XGYCTKyF7jM3p+UemgO+w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/8] DT: arm: renesas,r9a06g032: add the RZ/N1 bindings
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 12:09:45PM +0100, René Rebe wrote:
-> Should this currently just work without any arch change on e.g.
-> ppc64, sparc64 et al.? I could do a test build and boot if that is
-> of any value, ...
+Hi Michel,
 
-Initrd: no reason it wouldn't work, although for anything related to the
-boot process testing is a very good idea.  If you test, you'd really want to
-apply that printk patch I posted, it's too easy to accidentally get a silent
-fallback to gzip or uncompressed.  I wonder, perhaps such a printk could be
-permanently added, at a low message priority?
+On Thu, Mar 22, 2018 at 12:44 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> This documents the RZ/N1 bindings for both the RZ/N1 and the RZN1D400-DB
+> board.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-Kernel itself: needs per-arch porting, but it's not advertised in kconfig
-outside x86 so that's not a problem.  
+Thanks for your patch!
 
-If you are knowledgeful about bootloaders on ppc64, sparc64, etc, such
-information would be great.
+> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
+> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+> @@ -47,7 +47,8 @@ SoCs:
+>      compatible = "renesas,r8a77980"
+>    - R-Car D3 (R8A77995)
+>      compatible = "renesas,r8a77995"
+> -
+> +  - RZ/N1D (R9A06G032)
+> +    compatible = "renesas,r9a06g032"
+>
+>  Boards:
+>
+> @@ -104,6 +105,8 @@ Boards:
+>      compatible = "renesas,porter", "renesas,r8a7791"
+>    - RSKRZA1 (YR0K77210C000BE)
+>      compatible = "renesas,rskrza1", "renesas,r7s72100"
+> +  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
 
+The official board part number (between parentheses) should be
+YCONNECT-IT-RZN1D?
 
-Meow!
+> +    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032"
+>    - Salvator-X (RTP0RC7795SIPB0010S)
+>      compatible = "renesas,salvator-x", "renesas,r8a7795"
+>    - Salvator-X (RTP0RC7796SIPB0011S)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-⢀⣴⠾⠻⢶⣦⠀ 
-⣾⠁⢠⠒⠀⣿⡁ A dumb species has no way to open a tuna can.
-⢿⡄⠘⠷⠚⠋⠀ A smart species invents a can opener.
-⠈⠳⣄⠀⠀⠀⠀ A master species delegates.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
