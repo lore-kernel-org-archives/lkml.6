@@ -1,56 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751841AbeCVQIR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:08:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48952 "EHLO mail.kernel.org"
+        id S1751870AbeCVQIc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:08:32 -0400
+Received: from mga07.intel.com ([134.134.136.100]:26546 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751812AbeCVQIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:08:15 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7E42183E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AG47ELv5LTreVZqYke2oFu/Om2XXn0RHL/t4f5+5vwHyVypSEEIGI/yubftGUZ1Y7taiUayTFeSkoM0ggIkbE5muTZM=
+        id S1751811AbeCVQIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:08:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
+   d="scan'208";a="27974439"
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v2 0/3] perf/core: expose thread context switch out event type
+ to user space
+Organization: Intel Corp.
+Message-ID: <713750a0-7cc1-0a27-7253-12ff4f3c9a8d@linux.intel.com>
+Date: Thu, 22 Mar 2018 19:08:25 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <9C732DC6-F9CA-474F-B8F5-F8EBE406B12E@intel.com>
-References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
- <1521481767-22113-15-git-send-email-chang.seok.bae@intel.com>
- <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com>
- <C78DE381-C618-4370-9B06-F6E25C850661@intel.com> <CALCETrX03_AG-OuJdmfmsbvEt0UTdUpaUVDRQgbDZWGY7WD-Xw@mail.gmail.com>
- <E9221EFA-636C-4D36-AEBA-3A1EEBBF2F50@intel.com> <CALCETrUxQ1XOs7V1XKOsk-iQ-qOwn41sWGYkepkVOE7PtfX24A@mail.gmail.com>
- <9C732DC6-F9CA-474F-B8F5-F8EBE406B12E@intel.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 22 Mar 2018 16:07:53 +0000
-X-Gmail-Original-Message-ID: <CALCETrWyuDC9Visx2-7rwpicVfS3wVMVFBykysaYcoBBe2y+tg@mail.gmail.com>
-Message-ID: <CALCETrWyuDC9Visx2-7rwpicVfS3wVMVFBykysaYcoBBe2y+tg@mail.gmail.com>
-Subject: Re: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when FS/GS
- updated by ptracer
-To: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 3:45 PM, Bae, Chang Seok
-<chang.seok.bae@intel.com> wrote:
-> On 3/21/18, 18:41, "Andy Lutomirski" <luto@kernel.org> wrote:
->> mov to gs changes GSBASE even if GS was unchanged.
-> In GDB, ptrace (syscall) doesn't happen when FS/GS unchanged as
-> its (context) cache seems to be first checked. This does not allow to
-> preserve GSBASE as you know.
->
->> But it's not clear to me that you've identified any case where
->> emulating this behavior is useful.
-> One argument I heard is (if debugging a legacy application) user
-> might want to (indirectly) access LDT during inferior call and this
-> mov to fs/gs has been useful (maybe needed).
->
->
 
-But your patch doesn't actually do this, since gdb will just do
-SETREGS anyway, right?
+Implementation of exposing context-switch-out type event as a part 
+of PERF_RECORD_SWITCH[_CPU_WIDE] record.
+
+Introduced types of events assumed to be:
+a) preempt: when task->state == TASK_RUNNING
+b) yield: !preempt, encoding is done using new bit 
+   PERF_RECORD_MISC_SWITCH_OUT_YIELD like this:
+   
+   event_header->misc &= 
+	PERF_RECORD_MISC_SWITCH_OUT|PERF_RECORD_MISC_SWITCH_OUT_YIELD
+
+Perf tool report and script commands output has been extended to decode 
+new yield bit and the updated output looks like in the examples below.
+
+The documentation has been updated to mention yield switch out events 
+and its decoding symbols in perf script output.
+
+The changes have been manually tested on Fedora 27 with the patched kernel:
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+
+perf report -D -i system-wide.perf | grep _SWITCH: 
+
+1 113807080924003 0x26db26 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT        next pid/tid: 20495/20495
+1 113807080925644 0x26db4e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid: 31479/31479
+1 113807080937266 0x26db76 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:    16/16   
+1 113807080938445 0x26db9e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid: 20495/20495
+1 113807080945455 0x26dbc6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid: 20495/20495
+
+perf script --show-switch-events -F +misc -I -i system-wide.perf:
+
+  rcu_sched     8 [003]       113800.748548: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid:     0/0    
+       perf 31479 [000] S     113800.748548: PERF_RECORD_SWITCH_CPU_WIDE OUT        next pid/tid:    59/59   
+kworker/0:1    59 [000]       113800.748549: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid: 31479/31479
+  rcu_sched     8 [003] Sy    113800.748551: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0    
+    swapper     0 [003]       113800.748551: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid:     8/8
+
+---
+ Alexey Budankov (3):
+	perf/core: store context switch out type into Perf trace
+	perf report: extend raw dump (-D) out with switch out event type
+	perf script: extend misc field decoding with switch out event type
+
+ include/uapi/linux/perf_event.h          |  5 +++++
+ kernel/events/core.c                     |  4 +++-
+ tools/include/uapi/linux/perf_event.h    |  5 +++++
+ tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
+ tools/perf/builtin-script.c              |  5 ++++-
+ tools/perf/util/event.c                  |  4 +++-
+ 6 files changed, 29 insertions(+), 11 deletions(-)
