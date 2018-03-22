@@ -1,43 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932248AbeCVOIG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 10:08:06 -0400
-Received: from mail-pg0-f51.google.com ([74.125.83.51]:34902 "EHLO
-        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755751AbeCVOIF (ORCPT
+        id S1755818AbeCVOPC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 10:15:02 -0400
+Received: from mail-ot0-f173.google.com ([74.125.82.173]:33448 "EHLO
+        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752199AbeCVOO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:08:05 -0400
-X-Google-Smtp-Source: AG47ELupjGRdo8m0861k9HpyJgy71Q13Talq0dGZ6lUm6MaIYWED3DNAghmuDsCzxHd+OwgTw9X3ow==
-Date: Thu, 22 Mar 2018 23:07:59 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v1] printk: change message to pr_info
-Message-ID: <20180322140759.GB561@tigerII.localdomain>
-References: <20180322135833.16602-1-tomeu.vizoso@collabora.com>
+        Thu, 22 Mar 2018 10:14:58 -0400
+X-Google-Smtp-Source: AG47ELudmGVl1sAjOPLzXdT/OgQ4xwpryNdqQFOasygrzBTPmGAuII5oBrFQdy35hmFDqCtqhh5pLbOIztmubNjPsoY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180322135833.16602-1-tomeu.vizoso@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1521712529-632-2-git-send-email-abel.vesa@nxp.com>
+References: <1521712529-632-1-git-send-email-abel.vesa@nxp.com> <1521712529-632-2-git-send-email-abel.vesa@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 22 Mar 2018 11:14:57 -0300
+Message-ID: <CAOMZO5CkwK1yoJKEx4UOB1sp0y95SZrkRmyojXWxROLKJAdWow@mail.gmail.com>
+Subject: Re: [PATCH 1/4] arm: imx: Update clk driver API
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Yongcai Huang <anson.huang@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/22/18 14:58), Tomeu Vizoso wrote:
-> To allow userspace to prevent this message from appearing in the
-> console by changing the log priority.
-> 
-> This matches other informative messages that the power subsystem emits
-> when the system changes power states.
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+On Thu, Mar 22, 2018 at 6:55 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
+> This adds the following new wrappers:
+>  - imx_clk_gate2_flag
+>  - imx_clk_set_parent
 
-Well, no objections,
+Please explain the motivation for adding these two new functions in
+the commit log.
 
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+>
+> It also updates the flags for the old wrappers.
+>
+> Signed-off-by: Anson Huang <anson.huang@nxp.com>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 
-	-ss
+Is this patch from you or from Anson?
+
+If it is from Anson then his name should appear at the From: line.
