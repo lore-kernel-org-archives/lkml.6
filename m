@@ -1,76 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751923AbeCVCfD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 22:35:03 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39527 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751716AbeCVCfC (ORCPT
+        id S1751915AbeCVChx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 22:37:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56744 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbeCVChu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 22:35:02 -0400
-X-Google-Smtp-Source: AG47ELsgjchY1z+heynvPSSgyUPbGcUEVRr5mBNnjev896CofLxznn05SjptLYEn/hZGA+mzYm7T2A==
-Date: Thu, 22 Mar 2018 11:34:57 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        bugzilla-daemon@bugzilla.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, wen.yang99@zte.com.cn,
-        Petr Mladek <pmladek@suse.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [Bug 199003] console stalled, cause Hard LOCKUP.
-Message-ID: <20180322023457.GB3181@jagdpanzerIV>
-References: <bug-199003-8243@https.bugzilla.kernel.org/>
- <bug-199003-8243-Txkdkdv5Cm@https.bugzilla.kernel.org/>
- <20180321094422.6e099480@gandalf.local.home>
- <20180322021437.GA3181@jagdpanzerIV>
+        Wed, 21 Mar 2018 22:37:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 963E260817
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH][next] phy: qcom-qusb2: fix missing assignment to an error
+ return code
+To: Colin King <colin.king@canonical.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Manu Gautam <mgautam@codeaurora.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180321174538.2194-1-colin.king@canonical.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <40d4e9a6-86c0-4f1d-4768-b27209ab4890@codeaurora.org>
+Date: Thu, 22 Mar 2018 08:07:46 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180322021437.GA3181@jagdpanzerIV>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180321174538.2194-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/22/18 11:14), Sergey Senozhatsky wrote:
-[..]
-> Looking at
->  printk()->call_console_drivers()->serial8250_console_putchar()->wait_for_xmitr()
-> 
-> ... wait_for_xmitr() can spin for over 1 second waiting for the UART_MSR_CTS
-> bit.
 
-[..]
 
-> a 1+ second long busy loop in the console driver is quite close to
-> "problems guaranteed". But, wait, there is even more. This wait_for_xmitr()
-> busy wait is happening after every character we print on the console. So
-> printk("foo") will generate 5 * wait_for_xmitr() busy loops [foo + \r + \n].
-> They punch&touch watchdog a lot, so at the least the system won't get killed
-> by the hardlockup detector. But at the same time, it's still potentially a
-> 1+ second busy loop in the console driver * strlen(message).
+On 3/21/2018 11:15 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The error return code is not being assigned to ret from the call
+> to clk_prepare_enable and consequently the current check on ret
+> picks up the previous error return. Fix this by adding in the
+> missing assignment to ret.
+>
+> Detected by CoverityScan, CID#166020 ("Logically Dead code")
+>
+> Fixes: 891a96f65ac3 ("phy: qcom-qusb2: Add support for runtime PM)
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-One does not even need to have concurrent printk()-s in this case. A
-single CPU doing several direct printks under spin_lock is already
-enough:
+Acked-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-	CPUA						CPUB ~ CPUZ
-	spin_lock(&lock)
-	 printk->wait_for_xmitr				spin_lock(&lock)
-	 printk->wait_for_xmitr
-	 ...
-	 printk->wait_for_xmitr				<< lockups >>
-	 printk->wait_for_xmitr
-	spin_unlock(&lock)
+regards
+Vivek
 
-> Sometimes I really wish we had detached consoles. Direct printk()->console
-> is nice and cool, but... we can't have it.
-
-And this is, basically, what they do with printk_deferred(). We usually
-use it to avoid deadlocks, but in this particular case it's used due to
-the fact that direct printk() is way too painful, so they are detaching
-printout and move it to another control path. Quite an interesting idea,
-I must say.
-
-	-ss
+>   drivers/phy/qualcomm/phy-qcom-qusb2.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+> index 94afeac1a19e..6f5689a40884 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+> @@ -439,7 +439,7 @@ static int __maybe_unused qusb2_phy_runtime_resume(struct device *dev)
+>   	}
+>   
+>   	if (!qphy->has_se_clk_scheme) {
+> -		clk_prepare_enable(qphy->ref_clk);
+> +		ret = clk_prepare_enable(qphy->ref_clk);
+>   		if (ret) {
+>   			dev_err(dev, "failed to enable ref clk, %d\n", ret);
+>   			goto disable_ahb_clk;
