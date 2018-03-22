@@ -1,117 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751913AbeCVUDR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:03:17 -0400
-Received: from mail-pf0-f180.google.com ([209.85.192.180]:45254 "EHLO
-        mail-pf0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751731AbeCVUDQ (ORCPT
+        id S1751896AbeCVUIz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:08:55 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.111]:30996 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751771AbeCVUIy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:03:16 -0400
-X-Google-Smtp-Source: AG47ELtYJQKuyul11xPJHgVtgu1eF0QNoOl4H1gg75XYmGqO47qouZCWv21M9Nk7B3w0eZn5jFyjBw==
-Date: Thu, 22 Mar 2018 13:03:13 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Steven Rostedt <rostedt@goodmis.org>
-cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexei Starovoitov <ast@fb.com>
-Subject: Re: [PATCH] mm, vmscan, tracing: Use pointer to reclaim_stat struct
- in trace event
-In-Reply-To: <20180322121003.4177af15@gandalf.local.home>
-Message-ID: <alpine.DEB.2.20.1803221302570.3268@chino.kir.corp.google.com>
-References: <20180322121003.4177af15@gandalf.local.home>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Thu, 22 Mar 2018 16:08:54 -0400
+Date: Thu, 22 Mar 2018 15:08:49 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] qed: Use true and false for boolean values
+Message-ID: <20180322200849.GA28033@embeddedgus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1ez6W3-001FIK-N7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.145.54.187]:54268
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Mar 2018, Steven Rostedt wrote:
+Assign true or false to boolean variables instead of an integer value.
 
-> 
-> The trace event trace_mm_vmscan_lru_shrink_inactive() currently has 12
-> parameters! Seven of them are from the reclaim_stat structure. This
-> structure is currently local to mm/vmscan.c. By moving it to the global
-> vmstat.h header, we can also reference it from the vmscan tracepoints. In
-> moving it, it brings down the overhead of passing so many arguments to the
-> trace event. In the future, we may limit the number of arguments that a
-> trace event may pass (ideally just 6, but more realistically it may be 8).
-> 
-> Before this patch, the code to call the trace event is this:
-> 
->  0f 83 aa fe ff ff       jae    ffffffff811e6261 <shrink_inactive_list+0x1e1>
->  48 8b 45 a0             mov    -0x60(%rbp),%rax
->  45 8b 64 24 20          mov    0x20(%r12),%r12d
->  44 8b 6d d4             mov    -0x2c(%rbp),%r13d
->  8b 4d d0                mov    -0x30(%rbp),%ecx
->  44 8b 75 cc             mov    -0x34(%rbp),%r14d
->  44 8b 7d c8             mov    -0x38(%rbp),%r15d
->  48 89 45 90             mov    %rax,-0x70(%rbp)
->  8b 83 b8 fe ff ff       mov    -0x148(%rbx),%eax
->  8b 55 c0                mov    -0x40(%rbp),%edx
->  8b 7d c4                mov    -0x3c(%rbp),%edi
->  8b 75 b8                mov    -0x48(%rbp),%esi
->  89 45 80                mov    %eax,-0x80(%rbp)
->  65 ff 05 e4 f7 e2 7e    incl   %gs:0x7ee2f7e4(%rip)        # 15bd0 <__preempt_count>
->  48 8b 05 75 5b 13 01    mov    0x1135b75(%rip),%rax        # ffffffff8231bf68 <__tracepoint_mm_vmscan_lru_shrink_inactive+0x28>
->  48 85 c0                test   %rax,%rax
->  74 72                   je     ffffffff811e646a <shrink_inactive_list+0x3ea>
->  48 89 c3                mov    %rax,%rbx
->  4c 8b 10                mov    (%rax),%r10
->  89 f8                   mov    %edi,%eax
->  48 89 85 68 ff ff ff    mov    %rax,-0x98(%rbp)
->  89 f0                   mov    %esi,%eax
->  48 89 85 60 ff ff ff    mov    %rax,-0xa0(%rbp)
->  89 c8                   mov    %ecx,%eax
->  48 89 85 78 ff ff ff    mov    %rax,-0x88(%rbp)
->  89 d0                   mov    %edx,%eax
->  48 89 85 70 ff ff ff    mov    %rax,-0x90(%rbp)
->  8b 45 8c                mov    -0x74(%rbp),%eax
->  48 8b 7b 08             mov    0x8(%rbx),%rdi
->  48 83 c3 18             add    $0x18,%rbx
->  50                      push   %rax
->  41 54                   push   %r12
->  41 55                   push   %r13
->  ff b5 78 ff ff ff       pushq  -0x88(%rbp)
->  41 56                   push   %r14
->  41 57                   push   %r15
->  ff b5 70 ff ff ff       pushq  -0x90(%rbp)
->  4c 8b 8d 68 ff ff ff    mov    -0x98(%rbp),%r9
->  4c 8b 85 60 ff ff ff    mov    -0xa0(%rbp),%r8
->  48 8b 4d 98             mov    -0x68(%rbp),%rcx
->  48 8b 55 90             mov    -0x70(%rbp),%rdx
->  8b 75 80                mov    -0x80(%rbp),%esi
->  41 ff d2                callq  *%r10
-> 
-> After the patch:
-> 
->  0f 83 a8 fe ff ff       jae    ffffffff811e626d <shrink_inactive_list+0x1cd>
->  8b 9b b8 fe ff ff       mov    -0x148(%rbx),%ebx
->  45 8b 64 24 20          mov    0x20(%r12),%r12d
->  4c 8b 6d a0             mov    -0x60(%rbp),%r13
->  65 ff 05 f5 f7 e2 7e    incl   %gs:0x7ee2f7f5(%rip)        # 15bd0 <__preempt_count>
->  4c 8b 35 86 5b 13 01    mov    0x1135b86(%rip),%r14        # ffffffff8231bf68 <__tracepoint_mm_vmscan_lru_shrink_inactive+0x28>
->  4d 85 f6                test   %r14,%r14
->  74 2a                   je     ffffffff811e6411 <shrink_inactive_list+0x371>
->  49 8b 06                mov    (%r14),%rax
->  8b 4d 8c                mov    -0x74(%rbp),%ecx
->  49 8b 7e 08             mov    0x8(%r14),%rdi
->  49 83 c6 18             add    $0x18,%r14
->  4c 89 ea                mov    %r13,%rdx
->  45 89 e1                mov    %r12d,%r9d
->  4c 8d 45 b8             lea    -0x48(%rbp),%r8
->  89 de                   mov    %ebx,%esi
->  51                      push   %rcx
->  48 8b 4d 98             mov    -0x68(%rbp),%rcx
->  ff d0                   callq  *%rax
-> 
-> Link: http://lkml.kernel.org/r/2559d7cb-ec60-1200-2362-04fa34fd02bb@fb.com
-> 
-> Reported-by: Alexei Starovoitov <ast@fb.com>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+This issue was detected with the help of Coccinelle.
 
-Acked-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/qlogic/qed/qed_dev.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+index 553a6d1..cdb3eec 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
+@@ -298,8 +298,8 @@ static void qed_init_qm_params(struct qed_hwfn *p_hwfn)
+ 	qm_info->start_vport = (u8) RESC_START(p_hwfn, QED_VPORT);
+ 
+ 	/* rate limiting and weighted fair queueing are always enabled */
+-	qm_info->vport_rl_en = 1;
+-	qm_info->vport_wfq_en = 1;
++	qm_info->vport_rl_en = true;
++	qm_info->vport_wfq_en = true;
+ 
+ 	/* TC config is different for AH 4 port */
+ 	four_port = p_hwfn->cdev->num_ports_in_engine == MAX_NUM_PORTS_K2;
+@@ -1276,9 +1276,9 @@ static int qed_hw_init_common(struct qed_hwfn *p_hwfn,
+ 
+ 	if (p_hwfn->mcp_info) {
+ 		if (p_hwfn->mcp_info->func_info.bandwidth_max)
+-			qm_info->pf_rl_en = 1;
++			qm_info->pf_rl_en = true;
+ 		if (p_hwfn->mcp_info->func_info.bandwidth_min)
+-			qm_info->pf_wfq_en = 1;
++			qm_info->pf_wfq_en = true;
+ 	}
+ 
+ 	memset(&params, 0, sizeof(params));
+@@ -1630,7 +1630,7 @@ static int qed_vf_start(struct qed_hwfn *p_hwfn,
+ 		qed_vf_pf_tunnel_param_update(p_hwfn, p_params->p_tunn);
+ 	}
+ 
+-	p_hwfn->b_int_enabled = 1;
++	p_hwfn->b_int_enabled = true;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
