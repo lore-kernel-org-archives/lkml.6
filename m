@@ -1,77 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751765AbeCVUq4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:46:56 -0400
-Received: from cmta18.telus.net ([209.171.16.91]:57337 "EHLO cmta18.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751656AbeCVUqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:46:54 -0400
-X-Authority-Analysis: v=2.2 cv=ebrSR/MH c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=VwQbUJbxAAAA:8
- a=UQ8mlwBPq_CX1FJq91kA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-From: "Doug Smythies" <dsmythies@telus.net>
-To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc: "'Frederic Weisbecker'" <fweisbec@gmail.com>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
-        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
-        "'Rik van Riel'" <riel@surriel.com>,
-        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
-        "'Mike Galbraith'" <mgalbraith@suse.de>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Peter Zijlstra'" <peterz@infradead.org>
-References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <1635957.yuHkCe9oyz@aspire.rjw.lan> z4Bte42s61Konz4ByelYCQ
-In-Reply-To: z4Bte42s61Konz4ByelYCQ
-Subject: RE: [RFT][PATCH v7.3 5/8] cpuidle: Return nohz hint from cpuidle_select()
-Date: Thu, 22 Mar 2018 13:46:49 -0700
-Message-ID: <004001d3c21e$e867a3b0$b936eb10$@net>
+        id S1751812AbeCVUsJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:48:09 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36711 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbeCVUsH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 16:48:07 -0400
+Date: Thu, 22 Mar 2018 21:48:05 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv5,5/5] ARM: dts: omap4-droid4: add soundcard
+Message-ID: <20180322204804.GA26871@amd>
+References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdPCBM5CitelSSkKQxC1UE+Xq/NUEwAGGCYQ
-X-CMAE-Envelope: MS4wfPM0ouOquZiLd6heONyjnrvqUYc2+XtVhgeq3Ri/S+9+N28SJJPjtJZgJ6we9vpKdOjA1Vl8pU1vYHIbvt7AasK73cDRg4PJ7Vxnu7FOBGjQWV8AxeNt
- ZcODmbAwcEEHg4gh7bJleInOh8Onh7PcDV3nXRtRy6ajiVrOhN0z8IZmly9dGzLj5ZWK5yjPo9ojyQqvvvuLEfUgOsH0yPBJGQP+HM4UmPxSwAeRjLhrlDjV
- QtDWUWkuRWLXaTsP1a45e4PppzONdpgbgEv+nbiDiYvVFXLX6LkX2N49hbWsFU8Tbk+k3/8UU/K1pri5EcolneIswrBWkRWRgoKxOs5dOY9so96hyfc0Stie
- Wap1b93Y04AKYyz2o17h2D0C3YjGk7WurA+PQhNzXUyqJO4UIaWUXCycffYVfOefWWm/3EBumOfdlwObV8locpDAIMdvZg3ywiZIuq5zCt0K39+Ro+zZ5BTB
- VTWXiEmjSDSFuso5xXqwzaDwdKEm0rFprV2vXg==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+Content-Disposition: inline
+In-Reply-To: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.03.22 10:40 Rafael J. Wysocki wrote:
 
-...[snip]...
+--qDbXVdCdHGoSgWSk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->The difference between this and the original v7 (of patch [5/8]) is
-> what happens in menu_update().  This time next_timer_us is checked
-> properly and if that is above the tick boundary and a tick wakeup occurs,
-> the function simply sets mesured_us to a large constant and uses that to
-> update both the correction factor and data->intervals[] (the particular
-> value used in this patch was found through a bit of experimentation).
->
-> Let's see how this works for Thomas and Doug.
+Hi!
 
-System idle test done for 74 minutes.
-After boot and after the system settles down for a couple of minutes,
-Processor package power is constant at 3.7 Watts. (great)
-Not worth a new graph to show a flat line.
+> Add sound support to Motorola Droid 4 using simple-soundcard
+> and CPCAP's audio codec. This does not yet correctly represent
+> the whole audio routing, since McBSP3 is also connected to
+> Bluetooth and MDM6600 modem (and probably also 4G modem).
+> These extra DAI links are not yet supported and have not been
+> tested.
 
-V7.3 average package power = 3.68 Watts.
-V7 average package power = 3.68 Watts
-V7.2+ average package power = 4.06 Watts (+10%)
+I applied the series on top v4.16-rc5, but I can't seem to get it
+to work:
 
-> For easier testing there is a git branch containing this patch (and the
-> rest of the series) at:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
->  idle-loop-v7.3
+root@devuan:/sys/devices/platform/usb-phy@1# cat /proc/asound/cards
+ 0 [H58006000encode]: HDMI_58006000_e - HDMI 58006000.encoder
+                       HDMI 58006000.encoder
+root@devuan:/sys/devices/platform/usb-phy@1#
+[   10.819122] ALSA device list:
+[   10.832641]   #0: HDMI 58006000.encoder
+[   10.842407] Waiting 10 sec before mounting root device...
 
-Thanks. I used this git branch this time and for the first time.
-Much easier.
+I think I should have the required options enabled...=20
 
-... Doug
+CONFIG_SND_OMAP_SOC=3Dy
+CONFIG_SND_OMAP_SOC_DMIC=3Dy
+CONFIG_SND_OMAP_SOC_MCBSP=3Dy
+CONFIG_SND_OMAP_SOC_MCPDM=3Dy
+CONFIG_SND_OMAP_SOC_HDMI_AUDIO=3Dy
+# CONFIG_SND_OMAP_SOC_RX51 is not set
+# CONFIG_SND_OMAP_SOC_N9 is not set
+CONFIG_SND_OMAP_SOC_OMAP_TWL4030=3Dy
+CONFIG_SND_OMAP_SOC_OMAP_ABE_TWL6040=3Dy
+# CONFIG_SND_SOC_IMG is not set
+
+#
+# STMicroelectronics STM32 SOC audio support
+#
+# CONFIG_SND_SOC_XTFPGA_I2S is not set
+# CONFIG_ZX_TDM is not set
+CONFIG_SND_SOC_I2C_AND_SPI=3Dy
+CONFIG_SND_SOC_CPCAP=3Dy
+
+Any ideas?
+
+Thanks,
+							Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--qDbXVdCdHGoSgWSk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq0FoQACgkQMOfwapXb+vLRDQCfdMCTN0Ps3wd+sy9Si7gxD71x
+r7YAoLAOf9meT+w8TFBgSlMMz5EuLHDg
+=X8kF
+-----END PGP SIGNATURE-----
+
+--qDbXVdCdHGoSgWSk--
