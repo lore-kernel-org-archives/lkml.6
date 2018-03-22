@@ -1,82 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754189AbeCVABC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 20:01:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34412 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753614AbeCVAA7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 20:00:59 -0400
+        id S1754181AbeCVAJs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 20:09:48 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:60380 "EHLO vps-vb.mhejs.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753732AbeCVAJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 20:09:47 -0400
+Subject: Re: [PATCH] x86/speculation: Fill the RSB on context switch also on
+ non-IBPB CPUs
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
+        KarimAllah Ahmed <karahmed@amazon.de>, Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, thomas.lendacky@amd.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <9eb945bd-f77e-0301-d977-d1acf931b19d@maciej.szmigiero.name>
+ <757282b8-8b59-bcc6-1f6b-3383ae8a8575@intel.com>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Message-ID: <4d7cfea4-a86a-c8f2-aaff-c8429fc107b8@maciej.szmigiero.name>
+Date: Thu, 22 Mar 2018 01:09:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 21 Mar 2018 20:00:58 -0400
-From: okaya@codeaurora.org
-To: Casey Leedom <leedom@chelsio.com>
-Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Ganesh GR <ganeshgr@chelsio.com>, linux-kernel@vger.kernel.org,
-        Michael Werner <werner@chelsio.com>,
-        SWise OGC <swise@opengridcomputing.com>
-Subject: Re: [PATCH v4 12/17] net: cxgb4/cxgb4vf: Eliminate duplicate barriers
- on weakly-ordered archs
-In-Reply-To: <BY2PR1201MB0983417DC5ECAB85834A84DBC8AA0@BY2PR1201MB0983.namprd12.prod.outlook.com>
-References: <1521513753-7325-1-git-send-email-okaya@codeaurora.org>,<1521513753-7325-13-git-send-email-okaya@codeaurora.org>
- <BY2PR1201MB0983417DC5ECAB85834A84DBC8AA0@BY2PR1201MB0983.namprd12.prod.outlook.com>
-Message-ID: <11820921c76403bca743c382287aee05@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <757282b8-8b59-bcc6-1f6b-3383ae8a8575@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Language: en-US
+Content-Transfer-Encoding: 7BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-21 19:03, Casey Leedom wrote:
-> [[ Appologies for the DUPLICATE email.  I forgot to tell my Mail Agent 
-> to
->    use Plain Text. -- Casey ]]
+On 22.03.2018 00:30, Dave Hansen wrote:
+> On 03/20/2018 04:17 AM, Maciej S. Szmigiero wrote:
+>> Since it is unlikely that existing RSB entries from the previous task match
+>> the new task call stack we can use the existing unconditional
+>> RSB-filling-on-context-switch infrastructure to protect against such
+>> userspace-to-userspace attacks.
+>>
+>> This patch brings a change in behavior only for the following CPU types:
+>> * Intel pre-Skylake CPUs without updated microcode,
+>> * AMD Family 15h model >60h, Family 17h CPUs without updated microcode.
+>>
+>> Other CPU types either already do the RSB filling on context switch for
+>> other reasons or do support IBPB for more complete userspace-to-userspace
+>> protection.
 > 
->   I feel very uncomfortable with these proposed changes.  Our team is 
-> right
-> in the middle of trying to tease our way through the various platform
-> implementations of writel(), writel_relaxed(), __raw_writel(), etc. in 
-> order
-> to support x86, PowerPC, ARM, etc. with a single code base.  This is
-> complicated by the somewhat ... "fuzzily defined" semantics and varying
-> platform implementations of all of these APIs.  (And note that I'm just
-> picking writel() as an example.)
+> I think I misunderstood your reasoning a bit.  Let me see if I can
+> restate the problem a bit.
 > 
->   Additionally, many of the changes aren't even in fast paths and are 
-> thus
-> unneeded for performance.
+> IBPB provides provides userspace-to-userspace protection because it
+> prevents all indirect branch predictions after the barrier from being
+> controlled by software executed before the barrier.  We only use IBPB
+> for KVM and when processes clear their dumpable flag.
 > 
->   Please don't make these changes.  We're trying to get this all sussed 
-> out.
+> You're saying that, even if we don't have IBPB, we can do *some*
+> userspace-to-userspace protection with RSB manipulation.  The RSB
+> manipulation obviously only helps 'RET' instructions and not JMP/CALL,
+> but it does do *something* useful.
+> 
+> Is that right?
+
+Yes.
+
+As far as I understand the issue this should provide a good protection
+for userspace processes that were recompiled with retpolines as they
+won't have any indirect jumps and calls.
+
+> Do you really want this behavior on all context switches?  We don't do
+> IBPB on all context switches, only the ones where we are switching *to*
+> a non-dumpable process.
+> 
+> Do you perhaps want to do RSB manipulation in lieu of IBPB when
+> switching *to* a non-dumpable process and IBPB is not available?
 > 
 
-I was also given the feedback to look at performance critical path only. 
-I am in the process of revisiting the patches.
+Is it worth differentiating such processes in this case?
+IBPB is supposed to be very expensive so certainly it is worthwhile
+to do it only for high-value processes (=non-dumpable).
 
-If you can point me to the ones that are important, I can try to limit 
-the changes to those only.
+However, it is unlikely that existing RSB entries from the previous
+task match the new task call stack anyway.
+We already do unconditional RSB-filling-on-context-switch in many
+cases.
 
-If your team wants to do it, I can drop this patch as well.
-
-I think the semantics of write API is clear. What was actually 
-implemented is another story.
-
-I can share a few of my findings.
-
-A portable driver needs to do this.
-
-descriptor update in mem
-wmb ()
-writel_relaxed ()
-mmiowb ()
-
-Using __raw_write() is wrong as it can get reordered.
-
-Using wmb()+writel() is also wrong for performance reasons.
-
-If something is unclear, please ask.
-
-> 
+Maciej
