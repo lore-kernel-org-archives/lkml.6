@@ -1,77 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754987AbeCVPAY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:00:24 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35308 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754543AbeCVPAW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:00:22 -0400
-X-Google-Smtp-Source: AG47ELtHKd+aR76mIquJMk6vmT3OymIXXwcq0prsoe7dv409wip2BNFFmbk9jp/EE/nH6uQjav3cDw==
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Michal Marek <mmarek@suse.cz>,
-        Masahiro Yamada <yamada.m@jp.panasonic.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Sam Ravnborg <sam@ravnborg.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/2] modpost: sumversions: try to fix "same dir" logic
-Date: Thu, 22 Mar 2018 15:59:54 +0100
-Message-Id: <20180322150005.15061-2-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180322150005.15061-1-linux@rasmusvillemoes.dk>
-References: <20180322150005.15061-1-linux@rasmusvillemoes.dk>
+        id S1753342AbeCVPDG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:03:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48691 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751899AbeCVPDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 11:03:04 -0400
+Date: Thu, 22 Mar 2018 16:00:37 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Andiry Xu <jix024@eng.ucsd.edu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, dan.j.williams@intel.com,
+        andy.rudoff@intel.com, coughlan@redhat.com, swanson@cs.ucsd.edu,
+        david@fromorbit.com, jack@suse.com, swhiteho@redhat.com,
+        miklos@szeredi.hu, andiry.xu@gmail.com, Andiry Xu <jix024@cs.ucsd.edu>
+Subject: Re: [RFC v2 83/83] Sysfs support.
+Message-ID: <20180322150037.GD6955@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Andiry Xu <jix024@eng.ucsd.edu>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, dan.j.williams@intel.com,
+        andy.rudoff@intel.com, coughlan@redhat.com, swanson@cs.ucsd.edu,
+        david@fromorbit.com, jack@suse.com, swhiteho@redhat.com,
+        miklos@szeredi.hu, andiry.xu@gmail.com,
+        Andiry Xu <jix024@cs.ucsd.edu>
+References: <1520705944-6723-1-git-send-email-jix024@eng.ucsd.edu>
+ <1520705944-6723-84-git-send-email-jix024@eng.ucsd.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1520705944-6723-84-git-send-email-jix024@eng.ucsd.edu>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current logic for deciding whether to parse a file listed in the
-.o.cmd file matches neither "is in same dir" (implied by the comment
-here), nor the "/* Sum all files in the same dir or subdirs. */" a
-little higher up. For example, for an object file in the top-level
-crypto/ directory, we end up also parsing anything it includes from
-include/crypto/ (though not subdirectories of that) and
-arch/x86/include/asm/crypto/. On the other hand, we never parse anything
-included from subdirectories of the object file's directory, contrary to
-at least one of the comments.
+On Sat, Mar 10, 2018 at 10:19:04AM -0800, Andiry Xu wrote:
+> From: Andiry Xu <jix024@cs.ucsd.edu>
+> 
+> Sysfs support allows user to get/post information of running NOVA instance.
+> After mount, NOVA creates four entries under proc directory
+> /proc/fs/nova/pmem#/:
+> 
+> timing_stats	IO_stats	allocator	gc
+> 
+> Show NOVA file operation timing statistics:
+> cat /proc/fs/NOVA/pmem#/timing_stats
+> 
+> Clear timing statistics:
+> echo 1 > /proc/fs/NOVA/pmem#/timing_stats
+> 
+> Show NOVA I/O statistics:
+> cat /proc/fs/NOVA/pmem#/IO_stats
+> 
+> Clear I/O statistics:
+> echo 1 > /proc/fs/NOVA/pmem#/IO_stats
+> 
+> Show NOVA allocator information:
+> cat /proc/fs/NOVA/pmem#/allocator
+> 
+> Manual garbage collection:
+> echo #inode_number > /proc/fs/NOVA/pmem#/gc
 
-This tries to fix things so that we actually implement "parse stuff
-found in $(dirname $objfile) and below" by simply checking whether line
-begins with dir. It doesn't quite work, though, because there are some
-
-#include "../blabla"
-
-directives, e.g. in drivers/scsi/libsas/ we have #include
-"../scsi_sas_internal.h", and gcc doesn't normalize the path before
-printing it, so we have
-
-drivers/scsi/libsas/../scsi_sas_internal.h
-
-in the .o.cmd file. But perhaps that's actually a good thing - then the
-logic would be something like "if gcc found the included file using . as
-starting point, we include it - otherwise it was found via some -I path,
-so do not include it".
-
-In any case, this is mostly just something I stumbled on because I'm
-about to change the .o.cmd layout slightly, so I'd like to know what the
-rules are really supposed to be.
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- scripts/mod/sumversion.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/mod/sumversion.c b/scripts/mod/sumversion.c
-index 0f6dcb4011a8..e4f83fb9da2f 100644
---- a/scripts/mod/sumversion.c
-+++ b/scripts/mod/sumversion.c
-@@ -368,7 +368,7 @@ static int parse_source_files(const char *objfile, struct md4_ctx *md)
- 		}
- 
- 		/* Check if this file is in same dir as objfile */
--		if ((strstr(line, dir)+strlen(dir)-1) == strrchr(line, '/')) {
-+		if (strncmp(line, dir, dirlen) == 0) {
- 			if (!parse_file(line, md)) {
- 				warn("could not open %s: %s\n",
- 				     line, strerror(errno));
--- 
-2.15.1
+IIRC no new entries should be added to /proc, /sys is supposed to be
+used. I can't find it documented though, so you'd better check with
+sysfs people.
