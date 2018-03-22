@@ -1,99 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752115AbeCVT7r (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 15:59:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36364 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751771AbeCVT62 (ORCPT
+        id S1752131AbeCVT74 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 15:59:56 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44517 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751771AbeCVT7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 15:58:28 -0400
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH 3/4] mm: Add free()
-Date: Thu, 22 Mar 2018 12:58:18 -0700
-Message-Id: <20180322195819.24271-4-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180322195819.24271-1-willy@infradead.org>
-References: <20180322195819.24271-1-willy@infradead.org>
+        Thu, 22 Mar 2018 15:59:53 -0400
+X-Google-Smtp-Source: AG47ELuSCoFA4wXFblS37t+YOu7Ohdc8s3wYCp+9WdHI5lZV8DL97NDr3VcidvOWWHL90w26Zirg+Q==
+Subject: Re: [PATCH] floppy: Do not copy a kernel pointer to user memory in
+ FDGETPRM ioctl
+To: Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org
+References: <1520467365-7194-1-git-send-email-bbellevi@uci.edu>
+From: Brian Belleville <bbellevi@uci.edu>
+Message-ID: <ca7b2e22-483c-f16f-2a41-04fb936bba9b@uci.edu>
+Date: Thu, 22 Mar 2018 12:59:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1520467365-7194-1-git-send-email-bbellevi@uci.edu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+Hi, are there any comments on this patch or the issue I described? I 
+have tested the FDGETPRM ioctl and confirmed that the struct it returns 
+does contain a pointer to kernel data. I also have tested my patch, and 
+with it applied the returned struct no longer contains a kernel pointer, 
+but all other fields are still present.
 
-free() can free many different kinds of memory.
+Thank you,
+Brian Belleville
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
----
- include/linux/kernel.h |  2 ++
- mm/util.c              | 39 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+)
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 3fd291503576..8bb578938e65 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -933,6 +933,8 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
- 			 "pointer type mismatch in container_of()");	\
- 	((type *)(__mptr - offsetof(type, member))); })
- 
-+void free(const void *);
-+
- /* Rebuild everything on CONFIG_FTRACE_MCOUNT_RECORD */
- #ifdef CONFIG_FTRACE_MCOUNT_RECORD
- # define REBUILD_DUE_TO_FTRACE_MCOUNT_RECORD
-diff --git a/mm/util.c b/mm/util.c
-index dc4c7b551aaf..8aa2071059b0 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -26,6 +26,45 @@ static inline int is_kernel_rodata(unsigned long addr)
- 		addr < (unsigned long)__end_rodata;
- }
- 
-+/**
-+ * free() - Free memory
-+ * @ptr: Pointer to memory
-+ *
-+ * This function can free almost any type of memory.  It can safely be
-+ * called on:
-+ * * NULL pointers.
-+ * * Pointers to read-only data (will do nothing).
-+ * * Pointers to memory allocated from kmalloc().
-+ * * Pointers to memory allocated from kmem_cache_alloc().
-+ * * Pointers to memory allocated from vmalloc().
-+ * * Pointers to memory allocated from alloc_percpu().
-+ * * Pointers to memory allocated from __get_free_pages().
-+ * * Pointers to memory allocated from page_frag_alloc().
-+ *
-+ * It cannot free memory allocated by dma_pool_alloc() or dma_alloc_coherent().
-+ */
-+void free(const void *ptr)
-+{
-+	struct page *page;
-+
-+	if (unlikely(ZERO_OR_NULL_PTR(ptr)))
-+		return;
-+	if (is_kernel_rodata((unsigned long)ptr))
-+		return;
-+
-+	page = virt_to_head_page(ptr);
-+	if (likely(PageSlab(page)))
-+		return kmem_cache_free(page->slab_cache, (void *)ptr);
-+
-+	if (is_vmalloc_addr(ptr))
-+		return vfree(ptr);
-+	if (is_kernel_percpu_address((unsigned long)ptr))
-+		free_percpu((void __percpu *)ptr);
-+	if (put_page_testzero(page))
-+		__put_page(page);
-+}
-+EXPORT_SYMBOL(free);
-+
- /**
-  * kfree_const - conditionally free memory
-  * @x: pointer to the memory
--- 
-2.16.2
+On 03/07/2018 04:02 PM, Brian Belleville wrote:
+> The final field of a floppy_struct is the field "name", which is a
+> pointer to a string in kernel memory. The kernel pointer should not be
+> copied to user memory. The FDGETPRM ioctl copies a floppy_struct to
+> user memory, including the "name" field. This pointer cannot be used
+> by the user, and it will leak a kernel address to user-space, which
+> will reveal the location of kernel code and data and undermine KASLR
+> protection. Instead, copy the floppy_struct except for the "name"
+> field.
+> 
+> Signed-off-by: Brian Belleville <bbellevi@uci.edu>
+> ---
+>   drivers/block/floppy.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+> index eae484a..4d4a422 100644
+> --- a/drivers/block/floppy.c
+> +++ b/drivers/block/floppy.c
+> @@ -3470,6 +3470,7 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
+>   					  (struct floppy_struct **)&outparam);
+>   		if (ret)
+>   			return ret;
+> +		size = offsetof(struct floppy_struct, name);
+>   		break;
+>   	case FDMSGON:
+>   		UDP->flags |= FTD_MSG;
+> 
