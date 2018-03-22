@@ -1,105 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932065AbeCVPZE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:25:04 -0400
-Received: from mail-eopbgr30080.outbound.protection.outlook.com ([40.107.3.80]:33450
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        id S1755353AbeCVPZ2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:25:28 -0400
+Received: from mail-db5eur01on0047.outbound.protection.outlook.com ([104.47.2.47]:53088
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752305AbeCVPXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:23:49 -0400
-Date: Thu, 22 Mar 2018 17:23:36 +0200
+        id S1755318AbeCVPZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 11:25:14 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=leonro@mellanox.com;
+Date: Thu, 22 Mar 2018 17:24:59 +0200
 From: Leon Romanovsky <leonro@mellanox.com>
-To: syzbot <syzbot+8882c6f4c8feae701eba@syzkaller.appspotmail.com>
+To: syzbot <syzbot+06674559539eceb4d6f0@syzkaller.appspotmail.com>
 Cc: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
         jgg@ziepe.ca, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
         markb@mellanox.com, monis@mellanox.com, parav@mellanox.com,
         syzkaller-bugs@googlegroups.com
-Subject: Re: general protection fault in rdma_destroy_id
-Message-ID: <20180322152336.GF19440@mtr-leonro.local>
-References: <94eb2c05a2963475610566cd18e7@google.com>
+Subject: Re: general protection fault in rdma_resolve_addr
+Message-ID: <20180322152459.GI19440@mtr-leonro.local>
+References: <94eb2c03a2440a07af0566e73dcc@google.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="De7JZ5cYyW/PeqB+"
+        protocol="application/pgp-signature"; boundary="aiJlF+TB2UsRxGRQ"
 Content-Disposition: inline
-In-Reply-To: <94eb2c05a2963475610566cd18e7@google.com>
+In-Reply-To: <94eb2c03a2440a07af0566e73dcc@google.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Originating-IP: [193.47.165.251]
-X-ClientProxiedBy: HE1PR0402CA0048.eurprd04.prod.outlook.com
- (2603:10a6:7:7c::37) To HE1PR0502MB3916.eurprd05.prod.outlook.com
- (2603:10a6:7:88::11)
+X-ClientProxiedBy: DB6P193CA0020.EURP193.PROD.OUTLOOK.COM (2603:10a6:6:29::30)
+ To AM0PR0502MB3907.eurprd05.prod.outlook.com (2603:10a6:208:20::25)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 3730fe6e-f546-4469-84ae-08d59008e471
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0502MB3916;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0502MB3916;3:MEgDO4TF9ruTvl0hMuTZX1OdYcm0sXrgWbQUvCvH7lMKXnrXHciA4IfTKnlsZbcm3UI6i5Z8f3qMsovIp4iAnXMi7Kzm+wJb71KjLyn64mQ5ukapzDag4VoCIpX5Uilc5S8VhxqCYBlVJJ8hj9YR2X6bTZmJdHYz2ODy24U/G80KBs9w8xBer9LNxXrB8c2vgUIJ3/nkw73vY6h0ED0UXS58yMH4rlayIFl3Y1ttrAvl0ervYuLAOVeas5Dbc0iA;25:CFXxyinVDjA21zPBZQAuhjYpU0QdgTUCZ7GkmeiIIn3kuyqofT0cYJ74384U35GkvUqbtMa+NzUmciZxHsPOzyjFx9PvgGzKYtsmzltdV/dp1XZ3Ima9JCba0XRqS8mz1edSHUg+bgVHNXAUpF91b417IDe3q/zCiRq/MnqkFo/YSMQLOy1BdlxzZTrxWl6truLqqiuAKgCk1WxJ21OW3YbegGqx3UzRhPv5GOC5RRB56ExXW+51YfA2KfoXeqYw2p0frIx5oK7ShHN1VfIv8HXNKSteH1o3QW4aT9s5Y7usPWZjP0IQoqIU17+o5Y9Q+BALhPHgFNjis50mmiBGqg==;31:cmWQqttVeCfFhgh4NjDgTezcOa21OZbrQE6a/ixeyvSDyA1a77on5zhqAntq1zxuzClV0HHVWAzB6UMpn6VaPYuJEza87IUvXiU1xCdPmfmnBRnuEBxYdqhOxpAevZwqmVq0UmHqIdfDyNdAWvOVXhvvfDk9oowBwEyaWoIMfbqWDlpacu2QG2ZAuUBO0J3sx0nLgUtnmywU6PJo8NN2LWgLyThP87qyDUyg36D2yxQ=
-X-MS-TrafficTypeDiagnostic: HE1PR0502MB3916:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=leonro@mellanox.com;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0502MB3916;20:EBu8kW6S+wz1XZ7XFjSTqYzQYPsoSbEYF4hyny+zYdG+PdqxQ/s3Op/wGq6HErXiorU8dr48QprP3SGu7s47vayxxAmuK9EEkBBT4hQEEw15d9SwwVAHmYt7+FxuwYogxq7Lw4x1A/wt08slLyQ5bV4BebLul5QIjhF3n3zLp1LegOELhIxRSdjQVD3A+8bzcBq7wEOKOUQPU30tzXjnhJLnT4WRUWgd6Odv4OydH2Au29fbuTw+aSdtI1hyo2cImhyjomCUXdcYzbcaAlE8HpcUKxTp9Vwpd67S8bkNOo271Wd/8XqiWhpTNOt0CxyKJ3jwX61Pls6ZmWZS3b4RTgbBj3G+N+7lc87L3EnG2cYNd37W78b7VHrxe4rrthwzPe9a4HKjmLyNuaTYndzW0XfCf8uS37hIVcVGQpRfWBNnImrno45DlUR3qDZ0RO/VjPwN0q84YK0Ce7g5mbaeWn5ak/e+w3D41W6yM79/Ordg6opZquMM96qIO9PDakhI
-X-Microsoft-Antispam-PRVS: <HE1PR0502MB391692BD27B82BE512834CC8B0A90@HE1PR0502MB3916.eurprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(158342451672863)(72170088055959)(166708455590820)(192374486261705)(148501403981450)(84791874153150)(21532816269658);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231221)(944501327)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:HE1PR0502MB3916;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0502MB3916;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0502MB3916;4:8Zm68tAbgEJEHYJ2xZqfHk9n5qdk4YWMbpkl2iyE9BQMeU9Ji+XggaCD6BR3xJDo/8Y2tExzx5pcfB6aK176m//h97yRlhoMHhK1Lf2828PLiYVLlt9icn5gjCBQtiow4z0RHtRZsDH5FfB+T+PQU5uCXs21VqHvLfD/Na62yub4NY5kcp0nUuGNSRnX3hEnxvNvPYUritOeR0aAegcW9CfJvV6ieyT3p+O6QZcqMm3Ut+M/KLiPmbCSI2hgMOJBkXLL56NAtyKYy/xyFiaYxYQIAJ+hdSJGsXTV7Ti0i4F9VhhqIiVuS9f0E3I090ZHSlTyKjNh2ssy/FeBp9LwgOfDtbge0ZiNjoonYJuIj8n2/14DguRkxi00USPd//q/80Lv8MK/UxaSRG7yle9mUVa4sbDGFQr4OCNB3tZ41HNdLbBUZ62EQ1FtfvjDSN4iMWlAn28NpNB1wZfOUcyoQBd63jmMCGHBblDzBMnKvcuvJynaFrq3kB65HJ7ZNcQndG/rMWiyTTF1QU9qU2SMBg==
+X-MS-Office365-Filtering-Correlation-Id: d18f8efe-dcc1-40fc-1658-08d590091667
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM0PR0502MB3907;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;3:Fr7HW+/Yvpftbxo+cNJ/ORhCuqcWoW/zMdgKZPjTrZMd8sbQbOjXvIauxgol5LV5HfmL6VTlLSDl3LdjQjz8/WV7JSEHxwDpZ477a4s/iB0u/rR3yP3wfkfo5oZk/L4TMkykeGkyEXNVb9LIwZQvn3LXZuDcqP1bwA/98HhaDuQnq1vuLLvrTyGfY+PvoCDLpSxM6V6KtoBZGHghIY3w3HTvJgDLpB/Bd75aQivT51pDY4fbiGuD1ot1s5yg4F3p;25:d430O9pEhSBMMEmLM3igsZvbLLUpxgxTSSclux+zSseABrDWbzklawUsFLQcRxCCNHA/eqaatn1pCQgGEvV1jH8ncMb5XsbMNQagqjPhV8zoaJ4G8u8dohdfOrSRFC8/rQzecqDNSUvjWjQExJ5Pp2hhnSGA/g1OTJEieBv5HVAaCWR5fghCRtbJZd48BNuQkdfa67vyzs+z9t9gH/CWnTdwE1+jjI0x5mcxJZqt0FtCTcIx7eoBF7VLr52UesL8kljvN+eo+MhSB9rNIaS4KN63qR1LuWxQMizxli0jzTz5eNRaCfmEVj66YIwZ1XuB7eR3VxjZ3EULuXYhPPemLg==;31:6E3AVe9XXAaJVP8AWoz6EWSz08RVDYikAZxfnjVL79qkRZxZivTTc0lwpCY63/jdWIQo2viQqjz1T8aYyDqEXqUC/0SvvtHjsE03ANxfcQBgpWz4ArU9/KCf9wXpJziVbzEoZy26N2m0elCYI9NEYH2xLtLwn9dsD7Y9jPCPIu7H5ptmZdSmV6qfFGlHoag6qhqQEX5EmfRdGyfxnun5Sb/5xFKAL0xy8+cxCqyMW90=
+X-MS-TrafficTypeDiagnostic: AM0PR0502MB3907:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;20:/Icy/bMqR6isCNijeWmRWChXZ31ag/fBwNKcGqHNxLhSJQMpcI1Jt3Ao1LutQFCMCLeRCWTmcf9EAArwiq/zZwToCcL8/5l59N2smSM81ga4+a/hAdcUel5EFn5sCe9HAsP++8IGMHC/MaMcuUEOoVhUz+/xj4epbPpunWa7eSUmjqaFR2QuiokdGy7NLeHbk8+jg9LY8bAeuLWnppyp58N38TzsiUSzGIccAGJyfeckHFIQceIi9LgDOgUxP2Sy/r+yRC5JIWZeWM2QfTWZ5BjFDl61SjD2qWPn/53wyMT4OXb7N+B0UA14obCs86wwr2PdW3I6UIxYEA0T8CZTEnBACmI12QT+ReZRr+Ve1wk5Z2QG0ych8IBE+ArCQYj8Kh/U1ksh/O2CcOtfL8ciUlRs5v3SHFqLa4j4FVGUUTlBwk7DNDDpVJ6y6igXgECpyXU8sQR8pRvViMJ/EmD3x2mykexf8bnX6c2ViMfOYR2dfn+9AoMJBn3GykbU4VUb
+X-Microsoft-Antispam-PRVS: <AM0PR0502MB3907CA1E757ECC5E183E02E9B0A90@AM0PR0502MB3907.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(158342451672863)(72170088055959)(166708455590820)(192374486261705)(788757137089)(148501403981450)(84791874153150);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231221)(944501327)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:AM0PR0502MB3907;BCL:0;PCL:0;RULEID:;SRVR:AM0PR0502MB3907;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;4:1s/7EfisDtqmL8JQrchoWHSFPVC992eiDjEVwGM/SfuWQdEzr7cjwrg/bbdfZkvtOnUenaA3ttMcVAm+lE7MPkoly8YAOxIOq94SLk6JBqt216yj6v9IlDiwAS9YPvCXtNmskYvsaCrWT6Le2xsm/tpae0LKTuOgaLSahGTF+eRhLboroRx7/OAVS1g8sWHAjievVTA1jbAL4Q7brWTiZZli3kbwBDXokVn8Ks8kI34BzX+2lhCJDuFwpGk+JA6w2L9SNbd9zWnCr8YO3QIbA4lxiuyeD1pM62KUPgCGI44mlmFEFIAHsoarkkLJeuSlfcvZ7B9ahPey/nzd3gZF75uawj5RHKKsXA2oBzxPpkgvXvDU2pWQ/CQiLn6hIBQtVDY7MtwKcG0DCN8DTVKUSncPcE6erjptraNRKtfDsgkXxJ6L2T+iWlNEitsDFRKtsNX+81dZBMn+AFOHobXDzKAHGhIHhkwerEQsU2ZXYefd4G31VG1zml73h/ymWuLZc8V8jEvln0Q+XyDdlggFbQ==
 X-Forefront-PRVS: 0619D53754
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39380400002)(39860400002)(366004)(396003)(346002)(376002)(189003)(199004)(98436002)(97736004)(4326008)(63394003)(9686003)(229853002)(305945005)(7736002)(52116002)(25786009)(6496006)(81166006)(68736007)(5890100001)(76176011)(44144004)(81156014)(11609785009)(33896004)(8936002)(6306002)(186003)(84326002)(16526019)(575784001)(53376002)(26005)(86362001)(53936002)(66066001)(11346002)(6486002)(478600001)(59450400001)(6666003)(33656002)(2950100002)(966005)(16586007)(6246003)(386003)(316002)(45080400002)(8676002)(58126008)(5660300001)(6116002)(106356001)(21480400003)(53946003)(105586002)(1076002)(2906002)(16200700003)(76506005)(3846002)(446003)(18370500001)(2700100001)(579004)(559001)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0502MB3916;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR0502MB3916;23:htseLt75nIpF4kBxyJQiguosqqChrG8NBmvShyH?=
- =?us-ascii?Q?ONvIsBSN5ZWK6ufFIFyhQoCzKEZZRMPa+et5d5bGV0GbiSB1tjKoKV2MG4BY?=
- =?us-ascii?Q?bQrh1Rt1iEyiiKEEPuynnCJBPgFZXL8qNO9uUxmdBM5mkzRXBW9q+AgPnvV7?=
- =?us-ascii?Q?zk+0WxoxeOsAZ8Ruz73eYKj6PSE5rYRbj7W7HoLZlVVLaWcbvICUTSKySF7p?=
- =?us-ascii?Q?zSXUj0oig0EepgHVjPpaWbPbH6HuA3YkTdzfgPRKYlPNn0eDegFdr/xmntZG?=
- =?us-ascii?Q?wAco+MlMV6VA9OCQJvft8vOhiVUReDYOtWkIdrRS9MOg+kSeerWzoJi/ZJjD?=
- =?us-ascii?Q?sOn+dS8KxTJj7ECalJ3TbLN4VD+VcaEUaipItToMntXeuWquH34Zhi3QXNwc?=
- =?us-ascii?Q?CzOzXTHAQ9DD01cKCF8hGeu55tygXPkYnw2EpsqYMhXszMlQPItRRGdzrDI7?=
- =?us-ascii?Q?e9R8e25ufiNFAiyb4trd0cib+5hS+2b+UEfxcpPUtVqKz8R9utDzN2SoIhBO?=
- =?us-ascii?Q?DaQ+kI2Z3lcpmCABo4dIv+OeVkGRuB8WrM12SBLGzZ52ibdvhUQcifflAIwo?=
- =?us-ascii?Q?K5OtzbMFN0+Jyzk1nDzIExrX2W+3FxAVWUYmDjfeUYZMP5nLCy9O9KxNWa23?=
- =?us-ascii?Q?/x1JdjToS1rtwZ+tJZlhKVIkmF2pVj3rgNDGDx2NmfpDRqUgjJ4zaJqrBu5Y?=
- =?us-ascii?Q?L1vUbCb8XBBXH+33yc7buAZ8iwY0lPbJE/JBcD7a4f6E4Jo7JIPcMRHLS6rK?=
- =?us-ascii?Q?zurCkQql+nJmaDTq3E4vwmK/tyQegW0U5wLMExnbQYQQS9SdjaGK54DAb7oy?=
- =?us-ascii?Q?Tyu5PERems2DSKNqABvUMYNA0mUXMSTnAK/iFW48eeeRySOq8AOBw4qp29Te?=
- =?us-ascii?Q?2Jc70Pd/t2M+Hld6x6w8SRmehBD2wVz+Q2o3Rvt06+HN2IfG3Fprfn7Sa6SE?=
- =?us-ascii?Q?shohEwXvaZYIS5h4kb3aW+A5TDQpEOPfMadyd9iji7UIVZWZ2XEMN/N3VsXb?=
- =?us-ascii?Q?UE9F8+cABi5yd+eXl1IAmL1REoaN4ecuC4cfQ1LllfXieIW8sZVPpcwNMhXp?=
- =?us-ascii?Q?E99ZGdnHNRhhAXJeJn7A4bL9F13qa17K2W2Y7huIoEFFpoADkYEomWnlEXgk?=
- =?us-ascii?Q?F6mf0bcZTvdnBUxcBydG4Y1nrwhQlBG7C5xD4or/cb9mtR4OyXxK5XKTWj3O?=
- =?us-ascii?Q?YM3wbijjbOeJJECzuguGatz6Jfl34COezoFUqOi6V3GtmJ6BzNNtpBWbeTuO?=
- =?us-ascii?Q?B0/TmWQzHFE3HrT3AiKQxHIbXPeiiSfa3I+wfLP/+Z5wjEYKhkEbfD5FmB7F?=
- =?us-ascii?Q?olCiEA9tGazp0HgiOWMWkq8x2MmSwR8ffuakE3jb8iOeD3fd4yADw1ytzvNr?=
- =?us-ascii?Q?4kpUofLK6tP37zA17Da0t/sS32o/QF4TJ5rwJd64ffTdKbQKH35UeSpEsUs0?=
- =?us-ascii?Q?CzvFIFFnwLtmglEj3FctItn9UkyuOQ/jToDf2SHtfS7CYAv+vjpG7hfVqfp0?=
- =?us-ascii?Q?ug84/8G7PNbOr/ITtZL1W4CStygZG4vfLS6jke4sB5KNftq14rOR1/AeI8LD?=
- =?us-ascii?Q?7sMdMZBmFleBX5RyjIV/sYvLGoNS8/+mWS5+lYMwaiAWn5Nl3Q9W1fM9d9AF?=
- =?us-ascii?Q?F?=
-X-Microsoft-Antispam-Message-Info: f6LUL9m7aJ+qlvg3ZmUhEAlZLCo69vLYrsLKupTw8olfRHQvttiI5bCKT7aCbkJZhhgW4n9W9dNjkXFh9q3+mGDnnKWqPnT+0CSjCQXvroOibl2A7ltSVfM2la8XrPGGxuYF1GAnyHdtoonxyAYfQQFtpzKQU1er5kEc25sNcmJdORoSVAW2ccFfBOn+Opjb
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0502MB3916;6:mAsawGDmWNnSrm6KbQOIUXUbrO9QO8mV2Dof+g6Zo5xcHzS3p8ipdo+VXNTtPMRMWWwkYYovzfXDUL+gGam/nU6GPlC8Qbd/oqUGZ6zT0pafJ5yo8gSN6LNU8DcmxnALexGbZR0f+pwytgwU1wpHre3Oob6XbSeIF7cCH4ZopifYDYeKTgrSVFBhCyFMJnyp4O6oyHBzcmEmjb19ah43Qrpi1SQSqGTJzBTH9gTxUPqBZW9lbWF4CvDi//TtVIer4vpU/vyARHkEXOnsjnq6oWlhFKMlSDPbQgbvHmRjL5ZAKICqspbYq3bMD3YlxPorWHok0ju8TG3zWOuvWR9td3I+Db16eJoc2ZcoXlSjyiU=;5:jo1CVQgJ3kuOOxtFo4qFy92XdXtkWporaKiQldnHHp6hDrhTgNo06+ssCvD3FFSJw6lkbxysEz1c8hjEjYGkUMk18hsfTfWenICwitWE9sZwziiokJ5/dYnhmO1OId7jK0ns2cHGEHlf4A0z3T1VmHEfGwY8xr6FEtp4oN9duiI=;24:LlsqHxx/l4H2Pl30wB/s86CyhqGvuXlnC8wyQuI4f4cjSV2/qAM/xeKjteWaJp5+g1Q7g4vnBhcB45sRZ5G0FUG6VGzngpLv3rZaMIKbTps=;7:cFwzNi3gw6pVcd+gKKlv9EtZ6DFsKXbkuCpNQByI+DbB3NMZIrFGJV8Qx3o9auhTIJe3MWH/Sf3mQx7PcC2swHyzmFLNaQ/9Af/vWujRuzEkPexwcK593UskDImPMXj3BMN11JokYNCX9nujdHLYi4kwYJtrko81EiNrjav8QI2BMeqc3cAomG3Sak0gP07rtmL4LMLp1sL86K48pQpfxTlRYovIVHYAjiTmIUlArrumlJilC7dNSA3bGwGJVw28
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(39380400002)(366004)(396003)(346002)(39860400002)(376002)(189003)(199004)(26005)(6486002)(33896004)(45080400002)(6246003)(76176011)(44144004)(63394003)(1076002)(98436002)(4326008)(33656002)(59450400001)(53376002)(11609785009)(16200700003)(53936002)(5660300001)(53946003)(52116002)(9686003)(58126008)(6306002)(97736004)(66066001)(8936002)(11346002)(2906002)(3846002)(6116002)(81166006)(6496006)(81156014)(7736002)(8676002)(305945005)(25786009)(76506005)(5890100001)(106356001)(68736007)(575784001)(86362001)(21480400003)(105586002)(186003)(478600001)(16586007)(6666003)(386003)(16526019)(966005)(84326002)(2950100002)(316002)(229853002)(446003)(18370500001)(2700100001)(559001)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0502MB3907;H:localhost;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR0502MB3907;23:7SQdG2iJMRlYwsBFBFRCNFcgdE1fEoZhGF1rmVJ?=
+ =?us-ascii?Q?onu5eVaNuKeq30TcAm+yzl3eZ/tYIatQiF59kVfo7IxLGAr5KJceIiNVVQIO?=
+ =?us-ascii?Q?vbnZkbUPEjY+QNR2lauzYNALt0rKK6ZQT1DbsrRbLU903AY27xfiz/RiPPat?=
+ =?us-ascii?Q?h2KbGYoWBCn6PtqDSaRQpZoXXqMMewtzB5lM0LUoJfLcHWMGlft0W9GyOPi7?=
+ =?us-ascii?Q?94XC2BSsb7uc/3oS5daha/Lm6OUcC5H3X2vq2FQR+1WJdVDFEVB+hrjAWLYd?=
+ =?us-ascii?Q?7f5GaJ3zk3WpDjh9c7ZODILtVK5aQ5j3Smm2C+bSeqCeAyDkF1GTx9ETVu1O?=
+ =?us-ascii?Q?gWMtYYZ0qNJEUKtq6ynscNffNltbp9LmGs8ZISItfdLeG7+Db/HrSA79I3Vd?=
+ =?us-ascii?Q?Z1XPOLPtuGyAx7mvWA07Wg2M8CqtXY2GVQcWd3epdK8mJB27ReF3s+/9LWbf?=
+ =?us-ascii?Q?2qAzfB1eHOKfNDkwSnh3RqruADIETaCciD5AZxnTE7en6ajAO3H2cXdXiTMv?=
+ =?us-ascii?Q?TtzK7oXfP9uE8jC4EUFnxUtv333K0uwAUm40vfXjRRYhB8gWt0l5sfdac+IX?=
+ =?us-ascii?Q?T7cDz60X9drj/q6P/if9nFCHIXaGGdmDN8N+Y8aWaJVKpnGCWs9tci/9fux+?=
+ =?us-ascii?Q?4iwW3diPkzqg+/WkaDH1RVeWC3B/yPwcIXW+jUaZtUa7CNs4XGMZL8ObSAhR?=
+ =?us-ascii?Q?vr+l2Wg3Iw08Y6cl8BPfa8tupn2ccnGSSXrJHclKOi8Lep+ba9J7KoPiFIFa?=
+ =?us-ascii?Q?cITQO28tOSMgvx2G4tDaN6vLPNVeennofLh4pzm3uMw0L8s1x1R1KQm5cBIH?=
+ =?us-ascii?Q?yOvblEbzqNe6FTUF2igtUVgi2mcfvSgMTyVRGUawTDdd7wU7Ks/xHzJ+4wMr?=
+ =?us-ascii?Q?JsZ4gcMDEwn+4YQQHoMZohrk3Y7F8K8gjYteA/+vFAd2rAuDYhQl4faOp8l5?=
+ =?us-ascii?Q?FFYfu7BQDW771zu8anpzhhCYtOhY3C8T2xjrii5Eq55jogvSbwcX+aUSjeZO?=
+ =?us-ascii?Q?aIIHpv7FT6vrTUlhelGMv4nVCTnbpwg2hIdWf81btB2hrlpyrtmhaCswDKuD?=
+ =?us-ascii?Q?nMA7wXB79aHHQNPcecq333DhHISAyZdbZey/Of/ptsL94xv7QSXHPEmNF9Rs?=
+ =?us-ascii?Q?b8MYxptwHhR4zSp6hc0KK7gCOY4sLqCOtPFapyfRT1/f0jiji45HCpeBSyOE?=
+ =?us-ascii?Q?rMs47/0Du/jz9fL/Mm1rGrRaxS62/8ditdFzbbbrrCeARZOn4gb+GthQFb2n?=
+ =?us-ascii?Q?VmpCUSwqJxWXUgtf9awUoBJxJKlxzALtM3+Vo+e1N8XmYxvLGi5hdn9Jrw22?=
+ =?us-ascii?Q?GWJJZaPfP5G6P/q2Df9QE1XDiEgam9vjV6lon8GB3l1PeP32L/ZPlwo18RMV?=
+ =?us-ascii?Q?+UU9Dgmbs0rHtcsGRr2VsjQT6Wgc72yTu9CQ01zgQqAZQjbA8Qz9+OdgVpRs?=
+ =?us-ascii?Q?4Yy2/THKeby8eZSdiaf6zTcP4k9LaFztoCEtIPG6vNssDXEQU61VYbuKy8cR?=
+ =?us-ascii?Q?bkc7zp4tH+9KYmjtZasXaaai1R9V7veQuHM4+Qe49lWpGfmqk7L2G18oHI2L?=
+ =?us-ascii?Q?Rfb7AqaNoSn2lrDyejpN49uGwKb1stFvffybVvrUEegbFUet2yQJrc6Dr4DG?=
+ =?us-ascii?Q?7?=
+X-Microsoft-Antispam-Message-Info: /K8C+M0VhSwp7Mro6YL4RazB4C0EwvKuXC6ZkO8sw/7f26kq2YqeaXnjBPvh9JH9YGaC+foEgvDpWFJVyQKzn7CfCVb99rwMzgtaMCSZ+9YCvVVkc3X+TSnh5ereb+wA0FhSFCjm42wVUBJJfJfQMShpBfXuYf2l4Qkfrq4xj9hLgJQv/5iGAExgW/oNorTT
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;6:htfIZVpRC2NLlb9QxCGV3dzz3kpmv0m0e0imCOCFQ5RrIxxswLJcV5n8aOhAO4N5zy844gqHsEsJCMJ4a9AT7vaiJICsXGI+qkHtAOK0O0zILzsAo1gsm//gZcpusgHNPU1jpIs75g9twqPj9CRTnE9BB8KXJteBQvk92majONgZ/6OX7Ke6qO+D8uYmTyv2ZZ7ZTy4/dZ7aF/1Pms7HqiKH07+qjqZyPXra/hjr1fRn0YW2DaoW8+DOS0rEBc4hSt3Y9S6NttD7LLPeXFfYngU1Mf/DSUJvdMbYvDtBxfHfEhMIIhqJ5FRDHARIXi72UoNhgl2Mh5LelIkO0O+j1TQ0DChJfOeIjyFcV2/gWpcAZjXxu3vlbOSc/hLEfDOYrbtSkn0qn/pLXS3FVVuSiydszadGJ6ShNnH1WgCzuybFY2y4ra/mhho+kUs6gVRRRRnqrEaEVOJMcBxKYjFX1Q==;5:F40DvZO/P9ox5vkwiGZQTJfG+jH3ek1F1OSYgTBpjGDfdHgKC8qJ8QQYiRsQWW8xi8PiDMp/VPndZ5Rl9nAmoCnO2Gsa7tc5xw8jErujoJCC3jFicX6Zl4iAqIYgks6LEEy32Tc5D1bzRgJ1txQHyQ15GhIjZ8IlfZ1YJf4DzVc=;24:/wRbX6mq7JYVKxQlm9aEoOTXMUu3GBeHz0NgYTimu4GsL9YG2F12EvxNpr0LNDjrbZ4BCvQ+T+a9PlNHxi/KQ/FSfOU0TWwxDAJhHH9wZhE=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0502MB3907;7:XLLknOvkBcKiJBM0PgCPhGrbzyssck2GVUJhcoXVyzqdhUrGxJcOeY2YhZoT7kx1fbkv2SsBmfC54nUpcn7Q4umTWnhjy3qoddipHKplCED3aS7jx9PfxtS4sB54YA9arDCRUyq+22kXDIuFjhKng4SVpsEpTXCAIYZLQsib/SSbGo6arP7ppK+7DSXrAxBkWfdUe1eO+dOqKwF1YWyr1RS2hedzabCjCsrTnstQG48fHHeAOUbN1cbAwWuiVFpw
 X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2018 15:23:40.6138 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3730fe6e-f546-4469-84ae-08d59008e471
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2018 15:25:04.5878
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d18f8efe-dcc1-40fc-1658-08d590091667
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0502MB3916
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0502MB3907
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---De7JZ5cYyW/PeqB+
+--aiJlF+TB2UsRxGRQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 #syz dup: KASAN: null-ptr-deref Write in rdma_resolve_addr
 
-On Tue, Mar 06, 2018 at 10:59:03PM -0800, syzbot wrote:
+On Thu, Mar 08, 2018 at 06:10:31AM -0800, syzbot wrote:
 > Hello,
 >
 > syzbot hit the following crash on upstream commit
-> ce380619fab99036f5e745c7a865b21c59f005f6 (Tue Mar 6 04:31:14 2018 +0000)
-> Merge tag 'please-pull-ia64_misc' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/aegl/linux
+> 851710a8096131129ad1da79a47d385c4926d114 (Thu Mar 8 01:37:32 2018 +0000)
+> Merge branch 'for-linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input
 >
-> So far this crash happened 3 times on upstream.
 > C reproducer is attached.
 > syzkaller reproducer is attached.
 > Raw console output is attached.
@@ -107,7 +107,7 @@ On Tue, Mar 06, 2018 at 10:59:03PM -0800, syzbot wrote:
 > .config is attached.
 >
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+8882c6f4c8feae701eba@syzkaller.appspotmail.com
+> Reported-by: syzbot+06674559539eceb4d6f0@syzkaller.appspotmail.com
 > It will help syzbot understand when the bug is fixed. See footer for
 > details.
 > If you forward the report, please keep this part and the footer.
@@ -118,29 +118,25 @@ On Tue, Mar 06, 2018 at 10:59:03PM -0800, syzbot wrote:
 > Dumping ftrace buffer:
 >    (ftrace buffer empty)
 > Modules linked in:
-> CPU: 1 PID: 4278 Comm: syzkaller771653 Not tainted 4.16.0-rc4+ #343
+> CPU: 0 PID: 10410 Comm: syzkaller958277 Not tainted 4.16.0-rc4+ #345
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
-> RIP: 0010:__lock_acquire+0xa09/0x3e00 kernel/locking/lockdep.c:3310
-> RSP: 0018:ffff8801b0477370 EFLAGS: 00010002
-> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 0000000000000000
-> RDX: 0000000000000046 RSI: 0000000000000000 RDI: ffffffff86ec9920
-> RBP: ffff8801b0477700 R08: ffffffff841cb939 R09: 0000000000000001
-> R10: 0000000000000000 R11: 0000000000000230 R12: 0000000000000000
-> R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b09f8080
-> FS:  00007f9804bd9700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000=
+> RIP: 0010:rdma_resolve_addr+0x13c/0x26c0 drivers/infiniband/core/cma.c:29=
+21
+> RSP: 0018:ffff8801b3807680 EFLAGS: 00010207
+> RAX: 0000000000000042 RBX: ffff8801b3807a44 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffff8801b3807a44 RDI: 0000000000000214
+> RBP: ffff8801b38079e0 R08: 0000000000000000 R09: 0000000000000000
+> R10: ffff8801b38079f8 R11: 0000000000000000 R12: dffffc0000000000
+> R13: 00000000000000a0 R14: ffff8801b3807a28 R15: 0000000000000000
+> FS:  00007f2dc376e700(0000) GS:ffff8801db200000(0000) knlGS:0000000000000=
 000
 > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fd44e116000 CR3: 00000001b77dc005 CR4: 00000000001606e0
+> CR2: 0000000020000140 CR3: 00000001c6e4e006 CR4: 00000000001606f0
 > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > Call Trace:
->  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
->  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->  cma_exch drivers/infiniband/core/cma.c:461 [inline]
->  rdma_destroy_id+0xa9/0xda0 drivers/infiniband/core/cma.c:1660
->  ucma_destroy_id+0x2e9/0x4c0 drivers/infiniband/core/ucma.c:606
+>  ucma_resolve_ip+0x142/0x1f0 drivers/infiniband/core/ucma.c:677
 >  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1627
 >  __vfs_write+0xef/0x970 fs/read_write.c:480
 >  vfs_write+0x189/0x510 fs/read_write.c:544
@@ -148,20 +144,21 @@ On Tue, Mar 06, 2018 at 10:59:03PM -0800, syzbot wrote:
 >  SyS_write+0xef/0x220 fs/read_write.c:581
 >  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
 >  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x449639
-> RSP: 002b:00007f9804bd8da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00000000006dac5c RCX: 0000000000449639
-> RDX: 00000000000000a4 RSI: 0000000020000000 RDI: 00000000000001b4
-> RBP: 00000000006dac58 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 006d635f616d6472
-> R13: 2f646e6162696e69 R14: 666e692f7665642f R15: 0000000000000007
-> Code: 81 c4 60 03 00 00 44 89 d0 5b 41 5a 41 5c 41 5d 41 5e 41 5f 5d 49 8d
-> 62 f8 c3 4c 89 da 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00=
- 0f
-> 85 0a 33 00 00 49 81 3b 60 ed 9f 87 41 bd 00 00
-> RIP: __lock_acquire+0xa09/0x3e00 kernel/locking/lockdep.c:3310 RSP:
-> ffff8801b0477370
-> ---[ end trace 885cef83eddc104c ]---
+> RIP: 0033:0x446aa9
+> RSP: 002b:00007f2dc376dda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 0000000000446aa9
+> RDX: 0000000000000008 RSI: 0000000020007100 RDI: 0000000000000004
+> RBP: 00000000006e29f8 R08: 00007f2dc376e700 R09: 0000000000000000
+> R10: 00007f2dc376e700 R11: 0000000000000246 R12: 006d635f616d6472
+> R13: 2f646e6162696e69 R14: 666e692f7665642f R15: 0000000000000003
+> Code: 31 c0 e8 f8 b1 53 fd 48 89 df e8 70 f4 f5 ff 4c 89 ef 48 63 d0 48 89
+> de e8 02 df 8b fd 49 8d bf 14 02 00 00 48 89 f8 48 c1 e8 03 <42> 0f b6 14=
+ 20
+> 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f
+> RIP: rdma_resolve_addr+0x13c/0x26c0 drivers/infiniband/core/cma.c:2921 RS=
+P:
+> ffff8801b3807680
+> ---[ end trace 35b5ca64e9e3cd3f ]---
 > Kernel panic - not syncing: Fatal exception
 > Dumping ftrace buffer:
 >    (ftrace buffer empty)
@@ -191,41 +188,40 @@ On Tue, Mar 06, 2018 at 10:59:03PM -0800, syzbot wrote:
 > Note: all commands must start from beginning of the line in the email bod=
 y.
 
-> [....] Starting enhanced syslogd: rsyslogd[   17.675701] audit: type=3D14=
-00 audit(1520372118.003:5): avc:  denied  { syslog } for  pid=3D4122 comm=
-=3D"rsyslogd" capability=3D34  scontext=3Dsystem_u:system_r:kernel_t:s0 tco=
-ntext=3Dsystem_u:system_r:kernel_t:s0 tclass=3Dcapability2 permissive=3D1
 > =1B[?25l=1B[?1c=1B7=1B[1G[=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
 > [....] Starting periodic command scheduler: cron=1B[?25l=1B[?1c=1B7=1B[1G=
 [=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
 > Starting mcstransd:
-> [....] Starting file context maintaining daemon: restorecond=1B[?25l=1B[?=
-1c=1B7=1B[1G[=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
 > [....] Starting OpenBSD Secure Shell server: sshd=1B[?25l=1B[?1c=1B7=1B[1=
 G[=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
+> [....] Starting file context maintaining daemon: restorecond=1B[?25l=1B[?=
+1c=1B7=1B[1G[=1B[32m ok =1B[39;49m=1B8=1B[?25h=1B[?0c.
+> [   19.110518] audit: type=3D1400 audit(1520479597.561:6): avc:  denied  =
+{ map } for  pid=3D4181 comm=3D"bash" path=3D"/bin/bash" dev=3D"sda1" ino=
+=3D1457 scontext=3Dunconfined_u:system_r:insmod_t:s0-s0:c0.c1023 tcontext=
+=3Dsystem_u:object_r:file_t:s0 tclass=3Dfile permissive=3D1
 >
 > Debian GNU/Linux 7 syzkaller ttyS0
 >
-> syzkaller login: [   23.723433] audit: type=3D1400 audit(1520372124.051:6=
-): avc:  denied  { map } for  pid=3D4262 comm=3D"bash" path=3D"/bin/bash" d=
-ev=3D"sda1" ino=3D1457 scontext=3Dunconfined_u:system_r:insmod_t:s0-s0:c0.c=
-1023 tcontext=3Dsystem_u:object_r:file_t:s0 tclass=3Dfile permissive=3D1
-> Warning: Permanently added '10.128.0.25' (ECDSA) to the list of known hos=
-ts.
+> Warning: Permanently added '10.128.0.6' (ECDSA) to the list of known host=
+s.
+> syzkaller login: [   30.486227] audit: type=3D1400 audit(1520479608.937:7=
+): avc:  denied  { map } for  pid=3D4196 comm=3D"syzkaller958277" path=3D"/=
+root/syzkaller958277320" dev=3D"sda1" ino=3D16481 scontext=3Dunconfined_u:s=
+ystem_r:insmod_t:s0-s0:c0.c1023 tcontext=3Dunconfined_u:object_r:user_home_=
+t:s0 tclass=3Dfile permissive=3D1
+> [   30.502445] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
 > executing program
+> [   30.540985] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
-> [   30.153607] audit: type=3D1400 audit(1520372130.481:7): avc:  denied  =
-{ map } for  pid=3D4276 comm=3D"syzkaller771653" path=3D"/root/syzkaller771=
-653808" dev=3D"sda1" ino=3D16481 scontext=3Dunconfined_u:system_r:insmod_t:=
-s0-s0:c0.c1023 tcontext=3Dunconfined_u:object_r:user_home_t:s0 tclass=3Dfil=
-e permissive=3D1
 > executing program
 > executing program
 > executing program
 > executing program
+> [   30.579193] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
@@ -235,6 +231,7 @@ e permissive=3D1
 > executing program
 > executing program
 > executing program
+> [   30.635337] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
@@ -243,12 +240,14 @@ e permissive=3D1
 > executing program
 > executing program
 > executing program
+> [   30.693344] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
 > executing program
 > executing program
 > executing program
+> [   30.743845] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
@@ -257,6 +256,7 @@ e permissive=3D1
 > executing program
 > executing program
 > executing program
+> [   30.792724] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
@@ -264,6 +264,7 @@ e permissive=3D1
 > executing program
 > executing program
 > executing program
+> [   30.855563] IPVS: ftp: loaded support on port[0] =3D 21
 > executing program
 > executing program
 > executing program
@@ -326,195 +327,1838 @@ e permissive=3D1
 > executing program
 > executing program
 > executing program
-> [   31.778948] kasan: CONFIG_KASAN_INLINE enabled
-> [   31.783564] kasan: GPF could be caused by NULL-ptr deref or user memor=
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> [   36.151874] kasan: CONFIG_KASAN_INLINE enabled
+> [   36.156755] kasan: GPF could be caused by NULL-ptr deref or user memor=
 y access
-> [   31.790896] general protection fault: 0000 [#1] SMP KASAN
-> [   31.796408] Dumping ftrace buffer:
-> [   31.799914]    (ftrace buffer empty)
-> [   31.803593] Modules linked in:
-> [   31.806757] CPU: 1 PID: 4278 Comm: syzkaller771653 Not tainted 4.16.0-=
-rc4+ #343
-> [   31.814169] Hardware name: Google Google Compute Engine/Google Compute=
+> [   36.164197] general protection fault: 0000 [#1] SMP KASAN
+> [   36.169729] Dumping ftrace buffer:
+> [   36.173267]    (ftrace buffer empty)
+> [   36.176970] Modules linked in:
+> [   36.180152] CPU: 0 PID: 10410 Comm: syzkaller958277 Not tainted 4.16.0=
+-rc4+ #345
+> [   36.187665] Hardware name: Google Google Compute Engine/Google Compute=
  Engine, BIOS Google 01/01/2011
-> [   31.823504] RIP: 0010:__lock_acquire+0xa09/0x3e00
-> [   31.828311] RSP: 0018:ffff8801b0477370 EFLAGS: 00010002
-> [   31.833641] RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 000000000=
+> [   36.197025] RIP: 0010:rdma_resolve_addr+0x13c/0x26c0
+> executing program
+> executing program
+> executing program
+> [   36.202117] RSP: 0018:ffff8801b3807680 EFLAGS: 00010207
+> [   36.207476] RAX: 0000000000000042 RBX: ffff8801b3807a44 RCX: 000000000=
 0000000
-> [   31.840879] RDX: 0000000000000046 RSI: 0000000000000000 RDI: ffffffff8=
-6ec9920
-> [   31.848117] RBP: ffff8801b0477700 R08: ffffffff841cb939 R09: 000000000=
-0000001
-> [   31.855354] R10: 0000000000000000 R11: 0000000000000230 R12: 000000000=
+> [   36.214739] RDX: 0000000000000000 RSI: ffff8801b3807a44 RDI: 000000000=
+0000214
+> [   36.222006] RBP: ffff8801b38079e0 R08: 0000000000000000 R09: 000000000=
 0000000
-> [   31.862593] R13: 0000000000000001 R14: 0000000000000000 R15: ffff8801b=
-09f8080
-> [   31.869835] FS:  00007f9804bd9700(0000) GS:ffff8801db300000(0000) knlG=
+> [   36.229272] R10: ffff8801b38079f8 R11: 0000000000000000 R12: dffffc000=
+0000000
+> [   36.236542] R13: 00000000000000a0 R14: ffff8801b3807a28 R15: 000000000=
+0000000
+> [   36.243810] FS:  00007f2dc376e700(0000) GS:ffff8801db200000(0000) knlG=
 S:0000000000000000
-> [   31.878030] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   31.883878] CR2: 00007fd44e116000 CR3: 00000001b77dc005 CR4: 000000000=
-01606e0
-> [   31.891118] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
+> [   36.252032] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   36.257911] CR2: 0000000020000140 CR3: 00000001c6e4e006 CR4: 000000000=
+01606f0
+> [   36.265178] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
 0000000
-> [   31.898357] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
+> [   36.272443] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
 0000400
-> [   31.905597] Call Trace:
-> [   31.908162]  ? __lock_acquire+0x664/0x3e00
-> [   31.912364]  ? print_irqtrace_events+0x270/0x270
-> [   31.917087]  ? __lockdep_init_map+0xe4/0x650
-> [   31.921464]  ? debug_check_no_locks_freed+0x3c0/0x3c0
-> [   31.926623]  ? debug_check_no_locks_freed+0x3c0/0x3c0
-> [   31.931779]  ? __lock_acquire+0x664/0x3e00
-> [   31.935985]  ? ucma_destroy_id+0x269/0x4c0
-> [   31.940191]  ? debug_check_no_locks_freed+0x3c0/0x3c0
-> [   31.945352]  ? __might_sleep+0x95/0x190
-> [   31.949292]  ? ucma_destroy_id+0x269/0x4c0
-> [   31.953495]  ? __mutex_lock+0x16f/0x1a80
-> [   31.957522]  ? ucma_destroy_id+0x269/0x4c0
-> [   31.961728]  ? trace_hardirqs_off+0x10/0x10
-> [   31.966016]  ? trace_hardirqs_off+0x10/0x10
-> [   31.970303]  ? mutex_lock_io_nested+0x1900/0x1900
-> [   31.975114]  ? futex_wait+0x6a9/0x9a0
-> [   31.978884]  lock_acquire+0x1d5/0x580
-> [   31.982660]  ? lock_acquire+0x1d5/0x580
-> [   31.986606]  ? rdma_destroy_id+0xa9/0xda0
-> [   31.990721]  ? lock_release+0xa40/0xa40
-> [   31.994663]  ? lock_downgrade+0x980/0x980
-> [   31.998779]  ? lock_release+0xa40/0xa40
-> [   32.002725]  ? check_same_owner+0x320/0x320
-> [   32.007025]  ? do_raw_spin_trylock+0x190/0x190
-> [   32.011577]  _raw_spin_lock_irqsave+0x96/0xc0
-> [   32.016043]  ? rdma_destroy_id+0xa9/0xda0
-> [   32.020157]  rdma_destroy_id+0xa9/0xda0
-> [   32.024100]  ? trace_hardirqs_on+0xd/0x10
-> [   32.028225]  ? _raw_spin_unlock_irq+0x27/0x70
-> [   32.032692]  ? wait_for_completion+0xe0/0x770
-> [   32.037157]  ? cma_release_dev+0x350/0x350
-> [   32.041359]  ? wait_for_completion_interruptible+0x7e0/0x7e0
-> [   32.047125]  ? do_wait_intr_irq+0x3e0/0x3e0
-> [   32.051416]  ? do_raw_spin_trylock+0x190/0x190
-> [   32.055967]  ? _raw_spin_unlock_irqrestore+0x31/0xc0
-> [   32.061038]  ? trace_hardirqs_on_caller+0x421/0x5c0
-> [   32.066023]  ? trace_hardirqs_on+0xd/0x10
-> [   32.070137]  ? complete+0x62/0x80
-> [   32.073559]  ucma_destroy_id+0x2e9/0x4c0
-> [   32.077588]  ? ucma_close+0x2f0/0x2f0
-> [   32.081359]  ? __might_sleep+0x95/0x190
-> [   32.085302]  ? kasan_check_write+0x14/0x20
-> [   32.089511]  ? _copy_from_user+0x99/0x110
-> [   32.093630]  ucma_write+0x2d6/0x3d0
-> [   32.097223]  ? ucma_close+0x2f0/0x2f0
-> [   32.100991]  ? ucma_resolve_route+0x1a0/0x1a0
-> [   32.105458]  ? ucma_resolve_route+0x1a0/0x1a0
-> [   32.109930]  __vfs_write+0xef/0x970
-> [   32.113529]  ? rcu_note_context_switch+0x710/0x710
-> [   32.118427]  ? kernel_read+0x120/0x120
-> [   32.122295]  ? __might_sleep+0x95/0x190
-> [   32.126241]  ? _cond_resched+0x14/0x30
-> [   32.130097]  ? __inode_security_revalidate+0xd9/0x130
-> [   32.135254]  ? avc_policy_seqno+0x9/0x20
-> [   32.139281]  ? selinux_file_permission+0x82/0x460
-> [   32.144102]  ? security_file_permission+0x89/0x1e0
-> [   32.148997]  ? rw_verify_area+0xe5/0x2b0
-> [   32.153025]  ? __fdget_raw+0x20/0x20
-> [   32.156706]  vfs_write+0x189/0x510
-> [   32.160214]  SyS_write+0xef/0x220
-> [   32.163634]  ? filp_open+0x70/0x70
-> [   32.167141]  ? SyS_read+0x220/0x220
-> [   32.170737]  ? do_syscall_64+0xb7/0x940
-> [   32.174681]  ? SyS_read+0x220/0x220
-> [   32.178274]  do_syscall_64+0x281/0x940
-> [   32.182130]  ? _raw_spin_unlock_irq+0x27/0x70
-> [   32.186593]  ? finish_task_switch+0x1c1/0x7e0
-> [   32.191056]  ? syscall_return_slowpath+0x550/0x550
-> [   32.195952]  ? syscall_return_slowpath+0x2ac/0x550
-> [   32.200849]  ? prepare_exit_to_usermode+0x350/0x350
-> [   32.205832]  ? entry_SYSCALL_64_after_hwframe+0x52/0xb7
-> [   32.211163]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-> [   32.215975]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> [   32.221132] RIP: 0033:0x449639
-> [   32.224291] RSP: 002b:00007f9804bd8da8 EFLAGS: 00000246 ORIG_RAX: 0000=
+> [   36.279704] Call Trace:
+> [   36.282298]  ? find_held_lock+0x35/0x1d0
+> [   36.286365]  ? rdma_bind_addr+0x1b50/0x1b50
+> [   36.290688]  ? lock_downgrade+0x980/0x980
+> [   36.294840]  ? __radix_tree_lookup+0x435/0x5e0
+> [   36.299435]  ? __mutex_unlock_slowpath+0xe9/0xac0
+> [   36.304285]  ? wait_for_completion+0x770/0x770
+> [   36.308878]  ? lock_release+0xa40/0xa40
+> [   36.312861]  ? check_same_owner+0x320/0x320
+> [   36.317184]  ? find_held_lock+0x35/0x1d0
+> [   36.321267]  ucma_resolve_ip+0x142/0x1f0
+> [   36.325329]  ? ucma_resolve_ip+0x142/0x1f0
+> [   36.329566]  ? ucma_resolve_addr+0x330/0x330
+> [   36.333984]  ? kasan_check_write+0x14/0x20
+> [   36.338227]  ucma_write+0x2d6/0x3d0
+> [   36.341860]  ? ucma_resolve_addr+0x330/0x330
+> [   36.346276]  ? ucma_resolve_route+0x1a0/0x1a0
+> [   36.350788]  ? ucma_resolve_route+0x1a0/0x1a0
+> [   36.355280]  __vfs_write+0xef/0x970
+> [   36.358908]  ? rcu_note_context_switch+0x710/0x710
+> [   36.363841]  ? kernel_read+0x120/0x120
+> [   36.367752]  ? __might_sleep+0x95/0x190
+> [   36.371737]  ? _cond_resched+0x14/0x30
+> [   36.375627]  ? __inode_security_revalidate+0xd9/0x130
+> [   36.380820]  ? avc_policy_seqno+0x9/0x20
+> [   36.384896]  ? selinux_file_permission+0x82/0x460
+> [   36.389743]  ? security_file_permission+0x89/0x1e0
+> [   36.394676]  ? rw_verify_area+0xe5/0x2b0
+> [   36.398735]  ? __fdget_raw+0x20/0x20
+> [   36.402452]  vfs_write+0x189/0x510
+> [   36.406007]  SyS_write+0xef/0x220
+> [   36.409468]  ? SyS_read+0x220/0x220
+> [   36.413096]  ? trace_hardirqs_on_caller+0x421/0x5c0
+> [   36.418110]  ? do_syscall_64+0xb7/0x940
+> [   36.422084]  ? SyS_read+0x220/0x220
+> [   36.425716]  do_syscall_64+0x281/0x940
+> [   36.429607]  ? syscall_return_slowpath+0x550/0x550
+> [   36.434536]  ? syscall_return_slowpath+0x2ac/0x550
+> [   36.439469]  ? prepare_exit_to_usermode+0x350/0x350
+> [   36.444491]  ? entry_SYSCALL_64_after_hwframe+0x52/0xb7
+> [   36.449865]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+> [   36.454735]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> [   36.459937] RIP: 0033:0x446aa9
+> [   36.463119] RSP: 002b:00007f2dc376dda8 EFLAGS: 00000246 ORIG_RAX: 0000=
 000000000001
-> [   32.231968] RAX: ffffffffffffffda RBX: 00000000006dac5c RCX: 000000000=
-0449639
-> [   32.239206] RDX: 00000000000000a4 RSI: 0000000020000000 RDI: 000000000=
-00001b4
-> [   32.246443] RBP: 00000000006dac58 R08: 0000000000000000 R09: 000000000=
+> [   36.470821] RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 000000000=
+0446aa9
+> [   36.478092] RDX: 0000000000000008 RSI: 0000000020007100 RDI: 000000000=
+0000004
+> [   36.485358] RBP: 00000000006e29f8 R08: 00007f2dc376e700 R09: 000000000=
 0000000
-> [   32.253682] R10: 0000000000000000 R11: 0000000000000246 R12: 006d635f6=
+> [   36.492626] R10: 00007f2dc376e700 R11: 0000000000000246 R12: 006d635f6=
 16d6472
-> [   32.260922] R13: 2f646e6162696e69 R14: 666e692f7665642f R15: 000000000=
-0000007
-> [   32.268163] Code: 81 c4 60 03 00 00 44 89 d0 5b 41 5a 41 5c 41 5d 41 5=
-e 41 5f 5d 49 8d 62 f8 c3 4c 89 da 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 0=
-3 <80> 3c 02 00 0f 85 0a 33 00 00 49 81 3b 60 ed 9f 87 41 bd 00 00
-> [   32.287208] RIP: __lock_acquire+0xa09/0x3e00 RSP: ffff8801b0477370
-> [   32.293497] ---[ end trace 885cef83eddc104c ]---
-> [   32.298219] Kernel panic - not syncing: Fatal exception
-> [   32.304030] Dumping ftrace buffer:
-> [   32.307548]    (ftrace buffer empty)
-> [   32.311227] Kernel Offset: disabled
-> [   32.314823] Rebooting in 86400 seconds..
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> executing program
+> [   36.499894] R13: 2f646e6162696e69 R14: 666e692f7665642f R15: 000000000=
+0000003
+> [   36.507165] Code: 31 c0 e8 f8 b1 53 fd 48 89 df e8 70 f4 f5 ff 4c 89 e=
+f 48 63 d0 48 89 de e8 02 df 8b fd 49 8d bf 14 02 00 00 48 89 f8 48 c1 e8 0=
+3 <42> 0f b6 14 20 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f
+> [   36.526604] RIP: rdma_resolve_addr+0x13c/0x26c0 RSP: ffff8801b3807680
+> [   36.533224] ---[ end trace 35b5ca64e9e3cd3f ]---
+> [   36.538007] Kernel panic - not syncing: Fatal exception
+> [   36.543817] Dumping ftrace buffer:
+> [   36.547350]    (ftrace buffer empty)
+> [   36.551032] Kernel Offset: disabled
+> [   36.554631] Rebooting in 86400 seconds..
 
 > # See https://goo.gl/kgGztJ for information about syzkaller reproducers.
-> #{Threaded:true Collide:true Repeat:true Procs:1 Sandbox: Fault:false Fau=
-ltCall:-1 FaultNth:0 EnableTun:false UseTmpDir:false HandleSegv:false WaitR=
-epeat:false Debug:false Repro:false}
-> r0 =3D syz_open_dev$vcsa(&(0x7f0000000040)=3D'/dev/vcsa#\x00', 0x3, 0x80)
-> connect$unix(r0, &(0x7f0000000080)=3D@abs=3D{0x1, 0x0, 0x4e24}, 0x6e)
-> clock_gettime(0x0, &(0x7f0000000100))
-> ioctl$SNDRV_SEQ_IOCTL_GET_QUEUE_STATUS(r0, 0xc05c5340, &(0x7f00000001c0)=
-=3D{0x80000000, 0x80000001, 0x4, {0x0, 0x989680}, 0x75a})
-> r1 =3D openat$rdma_cm(0xffffffffffffff9c, &(0x7f0000000180)=3D'/dev/infin=
+> #{Threaded:true Collide:true Repeat:true Procs:8 Sandbox:none Fault:false=
+ FaultCall:-1 FaultNth:0 EnableTun:false UseTmpDir:false HandleSegv:false W=
+aitRepeat:true Debug:false Repro:false}
+> r0 =3D openat$rdma_cm(0xffffffffffffff9c, &(0x7f0000000140)=3D'/dev/infin=
 iband/rdma_cm\x00', 0x2, 0x0)
-> write$rdma_cm(r1, &(0x7f0000002940)=3D@create_id=3D{0x0, 0x18, 0xfa00, {0=
-x0, &(0x7f0000002900)=3D{<r2=3D>0xffffffff}, 0x106}}, 0x20)
-> write$rdma_cm(r1, &(0x7f0000000000)=3D@destroy_id=3D{0x1, 0x0, 0xfa00, {&=
-(0x7f00000013c0), r2}}, 0xa4)
+> write$rdma_cm(r0, &(0x7f00000070c0)=3D@create_id=3D{0x0, 0x18, 0xfa00, {0=
+x0, &(0x7f0000007080)=3D{<r1=3D>0xffffffff}, 0x13f}}, 0x20)
+> write$rdma_cm(r0, &(0x7f0000007100)=3DANY=3D[@ANYBLOB, @ANYRES32=3Dr1, @A=
+NYBLOB=3D'\x00\x00\x00\x00'], 0x8)
 
 > // autogenerated by syzkaller (http://github.com/google/syzkaller)
 >
 > #define _GNU_SOURCE
 > #include <endian.h>
-> #include <fcntl.h>
+> #include <errno.h>
+> #include <errno.h>
 > #include <linux/futex.h>
+> #include <linux/net.h>
+> #include <netinet/in.h>
 > #include <pthread.h>
-> #include <stdint.h>
+> #include <sched.h>
+> #include <signal.h>
+> #include <signal.h>
+> #include <stdarg.h>
+> #include <stdarg.h>
+> #include <stdbool.h>
+> #include <stdio.h>
 > #include <stdio.h>
 > #include <stdlib.h>
-> #include <string.h>
-> #include <string.h>
-> #include <sys/stat.h>
+> #include <sys/prctl.h>
+> #include <sys/prctl.h>
+> #include <sys/resource.h>
+> #include <sys/socket.h>
 > #include <sys/syscall.h>
+> #include <sys/time.h>
+> #include <sys/time.h>
+> #include <sys/wait.h>
+> #include <sys/wait.h>
+> #include <time.h>
 > #include <unistd.h>
 >
-> static uintptr_t syz_open_dev(uintptr_t a0, uintptr_t a1, uintptr_t a2)
+> __attribute__((noreturn)) static void doexit(int status)
 > {
->   if (a0 =3D=3D 0xc || a0 =3D=3D 0xb) {
->     char buf[128];
->     sprintf(buf, "/dev/%s/%d:%d", a0 =3D=3D 0xc ? "char" : "block", (uint=
-8_t)a1,
->             (uint8_t)a2);
->     return open(buf, O_RDWR, 0);
->   } else {
->     char buf[1024];
->     char* hash;
->     strncpy(buf, (char*)a0, sizeof(buf));
->     buf[sizeof(buf) - 1] =3D 0;
->     while ((hash =3D strchr(buf, '#'))) {
->       *hash =3D '0' + (char)(a1 % 10);
->       a1 /=3D 10;
->     }
->     return open(buf, a2, 0);
+>   volatile unsigned i;
+>   syscall(__NR_exit_group, status);
+>   for (i =3D 0;; i++) {
 >   }
+> }
+> #include <errno.h>
+> #include <stdarg.h>
+> #include <stdint.h>
+> #include <stdio.h>
+> #include <string.h>
+>
+> const int kFailStatus =3D 67;
+> const int kRetryStatus =3D 69;
+>
+> static void fail(const char* msg, ...)
+> {
+>   int e =3D errno;
+>   va_list args;
+>   va_start(args, msg);
+>   vfprintf(stderr, msg, args);
+>   va_end(args);
+>   fprintf(stderr, " (errno %d)\n", e);
+>   doexit((e =3D=3D ENOMEM || e =3D=3D EAGAIN) ? kRetryStatus : kFailStatu=
+s);
+> }
+>
+> static uint64_t current_time_ms()
+> {
+>   struct timespec ts;
+>
+>   if (clock_gettime(CLOCK_MONOTONIC, &ts))
+>     fail("clock_gettime failed");
+>   return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
+> }
+>
+> static void loop();
+>
+> static void sandbox_common()
+> {
+>   prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
+>   setpgrp();
+>   setsid();
+>
+>   struct rlimit rlim;
+>   rlim.rlim_cur =3D rlim.rlim_max =3D 128 << 20;
+>   setrlimit(RLIMIT_AS, &rlim);
+>   rlim.rlim_cur =3D rlim.rlim_max =3D 8 << 20;
+>   setrlimit(RLIMIT_MEMLOCK, &rlim);
+>   rlim.rlim_cur =3D rlim.rlim_max =3D 1 << 20;
+>   setrlimit(RLIMIT_FSIZE, &rlim);
+>   rlim.rlim_cur =3D rlim.rlim_max =3D 1 << 20;
+>   setrlimit(RLIMIT_STACK, &rlim);
+>   rlim.rlim_cur =3D rlim.rlim_max =3D 0;
+>   setrlimit(RLIMIT_CORE, &rlim);
+>
+> #define CLONE_NEWCGROUP 0x02000000
+>
+>   if (unshare(CLONE_NEWNS)) {
+>   }
+>   if (unshare(CLONE_NEWIPC)) {
+>   }
+>   if (unshare(CLONE_NEWCGROUP)) {
+>   }
+>   if (unshare(CLONE_NEWUTS)) {
+>   }
+>   if (unshare(CLONE_SYSVSEM)) {
+>   }
+> }
+>
+> static int do_sandbox_none(void)
+> {
+>   if (unshare(CLONE_NEWPID)) {
+>   }
+>   int pid =3D fork();
+>   if (pid < 0)
+>     fail("sandbox fork failed");
+>   if (pid)
+>     return pid;
+>
+>   sandbox_common();
+>   if (unshare(CLONE_NEWNET)) {
+>   }
+>
+>   loop();
+>   doexit(1);
+> }
+>
+> #define XT_TABLE_SIZE 1536
+> #define XT_MAX_ENTRIES 10
+>
+> struct xt_counters {
+>   uint64_t pcnt, bcnt;
+> };
+>
+> struct ipt_getinfo {
+>   char name[32];
+>   unsigned int valid_hooks;
+>   unsigned int hook_entry[5];
+>   unsigned int underflow[5];
+>   unsigned int num_entries;
+>   unsigned int size;
+> };
+>
+> struct ipt_get_entries {
+>   char name[32];
+>   unsigned int size;
+>   void* entrytable[XT_TABLE_SIZE / sizeof(void*)];
+> };
+>
+> struct ipt_replace {
+>   char name[32];
+>   unsigned int valid_hooks;
+>   unsigned int num_entries;
+>   unsigned int size;
+>   unsigned int hook_entry[5];
+>   unsigned int underflow[5];
+>   unsigned int num_counters;
+>   struct xt_counters* counters;
+>   char entrytable[XT_TABLE_SIZE];
+> };
+>
+> struct ipt_table_desc {
+>   const char* name;
+>   struct ipt_getinfo info;
+>   struct ipt_replace replace;
+> };
+>
+> static struct ipt_table_desc ipv4_tables[] =3D {
+>     {.name =3D "filter"}, {.name =3D "nat"},      {.name =3D "mangle"},
+>     {.name =3D "raw"},    {.name =3D "security"},
+> };
+>
+> static struct ipt_table_desc ipv6_tables[] =3D {
+>     {.name =3D "filter"}, {.name =3D "nat"},      {.name =3D "mangle"},
+>     {.name =3D "raw"},    {.name =3D "security"},
+> };
+>
+> #define IPT_BASE_CTL 64
+> #define IPT_SO_SET_REPLACE (IPT_BASE_CTL)
+> #define IPT_SO_GET_INFO (IPT_BASE_CTL)
+> #define IPT_SO_GET_ENTRIES (IPT_BASE_CTL + 1)
+>
+> struct arpt_getinfo {
+>   char name[32];
+>   unsigned int valid_hooks;
+>   unsigned int hook_entry[3];
+>   unsigned int underflow[3];
+>   unsigned int num_entries;
+>   unsigned int size;
+> };
+>
+> struct arpt_get_entries {
+>   char name[32];
+>   unsigned int size;
+>   void* entrytable[XT_TABLE_SIZE / sizeof(void*)];
+> };
+>
+> struct arpt_replace {
+>   char name[32];
+>   unsigned int valid_hooks;
+>   unsigned int num_entries;
+>   unsigned int size;
+>   unsigned int hook_entry[3];
+>   unsigned int underflow[3];
+>   unsigned int num_counters;
+>   struct xt_counters* counters;
+>   char entrytable[XT_TABLE_SIZE];
+> };
+>
+> struct arpt_table_desc {
+>   const char* name;
+>   struct arpt_getinfo info;
+>   struct arpt_replace replace;
+> };
+>
+> static struct arpt_table_desc arpt_tables[] =3D {
+>     {.name =3D "filter"},
+> };
+>
+> #define ARPT_BASE_CTL 96
+> #define ARPT_SO_SET_REPLACE (ARPT_BASE_CTL)
+> #define ARPT_SO_GET_INFO (ARPT_BASE_CTL)
+> #define ARPT_SO_GET_ENTRIES (ARPT_BASE_CTL + 1)
+>
+> static void checkpoint_iptables(struct ipt_table_desc* tables, int num_ta=
+bles,
+>                                 int family, int level)
+> {
+>   struct ipt_get_entries entries;
+>   socklen_t optlen;
+>   int fd, i;
+>
+>   fd =3D socket(family, SOCK_STREAM, IPPROTO_TCP);
+>   if (fd =3D=3D -1)
+>     fail("socket(%d, SOCK_STREAM, IPPROTO_TCP)", family);
+>   for (i =3D 0; i < num_tables; i++) {
+>     struct ipt_table_desc* table =3D &tables[i];
+>     strcpy(table->info.name, table->name);
+>     strcpy(table->replace.name, table->name);
+>     optlen =3D sizeof(table->info);
+>     if (getsockopt(fd, level, IPT_SO_GET_INFO, &table->info, &optlen)) {
+>       switch (errno) {
+>       case EPERM:
+>       case ENOENT:
+>       case ENOPROTOOPT:
+>         continue;
+>       }
+>       fail("getsockopt(IPT_SO_GET_INFO)");
+>     }
+>     if (table->info.size > sizeof(table->replace.entrytable))
+>       fail("table size is too large: %u", table->info.size);
+>     if (table->info.num_entries > XT_MAX_ENTRIES)
+>       fail("too many counters: %u", table->info.num_entries);
+>     memset(&entries, 0, sizeof(entries));
+>     strcpy(entries.name, table->name);
+>     entries.size =3D table->info.size;
+>     optlen =3D sizeof(entries) - sizeof(entries.entrytable) + table->info=
+=2Esize;
+>     if (getsockopt(fd, level, IPT_SO_GET_ENTRIES, &entries, &optlen))
+>       fail("getsockopt(IPT_SO_GET_ENTRIES)");
+>     table->replace.valid_hooks =3D table->info.valid_hooks;
+>     table->replace.num_entries =3D table->info.num_entries;
+>     table->replace.size =3D table->info.size;
+>     memcpy(table->replace.hook_entry, table->info.hook_entry,
+>            sizeof(table->replace.hook_entry));
+>     memcpy(table->replace.underflow, table->info.underflow,
+>            sizeof(table->replace.underflow));
+>     memcpy(table->replace.entrytable, entries.entrytable, table->info.siz=
+e);
+>   }
+>   close(fd);
+> }
+>
+> static void reset_iptables(struct ipt_table_desc* tables, int num_tables,
+>                            int family, int level)
+> {
+>   struct xt_counters counters[XT_MAX_ENTRIES];
+>   struct ipt_get_entries entries;
+>   struct ipt_getinfo info;
+>   socklen_t optlen;
+>   int fd, i;
+>
+>   fd =3D socket(family, SOCK_STREAM, IPPROTO_TCP);
+>   if (fd =3D=3D -1)
+>     fail("socket(%d, SOCK_STREAM, IPPROTO_TCP)", family);
+>   for (i =3D 0; i < num_tables; i++) {
+>     struct ipt_table_desc* table =3D &tables[i];
+>     if (table->info.valid_hooks =3D=3D 0)
+>       continue;
+>     memset(&info, 0, sizeof(info));
+>     strcpy(info.name, table->name);
+>     optlen =3D sizeof(info);
+>     if (getsockopt(fd, level, IPT_SO_GET_INFO, &info, &optlen))
+>       fail("getsockopt(IPT_SO_GET_INFO)");
+>     if (memcmp(&table->info, &info, sizeof(table->info)) =3D=3D 0) {
+>       memset(&entries, 0, sizeof(entries));
+>       strcpy(entries.name, table->name);
+>       entries.size =3D table->info.size;
+>       optlen =3D sizeof(entries) - sizeof(entries.entrytable) + entries.s=
+ize;
+>       if (getsockopt(fd, level, IPT_SO_GET_ENTRIES, &entries, &optlen))
+>         fail("getsockopt(IPT_SO_GET_ENTRIES)");
+>       if (memcmp(table->replace.entrytable, entries.entrytable,
+>                  table->info.size) =3D=3D 0)
+>         continue;
+>     }
+>     table->replace.num_counters =3D info.num_entries;
+>     table->replace.counters =3D counters;
+>     optlen =3D sizeof(table->replace) - sizeof(table->replace.entrytable)=
+ +
+>              table->replace.size;
+>     if (setsockopt(fd, level, IPT_SO_SET_REPLACE, &table->replace, optlen=
+))
+>       fail("setsockopt(IPT_SO_SET_REPLACE)");
+>   }
+>   close(fd);
+> }
+>
+> static void checkpoint_arptables(void)
+> {
+>   struct arpt_get_entries entries;
+>   socklen_t optlen;
+>   unsigned i;
+>   int fd;
+>
+>   fd =3D socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+>   if (fd =3D=3D -1)
+>     fail("socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)");
+>   for (i =3D 0; i < sizeof(arpt_tables) / sizeof(arpt_tables[0]); i++) {
+>     struct arpt_table_desc* table =3D &arpt_tables[i];
+>     strcpy(table->info.name, table->name);
+>     strcpy(table->replace.name, table->name);
+>     optlen =3D sizeof(table->info);
+>     if (getsockopt(fd, SOL_IP, ARPT_SO_GET_INFO, &table->info, &optlen)) {
+>       switch (errno) {
+>       case EPERM:
+>       case ENOENT:
+>       case ENOPROTOOPT:
+>         continue;
+>       }
+>       fail("getsockopt(ARPT_SO_GET_INFO)");
+>     }
+>     if (table->info.size > sizeof(table->replace.entrytable))
+>       fail("table size is too large: %u", table->info.size);
+>     if (table->info.num_entries > XT_MAX_ENTRIES)
+>       fail("too many counters: %u", table->info.num_entries);
+>     memset(&entries, 0, sizeof(entries));
+>     strcpy(entries.name, table->name);
+>     entries.size =3D table->info.size;
+>     optlen =3D sizeof(entries) - sizeof(entries.entrytable) + table->info=
+=2Esize;
+>     if (getsockopt(fd, SOL_IP, ARPT_SO_GET_ENTRIES, &entries, &optlen))
+>       fail("getsockopt(ARPT_SO_GET_ENTRIES)");
+>     table->replace.valid_hooks =3D table->info.valid_hooks;
+>     table->replace.num_entries =3D table->info.num_entries;
+>     table->replace.size =3D table->info.size;
+>     memcpy(table->replace.hook_entry, table->info.hook_entry,
+>            sizeof(table->replace.hook_entry));
+>     memcpy(table->replace.underflow, table->info.underflow,
+>            sizeof(table->replace.underflow));
+>     memcpy(table->replace.entrytable, entries.entrytable, table->info.siz=
+e);
+>   }
+>   close(fd);
+> }
+>
+> static void reset_arptables()
+> {
+>   struct xt_counters counters[XT_MAX_ENTRIES];
+>   struct arpt_get_entries entries;
+>   struct arpt_getinfo info;
+>   socklen_t optlen;
+>   unsigned i;
+>   int fd;
+>
+>   fd =3D socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+>   if (fd =3D=3D -1)
+>     fail("socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)");
+>   for (i =3D 0; i < sizeof(arpt_tables) / sizeof(arpt_tables[0]); i++) {
+>     struct arpt_table_desc* table =3D &arpt_tables[i];
+>     if (table->info.valid_hooks =3D=3D 0)
+>       continue;
+>     memset(&info, 0, sizeof(info));
+>     strcpy(info.name, table->name);
+>     optlen =3D sizeof(info);
+>     if (getsockopt(fd, SOL_IP, ARPT_SO_GET_INFO, &info, &optlen))
+>       fail("getsockopt(ARPT_SO_GET_INFO)");
+>     if (memcmp(&table->info, &info, sizeof(table->info)) =3D=3D 0) {
+>       memset(&entries, 0, sizeof(entries));
+>       strcpy(entries.name, table->name);
+>       entries.size =3D table->info.size;
+>       optlen =3D sizeof(entries) - sizeof(entries.entrytable) + entries.s=
+ize;
+>       if (getsockopt(fd, SOL_IP, ARPT_SO_GET_ENTRIES, &entries, &optlen))
+>         fail("getsockopt(ARPT_SO_GET_ENTRIES)");
+>       if (memcmp(table->replace.entrytable, entries.entrytable,
+>                  table->info.size) =3D=3D 0)
+>         continue;
+>     }
+>     table->replace.num_counters =3D info.num_entries;
+>     table->replace.counters =3D counters;
+>     optlen =3D sizeof(table->replace) - sizeof(table->replace.entrytable)=
+ +
+>              table->replace.size;
+>     if (setsockopt(fd, SOL_IP, ARPT_SO_SET_REPLACE, &table->replace, optl=
+en))
+>       fail("setsockopt(ARPT_SO_SET_REPLACE)");
+>   }
+>   close(fd);
+> }
+> #include <linux/if.h>
+> #include <linux/netfilter_bridge/ebtables.h>
+>
+> struct ebt_table_desc {
+>   const char* name;
+>   struct ebt_replace replace;
+>   char entrytable[XT_TABLE_SIZE];
+> };
+>
+> static struct ebt_table_desc ebt_tables[] =3D {
+>     {.name =3D "filter"}, {.name =3D "nat"}, {.name =3D "broute"},
+> };
+>
+> static void checkpoint_ebtables(void)
+> {
+>   socklen_t optlen;
+>   unsigned i;
+>   int fd;
+>
+>   fd =3D socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+>   if (fd =3D=3D -1)
+>     fail("socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)");
+>   for (i =3D 0; i < sizeof(ebt_tables) / sizeof(ebt_tables[0]); i++) {
+>     struct ebt_table_desc* table =3D &ebt_tables[i];
+>     strcpy(table->replace.name, table->name);
+>     optlen =3D sizeof(table->replace);
+>     if (getsockopt(fd, SOL_IP, EBT_SO_GET_INIT_INFO, &table->replace,
+>                    &optlen)) {
+>       switch (errno) {
+>       case EPERM:
+>       case ENOENT:
+>       case ENOPROTOOPT:
+>         continue;
+>       }
+>       fail("getsockopt(EBT_SO_GET_INIT_INFO)");
+>     }
+>     if (table->replace.entries_size > sizeof(table->entrytable))
+>       fail("table size is too large: %u", table->replace.entries_size);
+>     table->replace.num_counters =3D 0;
+>     table->replace.entries =3D table->entrytable;
+>     optlen =3D sizeof(table->replace) + table->replace.entries_size;
+>     if (getsockopt(fd, SOL_IP, EBT_SO_GET_INIT_ENTRIES, &table->replace,
+>                    &optlen))
+>       fail("getsockopt(EBT_SO_GET_INIT_ENTRIES)");
+>   }
+>   close(fd);
+> }
+>
+> static void reset_ebtables()
+> {
+>   struct ebt_replace replace;
+>   char entrytable[XT_TABLE_SIZE];
+>   socklen_t optlen;
+>   unsigned i, j, h;
+>   int fd;
+>
+>   fd =3D socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+>   if (fd =3D=3D -1)
+>     fail("socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)");
+>   for (i =3D 0; i < sizeof(ebt_tables) / sizeof(ebt_tables[0]); i++) {
+>     struct ebt_table_desc* table =3D &ebt_tables[i];
+>     if (table->replace.valid_hooks =3D=3D 0)
+>       continue;
+>     memset(&replace, 0, sizeof(replace));
+>     strcpy(replace.name, table->name);
+>     optlen =3D sizeof(replace);
+>     if (getsockopt(fd, SOL_IP, EBT_SO_GET_INFO, &replace, &optlen))
+>       fail("getsockopt(EBT_SO_GET_INFO)");
+>     replace.num_counters =3D 0;
+>     for (h =3D 0; h < NF_BR_NUMHOOKS; h++)
+>       table->replace.hook_entry[h] =3D 0;
+>     if (memcmp(&table->replace, &replace, sizeof(table->replace)) =3D=3D =
+0) {
+>       memset(&entrytable, 0, sizeof(entrytable));
+>       replace.entries =3D entrytable;
+>       optlen =3D sizeof(replace) + replace.entries_size;
+>       if (getsockopt(fd, SOL_IP, EBT_SO_GET_ENTRIES, &replace, &optlen))
+>         fail("getsockopt(EBT_SO_GET_ENTRIES)");
+>       if (memcmp(table->entrytable, entrytable, replace.entries_size) =3D=
+=3D 0)
+>         continue;
+>     }
+>     for (j =3D 0, h =3D 0; h < NF_BR_NUMHOOKS; h++) {
+>       if (table->replace.valid_hooks & (1 << h)) {
+>         table->replace.hook_entry[h] =3D
+>             (struct ebt_entries*)table->entrytable + j;
+>         j++;
+>       }
+>     }
+>     optlen =3D sizeof(table->replace) + table->replace.entries_size;
+>     if (setsockopt(fd, SOL_IP, EBT_SO_SET_ENTRIES, &table->replace, optle=
+n))
+>       fail("setsockopt(EBT_SO_SET_ENTRIES)");
+>   }
+>   close(fd);
+> }
+>
+> static void checkpoint_net_namespace(void)
+> {
+>   checkpoint_ebtables();
+>   checkpoint_arptables();
+>   checkpoint_iptables(ipv4_tables, sizeof(ipv4_tables) / sizeof(ipv4_tabl=
+es[0]),
+>                       AF_INET, SOL_IP);
+>   checkpoint_iptables(ipv6_tables, sizeof(ipv6_tables) / sizeof(ipv6_tabl=
+es[0]),
+>                       AF_INET6, SOL_IPV6);
+> }
+>
+> static void reset_net_namespace(void)
+> {
+>   reset_ebtables();
+>   reset_arptables();
+>   reset_iptables(ipv4_tables, sizeof(ipv4_tables) / sizeof(ipv4_tables[0]=
+),
+>                  AF_INET, SOL_IP);
+>   reset_iptables(ipv6_tables, sizeof(ipv6_tables) / sizeof(ipv6_tables[0]=
+),
+>                  AF_INET6, SOL_IPV6);
 > }
 >
 > static void test();
 >
 > void loop()
 > {
->   while (1) {
->     test();
+>   int iter;
+>   checkpoint_net_namespace();
+>   for (iter =3D 0;; iter++) {
+>     int pid =3D fork();
+>     if (pid < 0)
+>       fail("loop fork failed");
+>     if (pid =3D=3D 0) {
+>       prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
+>       setpgrp();
+>       test();
+>       doexit(0);
+>     }
+>     int status =3D 0;
+>     uint64_t start =3D current_time_ms();
+>     for (;;) {
+>       int res =3D waitpid(-1, &status, __WALL | WNOHANG);
+>       if (res =3D=3D pid)
+>         break;
+>       usleep(1000);
+>       if (current_time_ms() - start > 5 * 1000) {
+>         kill(-pid, SIGKILL);
+>         kill(pid, SIGKILL);
+>         while (waitpid(-1, &status, __WALL) !=3D pid) {
+>         }
+>         break;
+>       }
+>     }
+>     reset_net_namespace();
 >   }
 > }
 >
@@ -576,148 +2220,65 @@ ead++) {
 >   }
 > }
 >
-> uint64_t r[3] =3D {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffff};
+> uint64_t r[2] =3D {0xffffffffffffffff, 0xffffffffffffffff};
+> uint64_t procid;
 > void execute_call(int call)
 > {
 >   long res;
 >   switch (call) {
 >   case 0:
->     memcpy((void*)0x20000040, "/dev/vcsa#", 11);
->     res =3D syz_open_dev(0x20000040, 3, 0x80);
+>     memcpy((void*)0x20000140, "/dev/infiniband/rdma_cm", 24);
+>     res =3D syscall(__NR_openat, 0xffffffffffffff9c, 0x20000140, 2, 0);
 >     if (res !=3D -1)
 >       r[0] =3D res;
 >     break;
 >   case 1:
->     *(uint16_t*)0x20000080 =3D 1;
->     *(uint8_t*)0x20000082 =3D 0;
->     *(uint32_t*)0x20000084 =3D 0x4e24;
->     syscall(__NR_connect, r[0], 0x20000080, 0x6e);
+>     *(uint32_t*)0x200070c0 =3D 0;
+>     *(uint16_t*)0x200070c4 =3D 0x18;
+>     *(uint16_t*)0x200070c6 =3D 0xfa00;
+>     *(uint64_t*)0x200070c8 =3D 0;
+>     *(uint64_t*)0x200070d0 =3D 0x20007080;
+>     *(uint16_t*)0x200070d8 =3D 0x13f;
+>     *(uint8_t*)0x200070da =3D 0;
+>     *(uint8_t*)0x200070db =3D 0;
+>     *(uint8_t*)0x200070dc =3D 0;
+>     *(uint8_t*)0x200070dd =3D 0;
+>     *(uint8_t*)0x200070de =3D 0;
+>     *(uint8_t*)0x200070df =3D 0;
+>     res =3D syscall(__NR_write, r[0], 0x200070c0, 0x20);
+>     if (res !=3D -1)
+>       r[1] =3D *(uint32_t*)0x20007080;
 >     break;
 >   case 2:
->     syscall(__NR_clock_gettime, 0, 0x20000100);
->     break;
->   case 3:
->     *(uint32_t*)0x200001c0 =3D 0x80000000;
->     *(uint32_t*)0x200001c4 =3D 0x80000001;
->     *(uint32_t*)0x200001c8 =3D 4;
->     *(uint64_t*)0x200001d0 =3D 0;
->     *(uint64_t*)0x200001d8 =3D 0x989680;
->     *(uint32_t*)0x200001e0 =3D 0x75a;
->     *(uint32_t*)0x200001e4 =3D 0;
->     *(uint8_t*)0x200001e8 =3D 0;
->     *(uint8_t*)0x200001e9 =3D 0;
->     *(uint8_t*)0x200001ea =3D 0;
->     *(uint8_t*)0x200001eb =3D 0;
->     *(uint8_t*)0x200001ec =3D 0;
->     *(uint8_t*)0x200001ed =3D 0;
->     *(uint8_t*)0x200001ee =3D 0;
->     *(uint8_t*)0x200001ef =3D 0;
->     *(uint8_t*)0x200001f0 =3D 0;
->     *(uint8_t*)0x200001f1 =3D 0;
->     *(uint8_t*)0x200001f2 =3D 0;
->     *(uint8_t*)0x200001f3 =3D 0;
->     *(uint8_t*)0x200001f4 =3D 0;
->     *(uint8_t*)0x200001f5 =3D 0;
->     *(uint8_t*)0x200001f6 =3D 0;
->     *(uint8_t*)0x200001f7 =3D 0;
->     *(uint8_t*)0x200001f8 =3D 0;
->     *(uint8_t*)0x200001f9 =3D 0;
->     *(uint8_t*)0x200001fa =3D 0;
->     *(uint8_t*)0x200001fb =3D 0;
->     *(uint8_t*)0x200001fc =3D 0;
->     *(uint8_t*)0x200001fd =3D 0;
->     *(uint8_t*)0x200001fe =3D 0;
->     *(uint8_t*)0x200001ff =3D 0;
->     *(uint8_t*)0x20000200 =3D 0;
->     *(uint8_t*)0x20000201 =3D 0;
->     *(uint8_t*)0x20000202 =3D 0;
->     *(uint8_t*)0x20000203 =3D 0;
->     *(uint8_t*)0x20000204 =3D 0;
->     *(uint8_t*)0x20000205 =3D 0;
->     *(uint8_t*)0x20000206 =3D 0;
->     *(uint8_t*)0x20000207 =3D 0;
->     *(uint8_t*)0x20000208 =3D 0;
->     *(uint8_t*)0x20000209 =3D 0;
->     *(uint8_t*)0x2000020a =3D 0;
->     *(uint8_t*)0x2000020b =3D 0;
->     *(uint8_t*)0x2000020c =3D 0;
->     *(uint8_t*)0x2000020d =3D 0;
->     *(uint8_t*)0x2000020e =3D 0;
->     *(uint8_t*)0x2000020f =3D 0;
->     *(uint8_t*)0x20000210 =3D 0;
->     *(uint8_t*)0x20000211 =3D 0;
->     *(uint8_t*)0x20000212 =3D 0;
->     *(uint8_t*)0x20000213 =3D 0;
->     *(uint8_t*)0x20000214 =3D 0;
->     *(uint8_t*)0x20000215 =3D 0;
->     *(uint8_t*)0x20000216 =3D 0;
->     *(uint8_t*)0x20000217 =3D 0;
->     *(uint8_t*)0x20000218 =3D 0;
->     *(uint8_t*)0x20000219 =3D 0;
->     *(uint8_t*)0x2000021a =3D 0;
->     *(uint8_t*)0x2000021b =3D 0;
->     *(uint8_t*)0x2000021c =3D 0;
->     *(uint8_t*)0x2000021d =3D 0;
->     *(uint8_t*)0x2000021e =3D 0;
->     *(uint8_t*)0x2000021f =3D 0;
->     *(uint8_t*)0x20000220 =3D 0;
->     *(uint8_t*)0x20000221 =3D 0;
->     *(uint8_t*)0x20000222 =3D 0;
->     *(uint8_t*)0x20000223 =3D 0;
->     *(uint8_t*)0x20000224 =3D 0;
->     *(uint8_t*)0x20000225 =3D 0;
->     *(uint8_t*)0x20000226 =3D 0;
->     *(uint8_t*)0x20000227 =3D 0;
->     syscall(__NR_ioctl, r[0], 0xc05c5340, 0x200001c0);
->     break;
->   case 4:
->     memcpy((void*)0x20000180, "/dev/infiniband/rdma_cm", 24);
->     res =3D syscall(__NR_openat, 0xffffffffffffff9c, 0x20000180, 2, 0);
->     if (res !=3D -1)
->       r[1] =3D res;
->     break;
->   case 5:
->     *(uint32_t*)0x20002940 =3D 0;
->     *(uint16_t*)0x20002944 =3D 0x18;
->     *(uint16_t*)0x20002946 =3D 0xfa00;
->     *(uint64_t*)0x20002948 =3D 0;
->     *(uint64_t*)0x20002950 =3D 0x20002900;
->     *(uint16_t*)0x20002958 =3D 0x106;
->     *(uint8_t*)0x2000295a =3D 0;
->     *(uint8_t*)0x2000295b =3D 0;
->     *(uint8_t*)0x2000295c =3D 0;
->     *(uint8_t*)0x2000295d =3D 0;
->     *(uint8_t*)0x2000295e =3D 0;
->     *(uint8_t*)0x2000295f =3D 0;
->     res =3D syscall(__NR_write, r[1], 0x20002940, 0x20);
->     if (res !=3D -1)
->       r[2] =3D *(uint32_t*)0x20002900;
->     break;
->   case 6:
->     *(uint32_t*)0x20000000 =3D 1;
->     *(uint16_t*)0x20000004 =3D 0;
->     *(uint16_t*)0x20000006 =3D 0xfa00;
->     *(uint64_t*)0x20000008 =3D 0x200013c0;
->     *(uint32_t*)0x20000010 =3D r[2];
->     *(uint32_t*)0x20000014 =3D 0;
->     syscall(__NR_write, r[1], 0x20000000, 0xa4);
+>     *(uint32_t*)0x20007100 =3D r[1];
+>     memcpy((void*)0x20007104, "\x00\x00\x00\x00", 4);
+>     syscall(__NR_write, r[0], 0x20007100, 8);
 >     break;
 >   }
 > }
 >
 > void test()
 > {
->   execute(7);
+>   execute(3);
 >   collide =3D 1;
->   execute(7);
+>   execute(3);
 > }
 >
 > int main()
 > {
 >   syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
->   for (;;) {
->     loop();
+>   for (procid =3D 0; procid < 8; procid++) {
+>     if (fork() =3D=3D 0) {
+>       for (;;) {
+>         int pid =3D do_sandbox_none();
+>         int status =3D 0;
+>         while (waitpid(pid, &status, __WALL) !=3D pid) {
+>         }
+>       }
+>     }
 >   }
+>   sleep(1000000);
+>   return 0;
 > }
 
 > #
@@ -5982,24 +7543,24 @@ r30,binder31"
 > # CONFIG_STRING_SELFTEST is not set
 
 
---De7JZ5cYyW/PeqB+
+--aiJlF+TB2UsRxGRQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlqzyncACgkQ5GN7iDZy
-WKdcrRAAvIaWWHgt7gwxQfmo2te+f92yhquWP2ST+udxohZBnQA1UjAiZULo0oOk
-gliypMFjAj7thXM3NzyTtZvkRRsPYFFm6bZjqN8PsTjfyApJORvMvFsCuuIvG/EN
-na8F6WTLcPl3QJkHiFksrk1NbS9UoSPAntCOhlxWI/j7pDrmDOu8V5245TLWBRDG
-q9tiuqNFSeBT4E3oXqB3KPEKjce6s9pvg2J7AolTZ81bQiMUKAdZ1yd6tv6xTY5Z
-EX519ixE1Fv5zn5NCM8vLWVTGg8fzR/Z2Jnt4GQDODg70s7ZQ6N77Z4wpELq9QWs
-vYDXPH27r5ODuau/o0ccPBaWo9cN82a8Xj2t1F69zo1ZGNkciyXOmUzB8LC1njKE
-EkFhAWYKlzcv3SjbeBO0Iv+tvbCmxLENKLdHGX97VS6RuUCCUYeIVyUI7mHAH9/F
-QA/OxOabIzKh7/qOtia1QheAbq4EdfccF4W/FERYx8/IGAnNyPkMsTNxtPOZvjJv
-h2aUOHSGaeEpueFc1LmecOu5N3iIc+vbM4KGmcAg5ZvuqLhldJ5Ws/gX6hWwrMcM
-yrhHOPPnOsA3jPbY9Jt0FWYr6B2Q3SZDQ35dnjBpKs0P/oKvja/MJmB5GKQ4xJXN
-Pp7QE379nzUSR5tUxL+dDbT/oVFloOJwro/c6Aw2mgit1hXHtdk=
-=MbYe
+iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlqzyssACgkQ5GN7iDZy
+WKf+hQ/7BWXMjRvHAvWPdhl7HsFjz8Z1v6MgpxsdBZII06mn/K3DWjtrbv1UrAL9
+o8QSf6hAaBEVUFJJ0bN1KOG0gkLZMrOoG/cHXTVcY99yfNg+K1F/5D5chXNlP+ho
+laNwC7ouXeVeD8Aq+cMFfVCJT/Q24O3Ak4m14VN7tjdNMDxtwzRd3EDIWL8NnWtg
+7lEfUlZj6aI65AsqNrr3x15kTR5QmN1gPOdnzc8lataO7/l6Qfb8n+CIOnPlhc8D
+D0W2MLhVoclK62B5gpxL8Ebsaxg2YaCg5SCW8hOZSdfzWQbWkRBhZfxxwQiW2rq4
+48hb/6H4qP5mOYTBmKPFrgELzsk8tIfJN+FxblLo7K3++YFHc+kZ9/nzg8DSXfTJ
+FYaqpchIjt5nX8I8kj5WyEdSvS6GMEogRnI4E6zF6yO4ki/6jZiJxXlf39GjzpCG
+m0ovlLgIUgNFUQU0B5NRaE5GuFOsOLecfeY1M8c4SlrQi5vB5+BYiAK/x6ghEYxd
+s+GRfS5xyButDzhvvjfZA6tJl/DFn1fhdTtNtX5ly5H1NwNoOPQMX/42kUXchJ0r
+KhqZFOyZefWr7lGPtXxgKaGvas6NP+I9OUeLVIJaSrspEZyTF/zDX+m/d2jf4lFp
+jQHY9UZXO6lbJ9/UhAv3aaxQMyLacNS9yj3m0OyqKrjvuej8jpY=
+=mp1V
 -----END PGP SIGNATURE-----
 
---De7JZ5cYyW/PeqB+--
+--aiJlF+TB2UsRxGRQ--
