@@ -1,72 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeCVEnA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 00:43:00 -0400
-Received: from leo.clearchain.com ([199.73.29.74]:13513 "EHLO
-        mail.clearchain.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751291AbeCVEm6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 00:42:58 -0400
-Date: Thu, 22 Mar 2018 14:42:26 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] HID core and multitouch fixups
-Message-ID: <20180322044226.GA16269@jelly>
-References: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
+        id S1752174AbeCVEvc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 00:51:32 -0400
+Received: from mga18.intel.com ([134.134.136.126]:32738 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751291AbeCVEva (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 00:51:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,342,1517904000";
+   d="scan'208";a="210324753"
+Subject: [PATCH] nfit: skip region registration for incomplete control
+ regions
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: linux-acpi@vger.kernel.org, ross.zwisler@linux.intel.com,
+        linux-kernel@vger.kernel.org
+Date: Wed, 21 Mar 2018 21:42:24 -0700
+Message-ID: <152169374458.19742.14326187212131249042.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 12:04:44PM +0100, Benjamin Tissoires wrote:
-> Hi,
-> 
-> Patches 1 and 2 are related to the Razer Blade Stealth that has some dead zone
-> near the edges of the touchpad.
-> Patches 3 was previously sent and reviewed by Dmitry and he suggested patch 4
-> at the time.
-> Patches 5..7 are cleanups I realized while trying to merge hid-multitouch
-> into hid-core, so that other drivers could reuse the hid-mt logic (but it's
-> not that easy I must confess).
+Per the ACPI specification the only functional purpose for a DIMM
+Control Region to be mapped into the system physical address space, from
+an OSPM perspective, is to support block-apertures. However, there are
+some BIOSen that publish DIMM Control Region SPA entries for pre-boot
+environment consumption.  Undo the kernel policy of generating disabled
+'ndblk' regions when this configuration is detected.
 
-Series: Acked-by: Peter Hutterer <peter.hutterer@who-t.net>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ drivers/acpi/nfit/core.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-Cheers,
-   Peter
-
-> 
-> Cheers,
-> Benjamin
-> 
-> Benjamin Tissoires (7):
->   HID: multitouch: export a quirk for the button handling of touchpads
->   HID: multitouch: remove dead zones of Razer Blade Stealth
->   HID: use BIT macro instead of plain integers for flags
->   HID: use BIT() macro for quirks too
->   HID: core: remove the need for HID_QUIRK_NO_EMPTY_INPUT
->   HID: multitouch: do not set HID_QUIRK_NO_INIT_REPORTS
->   HID: core: reset the quirks before calling probe again
-> 
->  drivers/hid/hid-asus.c       |  3 +-
->  drivers/hid/hid-core.c       |  2 ++
->  drivers/hid/hid-input.c      | 10 +++----
->  drivers/hid/hid-multitouch.c | 61 ++++++++++++++++-------------------------
->  drivers/hid/hid-uclogic.c    |  1 -
->  include/linux/hid.h          | 65 ++++++++++++++++++++++----------------------
->  6 files changed, 65 insertions(+), 77 deletions(-)
-> 
-> -- 
-> 2.14.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-input" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index 39ad06143e78..4530d89044db 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -2578,7 +2578,7 @@ static int acpi_nfit_init_mapping(struct acpi_nfit_desc *acpi_desc,
+ 	struct acpi_nfit_system_address *spa = nfit_spa->spa;
+ 	struct nd_blk_region_desc *ndbr_desc;
+ 	struct nfit_mem *nfit_mem;
+-	int blk_valid = 0, rc;
++	int rc;
+ 
+ 	if (!nvdimm) {
+ 		dev_err(acpi_desc->dev, "spa%d dimm: %#x not found\n",
+@@ -2598,15 +2598,14 @@ static int acpi_nfit_init_mapping(struct acpi_nfit_desc *acpi_desc,
+ 		if (!nfit_mem || !nfit_mem->bdw) {
+ 			dev_dbg(acpi_desc->dev, "spa%d %s missing bdw\n",
+ 					spa->range_index, nvdimm_name(nvdimm));
+-		} else {
+-			mapping->size = nfit_mem->bdw->capacity;
+-			mapping->start = nfit_mem->bdw->start_address;
+-			ndr_desc->num_lanes = nfit_mem->bdw->windows;
+-			blk_valid = 1;
++			break;
+ 		}
+ 
++		mapping->size = nfit_mem->bdw->capacity;
++		mapping->start = nfit_mem->bdw->start_address;
++		ndr_desc->num_lanes = nfit_mem->bdw->windows;
+ 		ndr_desc->mapping = mapping;
+-		ndr_desc->num_mappings = blk_valid;
++		ndr_desc->num_mappings = 1;
+ 		ndbr_desc = to_blk_region_desc(ndr_desc);
+ 		ndbr_desc->enable = acpi_nfit_blk_region_enable;
+ 		ndbr_desc->do_io = acpi_desc->blk_do_io;
