@@ -1,72 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754403AbeCVOwK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 10:52:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39876 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753117AbeCVOwH (ORCPT
+        id S1754908AbeCVPAN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:00:13 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36311 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752613AbeCVPAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:52:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E959D6085F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on
- weakly-ordered archs
-To: Steve Wise <swise@opengridcomputing.com>,
-        "'kbuild test robot'" <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-rdma@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "'Steve Wise'" <swise@chelsio.com>,
-        "'Doug Ledford'" <dledford@redhat.com>,
-        "'Jason Gunthorpe'" <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-        "'Casey Leedom'" <leedom@chelsio.com>,
-        "'Michael Werner'" <werner@chelsio.com>
-References: <1521514068-8856-5-git-send-email-okaya@codeaurora.org>
- <201803221430.P43GJl9U%fengguang.wu@intel.com>
- <3664b253c730dbf83f4528acaedb3a88@codeaurora.org>
- <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
- <03d201d3c1eb$b71fb460$255f1d20$@opengridcomputing.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <83484a3f-d3f7-d763-e4f8-e4fec3bb8cc2@codeaurora.org>
-Date: Thu, 22 Mar 2018 09:52:04 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <03d201d3c1eb$b71fb460$255f1d20$@opengridcomputing.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 22 Mar 2018 11:00:11 -0400
+X-Google-Smtp-Source: AG47ELs5MtyUqUt7L6I0ZwU9Ti4+KZNbNgJfkSTqppiYLPhhypES4mAYOTOFcfsZrptYEbDOTqJbKg==
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Michal Marek <mmarek@suse.cz>,
+        Masahiro Yamada <yamada.m@jp.panasonic.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Sam Ravnborg <sam@ravnborg.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 1/2] modpost: delete stale comment
+Date: Thu, 22 Mar 2018 15:59:53 +0100
+Message-Id: <20180322150005.15061-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/22/2018 9:40 AM, Steve Wise wrote:
-> I think all these iw_cxgb4 changes should be reverted until we really have a
-> plan for multi-platform that works.  
+Commit (7840fea200cd "kbuild: Fix computing srcversion for modules")
+fixed the comment above parse_source_files to refer to the new source_
+line, but left this one behind that could still give the impression that
+drivers/net/dummy.c appears in the deps_ variable.
 
-I know you are looking to have support for PowerPC. 
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ scripts/mod/sumversion.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-Isn't this a PowerPC problem? Why penalize other architectures?
-
-Do you see anything wrong with the code itself?
-
-I started this thread with the PowerPC develoeprs on your request.
-"RFC on writel and writel_relaxed"
-
-They are looking into adding the relaxed API support. Support can come
-in later. Why block this change now?
-
-benh@kernel.crashing.org:
-"I've been wanting to implement the relaxed accessors for a while but
-was battling with this to try to also better support WC, and due to
-other commitments, this somewhat fell down the cracks."
-
-I have seen four different responses on this thread. Since this is an
-architecture change it will take a while to get the semantics right.
-It won't happen in the new few days.
-
+diff --git a/scripts/mod/sumversion.c b/scripts/mod/sumversion.c
+index 944418da9fe3..0f6dcb4011a8 100644
+--- a/scripts/mod/sumversion.c
++++ b/scripts/mod/sumversion.c
+@@ -330,14 +330,7 @@ static int parse_source_files(const char *objfile, struct md4_ctx *md)
+ 		goto out;
+ 	}
+ 
+-	/* There will be a line like so:
+-		deps_drivers/net/dummy.o := \
+-		  drivers/net/dummy.c \
+-		    $(wildcard include/config/net/fastroute.h) \
+-		  include/linux/module.h \
+-
+-	   Sum all files in the same dir or subdirs.
+-	*/
++	/* Sum all files in the same dir or subdirs. */
+ 	while ((line = get_next_line(&pos, file, flen)) != NULL) {
+ 		char* p = line;
+ 
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.15.1
