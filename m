@@ -1,128 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753217AbeCVIwC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 04:52:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45838 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753078AbeCVIvv (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 04:51:51 -0400
-Date: Thu, 22 Mar 2018 09:51:47 +0100
-From: Jiri Olsa <jolsa@redhat.com>
-To: "Jin, Yao" <yao.jin@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-Subject: Re: [PATCH] perf util: Display warning when perf report/annotate is
- missing some libs
-Message-ID: <20180322085147.GI2707@krava>
-References: <1515668586-14327-1-git-send-email-yao.jin@linux.intel.com>
- <20180111153028.GB20406@krava>
- <ef52d9de-54b6-88a6-625d-bd048a098222@linux.intel.com>
- <42a90e87-f2fd-293d-bd25-591fcdff14e1@linux.intel.com>
- <20180321153807.GA2707@krava>
- <e02a4bff-78e3-67b4-29b4-e0c7c4cd8ea2@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e02a4bff-78e3-67b4-29b4-e0c7c4cd8ea2@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1753294AbeCVIwi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 04:52:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39356 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753013AbeCVIvo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 04:51:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 06A1C60F78
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+From: Manu Gautam <mgautam@codeaurora.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH v2 5/6] dt-bindings: phy-qcom-usb2: Update bindings for sdm845
+Date: Thu, 22 Mar 2018 14:20:45 +0530
+Message-Id: <1521708646-5379-6-git-send-email-mgautam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521708646-5379-1-git-send-email-mgautam@codeaurora.org>
+References: <1521708646-5379-1-git-send-email-mgautam@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 09:04:10AM +0800, Jin, Yao wrote:
-> 
-> 
-> On 3/21/2018 11:38 PM, Jiri Olsa wrote:
-> > On Wed, Mar 21, 2018 at 10:11:10AM +0800, Jin, Yao wrote:
-> > > Hi Jiri,
-> > > 
-> > > I'm still thinking it's worth displaying the warning when perf missing some
-> > > libraries.
-> > > 
-> > > Somebody just told me that perf didn't work well. While after some
-> > > investigations, I found it's just missing some libraries when building the
-> > > perf.
-> > > 
-> > > But I have spent some time on getting the root cause. If with this patch, it
-> > > should be very easily to know that.
-> > 
-> > true.. Arnaldo, any feedback on this one?
-> > 
-> > > > I just think it'd better provide some hints to user. For example,
-> > > > "symbol is disabled and you need to install libelf/xxx", say something
-> > > > like that.
-> > > > 
-> > > > But it looks the column can't contain too much information (i.e. no more
-> > > > space to contain the entire hints).
-> > > > 
-> > > > Any idea? Or just add this warning in verbose mode?
-> > > > 
-> > > > > also your change does not affect tui mode
-> > > > > 
-> > > > > annotation for some reason does not start at all.. could be
-> > > > > little more verbose ;-)
-> > > > > 
-> > > > > jirka
-> > > > > 
-> > > > 
-> > > > Yes, it doesn't affect tui mode.
-> > > > 
-> > > > Or we just add this warning in verbose mode?
-> > > > 
-> > > > e.g. perf report -v?
-> > 
-> > how about displaying libraries separately with -vv output,
-> > that would mimic the build message, like:
-> > 
-> >    $ ./perf -vv
-> >    perf version 4.16.rc6.g18fd48
-> > 
-> >                     dwarf: [ on  ]
-> >        dwarf_getlocations: [ on  ]
-> >                     glibc: [ on  ]
-> >                      gtk2: [ on  ]
-> >                  libaudit: [ on  ]
-> >                    libbfd: [ on  ]
-> >                    libelf: [ on  ]
-> >                   libnuma: [ on  ]
-> >    numa_num_possible_cpus: [ on  ]
-> >                   libperl: [ on  ]
-> >                 libpython: [ on  ]
-> >                  libslang: [ on  ]
-> >                 libcrypto: [ on  ]
-> >                 libunwind: [ on  ]
-> >        libdw-dwarf-unwind: [ on  ]
-> >                      zlib: [ on  ]
-> >                      lzma: [ on  ]
-> >                 get_cpuid: [ on  ]
-> >                       bpf: [ on  ]
-> > 
-> > and perf -vvv could display the 'make VF=1' info
-> > 
-> > jirka
-> > 
-> 
-> I'm just afraid that the newbie will not check the -vv on his own when he
-> gets trouble in using perf.
-> 
-> In other words, if a user is experienced and he knows -vv yet, I may assume
-> that he should know installing all libraries before building the perf.
-> 
-> This patch is specific for the perf newbie. It will directly shows the
-> error/warning when the user launches the perf binary. It will have a little
-> bit helps, I guess. :)
+Update compatible strings for USB2 PHYs on sdm845.
+There are two QUSB2 PHYs present on sdm845. Few PHY registers
+programming is different for these PHYs related to electrical
+parameters, otherwise both are same.
 
-I just don't like the idea that when you run perf report,
-or annotate it spits out lines for every missing feature
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+---
+ Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-maybe we could detect missing features for given command
-and display line about missing features and say something
-like:
-
-'Warning: symbol,dwarf support not compiled in (for more details run perf -vv)'
-
-or somwthing like that.. ;-)
-
-jirka
+diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+index 42c9742..b99a57f 100644
+--- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
++++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+@@ -6,7 +6,9 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
+ Required properties:
+  - compatible: compatible list, contains
+ 	       "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
+-	       "qcom,qusb2-v2-phy" for QUSB2 V2 PHY.
++	       "qcom,qusb2-v2-phy" for QUSB2 V2 PHY,
++	       "qcom,sdm845-qusb2-phy-1" for primary PHY on sdm845,
++	       "qcom,sdm845-qusb2-phy-2" for secondary PHY on sdm845.
+ 
+  - reg: offset and length of the PHY register set.
+  - #phy-cells: must be 0.
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
