@@ -1,56 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754225AbeCVPRo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:17:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36452 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752895AbeCVPRZ (ORCPT
+        id S1754934AbeCVPVF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:21:05 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:46912 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753456AbeCVPUk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:17:25 -0400
-Date: Thu, 22 Mar 2018 08:17:19 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Aaron Lu <aaron.lu@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH v4 2/3] mm/free_pcppages_bulk: do not hold lock when
- picking pages to free
-Message-ID: <20180322151719.GA28468@bombadil.infradead.org>
-References: <20180301062845.26038-1-aaron.lu@intel.com>
- <20180301062845.26038-3-aaron.lu@intel.com>
- <9cad642d-9fe5-b2c3-456c-279065c32337@suse.cz>
- <20180313033453.GB13782@intel.com>
+        Thu, 22 Mar 2018 11:20:40 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w2MFKLlx020415
+X-Nifty-SrcIP: [209.85.217.176]
+X-Google-Smtp-Source: AG47ELtOB26GNfIYHNytMl2ByiMWHiH37SI8qHKCJZo9EkuypGWMFP8KXKEX1IeWZ1Z+cYdTRp9qxQFl1+CeGI5JwAM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180313033453.GB13782@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180216202255.25307-4-ulfalizer@gmail.com>
+References: <20180216202255.25307-1-ulfalizer@gmail.com> <20180216202255.25307-4-ulfalizer@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 23 Mar 2018 00:19:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATvuFG2jqqH4w53W3oXCHhQR5gZ1E+2MEemgzKfc8XmEQ@mail.gmail.com>
+Message-ID: <CAK7LNATvuFG2jqqH4w53W3oXCHhQR5gZ1E+2MEemgzKfc8XmEQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] checkpatch: kconfig: prefer 'help' over '---help---'
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Robo Bot <apw@canonical.com>, Joe Perches <joe@perches.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 11:34:53AM +0800, Aaron Lu wrote:
-> I wish there is a data structure that has the flexibility of list while
-> at the same time we can locate the Nth element in the list without the
-> need to iterate. That's what I'm looking for when developing clustered
-> allocation for order 0 pages. In the end, I had to use another place to
-> record where the Nth element is. I hope to send out v2 of that RFC
-> series soon but I'm still collecting data for it. I would appreciate if
-> people could take a look then :-)
+2018-02-17 5:22 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+> IMO, we should discourage '---help---' for new help texts, even in cases
+> where it would be consistent with other help texts in the file. This
+> will help if we ever want to get rid of '---help---' in the future.
+>
+> Also simplify the code to only check for exactly '---help---'. Since
+> commit c2264564df3d ("kconfig: warn of unhandled characters in Kconfig
+> commands"), '---help---' is a proper keyword and can only appear in that
+> form. Prior to that commit, '---help---' working was more of a syntactic
+> quirk.
+>
+> Signed-off-by: Ulf Magnusson <ulfalizer@gmail.com>
+> ---
+>  scripts/checkpatch.pl | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 54b782fab4fd..2784f6ab309f 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -2817,7 +2817,11 @@ sub process {
+>
+>                                 if ($lines[$ln - 1] =~ /^\+\s*(?:bool|tristate|prompt)\s*["']/) {
+>                                         $is_start = 1;
+> -                               } elsif ($lines[$ln - 1] =~ /^\+\s*(?:---)?help(?:---)?$/) {
+> +                               } elsif ($lines[$ln - 1] =~ /^\+\s*(?:help|---help---)\s*$/) {
+> +                                       if ($lines[$ln - 1] =~ "---help---") {
+> +                                               WARN("CONFIG_DESCRIPTION",
+> +                                                    "prefer 'help' over '---help---' for new help texts\n" . $herecurr);
+> +                                       }
+>                                         $length = -1;
+>                                 }
+>
 
-Sorry, I missed this.  There is such a data structure -- the IDR, or
-possibly a bare radix tree, or we can build a better data structure on
-top of the radix tree (I talked about one called the XQueue a while ago).
 
-The IDR will automatically grow to whatever needed size, it stores
-pointers, you can find out quickly where the last allocated index is,
-you can remove from the middle of the array.  Disadvantage is that it
-requires memory allocation to store the array of pointers, *but* it
-can always hold at least one entry.  So if you have no memory, you can
-always return the one element in your IDR to the free pool and allocate
-from that page.
+I applied this, but perhaps the line number for the offending part
+could be improved.
+
+The warning looks like this.
+
+
+WARNING: prefer 'help' over '---help---' for new help texts
+#1109: FILE: init/Kconfig:1109:
++config SGETMASK_SYSCALL
+
+
+The #1109 points to the line of the symbol start.
+IMHO, it is even better to point to the '---help---' line.
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
