@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754641AbeCVM36 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:29:58 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:39981 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751835AbeCVM3x (ORCPT
+        id S1754677AbeCVMal (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:30:41 -0400
+Received: from mail-qk0-f177.google.com ([209.85.220.177]:33675 "EHLO
+        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754659AbeCVMaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:29:53 -0400
-X-Google-Smtp-Source: AG47ELvy2cKZSNsRdrrHIVrtJl++5doU7J+6QuCv0GCtcKVF6gVYGKlg2iijo03tFCjXZ8bGNOuy7e+pbx2+MHcuy90=
+        Thu, 22 Mar 2018 08:30:39 -0400
+X-Google-Smtp-Source: AG47ELtaXUscbQGsNjha1crR0IXf6ZrCCxufKTvdV7pK275YXFT6AYXp+BMlT41bNpv+Q7Y1TOrVSR0kLHszXW26alw=
 MIME-Version: 1.0
-In-Reply-To: <1521719091-25157-2-git-send-email-michel.pollet@bp.renesas.com>
-References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com> <1521719091-25157-2-git-send-email-michel.pollet@bp.renesas.com>
+In-Reply-To: <1521719091-25157-3-git-send-email-michel.pollet@bp.renesas.com>
+References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com> <1521719091-25157-3-git-send-email-michel.pollet@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 Mar 2018 13:29:52 +0100
-X-Google-Sender-Auth: EOipBSr_oknWoiB6bsQkR88LvQo
-Message-ID: <CAMuHMdUx7E3dk0S678HOotv3E33ZEjfoEQ=xaRpNLMCKMVnXLA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] DT: mfd: renesas,rzn1-sysctrl: document RZ/N1
- sysctrl node
+Date: Thu, 22 Mar 2018 13:30:37 +0100
+X-Google-Sender-Auth: 73h0CIJq5QSYo_bNEy_3b97lBlc
+Message-ID: <CAMuHMdUzW221ppgR=BW0iiLNRr8KQbgTPoRbTKRKU8wnXavVtA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] DT: reset: renesas,rzn1-reboot: document RZ/N1
+ reboot driver
 To: Michel Pollet <michel.pollet@bp.renesas.com>
 Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
@@ -37,53 +37,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Michel,
 
-Thanks for your patch!
-
 On Thu, Mar 22, 2018 at 12:44 PM, Michel Pollet
 <michel.pollet@bp.renesas.com> wrote:
-> The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function
-> system controller. This documents the node used to encapsulate
-> it's sub drivers.
-
-its
-
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
+> as part of the sysctrl MFD to handle rebooting the CA7 cores.
+> This documents the driver bindings.
 >
 > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
+Thanks for your patch!
+
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+> +++ b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
 > @@ -0,0 +1,22 @@
-> +DT bindings for the Renesas RZ-N1 System Controller
-
-RZ/N1
-
+> +DT bindings for the Renesas RZ-N1 Reboot Driver
 > +
-> +== System Controller Node ==
+> +== Reboot Driver Node ==
 > +
-> +The system controller node currently only hosts a single sub-driver to handle
-
-s/sub-driver/sub-node/
-
-> +the rebooting of the CPU. Eventually it will host the clock driver, SMP
-> +start handler, watchdog etc.
-> +
-> +See renesas,rzn1-reboot.txt for further details.
+> +The reboot driver is always a subnode of the system controller node, see
+> +renesas,rzn1-sysctrl.txt for details.
 > +
 > +Bindings:
 > ++ Optional:
-> +       compatible = "renesas,r9a06g032-sysctrl";
+> +       compatible = "renesas,r9a06g032-reboot";
 > ++ Required:
-> +       compatible = "renesas,rzn1-sysctrl";
+> +       compatible = "renesas,rzn1-reboot";
 
 Please mark both the SoC-specific and the family-specific values required.
-Missing "syscon", "simple-mfd".
 
 > +
 > +Example:
 > +       sysctrl: sysctrl@4000c000 {
-> +               compatible = "renesas,r9a06g032-sysctrl",
-> +                       "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
+> +               compatible = "renesas,r9a06g032-sysctrl", "syscon", "simple-mfd";
 > +               reg = <0x4000c000 0x1000>;
+> +
+> +               reboot {
+> +                       compatible = "renesas,r9a06g032-reboot";
+
+"renesas,r9a06g032-reboot", "renesas,rzn1-reboot".
+
+> +               };
 > +       };
 
 Gr{oetje,eeting}s,
