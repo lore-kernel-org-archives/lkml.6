@@ -1,23 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752151AbeCVRKY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 13:10:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39734 "EHLO
+        id S1752171AbeCVRKp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 13:10:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39676 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751739AbeCVRKS (ORCPT
+        with ESMTP id S1751937AbeCVRKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 13:10:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 830DA6030F
+        Thu, 22 Mar 2018 13:10:16 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ADBA66030F
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>,
-        Michael Chan <michael.chan@broadcom.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 5/5] bnxt_en: Eliminate duplicate barriers on weakly-ordered archs
-Date: Thu, 22 Mar 2018 13:10:02 -0400
-Message-Id: <1521738603-23596-6-git-send-email-okaya@codeaurora.org>
+        Harish Patil <harish.patil@cavium.com>,
+        Manish Chopra <manish.chopra@cavium.com>,
+        Dept-GELinuxNICDev@cavium.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 4/5] net: qlge: Eliminate duplicate barriers on weakly-ordered archs
+Date: Thu, 22 Mar 2018 13:10:01 -0400
+Message-Id: <1521738603-23596-5-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521738603-23596-1-git-send-email-okaya@codeaurora.org>
 References: <1521738603-23596-1-git-send-email-okaya@codeaurora.org>
@@ -36,47 +38,52 @@ register write.
 Create a new wrapper function with relaxed write operator. Use the new
 wrapper when a write is following a wmb().
 
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
-
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 2 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.h | 9 +++++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qlge/qlge.h      | 16 ++++++++++++++++
+ drivers/net/ethernet/qlogic/qlge/qlge_main.c |  3 ++-
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 1500243..befb538 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -1922,7 +1922,7 @@ static int bnxt_poll_work(struct bnxt *bp, struct bnxt_napi *bnapi, int budget)
- 		/* Sync BD data before updating doorbell */
- 		wmb();
- 
--		bnxt_db_write(bp, db, DB_KEY_TX | prod);
-+		bnxt_db_write_relaxed(bp, db, DB_KEY_TX | prod);
- 	}
- 
- 	cpr->cp_raw_cons = raw_cons;
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index 1989c47..5e453b9 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1401,6 +1401,15 @@ static inline u32 bnxt_tx_avail(struct bnxt *bp, struct bnxt_tx_ring_info *txr)
- 		((txr->tx_prod - txr->tx_cons) & bp->tx_ring_mask);
+diff --git a/drivers/net/ethernet/qlogic/qlge/qlge.h b/drivers/net/ethernet/qlogic/qlge/qlge.h
+index 84ac50f..3e71b65 100644
+--- a/drivers/net/ethernet/qlogic/qlge/qlge.h
++++ b/drivers/net/ethernet/qlogic/qlge/qlge.h
+@@ -2185,6 +2185,22 @@ static inline void ql_write_db_reg(u32 val, void __iomem *addr)
  }
  
-+/* For TX and RX ring doorbells with no ordering guarantee*/
-+static inline void bnxt_db_write_relaxed(struct bnxt *bp, void __iomem *db,
-+					 u32 val)
+ /*
++ * Doorbell Registers:
++ * Doorbell registers are virtual registers in the PCI memory space.
++ * The space is allocated by the chip during PCI initialization.  The
++ * device driver finds the doorbell address in BAR 3 in PCI config space.
++ * The registers are used to control outbound and inbound queues. For
++ * example, the producer index for an outbound queue.  Each queue uses
++ * 1 4k chunk of memory.  The lower half of the space is for outbound
++ * queues. The upper half is for inbound queues.
++ * Caller has to guarantee ordering.
++ */
++static inline void ql_write_db_reg_relaxed(u32 val, void __iomem *addr)
 +{
-+	writel_relaxed(val, db);
-+	if (bp->flags & BNXT_FLAG_DOUBLE_DB)
-+		writel_relaxed(val, db);
++	writel_relaxed(val, addr);
 +}
 +
- /* For TX and RX ring doorbells */
- static inline void bnxt_db_write(struct bnxt *bp, void __iomem *db, u32 val)
- {
++/*
+  * Shadow Registers:
+  * Outbound queues have a consumer index that is maintained by the chip.
+  * Inbound queues have a producer index that is maintained by the chip.
+diff --git a/drivers/net/ethernet/qlogic/qlge/qlge_main.c b/drivers/net/ethernet/qlogic/qlge/qlge_main.c
+index 50038d9..8293c202 100644
+--- a/drivers/net/ethernet/qlogic/qlge/qlge_main.c
++++ b/drivers/net/ethernet/qlogic/qlge/qlge_main.c
+@@ -2700,7 +2700,8 @@ static netdev_tx_t qlge_send(struct sk_buff *skb, struct net_device *ndev)
+ 		tx_ring->prod_idx = 0;
+ 	wmb();
+ 
+-	ql_write_db_reg(tx_ring->prod_idx, tx_ring->prod_idx_db_reg);
++	ql_write_db_reg_relaxed(tx_ring->prod_idx, tx_ring->prod_idx_db_reg);
++	mmiowb();
+ 	netif_printk(qdev, tx_queued, KERN_DEBUG, qdev->ndev,
+ 		     "tx queued, slot %d, len %d\n",
+ 		     tx_ring->prod_idx, skb->len);
 -- 
 2.7.4
