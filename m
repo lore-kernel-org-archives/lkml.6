@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753403AbeCVJHg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:07:36 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37702 "EHLO
+        id S1754513AbeCVJHZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:07:25 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37704 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753059AbeCVJBx (ORCPT
+        with ESMTP id S1753061AbeCVJBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Mar 2018 05:01:53 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
@@ -12,9 +12,9 @@ To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
 Cc: Al Viro <viro@ZenIV.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 14/45] fs: add do_compat_signalfd4() helper; remove in-kernel call to comapt syscall
-Date: Thu, 22 Mar 2018 10:00:28 +0100
-Message-Id: <20180322090059.19361-15-linux@dominikbrodowski.net>
+Subject: [PATCH 08/45] fs: add kern_select() helper; remove in-kernel call to sys_select()
+Date: Thu, 22 Mar 2018 10:00:22 +0100
+Message-Id: <20180322090059.19361-9-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -22,8 +22,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the fs-internal do_compat_signalfd4() helper allows us to get rid of
-the fs-internal call to the compat_sys_signalfd4() syscall.
+Using this helper allows us to avoid the in-kernel call to the sys_umount()
+syscall.
 
 This patch is part of a series which tries to remove in-kernel calls to
 syscalls. On this basis, the syscall entry path can be streamlined.
@@ -32,46 +32,45 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/signalfd.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ fs/select.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/fs/signalfd.c b/fs/signalfd.c
-index 501c41f3351f..d2187a813376 100644
---- a/fs/signalfd.c
-+++ b/fs/signalfd.c
-@@ -323,10 +323,9 @@ SYSCALL_DEFINE3(signalfd, int, ufd, sigset_t __user *, user_mask,
+diff --git a/fs/select.c b/fs/select.c
+index b6c36254028a..b5df01c4587d 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -675,8 +675,8 @@ int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
+ 	return ret;
  }
  
- #ifdef CONFIG_COMPAT
--COMPAT_SYSCALL_DEFINE4(signalfd4, int, ufd,
--		     const compat_sigset_t __user *,sigmask,
--		     compat_size_t, sigsetsize,
--		     int, flags)
-+static long do_compat_signalfd4(int ufd,
-+			const compat_sigset_t __user *sigmask,
-+			compat_size_t sigsetsize, int flags)
+-SYSCALL_DEFINE5(select, int, n, fd_set __user *, inp, fd_set __user *, outp,
+-		fd_set __user *, exp, struct timeval __user *, tvp)
++static int kern_select(int n, fd_set __user *inp, fd_set __user *outp,
++		       fd_set __user *exp, struct timeval __user *tvp)
  {
- 	sigset_t tmp;
- 	sigset_t __user *ksigmask;
-@@ -342,10 +341,18 @@ COMPAT_SYSCALL_DEFINE4(signalfd4, int, ufd,
- 	return do_signalfd4(ufd, ksigmask, sizeof(sigset_t), flags);
+ 	struct timespec64 end_time, *to = NULL;
+ 	struct timeval tv;
+@@ -699,6 +699,12 @@ SYSCALL_DEFINE5(select, int, n, fd_set __user *, inp, fd_set __user *, outp,
+ 	return ret;
  }
  
-+COMPAT_SYSCALL_DEFINE4(signalfd4, int, ufd,
-+		     const compat_sigset_t __user *, sigmask,
-+		     compat_size_t, sigsetsize,
-+		     int, flags)
++SYSCALL_DEFINE5(select, int, n, fd_set __user *, inp, fd_set __user *, outp,
++		fd_set __user *, exp, struct timeval __user *, tvp)
 +{
-+	return do_compat_signalfd4(ufd, sigmask, sigsetsize, flags);
++	return kern_select(n, inp, outp, exp, tvp);
 +}
 +
- COMPAT_SYSCALL_DEFINE3(signalfd, int, ufd,
- 		     const compat_sigset_t __user *,sigmask,
- 		     compat_size_t, sigsetsize)
- {
--	return compat_sys_signalfd4(ufd, sigmask, sigsetsize, 0);
-+	return do_compat_signalfd4(ufd, sigmask, sigsetsize, 0);
+ static long do_pselect(int n, fd_set __user *inp, fd_set __user *outp,
+ 		       fd_set __user *exp, struct timespec __user *tsp,
+ 		       const sigset_t __user *sigmask, size_t sigsetsize)
+@@ -784,7 +790,7 @@ SYSCALL_DEFINE1(old_select, struct sel_arg_struct __user *, arg)
+ 
+ 	if (copy_from_user(&a, arg, sizeof(a)))
+ 		return -EFAULT;
+-	return sys_select(a.n, a.inp, a.outp, a.exp, a.tvp);
++	return kern_select(a.n, a.inp, a.outp, a.exp, a.tvp);
  }
  #endif
+ 
 -- 
 2.16.2
