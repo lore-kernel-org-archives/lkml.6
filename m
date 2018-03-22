@@ -1,109 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753964AbeCVKfG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 06:35:06 -0400
-Received: from smtp-out4.electric.net ([192.162.216.184]:53778 "EHLO
-        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751792AbeCVKfE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:35:04 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Linus Torvalds'" <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
-        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
-        "indranil@chelsio.com" <indranil@chelsio.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
-Subject: RE: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Thread-Topic: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Thread-Index: AQHTv43TjMVMzNQoikSg1VH837bpVaPXnqXggAAJp4CAAAH+gIADWB3UgAELVpA=
-Date: Thu, 22 Mar 2018 10:35:43 +0000
-Message-ID: <2f5cb27711e741fba77846574e72eb62@AcuMS.aculab.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
- <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
- <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
- <CA+55aFybTvLz47mw=AG21jCJv_hE2vaVyiJP_F-4vAD-3Gnc7Q@mail.gmail.com>
- <20180321074634.dzpyjz3ia46snodh@gmail.com>
- <CA+55aFyK6uJopBjZGyeDz0O+qzCac6AwPkJyOpuaT69inPgVgw@mail.gmail.com>
-In-Reply-To: <CA+55aFyK6uJopBjZGyeDz0O+qzCac6AwPkJyOpuaT69inPgVgw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
+        id S1754124AbeCVKmh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 06:42:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51274 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753177AbeCVKmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 06:42:31 -0400
+Subject: Re: [PATCH] KVM: X86: Fix the decoding of segment overrides in 64bit
+ mode
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+        Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1521707651-9375-1-git-send-email-wanpengli@tencent.com>
+ <aadc47c3-9d5f-b4d5-92d3-cb888a29563c@redhat.com>
+ <49454fe4-16e2-4d8b-7ad5-9e488afc786e@citrix.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <d1126eb9-7203-7044-f72b-174cac6607ab@redhat.com>
+Date: Thu, 22 Mar 2018 11:42:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+In-Reply-To: <49454fe4-16e2-4d8b-7ad5-9e488afc786e@citrix.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2MAZDmh011853
 
-From: Sent: 21 March 2018 18:16
-> To: Ingo Molnar
-...
-> All this to do a 32-byte PIO access, with absolutely zero data right
-> now on what the win is?
+On 22/03/2018 11:19, Andrew Cooper wrote:
+> On 22/03/2018 10:07, Paolo Bonzini wrote:
+>> On 22/03/2018 09:34, Wanpeng Li wrote:
+>>> From: Wanpeng Li <wanpengli@tencent.com>
+>>>
+>>> Explicit segment overides other than %fs and %gs are documented as ignored by
+>>> both Intel and AMD.
+>>>
+>>> In practice, this means that:
+>>>
+>>>  * Explicit uses of %ss don't actually yield #SS[0] for non-canonical
+>>>    memory references.
+>>>  * Explicit uses of %{e,c,d}s don't override %rbp/%rsp-based memory references
+>>>    to yield #GP[0] for non-canonical memory references.
+>>>
+>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 > 
-> Yes, yes, I can find an Intel white-paper that talks about setting WC
-> and then using xmm and ymm instructions to write a single 64-byte
-> burst over PCIe, and I assume that is where the code and idea came
-> from. But I don't actually see any reason why a burst of 8 regular
-> quad-word bytes wouldn't cause a 64-byte burst write too.
-
-The big gain is from wide PCIe reads, not writes.
-Writes to uncached locations (without WC) are almost certainly required
-to generate the 'obvious' PCIe TLP, otherwise things are likely to break.
-
-> So right now this is for _one_ odd rdma controller, with absolutely
-> _zero_ performance numbers, and a very high likelihood that it does
-> not matter in the least.
+> When porting fixes from other projects, it is customary to identify so
+> in the commit message.  In this case, the fix you've ported is
+> http://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=b7dce29d9faf3597d009c853ed1fcbed9f7a7f68
 > 
-> And if there are some atomicity concerns ("we need to guarantee a
-> single atomic access for race conditions with the hardware"), they are
-> probably bogus and misplaced anyway, since
+> Here is an example of how Xen ports fixes from Linux for the drivers
+> that we share. 
+> http://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=4e131596f1defec9407b6e60d584a696beaf5d7e
+
+Thanks Andrew.  The code is of course completely different, but the
+commit message is 1:1.  Wanpeng, please acknowledge Jan in v2!
+
+>> Testcase, please...
 > 
->  (a) we can't guarantee that AVX2 exists in the first place
+> If you want to crib from one, this is the testcase I made for Xen.
+> 
+> http://xenbits.xen.org/docs/xtf/test-memop-seg.html
 
-Any code would need to be in memcpy_fromio(), not in every driver that
-might benefit.
-Then fallback code can be used if the registers aren't available.
+How does it ensure that the code is executed through the emulator and
+not by the processor?
 
->  (b) we can't guarantee that %ymm register write will show up on any
-> bus as a single write transaction anyway
+> With the impending KVM/PVH work which is ongoing, it will soon be easy
+> to run Xen's HVM test suite unmodified under KVM, but we're not quite
+> there yet.
 
-Misaligned 8 byte accesses generate a single PCIe TLP.
-I can look at what happens for AVX2 transfers later.
-I've got code that mmap()s PCIe addresses into user space, and can
-look at the TLP (indirectly through tracing on an fpga target).
-Just need to set something up that uses AVX copies.
+What does the test suite use for console I/O?
 
-> So as far as I can tell, there are basically *zero* upsides, and a lot
-> of potential downsides.
-
-There are some upsides.
-I'll do a performance measurement for reads.
-
-	David
+Paolo
