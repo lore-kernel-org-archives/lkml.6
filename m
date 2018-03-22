@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753029AbeCVJcG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:32:06 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51466 "EHLO
+        id S1753303AbeCVJcS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:32:18 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54459 "EHLO
         mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752597AbeCVJcD (ORCPT
+        with ESMTP id S1752924AbeCVJcO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:32:03 -0400
-X-Google-Smtp-Source: AG47ELt1bled41ngRKWmARWtHLGC9WReXJxB9ucck2l/pcJhoCJh+eEPpvBzxhTdqUmhQkSRevpDFuEdbpntQ6uE8ac=
+        Thu, 22 Mar 2018 05:32:14 -0400
+X-Google-Smtp-Source: AIpwx4+hfr5G0Dmq97+Dq6toCWUikDwuDJvMv1ovfxpIZ/EP7fQnN8v/tpMojJo3aUfUOL7ePzXZONDixFyXulY8QXE=
 MIME-Version: 1.0
-In-Reply-To: <755aabf2ad16d3a2131483407d7f580431571a00.1513926033.git.viresh.kumar@linaro.org>
-References: <cover.1513926033.git.viresh.kumar@linaro.org> <755aabf2ad16d3a2131483407d7f580431571a00.1513926033.git.viresh.kumar@linaro.org>
+In-Reply-To: <e9bef639c041e506f1a9fd0c7c84896eee847a16.1513926033.git.viresh.kumar@linaro.org>
+References: <cover.1513926033.git.viresh.kumar@linaro.org> <e9bef639c041e506f1a9fd0c7c84896eee847a16.1513926033.git.viresh.kumar@linaro.org>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 22 Mar 2018 10:32:02 +0100
-Message-ID: <CAPDyKFrviW6BkjL3-2=587xrdrNaR=VNf_2tOSzzqcRzMc+u=A@mail.gmail.com>
-Subject: Re: [PATCH 5/7] PM / Domain: Implement of_dev_pm_genpd_get_performance_state()
+Date: Thu, 22 Mar 2018 10:32:13 +0100
+Message-ID: <CAPDyKFqaP2VHjvBHAsaEOhMi5atRHey_-2ipBGEd+R+8vE9EFw@mail.gmail.com>
+Subject: Re: [PATCH 6/7] PM / OPP: Get performance state using genpd helper
 To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Kevin Hilman <khilman@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+Cc: Kevin Hilman <khilman@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
         Linux PM <linux-pm@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nishanth Menon <nm@ti.com>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -32,151 +31,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 22 December 2017 at 08:26, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> This implements of_dev_pm_genpd_get_performance_state() which can be
-> used from the device drivers or the OPP core to find the performance
-> state encoded in the "required-opp" property of a node. Different
-
-Please add a two newlines after "node".
-
-> platforms may encode the performance state differently using the OPP
-> table (they may simply return value of opp-hz or opp-microvolt, or apply
-> some algorithm on top of those values) and so a new callback is
-> implemented to allow platform specific drivers to convert the power
-> domain OPP to a performance state.
-
-Could you perhaps clarify at what typical point(s) the drivers or the
-OPP core should call this new API? That is useful information in the
-changelog.
-
+> The genpd core provides an API now to retrieve the performance state
+> from DT, use that instead of the ->get_pstate() callback.
 >
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/base/power/domain.c | 48 +++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/pm_domain.h   | 11 +++++++++++
->  2 files changed, 59 insertions(+)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 1ad4ad0b0de0..ef43b75982fa 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2415,6 +2415,54 @@ int of_genpd_parse_idle_states(struct device_node *dn,
->  }
->  EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
->
-> +/**
-> + * of_dev_pm_genpd_get_performance_state- Gets performance state of device's
-> + * power domain corresponding to a DT node's "required-opp" property.
-> + *
-> + * @dev: Device for which the performance-state needs to be found.
-> + * @np: DT node where the "required-opp" property is present. This can be
-> + *     the device node itself (if it doesn't have an OPP table) or a node
-> + *     within the OPP table of a device (if device has an OPP table).
-> + * @state: Pointer to return performance state.
-> + *
-> + * Returns performance state corresponding to the "required-opp" property of
-> + * a DT node. This calls platform specific genpd->get_performance_state()
-> + * callback to translate power domain OPP to performance state.
-> + *
-> + * Returns performance state on success and 0 on failure.
-> + */
-> +unsigned int of_dev_pm_genpd_get_performance_state(struct device *dev,
-> +                                                  struct device_node *np)
 
-First: To clarify the API, perhaps change to "...struct device_node *opp_node)"
-
-Second, the function name is confusing. To me, it sounds like an API
-that will get the dynamically requested performance state for the
-device and that isn't the case.
-
-So, I would rather name it something along the lines of,
-"of_genpd_opp_to_performance_state()". Can you please consider
-renaming it?
-
-> +{
-> +       struct generic_pm_domain *genpd;
-> +       struct dev_pm_opp *opp;
-> +       int state = 0;
-> +
-> +       genpd = dev_to_genpd(dev);
-> +       if (IS_ERR(genpd))
-> +               return 0;
-> +
-> +       if (unlikely(!genpd->set_performance_state))
-> +               return 0;
-> +
-> +       genpd_lock(genpd);
-> +
-> +       opp = of_dev_pm_opp_find_required_opp(&genpd->dev, np);
-> +       if (IS_ERR(opp)) {
-> +               state = PTR_ERR(opp);
-> +               goto unlock;
-> +       }
-> +
-> +       state = genpd->get_performance_state(genpd, opp);
-> +       dev_pm_opp_put(opp);
-> +
-> +unlock:
-> +       genpd_unlock(genpd);
-> +
-> +       return state;
-> +}
-> +EXPORT_SYMBOL_GPL(of_dev_pm_genpd_get_performance_state);
-> +
->  #endif /* CONFIG_PM_GENERIC_DOMAINS_OF */
->
->
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index aaacaa35005d..4edbdaa54cec 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -47,6 +47,7 @@ struct genpd_power_state {
->  };
->
->  struct genpd_lock_ops;
-> +struct dev_pm_opp;
->
->  struct generic_pm_domain {
->         struct device dev;
-> @@ -68,6 +69,8 @@ struct generic_pm_domain {
->         unsigned int performance_state; /* Aggregated max performance state */
->         int (*power_off)(struct generic_pm_domain *domain);
->         int (*power_on)(struct generic_pm_domain *domain);
-> +       unsigned int (*get_performance_state)(struct generic_pm_domain *genpd,
-> +                                             struct dev_pm_opp *opp);
-
-According to the comments above, please rename the callback to:
-"opp_to_performance_state", or whatever better name you can come up with. :-)
-
->         int (*set_performance_state)(struct generic_pm_domain *genpd,
->                                      unsigned int state);
->         struct gpd_dev_ops dev_ops;
-> @@ -244,6 +247,8 @@ extern int of_genpd_add_subdomain(struct of_phandle_args *parent,
->  extern struct generic_pm_domain *of_genpd_remove_last(struct device_node *np);
->  extern int of_genpd_parse_idle_states(struct device_node *dn,
->                         struct genpd_power_state **states, int *n);
-> +extern unsigned int of_dev_pm_genpd_get_performance_state(struct device *dev,
-> +                               struct device_node *np);
->
->  int genpd_dev_pm_attach(struct device *dev);
->  #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
-> @@ -279,6 +284,12 @@ static inline int of_genpd_parse_idle_states(struct device_node *dn,
->         return -ENODEV;
->  }
->
-> +static inline unsigned int of_dev_pm_genpd_get_performance_state(struct device *dev,
-> +                                       struct device_node *np)
-> +{
-> +       return -ENODEV;
-> +}
-> +
->  static inline int genpd_dev_pm_attach(struct device *dev)
->  {
->         return -ENODEV;
-> --
-> 2.15.0.194.g9af6a3dea062
->
-
-Mostly minor things, so overall this looks good to me!
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
 Kind regards
 Uffe
+
+> ---
+>  drivers/opp/core.c |  3 ---
+>  drivers/opp/of.c   | 20 +++++++++++++++++++-
+>  2 files changed, 19 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index bfcad8983fd1..6194219fb95f 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1034,9 +1034,6 @@ int _opp_add(struct device *dev, struct dev_pm_opp *new_opp,
+>                 return ret;
+>         }
+>
+> -       if (opp_table->get_pstate)
+> -               new_opp->pstate = opp_table->get_pstate(dev, new_opp->rate);
+> -
+>         list_add(&new_opp->node, head);
+>         mutex_unlock(&opp_table->lock);
+>
+> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+> index 2d1bb348ae73..21265af55117 100644
+> --- a/drivers/opp/of.c
+> +++ b/drivers/opp/of.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/device.h>
+>  #include <linux/of_device.h>
+> +#include <linux/pm_domain.h>
+>  #include <linux/slab.h>
+>  #include <linux/export.h>
+>
+> @@ -321,6 +322,8 @@ static int _opp_add_static_v2(struct opp_table *opp_table, struct device *dev,
+>         if (!of_property_read_u32(np, "clock-latency-ns", &val))
+>                 new_opp->clock_latency_ns = val;
+>
+> +       new_opp->pstate = of_dev_pm_genpd_get_performance_state(dev, np);
+> +
+>         ret = opp_parse_supplies(new_opp, dev, opp_table);
+>         if (ret)
+>                 goto free_opp;
+> @@ -371,7 +374,8 @@ static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np)
+>  {
+>         struct device_node *np;
+>         struct opp_table *opp_table;
+> -       int ret = 0, count = 0;
+> +       int ret = 0, count = 0, pstate_count = 0;
+> +       struct dev_pm_opp *opp;
+>
+>         opp_table = _managed_opp(opp_np);
+>         if (opp_table) {
+> @@ -405,6 +409,20 @@ static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np)
+>                 goto put_opp_table;
+>         }
+>
+> +       list_for_each_entry(opp, &opp_table->opp_list, node)
+> +               pstate_count += !!opp->pstate;
+> +
+> +       /* Either all or none of the nodes shall have performance state set */
+> +       if (pstate_count && pstate_count != count) {
+> +               dev_err(dev, "Not all nodes have performance state set (%d: %d)\n",
+> +                       count, pstate_count);
+> +               ret = -ENOENT;
+> +               goto put_opp_table;
+> +       }
+> +
+> +       if (pstate_count)
+> +               opp_table->genpd_performance_state = true;
+> +
+>         opp_table->np = opp_np;
+>         if (of_property_read_bool(opp_np, "opp-shared"))
+>                 opp_table->shared_opp = OPP_TABLE_ACCESS_SHARED;
+> --
+> 2.15.0.194.g9af6a3dea062
+>
