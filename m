@@ -1,48 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754585AbeCVMHM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:07:12 -0400
-Received: from mout01.posteo.de ([185.67.36.65]:36199 "EHLO mout01.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753642AbeCVMHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:07:08 -0400
-From: Martin Kepplinger <martink@posteo.de>
-To: corbet@lwn.net
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martink@posteo.de>
-Subject: [PATCH] Documentation: admin-guide: add kvmconfig, xenconfig and tinyconfig commands
-Date: Thu, 22 Mar 2018 13:06:56 +0100
-Message-Id: <20180322120656.13644-1-martink@posteo.de>
-X-Mailer: git-send-email 2.14.2
+        id S1753982AbeCVMKt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:10:49 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50941 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752874AbeCVMKp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 08:10:45 -0400
+Date: Thu, 22 Mar 2018 13:10:44 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, mingo@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: [PATCH 1/2] x86: Force asm-goto
+Message-ID: <20180322121043.GB12518@amd>
+References: <20180319154124.337947038@infradead.org>
+ <20180319154717.652679334@infradead.org>
+ <20180320094554.2bc49dea@lwn.net>
+ <20180320155036.GU4043@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="A6N2fC+uXW/VQSAv"
+Content-Disposition: inline
+In-Reply-To: <20180320155036.GU4043@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add kvmconfig, xenconfig and tinyconfig to the list of alternative
-configuration commands. Descriptions are directly taken from the Makefile.
 
-Signed-off-by: Martin Kepplinger <martink@posteo.de>
----
- Documentation/admin-guide/README.rst | 7 +++++++
- 1 file changed, 7 insertions(+)
+--A6N2fC+uXW/VQSAv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/admin-guide/README.rst b/Documentation/admin-guide/README.rst
-index 155372b3b57f..02caa7efd5ef 100644
---- a/Documentation/admin-guide/README.rst
-+++ b/Documentation/admin-guide/README.rst
-@@ -218,6 +218,13 @@ Configuring the kernel
-      "make localyesconfig" Similar to localmodconfig, except it will convert
-                            all module options to built in (=y) options.
- 
-+     "make kvmconfig"   Enable additional options for kvm guest kernel support.
-+
-+     "make xenconfig"   Enable additional options for xen dom0 guest kernel
-+                        support.
-+
-+     "make tinyconfig"  Configure the tiniest possible kernel.
-+
-    You can find more information on using the Linux kernel config tools
-    in Documentation/kbuild/kconfig.txt.
- 
--- 
-2.14.2
+On Tue 2018-03-20 16:50:36, Peter Zijlstra wrote:
+> On Tue, Mar 20, 2018 at 09:45:54AM -0600, Jonathan Corbet wrote:
+> > On Mon, 19 Mar 2018 16:41:25 +0100
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> >=20
+> > > A primary prerequisite for this is of course that the compiler
+> > > supports asm-goto. This effecively lifts the minimum GCC version to
+> > > build an x86 kernel to gcc-4.5.
+> >=20
+> > Given that, how about a patch to Documentation/Changes to reflect the n=
+ew
+> > reality?  It's not in RST yet, so you should be able to go there without
+> > ill effect :)
+>=20
+>=20
+> That thing says:
+>=20
+>   GCC
+>   ---
+>=20
+>   The gcc version requirements may vary depending on the type of CPU in y=
+our
+>   computer. jon
+>=20
+> Which is still entirely accurate. And afaik the 3.2 minimum listed there
+> still works for !x86.
+
+Maybe accurate, but pretty user hostile :-(.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--A6N2fC+uXW/VQSAv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlqznUMACgkQMOfwapXb+vLEPgCfbAGhFnaihiqpafa//lb+oBDS
+r6oAnA6UD9NcB9hwOR3YI4G2r8ERXEoL
+=0ynj
+-----END PGP SIGNATURE-----
+
+--A6N2fC+uXW/VQSAv--
