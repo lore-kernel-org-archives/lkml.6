@@ -1,65 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754356AbeCVBic (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 21:38:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46122 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752382AbeCVBia (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 21:38:30 -0400
-Date: Thu, 22 Mar 2018 09:38:17 +0800
-From: Mark Brown <broonie@kernel.org>
-To: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20180322013817.GY2186@sirena.org.uk>
-References: <20180321133040.6754c372@canb.auug.org.au>
- <20180321024556.GX2186@sirena.org.uk>
- <3bc6e9ca-b1d9-3458-6399-758be07fd7f3@amd.com>
+        id S1754387AbeCVBkV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 21:40:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52850 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752527AbeCVBkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 21:40:20 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885C92177A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AG47ELs5/kuoEXgk1CYJoP1C8jMUPO0aQxB76D1J7//B4djmylPDuQZJGJam3ZFoWJkH8h1yfHte9+3x2aab27otEeM=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kKplKE35C9I8SQOF"
-Content-Disposition: inline
-In-Reply-To: <3bc6e9ca-b1d9-3458-6399-758be07fd7f3@amd.com>
-X-Cookie: Am I SHOPLIFTING?
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <A78C989F6D9628469189715575E55B23696641B6@IRSMSX103.ger.corp.intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+ <1521481767-22113-15-git-send-email-chang.seok.bae@intel.com>
+ <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com>
+ <C78DE381-C618-4370-9B06-F6E25C850661@intel.com> <CALCETrX03_AG-OuJdmfmsbvEt0UTdUpaUVDRQgbDZWGY7WD-Xw@mail.gmail.com>
+ <A78C989F6D9628469189715575E55B23696641B6@IRSMSX103.ger.corp.intel.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Thu, 22 Mar 2018 01:39:58 +0000
+X-Gmail-Original-Message-ID: <CALCETrXB=jhXQBM8btgSJq-BQY79rL7ekDdv7COgJHSjxj9XoQ@mail.gmail.com>
+Message-ID: <CALCETrXB=jhXQBM8btgSJq-BQY79rL7ekDdv7COgJHSjxj9XoQ@mail.gmail.com>
+Subject: Re: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when FS/GS
+ updated by ptracer
+To: "Metzger, Markus T" <markus.t.metzger@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>,
+        "Bae, Chang Seok" <chang.seok.bae@intel.com>, X86 ML <x86@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 21, 2018 at 7:01 AM, Metzger, Markus T
+<markus.t.metzger@intel.com> wrote:
+>> -----Original Message-----
+>> From: Andy Lutomirski [mailto:luto@kernel.org]
+>> Sent: 21 March 2018 01:47
+>
+> Hello Andy,
+>
+>> I retract this particular comment.  But I still think that all this complexity needs to
+>> be more clearly justified.  My objection to the old approach wasn't that I thought
+>> it was obviously wrong -- I thought that someone needed to survey existing
+>> ptrace() users and see if anyone needed the fancier code that you're adding.  Did
+>> you find something that needs this fancy code?
+>
+> There are 3 cases:
+> - only FS changed, e.g. "p $fs = ..."
 
---kKplKE35C9I8SQOF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+If a person literally types that, I have no problem if they get
+different behavior on different systems.  If it's some existing
+program that needs to keep working, then we may be out of luck, since
+gdb seems to use SETREGS.
 
-On Wed, Mar 21, 2018 at 11:15:16AM +0530, Mukunda,Vijendar wrote:
+> - only FS_BASE changed, e.g. "p $fs_base = ..."
 
-> There is a patch dependency .
-> Below patch not merged yet. We submitted for upstream review.
-> [PATCH V2] ASoC: dwc: I2S Controller instance param added
+That's fine no matter what, I think.
 
-You need to mention dependencies between patches when publishing and I
-don't seem to have a copy of that patch, according to the list archives
-Alex asked you to make some chnages to it.
+> - both change, e.g. "p foo()" when restoring the original register state on return
+>   from the inferior call
 
---kKplKE35C9I8SQOF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqzCQYACgkQJNaLcl1U
-h9A/BQf/SsRk7fub/qqkfI0T5kgHQ8aF+hpGsXodUmmoHbm1XYMAh8UY5mQU712q
-C51a+sHY0SwkzanhPPQrvYD/+siKpfFAu3/cslPwOdLfDv4A7NqXEXgmloerUb6d
-TIT/H7lvY5yTG9Pj2s1HqT0x002wX+taETRk0zRIWE0mMrYO+JGWPcdqJK7fS8Jc
-jKsbM78nTDGuxhheIFJmD3jYlBPbGtfqfwdwqNeTTJyoEJQ0Y/FVZ31I5iTuiqdc
-5tduJkrYrx09ZT0yvfWcIc4VS2lSEm7Yke3ZARy7ez+nX+Ed0MVFzlzjnRoGduI8
-Fo5OvMBbqfx9HiwZrx6hBFB0Q5YyEA==
-=iCQm
------END PGP SIGNATURE-----
-
---kKplKE35C9I8SQOF--
+This is the interesting case.  If everything that matters uses
+SETREGS, then I think we're in good shape, and we should probably just
+make writing to FS using ptrace on FSGSBASE systems *not* change
+FSBASE, since that way is much simpler.
