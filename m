@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752450AbeCVUWL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:22:11 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:43899 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752286AbeCVUVI (ORCPT
+        id S1752257AbeCVUVD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:21:03 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39029 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752176AbeCVUUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:21:08 -0400
-X-Google-Smtp-Source: AG47ELsqNLgt8zVhcOR4vAi9XfGK+MYe/lLLe5JwGjfkcfx7Xd9hOZVeCux3LyKdux/MxwHWs6Qxug==
+        Thu, 22 Mar 2018 16:20:55 -0400
+X-Google-Smtp-Source: AG47ELvKrfl2AVoucU38ClRI+s0fFjabHLcYve0iz39gJjRr2wT0LaS8sb8FMXUzs8AQqNY7DduoaQ==
 From: Mathieu Malaterre <malat@debian.org>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Mathieu Malaterre <malat@debian.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org
-Subject: [PATCH 16/19] powerpc/powermac: Add missing include of header pmac.h
-Date: Thu, 22 Mar 2018 21:20:02 +0100
-Message-Id: <20180322202007.23088-17-malat@debian.org>
+Subject: [PATCH 09/19] powerpc/chrp/pci: Make some functions static
+Date: Thu, 22 Mar 2018 21:19:55 +0100
+Message-Id: <20180322202007.23088-10-malat@debian.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180322202007.23088-1-malat@debian.org>
 References: <20180322202007.23088-1-malat@debian.org>
@@ -27,44 +27,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The header `pmac.h` was not included, leading to the following warnings,
-treated as error with W=1:
+These functions can all be static, make it so. Fix warnings treated as
+errors with W=1:
 
-  arch/powerpc/platforms/powermac/time.c:69:13: error: no previous prototype for ‘pmac_time_init’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/powermac/time.c:207:15: error: no previous prototype for ‘pmac_get_boot_time’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/powermac/time.c:222:6: error: no previous prototype for ‘pmac_get_rtc_time’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/powermac/time.c:240:5: error: no previous prototype for ‘pmac_set_rtc_time’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/powermac/time.c:259:12: error: no previous prototype for ‘via_calibrate_decr’ [-Werror=missing-prototypes]
-  arch/powerpc/platforms/powermac/time.c:311:13: error: no previous prototype for ‘pmac_calibrate_decr’ [-Werror=missing-prototypes]
-
-The function `via_calibrate_decr` was made static to silence a warning.
+  arch/powerpc/platforms/chrp/pci.c:34:5: error: no previous prototype for ‘gg2_read_config’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/pci.c:61:5: error: no previous prototype for ‘gg2_write_config’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/pci.c:97:5: error: no previous prototype for ‘rtas_read_config’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/chrp/pci.c:112:5: error: no previous prototype for ‘rtas_write_config’ [-Werror=missing-prototypes]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/powerpc/platforms/powermac/time.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/chrp/pci.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index 274af6fa388e..5cc6fa40fcc4 100644
---- a/arch/powerpc/platforms/powermac/time.c
-+++ b/arch/powerpc/platforms/powermac/time.c
-@@ -34,6 +34,8 @@
- #include <asm/nvram.h>
- #include <asm/smu.h>
- 
-+#include "pmac.h"
-+
- #undef DEBUG
- 
- #ifdef DEBUG
-@@ -256,7 +258,7 @@ int pmac_set_rtc_time(struct rtc_time *tm)
-  * Calibrate the decrementer register using VIA timer 1.
-  * This is used both on powermacs and CHRP machines.
+diff --git a/arch/powerpc/platforms/chrp/pci.c b/arch/powerpc/platforms/chrp/pci.c
+index 0f512d35f7c5..84e1fedb3796 100644
+--- a/arch/powerpc/platforms/chrp/pci.c
++++ b/arch/powerpc/platforms/chrp/pci.c
+@@ -31,7 +31,7 @@ void __iomem *gg2_pci_config_base;
+  * limit the bus number to 3 bits
   */
--int __init via_calibrate_decr(void)
-+static int __init via_calibrate_decr(void)
+ 
+-int gg2_read_config(struct pci_bus *bus, unsigned int devfn, int off,
++static int gg2_read_config(struct pci_bus *bus, unsigned int devfn, int off,
+ 			   int len, u32 *val)
  {
- 	struct device_node *vias;
- 	volatile unsigned char __iomem *via;
+ 	volatile void __iomem *cfg_data;
+@@ -58,7 +58,7 @@ int gg2_read_config(struct pci_bus *bus, unsigned int devfn, int off,
+ 	return PCIBIOS_SUCCESSFUL;
+ }
+ 
+-int gg2_write_config(struct pci_bus *bus, unsigned int devfn, int off,
++static int gg2_write_config(struct pci_bus *bus, unsigned int devfn, int off,
+ 			    int len, u32 val)
+ {
+ 	volatile void __iomem *cfg_data;
+@@ -94,7 +94,7 @@ static struct pci_ops gg2_pci_ops =
+ /*
+  * Access functions for PCI config space using RTAS calls.
+  */
+-int rtas_read_config(struct pci_bus *bus, unsigned int devfn, int offset,
++static int rtas_read_config(struct pci_bus *bus, unsigned int devfn, int offset,
+ 		     int len, u32 *val)
+ {
+ 	struct pci_controller *hose = pci_bus_to_host(bus);
+@@ -109,7 +109,7 @@ int rtas_read_config(struct pci_bus *bus, unsigned int devfn, int offset,
+ 	return rval? PCIBIOS_DEVICE_NOT_FOUND: PCIBIOS_SUCCESSFUL;
+ }
+ 
+-int rtas_write_config(struct pci_bus *bus, unsigned int devfn, int offset,
++static int rtas_write_config(struct pci_bus *bus, unsigned int devfn, int offset,
+ 		      int len, u32 val)
+ {
+ 	struct pci_controller *hose = pci_bus_to_host(bus);
 -- 
 2.11.0
