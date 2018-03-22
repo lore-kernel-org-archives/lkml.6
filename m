@@ -1,54 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754694AbeCVMbI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:31:08 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:41511 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754659AbeCVMbE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:31:04 -0400
-X-Google-Smtp-Source: AIpwx49Hc4Ki7pJfu+dzxRTDClxMGJrQhcMYzckuEfRls00ADYlBW+BUp2XFWhjCoQ1BNtVJukIyWPHioXtqoy6XP7Y=
-MIME-Version: 1.0
-In-Reply-To: <1521712529-632-3-git-send-email-abel.vesa@nxp.com>
-References: <1521712529-632-1-git-send-email-abel.vesa@nxp.com> <1521712529-632-3-git-send-email-abel.vesa@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 22 Mar 2018 09:31:03 -0300
-Message-ID: <CAOMZO5BVxp7pq44pUp444CqsYcJ5QQFqrgdRyFbaxRi0_d0ssg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm: imx: Correct dram pll type
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Yongcai Huang <anson.huang@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1754651AbeCVMfN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:35:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40844 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751597AbeCVMfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 08:35:10 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] pinctrl: ocelot: fix gpio direction
+Date: Thu, 22 Mar 2018 13:35:00 +0100
+Message-Id: <20180322123500.2379-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abel,
+Bits have to be cleared in DEVCPU_GCB:GPIO:GPIO_OE for input and set for
+output. ocelot_gpio_set_direction() got it wrong and this went unnoticed
+when the driver was reworked.
 
-On Thu, Mar 22, 2018 at 6:55 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
-> From: Anson Huang <anson.huang@nxp.com>
->
-> DRAM PLL is a audio/video type PLL, need to correct it to get correct ops of
-> PLL.
->
-> There is a test_div placed before DRAM PLL's gate, so add this test div clk.
->
-> Signed-off-by: Anson Huang <anson.huang@nxp.com>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Reported-by: Gregory Clement <gregory.clement@bootlin.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This has already been applied in linux-next as commit:
-
-commit b716aad97eb5 ("clk: imx: imx7d: correct video pll clock tree)
-
-Nit: the prefix in the Subject lines of all these patches should not
-be "arm:imx".
-
-"clk: imx: imx7d" is better suited to reflect the subsystem that thes
-patches touch.
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index a9423238471e..b5b3547fdcb2 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -252,7 +252,7 @@ static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
+ 	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
+ 
+ 	regmap_update_bits(info->map, OCELOT_GPIO_OE, BIT(pin),
+-			   input ? BIT(pin) : 0);
++			   input ? 0 : BIT(pin));
+ 
+ 	return 0;
+ }
+-- 
+2.16.2
