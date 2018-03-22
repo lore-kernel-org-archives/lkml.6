@@ -1,149 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754725AbeCVMsU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:48:20 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:41583 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753742AbeCVMsQ (ORCPT
+        id S1754755AbeCVMsw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:48:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50246 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754110AbeCVMso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:48:16 -0400
-X-Google-Smtp-Source: AG47ELsWQOW9f4tb/StFb5QEexgx+CzNqSoutzjYXN58K7+//aDDqljWqxWJ16KPMySKU4NsXkO4viM5UrUYxWMhu6M=
+        Thu, 22 Mar 2018 08:48:44 -0400
 MIME-Version: 1.0
-In-Reply-To: <1521719091-25157-5-git-send-email-michel.pollet@bp.renesas.com>
-References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com> <1521719091-25157-5-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 22 Mar 2018 13:48:14 +0100
-X-Google-Sender-Auth: 1H-UMUDSzgOruEKohakHmdzvNt4
-Message-ID: <CAMuHMdUbSfQAf9cRAiLg3ZuVwdSoAGOFwiqyv-28SW5d0fOr3w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] reset: Renesas RZ/N1 reboot driver
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Thu, 22 Mar 2018 08:48:35 -0400
+From: okaya@codeaurora.org
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-rdma@vger.kernel.org, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Steve Wise <swise@chelsio.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on
+ weakly-ordered archs
+In-Reply-To: <3664b253c730dbf83f4528acaedb3a88@codeaurora.org>
+References: <1521514068-8856-5-git-send-email-okaya@codeaurora.org>
+ <201803221430.P43GJl9U%fengguang.wu@intel.com>
+ <3664b253c730dbf83f4528acaedb3a88@codeaurora.org>
+Message-ID: <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michel,
+On 2018-03-22 08:24, okaya@codeaurora.org wrote:
+> On 2018-03-22 02:44, kbuild test robot wrote:
+>> Hi Sinan,
+>> 
+>> Thank you for the patch! Yet something to improve:
+>> 
+>> [auto build test ERROR on linus/master]
+>> [also build test ERROR on v4.16-rc6 next-20180321]
+>> [if your patch is applied to the wrong git tree, please drop us a note
+>> to help improve the system]
+>> 
+>> url:
+>> https://github.com/0day-ci/linux/commits/Sinan-Kaya/ib-Eliminate-duplicate-barriers-on-weakly-ordered-archs/20180321-091659
+>> config: xtensa-allyesconfig (attached as .config)
+>> compiler: xtensa-linux-gcc (GCC) 7.2.0
+>> reproduce:
+>>         wget
+>> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+>> -O ~/bin/make.cross
+>>         chmod +x ~/bin/make.cross
+>>         # save the attached .config to linux build tree
+>>         make.cross ARCH=xtensa
+>> 
+> 
+> Jason,
+> 
+> Can you remove the writeq change if it is too late for me to fix?
+> 
+> This is an infrastructural issue on xtensa arch.
+> 
+> Probably, it won't get fixed today.
 
-On Thu, Mar 22, 2018 at 12:44 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> The Renesas RZ/N1 Family (Part #R9A06G0xx) needs a small driver
-> to reboot the Cortex-A7 cores. This driver is a sub driver of
-> the sysctrl MFD.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+AFAIS, even writeq won't compile on this arch. I started questioning 
+this build test.
 
-Thanks for your patch!
 
-> --- /dev/null
-> +++ b/drivers/power/reset/rzn1-reboot.c
-> @@ -0,0 +1,109 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * RZ/N1 reboot driver
-> + *
-> + * Copyright (C) 2018 Renesas Electronics Europe Limited
-> + *
-> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-> + * Derived from zx-reboot.c
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/notifier.h>
-> +#include <linux/of_address.h>
-
-I don't think you need <linux/of_address.h>.
-
-> +#include <linux/platform_device.h>
-> +#include <linux/reboot.h>
-> +#include <linux/regmap.h>
-> +
-> +/* Definitions from the SDK rzn1-sysctrl.h autogenerated file */
-> +#define RZN1_SYSCTRL_REG_RSTEN                 0x120
-> +#define RZN1_SYSCTRL_REG_RSTEN_MRESET_EN               0
-> +#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN              1
-> +#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN_MASK         0x6
-> +#define RZN1_SYSCTRL_REG_RSTEN_WDM3RST_EN              3
-> +#define RZN1_SYSCTRL_REG_RSTEN_CM3LOCKUPRST_EN         4
-> +#define RZN1_SYSCTRL_REG_RSTEN_CM3SYSRESET_EN          5
-> +#define RZN1_SYSCTRL_REG_RSTEN_SWRST_EN                        6
-> +#define RZN1_SYSCTRL_REG_RSTCTRL               0x198
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ           1
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ_MASK      0x6
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDM3RST_REQ           3
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_CM3LOCKUPRST_REQ      4
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_CM3SYSRESET_REQ       5
-> +#define RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ             6
-> +
-> +
-> +static struct regmap *_sysctrl;
-
-Variable names starting with an underscore are frowned upon.
-
-> +static int rzn1_reboot_probe(struct platform_device *pdev)
-> +{
-> +       int err;
-> +       struct device *parent;
-> +
-> +       parent = pdev->dev.parent;
-> +       if (parent && parent->of_node) {
-> +               _sysctrl = syscon_node_to_regmap(parent->of_node);
-> +       } else {
-> +               dev_err(&pdev->dev, "couldn't find sysctrl node\n");
-> +               return -ENODEV;
-> +       }
-
-if (!parent || !parent->of_node) {
-        dev_err(&pdev->dev, "couldn't find sysctrl node\n");
-        return -ENODEV;
-}
-_sysctrl = syscon_node_to_regmap(parent->of_node);
-
-> +       if (IS_ERR(_sysctrl)) {
-> +               dev_err(&pdev->dev, "couldn't find find regmap\n");
-> +               return PTR_ERR(_sysctrl);
-> +       }
-> +       err = register_restart_handler(&rzn1_reboot_nb);
-> +       if (err) {
-> +               dev_err(&pdev->dev, "register restart handler failed(err=%d)\n",
-> +                       err);
-> +       }
-> +
-> +       return err;
-> +}
-> +
-> +static const struct of_device_id rzn1_reboot_of_match[] = {
-> +       { .compatible = "renesas,r9a06g032-reboot" },
-> +       { .compatible = "renesas,rzn1-reboot" },
-
-Matching against the second (family-specific) compatible value should
-be sufficient.
-
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(of, rzn1_reboot_of_match);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> Sinan
+> 
+> 
+>> All errors (new ones prefixed by >>):
+>> 
+>>    In file included from drivers/infiniband/hw/cxgb4/iw_cxgb4.h:73:0,
+>>                     from drivers/infiniband/hw/cxgb4/device.c:40:
+>>    drivers/infiniband/hw/cxgb4/t4.h: In function 'pio_copy':
+>>>> drivers/infiniband/hw/cxgb4/t4.h:460:3: error: implicit declaration 
+>>>> of function 'writeq_relaxed'; did you mean 'writel_relaxed'? 
+>>>> [-Werror=implicit-function-declaration]
+>>       writeq_relaxed(*src, dst);
+>>       ^~~~~~~~~~~~~~
+>>       writel_relaxed
+>>    cc1: some warnings being treated as errors
+>> 
+>> vim +460 drivers/infiniband/hw/cxgb4/t4.h
+>> 
+>>    450
+>>    451	/* This function copies 64 byte coalesced work request to 
+>> memory
+>>    452	 * mapped BAR2 space. For coalesced WRs, the SGE fetches data
+>>    453	 * from the FIFO instead of from Host.
+>>    454	 */
+>>    455	static inline void pio_copy(u64 __iomem *dst, u64 *src)
+>>    456	{
+>>    457		int count = 8;
+>>    458
+>>    459		while (count) {
+>>  > 460			writeq_relaxed(*src, dst);
+>>    461			src++;
+>>    462			dst++;
+>>    463			count--;
+>>    464		}
+>>    465	}
+>>    466
+>> 
+>> ---
+>> 0-DAY kernel test infrastructure                Open Source Technology 
+>> Center
+>> https://lists.01.org/pipermail/kbuild-all                   Intel 
+>> Corporation
