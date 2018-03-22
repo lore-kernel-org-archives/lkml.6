@@ -1,103 +1,240 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3063729-1521207167-2-2787213859521462437
+X-Cyrus-Session-Id: sloti22d1t05-1321235-1521684179-2-17503341735868018019
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: cc='iso-8859-1', plain='us-ascii'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-Attached: 0001-SMB3-Validate-negotiate-request-must-always-be-signe.patch
+X-Attached: 0002-CIFS-Enable-encryption-during-session-setup-phase.patch
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521207167; b=HC6SMM83W/4u4GQ/S9pt0N8doJBXfWgZ73ObP0QuB7r1S9o
-    sBEhi13RMRicojjNl6wj8DoaFMkZGJ3vb2pL/BUIJEx7sgiWxyZXWT3U2yUcHLto
-    K4CsxC+VqgEeM/DVGdPNfh8zVWhtpsmtgNICZ6BG9f80u7rREUNVQux6j+Twh4qE
-    U7l0HAfebsHnZXSW6X+vGiVBxWaSQoqD2JMewLQ5Pb26YxDOrOk+WwMY/PaKs4Aq
-    9CQSV6s82QtnKdwlfkOCKc3rVuFiyXt7Xa34cUSrJjT71fQ0yJwPKi92y70Sy2q0
-    nc3kXEuB41hwugbGSvkCELfysnWRMOuRavXHltg==
+    t=1521684179; b=m4rZcaC7oMSxZgp3boEGZZUAPrQvqMLizRSXamzzgMfkxHf
+    x0jFJuApPOTnCuHhUkVOWEIoz30fRxFZp3En9JQowlxtzQq03+tKTtQgBMIR86WF
+    0iZuuV1r4RPpK2c3kTwcMRoPQ4Z/7drlOuhy0mfb2myLJgL9jk35BOQjl7HvaMRR
+    6Q+SullZR8qGl/pkUCw7OaQd1MWWXC0vhvmnl4uM4rKeZwTjQ2mKEu+vGTxOfIk2
+    daibkmsT1nqRYqB+HIf0n2qjB0ttR/G44takliMBIJTLhZfFCyvGyZOfO7dy34BU
+    VNpZ/qnO46QLrG64fyysjhvL0ybCvAlDRBwMwjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521207167; bh=bdpQcPo68RWM3efkYUNkVs216P
-    uZ5Q1u0ZoJwc3WBV4=; b=nAtWJAS+GB8+5OEE1QsN2Uv35+I2Z47SLX6hhZGbRW
-    ZLeRoqKOFXmv1JUIPDOw9+IOeOxKS39QU5t4VXKJezzlmGYuwA1COZLkGk0kbDRO
-    ca4W0uTz6B7g0XI8cE9bXNb3bta07w+mV6x9oarD4UhHtjwpvE6yZgxiKMJSTiK9
-    xedhm7ixiqOGPnjIyTMGhhvVBrpPcwcZ81mivcaHVATjvNeeB6ZFaUvGJcheqF5R
-    A4K1rcp8n15R/2yw9FKZKXilXmKzOzVf0SGeany/6jFd31TSn1MTVPjSEbVo6jEL
-    FkWU7w3/rD7sI/A8Cy7veT22D8BygPt4nWTpZ52LGE8A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1521684179; bh=Sd25DoWet2f2QV3vbsMh6k6hyFl5NfRkLhLVTd
+    n3lrY=; b=qp9nOgG53eF4t/ImfER5CbNMSrqrFkNcAxzEZppNkc3Rmksing3NnP
+    1FzDfzNSDS8dIk5wZ6rqpqyZb6gOPTz9hkAD5B706qrsts9R3kIgxlVLFoQb6SsE
+    xpKaMtkv74QuXRB8b+lhf+HPHTP57A1dBr5nAdq3N6rK+N7Cf5kwo6/0CIruM24B
+    Egj3GvxX6RqwFj3vdKkiUSWNVUB2YDelyrNuiSaMTj/t5TRxqwrgYFZ6A7ldj7Qc
+    UkfcOKjG+cJdh+hCNkg0IQL1sKtXKo7mj/Y5dhUAdIesuESyzIFSubClBZM8p7zV
+    Y9BX8e5eneY9udjQyRwW1v5OkW4OVW3g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=efesvOJS x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ghYzDyZQ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
-Authentication-Results: mx4.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=efesvOJS x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-category=clean score=-100 state=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=ghYzDyZQ;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751871AbeCPNcn (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 16 Mar 2018 09:32:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42384 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751064AbeCPNcn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 16 Mar 2018 09:32:43 -0400
-Date: Fri, 16 Mar 2018 14:32:41 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Steve French <smfrench@gmail.com>
+        id S1753388AbeCVCCp (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 21 Mar 2018 22:02:45 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:44675 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753342AbeCVCCo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 21 Mar 2018 22:02:44 -0400
+X-Google-Smtp-Source: AG47ELsXRYeppvbAW/UFRKdrTp/Oui1ImYx2mNdqdQiv38gdS2OBUFFebmQquFNq4WFRcZJagTN8QxIUL1+RocmIN40=
+MIME-Version: 1.0
+In-Reply-To: <20180316133241.GC11397@kroah.com>
+References: <28ffc363-5140-5685-d288-6e3dc07c6369@csail.mit.edu>
+ <20180227085428.GA16879@kroah.com> <b20cbd94-ce9b-cb2c-dc95-a6821376823f@csail.mit.edu>
+ <20180227124050.GB31888@kroah.com> <6bca5a97-f581-86b8-12ad-77147619d519@csail.mit.edu>
+ <CAH2r5mt91WGHDk-+LP4EBTEfAOmrY2k6_X7KKjc0D+LcDCfxRw@mail.gmail.com>
+ <309db6c4-7e21-bfbe-44d4-eb41f5516d5e@csail.mit.edu> <CAH2r5muUfsZsqaBqkAfi_dXRheib+7DN=VSsbGcV22C2MdJaGw@mail.gmail.com>
+ <20180313092133.GA13325@kroah.com> <CAH2r5mvmiTaC4W=LAaOvWv6xGEMce957c+u+Af6wNgxudbO3_w@mail.gmail.com>
+ <20180316133241.GC11397@kroah.com>
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 21 Mar 2018 21:02:22 -0500
+Message-ID: <CAH2r5mvYxpr_0CPZNiNJTGhFNaM06w-EoTT7WS8oVjVZq8HCCw@mail.gmail.com>
+Subject: Re: [PATCH 4.13 28/43] SMB3: Validate negotiate request must always
+ be signed
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         Thomas Backlund <tmb@mageia.org>,
-        =?iso-8859-1?Q?Aur=E9lien?= Aptel <aaptel@suse.com>,
+        =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Stable <stable@vger.kernel.org>,
         Ronnie Sahlberg <lsahlber@redhat.com>,
         Pavel Shilovskiy <pshilov@microsoft.com>,
         CIFS <linux-cifs@vger.kernel.org>
-Subject: Re: [PATCH 4.13 28/43] SMB3: Validate negotiate request must always
- be signed
-Message-ID: <20180316133241.GC11397@kroah.com>
-References: <28ffc363-5140-5685-d288-6e3dc07c6369@csail.mit.edu>
- <20180227085428.GA16879@kroah.com>
- <b20cbd94-ce9b-cb2c-dc95-a6821376823f@csail.mit.edu>
- <20180227124050.GB31888@kroah.com>
- <6bca5a97-f581-86b8-12ad-77147619d519@csail.mit.edu>
- <CAH2r5mt91WGHDk-+LP4EBTEfAOmrY2k6_X7KKjc0D+LcDCfxRw@mail.gmail.com>
- <309db6c4-7e21-bfbe-44d4-eb41f5516d5e@csail.mit.edu>
- <CAH2r5muUfsZsqaBqkAfi_dXRheib+7DN=VSsbGcV22C2MdJaGw@mail.gmail.com>
- <20180313092133.GA13325@kroah.com>
- <CAH2r5mvmiTaC4W=LAaOvWv6xGEMce957c+u+Af6wNgxudbO3_w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAH2r5mvmiTaC4W=LAaOvWv6xGEMce957c+u+Af6wNgxudbO3_w@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/mixed; boundary="94eb2c0bd53a0ae8780567f6b4e8"
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 13, 2018 at 10:21:45AM -0500, Steve French wrote:
-> There will be a fix needed to correct an oops in calc_signature,
-> besides the easy patch (smb3 validate negotiate patch).
+--94eb2c0bd53a0ae8780567f6b4e8
+Content-Type: text/plain; charset="UTF-8"
 
-Ok, I still have no idea how to parse this for a stable tree submission.
+Found a patch which solves the dependency issue.  In my testing (on
+4.9, with Windows 2016, and also to Samba) as Pavel suggested this
+appears to fix the problem, but I will let Srivatsa confirm that it
+also fixes it for him.  The two attached patches for 4.9 should work.
 
-So can someone please just send me a simple "apply these git ids to tree
-X.X.y so we can fix the problem", otherwise I'm not going to do anything
-here as I'm really confused,
+As an aside which may help some in testing stable true problems (as a
+point of comparison or alternative), I did a complete backport of all
+relevant CIFS/SMB3 patches (ie all patches to cifs.ko that are not
+dependent on a VFS changes or global kernel API changes) for kernels
+4.9 through 4.15
+https://github.com/smfrench/smb3-cifs-linux-stable-backports
 
-greg k-h
+The individual patches that were included (and in a distinct directory
+all cifs patches that were rejected due to global/VFS dependencies)
+are also checked in -
+https://github.com/smfrench/smb3-backported-patches.
+
+Given the focus on security, these two git trees may be useful for
+those who want a cifs.ko which includes all security and functional
+improvements and fixes that more closely matches mainline cifs.ko
+
+Srivatsa,
+Let us know if those two patches fix your issue as expected.
+
+On Fri, Mar 16, 2018 at 8:32 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Tue, Mar 13, 2018 at 10:21:45AM -0500, Steve French wrote:
+>> There will be a fix needed to correct an oops in calc_signature,
+>> besides the easy patch (smb3 validate negotiate patch).
+>
+> Ok, I still have no idea how to parse this for a stable tree submission.
+>
+> So can someone please just send me a simple "apply these git ids to tree
+> X.X.y so we can fix the problem", otherwise I'm not going to do anything
+> here as I'm really confused,
+>
+> greg k-h
+
+
+
+-- 
+Thanks,
+
+Steve
+
+--94eb2c0bd53a0ae8780567f6b4e8
+Content-Type: text/x-patch; charset="US-ASCII";
+	name="0001-SMB3-Validate-negotiate-request-must-always-be-signe.patch"
+Content-Disposition: attachment;
+	filename="0001-SMB3-Validate-negotiate-request-must-always-be-signe.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jf1v6c6o0
+
+RnJvbSA4YWM3YjFkMTVkYzk3M2UyMDkyYWIyYjFiNWI2OThlYjkyZTFkMWMzIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTdGV2ZSBGcmVuY2ggPHNtZnJlbmNoQGdtYWlsLmNvbT4KRGF0
+ZTogU3VuLCAxMSBNYXIgMjAxOCAyMDowMDoyNyAtMDcwMApTdWJqZWN0OiBbUEFUQ0ggMS8yXSBT
+TUIzOiBWYWxpZGF0ZSBuZWdvdGlhdGUgcmVxdWVzdCBtdXN0IGFsd2F5cyBiZSBzaWduZWQKCkFj
+Y29yZGluZyB0byBNUy1TTUIyIDMuMi41NSB2YWxpZGF0ZV9uZWdvdGlhdGUgcmVxdWVzdCBtdXN0
+CmFsd2F5cyBiZSBzaWduZWQuIFNvbWUgV2luZG93cyBjYW4gZmFpbCB0aGUgcmVxdWVzdCBpZiB5
+b3Ugc2VuZCBpdCB1bnNpZ25lZAoKU2VlIGtlcm5lbCBidWd6aWxsYSBidWcgMTk3MzExCgpbUGF0
+Y2ggZml4ZWQgdXAgZm9yIGtlcm5lbCB2ZXJzaW9uIDQuOV0KCkNDOiBTdGFibGUgPHN0YWJsZUB2
+Z2VyLmtlcm5lbC5vcmc+CkFja2VkLWJ5OiBSb25uaWUgU2FobGJlcmcgPGxzYWhsYmVyLnJlZGhh
+dC5jb20+ClNpZ25lZC1vZmYtYnk6IFN0ZXZlIEZyZW5jaCA8c21mcmVuY2hAZ21haWwuY29tPgot
+LS0KIGZzL2NpZnMvc21iMnBkdS5jIHwgMyArKysKIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlv
+bnMoKykKCmRpZmYgLS1naXQgYS9mcy9jaWZzL3NtYjJwZHUuYyBiL2ZzL2NpZnMvc21iMnBkdS5j
+CmluZGV4IDk0YzRjMTkwMTIyMi4uNGMyZWFmMDVhNmE0IDEwMDY0NAotLS0gYS9mcy9jaWZzL3Nt
+YjJwZHUuYworKysgYi9mcy9jaWZzL3NtYjJwZHUuYwpAQCAtMTcxMiw2ICsxNzEyLDkgQEAgU01C
+Ml9pb2N0bChjb25zdCB1bnNpZ25lZCBpbnQgeGlkLCBzdHJ1Y3QgY2lmc190Y29uICp0Y29uLCB1
+NjQgcGVyc2lzdGVudF9maWQsCiAJfSBlbHNlCiAJCWlvdlswXS5pb3ZfbGVuID0gZ2V0X3JmYzEw
+MDJfbGVuZ3RoKHJlcSkgKyA0OwogCisJLyogdmFsaWRhdGUgbmVnb3RpYXRlIHJlcXVlc3QgbXVz
+dCBiZSBzaWduZWQgLSBzZWUgTVMtU01CMiAzLjIuNS41ICovCisJaWYgKG9wY29kZSA9PSBGU0NU
+TF9WQUxJREFURV9ORUdPVElBVEVfSU5GTykKKwkJcmVxLT5oZHIuRmxhZ3MgfD0gU01CMl9GTEFH
+U19TSUdORUQ7CiAKIAlyYyA9IFNlbmRSZWNlaXZlMih4aWQsIHNlcywgaW92LCBudW1faW92ZWNz
+LCAmcmVzcF9idWZ0eXBlLCAwKTsKIAlyc3AgPSAoc3RydWN0IHNtYjJfaW9jdGxfcnNwICopaW92
+WzBdLmlvdl9iYXNlOwotLSAKMi4xNC4xCgo=
+--94eb2c0bd53a0ae8780567f6b4e8
+Content-Type: text/x-patch; charset="US-ASCII";
+	name="0002-CIFS-Enable-encryption-during-session-setup-phase.patch"
+Content-Disposition: attachment;
+	filename="0002-CIFS-Enable-encryption-during-session-setup-phase.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jf1v6c7u1
+
+RnJvbSBjNTM0NjIyM2NhOTUyYTI4NjhiZDY5YTg4ODgxMzMyNTFlNTE3NTcxIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBQYXZlbCBTaGlsb3Zza3kgPHBzaGlsb3ZAbWljcm9zb2Z0LmNv
+bT4KRGF0ZTogTW9uLCA3IE5vdiAyMDE2IDE4OjIwOjUwIC0wODAwClN1YmplY3Q6IFtQQVRDSCAy
+LzJdIENJRlM6IEVuYWJsZSBlbmNyeXB0aW9uIGR1cmluZyBzZXNzaW9uIHNldHVwIHBoYXNlCgpJ
+biBvcmRlciB0byBhbGxvdyBlbmNyeXB0aW9uIG9uIFNNQiBjb25uZWN0aW9uIHdlIG5lZWQgdG8g
+ZXhjaGFuZ2UKYSBzZXNzaW9uIGtleSBhbmQgZ2VuZXJhdGUgZW5jcnlwdGlvbiBhbmQgZGVjcnlw
+dGlvbiBrZXlzLgoKU2lnbmVkLW9mZi1ieTogUGF2ZWwgU2hpbG92c2t5IDxwc2hpbG92QG1pY3Jv
+c29mdC5jb20+Ci0tLQogZnMvY2lmcy9zZXNzLmMgICAgfCAyMiArKysrKysrKysrLS0tLS0tLS0t
+LS0tCiBmcy9jaWZzL3NtYjJwZHUuYyB8IDEyICsrLS0tLS0tLS0tLQogMiBmaWxlcyBjaGFuZ2Vk
+LCAxMiBpbnNlcnRpb25zKCspLCAyMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy9jaWZz
+L3Nlc3MuYyBiL2ZzL2NpZnMvc2Vzcy5jCmluZGV4IDUzOGQ5YjU1Njk5YS4uYzNkYjJhODgyYWVl
+IDEwMDY0NAotLS0gYS9mcy9jaWZzL3Nlc3MuYworKysgYi9mcy9jaWZzL3Nlc3MuYwpAQCAtMzQ0
+LDEzICszNDQsMTIgQEAgdm9pZCBidWlsZF9udGxtc3NwX25lZ290aWF0ZV9ibG9iKHVuc2lnbmVk
+IGNoYXIgKnBidWZmZXIsCiAJLyogQkIgaXMgTlRMTVYyIHNlc3Npb24gc2VjdXJpdHkgZm9ybWF0
+IGVhc2llciB0byB1c2UgaGVyZT8gKi8KIAlmbGFncyA9IE5UTE1TU1BfTkVHT1RJQVRFXzU2IHwJ
+TlRMTVNTUF9SRVFVRVNUX1RBUkdFVCB8CiAJCU5UTE1TU1BfTkVHT1RJQVRFXzEyOCB8IE5UTE1T
+U1BfTkVHT1RJQVRFX1VOSUNPREUgfAotCQlOVExNU1NQX05FR09USUFURV9OVExNIHwgTlRMTVNT
+UF9ORUdPVElBVEVfRVhURU5ERURfU0VDOwotCWlmIChzZXMtPnNlcnZlci0+c2lnbikgeworCQlO
+VExNU1NQX05FR09USUFURV9OVExNIHwgTlRMTVNTUF9ORUdPVElBVEVfRVhURU5ERURfU0VDIHwK
+KwkJTlRMTVNTUF9ORUdPVElBVEVfU0VBTDsKKwlpZiAoc2VzLT5zZXJ2ZXItPnNpZ24pCiAJCWZs
+YWdzIHw9IE5UTE1TU1BfTkVHT1RJQVRFX1NJR047Ci0JCWlmICghc2VzLT5zZXJ2ZXItPnNlc3Np
+b25fZXN0YWIgfHwKLQkJCQlzZXMtPm50bG1zc3AtPnNlc3NrZXlfcGVyX3NtYnNlc3MpCi0JCQlm
+bGFncyB8PSBOVExNU1NQX05FR09USUFURV9LRVlfWENIOwotCX0KKwlpZiAoIXNlcy0+c2VydmVy
+LT5zZXNzaW9uX2VzdGFiIHx8IHNlcy0+bnRsbXNzcC0+c2Vzc2tleV9wZXJfc21ic2VzcykKKwkJ
+ZmxhZ3MgfD0gTlRMTVNTUF9ORUdPVElBVEVfS0VZX1hDSDsKIAogCXNlY19ibG9iLT5OZWdvdGlh
+dGVGbGFncyA9IGNwdV90b19sZTMyKGZsYWdzKTsKIApAQCAtNDA3LDEzICs0MDYsMTIgQEAgaW50
+IGJ1aWxkX250bG1zc3BfYXV0aF9ibG9iKHVuc2lnbmVkIGNoYXIgKipwYnVmZmVyLAogCWZsYWdz
+ID0gTlRMTVNTUF9ORUdPVElBVEVfNTYgfAogCQlOVExNU1NQX1JFUVVFU1RfVEFSR0VUIHwgTlRM
+TVNTUF9ORUdPVElBVEVfVEFSR0VUX0lORk8gfAogCQlOVExNU1NQX05FR09USUFURV8xMjggfCBO
+VExNU1NQX05FR09USUFURV9VTklDT0RFIHwKLQkJTlRMTVNTUF9ORUdPVElBVEVfTlRMTSB8IE5U
+TE1TU1BfTkVHT1RJQVRFX0VYVEVOREVEX1NFQzsKLQlpZiAoc2VzLT5zZXJ2ZXItPnNpZ24pIHsK
+KwkJTlRMTVNTUF9ORUdPVElBVEVfTlRMTSB8IE5UTE1TU1BfTkVHT1RJQVRFX0VYVEVOREVEX1NF
+QyB8CisJCU5UTE1TU1BfTkVHT1RJQVRFX1NFQUw7CisJaWYgKHNlcy0+c2VydmVyLT5zaWduKQog
+CQlmbGFncyB8PSBOVExNU1NQX05FR09USUFURV9TSUdOOwotCQlpZiAoIXNlcy0+c2VydmVyLT5z
+ZXNzaW9uX2VzdGFiIHx8Ci0JCQkJc2VzLT5udGxtc3NwLT5zZXNza2V5X3Blcl9zbWJzZXNzKQot
+CQkJZmxhZ3MgfD0gTlRMTVNTUF9ORUdPVElBVEVfS0VZX1hDSDsKLQl9CisJaWYgKCFzZXMtPnNl
+cnZlci0+c2Vzc2lvbl9lc3RhYiB8fCBzZXMtPm50bG1zc3AtPnNlc3NrZXlfcGVyX3NtYnNlc3Mp
+CisJCWZsYWdzIHw9IE5UTE1TU1BfTkVHT1RJQVRFX0tFWV9YQ0g7CiAKIAl0bXAgPSAqcGJ1ZmZl
+ciArIHNpemVvZihBVVRIRU5USUNBVEVfTUVTU0FHRSk7CiAJc2VjX2Jsb2ItPk5lZ290aWF0ZUZs
+YWdzID0gY3B1X3RvX2xlMzIoZmxhZ3MpOwpkaWZmIC0tZ2l0IGEvZnMvY2lmcy9zbWIycGR1LmMg
+Yi9mcy9jaWZzL3NtYjJwZHUuYwppbmRleCA0YzJlYWYwNWE2YTQuLjdjMjYyODZhNTI1ZCAxMDA2
+NDQKLS0tIGEvZnMvY2lmcy9zbWIycGR1LmMKKysrIGIvZnMvY2lmcy9zbWIycGR1LmMKQEAgLTcw
+NywxNSArNzA3LDEzIEBAIFNNQjJfc2Vzc19lc3RhYmxpc2hfc2Vzc2lvbihzdHJ1Y3QgU01CMl9z
+ZXNzX2RhdGEgKnNlc3NfZGF0YSkKIAlzdHJ1Y3QgY2lmc19zZXMgKnNlcyA9IHNlc3NfZGF0YS0+
+c2VzOwogCiAJbXV0ZXhfbG9jaygmc2VzLT5zZXJ2ZXItPnNydl9tdXRleCk7Ci0JaWYgKHNlcy0+
+c2VydmVyLT5zaWduICYmIHNlcy0+c2VydmVyLT5vcHMtPmdlbmVyYXRlX3NpZ25pbmdrZXkpIHsK
+KwlpZiAoc2VzLT5zZXJ2ZXItPm9wcy0+Z2VuZXJhdGVfc2lnbmluZ2tleSkgewogCQlyYyA9IHNl
+cy0+c2VydmVyLT5vcHMtPmdlbmVyYXRlX3NpZ25pbmdrZXkoc2VzKTsKLQkJa2ZyZWUoc2VzLT5h
+dXRoX2tleS5yZXNwb25zZSk7Ci0JCXNlcy0+YXV0aF9rZXkucmVzcG9uc2UgPSBOVUxMOwogCQlp
+ZiAocmMpIHsKIAkJCWNpZnNfZGJnKEZZSSwKIAkJCQkiU01CMyBzZXNzaW9uIGtleSBnZW5lcmF0
+aW9uIGZhaWxlZFxuIik7CiAJCQltdXRleF91bmxvY2soJnNlcy0+c2VydmVyLT5zcnZfbXV0ZXgp
+OwotCQkJZ290byBrZXlnZW5fZXhpdDsKKwkJCXJldHVybiByYzsKIAkJfQogCX0KIAlpZiAoIXNl
+cy0+c2VydmVyLT5zZXNzaW9uX2VzdGFiKSB7CkBAIC03MjksMTIgKzcyNyw2IEBAIFNNQjJfc2Vz
+c19lc3RhYmxpc2hfc2Vzc2lvbihzdHJ1Y3QgU01CMl9zZXNzX2RhdGEgKnNlc3NfZGF0YSkKIAlz
+ZXMtPnN0YXR1cyA9IENpZnNHb29kOwogCXNlcy0+bmVlZF9yZWNvbm5lY3QgPSBmYWxzZTsKIAlz
+cGluX3VubG9jaygmR2xvYmFsTWlkX0xvY2spOwotCi1rZXlnZW5fZXhpdDoKLQlpZiAoIXNlcy0+
+c2VydmVyLT5zaWduKSB7Ci0JCWtmcmVlKHNlcy0+YXV0aF9rZXkucmVzcG9uc2UpOwotCQlzZXMt
+PmF1dGhfa2V5LnJlc3BvbnNlID0gTlVMTDsKLQl9CiAJcmV0dXJuIHJjOwogfQogCi0tIAoyLjE0
+LjEKCg==
+--94eb2c0bd53a0ae8780567f6b4e8--
