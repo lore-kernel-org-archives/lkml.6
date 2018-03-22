@@ -1,62 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755158AbeCVPOZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:14:25 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:38852 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755074AbeCVPOW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:14:22 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w2MFEJ7j004430
-X-Nifty-SrcIP: [209.85.217.175]
-X-Google-Smtp-Source: AG47ELvAOdlbZMC9JdAt17Peeym916sz5gzlBwiix5QAcLivinF+jqfe9jQ53BjQ/Teq5yAkgGgolnn4UiIQR0uTdiU=
-MIME-Version: 1.0
-In-Reply-To: <20180216202255.25307-3-ulfalizer@gmail.com>
-References: <20180216202255.25307-1-ulfalizer@gmail.com> <20180216202255.25307-3-ulfalizer@gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 23 Mar 2018 00:13:38 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATn1qu0+sXvEtLwd7eJJDNtm0Mt_MaPA3_W=TnxZkK7fQ@mail.gmail.com>
-Message-ID: <CAK7LNATn1qu0+sXvEtLwd7eJJDNtm0Mt_MaPA3_W=TnxZkK7fQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] checkpatch: kconfig: check help texts for menuconfig
- and choice
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Robo Bot <apw@canonical.com>, Joe Perches <joe@perches.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1754950AbeCVPPq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:15:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47241 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751719AbeCVPPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 11:15:45 -0400
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v3 1/2] dt-bindings: interrupt-controller: Add binding for the Microsemi Ocelot interrupt controller
+Date: Thu, 22 Mar 2018 16:15:23 +0100
+Message-Id: <20180322151524.13902-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-17 5:22 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
-> Currently, only Kconfig symbols are checked for a missing or short help
-> text, and are only checked if they are defined with the 'config'
-> keyword.
->
-> To make the check more general, extend it to also check help texts for
-> choices and for symbols defined with the 'menuconfig' keyword.
->
-> This increases the accuracy of the check for symbols that would already
-> have been checked as well, since e.g. a 'menuconfig' symbol after a help
-> text will be recognized as ending the preceding symbol/choice
-> definition.
->
-> To increase the accuracy of the check further, also recognize 'if',
-> 'endif', 'menu', 'endmenu', 'endchoice', and 'source' as ending a
-> symbol/choice definition.
+Add the Device Tree binding documentation for the Microsemi Ocelot
+interrupt controller that is part of the ICPU. It is connected directly to
+the MIPS core interrupt controller.
 
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+Changes since v2:
+ - none
 
-Currently, this is not checked for the last symbol in a file.
-Perhaps, EOF could be also an ending of symbol definition.
+ .../interrupt-controller/mscc,ocelot-icpu-intr.txt | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/mscc,ocelot-icpu-intr.txt
 
-This patch is a good improvement enough,
-so I queued it up.
-
-If you have an idea for further improvement,
-v2 is welcome, of course.
-
-
-
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/mscc,ocelot-icpu-intr.txt b/Documentation/devicetree/bindings/interrupt-controller/mscc,ocelot-icpu-intr.txt
+new file mode 100644
+index 000000000000..b47a8a02b17b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/mscc,ocelot-icpu-intr.txt
+@@ -0,0 +1,22 @@
++Microsemi Ocelot SoC ICPU Interrupt Controller
++
++Required properties:
++
++- compatible : should be "mscc,ocelot-icpu-intr"
++- reg : Specifies base physical address and size of the registers.
++- interrupt-controller : Identifies the node as an interrupt controller
++- #interrupt-cells : Specifies the number of cells needed to encode an
++  interrupt source. The value shall be 1.
++- interrupt-parent : phandle of the CPU interrupt controller.
++- interrupts : Specifies the CPU interrupt the controller is connected to.
++
++Example:
++
++		intc: interrupt-controller@70000070 {
++			compatible = "mscc,ocelot-icpu-intr";
++			reg = <0x70000070 0x70>;
++			#interrupt-cells = <1>;
++			interrupt-controller;
++			interrupt-parent = <&cpuintc>;
++			interrupts = <2>;
++		};
 -- 
-Best Regards
-Masahiro Yamada
+2.16.2
