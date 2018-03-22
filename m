@@ -1,88 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751789AbeCVSz1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 14:55:27 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44927 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751595AbeCVSz0 (ORCPT
+        id S1751861AbeCVS6w (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 14:58:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55706 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751739AbeCVS6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 14:55:26 -0400
-X-Google-Smtp-Source: AG47ELthxRNzHh1fmuxUCczhx5CZEPLsK6uK5UoWpWesuXnkUZb4fYrhxHxQ5gTCwzZs0yPn3O+IQQ==
-Date: Thu, 22 Mar 2018 11:55:24 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>, ard.biesheuvel@linaro.org,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: Clang build of arm64 kernel fails
-Message-ID: <20180322185524.GA78232@google.com>
-References: <CAAeHK+wRcZ1o53CEpeOQ-J5AayVAd8nm-ASj8HsTy1vOzHQAqQ@mail.gmail.com>
- <d601e0ca-dd91-3dd4-c610-dd2ae49aa1b6@arm.com>
- <20180301103100.GE32331@e103592.cambridge.arm.com>
+        Thu, 22 Mar 2018 14:58:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E4611602B6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on
+ weakly-ordered archs
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-rdma@vger.kernel.org, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Steve Wise <swise@chelsio.com>,
+        Doug Ledford <dledford@redhat.com>, linux-kernel@vger.kernel.org
+References: <1521514068-8856-5-git-send-email-okaya@codeaurora.org>
+ <201803221430.P43GJl9U%fengguang.wu@intel.com>
+ <3664b253c730dbf83f4528acaedb3a88@codeaurora.org>
+ <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
+ <20180322184833.GB9469@ziepe.ca>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <2c575798-53d8-6ae3-5f54-f697abf067bb@codeaurora.org>
+Date: Thu, 22 Mar 2018 13:58:46 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180322184833.GB9469@ziepe.ca>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180301103100.GE32331@e103592.cambridge.arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-El Thu, Mar 01, 2018 at 10:31:02AM +0000 Dave Martin ha dit:
+On 3/22/2018 1:48 PM, Jason Gunthorpe wrote:
+>> AFAIS, even writeq won't compile on this arch. I started questioning this
+>> build test.
+> I have the same confusion. Did you figure out an explanation?
 
-> On Thu, Mar 01, 2018 at 09:45:24AM +0000, Robin Murphy wrote:
-> > Hi Andrey,
-> > 
-> > On 28/02/18 19:32, Andrey Konovalov wrote:
-> > >Hi Marc!
-> > >
-> > >I've tried to pull in new upstream commits and the kernel build
-> > >started failing for me with the following errors (see below).
-> > >
-> > >It seems that the reason is your commit "arm64: Add
-> > >ARM_SMCCC_ARCH_WORKAROUND_1 BP hardening support". It seems that Clang
-> > >doesn't like 32 bits registers being used in 64 bits build.
-> > 
-> > I'd say this is really a bug in Clang. Architecturally, the register in
-> > AArch64 state is still named "r0"; "x0"/"w0" are assembler operands which
-> > additionally encode the size of the corresponding *access* to r0.
-> > 
-> > I note that GCC's documentation on register variables[1] does just say "the
-> > name of the register", which implies this code is not incorrect. Given that
-> > Clang already likes to infer the operand size from the argument type in
-> > actual inline asms, it seems funny that its register allocator should care
-> > in this non-instruction context.
-> 
-> +1
-> 
-> rN is perfectly reasonable here and has always been supported by GCC for
-> AArch64 AFAIK.
-> 
-> (IMHO rN is preferable, because this separates the register allocation
-> specification from how that register is used to encode the data type --
-> GCC has no choice about the latter, but using "w"/"x" gives the
-> misleading impression of control over this.)
-> 
-> > >Would you mind sending a fix?
-> > 
-> > That said, I guess it's a bug we might have to work around anyway. Oh well.
-> 
-> It would be preferable to see evidence of the llvm community committing
-> to fix this before we consider merging a bodge into Linux for it.
-> 
-> Although this one issue is easy-ish to work around, we're on a slippery
-> slope towards allowing the LLVM and GCC inline assemblers to diverge if
-> we don't push back on worthless incompatibilities.
+I did a compile test without the relaxed change. It built just fine.
+CONFIG_64BIT is also not defined in the .config file from kbuild.
+I also dropped this patch on v5 due to Steve's request.
 
-For the record, a LLVM bug was opened to add support for the rN names
-in constraints: https://bugs.llvm.org/show_bug.cgi?id=36862 . I know
-Manoj intends to submit a fix once the scope has been clarified.
+However, I think I still need an answer for 
+v6: RDMA/qedr: eliminate duplicate barriers on weakly-ordered archs #2
+I can switch to #include <linux/io-64-nonatomic-lo-hi.h> there.
 
-I plan to send a kernel fix soon, unless someone beats me to it.
-
-Matthias
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
