@@ -1,116 +1,108 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELvg2RBS5Hal9+2Csh5Oorm68WU0E23Ikk23D5mo3peSnRZJkhqWjTDENRXIH2LuPxQ7LPB5
-ARC-Seal: i=1; a=rsa-sha256; t=1521714240; cv=none;
+X-Google-Smtp-Source: AG47ELu/HSM6dPGV38Ri2d9bvp+gs5gX12dxHEhYVGzYXY0fPFjCyNtwVF4Cx1BVPhVUrNfi5MXM
+ARC-Seal: i=1; a=rsa-sha256; t=1521715648; cv=none;
         d=google.com; s=arc-20160816;
-        b=KYW+oAqIm0QjeNkH66NUgp6MHzTDTkYW4blhnMv8mw4GzOH6nVzaI6SI6m4A5Rj8b8
-         A/6quzmPJOOYJg9wDb5ckb+Fl40YN20ZTkMpDFLXD+XRUlmevgVnhDyN09537M/oH/oj
-         Zb3kpJ1zg3xJVpZz4DRXuuX2ffD3caB0IFHOf3EVfQdeci+bDFtY755CZhDNz+NeVPAH
-         3aEG9VFEcLNYUNCreKQxij27l8IV8xNkwNgdXbsuSjtMuJxKzHGFLDDUKV47FV2pxA/e
-         j4EP1yyFTnSVvldgQmX+2CdCu7/H+S60dyAEOz6nv1lFr0O4MOYZz49BzWiUUkN1xOeZ
-         ZJgA==
+        b=DIAAvBC1JBj9/82skm2hMB+nGIorec+YO0xzF6Umxm8kZGc/ZASLJDEoljHm1SgwsW
+         KnjlWBD0V8o1sKIUYyT7RrpGVIMVc6Mqklf58VXcb5DwLHFXJlJnSis4ZI2YtrtHTDrE
+         cIc2uLTBeiW4Ttra/bxbNdB0XKJKJvPSfNU1N7y4KA1+YETw0/o/qiVpObHRRXLuNvGD
+         r2N8u03QaOE5HaS5Kz1v2t6Kb4cCeAZiSrzYnH4EBHqJYD00Kz2jtYXtEm2Jk2Krrfsa
+         Zt0ipI0ParYnUI7VWuNdagKvZsTZcizxjPjT2y5Rz0OBtY9yunlCFNWRVEPiioZhtBFP
+         K1Fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :references:in-reply-to:message-id:subject:cc:to:from:date
-         :dmarc-filter:arc-authentication-results;
-        bh=Pq1ufAJnI1m1oWABdveITM+PjEcJQJlMaO/7KhCs0es=;
-        b=zLh2QEPL33LEW2xtHiDZXy/SDqi//ciMV7BXqDabbPbVFjJIbfw6mpQBnhnme9/dGd
-         jZ4Fw84PSlafA6Xo/P/ytMjePyCfbXMCkvfzi+7AGm+9jOovdvMOWtv+Il5PyUiBlBKG
-         0DPGE8XSTfCLhNWNuoNoGNwaqGdb9KKP305Ai9kBBrilirzXm6bejAt8rxQex9P23JaU
-         ib2Nbahiq++qrdcQV3YIxJ0hOarLaXJDEUaexMG8DVEoKIJlo9WrDkBIaqpCNVJMxKND
-         24Pnc0i8FQCgNGShNPy7UexP6bxhjQpfwPHQv5tVV3ENrgyrzQhWXEztp9Q29w4NerpQ
-         XCsQ==
+        h=list-id:precedence:sender:message-id:content-language
+         :content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :from:references:cc:to:subject:arc-authentication-results;
+        bh=e7yPk59F3Ig8Q5FQGUPQGHeD3JU8uhc8RUkxaxccH1M=;
+        b=OUeKBidD1SZRyW/G4MKCFGdj2PAdhxg56MKk0RK2ZK0+7bzP9ePZH04NcTCjxKsfIE
+         qLlH4ADXmrGKI0jSKU6y+7NPmYePzglCajeOrBovvUmJtP3oo8ISgsTIptxawNxnBkJU
+         DgFAOZiG0xSUtaJxw3jqlMGt7S9l8stViWv5xNEAhcpxDEgyVCf/24gcnjimx8gDOY2M
+         MybyAFw11w4sv7a75E5tUM1tgBf6Rl87ZYg058gl0pavNS676sbsP72uBRNCNsSL/WuR
+         F4ooD+6RjYllh1xjxuDZ6E4DJmyql3QH34UT5G7gSP9UEFv35/k4ggIVSmaQoDAwEzEX
+         97VQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754065AbeCVKX6 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 22 Mar 2018 06:23:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753342AbeCVKXx (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:23:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E869B217D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Thu, 22 Mar 2018 18:23:47 +0800
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+        id S1753802AbeCVKr1 (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 22 Mar 2018 06:47:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57358 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754359AbeCVKrY (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 22 Mar 2018 06:47:24 -0400
+Subject: Re: [PATCH v6 21/21] perf-probe: Add array argument support
+To: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
         Ingo Molnar <mingo@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org
-Subject: Re: [PATCH v6 21/21] perf-probe: Add array argument support
-Message-Id: <20180322182347.ca1aab9b77ab4c351100646b@kernel.org>
-In-Reply-To: <8c02c538-4934-59c2-7795-9058ce57e625@linux.vnet.ibm.com>
+        shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 References: <152129024033.31874.15800253385376959274.stgit@devbox>
-        <152129118998.31874.16273532808298489908.stgit@devbox>
-        <8c02c538-4934-59c2-7795-9058ce57e625@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+ <152129118998.31874.16273532808298489908.stgit@devbox>
+ <8c02c538-4934-59c2-7795-9058ce57e625@linux.vnet.ibm.com>
+ <20180322182347.ca1aab9b77ab4c351100646b@kernel.org>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Date: Thu, 22 Mar 2018 16:19:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180322182347.ca1aab9b77ab4c351100646b@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18032210-0044-0000-0000-0000053EB303
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032210-0045-0000-0000-0000287DBB42
+Message-Id: <8b3ad72c-f28c-8fc0-32b8-4401dbe16358@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-22_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803220129
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595189477266437642?=
-X-GMAIL-MSGID: =?utf-8?q?1595633031485120008?=
+X-GMAIL-MSGID: =?utf-8?q?1595634507027510521?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 19 Mar 2018 13:29:59 +0530
-Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+Hi Masami :)
 
-> Hi Masami,
-> 
-> On 03/17/2018 06:23 PM, Masami Hiramatsu wrote:
-> > Since kprobes events support an array argument, perf-probe
-> > can also support dumping array now.
-> > The syntax are
-> >
-> >  <array-var>[<range>]
-> > or
-> >  <pointer-var>[<range>]
-> >
-> > where the <range> is <start>..<end>. e.g. array[0..5].
-> > This can also be available with string type. In this
-> > case, the string array should be "char *array[]" or
-> > "char **array_ptr".
-> >
-> > Note that this feature is only available on the kernel which
-> > supports array type.
-> 
-> User can still do,
-> 
-> # perf probe -x ~/hello main:3 'a=a:x32[3]'
-> 
-> which will successfully be installed in uprobe_events. But for a
-> perf tool, x32[3] is not a valid type. And it seems perf tool don't
-> validate the 'type' field:
-> 
->     static int parse_perf_probe_arg(char *str, struct perf_probe_arg *arg)
->     {
->         ....
->         tmp = strchr(str, ':');
->         if (tmp) {      /* Type setting */
->                 *tmp = '\0';
->                 arg->type = strdup(tmp + 1);
->                 if (arg->type == NULL)
->                         return -ENOMEM;
->                 pr_debug("type:%s ", arg->type);
->         }
-> 
-> Is it okay to allow user to specify array size with type field?
+On 03/22/2018 03:53 PM, Masami Hiramatsu wrote:
+> On Mon, 19 Mar 2018 13:29:59 +0530
+> Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+>
+>>
+>> Is it okay to allow user to specify array size with type field?
+> Fro this patch, yes.
 
-Fro this patch, yes. The availability of type is checked only when
-it is automatically generated.
-IMO, it should be done in another patch, something like
-"Validate user specified type casting" patch. Would you need it?
+So IIUC, perf _tool_ will allow user to record array either with "name[range]"
+or by "name:type[length]". Please correct me if that's wrong.
 
-Thank you,
+And If perf tool will allow array length along with TYPE field, I guess we should
+document that in man perf-probe?
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Otherwise,
+
+Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+
+Thanks,
+Ravi
+
+>  The availability of type is checked only when
+> it is automatically generated.
+> IMO, it should be done in another patch, something like
+> "Validate user specified type casting" patch. Would you need it?
+>
+> Thank you,
+>
+
