@@ -1,23 +1,23 @@
 Return-Path: <gunthorp@deltatee.com>
-X-Google-Smtp-Source: AG47ELtd6sdmoOfWwiabqjJ67Uatuop4kAJrhybBHkPpc0wsSb6vtJggqbIJu18BPoyIbcOGfgYN
+X-Google-Smtp-Source: AG47ELv86+s+Bx+oLDF4xLczYJD9re8u6ioix4WJIJML/fCNgU4xfM+QmzH6uNB+Sp6qzlIIJ3lE
 ARC-Seal: i=1; a=rsa-sha256; t=1521739035; cv=none;
         d=google.com; s=arc-20160816;
-        b=P8U48qnaTMira4urbVfS1Jiy04TzXTOXh6ghAdH+9OBaqsy6lWGN0a0kfzJhlpAYpt
-         cV7S9YsDphX5KsQYGd9VIEpUDZ34IqQjw3HQVmo5y040o/sJg3UrxIDBOfrH6ibeJxVs
-         OntWlQnW5esv6l4AGgOIY9Auh9Gb64xVfbFtj7Wd9zP0jBjDTeQ/9aX6atwve1cjoSyG
-         6s+LMjnbHeDjUZAYVyVsmMPDQ25GYbycXg3GRULZpEPq3iYT+mb/+Z30EzBQ+U/XYZt1
-         VPjeBBaIbzn7umULTPsOXGBbVX05Eqg+l50D9j9CL5aVH893mTNP9Z20vKXNYLHwVxv6
-         LQhg==
+        b=onq4Wt2lFTaG/QiImrhwmnTNJOSxmlDCs9NzpRJzpefRW5il4bf4vQDIWlFYyjPlJu
+         HnUcr5pNyXehuZGj+uiFT0F8oqIKMbqRnp4pi+qNmSVJd9Hu/nonY8toad0CSl//2+/w
+         BbI/XM1eqKf/EmMElQlbzHAev5kHQmhfmC7henME4+sR300+dz+bTu5Vu7dx36NYwJMT
+         RI5wG6Tfu6c+z4zPcHvdJK9Q77gq+jBjnn5Ln2INQlvv3tlBOzADynP1OwTBoyhlhCt0
+         QguwnD1i2vUZHUp+isPgQZjS7Ibm9ztZrklLZFVXmdIey5gqEdH2i/DBU5M0XOvG4Jsx
+         6ryw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=subject:content-transfer-encoding:mime-version:references
-         :in-reply-to:message-id:date:cc:to:from:arc-authentication-results;
-        bh=I0mQAG6uuC+hyAVaFbO7lBUDJGoy/57bE5IwTmzt9Gs=;
-        b=Kl1bCqgoe5UR0IYSq9L0LjwJV5P1N7Wwxf08gNylptbenOaQbuPjBT6CMPhTDBM0AO
-         sbHtH/FwGO+f4zD41QoMpszu4CSfU1Lrd/1mBNgpHmr2qC6tV8GM1ckzmP8ONnbwApPp
-         SgfCqTkBdUjOFnovjwq8UaJq1oW2etvogXI9/kSkQ5m+AxDcaA4ENmsbNy6K+bSNbOPf
-         eHgCHmyqleMEyFcTGI5d0oLztvIt7lF3ALHwLVXnDadCySbH+xbLP6RUKs36ML7Rv3w1
-         x9BTcwMJtCdKOyI8HIMy6Atc7ycZQFSX6Pex/Vd0us7TFQA6Omb4HGvcWAKWdVr9Y1AN
-         wF4A==
+        h=subject:references:in-reply-to:message-id:date:cc:to:from
+         :arc-authentication-results;
+        bh=ZResSvF71S4b9JnFuePZhxuGdTdkgn2/HrjfNWEuCO4=;
+        b=YV/d8fuNCU6fae9U2rEdZszVjvBB4htGPsDMu27RiZuJbnFDLpdFHbT0li6PUuCwKy
+         YEYKXS9vzaN8B2cxUwvQAIsR3o4qqTk/fru5Vdzv4WBWYiFSxXtJUNRUarA6n51XQhWv
+         DVdMSwvYsbFCgyExPdN+ayCRX7fXwjWSYuMobCKk/gzqdQNwuc5fPEDOLMslUQaz4neM
+         PmKkddj2hWQQAhMeOgeqn+J1KP1+os7lxkRkBHu3fNNHJXFFb/Us6FHKwojPgPdaWTYA
+         lVBkaPh/BwFPwjkJw5WYz2T93T19VGyEajWiN6hUAwSSPI5QDn7JfoWUHzg/Q8D2n+ED
+         qSgA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
@@ -32,110 +32,68 @@ Cc: Arnd Bergmann <arnd@arndb.de>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>,
 	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
 	Logan Gunthorpe <logang@deltatee.com>,
-	Dan Douglass <dan.douglass@nxp.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Date: Thu, 22 Mar 2018 11:17:02 -0600
-Message-Id: <20180322171703.4300-10-logang@deltatee.com>
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Suresh Warrier <warrier@linux.vnet.ibm.com>,
+	"Oliver O'Halloran" <oohall@gmail.com>
+Date: Thu, 22 Mar 2018 11:16:57 -0600
+Message-Id: <20180322171703.4300-5-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180322171703.4300-1-logang@deltatee.com>
 References: <20180322171703.4300-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, logang@deltatee.com, horia.geanta@nxp.com, dan.douglass@nxp.com, herbert@gondor.apana.org.au, davem@davemloft.net
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, horia.geanta@nxp.com, logang@deltatee.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, warrier@linux.vnet.ibm.com, andy.shevchenko@gmail.com, npiggin@gmail.com, oohall@gmail.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v14 09/10] crypto: caam: cleanup CONFIG_64BIT ifdefs when using io{read|write}64
+Subject: [PATCH v14 04/10] powerpc: io.h: move iomap.h include so that it can use readq/writeq defs
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595659030740808988?=
-X-GMAIL-MSGID: =?utf-8?q?1595659030740808988?=
+X-GMAIL-THRID: =?utf-8?q?1595659030952058458?=
+X-GMAIL-MSGID: =?utf-8?q?1595659030952058458?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Clean up the extra ifdefs which defined the wr_reg64 and rd_reg64
-functions in non-64bit cases in favour of the new common
-io-64-nonatomic-lo-hi header.
-
-To be consistent with CAAM engine HW spec: in case of 64-bit registers,
-irrespective of device endianness, the lower address should be read from
-/ written to first, followed by the upper address. Indeed the I/O
-accessors in CAAM driver currently don't follow the spec, however this
-is a good opportunity to fix the code.
+Subsequent patches in this series makes use of the readq and writeq
+defines in iomap.h. However, as is, they get missed on the powerpc
+platform seeing the include comes before the define. This patch
+moves the include down to fix this.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Horia Geantă <horia.geanta@nxp.com>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Dan Douglass <dan.douglass@nxp.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Suresh Warrier <warrier@linux.vnet.ibm.com>
+Cc: "Oliver O'Halloran" <oohall@gmail.com>
 ---
- drivers/crypto/caam/regs.h | 30 +++---------------------------
- 1 file changed, 3 insertions(+), 27 deletions(-)
+ arch/powerpc/include/asm/io.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
-index fee363865d88..f887b371040f 100644
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -10,7 +10,7 @@
+diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
+index 422f99cf9924..af074923d598 100644
+--- a/arch/powerpc/include/asm/io.h
++++ b/arch/powerpc/include/asm/io.h
+@@ -33,8 +33,6 @@ extern struct pci_dev *isa_bridge_pcidev;
+ #include <asm/mmu.h>
+ #include <asm/ppc_asm.h>
  
- #include <linux/types.h>
- #include <linux/bitops.h>
--#include <linux/io.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- 
- /*
-  * Architecture-specific register access methods
-@@ -136,10 +136,9 @@ static inline void clrsetbits_32(void __iomem *reg, u32 clear, u32 set)
-  *    base + 0x0000 : least-significant 32 bits
-  *    base + 0x0004 : most-significant 32 bits
-  */
--#ifdef CONFIG_64BIT
- static inline void wr_reg64(void __iomem *reg, u64 data)
- {
--	if (caam_little_end)
-+	if (!caam_imx && caam_little_end)
- 		iowrite64(data, reg);
- 	else
- 		iowrite64be(data, reg);
-@@ -147,35 +146,12 @@ static inline void wr_reg64(void __iomem *reg, u64 data)
- 
- static inline u64 rd_reg64(void __iomem *reg)
- {
--	if (caam_little_end)
-+	if (!caam_imx && caam_little_end)
- 		return ioread64(reg);
- 	else
- 		return ioread64be(reg);
- }
- 
--#else /* CONFIG_64BIT */
--static inline void wr_reg64(void __iomem *reg, u64 data)
--{
--	if (!caam_imx && caam_little_end) {
--		wr_reg32((u32 __iomem *)(reg) + 1, data >> 32);
--		wr_reg32((u32 __iomem *)(reg), data);
--	} else {
--		wr_reg32((u32 __iomem *)(reg), data >> 32);
--		wr_reg32((u32 __iomem *)(reg) + 1, data);
--	}
--}
+-#include <asm-generic/iomap.h>
 -
--static inline u64 rd_reg64(void __iomem *reg)
--{
--	if (!caam_imx && caam_little_end)
--		return ((u64)rd_reg32((u32 __iomem *)(reg) + 1) << 32 |
--			(u64)rd_reg32((u32 __iomem *)(reg)));
--
--	return ((u64)rd_reg32((u32 __iomem *)(reg)) << 32 |
--		(u64)rd_reg32((u32 __iomem *)(reg) + 1));
--}
--#endif /* CONFIG_64BIT  */
--
- static inline u64 cpu_to_caam_dma64(dma_addr_t value)
- {
- 	if (caam_imx)
+ #ifdef CONFIG_PPC64
+ #include <asm/paca.h>
+ #endif
+@@ -663,6 +661,8 @@ static inline void name at					\
+ #define writel_relaxed(v, addr)	writel(v, addr)
+ #define writeq_relaxed(v, addr)	writeq(v, addr)
+ 
++#include <asm-generic/iomap.h>
++
+ #ifdef CONFIG_PPC32
+ #define mmiowb()
+ #else
 -- 
 2.11.0
