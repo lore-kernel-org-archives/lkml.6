@@ -1,111 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755170AbeCVNAy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 09:00:54 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:46847 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754792AbeCVNAs (ORCPT
+        id S1755153AbeCVNAk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 09:00:40 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38344 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755105AbeCVNAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 09:00:48 -0400
-X-Google-Smtp-Source: AG47ELvPVVPf7Ndj2n2Y20l/1h1Kp/BDkEfcJqRRd1XWmh+WO+d6HbBXfwlsVscQHaU6MU+BWlFffQ==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: linus.walleij@linaro.org
-Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v4 6/7] gpio: gpio-mm: Implement get_multiple callback
-Date: Thu, 22 Mar 2018 09:00:42 -0400
-Message-Id: <dca781eea9e47dafa3da9d450e2de54d11c62878.1521723192.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
-References: <cover.1521723192.git.vilhelm.gray@gmail.com>
+        Thu, 22 Mar 2018 09:00:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99AED61132
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v4 10/13] ARM: dts: ipq4019: Add qcom-ipq4019-ap.dk07.1-c2 board file
+Date: Thu, 22 Mar 2018 18:28:49 +0530
+Message-Id: <1521723532-28361-11-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
+References: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Diamond Systems GPIO-MM series of devices contain two 82C55A
-devices, which each feature three 8-bit ports of I/O. Since eight input
-lines are acquired on a single port input read, the GPIO-MM GPIO driver
-may improve multiple input reads by utilizing a get_multiple callback.
-This patch implements the gpiomm_gpio_get_multiple function which serves
-as the respective get_multiple callback.
-
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/gpio/gpio-gpio-mm.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ arch/arm/boot/dts/Makefile                      |  1 +
+ arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts | 26 +++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
 
-diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
-index 11ade5b288f8..d496cc56c2a2 100644
---- a/drivers/gpio/gpio-gpio-mm.c
-+++ b/drivers/gpio/gpio-gpio-mm.c
-@@ -14,6 +14,7 @@
-  * This driver supports the following Diamond Systems devices: GPIO-MM and
-  * GPIO-MM-12.
-  */
-+#include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/errno.h>
-@@ -171,6 +172,51 @@ static int gpiomm_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	return !!(port_state & mask);
- }
- 
-+static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-+	unsigned long *bits)
-+{
-+	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
-+	size_t i;
-+	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
-+	const unsigned int gpio_reg_size = 8;
-+	unsigned int bits_offset;
-+	size_t word_index;
-+	unsigned int word_offset;
-+	unsigned long word_mask;
-+	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
-+	unsigned long port_state;
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index ae7f214..3b65e30 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -750,6 +750,7 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+ 	qcom-ipq4019-ap.dk04.1-c1.dtb \
+ 	qcom-ipq4019-ap.dk04.1-c3.dtb \
+ 	qcom-ipq4019-ap.dk07.1-c1.dtb \
++	qcom-ipq4019-ap.dk07.1-c2.dtb \
+ 	qcom-ipq8064-ap148.dtb \
+ 	qcom-msm8660-surf.dtb \
+ 	qcom-msm8960-cdp.dtb \
+diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
+new file mode 100644
+index 0000000..c1e909c
+--- /dev/null
++++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1-c2.dts
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018, The Linux Foundation. All rights reserved.
 +
-+	/* clear bits array to a clean slate */
-+	bitmap_zero(bits, chip->ngpio);
++#include "qcom-ipq4019-ap.dk07.1.dtsi"
 +
-+	/* get bits are evaluated a gpio port register at a time */
-+	for (i = 0; i < ARRAY_SIZE(ports); i++) {
-+		/* gpio offset in bits array */
-+		bits_offset = i * gpio_reg_size;
++/ {
++	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK07.1-C2";
 +
-+		/* word index for bits array */
-+		word_index = BIT_WORD(bits_offset);
++	soc {
++		pinctrl@1000000 {
++			serial_1_pins: serial1_pinmux {
++				mux {
++					pins = "gpio8", "gpio9";
++					function = "blsp_uart1";
++					bias-disable;
++				};
++			};
++		};
 +
-+		/* gpio offset within current word of bits array */
-+		word_offset = bits_offset % BITS_PER_LONG;
-+
-+		/* mask of get bits for current gpio within current word */
-+		word_mask = mask[word_index] & (port_mask << word_offset);
-+		if (!word_mask) {
-+			/* no get bits in this port so skip to next one */
-+			continue;
-+		}
-+
-+		/* read bits from current gpio port */
-+		port_state = inb(gpiommgpio->base + ports[i]);
-+
-+		/* store acquired bits at respective bits array offset */
-+		bits[word_index] |= port_state << word_offset;
-+	}
-+
-+	return 0;
-+}
-+
- static void gpiomm_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	int value)
- {
-@@ -268,6 +314,7 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
- 	gpiommgpio->chip.direction_input = gpiomm_gpio_direction_input;
- 	gpiommgpio->chip.direction_output = gpiomm_gpio_direction_output;
- 	gpiommgpio->chip.get = gpiomm_gpio_get;
-+	gpiommgpio->chip.get_multiple = gpiomm_gpio_get_multiple;
- 	gpiommgpio->chip.set = gpiomm_gpio_set;
- 	gpiommgpio->chip.set_multiple = gpiomm_gpio_set_multiple;
- 	gpiommgpio->base = base[id];
++		serial@78b0000 {
++			pinctrl-0 = <&serial_1_pins>;
++			pinctrl-names = "default";
++			status = "ok";
++		};
++	};
++};
 -- 
-2.16.2
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
