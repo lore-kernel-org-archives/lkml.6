@@ -1,113 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751691AbeCVUvd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:51:33 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:54769 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751455AbeCVUvb (ORCPT
+        id S1751796AbeCVU6h (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:58:37 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40376 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeCVU6f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:51:31 -0400
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT)
-Subject: [PATCH v5] ARM: dts: wheat: Fix ADV7513 address usage
-Date: Thu, 22 Mar 2018 20:51:22 +0000
-Message-Id: <1521751882-7996-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 22 Mar 2018 16:58:35 -0400
+X-Google-Smtp-Source: AG47ELs09r/IrKcRiPejsS/f84QsVWE9E8VzHg/tr/8gZ39nDz1nsOGhKFPbMkaxNvap8jJONtoBfw==
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Cc: linux-kbuild@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Update Kbuild entry with a few paths
+Date: Thu, 22 Mar 2018 21:58:27 +0100
+Message-Id: <20180322205827.24578-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
-bus, however in low power mode the ADV7513 will reset it's slave maps to
-use the hardware defined default addresses.
+I managed to send some modpost patches to old addresses of both
+Masahiro and Michal, and omitted linux-kbuild from cc, because my
+tried and trusted scripts/get_maintainer wrapper failed me. Add the
+modpost directory to the MAINTAINERS entry, and while at it make the
+Makefile glob match scripts/Makefile itself, and add one matching the
+Kbuild.include file as well.
 
-The ADV7511 driver was adapted to allow the two devices to be registered
-correctly - but it did not take into account the fault whereby the
-devices reset the addresses.
-
-This results in an address conflict between the device using the default
-addresses, and the other device if it is in low-power-mode.
-
-Repair this issue by moving both devices away from the default address
-definitions.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
-v2:
- - Addition to series
+Hi Kbuild maintainers. Hope you don't mind me extending this entry a bit.
 
-v3:
- - Split map register addresses into individual declarations.
+ MAINTAINERS | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-v4:
- - Normalise I2C usage
-
-v5:
- - No change from v4 except to repost and drop the [RFT] now that it's tested
-
-
-Testing on a wheat board shows the addresses correctly assigned, and the
-default addresses (0x38, 0x3e, 0x3f which would otherwise conflict) are
-shown as actively returning data in low power mode during the scan.
-(they return 0)
-
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:          -- -- -- -- -- -- -- -- -- -- -- -- --
-10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-20: -- -- -- -- -- -- -- -- -- UU -- -- -- UU -- --
-30: -- -- -- -- -- -- -- -- 38 UU -- -- -- UU 3e 3f
-40: -- -- -- -- -- -- -- -- -- UU -- -- -- UU -- --
-50: -- -- -- -- -- -- -- -- -- UU -- -- -- UU -- --
-60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-70: -- -- -- -- -- -- -- --
----
- arch/arm/boot/dts/r8a7792-wheat.dts | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7792-wheat.dts b/arch/arm/boot/dts/r8a7792-wheat.dts
-index 293b9e3b3e70..3e9f70e87a60 100644
---- a/arch/arm/boot/dts/r8a7792-wheat.dts
-+++ b/arch/arm/boot/dts/r8a7792-wheat.dts
-@@ -245,9 +245,16 @@
- 	status = "okay";
- 	clock-frequency = <400000>;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4e62756936fa..5f5d4faddc74 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7640,9 +7640,11 @@ L:	linux-kbuild@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/kbuild/
+ F:	Makefile
+-F:	scripts/Makefile.*
++F:	scripts/Kbuild*
++F:	scripts/Makefile*
+ F:	scripts/basic/
+ F:	scripts/mk*
++F:	scripts/mod/
+ F:	scripts/package/
  
-+	/*
-+	 * The adv75xx resets its addresses to defaults during low power power
-+	 * mode. Because we have two ADV7513 devices on the same bus, we must
-+	 * change both of them away from the defaults so that they do not
-+	 * conflict.
-+	 */
- 	hdmi@3d {
- 		compatible = "adi,adv7513";
--		reg = <0x3d>;
-+		reg = <0x3d>, <0x2d>, <0x4d>, <0x5d>;
-+		reg-names = "main", "cec", "edid", "packet";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
-@@ -277,7 +284,8 @@
- 
- 	hdmi@39 {
- 		compatible = "adi,adv7513";
--		reg = <0x39>;
-+		reg = <0x39>, <0x29>, <0x49>, <0x59>;
-+		reg-names = "main", "cec", "edid", "packet";
- 
- 		adi,input-depth = <8>;
- 		adi,input-colorspace = "rgb";
+ KERNEL JANITORS
 -- 
-2.7.4
+2.15.1
