@@ -1,62 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752041AbeCVVeG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:34:06 -0400
-Received: from ozlabs.org ([103.22.144.67]:53737 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751730AbeCVVeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:34:04 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 23 Mar 2018 08:33:15 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Antoine Tenart <antoine.tenart@bootlin.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: linux-next: please clean up the alpine tree
-Message-ID: <20180323083315.58976d73@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2IV5wW/2i0j_PavOz9IjbOK"; protocol="application/pgp-signature"
+        id S1751987AbeCVVfB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:35:01 -0400
+Received: from smtprelay0120.hostedemail.com ([216.40.44.120]:35093 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751548AbeCVVfA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:35:00 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:152:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2553:2559:2562:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3872:4225:4250:4321:5007:6119:7903:8660:10004:10400:10848:11026:11232:11473:11658:11914:12296:12740:12895:13069:13148:13230:13311:13357:13894:14181:14659:14721:21080:21433:21627:30046:30054:30090:30091,0,RBL:172.56.30.185:@perches.com:.lbl8.mailshell.net-62.8.0.190 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
+X-HE-Tag: hate49_484e8e5893a34
+X-Filterd-Recvd-Size: 2050
+Message-ID: <1521754493.7999.49.camel@perches.com>
+Subject: Re: [PATCH 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
+From: Joe Perches <joe@perches.com>
+To: Alan Tull <atull@kernel.org>
+Cc: Paolo Pisati <p.pisati@gmail.com>, Moritz Fischer <mdf@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-fpga@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Thu, 22 Mar 2018 14:34:53 -0700
+In-Reply-To: <CANk1AXT6TY5N+gR=tBNuvhQMnOpuaWKWVoUSjB+Vfof2=GAM6w@mail.gmail.com>
+References: <1521653726-24625-1-git-send-email-p.pisati@gmail.com>
+         <1521653726-24625-3-git-send-email-p.pisati@gmail.com>
+         <1521655492.7999.13.camel@perches.com>
+         <CANk1AXT6TY5N+gR=tBNuvhQMnOpuaWKWVoUSjB+Vfof2=GAM6w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/2IV5wW/2i0j_PavOz9IjbOK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2018-03-22 at 16:32 -0500, Alan Tull wrote:
+> On Wed, Mar 21, 2018 at 1:04 PM, Joe Perches <joe@perches.com> wrote:
+> > On Wed, 2018-03-21 at 18:35 +0100, Paolo Pisati wrote:
+> > > This patch adds support to the FPGA manager for programming
+> > > MachXO2 device’s internal flash memory, via slave SPI.
+> > 
+> > style trivia:
+> > 
+> > > diff --git a/drivers/fpga/machxo2-spi.c b/drivers/fpga/machxo2-spi.c
+> > 
+> > []
+> > > +static int get_status(struct spi_device *spi, unsigned long *status)
+> > > +{
+> > > +     struct spi_message msg;
+> > > +     struct spi_transfer rx, tx;
+> > > +     u8 cmd[] = LSC_READ_STATUS;
+> > 
+> > static const u8 cmd[]
+> > here and everywhere else as all the tx_buf assignments
+> > of cmd are to const void *
+> 
+> Why *static* const u8 cmd[]?
 
-Hi Antoine,
-
-The alpine tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/atenart/linux.git#alpine/for=
--next)
-only contains commits that have been upstreamed as different commits.
-It also hasn't been updated since late March 2017.  Please clean it up
-(it takes some time to merge - presumably just because of its age).
-
-Or, if it is no longer being used, please let me know and I will remove
-it from linux-next.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2IV5wW/2i0j_PavOz9IjbOK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0IRsACgkQAVBC80lX
-0Gx62wf/ahhhKNL4e7QdHS4yy+ZnqasYtHlqjrH2a+X9QqOuKB57XTOv2U0I7v14
-MdAXQouxZsmKXZZc45+NLYEqX8+Tno4inaitqjIkIFvOzKhasmRLii0DIMeHtWU1
-w3HA0v+YosFYx57C5ID1VkKKfrqJhXxnBHaTJqeKasUcxwWp1sA7MnaXosxZNGGp
-OM0tFBRrM9hO/dfRSG0HilHZj1IsKyUiWboAd7ISVxpr8fKWbJ03YbQvH0DIN3sa
-bYzf/bJFFkFBmo8jp5yIxDSnwBv4zxqnEdMWJIrZOYkxdS+4IoV/PSzGuuJa2jDC
-MR1cVjR8GF9y5UYss8/u+srks4xgyQ==
-=y75j
------END PGP SIGNATURE-----
-
---Sig_/2IV5wW/2i0j_PavOz9IjbOK--
+So various compilers don't reload it on each call.
