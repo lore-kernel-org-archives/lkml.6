@@ -1,63 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751921AbeCVDaU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 23:30:20 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46810 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbeCVDaR (ORCPT
+        id S1752009AbeCVDeX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 23:34:23 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:45890 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751728AbeCVDeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 23:30:17 -0400
-X-Google-Smtp-Source: AG47ELvUCriKIR7jn/fdh2I7336ces3UUq4SDG3egVyF7GgtPnftSqHMyM6WFIrjyLx0GqqAdMEplQ==
-Date: Thu, 22 Mar 2018 11:30:13 +0800
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Cc: rjw@rjwysocki.net, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
-        Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: Re: [RFC PATCH] cpufreq: Calling init() of cpufreq_driver  when
- policy inactive cpu online
-Message-ID: <20180322033013.3mqhf2fnbaqfdgay@vireshk-mac-ubuntu>
-References: <1521627703-7728-1-git-send-email-shunyong.yang@hxt-semitech.com>
+        Wed, 21 Mar 2018 23:34:21 -0400
+X-UUID: 04ac4a54797d4b50a2d6e69912e03563-20180322
+From: Ji Zhang <ji.zhang@mediatek.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mickael GUENE <mickael.guene@st.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ji Zhang <ji.zhang@mediatek.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        <shadanji@163.com>
+Subject: [PATCH] arm: avoid race condition issue in dump_backtrace
+Date: Thu, 22 Mar 2018 11:34:16 +0800
+Message-ID: <1521689656-4694-1-git-send-email-ji.zhang@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521627703-7728-1-git-send-email-shunyong.yang@hxt-semitech.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-03-18, 18:21, Shunyong Yang wrote:
-> When multiple cpus are related in one cpufreq policy, the first online cpu
-> will be chosen by default to handle cpufreq operations. In a CPPC case,
-> let's take two related cpus, cpu0 and cpu1 as an example.
-> 
-> After system start, cpu0 is the first online cpu. Cpufreq policy will be
-> allocated and init() in cpufreq_driver will be called to initialize cpu0's
-> perf capabilities and policy parameters.
+When we dump the backtrace of some specific task, there is a potential race
+condition due to the task may be running on other cores if SMP enabled.
+That is because for current implementation, if the task is not the current
+task, we will get the registers used for unwind from cpu_context saved in
+thread_info, which the snapshot before context switch, but if the task is
+running on other cores, the registers and the content of stack are changed.
+This may cause that we get the wrong backtrace or incomplete backtrace or
+even crash the kernel.
+To avoid this case, do not dump the backtrace of the task which is running
+on other cores.
+This patch cannot solve the issue completely but can shrink the window of
+race condition.
 
-Not exactly. The init() is called to initialize stuff for all the CPUs that
-should be part of policy->related_cpus after init() has returned. So you should
-initialize perf capabilities for all of them.
+Signed-off-by: Ji Zhang <ji.zhang@mediatek.com>
+---
+ arch/arm/kernel/traps.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> When cpu1 is online, current code
-> will not call init() in cpufreq_driver as policy has been allocated and
-> activated by cpu0. So, cpu1's perf capabilities are not initialized
-> (all 0s).
-> 
-> When cpu0 is offline, policy->cpu will be shifted to cpu1. As cpu1's perf
-> capabilities are 0s, speed change will not take effect when setting
-> speed.
-> 
-> This patch adds calling init() of cpufreq_driver when policy inactive cpu
-> comes to online.
-
-No CPU should be inactive here, its just that you haven't initialized it
-properly.
-
-And we are not going to call init() multiple times for a group of CPUs. That's
-not what the purpose of init() is.
-
+diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
+index 5e3633c..faa3d45 100644
+--- a/arch/arm/kernel/traps.c
++++ b/arch/arm/kernel/traps.c
+@@ -220,6 +220,10 @@ static void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+ 		fp = frame_pointer(regs);
+ 		mode = processor_mode(regs);
+ 	} else if (tsk != current) {
++		if (tsk->state == TASK_RUNNING) {
++			pr_notice("Do not dump other running tasks\n");
++			return;
++		}
+ 		fp = thread_saved_fp(tsk);
+ 		mode = 0x10;
+ 	} else {
 -- 
-viresh
+1.9.1
