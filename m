@@ -1,76 +1,70 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1112617-1521676300-2-15718663241779298757
+X-Cyrus-Session-Id: sloti22d1t05-1654586-1521694319-2-5250068546122319543
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521676300; b=uPISy0FGM2oIQZPYhuUPIKNAhvfvBQy9dJ6dQr9V7Tv+6qn
-    ps2fCsadPIWKVcWZqNZf9TiQMjmOIKsdSBso85L2auKzSIr58VeKyWG2haZxDEEG
-    wVUA74bCHI0/1yqhfFoKFgyjaFWvUmdW5g6HgRDbCEviUCyUMxMCcoQeN7qGqCAg
-    H4ka7Y2gH7dxmNNwud1n/b1TaZexbqUzALBsnqTrtWhf7nZTfSbRi64lO0OiqiTw
-    Rczb8QDqtjl1rrVdskAF9K/4pI58SQ34xosMWFgJnhFPKEFtfysbz5GQ4f/iluwt
-    nN9dcW0J0FFIbid7/6GitXf/uAyHFCEN1ZHPyiA==
+    t=1521694318; b=fUjhKRg0s9j9SLuOFy08NzBX3iRrvgzv7uViW1YBvx8SO5m
+    ji1cdMjNkN93Lew+28KMDfQpPuWSYbjkjivCacAzzCtM5TLiBmGL4Tqk1d302SXc
+    63h/bMBKrnlqZpJMnvUW+AcBOGSdbGRxsp0vGIii3iAPShF3wVhuievFP0nEBHj/
+    Ktuuu+6MlEzlcDVj6MgO6Sbim1YbV3FtFeVf5xtv9za2dOdkGN3tQghwtMBZN8ft
+    gztsbUI9zv2nGq6XDUTC0jGFdKcM69dHwFGk1vViK1acZeVZ5Gb4fJqz03AdJwzi
+    SW8453Mu5SC7vdRfxQczmbKfBnwnsCFEDSLG43Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1521676300; bh=ePJ4lxuHj9yPo2pWbq1UudrnUbSXH0wZfWuCFk
-    y6Q+0=; b=EnQ5gYd0u0Oj2AAyyAzIh+veu1ToYpimjXK7fVXPHxNaJfH8fLqhVP
-    m20Ge/sJyCGHIVgB+NCXG5h7lMlnRdkWxdVGkj9M3npfSxpIiwkz1p+9fJ5v6LOy
-    DqEYLSA489eQfs0S3/GauJks9s2yLFafx6JDKbyu26kktzD28bhjbzo24z8OW5Qe
-    BONNkpefE70VQdyjTnyghEM7K7gMxs/CnlWm+Lh1lYeDUH7QSmZK+RWqEWhr7lxn
-    /Hm4RgVjwmR4KFm1GMtCjTRUpYIO49+alMjjhGL/0SdQfGscCpZPWw9+Q/DMTLlg
-    3VxKr4wfgCNOSbRsbgi7bgcTknwkgynA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=arctest; t=1521694318; bh=hFPF61k4sdsj2lBQSlG6ItXgBJ
+    +Wl/np1EYaWzlq6NI=; b=Q9MB1nzZH7KtqHfW7AgBYUBxA8ZREbygLJdoFAPVkG
+    phlazGUCyfb6IsMCOS8yZfneN1blUVxNtBhSndsZifzxr+LRmTXpaPtR2LRR3ALJ
+    fT187yO4bqQs2FLAGyYz/dnhODzafMCLpTaz8612ECNYJTlCwqcBVG9VBQzvgEQh
+    P95Xy1ExOOIsuHLfe0iDPHpmiNWMpN8DqqlM8SDmh1GLqd6hGYGQoT1Ywg7J2vBg
+    WpndcRO8Dt6ZWx8Pt8EzIc6/tW8Lxvsdp2+1nc6E9KXUQEw7JYjNpLPRUNimglMA
+    299BXM97EGLlTlX+nWP6OPfZy9faT6ip2pI27ElmupkQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753967AbeCUXvh (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 21 Mar 2018 19:51:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36810 "EHLO mail.kernel.org"
+        id S1751945AbeCVEv5 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Mar 2018 00:51:57 -0400
+Received: from mga04.intel.com ([192.55.52.120]:3936 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753732AbeCUXvg (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 21 Mar 2018 19:51:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D32FF217D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AIpwx49Mz9dJueVhndsfnt3S3dvAjqu3kqt4gUZeLbWaO4BEj/XvbReQXSg8xAwRtTMbIcgb9ZjJglmg4HICB57UZP0=
-MIME-Version: 1.0
-In-Reply-To: <20180320071037.GB31239@hao-dev>
-References: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
- <1518513893-4719-24-git-send-email-hao.wu@intel.com> <CANk1AXQpPXhNoPt1Uj=YvbtO+jun7e2Yzvyp+wuR1ZXx6+-i8Q@mail.gmail.com>
- <20180320071037.GB31239@hao-dev>
-From: Alan Tull <atull@kernel.org>
-Date: Wed, 21 Mar 2018 18:50:54 -0500
-X-Gmail-Original-Message-ID: <CANk1AXSyh1ZcbgVbj3DxjULEeYKMfq_4CA6P0DK6+_z-pnBMUw@mail.gmail.com>
-Message-ID: <CANk1AXSyh1ZcbgVbj3DxjULEeYKMfq_4CA6P0DK6+_z-pnBMUw@mail.gmail.com>
-Subject: Re: [PATCH v4 23/24] fpga: dfl: afu: add user afu sub feature support
-To: Wu Hao <hao.wu@intel.com>
+        id S1751291AbeCVEv5 (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Thu, 22 Mar 2018 00:51:57 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,342,1517904000";
+   d="scan'208";a="30196646"
+Date: Thu, 22 Mar 2018 12:41:56 +0800
+From: Wu Hao <hao.wu@intel.com>
+To: Alan Tull <atull@kernel.org>
 Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
         linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
@@ -80,39 +74,45 @@ Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
         Enno Luebbers <enno.luebbers@intel.com>,
         Shiva Rao <shiva.rao@intel.com>,
         Christopher Rauer <christopher.rauer@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v4 23/24] fpga: dfl: afu: add user afu sub feature support
+Message-ID: <20180322044156.GB8305@hao-dev>
+References: <1518513893-4719-1-git-send-email-hao.wu@intel.com>
+ <1518513893-4719-24-git-send-email-hao.wu@intel.com>
+ <CANk1AXQpPXhNoPt1Uj=YvbtO+jun7e2Yzvyp+wuR1ZXx6+-i8Q@mail.gmail.com>
+ <20180320071037.GB31239@hao-dev>
+ <CANk1AXSyh1ZcbgVbj3DxjULEeYKMfq_4CA6P0DK6+_z-pnBMUw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANk1AXSyh1ZcbgVbj3DxjULEeYKMfq_4CA6P0DK6+_z-pnBMUw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 20, 2018 at 2:10 AM, Wu Hao <hao.wu@intel.com> wrote:
+On Wed, Mar 21, 2018 at 06:50:54PM -0500, Alan Tull wrote:
+> On Tue, Mar 20, 2018 at 2:10 AM, Wu Hao <hao.wu@intel.com> wrote:
+> 
+> >> > +static int afu_mmap(struct file *filp, struct vm_area_struct *vma)
+> >> > +{
+> >> > +       struct fpga_afu_region region;
+> >> > +       struct platform_device *pdev = filp->private_data;
+> >> > +       struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> >> > +       u64 size = vma->vm_end - vma->vm_start;
+> >> > +       u64 offset;
+> >> > +       int ret;
+> >> > +
+> >> > +       if (!(vma->vm_flags & VM_SHARED))
+> >> > +               return -EINVAL;
+> >> > +
+> >> > +       offset = vma->vm_pgoff << PAGE_SHIFT;
+> >> > +       ret = afu_get_region_by_offset(pdata, offset, size, &region);
+> 
+> Most of the functions here are afu_region_*, but there's also
+> afu_get_region_by_*.  Better if afu_region_get_by_* to be consistent.
 
->> > +static int afu_mmap(struct file *filp, struct vm_area_struct *vma)
->> > +{
->> > +       struct fpga_afu_region region;
->> > +       struct platform_device *pdev = filp->private_data;
->> > +       struct feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
->> > +       u64 size = vma->vm_end - vma->vm_start;
->> > +       u64 offset;
->> > +       int ret;
->> > +
->> > +       if (!(vma->vm_flags & VM_SHARED))
->> > +               return -EINVAL;
->> > +
->> > +       offset = vma->vm_pgoff << PAGE_SHIFT;
->> > +       ret = afu_get_region_by_offset(pdata, offset, size, &region);
+Agree, will fix it in the next version, thanks a lot for the comments.
 
-Most of the functions here are afu_region_*, but there's also
-afu_get_region_by_*.  Better if afu_region_get_by_* to be consistent.
-
->> > +       if (ret)
->> > +               return ret;
->> > +
->> > +       if (!(region.flags & FPGA_REGION_MMAP))
->>
->> FPGA_REGION_*?  We already have FPGA regions which are something
->> different.  Please call this something else.
->
-> Yes, will replace it with DFL_FPGA_*.
+Hao
