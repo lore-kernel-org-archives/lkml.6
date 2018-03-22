@@ -1,160 +1,219 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752190AbeCVWK0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 18:10:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56566 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751303AbeCVWKY (ORCPT
+        id S1752183AbeCVWLY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 18:11:24 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36240 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751714AbeCVWLT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 18:10:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 45C026055D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-Subject: Re: [PATCH v3 7/7] remoteproc: qcom: Always assert and deassert reset
- signals in SDM845
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: p.zabel@pengutronix.de, robh+dt@kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, georgi.djakov@linaro.org,
-        jassisinghbrar@gmail.com, ohad@wizery.com, mark.rutland@arm.com,
-        kyan@codeaurora.org, sricharan@codeaurora.org, akdwived@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org
-References: <1521019283-32212-1-git-send-email-sibis@codeaurora.org>
- <1521019283-32212-8-git-send-email-sibis@codeaurora.org>
- <20180318224631.GH5626@tuxbook-pro>
-From: Sibi S <sibis@codeaurora.org>
-Message-ID: <ddc8713a-ea65-f38f-3a4e-07a7908e8be6@codeaurora.org>
-Date: Fri, 23 Mar 2018 03:40:17 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Thu, 22 Mar 2018 18:11:19 -0400
+X-Google-Smtp-Source: AG47ELskUZFjWjVM7sJQ6FdcTR/Zu0Ze3AOouPrf3stc3q1TzJdoL/ISh0Jd0VzOeJmBgscesfkK8Q==
+From: Junio C Hamano <gitster@pobox.com>
+To: git@vger.kernel.org
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+        git-packagers@googlegroups.com
+Subject: [ANNOUNCE] Git v2.16.3
+Date: Thu, 22 Mar 2018 15:11:16 -0700
+Message-ID: <xmqq4ll7lq0r.fsf@gitster-ct.c.googlers.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180318224631.GH5626@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-Thanks for the review
+The latest maintenance release Git v2.16.3 is now available at
+the usual places.  It merges many small fixes and documentation
+updates that have been in the 'master' branch for a few weeks.
 
-On 03/19/2018 04:16 AM, Bjorn Andersson wrote:
-> On Wed 14 Mar 02:21 PDT 2018, Sibi S wrote:
->> diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-> [..]
->> +struct q6v5_reset_ops {
->> +	int (*reset_start)(struct q6v5 *qproc);
->> +	int (*reset_stop)(struct q6v5 *qproc);
->> +};
-> 
-> Please add these two ops directly in q6v5 instead and please keep the
-> naming "reset_assert" and "reset_deassert".
-> 
+The tarballs are found at:
 
-sure will do
+    https://www.kernel.org/pub/software/scm/git/
 
->> +
->>   enum {
->>   	MSS_MSM8916,
->>   	MSS_MSM8974,
->> @@ -343,6 +354,52 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
->>   	return 0;
->>   }
->>   
->> +static void alt_reset_restart(struct q6v5 *qproc, u32 restart)
->> +{
->> +	writel(restart, qproc->rmb_base + RMB_MBA_ALT_RESET);
-> 
-> Just move this write into q6v5_sdm_reset_start()
-> 
+The following public repositories all have a copy of the 'v2.16.3'
+tag and the 'maint' branch that the tag points at:
 
-sure will do
+  url = https://kernel.googlesource.com/pub/scm/git/git
+  url = git://repo.or.cz/alt-git.git
+  url = https://github.com/gitster/git
 
->> +}
->> +
->> +static int q6v5_msm_reset_stop(struct q6v5 *qproc)
->> +{
->> +	return reset_control_assert(qproc->mss_restart);
->> +}
->> +
->> +static int q6v5_msm_reset_start(struct q6v5 *qproc)
->> +{
->> +	return reset_control_deassert(qproc->mss_restart);
->> +}
->> +
->> +static int q6v5_sdm_reset_stop(struct q6v5 *qproc)
->> +{
->> +	return reset_control_reset(qproc->mss_restart);
->> +}
->> +
->> +static int q6v5_sdm_reset_start(struct q6v5 *qproc)
->> +{
->> +	int ret;
->> +
->> +	alt_reset_restart(qproc, 1);
->> +	/* Ensure alt reset is written before restart reg */
-> 
-> That's not what udelay does ;)
-> 
-> If you want to make sure that the register is written and then give it
-> 100us delay until you reset the reset you have to readl() the same
-> register back after the writel()
-> 
-> I think the delay deserves a comment on what we're waiting for.
->
+----------------------------------------------------------------
 
-the delay can be removed for the reasons stated below
+Git v2.16.3 Release Notes
+=========================
 
->> +	udelay(100);
-> 
-> Use usleep_range() for delays longer than 10us.
->
->> +
->> +	ret = reset_control_reset(qproc->mss_restart);
->> +
->> +	udelay(100);
-> 
-> Same as the delay above, what are we waiting for?
->
+Fixes since v2.16.2
+-------------------
 
-The point is to wait for 6 32khz sleep cycles both after assert and
-after de-assert of the aoss mss reset line. So moving the udelay to
-the aoss reset controller should have been right thing to do. alt_reset
-shouldn't need delays in between will remove them.
+ * "git status" after moving a path in the working tree (hence making
+   it appear "removed") and then adding with the -N option (hence
+   making that appear "added") detected it as a rename, but did not
+   report the  old and new pathnames correctly.
 
->> +	alt_reset_restart(qproc, 0);
->> +
->> +	return ret;
->> +}
->> +
-> [..]
->> @@ -1179,6 +1251,12 @@ static int q6v5_probe(struct platform_device *pdev)
->>   	qproc->dev = &pdev->dev;
->>   	qproc->rproc = rproc;
->>   	platform_set_drvdata(pdev, qproc);
->> +	qproc->version = desc->version;
->> +
->> +	if (qproc->version == MSS_SDM845)
->> +		qproc->ops = &q6v5_sdm_ops;
->> +	else
->> +		qproc->ops = &q6v5_msm_ops;
-> 
-> Can we carry a boolean for "has_alt_reset" or something that picks the
-> new reset ops, rather than picking by version?
->
+ * "git commit --fixup" did not allow "-m<message>" option to be used
+   at the same time; allow it to annotate resulting commit with more
+   text.
 
-Though alt_reset is specific to SDM845 SoCs it also includes another
-reset controller (pdc_sync) in the modem bringup sequence, it isn't
-included it in the patch series since it doesn't seem to affect the
-modem start/stop functionality. Knowing that it may be added wouldn't
-version be a better choice here?
+ * When resetting the working tree files recursively, the working tree
+   of submodules are now also reset to match.
 
-> Regards,
-> Bjorn
-> 
+ * Fix for a commented-out code to adjust it to a rather old API change
+   around object ID.
 
--- 
-Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+ * When there are too many changed paths, "git diff" showed a warning
+   message but in the middle of a line.
+
+ * The http tracing code, often used to debug connection issues,
+   learned to redact potentially sensitive information from its output
+   so that it can be more safely sharable.
+
+ * Crash fix for a corner case where an error codepath tried to unlock
+   what it did not acquire lock on.
+
+ * The split-index mode had a few corner case bugs fixed.
+
+ * Assorted fixes to "git daemon".
+
+ * Completion of "git merge -s<strategy>" (in contrib/) did not work
+   well in non-C locale.
+
+ * Workaround for segfault with more recent versions of SVN.
+
+ * Recently introduced leaks in fsck have been plugged.
+
+ * Travis CI integration now builds the executable in 'script' phase
+   to follow the established practice, rather than during
+   'before_script' phase.  This allows the CI categorize the failures
+   better ('failed' is project's fault, 'errored' is build
+   environment's).
+
+Also contains various documentation updates and code clean-ups.
+
+----------------------------------------------------------------
+
+Changes since v2.16.2 are as follows:
+
+Ben Peart (1):
+      fsmonitor: update documentation to remove reference to invalid config settings
+
+Brandon Williams (1):
+      oidmap: ensure map is initialized
+
+Christian Ludwig (1):
+      t9001: use existing helper in send-email test
+
+Eric Sunshine (2):
+      git-worktree.txt: fix missing ")" typo
+      git-worktree.txt: fix indentation of example and text of 'add' command
+
+Eric Wong (2):
+      fsck: fix leak when traversing trees
+      git-svn: control destruction order to avoid segfault
+
+Genki Sky (1):
+      test-lib.sh: unset XDG_CACHE_HOME
+
+Jeff King (10):
+      t5570: use ls-remote instead of clone for interp tests
+      t/lib-git-daemon: record daemon log
+      daemon: fix off-by-one in logging extended attributes
+      daemon: handle NULs in extended attribute string
+      t/lib-git-daemon: add network-protocol helpers
+      daemon: fix length computation in newline stripping
+      t0205: drop redundant test
+      git-sh-i18n: check GETTEXT_POISON before USE_GETTEXT_SCHEME
+      commit: drop uses of get_cached_commit_buffer()
+      revision: drop --show-all option
+
+Jonathan Tan (2):
+      http: support cookie redaction when tracing
+      http: support omitting data from traces
+
+Juan F. Codagnone (1):
+      mailinfo: avoid segfault when can't open files
+
+Junio C Hamano (2):
+      worktree: say that "add" takes an arbitrary commit in short-help
+      Git 2.16.3
+
+Kaartic Sivaraam (2):
+      Doc/gitsubmodules: make some changes to improve readability and syntax
+      Doc/git-submodule: improve readability and grammar of a sentence
+
+Mathias Rav (1):
+      files_initial_transaction_commit(): only unlock if locked
+
+Motoki Seki (1):
+      Documentation/gitsubmodules.txt: avoid non-ASCII apostrophes
+
+Nguyễn Thái Ngọc Duy (12):
+      t2203: test status output with porcelain v2 format
+      Use DIFF_DETECT_RENAME for detect_rename assignments
+      wt-status.c: coding style fix
+      wt-status.c: catch unhandled diff status codes
+      wt-status.c: rename rename-related fields in wt_status_change_data
+      wt-status.c: handle worktree renames
+      read-cache.c: change type of "temp" in write_shared_index()
+      read-cache.c: move tempfile creation/cleanup out of write_shared_index
+      diff.c: flush stdout before printing rename warnings
+      read-cache: don't write index twice if we can't write shared index
+      completion: fix completing merge strategies on non-C locales
+      gitignore.txt: elaborate shell glob syntax
+
+Ramsay Jones (2):
+      config.mak.uname: remove SPARSE_FLAGS setting for cygwin
+      Makefile: suppress a sparse warning for pack-revindex.c
+
+Randall S. Becker (1):
+      hashmap.h: remove unused variable
+
+René Scharfe (2):
+      describe: use strbuf_add_unique_abbrev() for adding short hashes
+      cocci: simplify check for trivial format strings
+
+Robert P. J. Day (2):
+      t/: correct obvious typo "detahced"
+      Correct mispellings of ".gitmodule" to ".gitmodules"
+
+SZEDER Gábor (11):
+      travis-ci: build Git during the 'script' phase
+      t5541: add 'test_i18ngrep's missing filename parameter
+      t5812: add 'test_i18ngrep's missing filename parameter
+      t6022: don't run 'git merge' upstream of a pipe
+      t4001: don't run 'git status' upstream of a pipe
+      t5510: consolidate 'grep' and 'test_i18ngrep' patterns
+      t5536: let 'test_i18ngrep' read the file without redirection
+      t: move 'test_i18ncmp' and 'test_i18ngrep' to 'test-lib-functions.sh'
+      t: validate 'test_i18ngrep's parameters
+      t: make 'test_i18ngrep' more informative on failure
+      t: document 'test_must_fail ok=<signal-name>'
+
+Stefan Beller (5):
+      t/lib-submodule-update.sh: clarify test
+      t/lib-submodule-update.sh: fix test ignoring ignored files in submodules
+      unpack-trees: oneway_merge to update submodules
+      submodule: submodule_move_head omits old argument in forced case
+      Documentation/git-status: clarify status table for porcelain mode
+
+Stefan Moch (2):
+      t7001: add test case for --dry-run
+      mv: remove unneeded 'if (!show_only)'
+
+Thomas Gummerer (3):
+      read-cache: fix reading the shared index for other repos
+      split-index: don't write cache tree with null oid entries
+      travis: run tests with GIT_TEST_SPLIT_INDEX
+
+Todd Zullinger (1):
+      doc: mention 'git show' defaults to HEAD
+
+Yasushi SHOJI (1):
+      bisect: debug: convert struct object to object_id
+
+brian m. carlson (1):
+      docs/interpret-trailers: fix agreement error
+
+Ævar Arnfjörð Bjarmason (2):
+      commit doc: document that -c, -C, -F and --fixup with -m error
+      commit: add support for --fixup <commit> -m"<extra message>"
