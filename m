@@ -1,100 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751840AbeCVQMK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:12:10 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49011 "EHLO mail.bootlin.com"
+        id S1751873AbeCVQMt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:12:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54906 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751689AbeCVQMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:12:06 -0400
-Date: Thu, 22 Mar 2018 17:12:04 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 03/10] drm/sun4i: Don't pretend to handle ARGB8888 with
- the frontend
-Message-ID: <20180322161204.dpi6puzvosesm5xt@flea>
-References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
- <20180321152904.22411-4-paul.kocialkowski@bootlin.com>
+        id S1751667AbeCVQMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:12:48 -0400
+Date: Thu, 22 Mar 2018 17:12:46 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+Message-ID: <20180322161246.GG23100@dhcp22.suse.cz>
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321131449.GN23100@dhcp22.suse.cz>
+ <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
+ <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
+ <20180321212355.GR23100@dhcp22.suse.cz>
+ <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
+ <20180322091008.GZ23100@dhcp22.suse.cz>
+ <8b4407dd-78f6-2f6f-3f45-ddb8a2d805c8@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="doy7hfckjtsgsqwj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180321152904.22411-4-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <8b4407dd-78f6-2f6f-3f45-ddb8a2d805c8@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---doy7hfckjtsgsqwj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Beside the discussion with Chen-Yu,
-
-On Wed, Mar 21, 2018 at 04:28:57PM +0100, Paul Kocialkowski wrote:
-> It turns out that the frontend is not capable of preserving the alpha
-> component (that is always set to 0xff), so only support XRGB8888
-> instead.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
-
+On Thu 22-03-18 09:06:14, Yang Shi wrote:
+> 
+> 
+> On 3/22/18 2:10 AM, Michal Hocko wrote:
+> > On Wed 21-03-18 15:36:12, Yang Shi wrote:
+> > > 
+> > > On 3/21/18 2:23 PM, Michal Hocko wrote:
 [...]
+> > > > pages and that is quite easy to move out of the write lock. That would
+> > > > be an improvement already and it should be risk safe. If even that is
+> > > > not sufficient then using range locking should help a lot. There
+> > > > shouldn't be really any other address space operations within the range
+> > > > most of the time so this would be basically non-contended access.
+> > > It might depend on how the range is defined. Too big range may lead to
+> > > surprisingly more contention, but too small range may bring in too much
+> > > lock/unlock operations.
+> > The full vma will have to be range locked. So there is nothing small or large.
+> 
+> It sounds not helpful to a single large vma case since just one range lock
+> for the vma, it sounds equal to mmap_sem.
 
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/=
-sun4i_layer.c
-> index eb93df445a10..15238211a61a 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-> @@ -100,9 +100,9 @@ static void sun4i_backend_layer_atomic_update(struct =
-drm_plane *plane,
->  		sun4i_frontend_update_coord(frontend, plane);
->  		sun4i_frontend_update_buffer(frontend, plane);
->  		sun4i_frontend_update_formats(frontend, plane,
-> -					      DRM_FORMAT_ARGB8888);
-> +					      DRM_FORMAT_XRGB8888);
->  		sun4i_backend_update_layer_frontend(backend, layer->id, plane,
-> -						    DRM_FORMAT_ARGB8888);
-> +						    DRM_FORMAT_XRGB8888);
+This is not how the range locking works. If we have a range lock per mm
+then exclusive ranges are not contending. So if you are unmapping one
+vma and want to create a new mapping or fault into a different range
+then you are basically lockless.
 
-Even though it's slightly related, these changes should be justified
-in the commit log. From what you currently explain, this makes 0
-difference, since XRGB and ARGB with an alpha component to 0xff is
-exactly the same thing.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---doy7hfckjtsgsqwj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqz1dMACgkQ0rTAlCFN
-r3S//g//RT5mB+QlYOBWWPBL9EZ3wJn0CF2PZX7Y1sH1+op/fwYkcnb62aST23Le
-3wwBuhB0MNxIDrZwXDZhR4MsI2QHObSh7w3WSZpNIpwpOr/XcMg9r35FQ8H7R1Et
-F767Op33Kq+B3P2EzeYFDVsPM37RMQWC68JgMHKb2oFPOmsZ1fUYhPTTy2oDaW1b
-XgQch9oKxSLcOu7x440yceios7Y2WShixSaGoCT+NJnuRHGSWOKQ+E5nwakhg9R2
-EUySe5NllBp9T2t4mAigxdQHVDlrPtY9KpUXsUki4CNim9mh6yW7nNRaZq6yahm4
-YHiU2rPm2j/HZbLhMmOJra/br9IqiMq1RcOUIsIxchxOarD/XZwe53pwKBf/ADZr
-26RdaMtx5fOMl9taP6ZwdpAkMtlwOdKUOefdwA7JP4aMeKa4G8tIAETWiVpn4LMB
-Z1ZxFK0LJ0PK61z38IObpo5dOAlxsWtrJzV4c9jPyFeP0Jgy1Y4eKWjLbJTg7AYX
-VcyHshb16DdTcl5d0RATNiqdT00zpx6Oy1+e3H0Fm3OPnK7IlpR/4Whb/C8ATM21
-O8fKo5GLr5/Q5pfsDIQhlTUhovjeH+5lvsR/Xu2UfhC6f7vW91v0AvohdXxIgSNW
-RWnnlTlm11lGGLhSMp13rLHPDwpbvicnb4smivfdAL5wC0v93H4=
-=1n9b
------END PGP SIGNATURE-----
-
---doy7hfckjtsgsqwj--
+-- 
+Michal Hocko
+SUSE Labs
