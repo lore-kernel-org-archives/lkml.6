@@ -1,39 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755864AbeCVOEr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 10:04:47 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:46718 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755848AbeCVOEl (ORCPT
+        id S932248AbeCVOIG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 10:08:06 -0400
+Received: from mail-pg0-f51.google.com ([74.125.83.51]:34902 "EHLO
+        mail-pg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755751AbeCVOIF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:04:41 -0400
-X-Google-Smtp-Source: AG47ELvLEsa+l6HEQG9j4vSD/DIOaduDEyB/jbyExBym6TBt0wPf61NuTgx+rTosla+7Ju5chhFckwqgC+Y+vjpAs5U=
+        Thu, 22 Mar 2018 10:08:05 -0400
+X-Google-Smtp-Source: AG47ELupjGRdo8m0861k9HpyJgy71Q13Talq0dGZ6lUm6MaIYWED3DNAghmuDsCzxHd+OwgTw9X3ow==
+Date: Thu, 22 Mar 2018 23:07:59 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v1] printk: change message to pr_info
+Message-ID: <20180322140759.GB561@tigerII.localdomain>
+References: <20180322135833.16602-1-tomeu.vizoso@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20180322132950.lkljwy2w7mobzgp2@fsr-ub1664-175>
-References: <1521712529-632-1-git-send-email-abel.vesa@nxp.com>
- <1521712529-632-3-git-send-email-abel.vesa@nxp.com> <CAOMZO5BVxp7pq44pUp444CqsYcJ5QQFqrgdRyFbaxRi0_d0ssg@mail.gmail.com>
- <20180322132950.lkljwy2w7mobzgp2@fsr-ub1664-175>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 22 Mar 2018 11:04:40 -0300
-Message-ID: <CAOMZO5BDBjB5muij_+QQ-9Q8Dzam=-0nP6gj6fHQHrJuv5=gNg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm: imx: Correct dram pll type
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Anson Huang <anson.huang@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180322135833.16602-1-tomeu.vizoso@collabora.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 10:29 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
+On (03/22/18 14:58), Tomeu Vizoso wrote:
+> To allow userspace to prevent this message from appearing in the
+> console by changing the log priority.
+> 
+> This matches other informative messages that the power subsystem emits
+> when the system changes power states.
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
-> Which repo/branch should this patchset be created against ?
+Well, no objections,
 
-You can use linux-next or Shawn's for-next tree.
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+
+	-ss
