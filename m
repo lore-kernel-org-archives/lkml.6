@@ -1,57 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752525AbeCVH1i (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 03:27:38 -0400
-Received: from verein.lst.de ([213.95.11.211]:45886 "EHLO newverein.lst.de"
+        id S1752546AbeCVHnI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 03:43:08 -0400
+Received: from verein.lst.de ([213.95.11.211]:45945 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752273AbeCVH1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 03:27:36 -0400
-Date: Thu, 22 Mar 2018 08:27:34 +0100
+        id S1752335AbeCVHnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 03:43:04 -0400
+Date: Thu, 22 Mar 2018 08:43:03 +0100
 From: Christoph Hellwig <hch@lst.de>
 To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-nvdimm@lists.01.org, "Darrick J. Wong" <darrick.wong@oracle.com>,
+Cc: linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jack@suse.cz
-Subject: Re: [PATCH v7 13/14] xfs: prepare xfs_break_layouts() for another
-        layout type
-Message-ID: <20180322072734.GB28713@lst.de>
-References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com> <152167310580.5268.18270880990191450094.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 14/14] xfs, dax: introduce xfs_break_dax_layouts()
+Message-ID: <20180322074303.GC28713@lst.de>
+References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com> <152167311132.5268.8502709708606276650.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152167310580.5268.18270880990191450094.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152167311132.5268.8502709708606276650.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL
-> +				| (reason == BREAK_UNMAPI
-> +					? XFS_MMAPLOCK_EXCL : 0)));
-
-please split the assert, e.g.:
-
-	ASSERT(xfs_isilocked(ip, XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL));
-
-	switch (reason) {
-+	case BREAK_UNMAPI:
-		ASSERT(xfs_isilocked(ip, XFS_MMAPLOCK_EXCL));
-> +		/* fall through */
-> +	case BREAK_WRITE:
-> +		error = xfs_break_leased_layouts(inode, iolock, &did_unlock);
-> +		break;
-> +	default:
-> +		error = -EINVAL;
-> +		break;
-> +	}
+On Wed, Mar 21, 2018 at 03:58:31PM -0700, Dan Williams wrote:
+> xfs_break_dax_layouts(), similar to xfs_break_leased_layouts(), scans
+> for busy / pinned dax pages and waits for those pages to go idle before
+> any potential extent unmap operation.
+> 
+> dax_layout_busy_page() handles synchronizing against new page-busy
+> events (get_user_pages). It invalidates all mappings to trigger the
+> get_user_pages slow path which will eventually block on the xfs inode
+> lock held in XFS_MMAPLOCK_EXCL mode. If dax_layout_busy_page() finds a
+> busy page it returns it for xfs to wait for the page-idle event that
+> will fire when the page reference count reaches 1 (recall ZONE_DEVICE
+> pages are idle at count 1, see generic_dax_pagefree()).
+> 
+> While waiting, the XFS_MMAPLOCK_EXCL lock is dropped in order to not
+> deadlock the process that might be trying to elevate the page count of
+> more pages before arranging for any of them to go idle. I.e. the typical
+> case of submitting I/O is that iov_iter_get_pages() elevates the
+> reference count of all pages in the I/O before starting I/O on the first
+> page. The process of elevating the reference count of all pages involved
+> in an I/O may cause faults that need to take XFS_MMAPLOCK_EXCL.
+> 
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dave Chinner <david@fromorbit.com>
+> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  fs/xfs/xfs_file.c |   59 ++++++++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 49 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 7f37fadf007e..d4573f93fddb 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -752,6 +752,38 @@ xfs_file_write_iter(
+>  	return ret;
+>  }
+>  
+> +static void
+> +xfs_wait_var_event(
+> +	struct inode		*inode,
+> +	uint			iolock,
+> +	bool			*did_unlock)
+> +{
+> +	struct xfs_inode        *ip = XFS_I(inode);
 > +
-> +	return error;
+> +	*did_unlock = true;
+> +	xfs_iunlock(ip, iolock);
+> +	schedule();
+> +	xfs_ilock(ip, iolock);
+> +}
+> +
+> +static int
+> +xfs_break_dax_layouts(
+> +	struct inode		*inode,
+> +	uint			iolock,
+> +	bool			*did_unlock)
+> +{
+> +	struct page		*page;
+> +
+> +	*did_unlock = false;
+> +	page = dax_layout_busy_page(inode->i_mapping);
+> +	if (!page)
+> +		return 0;
+> +
+> +	return ___wait_var_event(&page->_refcount,
+> +			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
+> +			0, 0, xfs_wait_var_event(inode, iolock, did_unlock));
+> +}
+> +
+>  int
+>  xfs_break_layouts(
+>  	struct inode		*inode,
+> @@ -766,16 +798,23 @@ xfs_break_layouts(
+>  				| (reason == BREAK_UNMAPI
+>  					? XFS_MMAPLOCK_EXCL : 0)));
+>  
+> -	switch (reason) {
+> -	case BREAK_UNMAPI:
+> -		/* fall through */
+> -	case BREAK_WRITE:
+> -		error = xfs_break_leased_layouts(inode, iolock, &did_unlock);
+> -		break;
+> -	default:
+> -		error = -EINVAL;
+> -		break;
+> -	}
+> +	do {
+> +		switch (reason) {
+> +		case BREAK_UNMAPI:
+> +			error = xfs_break_dax_layouts(inode, *iolock,
+> +					&did_unlock);
+> +			/* fall through */
+> +		case BREAK_WRITE:
+> +			if (error || did_unlock)
+> +				break;
+> +			error = xfs_break_leased_layouts(inode, iolock,
+> +					&did_unlock);
+> +			break;
+> +		default:
+> +			error = -EINVAL;
+> +			break;
+> +		}
+> +	} while (error == 0 && did_unlock);
 
-I have to say I'd prefer BREAK_UNMAP over BREAK_UNMAPI given that weird
-I suffix doesn't buy us anything, but that's just a minor issue.
+Nitpick:  I think did_unlock should probably be called done in this context,
+and how about something like this:
 
-Otherwise looks good:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+	for (;;) {
+		switch (reason) {
+		case BREAK_UNMAPI:
+			error = xfs_break_dax_layouts(inode, *iolock, &done);
+			if (error || done)
+				return error;
+			/*fallthrough*/
+		case BREAK_WRITE:
+			error = xfs_break_leased_layouts(inode, iolock, &done);
+			if (error || done)
+				return error;
+			break;
+		default:
+			WARN_ON_ONCE(1);
+			return -EINVAL;
+		}
+	}
