@@ -1,71 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752723AbeCVIdt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 04:33:49 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52622 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751768AbeCVIdq (ORCPT
+        id S1752778AbeCVIeU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 04:34:20 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40631 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751768AbeCVIeQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 04:33:46 -0400
-Subject: Re: [PATCH v2] i2c: i2c-stm32f7: fix no check on returned setup
-To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1521650920-11578-1-git-send-email-pierre-yves.mordret@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <f6763dfd-9535-1206-fed0-a611b9ea81b7@st.com>
-Date: Thu, 22 Mar 2018 09:33:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 22 Mar 2018 04:34:16 -0400
+X-Google-Smtp-Source: AG47ELsUGP3umth8CSZf7McefXooCWdgAWjJ2jsKJ23t0DdBF8CAI2yohtYHxX27af6vsl65vXCobA==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH] KVM: X86: Fix the decoding of segment overrides in 64bit mode
+Date: Thu, 22 Mar 2018 16:34:11 +0800
+Message-Id: <1521707651-9375-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1521650920-11578-1-git-send-email-pierre-yves.mordret@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-22_05:,,
- signatures=0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Wanpeng Li <wanpengli@tencent.com>
 
+Explicit segment overides other than %fs and %gs are documented as ignored by
+both Intel and AMD.
 
-On 03/21/2018 05:48 PM, Pierre-Yves MORDRET wrote:
-> Before assigning returned setup structure check if not null
-> 
-> Fixes: 463a9215f3ca7600b5ff ("i2c: stm32f7: fix setup structure")
-> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-> ---
->    Version history:
->       v1:
->           * Initial
->       v2:
->           * fill "ret" with error statement before go to "clk_free"
-> ---
-> ---
->   drivers/i2c/busses/i2c-stm32f7.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-> index b445b3b..f273e28 100644
-> --- a/drivers/i2c/busses/i2c-stm32f7.c
-> +++ b/drivers/i2c/busses/i2c-stm32f7.c
-> @@ -888,6 +888,11 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
->   	}
->   
->   	setup = of_device_get_match_data(&pdev->dev);
-> +	if (!setup) {
-> +		dev_err(&pdev->dev, "Can't get device data\n");
-> +		ret = -ENODEV;
-> +		goto clk_free;
-> +	}
->   	i2c_dev->setup = *setup;
->   
->   	ret = device_property_read_u32(i2c_dev->dev, "i2c-scl-rising-time-ns",
-> 
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+In practice, this means that:
+
+ * Explicit uses of %ss don't actually yield #SS[0] for non-canonical
+   memory references.
+ * Explicit uses of %{e,c,d}s don't override %rbp/%rsp-based memory references
+   to yield #GP[0] for non-canonical memory references.
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ arch/x86/kvm/emulate.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index dd88158..5091255 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -5148,8 +5148,10 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
+ 		case 0x2e:	/* CS override */
+ 		case 0x36:	/* SS override */
+ 		case 0x3e:	/* DS override */
+-			has_seg_override = true;
+-			ctxt->seg_override = (ctxt->b >> 3) & 3;
++			if (mode != X86EMUL_MODE_PROT64) {
++				has_seg_override = true;
++				ctxt->seg_override = (ctxt->b >> 3) & 3;
++			}
+ 			break;
+ 		case 0x64:	/* FS override */
+ 		case 0x65:	/* GS override */
+-- 
+2.7.4
