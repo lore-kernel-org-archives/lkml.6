@@ -1,122 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751913AbeCVVsX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:48:23 -0400
-Received: from mail.efficios.com ([167.114.142.138]:50880 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751868AbeCVVsV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:48:21 -0400
-Date: Thu, 22 Mar 2018 17:48:17 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Erica Bugden <ebugden@efficios.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1443383811.3019.1521755297202.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180316165239.GA28462@redhat.com>
-References: <670124481.11073.1521146881571.JavaMail.zimbra@efficios.com> <20180316165239.GA28462@redhat.com>
-Subject: Re: uprobes misses breakpoint insertion into VM_WRITE mappings
+        id S1751986AbeCVVs3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:48:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48120 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751868AbeCVVs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:48:26 -0400
+Date: Thu, 22 Mar 2018 15:48:25 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
+Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, gnehzuil@linux.alibaba.com
+Subject: Re: [PATCH] vfio iommu type1: improve memory pinning process for
+ raw PFN mapping
+Message-ID: <20180322154825.0f8477f7@w520.home>
+In-Reply-To: <20180322045216.22220-1-jason.cai@linux.alibaba.com>
+References: <20180322045216.22220-1-jason.cai@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.7_GA_1964 (ZimbraWebClient - FF52 (Linux)/8.8.7_GA_1964)
-Thread-Topic: uprobes misses breakpoint insertion into VM_WRITE mappings
-Thread-Index: WGEkbW6SzmhtL2I3iv/QF00BGA6WWg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Mar 16, 2018, at 12:52 PM, Oleg Nesterov oleg@redhat.com wrote:
+On Thu, 22 Mar 2018 12:52:16 +0800
+"Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com> wrote:
 
-> On 03/15, Mathieu Desnoyers wrote:
->>
->> Hi,
->>
->> Erica has been working on extending test-cases for uprobes, and found
->> something unexpected:
->>
->> Since commit e40cfce626a5 "uprobes: Restrict valid_vma(false) to skip VM_SHARED
->> vmas"
->> uprobes does not insert breakpoints into mappings mprotect'd as writeable.
+> When using vfio to pass through a PCIe device (e.g. a GPU card) that
+> has a huge BAR (e.g. 16GB), a lot of cycles are wasted on memory
+> pinning because PFNs of PCI BAR are not backed by struct page, and
+> the corresponding VMA has flag VM_PFNMAP.
 > 
-> Not really, VM_WRITE was illegal from the very beginning, this commit only
-> affects the "is_register == false" case.
-
-Good point. I only noticed it after further archeology research through git blame. ;)
-
+> With this change, when pinning a region which is a raw PFN mapping,
+> it can skip unnecessary user memory pinning process, and thus, can
+> significantly improve VM's boot up time when passing through devices
+> via VFIO. In my test on a Xeon E5 2.6GHz, the time mapping a 16GB
+> BAR was reduced from about 0.4s to 1.5us.
 > 
->> This issue can be reproduced by compiling a library without PIC (not using GOT),
->> and then concurrently:
->>
->> A) Load the library (dynamic loader mprotect the code as writeable to do
->>    the relocations, and then mprotect as executable),
->>
->> B) Enable a uprobe through perf.
->>
->> (it is a race window between the two mprotect syscalls)
->>
->> It appears that the following restriction in valid_vma() is responsible
->> for this behavior:
->>
->>         if (is_register)
->>                 flags |= VM_WRITE;
->>
->> I don't figure a clear explanation for this flag based on the function
->> comment nor the commit changelog. Any idea on whether this is really
->> needed ?
+> Signed-off-by: Jason Cai (Xiang Feng) <jason.cai@linux.alibaba.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 24 ++++++++++++++----------
+>  1 file changed, 14 insertions(+), 10 deletions(-)
 > 
-> Because we do not want to modify the writable area. If nothing else, this
-> can break the application which writes to the page we are going to replace.
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index 45657e2b1ff7..0658f35318b8 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -397,7 +397,6 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+>  {
+>  	unsigned long pfn = 0;
+>  	long ret, pinned = 0, lock_acct = 0;
+> -	bool rsvd;
+>  	dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
+>  
+>  	/* This code path is only user initiated */
+> @@ -408,14 +407,22 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (is_invalid_reserved_pfn(*pfn_base)) {
+> +		struct vm_area_struct *vma;
 
-I fully agree on never poking writeable pages. However, I think something is
-missing here.
+scripts/checkpatch.pl suggests a new line here to separate variable
+declaration from code.
 
-The plausible scenario that's inherently racy is:
+> +		down_read(&current->mm->mmap_sem);
+> +		vma = find_vma_intersection(current->mm, vaddr, vaddr + 1);
+> +		pinned = min(npage, (long)vma_pages(vma));
 
-1) dynamic loader mprotect(write) the mapping,
-2) dynamic loader performs relocations
-3) (concurrently) uprobe is enabled for this mapping
-4) dynamic loader mprotect(read|exec) the mapping.
+checkpatch also suggests using min_t rather than casting to a
+compatible type, ie:
 
-Again, I fully agree that step (3) should *not* touch the mapping while it is
-writeable, because there is no way to synchronize the the application which is
-expecting to be sole owner of the code being modified.
+	pinned = min_t(long, npage, vma_pages(vma));
 
-However, what I think is missing here is that step (4) (mprotect(read|exec))
-should apply all "pending" modifications for that mapping.
+I'll make these updates on commit, please make use of checkpatch on
+future patches.  Applied to vfio next branch for v4.17.  Thanks,
 
-This means that if some code is always writeable, uprobes will not
-mess with it. However, if the pattern is to make it writeable for a short
-while and then make it read|exec again, then the queued modifications
-could be applied by mprotect().
+Alex
 
-What is not entirely clear to me is how to bound the number of pending
-modifications and where to these pending uprobes operation queues should
-reside.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
-
-> 
->> Note that on uprobes unregister, it allows removing a breakpoint event
->> on a writeable mapping,
-> 
-> Yes. Because a probed apllication can do mprotect() after the kernel installs
-> the breakpoint. And we have to remove this breakpoint in any case, even if
-> this is unsafe too.
-> 
-> Oleg.
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+> +		up_read(&current->mm->mmap_sem);
+> +		return pinned;
+> +	}
+> +
+>  	pinned++;
+> -	rsvd = is_invalid_reserved_pfn(*pfn_base);
+>  
+>  	/*
+>  	 * Reserved pages aren't counted against the user, externally pinned
+>  	 * pages are already counted against the user.
+>  	 */
+> -	if (!rsvd && !vfio_find_vpfn(dma, iova)) {
+> +	if (!vfio_find_vpfn(dma, iova)) {
+>  		if (!lock_cap && current->mm->locked_vm + 1 > limit) {
+>  			put_pfn(*pfn_base, dma->prot);
+>  			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
+> @@ -435,13 +442,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+>  		if (ret)
+>  			break;
+>  
+> -		if (pfn != *pfn_base + pinned ||
+> -		    rsvd != is_invalid_reserved_pfn(pfn)) {
+> +		if (pfn != *pfn_base + pinned) {
+>  			put_pfn(pfn, dma->prot);
+>  			break;
+>  		}
+>  
+> -		if (!rsvd && !vfio_find_vpfn(dma, iova)) {
+> +		if (!vfio_find_vpfn(dma, iova)) {
+>  			if (!lock_cap &&
+>  			    current->mm->locked_vm + lock_acct + 1 > limit) {
+>  				put_pfn(pfn, dma->prot);
+> @@ -459,10 +465,8 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+>  
+>  unpin_out:
+>  	if (ret) {
+> -		if (!rsvd) {
+> -			for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
+> -				put_pfn(pfn, dma->prot);
+> -		}
+> +		for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
+> +			put_pfn(pfn, dma->prot);
+>  
+>  		return ret;
+>  	}
