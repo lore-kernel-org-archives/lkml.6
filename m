@@ -1,49 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751689AbeCVVKZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:10:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32908 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751531AbeCVVKY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:10:24 -0400
-Date: Thu, 22 Mar 2018 14:10:22 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: Re: [PATCH] mm, vmscan, tracing: Use pointer to reclaim_stat struct
- in trace event
-Message-Id: <20180322141022.f02476e1f76338ab9cecf62e@linux-foundation.org>
-In-Reply-To: <20180322121003.4177af15@gandalf.local.home>
-References: <20180322121003.4177af15@gandalf.local.home>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751745AbeCVVRz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:17:55 -0400
+Received: from mga09.intel.com ([134.134.136.24]:47031 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751661AbeCVVRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:17:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
+   d="scan'208";a="26244244"
+From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
+To: Andy Lutomirski <luto@kernel.org>
+CC: X86 ML <x86@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when
+ FS/GS updated by ptracer
+Thread-Topic: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when
+ FS/GS updated by ptracer
+Thread-Index: AQHTv61cgKpKrSnds0atXlLhYuaZSaPZns+A//+jdICAAP9OgIAAfB0AgAElGwCAAHavgIAAe5+A//+VaACAAHdSAP//4dlL
+Date: Thu, 22 Mar 2018 21:17:49 +0000
+Message-ID: <C9BB696F3A938947B10DCAD29FAB8FFA66AC932C@CRSMSX101.amr.corp.intel.com>
+References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
+ <1521481767-22113-15-git-send-email-chang.seok.bae@intel.com>
+ <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com>
+ <C78DE381-C618-4370-9B06-F6E25C850661@intel.com>
+ <CALCETrX03_AG-OuJdmfmsbvEt0UTdUpaUVDRQgbDZWGY7WD-Xw@mail.gmail.com>
+ <E9221EFA-636C-4D36-AEBA-3A1EEBBF2F50@intel.com>
+ <CALCETrUxQ1XOs7V1XKOsk-iQ-qOwn41sWGYkepkVOE7PtfX24A@mail.gmail.com>
+ <9C732DC6-F9CA-474F-B8F5-F8EBE406B12E@intel.com>
+ <CALCETrWyuDC9Visx2-7rwpicVfS3wVMVFBykysaYcoBBe2y+tg@mail.gmail.com>
+ <E3872173-6EDB-4861-896E-4D636A5A9B55@intel.com>,<CALCETrUZk0m2-aJpzBbUR1-rSZkKCX6hKS3K3O_3LQJSkKKKGg@mail.gmail.com>
+In-Reply-To: <CALCETrUZk0m2-aJpzBbUR1-rSZkKCX6hKS3K3O_3LQJSkKKKGg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.19.9.46]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Mar 2018 12:10:03 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> 
-> The trace event trace_mm_vmscan_lru_shrink_inactive() currently has 12
-> parameters! Seven of them are from the reclaim_stat structure. This
-> structure is currently local to mm/vmscan.c. By moving it to the global
-> vmstat.h header, we can also reference it from the vmscan tracepoints. In
-> moving it, it brings down the overhead of passing so many arguments to the
-> trace event. In the future, we may limit the number of arguments that a
-> trace event may pass (ideally just 6, but more realistically it may be 8).
+________________________________________
+From: Andy Lutomirski [luto@kernel.org]
+Sent: Thursday, March 22, 2018 09:53
+>>> But your patch doesn't actually do this, since gdb will just do
+>>> SETREGS anyway, right?
+>> GDB does SETREGS on any exclusive (FS/GS) updates in inferior call.
 
-Unfortunately this is not a good time.  Andrey's "mm/vmscan: replace
-mm_vmscan_lru_shrink_inactive with shrink_page_list tracepoint" mucks
-with this code quite a lot and that patch's series is undergoing review
-at present, with a few issues yet unresolved.
+> This means that your patch has exactly the same effect as the code in
+> my git tree, right?  Then let's stick with something like what's in my
+> git tree, since it's far simpler.
 
-I'll park your patch for now and if Andrey's series doesn't converge
-soon I'll merge this and will ask Andrey to redo things.
+Difference is if flipping FS/GS multiple times, user may check the base from LDT.
+But I don't have strong will to keep arguing this; Markus or somebody might 
+want to say something.
+
+The whole point as I understand is to avoid any regression on legacy ptracers.
+If a strong confidence lies on the simple version, let me. My first thought bought
+this in fact.
+
+Thanks,
+Chang
