@@ -1,38 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751912AbeCVRaN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 13:30:13 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33428 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751628AbeCVRaL (ORCPT
+        id S1751505AbeCVRea (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 13:34:30 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:53476 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751319AbeCVRe3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 13:30:11 -0400
-Date: Thu, 22 Mar 2018 18:29:59 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH 23/45] sched: add do_sched_yield() helper; remove
- in-kernel call to sched_yield()
-Message-ID: <20180322172959.GX4043@hirez.programming.kicks-ass.net>
-References: <20180322090059.19361-1-linux@dominikbrodowski.net>
- <20180322090059.19361-24-linux@dominikbrodowski.net>
+        Thu, 22 Mar 2018 13:34:29 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0SzvUcF2_1521740050;
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321130833.GM23100@dhcp22.suse.cz>
+ <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
+ <20180321172932.GE4780@bombadil.infradead.org>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <af814bbe-b6b5-12f8-72e5-7935e767bd87@linux.alibaba.com>
+Date: Thu, 22 Mar 2018 10:34:08 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180322090059.19361-24-linux@dominikbrodowski.net>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180321172932.GE4780@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 10:00:37AM +0100, Dominik Brodowski wrote:
-> Using the sched-internal do_sched_yield() helper allows us to get rid of
-> the sched-internal call to the sys_sched_yield() syscall.
-> 
-> This patch is part of a series which tries to remove in-kernel calls to
-> syscalls. On this basis, the syscall entry path can be streamlined.
 
-But why !? Either Cc me on more of the series such that the whole makes
-sense, or better yet, write a proper Changelog.
+
+On 3/21/18 10:29 AM, Matthew Wilcox wrote:
+> On Wed, Mar 21, 2018 at 09:31:22AM -0700, Yang Shi wrote:
+>> On 3/21/18 6:08 AM, Michal Hocko wrote:
+>>> Yes, this definitely sucks. One way to work that around is to split the
+>>> unmap to two phases. One to drop all the pages. That would only need
+>>> mmap_sem for read and then tear down the mapping with the mmap_sem for
+>>> write. This wouldn't help for parallel mmap_sem writers but those really
+>>> need a different approach (e.g. the range locking).
+>> page fault might sneak in to map a page which has been unmapped before?
+>>
+>> range locking should help a lot on manipulating small sections of a large
+>> mapping in parallel or multiple small mappings. It may not achieve too much
+>> for single large mapping.
+> I don't think we need range locking.  What if we do munmap this way:
+>
+> Take the mmap_sem for write
+> Find the VMA
+>    If the VMA is large(*)
+>      Mark the VMA as deleted
+>      Drop the mmap_sem
+>      zap all of the entries
+>      Take the mmap_sem
+>    Else
+>      zap all of the entries
+> Continue finding VMAs
+> Drop the mmap_sem
+>
+> Now we need to change everywhere which looks up a VMA to see if it needs
+> to care the the VMA is deleted (page faults, eg will need to SIGBUS; mmap
+> does not care; munmap will need to wait for the existing munmap operation
+
+The other question is why munmap need wait? If the other parallel munmap 
+finds the vma has been marked as "deleted", it just need return 0 as it 
+doesn't find vma.
+
+Currently do_munmap() does the below logic:
+     vma = find_vma(mm, start);
+     if (!vma)
+         return 0;
+
+Yang
+
+> to complete), but it gives us the atomicity, at least on a per-VMA basis.
+>
+> We could also do:
+>
+> Take the mmap_sem for write
+> Mark all VMAs in the range as deleted & modify any partial VMAs
+> Drop mmap_sem
+> zap pages from deleted VMAs
+>
+> That would give us the same atomicity that we have today.
+>
+> Deleted VMAs would need a pointer to a completion, so operations that
+> need to wait can queue themselves up.  I'd recommend we use the low bit
+> of vm_file and treat it as a pointer to a struct completion if set.
