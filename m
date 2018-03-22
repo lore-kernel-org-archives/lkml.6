@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753541AbeCVJCT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:02:19 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37726 "EHLO
+        id S1753124AbeCVJBz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:01:55 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37684 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752972AbeCVJBv (ORCPT
+        with ESMTP id S1752852AbeCVJBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:51 -0400
+        Thu, 22 Mar 2018 05:01:43 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 12/45] fs: add do_compat_fcntl64() helper; remove in-kernel call to comapt syscall
-Date: Thu, 22 Mar 2018 10:00:26 +0100
-Message-Id: <20180322090059.19361-13-linux@dominikbrodowski.net>
+Cc: Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org
+Subject: [PATCH 24/45] kexec: call do_kexec_load() in compat syscall directly
+Date: Thu, 22 Mar 2018 10:00:38 +0100
+Message-Id: <20180322090059.19361-25-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -22,55 +21,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the fs-internal do_compat_fcntl64() helper allows us to get rid of
-the fs-internal call to the compat_sys_fcntl64() syscall.
+do_kexec_load() can be called directly by compat_sys_kexec() as long as
+the same parameters checks are completed which are currently handled
+(also) by sys_kexec(). Therefore, move those to kexec_load_check(),
+call that newly introduced helper function from both sys_kexec() and
+compat_sys_kexec(), and duplicate the remaining code from sys_kexec()
+in compat_sys_kexec().
 
 This patch is part of a series which tries to remove in-kernel calls to
 syscalls. On this basis, the syscall entry path can be streamlined.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: kexec@lists.infradead.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/fcntl.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ kernel/kexec.c | 50 +++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 37 insertions(+), 13 deletions(-)
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 1e97f1fda90c..d737ff082472 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -607,8 +607,8 @@ static int fixup_compat_flock(struct flock *flock)
- 	return 0;
- }
+diff --git a/kernel/kexec.c b/kernel/kexec.c
+index e62ec4dc6620..d959dc2c5587 100644
+--- a/kernel/kexec.c
++++ b/kernel/kexec.c
+@@ -192,11 +192,9 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
+  * that to happen you need to do that yourself.
+  */
  
--COMPAT_SYSCALL_DEFINE3(fcntl64, unsigned int, fd, unsigned int, cmd,
--		       compat_ulong_t, arg)
-+static long do_compat_fcntl64(unsigned int fd, unsigned int cmd,
-+			     compat_ulong_t arg)
+-SYSCALL_DEFINE4(kexec_load, unsigned long, entry, unsigned long, nr_segments,
+-		struct kexec_segment __user *, segments, unsigned long, flags)
++static inline int kexec_load_check(unsigned long nr_segments,
++				   unsigned long flags)
  {
- 	struct fd f = fdget_raw(fd);
- 	struct flock flock;
-@@ -672,6 +672,12 @@ COMPAT_SYSCALL_DEFINE3(fcntl64, unsigned int, fd, unsigned int, cmd,
- 	return err;
- }
+-	int result;
+-
+ 	/* We only trust the superuser with rebooting the system. */
+ 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
+ 		return -EPERM;
+@@ -208,17 +206,29 @@ SYSCALL_DEFINE4(kexec_load, unsigned long, entry, unsigned long, nr_segments,
+ 	if ((flags & KEXEC_FLAGS) != (flags & ~KEXEC_ARCH_MASK))
+ 		return -EINVAL;
  
-+COMPAT_SYSCALL_DEFINE3(fcntl64, unsigned int, fd, unsigned int, cmd,
-+		       compat_ulong_t, arg)
-+{
-+	return do_compat_fcntl64(fd, cmd, arg);
+-	/* Verify we are on the appropriate architecture */
+-	if (((flags & KEXEC_ARCH_MASK) != KEXEC_ARCH) &&
+-		((flags & KEXEC_ARCH_MASK) != KEXEC_ARCH_DEFAULT))
+-		return -EINVAL;
+-
+ 	/* Put an artificial cap on the number
+ 	 * of segments passed to kexec_load.
+ 	 */
+ 	if (nr_segments > KEXEC_SEGMENT_MAX)
+ 		return -EINVAL;
+ 
++	return 0;
 +}
 +
- COMPAT_SYSCALL_DEFINE3(fcntl, unsigned int, fd, unsigned int, cmd,
- 		       compat_ulong_t, arg)
- {
-@@ -684,7 +690,7 @@ COMPAT_SYSCALL_DEFINE3(fcntl, unsigned int, fd, unsigned int, cmd,
- 	case F_OFD_SETLKW:
++SYSCALL_DEFINE4(kexec_load, unsigned long, entry, unsigned long, nr_segments,
++		struct kexec_segment __user *, segments, unsigned long, flags)
++{
++	int result;
++
++	result = kexec_load_check(nr_segments, flags);
++	if (result)
++		return result;
++
++	/* Verify we are on the appropriate architecture */
++	if (((flags & KEXEC_ARCH_MASK) != KEXEC_ARCH) &&
++		((flags & KEXEC_ARCH_MASK) != KEXEC_ARCH_DEFAULT))
++		return -EINVAL;
++
+ 	/* Because we write directly to the reserved memory
+ 	 * region when loading crash kernels we need a mutex here to
+ 	 * prevent multiple crash  kernels from attempting to load
+@@ -247,15 +257,16 @@ COMPAT_SYSCALL_DEFINE4(kexec_load, compat_ulong_t, entry,
+ 	struct kexec_segment out, __user *ksegments;
+ 	unsigned long i, result;
+ 
++	result = kexec_load_check(nr_segments, flags);
++	if (result)
++		return result;
++
+ 	/* Don't allow clients that don't understand the native
+ 	 * architecture to do anything.
+ 	 */
+ 	if ((flags & KEXEC_ARCH_MASK) == KEXEC_ARCH_DEFAULT)
  		return -EINVAL;
+ 
+-	if (nr_segments > KEXEC_SEGMENT_MAX)
+-		return -EINVAL;
+-
+ 	ksegments = compat_alloc_user_space(nr_segments * sizeof(out));
+ 	for (i = 0; i < nr_segments; i++) {
+ 		result = copy_from_user(&in, &segments[i], sizeof(in));
+@@ -272,6 +283,19 @@ COMPAT_SYSCALL_DEFINE4(kexec_load, compat_ulong_t, entry,
+ 			return -EFAULT;
  	}
--	return compat_sys_fcntl64(fd, cmd, arg);
-+	return do_compat_fcntl64(fd, cmd, arg);
+ 
+-	return sys_kexec_load(entry, nr_segments, ksegments, flags);
++	/* Because we write directly to the reserved memory
++	 * region when loading crash kernels we need a mutex here to
++	 * prevent multiple crash  kernels from attempting to load
++	 * simultaneously, and to prevent a crash kernel from loading
++	 * over the top of a in use crash kernel.
++	 *
++	 * KISS: always take the mutex.
++	 */
++	if (!mutex_trylock(&kexec_mutex))
++		return -EBUSY;
++
++	result = do_kexec_load(entry, nr_segments, ksegments, flags);
++
++	mutex_unlock(&kexec_mutex);
  }
  #endif
- 
 -- 
 2.16.2
