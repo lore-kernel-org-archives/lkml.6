@@ -1,68 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeCVW2n (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 18:28:43 -0400
-Received: from muru.com ([72.249.23.125]:33310 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751937AbeCVW2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 18:28:41 -0400
-Date: Thu, 22 Mar 2018 15:28:37 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: v4.16-rc5 on Motorola Droid 4
-Message-ID: <20180322222837.GG5799@atomide.com>
-References: <20180322123518.GA27004@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mSxgbZZZvrAyzONB"
-Content-Disposition: inline
-In-Reply-To: <20180322123518.GA27004@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752060AbeCVW3c (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 18:29:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49374 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbeCVW3b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 18:29:31 -0400
+Date: Thu, 22 Mar 2018 15:29:29 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        takahiro.akashi@linaro.org, ebiederm@xmission.com, vgoyal@redhat.com,
+        dyoung@redhat.com, prudo@linux.vnet.ibm.com
+Subject: Re: [PATCH 1/2] resource: add walk_system_ram_res_rev()
+Message-Id: <20180322152929.9b421af2f66cc819ad691207@linux-foundation.org>
+In-Reply-To: <20180322033722.9279-2-bhe@redhat.com>
+References: <20180322033722.9279-1-bhe@redhat.com>
+        <20180322033722.9279-2-bhe@redhat.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 22 Mar 2018 11:37:21 +0800 Baoquan He <bhe@redhat.com> wrote:
 
---mSxgbZZZvrAyzONB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> 
+> This function, being a variant of walk_system_ram_res() introduced in
+> commit 8c86e70acead ("resource: provide new functions to walk through
+> resources"), walks through a list of all the resources of System RAM
+> in reversed order, i.e., from higher to lower.
+> 
+> It will be used in kexec_file code.
+> 
+> ...
+>
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -23,6 +23,8 @@
+>  #include <linux/pfn.h>
+>  #include <linux/mm.h>
+>  #include <linux/resource_ext.h>
+> +#include <linux/string.h>
+> +#include <linux/vmalloc.h>
+>  #include <asm/io.h>
+>  
+>  
+> @@ -470,6 +472,67 @@ int walk_system_ram_res(u64 start, u64 end, void *arg,
+>  }
+>  
+>  /*
+> + * This function, being a variant of walk_system_ram_res(), calls the @func
+> + * callback against all memory ranges of type System RAM which are marked as
+> + * IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY in reversed order, i.e., from
+> + * higher to lower.
+> + */
 
-* Pavel Machek <pavel@ucw.cz> [180322 12:36]:
-> What does _not_ yet work is battery charging, and I'm not sure if the
-> phone will actually shut down itself or if it will drain & damage the
-> battery.
+This should document the return value, as should walk_system_ram_res().
+Why does it return -1 on error rather than an errno (ENOMEM)?
 
-Hmm you have IIO and CPCAP related options enabled, right?
+> +int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+> +				int (*func)(struct resource *, void *))
+> +{
+> +	struct resource res, *rams;
+> +	int rams_size = 16, i;
+> +	int ret = -1;
+> +
+> +	/* create a list */
+> +	rams = vmalloc(sizeof(struct resource) * rams_size);
+> +	if (!rams)
+> +		return ret;
+> +
+> +	res.start = start;
+> +	res.end = end;
+> +	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+> +	i = 0;
+> +	while ((res.start < res.end) &&
+> +		(!find_next_iomem_res(&res, IORES_DESC_NONE, true))) {
+> +		if (i >= rams_size) {
+> +			/* re-alloc */
+> +			struct resource *rams_new;
+> +			int rams_new_size;
+> +
+> +			rams_new_size = rams_size + 16;
+> +			rams_new = vmalloc(sizeof(struct resource)
+> +							* rams_new_size);
+> +			if (!rams_new)
+> +				goto out;
+> +
+> +			memcpy(rams_new, rams,
+> +					sizeof(struct resource) * rams_size);
+> +			vfree(rams);
+> +			rams = rams_new;
+> +			rams_size = rams_new_size;
+> +		}
+> +
+> +		rams[i].start = res.start;
+> +		rams[i++].end = res.end;
+> +
+> +		res.start = res.end + 1;
+> +		res.end = end;
+> +	}
+> +
+> +	/* go reverse */
+> +	for (i--; i >= 0; i--) {
+> +		ret = (*func)(&rams[i], arg);
+> +		if (ret)
+> +			break;
+> +	}
 
-Maybe define DEBUG in cpcap-charger.c, cpcap-battery.c
-and cpcap-adc.c and see what output you get?
+erk, this is pretty nasty.  Isn't there a better way :(
 
-Regards,
-
-Tony
-
---mSxgbZZZvrAyzONB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkgNvrZJU/QSQYIcQG9Q+yVyrpXMFAlq0LhUACgkQG9Q+yVyr
-pXP2oxAAtdPvIf1daQ58//aOa125yS/bZVOS4twFhkuJ/BIaTYemp1eWyfwScMa2
-fi3eiRTYKA4KYZ8zzsy+x3Cw3SLT0xbJzThKXOESaf28l3PV+ACYkET5WyF2vB5h
-6F+eE2j9JgsJWukVlNefANpQLUy0phHOgntGhsMtri8odVNWhv6Lngr4Zu9KXKNY
-whQyXPXeAbwM+MQRBvlIAvZjQbhrVUt1QBIdgisEaQQ35Y7BqvBpw8jj4U2zm9N0
-1UfLmUx1TUXAglGi9nrNLSeiHEIzY+dW7kKz6eY52k9vtCCkh0fk8mQks2c+6yi1
-YV/5emEfOGibBpLTijf6qkDGxXa4ch8MFVM6RAH4sZ/QCHugvn9Wdl8f2Bq4dxi1
-yYFC0K0jA9BqQTI94MpTAmhLWTTZwwpZU7wrLvFUGvgohFTI2gF0loUgBffL7vfV
-pYk71zae3qTr/OpcRkOEKV4FQE4RsQQRDkk+S7xN54UZvkq4DHTXlfgg854Ihk1l
-e3yMA+84Jx/F8lrreIOKGWWIIC9MibKwTaPAQlICMl3A0JnoOtdv6JIv4L4UIK4j
-KoLDjK2FWG7iYXZ3diG1imQgvDlnqxx7TxaBhol2fakjSFvEHZRU019VrKBjJvC8
-QfZSO9m8sMepK5zK9gSUAI9FXrXvjRX5DCAprXSQD+jLCHX6ctk=
-=vUFB
------END PGP SIGNATURE-----
-
---mSxgbZZZvrAyzONB--
+> +out:
+> +	vfree(rams);
+> +	return ret;
+> +}
