@@ -1,122 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752400AbeCVGZs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 02:25:48 -0400
-Received: from ozlabs.org ([103.22.144.67]:50587 "EHLO ozlabs.org"
+        id S1752297AbeCVGYw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 02:24:52 -0400
+Received: from cmta17.telus.net ([209.171.16.90]:39079 "EHLO cmta17.telus.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752163AbeCVGZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 02:25:46 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 22 Mar 2018 17:25:03 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Darren Trapp <darren.trapp@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Quinn Tran <quinn.tran@cavium.com>
-Subject: linux-next: build failure after merge of the scsi-mkp tree
-Message-ID: <20180322172503.2d8e72ef@canb.auug.org.au>
+        id S1750886AbeCVGYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 02:24:50 -0400
+X-Authority-Analysis: v=2.2 cv=StJ/0LG0 c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8
+ a=HLEhOUT7AAAA:8 a=FGbulvE0AAAA:8 a=dk-T6pd_q-Q8p1Qg-z8A:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=73WewclNby-GrhdgABwy:22 a=svzTaB3SJmTkU8mK-ULk:22
+From: "Doug Smythies" <dsmythies@telus.net>
+To: "'Rafael J. Wysocki'" <rafael@kernel.org>,
+        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>
+Cc: "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
+        "'Rik van Riel'" <riel@surriel.com>,
+        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
+        "'Mike Galbraith'" <mgalbraith@suse.de>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "Doug Smythies" <dsmythies@telus.net>
+References: <2390019.oHdSGtR3EE@aspire.rjw.lan> <1635957.yuHkCe9oyz@aspire.rjw.lan> <CAJZ5v0j-CnEms-Wm0Op=386ceuG2GfAouVLXO48rbD_pUPJhMg@mail.gmail.com> <b05c00e7-b5d8-0bcb-0b38-a91324ec597a@tu-dresden.de> ym0ceyYVT1Konym0eegfln
+In-Reply-To: ym0ceyYVT1Konym0eegfln
+Subject: RE: [RFT][PATCH v7 5/8] cpuidle: Return nohz hint from cpuidle_select()
+Date: Wed, 21 Mar 2018 23:24:44 -0700
+Message-ID: <002d01d3c1a6$7a06bc30$6e143490$@net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.sejq5UpwT/Hp8Gk=6rRAqc"; protocol="application/pgp-signature"
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Content-Language: en-ca
+Thread-Index: AdPBYg/Oh/zHpvmbQaGiHmKF6GMzzgAO92wg
+X-CMAE-Envelope: MS4wfNO/MuDUj+BV+Xbw+VZUPqn33hn06QC/+8VfvYricEhyTy2rCVDXilxSYVQwaflNQ+i+IthEoV0sj0leaRsQxX58XhXzb2OlkHhTqacpT8wdQ02ePGWF
+ 8tiho3fnCZouBTrJAuuXtemAuf7IVrjl+xkjCzNO1pzz0jLJYuGK4MF3GXgta24/Ml56Uox74yN6LTCTsOjCo1VkFjxuepXj+j8zi2qqDjfS7F5jmChNMTR/
+ 7PCap3ZuNFttLKqZWWgDYN+eAyRfeoyQfYFe+7+rNNgiUWqj/31XJ2uwYoIgtTrDK5UGQwV+u7BqPk918XZZhhlI7lDgblaMx8GRtJNK28t3BWOnXWaAqPEa
+ 4VCI2h0bFtqYb5HhSqeZUcSEQdoEb0nM5TxfeDDJDpQHll3mMwZRzM0FR7zeCpJup5Xxzr5XhP9FrrFsN+KXrjEvQ6Sb8AjmwWbrrIqx25obI9hp7CeYZDE6
+ U1B29YifCyHl1mbqwm87DkOtH5m87oE+j5ISnJOccrxBa3khyVZ8z2ZbOnU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/.sejq5UpwT/Hp8Gk=6rRAqc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2018.03.21 15:15 Rafael J. Wysocki wrote:
+> On Wed, Mar 21, 2018 at 6:59 PM, Thomas Ilsche wrote:
+>> On 2018-03-21 15:36, Rafael J. Wysocki wrote:
+>>>
+>>>
+>>> So please disregard this one entirely and take the v7.2 replacement
+>>> instead of it:https://patchwork.kernel.org/patch/10299429/
+>>>
+>>> The current versions (including the above) is in the git branch at
+>>>
+>>>   git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+>>>   idle-loop-v7.2
+>>
+>> With v7.2 (tested on SKL-SP from git) I see similar behavior in idle
+>> as with v5: several cores which just keep the sched tick enabled.
+>> Worse yet, some go only in C1 (not even C1E!?) despite sleeping the
+>> full sched tick.
+>> The resulting power consumption is ~105 W instead of ~ 70 W.
+>>
+>> https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v7_2_skl_sp_idle.png
+>>
+>> I have briefly ran v7 and I believe it was also affected.
+>
+> Then it looks like menu_select() stubbornly thinks that the idle
+> duration will be within the tick boundary on those cores.
+> 
+> That may be because the bumping up of the correction factor in
+> menu_reflect() is too conservative or it may be necessary to do
+> something radical to measured_us in menu_update() in case of a tick
+> wakeup combined with a large next_timer_us value.
+>
+> For starters, please see if the attached patch (on top of the
+> idle-loop-v7.2 git branch) changes this behavior in any way.
 
-Hi Martin,
+O.K. I am seeing some weirdness.
+On my system with both V7.2 and V7.2 plus this patch, I observe
+A spike in Idle State 1 residency every 34+ minutes. And slightly
+higher average idle power than before. (I might not have done V7
+idle tests long enough).
 
-After merging the scsi-mkp tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+It can be seen in the frequency sweep I did earlier today, with V7.2:
 
-drivers/scsi/qla2xxx/qla_gs.c: In function 'qla24xx_async_gnnft_done':
-drivers/scsi/qla2xxx/qla_gs.c:3974:7: error: 'fc4type' undeclared (first us=
-e in this function); did you mean 'fc4type_t'?
-  if ((fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
-       ^~~~~~~
-       fc4type_t
-drivers/scsi/qla2xxx/qla_gs.c:3974:7: note: each undeclared identifier is r=
-eported only once for each function it appears in
-drivers/scsi/qla2xxx/qla_gs.c:3975:3: error: too few arguments to function =
-'qla24xx_async_gpnft'
-   qla24xx_async_gpnft(vha, FC4_TYPE_NVME);
-   ^~~~~~~~~~~~~~~~~~~
-In file included from drivers/scsi/qla2xxx/qla_def.h:4633:0,
-                 from drivers/scsi/qla2xxx/qla_gs.c:7:
-drivers/scsi/qla2xxx/qla_gbl.h:661:5: note: declared here
- int qla24xx_async_gpnft(scsi_qla_host_t *, u8, srb_t *);
-     ^~~~~~~~~~~~~~~~~~~
+http://fast.smythies.com/rjw_freq_sweep_72_combined.png
 
-Caused by commit
+Despite the note on the graph that says it might be real, I don't think
+it is (I forgot to delete the note).
 
-  33b28357dd00 ("scsi: qla2xxx: Fix Async GPN_FT for FCP and FC-NVMe scan")
+With V7.2+ sometimes the event occurs at 17 minute intervals.
+Here is a idle graph (for reference: we have seen idle package power
+pretty steady at ~3.7 watts before).
 
-interacting with commit
+http://fast.smythies.com/rjw_v72p_idle.png
 
-  2b5b96473efc ("scsi: qla2xxx: Fix FC-NVMe LUN discovery")
-
-from Linus' tree.
-
-I have added the following merge fix patch for today. Unfortunately it
-produces this warning, so a better merge resolution is needed ...
-
-drivers/scsi/qla2xxx/qla_gs.c: In function 'qla24xx_async_gnnft_done':
-drivers/scsi/qla2xxx/qla_gs.c:3974:9: warning: 'rp' may be used uninitializ=
-ed in this function [-Wmaybe-uninitialized]
-  if ((rp->fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
-       ~~^~~~~~~~~
-
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 22 Mar 2018 17:09:38 +1100
-Subject: [PATCH] scsi: qla2xxx: merge fix in qla_gs.c
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/scsi/qla2xxx/qla_gs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
-index f84807e850c3..d33f4619332e 100644
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -3971,8 +3971,8 @@ void qla24xx_async_gnnft_done(scsi_qla_host_t *vha, s=
-rb_t *sp)
- 	vha->scan.scan_flags &=3D ~SF_SCANNING;
- 	spin_unlock_irqrestore(&vha->work_lock, flags);
-=20
--	if ((fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
--		qla24xx_async_gpnft(vha, FC4_TYPE_NVME);
-+	if ((rp->fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
-+		qla24xx_async_gpnft(vha, FC4_TYPE_NVME, NULL);
- }
-=20
- static void qla2x00_find_free_fcp_nvme_slot(struct scsi_qla_host *vha,
---=20
-2.16.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.sejq5UpwT/Hp8Gk=6rRAqc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzTD8ACgkQAVBC80lX
-0GzcQAf9HN781CPZrW7AHoK7heULX0fNP0I6CzAQqTwz2g0Cwse3uoSv1SOKItGE
-PKOZG171mHvbRRs+YfKKr4GeS1L8YFesRnB8MmaK2IhtJVz3cfPFkHCseTlwmNdM
-EDBMpy14+nca3TWMLSmqrQOedEFUrAZeXoIZWQO0ni7rbRJ5YgXyTa0wNupsGATF
-XPlB+KIU+KgHQgCZcIDRFmiycKTPIYsNcyZuZtjydDfiTn+363KaLk4Y9whWNPiI
-gxy2s5lwc5ytaae+4K4TMlI7it6c9X3vam2W8cI6Inc4gB1b9LdiMtsBQRVzy2sK
-2PWLYd5h8SfkRGZs/5Z+4ABn0tD0mQ==
-=h5Ct
------END PGP SIGNATURE-----
-
---Sig_/.sejq5UpwT/Hp8Gk=6rRAqc--
+... Doug
+ 
