@@ -1,51 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752113AbeCVVcb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:32:31 -0400
-Received: from mail-pf0-f171.google.com ([209.85.192.171]:45775 "EHLO
-        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751839AbeCVVc2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:32:28 -0400
-X-Google-Smtp-Source: AG47ELt0gjrx8W9yJjyAkuUur7pURo2dqalpjGZJeYQ/shJx5/bGG710139wES1rdmqPGGRd7hVT4Q==
-Date: Thu, 22 Mar 2018 14:32:24 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: sricharan@codeaurora.org
-Cc: mark.rutland@arm.com, robh@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, linux@armlinux.org.uk,
-        bjorn.andersson@linaro.org, david.brown@linaro.org,
-        absahu@codeaurora.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
-        linux-soc@vger.kernel.org, sboyd@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 04/13] ARM: dts: ipq4019: Update ipq4019-dk01.1 board
- data
-Message-ID: <20180322213224.csntaaysjy2k3v35@localhost>
-References: <1521518336-5467-1-git-send-email-sricharan@codeaurora.org>
- <1521518336-5467-5-git-send-email-sricharan@codeaurora.org>
- <20180320143131.4eenixtbhciq5fwc@localhost>
- <78806c70c85e3cecaadfc94b173cb139@codeaurora.org>
- <20180321150743.z7edb5xkevsdi4vw@localhost>
- <4a9891ee982b55a1e76b6143bb42853c@codeaurora.org>
+        id S1752138AbeCVVdb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:33:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751595AbeCVVd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:33:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 655CD2183C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+X-Google-Smtp-Source: AG47ELs83uH/pS8JWKib1WcYFP2bypNewsn29WVoxYIfxYkFkbL+qYi4qIZcoUrcRS1tFwF29tYrQeJMILF9+0WpqlU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a9891ee982b55a1e76b6143bb42853c@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1521655492.7999.13.camel@perches.com>
+References: <1521653726-24625-1-git-send-email-p.pisati@gmail.com>
+ <1521653726-24625-3-git-send-email-p.pisati@gmail.com> <1521655492.7999.13.camel@perches.com>
+From: Alan Tull <atull@kernel.org>
+Date: Thu, 22 Mar 2018 16:32:47 -0500
+X-Gmail-Original-Message-ID: <CANk1AXT6TY5N+gR=tBNuvhQMnOpuaWKWVoUSjB+Vfof2=GAM6w@mail.gmail.com>
+Message-ID: <CANk1AXT6TY5N+gR=tBNuvhQMnOpuaWKWVoUSjB+Vfof2=GAM6w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
+To: Joe Perches <joe@perches.com>
+Cc: Paolo Pisati <p.pisati@gmail.com>, Moritz Fischer <mdf@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-fpga@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 06:35:48PM +0530, sricharan@codeaurora.org wrote:
->   Meanwhile i just posted a v4 (CCed you), is it possible that
->   i can have test feedback ? . That will be great.
+On Wed, Mar 21, 2018 at 1:04 PM, Joe Perches <joe@perches.com> wrote:
+> On Wed, 2018-03-21 at 18:35 +0100, Paolo Pisati wrote:
+>> This patch adds support to the FPGA manager for programming
+>> MachXO2 device’s internal flash memory, via slave SPI.
+>
+> style trivia:
+>
+>> diff --git a/drivers/fpga/machxo2-spi.c b/drivers/fpga/machxo2-spi.c
+> []
+>> +static int get_status(struct spi_device *spi, unsigned long *status)
+>> +{
+>> +     struct spi_message msg;
+>> +     struct spi_transfer rx, tx;
+>> +     u8 cmd[] = LSC_READ_STATUS;
+>
+> static const u8 cmd[]
+> here and everywhere else as all the tx_buf assignments
+> of cmd are to const void *
 
-I don't have any DK in hand, but I do have a custom design most
-similar to the DK7.  I'll gladly try to boot it with your series.
+Why *static* const u8 cmd[]?
 
-Just to be clear:  You are running pure mainline with absolutely no
-out-of-tree patches or other modifications, right?
+Alan
 
-Thanks,
-Richard
+>
+>> +     int ret;
+>> +
+>> +     memset(&rx, 0, sizeof(rx));
+>> +     memset(&tx, 0, sizeof(tx));
+>> +     tx.tx_buf = cmd;
+>
+> []
+>
+>> +#ifdef DEBUG
+>> +static void dump_status_reg(unsigned long *status)
+>> +{
+>
+> Instead of multiple declarations of dump_status_reg
+> it's frequently nicer to use a style like
+>
+> static void debug_func(args...)
+> {
+> #ifdef DEBUG
+>         [code...]
+> #endif
+> }
+>
+> so if function arguments ever need to be changed
+> it's only required to be changed in one spot and
+> not multiply compilation tested with and without
+> the DEBUG definition
+>
+>> +     char *ferr;
+>> +
+>> +     switch (get_err(status)) {
+>> +     case ENOERR:
+>> +             ferr = "No Error";
+>> +             break;
+>> +     case EID:
+>> +             ferr = "ID ERR";
+>> +             break;
+>> +     case ECMD:
+>> +             ferr = "CMD ERR";
+>> +             break;
+>> +     case ECRC:
+>> +             ferr = "CRC ERR";
+>> +             break;
+>> +     case EPREAM:
+>> +             ferr = "Preamble ERR";
+>> +             break;
+>> +     case EABRT:
+>> +             ferr = "Abort ERR";
+>> +             break;
+>> +     case EOVERFL:
+>> +             ferr = "Overflow ERR";
+>> +             break;
+>> +     case ESDMEOF:
+>> +             ferr = "SDM EOF";
+>> +             break;
+>> +     default:
+>> +             ferr = "Default switch case";
+>> +     }
+>
+> It's frequently nicer to use a static function
+> for these enum -> string conversions like:
+>
+> static const char *get_err_string(unsigned long err)
+> {
+>         switch (err) {
+>         case ENOERR:    return "No Error";
+>         case EID:       return "ID ERR";
+>         case ECMD:      return "CMD ERR";
+>         [...]
+>         }
+>         return "default switch case";
+> }
+>
+>> +     pr_debug("machxo2 status: 0x%08lX - done=%d, cfgena=%d, busy=%d, fail=%d, devver=%d, err=%s\n",
+>> +            *status, test_bit(DONE, status), test_bit(ENAB, status),
+>> +            test_bit(BUSY, status), test_bit(FAIL, status),
+>> +                test_bit(DVER, status), ferr);
+>
+> So instead of ferr, this could use
+>         get_err_string(*status)
+>
+> And please try to keep a consistent alignment for
+> indentation of multiple line statements
+>
+>> +}
+>> +#else
+>> +static void dump_status_reg(unsigned long *status) {}
+>> +#endif
+>> +
+>> +static int wait_until_not_busy(struct spi_device *spi)
+>> +{
+>> +     unsigned long status;
+>> +     int ret, loop = 0;
+>> +
+>> +     do {
+>> +             ret = get_status(spi, &status);
+>> +             if (ret)
+>> +                     break;
+>> +             if (++loop >= MACHXO2_MAX_BUSY_LOOP) {
+>> +                     ret = -EBUSY;
+>> +                     break;
+>> +             }
+>> +     } while (test_bit(BUSY, &status));
+>> +
+>> +     return ret;
+>> +}
+>
+> Direct returns are OK and would shorten the function
+> line count.
+>
