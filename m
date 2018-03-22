@@ -1,84 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752003AbeCVCne (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 22:43:34 -0400
-Received: from mail-pl0-f52.google.com ([209.85.160.52]:43741 "EHLO
-        mail-pl0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751716AbeCVCnb (ORCPT
+        id S1751981AbeCVC67 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 22:58:59 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:21635 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751625AbeCVC6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 22:43:31 -0400
-X-Google-Smtp-Source: AG47ELsJDqBpUMzxmOIrU0S2yXcUB91bHmk5Uq2+2GMWJgsvGRUDHQlJAvOQohSaxlPJJgJid73Z1Q==
-Date: Thu, 22 Mar 2018 11:43:26 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Nick Terrell <terrelln@fb.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Maninder Singh <maninder1.s@samsung.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "ngupta@vflare.org" <ngupta@vflare.org>,
-        Kees Cook <keescook@chromium.org>,
-        "anton@enomsg.org" <anton@enomsg.org>,
-        "ccross@android.com" <ccross@android.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pankaj.m@samsung.com" <pankaj.m@samsung.com>,
-        "a.sahrawat@samsung.com" <a.sahrawat@samsung.com>,
-        "v.narang@samsung.com" <v.narang@samsung.com>,
-        Yann Collet <cyan@fb.com>
-Subject: Re: [PATCH 0/1] cover-letter/lz4: Implement lz4 with dynamic offset
- length.
-Message-ID: <20180322024326.GC3181@jagdpanzerIV>
-References: <CGME20180321044137epcas5p221e7ee4a0b7464eaa00dad8320f0251d@epcas5p2.samsung.com>
- <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
- <20180321082628.GB2746@jagdpanzerIV>
- <1663C9A3-7DAC-4A11-894C-C99E07BEDAD2@fb.com>
+        Wed, 21 Mar 2018 22:58:55 -0400
+X-UUID: ff44d4a2c5ea42da9b64b6648171d7e7-20180322
+From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+To: <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
+        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>
+CC: <srv_heupstream@mediatek.com>, <liguo.zhang@mediatek.com>,
+        <yingjoe.chen@mediatek.com>, <hongkun.cao@mediatek.com>,
+        <biao.huang@mediatek.com>, <yt.shen@mediatek.com>,
+        <hongzhou.yang@mediatek.com>, <erin.lo@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        Zhiyong Tao <zhiyong.tao@mediatek.com>
+Subject: [PATCH v4 2/5] arm64: dts: mt2712: add pintcrl device node.
+Date: Thu, 22 Mar 2018 10:58:40 +0800
+Message-ID: <1521687523-1604-3-git-send-email-zhiyong.tao@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com>
+References: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1663C9A3-7DAC-4A11-894C-C99E07BEDAD2@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (03/21/18 19:56), Nick Terrell wrote:
-[..]
-> This seems like a reasonable extension to the algorithm, and it looks like
-> LZ4_DYN is about a 5% improvement to compression ratio on your benchmark.
-> The biggest question I have is if it is worthwhile to maintain a separate
-> incompatible variant of LZ4 in the kernel without any upstream for a 5%
-> gain? If we do want to go forward with this, we should perform more
-> benchmarks.
-> 
-> I commented in the patch, but because the `dynOffset` variable isn't a
-> compile time static in LZ4_decompress_generic(), I suspect that the patch
-> causes a regression in decompression speed for both LZ4 and LZ4_DYN. You'll
-> need to re-run the benchmarks to first show that LZ4 before the patch
-> performs the same as LZ4 after the patch. Then re-run the LZ4 vs LZ4_DYN
-> benchmarks.
-> 
-> I would also like to see a benchmark in user-space (with the code), so we
-> can see the performance of LZ4 before and after the patch, as well as LZ4
-> vs LZ4_DYN without anything else going on. I expect the extra branches in
-> the decoding loop to have an impact on speed, and I would like to see how
-> big the impact is without noise. 
+This patch adds pintcrl device node for mt2712.
 
-Yes, I've been thinking about this. There are more branches now
-("to dyn or not to dyn") in compression/decompression hot path but
-we see less instructions and branches in perf output at the end.
-And my guess is that we have a lot of noise from zram and zsmalloc.
-The data is XXX bytes shorter with dyn enabled, so we use YYY less
-moves and ZZZ less branches while we copy the data to zsmalloc and
-from zsmalloc, and I may be that's the root cause of "performance
-gain" that we see in zram-fio tests. So may be we need to run
-benchmarks against lz4, not zram+lz4.
+Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-> CC-ing Yann Collet, the author of LZ4
-
-Great, thanks.
-
-	-ss
+diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+index d7688bc..fb3b051 100644
+--- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
+@@ -9,6 +9,7 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/power/mt2712-power.h>
++#include "mt2712-pinfunc.h"
+ 
+ / {
+ 	compatible = "mediatek,mt2712";
+@@ -258,6 +259,23 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	syscfg_pctl_a: syscfg_pctl_a@10005000 {
++		compatible = "mediatek,mt2712-pctl-a-syscfg", "syscon";
++		reg = <0 0x10005000 0 0x1000>;
++	};
++
++	pio: pinctrl@10005000 {
++		compatible = "mediatek,mt2712-pinctrl";
++		reg = <0 0x1000b000 0 0x1000>;
++		mediatek,pctl-regmap = <&syscfg_pctl_a>;
++		pins-are-numbered;
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++	};
++
+ 	scpsys: scpsys@10006000 {
+ 		compatible = "mediatek,mt2712-scpsys", "syscon";
+ 		#power-domain-cells = <1>;
+-- 
+1.9.1
