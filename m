@@ -1,220 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751691AbeCVQKK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:10:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49134 "EHLO mail.kernel.org"
+        id S1751761AbeCVQLQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:11:16 -0400
+Received: from mga04.intel.com ([192.55.52.120]:35344 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750863AbeCVQKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:10:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB4652177B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 22 Mar 2018 12:10:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Cc: Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexei Starovoitov <ast@fb.com>
-Subject: [PATCH] mm, vmscan, tracing: Use pointer to reclaim_stat struct in
- trace event
-Message-ID: <20180322121003.4177af15@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751319AbeCVQLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:11:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
+   d="scan'208";a="27170323"
+Subject: [PATCH v2 1/3] perf/core: store context switch out type into Perf
+ trace
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+References: <713750a0-7cc1-0a27-7253-12ff4f3c9a8d@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <94a1fd9d-f3b1-156a-589b-a8dc9c17464b@linux.intel.com>
+Date: Thu, 22 Mar 2018 19:11:07 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <713750a0-7cc1-0a27-7253-12ff4f3c9a8d@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-The trace event trace_mm_vmscan_lru_shrink_inactive() currently has 12
-parameters! Seven of them are from the reclaim_stat structure. This
-structure is currently local to mm/vmscan.c. By moving it to the global
-vmstat.h header, we can also reference it from the vmscan tracepoints. In
-moving it, it brings down the overhead of passing so many arguments to the
-trace event. In the future, we may limit the number of arguments that a
-trace event may pass (ideally just 6, but more realistically it may be 8).
+Store thread context-switch-out event type into Perf trace as a part of 
+PERF_RECORD_SWITCH[_CPU_WIDE] records.
 
-Before this patch, the code to call the trace event is this:
+Introduced types of switch-out events assumed to be 
+a) preempt: task->state == TASK_RUNNING and b) yield: !preempt;
 
- 0f 83 aa fe ff ff       jae    ffffffff811e6261 <shrink_inactive_list+0x1e1>
- 48 8b 45 a0             mov    -0x60(%rbp),%rax
- 45 8b 64 24 20          mov    0x20(%r12),%r12d
- 44 8b 6d d4             mov    -0x2c(%rbp),%r13d
- 8b 4d d0                mov    -0x30(%rbp),%ecx
- 44 8b 75 cc             mov    -0x34(%rbp),%r14d
- 44 8b 7d c8             mov    -0x38(%rbp),%r15d
- 48 89 45 90             mov    %rax,-0x70(%rbp)
- 8b 83 b8 fe ff ff       mov    -0x148(%rbx),%eax
- 8b 55 c0                mov    -0x40(%rbp),%edx
- 8b 7d c4                mov    -0x3c(%rbp),%edi
- 8b 75 b8                mov    -0x48(%rbp),%esi
- 89 45 80                mov    %eax,-0x80(%rbp)
- 65 ff 05 e4 f7 e2 7e    incl   %gs:0x7ee2f7e4(%rip)        # 15bd0 <__preempt_count>
- 48 8b 05 75 5b 13 01    mov    0x1135b75(%rip),%rax        # ffffffff8231bf68 <__tracepoint_mm_vmscan_lru_shrink_inactive+0x28>
- 48 85 c0                test   %rax,%rax
- 74 72                   je     ffffffff811e646a <shrink_inactive_list+0x3ea>
- 48 89 c3                mov    %rax,%rbx
- 4c 8b 10                mov    (%rax),%r10
- 89 f8                   mov    %edi,%eax
- 48 89 85 68 ff ff ff    mov    %rax,-0x98(%rbp)
- 89 f0                   mov    %esi,%eax
- 48 89 85 60 ff ff ff    mov    %rax,-0xa0(%rbp)
- 89 c8                   mov    %ecx,%eax
- 48 89 85 78 ff ff ff    mov    %rax,-0x88(%rbp)
- 89 d0                   mov    %edx,%eax
- 48 89 85 70 ff ff ff    mov    %rax,-0x90(%rbp)
- 8b 45 8c                mov    -0x74(%rbp),%eax
- 48 8b 7b 08             mov    0x8(%rbx),%rdi
- 48 83 c3 18             add    $0x18,%rbx
- 50                      push   %rax
- 41 54                   push   %r12
- 41 55                   push   %r13
- ff b5 78 ff ff ff       pushq  -0x88(%rbp)
- 41 56                   push   %r14
- 41 57                   push   %r15
- ff b5 70 ff ff ff       pushq  -0x90(%rbp)
- 4c 8b 8d 68 ff ff ff    mov    -0x98(%rbp),%r9
- 4c 8b 85 60 ff ff ff    mov    -0xa0(%rbp),%r8
- 48 8b 4d 98             mov    -0x68(%rbp),%rcx
- 48 8b 55 90             mov    -0x70(%rbp),%rdx
- 8b 75 80                mov    -0x80(%rbp),%esi
- 41 ff d2                callq  *%r10
+New yield event type is encoded using special 
+PERF_RECORD_MISC_SWITCH_OUT_YIELD bit extending PERF_RECORD_MISC_SWITCH_OUT 
+meaning traditional preemption switch out event:
 
-After the patch:
-
- 0f 83 a8 fe ff ff       jae    ffffffff811e626d <shrink_inactive_list+0x1cd>
- 8b 9b b8 fe ff ff       mov    -0x148(%rbx),%ebx
- 45 8b 64 24 20          mov    0x20(%r12),%r12d
- 4c 8b 6d a0             mov    -0x60(%rbp),%r13
- 65 ff 05 f5 f7 e2 7e    incl   %gs:0x7ee2f7f5(%rip)        # 15bd0 <__preempt_count>
- 4c 8b 35 86 5b 13 01    mov    0x1135b86(%rip),%r14        # ffffffff8231bf68 <__tracepoint_mm_vmscan_lru_shrink_inactive+0x28>
- 4d 85 f6                test   %r14,%r14
- 74 2a                   je     ffffffff811e6411 <shrink_inactive_list+0x371>
- 49 8b 06                mov    (%r14),%rax
- 8b 4d 8c                mov    -0x74(%rbp),%ecx
- 49 8b 7e 08             mov    0x8(%r14),%rdi
- 49 83 c6 18             add    $0x18,%r14
- 4c 89 ea                mov    %r13,%rdx
- 45 89 e1                mov    %r12d,%r9d
- 4c 8d 45 b8             lea    -0x48(%rbp),%r8
- 89 de                   mov    %ebx,%esi
- 51                      push   %rcx
- 48 8b 4d 98             mov    -0x68(%rbp),%rcx
- ff d0                   callq  *%rax
-
-Link: http://lkml.kernel.org/r/2559d7cb-ec60-1200-2362-04fa34fd02bb@fb.com
-
-Reported-by: Alexei Starovoitov <ast@fb.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+    misc &= PERF_RECORD_MISC_SWITCH_OUT | PERF_RECORD_MISC_SWITCH_OUT_YIELD
+	
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- include/linux/vmstat.h        | 11 +++++++++++
- include/trace/events/vmscan.h | 24 +++++++++---------------
- mm/vmscan.c                   | 18 +-----------------
- 3 files changed, 21 insertions(+), 32 deletions(-)
+ include/uapi/linux/perf_event.h       | 5 +++++
+ kernel/events/core.c                  | 4 +++-
+ tools/include/uapi/linux/perf_event.h | 5 +++++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index a4c2317d8b9f..f25cef84b41d 100644
---- a/include/linux/vmstat.h
-+++ b/include/linux/vmstat.h
-@@ -20,6 +20,17 @@ extern int sysctl_vm_numa_stat_handler(struct ctl_table *table,
- 		int write, void __user *buffer, size_t *length, loff_t *ppos);
- #endif
- 
-+struct reclaim_stat {
-+	unsigned nr_dirty;
-+	unsigned nr_unqueued_dirty;
-+	unsigned nr_congested;
-+	unsigned nr_writeback;
-+	unsigned nr_immediate;
-+	unsigned nr_activate;
-+	unsigned nr_ref_keep;
-+	unsigned nr_unmap_fail;
-+};
-+
- #ifdef CONFIG_VM_EVENT_COUNTERS
- /*
-  * Light weight per cpu counter implementation.
-diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
-index e0b8b9173e1c..5a7435296d89 100644
---- a/include/trace/events/vmscan.h
-+++ b/include/trace/events/vmscan.h
-@@ -343,15 +343,9 @@ TRACE_EVENT(mm_vmscan_lru_shrink_inactive,
- 
- 	TP_PROTO(int nid,
- 		unsigned long nr_scanned, unsigned long nr_reclaimed,
--		unsigned long nr_dirty, unsigned long nr_writeback,
--		unsigned long nr_congested, unsigned long nr_immediate,
--		unsigned long nr_activate, unsigned long nr_ref_keep,
--		unsigned long nr_unmap_fail,
--		int priority, int file),
-+		struct reclaim_stat *stat, int priority, int file),
- 
--	TP_ARGS(nid, nr_scanned, nr_reclaimed, nr_dirty, nr_writeback,
--		nr_congested, nr_immediate, nr_activate, nr_ref_keep,
--		nr_unmap_fail, priority, file),
-+	TP_ARGS(nid, nr_scanned, nr_reclaimed, stat, priority, file),
- 
- 	TP_STRUCT__entry(
- 		__field(int, nid)
-@@ -372,13 +366,13 @@ TRACE_EVENT(mm_vmscan_lru_shrink_inactive,
- 		__entry->nid = nid;
- 		__entry->nr_scanned = nr_scanned;
- 		__entry->nr_reclaimed = nr_reclaimed;
--		__entry->nr_dirty = nr_dirty;
--		__entry->nr_writeback = nr_writeback;
--		__entry->nr_congested = nr_congested;
--		__entry->nr_immediate = nr_immediate;
--		__entry->nr_activate = nr_activate;
--		__entry->nr_ref_keep = nr_ref_keep;
--		__entry->nr_unmap_fail = nr_unmap_fail;
-+		__entry->nr_dirty = stat->nr_dirty;
-+		__entry->nr_writeback = stat->nr_writeback;
-+		__entry->nr_congested = stat->nr_congested;
-+		__entry->nr_immediate = stat->nr_immediate;
-+		__entry->nr_activate = stat->nr_activate;
-+		__entry->nr_ref_keep = stat->nr_ref_keep;
-+		__entry->nr_unmap_fail = stat->nr_unmap_fail;
- 		__entry->priority = priority;
- 		__entry->reclaim_flags = trace_shrink_flags(file);
- 	),
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index bee53495a829..aaeb86642095 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -865,17 +865,6 @@ static void page_check_dirty_writeback(struct page *page,
- 		mapping->a_ops->is_dirty_writeback(page, dirty, writeback);
- }
- 
--struct reclaim_stat {
--	unsigned nr_dirty;
--	unsigned nr_unqueued_dirty;
--	unsigned nr_congested;
--	unsigned nr_writeback;
--	unsigned nr_immediate;
--	unsigned nr_activate;
--	unsigned nr_ref_keep;
--	unsigned nr_unmap_fail;
--};
--
- /*
-  * shrink_page_list() returns the number of reclaimed pages
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 912b85b52344..f5dd823d0ff1 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -655,6 +655,11 @@ struct perf_event_mmap_page {
+  * perf_event_attr::precise_ip.
   */
-@@ -1828,12 +1817,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
- 		wait_iff_congested(pgdat, BLK_RW_ASYNC, HZ/10);
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++/*
++ * Indicates that thread explicitly yielded cpu due to
++ * a call of some synchronization API e.g. futex system call
++ */
++#define PERF_RECORD_MISC_SWITCH_OUT_YIELD	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 74a6e8f12a3c..f15af15af474 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7556,6 +7556,8 @@ static void perf_event_switch(struct task_struct *task,
+ 			      struct task_struct *next_prev, bool sched_in)
+ {
+ 	struct perf_switch_event switch_event;
++	__u16 switch_type = sched_in ? 0 : PERF_RECORD_MISC_SWITCH_OUT |
++		(task->state == TASK_RUNNING ? 0 : PERF_RECORD_MISC_SWITCH_OUT_YIELD);
  
- 	trace_mm_vmscan_lru_shrink_inactive(pgdat->node_id,
--			nr_scanned, nr_reclaimed,
--			stat.nr_dirty,  stat.nr_writeback,
--			stat.nr_congested, stat.nr_immediate,
--			stat.nr_activate, stat.nr_ref_keep,
--			stat.nr_unmap_fail,
--			sc->priority, file);
-+			nr_scanned, nr_reclaimed, &stat, sc->priority, file);
- 	return nr_reclaimed;
- }
+ 	/* N.B. caller checks nr_switch_events != 0 */
  
--- 
-2.13.6
+@@ -7565,7 +7567,7 @@ static void perf_event_switch(struct task_struct *task,
+ 		.event_id	= {
+ 			.header = {
+ 				/* .type */
+-				.misc = sched_in ? 0 : PERF_RECORD_MISC_SWITCH_OUT,
++				.misc = switch_type,
+ 				/* .size */
+ 			},
+ 			/* .next_prev_pid */
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index 912b85b52344..f5dd823d0ff1 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -655,6 +655,11 @@ struct perf_event_mmap_page {
+  * perf_event_attr::precise_ip.
+  */
+ #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
++/*
++ * Indicates that thread explicitly yielded cpu due to
++ * a call of some synchronization API e.g. futex system call
++ */
++#define PERF_RECORD_MISC_SWITCH_OUT_YIELD	(1 << 14)
+ /*
+  * Reserve the last bit to indicate some extended misc field
+  */
