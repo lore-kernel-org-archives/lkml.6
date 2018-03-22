@@ -1,64 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751819AbeCVTLm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 15:11:42 -0400
-Received: from cmta19.telus.net ([209.171.16.92]:33823 "EHLO cmta19.telus.net"
+        id S1752165AbeCVTO7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 15:14:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55050 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751668AbeCVTLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 15:11:40 -0400
-X-Authority-Analysis: v=2.2 cv=TI+qcxta c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=SSZsOMKSBQPNBdVzpjgA:9
- a=QEXdDO2ut3YA:10
-From: "Doug Smythies" <dsmythies@telus.net>
-To: "'Rik van Riel'" <riel@surriel.com>
-Cc: "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Frederic Weisbecker'" <fweisbec@gmail.com>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Paul McKenney'" <paulmck@linux.vnet.ibm.com>,
-        "'Thomas Ilsche'" <thomas.ilsche@tu-dresden.de>,
-        "'Aubrey Li'" <aubrey.li@linux.intel.com>,
-        "'Mike Galbraith'" <mgalbraith@suse.de>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: <4137867.C4jYrWdt8n@aspire.rjw.lan>  <20180314120450.GT4043@hirez.programming.kicks-ass.net> z38ge3YFh1Konz38iel45g
-In-Reply-To: z38ge3YFh1Konz38iel45g
-Subject: RE: [PATCH v2] cpuidle: poll_state: Add time limit to poll_idle()
-Date: Thu, 22 Mar 2018 12:11:33 -0700
-Message-ID: <003f01d3c211$9a094e10$ce1bea30$@net>
+        id S1751814AbeCVTO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 15:14:56 -0400
+Date: Thu, 22 Mar 2018 20:14:53 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        antoine.tenart@bootlin.com, thomas.petazzoni@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next v2] net: mvpp2: Don't use dynamic allocs for
+ local variables
+Message-ID: <20180322201453.706b0ab8@bootlin.com>
+In-Reply-To: <20180322.144709.550558706036978967.davem@davemloft.net>
+References: <20180321151400.6658-1-maxime.chevallier@bootlin.com>
+        <20180322.144709.550558706036978967.davem@davemloft.net>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdPB+2Knq1MUfUhjTr6ehdQ6RKf0qwAFSacQ
-X-CMAE-Envelope: MS4wfKf6jbN8aGXPfBvwxnUB0jHNr+SQ+v/feU553d5E9w+j8U8nKPxFCZ/aPeE/JIsLeE3IPN6SlmfgeAnjdHGi28GlTLoMHKLCcQnKDdV9bFTuD3JDT/mA
- +XiGFUAGV/MM4ZvxdlTYLgOh91/ROO+CMYEYdxV+Qzsoc11JywEfF/l383wHN7KDnzR8MS8R7tKeO6IlKBwzg129rI2/4RMa/zpk5R41Dy13VBr1yuh9DJzR
- VbNwKCcoMQkfLSQWD66fMl46lK4S6/DgNKFdv/cruWYKdZtbHQswvZSoIbyitcXbD1P9So5Wj2ezqxKrJJ8hEb5XKmRRGDCSy1unkIvHUVFb4Pvuq39TCK/a
- mBBmjOlY6ETroQiamPM2JIuYoBrginYTBtZVCw31YTeyd49/Awc9erF0Woekjs1KC2vvF58JQDBHQLnFlmr0CuHMLBKcukWT6MaD9V9cwUhblal0e8mxyL5r
- BZ34qHLdG6Q6rlBTpHYUcDhBrO17UbqphCamBUEMfefi80VcwDTfBwjG4Uo=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.03.22 09:32 Rik van Riel wrote:
-> On Wed, 2018-03-14 at 13:04 +0100, Peter Zijlstra wrote:
->
->> On x86 we don't have to use that time_check_counter thing,
->> sched_clock()
->> is really cheap, not sure if it makes sense on other platforms.
->
-> Are you sure? I saw a 5-10% increase in CPU use,
-> for a constant query rate to a memcache style
-> workload, with v3 of this patch.
+Hello David,
 
-I would very much like to be able to repeat your test results.
-However, I am not sure what you mean by "memcache style workload".
-Is there a test you can point me to? Say a Phoronix type test, for example.
+On Thu, 22 Mar 2018 14:47:09 -0400 (EDT),
+David Miller <davem@davemloft.net> wrote :
 
-All of my tests with the V3 of this patch have been fine.
+> From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Date: Wed, 21 Mar 2018 16:14:00 +0100
+> 
+> > diff --git a/drivers/net/ethernet/marvell/mvpp2.c
+> > b/drivers/net/ethernet/marvell/mvpp2.c index
+> > 9bd35f2291d6..28e33e139178 100644 ---
+> > a/drivers/net/ethernet/marvell/mvpp2.c +++
+> > b/drivers/net/ethernet/marvell/mvpp2.c @@ -1913,16 +1913,11 @@
+> > static void mvpp2_prs_sram_offset_set(struct mvpp2_prs_entry *pe, }
+> >  
+> >  /* Find parser flow entry */
+> > -static struct mvpp2_prs_entry *mvpp2_prs_flow_find(struct mvpp2
+> > *priv, int flow) +static int mvpp2_prs_flow_find(struct mvpp2
+> > *priv, int flow) {
+> > -	struct mvpp2_prs_entry *pe;
+> > +	struct mvpp2_prs_entry pe;
+> >  	int tid;
+> >  
+> > -	pe = kzalloc(sizeof(*pe), GFP_KERNEL);
+> > -	if (!pe)
+> > -		return NULL;
+> > -	mvpp2_prs_tcam_lu_set(pe, MVPP2_PRS_LU_FLOWS);
+> > -  
+> 
+> In order to be an equivalent change you must bzero out this 'pe'
+> object on the stack.  You are only initializing the index member
+> before passing it into other functions.
 
-... Doug
+I agree that this is unclear, but the functions I pass these objects to
+only need the index field to be set, and will fill the rest of the
+object according to the underlying HW representation (these objects
+mirror the HW configuration).
+
+I can see that this is confusing, we might want to make the
+mvpp2_prs_hw_read function more explicit about this.
+
+Would comments explaning this be enough, or should I try another way to
+make this cleaner ?
+
+Thanks,
+
+Maxime
