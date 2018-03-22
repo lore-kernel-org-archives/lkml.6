@@ -1,80 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754570AbeCVJKe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:10:34 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37706 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752921AbeCVJBq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:46 -0400
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 27/45] mm: add kernel_mbind() helper; remove in-kernel call to syscall
-Date: Thu, 22 Mar 2018 10:00:41 +0100
-Message-Id: <20180322090059.19361-28-linux@dominikbrodowski.net>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
-References: <20180322090059.19361-1-linux@dominikbrodowski.net>
+        id S1754606AbeCVJKv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:10:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43290 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754410AbeCVJKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 05:10:11 -0400
+Date: Thu, 22 Mar 2018 10:10:08 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+Message-ID: <20180322091008.GZ23100@dhcp22.suse.cz>
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321131449.GN23100@dhcp22.suse.cz>
+ <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
+ <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
+ <20180321212355.GR23100@dhcp22.suse.cz>
+ <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the mm-internal kernel_mbind() helper allows us to get rid of the
-mm-internal call to the sys_mbind() syscall.
+On Wed 21-03-18 15:36:12, Yang Shi wrote:
+> 
+> 
+> On 3/21/18 2:23 PM, Michal Hocko wrote:
+> > On Wed 21-03-18 10:16:41, Yang Shi wrote:
+> > > 
+> > > On 3/21/18 9:50 AM, Yang Shi wrote:
+> > > > 
+> > > > On 3/21/18 6:14 AM, Michal Hocko wrote:
+> > > > > On Wed 21-03-18 05:31:19, Yang Shi wrote:
+> > > > > > When running some mmap/munmap scalability tests with large memory (i.e.
+> > > > > > > 300GB), the below hung task issue may happen occasionally.
+> > > > > > INFO: task ps:14018 blocked for more than 120 seconds.
+> > > > > >          Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+> > > > > >    "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> > > > > > message.
+> > > > > >    ps              D    0 14018      1 0x00000004
+> > > > > >     ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+> > > > > >     ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+> > > > > >     00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+> > > > > >    Call Trace:
+> > > > > >     [<ffffffff817154d0>] ? __schedule+0x250/0x730
+> > > > > >     [<ffffffff817159e6>] schedule+0x36/0x80
+> > > > > >     [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+> > > > > >     [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+> > > > > >     [<ffffffff81717db0>] down_read+0x20/0x40
+> > > > > >     [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+> > > > > Slightly off-topic:
+> > > > > Btw. this sucks as well. Do we really need to take mmap_sem here? Do any
+> > > > > of
+> > > > >      arg_start = mm->arg_start;
+> > > > >      arg_end = mm->arg_end;
+> > > > >      env_start = mm->env_start;
+> > > > >      env_end = mm->env_end;
+> > > > > 
+> > > > > change after exec or while the pid is already visible in proc? If yes
+> > > > > maybe we can use a dedicated lock.
+> > > BTW, this is not the only place to acquire mmap_sem in
+> > > proc_pid_cmdline_read(), it calls access_remote_vm() which need acquire
+> > > mmap_sem too, so the mmap_sem scalability issue will be hit sooner or later.
+> > Ohh, absolutely. mmap_sem is unfortunatelly abused and it would be great
+> > to remove that. munmap should perform much better. How to do that safely
+> 
+> Yes, agree. We are on the same page.
+> 
+> > is a different question. I am not yet convinced that tearing down a vma
+> > in batches is safe. The vast majority of time is spent on tearing down
+> 
+> You can try my patches. I did full LTP test and running multiple kernel
+> build in parallel. It survives.
 
-This patch is part of a series which tries to remove in-kernel calls to
-syscalls. On this basis, the syscall entry path can be streamlined.
+Which doesn't really mean anything. Those tests are likely to not hit
+corner cases where an application silently depends on the mmap locking
+and unmap atomicity.
+ 
+> > pages and that is quite easy to move out of the write lock. That would
+> > be an improvement already and it should be risk safe. If even that is
+> > not sufficient then using range locking should help a lot. There
+> > shouldn't be really any other address space operations within the range
+> > most of the time so this would be basically non-contended access.
+> 
+> It might depend on how the range is defined. Too big range may lead to
+> surprisingly more contention, but too small range may bring in too much
+> lock/unlock operations.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- mm/mempolicy.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 7399ede02b5f..e4d7d4c0b253 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -1336,9 +1336,9 @@ static int copy_nodes_to_user(unsigned long __user *mask, unsigned long maxnode,
- 	return copy_to_user(mask, nodes_addr(*nodes), copy) ? -EFAULT : 0;
- }
- 
--SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
--		unsigned long, mode, const unsigned long __user *, nmask,
--		unsigned long, maxnode, unsigned, flags)
-+static long kernel_mbind(unsigned long start, unsigned long len,
-+			 unsigned long mode, const unsigned long __user *nmask,
-+			 unsigned long maxnode, unsigned int flags)
- {
- 	nodemask_t nodes;
- 	int err;
-@@ -1357,6 +1357,13 @@ SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
- 	return do_mbind(start, len, mode, mode_flags, &nodes, flags);
- }
- 
-+SYSCALL_DEFINE6(mbind, unsigned long, start, unsigned long, len,
-+		unsigned long, mode, const unsigned long __user *, nmask,
-+		unsigned long, maxnode, unsigned int, flags)
-+{
-+	return kernel_mbind(start, len, mode, nmask, maxnode, flags);
-+}
-+
- /* Set the process memory policy */
- SYSCALL_DEFINE3(set_mempolicy, int, mode, const unsigned long __user *, nmask,
- 		unsigned long, maxnode)
-@@ -1575,7 +1582,7 @@ COMPAT_SYSCALL_DEFINE6(mbind, compat_ulong_t, start, compat_ulong_t, len,
- 			return -EFAULT;
- 	}
- 
--	return sys_mbind(start, len, mode, nm, nr_bits+1, flags);
-+	return kernel_mbind(start, len, mode, nm, nr_bits+1, flags);
- }
- 
- COMPAT_SYSCALL_DEFINE4(migrate_pages, compat_pid_t, pid,
+The full vma will have to be range locked. So there is nothing small or large.
 -- 
-2.16.2
+Michal Hocko
+SUSE Labs
