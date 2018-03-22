@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752479AbeCVUWe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 16:22:34 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46488 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752267AbeCVUVG (ORCPT
+        id S1752490AbeCVUW5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 16:22:57 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53867 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752216AbeCVUVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 16:21:06 -0400
-X-Google-Smtp-Source: AG47ELvJm5PQ1PFeQaA3piXJ5S1tPmrFQM1is4SiE1kAD4mvw5zbTUpaRkLbTrmLzPumK5KN097K2g==
+        Thu, 22 Mar 2018 16:21:01 -0400
+X-Google-Smtp-Source: AG47ELt3TBw87iE7M/1R4fpQace9Bw7+ormhhyMMDg5v0+T5ZtyY5jqvFsDr4dbhaEAeygDPKi/kNQ==
 From: Mathieu Malaterre <malat@debian.org>
 To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Mathieu Malaterre <malat@debian.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org
-Subject: [PATCH 15/19] powerpc: Add missing prototype
-Date: Thu, 22 Mar 2018 21:20:01 +0100
-Message-Id: <20180322202007.23088-16-malat@debian.org>
+Subject: [PATCH 12/19] powerpc/powermac: Add missing prototype for note_bootable_part()
+Date: Thu, 22 Mar 2018 21:19:58 +0100
+Message-Id: <20180322202007.23088-13-malat@debian.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180322202007.23088-1-malat@debian.org>
 References: <20180322202007.23088-1-malat@debian.org>
@@ -27,29 +27,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add one missing prototype for function rh_dump_blk. Fix warning treated as
-error in W=1:
+Add a missing prototype for function `note_bootable_part` to silence a
+warning treated as error with W=1:
 
-  arch/powerpc/lib/rheap.c:740:6: error: no previous prototype for ‘rh_dump_blk’ [-Werror=missing-prototypes]
+  arch/powerpc/platforms/powermac/setup.c:361:12: error: no previous prototype for ‘note_bootable_part’ [-Werror=missing-prototypes]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/powerpc/include/asm/rheap.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/platforms/powermac/setup.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/include/asm/rheap.h b/arch/powerpc/include/asm/rheap.h
-index 172381769cfc..e75d96de19a0 100644
---- a/arch/powerpc/include/asm/rheap.h
-+++ b/arch/powerpc/include/asm/rheap.h
-@@ -83,6 +83,9 @@ extern int rh_get_stats(rh_info_t * info, int what, int max_stats,
- /* Simple dump of remote heap info */
- extern void rh_dump(rh_info_t * info);
+diff --git a/arch/powerpc/platforms/powermac/setup.c b/arch/powerpc/platforms/powermac/setup.c
+index ab668cb72263..e3d00f8af441 100644
+--- a/arch/powerpc/platforms/powermac/setup.c
++++ b/arch/powerpc/platforms/powermac/setup.c
+@@ -352,6 +352,7 @@ static int pmac_late_init(void)
+ }
+ machine_late_initcall(powermac, pmac_late_init);
  
-+/* Simple dump of remote info block */
-+extern void rh_dump_blk(rh_info_t *info, rh_block_t *blk);
-+
- /* Set owner of taken block */
- extern int rh_set_owner(rh_info_t * info, unsigned long start, const char *owner);
- 
++extern void note_bootable_part(dev_t dev, int part, int goodness);
+ /*
+  * This is __ref because we check for "initializing" before
+  * touching any of the __init sensitive things and "initializing"
 -- 
 2.11.0
