@@ -1,53 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754518AbeCVB7q (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 21:59:46 -0400
-Received: from mail-pl0-f46.google.com ([209.85.160.46]:33819 "EHLO
-        mail-pl0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754486AbeCVB7m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 21:59:42 -0400
-X-Google-Smtp-Source: AG47ELuAXKpRqnSGqgjrY19vf0KMqICxK01vK9X31BBZl9/mDI3qu1BNS4sV2f/Dj1fjMbHZIkDw4w==
-Date: Wed, 21 Mar 2018 19:00:14 -0700
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: mm/hmm: a simple question regarding devm_request_mem_region()
-Message-ID: <20180322020013.GA26480@Asurada-Nvidia>
-References: <20180321222357.GA31089@Asurada-Nvidia>
- <20180321225632.GI3214@redhat.com>
- <20180322002352.GA12673@Asurada-Nvidia>
- <20180322003253.GL3214@redhat.com>
+        id S1751724AbeCVCJH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 22:09:07 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6673 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751455AbeCVCJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 22:09:06 -0400
+From: Yunlong Song <yunlong.song@huawei.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] f2fs: no need to initialize zero value for GFP_F2FS_ZERO
+Date: Thu, 22 Mar 2018 10:08:40 +0800
+Message-ID: <1521684520-142131-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
+In-Reply-To: <1521635131-137071-1-git-send-email-yunlong.song@huawei.com>
+References: <1521635131-137071-1-git-send-email-yunlong.song@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180322003253.GL3214@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.113.189.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 08:32:54PM -0400, Jerome Glisse wrote:
+Since f2fs_inode_info is allocated with flag GFP_F2FS_ZERO, so we do not
+need to initialize zero value for its member any more.
 
-> > I am testing with drivers/char/hmm_dmirror.c from your git repository.
-> > 
-> > The addr I got (before "- size") is actually 0x7fffffffff, so equally
-> > (1 << 40).
-> > 
-> > So from your reply, it seems to me that HMM is supposed to request a
-> > region like it.
-> 
-> The dummy driver by default test the private memory, i had patches to
-> make it test public memory too somewhere in a branch. So yes this is
-> expected from the dummy driver. HMM here is trying to get a region that
-> will not collide with any known existing resources. Idealy we would
-> like a platform/arch function for that but it is hard to justify it
-> nor is there a safe way to find such thing either from arch/platform
-> specific code (there isn't for x86 at least).
-> 
-> For real device driver of pcie devices, the advice is to use the pci
-> bar region of the device. This way we know for sure we do not collide
-> with anything (ie use hmm_devmem_add_resource() not hmm_devmem_add()
-> but this need some code change for res->desc).
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/super.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-I see. Thank you!
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 0c1fe9b..42d564c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -827,7 +827,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	/* Initialize f2fs-specific inode info */
+ 	atomic_set(&fi->dirty_pages, 0);
+ 	fi->i_current_depth = 1;
+-	fi->i_advise = 0;
+ 	init_rwsem(&fi->i_sem);
+ 	INIT_LIST_HEAD(&fi->dirty_list);
+ 	INIT_LIST_HEAD(&fi->gdirty_list);
+@@ -839,10 +838,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	init_rwsem(&fi->i_mmap_sem);
+ 	init_rwsem(&fi->i_xattr_sem);
+ 
+-#ifdef CONFIG_QUOTA
+-	memset(&fi->i_dquot, 0, sizeof(fi->i_dquot));
+-	fi->i_reserved_quota = 0;
+-#endif
+ 	/* Will be used by directory only */
+ 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
+ 
+-- 
+1.8.5.2
