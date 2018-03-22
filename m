@@ -1,70 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751883AbeCVQf0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:35:26 -0400
-Received: from smtp-out4.electric.net ([192.162.216.183]:50387 "EHLO
-        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751553AbeCVQfX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:35:23 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Laurent Dufour'" <ldufour@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-CC: Michal Hocko <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-Thread-Topic: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-Thread-Index: AQHTwfsLnX+N9Wjp+0uBZsFtdYSo/qPccqlQ
-Date: Thu, 22 Mar 2018 16:36:14 +0000
-Message-ID: <fd5c7272f19442828fb00dff7cb24fae@AcuMS.aculab.com>
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321131449.GN23100@dhcp22.suse.cz>
- <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
- <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
- <20180321212355.GR23100@dhcp22.suse.cz>
- <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
- <20180322091008.GZ23100@dhcp22.suse.cz>
- <8b4407dd-78f6-2f6f-3f45-ddb8a2d805c8@linux.alibaba.com>
- <20180322161316.GD28468@bombadil.infradead.org>
- <e36daca9-8bf0-5fad-d68b-a3116cc1a75e@linux.vnet.ibm.com>
-In-Reply-To: <e36daca9-8bf0-5fad-d68b-a3116cc1a75e@linux.vnet.ibm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
+        id S1751843AbeCVQmW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:42:22 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40082 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751291AbeCVQmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:42:20 -0400
+Subject: Re: [PATCH v4 22/22] arm64: Add work around for Arm Cortex-A55
+ Erratum 1024718
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        ckadabi@codeaurora.org, ard.biesheuvel@linaro.org,
+        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, jnair@caviumnetworks.com,
+        robin.murphy@arm.com, shankerd@codeaurora.org
+References: <20180313115120.17256-1-suzuki.poulose@arm.com>
+ <20180313115120.17256-23-suzuki.poulose@arm.com>
+ <20180321153118.GE16308@e103592.cambridge.arm.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <d701a5ec-d8fe-3fe0-bb1f-20968403bf6a@arm.com>
+Date: Thu, 22 Mar 2018 16:42:14 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+In-Reply-To: <20180321153118.GE16308@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2MGZSFj005751
 
-From:  Laurent Dufour
-> Sent: 22 March 2018 16:29
-...
-> This being said, having a per VMA lock could lead to tricky dead lock case,
-> when merging multiple VMA happens in parallel since multiple VMA will have to
-> be locked at the same time, grabbing those lock in a fine order will be required.
+On 21/03/18 15:31, Dave Martin wrote:
+> On Tue, Mar 13, 2018 at 11:51:20AM +0000, Suzuki K Poulose wrote:
+>> Some variants of the Arm Cortex-55 cores (r0p0, r0p1, r1p0) suffer
+>> from an erratum 1024718, which causes incorrect updates when DBM/AP
+>> bits in a page table entry is modified without a break-before-make
+>> sequence. The work around is to skip enabling the hardware DBM feature
+>> on the affected cores. The hardware Access Flag management features
+>> is not affected. There are some other cores suffering from this
+>> errata, which could be added to the midr_list to trigger the work
+>> around.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: ckadabi@codeaurora.org
+>> Cc: Dave Martin <dave.martin@arm.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+> [...]
+> 
+>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>> index 4e73c610a409..0fc097e2b72e 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -963,9 +963,23 @@ static inline void __cpu_enable_hw_dbm(void)
+>>   	isb();
+>>   }
+>>   
+>> +static bool cpu_has_broken_dbm(void)
+>> +{
+>> +	/* List of CPUs which have broken DBM support. */
+>> +	static const struct midr_range cpus[] = {
+>> +#ifdef CONFIG_ARM64_ERRATUM_1024718
+>> +		MIDR_RANGE(MIDR_CORTEX_A55, 0, 0, 1, 0),  // A55 r0p0 -r1p0
+>> +#endif
+>> +		{},
+>> +	};
+>> +
+>> +	return is_midr_in_range_list(read_cpuid_id(), cpus);
+>> +}
+>> +
+>>   static bool cpu_can_use_dbm(const struct arm64_cpu_capabilities *cap)
+>>   {
+>> -	return has_cpuid_feature(cap, SCOPE_LOCAL_CPU);
+>> +	return has_cpuid_feature(cap, SCOPE_LOCAL_CPU) &&
+>> +	       !cpu_has_broken_dbm();
+> 
+> This refactoring seems sensbile to me.  The mapping between erratum IDs
+> and features that don't work is never guaranteed to be 1:1, so it
+> makes sense for the check function to have a generic name and to paste
+> in the relevant erratum ID ranges depending on the kernel config.
+> 
 
-You could have a global lock and per VMA locks.
-Anything that only accesses one VMA could release the global lock after
-acquiring the per VMA lock.
-If code needs multiple VMA 'locked' it can lock and unlock each VMA
-in turn, then keep the global lock held.
+Thanks Dave. Apologies for the lost change log for the patch. It looked
+like this (before it was lost in a rebase :-()
 
-	David
+
+Changes since v3:
+  - Renamed cpu_has_erratum_1024718() to cpu_has_broken_dbm() to
+    allow for different CPU Errata configs to share a single routine
+    for black listing CPUs. Dropped Dave's Reviewed-by
+
+
+> [...]
+> 
+> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+
+Cheers
+Suzuki
