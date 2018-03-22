@@ -1,82 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753119AbeCVB0M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 21:26:12 -0400
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:41472 "EHLO
-        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752232AbeCVB0K (ORCPT
+        id S1753659AbeCVB0l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 21:26:41 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:39541 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751604AbeCVB0j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 21:26:10 -0400
-X-Google-Smtp-Source: AG47ELtJuAsvjf9vr9v23ll/Hrc0R8Bk7kdfxjQuiqCUZ02mTz9+PHme/pSkSyAEWf3nuJ6m9DNF+g==
-Date: Thu, 22 Mar 2018 09:26:06 +0800
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, robdclark@gmail.com,
-        s.hauer@pengutronix.de, l.stach@pengutronix.de, shawnguo@kernel.org,
-        fabio.estevam@nxp.com, nm@ti.com, xuwei5@hisilicon.com,
-        robh+dt@kernel.org, olof@lixom.net, georgi.djakov@linaro.org
-Subject: Re: [PATCH V7 00/13] drivers: Boot Constraint core
-Message-ID: <20180322012606.vuaemu3pvpeojtwr@vireshk-mac-ubuntu>
-References: <cover.1519380923.git.viresh.kumar@linaro.org>
+        Wed, 21 Mar 2018 21:26:39 -0400
+X-Google-Smtp-Source: AG47ELtXYe0P3g0VY/9isFwk6dIYDPqdcq4GTvBjct+BIkzZuOhodJT4yY2UfzBtlG6exXDOUicZU1bdUVwVsLs8DlQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1519380923.git.viresh.kumar@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAKgT0UeTHPVrxEUbEszxm1MyJsQDSLfyM8txHq=r7GVkPD37nQ@mail.gmail.com>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <6ec3e7e0c70e85a804933f27bb4275d5363c044b.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <alpine.DEB.2.21.1803191525010.2010@nanos.tec.linutronix.de>
+ <20180320133206.GB25574@chelsio.com> <CAKgT0UeTHPVrxEUbEszxm1MyJsQDSLfyM8txHq=r7GVkPD37nQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 21 Mar 2018 18:26:38 -0700
+X-Google-Sender-Auth: GgzyCmcNGrukB1tl8UGlMsdAu_8
+Message-ID: <CA+55aFydu4+MZ=-5L7wDr2LvNH6Dbmi4qLnfHAAOrHKZCb5wdA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] x86/io: implement 256-bit IO read and write
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Ganesh GR <ganeshgr@chelsio.com>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        Indranil Choudhury <indranil@chelsio.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-02-18, 15:53, Viresh Kumar wrote:
-> Problem statement:
-> 
-> Some devices are powered ON by the bootloader before the bootloader
-> handovers control to Linux. It maybe important for some of those devices
-> to keep working until the time a Linux device driver probes the device
-> and reconfigure its resources.
-> 
-> A typical example of that can be the LCD controller, which is used by
-> the bootloaders to show image(s) while the platform is booting into
-> Linux.  The LCD controller can be using some resources, like clk,
-> regulators, etc, that are shared between several devices. These shared
-> resources should be configured to satisfy need of all the users.  If
-> another device's (X) driver gets probed before the LCD controller driver
-> in this case, then it may end up disabling or reconfiguring these
-> resources to ranges satisfying the current users (only device X) and
-> that can make the LCD screen unstable.
-> 
-> Another case can be a debug serial port enabled from the bootloader.
-> 
-> Of course we can have more complex cases where the same resource is
-> getting used by two devices while the kernel boots and the order in
-> which devices get probed wouldn't matter as the other device will surely
-> break then.
+On Tue, Mar 20, 2018 at 7:42 AM, Alexander Duyck
+<alexander.duyck@gmail.com> wrote:
+>
+> Instead of framing this as an enhanced version of the read/write ops
+> why not look at replacing or extending something like the
+> memcpy_fromio or memcpy_toio operations?
 
-And we have a _real_ use case for this complex scenario as well.
+Yes, doing something like "memcpy_fromio_avx()" is much more
+palatable, in that it works like the crypto functions do - if you do
+big chunks, the "kernel_fpu_begin/end()" isn't nearly the issue it can
+be otherwise.
 
-Georgi (cc'd) is currently working[1] on implementing generic support for the
-interconnect bus, which tries to play with the bandwidth of the bus based on how
-much are the requirements from different parts of the SoC. The 4th version was
-posted recently by him, and things are looking good/positive.
+Note that we definitely have seen hardware that *depends* on the
+regular memcpy_fromio()" not doing big reads. I don't know how
+hardware people screw it up, but it's clearly possible.
 
-The bootloader configures the interconnect to provide sufficient bandwidth for
-all the devices which are used during boot, few of them are the CPUs, serial and
-the LCD controller. As the kernel starts taking control of things, the drivers
-being probed start putting their requirements on the interconnect bus.  Because
-the interconnect doesn't have any representation from the devices which are not
-yet initialized by the kernel, the interconnect core incorrectly reduces the
-bandwidth of the bus to a level unacceptable to the devices running currently,
-like the CPUs and this makes kernel boot awfully slow. This is not an ordering
-problem as no matter which device we probe first, we are going to break
-something else.
+So it really needs to be an explicitly named function that basically a
+driver can use to say "my hardware really likes big aligned accesses"
+and explicitly ask for some AVX version if possible.
 
-Georgi already tried using the boot constraint patches to solve this complex
-problem, and its a perfect fit.
-
--- 
-viresh
-
-[1] http://lkml.kernel.org/r/20180309210958.16672-1-georgi.djakov@linaro.org
+                    Linus
