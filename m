@@ -1,73 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754874AbeCVM71 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:59:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34694 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754735AbeCVM7Y (ORCPT
+        id S1754913AbeCVM7k (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:59:40 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:40964 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754878AbeCVM7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:59:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4141A601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v4 01/13] firmware: qcom: scm: Add ipq4019 soc compatible
-Date: Thu, 22 Mar 2018 18:28:40 +0530
-Message-Id: <1521723532-28361-2-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
-References: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
+        Thu, 22 Mar 2018 08:59:34 -0400
+X-Google-Smtp-Source: AG47ELuVUpaxHrgsuQ/x27N6SA4SJY1tTjNA3OVrHabP3HhtjfF05cYkhtmYFQ+7pW4+VZVmZW8B8Q==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v4 0/7] Implement get_multiple for ACCES and PC/104 drivers
+Date: Thu, 22 Mar 2018 08:59:18 -0400
+Message-Id: <cover.1521723192.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the compatible for ipq4019.
-This does not need clocks to do scm calls.
+Changes in v4:
+  - Remove STX104 patch as it has been picked up through the IIO tree
+  - Utilize GENMASK for 104-IDIO-16 patch to avoid long literal bitmasks
+  - Fix off-by-one errors for port_mask initializations
+  - Add end comma to ports arrays initializations for consistency
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- Documentation/devicetree/bindings/firmware/qcom,scm.txt | 3 ++-
- drivers/firmware/qcom_scm.c                             | 3 +++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+This patchset implements get_multiple callbacks for the PC104 GPIO
+drivers as well as the PCI-IDIO-16 and PCIe-IDIO-24 GPIO drivers. These
+devices all acquire the multiple input lines with a single read, so
+utilizing the get_multiple callback can provide improvement for those
+users who regularly access multiple input lines.
 
-diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.txt b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-index 7b40054..fcf6979 100644
---- a/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-+++ b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-@@ -11,9 +11,10 @@ Required properties:
-  * "qcom,scm-msm8660" for MSM8660 platforms
-  * "qcom,scm-msm8690" for MSM8690 platforms
-  * "qcom,scm-msm8996" for MSM8996 platforms
-+ * "qcom,scm-ipq4019" for IPQ4019 platforms
-  * "qcom,scm" for later processors (MSM8916, APQ8084, MSM8974, etc)
- - clocks: One to three clocks may be required based on compatible.
-- * No clock required for "qcom,scm-msm8996"
-+ * No clock required for "qcom,scm-msm8996", "qcom,scm-ipq4019"
-  * Only core clock required for "qcom,scm-apq8064", "qcom,scm-msm8660", and "qcom,scm-msm8960"
-  * Core, iface, and bus clocks required for "qcom,scm"
- - clock-names: Must contain "core" for the core clock, "iface" for the interface
-diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-index 5a7d6930..e778af7 100644
---- a/drivers/firmware/qcom_scm.c
-+++ b/drivers/firmware/qcom_scm.c
-@@ -603,6 +603,9 @@ static void qcom_scm_shutdown(struct platform_device *pdev)
- 	{ .compatible = "qcom,scm-msm8996",
- 	  .data = NULL, /* no clocks */
- 	},
-+	{ .compatible = "qcom,scm-ipq4019",
-+	  .data = NULL, /* no clocks */
-+	},
- 	{ .compatible = "qcom,scm",
- 	  .data = (void *)(SCM_HAS_CORE_CLK
- 			   | SCM_HAS_IFACE_CLK
+While developing this patchset I noticed many of these devices make use
+of Intel 8255 compatible interfaces for their I/O. I may write a generic
+8255 GPIO driver in the future to reduce some of the redundant code I
+see pop among the drivers for these devices.
+
+William Breathitt Gray (7):
+  gpio: 104-idio-16: Implement get_multiple callback
+  gpio: pci-idio-16: Implement get_multiple callback
+  gpio: pcie-idio-24: Implement get_multiple/set_multiple callbacks
+  gpio: 104-dio-48e: Implement get_multiple callback
+  gpio: 104-idi-48: Implement get_multiple callback
+  gpio: gpio-mm: Implement get_multiple callback
+  gpio: ws16c48: Implement get_multiple callback
+
+ drivers/gpio/gpio-104-dio-48e.c  |  47 ++++++++++++++++
+ drivers/gpio/gpio-104-idi-48.c   |  47 ++++++++++++++++
+ drivers/gpio/gpio-104-idio-16.c  |  15 +++++
+ drivers/gpio/gpio-gpio-mm.c      |  47 ++++++++++++++++
+ drivers/gpio/gpio-pci-idio-16.c  |  50 +++++++++++++++++
+ drivers/gpio/gpio-pcie-idio-24.c | 117 +++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-ws16c48.c      |  47 ++++++++++++++++
+ 7 files changed, 370 insertions(+)
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.16.2
