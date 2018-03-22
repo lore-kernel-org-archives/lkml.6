@@ -1,58 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeCVQq3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:46:29 -0400
-Received: from mga05.intel.com ([192.55.52.43]:61810 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751291AbeCVQq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:46:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
-   d="scan'208";a="27558993"
-From: "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To: Andy Lutomirski <luto@kernel.org>
-CC: X86 ML <x86@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when
- FS/GS updated by ptracer
-Thread-Topic: [PATCH 14/15] x86/fsgsbase/64: Support legacy behavior when
- FS/GS updated by ptracer
-Thread-Index: AQHTv61cgKpKrSnds0atXlLhYuaZSaPZns+A//+jdICAAP9OgIAAfB0AgAElGwCAAHavgIAAe5+A//+VaAA=
-Date: Thu, 22 Mar 2018 16:46:22 +0000
-Message-ID: <E3872173-6EDB-4861-896E-4D636A5A9B55@intel.com>
-References: <1521481767-22113-1-git-send-email-chang.seok.bae@intel.com>
- <1521481767-22113-15-git-send-email-chang.seok.bae@intel.com>
- <CALCETrXb5RRuAnKpU2_3Rac4F4tbv1Z+UHU6=QrYk-GCSLv4cw@mail.gmail.com>
- <C78DE381-C618-4370-9B06-F6E25C850661@intel.com>
- <CALCETrX03_AG-OuJdmfmsbvEt0UTdUpaUVDRQgbDZWGY7WD-Xw@mail.gmail.com>
- <E9221EFA-636C-4D36-AEBA-3A1EEBBF2F50@intel.com>
- <CALCETrUxQ1XOs7V1XKOsk-iQ-qOwn41sWGYkepkVOE7PtfX24A@mail.gmail.com>
- <9C732DC6-F9CA-474F-B8F5-F8EBE406B12E@intel.com>
- <CALCETrWyuDC9Visx2-7rwpicVfS3wVMVFBykysaYcoBBe2y+tg@mail.gmail.com>
-In-Reply-To: <CALCETrWyuDC9Visx2-7rwpicVfS3wVMVFBykysaYcoBBe2y+tg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.b.0.180311
-x-originating-ip: [10.254.180.102]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B0E48A8E1BB2E34C879A7FB5857C328B@intel.com>
+        id S1752028AbeCVQrD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:47:03 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:33294 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751756AbeCVQrA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:47:00 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R911e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0SzvTlLk_1521737201;
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321130833.GM23100@dhcp22.suse.cz>
+ <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
+ <20180321172932.GE4780@bombadil.infradead.org>
+ <f057a634-7e0a-1b51-eede-dcb6f128b18e@linux.alibaba.com>
+ <20180321224631.GB3969@bombadil.infradead.org>
+ <18a727fd-f006-9fae-d9ca-74b9004f0a8b@linux.vnet.ibm.com>
+ <20180322154055.GB28468@bombadil.infradead.org>
+ <0442fb0e-3da3-3f23-ce4d-0f6cbc3eac9a@linux.vnet.ibm.com>
+ <20180322160547.GC28468@bombadil.infradead.org>
+ <55ac947f-fd77-3754-ebfe-30d458c54403@linux.vnet.ibm.com>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <d2fecab7-6e34-551f-7033-2a5df0dc5e5b@linux.alibaba.com>
+Date: Thu, 22 Mar 2018 09:46:38 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <55ac947f-fd77-3754-ebfe-30d458c54403@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2MGkWr0005895
 
-> But your patch doesn't actually do this, since gdb will just do
-> SETREGS anyway, right?
-GDB does SETREGS on any exclusive (FS/GS) updates in inferior call.
-    
-    
+
+
+On 3/22/18 9:18 AM, Laurent Dufour wrote:
+>
+> On 22/03/2018 17:05, Matthew Wilcox wrote:
+>> On Thu, Mar 22, 2018 at 04:54:52PM +0100, Laurent Dufour wrote:
+>>> On 22/03/2018 16:40, Matthew Wilcox wrote:
+>>>> On Thu, Mar 22, 2018 at 04:32:00PM +0100, Laurent Dufour wrote:
+>>>>> Regarding the page fault, why not relying on the PTE locking ?
+>>>>>
+>>>>> When munmap() will unset the PTE it will have to held the PTE lock, so this
+>>>>> will serialize the access.
+>>>>> If the page fault occurs before the mmap(MAP_FIXED), the page mapped will be
+>>>>> removed when mmap(MAP_FIXED) would do the cleanup. Fair enough.
+>>>> The page fault handler will walk the VMA tree to find the correct
+>>>> VMA and then find that the VMA is marked as deleted.  If it assumes
+>>>> that the VMA has been deleted because of munmap(), then it can raise
+>>>> SIGSEGV immediately.  But if the VMA is marked as deleted because of
+>>>> mmap(MAP_FIXED), it must wait until the new VMA is in place.
+>>> I'm wondering if such a complexity is required.
+>>> If the user space process try to access the page being overwritten through
+>>> mmap(MAP_FIXED) by another thread, there is no guarantee that it will
+>>> manipulate the *old* page or *new* one.
+>> Right; but it must return one or the other, it can't segfault.
+> Good point, I missed that...
+>
+>>> I'd think this is up to the user process to handle that concurrency.
+>>> What needs to be guaranteed is that once mmap(MAP_FIXED) returns the old page
+>>> are no more there, which is done through the mmap_sem and PTE locking.
+>> Yes, and allowing the fault handler to return the *old* page risks the
+>> old page being reinserted into the page tables after the unmapping task
+>> has done its work.
+> The PTE locking should prevent that.
+>
+>> It's *really* rare to page-fault on a VMA which is in the middle of
+>> being replaced.  Why are you trying to optimise it?
+> I was not trying to optimize it, but to not wait in the page fault handler.
+> This could become tricky in the case the VMA is removed once mmap(MAP_FIXED) is
+> done and before the waiting page fault got woken up. This means that the
+> removed VMA structure will have to remain until all the waiters are woken up
+> which implies ref_count or similar.
+
+We may not need ref_count. After removing "locked-for-deletion" vmas 
+when mmap(MAP_FIXED) is done, just wake up page fault to re-lookup vma, 
+then it will find the new vma installed by mmap(MAP_FIXED), right?
+
+I'm not sure if completion can do this or not since I'm not quite 
+familiar with it :-(
+
+Yang
+
+>
+>>>> I think I was wrong to describe VMAs as being *deleted*.  I think we
+>>>> instead need the concept of a *locked* VMA that page faults will block on.
+>>>> Conceptually, it's a per-VMA rwsem, but I'd use a completion instead of
+>>>> an rwsem since the only reason to write-lock the VMA is because it is
+>>>> being deleted.
+>>> Such a lock would only makes sense in the case of mmap(MAP_FIXED) since when
+>>> the VMA is removed there is no need to wait. Isn't it ?
+>> I can't think of another reason.  I suppose we could mark the VMA as
+>> locked-for-deletion or locked-for-replacement and have the SIGSEGV happen
+>> early.  But I'm not sure that optimising for SIGSEGVs is a worthwhile
+>> use of our time.  Just always have the pagefault sleep for a deleted VMA.
