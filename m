@@ -1,85 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752575AbeCVIHB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 04:07:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34940 "EHLO mail.bootlin.com"
+        id S1752564AbeCVIL4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 04:11:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39441 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752494AbeCVIG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 04:06:58 -0400
-Message-ID: <1521705949.1175.0.camel@bootlin.com>
-Subject: Re: [PATCH 08/10] drm/fourcc: Add definitions for Allwinner vendor
- and MB32 tiled format
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>
-Date: Thu, 22 Mar 2018 09:05:49 +0100
-In-Reply-To: <CAPj87rPNgga_pspx_0kTiP4itWUOL3O++2ZCiTUFfNBDGzkd0w@mail.gmail.com>
-References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
-         <20180321152904.22411-9-paul.kocialkowski@bootlin.com>
-         <CAPj87rPNgga_pspx_0kTiP4itWUOL3O++2ZCiTUFfNBDGzkd0w@mail.gmail.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-L7lvQHvlwIUcVZd6fL5f"
-X-Mailer: Evolution 3.26.5 
-Mime-Version: 1.0
+        id S1751817AbeCVILw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 04:11:52 -0400
+Date: Thu, 22 Mar 2018 09:11:50 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch] mm, thp: do not cause memcg oom for thp
+Message-ID: <20180322081150.GX23100@dhcp22.suse.cz>
+References: <alpine.DEB.2.20.1803191409420.124411@chino.kir.corp.google.com>
+ <20180320071624.GB23100@dhcp22.suse.cz>
+ <alpine.DEB.2.20.1803201321430.167205@chino.kir.corp.google.com>
+ <20180321082228.GC23100@dhcp22.suse.cz>
+ <alpine.DEB.2.20.1803211212490.92011@chino.kir.corp.google.com>
+ <20180321204921.GP23100@dhcp22.suse.cz>
+ <alpine.DEB.2.20.1803211422510.107059@chino.kir.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1803211422510.107059@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed 21-03-18 14:27:10, David Rientjes wrote:
+> On Wed, 21 Mar 2018, Michal Hocko wrote:
+> 
+> > > That doesn't make sense, the allocation path needs to allocate contiguous 
+> > > memory for the high order, the charging path just needs to charge a number 
+> > > of pages.  Why would the allocation and charging path be compatible when 
+> > > one needs to reclaim contiguous memory or compact memory and the the other 
+> > > just needs to reclaim any memory?
+> > 
+> > Because you do not want to see surprises. E.g. seeing unexpected OOMs
+> > for large allocatations. Just think about it. Do you really want to have
+> > a different reclaim policy for the allocation and charging for all
+> > allocating paths?
+> 
+> It depends on the use of __GFP_NORETRY.  If the high-order charge is 
+> __GFP_NORETRY, it does not oom kill.  It is left to the caller.
 
---=-L7lvQHvlwIUcVZd6fL5f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+How does the caller say it when the charge path is hidden inside the
+allocator - e.g. inside kmalloc?
 
-Hi,
+> Just 
+> because thp allocations have been special cased in the page allocator to 
+> be able to remove __GFP_NORETRY without fixing the memcg charge path does 
+> not mean memcg needs a special heuristic for high-order memory when it 
+> does not require contiguous memory.  You say you don't want any surprises, 
+> but now you are changing behavior needlessly for all charges with
+> order > PAGE_ALLOC_COSTLY_ORDER that do not use __GFP_NORETRY.
 
-On Wed, 2018-03-21 at 16:47 +0000, Daniel Stone wrote:
-> Hi Paul,
->=20
-> On 21 March 2018 at 15:29, Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
-> > +/*
-> > + * Allwinner "MB32" tiled format
-> > + *
-> > + * This is the primary layout coming out of the VPU, where pixels
-> > are tiled
-> > + * 32x32.
-> > + */
->=20
-> Can you please be a bit more specific here, following the other
-> examples? In particular, it should list whether the tile order is row-
-> or column-major.
+Not really. Only the #PF path is allowed to trigger the oom killer now
+so high order allocations (mostly coming from kmalloc) do not trigger
+OOM killer anyway. But this is the thing that might change in future and
+therefore I think it is essential to have a different oom behavior than
+the allocator.
 
-Yes that would definitely make sense, I'll do that in v2.
+> > You are right that the allocation path involves compaction and that is
+> > different from the charging path. But that is an implementation detail
+> > of the current implementation.
+> > 
+> 
+> Lol, the fact that the page allocator requires contiguous memory is not an 
+> implementation detail of the current implementation.
 
-Thanks for the review!
+The underlying mechanism might be different in future. So your lol is
+not really appropriate.
 
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-L7lvQHvlwIUcVZd6fL5f
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+> > Your patch only fixes up the current situation. Anytime a new THP
+> > allocation emerges that code path has to be careful to add
+> > __GFP_NORETRY to not regress again. That is just too error prone.
+> > 
+> 
+> We could certainly handle it by adding helpers similar to 
+> alloc_hugepage_direct_gfpmask() and alloc_hugepage_khugepaged_gfpmask() 
+> which are employed for the same purpose for the page allocator gfp mask.
 
------BEGIN PGP SIGNATURE-----
+This doesn't solve the problem in general (e.g. kmalloc).
 
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlqzY90ACgkQ3cLmz3+f
-v9FntQf/dxJx5mpnJHRp3Kd8mmvbOF9JA8U50xbYK7o7h/KzIi6WV+6HlD5rvAd/
-h0Ux955AweCv3OTdg5qf64Vpev6q24HU/m5gvHPgHRzPRrBIJhYxaXC8gLenI10F
-4NkJpHwtD2fWdjvhT5AWWn2JkolJuLYVMfuv5og+c1Lil3GcOQoNzlwXhWhLHdKl
-f3+uuqhIW2TmV0TfzC8fw7mo9iJvwiw8J8uEwkGIx3PKeYkgiRFI+SH4hK5P2sxs
-yvpYV1d93um/5V7DYep9wvTDyqnZuomfjYSOfRCzgKE8Q22BBk7GRx5TCKi9g6r+
-hxJEbFNDICh11gpUeqtA0UgekDFUog==
-=dJFt
------END PGP SIGNATURE-----
-
---=-L7lvQHvlwIUcVZd6fL5f--
+-- 
+Michal Hocko
+SUSE Labs
