@@ -1,131 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751912AbeCVCOp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 22:14:45 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:37529 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751854AbeCVCOm (ORCPT
+        id S1751896AbeCVCSD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 22:18:03 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:4481 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751608AbeCVCR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 22:14:42 -0400
-X-Google-Smtp-Source: AG47ELtYTKXGxWUsklw/EDIZPq8HhaobpaQ3Zfagjy4kQse4wmZ8F2esZcp0axsBwoh7B6s7Jlf2ew==
-Date: Thu, 22 Mar 2018 11:14:37 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: bugzilla-daemon@bugzilla.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, wen.yang99@zte.com.cn,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [Bug 199003] console stalled, cause Hard LOCKUP.
-Message-ID: <20180322021437.GA3181@jagdpanzerIV>
-References: <bug-199003-8243@https.bugzilla.kernel.org/>
- <bug-199003-8243-Txkdkdv5Cm@https.bugzilla.kernel.org/>
- <20180321094422.6e099480@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Wed, 21 Mar 2018 22:17:59 -0400
+X-UUID: 7345b8a08d5f4a348b5996989f4e1038-20180322
+Message-ID: <1521685073.28226.10.camel@mtkswgap22>
+Subject: Re: [PATCH v6 0/6] Add MediaTek PMIC keys support
+From: Sean Wang <sean.wang@mediatek.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>
+CC: Mark Rutland <mark.rutland@arm.com>, <a.zummo@towertech.it>,
+        <devicetree@vger.kernel.org>, <linus.walleij@linaro.org>,
+        <jcsing.lee@samsung.com>, <linux-kernel@vger.kernel.org>,
+        <krzk@kernel.org>, <javier@osg.samsung.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-input@vger.kernel.org>,
+        <matthias.bgg@gmail.com>, <eddie.huang@mediatek.com>,
+        <Chen.Zhong@mediatek.com>, <beomho.seo@samsung.com>,
+        <linux-rtc@vger.kernel.org>
+Date: Thu, 22 Mar 2018 10:17:53 +0800
+In-Reply-To: <808b2029da224ab687fb0553cbc1c68e@mtkmbs08n1.mediatek.inc>
+References: <1508937364-30054-1-git-send-email-chen.zhong@mediatek.com>
+         <808b2029da224ab687fb0553cbc1c68e@mtkmbs08n1.mediatek.inc>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180321094422.6e099480@gandalf.local.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+MIME-Version: 1.0
+X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23734.000
+X-TM-AS-Result: No-18.321900-8.000000-10
+X-TMASE-MatchedRID: 9d2LtCNB3NLvkBiM1eNiXvv+//lqU1h61kqyrcMalqUxCa3oFeZrRetY
+        BK5Q5zNX3f0e/BgwI9Dajws2LEAvyUoLuWKPFag47DzBuedLDxvRm6N++KG8MBd2FPQEB0XOyRS
+        EpZz6DA+jSFwvhL29gyzBFB7FQ7aTcMMjBRRYYhx2ue67hwJx8fDfYikgJILnJLfQYoCQHFbXlh
+        b0JuPQgXTDu+OFUeESiFHMv/GxbIVAoDTZXuYzI5VRzPxemJL0MZm0+sEE9msGW3hFnC9N1Si1J
+        mRhPGAWuBUrbyBrMarfissJdn3y3A6IaLd0egCv7spMO3HwKCBQCOsAlaxN735h6y4KCSJcAvK0
+        O9Xf2H5eP4bUjYKV3+osEgojljL9D7+f/jfUYxLAJnGRMfFxyY+YVJqrrEz4uPDHG2o8VrB576m
+        y5IxjulrA5k0qjE8HH0rosakDCywmNHlC7DQV5am4PbloS2C3a/fioJ9l4HjnU40jhQv76qPFjJ
+        EFr+olSlnU38LCY8vkwjHXXC/4I5BlLa6MK1y4
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--18.321900-8.000000
+X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23734.000
+X-TMASE-POSTMAN: 2-d;
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Steven,
+Hi, Dmitry and Lee
 
-On (03/21/18 09:44), Steven Rostedt wrote:
-[..]
-> >  #4 [ffff881ffb0b7540] delay_tsc at ffffffff81326724
-> >  #5 [ffff881ffb0b7548] __const_udelay at ffffffff81326678
-> >  #6 [ffff881ffb0b7558] wait_for_xmitr at ffffffff814056e0
-> >  #7 [ffff881ffb0b7580] serial8250_console_putchar at ffffffff814058ac
-> >  #8 [ffff881ffb0b75a0] uart_console_write at ffffffff8140035a
-> >  #9 [ffff881ffb0b75d0] serial8250_console_write at ffffffff814057fe
-> > #10 [ffff881ffb0b7618] call_console_drivers.constprop.17 at ffffffff81087011
-> > #11 [ffff881ffb0b7640] console_unlock at ffffffff810889e9
-> > #12 [ffff881ffb0b7680] vprintk_emit at ffffffff81088df4
-> > #13 [ffff881ffb0b76f0] dev_vprintk_emit at ffffffff81428e72
-> > #14 [ffff881ffb0b77a8] dev_printk_emit at ffffffff81428eee
-> > #15 [ffff881ffb0b7808] __dev_printk at ffffffff8142937e
-> > #16 [ffff881ffb0b7818] dev_printk at ffffffff8142942d
-> > #17 [ffff881ffb0b7888] sdev_prefix_printk at ffffffff81463771
-> > #18 [ffff881ffb0b7918] scsi_prep_state_check at ffffffff814598e4
-> > #19 [ffff881ffb0b7928] scsi_prep_fn at ffffffff8145992d
-> > #20 [ffff881ffb0b7960] blk_peek_request at ffffffff812f0826
-> > #21 [ffff881ffb0b7988] scsi_request_fn at ffffffff8145b588
-> > #22 [ffff881ffb0b79f0] __blk_run_queue at ffffffff812ebd63
-> > #23 [ffff881ffb0b7a08] blk_queue_bio at ffffffff812f1013        -----》acquired q->queue_lock and wait for console_write to finish
+The series seems not being got merged. Are they good enough to be ready
+into the your tree?
+
+Recently I've tested the series with focusing on pwrkey event generated
+through interrupt when push and release the key on bpi-r2 board and then
+finally it's working fine. but for homekey it cannot be found on the
+board and thus I cannot have more tests more about it.
+
+Tested-by: Sean Wang <sean.wang@mediatek.com>
+
+	Sean
+
+
+On Thu, 2018-03-22 at 10:03 +0800, Sean Wang (王志亘) wrote:
 > 
-> What do you mean by "wait for console_write to finish" here?
-
-*My guess*
-
-I suppose a typical "printk->console_unlock() under spin_lock" thing
-
-	CPU0						CPU1
-	spin_lock(&lock)
-	 printk						spin_lock(&lock)
-	  console_unlock()
-	   for (;;)
-	    call_console_drivers()
-
-While other CPUs printk->log_store() and some (or may be just one) is locked
-up on spin_lock(&lock). So we have several lockup vectors here - one is
-console_unlock() under spin_lock and the other one is CPUs spinning on the
-very same spin_lock. So handoff should help here, no doubt. But it cannot help
-if other CPUs will start to printk_deferred() instead of printk().
-
-
-Looking at
- printk()->call_console_drivers()->serial8250_console_putchar()->wait_for_xmitr()
-
-... wait_for_xmitr() can spin for over 1 second waiting for the UART_MSR_CTS
-bit.
-
-static void wait_for_xmitr(struct uart_8250_port *up, int bits)
-{
-	unsigned int status, tmout = 10000;
-
-	/* Wait up to 10ms for the character(s) to be sent. */
-	for (;;) {
-		status = serial_in(up, UART_LSR);
-
-		up->lsr_saved_flags |= status & LSR_SAVE_FLAGS;
-
-		if ((status & bits) == bits)
-			break;
-		if (--tmout == 0)
-			break;
-		udelay(1);
-		touch_nmi_watchdog();
-	}
-
-	/* Wait up to 1s for flow control if necessary */
-	if (up->port.flags & UPF_CONS_FLOW) {
-		for (tmout = 1000000; tmout; tmout--) {
-			unsigned int msr = serial_in(up, UART_MSR);
-			up->msr_saved_flags |= msr & MSR_SAVE_FLAGS;
-			if (msr & UART_MSR_CTS)
-				break;
-			udelay(1);
-			touch_nmi_watchdog();
-		}
-	}
-	...
-}
-
-a 1+ second long busy loop in the console driver is quite close to
-"problems guaranteed". But, wait, there is even more. This wait_for_xmitr()
-busy wait is happening after every character we print on the console. So
-printk("foo") will generate 5 * wait_for_xmitr() busy loops [foo + \r + \n].
-They punch&touch watchdog a lot, so at the least the system won't get killed
-by the hardlockup detector. But at the same time, it's still potentially a
-1+ second busy loop in the console driver * strlen(message).
-
-Sometimes I really wish we had detached consoles. Direct printk()->console
-is nice and cool, but... we can't have it. I don't want to pressure for
-printk_kthread, but look at all those consoles. There are not so many ways
-out. What do you think?
-
-	-ss
+> > -----Original Message-----
+> > From: Linux-mediatek [mailto:linux-mediatek-bounces@lists.infradead.org] On
+> > Behalf Of Chen Zhong
+> > Sent: Wednesday, October 25, 2017 9:16 PM
+> > To: Dmitry Torokhov <dmitry.torokhov@gmail.com>; Rob Herring
+> > <robh+dt@kernel.org>; Lee Jones <lee.jones@linaro.org>; Alexandre Belloni
+> > <alexandre.belloni@free-electrons.com>
+> > Cc: Mark Rutland <mark.rutland@arm.com>; Alessandro Zummo
+> > <a.zummo@towertech.it>; devicetree@vger.kernel.org; Linus Walleij
+> > <linus.walleij@linaro.org>; Jaechul Lee <jcsing.lee@samsung.com>; linux-
+> > kernel@vger.kernel.org; Krzysztof Kozlowski <krzk@kernel.org>; Javier
+> > Martinez Canillas <javier@osg.samsung.com>; linux-
+> > mediatek@lists.infradead.org; linux-arm-kernel@lists.infradead.org; linux-
+> > input@vger.kernel.org; Matthias Brugger <matthias.bgg@gmail.com>; Eddie
+> > Huang (S智) <eddie.huang@mediatek.com>; Chen Zhong (钟辰)
+> > <Chen.Zhong@mediatek.com>; Beomho Seo <beomho.seo@samsung.com>;
+> > linux-rtc@vger.kernel.org
+> > Subject: [PATCH v6 0/6] Add MediaTek PMIC keys support
+> > 
+> > MediaTek PMIC are multi-function devices that can handle key interrupts,
+> > typically there are two keys attached to PMIC, which called pwrkey and
+> > homekey. PWRKEY usually used to wake up system from sleep. Homekey can
+> > used as volume down key due to board design. Long press keys can shutdown
+> > PMIC, the mode can be choose to be one key only or two keys together.
+> > This series add support for key functions for MediaTek PMIC MT6397/MT6323.
+> > 
+> > Changes since v5:
+> > - use __maybe_unused annotation instead of #ifdef guard
+> > - use of_* API instead of device_* API
+> > 
+> > Changes since v4:
+> > - rebase to Linux 4.14-rc1
+> > - add a common keyboard binding document
+> > - use child device tree node to define each key
+> > 
+> > Changes since v3:
+> > - make the naming to be consistent as mtk_pmic or MTK_PMIC
+> > - add suspend/resume functions to enable/disable irq
+> > - change binding properties to define wakeup sources
+> > 
+> > Changes since v2:
+> > - use standard properties for keycodes and debounce time
+> > - change to use platform_get_irq in leaf drivers
+> > - use better ways to define IRQ resources
+> > 
+> > Changes since v1:
+> > - create irq mappings in mfd core driver instead of leaf drivers
+> > - remove some unused parts in mtk-pmic-keys driver
+> > 
+> > Chen Zhong (6):
+> >   mfd: mt6397: create irq mappings in mfd core driver
+> >   dt-bindings: input: Add common keyboard document bindings
+> >   dt-bindings: input: Add document bindings for mtk-pmic-keys
+> >   dt-bindings: mfd: Add bindings for the keys as subnode of PMIC
+> >   input: Add MediaTek PMIC keys support
+> >   mfd: mt6397: Add PMIC keys support to MT6397 driver
+> > 
+> >  Documentation/devicetree/bindings/input/keys.txt   |   8 +
+> >  .../devicetree/bindings/input/mtk-pmic-keys.txt    |  43 +++
+> >  Documentation/devicetree/bindings/mfd/mt6397.txt   |   6 +
+> >  drivers/input/keyboard/Kconfig                     |   9 +
+> >  drivers/input/keyboard/Makefile                    |   1 +
+> >  drivers/input/keyboard/mtk-pmic-keys.c             | 339
+> > +++++++++++++++++++++
+> >  drivers/mfd/mt6397-core.c                          |  26 +-
+> >  drivers/rtc/rtc-mt6397.c                           |   7 +-
+> >  8 files changed, 432 insertions(+), 7 deletions(-)  create mode 100644
+> > Documentation/devicetree/bindings/input/keys.txt
+> >  create mode 100644 Documentation/devicetree/bindings/input/mtk-pmic-
+> > keys.txt
+> >  create mode 100644 drivers/input/keyboard/mtk-pmic-keys.c
+> > 
+> > --
+> > 1.9.1
+> > 
+> > 
+> > 
+> > _______________________________________________
+> > Linux-mediatek mailing list
+> > Linux-mediatek@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
