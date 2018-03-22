@@ -1,45 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751848AbeCVRC5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 13:02:57 -0400
-Received: from verein.lst.de ([213.95.11.211]:48071 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751455AbeCVRCy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 13:02:54 -0400
-Date: Thu, 22 Mar 2018 18:02:52 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 14/14] xfs, dax: introduce xfs_break_dax_layouts()
-Message-ID: <20180322170252.GA5542@lst.de>
-References: <152167302988.5268.4370226749268662682.stgit@dwillia2-desk3.amr.corp.intel.com> <152167311132.5268.8502709708606276650.stgit@dwillia2-desk3.amr.corp.intel.com> <20180322074303.GC28713@lst.de> <CAPcyv4iO+xDLTgYcAApQwec1hDrVSrAyeAiFoA=anzpxEiBydA@mail.gmail.com>
+        id S1751776AbeCVRH1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 13:07:27 -0400
+Received: from mail-io0-f171.google.com ([209.85.223.171]:44307 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeCVRHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 13:07:25 -0400
+X-Google-Smtp-Source: AG47ELtgXBTStDU/o1pTNWl0e+ph+ZZ4hbpuLonusfNFsJDU2ZMew2k9Vzsf7kTMwUPKCB3soVCLRSWi4HEMdtdX0Ag=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4iO+xDLTgYcAApQwec1hDrVSrAyeAiFoA=anzpxEiBydA@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <b4658ee26be34c47807de0e5e13e7b31@AcuMS.aculab.com>
+References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
+ <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com> <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
+ <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com> <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
+ <20180320082651.jmxvvii2xvmpyr2s@gmail.com> <CA+55aFybTvLz47mw=AG21jCJv_hE2vaVyiJP_F-4vAD-3Gnc7Q@mail.gmail.com>
+ <20180321074634.dzpyjz3ia46snodh@gmail.com> <CA+55aFyK6uJopBjZGyeDz0O+qzCac6AwPkJyOpuaT69inPgVgw@mail.gmail.com>
+ <2f5cb27711e741fba77846574e72eb62@AcuMS.aculab.com> <b4658ee26be34c47807de0e5e13e7b31@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 22 Mar 2018 10:07:23 -0700
+X-Google-Sender-Auth: xI78y8ATaJJI0gbg7tAJY_cshEI
+Message-ID: <CA+55aFwdC4bK6aEM-h4z=EtRvYg1uG7uu9sSu25M5FnSCcakMQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
+To: David Laight <David.Laight@aculab.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "ganeshgr@chelsio.com" <ganeshgr@chelsio.com>,
+        "nirranjan@chelsio.com" <nirranjan@chelsio.com>,
+        "indranil@chelsio.com" <indranil@chelsio.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Fenghua Yu <fenghua.yu@intel.com>, Eric Biggers <ebiggers3@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 09:28:11AM -0700, Dan Williams wrote:
-> I can switch to the for() loop model, but it isn't 'done' flag, it's a
-> 'retry' flag. I.e. if xfs_break_leased_layouts() dropped
-> XFS_MMAPLOCK_EXCL we need to retry xfs_break_dax_layouts(), and if
+On Thu, Mar 22, 2018 at 5:48 AM, David Laight <David.Laight@aculab.com> wrote:
+>
+> So if we needed to do PIO reads using the AVX2 (or better AVX-512)
+> registers would make a significant difference.
+> Fortunately we can 'dma' most of the data we need to transfer.
 
-Oh, indeed.
+I think this is the really fundamental issue.
 
-> xfs_break_dax_layouts() slept we need to immediately retry it.
-> So, how
-> about this?
+A device that expects PIO to do some kind of high-performance
+transaction is a *broken* device.
 
-Ah, with that that the loop doesn't work too well, especially the
-continue inside a switch statement is probably not to good.  I guess
-we should just stick to your original, modulo better variable naming.
+It really is that simple. We don't bend over for misdesigned hardware
+crap unless it is really common.
+
+> I've traced writes before, they are a lot faster and are limited
+> by things in the fpga fabric (they appear back to back).
+
+The write combine buffer really should be much more effective than any
+AVX or similar can ever be.
+
+               Linus
