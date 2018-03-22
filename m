@@ -1,122 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755251AbeCVOkc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 10:40:32 -0400
-Received: from linode.aoot.com ([69.164.194.13]:58342 "EHLO linode.aoot.com"
+        id S1754744AbeCVOrZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 10:47:25 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:38977 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752913AbeCVOk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:40:27 -0400
-From: "Steve Wise" <swise@opengridcomputing.com>
-To: <okaya@codeaurora.org>, "'kbuild test robot'" <lkp@intel.com>
-Cc: <kbuild-all@01.org>, <linux-rdma@vger.kernel.org>,
-        <timur@codeaurora.org>, <sulrich@codeaurora.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "'Steve Wise'" <swise@chelsio.com>,
-        "'Doug Ledford'" <dledford@redhat.com>,
-        "'Jason Gunthorpe'" <jgg@ziepe.ca>, <linux-kernel@vger.kernel.org>,
-        "'Casey Leedom'" <leedom@chelsio.com>,
-        "'Michael Werner'" <werner@chelsio.com>
-References: <1521514068-8856-5-git-send-email-okaya@codeaurora.org> <201803221430.P43GJl9U%fengguang.wu@intel.com> <3664b253c730dbf83f4528acaedb3a88@codeaurora.org> <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
-In-Reply-To: <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
-Subject: RE: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on weakly-ordered archs
-Date: Thu, 22 Mar 2018 09:40:25 -0500
-Message-ID: <03d201d3c1eb$b71fb460$255f1d20$@opengridcomputing.com>
+        id S1751611AbeCVOrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 10:47:23 -0400
+Date: Thu, 22 Mar 2018 15:47:16 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: harinikatakamlinux@gmail.com
+Cc: nicolas.ferre@atmel.com, davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, harinik@xilinx.com, michals@xilinx.com,
+        appanad@xilinx.com, Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: Re: [RFC PATCH 1/5] net: macb: Check MDIO state before read/write
+ and use timeouts
+Message-ID: <20180322144716.GB24516@lunn.ch>
+References: <1521726700-22634-1-git-send-email-harinikatakamlinux@gmail.com>
+ <1521726700-22634-2-git-send-email-harinikatakamlinux@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQE8ydHJf7R4NETjQ4ju1lsYxD0xYQEyUahtAa2s6g8ChKTXb6TfHhyw
-Content-Language: en-us
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521726700-22634-2-git-send-email-harinikatakamlinux@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 22, 2018 at 07:21:36PM +0530, harinikatakamlinux@gmail.com wrote:
+> From: Harini Katakam <harinik@xilinx.com>
 > 
-> On 2018-03-22 08:24, okaya@codeaurora.org wrote:
-> > On 2018-03-22 02:44, kbuild test robot wrote:
-> >> Hi Sinan,
-> >>
-> >> Thank you for the patch! Yet something to improve:
-> >>
-> >> [auto build test ERROR on linus/master]
-> >> [also build test ERROR on v4.16-rc6 next-20180321]
-> >> [if your patch is applied to the wrong git tree, please drop us a note
-> >> to help improve the system]
-> >>
-> >> url:
-> >> https://github.com/0day-ci/linux/commits/Sinan-Kaya/ib-Eliminate-
-> duplicate-barriers-on-weakly-ordered-archs/20180321-091659
-> >> config: xtensa-allyesconfig (attached as .config)
-> >> compiler: xtensa-linux-gcc (GCC) 7.2.0
-> >> reproduce:
-> >>         wget
-> >> https://raw.githubusercontent.com/intel/lkp-
-> tests/master/sbin/make.cross
-> >> -O ~/bin/make.cross
-> >>         chmod +x ~/bin/make.cross
-> >>         # save the attached .config to linux build tree
-> >>         make.cross ARCH=xtensa
-> >>
-> >
-> > Jason,
-> >
-> > Can you remove the writeq change if it is too late for me to fix?
-> >
-> > This is an infrastructural issue on xtensa arch.
-> >
-> > Probably, it won't get fixed today.
+> Replace the while loop in MDIO read/write functions with a timeout.
+> In addition, add a check for MDIO bus busy before initiating a new
+> operation as well to make sure there is no ongoing MDIO operation.
 > 
-> AFAIS, even writeq won't compile on this arch. I started questioning
-> this build test.
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> Signed-off-by: Harini Katakam <harinik@xilinx.com>
+> ---
+>  drivers/net/ethernet/cadence/macb_main.c | 54 ++++++++++++++++++++++++++++++--
+>  1 file changed, 52 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+> index d09bd43..f4030c1 100644
+> --- a/drivers/net/ethernet/cadence/macb_main.c
+> +++ b/drivers/net/ethernet/cadence/macb_main.c
+> @@ -321,6 +321,21 @@ static int macb_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
+>  {
+>  	struct macb *bp = bus->priv;
+>  	int value;
+> +	ulong timeout;
+> +
+> +	timeout = jiffies + msecs_to_jiffies(1000);
+> +	/* wait for end of transfer */
+> +	do {
+> +		if (MACB_BFEXT(IDLE, macb_readl(bp, NSR)))
+> +			break;
+> +
+> +		cpu_relax();
+> +	} while (!time_after_eq(jiffies, timeout));
+> +
+> +	if (time_after_eq(jiffies, timeout)) {
+> +		netdev_err(bp->dev, "wait for end of transfer timed out\n");
+> +		return -ETIMEDOUT;
+> +	}
 
-I think all these iw_cxgb4 changes should be reverted until we really have a
-plan for multi-platform that works.  
+Hi Harini
 
-> 
-> >
-> > Sinan
-> >
-> >
-> >> All errors (new ones prefixed by >>):
-> >>
-> >>    In file included from drivers/infiniband/hw/cxgb4/iw_cxgb4.h:73:0,
-> >>                     from drivers/infiniband/hw/cxgb4/device.c:40:
-> >>    drivers/infiniband/hw/cxgb4/t4.h: In function 'pio_copy':
-> >>>> drivers/infiniband/hw/cxgb4/t4.h:460:3: error: implicit declaration
-> >>>> of function 'writeq_relaxed'; did you mean 'writel_relaxed'?
-> >>>> [-Werror=implicit-function-declaration]
-> >>       writeq_relaxed(*src, dst);
-> >>       ^~~~~~~~~~~~~~
-> >>       writel_relaxed
-> >>    cc1: some warnings being treated as errors
-> >>
-> >> vim +460 drivers/infiniband/hw/cxgb4/t4.h
-> >>
-> >>    450
-> >>    451	/* This function copies 64 byte coalesced work request to
-> >> memory
-> >>    452	 * mapped BAR2 space. For coalesced WRs, the SGE fetches
-> data
-> >>    453	 * from the FIFO instead of from Host.
-> >>    454	 */
-> >>    455	static inline void pio_copy(u64 __iomem *dst, u64 *src)
-> >>    456	{
-> >>    457		int count = 8;
-> >>    458
-> >>    459		while (count) {
-> >>  > 460			writeq_relaxed(*src, dst);
-> >>    461			src++;
-> >>    462			dst++;
-> >>    463			count--;
-> >>    464		}
-> >>    465	}
-> >>    466
-> >>
-> >> ---
-> >> 0-DAY kernel test infrastructure                Open Source Technology
-> >> Center
-> >> https://lists.01.org/pipermail/kbuild-all                   Intel
-> >> Corporation
+It looks like you have repeated the same code 4 times. Please move it
+into a helper function.
+
+     Andrew
