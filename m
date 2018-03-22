@@ -1,129 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751964AbeCVVux convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:50:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44288 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751464AbeCVVuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:50:51 -0400
-Subject: Re: [PATCH v6 2/2] cpuset: Add cpuset.sched_load_balance to v2
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
+        id S1751776AbeCVVxw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:53:52 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36877 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbeCVVxs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:53:48 -0400
+X-Google-Smtp-Source: AG47ELu8Unuy3SsGSYAhecbiba7c/gLL06MFMdkaft6oDMJB1q2RRMD8h4lyaOWxM+xa03OaNcw7hQ==
+Date: Thu, 22 Mar 2018 14:53:46 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Andrew Morton <akpm@linux-foundation.org>,
         Roman Gushchin <guro@fb.com>
-References: <1521649309-26690-1-git-send-email-longman@redhat.com>
- <1521649309-26690-3-git-send-email-longman@redhat.com>
- <20180322084120.GE7231@localhost.localdomain>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <e754e128-0a93-800e-e71b-2c8dc316ba8a@redhat.com>
-Date: Thu, 22 Mar 2018 17:50:48 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+cc: Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [patch v2 -mm 0/6] rewrite cgroup aware oom killer for general use
+In-Reply-To: <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com>
+Message-ID: <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
+References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803151351140.55261@chino.kir.corp.google.com> <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <20180322084120.GE7231@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/22/2018 04:41 AM, Juri Lelli wrote:
-> Hi Waiman,
->
-> On 21/03/18 12:21, Waiman Long wrote:
->> The sched_load_balance flag is needed to enable CPU isolation similar
->> to what can be done with the "isolcpus" kernel boot parameter.
->>
->> The sched_load_balance flag implies an implicit !cpu_exclusive as
->> it doesn't make sense to have an isolated CPU being load-balanced in
->> another cpuset.
->>
->> For v2, this flag is hierarchical and is inherited by child cpusets. It
->> is not allowed to have this flag turn off in a parent cpuset, but on
->> in a child cpuset.
->>
->> This flag is set by the parent and is not delegatable.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  Documentation/cgroup-v2.txt | 22 ++++++++++++++++++
->>  kernel/cgroup/cpuset.c      | 56 +++++++++++++++++++++++++++++++++++++++------
->>  2 files changed, 71 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
->> index ed8ec66..c970bd7 100644
->> --- a/Documentation/cgroup-v2.txt
->> +++ b/Documentation/cgroup-v2.txt
->> @@ -1514,6 +1514,28 @@ Cpuset Interface Files
->>  	it is a subset of "cpuset.mems".  Its value will be affected
->>  	by memory nodes hotplug events.
->>  
->> +  cpuset.sched_load_balance
->> +	A read-write single value file which exists on non-root cgroups.
->> +	The default is "1" (on), and the other possible value is "0"
->> +	(off).
->> +
->> +	When it is on, tasks within this cpuset will be load-balanced
->> +	by the kernel scheduler.  Tasks will be moved from CPUs with
->> +	high load to other CPUs within the same cpuset with less load
->> +	periodically.
->> +
->> +	When it is off, there will be no load balancing among CPUs on
->> +	this cgroup.  Tasks will stay in the CPUs they are running on
->> +	and will not be moved to other CPUs.
->> +
->> +	This flag is hierarchical and is inherited by child cpusets. It
->> +	can be turned off only when the CPUs in this cpuset aren't
->> +	listed in the cpuset.cpus of other sibling cgroups, and all
->> +	the child cpusets, if present, have this flag turned off.
->> +
->> +	Once it is off, it cannot be turned back on as long as the
->> +	parent cgroup still has this flag in the off state.
->> +
-> I'm afraid that this will not work for SCHED_DEADLINE (at least for how
-> it is implemented today). As you can see in Documentation [1] the only
-> way a user has to perform partitioned/clustered scheduling is to create
-> subset of exclusive cpusets and then assign deadline tasks to them. The
-> other thing to take into account here is that a root_domain is created
-> for each exclusive set and we use such root_domain to keep information
-> about admitted bandwidth and speed up load balancing decisions (there is
-> a max heap tracking deadlines of active tasks on each root_domain).
-> Now, AFAIR distinct root_domain(s) are created when parent group has
-> sched_load_balance disabled and cpus_exclusive set (in cgroup v1 that
-> is). So, what we normally do is create, say, cpus_exclusive groups for
-> the different clusters and then disable sched_load_balance at root level
-> (so that each cluster gets its own root_domain). Also,
-> sched_load_balance is enabled in children groups (as load balancing
-> inside clusters is what we actually needed :).
+rewrite cgroup aware oom killer for general use
 
-That looks like an undocumented side effect to me. I would rather see an
-explicit control file that enable root_domain and break it free from
-cpu_exclusive && !sched_load_balance, e.g. sched_root_domain(?).
+There are three significant concerns about the cgroup aware oom killer as
+it is implemented in -mm:
 
-> IIUC your proposal this will not be permitted with cgroup v2 because
-> sched_load_balance won't be present at root level and children groups
-> won't be able to set sched_load_balance back to 1 if that was set to 0
-> in some parent. Is that true?
+ (1) allows users to evade the oom killer by creating subcontainers or
+     using other controllers since scoring is done per cgroup and not
+     hierarchically,
 
-Yes, that is the current plan.
+ (2) unfairly compares the root mem cgroup using completely different
+     criteria than leaf mem cgroups and allows wildly inaccurate results
+     if oom_score_adj is used, and
 
-> Look, the way things work today is most probably not perfect (just to
-> say one thing, we need to disable load balancing for all classes at root
-> level just because DEADLINE wants to set restricted affinities to his
-> tasks :/) and we could probably think on how to change how this all
-> work. So, let's first see if IIUC what you are proposing (and its
-> implications). :)
->
-Cgroup v2 is supposed to allow us to have a fresh start to rethink what
-is a more sane way of partitioning resources without worrying about
-backward compatibility. So I think it is time to design a new way for
-deadline tasks to work with cpuset v2.
+ (3) does not allow the user to influence the decisionmaking, such that
+     important subtrees cannot be preferred or biased.
 
-Cheers,
-Longman
+This patchset fixes (1) and (2) completely and, by doing so, introduces a
+completely extensible user interface that can be expanded in the future.
+
+Concern (3) could subsequently be addressed either before or after the
+cgroup-aware oom killer feature is merged.
+
+It preserves all functionality that currently exists in -mm and extends
+it to be generally useful outside of very specialized usecases.
+
+It eliminates the mount option for the cgroup aware oom killer entirely
+since it is now enabled through the root mem cgroup's oom policy.
+---
+ - Rebased to next-20180322
+ - Fixed get_nr_swap_pages() build bug found by kbuild test robot
+
+ Documentation/cgroup-v2.txt | 100 ++++++++--------
+ include/linux/cgroup-defs.h |   5 -
+ include/linux/memcontrol.h  |  21 ++++
+ kernel/cgroup/cgroup.c      |  13 +--
+ mm/memcontrol.c             | 221 +++++++++++++++++++++---------------
+ 5 files changed, 204 insertions(+), 156 deletions(-)
