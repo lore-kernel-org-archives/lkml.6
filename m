@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751831AbeCVPmr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:42:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34588 "EHLO
+        id S1751866AbeCVPnC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:43:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34662 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751739AbeCVPmm (ORCPT
+        with ESMTP id S1751778AbeCVPmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:42:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 337F9601D3
+        Thu, 22 Mar 2018 11:42:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D8BBC60F6B
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
@@ -16,51 +16,42 @@ Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
         linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>, intel-wired-lan@lists.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/2] ixgbevf: keep writel() closer to wmb()
-Date: Thu, 22 Mar 2018 11:42:31 -0400
-Message-Id: <1521733352-25266-1-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH v5 2/2] ixgbevf: eliminate duplicate barriers on weakly-ordered archs
+Date: Thu, 22 Mar 2018 11:42:32 -0400
+Message-Id: <1521733352-25266-2-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521733352-25266-1-git-send-email-okaya@codeaurora.org>
+References: <1521733352-25266-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove ixgbevf_write_tail() in favor of moving writel() close to
-wmb().
+Code includes wmb() followed by writel() in multiple places. writel()
+already has a barrier on some architectures like arm64.
+
+This ends up CPU observing two barriers back to back before executing the
+register write.
+
+Since code already has an explicit barrier call, changing writel() to
+writel_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf.h      | 5 -----
  drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c | 6 +++---
- 2 files changed, 3 insertions(+), 8 deletions(-)
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-index f712646..f97091d 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf.h
-@@ -312,11 +312,6 @@ static inline u16 ixgbevf_desc_unused(struct ixgbevf_ring *ring)
- 	return ((ntc > ntu) ? 0 : ring->count) + ntc - ntu - 1;
- }
- 
--static inline void ixgbevf_write_tail(struct ixgbevf_ring *ring, u32 value)
--{
--	writel(value, ring->tail);
--}
--
- #define IXGBEVF_RX_DESC(R, i)	\
- 	(&(((union ixgbe_adv_rx_desc *)((R)->desc))[i]))
- #define IXGBEVF_TX_DESC(R, i)	\
 diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 3d9033f..815cb1a 100644
+index 815cb1a..eaa930e 100644
 --- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
 +++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
 @@ -725,7 +725,7 @@ static void ixgbevf_alloc_rx_buffers(struct ixgbevf_ring *rx_ring,
  		 * such as IA-64).
  		 */
  		wmb();
--		ixgbevf_write_tail(rx_ring, i);
-+		writel(i, rx_ring->tail);
+-		writel(i, rx_ring->tail);
++		writel_relaxed(i, rx_ring->tail);
  	}
  }
  
@@ -68,8 +59,8 @@ index 3d9033f..815cb1a 100644
  		 * know there are new descriptors to fetch.
  		 */
  		wmb();
--		ixgbevf_write_tail(xdp_ring, xdp_ring->next_to_use);
-+		writel(xdp_ring->next_to_use, xdp_ring->tail);
+-		writel(xdp_ring->next_to_use, xdp_ring->tail);
++		writel_relaxed(xdp_ring->next_to_use, xdp_ring->tail);
  	}
  
  	u64_stats_update_begin(&rx_ring->syncp);
@@ -77,8 +68,8 @@ index 3d9033f..815cb1a 100644
  	tx_ring->next_to_use = i;
  
  	/* notify HW of packet */
--	ixgbevf_write_tail(tx_ring, i);
-+	writel(i, tx_ring->tail);
+-	writel(i, tx_ring->tail);
++	writel_relaxed(i, tx_ring->tail);
  
  	return;
  dma_error:
