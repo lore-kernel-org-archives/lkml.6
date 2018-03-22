@@ -1,43 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754928AbeCVNjx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 09:39:53 -0400
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:35421 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754598AbeCVNju (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 09:39:50 -0400
-X-Google-Smtp-Source: AG47ELuePpHzfLraxF9EeyxzDljJbdjFXql8WqpE/h5bl3ryRmnrWmDB6v4+6V/8KqEjgU0IomeQkBJJCr3Wi7ENfkU=
-MIME-Version: 1.0
-In-Reply-To: <9bd82cb0-d88f-4891-a111-3704802e1d4e@redhat.com>
-References: <1521707651-9375-1-git-send-email-wanpengli@tencent.com>
- <aadc47c3-9d5f-b4d5-92d3-cb888a29563c@redhat.com> <49454fe4-16e2-4d8b-7ad5-9e488afc786e@citrix.com>
- <d1126eb9-7203-7044-f72b-174cac6607ab@redhat.com> <e9db6804-4881-be93-f570-e9631dbccac8@citrix.com>
- <9bd82cb0-d88f-4891-a111-3704802e1d4e@redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Thu, 22 Mar 2018 21:39:49 +0800
-Message-ID: <CANRm+CwmJQCFZ7oe1_YatqoOXzzEU+SP9Z5qR6zU_ybd_DoGQQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: X86: Fix the decoding of segment overrides in 64bit mode
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+        id S1755012AbeCVNkj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 09:40:39 -0400
+Received: from hermes.apache.org ([140.211.11.3]:55007 "HELO mail.apache.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+        id S1751753AbeCVNkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 09:40:36 -0400
+Message-ID: <d9fd167d6661fe4311eb773d794de8b22496b67a.camel@apache.org>
+Subject: Re: [PATCH v3] Fix modifier keys for Redragon Asura Keyboard
+From: Robert Munteanu <rombert@apache.org>
+To: Ondrej Zary <linux@rainbow-software.org>
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Date: Thu, 22 Mar 2018 14:40:31 +0100
+In-Reply-To: <1b0047c60fc5dc4be4bbe627ab830e65db1cfae5.camel@apache.org>
+References: <20180321104331.22783-1-rombert@apache.org>
+         <201803211751.04734.linux@rainbow-software.org>
+         <1b0047c60fc5dc4be4bbe627ab830e65db1cfae5.camel@apache.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.0 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-22 20:38 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
-> On 22/03/2018 12:04, Andrew Cooper wrote:
->> We've got a Force Emulation Prefix (ud2a; .ascii "xen") for doing
->> magic.  Originally, this was used for PV guests to explicitly request an
->> emulated CPUID, but I extended it to HVM guests for "emulate the next
->> instruction", after we had some guest user => guest kernel privilege
->> escalations because of incorrect emulation.
->
-> Wanpeng, why don't you add it behind a new kvm module parameter? :)
+On Thu, 2018-03-22 at 09:17 +0100, Robert Munteanu wrote:
+> On Wed, 2018-03-21 at 17:51 +0100, Ondrej Zary wrote:
+> > On Wednesday 21 March 2018 11:43:31 Robert Munteanu wrote:
+> > > +#define USB_VENDOR_ID_MICRODIA          0x0c45
+> > > +#define USB_DEVICE_ID_REDRAGON_ASURA    0x760b
+> > 
+> > Microdia is most probably an incorrect name. The 0c45 id probably
+> > belongs 
+> > to "Sonix Technology Co., Ltd."
+> 
+> Right, I was unsure about that. I'll remove the microdia references
+> and
+> use sonix.
 
-Great point! I will have a try. Thanks Paolo and Andrew. :)
+I see the following in hid-ids.h
 
-Regards,
-Wanpeng Li
+  define USB_VENDOR_ID_JESS            0x0c45
+
+which I guess I should use since it's already defined in there.
+
+Robert
