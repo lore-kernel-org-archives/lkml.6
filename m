@@ -1,217 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755233AbeCVNBx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 09:01:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38554 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755119AbeCVNAg (ORCPT
+        id S1755288AbeCVNCj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 09:02:39 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:39510 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755010AbeCVNAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 09:00:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71F3B6110B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v4 12/13] ARM: dts: ipq8074: Add pcie nodes
-Date: Thu, 22 Mar 2018 18:28:51 +0530
-Message-Id: <1521723532-28361-13-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
-References: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
+        Thu, 22 Mar 2018 09:00:07 -0400
+X-Google-Smtp-Source: AG47ELsbIcXxBJ7r2oM2En28ebEkDOlDebSJjD2sQMtsMDDsVsIG3jfwHo1o1jD76yAFy8vwCEGnJg==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v4 3/7] gpio: pcie-idio-24: Implement get_multiple/set_multiple callbacks
+Date: Thu, 22 Mar 2018 09:00:00 -0400
+Message-Id: <bd4594307521c93f952db774da466a54c434704a.1521723192.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
+References: <cover.1521723192.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver/phy support for ipq8074 is available now.
-So enabling the nodes in DT.
+The ACCES I/O PCIe-IDIO-24 series of devices provides 24
+optically-isolated digital I/O accessed via six 8-bit ports. Since eight
+input lines are acquired on a single port input read -- and similarly
+eight output lines are set on a single port output write -- the
+PCIe-IDIO-24 GPIO driver may improve multiple I/O reads/writes by
+utilizing a get_multiple/set_multiple callbacks. This patch implements
+the idio_24_gpio_get_multiple function which serves as the respective
+get_multiple callback, and implements the idio_24_gpio_set_multiple
+function which serves as the respective set_multiple callback.
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 157 +++++++++++++++++++++++++++++++++-
- 1 file changed, 156 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-pcie-idio-24.c | 117 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 117 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index a8dbbf0..caf3485 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -24,7 +24,7 @@
- 		ranges = <0 0 0 0xffffffff>;
- 		compatible = "simple-bus";
+diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
+index f666e2e69074..835607ecf658 100644
+--- a/drivers/gpio/gpio-pcie-idio-24.c
++++ b/drivers/gpio/gpio-pcie-idio-24.c
+@@ -15,6 +15,7 @@
+  * This driver supports the following ACCES devices: PCIe-IDIO-24,
+  * PCIe-IDI-24, PCIe-IDO-24, and PCIe-IDIO-12.
+  */
++#include <linux/bitmap.h>
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
+@@ -193,6 +194,61 @@ static int idio_24_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	return !!(ioread8(&idio24gpio->reg->ttl_in0_7) & offset_mask);
+ }
  
--		pinctrl@1000000 {
-+		tlmm: pinctrl@1000000 {
- 			compatible = "qcom,ipq8074-pinctrl";
- 			reg = <0x1000000 0x300000>;
- 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-@@ -229,6 +229,161 @@
- 			dma-names = "tx", "rx", "cmd";
- 			status = "disabled";
- 		};
++static int idio_24_gpio_get_multiple(struct gpio_chip *chip,
++	unsigned long *mask, unsigned long *bits)
++{
++	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
++	size_t i;
++	const unsigned int gpio_reg_size = 8;
++	unsigned int bits_offset;
++	size_t word_index;
++	unsigned int word_offset;
++	unsigned long word_mask;
++	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
++	unsigned long port_state;
++	u8 __iomem ports[] = {
++		idio24gpio->reg->out0_7, idio24gpio->reg->out8_15,
++		idio24gpio->reg->out16_23, idio24gpio->reg->in0_7,
++		idio24gpio->reg->in8_15, idio24gpio->reg->in16_23,
++	};
++	const unsigned long out_mode_mask = BIT(1);
 +
-+		pcie_phy0: phy@86000 {
-+			compatible = "qcom,ipq8074-qmp-pcie-phy";
-+			reg = <0x86000 0x1000>;
-+			#phy-cells = <0>;
-+			clocks = <&gcc GCC_PCIE0_PIPE_CLK>;
-+			clock-names = "pipe_clk";
-+			clock-output-names = "pcie20_phy0_pipe_clk";
++	/* clear bits array to a clean slate */
++	bitmap_zero(bits, chip->ngpio);
 +
-+			resets = <&gcc GCC_PCIE0_PHY_BCR>,
-+				<&gcc GCC_PCIE0PHY_PHY_BCR>;
-+			reset-names = "phy",
-+				      "common";
-+			status = "disabled";
-+		};
++	/* get bits are evaluated a gpio port register at a time */
++	for (i = 0; i < ARRAY_SIZE(ports); i++) {
++		/* gpio offset in bits array */
++		bits_offset = i * gpio_reg_size;
 +
-+		pcie0: pci@20000000 {
-+			compatible = "qcom,pcie-ipq8074";
-+			reg =  <0x20000000 0xf1d
-+				0x20000f20 0xa8
-+				0x80000 0x2000
-+				0x20100000 0x1000>;
-+			reg-names = "dbi", "elbi", "parf", "config";
-+			device_type = "pci";
-+			linux,pci-domain = <0>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
++		/* word index for bits array */
++		word_index = BIT_WORD(bits_offset);
 +
-+			phys = <&pcie_phy0>;
-+			phy-names = "pciephy";
++		/* gpio offset within current word of bits array */
++		word_offset = bits_offset % BITS_PER_LONG;
 +
-+			ranges = <0x81000000 0 0x20200000 0x20200000
-+				  0 0x100000   /* downstream I/O */
-+				  0x82000000 0 0x20300000 0x20300000
-+				  0 0xd00000>; /* non-prefetchable memory */
++		/* mask of get bits for current gpio within current word */
++		word_mask = mask[word_index] & (port_mask << word_offset);
++		if (!word_mask) {
++			/* no get bits in this port so skip to next one */
++			continue;
++		}
 +
-+			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 75
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 78
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 79
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 83
-+					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
++		/* read bits from current gpio port (port 6 is TTL GPIO) */
++		if (i < 6)
++			port_state = ioread8(ports + i);
++		else if (ioread8(&idio24gpio->reg->ctl) & out_mode_mask)
++			port_state = ioread8(&idio24gpio->reg->ttl_out0_7);
++		else
++			port_state = ioread8(&idio24gpio->reg->ttl_in0_7);
 +
-+			clocks = <&gcc GCC_SYS_NOC_PCIE0_AXI_CLK>,
-+				 <&gcc GCC_PCIE0_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE0_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE0_AHB_CLK>,
-+				 <&gcc GCC_PCIE0_AUX_CLK>;
++		/* store acquired bits at respective bits array offset */
++		bits[word_index] |= port_state << word_offset;
++	}
 +
-+			clock-names = "iface",
-+				      "axi_m",
-+				      "axi_s",
-+				      "ahb",
-+				      "aux";
-+			resets = <&gcc GCC_PCIE0_PIPE_ARES>,
-+				 <&gcc GCC_PCIE0_SLEEP_ARES>,
-+				 <&gcc GCC_PCIE0_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_MASTER_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_SLAVE_ARES>,
-+				 <&gcc GCC_PCIE0_AHB_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_MASTER_STICKY_ARES>;
-+			reset-names = "pipe",
-+				      "sleep",
-+				      "sticky",
-+				      "axi_m",
-+				      "axi_s",
-+				      "ahb",
-+				      "axi_m_sticky";
-+			status = "disabled";
-+		};
++	return 0;
++}
 +
-+		pcie_phy1: phy@8e000 {
-+			compatible = "qcom,ipq8074-qmp-pcie-phy";
-+			reg = <0x8e000 0x1000>;
-+			#phy-cells = <0>;
-+			clocks = <&gcc GCC_PCIE1_PIPE_CLK>;
-+			clock-names = "pipe_clk";
-+			clock-output-names = "pcie20_phy1_pipe_clk";
-+
-+			resets = <&gcc GCC_PCIE1_PHY_BCR>,
-+				<&gcc GCC_PCIE1PHY_PHY_BCR>;
-+			reset-names = "phy",
-+				      "common";
-+			status = "disabled";
-+		};
-+
-+		pcie1: pci@10000000 {
-+			compatible = "qcom,pcie-ipq8074";
-+			reg =  <0x10000000 0xf1d
-+				0x10000f20 0xa8
-+				0x88000 0x2000
-+				0x10100000 0x1000>;
-+			reg-names = "dbi", "elbi", "parf", "config";
-+			device_type = "pci";
-+			linux,pci-domain = <1>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			phys = <&pcie_phy1>;
-+			phy-names = "pciephy";
-+
-+			ranges = <0x81000000 0 0x10200000 0x10200000
-+				  0 0x100000   /* downstream I/O */
-+				  0x82000000 0 0x10300000 0x10300000
-+				  0 0xd00000>; /* non-prefetchable memory */
-+
-+			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 142
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 143
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 144
-+					 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 145
-+					 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+
-+			clocks = <&gcc GCC_SYS_NOC_PCIE1_AXI_CLK>,
-+				 <&gcc GCC_PCIE1_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE1_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE1_AHB_CLK>,
-+				 <&gcc GCC_PCIE1_AUX_CLK>;
-+			clock-names = "iface",
-+				      "axi_m",
-+				      "axi_s",
-+				      "ahb",
-+				      "aux";
-+			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
-+				 <&gcc GCC_PCIE1_SLEEP_ARES>,
-+				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_MASTER_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_SLAVE_ARES>,
-+				 <&gcc GCC_PCIE1_AHB_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_MASTER_STICKY_ARES>;
-+			reset-names = "pipe",
-+				      "sleep",
-+				      "sticky",
-+				      "axi_m",
-+				      "axi_s",
-+				      "ahb",
-+				      "axi_m_sticky";
-+			status = "disabled";
-+		};
- 	};
+ static void idio_24_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	int value)
+ {
+@@ -234,6 +290,65 @@ static void idio_24_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
+ }
  
- 	cpus {
++static void idio_24_gpio_set_multiple(struct gpio_chip *chip,
++	unsigned long *mask, unsigned long *bits)
++{
++	struct idio_24_gpio *const idio24gpio = gpiochip_get_data(chip);
++	size_t i;
++	unsigned long bits_offset;
++	unsigned long gpio_mask;
++	const unsigned int gpio_reg_size = 8;
++	const unsigned long port_mask = GENMASK(gpio_reg_size, 0);
++	unsigned long flags;
++	unsigned int out_state;
++	u8 __iomem ports[] = {
++		idio24gpio->reg->out0_7, idio24gpio->reg->out8_15,
++		idio24gpio->reg->out16_23
++	};
++	const unsigned long out_mode_mask = BIT(1);
++	const unsigned int ttl_offset = 48;
++	const size_t ttl_i = BIT_WORD(ttl_offset);
++	const unsigned int word_offset = ttl_offset % BITS_PER_LONG;
++	const unsigned long ttl_mask = (mask[ttl_i] >> word_offset) & port_mask;
++	const unsigned long ttl_bits = (bits[ttl_i] >> word_offset) & ttl_mask;
++
++	/* set bits are processed a gpio port register at a time */
++	for (i = 0; i < ARRAY_SIZE(ports); i++) {
++		/* gpio offset in bits array */
++		bits_offset = i * gpio_reg_size;
++
++		/* check if any set bits for current port */
++		gpio_mask = (*mask >> bits_offset) & port_mask;
++		if (!gpio_mask) {
++			/* no set bits for this port so move on to next port */
++			continue;
++		}
++
++		raw_spin_lock_irqsave(&idio24gpio->lock, flags);
++
++		/* process output lines */
++		out_state = ioread8(ports + i) & ~gpio_mask;
++		out_state |= (*bits >> bits_offset) & gpio_mask;
++		iowrite8(out_state, ports + i);
++
++		raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
++	}
++
++	/* check if setting TTL lines and if they are in output mode */
++	if (!ttl_mask || !(ioread8(&idio24gpio->reg->ctl) & out_mode_mask))
++		return;
++
++	/* handle TTL output */
++	raw_spin_lock_irqsave(&idio24gpio->lock, flags);
++
++	/* process output lines */
++	out_state = ioread8(&idio24gpio->reg->ttl_out0_7) & ~ttl_mask;
++	out_state |= ttl_bits;
++	iowrite8(out_state, &idio24gpio->reg->ttl_out0_7);
++
++	raw_spin_unlock_irqrestore(&idio24gpio->lock, flags);
++}
++
+ static void idio_24_irq_ack(struct irq_data *data)
+ {
+ }
+@@ -397,7 +512,9 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	idio24gpio->chip.direction_input = idio_24_gpio_direction_input;
+ 	idio24gpio->chip.direction_output = idio_24_gpio_direction_output;
+ 	idio24gpio->chip.get = idio_24_gpio_get;
++	idio24gpio->chip.get_multiple = idio_24_gpio_get_multiple;
+ 	idio24gpio->chip.set = idio_24_gpio_set;
++	idio24gpio->chip.set_multiple = idio_24_gpio_set_multiple;
+ 
+ 	raw_spin_lock_init(&idio24gpio->lock);
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.16.2
