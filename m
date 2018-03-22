@@ -1,167 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752138AbeCVVdb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:33:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53022 "EHLO mail.kernel.org"
+        id S1752041AbeCVVeG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:34:06 -0400
+Received: from ozlabs.org ([103.22.144.67]:53737 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751595AbeCVVd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:33:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 655CD2183C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AG47ELs83uH/pS8JWKib1WcYFP2bypNewsn29WVoxYIfxYkFkbL+qYi4qIZcoUrcRS1tFwF29tYrQeJMILF9+0WpqlU=
+        id S1751730AbeCVVeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:34:04 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 23 Mar 2018 08:33:15 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Antoine Tenart <antoine.tenart@bootlin.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: linux-next: please clean up the alpine tree
+Message-ID: <20180323083315.58976d73@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <1521655492.7999.13.camel@perches.com>
-References: <1521653726-24625-1-git-send-email-p.pisati@gmail.com>
- <1521653726-24625-3-git-send-email-p.pisati@gmail.com> <1521655492.7999.13.camel@perches.com>
-From: Alan Tull <atull@kernel.org>
-Date: Thu, 22 Mar 2018 16:32:47 -0500
-X-Gmail-Original-Message-ID: <CANk1AXT6TY5N+gR=tBNuvhQMnOpuaWKWVoUSjB+Vfof2=GAM6w@mail.gmail.com>
-Message-ID: <CANk1AXT6TY5N+gR=tBNuvhQMnOpuaWKWVoUSjB+Vfof2=GAM6w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
-To: Joe Perches <joe@perches.com>
-Cc: Paolo Pisati <p.pisati@gmail.com>, Moritz Fischer <mdf@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-fpga@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2IV5wW/2i0j_PavOz9IjbOK"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 1:04 PM, Joe Perches <joe@perches.com> wrote:
-> On Wed, 2018-03-21 at 18:35 +0100, Paolo Pisati wrote:
->> This patch adds support to the FPGA manager for programming
->> MachXO2 device’s internal flash memory, via slave SPI.
->
-> style trivia:
->
->> diff --git a/drivers/fpga/machxo2-spi.c b/drivers/fpga/machxo2-spi.c
-> []
->> +static int get_status(struct spi_device *spi, unsigned long *status)
->> +{
->> +     struct spi_message msg;
->> +     struct spi_transfer rx, tx;
->> +     u8 cmd[] = LSC_READ_STATUS;
->
-> static const u8 cmd[]
-> here and everywhere else as all the tx_buf assignments
-> of cmd are to const void *
+--Sig_/2IV5wW/2i0j_PavOz9IjbOK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Why *static* const u8 cmd[]?
+Hi Antoine,
 
-Alan
+The alpine tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/atenart/linux.git#alpine/for=
+-next)
+only contains commits that have been upstreamed as different commits.
+It also hasn't been updated since late March 2017.  Please clean it up
+(it takes some time to merge - presumably just because of its age).
 
->
->> +     int ret;
->> +
->> +     memset(&rx, 0, sizeof(rx));
->> +     memset(&tx, 0, sizeof(tx));
->> +     tx.tx_buf = cmd;
->
-> []
->
->> +#ifdef DEBUG
->> +static void dump_status_reg(unsigned long *status)
->> +{
->
-> Instead of multiple declarations of dump_status_reg
-> it's frequently nicer to use a style like
->
-> static void debug_func(args...)
-> {
-> #ifdef DEBUG
->         [code...]
-> #endif
-> }
->
-> so if function arguments ever need to be changed
-> it's only required to be changed in one spot and
-> not multiply compilation tested with and without
-> the DEBUG definition
->
->> +     char *ferr;
->> +
->> +     switch (get_err(status)) {
->> +     case ENOERR:
->> +             ferr = "No Error";
->> +             break;
->> +     case EID:
->> +             ferr = "ID ERR";
->> +             break;
->> +     case ECMD:
->> +             ferr = "CMD ERR";
->> +             break;
->> +     case ECRC:
->> +             ferr = "CRC ERR";
->> +             break;
->> +     case EPREAM:
->> +             ferr = "Preamble ERR";
->> +             break;
->> +     case EABRT:
->> +             ferr = "Abort ERR";
->> +             break;
->> +     case EOVERFL:
->> +             ferr = "Overflow ERR";
->> +             break;
->> +     case ESDMEOF:
->> +             ferr = "SDM EOF";
->> +             break;
->> +     default:
->> +             ferr = "Default switch case";
->> +     }
->
-> It's frequently nicer to use a static function
-> for these enum -> string conversions like:
->
-> static const char *get_err_string(unsigned long err)
-> {
->         switch (err) {
->         case ENOERR:    return "No Error";
->         case EID:       return "ID ERR";
->         case ECMD:      return "CMD ERR";
->         [...]
->         }
->         return "default switch case";
-> }
->
->> +     pr_debug("machxo2 status: 0x%08lX - done=%d, cfgena=%d, busy=%d, fail=%d, devver=%d, err=%s\n",
->> +            *status, test_bit(DONE, status), test_bit(ENAB, status),
->> +            test_bit(BUSY, status), test_bit(FAIL, status),
->> +                test_bit(DVER, status), ferr);
->
-> So instead of ferr, this could use
->         get_err_string(*status)
->
-> And please try to keep a consistent alignment for
-> indentation of multiple line statements
->
->> +}
->> +#else
->> +static void dump_status_reg(unsigned long *status) {}
->> +#endif
->> +
->> +static int wait_until_not_busy(struct spi_device *spi)
->> +{
->> +     unsigned long status;
->> +     int ret, loop = 0;
->> +
->> +     do {
->> +             ret = get_status(spi, &status);
->> +             if (ret)
->> +                     break;
->> +             if (++loop >= MACHXO2_MAX_BUSY_LOOP) {
->> +                     ret = -EBUSY;
->> +                     break;
->> +             }
->> +     } while (test_bit(BUSY, &status));
->> +
->> +     return ret;
->> +}
->
-> Direct returns are OK and would shorten the function
-> line count.
->
+Or, if it is no longer being used, please let me know and I will remove
+it from linux-next.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2IV5wW/2i0j_PavOz9IjbOK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0IRsACgkQAVBC80lX
+0Gx62wf/ahhhKNL4e7QdHS4yy+ZnqasYtHlqjrH2a+X9QqOuKB57XTOv2U0I7v14
+MdAXQouxZsmKXZZc45+NLYEqX8+Tno4inaitqjIkIFvOzKhasmRLii0DIMeHtWU1
+w3HA0v+YosFYx57C5ID1VkKKfrqJhXxnBHaTJqeKasUcxwWp1sA7MnaXosxZNGGp
+OM0tFBRrM9hO/dfRSG0HilHZj1IsKyUiWboAd7ISVxpr8fKWbJ03YbQvH0DIN3sa
+bYzf/bJFFkFBmo8jp5yIxDSnwBv4zxqnEdMWJIrZOYkxdS+4IoV/PSzGuuJa2jDC
+MR1cVjR8GF9y5UYss8/u+srks4xgyQ==
+=y75j
+-----END PGP SIGNATURE-----
+
+--Sig_/2IV5wW/2i0j_PavOz9IjbOK--
