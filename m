@@ -1,26 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753213AbeCVJbG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:31:06 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:43909 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751817AbeCVJbC (ORCPT
+        id S1753327AbeCVJcn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:32:43 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:52745 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752877AbeCVJck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:31:02 -0400
-X-Google-Smtp-Source: AG47ELvE/+VWGMMGWOp6TMojx7AjQsAdn6iePU/Jxg351maXLKSn8o8dWEgcuwH4XIs9SQxpQFMubxy/t7mpgBqGnRc=
+        Thu, 22 Mar 2018 05:32:40 -0400
+X-Google-Smtp-Source: AG47ELtft3LL072A3YkmhdaV9cG4Ic/5hO97ipsheGNuvHQaagJIq6HtEqZo+uWaVWI4kNG3P4XHo0NLC870SKcXb3U=
 MIME-Version: 1.0
-In-Reply-To: <596dd0d16dcb31fd35d6a38835d1a3d56254b6ce.1513926033.git.viresh.kumar@linaro.org>
-References: <cover.1513926033.git.viresh.kumar@linaro.org> <596dd0d16dcb31fd35d6a38835d1a3d56254b6ce.1513926033.git.viresh.kumar@linaro.org>
+In-Reply-To: <46a62463d9a0a04648672d5cd3a9803ad99bd36b.1513926033.git.viresh.kumar@linaro.org>
+References: <cover.1513926033.git.viresh.kumar@linaro.org> <46a62463d9a0a04648672d5cd3a9803ad99bd36b.1513926033.git.viresh.kumar@linaro.org>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 22 Mar 2018 10:31:01 +0100
-Message-ID: <CAPDyKFontDwvpS97xBskNE-FLMo3HPDLthCEkviZv8rKdA8t=g@mail.gmail.com>
-Subject: Re: [PATCH 4/7] PM / Domain: Add support to parse domain's OPP table
+Date: Thu, 22 Mar 2018 10:32:39 +0100
+Message-ID: <CAPDyKFoT6Bn538eJokSeL+4-ZfkG=v29fD9e32YUEL24r1Pa1w@mail.gmail.com>
+Subject: Re: [PATCH 7/7] PM / OPP: Remove dev_pm_opp_{un}register_get_pstate_helper()
 To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Kevin Hilman <khilman@kernel.org>,
+Cc: Kevin Hilman <khilman@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
         Linux PM <linux-pm@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, Nishanth Menon <nm@ti.com>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -32,165 +31,160 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 22 December 2017 at 08:26, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> Parse the OPP table for power domains if they have their
-> set_performance_state() callback set.
+> These helpers aren't used anymore, remove them.
 
-Nitpick:
-This is a bit too short, please elaborate a bit on the why and what
-this change does.
+I guess they weren't used even before? However, as we now have the new
+OF based APIs, we can use them instead.
+
+Anyway, feel free to add:
+
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
 
 >
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  drivers/base/power/domain.c | 78 +++++++++++++++++++++++++++++++++++----------
->  1 file changed, 62 insertions(+), 16 deletions(-)
+>  drivers/opp/core.c     | 75 --------------------------------------------------
+>  drivers/opp/opp.h      |  2 --
+>  include/linux/pm_opp.h | 10 -------
+>  3 files changed, 87 deletions(-)
 >
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 013c1e206167..1ad4ad0b0de0 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -10,6 +10,7 @@
->  #include <linux/kernel.h>
->  #include <linux/io.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/pm_domain.h>
->  #include <linux/pm_qos.h>
-> @@ -1900,15 +1901,33 @@ int of_genpd_add_provider_simple(struct device_node *np,
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 6194219fb95f..9e3c40437991 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1545,81 +1545,6 @@ void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table)
+>  }
+>  EXPORT_SYMBOL_GPL(dev_pm_opp_unregister_set_opp_helper);
 >
->         mutex_lock(&gpd_list_lock);
+> -/**
+> - * dev_pm_opp_register_get_pstate_helper() - Register get_pstate() helper.
+> - * @dev: Device for which the helper is getting registered.
+> - * @get_pstate: Helper.
+> - *
+> - * TODO: Remove this callback after the same information is available via Device
+> - * Tree.
+> - *
+> - * This allows a platform to initialize the performance states of individual
+> - * OPPs for its devices, until we get similar information directly from DT.
+> - *
+> - * This must be called before the OPPs are initialized for the device.
+> - */
+> -struct opp_table *dev_pm_opp_register_get_pstate_helper(struct device *dev,
+> -               int (*get_pstate)(struct device *dev, unsigned long rate))
+> -{
+> -       struct opp_table *opp_table;
+> -       int ret;
+> -
+> -       if (!get_pstate)
+> -               return ERR_PTR(-EINVAL);
+> -
+> -       opp_table = dev_pm_opp_get_opp_table(dev);
+> -       if (!opp_table)
+> -               return ERR_PTR(-ENOMEM);
+> -
+> -       /* This should be called before OPPs are initialized */
+> -       if (WARN_ON(!list_empty(&opp_table->opp_list))) {
+> -               ret = -EBUSY;
+> -               goto err;
+> -       }
+> -
+> -       /* Already have genpd_performance_state set */
+> -       if (WARN_ON(opp_table->genpd_performance_state)) {
+> -               ret = -EBUSY;
+> -               goto err;
+> -       }
+> -
+> -       opp_table->genpd_performance_state = true;
+> -       opp_table->get_pstate = get_pstate;
+> -
+> -       return opp_table;
+> -
+> -err:
+> -       dev_pm_opp_put_opp_table(opp_table);
+> -
+> -       return ERR_PTR(ret);
+> -}
+> -EXPORT_SYMBOL_GPL(dev_pm_opp_register_get_pstate_helper);
+> -
+> -/**
+> - * dev_pm_opp_unregister_get_pstate_helper() - Releases resources blocked for
+> - *                                        get_pstate() helper
+> - * @opp_table: OPP table returned from dev_pm_opp_register_get_pstate_helper().
+> - *
+> - * Release resources blocked for platform specific get_pstate() helper.
+> - */
+> -void dev_pm_opp_unregister_get_pstate_helper(struct opp_table *opp_table)
+> -{
+> -       if (!opp_table->genpd_performance_state) {
+> -               pr_err("%s: Doesn't have performance states set\n",
+> -                      __func__);
+> -               return;
+> -       }
+> -
+> -       /* Make sure there are no concurrent readers while updating opp_table */
+> -       WARN_ON(!list_empty(&opp_table->opp_list));
+> -
+> -       opp_table->genpd_performance_state = false;
+> -       opp_table->get_pstate = NULL;
+> -
+> -       dev_pm_opp_put_opp_table(opp_table);
+> -}
+> -EXPORT_SYMBOL_GPL(dev_pm_opp_unregister_get_pstate_helper);
+> -
+>  /**
+>   * dev_pm_opp_add()  - Add an OPP table from a table definitions
+>   * @dev:       device for which we do this operation
+> diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
+> index b181032e6938..ae99295b5382 100644
+> --- a/drivers/opp/opp.h
+> +++ b/drivers/opp/opp.h
+> @@ -140,7 +140,6 @@ enum opp_table_access {
+>   * @genpd_performance_state: Device's power domain support performance state.
+>   * @set_opp: Platform specific set_opp callback
+>   * @set_opp_data: Data to be passed to set_opp callback
+> - * @get_pstate: Platform specific get_pstate callback
+>   * @dentry:    debugfs dentry pointer of the real device directory (not links).
+>   * @dentry_name: Name of the real dentry.
+>   *
+> @@ -178,7 +177,6 @@ struct opp_table {
 >
-> -       if (genpd_present(genpd)) {
-> -               ret = genpd_add_provider(np, genpd_xlate_simple, genpd);
-> -               if (!ret) {
-> -                       genpd->provider = &np->fwnode;
-> -                       genpd->has_provider = true;
-> -                       genpd->dev.of_node = np;
-> +       if (!genpd_present(genpd))
-> +               goto unlock;
-> +
-> +       genpd->dev.of_node = np;
-> +
-> +       /* Parse genpd OPP table */
-> +       if (genpd->set_performance_state) {
-> +               ret = dev_pm_opp_of_add_table(&genpd->dev);
-> +               if (ret) {
-> +                       dev_err(&genpd->dev, "Failed to add OPP table: %d\n",
-> +                               ret);
-> +                       goto unlock;
->                 }
->         }
+>         int (*set_opp)(struct dev_pm_set_opp_data *data);
+>         struct dev_pm_set_opp_data *set_opp_data;
+> -       int (*get_pstate)(struct device *dev, unsigned long rate);
 >
-> +       ret = genpd_add_provider(np, genpd_xlate_simple, genpd);
-> +       if (ret) {
-> +               if (genpd->set_performance_state)
-> +                       dev_pm_opp_of_remove_table(&genpd->dev);
-> +
-> +               goto unlock;
-> +       }
-> +
-> +       genpd->provider = &np->fwnode;
-> +       genpd->has_provider = true;
-> +
-> +unlock:
->         mutex_unlock(&gpd_list_lock);
+>  #ifdef CONFIG_DEBUG_FS
+>         struct dentry *dentry;
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index 70686f434c13..528a7d9cf2ef 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -125,8 +125,6 @@ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char * name);
+>  void dev_pm_opp_put_clkname(struct opp_table *opp_table);
+>  struct opp_table *dev_pm_opp_register_set_opp_helper(struct device *dev, int (*set_opp)(struct dev_pm_set_opp_data *data));
+>  void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table);
+> -struct opp_table *dev_pm_opp_register_get_pstate_helper(struct device *dev, int (*get_pstate)(struct device *dev, unsigned long rate));
+> -void dev_pm_opp_unregister_get_pstate_helper(struct opp_table *opp_table);
+>  int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
+>  int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev, const struct cpumask *cpumask);
+>  int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
+> @@ -247,14 +245,6 @@ static inline struct opp_table *dev_pm_opp_register_set_opp_helper(struct device
 >
->         return ret;
-> @@ -1923,6 +1942,7 @@ EXPORT_SYMBOL_GPL(of_genpd_add_provider_simple);
->  int of_genpd_add_provider_onecell(struct device_node *np,
->                                   struct genpd_onecell_data *data)
+>  static inline void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table) {}
+>
+> -static inline struct opp_table *dev_pm_opp_register_get_pstate_helper(struct device *dev,
+> -               int (*get_pstate)(struct device *dev, unsigned long rate))
+> -{
+> -       return ERR_PTR(-ENOTSUPP);
+> -}
+> -
+> -static inline void dev_pm_opp_unregister_get_pstate_helper(struct opp_table *opp_table) {}
+> -
+>  static inline struct opp_table *dev_pm_opp_set_prop_name(struct device *dev, const char *name)
 >  {
-> +       struct generic_pm_domain *genpd;
->         unsigned int i;
->         int ret = -EINVAL;
->
-> @@ -1935,14 +1955,27 @@ int of_genpd_add_provider_onecell(struct device_node *np,
->                 data->xlate = genpd_xlate_onecell;
->
->         for (i = 0; i < data->num_domains; i++) {
-> -               if (!data->domains[i])
-> +               genpd = data->domains[i];
-> +
-> +               if (!genpd)
->                         continue;
-> -               if (!genpd_present(data->domains[i]))
-> +               if (!genpd_present(genpd))
->                         goto error;
->
-> -               data->domains[i]->provider = &np->fwnode;
-> -               data->domains[i]->has_provider = true;
-> -               data->domains[i]->dev.of_node = np;
-> +               genpd->dev.of_node = np;
-> +
-> +               /* Parse genpd OPP table */
-> +               if (genpd->set_performance_state) {
-> +                       ret = dev_pm_opp_of_add_table_indexed(&genpd->dev, i);
-> +                       if (ret) {
-> +                               dev_err(&genpd->dev, "Failed to add OPP table for index %d: %d\n",
-> +                                       i, ret);
-> +                               goto error;
-> +                       }
-> +               }
-> +
-> +               genpd->provider = &np->fwnode;
-> +               genpd->has_provider = true;
->         }
->
->         ret = genpd_add_provider(np, data->xlate, data);
-> @@ -1955,10 +1988,16 @@ int of_genpd_add_provider_onecell(struct device_node *np,
->
->  error:
->         while (i--) {
-> -               if (!data->domains[i])
-> +               genpd = data->domains[i];
-> +
-> +               if (!genpd)
->                         continue;
-> -               data->domains[i]->provider = NULL;
-> -               data->domains[i]->has_provider = false;
-> +
-> +               genpd->provider = NULL;
-> +               genpd->has_provider = false;
-> +
-> +               if (genpd->set_performance_state)
-> +                       dev_pm_opp_of_remove_table(&genpd->dev);
->         }
->
->         mutex_unlock(&gpd_list_lock);
-> @@ -1985,10 +2024,17 @@ void of_genpd_del_provider(struct device_node *np)
->                          * provider, set the 'has_provider' to false
->                          * so that the PM domain can be safely removed.
->                          */
-> -                       list_for_each_entry(gpd, &gpd_list, gpd_list_node)
-> -                               if (gpd->provider == &np->fwnode)
-> +                       list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
-> +                               if (gpd->provider == &np->fwnode) {
->                                         gpd->has_provider = false;
->
-> +                                       if (!gpd->set_performance_state)
-> +                                               continue;
-
-Nitpick, perhaps change this to:
-
-if (gpd->set_performance_state)
-       dev_pm_opp_of_remove_table(&gpd->dev);
-
-> +
-> +                                       dev_pm_opp_of_remove_table(&gpd->dev);
-> +                               }
-> +                       }
-> +
->                         list_del(&cp->link);
->                         of_node_put(cp->node);
->                         kfree(cp);
+>         return ERR_PTR(-ENOTSUPP);
 > --
 > 2.15.0.194.g9af6a3dea062
 >
-
-When fixed the nitpicks, feel free to add:
-
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Kind regards
-Uffe
