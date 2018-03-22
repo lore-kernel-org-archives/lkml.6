@@ -1,44 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754613AbeCVMTV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:19:21 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36794 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754591AbeCVMTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:19:18 -0400
-Subject: Re: [RFC PATCH] irqchip: arm-gic: take gic_lock when updating irq
- type
-To: Aniruddha Banerjee <aniruddhab@nvidia.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>, Vipin Kumar <vipink@nvidia.com>
-References: <c20f41d47ed9444b9050bc1f609d4bbe@bgmail101.nvidia.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <77ac9d88-e99e-c507-66b2-cc14f06ce192@arm.com>
-Date: Thu, 22 Mar 2018 12:19:15 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754637AbeCVMYr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:24:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54824 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754246AbeCVMYo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 08:24:44 -0400
 MIME-Version: 1.0
-In-Reply-To: <c20f41d47ed9444b9050bc1f609d4bbe@bgmail101.nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Thu, 22 Mar 2018 08:24:42 -0400
+From: okaya@codeaurora.org
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-rdma@vger.kernel.org, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Steve Wise <swise@chelsio.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on
+ weakly-ordered archs
+In-Reply-To: <201803221430.P43GJl9U%fengguang.wu@intel.com>
+References: <1521514068-8856-5-git-send-email-okaya@codeaurora.org>
+ <201803221430.P43GJl9U%fengguang.wu@intel.com>
+Message-ID: <3664b253c730dbf83f4528acaedb3a88@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/03/18 10:28, Aniruddha Banerjee wrote:
+On 2018-03-22 02:44, kbuild test robot wrote:
+> Hi Sinan,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.16-rc6 next-20180321]
+> [if your patch is applied to the wrong git tree, please drop us a note
+> to help improve the system]
+> 
+> url:
+> https://github.com/0day-ci/linux/commits/Sinan-Kaya/ib-Eliminate-duplicate-barriers-on-weakly-ordered-archs/20180321-091659
+> config: xtensa-allyesconfig (attached as .config)
+> compiler: xtensa-linux-gcc (GCC) 7.2.0
+> reproduce:
+>         wget
+> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+> -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=xtensa
+> 
 
-[a PGP-encrypted email]
+Jason,
 
-Given that you're cc-ing various mailing lists, please resend this email
-unencrypted.
+Can you remove the writeq change if it is too late for me to fix?
 
-Thanks,
+This is an infrastructural issue on xtensa arch.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Probably, it won't get fixed today.
+
+Sinan
+
+
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from drivers/infiniband/hw/cxgb4/iw_cxgb4.h:73:0,
+>                     from drivers/infiniband/hw/cxgb4/device.c:40:
+>    drivers/infiniband/hw/cxgb4/t4.h: In function 'pio_copy':
+>>> drivers/infiniband/hw/cxgb4/t4.h:460:3: error: implicit declaration 
+>>> of function 'writeq_relaxed'; did you mean 'writel_relaxed'? 
+>>> [-Werror=implicit-function-declaration]
+>       writeq_relaxed(*src, dst);
+>       ^~~~~~~~~~~~~~
+>       writel_relaxed
+>    cc1: some warnings being treated as errors
+> 
+> vim +460 drivers/infiniband/hw/cxgb4/t4.h
+> 
+>    450
+>    451	/* This function copies 64 byte coalesced work request to memory
+>    452	 * mapped BAR2 space. For coalesced WRs, the SGE fetches data
+>    453	 * from the FIFO instead of from Host.
+>    454	 */
+>    455	static inline void pio_copy(u64 __iomem *dst, u64 *src)
+>    456	{
+>    457		int count = 8;
+>    458
+>    459		while (count) {
+>  > 460			writeq_relaxed(*src, dst);
+>    461			src++;
+>    462			dst++;
+>    463			count--;
+>    464		}
+>    465	}
+>    466
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology 
+> Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel 
+> Corporation
