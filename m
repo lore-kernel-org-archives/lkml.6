@@ -1,77 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754676AbeCVMfX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:35:23 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51501 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751835AbeCVMfU (ORCPT
+        id S1754688AbeCVMgT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:36:19 -0400
+Received: from tartarus.angband.pl ([89.206.35.136]:54204 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbeCVMgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:35:20 -0400
-Date: Thu, 22 Mar 2018 13:35:18 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: v4.16-rc5 on Motorola Droid 4
-Message-ID: <20180322123518.GA27004@amd>
+        Thu, 22 Mar 2018 08:36:16 -0400
+Date: Thu, 22 Mar 2018 13:35:57 +0100
+From: Adam Borowski <kilobyte@angband.pl>
+To: =?iso-8859-1?Q?Ren=E9?= Rebe <rene@exactcode.com>
+Cc: Nick Terrell <terrelln@fb.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, kernel-team@fb.com,
+        Chris Mason <clm@fb.com>,
+        Julian Andres Klode <julian.klode@canonical.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RESEND PATCH v2 0/2] Add support for ZSTD-compressed kernel
+Message-ID: <20180322123557.4eu4huhldqn6bid6@angband.pl>
+References: <20180322012943.4145794-1-terrelln@fb.com>
+ <C0384AAE-FF89-4BAA-8EFC-FB3B0A8F02AB@exactcode.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <C0384AAE-FF89-4BAA-8EFC-FB3B0A8F02AB@exactcode.com>
+X-Junkbait: aaron@angband.pl, zzyx@angband.pl
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 22, 2018 at 12:09:45PM +0100, René Rebe wrote:
+> Should this currently just work without any arch change on e.g.
+> ppc64, sparc64 et al.? I could do a test build and boot if that is
+> of any value, ...
 
---EVF5PPMfhYS0aIcm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Initrd: no reason it wouldn't work, although for anything related to the
+boot process testing is a very good idea.  If you test, you'd really want to
+apply that printk patch I posted, it's too easy to accidentally get a silent
+fallback to gzip or uncompressed.  I wonder, perhaps such a printk could be
+permanently added, at a low message priority?
 
-Hi!
+Kernel itself: needs per-arch porting, but it's not advertised in kconfig
+outside x86 so that's not a problem.  
 
-Just... I got recent mainline to work on Motorola Droid 4. (Thanks for
-all the help).
+If you are knowledgeful about bootloaders on ppc64, sparc64, etc, such
+information would be great.
 
-Tree is at kernel.org:
 
-kernel.org:pub/scm/linux/kernel/git/pavel/linux-n900.git all-v4.16:all-v4.16
-
-branch all-v4.16 contains config.4 (which is config I'm using) and the
-patches I used. (But I did not do anything special).
-
-What does _not_ yet work is battery charging, and I'm not sure if the
-phone will actually shut down itself or if it will drain & damage the
-battery.
-
-user@devuan:/my/unicsy_demo$ lib/hardware.py
-Battery 3.67V 3.67V 3.82V 15% 49% 0% 0/0 mAh Discharging -353/-1/-1 mA
-user@devuan:/my/unicsy_demo$ lib/hardware.py
-Battery 3.65V 3.65V 3.88V 15% 61% 0% 0/0 mAh Discharging -534/-1/-1 mA
-
-Usb networking works with that config, and I can boot useful system
-with maemo leste.
-
-Good luck,
-    	       	     	       	       	     	 			Pavel
-=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---EVF5PPMfhYS0aIcm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqzowYACgkQMOfwapXb+vKu+wCgnimN/qk9VJBWZKGFzc8H4raw
-Jt8AniWRv5sbvIAS2JJwl8Tq7CKsccCd
-=H1JN
------END PGP SIGNATURE-----
-
---EVF5PPMfhYS0aIcm--
+Meow!
+-- 
+⢀⣴⠾⠻⢶⣦⠀ 
+⣾⠁⢠⠒⠀⣿⡁ A dumb species has no way to open a tuna can.
+⢿⡄⠘⠷⠚⠋⠀ A smart species invents a can opener.
+⠈⠳⣄⠀⠀⠀⠀ A master species delegates.
