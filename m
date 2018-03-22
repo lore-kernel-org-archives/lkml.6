@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753840AbeCVJNz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:13:55 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37176 "EHLO
+        id S1753737AbeCVJNv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:13:51 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37638 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752832AbeCVJBi (ORCPT
+        with ESMTP id S1752838AbeCVJBl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:38 -0400
+        Thu, 22 Mar 2018 05:01:41 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Howard McLauchlan <hmclauchlan@fb.com>
-Subject: [PATCH 45/45] bpf: whitelist all syscalls for error injection
-Date: Thu, 22 Mar 2018 10:00:59 +0100
-Message-Id: <20180322090059.19361-46-linux@dominikbrodowski.net>
+Cc: Jan Kara <jack@suse.com>
+Subject: [PATCH 18/45] fs/quota: add kernel_quotactl() helper; remove in-kernel call to syscall
+Date: Thu, 22 Mar 2018 10:00:32 +0100
+Message-Id: <20180322090059.19361-19-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -21,90 +21,95 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Howard McLauchlan <hmclauchlan@fb.com>
+Using the fs-internal kernel_quotactl() helper allows us to get rid of
+the fs-internal call to the sys_quotactl() syscall.
 
-Error injection is a useful mechanism to fail arbitrary kernel
-functions. However, it is often hard to guarantee an error propagates
-appropriately to user space programs. By injecting into syscalls, we can
-return arbitrary values to user space directly; this increases
-flexibility and robustness in testing, allowing us to test user space
-error paths effectively.
+This patch is part of a series which tries to remove in-kernel calls to
+syscalls. On this basis, the syscall entry path can be streamlined.
 
-The following script, for example, fails calls to sys_open() from a
-given pid:
-
-from bcc import BPF
-from sys import argv
-
-pid = argv[1]
-
-prog = r"""
-
-int kprobe__SyS_open(struct pt_regs *ctx, const char *pathname, int flags)
-{
-    u32 pid = bpf_get_current_pid_tgid();
-    if (pid == %s)
-        bpf_override_return(ctx, -ENOMEM);
-    return 0;
-}
-""" % pid
-
-b = BPF(text=prog)
-while 1:
-    b.perf_buffer_poll()
-
-This patch whitelists all syscalls defined with SYSCALL_DEFINE and
-COMPAT_SYSCALL_DEFINE for error injection. These changes are not
-intended to be considered stable, and would normally be configured off.
-
-Signed-off-by: Howard McLauchlan <hmclauchlan@fb.com>
+Cc: Jan Kara <jack@suse.com>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- include/linux/compat.h   | 3 +++
- include/linux/syscalls.h | 3 +++
- 2 files changed, 6 insertions(+)
+ fs/quota/compat.c        |  8 ++++----
+ fs/quota/quota.c         | 10 ++++++++--
+ include/linux/quotaops.h |  3 +++
+ 3 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index f1649a5e6716..57eb263a3bc9 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -33,6 +33,8 @@
- #endif
+diff --git a/fs/quota/compat.c b/fs/quota/compat.c
+index 779caed4f078..1577a2fd51f4 100644
+--- a/fs/quota/compat.c
++++ b/fs/quota/compat.c
+@@ -59,7 +59,7 @@ asmlinkage long sys32_quotactl(unsigned int cmd, const char __user *special,
+ 	case Q_GETQUOTA:
+ 		dqblk = compat_alloc_user_space(sizeof(struct if_dqblk));
+ 		compat_dqblk = addr;
+-		ret = sys_quotactl(cmd, special, id, dqblk);
++		ret = kernel_quotactl(cmd, special, id, dqblk);
+ 		if (ret)
+ 			break;
+ 		if (copy_in_user(compat_dqblk, dqblk, sizeof(*compat_dqblk)) ||
+@@ -75,12 +75,12 @@ asmlinkage long sys32_quotactl(unsigned int cmd, const char __user *special,
+ 			get_user(data, &compat_dqblk->dqb_valid) ||
+ 			put_user(data, &dqblk->dqb_valid))
+ 			break;
+-		ret = sys_quotactl(cmd, special, id, dqblk);
++		ret = kernel_quotactl(cmd, special, id, dqblk);
+ 		break;
+ 	case Q_XGETQSTAT:
+ 		fsqstat = compat_alloc_user_space(sizeof(struct fs_quota_stat));
+ 		compat_fsqstat = addr;
+-		ret = sys_quotactl(cmd, special, id, fsqstat);
++		ret = kernel_quotactl(cmd, special, id, fsqstat);
+ 		if (ret)
+ 			break;
+ 		ret = -EFAULT;
+@@ -113,7 +113,7 @@ asmlinkage long sys32_quotactl(unsigned int cmd, const char __user *special,
+ 		ret = 0;
+ 		break;
+ 	default:
+-		ret = sys_quotactl(cmd, special, id, addr);
++		ret = kernel_quotactl(cmd, special, id, addr);
+ 	}
+ 	return ret;
+ }
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index 43612e2a73af..860bfbe7a07a 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -833,8 +833,8 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
+  * calls. Maybe we need to add the process quotas etc. in the future,
+  * but we probably should use rlimits for that.
+  */
+-SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
+-		qid_t, id, void __user *, addr)
++int kernel_quotactl(unsigned int cmd, const char __user *special,
++		    qid_t id, void __user *addr)
+ {
+ 	uint cmds, type;
+ 	struct super_block *sb = NULL;
+@@ -885,3 +885,9 @@ SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
+ 		path_put(pathp);
+ 	return ret;
+ }
++
++SYSCALL_DEFINE4(quotactl, unsigned int, cmd, const char __user *, special,
++		qid_t, id, void __user *, addr)
++{
++	return kernel_quotactl(cmd, special, id, addr);
++}
+diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
+index 2fb6fb11132e..ff63eac16a79 100644
+--- a/include/linux/quotaops.h
++++ b/include/linux/quotaops.h
+@@ -105,6 +105,9 @@ int dquot_set_dqblk(struct super_block *sb, struct kqid id,
+ int __dquot_transfer(struct inode *inode, struct dquot **transfer_to);
+ int dquot_transfer(struct inode *inode, struct iattr *iattr);
  
- #define COMPAT_SYSCALL_DEFINE0(name) \
-+	asmlinkage long compat_sys_##name(void); \
-+	ALLOW_ERROR_INJECTION(compat_sys_##name, ERRNO); \
- 	asmlinkage long compat_sys_##name(void)
- 
- #define COMPAT_SYSCALL_DEFINE1(name, ...) \
-@@ -51,6 +53,7 @@
- #define COMPAT_SYSCALL_DEFINEx(x, name, ...)				\
- 	asmlinkage long compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))\
- 		__attribute__((alias(__stringify(compat_SyS##name))));  \
-+	ALLOW_ERROR_INJECTION(compat_sys##name, ERRNO);	\
- 	static inline long C_SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
- 	asmlinkage long compat_SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__));\
- 	asmlinkage long compat_SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__))\
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 3591c4af33d8..cc6fcd7d5b3c 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -191,6 +191,8 @@ static inline int is_syscall_trace_event(struct trace_event_call *tp_event)
- 
- #define SYSCALL_DEFINE0(sname)					\
- 	SYSCALL_METADATA(_##sname, 0);				\
-+	asmlinkage long sys_##sname(void);			\
-+	ALLOW_ERROR_INJECTION(sys_##sname, ERRNO);		\
- 	asmlinkage long sys_##sname(void)
- 
- #define SYSCALL_DEFINE1(name, ...) SYSCALL_DEFINEx(1, _##name, __VA_ARGS__)
-@@ -210,6 +212,7 @@ static inline int is_syscall_trace_event(struct trace_event_call *tp_event)
- #define __SYSCALL_DEFINEx(x, name, ...)					\
- 	asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
- 		__attribute__((alias(__stringify(SyS##name))));		\
-+	ALLOW_ERROR_INJECTION(sys##name, ERRNO);			\
- 	static inline long SYSC##name(__MAP(x,__SC_DECL,__VA_ARGS__));	\
- 	asmlinkage long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
- 	asmlinkage long SyS##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
++int kernel_quotactl(unsigned int cmd, const char __user *special,
++		    qid_t id, void __user *addr);
++
+ static inline struct mem_dqinfo *sb_dqinfo(struct super_block *sb, int type)
+ {
+ 	return sb_dqopt(sb)->info + type;
 -- 
 2.16.2
