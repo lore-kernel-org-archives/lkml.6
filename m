@@ -1,100 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754684AbeCVMsG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:48:06 -0400
-Received: from smtp-out6.electric.net ([192.162.217.184]:55229 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753742AbeCVMsE (ORCPT
+        id S1754725AbeCVMsU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:48:20 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:41583 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753742AbeCVMsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:48:04 -0400
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'Linus Torvalds'" <torvalds@linux-foundation.org>,
-        "'Ingo Molnar'" <mingo@kernel.org>
-CC: "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Rahul Lakkireddy'" <rahul.lakkireddy@chelsio.com>,
-        "'x86@kernel.org'" <x86@kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'netdev@vger.kernel.org'" <netdev@vger.kernel.org>,
-        "'mingo@redhat.com'" <mingo@redhat.com>,
-        "'hpa@zytor.com'" <hpa@zytor.com>,
-        "'davem@davemloft.net'" <davem@davemloft.net>,
-        "'akpm@linux-foundation.org'" <akpm@linux-foundation.org>,
-        "'ganeshgr@chelsio.com'" <ganeshgr@chelsio.com>,
-        "'nirranjan@chelsio.com'" <nirranjan@chelsio.com>,
-        "'indranil@chelsio.com'" <indranil@chelsio.com>,
-        "'Andy Lutomirski'" <luto@kernel.org>,
-        "'Peter Zijlstra'" <a.p.zijlstra@chello.nl>,
-        "'Fenghua Yu'" <fenghua.yu@intel.com>,
-        "'Eric Biggers'" <ebiggers3@gmail.com>
-Subject: RE: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Thread-Topic: [RFC PATCH 0/3] kernel: add support for 256-bit IO access
-Thread-Index: AQHTv43TjMVMzNQoikSg1VH837bpVaPXnqXggAAJp4CAAAH+gIADWB3UgAELVpCAACZUYA==
-Date: Thu, 22 Mar 2018 12:48:50 +0000
-Message-ID: <b4658ee26be34c47807de0e5e13e7b31@AcuMS.aculab.com>
-References: <cover.1521469118.git.rahul.lakkireddy@chelsio.com>
- <7f0ddb3678814c7bab180714437795e0@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191557400.2010@nanos.tec.linutronix.de>
- <7f8d811e79284a78a763f4852984eb3f@AcuMS.aculab.com>
- <alpine.DEB.2.21.1803191625080.2010@nanos.tec.linutronix.de>
- <20180320082651.jmxvvii2xvmpyr2s@gmail.com>
- <CA+55aFybTvLz47mw=AG21jCJv_hE2vaVyiJP_F-4vAD-3Gnc7Q@mail.gmail.com>
- <20180321074634.dzpyjz3ia46snodh@gmail.com>
- <CA+55aFyK6uJopBjZGyeDz0O+qzCac6AwPkJyOpuaT69inPgVgw@mail.gmail.com>
- <2f5cb27711e741fba77846574e72eb62@AcuMS.aculab.com>
-In-Reply-To: <2f5cb27711e741fba77846574e72eb62@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
+        Thu, 22 Mar 2018 08:48:16 -0400
+X-Google-Smtp-Source: AG47ELsWQOW9f4tb/StFb5QEexgx+CzNqSoutzjYXN58K7+//aDDqljWqxWJ16KPMySKU4NsXkO4viM5UrUYxWMhu6M=
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
+In-Reply-To: <1521719091-25157-5-git-send-email-michel.pollet@bp.renesas.com>
+References: <1521719091-25157-1-git-send-email-michel.pollet@bp.renesas.com> <1521719091-25157-5-git-send-email-michel.pollet@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 22 Mar 2018 13:48:14 +0100
+X-Google-Sender-Auth: 1H-UMUDSzgOruEKohakHmdzvNt4
+Message-ID: <CAMuHMdUbSfQAf9cRAiLg3ZuVwdSoAGOFwiqyv-28SW5d0fOr3w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] reset: Renesas RZ/N1 reboot driver
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2MCmGiI023332
 
-From: David Laight
-> Sent: 22 March 2018 10:36
-...
-> Any code would need to be in memcpy_fromio(), not in every driver that
-> might benefit.
-> Then fallback code can be used if the registers aren't available.
-> 
-> >  (b) we can't guarantee that %ymm register write will show up on any
-> > bus as a single write transaction anyway
-> 
-> Misaligned 8 byte accesses generate a single PCIe TLP.
-> I can look at what happens for AVX2 transfers later.
-> I've got code that mmap()s PCIe addresses into user space, and can
-> look at the TLP (indirectly through tracing on an fpga target).
-> Just need to set something up that uses AVX copies.
+Hi Michel,
 
-On my i7-7700 reads into xmm registers generate 16 byte TLP and
-reads into ymm registers 32 byte TLP.
-I don't think I've a system that supports avx-512
+On Thu, Mar 22, 2018 at 12:44 PM, Michel Pollet
+<michel.pollet@bp.renesas.com> wrote:
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) needs a small driver
+> to reboot the Cortex-A7 cores. This driver is a sub driver of
+> the sysctrl MFD.
+>
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 
-With my lethargic fpga slave 32 bytes reads happen every 144 clocks
-and 16 byte ones every 126 (+/- the odd clock).
-Single bytes ones happen every 108, 8 byte 117.
-So I have (about) 110 clock overhead on every read cycle.
-These clocks are the 62.5MHz clock on the fpga.
+Thanks for your patch!
 
-So if we needed to do PIO reads using the AVX2 (or better AVX-512)
-registers would make a significant difference.
-Fortunately we can 'dma' most of the data we need to transfer.
+> --- /dev/null
+> +++ b/drivers/power/reset/rzn1-reboot.c
+> @@ -0,0 +1,109 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RZ/N1 reboot driver
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
+> + * Derived from zx-reboot.c
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/notifier.h>
+> +#include <linux/of_address.h>
 
-I've traced writes before, they are a lot faster and are limited
-by things in the fpga fabric (they appear back to back).
+I don't think you need <linux/of_address.h>.
 
-	David
+> +#include <linux/platform_device.h>
+> +#include <linux/reboot.h>
+> +#include <linux/regmap.h>
+> +
+> +/* Definitions from the SDK rzn1-sysctrl.h autogenerated file */
+> +#define RZN1_SYSCTRL_REG_RSTEN                 0x120
+> +#define RZN1_SYSCTRL_REG_RSTEN_MRESET_EN               0
+> +#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN              1
+> +#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN_MASK         0x6
+> +#define RZN1_SYSCTRL_REG_RSTEN_WDM3RST_EN              3
+> +#define RZN1_SYSCTRL_REG_RSTEN_CM3LOCKUPRST_EN         4
+> +#define RZN1_SYSCTRL_REG_RSTEN_CM3SYSRESET_EN          5
+> +#define RZN1_SYSCTRL_REG_RSTEN_SWRST_EN                        6
+> +#define RZN1_SYSCTRL_REG_RSTCTRL               0x198
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ           1
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ_MASK      0x6
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_WDM3RST_REQ           3
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_CM3LOCKUPRST_REQ      4
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_CM3SYSRESET_REQ       5
+> +#define RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ             6
+> +
+> +
+> +static struct regmap *_sysctrl;
+
+Variable names starting with an underscore are frowned upon.
+
+> +static int rzn1_reboot_probe(struct platform_device *pdev)
+> +{
+> +       int err;
+> +       struct device *parent;
+> +
+> +       parent = pdev->dev.parent;
+> +       if (parent && parent->of_node) {
+> +               _sysctrl = syscon_node_to_regmap(parent->of_node);
+> +       } else {
+> +               dev_err(&pdev->dev, "couldn't find sysctrl node\n");
+> +               return -ENODEV;
+> +       }
+
+if (!parent || !parent->of_node) {
+        dev_err(&pdev->dev, "couldn't find sysctrl node\n");
+        return -ENODEV;
+}
+_sysctrl = syscon_node_to_regmap(parent->of_node);
+
+> +       if (IS_ERR(_sysctrl)) {
+> +               dev_err(&pdev->dev, "couldn't find find regmap\n");
+> +               return PTR_ERR(_sysctrl);
+> +       }
+> +       err = register_restart_handler(&rzn1_reboot_nb);
+> +       if (err) {
+> +               dev_err(&pdev->dev, "register restart handler failed(err=%d)\n",
+> +                       err);
+> +       }
+> +
+> +       return err;
+> +}
+> +
+> +static const struct of_device_id rzn1_reboot_of_match[] = {
+> +       { .compatible = "renesas,r9a06g032-reboot" },
+> +       { .compatible = "renesas,rzn1-reboot" },
+
+Matching against the second (family-specific) compatible value should
+be sufficient.
+
+> +       {}
+> +};
+> +MODULE_DEVICE_TABLE(of, rzn1_reboot_of_match);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
