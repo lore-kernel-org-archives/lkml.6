@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754548AbeCVJKY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:10:24 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37720 "EHLO
+        id S1753568AbeCVJNH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:13:07 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37682 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752929AbeCVJBr (ORCPT
+        with ESMTP id S1752854AbeCVJBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:47 -0400
+        Thu, 22 Mar 2018 05:01:43 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
-        x86@kernel.org
-Subject: [PATCH 41/45] x86: remove compat_sys_x86_waitpid()
-Date: Thu, 22 Mar 2018 10:00:55 +0100
-Message-Id: <20180322090059.19361-42-linux@dominikbrodowski.net>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 26/45] mm: add kernel_move_pages() helper, move compat syscall to mm/migrate.c
+Date: Thu, 22 Mar 2018 10:00:40 +0100
+Message-Id: <20180322090059.19361-27-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -22,63 +22,117 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-compat_sys_x86_waitpid() is not needed, as it takes the same parameters
-(int, *int, int) as the native syscall.
+Move compat_sys_move_pages() to mm/migrate.c and make it call a newly
+introduced helper -- kernel_move_pages() -- instead of the syscall.
 
-Suggested-by: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: x86@kernel.org
+This patch is part of a series which tries to remove in-kernel calls to
+syscalls. On this basis, the syscall entry path can be streamlined.
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/entry/syscalls/syscall_32.tbl | 2 +-
- arch/x86/ia32/sys_ia32.c               | 6 ------
- arch/x86/include/asm/sys_ia32.h        | 3 ---
- 3 files changed, 1 insertion(+), 10 deletions(-)
+ kernel/compat.c | 22 ----------------------
+ mm/migrate.c    | 39 +++++++++++++++++++++++++++++++++++----
+ 2 files changed, 35 insertions(+), 26 deletions(-)
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 09338dd2bd94..c58f75b088c5 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -13,7 +13,7 @@
- 4	i386	write			sys_write
- 5	i386	open			sys_open			compat_sys_open
- 6	i386	close			sys_close
--7	i386	waitpid			sys_waitpid			compat_sys_x86_waitpid
-+7	i386	waitpid			sys_waitpid
- 8	i386	creat			sys_creat
- 9	i386	link			sys_link
- 10	i386	unlink			sys_unlink
-diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
-index b9d4d8abc3f7..bd8a7020b9a7 100644
---- a/arch/x86/ia32/sys_ia32.c
-+++ b/arch/x86/ia32/sys_ia32.c
-@@ -170,12 +170,6 @@ COMPAT_SYSCALL_DEFINE1(x86_mmap, struct mmap_arg_struct32 __user *, arg)
- 			       a.offset>>PAGE_SHIFT);
+diff --git a/kernel/compat.c b/kernel/compat.c
+index 51bdf1808943..6d21894806b4 100644
+--- a/kernel/compat.c
++++ b/kernel/compat.c
+@@ -488,28 +488,6 @@ get_compat_sigset(sigset_t *set, const compat_sigset_t __user *compat)
+ }
+ EXPORT_SYMBOL_GPL(get_compat_sigset);
+ 
+-#ifdef CONFIG_NUMA
+-COMPAT_SYSCALL_DEFINE6(move_pages, pid_t, pid, compat_ulong_t, nr_pages,
+-		       compat_uptr_t __user *, pages32,
+-		       const int __user *, nodes,
+-		       int __user *, status,
+-		       int, flags)
+-{
+-	const void __user * __user *pages;
+-	int i;
+-
+-	pages = compat_alloc_user_space(nr_pages * sizeof(void *));
+-	for (i = 0; i < nr_pages; i++) {
+-		compat_uptr_t p;
+-
+-		if (get_user(p, pages32 + i) ||
+-			put_user(compat_ptr(p), pages + i))
+-			return -EFAULT;
+-	}
+-	return sys_move_pages(pid, nr_pages, pages, nodes, status, flags);
+-}
+-#endif
+-
+ /*
+  * Allocate user-space memory for the duration of a single system call,
+  * in order to marshall parameters inside a compat thunk.
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 1e5525a25691..003886606a22 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -34,6 +34,7 @@
+ #include <linux/backing-dev.h>
+ #include <linux/compaction.h>
+ #include <linux/syscalls.h>
++#include <linux/compat.h>
+ #include <linux/hugetlb.h>
+ #include <linux/hugetlb_cgroup.h>
+ #include <linux/gfp.h>
+@@ -1745,10 +1746,10 @@ static int do_pages_stat(struct mm_struct *mm, unsigned long nr_pages,
+  * Move a list of pages in the address space of the currently executing
+  * process.
+  */
+-SYSCALL_DEFINE6(move_pages, pid_t, pid, unsigned long, nr_pages,
+-		const void __user * __user *, pages,
+-		const int __user *, nodes,
+-		int __user *, status, int, flags)
++static int kernel_move_pages(pid_t pid, unsigned long nr_pages,
++			     const void __user * __user *pages,
++			     const int __user *nodes,
++			     int __user *status, int flags)
+ {
+ 	struct task_struct *task;
+ 	struct mm_struct *mm;
+@@ -1807,6 +1808,36 @@ SYSCALL_DEFINE6(move_pages, pid_t, pid, unsigned long, nr_pages,
+ 	return err;
  }
  
--COMPAT_SYSCALL_DEFINE3(x86_waitpid, compat_pid_t, pid, unsigned int __user *,
--		       stat_addr, int, options)
--{
--	return compat_sys_wait4(pid, stat_addr, options, NULL);
--}
--
- /* warning: next two assume little endian */
- COMPAT_SYSCALL_DEFINE5(x86_pread, unsigned int, fd, char __user *, ubuf,
- 		       u32, count, u32, poslo, u32, poshi)
-diff --git a/arch/x86/include/asm/sys_ia32.h b/arch/x86/include/asm/sys_ia32.h
-index 906794aa034e..2ee6e3b96656 100644
---- a/arch/x86/include/asm/sys_ia32.h
-+++ b/arch/x86/include/asm/sys_ia32.h
-@@ -35,9 +35,6 @@ asmlinkage long compat_sys_x86_fstatat(unsigned int, const char __user *,
- struct mmap_arg_struct32;
- asmlinkage long compat_sys_x86_mmap(struct mmap_arg_struct32 __user *);
- 
--asmlinkage long compat_sys_x86_waitpid(compat_pid_t, unsigned int __user *,
--				       int);
--
- asmlinkage long compat_sys_x86_pread(unsigned int, char __user *, u32, u32,
- 				     u32);
- asmlinkage long compat_sys_x86_pwrite(unsigned int, const char __user *, u32,
++SYSCALL_DEFINE6(move_pages, pid_t, pid, unsigned long, nr_pages,
++		const void __user * __user *, pages,
++		const int __user *, nodes,
++		int __user *, status, int, flags)
++{
++	return kernel_move_pages(pid, nr_pages, pages, nodes, status, flags);
++}
++
++#ifdef CONFIG_COMPAT
++COMPAT_SYSCALL_DEFINE6(move_pages, pid_t, pid, compat_ulong_t, nr_pages,
++		       compat_uptr_t __user *, pages32,
++		       const int __user *, nodes,
++		       int __user *, status,
++		       int, flags)
++{
++	const void __user * __user *pages;
++	int i;
++
++	pages = compat_alloc_user_space(nr_pages * sizeof(void *));
++	for (i = 0; i < nr_pages; i++) {
++		compat_uptr_t p;
++
++		if (get_user(p, pages32 + i) ||
++			put_user(compat_ptr(p), pages + i))
++			return -EFAULT;
++	}
++	return kernel_move_pages(pid, nr_pages, pages, nodes, status, flags);
++}
++#endif /* CONFIG_COMPAT */
++
+ #ifdef CONFIG_NUMA_BALANCING
+ /*
+  * Returns true if this is a safe migration target node for misplaced NUMA
 -- 
 2.16.2
