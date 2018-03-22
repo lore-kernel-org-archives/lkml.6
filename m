@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753173AbeCVJNF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:13:05 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37686 "EHLO
+        id S1753921AbeCVJN7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:13:59 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37142 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752861AbeCVJBn (ORCPT
+        with ESMTP id S1752629AbeCVJBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:43 -0400
+        Thu, 22 Mar 2018 05:01:38 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
-        Jiri Slaby <jslaby@suse.com>, x86@kernel.org,
-        Michael Tautschnig <tautschn@amazon.co.uk>
-Subject: [PATCH 42/45] x86: fix sys_sigreturn() return type to be long, not unsigned long
-Date: Thu, 22 Mar 2018 10:00:56 +0100
-Message-Id: <20180322090059.19361-43-linux@dominikbrodowski.net>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 13/45] fs: add do_compat_select() helper; remove in-kernel call to comapt syscall
+Date: Thu, 22 Mar 2018 10:00:27 +0100
+Message-Id: <20180322090059.19361-14-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -23,46 +22,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Same as with other system calls, sys_sigreturn() should return a value
-of type long, not unsigned long. This also matches the behaviour for
-IA32_EMULATION, see sys32_sigreturn() in arch/x86/ia32/ia32_signal.c .
+Using the fs-internal do_compat_select() helper allows us to get rid of
+the fs-internal call to the compat_sys_select() syscall.
 
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: x86@kernel.org
-Cc: Michael Tautschnig <tautschn@amazon.co.uk>
+This patch is part of a series which tries to remove in-kernel calls to
+syscalls. On this basis, the syscall entry path can be streamlined.
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/include/asm/syscalls.h | 2 +-
- arch/x86/kernel/signal.c        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/select.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/syscalls.h b/arch/x86/include/asm/syscalls.h
-index 1c0bebbd039e..ae6e05fdc24b 100644
---- a/arch/x86/include/asm/syscalls.h
-+++ b/arch/x86/include/asm/syscalls.h
-@@ -35,7 +35,7 @@ asmlinkage long sys_get_thread_area(struct user_desc __user *);
- #ifdef CONFIG_X86_32
+diff --git a/fs/select.c b/fs/select.c
+index b5df01c4587d..ba879c51288f 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -1265,9 +1265,9 @@ static int compat_core_sys_select(int n, compat_ulong_t __user *inp,
+ 	return ret;
+ }
  
- /* kernel/signal.c */
--asmlinkage unsigned long sys_sigreturn(void);
-+asmlinkage long sys_sigreturn(void);
- 
- /* kernel/vm86_32.c */
- struct vm86_struct;
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 4cdc0b27ec82..83a26726b689 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -601,7 +601,7 @@ static int x32_setup_rt_frame(struct ksignal *ksig,
-  * Do a signal return; undo the signal stack.
-  */
- #ifdef CONFIG_X86_32
--asmlinkage unsigned long sys_sigreturn(void)
-+asmlinkage long sys_sigreturn(void)
+-COMPAT_SYSCALL_DEFINE5(select, int, n, compat_ulong_t __user *, inp,
+-	compat_ulong_t __user *, outp, compat_ulong_t __user *, exp,
+-	struct compat_timeval __user *, tvp)
++static int do_compat_select(int n, compat_ulong_t __user *inp,
++	compat_ulong_t __user *outp, compat_ulong_t __user *exp,
++	struct compat_timeval __user *tvp)
  {
- 	struct pt_regs *regs = current_pt_regs();
- 	struct sigframe __user *frame;
+ 	struct timespec64 end_time, *to = NULL;
+ 	struct compat_timeval tv;
+@@ -1290,6 +1290,13 @@ COMPAT_SYSCALL_DEFINE5(select, int, n, compat_ulong_t __user *, inp,
+ 	return ret;
+ }
+ 
++COMPAT_SYSCALL_DEFINE5(select, int, n, compat_ulong_t __user *, inp,
++	compat_ulong_t __user *, outp, compat_ulong_t __user *, exp,
++	struct compat_timeval __user *, tvp)
++{
++	return do_compat_select(n, inp, outp, exp, tvp);
++}
++
+ struct compat_sel_arg_struct {
+ 	compat_ulong_t n;
+ 	compat_uptr_t inp;
+@@ -1304,8 +1311,8 @@ COMPAT_SYSCALL_DEFINE1(old_select, struct compat_sel_arg_struct __user *, arg)
+ 
+ 	if (copy_from_user(&a, arg, sizeof(a)))
+ 		return -EFAULT;
+-	return compat_sys_select(a.n, compat_ptr(a.inp), compat_ptr(a.outp),
+-				 compat_ptr(a.exp), compat_ptr(a.tvp));
++	return do_compat_select(a.n, compat_ptr(a.inp), compat_ptr(a.outp),
++				compat_ptr(a.exp), compat_ptr(a.tvp));
+ }
+ 
+ static long do_compat_pselect(int n, compat_ulong_t __user *inp,
 -- 
 2.16.2
