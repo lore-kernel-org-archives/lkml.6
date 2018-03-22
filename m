@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753388AbeCVJCL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:02:11 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37736 "EHLO
+        id S1753306AbeCVJCI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:02:08 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37686 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753040AbeCVJBx (ORCPT
+        with ESMTP id S1752848AbeCVJBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Mar 2018 05:01:53 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 31/45] ipc: add semget syscall wrapper
-Date: Thu, 22 Mar 2018 10:00:45 +0100
-Message-Id: <20180322090059.19361-32-linux@dominikbrodowski.net>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 16/45] inotify: add do_inotify_init() helper; remove in-kernel call to syscall
+Date: Thu, 22 Mar 2018 10:00:30 +0100
+Message-Id: <20180322090059.19361-17-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -22,81 +22,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide ksys_semget() wrapper to avoid in-kernel calls to this syscall.
-The ksys_ prefix denotes that this function is meant as a drop-in
-replacement for the syscall. In particular, it uses the same calling
-convention as sys_semget().
+Using the inotify-internal do_inotify_init() helper allows us to get rid
+of the in-kernel call to sys_inotify_init1() syscall.
 
 This patch is part of a series which tries to remove in-kernel calls to
 syscalls. On this basis, the syscall entry path can be streamlined.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- ipc/sem.c     | 7 ++++++-
- ipc/syscall.c | 4 ++--
- ipc/util.h    | 1 +
- 3 files changed, 9 insertions(+), 3 deletions(-)
+ fs/notify/inotify/inotify_user.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/ipc/sem.c b/ipc/sem.c
-index e21ceb8b4af1..2e5f7ec7a7db 100644
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -556,7 +556,7 @@ static inline int sem_more_checks(struct kern_ipc_perm *ipcp,
- 	return 0;
- }
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 2c908b31d6c9..43c23653ce2e 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -635,7 +635,7 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
  
--SYSCALL_DEFINE3(semget, key_t, key, int, nsems, int, semflg)
-+long ksys_semget(key_t key, int nsems, int semflg)
+ 
+ /* inotify syscalls */
+-SYSCALL_DEFINE1(inotify_init1, int, flags)
++static int do_inotify_init(int flags)
  {
- 	struct ipc_namespace *ns;
- 	static const struct ipc_ops sem_ops = {
-@@ -578,6 +578,11 @@ SYSCALL_DEFINE3(semget, key_t, key, int, nsems, int, semflg)
- 	return ipcget(ns, &sem_ids(ns), &sem_ops, &sem_params);
+ 	struct fsnotify_group *group;
+ 	int ret;
+@@ -660,9 +660,14 @@ SYSCALL_DEFINE1(inotify_init1, int, flags)
+ 	return ret;
  }
  
-+SYSCALL_DEFINE3(semget, key_t, key, int, nsems, int, semflg)
++SYSCALL_DEFINE1(inotify_init1, int, flags)
 +{
-+	return ksys_semget(key, nsems, semflg);
++	return do_inotify_init(flags);
 +}
 +
- /**
-  * perform_atomic_semop[_slow] - Attempt to perform semaphore
-  *                               operations on a given array.
-diff --git a/ipc/syscall.c b/ipc/syscall.c
-index 84d6a7691baa..21fcdf0b4836 100644
---- a/ipc/syscall.c
-+++ b/ipc/syscall.c
-@@ -35,7 +35,7 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
- 				       (const struct timespec __user *)fifth);
+ SYSCALL_DEFINE0(inotify_init)
+ {
+-	return sys_inotify_init1(0);
++	return do_inotify_init(0);
+ }
  
- 	case SEMGET:
--		return sys_semget(first, second, third);
-+		return ksys_semget(first, second, third);
- 	case SEMCTL: {
- 		unsigned long arg;
- 		if (!ptr)
-@@ -132,7 +132,7 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
- 		return compat_ksys_semtimedop(first, compat_ptr(ptr), second,
- 						compat_ptr(fifth));
- 	case SEMGET:
--		return sys_semget(first, second, third);
-+		return ksys_semget(first, second, third);
- 	case SEMCTL:
- 		if (!ptr)
- 			return -EINVAL;
-diff --git a/ipc/util.h b/ipc/util.h
-index 6deadf77547e..0f07056e5a73 100644
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -240,6 +240,7 @@ static inline int compat_ipc_parse_version(int *cmd)
- long ksys_semtimedop(int semid, struct sembuf __user *tsops,
- 		     unsigned int nsops,
- 		     const struct timespec __user *timeout);
-+long ksys_semget(key_t key, int nsems, int semflg);
- 
- /* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
- #ifdef CONFIG_COMPAT
+ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
 -- 
 2.16.2
