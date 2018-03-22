@@ -1,72 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753483AbeCVJPV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:15:21 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:38875 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752464AbeCVJNr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:13:47 -0400
-Date: Thu, 22 Mar 2018 10:13:19 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Daniel Bristot de Oliveira <daniel@bristot.me>,
-        =?ISO-8859-15?Q?Luis_Claudio_R=2E_Gon=E7alves?=
-        <lclaudio@redhat.com>,
-        Clark Williams <williams@redhat.com>,
-        target-devel <target-devel@vger.kernel.org>
-Subject: Re: [PATCH] target: Use WARNON_NON_RT(!irqs_disabled())
-In-Reply-To: <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1803221012160.1579@nanos.tec.linutronix.de>
-References: <20180321153854.GB24312@kernel.org> <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1753548AbeCVJPk convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:15:40 -0400
+Received: from lhrrgout.huawei.com ([194.213.3.17]:30377 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752097AbeCVJPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 05:15:35 -0400
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Alex Williamson <alex.williamson@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>
+CC: "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xuwei (O)" <xuwei5@huawei.com>, Linuxarm <linuxarm@huawei.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: RE: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
+ update iova list
+Thread-Topic: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
+ update iova list
+Thread-Index: AQHTwJwZTwCKJOB87EiGSFegES1joaPZ9++AgADaIQCAASZ2cA==
+Date: Thu, 22 Mar 2018 09:15:22 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA838678FA7@FRAEML521-MBX.china.huawei.com>
+References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
+        <20180315163509.17740-3-shameerali.kolothum.thodi@huawei.com>
+        <AADFC41AFE54684AB9EE6CBC0274A5D1910857ED@SHSMSX101.ccr.corp.intel.com>
+        <20180320163744.3c09fde0@t450s.home>
+        <AADFC41AFE54684AB9EE6CBC0274A5D191089B3B@SHSMSX101.ccr.corp.intel.com>
+ <20180321103112.229d4bf1@w520.home>
+In-Reply-To: <20180321103112.229d4bf1@w520.home>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.227.237]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018, Linus Torvalds wrote:
-> [ Adding PeterZ to participants due to query about lockdep_assert() ]
-> 
-> On Wed, Mar 21, 2018 at 8:38 AM, Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> >         assert_spin_locked(&cmd->t_state_lock);
-> > -       WARN_ON_ONCE(!irqs_disabled());
-> > +       WARN_ON_ONCE_NONRT(!irqs_disabled());
-> 
-> Ugh.
-> 
-> Can't we just replace both of those with a lockdep annotation?
-> 
-> Does "lockdep_assert_held()" already verify the irq contextr, or do we
-> need lockdep_assert_irqs_disabled() too?
-> 
-> Honestly, the old-fashioned way of doing verification of state by hand
-> is understandable, but it's legacy and kind of pointless when we have
-> much better tools these days.
-> 
-> I'm perfectly willing to leave old assertions in place, but if they
-> need fixing anyway, I'd damn well want to fix them *right* instead of
-> starting to just add more piles of hacks on top of the old model.
-> 
-> Because when the details of the locking rules depend on RT vs non-RT,
-> I want the checks to make sense.  And presumably lockdep is the thing
-> that really knows what the status of a lock is, no?
 
-We are working on replacing the _NONRT _RT variants with proper lockdep
-mechnisms which are aware of the RT vs. non-RT magic under the hood. Just
-not there yet.
+
+> -----Original Message-----
+> From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> Sent: Wednesday, March 21, 2018 4:31 PM
+> To: Tian, Kevin <kevin.tian@intel.com>
+> Cc: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>;
+> eric.auger@redhat.com; pmorel@linux.vnet.ibm.com; kvm@vger.kernel.org;
+> linux-kernel@vger.kernel.org; xuwei (O) <xuwei5@huawei.com>; Linuxarm
+> <linuxarm@huawei.com>; iommu@lists.linux-foundation.org
+> Subject: Re: [PATCH v5 2/7] vfio/type1: Check reserve region conflict and
+> update iova list
+> 
+> On Wed, 21 Mar 2018 03:30:29 +0000
+> "Tian, Kevin" <kevin.tian@intel.com> wrote:
+> 
+> > > From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> > > Sent: Wednesday, March 21, 2018 6:38 AM
+> > >
+> > > On Mon, 19 Mar 2018 07:51:58 +0000
+> > > "Tian, Kevin" <kevin.tian@intel.com> wrote:
+> > >
+> > > > > From: Shameer Kolothum
+> > > > > Sent: Friday, March 16, 2018 12:35 AM
+> > > > >
+> > > > > This retrieves the reserved regions associated with dev group and
+> > > > > checks for conflicts with any existing dma mappings. Also update
+> > > > > the iova list excluding the reserved regions.
+> > > > >
+> > > > > Signed-off-by: Shameer Kolothum
+> > > > > <shameerali.kolothum.thodi@huawei.com>
+> > > > > ---
+> > > > >  drivers/vfio/vfio_iommu_type1.c | 90
+> > > > > +++++++++++++++++++++++++++++++++++++++++
+> > > > >  1 file changed, 90 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/vfio/vfio_iommu_type1.c
+> > > > > b/drivers/vfio/vfio_iommu_type1.c
+> > > > > index 1123c74..cfe2bb2 100644
+> > > > > --- a/drivers/vfio/vfio_iommu_type1.c
+> > > > > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > > > > @@ -1313,6 +1313,82 @@ static int vfio_iommu_aper_resize(struct
+> > > > > list_head *iova,
+> > > > >  	return 0;
+> > > > >  }
+> > > > >
+> > > > > +/*
+> > > > > + * Check reserved region conflicts with existing dma mappings
+> > > > > + */
+> > > > > +static bool vfio_iommu_resv_conflict(struct vfio_iommu *iommu,
+> > > > > +				struct list_head *resv_regions)
+> > > > > +{
+> > > > > +	struct iommu_resv_region *region;
+> > > > > +
+> > > > > +	/* Check for conflict with existing dma mappings */
+> > > > > +	list_for_each_entry(region, resv_regions, list) {
+> > > > > +		if (vfio_find_dma(iommu, region->start, region-
+> >length))
+> > > > > +			return true;
+> > > > > +	}
+> > > > > +
+> > > > > +	return false;
+> > > > > +}
+> > > > > +
+> > > > > +/*
+> > > > > + * Check iova region overlap with  reserved regions and
+> > > > > + * exclude them from the iommu iova range
+> > > > > + */
+> > > > > +static int vfio_iommu_resv_exclude(struct list_head *iova,
+> > > > > +					struct list_head *resv_regions)
+> > > > > +{
+> > > > > +	struct iommu_resv_region *resv;
+> > > > > +	struct vfio_iova *n, *next;
+> > > > > +
+> > > > > +	list_for_each_entry(resv, resv_regions, list) {
+> > > > > +		phys_addr_t start, end;
+> > > > > +
+> > > > > +		start = resv->start;
+> > > > > +		end = resv->start + resv->length - 1;
+> > > > > +
+> > > > > +		list_for_each_entry_safe(n, next, iova, list) {
+> > > > > +			int ret = 0;
+> > > > > +
+> > > > > +			/* No overlap */
+> > > > > +			if ((start > n->end) || (end < n->start))
+> > > > > +				continue;
+> > > > > +			/*
+> > > > > +			 * Insert a new node if current node overlaps
+> with
+> > > > > the
+> > > > > +			 * reserve region to exlude that from valid iova
+> > > > > range.
+> > > > > +			 * Note that, new node is inserted before the
+> > > > > current
+> > > > > +			 * node and finally the current node is deleted
+> > > > > keeping
+> > > > > +			 * the list updated and sorted.
+> > > > > +			 */
+> > > > > +			if (start > n->start)
+> > > > > +				ret = vfio_iommu_iova_insert(&n->list,
+> > > > > +							n->start, start
+> - 1);
+> > > > > +			if (!ret && end < n->end)
+> > > > > +				ret = vfio_iommu_iova_insert(&n->list,
+> > > > > +							end + 1, n-
+> >end);
+> > > > > +			if (ret)
+> > > > > +				return ret;
+> > > >
+> > > > Is it safer to delete the 1st node here in case of failure of the 2nd node?
+> > > > There is no problem with current logic since upon error iova_copy will
+> > > > be released anyway. However this function alone doesn't assume the
+> > > > fact of a temporary list, thus it's better to keep the list clean w/o garbage
+> > > > left from any error handling.
+> > >
+> > > I don't think the proposal makes the list notably more sane on failure
+> > > than we have here.  If the function returns an error and the list is
+> > > modified in any way, how can the caller recover?  We're operating on a
+> > > principle of modify a copy and throw it away on error, the only
+> > > function level solution to the problem you're noting is to make each
+> > > function generate a working copy, which is clearly inefficient.  This
+> > > is a static function, not intended for general use, so I think a
+> > > sufficient approach to address your concern is to simply note the error
+> > > behavior in the comment above the function, the list is in an
+> > > unknown/inconsistent state on error.  Thanks,
+> > >
+> >
+> > 'static' doesn't mean it cannot be used for general purpose in the same
+> > file.
+> 
+> Obviously this is true, but expecting robust error handling, as might
+> be found in an exported general purpose function, from a static
+> specific purpose helper, is a bit absurd.  The strategy is therefore,
+> a) can we make it more general purpose without compromising the intent
+> of the function; probably not without adding overhead of using a local
+> copy of the list, b) can we modify the API, function name, arg names,
+> etc to make the behavior more intuitive; maybe, c) Can we at least add
+> a comment to make the potentially non-intuitive behavior obvious; of
+> course.  Thanks,
+
+I had a look at this function again and agree with the observation that 
+the only way to make it more sane would be to create another local copy
+of the list and free up that in case of error. That sounds very inefficient.
+
+I will go with the suggestion of adding a comment here to make the
+behavior obvious.
+
+Hi Alex,
+
+If there are other comments to this series, then I will sent a revised one
+along with this change added. Otherwise hope, its ok for you to add the
+comment. Please let me know.
 
 Thanks,
-
-	tglx
+Shameer
