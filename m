@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753666AbeCVJDX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:03:23 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37682 "EHLO
+        id S1754173AbeCVJEU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:04:20 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37720 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753180AbeCVJCF (ORCPT
+        with ESMTP id S1753145AbeCVJB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:02:05 -0400
+        Thu, 22 Mar 2018 05:01:58 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Alexander Viro <viro@ZenIV.linux.org.uk>
-Subject: [PATCH 03/45] fs: add ksys_lseek() helper; remove in-kernel calls to sys_lseek()
-Date: Thu, 22 Mar 2018 10:00:17 +0100
-Message-Id: <20180322090059.19361-4-linux@dominikbrodowski.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Subject: [PATCH 29/45] mm: add ksys_readahead() helper; remove in-kernel calls to sys_readahead()
+Date: Thu, 22 Mar 2018 10:00:43 +0100
+Message-Id: <20180322090059.19361-30-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -22,102 +22,138 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Using this helper allows us to avoid the in-kernel calls to the
-sys_lseek() syscall. The ksys_ prefix denotes that this function
-is meant as a drop-in replacement for the syscall. In particular, it
-uses the same calling convention as sys_lseek().
+sys_readahead() syscall. The ksys_ prefix denotes that this function is
+meant as a drop-in replacement for the syscall. In particular, it uses the
+same calling convention as sys_readahead().
 
 This patch is part of a series which tries to remove in-kernel calls to
 syscalls. On this basis, the syscall entry path can be streamlined.
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- fs/read_write.c          | 9 +++++++--
- include/linux/syscalls.h | 1 +
- init/do_mounts_rd.c      | 8 ++++----
- 3 files changed, 12 insertions(+), 6 deletions(-)
+ arch/mips/kernel/linux32.c      | 2 +-
+ arch/parisc/kernel/sys_parisc.c | 2 +-
+ arch/powerpc/kernel/sys_ppc32.c | 2 +-
+ arch/s390/kernel/compat_linux.c | 2 +-
+ arch/sparc/kernel/sys_sparc32.c | 2 +-
+ arch/x86/ia32/sys_ia32.c        | 2 +-
+ include/linux/syscalls.h        | 1 +
+ mm/readahead.c                  | 7 ++++++-
+ 8 files changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 8e8f0b4f52e2..b38b008a078e 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -301,7 +301,7 @@ loff_t vfs_llseek(struct file *file, loff_t offset, int whence)
- }
- EXPORT_SYMBOL(vfs_llseek);
- 
--SYSCALL_DEFINE3(lseek, unsigned int, fd, off_t, offset, unsigned int, whence)
-+off_t ksys_lseek(unsigned int fd, off_t offset, unsigned int whence)
+diff --git a/arch/mips/kernel/linux32.c b/arch/mips/kernel/linux32.c
+index 0571ab7b68b0..318f1c05c5b3 100644
+--- a/arch/mips/kernel/linux32.c
++++ b/arch/mips/kernel/linux32.c
+@@ -131,7 +131,7 @@ SYSCALL_DEFINE1(32_personality, unsigned long, personality)
+ asmlinkage ssize_t sys32_readahead(int fd, u32 pad0, u64 a2, u64 a3,
+ 				   size_t count)
  {
- 	off_t retval;
- 	struct fd f = fdget_pos(fd);
-@@ -319,10 +319,15 @@ SYSCALL_DEFINE3(lseek, unsigned int, fd, off_t, offset, unsigned int, whence)
- 	return retval;
+-	return sys_readahead(fd, merge_64(a2, a3), count);
++	return ksys_readahead(fd, merge_64(a2, a3), count);
  }
  
-+SYSCALL_DEFINE3(lseek, unsigned int, fd, off_t, offset, unsigned int, whence)
-+{
-+	return ksys_lseek(fd, offset, whence);
-+}
-+
- #ifdef CONFIG_COMPAT
- COMPAT_SYSCALL_DEFINE3(lseek, unsigned int, fd, compat_off_t, offset, unsigned int, whence)
+ asmlinkage long sys32_sync_file_range(int fd, int __pad,
+diff --git a/arch/parisc/kernel/sys_parisc.c b/arch/parisc/kernel/sys_parisc.c
+index 080d566654ea..8c99ebbe2bac 100644
+--- a/arch/parisc/kernel/sys_parisc.c
++++ b/arch/parisc/kernel/sys_parisc.c
+@@ -345,7 +345,7 @@ asmlinkage ssize_t parisc_pwrite64(unsigned int fd, const char __user *buf,
+ asmlinkage ssize_t parisc_readahead(int fd, unsigned int high, unsigned int low,
+ 		                    size_t count)
  {
--	return sys_lseek(fd, offset, whence);
-+	return ksys_lseek(fd, offset, whence);
+-	return sys_readahead(fd, (loff_t)high << 32 | low, count);
++	return ksys_readahead(fd, (loff_t)high << 32 | low, count);
  }
- #endif
  
+ asmlinkage long parisc_fadvise64_64(int fd,
+diff --git a/arch/powerpc/kernel/sys_ppc32.c b/arch/powerpc/kernel/sys_ppc32.c
+index 0b95fa13307f..c11c73373691 100644
+--- a/arch/powerpc/kernel/sys_ppc32.c
++++ b/arch/powerpc/kernel/sys_ppc32.c
+@@ -88,7 +88,7 @@ compat_ssize_t compat_sys_pwrite64(unsigned int fd, const char __user *ubuf, com
+ 
+ compat_ssize_t compat_sys_readahead(int fd, u32 r4, u32 offhi, u32 offlo, u32 count)
+ {
+-	return sys_readahead(fd, ((loff_t)offhi << 32) | offlo, count);
++	return ksys_readahead(fd, ((loff_t)offhi << 32) | offlo, count);
+ }
+ 
+ asmlinkage int compat_sys_truncate64(const char __user * path, u32 reg4,
+diff --git a/arch/s390/kernel/compat_linux.c b/arch/s390/kernel/compat_linux.c
+index da5ef7718254..8ac38d51ed7d 100644
+--- a/arch/s390/kernel/compat_linux.c
++++ b/arch/s390/kernel/compat_linux.c
+@@ -328,7 +328,7 @@ COMPAT_SYSCALL_DEFINE5(s390_pwrite64, unsigned int, fd, const char __user *, ubu
+ 
+ COMPAT_SYSCALL_DEFINE4(s390_readahead, int, fd, u32, high, u32, low, s32, count)
+ {
+-	return sys_readahead(fd, (unsigned long)high << 32 | low, count);
++	return ksys_readahead(fd, (unsigned long)high << 32 | low, count);
+ }
+ 
+ struct stat64_emu31 {
+diff --git a/arch/sparc/kernel/sys_sparc32.c b/arch/sparc/kernel/sys_sparc32.c
+index 4da66aed50b4..f166e5bbf506 100644
+--- a/arch/sparc/kernel/sys_sparc32.c
++++ b/arch/sparc/kernel/sys_sparc32.c
+@@ -217,7 +217,7 @@ asmlinkage long compat_sys_readahead(int fd,
+ 				     unsigned long offlo,
+ 				     compat_size_t count)
+ {
+-	return sys_readahead(fd, (offhi << 32) | offlo, count);
++	return ksys_readahead(fd, (offhi << 32) | offlo, count);
+ }
+ 
+ long compat_sys_fadvise64(int fd,
+diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
+index bf4e8dbd65e7..064b76598a2e 100644
+--- a/arch/x86/ia32/sys_ia32.c
++++ b/arch/x86/ia32/sys_ia32.c
+@@ -208,7 +208,7 @@ COMPAT_SYSCALL_DEFINE6(x86_fadvise64_64, int, fd, __u32, offset_low,
+ COMPAT_SYSCALL_DEFINE4(x86_readahead, int, fd, unsigned int, off_lo,
+ 		       unsigned int, off_hi, size_t, count)
+ {
+-	return sys_readahead(fd, ((u64)off_hi << 32) | off_lo, count);
++	return ksys_readahead(fd, ((u64)off_hi << 32) | off_lo, count);
+ }
+ 
+ COMPAT_SYSCALL_DEFINE6(x86_sync_file_range, int, fd, unsigned int, off_low,
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index f1d341d0972f..d11d06ab546e 100644
+index c509459ce9d5..3591c4af33d8 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -975,6 +975,7 @@ int ksys_fchown(unsigned int fd, uid_t user, gid_t group);
- int ksys_getdents64(unsigned int fd, struct linux_dirent64 __user *dirent,
- 		    unsigned int count);
- int ksys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg);
-+off_t ksys_lseek(unsigned int fd, off_t offset, unsigned int whence);
+@@ -982,6 +982,7 @@ ssize_t ksys_pwrite64(unsigned int fd, const char __user *buf,
+ 		      size_t count, loff_t pos);
+ int ksys_fallocate(int fd, int mode, loff_t offset, loff_t len);
+ int ksys_setsid(void);
++ssize_t ksys_readahead(int fd, loff_t offset, size_t count);
  
  /*
   * The following kernel syscall equivalents are just wrappers to fs-internal
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index 4dafaed5736f..13e54148c0e0 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -90,7 +90,7 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
- 	/*
- 	 * Read block 0 to test for compressed kernel
- 	 */
--	sys_lseek(fd, start_block * BLOCK_SIZE, 0);
-+	ksys_lseek(fd, start_block * BLOCK_SIZE, 0);
- 	sys_read(fd, buf, size);
- 
- 	*decompressor = decompress_method(buf, size, &compress_name);
-@@ -136,7 +136,7 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
- 	/*
- 	 * Read 512 bytes further to check if cramfs is padded
- 	 */
--	sys_lseek(fd, start_block * BLOCK_SIZE + 0x200, 0);
-+	ksys_lseek(fd, start_block * BLOCK_SIZE + 0x200, 0);
- 	sys_read(fd, buf, size);
- 
- 	if (cramfsb->magic == CRAMFS_MAGIC) {
-@@ -150,7 +150,7 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
- 	/*
- 	 * Read block 1 to test for minix and ext2 superblock
- 	 */
--	sys_lseek(fd, (start_block+1) * BLOCK_SIZE, 0);
-+	ksys_lseek(fd, (start_block+1) * BLOCK_SIZE, 0);
- 	sys_read(fd, buf, size);
- 
- 	/* Try minix */
-@@ -178,7 +178,7 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
- 	       start_block);
- 
- done:
--	sys_lseek(fd, start_block * BLOCK_SIZE, 0);
-+	ksys_lseek(fd, start_block * BLOCK_SIZE, 0);
- 	kfree(buf);
- 	return nblocks;
+diff --git a/mm/readahead.c b/mm/readahead.c
+index c4ca70239233..4d57b4644f98 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -573,7 +573,7 @@ do_readahead(struct address_space *mapping, struct file *filp,
+ 	return force_page_cache_readahead(mapping, filp, index, nr);
  }
+ 
+-SYSCALL_DEFINE3(readahead, int, fd, loff_t, offset, size_t, count)
++ssize_t ksys_readahead(int fd, loff_t offset, size_t count)
+ {
+ 	ssize_t ret;
+ 	struct fd f;
+@@ -592,3 +592,8 @@ SYSCALL_DEFINE3(readahead, int, fd, loff_t, offset, size_t, count)
+ 	}
+ 	return ret;
+ }
++
++SYSCALL_DEFINE3(readahead, int, fd, loff_t, offset, size_t, count)
++{
++	return ksys_readahead(fd, offset, count);
++}
 -- 
 2.16.2
