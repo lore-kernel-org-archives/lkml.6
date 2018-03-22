@@ -1,69 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751676AbeCVSBz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 14:01:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41076 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751455AbeCVSBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 14:01:53 -0400
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] objtool: add clang support
-Date: Thu, 22 Mar 2018 13:00:37 -0500
-Message-Id: <fce88ce81c356eedcae7f00ed349cfaddb3363cc.1521741586.git.jpoimboe@redhat.com>
+        id S1751753AbeCVSDq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 14:03:46 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.78]:16974 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751670AbeCVSDo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 14:03:44 -0400
+Date: Thu, 22 Mar 2018 13:03:42 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Ilan Tayari <ilant@mellanox.com>, Boris Pismenny <borisp@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] net/mlx5/core/fpga/ipsec: Fix use-after-free
+Message-ID: <20180322180342.GA18505@embeddedgus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1ez4Yw-003pYO-Nf
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedgus) [189.145.54.187]:52320
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the ORC unwinder was made the default on x86_64, clang-built
-defconfig kernels have triggered some new objtool warnings:
+_rule_ is being freed and then dereferenced by accessing rule->ctx
 
-  drivers/gpu/drm/i915/i915_gpu_error.o: warning: objtool: i915_error_printf()+0x6c: return with modified stack frame
-  drivers/gpu/drm/i915/intel_display.o: warning: objtool: pipe_config_err()+0xa6: return with modified stack frame
+Fix this by copying the value returned by PTR_ERR(rule->ctx) into a local
+variable for its safe use after freeing _rule_
 
-The problem is that objtool has never seen clang-built binaries before.
-
-Shockingly enough, objtool is apparently able to follow the code flow
-mostly fine, except for one instruction sequence.  Instead of a LEAVE
-instruction, clang restores RSP and RBP the long way:
-
-   67c:   48 89 ec                mov    %rbp,%rsp
-   67f:   5d                      pop    %rbp
-
-Teach objtool about this new code sequence.
-
-Reported-and-test-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Addresses-Coverity-ID: 1466041 ("Read from pointer after free")
+Fixes: 05564d0ae075 ("net/mlx5: Add flow-steering commands for FPGA IPSec implementation")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- tools/objtool/check.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 92b6a2c21631..f02df714c18e 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1386,6 +1386,17 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 				state->vals[op->dest.reg].offset = -state->stack_size;
- 			}
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+index 4f15685..0f5da49 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+@@ -1061,8 +1061,9 @@ static int fpga_ipsec_fs_create_fte(struct mlx5_core_dev *dev,
  
-+			else if (op->src.reg == CFI_BP && op->dest.reg == CFI_SP &&
-+				 cfa->base == CFI_BP) {
-+
-+				/*
-+				 * mov %rbp, %rsp
-+				 *
-+				 * Restore the original stack pointer (clang).
-+				 */
-+				state->stack_size = -state->regs[CFI_BP].offset;
-+			}
-+
- 			else if (op->dest.reg == cfa->base) {
+ 	rule->ctx = mlx5_fpga_ipsec_fs_create_sa_ctx(dev, fte, is_egress);
+ 	if (IS_ERR(rule->ctx)) {
++		int err = PTR_ERR(rule->ctx);
+ 		kfree(rule);
+-		return PTR_ERR(rule->ctx);
++		return err;
+ 	}
  
- 				/* mov %reg, %rsp */
+ 	rule->fte = fte;
 -- 
-2.14.3
+2.7.4
