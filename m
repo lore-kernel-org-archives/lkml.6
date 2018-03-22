@@ -1,83 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751670AbeCVQFv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:05:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59818 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750992AbeCVQFu (ORCPT
+        id S1751824AbeCVQGb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:06:31 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:48670 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751729AbeCVQGa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:05:50 -0400
-Date: Thu, 22 Mar 2018 09:05:47 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>,
-        Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+        Thu, 22 Mar 2018 12:06:30 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0SzvSVwE_1521734777;
 Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-Message-ID: <20180322160547.GC28468@bombadil.infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
 References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
  <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321130833.GM23100@dhcp22.suse.cz>
- <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
- <20180321172932.GE4780@bombadil.infradead.org>
- <f057a634-7e0a-1b51-eede-dcb6f128b18e@linux.alibaba.com>
- <20180321224631.GB3969@bombadil.infradead.org>
- <18a727fd-f006-9fae-d9ca-74b9004f0a8b@linux.vnet.ibm.com>
- <20180322154055.GB28468@bombadil.infradead.org>
- <0442fb0e-3da3-3f23-ce4d-0f6cbc3eac9a@linux.vnet.ibm.com>
+ <20180321131449.GN23100@dhcp22.suse.cz>
+ <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
+ <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
+ <20180321212355.GR23100@dhcp22.suse.cz>
+ <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
+ <20180322091008.GZ23100@dhcp22.suse.cz>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <8b4407dd-78f6-2f6f-3f45-ddb8a2d805c8@linux.alibaba.com>
+Date: Thu, 22 Mar 2018 09:06:14 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0442fb0e-3da3-3f23-ce4d-0f6cbc3eac9a@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180322091008.GZ23100@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 04:54:52PM +0100, Laurent Dufour wrote:
-> On 22/03/2018 16:40, Matthew Wilcox wrote:
-> > On Thu, Mar 22, 2018 at 04:32:00PM +0100, Laurent Dufour wrote:
-> >> Regarding the page fault, why not relying on the PTE locking ?
-> >>
-> >> When munmap() will unset the PTE it will have to held the PTE lock, so this
-> >> will serialize the access.
-> >> If the page fault occurs before the mmap(MAP_FIXED), the page mapped will be
-> >> removed when mmap(MAP_FIXED) would do the cleanup. Fair enough.
-> > 
-> > The page fault handler will walk the VMA tree to find the correct
-> > VMA and then find that the VMA is marked as deleted.  If it assumes
-> > that the VMA has been deleted because of munmap(), then it can raise
-> > SIGSEGV immediately.  But if the VMA is marked as deleted because of
-> > mmap(MAP_FIXED), it must wait until the new VMA is in place.
-> 
-> I'm wondering if such a complexity is required.
-> If the user space process try to access the page being overwritten through
-> mmap(MAP_FIXED) by another thread, there is no guarantee that it will
-> manipulate the *old* page or *new* one.
 
-Right; but it must return one or the other, it can't segfault.
 
-> I'd think this is up to the user process to handle that concurrency.
-> What needs to be guaranteed is that once mmap(MAP_FIXED) returns the old page
-> are no more there, which is done through the mmap_sem and PTE locking.
+On 3/22/18 2:10 AM, Michal Hocko wrote:
+> On Wed 21-03-18 15:36:12, Yang Shi wrote:
+>>
+>> On 3/21/18 2:23 PM, Michal Hocko wrote:
+>>> On Wed 21-03-18 10:16:41, Yang Shi wrote:
+>>>> On 3/21/18 9:50 AM, Yang Shi wrote:
+>>>>> On 3/21/18 6:14 AM, Michal Hocko wrote:
+>>>>>> On Wed 21-03-18 05:31:19, Yang Shi wrote:
+>>>>>>> When running some mmap/munmap scalability tests with large memory (i.e.
+>>>>>>>> 300GB), the below hung task issue may happen occasionally.
+>>>>>>> INFO: task ps:14018 blocked for more than 120 seconds.
+>>>>>>>           Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>>>>>>>     "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+>>>>>>> message.
+>>>>>>>     ps              D    0 14018      1 0x00000004
+>>>>>>>      ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>>>>>>>      ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>>>>>>>      00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>>>>>>>     Call Trace:
+>>>>>>>      [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>>>>>>>      [<ffffffff817159e6>] schedule+0x36/0x80
+>>>>>>>      [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>>>>>>>      [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>>>>>>>      [<ffffffff81717db0>] down_read+0x20/0x40
+>>>>>>>      [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>>>>>> Slightly off-topic:
+>>>>>> Btw. this sucks as well. Do we really need to take mmap_sem here? Do any
+>>>>>> of
+>>>>>>       arg_start = mm->arg_start;
+>>>>>>       arg_end = mm->arg_end;
+>>>>>>       env_start = mm->env_start;
+>>>>>>       env_end = mm->env_end;
+>>>>>>
+>>>>>> change after exec or while the pid is already visible in proc? If yes
+>>>>>> maybe we can use a dedicated lock.
+>>>> BTW, this is not the only place to acquire mmap_sem in
+>>>> proc_pid_cmdline_read(), it calls access_remote_vm() which need acquire
+>>>> mmap_sem too, so the mmap_sem scalability issue will be hit sooner or later.
+>>> Ohh, absolutely. mmap_sem is unfortunatelly abused and it would be great
+>>> to remove that. munmap should perform much better. How to do that safely
+>> Yes, agree. We are on the same page.
+>>
+>>> is a different question. I am not yet convinced that tearing down a vma
+>>> in batches is safe. The vast majority of time is spent on tearing down
+>> You can try my patches. I did full LTP test and running multiple kernel
+>> build in parallel. It survives.
+> Which doesn't really mean anything. Those tests are likely to not hit
+> corner cases where an application silently depends on the mmap locking
+> and unmap atomicity.
 
-Yes, and allowing the fault handler to return the *old* page risks the
-old page being reinserted into the page tables after the unmapping task
-has done its work.
+They definitely can't cover all corner cases. But, they do give us 
+somehow confidence that the most part works. The mmap stress tests in 
+LTP did discover some race conditions when I tried different approaches.
 
-It's *really* rare to page-fault on a VMA which is in the middle of
-being replaced.  Why are you trying to optimise it?
+>   
+>>> pages and that is quite easy to move out of the write lock. That would
+>>> be an improvement already and it should be risk safe. If even that is
+>>> not sufficient then using range locking should help a lot. There
+>>> shouldn't be really any other address space operations within the range
+>>> most of the time so this would be basically non-contended access.
+>> It might depend on how the range is defined. Too big range may lead to
+>> surprisingly more contention, but too small range may bring in too much
+>> lock/unlock operations.
+> The full vma will have to be range locked. So there is nothing small or large.
 
-> > I think I was wrong to describe VMAs as being *deleted*.  I think we
-> > instead need the concept of a *locked* VMA that page faults will block on.
-> > Conceptually, it's a per-VMA rwsem, but I'd use a completion instead of
-> > an rwsem since the only reason to write-lock the VMA is because it is
-> > being deleted.
-> 
-> Such a lock would only makes sense in the case of mmap(MAP_FIXED) since when
-> the VMA is removed there is no need to wait. Isn't it ?
+It sounds not helpful to a single large vma case since just one range 
+lock for the vma, it sounds equal to mmap_sem.
 
-I can't think of another reason.  I suppose we could mark the VMA as
-locked-for-deletion or locked-for-replacement and have the SIGSEGV happen
-early.  But I'm not sure that optimising for SIGSEGVs is a worthwhile
-use of our time.  Just always have the pagefault sleep for a deleted VMA.
+Yang
