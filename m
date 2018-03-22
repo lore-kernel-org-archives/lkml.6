@@ -1,85 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754588AbeCVMTJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 08:19:09 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51144 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751908AbeCVMTI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 08:19:08 -0400
-Date: Thu, 22 Mar 2018 13:19:06 +0100
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net
-Subject: Re: v4.16-rc5 on droid4: external abort in
- l2c310_configure+0x38/0x160
-Message-ID: <20180322121906.GC12518@amd>
-References: <20180322120359.GA12518@amd>
+        id S1754613AbeCVMTV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 08:19:21 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36794 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754591AbeCVMTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 08:19:18 -0400
+Subject: Re: [RFC PATCH] irqchip: arm-gic: take gic_lock when updating irq
+ type
+To: Aniruddha Banerjee <aniruddhab@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>, Vipin Kumar <vipink@nvidia.com>
+References: <c20f41d47ed9444b9050bc1f609d4bbe@bgmail101.nvidia.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <77ac9d88-e99e-c507-66b2-cc14f06ce192@arm.com>
+Date: Thu, 22 Mar 2018 12:19:15 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4ZLFUWh1odzi/v6L"
-Content-Disposition: inline
-In-Reply-To: <20180322120359.GA12518@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <c20f41d47ed9444b9050bc1f609d4bbe@bgmail101.nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 22/03/18 10:28, Aniruddha Banerjee wrote:
 
---4ZLFUWh1odzi/v6L
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[a PGP-encrypted email]
 
-On Thu 2018-03-22 13:03:59, Pavel Machek wrote:
-> Hi!
->=20
-> I'm trying to get something to work on Droid 4.
->=20
-> So far, v4.14 from leste project works, with the right config. I tried
-> v4.16-rc5 next, and am stopped in early boot by:
->=20
-> If someone knows what this is let me know, but I guess it is
-> config-dependend and I'll just try different one...
+Given that you're cc-ing various mailing lists, please resend this email
+unencrypted.
 
-With different config it works, I just get storm of
+Thanks,
 
-^@^=EF=BF=BD=EF=BF=BDr=EF=BF=BD=C2=82=EF=BF=BD=C2=AA=EF=BF=BD=EF=BF=BDmusb-=
-hdrc musb-hdrc.1.auto: VBUS Disconnect
-
-[   39.985656] musb-hdrc musb-hdrc.1.auto: VBUS b_idle, devctl 80
-
-^@^=EF=BF=BD=EF=BF=BDr=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
-=BD=EF=BF=BD=EF=BF=BDmusb-hdrc musb-hdrc.1.auto: VBUS Disconnect
-
-[   40.005645] musb-hdrc musb-hdrc.1.auto: VBUS b_idle, devctl 80
-
-^@^=EF=BF=BD=EF=BF=BDr=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
-=BD=EF=BF=BD=EF=BF=BDmusb-hdrc musb-hdrc.1.auto: VBUS Disconnect
-
-[   40.035766] musb-hdrc musb-hdrc.1.auto: VBUS b_idle, devctl 80
-
-
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---4ZLFUWh1odzi/v6L
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlqznzoACgkQMOfwapXb+vLBRACgoFMU19vKRQ6phfuyyo/ZlVja
-j3gAoMHXITiGNyx5vVAknM9QWOzswTEs
-=6TUp
------END PGP SIGNATURE-----
-
---4ZLFUWh1odzi/v6L--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
