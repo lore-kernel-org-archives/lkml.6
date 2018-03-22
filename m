@@ -1,86 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754181AbeCVAJs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 20:09:48 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:60380 "EHLO vps-vb.mhejs.net"
+        id S1754273AbeCVAME (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 20:12:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753732AbeCVAJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 20:09:47 -0400
-Subject: Re: [PATCH] x86/speculation: Fill the RSB on context switch also on
- non-IBPB CPUs
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>, Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>, thomas.lendacky@amd.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <9eb945bd-f77e-0301-d977-d1acf931b19d@maciej.szmigiero.name>
- <757282b8-8b59-bcc6-1f6b-3383ae8a8575@intel.com>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Message-ID: <4d7cfea4-a86a-c8f2-aaff-c8429fc107b8@maciej.szmigiero.name>
-Date: Thu, 22 Mar 2018 01:09:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754156AbeCVAMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 20:12:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B931D21749
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+Date: Thu, 22 Mar 2018 00:11:56 +0000
+From: James Hogan <jhogan@kernel.org>
+To: NeilBrown <neil@brown.name>
+Cc: John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] MIPS: ralink: fix booting on mt7621
+Message-ID: <20180322001155.GD13126@saruman>
+References: <87efkf9z0o.fsf@notabene.neil.brown.name>
+ <87605r9mwf.fsf@notabene.neil.brown.name>
+ <871sge872l.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <757282b8-8b59-bcc6-1f6b-3383ae8a8575@intel.com>
-Content-Type: text/plain; charset=US-ASCII
-Content-Language: en-US
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PHCdUe6m4AxPMzOu"
+Content-Disposition: inline
+In-Reply-To: <871sge872l.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.03.2018 00:30, Dave Hansen wrote:
-> On 03/20/2018 04:17 AM, Maciej S. Szmigiero wrote:
->> Since it is unlikely that existing RSB entries from the previous task match
->> the new task call stack we can use the existing unconditional
->> RSB-filling-on-context-switch infrastructure to protect against such
->> userspace-to-userspace attacks.
->>
->> This patch brings a change in behavior only for the following CPU types:
->> * Intel pre-Skylake CPUs without updated microcode,
->> * AMD Family 15h model >60h, Family 17h CPUs without updated microcode.
->>
->> Other CPU types either already do the RSB filling on context switch for
->> other reasons or do support IBPB for more complete userspace-to-userspace
->> protection.
-> 
-> I think I misunderstood your reasoning a bit.  Let me see if I can
-> restate the problem a bit.
-> 
-> IBPB provides provides userspace-to-userspace protection because it
-> prevents all indirect branch predictions after the barrier from being
-> controlled by software executed before the barrier.  We only use IBPB
-> for KVM and when processes clear their dumpable flag.
-> 
-> You're saying that, even if we don't have IBPB, we can do *some*
-> userspace-to-userspace protection with RSB manipulation.  The RSB
-> manipulation obviously only helps 'RET' instructions and not JMP/CALL,
-> but it does do *something* useful.
-> 
-> Is that right?
 
-Yes.
+--PHCdUe6m4AxPMzOu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As far as I understand the issue this should provide a good protection
-for userspace processes that were recompiled with retpolines as they
-won't have any indirect jumps and calls.
+On Wed, Mar 21, 2018 at 02:02:10PM +1100, NeilBrown wrote:
+>=20
+> Since commit 3af5a67c86a3 ("MIPS: Fix early CM probing") the MT7621
+> has not been able to boot.
+>=20
+> This patched caused mips_cm_probe() to be called before
+> mt7621.c::proc_soc_init().
+>=20
+> prom_soc_init() has a comment explaining that mips_cm_probe()
+> "wipes out the bootloader config" and means that configuration
+> registers are no longer available.  It has some code to re-enable
+> this config.
+>=20
+> Before this re-enable code is run, the sysc register cannot be
+> read, so when SYSC_REG_CHIP_NAME0 is read, a garbage value
+> is returned and panic() is called.
+>=20
+> If we move the config-repair code to the top of prom_soc_init(),
+> the registers can be read and boot can proceed.
+>=20
+> Very occasionally, the first register read after the reconfiguration
+> returns garbage.  So I added a call to __sync().
+>=20
+> Fixes: 3af5a67c86a3 ("MIPS: Fix early CM probing")
+> Signed-off-by: NeilBrown <neil@brown.name>
 
-> Do you really want this behavior on all context switches?  We don't do
-> IBPB on all context switches, only the ones where we are switching *to*
-> a non-dumpable process.
-> 
-> Do you perhaps want to do RSB manipulation in lieu of IBPB when
-> switching *to* a non-dumpable process and IBPB is not available?
-> 
+Looks good. I've cosmetically tweaked commit message (mainly reflow),
+added stable tag for 4.5+, and applied for 4.16.
 
-Is it worth differentiating such processes in this case?
-IBPB is supposed to be very expensive so certainly it is worthwhile
-to do it only for high-value processes (=non-dumpable).
+Thanks
+James
 
-However, it is unlikely that existing RSB entries from the previous
-task match the new task call stack anyway.
-We already do unconditional RSB-filling-on-context-switch in many
-cases.
+--PHCdUe6m4AxPMzOu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Maciej
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlqy9MsACgkQbAtpk944
+dnpeRhAAgaN+l55tjGiZQDJHe1nyfKRmTuiLe1wjiQXvsWOnWX9AqujyYQQfZDbm
+g8ETcjZ+7v5PBACougYqEsMCqAlxArltuZ5M0Gxf9fRbeWyLXNhUiD2mp28F6YeE
+rxFU6Pmosfq5MV+4zRgGwu0nha6rAm4PYT/5MHud0/3ySXBLjwIYma5iPG3omyBH
+Y2VupoBU/Bv514QhCI77JyYvRunbZjycOt0EaIIHXskJE8262lZDstuaOS1204BS
+m8RIQFXCEnncQY3ctcarY7txb5kvh0r6Je1zoe/gHPnD0BSzneAd/kT5f+UDckcW
+tkcqHzaVd7DCB7uiAOuvueVxFYnP27M0nEcO8betmqhYMqDK88AtSBZBD/P+NgHl
+ZMhy0s1/+beSInIYNfzIOEXVhB8QxJZ1VdKx6KXgNfzr4K+VqhzAgitrhhluSrhr
+QMnYhQU6Eu/xi55Q/zq9dPqzDMv/iEosEbBQJA5I4w4ds8JSNEaUVFFoeQwv8zoZ
+5yyoiHQP0TbwwvBx8fdV9hyv9wBiMdcZtVaXjQ7Ve59Bv/21zBlNk17A4nMxG4Qb
+g6BynzFlAe80bB8xYhr/ses2+Tjp4Cj8JjAjhXIVSGqkJlGOKXpoFL9AAXaLGS09
+1gk4nX9DMplOT5+o3y4jB0izJs+Q3ETpWnRsF5g7tfKoPMWPHcQ=
+=c5hx
+-----END PGP SIGNATURE-----
+
+--PHCdUe6m4AxPMzOu--
