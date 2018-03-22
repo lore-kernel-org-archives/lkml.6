@@ -1,111 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755191AbeCVNBK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 09:01:10 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:36374 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755179AbeCVNBG (ORCPT
+        id S1755133AbeCVNAh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 09:00:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38316 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755104AbeCVNAa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 09:01:06 -0400
-X-Google-Smtp-Source: AG47ELvDE+twJ8tOB1v8zj8epLHwillkJrqq7HVmfB/KKIDbf7sTj0qsODg+Y03KpkZRlcJ9PZ1l8A==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: linus.walleij@linaro.org
-Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v4 7/7] gpio: ws16c48: Implement get_multiple callback
-Date: Thu, 22 Mar 2018 09:00:59 -0400
-Message-Id: <259a3a67b82d2973f4c03a7c3c8a560b3054f7a9.1521723192.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
-References: <cover.1521723192.git.vilhelm.gray@gmail.com>
+        Thu, 22 Mar 2018 09:00:30 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EDA3E60F91
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From: Sricharan R <sricharan@codeaurora.org>
+To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
+Cc: sricharan@codeaurora.org
+Subject: [PATCH v4 11/13] ARM: dts: ipq8074: Add peripheral nodes
+Date: Thu, 22 Mar 2018 18:28:50 +0530
+Message-Id: <1521723532-28361-12-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
+References: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The WinSystems WS16C48 device provides 48 lines of digital I/O accessed
-via six 8-bit ports. Since eight input lines are acquired on a single
-port input read, the WS16C48 GPIO driver may improve multiple input
-reads by utilizing a get_multiple callback. This patch implements the
-ws16c48_gpio_get_multiple function which serves as the respective
-get_multiple callback.
+Add serial, i2c, bam, spi, qpic peripheral nodes.
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 ---
- drivers/gpio/gpio-ws16c48.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi | 105 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
 
-diff --git a/drivers/gpio/gpio-ws16c48.c b/drivers/gpio/gpio-ws16c48.c
-index 746648244bf3..c7028eb0b8e1 100644
---- a/drivers/gpio/gpio-ws16c48.c
-+++ b/drivers/gpio/gpio-ws16c48.c
-@@ -11,6 +11,7 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  * General Public License for more details.
-  */
-+#include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/errno.h>
-@@ -129,6 +130,51 @@ static int ws16c48_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return !!(port_state & mask);
- }
+diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+index 2bc5dec..a8dbbf0 100644
+--- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
+@@ -124,6 +124,111 @@
+ 			clock-names = "core", "iface";
+ 			status = "disabled";
+ 		};
++
++		blsp_dma: dma@7884000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0x7884000 0x2b000>;
++			interrupts = <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "bam_clk";
++			#dma-cells = <1>;
++			qcom,ee = <0>;
++		};
++
++		serial_blsp0: serial@78af000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0x78af000 0x200>;
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART1_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			status = "disabled";
++		};
++
++		serial_blsp2: serial@78b1000 {
++			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
++			reg = <0x78b1000 0x200>;
++			interrupts = <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_UART3_APPS_CLK>,
++				<&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			dmas = <&blsp_dma 4>,
++				<&blsp_dma 5>;
++			dma-names = "tx", "rx";
++			status = "disabled";
++		};
++
++		spi_0: spi@78b5000 {
++			compatible = "qcom,spi-qup-v2.2.1";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x78b5000 0x600>;
++			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
++			spi-max-frequency = <50000000>;
++			clocks = <&gcc GCC_BLSP1_QUP1_SPI_APPS_CLK>,
++				<&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			dmas = <&blsp_dma 12>, <&blsp_dma 13>;
++			dma-names = "tx", "rx";
++			status = "disabled";
++		};
++
++		i2c_0: i2c@78b6000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x78b6000 0x600>;
++			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
++				<&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
++			clock-names = "iface", "core";
++			clock-frequency = <400000>;
++			dmas = <&blsp_dma 15>, <&blsp_dma 14>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
++		i2c_1: i2c@78b7000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x78b7000 0x600>;
++			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
++				<&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>;
++			clock-names = "iface", "core";
++			clock-frequency = <100000>;
++			dmas = <&blsp_dma 17>, <&blsp_dma 16>;
++			dma-names = "rx", "tx";
++			status = "disabled";
++		};
++
++		qpic_bam: dma@7984000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0x7984000 0x1a000>;
++			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_QPIC_AHB_CLK>;
++			clock-names = "bam_clk";
++			#dma-cells = <1>;
++			qcom,ee = <0>;
++			status = "disabled";
++		};
++
++		qpic_nand: nand@79b0000 {
++			compatible = "qcom,ipq8074-nand";
++			reg = <0x79b0000 0x10000>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&gcc GCC_QPIC_CLK>,
++				 <&gcc GCC_QPIC_AHB_CLK>;
++			clock-names = "core", "aon";
++
++			dmas = <&qpic_bam 0>,
++			       <&qpic_bam 1>,
++			       <&qpic_bam 2>;
++			dma-names = "tx", "rx", "cmd";
++			status = "disabled";
++		};
+ 	};
  
-+static int ws16c48_gpio_get_multiple(struct gpio_chip *chip,
-+	unsigned long *mask, unsigned long *bits)
-+{
-+	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-+	const unsigned int gpio_reg_size = 8;
-+	size_t i;
-+	const size_t num_ports = chip->ngpio / gpio_reg_size;
-+	unsigned int bits_offset;
-+	size_t word_index;
-+	unsigned int word_offset;
-+	unsigned long word_mask;
-+	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
-+	unsigned long port_state;
-+
-+	/* clear bits array to a clean slate */
-+	bitmap_zero(bits, chip->ngpio);
-+
-+	/* get bits are evaluated a gpio port register at a time */
-+	for (i = 0; i < num_ports; i++) {
-+		/* gpio offset in bits array */
-+		bits_offset = i * gpio_reg_size;
-+
-+		/* word index for bits array */
-+		word_index = BIT_WORD(bits_offset);
-+
-+		/* gpio offset within current word of bits array */
-+		word_offset = bits_offset % BITS_PER_LONG;
-+
-+		/* mask of get bits for current gpio within current word */
-+		word_mask = mask[word_index] & (port_mask << word_offset);
-+		if (!word_mask) {
-+			/* no get bits in this port so skip to next one */
-+			continue;
-+		}
-+
-+		/* read bits from current gpio port */
-+		port_state = inb(ws16c48gpio->base + i);
-+
-+		/* store acquired bits at respective bits array offset */
-+		bits[word_index] |= port_state << word_offset;
-+	}
-+
-+	return 0;
-+}
-+
- static void ws16c48_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- {
- 	struct ws16c48_gpio *const ws16c48gpio = gpiochip_get_data(chip);
-@@ -383,6 +429,7 @@ static int ws16c48_probe(struct device *dev, unsigned int id)
- 	ws16c48gpio->chip.direction_input = ws16c48_gpio_direction_input;
- 	ws16c48gpio->chip.direction_output = ws16c48_gpio_direction_output;
- 	ws16c48gpio->chip.get = ws16c48_gpio_get;
-+	ws16c48gpio->chip.get_multiple = ws16c48_gpio_get_multiple;
- 	ws16c48gpio->chip.set = ws16c48_gpio_set;
- 	ws16c48gpio->chip.set_multiple = ws16c48_gpio_set_multiple;
- 	ws16c48gpio->base = base[id];
+ 	cpus {
 -- 
-2.16.2
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
