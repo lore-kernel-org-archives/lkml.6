@@ -1,223 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754516AbeCVKzM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 06:55:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39124 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753653AbeCVKzC (ORCPT
+        id S1753897AbeCVLFC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 07:05:02 -0400
+Received: from ppsw-42.csi.cam.ac.uk ([131.111.8.142]:54544 "EHLO
+        ppsw-42.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752266AbeCVLE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:55:02 -0400
-From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-To: mpe@ellerman.id.au, linux@roeck-us.net
-Cc: linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stewart@linux.vnet.ibm.com,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH 3/3] powernv: opal-sensor-groups: Add attributes to disable/enable sensors
-Date: Thu, 22 Mar 2018 16:24:35 +0530
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1521716075-807-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-References: <1521716075-807-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18032210-0008-0000-0000-000004E11FAA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032210-0009-0000-0000-00001E7446D4
-Message-Id: <1521716075-807-4-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-22_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803220131
+        Thu, 22 Mar 2018 07:04:59 -0400
+X-Cam-AntiVirus: no malware found
+X-Cam-ScannerInfo: http://help.uis.cam.ac.uk/email-scanner-virus
+Subject: Re: [PATCH] KVM: X86: Fix the decoding of segment overrides in 64bit
+ mode
+To: Paolo Bonzini <pbonzini@redhat.com>, Wanpeng Li <kernellwp@gmail.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1521707651-9375-1-git-send-email-wanpengli@tencent.com>
+ <aadc47c3-9d5f-b4d5-92d3-cb888a29563c@redhat.com>
+ <49454fe4-16e2-4d8b-7ad5-9e488afc786e@citrix.com>
+ <d1126eb9-7203-7044-f72b-174cac6607ab@redhat.com>
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Message-ID: <e9db6804-4881-be93-f570-e9631dbccac8@citrix.com>
+Date: Thu, 22 Mar 2018 11:04:58 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <d1126eb9-7203-7044-f72b-174cac6607ab@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch provides support to disable and enable plaform specific
-sensor groups like performance, utilization and frequency.
+On 22/03/2018 10:42, Paolo Bonzini wrote:
+> On 22/03/2018 11:19, Andrew Cooper wrote:
+>> On 22/03/2018 10:07, Paolo Bonzini wrote:
+>>> On 22/03/2018 09:34, Wanpeng Li wrote:
+>>>> From: Wanpeng Li <wanpengli@tencent.com>
+>>>>
+>>>> Explicit segment overides other than %fs and %gs are documented as ignored by
+>>>> both Intel and AMD.
+>>>>
+>>>> In practice, this means that:
+>>>>
+>>>>  * Explicit uses of %ss don't actually yield #SS[0] for non-canonical
+>>>>    memory references.
+>>>>  * Explicit uses of %{e,c,d}s don't override %rbp/%rsp-based memory references
+>>>>    to yield #GP[0] for non-canonical memory references.
+>>>>
+>>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>>>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> When porting fixes from other projects, it is customary to identify so
+>> in the commit message.  In this case, the fix you've ported is
+>> http://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=b7dce29d9faf3597d009c853ed1fcbed9f7a7f68
+>>
+>> Here is an example of how Xen ports fixes from Linux for the drivers
+>> that we share. 
+>> http://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=4e131596f1defec9407b6e60d584a696beaf5d7e
+> Thanks Andrew.  The code is of course completely different, but the
+> commit message is 1:1.  Wanpeng, please acknowledge Jan in v2!
 
-Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
----
- .../ABI/testing/sysfs-firmware-opal-sensor-groups  | 34 +++++++++
- .../powerpc/platforms/powernv/opal-sensor-groups.c | 80 +++++++++++++---------
- 2 files changed, 83 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups
+Thanks, but it is actually my patch, which is why I was confused at
+seeing my own commit message on LKML.
 
-diff --git a/Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups b/Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups
-new file mode 100644
-index 0000000..484ff1c
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-firmware-opal-sensor-groups
-@@ -0,0 +1,34 @@
-+What:		/sys/firmware/opal/sensor_groups
-+Date:		March 2018
-+Contact:	Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description:	Sensor groups directory for POWER9 powernv servers
-+
-+		Each folder in this directory contains a sensor group
-+		which are classified based on type of the sensor
-+		like power, temperature, frequency, current, etc. They
-+		can also indicate the group of sensors belonging to
-+		different owners like CSM, Profiler, Job-Scheduler
-+
-+What:		/sys/firmware/opal/sensor_groups/<sensor_group_name>/clear
-+Date:		March 2018
-+Contact:	Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description:	Sysfs file to clear the min-max of all the sensors
-+		belonging to the group.
-+
-+		Writing 1 to this file will clear the minimum and
-+		maximum values of all the sensors in the group. The
-+		min-max of a sensor is the historical minimum and
-+		maximum value of the sensor cached by OCC.
-+
-+What:		/sys/firmware/opal/sensor_groups/<sensor_group_name>/enable
-+Date:		March 2018
-+Contact:	Linux for PowerPC mailing list <linuxppc-dev@ozlabs.org>
-+Description:	Sysfs file to enable/disable the sensor-group
-+
-+		Writing 0 value to this file will disable the copying
-+		of the sensor-group to main memory by OCC. And writing
-+		1 to this file will enable the sensor-group copying.
-+		By default all the sensor-groups are enabled and will
-+		be copied to main memory. This file can be used to
-+		increase the update frequency of selective
-+		sensor-groups.
-diff --git a/arch/powerpc/platforms/powernv/opal-sensor-groups.c b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-index 5b53f58..67f28b2 100644
---- a/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-+++ b/arch/powerpc/platforms/powernv/opal-sensor-groups.c
-@@ -24,6 +24,7 @@
- struct sg_attr {
- 	u32 handle;
- 	struct kobj_attribute attr;
-+	u32 opal_no;
- };
- 
- static struct sensor_group {
-@@ -60,34 +61,17 @@ int sensor_group_enable(u32 handle, bool enable)
- }
- EXPORT_SYMBOL_GPL(sensor_group_enable);
- 
--static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
--			const char *buf, size_t count)
-+static int sensor_group_clear(u32 handle)
- {
--	struct sg_attr *sattr = container_of(attr, struct sg_attr, attr);
- 	struct opal_msg msg;
--	u32 data;
--	int ret, token;
--
--	ret = kstrtoint(buf, 0, &data);
--	if (ret)
--		return ret;
--
--	if (data != 1)
--		return -EINVAL;
-+	int token, ret;
- 
- 	token = opal_async_get_token_interruptible();
--	if (token < 0) {
--		pr_devel("Failed to get token\n");
-+	if (token < 0)
- 		return token;
--	}
- 
--	ret = mutex_lock_interruptible(&sg_mutex);
--	if (ret)
--		goto out_token;
--
--	ret = opal_sensor_group_clear(sattr->handle, token);
--	switch (ret) {
--	case OPAL_ASYNC_COMPLETION:
-+	ret = opal_sensor_group_clear(handle, token);
-+	if (ret == OPAL_ASYNC_COMPLETION) {
- 		ret = opal_async_wait_response(token, &msg);
- 		if (ret) {
- 			pr_devel("Failed to wait for the async response\n");
-@@ -95,20 +79,48 @@ static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
- 			goto out;
- 		}
- 		ret = opal_error_code(opal_get_async_rc(msg));
--		if (!ret)
--			ret = count;
-+	} else {
-+		ret = opal_error_code(ret);
-+	}
-+
-+out:
-+	opal_async_release_token(token);
-+	return ret;
-+}
-+
-+static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
-+			const char *buf, size_t count)
-+{
-+	struct sg_attr *sattr = container_of(attr, struct sg_attr, attr);
-+	u32 data;
-+	int ret;
-+
-+	ret = kstrtoint(buf, 0, &data);
-+	if (ret)
-+		return ret;
-+
-+	ret = mutex_lock_interruptible(&sg_mutex);
-+	if (ret)
-+		return ret;
-+
-+	ret = -EINVAL;
-+	switch (sattr->opal_no) {
-+	case OPAL_SENSOR_GROUP_CLEAR:
-+		if (data == 1)
-+			ret = sensor_group_clear(sattr->handle);
- 		break;
--	case OPAL_SUCCESS:
--		ret = count;
-+	case OPAL_SENSOR_GROUP_ENABLE:
-+		if (data == 0 || data == 1)
-+			ret = sensor_group_enable(sattr->handle, data);
- 		break;
- 	default:
--		ret = opal_error_code(ret);
-+		break;
- 	}
- 
--out:
-+	if (!ret)
-+		ret = count;
-+
- 	mutex_unlock(&sg_mutex);
--out_token:
--	opal_async_release_token(token);
- 	return ret;
- }
- 
-@@ -118,12 +130,14 @@ static ssize_t sg_store(struct kobject *kobj, struct kobj_attribute *attr,
- 	ssize_t (*store)(struct kobject *kobj, struct kobj_attribute *attr,
- 			const char *buf, size_t count);
- } ops_info[] = {
--	{ OPAL_SENSOR_GROUP_CLEAR, "clear", sg_store },
-+	{ OPAL_SENSOR_GROUP_CLEAR, "clear", sg_store},
-+	{ OPAL_SENSOR_GROUP_ENABLE, "enable", sg_store},
- };
- 
- static void add_attr(int handle, struct sg_attr *attr, int index)
- {
- 	attr->handle = handle;
-+	attr->opal_no = ops_info[index].opal_no;
- 	sysfs_attr_init(&attr->attr.attr);
- 	attr->attr.attr.name = ops_info[index].attr_name;
- 	attr->attr.attr.mode = 0220;
-@@ -186,6 +200,10 @@ void __init opal_sensor_groups_init(void)
- 		const __be32 *ops;
- 		u32 sgid, len, nr_attrs, chipid;
- 
-+		/* Skip sensor groups that are handled in HWMON */
-+		if (of_device_is_compatible(node, "ibm,opal-sensor"))
-+			continue;
-+
- 		ops = of_get_property(node, "ops", &len);
- 		if (!ops)
- 			continue;
--- 
-1.8.3.1
+Also, the chances are that there are similar issues decoding the
+instruction info field in the VMCS, which is how I stumbled onto this in
+the first place.  I haven't yet fixed that side of things for Xen.
+
+>
+>>> Testcase, please...
+>> If you want to crib from one, this is the testcase I made for Xen.
+>>
+>> http://xenbits.xen.org/docs/xtf/test-memop-seg.html
+> How does it ensure that the code is executed through the emulator and
+> not by the processor?
+
+This test, and most of the tests in general, deliberately set things up
+to execute the test cases first on the main processor, and then via the
+emulator, and complain when any result is unexpected.
+
+We've got a Force Emulation Prefix (ud2a; .ascii "xen") for doing
+magic.  Originally, this was used for PV guests to explicitly request an
+emulated CPUID, but I extended it to HVM guests for "emulate the next
+instruction", after we had some guest user => guest kernel privilege
+escalations because of incorrect emulation.
+
+Fundamentally, any multi-vcpu guest can force an arbitrary instruction
+through the emulator, because rewriting a couple of bytes of instruction
+stream is far far far faster than a vmexit.  I chose to introduce a
+explicit way to force this to occur, for testing purposes.
+
+>
+>> With the impending KVM/PVH work which is ongoing, it will soon be easy
+>> to run Xen's HVM test suite unmodified under KVM, but we're not quite
+>> there yet.
+> What does the test suite use for console I/O?
+
+Depends on what it available as it boots, but one of the default
+consoles is port 0x12.  If things need to be tweaked to work more
+cleanly, then that is entirely fine.
+
+~Andrew
