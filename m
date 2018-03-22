@@ -1,195 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755316AbeCVPPw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 11:15:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47248 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753090AbeCVPPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 11:15:46 -0400
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        id S1754225AbeCVPRo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 11:17:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36452 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752895AbeCVPRZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 11:17:25 -0400
+Date: Thu, 22 Mar 2018 08:17:19 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Aaron Lu <aaron.lu@intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v3 2/2] irqchip: Add a driver for the Microsemi Ocelot controller
-Date: Thu, 22 Mar 2018 16:15:24 +0100
-Message-Id: <20180322151524.13902-2-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180322151524.13902-1-alexandre.belloni@bootlin.com>
-References: <20180322151524.13902-1-alexandre.belloni@bootlin.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH v4 2/3] mm/free_pcppages_bulk: do not hold lock when
+ picking pages to free
+Message-ID: <20180322151719.GA28468@bombadil.infradead.org>
+References: <20180301062845.26038-1-aaron.lu@intel.com>
+ <20180301062845.26038-3-aaron.lu@intel.com>
+ <9cad642d-9fe5-b2c3-456c-279065c32337@suse.cz>
+ <20180313033453.GB13782@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180313033453.GB13782@intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Microsemi Ocelot SoC has a pretty simple IRQ controller in its ICPU
-block. Add a driver for it.
+On Tue, Mar 13, 2018 at 11:34:53AM +0800, Aaron Lu wrote:
+> I wish there is a data structure that has the flexibility of list while
+> at the same time we can locate the Nth element in the list without the
+> need to iterate. That's what I'm looking for when developing clustered
+> allocation for order 0 pages. In the end, I had to use another place to
+> record where the Nth element is. I hope to send out v2 of that RFC
+> series soon but I'm still collecting data for it. I would appreciate if
+> people could take a look then :-)
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
-Changes in v3:
- - moved parent irq parsing to the top of init
- - reworked error path
+Sorry, I missed this.  There is such a data structure -- the IDR, or
+possibly a bare radix tree, or we can build a better data structure on
+top of the radix tree (I talked about one called the XQueue a while ago).
 
-
- drivers/irqchip/Kconfig           |   5 ++
- drivers/irqchip/Makefile          |   1 +
- drivers/irqchip/irq-mscc-ocelot.c | 118 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 124 insertions(+)
- create mode 100644 drivers/irqchip/irq-mscc-ocelot.c
-
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index d913aec85109..0270797765f9 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -286,6 +286,11 @@ config IRQ_MXS
- 	select IRQ_DOMAIN
- 	select STMP_DEVICE
- 
-+config MSCC_OCELOT_IRQ
-+	bool
-+	select IRQ_DOMAIN
-+	select GENERIC_IRQ_CHIP
-+
- config MVEBU_GICP
- 	bool
- 
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index d27e3e3619e0..63d7bb434c33 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -72,6 +72,7 @@ obj-$(CONFIG_ARCH_SA1100)		+= irq-sa11x0.o
- obj-$(CONFIG_INGENIC_IRQ)		+= irq-ingenic.o
- obj-$(CONFIG_IMX_GPCV2)			+= irq-imx-gpcv2.o
- obj-$(CONFIG_PIC32_EVIC)		+= irq-pic32-evic.o
-+obj-$(CONFIG_MSCC_OCELOT_IRQ)		+= irq-mscc-ocelot.o
- obj-$(CONFIG_MVEBU_GICP)		+= irq-mvebu-gicp.o
- obj-$(CONFIG_MVEBU_ICU)			+= irq-mvebu-icu.o
- obj-$(CONFIG_MVEBU_ODMI)		+= irq-mvebu-odmi.o
-diff --git a/drivers/irqchip/irq-mscc-ocelot.c b/drivers/irqchip/irq-mscc-ocelot.c
-new file mode 100644
-index 000000000000..b63e40c00a02
---- /dev/null
-+++ b/drivers/irqchip/irq-mscc-ocelot.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Microsemi Ocelot IRQ controller driver
-+ *
-+ * Copyright (c) 2017 Microsemi Corporation
-+ */
-+#include <linux/bitops.h>
-+#include <linux/irq.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/interrupt.h>
-+
-+#define ICPU_CFG_INTR_INTR_STICKY	0x10
-+#define ICPU_CFG_INTR_INTR_ENA		0x18
-+#define ICPU_CFG_INTR_INTR_ENA_CLR	0x1c
-+#define ICPU_CFG_INTR_INTR_ENA_SET	0x20
-+#define ICPU_CFG_INTR_DST_INTR_IDENT(x)	(0x38 + 0x4 * (x))
-+#define ICPU_CFG_INTR_INTR_TRIGGER(x)	(0x5c + 0x4 * (x))
-+
-+#define OCELOT_NR_IRQ 24
-+
-+static void ocelot_irq_unmask(struct irq_data *data)
-+{
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(data);
-+	unsigned int mask = data->mask;
-+	u32 val;
-+
-+	irq_gc_lock(gc);
-+	val = irq_reg_readl(gc, ICPU_CFG_INTR_INTR_TRIGGER(0)) |
-+	      irq_reg_readl(gc, ICPU_CFG_INTR_INTR_TRIGGER(1));
-+	if (!(val & mask))
-+		irq_reg_writel(gc, mask, ICPU_CFG_INTR_INTR_STICKY);
-+
-+	*ct->mask_cache &= ~mask;
-+	irq_reg_writel(gc, mask, ICPU_CFG_INTR_INTR_ENA_SET);
-+	irq_gc_unlock(gc);
-+}
-+
-+static void ocelot_irq_handler(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct irq_domain *d = irq_desc_get_handler_data(desc);
-+	struct irq_chip_generic *gc = irq_get_domain_generic_chip(d, 0);
-+	u32 reg = irq_reg_readl(gc, ICPU_CFG_INTR_DST_INTR_IDENT(0));
-+
-+	chained_irq_enter(chip, desc);
-+
-+	while (reg) {
-+		u32 hwirq = __fls(reg);
-+
-+		generic_handle_irq(irq_find_mapping(d, hwirq));
-+		reg &= ~(BIT(hwirq));
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static int __init ocelot_irq_init(struct device_node *node,
-+				  struct device_node *parent)
-+{
-+	struct irq_domain *domain;
-+	struct irq_chip_generic *gc;
-+	int parent_irq, ret;
-+
-+	parent_irq = irq_of_parse_and_map(node, 0);
-+	if (!parent_irq)
-+		return -EINVAL;
-+
-+	domain = irq_domain_add_linear(node, OCELOT_NR_IRQ,
-+				       &irq_generic_chip_ops, NULL);
-+	if (!domain) {
-+		pr_err("%s: unable to add irq domain\n", node->name);
-+		return -ENOMEM;
-+	}
-+
-+	ret = irq_alloc_domain_generic_chips(domain, OCELOT_NR_IRQ, 1,
-+					     "icpu", handle_level_irq,
-+					     0, 0, 0);
-+	if (ret) {
-+		pr_err("%s: unable to alloc irq domain gc\n", node->name);
-+		goto err_domain_remove;
-+	}
-+
-+	gc = irq_get_domain_generic_chip(domain, 0);
-+	gc->reg_base = of_iomap(node, 0);
-+	if (!gc->reg_base) {
-+		pr_err("%s: unable to map resource\n", node->name);
-+		ret = -ENOMEM;
-+		goto err_gc_free;
-+	}
-+
-+	gc->chip_types[0].regs.ack = ICPU_CFG_INTR_INTR_STICKY;
-+	gc->chip_types[0].regs.mask = ICPU_CFG_INTR_INTR_ENA_CLR;
-+	gc->chip_types[0].chip.irq_ack = irq_gc_ack_set_bit;
-+	gc->chip_types[0].chip.irq_mask = irq_gc_mask_set_bit;
-+	gc->chip_types[0].chip.irq_unmask = ocelot_irq_unmask;
-+
-+	/* Mask and ack all interrupts */
-+	irq_reg_writel(gc, 0, ICPU_CFG_INTR_INTR_ENA);
-+	irq_reg_writel(gc, 0xffffffff, ICPU_CFG_INTR_INTR_STICKY);
-+
-+	irq_set_chained_handler_and_data(parent_irq, ocelot_irq_handler,
-+					 domain);
-+
-+	return 0;
-+
-+err_gc_free:
-+	irq_free_generic_chip(gc);
-+
-+err_domain_remove:
-+	irq_domain_remove(domain);
-+
-+	return ret;
-+}
-+IRQCHIP_DECLARE(ocelot_icpu, "mscc,ocelot-icpu-intr", ocelot_irq_init);
--- 
-2.16.2
+The IDR will automatically grow to whatever needed size, it stores
+pointers, you can find out quickly where the last allocated index is,
+you can remove from the middle of the array.  Disadvantage is that it
+requires memory allocation to store the array of pointers, *but* it
+can always hold at least one entry.  So if you have no memory, you can
+always return the one element in your IDR to the free pool and allocate
+from that page.
