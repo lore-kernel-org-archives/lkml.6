@@ -1,127 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751719AbeCVXhT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 19:37:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38276 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751617AbeCVXhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 19:37:18 -0400
-Date: Thu, 22 Mar 2018 19:37:16 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>
-Subject: Re: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM
- client quit v2
-Message-ID: <20180322233715.GA5011@redhat.com>
-References: <20180320020038.3360-5-jglisse@redhat.com>
- <20180321181614.9968-1-jglisse@redhat.com>
- <a9ba54c5-a2d9-49f6-16ad-46b79525b93c@nvidia.com>
- <20180321234110.GK3214@redhat.com>
- <cbc9dcba-0707-e487-d360-f6f7c8d5cb23@nvidia.com>
+        id S1751694AbeCVXrB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 19:47:01 -0400
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:17651 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751548AbeCVXq7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 19:46:59 -0400
+Date: Fri, 23 Mar 2018 10:46:13 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Michal Hocko <mhocko@kernel.org>, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH RFC] xfs, memcg: Call xfs_fs_nr_cached_objects() only in
+ case of global reclaim
+Message-ID: <20180322234613.GD18129@dastard>
+References: <20180315230313.GM18129@dastard>
+ <6628c551-f607-367b-1ee6-f458266c1d92@virtuozzo.com>
+ <20180316213910.GF7000@dastard>
+ <18a031f3-2136-4ef9-6ede-05f5b835661c@virtuozzo.com>
+ <20180320001827.GB1150@dastard>
+ <ec116ce6-c22b-66e1-0e01-55f895997c7d@virtuozzo.com>
+ <20180320143452.GT18129@dastard>
+ <5eb88165-c108-5989-3cb5-1f260cec5e53@virtuozzo.com>
+ <20180322050152.GA18129@dastard>
+ <3320c962-35c5-c5ed-2a9f-0acb2b875579@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cbc9dcba-0707-e487-d360-f6f7c8d5cb23@nvidia.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <3320c962-35c5-c5ed-2a9f-0acb2b875579@virtuozzo.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 03:47:16PM -0700, John Hubbard wrote:
-> On 03/21/2018 04:41 PM, Jerome Glisse wrote:
-> > On Wed, Mar 21, 2018 at 04:22:49PM -0700, John Hubbard wrote:
-> >> On 03/21/2018 11:16 AM, jglisse@redhat.com wrote:
-> >>> From: Jérôme Glisse <jglisse@redhat.com>
-> >>>
-> >>> This code was lost in translation at one point. This properly call
-> >>> mmu_notifier_unregister_no_release() once last user is gone. This
-> >>> fix the zombie mm_struct as without this patch we do not drop the
-> >>> refcount we have on it.
-> >>>
-> >>> Changed since v1:
-> >>>   - close race window between a last mirror unregistering and a new
-> >>>     mirror registering, which could have lead to use after free()
-> >>>     kind of bug
-> >>>
-> >>> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> >>> Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-> >>> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> >>> Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-> >>> Cc: John Hubbard <jhubbard@nvidia.com>
-> >>> ---
-> >>>  mm/hmm.c | 35 +++++++++++++++++++++++++++++++++--
-> >>>  1 file changed, 33 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/mm/hmm.c b/mm/hmm.c
-> >>> index 6088fa6ed137..f75aa8df6e97 100644
-> >>> --- a/mm/hmm.c
-> >>> +++ b/mm/hmm.c
-> >>> @@ -222,13 +222,24 @@ int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm)
-> >>>  	if (!mm || !mirror || !mirror->ops)
-> >>>  		return -EINVAL;
-> >>>  
-> >>> +again:
-> >>>  	mirror->hmm = hmm_register(mm);
-> >>>  	if (!mirror->hmm)
-> >>>  		return -ENOMEM;
-> >>>  
-> >>>  	down_write(&mirror->hmm->mirrors_sem);
-> >>> -	list_add(&mirror->list, &mirror->hmm->mirrors);
-> >>> -	up_write(&mirror->hmm->mirrors_sem);
-> >>> +	if (mirror->hmm->mm == NULL) {
-> >>> +		/*
-> >>> +		 * A racing hmm_mirror_unregister() is about to destroy the hmm
-> >>> +		 * struct. Try again to allocate a new one.
-> >>> +		 */
-> >>> +		up_write(&mirror->hmm->mirrors_sem);
-> >>> +		mirror->hmm = NULL;
-> >>
-> >> This is being set outside of locks, so now there is another race with
-> >> another hmm_mirror_register...
-> >>
-> >> I'll take a moment and draft up what I have in mind here, which is a more
-> >> symmetrical locking scheme for these routines.
-> >>
-> > 
-> > No this code is correct. hmm->mm is set after hmm struct is allocated
-> > and before it is public so no one can race with that. It is clear in
-> > hmm_mirror_unregister() under the write lock hence checking it here
-> > under that same lock is correct.
-> 
-> Are you implying that code that calls hmm_mirror_register() should do 
-> it's own locking, to prevent simultaneous calls to that function? Because
-> as things are right now, multiple threads can arrive at this point. The
-> fact that mirror->hmm is not "public" is irrelevant; what matters is that
-> >1 thread can change it simultaneously.
+On Thu, Mar 22, 2018 at 07:52:37PM +0300, Kirill Tkhai wrote:
+> Here is the problem I'm solving: https://lkml.org/lkml/2018/3/21/365.
 
-The content of struct hmm_mirror should not be modified by code outside
-HMM after hmm_mirror_register() and before hmm_mirror_unregister(). This
-is a private structure to HMM and the driver should not touch it, ie it
-should be considered as read only/const from driver code point of view.
+Oh, finally you tell me what the problem is that you're trying to
+solve. I *asked this several times* and got no response. Thank you
+for wasting so much of my time.
 
-It is also expected (which was obvious to me) that driver only call once
-and only once hmm_mirror_register(), and only once hmm_mirror_unregister()
-for any given hmm_mirror struct. Note that driver can register multiple
-_different_ mirror struct to same mm or differents mm.
+> Current shrinker is not scalable. Then there are many memcg and mounts,
+> the time of iteration shrink_slab() in case of global reclaim can
+> take much time. There is times of shrink_slab() by the link. A node
+> with 200 containers may waste 4 seconds on global reclaim just to
+> iterate over all shrinkers for all cgroups, call shrinker::count_objects()
+> and receive 0 zero objects.
 
-There is no need of locking on the driver side whatsoever as long as the
-above rules are respected. I am puzzle if they were not obvious :)
+So, your problem is the way the memcgs were tacked onto the side
+of the list_lru infrastructure and are iterated, which has basically
+nothing to do with the way the low level XFS inode shrinker behaves.
 
-Note that the above rule means that for any given struct hmm_mirror their
-can only be one and only one call to hmm_mirror_register() happening, no
-concurrent call. If you are doing the latter then something is seriously
-wrong in your design.
+/me looks at the patches
 
-So to be clear on what variable are you claiming race ?
-  mirror->hmm ?
-  mirror->hmm->mm which is really hmm->mm (mirror part does not matter) ?
+/me shudders at the thought of external "cache has freeable items"
+control for the shrinking of vfs caches.
 
-I will hold resending v4 until tomorrow morning (eastern time) so that
-you can convince yourself that this code is right or prove me wrong.
+Biggest problem I see with this is the scope for coherency bugs ini
+the "memcg shrinker has freeable items" tracking. If that happens,
+there's no way of getting that memcg to run it's shrinker ever
+again. That seems very, very fragile and likely to be an endless
+source of OOM bugs. The whole point of the shrinker polling
+infrastructure is that it is not susceptible to this sort of bug.
 
-Cheers,
-Jérôme
+Really, the problem is that there's no separate list of memcg aware
+shrinkers, so every registered shrinker has to be iterated just to
+find the one shrinker that is memcg aware.
+
+So why not just do the simple thing which is create a separate
+"memcg-aware" shrinker list (i.e. create shrinker_list_memcg
+alongside shrinker_list) and only iterate the shrinker_list_memcg
+when a memcg is passed to shrink_slab()?
+
+That means we'll only run 2 shrinkers per memcg at most (sueprblock
+and working set) per memcg reclaim call. That's a simple 10-20 line
+change, not a whole mess of new code and issues...
+
+> Can't we call shrink of shared objects only for top memcg? Something like
+> this:
+
+What's a "shared object", and how is it any different to a normal
+slab cache object?
+
+CHeers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
