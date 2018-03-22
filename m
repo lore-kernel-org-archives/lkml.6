@@ -1,166 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755167AbeCVNAr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 09:00:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38742 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755149AbeCVNAk (ORCPT
+        id S1755170AbeCVNAy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 09:00:54 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:46847 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754792AbeCVNAs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 09:00:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1A28C6110D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-From: Sricharan R <sricharan@codeaurora.org>
-To: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-Cc: sricharan@codeaurora.org
-Subject: [PATCH v4 13/13] ARM: dts: ipq8074: Enable few peripherals for hk01 board
-Date: Thu, 22 Mar 2018 18:28:52 +0530
-Message-Id: <1521723532-28361-14-git-send-email-sricharan@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
-References: <1521723532-28361-1-git-send-email-sricharan@codeaurora.org>
+        Thu, 22 Mar 2018 09:00:48 -0400
+X-Google-Smtp-Source: AG47ELvPVVPf7Ndj2n2Y20l/1h1Kp/BDkEfcJqRRd1XWmh+WO+d6HbBXfwlsVscQHaU6MU+BWlFffQ==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: andy.shevchenko@gmail.com, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v4 6/7] gpio: gpio-mm: Implement get_multiple callback
+Date: Thu, 22 Mar 2018 09:00:42 -0400
+Message-Id: <dca781eea9e47dafa3da9d450e2de54d11c62878.1521723192.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <cover.1521723192.git.vilhelm.gray@gmail.com>
+References: <cover.1521723192.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/ipq8074-hk01.dts | 103 ++++++++++++++++++++++++++++++
- 1 file changed, 103 insertions(+)
+The Diamond Systems GPIO-MM series of devices contain two 82C55A
+devices, which each feature three 8-bit ports of I/O. Since eight input
+lines are acquired on a single port input read, the GPIO-MM GPIO driver
+may improve multiple input reads by utilizing a get_multiple callback.
+This patch implements the gpiomm_gpio_get_multiple function which serves
+as the respective get_multiple callback.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-index 6a838b5..dbca7ec 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq8074-hk01.dts
-@@ -21,6 +21,7 @@
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ drivers/gpio/gpio-gpio-mm.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+
+diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
+index 11ade5b288f8..d496cc56c2a2 100644
+--- a/drivers/gpio/gpio-gpio-mm.c
++++ b/drivers/gpio/gpio-gpio-mm.c
+@@ -14,6 +14,7 @@
+  * This driver supports the following Diamond Systems devices: GPIO-MM and
+  * GPIO-MM-12.
+  */
++#include <linux/bitmap.h>
+ #include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
+@@ -171,6 +172,51 @@ static int gpiomm_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	return !!(port_state & mask);
+ }
  
- 	aliases {
- 		serial0 = &blsp1_uart5;
-+		serial1 = &serial_blsp2;
- 	};
- 
- 	chosen {
-@@ -41,6 +42,47 @@
- 					bias-disable;
- 				};
- 			};
++static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
++	unsigned long *bits)
++{
++	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
++	size_t i;
++	const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
++	const unsigned int gpio_reg_size = 8;
++	unsigned int bits_offset;
++	size_t word_index;
++	unsigned int word_offset;
++	unsigned long word_mask;
++	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
++	unsigned long port_state;
 +
-+			 i2c_0_pins: i2c_0_pinmux {
-+				  mux {
-+					   pins = "gpio42", "gpio43";
-+					   function = "blsp1_i2c";
-+					   drive-strength = <8>;
-+					   bias-disable;
-+				  };
-+			 };
++	/* clear bits array to a clean slate */
++	bitmap_zero(bits, chip->ngpio);
 +
-+			 spi_0_pins: spi_0_pins {
-+				  mux {
-+					   pins = "gpio38", "gpio39", "gpio40", "gpio41";
-+					   function = "blsp0_spi";
-+					   drive-strength = <8>;
-+					   bias-disable;
-+				  };
-+			 };
++	/* get bits are evaluated a gpio port register at a time */
++	for (i = 0; i < ARRAY_SIZE(ports); i++) {
++		/* gpio offset in bits array */
++		bits_offset = i * gpio_reg_size;
 +
-+			 hsuart_pins: hsuart_pins {
-+				  mux {
-+					   pins = "gpio46", "gpio47", "gpio48", "gpio49";
-+					   function = "blsp2_uart";
-+					   drive-strength = <8>;
-+					   bias-disable;
-+				  };
-+			 };
++		/* word index for bits array */
++		word_index = BIT_WORD(bits_offset);
 +
-+			 qpic_pins: qpic_pins {
-+				mux {
-+					   pins = "gpio1", "gpio3", "gpio4",
-+						  "gpio5", "gpio6", "gpio7",
-+						  "gpio8", "gpio10", "gpio11",
-+						  "gpio12", "gpio13", "gpio14",
-+						  "gpio15", "gpio16", "gpio17";
-+					   function = "qpic";
-+					   drive-strength = <8>;
-+					   bias-disable;
-+				  };
-+			};
++		/* gpio offset within current word of bits array */
++		word_offset = bits_offset % BITS_PER_LONG;
 +
- 		};
- 
- 		serial@78b3000 {
-@@ -48,5 +90,66 @@
- 			pinctrl-names = "default";
- 			status = "ok";
- 		};
++		/* mask of get bits for current gpio within current word */
++		word_mask = mask[word_index] & (port_mask << word_offset);
++		if (!word_mask) {
++			/* no get bits in this port so skip to next one */
++			continue;
++		}
 +
-+		spi@78b5000 {
-+			 pinctrl-0 = <&spi_0_pins>;
-+			 pinctrl-names = "default";
-+			 status = "ok";
++		/* read bits from current gpio port */
++		port_state = inb(gpiommgpio->base + ports[i]);
 +
-+			 m25p80@0 {
-+				  #address-cells = <1>;
-+				  #size-cells = <1>;
-+				  compatible = "n25q128a11", "jedec,spi-nor";
-+				  reg = <0>;
-+				  spi-max-frequency = <50000000>;
-+			 };
-+		};
++		/* store acquired bits at respective bits array offset */
++		bits[word_index] |= port_state << word_offset;
++	}
 +
-+		serial@78b1000 {
-+			 pinctrl-0 = <&hsuart_pins>;
-+			 pinctrl-names = "default";
-+			 status = "ok";
-+		};
++	return 0;
++}
 +
-+		i2c@78b6000 {
-+			 pinctrl-0 = <&i2c_0_pins>;
-+			 pinctrl-names = "default";
-+			 status = "ok";
-+		};
-+
-+		dma@7984000 {
-+			 status = "ok";
-+		};
-+
-+		nand@79b0000 {
-+			pinctrl-0 = <&qpic_pins>;
-+			pinctrl-names = "default";
-+			status = "ok";
-+
-+			nand@0 {
-+				reg = <0>;
-+				nand-ecc-strength = <4>;
-+				nand-ecc-step-size = <512>;
-+				nand-bus-width = <8>;
-+			};
-+		};
-+
-+		phy@86000 {
-+			status = "ok";
-+		};
-+
-+		phy@8e000 {
-+			status = "ok";
-+		};
-+
-+		pci@20000000 {
-+			status = "ok";
-+			perst-gpio = <&tlmm 58 0x1>;
-+		};
-+
-+		pci@10000000 {
-+			status = "ok";
-+			perst-gpio = <&tlmm 61 0x1>;
-+		};
- 	};
- };
+ static void gpiomm_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	int value)
+ {
+@@ -268,6 +314,7 @@ static int gpiomm_probe(struct device *dev, unsigned int id)
+ 	gpiommgpio->chip.direction_input = gpiomm_gpio_direction_input;
+ 	gpiommgpio->chip.direction_output = gpiomm_gpio_direction_output;
+ 	gpiommgpio->chip.get = gpiomm_gpio_get;
++	gpiommgpio->chip.get_multiple = gpiomm_gpio_get_multiple;
+ 	gpiommgpio->chip.set = gpiomm_gpio_set;
+ 	gpiommgpio->chip.set_multiple = gpiomm_gpio_set_multiple;
+ 	gpiommgpio->base = base[id];
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+2.16.2
