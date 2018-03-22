@@ -1,81 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753710AbeCVKTz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 06:19:55 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:40902 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753248AbeCVKTq (ORCPT
+        id S1753794AbeCVKUJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 06:20:09 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38984 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753688AbeCVKUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 06:19:46 -0400
-X-Google-Smtp-Source: AG47ELtN5F5K6BYgz1XUNHVliYNbphdjD9C9KPI7ZGDtmFH8x3I0eWOJIJwKAwEKdTpftQtKE3r94PyFJJDuR42a8iU=
-MIME-Version: 1.0
-In-Reply-To: <1520257159-27699-1-git-send-email-harish_kandiga@mentor.com>
-References: <1520257159-27699-1-git-send-email-harish_kandiga@mentor.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 22 Mar 2018 11:19:45 +0100
-Message-ID: <CAPDyKFotmS3ZxTCaYxuu7c-_KiLfNfz2GQMzmZn8JSOeSbgrbg@mail.gmail.com>
-Subject: Re: [PATCH v4] mmc: Export host capabilities to debugfs.
-To: Harish Jenny K N <harish_kandiga@mentor.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>, avri.altman@wdc.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Thu, 22 Mar 2018 06:20:03 -0400
+X-Google-Smtp-Source: AG47ELtDseMyjjSA50kxzP8P++a5gvXtolYV4lgN4sz2c0c4urPp4tgtb/wsTOThngCvIsa91cjqBg==
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH 1/2] r8169: reinstate ALDPS for power saving
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <75F177BF-B016-402B-93B3-62D635F5F9D5@canonical.com>
+Date: Thu, 22 Mar 2018 18:19:56 +0800
+Cc: nic_swsd <nic_swsd@realtek.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vladimir Zapolskiy <Vladimir_Zapolskiy@mentor.com>
-Content-Type: text/plain; charset="UTF-8"
+        romieu@fr.zoreil.com, jrg.otte@gmail.com,
+        David Miller <davem@davemloft.net>
+Content-Transfer-Encoding: 7bit
+Message-Id: <B39421A6-A863-414E-956F-0F185F09EB18@canonical.com>
+References: <20171115090019.23972-1-kai.heng.feng@canonical.com>
+ <20171115.195306.1005850318419905294.davem@davemloft.net>
+ <75F177BF-B016-402B-93B3-62D635F5F9D5@canonical.com>
+To: Hayes Wang <hayeswang@realtek.com>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 March 2018 at 14:39, Harish Jenny K N <harish_kandiga@mentor.com> wrote:
-> From: Abbas Raza <Abbas_Raza@mentor.com>
->
-> This patch exports the host capabilities to debugfs
->
-> Signed-off-by: Abbas Raza <Abbas_Raza@mentor.com>
-> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-> [Harish: Added caps2, moved creation to mmc_add_host_debugfs]
-> Signed-off-by: Harish Jenny K N <harish_kandiga@mentor.com>
+Kai Heng Feng <kai.heng.feng@canonical.com> wrote:
 
-Thanks, applied for next!
+> Hopefully Hayes (or Realtek) can shed more lights on the issue. Apparently
+> ALDPS and ASPM for r8169 is enabled in different commercial products, just
+> not in Linux mainline.
 
-Kind regards
-Uffe
+Hayes and Realtek folks,
 
-> ---
->
-> Changes in v4:
-> - Moved the creation of nodes to mmc_add_host_debugfs
-> - Exported caps2
-> - Renamed host_caps to caps
->
-> Changes in v3:
-> - Removed typecasting of &host->caps to (u32 *)
->
-> Changes in v2:
-> - Changed Author
->
->  drivers/mmc/core/debugfs.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs.c
-> index c51e0c0..d2275c5 100644
-> --- a/drivers/mmc/core/debugfs.c
-> +++ b/drivers/mmc/core/debugfs.c
-> @@ -243,6 +243,12 @@ void mmc_add_host_debugfs(struct mmc_host *host)
->         if (!debugfs_create_file("ios", S_IRUSR, root, host, &mmc_ios_fops))
->                 goto err_node;
->
-> +       if (!debugfs_create_x32("caps", S_IRUSR, root, &host->caps))
-> +               goto err_node;
-> +
-> +       if (!debugfs_create_x32("caps2", S_IRUSR, root, &host->caps2))
-> +               goto err_node;
-> +
->         if (!debugfs_create_file("clock", S_IRUSR | S_IWUSR, root, host,
->                         &mmc_clock_fops))
->                 goto err_node;
-> --
-> 1.9.1
->
+How do we make this patch going forward?
+Do you find the root cause that make this patch got reverted?
+
+I guess ALDPS is no longer needed after commit a92a08499b1f ("r8169:  
+improve runtime pm in general and suspend unused ports"), now the device  
+gets runtime suspended when link is down.
+
+OTOH, ASPM is still quite useful though. When it's enabled, it can save 1W  
+power usage, which is quite substantial for a laptop.
+
+So, I'd like to hear your feedback and make ASPM for r8169 eventually gets  
+upstreamed.
+
+Kai-Heng
