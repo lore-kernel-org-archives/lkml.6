@@ -1,89 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754717AbeCVOsF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 10:48:05 -0400
-Received: from mail-pf0-f171.google.com ([209.85.192.171]:34201 "EHLO
-        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754403AbeCVOsD (ORCPT
+        id S1754782AbeCVOtN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 10:49:13 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48842 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754403AbeCVOtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:48:03 -0400
-X-Google-Smtp-Source: AG47ELtgtpUAEJZstXvLiROQFKrrqB2vXCMv5WH8zEpM8KwnhtoLs071itsZmxp7377CTB3nuRKqjD7o4mJtq+aYYxE=
+        Thu, 22 Mar 2018 10:49:10 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Frank.Rowand@sony.com, Arnd Bergmann <arnd@arndb.de>,
+        David Airlie <airlied@linux.ie>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH] [RFC] drm: rcar-du: keep temporary dtb files around during build
+Date: Thu, 22 Mar 2018 16:50:15 +0200
+Message-ID: <1806382.Agy9d77yKa@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <CAMuHMdULWVXXSXrEBoomONQhF-Af3FGMijMnL6WL6P1XE-e7zA@mail.gmail.com>
+References: <20180315153730.3798004-1-arnd@arndb.de> <ED290C750E1B324E972B0017C9D4BAB06479C421@USCULXMSG01.am.sony.com> <CAMuHMdULWVXXSXrEBoomONQhF-Af3FGMijMnL6WL6P1XE-e7zA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180322142900.GD19440@mtr-leonro.local>
-References: <94eb2c0bc3aa8b2432056623c735@google.com> <20180322124823.GB19440@mtr-leonro.local>
- <CACT4Y+Ya8iMgV=7YGgsO2XnusF9tnGcHHPF5U5oNjQz_eJ+vMw@mail.gmail.com>
- <20180322132031.GC19440@mtr-leonro.local> <CACT4Y+a2KB6vvgFcqkq7cMCiCZQEFNxsCTgP+_gtgju8H2q9hQ@mail.gmail.com>
- <20180322142900.GD19440@mtr-leonro.local>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 22 Mar 2018 15:47:41 +0100
-Message-ID: <CACT4Y+ZEGHp9vg68O7dDfRWj+_bKZQCGQX2AcFckm8GBYaREug@mail.gmail.com>
-Subject: Re: WARNING: ODEBUG bug in process_one_req
-To: Leon Romanovsky <leonro@mellanox.com>
-Cc: syzbot <syzbot+3b4acab09b6463472d0a@syzkaller.appspotmail.com>,
-        danielj@mellanox.com, dledford@redhat.com,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Johannes Berg <johannes.berg@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        monis@mellanox.com, Paolo Abeni <pabeni@redhat.com>,
-        parav@mellanox.com, Roland Dreier <roland@purestorage.com>,
-        syzkaller-bugs@googlegroups.com, yuval.shaia@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 3:29 PM, Leon Romanovsky <leonro@mellanox.com> wrote:
-> On Thu, Mar 22, 2018 at 02:36:55PM +0100, Dmitry Vyukov wrote:
->> On Thu, Mar 22, 2018 at 2:20 PM, Leon Romanovsky <leonro@mellanox.com> wrote:
->> > On Thu, Mar 22, 2018 at 02:10:21PM +0100, Dmitry Vyukov wrote:
->> >> This bug is actively happening several times per day, if such bug is
->> >> closed syzbot will open another bug on the next crash.
->> >> This bug has a reproducer, why do you think it is invalid?
->> >
->> > I tried to reproduce it on latest rdma-next and failed, so wanted to
->> > start from clean page and see if it is still relevant.
->>
->> Ah,  I see.
->> You can now see the current status on dashboard:
->> https://syzkaller.appspot.com/bug?id=d4ac7bfeafac8a3d6d06123e078462ac765415e7
->> Yes, it still happens.
->>
->> syzbot has already reported another incarnation of this bug, you can
->> see the link to dashboard in the email:
->> https://syzkaller.appspot.com/bug?extid=b8d5eb964e412cfd2678
->> and it contains a link to the first version with reproducer.
->>
->> > Does it still reproduce on latest rdma-next?
->>
->> syzbot does not test rdma-next.
->>
->> But can you reproduce it on upstream tree where syzbot hits it? Just
->> to make sure, you have ODEBUG enabled, right?
->
-> Thanks for the tip, I added more debug options and returned to try the
-> repro on clean v4.16-rc1, it looks like I still don't have all needed
-> config options (SELinux).
->
->   mount(selinuxfs) failed (errno 2)
+Hi Geert,
 
+On Thursday, 22 March 2018 16:26:22 EET Geert Uytterhoeven wrote:
+> On Fri, Mar 16, 2018 at 2:39 AM,  <Frank.Rowand@sony.com> wrote:
+> > On Thursday, March 15, 2018 8:37 AM, Arnd Bergmann wrote:
+> >> The *.dtb and *.dtb.S files get removed by 'make' during the build
+> >> process, and later seem to be missed during the 'modpost' stage:
+> >> 
+> >> rm drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb.S
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb.S
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb.S
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb.S
+> >> WARNING: could not open
+> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S: No such file or
+> >> directory
+> >> 
+> >> As a workaround, this adds all those files to the 'extra-y' target list,
+> >> but that's really ugly. Any ideas for a better fix?
+> > 
+> > Does this work for you (untested, but the way it is done in
+> > drivers/of/unittest-data/Makefile):
+> > 
+> > .PRECIOUS: \
+> > 
+> >         $(obj)/%.dtb.S \
+> >         $(obj)/%.dtb
+> 
+> Shouldn't that just be moved to scripts/Makefile.lib, just above the rule
+> to make dtb.S, like is done for other precious objects?
 
-It seems that you have old syzkaller sources, it now explicitly does
-not fail on ENOENT:
+Without any implied acknowledgment that keeping those intermediate files is 
+the right solution (I don't claim to master the kernel build system), I think 
+such a rule would indeed be better in a core Makefile, as the rules to build 
+the .dtb.o file comes from the core too. Could another option be to create a 
+rule to compile a .dtb.o from the .dts file directly without going through 
+intermediate files that will be removed automatically ?
 
-    // selinux mount used to be at /selinux, but then moved to /sys/fs/selinux.
-    const char* selinux_path = "./syz-tmp/newroot/selinux";
-    if (mount("/selinux", selinux_path, NULL, mount_flags, NULL)) {
-        if (errno != ENOENT)
-            fail("mount(/selinux) failed");
-        if (mount("/sys/fs/selinux", selinux_path, NULL, mount_flags,
-NULL) && errno != ENOENT)
-            fail("mount(/sys/fs/selinux) failed");
-    }
+-- 
+Regards,
 
-
-> Can you please cancel my email that closes this bug?
-
-There is no such option. The new bug is already created:
-https://syzkaller.appspot.com/bug?id=6ecd3fdba0501c8843300056375abea0880816d2
-now if we open the old one, we now have 2 for the same root cause. It
-will lead to mess.
+Laurent Pinchart
