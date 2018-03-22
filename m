@@ -1,120 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752798AbeCVJ5G (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:57:06 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:22914 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751753AbeCVJ5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:57:03 -0400
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2] crypto: talitos - fix IPsec cipher in length
+        id S1752989AbeCVJ7M (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:59:12 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:35115 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752097AbeCVJ7K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 05:59:10 -0400
+X-Google-Smtp-Source: AG47ELt6bRteIBbXeY69xYaDmhWZu0gMSRrR4YoyvSwkh8fZQFEAWsdg05gNDFperDxHlKatdOxOXA==
+Date: Thu, 22 Mar 2018 17:59:03 +0800
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Kevin Hilman <khilman@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, Nishanth Menon <nm@ti.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/7] PM / Domain: Add struct device to genpd
+Message-ID: <20180322095903.h7hgm3xylq3esjyf@vireshk-mac-ubuntu>
+References: <cover.1513926033.git.viresh.kumar@linaro.org>
+ <a7867661e9bc6f5b1571f60398266ef678ccc1c0.1513926033.git.viresh.kumar@linaro.org>
+ <CAPDyKFprVsOd7_nKCXDCxDErh-K+vfaWojqDo0arzt0ZJKCPjQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, horia.geanta@nxp.com
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Message-Id: <20180322095701.4563E6F352@po15720vm.idsi0.si.c-s.fr>
-Date: Thu, 22 Mar 2018 10:57:01 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFprVsOd7_nKCXDCxDErh-K+vfaWojqDo0arzt0ZJKCPjQ@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For SEC 2.x+, cipher in length must contain only the ciphertext length.
-In case of using hardware ICV checking, the ICV length is provided via
-the "extent" field of the descriptor pointer.
+On 22-03-18, 10:30, Ulf Hansson wrote:
+> On 22 December 2017 at 08:26, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > The power-domain core would be using the OPP core going forward and the
+> > OPP core has the basic requirement of a device structure for its working.
+> 
+> According to the OPP core also seems to require the ->dev.of_node to
+> be set. Actually, it seems like that part belongs in patch4 instead,
+> while starting to make use of the opp OF APIs. Could you please move
+> it?
 
-Cc: <stable@vger.kernel.org> # 4.8+
-Fixes: 549bd8bc5987 ("crypto: talitos - Implement AEAD for SEC1 using HMAC_SNOOP_NO_AFEU")
-Reported-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- drivers/crypto/talitos.c | 36 ++++++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 16 deletions(-)
+You meaning setting of the of_node to the next patch? I can do that if that;s
+what you want.
 
-diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-index 6882fa2f8bad..016ff8c4c305 100644
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1130,10 +1130,10 @@ static int sg_to_link_tbl_offset(struct scatterlist *sg, int sg_count,
- 	return count;
- }
- 
--static int talitos_sg_map(struct device *dev, struct scatterlist *src,
--		   unsigned int len, struct talitos_edesc *edesc,
--		   struct talitos_ptr *ptr,
--		   int sg_count, unsigned int offset, int tbl_off)
-+static int talitos_sg_map_ext(struct device *dev, struct scatterlist *src,
-+			      unsigned int len, struct talitos_edesc *edesc,
-+			      struct talitos_ptr *ptr, int sg_count,
-+			      unsigned int offset, int tbl_off, int elen)
- {
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
-@@ -1142,6 +1142,7 @@ static int talitos_sg_map(struct device *dev, struct scatterlist *src,
- 		to_talitos_ptr(ptr, 0, 0, is_sec1);
- 		return 1;
- 	}
-+	to_talitos_ptr_ext_set(ptr, elen, is_sec1);
- 	if (sg_count == 1) {
- 		to_talitos_ptr(ptr, sg_dma_address(src) + offset, len, is_sec1);
- 		return sg_count;
-@@ -1150,7 +1151,7 @@ static int talitos_sg_map(struct device *dev, struct scatterlist *src,
- 		to_talitos_ptr(ptr, edesc->dma_link_tbl + offset, len, is_sec1);
- 		return sg_count;
- 	}
--	sg_count = sg_to_link_tbl_offset(src, sg_count, offset, len,
-+	sg_count = sg_to_link_tbl_offset(src, sg_count, offset, len + elen,
- 					 &edesc->link_tbl[tbl_off]);
- 	if (sg_count == 1) {
- 		/* Only one segment now, so no link tbl needed*/
-@@ -1164,6 +1165,15 @@ static int talitos_sg_map(struct device *dev, struct scatterlist *src,
- 	return sg_count;
- }
- 
-+static int talitos_sg_map(struct device *dev, struct scatterlist *src,
-+			  unsigned int len, struct talitos_edesc *edesc,
-+			  struct talitos_ptr *ptr, int sg_count,
-+			  unsigned int offset, int tbl_off)
-+{
-+	return talitos_sg_map_ext(dev, src, len, edesc, ptr, sg_count, offset,
-+				  tbl_off, 0);
-+}
-+
- /*
-  * fill in and submit ipsec_esp descriptor
-  */
-@@ -1181,7 +1191,7 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
- 	unsigned int ivsize = crypto_aead_ivsize(aead);
- 	int tbl_off = 0;
- 	int sg_count, ret;
--	int sg_link_tbl_len;
-+	int elen = 0;
- 	bool sync_needed = false;
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
-@@ -1223,17 +1233,11 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
- 	 * extent is bytes of HMAC postpended to ciphertext,
- 	 * typically 12 for ipsec
- 	 */
--	sg_link_tbl_len = cryptlen;
--
--	if (is_ipsec_esp) {
--		to_talitos_ptr_ext_set(&desc->ptr[4], authsize, is_sec1);
--
--		if (desc->hdr & DESC_HDR_MODE1_MDEU_CICV)
--			sg_link_tbl_len += authsize;
--	}
-+	if (is_ipsec_esp && (desc->hdr & DESC_HDR_MODE1_MDEU_CICV))
-+		elen = authsize;
- 
--	ret = talitos_sg_map(dev, areq->src, sg_link_tbl_len, edesc,
--			     &desc->ptr[4], sg_count, areq->assoclen, tbl_off);
-+	ret = talitos_sg_map_ext(dev, areq->src, cryptlen, edesc, &desc->ptr[4],
-+				 sg_count, areq->assoclen, tbl_off, elen);
- 
- 	if (ret > 1) {
- 		tbl_off += ret;
+> > +static struct bus_type genpd_bus_type = {
+> > +       .name =         "genpd",
+> > +};
+> 
+> This seems silly. Can't we just avoid having a bus type altogether,
+> thus no need to call bus_register() as well?
+
+I thought we need a bus where we want to add the device, haven't tried with that
+pointer being empty. Will try that and let you know.
+
+> > +
+> >  /**
+> >   * pm_genpd_init - Initialize a generic I/O PM domain object.
+> >   * @genpd: PM domain object to initialize.
+> > @@ -1687,6 +1691,18 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
+> >                         return ret;
+> >         }
+> >
+> > +       genpd->dev.bus = &genpd_bus_type;
+> > +       device_initialize(&genpd->dev);
+> > +       dev_set_name(&genpd->dev, "%s", genpd->name);
+> > +
+> > +       ret = device_add(&genpd->dev);
+> 
+> What's the point of adding the device? Can we skip this step, as I
+> guess the opp core is only using the device as cookie rather actual
+> using it? No?
+
+We also use it for the OPP debugfs stuff, so that would be required I believe.
+We also use it for playing with clk/regulator stuff as well, though we may not
+use it in genpd case for now.
+
 -- 
-2.13.3
+viresh
