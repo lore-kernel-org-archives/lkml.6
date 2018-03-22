@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753995AbeCVJEF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:04:05 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37680 "EHLO
+        id S1753901AbeCVJEB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:04:01 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37684 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753154AbeCVJCC (ORCPT
+        with ESMTP id S1753163AbeCVJCE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:02:02 -0400
+        Thu, 22 Mar 2018 05:02:04 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
-        x86@kernel.org
-Subject: [PATCH 40/45] x86: use _do_fork() in compat_sys_x86_clone()
-Date: Thu, 22 Mar 2018 10:00:54 +0100
-Message-Id: <20180322090059.19361-41-linux@dominikbrodowski.net>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 32/45] ipc: add semctl syscall/compat_syscall wrappers
+Date: Thu, 22 Mar 2018 10:00:46 +0100
+Message-Id: <20180322090059.19361-33-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
 References: <20180322090059.19361-1-linux@dominikbrodowski.net>
@@ -22,39 +22,109 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is trivial to directly call _do_fork() instead of the sys_clone()
-syscall in compat_sys_x86_clone().
+Provide ksys_semctl() and compat_ksys_semctl() wrappers to avoid in-kernel
+calls to these syscalls. The ksys_ prefix denotes that these functions are
+meant as a drop-in replacement for the syscalls. In particular, they use
+the same calling convention as sys_semctl() and compat_sys_semctl().
 
 This patch is part of a series which tries to remove in-kernel calls to
 syscalls. On this basis, the syscall entry path can be streamlined.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: x86@kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 ---
- arch/x86/ia32/sys_ia32.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ ipc/sem.c     | 14 ++++++++++++--
+ ipc/syscall.c |  4 ++--
+ ipc/util.h    |  2 ++
+ 3 files changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
-index 064b76598a2e..b9d4d8abc3f7 100644
---- a/arch/x86/ia32/sys_ia32.c
-+++ b/arch/x86/ia32/sys_ia32.c
-@@ -41,6 +41,7 @@
- #include <linux/highuid.h>
- #include <linux/sysctl.h>
- #include <linux/slab.h>
-+#include <linux/sched/task.h>
- #include <asm/mman.h>
- #include <asm/types.h>
- #include <linux/uaccess.h>
-@@ -242,6 +243,6 @@ COMPAT_SYSCALL_DEFINE5(x86_clone, unsigned long, clone_flags,
- 		       unsigned long, newsp, int __user *, parent_tidptr,
- 		       unsigned long, tls_val, int __user *, child_tidptr)
- {
--	return sys_clone(clone_flags, newsp, parent_tidptr, child_tidptr,
-+	return _do_fork(clone_flags, newsp, 0, parent_tidptr, child_tidptr,
- 			tls_val);
+diff --git a/ipc/sem.c b/ipc/sem.c
+index 2e5f7ec7a7db..1cf56279a84c 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -1581,7 +1581,7 @@ static int semctl_down(struct ipc_namespace *ns, int semid,
+ 	return err;
  }
+ 
+-SYSCALL_DEFINE4(semctl, int, semid, int, semnum, int, cmd, unsigned long, arg)
++long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg)
+ {
+ 	int version;
+ 	struct ipc_namespace *ns;
+@@ -1635,6 +1635,11 @@ SYSCALL_DEFINE4(semctl, int, semid, int, semnum, int, cmd, unsigned long, arg)
+ 	}
+ }
+ 
++SYSCALL_DEFINE4(semctl, int, semid, int, semnum, int, cmd, unsigned long, arg)
++{
++	return ksys_semctl(semid, semnum, cmd, arg);
++}
++
+ #ifdef CONFIG_COMPAT
+ 
+ struct compat_semid_ds {
+@@ -1683,7 +1688,7 @@ static int copy_compat_semid_to_user(void __user *buf, struct semid64_ds *in,
+ 	}
+ }
+ 
+-COMPAT_SYSCALL_DEFINE4(semctl, int, semid, int, semnum, int, cmd, int, arg)
++long compat_ksys_semctl(int semid, int semnum, int cmd, int arg)
+ {
+ 	void __user *p = compat_ptr(arg);
+ 	struct ipc_namespace *ns;
+@@ -1727,6 +1732,11 @@ COMPAT_SYSCALL_DEFINE4(semctl, int, semid, int, semnum, int, cmd, int, arg)
+ 		return -EINVAL;
+ 	}
+ }
++
++COMPAT_SYSCALL_DEFINE4(semctl, int, semid, int, semnum, int, cmd, int, arg)
++{
++	return compat_ksys_semctl(semid, semnum, cmd, arg);
++}
+ #endif
+ 
+ /* If the task doesn't already have a undo_list, then allocate one
+diff --git a/ipc/syscall.c b/ipc/syscall.c
+index 21fcdf0b4836..a536cca37661 100644
+--- a/ipc/syscall.c
++++ b/ipc/syscall.c
+@@ -42,7 +42,7 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
+ 			return -EINVAL;
+ 		if (get_user(arg, (unsigned long __user *) ptr))
+ 			return -EFAULT;
+-		return sys_semctl(first, second, third, arg);
++		return ksys_semctl(first, second, third, arg);
+ 	}
+ 
+ 	case MSGSND:
+@@ -138,7 +138,7 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
+ 			return -EINVAL;
+ 		if (get_user(pad, (u32 __user *) compat_ptr(ptr)))
+ 			return -EFAULT;
+-		return compat_sys_semctl(first, second, third, pad);
++		return compat_ksys_semctl(first, second, third, pad);
+ 
+ 	case MSGSND:
+ 		return compat_sys_msgsnd(first, ptr, second, third);
+diff --git a/ipc/util.h b/ipc/util.h
+index 0f07056e5a73..1f1109b83437 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -241,12 +241,14 @@ long ksys_semtimedop(int semid, struct sembuf __user *tsops,
+ 		     unsigned int nsops,
+ 		     const struct timespec __user *timeout);
+ long ksys_semget(key_t key, int nsems, int semflg);
++long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg);
+ 
+ /* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
+ #ifdef CONFIG_COMPAT
+ long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
+ 			    unsigned int nsops,
+ 			    const struct compat_timespec __user *timeout);
++long compat_ksys_semctl(int semid, int semnum, int cmd, int arg);
+ #endif /* CONFIG_COMPAT */
+ 
+ #endif
 -- 
 2.16.2
