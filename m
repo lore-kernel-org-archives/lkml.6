@@ -1,62 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751724AbeCVCJH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 21 Mar 2018 22:09:07 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6673 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751455AbeCVCJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Mar 2018 22:09:06 -0400
-From: Yunlong Song <yunlong.song@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] f2fs: no need to initialize zero value for GFP_F2FS_ZERO
-Date: Thu, 22 Mar 2018 10:08:40 +0800
-Message-ID: <1521684520-142131-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1521635131-137071-1-git-send-email-yunlong.song@huawei.com>
-References: <1521635131-137071-1-git-send-email-yunlong.song@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+        id S1751811AbeCVCLD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 21 Mar 2018 22:11:03 -0400
+Received: from tartarus.angband.pl ([89.206.35.136]:50772 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751599AbeCVCLA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Mar 2018 22:11:00 -0400
+From: Adam Borowski <kilobyte@angband.pl>
+To: Nick Terrell <terrelln@fb.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, kernel-team@fb.com,
+        Chris Mason <clm@fb.com>, Rene Rebe <rene@exactcode.com>,
+        Julian Andres Klode <julian.klode@canonical.com>,
+        Andi Kleen <ak@linux.intel.com>
+Cc: Adam Borowski <kilobyte@angband.pl>
+Date: Thu, 22 Mar 2018 03:10:43 +0100
+Message-Id: <20180322021043.29889-1-kilobyte@angband.pl>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180322012943.4145794-2-terrelln@fb.com>
+References: <20180322012943.4145794-2-terrelln@fb.com>
+X-SA-Exim-Connect-IP: 89.71.158.145
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+Subject: [PATCH] [NOT FOR MERGING] lib: Be noisy about used decompression method.
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since f2fs_inode_info is allocated with flag GFP_F2FS_ZERO, so we do not
-need to initialize zero value for its member any more.
+It's too easy to build the initrd with wrong options during testing, after
+which it may silently work anyway.
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Signed-off-by: Adam Borowski <kilobyte@angband.pl>
 ---
- fs/f2fs/super.c | 5 -----
- 1 file changed, 5 deletions(-)
+ lib/decompress.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 0c1fe9b..42d564c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -827,7 +827,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	/* Initialize f2fs-specific inode info */
- 	atomic_set(&fi->dirty_pages, 0);
- 	fi->i_current_depth = 1;
--	fi->i_advise = 0;
- 	init_rwsem(&fi->i_sem);
- 	INIT_LIST_HEAD(&fi->dirty_list);
- 	INIT_LIST_HEAD(&fi->gdirty_list);
-@@ -839,10 +838,6 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	init_rwsem(&fi->i_mmap_sem);
- 	init_rwsem(&fi->i_xattr_sem);
+diff --git a/lib/decompress.c b/lib/decompress.c
+index ab3fc90ffc64..556b9d916e10 100644
+--- a/lib/decompress.c
++++ b/lib/decompress.c
+@@ -78,7 +78,9 @@ decompress_fn __init decompress_method(const unsigned char *inbuf, long len,
+ 			break;
  
--#ifdef CONFIG_QUOTA
--	memset(&fi->i_dquot, 0, sizeof(fi->i_dquot));
--	fi->i_reserved_quota = 0;
--#endif
- 	/* Will be used by directory only */
- 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
- 
+ 	}
+-	if (name)
++	if (name) {
+ 		*name = cf->name;
++		printk("Decompressing using %s.\n", *name);
++	}
+ 	return cf->decompressor;
+ }
 -- 
-1.8.5.2
+2.16.2
