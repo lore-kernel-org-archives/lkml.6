@@ -1,131 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754523AbeCVJKR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 05:10:17 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:37678 "EHLO
+        id S1753416AbeCVJKb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 05:10:31 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:37638 "EHLO
         isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752939AbeCVJBs (ORCPT
+        with ESMTP id S1752918AbeCVJBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 05:01:48 -0400
+        Thu, 22 Mar 2018 05:01:46 -0400
 From: Dominik Brodowski <linux@dominikbrodowski.net>
 To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org
-Cc: Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 36/45] ipc: add shmctl syscall/compat_syscall wrappers
-Date: Thu, 22 Mar 2018 10:00:50 +0100
-Message-Id: <20180322090059.19361-37-linux@dominikbrodowski.net>
+Subject: [PATCH 00/45] remove in-kernel syscall invocations (part 3 == remainder outside arch/)
+Date: Thu, 22 Mar 2018 10:00:14 +0100
+Message-Id: <20180322090059.19361-1-linux@dominikbrodowski.net>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180322090059.19361-1-linux@dominikbrodowski.net>
-References: <20180322090059.19361-1-linux@dominikbrodowski.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide ksys_shmctl() and compat_ksys_shmctl() wrappers to avoid in-kernel
-calls to these syscalls. The ksys_ prefix denotes that these functions are
-meant as a drop-in replacement for the syscalls. In particular, they use
-the same calling convention as sys_shmctl() and compat_sys_shmctl().
+Here is a third series of patches which reduce the number of syscall
+invocations from within the kernel. Once this long-term goal is achieved,
+the syscall entry path can be streamlined.
 
-This patch is part of a series which tries to remove in-kernel calls to
-syscalls. On this basis, the syscall entry path can be streamlined.
+This series builds on top of
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
----
- ipc/shm.c     | 14 ++++++++++++--
- ipc/syscall.c |  4 ++--
- ipc/util.h    |  2 ++
- 3 files changed, 16 insertions(+), 4 deletions(-)
+- part1 (random bits and pieces) 
+  http://lkml.kernel.org/r/20180315190529.20943-1-linux@dominikbrodowski.net
 
-diff --git a/ipc/shm.c b/ipc/shm.c
-index e5838e3328dc..0aae3e55bc56 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1045,7 +1045,7 @@ static int shmctl_do_lock(struct ipc_namespace *ns, int shmid, int cmd)
- 	return err;
- }
- 
--SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, struct shmid_ds __user *, buf)
-+long ksys_shmctl(int shmid, int cmd, struct shmid_ds __user *buf)
- {
- 	int err, version;
- 	struct ipc_namespace *ns;
-@@ -1099,6 +1099,11 @@ SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, struct shmid_ds __user *, buf)
- 	}
- }
- 
-+SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, struct shmid_ds __user *, buf)
-+{
-+	return ksys_shmctl(shmid, cmd, buf);
-+}
-+
- #ifdef CONFIG_COMPAT
- 
- struct compat_shmid_ds {
-@@ -1218,7 +1223,7 @@ static int copy_compat_shmid_from_user(struct shmid64_ds *out, void __user *buf,
- 	}
- }
- 
--COMPAT_SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, void __user *, uptr)
-+long compat_ksys_shmctl(int shmid, int cmd, void __user *uptr)
- {
- 	struct ipc_namespace *ns;
- 	struct shmid64_ds sem64;
-@@ -1273,6 +1278,11 @@ COMPAT_SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, void __user *, uptr)
- 	}
- 	return err;
- }
-+
-+COMPAT_SYSCALL_DEFINE3(shmctl, int, shmid, int, cmd, void __user *, uptr)
-+{
-+	return compat_ksys_shmctl(shmid, cmd, uptr);
-+}
- #endif
- 
- /*
-diff --git a/ipc/syscall.c b/ipc/syscall.c
-index b3aa71564815..34bbabc9e672 100644
---- a/ipc/syscall.c
-+++ b/ipc/syscall.c
-@@ -94,7 +94,7 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
- 	case SHMGET:
- 		return ksys_shmget(first, second, third);
- 	case SHMCTL:
--		return sys_shmctl(first, second,
-+		return ksys_shmctl(first, second,
- 				   (struct shmid_ds __user *) ptr);
- 	default:
- 		return -ENOSYS;
-@@ -182,7 +182,7 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
- 	case SHMGET:
- 		return ksys_shmget(first, (unsigned int)second, third);
- 	case SHMCTL:
--		return compat_sys_shmctl(first, second, compat_ptr(ptr));
-+		return compat_ksys_shmctl(first, second, compat_ptr(ptr));
- 	}
- 
- 	return -ENOSYS;
-diff --git a/ipc/util.h b/ipc/util.h
-index 7770bcad1168..16e8b5b8c416 100644
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -245,6 +245,7 @@ long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg);
- long ksys_msgget(key_t key, int msgflg);
- long ksys_shmget(key_t key, size_t size, int shmflg);
- long ksys_shmdt(char __user *shmaddr);
-+long ksys_shmctl(int shmid, int cmd, struct shmid_ds __user *buf);
- 
- /* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
- #ifdef CONFIG_COMPAT
-@@ -252,6 +253,7 @@ long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
- 			    unsigned int nsops,
- 			    const struct compat_timespec __user *timeout);
- long compat_ksys_semctl(int semid, int semnum, int cmd, int arg);
-+long compat_ksys_shmctl(int shmid, int cmd, void __user *uptr);
- #endif /* CONFIG_COMPAT */
- 
- #endif
+- part2 (net)
+  http://lkml.kernel.org/r/20180316170614.5392-1-linux@dominikbrodowski.net
+
+and replaces the RFC of a subset of this series. Most of the patches are
+just "mindless" conversions and helpers. If wrappers or helpers are limited
+to one subsystem, I have named them do_*(), kern_*() or __sys_*(), depending
+on what was used by the subsystem and/or what was still available. Otherwise,
+I have used ksys_*() to reflect that this is meant as a drop-in replacement
+for sys_*() within the kernel.
+
+With this third series, *all* in-kernel callers of sys_*() and compat_sys_*()
+outside of arch/ are converted.[*] On top of this, three things may be
+attempted now:
+
+- ptregs system call conversion for x86-64.
+
+- re-work initramfs etc. code to not use in-kernel equivalents of
+   syscalls, but operate on the VFS level instead.
+
+- re-work SYSCALL_DEFINEx() / COMPAT_SYSCALL_DEFINEx() to do the right
+  thing depending on arch-specific requirements on padding, long long handling,
+  etc. (Al Viro). 
+
+Also thrown in are a patch by Michael Tautschnig to use proper
+SYSCALL_DEFINE0() macros on x86 and a patch by Howard McLauchlan to whitelist
+all syscalls for error injection.
+
+The whole series, including part 1 and part 2, can be found at
+
+        https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscalls-next
+
+Thanks,
+	Dominik
+
+[*] Within arch, only x86 is fully covered by these series.
+
+Dominik Brodowski (43):
+  fs: add ksys_getdents64() helper; remove in-kernel calls to
+    sys_getdents64()
+  fs: add ksys_ioctl() helper; remove in-kernel calls to sys_ioctl()
+  fs: add ksys_lseek() helper; remove in-kernel calls to sys_lseek()
+  fs: add ksys_read() helper; remove in-kernel calls to sys_read()
+  fs: add ksys_sync() helper; remove in-kernel calls to sys_sync()
+  fs: add do_lookup_dcookie() helper; remove in-kernel call to syscall
+  fs: add do_vmsplice() helper; remove in-kernel call to syscall
+  fs: add kern_select() helper; remove in-kernel call to sys_select()
+  fs: add ksys_truncate() wrapper; remove in-kernel calls to
+    sys_truncate()
+  fs: add ksys_p{read,write}64() helpers; remove in-kernel calls to
+    syscalls
+  fs: add ksys_fallocate() wrapper; remove in-kernel calls to
+    sys_fallocate()
+  fs: add do_compat_fcntl64() helper; remove in-kernel call to comapt
+    syscall
+  fs: add do_compat_select() helper; remove in-kernel call to comapt
+    syscall
+  fs: add do_compat_signalfd4() helper; remove in-kernel call to comapt
+    syscall
+  fs: add do_compat_futimesat() helper; remove in-kernel call to comapt
+    syscall
+  inotify: add do_inotify_init() helper; remove in-kernel call to
+    syscall
+  fanotify: add do_fanotify_mark() helper; remove in-kernel call to
+    syscall
+  fs/quota: add kernel_quotactl() helper; remove in-kernel call to
+    syscall
+  fs/quota: use COMPAT_SYSCALL_DEFINE for sys32_quotactl()
+  kernel: add do_compat_sigaltstack() helper; remove in-kernel call to
+    compat syscall
+  kernel: add ksys_setsid() helper; remove in-kernel call to
+    sys_setsid()
+  kernel: provide ksys_*() wrappers for syscalls called by
+    kernel/uid16.c
+  sched: add do_sched_yield() helper; remove in-kernel call to
+    sched_yield()
+  kexec: call do_kexec_load() in compat syscall directly
+  mm: add kernel_migrate_pages() helper, move compat syscall to
+    mm/mempolicy.c
+  mm: add kernel_move_pages() helper, move compat syscall to
+    mm/migrate.c
+  mm: add kernel_mbind() helper; remove in-kernel call to syscall
+  mm: add kernel_[sg]et_mempolicy() helpers; remove in-kernel calls to
+    syscalls
+  mm: add ksys_readahead() helper; remove in-kernel calls to
+    sys_readahead()
+  ipc: add semtimedop syscall/compat_syscall wrappers
+  ipc: add semget syscall wrapper
+  ipc: add semctl syscall/compat_syscall wrappers
+  ipc: add msgget syscall wrapper
+  ipc: add shmget syscall wrapper
+  ipc: add shmdt syscall wrapper
+  ipc: add shmctl syscall/compat_syscall wrappers
+  ipc: add msgctl syscall/compat_syscall wrappers
+  ipc: add msgrcv syscall/compat_syscall wrappers
+  ipc: add msgsnd syscall/compat_syscall wrappers
+  x86: use _do_fork() in compat_sys_x86_clone()
+  x86: remove compat_sys_x86_waitpid()
+  x86: fix sys_sigreturn() return type to be long, not unsigned long
+  kernel/sys_ni: sort cond_syscall() entries
+
+Howard McLauchlan (1):
+  bpf: whitelist all syscalls for error injection
+
+Tautschnig, Michael (1):
+  x86/sigreturn: use SYSCALL_DEFINE0
+
+ arch/mips/kernel/linux32.c             |  12 +-
+ arch/parisc/kernel/sys_parisc.c        |  16 +-
+ arch/powerpc/kernel/sys_ppc32.c        |  10 +-
+ arch/s390/kernel/compat_linux.c        |  14 +-
+ arch/sh/kernel/sys_sh32.c              |   4 +-
+ arch/sparc/kernel/setup_32.c           |   2 +-
+ arch/sparc/kernel/sys_sparc32.c        |  12 +-
+ arch/x86/entry/syscalls/syscall_32.tbl |   4 +-
+ arch/x86/ia32/sys_ia32.c               |  26 +-
+ arch/x86/include/asm/sys_ia32.h        |   3 -
+ arch/x86/include/asm/syscalls.h        |   2 +-
+ arch/x86/kernel/signal.c               |   5 +-
+ drivers/tty/sysrq.c                    |   2 +-
+ fs/dcookies.c                          |  11 +-
+ fs/fcntl.c                             |  12 +-
+ fs/ioctl.c                             |   7 +-
+ fs/notify/fanotify/fanotify_user.c     |  14 +-
+ fs/notify/inotify/inotify_user.c       |   9 +-
+ fs/open.c                              |   9 +-
+ fs/quota/compat.c                      |  13 +-
+ fs/quota/quota.c                       |  10 +-
+ fs/read_write.c                        |  36 ++-
+ fs/readdir.c                           |  11 +-
+ fs/select.c                            |  29 +-
+ fs/signalfd.c                          |  17 +-
+ fs/splice.c                            |  12 +-
+ fs/sync.c                              |   7 +-
+ fs/utimes.c                            |  12 +-
+ include/linux/compat.h                 |   6 +
+ include/linux/quotaops.h               |   3 +
+ include/linux/syscalls.h               |  27 +-
+ init/do_mounts.c                       |  10 +-
+ init/do_mounts_initrd.c                |   4 +-
+ init/do_mounts_md.c                    |  15 +-
+ init/do_mounts_rd.c                    |  22 +-
+ init/initramfs.c                       |   4 +-
+ ipc/msg.c                              |  60 +++-
+ ipc/sem.c                              |  44 ++-
+ ipc/shm.c                              |  28 +-
+ ipc/syscall.c                          |  58 ++--
+ ipc/util.h                             |  31 ++
+ kernel/compat.c                        |  55 ----
+ kernel/kexec.c                         |  50 +++-
+ kernel/power/hibernate.c               |   2 +-
+ kernel/power/suspend.c                 |   2 +-
+ kernel/power/user.c                    |   2 +-
+ kernel/sched/core.c                    |   8 +-
+ kernel/signal.c                        |  14 +-
+ kernel/sys.c                           |  65 ++++-
+ kernel/sys_ni.c                        | 506 +++++++++++++++++++++------------
+ kernel/uid16.c                         |  19 +-
+ kernel/uid16.h                         |  14 +
+ mm/mempolicy.c                         |  92 +++++-
+ mm/migrate.c                           |  39 ++-
+ mm/readahead.c                         |   7 +-
+ 55 files changed, 1030 insertions(+), 478 deletions(-)
+ create mode 100644 kernel/uid16.h
+
 -- 
 2.16.2
