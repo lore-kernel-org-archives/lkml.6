@@ -1,109 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeCVXeN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 19:34:13 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:37022 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751319AbeCVXeL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 19:34:11 -0400
-X-Google-Smtp-Source: AG47ELthadwCx84tSDdhqyffy91MbtAQGVbbUgNSj4cKFim+ygdLllkMDyj7My7/++/UzRMqvsRA4A==
-Date: Thu, 22 Mar 2018 16:34:08 -0700
-From: Benson Leung <bleung@google.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Nick Dyer <nick@shmanahar.org>, Olof Johansson <olof@lixom.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/14] platform/chrome: chromeos_laptop - stop setting
- suspend mode for Atmel devices
-Message-ID: <20180322233408.GA29926@decatoncale.mtv.corp.google.com>
-References: <20180320223138.234724-1-dmitry.torokhov@gmail.com>
- <20180320223138.234724-6-dmitry.torokhov@gmail.com>
+        id S1751719AbeCVXhT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 19:37:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38276 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751617AbeCVXhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 19:37:18 -0400
+Date: Thu, 22 Mar 2018 19:37:16 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>
+Subject: Re: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM
+ client quit v2
+Message-ID: <20180322233715.GA5011@redhat.com>
+References: <20180320020038.3360-5-jglisse@redhat.com>
+ <20180321181614.9968-1-jglisse@redhat.com>
+ <a9ba54c5-a2d9-49f6-16ad-46b79525b93c@nvidia.com>
+ <20180321234110.GK3214@redhat.com>
+ <cbc9dcba-0707-e487-d360-f6f7c8d5cb23@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180320223138.234724-6-dmitry.torokhov@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cbc9dcba-0707-e487-d360-f6f7c8d5cb23@nvidia.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 22, 2018 at 03:47:16PM -0700, John Hubbard wrote:
+> On 03/21/2018 04:41 PM, Jerome Glisse wrote:
+> > On Wed, Mar 21, 2018 at 04:22:49PM -0700, John Hubbard wrote:
+> >> On 03/21/2018 11:16 AM, jglisse@redhat.com wrote:
+> >>> From: Jérôme Glisse <jglisse@redhat.com>
+> >>>
+> >>> This code was lost in translation at one point. This properly call
+> >>> mmu_notifier_unregister_no_release() once last user is gone. This
+> >>> fix the zombie mm_struct as without this patch we do not drop the
+> >>> refcount we have on it.
+> >>>
+> >>> Changed since v1:
+> >>>   - close race window between a last mirror unregistering and a new
+> >>>     mirror registering, which could have lead to use after free()
+> >>>     kind of bug
+> >>>
+> >>> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+> >>> Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+> >>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> >>> Cc: Mark Hairgrove <mhairgrove@nvidia.com>
+> >>> Cc: John Hubbard <jhubbard@nvidia.com>
+> >>> ---
+> >>>  mm/hmm.c | 35 +++++++++++++++++++++++++++++++++--
+> >>>  1 file changed, 33 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/mm/hmm.c b/mm/hmm.c
+> >>> index 6088fa6ed137..f75aa8df6e97 100644
+> >>> --- a/mm/hmm.c
+> >>> +++ b/mm/hmm.c
+> >>> @@ -222,13 +222,24 @@ int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm)
+> >>>  	if (!mm || !mirror || !mirror->ops)
+> >>>  		return -EINVAL;
+> >>>  
+> >>> +again:
+> >>>  	mirror->hmm = hmm_register(mm);
+> >>>  	if (!mirror->hmm)
+> >>>  		return -ENOMEM;
+> >>>  
+> >>>  	down_write(&mirror->hmm->mirrors_sem);
+> >>> -	list_add(&mirror->list, &mirror->hmm->mirrors);
+> >>> -	up_write(&mirror->hmm->mirrors_sem);
+> >>> +	if (mirror->hmm->mm == NULL) {
+> >>> +		/*
+> >>> +		 * A racing hmm_mirror_unregister() is about to destroy the hmm
+> >>> +		 * struct. Try again to allocate a new one.
+> >>> +		 */
+> >>> +		up_write(&mirror->hmm->mirrors_sem);
+> >>> +		mirror->hmm = NULL;
+> >>
+> >> This is being set outside of locks, so now there is another race with
+> >> another hmm_mirror_register...
+> >>
+> >> I'll take a moment and draft up what I have in mind here, which is a more
+> >> symmetrical locking scheme for these routines.
+> >>
+> > 
+> > No this code is correct. hmm->mm is set after hmm struct is allocated
+> > and before it is public so no one can race with that. It is clear in
+> > hmm_mirror_unregister() under the write lock hence checking it here
+> > under that same lock is correct.
+> 
+> Are you implying that code that calls hmm_mirror_register() should do 
+> it's own locking, to prevent simultaneous calls to that function? Because
+> as things are right now, multiple threads can arrive at this point. The
+> fact that mirror->hmm is not "public" is irrelevant; what matters is that
+> >1 thread can change it simultaneously.
 
---LZvS9be/3tNcYl/X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The content of struct hmm_mirror should not be modified by code outside
+HMM after hmm_mirror_register() and before hmm_mirror_unregister(). This
+is a private structure to HMM and the driver should not touch it, ie it
+should be considered as read only/const from driver code point of view.
 
-Hi Dmitry,
+It is also expected (which was obvious to me) that driver only call once
+and only once hmm_mirror_register(), and only once hmm_mirror_unregister()
+for any given hmm_mirror struct. Note that driver can register multiple
+_different_ mirror struct to same mm or differents mm.
 
-On Tue, Mar 20, 2018 at 03:31:29PM -0700, Dmitry Torokhov wrote:
-> Atmel touch controller driver no longer respects suspend mode specified in
-> platform data, so let's stop setting it.
->=20
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+There is no need of locking on the driver side whatsoever as long as the
+above rules are respected. I am puzzle if they were not obvious :)
 
-Applied to my working branch for atmel_mxt_ts + chromeos_laptop.c for
-v4.17. Thanks!
+Note that the above rule means that for any given struct hmm_mirror their
+can only be one and only one call to hmm_mirror_register() happening, no
+concurrent call. If you are doing the latter then something is seriously
+wrong in your design.
 
-> ---
->  drivers/platform/chrome/chromeos_laptop.c | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/platform/chrome/chromeos_laptop.c b/drivers/platform=
-/chrome/chromeos_laptop.c
-> index 54a13c70e1d8f..0a43f1833de3f 100644
-> --- a/drivers/platform/chrome/chromeos_laptop.c
-> +++ b/drivers/platform/chrome/chromeos_laptop.c
-> @@ -100,7 +100,6 @@ static struct mxt_platform_data atmel_224s_tp_platfor=
-m_data =3D {
->  	.irqflags		=3D IRQF_TRIGGER_FALLING,
->  	.t19_num_keys		=3D ARRAY_SIZE(mxt_t19_keys),
->  	.t19_keymap		=3D mxt_t19_keys,
-> -	.suspend_mode		=3D MXT_SUSPEND_T9_CTRL,
->  };
-> =20
->  static struct i2c_board_info atmel_224s_tp_device =3D {
-> @@ -111,7 +110,6 @@ static struct i2c_board_info atmel_224s_tp_device =3D=
- {
-> =20
->  static struct mxt_platform_data atmel_1664s_platform_data =3D {
->  	.irqflags		=3D IRQF_TRIGGER_FALLING,
-> -	.suspend_mode		=3D MXT_SUSPEND_T9_CTRL,
->  };
-> =20
->  static struct i2c_board_info atmel_1664s_device =3D {
-> --=20
-> 2.16.2.804.g6dcf76e118-goog
->=20
+So to be clear on what variable are you claiming race ?
+  mirror->hmm ?
+  mirror->hmm->mm which is really hmm->mm (mirror part does not matter) ?
 
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+I will hold resending v4 until tomorrow morning (eastern time) so that
+you can convince yourself that this code is right or prove me wrong.
 
---LZvS9be/3tNcYl/X
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlq0PVkACgkQHwn1ewov
-5ljBzQ/+PrDaiWJ3IZp3EYweoviwzp9WehOW0f6bsa5TVlli9qrkNsyPfWhu8hFE
-1FcLd1saP9j67ctaeQVUZnVvx0vPEF5EyxeoqTKG8ouS5cM04UFeCkzX8+iJq4Mz
-PjO1q9NAWANzJgFyskWQVSOq5n4Y41tUI47pk0GyWzD2G77PRx/Y819lvuH0GAvn
-GnP46ZmjBYkjkkwLXJbaewp/Sm5Zf8x5/9uWR1X4g8oQXB8OHvcgo6n7GsZUtgR5
-WDpl4B9Ct7KlWJzQvY2Wesp2/0hyt6XuYNKiMMZrPtgB9XpUKCJNOfDYrRnMftL+
-lZmHVSmiPUAxG8RgiZQKNg3+r/UTjrrUL3PgbjqWJbVCSxae6e4QRf5h872WVBy4
-R9835W6SPODZZWfjGf8tPWXfCFpRh8/Vx2YZPPdY35m2A/8sFcZYP+fsjJrt62pe
-/Mvy0TpQoI/Cma5G9OeJfj1ndCYo/pO93bBoMTJB8+jSd18TOzL3lwo3tO4EEtyG
-DnYlHR8hetucGAwIA1kMPQXwcruZc13YKUYzl/j5LmAvWMxkDuOq+/3NTp4lMFn9
-4ePDtjwX9uGgsf9gVZtBTEwEMNK0nWBSpiywfOJkuZ5nxdcPW3EsbPsFGU9i4Thg
-sK5wET7RfgH102m7UPsiK5ATNvOGNccR/3+i6UKGuVdHUhSQAJM=
-=qWkj
------END PGP SIGNATURE-----
-
---LZvS9be/3tNcYl/X--
+Cheers,
+Jérôme
