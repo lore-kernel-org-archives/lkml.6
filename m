@@ -1,75 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751661AbeCVSaQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 14:30:16 -0400
-Received: from smtprelay0022.hostedemail.com ([216.40.44.22]:54551 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751140AbeCVSaO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 14:30:14 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3871:3872:3873:3874:4321:4605:5007:6119:7875:7903:10004:10400:10848:11026:11232:11658:11914:12296:12681:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21433:21451:21627:30046:30054:30080:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: bell63_3bf6d6c4a0421
-X-Filterd-Recvd-Size: 2505
-Message-ID: <1521743410.7999.48.camel@perches.com>
-Subject: Re: [PATCH 2/2] fpga: lattice machxo2: Add Lattice MachXO2 support
-From: Joe Perches <joe@perches.com>
-To: Paolo Pisati <p.pisati@gmail.com>
-Cc: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
+        id S1751739AbeCVSaa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 14:30:30 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41784 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751692AbeCVSa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 14:30:28 -0400
+Subject: Re: [PATCH] arm64: tlbflush: avoid writing RES0 bits
+To: Philip Elcan <pelcan@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
         linux-kernel@vger.kernel.org
-Date: Thu, 22 Mar 2018 11:30:10 -0700
-In-Reply-To: <20180322172608.GA22179@harukaze>
-References: <1521653726-24625-1-git-send-email-p.pisati@gmail.com>
-         <1521653726-24625-3-git-send-email-p.pisati@gmail.com>
-         <1521655492.7999.13.camel@perches.com> <20180322172608.GA22179@harukaze>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+Cc: Thomas Speier <tspeier@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+References: <1521666172-2494-1-git-send-email-pelcan@codeaurora.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <00ae42df-d0b7-f63b-9cca-4c3e65a3938e@arm.com>
+Date: Thu, 22 Mar 2018 18:30:25 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1521666172-2494-1-git-send-email-pelcan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-22 at 18:26 +0100, Paolo Pisati wrote:
-> > It's frequently nicer to use a static function
-> > for these enum -> string conversions like:
-> > 
-> > static const char *get_err_string(unsigned long err)
-> > {
-> > 	switch (err) {
-> > 	case ENOERR:	return "No Error";
-> > 	case EID:	return "ID ERR";
-> > 	case ECMD:	return "CMD ERR";
-> > 	[...]
-> > 	}
-> > 	return "default switch case";
-> > }
-> 
-> Ok - checkpatch complained when i put the "case ...: return ...;" on the same
-> line as you did here, that is why i ended up with the ugly "case...: $string;
-> break" all on different lines
+On 21/03/18 21:02, Philip Elcan wrote:
+> Bits [47:44] of the TLBI register operand are RES0 for instructions that
+> require a VA, per the ARM ARM spec, so TLBI operations should avoid writing
+> non-zero values to these bits.
 
-checkpatch is brainless and stupid and if it
-recommends stupid consistency over readability,
-ignore it.
- 
-> > > +	pr_debug("machxo2 status: 0x%08lX - done=%d, cfgena=%d, busy=%d, fail=%d, devver=%d, err=%s\n",
-> > > +	       *status, test_bit(DONE, status), test_bit(ENAB, status),
-> > > +	       test_bit(BUSY, status), test_bit(FAIL, status),
-> > > +		   test_bit(DVER, status), ferr);
-> > 
-> > So instead of ferr, this could use
-> > 	get_err_string(*status)
-> > 
-> > And please try to keep a consistent alignment for
-> > indentation of multiple line statements
-> 
-> I tried, but then checkpatch complained again about the indentation of the above block
-> and i literally had to guess...
+If we're going to start sanitising addresses to respect RES0 bits, then 
+we should probably do it properly to cope with the cases where bits 
+63:47 are also RES0, and others - I guess we never actually try to do 
+something like VAE1IS with a kernel VA, but AFAICS that would still be 
+busted even after this patch.
 
-I think it only complained about the
-2nd line that starts *status because it
-doesn't align with the open parenthesis
-of pr_debug
+Robin.
+
+> Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
+> ---
+>   arch/arm64/include/asm/tlbflush.h | 16 ++++++++++------
+>   1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+> index 9e82dd7..dbd22a9 100644
+> --- a/arch/arm64/include/asm/tlbflush.h
+> +++ b/arch/arm64/include/asm/tlbflush.h
+> @@ -60,6 +60,9 @@
+>   		__tlbi(op, (arg) | USER_ASID_FLAG);				\
+>   } while (0)
+>   
+> +/* This macro masks out RES0 bits in the TLBI operand */
+> +#define __TLBI_VADDR(addr) (addr & ~GENMASK_ULL(47, 44))
+> +
+>   /*
+>    *	TLB Management
+>    *	==============
+> @@ -128,7 +131,8 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
+>   static inline void flush_tlb_page(struct vm_area_struct *vma,
+>   				  unsigned long uaddr)
+>   {
+> -	unsigned long addr = uaddr >> 12 | (ASID(vma->vm_mm) << 48);
+> +	unsigned long addr = __TLBI_VADDR(uaddr >> 12) |
+> +			     (ASID(vma->vm_mm) << 48);
+>   
+>   	dsb(ishst);
+>   	__tlbi(vale1is, addr);
+> @@ -154,8 +158,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
+>   		return;
+>   	}
+>   
+> -	start = asid | (start >> 12);
+> -	end = asid | (end >> 12);
+> +	start = asid | __TLBI_VADDR(start >> 12);
+> +	end = asid | __TLBI_VADDR(end >> 12);
+>   
+>   	dsb(ishst);
+>   	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12)) {
+> @@ -185,8 +189,8 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
+>   		return;
+>   	}
+>   
+> -	start >>= 12;
+> -	end >>= 12;
+> +	start = __TLBI_VADDR(start >> 12);
+> +	end = __TLBI_VADDR(end >> 12);
+>   
+>   	dsb(ishst);
+>   	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12))
+> @@ -202,7 +206,7 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
+>   static inline void __flush_tlb_pgtable(struct mm_struct *mm,
+>   				       unsigned long uaddr)
+>   {
+> -	unsigned long addr = uaddr >> 12 | (ASID(mm) << 48);
+> +	unsigned long addr = __TLBI_VADDR(uaddr >> 12) | (ASID(mm) << 48);
+>   
+>   	__tlbi(vae1is, addr);
+>   	__tlbi_user(vae1is, addr);
+> 
