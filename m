@@ -1,125 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeCVVs3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 17:48:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48120 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751868AbeCVVs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 17:48:26 -0400
-Date: Thu, 22 Mar 2018 15:48:25 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com>
-Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, gnehzuil@linux.alibaba.com
-Subject: Re: [PATCH] vfio iommu type1: improve memory pinning process for
- raw PFN mapping
-Message-ID: <20180322154825.0f8477f7@w520.home>
-In-Reply-To: <20180322045216.22220-1-jason.cai@linux.alibaba.com>
-References: <20180322045216.22220-1-jason.cai@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751896AbeCVVtx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 17:49:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32808 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751628AbeCVVtt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 17:49:49 -0400
+Subject: Re: [PATCH v6 02/12] PKCS#7: Introduce pkcs7_get_message_sig() and
+ verify_pkcs7_message_sig()
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+Date: Thu, 22 Mar 2018 17:49:38 -0400
+In-Reply-To: <20180316203837.10174-3-bauerman@linux.vnet.ibm.com>
+References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+         <20180316203837.10174-3-bauerman@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18032221-0012-0000-0000-000005C2555D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032221-0013-0000-0000-0000193E7FC6
+Message-Id: <1521755378.3848.295.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-22_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803220245
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Mar 2018 12:52:16 +0800
-"Jason Cai (Xiang Feng)" <jason.cai@linux.alibaba.com> wrote:
+Hi Thiago,
 
-> When using vfio to pass through a PCIe device (e.g. a GPU card) that
-> has a huge BAR (e.g. 16GB), a lot of cycles are wasted on memory
-> pinning because PFNs of PCI BAR are not backed by struct page, and
-> the corresponding VMA has flag VM_PFNMAP.
+On Fri, 2018-03-16 at 17:38 -0300, Thiago Jung Bauermann wrote:
+> IMA will need to know the key that signed a given PKCS#7 message, so add
+> pkcs7_get_message_sig().
 > 
-> With this change, when pinning a region which is a raw PFN mapping,
-> it can skip unnecessary user memory pinning process, and thus, can
-> significantly improve VM's boot up time when passing through devices
-> via VFIO. In my test on a Xeon E5 2.6GHz, the time mapping a 16GB
-> BAR was reduced from about 0.4s to 1.5us.
-> 
-> Signed-off-by: Jason Cai (Xiang Feng) <jason.cai@linux.alibaba.com>
+> It will also need to verify an already parsed PKCS#7 message. For this
+> purpose, add verify_pkcs7_message_sig() which takes a struct pkcs7_message
+> for verification instead of the raw bytes that verify_pkcs7_signature()
+> takes.
+
+The title "PKCS#7: refactor verify_pkcs7_signature()" might be more
+appropriate.  The patch description would then explain why it needs to
+be refactored.  In this case, verify_pkcs7_signature() verifies the
+signature using keys on the builtin and secondary keyrings.  IMA-
+appraisal needs to verify the signature using keys on its keyring.
+
+The patch itself looks good!
+
+Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+
+
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
 > ---
->  drivers/vfio/vfio_iommu_type1.c | 24 ++++++++++++++----------
->  1 file changed, 14 insertions(+), 10 deletions(-)
+>  certs/system_keyring.c                | 61 ++++++++++++++++++++++++++---------
+>  crypto/asymmetric_keys/pkcs7_parser.c | 16 +++++++++
+>  include/crypto/pkcs7.h                |  2 ++
+>  include/linux/verification.h          | 10 ++++++
+>  4 files changed, 73 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index 45657e2b1ff7..0658f35318b8 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -397,7 +397,6 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 6251d1b27f0c..7ddc8b7a3062 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -190,33 +190,27 @@ late_initcall(load_system_certificate_list);
+>  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+> 
+>  /**
+> - * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
+> + * verify_pkcs7_message_sig - Verify a PKCS#7-based signature on system data.
+>   * @data: The data to be verified (NULL if expecting internal data).
+>   * @len: Size of @data.
+> - * @raw_pkcs7: The PKCS#7 message that is the signature.
+> - * @pkcs7_len: The size of @raw_pkcs7.
+> + * @pkcs7: The PKCS#7 message that is the signature.
+>   * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
+>   *					(void *)1UL for all trusted keys).
+>   * @usage: The use to which the key is being put.
+>   * @view_content: Callback to gain access to content.
+>   * @ctx: Context for callback.
+>   */
+> -int verify_pkcs7_signature(const void *data, size_t len,
+> -			   const void *raw_pkcs7, size_t pkcs7_len,
+> -			   struct key *trusted_keys,
+> -			   enum key_being_used_for usage,
+> -			   int (*view_content)(void *ctx,
+> -					       const void *data, size_t len,
+> -					       size_t asn1hdrlen),
+> -			   void *ctx)
+> +int verify_pkcs7_message_sig(const void *data, size_t len,
+> +			     struct pkcs7_message *pkcs7,
+> +			     struct key *trusted_keys,
+> +			     enum key_being_used_for usage,
+> +			     int (*view_content)(void *ctx,
+> +						 const void *data, size_t len,
+> +						 size_t asn1hdrlen),
+> +			     void *ctx)
 >  {
->  	unsigned long pfn = 0;
->  	long ret, pinned = 0, lock_acct = 0;
-> -	bool rsvd;
->  	dma_addr_t iova = vaddr - dma->vaddr + dma->iova;
->  
->  	/* This code path is only user initiated */
-> @@ -408,14 +407,22 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->  	if (ret)
->  		return ret;
->  
-> +	if (is_invalid_reserved_pfn(*pfn_base)) {
-> +		struct vm_area_struct *vma;
-
-scripts/checkpatch.pl suggests a new line here to separate variable
-declaration from code.
-
-> +		down_read(&current->mm->mmap_sem);
-> +		vma = find_vma_intersection(current->mm, vaddr, vaddr + 1);
-> +		pinned = min(npage, (long)vma_pages(vma));
-
-checkpatch also suggests using min_t rather than casting to a
-compatible type, ie:
-
-	pinned = min_t(long, npage, vma_pages(vma));
-
-I'll make these updates on commit, please make use of checkpatch on
-future patches.  Applied to vfio next branch for v4.17.  Thanks,
-
-Alex
-
-> +		up_read(&current->mm->mmap_sem);
-> +		return pinned;
-> +	}
-> +
->  	pinned++;
-> -	rsvd = is_invalid_reserved_pfn(*pfn_base);
->  
->  	/*
->  	 * Reserved pages aren't counted against the user, externally pinned
->  	 * pages are already counted against the user.
->  	 */
-> -	if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> +	if (!vfio_find_vpfn(dma, iova)) {
->  		if (!lock_cap && current->mm->locked_vm + 1 > limit) {
->  			put_pfn(*pfn_base, dma->prot);
->  			pr_warn("%s: RLIMIT_MEMLOCK (%ld) exceeded\n", __func__,
-> @@ -435,13 +442,12 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->  		if (ret)
->  			break;
->  
-> -		if (pfn != *pfn_base + pinned ||
-> -		    rsvd != is_invalid_reserved_pfn(pfn)) {
-> +		if (pfn != *pfn_base + pinned) {
->  			put_pfn(pfn, dma->prot);
->  			break;
->  		}
->  
-> -		if (!rsvd && !vfio_find_vpfn(dma, iova)) {
-> +		if (!vfio_find_vpfn(dma, iova)) {
->  			if (!lock_cap &&
->  			    current->mm->locked_vm + lock_acct + 1 > limit) {
->  				put_pfn(pfn, dma->prot);
-> @@ -459,10 +465,8 @@ static long vfio_pin_pages_remote(struct vfio_dma *dma, unsigned long vaddr,
->  
->  unpin_out:
->  	if (ret) {
-> -		if (!rsvd) {
-> -			for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-> -				put_pfn(pfn, dma->prot);
-> -		}
-> +		for (pfn = *pfn_base ; pinned ; pfn++, pinned--)
-> +			put_pfn(pfn, dma->prot);
->  
->  		return ret;
+> -	struct pkcs7_message *pkcs7;
+>  	int ret;
+> 
+> -	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
+> -	if (IS_ERR(pkcs7))
+> -		return PTR_ERR(pkcs7);
+> -
+>  	/* The data should be detached - so we need to supply it. */
+>  	if (data && pkcs7_supply_detached_data(pkcs7, data, len) < 0) {
+>  		pr_err("PKCS#7 signature with non-detached data\n");
+> @@ -258,6 +252,41 @@ int verify_pkcs7_signature(const void *data, size_t len,
 >  	}
+> 
+>  error:
+> +	pr_devel("<==%s() = %d\n", __func__, ret);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * verify_pkcs7_signature - Verify a PKCS#7-based signature on system data.
+> + * @data: The data to be verified (NULL if expecting internal data).
+> + * @len: Size of @data.
+> + * @raw_pkcs7: The PKCS#7 message that is the signature.
+> + * @pkcs7_len: The size of @raw_pkcs7.
+> + * @trusted_keys: Trusted keys to use (NULL for builtin trusted keys only,
+> + *					(void *)1UL for all trusted keys).
+> + * @usage: The use to which the key is being put.
+> + * @view_content: Callback to gain access to content.
+> + * @ctx: Context for callback.
+> + */
+> +int verify_pkcs7_signature(const void *data, size_t len,
+> +			   const void *raw_pkcs7, size_t pkcs7_len,
+> +			   struct key *trusted_keys,
+> +			   enum key_being_used_for usage,
+> +			   int (*view_content)(void *ctx,
+> +					       const void *data, size_t len,
+> +					       size_t asn1hdrlen),
+> +			   void *ctx)
+> +{
+> +	struct pkcs7_message *pkcs7;
+> +	int ret;
+> +
+> +	pkcs7 = pkcs7_parse_message(raw_pkcs7, pkcs7_len);
+> +	if (IS_ERR(pkcs7))
+> +		return PTR_ERR(pkcs7);
+> +
+> +	ret = verify_pkcs7_message_sig(data, len, pkcs7, trusted_keys, usage,
+> +				       view_content, ctx);
+> +
+>  	pkcs7_free_message(pkcs7);
+>  	pr_devel("<==%s() = %d\n", __func__, ret);
+>  	return ret;
+> diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
+> index a6dcaa659aa8..456b803972b5 100644
+> --- a/crypto/asymmetric_keys/pkcs7_parser.c
+> +++ b/crypto/asymmetric_keys/pkcs7_parser.c
+> @@ -683,3 +683,19 @@ int pkcs7_note_signed_info(void *context, size_t hdrlen,
+>  		return -ENOMEM;
+>  	return 0;
+>  }
+> +
+> +/**
+> + * pkcs7_get_message_sig - get signature in @pkcs7
+> + */
+> +const struct public_key_signature *pkcs7_get_message_sig(
+> +					const struct pkcs7_message *pkcs7)
+> +{
+> +	/*
+> +	 * This function doesn't support messages with more than one signature,
+> +	 * so don't return anything in that case.
+> +	 */
+> +	if (pkcs7->signed_infos == NULL || pkcs7->signed_infos->next != NULL)
+> +		return NULL;
+> +
+> +	return pkcs7->signed_infos->sig;
+> +}
+> diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
+> index 583f199400a3..6f51d0cb6d12 100644
+> --- a/include/crypto/pkcs7.h
+> +++ b/include/crypto/pkcs7.h
+> @@ -28,6 +28,8 @@ extern void pkcs7_free_message(struct pkcs7_message *pkcs7);
+>  extern int pkcs7_get_content_data(const struct pkcs7_message *pkcs7,
+>  				  const void **_data, size_t *_datalen,
+>  				  size_t *_headerlen);
+> +extern const struct public_key_signature *pkcs7_get_message_sig(
+> +					const struct pkcs7_message *pkcs7);
+> 
+>  /*
+>   * pkcs7_trust.c
+> diff --git a/include/linux/verification.h b/include/linux/verification.h
+> index a10549a6c7cd..f04dac2728ec 100644
+> --- a/include/linux/verification.h
+> +++ b/include/linux/verification.h
+> @@ -29,6 +29,7 @@ extern const char *const key_being_used_for[NR__KEY_BEING_USED_FOR];
+>  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+> 
+>  struct key;
+> +struct pkcs7_message;
+> 
+>  extern int verify_pkcs7_signature(const void *data, size_t len,
+>  				  const void *raw_pkcs7, size_t pkcs7_len,
+> @@ -38,6 +39,15 @@ extern int verify_pkcs7_signature(const void *data, size_t len,
+>  						      const void *data, size_t len,
+>  						      size_t asn1hdrlen),
+>  				  void *ctx);
+> +extern int verify_pkcs7_message_sig(const void *data, size_t len,
+> +				    struct pkcs7_message *pkcs7,
+> +				    struct key *trusted_keys,
+> +				    enum key_being_used_for usage,
+> +				    int (*view_content)(void *ctx,
+> +							const void *data,
+> +							size_t len,
+> +							size_t asn1hdrlen),
+> +				    void *ctx);
+> 
+>  #ifdef CONFIG_SIGNED_PE_FILE_VERIFICATION
+>  extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
+> 
