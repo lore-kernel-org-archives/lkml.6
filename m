@@ -1,79 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754782AbeCVOtN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 10:49:13 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:48842 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754403AbeCVOtK (ORCPT
+        id S1754403AbeCVOwK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 10:52:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39876 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753117AbeCVOwH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 10:49:10 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Frank.Rowand@sony.com, Arnd Bergmann <arnd@arndb.de>,
-        David Airlie <airlied@linux.ie>,
-        Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH] [RFC] drm: rcar-du: keep temporary dtb files around during build
-Date: Thu, 22 Mar 2018 16:50:15 +0200
-Message-ID: <1806382.Agy9d77yKa@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <CAMuHMdULWVXXSXrEBoomONQhF-Af3FGMijMnL6WL6P1XE-e7zA@mail.gmail.com>
-References: <20180315153730.3798004-1-arnd@arndb.de> <ED290C750E1B324E972B0017C9D4BAB06479C421@USCULXMSG01.am.sony.com> <CAMuHMdULWVXXSXrEBoomONQhF-Af3FGMijMnL6WL6P1XE-e7zA@mail.gmail.com>
+        Thu, 22 Mar 2018 10:52:07 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E959D6085F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v4 4/6] infiniband: cxgb4: Eliminate duplicate barriers on
+ weakly-ordered archs
+To: Steve Wise <swise@opengridcomputing.com>,
+        "'kbuild test robot'" <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-rdma@vger.kernel.org, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "'Steve Wise'" <swise@chelsio.com>,
+        "'Doug Ledford'" <dledford@redhat.com>,
+        "'Jason Gunthorpe'" <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
+        "'Casey Leedom'" <leedom@chelsio.com>,
+        "'Michael Werner'" <werner@chelsio.com>
+References: <1521514068-8856-5-git-send-email-okaya@codeaurora.org>
+ <201803221430.P43GJl9U%fengguang.wu@intel.com>
+ <3664b253c730dbf83f4528acaedb3a88@codeaurora.org>
+ <3e9c006e4541acbce11743dbda553e84@codeaurora.org>
+ <03d201d3c1eb$b71fb460$255f1d20$@opengridcomputing.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <83484a3f-d3f7-d763-e4f8-e4fec3bb8cc2@codeaurora.org>
+Date: Thu, 22 Mar 2018 09:52:04 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <03d201d3c1eb$b71fb460$255f1d20$@opengridcomputing.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On 3/22/2018 9:40 AM, Steve Wise wrote:
+> I think all these iw_cxgb4 changes should be reverted until we really have a
+> plan for multi-platform that works.  
 
-On Thursday, 22 March 2018 16:26:22 EET Geert Uytterhoeven wrote:
-> On Fri, Mar 16, 2018 at 2:39 AM,  <Frank.Rowand@sony.com> wrote:
-> > On Thursday, March 15, 2018 8:37 AM, Arnd Bergmann wrote:
-> >> The *.dtb and *.dtb.S files get removed by 'make' during the build
-> >> process, and later seem to be missed during the 'modpost' stage:
-> >> 
-> >> rm drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dtb.S
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb.S
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dtb.S
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dtb.S
-> >> WARNING: could not open
-> >> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb.S: No such file or
-> >> directory
-> >> 
-> >> As a workaround, this adds all those files to the 'extra-y' target list,
-> >> but that's really ugly. Any ideas for a better fix?
-> > 
-> > Does this work for you (untested, but the way it is done in
-> > drivers/of/unittest-data/Makefile):
-> > 
-> > .PRECIOUS: \
-> > 
-> >         $(obj)/%.dtb.S \
-> >         $(obj)/%.dtb
-> 
-> Shouldn't that just be moved to scripts/Makefile.lib, just above the rule
-> to make dtb.S, like is done for other precious objects?
+I know you are looking to have support for PowerPC. 
 
-Without any implied acknowledgment that keeping those intermediate files is 
-the right solution (I don't claim to master the kernel build system), I think 
-such a rule would indeed be better in a core Makefile, as the rules to build 
-the .dtb.o file comes from the core too. Could another option be to create a 
-rule to compile a .dtb.o from the .dts file directly without going through 
-intermediate files that will be removed automatically ?
+Isn't this a PowerPC problem? Why penalize other architectures?
+
+Do you see anything wrong with the code itself?
+
+I started this thread with the PowerPC develoeprs on your request.
+"RFC on writel and writel_relaxed"
+
+They are looking into adding the relaxed API support. Support can come
+in later. Why block this change now?
+
+benh@kernel.crashing.org:
+"I've been wanting to implement the relaxed accessors for a while but
+was battling with this to try to also better support WC, and due to
+other commitments, this somewhat fell down the cracks."
+
+I have seen four different responses on this thread. Since this is an
+architecture change it will take a while to get the semantics right.
+It won't happen in the new few days.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
