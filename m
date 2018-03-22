@@ -1,52 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeCVW2W (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 18:28:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34078 "EHLO mail.kernel.org"
+        id S1751921AbeCVW2d (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 18:28:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751541AbeCVW2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 18:28:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 866332183B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jeyu@kernel.org
-Date: Thu, 22 Mar 2018 23:28:13 +0100
-From: Jessica Yu <jeyu@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+        id S1751611AbeCVW2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 18:28:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C1792183B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 22 Mar 2018 18:28:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Takashi Iwai <tiwai@suse.de>
 Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Modules fix for 4.16-rc7
-Message-ID: <20180322222813.ymjaa3bvquad5uav@redbean>
+Subject: Re: [PATCH] trace-cmd: Documentation: Fix title markers
+Message-ID: <20180322182829.7c8d38f8@gandalf.local.home>
+In-Reply-To: <20180321160334.16050-1-tiwai@suse.de>
+References: <20180321160334.16050-1-tiwai@suse.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-X-OS: Linux redbean 4.15.3-200.fc26.x86_64 x86_64
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
+On Wed, 21 Mar 2018 17:03:34 +0100
+Takashi Iwai <tiwai@suse.de> wrote:
 
-  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
+> Fix the title markers that aren't aligned with the previous lines.
+> This was caught by processing via asciidoctor, which is picker than
+> asciidoc and aborts as an error.
+> 
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
 
-are available in the git repository at:
+Thanks, Applied.
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v4.16-rc7
-
-for you to fetch changes up to 3f553b308bb004eb730da8e00a28150c157c7724:
-
-  module: propagate error in modules_open() (2018-03-08 21:58:51 +0100)
-
-----------------------------------------------------------------
-Modules fix for v4.16-rc7
-
-- Propagate error in modules_open() to avoid possible later NULL
-  dereference if seq_open() had failed.
-
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
-
-----------------------------------------------------------------
-Leon Yu (1):
-      module: propagate error in modules_open()
-
- kernel/module.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-- Steve
