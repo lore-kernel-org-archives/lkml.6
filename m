@@ -1,54 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751913AbeCVQNU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 12:13:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34198 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750863AbeCVQNS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 12:13:18 -0400
-Date: Thu, 22 Mar 2018 09:13:16 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-Message-ID: <20180322161316.GD28468@bombadil.infradead.org>
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321131449.GN23100@dhcp22.suse.cz>
- <8e0ded7b-4be4-fa25-f40c-d3116a6db4db@linux.alibaba.com>
- <cf87ade4-5a5c-3919-0fc6-acc40e12659b@linux.alibaba.com>
- <20180321212355.GR23100@dhcp22.suse.cz>
- <952dcae2-a73e-0726-3cc5-9b6a63b417b7@linux.alibaba.com>
- <20180322091008.GZ23100@dhcp22.suse.cz>
- <8b4407dd-78f6-2f6f-3f45-ddb8a2d805c8@linux.alibaba.com>
+        id S1751669AbeCVQQh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 12:16:37 -0400
+Received: from mga04.intel.com ([192.55.52.120]:35710 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751140AbeCVQQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 12:16:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,345,1517904000";
+   d="scan'208";a="37237711"
+Subject: [PATCH v2 3/3] perf script: extend misc field decoding with switch
+ out event type
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+References: <713750a0-7cc1-0a27-7253-12ff4f3c9a8d@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <61fcf81c-f72e-d745-a7e7-52b761b7ec2d@linux.intel.com>
+Date: Thu, 22 Mar 2018 19:16:22 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b4407dd-78f6-2f6f-3f45-ddb8a2d805c8@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <713750a0-7cc1-0a27-7253-12ff4f3c9a8d@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 09:06:14AM -0700, Yang Shi wrote:
-> On 3/22/18 2:10 AM, Michal Hocko wrote:
-> > On Wed 21-03-18 15:36:12, Yang Shi wrote:
-> > > On 3/21/18 2:23 PM, Michal Hocko wrote:
-> > > > On Wed 21-03-18 10:16:41, Yang Shi wrote:
-> > > > > proc_pid_cmdline_read(), it calls access_remote_vm() which need acquire
-> > > > > mmap_sem too, so the mmap_sem scalability issue will be hit sooner or later.
-> > > > Ohh, absolutely. mmap_sem is unfortunatelly abused and it would be great
-> > > > to remove that. munmap should perform much better. How to do that safely
-> > The full vma will have to be range locked. So there is nothing small or large.
-> 
-> It sounds not helpful to a single large vma case since just one range lock
-> for the vma, it sounds equal to mmap_sem.
 
-But splitting mmap_sem into pieces is beneficial for this case.  Imagine
-we have a spinlock / rwlock to protect the rbtree / arg_start / arg_end
-/ ...  and then each VMA has a rwsem (or equivalent).  access_remote_vm()
-would walk the tree and grab the VMA's rwsem for read while reading
-out the arguments.  The munmap code would have a completely different
-VMA write-locked.
+Append 'y' sign to 'S' tag designating the type of context switch out event so 
+'S' means preemption context switch and 'Sy' means synchronization context 
+switch. Documentation is extended to cover new presentation changes.
+
+perf script --show-switch-events -F +misc -I -i system-wide.perf:
+
+  rcu_sched     8 [003]       113800.748548: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid:     0/0    
+       perf 31479 [000] S     113800.748548: PERF_RECORD_SWITCH_CPU_WIDE OUT        next pid/tid:    59/59   
+kworker/0:1    59 [000]       113800.748549: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid: 31479/31479
+  rcu_sched     8 [003] Sy    113800.748551: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0    
+    swapper     0 [003]       113800.748551: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid:     8/8
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
+ tools/perf/builtin-script.c              |  5 ++++-
+ 2 files changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
+index 36ec0257f8d3..80e94cbbf520 100644
+--- a/tools/perf/Documentation/perf-script.txt
++++ b/tools/perf/Documentation/perf-script.txt
+@@ -228,14 +228,15 @@ OPTIONS
+ 	For sample events it's possible to display misc field with -F +misc option,
+ 	following letters are displayed for each bit:
+ 
+-	  PERF_RECORD_MISC_KERNEL        K
+-	  PERF_RECORD_MISC_USER          U
+-	  PERF_RECORD_MISC_HYPERVISOR    H
+-	  PERF_RECORD_MISC_GUEST_KERNEL  G
+-	  PERF_RECORD_MISC_GUEST_USER    g
+-	  PERF_RECORD_MISC_MMAP_DATA*    M
+-	  PERF_RECORD_MISC_COMM_EXEC     E
+-	  PERF_RECORD_MISC_SWITCH_OUT    S
++	  PERF_RECORD_MISC_KERNEL               K
++	  PERF_RECORD_MISC_USER                 U
++	  PERF_RECORD_MISC_HYPERVISOR           H
++	  PERF_RECORD_MISC_GUEST_KERNEL         G
++	  PERF_RECORD_MISC_GUEST_USER           g
++	  PERF_RECORD_MISC_MMAP_DATA*           M
++	  PERF_RECORD_MISC_COMM_EXEC            E
++	  PERF_RECORD_MISC_SWITCH_OUT           S
++	  PERF_RECORD_MISC_SWITCH_OUT_YIELD     Sy
+ 
+ 	  $ perf script -F +misc ...
+ 	   sched-messaging  1414 K     28690.636582:       4590 cycles ...
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 313c42423393..c0a3a7297c8a 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -657,8 +657,11 @@ static int perf_sample__fprintf_start(struct perf_sample *sample,
+ 			break;
+ 		case PERF_RECORD_SWITCH:
+ 		case PERF_RECORD_SWITCH_CPU_WIDE:
+-			if (has(SWITCH_OUT))
++			if (has(SWITCH_OUT)) {
+ 				ret += fprintf(fp, "S");
++				if (sample->misc & PERF_RECORD_MISC_SWITCH_OUT_YIELD)
++					ret += fprintf(fp, "y");
++			}
+ 		default:
+ 			break;
+ 		}
