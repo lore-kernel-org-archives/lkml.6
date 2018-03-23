@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752118AbeCWPN3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 11:13:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51208 "EHLO mail.kernel.org"
+        id S1752097AbeCWPN2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 11:13:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751687AbeCWPNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751657AbeCWPNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Mar 2018 11:13:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12DA021841
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13D82183C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180323151322.979520302@goodmis.org>
+Message-Id: <20180323151322.712818282@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 23 Mar 2018 11:02:44 -0400
+Date: Fri, 23 Mar 2018 11:02:43 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
@@ -20,94 +20,150 @@ Cc: Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>,
         =?ISO-8859-15?q?Am=C3=A9rico=20Wang?= <xiyou.wangcong@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH 3/3] init, tracing: instrument security and console initcall trace events
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 2/3] init, tracing: Add initcall trace events
 References: <20180323150241.878778199@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0003-init-tracing-instrument-security-and-console-initcal.patch
+Content-Disposition: inline; filename=0002-init-tracing-Add-initcall-trace-events.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Trace events have been added around the initcall functions defined in
-init/main.c. But console and security have their own initcalls. This adds
-the trace events associated for those initcall functions.
+Being able to trace the start and stop of initcalls is useful to see where
+the timings are an issue. There is already an "initcall_debug" parameter,
+but that can cause a large overhead itself, as the printing of the
+information may take longer than the initcall functions.
 
-Link: http://lkml.kernel.org/r/1521765208.19745.2.camel@polymtl.ca
+Adding in a start and finish trace event around the initcall functions, as
+well as a trace event that records the level of the initcalls, one can get a
+much finer measurement of the times and interactions of the initcalls
+themselves, as trace events are much lighter than printk()s.
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+Suggested-by: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/printk/printk.c | 7 ++++++-
- security/security.c    | 8 +++++++-
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ include/trace/events/initcall.h | 66 +++++++++++++++++++++++++++++++++++++++++
+ init/main.c                     |  7 +++++
+ 2 files changed, 73 insertions(+)
+ create mode 100644 include/trace/events/initcall.h
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index f274fbef821d..cb5b35341d69 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -52,6 +52,7 @@
- #include <linux/uaccess.h>
+diff --git a/include/trace/events/initcall.h b/include/trace/events/initcall.h
+new file mode 100644
+index 000000000000..8d6cf10d27c9
+--- /dev/null
++++ b/include/trace/events/initcall.h
+@@ -0,0 +1,66 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM initcall
++
++#if !defined(_TRACE_INITCALL_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_INITCALL_H
++
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(initcall_level,
++
++	TP_PROTO(const char *level),
++
++	TP_ARGS(level),
++
++	TP_STRUCT__entry(
++		__string(level, level)
++	),
++
++	TP_fast_assign(
++		__assign_str(level, level);
++	),
++
++	TP_printk("level=%s", __get_str(level))
++);
++
++TRACE_EVENT(initcall_start,
++
++	TP_PROTO(initcall_t func),
++
++	TP_ARGS(func),
++
++	TP_STRUCT__entry(
++		__field(initcall_t, func)
++	),
++
++	TP_fast_assign(
++		__entry->func = func;
++	),
++
++	TP_printk("func=%pS", __entry->func)
++);
++
++TRACE_EVENT(initcall_finish,
++
++	TP_PROTO(initcall_t func, int ret),
++
++	TP_ARGS(func, ret),
++
++	TP_STRUCT__entry(
++		__field(initcall_t,	func)
++		__field(int,		ret)
++	),
++
++	TP_fast_assign(
++		__entry->func = func;
++		__entry->ret = ret;
++	),
++
++	TP_printk("func=%pS ret=%d", __entry->func, __entry->ret)
++);
++
++#endif /* if !defined(_TRACE_GPIO_H) || defined(TRACE_HEADER_MULTI_READ) */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+diff --git a/init/main.c b/init/main.c
+index 0ebdd5f15be8..2af8f2bb5ca8 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -97,6 +97,9 @@
  #include <asm/sections.h>
+ #include <asm/cacheflush.h>
  
-+#include <trace/events/initcall.h>
- #define CREATE_TRACE_POINTS
- #include <trace/events/printk.h>
- 
-@@ -2781,6 +2782,7 @@ EXPORT_SYMBOL(unregister_console);
-  */
- void __init console_init(void)
- {
-+	int ret;
- 	initcall_t *call;
- 
- 	/* Setup the default TTY line discipline. */
-@@ -2791,8 +2793,11 @@ void __init console_init(void)
- 	 * inform about problems etc..
- 	 */
- 	call = __con_initcall_start;
-+	trace_initcall_level("console");
- 	while (call < __con_initcall_end) {
--		(*call)();
-+		trace_initcall_start((*call));
-+		ret = (*call)();
-+		trace_initcall_finish((*call), ret);
- 		call++;
- 	}
- }
-diff --git a/security/security.c b/security/security.c
-index 1cd8526cb0b7..987afe3d464c 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -30,6 +30,8 @@
- #include <linux/string.h>
- #include <net/flow.h>
- 
++#define CREATE_TRACE_POINTS
 +#include <trace/events/initcall.h>
 +
- #define MAX_LSM_EVM_XATTR	2
+ static int kernel_init(void *);
  
- /* Maximum number of letters for an LSM name string */
-@@ -45,10 +47,14 @@ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+ extern void init_IRQ(void);
+@@ -827,10 +830,12 @@ int __init_or_module do_one_initcall(initcall_t fn)
+ 	if (initcall_blacklisted(fn))
+ 		return -EPERM;
  
- static void __init do_security_initcalls(void)
++	trace_initcall_start(fn);
+ 	if (initcall_debug)
+ 		ret = do_one_initcall_debug(fn);
+ 	else
+ 		ret = fn();
++	trace_initcall_finish(fn, ret);
+ 
+ 	msgbuf[0] = 0;
+ 
+@@ -895,6 +900,7 @@ static void __init do_initcall_level(int level)
+ 		   level, level,
+ 		   NULL, &repair_env_string);
+ 
++	trace_initcall_level(initcall_level_names[level]);
+ 	for (fn = initcall_levels[level]; fn < initcall_levels[level+1]; fn++)
+ 		do_one_initcall(*fn);
+ }
+@@ -929,6 +935,7 @@ static void __init do_pre_smp_initcalls(void)
  {
-+	int ret;
- 	initcall_t *call;
- 	call = __security_initcall_start;
-+	trace_initcall_level("security");
- 	while (call < __security_initcall_end) {
--		(*call) ();
-+		trace_initcall_start((*call));
-+		ret = (*call) ();
-+		trace_initcall_finish((*call), ret);
- 		call++;
- 	}
+ 	initcall_t *fn;
+ 
++	trace_initcall_level("early");
+ 	for (fn = __initcall_start; fn < __initcall0_start; fn++)
+ 		do_one_initcall(*fn);
  }
 -- 
 2.15.1
