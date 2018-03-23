@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803824-2-10162863458061718856
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803814-3-15164162109521963329
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803823; b=WfMiUmUCWYK9yNYF+Iucbt7KwRhNspHZDagGU9aLxKzn0KY
-    XNWcPhp8fg1sLhM1wRhVBWU4r8ZhXkPTUWiVmLAOZgH3L6XQ5JMjsVA3EkeZCADg
-    GDm5g/PkcijdlPA+apQD9SPm0Zk9kPBqPAbBR7kO/UYMJsTcK5NCg9fWr6qUC98a
-    ai46pm38QHy+7LQ9TtV+unBBJeD+xNpB/PVcdxR53vdsE9aKlSKbWdW1S8kvysll
-    5TmjbEbSRZdwkhpiB9KD8VbqwaYJyHlfZknUo6dAcQ6M2kCk5eyiGMxAMIziN95p
-    Bo8powWCV7fxjbRW0Nf+WWxaKnMpvHJP4EY57bA==
+    t=1521803814; b=Cg3UW+pGCGE9SXVKNbxewcDel0vJSzE4UeBKOYBCpSKeuJn
+    qasFnCdRYpCnRod1eu3mTQu26RZOrSxXIjoRcdHCBbaYWZMKLzRE23/NLL532Q35
+    +b0RiEyuUxqC2skCuKYmBB55i2+deWIW1KY6s8bizsQDs9hfEQQqfmJdna02JpXZ
+    mbpyzPXtpCirxD32EpbroulxIEKptXGm/N8lmJj8yuYP+lWZv6lQlAjySmQFT4IY
+    t+vt7RZEaSYKWa6ejKYVMUUDURcky5bp4BiS/K2696FNUFEGwhCn5Yo/w5FE7dpO
+    owsJMZhOmCXTu07dqxFutMbj5ktUs5XFtYcGGbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803823; bh=mU2SE8eC6bBvKT1gXQEiEVOGYn
-    0v/1lJ1fqjq1Y+V0Q=; b=ZAPpTlQz/WDLAeuS6MsyHPhALPr0xkLfU2Dadx4R4W
-    gPZBXF1uwyynJV7IZhJT+st2GFM5r28Kmjzr3dsCnydRhIiXRzGRLktTYcIqN9Ul
-    eYa6Oll4Dw/52npXquTVFd1Q3aWglG52N4Hnjqyp2K8Fl4+j9C+CYqecCD1S2wII
-    PXaYp18sCcfwfZVoRrTXpG/zTMWCeD/t7YyZQhA6iaFWllyPU6VDUbhWlXIq4zBR
-    K3XrRE0Wafoys4xkdD/vY3G2uVH4XJInJk3aHa1fJBWyoePzRldqNh3iyi5ebZ7P
-    TUbBdvT00adTYnbhhYFlJbLVx0wreKgIdeCWMhXN0XPw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803814; bh=EQezguyr+8KXquQBlyOkZxzsEb
+    8o2IT4nOEKDTTc00M=; b=VCSHbISSt7bjcWZ1XSuu+qBw+8rrUzk1n1ntebXA9Y
+    bIsT/XghyexkuS7QZwXQ2kRIt9AcE2Lff1R3cOKkbIk/J+wf9gknPnsfmkviwC82
+    Hsol4wvO+Koral9jNTSN810j9rwdkkXDCLWVRdu+idN+INueeDF4HO3Q50jAYWUD
+    uoFawta2hlyHXs1wTKj18GMCg6wV53F/rUV+71URMEuY4Zv8o2N1yPLOjNSXYZ6M
+    jkBSWVTrOSzxPTRA+xAzKFPlV1/IVW1GnZdpjcpF0s+gbEzdl6a3XFD3YzXtxxGP
+    3Y8S3AQU1cVfHgYIZB1BslZjEYawmyghqcobMWS9IPrA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932487AbeCWKJg (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:09:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42176 "EHLO
+        id S1751713AbeCWLQg (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:16:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42190 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932204AbeCWKJc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:32 -0400
+        with ESMTP id S932495AbeCWKJh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>,
-        Nicholas Bellinger <nab@linux-iscsi.org>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 119/177] tcm_fileio: Prevent information leak for short reads
-Date: Fri, 23 Mar 2018 10:54:07 +0100
-Message-Id: <20180323094210.510511343@linuxfoundation.org>
+Subject: [PATCH 4.9 120/177] x86/xen: split xen_smp_prepare_boot_cpu()
+Date: Fri, 23 Mar 2018 10:54:08 +0100
+Message-Id: <20180323094210.546742681@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,74 +82,102 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Monakhov <dmonakhov@openvz.org>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
 
-[ Upstream commit f11b55d13563e9428c88c873f4f03a6bef11ec0a ]
+[ Upstream commit a2d1078a35f9a38ae888aa6147e4ca32666154a1 ]
 
-If we failed to read data from backing file (probably because some one
-truncate file under us), we must zerofill cmd's data, otherwise it will
-be returned as is. Most likely cmd's data are unitialized pages from
-page cache. This result in information leak.
+Split xen_smp_prepare_boot_cpu() into xen_pv_smp_prepare_boot_cpu() and
+xen_hvm_smp_prepare_boot_cpu() to support further splitting of smp.c.
 
-(Change BUG_ON into -EINVAL se_cmd failure - nab)
-
-testcase: https://github.com/dmonakhov/xfstests/commit/e11a1b7b907ca67b1be51a1594025600767366d5
-Signed-off-by: Dmitry Monakhov <dmonakhov@openvz.org>
-Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/target/target_core_file.c |   23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ arch/x86/xen/smp.c |   49 ++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
 
---- a/drivers/target/target_core_file.c
-+++ b/drivers/target/target_core_file.c
-@@ -276,12 +276,11 @@ static int fd_do_rw(struct se_cmd *cmd,
- 	else
- 		ret = vfs_iter_read(fd, &iter, &pos);
+--- a/arch/x86/xen/smp.c
++++ b/arch/x86/xen/smp.c
+@@ -299,35 +299,46 @@ static void __init xen_filter_cpu_maps(v
  
--	kfree(bvec);
--
- 	if (is_write) {
- 		if (ret < 0 || ret != data_length) {
- 			pr_err("%s() write returned %d\n", __func__, ret);
--			return (ret < 0 ? ret : -EINVAL);
-+			if (ret >= 0)
-+				ret = -EINVAL;
- 		}
- 	} else {
- 		/*
-@@ -294,17 +293,29 @@ static int fd_do_rw(struct se_cmd *cmd,
- 				pr_err("%s() returned %d, expecting %u for "
- 						"S_ISBLK\n", __func__, ret,
- 						data_length);
--				return (ret < 0 ? ret : -EINVAL);
-+				if (ret >= 0)
-+					ret = -EINVAL;
- 			}
- 		} else {
- 			if (ret < 0) {
- 				pr_err("%s() returned %d for non S_ISBLK\n",
- 						__func__, ret);
--				return ret;
-+			} else if (ret != data_length) {
-+				/*
-+				 * Short read case:
-+				 * Probably some one truncate file under us.
-+				 * We must explicitly zero sg-pages to prevent
-+				 * expose uninizialized pages to userspace.
-+				 */
-+				if (ret < data_length)
-+					ret += iov_iter_zero(data_length - ret, &iter);
-+				else
-+					ret = -EINVAL;
- 			}
- 		}
- 	}
--	return 1;
-+	kfree(bvec);
-+	return ret;
  }
  
- static sense_reason_t
+-static void __init xen_smp_prepare_boot_cpu(void)
++static void __init xen_pv_smp_prepare_boot_cpu(void)
+ {
+ 	BUG_ON(smp_processor_id() != 0);
+ 	native_smp_prepare_boot_cpu();
+ 
+-	if (xen_pv_domain()) {
+-		if (!xen_feature(XENFEAT_writable_page_tables))
+-			/* We've switched to the "real" per-cpu gdt, so make
+-			 * sure the old memory can be recycled. */
+-			make_lowmem_page_readwrite(xen_initial_gdt);
++	if (!xen_feature(XENFEAT_writable_page_tables))
++		/* We've switched to the "real" per-cpu gdt, so make
++		 * sure the old memory can be recycled. */
++		make_lowmem_page_readwrite(xen_initial_gdt);
+ 
+ #ifdef CONFIG_X86_32
+-		/*
+-		 * Xen starts us with XEN_FLAT_RING1_DS, but linux code
+-		 * expects __USER_DS
+-		 */
+-		loadsegment(ds, __USER_DS);
+-		loadsegment(es, __USER_DS);
++	/*
++	 * Xen starts us with XEN_FLAT_RING1_DS, but linux code
++	 * expects __USER_DS
++	 */
++	loadsegment(ds, __USER_DS);
++	loadsegment(es, __USER_DS);
+ #endif
+ 
+-		xen_filter_cpu_maps();
+-		xen_setup_vcpu_info_placement();
+-	}
++	xen_filter_cpu_maps();
++	xen_setup_vcpu_info_placement();
++
++	/*
++	 * The alternative logic (which patches the unlock/lock) runs before
++	 * the smp bootup up code is activated. Hence we need to set this up
++	 * the core kernel is being patched. Otherwise we will have only
++	 * modules patched but not core code.
++	 */
++	xen_init_spinlocks();
++}
++
++static void __init xen_hvm_smp_prepare_boot_cpu(void)
++{
++	BUG_ON(smp_processor_id() != 0);
++	native_smp_prepare_boot_cpu();
+ 
+ 	/*
+ 	 * Setup vcpu_info for boot CPU.
+ 	 */
+-	if (xen_hvm_domain())
+-		xen_vcpu_setup(0);
++	xen_vcpu_setup(0);
+ 
+ 	/*
+ 	 * The alternative logic (which patches the unlock/lock) runs before
+@@ -733,7 +744,7 @@ static irqreturn_t xen_irq_work_interrup
+ }
+ 
+ static const struct smp_ops xen_smp_ops __initconst = {
+-	.smp_prepare_boot_cpu = xen_smp_prepare_boot_cpu,
++	.smp_prepare_boot_cpu = xen_pv_smp_prepare_boot_cpu,
+ 	.smp_prepare_cpus = xen_smp_prepare_cpus,
+ 	.smp_cpus_done = xen_smp_cpus_done,
+ 
+@@ -772,5 +783,5 @@ void __init xen_hvm_smp_init(void)
+ 	smp_ops.cpu_die = xen_cpu_die;
+ 	smp_ops.send_call_func_ipi = xen_smp_send_call_function_ipi;
+ 	smp_ops.send_call_func_single_ipi = xen_smp_send_call_function_single_ipi;
+-	smp_ops.smp_prepare_boot_cpu = xen_smp_prepare_boot_cpu;
++	smp_ops.smp_prepare_boot_cpu = xen_hvm_smp_prepare_boot_cpu;
+ }
