@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806375-2-4265643022881809801
+X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806358-2-14628215433181509005
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806374; b=JMZAHrGMxXTrBEOJEU9ApmvDvm/uHEYaxUyLVrvL94nAij1
-    NNwyG/cVA9/L9ZWADZs3Pmw1ZdzsMrwzYZlynA8Cb2Y4PQq2hAOsUPGLLHHV0MKz
-    fk+o0shspnf71QErQmXyBSA5/EgHTvHHMOBDeLpela9ieWXex/U8WTwy1UmEef+u
-    xzcOV+fkBZawwNLwwoVSsSxyKrNlemsZTSfFBNB/2HJvT3V13l8/LHz4MAk1uRJQ
-    6KZLhEFyZXcgvOb9D8mOtg2Sz14yKjlqP1rEMu2oomPpY0wlkyYNnFUjF9ODjl27
-    qsOPDiPSJ59NoUQbOTJKd0PAGXIiFBmFI/HSd7A==
+    t=1521806357; b=k8UpG7YH91Mix0lKbJAaBlU407z3hz/M5RzMidQs5Gcq2Qo
+    vO9D9BRJGJw/ZxWN6zVPA4DtNbUd8a8Gs5lhKE7H3Rk6Kr59McCGAYSM45xyf0+o
+    F8Snf0MoXjhclMX9m4t4WOV2+HOsGohgSHYuYsVbA03qmlErEyAGFz/fe8cfmUWx
+    on5FrSu61fRC+iGhPIKtgmKI8HEWIJBHdrSZG+TTZ/nNlhFFVMQhOZFL/6uHtf73
+    +Fhr1GV5hjYCC5oB9srSw6/WSY5LpYyNpXF0sBzDSMGOqW1HBS5tRPfoiKd3pwwq
+    pzSpw5bbGQUWyh1pqVtJ3F4DWASJNY1Mjg3THSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806374; bh=UW58tl9Qe3TA6euiXoSKIyr02F
-    eDjvhjUQb1aYDjjnM=; b=B1rBwud+aR/4Ba+iyJxPtsu0QGPMRFv/DFOo1RXrZZ
-    SwNRy3MXWhM7UuyH5bF4xVrR0Vg/0FpUEA4GW3nfTlbbl/RhHNw94Zk85dLKYZD+
-    K3Jn0lnR1PfH6JAg6/Qs5xvctWa3RucBCv4gns2UvJ187tdnOhg+lVbnQAWqxcDk
-    uEBrFfC9+0lIUZs5umn+BWt+zwWDoj5omoLei3oJ8dDWF5NleTb8WrOhiEPXIV9p
-    rWVLkqnJnoNCamYA8tC291Kjl8z/R8Hb68GyG4gNhl4mtR1FJL6/SR9t5cgrTk/L
-    h19WBxsYBLoqMybCqaQklA/K4+peo8pyQwtUb8Py2y1A==
+    :list-id; s=arctest; t=1521806357; bh=YFpzbIJ2mwav2mx6IjzMlYiwIc
+    ZFSJ2LclHXSmP7jc0=; b=gLADpXxNp3zX2hpqnJxF2RLYFA+z/yWWS1qhKg4p43
+    fjCI312R0Q3Ey27/+7qiCq3z2x20HwURWzHb9ioLMoQnSwNwzp0ehNrhAvvC24dC
+    7hk/B2mDmrNdI/Cbo1mL0pSnByZdw1fBHDt1mH2EiHziZHAEl97Gbve7Z2yDm4B+
+    sZvXgu+tN1g3/h7MABzhub53OmsiSM7cS9fdQFSLE9X7UfQZZPmpKqXrtAult4iu
+    vl9fLXidCVTgqitUg61hltVD2gead+nz6yEaeS+k7lJjsGP4wwqAizrvxgAGBBfI
+    uyrdkR78+3pNI1ZnPDC6heliYmEVlT5jfz4jIToVFeZA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753582AbeCWKAV (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:00:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36480 "EHLO
+        id S1753613AbeCWKAa (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:00:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36530 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753573AbeCWKAT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:00:19 -0400
+        with ESMTP id S1753606AbeCWKAZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:00:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 10/77] hv_netvsc: Fix the receive buffer size limit
-Date: Fri, 23 Mar 2018 10:53:44 +0100
-Message-Id: <20180323094142.900265737@linuxfoundation.org>
+Subject: [PATCH 4.14 12/77] spi: sh-msiof: Avoid writing to registers from spi_master.setup()
+Date: Fri, 23 Mar 2018 10:53:46 +0100
+Message-Id: <20180323094143.040247348@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,58 +83,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit 11b2b653102571ac791885324371d9a1a17b900e ]
+[ Upstream commit 7ff0b53c4051145d1cf992d2f60987e6447eed4f ]
 
-The max should be 31 MB on host with NVSP version > 2.
+The spi_master.setup() callback must not change configuration registers,
+as that could corrupt I/O that is in progress for other SPI slaves.
 
-On legacy hosts (NVSP version <=2) only 15 MB receive buffer is allowed,
-otherwise the buffer request will be rejected by the host, resulting
-vNIC not coming up.
+The only exception is the configuration of the native chip select
+polarity in SPI master mode, as a wrong chip select polarity will cause
+havoc during all future transfers to any other SPI slave.
 
-The NVSP version is only available after negotiation. So, we add the
-limit checking for legacy hosts in netvsc_init_buf().
+Hence stop writing to registers in sh_msiof_spi_setup(), unless it is
+the first call for a controller using a native chip select, or unless
+native chip select polarity has changed (note that you'll loose anyway
+if I/O is in progress).  Even then, only do what is strictly necessary,
+instead of calling sh_msiof_spi_set_pin_regs().
 
-Fixes: 5023a6db73196 ("netvsc: increase default receive buffer size")
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/hyperv_net.h |    6 ++++--
- drivers/net/hyperv/netvsc.c     |    5 +++++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ drivers/spi/spi-sh-msiof.c |   35 ++++++++++++++++++++++++-----------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
 
---- a/drivers/net/hyperv/hyperv_net.h
-+++ b/drivers/net/hyperv/hyperv_net.h
-@@ -635,9 +635,11 @@ struct nvsp_message {
- #define NETVSC_MTU 65535
- #define NETVSC_MTU_MIN ETH_MIN_MTU
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -55,6 +55,8 @@ struct sh_msiof_spi_priv {
+ 	void *rx_dma_page;
+ 	dma_addr_t tx_dma_addr;
+ 	dma_addr_t rx_dma_addr;
++	bool native_cs_inited;
++	bool native_cs_high;
+ 	bool slave_aborted;
+ };
  
--#define NETVSC_RECEIVE_BUFFER_SIZE		(1024*1024*16)	/* 16MB */
--#define NETVSC_RECEIVE_BUFFER_SIZE_LEGACY	(1024*1024*15)  /* 15MB */
-+/* Max buffer sizes allowed by a host */
-+#define NETVSC_RECEIVE_BUFFER_SIZE		(1024 * 1024 * 31) /* 31MB */
-+#define NETVSC_RECEIVE_BUFFER_SIZE_LEGACY	(1024 * 1024 * 15) /* 15MB */
- #define NETVSC_SEND_BUFFER_SIZE			(1024 * 1024 * 15)   /* 15MB */
+@@ -528,8 +530,7 @@ static int sh_msiof_spi_setup(struct spi
+ {
+ 	struct device_node	*np = spi->master->dev.of_node;
+ 	struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
+-
+-	pm_runtime_get_sync(&p->pdev->dev);
++	u32 clr, set, tmp;
+ 
+ 	if (!np) {
+ 		/*
+@@ -539,19 +540,31 @@ static int sh_msiof_spi_setup(struct spi
+ 		spi->cs_gpio = (uintptr_t)spi->controller_data;
+ 	}
+ 
+-	/* Configure pins before deasserting CS */
+-	sh_msiof_spi_set_pin_regs(p, !!(spi->mode & SPI_CPOL),
+-				  !!(spi->mode & SPI_CPHA),
+-				  !!(spi->mode & SPI_3WIRE),
+-				  !!(spi->mode & SPI_LSB_FIRST),
+-				  !!(spi->mode & SPI_CS_HIGH));
+-
+-	if (spi->cs_gpio >= 0)
++	if (spi->cs_gpio >= 0) {
+ 		gpio_set_value(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
++		return 0;
++	}
 +
- #define NETVSC_INVALID_INDEX			-1
++	if (spi_controller_is_slave(p->master))
++		return 0;
  
- #define NETVSC_SEND_SECTION_SIZE		6144
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -262,6 +262,11 @@ static int netvsc_init_buf(struct hv_dev
- 	buf_size = device_info->recv_sections * device_info->recv_section_size;
- 	buf_size = roundup(buf_size, PAGE_SIZE);
++	if (p->native_cs_inited &&
++	    (p->native_cs_high == !!(spi->mode & SPI_CS_HIGH)))
++		return 0;
  
-+	/* Legacy hosts only allow smaller receive buffer */
-+	if (net_device->nvsp_version <= NVSP_PROTOCOL_VERSION_2)
-+		buf_size = min_t(unsigned int, buf_size,
-+				 NETVSC_RECEIVE_BUFFER_SIZE_LEGACY);
-+
- 	net_device->recv_buf = vzalloc(buf_size);
- 	if (!net_device->recv_buf) {
- 		netdev_err(ndev,
++	/* Configure native chip select mode/polarity early */
++	clr = MDR1_SYNCMD_MASK;
++	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
++	if (spi->mode & SPI_CS_HIGH)
++		clr |= BIT(MDR1_SYNCAC_SHIFT);
++	else
++		set |= BIT(MDR1_SYNCAC_SHIFT);
++	pm_runtime_get_sync(&p->pdev->dev);
++	tmp = sh_msiof_read(p, TMDR1) & ~clr;
++	sh_msiof_write(p, TMDR1, tmp | set);
+ 	pm_runtime_put(&p->pdev->dev);
+-
++	p->native_cs_high = spi->mode & SPI_CS_HIGH;
++	p->native_cs_inited = true;
+ 	return 0;
+ }
+ 
