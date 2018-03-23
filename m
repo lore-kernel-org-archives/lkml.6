@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsosReWPtcxksOMzxDWNoyjiH4B15NK6H40k/ePpQACyejvZe2dRHjVOmbd6JL6hicP4LZ6
-ARC-Seal: i=1; a=rsa-sha256; t=1521800152; cv=none;
+X-Google-Smtp-Source: AG47ELvFpfKLfKwzGNC5kz4+UlAOticxXuhqcId2dIJ/g1IGLNPv06Go8im03IMgLSNfEtwnIE2v
+ARC-Seal: i=1; a=rsa-sha256; t=1521800149; cv=none;
         d=google.com; s=arc-20160816;
-        b=r62+nXipklR2lXDhZxJxtkgp0TkiEbz57xIDlP4rqgq4GsE6LSOWnBQqEad5rHGvsO
-         uSLLGPy+sr429ycDXEqtxaHMMkMzGFUnEqkNR53P3u+yc7xGAQGBAfq+2LcZVAZ8k98Z
-         VBp+3lKIHWrHZD0F/nq+kKWyPYEfJlxThb4UOt+e3QJANA7Lnh8ct2bt3N9REZFYfsGf
-         HnRKrD1XH5chfQuluV1XdPH5UZnv7XDO6/f/rZZshlOLEi7S8mMLMtmIExRhdJWpUOuq
-         nnk0uzbi6zZc7JycdjG2pkh2iCPYIKHgm31fnwo7wjXL2ftk3godfTIyfOOZIM4xuzbb
-         9Yzw==
+        b=hr5BoqjdMeX/1pCs9vmRFJIlsG7oLi/PASCL9zgeD4fGn7ggGWCnnvOmxSOGzI+lj+
+         +hJ5B/Fh8CRfHsK0Cki0MPTAhoEZpLzFd8Ej0trSrfKW0ARPsNGVWv667KJKgtHPQGSY
+         jl8I/g3nc/52YbP/nzZfTSrQpaG1LlBBERGKBIix3oHzMiEea5gRYk6utZM7EER33xz8
+         rYnszf8Xc4p2x6OPVj7Hne0USsORiifuqcJQ/oB5Xkt63j78WJ4nI1bNIJnvqslZQvVd
+         n6MPnBpmNiNCqjVrLctD/ABpH4v0VVUlZ19gNqY82edg3QP2rGQTW1wOEhCVjLjJTCiS
+         FWZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bRPmjbtaAqDRpTKEOQ4TL2Rtkt0nCQyzAYZQ0vFgHFc=;
-        b=HbfPEaLcK9gOBFW2gfuuM48N6mQl3mzLyD9kIKyYrwmeenFyqf9h6rrcSkWrJPOrdl
-         G/3egfQ4T6SE5zm+nRvuGzHzYrHVV5CZRzmKUBSJeNkqStqZCDbuLljiDoHI0jXaMzIh
-         kDJQrBknT7KKbatRrU758D44uGy1gnQ1mFmZ0vwvAD172OYqUSYZ5wOFuSwHmHIiqKme
-         q9i2229u9wSqPSv2a4j8QzKberzCaFMJR2v3dN+dUgfsfPtXcjTqOiUeUK/XPROoUQua
-         26Sko5Mk3641w3caHe23eszAvQRpLaWi4aDksgFXbjBP5shpefLkU1DfDvIYLFiGKvRz
-         GvkA==
+        bh=2WycRnY3YeGClgCpDhAWOT0rzD/T4tA4KCvY3yzl7ag=;
+        b=N9Ce+u5HSK0RF5Oa8uuKzcGxWkmY7frACKTmN3u/A3wreuDY+ahzMqD2B3U3zTdXew
+         kTTzXfUnkkgYYGfajMbkWJ81KQhKlV3Ptn8tDibbnj9CyCLClHwYJaEmemKZZrwcPJHn
+         YwGke2Wu6vgVIPCpYqJaQ0SmQnLRengKUFKHHLvash5exAuqzFX0F/PSFzL4A69Ve8fh
+         AwTSHt8329TBquCIIvaNRPKJlCIqinTU5or5Yt4Cd9jzBlzOY1S5SLS5sO7k5u5eVRM2
+         vGAjBiO9GCXIq07sljd7iRKeYlUiunwqoKo1J4c2EDFh993IEbYdWMIf8PHPHQWQHUEC
+         MdAw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pan Bian <bianpan2016@163.com>,
+	Sameer Wadgaonkar <sameer.wadgaonkar@unisys.com>,
+	David Kershner <david.kershner@unisys.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 54/97] staging: wilc1000: fix unchecked return value
-Date: Fri, 23 Mar 2018 10:54:41 +0100
-Message-Id: <20180323094200.696341654@linuxfoundation.org>
+Subject: [PATCH 4.4 53/97] staging: unisys: visorhba: fix s-Par to boot with option CONFIG_VMAP_STACK set to y
+Date: Fri, 23 Mar 2018 10:54:40 +0100
+Message-Id: <20180323094200.634018655@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722650670418248?=
-X-GMAIL-MSGID: =?utf-8?q?1595723116571900256?=
+X-GMAIL-THRID: =?utf-8?q?1595722700204077922?=
+X-GMAIL-MSGID: =?utf-8?q?1595723113905633652?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,32 +50,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Sameer Wadgaonkar <sameer.wadgaonkar@unisys.com>
 
 
-[ Upstream commit 9e96652756ad647b7bcc03cb99ffc9756d7b5f93 ]
+[ Upstream commit 3c2bf0bd08123f3497bd3e84bd9088c937b0cb40 ]
 
-Function dev_alloc_skb() will return a NULL pointer if there is no
-enough memory. However, in function WILC_WFI_mon_xmit(), its return
-value is used without validation. This may result in a bad memory access
-bug. This patch fixes the bug.
+The root issue is that we are not allowed to have items on the
+stack being passed to "DMA" like operations. In this case we have
+a vmcall and an inline completion of scsi command.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
+This patch fixes the issue by moving the variables on stack in
+do_scsi_nolinuxstat() to heap memory.
+
+Signed-off-by: Sameer Wadgaonkar <sameer.wadgaonkar@unisys.com>
+Signed-off-by: David Kershner <david.kershner@unisys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/wilc1000/linux_mon.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/unisys/visorhba/visorhba_main.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/wilc1000/linux_mon.c
-+++ b/drivers/staging/wilc1000/linux_mon.c
-@@ -251,6 +251,8 @@ static netdev_tx_t WILC_WFI_mon_xmit(str
+--- a/drivers/staging/unisys/visorhba/visorhba_main.c
++++ b/drivers/staging/unisys/visorhba/visorhba_main.c
+@@ -792,7 +792,7 @@ static void
+ do_scsi_nolinuxstat(struct uiscmdrsp *cmdrsp, struct scsi_cmnd *scsicmd)
+ {
+ 	struct scsi_device *scsidev;
+-	unsigned char buf[36];
++	unsigned char *buf;
+ 	struct scatterlist *sg;
+ 	unsigned int i;
+ 	char *this_page;
+@@ -807,6 +807,10 @@ do_scsi_nolinuxstat(struct uiscmdrsp *cm
+ 		if (cmdrsp->scsi.no_disk_result == 0)
+ 			return;
  
- 	if (skb->data[0] == 0xc0 && (!(memcmp(broadcast, &skb->data[4], 6)))) {
- 		skb2 = dev_alloc_skb(skb->len + sizeof(struct wilc_wfi_radiotap_cb_hdr));
-+		if (!skb2)
-+			return -ENOMEM;
++		buf = kzalloc(sizeof(char) * 36, GFP_KERNEL);
++		if (!buf)
++			return;
++
+ 		/* Linux scsi code wants a device at Lun 0
+ 		 * to issue report luns, but we don't want
+ 		 * a disk there so we'll present a processor
+@@ -820,6 +824,7 @@ do_scsi_nolinuxstat(struct uiscmdrsp *cm
+ 		if (scsi_sg_count(scsicmd) == 0) {
+ 			memcpy(scsi_sglist(scsicmd), buf,
+ 			       cmdrsp->scsi.bufflen);
++			kfree(buf);
+ 			return;
+ 		}
  
- 		memcpy(skb_put(skb2, skb->len), skb->data, skb->len);
- 
+@@ -831,6 +836,7 @@ do_scsi_nolinuxstat(struct uiscmdrsp *cm
+ 			memcpy(this_page, buf + bufind, sg[i].length);
+ 			kunmap_atomic(this_page_orig);
+ 		}
++		kfree(buf);
+ 	} else {
+ 		devdata = (struct visorhba_devdata *)scsidev->host->hostdata;
+ 		for_each_vdisk_match(vdisk, devdata, scsidev) {
