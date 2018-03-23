@@ -1,70 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeCWJl1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:41:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54588 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751675AbeCWJlZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:41:25 -0400
-Date: Fri, 23 Mar 2018 10:41:16 +0100
-From: Philipp Rudo <prudo@linux.vnet.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Dave Young <dyoung@redhat.com>
-Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, x86@kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v2 00/11] kexec_file: Clean up purgatory load
-In-Reply-To: <20180321160042.0f7d1fe21937f37af96a982a@linux-foundation.org>
-References: <20180321112751.22196-1-prudo@linux.vnet.ibm.com>
-        <20180321160042.0f7d1fe21937f37af96a982a@linux-foundation.org>
-Organization: IBM
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1752124AbeCWJlf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:41:35 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:39530 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751675AbeCWJlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:41:31 -0400
+Date: Fri, 23 Mar 2018 10:41:18 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: sean.wang@mediatek.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, sre@kernel.org,
+        lee.jones@linaro.org, a.zummo@towertech.it, eddie.huang@mediatek.com,
+        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 02/16] dt-bindings: rtc: mediatek: add bindings for
+ PMIC RTC
+Message-ID: <20180323094118.GC3417@piout.net>
+References: <cover.1521794176.git.sean.wang@mediatek.com>
+ <5846e8be319c4836808c8127d5bb51b7e999e896.1521794177.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18032309-0008-0000-0000-000004E181C9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032309-0009-0000-0000-00001E74AD3F
-Message-Id: <20180323104116.0a3f00f4@ThinkPad>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-23_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803230111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5846e8be319c4836808c8127d5bb51b7e999e896.1521794177.git.sean.wang@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
-Hi Dave,
+Hi,
 
-i checked out linux-next with the patches and it looks good to me. Also made a
-quick test and everything works fine.
-
-Thanks very much to both of you
-Philipp
-
-
-On Wed, 21 Mar 2018 16:00:42 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
-
-> On Wed, 21 Mar 2018 12:27:40 +0100 Philipp Rudo <prudo@linux.vnet.ibm.com> wrote:
+On 23/03/2018 at 17:14:59 +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
 > 
-> > here is the updated patch set including Dave's comments.  
+> Add device-tree binding for MediaTek PMIC based RTC.
 > 
-> There were some syntactic clashes with the "kexec_file, x86, powerpc:
-> refactoring for other architecutres" series.  Please check (in
-> linux-next) that I got it all correct and that both patch series are
-> functioning correctly.
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> ---
+>  .../devicetree/bindings/rtc/rtc-mt6397.txt         | 39 ++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
 > 
-> I expect to send all this into Stephen for -next tomorrow.
-> 
+> diff --git a/Documentation/devicetree/bindings/rtc/rtc-mt6397.txt b/Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
+> new file mode 100644
+> index 0000000..83ff6be
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
+> @@ -0,0 +1,39 @@
+> +Device-Tree bindings for MediaTek PMIC based RTC
+> +
+> +MediaTek PMIC based RTC is an independent function of MediaTek PMIC which
+> +is working as a multi-function device (MFD). And the RTC can be configured and
+> +set up via PMIC wrapper bus. Which is also common resource shared among the
+> +other functions present on the PMIC.
+> +
+> +For MediaTek PMIC wrapper bus bindings, see:
+> +Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> +
+> +Required parent node:
+> +- pmic
+> +  For MediaTek PMIC MFD bindings, see:
+> +  Documentation/devicetree/bindings/mfd/mt6397.txt
+> +
+> +Required properties:
+> +- compatible: Should be one of follows
+> +	"mediatek,mt6323-rtc": for MT6323 PMIC
+> +	"mediatek,mt6397-rtc": for MT6397 PMIC
+> +
+> +Optional child node:
+> +- power-off
+> +  For Power-Off Device for MediaTek PMIC RTC bindings, see:
+> +  Documentation/devicetree/bindings/power/reset/mt6397-rtc-poweroff.txt
+> +
+> +Example:
+> +
+> +	pmic {
+> +		compatible = "mediatek,mt6323";
+> +
+> +		...
+> +		rtc {
+> +			compatible = "mediatek,mt6323-rtc";
+> +
+> +			power-off {
+> +				compatible = "mediatek,mt6323-rtc-poweroff";
+> +			};
+
+I'm pretty sure the whole point of mfd is to avoid having the poweroff
+controller under the rtc
+
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
