@@ -1,410 +1,249 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751837AbeCWONl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:13:41 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:51732 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751674AbeCWONj (ORCPT
+        id S1751907AbeCWON7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:13:59 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:32970 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1751861AbeCWON6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:13:39 -0400
-Subject: Re: [PATCH 2/2] clk: meson-axg: Add AO Clock and Reset controller
- driver
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-References: <20180209070026.193879-1-yixun.lan@amlogic.com>
- <20180209070026.193879-3-yixun.lan@amlogic.com>
- <1518449571.2883.30.camel@baylibre.com>
-CC: <yixun.lan@amlogic.com>, Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-From: Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <dd982e84-a500-a95c-73f0-cc20e76295d2@amlogic.com>
-Date: Fri, 23 Mar 2018 22:13:31 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Fri, 23 Mar 2018 10:13:58 -0400
+Date: Fri, 23 Mar 2018 10:13:57 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+cc: Kernel development list <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] tools/memory-model: rename link and rcu-path to rcu-link
+ and rb
+Message-ID: <Pine.LNX.4.44L0.1803231007590.1390-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <1518449571.2883.30.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [180.159.118.39]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome:
+This patch makes a simple non-functional change to the RCU portion of
+the Linux Kernel Memory Consistency Model by renaming the "link" and
+"rcu-path" relations to "rcu-link" and "rb".
 
+The name "link" was an unfortunate choice, because it was too generic
+and subject to confusion with other meanings of the same word, which
+occur quite often in LKMM documentation.  The name "rcu-path" is not
+very appropriate, because the relation is analogous to the
+happens-before (hb) and propagates-before (pb) relations -- although
+that fact won't become apparent until the second patch in this series.
 
-On 02/12/2018 11:32 PM, Jerome Brunet wrote:
-> On Fri, 2018-02-09 at 15:00 +0800, Yixun Lan wrote:
->> Adds a Clock and Reset controller driver for the Always-On part
->> of the Amlogic Meson-AXG SoC.
->>
->> Signed-off-by: Qiufang Dai <qiufang.dai@amlogic.com>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  drivers/clk/meson/Makefile    |   2 +-
->>  drivers/clk/meson/axg-aoclk.c | 236 ++++++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/meson/axg-aoclk.h |  25 +++++
->>  3 files changed, 262 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/clk/meson/axg-aoclk.c
->>  create mode 100644 drivers/clk/meson/axg-aoclk.h
->>
->> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->> index 11f99139b844..c7510744406a 100644
->> --- a/drivers/clk/meson/Makefile
->> +++ b/drivers/clk/meson/Makefile
->> @@ -6,6 +6,6 @@ obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-audio-divider.o
->>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-phase.o
->>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->>  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
->> -obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o
->> +obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
->>  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
->>  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
->> diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
->> new file mode 100644
->> index 000000000000..832aa19dd76c
->> --- /dev/null
->> +++ b/drivers/clk/meson/axg-aoclk.c
->> @@ -0,0 +1,236 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * AmLogic Meson-AXG Clock Controller Driver
-> 
-> Unless there a rule behind it, I think we should stop 
-> with the funny camel case and stick to "Amlogic" like written below.
-> 
-will fix it
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Acked-by: Andrea Parri <parri.andrea@gmail.com>
 
->> + *
->> + * Copyright (c) 2016 Baylibre SAS.
->> + * Author: Michael Turquette <mturquette@baylibre.com>
->> + *
->> + * Copyright (c) 2018 Amlogic, inc.
->> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
->> + */
->> +#include <linux/clk-provider.h>
->> +#include <linux/of_address.h>
-> I did not see what is requiring this header. Did I miss something ?
-> 
-will drop this
->> +#include <linux/platform_device.h>
->> +#include <linux/reset-controller.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/regmap.h>
->> +#include <linux/init.h>
->> +#include <linux/delay.h>
-> Same question for this one.
-> 
-ditto
+---
 
->> +#include <dt-bindings/clock/axg-aoclkc.h>
->> +#include <dt-bindings/reset/axg-aoclkc.h>
-> 
-> I think those should be included in the same fashion as axg.h, gxbb.h and
-> meson8.h ... which is at the end of the private header.
-> 
-will do
-
->> +#include "clkc.h"
->> +#include "axg-aoclk.h"
->> +
->> +struct axg_aoclk_reset_controller {
->> +	struct reset_controller_dev reset;
->> +	unsigned int *data;
->> +	struct regmap *regmap;
->> +};
-> 
-> This duplicate what is gxbb-aoclk.
-> Please make something cleaner with a shared definition.
-> 
-as you already raised this in another email.
-and I will factor the common code, and send out an updated version
->> +
->> +static int axg_aoclk_do_reset(struct reset_controller_dev *rcdev,
->> +			       unsigned long id)
->> +{
->> +	struct axg_aoclk_reset_controller *reset =
->> +		container_of(rcdev, struct axg_aoclk_reset_controller, reset);
->> +
->> +	return regmap_write(reset->regmap, AO_RTI_GEN_CNTL_REG0,
->> +			    BIT(reset->data[id]));
->> +}
->> +
->> +static const struct reset_control_ops axg_aoclk_reset_ops = {
->> +	.reset = axg_aoclk_do_reset,
->> +};
->> +
->> +#define AXG_AO_GATE(_name, _bit)					\
->> +static struct clk_regmap _name##_ao = {					\
->> +	.data = &(struct clk_regmap_gate_data) {			\
->> +		.offset = (AO_RTI_GEN_CNTL_REG0),			\
->> +		.bit_idx = (_bit),					\
->> +	},								\
->> +	.hw.init = &(struct clk_init_data) {				\
->> +		.name = #_name "_ao",					\
->> +		.ops = &clk_regmap_gate_ops,				\
->> +		.parent_names = (const char *[]){ "clk81" },		\
->> +		.num_parents = 1,					\
->> +		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-> 
-> These clock are peripheral clocks (meant to enable/disable IPs):
-> * CLK_SET_RATE_PARENT: why do you need rate propagation here ? do you really
-> want a consumer of these gate to be able to change clk81 ? 
-> 
-
-No, we shouldn't change clk81, will drop this flag
-
-> * CLK_IGNORE_UNUSED: Why do need this flag ? All the IPs behind this
-> definition should be able to claim the pclk properly. If not the driver should
-> be fixed.
-> 
-not really, we could drop this flag
-
-but I'd like to address this in yet another thread (rather than in this
-"add ao clock and reset driver")
-
->> +	},								\
->> +}
->> +
->> +AXG_AO_GATE(remote, 0);
->> +AXG_AO_GATE(i2c_master, 1);
->> +AXG_AO_GATE(i2c_slave, 2);
->> +AXG_AO_GATE(uart1, 3);
->> +AXG_AO_GATE(uart2, 5);
->> +AXG_AO_GATE(ir_blaster, 6);
->> +AXG_AO_GATE(saradc, 7);
->> +
->> +static struct clk_fixed_rate ao_alt_xtal = {
->> +	.fixed_rate = 32000,
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "ao_alt_xtal",
->> +		.num_parents = 0,
->> +		.ops = &clk_fixed_rate_ops,
->> +	},
->> +};
-> 
-> Unless this xtal is actually embedded in SoC, this should be defined it the DT,
-> same as the other xtal.
-> 
-it's an external crystal, I will put it into DT file, thanks for hint
-
->> +
->> +static struct clk_regmap ao_clk81 = {
->> +	.data = &(struct clk_regmap_mux_data) {
->> +		.offset = AO_RTI_PWR_CNTL_REG0,
->> +		.mask = 0x1,
->> +		.shift = 8,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "ao_clk81",
->> +		.ops = &clk_regmap_mux_ro_ops,
->> +		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
->> +		.num_parents = 2,
->> +	},
->> +};
->> +
->> +static struct clk_regmap axg_saradc_mux = {
->> +	.data = &(struct clk_regmap_mux_data) {
->> +		.offset = AO_SAR_CLK,
->> +		.mask = 0x3,
->> +		.shift = 9,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "axg_saradc_mux",
->> +		.ops = &clk_regmap_mux_ops,
->> +		.parent_names = (const char *[]){ "xtal", "ao_clk81" },
->> +		.num_parents = 2,
->> +	},
->> +};
->> +
->> +static struct clk_regmap axg_saradc_div = {
->> +	.data = &(struct clk_regmap_div_data) {
->> +		.offset = AO_SAR_CLK,
->> +		.shift = 0,
->> +		.width = 8,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "axg_saradc_div",
->> +		.ops = &clk_regmap_divider_ops,
->> +		.parent_names = (const char *[]){ "axg_saradc_mux" },
->> +		.num_parents = 1,
-> 
-> Should the saradc mux change to accomodate the requested rate, if needed ?
-> If so, you might want to add a CLK_SET_RATE_PARENT here.
-> 
-yes, from hardware perspective, the mux can select clk parent, I will
-update this
-
->> +	},
->> +};
->> +
->> +static struct clk_regmap axg_saradc_gate = {
->> +	.data = &(struct clk_regmap_gate_data) {
->> +		.offset = AO_SAR_CLK,
->> +		.bit_idx = 8,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "axg_saradc_gate",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_names = (const char *[]){ "axg_saradc_div" },
->> +		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
->> +
->> +static unsigned int axg_aoclk_reset[] = {
->> +	[RESET_AO_REMOTE] = 16,
->> +	[RESET_AO_I2C_MASTER] = 18,
->> +	[RESET_AO_I2C_SLAVE] = 19,
->> +	[RESET_AO_UART1] = 17,
->> +	[RESET_AO_UART2] = 22,
->> +	[RESET_AO_IR_BLASTER] = 23,
->> +};
->> +
->> +static struct clk_regmap *axg_aoclk_regmap[] = {
->> +	[CLKID_AO_REMOTE]	= &remote_ao,
->> +	[CLKID_AO_I2C_MASTER]	= &i2c_master_ao,
->> +	[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao,
->> +	[CLKID_AO_UART1]	= &uart1_ao,
->> +	[CLKID_AO_UART2]	= &uart2_ao,
->> +	[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao,
->> +	[CLKID_AO_SAR_ADC]	= &saradc_ao,
->> +	[CLKID_AO_CLK81]	= &ao_clk81,
->> +	[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux,
->> +	[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div,
->> +	[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate,
->> +};
->> +
->> +static struct clk_hw_onecell_data axg_aoclk_onecell_data = {
->> +	.hws = {
->> +		[CLKID_AO_REMOTE]	= &remote_ao.hw,
->> +		[CLKID_AO_I2C_MASTER]	= &i2c_master_ao.hw,
->> +		[CLKID_AO_I2C_SLAVE]	= &i2c_slave_ao.hw,
->> +		[CLKID_AO_UART1]	= &uart1_ao.hw,
->> +		[CLKID_AO_UART2]	= &uart2_ao.hw,
->> +		[CLKID_AO_IR_BLASTER]	= &ir_blaster_ao.hw,
->> +		[CLKID_AO_SAR_ADC]	= &saradc_ao.hw,
->> +		[CLKID_AO_CLK81]	= &ao_clk81.hw,
->> +		[CLKID_AO_SAR_ADC_SEL]	= &axg_saradc_mux.hw,
->> +		[CLKID_AO_SAR_ADC_DIV]	= &axg_saradc_div.hw,
->> +		[CLKID_AO_SAR_ADC_CLK]	= &axg_saradc_gate.hw,
->> +		[CLKID_AO_ALT_XTAL]	= &ao_alt_xtal.hw,
->> +	},
->> +	.num = 12,
-> 
-> I would prefer having a NR_CLKS defined in drivers/clk/meson/axg-aoclk.h
-> 
-can do
-
->> +};
->> +
->> +static int axg_aoclkc_probe(struct platform_device *pdev)
->> +{
->> +	struct axg_aoclk_reset_controller *rstc;
->> +	struct device *dev = &pdev->dev;
->> +	struct regmap *regmap;
->> +	int ret, clkid;
->> +
->> +	rstc = devm_kzalloc(dev, sizeof(*rstc), GFP_KERNEL);
->> +	if (!rstc)
->> +		return -ENOMEM;
->> +
->> +	regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
->> +	if (IS_ERR(regmap)) {
->> +		dev_err(dev, "failed to get regmap\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	/* Reset Controller */
->> +	rstc->regmap = regmap;
->> +	rstc->data = axg_aoclk_reset;
->> +	rstc->reset.ops = &axg_aoclk_reset_ops;
->> +	rstc->reset.nr_resets = ARRAY_SIZE(axg_aoclk_reset);
->> +	rstc->reset.of_node = dev->of_node;
->> +	ret = devm_reset_controller_register(dev, &rstc->reset);
->> +
->> +	/*
->> +	 * Populate regmap and register all clks
->> +	 */
->> +	for (clkid = 0; clkid < ARRAY_SIZE(axg_aoclk_regmap); clkid++) {
->> +		axg_aoclk_regmap[clkid]->map = regmap;
->> +
->> +		ret = devm_clk_hw_register(dev,
->> +					axg_aoclk_onecell_data.hws[clkid]);
->> +		if (ret) {
->> +			dev_err(dev, "clk register failed.\n");
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	/* Specific clocks */
->> +	ret = devm_clk_hw_register(dev, &ao_alt_xtal.hw);
->> +	if (ret) {
->> +		dev_err(dev, "clk alt_xtal register failed.\n");
->> +		return ret;
->> +	}
->> +
->> +	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
->> +			&axg_aoclk_onecell_data);
->> +}
->> +
->> +static const struct of_device_id axg_aoclkc_match_table[] = {
->> +	{ .compatible = "amlogic,meson-axg-aoclkc" },
->> +	{ }
->> +};
->> +
->> +static struct platform_driver axg_aoclkc_driver = {
->> +	.probe		= axg_aoclkc_probe,
->> +	.driver		= {
->> +		.name	= "axg-aoclkc",
->> +		.of_match_table = axg_aoclkc_match_table,
->> +	},
->> +};
->> +
->> +builtin_platform_driver(axg_aoclkc_driver);
->> diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
->> new file mode 100644
->> index 000000000000..70f82004d3db
->> --- /dev/null
->> +++ b/drivers/clk/meson/axg-aoclk.h
->> @@ -0,0 +1,25 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Copyright (c) 2017 BayLibre, SAS
->> + * Author: Neil Armstrong <narmstrong@baylibre.com>
->> + *
->> + * Copyright (c) 2018 Amlogic, inc.
->> + * Author: Qiufang Dai <qiufang.dai@amlogic.com>
->> + */
->> +
->> +#ifndef __AXG_AOCLKC_H
->> +#define __AXG_AOCLKC_H
->> +
->> +/* AO Configuration Clock registers offsets
->> + * Register offsets from the data sheet must be multiplied by 4.
->> + */
->> +#define AO_RTI_PWR_CNTL_REG1	(0x03 << 2)
->> +#define AO_RTI_PWR_CNTL_REG0	(0x04 << 2)
->> +#define AO_RTI_GEN_CNTL_REG0	(0x10 << 2)
->> +#define AO_OSCIN_CNTL		(0x16 << 2)
->> +#define AO_CRT_CLK_CNTL1	(0x1a << 2)
->> +#define AO_SAR_CLK		(0x24 << 2)
->> +#define AO_RTC_ALT_CLK_CNTL0	(0x25 << 2)
->> +#define AO_RTC_ALT_CLK_CNTL1	(0x26 << 2)
-> 
-> As already pointed out for the axg clk series, please remove those
-> calculation from the header file.
-> 
-Ok, will update
->> +
->> +#endif /* __AXG_AOCLKC_H */
-> 
-> .
-> 
+Index: usb-4.x/tools/memory-model/linux-kernel.cat
+===================================================================
+--- usb-4.x.orig/tools/memory-model/linux-kernel.cat
++++ usb-4.x/tools/memory-model/linux-kernel.cat
+@@ -100,22 +100,22 @@ let rscs = po ; crit^-1 ; po?
+  * one but two non-rf relations, but only in conjunction with an RCU
+  * read-side critical section.
+  *)
+-let link = hb* ; pb* ; prop
++let rcu-link = hb* ; pb* ; prop
+ 
+ (* Chains that affect the RCU grace-period guarantee *)
+-let gp-link = gp ; link
+-let rscs-link = rscs ; link
++let gp-link = gp ; rcu-link
++let rscs-link = rscs ; rcu-link
+ 
+ (*
+  * A cycle containing at least as many grace periods as RCU read-side
+  * critical sections is forbidden.
+  *)
+-let rec rcu-path =
++let rec rb =
+ 	gp-link |
+ 	(gp-link ; rscs-link) |
+ 	(rscs-link ; gp-link) |
+-	(rcu-path ; rcu-path) |
+-	(gp-link ; rcu-path ; rscs-link) |
+-	(rscs-link ; rcu-path ; gp-link)
++	(rb ; rb) |
++	(gp-link ; rb ; rscs-link) |
++	(rscs-link ; rb ; gp-link)
+ 
+-irreflexive rcu-path as rcu
++irreflexive rb as rcu
+Index: usb-4.x/tools/memory-model/Documentation/explanation.txt
+===================================================================
+--- usb-4.x.orig/tools/memory-model/Documentation/explanation.txt
++++ usb-4.x/tools/memory-model/Documentation/explanation.txt
+@@ -27,7 +27,7 @@ Explanation of the Linux-Kernel Memory C
+   19. AND THEN THERE WAS ALPHA
+   20. THE HAPPENS-BEFORE RELATION: hb
+   21. THE PROPAGATES-BEFORE RELATION: pb
+-  22. RCU RELATIONS: link, gp-link, rscs-link, and rcu-path
++  22. RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
+   23. ODDS AND ENDS
+ 
+ 
+@@ -1451,8 +1451,8 @@ they execute means that it cannot have c
+ the content of the LKMM's "propagation" axiom.
+ 
+ 
+-RCU RELATIONS: link, gp-link, rscs-link, and rcu-path
+------------------------------------------------------
++RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
++---------------------------------------------------
+ 
+ RCU (Read-Copy-Update) is a powerful synchronization mechanism.  It
+ rests on two concepts: grace periods and read-side critical sections.
+@@ -1509,8 +1509,8 @@ y, which occurs before the end of the cr
+ propagate to P1 before the end of the grace period, violating the
+ Guarantee.
+ 
+-In the kernel's implementations of RCU, the business about stores
+-propagating to every CPU is realized by placing strong fences at
++In the kernel's implementations of RCU, the requirements for stores
++to propagate to every CPU are fulfilled by placing strong fences at
+ suitable places in the RCU-related code.  Thus, if a critical section
+ starts before a grace period does then the critical section's CPU will
+ execute an smp_mb() fence after the end of the critical section and
+@@ -1523,19 +1523,19 @@ executes.
+ What exactly do we mean by saying that a critical section "starts
+ before" or "ends after" a grace period?  Some aspects of the meaning
+ are pretty obvious, as in the example above, but the details aren't
+-entirely clear.  The LKMM formalizes this notion by means of a
+-relation with the unfortunately generic name "link".  It is a very
+-general relation; among other things, X ->link Z includes cases where
+-X happens-before or is equal to some event Y which is equal to or
+-comes before Z in the coherence order.  Taking Y = Z, this says that
+-X ->rfe Z implies X ->link Z, and taking Y = X, it says that X ->fr Z
+-and X ->co Z each imply X ->link Z.
++entirely clear.  The LKMM formalizes this notion by means of the
++rcu-link relation.  rcu-link encompasses a very general notion of
++"before": Among other things, X ->rcu-link Z includes cases where X
++happens-before or is equal to some event Y which is equal to or comes
++before Z in the coherence order.  When Y = Z this says that X ->rfe Z
++implies X ->rcu-link Z.  In addition, when Y = X it says that X ->fr Z
++and X ->co Z each imply X ->rcu-link Z.
+ 
+-The formal definition of the link relation is more than a little
++The formal definition of the rcu-link relation is more than a little
+ obscure, and we won't give it here.  It is closely related to the pb
+ relation, and the details don't matter unless you want to comb through
+ a somewhat lengthy formal proof.  Pretty much all you need to know
+-about link is the information in the preceding paragraph.
++about rcu-link is the information in the preceding paragraph.
+ 
+ The LKMM goes on to define the gp-link and rscs-link relations.  They
+ bring grace periods and read-side critical sections into the picture,
+@@ -1543,32 +1543,33 @@ in the following way:
+ 
+ 	E ->gp-link F means there is a synchronize_rcu() fence event S
+ 	and an event X such that E ->po S, either S ->po X or S = X,
+-	and X ->link F.  In other words, E and F are connected by a
+-	grace period followed by an instance of link.
++	and X ->rcu-link F.  In other words, E and F are linked by a
++	grace period followed by an instance of rcu-link.
+ 
+ 	E ->rscs-link F means there is a critical section delimited by
+ 	an rcu_read_lock() fence L and an rcu_read_unlock() fence U,
+ 	and an event X such that E ->po U, either L ->po X or L = X,
+-	and X ->link F.  Roughly speaking, this says that some event
+-	in the same critical section as E is connected by link to F.
+-
+-If we think of the link relation as standing for an extended "before",
+-then E ->gp-link F says that E executes before a grace period which
+-ends before F executes.  (In fact it says more than this, because it
+-includes cases where E executes before a grace period and some store
+-propagates to F's CPU before F executes and doesn't propagate to some
+-other CPU until after the grace period ends.)  Similarly,
+-E ->rscs-link F says that E is part of (or before the start of) a
+-critical section which starts before F executes.
++	and X ->rcu-link F.  Roughly speaking, this says that some
++	event in the same critical section as E is linked by rcu-link
++	to F.
++
++If we think of the rcu-link relation as standing for an extended
++"before", then E ->gp-link F says that E executes before a grace
++period which ends before F executes.  (In fact it covers more than
++this, because it also includes cases where E executes before a grace
++period and some store propagates to F's CPU before F executes and
++doesn't propagate to some other CPU until after the grace period
++ends.)  Similarly, E ->rscs-link F says that E is part of (or before
++the start of) a critical section which starts before F executes.
+ 
+ Putting this all together, the LKMM expresses the Grace Period
+ Guarantee by requiring that there are no cycles consisting of gp-link
+-and rscs-link connections in which the number of gp-link instances is
+->= the number of rscs-link instances.  It does this by defining the
+-rcu-path relation to link events E and F whenever it is possible to
+-pass from E to F by a sequence of gp-link and rscs-link connections
+-with at least as many of the former as the latter.  The LKMM's "rcu"
+-axiom then says that there are no events E such that E ->rcu-path E.
++and rscs-link links in which the number of gp-link instances is >= the
++number of rscs-link instances.  It does this by defining the rb
++relation to link events E and F whenever it is possible to pass from E
++to F by a sequence of gp-link and rscs-link links with at least as
++many of the former as the latter.  The LKMM's "rcu" axiom then says
++that there are no events E with E ->rb E.
+ 
+ Justifying this axiom takes some intellectual effort, but it is in
+ fact a valid formalization of the Grace Period Guarantee.  We won't
+@@ -1585,10 +1586,10 @@ rcu_read_unlock() fence events delimitin
+ question, and let S be the synchronize_rcu() fence event for the grace
+ period.  Saying that the critical section starts before S means there
+ are events E and F where E is po-after L (which marks the start of the
+-critical section), E is "before" F in the sense of the link relation,
+-and F is po-before the grace period S:
++critical section), E is "before" F in the sense of the rcu-link
++relation, and F is po-before the grace period S:
+ 
+-	L ->po E ->link F ->po S.
++	L ->po E ->rcu-link F ->po S.
+ 
+ Let W be the store mentioned above, let Z come before the end of the
+ critical section and witness that W propagates to the critical
+@@ -1600,12 +1601,12 @@ some event X which is po-after S.  Symbo
+ 
+ The fr link from Y to W indicates that W has not propagated to Y's CPU
+ at the time that Y executes.  From this, it can be shown (see the
+-discussion of the link relation earlier) that X and Z are connected by
+-link, yielding:
++discussion of the rcu-link relation earlier) that X and Z are related
++by rcu-link, yielding:
+ 
+-	S ->po X ->link Z ->po U.
++	S ->po X ->rcu-link Z ->po U.
+ 
+-These formulas say that S is po-between F and X, hence F ->gp-link Z
++The formulas say that S is po-between F and X, hence F ->gp-link Z
+ via X.  They also say that Z comes before the end of the critical
+ section and E comes after its start, hence Z ->rscs-link F via E.  But
+ now we have a forbidden cycle: F ->gp-link Z ->rscs-link F.  Thus the
+@@ -1635,13 +1636,13 @@ time with statement labels added to the
+ 	}
+ 
+ 
+-If r2 = 0 at the end then P0's store at X overwrites the value
+-that P1's load at Z reads from, so we have Z ->fre X and thus
+-Z ->link X.  In addition, there is a synchronize_rcu() between Y and
+-Z, so therefore we have Y ->gp-link X.
++If r2 = 0 at the end then P0's store at X overwrites the value that
++P1's load at Z reads from, so we have Z ->fre X and thus Z ->rcu-link X.
++In addition, there is a synchronize_rcu() between Y and Z, so therefore
++we have Y ->gp-link X.
+ 
+ If r1 = 1 at the end then P1's load at Y reads from P0's store at W,
+-so we have W ->link Y.  In addition, W and X are in the same critical
++so we have W ->rcu-link Y.  In addition, W and X are in the same critical
+ section, so therefore we have X ->rscs-link Y.
+ 
+ This gives us a cycle, Y ->gp-link X ->rscs-link Y, with one gp-link
