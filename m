@@ -1,55 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751883AbeCWXuX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 19:50:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55138 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751718AbeCWXuV (ORCPT
+        id S1751938AbeCWXwG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 19:52:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46048 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751400AbeCWXwE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 19:50:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D7AA7607A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=timur@codeaurora.org
-Subject: Re: [PATCH v4 0/5] Support qcom pinctrl protected pins
-To: Stephen Boyd <swboyd@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Grant Likely <grant.likely@secretlab.ca>, linux-gpio@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20180323163453.96495-1-swboyd@chromium.org>
-From: Timur Tabi <timur@codeaurora.org>
-Message-ID: <d7e0d2e1-c0d8-f751-7a73-71d5ab15bf52@codeaurora.org>
-Date: Fri, 23 Mar 2018 18:50:18 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 23 Mar 2018 19:52:04 -0400
+From: Colin King <colin.king@canonical.com>
+To: "David S . Miller" <davem@davemloft.net>,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: qualcomm: rmnet: check for null ep to avoid null pointer dereference
+Date: Fri, 23 Mar 2018 23:51:57 +0000
+Message-Id: <20180323235157.8129-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <20180323163453.96495-1-swboyd@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/2018 11:34 AM, Stephen Boyd wrote:
-> Stephen Boyd (5):
->    dt-bindings: gpio: Add a gpio-reserved-ranges property
->    gpiolib: Extract mask allocation into subroutine
->    gpiolib: Change bitmap allocation to kmalloc_array
->    gpiolib: Support 'gpio-reserved-ranges' property
->    pinctrl: qcom: Don't allow protected pins to be requested
+From: Colin Ian King <colin.king@canonical.com>
 
-ACPI parts:
+The call to rmnet_get_endpoint can potentially return NULL so check
+for this to avoid any subsequent null pointer dereferences on a NULL
+ep.
 
-Tested-by: Timur Tabi <timur@codeaurora.org>
+Detected by CoverityScan, CID#1465385 ("Dereference null return value")
 
-I posted a pair of patches that should be applied on top of yours.  The 
-first one fixed pinctrl-msm when there is more than one TLMM device. 
-The second adds support for my SOC.
+Fixes: 23790ef12082 ("net: qualcomm: rmnet: Allow to configure flags for existing devices")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
+index 38d9356ebcc4..d33988570217 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_config.c
+@@ -312,6 +312,8 @@ static int rmnet_changelink(struct net_device *dev, struct nlattr *tb[],
+ 	if (data[IFLA_RMNET_MUX_ID]) {
+ 		mux_id = nla_get_u16(data[IFLA_RMNET_MUX_ID]);
+ 		ep = rmnet_get_endpoint(port, priv->mux_id);
++		if (!ep)
++			return -ENODEV;
+ 
+ 		hlist_del_init_rcu(&ep->hlnode);
+ 		hlist_add_head_rcu(&ep->hlnode, &port->muxed_ep[mux_id]);
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.15.1
