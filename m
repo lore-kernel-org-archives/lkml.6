@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsrU2QnhSnQDd5uHFF88FECoNb7s6g/KaqpEYk37sYI2BZd886KJlpXr1ciHYmIDNqvWYwx
-ARC-Seal: i=1; a=rsa-sha256; t=1521800146; cv=none;
+X-Google-Smtp-Source: AG47ELuLcomA9hum4oBuzmKA4NN1XIVRGMAz3y0Sm1n52cIMseby2eB9RQXMgUgI79Aca94sTKAM
+ARC-Seal: i=1; a=rsa-sha256; t=1521800143; cv=none;
         d=google.com; s=arc-20160816;
-        b=qFHpkA3umSA8kGFV4tsGro2HZV9FlTyMimy+Mx7EsIoI1PisKTLPncrYdqqe1VgYiP
-         h8XNOWquXoJLBOaWYEiQ0Kj2arYyo2Fbr5kICc+C5zF0Q/ObC34OqgSdx2H7HJQiNbcW
-         7rpE61jV2qwBvOVCmg/JInBtesFBT2M+HUWvTifbUhE63DjJMzYxDhHcoyxSodHUOjuL
-         2le8jbqZpJF5gfJJMQN+RaSg0IKJ4IvBrPGEeROTgjuGK+WIQInq1yEOnlImAyj+wTVl
-         appzkXOO/iJoUGzX4GrpbCGntzv/Wdcvr4HgP4zzDCKHRon3NxOVHmLhUGAgNCUOdmPX
-         igfQ==
+        b=UEZxRcGeeoQ6FdZDOSZCkJnzMI/jO5WqA4j/igPMDNKZ+nFC9SoiIVb6IUpOP3s8KP
+         Vftu+4awq5UtfxKXoZfws3EUzrjzSQ+KiCyK09BSvRVhpfgF0txmpMqHTNFuDm/CbU38
+         AJtpeTaOc4zF+0vtKasUE/nThfP0SyaVL7hflF7V2NGB2DiidU64Ijpn0qt5vJhDbWOC
+         j2MpXCsbaIiW+RbHnBi57tOTzHZ92cCfLnR++RpKdsLdRIpcvAjmnu6xENNMCl8dvofy
+         F2yPvONGV1ETCILo+XT3UVhCYEp4DOIp1azv7XDbLefNnKcGdxq75YfnkDLimisof3Au
+         pLvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mHh2LeJ9gzgieMaMcD2Q7u3NdJk/6vHe0j42BCQuawY=;
-        b=MneXtbMqBlTEKFqCDEgk2m8RwpeJrW8Vwv5L0v5h5acj6iyqf7FLJGHZ7oFQt0kwvt
-         pIWGmGc2cz2x2LGtrk573qFk//P9u1g73noQZhJ3m7UotZiPZSh+t+F3KrurYxdR9rEp
-         d/dgve1wJgzEPzu/PIGfDmpIlZvpB/pprxQbaGW/hYoTiPA8giCYVpPXZSQ3tvTliTmU
-         JB2Rtf2OCWe1uV9hF0uLl8d+xnCC7K2HZQ/OtR7Tms9kHXIbQrf01L/mAy4UnFJclrjQ
-         PrYwYkCZ0Dm7FYObaHZqQbOR5TasOiDpROxDppCssjIQfmSWouIDKXl3oaBRREhMXo6P
-         R91w==
+        bh=B3nkgjvL8lA3FKuXXucA2ByfzfePS4iovAUr2BLFoT4=;
+        b=ob0VD0k78hPl6NqfEGJUUbppbkgoQruOIgvEMGpZjfrK85b1E/wUhscN+5eHb+pv8C
+         CikQAsJff7gvBpONapXyC9YoCi3rr5U0Ewhuv/z+X5WxZFjWUgoFJhM05lxC6QMfl/HT
+         96XfajExpsz5OJa5tzwrEiSWfHkyr94sfPzPd7TRE3LKycx2UyUgFDtFZ33Z+GQhNPko
+         /kGx8TYXXQe+oAjYI75uxU95mhJjitTUTXdOFYEoD06AoOo5SzX0YOHt9zIts5lPrkwL
+         BfeaGfPykcAQRQsoqZSt6dwJLXLmacetq8MU1EqyecSmYx1B8KV2ZrHiSMsb9KaVxUvb
+         Y9yA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@fb.com>,
+	Keerthy <j-keerthy@ti.com>,
+	Lee Jones <lee.jones@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 52/97] mtip32xx: use runtime tag to initialize command header
-Date: Fri, 23 Mar 2018 10:54:39 +0100
-Message-Id: <20180323094200.569562172@linuxfoundation.org>
+Subject: [PATCH 4.4 51/97] mfd: palmas: Reset the POWERHOLD mux during power off
+Date: Fri, 23 Mar 2018 10:54:38 +0100
+Message-Id: <20180323094200.471499547@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722613910979251?=
-X-GMAIL-MSGID: =?utf-8?q?1595723110786076602?=
+X-GMAIL-THRID: =?utf-8?q?1595722610937627144?=
+X-GMAIL-MSGID: =?utf-8?q?1595723107267568860?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,100 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Keerthy <j-keerthy@ti.com>
 
 
-[ Upstream commit a4e84aae8139aca9fbfbced1f45c51ca81b57488 ]
+[ Upstream commit 85fdaf8eb9bbec1f0f8a52fd5d85659d60738816 ]
 
-mtip32xx supposes that 'request_idx' passed to .init_request()
-is tag of the request, and use that as request's tag to initialize
-command header.
+POWERHOLD signal has higher priority  over the DEV_ON bit.
+So power off will not happen if the POWERHOLD is held high.
+Hence reset the MUX to GPIO_7 mode to release the POWERHOLD
+and the DEV_ON bit to take effect to power off the PMIC.
 
-After MQ IO scheduler is in, request tag assigned isn't same with
-the request index anymore, so cause strange hardware failure on
-mtip32xx, even whole system panic is triggered.
+PMIC Power off happens in dire situations like thermal shutdown
+so irrespective of the POWERHOLD setting go ahead and turn off
+the powerhold.  Currently poweroff is broken on boards that have
+powerhold enabled. This fixes poweroff on those boards.
 
-This patch fixes the issue by initializing command header via
-request's real tag.
-
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@fb.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/mtip32xx/mtip32xx.c |   36 ++++++++++++++++++++++++------------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+ drivers/mfd/palmas.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/drivers/block/mtip32xx/mtip32xx.c
-+++ b/drivers/block/mtip32xx/mtip32xx.c
-@@ -169,6 +169,25 @@ static bool mtip_check_surprise_removal(
- 	return false; /* device present */
- }
- 
-+/* we have to use runtime tag to setup command header */
-+static void mtip_init_cmd_header(struct request *rq)
-+{
-+	struct driver_data *dd = rq->q->queuedata;
-+	struct mtip_cmd *cmd = blk_mq_rq_to_pdu(rq);
-+	u32 host_cap_64 = readl(dd->mmio + HOST_CAP) & HOST_CAP_64;
-+
-+	/* Point the command headers at the command tables. */
-+	cmd->command_header = dd->port->command_list +
-+				(sizeof(struct mtip_cmd_hdr) * rq->tag);
-+	cmd->command_header_dma = dd->port->command_list_dma +
-+				(sizeof(struct mtip_cmd_hdr) * rq->tag);
-+
-+	if (host_cap_64)
-+		cmd->command_header->ctbau = __force_bit2int cpu_to_le32((cmd->command_dma >> 16) >> 16);
-+
-+	cmd->command_header->ctba = __force_bit2int cpu_to_le32(cmd->command_dma & 0xFFFFFFFF);
-+}
-+
- static struct mtip_cmd *mtip_get_int_command(struct driver_data *dd)
+--- a/drivers/mfd/palmas.c
++++ b/drivers/mfd/palmas.c
+@@ -430,6 +430,20 @@ static void palmas_power_off(void)
  {
- 	struct request *rq;
-@@ -180,6 +199,9 @@ static struct mtip_cmd *mtip_get_int_com
- 	if (IS_ERR(rq))
- 		return NULL;
- 
-+	/* Internal cmd isn't submitted via .queue_rq */
-+	mtip_init_cmd_header(rq);
+ 	unsigned int addr;
+ 	int ret, slave;
++	struct device_node *np = palmas_dev->dev->of_node;
 +
- 	return blk_mq_rq_to_pdu(rq);
- }
- 
-@@ -3818,6 +3840,8 @@ static int mtip_queue_rq(struct blk_mq_h
- 	struct request *rq = bd->rq;
- 	int ret;
- 
-+	mtip_init_cmd_header(rq);
++	if (of_property_read_bool(np, "ti,palmas-override-powerhold")) {
++		addr = PALMAS_BASE_TO_REG(PALMAS_PU_PD_OD_BASE,
++					  PALMAS_PRIMARY_SECONDARY_PAD2);
++		slave = PALMAS_BASE_TO_SLAVE(PALMAS_PU_PD_OD_BASE);
 +
- 	if (unlikely(mtip_check_unal_depth(hctx, rq)))
- 		return BLK_MQ_RQ_QUEUE_BUSY;
++		ret = regmap_update_bits(palmas_dev->regmap[slave], addr,
++				PALMAS_PRIMARY_SECONDARY_PAD2_GPIO_7_MASK, 0);
++		if (ret)
++			dev_err(palmas_dev->dev,
++				"Unable to write PRIMARY_SECONDARY_PAD2 %d\n",
++				ret);
++	}
  
-@@ -3849,7 +3873,6 @@ static int mtip_init_cmd(void *data, str
- {
- 	struct driver_data *dd = data;
- 	struct mtip_cmd *cmd = blk_mq_rq_to_pdu(rq);
--	u32 host_cap_64 = readl(dd->mmio + HOST_CAP) & HOST_CAP_64;
- 
- 	/*
- 	 * For flush requests, request_idx starts at the end of the
-@@ -3866,17 +3889,6 @@ static int mtip_init_cmd(void *data, str
- 
- 	memset(cmd->command, 0, CMD_DMA_ALLOC_SZ);
- 
--	/* Point the command headers at the command tables. */
--	cmd->command_header = dd->port->command_list +
--				(sizeof(struct mtip_cmd_hdr) * request_idx);
--	cmd->command_header_dma = dd->port->command_list_dma +
--				(sizeof(struct mtip_cmd_hdr) * request_idx);
--
--	if (host_cap_64)
--		cmd->command_header->ctbau = __force_bit2int cpu_to_le32((cmd->command_dma >> 16) >> 16);
--
--	cmd->command_header->ctba = __force_bit2int cpu_to_le32(cmd->command_dma & 0xFFFFFFFF);
--
- 	sg_init_table(cmd->sg, MTIP_MAX_SG);
- 	return 0;
- }
+ 	if (!palmas_dev)
+ 		return;
