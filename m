@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsPrIXceX+ckniph4Fz1HS0lMayf/xzg8AKp+mQhHsLQXBEktkRWTW+AKaMmMf1TflLkxiD
-ARC-Seal: i=1; a=rsa-sha256; t=1521800141; cv=none;
+X-Google-Smtp-Source: AG47ELuumTLOYso0OPpnilwI/nkN1FX4AiifFjtLnxYyYOfWbu+7N9hsWbYP7EvxIpv+W5/UtKl9
+ARC-Seal: i=1; a=rsa-sha256; t=1521800138; cv=none;
         d=google.com; s=arc-20160816;
-        b=rEU06tPh3sBiqSSsXDXniWrNvRxl8/OwM6qCz5VJPg5FMGRpt0LoSIWMm9NCWFnFN5
-         HfixIeM0jxldcjrqKL8LMHRjEKmsT+ogq/2QXtLkmL+LzW+fa0KVGYN3ZkSd/3Krn9KS
-         jm73hsywlbwo/gu95KXISM9a9wBfdRUhszDe1vWoXU+m8FGPVsQOrXW3uavRTKjwK5Nj
-         iwv2DdaXqJJcRYEw5RIdI3afxFyz6fp7ZHKdefwbDyEuGZtWB6g/VAtP9fvCWxUPLoU2
-         d9NgRSHadzED4+fhxRWjozkaRCS8sHskRD6QYLIyZEFYTtvkbu3Qt94orKb9EwmmLzvK
-         9DCQ==
+        b=zcgRYZQlN3XKpvdIFcf238DTV8oZOo9uCYwHG0MRQeB3/zAgjV0F5IHDTjMAT2SmkN
+         2Uva+Hr+ZB/3VT+2b+pzgxphm6o6Js+l+6W1rgvdtd3k9clPqDkN6uoQkoMaQdb4vjUl
+         IQP+wnev0e8zfBcLfYDdOlPhJ1rUIM+QTXPsoYN27OVQjb5ufSM7Ej9pW4kzaMAlW491
+         FB3JDVdrYrf16lDzAUHGqUQZ9aRNmjW4XMiK5dTCP3WbVZGL7u2U9kimvU18ICpgveY6
+         b8mDeWYlygLIzHbKCu945R5scLNbaJ7T8ktb9JtCewxafSG4hdpXOSVHf6JMOZcEmTcX
+         Q8HQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/EycqQeDX2166NwEkdUusuaA62q+exWWi02oc5Yyyr8=;
-        b=GVFM5ylvgWvmhj1cgp3g/82tP032IEJnfAr+3HbpVG1Df9dRIFepmMDe0CX+pAuXru
-         7B00ulrravuix5k1cF8IGqUzenUhhFhImgpA56AsbpnmOYVgzKqLrIslF6o2LXAuu8IA
-         swEdi8TCBTM3nCBw1GwjwZLc/LYDg6qxlcwpJYrqca1VRrBiKuvXn7ULrA4opE8cRevC
-         iqoWCXFoBRQ2Uww8Hi2qlx4uz85QdD6pN6Oi4HdFF6onVMUIzLy1BpiqcNjI9LdkXw66
-         KlTRET7mMP9pECYlXVnFqovA7n0fk0z7plQKO7goovd7tcSuXzW/Lxz8U/QtvT1qE5kp
-         B0mw==
+        bh=c9hdvDQDhszg+WxUsdMS5sz3yjrzNk9/2tzZZSqrjSo=;
+        b=bYY0JbimmnHxgtNBtrQPKXkvhMhrCstPOBvJRfuaTBe6Lp4GG2Uv79FDFaE2LfQJtv
+         mdB0pkGMH5NRnQm3PSJmWas0iWggCmc48pnioStKmTVwn1t+ZRmGkEfvFYKp4VVii5a/
+         eS7Nqh71lmxpV5xVdHKyOrZn3Wz/I9ogoq91UqlSAAg33faQqSBghDCx/9gwQB4/RJtR
+         KZBdMDaSXIG3RaqV5A7gvQftuWEl//a7aJ8QvQn9aJA7iSNg0PSqXasV3dHvnbDiufN3
+         zcHx2yDUdVEqxzGdm+Yiqy44zmHPJxxMKDV0iPDe+6oLANXS9obpJcofsQLf+/oIhjlr
+         v2bg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Guoqing Jiang <gqjiang@suse.com>,
-	NeilBrown <neilb@suse.com>,
-	Shaohua Li <shli@fb.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 63/97] md/raid10: skip spare disk as first disk
-Date: Fri, 23 Mar 2018 10:54:50 +0100
-Message-Id: <20180323094201.150412201@linuxfoundation.org>
+Subject: [PATCH 4.4 62/97] Input: twl4030-pwrbutton - use correct device for irq request
+Date: Fri, 23 Mar 2018 10:54:49 +0100
+Message-Id: <20180323094201.091325005@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722709083060943?=
-X-GMAIL-MSGID: =?utf-8?q?1595723104474111325?=
+X-GMAIL-THRID: =?utf-8?q?1595722752515965613?=
+X-GMAIL-MSGID: =?utf-8?q?1595723101742355218?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,32 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shaohua Li <shli@fb.com>
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
 
-[ Upstream commit b506335e5d2b4ec687dde392a3bdbf7601778f1d ]
+[ Upstream commit 3071e9dd6cd3f2290d770117330f2c8b2e9a97e4 ]
 
-Commit 6f287ca(md/raid10: reset the 'first' at the end of loop) ignores
-a case in reshape, the first rdev could be a spare disk, which shouldn't
-be accounted as the first disk since it doesn't include the offset info.
+The interrupt should be requested for the platform device
+and not for the input device.
 
-Fix: 6f287ca(md/raid10: reset the 'first' at the end of loop)
-Cc: Guoqing Jiang <gqjiang@suse.com>
-Cc: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Fixes: 7f9ce649d267 ("Input: twl4030-pwrbutton - simplify driver using devm_*")
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid10.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/misc/twl4030-pwrbutton.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -4044,6 +4044,7 @@ static int raid10_start_reshape(struct m
- 				diff = 0;
- 			if (first || diff < min_offset_diff)
- 				min_offset_diff = diff;
-+			first = 0;
- 		}
- 	}
+--- a/drivers/input/misc/twl4030-pwrbutton.c
++++ b/drivers/input/misc/twl4030-pwrbutton.c
+@@ -70,7 +70,7 @@ static int twl4030_pwrbutton_probe(struc
+ 	pwr->phys = "twl4030_pwrbutton/input0";
+ 	pwr->dev.parent = &pdev->dev;
  
+-	err = devm_request_threaded_irq(&pwr->dev, irq, NULL, powerbutton_irq,
++	err = devm_request_threaded_irq(&pdev->dev, irq, NULL, powerbutton_irq,
+ 			IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING |
+ 			IRQF_ONESHOT,
+ 			"twl4030_pwrbutton", pwr);
