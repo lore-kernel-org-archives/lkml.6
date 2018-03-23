@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuwt9lPTNXu1Li49dh/5N/rG4dAXeTWW4dufiMc1ia7nBp0TDIyJAytWR93XJgYew3Z9cJ4
-ARC-Seal: i=1; a=rsa-sha256; t=1521800094; cv=none;
+X-Google-Smtp-Source: AG47ELs2nes5fumtYnSIyg9UAAJLnFvYbUpx0LIh120S5G5z1O1vYG1EvJ5evDSYtwhkIqr1MWaH
+ARC-Seal: i=1; a=rsa-sha256; t=1521800091; cv=none;
         d=google.com; s=arc-20160816;
-        b=otpGx2MFJy9GWQLAHJysUOtZZ+NG/OmFgI0nXRh1QTX+VR4QZR6rjHvBYuMUI6QbG9
-         Wi0udvQhH7RrRdCsrYwTHF3OYJpazNFzm4RATkopp0YlOmrT0vJaNm2+c9mn7kzudBT1
-         iDQyQYYLH0ZUsYIFxmEOUmZJlIv+nWCpfBP7JJbgrXvRVwregV08VPJMiHGjqvJnTDrN
-         j575i6RWNGGdE0XSRwezZ63a5XoimwX6efGd8nw77cDK++zS/Y9iIflyCetltnJkK1wG
-         neux/ISe3q4e/UWVzbEwwwAlCtbi+F+E2P0LbVl0CpZKfqHhQYisgaz+j3DZWYUgYnn1
-         HNLQ==
+        b=xTUWkoenna2XkKH3zXkD9IOunzLo/kG7QRWq/XDgx6hcntWGheS0o/F/Ucj/8rttlm
+         CmLUvcEuW9R+SFxPatgu3/uG3GANCBkubwzsH2WZkqsoi9tzt/0gKOGLfVcDYAj52swR
+         i/M8Nip39q7k0nwU2bL8AKUIN/+lA82y8ryfdVP9WRd6L+IVHA/Kiiw2qafNLzcvQqOw
+         SYPO1Vvtdldq0hCFRTSbqZYGncE0xq2Vn6pLxQatsSxj/VwTPqbgxqIPrUeukqtg3qOh
+         aCdvVXdCVIU0KqqNYzHPkcJYofOZNBqXVPu14vkcNe7xVYKj9vu5WHd1RUcTfrUftcOu
+         uoVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vFv+vRNin3orJNTgpMWyO2/7TbyDubiVxjRRxvnw9Ek=;
-        b=s/jG/dKTJbHJiMBqb3/Tz/fmg5ShVnGFZmzk4B5PmxuMpctz8pCL5g5hah1RuZgzEO
-         rT8smXP5IayUi2er3GW6kdYL23v+ONrLL7yu0A/NEPAt3opHmIAjFk4jYOdIEoCCqe2t
-         iiS4li77wsuhoo1fpR1zjzDCGEocuJ7KwdHc/0DkS3AaboRfdFC3nKbTftXxj5onEwgI
-         chhYN4q98R2UPS7MPcUsqrUOoOlywCtenZFmDxBVTeoEfSmUjufdsoafatxFu9iheYhT
-         xbF/iVEkQ+kJ1heAKKGdEPpmehPlpQSIo18Fbpe9GYGUWN0/sDFgfHODkTIQ2YnLDGnL
-         iNew==
+        bh=M/zHva4BOPF2rqgJO7kQkNQs42RdwtLuemZyDe6G3pM=;
+        b=dq8bmBg4uyEzsU6EBHAmsZt0A3StnvvTv0T4U1JocgCcbVMLb3ouRcbfUofs5ECR0n
+         dJbP67sbergUXnyv8blVhI1yX/rHXNm7rHDqQaNNHrsFBFBsMYs4rmzoh4TGWOe3F9Hq
+         67WLo7xZvZT5/ZWKaAX/9ztdOaKI9RAHNDQAglv35Upd8eqfoj8kvcqK9vGFljIchty9
+         fAvw9aGBBs39BCUb4WdGmQHaZCVbuM8Wm8FNHDSRbKB+34RlXLyuD8aL/SrlfoWfzWgM
+         S4dbD56W2CLBXxXYlKKFOBtVbfsyBNr0+6Z7GvD3OyxYWMKwMNLB2VQKYGOoMtIn28oj
+         7QTg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pan Bian <bianpan2016@163.com>,
-	Jakub Kicinski <kubakici@wp.pl>,
-	Kalle Valo <kvalo@codeaurora.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 47/97] mt7601u: check return value of alloc_skb
-Date: Fri, 23 Mar 2018 10:54:34 +0100
-Message-Id: <20180323094200.258964491@linuxfoundation.org>
+Subject: [PATCH 4.4 46/97] iio: st_pressure: st_accel: Initialise sensor platform data properly
+Date: Fri, 23 Mar 2018 10:54:33 +0100
+Message-Id: <20180323094200.211751647@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722602127070056?=
-X-GMAIL-MSGID: =?utf-8?q?1595723056478543457?=
+X-GMAIL-THRID: =?utf-8?q?1595722647032251285?=
+X-GMAIL-MSGID: =?utf-8?q?1595723053141201749?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,54 +50,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Shrirang Bagul <shrirang.bagul@canonical.com>
 
 
-[ Upstream commit 5fb01e91daf84ad1e50edfcf63116ecbe31e7ba7 ]
+[ Upstream commit 7383d44b84c94aaca4bf695a6bd8a69f2295ef1a ]
 
-Function alloc_skb() will return a NULL pointer if there is no enough
-memory. However, in function mt7601u_mcu_msg_alloc(), its return value
-is not validated before it is used. This patch fixes it.
+This patch fixes the sensor platform data initialisation for st_pressure
+and st_accel device drivers. Without this patch, the driver fails to
+register the sensors when the user removes and re-loads the driver.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Acked-by: Jakub Kicinski <kubakici@wp.pl>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+1. Unload the kernel modules for st_pressure
+$ sudo rmmod st_pressure_i2c
+$ sudo rmmod st_pressure
+
+2. Re-load the driver
+$ sudo insmod st_pressure
+$ sudo insmod st_pressure_i2c
+
+Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mediatek/mt7601u/mcu.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/iio/accel/st_accel_core.c       |    7 ++++---
+ drivers/iio/pressure/st_pressure_core.c |    8 ++++----
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/net/wireless/mediatek/mt7601u/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt7601u/mcu.c
-@@ -66,8 +66,10 @@ mt7601u_mcu_msg_alloc(struct mt7601u_dev
- 	WARN_ON(len % 4); /* if length is not divisible by 4 we need to pad */
+--- a/drivers/iio/accel/st_accel_core.c
++++ b/drivers/iio/accel/st_accel_core.c
+@@ -628,6 +628,8 @@ static const struct iio_trigger_ops st_a
+ int st_accel_common_probe(struct iio_dev *indio_dev)
+ {
+ 	struct st_sensor_data *adata = iio_priv(indio_dev);
++	struct st_sensors_platform_data *pdata =
++		(struct st_sensors_platform_data *)adata->dev->platform_data;
+ 	int irq = adata->get_irq_data_ready(indio_dev);
+ 	int err;
  
- 	skb = alloc_skb(len + MT_DMA_HDR_LEN + 4, GFP_KERNEL);
--	skb_reserve(skb, MT_DMA_HDR_LEN);
--	memcpy(skb_put(skb, len), data, len);
-+	if (skb) {
-+		skb_reserve(skb, MT_DMA_HDR_LEN);
-+		memcpy(skb_put(skb, len), data, len);
-+	}
+@@ -652,9 +654,8 @@ int st_accel_common_probe(struct iio_dev
+ 					&adata->sensor_settings->fs.fs_avl[0];
+ 	adata->odr = adata->sensor_settings->odr.odr_avl[0].hz;
  
- 	return skb;
- }
-@@ -170,6 +172,8 @@ static int mt7601u_mcu_function_select(s
- 	};
+-	if (!adata->dev->platform_data)
+-		adata->dev->platform_data =
+-			(struct st_sensors_platform_data *)&default_accel_pdata;
++	if (!pdata)
++		pdata = (struct st_sensors_platform_data *)&default_accel_pdata;
  
- 	skb = mt7601u_mcu_msg_alloc(dev, &msg, sizeof(msg));
-+	if (!skb)
-+		return -ENOMEM;
- 	return mt7601u_mcu_msg_send(dev, skb, CMD_FUN_SET_OP, func == 5);
- }
+ 	err = st_sensors_init_sensor(indio_dev, adata->dev->platform_data);
+ 	if (err < 0)
+--- a/drivers/iio/pressure/st_pressure_core.c
++++ b/drivers/iio/pressure/st_pressure_core.c
+@@ -436,6 +436,8 @@ static const struct iio_trigger_ops st_p
+ int st_press_common_probe(struct iio_dev *indio_dev)
+ {
+ 	struct st_sensor_data *press_data = iio_priv(indio_dev);
++	struct st_sensors_platform_data *pdata =
++		(struct st_sensors_platform_data *)press_data->dev->platform_data;
+ 	int irq = press_data->get_irq_data_ready(indio_dev);
+ 	int err;
  
-@@ -205,6 +209,8 @@ mt7601u_mcu_calibrate(struct mt7601u_dev
- 	};
+@@ -464,10 +466,8 @@ int st_press_common_probe(struct iio_dev
+ 	press_data->odr = press_data->sensor_settings->odr.odr_avl[0].hz;
  
- 	skb = mt7601u_mcu_msg_alloc(dev, &msg, sizeof(msg));
-+	if (!skb)
-+		return -ENOMEM;
- 	return mt7601u_mcu_msg_send(dev, skb, CMD_CALIBRATION_OP, true);
- }
+ 	/* Some devices don't support a data ready pin. */
+-	if (!press_data->dev->platform_data &&
+-				press_data->sensor_settings->drdy_irq.addr)
+-		press_data->dev->platform_data =
+-			(struct st_sensors_platform_data *)&default_press_pdata;
++	if (!pdata && press_data->sensor_settings->drdy_irq.addr)
++		pdata =	(struct st_sensors_platform_data *)&default_press_pdata;
  
+ 	err = st_sensors_init_sensor(indio_dev, press_data->dev->platform_data);
+ 	if (err < 0)
