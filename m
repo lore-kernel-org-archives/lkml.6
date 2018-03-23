@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvgyp1Vez88C7EmMDQ7Z5Q5ycx66C4vO612duL2AYCo935Ot6ID+zQR0Fj5U1oJ4SRozh0h
-ARC-Seal: i=1; a=rsa-sha256; t=1521800155; cv=none;
+X-Google-Smtp-Source: AG47ELsosReWPtcxksOMzxDWNoyjiH4B15NK6H40k/ePpQACyejvZe2dRHjVOmbd6JL6hicP4LZ6
+ARC-Seal: i=1; a=rsa-sha256; t=1521800152; cv=none;
         d=google.com; s=arc-20160816;
-        b=OxGSjjaEdaB08uCRIvov3L56tYTmu1OYiWcq6MPKOrhV0rOgW27LiHS980Y22fpTdv
-         Kn9ctlcHqSWsmrT5qJ3N/pW2DzC4LrF1pztgpiwlWeTej1jW/wJP162E6FAwUV3Fk3hH
-         GxRNGSRpZfDoaeXy7Wz1ss70u2sxWz6rms4RgzXr8xAdw3uZV/kYrju8RLSODmOBo11V
-         NGzjqSbgLO0t618OCZXNPfo8mrYsPRqoMSRL1hrRrEKtnJ6tBWYfKUwb4oxUKYzQAU13
-         ZEDAJ4z//fAlgp5kThBtYhywhp1wBmOXKE1DA3AAb7lpIxNxoVo6oEXxIFPzmPtuGTkN
-         bSdw==
+        b=r62+nXipklR2lXDhZxJxtkgp0TkiEbz57xIDlP4rqgq4GsE6LSOWnBQqEad5rHGvsO
+         uSLLGPy+sr429ycDXEqtxaHMMkMzGFUnEqkNR53P3u+yc7xGAQGBAfq+2LcZVAZ8k98Z
+         VBp+3lKIHWrHZD0F/nq+kKWyPYEfJlxThb4UOt+e3QJANA7Lnh8ct2bt3N9REZFYfsGf
+         HnRKrD1XH5chfQuluV1XdPH5UZnv7XDO6/f/rZZshlOLEi7S8mMLMtmIExRhdJWpUOuq
+         nnk0uzbi6zZc7JycdjG2pkh2iCPYIKHgm31fnwo7wjXL2ftk3godfTIyfOOZIM4xuzbb
+         9Yzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wdb4YuCSoOznzY9YyxGaq68f1edZJ9hmUldyNOwy1Yo=;
-        b=Bpfizf8LEysiynorOTBEY6j55yPqzAEMHzQRIsVyofMzOpKM3TUlS7kCeQcO+1eXXe
-         +AKjnINWcDeBD/UUDKMD1p40MnfVw0dBwhLJF8xO7RHf2ikyT+4H4J1fCEJQbyq22a5z
-         dt+86+X6/6R3wmV57YRDFOY9j5Ma3GLWRsqK6EBPqMuqO+FjDSrLUQAGcgw4Abijnh7x
-         D5CYthHtnrnuodS7PxtNpNQnQVg6zMUd5qesWABbO6BE6Ga6zD0Sl6h6aDDLuIAPX/CC
-         yBxzYrTxQc1HH3662XaUCIT9hKRT687AY03YCJkqVon4HmrI6hc1zzV76Ynfd3vA/TSM
-         PdlA==
+        bh=bRPmjbtaAqDRpTKEOQ4TL2Rtkt0nCQyzAYZQ0vFgHFc=;
+        b=HbfPEaLcK9gOBFW2gfuuM48N6mQl3mzLyD9kIKyYrwmeenFyqf9h6rrcSkWrJPOrdl
+         G/3egfQ4T6SE5zm+nRvuGzHzYrHVV5CZRzmKUBSJeNkqStqZCDbuLljiDoHI0jXaMzIh
+         kDJQrBknT7KKbatRrU758D44uGy1gnQ1mFmZ0vwvAD172OYqUSYZ5wOFuSwHmHIiqKme
+         q9i2229u9wSqPSv2a4j8QzKberzCaFMJR2v3dN+dUgfsfPtXcjTqOiUeUK/XPROoUQua
+         26Sko5Mk3641w3caHe23eszAvQRpLaWi4aDksgFXbjBP5shpefLkU1DfDvIYLFiGKvRz
+         GvkA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yangbo Lu <yangbo.lu@nxp.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+	Pan Bian <bianpan2016@163.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 55/97] mmc: sdhci-of-esdhc: limit SD clock for ls1012a/ls1046a
-Date: Fri, 23 Mar 2018 10:54:42 +0100
-Message-Id: <20180323094200.742771593@linuxfoundation.org>
+Subject: [PATCH 4.4 54/97] staging: wilc1000: fix unchecked return value
+Date: Fri, 23 Mar 2018 10:54:41 +0100
+Message-Id: <20180323094200.696341654@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722681152507399?=
-X-GMAIL-MSGID: =?utf-8?q?1595723119799482951?=
+X-GMAIL-THRID: =?utf-8?q?1595722650670418248?=
+X-GMAIL-MSGID: =?utf-8?q?1595723116571900256?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,45 +49,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: yangbo lu <yangbo.lu@nxp.com>
+From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit a627f025eb0534052ff451427c16750b3530634c ]
+[ Upstream commit 9e96652756ad647b7bcc03cb99ffc9756d7b5f93 ]
 
-The ls1046a datasheet specified that the max SD clock frequency
-for eSDHC SDR104/HS200 was 167MHz, and the ls1012a datasheet
-specified it's 125MHz for ls1012a. So this patch is to add the
-limitation.
+Function dev_alloc_skb() will return a NULL pointer if there is no
+enough memory. However, in function WILC_WFI_mon_xmit(), its return
+value is used without validation. This may result in a bad memory access
+bug. This patch fixes the bug.
 
-Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci-of-esdhc.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/staging/wilc1000/linux_mon.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/mmc/host/sdhci-of-esdhc.c
-+++ b/drivers/mmc/host/sdhci-of-esdhc.c
-@@ -418,6 +418,20 @@ static void esdhc_of_set_clock(struct sd
- 	if (esdhc->vendor_ver < VENDOR_V_23)
- 		pre_div = 2;
+--- a/drivers/staging/wilc1000/linux_mon.c
++++ b/drivers/staging/wilc1000/linux_mon.c
+@@ -251,6 +251,8 @@ static netdev_tx_t WILC_WFI_mon_xmit(str
  
-+	/*
-+	 * Limit SD clock to 167MHz for ls1046a according to its datasheet
-+	 */
-+	if (clock > 167000000 &&
-+	    of_find_compatible_node(NULL, NULL, "fsl,ls1046a-esdhc"))
-+		clock = 167000000;
-+
-+	/*
-+	 * Limit SD clock to 125MHz for ls1012a according to its datasheet
-+	 */
-+	if (clock > 125000000 &&
-+	    of_find_compatible_node(NULL, NULL, "fsl,ls1012a-esdhc"))
-+		clock = 125000000;
-+
- 	/* Workaround to reduce the clock frequency for p1010 esdhc */
- 	if (of_find_compatible_node(NULL, NULL, "fsl,p1010-esdhc")) {
- 		if (clock > 20000000)
+ 	if (skb->data[0] == 0xc0 && (!(memcmp(broadcast, &skb->data[4], 6)))) {
+ 		skb2 = dev_alloc_skb(skb->len + sizeof(struct wilc_wfi_radiotap_cb_hdr));
++		if (!skb2)
++			return -ENOMEM;
+ 
+ 		memcpy(skb_put(skb2, skb->len), skb->data, skb->len);
+ 
