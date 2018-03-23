@@ -1,64 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752206AbeCWJrq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:47:46 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:37284 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752066AbeCWJro (ORCPT
+        id S1752266AbeCWJsh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:48:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60463 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751837AbeCWJsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:47:44 -0400
-X-Google-Smtp-Source: AG47ELtlxqNqxsngrgRJKcM8HFiwKCOHvGie2GSKMQrBNuHaIqCJyJxYGMmXsF6ZQ7QtU475fas1Fw==
-Date: Fri, 23 Mar 2018 10:47:40 +0100
-From: Juri Lelli <juri.lelli@gmail.com>
-To: b43-dev@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [QUESTION] Mainline support for B43_PHY_AC wifi cards
-Message-ID: <20180323094740.GA5942@localhost.localdomain>
+        Fri, 23 Mar 2018 05:48:36 -0400
+From: Colin King <colin.king@canonical.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: amd: make pointer da7219_dai_clk static
+Date: Fri, 23 Mar 2018 09:48:24 +0000
+Message-Id: <20180323094824.26028-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Colin Ian King <colin.king@canonical.com>
 
-I've got a Dell XPS 13 9343/0TM99H (BIOS A15 01/23/2018) mounting a
-BCM4352 802.11ac (rev 03) wireless card and so far I've been using it on
-Fedora with broadcom-wl package (which I believe installs Broadcom's STA
-driver?). It works good apart from occasional hiccups after suspend.
+The pointer da7219_dai_clk  is local to the source and does not need to
+be in global scope, so make it static.
 
-I'd like to get rid of that dependency (you can understand that it's
-particularly annoying when testing mainline kernels), but I found out
-that support for my card is BROKEN in mainline [1]. Just to see what
-happens, I forcibly enabled it witnessing that it indeed crashes like
-below as Kconfig warns. :)
+Cleans up sparse warning:
+sound/soc/amd/acp-da7219-max98357a.c:46:12: warning: symbol 'da7219_dai_clk'
+was not declared. Should it be static?
 
- bcma: bus0: Found chip with id 0x4352, rev 0x03 and package 0x00
- bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
- bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
- bcma: bus0: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
- bcma: bus0: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
- bcma: bus0: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
- bcma: Unsupported SPROM revision: 11
- bcma: bus0: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
- bcma: bus0: Using fallback SPROM failed (err -2)
- bcma: bus0: No SPROM available
- bcma: bus0: Bus registered
- b43-phy0: Broadcom 4352 WLAN found (core revision 42)
- b43-phy0: Found PHY: Analog 12, Type 11 (AC), Revision 1
- b43-phy0: Found Radio: Manuf 0x17F, ID 0x2069, Revision 4, Version 0
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/amd/acp-da7219-max98357a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So, question: is replacing my card the only way I can get rid of this
-downstream dependency? :(
-
-Thanks a lot.
-
-Best,
-
-- Juri
-
-[1] https://elixir.bootlin.com/linux/v4.16-rc6/source/drivers/net/wireless/broadcom/b43/Kconfig#L151
+diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
+index 99c6b5ce5c6c..af458bd36c72 100644
+--- a/sound/soc/amd/acp-da7219-max98357a.c
++++ b/sound/soc/amd/acp-da7219-max98357a.c
+@@ -43,7 +43,7 @@
+ #define DUAL_CHANNEL		2
+ 
+ static struct snd_soc_jack cz_jack;
+-struct clk *da7219_dai_clk;
++static struct clk *da7219_dai_clk;
+ 
+ static int cz_da7219_init(struct snd_soc_pcm_runtime *rtd)
+ {
+-- 
+2.15.1
