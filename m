@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvm4M3dsi+2eQV4H7xE1UEcuHjiUBxEJSLoY6KQ3G5fAHXw/w2sVvLtVxP7BhxgV/Qq68Yb
-ARC-Seal: i=1; a=rsa-sha256; t=1521800417; cv=none;
+X-Google-Smtp-Source: AG47ELsWAuA8ipjs17GcnzkeIxua5iaXXQH3UoMw7LBkfc2lPgtIG5vykxbeeKzRgXN2VOq/FahN
+ARC-Seal: i=1; a=rsa-sha256; t=1521800413; cv=none;
         d=google.com; s=arc-20160816;
-        b=SSYoz3g53XQ57Fn5Y41LQRmlrDW+uVS64ATW/QrgYLsCOb/YTBPyUKUE1jieWKHbqW
-         57rVH2J0mfsdwivL3tkUkVNyp17/+5cLEDhxPkg2AFgbtJx15eN4Or2c2xCo200tZ24Z
-         za84F1Ujvt5QdbWchvcjKv6fsj6EP0JR9ni08rT17N2iGV0DgaKqraCPRsnBNRBolTuM
-         /N/RHCn/e1atXditc3FZikxemC2Htp2oyBTEISp1nfj3+rXMFMNBxe998EwENkItW7BF
-         BttYZSw0Ro5OQ5Uh6q5d9t1fWXraRVsR7sNPG+eQ6PR4oclipbU/i+mzGiqv/FwCD0ab
-         Awjg==
+        b=bQMU/d2Ka+ccHSi+Gk1VBPsMjOJUkVwtuOL79e3sD4umqKzj5Vvr5BP0CLv/lagNbp
+         zQukc73VMhGMPwCNfytfUpm3vHEtuysn2JAh0w0takzgHRaVc7penqdfa/uuB/n/X9aZ
+         PFEE1zOl/IaMaVihy6sPoDiAV4IjTqDkTC6GmL3k1mHjebBe9Qvvc8D/IXVCeH+GKsM+
+         SYMcn5I0A1NNA+ekVcFUjN3Pnz/b5Il2h5Q0/cOAV7HWnyhZWtCFUN/1KIXPc7j3XSjG
+         P9eMgk9T0uvbqb9jJsSI6mXZxwGGyWYJYPfwkWPzzOig9Wo4YlzE2dPsY/bRE5YU6a0g
+         6/ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dZtfNHA3axgD657l1anmBemyfWGuWlyhNX1POjUA5XM=;
-        b=ec1n0WIHzoGKPysGg2tp/szoq0zpTzNSZzLoeaLO4PCUGcfheSZBfFiDDfX8FV1a8T
-         0QCzXRuMJ82xvBIKJGqlBcXlqm8OWK0029pzeU1lyhUixTFvp7fOaxZXOwfUa09DdeuS
-         Zg6pqxNiuedkGYisJsHZLM6TFFznMSVQ+v/MySBrGB5pxRUb6XNM1QMdx9cJbkqKBUj2
-         oxLw/kzuz24ShvDD/KxhZCHxWdhCMbJeQfi8o5kyclDiyruy9m2MEMhg49+Kg04IsGgE
-         42/x5IPfuHVVdGVctgwMiKTp6iG3ShfA9MuumKVH7T0vbxb9aPGIU13ucttkV0j8pIwA
-         /CJQ==
+        bh=sSWv9M+VdHXsbOBISqRl43O0ObHTvSMJBSDUpQhUZjE=;
+        b=AmkfACOfMMrdN5q5T++zXAKiV/f5n979SZA/Q9meMllEv0Omp8W3PMBXSGMiH/Ykcq
+         T+LljKdUMYiAZF0rbX/EBREBs5dL84/kLNq5QMMiSzdpN82CjrNXnRBKD98I/tBP3ETy
+         1EnCQQa7d4MvTWBO4d2xy547Py1kbnpE5M1zinaQQUU6IhffT2V5pzCb3UWnQYZOEcVw
+         qhnzWahGn0ATaukS/ceLWyk51zx3BQFaBraKot1vZkfVTjLfthNUhjUFeVetDu0UwAsl
+         Evzv+9y4UuTj/YBmc4FbporESAbKBiLlr5V1i7yrv6dLMijFa1BRF/APt7WRHidFHLga
+         BCTw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>,
 	Tomi Valkeinen <tomi.valkeinen@ti.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 35/47] sm501fb: dont return zero on failure path in sm501fb_start()
-Date: Fri, 23 Mar 2018 10:55:26 +0100
-Message-Id: <20180323094249.616033361@linuxfoundation.org>
+Subject: [PATCH 3.18 44/47] drm/omap: DMM: Check for DMM readiness after successful transaction commit
+Date: Fri, 23 Mar 2018 10:55:35 +0100
+Message-Id: <20180323094250.001533219@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722758223854090?=
-X-GMAIL-MSGID: =?utf-8?q?1595723393960601810?=
+X-GMAIL-THRID: =?utf-8?q?1595722059717859686?=
+X-GMAIL-MSGID: =?utf-8?q?1595723390074543779?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
 
-[ Upstream commit dc85e9a87420613b3129d5cc5ecd79c58351c546 ]
+[ Upstream commit b7ea6b286c4051e043f691781785e3c4672f014a ]
 
-If fbmem iomemory mapping failed, sm501fb_start() breaks off
-initialization, deallocates resources, but returns zero.
-As a result, double deallocation can happen in sm501fb_stop().
+Check the status of the DMM engine after it is reported that the
+transaction was completed as in rare cases the engine might not reached a
+working state.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+The wait_status() will print information in case the DMM is not reached the
+expected state and the dmm_txn_commit() will return with an error code to
+make sure that we are not continuing with a broken setup.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/sm501fb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/video/fbdev/sm501fb.c
-+++ b/drivers/video/fbdev/sm501fb.c
-@@ -1600,6 +1600,7 @@ static int sm501fb_start(struct sm501fb_
- 	info->fbmem = ioremap(res->start, resource_size(res));
- 	if (info->fbmem == NULL) {
- 		dev_err(dev, "cannot remap framebuffer\n");
-+		ret = -ENXIO;
- 		goto err_mem_res;
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -280,7 +280,12 @@ static int dmm_txn_commit(struct dmm_txn
+ 				msecs_to_jiffies(1)) <= 0) {
+ 			dev_err(dmm->dev, "timed out waiting for done\n");
+ 			ret = -ETIMEDOUT;
++			goto cleanup;
+ 		}
++
++		/* Check the engine status before continue */
++		ret = wait_status(engine, DMM_PATSTATUS_READY |
++				  DMM_PATSTATUS_VALID | DMM_PATSTATUS_DONE);
  	}
  
+ cleanup:
