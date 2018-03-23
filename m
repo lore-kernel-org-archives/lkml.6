@@ -1,155 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752944AbeCWNpV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 09:45:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59776 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752549AbeCWNpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:45:17 -0400
-Date: Fri, 23 Mar 2018 14:45:05 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Shakeel Butt <shakeelb@google.com>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH] mm, slab: eagerly delete inactive offlined SLABs
-Message-ID: <20180323134505.GU23100@dhcp22.suse.cz>
-References: <20180321224301.142879-1-shakeelb@google.com>
+        id S1753129AbeCWNqZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 09:46:25 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:41738 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753102AbeCWNqT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 09:46:19 -0400
+X-Google-Smtp-Source: AG47ELsnmgBIsGKxPlELJtODOYWS/BUnaBUIIftrpKtoXHYEBFKNyosafhjIhqfy73rXlH2aapDiZkgpwt92Zl6sg9k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180321224301.142879-1-shakeelb@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1521812598.3406.8.camel@pengutronix.de>
+References: <20180323130455.11470-1-brgl@bgdev.pl> <20180323130455.11470-2-brgl@bgdev.pl>
+ <1521812598.3406.8.camel@pengutronix.de>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Fri, 23 Mar 2018 14:46:18 +0100
+Message-ID: <CAMpxmJUOUvBH6bArXDn1TkS0ZXttD2CCk-cMw0TH52FoRNRdmA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/8] reset: modify the way reset lookup works for board files
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc Vladimir]
+2018-03-23 14:43 GMT+01:00 Philipp Zabel <p.zabel@pengutronix.de>:
+> On Fri, 2018-03-23 at 14:04 +0100, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
+>> introduced reset control lookup mechanism for boards that still use
+>> board files.
+>>
+>> The routine used to register lookup entries takes the corresponding
+>> reset_controlled_dev structure as argument.
+>>
+>> It's been determined however that for the first user of this new
+>> interface - davinci psc driver - it will be easier to register the
+>> lookup entries using the reset controller device name.
+>>
+>> This patch changes the way lookup entries are added.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>  drivers/reset/core.c             | 38 +++++++++++++++++++++++++++++++-------
+>>  include/linux/reset-controller.h | 14 ++++++++------
+>>  2 files changed, 39 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+>> index 06fa4907afc4..f4a29c046995 100644
+>> --- a/drivers/reset/core.c
+>> +++ b/drivers/reset/core.c
+>> @@ -153,12 +153,10 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+>>
+>>  /**
+>>   * reset_controller_add_lookup - register a set of lookup entries
+>> - * @rcdev: initialized reset controller device owning the reset line
+>>   * @lookup: array of reset lookup entries
+>>   * @num_entries: number of entries in the lookup array
+>>   */
+>> -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+>> -                              struct reset_control_lookup *lookup,
+>> +void reset_controller_add_lookup(struct reset_control_lookup *lookup,
+>>                                unsigned int num_entries)
+>>  {
+>>       struct reset_control_lookup *entry;
+>> @@ -168,13 +166,12 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+>>       for (i = 0; i < num_entries; i++) {
+>>               entry = &lookup[i];
+>>
+>> -             if (!entry->dev_id) {
+>> -                     pr_warn("%s(): reset lookup entry has no dev_id, skipping\n",
+>> +             if (!entry->dev_id || !entry->provider) {
+>> +                     pr_warn("%s(): reset lookup entry badly specified, skipping\n",
+>>                               __func__);
+>>                       continue;
+>>               }
+>>
+>> -             entry->rcdev = rcdev;
+>>               list_add_tail(&entry->list, &reset_lookup_list);
+>>       }
+>>       mutex_unlock(&reset_lookup_mutex);
+>> @@ -526,11 +523,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+>>  }
+>>  EXPORT_SYMBOL_GPL(__of_reset_control_get);
+>>
+>> +static struct reset_controller_dev *
+>> +__reset_controller_by_name(const char *name)
+>> +{
+>> +     struct reset_controller_dev *rcdev;
+>> +
+>> +     lockdep_assert_held(&reset_list_mutex);
+>> +
+>> +     list_for_each_entry(rcdev, &reset_controller_list, list) {
+>> +             if (!rcdev->dev)
+>> +                     continue;
+>> +
+>> +             if (!strcmp(name, dev_name(rcdev->dev)))
+>> +                     return rcdev;
+>> +     }
+>> +
+>> +     return NULL;
+>> +}
+>> +
+>>  static struct reset_control *
+>>  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>>                               bool shared, bool optional)
+>>  {
+>>       const struct reset_control_lookup *lookup;
+>> +     struct reset_controller_dev *rcdev;
+>>       const char *dev_id = dev_name(dev);
+>>       struct reset_control *rstc = NULL;
+>>
+>> @@ -547,7 +563,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>>                   ((con_id && lookup->con_id) &&
+>>                    !strcmp(con_id, lookup->con_id))) {
+>>                       mutex_lock(&reset_list_mutex);
+>> -                     rstc = __reset_control_get_internal(lookup->rcdev,
+>> +                     rcdev = __reset_controller_by_name(lookup->provider);
+>> +                     if (!rcdev) {
+>> +                             mutex_unlock(&reset_list_mutex);
+>> +                             mutex_unlock(&reset_lookup_mutex);
+>> +                             /* Reset provider may not be ready yet. */
+>> +                             return -EPROBE_DEFER;
+>
+> Thanks, I've applied this patch to reset/next with the following change:
+>
+> -                               return -EPROBE_DEFER;
+> +                               return ERR_PTR(-EPROBE_DEFER);
+>
+> regards
+> Philipp
 
-On Wed 21-03-18 15:43:01, Shakeel Butt wrote:
-> With kmem cgroup support, high memcgs churn can leave behind a lot of
-> empty kmem_caches. Usually such kmem_caches will be destroyed when the
-> corresponding memcg gets released but the memcg release can be
-> arbitrarily delayed. These empty kmem_caches wastes cache_reaper's time.
-> So, the reaper should destroy such empty offlined kmem_caches.
-> 
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> ---
->  mm/slab.c        | 18 ++++++++++++++++--
->  mm/slab.h        | 15 +++++++++++++++
->  mm/slab_common.c |  2 +-
->  3 files changed, 32 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/slab.c b/mm/slab.c
-> index 66f2db98f026..9c174a799ffb 100644
-> --- a/mm/slab.c
-> +++ b/mm/slab.c
-> @@ -4004,6 +4004,16 @@ static void drain_array(struct kmem_cache *cachep, struct kmem_cache_node *n,
->  	slabs_destroy(cachep, &list);
->  }
->  
-> +static bool is_slab_active(struct kmem_cache *cachep)
-> +{
-> +	int node;
-> +	struct kmem_cache_node *n;
-> +
-> +	for_each_kmem_cache_node(cachep, node, n)
-> +		if (READ_ONCE(n->total_slabs) - n->free_slabs)
-> +			return true;
-> +	return false;
-> +}
->  /**
->   * cache_reap - Reclaim memory from caches.
->   * @w: work descriptor
-> @@ -4018,7 +4028,7 @@ static void drain_array(struct kmem_cache *cachep, struct kmem_cache_node *n,
->   */
->  static void cache_reap(struct work_struct *w)
->  {
-> -	struct kmem_cache *searchp;
-> +	struct kmem_cache *searchp, *tmp;
->  	struct kmem_cache_node *n;
->  	int node = numa_mem_id();
->  	struct delayed_work *work = to_delayed_work(w);
-> @@ -4027,7 +4037,7 @@ static void cache_reap(struct work_struct *w)
->  		/* Give up. Setup the next iteration. */
->  		goto out;
->  
-> -	list_for_each_entry(searchp, &slab_caches, list) {
-> +	list_for_each_entry_safe(searchp, tmp, &slab_caches, list) {
->  		check_irq_on();
->  
->  		/*
-> @@ -4061,6 +4071,10 @@ static void cache_reap(struct work_struct *w)
->  				5 * searchp->num - 1) / (5 * searchp->num));
->  			STATS_ADD_REAPED(searchp, freed);
->  		}
-> +
-> +		/* Eagerly delete inactive kmem_cache of an offlined memcg. */
-> +		if (!is_memcg_online(searchp) && !is_slab_active(searchp))
-> +			shutdown_cache(searchp);
->  next:
->  		cond_resched();
->  	}
-> diff --git a/mm/slab.h b/mm/slab.h
-> index e8981e811c45..e911b10efae7 100644
-> --- a/mm/slab.h
-> +++ b/mm/slab.h
-> @@ -166,6 +166,7 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
->  			      SLAB_TEMPORARY | \
->  			      SLAB_ACCOUNT)
->  
-> +int shutdown_cache(struct kmem_cache *s);
->  int __kmem_cache_shutdown(struct kmem_cache *);
->  void __kmem_cache_release(struct kmem_cache *);
->  int __kmem_cache_shrink(struct kmem_cache *);
-> @@ -290,6 +291,15 @@ static __always_inline void memcg_uncharge_slab(struct page *page, int order,
->  	memcg_kmem_uncharge(page, order);
->  }
->  
-> +static __always_inline bool is_memcg_online(struct kmem_cache *s)
-> +{
-> +	if (!memcg_kmem_enabled())
-> +		return true;
-> +	if (is_root_cache(s))
-> +		return true;
-> +	return mem_cgroup_online(s->memcg_params.memcg);
-> +}
-> +
->  extern void slab_init_memcg_params(struct kmem_cache *);
->  extern void memcg_link_cache(struct kmem_cache *s);
->  extern void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
-> @@ -342,6 +352,11 @@ static inline void memcg_uncharge_slab(struct page *page, int order,
->  {
->  }
->  
-> +static inline bool is_memcg_online(struct kmem_cache *s)
-> +{
-> +	return true;
-> +}
-> +
->  static inline void slab_init_memcg_params(struct kmem_cache *s)
->  {
->  }
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 61ab2ca8bea7..d197e878636b 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -573,7 +573,7 @@ static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work)
->  	}
->  }
->  
-> -static int shutdown_cache(struct kmem_cache *s)
-> +int shutdown_cache(struct kmem_cache *s)
->  {
->  	/* free asan quarantined objects */
->  	kasan_cache_shutdown(s);
-> -- 
-> 2.17.0.rc0.231.g781580f067-goog
+Oops, thanks for spotting that.
 
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+Bart
