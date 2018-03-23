@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803786-2-14509828592657130413
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803776-2-11158229115411612189
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803786; b=nBfeS3dgXQgUaWfmCf8aHPVAWRCA3fy4D/9bJFoNtswLnnt
-    tIoa3IZo1qU+krjltFNBWKW+suKRTCTZtNF+1cYg75zIFXFZb5IpEc47ffjzKiPd
-    prRziicf0yu17j+94RS5CDDSwlHj1FYrQKkLnLV3n8r3QA5sW0nZQFUkpqrUwDpy
-    0iRYVcr9UsZd4x6gI3l/D9qpN2Jlwxyd3Pf//WeSdVN1GqsN3Vhix2zNl+fvcg0y
-    ZxpUICQO6xVKIDJMDIBJAzUqhjw7Q2BWtfWqYl2AFHqWAXh+ruJIJKMwW74w/QP0
-    LL6kG2Yi3FckuGmct49alLU9bhaqdm03TkaGhzQ==
+    t=1521803776; b=qrXPMcSqebQVEVnoaRNyQCzVVPx3qgHEuo2xoRgNxuSD5Wa
+    boe2faYyiEE239pvmCwPX7/RWE5hoaCDsi4QnmmQtsv3NnSgvgT7vaHgI8oqsCGa
+    SKiLzn8ly2e6Rwr6irf6IVrpCdxBN+i3syo1BFbak20r1EDzU5AkUfHioETKZB/H
+    u1wirxXwIkOawfoUjfP/HMfXKfMaxq9RYUP+yweW75TYE6bxsKo4s5sX9UBr7nNH
+    b1Dht+a5EPGxWpUslG7iRfMIzep6aza66FnTIgvFeabGA2ck1TjEsVb2gg2gev7v
+    tt1dpuDdlT24c3a1QHgTmJwtWFGgWfAMf/mAHnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803786; bh=cFY0cC94q/bdegjxcK0XAVp+uT
-    X049naUN/KozEBRQE=; b=Fs87sOvGnDRnLrpICSohZchsRycQvk6mjim2Ozd9Xt
-    OKISMRRtkINdp77/L/heA9llBjzg3lD6bCq0K5Q4DUhtMz7+6hgUgus844WEHlWv
-    Y6dAVMqlh9OJE3iPV1xxNzPBxUEn4eF4z5M1Wi+ssuXih+PL09LqzT0pm3bi5FOo
-    3U4v+QWyFiid5Cphe/an/flBu0E4c15BDGTqbOcQC8oR4RqXilYNGqrkQWcF0d3/
-    Wpcfi2ayToTz8nH8IIDBNOOvEbkQw5I2KUHUUdJWxN6wGwQoUX3H+JxbDh4N9SzN
-    Msl48sVNCJ7XiPIJ+ygXIDZFGEKweJYJQHPk3Ele+nXA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803776; bh=yaGZrTepnydE5JcqnflQdmfMWC
+    +J22YpmTNlljoo2wI=; b=a7NnMxtSAkLNcCdUN9kVsI4Wk/+Ez7YwTRtTxBmpVu
+    ZDHwepnROc68FJrQobi9GPXugksRUNs55fhFxMBSGBCno30IUHbCu/9oyO0jaqx6
+    7y1kb2GnRLhyCe84pUpkTL4dPxUBPE4eAehTkm1r6FFHrgWktKnS+ROplS72cUVi
+    SgTfZvMa2eGTxyqGHm+oeGx8osaS2QPvk6/w/o1AJ4dRSxGeimZOPtMvG2q67mfF
+    gVJ+QxLzHbq0+WCIlLc0nC1yrDJn7WvMnQuvYIOfjqnARbmHk69rGzssr7xqKXWt
+    /5cN4eG6bwikXn3DMJ5tqicJMCnimSsvJ21UDGRrz+/Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932530AbeCWKJl (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:09:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42230 "EHLO
+        id S932483AbeCWKJs (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:09:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42274 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932483AbeCWKJk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:40 -0400
+        with ESMTP id S932343AbeCWKJr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dean Jenkins <Dean_Jenkins@mentor.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Yuval Mintz <Yuval.Mintz@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 107/177] Bluetooth: hci_ldisc: Add protocol check to hci_uart_tx_wakeup()
-Date: Fri, 23 Mar 2018 10:53:55 +0100
-Message-Id: <20180323094209.999581866@linuxfoundation.org>
+Subject: [PATCH 4.9 109/177] qed: Unlock on error in qed_vf_pf_acquire()
+Date: Fri, 23 Mar 2018 10:53:57 +0100
+Message-Id: <20180323094210.087859774@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,49 +83,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dean Jenkins <Dean_Jenkins@mentor.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 2d6f1da168e1d62c47f7d50135ac4cbd8411dcb1 ]
+[ Upstream commit 66117a9d9a8ca948680d6554769ef9e88f936954 ]
 
-Before attempting to schedule a work-item onto hu->write_work in
-hci_uart_tx_wakeup(), check that the Data Link protocol layer is
-still bound to the HCI UART driver.
+My static checker complains that we're holding a mutex on this error
+path.  Let's goto exit instead of returning directly.
 
-Failure to perform this protocol check causes a race condition between
-the work queue hu->write_work running hci_uart_write_work() and the
-Data Link protocol layer being unbound (closed) in hci_uart_tty_close().
-
-Note hci_uart_tty_close() does have a "cancel_work_sync(&hu->write_work)"
-but it is ineffective because it cannot prevent work-items being added
-to hu->write_work after cancel_work_sync() has run.
-
-Therefore, add a check for HCI_UART_PROTO_READY into hci_uart_tx_wakeup()
-which prevents scheduling of the work queue when HCI_UART_PROTO_READY
-is in the clear state. However, note a small race condition remains
-because the hci_uart_tx_wakeup() thread can run in parallel with the
-hci_uart_tty_close() thread so it is possible that a schedule of
-hu->write_work can occur when HCI_UART_PROTO_READY is cleared. A complete
-solution needs locking of the threads which is implemented in a future
-commit.
-
-Signed-off-by: Dean Jenkins <Dean_Jenkins@mentor.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Fixes: b0bccb69eba3 ("qed: Change locking scheme for VF channel")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Yuval Mintz <Yuval.Mintz@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/hci_ldisc.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_vf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -125,6 +125,9 @@ static inline struct sk_buff *hci_uart_d
+--- a/drivers/net/ethernet/qlogic/qed/qed_vf.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_vf.c
+@@ -204,7 +204,7 @@ static int qed_vf_pf_acquire(struct qed_
+ 		/* send acquire request */
+ 		rc = qed_send_msg2pf(p_hwfn, &resp->hdr.status, sizeof(*resp));
+ 		if (rc)
+-			return rc;
++			goto exit;
  
- int hci_uart_tx_wakeup(struct hci_uart *hu)
- {
-+	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
-+		return 0;
-+
- 	if (test_and_set_bit(HCI_UART_SENDING, &hu->tx_state)) {
- 		set_bit(HCI_UART_TX_WAKEUP, &hu->tx_state);
- 		return 0;
+ 		/* copy acquire response from buffer to p_hwfn */
+ 		memcpy(&p_iov->acquire_resp, resp, sizeof(p_iov->acquire_resp));
