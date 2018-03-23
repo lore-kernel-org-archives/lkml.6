@@ -1,52 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeCWTuV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 15:50:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45974 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeCWTuS (ORCPT
+        id S1752488AbeCWTul (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:50:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60841 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751864AbeCWTuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 15:50:18 -0400
-Date: Fri, 23 Mar 2018 12:50:16 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>,
-        =?ISO-8859-1?Q?Am=C3=A9rico?= Wang <xiyou.wangcong@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 0/3] [RFC] init, tracing: Add initcall trace events
-Message-Id: <20180323125016.270ea1558fe2499b1a12bfd7@linux-foundation.org>
-In-Reply-To: <20180323150241.878778199@goodmis.org>
-References: <20180323150241.878778199@goodmis.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 23 Mar 2018 15:50:39 -0400
+Date: Fri, 23 Mar 2018 12:50:12 -0700
+From: tip-bot for Christoph Hellwig <tipbot@zytor.com>
+Message-ID: <tip-f3c39d51043dcee5dd4d51dffcfe9ce01a263582@git.kernel.org>
+Cc: thomas.lendacky@amd.com, konrad.wilk@oracle.com, mulix@mulix.org,
+        dwmw2@infradead.org, hch@lst.de, peterz@infradead.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        joro@8bytes.org, mingo@kernel.org, torvalds@linux-foundation.org,
+        jdmason@kudzu.us
+Reply-To: peterz@infradead.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, joro@8bytes.org,
+        mingo@kernel.org, torvalds@linux-foundation.org, jdmason@kudzu.us,
+        thomas.lendacky@amd.com, konrad.wilk@oracle.com, mulix@mulix.org,
+        dwmw2@infradead.org, hch@lst.de
+In-Reply-To: <20180319103826.12853-6-hch@lst.de>
+References: <20180319103826.12853-6-hch@lst.de>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/dma] x86/dma/amd_gart: Look at dev->coherent_dma_mask
+ instead of GFP_DMA
+Git-Commit-ID: f3c39d51043dcee5dd4d51dffcfe9ce01a263582
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Mar 2018 11:02:41 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
+Commit-ID:  f3c39d51043dcee5dd4d51dffcfe9ce01a263582
+Gitweb:     https://git.kernel.org/tip/f3c39d51043dcee5dd4d51dffcfe9ce01a263582
+Author:     Christoph Hellwig <hch@lst.de>
+AuthorDate: Mon, 19 Mar 2018 11:38:17 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 20 Mar 2018 10:01:57 +0100
 
-> A while ago we had a boot tracer. But it was eventually removed:
->  commit 30dbb20e68e6f ("tracing: Remove boot tracer").
-> 
-> The rational was because there is already a initcall_debug boot option
-> that causes printk()s of all the initcall functions.
+x86/dma/amd_gart: Look at dev->coherent_dma_mask instead of GFP_DMA
 
-"rationale" :)
+We want to phase out looking at the magic GFP_DMA flag in the DMA mapping
+routines, so switch the gart driver to use the dev->coherent_dma_mask
+instead, which is used to select the GFP_DMA flag in the caller.
 
-> The problem with the initcall_debug option is that printk() is awfully slow,
-> and makes it difficult to see the real impact of initcalls. Mainly because
-> a single printk() is usually slower than most initcall functions.
+Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Jon Mason <jdmason@kudzu.us>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Muli Ben-Yehuda <mulix@mulix.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: iommu@lists.linux-foundation.org
+Link: http://lkml.kernel.org/r/20180319103826.12853-6-hch@lst.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/amd_gart_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Not understanding this.  We do it correctly:
-
-	calltime = ktime_get();
-	ret = fn();
-	rettime = ktime_get();
-
-so the displayed initcall timing is independent of the printk()
-execution time?
+diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
+index 52e3abcf3e70..79ac6caaaabb 100644
+--- a/arch/x86/kernel/amd_gart_64.c
++++ b/arch/x86/kernel/amd_gart_64.c
+@@ -484,7 +484,7 @@ gart_alloc_coherent(struct device *dev, size_t size, dma_addr_t *dma_addr,
+ 	unsigned long align_mask;
+ 	struct page *page;
+ 
+-	if (force_iommu && !(flag & GFP_DMA)) {
++	if (force_iommu && dev->coherent_dma_mask > DMA_BIT_MASK(24)) {
+ 		flag &= ~(__GFP_DMA | __GFP_HIGHMEM | __GFP_DMA32);
+ 		page = alloc_pages(flag | __GFP_ZERO, get_order(size));
+ 		if (!page)
