@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802383-2-3316154605463487434
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802375-2-4060585508254533743
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802382; b=m9wf0liWp6ilW23LQ5mPU0u1PN6UPbELycf7LkNu+k4TmNr
-    c4CFL4yB7hHm/pruEOicxRdF6ve27VQ5w94cXabzfn+slL2J8iXbUbRYk2P13oEF
-    r73F8CCeSnn0/ZGYi1inr+s/uwFG/0R48PBR1b4UW5U5X9er6ofz+uTo05s/I+Fg
-    qeDeEplcL4uMk+bxVCMnAN0lR4RGPQM8AJhfJT3hH4LboZ8v210g5AcGLU6B/qVF
-    Z21yh2/3OU2Y4WKhj2pw6STQC3CQ0rH0gpke2mY//dyK6T8da5BIttnuxjdv+X6A
-    uZPhgCdVKHaGXs3r30/KdtB385XXiwi84YViHXQ==
+    t=1521802374; b=l6uvMsOytVorHDC50rqWiNP5DsaT0fD0fnZBVkcwrUsUA0N
+    YGzxuAUXa30aGxUAf/mPX5d2thtcq5eGb2y2sqrQcpFtFe5NPZ9aOhJgzYJurK/K
+    bMoUbMWrVM3AiCzO1QX8gBxOa7U8gIF5ebAw/M4CKCxR41XkCQbzWCCULqatow2i
+    gi7c2+2vp6+yLLnVQZI2BZSy6g1+IOfToujqS0Gypla/VZ52MouEUZ+vv1vZgjzQ
+    cCUWZC0HaeZhLpmQUB0+fv5lR0RSWjwi2GN7D1QtOPZrqVAZ5hKt0kIMuMka7lMD
+    Xpg5PWHjD6jRMEVNiX3vL7yBs11R05V2e7q6wEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802382; bh=SDQkM/8rcCDwU4Id78TArb5DLu
-    A0vBUbY5DC0QmTcdg=; b=kDR+9M2dT+eP4kvePr5u3beyfNKmX+zTrc0ftKjp5T
-    M//QkhVifjX0Xel9wo1RG7EnMAPMSkD2a0IsYLfxF+VCLeTUlUok6SKCuvau0o9t
-    oLIqhEefd93MySTUMYIyBSQrxbOlykxvwA+353W7k9OCUBzCnE8nTE5WCVGgiY7U
-    h7HSQtgj3wTfE6vBsv/MMUPOb3bZQ4qZaoTzm46brT+a7iK5O9ms48CSv4/O45ba
-    QEpscmrzmqujJ4wQOLzR36QC8ETpGYDBVM9jLRIKnzzBztGeFtIAF3ooTdfcYss+
-    UCJ7NcW7ZDJpvV1xBbeProHkKauNryY3+V33CXYNl0Uw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521802374; bh=YfYXgSBYn76hOaymaB+2WDBO3U
+    0IdiTiLkz7A7bQd6Q=; b=vjSPsctthWO81gnr0TDY5NfKxZDO60O4Nyk5xqp4+g
+    hFifE51Lroy0u8ncZSXvK69MvuQgfFU9Ndvg4/8efZKywgLuJwOehIzf/E6ZoXow
+    fX8spA9ex/USIDRgxeNz/tIwUyqxJ0kYQV1IXaq48JarkAu9uD+FdfjV04Ghxs0b
+    EMCkZ4V8fOua1B9uiC8rPcFo6GMghl9yWIyKJdwDONCyBeBG3/lKM8WiADXL+rt6
+    bS7MxOVCpswKHH5x+T+KaT1byNrejNhmkFd85gfq+J0a6dA9yx7ydpBKIpujozpz
+    KMqSt7TDLpbvTaH1AV7U6JgEb0ZH53vpnuT5y4AgYyhQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755930AbeCWKNv (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:13:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44986 "EHLO
+        id S1755946AbeCWKN7 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:13:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45014 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755901AbeCWKNt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:49 -0400
+        with ESMTP id S1755901AbeCWKN4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
-        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 26/97] md/raid10: wait up frozen array in handle_write_completed
-Date: Fri, 23 Mar 2018 10:54:13 +0100
-Message-Id: <20180323094159.090940331@linuxfoundation.org>
+Subject: [PATCH 4.4 28/97] tcp: remove poll() flakes with FastOpen
+Date: Fri, 23 Mar 2018 10:54:15 +0100
+Message-Id: <20180323094159.200488589@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -82,39 +83,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guoqing Jiang <gqjiang@suse.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit cf25ae78fc50010f66b9be945017796da34c434d ]
+[ Upstream commit 0f9fa831aecfc297b7b45d4f046759bcefcf87f0 ]
 
-Since nr_queued is changed, we need to call wake_up here
-if the array is already frozen and waiting for condition
-"nr_pending == nr_queued + extra" to be true.
+When using TCP FastOpen for an active session, we send one wakeup event
+from tcp_finish_connect(), right before the data eventually contained in
+the received SYNACK is queued to sk->sk_receive_queue.
 
-And commit 824e47daddbf ("RAID1: avoid unnecessary spin
-locks in I/O barrier code") which has already added the
-wake_up for raid1.
+This means that depending on machine load or luck, poll() users
+might receive POLLOUT events instead of POLLIN|POLLOUT
 
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+To fix this, we need to move the call to sk->sk_state_change()
+after the (optional) call to tcp_rcv_fastopen_synack()
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid10.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/ipv4/tcp_input.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -2698,6 +2698,11 @@ static void handle_write_completed(struc
- 			list_add(&r10_bio->retry_list, &conf->bio_end_io_list);
- 			conf->nr_queued++;
- 			spin_unlock_irq(&conf->device_lock);
-+			/*
-+			 * In case freeze_array() is waiting for condition
-+			 * nr_pending == nr_queued + extra to be true.
-+			 */
-+			wake_up(&conf->wait_barrier);
- 			md_wakeup_thread(conf->mddev->thread);
- 		} else {
- 			if (test_bit(R10BIO_WriteError,
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -5464,10 +5464,6 @@ void tcp_finish_connect(struct sock *sk,
+ 	else
+ 		tp->pred_flags = 0;
+ 
+-	if (!sock_flag(sk, SOCK_DEAD)) {
+-		sk->sk_state_change(sk);
+-		sk_wake_async(sk, SOCK_WAKE_IO, POLL_OUT);
+-	}
+ }
+ 
+ static bool tcp_rcv_fastopen_synack(struct sock *sk, struct sk_buff *synack,
+@@ -5531,6 +5527,7 @@ static int tcp_rcv_synsent_state_process
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct tcp_fastopen_cookie foc = { .len = -1 };
+ 	int saved_clamp = tp->rx_opt.mss_clamp;
++	bool fastopen_fail;
+ 
+ 	tcp_parse_options(skb, &tp->rx_opt, 0, &foc);
+ 	if (tp->rx_opt.saw_tstamp && tp->rx_opt.rcv_tsecr)
+@@ -5633,10 +5630,15 @@ static int tcp_rcv_synsent_state_process
+ 
+ 		tcp_finish_connect(sk, skb);
+ 
+-		if ((tp->syn_fastopen || tp->syn_data) &&
+-		    tcp_rcv_fastopen_synack(sk, skb, &foc))
+-			return -1;
++		fastopen_fail = (tp->syn_fastopen || tp->syn_data) &&
++				tcp_rcv_fastopen_synack(sk, skb, &foc);
+ 
++		if (!sock_flag(sk, SOCK_DEAD)) {
++			sk->sk_state_change(sk);
++			sk_wake_async(sk, SOCK_WAKE_IO, POLL_OUT);
++		}
++		if (fastopen_fail)
++			return -1;
+ 		if (sk->sk_write_pending ||
+ 		    icsk->icsk_accept_queue.rskq_defer_accept ||
+ 		    icsk->icsk_ack.pingpong) {
