@@ -1,25 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752035AbeCWOOb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:14:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51535 "EHLO mail.bootlin.com"
+        id S1752069AbeCWOPv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:15:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751861AbeCWOOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:14:30 -0400
-Date: Fri, 23 Mar 2018 15:14:27 +0100
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Marek Vasut <marex@denx.de>, Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jagdish Gediya <jagdish.gediya@nxp.com>,
-        OuYang ZhiZhong <ouyzz@yealink.com>
-Subject: [GIT PULL] mtd: fixes for 4.16-rc7
-Message-ID: <20180323151427.31229231@bbrezillon>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751625AbeCWOPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 10:15:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A65B21839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 23 Mar 2018 10:15:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexei Starovoitov <ast@fb.com>
+Subject: Re: [PATCH] mm, vmscan, tracing: Use pointer to reclaim_stat struct
+ in trace event
+Message-ID: <20180323101548.1f091c93@gandalf.local.home>
+In-Reply-To: <20180323135225.GV23100@dhcp22.suse.cz>
+References: <20180322121003.4177af15@gandalf.local.home>
+        <20180323134200.GT23100@dhcp22.suse.cz>
+        <20180323094753.760b2c86@gandalf.local.home>
+        <20180323135225.GV23100@dhcp22.suse.cz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -27,46 +33,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+On Fri, 23 Mar 2018 14:52:25 +0100
+Michal Hocko <mhocko@kernel.org> wrote:
 
-Here is a fixes PR for 4.16-rc7.
+> On Fri 23-03-18 09:47:53, Steven Rostedt wrote:
+> > 
+> > The one solution is to pull the tracing file
+> > include/trace/events/vmscan.h into mm/ and have a local header to store
+> > the reclaim_stat structure that both vmscan.h and vmscan.c can
+> > reference.  
+> 
+> I guess we can live with the public definition as well.
+> 
 
-Regards,
+Yes, that would be easier. Thanks!
 
-Boris
+Then if Andrey's patches are not pulled, then this patch will be good
+to go.
 
-The following changes since commit c698ca5278934c0ae32297a8725ced2e27585d7f:
-
-  Linux 4.16-rc6 (2018-03-18 17:48:42 -0700)
-
-are available in the git repository at:
-
-  git://git.infradead.org/linux-mtd.git tags/mtd/fixes-for-4.16-rc7
-
-for you to fetch changes up to 6b00c35138b404be98b85f4a703be594cbed501c:
-
-  mtd: nand: fsl_ifc: Read ECCSTAT0 and ECCSTAT1 registers for IFC 2.0 (2018-03-21 10:22:28 +0100)
-
-----------------------------------------------------------------
-* Fix several problems in the fsl_ifc NAND controller driver
-* Fix misuse of mtd_ooblayout_ecc() in mtdchar.c
-
-----------------------------------------------------------------
-Jagdish Gediya (3):
-      mtd: nand: fsl_ifc: Fix nand waitfunc return value
-      mtd: nand: fsl_ifc: Fix eccstat array overflow for IFC ver >= 2.0.0
-      mtd: nand: fsl_ifc: Read ECCSTAT0 and ECCSTAT1 registers for IFC 2.0
-
-OuYang ZhiZhong (1):
-      mtdchar: fix usage of mtd_ooblayout_ecc()
-
- drivers/mtd/mtdchar.c           |  4 ++--
- drivers/mtd/nand/fsl_ifc_nand.c | 32 +++++++++++++-------------------
- include/linux/fsl_ifc.h         |  6 +-----
- 3 files changed, 16 insertions(+), 26 deletions(-)
-
-
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- Steve
