@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752354AbeCWRrA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:47:00 -0400
-Received: from mga14.intel.com ([192.55.52.115]:6724 "EHLO mga14.intel.com"
+        id S1752481AbeCWRrL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:47:11 -0400
+Received: from mga01.intel.com ([192.55.52.88]:36679 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752176AbeCWRqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:46:53 -0400
+        id S1751657AbeCWRrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 13:47:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,351,1517904000";
-   d="scan'208";a="210791182"
-Subject: [PATCH 03/11] x86/mm: introduce "default" kernel PTE mask
+   d="scan'208";a="30724175"
+Subject: [PATCH 09/11] x86/pti: enable global pages for shared areas
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
         aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
         keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
         namit@vmware.com
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 23 Mar 2018 10:44:52 -0700
+Date: Fri, 23 Mar 2018 10:45:00 -0700
 References: <20180323174447.55F35636@viggo.jf.intel.com>
 In-Reply-To: <20180323174447.55F35636@viggo.jf.intel.com>
-Message-Id: <20180323174452.8617EBB0@viggo.jf.intel.com>
+Message-Id: <20180323174500.64BD3D36@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,25 +29,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-The __PAGE_KERNEL_* page permissions are "raw".  They contain bits
-that may or may not be supported on the current processor.  They need
-to be filtered by a mask (currently __supported_pte_mask) to turn them
-into a value that we can actually set in a PTE.
+The entry/exit text and cpu_entry_area are mapped into userspace and
+the kernel.  But, they are not _PAGE_GLOBAL.  This creates unnecessary
+TLB misses.
 
-These __PAGE_KERNEL_* values all contain _PAGE_GLOBAL.  But, with PTI,
-we want to be able to support _PAGE_GLOBAL (have the bit set in
-__supported_pte_mask) but not have it appear in any of these masks by
-default.
-
-This patch creates a new mask, __default_kernel_pte_mask, and applies
-it when creating all of the PAGE_KERNEL_* masks.  This makes
-PAGE_KERNEL_* safe to use anywhere (they only contain supported bits).
-It also ensures that PAGE_KERNEL_* contains _PAGE_GLOBAL on PTI=n
-kernels but clears _PAGE_GLOBAL when PTI=y.
-
-We also make __default_kernel_pte_mask a non-GPL exported symbol
-because there are plenty of driver-available interfaces that take
-PAGE_KERNEL_* permissions.
+Add the _PAGE_GLOBAL flag for these areas.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
@@ -60,107 +46,55 @@ Cc: x86@kernel.org
 Cc: Nadav Amit <namit@vmware.com>
 ---
 
- b/arch/x86/include/asm/pgtable_types.h |   27 +++++++++++++++------------
- b/arch/x86/mm/init.c                   |    6 ++++++
- b/arch/x86/mm/init_32.c                |    8 +++++++-
- b/arch/x86/mm/init_64.c                |    5 +++++
- 4 files changed, 33 insertions(+), 13 deletions(-)
+ b/arch/x86/mm/cpu_entry_area.c |   10 +++++++++-
+ b/arch/x86/mm/pti.c            |    9 ++++++++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-diff -puN arch/x86/include/asm/pgtable_types.h~KERN-pgprot-default arch/x86/include/asm/pgtable_types.h
---- a/arch/x86/include/asm/pgtable_types.h~KERN-pgprot-default	2018-03-21 16:31:57.339192320 -0700
-+++ b/arch/x86/include/asm/pgtable_types.h	2018-03-21 16:31:57.348192320 -0700
-@@ -196,19 +196,21 @@ enum page_cache_mode {
- #define __PAGE_KERNEL_NOENC	(__PAGE_KERNEL)
- #define __PAGE_KERNEL_NOENC_WP	(__PAGE_KERNEL_WP)
+diff -puN arch/x86/mm/cpu_entry_area.c~kpti-why-no-global arch/x86/mm/cpu_entry_area.c
+--- a/arch/x86/mm/cpu_entry_area.c~kpti-why-no-global	2018-03-21 16:32:00.797192311 -0700
++++ b/arch/x86/mm/cpu_entry_area.c	2018-03-21 16:32:00.802192311 -0700
+@@ -27,8 +27,16 @@ EXPORT_SYMBOL(get_cpu_entry_area);
+ void cea_set_pte(void *cea_vaddr, phys_addr_t pa, pgprot_t flags)
+ {
+ 	unsigned long va = (unsigned long) cea_vaddr;
++	pte_t pte = pfn_pte(pa >> PAGE_SHIFT, flags);
  
--#define PAGE_KERNEL		__pgprot(__PAGE_KERNEL | _PAGE_ENC)
--#define PAGE_KERNEL_NOENC	__pgprot(__PAGE_KERNEL)
--#define PAGE_KERNEL_RO		__pgprot(__PAGE_KERNEL_RO | _PAGE_ENC)
--#define PAGE_KERNEL_EXEC	__pgprot(__PAGE_KERNEL_EXEC | _PAGE_ENC)
--#define PAGE_KERNEL_EXEC_NOENC	__pgprot(__PAGE_KERNEL_EXEC)
--#define PAGE_KERNEL_RX		__pgprot(__PAGE_KERNEL_RX | _PAGE_ENC)
--#define PAGE_KERNEL_NOCACHE	__pgprot(__PAGE_KERNEL_NOCACHE | _PAGE_ENC)
--#define PAGE_KERNEL_LARGE	__pgprot(__PAGE_KERNEL_LARGE | _PAGE_ENC)
--#define PAGE_KERNEL_LARGE_EXEC	__pgprot(__PAGE_KERNEL_LARGE_EXEC | _PAGE_ENC)
--#define PAGE_KERNEL_VVAR	__pgprot(__PAGE_KERNEL_VVAR | _PAGE_ENC)
-+#define default_pgprot(x)	__pgprot((x) & __default_kernel_pte_mask)
- 
--#define PAGE_KERNEL_IO		__pgprot(__PAGE_KERNEL_IO)
--#define PAGE_KERNEL_IO_NOCACHE	__pgprot(__PAGE_KERNEL_IO_NOCACHE)
-+#define PAGE_KERNEL		default_pgprot(__PAGE_KERNEL | _PAGE_ENC)
-+#define PAGE_KERNEL_NOENC	default_pgprot(__PAGE_KERNEL)
-+#define PAGE_KERNEL_RO		default_pgprot(__PAGE_KERNEL_RO | _PAGE_ENC)
-+#define PAGE_KERNEL_EXEC	default_pgprot(__PAGE_KERNEL_EXEC | _PAGE_ENC)
-+#define PAGE_KERNEL_EXEC_NOENC	default_pgprot(__PAGE_KERNEL_EXEC)
-+#define PAGE_KERNEL_RX		default_pgprot(__PAGE_KERNEL_RX | _PAGE_ENC)
-+#define PAGE_KERNEL_NOCACHE	default_pgprot(__PAGE_KERNEL_NOCACHE | _PAGE_ENC)
-+#define PAGE_KERNEL_LARGE	default_pgprot(__PAGE_KERNEL_LARGE | _PAGE_ENC)
-+#define PAGE_KERNEL_LARGE_EXEC	default_pgprot(__PAGE_KERNEL_LARGE_EXEC | _PAGE_ENC)
-+#define PAGE_KERNEL_VVAR	default_pgprot(__PAGE_KERNEL_VVAR | _PAGE_ENC)
+-	set_pte_vaddr(va, pfn_pte(pa >> PAGE_SHIFT, flags));
++	/*
++	 * The cpu_entry_area is shared between the user and kernel
++	 * page tables.  All of its ptes can safely be global.
++	 */
++	if (boot_cpu_has(X86_FEATURE_PGE))
++		pte = pte_set_flags(pte, _PAGE_GLOBAL);
 +
-+#define PAGE_KERNEL_IO		default_pgprot(__PAGE_KERNEL_IO)
-+#define PAGE_KERNEL_IO_NOCACHE	default_pgprot(__PAGE_KERNEL_IO_NOCACHE)
- 
- #endif	/* __ASSEMBLY__ */
- 
-@@ -483,6 +485,7 @@ static inline pgprot_t pgprot_large_2_4k
- typedef struct page *pgtable_t;
- 
- extern pteval_t __supported_pte_mask;
-+extern pteval_t __default_kernel_pte_mask;
- extern void set_nx(void);
- extern int nx_enabled;
- 
-diff -puN arch/x86/mm/init_32.c~KERN-pgprot-default arch/x86/mm/init_32.c
---- a/arch/x86/mm/init_32.c~KERN-pgprot-default	2018-03-21 16:31:57.341192320 -0700
-+++ b/arch/x86/mm/init_32.c	2018-03-21 16:31:57.348192320 -0700
-@@ -558,8 +558,14 @@ static void __init pagetable_init(void)
- 	permanent_kmaps_init(pgd_base);
++	set_pte_vaddr(va, pte);
  }
  
--pteval_t __supported_pte_mask __read_mostly = ~(_PAGE_NX | _PAGE_GLOBAL);
-+#define DEFAULT_PTE_MASK ~(_PAGE_NX | _PAGE_GLOBAL)
-+/* Bits supported by the hardware: */
-+pteval_t __supported_pte_mask __read_mostly = DEFAULT_PTE_MASK;
-+/* Bits allowed in normal kernel mappings: */
-+pteval_t __default_kernel_pte_mask __read_mostly = DEFAULT_PTE_MASK;
- EXPORT_SYMBOL_GPL(__supported_pte_mask);
-+/* Used in PAGE_KERNEL_* macros which are reasonably used out-of-tree: */
-+EXPORT_SYMBOL(__default_kernel_pte_mask);
+ static void __init
+diff -puN arch/x86/mm/pti.c~kpti-why-no-global arch/x86/mm/pti.c
+--- a/arch/x86/mm/pti.c~kpti-why-no-global	2018-03-21 16:32:00.799192311 -0700
++++ b/arch/x86/mm/pti.c	2018-03-21 16:32:00.803192311 -0700
+@@ -300,6 +300,13 @@ pti_clone_pmds(unsigned long start, unsi
+ 			return;
  
- /* user-defined highmem size */
- static unsigned int highmem_pages = -1;
-diff -puN arch/x86/mm/init_64.c~KERN-pgprot-default arch/x86/mm/init_64.c
---- a/arch/x86/mm/init_64.c~KERN-pgprot-default	2018-03-21 16:31:57.343192320 -0700
-+++ b/arch/x86/mm/init_64.c	2018-03-21 16:31:57.349192320 -0700
-@@ -65,8 +65,13 @@
-  * around without checking the pgd every time.
-  */
- 
-+/* Bits supported by the hardware: */
- pteval_t __supported_pte_mask __read_mostly = ~0;
-+/* Bits allowed in normal kernel mappings: */
-+pteval_t __default_kernel_pte_mask __read_mostly = ~0;
- EXPORT_SYMBOL_GPL(__supported_pte_mask);
-+/* Used in PAGE_KERNEL_* macros which are reasonably used out-of-tree: */
-+EXPORT_SYMBOL(__default_kernel_pte_mask);
- 
- int force_personality32;
- 
-diff -puN arch/x86/mm/init.c~KERN-pgprot-default arch/x86/mm/init.c
---- a/arch/x86/mm/init.c~KERN-pgprot-default	2018-03-21 16:31:57.345192320 -0700
-+++ b/arch/x86/mm/init.c	2018-03-21 16:31:57.349192320 -0700
-@@ -190,6 +190,12 @@ static void __init probe_page_size_mask(
- 		enable_global_pages();
- 	}
- 
-+	/* By the default is everything supported: */
-+	__default_kernel_pte_mask = __supported_pte_mask;
-+	/* Except when with PTI where the kernel is mostly non-Global: */
-+	if (cpu_feature_enabled(X86_FEATURE_PTI))
-+		__default_kernel_pte_mask &= ~_PAGE_GLOBAL;
+ 		/*
++		 * Setting 'target_pmd' below creates a mapping in both
++		 * the user and kernel page tables.  It is effectively
++		 * global, so set it as global in both copies.
++		 */
++		*pmd = pmd_set_flags(*pmd, _PAGE_GLOBAL);
 +
- 	/* Enable 1 GB linear kernel mappings if available: */
- 	if (direct_gbpages && boot_cpu_has(X86_FEATURE_GBPAGES)) {
- 		printk(KERN_INFO "Using GB pages for direct mapping\n");
++		/*
+ 		 * Copy the PMD.  That is, the kernelmode and usermode
+ 		 * tables will share the last-level page tables of this
+ 		 * address range
+@@ -348,7 +355,7 @@ static void __init pti_clone_entry_text(
+ {
+ 	pti_clone_pmds((unsigned long) __entry_text_start,
+ 			(unsigned long) __irqentry_text_end,
+-		       _PAGE_RW | _PAGE_GLOBAL);
++		       _PAGE_RW);
+ }
+ 
+ /*
 _
