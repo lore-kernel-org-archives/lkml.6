@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvLDdkiIui9ACj0uTR6kvfXdtOjfgFeDQiu8K0w9MRz4o3w1Ox2du08jGgh1zqq1Ow0Xrrv
-ARC-Seal: i=1; a=rsa-sha256; t=1521800260; cv=none;
+X-Google-Smtp-Source: AG47ELuad3dVt91mD+mcteYUBCnOGGhP/gWVzNrXhZCqREWjhxQ9ljid+TkxR6QkoyBuBRSpW4fd
+ARC-Seal: i=1; a=rsa-sha256; t=1521800257; cv=none;
         d=google.com; s=arc-20160816;
-        b=a+Egb9rmZBqjCgET8IFrg/C/e4FGece94wRmxr6pT+5AT66yENk38RaTsdNSClCCEJ
-         gwMUj0QouYjQkvDfBsvWXwQQuq7iz8qf8q+uZDnYqX54NSVgZuMxx6uNEpRhOknmE4wN
-         Hoz1PJyJz2IlVW18Y4/bNbcMFy7s2NVFJ2eQ4q4TEuYWLOblY7o9FN6aPtzE/rRlq/4g
-         qWFb1F/VOaUyPYuXRjdGGTtoxGKm0uFjoEZCDsNG6B87TULZG/RxGMQHjXhf39Co4prz
-         U/WznSFp92sszAr2/OADU7hgVI1SSfhE2pJT0aUgmfYiChMxtWjPD2OeYLEVA5ycp0AZ
-         1MAQ==
+        b=hCPu3ELIHeYt2yQR8JLOwQQobE5GPul11y77bbHQLm5TA8sEEqqkhMRVqCqPHAbmTr
+         +Umhd86Qv5LntBQrVXq2mO38vAtwpYzQmkxoSAWTzGI2+A+dTPolKqSLWHn9aExASZ7q
+         aIXtVS6nQK84dDV32HqMGvof6uP8KKnmBWu3r7sneUGBunNDt2qYLBvRTQVCe8DSXF11
+         Y8IESCGJy9I4s5WPlh9RBi/FZGuuPeNafTEdOuWxWvPZDsn3PTkX6Ae20fhPRlaxS6ut
+         6L3gjx0fef5Wh/KOxv6s2bLOxcTldhri/6iKiuAsIzcqWtGpCURkYZNCA2eaZKmK0wpv
+         CH6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=vac8CuDenUL8je0QDjwc0QQHoOUnCEozdPoyzlrFeHA=;
-        b=eeFrDQBr6vcxxYbK6Fnc33LpB1qZnJmK1cWmrkKHDrW6YyRijcSIYv21ZKzJBj5kY2
-         s5A0Lx1ZhszlGI6kqIFqvj/RLtPeru/NqDaoAzGqb6sZI5Qb7NOrD0tEJb0aPxfsn3h2
-         0alX55t87KOSgcZcVv61LrB6RhlfrBHTLLFvlFTSY316vHsgoDbqnFsrzbNIaGB2lYLM
-         fsQoQvD9GC+sw1r0PKh2kUh1pKFS1RkjX4+z4/B8jTcq/lmyO4rJyqwtJsjQ9nmZDQ4p
-         WCEjUc1RIsuYPTSWCCi1YwEdbXq4DkQ3vTXOsUr9X5rvwE7cnzv4kutmAg+E0HpR86iS
-         hdvw==
+        bh=x7+ziCtadCvLkodyaE/E7EsqdVOk/j1l0nzK0wqrPB4=;
+        b=WCPx7JXMiES3bqglFUrOcOHXaqfav2uk4e+1I7w3Vk75OpDjfHYlTO3dVd9e/bTTya
+         uaRaX7xzRZNOuqpslHyy/UK7xCiVa1r6GUY0UO9rtpdsIU7JYd4huORLKFKUGnO+IIhx
+         yh41LtiBaXxpE45M13jW4+0DEogogPUM+mlFqEP8ii6hilEr8TASCqFL49k/RtUSlvlI
+         93wrSBbB6TLximYEpud4odQtXq96eVEQBDdd7jf/UViwQlwoeherzhf7cOqw/EgAZSSY
+         BGecEb71TWpFkaJGkql0fkk4zEe6lzPfwB4sEpfPNCWRULNoJOX9jzUVwbOVRWl2aLiw
+         Bojw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
+	Robert Walker <robert.walker@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 90/97] pinctrl: Really force states during suspend/resume
-Date: Fri, 23 Mar 2018 10:55:17 +0100
-Message-Id: <20180323094202.520488518@linuxfoundation.org>
+Subject: [PATCH 4.4 89/97] coresight: Fix disabling of CoreSight TPIU
+Date: Fri, 23 Mar 2018 10:55:16 +0100
+Message-Id: <20180323094202.472118669@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722021029540326?=
-X-GMAIL-MSGID: =?utf-8?q?1595723229764772036?=
+X-GMAIL-THRID: =?utf-8?q?1595722035673432219?=
+X-GMAIL-MSGID: =?utf-8?q?1595723226589631414?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,105 +51,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Robert Walker <robert.walker@arm.com>
 
 
-[ Upstream commit 981ed1bfbc6c4660b2ddaa8392893e20a6255048 ]
+[ Upstream commit 11595db8e17faaa05fadc25746c870e31276962f ]
 
-In case a platform only defaults a "default" set of pins, but not a
-"sleep" set of pins, and this particular platform suspends and resumes
-in a way that the pin states are not preserved by the hardware, when we
-resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
--> pinctrl_select_state() and the first thing we do is check that the
-pins state is the same as before, and do nothing.
+The CoreSight TPIU should be disabled when tracing to other sinks to allow
+them to operate at full bandwidth.
 
-In order to fix this, decouple the actual state change from
-pinctrl_select_state() and move it pinctrl_commit_state(), while keeping
-the p->state == state check in pinctrl_select_state() not to change the
-caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
-are updated to bypass the state check by calling pinctrl_commit_state().
+This patch fixes tpiu_disable_hw() to correctly disable the TPIU by
+configuring the TPIU to stop on flush, initiating a manual flush, waiting
+for the flush to complete and then waits for the TPIU to indicate it has
+stopped.
 
-[Linus Walleij]
-The forced pin control states are currently only used in some pin
-controller drivers that grab their own reference to their own pins.
-This is equal to the pin control hogs: pins taken by pin control
-devices since there are no corresponding device in the Linux device
-hierarchy, such as memory controller lines or unused GPIO lines,
-or GPIO lines that are used orthogonally from the GPIO subsystem
-but pincontrol-wise managed as hogs (non-strict mode, allowing
-simultaneous use by GPIO and pin control). For this case forcing
-the state from the drivers' suspend()/resume() callbacks makes
-sense and should semantically match the name of the function.
-
-Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Robert Walker <robert.walker@arm.com>
+Tested-by: Mike Leach <mike.leach@linaro.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/core.c |   24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ drivers/hwtracing/coresight/coresight-tpiu.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -979,19 +979,16 @@ struct pinctrl_state *pinctrl_lookup_sta
- EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
+--- a/drivers/hwtracing/coresight/coresight-tpiu.c
++++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+@@ -45,8 +45,11 @@
+ #define TPIU_ITATBCTR0		0xef8
+ 
+ /** register definition **/
++/* FFSR - 0x300 */
++#define FFSR_FT_STOPPED		BIT(1)
+ /* FFCR - 0x304 */
+ #define FFCR_FON_MAN		BIT(6)
++#define FFCR_STOP_FI		BIT(12)
  
  /**
-- * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
-  * @p: the pinctrl handle for the device that requests configuration
-  * @state: the state handle to select/activate/program
-  */
--int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
+  * @base:	memory mapped base address for this component.
+@@ -85,10 +88,14 @@ static void tpiu_disable_hw(struct tpiu_
  {
- 	struct pinctrl_setting *setting, *setting2;
- 	struct pinctrl_state *old_state = p->state;
- 	int ret;
+ 	CS_UNLOCK(drvdata->base);
  
--	if (p->state == state)
--		return 0;
--
- 	if (p->state) {
- 		/*
- 		 * For each pinmux setting in the old state, forget SW's record
-@@ -1055,6 +1052,19 @@ unapply_new_state:
+-	/* Clear formatter controle reg. */
+-	writel_relaxed(0x0, drvdata->base + TPIU_FFCR);
++	/* Clear formatter and stop on flush */
++	writel_relaxed(FFCR_STOP_FI, drvdata->base + TPIU_FFCR);
+ 	/* Generate manual flush */
+-	writel_relaxed(FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	/* Wait for flush to complete */
++	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
++	/* Wait for formatter to stop */
++	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
  
- 	return ret;
+ 	CS_LOCK(drvdata->base);
  }
-+
-+/**
-+ * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * @p: the pinctrl handle for the device that requests configuration
-+ * @state: the state handle to select/activate/program
-+ */
-+int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+{
-+	if (p->state == state)
-+		return 0;
-+
-+	return pinctrl_commit_state(p, state);
-+}
- EXPORT_SYMBOL_GPL(pinctrl_select_state);
- 
- static void devm_pinctrl_release(struct device *dev, void *res)
-@@ -1223,7 +1233,7 @@ void pinctrl_unregister_map(struct pinct
- int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-@@ -1235,7 +1245,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
- int pinctrl_force_default(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_default);
