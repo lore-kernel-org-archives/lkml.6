@@ -1,69 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752410AbeCWJSA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:18:00 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:39333 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751668AbeCWJPf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:15:35 -0400
-X-UUID: 85b9cd7b8eaa4afe9a72139cfed2aa36-20180323
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
-        <lee.jones@linaro.org>, <a.zummo@towertech.it>,
-        <alexandre.belloni@free-electrons.com>, <eddie.huang@mediatek.com>
-CC: <devicetree@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v1 15/16] MAINTAINERS: update entry for ARM/Mediatek RTC DRIVER
-Date: Fri, 23 Mar 2018 17:15:12 +0800
-Message-ID: <abadf0686094826b241944ee5563996de9a0f41a.1521794177.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1521794176.git.sean.wang@mediatek.com>
-References: <cover.1521794176.git.sean.wang@mediatek.com>
+        id S1752445AbeCWJSb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:18:31 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:49969 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752195AbeCWJS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:18:29 -0400
+Subject: Re: [PATCH 01/19] powerpc/powermac: Mark variable x as unused
+To: Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+References: <20180322202007.23088-1-malat@debian.org>
+ <20180322202007.23088-2-malat@debian.org>
+From: christophe leroy <christophe.leroy@c-s.fr>
+Message-ID: <eaf8b87a-a2f0-03ea-1a27-50931dfd16fb@c-s.fr>
+Date: Fri, 23 Mar 2018 10:18:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23736.004
-X-TM-AS-Result: No-4.067500-8.000000-10
-X-TMASE-MatchedRID: x6uIgBUWMEwxFdXyW/P+XbiMC5wdwKqdK2i9pofGVSuY5ISV79wbr2b6
-        PphVtfZgRAjjCBWd1tV63xQjyx+HXtOYsB74R7ecdARARTk4h599LQinZ4QefCP/VFuTOXUT3n8
-        eBZjGmUzkwjHXXC/4I66NVEWSRWybUsAHQn5GEzDRpjwMXIGP7K6HZQqIz+9cwoeDtmp32d04Fa
-        0M94SCv/g5LDH7EcAUuHuaTWKtdCtLm6vl+Utdqjfj9WnQo0h58OyccFNBL2TKhETi2//sjuP9C
-        b59K8ACZrS+A8PszW+YV38c4KFOjw==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.067500-8.000000
-X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23736.004
-X-TMASE-POSTMAN: 2-d;
-X-MTK: N
+In-Reply-To: <20180322202007.23088-2-malat@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
 
-Add new files for new dt-bindings and a globally visible header file.
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Le 22/03/2018 à 21:19, Mathieu Malaterre a écrit :
+> Since the value of x is never intended to be read, declare it with gcc
+> attribute as unused. Fix warning treated as error with W=1:
+> 
+>    arch/powerpc/platforms/powermac/bootx_init.c:471:21: error: variable ‘x’ set but not used [-Werror=unused-but-set-variable]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>   arch/powerpc/platforms/powermac/bootx_init.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/platforms/powermac/bootx_init.c b/arch/powerpc/platforms/powermac/bootx_init.c
+> index c3c9bbb3573a..d3ce55dae78f 100644
+> --- a/arch/powerpc/platforms/powermac/bootx_init.c
+> +++ b/arch/powerpc/platforms/powermac/bootx_init.c
+> @@ -468,7 +468,7 @@ void __init bootx_init(unsigned long r3, unsigned long r4)
+>   	boot_infos_t *bi = (boot_infos_t *) r4;
+>   	unsigned long hdr;
+>   	unsigned long space;
+> -	unsigned long ptr, x;
+> +	unsigned long ptr, x __maybe_unused;
+
+Why not use fault_in_pages_readable() instead of the hardcoded part that 
+uses x ?
+
+If you decide to keep it as is, at least x should be declared inside the 
+if (bi->version < 4)
+
+Christophe
+
+
+>   	char *model;
+>   	unsigned long offset = reloc_offset();
+>   
+> 
+
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d3c33d7..1c13f29 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1626,9 +1626,11 @@ M:	Sean Wang <sean.wang@mediatek.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-+F:	Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
- F:	Documentation/devicetree/bindings/rtc/rtc-mt7622.txt
- F:	drivers/rtc/rtc-mt6397.c
- F:	drivers/rtc/rtc-mt7622.c
-+F:	include/linux/rtc/mt6397.h
- 
- ARM/Mediatek SoC support
- M:	Matthias Brugger <matthias.bgg@gmail.com>
--- 
-2.7.4
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
