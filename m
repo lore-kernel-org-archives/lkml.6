@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806654-2-15942545194796315243
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806630-2-2564348067244096709
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806654; b=GaYa/gWd8nTKc7iwGUjEibUky/UoZWw2KjhSa5vc5Tt8FHG
-    lxlb5b8VbNJhcgOCBi0+5obOF5kdFAa7HXEX0FOYPx3P2tpRykRtD7PjPwISMEHO
-    +frbMZORWyNG71UnpDVlS/HJm1feEdCRU6dtU9+lRam4hNtMC90M/YPAwNQ3vm45
-    uKHpxU3vXeTTFr53ugIJCaHI/Ggr1dhdYfDrHEeSU1t35n53f7ApXzT++VikwRgn
-    62l+HPhxfGIYixznoPVWtBfMlIJtAW/HatOCMJrf2IxCUrd9kKOK1S9OwHX2pCOP
-    +Xd4Ct7I+z0sljy90g2A2y+lnAiNPHicTxC1bcA==
+    t=1521806630; b=gGchV4yZOeVn2gkhOj/I40Y+uaOwrWuG0TE/H14PU7UVubP
+    l6skL4fuWQ6tssPDjbGtn10iLzbKTWLYcAnIcKa5I+3RP/F4OCIWTko+ke7MBGkT
+    4ZQuHDUZDBSzxO/3c1xgAdD88LCBtQPVAxMr/znBlweN0ypH0cav+lVrvEgSPWGV
+    lpCrMDpktgo3/DBxLgfO2MKKzyfrcCn0Zt1H8rhpB9dYuMJXrAUk5FkXYK/vXOao
+    +L5nONN71Islpb4IZ7492SpsYZd58mg1Hf8RNuuJyHKvf+erumAmcLrJPYQsxVZt
+    m73qaqEfB2XxRTVWNcZ62JAlWjXtpnpJ1xFoBig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806654; bh=jG8KSEf5h8hpmXI0ZcB41ceKpb
-    EvWCplp4NZ1+6BDW8=; b=EvNRnpvevRO3ZgB2/Ew1++O00iF32XFoYx2iN+kMHy
-    4HwtVyTThtjahx0dTz4lgne5l/08eN1Ft5aBg8uP3H62yPH/VHzF9blaVIrSEXe6
-    4FtXOB5Cq1ULft2AvMemySKxwGlNSx4obfwQ/9U54ouJPkGNl4L+/Hjv6dtXvTRG
-    kTvCBFw8uUsv+zG3vWkhX4ptroXmiYwK4+wI2jvmYYvEnwb4f/ttsv5g3NyIbQl9
-    +tMB20Ni2gFm7qrJFEnT6PRPtY0A9TfcSl0E+2ZVl+/VFE9/+EkaIAXlFsqKlMoM
-    Mv7e1lja1vNdTkKpQx7K3uzLfc+S9f7xwded11QrvZHQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521806630; bh=O3W7WMPsCy8JuGEcmnGIc22TDg
+    lG7TDHXHpnZL395PY=; b=u52mYpMX1XJmTUZJqsJp1PvuxF4tw0swos5UdwpCWe
+    lZSyXh4nQAamVGXcWpDfH4i9dldUceDiMAlWX5MWTMS4jZncd96AEx9vkHPj4k6g
+    r01edjYKigj4KMUb1wzejiAgAoLyHMo8PYtn2oMWY346B6arHJ0jxh1ogVoZYQ9a
+    oPk86tBADt4kbMnhIUt+RHPyO14BEk/uSOeqySTO8yuz2I3V7eOpV7hZPTQx+4IC
+    VugFxjbStXz1cQ8zsCw3gc3tbx4FiX6ugHrSOJv5Ah+HzLyRgj/guH7cS4HAvKAr
+    A4YvabrPdMdVYiAXEdg5H4x9DaKw1tHaiw5I55xeR4Ow==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753478AbeCWMEK (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 08:04:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36202 "EHLO
+        id S1753481AbeCWMDf (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 08:03:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36248 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753354AbeCWJ7f (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:35 -0400
+        with ESMTP id S1753386AbeCWJ7n (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:43 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 66/84] scsi: lpfc: Fix issues connecting with nvme initiator
-Date: Fri, 23 Mar 2018 10:54:20 +0100
-Message-Id: <20180323095421.926616969@linuxfoundation.org>
+Subject: [PATCH 4.15 68/84] ARM: dts: aspeed-evb: Add unit name to memory node
+Date: Fri, 23 Mar 2018 10:54:22 +0100
+Message-Id: <20180323095422.251421107@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -84,46 +81,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
 
 
-[ Upstream commit e06351a002214d152142906a546006e3446d1ef7 ]
+[ Upstream commit e40ed274489a5f516da120186578eb379b452ac6 ]
 
-In the lpfc discovery engine, when as a nvme target, where the driver
-was performing mailbox io with the adapter for port login when a NVME
-PRLI is received from the host. Rather than queue and eventually get
-back to sending a response after the mailbox traffic, the driver
-rejected the io with an error response.
+Fixes a warning when building with W=1.
 
-Turns out this particular initiator didn't like the rejection values
-(unable to process command/command in progress) so it never attempted a
-retry of the PRLI. Thus the host never established nvme connectivity
-with the lpfc target.
+All of the ASPEED device trees build without warnings now.
 
-By changing the rejection values (to Logical Busy/nothing more), the
-initiator accepted the response and would retry the PRLI, resulting in
-nvme connectivity.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/lpfc/lpfc_nportdisc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/aspeed-ast2500-evb.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/lpfc/lpfc_nportdisc.c
-+++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
-@@ -1569,8 +1569,8 @@ lpfc_rcv_prli_reglogin_issue(struct lpfc
- 					 ndlp->nlp_rpi, ndlp->nlp_state,
- 					 ndlp->nlp_flag);
- 			memset(&stat, 0, sizeof(struct ls_rjt));
--			stat.un.b.lsRjtRsnCode = LSRJT_UNABLE_TPC;
--			stat.un.b.lsRjtRsnCodeExp = LSEXP_CMD_IN_PROGRESS;
-+			stat.un.b.lsRjtRsnCode = LSRJT_LOGICAL_BSY;
-+			stat.un.b.lsRjtRsnCodeExp = LSEXP_NOTHING_MORE;
- 			lpfc_els_rsp_reject(vport, stat.un.lsRjtError, cmdiocb,
- 					    ndlp, NULL);
- 			return ndlp->nlp_state;
+--- a/arch/arm/boot/dts/aspeed-ast2500-evb.dts
++++ b/arch/arm/boot/dts/aspeed-ast2500-evb.dts
+@@ -16,7 +16,7 @@
+ 		bootargs = "console=ttyS4,115200 earlyprintk";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x20000000>;
+ 	};
+ };
