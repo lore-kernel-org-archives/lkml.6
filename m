@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753200AbeCWNGK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 09:06:10 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:52876 "EHLO
+        id S1752955AbeCWNIB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 09:08:01 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:52980 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753173AbeCWNGH (ORCPT
+        with ESMTP id S1753179AbeCWNGK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:06:07 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w2ND4mgb011418
+        Fri, 23 Mar 2018 09:06:10 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w2ND4mgc011418
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -18,9 +18,9 @@ Cc: Sam Ravnborg <sam@ravnborg.org>,
         Frank Rowand <frank.rowand@sony.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 05/10] kbuild: add %.dtb.S and %.dtb to 'targets' automatically
-Date: Fri, 23 Mar 2018 22:04:34 +0900
-Message-Id: <1521810279-6282-5-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 06/10] .gitignore: move *-asn1.[ch] patterns to the top-level .gitignore
+Date: Fri, 23 Mar 2018 22:04:35 +0900
+Message-Id: <1521810279-6282-6-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com>
@@ -28,65 +28,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Another common pattern that consists of chained commands is to compile
-a DTB as binary data into the kernel image or a module.  It is used in
-several places in the source tree.  Let's support it in the build core.
-
-$(call if_changed,dt_S_dtb) is more suitable than $(call cmd,dt_S_dtb)
-in case cmd_dt_S_dtb is changed in the future.
+These are common patterns where source files are parsed by the
+asn1_compiler.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- drivers/of/unittest-data/Makefile | 2 --
- scripts/Makefile.build            | 4 +++-
- scripts/Makefile.lib              | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ .gitignore                               | 5 +----
+ crypto/.gitignore                        | 1 -
+ crypto/asymmetric_keys/.gitignore        | 1 -
+ drivers/crypto/qat/qat_common/.gitignore | 1 -
+ 4 files changed, 1 insertion(+), 7 deletions(-)
+ delete mode 100644 crypto/.gitignore
+ delete mode 100644 crypto/asymmetric_keys/.gitignore
+ delete mode 100644 drivers/crypto/qat/qat_common/.gitignore
 
-diff --git a/drivers/of/unittest-data/Makefile b/drivers/of/unittest-data/Makefile
-index df69797..333bc4c 100644
---- a/drivers/of/unittest-data/Makefile
-+++ b/drivers/of/unittest-data/Makefile
-@@ -7,8 +7,6 @@ obj-$(CONFIG_OF_OVERLAY) += overlay.dtb.o \
- 			    overlay_bad_symbol.dtb.o \
- 			    overlay_base.dtb.o
+diff --git a/.gitignore b/.gitignore
+index 1e82be1..a7fef34 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -11,6 +11,7 @@
+ #
+ .*
+ *.a
++*-asn1.[ch]
+ *.bin
+ *.bz2
+ *.c.[012]*.*
+@@ -130,7 +131,3 @@ all.config
  
--targets += $(foreach suffix, dtb dtb.S, $(patsubst %.dtb.o,%.$(suffix),$(obj-y)))
+ # Kdevelop4
+ *.kdev4
 -
- # enable creation of __symbols__ node
- DTC_FLAGS_overlay := -@
- DTC_FLAGS_overlay_bad_phandle := -@
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 36f7990..15b3bbb 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -544,9 +544,11 @@ targets := $(filter-out $(PHONY), $(targets))
- intermediate_targets = $(foreach sfx, $(2), \
- 				$(patsubst %$(strip $(1)),%$(sfx), \
- 					$(filter %$(strip $(1)), $(targets))))
-+# %.dtb.o <- %.dtb.S <- %.dtb <- %.dts
- # %.lex.o <- %.lex.c <- %.l
- # %.tab.o <- %.tab.[ch] <- %.y
--targets += $(call intermediate_targets, .lex.o, .lex.c) \
-+targets += $(call intermediate_targets, .dtb.o, .dtb.S .dtb) \
-+	   $(call intermediate_targets, .lex.o, .lex.c) \
- 	   $(call intermediate_targets, .tab.o, .tab.c .tab.h)
- 
- # Descending
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index b7d2c97..7a1fa92 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -278,8 +278,8 @@ cmd_dt_S_dtb=						\
- 	echo '.balign STRUCT_ALIGNMENT'; 		\
- ) > $@
- 
--$(obj)/%.dtb.S: $(obj)/%.dtb
--	$(call cmd,dt_S_dtb)
-+$(obj)/%.dtb.S: $(obj)/%.dtb FORCE
-+	$(call if_changed,dt_S_dtb)
- 
- quiet_cmd_dtc = DTC     $@
- cmd_dtc = mkdir -p $(dir ${dtc-tmp}) ; \
+-#Automatically generated by ASN.1 compiler
+-net/ipv4/netfilter/nf_nat_snmp_basic-asn1.c
+-net/ipv4/netfilter/nf_nat_snmp_basic-asn1.h
+diff --git a/crypto/.gitignore b/crypto/.gitignore
+deleted file mode 100644
+index ee328374..0000000
+--- a/crypto/.gitignore
++++ /dev/null
+@@ -1 +0,0 @@
+-*-asn1.[ch]
+diff --git a/crypto/asymmetric_keys/.gitignore b/crypto/asymmetric_keys/.gitignore
+deleted file mode 100644
+index ee328374..0000000
+--- a/crypto/asymmetric_keys/.gitignore
++++ /dev/null
+@@ -1 +0,0 @@
+-*-asn1.[ch]
+diff --git a/drivers/crypto/qat/qat_common/.gitignore b/drivers/crypto/qat/qat_common/.gitignore
+deleted file mode 100644
+index ee328374..0000000
+--- a/drivers/crypto/qat/qat_common/.gitignore
++++ /dev/null
+@@ -1 +0,0 @@
+-*-asn1.[ch]
 -- 
 2.7.4
