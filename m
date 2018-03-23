@@ -1,98 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752223AbeCWRo4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:44:56 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:56569 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751388AbeCWRox (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:44:53 -0400
-X-IronPort-AV: E=Sophos;i="5.48,351,1517846400";
-   d="scan'208";a="74954991"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
-        "nab@linux-iscsi.org" <nab@linux-iscsi.org>
-CC: "daniel@bristot.me" <daniel@bristot.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "williams@redhat.com" <williams@redhat.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "lclaudio@redhat.com" <lclaudio@redhat.com>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
-Subject: Re: [PATCH 2/2] target: remove spin_lock_assert() in
- __target_(attach|detach)_tg_pt_gp()
-Thread-Topic: [PATCH 2/2] target: remove spin_lock_assert() in
- __target_(attach|detach)_tg_pt_gp()
-Thread-Index: AQHTwssw/ek84VX6f0CewLK+jkAVz6PeF6yA
-Date: Fri, 23 Mar 2018 17:44:46 +0000
-Message-ID: <1521827085.2535.12.camel@wdc.com>
-References: <20180321153854.GB24312@kernel.org>
-         <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
-         <20180322093745.GC4229@kernel.org>
-         <20180323155513.dwbgvblenlji33as@linutronix.de>
-         <1521822325.2535.5.camel@wdc.com>
-         <CA+55aFxVkuntSektVmwXktzvfEezdDTAM_zj4DJdp3qJxWf8aA@mail.gmail.com>
-         <20180323171736.bcyi2oiolge4l6hl@linutronix.de>
-         <20180323171959.7ac6klrqg4fdk3ey@linutronix.de>
-In-Reply-To: <20180323171959.7ac6klrqg4fdk3ey@linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [199.255.44.172]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0206;7:LrkbN2eMPGY6bkrDUTO9jF0tUBBkU+1+fsRLxW3SBEL5KW7ezjfo3e3wlfq4xGW9iwbvw5Eias7LkXUiEUb3+wTPj8mr15oFcJnUcJD6wd4A27H1bK2sHdgd484xX5kuEczVvWBLh+cBlK27Gv/TnKaUrXsjMc9N1EVFQqH59nKAxe7qMH8oeqRdm9uSnJ/tq9mW22//oYzS56UzycYF++XH3s4ibtGg3PZPjYNdAx9LmZPnLW0SbdxX1SZEqF7u;20:wvLgZHL+c8xXMB2BMEWEw1bMexplVSF9mxwGcniFo2jABlBypB0jwdtXqe1wWGrsQxYFqwI8IiXZ4aiwj5fQk0t5F6RsyqXyV/ZTx25bHwwANkvMYKP7OdPnURaaKZFvpMjM6MEL35iZztAFEr9bAa34TP8nubp0D31sU8jPXl4=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 15d89f87-3603-4c91-0ddf-08d590e5c50a
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0206;
-x-ms-traffictypediagnostic: MWHPR04MB0206:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0206725FE791A1715641238698A80@MWHPR04MB0206.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501327)(52105095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR04MB0206;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0206;
-x-forefront-prvs: 0620CADDF3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(39860400002)(346002)(396003)(189003)(199004)(51444003)(377424004)(106356001)(68736007)(7736002)(93886005)(59450400001)(186003)(76176011)(7416002)(478600001)(103116003)(11346002)(97736004)(446003)(316002)(14454004)(72206003)(305945005)(5890100001)(6116002)(5250100002)(26005)(3846002)(6246003)(2501003)(2906002)(66066001)(6436002)(6486002)(53936002)(6512007)(229853002)(54906003)(110136005)(4326008)(102836004)(5660300001)(6506007)(81166006)(3280700002)(3660700001)(2201001)(86362001)(2900100001)(8676002)(81156014)(8936002)(105586002)(25786009)(99286004)(36756003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0206;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: 2Z3d7+mONgqrdP2vwXDaFvyPvz8fgwR47WToSTgyrjn43FRU2rN4Su80xBM82vuXcjlN+8/HMGSm5lomt+5WrDTRJTPi9yK8Sv+bn8r+mNfbltmKVHbfYnhuGA3XQwKwE7kVW25cG0WgTpdsz/WNaUKxffKI8FFJ2stxKxyfLZnIDr3JdFdy2c330wnQ/MoHf2NGFdUj7kZXVlC+jXca0eFfJV5czWl3LgaDAIQ0D780qtWUoazPfUXBMwuzHrW9ihiR1AQFwPI1m09azdkJE3mfUJElosxEbIrJayEqt2T+hhOK/LBfMJ4P6/FngoKw7FzS0fdrAb7+UCn/Jq56wg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B0EF4A7A86E3864C8F349081FE016E90@namprd04.prod.outlook.com>
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15d89f87-3603-4c91-0ddf-08d590e5c50a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2018 17:44:46.9224
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0206
+        id S1752282AbeCWRqw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:46:52 -0400
+Received: from mga03.intel.com ([134.134.136.65]:4868 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752053AbeCWRqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 13:46:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,351,1517904000";
+   d="scan'208";a="44763499"
+Subject: [PATCH 01/11] x86/mm: factor out pageattr _PAGE_GLOBAL setting
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
+        keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
+        namit@vmware.com
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Fri, 23 Mar 2018 10:44:49 -0700
+References: <20180323174447.55F35636@viggo.jf.intel.com>
+In-Reply-To: <20180323174447.55F35636@viggo.jf.intel.com>
+Message-Id: <20180323174449.2C319A44@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2NHj1R6010138
 
-On Fri, 2018-03-23 at 18:19 +0100, bigeasy@linutronix.de wrote:
-> __target_attach_tg_pt_gp() and __target_detach_tg_pt_gp() check if the caller
-> holds lun_tg_pt_gp_lock(). Both functions are static, the callers are
-> acquiring the lock before the invocation of the function so the check
-> looks superfluous.
-> Remove it.
 
-Does this check cause trouble to anyone or to a specific kernel configuration?
-In other words, do we really need to remove these checks? I think that these
-checks are useful as documentation to people who read the SCSI target code.
-The target code is already hard to follow so I think any documentation,
-especially documentation in the form of code that is checked at runtime, is
-welcome.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-Thanks,
+The pageattr code has a pattern repeated where it sets
+_PAGE_GLOBAL for present PTEs but clears it for non-present PTEs.
+The intention is to keep _PAGE_GLOBAL from getting confused
+with _PAGE_PROTNONE since _PAGE_GLOBAL is for present PTEs and
+_PAGE_PROTNONE is for non-present
 
-Bart.
+But, this pattern makes no sense.  Effectively, it says, if
+you use the pageattr code, always set _PAGE_GLOBAL when
+_PAGE_PRESENT.  canon_pgprot() will clear it if unsupported,
+but we *always* set it.
+
+This gets confusing when we have PTI and non-PTI and we want
+some areas to have _PAGE_GLOBAL and some not.
+
+This updated version of the code says:
+1. Clear _PAGE_GLOBAL when !_PAGE_PRESENT
+2. Never set _PAGE_GLOBAL implicitly
+3. Allow _PAGE_GLOBAL to be in cpa.set_mask
+4. Allow _PAGE_GLOBAL to be inherited from previous PTE
+
+Aside: _PAGE_GLOBAL is ignored when CR4.PGE=1, so why do we
+even go to the trouble of filtering it anywhere?
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@google.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: x86@kernel.org
+Cc: Nadav Amit <namit@vmware.com>
+---
+
+ b/arch/x86/mm/pageattr.c |   68 ++++++++++++++++-------------------------------
+ 1 file changed, 24 insertions(+), 44 deletions(-)
+
+diff -puN arch/x86/mm/pageattr.c~kpti-centralize-global-setting arch/x86/mm/pageattr.c
+--- a/arch/x86/mm/pageattr.c~kpti-centralize-global-setting	2018-03-21 16:31:56.262192322 -0700
++++ b/arch/x86/mm/pageattr.c	2018-03-21 16:31:56.266192322 -0700
+@@ -512,6 +512,23 @@ static void __set_pmd_pte(pte_t *kpte, u
+ #endif
+ }
+ 
++static pgprot_t pgprot_clear_protnone_bits(pgprot_t prot)
++{
++	/*
++	 * _PAGE_GLOBAL means "global page" for present PTEs.
++	 * But, it is also used to indicate _PAGE_PROTNONE
++	 * for non-present PTEs.
++	 *
++	 * This ensures that a _PAGE_GLOBAL PTE going from
++	 * present to non-present is not confused as
++	 * _PAGE_PROTNONE.
++	 */
++	if (!(pgprot_val(prot) & _PAGE_PRESENT))
++		pgprot_val(prot) &= ~_PAGE_GLOBAL;
++
++	return prot;
++}
++
+ static int
+ try_preserve_large_page(pte_t *kpte, unsigned long address,
+ 			struct cpa_data *cpa)
+@@ -577,18 +594,11 @@ try_preserve_large_page(pte_t *kpte, uns
+ 	 * different bit positions in the two formats.
+ 	 */
+ 	req_prot = pgprot_4k_2_large(req_prot);
+-
+-	/*
+-	 * Set the PSE and GLOBAL flags only if the PRESENT flag is
+-	 * set otherwise pmd_present/pmd_huge will return true even on
+-	 * a non present pmd. The canon_pgprot will clear _PAGE_GLOBAL
+-	 * for the ancient hardware that doesn't support it.
+-	 */
+-	if (pgprot_val(req_prot) & _PAGE_PRESENT)
+-		pgprot_val(req_prot) |= _PAGE_PSE | _PAGE_GLOBAL;
++	req_prot = pgprot_clear_protnone_bits(req_prot);
++        if (pgprot_val(req_prot) & _PAGE_PRESENT)
++		pgprot_val(req_prot) |= _PAGE_PSE;
+ 	else
+-		pgprot_val(req_prot) &= ~(_PAGE_PSE | _PAGE_GLOBAL);
+-
++		pgprot_val(req_prot) &= ~_PAGE_PSE;
+ 	req_prot = canon_pgprot(req_prot);
+ 
+ 	/*
+@@ -698,16 +708,7 @@ __split_large_page(struct cpa_data *cpa,
+ 		return 1;
+ 	}
+ 
+-	/*
+-	 * Set the GLOBAL flags only if the PRESENT flag is set
+-	 * otherwise pmd/pte_present will return true even on a non
+-	 * present pmd/pte. The canon_pgprot will clear _PAGE_GLOBAL
+-	 * for the ancient hardware that doesn't support it.
+-	 */
+-	if (pgprot_val(ref_prot) & _PAGE_PRESENT)
+-		pgprot_val(ref_prot) |= _PAGE_GLOBAL;
+-	else
+-		pgprot_val(ref_prot) &= ~_PAGE_GLOBAL;
++	ref_prot = pgprot_clear_protnone_bits(ref_prot);
+ 
+ 	/*
+ 	 * Get the target pfn from the original entry:
+@@ -930,18 +931,7 @@ static void populate_pte(struct cpa_data
+ 
+ 	pte = pte_offset_kernel(pmd, start);
+ 
+-	/*
+-	 * Set the GLOBAL flags only if the PRESENT flag is
+-	 * set otherwise pte_present will return true even on
+-	 * a non present pte. The canon_pgprot will clear
+-	 * _PAGE_GLOBAL for the ancient hardware that doesn't
+-	 * support it.
+-	 */
+-	if (pgprot_val(pgprot) & _PAGE_PRESENT)
+-		pgprot_val(pgprot) |= _PAGE_GLOBAL;
+-	else
+-		pgprot_val(pgprot) &= ~_PAGE_GLOBAL;
+-
++	pgprot = pgprot_clear_protnone_bits(pgprot);
+ 	pgprot = canon_pgprot(pgprot);
+ 
+ 	while (num_pages-- && start < end) {
+@@ -1234,17 +1224,7 @@ repeat:
+ 
+ 		new_prot = static_protections(new_prot, address, pfn);
+ 
+-		/*
+-		 * Set the GLOBAL flags only if the PRESENT flag is
+-		 * set otherwise pte_present will return true even on
+-		 * a non present pte. The canon_pgprot will clear
+-		 * _PAGE_GLOBAL for the ancient hardware that doesn't
+-		 * support it.
+-		 */
+-		if (pgprot_val(new_prot) & _PAGE_PRESENT)
+-			pgprot_val(new_prot) |= _PAGE_GLOBAL;
+-		else
+-			pgprot_val(new_prot) &= ~_PAGE_GLOBAL;
++		new_prot = pgprot_clear_protnone_bits(new_prot);
+ 
+ 		/*
+ 		 * We need to keep the pfn from the existing PTE,
+_
