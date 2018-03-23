@@ -1,60 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeCWTPJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 15:15:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47428 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751894AbeCWTPH (ORCPT
+        id S1752384AbeCWTPL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:15:11 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37614 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbeCWTPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 15:15:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4DED0607A2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v5 2/3] RDMA/i40iw: Eliminate duplicate barriers on
- weakly-ordered archs
-To: linux-rdma@vger.kernel.org, timur@codeaurora.org,
-        sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Faisal Latif <faisal.latif@intel.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-kernel@vger.kernel.org
-References: <1521736009-23387-1-git-send-email-okaya@codeaurora.org>
- <1521736009-23387-3-git-send-email-okaya@codeaurora.org>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <352b0adc-5489-c919-fa0a-2a3a3b2d37a0@codeaurora.org>
-Date: Fri, 23 Mar 2018 15:15:04 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 23 Mar 2018 15:15:09 -0400
+X-Google-Smtp-Source: AG47ELsg454eQCO9my1ur4ieXATTeVEjtAcMUh4yBxwjNwCUyG1bFbRj/pRX8JEDEDBBIo8I2MLupXPxSlibGa5/bzk=
 MIME-Version: 1.0
-In-Reply-To: <1521736009-23387-3-git-send-email-okaya@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180323180911.E43ACAB8@viggo.jf.intel.com>
+References: <20180323180903.33B17168@viggo.jf.intel.com> <20180323180911.E43ACAB8@viggo.jf.intel.com>
+From: Shakeel Butt <shakeelb@google.com>
+Date: Fri, 23 Mar 2018 12:15:06 -0700
+Message-ID: <CALvZod6F8x-smAE7sEGfJ3Ds5p6M5Qj6gd-P-VLejuBxfU6niQ@mail.gmail.com>
+Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from PROT_EXEC
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        linuxram@us.ibm.com, Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>, mpe@ellerman.id.au,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/22/2018 12:26 PM, Sinan Kaya wrote:
-> +++ b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-> @@ -706,9 +706,11 @@ static void i40iw_sc_ccq_arm(struct i40iw_sc_cq *ccq)
->  	wmb();       /* make sure shadow area is updated before arming */
->  
->  	if (ccq->dev->is_pf)
-> -		i40iw_wr32(ccq->dev->hw, I40E_PFPE_CQARM, ccq->cq_uk.cq_id);
-> +		i40iw_wr32_relaxed(ccq->dev->hw, I40E_PFPE_CQARM,
-> +				   ccq->cq_uk.cq_id);
->  	else
-> -		i40iw_wr32(ccq->dev->hw, I40E_VFPE_CQARM1, ccq->cq_uk.cq_id);
-> +		i40iw_wr32_relaxed(ccq->dev->hw, I40E_VFPE_CQARM1,
-> +				   ccq->cq_uk.cq_id);
+On Fri, Mar 23, 2018 at 11:09 AM, Dave Hansen
+<dave.hansen@linux.intel.com> wrote:
+>
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+>
+> I got a bug report that the following code (roughly) was
+> causing a SIGSEGV:
+>
+>         mprotect(ptr, size, PROT_EXEC);
+>         mprotect(ptr, size, PROT_NONE);
+>         mprotect(ptr, size, PROT_READ);
+>         *ptr = 100;
+>
+> The problem is hit when the mprotect(PROT_EXEC)
+> is implicitly assigned a protection key to the VMA, and made
+> that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
+> failed to remove the protection key, and the PROT_NONE->
+> PROT_READ left the PTE usable, but the pkey still in place
+> and left the memory inaccessible.
+>
+> To fix this, we ensure that we always "override" the pkee
+> at mprotect() if the VMA does not have execute-only
+> permissions, but the VMA has the execute-only pkey.
+>
+> We had a check for PROT_READ/WRITE, but it did not work
+> for PROT_NONE.  This entirely removes the PROT_* checks,
+> which ensures that PROT_NONE now works.
+>
+> Reported-by: Shakeel Butt <shakeelb@google.com>
+>
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 
-do we want an mmiowb() here?
+Should there be a 'Fixes' tag? Also should this patch go to stable?
 
+> Cc: Ram Pai <linuxram@us.ibm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Michael Ellermen <mpe@ellerman.id.au>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Shuah Khan <shuah@kernel.org>
+> ---
+>
+>  b/arch/x86/include/asm/pkeys.h |   12 +++++++++++-
+>  b/arch/x86/mm/pkeys.c          |   19 ++++++++++---------
+>  2 files changed, 21 insertions(+), 10 deletions(-)
+>
+> diff -puN arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/include/asm/pkeys.h
+> --- a/arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively       2018-03-21 15:47:49.810198922 -0700
+> +++ b/arch/x86/include/asm/pkeys.h      2018-03-21 15:47:49.816198922 -0700
+> @@ -2,6 +2,8 @@
+>  #ifndef _ASM_X86_PKEYS_H
+>  #define _ASM_X86_PKEYS_H
+>
+> +#define ARCH_DEFAULT_PKEY      0
+> +
+>  #define arch_max_pkey() (boot_cpu_has(X86_FEATURE_OSPKE) ? 16 : 1)
+>
+>  extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+> @@ -15,7 +17,7 @@ extern int __execute_only_pkey(struct mm
+>  static inline int execute_only_pkey(struct mm_struct *mm)
+>  {
+>         if (!boot_cpu_has(X86_FEATURE_OSPKE))
+> -               return 0;
+> +               return ARCH_DEFAULT_PKEY;
+>
+>         return __execute_only_pkey(mm);
 >  }
-
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+> @@ -56,6 +58,14 @@ bool mm_pkey_is_allocated(struct mm_stru
+>                 return false;
+>         if (pkey >= arch_max_pkey())
+>                 return false;
+> +       /*
+> +        * The exec-only pkey is set in the allocation map, but
+> +        * is not available to any of the user interfaces like
+> +        * mprotect_pkey().
+> +        */
+> +       if (pkey == mm->context.execute_only_pkey)
+> +               return false;
+> +
+>         return mm_pkey_allocation_map(mm) & (1U << pkey);
+>  }
+>
+> diff -puN arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/mm/pkeys.c
+> --- a/arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively        2018-03-21 15:47:49.812198922 -0700
+> +++ b/arch/x86/mm/pkeys.c       2018-03-21 15:47:49.816198922 -0700
+> @@ -94,15 +94,7 @@ int __arch_override_mprotect_pkey(struct
+>          */
+>         if (pkey != -1)
+>                 return pkey;
+> -       /*
+> -        * Look for a protection-key-drive execute-only mapping
+> -        * which is now being given permissions that are not
+> -        * execute-only.  Move it back to the default pkey.
+> -        */
+> -       if (vma_is_pkey_exec_only(vma) &&
+> -           (prot & (PROT_READ|PROT_WRITE))) {
+> -               return 0;
+> -       }
+> +
+>         /*
+>          * The mapping is execute-only.  Go try to get the
+>          * execute-only protection key.  If we fail to do that,
+> @@ -113,7 +105,16 @@ int __arch_override_mprotect_pkey(struct
+>                 pkey = execute_only_pkey(vma->vm_mm);
+>                 if (pkey > 0)
+>                         return pkey;
+> +       } else if (vma_is_pkey_exec_only(vma)) {
+> +               /*
+> +                * Protections are *not* PROT_EXEC, but the mapping
+> +                * is using the exec-only pkey.  This mapping was
+> +                * PROT_EXEC and will no longer be.  Move back to
+> +                * the default pkey.
+> +                */
+> +               return ARCH_DEFAULT_PKEY;
+>         }
+> +
+>         /*
+>          * This is a vanilla, non-pkey mprotect (or we failed to
+>          * setup execute-only), inherit the pkey from the VMA we
+> _
