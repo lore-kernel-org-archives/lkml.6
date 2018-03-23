@@ -1,138 +1,561 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751687AbeCWB1W (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 21:27:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44978 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751303AbeCWB1V (ORCPT
+        id S1751857AbeCWBaN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 21:30:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43142 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeCWBaK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 21:27:21 -0400
-Date: Thu, 22 Mar 2018 18:27:16 -0700
-From: "Darren Hart (VMware)" <dvhart@infradead.org>
-To: LKML <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Cc: Jan-Marek Glogowski <glogow@fbihome.de>,
-        =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
-        Jonathan Woithe <jwoithe@just42.net>
-Subject: [PATCH] platform/x86: fujitsu-laptop: Simplify soft key handling
-Message-ID: <2721b2f93063dd6d5586e151ec6cc14fcd39ec1b.1521768118.git.dvhart@infradead.org>
+        Thu, 22 Mar 2018 21:30:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E58B5602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH 1/2] regulator: add QCOM RPMh regulator driver
+To: Stephen Boyd <sboyd@kernel.org>, broonie@kernel.org,
+        lgirdwood@gmail.com, mark.rutland@arm.com, robh+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rnayak@codeaurora.org, ilina@codeaurora.org
+References: <cover.1521246069.git.collinsd@codeaurora.org>
+ <71fab82672524b95632cdb588c16edfc9711866a.1521246069.git.collinsd@codeaurora.org>
+ <152165924074.91116.13025068669916027026@swboyd.mtv.corp.google.com>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <493c1f5d-df99-ca68-0f90-a7937a696f5d@codeaurora.org>
+Date: Thu, 22 Mar 2018 18:30:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
+In-Reply-To: <152165924074.91116.13025068669916027026@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hardcoded BIT(X) used in the soft key handling can be confusing and
-prone to errors.
+Hello Stephen,
 
-Instead, use the status FLAG_* defines for the sparse keymap index.
-Rather than check for each known bit, use a bitmask to filter for all
-known soft keys, and use the for_each_set_bit iterator.
+Thank you for the very detailed review feedback.
 
-Cc: Jan-Marek Glogowski <glogow@fbihome.de>
-Cc: Michał Kępień <kernel@kempniu.pl>
-Cc: Jonathan Woithe <jwoithe@just42.net>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
----
+On 03/21/2018 12:07 PM, Stephen Boyd wrote:
+> Quoting David Collins (2018-03-16 18:09:10)
+>> diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+>> index 097f617..e0ecd0a 100644
+>> --- a/drivers/regulator/Kconfig
+>> +++ b/drivers/regulator/Kconfig
+>> @@ -671,6 +671,15 @@ config REGULATOR_QCOM_RPM
+>>           Qualcomm RPM as a module. The module will be named
+>>           "qcom_rpm-regulator".
+>>  
+>> +config REGULATOR_QCOM_RPMH
+>> +       tristate "Qualcomm Technologies, Inc. RPMh regulator driver"
+>> +       depends on (QCOM_RPMH && QCOM_COMMAND_DB && OF) || COMPILE_TEST
+> 
+> What's the build dependency on OF?
 
-Note: this applies on top of Jan-Marek's recent RFKILL and MICMUTE hotkey patch.
-I'd really appreciate a Tested-by from Jan-Marek in particular. You can get the
-entire series ready for testing here:
+The qcom_rpmh-regulator driver cannot function without device tree support
+enabled.  I suppose that it might be able to compile, but it wouldn't be
+useful.
 
-http://git.infradead.org/linux-platform-drivers-x86.git/shortlog/refs/heads/review-dvhart-fujitsu
 
-Also wondering if LID and DOCK might benefit from an input event...
+>> diff --git a/drivers/regulator/qcom_rpmh-regulator.c b/drivers/regulator/qcom_rpmh-regulator.c
+...
+>> +#include <linux/string.h>
+>> +#include <linux/regulator/driver.h>
+>> +#include <linux/regulator/machine.h>
+> 
+> Including machine is usually a red flag in regulator drivers.
 
- drivers/platform/x86/fujitsu-laptop.c | 47 ++++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+Many of the regulator drivers include machine.h.  It is done here in order
+to allow manipulation of constraints.valid_ops_mask (to set
+REGULATOR_CHANGE_MODE) and constraints.valid_mode_mask.  There is no DT
+method to configure these fields.
 
-diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
-index cd95b6f3a064..6afeaece2f50 100644
---- a/drivers/platform/x86/fujitsu-laptop.c
-+++ b/drivers/platform/x86/fujitsu-laptop.c
-@@ -91,6 +91,9 @@
- #define FLAG_RFKILL			BIT(5)
- #define FLAG_LID			BIT(8)
- #define FLAG_DOCK			BIT(9)
-+#define FLAG_TOUCHPAD_TOGGLE		BIT(26)
-+#define FLAG_MICMUTE			BIT(29)
-+#define FLAG_SOFTKEYS			(FLAG_RFKILL | FLAG_TOUCHPAD_TOGGLE | FLAG_MICMUTE)
- 
- /* FUNC interface - LED control */
- #define FUNC_LED_OFF			BIT(0)
-@@ -456,14 +459,15 @@ static void acpi_fujitsu_bl_notify(struct acpi_device *device, u32 event)
- /* ACPI device for hotkey handling */
- 
- static const struct key_entry keymap_default[] = {
--	{ KE_KEY, KEY1_CODE, { KEY_PROG1 } },
--	{ KE_KEY, KEY2_CODE, { KEY_PROG2 } },
--	{ KE_KEY, KEY3_CODE, { KEY_PROG3 } },
--	{ KE_KEY, KEY4_CODE, { KEY_PROG4 } },
--	{ KE_KEY, KEY5_CODE, { KEY_RFKILL } },
--	{ KE_KEY, BIT(5),    { KEY_RFKILL } },
--	{ KE_KEY, BIT(26),   { KEY_TOUCHPAD_TOGGLE } },
--	{ KE_KEY, BIT(29),   { KEY_MICMUTE } },
-+	{ KE_KEY, KEY1_CODE,            { KEY_PROG1 } },
-+	{ KE_KEY, KEY2_CODE,            { KEY_PROG2 } },
-+	{ KE_KEY, KEY3_CODE,            { KEY_PROG3 } },
-+	{ KE_KEY, KEY4_CODE,            { KEY_PROG4 } },
-+	{ KE_KEY, KEY5_CODE,            { KEY_RFKILL } },
-+	/* Soft keys read from status flags */
-+	{ KE_KEY, FLAG_RFKILL,          { KEY_RFKILL } },
-+	{ KE_KEY, FLAG_TOUCHPAD_TOGGLE, { KEY_TOUCHPAD_TOGGLE } },
-+	{ KE_KEY, FLAG_MICMUTE,         { KEY_MICMUTE } },
- 	{ KE_END, 0 }
- };
- 
-@@ -903,7 +907,8 @@ static void acpi_fujitsu_laptop_release(struct acpi_device *device)
- static void acpi_fujitsu_laptop_notify(struct acpi_device *device, u32 event)
- {
- 	struct fujitsu_laptop *priv = acpi_driver_data(device);
--	int scancode, i = 0, ret;
-+	unsigned long flags;
-+	int scancode, i = 0;
- 	unsigned int irb;
- 
- 	if (event != ACPI_FUJITSU_NOTIFY_CODE) {
-@@ -930,21 +935,17 @@ static void acpi_fujitsu_laptop_notify(struct acpi_device *device, u32 event)
- 					 "Unknown GIRB result [%x]\n", irb);
- 	}
- 
--	/* On some models (first seen on the Skylake-based Lifebook
--	 * E736/E746/E756), the touchpad toggle hotkey (Fn+F4) is
--	 * handled in software; its state is queried using FUNC_FLAGS
-+	/*
-+	 * First seen on the Skylake-based Lifebook E736/E746/E756), the
-+	 * touchpad toggle hotkey (Fn+F4) is handled in software. Other models
-+	 * have since added additional "soft keys". These are reported in the
-+	 * status flags queried using FUNC_FLAGS.
- 	 */
--	if (priv->flags_supported & (BIT(5) | BIT(26) | BIT(29))) {
--		ret = call_fext_func(device, FUNC_FLAGS, 0x1, 0x0, 0x0);
--		if (ret & BIT(5))
--			sparse_keymap_report_event(priv->input,
--						   BIT(5), 1, true);
--		if (ret & BIT(26))
--			sparse_keymap_report_event(priv->input,
--						   BIT(26), 1, true);
--		if (ret & BIT(29))
--			sparse_keymap_report_event(priv->input,
--						   BIT(29), 1, true);
-+	if (priv->flags_supported & (FLAG_SOFTKEYS)) {
-+		flags = call_fext_func(device, FUNC_FLAGS, 0x1, 0x0, 0x0);
-+		flags &= (FLAG_SOFTKEYS);
-+		for_each_set_bit(i, &flags, BITS_PER_LONG)
-+			sparse_keymap_report_event(priv->input, BIT(i), 1, true);
- 	}
- }
- 
+
+>> +/* Register offsets: */
+> 
+> Why the colon?        ^
+> Why even have the comment?
+
+I can remove such comments if they are not preferred in upstream code.
+
+
+>> +/* Enable register values: */
+>> +#define RPMH_REGULATOR_DISABLE                 0x0
+>> +#define RPMH_REGULATOR_ENABLE                  0x1
+>> +
+>> +/* Number of unique hardware modes supported: */
+> 
+> Both above also look useless.
+
+I'll remove them too.
+
+
+>> + * @rdev:                      Regulator device pointer returned by
+>> + *                             devm_regulator_register()
+> 
+> Is this used? Why save it around?
+
+I'll remove it.
+
+
+>> + * @voltage:                   RPMh VRM regulator voltage in microvolts
+> 
+> So call it uV?
+
+Ok.
+
+
+>> + * @mode:                      RPMh VRM regulator current framework mode
+>> + * @headroom_voltage:          RPMh VRM regulator minimum headroom voltage
+>> + *                             required
+> 
+> headroom_uV?
+
+Ok.
+
+
+>> +struct rpmh_vreg {
+>> +       struct device_node              *of_node;
+>> +       struct rpmh_pmic                *pmic;
+>> +       const char                      *resource_name;
+>> +       u32                             addr;
+>> +       struct regulator_desc           rdesc;
+>> +       struct regulator_dev            *rdev;
+>> +       const struct rpmh_vreg_hw_data  *hw_data;
+>> +       enum rpmh_regulator_type        regulator_type;
+>> +       bool                            always_wait_for_ack;
+>> +       struct rpmh_regulator_mode      *mode_map;
+>> +       int                             mode_count;
+> 
+> size_t?
+
+Ok.
+
+
+>> +
+>> +       bool                            enabled;
+>> +       int                             voltage;
+>> +       unsigned int                    mode;
+>> +       int                             headroom_voltage;
+> 
+> Please try to limit the things that are assigned into these structs and
+> then never used outside of init. It adds complexity to the code when a
+> local variable in the function would work just as well.
+
+I'll remove headroom_voltage from this struct.
+
+
+>> + * struct rpmh_vreg_init_data - initialization data for an RPMh regulator
+>> + * @name:                      Name for the regulator which also corresponds
+>> + *                             to the device tree subnode name of the regulator
+>> + * @resource_name_base:                RPMh regulator resource name prefix.  E.g.
+>> + *                             "ldo" for RPMh resource "ldoa1".
+> 
+> Maybe it should be "ldo%c1"? Then we could kasprintf the name with the
+> pmic_id and drop the 'id' member entirely.
+
+I can make this modification (though with %s instead of %c for simplicity
+with DT string parsing).  Hopefully having a variable format string
+doesn't trigger any static analysis tools.
+
+
+>> +struct rpmh_pmic {
+>> +       struct device                           *dev;
+>> +       struct rpmh_client                      *rpmh_client;
+>> +       struct rpmh_vreg                        *vreg;
+> 
+> It's a circle! Life is a circle! It's a circle!
+
+I can get rid of the vreg array.
+
+
+>> +       int                                     vreg_count;
+>> +       const char                              *pmic_id;
+>> +       const struct rpmh_pmic_init_data        *init_data;
+> 
+> Hopefully we don't really need this entire struct and we can just use
+> local variables instead.
+
+Outside of probe-time, this is used by struct rpmh_vreg in order to access
+rpmh_client (for RPMh transactions) and pmic->init_data->name (for debug
+and error messages).  I suppose that rpmh_client could be specified in
+struct rpmh_vreg directly.
+
+
+>> +static int rpmh_regulator_enable(struct regulator_dev *rdev)
+>> +{
+>> +       struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
+>> +       struct tcs_cmd cmd = {
+>> +               .addr = vreg->addr + RPMH_REGULATOR_REG_ENABLE,
+>> +               .data = RPMH_REGULATOR_ENABLE,
+>> +       };
+>> +       int ret;
+>> +
+>> +       if (vreg->enabled)
+>> +               return 0;
+>> +
+>> +       ret = rpmh_regulator_send_request(vreg, &cmd, 1, true);
+>> +       if (ret < 0) {
+>> +               vreg_err(vreg, "enable failed, ret=%d\n", ret);
+> 
+> Do we really need all these error messages deep down in the regulator
+> drivers? If consumers care, they'll print some error message themselves
+> anyway.
+
+I'd prefer to keep error messages in place unless you have a strong
+objection.  They make debugging simpler.
+
+
+>> +/**
+>> + * rpmh_regulator_vrm_set_load() - set the PMIC mode based upon the maximum load
+>> + *             required from the VRM rpmh-regulator
+>> + * @rdev:              Regulator device pointer for the rpmh-regulator
+>> + * @load_ua:           Maximum current required from all consumers in microamps
+>> + *
+>> + * This function is passed as a callback function into the regulator ops that
+>> + * are registered for each VRM rpmh-regulator device.
+>> + *
+>> + * This function sets the mode of the regulator to that which has the highest
+>> + * min support load less than or equal to load_ua.  Example:
+> 
+> s/support/supported/
+
+ACK
+
+
+>> +/**
+>> + * rpmh_regulator_parse_vrm_modes() - parse the supported mode configurations
+>> + *             for a VRM RPMh resource from device tree
+>> + * vreg:               Pointer to the rpmh regulator resource
+>> + *
+>> + * This function initializes the mode[] array of vreg based upon the values
+>> + * of optional device tree properties.
+>> + *
+>> + * Return: 0 on success, errno on failure
+>> + */
+>> +static int rpmh_regulator_parse_vrm_modes(struct rpmh_vreg *vreg)
+>> +{
+> 
+> I have a feeling this should all come from the driver data, not DT.
+> Doubtful this really changes for each board.
+
+This needs to be determined at a board level instead of hard-coded per
+regulator type.  For LDOs switching between LPM and HPM typically happens
+at 10 mA or 30 mA per hardware documentation.  Unfortunately, sharing
+control of regulators with other processors adds some subtlety.
+
+Consider the case of a regulator with 10 mA LPM/HPM threshold physically.
+Say that modem and application processors each have a load on the
+regulator that draws 9 mA.  If they each respect the 10 mA threshold, then
+they'd each vote for LPM.  VRM will aggregate these requests together
+which will result in the regulator being set to LPM even though the total
+load is 18 mA (which would require HPM).  To get around this corner case,
+a threshold of 1 uA can be used for all supplies that have non-application
+processor consumers.  Thus, any non-zero current request will result in
+setting the regulator to HPM (which is always safe).
+
+Another example is SMPS regulators which should theoretically always be
+able to operate in AUTO mode.  However, there may be board/system issues
+that require switching to PWM mode (HPM) for certain use cases as it has
+better load regulation (even though it can source the same amount of
+current as AUTO mode).  If there is more than one consumer that requires
+this ability for a given regulator, then regulator_set_load() is the only
+option since it provides aggregation, where as regulator_set_mode() does not.
+
+
+>> +static int rpmh_regulator_allocate_vreg(struct rpmh_pmic *pmic)
+>> +{
+>> +       struct device_node *node;
+>> +       int i;
+>> +
+>> +       pmic->vreg_count = of_get_available_child_count(pmic->dev->of_node);
+>> +       if (pmic->vreg_count == 0) {
+>> +               dev_err(pmic->dev, "could not find any regulator subnodes\n");
+>> +               return -ENODEV;
+>> +       }
+>> +
+>> +       pmic->vreg = devm_kcalloc(pmic->dev, pmic->vreg_count,
+>> +                       sizeof(*pmic->vreg), GFP_KERNEL);
+>> +       if (!pmic->vreg)
+>> +               return -ENOMEM;
+> 
+> Please just allocate one at a time. It's not like we have thousands of
+> these things to worry about.
+
+Sure, I'll change this.
+
+
+>> +/**
+>> + * rpmh_regulator_load_default_parameters() - initialize the RPMh resource
+>> + *             request for this regulator based on optional device tree
+>> + *             properties
+>> + * @vreg:              Pointer to the RPMh regulator
+>> + *
+>> + * Return: 0 on success, errno on failure
+>> + */
+>> +static int rpmh_regulator_load_default_parameters(struct rpmh_vreg *vreg)
+>> +{
+>> +       struct tcs_cmd cmd[2] = { };
+>> +       const char *prop;
+>> +       int cmd_count = 0;
+>> +       int ret;
+>> +       u32 temp;
+>> +
+>> +       if (vreg->regulator_type == RPMH_REGULATOR_TYPE_VRM) {
+>> +               prop = "qcom,headroom-voltage";
+> 
+> Is this regulator-microvolt-offset? Ah I guess it's a thing in the RPMh
+> registers. This probably needs to be pushed into the framework and come
+> down through a 'set_headroom' op in the regulator ops via a
+> regulator-headroom-microvolt property that's parsed in of_regulator.c.
+
+The qcom,headroom-voltage property is equivalent to struct
+regulator_desc.min_dropout_uV, but handled in hardware.  I don't see the
+need to make a new regulator op to configure this value dynamically.
+Headroom typically does not need to change.  Also, we don't really want
+this particular value plumbed into min_dropout_uV since we need to pass it
+directly to hardware and not have the regulator framework attempt to use
+it for a parent.
+
+
+>> +               prop = "qcom,regulator-initial-voltage";
+> 
+> DT constraints should take care of this by setting voltages on all
+> regulators that need them?
+
+Unfortunately not.  At regulator registration time, the regulator
+framework machine_constraints_voltage() function will call get_voltage()
+op and check if the voltage is in the min_uV to max_uV constraint range.
+If it is, then nothing happens.  If it's not, then it will call the
+set_voltage() call back to set the voltage to min_uV if current_uV <
+min_uV or max_uV if current_uV > max_uV.  Since the rpmh regulator driver
+doesn't know the initial voltage, get_voltage() will return 0 initially.
+As a result, machine_constraints_voltage() will always set the regulator
+to the minimum constraint voltage specified in DT.
+
+That behavior may not be acceptable for some regulators depending upon the
+hardware state at kernel initialization.  Therefore, we need a DT
+mechanism to specify a single voltage to configure by default.
+
+
+>> + * rpmh_regulator_init_vreg() - initialize all abbributes of an rpmh-regulator
+> 
+> Heh, abbributes.
+
+I'll fix this.
+
+
+>> +static int rpmh_regulator_init_vreg(struct rpmh_vreg *vreg)
+...
+>> +       vreg->resource_name = devm_kasprintf(dev, GFP_KERNEL, "%s%s%d",
+>> +                       rpmh_data->resource_name_base, vreg->pmic->pmic_id,
+>> +                       rpmh_data->id);
+>> +       if (!vreg->resource_name)
+>> +               return -ENOMEM;
+> 
+> This isn't used outside of this function, so remove the
+> vreg::resource_name member and use a local variable that gets freed
+> on exit please.
+
+Ok.
+
+
+>> +       /* Optional override for the default RPMh accelerator type */
+>> +       ret = of_property_read_string(vreg->of_node, "qcom,rpmh-resource-type",
+> 
+> Can this property have override in the name? And then because it is
+> called override, perhaps it should come from the driver instead of DT
+> because DT may need an override itself.
+
+Yes, I can add 'override' to the name of the property.  I'm not following
+your second sentence.  We require the ability to specify that a given
+regulator is using XOB instead of VRM at a board level.  This means that
+the override needs to happen in DT instead of the driver.  See [1] for
+more details.
+
+> Also, is this currently being used? If not I'd prefer we drop this until we
+> need it.
+
+It will be needed on a to-be-released Qualcomm Technologies, Inc. SoC that
+is currently under development.  I suppose that I can leave this property
+out for the initial patch.  However, we would still need to ensure that
+the driver architecture allows for this property to be read in a later
+patch and determine the regulator ops and whether or not to perform VRM
+specific initialization.
+
+
+>> +       if (type == RPMH_REGULATOR_TYPE_XOB && init_data->constraints.min_uV) {
+>> +               vreg->rdesc.fixed_uV = init_data->constraints.min_uV;
+>> +               init_data->constraints.apply_uV = 0;
+>> +               vreg->rdesc.n_voltages = 1;
+>> +       }
+> 
+> What is this doing? Usually constraints aren't touched by the driver.
+
+For XOB managed regulators, we need to set fixed_uV to match the DT
+constraint voltage and n_voltages = 1.  This allows consumers
+regulator_set_voltage() calls to succeed for such regulators.  It works
+the same as a fixed regulator.  I think that apply_uV = 0 could be left out.
+
+
+>> +
+>> +       if (vreg->hw_data->mode_map) {
+>> +               init_data->constraints.valid_ops_mask |= REGULATOR_CHANGE_MODE;
+> 
+> Huh, I thought this was assigned by the framework.
+
+No, this is not set anywhere in the regulator framework.  There isn't a DT
+method to configure it.  It seems that it could only be handled before
+with board files.  Other regulator drivers also configure it.
+
+
+>> +static const struct rpmh_pmic_init_data pm8005_pmic_data = {
+>> +       .name           = "PM8005",
+>> +       .vreg_data      = pm8005_vreg_data,
+>> +       .count          = ARRAY_SIZE(pm8005_vreg_data),
+>> +};
+> 
+> Kill 'name' please, and then get rid of 'count' and NUL terminate the
+> array instead. This follows previous rpm regulator driver styles. Also,
+> drop the macro that does stringification. We should end up with the
+> match_table pointing to static arrays of structs that look like:
+> 
+> 	{ "s1", VRM, "smp", 1, &pmic4_ftsmps42, "vdd_s1", },
+> 
+> And yes, drop the RPMH_REGULATOR_TYPE_ prefix and _hw_data postfix.
+
+Ok.
+
+
+>> +static const struct of_device_id rpmh_regulator_match_table[] = {
+>> +       {
+>> +               .compatible = "qcom,pm8998-rpmh-regulators",
+>> +               .data = &pm8998_pmic_data,
+>> +       },
+>> +       {
+>> +               .compatible = "qcom,pmi8998-rpmh-regulators",
+>> +               .data = &pmi8998_pmic_data,
+>> +       },
+>> +       {
+>> +               .compatible = "qcom,pm8005-rpmh-regulators",
+>> +               .data = &pm8005_pmic_data,
+>> +       },
+>> +       {}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, rpmh_regulator_match_table);
+> 
+> Please move this array next to the driver structure.
+
+Ok.
+
+
+>> +static int rpmh_regulator_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       const struct of_device_id *match;
+>> +       struct rpmh_pmic *pmic;
+>> +       struct device_node *node;
+>> +       int ret, i;
+>> +
+>> +       node = dev->of_node;
+>> +
+>> +       if (!node) {
+>> +               dev_err(dev, "Device tree node is missing\n");
+>> +               return -EINVAL;
+>> +       }
+> 
+> This should never happen. Please remove.
+
+Ok.
+
+
+>> +
+>> +       ret = cmd_db_ready();
+>> +       if (ret < 0) {
+>> +               if (ret != -EPROBE_DEFER)
+>> +                       dev_err(dev, "Command DB not available, ret=%d\n", ret);
+>> +               return ret;
+>> +       }
+> 
+> We should just make rpmh parent device call cmd_db_ready() so that these
+> devices aren't even populated until then and so that cmd_db_ready() is
+> only in one place. Lina?
+
+Let's see if Lina has qualms about this plan.
+
+
+>> +       pmic->rpmh_client = rpmh_get_client(pdev);
+>> +       if (IS_ERR(pmic->rpmh_client)) {
+>> +               ret = PTR_ERR(pmic->rpmh_client);
+>> +               if (ret != -EPROBE_DEFER)
+>> +                       dev_err(dev, "failed to request RPMh client, ret=%d\n",
+>> +                               ret);
+> 
+> I fail to see how this happens given that rpmh creates this device.
+
+I'll remove the EPROBE_DEFER check.
+
+
+>> +       match = of_match_node(rpmh_regulator_match_table, node);
+>> +       if (match) {
+>> +               pmic->init_data = match->data;
+>> +       } else {
+>> +               dev_err(dev, "could not find compatible string match\n");
+>> +               ret = -ENODEV;
+>> +               goto cleanup;
+>> +       }
+> 
+> Use of_device_get_match_data() instead and print nothing on error.
+
+Ok.
+
+
+>> +       ret = rpmh_regulator_allocate_vreg(pmic);
+> 
+> _allocate_vregs (plural)?
+
+This function is going to be removed per Doug's suggestions.
+
+
+>> +       if (ret < 0) {
+>> +               dev_err(dev, "failed to allocate regulator subnode array, ret=%d\n",
+> 
+> Please no allocation error messages, kmalloc already prints a bunch of
+> info.
+
+Ok.
+
+
+>> +       dev_dbg(dev, "successfully probed %d %s regulators\n",
+>> +               pmic->vreg_count, pmic->init_data->name);
+> 
+> Doesn't the regulator framework already print a bunch of constraint
+> stuff when regulators are registered? Seems sort of spammy even for
+> debug mode. Plus it's the only reason for pmic::name right now.
+
+I think that the regulator framework will only print something if it has
+to set the voltage in order to bring the regulator voltage into the
+constraint range.  I suppose that I can remove this message.
+
+
+>> +static int rpmh_regulator_remove(struct platform_device *pdev)
+>> +{
+>> +       struct rpmh_pmic *pmic = platform_get_drvdata(pdev);
+>> +
+>> +       rpmh_release(pmic->rpmh_client);
+> 
+> I'm still lost on what rpmh_client is giving us besides more code we
+> don't need. I'll ping the rpmh thread again.
+
+Let's see if Lina is willing to add some devm_* calls so that no cleanup
+is required.
+
+Take care,
+David
+
+[1]: https://lkml.org/lkml/2018/3/21/877
+
 -- 
-2.14.3
-
-
--- 
-Darren Hart
-VMware Open Source Technology Center
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
