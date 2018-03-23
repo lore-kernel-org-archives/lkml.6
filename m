@@ -1,1050 +1,1846 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeCWOzB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:55:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47650 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751553AbeCWOzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:55:00 -0400
-Date: Fri, 23 Mar 2018 15:54:57 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Cc: Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] livepatch: Atomic replace feature
-Message-ID: <20180323145457.pup7fxle2pvhbjon@pathway.suse.cz>
-References: <20180323120028.31451-1-pmladek@suse.com>
+        id S1751841AbeCWO6k (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:58:40 -0400
+Received: from mail-bl2nam02on0067.outbound.protection.outlook.com ([104.47.38.67]:39936
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751541AbeCWO6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 10:58:37 -0400
+From: Naga Sureshkumar Relli <nagasure@xilinx.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+        "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>
+CC: "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <michals@xilinx.com>,
+        "Punnaiah Choudary Kalluri" <punnaia@xilinx.com>
+Subject: RE: [LINUX PATCH v8 2/2] mtd: rawnand: pl353: Add basic driver for
+ arm pl353 smc nand interface
+Thread-Topic: [LINUX PATCH v8 2/2] mtd: rawnand: pl353: Add basic driver for
+ arm pl353 smc nand interface
+Thread-Index: AQHTu4IebRjORrYPu0KFc32DbYgusKPYLssAgAW0FkA=
+Date: Fri, 23 Mar 2018 14:58:31 +0000
+Message-ID: <BY2PR02MB14114DD144070E22CEB8FC07AFA80@BY2PR02MB1411.namprd02.prod.outlook.com>
+References: <1521024505-30677-1-git-send-email-nagasureshkumarrelli@gmail.com>
+ <20180319233748.65b5a7b9@xps13>
+In-Reply-To: <20180319233748.65b5a7b9@xps13>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com;
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR02MB1991;7:shQMpwpA+K0RI3zLWPklSOB2H7XVfublBL7Y+BXxqEew67YsUNfRqM5qp1Wp1t/wRQqnBDlF5BACojUu+B3iFawh65yF2dTXCHe5ykErTjD+l7AC9X5wocPkPZZ9zZ8DAPP3Za4yeIUxeYZEW8l4mcFBn8pdsrJP8vXcUVPaUoCI1sZwFKkzD/hh6ecTQ1dbLRrEiRzvj0F2xAeOkD01ZuyPx7dZP8+JabzlirhYIomzHSTwlp4EQCutai+2RKVl
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 9a338dcb-1940-4909-e487-08d590ce8b28
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BY2PR02MB1991;
+x-ms-traffictypediagnostic: BY2PR02MB1991:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <BY2PR02MB1991ADE7240C5F274EC1E56BAFA80@BY2PR02MB1991.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(258649278758335)(192813158149592)(17755550239193);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:BY2PR02MB1991;BCL:0;PCL:0;RULEID:;SRVR:BY2PR02MB1991;
+x-forefront-prvs: 0620CADDF3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(39380400002)(376002)(346002)(366004)(396003)(39860400002)(199004)(13464003)(189003)(66066001)(106356001)(316002)(33656002)(478600001)(5250100002)(966005)(229853002)(2501003)(14454004)(25786009)(2900100001)(5660300001)(9686003)(6306002)(107886003)(6246003)(55016002)(7736002)(53946003)(53936002)(16200700003)(4326008)(39060400002)(68736007)(7416002)(74316002)(110136005)(105586002)(3280700002)(305945005)(7696005)(3660700001)(99286004)(54906003)(102836004)(6116002)(6506007)(55236004)(76176011)(59450400001)(97736004)(186003)(3846002)(53546011)(81156014)(81166006)(8936002)(446003)(2906002)(8676002)(26005)(6436002)(11346002)(86362001)(575784001)(217873001)(959014)(579004)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR02MB1991;H:BY2PR02MB1411.namprd02.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: 5KjQm116FMhZrL79jM0723TAFfQHwcUmlGDM7M0HM1pm+knw3cCDkgIoZf8EJwqAQg3ZjhkTOF3VizHmhFwzfKVS4lMGjEOJFcSTgeXWTGqk787CYf9IL4N8exe1kgMWQnKMc+kC1NBU+CEzyDoKQEgSdFyB2oRYOzizaMkpoJah2PM6NakniKlQBgoyBhmiEaVxKzWNDYNQl34fjYmzl84gM3DmItlbiZ9dpOKsRlWZLSiKbm/XPC6nc3Cte4Gfj63dR1oBGIc88JRybjE2n7hUxhmaQ4+qu4ShzPNG5NYuRnozRBWFPNsfiaBFxv67AkW5OZ7Ao/Ex8sxaruoFAA==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180323120028.31451-1-pmladek@suse.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a338dcb-1940-4909-e487-08d590ce8b28
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2018 14:58:31.3762
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR02MB1991
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2NEwnGA001144
 
-On Fri 2018-03-23 13:00:20, Petr Mladek wrote:
-> The atomic replace allows to create cumulative patches. They
-> are useful when you maintain many livepatches and want to remove
-> one that is lower on the stack. In addition it is very useful when
-> more patches touch the same function and there are dependencies
-> between them.
-> 
-> This version is heavily refactored and cleaned based on feedback from Josh.
-> There are actually only three functional changes.
-> 
-> It still passes the first draft of the selfttest from Joe that can
-> be found at https://lkml.kernel.org/r/1520881024-29386-1-git-send-email-joe.lawrence@redhat.com
-> 
-> 
-> Changes against v10:
-> 
->   + Bug fixes and functional changes:
->     + Handle Nops in klp_ftrace_handled() to avoid infinite loop [Mirek]
->     + Really add dynamically allocated klp_object into the list [Petr]
->     + Clear patch->replace when transition finishes [Josh]
-> 
->   + Refactoring and clean up [Josh]:
->     + Replace enum types with bools
->     + Avoid using ERR_PTR
->     + Remove too paranoid warnings
->     + Distinguish registered patches by a flag instead of a list
->     + Squash some functions
->     + Update comments, documentation, and commit messages
->     + Squashed and split patches to do more controversial changes later
+Hi Miquel,
 
-Please, see below git diff against v10. Otherwise, the changes might
-be hard to find because of the refactoring.
+Thanks for reviewing the patch.
+Please see my comments inline.
 
-diff --git a/Documentation/livepatch/cumulative-patches.txt b/Documentation/livepatch/cumulative-patches.txt
-index c041fc1bd259..206b7f98d270 100644
---- a/Documentation/livepatch/cumulative-patches.txt
-+++ b/Documentation/livepatch/cumulative-patches.txt
-@@ -31,15 +31,37 @@ be enabled even when some earlier patches have not been enabled yet.
- 
- All processes are then migrated to use the code only from the new patch.
- Once the transition is finished, all older patches are removed from the stack
--of patches. Even the older not-enabled patches mentioned above.
-+of patches. Even the older not-enabled patches mentioned above. They can
-+even be unregistered and the related modules unloaded.
- 
- Ftrace handlers are transparently removed from functions that are no
- longer modified by the new cumulative patch.
- 
--As a result, the livepatch author might maintain sources only for one
-+As a result, the livepatch authors might maintain sources only for one
- cumulative patch. It helps to keep the patch consistent while adding or
- removing various fixes or features.
- 
-+Users could keep only the last patch installed on the system after
-+the transition to has finished. It helps to clearly see what code is
-+actually in use. Also the livepatch might then be seen as a "normal"
-+module that modifies the kernel behavior. The only difference is that
-+it can be updated at runtime without breaking its functionality.
-+
-+
-+Features
-+--------
-+
-+The atomic replace allows:
-+
-+  + Atomically revert some functions in a previous patch while
-+    upgrading other functions.
-+
-+  + Remove eventual performance impact caused by core redirection
-+    for functions that are no longer patched.
-+
-+  + Decrease user confusion about stacking order and what patches are
-+    currently in effect.
-+
- 
- Limitations:
- ------------
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 7222b801d63a..1635b30bb1ec 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -35,34 +35,19 @@
- #define KLP_UNPATCHED	 0
- #define KLP_PATCHED	 1
- 
--/*
-- * Function type is used to distinguish dynamically allocated structures
-- * and limit some operations.
-- */
--enum klp_func_type {
--	KLP_FUNC_ANY = -1,	/* Substitute any type */
--	KLP_FUNC_STATIC = 0,    /* Original statically defined structure */
--	KLP_FUNC_NOP,		/* Dynamically allocated NOP function patch */
--};
--
--enum klp_object_type {
--	KLP_OBJECT_STATIC = 0,  /* Original statically defined structure */
--	KLP_OBJECT_DYNAMIC,	/* Dynamically allocated structure. */
--};
--
- /**
-  * struct klp_func - function structure for live patching
-  * @old_name:	name of the function to be patched
-  * @new_func:	pointer to the patched function code
-  * @old_sympos: a hint indicating which symbol position the old function
-  *		can be found (optional)
-- * @ftype:	distinguish static and dynamic structures
-  * @old_addr:	the address of the function being patched
-  * @kobj:	kobject for sysfs resources
-+ * @node:	list node for klp_object func_list
-  * @stack_node:	list node for klp_ops func_stack list
-- * @func_entry:	links struct klp_func to struct klp_object
-  * @old_size:	size of the old function
-  * @new_size:	size of the new function
-+ * @nop:        temporary patch to use the original code again; dyn. allocated
-  * @patched:	the func has been added to the klp_ops list
-  * @transition:	the func is currently being applied or reverted
-  *
-@@ -95,12 +80,12 @@ struct klp_func {
- 	unsigned long old_sympos;
- 
- 	/* internal */
--	enum klp_func_type ftype;
- 	unsigned long old_addr;
- 	struct kobject kobj;
-+	struct list_head node;
- 	struct list_head stack_node;
--	struct list_head func_entry;
- 	unsigned long old_size, new_size;
-+	bool nop;
- 	bool patched;
- 	bool transition;
- };
-@@ -137,8 +122,9 @@ struct klp_callbacks {
-  * @kobj:	kobject for sysfs resources
-  * @mod:	kernel module associated with the patched object
-  *		(NULL for vmlinux)
-- * @func_list:	head of list for struct klp_func
-- * @obj_entry:	links struct klp_object to struct klp_patch
-+ * @func_list:	dynamic list of the function entries
-+ * @node:	list node for klp_patch obj_list
-+ * @dynamic:    temporary object for nop functions; dynamically allocated
-  * @patched:	the object's funcs have been added to the klp_ops list
-  */
- struct klp_object {
-@@ -148,11 +134,11 @@ struct klp_object {
- 	struct klp_callbacks callbacks;
- 
- 	/* internal */
--	enum klp_object_type otype;
- 	struct kobject kobj;
- 	struct list_head func_list;
--	struct list_head obj_entry;
-+	struct list_head node;
- 	struct module *mod;
-+	bool dynamic;
- 	bool patched;
- };
- 
-@@ -163,7 +149,8 @@ struct klp_object {
-  * @replace:	replace all already registered patches
-  * @list:	list node for global list of registered patches
-  * @kobj:	kobject for sysfs resources
-- * @obj_list:	head of list for struct klp_object
-+ * @obj_list:	dynamic list of the object entries
-+ * @registered: reliable way to check registration status
-  * @enabled:	the patch is enabled (but operation may be incomplete)
-  * @finish:	for waiting till it is safe to remove the patch module
-  */
-@@ -177,6 +164,7 @@ struct klp_patch {
- 	struct list_head list;
- 	struct kobject kobj;
- 	struct list_head obj_list;
-+	bool registered;
- 	bool enabled;
- 	struct completion finish;
- };
-@@ -185,39 +173,21 @@ struct klp_patch {
- 	for (obj = patch->objs; obj->funcs || obj->name; obj++)
- 
- #define klp_for_each_object_safe(patch, obj, tmp_obj)		\
--	list_for_each_entry_safe(obj, tmp_obj, &patch->obj_list, obj_entry)
-+	list_for_each_entry_safe(obj, tmp_obj, &patch->obj_list, node)
- 
- #define klp_for_each_object(patch, obj)	\
--	list_for_each_entry(obj, &patch->obj_list, obj_entry)
-+	list_for_each_entry(obj, &patch->obj_list, node)
- 
--/* Support also dynamically allocated struct klp_object */
- #define klp_for_each_func_static(obj, func) \
- 	for (func = obj->funcs; \
--	     func && (func->old_name || func->new_func || func->old_sympos); \
-+	     func->old_name || func->new_func || func->old_sympos; \
- 	     func++)
- 
- #define klp_for_each_func_safe(obj, func, tmp_func)			\
--	list_for_each_entry_safe(func, tmp_func, &obj->func_list, func_entry)
-+	list_for_each_entry_safe(func, tmp_func, &obj->func_list, node)
- 
- #define klp_for_each_func(obj, func)	\
--	list_for_each_entry(func, &obj->func_list, func_entry)
--
--static inline bool klp_is_object_dynamic(struct klp_object *obj)
--{
--	return obj->otype == KLP_OBJECT_DYNAMIC;
--}
--
--static inline bool klp_is_func_dynamic(struct klp_func *func)
--{
--	WARN_ON_ONCE(func->ftype == KLP_FUNC_ANY);
--	return func->ftype != KLP_FUNC_STATIC;
--}
--
--static inline bool klp_is_func_type(struct klp_func *func,
--				    enum klp_func_type ftype)
--{
--	return ftype == KLP_FUNC_ANY || ftype == func->ftype;
--}
-+	list_for_each_entry(func, &obj->func_list, node)
- 
- int klp_register_patch(struct klp_patch *);
- int klp_unregister_patch(struct klp_patch *);
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index b098dc10d4d5..c64371ffc063 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -45,41 +45,28 @@
-  */
- DEFINE_MUTEX(klp_mutex);
- 
--static LIST_HEAD(klp_patches);
--
- /*
-- * List of 'replaced' patches that have been replaced by a patch that has the
-- * 'replace' bit set. When they are added to this list, they are disabled and
-- * can not be re-enabled, but they can be unregistered().
-+ * Stack of patches. It defines the order in which the patches can be enabled.
-+ * Only patches on this stack might be enabled. New patches are added when
-+ * registered. They are removed when they are unregistered.
-  */
--static LIST_HEAD(klp_replaced_patches);
-+static LIST_HEAD(klp_patches);
- 
- static struct kobject *klp_root_kobj;
- 
--static void klp_init_func_list(struct klp_object *obj, struct klp_func *func)
--{
--	list_add(&func->func_entry, &obj->func_list);
--}
--
--static void klp_init_object_list(struct klp_patch *patch,
--				 struct klp_object *obj)
--{
--	struct klp_func *func;
--
--	list_add(&obj->obj_entry, &patch->obj_list);
--
--	INIT_LIST_HEAD(&obj->func_list);
--	klp_for_each_func_static(obj, func)
--		klp_init_func_list(obj, func);
--}
--
--static void klp_init_patch_list(struct klp_patch *patch)
-+static void klp_init_lists(struct klp_patch *patch)
- {
- 	struct klp_object *obj;
-+	struct klp_func *func;
- 
- 	INIT_LIST_HEAD(&patch->obj_list);
--	klp_for_each_object_static(patch, obj)
--		klp_init_object_list(patch, obj);
-+	klp_for_each_object_static(patch, obj) {
-+		list_add(&obj->node, &patch->obj_list);
-+
-+		INIT_LIST_HEAD(&obj->func_list);
-+		klp_for_each_func_static(obj, func)
-+			list_add(&func->node, &obj->func_list);
-+	}
- }
- 
- static bool klp_is_module(struct klp_object *obj)
-@@ -115,28 +102,17 @@ static void klp_find_object_module(struct klp_object *obj)
- 	mutex_unlock(&module_mutex);
- }
- 
--static bool klp_is_patch_in_list(struct klp_patch *patch,
--				 struct list_head *head)
-+static bool klp_is_patch_on_stack(struct klp_patch *patch)
- {
- 	struct klp_patch *mypatch;
- 
--	list_for_each_entry(mypatch, head, list)
-+	list_for_each_entry(mypatch, &klp_patches, list)
- 		if (mypatch == patch)
- 			return true;
- 
- 	return false;
- }
- 
--static bool klp_is_patch_usable(struct klp_patch *patch)
--{
--	return klp_is_patch_in_list(patch, &klp_patches);
--}
--
--static bool klp_is_patch_replaced(struct klp_patch *patch)
--{
--	return klp_is_patch_in_list(patch, &klp_replaced_patches);
--}
--
- static bool klp_initialized(void)
- {
- 	return !!klp_root_kobj;
-@@ -161,10 +137,9 @@ static struct klp_object *klp_find_object(struct klp_patch *patch,
- 					  struct klp_object *old_obj)
- {
- 	struct klp_object *obj;
--	bool mod = klp_is_module(old_obj);
- 
- 	klp_for_each_object(patch, obj) {
--		if (mod) {
-+		if (klp_is_module(old_obj)) {
- 			if (klp_is_module(obj) &&
- 			    strcmp(old_obj->name, obj->name) == 0) {
- 				return obj;
-@@ -361,14 +336,18 @@ static int klp_write_object_relocations(struct module *pmod,
-  * This function removes replaced patches from both func_stack
-  * and klp_patches stack.
-  *
-- * We could be pretty aggressive here. It is called in situation
-- * when these structures are no longer accessible. All functions
-- * are redirected using the klp_transition_patch. They use either
-- * a new code or they are in the original code because of the special
-- * nop function patches.
-+ * We could be pretty aggressive here. It is called in the situation where
-+ * these structures are no longer accessible. All functions are redirected
-+ * by the klp_transition_patch. They use either a new code or they are in
-+ * the original code because of the special nop function patches.
-+ *
-+ * The only exception is when the transition was forced. In this case,
-+ * klp_ftrace_handler() might still see the replaced patch on the stack.
-+ * Fortunately, it is carefully designed to work with removed functions
-+ * thanks to RCU. We only have to keep the patches on the system. This
-+ * is handled by @keep_module parameter.
-  */
--void klp_throw_away_replaced_patches(struct klp_patch *new_patch,
--				     bool keep_module)
-+void klp_discard_replaced_patches(struct klp_patch *new_patch, bool keep_module)
- {
- 	struct klp_patch *old_patch, *tmp_patch;
- 
-@@ -377,7 +356,7 @@ void klp_throw_away_replaced_patches(struct klp_patch *new_patch,
- 			return;
- 
- 		if (old_patch->enabled) {
--			klp_unpatch_objects(old_patch, KLP_FUNC_ANY);
-+			klp_unpatch_objects(old_patch);
- 			old_patch->enabled = false;
- 
- 			if (!keep_module)
-@@ -388,7 +367,7 @@ void klp_throw_away_replaced_patches(struct klp_patch *new_patch,
- 		 * Replaced patches could not get re-enabled to keep
- 		 * the code sane.
- 		 */
--		list_move(&old_patch->list, &klp_replaced_patches);
-+		list_del_init(&old_patch->list);
- 	}
- }
- 
-@@ -443,7 +422,7 @@ int klp_disable_patch(struct klp_patch *patch)
- 
- 	mutex_lock(&klp_mutex);
- 
--	if (!klp_is_patch_usable(patch)) {
-+	if (!patch->registered) {
- 		ret = -EINVAL;
- 		goto err;
- 	}
-@@ -472,13 +451,14 @@ static int __klp_enable_patch(struct klp_patch *patch)
- 	if (WARN_ON(patch->enabled))
- 		return -EINVAL;
- 
--	if (!klp_is_patch_usable(patch))
-+	/* Enforce stacking. */
-+	if (!klp_is_patch_on_stack(patch))
- 		return -EINVAL;
- 
- 	/*
--	 * Enforce stacking: only the first disabled patch can be enabled.
--	 * This is not required for patches with the replace flags. They
--	 * override even disabled patches that were registered earlier.
-+	 * Only the first disabled patch can be enabled. This is not required
-+	 * for patches with the replace flags. They override even disabled
-+	 * patches that were registered earlier.
- 	 */
- 	if (!patch->replace &&
- 	    patch->list.prev != &klp_patches &&
-@@ -551,7 +531,7 @@ int klp_enable_patch(struct klp_patch *patch)
- 
- 	mutex_lock(&klp_mutex);
- 
--	if (!klp_is_patch_usable(patch)) {
-+	if (!patch->registered) {
- 		ret = -EINVAL;
- 		goto err;
- 	}
-@@ -592,15 +572,16 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
- 
- 	mutex_lock(&klp_mutex);
- 
--	if (!klp_is_patch_usable(patch)) {
-+	if (!patch->registered) {
- 		/*
- 		 * Module with the patch could either disappear meanwhile or is
--		 * not properly initialized yet or the patch was just replaced.
-+		 * not properly initialized yet.
- 		 */
- 		ret = -EINVAL;
- 		goto err;
- 	}
- 
-+
- 	if (patch->enabled == enabled) {
- 		/* already in requested state */
- 		ret = -EINVAL;
-@@ -720,18 +701,6 @@ static struct attribute *klp_patch_attrs[] = {
- /*
-  * Dynamically allocated objects and functions.
-  */
--static void klp_free_func_nop(struct klp_func *func)
--{
--	kfree(func->old_name);
--	kfree(func);
--}
--
--static void klp_free_func_dynamic(struct klp_func *func)
--{
--	if (func->ftype == KLP_FUNC_NOP)
--		klp_free_func_nop(func);
--}
--
- static void klp_free_object_dynamic(struct klp_object *obj)
- {
- 	kfree(obj->name);
-@@ -744,35 +713,26 @@ static struct klp_object *klp_alloc_object_dynamic(const char *name)
- 
- 	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
- 	if (!obj)
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
- 
- 	if (name) {
- 		obj->name = kstrdup(name, GFP_KERNEL);
- 		if (!obj->name) {
- 			kfree(obj);
--			return ERR_PTR(-ENOMEM);
-+			return NULL;
- 		}
- 	}
--	obj->otype = KLP_OBJECT_DYNAMIC;
-+
-+	INIT_LIST_HEAD(&obj->func_list);
-+	obj->dynamic = true;
- 
- 	return obj;
- }
- 
--static struct klp_object *klp_get_or_add_object(struct klp_patch *patch,
--						struct klp_object *old_obj)
-+static void klp_free_func_nop(struct klp_func *func)
- {
--	struct klp_object *obj;
--
--	obj = klp_find_object(patch, old_obj);
--	if (obj)
--		return obj;
--
--	obj = klp_alloc_object_dynamic(old_obj->name);
--	if (IS_ERR(obj))
--		return obj;
--
--	klp_init_object_list(patch, obj);
--	return obj;
-+	kfree(func->old_name);
-+	kfree(func);
- }
- 
- static struct klp_func *klp_alloc_func_nop(struct klp_func *old_func,
-@@ -782,59 +742,52 @@ static struct klp_func *klp_alloc_func_nop(struct klp_func *old_func,
- 
- 	func = kzalloc(sizeof(*func), GFP_KERNEL);
- 	if (!func)
--		return ERR_PTR(-ENOMEM);
-+		return NULL;
- 
- 	if (old_func->old_name) {
- 		func->old_name = kstrdup(old_func->old_name, GFP_KERNEL);
- 		if (!func->old_name) {
- 			kfree(func);
--			return ERR_PTR(-ENOMEM);
-+			return NULL;
- 		}
- 	}
--	func->old_sympos = old_func->old_sympos;
-+
- 	/*
- 	 * func->new_func is same as func->old_addr. These addresses are
- 	 * set when the object is loaded, see klp_init_object_loaded().
- 	 */
--	func->ftype = KLP_FUNC_NOP;
-+	func->old_sympos = old_func->old_sympos;
-+	func->nop = true;
- 
- 	return func;
- }
- 
--static int klp_add_func_nop(struct klp_object *obj,
--			    struct klp_func *old_func)
--{
--	struct klp_func *func;
--
--	func = klp_find_func(obj, old_func);
--
--	if (func)
--		return 0;
--
--	func = klp_alloc_func_nop(old_func, obj);
--	if (IS_ERR(func))
--		return PTR_ERR(func);
--
--	klp_init_func_list(obj, func);
--
--	return 0;
--}
--
- static int klp_add_object_nops(struct klp_patch *patch,
- 			       struct klp_object *old_obj)
- {
- 	struct klp_object *obj;
--	struct klp_func *old_func;
--	int err = 0;
-+	struct klp_func *func, *old_func;
-+
-+	obj = klp_find_object(patch, old_obj);
-+
-+	if (!obj) {
-+		obj = klp_alloc_object_dynamic(old_obj->name);
-+		if (!obj)
-+			return -ENOMEM;
- 
--	obj = klp_get_or_add_object(patch, old_obj);
--	if (IS_ERR(obj))
--		return PTR_ERR(obj);
-+		list_add(&obj->node, &patch->obj_list);
-+	}
- 
- 	klp_for_each_func(old_obj, old_func) {
--		err = klp_add_func_nop(obj, old_func);
--		if (err)
--			return err;
-+		func = klp_find_func(obj, old_func);
-+		if (func)
-+			continue;
-+
-+		func = klp_alloc_func_nop(old_func, obj);
-+		if (!func)
-+			return -ENOMEM;
-+
-+		list_add(&func->node, &obj->func_list);
- 	}
- 
- 	return 0;
-@@ -843,15 +796,7 @@ static int klp_add_object_nops(struct klp_patch *patch,
- /*
-  * Add 'nop' functions which simply return to the caller to run
-  * the original function. The 'nop' functions are added to a
-- * patch to facilitate a 'replace' mode
-- *
-- * The nops are generated for all patches on the stack when
-- * the new patch is initialized. It is safe even though some
-- * older patches might get disabled and removed before the
-- * new one is enabled. In the worst case, there might be nops
-- * which will not be really needed. But it does not harm and
-- * simplifies the implementation a lot. Especially we could
-- * use the init functions as is.
-+ * patch to facilitate a 'replace' mode.
-  */
- static int klp_add_nops(struct klp_patch *patch)
- {
-@@ -859,9 +804,6 @@ static int klp_add_nops(struct klp_patch *patch)
- 	struct klp_object *old_obj;
- 	int err = 0;
- 
--	if (WARN_ON(!patch->replace))
--		return -EINVAL;
--
- 	list_for_each_entry(old_patch, &klp_patches, list) {
- 		klp_for_each_object(old_patch, old_obj) {
- 			err = klp_add_object_nops(patch, old_obj);
-@@ -873,17 +815,6 @@ static int klp_add_nops(struct klp_patch *patch)
- 	return 0;
- }
- 
--/*
-- * Patch release framework must support the following scenarios:
-- *
-- *   + Asynchonous release is used when kobjects are initialized.
-- *
-- *   + Direct release is used in error paths for structures that
-- *     have not had kobj initialized yet.
-- *
-- *   + Allow to release dynamic structures of the given type when
-- *     they are not longer needed.
-- */
- static void klp_kobj_release_patch(struct kobject *kobj)
- {
- 	struct klp_patch *patch;
-@@ -904,7 +835,7 @@ static void klp_kobj_release_object(struct kobject *kobj)
- 
- 	obj = container_of(kobj, struct klp_object, kobj);
- 
--	if (klp_is_object_dynamic(obj))
-+	if (obj->dynamic)
- 		klp_free_object_dynamic(obj);
- }
- 
-@@ -919,8 +850,8 @@ static void klp_kobj_release_func(struct kobject *kobj)
- 
- 	func = container_of(kobj, struct klp_func, kobj);
- 
--	if (klp_is_func_dynamic(func))
--		klp_free_func_dynamic(func);
-+	if (func->nop)
-+		klp_free_func_nop(func);
- }
- 
- static struct kobj_type klp_ktype_func = {
-@@ -928,26 +859,25 @@ static struct kobj_type klp_ktype_func = {
- 	.sysfs_ops = &kobj_sysfs_ops,
- };
- 
--/*
-- * Free all funcs of the given ftype. Use the kobject when it has already
-- * been initialized. Otherwise, do it directly.
-- */
--static void klp_free_funcs(struct klp_object *obj,
--			   enum klp_func_type ftype)
-+static void __klp_free_funcs(struct klp_object *obj, bool free_all)
- {
- 	struct klp_func *func, *tmp_func;
- 
- 	klp_for_each_func_safe(obj, func, tmp_func) {
--		if (!klp_is_func_type(func, ftype))
-+		if (!free_all && !func->nop)
- 			continue;
- 
--		/* Avoid double free and allow to detect empty objects. */
--		list_del(&func->func_entry);
-+		/*
-+		 * Avoid double free. It would be tricky to wait for kobject
-+		 * callbacks when only NOPs are handled.
-+		 */
-+		list_del(&func->node);
- 
-+		/* Might be called from klp_init_patch() error path. */
- 		if (func->kobj.state_initialized)
- 			kobject_put(&func->kobj);
--		else if (klp_is_func_dynamic(func))
--			klp_free_func_dynamic(func);
-+		else if (func->nop)
-+			klp_free_func_nop(func);
- 	}
- }
- 
-@@ -961,48 +891,48 @@ static void klp_free_object_loaded(struct klp_object *obj)
- 	klp_for_each_func(obj, func) {
- 		func->old_addr = 0;
- 
--		if (klp_is_func_type(func, KLP_FUNC_NOP))
-+		if (func->nop)
- 			func->new_func = NULL;
- 	}
- }
- 
--/*
-- * Free all linked funcs of the given ftype. Then free empty objects.
-- * Use the kobject when it has already been initialized. Otherwise,
-- * do it directly.
-- */
--void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype)
-+static void __klp_free_objects(struct klp_patch *patch, bool free_all)
- {
- 	struct klp_object *obj, *tmp_obj;
- 
- 	klp_for_each_object_safe(patch, obj, tmp_obj) {
--		klp_free_funcs(obj, ftype);
-+		__klp_free_funcs(obj, free_all);
- 
--		if (!list_empty(&obj->func_list))
-+		if (!free_all && !obj->dynamic)
- 			continue;
- 
- 		/*
--		 * Keep objects from the original patch initialized until
--		 * the entire patch is being freed.
-+		 * Avoid double free. It would be tricky to wait for kobject
-+		 * callbacks when only dynamic objects are handled.
- 		 */
--		if (!klp_is_object_dynamic(obj) &&
--		    ftype != KLP_FUNC_STATIC &&
--		    ftype != KLP_FUNC_ANY)
--			continue;
--
--		/* Avoid freeing the object twice. */
--		list_del(&obj->obj_entry);
-+		list_del(&obj->node);
- 
-+		/* Might be called from klp_init_patch() error path. */
- 		if (obj->kobj.state_initialized)
- 			kobject_put(&obj->kobj);
--		else if (klp_is_object_dynamic(obj))
-+		else if (obj->dynamic)
- 			klp_free_object_dynamic(obj);
- 	}
- }
- 
-+static void klp_free_objects(struct klp_patch *patch)
-+{
-+	__klp_free_objects(patch, true);
-+}
-+
-+void klp_free_objects_dynamic(struct klp_patch *patch)
-+{
-+	__klp_free_objects(patch, false);
-+}
-+
- static void klp_free_patch(struct klp_patch *patch)
- {
--	klp_free_objects(patch, KLP_FUNC_ANY);
-+	klp_free_objects(patch);
- 
- 	if (!list_empty(&patch->list))
- 		list_del(&patch->list);
-@@ -1017,7 +947,7 @@ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
- 	 * NOPs get the address later. The the patched module must be loaded,
- 	 * see klp_init_object_loaded().
- 	 */
--	if (!func->new_func && !klp_is_func_type(func, KLP_FUNC_NOP))
-+	if (!func->new_func && !func->nop)
- 		return -EINVAL;
- 
- 	INIT_LIST_HEAD(&func->stack_node);
-@@ -1072,7 +1002,7 @@ static int klp_init_object_loaded(struct klp_patch *patch,
- 			return -ENOENT;
- 		}
- 
--		if (klp_is_func_type(func, KLP_FUNC_NOP))
-+		if (func->nop)
- 			func->new_func = (void *)func->old_addr;
- 
- 		ret = kallsyms_lookup_size_offset((unsigned long)func->new_func,
-@@ -1093,6 +1023,9 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
- 	int ret;
- 	const char *name;
- 
-+	if (!obj->funcs && !obj->dynamic)
-+		return -EINVAL;
-+
- 	obj->patched = false;
- 	obj->mod = NULL;
- 
-@@ -1131,7 +1064,7 @@ static int klp_init_patch(struct klp_patch *patch)
- 
- 	patch->enabled = false;
- 	init_completion(&patch->finish);
--	klp_init_patch_list(patch);
-+	klp_init_lists(patch);
- 
- 	ret = kobject_init_and_add(&patch->kobj, &klp_ktype_patch,
- 				   klp_root_kobj, "%s", patch->mod->name);
-@@ -1153,13 +1086,14 @@ static int klp_init_patch(struct klp_patch *patch)
- 	}
- 
- 	list_add_tail(&patch->list, &klp_patches);
-+	patch->registered = true;
- 
- 	mutex_unlock(&klp_mutex);
- 
- 	return 0;
- 
- free:
--	klp_free_objects(patch, KLP_FUNC_ANY);
-+	klp_free_objects(patch);
- 
- 	mutex_unlock(&klp_mutex);
- 
-@@ -1183,7 +1117,7 @@ int klp_unregister_patch(struct klp_patch *patch)
- 
- 	mutex_lock(&klp_mutex);
- 
--	if (!klp_is_patch_usable(patch) && !klp_is_patch_replaced(patch)) {
-+	if (!patch->registered) {
- 		ret = -EINVAL;
- 		goto err;
- 	}
-@@ -1194,6 +1128,7 @@ int klp_unregister_patch(struct klp_patch *patch)
- 	}
- 
- 	klp_free_patch(patch);
-+	patch->registered = false;
- 
- 	mutex_unlock(&klp_mutex);
- 
-@@ -1272,7 +1207,7 @@ static void klp_cleanup_module_patches_limited(struct module *mod,
- 
- 				pr_notice("reverting patch '%s' on unloading module '%s'\n",
- 					  patch->mod->name, obj->mod->name);
--				klp_unpatch_object(obj, KLP_FUNC_ANY);
-+				klp_unpatch_object(obj);
- 
- 				klp_post_unpatch_callback(obj);
- 			}
-diff --git a/kernel/livepatch/core.h b/kernel/livepatch/core.h
-index 43184a5318d8..0837360a7170 100644
---- a/kernel/livepatch/core.h
-+++ b/kernel/livepatch/core.h
-@@ -6,9 +6,9 @@
- 
- extern struct mutex klp_mutex;
- 
--void klp_throw_away_replaced_patches(struct klp_patch *new_patch,
--				     bool keep_module);
--void klp_free_objects(struct klp_patch *patch, enum klp_func_type ftype);
-+void klp_discard_replaced_patches(struct klp_patch *new_patch,
-+				  bool keep_module);
-+void klp_free_objects_dynamic(struct klp_patch *patch);
- 
- static inline bool klp_is_object_loaded(struct klp_object *obj)
- {
-diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
-index 460a09aa7715..64b9ec3facf7 100644
---- a/kernel/livepatch/patch.c
-+++ b/kernel/livepatch/patch.c
-@@ -118,8 +118,11 @@ static void notrace klp_ftrace_handler(unsigned long ip,
- 		}
- 	}
- 
--	/* Survive ugly mistakes, for example, when handling NOPs. */
--	if (WARN_ON_ONCE(!func->new_func))
-+	/*
-+	 * NOPs are used to replace existing patches with original code.
-+	 * Do nothing! Setting pc would cause an infinite loop.
-+	 */
-+	if (func->nop)
- 		goto unlock;
- 
- 	klp_arch_set_pc(regs, (unsigned long)func->new_func);
-@@ -241,27 +244,28 @@ static int klp_patch_func(struct klp_func *func)
- 	return ret;
- }
- 
--void klp_unpatch_object(struct klp_object *obj, enum klp_func_type ftype)
-+static void __klp_unpatch_object(struct klp_object *obj, bool unpatch_all)
- {
- 	struct klp_func *func;
- 
- 	klp_for_each_func(obj, func) {
--		if (!func->patched)
-+		if (!unpatch_all && !func->nop)
- 			continue;
- 
--		if (klp_is_func_type(func, ftype))
-+		if (func->patched)
- 			klp_unpatch_func(func);
- 	}
- 
--	/*
--	 * The state of the object is defined by the state of statically
--	 * defined func structures. Note that we will need to run callbacks
--	 * even when obj->funcs array is empty.
--	 */
--	if (ftype == KLP_FUNC_ANY || ftype == KLP_FUNC_STATIC)
-+	if (unpatch_all || obj->dynamic)
- 		obj->patched = false;
- }
- 
-+
-+void klp_unpatch_object(struct klp_object *obj)
-+{
-+	__klp_unpatch_object(obj, true);
-+}
-+
- int klp_patch_object(struct klp_object *obj)
- {
- 	struct klp_func *func;
-@@ -273,7 +277,7 @@ int klp_patch_object(struct klp_object *obj)
- 	klp_for_each_func(obj, func) {
- 		ret = klp_patch_func(func);
- 		if (ret) {
--			klp_unpatch_object(obj, KLP_FUNC_ANY);
-+			klp_unpatch_object(obj);
- 			return ret;
- 		}
- 	}
-@@ -282,11 +286,21 @@ int klp_patch_object(struct klp_object *obj)
- 	return 0;
- }
- 
--void klp_unpatch_objects(struct klp_patch *patch, enum klp_func_type ftype)
-+static void __klp_unpatch_objects(struct klp_patch *patch, bool unpatch_all)
- {
- 	struct klp_object *obj;
- 
- 	klp_for_each_object(patch, obj)
- 		if (obj->patched)
--			klp_unpatch_object(obj, ftype);
-+			__klp_unpatch_object(obj, unpatch_all);
-+}
-+
-+void klp_unpatch_objects(struct klp_patch *patch)
-+{
-+	__klp_unpatch_objects(patch, true);
-+}
-+
-+void klp_unpatch_objects_dynamic(struct klp_patch *patch)
-+{
-+	__klp_unpatch_objects(patch, false);
- }
-diff --git a/kernel/livepatch/patch.h b/kernel/livepatch/patch.h
-index 885f644add4c..cd8e1f03b22b 100644
---- a/kernel/livepatch/patch.h
-+++ b/kernel/livepatch/patch.h
-@@ -28,7 +28,8 @@ struct klp_ops {
- struct klp_ops *klp_find_ops(unsigned long old_addr);
- 
- int klp_patch_object(struct klp_object *obj);
--void klp_unpatch_object(struct klp_object *obj, enum klp_func_type ftype);
--void klp_unpatch_objects(struct klp_patch *patch, enum klp_func_type ftype);
-+void klp_unpatch_object(struct klp_object *obj);
-+void klp_unpatch_objects(struct klp_patch *patch);
-+void klp_unpatch_objects_dynamic(struct klp_patch *patch);
- 
- #endif /* _LIVEPATCH_PATCH_H */
-diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-index d6af190865d2..05ea2a8e03bd 100644
---- a/kernel/livepatch/transition.c
-+++ b/kernel/livepatch/transition.c
-@@ -87,34 +87,16 @@ static void klp_complete_transition(void)
- 		 klp_transition_patch->mod->name,
- 		 klp_target_state == KLP_PATCHED ? "patching" : "unpatching");
- 
--	/*
--	 * For replace patches, we disable all previous patches, and replace
--	 * the dynamic no-op functions by removing the ftrace hook.
--	 */
- 	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED) {
--		/*
--		 * Make sure that no ftrace handler accesses any older patch
--		 * on the stack.  This might happen when the user forced the
--		 * transaction while some running tasks were still falling
--		 * back to the old code.  There might even still be ftrace
--		 * handlers that have not seen the last patch on the stack yet.
--		 *
--		 * It probably is not necessary because of the rcu-safe access.
--		 * But better be safe than sorry.
--		 */
--		if (klp_forced)
--			klp_synchronize_transition();
--
--		klp_throw_away_replaced_patches(klp_transition_patch,
--						klp_forced);
-+		klp_discard_replaced_patches(klp_transition_patch, klp_forced);
- 
- 		/*
- 		 * There is no need to synchronize the transition after removing
- 		 * nops. They must be the last on the func_stack. Ftrace
--		 * gurantees that nobody will stay in the trampoline after
-+		 * guarantees that nobody will stay in the trampoline after
- 		 * the ftrace handler is unregistered.
- 		 */
--		klp_unpatch_objects(klp_transition_patch, KLP_FUNC_NOP);
-+		klp_unpatch_objects_dynamic(klp_transition_patch);
- 	}
- 
- 	if (klp_target_state == KLP_UNPATCHED) {
-@@ -122,7 +104,7 @@ static void klp_complete_transition(void)
- 		 * All tasks have transitioned to KLP_UNPATCHED so we can now
- 		 * remove the new functions from the func_stack.
- 		 */
--		klp_unpatch_objects(klp_transition_patch, KLP_FUNC_ANY);
-+		klp_unpatch_objects(klp_transition_patch);
- 
- 		/*
- 		 * Make sure klp_ftrace_handler() can no longer see functions
-@@ -173,14 +155,20 @@ static void klp_complete_transition(void)
- 	if (!klp_forced && klp_target_state == KLP_UNPATCHED)
- 		module_put(klp_transition_patch->mod);
- 
--	/*
--	 * We do not need to wait until the objects are really freed.
--	 * The patch must be on the bottom of the stack. Therefore it
--	 * will never replace anything else. The only important thing
--	 * is that we wait when the patch is being unregistered.
--	 */
--	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED)
--		klp_free_objects(klp_transition_patch, KLP_FUNC_NOP);
-+	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED) {
-+		/*
-+		 * We do not need to wait until the objects are really freed.
-+		 * We will never need them again because the patch must be on
-+		 * the bottom of the stack now.
-+		 */
-+		klp_free_objects_dynamic(klp_transition_patch);
-+		/*
-+		 * Replace behavior will not longer be needed. Avoid the related
-+		 * code when disabling and enabling again.
-+		 */
-+		klp_transition_patch->replace = false;
-+	}
-+
- 
- 	klp_target_state = KLP_UNDEFINED;
- 	klp_transition_patch = NULL;
+> -----Original Message-----
+> From: Miquel Raynal [mailto:miquel.raynal@bootlin.com]
+> Sent: Tuesday, March 20, 2018 4:08 AM
+> To: nagasureshkumarrelli@gmail.com
+> Cc: boris.brezillon@bootlin.com; richard@nod.at; dwmw2@infradead.org;
+> computersforpeace@gmail.com; marek.vasut@gmail.com;
+> cyrille.pitchen@wedev4u.fr; linux-mtd@lists.infradead.org; linux-
+> kernel@vger.kernel.org; Michal Simek <michals@xilinx.com>; Punnaiah
+> Choudary Kalluri <punnaia@xilinx.com>; Naga Sureshkumar Relli
+> <nagasure@xilinx.com>
+> Subject: Re: [LINUX PATCH v8 2/2] mtd: rawnand: pl353: Add basic driver for
+> arm pl353 smc nand interface
+> 
+> Hi Naga,
+> 
+> Thanks for sending a new version supporting ->exec_op(). A few comments
+> below.
+> 
+> On Wed, 14 Mar 2018 16:18:25 +0530,
+> <nagasureshkumarrelli@gmail.com> wrote:
+> 
+> > From: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> >
+> > Add driver for arm pl353 static memory controller nand interface with
+> > HW ECC support. This controller is used in xilinx zynq soc for
+> > interfacing the nand flash memory.
+> >
+> > Signed-off-by: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> > ---
+> > Changes in v8:
+> >  - Added exec_op() implementation
+> >  - Fixed the below v7 review comments
+> >  - removed mtd_info from pl353_nand_info struct
+> >  - Corrected ecc layout offsets
+> >  - Added on-die ecc support
+> > Changes in v7:
+> >  - Currently not implemented the memclk rate adjustments. I will
+> >    look into this later and once the basic driver is accepted.
+> >  - Fixed GPL licence ident
+> > Changes in v6:
+> >  - Fixed the checkpatch.pl reported warnings
+> >  - Using the address cycles information from the onfi param page
+> >    earlier it is hardcoded to 5 in driver Changes in v5:
+> >  - Configure the nand timing parameters as per the onfi spec Changes
+> > in v4:
+> >  - Updated the driver to sync with pl353_smc driver APIs Changes in
+> > v3:
+> >  - implemented the proper error codes
+> >  - further breakdown this patch to multiple sets
+> >  - added the controller and driver details to Documentation section
+> >  - updated the licenece to GPLv2
+> >  - reorganized the pl353_nand_ecc_init function Changes in v2:
+> >  - use "depends on" rather than "select" option in kconfig
+> >  - remove unused variable parts
+> >  - remove dummy helper and use writel_relaxed directly
+> > ---
+> >  drivers/mtd/nand/raw/Kconfig      |    8 +
+> >  drivers/mtd/nand/raw/Makefile     |    1 +
+> >  drivers/mtd/nand/raw/pl353_nand.c | 1363
+> > +++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 1372 insertions(+)
+> >  create mode 100644 drivers/mtd/nand/raw/pl353_nand.c
+> >
+> > diff --git a/drivers/mtd/nand/raw/Kconfig
+> > b/drivers/mtd/nand/raw/Kconfig index 2c6ecb7..5e20391 100644
+> > --- a/drivers/mtd/nand/raw/Kconfig
+> > +++ b/drivers/mtd/nand/raw/Kconfig
+> > @@ -566,4 +566,12 @@ config MTD_NAND_MTK
+> >  	  Enables support for NAND controller on MTK SoCs.
+> >  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
+> >
+> > +config MTD_NAND_PL353
+> > +	tristate "ARM Pl353 NAND flash driver"
+> > +	depends on MTD_NAND && ARM
+> > +	depends on PL35X_SMC
+> > +	help
+> > +	  This enables access to the NAND flash device on PL353
+> > +	  SMC controller.
+> 
+> What about:
+>           "Enables support for PrimeCell Static Memory Controller
+>           PL353."?
+Are you asking to change the description in help?
+> 
+> > +
+> >  endif # MTD_NAND
+> > diff --git a/drivers/mtd/nand/raw/Makefile
+> > b/drivers/mtd/nand/raw/Makefile index f16f59a..3e943f3 100644
+> > --- a/drivers/mtd/nand/raw/Makefile
+> > +++ b/drivers/mtd/nand/raw/Makefile
+> > @@ -57,6 +57,7 @@ obj-$(CONFIG_MTD_NAND_HISI504)	        +=
+> hisi504_nand.o
+> >  obj-$(CONFIG_MTD_NAND_BRCMNAND)		+= brcmnand/
+> >  obj-$(CONFIG_MTD_NAND_QCOM)		+= qcom_nandc.o
+> >  obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
+> > +obj-$(CONFIG_MTD_NAND_PL353)		+= pl353_nand.o
+> >
+> >  nand-objs := nand_base.o nand_bbt.o nand_timings.o nand_ids.o
+> > nand-objs += nand_amd.o diff --git a/drivers/mtd/nand/raw/pl353_nand.c
+> > b/drivers/mtd/nand/raw/pl353_nand.c
+> > new file mode 100644
+> > index 0000000..55c51e2
+> > --- /dev/null
+> > +++ b/drivers/mtd/nand/raw/pl353_nand.c
+> > @@ -0,0 +1,1363 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * ARM PL353 NAND flash controller driver
+> > + *
+> > + * Copyright (C) 2017 Xilinx, Inc
+> > + * Author: Punnaiah <punnaiah@xilinx.com>
+> > + * Author: nagasuresh <nagasure@xilinx.com>
+> 
+> Please use your full names here.
+Ok, I will update.
+> 
+> > + *
+> > + */
+> > +
+> > +#include <linux/err.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/io.h>
+> > +#include <linux/ioport.h>
+> > +#include <linux/irq.h>
+> > +#include <linux/module.h>
+> > +#include <linux/moduleparam.h>
+> > +#include <linux/mtd/mtd.h>
+> > +#include <linux/mtd/rawnand.h>
+> > +#include <linux/mtd/nand_ecc.h>
+> > +#include <linux/mtd/partitions.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/of_device.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/platform_data/pl353-smc.h>
+> > +
+> > +#define PL353_NAND_DRIVER_NAME "pl353-nand"
+> > +
+> > +/* NAND flash driver defines */
+> > +#define PL353_NAND_CMD_PHASE	1	/* End command valid in
+> command phase */
+> > +#define PL353_NAND_DATA_PHASE	2	/* End command valid in data
+> phase */
+> > +#define PL353_NAND_ECC_SIZE	512	/* Size of data for ECC
+> operation */
+> > +
+> > +/* Flash memory controller operating parameters */
+> > +
+> > +#define PL353_NAND_ECC_CONFIG	(BIT(4)  |	/* ECC read at end of
+> page */ \
+> > +				 (0 << 5))	/* No Jumping */
+> > +
+> > +/* AXI Address definitions */
+> > +#define START_CMD_SHIFT		3
+> > +#define END_CMD_SHIFT		11
+> > +#define END_CMD_VALID_SHIFT	20
+> > +#define ADDR_CYCLES_SHIFT	21
+> > +#define CLEAR_CS_SHIFT		21
+> > +#define ECC_LAST_SHIFT		10
+> > +#define COMMAND_PHASE		(0 << 19)
+> > +#define DATA_PHASE		BIT(19)
+> > +
+> > +#define PL353_NAND_ECC_LAST	BIT(ECC_LAST_SHIFT)	/* Set
+> ECC_Last */
+> > +#define PL353_NAND_CLEAR_CS	BIT(CLEAR_CS_SHIFT)	/* Clear chip
+> select */
+> > +
+> > +#define ONDIE_ECC_FEATURE_ADDR	0x90
+> > +#define PL353_NAND_ECC_BUSY_TIMEOUT	(1 * HZ)
+> > +#define PL353_NAND_DEV_BUSY_TIMEOUT	(1 * HZ)
+> > +#define PL353_NAND_LAST_TRANSFER_LENGTH	4
+> > +
+> > +/* Inline function for the NAND controller register write */ static
+> > +inline void pl353_nand_write32(void __iomem *addr, u32 val) {
+> > +	writel_relaxed((val), (addr));
+> > +}
+> 
+> Is there an actual need for this inline function? Why not calling
+> writel_relaxed() directly?
+Let me check and get back to you.
+> 
+> > +
+> > +struct pl353_nfc_op {
+> > +	u32 cmnds[4];
+> > +	u32 thirdrow;
+> > +	u32 type;
+> > +	u32 end_cmd;
+> > +	u32 addrs;
+> > +	bool wait;
+> > +	u32 len;
+> > +	u32 naddrs;
+> > +	unsigned int data_instr_idx;
+> > +	const struct nand_op_instr *data_instr;
+> > +	unsigned int rdy_timeout_ms;
+> > +	unsigned int rdy_delay_ns;
+> > +};
+> > +
+> > +/**
+> > + * struct pl353_nand_info - Defines the NAND flash driver instance
+> > + * @chip:		NAND chip information structure
+> > + * @nand_base:		Virtual address of the NAND flash device
+> > + * @end_cmd_pending:	End command is pending
+> > + * @end_cmd:		End command
+> > + * @row_addr_cycles:	Row address cycles
+> > + * @col_addr_cycles:	Column address cycles
+> > + * @address:		Page address
+> > + * @cmd_pending:	More command is needed
+> > + */
+> > +struct pl353_nand_info {
+> > +	struct nand_chip chip;
+> > +	void __iomem *nand_base;
+> > +	unsigned long end_cmd_pending;
+> > +	unsigned long end_cmd;
+> > +	u8 row_addr_cycles;
+> > +	u8 col_addr_cycles;
+> > +	u32 address;
+> > +	u32 cmd_pending;
+> > +};
+> > +
+> > +static int pl353_ecc_ooblayout16_ecc(struct mtd_info *mtd, int section,
+> > +				   struct mtd_oob_region *oobregion) {
+> > +	struct nand_chip *chip = mtd_to_nand(mtd);
+> > +
+> > +	if (section >= chip->ecc.steps)
+> > +		return -ERANGE;
+> > +
+> > +	oobregion->offset = (section * 16) + 0;
+> > +	oobregion->length = chip->ecc.bytes;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int pl353_ecc_ooblayout16_free(struct mtd_info *mtd, int section,
+> > +				    struct mtd_oob_region *oobregion) {
+> > +	struct nand_chip *chip = mtd_to_nand(mtd);
+> > +
+> > +	if (section >= chip->ecc.steps)
+> > +		return -ERANGE;
+> > +
+> > +	oobregion->offset = (section * 16) + 8;
+> > +
+> 
+> Extra space
+I will fix it.
+> 
+> > +	oobregion->length = 8;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct mtd_ooblayout_ops pl353_ecc_ooblayout16_ops = {
+> > +	.ecc = pl353_ecc_ooblayout16_ecc,
+> > +	.free = pl353_ecc_ooblayout16_free,
+> > +};
+> > +
+> > +static int pl353_ecc_ooblayout64_ecc(struct mtd_info *mtd, int section,
+> > +				   struct mtd_oob_region *oobregion) {
+> > +	struct nand_chip *chip = mtd_to_nand(mtd);
+> > +
+> > +	if (section >= chip->ecc.steps)
+> > +		return -ERANGE;
+> > +
+> > +	oobregion->offset = (section * chip->ecc.bytes) + 52;
+> > +	oobregion->length = chip->ecc.bytes;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int pl353_ecc_ooblayout64_free(struct mtd_info *mtd, int section,
+> > +				    struct mtd_oob_region *oobregion) {
+> > +	struct nand_chip *chip = mtd_to_nand(mtd);
+> > +
+> > +	if (section)
+> > +		return -ERANGE;
+> > +	if (section >= chip->ecc.steps)
+> > +		return -ERANGE;
+> 
+> If you can't support more than one section, the second if is useless, and the
+> offset is just "2".
+Yes, we can use just 2. I will update
+> 
+> > +
+> > +	oobregion->offset = (section * chip->ecc.bytes) + 2;
+> > +
+> > +	oobregion->length = 50;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct mtd_ooblayout_ops pl353_ecc_ooblayout64_ops = {
+> > +	.ecc = pl353_ecc_ooblayout64_ecc,
+> > +	.free = pl353_ecc_ooblayout64_free,
+> > +};
+> > +
+> > +/* Generic flash bbt decriptors */
+> > +static uint8_t bbt_pattern[] = { 'B', 'b', 't', '0' }; static uint8_t
+> > +mirror_pattern[] = { '1', 't', 'b', 'B' };
+> > +
+> > +static struct nand_bbt_descr bbt_main_descr = {
+> > +	.options = NAND_BBT_LASTBLOCK | NAND_BBT_CREATE |
+> NAND_BBT_WRITE
+> > +		| NAND_BBT_2BIT | NAND_BBT_VERSION |
+> NAND_BBT_PERCHIP,
+> > +	.offs = 4,
+> > +	.len = 4,
+> > +	.veroffs = 20,
+> > +	.maxblocks = 4,
+> > +	.pattern = bbt_pattern
+> > +};
+> > +
+> > +static struct nand_bbt_descr bbt_mirror_descr = {
+> > +	.options = NAND_BBT_LASTBLOCK | NAND_BBT_CREATE |
+> NAND_BBT_WRITE
+> > +		| NAND_BBT_2BIT | NAND_BBT_VERSION |
+> NAND_BBT_PERCHIP,
+> > +	.offs = 4,
+> > +	.len = 4,
+> > +	.veroffs = 20,
+> > +	.maxblocks = 4,
+> > +	.pattern = mirror_pattern
+> > +};
+> > +
+> > +/**
+> > + * pl353_nand_read_buf_l - read chip data into buffer
+> > + * @chip:	Pointer to the NAND chip info structure
+> > + * @in:		Pointer to the buffer to store read data
+> > + * @len:	Number of bytes to read
+> > + * Return:	Always return zero
+> > + */
+> > +static int pl353_nand_read_buf_l(struct nand_chip *chip,
+> > +				     uint8_t *in,
+> > +				     unsigned int len)
+> > +{
+> > +	int i;
+> > +	unsigned long *ptr = (unsigned long *)in;
+> > +
+> > +	len >>= 2;
+> 
+> Can you please let the compiler optimize things? I don't find this very readable, I
+> would prefer a division here. And if this division by 4 is related to the size of *ptr,
+> please use the sizeof() macro. Otherwise please document this value.
+At a time, we are reading 4bytes. Hence >> 2.
+I didn't get your point.
+Are you saying instead of shifting, just use divide by 4?
+
+> 
+> > +	for (i = 0; i < len; i++)
+> > +		ptr[i] = readl(chip->IO_ADDR_R);
+> 
+> Space
+Ok, I will update it
+> 
+> > +	return 0;
+> > +}
+> > +
+> > +static void pl353_nand_write_buf_l(struct nand_chip *chip, const uint8_t
+> *buf,
+> > +				int len)
+> > +{
+> > +	int i;
+> > +	unsigned long *ptr = (unsigned long *)buf;
+> > +
+> > +	for (i = 0; i < len; i++)
+> > +		writeb(ptr[i], chip->IO_ADDR_W);
+> 
+> Here you use writeb (as opposed to readl previously). Then, I guess you can also
+> read byte per byte. If so, you can drop both helpers and let the core use its
+> defaults ones: nand_read/write_buf().
+May be the function name I have written wrongly.
+When using writel, it should be nand_write_buf_l.
+But the thing is, when using exec_op, core is not calling chip->read_byte(), hence I added
+Byte reading.
+> 
+> Same for the next functions. Plus, if you don't use them inside
+> ->exec_op() implementation, they have to be removed anyway.
+The name of the function should change to buf_l, to do 4byte writes.
+The name is creating confusion.
+> 
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_write_buf - write buffer to chip
+> > + * @mtd:	Pointer to the mtd info structure
+> > + * @buf:	Pointer to the buffer to store read data
+> > + * @len:	Number of bytes to write
+> > + */
+> > +static void pl353_nand_write_buf(struct mtd_info *mtd, const uint8_t *buf,
+> > +				int len)
+> > +{
+> > +	int i;
+> > +	struct nand_chip *chip = mtd_to_nand(mtd);
+> > +	unsigned long *ptr = (unsigned long *)buf;
+> > +
+> > +	len >>= 2;
+> > +
+> > +	for (i = 0; i < len; i++)
+> > +		writel(ptr[i], chip->IO_ADDR_W);
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_read_buf - read chip data into buffer
+> > + * @chip:	Pointer to the NAND chip info structure
+> > + * @in:	Pointer to the buffer to store read data
+> > + * @len:	Number of bytes to read
+> > + * Return:	0 on success or error value on failure
+> > + */
+> > +static int pl353_nand_read_buf(struct nand_chip *chip,
+> > +				     uint8_t *in,
+> > +				     unsigned int len)
+> > +{
+> > +	int i;
+> > +
+> > +	for (i = 0; i < len; i++)
+> > +		in[i] = readb(chip->IO_ADDR_R);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_calculate_hwecc - Calculate Hardware ECC
+> > + * @mtd:	Pointer to the mtd_info structure
+> > + * @data:	Pointer to the page data
+> > + * @ecc_code:	Pointer to the ECC buffer where ECC data needs to be
+> stored
+> 
+> You store ECC in a variable called "code", can you please make it consistent?
+Miquel, I am not using any variable called "code"
+> 
+> > + *
+> > + * This function retrieves the Hardware ECC data from the controller
+> > +and returns
+> > + * ECC data back to the MTD subsystem.
+> > + *
+> > + * Return:	0 on success or error value on failure
+> > + */
+> > +static int pl353_nand_calculate_hwecc(struct mtd_info *mtd,
+> > +				const u8 *data, u8 *ecc_code)
+> > +{
+> > +	u32 ecc_value, ecc_status;
+> > +	u8 ecc_reg, ecc_byte;
+> > +	unsigned long timeout = jiffies + PL353_NAND_ECC_BUSY_TIMEOUT;
+> > +	/* Wait till the ECC operation is complete or timeout */
+> > +	do {
+> > +		if (pl353_smc_ecc_is_busy())
+> 
+> Where does this function come from?
+The pl353 SMC has memory controller driver and this NAND driver is using those APIs.
+I sent patches to add the memory controller driver for pl353.
+https://www.spinics.net/lists/kernel/msg2748832.html
+https://www.spinics.net/lists/kernel/msg2748834.html
+https://www.spinics.net/lists/kernel/msg2748840.html
+
+> 
+> I would rather prefer a readl_relaxed_poll_timeout() or similar, if possible.
+Let me check this function to use.
+> 
+> > +			cpu_relax();
+> > +		else
+> > +			break;
+> > +	} while (!time_after_eq(jiffies, timeout));
+> > +
+> > +	if (time_after_eq(jiffies, timeout)) {
+> > +		pr_err("%s timed out\n", __func__);
+> > +		return -ETIMEDOUT;
+> > +	}
+> > +
+> > +	for (ecc_reg = 0; ecc_reg < 4; ecc_reg++) {
+> > +		/* Read ECC value for each block */
+> > +		ecc_value = pl353_smc_get_ecc_val(ecc_reg);
+> 
+> I don't have this function neither?
+Same as said above.
+> 
+> > +		ecc_status = (ecc_value >> 24) & 0xFF;
+> > +		/* ECC value valid */
+> > +		if (ecc_status & 0x40) {
+> > +			for (ecc_byte = 0; ecc_byte < 3; ecc_byte++) {
+> > +				/* Copy ECC bytes to MTD buffer */
+> > +				*ecc_code = ~ecc_value & 0xFF;
+> > +				ecc_value = ecc_value >> 8;
+> > +				ecc_code++;
+> > +			}
+> > +		} else {
+> > +			pr_warn("%s status failed\n", __func__);
+> > +			return -1;
+> > +		}
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * onehot - onehot function
+> > + * @value:	Value to check for onehot
+> > + *
+> > + * This function checks whether a value is onehot or not.
+> > + * onehot is if and only if onebit is set.
+> 
+> s/onebit/one bit/
+> 
+> But I am sure there is already a function for that in the kernel, please don't use
+> your own implementation for this kind of stuff.
+Ok, I will check the existing function and will  modify.
+> 
+> > + *
+> > + * Return:	1 if it is onehot else 0
+> > + */
+> > +static int onehot(unsigned short value) {
+> > +	return (value & (value - 1)) == 0;
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_correct_data - ECC correction function
+> > + * @mtd:	Pointer to the mtd_info structure
+> > + * @buf:	Pointer to the page data
+> > + * @read_ecc:	Pointer to the ECC value read from spare data area
+> > + * @calc_ecc:	Pointer to the calculated ECC value
+> > + *
+> > + * This function corrects the ECC single bit errors & detects 2-bit errors.
+> > + *
+> > + * Return:	0 if no ECC errors found
+> > + *		1 if single bit error found and corrected.
+> > + *		-1 if multiple ECC errors found.
+> > + */
+> > +static int pl353_nand_correct_data(struct mtd_info *mtd, unsigned char
+> *buf,
+> > +				unsigned char *read_ecc,
+> > +				unsigned char *calc_ecc)
+> > +{
+> > +	unsigned char bit_addr;
+> > +	unsigned int byte_addr;
+> > +	unsigned short ecc_odd, ecc_even, read_ecc_lower, read_ecc_upper;
+> > +	unsigned short calc_ecc_lower, calc_ecc_upper;
+> > +
+> > +	read_ecc_lower = (read_ecc[0] | (read_ecc[1] << 8)) & 0xfff;
+> > +	read_ecc_upper = ((read_ecc[1] >> 4) | (read_ecc[2] << 4)) & 0xfff;
+> > +
+> > +	calc_ecc_lower = (calc_ecc[0] | (calc_ecc[1] << 8)) & 0xfff;
+> > +	calc_ecc_upper = ((calc_ecc[1] >> 4) | (calc_ecc[2] << 4)) & 0xfff;
+> > +
+> > +	ecc_odd = read_ecc_lower ^ calc_ecc_lower;
+> > +	ecc_even = read_ecc_upper ^ calc_ecc_upper;
+> > +
+> > +	if ((ecc_odd == 0) && (ecc_even == 0))
+> > +		return 0;       /* no error */
+> 
+> What about:
+I think, the below logic is doing that. if (ecc_odd == (~ecc_even & 0xfff)) 
+> 
+>         if (!ecc_odd && !ecc_even)
+>                 return 0;
+> 
+> > +
+> > +	if (ecc_odd == (~ecc_even & 0xfff)) {
+> > +		/* bits [11:3] of error code is byte offset */
+> > +		byte_addr = (ecc_odd >> 3) & 0x1ff;
+> > +		/* bits [2:0] of error code is bit offset */
+> > +		bit_addr = ecc_odd & 0x7;
+> > +		/* Toggling error bit */
+> > +		buf[byte_addr] ^= (1 << bit_addr);
+> 
+> Use BIT(bit_addr) macro instead?
+Ok, I will modify it.
+> 
+> > +		return 1;
+> > +	}
+> > +
+> > +	if (onehot(ecc_odd | ecc_even) == 1)
+> > +		return 1; /* one error in parity */
+> 
+> Comment should be before the if statement here.
+Ok, I will update it.
+> 
+> > +
+> > +	return -1; /* Uncorrectable error */
+> 
+> And here, before the return statement.
+Ok, I will update it.
+> 
+> > +}
+> > +
+> > +static int pl353_dev_timeout(struct mtd_info *mtd, struct nand_chip
+> > +*chip) {
+> > +	unsigned long timeout = jiffies + PL353_NAND_DEV_BUSY_TIMEOUT;
+> > +
+> > +	do {
+> > +		if (chip->dev_ready(mtd))
+> > +			break;
+> > +		cpu_relax();
+> > +	} while (!time_after_eq(jiffies, timeout));
+> > +
+> > +	if (time_after_eq(jiffies, timeout)) {
+> > +		pr_err("%s timed out\n", __func__);
+> > +		return -1;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void pl353_prepare_cmd(struct mtd_info *mtd, struct nand_chip *chip,
+> > +	int page, int column, int start_cmd, int end_cmd, bool read) {
+> > +	unsigned long data_phase_addr;
+> > +	u32 end_cmd_valid = 0;
+> > +	void __iomem *cmd_addr;
+> > +	unsigned long cmd_phase_addr = 0, cmd_data = 0;
+> > +
+> > +	struct pl353_nand_info *xnand =
+> > +		container_of(chip, struct pl353_nand_info, chip);
+> > +
+> > +	if (read)
+> > +		end_cmd_valid = 1;
+> > +	else
+> > +		end_cmd_valid = 0;
+> 
+> This is a good spot to use the ternary operator :)
+Yes, we can use. I will add this.
+> 
+> > +
+> > +	cmd_phase_addr = (unsigned long __force)xnand->nand_base + (
+> > +			 (((xnand->row_addr_cycles) + (xnand-
+> >col_addr_cycles))
+> > +			 << ADDR_CYCLES_SHIFT) |
+> > +			 (end_cmd_valid << END_CMD_VALID_SHIFT)
+> 	|
+> > +			 (COMMAND_PHASE)				|
+> > +			 (end_cmd << END_CMD_SHIFT)			|
+> 
+> Please don't align the '|'
+You mean, tabbing? 
+> 
+> > +			 (start_cmd << START_CMD_SHIFT));
+> > +	cmd_addr = (void __iomem * __force)cmd_phase_addr;
+> > +
+> > +	/* Get the data phase address */
+> > +	data_phase_addr = (unsigned long __force)xnand->nand_base + (
+> > +			  (0x0 << CLEAR_CS_SHIFT)			|
+> > +			  (0 << END_CMD_VALID_SHIFT)	|
+> > +			  (DATA_PHASE)					|
+> > +			  (end_cmd << END_CMD_SHIFT)			|
+> > +			  (0x0 << ECC_LAST_SHIFT));
+> > +
+> > +	chip->IO_ADDR_R = (void __iomem * __force)data_phase_addr;
+> > +	chip->IO_ADDR_W = chip->IO_ADDR_R;
+> > +	if (chip->options & NAND_BUSWIDTH_16)
+> > +		column >>= 1;
+> 
+>  / 2
+> 
+> > +	cmd_data = column;
+> > +	if (mtd->writesize > PL353_NAND_ECC_SIZE) {
+> > +		cmd_data |= page << 16;
+> > +		/* Another address cycle for devices > 128MiB */
+> > +		if (chip->chipsize > (128 << 20)) {
+> 
+> Now there is a flag for that in the core, called NAND_ROW_ADDR_3.
+I will check and update.
+> 
+> > +			pl353_nand_write32(cmd_addr, cmd_data);
+> > +			cmd_data = (page >> 16);
+> > +		}
+> > +	} else {
+> > +		cmd_data |= page << 8;
+> > +	}
+> 
+> Space
+Ok, I will update.
+> 
+> > +	pl353_nand_write32(cmd_addr, cmd_data); }
+> > +
+> > +/**
+> > + * pl353_nand_read_oob - [REPLACEABLE] the most common OOB data read
+> function
+> > + * @mtd:	Pointer to the mtd info structure
+> > + * @chip:	Pointer to the NAND chip info structure
+> > + * @page:	Page number to read
+> > + *
+> > + * Return:	Always return zero
+> > + */
+> > +static int pl353_nand_read_oob(struct mtd_info *mtd, struct nand_chip
+> *chip,
+> > +			    int page)
+> > +{
+> > +
+> > +	unsigned long data_phase_addr;
+> > +	uint8_t *p;
+> > +
+> > +	chip->pagebuf = -1;
+> > +	if (mtd->writesize < PL353_NAND_ECC_SIZE)
+> > +		return 0;
+> > +
+> > +	pl353_prepare_cmd(mtd, chip, page, mtd->writesize,
+> NAND_CMD_READ0,
+> > +		NAND_CMD_READSTART, 1);
+> 
+> Alignment
+Are you running any script apart from checkpatch?
+Any way I will correct it.
+> 
+> > +
+> > +	ndelay(100);
+> > +	pl353_dev_timeout(mtd, chip);
+> > +
+> > +	p = chip->oob_poi;
+> > +	pl353_nand_read_buf_l(chip, p,
+> > +		(mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH));
+> 
+> Alignment
+Ok, I will correct it.
+> 
+> > +	p += (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_R;
+> > +	data_phase_addr |= PL353_NAND_CLEAR_CS;
+> > +	chip->IO_ADDR_R = (void __iomem * __force)data_phase_addr;
+> > +	pl353_nand_read_buf_l(chip, p,
+> PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_write_oob - [REPLACEABLE] the most common OOB data
+> write function
+> > + * @mtd:	Pointer to the mtd info structure
+> > + * @chip:	Pointer to the NAND chip info structure
+> > + * @page:	Page number to write
+> > + *
+> > + * Return:	Zero on success and EIO on failure
+> > + */
+> 
+> Comments inside this function would be welcome!
+Ok, I will add.
+> 
+> > +static int pl353_nand_write_oob(struct mtd_info *mtd, struct nand_chip
+> *chip,
+> > +			     int page)
+> > +{
+> > +
+> 
+> Extra space
+Any way I will correct it.
+> 
+> > +	const uint8_t *buf = chip->oob_poi;
+> > +	unsigned long data_phase_addr;
+> > +	struct pl353_nand_info *xnand =
+> > +		container_of(chip, struct pl353_nand_info, chip);
+> > +	u32 addrcycles = 0, ret;
+> > +	unsigned long timeout = jiffies + PL353_NAND_DEV_BUSY_TIMEOUT;
+> > +	u8 status;
+> > +
+> > +	chip->pagebuf = -1;
+> > +	addrcycles = xnand->row_addr_cycles + xnand->col_addr_cycles;
+> > +	pl353_prepare_cmd(mtd, chip, page, mtd->writesize,
+> NAND_CMD_SEQIN,
+> > +		NAND_CMD_PAGEPROG, 0);
+> > +	ndelay(100);
+> > +	pl353_nand_write_buf(mtd, buf,
+> > +			(mtd->oobsize -
+> PL353_NAND_LAST_TRANSFER_LENGTH));
+> > +	buf += (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_W;
+> > +	data_phase_addr |= PL353_NAND_CLEAR_CS;
+> > +	data_phase_addr |= (1 << END_CMD_VALID_SHIFT);
+> > +	chip->IO_ADDR_W = (void __iomem * __force)data_phase_addr;
+> > +	pl353_nand_write_buf(mtd, buf,
+> PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	/* Send command to program the OOB data */
+> > +	ret = nand_status_op(chip, &status);
+> 
+> Doing this without exiting the status state is broken.
+I didn't get.
+> 
+> > +	timeout = jiffies + msecs_to_jiffies(timeout);
+> > +	do {
+> > +		if (chip->dev_ready) {
+> > +			if (chip->dev_ready(mtd))
+> > +				break;
+> > +		} else {
+> 
+> You give your own implementation of ->dev_ready(). So this is dead code.
+Hmm, you are correct, I will remove this code.
+> 
+> > +			if (status & NAND_STATUS_READY)
+> 
+> You don't update "status", while you wait for it to change.
+Basically I am waiting for device ready, but not updating the status.
+I will look this implementation and will get back to you.
+> 
+> > +				break;
+> > +		}
+> > +		cond_resched();
+> > +	} while (time_before(jiffies, timeout));
+> > +
+> > +	/* This can happen if in case of timeout or buggy dev_ready */
+> > +	WARN_ON(!(status & NAND_STATUS_READY));
+> 
+> I think the whole block has to be replaced by a simple nand_wait_ready() call.
+Let me use this, thanks for pointing.
+> 
+> > +
+> > +	return (status & NAND_STATUS_FAIL) ? -EIO : 0; }
+> > +
+> > +/**
+> > + * pl353_nand_read_page_raw - [Intern] read raw page data without ecc
+> > + * @mtd:		Pointer to the mtd info structure
+> > + * @chip:		Pointer to the NAND chip info structure
+> > + * @buf:		Pointer to the data buffer
+> > + * @oob_required:	Caller requires OOB data read to chip->oob_poi
+> > + * @page:		Page number to read
+> > + *
+> > + * Return:	Always return zero
+> > + */
+> > +static int pl353_nand_read_page_raw(struct mtd_info *mtd,
+> > +				struct nand_chip *chip,
+> > +				uint8_t *buf, int oob_required, int page)
+> 
+> Do you really need raw accessors?
+Yes, when using on-die ecc, this function is getting called.
+i.e. nand_micron.c is calling nand_set_features_op, with DATA_OUT_INSTR, and there
+we are using this.
+> 
+> Not sure this is needed.
+> 
+> > +{
+> > +	unsigned long data_phase_addr;
+> > +	uint8_t *p;
+> > +
+> > +	pl353_nand_read_buf_l(chip, buf, mtd->writesize);
+> > +	p = chip->oob_poi;
+> > +	pl353_nand_read_buf_l(chip, p,
+> > +		(mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH));
+> > +	p += (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_R;
+> > +	data_phase_addr |= PL353_NAND_CLEAR_CS;
+> > +	chip->IO_ADDR_R = (void __iomem * __force)data_phase_addr;
+> > +
+> > +	pl353_nand_read_buf_l(chip, p,
+> PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_write_page_raw - [Intern] raw page write function
+> > + * @mtd:		Pointer to the mtd info structure
+> > + * @chip:		Pointer to the NAND chip info structure
+> > + * @buf:		Pointer to the data buffer
+> > + * @oob_required:	Caller requires OOB data read to chip->oob_poi
+> > + * @page:		Page number to write
+> > + *
+> > + * Return:	Always return zero
+> > + */
+> > +static int pl353_nand_write_page_raw(struct mtd_info *mtd,
+> > +				    struct nand_chip *chip,
+> > +				    const uint8_t *buf, int oob_required,
+> > +				    int page)
+> > +{
+> > +	unsigned long data_phase_addr;
+> > +	uint8_t *p;
+> > +
+> > +	pl353_prepare_cmd(mtd, chip, page, 0, NAND_CMD_SEQIN,
+> > +		NAND_CMD_PAGEPROG, 0);
+> > +	pl353_nand_write_buf(mtd, buf, mtd->writesize);
+> > +	p = chip->oob_poi;
+> > +	pl353_nand_write_buf(mtd, p,
+> > +			(mtd->oobsize -
+> PL353_NAND_LAST_TRANSFER_LENGTH));
+> > +	p += (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_W;
+> > +	data_phase_addr |= PL353_NAND_CLEAR_CS;
+> > +	data_phase_addr |= (1 << END_CMD_VALID_SHIFT);
+> > +	chip->IO_ADDR_W = (void __iomem * __force)data_phase_addr;
+> > +
+> > +	pl353_nand_write_buf(mtd, p,
+> PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * nand_write_page_hwecc - Hardware ECC based page write function
+> > + * @mtd:		Pointer to the mtd info structure
+> > + * @chip:		Pointer to the NAND chip info structure
+> > + * @buf:		Pointer to the data buffer
+> > + * @oob_required:	Caller requires OOB data read to chip->oob_poi
+> > + * @page:		Page number to write
+> > + *
+> > + * This functions writes data and hardware generated ECC values in to the
+> page.
+> > + *
+> > + * Return:	Always return zero
+> > + */
+> > +static int pl353_nand_write_page_hwecc(struct mtd_info *mtd,
+> > +				    struct nand_chip *chip, const uint8_t *buf,
+> > +				    int oob_required, int page)
+> > +{
+> > +
+> > +	int eccsize = chip->ecc.size;
+> > +	int eccsteps = chip->ecc.steps;
+> > +	uint8_t *ecc_calc = chip->ecc.calc_buf;
+> > +	const uint8_t *p = buf;
+> > +	uint8_t *oob_ptr;
+> > +	u32 ret;
+> > +	unsigned long data_phase_addr, timeo;
+> > +	u8 status;
+> > +
+> > +	pl353_prepare_cmd(mtd, chip, page, 0, NAND_CMD_SEQIN,
+> > +		NAND_CMD_PAGEPROG, 0);
+> > +	ndelay(100);
+> > +	for ( ; (eccsteps - 1); eccsteps--) {
+> > +		pl353_nand_write_buf(mtd, p, eccsize);
+> > +		p += eccsize;
+> > +	}
+> > +	pl353_nand_write_buf(mtd, p,
+> > +		(eccsize - PL353_NAND_LAST_TRANSFER_LENGTH));
+> > +	p += (eccsize - PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	/* Set ECC Last bit to 1 */
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_W;
+> > +	data_phase_addr |= PL353_NAND_ECC_LAST;
+> > +	chip->IO_ADDR_W = (void __iomem * __force)data_phase_addr;
+> > +	pl353_nand_write_buf(mtd, p,
+> PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	p = buf;
+> > +	chip->ecc.calculate(mtd, p, &ecc_calc[0]);
+> > +
+> > +	/* Wait for ECC to be calculated and read the error values */
+> > +	ret = mtd_ooblayout_set_eccbytes(mtd, ecc_calc, chip->oob_poi,
+> > +						0, chip->ecc.total);
+> > +	if (ret)
+> > +		return ret;
+> > +	/* Clear ECC last bit */
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_W;
+> > +	data_phase_addr &= ~PL353_NAND_ECC_LAST;
+> > +	chip->IO_ADDR_W = (void __iomem * __force)data_phase_addr;
+> > +
+> > +	/* Write the spare area with ECC bytes */
+> > +	oob_ptr = chip->oob_poi;
+> > +	pl353_nand_write_buf(mtd, oob_ptr,
+> > +			(mtd->oobsize -
+> PL353_NAND_LAST_TRANSFER_LENGTH));
+> > +
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_W;
+> > +	data_phase_addr |= PL353_NAND_CLEAR_CS;
+> > +	data_phase_addr |= (1 << END_CMD_VALID_SHIFT);
+> > +	chip->IO_ADDR_W = (void __iomem * __force)data_phase_addr;
+> > +	oob_ptr += (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +	pl353_nand_write_buf(mtd, oob_ptr,
+> PL353_NAND_LAST_TRANSFER_LENGTH);
+> 
+> Once using ->exec_op(), you should use something like nand_write_data_op().
+Yes, I will update this.
+> > +
+> > +	/*
+> > +	 * Apply this short delay always to ensure that we do wait tWB in any
+> > +	 * case on any machine.
+> > +	 */
+> > +	ndelay(100);
+> > +	ret = nand_status_op(chip, &status);
+> > +	timeo = jiffies + msecs_to_jiffies(400);
+> > +	do {
+> > +		if (chip->dev_ready) {
+> > +			if (chip->dev_ready(mtd))
+> > +				break;
+> > +		} else {
+> > +			if (status & NAND_STATUS_READY)
+> > +				break;
+> > +		}
+> > +		cond_resched();
+> > +	} while (time_before(jiffies, timeo));
+> > +
+> > +	/* This can happen if in case of timeout or buggy dev_ready */
+> > +	WARN_ON(!(status & NAND_STATUS_READY));
+> > +
+> 
+> Same here about ->dev_ready().
+Ok
+> 
+> > +	return (status & NAND_STATUS_FAIL) ? -EIO : 0; }
+> > +
+> > +/**
+> > + * pl353_nand_write_page_swecc - [REPLACEABLE] software ecc based page
+> write
+> > + *				function
+> > + * @mtd:		Pointer to the mtd info structure
+> > + * @chip:		Pointer to the NAND chip info structure
+> > + * @buf:		Pointer to the data buffer
+> > + * @oob_required:	Caller requires OOB data read to chip->oob_poi
+> > + * @page:		Page number to write
+> > + *
+> > + * Return:	Always return zero
+> > + */
+> > +static int pl353_nand_write_page_swecc(struct mtd_info *mtd,
+> > +				    struct nand_chip *chip, const uint8_t *buf,
+> > +				    int oob_required, int page)
+> > +{
+> 
+> This is an exact copy of the core's function, you probably don't need it.
+Ok, I will remove it in next version.
+> 
+> > +	int i, eccsize = chip->ecc.size;
+> > +	int eccbytes = chip->ecc.bytes;
+> > +	int eccsteps = chip->ecc.steps;
+> > +	uint8_t *ecc_calc = chip->ecc.calc_buf;
+> > +	const uint8_t *p = buf;
+> > +	u32 ret;
+> > +
+> > +	for (i = 0; eccsteps; eccsteps--, i += eccbytes, p += eccsize)
+> > +		chip->ecc.calculate(mtd, p, &ecc_calc[0]);
+> > +
+> > +	ret = mtd_ooblayout_set_eccbytes(mtd, ecc_calc, chip->oob_poi,
+> > +						0, chip->ecc.total);
+> > +	if (ret)
+> > +		return ret;
+> > +	chip->ecc.write_page_raw(mtd, chip, buf, 1, page);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_read_page_hwecc - Hardware ECC based page read function
+> > + * @mtd:		Pointer to the mtd info structure
+> > + * @chip:		Pointer to the NAND chip info structure
+> > + * @buf:		Pointer to the buffer to store read data
+> > + * @oob_required:	Caller requires OOB data read to chip->oob_poi
+> > + * @page:		Page number to read
+> > + *
+> > + * This functions reads data and checks the data integrity by
+> > +comparing hardware
+> > + * generated ECC values and read ECC values from spare area.
+> > + *
+> > + * Return:	0 always and updates ECC operation status in to MTD structure
+> > + */
+> > +static int pl353_nand_read_page_hwecc(struct mtd_info *mtd,
+> > +				 struct nand_chip *chip,
+> > +				 uint8_t *buf, int oob_required, int page) {
+> > +	int i, stat, eccsize = chip->ecc.size;
+> > +	int eccbytes = chip->ecc.bytes;
+> > +	int eccsteps = chip->ecc.steps;
+> > +	uint8_t *p = buf;
+> > +	uint8_t *ecc_calc = chip->ecc.calc_buf;
+> > +	uint8_t *ecc_code = chip->ecc.code_buf;
+> > +
+> > +	uint8_t *oob_ptr;
+> > +	u32 ret;
+> > +	unsigned long data_phase_addr;
+> > +	unsigned long timeout = jiffies + PL353_NAND_DEV_BUSY_TIMEOUT;
+> > +
+> > +	pl353_prepare_cmd(mtd, chip, page, 0, NAND_CMD_READ0,
+> > +		NAND_CMD_READSTART, 1);
+> > +	ndelay(100);
+> > +	do {
+> > +		if (chip->dev_ready(mtd))
+> > +			break;
+> > +		cpu_relax();
+> > +	} while (!time_after_eq(jiffies, timeout));
+> > +
+> > +	if (time_after_eq(jiffies, timeout)) {
+> > +		pr_err("%s timed out\n", __func__);
+> > +		return -1;
+> > +	}
+> > +	for ( ; (eccsteps - 1); eccsteps--) {
+> > +		pl353_nand_read_buf_l(chip, p, eccsize);
+> > +		p += eccsize;
+> > +	}
+> > +	pl353_nand_read_buf_l(chip, p,
+> > +		(eccsize - PL353_NAND_LAST_TRANSFER_LENGTH));
+> > +	p += (eccsize - PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	/* Set ECC Last bit to 1 */
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_R;
+> > +	data_phase_addr |= PL353_NAND_ECC_LAST;
+> > +	chip->IO_ADDR_R = (void __iomem * __force)data_phase_addr;
+> > +	pl353_nand_read_buf_l(chip, p,
+> PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	/* Read the calculated ECC value */
+> > +	p = buf;
+> > +	chip->ecc.calculate(mtd, p, &ecc_calc[0]);
+> > +
+> > +	/* Clear ECC last bit */
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_R;
+> > +	data_phase_addr &= ~PL353_NAND_ECC_LAST;
+> > +	chip->IO_ADDR_R = (void __iomem * __force)data_phase_addr;
+> > +
+> > +	/* Read the stored ECC value */
+> > +	oob_ptr = chip->oob_poi;
+> > +	pl353_nand_read_buf_l(chip, oob_ptr,
+> > +		(mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH));
+> > +
+> > +	/* de-assert chip select */
+> > +	data_phase_addr = (unsigned long __force)chip->IO_ADDR_R;
+> > +	data_phase_addr |= PL353_NAND_CLEAR_CS;
+> > +	chip->IO_ADDR_R = (void __iomem * __force)data_phase_addr;
+> > +
+> > +	oob_ptr += (mtd->oobsize - PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +	pl353_nand_read_buf_l(chip, oob_ptr,
+> > +PL353_NAND_LAST_TRANSFER_LENGTH);
+> > +
+> > +	ret = mtd_ooblayout_get_eccbytes(mtd, ecc_code, chip->oob_poi, 0,
+> > +						 chip->ecc.total);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	eccsteps = chip->ecc.steps;
+> > +	p = buf;
+> > +
+> > +	/* Check ECC error for all blocks and correct if it is correctable */
+> > +	for (i = 0 ; eccsteps; eccsteps--, i += eccbytes, p += eccsize) {
+> 
+> In this loop you should monitore a max_bitflips value and return it instead of
+> zero at the end of the function.
+Ok, I will add it.
+> 
+> > +		stat = chip->ecc.correct(mtd, p, &ecc_code[i], &ecc_calc[i]);
+> > +		if (stat < 0)
+> > +			mtd->ecc_stats.failed++;
+> > +		else
+> > +			mtd->ecc_stats.corrected += stat;
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_read_page_swecc - [REPLACEABLE] software ecc based page
+> read
+> > + *				function
+> > + * @mtd:		Pointer to the mtd info structure
+> > + * @chip:		Pointer to the NAND chip info structure
+> > + * @buf:		Pointer to the buffer to store read data
+> > + * @oob_required:	Caller requires OOB data read to chip->oob_poi
+> > + * @page:		Page number to read
+> > + *
+> > + * Return:	Always return zero
+> > + */
+> > +static int pl353_nand_read_page_swecc(struct mtd_info *mtd,
+> > +				     struct nand_chip *chip,
+> > +				     uint8_t *buf,  int oob_required, int page) {
+> 
+> Same, you probably don't need this function.
+Yes, I will remove in next version.
+> 
+> > +	int i, eccsize = chip->ecc.size;
+> > +	int eccbytes = chip->ecc.bytes;
+> > +	int eccsteps = chip->ecc.steps;
+> > +	uint8_t *p = buf;
+> > +	uint8_t *ecc_calc = chip->ecc.calc_buf;
+> > +	uint8_t *ecc_code = chip->ecc.code_buf;
+> > +	u32 ret;
+> > +
+> > +	chip->ecc.read_page_raw(mtd, chip, buf, page, 1);
+> > +
+> > +	for (i = 0; eccsteps; eccsteps--, i += eccbytes, p += eccsize)
+> > +		chip->ecc.calculate(mtd, p, &ecc_calc[i]);
+> > +
+> > +	ret = mtd_ooblayout_get_eccbytes(mtd, ecc_calc, chip->oob_poi,
+> > +						0, chip->ecc.total);
+> > +
+> > +	eccsteps = chip->ecc.steps;
+> > +	p = buf;
+> > +
+> > +	for (i = 0 ; eccsteps; eccsteps--, i += eccbytes, p += eccsize) {
+> > +		int stat;
+> > +
+> > +		stat = chip->ecc.correct(mtd, p, &ecc_code[i], &ecc_calc[i]);
+> > +		if (stat < 0)
+> > +			mtd->ecc_stats.failed++;
+> > +		else
+> > +			mtd->ecc_stats.corrected += stat;
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_select_chip - Select the flash device
+> > + * @mtd:	Pointer to the mtd info structure
+> > + * @chip:	Pointer to the NAND chip info structure
+> > + *
+> > + * This function is empty as the NAND controller handles chip select
+> > +line
+> > + * internally based on the chip address passed in command and data phase.
+> > + */
+> > +static void pl353_nand_select_chip(struct mtd_info *mtd, int chip) {
+> > +}
+> > +
+> > +/* NAND framework ->exec_op() hooks and related helpers */ static
+> > +void pl353_nfc_parse_instructions(struct nand_chip *chip,
+> > +					   const struct nand_subop *subop,
+> > +					   struct pl353_nfc_op *nfc_op)
+> > +{
+> > +	const struct nand_op_instr *instr = NULL;
+> > +	unsigned int op_id, offset, naddrs;
+> > +	int i;
+> > +	const u8 *addrs;
+> > +
+> > +	memset(nfc_op, 0, sizeof(struct pl353_nfc_op));
+> > +	for (op_id = 0; op_id < subop->ninstrs; op_id++) {
+> > +
+> 
+> What is this for-loop for? I don't get it as you break the switch in every case?
+I think, breaking switch case only not for loop.
+> 
+> > +		nfc_op->len = nand_subop_get_data_len(subop, op_id);
+> > +
+> > +		instr = &subop->instrs[op_id];
+> > +		if (subop->ninstrs == 1)
+> > +			nfc_op->cmnds[0] = -1;
+> > +		switch (instr->type) {
+> > +		case NAND_OP_CMD_INSTR:
+> > +			nfc_op->type = NAND_OP_CMD_INSTR;
+> > +			nfc_op->end_cmd = op_id - 1;
+> > +			if (op_id)
+> 
+> You should put { } on the if also if the else statement needs braces.
+Ok, but I didn't see any warning from checkpatch.
+> 
+> > +				nfc_op->cmnds[1] = instr->ctx.cmd.opcode;
+> > +			else {
+> > +				nfc_op->cmnds[0] = instr->ctx.cmd.opcode;
+> > +				nfc_op->cmnds[1] = -1;
+> > +			}
+> > +			break;
+> > +
+> > +		case NAND_OP_ADDR_INSTR:
+> > +			offset = nand_subop_get_addr_start_off(subop, op_id);
+> > +			naddrs = nand_subop_get_num_addr_cyc(subop,
+> op_id);
+> > +			addrs = &instr->ctx.addr.addrs[offset];
+> > +			nfc_op->addrs = instr->ctx.addr.addrs[offset];
+> > +			for (i = 0; i < min_t(unsigned int, 4, naddrs); i++)
+> > +				nfc_op->addrs |= instr->ctx.addr.addrs[i] <<
+> > +						 (8 * i);
+> > +
+> > +			if (naddrs >= 5) {
+> > +				nfc_op->addrs >>= 16;
+> > +				nfc_op->addrs |= (addrs[4] << 16);
+> > +				nfc_op->thirdrow = 1;
+> > +			}
+> > +			nfc_op->naddrs = nand_subop_get_num_addr_cyc
+> > +						(subop, op_id);
+> 
+> Don't put the parameters of a function on the next line like that?
+Ok, I will update it.
+> 
+> > +			break;
+> > +
+> > +		case NAND_OP_DATA_IN_INSTR:
+> > +			nfc_op->data_instr = instr;
+> > +			nfc_op->type = NAND_OP_DATA_IN_INSTR;
+> > +			nfc_op->data_instr_idx = op_id;
+> > +			break;
+> > +
+> > +		case NAND_OP_DATA_OUT_INSTR:
+> > +			nfc_op->data_instr = instr;
+> > +			nfc_op->type = NAND_OP_DATA_IN_INSTR;
+> DATA_OUT_INSTR?
+Yes, I will correct it.
+But I am using instr->type in cmd_function.
+I will update it.
+> 
+> Is this really tested?
+Yes, During on-die ECC test.
+When nand_micron is asking to set some features, this will execute.
+> 
+> > +			nfc_op->data_instr_idx = op_id;
+> > +			break;
+> > +
+> > +		case NAND_OP_WAITRDY_INSTR:
+> > +			nfc_op->rdy_timeout_ms = instr-
+> >ctx.waitrdy.timeout_ms;
+> > +			nfc_op->rdy_delay_ns = instr->delay_ns;
+> > +			nfc_op->wait = true;
+> > +			break;
+> > +		}
+> > +	}
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_cmd_function - Send command to NAND device
+> > + * @chip:	Pointer to the NAND chip info structure
+> > + * @subop:	Pointer to array of instructions
+> > + * Return:	Always return zero
+> > + */
+> > +static int pl353_nand_cmd_function(struct nand_chip *chip,
+> > +					      const struct nand_subop *subop) {
+> > +	struct mtd_info *mtd = nand_to_mtd(chip);
+> > +	const struct nand_op_instr *instr;
+> > +	struct pl353_nfc_op nfc_op;
+> 
+> nfc_op = {}; to initialize to 0.
+Ok, I will update it.
+> 
+> > +	struct pl353_nand_info *xnand =
+> > +		container_of(chip, struct pl353_nand_info, chip);
+> > +	void __iomem *cmd_addr;
+> > +	unsigned long cmd_data = 0, end_cmd_valid = 0;
+> > +	unsigned long cmd_phase_addr, data_phase_addr, end_cmd;
+> > +	unsigned long timeout = jiffies + PL353_NAND_DEV_BUSY_TIMEOUT;
+> > +	u32 addrcycles = 0;
+> > +	unsigned int op_id, len, offset;
+> > +
+> > +	pl353_nfc_parse_instructions(chip, subop, &nfc_op);
+> > +	instr = nfc_op.data_instr;
+> > +	op_id = nfc_op.data_instr_idx;
+> > +	len = nand_subop_get_data_len(subop, op_id);
+> > +	offset = nand_subop_get_data_start_off(subop, op_id);
+> > +
+> > +	if (nfc_op.cmnds[0] != -1) {
+> > +		if (xnand->end_cmd_pending) {
+> > +			/*
+> > +			 * Check for end command if this command request is
+> > +			 * same as the pending command then return
+> > +			 */
+> > +			if (xnand->end_cmd == nfc_op.cmnds[0]) {
+> > +				xnand->end_cmd = 0;
+> > +				xnand->end_cmd_pending = 0;
+> > +				return 0;
+> > +			}
+> > +		}
+> > +
+> > +		/* Clear interrupt */
+> > +		pl353_smc_clr_nand_int();
+> > +		end_cmd_valid = 0;
+> 
+> Space
+Ok, I will correct it.
+> 
+> > +		/* Get the command phase address */
+> > +		if (nfc_op.cmnds[1] != -1) {
+> > +			end_cmd_valid = 1;
+> > +		} else {
+> > +			if (nfc_op.cmnds[0] == NAND_CMD_READ0)
+> > +				return 0;
+> > +		}
+> > +		if (nfc_op.end_cmd == NAND_CMD_NONE)
+> > +			end_cmd = 0x0;
+> > +		else
+> > +			end_cmd = nfc_op.cmnds[1];
+> > +
+> > +		addrcycles = nfc_op.naddrs;
+> > +		if (nfc_op.cmnds[0] == NAND_CMD_READ0 ||
+> > +			nfc_op.cmnds[0] == NAND_CMD_SEQIN)
+> > +			addrcycles = xnand->row_addr_cycles +
+> > +					xnand->col_addr_cycles;
+> > +		else if ((nfc_op.cmnds[0] == NAND_CMD_ERASE1) ||
+> > +			(nfc_op.cmnds[0] == NAND_CMD_ERASE2))
+> > +			addrcycles = xnand->row_addr_cycles;
+> > +		else
+> > +			addrcycles = nfc_op.naddrs;
+> 
+> A switch block would probably be appropriate.
+Yes we can use.
+> 
+> > +		cmd_phase_addr = (unsigned long __force)xnand->nand_base +
+> (
+> > +				 (addrcycles << ADDR_CYCLES_SHIFT)	|
+> > +				 (end_cmd_valid << END_CMD_VALID_SHIFT)
+> 	|
+> > +				 (COMMAND_PHASE)			|
+> > +				 (end_cmd << END_CMD_SHIFT)		|
+> > +				 (nfc_op.cmnds[0] << START_CMD_SHIFT));
+> > +
+> > +		cmd_addr = (void __iomem * __force)cmd_phase_addr;
+> 
+> Space
+Ok, I will correc it.
+> 
+> > +		/* Get the data phase address */
+> > +		end_cmd_valid = 0;
+> > +
+> > +		data_phase_addr = (unsigned long __force)xnand->nand_base +
+> (
+> > +				  (0x0 << CLEAR_CS_SHIFT)		|
+> > +				  (end_cmd_valid << END_CMD_VALID_SHIFT)|
+> > +				  (DATA_PHASE)				|
+> > +				  (end_cmd << END_CMD_SHIFT)		|
+> > +				  (0x0 << ECC_LAST_SHIFT));
+> > +		chip->IO_ADDR_R = (void __iomem *
+> __force)data_phase_addr;
+> 
+> Do you really need this "__force" ?
+Let me check and get back to you on this.
+> 
+> > +		chip->IO_ADDR_W = chip->IO_ADDR_R;
+> > +		/* Command phase AXI write */
+> > +		/* Read & Write */
+> > +		if (nfc_op.thirdrow) {
+> > +			nfc_op.thirdrow = 0;
+> > +			if (mtd->writesize > PL353_NAND_ECC_SIZE) {
+> > +				cmd_data |= nfc_op.addrs << 16;
+> > +				/* Another address cycle for devices > 128MiB
+> */
+> > +				if (chip->chipsize > (128 << 20)) {
+> > +					pl353_nand_write32(cmd_addr,
+> cmd_data);
+> > +					cmd_data = (nfc_op.addrs >> 16);
+> > +				}
+> > +			}
+> > +		}  else {
+> > +			if (nfc_op.addrs != -1) {
+> > +				int column = nfc_op.addrs;
+> > +				/*
+> > +				 * Change read/write column, read id etc
+> > +				 * Adjust columns for 16 bit bus width
+> > +				 */
+> > +				if ((chip->options & NAND_BUSWIDTH_16) &&
+> > +				((nfc_op.cmnds[0] == NAND_CMD_READ0) ||
+> > +				(nfc_op.cmnds[0] == NAND_CMD_SEQIN) ||
+> > +				(nfc_op.cmnds[0] == NAND_CMD_RNDOUT) ||
+> > +				(nfc_op.cmnds[0] == NAND_CMD_RNDIN))) {
+> 
+> Alignment.
+Ok, I will update it.
+> 
+> > +					column >>= 1;
+> > +				}
+> > +				cmd_data = nfc_op.addrs;
+> > +			}
+> > +		}
+> > +		pl353_nand_write32(cmd_addr, cmd_data);
+> > +		if (nfc_op.type != 0) {
+> > +			xnand->end_cmd = nfc_op.end_cmd;
+> > +			xnand->end_cmd_pending = 1;
+> > +		}
+> > +		ndelay(100);
+> 
+> Why?
+I found some errors during on_die testing, hence I added this delay.
+Let me check once
+> 
+> > +		if (nfc_op.cmnds[0] == 0xef)
+> > +			nfc_op.wait = false;
+> > +		if (nfc_op.wait) {
+> > +			nfc_op.wait = false;
+> 
+> You can remove this line.
+Yes, it is initializing to zero in cmd_function.
+> 
+> > +			do {
+> > +				if (chip->dev_ready(mtd))
+> > +					break;
+> > +				cpu_relax();
+> > +			} while (!time_after_eq(jiffies, timeout));
+> > +			if (time_after_eq(jiffies, timeout)) {
+> > +				pr_err("%s timed out\n", __func__);
+> > +				return -ETIMEDOUT;
+> > +			}
+> 
+> Same comment about the wait.
+Ok, I will update it.
+> 
+> > +			return 0;
+> > +		}
+> > +	}
+> > +
+> > +	if (instr == NULL)
+> 
+> if (!instr)
+I will modify it.
+> 
+> > +		return 0;
+> > +	if (instr->type == NAND_OP_DATA_IN_INSTR)
+> > +		return pl353_nand_read_buf(chip, instr->ctx.data.buf.in, len);
+> > +
+> > +	if (instr->type == NAND_OP_DATA_OUT_INSTR) {
+> > +		if ((nfc_op.cmnds[0] == NAND_CMD_PAGEPROG) ||
+> > +			(nfc_op.cmnds[0] == NAND_CMD_SEQIN))
+> > +			pl353_nand_write_page_raw(mtd, chip,
+> > +			instr->ctx.data.buf.out, 0, nfc_op.addrs);
+> > +		else
+> > +			pl353_nand_write_buf_l(chip, instr->ctx.data.buf.out,
+> > +				len);
+> > +		return 0;
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct nand_op_parser pl353_nfc_op_parser =
+> NAND_OP_PARSER(
+> > +	NAND_OP_PARSER_PATTERN(
+> > +		pl353_nand_cmd_function,
+> > +		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> > +		NAND_OP_PARSER_PAT_ADDR_ELEM(false, 7),
+> > +		NAND_OP_PARSER_PAT_DATA_IN_ELEM(false, 8)),
+> > +	 NAND_OP_PARSER_PATTERN(
+> > +		pl353_nand_cmd_function,
+> > +		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> > +		NAND_OP_PARSER_PAT_ADDR_ELEM(false, 7),
+> > +		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> > +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(false)),
+> > +	NAND_OP_PARSER_PATTERN(
+> > +		pl353_nand_cmd_function,
+> > +		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> > +		NAND_OP_PARSER_PAT_DATA_IN_ELEM(false, 8)),
+> > +	 NAND_OP_PARSER_PATTERN(
+> > +		pl353_nand_cmd_function,
+> > +		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> > +		NAND_OP_PARSER_PAT_ADDR_ELEM(false, 7),
+> > +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(false)),
+> > +	NAND_OP_PARSER_PATTERN(
+> > +		pl353_nand_cmd_function,
+> > +		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> > +		NAND_OP_PARSER_PAT_ADDR_ELEM(false, 8),
+> > +		NAND_OP_PARSER_PAT_DATA_OUT_ELEM(false, 2048),
+> > +		NAND_OP_PARSER_PAT_CMD_ELEM(true),
+> > +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(true)),
+> > +	NAND_OP_PARSER_PATTERN(
+> > +		pl353_nand_cmd_function,
+> > +		NAND_OP_PARSER_PAT_CMD_ELEM(false),
+> > +		NAND_OP_PARSER_PAT_WAITRDY_ELEM(false)),
+> > +	NAND_OP_PARSER_PATTERN(
+> > +		pl353_nand_cmd_function,
+> > +		NAND_OP_PARSER_PAT_DATA_IN_ELEM(false, 2048)),
+> > +	NAND_OP_PARSER_PATTERN(
+> > +		pl353_nand_cmd_function,
+> > +		NAND_OP_PARSER_PAT_CMD_ELEM(false)),
+> 
+> I am pretty sure you can factorize all these patterns now. Use the "optional"
+> parameter for that.
+Can you explain little bit?  I didn't get.
+> 
+> > +	);
+> > +
+> > +static int pl353_nfc_exec_op(struct nand_chip *chip,
+> > +			       const struct nand_operation *op,
+> > +			       bool check_only)
+> > +{
+> > +	return nand_op_parser_exec_op(chip, &pl353_nfc_op_parser,
+> > +					      op, check_only);
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_device_ready - Check device ready/busy line
+> > + * @mtd:	Pointer to the mtd_info structure
+> > + *
+> > + * Return:	0 on busy or 1 on ready state
+> > + */
+> > +static int pl353_nand_device_ready(struct mtd_info *mtd) {
+> > +	if (pl353_smc_get_nand_int_status_raw()) {
+> 
+> I don't understand where this new function is declared.
+Added links above for this driver.
+> 
+> > +		pl353_smc_clr_nand_int();
+> > +		return 1;
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_ecc_init - Initialize the ecc information as per the ecc mode
+> > + * @mtd:	Pointer to the mtd_info structure
+> > + * @ecc:	Pointer to ECC control structure
+> > + * @ecc_mode:	ondie ecc status
+> > + *
+> > + * This function initializes the ecc block and functional pointers as
+> > +per the
+> > + * ecc mode
+> > + */
+> > +static void pl353_nand_ecc_init(struct mtd_info *mtd, struct nand_ecc_ctrl
+> *ecc,
+> > +	int ecc_mode)
+> > +{
+> > +	struct nand_chip *chip = mtd_to_nand(mtd);
+> > +
+> > +	ecc->read_oob = pl353_nand_read_oob;
+> > +	ecc->read_page_raw = pl353_nand_read_page_raw;
+> > +	ecc->write_oob = pl353_nand_write_oob;
+> > +	ecc->write_page_raw = pl353_nand_write_page_raw;
+> > +
+> > +	if (ecc_mode == NAND_ECC_ON_DIE) {
+> > +		pl353_smc_set_ecc_mode(PL353_SMC_ECCMODE_BYPASS);
+> > +
+> > +		/*
+> > +		 * The software ECC routines won't work with the
+> > +		 * SMC controller
+> > +		 */
+> > +		ecc->read_page = pl353_nand_read_page_raw;
+> > +		ecc->write_page = pl353_nand_write_page_raw;
+> > +		/*
+> > +		 * On-Die ECC spare bytes offset 8 is used for ECC codes
+> > +		 * Use the BBT pattern descriptors
+> > +		 */
+> > +		chip->bbt_td = &bbt_main_descr;
+> > +		chip->bbt_md = &bbt_mirror_descr;
+> > +	} else {
+> > +		ecc->mode = NAND_ECC_HW;
+> > +		/* Hardware ECC generates 3 bytes ECC code for each 512
+> bytes */
+> > +		ecc->bytes = 3;
+> > +		ecc->strength = 1;
+> > +		ecc->calculate = pl353_nand_calculate_hwecc;
+> > +		ecc->correct = pl353_nand_correct_data;
+> > +		ecc->hwctl = NULL;
+> 
+> You can drop this.
+Ok, I will update it.
+> 
+> > +		ecc->read_page = pl353_nand_read_page_hwecc;
+> > +		ecc->size = PL353_NAND_ECC_SIZE;
+> > +		ecc->write_page = pl353_nand_write_page_hwecc;
+> > +		pl353_smc_set_ecc_pg_size(mtd->writesize);
+> > +		switch (mtd->writesize) {
+> > +		case 512:
+> > +		case 1024:
+> > +		case 2048:
+> 
+> I prefer SZ_512, SZ_1K, SZ_2K.
+Ok, I will update it.
+Thanks again.
+If any of the above comments given by you, are not addressed properly,
+Please let me know.
+
+Thanks,
+Naga Sureshkumar Reli.
+> 
+> > +
+> 	pl353_smc_set_ecc_mode(PL353_SMC_ECCMODE_APB);
+> > +			break;
+> > +		default:
+> > +			/*
+> > +			 * The software ECC routines won't work with the
+> > +			 * SMC controller
+> > +			 */
+> > +			ecc->calculate = nand_calculate_ecc;
+> > +			ecc->correct = nand_correct_data;
+> > +			ecc->read_page = pl353_nand_read_page_swecc;
+> > +			ecc->write_page = pl353_nand_write_page_swecc;
+> > +			ecc->size = 256;
+> > +			break;
+> > +		}
+> > +
+> > +		if (mtd->oobsize == 16)
+> > +			mtd_set_ooblayout(mtd,
+> &pl353_ecc_ooblayout16_ops);
+> > +		else if (mtd->oobsize == 64)
+> > +			mtd_set_ooblayout(mtd,
+> &pl353_ecc_ooblayout64_ops);
+> > +	}
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_probe - Probe method for the NAND driver
+> > + * @pdev:	Pointer to the platform_device structure
+> > + *
+> > + * This function initializes the driver data structures and the hardware.
+> > + *
+> > + * Return:	0 on success or error value on failure
+> > + */
+> > +static int pl353_nand_probe(struct platform_device *pdev) {
+> > +	struct pl353_nand_info *xnand;
+> > +	struct mtd_info *mtd;
+> > +	struct nand_chip *nand_chip;
+> > +	struct resource *res;
+> > +
+> > +	xnand = devm_kzalloc(&pdev->dev, sizeof(*xnand), GFP_KERNEL);
+> > +	if (!xnand)
+> > +		return -ENOMEM;
+> > +
+> > +	/* Map physical address of NAND flash */
+> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +	xnand->nand_base = devm_ioremap_resource(&pdev->dev, res);
+> > +	if (IS_ERR(xnand->nand_base))
+> > +		return PTR_ERR(xnand->nand_base);
+> > +
+> > +	nand_chip = &xnand->chip;
+> > +	mtd = nand_to_mtd(nand_chip);
+> > +	nand_chip->exec_op = pl353_nfc_exec_op;
+> > +	nand_set_controller_data(nand_chip, xnand);
+> > +	mtd->priv = nand_chip;
+> > +	mtd->owner = THIS_MODULE;
+> > +	mtd->name = PL353_NAND_DRIVER_NAME;
+> > +	nand_set_flash_node(nand_chip, pdev->dev.of_node);
+> > +
+> > +	/* Set address of NAND IO lines */
+> > +	nand_chip->IO_ADDR_R = xnand->nand_base;
+> > +	nand_chip->IO_ADDR_W = xnand->nand_base;
+> > +	/* Set the driver entry points for MTD */
+> > +	nand_chip->dev_ready = pl353_nand_device_ready;
+> > +	nand_chip->select_chip = pl353_nand_select_chip;
+> > +	/* If we don't set this delay driver sets 20us by default */
+> > +	nand_chip->chip_delay = 30;
+> > +
+> > +	/* Set the device option and flash width */
+> > +	nand_chip->options = NAND_BUSWIDTH_AUTO;
+> > +	nand_chip->bbt_options = NAND_BBT_USE_FLASH;
+> > +	platform_set_drvdata(pdev, xnand);
+> > +
+> > +	/* first scan to find the device and get the page size */
+> > +	if (nand_scan_ident(mtd, 1, NULL)) {
+> > +		dev_err(&pdev->dev, "nand_scan_ident for NAND failed\n");
+> > +		return -ENXIO;
+> > +	}
+> > +
+> > +	xnand->row_addr_cycles = nand_chip->onfi_params.addr_cycles & 0xF;
+> > +	xnand->col_addr_cycles =
+> > +				(nand_chip->onfi_params.addr_cycles >> 4) &
+> 0xF;
+> > +
+> > +	pl353_nand_ecc_init(mtd, &nand_chip->ecc, nand_chip->ecc.mode);
+> > +	if (nand_chip->options & NAND_BUSWIDTH_16)
+> > +		pl353_smc_set_buswidth(PL353_SMC_MEM_WIDTH_16);
+> > +	/* second phase scan */
+> > +	if (nand_scan_tail(mtd)) {
+> > +		dev_err(&pdev->dev, "nand_scan_tail for NAND failed\n");
+> > +		return -ENXIO;
+> > +	}
+> > +
+> > +	mtd_device_register(mtd, NULL, 0);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * pl353_nand_remove - Remove method for the NAND driver
+> > + * @pdev:	Pointer to the platform_device structure
+> > + *
+> > + * This function is called if the driver module is being unloaded. It
+> > +frees all
+> > + * resources allocated to the device.
+> > + *
+> > + * Return:	0 on success or error value on failure
+> > + */
+> > +static int pl353_nand_remove(struct platform_device *pdev) {
+> > +	struct pl353_nand_info *xnand = platform_get_drvdata(pdev);
+> > +	struct mtd_info *mtd = nand_to_mtd(&xnand->chip);
+> > +
+> > +	/* Release resources, unregister device */
+> > +	nand_release(mtd);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/* Match table for device tree binding */ static const struct
+> > +of_device_id pl353_nand_of_match[] = {
+> > +	{ .compatible = "arm,pl353-nand-r2p1" },
+> > +	{},
+> > +};
+> > +MODULE_DEVICE_TABLE(of, pl353_nand_of_match);
+> > +
+> > +/*
+> > + * pl353_nand_driver - This structure defines the NAND subsystem
+> > +platform driver  */ static struct platform_driver pl353_nand_driver =
+> > +{
+> > +	.probe		= pl353_nand_probe,
+> > +	.remove		= pl353_nand_remove,
+> > +	.driver		= {
+> > +		.name	= PL353_NAND_DRIVER_NAME,
+> > +		.of_match_table = pl353_nand_of_match,
+> > +	},
+> > +};
+> > +
+> > +module_platform_driver(pl353_nand_driver);
+> > +
+> > +MODULE_AUTHOR("Xilinx, Inc.");
+> > +MODULE_ALIAS("platform:" PL353_NAND_DRIVER_NAME);
+> > +MODULE_DESCRIPTION("ARM PL353 NAND Flash Driver");
+> > +MODULE_LICENSE("GPL");
+> 
+> Thanks,
+> Miquèl
+> 
+> --
+> Miquel Raynal, Bootlin (formerly Free Electrons) Embedded Linux and Kernel
+> engineering https://bootlin.com
