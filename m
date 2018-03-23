@@ -1,54 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756246AbeCWKeM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 06:34:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52402 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752538AbeCWKeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 06:34:10 -0400
-Date: Fri, 23 Mar 2018 11:34:07 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: Li RongQing <lirongqing@baidu.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, hannes@cmpxchg.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: Re: [PATCH] mm/memcontrol.c: speed up to force empty a memory cgroup
-Message-ID: <20180323103407.GP23100@dhcp22.suse.cz>
-References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
+        id S933892AbeCWKSC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 06:18:02 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:48691 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756000AbeCWKRw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 06:17:52 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w2NAHSXP003274
+X-Nifty-SrcIP: [209.85.213.53]
+X-Google-Smtp-Source: AG47ELs+a51YMZ45M0PdqmQxLO5JNRUvA+n6hZQcBrAg6d3wi+7ynrV2X5EZHJ24Qv0/qSh58SwjKbMZHa1pblcbbhU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1521781901-20466-1-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1521781901-20466-1-git-send-email-hayashi.kunihiko@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 23 Mar 2018 19:16:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARPD5_9xWLkWZyFQHN2WwtyBtQsnZYggbvyWEg+qtXCWg@mail.gmail.com>
+Message-ID: <CAK7LNARPD5_9xWLkWZyFQHN2WwtyBtQsnZYggbvyWEg+qtXCWg@mail.gmail.com>
+Subject: Re: [PATCH] clk: uniphier: add ethernet clock control support for PXs3
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 19-03-18 16:29:30, Li RongQing wrote:
-> mem_cgroup_force_empty() tries to free only 32 (SWAP_CLUSTER_MAX) pages
-> on each iteration, if a memory cgroup has lots of page cache, it will
-> take many iterations to empty all page cache, so increase the reclaimed
-> number per iteration to speed it up. same as in mem_cgroup_resize_limit()
-> 
-> a simple test show:
-> 
->   $dd if=aaa  of=bbb  bs=1k count=3886080
->   $rm -f bbb
->   $time echo 100000000 >/cgroup/memory/test/memory.limit_in_bytes
+2018-03-23 14:11 GMT+09:00 Kunihiko Hayashi <hayashi.kunihiko@socionext.com>:
+> Add clock control for ethernet controller on PXs3 SoC.
 >
-> Before: 0m0.252s ===> after: 0m0.178s
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
+>  drivers/clk/uniphier/clk-uniphier-sys.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
+> index d244e72..faadd9b 100644
+> --- a/drivers/clk/uniphier/clk-uniphier-sys.c
+> +++ b/drivers/clk/uniphier/clk-uniphier-sys.c
+> @@ -233,6 +233,8 @@ const struct uniphier_clk_data uniphier_pxs3_sys_clk_data[] = {
+>         UNIPHIER_LD20_SYS_CLK_SD,
+>         UNIPHIER_LD11_SYS_CLK_NAND(2),
+>         UNIPHIER_LD11_SYS_CLK_EMMC(4),
+> +       UNIPHIER_CLK_GATE("ether0", 6, NULL, 0x210c, 9),
+> +       UNIPHIER_CLK_GATE("ether1", 7, NULL, 0x210c, 10),
+>         UNIPHIER_CLK_GATE("usb30", 12, NULL, 0x210c, 4),        /* =GIO0 */
+>         UNIPHIER_CLK_GATE("usb31-0", 13, NULL, 0x210c, 5),      /* =GIO1 */
+>         UNIPHIER_CLK_GATE("usb31-1", 14, NULL, 0x210c, 6),      /* =GIO1-1 */
+> --
 
-One more note. I have only now realized that increasing the patch size
-might have another negative side effect. Memcg reclaim bails out early
-when the required target has been reclaimed and so we might skip memcgs
-in the hierarchy and could end up hamering one child in the hierarchy
-much more than others. Our current code is not ideal and we workaround
-this by a smaller target and caching the last reclaimed memcg so the
-imbalance is not so visible at least.
 
-This is not something that couldn't be fixed and maybe 1M chunk would be
-acceptable as well. I dunno. Let's focus on the main bottleneck first
-before we start doing these changes though.
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+
 -- 
-Michal Hocko
-SUSE Labs
+Best Regards
+Masahiro Yamada
