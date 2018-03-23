@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803619-2-13616396547790700372
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803614-2-7266370105181297526
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endasv,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803619; b=m7SunhtLhicw9lJSmOIzQzkKSV9yAhBS5Op9GqZhtobRKxh
-    O5xtdpnk2OQNe38ejb89EXN5Q84ZPljUyM0um6cCyQF92bBQ9URWolmSHHx8cLT9
-    G58yFF5zlmOnMFr9/E1CC5UR4SUbDIqNCQ1FpMfvWnS8MH9PIISnQeBEgBr0qYKw
-    cRs9+ea/9VBLYsjQ0dEFQ9WFylVD4H4egBynaxjQ5ne/9s4k1cFONr/gxCCZWcXp
-    Ph0PwJY7/XXRxfmERQuvPSj7C4UZtfLoRtHrjmDwCY2vs7/98qDj7aYasZNM6C5T
-    nxRmfc5tGtcIrFA+gAxLwaWl85mZaWIZZmupENA==
+    t=1521803613; b=a9n7MjeiQ7o/Gkj9ISh/SRCdG6TBePnJaQh7IgFr0Y9DCpt
+    rUT45s/CYhkKkyV21E2F4HQ89xraDAnZFFFh9/pgXCwPXMoUKwKnEOe7VgwAYQGP
+    kJtwI5I3KDjiCuVxf0UqAwAtq233CXAAjkDyVU019fqRAkhegn0eqH0l29WRkaMu
+    F1+1tWMFAO/SGm1U9qQTFYXHvBxTRaQPwuMkox3VJNnf71UB14FSV41/rQshPMh9
+    23v4tQaTwB7Q/obMtMNDE2E/bwLWYTDDBo4xYKN7wMg8Ob+CPearH80LdX31r4fs
+    FTjRKn1eLjBXnOd0aP/natc/JWTQLODp21nG+zg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803619; bh=t6X9SejACOJv2vbXhjL8j95yFV
-    rkrQiszfP7FPpOgbQ=; b=qla5ZKcWWu0l1T8P9dnUZpg8ApnQQevwsUzAtzmJmR
-    HttL5a+ckphjp5dXjtgwEE1O4HtbMD+R4Mb/My+SXg+sKTkV4ULFK8RmqJjXabMK
-    FTm9rB93npym1KtDPkQoYHIL7H2gX2U5qBjlx10X5ITu2RsGpE2l5Jbg+zjFJLlc
-    2eg6kAgyZ/JwcMc272Bj1KKxPrsCEIKClLOfRneXK7dYsSMlC42PgV/J2zXqdgop
-    iU2y5Jlqbfmff7/I3X6wL8vIZIL7a3hNiJicY8xP4b8em9VY6svI7SMerZuQ5dqT
-    lpAdzj5q22B4BkN3lBpoQ8HYuvWh0mEjG6xkWbPvFgFQ==
+    :list-id; s=arctest; t=1521803613; bh=lcXRRJ89fyzYvEgmpIYK2x73J3
+    rBiPxS5q4CV2EjPNY=; b=u/E7fp+Fn6TQhsB/g3f4nMu258EBuCGLXnCG9Q8YQP
+    nqH5rYl1HyKj8Jj+xdmweWx7iowRz/jaR3BMIEUncZT2ySHP/KcM25y6Bx+p+1+B
+    25oQMigWAC6nCp3VGmGKjVEkfcJMtTO9tdE436HcVW3QYOFV8KkhtOaQ+eh16i6o
+    89DUzIHZJf89YPlxznQKTFrcpLG/YFTJbU7WtsAbpPkrclM6t11lAdSL/ODNacG6
+    l3vjVH86HWFQqlEF9QEQ9b/IarBVneoDNKqXicj4rg2Q+n3nk4VMNe0XEjf7ZREN
+    LY9WR0QTb7h1GH4iMEg0CESMM9D2gDEiNfjX4ROTYRQg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,25 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932720AbeCWKKc (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:10:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42568 "EHLO
+        id S932744AbeCWKKi (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:10:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42638 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932684AbeCWKKa (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:10:30 -0400
+        with ESMTP id S932743AbeCWKKg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:10:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Timmy Li <lixiaoping3@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Hillf Danton <hillf.zj@alibaba-inc.com>,
+        Michal Hocko <mhocko@suse.com>, Jia He <hejianet@gmail.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 124/177] net: hns: fix ethtool_get_strings overflow in hns driver
-Date: Fri, 23 Mar 2018 10:54:12 +0100
-Message-Id: <20180323094210.711890833@linuxfoundation.org>
+Subject: [PATCH 4.9 126/177] mm: fix check for reclaimable pages in PF_MEMALLOC reclaim throttling
+Date: Fri, 23 Mar 2018 10:54:14 +0100
+Message-Id: <20180323094210.796866037@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,80 +86,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Timmy Li <lixiaoping3@huawei.com>
+From: Johannes Weiner <hannes@cmpxchg.org>
 
 
-[ Upstream commit 412b65d15a7f8a93794653968308fc100f2aa87c ]
+[ Upstream commit d450abd81b081d45adb12f303a07dd44b15eb1bc ]
 
-hns_get_sset_count() returns HNS_NET_STATS_CNT and the data space allocated
-is not enough for ethtool_get_strings(), which will cause random memory
-corruption.
+PF_MEMALLOC direct reclaimers get throttled on a node when the sum of
+all free pages in each zone fall below half the min watermark.  During
+the summation, we want to exclude zones that don't have reclaimables.
+Checking the same pgdat over and over again doesn't make sense.
 
-When SLAB and DEBUG_SLAB are both enabled, memory corruptions like the
-the following can be observed without this patch:
-[   43.115200] Slab corruption (Not tainted): Acpi-ParseExt start=ffff801fb0b69030, len=80
-[   43.115206] Redzone: 0x9f911029d006462/0x5f78745f31657070.
-[   43.115208] Last user: [<5f7272655f746b70>](0x5f7272655f746b70)
-[   43.115214] 010: 70 70 65 31 5f 74 78 5f 70 6b 74 00 6b 6b 6b 6b  ppe1_tx_pkt.kkkk
-[   43.115217] 030: 70 70 65 31 5f 74 78 5f 70 6b 74 5f 6f 6b 00 6b  ppe1_tx_pkt_ok.k
-[   43.115218] Next obj: start=ffff801fb0b69098, len=80
-[   43.115220] Redzone: 0x706d655f6f666966/0x9f911029d74e35b.
-[   43.115229] Last user: [<ffff0000084b11b0>](acpi_os_release_object+0x28/0x38)
-[   43.115231] 000: 74 79 00 6b 6b 6b 6b 6b 70 70 65 31 5f 74 78 5f  ty.kkkkkppe1_tx_
-[   43.115232] 010: 70 6b 74 5f 65 72 72 5f 63 73 75 6d 5f 66 61 69  pkt_err_csum_fai
-
-Signed-off-by: Timmy Li <lixiaoping3@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 599d0c954f91 ("mm, vmscan: move LRU lists to node")
+Link: http://lkml.kernel.org/r/20170228214007.5621-3-hannes@cmpxchg.org
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Hillf Danton <hillf.zj@alibaba-inc.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Jia He <hejianet@gmail.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c  |    2 +-
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c   |    2 +-
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c   |    2 +-
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ mm/vmscan.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
-@@ -671,7 +671,7 @@ static void hns_gmac_get_strings(u32 str
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2841,8 +2841,10 @@ static bool allow_direct_reclaim(pg_data
  
- static int hns_gmac_get_sset_count(int stringset)
- {
--	if (stringset == ETH_SS_STATS)
-+	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
- 		return ARRAY_SIZE(g_gmac_stats_string);
+ 	for (i = 0; i <= ZONE_NORMAL; i++) {
+ 		zone = &pgdat->node_zones[i];
+-		if (!managed_zone(zone) ||
+-		    pgdat_reclaimable_pages(pgdat) == 0)
++		if (!managed_zone(zone))
++			continue;
++
++		if (!zone_reclaimable_pages(zone))
+ 			continue;
  
- 	return 0;
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_ppe.c
-@@ -422,7 +422,7 @@ void hns_ppe_update_stats(struct hns_ppe
- 
- int hns_ppe_get_sset_count(int stringset)
- {
--	if (stringset == ETH_SS_STATS)
-+	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
- 		return ETH_PPE_STATIC_NUM;
- 	return 0;
- }
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_rcb.c
-@@ -798,7 +798,7 @@ void hns_rcb_get_stats(struct hnae_queue
-  */
- int hns_rcb_get_ring_sset_count(int stringset)
- {
--	if (stringset == ETH_SS_STATS)
-+	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
- 		return HNS_RING_STATIC_REG_NUM;
- 
- 	return 0;
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_xgmac.c
-@@ -776,7 +776,7 @@ static void hns_xgmac_get_strings(u32 st
-  */
- static int hns_xgmac_get_sset_count(int stringset)
- {
--	if (stringset == ETH_SS_STATS)
-+	if (stringset == ETH_SS_STATS || stringset == ETH_SS_PRIV_FLAGS)
- 		return ARRAY_SIZE(g_xgmac_stats_string);
- 
- 	return 0;
+ 		pfmemalloc_reserve += min_wmark_pages(zone);
