@@ -1,114 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeCWVwl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 17:52:41 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40867 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751288AbeCWVwj (ORCPT
+        id S1752118AbeCWV7Y (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 17:59:24 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46699 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751288AbeCWV7X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 17:52:39 -0400
-Date: Fri, 23 Mar 2018 14:51:49 -0700
-From: tip-bot for Claudio Scordino <tipbot@zytor.com>
-Message-ID: <tip-e97a90f7069b740575bcb1dae86596e0484b8957@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
-        mingo@kernel.org, morten.rasmussen@arm.com, patrick.bellasi@arm.com,
-        rafael.j.wysocki@intel.com, vincent.guittot@linaro.org,
-        peterz@infradead.org, claudio@evidence.eu.com, joelaf@google.com,
-        hpa@zytor.com, viresh.kumar@linaro.org, juri.lelli@redhat.com,
-        tkjos@android.com, tglx@linutronix.de
-Reply-To: morten.rasmussen@arm.com, mingo@kernel.org, dietmar.eggemann@arm.com,
-        linux-kernel@vger.kernel.org, joelaf@google.com,
-        claudio@evidence.eu.com, peterz@infradead.org,
-        vincent.guittot@linaro.org, patrick.bellasi@arm.com,
-        rafael.j.wysocki@intel.com, tkjos@android.com, juri.lelli@redhat.com,
-        viresh.kumar@linaro.org, hpa@zytor.com, tglx@linutronix.de
-In-Reply-To: <1520937340-2755-1-git-send-email-claudio@evidence.eu.com>
-References: <1520937340-2755-1-git-send-email-claudio@evidence.eu.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/cpufreq: Rate limits for SCHED_DEADLINE
-Git-Commit-ID: e97a90f7069b740575bcb1dae86596e0484b8957
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Fri, 23 Mar 2018 17:59:23 -0400
+X-Google-Smtp-Source: AG47ELvmAqO8OC9Dszg8JnflBWWH4aZ21sbNqFxW3VyQpHbq0AIUAI7MrSbjDs3LHpEH0OkfxF5J6Q==
+From: Eric Dumazet <edumazet@google.com>
+To: x86 <x86@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Hugh Dickins <hughd@google.com>
+Subject: [PATCH v3 1/2] x86, msr: allow rdmsr_safe_on_cpu() to schedule
+Date: Fri, 23 Mar 2018 14:58:17 -0700
+Message-Id: <20180323215818.127774-1-edumazet@google.com>
+X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e97a90f7069b740575bcb1dae86596e0484b8957
-Gitweb:     https://git.kernel.org/tip/e97a90f7069b740575bcb1dae86596e0484b8957
-Author:     Claudio Scordino <claudio@evidence.eu.com>
-AuthorDate: Tue, 13 Mar 2018 11:35:40 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 23 Mar 2018 22:48:22 +0100
+I noticed high latencies caused by a daemon periodically reading
+various MSR on all cpus. KASAN kernels would see ~10ms latencies
+simply reading one MSR. Even without KASAN, sending IPI to CPU
+in deep sleep state or blocking hard IRQ in a a long section,
+then waiting for the answer can consume hundreds of usec.
 
-sched/cpufreq: Rate limits for SCHED_DEADLINE
+Converts rdmsr_safe_on_cpu() to use a completion instead
+of busy polling.
 
-When the SCHED_DEADLINE scheduling class increases the CPU utilization, it
-should not wait for the rate limit, otherwise it may miss some deadline.
+Overall daemon cpu usage was reduced by 35 %,
+and latencies caused by msr_read() disappeared.
 
-Tests using rt-app on Exynos5422 with up to 10 SCHED_DEADLINE tasks have
-shown reductions of even 10% of deadline misses with a negligible
-increase of energy consumption (measured through Baylibre Cape).
-
-Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: linux-pm@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Todd Kjos <tkjos@android.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Link: https://lkml.kernel.org/r/1520937340-2755-1-git-send-email-claudio@evidence.eu.com
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Hugh Dickins <hughd@google.com>
 ---
- kernel/sched/cpufreq_schedutil.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/x86/lib/msr-smp.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 89fe78ecb88c..2b124811947d 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -267,6 +267,16 @@ static bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu)
- static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return false; }
- #endif /* CONFIG_NO_HZ_COMMON */
+diff --git a/arch/x86/lib/msr-smp.c b/arch/x86/lib/msr-smp.c
+index 693cce0be82dffb822cecd0c7e38d2821aff896c..761ba062afdaf7f7d0603ed94ed6cc3e46b37f76 100644
+--- a/arch/x86/lib/msr-smp.c
++++ b/arch/x86/lib/msr-smp.c
+@@ -2,6 +2,7 @@
+ #include <linux/export.h>
+ #include <linux/preempt.h>
+ #include <linux/smp.h>
++#include <linux/completion.h>
+ #include <asm/msr.h>
  
-+/*
-+ * Make sugov_should_update_freq() ignore the rate limit when DL
-+ * has increased the utilization.
-+ */
-+static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu, struct sugov_policy *sg_policy)
-+{
-+	if (cpu_util_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->util_dl)
-+		sg_policy->need_freq_update = true;
-+}
+ static void __rdmsr_on_cpu(void *info)
+@@ -143,13 +144,19 @@ void wrmsr_on_cpus(const struct cpumask *mask, u32 msr_no, struct msr *msrs)
+ }
+ EXPORT_SYMBOL(wrmsr_on_cpus);
+ 
++struct msr_info_completion {
++	struct msr_info		msr;
++	struct completion	done;
++};
 +
- static void sugov_update_single(struct update_util_data *hook, u64 time,
- 				unsigned int flags)
+ /* These "safe" variants are slower and should be used when the target MSR
+    may not actually exist. */
+ static void __rdmsr_safe_on_cpu(void *info)
  {
-@@ -279,6 +289,8 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
- 	sugov_set_iowait_boost(sg_cpu, time, flags);
- 	sg_cpu->last_update = time;
+-	struct msr_info *rv = info;
++	struct msr_info_completion *rv = info;
  
-+	ignore_dl_rate_limit(sg_cpu, sg_policy);
-+
- 	if (!sugov_should_update_freq(sg_policy, time))
- 		return;
+-	rv->err = rdmsr_safe(rv->msr_no, &rv->reg.l, &rv->reg.h);
++	rv->msr.err = rdmsr_safe(rv->msr.msr_no, &rv->msr.reg.l, &rv->msr.reg.h);
++	complete(&rv->done);
+ }
  
-@@ -356,6 +368,8 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
- 	sugov_set_iowait_boost(sg_cpu, time, flags);
- 	sg_cpu->last_update = time;
+ static void __wrmsr_safe_on_cpu(void *info)
+@@ -161,17 +168,26 @@ static void __wrmsr_safe_on_cpu(void *info)
  
-+	ignore_dl_rate_limit(sg_cpu, sg_policy);
-+
- 	if (sugov_should_update_freq(sg_policy, time)) {
- 		next_f = sugov_next_freq_shared(sg_cpu, time);
- 		sugov_update_commit(sg_policy, time, next_f);
+ int rdmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 *l, u32 *h)
+ {
++	struct msr_info_completion rv;
++	call_single_data_t csd = {
++		.func	= __rdmsr_safe_on_cpu,
++		.info	= &rv,
++	};
+ 	int err;
+-	struct msr_info rv;
+ 
+ 	memset(&rv, 0, sizeof(rv));
++	init_completion(&rv.done);
++	rv.msr.msr_no = msr_no;
+ 
+-	rv.msr_no = msr_no;
+-	err = smp_call_function_single(cpu, __rdmsr_safe_on_cpu, &rv, 1);
+-	*l = rv.reg.l;
+-	*h = rv.reg.h;
++	err = smp_call_function_single_async(cpu, &csd);
++	if (!err) {
++		wait_for_completion(&rv.done);
++		err = rv.msr.err;
++	}
++	*l = rv.msr.reg.l;
++	*h = rv.msr.reg.h;
+ 
+-	return err ? err : rv.err;
++	return err;
+ }
+ EXPORT_SYMBOL(rdmsr_safe_on_cpu);
+ 
+-- 
+2.17.0.rc0.231.g781580f067-goog
