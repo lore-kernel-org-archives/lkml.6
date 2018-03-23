@@ -1,158 +1,216 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2729766-1522256410-2-7592408047829576379
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enca, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522256410; b=bYmHS66AbmU/E6+jG2WrDsBHvMq3TDdgDlRPbIonsFge+OG
-    4kHfQp7GTJxV0OufYPHPKm3vvMbET0wcFAAgoEOF8xY6PDe7REkOpfYsxjQzRtec
-    pZL29g++M16R7yi6mSxUD+6fXDH5YUYNbxiws14XdnsA33SvoCJqSqUAaGXEcs35
-    fYShAj1/CzmO4IBo/deguJGJ2J7Zp6reui7FdEeOWZTGEYWEzugnvDu4CycV1+tR
-    PnaOK88u+4rGntsB097ZiBTKgw88BRyXI8QJbylwzGGtGLCvzl/i1raJ7DKJfaWg
-    9d4oB+MR6XP0WNFw+KDdCrQeKvwbhj5jpT+VbBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1522256410; bh=CPdPM3LwLxcdA+gSh17Fed0Qb7oAnHOLZ9fJvX
-    Ce/YY=; b=hZ9kbCh51vZtkagpGEAQ4hV3PNxCibT014BG1XpNrGAVG7tGTFYLGt
-    op/vETfN1Sc3vNX9D1Qr3bomacnUipdFqaYEWJ4l7rp2qZlhjb8V2ADiqxL1aWkx
-    ni9zZVB1oNvycHX0gN3A0V+BULZPOE7jPVM3k42tMGJdQ2CmtzhfTekP5rm9YE5v
-    It7AlyCn6FGOfAxQG4GojPXQbUA8izOw3cK1sqR6Cg+41PAgUaEvRg8nND11Z6xw
-    eeHEWLA628pPrghwdqyp+cdcXb69fNsTZxUYiQkZsg472uKPBtEy6L6ysKk44uA9
-    Pcny3JE2whNSHKLniO8t7EnXO2fXYAlQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=gr6pMACa x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=iGsYH/qg x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OJrS4i4x;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=gr6pMACa x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=iGsYH/qg x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OJrS4i4x;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBrYmQE1gbeuZlTuvXNFNxFawH3uwWQ43irimsmTQ0e4auzAYl9JHk1qY102sTXQ57QCEJ9mawNtgJeZbTXgJmrgr9aTqSMMBCE07kTM1nUJ26ZkC+FJ
-    LU9LP2CK3uxM/Hz0QHOkXYyFazxQ5jJuvvBixcbcpM/tMA8Kv6ue4b15l5l8BeIEh6G3+mpuZ7UgzzJDrNybM6YVhol5at7XbgrqbL8u674ipgz1p8ehvp4h
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8 a=dYKwY61XRkWUM7whKowA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=xmb-EsYY8bH0VWELuYED:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeC1RAI (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 28 Mar 2018 13:00:08 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:40296 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752457AbeC1RAH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 28 Mar 2018 13:00:07 -0400
-X-Google-Smtp-Source: AIpwx496S8sj1SOZ917G/QQ7MCp9mNOzUKOPYUfnNfv84pzpZs+rWjwsbWGfkxMlHsdIkTDNIbZ9v8KOGQcNDcg6nEs=
-MIME-Version: 1.0
-In-Reply-To: <20180328152115.GB1991@saruman>
-References: <1522226933-29317-1-git-send-email-chenhc@lemote.com> <20180328152115.GB1991@saruman>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 28 Mar 2018 10:00:05 -0700
-X-Google-Sender-Auth: CiAUwqRpYRkqCJ4B_OZoSVGmCAU
-Message-ID: <CAGXu5j+p9fy=fVkBtyXUNH6tmCfraWdZTJCqiRHvyO3vxNxzng@mail.gmail.com>
-Subject: Re: [PATCH V4 Resend] ZBOOT: fix stack protector in compressed boot phase
-To: James Hogan <jhogan@kernel.org>
-Cc: Huacai Chen <chenhc@lemote.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        linux-sh <linux-sh@vger.kernel.org>,
-        "# 3.4.x" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <boris.brezillon@bootlin.com>
+X-Google-Smtp-Source: AG47ELvXfQ7nDcxYeCXX6iIt7718u0lE9jf2XiPmdOjQYbHLmFixSBo34W+71ASfleOfq5JZr4HQ
+ARC-Seal: i=1; a=rsa-sha256; t=1521802834; cv=none;
+        d=google.com; s=arc-20160816;
+        b=jVh+EMtUlSyGXxKIMFt10kMNhKZzppdGILRp9+Ss8Ufs2OxxscI9sb7Jz7TxHg2UhA
+         PpmUXXTeqz2ymD6R/COUkAqv4uLttr+AKKGkyus20XMlbF/xRvB9NGkM35WX0c2f8Fdt
+         odQZO2RcSwihW86pkqDuY0tuqKxz9S7lNJZYZgRmP59PVIr2IJeEmtQw8dun7n1LJ98P
+         nCd+qvZSH7edP1RZC4m/aCPpkTfanJS9Eh9PXmrcBlxsfYxPaJvnM80eVLCK6T5FME7e
+         OGY8IiB9iNC24wASlHKMqL/JmYasizx68n6a2UkqTW/uPgnMVSzZmf7PZJKSrnRY9Sb2
+         hiHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=wrjEdlimgXAEg1uoYBci5LxQGS4Fz8UYvM9vTAcKiO8=;
+        b=HNu0UPY9aV2KTw9p7XJlMLgypgqwFSOBSf6h0By+N1nurr4/XuDE//SPY4tEA8fhys
+         IRABCQIxw5IrVrgeg+V77jvnVUPfKq9YSR38aAQf5F7pixtRAxh6p7OgVsSsZXd8z3SL
+         l/l3xLti73JgHZGYT8XjtEnILbE6xF6nPe4/BxAqZ8SmCVsCeyiqYveD7TWag02on0d1
+         tTZOHGuvwjWomC2UlEfBf6c6ntxboGB8H5UAyLl+hTRyLPmtI7lIyVtC9TDM1CDrXxQ1
+         vzinWurHsDuFmgtyoaR5MC0Ce85BbSBJmoN09VPjJluMM7104avUff9f/lDk8XBgD33o
+         ljPA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Wolfram Sang <wsa@the-dreams.de>,
+	linux-i2c@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Przemyslaw Sroka <psroka@cadence.com>,
+	Arkadiusz Golec <agolec@cadence.com>,
+	Alan Douglas <adouglas@cadence.com>,
+	Bartosz Folta <bfolta@cadence.com>,
+	Damian Kos <dkos@cadence.com>,
+	Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+	Cyprian Wronka <cwronka@cadence.com>,
+	Suresh Punnoose <sureshp@cadence.com>,
+	Rafal Ciepiela <rafalc@cadence.com>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Nishanth Menon <nm@ti.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Pawel Moll <pawel.moll@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ian Campbell <ijc+devicetree@hellion.org.uk>,
+	Kumar Gala <galak@codeaurora.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vitor Soares <Vitor.Soares@synopsys.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Xiang Lin <Xiang.Lin@synaptics.com>,
+	linux-gpio@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH v3 00/11] Add the I3C subsystem
+Date: Fri, 23 Mar 2018 12:00:09 +0100
+Message-Id: <20180323110020.19080-1-boris.brezillon@bootlin.com>
+X-Mailer: git-send-email 2.14.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595725929392804192?=
+X-GMAIL-MSGID: =?utf-8?q?1595725929392804192?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Mar 28, 2018 at 8:21 AM, James Hogan <jhogan@kernel.org> wrote:
-> On Wed, Mar 28, 2018 at 04:48:53PM +0800, Huacai Chen wrote:
->> diff --git a/arch/mips/boot/compressed/decompress.c b/arch/mips/boot/compressed/decompress.c
->> index fdf99e9..81df904 100644
->> --- a/arch/mips/boot/compressed/decompress.c
->> +++ b/arch/mips/boot/compressed/decompress.c
->> @@ -76,12 +76,7 @@ void error(char *x)
->>  #include "../../../../lib/decompress_unxz.c"
->>  #endif
->>
->> -unsigned long __stack_chk_guard;
->> -
->> -void __stack_chk_guard_setup(void)
->> -{
->> -     __stack_chk_guard = 0x000a0dff;
->> -}
->> +const unsigned long __stack_chk_guard = 0x000a0dff;
->>
->>  void __stack_chk_fail(void)
->>  {
->> @@ -92,8 +87,6 @@ void decompress_kernel(unsigned long boot_heap_start)
->>  {
->>       unsigned long zimage_start, zimage_size;
->>
->> -     __stack_chk_guard_setup();
->> -
->>       zimage_start = (unsigned long)(&__image_begin);
->>       zimage_size = (unsigned long)(&__image_end) -
->>           (unsigned long)(&__image_begin);
->
-> This looks good to me, though I've Cc'd Kees as apparently the original
-> author from commit 8779657d29c0 ("stackprotector: Introduce
+This patch series is a proposal for a new I3C [1] subsystem.
 
-I wonder what changed in the compiler -- I regularly boot
-stack-protected ARM images. Regardless, this is fine. :)
+This infrastructure is not complete yet and will be extended over
+time.
 
-> CONFIG_CC_STACKPROTECTOR_STRONG") in case there was a particular reason
-> this wasn't done in the first place.
+There are a few design choices that are worth mentioning because they
+impact the way I3C device drivers can interact with their devices:
 
-I think I was copying from other places? It's been long enough that I
-don't remember, actually. :)
+- all functions used to send I3C/I2C frames must be called in
+  non-atomic context. Mainly done this way to ease implementation, but
+  this is still open to discussion. Please let me know if you think it's
+  worth considering an asynchronous model here
+- the bus element is a separate object and is not implicitly described
+  by the master (as done in I2C). The reason is that I want to be able
+  to handle multiple master connected to the same bus and visible to
+  Linux.
+  In this situation, we should only have one instance of the device and
+  not one per master, and sharing the bus object would be part of the
+  solution to gracefully handle this case.
+  I'm not sure if we will ever need to deal with multiple masters
+  controlling the same bus and exposed under Linux, but separating the
+  bus and master concept is pretty easy, hence the decision to do it
+  now, just in case we need it some day.
+  The other benefit of separating the bus and master concepts is that
+  master devices appear under the bus directory in sysfs.
+- I2C backward compatibility has been designed to be transparent to I2C
+  drivers and the I2C subsystem. The I3C master just registers an I2C
+  adapter which creates a new I2C bus. I'd say that, from a
+  representation PoV it's not ideal because what should appear as a
+  single I3C bus exposing I3C and I2C devices here appears as 2
+  different busses connected to each other through the parenting (the
+  I3C master is the parent of the I2C and I3C busses).
+  On the other hand, I don't see a better solution if we want something
+  that is not invasive.
 
-> Acked-by: James Hogan <jhogan@kernel.org>
+Missing features in this preliminary version:
+- support for HDR modes (has been removed because of lack of real users)
+- no support for multi-master and the associated concepts (mastership
+  handover, support for secondary masters, ...)
+- I2C devices can only be described using DT because this is the only
+  use case I have. However, the framework can easily be extended with
+  ACPI and board info support
+- I3C slave framework. This has been completely omitted, but shouldn't
+  have a huge impact on the I3C framework because I3C slaves don't see
+  the whole bus, it's only about handling master requests and generating
+  IBIs. Some of the struct, constant and enum definitions could be
+  shared, but most of the I3C slave framework logic will be different
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Main changes between v2 and v3 are:
+- Reworked the DT bindings as suggested by Rob
+- Reworked the bus initialization step as suggested by Vitor
+- Added a driver for an I3C GPIO expander
 
-> (Happy to apply with acks from Kees and ARM, SH maintainers if nobody
-> else does).
+Main changes between the initial RFC and this v2 are:
+- Add a generic infrastructure to support IBIs. It's worth mentioning
+  that I tried exposing IBIs as a regular IRQs, but after several
+  attempts and a discussion with Mark Zyngier, it appeared that it was
+  not really fitting in the Linux IRQ model (the fact that you have
+  payload attached to IBIs, the fact that most of the time an IBI will
+  generate a transfer on the bus which has to be done in an atomic
+  context, ...)
+  The counterpart of this decision is the latency induced by the
+  workqueue approach, but since I don't have real use cases, I don't
+  know if this can be a problem or not. 
+- Add helpers to support Hot Join
+- Add support for IBIs and Hot Join in Cadence I3C master driver
+- Address several issues in how I was using the device model
 
-That'd be fine by me, FWIW. Thanks!
+I'll finish on a good news: this week the MIPI alliance opened the I3C
+spec. So everyone can now review the patches (no need to be member of
+the MIPI I3C group).
+I'll let you find the link in the doc, this way maybe I'll have reviews
+on the doc itself :-).
 
--Kees
+Thanks,
+
+Boris
+
+Boris Brezillon (11):
+  i2c: Export of_i2c_get_board_info()
+  i3c: Add core I3C infrastructure
+  docs: driver-api: Add I3C documentation
+  i3c: Add sysfs ABI spec
+  dt-bindings: i3c: Document core bindings
+  dt-bindings: i3c: Add macros to help fill I3C/I2C device's reg
+    property
+  MAINTAINERS: Add myself as the I3C subsystem maintainer
+  i3c: master: Add driver for Cadence IP
+  dt-bindings: i3c: Document Cadence I3C master bindings
+  gpio: Add a driver for Cadence I3C GPIO expander
+  dt-bindings: gpio: Add bindings for Cadence I3C gpio expander
+
+ Documentation/ABI/testing/sysfs-bus-i3c            |   95 ++
+ .../devicetree/bindings/gpio/gpio-cdns-i3c.txt     |   38 +
+ .../devicetree/bindings/i3c/cdns,i3c-master.txt    |   45 +
+ Documentation/devicetree/bindings/i3c/i3c.txt      |  140 ++
+ Documentation/driver-api/i3c/conf.py               |   10 +
+ Documentation/driver-api/i3c/device-driver-api.rst |    7 +
+ Documentation/driver-api/i3c/index.rst             |    9 +
+ Documentation/driver-api/i3c/master-driver-api.rst |    8 +
+ Documentation/driver-api/i3c/protocol.rst          |  201 +++
+ Documentation/driver-api/index.rst                 |    1 +
+ MAINTAINERS                                        |    9 +
+ drivers/Kconfig                                    |    2 +
+ drivers/Makefile                                   |    2 +-
+ drivers/gpio/Kconfig                               |   11 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-cdns-i3c.c                       |  380 +++++
+ drivers/i2c/i2c-core-base.c                        |    2 +-
+ drivers/i2c/i2c-core-of.c                          |   66 +-
+ drivers/i3c/Kconfig                                |   24 +
+ drivers/i3c/Makefile                               |    4 +
+ drivers/i3c/core.c                                 |  620 +++++++
+ drivers/i3c/device.c                               |  294 ++++
+ drivers/i3c/internals.h                            |   28 +
+ drivers/i3c/master.c                               | 1723 ++++++++++++++++++++
+ drivers/i3c/master/Kconfig                         |    5 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/i3c-master-cdns.c               | 1648 +++++++++++++++++++
+ include/dt-bindings/i3c/i3c.h                      |   28 +
+ include/linux/i2c.h                                |   10 +
+ include/linux/i3c/ccc.h                            |  382 +++++
+ include/linux/i3c/device.h                         |  305 ++++
+ include/linux/i3c/master.h                         |  587 +++++++
+ include/linux/mod_devicetable.h                    |   17 +
+ 33 files changed, 6673 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+ create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
+ create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
+ create mode 100644 Documentation/driver-api/i3c/conf.py
+ create mode 100644 Documentation/driver-api/i3c/device-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/index.rst
+ create mode 100644 Documentation/driver-api/i3c/master-driver-api.rst
+ create mode 100644 Documentation/driver-api/i3c/protocol.rst
+ create mode 100644 drivers/gpio/gpio-cdns-i3c.c
+ create mode 100644 drivers/i3c/Kconfig
+ create mode 100644 drivers/i3c/Makefile
+ create mode 100644 drivers/i3c/core.c
+ create mode 100644 drivers/i3c/device.c
+ create mode 100644 drivers/i3c/internals.h
+ create mode 100644 drivers/i3c/master.c
+ create mode 100644 drivers/i3c/master/Kconfig
+ create mode 100644 drivers/i3c/master/Makefile
+ create mode 100644 drivers/i3c/master/i3c-master-cdns.c
+ create mode 100644 include/dt-bindings/i3c/i3c.h
+ create mode 100644 include/linux/i3c/ccc.h
+ create mode 100644 include/linux/i3c/device.h
+ create mode 100644 include/linux/i3c/master.h
 
 -- 
-Kees Cook
-Pixel Security
+2.14.1
