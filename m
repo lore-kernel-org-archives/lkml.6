@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805127-2-5362277345183305646
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805115-2-15787658033871795848
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805126; b=bWjhtbMJh/2K/xQHUd0G7nYSuc3Ai42PjgdXBoDYzoJB1Tm
-    8qvM4sDDNk+vM0gfMZl1CuBQJY4n9EHb+CwG9X4KUTu2OZpf8kkIqkkhSJxrIBLp
-    PM6ok2mKEWYKHs0GvuruFMHyb8w/TboVzUdu5LaUyhNiVrcorM3chCIeCk5rd+yJ
-    B1hI/SuPSVMWFso4u5fxt8e7mQ4lx6h2tK8CZ7oFPiCyqsViKy9sgeyiPssGgyW5
-    XonJtHNdXmC/zZphZzwYUkuspQaSK/PWv/4F93aZYTboW9jia5PKFA3Z3cWZ3zZ8
-    agqAD0H0myYWnz3IeQ0TzgD/tbakH/Vv/GOzE1Q==
+    t=1521805114; b=LacTUBSC8DXLcK6M99zQyAfuymQR1qupiwCAmD+3ImYwDlN
+    HEvZ8VTMmyYFV//CY3UKzDevCxPwyZEmC/f/OA99jRleYclj+rK7WuSmQ6z657nU
+    0Lrafy0pHLSCBxgY5h2OrpYQagYgairYtvBp4rLx2yYx8GQ1R7y7kQKka7zvPpHk
+    3rEJBvgdTQE0f5mGWoTHXX6dYPkdjkTOPhRqfV+kjkCDJvT810y1YlM5C8KFAyR3
+    mhZ0ybVggcoPltn/SD/YKteDnvAM/prm6TUs7Tzd94ksxwM6UkRtKui9z+2fysZO
+    dBaPXPyIdxBq4U4dT5Yr6S2c5xnzGpNvt6RyaqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805126; bh=dPeLGOMDGRh+6L0VaPEmU7RjEZ
-    fAN/J9xv3O1woiCvM=; b=htqfjuAUNECIU1f6tuTEIGYODHJIxYdZFeauW7NTLe
-    r7gsCe0C5J2iYxYgMHujJEtvTjlfRL5uM+P4QZOgKTI3cuJftUuOGYL+cN7BceFA
-    P0s918J6JKP6OqM9DrrnYkNCpPx1ZYjPKPSByRL9FvefDYqdAGqVdac31M9sv85B
-    cvks7FKsiEdRA6xQmEY0AHkIFIeZ846RdK2r5bCItyDQ95OZbUcwl6QvUB/Dj+oh
-    ab3kjngimqC/kWLoMXth1fHHQhEp1xiyWhONcwOIQMQGgm3bRmXulPq8ld88qBkO
-    0LPD1OeqLjMX8nku34FgpqW+Hy24y5BxZABVI3YS3YEw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805114; bh=8Fsa6cTn3g3pzsuM/ka2hJwY8q
+    qFBKRdL1W8YY32Jrg=; b=nuv05Vh/vmIx9dvKbMa6K3ayRomCjxG2qNsMM3dqLL
+    BDcTcuqutbh1qz2oshxwISHaE2/craxtVYborfJp2NJ/AQLArOKNvxcQtW3C+DJf
+    8KPoROAEF0JFAgiJ7+3LTRoXjCxqFg63UXfIqZaLgNu15qHvtEzoI5tVGTqu8/fL
+    Lf7F3xMlnEAQRYlO/Dw/Bs25tGIq4w0q9juBCXKhdEaqCKlzX5hX1QW1sKHPo5Kg
+    mV0SIlCfBixBikVM63JmJyKFsC/+becyhIsguf60b7YOBOA6CJ3RoYkRTlAT+gJn
+    An4FZ+AOLvj+HbXy1vIfklydfnzENmr/yvKsFKn05FRg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,23 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754283AbeCWLif (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:38:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39258 "EHLO
+        id S1754775AbeCWKEn (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:04:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39220 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754768AbeCWKEn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:43 -0400
+        with ESMTP id S1754747AbeCWKEh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsa@cumulusnetworks.com>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Liam Breck <kernel@networkimprov.net>,
+        Sebastian Reichel <sre@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 021/177] net: ipv6: send unsolicited NA on admin up
-Date: Fri, 23 Mar 2018 10:52:29 +0100
-Message-Id: <20180323094206.129354288@linuxfoundation.org>
+Subject: [PATCH 4.9 011/177] power: supply: bq24190_charger: Limit over/under voltage fault logging
+Date: Fri, 23 Mar 2018 10:52:19 +0100
+Message-Id: <20180323094205.712019635@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,35 +84,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Ahern <dsa@cumulusnetworks.com>
+From: Liam Breck <kernel@networkimprov.net>
 
 
-[ Upstream commit 4a6e3c5def13c91adf2acc613837001f09af3baa ]
+[ Upstream commit d63d07c6fc25182af6d3ab5b3b8737b0c1025ebd ]
 
-ndisc_notify is the ipv6 equivalent to arp_notify. When arp_notify is
-set to 1, gratuitous arp requests are sent when the device is brought up.
-The same is expected when ndisc_notify is set to 1 (per ndisc_notify in
-Documentation/networking/ip-sysctl.txt). The NA is not sent on NETDEV_UP
-event; add it.
+If the charger is unplugged before the battery is full we may
+see an over/under voltage fault. Ignore this rather then emitting
+a message or uevent.
 
-Fixes: 5cb04436eef6 ("ipv6: add knob to send unsolicited ND on link-layer address change")
-Signed-off-by: David Ahern <dsa@cumulusnetworks.com>
-Acked-by: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This fixes messages like these getting logged on charger unplug + replug:
+bq24190-charger 15-006b: Fault: boost 0, charge 1, battery 0, ntc 0
+bq24190-charger 15-006b: Fault: boost 0, charge 0, battery 0, ntc 0
+
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Liam Breck <kernel@networkimprov.net>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Sebastian Reichel <sre@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ndisc.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/power/supply/bq24190_charger.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -1723,6 +1723,8 @@ static int ndisc_netdev_event(struct not
- 	case NETDEV_CHANGEADDR:
- 		neigh_changeaddr(&nd_tbl, dev);
- 		fib6_run_gc(0, net, false);
-+		/* fallthrough */
-+	case NETDEV_UP:
- 		idev = in6_dev_get(dev);
- 		if (!idev)
- 			break;
+--- a/drivers/power/supply/bq24190_charger.c
++++ b/drivers/power/supply/bq24190_charger.c
+@@ -1184,8 +1184,13 @@ static irqreturn_t bq24190_irq_handler_t
+ 		}
+ 	} while (f_reg && ++i < 2);
+ 
++	/* ignore over/under voltage fault after disconnect */
++	if (f_reg == (1 << BQ24190_REG_F_CHRG_FAULT_SHIFT) &&
++	    !(ss_reg & BQ24190_REG_SS_PG_STAT_MASK))
++		f_reg = 0;
++
+ 	if (f_reg != bdi->f_reg) {
+-		dev_info(bdi->dev,
++		dev_warn(bdi->dev,
+ 			"Fault: boost %d, charge %d, battery %d, ntc %d\n",
+ 			!!(f_reg & BQ24190_REG_F_BOOST_FAULT_MASK),
+ 			!!(f_reg & BQ24190_REG_F_CHRG_FAULT_MASK),
