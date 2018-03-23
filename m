@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752561AbeCWRsb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:48:31 -0400
-Received: from mga04.intel.com ([192.55.52.120]:11383 "EHLO mga04.intel.com"
+        id S1752577AbeCWRsy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:48:54 -0400
+Received: from mga07.intel.com ([134.134.136.100]:25885 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752384AbeCWRrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:47:04 -0400
+        id S1751901AbeCWRq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 13:46:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,351,1517904000";
-   d="scan'208";a="27005409"
-Subject: [PATCH 10/11] x86/pti: clear _PAGE_GLOBAL for kernel image
+   d="scan'208";a="185435703"
+Subject: [PATCH 07/11] x86/mm: comment _PAGE_GLOBAL mystery
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
         aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
         keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
         namit@vmware.com
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 23 Mar 2018 10:45:02 -0700
+Date: Fri, 23 Mar 2018 10:44:57 -0700
 References: <20180323174447.55F35636@viggo.jf.intel.com>
 In-Reply-To: <20180323174447.55F35636@viggo.jf.intel.com>
-Message-Id: <20180323174502.9CE352DD@viggo.jf.intel.com>
+Message-Id: <20180323174457.F5E61B2F@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,48 +29,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-The kernel page tables are inherited from head_64.S which rudely marks
-them as _PAGE_GLOBAL.  For PTI, we have been relying on the grace of
-$DEITY and some insane behavior in pageattr.c.  Now we do it properly.
+I was mystified as to where the _PAGE_GLOBAL in the kernel page tables
+for kernel text came from.  I audited all the places I could find, but
+I missed one: head_64.S.
 
-First, stop filtering out "unsupported" bits from being cleared in the
-pageattr code.  It's fine to filter out *setting* these bits but it
-is insane to keep us from clearing them.
+The page tables that we create in here live for a long time, and they
+also have _PAGE_GLOBAL set, despite whether the processor supports it
+or not.  It's harmless, and we got *lucky* that the pageattr code
+accidentally clears it when we wipe it out of __supported_pte_mask and
+then later try to mark kernel text read-only.
 
-Then, *explicitly* go clear _PAGE_GLOBAL from the kernel identity map.
-Do not rely on pageattr to do it magically.
-
-After this patch, we can see that "GLB" shows up in each copy of the
-page tables, that we have the same number of global entries in each
-and that they are the *same* entries.
-
-# grep -c GLB /sys/kernel/debug/page_tables/*
-/sys/kernel/debug/page_tables/current_kernel:11
-/sys/kernel/debug/page_tables/current_user:11
-/sys/kernel/debug/page_tables/kernel:11
-
-# for f in `ls /sys/kernel/debug/page_tables/`; do grep GLB /sys/kernel/debug/page_tables/$f > $f.GLB; done
-# md5sum *.GLB
-9caae8ad6a1fb53aca2407ec037f612d  current_kernel.GLB
-9caae8ad6a1fb53aca2407ec037f612d  current_user.GLB
-9caae8ad6a1fb53aca2407ec037f612d  kernel.GLB
-
-A quick visual audit also shows that all the entries make sense.
-0xfffffe0000000000 is the cpu_entry_area and 0xffffffff81c00000
-is the entry/exit text:
-
-# grep -c GLB /sys/kernel/debug/page_tables/current_user
-0xfffffe0000000000-0xfffffe0000002000           8K     ro                 GLB NX pte
-0xfffffe0000002000-0xfffffe0000003000           4K     RW                 GLB NX pte
-0xfffffe0000003000-0xfffffe0000006000          12K     ro                 GLB NX pte
-0xfffffe0000006000-0xfffffe0000007000           4K     ro                 GLB x  pte
-0xfffffe0000007000-0xfffffe000000d000          24K     RW                 GLB NX pte
-0xfffffe000002d000-0xfffffe000002e000           4K     ro                 GLB NX pte
-0xfffffe000002e000-0xfffffe000002f000           4K     RW                 GLB NX pte
-0xfffffe000002f000-0xfffffe0000032000          12K     ro                 GLB NX pte
-0xfffffe0000032000-0xfffffe0000033000           4K     ro                 GLB x  pte
-0xfffffe0000033000-0xfffffe0000039000          24K     RW                 GLB NX pte
-0xffffffff81c00000-0xffffffff81e00000           2M     ro         PSE     GLB x  pmd
+Comment some of these properties to make it easier to find and
+understand in the future.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
@@ -83,107 +53,36 @@ Cc: x86@kernel.org
 Cc: Nadav Amit <namit@vmware.com>
 ---
 
- b/arch/x86/mm/init.c     |    8 +-------
- b/arch/x86/mm/pageattr.c |   12 +++++++++---
- b/arch/x86/mm/pti.c      |   25 +++++++++++++++++++++++++
- 3 files changed, 35 insertions(+), 10 deletions(-)
+ b/arch/x86/kernel/head_64.S |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff -puN arch/x86/mm/init.c~clear-global-for-pti arch/x86/mm/init.c
---- a/arch/x86/mm/init.c~clear-global-for-pti	2018-03-21 16:32:01.354192310 -0700
-+++ b/arch/x86/mm/init.c	2018-03-21 16:32:01.361192310 -0700
-@@ -161,12 +161,6 @@ struct map_range {
- 
- static int page_size_mask;
- 
--static void enable_global_pages(void)
--{
--	if (!static_cpu_has(X86_FEATURE_PTI))
--		__supported_pte_mask |= _PAGE_GLOBAL;
--}
--
- static void __init probe_page_size_mask(void)
- {
- 	/*
-@@ -187,7 +181,7 @@ static void __init probe_page_size_mask(
- 	__supported_pte_mask &= ~_PAGE_GLOBAL;
- 	if (boot_cpu_has(X86_FEATURE_PGE)) {
- 		cr4_set_bits_and_update_boot(X86_CR4_PGE);
--		enable_global_pages();
-+		__supported_pte_mask |= _PAGE_GLOBAL;
- 	}
- 
- 	/* By the default is everything supported: */
-diff -puN arch/x86/mm/pageattr.c~clear-global-for-pti arch/x86/mm/pageattr.c
---- a/arch/x86/mm/pageattr.c~clear-global-for-pti	2018-03-21 16:32:01.356192310 -0700
-+++ b/arch/x86/mm/pageattr.c	2018-03-21 16:32:01.362192310 -0700
-@@ -1411,11 +1411,11 @@ static int change_page_attr_set_clr(unsi
- 	memset(&cpa, 0, sizeof(cpa));
- 
- 	/*
--	 * Check, if we are requested to change a not supported
--	 * feature:
-+	 * Check, if we are requested to set a not supported
-+	 * feature.  Clearing non-supported features is OK.
- 	 */
- 	mask_set = canon_pgprot(mask_set);
--	mask_clr = canon_pgprot(mask_clr);
-+
- 	if (!pgprot_val(mask_set) && !pgprot_val(mask_clr) && !force_split)
- 		return 0;
- 
-@@ -1758,6 +1758,12 @@ int set_memory_4k(unsigned long addr, in
- 					__pgprot(0), 1, 0, NULL);
- }
- 
-+int set_memory_nonglobal(unsigned long addr, int numpages)
-+{
-+	return change_page_attr_clear(&addr, numpages,
-+				      __pgprot(_PAGE_GLOBAL), 0);
-+}
-+
- static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
- {
- 	struct cpa_data cpa;
-diff -puN arch/x86/mm/pti.c~clear-global-for-pti arch/x86/mm/pti.c
---- a/arch/x86/mm/pti.c~clear-global-for-pti	2018-03-21 16:32:01.358192310 -0700
-+++ b/arch/x86/mm/pti.c	2018-03-21 16:32:01.362192310 -0700
-@@ -359,6 +359,27 @@ static void __init pti_clone_entry_text(
- }
- 
- /*
-+ * This is the only user for it and it is not arch-generic like
-+ * the other set_memory.h functions.  Just extern it.
-+ */
-+extern int set_memory_nonglobal(unsigned long addr, int numpages);
-+void pti_set_kernel_image_nonglobal(void)
-+{
+diff -puN arch/x86/kernel/head_64.S~comment-global-page arch/x86/kernel/head_64.S
+--- a/arch/x86/kernel/head_64.S~comment-global-page	2018-03-21 16:31:59.729192314 -0700
++++ b/arch/x86/kernel/head_64.S	2018-03-21 16:31:59.733192314 -0700
+@@ -401,8 +401,13 @@ NEXT_PAGE(level3_ident_pgt)
+ 	.quad	level2_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+ 	.fill	511, 8, 0
+ NEXT_PAGE(level2_ident_pgt)
+-	/* Since I easily can, map the first 1G.
 +	/*
-+	 * The identity map is created with PMDs, regardless of the
-+	 * actual length of the kernel.  We need to clear
-+	 * _PAGE_GLOBAL up to a PMD boundary, not just to the end
-+	 * of the image.
-+	 */
-+	unsigned long start = PFN_ALIGN(_text);
-+	unsigned long end = ALIGN((unsigned long)_end, PMD_PAGE_SIZE);
-+
-+	pr_debug("set kernel image non-global\n");
-+
-+	set_memory_nonglobal(start, (end - start) >> PAGE_SHIFT);
-+}
-+
-+/*
-  * Initialize kernel page table isolation
-  */
- void __init pti_init(void)
-@@ -369,6 +390,10 @@ void __init pti_init(void)
- 	pr_info("enabled\n");
- 
- 	pti_clone_user_shared();
-+
-+	/* Undo all global bits from the init pagetables in head_64.S: */
-+	pti_set_kernel_image_nonglobal();
-+	/* Replace some of the global bits just for shared entry text: */
- 	pti_clone_entry_text();
- 	pti_setup_espfix64();
- 	pti_setup_vsyscall();
++	 * Since I easily can, map the first 1G.
+ 	 * Don't set NX because code runs from these pages.
++	 *
++	 * Note: This sets _PAGE_GLOBAL despite whether
++	 * the CPU supports it or it is enabled.  But,
++	 * the CPU should ignore the bit.
+ 	 */
+ 	PMDS(0, __PAGE_KERNEL_IDENT_LARGE_EXEC, PTRS_PER_PMD)
+ #else
+@@ -433,6 +438,10 @@ NEXT_PAGE(level2_kernel_pgt)
+ 	 * (NOTE: at +512MB starts the module area, see MODULES_VADDR.
+ 	 *  If you want to increase this then increase MODULES_VADDR
+ 	 *  too.)
++	 *
++	 *  This table is eventually used by the kernel during normal
++	 *  runtime.  Care must be taken to clear out undesired bits
++	 *  later, like _PAGE_RW or _PAGE_GLOBAL in some cases.
+ 	 */
+ 	PMDS(0, __PAGE_KERNEL_LARGE_EXEC,
+ 		KERNEL_IMAGE_SIZE/PMD_SIZE)
 _
