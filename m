@@ -1,202 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751843AbeCWI5m (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 04:57:42 -0400
-Received: from lhrrgout.huawei.com ([194.213.3.17]:30565 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751531AbeCWI5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 04:57:41 -0400
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Robin Murphy <robin.murphy@arm.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-CC: "eric.auger@redhat.com" <eric.auger@redhat.com>,
-        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Linuxarm <linuxarm@huawei.com>, "John Garry" <john.garry@huawei.com>,
-        "xuwei (O)" <xuwei5@huawei.com>, Joerg Roedel <joro@8bytes.org>
-Subject: RE: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
- back into dma specific path.
-Thread-Topic: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
- back into dma specific path.
-Thread-Index: AQHTvHwDUO0hRZRsGUWYDJgBXn9Y+KPcagUAgAAQ8oCAARVX0A==
-Date: Fri, 23 Mar 2018 08:57:25 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA838679A60@FRAEML521-MBX.china.huawei.com>
-References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
- <20180315163509.17740-8-shameerali.kolothum.thodi@huawei.com>
- <20180322102148.29afce09@w520.home>
- <3b481ba6-ffdd-fef1-12dc-f5eac8b589d5@arm.com>
-In-Reply-To: <3b481ba6-ffdd-fef1-12dc-f5eac8b589d5@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="utf-8"
+        id S1751915AbeCWI6C (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 04:58:02 -0400
+Received: from mail-ot0-f173.google.com ([74.125.82.173]:35011 "EHLO
+        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751872AbeCWI6A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 04:58:00 -0400
+X-Google-Smtp-Source: AG47ELu6GomdImpId4mrfNZP1VGsKrk0fFAOxwPhhcf1PwHJS1FxZPWRdZb7XnzTxSVHINObr4ot52Hq4UXYh1yy9v4=
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <004c01d3c255$c1f146a0$45d3d3e0$@net>
+References: <4137867.C4jYrWdt8n@aspire.rjw.lan> <20180314120450.GT4043@hirez.programming.kicks-ass.net>
+ <004c01d3c255$c1f146a0$45d3d3e0$@net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 23 Mar 2018 09:57:58 +0100
+X-Google-Sender-Auth: g9Y5WsDLR3s7OKIoKLlEyiObNmc
+Message-ID: <CAJZ5v0iZVVkevY2oJnySoa6uQesMXcj_ZshV97utdXsW2w-aAA@mail.gmail.com>
+Subject: Re: [PATCH v2] cpuidle: poll_state: Add time limit to poll_idle()
+To: Doug Smythies <dsmythies@telus.net>
+Cc: Rik van Riel <riel@surriel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2N8vom2007119
 
+On Fri, Mar 23, 2018 at 4:19 AM, Doug Smythies <dsmythies@telus.net> wrote:
+> On 2018.03.22 12:12 Doug Smythies wrote:
+>>On 2018.03.22 09:32 Rik van Riel wrote:
+>>> On Wed, 2018-03-14 at 13:04 +0100, Peter Zijlstra wrote:
+>>>
+>>>> On x86 we don't have to use that time_check_counter thing,
+>>>> sched_clock()
+>>>> is really cheap, not sure if it makes sense on other platforms.
+>>>
+>>> Are you sure? I saw a 5-10% increase in CPU use,
+>>> for a constant query rate to a memcache style
+>>> workload, with v3 of this patch.
+>>
+>> I would very much like to be able to repeat your test results.
+>> However, I am not sure what you mean by "memcache style workload".
+>> Is there a test you can point me to? Say a Phoronix type test, for example.
+>>
+>> All of my tests with the V3 of this patch have been fine.
+>
+> What is the difference between sched_clock() talked about herein,
+> and local_clock() used in the patch?
 
+It is almost the same (modulo offset) unless sched_clock_stable()
+returns 'false'.
 
-> -----Original Message-----
-> From: Robin Murphy [mailto:robin.murphy@arm.com]
-> Sent: Thursday, March 22, 2018 5:22 PM
-> To: Alex Williamson <alex.williamson@redhat.com>; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>
-> Cc: eric.auger@redhat.com; pmorel@linux.vnet.ibm.com;
-> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; iommu@lists.linux-
-> foundation.org; Linuxarm <linuxarm@huawei.com>; John Garry
-> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Joerg Roedel
-> <joro@8bytes.org>
-> Subject: Re: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
-> back into dma specific path.
-> 
-> On 22/03/18 16:21, Alex Williamson wrote:
-> > On Thu, 15 Mar 2018 16:35:09 +0000
-> > Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
-> >
-> >> This pretty much reverts commit 273df9635385 ("iommu/dma: Make PCI
-> >> window reservation generic")  by moving the PCI window region
-> >> reservation back into the dma specific path so that these regions
-> >> doesn't get exposed via the IOMMU API interface. With this change,
-> >> the vfio interface will report only iommu specific reserved regions
-> >> to the user space.
-> >>
-> >> Cc: Robin Murphy <robin.murphy@arm.com>
-> >> Cc: Joerg Roedel <joro@8bytes.org>
-> >> Signed-off-by: Shameer Kolothum
-> <shameerali.kolothum.thodi@huawei.com>
-> >> ---
-> >
-> > As currently ordered, we expose the iova list to the user in 5/7 with
-> > the PCI window reservations still intact.  Isn't that a bisection
-> > problem?  This patch should come before the iova list is expose to the
-> > user.  This is otherwise independent, so I can pop it up in the stack on
-> > commit, but I'd need an ack from Joerg and Robin to take it via my
-> > tree.  Thanks,
-> 
-> If it counts, the changes look right, so:
-> 
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
+> I'm not sure how good it is but I made a test. I didn't believe
+> the results, so I did it 3 times.
+>
+> V7.3 is as from the git branch.
+> V7.3p is plus the patch adding the counter loop to poll_state.c
+>
+> The test is a tight loop (about 19600 loops per second) running
+> on all 8 CPUs. I can not seem to get my system to use Idle State
+> 0, so I disabled Idle States 1 and 2 to force use of Idle State 0.
+>
+> V7.3 uses a processor package power of 62.5 Watts
+> V7.3p uses a processor package power of 53.4 Watts, or 14.6% less power.
+>
+> The loop times do not change.
+> The Idle state 0 residency per unit time does not change.
 
-Thanks Robin.
- 
-> but it does look like there's a hard dependency on Joerg's core branch
-> where Shameer's ITS workaround patches are currently queued. Otherwise,
-> though, I don't think there's anything else due to be touching iommu-dma
-> just yet.
+OK, so this means that the results should improve for Rik with this
+patch too. :-)
 
-True, I have mentioned this dependency[1] in the cover letter.
-
-Thanks,
-Shameer
-
-1. https://kernel.googlesource.com/pub/scm/linux/kernel/git/joro/iommu/+log/core
-
-
-> Robin.
-> 
-> >
-> > Alex
-> >
-> >>   drivers/iommu/dma-iommu.c | 54 ++++++++++++++++++++++-----------------
-> --------
-> >>   1 file changed, 25 insertions(+), 29 deletions(-)
-> >>
-> >> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> >> index f05f3cf..ddcbbdb 100644
-> >> --- a/drivers/iommu/dma-iommu.c
-> >> +++ b/drivers/iommu/dma-iommu.c
-> >> @@ -167,40 +167,16 @@ EXPORT_SYMBOL(iommu_put_dma_cookie);
-> >>    * @list: Reserved region list from iommu_get_resv_regions()
-> >>    *
-> >>    * IOMMU drivers can use this to implement their .get_resv_regions
-> callback
-> >> - * for general non-IOMMU-specific reservations. Currently, this covers host
-> >> - * bridge windows for PCI devices and GICv3 ITS region reservation on ACPI
-> >> - * based ARM platforms that may require HW MSI reservation.
-> >> + * for general non-IOMMU-specific reservations. Currently, this covers
-> GICv3
-> >> + * ITS region reservation on ACPI based ARM platforms that may require
-> HW MSI
-> >> + * reservation.
-> >>    */
-> >>   void iommu_dma_get_resv_regions(struct device *dev, struct list_head
-> *list)
-> >>   {
-> >> -	struct pci_host_bridge *bridge;
-> >> -	struct resource_entry *window;
-> >> -
-> >> -	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode) &&
-> >> -		iort_iommu_msi_get_resv_regions(dev, list) < 0)
-> >> -		return;
-> >> -
-> >> -	if (!dev_is_pci(dev))
-> >> -		return;
-> >> -
-> >> -	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
-> >> -	resource_list_for_each_entry(window, &bridge->windows) {
-> >> -		struct iommu_resv_region *region;
-> >> -		phys_addr_t start;
-> >> -		size_t length;
-> >> -
-> >> -		if (resource_type(window->res) != IORESOURCE_MEM)
-> >> -			continue;
-> >>
-> >> -		start = window->res->start - window->offset;
-> >> -		length = window->res->end - window->res->start + 1;
-> >> -		region = iommu_alloc_resv_region(start, length, 0,
-> >> -				IOMMU_RESV_RESERVED);
-> >> -		if (!region)
-> >> -			return;
-> >> +	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode))
-> >> +		iort_iommu_msi_get_resv_regions(dev, list);
-> >>
-> >> -		list_add_tail(&region->list, list);
-> >> -	}
-> >>   }
-> >>   EXPORT_SYMBOL(iommu_dma_get_resv_regions);
-> >>
-> >> @@ -229,6 +205,23 @@ static int cookie_init_hw_msi_region(struct
-> iommu_dma_cookie *cookie,
-> >>   	return 0;
-> >>   }
-> >>
-> >> +static void iova_reserve_pci_windows(struct pci_dev *dev,
-> >> +		struct iova_domain *iovad)
-> >> +{
-> >> +	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
-> >> +	struct resource_entry *window;
-> >> +	unsigned long lo, hi;
-> >> +
-> >> +	resource_list_for_each_entry(window, &bridge->windows) {
-> >> +		if (resource_type(window->res) != IORESOURCE_MEM)
-> >> +			continue;
-> >> +
-> >> +		lo = iova_pfn(iovad, window->res->start - window->offset);
-> >> +		hi = iova_pfn(iovad, window->res->end - window->offset);
-> >> +		reserve_iova(iovad, lo, hi);
-> >> +	}
-> >> +}
-> >> +
-> >>   static int iova_reserve_iommu_regions(struct device *dev,
-> >>   		struct iommu_domain *domain)
-> >>   {
-> >> @@ -238,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device
-> *dev,
-> >>   	LIST_HEAD(resv_regions);
-> >>   	int ret = 0;
-> >>
-> >> +	if (dev_is_pci(dev))
-> >> +		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
-> >> +
-> >>   	iommu_get_resv_regions(dev, &resv_regions);
-> >>   	list_for_each_entry(region, &resv_regions, list) {
-> >>   		unsigned long lo, hi;
-> >
+Thanks!
