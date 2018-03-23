@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1061450-1521803148-2-15531892560498531450
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802837-4-1562710561700055257
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803147; b=YtouNOKOLx+VEgquBt6ojRgxEea/HNQ9N9gexwrComlRIQb
-    vGJxRiUTTqK32bE40jo+Jfok1Z2+jLqEKSuXuIyEFtlsEFyivQzG7x+9K9mk5nIz
-    GgMMHUsqnqlJWJkbsWaVS6TAI0qgn8wu6gNB356pNpoUGEhLJ20Ewf9hx6TSzK8X
-    HMuT04gIv4TE3Vjy8eNqVoYHtQX3SokdNcUCAq6fPiqispxRs/1hL1dAtow4TYu0
-    o78p9dblYYOwdrWEU4v/NYA0hMClYxIR3lXl0uOwlky3ih4h2ooC1F62gDRRz95z
-    Ez5TAfwTyW802aJISJLl/Nt/6/Xxv6I6AJI81oQ==
+    t=1521802836; b=MElrbO1YL2FvoqAaMgXYNSWAH8Ayb/17jB8cEyvD2eRj2oc
+    TYnPJosRvWoj027ZBum+H95l9LXzyl2/7RkzIUlz9BuP5Of8Ht0eXlPukc73xCyY
+    tWXpFD53Q0kdHZRQDwGwY40mTc6DpwTIv6a4pRDb0Nq5BF2Qfm09Rud1PHyTQ1a1
+    KOPHPQOSfzGD+xSpDLDEmWsaa2SS2h4OQbCrurQBBUdpvOA4mp2vrhlWAk25Hwa+
+    wtIPTQUHWUxIzIWXIQEMfqG0TUfIakWUoMppaqWso3XSYqk5dpxaqf/KejueUBx6
+    8X6A7f4gGwlGRvceXW4Dd0tfm4zmO+L08gVtPUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803147; bh=GF0SbPhDn7CxE5eUu4ZRHRkJWq
-    AHE3jtlWgT77P4aE8=; b=Th7ZjGApBRi4WYg60WwfGaXMyiQxLoFPntYSVI2cyO
-    lzdVx6BQh2LgJJSJ3iTELecTJqhmvqaGbnlTvyYaxl9P9ON9kxBScj67o2KAp7k7
-    p6IRS/3BcrrFtdokvrpWp/88obbciQkhl6p/ZSpkYBGdgnFTJTuD3fGxOEjfVR7r
-    rmRd/ptzrJnzJ19BCEucdcaEbK68X38BwzSg0iJ0I/MeisrsDO0GAlZYHVW1o4LP
-    fatnpLSV8HHQYbVHrC/fAGe3Re9iOQuQGm5DNX+tJP8cciHP4MHm5xXWyTpvtVns
-    T+K3hi8KVxBAqz5nWF+W5ZBb1JjMC5WoV/lPFbwn/0qw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521802836; bh=+/S8TSDQOrT5UgEkCItN+CyGu+
+    I2eEqFKqvLe2k2xlc=; b=rUZpFRxHXiLAxSJJmyA2SaB001pH7LY6eisxx7YnEG
+    E/3/5z0ljMk4Owb1+u/L/AnRfkH/h7HzE5ipQ4rD/8v2Ws/eXtjc/qtwiUAgMtpM
+    sMAdJuOuYJh+k0JtoMJoAs1sWwyqvsBVmw5s8IjAzrbekk3stgWQ2ZmofLGBbVKd
+    hXveA95nqjeWGI85iWQVJl2sDIWPA8yQnfavbucvCMTeSD1xbVPMJ33LyBAjcg1k
+    TNwLwz1cK22Kffg/IyBvgbZrBmOwFsdeVz01+2O39byq6km/RDzn8RRGlBsZu5BG
+    NnRxEfi4CtUw2xU0v/VfLe+fmBzVjnMWV2LRkYY45VyA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752917AbeCWLFB (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:05:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44346 "EHLO
+        id S1755612AbeCWK7m (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:59:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44356 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933181AbeCWKMZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:25 -0400
+        with ESMTP id S933202AbeCWKM3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erez Shitrit <erezsh@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 152/177] IB/ipoib: Avoid memory leak if the SA returns a different DGID
-Date: Fri, 23 Mar 2018 10:54:40 +0100
-Message-Id: <20180323094211.896399808@linuxfoundation.org>
+Subject: [PATCH 4.9 169/177] clk: axi-clkgen: Correctly handle nocount bit in recalc_rate()
+Date: Fri, 23 Mar 2018 10:54:57 +0100
+Message-Id: <20180323094212.610645709@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,62 +82,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Erez Shitrit <erezsh@mellanox.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
 
-[ Upstream commit 439000892ee17a9c92f1e4297818790ef8bb4ced ]
+[ Upstream commit 063578dc5f407f67d149133818efabe457daafda ]
 
-The ipoib path database is organized around DGIDs from the LLADDR, but the
-SA is free to return a different GID when asked for path. This causes a
-bug because the SA's modified DGID is copied into the database key, even
-though it is no longer the correct lookup key, causing a memory leak and
-other malfunctions.
+If the nocount bit is set the divider is bypassed and the settings for the
+divider count should be ignored and a divider value of 1 should be assumed.
+Handle this correctly in the driver recalc_rate() callback.
 
-Ensure the database key does not change after the SA query completes.
+While the driver sets up the part so that the read back dividers values
+yield the correct result the power-on reset settings of the part might not
+reflect this and hence calling e.g. clk_get_rate() without prior calls to
+clk_set_rate() will yield the wrong result.
 
-Demonstration of the bug is as  follows
-ipoib wants to send to GID fe80:0000:0000:0000:0002:c903:00ef:5ee2, it
-creates new record in the DB with that gid as a key, and issues a new
-request to the SM.
-Now, the SM from some reason returns path-record with other SGID (for
-example, 2001:0000:0000:0000:0002:c903:00ef:5ee2 that contains the local
-subnet prefix) now ipoib will overwrite the current entry with the new
-one, and if new request to the original GID arrives ipoib  will not find
-it in the DB (was overwritten) and will create new record that in its
-turn will also be overwritten by the response from the SM, and so on
-till the driver eats all the device memory.
-
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/clk/clk-axi-clkgen.c |   29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -799,6 +799,22 @@ static void path_rec_completion(int stat
- 	spin_lock_irqsave(&priv->lock, flags);
+--- a/drivers/clk/clk-axi-clkgen.c
++++ b/drivers/clk/clk-axi-clkgen.c
+@@ -40,6 +40,10 @@
+ #define MMCM_REG_FILTER1	0x4e
+ #define MMCM_REG_FILTER2	0x4f
  
- 	if (!IS_ERR_OR_NULL(ah)) {
-+		/*
-+		 * pathrec.dgid is used as the database key from the LLADDR,
-+		 * it must remain unchanged even if the SA returns a different
-+		 * GID to use in the AH.
-+		 */
-+		if (memcmp(pathrec->dgid.raw, path->pathrec.dgid.raw,
-+			   sizeof(union ib_gid))) {
-+			ipoib_dbg(
-+				priv,
-+				"%s got PathRec for gid %pI6 while asked for %pI6\n",
-+				dev->name, pathrec->dgid.raw,
-+				path->pathrec.dgid.raw);
-+			memcpy(pathrec->dgid.raw, path->pathrec.dgid.raw,
-+			       sizeof(union ib_gid));
-+		}
++#define MMCM_CLKOUT_NOCOUNT	BIT(6)
 +
- 		path->pathrec = *pathrec;
++#define MMCM_CLK_DIV_NOCOUNT	BIT(12)
++
+ struct axi_clkgen {
+ 	void __iomem *base;
+ 	struct clk_hw clk_hw;
+@@ -315,12 +319,27 @@ static unsigned long axi_clkgen_recalc_r
+ 	unsigned int reg;
+ 	unsigned long long tmp;
  
- 		old_ah   = path->ah;
+-	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_1, &reg);
+-	dout = (reg & 0x3f) + ((reg >> 6) & 0x3f);
++	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_2, &reg);
++	if (reg & MMCM_CLKOUT_NOCOUNT) {
++		dout = 1;
++	} else {
++		axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_1, &reg);
++		dout = (reg & 0x3f) + ((reg >> 6) & 0x3f);
++	}
++
+ 	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_DIV, &reg);
+-	d = (reg & 0x3f) + ((reg >> 6) & 0x3f);
+-	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB1, &reg);
+-	m = (reg & 0x3f) + ((reg >> 6) & 0x3f);
++	if (reg & MMCM_CLK_DIV_NOCOUNT)
++		d = 1;
++	else
++		d = (reg & 0x3f) + ((reg >> 6) & 0x3f);
++
++	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB2, &reg);
++	if (reg & MMCM_CLKOUT_NOCOUNT) {
++		m = 1;
++	} else {
++		axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB1, &reg);
++		m = (reg & 0x3f) + ((reg >> 6) & 0x3f);
++	}
+ 
+ 	if (d == 0 || dout == 0)
+ 		return 0;
