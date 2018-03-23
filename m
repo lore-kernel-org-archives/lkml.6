@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt/MqddehhO8fJxYUhmV3vDOLXKION9LkwITQtjl5Ot2EJMYtXKYH/VDUKCfydep2o0nGwX
-ARC-Seal: i=1; a=rsa-sha256; t=1521800359; cv=none;
+X-Google-Smtp-Source: AG47ELumK3iDdMtETkUGwg89LcU4to1IJV1O0C+xDI23KMfuE6QjpviRC7FEstTRq2SnuaJjOmyS
+ARC-Seal: i=1; a=rsa-sha256; t=1521800356; cv=none;
         d=google.com; s=arc-20160816;
-        b=wPO+ENQYIvQ4NxT3ZCul9xawDASfk4dSwT61c8roo2hAgLYWS3Ou8Ln1cNXYvhosVb
-         YhlAUpOr4YiHTs5wsFIvu7JLafnOpdkGrmX6ZvcgRv4tZ1dSLLKzkpdUpqg1ZwtIE5Hq
-         FDQcpKfjFkzmvDT9K/yDwSFcvpSAgX3YuHH4cn3sQO9T+b+xBgY5y8Ze/xQqXex4Juw6
-         wm0pGVDreHLDXfIEA90JTaqEg9MLaZ2mhTpohk3wA/OLNsRQjlRPfDfenkVNEJ8+7aPC
-         Cxkf0WSld+bHy9/Ds943rXUKUtjKun/u3emZ4tBL62RLCndW1THZR6XhJ0ICzd428omQ
-         osrg==
+        b=ZRlCcx2eOHwLt+b/NsEyX4784Bwid29UBqS1lvpoKhBViMvViykzOA+kAmHcqOpO2U
+         W3r8I2vsHSUv05A36/6gGZEWDDGAytVf6FxEsPVBinpmt0n3AN1nVDBBRfsbgDC6F9pn
+         8zW8C3XM4x9Z9wsoJd9m9JGANYasycxyZY7m4qKgW1ZswerCPWFdiAhIv6fcISmoi2Yf
+         kXFddSKknI7ex0n7AjReUK2lrzj9+60kdtnZdd9EsD+UBcb94+F0htqmZzNaLwHih/3z
+         wcC55oGUOgfGY8RBbcaXZJueQPJwTuaRqHxyKVLiv+qHNuiJvepkBwHqwnMOtfEOnwQZ
+         LQfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=eMVoRQbY+pT/rMwYV5SiywF2rE/Rud3Q7/PRiysEPjY=;
-        b=xFPtsGxIf+n14cUM0kZD8fuP45pJeudELEXAl3P2qdHFyGftEVZRq33RFRV74gFTEM
-         2hGI627WWu8u0As2/6u/98//s5XJhhHsl4JT3EDaYMGDm2MO623ZSrsw+qliQOI/zYuQ
-         Bs8TRC+k/719dP4BzQakmOeql1KJFoehgBFtXde6TfAfHRFj28t6Ma4+wrvOXd9OdY2X
-         3vIUY4DS5jRYGRoIEpcqxjTKfwd0QRtT1XUkbiYNEOX32LJWPlST0EMAGi7LkbPcWEO0
-         RyHEV2ujCWvzzi7EZkdWWB0N97na9XPegv4z7KcT8IuVq/c6tg6O6oCZ78gugzzFrJ7s
-         StYg==
+        bh=tnOpbOVtUCCtCaz84vsp51jL6e6yM9g+dUO0/JzqW7U=;
+        b=u+o22VIrVmmZXmjRmChAq9/IIh1dJ2KzQ+aGlpnTuYnz/hLd2XSec7LSaHpwCv4n5A
+         Bj1QBILc9pkRTtTH9azykk8mo73BTRFDRR386k5NbTIXyr+Myi2pxkN9ZE68DkD2JTKe
+         CUsU7DXYdJmgIssGGfZ77u13q5uvZYJi6wgEmcK4D8k3VwZlyQlS7EWsMABjL7H2IFTe
+         Uu1SwgpXuNYl1ebkyJ1WbgPYWkToCh5+DRjZMOhHSySxo6ZTZ3oj1K3YuTSKTTAbkeox
+         dvu7Af+djd1oaiHK9Sp4BREsgZZ/GHPKR3X26rVmnXKDTslKdH0XLB64YottpMcr5Ffr
+         adgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Filipe Manana <fdmanana@suse.com>,
-	Liu Bo <bo.li.liu@oracle.com>,
+	Pan Bian <bianpan2016@163.com>,
+	Kalle Valo <kvalo@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 25/47] Btrfs: send, fix file hole not being preserved due to inline extent
-Date: Fri, 23 Mar 2018 10:55:16 +0100
-Message-Id: <20180323094249.194276396@linuxfoundation.org>
+Subject: [PATCH 3.18 24/47] rndis_wlan: add return value validation
+Date: Fri, 23 Mar 2018 10:55:15 +0100
+Message-Id: <20180323094249.153770370@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722632353760429?=
-X-GMAIL-MSGID: =?utf-8?q?1595723334000992506?=
+X-GMAIL-THRID: =?utf-8?q?1595722625840527825?=
+X-GMAIL-MSGID: =?utf-8?q?1595723331219145812?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,85 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit e1cbfd7bf6dabdac561c75d08357571f44040a45 ]
+[ Upstream commit 9dc7efd3978aa67ae598129d2a3f240b390ce508 ]
 
-Normally we don't have inline extents followed by regular extents, but
-there's currently at least one harmless case where this happens. For
-example, when the page size is 4Kb and compression is enabled:
+Function create_singlethread_workqueue() will return a NULL pointer if
+there is no enough memory, and its return value should be validated
+before using. However, in function rndis_wlan_bind(), its return value
+is not checked. This may cause NULL dereference bugs. This patch fixes
+it.
 
-  $ mkfs.btrfs -f /dev/sdb
-  $ mount -o compress /dev/sdb /mnt
-  $ xfs_io -f -c "pwrite -S 0xaa 0 4K" -c "fsync" /mnt/foobar
-  $ xfs_io -c "pwrite -S 0xbb 8K 4K" -c "fsync" /mnt/foobar
-
-In this case we get a compressed inline extent, representing 4Kb of
-data, followed by a hole extent and then a regular data extent. The
-inline extent was not expanded/converted to a regular extent exactly
-because it represents 4Kb of data. This does not cause any apparent
-problem (such as the issue solved by commit e1699d2d7bf6
-("btrfs: add missing memset while reading compressed inline extents"))
-except trigger an unexpected case in the incremental send code path
-that makes us issue an operation to write a hole when it's not needed,
-resulting in more writes at the receiver and wasting space at the
-receiver.
-
-So teach the incremental send code to deal with this particular case.
-
-The issue can be currently triggered by running fstests btrfs/137 with
-compression enabled (MOUNT_OPTIONS="-o compress" ./check btrfs/137).
-
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/send.c |   23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ drivers/net/wireless/rndis_wlan.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -4663,13 +4663,19 @@ static int is_extent_unchanged(struct se
- 	while (key.offset < ekey->offset + left_len) {
- 		ei = btrfs_item_ptr(eb, slot, struct btrfs_file_extent_item);
- 		right_type = btrfs_file_extent_type(eb, ei);
--		if (right_type != BTRFS_FILE_EXTENT_REG) {
-+		if (right_type != BTRFS_FILE_EXTENT_REG &&
-+		    right_type != BTRFS_FILE_EXTENT_INLINE) {
- 			ret = 0;
- 			goto out;
- 		}
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -3425,6 +3425,10 @@ static int rndis_wlan_bind(struct usbnet
  
- 		right_disknr = btrfs_file_extent_disk_bytenr(eb, ei);
--		right_len = btrfs_file_extent_num_bytes(eb, ei);
-+		if (right_type == BTRFS_FILE_EXTENT_INLINE) {
-+			right_len = btrfs_file_extent_inline_len(eb, slot, ei);
-+			right_len = PAGE_ALIGN(right_len);
-+		} else {
-+			right_len = btrfs_file_extent_num_bytes(eb, ei);
-+		}
- 		right_offset = btrfs_file_extent_offset(eb, ei);
- 		right_gen = btrfs_file_extent_generation(eb, ei);
- 
-@@ -4683,6 +4689,19 @@ static int is_extent_unchanged(struct se
- 			goto out;
- 		}
- 
-+		/*
-+		 * We just wanted to see if when we have an inline extent, what
-+		 * follows it is a regular extent (wanted to check the above
-+		 * condition for inline extents too). This should normally not
-+		 * happen but it's possible for example when we have an inline
-+		 * compressed extent representing data with a size matching
-+		 * the page size (currently the same as sector size).
-+		 */
-+		if (right_type == BTRFS_FILE_EXTENT_INLINE) {
-+			ret = 0;
-+			goto out;
-+		}
-+
- 		left_offset_fixed = left_offset;
- 		if (key.offset < ekey->offset) {
- 			/* Fix the right offset for 2a and 7. */
+ 	/* because rndis_command() sleeps we need to use workqueue */
+ 	priv->workqueue = create_singlethread_workqueue("rndis_wlan");
++	if (!priv->workqueue) {
++		wiphy_free(wiphy);
++		return -ENOMEM;
++	}
+ 	INIT_WORK(&priv->work, rndis_wlan_worker);
+ 	INIT_DELAYED_WORK(&priv->dev_poller_work, rndis_device_poller);
+ 	INIT_DELAYED_WORK(&priv->scan_work, rndis_get_scan_results);
