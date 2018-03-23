@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804117-2-12075585760408343736
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804105-2-10627768563626579125
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804117; b=hHlSFYAWJ3nOsRzxOGc+8QsjbpAaRWwbJBLI/EMpi7I/UT4
-    ih+Apko2C+KMbqGmfQNNCygSXLnJRJ+z1fSHU+9BQpryRtCMft08hNLM1PSGCxl9
-    3TC9wac3DO+bXPJd2AqXxZzFIXZQUNiqFtdOghWsy6GdgA/bgj0p38HJKaVG8cLP
-    6ilxqd8r5a6SrKVGcMWAZay5NBkQ+cUX7IaffbOOveqh3rnlOA1NmW+6tLtrug1p
-    IXYCbn5ZZlt3KsOvx7ured48j+rTcMeWNNlH0HIYzzhk2j3bBYZIo0fDcvIE26Hb
-    BFF+I1yWmcmIUEIo46dHhNfERsjCREKHkfNFwyg==
+    t=1521804104; b=cbC7pEXr2KN9qzhA22AasrtwZHAuDwXJ1W234chXv6RCgXD
+    2F1XXy+iEgWBRB3Xd2U4N1IDDpOXmcTQMMoDiU70qWZHVC1Guf6DxNiVhyBzeGZb
+    byCYRmjYA99aJFNj+bv+zNugXe069zDZuQ2ipkDpNySQf+XCpk+aNIevAz0eNw+h
+    TzeriR6iSmGDcE/KtYwH6nvxiWSFwyOlkpi/EdPv3HYck6bzj457kEY2VlU4yXyX
+    KiT2Gxxiwrm3zXnmdOlmfhImXVSvThIKPG8tspN/74jTPaUfXiAF3YXi5d5e2Fwi
+    uWEB8QjPa+2sdpdBDUu8aXNrNFkLoCYFr0inXMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804117; bh=iCCSKqVv80YAYSUNHUZ9yZ1u11
-    8/CNlMPGd0OQ+P8TI=; b=CJfZEPcwMzpuAI6+aPk5mOmnY0FGuICsQS8CwdHA5Y
-    YrYwzpgYhlLyOVK5JwmznEWTzFL6Vg+GoF1lV5tmMpE3OsmuEowbw4jEQaAbgXCf
-    S3KFlME1US6J0UbAC+IQy52OZ3jWBRPfbonA4U3KCOqG0W9277N7yfzMdAXABhrr
-    wj/HTfrxODxro5sj/CQ3vq7h2AgbT83nEepOGektvRnqw9uuWQwe9z1QyHnFqxDT
-    OffYznFDbPJGGrD3XFPJI6ATiDrXGivGpPZW9V9vuy7sVEuAzy3LRtliOxCd3vsE
-    9bTWbHlFjgQUnhz4FLhIkvPZkPYDy4xqZdMT881WHunw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804104; bh=brQQuSSj10x7ilJ53ZLIXaQGIg
+    pqpI8nghOTvxCIy/A=; b=gMMHBeNJLb8doBzMb4iy39MUnNcPzfCDmQibwVFGEC
+    9ce5Yh7zg8ZsT0qmdulJ3ltsDqK+U7VSjSlnkrK4y8U4m7dpl/iAzDR8V4F+G80t
+    /38IOqXT5kh6h4urNxRvYGFuaRGGAe9D9sSCpBD9zdstNkmQjPrBf96gyaB2XzIz
+    qIbMgWCWGDkK0cwkAzhIGGP3wgd9E4DDwvti++j+VybMH3gNrE++EKeCFfouEtg7
+    /VLfJBHxxwspBNKOxa9hRhWsigXSteWkGheRe+3cUKWQUaju5OYCwizhFTjA1ijw
+    dHjyeak8N4sqZusnMucknDlUWu5Wu8AtDRbmH7QVpAJw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,23 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755516AbeCWKIU (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:08:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41610 "EHLO
+        id S1755531AbeCWKIX (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:08:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41648 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755507AbeCWKIQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:16 -0400
+        with ESMTP id S1755507AbeCWKIW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Brandenburg <martin@omnibond.com>,
-        Mike Marshall <hubcap@omnibond.com>,
+        stable@vger.kernel.org, Alexei Fedorov <Alexei.Fedorov@arm.com>,
+        Lv Zheng <lv.zheng@intel.com>,
+        Bob Moore <robert.moore@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 079/177] orangefs: do not wait for timeout if umounting
-Date: Fri, 23 Mar 2018 10:53:27 +0100
-Message-Id: <20180323094208.792427775@linuxfoundation.org>
+Subject: [PATCH 4.9 081/177] ACPICA: iasl: Fix IORT SMMU GSI disassembling
+Date: Fri, 23 Mar 2018 10:53:29 +0100
+Message-Id: <20180323094208.882787107@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,42 +84,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Brandenburg <martin@omnibond.com>
+From: Lv Zheng <lv.zheng@intel.com>
 
 
-[ Upstream commit b5a9d61eebdd0016ccb383b25a5c3d04977a6549 ]
+[ Upstream commit bb1e23e66e6237ff7a1824b37366540a89149c33 ]
 
-When the computer is turned off, all the processes are killed and then
-all the filesystems are umounted.  OrangeFS should not wait for the
-userspace daemon to come back in that case.
+ACPICA commit 637b88de24a78c20478728d9d66632b06fcaa5bf
 
-This only works for plain umount(2).  To actually take advantage of this
-interactively, `umount -f' is needed; otherwise umount will issue a
-statfs first, which will wait for the userspace daemon to come back.
+If the IORT template is compiled and then iort.aml binary disassembled to
+iort.dsl, SMMUv1 node lists incorrect offset for SMMU_Nsg_cfg_irpt Interrupt:
+[0ECh 0236   8]       SMMU_Nsg_irpt Interrupt : 0000000000000000
+[0ECh 0236   8]    SMMU_Nsg_cfg_irpt Interrupt : 0000000000000000
+This is because iasl hasn't implemented SMMU GSI decoding yet.
 
-Signed-off-by: Martin Brandenburg <martin@omnibond.com>
-Signed-off-by: Mike Marshall <hubcap@omnibond.com>
+This patch fixes this issue by preparing structures for decoding IORT SMMU
+GSI. ACPICA BZ 1340, reported by Alexei Fedorov, fixed by Lv Zheng.
+
+Link: https://github.com/acpica/acpica/commit/637b88de
+Link: https://bugs.acpica.org/show_bug.cgi?id=1340
+Reported-by: Alexei Fedorov <Alexei.Fedorov@arm.com>
+Signed-off-by: Lv Zheng <lv.zheng@intel.com>
+Signed-off-by: Bob Moore <robert.moore@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/orangefs/waitqueue.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ include/acpi/actbl2.h |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/fs/orangefs/waitqueue.c
-+++ b/fs/orangefs/waitqueue.c
-@@ -124,7 +124,14 @@ retry_servicing:
- 		gossip_debug(GOSSIP_WAIT_DEBUG,
- 			     "%s:client core is NOT in service.\n",
- 			     __func__);
--		timeout = op_timeout_secs * HZ;
-+		/*
-+		 * Don't wait for the userspace component to return if
-+		 * the filesystem is being umounted anyway.
-+		 */
-+		if (op->upcall.type == ORANGEFS_VFS_OP_FS_UMOUNT)
-+			timeout = 0;
-+		else
-+			timeout = op_timeout_secs * HZ;
- 	}
- 	spin_unlock(&orangefs_request_list_lock);
+--- a/include/acpi/actbl2.h
++++ b/include/acpi/actbl2.h
+@@ -783,6 +783,15 @@ struct acpi_iort_smmu {
+ #define ACPI_IORT_SMMU_DVM_SUPPORTED    (1)
+ #define ACPI_IORT_SMMU_COHERENT_WALK    (1<<1)
  
++/* Global interrupt format */
++
++struct acpi_iort_smmu_gsi {
++	u32 nsg_irpt;
++	u32 nsg_irpt_flags;
++	u32 nsg_cfg_irpt;
++	u32 nsg_cfg_irpt_flags;
++};
++
+ struct acpi_iort_smmu_v3 {
+ 	u64 base_address;	/* SMMUv3 base address */
+ 	u32 flags;
