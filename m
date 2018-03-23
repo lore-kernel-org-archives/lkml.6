@@ -1,116 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752109AbeCWA4W convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:56:22 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11975 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751821AbeCWA4S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 20:56:18 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 22 Mar 2018 17:56:13 -0700
-Subject: Re: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM
- client quit v2
-To: Jerome Glisse <jglisse@redhat.com>
-CC: <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, Evgeny Baskakov <ebaskakov@nvidia.com>,
+        id S1752008AbeCWA4C (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:56:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52496 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751861AbeCWAzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 20:55:54 -0400
+From: jglisse@redhat.com
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Evgeny Baskakov <ebaskakov@nvidia.com>,
         Ralph Campbell <rcampbell@nvidia.com>,
         Mark Hairgrove <mhairgrove@nvidia.com>
-References: <20180320020038.3360-5-jglisse@redhat.com>
- <20180321181614.9968-1-jglisse@redhat.com>
- <a9ba54c5-a2d9-49f6-16ad-46b79525b93c@nvidia.com>
- <20180321234110.GK3214@redhat.com>
- <cbc9dcba-0707-e487-d360-f6f7c8d5cb23@nvidia.com>
- <20180322233715.GA5011@redhat.com>
- <b858d92a-3a38-bfff-fe66-697c64ea2053@nvidia.com>
- <20180323005017.GB5011@redhat.com>
-From: John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <45076a33-1dab-d4c0-d0b3-ea8e9782975f@nvidia.com>
-Date: Thu, 22 Mar 2018 17:56:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Subject: [PATCH 10/15] mm/hmm: do not differentiate between empty entry or missing directory v3
+Date: Thu, 22 Mar 2018 20:55:22 -0400
+Message-Id: <20180323005527.758-11-jglisse@redhat.com>
+In-Reply-To: <20180323005527.758-1-jglisse@redhat.com>
+References: <20180323005527.758-1-jglisse@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180323005017.GB5011@redhat.com>
-X-Originating-IP: [10.110.48.28]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/22/2018 05:50 PM, Jerome Glisse wrote:
-> On Thu, Mar 22, 2018 at 05:13:14PM -0700, John Hubbard wrote:
->> On 03/22/2018 04:37 PM, Jerome Glisse wrote:
->>> On Thu, Mar 22, 2018 at 03:47:16PM -0700, John Hubbard wrote:
->>>> On 03/21/2018 04:41 PM, Jerome Glisse wrote:
->>>>> On Wed, Mar 21, 2018 at 04:22:49PM -0700, John Hubbard wrote:
->>>>>> On 03/21/2018 11:16 AM, jglisse@redhat.com wrote:
->>>>>>> From: Jérôme Glisse <jglisse@redhat.com>
->>
->> <snip>
->>
->>>>>
->>>>> No this code is correct. hmm->mm is set after hmm struct is allocated
->>>>> and before it is public so no one can race with that. It is clear in
->>>>> hmm_mirror_unregister() under the write lock hence checking it here
->>>>> under that same lock is correct.
->>>>
->>>> Are you implying that code that calls hmm_mirror_register() should do 
->>>> it's own locking, to prevent simultaneous calls to that function? Because
->>>> as things are right now, multiple threads can arrive at this point. The
->>>> fact that mirror->hmm is not "public" is irrelevant; what matters is that
->>>>> 1 thread can change it simultaneously.
->>>
->>> The content of struct hmm_mirror should not be modified by code outside
->>> HMM after hmm_mirror_register() and before hmm_mirror_unregister(). This
->>> is a private structure to HMM and the driver should not touch it, ie it
->>> should be considered as read only/const from driver code point of view.
->>
->> Yes, that point is clear and obvious.
->>
->>>
->>> It is also expected (which was obvious to me) that driver only call once
->>> and only once hmm_mirror_register(), and only once hmm_mirror_unregister()
->>> for any given hmm_mirror struct. Note that driver can register multiple
->>> _different_ mirror struct to same mm or differents mm.
->>>
->>> There is no need of locking on the driver side whatsoever as long as the
->>> above rules are respected. I am puzzle if they were not obvious :)
->>
->> Those rules were not obvious. It's unusual to claim that register and unregister
->> can run concurrently, but regiser and register cannot. Let's please document
->> the rules a bit in the comments.
-> 
-> I am really surprise this was not obvious. All existing _register API
-> in the kernel follow this. You register something once only and doing
-> it twice for same structure (ie unique struct hmm_mirror *mirror pointer
-> value) leads to serious bugs (doing so concurently or not).
-> 
-> For instance if you call mmu_notifier_register() twice (concurrently
-> or not) with same pointer value for struct mmu_notifier *mn then bad
-> thing will happen. Same for driver_register() but this one actualy
-> have sanity check and complain loudly if that happens. I doubt there
-> is any single *_register/unregister() in the kernel that does not
-> follow this.
+From: Jérôme Glisse <jglisse@redhat.com>
 
-OK, then I guess no need to document it. In any case we know what to
-expect here, so no problem there.
+There is no point in differentiating between a range for which there
+is not even a directory (and thus entries) and empty entry (pte_none()
+or pmd_none() returns true).
 
-thanks,
+Simply drop the distinction ie remove HMM_PFN_EMPTY flag and merge now
+duplicate hmm_vma_walk_hole() and hmm_vma_walk_clear() functions.
+
+Changed since v1:
+  - Improved comments
+Changed since v2:
+  - Typo in comments
+
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Mark Hairgrove <mhairgrove@nvidia.com>
+---
+ include/linux/hmm.h |  8 +++-----
+ mm/hmm.c            | 45 +++++++++++++++------------------------------
+ 2 files changed, 18 insertions(+), 35 deletions(-)
+
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 54d684fe3b90..cf283db22106 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -84,7 +84,6 @@ struct hmm;
+  * HMM_PFN_VALID: pfn is valid. It has, at least, read permission.
+  * HMM_PFN_WRITE: CPU page table has write permission set
+  * HMM_PFN_ERROR: corresponding CPU page table entry points to poisoned memory
+- * HMM_PFN_EMPTY: corresponding CPU page table entry is pte_none()
+  * HMM_PFN_SPECIAL: corresponding CPU page table entry is special; i.e., the
+  *      result of vm_insert_pfn() or vm_insert_page(). Therefore, it should not
+  *      be mirrored by a device, because the entry will never have HMM_PFN_VALID
+@@ -94,10 +93,9 @@ struct hmm;
+ #define HMM_PFN_VALID (1 << 0)
+ #define HMM_PFN_WRITE (1 << 1)
+ #define HMM_PFN_ERROR (1 << 2)
+-#define HMM_PFN_EMPTY (1 << 3)
+-#define HMM_PFN_SPECIAL (1 << 4)
+-#define HMM_PFN_DEVICE_UNADDRESSABLE (1 << 5)
+-#define HMM_PFN_SHIFT 6
++#define HMM_PFN_SPECIAL (1 << 3)
++#define HMM_PFN_DEVICE_UNADDRESSABLE (1 << 4)
++#define HMM_PFN_SHIFT 5
+ 
+ /*
+  * hmm_pfn_to_page() - return struct page pointed to by a valid HMM pfn
+diff --git a/mm/hmm.c b/mm/hmm.c
+index a93c1e35df91..b8affe0bf4eb 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -348,6 +348,16 @@ static void hmm_pfns_clear(uint64_t *pfns,
+ 		*pfns = 0;
+ }
+ 
++/*
++ * hmm_vma_walk_hole() - handle a range lacking valid pmd or pte(s)
++ * @start: range virtual start address (inclusive)
++ * @end: range virtual end address (exclusive)
++ * @walk: mm_walk structure
++ * Returns: 0 on success, -EAGAIN after page fault, or page fault error
++ *
++ * This function will be called whenever pmd_none() or pte_none() returns true,
++ * or whenever there is no page directory covering the virtual address range.
++ */
+ static int hmm_vma_walk_hole(unsigned long addr,
+ 			     unsigned long end,
+ 			     struct mm_walk *walk)
+@@ -357,31 +367,6 @@ static int hmm_vma_walk_hole(unsigned long addr,
+ 	uint64_t *pfns = range->pfns;
+ 	unsigned long i;
+ 
+-	hmm_vma_walk->last = addr;
+-	i = (addr - range->start) >> PAGE_SHIFT;
+-	for (; addr < end; addr += PAGE_SIZE, i++) {
+-		pfns[i] = HMM_PFN_EMPTY;
+-		if (hmm_vma_walk->fault) {
+-			int ret;
+-
+-			ret = hmm_vma_do_fault(walk, addr, &pfns[i]);
+-			if (ret != -EAGAIN)
+-				return ret;
+-		}
+-	}
+-
+-	return hmm_vma_walk->fault ? -EAGAIN : 0;
+-}
+-
+-static int hmm_vma_walk_clear(unsigned long addr,
+-			      unsigned long end,
+-			      struct mm_walk *walk)
+-{
+-	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+-	struct hmm_range *range = hmm_vma_walk->range;
+-	uint64_t *pfns = range->pfns;
+-	unsigned long i;
+-
+ 	hmm_vma_walk->last = addr;
+ 	i = (addr - range->start) >> PAGE_SHIFT;
+ 	for (; addr < end; addr += PAGE_SIZE, i++) {
+@@ -440,10 +425,10 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 		if (!pmd_devmap(pmd) && !pmd_trans_huge(pmd))
+ 			goto again;
+ 		if (pmd_protnone(pmd))
+-			return hmm_vma_walk_clear(start, end, walk);
++			return hmm_vma_walk_hole(start, end, walk);
+ 
+ 		if (write_fault && !pmd_write(pmd))
+-			return hmm_vma_walk_clear(start, end, walk);
++			return hmm_vma_walk_hole(start, end, walk);
+ 
+ 		pfn = pmd_pfn(pmd) + pte_index(addr);
+ 		flag |= pmd_write(pmd) ? HMM_PFN_WRITE : 0;
+@@ -462,7 +447,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 		pfns[i] = 0;
+ 
+ 		if (pte_none(pte)) {
+-			pfns[i] = HMM_PFN_EMPTY;
++			pfns[i] = 0;
+ 			if (hmm_vma_walk->fault)
+ 				goto fault;
+ 			continue;
+@@ -513,8 +498,8 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 
+ fault:
+ 		pte_unmap(ptep);
+-		/* Fault all pages in range */
+-		return hmm_vma_walk_clear(start, end, walk);
++		/* Fault any virtual address we were asked to fault */
++		return hmm_vma_walk_hole(start, end, walk);
+ 	}
+ 	pte_unmap(ptep - 1);
+ 
 -- 
-John Hubbard
-NVIDIA
-
-> 
-> Note that doing register/unregister concurrently for the same unique
-> hmm_mirror struct is also illegal. However concurrent register and
-> unregister of different hmm_mirror struct is legal and this is the
-> reasons for races we were discussing.
-> 
-> Cheers,
-> Jérôme
-> 
+2.14.3
