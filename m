@@ -1,142 +1,103 @@
 Return-Path: <ioana.ciornei@nxp.com>
-X-Google-Smtp-Source: AG47ELtb+bDOyhUMqkEj4xhZfjGB8s/c550RDgZrj09NAQaubkYG1BAbLy+RnXtRsy+mOQEoJCyM
-ARC-Seal: i=1; a=rsa-sha256; t=1521133567; cv=none;
+X-Google-Smtp-Source: AG47ELuMyMVRHmTxPSrmI0axT5n+WRjEd9vqoy6qaoraxqwEjs1AcJ6IqkQpD7WIXhX1hTsWaODh
+ARC-Seal: i=1; a=rsa-sha256; t=1521817772; cv=none;
         d=google.com; s=arc-20160816;
-        b=yCY2MMDxljnRsCqnKuF4a1FvK4vfGopJm0/CIZU2UFVJFKlwMqGgtSI4z57mPJsL1+
-         NkYQPmYyWx4TliGVlR4aDKlNAHh4y79u80neoVOam88zI6fpPK2OcI476cfdumcx7zCm
-         V3AUBd7Pkfr2M96jYomiY3NGDwfPCZBUJaeeKRaiHX65CSJ7nm2JXJjlNoyoWR7re+PT
-         jpVVN6Tu63QM0WqLaj0cwN1xBnnBIXcLuYPb0Qe1qld1jeiYYgFYiVFsR0wShj5voJ9g
-         IVgQ0gq9JZ2M1QG6pQhZTT1/6rvtCjlPCsknuih8Du3PTrM7fLrICxa3kK5Vw3nsYu6E
-         ckzQ==
+        b=Bx3wMzDBxo9NJS7vvslC3IfH/vWIWRiPXf9COm3WfiohGy+fIE7h4YIBXVJB13d4nv
+         8SAGdpYSMaLMaLvEUz6yaV4Hh/+pSfHZc0Wprr+9YZGLp3H03lqaEoJZMQkTg8jfqNaW
+         L8FiDO07IOE91u69RzoEbDptYCpwqNZez1Aszvt3YOPBXOatvZ1SwA/LcwYXouRBokMd
+         TsV/rV5bbPgiZwnslZWQVXggfeiPKH31nm0JVeV7zg+Vl+cheyC08nyFmBMHI0hYMBwl
+         WT+yb3llRMZzrwAL1IKbLaMsfXAfnW0lk/nkqqItPjTIj+RIIcO+KlyZuNS6bj7CwwKv
+         2yZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:message-id
-         :date:subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=9qYhxSIE2NCM533IebBmunPSJAQKZFMZ7q+QBjdt7U8=;
-        b=xPjtCqF1bu5PAQ4jyg48zwClCL8EWcm7JxmMypQSqpg5VBwV/A5MPFBT8t5vRSZV7s
-         myMoiNTdUXsrXO8oQ6K0yqtKj4e/1y2SWu9qv3sDNSYWCDUsEvISOBThOJAUFwSkHtGy
-         23r7eDWjUSbOBiEnZZ9qg57yfL/yqtbjbVvA8oz1oABhu6hhGHOGpO0diOgZs6+cKCvN
-         598OsjFWculMk5baJThdQauVMSSz9Np3z5l/JGqGxF5YMzuE7sX/+woU+CZmMqck3J1M
-         OOfghEkMuWNSemWMEh6OvWfB6cRk70jgUxxwhU6BCIT+a3ubiWl4kBZo+IkBbjaipQ1Q
-         U3jQ==
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=7Gyt54EdUpPDHK0b6VNPsWPkJ+O/IvpBqKqE4Eiz2Wc=;
+        b=O8//ZEFBUketXjd8JY91Gs8IqvR2zKR6XvVwb22GYZr3wl6FS+WDwfhnMgH8K/BXoW
+         A2bdRTdDmSpbCZlxq2Tup7BFREgtWkZcjgzdPFQ/vYiVaokMYZ3l1ZWsd/ps9V9E2pjT
+         YPDp7NHZY8tykhMgNEJIDKysCLmRgPY8UPlDkopQu71dt3019fCqM5BrC5422eFM70pY
+         lDupAAgJqaIxEzj6mZs0Qkz9bRwUq1LmNga5g5xy1tl262X6/G0aa9wC5h2BDcHRgz/Y
+         IdpCNYmf1RmsIUiPKs4cC8uQWolvkOrP64uFlS+jJA0UBvFo+I2vtG5uXNtohv6Uk24G
+         Qtnw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nxp.com header.s=selector1 header.b=L6P6mKqz;
-       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 104.47.2.40 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=ubDK8jmw;
+       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 40.107.5.69 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nxp.com header.s=selector1 header.b=L6P6mKqz;
-       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 104.47.2.40 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=ubDK8jmw;
+       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 40.107.5.69 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ioana.ciornei@nxp.com;
 From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: gregkh@linuxfoundation.org,
-	laurentiu.tudor@nxp.com
-Cc: linux-kernel@vger.kernel.org,
-	stuyoder@gmail.com,
-	ruxandra.radulescu@nxp.com,
-	razvan.stefanescu@nxp.com,
-	Roy.Pledge@nxp.com,
-	arnd@arndb.de,
-	Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH v2 0/6] bus: fsl-mc: enhance Management Complex userspace support
-Date: Thu, 15 Mar 2018 12:05:30 -0500
-Message-Id: <cover.1521132659.git.ioana.ciornei@nxp.com>
-X-Mailer: git-send-email 2.8.3
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: Laurentiu Tudor <laurentiu.tudor@nxp.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "stuyoder@gmail.com" <stuyoder@gmail.com>,
+	Ruxandra Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>, Razvan
+ Stefanescu <razvan.stefanescu@nxp.com>, Roy Pledge <roy.pledge@nxp.com>,
+	"arnd@arndb.de" <arnd@arndb.de>
+Subject: RE: [PATCH v2 0/6] bus: fsl-mc: enhance Management Complex userspace
+ support
+Thread-Topic: [PATCH v2 0/6] bus: fsl-mc: enhance Management Complex userspace
+ support
+Thread-Index: AQHTvH8RSTFvtHiQNkCMA8QITBDtcaPd9KUAgAADxgA=
+Date: Fri, 23 Mar 2018 15:09:28 +0000
+Message-ID: <HE1PR04MB3212EFA492177BBF5BF26A44E0A80@HE1PR04MB3212.eurprd04.prod.outlook.com>
+References: <cover.1521132659.git.ioana.ciornei@nxp.com>
+ <20180323145418.GA21034@kroah.com>
+In-Reply-To: <20180323145418.GA21034@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR04MB3145;7:aFPrRKwx/FXXYXt8xKsQPO31IzeBqtYGkYyl9lXZCZZmxDrvqd68z5iApt02+yAqMnmi24pubSEq1s1wm5YJfZUei6STTy/OypUJDeCdiGEp1zZaqFLCXguEiM3bk4WvG0pQdc4Yb6Iiwb0DALWkmORpdmV+LwfX/LyhPqrEgnp+SoId5qG0luPFctmOPFtTTR+6LsG3PBGosIdlQb232gIlZjQ2/sIrk2SVZjHTLTMngcvnqkcc0Mj8GwDP8OGN
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 748b9185-d933-4a77-c3c9-08d590d012b2
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB3145;
+x-ms-traffictypediagnostic: HE1PR04MB3145:
+x-microsoft-antispam-prvs: <HE1PR04MB3145D2134ABCD8666B30E11AE0A80@HE1PR04MB3145.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(6055026)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:HE1PR04MB3145;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB3145;
+x-forefront-prvs: 0620CADDF3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(376002)(366004)(396003)(346002)(39860400002)(199004)(189003)(106356001)(2900100001)(33656002)(74316002)(55016002)(316002)(7736002)(305945005)(76176011)(5660300001)(478600001)(68736007)(7696005)(229853002)(54906003)(99286004)(11346002)(3660700001)(446003)(6346003)(26005)(186003)(6916009)(81166006)(81156014)(6506007)(102836004)(6436002)(53936002)(6246003)(9686003)(105586002)(8676002)(4326008)(97736004)(25786009)(39060400002)(3280700002)(2906002)(5250100002)(3846002)(6116002)(8936002)(14454004)(86362001)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB3145;H:HE1PR04MB3212.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ioana.ciornei@nxp.com;
+x-microsoft-antispam-message-info: bvuWArTNJ1yLbbCrMu4CmS8zvbNhXic1gqUVioa1V06MKYwgk/6Ph7LIyLJy2z08LZpQooGK30BgR/eAMgL9+Fw09F2NI7YeYBmpBZkACmSwOF3gR1OTRD2RWd3utP0N1uwPQBvgm3HQd1jkf5FfsjVqbf+x7ANY1rkch6w8eh16OG3SurFWYMW8x/ywb45jOfP7QHids/ZE61vQBFaJbnH4+9f4fFTCHTYcAKuV3a55V2zT6LrY4Qw7wx71qPg8I+4jL0G/rQtl80CRP2UXY0wXvfcVwvNdmssgknYAlBzmXJ/PTMDJR/WtUtuMSvvMeCUq/jHrU+vqzNx+0EipeQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.88.168.1]
-X-ClientProxiedBy: MWHPR15CA0039.namprd15.prod.outlook.com
- (2603:10b6:300:ad::25) To DB6PR04MB3206.eurprd04.prod.outlook.com
- (2603:10a6:6:6::14)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 19d2c3d6-fe2c-4443-d0a9-08d58a9709e0
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR04MB3206;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR04MB3206;3:R4cQ9m9G295y7OrrNKR/gh60ZZzsQhCcpDUO79SGPa9TL6b9yYpiYMjxe/3J7VG8zD63sMq/kr73YrjdaV1Qzo/Mm8fEa23V9XDY/h1QT/1QedrhTN0UDbAtw48hf7jTPaP377cQya5i1ucbQzeb0WAIGpCwToIsc33+6zXBgH7UJkow647wBd7zZTZAKJFJL7T31OBxjeRGQlkgEzs9/yijOp2CCa0vctjHQzju/sYh2poReq8rYpxd6rFx1MHh;25:m7c/tZl4UThqkI6Cwi87wE0+t2GY0DD0IJV+ZCRKFgVXYUsyUIafkk8NUoFii6xrXgPhp+8cSMhFspdUIrV5vvySwsSgO3AV041mZP0l3Mw4AVTpLyo5cFqK3z//24IHvlIXA76VmWedKwa/Hj1DkDsczWPyGAzxW9PdLbHz1fUfAx7b5bJjbIxa83yYPwtA6dMMhrZY7U3TY90YdRxGllPZaK0fNfDh1dUGb8aC81EFgWSacZ5QB2tRwqzlO75C+ObeoWYnZyj00lQzn9HGyDBy+t2+Oj/+3YGSVIOE4fN3+e2eD8EXvw6AlczXMYSffqHq4kJWu8Sx07ssUCMOrw==;31:8GjQM6vidtlyA0zalBmgbqOdmefyCCTJlDubxwX1+tFAxoJ/ssNhMzu4bxhE6YhMU+sEe027C81PCNN2hR05dV3Eob7Ax3yvyR25hilw4tiW0tBqKB9OuzZuwfNSQcRbezi/M8KSDg4aEvwiaE7gQHTM/Nl+tkDlQ2ZKbj+PDYJXU5WYLVRuPBdcv2SKdgpfNbngDJaKQHwUdkbotrlVvCdImJowwAHCXolJKW860wo=
-X-MS-TrafficTypeDiagnostic: DB6PR04MB3206:
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR04MB3206;20:ukX149cfLJQ4lwFDOh5CZ89UvVf3U1MCmLu7Di5aMWm/2/Zq+rWyyldx5NfD4FYr4NYTwjI0ZmHqhUdy+nRC0vFOaoDD/t+OzxtrNSU/lIgFDLM30xwhyd97uHk3fTudGMgPeE6NjmLEvpxHIEBPl+SjW5lY2Gdh4DuoVjv5fiiSAxYqqQl8je9D737VU+Zxr/JA9g21Yp18U/e9ya6vHaRM4S2lcr9109KgYaE6nYF/tj9TMSCQeWsrlSaZF3mY7oMOX82Hsi3AUBiG81gUrYidf4XyupGpanIEykd8cLDF7QFDC61rtsRa/j4YSlU6oaMd/LEuVFeFxWGu4C9lt0x5OvkpyLXEf7edarw8Z7lE2pDIuqjHqV+UeANrbE8sS3kGVQ8not6sViZIesauO1ehLJOFro+RA9YC68vAw6nR0LRAjBAYR7WHARdIq6EjphTnxWAMGZjV/j098j7kojQtT7emwyWj8zvkliZDYi/9W1zkiTKKXDcBk3oC/nDN;4:EreH/djs82tHidYijwgIIqi0jjvUHo2agZN8JNUwKx8prrPcNhFcOItAsNgdkO4m758a4akprOzZkZjEZIumB3nOoYvYuXeFaLFYySqRE+P9MbEQf1zmWTjfaVcm4hPg4UB++MBwpnICpu8F83Q0VeNwQI2A9EOqqwUW5sSz9RLcALPxEEU1GVaR5Q58Qjb7VKeney+PF8P6aSjIRE2Qu7ZBUKjiaCLtyq52E+7SikXuHFf9IPA4I6qEQZSwn6xvj53B+JoTPC7PP2QSH2KSYQ==
-X-Microsoft-Antispam-PRVS: <DB6PR04MB320675C77C292D63E5FF5F82E0D00@DB6PR04MB3206.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501244)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DB6PR04MB3206;BCL:0;PCL:0;RULEID:;SRVR:DB6PR04MB3206;
-X-Forefront-PRVS: 0612E553B4
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(39380400002)(346002)(366004)(39860400002)(189003)(199004)(7736002)(105586002)(81156014)(6486002)(50466002)(68736007)(3846002)(47776003)(66066001)(50226002)(6512007)(305945005)(6116002)(36756003)(48376002)(8676002)(53936002)(8936002)(5660300001)(478600001)(186003)(97736004)(16526019)(316002)(86362001)(25786009)(106356001)(39060400002)(81166006)(6666003)(26005)(6636002)(4326008)(52116002)(386003)(51416003)(6506007)(2906002)(16586007);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR04MB3206;H:rhuath.am.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR04MB3206;23:NevPbtG1xGwONYnZEy4UBhKST3UA///euOXRhFzKj?=
- =?us-ascii?Q?4y1mtT6hLsPyCo3X8Ij9/HQq3+geRalpgKFYHaZRQMnxEBOMgRplNGs7L6ue?=
- =?us-ascii?Q?AtJvNdU+87KdxbwciYjqNFZ8JGIRB8wAhFDiZNxdD2U+pTdpXdai+N/pLtGX?=
- =?us-ascii?Q?wVXJ5orvTnniBVVR2WkBG9bt8Eba7l+9znxGMZTovkAAh3u/DaUo/evLnUgE?=
- =?us-ascii?Q?NrlHf38Ya/Lk98mVKBiPiMxWa5W5fwMcG7hcsAdu13dbWEHn4yAM1C4f2c+y?=
- =?us-ascii?Q?+g4RNGMoND6U8y1MGHIdsavR48FULlfTR37OZQkU3Pm0KCyVr7706QDpvAZi?=
- =?us-ascii?Q?jSpaAmfDuzuBnmheiz8UeDDZnviOQBQmU4agl+rT/nag9THTcH9nc7kgXqkv?=
- =?us-ascii?Q?g5sr6kPqYihiplbHK4RSz1GITi5bXUC4jIpbikBdBl38AahV2TjBk4BJ8JjQ?=
- =?us-ascii?Q?Q9+t8sPa/2dBimaAiHZiy8BVym3Pd0ReGYfB9KMb00p+gjBn+sFDDcbNw1DD?=
- =?us-ascii?Q?YbA1v4zTvpy23SIhidA38Guv+0TUcC9VG+5vtDx2QrqtK+t4nMdzFPCuf3FV?=
- =?us-ascii?Q?a+MmfJ8pLgH/9hkvcZetf3iZ29q8lkLncw8NXGDE0K7PXiTEZqTLMTX059jK?=
- =?us-ascii?Q?h3nknimh7v/6DR4dAMa4wGhecqLw8vQOwUJ0BzsyEKHTLiBCNwKn5mGVRgkF?=
- =?us-ascii?Q?VgsbbNulro4VJNVXgjxa2okfGovvVmLeP1LK01y5AZ2svhe4PQr+KeVq0pdg?=
- =?us-ascii?Q?vd8szAWjSaNCP2MqjRJbrR9HQbku8ys3ucFeISsVvRfQryV/tFWV9rYsz4Wq?=
- =?us-ascii?Q?c03lYnVaOK55C7zIpxWKkK69rpA/x3yA6x+L8hdo0FGkV2Vcm2UrC9f0Ss06?=
- =?us-ascii?Q?o8+5JDw5dD8Eh+L9qkRpYw2eRxj7iF4Ht2VcWmXVlDmwWeIvaUURqJryB9tD?=
- =?us-ascii?Q?TYA6ozl5JNlZDa4GrvSSr4mrM2qJi0ggr1pr8QeN2ysOHYV2aZ7teDJnng7/?=
- =?us-ascii?Q?DMvJYGbXR9w2cAfgCruYMwgwXnLG00LJZywtO1Qa+t2i706Q4QucLjGazV8Y?=
- =?us-ascii?Q?GNOAx9X41+bx9NDYaBd6uoFaD0H?=
-X-Microsoft-Antispam-Message-Info: YQDDQc5izq/aD3xEiTy3y+hKHNTzNq0MmVcXdEkonvw09gr40C42TP6Abw2YofBtdMbBdA9MXu4VoT6VPixhTnXrTM81j1Etv8wHjy+PdD5NEOzh7T0QLzPs7m0hnfiCBdKIan/CWJHb6hR+Tsvz4vOm2sTVNEPHJCicvfyZfAWmPzRKNpR/5T8/+IlwrTIT
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR04MB3206;6:NxK+9KvsNNxpkItKtkYy4lMMp/+76xOBiFdbS4foq7/q7e/AhLwgYbmpJ8GoKwcl5M1+kS5IUImKAhTH3dtVIFKBMWmGm/H2JQiMztBRyK5HP0YZ7sciIOsCUT8X2YLIzP8YXiCpdsTCsi2jzLjc7EGmyT9MdALM7YB8n5nFcmHPUrxyoi82IGzwrroyirRevYjBrG2IzipvKSGYPPzpWLJdXIL7Ghd2q+VVnp6GDvhD71oAfYlI70ykoPc5HDAKUZmOTBdJ4cNAn/0wwX19XfGJwUcslm6ePcWdNUZ83jTMTbn/UJVk3H7OSzZ7zlWFEe+quN6wQSofubhetRHWoUGNjcVBrDScht9cXP+dgfQ=;5:4EB5RCNuz1jbfPpo7VhUfpQwQtv3CtLj2KR/JgvA1t6asGPOc6pqjhMjxfuKnnajJrKEkQhwQA9ux/tjHDQ+eqn/j/cmxxWOKRJZJC/OMwCOsobATr3NAg0ElTmeevmBGpIry5Um0IRyHWcMj/Wg6C2yav5GYno+MLcRjhb4deo=;24:eWklWo715uQg2V1Vt0wOq8iJGJSui1nfagosKdq6kjuNPgbinFZMifVgIJjd8isxd8A5hfNmN+6kpB0rSpEy4pKnn4pXPZDzO6fPPwWJGYQ=;7:/mcdjkqNy0bRveSjOz3eMl66X3FrLXi32MzD3STSuKyrufFOfUgv9qVBFbF2/DLg4sCEyfG4ayDU86Et46HOFOK9ndSukJaINhNu0YWzdDVApuOo+s27m/vqv20W5ZhPkkRusht23SjajIxhXhXGs2aFn4LQJufBY+KQYkWqLOmgUhZ0LhwDeYGqjrqzhLa7JDcJcgwS3BdyfxWphsq3WXcNaoer/9NKLR+QJJPf2QVQAmFbkYrR9fAMhMbunRm+
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Mar 2018 17:06:03.0246
+X-MS-Exchange-CrossTenant-Network-Message-Id: 748b9185-d933-4a77-c3c9-08d590d012b2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2018 15:09:28.2689
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19d2c3d6-fe2c-4443-d0a9-08d58a9709e0
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR04MB3206
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB3145
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595024152098474506?=
-X-GMAIL-MSGID: =?utf-8?q?1595024152098474506?=
+X-GMAIL-MSGID: =?utf-8?q?1595741592475812714?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch set adds restool support in fsl-mc bus along
-with a rescan attribute to the root DPRC container.
+> > This patch set adds restool support in fsl-mc bus along with a rescan
+> > attribute to the root DPRC container.
+> >
+> > Changes in v2:
+> >  - changed mc_command in fsl_mc_command structure
+> >  - updated fsl_mc_command to use the proper types and moved it in uapi
+> >  - added proper sysfs documentation
+>=20
+> I've applied patches 1 and 3 here, can you redo patch 2 and resend them b=
+ased
+> on my tree?
 
-Changes in v2:
- - changed mc_command in fsl_mc_command structure
- - updated fsl_mc_command to use the proper types and moved it in uapi
- - added proper sysfs documentation
+Yes, sure. I will send the updated patch set right away.
 
-Ioana Ciornei (6):
-  bus: fsl-mc: change mc_command in fsl_mc_command
-  bus: fsl-mc: move fsl_mc_command struct in a uapi header
-  bus: fsl-mc: add fsl_mc_allocator cleanup function
-  bus: fsl-mc: add restool userspace support
-  bus: fsl-mc: add root dprc rescan attribute
-  bus: fsl-mc: add bus rescan attribute
-
- Documentation/ABI/stable/sysfs-bus-fsl-mc   |  13 ++
- Documentation/ioctl/ioctl-number.txt        |   1 +
- Documentation/networking/dpaa2/overview.rst |   4 +
- MAINTAINERS                                 |   2 +
- drivers/bus/fsl-mc/Kconfig                  |   7 +
- drivers/bus/fsl-mc/Makefile                 |   3 +
- drivers/bus/fsl-mc/dpbp.c                   |  12 +-
- drivers/bus/fsl-mc/dpcon.c                  |  14 +-
- drivers/bus/fsl-mc/dpmcp.c                  |   6 +-
- drivers/bus/fsl-mc/dprc-driver.c            |   4 +-
- drivers/bus/fsl-mc/dprc.c                   |  28 ++--
- drivers/bus/fsl-mc/fsl-mc-allocator.c       |   5 +
- drivers/bus/fsl-mc/fsl-mc-bus.c             |  97 +++++++++++-
- drivers/bus/fsl-mc/fsl-mc-private.h         |  53 +++++++
- drivers/bus/fsl-mc/fsl-mc-restool.c         | 219 ++++++++++++++++++++++++++++
- drivers/bus/fsl-mc/mc-sys.c                 |  20 +--
- drivers/staging/fsl-dpaa2/ethernet/dpni.c   |  84 +++++------
- drivers/staging/fsl-dpaa2/ethsw/dpsw.c      |  64 ++++----
- drivers/staging/fsl-mc/bus/dpio/dpio.c      |  12 +-
- include/linux/fsl/mc.h                      |  16 +-
- include/uapi/linux/fsl_mc.h                 |  31 ++++
- 21 files changed, 561 insertions(+), 134 deletions(-)
- create mode 100644 Documentation/ABI/stable/sysfs-bus-fsl-mc
- create mode 100644 drivers/bus/fsl-mc/fsl-mc-restool.c
- create mode 100644 include/uapi/linux/fsl_mc.h
-
--- 
-1.9.1
+>=20
+> thanks,
+>=20
+> greg k-h
