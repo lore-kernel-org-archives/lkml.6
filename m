@@ -1,72 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752681AbeCWWZT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 18:25:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35788 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752112AbeCWWXV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 18:23:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E19B607E5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Ariel Elior <ariel.elior@cavium.com>, everest-linux-l2@cavium.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/6] bnx2x: Replace doorbell barrier() with wmb()
-Date: Fri, 23 Mar 2018 18:23:08 -0400
-Message-Id: <1521843791-21201-4-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521843791-21201-1-git-send-email-okaya@codeaurora.org>
-References: <1521843791-21201-1-git-send-email-okaya@codeaurora.org>
+        id S1752206AbeCWWcj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 18:32:39 -0400
+Received: from ozlabs.org ([103.22.144.67]:59445 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751471AbeCWWch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 18:32:37 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Sat, 24 Mar 2018 09:31:37 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Fabio Estevam <festevam@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Huacai Chen <chenhc@lemote.com>, Rich Felker <dalias@libc.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-omap@vger.kernel.org,
+        James Hogan <james.hogan@mips.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Regression with arm in next with stack protector
+Message-ID: <20180324093137.1658f740@canb.auug.org.au>
+In-Reply-To: <20180323121530.f28dc29939d9395268911a4e@linux-foundation.org>
+References: <20180323181452.GJ5799@atomide.com>
+        <CAOMZO5Bmpk4cwav-qTnNA6L16DwdDPp5LeKC-jY9=QzfVBuKSQ@mail.gmail.com>
+        <20180323121530.f28dc29939d9395268911a4e@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fdq6P8WKSg_Bb8C59muoHml"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-barrier() doesn't guarantee memory writes to be observed by the hardware on
-all architectures. barrier() only tells compiler not to move this code
-with respect to other read/writes.
+--Sig_/fdq6P8WKSg_Bb8C59muoHml
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If memory write needs to be observed by the HW, wmb() is the right choice.
+Hi Andrew,
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c     | 3 ++-
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+On Fri, 23 Mar 2018 12:15:30 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> On Fri, 23 Mar 2018 15:45:27 -0300 Fabio Estevam <festevam@gmail.com> wro=
+te:
+>=20
+> > On Fri, Mar 23, 2018 at 3:14 PM, Tony Lindgren <tony@atomide.com> wrote=
+: =20
+> > > Hi,
+> > >
+> > > Looks like commit 5638790dadae ("zboot: fix stack protector in
+> > > compressed boot phase") breaks booting on arm. =20
+> >=20
+> > Yes, almost all imx are broken in linux-next due to this commit:
+> > https://kernelci.org/soc/imx/job/next/kernel/next-20180323/ =20
+>=20
+> Thanks, I dropped it and I expect Stephen will also do that.
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-index d7c98e8..b97820f 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -4153,7 +4153,8 @@ netdev_tx_t bnx2x_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	wmb();
- 
- 	txdata->tx_db.data.prod += nbd;
--	barrier();
-+	/* make sur edescriptor update is observed by HW */
-+	wmb();
- 
- 	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
- 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-index 1e33abd..39af4f8 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-@@ -2591,7 +2591,8 @@ static int bnx2x_run_loopback(struct bnx2x *bp, int loopback_mode)
- 	wmb();
- 
- 	txdata->tx_db.data.prod += 2;
--	barrier();
-+	/* make sure descriptor update is observed by the HW */
-+	wmb();
- 	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
- 
- 	mmiowb();
--- 
-2.7.4
+OK, dropped.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/fdq6P8WKSg_Bb8C59muoHml
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq1gEkACgkQAVBC80lX
+0GztXwgAo+rsdKDZd907h4gTFvwoIkGgJSp8+g4M0PEZrGSKLBRxwYfFwSu7Ybsq
+h1lSB4eeDbfV1cLYEbqoDFm7LO3y6HN3fKhamXO9cxfuau57/CVWwn6izglHPNdE
+NNVRFPooyVeW2GmM0hkwLatS6mTrPkwHG0daRXUQWno2TgjEtSA/UOr7xFsNMVwc
+oixHlBJddDNDcEo2Yqj001zj7g+4TCovcfh7OmzgJafkMWUIpYacnQvBvEU0t1eT
+WyJFTqdJmd4OQOhf/NanIsGlult+6uChePYeA3NyBk9PJ6f1gCYgsXWRVhJcZ91Q
+FCRHkbKLKDdQgepMTDUcXOPLi8NRIg==
+=eCUk
+-----END PGP SIGNATURE-----
+
+--Sig_/fdq6P8WKSg_Bb8C59muoHml--
