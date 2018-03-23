@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521828371; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521828368; cv=none;
         d=google.com; s=arc-20160816;
-        b=Sjf7r4c0/NRWH8OFuPkGoLhVpQncGlKWqKOSOFFGurIrXtq4kN+OYs32iTDNY+2InS
-         SHib5OAlmYRJrT72afb4oU/7VArff1IJ8X23H8eycZak8ppUeTp2tJTFjNVte1/onuOL
-         rhD45hxCRktDRMn0wUx7Ylu57T7V7Xna/0hD7hf3HPLmn0ja/3KVPi9nyo/mfOTnwnG8
-         2Sz0yOe7WcN7HBuaN5BVNh+8BLmBKmFzaHBsVyGoZo9qo7vfn9RZeY6fD8+tyJrm43dV
-         VkWzj6Iokbcd3UCyLiMh7Jn+ZwGGeYDfoW5wSzxHnE1Kapx+OT7AuHAJtD5nHQImakI3
-         zMlA==
+        b=DlFVkerWsyxgyFDjPKzG7yAtfiXGHKr8Oq0S8vNzkLt54558UPoWNRIsUOKcq6y7fh
+         47ZgCtxPOk7sGn+yriMJxIdTBML6EbZOQpp62bcaPY6zTPdrlCLc0rolApkue63jSq/U
+         3bCaCN+dMd5lTwds5kv9MxSuoNSYZVmq0BtX+ejSHZxxaWf03wxpnqVUAFjRQ0nV0XO2
+         eVqn7wPN298ls7+XH7PJQaFRjUsO5nExBrqLLNw7Ym5r8YC6CLz8LfgNIU4Hj0vh5AuK
+         rwMnsHnnZUbJl34IjcAZqgfMvHhRToYzIf5M6U4GR0hBfOGG3irHByEjrKZJleIRkoB6
+         /vKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ZqyK3M6d8G1iLL6ihHv3V278/cE4UIR/+6hH/+0b1fg=;
-        b=leh0VnM0Y5avc4synEhYnBgmyf1WU9/JzImfxsl7vp9OCqGR6StPBAZkIuES2nJan9
-         5aTU7mVRxM/I6x+Oo/5Ge3jiPHhhDzqTUSCGsM5f6gpS9UWEYzmlVtA8y/51Oc104BCa
-         GvOIiqHAD/u0uqrxKYQNkWPv/y6s7CMNjhewmVbIBtIMC8luYaTC+7F50U68Fg534bZq
-         W38cwSUjzs0PTIwG7IPAVPZKX0QsophyTZeZpRkdRno4oBLdClk8gLD42zcAK5oY0KDL
-         O6N4Syu2FbpvJ1vzcByCMb9mgcJnwSE9yMOsmdiEB6a5NScs8wE307S40EL4aYe+2yz3
-         M5Xw==
+        bh=tz6arFcYHBivEGudPAGwm+szCEU7FId9FhF6HQTYNA8=;
+        b=eM87mn/x7gMvjJ/wgGSWGRFDvbV/jQMUapZPhYP7r/RCWi+VCKucEDs5+aSma6NtmA
+         isNm0iMPXKe3Z8aSSDdhj5sYPTHs7Cu+18tmGdN8Hqn1+0pUChx+AKndMQLnppgbJIZy
+         s45xJTvHNCujpkxIos7Yz36q+Odin14WA+wEdWI2wtBOyDOfKHjnaknyhpA/btu4BJ9j
+         r0tkhtP4lzVUMxevGMUBxwljCAgJnvuaC1iQsF57OaDIJwJaH1u4Ob1OHnOcpUsfYOqv
+         49bK06aV3h+1V6BrxhjmJa/JILOd5Pd21ojS9CiqBPeVqm0/2ZoEdIRB5/8HdWY4l7hF
+         NJ9A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=QlYD5Z/V;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Ol0HTi9o;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=QlYD5Z/V;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Ol0HTi9o;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELs1rhttWLCIc7fmS8q6Ex/DFVcWm+Gi+20xcvm4ssmpCRg+CUseKNlzfi9iZYM/bjtY1lK2Cw==
+X-Google-Smtp-Source: AG47ELvUpaOrmD4GuD2sWQlsu5pLve0q2orA8v+hhlRpdqh4a0ntDxaQVhLkDrhz82uDWnGIP0PBBw==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Alexander Potapenko <glider@google.com>,
@@ -87,59 +87,69 @@ Cc: Kostya Serebryany <kcc@google.com>,
 	Kees Cook <keescook@google.com>,
 	Jann Horn <jannh@google.com>,
 	Mark Brand <markbrand@google.com>
-Subject: [RFC PATCH v2 06/15] khwasan, arm64: untag virt address in __kimg_to_phys
-Date: Fri, 23 Mar 2018 19:05:42 +0100
-Message-Id: <81963b1be20e0d661aa626d18d245be653bdc150.1521828274.git.andreyknvl@google.com>
+Subject: [RFC PATCH v2 04/15] khwasan, arm64: adjust shadow size for CONFIG_KASAN_TAGS
+Date: Fri, 23 Mar 2018 19:05:40 +0100
+Message-Id: <a7a07c29d352796b9281080186aa9966a4b32229.1521828274.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
 In-Reply-To: <cover.1521828273.git.andreyknvl@google.com>
 References: <cover.1521828273.git.andreyknvl@google.com>
 In-Reply-To: <cover.1521828273.git.andreyknvl@google.com>
 References: <cover.1521828273.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595752706157567518?=
-X-GMAIL-MSGID: =?utf-8?q?1595752706157567518?=
+X-GMAIL-THRID: =?utf-8?q?1595752703021936098?=
+X-GMAIL-MSGID: =?utf-8?q?1595752703021936098?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-__kimg_to_phys (which is used by virt_to_phys) assumes that the top byte
-of the address is 0xff, which isn't always the case with KHWASAN enabled.
-The solution is to reset the tag in __kimg_to_phys.
+KWHASAN uses 1 shadow byte for 16 bytes of kernel memory, so it requires
+1/16th of the kernel virtual address space for the shadow memory.
 
-__lm_to_phys doesn't require any fixups, as it zeroes out the top byte
-with the current implementation.
+This commit sets KASAN_SHADOW_SCALE_SHIFT to 4 when KHWASAN is enabled.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/include/asm/memory.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/Makefile             |  2 +-
+ arch/arm64/include/asm/memory.h | 13 +++++++++----
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 4bb18aee4846..23e9fe816cb4 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -100,7 +100,7 @@ endif
+ # KASAN_SHADOW_OFFSET = VA_START + (1 << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
+ #				 - (1 << (64 - KASAN_SHADOW_SCALE_SHIFT))
+ # in 32-bit arithmetic
+-KASAN_SHADOW_SCALE_SHIFT := 3
++KASAN_SHADOW_SCALE_SHIFT := $(if $(CONFIG_KASAN_TAGS), 4, 3)
+ KASAN_SHADOW_OFFSET := $(shell printf "0x%08x00000000\n" $$(( \
+ 	(0xffffffff & (-1 << ($(CONFIG_ARM64_VA_BITS) - 32))) \
+ 	+ (1 << ($(CONFIG_ARM64_VA_BITS) - 32 - $(KASAN_SHADOW_SCALE_SHIFT))) \
 diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index febd54ff3354..c13b89257352 100644
+index 50fa96a49792..febd54ff3354 100644
 --- a/arch/arm64/include/asm/memory.h
 +++ b/arch/arm64/include/asm/memory.h
-@@ -98,6 +98,10 @@
- #define KASAN_THREAD_SHIFT	0
- #endif
- 
-+#ifdef CONFIG_KASAN_TAGS
-+#define KASAN_PTR_TAG_MASK	(UL(0xff) << 56)
-+#endif
-+
- #define MIN_THREAD_SHIFT	(14 + KASAN_THREAD_SHIFT)
+@@ -80,12 +80,17 @@
+ #define KERNEL_END        _end
  
  /*
-@@ -231,7 +235,12 @@ static inline unsigned long kaslr_offset(void)
- #define __is_lm_address(addr)	(!!((addr) & BIT(VA_BITS - 1)))
- 
- #define __lm_to_phys(addr)	(((addr) & ~PAGE_OFFSET) + PHYS_OFFSET)
-+
-+#ifdef CONFIG_KASAN_TAGS
-+#define __kimg_to_phys(addr)	(((addr) | KASAN_PTR_TAG_MASK) - kimage_voffset)
-+#else
- #define __kimg_to_phys(addr)	((addr) - kimage_voffset)
+- * KASAN requires 1/8th of the kernel virtual address space for the shadow
+- * region. KASAN can bloat the stack significantly, so double the (minimum)
+- * stack size when KASAN is in use.
++ * KASAN and KHWASAN require 1/8th and 1/16th of the kernel virtual address
++ * space for the shadow region respectively. They can bloat the stack
++ * significantly, so double the (minimum) stack size when they are in use.
+  */
+-#ifdef CONFIG_KASAN
++#ifdef CONFIG_KASAN_CLASSIC
+ #define KASAN_SHADOW_SCALE_SHIFT 3
 +#endif
- 
- #define __virt_to_phys_nodebug(x) ({					\
- 	phys_addr_t __x = (phys_addr_t)(x);				\
++#ifdef CONFIG_KASAN_TAGS
++#define KASAN_SHADOW_SCALE_SHIFT 4
++#endif
++#ifdef CONFIG_KASAN
+ #define KASAN_SHADOW_SIZE	(UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
+ #define KASAN_THREAD_SHIFT	1
+ #else
 -- 
 2.17.0.rc0.231.g781580f067-goog
