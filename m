@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806603-2-17152087756325166490
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806589-2-17900173556568931797
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806602; b=mFZLCreXinbhQ103Pml6dBZS5I/eucjBcqbrf9aEnpfnb09
-    Oknzq04CYdly19xUJMUQAzSFAts6+QgPD8iWXZwJS7SFaLCuNbfNyxvvZAbidHS4
-    5nvwk7iUqd88JoWEraAQRKbJ3Z9ZBCc0KuqDTilT9YWvVwRNaD0E0zi4LIrRLzVJ
-    T/919UFQpgBHzMzFDMCzVCemwRkRp6YJGMV+hybCUOmGLvy1xprikun3kE3BV+JD
-    yVDlL11i2aKMYG0OIWf7ioLWWpVNmNggrzB5cbZizIq/cHxoHhyM3Jg3kWrBxwHv
-    zoXX/cVsqWi7/hg8FuNxWjcRe15gk4QwRtBjy3A==
+    t=1521806588; b=Hkt0w/k2dd/Di29KhrkB5buU/+HyIPa2m6sb0C85Isk5W79
+    VyccCVHvBQfgZMRgetZQXXd1qM9d1WlIUyHfVs/tRmAXrNP52aVmIwClR89Xkzpo
+    lsEq5jC/FSr5zlO/7hVd1bnkEPQWS6CCLqnxQQhAUZb5LUb53biwpMCWD/lKXG7e
+    PYwPdDXCiErFk2eHhqqjG9p4ZhgVizxwuZmEUT/CtZlac1a8USjbmiQiNDA4kEr6
+    1NJjjyaNKTPjOi7A7CQQbMau4JUgfECkbOsN5er8UhXxKjUumDWHNksj0SE+aiUN
+    +tpenX0LvG0oNuPu1eiPGU8MBSzh0IYejaXfLgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806602; bh=1ZXAsCorT0ZIl73tSfYbqLQv5n
-    +xb+CMCTSuh1uoSmI=; b=s6z+QuwkmLNjoYh8olawbVeF7u+97w1zrQpkqJhTR2
-    gMpSEWFpGcBSX2A/Ih+NcGdtZWAJOQzY8UYVzx3nBZyNKmmbxLKjhS0eax9qy7Ct
-    B7/4Hax5iVYi8kk8Ege8XSVhc75hFV77AUVCSvzSM7Acgw7uyKXKrnJ2AFy/ONPD
-    DuZ7P4d+fZacoOzlTfGtD5r9CJozwz9rtBHaAonaEhuNy1K8Qmw9844p0jRhZsQl
-    QBNYgrK0MW2XSMi6FaKUgxHPzMUKEdnIx69HIRmGyu6+NNdx5OIPx/MzuyK1DdMS
-    ++7CxU93WwxKexvg38VZGj5+B+2OJ0Ep38k3Ic6P+Usw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521806588; bh=uWHfcVBmiYVD3iiQjz2tqUWvUm
+    p8TpyKkKxeuLcJkb8=; b=JGsGHir+k6Z5DFvMwfUdkOdb9xbtUQJ3q+x/j1N2Kq
+    IksNiNm1CyEEkilcA9pcIeTMEGuApcxeS+RFj1w1ajpnCIq5aLCTFXdx/7eP6HS5
+    gpm3m8gnmOyZ49Fy1rD4/J+dvLt+f3nLGn6KaQt2FDwv8B9bYBXpLDa/UQK0I0fH
+    NEYjwAHqXgMwACux72/OWcjK9IZj1nyJiSN80ZagI4sYjXdVleqXqBp351ivxgb1
+    jvgspCX1aMINyAZuZxWaLbT3FVU+iUadpyJifYccDmTuTh5Z1TDLwtbWHZn0nnmk
+    cuTlU7wty8f4UBWTrtHv4k9ssFv33AEQ/JYiHcbsQiPg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,24 +50,24 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753414AbeCWJ7v (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:59:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36292 "EHLO
+        id S1752769AbeCWJ7y (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:59:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36306 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752769AbeCWJ7t (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:49 -0400
+        with ESMTP id S1753431AbeCWJ7x (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Romain Izard <romain.izard.pro@gmail.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        stable@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 70/84] clk: at91: pmc: Wait for clocks when resuming
-Date: Fri, 23 Mar 2018 10:54:24 +0100
-Message-Id: <20180323095422.536619470@linuxfoundation.org>
+Subject: [PATCH 4.15 71/84] clk: Dont touch hardware when reparenting during registration
+Date: Fri, 23 Mar 2018 10:54:25 +0100
+Message-Id: <20180323095422.703323355@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -85,66 +85,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Romain Izard <romain.izard.pro@gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
 
 
-[ Upstream commit 960e1c4d93be86d3b118fe22d4edc69e401b28b5 ]
+[ Upstream commit f8f8f1d04494d3a6546bee3f0618c4dba31d7b72 ]
 
-Wait for the syncronization of all clocks when resuming, not only the
-UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
-when interrupts are masked, which is the case in here.
+The orphan clocks reparent operation shouldn't touch the hardware
+if clocks are enabled, otherwise it may get a chance to disable a
+newly registered critical clock which triggers the warning below.
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Assuming we have two clocks: A and B, B is the parent of A.
+Clock A has flag: CLK_OPS_PARENT_ENABLE
+Clock B has flag: CLK_IS_CRITICAL
+
+Step 1:
+Clock A is registered, then it becomes orphan.
+
+Step 2:
+Clock B is registered. Before clock B reach the critical clock enable
+operation, orphan A will find the newly registered parent B and do
+reparent operation, then parent B will be finally disabled in
+__clk_set_parent_after() due to CLK_OPS_PARENT_ENABLE flag as there's
+still no users of B which will then trigger the following warning.
+
+WARNING: CPU: 0 PID: 0 at drivers/clk/clk.c:597 clk_core_disable+0xb4/0xe0
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.11.0-rc1-00056-gdff1f66-dirty #1373
+Hardware name: Generic DT based system
+Backtrace:
+[<c010c4bc>] (dump_backtrace) from [<c010c764>] (show_stack+0x18/0x1c)
+ r6:600000d3 r5:00000000 r4:c0e26358 r3:00000000
+[<c010c74c>] (show_stack) from [<c040599c>] (dump_stack+0xb4/0xe8)
+[<c04058e8>] (dump_stack) from [<c0125c94>] (__warn+0xd8/0x104)
+ r10:c0c21cd0 r9:c048aa78 r8:00000255 r7:00000009 r6:c0c1cd90 r5:00000000
+ r4:00000000 r3:c0e01d34
+[<c0125bbc>] (__warn) from [<c0125d74>] (warn_slowpath_null+0x28/0x30)
+ r9:00000000 r8:ef00bf80 r7:c165ac4c r6:ef00bf80 r5:ef00bf80 r4:ef00bf80
+[<c0125d4c>] (warn_slowpath_null) from [<c048aa78>] (clk_core_disable+0xb4/0xe0)
+[<c048a9c4>] (clk_core_disable) from [<c048be88>] (clk_core_disable_lock+0x20/0x2c)
+ r4:000000d3 r3:c0e0af00
+[<c048be68>] (clk_core_disable_lock) from [<c048c224>] (clk_core_disable_unprepare+0x14/0x28)
+ r5:00000000 r4:ef00bf80
+[<c048c210>] (clk_core_disable_unprepare) from [<c048c270>] (__clk_set_parent_after+0x38/0x54)
+ r4:ef00bd80 r3:000010a0
+[<c048c238>] (__clk_set_parent_after) from [<c048daa8>] (clk_register+0x4d0/0x648)
+ r6:ef00d500 r5:ef00bf80 r4:ef00bd80 r3:ef00bfd4
+[<c048d5d8>] (clk_register) from [<c048dc30>] (clk_hw_register+0x10/0x1c)
+ r9:00000000 r8:00000003 r7:00000000 r6:00000824 r5:00000001 r4:ef00d500
+[<c048dc20>] (clk_hw_register) from [<c048e698>] (_register_divider+0xcc/0x120)
+[<c048e5cc>] (_register_divider) from [<c048e730>] (clk_register_divider+0x44/0x54)
+ r10:00000004 r9:00000003 r8:00000001 r7:00000000 r6:00000003 r5:00000001
+ r4:f0810030
+[<c048e6ec>] (clk_register_divider) from [<c0d3ff58>] (imx7ulp_clocks_init+0x558/0xe98)
+ r7:c0e296f8 r6:c165c808 r5:00000000 r4:c165c808
+[<c0d3fa00>] (imx7ulp_clocks_init) from [<c0d24db0>] (of_clk_init+0x118/0x1e0)
+ r10:00000001 r9:c0e01f68 r8:00000000 r7:c0e01f60 r6:ef7f8974 r5:ef0035c0
+ r4:00000006
+[<c0d24c98>] (of_clk_init) from [<c0d04a50>] (time_init+0x2c/0x38)
+ r10:efffed40 r9:c0d61a48 r8:c0e78000 r7:c0e07900 r6:ffffffff r5:c0e78000
+ r4:00000000
+[<c0d04a24>] (time_init) from [<c0d00b8c>] (start_kernel+0x218/0x394)
+[<c0d00974>] (start_kernel) from [<6000807c>] (0x6000807c)
+ r10:00000000 r9:410fc075 r8:6000406a r7:c0e0c930 r6:c0d61a44 r5:c0e07918
+ r4:c0e78294
+
+We know that the clk isn't enabled with any sort of prepare_count
+here so we don't need to enable anything to prevent a race. And
+we're holding the prepare mutex so set_rate/set_parent can't race
+here either. Based on an earlier patch by Dong Aisheng.
+
+Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Reported-by: Dong Aisheng <aisheng.dong@nxp.com>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/at91/pmc.c |   24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/clk/clk.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -107,10 +107,20 @@ static int pmc_suspend(void)
- 	return 0;
- }
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2597,14 +2597,17 @@ static int __clk_core_init(struct clk_co
+ 	 */
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+ 		struct clk_core *parent = __clk_init_parent(orphan);
++		unsigned long flags;
  
-+static bool pmc_ready(unsigned int mask)
-+{
-+	unsigned int status;
-+
-+	regmap_read(pmcreg, AT91_PMC_SR, &status);
-+
-+	return ((status & mask) == mask) ? 1 : 0;
-+}
-+
- static void pmc_resume(void)
- {
--	int i, ret = 0;
-+	int i;
- 	u32 tmp;
-+	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
- 
- 	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
- 	if (pmc_cache.mckr != tmp)
-@@ -134,13 +144,11 @@ static void pmc_resume(void)
- 			     AT91_PMC_PCR_CMD);
- 	}
- 
--	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
--		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
--					       !(tmp & AT91_PMC_LOCKU),
--					       10, 5000);
--		if (ret)
--			pr_crit("USB PLL didn't lock when resuming\n");
--	}
-+	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
-+		mask |= AT91_PMC_LOCKU;
-+
-+	while (!pmc_ready(mask))
-+		cpu_relax();
- }
- 
- static struct syscore_ops pmc_syscore_ops = {
+ 		/*
+ 		 * we could call __clk_set_parent, but that would result in a
+ 		 * redundant call to the .set_rate op, if it exists
+ 		 */
+ 		if (parent) {
+-			__clk_set_parent_before(orphan, parent);
+-			__clk_set_parent_after(orphan, parent, NULL);
++			/* update the clk tree topology */
++			flags = clk_enable_lock();
++			clk_reparent(orphan, parent);
++			clk_enable_unlock(flags);
+ 			__clk_recalc_accuracies(orphan);
+ 			__clk_recalc_rates(orphan, 0);
+ 		}
