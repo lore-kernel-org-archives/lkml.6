@@ -1,85 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeCWJHr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:07:47 -0400
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:45820 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751953AbeCWJHd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:07:33 -0400
-X-Google-Smtp-Source: AG47ELtqpl9zKQKagqlM1k1NsvDspGDbAnFzABl4q0Neemzbt9LJ7fS+Qh6XPL1M+2L2nFKmnoBZ166bzs2bh+N9rnY=
+        id S1751962AbeCWJJb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:09:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36588 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751790AbeCWJJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:09:30 -0400
+Date: Fri, 23 Mar 2018 10:09:27 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Quentin Monnet <quentin.monnet@netronome.com>,
+        Jiri Olsa <jolsa@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+Subject: Re: [PATCH 1/2] bpf: Remove struct bpf_verifier_env argument from
+ print_bpf_insn
+Message-ID: <20180323090927.GA4096@krava>
+References: <20180321150212.5586-1-jolsa@kernel.org>
+ <d28f0a7f-3721-88f3-f4e9-97a73a8833e5@netronome.com>
+ <20180321183749.GF2707@krava>
+ <e30c5b79-c2a9-d0ed-e626-bf81a0705805@iogearbox.net>
+ <20180322133222.GB3206@krava>
+ <efa1cd74-12f4-2ac6-cc9a-50669b4b69de@netronome.com>
+ <20180322155723.GD3206@krava>
+ <96093da6-9e0f-5d6b-59a4-91a744ad64cb@iogearbox.net>
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0iZVVkevY2oJnySoa6uQesMXcj_ZshV97utdXsW2w-aAA@mail.gmail.com>
-References: <4137867.C4jYrWdt8n@aspire.rjw.lan> <20180314120450.GT4043@hirez.programming.kicks-ass.net>
- <004c01d3c255$c1f146a0$45d3d3e0$@net> <CAJZ5v0iZVVkevY2oJnySoa6uQesMXcj_ZshV97utdXsW2w-aAA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 23 Mar 2018 10:07:31 +0100
-X-Google-Sender-Auth: SogQBX-U4oo-4wTu1VJSn9KIg4I
-Message-ID: <CAJZ5v0j3yPem=dXGYyFpxT9WfKVYgk17Av__jp-xZxdsKWYLiw@mail.gmail.com>
-Subject: Re: [PATCH v2] cpuidle: poll_state: Add time limit to poll_idle()
-To: Doug Smythies <dsmythies@telus.net>
-Cc: Rik van Riel <riel@surriel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96093da6-9e0f-5d6b-59a4-91a744ad64cb@iogearbox.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 9:57 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
-> On Fri, Mar 23, 2018 at 4:19 AM, Doug Smythies <dsmythies@telus.net> wrote:
->> On 2018.03.22 12:12 Doug Smythies wrote:
->>>On 2018.03.22 09:32 Rik van Riel wrote:
->>>> On Wed, 2018-03-14 at 13:04 +0100, Peter Zijlstra wrote:
->>>>
->>>>> On x86 we don't have to use that time_check_counter thing,
->>>>> sched_clock()
->>>>> is really cheap, not sure if it makes sense on other platforms.
->>>>
->>>> Are you sure? I saw a 5-10% increase in CPU use,
->>>> for a constant query rate to a memcache style
->>>> workload, with v3 of this patch.
->>>
->>> I would very much like to be able to repeat your test results.
->>> However, I am not sure what you mean by "memcache style workload".
->>> Is there a test you can point me to? Say a Phoronix type test, for example.
->>>
->>> All of my tests with the V3 of this patch have been fine.
->>
->> What is the difference between sched_clock() talked about herein,
->> and local_clock() used in the patch?
->
-> It is almost the same (modulo offset) unless sched_clock_stable()
-> returns 'false'.
->
->> I'm not sure how good it is but I made a test. I didn't believe
->> the results, so I did it 3 times.
->>
->> V7.3 is as from the git branch.
->> V7.3p is plus the patch adding the counter loop to poll_state.c
->>
->> The test is a tight loop (about 19600 loops per second) running
->> on all 8 CPUs. I can not seem to get my system to use Idle State
->> 0, so I disabled Idle States 1 and 2 to force use of Idle State 0.
->>
->> V7.3 uses a processor package power of 62.5 Watts
->> V7.3p uses a processor package power of 53.4 Watts, or 14.6% less power.
->>
->> The loop times do not change.
->> The Idle state 0 residency per unit time does not change.
->
-> OK, so this means that the results should improve for Rik with this
-> patch too. :-)
+On Thu, Mar 22, 2018 at 05:07:48PM +0100, Daniel Borkmann wrote:
 
-BTW, can you possibly check how much of a difference it makes to
-reduce POLL_IDLE_COUNT in the patch to, say, 500 or even more?
+SNIP
 
-The lower it is, the less noise it will introduce AFAICS.
+> >>> +	va_end(args);
+> >>> +}
+> >>>  EXPORT_SYMBOL_GPL(bpf_verifier_log_write);
+> >>> +
+> >>> +__printf(2, 3) static void print_ins(void *private_data,
+> >>> +				     const char *fmt, ...)
+> >>
+> >> Unless I am mistaken, you could just call this one "verbose()" and
+> >> simply remove the function alias?
+> > 
+> > right you are ;-) I haven't realized that struct bpf_verifier_env *env
+> > will cleanly cast to void * 
+> > 
+> > new version attached.. I'll make some tests and send full patch
+> 
+> When you do so, please make sure to send a full fresh series with the two
+> patches and also cover letter included, otherwise it's more fragile wrt
+> potentially applying the wrong patch from one of the replies. :-)
+
+will do, thanks
+
+jirka
