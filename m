@@ -1,97 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752271AbeCWRtK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:49:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:36679 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752309AbeCWRq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:46:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,351,1517904000";
-   d="scan'208";a="27488111"
-Subject: [PATCH 06/11] x86/mm: remove extra filtering in pageattr code
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
-        keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
-        namit@vmware.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 23 Mar 2018 10:44:56 -0700
-References: <20180323174447.55F35636@viggo.jf.intel.com>
-In-Reply-To: <20180323174447.55F35636@viggo.jf.intel.com>
-Message-Id: <20180323174456.A2891021@viggo.jf.intel.com>
+        id S1752613AbeCWRtm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:49:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45858 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751691AbeCWRtk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 13:49:40 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: tglx@linutronix.de, mingo@elte.hu
+Cc: konrad.wilk@oracle.com, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH] swiotlb: swiotlb_{alloc,free}_buffer should depend on CONFIG_DMA_DIRECT_OPS
+Date: Fri, 23 Mar 2018 18:49:30 +0100
+Message-Id: <20180323174930.17767-1-hch@lst.de>
+X-Mailer: git-send-email 2.14.2
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Otherwise we might get unused symbol warnings for configs that built
+swiotlb.c only for use by xen-swiotlb.c and that don't otherwise select
+CONFIG_DMA_DIRECT_OPS, which is possible on arm.
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
-
-The pageattr code has a mode where it can set or clear PTE bits in
-existing PTEs, so the page protections of the *new* PTEs come from
-one of two places:
-1. The set/clear masks: cpa->mask_clr / cpa->mask_set
-2. The existing PTE
-
-We filter ->mask_set/clr for supported PTE bits at entry to
-__change_page_attr() so we never need to filter them again.
-
-The only other place permissions can come from is an existing PTE
-and those already presumably have good bits.  We do not need to filter
-them again.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <keescook@google.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: x86@kernel.org
-Cc: Nadav Amit <namit@vmware.com>
-
+Fixes: 16e73adbca76 ("dma/swiotlb: Remove swiotlb_{alloc,free}_coherent()")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
+ lib/swiotlb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- b/arch/x86/mm/pageattr.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff -puN arch/x86/mm/pageattr.c~x86-pageattr-dont-filter-global arch/x86/mm/pageattr.c
---- a/arch/x86/mm/pageattr.c~x86-pageattr-dont-filter-global	2018-03-21 16:31:59.191192315 -0700
-+++ b/arch/x86/mm/pageattr.c	2018-03-21 16:31:59.195192315 -0700
-@@ -598,7 +598,6 @@ try_preserve_large_page(pte_t *kpte, uns
- 	req_prot = pgprot_clear_protnone_bits(req_prot);
-         if (pgprot_val(req_prot) & _PAGE_PRESENT)
- 		pgprot_val(req_prot) |= _PAGE_PSE;
--	req_prot = canon_pgprot(req_prot);
+diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+index 15954b86f09e..47aeb04c1997 100644
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -692,6 +692,7 @@ void swiotlb_tbl_sync_single(struct device *hwdev, phys_addr_t tlb_addr,
+ 	}
+ }
  
- 	/*
- 	 * old_pfn points to the large page base pfn. So we need
-@@ -718,7 +717,7 @@ __split_large_page(struct cpa_data *cpa,
- 	 */
- 	pfn = ref_pfn;
- 	for (i = 0; i < PTRS_PER_PTE; i++, pfn += pfninc)
--		set_pte(&pbase[i], pfn_pte(pfn, canon_pgprot(ref_prot)));
-+		set_pte(&pbase[i], pfn_pte(pfn, ref_prot));
++#ifdef CONFIG_DMA_DIRECT_OPS
+ static inline bool dma_coherent_ok(struct device *dev, dma_addr_t addr,
+ 		size_t size)
+ {
+@@ -763,6 +764,7 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+ 				 DMA_ATTR_SKIP_CPU_SYNC);
+ 	return true;
+ }
++#endif
  
- 	if (virt_addr_valid(address)) {
- 		unsigned long pfn = PFN_DOWN(__pa(address));
-@@ -935,7 +934,6 @@ static void populate_pte(struct cpa_data
- 	pte = pte_offset_kernel(pmd, start);
- 
- 	pgprot = pgprot_clear_protnone_bits(pgprot);
--	pgprot = canon_pgprot(pgprot);
- 
- 	while (num_pages-- && start < end) {
- 		set_pte(pte, pfn_pte(cpa->pfn, pgprot));
-@@ -1234,7 +1232,7 @@ repeat:
- 		 * after all we're only going to change it's attributes
- 		 * not the memory it points to
- 		 */
--		new_pte = pfn_pte(pfn, canon_pgprot(new_prot));
-+		new_pte = pfn_pte(pfn, new_prot);
- 		cpa->pfn = pfn;
- 		/*
- 		 * Do we really change anything ?
-_
+ static void
+ swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
+-- 
+2.14.2
