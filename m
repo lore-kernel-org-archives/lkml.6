@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751964AbeCWOjA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:39:00 -0400
+        id S1751848AbeCWOii (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:38:38 -0400
 Received: from mail-sh2.amlogic.com ([58.32.228.45]:11642 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751854AbeCWOil (ORCPT
+        with ESMTP id S1751388AbeCWOig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:38:41 -0400
+        Fri, 23 Mar 2018 10:38:36 -0400
 From: Yixun Lan <yixun.lan@amlogic.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
@@ -19,12 +19,10 @@ CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
         <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH v2 4/7] dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
-Date: Fri, 23 Mar 2018 22:38:13 +0800
-Message-ID: <20180323143816.200573-5-yixun.lan@amlogic.com>
+Subject: [PATCH v2 0/7] clk: meson-axg: Add AO Cloclk and Reset driver
+Date: Fri, 23 Mar 2018 22:38:09 +0800
+Message-ID: <20180323143816.200573-1-yixun.lan@amlogic.com>
 X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180323143816.200573-1-yixun.lan@amlogic.com>
-References: <20180323143816.200573-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.18.20.235]
@@ -32,74 +30,52 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add dt-bindings headers for the Meson-AXG's AO clock and
-reset controller.
+  This patch try to add AO clock and Reset driver for Amlogic's
+Meson-AXG SoC.
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
- include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+ patch 1: it's a generic independent fix for the previous clock driver
+ patch 2: factor the common code into a dedicated files
+ patch 3-5: add the driver for AXG SoC
+ patch 6-7: add the DTS part
+
+changes since v1 at [0]: 
+ - rebase to clk-meson's branch 'next/drivers' [1]
+ - fix license, update to BSD-3-Clause
+ - drop un-used include header file
+ - 
+                                                                                                                                            
+[0] https://lkml.kernel.org/r/<20180209070026.193879-1-yixun.lan@amlogic.com>
+
+
+Qiufang Dai (2):
+  clk: meson-axg: Add AO Clock and Reset controller driver
+  arm64: dts: meson-axg: add AO clock driver DT info
+
+Yixun Lan (5):
+  clk: meson: drop meson_aoclk_gate_regmap_ops
+  clk: meson: aoclk: refactor common code into dedicated file
+  dt-bindings: clock: axg-aoclkc: New binding for Meson-AXG SoC
+  dt-bindings: clock: reset: Add AXG AO Clock and Reset Bindings
+  ARM64: dts: meson-axg: add an 32K alt aoclk
+
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt         |   1 +
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi         |  19 +++
+ drivers/clk/meson/Makefile                         |   4 +-
+ drivers/clk/meson/axg-aoclk.c                      | 162 +++++++++++++++++++++
+ drivers/clk/meson/axg-aoclk.h                      |  31 ++++
+ drivers/clk/meson/gxbb-aoclk.c                     |  81 ++++-------
+ drivers/clk/meson/gxbb-aoclk.h                     |   9 +-
+ drivers/clk/meson/meson-aoclk.c                    |  76 ++++++++++
+ drivers/clk/meson/meson-aoclk.h                    |  30 ++++
+ include/dt-bindings/clock/axg-aoclkc.h             |  26 ++++
+ include/dt-bindings/reset/axg-aoclkc.h             |  20 +++
+ 11 files changed, 399 insertions(+), 60 deletions(-)
+ create mode 100644 drivers/clk/meson/axg-aoclk.c
+ create mode 100644 drivers/clk/meson/axg-aoclk.h
+ create mode 100644 drivers/clk/meson/meson-aoclk.c
+ create mode 100644 drivers/clk/meson/meson-aoclk.h
  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
 
-diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
-new file mode 100644
-index 000000000000..61955016a55b
---- /dev/null
-+++ b/include/dt-bindings/clock/axg-aoclkc.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_CLOCK_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define CLKID_AO_REMOTE		0
-+#define CLKID_AO_I2C_MASTER	1
-+#define CLKID_AO_I2C_SLAVE	2
-+#define CLKID_AO_UART1		3
-+#define CLKID_AO_UART2		4
-+#define CLKID_AO_IR_BLASTER	5
-+#define CLKID_AO_SAR_ADC	6
-+#define CLKID_AO_CLK81		7
-+#define CLKID_AO_SAR_ADC_SEL	8
-+#define CLKID_AO_SAR_ADC_DIV	9
-+#define CLKID_AO_SAR_ADC_CLK	10
-+#define CLKID_AO_ALT_XTAL	11
-+
-+#endif
-diff --git a/include/dt-bindings/reset/axg-aoclkc.h b/include/dt-bindings/reset/axg-aoclkc.h
-new file mode 100644
-index 000000000000..d342c0b6b2a7
---- /dev/null
-+++ b/include/dt-bindings/reset/axg-aoclkc.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
-+/*
-+ * Copyright (c) 2016 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Qiufang Dai <qiufang.dai@amlogic.com>
-+ */
-+
-+#ifndef DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+#define DT_BINDINGS_RESET_AMLOGIC_MESON_AXG_AOCLK
-+
-+#define RESET_AO_REMOTE		0
-+#define RESET_AO_I2C_MASTER	1
-+#define RESET_AO_I2C_SLAVE	2
-+#define RESET_AO_UART1		3
-+#define RESET_AO_UART2		4
-+#define RESET_AO_IR_BLASTER	5
-+
-+#endif
 -- 
 2.15.1
