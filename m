@@ -1,65 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751657AbeCWHuB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 03:50:01 -0400
-Received: from smtprelay0191.hostedemail.com ([216.40.44.191]:42232 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750789AbeCWHuA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 03:50:00 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2553:2559:2562:2693:2737:2828:3138:3139:3140:3141:3142:3353:3622:3698:3865:3866:3867:3868:3870:3871:3874:4250:4321:5007:6119:7808:7901:7903:7974:8603:10004:10400:10848:11232:11658:11914:12109:12740:12760:12895:13069:13149:13161:13229:13230:13255:13311:13357:13439:14096:14097:14181:14659:14721:14777:21080:21433:21627:21740:30022:30054:30060:30070:30083:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: rule08_3a01d3567765c
-X-Filterd-Recvd-Size: 2456
-Message-ID: <1521791397.24655.7.camel@perches.com>
-Subject: Re: git send-email and sending the cover-letter to all cc addresses
- found in a patch series
-From: Joe Perches <joe@perches.com>
-To: Dominik Brodowski <linux@dominikbrodowski.net>, gitster@pobox.com
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        git@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 23 Mar 2018 00:49:57 -0700
-In-Reply-To: <20180323073858.GA12077@light.dominikbrodowski.net>
-References: <20180322090059.19361-1-linux@dominikbrodowski.net>
-         <20180322090059.19361-24-linux@dominikbrodowski.net>
-         <20180322172959.GX4043@hirez.programming.kicks-ass.net>
-         <CA+55aFwM8mMyZZ9wH2ExAkTKg9Mwie1hOtXz87ivi0nhsZ49Ug@mail.gmail.com>
-         <20180323073858.GA12077@light.dominikbrodowski.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751718AbeCWHu7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 03:50:59 -0400
+Received: from sauhun.de ([88.99.104.3]:59950 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751294AbeCWHu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 03:50:57 -0400
+Date: Fri, 23 Mar 2018 08:50:54 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: Rich Felker <dalias@libc.org>,
+        "ysato@users.sourceforge.jp" <ysato@users.sourceforge.jp>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/4] i2c: pca-platform: additional improvements
+Message-ID: <20180323075054.jbmoijyikoy5rxgt@ninjato>
+References: <20170705101358.17458-1-chris.packham@alliedtelesis.co.nz>
+ <20171029172918.2xtz2srh2meq45io@ninjato>
+ <20171207104205.h5ejivdmtharmdln@ninjato>
+ <8564c3ea3b3c4b08b940b02acf501722@svr-chch-ex1.atlnz.lc>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dy3hz6x2vm2qzpbc"
+Content-Disposition: inline
+In-Reply-To: <8564c3ea3b3c4b08b940b02acf501722@svr-chch-ex1.atlnz.lc>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-23 at 08:38 +0100, Dominik Brodowski wrote:
-> On Thu, Mar 22, 2018 at 10:44:54AM -0700, Linus Torvalds wrote:
-> > On Thu, Mar 22, 2018 at 10:29 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > > 
-> > > But why !? Either Cc me on more of the series such that the whole makes
-> > > sense, or better yet, write a proper Changelog.
-> > 
-> > This is a common issue. We should encourage people to always send at
-> > least the cover-page to everybody who gets cc'd, even if they don't
-> > get the whole series.
-> 
-> Will try to do that in future. Does git send-email have such an option? Or
-> do I have to specify all cc addresses in the cover letter manually? I found
-> some reference to an unresolved discussion on git@ of that topic in 2016, so
-> I might not be the only one who could make use of that feature...
 
-The main problem might be the quantity of recipients.
+--dy3hz6x2vm2qzpbc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Many spam filters look at how many recipients on an email
-to eliminate likely spam.
+On Fri, Mar 23, 2018 at 03:39:47AM +0000, Chris Packham wrote:
+> On 07/12/17 23:42, Wolfram Sang wrote:
+> > On Sun, Oct 29, 2017 at 06:29:18PM +0100, Wolfram Sang wrote:
+> >> On Wed, Jul 05, 2017 at 10:13:54PM +1200, Chris Packham wrote:
+> >>> This series addresses some of the points identified by Andy. The seri=
+es is
+> >>> based on top of i2c/for-next. 2 of the patches from v1 have already b=
+een
+> >>> applied so I've dropped them from this version.
+> >>>
+> >>> I have compile tested patch 1/1 but I don't have access to sh hardware
+> >>> to actually test the changes on.
+> >>>
+> >>> Chris Packham (4):
+> >>>    sh: sh7785lcr: add GPIO lookup table for i2c controller reset
+> >>>    i2c: pca-platform: unconditionally use devm_gpiod_get_optional
+> >>>    i2c: pca-platform: use device_property_read_u32
+> >>>    i2c: pca-platform: drop gpio from platform data
+> >>>
+> >>>   arch/blackfin/mach-bf561/boards/acvilon.c |  1 -
+> >>>   arch/sh/boards/board-sh7785lcr.c          | 11 +++++++++-
+> >>>   drivers/i2c/busses/i2c-pca-platform.c     | 34 +++++++++-----------=
+-----------
+> >>>   include/linux/i2c-pca-platform.h          |  3 ---
+> >>>   4 files changed, 20 insertions(+), 29 deletions(-)
+> >>
+> >> Series looks good to me, too. I'd need ACKs from the SH maintainers,
+> >> though. Technically, from Blackfin maintainers as well. But I haven't
+> >> heard from them in months, so I could go without that.
+> >=20
+> > Adding Rich Felker to CC...
+> >=20
+>=20
+> Ping. Was there any movement on this series? I think this may have been=
+=20
+> caught up between the holiday period and various merge windows.
+>=20
+> Just wanted to check if there was anything I need to be doing to get=20
+> this through.
 
-kernel.org mailing lists have a maximum email header size.
-Too many recipients aren't delivered to the lists.
+No, there wasn't. I was waiting for ACKs from the maintainers, but
+checking the arch/sh/-git-history, the last action I see from them is
+~18 months ago. So, I'll pick up your patches without those acks...
 
-Using BCC could work, but replies then don't go to all
-of the recipients.
 
-Generally, I send only to listed the 0/n patch only
-to lists and individual patches to maintainers.
+--dy3hz6x2vm2qzpbc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq0sdoACgkQFA3kzBSg
+KbZSKRAAmNS+tvB4q/eISEo9CnYscjptJWUdYVzx6yl3DCAIpvxNOTJS1DAZl/XR
+Axbj4ixJZBVcprS9ptgSYQWTeVCjpuq1xlN+pV6P1kBnzDIN4qi3yEnyTy3NVecE
+UguPozfWcz25Vzqvat7NJGJ0CYAY7U3qM1Rpy4OFch1aCEEtYdvrcfLsf1odN3HT
+jFcN1L8kHBlm6yakRe/kqZtPhE28CTrCL1cOgoMvTpEh61oRXW4vqQNh1Te5uaUW
+3RpS8rjjfufhRJ+Gho8fpfC0q3dbfWExKZZeydKQOV+zPDnouWHlXZLd5qQpVhV9
+JcsifL69+Uelu+CFxeZ399AsseIViEDgaDojT2DYI8HN+w0eMAQoHwjVzS6iQTuY
+6jz+kEEymqfJKifC/GMYdwIfomU5Jlqjhi/pdPUTSB6IU+ylxXFuQ8+SmMQ/O2ji
+msSdh8iXXMnL8GpAriVamQ7IvsPbEbf2wZx4b1hdhfVud+Qx7AiQ9q1ED1FA8pJf
+crGdMgwWDkg6Hx3xh8QbGHJnjVsfTRsjEVi6agesaIhBsGPbNN/XFj/Qrm6OwLwq
+p56/SjCuUL49NsZwEPrY9sw1PFzp7H8od/CsIdyknRsGX6Noh0kK61c9K93AroPm
+E4YoKoFL5xcW8+2ZYKtaXO5nBdsoPd8Meh9VXbDoUtAzZdOGUU0=
+=IFQ9
+-----END PGP SIGNATURE-----
+
+--dy3hz6x2vm2qzpbc--
