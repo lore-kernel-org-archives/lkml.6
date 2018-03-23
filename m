@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804360-2-3940260676781080874
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804350-2-18062652166093138691
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804359; b=mI1hRb832k53C1yzt2fnTG8QV6KXDJK9KYYYHqNi3k5fhXm
-    8WGfAM7fd/KpKPatraBdk8t9pBJhu4dxOUj58MzzKH84gPZP2N4OXvxqfbUCVeep
-    MVhtuMKx4dsQxeBZGUgiapA/6lx8hIW092Rnkj7+wUeAqSEg5rI4b0nhp4iHU1AN
-    QQf/9kwXqwDvKOSbuZmujdw7A5VsF532GIn7/BwSgOei1nAFR0Ogn4Lpl2OLE9Sc
-    f5KICmY0FVB17nWeBTnfo3gd1FuvViGufI35iih1hFBx9RbkwzuyNOIMc7TGkaoc
-    Yvi8cHHNxQw8YKgA7NzaWOuS220G4lKuJfUGL2w==
+    t=1521804349; b=clzGxM0V1F2PSlE265+bz3R1qFCY1fk7uV7LGrJdx5AGYFM
+    iXkHXIwQ8l8PuPhyv4SqiZtWKKIdrj+3+k3ASj5XpI7epqBLcSCDiOSrPcofuElA
+    wloJH0/so0SyUddtOSCg8TogMOo8dfGiyF5uqkVWFD+CdVzbeCGH22vyhL6XxVEM
+    2auJKsgH129X4wttvhXvhF/IjUMDsnMCG3VSzt30hdFzX2xdxrlRnTB23bT6PpT0
+    d4Fo9YO4/l4COXMa1ntOohrQJuJPONvxT5F2s5paqT/OgOQ6/yiYAMibggq6NKuM
+    pmDqWYlEys1U61VA9ovBKkuahppvZPFmEzxw/dA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804359; bh=0Mmysk9+Dv9VVcUm1QLxEt8EY/
-    UfwJ+q5G1SOgx0km0=; b=Z+HsbAf2KJKwtQLeTfA7ub29OeD1XAoxdiJzWZooT8
-    Pa5RsPg4YeeNYWWXL+ls6XW8IcUXTWw4fx5Bx8v21fNve7BYMswNDIGB/suIe1zo
-    dEN8GQxjqF20WW124i2BVku+h7XvgD06su2QRCJtPnJCIghNDleetdGmQXPKu1pe
-    ojEDwu5bfa2RmQI+B0luYs/XboOglzV8RlBfCixIzt324f3QZZiDc2ToLOeW7MKB
-    6xlLIfdmLZ53k5geBLsv8QwivRvoIWosIYBUw3NhRgTdQwgNlTs4R4iC4T0vS3rB
-    JnNG5voRp3Xi4aEYOcaRwOgq0K0DiAfHDqYCoXXRZpIQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804349; bh=HdjcbmdPBkzGgsvP1X5qTxqU3V
+    SGG54cenSuugeNHhE=; b=Wv49CKHjUshVnokXjQp5ruzEk/vXXJn5Gw9vxxVfF/
+    Cm1lyyHhuoNKGVQxdo89Y2RMCYjqOE5vndIs+S6oEJiL91hzaoii7X+W0KX9qn9H
+    cEuBQ3D5diLrDX0LC/P+2Jj6Pkl2iyqZfkidtarJVOZabCaornVcj4wwpZ8Wf0Ke
+    sZZLXtqCQvNFUqDW71k1D3zcElMNiS8nGv9AeIFzKhEIeDjzjEXFo7RVJ3RzpAT/
+    H7n+/xj1J1jvkWmlMhRRcbSE9ZhZc7jaLHLyI1s6mcxm0GkpUZdHLLq9EH4G5PFS
+    yfre5ZoyZGimw8BN/S9BDFFI+M8+0GGPV+sZA1yOZXrg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755284AbeCWKHW (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:07:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41198 "EHLO
+        id S1752675AbeCWLZc (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:25:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41226 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755013AbeCWKHV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:21 -0400
+        with ESMTP id S1755303AbeCWKH0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yang Song <yangsong@vmware.com>,
-        Jarno Rajahalme <jarno@ovn.org>, Joe Stringer <joe@ovn.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 059/177] openvswitch: Delete conntrack entry clashing with an expectation.
-Date: Fri, 23 Mar 2018 10:53:07 +0100
-Message-Id: <20180323094207.947541669@linuxfoundation.org>
+Subject: [PATCH 4.9 061/177] mmc: host: omap_hsmmc: checking for NULL instead of IS_ERR()
+Date: Fri, 23 Mar 2018 10:53:09 +0100
+Message-Id: <20180323094208.028293435@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,83 +83,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jarno Rajahalme <jarno@ovn.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit cf5d70918877c6a6655dc1e92e2ebb661ce904fd ]
+[ Upstream commit ec5ab8933772c87f24ad62a4a602fe8949f423c2 ]
 
-Conntrack helpers do not check for a potentially clashing conntrack
-entry when creating a new expectation.  Also, nf_conntrack_in() will
-check expectations (via init_conntrack()) only if a conntrack entry
-can not be found.  The expectation for a packet which also matches an
-existing conntrack entry will not be removed by conntrack, and is
-currently handled inconsistently by OVS, as OVS expects the
-expectation to be removed when the connection tracking entry matching
-that expectation is confirmed.
+devm_pinctrl_get() returns error pointers, it never returns NULL.
 
-It should be noted that normally an IP stack would not allow reuse of
-a 5-tuple of an old (possibly lingering) connection for a new data
-connection, so this is somewhat unlikely corner case.  However, it is
-possible that a misbehaving source could cause conntrack entries be
-created that could then interfere with new related connections.
-
-Fix this in the OVS module by deleting the clashing conntrack entry
-after an expectation has been matched.  This causes the following
-nf_conntrack_in() call also find the expectation and remove it when
-creating the new conntrack entry, as well as the forthcoming reply
-direction packets to match the new related connection instead of the
-old clashing conntrack entry.
-
-Fixes: 7f8a436eaa2c ("openvswitch: Add conntrack action")
-Reported-by: Yang Song <yangsong@vmware.com>
-Signed-off-by: Jarno Rajahalme <jarno@ovn.org>
-Acked-by: Joe Stringer <joe@ovn.org>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 455e5cd6f736 ("mmc: omap_hsmmc: Pin remux workaround to support SDIO interrupt on AM335x")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/conntrack.c |   30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+ drivers/mmc/host/omap_hsmmc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/openvswitch/conntrack.c
-+++ b/net/openvswitch/conntrack.c
-@@ -396,10 +396,38 @@ ovs_ct_expect_find(struct net *net, cons
- 		   u16 proto, const struct sk_buff *skb)
- {
- 	struct nf_conntrack_tuple tuple;
-+	struct nf_conntrack_expect *exp;
- 
- 	if (!nf_ct_get_tuplepr(skb, skb_network_offset(skb), proto, net, &tuple))
- 		return NULL;
--	return __nf_ct_expect_find(net, zone, &tuple);
-+
-+	exp = __nf_ct_expect_find(net, zone, &tuple);
-+	if (exp) {
-+		struct nf_conntrack_tuple_hash *h;
-+
-+		/* Delete existing conntrack entry, if it clashes with the
-+		 * expectation.  This can happen since conntrack ALGs do not
-+		 * check for clashes between (new) expectations and existing
-+		 * conntrack entries.  nf_conntrack_in() will check the
-+		 * expectations only if a conntrack entry can not be found,
-+		 * which can lead to OVS finding the expectation (here) in the
-+		 * init direction, but which will not be removed by the
-+		 * nf_conntrack_in() call, if a matching conntrack entry is
-+		 * found instead.  In this case all init direction packets
-+		 * would be reported as new related packets, while reply
-+		 * direction packets would be reported as un-related
-+		 * established packets.
-+		 */
-+		h = nf_conntrack_find_get(net, zone, &tuple);
-+		if (h) {
-+			struct nf_conn *ct = nf_ct_tuplehash_to_ctrack(h);
-+
-+			nf_ct_delete(ct, 0, 0);
-+			nf_conntrack_put(&ct->ct_general);
-+		}
-+	}
-+
-+	return exp;
- }
- 
- /* This replicates logic from nf_conntrack_core.c that is not exported. */
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -1762,8 +1762,8 @@ static int omap_hsmmc_configure_wake_irq
+ 	 */
+ 	if (host->pdata->controller_flags & OMAP_HSMMC_SWAKEUP_MISSING) {
+ 		struct pinctrl *p = devm_pinctrl_get(host->dev);
+-		if (!p) {
+-			ret = -ENODEV;
++		if (IS_ERR(p)) {
++			ret = PTR_ERR(p);
+ 			goto err_free_irq;
+ 		}
+ 		if (IS_ERR(pinctrl_lookup_state(p, PINCTRL_STATE_DEFAULT))) {
