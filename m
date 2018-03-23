@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182164-1521807135-2-16463366919818030753
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521807127-2-2081515065390827853
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807134; b=sZvywr4zuBpVOB7+cbC1puDrgElRXXzuzj6QwIPuEdvr68e
-    eoOSKBK8NDZk8NMp3X3NBssHUYFyhIAFlzsvVBcVtrRau29YLA6Qe+fTaxLWScZ5
-    Cip5VdSwKtN0EUIh44ySaKti+bb6lZ+dlCmGFJpmL8nZ00vvbfHrEa2tZjaOhbFS
-    aZ5cwP0p9LN0njZ8AqAIXm4lVfB144cQF9A2cAKM349pzKIwn7UjB0h5D4OupR2I
-    jHaLmyT+Fif1oKxg9yjAnn5QuGnfq5mF87x4cZB6s8Q8upmNfBMJZZSmnnFZewKy
-    HBfMGOZh76DjO6sED9H3Em1mRu2JfjJ/6lGLqYQ==
+    t=1521807126; b=ijdD9w4dSlEdZyazG8OaQlnWHBSJET2G7Hj+dkvQ+HkoUTv
+    Snh2aUiuGx+024i+ZqhV/RkMs4umsYhlqn5QX1ZdLoejHCMzEd4fbpta+vGzpnYA
+    6lvbx/Y9/+qAGpAPlNbK3NcP2V5WDnmYBNsNlRtxXA+Nia8BcefiE+CpY9fm/eZq
+    KqSihq9fG034TiYnyf6SdudV/4slqThKUjI0FUNRPgDO5edJQS05aRE9TOAE+qiM
+    SF/WXMeOQCoc5HLeF9jWBdQ+y//no5PTD1MCod3fc4Q3N8Zzf61I7qHlRnWr/q04
+    okRxNMpk03W3jCs030K+j1dy6mTvPze9HXdhoew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807134; bh=c86C+Ayu1dFU+s7HcgMYGyY+17
-    XQap+MDrSoovZggas=; b=I8vQpIq8jlkv1KeKRf1pFP2SneABfKak32C3Ef4o9o
-    EErxwym2ZRDzSRIbxDWpyatuUseVtzt2yK2dPOdPhoa4HSBdcS28t5gPGXUwpnIn
-    98BsicrJv1tNvPmaBDNg6Y1Yr6+bi4GBoFDkoeVsMtXPlRhC/LQM/47PW/n8+tvG
-    ouhdLxkLViwBLXXLawkFiAXcT3gYPeCqC5I2YsN6Kf9RoroP9WL1wefZgPimIDTu
-    e52WhjKpbl+EutVnJCsHRpDHFwHpDKxnoPskxc7OL+aLD2DyeGiXvB/I37TxqneT
-    hYUtbT5pS1qTdq7ffH/5RXGAnkxVTe8zVEmPvqbYCH4A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521807126; bh=+lnFpsG09Yb+gKL7Ub970N/SVB
+    mR3lS42oO6b7OmNZk=; b=nQ/UyewJc/0LvaWmMXLhCp47nVbR1EYlxbQxQ3I7OI
+    iXsQmEYV12NVFn2JRRK0LLV7N7L7fs4lSHC98zwhBF85gW0SHnZD5CeuXEiL4FIt
+    6hDfFB65sR6DxGfVwgk6bylZ/mPrdEb/2BX4x6PIilZKl2Unhy+MbPqv411wL+1K
+    0n4ytd8unu0G30tKkKRNUeTF3i9f0U5m74rZtOUNhiYP5aOMs1vnfvzxW7gC34v9
+    +8oVxHBBcOSqTAisQOQ2s2G0P/TZTIGu41CWob2/IjwR/JstvOTXmSQxd4i0cCMH
+    OCOmkWyszPKWcn23vkc0CaBWFkU1DsmPtR970tURaQlw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752897AbeCWJ5i (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:57:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35144 "EHLO
+        id S1753163AbeCWMLw (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 08:11:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35228 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752029AbeCWJ5g (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:36 -0400
+        with ESMTP id S1752877AbeCWJ5j (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Potnuri Bharat Teja <bharat@chelsio.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Yonghong Song <yhs@fb.com>,
+        Roman Gushchin <guro@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 42/84] iser-target: avoid reinitializing rdma contexts for isert commands
-Date: Fri, 23 Mar 2018 10:53:56 +0100
-Message-Id: <20180323095418.316618309@linuxfoundation.org>
+Subject: [PATCH 4.15 43/84] bpf/cgroup: fix a verification error for a CGROUP_DEVICE type prog
+Date: Fri, 23 Mar 2018 10:53:57 +0100
+Message-Id: <20180323095418.440265398@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -83,83 +83,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bharat Potnuri <bharat@chelsio.com>
+From: Yonghong Song <yhs@fb.com>
 
 
-[ Upstream commit 66f53e6f5400578bae58db0c06d85a8820831f40 ]
+[ Upstream commit 06ef0ccb5a36e1feba9b413ff59a04ecc4407c1c ]
 
-isert commands that failed during isert_rdma_rw_ctx_post() are queued to
-Queue-Full(QF) queue and are scheduled to be reposted during queue-full
-queue processing. During this reposting, the rdma contexts are initialised
-again in isert_rdma_rw_ctx_post(), which is leaking significant memory.
+The tools/testing/selftests/bpf test program
+test_dev_cgroup fails with the following error
+when compiled with llvm 6.0. (I did not try
+with earlier versions.)
 
-unreferenced object 0xffff8830201d9640 (size 64):
-  comm "kworker/0:2", pid 195, jiffies 4295374851 (age 4528.436s)
-  hex dump (first 32 bytes):
-    00 60 8b cb 2e 00 00 00 00 10 00 00 00 00 00 00  .`..............
-    00 90 e3 cb 2e 00 00 00 00 10 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff8170711e>] kmemleak_alloc+0x4e/0xb0
-    [<ffffffff811f8ba5>] __kmalloc+0x125/0x2b0
-    [<ffffffffa046b24f>] rdma_rw_ctx_init+0x15f/0x6f0 [ib_core]
-    [<ffffffffa07ab644>] isert_rdma_rw_ctx_post+0xc4/0x3c0 [ib_isert]
-    [<ffffffffa07ad972>] isert_put_datain+0x112/0x1c0 [ib_isert]
-    [<ffffffffa07dddce>] lio_queue_data_in+0x2e/0x30 [iscsi_target_mod]
-    [<ffffffffa076c322>] target_qf_do_work+0x2b2/0x4b0 [target_core_mod]
-    [<ffffffff81080c3b>] process_one_work+0x1db/0x5d0
-    [<ffffffff8108107d>] worker_thread+0x4d/0x3e0
-    [<ffffffff81088667>] kthread+0x117/0x150
-    [<ffffffff81713fa7>] ret_from_fork+0x27/0x40
-    [<ffffffffffffffff>] 0xffffffffffffffff
+  libbpf: load bpf program failed: Permission denied
+  libbpf: -- BEGIN DUMP LOG ---
+  libbpf:
+  0: (61) r2 = *(u32 *)(r1 +4)
+  1: (b7) r0 = 0
+  2: (55) if r2 != 0x1 goto pc+8
+   R0=inv0 R1=ctx(id=0,off=0,imm=0) R2=inv1 R10=fp0
+  3: (69) r2 = *(u16 *)(r1 +0)
+  invalid bpf_context access off=0 size=2
+  ...
 
-Here is patch to use the older rdma contexts while reposting
-the isert commands intead of reinitialising them.
+The culprit is the following statement in dev_cgroup.c:
+  short type = ctx->access_type & 0xFFFF;
+This code is typical as the ctx->access_type is assigned
+as below in kernel/bpf/cgroup.c:
+  struct bpf_cgroup_dev_ctx ctx = {
+        .access_type = (access << 16) | dev_type,
+        .major = major,
+        .minor = minor,
+  };
 
-Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+The compiler converts it to u16 access while
+the verifier cgroup_dev_is_valid_access rejects
+any non u32 access.
+
+This patch permits the field access_type to be accessible
+with type u16 and u8 as well.
+
+Signed-off-by: Yonghong Song <yhs@fb.com>
+Tested-by: Roman Gushchin <guro@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/isert/ib_isert.c |    7 +++++++
- drivers/infiniband/ulp/isert/ib_isert.h |    1 +
- 2 files changed, 8 insertions(+)
+ include/uapi/linux/bpf.h |    3 ++-
+ kernel/bpf/cgroup.c      |   15 +++++++++++++--
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/ulp/isert/ib_isert.c
-+++ b/drivers/infiniband/ulp/isert/ib_isert.c
-@@ -2124,6 +2124,9 @@ isert_rdma_rw_ctx_post(struct isert_cmd
- 	u32 rkey, offset;
- 	int ret;
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -995,7 +995,8 @@ struct bpf_perf_event_value {
+ #define BPF_DEVCG_DEV_CHAR	(1ULL << 1)
  
-+	if (cmd->ctx_init_done)
-+		goto rdma_ctx_post;
-+
- 	if (dir == DMA_FROM_DEVICE) {
- 		addr = cmd->write_va;
- 		rkey = cmd->write_stag;
-@@ -2151,11 +2154,15 @@ isert_rdma_rw_ctx_post(struct isert_cmd
- 				se_cmd->t_data_sg, se_cmd->t_data_nents,
- 				offset, addr, rkey, dir);
- 	}
-+
- 	if (ret < 0) {
- 		isert_err("Cmd: %p failed to prepare RDMA res\n", cmd);
- 		return ret;
- 	}
- 
-+	cmd->ctx_init_done = true;
-+
-+rdma_ctx_post:
- 	ret = rdma_rw_ctx_post(&cmd->rw, conn->qp, port_num, cqe, chain_wr);
- 	if (ret < 0)
- 		isert_err("Cmd: %p failed to post RDMA res\n", cmd);
---- a/drivers/infiniband/ulp/isert/ib_isert.h
-+++ b/drivers/infiniband/ulp/isert/ib_isert.h
-@@ -126,6 +126,7 @@ struct isert_cmd {
- 	struct rdma_rw_ctx	rw;
- 	struct work_struct	comp_work;
- 	struct scatterlist	sg;
-+	bool			ctx_init_done;
+ struct bpf_cgroup_dev_ctx {
+-	__u32 access_type; /* (access << 16) | type */
++	/* access_type encoded as (BPF_DEVCG_ACC_* << 16) | BPF_DEVCG_DEV_* */
++	__u32 access_type;
+ 	__u32 major;
+ 	__u32 minor;
  };
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -568,6 +568,8 @@ static bool cgroup_dev_is_valid_access(i
+ 				       enum bpf_access_type type,
+ 				       struct bpf_insn_access_aux *info)
+ {
++	const int size_default = sizeof(__u32);
++
+ 	if (type == BPF_WRITE)
+ 		return false;
  
- static inline struct isert_cmd *tx_desc_to_cmd(struct iser_tx_desc *desc)
+@@ -576,8 +578,17 @@ static bool cgroup_dev_is_valid_access(i
+ 	/* The verifier guarantees that size > 0. */
+ 	if (off % size != 0)
+ 		return false;
+-	if (size != sizeof(__u32))
+-		return false;
++
++	switch (off) {
++	case bpf_ctx_range(struct bpf_cgroup_dev_ctx, access_type):
++		bpf_ctx_record_field_size(info, size_default);
++		if (!bpf_ctx_narrow_access_ok(off, size, size_default))
++			return false;
++		break;
++	default:
++		if (size != size_default)
++			return false;
++	}
+ 
+ 	return true;
+ }
