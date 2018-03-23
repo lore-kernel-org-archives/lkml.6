@@ -1,156 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752707AbeCWNEs convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 09:04:48 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:40358 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752628AbeCWNEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:04:46 -0400
-Date: Fri, 23 Mar 2018 13:04:27 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: =?ISO-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>
-CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
-        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/11] Move ad7746 out of staging
-Message-ID: <20180323140427.000018f3@huawei.com>
-In-Reply-To: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
-References: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; i686-w64-mingw32)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.202.226.45]
-X-CFilter-Loop: Reflected
+        id S1752876AbeCWNFE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 09:05:04 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:43116 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752735AbeCWNFB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 09:05:01 -0400
+X-Google-Smtp-Source: AG47ELsZ5TO+QuN6XSn5E3GoR1jhFXAQhOW0ZnfcH7QJ9fElJ/J7s2rBhC15eeaEam7nfKNDDivcCg==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 1/8] reset: modify the way reset lookup works for board files
+Date: Fri, 23 Mar 2018 14:04:48 +0100
+Message-Id: <20180323130455.11470-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018 11:28:48 -0300
-Hernán Gonzalez <hernan@vanguardiasur.com.ar> wrote:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> This patch series aims to move the cdc ad7746 driver out of staging. I have some
-> design questions though so I would introduce them here, along with a short
-> description of each patch.
-> 
-> *PATCH 0001 - Adjust arguments to match open parenthesis.
-> There were a couple CHECKS that still remained, so I got rid of them.
-Don't bother describing straight forward patches in the cover letter.
-Adds noise to the interesting message.
-> 
-> *PATCH 0002 - Fix multiple line dereference
-> In this case, I opted for avoiding the multiple line derefence and having a 80+
-> characters line instead as I consider that it improves readability. I may be
-> wrong though, so this patch could just be discarded.
-> 
-> *PATCH 0003 - Reorder includes alphabetically
-> 
-> *PATCH 0004 - Reorder variable declarations in an inverser-pyramid way
-> 
-> *PATCH 0005 - Remove unused defines
-> There were a few too many #defines that were not used at all, so I just removed
-> them. I guess if someone plans on extending the drivers functionality they can
-> be added again, but they were just wasting space as they were. Again, I could be
-> wrong with this decision so this patch could just be discarded.
-> 
-> *PATCH 0006 - Add dt-bindings
-> This patch adds dt bindings by populating the old pdata struct. It supports both
-> platform_data and dt-bindings but uses only one depending on CONFIG_OF. I chose
-> this way to avoid modifying too much the code, and introduce no errors (or as
-> few as I could), keeping the same functionality and maintaining support of the
-> platform_data.
-> 
-> *PATCH 0007 - Add remove()
-> I added a remove function so I could test that the driver probed properly when
-> compiled as a module with the new dt-bindings.
-> 
-> *PATCH 0008 - Add comments to clarify some of the calculations
-> I had to go through most of the datasheet to understand some of the math in the
-> code, so I added comments where I saw fit. (Comments on the comments are
-> welcome).
-> 
-> *PATCH 0009 - Add devicetree bindings documentation
-> Add documentation on the devicetree bindings, explaining the properties of it
-> and describing a short example.
-> 
-> *PATCH 0010 - Rename sysfs attrs to comply with the ABI
-> Comments are welcome on this one.
-> I shortened the names of the sysfs attrs to comply with the ABI:
-> <type>[Y]_calibbias_calibration -> <type>[Y]_calibbias
-> <type>[Y]_calibscale_calibration -> <type>[Y]_calibscale
-Hmm. so this one is interesting (note I didn't read the cover letter
-and most people don't so better to have put this discussion in that patches
-own description.
+Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
+introduced reset control lookup mechanism for boards that still use
+board files.
 
-> 
-> The device supports 2 ways of calibrating the gain (from the datasheet):
-> 'The gain can be changed by executing a capacitance gain
-> calibration mode, for which an external full-scale capacitance
-> needs to be connected to the capacitance input, or by writing a
-> user value to the capacitive gain register.'
-So the second case is valid for the calibscale ABI, the second not.
-> 
-> The same for the offset calibration:
-> 'One method of adjusting the offset is to connect a zero-scale
-> capacitance to the input and execute the capacitance offset
-> calibration mode. The calibration sets the midpoint of the
-> ±4.096 pF range (that is, Output Code 0x800000) to that
-> zero-scale input.
-> Another method would be to calculate and write the offset cali-
-> bration register value, the LSB is value 31.25 aF (4.096 pF/2^17 ).'
-> 
-> The driver only supports the first way in both cases, as it only writes the
-> register that starts the calibration mode and doesn't allow the user to write
-> anything on other registers.
-> 
-> What I understand from the ABI is not so different when explaining calibbias and
-> calibscale:
-> 'Description:
-> Hardware applied calibration {offset,scale factor} (assumed to fix production
-> inaccuracies).'
-> 
-> Maybe I'm missing something and the renaming is not good. I would be really
-> grateful if someone could shed some light on this for me.
-You are correct - it isn't good.  We can't 'bend' the ABI like this as
-userspace would have no idea what to do with it.
+The routine used to register lookup entries takes the corresponding
+reset_controlled_dev structure as argument.
 
-This needs new ABI defining to cover the use case.  Please have a go and
-make sure to provide documentation of the new ABI
-/Documentation/ABI/testing/sysfs-bus-iio-ad7746 (for now - we can move
-to the shared docs if it makes sense later).
+It's been determined however that for the first user of this new
+interface - davinci psc driver - it will be easier to register the
+lookup entries using the reset controller device name.
 
-> 
-> *PATCH 0011 - Move cdc ad7746 driver out of staging to mainline iio
-> Move the files, modify the proper Kconfigs and the documentation.
-> 
-> That'd be all. Any feedback is welcome. I hope this gets out of staging :)
-> 
-> Cheers,
-> 
-> Hernán
-> 
-> Hernán Gonzalez (11):
->   staging: iio: ad7746: Adjust arguments to match open parenthesis
->   staging: iio: ad7746: Fix multiple line dereference
->   staging: iio: ad7746: Reorder includes alphabetically
->   staging: iio: ad7746: Reorder variable declarations
->   staging: iio: ad7746: Remove unused defines
->   staging: iio: ad7746: Add dt-bindings
->   staging: iio: ad7746: Add remove()
->   staging: iio: ad7746: Add comments
->   staging: iio: ad7746: Add devicetree bindings documentation
->   staging: iio: ad7746: Rename sysfs attrs to comply with the ABI
->   Move cdc ad7746 driver out of staging to mainline iio
-> 
->  .../devicetree/bindings/iio/cdc/ad7746.txt         |  32 ++++
->  drivers/iio/Kconfig                                |   1 +
->  drivers/iio/cdc/Kconfig                            |  16 ++
->  drivers/{staging => }/iio/cdc/ad7746.c             | 168 +++++++++++++++------
->  drivers/staging/iio/cdc/Kconfig                    |  10 --
->  .../staging => include/linux}/iio/cdc/ad7746.h     |   9 --
->  6 files changed, 168 insertions(+), 68 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/iio/cdc/ad7746.txt
->  create mode 100644 drivers/iio/cdc/Kconfig
->  rename drivers/{staging => }/iio/cdc/ad7746.c (84%)
->  rename {drivers/staging => include/linux}/iio/cdc/ad7746.h (70%)
-> 
+This patch changes the way lookup entries are added.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/reset/core.c             | 38 +++++++++++++++++++++++++++++++-------
+ include/linux/reset-controller.h | 14 ++++++++------
+ 2 files changed, 39 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 06fa4907afc4..f4a29c046995 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -153,12 +153,10 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+ 
+ /**
+  * reset_controller_add_lookup - register a set of lookup entries
+- * @rcdev: initialized reset controller device owning the reset line
+  * @lookup: array of reset lookup entries
+  * @num_entries: number of entries in the lookup array
+  */
+-void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+-				 struct reset_control_lookup *lookup,
++void reset_controller_add_lookup(struct reset_control_lookup *lookup,
+ 				 unsigned int num_entries)
+ {
+ 	struct reset_control_lookup *entry;
+@@ -168,13 +166,12 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+ 	for (i = 0; i < num_entries; i++) {
+ 		entry = &lookup[i];
+ 
+-		if (!entry->dev_id) {
+-			pr_warn("%s(): reset lookup entry has no dev_id, skipping\n",
++		if (!entry->dev_id || !entry->provider) {
++			pr_warn("%s(): reset lookup entry badly specified, skipping\n",
+ 				__func__);
+ 			continue;
+ 		}
+ 
+-		entry->rcdev = rcdev;
+ 		list_add_tail(&entry->list, &reset_lookup_list);
+ 	}
+ 	mutex_unlock(&reset_lookup_mutex);
+@@ -526,11 +523,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+ }
+ EXPORT_SYMBOL_GPL(__of_reset_control_get);
+ 
++static struct reset_controller_dev *
++__reset_controller_by_name(const char *name)
++{
++	struct reset_controller_dev *rcdev;
++
++	lockdep_assert_held(&reset_list_mutex);
++
++	list_for_each_entry(rcdev, &reset_controller_list, list) {
++		if (!rcdev->dev)
++			continue;
++
++		if (!strcmp(name, dev_name(rcdev->dev)))
++			return rcdev;
++	}
++
++	return NULL;
++}
++
+ static struct reset_control *
+ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 				bool shared, bool optional)
+ {
+ 	const struct reset_control_lookup *lookup;
++	struct reset_controller_dev *rcdev;
+ 	const char *dev_id = dev_name(dev);
+ 	struct reset_control *rstc = NULL;
+ 
+@@ -547,7 +563,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 		    ((con_id && lookup->con_id) &&
+ 		     !strcmp(con_id, lookup->con_id))) {
+ 			mutex_lock(&reset_list_mutex);
+-			rstc = __reset_control_get_internal(lookup->rcdev,
++			rcdev = __reset_controller_by_name(lookup->provider);
++			if (!rcdev) {
++				mutex_unlock(&reset_list_mutex);
++				mutex_unlock(&reset_lookup_mutex);
++				/* Reset provider may not be ready yet. */
++				return -EPROBE_DEFER;
++			}
++
++			rstc = __reset_control_get_internal(rcdev,
+ 							    lookup->index,
+ 							    shared);
+ 			mutex_unlock(&reset_list_mutex);
+diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
+index 25698f6c1fae..9326d671b6e6 100644
+--- a/include/linux/reset-controller.h
++++ b/include/linux/reset-controller.h
+@@ -30,24 +30,25 @@ struct of_phandle_args;
+  * struct reset_control_lookup - represents a single lookup entry
+  *
+  * @list: internal list of all reset lookup entries
+- * @rcdev: reset controller device controlling this reset line
++ * @provider: name of the reset controller device controlling this reset line
+  * @index: ID of the reset controller in the reset controller device
+  * @dev_id: name of the device associated with this reset line
+  * @con_id name of the reset line (can be NULL)
+  */
+ struct reset_control_lookup {
+ 	struct list_head list;
+-	struct reset_controller_dev *rcdev;
++	const char *provider;
+ 	unsigned int index;
+ 	const char *dev_id;
+ 	const char *con_id;
+ };
+ 
+-#define RESET_LOOKUP(_dev_id, _con_id, _index)				\
++#define RESET_LOOKUP(_provider, _index, _dev_id, _con_id)		\
+ 	{								\
++		.provider = _provider,					\
++		.index = _index,					\
+ 		.dev_id = _dev_id,					\
+ 		.con_id = _con_id,					\
+-		.index = _index,					\
+ 	}
+ 
+ /**
+@@ -57,6 +58,7 @@ struct reset_control_lookup {
+  * @owner: kernel module of the reset controller driver
+  * @list: internal list of reset controller devices
+  * @reset_control_head: head of internal list of requested reset controls
++ * @dev: corresponding driver model device struct
+  * @of_node: corresponding device tree node as phandle target
+  * @of_reset_n_cells: number of cells in reset line specifiers
+  * @of_xlate: translation function to translate from specifier as found in the
+@@ -68,6 +70,7 @@ struct reset_controller_dev {
+ 	struct module *owner;
+ 	struct list_head list;
+ 	struct list_head reset_control_head;
++	struct device *dev;
+ 	struct device_node *of_node;
+ 	int of_reset_n_cells;
+ 	int (*of_xlate)(struct reset_controller_dev *rcdev,
+@@ -82,8 +85,7 @@ struct device;
+ int devm_reset_controller_register(struct device *dev,
+ 				   struct reset_controller_dev *rcdev);
+ 
+-void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+-				 struct reset_control_lookup *lookup,
++void reset_controller_add_lookup(struct reset_control_lookup *lookup,
+ 				 unsigned int num_entries);
+ 
+ #endif
+-- 
+2.16.1
