@@ -1,73 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752163AbeCWM3G (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 08:29:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44860 "EHLO mx2.suse.de"
+        id S1752299AbeCWMbU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:31:20 -0400
+Received: from mx.socionext.com ([202.248.49.38]:10375 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751294AbeCWM3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 08:29:04 -0400
-Date: Fri, 23 Mar 2018 13:29:02 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: "Li,Rongqing" <lirongqing@baidu.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?=
- =?utf-8?B?5aSNOiBbUEFUQ0g=?= =?utf-8?Q?=5D?= mm/memcontrol.c: speed up to
- force empty a memory cgroup
-Message-ID: <20180323122902.GR23100@dhcp22.suse.cz>
-References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
- <20180319085355.GQ23100@dhcp22.suse.cz>
- <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com>
- <20180319103756.GV23100@dhcp22.suse.cz>
- <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
- <2AD939572F25A448A3AE3CAEA61328C2374832C1@BC-MAIL-M28.internal.baidu.com>
- <20180323100839.GO23100@dhcp22.suse.cz>
- <2AD939572F25A448A3AE3CAEA61328C2374EC73E@BC-MAIL-M28.internal.baidu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2AD939572F25A448A3AE3CAEA61328C2374EC73E@BC-MAIL-M28.internal.baidu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751768AbeCWMbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 08:31:19 -0400
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH 0/2] net: ethernet: ave: add UniPhier PXs3 support
+Date: Fri, 23 Mar 2018 21:30:35 +0900
+Message-Id: <1521808237-3623-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23-03-18 12:04:16, Li,Rongqing wrote:
-[...]
-> shrink_slab does not reclaim any memory, but take lots of time to
-> count lru
->
-> maybe we can use the returning of shrink_slab to control if next
-> shrink_slab should be called?
+Add ethernet controller support on UniPhier PXs3 SoC.
 
-How? Different memcgs might have different amount of shrinkable memory.
+Kunihiko Hayashi (2):
+  dt-bindings: net: ave: add PXs3 support
+  net: ethernet: ave: add UniPhier PXs3 support
 
-> Or define a slight list_lru_empty to check if sb->s_dentry_lru is
-> empty before calling list_lru_shrink_count, like below
-
-Does it really help to improve numbers?
- 
-> diff --git a/fs/super.c b/fs/super.c
-> index 672538ca9831..954c22338833 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -130,8 +130,10 @@ static unsigned long super_cache_count(struct shrinker *shrink,
->         if (sb->s_op && sb->s_op->nr_cached_objects)
->                 total_objects = sb->s_op->nr_cached_objects(sb, sc);
->  
-> -       total_objects += list_lru_shrink_count(&sb->s_dentry_lru, sc);
-> -       total_objects += list_lru_shrink_count(&sb->s_inode_lru, sc);
-> +       if (!list_lru_empty(sb->s_dentry_lru))
-> +               total_objects += list_lru_shrink_count(&sb->s_dentry_lru, sc);
-> +       if (!list_lru_empty(sb->s_inode_lru))
-> +               total_objects += list_lru_shrink_count(&sb->s_inode_lru, sc);
->  
->         total_objects = vfs_pressure_ratio(total_objects);
->         return total_objects;
+ Documentation/devicetree/bindings/net/socionext,uniphier-ave4.txt | 1 +
+ drivers/net/ethernet/socionext/sni_ave.c                          | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
