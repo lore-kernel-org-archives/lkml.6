@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802272-2-13762397351825082863
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802257-2-15919284808325271868
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802271; b=EViSI1hE/vKPByQcAE6DVoOP329q9ht2RddG8Z8pCu8jOQx
-    mxzz3vkYHx8r6Fg9uwBicmljEL9vqnqJKkh7JyfKgPyCFA5cW0ZLXpjCjMPKAS5p
-    4yz4TCu3kVel4rTCodsk6V1UiroE32W7yo3yfKcKp4YGSHbyMmz2X5RNyfWT2YLQ
-    +W6/huwaY6i9H2hBk8ajccZBSsPog+WPEL7Yrkp8l3i9gm1WzJ8CDEfTzYyd/IzZ
-    ilq1tG0KSA82PqCab+BXCS+bVVTLRE2mGXBDlDMbgok1K/Kzi3RkN3sWMUECd6sW
-    vQqhGY2ewnBZ07nsyviSPt5jB6JZwgOZKBjCgzg==
+    t=1521802256; b=GYCuksH3UahDX3nCL3mkBr+fzblHVj+U6bOt3lWmY/dOjCi
+    IZuqbq9rj3n9Xqwu8ctKLcpdJMMeL3HyqYqQX8a+pFxZIbPSrtLfcquUZgf+Qj5W
+    A7DiTxEQvg1E7drIseeAWlp3EjEWSdcREvlAjLsmHqlY3nJlLEwjMbC7wWYdydKA
+    YvrvtBhw4znAQ71CwxdqEhPyRE/GH8WnnzRnmz7l+JJCtV92QnKsvmBqKGR5eKod
+    ExjjZV/X5Z6894/K4qmeqLwqP7UEhLo6d6fqpRkBXjIIu/1IXJsy202zIa4L+2Uf
+    50Xlydpalzdyrz64e1MHdzHluR6u0n7tOXMQyLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802271; bh=tKbOJUsbBgLqY7+wffes6ha7BP
-    BAoz0iFUg08/FJjxo=; b=XAbKhQ6WmUyCXI7lAUHYn3MJ7x48BLgYdFvmlpT+5q
-    +A3JM4kGUpwGn6ujhzspqUfuT1+VwmhdJgZR+qXw3Iher80JCIpMtGp+P9xOY+/A
-    kwqeYfsVVB5aubOpux9dMoLExXB3A89oCapvSdtkoCGwvZuZLXzwa8rhSXHUNePy
-    Yl7ylIidos70fcht/jA6S+kgfLtTmrThveuRtNJHeIFh+pnRaVvsKvNTgES+KJl5
-    aD64YB3i9mws3/JiA2gXqzKzMlvyQsf/P9MdhBLnYiSJzvGRF8Y0Gvv1cQ/SIsRi
-    MdzFf63Vb2M//i6thnKJv85C5j7SmK1dV0ttuCTM79xQ==
+    :list-id; s=arctest; t=1521802256; bh=PPWXRL91QQItJNGmVDOyn+TL+3
+    b3USnW5xToDo/EVC4=; b=Con2lEx+4glEfh9TiEQ8lYskDPPDsGe1xCw4/YlBMF
+    i9wgrvXX6IKBlI5f5UtwHOt/CoS5A3o9HKZV1aMXM6c6FBtOE7C41zyDmdXMTgXo
+    IgCEYZUbo3k3xCr9oEoVg9t4Dom7wYTx6jD5yPu+ftEsj5aeHlBlnZHokfDhVIa2
+    9DIDFBijmUVkbzE537kkrAn2pFtQd+vlAZ2m9imwMLqZsmL7l2HpaQe2GpnMqACe
+    WUYDDr9xWcbZJPuKg+NpWZI1U+jLLK9hvwYS6sQccMra3Q+YjxWisf3MYLB9LFqP
+    Nuj4amq1lJku+Bl/pWm5wWl6g4sp9Sv4MWlRg5ilYsNw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,25 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933314AbeCWKOa (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:14:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45206 "EHLO
+        id S1752392AbeCWKuo (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:50:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45288 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933313AbeCWKO3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:14:29 -0400
+        with ESMTP id S1755766AbeCWKOe (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:14:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolai Stange <nicstange@gmail.com>,
-        Rabin Vincent <rabin@rab.in>, Abel Vesa <abelvesa@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
+        Michael Brunner <Michael.Brunner@kontron.com>,
+        Viktor Krasnov <vkrasnov@dev.rtsoft.ru>,
+        Jean Delvare <jdelvare@suse.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 24/97] ARM: 8668/1: ftrace: Fix dynamic ftrace with DEBUG_RODATA and !FRAME_POINTER
-Date: Fri, 23 Mar 2018 10:54:11 +0100
-Message-Id: <20180323094158.974629575@linuxfoundation.org>
+Subject: [PATCH 4.4 16/97] i2c: i2c-scmi: add a MS HID
+Date: Fri, 23 Mar 2018 10:54:03 +0100
+Message-Id: <20180323094158.399312214@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -83,61 +86,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Abel Vesa <abelvesa@linux.com>
+From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
 
 
-[ Upstream commit 6f05d0761af612e04572ba4d65b4c0274a88444f ]
+[ Upstream commit e058e7a4bc89104540a8a303682248614b5df6f1 ]
 
-The support for dynamic ftrace with CONFIG_DEBUG_RODATA involves
-overriding the weak arch_ftrace_update_code() with a variant which makes
-the kernel text writable around the patching.
+Description of the problem:
+ - i2c-scmi driver contains only two identifiers "SMBUS01" and "SMBUSIBM";
+ - the fist HID (SMBUS01) is clearly defined in "SMBus Control Method
+   Interface Specification, version 1.0": "Each device must specify
+   'SMBUS01' as its _HID and use a unique _UID value";
+ - unfortunately, BIOS vendors (like AMI) seem to ignore this requirement
+   and implement "SMB0001" HID instead of "SMBUS01";
+ - I speculate that they do this because only "SMB0001" is hard coded in
+   Windows SMBus driver produced by Microsoft.
 
-This override was however added under the CONFIG_OLD_MCOUNT ifdef, and
-CONFIG_OLD_MCOUNT is only enabled if frame pointers are enabled.
+This leads to following situation:
+ - SMBus works out of box in Windows but not in Linux;
+ - board vendors are forced to add correct "SMBUS01" HID to BIOS to make
+   SMBus work in Linux. Moreover the same board vendors complain that
+   tools (3-rd party ASL compiler) do not like the "SMBUS01" identifier
+   and produce errors.  So they need to constantly patch the compiler for
+   each new version of BIOS.
 
-This leads to non-functional dynamic ftrace (ftrace triggers a
-WARN_ON()) when CONFIG_DEBUG_RODATA is enabled and CONFIG_FRAME_POINTER
-is not.
+As it is very unlikely that BIOS vendors implement a correct HID in
+future, I would propose to consider whether it is possible to work around
+the problem by adding MS HID to the Linux i2c-scmi driver.
 
-Move the override out of that ifdef and into the CONFIG_DYNAMIC_FTRACE
-ifdef where it belongs.
+v2: move the definition of the new HID to the driver itself.
 
-Fixes: 80d6b0c2eed2a ("ARM: mm: allow text and rodata sections to be read-only")
-Suggested-by: Nicolai Stange <nicstange@gmail.com>
-Suggested-by: Rabin Vincent <rabin@rab.in>
-Signed-off-by: Abel Vesa <abelvesa@gmail.com>
-Acked-by: Rabin Vincent <rabin@rab.in>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+Signed-off-by: Michael Brunner <Michael.Brunner@kontron.com>
+Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/kernel/ftrace.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/i2c/busses/i2c-scmi.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/kernel/ftrace.c
-+++ b/arch/arm/kernel/ftrace.c
-@@ -29,11 +29,6 @@
- #endif
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -18,6 +18,9 @@
+ #define ACPI_SMBUS_HC_CLASS		"smbus"
+ #define ACPI_SMBUS_HC_DEVICE_NAME	"cmi"
  
- #ifdef CONFIG_DYNAMIC_FTRACE
--#ifdef CONFIG_OLD_MCOUNT
--#define OLD_MCOUNT_ADDR	((unsigned long) mcount)
--#define OLD_FTRACE_ADDR ((unsigned long) ftrace_caller_old)
--
--#define	OLD_NOP		0xe1a00000	/* mov r0, r0 */
- 
- static int __ftrace_modify_code(void *data)
- {
-@@ -51,6 +46,12 @@ void arch_ftrace_update_code(int command
- 	stop_machine(__ftrace_modify_code, &command, NULL);
- }
- 
-+#ifdef CONFIG_OLD_MCOUNT
-+#define OLD_MCOUNT_ADDR	((unsigned long) mcount)
-+#define OLD_FTRACE_ADDR ((unsigned long) ftrace_caller_old)
++/* SMBUS HID definition as supported by Microsoft Windows */
++#define ACPI_SMBUS_MS_HID		"SMB0001"
 +
-+#define	OLD_NOP		0xe1a00000	/* mov r0, r0 */
-+
- static unsigned long ftrace_nop_replace(struct dyn_ftrace *rec)
- {
- 	return rec->arch.old_mcount ? OLD_NOP : NOP;
+ ACPI_MODULE_NAME("smbus_cmi");
+ 
+ struct smbus_methods_t {
+@@ -51,6 +54,7 @@ static const struct smbus_methods_t ibm_
+ static const struct acpi_device_id acpi_smbus_cmi_ids[] = {
+ 	{"SMBUS01", (kernel_ulong_t)&smbus_methods},
+ 	{ACPI_SMBUS_IBM_HID, (kernel_ulong_t)&ibm_smbus_methods},
++	{ACPI_SMBUS_MS_HID, (kernel_ulong_t)&smbus_methods},
+ 	{"", 0}
+ };
+ MODULE_DEVICE_TABLE(acpi, acpi_smbus_cmi_ids);
