@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-947063-1521799503-2-3397682144158470175
+X-Cyrus-Session-Id: sloti22d1t05-947063-1521799452-2-17471752585694982024
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521799503; b=NQJmc0H2pLLXCkglzyb3XFPIAVKbGdzB8T6+F1pBF7vcCky
-    8OlI6E+SHyqlRfHDvvH4WHu0DTKOuw5EKP7dtGW5/pCdvN84eAa2hMCrU+HF2v8X
-    ExXdaXVQQJMLulb9X2LcB3kZlAwKnJbpdaoURw9C/0WQfjc2bWC43GR0daeEx421
-    c2QuCSsXAAA/BxERwuHm9jNCdwuMoGDLkL/hkZzLibVH+u4mCfXV4NPv1Ksx89Kc
-    8a/31yw6y6yr7akEKI9TVH5xbDcwDulQiVNsRGLBsy1ZwNgwlStVB8MnefhByb6M
-    Bzqx8h7eOZzJTJGL6yJHn8PBf95P/h9LFsfQQ5w==
+    t=1521799452; b=h1moDLSt8QCC8ZaVYu1Jxi1C8fsYtdmU0Vx56PDozKY0YAB
+    3fYze/BSVhKu0rjPmQ1gNqrSClvxG2LcWPieFa1LbI553ZxGVegCBRAOCYRW/EwG
+    X1mjwI3fAmmLyIFwFvyu4h3k1wyqhO43Qct6Jm/Br1iR2rXThqLnJgcREtPAviT1
+    b7A6Q5kWRP2KT9W4+8YaGbK+RN2q2ay4b0JZCiDb8esjpjzFxwsISRQb/vtlOcHO
+    3we4YwwzB9w+5PNHnM6GkOA6VH8YP+gpuI/gDGQXYfhEBsAsbe5QHgLmIKof8+xG
+    +WkLl53eDDzu5L+peWLllqsKVKUOQJMpqQSx6aQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521799503; bh=oVDsaHK0GdX/JiCcv2PkfvAU6F
-    UiyDMPdYUKICRTWGw=; b=G3zklHqEOWtCMilQx/QgO1IQbJFyGtfjaUHdAHZWs6
-    Iy8SKQFN8s32KRZ0LKmcho+bNqFJ3LTlw1j/4DOw9soADGHck51BrwYSzzsORL+J
-    3RZ95fkzDwUlKwYoOb+X8+FDCvZfWyd5CbBAqQzzSqKZ4RfHWagFSlXCltOZRYqQ
-    JBaTIi1Fet33WRZbLnplBbtREYoNNhx+XOtQVrriWBRcGjbIeDreKjg6SwPEVtfY
-    qx4T8ERiAkrrrKqbjdO+QS/r5TFmaNnlp/WoMGUIXeCsve4MYTWqmCtG54X86lFH
-    d//XgTScMMyWKfjBbFPPjLlJCk88QwEvJIgyo/AkLkYg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521799452; bh=CwDNlmCH7HzmtCqbp5BFH6cu57
+    21TGfaw1h5uK/d3vA=; b=QEcP7/wu5lO3ollwbsmCOEeFmeq468jyfbPfZDnIYA
+    e1OWgRGnedNvr2YkDaNViaA/61CzYFwT8LvSVbyk6W1E0pZP1VjXQz6ljXJtSVRI
+    +Sy5J9F6YtW2KYUEbJIkntMf0R0ANTL4myTwV9/u8BU+7A7LQ1bK5RMBC/4Vc2TS
+    ecfCifPyuMtELCbBNMRSGvHEqKTqGFJi321NKHSW81reD9jmpVbQkyfAKD7pS+B3
+    RSWq18t2KwjER8kwOKHt/qMbFQ1oacKKPIs9h8H+t21g18LRzyGXbobG4QXR02A2
+    e9+IJUKhv3IQcp7XvKKxoD6+VTmugBTvpAJ7dgLk/a2w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,26 +50,26 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754471AbeCWKE7 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:04:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39408 "EHLO
+        id S1754604AbeCWKEJ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:04:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39050 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754148AbeCWKE5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:57 -0400
+        with ESMTP id S1754624AbeCWKEI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 013/177] rtc: cmos: Do not assume irq 8 for rtc when there are no legacy irqs
-Date: Fri, 23 Mar 2018 10:52:21 +0100
-Message-Id: <20180323094205.789288206@linuxfoundation.org>
+        stable@vger.kernel.org, Jeremy Boone <jeremy.boone@nccgroup.trust>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <james.morris@microsoft.com>
+Subject: [PATCH 4.9 001/177] tpm: fix potential buffer overruns caused by bit glitches on the bus
+Date: Fri, 23 Mar 2018 10:52:09 +0100
+Message-Id: <20180323094205.172538837@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -82,73 +82,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 
+commit 3be23274755ee85771270a23af7691dc9b3a95db upstream.
 
-[ Upstream commit a1e23a42f1bdc00e32fc4869caef12e4e6272f26 ]
+Discrete TPMs are often connected over slow serial buses which, on
+some platforms, can have glitches causing bit flips.  If a bit does
+flip it could cause an overrun if it's in one of the size parameters,
+so sanity check that we're not overrunning the provided buffer when
+doing a memcpy().
 
-On some systems (e.g. Intel Bay Trail systems) the legacy PIC is not
-used, in this case virq 8 will be a random irq, rather then hw_irq 8
-from the PIC.
-
-Requesting virq 8 in this case will not help us to get alarm irqs and
-may cause problems for other drivers which actually do need virq 8,
-for example on an Asus Transformer T100TA this leads to:
-
-[ 28.745155] genirq: Flags mismatch irq 8. 00000088 (mmc0) vs. 00000080 (rtc0)
-<snip oops>
-[ 28.753700] mmc0: Failed to request IRQ 8: -16
-[ 28.975934] sdhci-acpi: probe of 80860F14:01 failed with error -16
-
-This commit fixes this by making the rtc-cmos driver continue
-without using an irq rather then claiming irq 8 when no irq is
-specified in the pnp-info and there are no legacy-irqs.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
+Cc: stable@vger.kernel.org
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/rtc/rtc-cmos.c |   17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
 
---- a/drivers/rtc/rtc-cmos.c
-+++ b/drivers/rtc/rtc-cmos.c
-@@ -41,6 +41,9 @@
- #include <linux/pm.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
-+#ifdef CONFIG_X86
-+#include <asm/i8259.h>
-+#endif
+---
+ drivers/char/tpm/tpm-interface.c |    5 +++++
+ drivers/char/tpm/tpm2-cmd.c      |    6 ++++++
+ 2 files changed, 11 insertions(+)
+
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -1078,6 +1078,11 @@ int tpm_get_random(u32 chip_num, u8 *out
+ 			break;
  
- /* this is for "generic access to PC-style RTC" using CMOS_READ/CMOS_WRITE */
- #include <linux/mc146818rtc.h>
-@@ -1117,17 +1120,23 @@ static int cmos_pnp_probe(struct pnp_dev
- {
- 	cmos_wake_setup(&pnp->dev);
+ 		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
++		if (recd > num_bytes) {
++			total = -EFAULT;
++			break;
++		}
++
+ 		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
  
--	if (pnp_port_start(pnp, 0) == 0x70 && !pnp_irq_valid(pnp, 0))
-+	if (pnp_port_start(pnp, 0) == 0x70 && !pnp_irq_valid(pnp, 0)) {
-+		unsigned int irq = 0;
-+#ifdef CONFIG_X86
- 		/* Some machines contain a PNP entry for the RTC, but
- 		 * don't define the IRQ. It should always be safe to
--		 * hardcode it in these cases
-+		 * hardcode it on systems with a legacy PIC.
- 		 */
-+		if (nr_legacy_irqs())
-+			irq = 8;
-+#endif
- 		return cmos_do_probe(&pnp->dev,
--				pnp_get_resource(pnp, IORESOURCE_IO, 0), 8);
--	else
-+				pnp_get_resource(pnp, IORESOURCE_IO, 0), irq);
-+	} else {
- 		return cmos_do_probe(&pnp->dev,
- 				pnp_get_resource(pnp, IORESOURCE_IO, 0),
- 				pnp_irq(pnp, 0));
-+	}
+ 		dest += recd;
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -668,6 +668,11 @@ static int tpm2_unseal_cmd(struct tpm_ch
+ 	if (!rc) {
+ 		data_len = be16_to_cpup(
+ 			(__be16 *) &buf.data[TPM_HEADER_SIZE + 4]);
++		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE + 1) {
++			rc = -EFAULT;
++			goto out;
++		}
++
+ 		data = &buf.data[TPM_HEADER_SIZE + 6];
+ 
+ 		memcpy(payload->key, data, data_len - 1);
+@@ -675,6 +680,7 @@ static int tpm2_unseal_cmd(struct tpm_ch
+ 		payload->migratable = data[data_len - 1];
+ 	}
+ 
++out:
+ 	tpm_buf_destroy(&buf);
+ 	return rc;
  }
- 
- static void cmos_pnp_remove(struct pnp_dev *pnp)
