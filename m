@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182164-1521807308-2-6233482811606415597
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521807307-2-10765441299004426805
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807307; b=ro3v1y9XxcBorIbAgi3fdqo5Eh9ORMW7l38mxuby5Htynej
-    hVLnvGDS9BhqVzcCi6EFIa4PTd9bHJS406wNgac/J4iKPBmfjdL4h3V5pFNey+2o
-    hGPrt8kf9RchRiA2SfRCsBLy4fudwwStglLk9fa92nOIcj9rnxNNaN+KIduY4xD2
-    BJ3ETx/TMEQbMQx18+74OweykwSQVD81+RoZ7zUXdpPzWdWljUjhNEW4fy0lQmjs
-    KFfF2+195ghFZoN19DntDiH4xrDwlJwTL8lPidjhIYGh0ZcUtiIWZIPRTcvxF1TG
-    XU64zPkhCBvKJet+LCrQlP0dVOtZCQeegOC/3ow==
+    t=1521807307; b=B9Mr0nCCHWaFdpW6bNclRlq0Or3i4oJ/xbYZhzkpsUxexbA
+    l2f7ed0VSaG98SZU5JqEL6XKH1UJ2S6Kv/RDATcuv29/dWfcej8xADa85MvMGora
+    TOBiaJfYiM78toCBSQPO1XQ2xrMjWM7wPHdCOi5X0tt1NKvOWKAL+JjJ9bbi2iPb
+    PuEEz6NBRzlvR4RWakORII1tkXDPUNkEBgeVYVhTQKngcxoaNAbL0SEabP2qX9nw
+    VVd0/9kUVXgnf7PHgrweIOWPe4/oXjrlX7SgpRgOEPCxIISzoDjzU5gfF1F9/eMC
+    HAou6+vz+mC+z1sW77QgcRc+SC3T+a3+k0qZntQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807307; bh=ZTMwODJi9Fb0cUjQ/nUz6r7Xkw
-    JBbzKUWKOBpochMfw=; b=Y7+7eKOM3jGVyDPZzaSCuhpgfZEIMbHP9GL2qnPd8u
-    vxCnkpsitzCZkB96KnGX2juz5VrHfOtujn2BME1ua+uvZhxAZlgPQNbm/xPsg+nf
-    Dup+guy7pu70pi8/36WowX1+wsVcA1oLt5J8WankYGD9dKJ0QZYPQDyD9bbG9LWM
-    xOh8zTp3M/0jglzlY+FcXKPjUDFivfazMKgXqJqYk1Fb6litby+hcqTZ1iPIO6L8
-    Re5YmPTxib6wh2fPPzH13OozYx4RS5VmlJIJA+2XZAywp1aQjqmRyAw1tYSFj5Dn
-    T5AacaHWJmm+hWVUc7iIgJNFUueG9HP7a1F4Y7OoDnHw==
+    :list-id; s=arctest; t=1521807307; bh=5s8EG1dB1A7lIOxdAkd43+Znmu
+    MdCbvCxfrxrUcF1ks=; b=glIn6k6X/kHktOdPVEohrsqMFqPXYaft7VPoMQaR/R
+    HsEYILOVSe4XxakgfRP0fKkKcuUPtOf7skcXKDW8an7f32pl6o+1nNlFl4sC7UK8
+    XFBbHiOpE7XDMcAdxnIWWmnVBgtJqcEaDZs8+r407zOif7GgZuXp9GVUuZznP1YU
+    c/d+7UW46xrKYuESG7YalCSwGAnJXuZ+TXOsjHdXQaHmGXv82JD1+fny83IC63zI
+    7rVms7/vwAJCSv0yEzZJ7niVEZUu8Swbd5vRWZi6oXalYr5ps++GkIk2gdwOJVpK
+    XGCkt8zmzDsrlPvMxEdt/tKQoVwm4YsM0etHcEQ5r3uQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,24 +50,23 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeCWMOk (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 08:14:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34186 "EHLO
+        id S1752749AbeCWJ46 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:56:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34144 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752760AbeCWJ5B (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:01 -0400
+        with ESMTP id S1752686AbeCWJ4z (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:56:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jyri Sarha <jsarha@ti.com>, Arnd Bergmann <arnd@arndb.de>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        David Airlie <airlied@linux.ie>,
+        stable@vger.kernel.org, Shawn Nematbakhsh <shawnn@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Javier Martinez Canillas <javier@osg.samsung.com>,
+        Benson Leung <bleung@chromium.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 30/84] drm/tilcdc: ensure nonatomic iowrite64 is not used
-Date: Fri, 23 Mar 2018 10:53:44 +0100
-Message-Id: <20180323095416.456606529@linuxfoundation.org>
+Subject: [PATCH 4.15 28/84] platform/chrome: Use proper protocol transfer function
+Date: Fri, 23 Mar 2018 10:53:42 +0100
+Message-Id: <20180323095416.174834909@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -85,50 +84,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Shawn Nematbakhsh <shawnn@chromium.org>
 
 
-[ Upstream commit 4e5ca2d930aa8714400aedf4bf1dc959cb04280f ]
+[ Upstream commit d48b8c58c57f6edbe2965f0a5f62c5cf9593ca96 ]
 
-Add a check to ensure iowrite64 is only used if it is atomic.
+pkt_xfer should be used for protocol v3, and cmd_xfer otherwise. We had
+one instance of these functions correct, but not the second, fall-back
+case. We use the fall-back only when the first command returns an
+IN_PROGRESS status, which is only used on some EC firmwares where we
+don't want to constantly poll the bus, but instead back off and
+sleep/retry for a little while.
 
-It was decided in [1] that the tilcdc driver should not be using an
-atomic operation (so it was left out of this patchset). However, it turns
-out that through the drm code, a nonatomic header is actually included:
-
-include/linux/io-64-nonatomic-lo-hi.h
-is included from include/drm/drm_os_linux.h:9:0,
-            from include/drm/drmP.h:74,
-            from include/drm/drm_modeset_helper.h:26,
-            from include/drm/drm_atomic_helper.h:33,
-            from drivers/gpu/drm/tilcdc/tilcdc_crtc.c:19:
-
-And thus, without this change, this patchset would inadvertantly
-change the behaviour of the tilcdc driver.
-
-[1] lkml.kernel.org/r/CAK8P3a2HhO_zCnsTzq7hmWSz5La5Thu19FWZpun16iMnyyNreQ@mail.gmail.com
-
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jyri Sarha <jsarha@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: David Airlie <airlied@linux.ie>
-Signed-off-by: Jyri Sarha <jsarha@ti.com>
+Fixes: 2c7589af3c4d ("mfd: cros_ec: add proto v3 skeleton")
+Signed-off-by: Shawn Nematbakhsh <shawnn@chromium.org>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/tilcdc/tilcdc_regs.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/chrome/cros_ec_proto.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/tilcdc/tilcdc_regs.h
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_regs.h
-@@ -133,7 +133,7 @@ static inline void tilcdc_write64(struct
- 	struct tilcdc_drm_private *priv = dev->dev_private;
- 	volatile void __iomem *addr = priv->mmio + reg;
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -60,12 +60,14 @@ static int send_command(struct cros_ec_d
+ 			struct cros_ec_command *msg)
+ {
+ 	int ret;
++	int (*xfer_fxn)(struct cros_ec_device *ec, struct cros_ec_command *msg);
  
--#ifdef iowrite64
-+#if defined(iowrite64) && !defined(iowrite64_is_nonatomic)
- 	iowrite64(data, addr);
- #else
- 	__iowmb();
+ 	if (ec_dev->proto_version > 2)
+-		ret = ec_dev->pkt_xfer(ec_dev, msg);
++		xfer_fxn = ec_dev->pkt_xfer;
+ 	else
+-		ret = ec_dev->cmd_xfer(ec_dev, msg);
++		xfer_fxn = ec_dev->cmd_xfer;
+ 
++	ret = (*xfer_fxn)(ec_dev, msg);
+ 	if (msg->result == EC_RES_IN_PROGRESS) {
+ 		int i;
+ 		struct cros_ec_command *status_msg;
+@@ -88,7 +90,7 @@ static int send_command(struct cros_ec_d
+ 		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
+ 			usleep_range(10000, 11000);
+ 
+-			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
++			ret = (*xfer_fxn)(ec_dev, status_msg);
+ 			if (ret < 0)
+ 				break;
+ 
