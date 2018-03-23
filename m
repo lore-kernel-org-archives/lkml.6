@@ -1,30 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752479AbeCWTyV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 15:54:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44705 "EHLO
+        id S1752322AbeCWTyv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:54:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34419 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751853AbeCWTyT (ORCPT
+        with ESMTP id S1751921AbeCWTyt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 15:54:19 -0400
-Date: Fri, 23 Mar 2018 12:53:52 -0700
+        Fri, 23 Mar 2018 15:54:49 -0400
+Date: Fri, 23 Mar 2018 12:54:19 -0700
 From: tip-bot for Christoph Hellwig <tipbot@zytor.com>
-Message-ID: <tip-c10f07aa27dadf5ab5b3d58c48c91a467f80db49@git.kernel.org>
-Cc: konrad.wilk@oracle.com, dwmw2@infradead.org, mingo@kernel.org,
-        hch@lst.de, torvalds@linux-foundation.org, peterz@infradead.org,
-        joro@8bytes.org, jdmason@kudzu.us, tglx@linutronix.de, mulix@mulix.org,
-        thomas.lendacky@amd.com, hpa@zytor.com, linux-kernel@vger.kernel.org
-Reply-To: hch@lst.de, dwmw2@infradead.org, mingo@kernel.org,
-        konrad.wilk@oracle.com, torvalds@linux-foundation.org, joro@8bytes.org,
-        peterz@infradead.org, tglx@linutronix.de, thomas.lendacky@amd.com,
-        mulix@mulix.org, jdmason@kudzu.us, linux-kernel@vger.kernel.org,
-        hpa@zytor.com
-In-Reply-To: <20180319103826.12853-14-hch@lst.de>
-References: <20180319103826.12853-14-hch@lst.de>
+Message-ID: <tip-16e73adbca76fd18733278cb688b0ddb4cad162c@git.kernel.org>
+Cc: mingo@kernel.org, hch@lst.de, dwmw2@infradead.org,
+        linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+        konrad.wilk@oracle.com, jdmason@kudzu.us, hpa@zytor.com,
+        torvalds@linux-foundation.org, peterz@infradead.org, mulix@mulix.org,
+        tglx@linutronix.de, joro@8bytes.org
+Reply-To: dwmw2@infradead.org, linux-kernel@vger.kernel.org,
+        thomas.lendacky@amd.com, konrad.wilk@oracle.com, jdmason@kudzu.us,
+        hpa@zytor.com, mingo@kernel.org, hch@lst.de,
+        torvalds@linux-foundation.org, peterz@infradead.org, mulix@mulix.org,
+        tglx@linutronix.de, joro@8bytes.org
+In-Reply-To: <20180319103826.12853-15-hch@lst.de>
+References: <20180319103826.12853-15-hch@lst.de>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/dma] dma/direct: Handle force decryption for DMA coherent
- buffers in common code
-Git-Commit-ID: c10f07aa27dadf5ab5b3d58c48c91a467f80db49
+Subject: [tip:x86/dma] dma/swiotlb: Remove swiotlb_{alloc,free}_coherent()
+Git-Commit-ID: 16e73adbca76fd18733278cb688b0ddb4cad162c
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,23 +37,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c10f07aa27dadf5ab5b3d58c48c91a467f80db49
-Gitweb:     https://git.kernel.org/tip/c10f07aa27dadf5ab5b3d58c48c91a467f80db49
+Commit-ID:  16e73adbca76fd18733278cb688b0ddb4cad162c
+Gitweb:     https://git.kernel.org/tip/16e73adbca76fd18733278cb688b0ddb4cad162c
 Author:     Christoph Hellwig <hch@lst.de>
-AuthorDate: Mon, 19 Mar 2018 11:38:25 +0100
+AuthorDate: Mon, 19 Mar 2018 11:38:26 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 20 Mar 2018 10:01:59 +0100
 
-dma/direct: Handle force decryption for DMA coherent buffers in common code
+dma/swiotlb: Remove swiotlb_{alloc,free}_coherent()
 
-With that in place the generic DMA-direct routines can be used to
-allocate non-encrypted bounce buffers, and the x86 SEV case can use
-the generic swiotlb ops including nice features such as using CMA
-allocations.
-
-Note that I'm not too happy about using sev_active() in DMA-direct, but
-I couldn't come up with a good enough name for a wrapper to make it
-worth adding.
+Unused now that everyone uses swiotlb_{alloc,free}().
 
 Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
@@ -66,190 +59,92 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Muli Ben-Yehuda <mulix@mulix.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: iommu@lists.linux-foundation.org
-Link: http://lkml.kernel.org/r/20180319103826.12853-14-hch@lst.de
+Link: http://lkml.kernel.org/r/20180319103826.12853-15-hch@lst.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/mem_encrypt.c | 73 ++---------------------------------------------
- lib/dma-direct.c          | 32 +++++++++++++++++----
- 2 files changed, 29 insertions(+), 76 deletions(-)
+ include/linux/swiotlb.h |  8 --------
+ lib/swiotlb.c           | 38 --------------------------------------
+ 2 files changed, 46 deletions(-)
 
-diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-index 1b396422d26f..b2de398d1fd3 100644
---- a/arch/x86/mm/mem_encrypt.c
-+++ b/arch/x86/mm/mem_encrypt.c
-@@ -195,58 +195,6 @@ void __init sme_early_init(void)
- 		swiotlb_force = SWIOTLB_FORCE;
+diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
+index 5b1f2a00491c..965be92c33b5 100644
+--- a/include/linux/swiotlb.h
++++ b/include/linux/swiotlb.h
+@@ -72,14 +72,6 @@ void *swiotlb_alloc(struct device *hwdev, size_t size, dma_addr_t *dma_handle,
+ void swiotlb_free(struct device *dev, size_t size, void *vaddr,
+ 		dma_addr_t dma_addr, unsigned long attrs);
+ 
+-extern void
+-*swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+-			dma_addr_t *dma_handle, gfp_t flags);
+-
+-extern void
+-swiotlb_free_coherent(struct device *hwdev, size_t size,
+-		      void *vaddr, dma_addr_t dma_handle);
+-
+ extern dma_addr_t swiotlb_map_page(struct device *dev, struct page *page,
+ 				   unsigned long offset, size_t size,
+ 				   enum dma_data_direction dir,
+diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+index 8b06b4485e65..15954b86f09e 100644
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -157,13 +157,6 @@ unsigned long swiotlb_size_or_default(void)
+ 	return size ? size : (IO_TLB_DEFAULT_SIZE);
  }
  
--static void *sev_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
--		       gfp_t gfp, unsigned long attrs)
+-/* Note that this doesn't work with highmem page */
+-static dma_addr_t swiotlb_virt_to_bus(struct device *hwdev,
+-				      volatile void *address)
 -{
--	unsigned int order;
--	struct page *page;
--	void *vaddr = NULL;
+-	return phys_to_dma(hwdev, virt_to_phys(address));
+-}
 -
--	order = get_order(size);
--	page = alloc_pages_node(dev_to_node(dev), gfp, order);
--	if (page) {
--		dma_addr_t addr;
+ static bool no_iotlb_memory;
+ 
+ void swiotlb_print_info(void)
+@@ -752,28 +745,6 @@ out_warn:
+ 	return NULL;
+ }
+ 
+-void *
+-swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+-		       dma_addr_t *dma_handle, gfp_t flags)
+-{
+-	int order = get_order(size);
+-	unsigned long attrs = (flags & __GFP_NOWARN) ? DMA_ATTR_NO_WARN : 0;
+-	void *ret;
 -
--		/*
--		 * Since we will be clearing the encryption bit, check the
--		 * mask with it already cleared.
--		 */
--		addr = __phys_to_dma(dev, page_to_phys(page));
--		if ((addr + size) > dev->coherent_dma_mask) {
--			__free_pages(page, get_order(size));
--		} else {
--			vaddr = page_address(page);
--			*dma_handle = addr;
+-	ret = (void *)__get_free_pages(flags, order);
+-	if (ret) {
+-		*dma_handle = swiotlb_virt_to_bus(hwdev, ret);
+-		if (dma_coherent_ok(hwdev, *dma_handle, size)) {
+-			memset(ret, 0, size);
+-			return ret;
 -		}
+-		free_pages((unsigned long)ret, order);
 -	}
 -
--	if (!vaddr)
--		vaddr = swiotlb_alloc_coherent(dev, size, dma_handle, gfp);
--
--	if (!vaddr)
--		return NULL;
--
--	/* Clear the SME encryption bit for DMA use if not swiotlb area */
--	if (!is_swiotlb_buffer(dma_to_phys(dev, *dma_handle))) {
--		set_memory_decrypted((unsigned long)vaddr, 1 << order);
--		memset(vaddr, 0, PAGE_SIZE << order);
--		*dma_handle = __sme_clr(*dma_handle);
--	}
--
--	return vaddr;
+-	return swiotlb_alloc_buffer(hwdev, size, dma_handle, attrs);
 -}
+-EXPORT_SYMBOL(swiotlb_alloc_coherent);
 -
--static void sev_free(struct device *dev, size_t size, void *vaddr,
--		     dma_addr_t dma_handle, unsigned long attrs)
+ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+ 		dma_addr_t dma_addr)
+ {
+@@ -793,15 +764,6 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+ 	return true;
+ }
+ 
+-void
+-swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
+-		      dma_addr_t dev_addr)
 -{
--	/* Set the SME encryption bit for re-use if not swiotlb area */
--	if (!is_swiotlb_buffer(dma_to_phys(dev, dma_handle)))
--		set_memory_encrypted((unsigned long)vaddr,
--				     1 << get_order(size));
--
--	swiotlb_free_coherent(dev, size, vaddr, dma_handle);
+-	if (!swiotlb_free_buffer(hwdev, size, dev_addr))
+-		free_pages((unsigned long)vaddr, get_order(size));
 -}
+-EXPORT_SYMBOL(swiotlb_free_coherent);
 -
- static void __init __set_clr_pte_enc(pte_t *kpte, int level, bool enc)
- {
- 	pgprot_t old_prot, new_prot;
-@@ -399,20 +347,6 @@ bool sev_active(void)
- }
- EXPORT_SYMBOL(sev_active);
- 
--static const struct dma_map_ops sev_dma_ops = {
--	.alloc                  = sev_alloc,
--	.free                   = sev_free,
--	.map_page               = swiotlb_map_page,
--	.unmap_page             = swiotlb_unmap_page,
--	.map_sg                 = swiotlb_map_sg_attrs,
--	.unmap_sg               = swiotlb_unmap_sg_attrs,
--	.sync_single_for_cpu    = swiotlb_sync_single_for_cpu,
--	.sync_single_for_device = swiotlb_sync_single_for_device,
--	.sync_sg_for_cpu        = swiotlb_sync_sg_for_cpu,
--	.sync_sg_for_device     = swiotlb_sync_sg_for_device,
--	.mapping_error          = swiotlb_dma_mapping_error,
--};
--
- /* Architecture __weak replacement functions */
- void __init mem_encrypt_init(void)
- {
-@@ -423,12 +357,11 @@ void __init mem_encrypt_init(void)
- 	swiotlb_update_mem_attributes();
- 
- 	/*
--	 * With SEV, DMA operations cannot use encryption. New DMA ops
--	 * are required in order to mark the DMA areas as decrypted or
--	 * to use bounce buffers.
-+	 * With SEV, DMA operations cannot use encryption, we need to use
-+	 * SWIOTLB to bounce buffer DMA operation.
- 	 */
- 	if (sev_active())
--		dma_ops = &sev_dma_ops;
-+		dma_ops = &swiotlb_dma_ops;
- 
- 	/*
- 	 * With SEV, we need to unroll the rep string I/O instructions.
-diff --git a/lib/dma-direct.c b/lib/dma-direct.c
-index c9e8e21cb334..1277d293d4da 100644
---- a/lib/dma-direct.c
-+++ b/lib/dma-direct.c
-@@ -9,6 +9,7 @@
- #include <linux/scatterlist.h>
- #include <linux/dma-contiguous.h>
- #include <linux/pfn.h>
-+#include <linux/set_memory.h>
- 
- #define DIRECT_MAPPING_ERROR		0
- 
-@@ -20,6 +21,14 @@
- #define ARCH_ZONE_DMA_BITS 24
- #endif
- 
-+/*
-+ * For AMD SEV all DMA must be to unencrypted addresses.
-+ */
-+static inline bool force_dma_unencrypted(void)
-+{
-+	return sev_active();
-+}
-+
- static bool
- check_addr(struct device *dev, dma_addr_t dma_addr, size_t size,
- 		const char *caller)
-@@ -37,7 +46,9 @@ check_addr(struct device *dev, dma_addr_t dma_addr, size_t size,
- 
- static bool dma_coherent_ok(struct device *dev, phys_addr_t phys, size_t size)
- {
--	return phys_to_dma(dev, phys) + size - 1 <= dev->coherent_dma_mask;
-+	dma_addr_t addr = force_dma_unencrypted() ?
-+		__phys_to_dma(dev, phys) : phys_to_dma(dev, phys);
-+	return addr + size - 1 <= dev->coherent_dma_mask;
- }
- 
- void *dma_direct_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
-@@ -46,6 +57,7 @@ void *dma_direct_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	unsigned int count = PAGE_ALIGN(size) >> PAGE_SHIFT;
- 	int page_order = get_order(size);
- 	struct page *page = NULL;
-+	void *ret;
- 
- 	/* GFP_DMA32 and GFP_DMA are no ops without the corresponding zones: */
- 	if (dev->coherent_dma_mask <= DMA_BIT_MASK(ARCH_ZONE_DMA_BITS))
-@@ -78,10 +90,15 @@ again:
- 
- 	if (!page)
- 		return NULL;
--
--	*dma_handle = phys_to_dma(dev, page_to_phys(page));
--	memset(page_address(page), 0, size);
--	return page_address(page);
-+	ret = page_address(page);
-+	if (force_dma_unencrypted()) {
-+		set_memory_decrypted((unsigned long)ret, 1 << page_order);
-+		*dma_handle = __phys_to_dma(dev, page_to_phys(page));
-+	} else {
-+		*dma_handle = phys_to_dma(dev, page_to_phys(page));
-+	}
-+	memset(ret, 0, size);
-+	return ret;
- }
- 
- /*
-@@ -92,9 +109,12 @@ void dma_direct_free(struct device *dev, size_t size, void *cpu_addr,
- 		dma_addr_t dma_addr, unsigned long attrs)
- {
- 	unsigned int count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-+	unsigned int page_order = get_order(size);
- 
-+	if (force_dma_unencrypted())
-+		set_memory_encrypted((unsigned long)cpu_addr, 1 << page_order);
- 	if (!dma_release_from_contiguous(dev, virt_to_page(cpu_addr), count))
--		free_pages((unsigned long)cpu_addr, get_order(size));
-+		free_pages((unsigned long)cpu_addr, page_order);
- }
- 
- static dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
+ static void
+ swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
+ 	     int do_panic)
