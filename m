@@ -1,246 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeCWQYZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:24:25 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:48778 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752159AbeCWQYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:24:24 -0400
-From: Peng Hao <peng.hao2@zte.com.cn>
-To: cdall@kernel.org, marc.zyngier@arm.com
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH v3] KVM: arm/arm64 : add lpi info in vgic-debug
-Date: Sat, 24 Mar 2018 08:42:41 +0800
-Message-Id: <1521852161-67603-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-03-24 00:24:19,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-03-24 00:23:53,
-        Serialize complete at 2018-03-24 00:23:53
-X-MAIL: mse01.zte.com.cn w2NGO99u026061
+        id S1752237AbeCWQZd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:25:33 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:8299 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751471AbeCWQZa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 12:25:30 -0400
+X-IronPort-AV: E=Sophos;i="5.48,350,1517846400";
+   d="scan'208";a="177419846"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "nab@linux-iscsi.org" <nab@linux-iscsi.org>
+CC: "daniel@bristot.me" <daniel@bristot.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "williams@redhat.com" <williams@redhat.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "lclaudio@redhat.com" <lclaudio@redhat.com>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
+Subject: Re: [PATCH] target: Use WARNON_NON_RT(!irqs_disabled())
+Thread-Topic: [PATCH] target: Use WARNON_NON_RT(!irqs_disabled())
+Thread-Index: AQHTwSradWvxjdgAqEmtQCoI9WXRAaPbBs4AgAD5uYCAAfvLgIAACHCA
+Date: Fri, 23 Mar 2018 16:25:25 +0000
+Message-ID: <1521822325.2535.5.camel@wdc.com>
+References: <20180321153854.GB24312@kernel.org>
+         <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
+         <20180322093745.GC4229@kernel.org>
+         <20180323155513.dwbgvblenlji33as@linutronix.de>
+In-Reply-To: <20180323155513.dwbgvblenlji33as@linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [199.255.44.172]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0753;7:lYNwxLLeEThxV1KuBkFpeEVPxEiS/bUlLxxXo7R0rEhrYn5C0JYHmYwLXSsmf5ACXdG6OGpBfhcozQiuIC07dMQCv+fK9C/YVF0c+rWBo0Er9uQXUmc/Pf7+XmeOVVDVCxfPe60zvHkyeepLnrfIqbgYp87xBE2AdeQoRy/B+guBx5vfPqA9+g6ckjYpvKHNDEkZaJNvdoXAI7iI785/wSHXtGztuP5r9AJMI/QRg+RoY/F3bCOeW3NYzDCT0VxX;20:dyz0NwTXJtHF/BH7OT9Bkx9jYrGXoDgN8cJeO7yB5VZ2ppgDwsgtN1P7v5DhRYSTou+P2LzSaeJbvyB/q22/OP7TIQpqCVJYIt816pvyHtL2vhlbR1E85QlpQ9ahLxUEUnt3sCAvbVEtW03DSnFoHv0dDyL5gpF/tA6pKzU5Blg=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 9d8cb143-49f8-43a4-60da-08d590daaf5b
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0753;
+x-ms-traffictypediagnostic: MWHPR04MB0753:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB07538D4A40E5161CEF2563A398A80@MWHPR04MB0753.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:MWHPR04MB0753;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0753;
+x-forefront-prvs: 0620CADDF3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(39860400002)(39380400002)(396003)(51444003)(189003)(199004)(377424004)(186003)(6486002)(36756003)(6512007)(6436002)(4326008)(25786009)(68736007)(6246003)(59450400001)(26005)(305945005)(8676002)(6506007)(103116003)(2906002)(53936002)(76176011)(93886005)(99286004)(66066001)(3660700001)(11346002)(316002)(54906003)(97736004)(3846002)(110136005)(6116002)(5660300001)(105586002)(14454004)(478600001)(7736002)(3280700002)(446003)(2201001)(8936002)(229853002)(72206003)(106356001)(7416002)(86362001)(81166006)(5250100002)(81156014)(2501003)(2900100001)(102836004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0753;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: 14P01GskB6UUFcD8rBq51mZEZIG5WZw2jd4pnRdc7kdl0fo372Um1eUUPWyVhMF/5MbA1PVjukfrbjjgaJ5xzWjrnYq8A81BpkRRoMzYL66Z/a0enEkhL2zg1Q/pD8CofP4T51yg90u+CCJ/WOHnE36AKRbW9eGP2QRH+SEiG+M0VFm/8U2QpYU5kIL361DZuqFV/1pBaTPbNdt6DaQdGzmCUCtqWhqdX0+LyE4uvk5tpUmQeV5+kio76iRFbHTGnMzCXtuWeomFBEXEIx5pALN3R3I6cbGNBThE4xFkQqyvvVdcBCs2+My0eye7P/p/7efW4QDnTxZQA6MT36m9+g==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0E43EC1815970742906861AF2E51524A@namprd04.prod.outlook.com>
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d8cb143-49f8-43a4-60da-08d590daaf5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2018 16:25:26.0189
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0753
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2NGPbIJ005635
 
-Add lpi debug info to vgic-stat.
-The printed info like this:
-    SPI  287      0 000001        0        0   0 160      -1
-    LPI 8192      2 000100        0        0   0 160      -1
+On Fri, 2018-03-23 at 16:55 +0100, Sebastian Andrzej Siewior wrote:
+> I am going take this into -RT tree for now until we have different
+> solution.
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- virt/kvm/arm/vgic/vgic-debug.c | 59 ++++++++++++++++++++++++++++++++++++++----
- virt/kvm/arm/vgic/vgic-its.c   | 16 ++++++------
- virt/kvm/arm/vgic/vgic.h       |  1 +
- 3 files changed, 63 insertions(+), 13 deletions(-)
+Have you considered to delete the WARN_ON_ONCE(!irqs_disabled()) statement?
+I think that check duplicates functionality that already exists in lockdep
+since lockdep is already able to detect spinlock use inconsistencies.
 
-diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
-index 10b3817..ddac6bd 100644
---- a/virt/kvm/arm/vgic/vgic-debug.c
-+++ b/virt/kvm/arm/vgic/vgic-debug.c
-@@ -36,9 +36,12 @@
- struct vgic_state_iter {
- 	int nr_cpus;
- 	int nr_spis;
-+	int nr_lpis;
- 	int dist_id;
- 	int vcpu_id;
- 	int intid;
-+	int lpi_print_count;
-+	struct vgic_irq **lpi_irqs;
- };
- 
- static void iter_next(struct vgic_state_iter *iter)
-@@ -52,6 +55,39 @@ static void iter_next(struct vgic_state_iter *iter)
- 	if (iter->intid == VGIC_NR_PRIVATE_IRQS &&
- 	    ++iter->vcpu_id < iter->nr_cpus)
- 		iter->intid = 0;
-+
-+	if (iter->intid >= VGIC_NR_PRIVATE_IRQS + iter->nr_spis) {
-+		if (iter->lpi_print_count < iter->nr_lpis)
-+			iter->intid = iter->lpi_irqs[iter->lpi_print_count]->intid;
-+		iter->lpi_print_count++;
-+	}
-+}
-+
-+static void vgic_debug_get_lpis(struct kvm *kvm, struct vgic_state_iter *iter)
-+{
-+	u32 *intids;
-+	int i, irq_count;
-+	struct vgic_irq *irq = NULL, **lpi_irqs;
-+
-+	iter->nr_lpis = 0;
-+	irq_count = vgic_copy_lpi_list(kvm, NULL, &intids);
-+	if (irq_count < 0)
-+		return;
-+
-+	lpi_irqs = kmalloc_array(irq_count, sizeof(irq), GFP_KERNEL);
-+	if (!lpi_irqs) {
-+		kfree(intids);
-+		return;
-+	}
-+
-+	for (i = 0; i < irq_count; i++) {
-+		irq = vgic_get_irq(kvm, NULL, intids[i]);
-+		if (!irq)
-+			continue;
-+		lpi_irqs[iter->nr_lpis++] = irq;
-+	}
-+	iter->lpi_irqs = lpi_irqs;
-+	kfree(intids);
- }
- 
- static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
-@@ -64,6 +100,8 @@ static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
- 	iter->nr_cpus = nr_cpus;
- 	iter->nr_spis = kvm->arch.vgic.nr_spis;
- 
-+	if (vgic_supports_direct_msis(kvm) && !pos)
-+		vgic_debug_get_lpis(kvm, iter);
- 	/* Fast forward to the right position if needed */
- 	while (pos--)
- 		iter_next(iter);
-@@ -73,7 +111,9 @@ static bool end_of_vgic(struct vgic_state_iter *iter)
- {
- 	return iter->dist_id > 0 &&
- 		iter->vcpu_id == iter->nr_cpus &&
--		(iter->intid - VGIC_NR_PRIVATE_IRQS) == iter->nr_spis;
-+		(iter->intid - VGIC_NR_PRIVATE_IRQS) >= iter->nr_spis &&
-+		((iter->nr_lpis == 0) ||
-+		(iter->lpi_print_count == iter->nr_lpis + 1));
- }
- 
- static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
-@@ -130,6 +170,7 @@ static void vgic_debug_stop(struct seq_file *s, void *v)
- 
- 	mutex_lock(&kvm->lock);
- 	iter = kvm->arch.vgic.iter;
-+	kfree(iter->lpi_irqs);
- 	kfree(iter);
- 	kvm->arch.vgic.iter = NULL;
- 	mutex_unlock(&kvm->lock);
-@@ -154,7 +195,7 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
- 			 struct kvm_vcpu *vcpu)
- {
- 	int id = 0;
--	char *hdr = "SPI ";
-+	char *hdr = "Global";
- 
- 	if (vcpu) {
- 		hdr = "VCPU";
-@@ -162,7 +203,10 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
- 	}
- 
- 	seq_printf(s, "\n");
--	seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
-+	if (vcpu)
-+		seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
-+	else
-+		seq_printf(s, "%s TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr);
- 	seq_printf(s, "---------------------------------------------------------------\n");
- }
- 
-@@ -174,8 +218,10 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
- 		type = "SGI";
- 	else if (irq->intid < VGIC_NR_PRIVATE_IRQS)
- 		type = "PPI";
--	else
-+	else if (irq->intid < VGIC_MAX_SPI)
- 		type = "SPI";
-+	else if (irq->intid >= VGIC_MIN_LPI)
-+		type = "LPI";
- 
- 	if (irq->intid ==0 || irq->intid == VGIC_NR_PRIVATE_IRQS)
- 		print_header(s, irq, vcpu);
-@@ -220,7 +266,9 @@ static int vgic_debug_show(struct seq_file *s, void *v)
- 	if (!kvm->arch.vgic.initialized)
- 		return 0;
- 
--	if (iter->vcpu_id < iter->nr_cpus) {
-+	if (iter->intid >= VGIC_MIN_LPI)
-+		irq = iter->lpi_irqs[iter->lpi_print_count - 1];
-+	else if (iter->vcpu_id < iter->nr_cpus) {
- 		vcpu = kvm_get_vcpu(kvm, iter->vcpu_id);
- 		irq = &vcpu->arch.vgic_cpu.private_irqs[iter->intid];
- 	} else {
-@@ -230,6 +278,7 @@ static int vgic_debug_show(struct seq_file *s, void *v)
- 	spin_lock(&irq->irq_lock);
- 	print_irq_state(s, irq, vcpu);
- 	spin_unlock(&irq->irq_lock);
-+	vgic_put_irq(kvm, irq);
- 
- 	return 0;
- }
-diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
-index 4650953..3e8a47d 100644
---- a/virt/kvm/arm/vgic/vgic-its.c
-+++ b/virt/kvm/arm/vgic/vgic-its.c
-@@ -307,13 +307,13 @@ static int update_lpi_config(struct kvm *kvm, struct vgic_irq *irq,
- }
- 
- /*
-- * Create a snapshot of the current LPIs targeting @vcpu, so that we can
-- * enumerate those LPIs without holding any lock.
-+ * Create a snapshot of the current LPIs targeting @vcpu if @vcpu!=NULL or all
-+ * LPIs, so that we can enumerate those LPIs without holding any lock.
-  * Returns their number and puts the kmalloc'ed array into intid_ptr.
-  */
--static int vgic_copy_lpi_list(struct kvm_vcpu *vcpu, u32 **intid_ptr)
-+int vgic_copy_lpi_list(struct kvm *kvm, struct kvm_vcpu *vcpu, u32 **intid_ptr)
- {
--	struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
-+	struct vgic_dist *dist = &kvm->arch.vgic;
- 	struct vgic_irq *irq;
- 	u32 *intids;
- 	int irq_count = dist->lpi_list_count, i = 0;
-@@ -332,7 +332,7 @@ static int vgic_copy_lpi_list(struct kvm_vcpu *vcpu, u32 **intid_ptr)
- 	spin_lock(&dist->lpi_list_lock);
- 	list_for_each_entry(irq, &dist->lpi_list_head, lpi_list) {
- 		/* We don't need to "get" the IRQ, as we hold the list lock. */
--		if (irq->target_vcpu != vcpu)
-+		if (vcpu && irq->target_vcpu != vcpu)
- 			continue;
- 		intids[i++] = irq->intid;
- 	}
-@@ -423,7 +423,7 @@ static int its_sync_lpi_pending_table(struct kvm_vcpu *vcpu)
- 	unsigned long flags;
- 	u8 pendmask;
- 
--	nr_irqs = vgic_copy_lpi_list(vcpu, &intids);
-+	nr_irqs = vgic_copy_lpi_list(vcpu->kvm, vcpu, &intids);
- 	if (nr_irqs < 0)
- 		return nr_irqs;
- 
-@@ -1147,7 +1147,7 @@ static int vgic_its_cmd_handle_invall(struct kvm *kvm, struct vgic_its *its,
- 
- 	vcpu = kvm_get_vcpu(kvm, collection->target_addr);
- 
--	irq_count = vgic_copy_lpi_list(vcpu, &intids);
-+	irq_count = vgic_copy_lpi_list(kvm, vcpu, &intids);
- 	if (irq_count < 0)
- 		return irq_count;
- 
-@@ -1195,7 +1195,7 @@ static int vgic_its_cmd_handle_movall(struct kvm *kvm, struct vgic_its *its,
- 	vcpu1 = kvm_get_vcpu(kvm, target1_addr);
- 	vcpu2 = kvm_get_vcpu(kvm, target2_addr);
- 
--	irq_count = vgic_copy_lpi_list(vcpu1, &intids);
-+	irq_count = vgic_copy_lpi_list(kvm, vcpu1, &intids);
- 	if (irq_count < 0)
- 		return irq_count;
- 
-diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-index f5b8519..68b5ed2 100644
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -257,5 +257,6 @@ int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
- void vgic_v4_teardown(struct kvm *kvm);
- int vgic_v4_sync_hwstate(struct kvm_vcpu *vcpu);
- int vgic_v4_flush_hwstate(struct kvm_vcpu *vcpu);
-+int vgic_copy_lpi_list(struct kvm *kvm, struct kvm_vcpu *vcpu, u32 **intid_ptr);
- 
- #endif
--- 
-1.8.3.1
+Bart.
