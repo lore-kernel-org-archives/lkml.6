@@ -1,58 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeCWIvr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 04:51:47 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:34420 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751797AbeCWIvp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 04:51:45 -0400
-Date: Fri, 23 Mar 2018 09:51:40 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6] ARM: dts: wheat: Fix ADV7513 address usage
-Message-ID: <20180323085140.g3golwdtpezo7fhi@verge.net.au>
-References: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+        id S1751898AbeCWIv4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 04:51:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37734 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751668AbeCWIvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 04:51:55 -0400
+Date: Fri, 23 Mar 2018 09:51:53 +0100
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: linux-next: please clean up the alpine tree
+Message-ID: <20180323085153.GB9682@kwain>
+References: <20180323083315.58976d73@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180323083315.58976d73@canb.auug.org.au>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 09:30:40PM +0000, Kieran Bingham wrote:
-> The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
-> bus, however in low power mode the ADV7513 will reset it's slave maps to
-> use the hardware defined default addresses.
-> 
-> The ADV7511 driver was adapted to allow the two devices to be registered
-> correctly - but it did not take into account the fault whereby the
-> devices reset the addresses.
-> 
-> This results in an address conflict between the device using the default
-> addresses, and the other device if it is in low-power-mode.
-> 
-> Repair this issue by moving both devices away from the default address
-> definitions.
+Hi Stephen,
 
-Hi Kierean,
+On Fri, Mar 23, 2018 at 08:33:15AM +1100, Stephen Rothwell wrote:
+> 
+> The alpine tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/atenart/linux.git#alpine/for-next)
+> only contains commits that have been upstreamed as different commits.
+> It also hasn't been updated since late March 2017.  Please clean it up
+> (it takes some time to merge - presumably just because of its age).
+> 
+> Or, if it is no longer being used, please let me know and I will remove
+> it from linux-next.
 
-as this is a fix
-a) Does it warrant a fixes tag?
-   Fixes: f6eea82a87db ("ARM: dts: wheat: add DU support")
-b) Does it warrant being posted as a fix for v4.16;
-c) or v4.17?
+Thanks for pointing this out, and sorry for the inconvenience. The
+Alpine tree isn't very active and I haven't got patches for quite
+some time.
+
+I updated alpine/next to point to v4.16-rc1 to fix the issue. It's not
+completely dead, but as it's not active you can also remove the
+alpine/for-next tree from linux-next. And when/if I get patches to merge
+in the future I'll ask to add it back. As you wish :)
+
+Thank you for making linux-next!
+Antoine
+
+-- 
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
