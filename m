@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803994-2-5553280526366827749
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803976-2-14554336176453673608
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803994; b=VkMD7txBz2dOw6m+fmPn3OWV8/Nr+meuY7FgV18WYVZjOaS
-    y2LQKV6KA6unEvh27WKCSSLTj8b5AS0KX0clEqraak8jw4V074wAAwf59nP60Q+i
-    n3RCcE4GGxAdlI/TXeJo7t8ddbSkVn5twfEMqHieBlexfKPKA8ERY0xmZCVZb/0f
-    Zh6AzcCX87XLwtGjmT4tmMwIE16dD7a7oPuPCdrtYltM8SMU7vhOvYjeRyBzpy8C
-    2BXP8YZ/0gaYKJHNKQLjW/CdQRLxQEUNaM6xxl5J+eYvrhN5XVeeiKhOh10kNW44
-    VD0c6Kzz1T4jm0LYa+1t7cfn1f8Sadrf9dcfJPw==
+    t=1521803975; b=Ym/43KM1efivYfVoBnscm+YK6oeX/KK4/wl8fL1GsCEH1z1
+    njOkXBODPa1HW4za6BQzeFv/LQ2susSAgvds6EjSsMGhaSszMaaOSFuvnVIrHPET
+    KloRBMxuqT/a7FxMsKZ4lThZ+Su6CYsYApBIA0Eiqa41V8K2BRm/oElz3cTDLiUM
+    K+dSiM7MX1Sm/YCTs2Axcx1N2NH2v0bQNVUoHK5IPceZwfb9qCDZmDjfllFPzGJC
+    tciad+hXp/SgMjdgVzM30tBBzzSU7jNk18xoeu+34eybZlf6w9L6DWfBmzdaoMnS
+    up9yHTWbQ88UmDrcF6hH+Wt1WSsUZkVITHqCAew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803994; bh=/a5DiMhdDZZETjXpHqKfJIs1gq
-    zc9LnomlghEllYqNY=; b=ntWOObDpo0NnoBO15c82hHnuJzgbCEvK5/2+o4at2m
-    As78JmaNyz3ZF9PlECgndzlr9fr3k6PsgGrGio+j/oesc0fWuo7glLlRF0eBF4wd
-    cMJFj2lGAVlBSirpmda7MU8/bQJzcpStAbEEsza0zank0RyIYQ2iqObcy2mgY6yv
-    gi+UgqfIkRdeWPlKaKn8tGci1szZEfVWllnRuHQAHFfVCYYOaSOqtFJif95KZjH8
-    kEiUBzpV72zO+Yqaq42xoThebfdbQLKPbWuA9QQ7O333GkCH6UyVxCcAPiTCCSrb
-    uIQS6pTMDHgU+sDxgqcaOBVvX6auz1UCv/BWu7WLfNdQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803975; bh=1+l3JcTgKCNiV1gPaQCzKwyWyH
+    wI/LYNhd8lRL/PQBY=; b=tyfHTFF7HAimHf5ozZDstvENXxBm/D2IHIsGFQJGly
+    JXee7RjLu7/8J7w/eoY2RjAfRh29cZAYap51q5OC5pDXe47aowkTTI8NV2NrSkGW
+    x18aLHq538CWLooco37FeCjCI2ykrvfLJL7J+St7IugRfTw7o/+KvPtEBygzPsMj
+    +xCXeSKC2XPCmja+IIL8pvE0NkGxG2tNmOtTIUYpKpM3Kj7nZKJjtdJ+T1zycT+d
+    6gtA540xS+y8hb/V8y2AMm4HptIsL1zDWLRoos7LflqEEOpQkKHat9rceK6lHgmi
+    GUoQZ0SzhHmjW6Y+EZtrmr2HGeF1699Y5I0jPJdmPgsg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755637AbeCWKIs (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:08:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41816 "EHLO
+        id S1753689AbeCWKIx (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:08:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41842 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755625AbeCWKIs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:48 -0400
+        with ESMTP id S1755655AbeCWKIv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        Li Yang <pku.leo@gmail.com>, Scott Wood <oss@buserror.net>,
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        Julian Anastasov <ja@ssi.bg>,
+        Simon Horman <horms@verge.net.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 104/177] net: ethernet: ucc_geth: fix MEM_PART_MURAM mode
-Date: Fri, 23 Mar 2018 10:53:52 +0100
-Message-Id: <20180323094209.878512935@linuxfoundation.org>
+Subject: [PATCH 4.9 090/177] ipvs: explicitly forbid ipv6 service/dest creation if ipv6 mod is disabled
+Date: Fri, 23 Mar 2018 10:53:38 +0100
+Message-Id: <20180323094209.263628915@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,60 +83,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Paolo Abeni <pabeni@redhat.com>
 
 
-[ Upstream commit 8b8642af15ed14b9a7a34d3401afbcc274533e13 ]
+[ Upstream commit 1442f6f7c1b77de1c508318164a527e240c24a4d ]
 
-Since commit 5093bb965a163 ("powerpc/QE: switch to the cpm_muram
-implementation"), muram area is not part of immrbar mapping anymore
-so immrbar_virt_to_phys() is not usable anymore.
+When creating a new ipvs service, ipv6 addresses are always accepted
+if CONFIG_IP_VS_IPV6 is enabled. On dest creation the address family
+is not explicitly checked.
 
-Fixes: 5093bb965a163 ("powerpc/QE: switch to the cpm_muram implementation")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Acked-by: David S. Miller <davem@davemloft.net>
-Acked-by: Li Yang <pku.leo@gmail.com>
-Signed-off-by: Scott Wood <oss@buserror.net>
+This allows the user-space to configure ipvs services even if the
+system is booted with ipv6.disable=1. On specific configuration, ipvs
+can try to call ipv6 routing code at setup time, causing the kernel to
+oops due to fib6_rules_ops being NULL.
+
+This change addresses the issue adding a check for the ipv6
+module being enabled while validating ipv6 service operations and
+adding the same validation for dest operations.
+
+According to git history, this issue is apparently present since
+the introduction of ipv6 support, and the oops can be triggered
+since commit 09571c7ae30865ad ("IPVS: Add function to determine
+if IPv6 address is local")
+
+Fixes: 09571c7ae30865ad ("IPVS: Add function to determine if IPv6 address is local")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Julian Anastasov <ja@ssi.bg>
+Signed-off-by: Simon Horman <horms@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/ucc_geth.c |    8 +++-----
- include/soc/fsl/qe/qe.h                   |    1 +
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ net/netfilter/ipvs/ip_vs_ctl.c |   22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/freescale/ucc_geth.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -2594,11 +2594,10 @@ static int ucc_geth_startup(struct ucc_g
- 		} else if (ugeth->ug_info->uf_info.bd_mem_part ==
- 			   MEM_PART_MURAM) {
- 			out_be32(&ugeth->p_send_q_mem_reg->sqqd[i].bd_ring_base,
--				 (u32) immrbar_virt_to_phys(ugeth->
--							    p_tx_bd_ring[i]));
-+				 (u32)qe_muram_dma(ugeth->p_tx_bd_ring[i]));
- 			out_be32(&ugeth->p_send_q_mem_reg->sqqd[i].
- 				 last_bd_completed_address,
--				 (u32) immrbar_virt_to_phys(endOfRing));
-+				 (u32)qe_muram_dma(endOfRing));
- 		}
- 	}
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -3092,6 +3092,17 @@ nla_put_failure:
+ 	return skb->len;
+ }
  
-@@ -2844,8 +2843,7 @@ static int ucc_geth_startup(struct ucc_g
- 		} else if (ugeth->ug_info->uf_info.bd_mem_part ==
- 			   MEM_PART_MURAM) {
- 			out_be32(&ugeth->p_rx_bd_qs_tbl[i].externalbdbaseptr,
--				 (u32) immrbar_virt_to_phys(ugeth->
--							    p_rx_bd_ring[i]));
-+				 (u32)qe_muram_dma(ugeth->p_rx_bd_ring[i]));
- 		}
- 		/* rest of fields handled by QE */
- 	}
---- a/include/soc/fsl/qe/qe.h
-+++ b/include/soc/fsl/qe/qe.h
-@@ -243,6 +243,7 @@ static inline int qe_alive_during_sleep(
- #define qe_muram_free cpm_muram_free
- #define qe_muram_addr cpm_muram_addr
- #define qe_muram_offset cpm_muram_offset
-+#define qe_muram_dma cpm_muram_dma
++static bool ip_vs_is_af_valid(int af)
++{
++	if (af == AF_INET)
++		return true;
++#ifdef CONFIG_IP_VS_IPV6
++	if (af == AF_INET6 && ipv6_mod_enabled())
++		return true;
++#endif
++	return false;
++}
++
+ static int ip_vs_genl_parse_service(struct netns_ipvs *ipvs,
+ 				    struct ip_vs_service_user_kern *usvc,
+ 				    struct nlattr *nla, int full_entry,
+@@ -3118,11 +3129,7 @@ static int ip_vs_genl_parse_service(stru
+ 	memset(usvc, 0, sizeof(*usvc));
  
- #define qe_setbits32(_addr, _v) iowrite32be(ioread32be(_addr) |  (_v), (_addr))
- #define qe_clrbits32(_addr, _v) iowrite32be(ioread32be(_addr) & ~(_v), (_addr))
+ 	usvc->af = nla_get_u16(nla_af);
+-#ifdef CONFIG_IP_VS_IPV6
+-	if (usvc->af != AF_INET && usvc->af != AF_INET6)
+-#else
+-	if (usvc->af != AF_INET)
+-#endif
++	if (!ip_vs_is_af_valid(usvc->af))
+ 		return -EAFNOSUPPORT;
+ 
+ 	if (nla_fwmark) {
+@@ -3624,6 +3631,11 @@ static int ip_vs_genl_set_cmd(struct sk_
+ 		if (udest.af == 0)
+ 			udest.af = svc->af;
+ 
++		if (!ip_vs_is_af_valid(udest.af)) {
++			ret = -EAFNOSUPPORT;
++			goto out;
++		}
++
+ 		if (udest.af != svc->af && cmd != IPVS_CMD_DEL_DEST) {
+ 			/* The synchronization protocol is incompatible
+ 			 * with mixed family services
