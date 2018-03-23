@@ -1,960 +1,271 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4058583-1522033886-2-15568945169273179437
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES roen, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522033884; b=vabB8vNb2ZuNA5H91Uj+qMa+4g24dY66iqEVM5VcfCQLOMY
-    S0jgb2UJsH7zaACwQFqe9QqR+jfUQDjaHbpBie+5wjw/BUxbkQmcEQdwViMCjWGZ
-    sVeRJYzVtRA6lc6kS0780IiCyHD0t04RKeK/F5aPBkki93aj3DY6LYXem2+d7LPV
-    Fi6180P+Ux8Q/Co3nQtDoDCJf4RJFtp3xksQtpV/8h9m6atcoQ0iKcf4Zd7KSLgx
-    gQfcYN5fPC1QgBKjB1EUBSp5Nap978tYqVHs9SKXyGHQnhOMlR3ks0rPDouNtbg9
-    b1ekQDMvOiRBXWRFGCCnRs4vXFJpa8mnoEondxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1522033884; bh=y3BskEv7MStWAEWhHtdQVwP3DZ5As1knnYcJM/M5xQE=; b=r
-    JBN0Hs6zMZErEOlwfQQYSsMu1hhp3kaoymd1jy1G6hS9kH60DDCeFqZDw31Eh8A8
-    LL5rOhkdflDfCM+U6TUdwuyDfos5dJrNjdzpdH2HpiSX+tIODNHUyn53AfM45uAW
-    aZMtBMzfIXut9gsvd+eEd6K5Hr2I2C8HrmWVMI4KtPR1NcxrAP8heAxZL1F8P8Ws
-    6QR89KC6qCS0PKdsDzi/jkRMHcx+oB6Mg+M1LFsHJwNsN0N/OtsBsMJ20q8pGT8g
-    1PQyOTP4+XYLcLsFySwisRFlMpumOE4ITidezxOph/0Jpeg001uYk9Ihr4BvebUr
-    cEOGUCJnnWaN7bFTxwSbg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fjNKV63I x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Bu6MHWty;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fjNKV63I x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Bu6MHWty;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751076AbeCZDLE (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 25 Mar 2018 23:11:04 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46309 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750839AbeCZDLC (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Sun, 25 Mar 2018 23:11:02 -0400
-X-Google-Smtp-Source: AG47ELvqpVWiFf9epgCpXzSH4ftYV3cL8No4JOd6l745iq5n1QJMKAnhKlYRtnfV8Mfmw+iBV6br8A==
-Subject: Re: [PATCH v7 1/6] typec: tcpm: Add core support for sink side PPS
-To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>, Jun Li <jun.li@nxp.com>
-Cc: linux-usb@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, support.opensource@diasemi.com
+Return-Path: <Adam.Thomson.Opensource@diasemi.com>
+X-Google-Smtp-Source: AG47ELuqInGtFIi7LPiNxXrT3n/OxAlgZFoWW9F9E213SIkhQ8AGCzChyltiFvuHvTVEhLuPscbb
+ARC-Seal: i=1; a=rsa-sha256; t=1521799946; cv=none;
+        d=google.com; s=arc-20160816;
+        b=grbvv+XXLkbuI0f1Ol8RSC57hCMWpmbvFwmyCK3Muvc2NWWC2iair1kO/LDfbhgB+v
+         3Zk8EIBBmffD/47SN/T/APj22pnPbyq77ngpiUcfLOTmHkUF+ax5lUAU8ZmhdhUc8m2t
+         e4yPHmc8+jJo2LuefcDbK2Jeun/E96c3ua5OLZvUIz9cvUSi/aM/hl7+fJqBYXZnqNCg
+         jziJ9+iAq7fA82cE0cdkl4LHvdMnK/Dt10WgfQIRze/jT2ryTwFigGjtGVkD0kuru03F
+         eDg7dnKEzn+9isEoM6x8qSpweBGEN9GCq/YyMeasdPSqS7PHOoWPsF7v5vhRJxsdM08s
+         POng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:cc:to:subject:date:from:references:in-reply-to
+         :message-id:arc-authentication-results;
+        bh=UvxaEU3j2wL2Kz4OMtiy/kLvPdh78QaTsZyS/o/QCiE=;
+        b=nabLhCCMxIcLfprk7SSuK77lgqMEXJpJ2vMfV6E8LKI3mz0wyk9xpBrlmp0PMToonA
+         wyaMEleqp8068oUU2dhMcollZQwInBeaBMr+sIL8WIu/irIeX8Io/6ULpd7prcMekcjB
+         J7nX+Yc2o7MgHD/m+Yr3/W5a7G5/1xYQJ2FeNPwocEECervSRqiGWdKzH6rxQLTmVHCH
+         bjJH7+o3MMp7Sb15OmNRXr9VifpsAZwju0XmkHs5iUgS/o9hvAd00BSFnoEo5ZaLA79E
+         sTa+VE23XEPh+aKtgZGj3si9PGTndSlPJbDF2P3ytQn3ZGjVuSG2ZX/xCqPIm/FFI7HZ
+         wQGA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 195.245.231.147 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=diasemi.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 195.245.231.147 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=diasemi.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmleJIrShJLcpLzFFi42KJ27nUWJfz8pY
+  og7WTFC2aF69ns3hzfDqTRdfqnSwW1471Mllc3jWHzeJz7xFGi0XLWpktniw8w2RxeneJA6fH
+  plWdbB7zTgZ67J+7ht1j47sdTB7v911l89j5vYHd4/MmuQD2KNbMvKT8igTWjJcvt7IXPDavm
+  DR7BXMD41b9LkYuDiGB9YwSfycdYepi5ARyKiRWPV3A1sXIwcErkCnx5KoSSJhTwF3i3stOJp
+  CwkICbxJ5PzCBhNgELicknHrCB2CwCqhLTJ65nBbGFBYIldr1rYQMZLyLwnlHi0+MPLCAJZoE
+  6id7fb8FsXgFBiZMzn0DFJSQOvnjBDHGCgcTpBY1gcQkBe4np768yg+yVENCXaDwWCxE2lPg+
+  6xtUibnErLM72CYwCs5CMnUWkqkLGJlWMWoUpxaVpRbpGlnoJRVlpmeU5CZm5ugaGpjq5aYWF
+  yemp+YkJhXrJefnbmIERkg9AwPjDsa+VX6HGCU5mJREeTOPb4kS4kvKT6nMSCzOiC8qzUktPs
+  Qow8GhJMF77SJQTrAoNT21Ii0zBxirMGkJDh4lEd73IGne4oLE3OLMdIjUKUZdjhsvXrcxC7H
+  k5eelSonzrgApEgApyijNgxsBSxuXGGWlhHkZGRgYhHgKUotyM0tQ5V8xinMwKgnzNoBM4cnM
+  K4Hb9AroCCagI3ymgB1RkoiQkmpgVFmf9+FOxNsqQc0nnrvcLru1d0R63b8YmLT80eGX3qEvF
+  kR1Pn1rfaaNZar5xmtT+Nwncs+Z+ynw9Kf0uK6afFXXG6p7d5g0cfivi5w144zzmkfH+HwnrJ
+  H9dz+o5MbJnz2RwUz50nusFqQ2+cVu2q9TtFcpSuVdnnGz+vGa4yqNUxuuyXu+UGIpzkg01GI
+  uKk4EAGrXP6QWAwAA
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-16.tower-178.messagelabs.com!1521799945!113435845!1
+X-Originating-IP: [94.185.165.51]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+Message-ID: <c7704e7434bdf8567137ec239d33dbf4a34b2ff0.1521799705.git.Adam.Thomson.Opensource@diasemi.com>
+In-Reply-To: <cover.1521799705.git.Adam.Thomson.Opensource@diasemi.com>
 References: <cover.1521799705.git.Adam.Thomson.Opensource@diasemi.com>
- <daf72dd237653e55c0485e930108c19a4996aa4f.1521799705.git.Adam.Thomson.Opensource@diasemi.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <3d44bdca-4716-64ea-2992-6932f2178ff3@roeck-us.net>
-Date: Sun, 25 Mar 2018 20:10:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date: Fri, 23 Mar 2018 10:12:24 +0000
+Subject: [PATCH v7 4/6] power: supply: Add 'usb_type' property and supporting
+ code
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck
+	<linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Reichel <sre@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Jun
+ Li <jun.li@nxp.com>
+CC: <linux-usb@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <support.opensource@diasemi.com>
 MIME-Version: 1.0
-In-Reply-To: <daf72dd237653e55c0485e930108c19a4996aa4f.1521799705.git.Adam.Thomson.Opensource@diasemi.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 23/03/2018 08:40:00
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595722900301621749?=
+X-GMAIL-MSGID: =?utf-8?q?1595722900301621749?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/23/2018 03:12 AM, Adam Thomson wrote:
-> This commit adds code to handle requesting of PPS APDOs. Switching
-> between standard PDOs and APDOs, and re-requesting an APDO to
-> modify operating voltage/current will be triggered by an
-> external call into TCPM.
-> 
-> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-> Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+This commit adds the 'usb_type' property to represent USB supplies
+which can report a number of different types based on a connection
+event.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Examples of this already exist in drivers whereby the existing 'type'
+property is updated, based on an event, to represent what was
+connected (e.g. USB, USB_DCP, USB_ACA, ...). Current implementations
+however don't show all supported connectable types, so this knowledge
+has to be exlicitly known for each driver that supports this.
 
-> ---
->   drivers/usb/typec/tcpm.c | 517 ++++++++++++++++++++++++++++++++++++++++++++++-
->   include/linux/usb/pd.h   |   4 +-
->   include/linux/usb/tcpm.h |   1 +
->   3 files changed, 509 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-> index 4c0fc54..1a66c9e 100644
-> --- a/drivers/usb/typec/tcpm.c
-> +++ b/drivers/usb/typec/tcpm.c
-> @@ -47,6 +47,7 @@
->   	S(SNK_DISCOVERY_DEBOUNCE_DONE),		\
->   	S(SNK_WAIT_CAPABILITIES),		\
->   	S(SNK_NEGOTIATE_CAPABILITIES),		\
-> +	S(SNK_NEGOTIATE_PPS_CAPABILITIES),	\
->   	S(SNK_TRANSITION_SINK),			\
->   	S(SNK_TRANSITION_SINK_VBUS),		\
->   	S(SNK_READY),				\
-> @@ -166,6 +167,16 @@ struct pd_mode_data {
->   	struct typec_altmode_desc altmode_desc[SVID_DISCOVERY_MAX];
->   };
->   
-> +struct pd_pps_data {
-> +	u32 min_volt;
-> +	u32 max_volt;
-> +	u32 max_curr;
-> +	u32 out_volt;
-> +	u32 op_curr;
-> +	bool supported;
-> +	bool active;
-> +};
-> +
->   struct tcpm_port {
->   	struct device *dev;
->   
-> @@ -233,6 +244,7 @@ struct tcpm_port {
->   	struct completion swap_complete;
->   	int swap_status;
->   
-> +	unsigned int negotiated_rev;
->   	unsigned int message_id;
->   	unsigned int caps_count;
->   	unsigned int hard_reset_count;
-> @@ -259,6 +271,7 @@ struct tcpm_port {
->   	unsigned int max_snk_ma;
->   	unsigned int max_snk_mw;
->   	unsigned int operating_snk_mw;
-> +	bool update_sink_caps;
->   
->   	/* Requested current / voltage */
->   	u32 current_limit;
-> @@ -275,8 +288,13 @@ struct tcpm_port {
->   	/* VDO to retry if UFP responder replied busy */
->   	u32 vdo_retry;
->   
-> -	/* Alternate mode data */
-> +	/* PPS */
-> +	struct pd_pps_data pps_data;
-> +	struct completion pps_complete;
-> +	bool pps_pending;
-> +	int pps_status;
->   
-> +	/* Alternate mode data */
->   	struct pd_mode_data mode_data;
->   	struct typec_altmode *partner_altmode[SVID_DISCOVERY_MAX];
->   	struct typec_altmode *port_altmode[SVID_DISCOVERY_MAX];
-> @@ -494,6 +512,16 @@ static void tcpm_log_source_caps(struct tcpm_port *port)
->   				  pdo_max_voltage(pdo),
->   				  pdo_max_power(pdo));
->   			break;
-> +		case PDO_TYPE_APDO:
-> +			if (pdo_apdo_type(pdo) == APDO_TYPE_PPS)
-> +				scnprintf(msg, sizeof(msg),
-> +					  "%u-%u mV, %u mA",
-> +					  pdo_pps_apdo_min_voltage(pdo),
-> +					  pdo_pps_apdo_max_voltage(pdo),
-> +					  pdo_pps_apdo_max_current(pdo));
-> +			else
-> +				strcpy(msg, "undefined APDO");
-> +			break;
->   		default:
->   			strcpy(msg, "undefined");
->   			break;
-> @@ -777,11 +805,13 @@ static int tcpm_pd_send_source_caps(struct tcpm_port *port)
->   		msg.header = PD_HEADER_LE(PD_CTRL_REJECT,
->   					  port->pwr_role,
->   					  port->data_role,
-> +					  port->negotiated_rev,
->   					  port->message_id, 0);
->   	} else {
->   		msg.header = PD_HEADER_LE(PD_DATA_SOURCE_CAP,
->   					  port->pwr_role,
->   					  port->data_role,
-> +					  port->negotiated_rev,
->   					  port->message_id,
->   					  port->nr_src_pdo);
->   	}
-> @@ -802,11 +832,13 @@ static int tcpm_pd_send_sink_caps(struct tcpm_port *port)
->   		msg.header = PD_HEADER_LE(PD_CTRL_REJECT,
->   					  port->pwr_role,
->   					  port->data_role,
-> +					  port->negotiated_rev,
->   					  port->message_id, 0);
->   	} else {
->   		msg.header = PD_HEADER_LE(PD_DATA_SINK_CAP,
->   					  port->pwr_role,
->   					  port->data_role,
-> +					  port->negotiated_rev,
->   					  port->message_id,
->   					  port->nr_snk_pdo);
->   	}
-> @@ -1173,6 +1205,7 @@ static void vdm_run_state_machine(struct tcpm_port *port)
->   		msg.header = PD_HEADER_LE(PD_DATA_VENDOR_DEF,
->   					  port->pwr_role,
->   					  port->data_role,
-> +					  port->negotiated_rev,
->   					  port->message_id, port->vdo_count);
->   		for (i = 0; i < port->vdo_count; i++)
->   			msg.payload[i] = cpu_to_le32(port->vdo_data[i]);
-> @@ -1244,6 +1277,8 @@ enum pdo_err {
->   	PDO_ERR_FIXED_NOT_SORTED,
->   	PDO_ERR_VARIABLE_BATT_NOT_SORTED,
->   	PDO_ERR_DUPE_PDO,
-> +	PDO_ERR_PPS_APDO_NOT_SORTED,
-> +	PDO_ERR_DUPE_PPS_APDO,
->   };
->   
->   static const char * const pdo_err_msg[] = {
-> @@ -1259,6 +1294,10 @@ enum pdo_err {
->   	" err: Variable/Battery supply pdos should be in increasing order of their minimum voltage",
->   	[PDO_ERR_DUPE_PDO] =
->   	" err: Variable/Batt supply pdos cannot have same min/max voltage",
-> +	[PDO_ERR_PPS_APDO_NOT_SORTED] =
-> +	" err: Programmable power supply apdos should be in increasing order of their maximum voltage",
-> +	[PDO_ERR_DUPE_PPS_APDO] =
-> +	" err: Programmable power supply apdos cannot have same min/max voltage and max current",
->   };
->   
->   static enum pdo_err tcpm_caps_err(struct tcpm_port *port, const u32 *pdo,
-> @@ -1308,6 +1347,26 @@ static enum pdo_err tcpm_caps_err(struct tcpm_port *port, const u32 *pdo,
->   					  pdo_min_voltage(pdo[i - 1])))
->   					return PDO_ERR_DUPE_PDO;
->   				break;
-> +			/*
-> +			 * The Programmable Power Supply APDOs, if present,
-> +			 * shall be sent in Maximum Voltage order;
-> +			 * lowest to highest.
-> +			 */
-> +			case PDO_TYPE_APDO:
-> +				if (pdo_apdo_type(pdo[i]) != APDO_TYPE_PPS)
-> +					break;
-> +
-> +				if (pdo_pps_apdo_max_current(pdo[i]) <
-> +				    pdo_pps_apdo_max_current(pdo[i - 1]))
-> +					return PDO_ERR_PPS_APDO_NOT_SORTED;
-> +				else if (pdo_pps_apdo_min_voltage(pdo[i]) ==
-> +					  pdo_pps_apdo_min_voltage(pdo[i - 1]) &&
-> +					 pdo_pps_apdo_max_voltage(pdo[i]) ==
-> +					  pdo_pps_apdo_max_voltage(pdo[i - 1]) &&
-> +					 pdo_pps_apdo_max_current(pdo[i]) ==
-> +					  pdo_pps_apdo_max_current(pdo[i - 1]))
-> +					return PDO_ERR_DUPE_PPS_APDO;
-> +				break;
->   			default:
->   				tcpm_log_force(port, " Unknown pdo type");
->   			}
-> @@ -1333,11 +1392,16 @@ static int tcpm_validate_caps(struct tcpm_port *port, const u32 *pdo,
->   /*
->    * PD (data, control) command handling functions
->    */
-> +
-> +static int tcpm_pd_send_control(struct tcpm_port *port,
-> +				enum pd_ctrl_msg_type type);
-> +
->   static void tcpm_pd_data_request(struct tcpm_port *port,
->   				 const struct pd_message *msg)
->   {
->   	enum pd_data_msg_type type = pd_header_type_le(msg->header);
->   	unsigned int cnt = pd_header_cnt_le(msg->header);
-> +	unsigned int rev = pd_header_rev_le(msg->header);
->   	unsigned int i;
->   
->   	switch (type) {
-> @@ -1356,6 +1420,17 @@ static void tcpm_pd_data_request(struct tcpm_port *port,
->   				   port->nr_source_caps);
->   
->   		/*
-> +		 * Adjust revision in subsequent message headers, as required,
-> +		 * to comply with 6.2.1.1.5 of the USB PD 3.0 spec. We don't
-> +		 * support Rev 1.0 so just do nothing in that scenario.
-> +		 */
-> +		if (rev == PD_REV10)
-> +			break;
-> +
-> +		if (rev < PD_MAX_REV)
-> +			port->negotiated_rev = rev;
-> +
-> +		/*
->   		 * This message may be received even if VBUS is not
->   		 * present. This is quite unexpected; see USB PD
->   		 * specification, sections 8.3.3.6.3.1 and 8.3.3.6.3.2.
-> @@ -1376,6 +1451,20 @@ static void tcpm_pd_data_request(struct tcpm_port *port,
->   			tcpm_queue_message(port, PD_MSG_CTRL_REJECT);
->   			break;
->   		}
-> +
-> +		/*
-> +		 * Adjust revision in subsequent message headers, as required,
-> +		 * to comply with 6.2.1.1.5 of the USB PD 3.0 spec. We don't
-> +		 * support Rev 1.0 so just reject in that scenario.
-> +		 */
-> +		if (rev == PD_REV10) {
-> +			tcpm_queue_message(port, PD_MSG_CTRL_REJECT);
-> +			break;
-> +		}
-> +
-> +		if (rev < PD_MAX_REV)
-> +			port->negotiated_rev = rev;
-> +
->   		port->sink_request = le32_to_cpu(msg->payload[0]);
->   		tcpm_set_state(port, SRC_NEGOTIATE_CAPABILITIES, 0);
->   		break;
-> @@ -1400,6 +1489,15 @@ static void tcpm_pd_data_request(struct tcpm_port *port,
->   	}
->   }
->   
-> +static void tcpm_pps_complete(struct tcpm_port *port, int result)
-> +{
-> +	if (port->pps_pending) {
-> +		port->pps_status = result;
-> +		port->pps_pending = false;
-> +		complete(&port->pps_complete);
-> +	}
-> +}
-> +
->   static void tcpm_pd_ctrl_request(struct tcpm_port *port,
->   				 const struct pd_message *msg)
->   {
-> @@ -1476,6 +1574,14 @@ static void tcpm_pd_ctrl_request(struct tcpm_port *port,
->   				next_state = SNK_WAIT_CAPABILITIES;
->   			tcpm_set_state(port, next_state, 0);
->   			break;
-> +		case SNK_NEGOTIATE_PPS_CAPABILITIES:
-> +			/* Revert data back from any requested PPS updates */
-> +			port->pps_data.out_volt = port->supply_voltage;
-> +			port->pps_data.op_curr = port->current_limit;
-> +			port->pps_status = (type == PD_CTRL_WAIT ?
-> +					    -EAGAIN : -EOPNOTSUPP);
-> +			tcpm_set_state(port, SNK_READY, 0);
-> +			break;
->   		case DR_SWAP_SEND:
->   			port->swap_status = (type == PD_CTRL_WAIT ?
->   					     -EAGAIN : -EOPNOTSUPP);
-> @@ -1498,6 +1604,13 @@ static void tcpm_pd_ctrl_request(struct tcpm_port *port,
->   	case PD_CTRL_ACCEPT:
->   		switch (port->state) {
->   		case SNK_NEGOTIATE_CAPABILITIES:
-> +			port->pps_data.active = false;
-> +			tcpm_set_state(port, SNK_TRANSITION_SINK, 0);
-> +			break;
-> +		case SNK_NEGOTIATE_PPS_CAPABILITIES:
-> +			port->pps_data.active = true;
-> +			port->supply_voltage = port->pps_data.out_volt;
-> +			port->current_limit = port->pps_data.op_curr;
->   			tcpm_set_state(port, SNK_TRANSITION_SINK, 0);
->   			break;
->   		case SOFT_RESET_SEND:
-> @@ -1652,6 +1765,7 @@ static int tcpm_pd_send_control(struct tcpm_port *port,
->   	memset(&msg, 0, sizeof(msg));
->   	msg.header = PD_HEADER_LE(type, port->pwr_role,
->   				  port->data_role,
-> +				  port->negotiated_rev,
->   				  port->message_id, 0);
->   
->   	return tcpm_pd_transmit(port, TCPC_TX_SOP, &msg);
-> @@ -1761,6 +1875,8 @@ static int tcpm_pd_select_pdo(struct tcpm_port *port)
->   	unsigned int i, max_mw = 0, max_mv = 0;
->   	int ret = -EINVAL;
->   
-> +	port->pps_data.supported = false;
-> +
->   	/*
->   	 * Select the source PDO providing the most power while staying within
->   	 * the board's voltage limits. Prefer PDO providing exp
-> @@ -1770,20 +1886,41 @@ static int tcpm_pd_select_pdo(struct tcpm_port *port)
->   		enum pd_pdo_type type = pdo_type(pdo);
->   		unsigned int mv, ma, mw;
->   
-> -		if (type == PDO_TYPE_FIXED)
-> +		switch (type) {
-> +		case PDO_TYPE_FIXED:
->   			mv = pdo_fixed_voltage(pdo);
-> -		else
-> +			break;
-> +		case PDO_TYPE_BATT:
-> +		case PDO_TYPE_VAR:
->   			mv = pdo_min_voltage(pdo);
-> +			break;
-> +		case PDO_TYPE_APDO:
-> +			if (pdo_apdo_type(pdo) == APDO_TYPE_PPS)
-> +				port->pps_data.supported = true;
-> +			continue;
-> +		default:
-> +			tcpm_log(port, "Invalid PDO type, ignoring");
-> +			continue;
-> +		}
->   
-> -		if (type == PDO_TYPE_BATT) {
-> -			mw = pdo_max_power(pdo);
-> -		} else {
-> +		switch (type) {
-> +		case PDO_TYPE_FIXED:
-> +		case PDO_TYPE_VAR:
->   			ma = min(pdo_max_current(pdo),
->   				 port->max_snk_ma);
->   			mw = ma * mv / 1000;
-> +			break;
-> +		case PDO_TYPE_BATT:
-> +			mw = pdo_max_power(pdo);
-> +			break;
-> +		case PDO_TYPE_APDO:
-> +			continue;
-> +		default:
-> +			tcpm_log(port, "Invalid PDO type, ignoring");
-> +			continue;
->   		}
->   
-> -		/* Perfer higher voltages if available */
-> +		/* Prefer higher voltages if available */
->   		if ((mw > max_mw || (mw == max_mw && mv > max_mv)) &&
->   		    mv <= port->max_snk_mv) {
->   			ret = i;
-> @@ -1795,6 +1932,65 @@ static int tcpm_pd_select_pdo(struct tcpm_port *port)
->   	return ret;
->   }
->   
-> +static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
-> +{
-> +	unsigned int i, max_mw = 0, max_mv = 0;
-> +	unsigned int pps_min_mv, pps_max_mv, ma, mw;
-> +	enum pd_pdo_type type;
-> +	u32 pdo;
-> +	unsigned int index = 0;
-> +
-> +	/*
-> +	 * Select the source PPS APDO providing the most power while staying
-> +	 * within the board's limits. We skip the first PDO as this is always
-> +	 * 5V 3A.
-> +	 */
-> +	for (i = 1; i < port->nr_source_caps; ++i) {
-> +		pdo = port->source_caps[i];
-> +		type = pdo_type(pdo);
-> +
-> +		switch (type) {
-> +		case PDO_TYPE_APDO:
-> +			if (pdo_apdo_type(pdo) != APDO_TYPE_PPS) {
-> +				tcpm_log(port, "Not PPS APDO, ignoring");
-> +				continue;
-> +			}
-> +
-> +			pps_min_mv = pdo_pps_apdo_min_voltage(pdo);
-> +			pps_max_mv = pdo_pps_apdo_max_voltage(pdo);
-> +			ma = min(pdo_pps_apdo_max_current(pdo), port->max_snk_ma);
-> +			mw = (ma * pps_max_mv) / 1000;
-> +			break;
-> +		default:
-> +			tcpm_log(port, "Not APDO type, ignoring");
-> +			continue;
-> +		}
-> +
-> +		/* Prefer higher voltages if available */
-> +		if ((mw > max_mw || (mw == max_mw && pps_max_mv > max_mv)) &&
-> +		    pps_max_mv <= port->max_snk_mv) {
-> +			index = i;
-> +			max_mw = mw;
-> +			max_mv = pps_max_mv;
-> +		}
-> +	}
-> +
-> +	if (index) {
-> +		pdo = port->source_caps[index];
-> +
-> +		port->pps_data.min_volt = pdo_pps_apdo_min_voltage(pdo);
-> +		port->pps_data.max_volt = pdo_pps_apdo_max_voltage(pdo);
-> +		port->pps_data.max_curr =
-> +			min(pdo_pps_apdo_max_current(pdo), port->max_snk_ma);
-> +		port->pps_data.out_volt =
-> +			min(pdo_pps_apdo_max_voltage(pdo), port->pps_data.out_volt);
-> +		port->pps_data.op_curr =
-> +			min(pdo_pps_apdo_max_current(pdo), port->pps_data.op_curr);
-> +	}
-> +
-> +	return index;
-> +}
-> +
->   static int tcpm_pd_build_request(struct tcpm_port *port, u32 *rdo)
->   {
->   	unsigned int mv, ma, mw, flags;
-> @@ -1809,10 +2005,18 @@ static int tcpm_pd_build_request(struct tcpm_port *port, u32 *rdo)
->   	pdo = port->source_caps[index];
->   	type = pdo_type(pdo);
->   
-> -	if (type == PDO_TYPE_FIXED)
-> +	switch (type) {
-> +	case PDO_TYPE_FIXED:
->   		mv = pdo_fixed_voltage(pdo);
-> -	else
-> +		break;
-> +	case PDO_TYPE_BATT:
-> +	case PDO_TYPE_VAR:
->   		mv = pdo_min_voltage(pdo);
-> +		break;
-> +	default:
-> +		tcpm_log(port, "Invalid PDO selected!");
-> +		return -EINVAL;
-> +	}
->   
->   	/* Select maximum available current within the board's power limit */
->   	if (type == PDO_TYPE_BATT) {
-> @@ -1875,6 +2079,105 @@ static int tcpm_pd_send_request(struct tcpm_port *port)
->   	msg.header = PD_HEADER_LE(PD_DATA_REQUEST,
->   				  port->pwr_role,
->   				  port->data_role,
-> +				  port->negotiated_rev,
-> +				  port->message_id, 1);
-> +	msg.payload[0] = cpu_to_le32(rdo);
-> +
-> +	return tcpm_pd_transmit(port, TCPC_TX_SOP, &msg);
-> +}
-> +
-> +static int tcpm_pd_build_pps_request(struct tcpm_port *port, u32 *rdo)
-> +{
-> +	unsigned int out_mv, op_ma, op_mw, min_mv, max_mv, max_ma, flags;
-> +	enum pd_pdo_type type;
-> +	int index;
-> +	u32 pdo;
-> +
-> +	index = tcpm_pd_select_pps_apdo(port);
-> +	if (!index)
-> +		return -EOPNOTSUPP;
-> +
-> +	pdo = port->source_caps[index];
-> +	type = pdo_type(pdo);
-> +
-> +	switch (type) {
-> +	case PDO_TYPE_APDO:
-> +		if (pdo_apdo_type(pdo) != APDO_TYPE_PPS) {
-> +			tcpm_log(port, "Invalid APDO selected!");
-> +			return -EINVAL;
-> +		}
-> +		min_mv = port->pps_data.min_volt;
-> +		max_mv = port->pps_data.max_volt;
-> +		max_ma = port->pps_data.max_curr;
-> +		out_mv = port->pps_data.out_volt;
-> +		op_ma = port->pps_data.op_curr;
-> +		break;
-> +	default:
-> +		tcpm_log(port, "Invalid PDO selected!");
-> +		return -EINVAL;
-> +	}
-> +
-> +	flags = RDO_USB_COMM | RDO_NO_SUSPEND;
-> +
-> +	op_mw = (op_ma * out_mv) / 1000;
-> +	if (op_mw < port->operating_snk_mw) {
-> +		/*
-> +		 * Try raising current to meet power needs. If that's not enough
-> +		 * then try upping the voltage. If that's still not enough
-> +		 * then we've obviously chosen a PPS APDO which really isn't
-> +		 * suitable so abandon ship.
-> +		 */
-> +		op_ma = (port->operating_snk_mw * 1000) / out_mv;
-> +		if ((port->operating_snk_mw * 1000) % out_mv)
-> +			++op_ma;
-> +		op_ma += RDO_PROG_CURR_MA_STEP - (op_ma % RDO_PROG_CURR_MA_STEP);
-> +
-> +		if (op_ma > max_ma) {
-> +			op_ma = max_ma;
-> +			out_mv = (port->operating_snk_mw * 1000) / op_ma;
-> +			if ((port->operating_snk_mw * 1000) % op_ma)
-> +				++out_mv;
-> +			out_mv += RDO_PROG_VOLT_MV_STEP -
-> +				  (out_mv % RDO_PROG_VOLT_MV_STEP);
-> +
-> +			if (out_mv > max_mv) {
-> +				tcpm_log(port, "Invalid PPS APDO selected!");
-> +				return -EINVAL;
-> +			}
-> +		}
-> +	}
-> +
-> +	tcpm_log(port, "cc=%d cc1=%d cc2=%d vbus=%d vconn=%s polarity=%d",
-> +		 port->cc_req, port->cc1, port->cc2, port->vbus_source,
-> +		 port->vconn_role == TYPEC_SOURCE ? "source" : "sink",
-> +		 port->polarity);
-> +
-> +	*rdo = RDO_PROG(index + 1, out_mv, op_ma, flags);
-> +
-> +	tcpm_log(port, "Requesting APDO %d: %u mV, %u mA",
-> +		 index, out_mv, op_ma);
-> +
-> +	port->pps_data.op_curr = op_ma;
-> +	port->pps_data.out_volt = out_mv;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tcpm_pd_send_pps_request(struct tcpm_port *port)
-> +{
-> +	struct pd_message msg;
-> +	int ret;
-> +	u32 rdo;
-> +
-> +	ret = tcpm_pd_build_pps_request(port, &rdo);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.header = PD_HEADER_LE(PD_DATA_REQUEST,
-> +				  port->pwr_role,
-> +				  port->data_role,
-> +				  port->negotiated_rev,
->   				  port->message_id, 1);
->   	msg.payload[0] = cpu_to_le32(rdo);
->   
-> @@ -2060,6 +2363,7 @@ static void tcpm_reset_port(struct tcpm_port *port)
->   	tcpm_typec_disconnect(port);
->   	port->attached = false;
->   	port->pd_capable = false;
-> +	port->pps_data.supported = false;
->   
->   	/*
->   	 * First Rx ID should be 0; set this to a sentinel of -1 so that
-> @@ -2075,6 +2379,8 @@ static void tcpm_reset_port(struct tcpm_port *port)
->   	tcpm_set_attached_state(port, false);
->   	port->try_src_count = 0;
->   	port->try_snk_count = 0;
-> +	port->supply_voltage = 0;
-> +	port->current_limit = 0;
->   }
->   
->   static void tcpm_detach(struct tcpm_port *port)
-> @@ -2321,6 +2627,7 @@ static void run_state_machine(struct tcpm_port *port)
->   		typec_set_pwr_opmode(port->typec_port, opmode);
->   		port->pwr_opmode = TYPEC_PWR_MODE_USB;
->   		port->caps_count = 0;
-> +		port->negotiated_rev = PD_MAX_REV;
->   		port->message_id = 0;
->   		port->rx_msgid = -1;
->   		port->explicit_contract = false;
-> @@ -2381,6 +2688,7 @@ static void run_state_machine(struct tcpm_port *port)
->   
->   		tcpm_swap_complete(port, 0);
->   		tcpm_typec_connect(port);
-> +
->   		tcpm_check_send_discover(port);
->   		/*
->   		 * 6.3.5
-> @@ -2404,6 +2712,7 @@ static void run_state_machine(struct tcpm_port *port)
->   	case SNK_UNATTACHED:
->   		if (!port->non_pd_role_swap)
->   			tcpm_swap_complete(port, -ENOTCONN);
-> +		tcpm_pps_complete(port, -ENOTCONN);
->   		tcpm_snk_detach(port);
->   		if (tcpm_start_drp_toggling(port)) {
->   			tcpm_set_state(port, DRP_TOGGLING, 0);
-> @@ -2493,6 +2802,7 @@ static void run_state_machine(struct tcpm_port *port)
->   					      port->cc2 : port->cc1);
->   		typec_set_pwr_opmode(port->typec_port, opmode);
->   		port->pwr_opmode = TYPEC_PWR_MODE_USB;
-> +		port->negotiated_rev = PD_MAX_REV;
->   		port->message_id = 0;
->   		port->rx_msgid = -1;
->   		port->explicit_contract = false;
-> @@ -2563,6 +2873,24 @@ static void run_state_machine(struct tcpm_port *port)
->   					    PD_T_SENDER_RESPONSE);
->   		}
->   		break;
-> +	case SNK_NEGOTIATE_PPS_CAPABILITIES:
-> +		ret = tcpm_pd_send_pps_request(port);
-> +		if (ret < 0) {
-> +			port->pps_status = ret;
-> +			/*
-> +			 * If this was called due to updates to sink
-> +			 * capabilities, and pps is no longer valid, we should
-> +			 * safely fall back to a standard PDO.
-> +			 */
-> +			if (port->update_sink_caps)
-> +				tcpm_set_state(port, SNK_NEGOTIATE_CAPABILITIES, 0);
-> +			else
-> +				tcpm_set_state(port, SNK_READY, 0);
-> +		} else {
-> +			tcpm_set_state_cond(port, hard_reset_state(port),
-> +					    PD_T_SENDER_RESPONSE);
-> +		}
-> +		break;
->   	case SNK_TRANSITION_SINK:
->   	case SNK_TRANSITION_SINK_VBUS:
->   		tcpm_set_state(port, hard_reset_state(port),
-> @@ -2570,6 +2898,7 @@ static void run_state_machine(struct tcpm_port *port)
->   		break;
->   	case SNK_READY:
->   		port->try_snk_count = 0;
-> +		port->update_sink_caps = false;
->   		if (port->explicit_contract) {
->   			typec_set_pwr_opmode(port->typec_port,
->   					     TYPEC_PWR_MODE_PD);
-> @@ -2579,6 +2908,8 @@ static void run_state_machine(struct tcpm_port *port)
->   		tcpm_swap_complete(port, 0);
->   		tcpm_typec_connect(port);
->   		tcpm_check_send_discover(port);
-> +		tcpm_pps_complete(port, port->pps_status);
-> +
->   		break;
->   
->   	/* Accessory states */
-> @@ -2625,6 +2956,7 @@ static void run_state_machine(struct tcpm_port *port)
->   		tcpm_set_state(port, SRC_UNATTACHED, PD_T_PS_SOURCE_ON);
->   		break;
->   	case SNK_HARD_RESET_SINK_OFF:
-> +		memset(&port->pps_data, 0, sizeof(port->pps_data));
->   		tcpm_set_vconn(port, false);
->   		tcpm_set_charge(port, false);
->   		tcpm_set_roles(port, false, TYPEC_SINK, TYPEC_DEVICE);
-> @@ -2845,6 +3177,7 @@ static void run_state_machine(struct tcpm_port *port)
->   		break;
->   	case ERROR_RECOVERY:
->   		tcpm_swap_complete(port, -EPROTO);
-> +		tcpm_pps_complete(port, -EPROTO);
->   		tcpm_set_state(port, PORT_RESET, 0);
->   		break;
->   	case PORT_RESET:
-> @@ -3427,6 +3760,162 @@ static int tcpm_try_role(const struct typec_capability *cap, int role)
->   	return ret;
->   }
->   
-> +static int tcpm_pps_set_op_curr(struct tcpm_port *port, u16 op_curr)
-> +{
-> +	unsigned int target_mw;
-> +	int ret;
-> +
-> +	mutex_lock(&port->swap_lock);
-> +	mutex_lock(&port->lock);
-> +
-> +	if (!port->pps_data.active) {
-> +		ret = -EOPNOTSUPP;
-> +		goto port_unlock;
-> +	}
-> +
-> +	if (port->state != SNK_READY) {
-> +		ret = -EAGAIN;
-> +		goto port_unlock;
-> +	}
-> +
-> +	if (op_curr > port->pps_data.max_curr) {
-> +		ret = -EINVAL;
-> +		goto port_unlock;
-> +	}
-> +
-> +	target_mw = (op_curr * port->pps_data.out_volt) / 1000;
-> +	if (target_mw < port->operating_snk_mw) {
-> +		ret = -EINVAL;
-> +		goto port_unlock;
-> +	}
-> +
-> +	reinit_completion(&port->pps_complete);
-> +	port->pps_data.op_curr = op_curr;
-> +	port->pps_status = 0;
-> +	port->pps_pending = true;
-> +	tcpm_set_state(port, SNK_NEGOTIATE_PPS_CAPABILITIES, 0);
-> +	mutex_unlock(&port->lock);
-> +
-> +	if (!wait_for_completion_timeout(&port->pps_complete,
-> +				msecs_to_jiffies(PD_PPS_CTRL_TIMEOUT)))
-> +		ret = -ETIMEDOUT;
-> +	else
-> +		ret = port->pps_status;
-> +
-> +	goto swap_unlock;
-> +
-> +port_unlock:
-> +	mutex_unlock(&port->lock);
-> +swap_unlock:
-> +	mutex_unlock(&port->swap_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int tcpm_pps_set_out_volt(struct tcpm_port *port, u16 out_volt)
-> +{
-> +	unsigned int target_mw;
-> +	int ret;
-> +
-> +	mutex_lock(&port->swap_lock);
-> +	mutex_lock(&port->lock);
-> +
-> +	if (!port->pps_data.active) {
-> +		ret = -EOPNOTSUPP;
-> +		goto port_unlock;
-> +	}
-> +
-> +	if (port->state != SNK_READY) {
-> +		ret = -EAGAIN;
-> +		goto port_unlock;
-> +	}
-> +
-> +	if (out_volt < port->pps_data.min_volt ||
-> +	    out_volt > port->pps_data.max_volt) {
-> +		ret = -EINVAL;
-> +		goto port_unlock;
-> +	}
-> +
-> +	target_mw = (port->pps_data.op_curr * out_volt) / 1000;
-> +	if (target_mw < port->operating_snk_mw) {
-> +		ret = -EINVAL;
-> +		goto port_unlock;
-> +	}
-> +
-> +	reinit_completion(&port->pps_complete);
-> +	port->pps_data.out_volt = out_volt;
-> +	port->pps_status = 0;
-> +	port->pps_pending = true;
-> +	tcpm_set_state(port, SNK_NEGOTIATE_PPS_CAPABILITIES, 0);
-> +	mutex_unlock(&port->lock);
-> +
-> +	if (!wait_for_completion_timeout(&port->pps_complete,
-> +				msecs_to_jiffies(PD_PPS_CTRL_TIMEOUT)))
-> +		ret = -ETIMEDOUT;
-> +	else
-> +		ret = port->pps_status;
-> +
-> +	goto swap_unlock;
-> +
-> +port_unlock:
-> +	mutex_unlock(&port->lock);
-> +swap_unlock:
-> +	mutex_unlock(&port->swap_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int tcpm_pps_activate(struct tcpm_port *port, bool activate)
-> +{
-> +	int ret = 0;
-> +
-> +	mutex_lock(&port->swap_lock);
-> +	mutex_lock(&port->lock);
-> +
-> +	if (!port->pps_data.supported) {
-> +		ret = -EOPNOTSUPP;
-> +		goto port_unlock;
-> +	}
-> +
-> +	/* Trying to deactivate PPS when already deactivated so just bail */
-> +	if (!port->pps_data.active && !activate)
-> +		goto port_unlock;
-> +
-> +	if (port->state != SNK_READY) {
-> +		ret = -EAGAIN;
-> +		goto port_unlock;
-> +	}
-> +
-> +	reinit_completion(&port->pps_complete);
-> +	port->pps_status = 0;
-> +	port->pps_pending = true;
-> +
-> +	/* Trigger PPS request or move back to standard PDO contract */
-> +	if (activate) {
-> +		port->pps_data.out_volt = port->supply_voltage;
-> +		port->pps_data.op_curr = port->current_limit;
-> +		tcpm_set_state(port, SNK_NEGOTIATE_PPS_CAPABILITIES, 0);
-> +	} else {
-> +		tcpm_set_state(port, SNK_NEGOTIATE_CAPABILITIES, 0);
-> +	}
-> +	mutex_unlock(&port->lock);
-> +
-> +	if (!wait_for_completion_timeout(&port->pps_complete,
-> +				msecs_to_jiffies(PD_PPS_CTRL_TIMEOUT)))
-> +		ret = -ETIMEDOUT;
-> +	else
-> +		ret = port->pps_status;
-> +
-> +	goto swap_unlock;
-> +
-> +port_unlock:
-> +	mutex_unlock(&port->lock);
-> +swap_unlock:
-> +	mutex_unlock(&port->swap_lock);
-> +
-> +	return ret;
-> +}
-> +
->   static void tcpm_init(struct tcpm_port *port)
->   {
->   	enum typec_cc_status cc1, cc2;
-> @@ -3566,13 +4055,18 @@ int tcpm_update_sink_capabilities(struct tcpm_port *port, const u32 *pdo,
->   	port->max_snk_ma = max_snk_ma;
->   	port->max_snk_mw = max_snk_mw;
->   	port->operating_snk_mw = operating_snk_mw;
-> +	port->update_sink_caps = true;
->   
->   	switch (port->state) {
->   	case SNK_NEGOTIATE_CAPABILITIES:
-> +	case SNK_NEGOTIATE_PPS_CAPABILITIES:
->   	case SNK_READY:
->   	case SNK_TRANSITION_SINK:
->   	case SNK_TRANSITION_SINK_VBUS:
-> -		tcpm_set_state(port, SNK_NEGOTIATE_CAPABILITIES, 0);
-> +		if (port->pps_data.active)
-> +			tcpm_set_state(port, SNK_NEGOTIATE_PPS_CAPABILITIES, 0);
-> +		else
-> +			tcpm_set_state(port, SNK_NEGOTIATE_CAPABILITIES, 0);
->   		break;
->   	default:
->   		break;
-> @@ -3614,6 +4108,7 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
->   
->   	init_completion(&port->tx_complete);
->   	init_completion(&port->swap_complete);
-> +	init_completion(&port->pps_complete);
->   	tcpm_debugfs_init(port);
->   
->   	if (tcpm_validate_caps(port, tcpc->config->src_pdo,
-> @@ -3642,7 +4137,7 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
->   	port->typec_caps.prefer_role = tcpc->config->default_role;
->   	port->typec_caps.type = tcpc->config->type;
->   	port->typec_caps.revision = 0x0120;	/* Type-C spec release 1.2 */
-> -	port->typec_caps.pd_revision = 0x0200;	/* USB-PD spec release 2.0 */
-> +	port->typec_caps.pd_revision = 0x0300;	/* USB-PD spec release 3.0 */
->   	port->typec_caps.dr_set = tcpm_dr_set;
->   	port->typec_caps.pr_set = tcpm_pr_set;
->   	port->typec_caps.vconn_set = tcpm_vconn_set;
-> diff --git a/include/linux/usb/pd.h b/include/linux/usb/pd.h
-> index ff359bdf..09b570f 100644
-> --- a/include/linux/usb/pd.h
-> +++ b/include/linux/usb/pd.h
-> @@ -103,8 +103,8 @@ enum pd_ext_msg_type {
->   	 (((cnt) & PD_HEADER_CNT_MASK) << PD_HEADER_CNT_SHIFT) |	\
->   	 ((ext_hdr) ? PD_HEADER_EXT_HDR : 0))
->   
-> -#define PD_HEADER_LE(type, pwr, data, id, cnt) \
-> -	cpu_to_le16(PD_HEADER((type), (pwr), (data), PD_REV20, (id), (cnt), (0)))
-> +#define PD_HEADER_LE(type, pwr, data, rev, id, cnt) \
-> +	cpu_to_le16(PD_HEADER((type), (pwr), (data), (rev), (id), (cnt), (0)))
->   
->   static inline unsigned int pd_header_cnt(u16 header)
->   {
-> diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
-> index ca1c0b5..220ecc0 100644
-> --- a/include/linux/usb/tcpm.h
-> +++ b/include/linux/usb/tcpm.h
-> @@ -36,6 +36,7 @@ enum typec_cc_polarity {
->   /* Time to wait for TCPC to complete transmit */
->   #define PD_T_TCPC_TX_TIMEOUT	100		/* in ms	*/
->   #define PD_ROLE_SWAP_TIMEOUT	(MSEC_PER_SEC * 10)
-> +#define PD_PPS_CTRL_TIMEOUT	(MSEC_PER_SEC * 10)
->   
->   enum tcpm_transmit_status {
->   	TCPC_TX_SUCCESS = 0,
-> 
+The 'usb_type' property is intended to fill this void and show users
+all possible USB types supported by a driver. The property, when read,
+shows all available types for the driver, and the one currently chosen
+is highlighted/bracketed. It is expected that the 'type' property
+would then just show the top-level type 'USB', and this would be
+static.
 
+Currently the 'usb_type' enum contains all of the USB variant types
+that exist for the 'type' enum at this time, and in addition has
+SDP and PPS types. The mirroring is intentional so as to not impact
+existing usage of the 'type' property.
+
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+---
+ Documentation/ABI/testing/sysfs-class-power | 12 ++++++++
+ drivers/power/supply/power_supply_core.c    |  8 ++++-
+ drivers/power/supply/power_supply_sysfs.c   | 45 +++++++++++++++++++++++++++++
+ include/linux/power_supply.h                | 16 ++++++++++
+ 4 files changed, 80 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentation/ABI/testing/sysfs-class-power
+index e046566..5e23e22 100644
+--- a/Documentation/ABI/testing/sysfs-class-power
++++ b/Documentation/ABI/testing/sysfs-class-power
+@@ -409,6 +409,18 @@ Description:
+ 		Access: Read
+ 		Valid values: Represented in 1/10 Degrees Celsius
+ 
++What: 		/sys/class/power_supply/<supply_name>/usb_type
++Date:		March 2018
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports what type of USB connection is currently active for
++		the supply, for example it can show if USB-PD capable source
++		is attached.
++
++		Access: Read-Only
++		Valid values: "Unknown", "SDP", "DCP", "CDP", "ACA", "C", "PD",
++			      "PD_DRP", "PD_PPS", "BrickID"
++
+ What: 		/sys/class/power_supply/<supply_name>/voltage_max
+ Date:		January 2008
+ Contact:	linux-pm@vger.kernel.org
+diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
+index 64f6449..dff2bbb 100644
+--- a/drivers/power/supply/power_supply_core.c
++++ b/drivers/power/supply/power_supply_core.c
+@@ -843,7 +843,7 @@ static void psy_unregister_cooler(struct power_supply *psy)
+ {
+ 	struct device *dev;
+ 	struct power_supply *psy;
+-	int rc;
++	int i, rc;
+ 
+ 	if (!parent)
+ 		pr_warn("%s: Expected proper parent device for '%s'\n",
+@@ -852,6 +852,12 @@ static void psy_unregister_cooler(struct power_supply *psy)
+ 	if (!desc || !desc->name || !desc->properties || !desc->num_properties)
+ 		return ERR_PTR(-EINVAL);
+ 
++	for (i = 0; i < desc->num_properties; ++i) {
++		if ((desc->properties[i] == POWER_SUPPLY_PROP_USB_TYPE) &&
++		    (!desc->usb_types || !desc->num_usb_types))
++			return ERR_PTR(-EINVAL);
++	}
++
+ 	psy = kzalloc(sizeof(*psy), GFP_KERNEL);
+ 	if (!psy)
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+index 5204f11..1350068 100644
+--- a/drivers/power/supply/power_supply_sysfs.c
++++ b/drivers/power/supply/power_supply_sysfs.c
+@@ -46,6 +46,11 @@
+ 	"USB_PD", "USB_PD_DRP", "BrickID"
+ };
+ 
++static const char * const power_supply_usb_type_text[] = {
++	"Unknown", "SDP", "DCP", "CDP", "ACA", "C",
++	"PD", "PD_DRP", "PD_PPS", "BrickID"
++};
++
+ static const char * const power_supply_status_text[] = {
+ 	"Unknown", "Charging", "Discharging", "Not charging", "Full"
+ };
+@@ -73,6 +78,41 @@
+ 	"Unknown", "System", "Device"
+ };
+ 
++static ssize_t power_supply_show_usb_type(struct device *dev,
++					  enum power_supply_usb_type *usb_types,
++					  ssize_t num_usb_types,
++					  union power_supply_propval *value,
++					  char *buf)
++{
++	enum power_supply_usb_type usb_type;
++	ssize_t count = 0;
++	bool match = false;
++	int i;
++
++	for (i = 0; i < num_usb_types; ++i) {
++		usb_type = usb_types[i];
++
++		if (value->intval == usb_type) {
++			count += sprintf(buf + count, "[%s] ",
++					 power_supply_usb_type_text[usb_type]);
++			match = true;
++		} else {
++			count += sprintf(buf + count, "%s ",
++					 power_supply_usb_type_text[usb_type]);
++		}
++	}
++
++	if (!match) {
++		dev_warn(dev, "driver reporting unsupported connected type\n");
++		return -EINVAL;
++	}
++
++	if (count)
++		buf[count - 1] = '\n';
++
++	return count;
++}
++
+ static ssize_t power_supply_show_property(struct device *dev,
+ 					  struct device_attribute *attr,
+ 					  char *buf) {
+@@ -115,6 +155,10 @@ static ssize_t power_supply_show_property(struct device *dev,
+ 	else if (off == POWER_SUPPLY_PROP_TYPE)
+ 		return sprintf(buf, "%s\n",
+ 			       power_supply_type_text[value.intval]);
++	else if (off == POWER_SUPPLY_PROP_USB_TYPE)
++		return power_supply_show_usb_type(dev, psy->desc->usb_types,
++						  psy->desc->num_usb_types,
++						  &value, buf);
+ 	else if (off == POWER_SUPPLY_PROP_SCOPE)
+ 		return sprintf(buf, "%s\n",
+ 			       power_supply_scope_text[value.intval]);
+@@ -241,6 +285,7 @@ static ssize_t power_supply_store_property(struct device *dev,
+ 	POWER_SUPPLY_ATTR(time_to_full_now),
+ 	POWER_SUPPLY_ATTR(time_to_full_avg),
+ 	POWER_SUPPLY_ATTR(type),
++	POWER_SUPPLY_ATTR(usb_type),
+ 	POWER_SUPPLY_ATTR(scope),
+ 	POWER_SUPPLY_ATTR(precharge_current),
+ 	POWER_SUPPLY_ATTR(charge_term_current),
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index 79e90b3..4ca8876 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -145,6 +145,7 @@ enum power_supply_property {
+ 	POWER_SUPPLY_PROP_TIME_TO_FULL_NOW,
+ 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
+ 	POWER_SUPPLY_PROP_TYPE, /* use power_supply.type instead */
++	POWER_SUPPLY_PROP_USB_TYPE,
+ 	POWER_SUPPLY_PROP_SCOPE,
+ 	POWER_SUPPLY_PROP_PRECHARGE_CURRENT,
+ 	POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
+@@ -170,6 +171,19 @@ enum power_supply_type {
+ 	POWER_SUPPLY_TYPE_APPLE_BRICK_ID,	/* Apple Charging Method */
+ };
+ 
++enum power_supply_usb_type {
++	POWER_SUPPLY_USB_TYPE_UNKNOWN = 0,
++	POWER_SUPPLY_USB_TYPE_SDP,		/* Standard Downstream Port */
++	POWER_SUPPLY_USB_TYPE_DCP,		/* Dedicated Charging Port */
++	POWER_SUPPLY_USB_TYPE_CDP,		/* Charging Downstream Port */
++	POWER_SUPPLY_USB_TYPE_ACA,		/* Accessory Charger Adapters */
++	POWER_SUPPLY_USB_TYPE_C,		/* Type C Port */
++	POWER_SUPPLY_USB_TYPE_PD,		/* Power Delivery Port */
++	POWER_SUPPLY_USB_TYPE_PD_DRP,		/* PD Dual Role Port */
++	POWER_SUPPLY_USB_TYPE_PD_PPS,		/* PD Programmable Power Supply */
++	POWER_SUPPLY_USB_TYPE_APPLE_BRICK_ID,	/* Apple Charging Method */
++};
++
+ enum power_supply_notifier_events {
+ 	PSY_EVENT_PROP_CHANGED,
+ };
+@@ -196,6 +210,8 @@ struct power_supply_config {
+ struct power_supply_desc {
+ 	const char *name;
+ 	enum power_supply_type type;
++	enum power_supply_usb_type *usb_types;
++	size_t num_usb_types;
+ 	enum power_supply_property *properties;
+ 	size_t num_properties;
+ 
+-- 
+1.9.1
