@@ -1,103 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751925AbeCWJHJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:07:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36299 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751668AbeCWJHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:07:07 -0400
-Date: Fri, 23 Mar 2018 10:07:04 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] memcg, thp: do not invoke oom killer on thp charges
-Message-ID: <20180323090704.GK23100@dhcp22.suse.cz>
-References: <20180321205928.22240-1-mhocko@kernel.org>
- <alpine.DEB.2.20.1803211418170.107059@chino.kir.corp.google.com>
- <20180321214104.GT23100@dhcp22.suse.cz>
- <alpine.DEB.2.20.1803220106010.175961@chino.kir.corp.google.com>
- <20180322085611.GY23100@dhcp22.suse.cz>
- <alpine.DEB.2.20.1803221304160.3268@chino.kir.corp.google.com>
+        id S1751981AbeCWJHe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:07:34 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:45277 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751689AbeCWJHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:07:31 -0400
+X-Google-Smtp-Source: AG47ELvn3GKGqiyjh5ub+CmsKbuz6w3L6rE86cpW5tUScAgXIuTTdm8ev6GL2GJ3g8B8XKNNlM6B0z6U6q88wdxcsds=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1803221304160.3268@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a4ca0ba3-5d31-2d8c-7fa6-f8e9ba9b4535@lechnology.com>
+References: <20180321120807.18032-1-brgl@bgdev.pl> <20180321120807.18032-5-brgl@bgdev.pl>
+ <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com> <CAMpxmJUELxNGv5fL1gdNM4nRxdJ9t39G2Nc29yjZRnS0fRyHYg@mail.gmail.com>
+ <a4ca0ba3-5d31-2d8c-7fa6-f8e9ba9b4535@lechnology.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 23 Mar 2018 10:07:30 +0100
+Message-ID: <CAMRc=Mf_nT3WDzPwMxhNcmk5=BUXBj2SobUcad809knqaWyGBQ@mail.gmail.com>
+Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
+To: David Lechner <david@lechnology.com>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 22-03-18 13:29:37, David Rientjes wrote:
-> On Thu, 22 Mar 2018, Michal Hocko wrote:
-[...]
-> > They simply cannot because kmalloc performs the change under the cover.
-> > So you would have to use kmalloc(gfp|__GFP_NORETRY) to be absolutely
-> > sure to not trigger _any_ oom killer. This is just wrong thing to do.
-> > 
-> 
-> Examples of where this isn't already done?  It certainly wasn't a problem 
-> before __GFP_NORETRY was dropped in commit 2516035499b9 but you suspect 
-> it's a problem now.
+2018-03-21 17:17 GMT+01:00 David Lechner <david@lechnology.com>:
+> On 03/21/2018 11:08 AM, Bartosz Golaszewski wrote:
+>>
+>> 2018-03-21 17:01 GMT+01:00 David Lechner <david@lechnology.com>:
+>>>
+>>> On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
+>>>>
+>>>>
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> In order to be able to use the reset framework in legacy boot mode as
+>>>> well, add the reset lookup table to the psc driver for da850 variant.
+>>>>
+>>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>> ---
+>>>>    drivers/clk/davinci/psc-da850.c | 8 ++++++++
+>>>>    drivers/clk/davinci/psc.c       | 1 +
+>>>>    2 files changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/davinci/psc-da850.c
+>>>> b/drivers/clk/davinci/psc-da850.c
+>>>> index ccc7eb17bf3a..395db4b2c0ee 100644
+>>>> --- a/drivers/clk/davinci/psc-da850.c
+>>>> +++ b/drivers/clk/davinci/psc-da850.c
+>>>> @@ -6,6 +6,7 @@
+>>>>     */
+>>>>      #include <linux/clk-provider.h>
+>>>> +#include <linux/reset-controller.h>
+>>>>    #include <linux/clk.h>
+>>>>    #include <linux/clkdev.h>
+>>>>    #include <linux/init.h>
+>>>> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,    "fck",  "ecap.0",
+>>>>                                  "fck",  "ecap.1",
+>>>>                                  "fck",  "ecap.2");
+>>>>    +static struct reset_control_lookup da850_psc0_reset_lookup_table[] =
+>>>> {
+>>>> +       RESET_LOOKUP("davinci-rproc.0", NULL, 15),
+>>>> +};
+>>>> +
+>>>>    static int da850_psc0_init(struct device *dev, void __iomem *base)
+>>>>    {
+>>>> +       reset_controller_add_lookup("da850-psc0",
+>>>> +                                   da850_psc0_reset_lookup_table,
+>>>> +
+>>>> ARRAY_SIZE(da850_psc0_reset_lookup_table));
+>>>
+>>>
+>>>
+>>> Could there be a race condition here since you are adding the lookup
+>>> *before*
+>>> you are adding the actual provider? It seems like
+>>> reset_controller_add_lookup()
+>>> should be after davinci_psc_register_clocks().
+>>>
+>>
+>> I don't think so, because reset_controller_add_lookup() only adds the
+>> lookup structure to the list in reset/core.c. The actual reset
+>> controller struct is only located and used when reset_control_get_*()
+>> is called, so after probing the user. And it's all protected with
+>> mutexes.
+>>
+>> This made me think though - maybe if we can't locate the controller,
+>> we should return -EPROBE_DEFER from probe in davinci-rproc?
+>>
+>> Bart
+>>
+>
+> Yes, especially since we know that the PSC driver itself does get
+> deferred already.
 
-It is not a problem _right now_ as I've already pointed out few
-times. We do not trigger the OOM killer for anything but #PF path. But
-this is an implementation detail which can change in future and there is
-actually some demand for the change. Once we start triggering the oom
-killer for all charges then we do not really want to have the disparity.
+On the other hand if clk_get() succeeded, than the psc driver is
+already initialized and the subsequent call to reset_control_get()
+must succeed. But this is probably too machine-specific for a driver.
 
-> > > You're diverging from it because the memcg charge path has never had this 
-> > > heuristic.
-> > 
-> > Which is arguably a bug which just didn't matter because we do not
-> > have costly order oom eligible charges in general and THP was subtly
-> > different and turned out to be error prone.
-> > 
-> 
-> It was inadvertently dropped from commit 2516035499b9.  There were no 
-> high-order charge oom kill problems before this commit.  People know how 
-> to use __GFP_NORETRY or leave it off, which you don't trust them to do 
-> because you're hardcoding a heuristic in the charge path.
-
-No. Just read what I wrote. I am worried that the current disparity
-between the page allocator and the memcg charging will _force_ them to
-do hacks and sometimes (e.g. kmalloc) they will not have any option but
-using __GFP_NORETRY even when that is not really needed and it has a
-different semantic than they would like.
-
-Behavior on with and without memcgs should be as similar as possible
-otherwise you will see different sets of bugs when running under the
-memcg and without. I really fail to see what is so hard about this to
-understand.
-
-[...]
-
-> > > Your change is broken and I wouldn't push it to Linus for rc7 if my life 
-> > > depended on it.  What is the response when someone complains that they 
-> > > start getting a ton of MEMCG_OOM notifications for every thp fallback?
-> > > They will, because yours is a broken implementation.
-> > 
-> > I fail to see what is broken. Could you be more specific?
-> >  
-> 
-> I said MEMCG_OOM notifications on thp fallback.  You modified 
-> mem_cgroup_oom().  What is called before mem_cgroup_oom()?  
-> mem_cgroup_event(mem_over_limit, MEMCG_OOM).  That increments the 
-> MEMCG_OOM event and anybody waiting on the events file gets notified it 
-> changed.  They read a MEMCG_OOM event.  It's thp fallback, it's not memcg 
-> oom.
-
-MEMCG_OOM doesn't count the number of oom killer invocations. That has
-never been the case.
-
-> Really, I can't continue to write 100 emails in this thread.
-
-Then try to read and even try to understand concerns expressed in those
-emails. Repeating the same set of arguments and ignoring the rest is not
-really helpful.
--- 
-Michal Hocko
-SUSE Labs
+Bart
