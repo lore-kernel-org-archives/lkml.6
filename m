@@ -1,85 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752308AbeCWQvw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:51:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56732 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751632AbeCWQvu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:51:50 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2845B601D3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v5 3/5] bnx2x: Eliminate duplicate barriers on
- weakly-ordered archs
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        ariel.elior@cavium.com, everest-linux-l2@cavium.com,
-        linux-kernel@vger.kernel.org
-References: <1521738603-23596-4-git-send-email-okaya@codeaurora.org>
- <20180323.122035.1380806748695640531.davem@davemloft.net>
- <cb6a0522-2c53-b252-49db-5779d24963c6@codeaurora.org>
- <20180323.124326.2170503491903886041.davem@davemloft.net>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <4bd9ccd2-df8f-acad-2513-eefe065dc852@codeaurora.org>
-Date: Fri, 23 Mar 2018 12:51:47 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752296AbeCWQxQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:53:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38344 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751691AbeCWQxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 12:53:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF592177B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180323.124326.2170503491903886041.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+To: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521602391-30356-2-git-send-email-aisheng.dong@nxp.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mturquette@baylibre.com, hdegoede@redhat.com, b.zolnierkie@samsung.com,
+        linux@armlinux.org.uk, linux-fbdev@vger.kernel.org, linux-imx@nxp.com,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Russell King <linux@arm.linux.org.uk>
+References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
+ <1521602391-30356-2-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <152182399342.178046.13139513462419815903@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH V2 1/4] clk: bulk: add of_clk_bulk_get()
+Date: Fri, 23 Mar 2018 09:53:13 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 3/23/2018 12:43 PM, David Miller wrote:
-> From: Sinan Kaya <okaya@codeaurora.org>
-> Date: Fri, 23 Mar 2018 12:31:12 -0400
-> 
->> Sorry, you got me confused now.
->>
->> If you look at the code closer, you'll see this.
->>
->> 	wmb();
->>
->> 	txdata->tx_db.data.prod += nbd;
->> 	barrier();
->>
->> 	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
->>
->> and you also asked me to rename DOORBELL to DOORBELL_RELAXED() to make
->> it obvious that we have a relaxed operator inside the macro.
-> 
-> This still doesn't match the stated pattern.
+Quoting Dong Aisheng (2018-03-20 20:19:48)
+> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+> index 4c10456..4b357b2 100644
+> --- a/drivers/clk/clk-bulk.c
+> +++ b/drivers/clk/clk-bulk.c
+> @@ -19,6 +19,38 @@
+>  #include <linux/clk.h>
+>  #include <linux/device.h>
+>  #include <linux/export.h>
+> +#include <linux/of.h>
+> +
+> +#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
 
-I can certainly update the commit text for this or spin into its own
-patch to make it obvious.
+Do we need these defines? of_clk_get() is a stub function when these
+configs are false.
 
-> 
-> 	wmb();
-> 	/* no other memory or I/O or IOMEM operation */
-> 	writel();
-> 
-> There is a write to a producer index there and then no non-compiler
-> barrier or any kind before the writel().
-> 
-> So, in fact, it might really need that implicit writel() barrier here!
-> 
+> +static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+> +                                       struct clk_bulk_data *clks)
+> +{
+> +       int ret;
+> +       int i;
+> +
+> +       for (i = 0; i < num_clks; i++)
+> +               clks[i].clk = NULL;
+> +
+> +       for (i = 0; i < num_clks; i++) {
+> +               clks[i].clk = of_clk_get(np, i);
+> +               if (IS_ERR(clks[i].clk)) {
+> +                       ret = PTR_ERR(clks[i].clk);
+> +                       pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
+> +                              np, i, ret);
+> +                       clks[i].clk = NULL;
+> +                       goto err;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +
+> +err:
+> +       clk_bulk_put(i, clks);
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL(of_clk_bulk_get);
 
-It could if txdata->tx_db was not a union. There is a data dependency
-between txdata->tx_db.data.prod and txdata->tx_db.raw. 
-
-So, no reordering.
-
-I can argue that barrier() here is useless in fact.
-
-Anyhow, I'll spin this piece out of this patch so that we pay special
-attention with a better description.
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+It's static, so don't export it.
