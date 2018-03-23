@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvGoF2Nq0a1A1klWX0RirCvk4TJ0cIrJNgttuQE5Xv6LAnhX9/lUHI34LDJc3nHci6hgYel
-ARC-Seal: i=1; a=rsa-sha256; t=1521800195; cv=none;
+X-Google-Smtp-Source: AG47ELsademnAhSAWgDeDwpAshWjLV5STPLeSrgSaC91DMz8i4c/hcTI6kHhUIOn+UMU5F60n5HI
+ARC-Seal: i=1; a=rsa-sha256; t=1521800192; cv=none;
         d=google.com; s=arc-20160816;
-        b=LAos0KeiGaLPg9McNGwMHPlU6fGCAl4nrYjgRW2OrMcUvgttClm/95lL+3emvj8cQv
-         NkrlNZmYLBN07UYv1mH9QNh1k5jKfo3Q0++i5bu/jC3DgjXr6scQRux+W9VGeYphrscF
-         g+4THSOmPMuT/5VhzYx1hA/MqdtrAkv2mBjQ514/5V1M2uFaN8ORXdKI24BYKiBocmFh
-         MDo1TIP3+xEkXZXfCVm5ukCNaa9oNvBghSTuzNxeehIUnE8Wla6e6rpZf883KJBQImXt
-         roCBhw2E0olWhVGdORM0FCeNQkl2vFnNnZvy0jL5HpfUZQf3MjKw/F3JCIDoJ5YKDI0Z
-         aGIg==
+        b=ZJy/kGN+sCl5alNCgvVtfoDxMaU5nlUE2rEGWRcPePrvH+8C0nuOUB9dI2BVrQo6vu
+         5QhXg87CtZEqy5CIfp4iIGNeLwvkuDwU0fXxn018o+DfWu6xEMPjFjYc3kpKEQhuNlTX
+         +MS9O/CJMwdZMsu748FaRO7v3o7gQXAgruzhGQpDH2hSObeHp/eNdMafMItQWA2NFXYQ
+         wcRSmBGXykn8Hjfa5YeeFfMx9G2b4LrgPDoF2itXAU2ywoZqgqjPLr6NqbpgzKgIxHoM
+         wvnfXFVirQDA7VXpScDR1mNbYwzCgodLugU+hqjbm1mMJsQPFwIdWx9R02HFT2I02fqI
+         GbCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=OcLhi9NaLEzC6QeciDFLWowXmu12HnNw89Xu5Z1KFcw=;
-        b=jqm5bX4cBsuH+iVUQnqg93uM4D/gmpzmWSbIPoljlD56euft7git12UTj8gNotBypk
-         Q6fMzdMrhudjOZ8jvxYLdP1vKS4nma6PvNPINuYpgCvEUrFDKpJ3eisgc1nSfoBYFLH7
-         ALY8VqDV8rlaD9hTfj7uwrpkeLtCL7Wvwme6byUkuKH/nuV8RANEK15PaVLl2KdrQeZu
-         tLXHRLmGPmpTw9iQfTzkrZfP+b3bk+/hwuTSYQjGGNCQN1cBL2f0UTluvqzD73tL7DIz
-         b3l4S6AEo2gmRbZbn+LaKW8Cep257zUN/zvzgdtXs1ZsOSIWquowYDZH8GtzxSkejvPa
-         Lmmw==
+        bh=ejGYLbkaR4FJk4Piy32I4pGbPohNdyyD53xXAFvAf8U=;
+        b=ATePZjQyxidPKhTnbgu4vBO9z/jALJneK2XoMf+jRuHJEeW9mxYuqbBdU7XrQeweOH
+         j7bAauTXyYWk+MiOxFh/iJSV8rxuSqZuPC9B/f6rKJsBf5PpC1Ghz0IPDPAPHf3Y9IfQ
+         mjlJCsqkJOeqiIN0I8yExg+4BB/qoc9wbXdZn2InG4XxPWusWjZmrS//HvFvKjbxyHfI
+         0gCOWEIFosYX+Z7VEM06KgfdNNESI52UsSS5/HR/FCBYiCcxooDKBe0RAp7P/jPB7K/t
+         5KdSW0I8250rew6IBXYcC8JOnHVDut5z5ZsB6P3DKj6Yxn6G9XxjbCZCNXcJVnD1IUVj
+         8vDw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Maksim Salau <maksim.salau@gmail.com>,
-	Bernie Thompson <bernie@plugable.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Shawn Nematbakhsh <shawnn@chromium.org>,
+	Brian Norris <briannorris@chromium.org>,
+	Javier Martinez Canillas <javier@osg.samsung.com>,
+	Benson Leung <bleung@chromium.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 66/97] video: fbdev: udlfb: Fix buffer on stack
-Date: Fri, 23 Mar 2018 10:54:53 +0100
-Message-Id: <20180323094201.332229360@linuxfoundation.org>
+Subject: [PATCH 4.4 81/97] platform/chrome: Use proper protocol transfer function
+Date: Fri, 23 Mar 2018 10:55:08 +0100
+Message-Id: <20180323094202.082457097@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722800036610611?=
-X-GMAIL-MSGID: =?utf-8?q?1595723162152908601?=
+X-GMAIL-THRID: =?utf-8?q?1595721924296657461?=
+X-GMAIL-MSGID: =?utf-8?q?1595723158662797117?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,51 +52,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maksim Salau <maksim.salau@gmail.com>
+From: Shawn Nematbakhsh <shawnn@chromium.org>
 
 
-[ Upstream commit 45f580c42e5c125d55dbd8099750a1998de3d917 ]
+[ Upstream commit d48b8c58c57f6edbe2965f0a5f62c5cf9593ca96 ]
 
-Allocate buffers on HEAP instead of STACK for local array
-that is to be sent using usb_control_msg().
+pkt_xfer should be used for protocol v3, and cmd_xfer otherwise. We had
+one instance of these functions correct, but not the second, fall-back
+case. We use the fall-back only when the first command returns an
+IN_PROGRESS status, which is only used on some EC firmwares where we
+don't want to constantly poll the bus, but instead back off and
+sleep/retry for a little while.
 
-Signed-off-by: Maksim Salau <maksim.salau@gmail.com>
-Cc: Bernie Thompson <bernie@plugable.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 2c7589af3c4d ("mfd: cros_ec: add proto v3 skeleton")
+Signed-off-by: Shawn Nematbakhsh <shawnn@chromium.org>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
+Signed-off-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/udlfb.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/platform/chrome/cros_ec_proto.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1487,15 +1487,25 @@ static struct device_attribute fb_device
- static int dlfb_select_std_channel(struct dlfb_data *dev)
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -59,12 +59,14 @@ static int send_command(struct cros_ec_d
+ 			struct cros_ec_command *msg)
  {
  	int ret;
--	u8 set_def_chn[] = {	   0x57, 0xCD, 0xDC, 0xA7,
-+	void *buf;
-+	static const u8 set_def_chn[] = {
-+				0x57, 0xCD, 0xDC, 0xA7,
- 				0x1C, 0x88, 0x5E, 0x15,
- 				0x60, 0xFE, 0xC6, 0x97,
- 				0x16, 0x3D, 0x47, 0xF2  };
++	int (*xfer_fxn)(struct cros_ec_device *ec, struct cros_ec_command *msg);
  
-+	buf = kmemdup(set_def_chn, sizeof(set_def_chn), GFP_KERNEL);
-+
-+	if (!buf)
-+		return -ENOMEM;
-+
- 	ret = usb_control_msg(dev->udev, usb_sndctrlpipe(dev->udev, 0),
- 			NR_USB_REQUEST_CHANNEL,
- 			(USB_DIR_OUT | USB_TYPE_VENDOR), 0, 0,
--			set_def_chn, sizeof(set_def_chn), USB_CTRL_SET_TIMEOUT);
-+			buf, sizeof(set_def_chn), USB_CTRL_SET_TIMEOUT);
-+
-+	kfree(buf);
-+
- 	return ret;
- }
+ 	if (ec_dev->proto_version > 2)
+-		ret = ec_dev->pkt_xfer(ec_dev, msg);
++		xfer_fxn = ec_dev->pkt_xfer;
+ 	else
+-		ret = ec_dev->cmd_xfer(ec_dev, msg);
++		xfer_fxn = ec_dev->cmd_xfer;
+ 
++	ret = (*xfer_fxn)(ec_dev, msg);
+ 	if (msg->result == EC_RES_IN_PROGRESS) {
+ 		int i;
+ 		struct cros_ec_command *status_msg;
+@@ -87,7 +89,7 @@ static int send_command(struct cros_ec_d
+ 		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
+ 			usleep_range(10000, 11000);
+ 
+-			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
++			ret = (*xfer_fxn)(ec_dev, status_msg);
+ 			if (ret < 0)
+ 				break;
  
