@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804105-2-10627768563626579125
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804098-2-14358976116854749089
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roenca,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804104; b=cbC7pEXr2KN9qzhA22AasrtwZHAuDwXJ1W234chXv6RCgXD
-    2F1XXy+iEgWBRB3Xd2U4N1IDDpOXmcTQMMoDiU70qWZHVC1Guf6DxNiVhyBzeGZb
-    byCYRmjYA99aJFNj+bv+zNugXe069zDZuQ2ipkDpNySQf+XCpk+aNIevAz0eNw+h
-    TzeriR6iSmGDcE/KtYwH6nvxiWSFwyOlkpi/EdPv3HYck6bzj457kEY2VlU4yXyX
-    KiT2Gxxiwrm3zXnmdOlmfhImXVSvThIKPG8tspN/74jTPaUfXiAF3YXi5d5e2Fwi
-    uWEB8QjPa+2sdpdBDUu8aXNrNFkLoCYFr0inXMQ==
+    t=1521804097; b=DlmmkdL4hWzannevO09R6JD1bg3Zu2fkMV4HXegDb3e32pY
+    W1z9A3/jmal1b37zMnztNXV4hHmiEFB4Bc/JuJHzBxbWtOw6cxKcEXfP0GStnThj
+    ozULXPyVrWMZg5Smf9Ht6E7SMJ527rAiR/eOWdt/2luehaiP9BFEhdAqFq4IX/6X
+    u8FPPaHSHBmgkyR0oUJfl/hfeL2SNi18EhEP7o/ftDhIoBL3cdQ8kXmHkGo0IDQv
+    aG7Sd2m6TPLVAckETuJEHyV1DxhVfM6oxXmril8q75mEesePsT6jj6tseFpVCLZN
+    IBlyZv0EYAfos+ehMDp3OQVaKnBDAvQePc92SUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804104; bh=brQQuSSj10x7ilJ53ZLIXaQGIg
-    pqpI8nghOTvxCIy/A=; b=gMMHBeNJLb8doBzMb4iy39MUnNcPzfCDmQibwVFGEC
-    9ce5Yh7zg8ZsT0qmdulJ3ltsDqK+U7VSjSlnkrK4y8U4m7dpl/iAzDR8V4F+G80t
-    /38IOqXT5kh6h4urNxRvYGFuaRGGAe9D9sSCpBD9zdstNkmQjPrBf96gyaB2XzIz
-    qIbMgWCWGDkK0cwkAzhIGGP3wgd9E4DDwvti++j+VybMH3gNrE++EKeCFfouEtg7
-    /VLfJBHxxwspBNKOxa9hRhWsigXSteWkGheRe+3cUKWQUaju5OYCwizhFTjA1ijw
-    dHjyeak8N4sqZusnMucknDlUWu5Wu8AtDRbmH7QVpAJw==
+    :list-id; s=arctest; t=1521804097; bh=unHiWBwzOja/dvamuj/zjZ/YFE
+    AP9OTFz5EEY2V0mN8=; b=fLuFjsJnLvnx+IID4Xbksx6/9cM5agMT8FuSvu3Bwb
+    ZAkfb4c1N7uTTtJoc5bxY4wdAhaFhi3ElbxgbgTqt3mSjdqUbqIyp/M+SsVXjnA6
+    a/JH4JPzpDMYKvbHIE0rZMBoff3xlOOFxv9JBMYb6rphGtbMVwcvk+AyQYE+eVR9
+    +VN9cClFSmyUgderss8epUfWCQGSUOQlkC71/j4mYUf9ZNGkLX30n4T9FQA1sl12
+    sxB+7sxgDDvO5lyctJT1MU8qURy3IaxtRPTe+7b/7lD71QeJcQblo9x8jeiyqVm7
+    iXDTwTNnt00RFVw+xd/bpRYp28iLpCZwfnTUPBrSlHpw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,21 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755531AbeCWKIX (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:08:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41648 "EHLO
+        id S1755546AbeCWKI1 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:08:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41666 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755507AbeCWKIW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:22 -0400
+        with ESMTP id S1755507AbeCWKIZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexei Fedorov <Alexei.Fedorov@arm.com>,
-        Lv Zheng <lv.zheng@intel.com>,
-        Bob Moore <robert.moore@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 081/177] ACPICA: iasl: Fix IORT SMMU GSI disassembling
-Date: Fri, 23 Mar 2018 10:53:29 +0100
-Message-Id: <20180323094208.882787107@linuxfoundation.org>
+Subject: [PATCH 4.9 072/177] iio: st_pressure: st_accel: Initialise sensor platform data properly
+Date: Fri, 23 Mar 2018 10:53:20 +0100
+Message-Id: <20180323094208.500389267@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -84,49 +82,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lv Zheng <lv.zheng@intel.com>
+From: Shrirang Bagul <shrirang.bagul@canonical.com>
 
 
-[ Upstream commit bb1e23e66e6237ff7a1824b37366540a89149c33 ]
+[ Upstream commit 7383d44b84c94aaca4bf695a6bd8a69f2295ef1a ]
 
-ACPICA commit 637b88de24a78c20478728d9d66632b06fcaa5bf
+This patch fixes the sensor platform data initialisation for st_pressure
+and st_accel device drivers. Without this patch, the driver fails to
+register the sensors when the user removes and re-loads the driver.
 
-If the IORT template is compiled and then iort.aml binary disassembled to
-iort.dsl, SMMUv1 node lists incorrect offset for SMMU_Nsg_cfg_irpt Interrupt:
-[0ECh 0236   8]       SMMU_Nsg_irpt Interrupt : 0000000000000000
-[0ECh 0236   8]    SMMU_Nsg_cfg_irpt Interrupt : 0000000000000000
-This is because iasl hasn't implemented SMMU GSI decoding yet.
+1. Unload the kernel modules for st_pressure
+$ sudo rmmod st_pressure_i2c
+$ sudo rmmod st_pressure
 
-This patch fixes this issue by preparing structures for decoding IORT SMMU
-GSI. ACPICA BZ 1340, reported by Alexei Fedorov, fixed by Lv Zheng.
+2. Re-load the driver
+$ sudo insmod st_pressure
+$ sudo insmod st_pressure_i2c
 
-Link: https://github.com/acpica/acpica/commit/637b88de
-Link: https://bugs.acpica.org/show_bug.cgi?id=1340
-Reported-by: Alexei Fedorov <Alexei.Fedorov@arm.com>
-Signed-off-by: Lv Zheng <lv.zheng@intel.com>
-Signed-off-by: Bob Moore <robert.moore@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/acpi/actbl2.h |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/iio/accel/st_accel_core.c       |    7 ++++---
+ drivers/iio/pressure/st_pressure_core.c |    8 ++++----
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
---- a/include/acpi/actbl2.h
-+++ b/include/acpi/actbl2.h
-@@ -783,6 +783,15 @@ struct acpi_iort_smmu {
- #define ACPI_IORT_SMMU_DVM_SUPPORTED    (1)
- #define ACPI_IORT_SMMU_COHERENT_WALK    (1<<1)
+--- a/drivers/iio/accel/st_accel_core.c
++++ b/drivers/iio/accel/st_accel_core.c
+@@ -827,6 +827,8 @@ static const struct iio_trigger_ops st_a
+ int st_accel_common_probe(struct iio_dev *indio_dev)
+ {
+ 	struct st_sensor_data *adata = iio_priv(indio_dev);
++	struct st_sensors_platform_data *pdata =
++		(struct st_sensors_platform_data *)adata->dev->platform_data;
+ 	int irq = adata->get_irq_data_ready(indio_dev);
+ 	int err;
  
-+/* Global interrupt format */
-+
-+struct acpi_iort_smmu_gsi {
-+	u32 nsg_irpt;
-+	u32 nsg_irpt_flags;
-+	u32 nsg_cfg_irpt;
-+	u32 nsg_cfg_irpt_flags;
-+};
-+
- struct acpi_iort_smmu_v3 {
- 	u64 base_address;	/* SMMUv3 base address */
- 	u32 flags;
+@@ -853,9 +855,8 @@ int st_accel_common_probe(struct iio_dev
+ 					&adata->sensor_settings->fs.fs_avl[0];
+ 	adata->odr = adata->sensor_settings->odr.odr_avl[0].hz;
+ 
+-	if (!adata->dev->platform_data)
+-		adata->dev->platform_data =
+-			(struct st_sensors_platform_data *)&default_accel_pdata;
++	if (!pdata)
++		pdata = (struct st_sensors_platform_data *)&default_accel_pdata;
+ 
+ 	err = st_sensors_init_sensor(indio_dev, adata->dev->platform_data);
+ 	if (err < 0)
+--- a/drivers/iio/pressure/st_pressure_core.c
++++ b/drivers/iio/pressure/st_pressure_core.c
+@@ -638,6 +638,8 @@ static const struct iio_trigger_ops st_p
+ int st_press_common_probe(struct iio_dev *indio_dev)
+ {
+ 	struct st_sensor_data *press_data = iio_priv(indio_dev);
++	struct st_sensors_platform_data *pdata =
++		(struct st_sensors_platform_data *)press_data->dev->platform_data;
+ 	int irq = press_data->get_irq_data_ready(indio_dev);
+ 	int err;
+ 
+@@ -673,10 +675,8 @@ int st_press_common_probe(struct iio_dev
+ 	press_data->odr = press_data->sensor_settings->odr.odr_avl[0].hz;
+ 
+ 	/* Some devices don't support a data ready pin. */
+-	if (!press_data->dev->platform_data &&
+-				press_data->sensor_settings->drdy_irq.addr)
+-		press_data->dev->platform_data =
+-			(struct st_sensors_platform_data *)&default_press_pdata;
++	if (!pdata && press_data->sensor_settings->drdy_irq.addr)
++		pdata =	(struct st_sensors_platform_data *)&default_press_pdata;
+ 
+ 	err = st_sensors_init_sensor(indio_dev, press_data->dev->platform_data);
+ 	if (err < 0)
