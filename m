@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804994-2-7354614039823888486
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804961-2-1882803657130361915
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804993; b=g31aC3YZuDJ6QyT2jrrixp8cte9xdzZv6nffWJUA2yETfLO
-    riVadxhT2R7XIPYmhfuEoxuQR3SnIQO+w71lCtt8ONEX+zV6jXJHl5ok9sz5HMQZ
-    +jGxK79fM7bhhHe+YyEOVggIzsLSVj/WpYHY7z7JdmKTAOE6u8euk2NR6+l1yo1V
-    6uRFnWRaTybaZSFDYdRlmKo0ac5BYdigZFx1Ozu+dN6qAnb28UVB/dWOaD67nrk7
-    J4khCFWJD8z69/BGif5m5CbJdLDROupeysCpXgzdpVfmYFpkTPamR7dRY6uckMb7
-    rL48ywnB4q9DRZtZP0hdDCkMiVbpoYxqi797HGw==
+    t=1521804960; b=IBNDyoFvf+VRBebw60xVlgYIvbMyxjZJBtV5ZFW/P0gvjVV
+    tvt5SlhlejAW5jakrDxTDu7L81DmEXe5zaPhz4zCIZ55o0O4XHqRZnWQ5WRSeh7E
+    WMXS8ZIGFVSby3KVsQi4YMqKzWKyp6/qSFsk0KZDP0VMDSOdjKdvIQ+zhAO5OQ8f
+    e8UGwHS+BW/YyvUl9VMl77iiWudGEiLM5JaJQBtRgV6gWr6NYtjRCxdXwbtin10u
+    SaRNfpJOUdJ1KUGnsdYOw1hJvkXxufpxQZFtJpMVv+DSeGBcYGHr+s3EOVupLY7d
+    yi9Kp6sbglXXCTjQnoxECRU9SFgR9pP+/GEBwbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804993; bh=ncFvSbi9/gQUpVnmsBfCa6wF/X
-    cSKYfKGaz42yKj7/Q=; b=jsuhkKF7gcFJ7zH19AVNjs6IHuHi9ZSOh/MX3H+Ce+
-    mGP8HfCG356Lvg3flE5IJbNtnjlwEdCztMklW710fxghtqGK5viEP4ihr3IroPph
-    DTnmsUzyBXpZKxDGzIyzr/ujLZUJdLbyOaaeBzeSsSTrWMXP+W8M1eipORWo+wts
-    D703IUnvSmnZ4fPwEt3/inU+iWUtnbCkLDCCpQg6WbEjXwqKenQyaUaQwuvR13jI
-    o6VxJzI2VJOsr3R5ZRAfT5BiSDYyZikekoI7JiVw2eliHvOxfz6w7sDgC5wzLFdb
-    HUD0DmjtWHwkNMgiicEGpHKHtdo7/DlHdnA/Kudk8UZg==
+    :list-id; s=arctest; t=1521804960; bh=Gd/UcEXAO9cJh9mFZLh/TOskYu
+    aWwtOzJCjwtlwPt4o=; b=Dh5inxgUMSca7GULdw1yUxRrcRn4WAWWIyyVDNv2Di
+    65lY3/dWrHMlVgEgOxBypZRGDUX+jq2fO++oTeYL8TCZx5r6CyP6G0WF7crTmAsq
+    X3IHE4r7ehUMDDmAf+MzKsSUqkAC4/3XgusoXFDMob0elmdc+AAuA92z8/u5oRRn
+    t5BhYiy3HEUF30VutWw+pFd03mrz5KTE4pZPknvyqtka47XsZV5CTpmUQvs6ltOW
+    FizWb41EHX2yf0qyJOVtOPZs81RTWO5Et4zX7pVP+2LbFPOQhMj8o/9Ibg8eWgvU
+    KtestYlTjQ00cdw9becjudqW1AZsy7dKp7omTkFyX5cQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,33 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754874AbeCWKFG (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:05:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39450 "EHLO
+        id S1754899AbeCWKFL (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:05:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39516 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754854AbeCWKFD (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:03 -0400
+        with ESMTP id S1754854AbeCWKFJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Deepa Dinamani <deepa.kernel@gmail.com>,
-        arnd@arndb.de, y2038@lists.linaro.org, netdev@vger.kernel.org,
-        Richard Cochran <richardcochran@gmail.com>,
-        john.stultz@linaro.org, Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-acpi@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Tejun Heo <tj@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Len Brown <lenb@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 015/177] time: Change posix clocks ops interfaces to use timespec64
-Date: Fri, 23 Mar 2018 10:52:23 +0100
-Message-Id: <20180323094205.878895184@linuxfoundation.org>
+Subject: [PATCH 4.9 017/177] ACPI/processor: Replace racy task affinity logic
+Date: Fri, 23 Mar 2018 10:52:25 +0100
+Message-Id: <20180323094205.954384495@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -84,225 +94,198 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Deepa Dinamani <deepa.kernel@gmail.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
 
-[ Upstream commit d340266e19ddb70dbd608f9deedcfb35fdb9d419 ]
+[ Upstream commit 8153f9ac43897f9f4786b30badc134fcc1a4fb11 ]
 
-struct timespec is not y2038 safe on 32 bit machines.
+acpi_processor_get_throttling() requires to invoke the getter function on
+the target CPU. This is achieved by temporarily setting the affinity of the
+calling user space thread to the requested CPU and reset it to the original
+affinity afterwards.
 
-The posix clocks apis use struct timespec directly and through struct
-itimerspec.
+That's racy vs. CPU hotplug and concurrent affinity settings for that
+thread resulting in code executing on the wrong CPU and overwriting the
+new affinity setting.
 
-Replace the posix clock interfaces to use struct timespec64 and struct
-itimerspec64 instead.  Also fix up their implementations accordingly.
+acpi_processor_get_throttling() is invoked in two ways:
 
-Note that the clock_getres() interface has also been changed to use
-timespec64 even though this particular interface is not affected by the
-y2038 problem. This helps verification for internal kernel code for y2038
-readiness by getting rid of time_t/ timeval/ timespec.
+1) The CPU online callback, which is already running on the target CPU and
+   obviously protected against hotplug and not affected by affinity
+   settings.
 
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: arnd@arndb.de
-Cc: y2038@lists.linaro.org
-Cc: netdev@vger.kernel.org
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: john.stultz@linaro.org
-Link: http://lkml.kernel.org/r/1490555058-4603-3-git-send-email-deepa.kernel@gmail.com
+2) The ACPI driver probe function, which is not protected against hotplug
+   during modprobe.
+
+Switch it over to work_on_cpu() and protect the probe function against CPU
+hotplug.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Sebastian Siewior <bigeasy@linutronix.de>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-acpi@vger.kernel.org
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Len Brown <lenb@kernel.org>
+Link: http://lkml.kernel.org/r/20170412201042.785920903@linutronix.de
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/ptp/ptp_clock.c     |   18 +++++++-----------
- include/linux/posix-clock.h |   10 +++++-----
- kernel/time/posix-clock.c   |   34 ++++++++++++++++++++++++----------
- 3 files changed, 36 insertions(+), 26 deletions(-)
+ drivers/acpi/processor_driver.c     |    7 +++-
+ drivers/acpi/processor_throttling.c |   62 ++++++++++++++++++++----------------
+ 2 files changed, 42 insertions(+), 27 deletions(-)
 
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -97,30 +97,26 @@ static s32 scaled_ppm_to_ppb(long ppm)
- 
- /* posix clock implementation */
- 
--static int ptp_clock_getres(struct posix_clock *pc, struct timespec *tp)
-+static int ptp_clock_getres(struct posix_clock *pc, struct timespec64 *tp)
+--- a/drivers/acpi/processor_driver.c
++++ b/drivers/acpi/processor_driver.c
+@@ -262,11 +262,16 @@ err_power_exit:
+ static int acpi_processor_start(struct device *dev)
  {
- 	tp->tv_sec = 0;
- 	tp->tv_nsec = 1;
+ 	struct acpi_device *device = ACPI_COMPANION(dev);
++	int ret;
+ 
+ 	if (!device)
+ 		return -ENODEV;
+ 
+-	return __acpi_processor_start(device);
++	/* Protect against concurrent CPU hotplug operations */
++	get_online_cpus();
++	ret = __acpi_processor_start(device);
++	put_online_cpus();
++	return ret;
+ }
+ 
+ static int acpi_processor_stop(struct device *dev)
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -62,8 +62,8 @@ struct acpi_processor_throttling_arg {
+ #define THROTTLING_POSTCHANGE      (2)
+ 
+ static int acpi_processor_get_throttling(struct acpi_processor *pr);
+-int acpi_processor_set_throttling(struct acpi_processor *pr,
+-						int state, bool force);
++static int __acpi_processor_set_throttling(struct acpi_processor *pr,
++					   int state, bool force, bool direct);
+ 
+ static int acpi_processor_update_tsd_coord(void)
+ {
+@@ -891,7 +891,8 @@ static int acpi_processor_get_throttling
+ 			ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+ 				"Invalid throttling state, reset\n"));
+ 			state = 0;
+-			ret = acpi_processor_set_throttling(pr, state, true);
++			ret = __acpi_processor_set_throttling(pr, state, true,
++							      true);
+ 			if (ret)
+ 				return ret;
+ 		}
+@@ -901,36 +902,31 @@ static int acpi_processor_get_throttling
  	return 0;
  }
  
--static int ptp_clock_settime(struct posix_clock *pc, const struct timespec *tp)
-+static int ptp_clock_settime(struct posix_clock *pc, const struct timespec64 *tp)
+-static int acpi_processor_get_throttling(struct acpi_processor *pr)
++static long __acpi_processor_get_throttling(void *data)
  {
- 	struct ptp_clock *ptp = container_of(pc, struct ptp_clock, clock);
--	struct timespec64 ts = timespec_to_timespec64(*tp);
+-	cpumask_var_t saved_mask;
+-	int ret;
++	struct acpi_processor *pr = data;
++
++	return pr->throttling.acpi_processor_get_throttling(pr);
++}
  
--	return  ptp->info->settime64(ptp->info, &ts);
-+	return  ptp->info->settime64(ptp->info, tp);
- }
++static int acpi_processor_get_throttling(struct acpi_processor *pr)
++{
+ 	if (!pr)
+ 		return -EINVAL;
  
--static int ptp_clock_gettime(struct posix_clock *pc, struct timespec *tp)
-+static int ptp_clock_gettime(struct posix_clock *pc, struct timespec64 *tp)
- {
- 	struct ptp_clock *ptp = container_of(pc, struct ptp_clock, clock);
--	struct timespec64 ts;
- 	int err;
+ 	if (!pr->flags.throttling)
+ 		return -ENODEV;
  
--	err = ptp->info->gettime64(ptp->info, &ts);
--	if (!err)
--		*tp = timespec64_to_timespec(ts);
-+	err = ptp->info->gettime64(ptp->info, tp);
- 	return err;
- }
- 
-@@ -133,7 +129,7 @@ static int ptp_clock_adjtime(struct posi
- 	ops = ptp->info;
- 
- 	if (tx->modes & ADJ_SETOFFSET) {
--		struct timespec ts;
-+		struct timespec64 ts;
- 		ktime_t kt;
- 		s64 delta;
- 
-@@ -146,7 +142,7 @@ static int ptp_clock_adjtime(struct posi
- 		if ((unsigned long) ts.tv_nsec >= NSEC_PER_SEC)
- 			return -EINVAL;
- 
--		kt = timespec_to_ktime(ts);
-+		kt = timespec64_to_ktime(ts);
- 		delta = ktime_to_ns(kt);
- 		err = ops->adjtime(ops, delta);
- 	} else if (tx->modes & ADJ_FREQUENCY) {
---- a/include/linux/posix-clock.h
-+++ b/include/linux/posix-clock.h
-@@ -59,23 +59,23 @@ struct posix_clock_operations {
- 
- 	int  (*clock_adjtime)(struct posix_clock *pc, struct timex *tx);
- 
--	int  (*clock_gettime)(struct posix_clock *pc, struct timespec *ts);
-+	int  (*clock_gettime)(struct posix_clock *pc, struct timespec64 *ts);
- 
--	int  (*clock_getres) (struct posix_clock *pc, struct timespec *ts);
-+	int  (*clock_getres) (struct posix_clock *pc, struct timespec64 *ts);
- 
- 	int  (*clock_settime)(struct posix_clock *pc,
--			      const struct timespec *ts);
-+			      const struct timespec64 *ts);
- 
- 	int  (*timer_create) (struct posix_clock *pc, struct k_itimer *kit);
- 
- 	int  (*timer_delete) (struct posix_clock *pc, struct k_itimer *kit);
- 
- 	void (*timer_gettime)(struct posix_clock *pc,
--			      struct k_itimer *kit, struct itimerspec *tsp);
-+			      struct k_itimer *kit, struct itimerspec64 *tsp);
- 
- 	int  (*timer_settime)(struct posix_clock *pc,
- 			      struct k_itimer *kit, int flags,
--			      struct itimerspec *tsp, struct itimerspec *old);
-+			      struct itimerspec64 *tsp, struct itimerspec64 *old);
- 	/*
- 	 * Optional character device methods:
- 	 */
---- a/kernel/time/posix-clock.c
-+++ b/kernel/time/posix-clock.c
-@@ -300,14 +300,17 @@ out:
- static int pc_clock_gettime(clockid_t id, struct timespec *ts)
- {
- 	struct posix_clock_desc cd;
-+	struct timespec64 ts64;
- 	int err;
- 
- 	err = get_clock_desc(id, &cd);
- 	if (err)
- 		return err;
- 
--	if (cd.clk->ops.clock_gettime)
--		err = cd.clk->ops.clock_gettime(cd.clk, ts);
-+	if (cd.clk->ops.clock_gettime) {
-+		err = cd.clk->ops.clock_gettime(cd.clk, &ts64);
-+		*ts = timespec64_to_timespec(ts64);
-+	}
- 	else
- 		err = -EOPNOTSUPP;
- 
-@@ -319,14 +322,17 @@ static int pc_clock_gettime(clockid_t id
- static int pc_clock_getres(clockid_t id, struct timespec *ts)
- {
- 	struct posix_clock_desc cd;
-+	struct timespec64 ts64;
- 	int err;
- 
- 	err = get_clock_desc(id, &cd);
- 	if (err)
- 		return err;
- 
--	if (cd.clk->ops.clock_getres)
--		err = cd.clk->ops.clock_getres(cd.clk, ts);
-+	if (cd.clk->ops.clock_getres) {
-+		err = cd.clk->ops.clock_getres(cd.clk, &ts64);
-+		*ts = timespec64_to_timespec(ts64);
-+	}
- 	else
- 		err = -EOPNOTSUPP;
- 
-@@ -337,6 +343,7 @@ static int pc_clock_getres(clockid_t id,
- 
- static int pc_clock_settime(clockid_t id, const struct timespec *ts)
- {
-+	struct timespec64 ts64 = timespec_to_timespec64(*ts);
- 	struct posix_clock_desc cd;
- 	int err;
- 
-@@ -350,7 +357,7 @@ static int pc_clock_settime(clockid_t id
- 	}
- 
- 	if (cd.clk->ops.clock_settime)
--		err = cd.clk->ops.clock_settime(cd.clk, ts);
-+		err = cd.clk->ops.clock_settime(cd.clk, &ts64);
- 	else
- 		err = -EOPNOTSUPP;
- out:
-@@ -403,29 +410,36 @@ static void pc_timer_gettime(struct k_it
- {
- 	clockid_t id = kit->it_clock;
- 	struct posix_clock_desc cd;
-+	struct itimerspec64 ts64;
- 
- 	if (get_clock_desc(id, &cd))
- 		return;
- 
--	if (cd.clk->ops.timer_gettime)
--		cd.clk->ops.timer_gettime(cd.clk, kit, ts);
+-	if (!alloc_cpumask_var(&saved_mask, GFP_KERNEL))
+-		return -ENOMEM;
 -
-+	if (cd.clk->ops.timer_gettime) {
-+		cd.clk->ops.timer_gettime(cd.clk, kit, &ts64);
-+		*ts = itimerspec64_to_itimerspec(&ts64);
-+	}
- 	put_clock_desc(&cd);
+ 	/*
+-	 * Migrate task to the cpu pointed by pr.
++	 * This is either called from the CPU hotplug callback of
++	 * processor_driver or via the ACPI probe function. In the latter
++	 * case the CPU is not guaranteed to be online. Both call sites are
++	 * protected against CPU hotplug.
+ 	 */
+-	cpumask_copy(saved_mask, &current->cpus_allowed);
+-	/* FIXME: use work_on_cpu() */
+-	if (set_cpus_allowed_ptr(current, cpumask_of(pr->id))) {
+-		/* Can't migrate to the target pr->id CPU. Exit */
+-		free_cpumask_var(saved_mask);
++	if (!cpu_online(pr->id))
+ 		return -ENODEV;
+-	}
+-	ret = pr->throttling.acpi_processor_get_throttling(pr);
+-	/* restore the previous state */
+-	set_cpus_allowed_ptr(current, saved_mask);
+-	free_cpumask_var(saved_mask);
+ 
+-	return ret;
++	return work_on_cpu(pr->id, __acpi_processor_get_throttling, pr);
  }
  
- static int pc_timer_settime(struct k_itimer *kit, int flags,
- 			    struct itimerspec *ts, struct itimerspec *old)
+ static int acpi_processor_get_fadt_info(struct acpi_processor *pr)
+@@ -1080,8 +1076,15 @@ static long acpi_processor_throttling_fn
+ 			arg->target_state, arg->force);
+ }
+ 
+-int acpi_processor_set_throttling(struct acpi_processor *pr,
+-						int state, bool force)
++static int call_on_cpu(int cpu, long (*fn)(void *), void *arg, bool direct)
++{
++	if (direct)
++		return fn(arg);
++	return work_on_cpu(cpu, fn, arg);
++}
++
++static int __acpi_processor_set_throttling(struct acpi_processor *pr,
++					   int state, bool force, bool direct)
  {
-+	struct itimerspec64 ts64 = itimerspec_to_itimerspec64(ts);
- 	clockid_t id = kit->it_clock;
- 	struct posix_clock_desc cd;
-+	struct itimerspec64 old64;
- 	int err;
+ 	int ret = 0;
+ 	unsigned int i;
+@@ -1130,7 +1133,8 @@ int acpi_processor_set_throttling(struct
+ 		arg.pr = pr;
+ 		arg.target_state = state;
+ 		arg.force = force;
+-		ret = work_on_cpu(pr->id, acpi_processor_throttling_fn, &arg);
++		ret = call_on_cpu(pr->id, acpi_processor_throttling_fn, &arg,
++				  direct);
+ 	} else {
+ 		/*
+ 		 * When the T-state coordination is SW_ALL or HW_ALL,
+@@ -1163,8 +1167,8 @@ int acpi_processor_set_throttling(struct
+ 			arg.pr = match_pr;
+ 			arg.target_state = state;
+ 			arg.force = force;
+-			ret = work_on_cpu(pr->id, acpi_processor_throttling_fn,
+-				&arg);
++			ret = call_on_cpu(pr->id, acpi_processor_throttling_fn,
++					  &arg, direct);
+ 		}
+ 	}
+ 	/*
+@@ -1182,6 +1186,12 @@ int acpi_processor_set_throttling(struct
+ 	return ret;
+ }
  
- 	err = get_clock_desc(id, &cd);
- 	if (err)
- 		return err;
- 
--	if (cd.clk->ops.timer_settime)
--		err = cd.clk->ops.timer_settime(cd.clk, kit, flags, ts, old);
-+	if (cd.clk->ops.timer_settime) {
-+		err = cd.clk->ops.timer_settime(cd.clk, kit, flags, &ts64, &old64);
-+		if (old)
-+			*old = itimerspec64_to_itimerspec(&old64);
-+	}
- 	else
- 		err = -EOPNOTSUPP;
- 
++int acpi_processor_set_throttling(struct acpi_processor *pr, int state,
++				  bool force)
++{
++	return __acpi_processor_set_throttling(pr, state, force, false);
++}
++
+ int acpi_processor_get_throttling_info(struct acpi_processor *pr)
+ {
+ 	int result = 0;
