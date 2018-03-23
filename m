@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802761-2-11451573566581297851
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802721-5-11022057651613163536
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802760; b=wHw9KqvbZMUyK7PR4n/w7Ue1IkQjiTPf87Qy/rbeu53VGsm
-    x4xcBdzR0+ajRNzu2t6OXjKhJZD7wqIuoAwvzVAsEmUHBp+xUBW6I1xwLCfCiEpT
-    nh+6KHKx+AQN0CwX1qkTaJmdFApK+0NTGt9MealACh2UxoSqVWqR4mX8JtbEtPCR
-    WtKI7Zn+Nbw6MawyhyQ7xKkpWMC67rjqW2nZpXx36JX3LVA+e41mjexiJDGDrore
-    vANOH5T0RqLmBwTtPcjjOSVU+/ZSM3XAjWuKA25VbvMKKq0IgQ8MWlianpkmwnDl
-    5QTVfGDy2gv51bVl+FPyaZ3LAvRP+AbXwK8j/Kw==
+    t=1521802721; b=XdYR7znL4Wuk9vyr0fAEn7uwbyliG9NGkO50WBr4s38TRpG
+    Yxy3b5ohn/GdOjSA5pWQ9Y5Ff8pGdrGteSD4P8ScpveUPbEYtOvh0Elneu2Ma5oK
+    NXalRlfH/Be5P/5J9k3+PX1RLoqztIlAtlsUjHGfdEHSLSnRUSvbTNT/wgbfV5Zg
+    s45IeMHbKWEcgYfuuDUeRn7DUvEhF0E2Ayeb+YwdjNSOYI61FDJYP2kzfkrByFWU
+    TsvbFgVGaBjfvO0/O09AHb9SHVE4i/MfP56W1qIqVneliOTtROCh3CGVlqXntXiP
+    JLWFDbcqepdft3RKMQeHseVRZsJR2/9LD7lmMbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802760; bh=IUCmDpxhUiX8PuGMwnEDy1eEIV
-    GaP7xv51Ez9vRZccc=; b=Te7DM/sXiOxiKKxuYcceuyZSuz8Y69NJVYxzFibBTp
-    ruBE8Omn1/YgGwt3fYH8ImoJ8qAWvkzNIU+GSTHA9xjtYJLXu7M/Med7KjRN9YnB
-    qMWKUWjvbAZw3+axoS79RIH3dEFySHFVg+a6CEGrfab60eV49X3ZisF3hB74HEAY
-    FgBwQ5cnDW9rLlqdH2GIaB7Ag4y9N2UsbUG2igH8VP/B87NrjhVvVSC8bc4Qy4z+
-    bRDqBOceBvWi+q3UiGmeEJUHfEi1Bom2M2kvZSOx2z2O3wQRJU8RxtyIyMbOCAEq
-    0qO7mUySwe16IHPxIZVU93DiJ7YFxqbNXp1v/3bTKg+g==
+    :list-id; s=arctest; t=1521802721; bh=Nn2C/O+S70jZ1GF4pSziyaa5vG
+    s95uq0pjYXmx6SXcU=; b=D6o4vruRA2kn/vDpDkRRWsb3TtKT7G319MOnLn5f6A
+    BkQo1/XjjA9YlXwMxhYv2bH+BCHChqUuKQWLp+IMbSo2/PAmwTYr5YuNCUCwu3cU
+    l9uTkP+Q+1nohbNq/gPWvX1sgGdHf26LwXDCkq3pLanRCEBmNFxUeGHY87KgkBSj
+    C7iQhmX32ZGFqYkFW8TdF+OLX2RxvAsLm05wZbpo2+m19RH81ZtzVfIPhOx5ZR9m
+    fR5uPEPB4WTxPoDkkByhXABTC+cS1tSyTitIK6pBZYbLhfP4E7vDAmcySSu9NjNW
+    vcXeuviHXcxIo/7UYTcaZ3uQWnm78sexahr6uYCo3tfg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751848AbeCWK6y (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:58:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44394 "EHLO
+        id S933179AbeCWKMk (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:12:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44418 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933225AbeCWKMf (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:35 -0400
+        with ESMTP id S933256AbeCWKMj (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 171/177] dmaengine: ti-dma-crossbar: Fix event mapping for TPCC_EVT_MUX_60_63
-Date: Fri, 23 Mar 2018 10:54:59 +0100
-Message-Id: <20180323094212.696536011@linuxfoundation.org>
+        stable@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.9 172/177] IB/mlx5: Fix integer overflows in mlx5_ib_create_srq
+Date: Fri, 23 Mar 2018 10:55:00 +0100
+Message-Id: <20180323094212.739234676@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,44 +83,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vignesh R <vigneshr@ti.com>
+From: Boris Pismenny <borisp@mellanox.com>
 
+commit c2b37f76485f073f020e60b5954b6dc4e55f693c upstream.
 
-[ Upstream commit d087f15786021a9605b20f4c678312510be4cac1 ]
+This patch validates user provided input to prevent integer overflow due
+to integer manipulation in the mlx5_ib_create_srq function.
 
-Register layout of a typical TPCC_EVT_MUX_M_N register is such that the
-lowest numbered event is at the lowest byte address and highest numbered
-event at highest byte address. But TPCC_EVT_MUX_60_63 register layout is
-different,  in that the lowest numbered event is at the highest address
-and highest numbered event is at the lowest address. Therefore, modify
-ti_am335x_xbar_write() to handle TPCC_EVT_MUX_60_63 register
-accordingly.
-
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: syzkaller <syzkaller@googlegroups.com>
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Signed-off-by: Boris Pismenny <borisp@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/dma/ti-dma-crossbar.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/dma/ti-dma-crossbar.c
-+++ b/drivers/dma/ti-dma-crossbar.c
-@@ -54,7 +54,15 @@ struct ti_am335x_xbar_map {
- 
- static inline void ti_am335x_xbar_write(void __iomem *iomem, int event, u8 val)
+---
+ drivers/infiniband/hw/mlx5/srq.c |   15 +++++++++------
+ include/linux/mlx5/driver.h      |    4 ++--
+ 2 files changed, 11 insertions(+), 8 deletions(-)
+
+--- a/drivers/infiniband/hw/mlx5/srq.c
++++ b/drivers/infiniband/hw/mlx5/srq.c
+@@ -243,8 +243,8 @@ struct ib_srq *mlx5_ib_create_srq(struct
  {
--	writeb_relaxed(val, iomem + event);
-+	/*
-+	 * TPCC_EVT_MUX_60_63 register layout is different than the
-+	 * rest, in the sense, that event 63 is mapped to lowest byte
-+	 * and event 60 is mapped to highest, handle it separately.
-+	 */
-+	if (event >= 60 && event <= 63)
-+		writeb_relaxed(val, iomem + (63 - event % 4));
-+	else
-+		writeb_relaxed(val, iomem + event);
- }
+ 	struct mlx5_ib_dev *dev = to_mdev(pd->device);
+ 	struct mlx5_ib_srq *srq;
+-	int desc_size;
+-	int buf_size;
++	size_t desc_size;
++	size_t buf_size;
+ 	int err;
+ 	struct mlx5_srq_attr in = {0};
+ 	__u32 max_srq_wqes = 1 << MLX5_CAP_GEN(dev->mdev, log_max_srq_sz);
+@@ -268,15 +268,18 @@ struct ib_srq *mlx5_ib_create_srq(struct
  
- static void ti_am335x_xbar_free(struct device *dev, void *route_data)
+ 	desc_size = sizeof(struct mlx5_wqe_srq_next_seg) +
+ 		    srq->msrq.max_gs * sizeof(struct mlx5_wqe_data_seg);
++	if (desc_size == 0 || srq->msrq.max_gs > desc_size)
++		return ERR_PTR(-EINVAL);
+ 	desc_size = roundup_pow_of_two(desc_size);
+-	desc_size = max_t(int, 32, desc_size);
++	desc_size = max_t(size_t, 32, desc_size);
++	if (desc_size < sizeof(struct mlx5_wqe_srq_next_seg))
++		return ERR_PTR(-EINVAL);
+ 	srq->msrq.max_avail_gather = (desc_size - sizeof(struct mlx5_wqe_srq_next_seg)) /
+ 		sizeof(struct mlx5_wqe_data_seg);
+ 	srq->msrq.wqe_shift = ilog2(desc_size);
+ 	buf_size = srq->msrq.max * desc_size;
+-	mlx5_ib_dbg(dev, "desc_size 0x%x, req wr 0x%x, srq size 0x%x, max_gs 0x%x, max_avail_gather 0x%x\n",
+-		    desc_size, init_attr->attr.max_wr, srq->msrq.max, srq->msrq.max_gs,
+-		    srq->msrq.max_avail_gather);
++	if (buf_size < desc_size)
++		return ERR_PTR(-EINVAL);
+ 	in.type = init_attr->srq_type;
+ 
+ 	if (pd->uobject)
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -380,8 +380,8 @@ struct mlx5_core_srq {
+ 	struct mlx5_core_rsc_common	common; /* must be first */
+ 	u32		srqn;
+ 	int		max;
+-	int		max_gs;
+-	int		max_avail_gather;
++	size_t		max_gs;
++	size_t		max_avail_gather;
+ 	int		wqe_shift;
+ 	void (*event)	(struct mlx5_core_srq *, enum mlx5_event);
+ 
