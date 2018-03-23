@@ -1,172 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751832AbeCWOnB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:43:01 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:45566 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751531AbeCWOnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:43:00 -0400
-From: Peng Hao <peng.hao2@zte.com.cn>
-To: christoffer.dall@linaro.org, marc.zyngier@arm.com
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH v2] KVM: arm/arm64 : add lpi info in vgic-debug
-Date: Sat, 24 Mar 2018 07:01:14 +0800
-Message-Id: <1521846074-66914-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-03-23 22:43:00,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-03-23 22:42:34,
-        Serialize complete at 2018-03-23 22:42:34
-X-MAIL: mse01.zte.com.cn w2NEgoIb052298
+        id S1751880AbeCWOnr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:43:47 -0400
+Received: from smtp.eu.citrix.com ([185.25.65.24]:3678 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751814AbeCWOnp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 10:43:45 -0400
+X-IronPort-AV: E=Sophos;i="5.48,350,1517875200";
+   d="scan'208";a="70469679"
+Subject: Re: [PATCH] KVM: X86: Fix the decoding of segment overrides in 64bit
+ mode
+To: Wanpeng Li <kernellwp@gmail.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1521707651-9375-1-git-send-email-wanpengli@tencent.com>
+ <aadc47c3-9d5f-b4d5-92d3-cb888a29563c@redhat.com>
+ <49454fe4-16e2-4d8b-7ad5-9e488afc786e@citrix.com>
+ <d1126eb9-7203-7044-f72b-174cac6607ab@redhat.com>
+ <e9db6804-4881-be93-f570-e9631dbccac8@citrix.com>
+ <9bd82cb0-d88f-4891-a111-3704802e1d4e@redhat.com>
+ <CANRm+CwmJQCFZ7oe1_YatqoOXzzEU+SP9Z5qR6zU_ybd_DoGQQ@mail.gmail.com>
+ <94bbfac5-2022-ab92-0b9a-1c3cd2275054@citrix.com>
+ <CANRm+CwsFX7rVkPvENRM20D84zotonxFFJMSq98icS4BQm7o2Q@mail.gmail.com>
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Message-ID: <3cff8fb1-bfa7-0e63-4642-4d779454965a@citrix.com>
+Date: Fri, 23 Mar 2018 14:43:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CANRm+CwsFX7rVkPvENRM20D84zotonxFFJMSq98icS4BQm7o2Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
+ AMSPEX02CL02.citrite.net (10.69.22.126)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add lpi debug info to vgic-stat.
-the printed info like this:
-    SPI  287      0 000001        0        0   0 160      -1
-    LPI 8192      2 000100        0        0   0 160      -1
+On 23/03/18 14:27, Wanpeng Li wrote:
+> 2018-03-22 21:53 GMT+08:00 Andrew Cooper <andrew.cooper3@citrix.com>:
+>> On 22/03/18 13:39, Wanpeng Li wrote:
+>>> 2018-03-22 20:38 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
+>>>> On 22/03/2018 12:04, Andrew Cooper wrote:
+>>>>> We've got a Force Emulation Prefix (ud2a; .ascii "xen") for doing
+>>>>> magic.  Originally, this was used for PV guests to explicitly request an
+>>>>> emulated CPUID, but I extended it to HVM guests for "emulate the next
+>>>>> instruction", after we had some guest user => guest kernel privilege
+>>>>> escalations because of incorrect emulation.
+>>>> Wanpeng, why don't you add it behind a new kvm module parameter? :)
+>>> Great point! I will have a try. Thanks Paolo and Andrew. :)
+>> Using the force emulation prefix requires intercepting #UD, which is in
+>> general a BadThing(tm) for security.  Therefore, we have a build time
+> Yeah, however kvm intercepts and emulates #UD by default, should we
+> add a new kvm module parameter to enable it and disable by default?
+> Paolo.
+>
+>> configuration option to compile in support, and require that test
+>> systems explicitly opt into using it via a command line parameter.
+>>
+>> http://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=xen/arch/x86/hvm/hvm.c;h=db52312882205e65b32e587106ca795f4bfab2eb;hb=refs/heads/staging#l3741
+>> is the general #UD intercept handler if you want a reference.  (You can
+> Thanks Andrew, it is useful. :) In addition, I didn't see the
+> test-memop-seg testcase has "Forced Emulation Prefix", when the prefix
+> is added to each instruction in the testcase?
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- virt/kvm/arm/vgic/vgic-debug.c | 56 ++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 51 insertions(+), 5 deletions(-)
+It has ended up substantially more ugly than I first intended, due to
+several assembler bugs in older GCC and Clang toolchains.
 
-diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
-index 10b3817..cb85550 100644
---- a/virt/kvm/arm/vgic/vgic-debug.c
-+++ b/virt/kvm/arm/vgic/vgic-debug.c
-@@ -36,9 +36,12 @@
- struct vgic_state_iter {
- 	int nr_cpus;
- 	int nr_spis;
-+	int nr_lpis;
- 	int dist_id;
- 	int vcpu_id;
- 	int intid;
-+	int lpi_print_count;
-+	struct vgic_irq **lpi_irqs;
- };
- 
- static void iter_next(struct vgic_state_iter *iter)
-@@ -52,6 +55,35 @@ static void iter_next(struct vgic_state_iter *iter)
- 	if (iter->intid == VGIC_NR_PRIVATE_IRQS &&
- 	    ++iter->vcpu_id < iter->nr_cpus)
- 		iter->intid = 0;
-+
-+	if (iter->intid >= VGIC_NR_PRIVATE_IRQS + iter->nr_spis) {
-+		if (iter->lpi_print_count < iter->nr_lpis)
-+			iter->intid = iter->lpi_irqs[iter->lpi_print_count]->intid;
-+		iter->lpi_print_count++;
-+	}
-+}
-+
-+static void vgic_debug_get_lpis(struct kvm *kvm, struct vgic_state_iter *iter)
-+{
-+	struct vgic_dist *dist = &kvm->arch.vgic;
-+	int i = 0;
-+	struct vgic_irq *irq = NULL, **lpi_irqs;
-+
-+	iter->nr_lpis = dist->lpi_list_count;
-+	lpi_irqs = kmalloc_array(iter->nr_lpis, sizeof(irq), GFP_KERNEL);
-+	if (!lpi_irqs) {
-+		iter->nr_lpis = 0;
-+		return;
-+	}
-+	spin_lock(&dist->lpi_list_lock);
-+	list_for_each_entry(irq, &dist->lpi_list_head, lpi_list) {
-+		vgic_get_irq_kref(irq);
-+		if (i < iter->nr_lpis)
-+			lpi_irqs[i++] = irq;
-+	}
-+	iter->nr_lpis = i;
-+	spin_unlock(&dist->lpi_list_lock);
-+	iter->lpi_irqs = lpi_irqs;
- }
- 
- static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
-@@ -64,6 +96,8 @@ static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
- 	iter->nr_cpus = nr_cpus;
- 	iter->nr_spis = kvm->arch.vgic.nr_spis;
- 
-+	if (vgic_supports_direct_msis(kvm) && !pos)
-+		vgic_debug_get_lpis(kvm, iter);
- 	/* Fast forward to the right position if needed */
- 	while (pos--)
- 		iter_next(iter);
-@@ -73,7 +107,9 @@ static bool end_of_vgic(struct vgic_state_iter *iter)
- {
- 	return iter->dist_id > 0 &&
- 		iter->vcpu_id == iter->nr_cpus &&
--		(iter->intid - VGIC_NR_PRIVATE_IRQS) == iter->nr_spis;
-+		(iter->intid - VGIC_NR_PRIVATE_IRQS) >= iter->nr_spis &&
-+		((iter->nr_lpis == 0) ||
-+		(iter->lpi_print_count == iter->nr_lpis + 1));
- }
- 
- static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
-@@ -130,6 +166,7 @@ static void vgic_debug_stop(struct seq_file *s, void *v)
- 
- 	mutex_lock(&kvm->lock);
- 	iter = kvm->arch.vgic.iter;
-+	kfree(iter->lpi_irqs);
- 	kfree(iter);
- 	kvm->arch.vgic.iter = NULL;
- 	mutex_unlock(&kvm->lock);
-@@ -154,7 +191,7 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
- 			 struct kvm_vcpu *vcpu)
- {
- 	int id = 0;
--	char *hdr = "SPI ";
-+	char *hdr = "Global";
- 
- 	if (vcpu) {
- 		hdr = "VCPU";
-@@ -162,7 +199,10 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
- 	}
- 
- 	seq_printf(s, "\n");
--	seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
-+	if (vcpu)
-+		seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
-+	else
-+		seq_printf(s, "%s TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr);
- 	seq_printf(s, "---------------------------------------------------------------\n");
- }
- 
-@@ -174,8 +214,10 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
- 		type = "SGI";
- 	else if (irq->intid < VGIC_NR_PRIVATE_IRQS)
- 		type = "PPI";
--	else
-+	else if (irq->intid < VGIC_MAX_SPI)
- 		type = "SPI";
-+	else if (irq->intid >= VGIC_MIN_LPI)
-+		type = "LPI";
- 
- 	if (irq->intid ==0 || irq->intid == VGIC_NR_PRIVATE_IRQS)
- 		print_header(s, irq, vcpu);
-@@ -220,7 +262,9 @@ static int vgic_debug_show(struct seq_file *s, void *v)
- 	if (!kvm->arch.vgic.initialized)
- 		return 0;
- 
--	if (iter->vcpu_id < iter->nr_cpus) {
-+	if (iter->intid >= VGIC_MIN_LPI)
-+		irq = iter->lpi_irqs[iter->lpi_print_count - 1];
-+	else if (iter->vcpu_id < iter->nr_cpus) {
- 		vcpu = kvm_get_vcpu(kvm, iter->vcpu_id);
- 		irq = &vcpu->arch.vgic_cpu.private_irqs[iter->intid];
- 	} else {
-@@ -230,6 +274,8 @@ static int vgic_debug_show(struct seq_file *s, void *v)
- 	spin_lock(&irq->irq_lock);
- 	print_irq_state(s, irq, vcpu);
- 	spin_unlock(&irq->irq_lock);
-+
-+	vgic_put_irq(kvm, irq);
- 
- 	return 0;
- }
--- 
-1.8.3.1
+http://xenbits.xen.org/gitweb/?p=xtf.git;a=blob;f=tests/memop-seg/asm.S;h=698661425bcdc9c181b235e323c2460e06c6e986;hb=HEAD#l35
+
+I previously has FEP passed as a second parameter, but that becomes
+prohibitively complicated to extract when testing %ss or %esp.  FEP is
+now encoded in the bottom bit of the address passed in.
+
+This was the cleanest way I could find of testing every combination, but
+I'm open to improvements if anyone can spot any.
+
+~Andrew
