@@ -1,94 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752924AbeCWOJ0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:09:26 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:38718 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752525AbeCWOJY (ORCPT
+        id S1753010AbeCWOJv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:09:51 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59813 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752640AbeCWOJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:09:24 -0400
-X-Google-Smtp-Source: AG47ELsM5qgCNQwDGe+0tq38YsvE8DZABW/qu6S0iXWqqD1bEmNEXbjWY5pHmpT2CtuQF0QzpSq0qQ==
-Date: Fri, 23 Mar 2018 15:09:19 +0100
-From: Juri Lelli <juri.lelli@gmail.com>
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: b43-dev <b43-dev@lists.infradead.org>,
-        Network Development <netdev@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [QUESTION] Mainline support for B43_PHY_AC wifi cards
-Message-ID: <20180323140919.GB5942@localhost.localdomain>
-References: <20180323094740.GA5942@localhost.localdomain>
- <CACna6rx-QNQhVNkwFSabwAY9vM1qV_gTcWywsHFuP5B4NH4NXA@mail.gmail.com>
+        Fri, 23 Mar 2018 10:09:50 -0400
+Date: Fri, 23 Mar 2018 15:09:47 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv5,5/5] ARM: dts: omap4-droid4: add soundcard
+Message-ID: <20180323140947.GA23658@amd>
+References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
+ <20180322204804.GA26871@amd>
+ <20180322234832.o24ut5ahon46mdu4@earth.universe>
+ <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACna6rx-QNQhVNkwFSabwAY9vM1qV_gTcWywsHFuP5B4NH4NXA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180323103006.alymgb3ywftb4gek@earth.universe>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-thanks a lot for your reply!
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 23/03/18 14:43, Rafał Miłecki wrote:
-> Hi,
-> 
-> On 23 March 2018 at 10:47, Juri Lelli <juri.lelli@gmail.com> wrote:
-> > I've got a Dell XPS 13 9343/0TM99H (BIOS A15 01/23/2018) mounting a
-> > BCM4352 802.11ac (rev 03) wireless card and so far I've been using it on
-> > Fedora with broadcom-wl package (which I believe installs Broadcom's STA
-> > driver?). It works good apart from occasional hiccups after suspend.
-> >
-> > I'd like to get rid of that dependency (you can understand that it's
-> > particularly annoying when testing mainline kernels), but I found out
-> > that support for my card is BROKEN in mainline [1]. Just to see what
-> > happens, I forcibly enabled it witnessing that it indeed crashes like
-> > below as Kconfig warns. :)
-> >
-> >  bcma: bus0: Found chip with id 0x4352, rev 0x03 and package 0x00
-> >  bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
-> >  bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
-> >  bcma: bus0: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
-> >  bcma: bus0: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
-> >  bcma: bus0: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
-> >  bcma: Unsupported SPROM revision: 11
-> >  bcma: bus0: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
-> >  bcma: bus0: Using fallback SPROM failed (err -2)
-> >  bcma: bus0: No SPROM available
-> >  bcma: bus0: Bus registered
-> >  b43-phy0: Broadcom 4352 WLAN found (core revision 42)
-> >  b43-phy0: Found PHY: Analog 12, Type 11 (AC), Revision 1
-> >  b43-phy0: Found Radio: Manuf 0x17F, ID 0x2069, Revision 4, Version 0
-> >  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-> 
-> This isn't really useful without a full backtrace.
+Hi!
 
-Sure. I cut it here because I didn't expect people to debug what is
-already known to be broken (but still it seemed to carry useful
-information about the hw). :)
+> That's not an error, but just some debug messages. Consider
+> disabling CONFIG_DEBUG_GPIO to get rid of them.
+>=20
+> > Indeed the dts does not seem to contain any gpios
+>=20
+> It's optional and does not exist on Droid 4.
+>=20
+> >         soundcard {
+=2E..
+> > 	};
+> >=20
+> > Any more ideas? :-)
+>=20
+> Make sure, that the device was not proped properly (cat
+> /proc/asound/cards) and post the real error? :)
 
-> > So, question: is replacing my card the only way I can get rid of this
-> > downstream dependency? :(
-> 
-> It's definitely the cheapest way. Getting AC PHY into anything usable
-> (proper setup that will allow Tx & Rx anything) would probably take
-> weeks or months of development. I'm not even going to estimate cost of
-> adding support for 802.11n and 802.11ac features. I was the last
-> person actively working on b43, right now I spend my free time on
-> other hobby projects. Few people were planning to help but it seems it
-> never worked out for them.
+Thanks, it is indeed a config problem. When I disabled "unrelated"
+options, these got disabled, too:
 
-I see. Just wondering why even if Broadcom's STA solution seems to work
-fine, it is not mainline. Maybe a maintenance problem? But Fedora ships
-with very recent kernels, so I'd expect the driver to work with mainline
-(I tried compiling that against mainline, but I got errors that I didn't
-spend time figuring out how to fix).
+They can be only selected, and there's nothing to select them in Droid
+4 case.
+								Pavel
 
-Do you know what's the deal w.r.t. the STA driver?
+diff --git a/sound/soc/omap/Kconfig b/sound/soc/omap/Kconfig
+index 2772414..7860b6e 100644
+--- a/sound/soc/omap/Kconfig
++++ b/sound/soc/omap/Kconfig
+@@ -4,13 +4,13 @@ config SND_OMAP_SOC
+ 	select SND_DMAENGINE_PCM
+=20
+ config SND_OMAP_SOC_DMIC
+-	tristate
++	tristate "dmic"
+=20
+ config SND_OMAP_SOC_MCBSP
+-	tristate
++	tristate "mcbsp"
+=20
+ config SND_OMAP_SOC_MCPDM
+-	tristate
++	tristate "mcpdm"
+=20
+ config SND_OMAP_SOC_HDMI_AUDIO
+ 	tristate "HDMI audio support for OMAP4+ based SoCs"
 
-Best,
 
-- Juri
+
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq1CqsACgkQMOfwapXb+vLSDwCghk3dZdFbR9pu8uaRU01YmIYo
+qysAnjtWSfv1hxtyzr9DK8wj7ELMbzi4
+=y7SA
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
