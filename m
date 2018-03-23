@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803878-2-1611103012155412351
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803872-2-12281738770453622120
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803877; b=nTfZyLVsvak6ifUBQN3wlOIIQ/bVS0gSy9LYXfoycxR+m+s
-    +EXOuf9nIueI994Zw3+XHJ0QW0jXiIx/JOW97ljoUZi9AdwTEM+gJ6FoFoKhu76k
-    wJawzDJtaAv+UgGtfbN5kPwsBkaZpAbR9UXO1jcL0H0pL7UrYqkyIA6usdRtIOvH
-    QhJnaXytrL+NJcmnqbSMBZAlPXJpHvjF+GcO5YHTCfgbvnFrHsL7bZTsmx21mvHX
-    gYAfhobDrNdlWGaYXOcl/UpiPKqyRUOrNqmpOzexO/0sPRWcQqdqj9zDE0yANnPn
-    /tUeuf12i++c9cSQeR1RPlNjm/0DZOwwdMXJTdQ==
+    t=1521803871; b=tbFeeADuZUF8G+0TG9YxV/lmEZpDHb6vWWuTXQv/miis62E
+    3DaSICxWJfuQwiLKvEVzKV2RxwyFQgqfc1F8zyCuO3wiOYkcnDVVkTxBj+uCrD2a
+    l2/2sSn3CunEUG4gGWgpgXWWTf1WDII0fCHMgoo63yG2yJXQwHnB3dgBXCUIBdmo
+    vq3/RfTSxqVvnYbyQIDCpvpf/qxqKxoRuY+pQh9M0tQQ6bQU3UN6ZCkNt3/MPTD6
+    JRxkmVENeT3BdJNYGWt2SomjVtB7Pl9vwChJrOxcZ3D4tEY05hoIHPKfZbK99xLx
+    u6BlILZPHbTglBsaD7UbzsHtfPDjZi85HwnpnTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803877; bh=riXnYhyrZk95UqovGtvxCOx7zW
-    ytm2HyQGyK/L+PHkI=; b=MY9jEPjuHdoNjMHutIKXl8MawsiMK80/X6oxnRWtZ/
-    sMkUrffOVdrMnM4wIQGfQuFih8uGZjwWRPeWmd3qPfhxbxK+48c+JbQ0D0QjY8Xg
-    292JWRuvc7EAt63V+EEwM3eSQoA3eI/WP/K203FOJyfvavgnzaLT1AqMq7ZBm4lX
-    VMm6bGSF3+/ETkIgU1QgHGs3MODskBktoP6oGGi4QCMHHSHDLBR82debqXpiOTIR
-    M5F69j0CKhm5R629w+i/IVOSdjb7Pk1GbFV3CerS+BJJrfEMsyrI53wNmxOHDA4V
-    85U4MXIcJZYoYGK6YxqsPoR/STS04viE1fJuIPsVNccg==
+    :list-id; s=arctest; t=1521803871; bh=x55/kutd7WBaACcaSB9M4CnfHp
+    JchcfxKq4gbqv/9So=; b=TPx7H7+AOPa4Aj/LBdqLdcAr86RUO25zAR2QSEYGrW
+    c4OTSrvRqHqn/cO2Z91rKZjfZBOI9GeJHA0jMmGI2QVThVm2yU+fB3KVuMUB9YiP
+    VOqkFJZfGnNPB/zcoE6PmTsNHSxE8AStvgHOfb+5Dk5vIupd2sSUhldYtus7PgqM
+    P01d68BvYzUl2auBG16oHRvyPto76bSoIQwHcxL6hpTztqbDGDvOCSIPPeMm0GGn
+    fHSs9lgkGE9z8rlQFBv8nnjoF6KAZACijIHvZdyzzXWdzDynC6ioTtftwOQSsHv2
+    a/xHjmmbBtHYtakJfuwFqv2jOHnrkc1ibVXq3UcANg0Q==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752156AbeCWLR4 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:17:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42020 "EHLO
+        id S1755745AbeCWKJT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:09:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42034 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755725AbeCWKJP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:15 -0400
+        with ESMTP id S1755742AbeCWKJS (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sameer Wadgaonkar <sameer.wadgaonkar@unisys.com>,
-        David Kershner <david.kershner@unisys.com>,
+        stable@vger.kernel.org, Dean Jenkins <Dean_Jenkins@mentor.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 088/177] staging: unisys: visorhba: fix s-Par to boot with option CONFIG_VMAP_STACK set to y
-Date: Fri, 23 Mar 2018 10:53:36 +0100
-Message-Id: <20180323094209.170789235@linuxfoundation.org>
+Subject: [PATCH 4.9 106/177] Bluetooth: hci_ldisc: Add protocol check to hci_uart_dequeue()
+Date: Fri, 23 Mar 2018 10:53:54 +0100
+Message-Id: <20180323094209.954357340@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,62 +82,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sameer Wadgaonkar <sameer.wadgaonkar@unisys.com>
+From: Dean Jenkins <Dean_Jenkins@mentor.com>
 
 
-[ Upstream commit 3c2bf0bd08123f3497bd3e84bd9088c937b0cb40 ]
+[ Upstream commit 048e1bd3a27fbeb84ccdff52e165370c1339a193 ]
 
-The root issue is that we are not allowed to have items on the
-stack being passed to "DMA" like operations. In this case we have
-a vmcall and an inline completion of scsi command.
+Before attempting to dequeue a Data Link protocol encapsulated message,
+check that the Data Link protocol is still bound to the HCI UART driver.
+This makes the code consistent with the usage of the other proto
+function pointers.
 
-This patch fixes the issue by moving the variables on stack in
-do_scsi_nolinuxstat() to heap memory.
+Therefore, add a check for HCI_UART_PROTO_READY into hci_uart_dequeue()
+and return NULL if the Data Link protocol is not bound.
 
-Signed-off-by: Sameer Wadgaonkar <sameer.wadgaonkar@unisys.com>
-Signed-off-by: David Kershner <david.kershner@unisys.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This is needed for robustness as there is a scheduling race condition.
+hci_uart_write_work() is scheduled to run via work queue hu->write_work
+from hci_uart_tx_wakeup(). Therefore, there is a delay between
+scheduling hci_uart_write_work() to run and hci_uart_dequeue() running
+whereby the Data Link protocol layer could become unbound during the
+scheduling delay. In this case, without the check, the call to the
+unbound Data Link protocol layer dequeue function can crash.
+
+It is noted that hci_uart_tty_close() has a
+"cancel_work_sync(&hu->write_work)" statement but this only reduces
+the window of the race condition because it is possible for a new
+work-item to be added to work queue hu->write_work after the call to
+cancel_work_sync(). For example, Data Link layer retransmissions can
+be added to the work queue after the cancel_work_sync() has finished.
+
+Signed-off-by: Dean Jenkins <Dean_Jenkins@mentor.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/unisys/visorhba/visorhba_main.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/bluetooth/hci_ldisc.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/staging/unisys/visorhba/visorhba_main.c
-+++ b/drivers/staging/unisys/visorhba/visorhba_main.c
-@@ -842,7 +842,7 @@ static void
- do_scsi_nolinuxstat(struct uiscmdrsp *cmdrsp, struct scsi_cmnd *scsicmd)
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -113,10 +113,12 @@ static inline struct sk_buff *hci_uart_d
  {
- 	struct scsi_device *scsidev;
--	unsigned char buf[36];
-+	unsigned char *buf;
- 	struct scatterlist *sg;
- 	unsigned int i;
- 	char *this_page;
-@@ -857,6 +857,10 @@ do_scsi_nolinuxstat(struct uiscmdrsp *cm
- 		if (cmdrsp->scsi.no_disk_result == 0)
- 			return;
+ 	struct sk_buff *skb = hu->tx_skb;
  
-+		buf = kzalloc(sizeof(char) * 36, GFP_KERNEL);
-+		if (!buf)
-+			return;
-+
- 		/* Linux scsi code wants a device at Lun 0
- 		 * to issue report luns, but we don't want
- 		 * a disk there so we'll present a processor
-@@ -868,6 +872,7 @@ do_scsi_nolinuxstat(struct uiscmdrsp *cm
- 		if (scsi_sg_count(scsicmd) == 0) {
- 			memcpy(scsi_sglist(scsicmd), buf,
- 			       cmdrsp->scsi.bufflen);
-+			kfree(buf);
- 			return;
- 		}
+-	if (!skb)
+-		skb = hu->proto->dequeue(hu);
+-	else
++	if (!skb) {
++		if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
++			skb = hu->proto->dequeue(hu);
++	} else {
+ 		hu->tx_skb = NULL;
++	}
  
-@@ -879,6 +884,7 @@ do_scsi_nolinuxstat(struct uiscmdrsp *cm
- 			memcpy(this_page, buf + bufind, sg[i].length);
- 			kunmap_atomic(this_page_orig);
- 		}
-+		kfree(buf);
- 	} else {
- 		devdata = (struct visorhba_devdata *)scsidev->host->hostdata;
- 		for_each_vdisk_match(vdisk, devdata, scsidev) {
+ 	return skb;
+ }
