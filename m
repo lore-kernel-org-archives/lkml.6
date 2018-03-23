@@ -1,146 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752007AbeCWRSK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:18:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56290 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751388AbeCWRSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:18:06 -0400
-From: jglisse@redhat.com
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        David Rientjes <rientjes@google.com>, Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>
-Subject: [RFC PATCH 0/3] mmu_notifier contextual information
-Date: Fri, 23 Mar 2018 13:17:45 -0400
-Message-Id: <20180323171748.20359-1-jglisse@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1752088AbeCWRSR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:18:17 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:44202 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751388AbeCWRSP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 13:18:15 -0400
+Date: Fri, 23 Mar 2018 13:18:13 -0400 (EDT)
+Message-Id: <20180323.131813.62705698826430087.davem@davemloft.net>
+To: gustavo@embeddedor.com
+Cc: Ariel.Elior@cavium.com, everest-linux-l2@cavium.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] qed: Use true and false for boolean values
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180322200849.GA28033@embeddedgus>
+References: <20180322200849.GA28033@embeddedgus>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Thu, 22 Mar 2018 15:08:49 -0500
 
-This patchset are the improvements to mmu_notifier i wish to discuss
-at next LSF/MM. I am sending now to give time to people to look at
-them and think about them.
+> Assign true or false to boolean variables instead of an integer value.
+> 
+> This issue was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-git://people.freedesktop.org/~glisse/linux mmu-notifier-rfc
-https://cgit.freedesktop.org/~glisse/linux/log/?h=mmu-notifier-rfc
-
-First patch just use a struct for invalidate_range_start/end arguments
-this make the other 2 patches easier and smaller.
-
-The idea is to provide more information to mmu_notifier listener on
-the context of each invalidation. When a range is invalidated this
-can be for various reasons (munmap, protection change, OOM, ...). If
-listener can distinguish between those it can take better action.
-
-For instance if device driver allocate structure to track a range of
-virtual address prior to this patch it always have to assume that it
-has to free those on each mmu_notifieir callback (having to assume it
-is a munmap) and reallocate those latter when the device try to do
-something with that range again.
-
-OOM is also an interesting case, recently a patchset was added to
-avoid OOM on a mm if a blocking mmu_notifier listener have been
-registered [1]. This can be improve by adding a new OOM event type and
-having listener take special path on those. All mmu_notifier i know
-can easily have a special path for OOM that do not block (beside
-taking a short lived, across driver, spinlock). If mmu_notifier usage
-grows (from a point of view of more process using devices that rely on
-them) then we should also make sure OOM can do its bidding.
-
-
-The last part of the patchset is to allow more concurrency between a
-range being invalidated and someone wanting to look at CPU page table
-for a different range of address. I don't have any benchmark for those
-but i expect this will be common with HMM and mirror once we can run
-real workload. It can also replace lot of custom and weird counting
-of active mmu_notifier done listener side (KVM, ODP, ...) with some-
-thing cleaner.
-
-
-I have try to leverage all this in KVM but it did not seems to give any
-significant performance improvements (KVM patches at [2]). Tested with
-the host kernel using this patchset and KVM patches, and running thing
-like kernel compilation in the guest. Maybe it is not the kind of work-
-load that can benefit from this.
-
-
-[1] http://lkml.iu.edu/hypermail/linux/kernel/1712.1/02108.html
-[2] https://cgit.freedesktop.org/~glisse/linux/log/?h=mmu-notifier-rfc-kvm
-
-Cc: David Rientjes <rientjes@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Christian König <christian.koenig@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Leon Romanovsky <leonro@mellanox.com>
-Cc: Artemy Kovalyov <artemyko@mellanox.com>
-Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>
-Cc: Dimitri Sivanich <sivanich@sgi.com>
-
-Jérôme Glisse (3):
-  mm/mmu_notifier: use struct for invalidate_range_start/end parameters
-  mm/mmu_notifier: provide context information about range invalidation
-  mm/mmu_notifier: keep track of ranges being invalidated
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  |  17 ++---
- drivers/gpu/drm/i915/i915_gem_userptr.c |  13 ++--
- drivers/gpu/drm/radeon/radeon_mn.c      |  11 +--
- drivers/infiniband/core/umem_odp.c      |  16 ++--
- drivers/infiniband/hw/hfi1/mmu_rb.c     |  12 ++-
- drivers/misc/mic/scif/scif_dma.c        |  10 +--
- drivers/misc/sgi-gru/grutlbpurge.c      |  13 ++--
- drivers/xen/gntdev.c                    |   7 +-
- fs/dax.c                                |   8 +-
- fs/proc/task_mmu.c                      |   8 +-
- include/linux/mm.h                      |   3 +-
- include/linux/mmu_notifier.h            | 129 ++++++++++++++++++++++++++------
- kernel/events/uprobes.c                 |  11 +--
- mm/hmm.c                                |  15 ++--
- mm/huge_memory.c                        |  69 +++++++++--------
- mm/hugetlb.c                            |  47 ++++++------
- mm/khugepaged.c                         |  12 +--
- mm/ksm.c                                |  24 +++---
- mm/madvise.c                            |  21 +++---
- mm/memory.c                             |  97 +++++++++++++-----------
- mm/migrate.c                            |  47 ++++++------
- mm/mmu_notifier.c                       |  44 +++++++++--
- mm/mprotect.c                           |  14 ++--
- mm/mremap.c                             |  12 +--
- mm/oom_kill.c                           |  19 +++--
- mm/rmap.c                               |  22 ++++--
- virt/kvm/kvm_main.c                     |  12 +--
- 27 files changed, 420 insertions(+), 293 deletions(-)
-
--- 
-2.14.3
+Applied.
