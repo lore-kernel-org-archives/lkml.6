@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtVRu/Peds4JNsWidCTvgwVbZsjqjkd+ONRrVvaKfpuDCCUESX0717kwyhB/4jSTWaOu5jl
-ARC-Seal: i=1; a=rsa-sha256; t=1521800362; cv=none;
+X-Google-Smtp-Source: AG47ELt/MqddehhO8fJxYUhmV3vDOLXKION9LkwITQtjl5Ot2EJMYtXKYH/VDUKCfydep2o0nGwX
+ARC-Seal: i=1; a=rsa-sha256; t=1521800359; cv=none;
         d=google.com; s=arc-20160816;
-        b=ikxTFSaCo5kNPFEkI9seuvNR5b9RoGzyVEhG0o6z8WB7xm/0Qzc67WWOGff9AL3WLb
-         sCMvy7Eyr59UmJ/lsBzw4HIUbp6//Ab4rHgtnhbpKNibsIXdHZHpGqJli+cynm/FR5PE
-         1osXuQ+BECrJZ/tl67fA6rQFb9Eh+O6HZHLYJ3Mr1hNl5QzOBpFbolEeKgiISJ7hqmE0
-         Lf/u0ZJcAlmx8dKAAt8Yn1y5BIl3f8Rbi15CVhvH3BCZvW6PC6BmsjVg5Cs9ER0eFffU
-         bCS2OFEkrQv9e6Xn2Qio7m+k1ybTpWW/c3e4tt5njFWswgd6ePUuOBZEATnYWHWBIFme
-         NmsA==
+        b=wPO+ENQYIvQ4NxT3ZCul9xawDASfk4dSwT61c8roo2hAgLYWS3Ou8Ln1cNXYvhosVb
+         YhlAUpOr4YiHTs5wsFIvu7JLafnOpdkGrmX6ZvcgRv4tZ1dSLLKzkpdUpqg1ZwtIE5Hq
+         FDQcpKfjFkzmvDT9K/yDwSFcvpSAgX3YuHH4cn3sQO9T+b+xBgY5y8Ze/xQqXex4Juw6
+         wm0pGVDreHLDXfIEA90JTaqEg9MLaZ2mhTpohk3wA/OLNsRQjlRPfDfenkVNEJ8+7aPC
+         Cxkf0WSld+bHy9/Ds943rXUKUtjKun/u3emZ4tBL62RLCndW1THZR6XhJ0ICzd428omQ
+         osrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sAaMZGBidKpeKjaKbzRyjKTPgzoXuCwdvdkQdXDsW9k=;
-        b=y2Y1rMwPjFEvAS2pKts9xiQh6yQxpb1XErRhPtXmdGAJhXee4y8gg4rcp1J1tsXkxS
-         zAfdZBMcj4Cv3MtREY/o5QAb6Zs6Ez8bz8Eq21VEdg75kTbKhpFbp7V31fZGmhovcbbB
-         1L9v5nEZAX3xLZwNe3RKceZQl+ZWwZD1gjj7A/5uOQgR5Qu2wq/mSX0Igr0qjTfL3TDd
-         CGrgFfjhPoa+TWg6bS3JQt6Hw5GdQ356J8C+1zpxxVAHt/oSTa/1nFdRhUpxeojU+3d6
-         Hu7AB6F8l40OnvabP5piQE3bHXa1hYQOWaC8vps3ZXj8av4MsWnujFfVAJu142zVnMkY
-         lxJA==
+        bh=eMVoRQbY+pT/rMwYV5SiywF2rE/Rud3Q7/PRiysEPjY=;
+        b=xFPtsGxIf+n14cUM0kZD8fuP45pJeudELEXAl3P2qdHFyGftEVZRq33RFRV74gFTEM
+         2hGI627WWu8u0As2/6u/98//s5XJhhHsl4JT3EDaYMGDm2MO623ZSrsw+qliQOI/zYuQ
+         Bs8TRC+k/719dP4BzQakmOeql1KJFoehgBFtXde6TfAfHRFj28t6Ma4+wrvOXd9OdY2X
+         3vIUY4DS5jRYGRoIEpcqxjTKfwd0QRtT1XUkbiYNEOX32LJWPlST0EMAGi7LkbPcWEO0
+         RyHEV2ujCWvzzi7EZkdWWB0N97na9XPegv4z7KcT8IuVq/c6tg6O6oCZ78gugzzFrJ7s
+         StYg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Luca Coelho <luciano.coelho@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	Liu Bo <bo.li.liu@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 26/47] mac80211: dont parse encrypted management frames in ieee80211_frame_acked
-Date: Fri, 23 Mar 2018 10:55:17 +0100
-Message-Id: <20180323094249.235716745@linuxfoundation.org>
+Subject: [PATCH 3.18 25/47] Btrfs: send, fix file hole not being preserved due to inline extent
+Date: Fri, 23 Mar 2018 10:55:16 +0100
+Message-Id: <20180323094249.194276396@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722641313957230?=
-X-GMAIL-MSGID: =?utf-8?q?1595723337132082861?=
+X-GMAIL-THRID: =?utf-8?q?1595722632353760429?=
+X-GMAIL-MSGID: =?utf-8?q?1595723334000992506?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,46 +50,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Filipe Manana <fdmanana@suse.com>
 
 
-[ Upstream commit cf147085fdda044622973a12e4e06f1c753ab677 ]
+[ Upstream commit e1cbfd7bf6dabdac561c75d08357571f44040a45 ]
 
-ieee80211_frame_acked is called when a frame is acked by
-the peer. In case this is a management frame, we check
-if this an SMPS frame, in which case we can update our
-antenna configuration.
+Normally we don't have inline extents followed by regular extents, but
+there's currently at least one harmless case where this happens. For
+example, when the page size is 4Kb and compression is enabled:
 
-When we parse the management frame we look at the category
-in case it is an action frame. That byte sits after the IV
-in case the frame was encrypted. This means that if the
-frame was encrypted, we basically look at the IV instead
-of looking at the category. It is then theorically
-possible that we think that an SMPS action frame was acked
-where really we had another frame that was encrypted.
+  $ mkfs.btrfs -f /dev/sdb
+  $ mount -o compress /dev/sdb /mnt
+  $ xfs_io -f -c "pwrite -S 0xaa 0 4K" -c "fsync" /mnt/foobar
+  $ xfs_io -c "pwrite -S 0xbb 8K 4K" -c "fsync" /mnt/foobar
 
-Since the only management frame whose ack needs to be
-tracked is the SMPS action frame, and that frame is not
-a robust management frame, it will never be encrypted.
-The easiest way to fix this problem is then to not look
-at frames that were encrypted.
+In this case we get a compressed inline extent, representing 4Kb of
+data, followed by a hole extent and then a regular data extent. The
+inline extent was not expanded/converted to a regular extent exactly
+because it represents 4Kb of data. This does not cause any apparent
+problem (such as the issue solved by commit e1699d2d7bf6
+("btrfs: add missing memset while reading compressed inline extents"))
+except trigger an unexpected case in the incremental send code path
+that makes us issue an operation to write a hole when it's not needed,
+resulting in more writes at the receiver and wasting space at the
+receiver.
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+So teach the incremental send code to deal with this particular case.
+
+The issue can be currently triggered by running fstests btrfs/137 with
+compression enabled (MOUNT_OPTIONS="-o compress" ./check btrfs/137).
+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/status.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/send.c |   23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -194,6 +194,7 @@ static void ieee80211_frame_acked(struct
- 	}
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -4663,13 +4663,19 @@ static int is_extent_unchanged(struct se
+ 	while (key.offset < ekey->offset + left_len) {
+ 		ei = btrfs_item_ptr(eb, slot, struct btrfs_file_extent_item);
+ 		right_type = btrfs_file_extent_type(eb, ei);
+-		if (right_type != BTRFS_FILE_EXTENT_REG) {
++		if (right_type != BTRFS_FILE_EXTENT_REG &&
++		    right_type != BTRFS_FILE_EXTENT_INLINE) {
+ 			ret = 0;
+ 			goto out;
+ 		}
  
- 	if (ieee80211_is_action(mgmt->frame_control) &&
-+	    !ieee80211_has_protected(mgmt->frame_control) &&
- 	    mgmt->u.action.category == WLAN_CATEGORY_HT &&
- 	    mgmt->u.action.u.ht_smps.action == WLAN_HT_ACTION_SMPS &&
- 	    ieee80211_sdata_running(sdata)) {
+ 		right_disknr = btrfs_file_extent_disk_bytenr(eb, ei);
+-		right_len = btrfs_file_extent_num_bytes(eb, ei);
++		if (right_type == BTRFS_FILE_EXTENT_INLINE) {
++			right_len = btrfs_file_extent_inline_len(eb, slot, ei);
++			right_len = PAGE_ALIGN(right_len);
++		} else {
++			right_len = btrfs_file_extent_num_bytes(eb, ei);
++		}
+ 		right_offset = btrfs_file_extent_offset(eb, ei);
+ 		right_gen = btrfs_file_extent_generation(eb, ei);
+ 
+@@ -4683,6 +4689,19 @@ static int is_extent_unchanged(struct se
+ 			goto out;
+ 		}
+ 
++		/*
++		 * We just wanted to see if when we have an inline extent, what
++		 * follows it is a regular extent (wanted to check the above
++		 * condition for inline extents too). This should normally not
++		 * happen but it's possible for example when we have an inline
++		 * compressed extent representing data with a size matching
++		 * the page size (currently the same as sector size).
++		 */
++		if (right_type == BTRFS_FILE_EXTENT_INLINE) {
++			ret = 0;
++			goto out;
++		}
++
+ 		left_offset_fixed = left_offset;
+ 		if (key.offset < ekey->offset) {
+ 			/* Fix the right offset for 2a and 7. */
