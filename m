@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803200-2-18158142387114746769
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521803191-2-8238403649536446847
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803199; b=S29woD8SA0tZ07Zf1GcthWaiyym380456kg8fv7coXtjWAd
-    LOVeUeEX4tIjajfqjDi4YpA7H4T4bgAZDTznsVfLtpNr7if2NNlfMKCWyRPkP800
-    xzPWgotcJgq2E3S3imn5/S1o1xP2kEmjh45Vh+TJOZRpSqNl9qKcDYNDSStAE28g
-    oIs0MOpQ5NzQyRoUemEArvYDccKbwX54+M2vKDUbwKdvNSE/PDxjSCQtIFgc1eTe
-    v75AuqCirVPoy3FlkhlKp8BP8D37WxmVx140jWaZpILKErGe0AnxWKuPWn2zv28l
-    dtIUvgVqybszMhoxfTvmMzSRlZhqYv8AHPXK6Ug==
+    t=1521803190; b=MlYKoPZAA+vdHjevMGYKBu4rwvpEchMmBej1cu8iWcrMtwm
+    FK5BequrTI5QZhsEBSRGeFVRvQswfcrKCPvoLDYM5fhnOqVnqPJ8c7W5RiURWU3/
+    oYqqEDUjUIjmxh7PuIgBc+Ix7w88g14CbuIC11m3yMpRib/D9Zs9vxLX0mWLCDEJ
+    vMkJj1go8eD1JTu4jh2scHYmdbXo253kHwPzy9LwuXsfJ/9wWb+zg5cLawiXAB6a
+    PRxMEO0MeyZ3OjMjKarkrke3jJKBCxKMU4dwmqUuBu1f4UoZ2XAAzCZ0XkoH6CQN
+    gv1+d4sj4XWjDvOLFKh5JXyJDXDSiZhimfjan7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803199; bh=gQZkRvVIhJXujqMIHSuGZhXzVS
-    2r4LakbJ9tuxn26KA=; b=H/uiTPRN52DkloNrM17iZo8S1mk77uYZYoupx7yLUJ
-    m5uzNXVuqnkcjaNCnB0fo8WIQdcuuwrVAeKxMWU12Ve/IsPYCUl0pRC6fyMRTIkV
-    61CHDRw9D5111XUG1rBlm81ILXWAX+kB29wXmMxBSgrkSGdRqXOUlJiaVCn85vny
-    G50cpI1sLaLsTgdQ9npzwsC6ynwRmut5C+aeHFkokJnNMA4zuG8x447R6E4/DPxb
-    XOS0Zl9Ht4HF9ZgPiPE+y2C6AT81lrXs9O72xlwJJ+w19N8vDrWcZFjgJCK1d1CD
-    lfvFK4Kq/BGt8cuZFyHgIHbh624Fp6cUppX+sa5xKSeg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803190; bh=LKQ9xN1zt7eQreyYjN9chhLezH
+    gm5RR5gonFBeVrvzo=; b=qNI3oUC8uKvyjsBrlqtHZybjjPiKNrxHkhqcBY6txc
+    4ctfeHtVUntGdef0mgEpX7rKvssKWeAS29WtFu+QPOaIRQugvlgEOlqrfV8Y9pSu
+    E98P98e0uwI0vX6nMvo3NEj8hWaV1FFeiPfMqg1thmWPoVcU9DO5Ch20ZP5O7f98
+    R/pHBEvEmEAlX1pE95p+ncU7Eai4HhlqUavMnt2piAVoeJRx4YZN8idEh8ewLVhr
+    1j/0zQ7X9KfLYuRrOTxqHT5ByrUpX8ndXZcaTYdU0nomXxyzZmrLiV5M9CmSaqzM
+    M4Etk3yLU9UJ7iAHX9Fkd4iNBgmnvLyc/un75uR+gtaw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933106AbeCWKMO (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:12:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44188 "EHLO
+        id S1752413AbeCWLGN (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:06:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932478AbeCWKMM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:12 -0400
+        with ESMTP id S933165AbeCWKMT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        stable@vger.kernel.org, Robert Walker <robert.walker@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 158/177] drm/omap: DMM: Check for DMM readiness after successful transaction commit
-Date: Fri, 23 Mar 2018 10:54:46 +0100
-Message-Id: <20180323094212.159460222@linuxfoundation.org>
+Subject: [PATCH 4.9 160/177] coresight: Fix disabling of CoreSight TPIU
+Date: Fri, 23 Mar 2018 10:54:48 +0100
+Message-Id: <20180323094212.237630230@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,39 +83,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Robert Walker <robert.walker@arm.com>
 
 
-[ Upstream commit b7ea6b286c4051e043f691781785e3c4672f014a ]
+[ Upstream commit 11595db8e17faaa05fadc25746c870e31276962f ]
 
-Check the status of the DMM engine after it is reported that the
-transaction was completed as in rare cases the engine might not reached a
-working state.
+The CoreSight TPIU should be disabled when tracing to other sinks to allow
+them to operate at full bandwidth.
 
-The wait_status() will print information in case the DMM is not reached the
-expected state and the dmm_txn_commit() will return with an error code to
-make sure that we are not continuing with a broken setup.
+This patch fixes tpiu_disable_hw() to correctly disable the TPIU by
+configuring the TPIU to stop on flush, initiating a manual flush, waiting
+for the flush to complete and then waits for the TPIU to indicate it has
+stopped.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Robert Walker <robert.walker@arm.com>
+Tested-by: Mike Leach <mike.leach@linaro.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/hwtracing/coresight/coresight-tpiu.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -298,7 +298,12 @@ static int dmm_txn_commit(struct dmm_txn
- 				msecs_to_jiffies(100))) {
- 			dev_err(dmm->dev, "timed out waiting for done\n");
- 			ret = -ETIMEDOUT;
-+			goto cleanup;
- 		}
-+
-+		/* Check the engine status before continue */
-+		ret = wait_status(engine, DMM_PATSTATUS_READY |
-+				  DMM_PATSTATUS_VALID | DMM_PATSTATUS_DONE);
- 	}
+--- a/drivers/hwtracing/coresight/coresight-tpiu.c
++++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+@@ -46,8 +46,11 @@
+ #define TPIU_ITATBCTR0		0xef8
  
- cleanup:
+ /** register definition **/
++/* FFSR - 0x300 */
++#define FFSR_FT_STOPPED		BIT(1)
+ /* FFCR - 0x304 */
+ #define FFCR_FON_MAN		BIT(6)
++#define FFCR_STOP_FI		BIT(12)
+ 
+ /**
+  * @base:	memory mapped base address for this component.
+@@ -85,10 +88,14 @@ static void tpiu_disable_hw(struct tpiu_
+ {
+ 	CS_UNLOCK(drvdata->base);
+ 
+-	/* Clear formatter controle reg. */
+-	writel_relaxed(0x0, drvdata->base + TPIU_FFCR);
++	/* Clear formatter and stop on flush */
++	writel_relaxed(FFCR_STOP_FI, drvdata->base + TPIU_FFCR);
+ 	/* Generate manual flush */
+-	writel_relaxed(FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	/* Wait for flush to complete */
++	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
++	/* Wait for formatter to stop */
++	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
+ 
+ 	CS_LOCK(drvdata->base);
+ }
