@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803598-2-7397566780218055220
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803575-2-2650131415882231163
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803597; b=qvb8fL71ta8UXEbjv1RsnkLoVXK+jvcvuq0mK3EkH9CFBqn
-    4XFCw0P/8WwWSxChnFHDfDbCTj1b9mc5H6Mu6obKQVkIxob308GPTGFmarXuVtXW
-    v4t+m0DDCG+eUsVJsCdNc9NLHafJ1n8q3MCnGiiXRiYIsf4f9D1WUviUzNUAnwKe
-    VLzb85PdZM2CCaNb1Yw5eOdwJN1f+DEh2p57C97OO4NTmh+46j3Qws/iJp+GgpeT
-    CsXJvSX6Sg0kEuZfuhlhxOSPe2ydUbvb9awfdjK6lhqVk90SS3CXJYczPXGkp80H
-    sJgrtdahIRm68GbyQ7xxoEDYQzL/e+/VXwjh4Rg==
+    t=1521803575; b=YgVAfoXAsI83gGNvUt0jfPz0FZa+TSOp/3roX12xOtdjN/b
+    JLiH8h/IRqQA40GUWJxyh+6vpCh5tyCN04W77glSWkrYrFw4xfX0yivWS450vhAa
+    0zHgg5FLoGk7AxYFHcyXLhy4aR1XJFOxCWn78h34lwgtTHX2ZpMj8tcipf31bWwB
+    YUXWjAWcdcrfNHMuxNZ4lX9vOnRzyph1CBpYn2RtQZyVT9R60xQSoRkdMZu1NE5n
+    3wlBkWDkUq8kZPXvcPBRMW4iJ+NrARvAv5pw63fHxeSUvTl+6GVMmsRrdFyTwsWx
+    GNctj+ke/zSsVSVXP7l2B+rBQlpZO8irgnKa/mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803597; bh=0azNUqRf2ff2ZjSndgEj6ViFEs
-    vKXe17t8d8w1iGa0o=; b=gHb0B7877g1ArEYqZFoJptRNkC54faOBZWJLqVY5Dw
-    pxGFwOyxCBdBd5TNqur8OlnZ45Eu/MYAypHLjnr85/LmbvbHPxk/NrtaNCyD2e2a
-    3yiTiUrQr0WfDKv1K6BtdqDP3BBwMOPiiTPap1SVxAUmr/3gbuoyOZEKIf/i2fKZ
-    F6rHCuuVQPNdwONvuVeHnq3nHo0l5XGnkNMQVwKJzHfrR3RqyXc2wtjB3w+9CR50
-    hqou8+RMkD64D4yGp7nCN6cRoHSpnL6fdQYg9++PODEl+zKOZs9aCHh/Gc1wIx0x
-    HTLr/Kh+SeEf7MICdRT6e84Bc46OnhpufC+pLgQeVZ8A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803575; bh=0fRCv24UwNW+R8jEJgz0NDVbkP
+    j04BgPQUnCP7jruMM=; b=j4BHj3SGIreuL1tWLf45eZK1vgPZ3mMb+h4AMu7YWR
+    eb3RmTu4WBPLqprxMRT09+E6OahJKRNUk5J2Oyq9Wnhzr2oIZac3f7DHr9Mm5Vaz
+    QhzgN/EIxDq4c3AOWWz/xv0NYVvoh85JYX0ed3AtEZOC42ktEvDfpHj2eILp5M23
+    XYjndJM4prwESRRHpevuRlkwVgIMGFYFgbcT3TY9UpGWTpuatAKXPr8SJl/CGKib
+    27e2tU/TqSX5Ch7fLV5AGCfRFyb1JZQD7ruTTmvQuTPbNmoCprB6GjdtCczQ36Bq
+    A1pdZqECrjhuMtzmIxc3g5mL8Asm3bDOh0cFzg5BeLMA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,26 +50,26 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755084AbeCWLNH (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:13:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42664 "EHLO
+        id S932781AbeCWKKo (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:10:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42726 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932746AbeCWKKj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:10:39 -0400
+        with ESMTP id S932734AbeCWKKm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:10:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        stable@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        kernel test robot <lkp@intel.com>,
+        Xiaolong Ye <xiaolong.ye@intel.com>,
+        Chen Gong <gong.chen@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 127/177] mm, vmstat: suppress pcp stats for unpopulated zones in zoneinfo
-Date: Fri, 23 Mar 2018 10:54:15 +0100
-Message-Id: <20180323094210.836282381@linuxfoundation.org>
+Subject: [PATCH 4.9 128/177] mm: hwpoison: call shake_page() after try_to_unmap() for mlocked page
+Date: Fri, 23 Mar 2018 10:54:16 +0100
+Message-Id: <20180323094210.876445498@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -87,66 +87,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Rientjes <rientjes@google.com>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
 
-[ Upstream commit 7dfb8bf3b9caef4049bee51d2c22e1c3a311d483 ]
+[ Upstream commit 286c469a988fbaf68e3a97ddf1e6c245c1446968 ]
 
-After "mm, vmstat: print non-populated zones in zoneinfo",
-/proc/zoneinfo will show unpopulated zones.
+Memory error handler calls try_to_unmap() for error pages in various
+states.  If the error page is a mlocked page, error handling could fail
+with "still referenced by 1 users" message.  This is because the page is
+linked to and stays in lru cache after the following call chain.
 
-The per-cpu pageset statistics are not relevant for unpopulated zones
-and can be potentially lengthy, so supress them when they are not
-interesting.
+  try_to_unmap_one
+    page_remove_rmap
+      clear_page_mlock
+        putback_lru_page
+          lru_cache_add
 
-Also moves lowmem reserve protection information above pcp stats since
-it is relevant for all zones per vm.lowmem_reserve_ratio.
+memory_failure() calls shake_page() to hanlde the similar issue, but
+current code doesn't cover because shake_page() is called only before
+try_to_unmap().  So this patches adds shake_page().
 
-Link: http://lkml.kernel.org/r/alpine.DEB.2.10.1703061400500.46428@chino.kir.corp.google.com
-Signed-off-by: David Rientjes <rientjes@google.com>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
+Fixes: 23a003bfd23ea9ea0b7756b920e51f64b284b468 ("mm/madvise: pass return code of memory_failure() to userspace")
+Link: http://lkml.kernel.org/r/20170417055948.GM31394@yexl-desktop
+Link: http://lkml.kernel.org/r/1493197841-23986-3-git-send-email-n-horiguchi@ah.jp.nec.com
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Cc: Xiaolong Ye <xiaolong.ye@intel.com>
+Cc: Chen Gong <gong.chen@linux.intel.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/vmstat.c |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ mm/memory-failure.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1387,18 +1387,24 @@ static void zoneinfo_show_print(struct s
- 		   zone->present_pages,
- 		   zone->managed_pages);
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -921,6 +921,7 @@ static int hwpoison_user_mappings(struct
+ 	int ret;
+ 	int kill = 1, forcekill;
+ 	struct page *hpage = *hpagep;
++	bool mlocked = PageMlocked(hpage);
  
--	for (i = 0; i < NR_VM_ZONE_STAT_ITEMS; i++)
--		seq_printf(m, "\n      %-12s %lu", vmstat_text[i],
--				zone_page_state(zone, i));
--
- 	seq_printf(m,
- 		   "\n        protection: (%ld",
- 		   zone->lowmem_reserve[0]);
- 	for (i = 1; i < ARRAY_SIZE(zone->lowmem_reserve); i++)
- 		seq_printf(m, ", %ld", zone->lowmem_reserve[i]);
--	seq_printf(m,
--		   ")"
--		   "\n  pagesets");
-+	seq_putc(m, ')');
-+
-+	/* If unpopulated, no other information is useful */
-+	if (!populated_zone(zone)) {
-+		seq_putc(m, '\n');
-+		return;
-+	}
-+
-+	for (i = 0; i < NR_VM_ZONE_STAT_ITEMS; i++)
-+		seq_printf(m, "\n      %-12s %lu", vmstat_text[i],
-+				zone_page_state(zone, i));
-+
-+	seq_printf(m, "\n  pagesets");
- 	for_each_online_cpu(i) {
- 		struct per_cpu_pageset *pageset;
+ 	/*
+ 	 * Here we are interested only in user-mapped pages, so skip any
+@@ -985,6 +986,13 @@ static int hwpoison_user_mappings(struct
+ 		       pfn, page_mapcount(hpage));
  
+ 	/*
++	 * try_to_unmap() might put mlocked page in lru cache, so call
++	 * shake_page() again to ensure that it's flushed.
++	 */
++	if (mlocked)
++		shake_page(hpage, 0);
++
++	/*
+ 	 * Now that the dirty bit has been propagated to the
+ 	 * struct page and all unmaps done we can decide if
+ 	 * killing is needed or not.  Only kill when the page
