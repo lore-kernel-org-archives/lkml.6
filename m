@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802494-2-8101763502764618728
+X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802485-2-6292106131538215999
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES encafr,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802493; b=Hl2vBctBuPfErjAXAoI5NZzjMG2i2nzhGpomM1mZPl3lIvm
-    rKyPSYh1X0YFETdfsb5KdoEkjdTM4qGBVtWjpZAUkFAhVJO2gFFPnI2MRxSISdAT
-    xhuzszb66f6W9/Kb/5YyEgGfNXKc0kr1G67ItOmT0qu573SF0yMywwGRTwOgIwcA
-    runWJyleKZTL5jVktWK7OguAZkCwIENHT4XDkVtRhwxIXfpifbjp9NTrAKP5sgDP
-    cofEpenjB0xDrk3EC0xA3vLCch1CKbOD3re0lUt5SWS8DznMO9E3LJzjjrQ6WjV3
-    GP3Uh5d1JtNdEQDZHRXGrR7/mcUrrK8DC6XxZ7w==
+    t=1521802485; b=QUYrCgARWVLPQeMq+kSMov/UVqOMOEDEl+EgNiI3Mj9jZrd
+    wI1/j6XFCCNzCSnKnyNwF6hhIwnZUWCIfyrZjT9Xt22uYrUJ65q8Q9r1Z1MHpydF
+    FKZy1D2V1r/qcocBApiH+3CfqsPxNbhNbJrd0IXg8cmmjHvBlDR+tlgaq1aUdYEv
+    6hEtG24hsd04Qv8VifP8q5Eb+T4Q3KEou6i+4imLynnlx7gTnvnjP+17wfExD/oW
+    +Bpfou+VfPLsqrCvqBYIpuhAhWM0iysNZGrIeosju96gaTil49mnbH5DYPxElLlc
+    SfUs8jf82MjECkSqrVvtw7xbMfvlKg8SvZZZLcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802493; bh=LWFvTOYBTU89bN+nZh3CEDhlEg
-    +4XaZmYgQXDEPaGgk=; b=e3bXLn0cMDJVT3UUkJoo6D2Q0JyXxDPeBUVIvXQPqW
-    5gsrrdEThFnA9wTW9HrAyRdzOhBn9Y8kWDCHnqNXVJmqoUVz+IiCl8TxnKhL10c4
-    AyfnUbH+npS9SjUnvVuM6xi0wJUUyUwx2moGV5vujdk6OIrOzaHyYwVMrDfaU5ht
-    DtQHut/D9tu2XVGxAivuths4Cfrk3lZz3IHTzllULDN17GdUHYujeKTISuAeUAKL
-    jMi+ACDxkiVzn/OtkuUnv/C2/0JLFAE3RCMJ4hFViqXMHEKLHCy9/eB6yh4HlbXp
-    AMqDp4QPBeK+t46c5ewLWYO5GqySFJEOsoN6y1dfJrdw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521802485; bh=ALjsDzKmvOKYRsFsNX+Gm6Rn9Y
+    leBzaF6iaJKr56b+M=; b=Lm6j328ApWPTWdcap6aZFSXPoNzR3qSv7BLT7u818o
+    FjoMkQqrm1eht0hWIKT1ZQWz+v3WvYTvw/AIaX9xF0YmWg+HTlg43N2vDh/q26p9
+    W45alC5C/2pXrMK1NLL83Y/K/wEh5FjXK1lA1Yjur2qhidMThHtW+abC67WrVjQk
+    oiH2iigYGRzYuHfwsONF9cHkwEm6/uetDetgJJ+dBFFQ3aI0McpYGDYx9H8h763C
+    ezFE8dhvrC20ydzvCcsR9UofHaTXKjGjH85izUCgaOfTmLM24Pi53qKbYtxR08Ua
+    uO2w99zDn6t2OO/7lmQmcwdyjRcYJhDJL7UpisPuqE2A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755863AbeCWKN0 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:13:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44796 "EHLO
+        id S1755875AbeCWKNa (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:13:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44816 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755860AbeCWKNZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:25 -0400
+        with ESMTP id S1755860AbeCWKN2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
-        Steve French <smfrench@gmail.com>
-Subject: [PATCH 4.4 04/97] CIFS: Enable encryption during session setup phase
-Date: Fri, 23 Mar 2018 10:53:51 +0100
-Message-Id: <20180323094157.798345134@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+d7a918a7a8e1c952bc36@syzkaller.appspotmail.com,
+        Yisheng Xie <xieyisheng1@huawei.com>,
+        "Joel Fernandes (Google)" <joel.opensrc@gmail.com>
+Subject: [PATCH 4.4 05/97] staging: android: ashmem: Fix possible deadlock in ashmem_ioctl
+Date: Fri, 23 Mar 2018 10:53:52 +0100
+Message-Id: <20180323094157.843632674@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -82,85 +83,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
 
-commit cabfb3680f78981d26c078a26e5c748531257ebb upstream.
+commit 740a5759bf222332fbb5eda42f89aa25ba38f9b2 upstream.
 
-In order to allow encryption on SMB connection we need to exchange
-a session key and generate encryption and decryption keys.
+ashmem_mutex may create a chain of dependencies like:
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
-Cc: Steve French <smfrench@gmail.com>
+CPU0                                    CPU1
+ mmap syscall                           ioctl syscall
+ -> mmap_sem (acquired)                 -> ashmem_ioctl
+ -> ashmem_mmap                            -> ashmem_mutex (acquired)
+    -> ashmem_mutex (try to acquire)       -> copy_from_user
+                                              -> mmap_sem (try to acquire)
+
+There is a lock odering problem between mmap_sem and ashmem_mutex causing
+a lockdep splat[1] during a syzcaller test. This patch fixes the problem
+by move copy_from_user out of ashmem_mutex.
+
+[1] https://www.spinics.net/lists/kernel/msg2733200.html
+
+Fixes: ce8a3a9e76d0 (staging: android: ashmem: Fix a race condition in pin ioctls)
+Reported-by: syzbot+d7a918a7a8e1c952bc36@syzkaller.appspotmail.com
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: "Joel Fernandes (Google)" <joel.opensrc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/sess.c    |   22 ++++++++++------------
- fs/cifs/smb2pdu.c |    8 +-------
- 2 files changed, 11 insertions(+), 19 deletions(-)
+ drivers/staging/android/ashmem.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/fs/cifs/sess.c
-+++ b/fs/cifs/sess.c
-@@ -344,13 +344,12 @@ void build_ntlmssp_negotiate_blob(unsign
- 	/* BB is NTLMV2 session security format easier to use here? */
- 	flags = NTLMSSP_NEGOTIATE_56 |	NTLMSSP_REQUEST_TARGET |
- 		NTLMSSP_NEGOTIATE_128 | NTLMSSP_NEGOTIATE_UNICODE |
--		NTLMSSP_NEGOTIATE_NTLM | NTLMSSP_NEGOTIATE_EXTENDED_SEC;
--	if (ses->server->sign) {
-+		NTLMSSP_NEGOTIATE_NTLM | NTLMSSP_NEGOTIATE_EXTENDED_SEC |
-+		NTLMSSP_NEGOTIATE_SEAL;
-+	if (ses->server->sign)
- 		flags |= NTLMSSP_NEGOTIATE_SIGN;
--		if (!ses->server->session_estab ||
--				ses->ntlmssp->sesskey_per_smbsess)
--			flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -703,16 +703,14 @@ static int ashmem_pin_unpin(struct ashme
+ 	size_t pgstart, pgend;
+ 	int ret = -EINVAL;
+ 
++	if (unlikely(copy_from_user(&pin, p, sizeof(pin))))
++		return -EFAULT;
++
+ 	mutex_lock(&ashmem_mutex);
+ 
+ 	if (unlikely(!asma->file))
+ 		goto out_unlock;
+ 
+-	if (unlikely(copy_from_user(&pin, p, sizeof(pin)))) {
+-		ret = -EFAULT;
+-		goto out_unlock;
 -	}
-+	if (!ses->server->session_estab || ses->ntlmssp->sesskey_per_smbsess)
-+		flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
- 
- 	sec_blob->NegotiateFlags = cpu_to_le32(flags);
- 
-@@ -407,13 +406,12 @@ int build_ntlmssp_auth_blob(unsigned cha
- 	flags = NTLMSSP_NEGOTIATE_56 |
- 		NTLMSSP_REQUEST_TARGET | NTLMSSP_NEGOTIATE_TARGET_INFO |
- 		NTLMSSP_NEGOTIATE_128 | NTLMSSP_NEGOTIATE_UNICODE |
--		NTLMSSP_NEGOTIATE_NTLM | NTLMSSP_NEGOTIATE_EXTENDED_SEC;
--	if (ses->server->sign) {
-+		NTLMSSP_NEGOTIATE_NTLM | NTLMSSP_NEGOTIATE_EXTENDED_SEC |
-+		NTLMSSP_NEGOTIATE_SEAL;
-+	if (ses->server->sign)
- 		flags |= NTLMSSP_NEGOTIATE_SIGN;
--		if (!ses->server->session_estab ||
--				ses->ntlmssp->sesskey_per_smbsess)
--			flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
--	}
-+	if (!ses->server->session_estab || ses->ntlmssp->sesskey_per_smbsess)
-+		flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
- 
- 	tmp = *pbuffer + sizeof(AUTHENTICATE_MESSAGE);
- 	sec_blob->NegotiateFlags = cpu_to_le32(flags);
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -832,10 +832,8 @@ ssetup_exit:
- 
- 	if (!rc) {
- 		mutex_lock(&server->srv_mutex);
--		if (server->sign && server->ops->generate_signingkey) {
-+		if (server->ops->generate_signingkey) {
- 			rc = server->ops->generate_signingkey(ses);
--			kfree(ses->auth_key.response);
--			ses->auth_key.response = NULL;
- 			if (rc) {
- 				cifs_dbg(FYI,
- 					"SMB3 session key generation failed\n");
-@@ -857,10 +855,6 @@ ssetup_exit:
- 	}
- 
- keygen_exit:
--	if (!server->sign) {
--		kfree(ses->auth_key.response);
--		ses->auth_key.response = NULL;
--	}
- 	if (spnego_key) {
- 		key_invalidate(spnego_key);
- 		key_put(spnego_key);
+-
+ 	/* per custom, you can pass zero for len to mean "everything onward" */
+ 	if (!pin.len)
+ 		pin.len = PAGE_ALIGN(asma->size) - pin.offset;
