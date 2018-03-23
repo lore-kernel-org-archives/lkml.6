@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521807087-2-5899066542825350829
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521807074-2-15617930990261527873
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807086; b=mBUWOFVc0qNhr2i/6hlUz2BlJrp3U898idrW5knacxU9Qp5
-    GfnHAo0xkXEOjXlCKznXJrAAR3hV3panBWiw0M+RUbV30EeheCw/nY5JOD0I62fJ
-    4gsKScAUqcEAmfVCVMRqcaq6wAWXuCrN5l8v1YikIgw4Vkq14xq3IS1W4eaOUk/V
-    Nrr/wwY8hRrHoXuINw3BTJMXq7Z3cDoXwPpLJcVUZ62nHyHlKXje7TelfbN+tH+z
-    xLAwYFyttOxG8CZC4XvhY4B+LNpNfMrnTHrbo98LRMHprwtxQiZqTPhjSmHqZ1Uv
-    MqthNQ5veXwwMeW+E9AKYtfUgeAIPx+krFq8eYA==
+    t=1521807073; b=d/olMPPEkQCit+HubqgNBUw0wb4//bJk80GmDrrevZWqYbh
+    398awda7ZZ1/I5CSXt+7zZp6T5V7sdiAeAexdELqxLsr/y/K97ILAtckuczXRR7E
+    rzgR0LQeksY548tSaHtSoM08W8ZLJFkBjT50OTAZKHhtgR+WTp+x5lS9c3CalVuj
+    TCIz5v1tEQDKb1enJP/a4qsSUhGazwUUCuqbqJ132Kn+0CdwwQrPXDW/HkTdh/Sj
+    PZSlBlkJ2HQFWxkkOcc9wxAHokcS8okAfZkTkujCq4aHiU2k8SV5XZnd6S2WIRTF
+    08PsZdB23F6+mWGFh0JGowurQOTE6Mqw9rQps2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807086; bh=Azx9Cl//QC3QjNHyoe7jLA6CCM
-    1AoHS4Chr/rqC6l/g=; b=uIaFII/GSn8Ngi2HXoJWdjXRMrcefnspQMJrWqN93o
-    8kVkcwQ9Mh4exi48tVrOe3E2wJklJph7H6853hVdZ+IFCgKZdxY99sdPpe9DuCBo
-    EBPTlt58Al3FRihR0wJOD2P42TAU3pvveeq6VxZGoykC8RiXsjUTzG7L8o191S/J
-    SnCQ+m3KCN3qTMx+AmCOlTBX/KxJXS2hPkhAd9MshYT53LWvzELJonQbFC8Y70pR
-    wKjgRb6DJ6rXSu2soStlBQ8yGp8a8lmttAxsrEXWqTHNHRCkHsaUJxKjCwMeRjUs
-    QwN5nZOun2GFyFcL/W1lGmeEwbXmjJflb6nsMeb+4HqQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521807073; bh=61sZBSQ93hRR0sk0KncVfMP4lb
+    21QYhQFqtrGEAWyHg=; b=TCrJEbkY2cJcEGD1TpencJ97JcfL7/Dn0E+0XtQMoG
+    azNop2QgKvXME7y7KhGQ6QHdg7GJIO2gxPEd7s2TS1RkTjrgEt5+765xAmhAK55z
+    qi/vBisF6QGA+zJnjlxOvFDrGRXrd1qhEHaeNxnFzVJoaIsZRX1U08L72gyt3bZ/
+    I7HWLIv29h/6kR95n1hyV+g1ifi/X1mNium/z0aEJEvCEGTCTfJRuG4As2pmRbiN
+    kkAN8Glsc8CKJ27yRmnuePShzsQr/3kivh2n44oLFnjHjFs6E6dp1CxH7oU8vAc5
+    zCq/E9OkazhSZSCvqBlgEyen0NGokY5W0DSyqdHzctIA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,20 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753155AbeCWMLI (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 08:11:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35474 "EHLO
+        id S1752945AbeCWJ5u (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:57:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35446 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752947AbeCWJ5u (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:50 -0400
+        with ESMTP id S1752914AbeCWJ5r (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhoujie Wu <zjwu@marvell.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 47/84] mmc: sdhci-xenon: wait 5ms after set 1.8V signal enable
-Date: Fri, 23 Mar 2018 10:54:01 +0100
-Message-Id: <20180323095419.109959552@linuxfoundation.org>
+Subject: [PATCH 4.15 45/84] vgacon: Set VGA struct resource types
+Date: Fri, 23 Mar 2018 10:53:59 +0100
+Message-Id: <20180323095418.793264852@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -83,50 +81,108 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Zhoujie Wu <zjwu@marvell.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
 
 
-[ Upstream commit 8d876bf472dba73c015cea9feea80dcb80626a7c ]
+[ Upstream commit c82084117f79bcae085e40da526253736a247120 ]
 
-According to SD spec 3.00 3.6.1 signal voltage switch
-procedure step 6~8,
-(6) Set 1.8V Signal Enable in the Host Control 2 register.
-(7) Wait 5ms. 1.8V voltage regulator shall be stable within this period.
-(8) If 1.8V Signal Enable is cleared by Host Controller, go to step (12).
-Host should wait 5ms after set 1.8V signal enable bit in
-Host Control 2 register and check if 1.8V is stable or not.
+Set the resource type when we reserve VGA-related I/O port resources.
 
-But current code checks this bit right after set it.
-On some platforms with xenon controller found the bit is
-cleared right away and host reports "1.8V regulator output
-did not became stable" and 5ms delay can help.
+The resource code doesn't actually look at the type, so it inserts
+resources without a type in the tree correctly even without this change.
+But if we ever print a resource without a type, it looks like this:
 
-Implement voltage_switch callback for xenon controller to add 5ms
-delay to make sure the 1.8V signal enable bit is set by controller.
+  vga+ [??? 0x000003c0-0x000003df flags 0x0]
 
-Signed-off-by: Zhoujie Wu <zjwu@marvell.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Setting the type means it will be printed correctly as:
+
+  vga+ [io  0x000003c0-0x000003df]
+
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci-xenon.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/alpha/kernel/console.c    |    1 +
+ drivers/video/console/vgacon.c |   34 ++++++++++++++++++++++++++--------
+ 2 files changed, 27 insertions(+), 8 deletions(-)
 
---- a/drivers/mmc/host/sdhci-xenon.c
-+++ b/drivers/mmc/host/sdhci-xenon.c
-@@ -230,7 +230,14 @@ static void xenon_set_power(struct sdhci
- 		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
- }
+--- a/arch/alpha/kernel/console.c
++++ b/arch/alpha/kernel/console.c
+@@ -21,6 +21,7 @@
+ struct pci_controller *pci_vga_hose;
+ static struct resource alpha_vga = {
+ 	.name	= "alpha-vga+",
++	.flags	= IORESOURCE_IO,
+ 	.start	= 0x3C0,
+ 	.end	= 0x3DF
+ };
+--- a/drivers/video/console/vgacon.c
++++ b/drivers/video/console/vgacon.c
+@@ -422,7 +422,10 @@ static const char *vgacon_startup(void)
+ 		vga_video_port_val = VGA_CRT_DM;
+ 		if ((screen_info.orig_video_ega_bx & 0xff) != 0x10) {
+ 			static struct resource ega_console_resource =
+-			    { .name = "ega", .start = 0x3B0, .end = 0x3BF };
++			    { .name	= "ega",
++			      .flags	= IORESOURCE_IO,
++			      .start	= 0x3B0,
++			      .end	= 0x3BF };
+ 			vga_video_type = VIDEO_TYPE_EGAM;
+ 			vga_vram_size = 0x8000;
+ 			display_desc = "EGA+";
+@@ -430,9 +433,15 @@ static const char *vgacon_startup(void)
+ 					 &ega_console_resource);
+ 		} else {
+ 			static struct resource mda1_console_resource =
+-			    { .name = "mda", .start = 0x3B0, .end = 0x3BB };
++			    { .name	= "mda",
++			      .flags	= IORESOURCE_IO,
++			      .start	= 0x3B0,
++			      .end	= 0x3BB };
+ 			static struct resource mda2_console_resource =
+-			    { .name = "mda", .start = 0x3BF, .end = 0x3BF };
++			    { .name	= "mda",
++			      .flags	= IORESOURCE_IO,
++			      .start	= 0x3BF,
++			      .end	= 0x3BF };
+ 			vga_video_type = VIDEO_TYPE_MDA;
+ 			vga_vram_size = 0x2000;
+ 			display_desc = "*MDA";
+@@ -454,15 +463,21 @@ static const char *vgacon_startup(void)
+ 			vga_vram_size = 0x8000;
  
-+static void xenon_voltage_switch(struct sdhci_host *host)
-+{
-+	/* Wait for 5ms after set 1.8V signal enable bit */
-+	usleep_range(5000, 5500);
-+}
-+
- static const struct sdhci_ops sdhci_xenon_ops = {
-+	.voltage_switch		= xenon_voltage_switch,
- 	.set_clock		= sdhci_set_clock,
- 	.set_power		= xenon_set_power,
- 	.set_bus_width		= sdhci_set_bus_width,
+ 			if (!screen_info.orig_video_isVGA) {
+-				static struct resource ega_console_resource
+-				    = { .name = "ega", .start = 0x3C0, .end = 0x3DF };
++				static struct resource ega_console_resource =
++				    { .name	= "ega",
++				      .flags	= IORESOURCE_IO,
++				      .start	= 0x3C0,
++				      .end	= 0x3DF };
+ 				vga_video_type = VIDEO_TYPE_EGAC;
+ 				display_desc = "EGA";
+ 				request_resource(&ioport_resource,
+ 						 &ega_console_resource);
+ 			} else {
+-				static struct resource vga_console_resource
+-				    = { .name = "vga+", .start = 0x3C0, .end = 0x3DF };
++				static struct resource vga_console_resource =
++				    { .name	= "vga+",
++				      .flags	= IORESOURCE_IO,
++				      .start	= 0x3C0,
++				      .end	= 0x3DF };
+ 				vga_video_type = VIDEO_TYPE_VGAC;
+ 				display_desc = "VGA+";
+ 				request_resource(&ioport_resource,
+@@ -494,7 +509,10 @@ static const char *vgacon_startup(void)
+ 			}
+ 		} else {
+ 			static struct resource cga_console_resource =
+-			    { .name = "cga", .start = 0x3D4, .end = 0x3D5 };
++			    { .name	= "cga",
++			      .flags	= IORESOURCE_IO,
++			      .start	= 0x3D4,
++			      .end	= 0x3D5 };
+ 			vga_video_type = VIDEO_TYPE_CGA;
+ 			vga_vram_size = 0x2000;
+ 			display_desc = "*CGA";
