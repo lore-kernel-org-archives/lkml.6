@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806579-2-2766971995262659106
+X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806447-2-9787242868986195429
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806579; b=G7+uebMKkfHmBlupsevyVOaFf7bpzUTOkeLDLR9UyIwGGfi
-    jAYLv64cyYydKsi8MQTPYZfIQEGuclMBqtJ36HCz4N4VVvO9FOWRVABfhwXHsZpC
-    j3DgW0wUV9mrQOmM8MkUPWlMdcp8g8iUtN5jmJznwdPTVVnA29csdxlaGtZYJT2F
-    yqdVlZXLh6wUv6kdnmRL6JARQIuJS38uFliZI6TYIyRQz04zObRWjTegswumE3kW
-    wJHJQOx9EXq+7ELB6HYgTde3bt/4GjO2Lf25p/JmdJgjE++VnordXzM28akeqGsS
-    tRY4HROt4cnTkWNCglqrawyZ9cACIMWUC/Kv6ZQ==
+    t=1521806447; b=GpQP9l8a0wofuRGpHlWFQuJVs2QSIQ48hnRktt2Sjfx9wPW
+    jfbWxyEq/CzRLmYt/UDb4BKKO0y0MyBwzy5WNM30IAgVJiAytcI2O82ss6aWjV4S
+    lCrpJLz1EArtMvLYoh3EvY1tZ/UhTk5SY1Jv5Ehw0AUoLxPZzclMTCDV9klUMib+
+    CR9Cwt9tQXdKDi1gvnSxV+Ze0/ijyX8HGjNmygn9WaxHcFlpFtCbt3oSUJClXI7y
+    RVJ9nTJAArv6c8d5hH62f05gd1OquL6aj8SyRRjGDktDOiuEDowMvI/aQgJoMkHy
+    nh6ry/V6ExeU5h6fRPMwQBoHxMbmrT8/Z0QlunQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806579; bh=oRxSjYWptTCDa5aGcNaJakLO9E
-    cCJBFf8QfIUIIHUOo=; b=ilHTQwx8lY3AsWXWS2A6NXQ08MCIfTiDO8JcGcNGz5
-    Z3CUSrUq+kt3jZFTwpugo+5ynXcR0isEjHn8jmHPvbxQphtwYABtcyMabm4UQsp1
-    xKFXcekpwCrX8+LMfhKUN0HAE/NW9OOGdkoWXVwibzXA+3a86pnCrVxTmBsfejCg
-    qZqZ4mPMPeeUI6Xa7/6h39YSPGvO19wM1YJ/nkP9QOoCPq42xXWH710cRx84ADxa
-    C+/IewtSSfmiH3dDVX8+BbzzSNq2J2NgI+A0nV4fAI29AqGcXRmCrIF5cgwwkR9x
-    9yhgLkGmS/AduxYU5a45f3aUie+oN8ljCI+Fi8w594ag==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521806447; bh=ZG5tRmRu3fCrGP7pFtaWpnjVih
+    QxlXIEdcwNw7CqBkw=; b=P/YUcltb3zZ3vX+GyLG4BmTU1rJhAQLTkpP+36HEC0
+    HiPY8pjlo2gVSmgm3JhLTM11m3LLTK2tIw/bbrHx12CKCgvm01AdAZAteKCaIxyk
+    gBBRIclFWyc4lor4aCinbihZBWnGGK4QLozwyuOfdW8J4SZQ6y4mCyaUHavE8nLH
+    5TSrrzW7Sk0kKeIJ1Q5dlsVZYjgW8OTN2GeWiu/Nn+E0cAPJoJJ7eqzR863ah/vK
+    yTgC0A/95Mz+ZlzqzakB0QkhD9F4rZMXPq3ejY2/aQBrbwaOowe7KEu1CiAAIPEO
+    cGN+ZOsvlbykjcC9eIG39JHGJJy61wi6s8jKngImVVLA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753431AbeCWJ75 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:59:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36322 "EHLO
+        id S1753472AbeCWJ77 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:59:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36346 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753444AbeCWJ7z (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:55 -0400
+        with ESMTP id S1753444AbeCWJ76 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+        stable@vger.kernel.org, William Tu <u9012063@gmail.com>,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 72/84] clk: axi-clkgen: Correctly handle nocount bit in recalc_rate()
-Date: Fri, 23 Mar 2018 10:54:26 +0100
-Message-Id: <20180323095422.823267169@linuxfoundation.org>
+Subject: [PATCH 4.15 63/84] ip_gre: fix potential memory leak in erspan_rcv
+Date: Fri, 23 Mar 2018 10:54:17 +0100
+Message-Id: <20180323095421.489923342@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -82,71 +83,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
 
-[ Upstream commit 063578dc5f407f67d149133818efabe457daafda ]
+[ Upstream commit 50670b6ee9bc4ae8f9ce3112b437987adf273245 ]
 
-If the nocount bit is set the divider is bypassed and the settings for the
-divider count should be ignored and a divider value of 1 should be assumed.
-Handle this correctly in the driver recalc_rate() callback.
+If md is NULL, tun_dst must be freed, otherwise it will cause memory
+leak.
 
-While the driver sets up the part so that the read back dividers values
-yield the correct result the power-on reset settings of the part might not
-reflect this and hence calling e.g. clk_get_rate() without prior calls to
-clk_set_rate() will yield the wrong result.
-
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Fixes: 1a66a836da6 ("gre: add collect_md mode to ERSPAN tunnel")
+Cc: William Tu <u9012063@gmail.com>
+Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk-axi-clkgen.c |   29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ net/ipv4/ip_gre.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -40,6 +40,10 @@
- #define MMCM_REG_FILTER1	0x4e
- #define MMCM_REG_FILTER2	0x4f
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -303,8 +303,10 @@ static int erspan_rcv(struct sk_buff *sk
+ 				return PACKET_REJECT;
  
-+#define MMCM_CLKOUT_NOCOUNT	BIT(6)
-+
-+#define MMCM_CLK_DIV_NOCOUNT	BIT(12)
-+
- struct axi_clkgen {
- 	void __iomem *base;
- 	struct clk_hw clk_hw;
-@@ -315,12 +319,27 @@ static unsigned long axi_clkgen_recalc_r
- 	unsigned int reg;
- 	unsigned long long tmp;
+ 			md = ip_tunnel_info_opts(&tun_dst->u.tun_info);
+-			if (!md)
++			if (!md) {
++				dst_release((struct dst_entry *)tun_dst);
+ 				return PACKET_REJECT;
++			}
  
--	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_1, &reg);
--	dout = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_2, &reg);
-+	if (reg & MMCM_CLKOUT_NOCOUNT) {
-+		dout = 1;
-+	} else {
-+		axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_1, &reg);
-+		dout = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+	}
-+
- 	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_DIV, &reg);
--	d = (reg & 0x3f) + ((reg >> 6) & 0x3f);
--	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB1, &reg);
--	m = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+	if (reg & MMCM_CLK_DIV_NOCOUNT)
-+		d = 1;
-+	else
-+		d = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+
-+	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB2, &reg);
-+	if (reg & MMCM_CLKOUT_NOCOUNT) {
-+		m = 1;
-+	} else {
-+		axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB1, &reg);
-+		m = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+	}
- 
- 	if (d == 0 || dout == 0)
- 		return 0;
+ 			md->index = index;
+ 			info = &tun_dst->u.tun_info;
