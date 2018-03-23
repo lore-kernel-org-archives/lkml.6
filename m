@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805478-5-232671726125300508
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805472-2-5426550697124400182
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805478; b=xFaqQIO1WG6eAnTSG9twTyjZrWKH4DiAlRuKtU7MRrvnx0S
-    Li3btc5iKroPbKCerWzFRkYHl8nnsODp6NdyAke/F2TAH48moa81yYG8oiTQlNpv
-    KWo/bqNAvmnHjLbZZMc8aYYwL2aqmdB+r5Bqk7ZzWuGY03j2Y8gciY1hH/cE8KcD
-    fmjCENQb96I8P68dVFoeYabgEiqf2NP15/LUOUSrC7ccXW+NX2dkceocScFR1hVO
-    8Az1dWXpVDpAn6ZQVeCMcD8bxVOqckzm2NekPdrzVxS0RnjDM1bFCv8MC/i6bb3P
-    4s4y6X2V70zqbpYZYFkLEhFNbgb+TWashbsSXEw==
+    t=1521805471; b=k2dkmguCBea9xrI432m/iMqT6z+TjlOVZNiR9Th7WKQcTe2
+    JWB6kbYAENwgfDFWFEGI6CK0+sfO1sagBGLFV3C1+P0WFi5p0RMDJlizN8kNyQRO
+    gLGCXnRbVv7p7r0pn0ZW9OCx0eKeuH6By/Ef45VE4L01nsO6odHSaX6vUgXnBT/z
+    63ChMjsFqO2rWUz6sNkdnx7CdoSg3jqi/tdfjTYdDFuMMxpUx9cXCEf7u+gEfM/s
+    6eWguiPF26i3H9eI1P3tr49jTl7PR8XkMkIGndVBRuBM/lhbfuKggltezm9kMp7l
+    STm8HjPr+4RSwB30geqNbbrZkW+ILn1UutO70iA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805478; bh=EEx73/fgYTirCnjZEyaqzbmrjs
-    GUHQ4fDhzgJFGH6KE=; b=O1OGLwbr4YOt4eYQ7RtLtCFhgMrePA/HPj2FqxerB4
-    gZ6jrBFn2Y9T2xV3/33hILYnF0B6swf45YQZkYeYXekDaYTBrqqZeXxOQXoQ/Qx/
-    YEhoVRXFYbpfQ3CuJNQr5gilbt39aLdKsiKhBJ278EbmLO+GZh/CTYy/dJPx4uru
-    EjBxZ0uJMOdq//hXbRyoK3WV3XhKCr9HL8LMKxaS+bA7UDbrJ79vzeaA4NMkf9DU
-    WRwfS0hvtfeYtGXrQ0ETyjuIe1c0cKMF/wlIZqSwV9vF+UGNerg0xbqFCQc5/KwW
-    GHfcLE6E0wyn6oukub8hgb4YwmYrkxXleLTcNBbHERyw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805471; bh=Q+C6r0HKxfU7UN04KBMmCCQmPJ
+    t/Nc+DyKHwBmyhEoo=; b=FjzUPkUnrRXgAnii2DqW2aznNeXceSdS3KavIDAOsk
+    OUcdx4zlbnLOBk2e1G8rIoLyhsu3VTNA8/6ltiVbIoq5dUNfpSc9cXogmjJ+5bEF
+    5VlcsbSmyF1upllfneakEWcYrTdOVYUK1BNW6NEPnzNjzsSK+CHQmbQKpEnzgtPv
+    g0rSxd0+OuJADhqI9rCDhkVvH0RGFVpYE7nZSKm9RsrBLKVl3Lu2SBTWYyA5ZO20
+    gnw2rwqKhkn4P+CXFo8K+FxxS121xUUz2Xa5S+nKNJUzIANXUZkTXW8hzLZgFJRp
+    fOyXBu3KIHAwua3xeV9WKu3OpW6bZHv5Z19LjDXbrrCQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,24 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754075AbeCWKDY (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:03:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38748 "EHLO
+        id S1754526AbeCWLoP (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:44:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38774 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753983AbeCWKDW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:22 -0400
+        with ESMTP id S1754446AbeCWKDZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rabeeh Khoury <rabeeh@solid-run.com>,
+        Sergej Sawazki <sergej@taudac.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 46/77] PCI: endpoint: Fix find_first_zero_bit() usage
-Date: Fri, 23 Mar 2018 10:54:20 +0100
-Message-Id: <20180323094145.353322114@linuxfoundation.org>
+Subject: [PATCH 4.14 64/77] clk: si5351: Rename internal plls to avoid name collisions
+Date: Fri, 23 Mar 2018 10:54:38 +0100
+Message-Id: <20180323094146.573471544@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,42 +85,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Niklas Cassel <niklas.cassel@axis.com>
+From: Sergej Sawazki <sergej@taudac.com>
 
 
-[ Upstream commit 35ad61921f495ee14915d185de79478c1737b4da ]
+[ Upstream commit cdba9a4fb0b53703959ac861e415816cb61aded4 ]
 
-find_first_zero_bit()'s parameter 'size' is defined in bits,
-not in bytes.
+This drivers probe fails due to a clock name collision if a clock named
+'plla' or 'pllb' is already registered when registering this drivers
+internal plls.
 
-Calling find_first_zero_bit() with the wrong size unit
-will lead to insidious bugs.
+Fix it by renaming internal plls to avoid name collisions.
 
-Fix this by calling find_first_zero_bit() with size BITS_PER_LONG,
-rather than sizeof() and add missing find_first_zero_bit() return
-handling.
-
-Fixes: d74679911610 ("PCI: endpoint: Introduce configfs entry for configuring EP functions")
-Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/endpoint/pci-ep-cfs.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/clk-si5351.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pci/endpoint/pci-ep-cfs.c
-+++ b/drivers/pci/endpoint/pci-ep-cfs.c
-@@ -109,7 +109,10 @@ static int pci_epc_epf_link(struct confi
- 		goto err_add_epf;
- 
- 	func_no = find_first_zero_bit(&epc_group->function_num_map,
--				      sizeof(epc_group->function_num_map));
-+				      BITS_PER_LONG);
-+	if (func_no >= BITS_PER_LONG)
-+		return -EINVAL;
-+
- 	set_bit(func_no, &epc_group->function_num_map);
- 	epf->func_no = func_no;
- 
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -72,7 +72,7 @@ static const char * const si5351_input_n
+ 	"xtal", "clkin"
+ };
+ static const char * const si5351_pll_names[] = {
+-	"plla", "pllb", "vxco"
++	"si5351_plla", "si5351_pllb", "si5351_vxco"
+ };
+ static const char * const si5351_msynth_names[] = {
+ 	"ms0", "ms1", "ms2", "ms3", "ms4", "ms5", "ms6", "ms7"
