@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELukY7cHBLzk0mYRXnClp55atUMMXdmrLsD/1gzyx6p6Hjqp+Rehs8vqvZN5fWGho7NvAhlb
-ARC-Seal: i=1; a=rsa-sha256; t=1521800097; cv=none;
+X-Google-Smtp-Source: AG47ELuwt9lPTNXu1Li49dh/5N/rG4dAXeTWW4dufiMc1ia7nBp0TDIyJAytWR93XJgYew3Z9cJ4
+ARC-Seal: i=1; a=rsa-sha256; t=1521800094; cv=none;
         d=google.com; s=arc-20160816;
-        b=xDil7TBx7lI85XrJxSvbuGZ852eDIBvZk8zm+uKjuGLWwbK6XF2TtH5v4vsG1y2hEv
-         uPcql46aEK6xT8RUHmokJ9RnKN+wCisBt33DQB20NfPehGoEcMUTf0Vywgar3c32ALYp
-         ZvX1MiqxvO3/ov0dAFOtNTCMW1iIFv4Y9CLOkqP8TvUSXPoUKYczYRr9BQPRAZuDdOEq
-         ZVyMevB8ihj3mWdYPneEazUI14movSccpTk1kY3KJZaoRv/ZTH78I7nVfI7Wz/suXjjL
-         bey1f1jrSP/jHTeXssFPrl1DTsF+gyHMCuGk9Rm+wMtAYmE0wfd3Ezj4C5jUEiOz1Uc1
-         dl6w==
+        b=otpGx2MFJy9GWQLAHJysUOtZZ+NG/OmFgI0nXRh1QTX+VR4QZR6rjHvBYuMUI6QbG9
+         Wi0udvQhH7RrRdCsrYwTHF3OYJpazNFzm4RATkopp0YlOmrT0vJaNm2+c9mn7kzudBT1
+         iDQyQYYLH0ZUsYIFxmEOUmZJlIv+nWCpfBP7JJbgrXvRVwregV08VPJMiHGjqvJnTDrN
+         j575i6RWNGGdE0XSRwezZ63a5XoimwX6efGd8nw77cDK++zS/Y9iIflyCetltnJkK1wG
+         neux/ISe3q4e/UWVzbEwwwAlCtbi+F+E2P0LbVl0CpZKfqHhQYisgaz+j3DZWYUgYnn1
+         HNLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JD5LTOXNNU1S0KKiG/x72+/vpGMbukTIcV/4T0gnZUA=;
-        b=XGZVaVg7nDNbNfEFbTYbLK79qzkncOdfx0F6ud+kOrCrG4Cx/eOgsxoKiKRe2mjblB
-         defY1cks8t35ISrEA0/aBn5W4A/7bkWWSedcD/diOr+v88UthydyAoFt+pPF+fLDFssk
-         pt3i2L/HVdFu0w7Flg7BWe6fdqpTgQ+pp5tMvzm5efUeoeLBbqaV25SX4VP8dwBafvD5
-         OhscihT8r28HWl6u2K3IyBFnfSUNkJcUJLMMyZ44t2yMrjMOOLfl6Tclc2dGHLrnI1Kf
-         K1kAJXaHQ6vbHdoxWePZ2ws7n/4uqhvgig+UxzKjsbsbnGJkxWnsZ0LWIAL54fLf5Bz+
-         hTuA==
+        bh=vFv+vRNin3orJNTgpMWyO2/7TbyDubiVxjRRxvnw9Ek=;
+        b=s/jG/dKTJbHJiMBqb3/Tz/fmg5ShVnGFZmzk4B5PmxuMpctz8pCL5g5hah1RuZgzEO
+         rT8smXP5IayUi2er3GW6kdYL23v+ONrLL7yu0A/NEPAt3opHmIAjFk4jYOdIEoCCqe2t
+         iiS4li77wsuhoo1fpR1zjzDCGEocuJ7KwdHc/0DkS3AaboRfdFC3nKbTftXxj5onEwgI
+         chhYN4q98R2UPS7MPcUsqrUOoOlywCtenZFmDxBVTeoEfSmUjufdsoafatxFu9iheYhT
+         xbF/iVEkQ+kJ1heAKKGdEPpmehPlpQSIo18Fbpe9GYGUWN0/sDFgfHODkTIQ2YnLDGnL
+         iNew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,12 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Pan Bian <bianpan2016@163.com>,
+	Jakub Kicinski <kubakici@wp.pl>,
 	Kalle Valo <kvalo@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 48/97] rndis_wlan: add return value validation
-Date: Fri, 23 Mar 2018 10:54:35 +0100
-Message-Id: <20180323094200.302960637@linuxfoundation.org>
+Subject: [PATCH 4.4 47/97] mt7601u: check return value of alloc_skb
+Date: Fri, 23 Mar 2018 10:54:34 +0100
+Message-Id: <20180323094200.258964491@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722625840527825?=
-X-GMAIL-MSGID: =?utf-8?q?1595723059112028874?=
+X-GMAIL-THRID: =?utf-8?q?1595722602127070056?=
+X-GMAIL-MSGID: =?utf-8?q?1595723056478543457?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,32 +54,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit 9dc7efd3978aa67ae598129d2a3f240b390ce508 ]
+[ Upstream commit 5fb01e91daf84ad1e50edfcf63116ecbe31e7ba7 ]
 
-Function create_singlethread_workqueue() will return a NULL pointer if
-there is no enough memory, and its return value should be validated
-before using. However, in function rndis_wlan_bind(), its return value
-is not checked. This may cause NULL dereference bugs. This patch fixes
-it.
+Function alloc_skb() will return a NULL pointer if there is no enough
+memory. However, in function mt7601u_mcu_msg_alloc(), its return value
+is not validated before it is used. This patch fixes it.
 
 Signed-off-by: Pan Bian <bianpan2016@163.com>
+Acked-by: Jakub Kicinski <kubakici@wp.pl>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/rndis_wlan.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/wireless/mediatek/mt7601u/mcu.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/rndis_wlan.c
-+++ b/drivers/net/wireless/rndis_wlan.c
-@@ -3425,6 +3425,10 @@ static int rndis_wlan_bind(struct usbnet
+--- a/drivers/net/wireless/mediatek/mt7601u/mcu.c
++++ b/drivers/net/wireless/mediatek/mt7601u/mcu.c
+@@ -66,8 +66,10 @@ mt7601u_mcu_msg_alloc(struct mt7601u_dev
+ 	WARN_ON(len % 4); /* if length is not divisible by 4 we need to pad */
  
- 	/* because rndis_command() sleeps we need to use workqueue */
- 	priv->workqueue = create_singlethread_workqueue("rndis_wlan");
-+	if (!priv->workqueue) {
-+		wiphy_free(wiphy);
-+		return -ENOMEM;
+ 	skb = alloc_skb(len + MT_DMA_HDR_LEN + 4, GFP_KERNEL);
+-	skb_reserve(skb, MT_DMA_HDR_LEN);
+-	memcpy(skb_put(skb, len), data, len);
++	if (skb) {
++		skb_reserve(skb, MT_DMA_HDR_LEN);
++		memcpy(skb_put(skb, len), data, len);
 +	}
- 	INIT_WORK(&priv->work, rndis_wlan_worker);
- 	INIT_DELAYED_WORK(&priv->dev_poller_work, rndis_device_poller);
- 	INIT_DELAYED_WORK(&priv->scan_work, rndis_get_scan_results);
+ 
+ 	return skb;
+ }
+@@ -170,6 +172,8 @@ static int mt7601u_mcu_function_select(s
+ 	};
+ 
+ 	skb = mt7601u_mcu_msg_alloc(dev, &msg, sizeof(msg));
++	if (!skb)
++		return -ENOMEM;
+ 	return mt7601u_mcu_msg_send(dev, skb, CMD_FUN_SET_OP, func == 5);
+ }
+ 
+@@ -205,6 +209,8 @@ mt7601u_mcu_calibrate(struct mt7601u_dev
+ 	};
+ 
+ 	skb = mt7601u_mcu_msg_alloc(dev, &msg, sizeof(msg));
++	if (!skb)
++		return -ENOMEM;
+ 	return mt7601u_mcu_msg_send(dev, skb, CMD_CALIBRATION_OP, true);
+ }
+ 
