@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804698-2-5704229352660472048
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804669-2-614733358421131606
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804698; b=Jl17DeZLzJtjPQnMfeCw0bVLhP0DNmW4kuFEwHRsjvLdDHQ
-    DNHg99XUQ4LECYIDdeVa0VcrGi5bwVfif58uWKJBnfp7P92+08vlg7i1UKiLQzY4
-    7moHfuTiNwFmnL3Q9z8ZP/y6RD8lnzcPltXNmmeDFXzEqfbLcERXtsdC5PCXs2kN
-    HwH+iHPkJ33fTPe6yYTSRGFwzMI2d178xEdq4RAZRgmeshEsynlmLbJHm4qDQVHM
-    YWwbbWZ4cmDXG4c0iXLuQ48HQd2vm3uyaVHxxFRLmQBOBcqxNUnhEpHZwKkRXxoM
-    fywFcbp7fY6rLOfqGIcBZcLehiDEY3pO1ljJKXQ==
+    t=1521804669; b=QqpJb0yVrDea7WvzBFbQlT+pwD8mLUiu0+aOwa67ECPVOcQ
+    ylFGcElrgMRMtlejEkhvoEE7XoxuSu9PBxjgXYR0ZasD/8ysXsAH7JZo90c9Spia
+    e2EbIHN6rtqbA1aeATFEnF1tWXwU4CATGPdz8IoTiJXgC25N3EX52cODo+qqeM+A
+    nWWN7s/6hA1HM/zwbQG1I/K18KdtjcpoaPm8mwo6NDtlfrZT1SqnUxZbI0xxVlDV
+    S4NsY/IMmW3qss4QDHmh6fWbb3RU1CwjOXBeFMDjRAC9UGWLXhS//GEm5fPzmIgX
+    o6hOiLADujQox5b8PB8WunXaE1CrQLy/FKjZ8Ig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804698; bh=IfW/SXp98FvHFz+5UYMIMIN2ea
-    Ff9oA/kUxeAcHy1pk=; b=Fops+4q3qckYXzVKOVCrabmxOdF96j6mmlw+Y+2sZ5
-    SANO5ugCkhmoOg2ZkSrPZqKfJIJoIjWlxmUxEtUmTTyfQLVCGPCL9ds/EEMMH9JI
-    i0pzvwsy+ILq88/41V2mXOcGo1e7tmzbChN6tfakb35IQivsKom5to3RhCb5q+8N
-    JrO6XdhtaKClUbLFoRokLG6PJfJ0fOKNhgIWTpvRr4DuKMW9kdF2C6ghZ6I40GYR
-    cP76ImNrbUXg72opwPGEnZP0mFZQ82BUWZgFN7qn8NRM9VRAaRFZGX6ILBucNdbP
-    KHmZkDNDqz+YyKGBZrL/2ZM2aIs6X9iOf2+SAKebj1oQ==
+    :list-id; s=arctest; t=1521804669; bh=vPN1bU7vcgyeOkjNVj+AMgpheC
+    LdUI8aac4I2qJlyJc=; b=wKHoucF6WNG/X8uH7CpaFC92U1XB2DywNfDDq/AfsK
+    ksboE6wj1+CHyH1moIHeApxSkAYCeWKPYL+TLv8aV7uP9GN7Z2eYPlRMtX21rcww
+    jBo2v6cwDDERzjVjL2BuZc2RKDWxf3dsqnJerQTNzeSIW/yV56FCGC9h2zlCemI8
+    FIIt8eKTtmSD0tiSJ8v+Hfw7ruDTmhij+PYGOSt5BSwV37yJD5ILjj5/2BSz/Vt1
+    Zgf2nsq0oNLUe+lvWZe2TFMujDppU0Vs0FuDmK5+NL5Ye0/RaPTHlWxw0bXPcIkG
+    YkOGn2Bsg55h8Cx+9wZ5E3DHyoCtNxLTpf8JADTo/5HQ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752124AbeCWLbY (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:31:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40668 "EHLO
+        id S1755183AbeCWKGM (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:06:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40694 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755159AbeCWKGH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:07 -0400
+        with ESMTP id S1755146AbeCWKGL (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Maor Gottlieb <maorg@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 041/177] tcp: remove poll() flakes with FastOpen
-Date: Fri, 23 Mar 2018 10:52:49 +0100
-Message-Id: <20180323094206.991719112@linuxfoundation.org>
+Subject: [PATCH 4.9 050/177] IB/mlx5: Change vma from shared to private
+Date: Fri, 23 Mar 2018 10:52:58 +0100
+Message-Id: <20180323094207.532965515@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,67 +83,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Maor Gottlieb <maorg@mellanox.com>
 
 
-[ Upstream commit 0f9fa831aecfc297b7b45d4f046759bcefcf87f0 ]
+[ Upstream commit 1377661298d2820d675553d186c31b6f46c140d0 ]
 
-When using TCP FastOpen for an active session, we send one wakeup event
-from tcp_finish_connect(), right before the data eventually contained in
-the received SYNACK is queued to sk->sk_receive_queue.
+Anonymous VMA (->vm_ops == NULL) cannot be shared, otherwise
+it would lead to SIGBUS.
 
-This means that depending on machine load or luck, poll() users
-might receive POLLOUT events instead of POLLIN|POLLOUT
+Remove the shared flags from the vma after we change it to be
+anonymous.
 
-To fix this, we need to move the call to sk->sk_state_change()
-after the (optional) call to tcp_rcv_fastopen_synack()
+This is easily reproduced by doing modprobe -r while running a
+user-space application such as raw_ethernet_bw.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 7c2344c3bbf97 ('IB/mlx5: Implements disassociate_ucontext API')
+Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/infiniband/hw/mlx5/main.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -5606,10 +5606,6 @@ void tcp_finish_connect(struct sock *sk,
- 	else
- 		tp->pred_flags = 0;
- 
--	if (!sock_flag(sk, SOCK_DEAD)) {
--		sk->sk_state_change(sk);
--		sk_wake_async(sk, SOCK_WAKE_IO, POLL_OUT);
--	}
- }
- 
- static bool tcp_rcv_fastopen_synack(struct sock *sk, struct sk_buff *synack,
-@@ -5678,6 +5674,7 @@ static int tcp_rcv_synsent_state_process
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	struct tcp_fastopen_cookie foc = { .len = -1 };
- 	int saved_clamp = tp->rx_opt.mss_clamp;
-+	bool fastopen_fail;
- 
- 	tcp_parse_options(skb, &tp->rx_opt, 0, &foc);
- 	if (tp->rx_opt.saw_tstamp && tp->rx_opt.rcv_tsecr)
-@@ -5781,10 +5778,15 @@ static int tcp_rcv_synsent_state_process
- 
- 		tcp_finish_connect(sk, skb);
- 
--		if ((tp->syn_fastopen || tp->syn_data) &&
--		    tcp_rcv_fastopen_synack(sk, skb, &foc))
--			return -1;
-+		fastopen_fail = (tp->syn_fastopen || tp->syn_data) &&
-+				tcp_rcv_fastopen_synack(sk, skb, &foc);
- 
-+		if (!sock_flag(sk, SOCK_DEAD)) {
-+			sk->sk_state_change(sk);
-+			sk_wake_async(sk, SOCK_WAKE_IO, POLL_OUT);
-+		}
-+		if (fastopen_fail)
-+			return -1;
- 		if (sk->sk_write_pending ||
- 		    icsk->icsk_accept_queue.rskq_defer_accept ||
- 		    icsk->icsk_ack.pingpong) {
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -1323,6 +1323,7 @@ static void mlx5_ib_disassociate_ucontex
+ 		/* context going to be destroyed, should
+ 		 * not access ops any more.
+ 		 */
++		vma->vm_flags &= ~(VM_SHARED | VM_MAYSHARE);
+ 		vma->vm_ops = NULL;
+ 		list_del(&vma_private->list);
+ 		kfree(vma_private);
