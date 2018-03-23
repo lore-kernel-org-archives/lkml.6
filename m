@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806872-2-15930573193811216796
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806844-2-7021255946438579473
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806871; b=YELKRLGFZTJwfWvWF8CjeWZ7wv3MN9FY43oGhbVJGCcmQYi
-    /smIKp0HnkYbUl5k2FXIAEUiCavDF+QDt1xoAWpfIHimricR4SPfXTTHPa0+dqjK
-    gNWfOsV/BIA6K6W3Zh1hEbN//oXkCUsamaE8H3NZ5jsdQpBtwT4Se+OT/dnrXfkH
-    CqmqfpbsGeRwM4Jf/JuGwHXUPvlzkkCssgMtMXf9EghdV+MReEMxI/y5jBERTMej
-    xA1pRlr5hL6tJS2132GobpS5zRQ8CqBavkP/SA9gWnRxFMPzzSoyKDho6v1HhDAM
-    CKL4Vh0F9ewRa1jDoaKPqxu/u11aa+HieDdVWlw==
+    t=1521806844; b=OFSBIpCYdJedZo660VmK1ZpinhmfpoySU6kHOcdQs464PgV
+    jDm5qE9S0C7/rhRaCstSNBnmCtsT6ypRm0bHs1lJpmB9FRZios/u/3qUkckTtWvi
+    qqG2ZlT+tP/Ewg3wDSd6iooz89X+TE0nAqj3eLMYOs107r/0m1pN+hJic3M6ZN/v
+    J4UNt079kT4PSKONyl0ks9UetG5/7NUFDQ9Ph22qBcKCxgPfEDTIjm2DvMhEyaCM
+    ZvCWHehiA8SUnY/WkQrOmlBxi3I2Ya3PVDCV02E9tD9T+M7CD+sxhPnFZ5p/4dWE
+    2ijob6MYtIT0/yudTzhZf9FhIAYsklhumGTOabA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806871; bh=gCqg1s57dz75kw8zhbbKTX55fY
-    RRC6yH5hBgFZ9GXF4=; b=ji9pW0T0TJKqMvl+cRiGe97deEs1d0CNgjBMlaCaO0
-    EuP0zaQFQcgHV8RvjPpoSp/+mUsGYHQQdn/f4oaFMK+k73S8hXFqhrRdnm6rxnFs
-    HXTIxbsJpodfZdHg2XOyrflM2b7ghrrbx30fr7ejO+mB3YubwGl/5/+j4+59ICvZ
-    O1dl/uEY8vC7omlEWl/1lC8FnYBm9s0c3k/WF4Lny9KWhJOglByStJFZqiu9UG2g
-    IY9Mf8wZaI97FnSZbMpiYM8xmmtbLVk81GNoD22bPNB1r8Eyawu4tjLtVMln/YbT
-    boS9sgfGH0pENHyA2wp4Bi/tcuTFIWkRLkkJFzrt2VPQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521806844; bh=kmSAudrrn9ENWre6Io5ROoto3h
+    BdYeZbS6hgAvj79L8=; b=XwfAqgu/ze8zP6AG3i4IqDEcHiUlkrmfRyrqAvC9BH
+    We6eZAHcaR6e61EJn8qVzQ63XjRZnWznHm94NjNLxlrOhyZPh39pdj1qoC/1P83+
+    bXFYoOgHxZkmLBH8yIT3U81T6uqoCQa4PtxhnQOtuaMlKVRBiQ0eNZ+7m1e4Zn7T
+    f/Biljuwi47ZtFO8KuWSct5slFWv/AgWUzPjl6czaYlmZsd/RO1oD6ObgON/0MxR
+    NFXEAyWDw4Z9F/JVlmijGBQSZTpCkd0hREon+wVlOMK7PjWujsey94XCHn+b6oFj
+    /50Rnvu5cRbsvTAZwWLZk0Jh2OmcZvuMolD8BKvyObaw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753373AbeCWMH3 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 08:07:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35836 "EHLO
+        id S1753195AbeCWJ6t (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:58:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35858 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752689AbeCWJ6o (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:44 -0400
+        with ESMTP id S1753150AbeCWJ6r (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@axis.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 51/84] PCI: designware-ep: Fix ->get_msi() to check MSI_EN bit
-Date: Fri, 23 Mar 2018 10:54:05 +0100
-Message-Id: <20180323095419.696617706@linuxfoundation.org>
+Subject: [PATCH 4.15 52/84] PCI: endpoint: Fix find_first_zero_bit() usage
+Date: Fri, 23 Mar 2018 10:54:06 +0100
+Message-Id: <20180323095419.842070254@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -82,66 +83,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Niklas Cassel <niklas.cassel@axis.com>
 
 
-[ Upstream commit a134a457ed985dca8cce7ac4ea66129ea70eba73 ]
+[ Upstream commit 35ad61921f495ee14915d185de79478c1737b4da ]
 
-->get_msi() now checks MSI_EN bit in the MSI CAPABILITY register to
-find whether the host supports MSI instead of using the
-MSI ADDRESS in the MSI CAPABILITY register.
+find_first_zero_bit()'s parameter 'size' is defined in bits,
+not in bytes.
 
-This fixes the issue with the following sequence
-  'modprobe pci_endpoint_test' enables MSI
-  'rmmod pci_endpoint_test' disables MSI but MSI address (in EP's
-	capability register) has a valid value
-  'modprobe pci_endpoint_test no_msi=1' - Since MSI address (in EP's
-	capability register) has a valid value (set during the previous
-	insertion of the module), EP thinks host supports MSI.
+Calling find_first_zero_bit() with the wrong size unit
+will lead to insidious bugs.
 
-Fixes: f8aed6ec624f ("PCI: dwc: designware: Add EP mode support")
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Fix this by calling find_first_zero_bit() with size BITS_PER_LONG,
+rather than sizeof() and add missing find_first_zero_bit() return
+handling.
+
+Fixes: d74679911610 ("PCI: endpoint: Introduce configfs entry for configuring EP functions")
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/dwc/pcie-designware-ep.c |   12 +++---------
- drivers/pci/dwc/pcie-designware.h    |    1 +
- 2 files changed, 4 insertions(+), 9 deletions(-)
+ drivers/pci/endpoint/pci-ep-cfs.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/dwc/pcie-designware-ep.c
-@@ -197,20 +197,14 @@ static int dw_pcie_ep_map_addr(struct pc
- static int dw_pcie_ep_get_msi(struct pci_epc *epc)
- {
- 	int val;
--	u32 lower_addr;
--	u32 upper_addr;
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+--- a/drivers/pci/endpoint/pci-ep-cfs.c
++++ b/drivers/pci/endpoint/pci-ep-cfs.c
+@@ -109,7 +109,10 @@ static int pci_epc_epf_link(struct confi
+ 		goto err_add_epf;
  
--	val = dw_pcie_readb_dbi(pci, MSI_MESSAGE_CONTROL);
--	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
--
--	lower_addr = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_L32);
--	upper_addr = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_U32);
--
--	if (!(lower_addr || upper_addr))
-+	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
-+	if (!(val & MSI_CAP_MSI_EN_MASK))
- 		return -EINVAL;
+ 	func_no = find_first_zero_bit(&epc_group->function_num_map,
+-				      sizeof(epc_group->function_num_map));
++				      BITS_PER_LONG);
++	if (func_no >= BITS_PER_LONG)
++		return -EINVAL;
++
+ 	set_bit(func_no, &epc_group->function_num_map);
+ 	epf->func_no = func_no;
  
-+	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
- 	return val;
- }
- 
---- a/drivers/pci/dwc/pcie-designware.h
-+++ b/drivers/pci/dwc/pcie-designware.h
-@@ -101,6 +101,7 @@
- #define MSI_MESSAGE_CONTROL		0x52
- #define MSI_CAP_MMC_SHIFT		1
- #define MSI_CAP_MME_SHIFT		4
-+#define MSI_CAP_MSI_EN_MASK		0x1
- #define MSI_CAP_MME_MASK		(7 << MSI_CAP_MME_SHIFT)
- #define MSI_MESSAGE_ADDR_L32		0x54
- #define MSI_MESSAGE_ADDR_U32		0x58
