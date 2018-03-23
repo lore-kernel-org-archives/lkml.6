@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805195-2-1248911842373429809
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805184-2-14693395509105024000
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805194; b=wYWpUEWvSAXmwREjletSnN2bbUQaHTjkz/QV0yKWwOguDWE
-    SrdK/mlT4NyQnphC8gHKUbuOZL6WUKOERssLuHDfj32+4wPiRzk8Ln1OZVBmUBe5
-    14X/lRV6ClhL9AWiW5lyeoJnLd4TmX/zPgV7fXIvU7GguZFCXditTXl9mttCOXsE
-    X80uyYhUsdO2DjEqhXXMDJulzeXpYGtgU0c0Gegq3/eQ7nxVZqafM5yWnZYUEOhx
-    ubolHgPQYOe88wPi0wc6wuIglhcN398Cfl036uBQoAQZvR5yGuMWsl9SAEDbcOyk
-    gqiKVh3/vYAG/aR5tFF5m4sv3tzrbfouQznHy5w==
+    t=1521805184; b=ICLJa3RSRRhOgKOuUwqVjHhCsFit6tftL3m5lCvWJjp1jnk
+    IpxDr6qMeE1/TsvNGY5X8bnvvRIy/vDeHnnxJyJEVcRISnrcNkIfNPSU4ZDXBX2n
+    AL265NFzYKC7ZEAzGntfCrKZc6Wresz+JKh3dLDOuWTKCkQZ0+iBQCi2OMtByDFr
+    Ry/IKeeLJpCySh/TnseDjtyX9sWxHRrYyPS3ARhgE0h8ayELiNkG9TTwAlf8z9UU
+    h+6fBC57qvX+eNryKz4wSVS0WN0gM+HmvBzNZzihEepwSuAMCu+L2+pJ0y16SvqV
+    WdXeZtqJypPZKRdD/urimDtxN6o/KHAWa7GiwoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805194; bh=3K4QqGCkzDH5VcXXL0cYu/BtTV
-    yZ3/y5tuyyCy9feB4=; b=jsZn4kr3FWJT3sUG6rRW1ZTaOs3ZEc+qdKMyo+Sz+P
-    w2ICTK9aSZj/ZCNOYghIhLxbFosnPIcSu+VwY8ZsneOeNEqoewwj1d3uwM25+OgJ
-    G5yzlq4ge2EbjsGbKG55bRr3HGeltDPMbcP+a+qT2ui4P/kWDRPdrrsXfiHu5i0P
-    Cy3OGx6INZb5KThleci9UTVtIHzC9u6XjekTkzyDhjqrNGbaR28e1Oo/b65KrFNS
-    i2c8qCJ/nrtvvSP69iQnXObr0xayIihlhfIBhMM/dIKPCkg37/Lb/A5zls1qgIhA
-    SBfXdawsDKPvZdbLWyu+aAwYwT2hXkpiSD3+/1IV0zRg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805184; bh=VUenVBdoBaI1bUTM6qbr6VqRk4
+    KN7hJdylcW4u4T4+E=; b=YLnjkaqg3cwT1ph8BdZaRYdSDLMcowqaVwPkMXLjX4
+    JvMS8U3SEFZIInmBmGBdsMg4jCUI1NQ6BajySnXrqgmZF3s0Wk2TFTq9MxWndRrm
+    ki9m3yMFjXPKfxzEZp1l+4k+Yo+ZL9Vd+TtGVNetY5lLUYAoWWGCEFMAe+lVfidK
+    54vODMeiHtrn2nI2fan6Jrer3AYclIz6XuypHmcV++mjkxlJ7B51RHf/QvcSHWoX
+    Vz+EqXwg21SVeZNGMQofPNpqT3DVYVjF+UOWUgeWfROCMVDG6GjFIYvwMUA7NcNl
+    8C/Am0flRmo1mszSmBAzpH2RSyIvr/4KeqYbileMO7Gg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,20 +50,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754681AbeCWKEU (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:04:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39096 "EHLO
+        id S1754702AbeCWKEY (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:04:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39126 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754642AbeCWKEQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:16 -0400
+        with ESMTP id S1754686AbeCWKEW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <smfrench@gmail.com>
-Subject: [PATCH 4.9 004/177] CIFS: Enable encryption during session setup phase
-Date: Fri, 23 Mar 2018 10:52:12 +0100
-Message-Id: <20180323094205.390766145@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Matthias Schiffer <mschiffer@universe-factory.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: [PATCH 4.9 006/177] Revert "led: core: Fix brightness setting when setting delay_off=0"
+Date: Fri, 23 Mar 2018 10:52:14 +0100
+Message-Id: <20180323094205.493198018@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -81,93 +83,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-commit cabfb3680f78981d26c078a26e5c748531257ebb upstream.
+This reverts commit 86b9fa2190907f4f550d9d6bf490c5f89ca33836 which was
+commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c upstream.
 
-In order to allow encryption on SMB connection we need to exchange
-a session key and generate encryption and decryption keys.
+The commit being reverted has two flaws:
+ - it introduces a regression, fixed in the upstream
+   commit 7b6af2c53192f1766892ef40c8f48a413509ed72.
+ - it has truncated commit message
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Cc: Steve French <smfrench@gmail.com>
+Reported-by: Sasha Levin <Alexander.Levin@microsoft.com>
+Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- fs/cifs/sess.c    |   22 ++++++++++------------
- fs/cifs/smb2pdu.c |   12 ++----------
- 2 files changed, 12 insertions(+), 22 deletions(-)
+ drivers/leds/led-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/sess.c
-+++ b/fs/cifs/sess.c
-@@ -344,13 +344,12 @@ void build_ntlmssp_negotiate_blob(unsign
- 	/* BB is NTLMV2 session security format easier to use here? */
- 	flags = NTLMSSP_NEGOTIATE_56 |	NTLMSSP_REQUEST_TARGET |
- 		NTLMSSP_NEGOTIATE_128 | NTLMSSP_NEGOTIATE_UNICODE |
--		NTLMSSP_NEGOTIATE_NTLM | NTLMSSP_NEGOTIATE_EXTENDED_SEC;
--	if (ses->server->sign) {
-+		NTLMSSP_NEGOTIATE_NTLM | NTLMSSP_NEGOTIATE_EXTENDED_SEC |
-+		NTLMSSP_NEGOTIATE_SEAL;
-+	if (ses->server->sign)
- 		flags |= NTLMSSP_NEGOTIATE_SIGN;
--		if (!ses->server->session_estab ||
--				ses->ntlmssp->sesskey_per_smbsess)
--			flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
--	}
-+	if (!ses->server->session_estab || ses->ntlmssp->sesskey_per_smbsess)
-+		flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -186,7 +186,7 @@ void led_blink_set(struct led_classdev *
+ 		   unsigned long *delay_on,
+ 		   unsigned long *delay_off)
+ {
+-	led_stop_software_blink(led_cdev);
++	del_timer_sync(&led_cdev->blink_timer);
  
- 	sec_blob->NegotiateFlags = cpu_to_le32(flags);
- 
-@@ -407,13 +406,12 @@ int build_ntlmssp_auth_blob(unsigned cha
- 	flags = NTLMSSP_NEGOTIATE_56 |
- 		NTLMSSP_REQUEST_TARGET | NTLMSSP_NEGOTIATE_TARGET_INFO |
- 		NTLMSSP_NEGOTIATE_128 | NTLMSSP_NEGOTIATE_UNICODE |
--		NTLMSSP_NEGOTIATE_NTLM | NTLMSSP_NEGOTIATE_EXTENDED_SEC;
--	if (ses->server->sign) {
-+		NTLMSSP_NEGOTIATE_NTLM | NTLMSSP_NEGOTIATE_EXTENDED_SEC |
-+		NTLMSSP_NEGOTIATE_SEAL;
-+	if (ses->server->sign)
- 		flags |= NTLMSSP_NEGOTIATE_SIGN;
--		if (!ses->server->session_estab ||
--				ses->ntlmssp->sesskey_per_smbsess)
--			flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
--	}
-+	if (!ses->server->session_estab || ses->ntlmssp->sesskey_per_smbsess)
-+		flags |= NTLMSSP_NEGOTIATE_KEY_XCH;
- 
- 	tmp = *pbuffer + sizeof(AUTHENTICATE_MESSAGE);
- 	sec_blob->NegotiateFlags = cpu_to_le32(flags);
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -707,15 +707,13 @@ SMB2_sess_establish_session(struct SMB2_
- 	struct cifs_ses *ses = sess_data->ses;
- 
- 	mutex_lock(&ses->server->srv_mutex);
--	if (ses->server->sign && ses->server->ops->generate_signingkey) {
-+	if (ses->server->ops->generate_signingkey) {
- 		rc = ses->server->ops->generate_signingkey(ses);
--		kfree(ses->auth_key.response);
--		ses->auth_key.response = NULL;
- 		if (rc) {
- 			cifs_dbg(FYI,
- 				"SMB3 session key generation failed\n");
- 			mutex_unlock(&ses->server->srv_mutex);
--			goto keygen_exit;
-+			return rc;
- 		}
- 	}
- 	if (!ses->server->session_estab) {
-@@ -729,12 +727,6 @@ SMB2_sess_establish_session(struct SMB2_
- 	ses->status = CifsGood;
- 	ses->need_reconnect = false;
- 	spin_unlock(&GlobalMid_Lock);
--
--keygen_exit:
--	if (!ses->server->sign) {
--		kfree(ses->auth_key.response);
--		ses->auth_key.response = NULL;
--	}
- 	return rc;
- }
- 
+ 	led_cdev->flags &= ~LED_BLINK_ONESHOT;
+ 	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
