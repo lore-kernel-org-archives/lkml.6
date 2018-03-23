@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804331-2-12190661315683110761
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804309-2-6519166148189703621
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804331; b=g82huK/gpvMDyHGrTVTlZPzMOrTV8X8x5RRPr07agkP5zwS
-    P3PdCbqfR1JVWZ0Je8wkFF3QvTlq3EmKxY7lZnWQ18qFnmy+Xju1k5B2DzuP+Z6o
-    xrVKzgrIcBbmC0zPbJZFRsBamSfShzXMxE/jojla/CyHWBK1JoU4dPHa6xEUPkk+
-    TriIs5Rqg0aQd5cgUZKBiO522yJrSSbNxZKQelZMD38GFIqOBPaYflTNXng/9YUg
-    Wjiso5iCeR+MN68++yC/X3KkdQfhy7iyeBndROmT3m/1ZzwDmytZK+m964x1Vq0v
-    CzII8NhzgEOGUuxapLQkSZDnTSANmVTdJggMfSQ==
+    t=1521804309; b=qixQs+N/2FND0E7IcqJnYPEGqaxL1Wtr1MzhQJ1e73HEulp
+    gGvX8nObueiAa4CddpK7hHQ+mEjS9Us+S36RyudYgsN/ze8ZHHUTqSOYbpxK58Q+
+    VDUEHiJ/Dxq89+O7/2ISkhwTgctCLxw+qWcHhNGTzSR4So2FgR4uSxgXbR0qY8lk
+    uEJ77tkqoKMeWAT2HhCS2wyc5qFHLsa7tPmvRUAB17zZEz+2y/PNtzLUv80Lk85a
+    WdSZ6G0/TfcxOwzocjX8IqIjF4a/SEyeDdG6r1zVga50TuIl11yAPWNYgfnDe+PE
+    jsdFZzj4RgA5kpFaiHy2DLStGFDf90RqJTGK0mA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804331; bh=FIpWorFPzFRCH6IfhuNjXJ8a2U
-    UtJXjj1MsJ2vIoMBY=; b=vppPeYLrzfeMWApERKCmRpTR9w5LV7nep4jR5501PS
-    9hYMui60nDRbkyqm4P5EChZGAS6AL/nCcoe53QhzYzoBr3SXaf5h5DdkGPziuMpD
-    9/743Fj5cV5O8ZV9+47/jP8kgFnZh/Id+L2HOMj6WUXo8i+iKJ5Lwjs8mO5De6qM
-    27an3Le4sJxeR+Q5uns0yhBOq6hpqP/RGKMhzUjUT46wL+Ypo9T372dsgIP5UzGN
-    ffmvpT1L3YzxV9Kt/00RHz9ZPseoekTecnevHdziHs89bCwAX+rBU4OJQMK8w0Wj
-    myVQ7OrRkTtUvuF1f6o1jX7q/BU5/cWTwxrO9qoR1nlw==
+    :list-id; s=arctest; t=1521804309; bh=aUHJbdnWpGsnvei0NyzQJQTlG7
+    yXspmgXfkZmU8shAQ=; b=rm8HFiZNbjhPeuWAeRUbGJGR/GZPl+hWMFtyN0VKpV
+    LD4G8XnOIvnXyimRrHMR2Pq0ZDFDMv3P7bFXPErgFepurxGrlmv8uq0DfFTlS9ZG
+    W2V1tTfy1vzWoFadk2x6xkSsCOxZP8ll2AwlW9YmTmhHrSJUulzWNs4Bdb9Cnn9s
+    Fa5/xwn3sES3yXrOW2fXJFVnBq8Z5zcK9nlUrrsxHY/bM/EgGFl/8t9rRm+YR0X7
+    joaUfrMVFn+edq4fzXc2oORRl6VYwZGs2XINMEv1L7B+NY0wu3Ei3pZaSSqKhwNU
+    zhB49lNxfBtkwNJFpsKPDFEOaKw+dBACK46CkOdVY+tw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755281AbeCWKHb (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:07:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41262 "EHLO
+        id S1755332AbeCWKHh (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:07:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41310 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755013AbeCWKH3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:29 -0400
+        with ESMTP id S1755013AbeCWKHf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 062/177] tipc: check return value of nlmsg_new
-Date: Fri, 23 Mar 2018 10:53:10 +0100
-Message-Id: <20180323094208.070539976@linuxfoundation.org>
+Subject: [PATCH 4.9 064/177] qlcnic: fix unchecked return value
+Date: Fri, 23 Mar 2018 10:53:12 +0100
+Message-Id: <20180323094208.160442138@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -85,30 +85,29 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit 78302fd405769c9a9379e9adda119d533dce2eed ]
+[ Upstream commit 91ec701a553cb3de470fd471c6fefe3ad1125455 ]
 
-Function nlmsg_new() will return a NULL pointer if there is no enough
-memory, and its return value should be checked before it is used.
-However, in function tipc_nl_node_get_monitor(), the validation of the
-return value of function nlmsg_new() is missed. This patch fixes the
-bug.
+Function pci_find_ext_capability() may return 0, which is an invalid
+address. In function qlcnic_sriov_virtid_fn(), its return value is used
+without validation. This may result in invalid memory access bugs. This
+patch fixes the bug.
 
 Signed-off-by: Pan Bian <bianpan2016@163.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/node.c |    2 ++
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/net/tipc/node.c
-+++ b/net/tipc/node.c
-@@ -2094,6 +2094,8 @@ int tipc_nl_node_get_monitor(struct sk_b
- 	int err;
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+@@ -128,6 +128,8 @@ static int qlcnic_sriov_virtid_fn(struct
+ 		return 0;
  
- 	msg.skb = nlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-+	if (!msg.skb)
-+		return -ENOMEM;
- 	msg.portid = info->snd_portid;
- 	msg.seq = info->snd_seq;
+ 	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_SRIOV);
++	if (!pos)
++		return 0;
+ 	pci_read_config_word(dev, pos + PCI_SRIOV_VF_OFFSET, &offset);
+ 	pci_read_config_word(dev, pos + PCI_SRIOV_VF_STRIDE, &stride);
  
