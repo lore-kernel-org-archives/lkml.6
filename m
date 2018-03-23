@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805059-2-8638600138019252100
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805049-2-13793702820143248084
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805058; b=e0FZ/QhE3EJbZoIqnJr7OCO2NnAWZwZNRNse4pe2mbZBG47
-    +FwtNvKzlHiL8kw0p8dFvHATjSLKZiwhGFbG6yi2MT0NQjKWAnAEv453ZOu1Acii
-    AcKmkbzA+na/MLmL9BsczMKnho+lLWFhXjrUxovzTbmmA6i8Ow3rhbslKjEeTZcH
-    F7JA5BbMle86ZrzPafhxfYz9vruMeFw75oQazYVfy32VvnYAXB7ndFenzUPxF8g9
-    +qBgNdRqHd+dqhuCUSe6VAM4TA4zIVHT5dg5E3lzvovCw1DXgV+gjydInUvH8eJz
-    ARJS2z2uKi0inVogNf36CiaApq9IXggFMuXnD+w==
+    t=1521805048; b=S1quscQNsChzHInRvKZQnBsbmWwJJMlKN6+K/pZobUfWwxs
+    cqkDeBBM18w+tu7a8NRJTfFp3XtoWKRh0GpJ6xRmW9k1E7IP14STbkJgcE+b0e05
+    oMzePyObSP2r1WRA97UIZSeoMGcV6qRhqO5woccxQBF2cZiIFvgdXxlIcKM1AZXR
+    Ju+EHtNfD3YvPAikunfWzGI1GQR/xOxFLNgUTY/3th8Zral5foTvezyv+Nhwu3IR
+    fpn6K9ld5y4YdQhkIDNGEEdt0HT5WkxGWKOW/B8jjCn9y/FZkC1NWuZWOG5eaxzC
+    BdIFPudBHntF/ENUycvfkBtYHYjcqRU+XnJnsdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805058; bh=7mP4wQ00Qq0tUuJKV3ua6yq/bl
-    GMPyEb+ndDWUaAdvU=; b=T3tHTU4CB5soSpYVNh04XSaeWp5QhGoLOfwQK2io3z
-    ABpd/7bqHGsIlMF30iiyOlG0nhHtj/T2HUID82lT9c5f9H5HrdUTsD+2scjFML3i
-    tA5gaStRDKR6jI40vUO5CG4yHlqo7lwQUBLEAnT+VxcmxLYgNhhNEMjFCkmLW06d
-    bC02OdmxjB+nqlpacu2Wnk8ykmvE9kGq0vLuVPM07qIMV93VLkGu867tsBZa3vTj
-    p4fEJpFin/FbEHBLHRHntMC7fsjJrSoOcNhFGbxAeGwMmEhtcYS/MSPyMg8AOVWF
-    4oQM7UkpelESePCqNl+ULcN5nRzpTay31RYMtdqxs91A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805048; bh=PmVucEcz33Xw5TgrBbzdJ+MqNC
+    /Rf8uXrQ4aYQE8Gz4=; b=c+DC9VYv+tTGN2vzGI9bBUZcMpAxn0wmcLs4JGMlyL
+    E5mesz5t3nvXrl6UKHGU20+0j8m4V0WN7JhYdtpnfgbDCjvgGaLK3PTjUAbG5xOS
+    vGcqaxiIOy/KTFXiJa4QqdkbbpAmISJ0EhTDXVlfl/fEidJ5vin+nVFEsy3HU4yE
+    TKshyGyZVC37HOujJCQZ3nSTLIxuGBdIHxpX94AkU8QdgRhttka2VPqVbhyCSGzj
+    0+c8+gYTpbBCcUR5JQwTzceIyX/leczWt7A9HNg4lvGykQ+jgQ9FEzUsgp7cE1ZX
+    DK3FP2gvok3leNMaMKowxqbRNQ4GbqTtbEYIp1ncY8Sg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754747AbeCWKEw (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:04:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39304 "EHLO
+        id S1754358AbeCWKEz (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:04:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39384 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754389AbeCWKEs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:48 -0400
+        with ESMTP id S1754148AbeCWKEy (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Borowski <kilobyte@angband.pl>,
-        Liu Bo <bo.li.liu@oracle.com>, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, rtc-linux@googlegroups.com,
+        alexandre.belloni@free-electrons.com,
+        Hans de Goede <hdegoede@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 023/177] btrfs: fix a bogus warning when converting only data or metadata
-Date: Fri, 23 Mar 2018 10:52:31 +0100
-Message-Id: <20180323094206.211588633@linuxfoundation.org>
+Subject: [PATCH 4.9 012/177] x86: i8259: export legacy_pic symbol
+Date: Fri, 23 Mar 2018 10:52:20 +0100
+Message-Id: <20180323094205.752587360@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,55 +83,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adam Borowski <kilobyte@angband.pl>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit 14506127979a5a3d0c5d9b4cc76ce9d4ec23b717 ]
+[ Upstream commit 7ee06cb2f840a96be46233181ed4557901a74385 ]
 
-If your filesystem has, eg, data:raid0 metadata:raid1, and you run "btrfs
-balance -dconvert=raid1", the meta.target field will be uninitialized.
-That's otherwise ok, as it's unused except for this warning.
+The classic PC rtc-coms driver has a workaround for broken ACPI device
+nodes for it which lack an irq resource. This workaround used to
+unconditionally hardcode the irq to 8 in these cases.
 
-Thus, let's use the existing set of raid levels for the comparison.
+This was causing irq conflict problems on systems without a legacy-pic
+so a recent patch added an if (nr_legacy_irqs()) guard to the
+workaround to avoid this irq conflict.
 
-As a side effect, non-convert balances will now nag about data>metadata.
+nr_legacy_irqs() uses the legacy_pic symbol under the hood causing
+an undefined symbol error if the rtc-cmos code is build as a module.
 
-Signed-off-by: Adam Borowski <kilobyte@angband.pl>
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+This commit exports the legacy_pic symbol to fix this.
+
+Cc: rtc-linux@googlegroups.com
+Cc: alexandre.belloni@free-electrons.com
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/volumes.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ arch/x86/kernel/i8259.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -3765,6 +3765,7 @@ int btrfs_balance(struct btrfs_balance_c
- 		  struct btrfs_ioctl_balance_args *bargs)
+--- a/arch/x86/kernel/i8259.c
++++ b/arch/x86/kernel/i8259.c
+@@ -418,6 +418,7 @@ struct legacy_pic default_legacy_pic = {
+ };
+ 
+ struct legacy_pic *legacy_pic = &default_legacy_pic;
++EXPORT_SYMBOL(legacy_pic);
+ 
+ static int __init i8259A_init_ops(void)
  {
- 	struct btrfs_fs_info *fs_info = bctl->fs_info;
-+	u64 meta_target, data_target;
- 	u64 allowed;
- 	int mixed = 0;
- 	int ret;
-@@ -3861,11 +3862,16 @@ int btrfs_balance(struct btrfs_balance_c
- 		}
- 	} while (read_seqretry(&fs_info->profiles_lock, seq));
- 
--	if (btrfs_get_num_tolerated_disk_barrier_failures(bctl->meta.target) <
--		btrfs_get_num_tolerated_disk_barrier_failures(bctl->data.target)) {
-+	/* if we're not converting, the target field is uninitialized */
-+	meta_target = (bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
-+		bctl->meta.target : fs_info->avail_metadata_alloc_bits;
-+	data_target = (bctl->data.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
-+		bctl->data.target : fs_info->avail_data_alloc_bits;
-+	if (btrfs_get_num_tolerated_disk_barrier_failures(meta_target) <
-+		btrfs_get_num_tolerated_disk_barrier_failures(data_target)) {
- 		btrfs_warn(fs_info,
- 			   "metadata profile 0x%llx has lower redundancy than data profile 0x%llx",
--			   bctl->meta.target, bctl->data.target);
-+			   meta_target, data_target);
- 	}
- 
- 	if (bctl->sys.flags & BTRFS_BALANCE_ARGS_CONVERT) {
