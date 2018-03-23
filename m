@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-947063-1521799973-2-5323290037837764724
+X-Cyrus-Session-Id: sloti22d1t05-947063-1521799947-2-660834831622917753
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521799972; b=mwJA/fRWHMqI9Y16T6gOBafipwaAJ4nnMclzui18sTokuzl
-    KtGd7YD6v/jzdrvL4dVoJBUBkBoiRnaYEEu3MeKefAiBFVTpdKVUpPW8MP/q5vav
-    uADqjTRXRvBR1b9IGzoS/en7eTSEF93R1QU2Tt4PA3qQpjgyCw1dhnUhbfilgRIo
-    B0CGFlKW378hH81Icm1/8mbpo/AhADTReXRPSahxSfIavpM2xauWJjiHb3Szzwyz
-    QBquJ+GcAq28dlmmMnMwrkMiHgfcCD68YMqO3Rzr1UFACEvx5KMqVF4iX4vz5WvC
-    ctHqw4Q8lLFIglHm3sgcPi97yVADJe9nerP8xrA==
+    t=1521799946; b=VhCxv6lNT91kpYEPktSITqCWE0REPWG9hUtH63+93EwBFUv
+    bHSYu+FFqwNC5T+jPr+QOKGoan6wo5fBzOu9SyP3uM6KjwnBgNZygwhdBZsNq5PE
+    7oJT+3E562T7iZW0/aWi92r7MmOQ7aW0+11I85keeDjm6dYfqNV1Nv2xr5ji+s+y
+    Zc/RJezn3vNIfgJoMZxnul6sWbpBgf/SxXTXLhUREXLkBB/o8hjnLqtAAdol0a5N
+    ciNyfM0/SwlbW1axumMNyDQuoTjJidIDXbnm3hHjj97cjGMwHiBkNx7CXelTqRWP
+    oFe3Mm28ngS9jjeELIw70SIV6DZTl6qsDuToQsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521799972; bh=SdOZUEOzPu24Gm/eqNlkJggicD
-    80jKXVFwfmmfHlRpM=; b=qXlOkFN3hV/IvOvlGGucNMpt5j+Bs5jDxAuojDX8yz
-    ScUMnp6RI2dMM3Yhj+R7B0DdC49CMl/AHvrnuU6DIWONKL0qVvVoJX6ZJcZo00Xh
-    EY8nnbm6V4G4OT2Mr0Zv8wp8HwNibg7GLg6rs0NNGwjXUfyAXOWq5tuLkob4IXsA
-    8ydbbaJxHdytyIUprgLUYDkaHj2NwOJI6zOKX5PsZHPkVVlv0ha2LDES+7NenCLy
-    E7GSTFl122NhEcXRGCiXd+VHZfv0Mj52aVjfhVD7WRcfK2J+Ws5mReYrY6v4MTQt
-    jZgVJPttIWjE0ARYBlYtVD4i2aOlhKWqH2EzNsc0G44A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521799946; bh=lvuuIswoaj0OWZ0T9r0mcqpZ6G
+    23Tm/hvbQQLRcIezU=; b=DMlZEM2XHXd/fLpl4t0p8hIGPcp/ilLzfKa6mPiSh9
+    yV6GJyOlDZdBixi8odYyhyAOUAlWrISTHUAJL8FnrnMoN5mtVE+Y6WWjA/LtG+ox
+    jABTfXx2Z982KoySW4wXvK6oHrnVci5Xrhokw5DlZLl7D/NtlVOp2nYR1vr0GOGs
+    qnIjCNVY0ZIJVTJrwM9u//DY+QWyvnDNo07V336O4jji+pJpjyRNnTDKYmF7PxlA
+    BitUXXib7KWgmywyZ+q+KSBi1jg0YWQi3EaPswVr5Aon9KyEw/9UborQKRmLr2Ei
+    pmc7jCgeJzeuRXzjTvPZeTyNpV05zfe5THLPjto9AkGw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,25 +50,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751861AbeCWKMq (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:12:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44452 "EHLO
+        id S933161AbeCWKMS (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:12:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44210 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752088AbeCWKMo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:44 -0400
+        with ESMTP id S932478AbeCWKMP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: [PATCH 4.9 174/177] clk: migrate the count of orphaned clocks at init
-Date: Fri, 23 Mar 2018 10:55:02 +0100
-Message-Id: <20180323094212.819645938@linuxfoundation.org>
+        stable@vger.kernel.org, Sahara <keun-o.park@darkmatter.ae>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 159/177] pty: cancel pty slave port bufs work in tty_release
+Date: Fri, 23 Mar 2018 10:54:47 +0100
+Message-Id: <20180323094212.200792318@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -86,117 +81,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Sahara <keun-o.park@darkmatter.ae>
 
-commit 99652a469df19086d594e8e89757d4081a812789 upstream.
 
-The orphan clocks reparents should migrate any existing count from the
-orphan clock to its new acestor clocks, otherwise we may have
-inconsistent counts in the tree and end-up with gated critical clocks
+[ Upstream commit 2b022ab7542df60021ab57854b3faaaf42552eaf ]
 
-Assuming we have two clocks, A and B.
-* Clock A has CLK_IS_CRITICAL flag set.
-* Clock B is an ancestor of A which can gate. Clock B gate is left
-  enabled by the bootloader.
+In case that CONFIG_SLUB_DEBUG is on and pty is used, races between
+release_one_tty and flush_to_ldisc work threads may happen and lead
+to use-after-free condition on tty->link->port. Because SLUB_DEBUG
+is turned on, freed tty->link->port is filled with POISON_FREE value.
+So far without SLUB_DEBUG, port was filled with zero and flush_to_ldisc
+could return without a problem by checking if tty is NULL.
 
-Step 1: Clock A is registered. Since it is a critical clock, it is
-enabled. The clock being still an orphan, no parent are enabled.
+CPU 0                                 CPU 1
+-----                                 -----
+release_tty                           pty_write
+   cancel_work_sync(tty)                 to = tty->link
+   tty_kref_put(tty->link)               tty_schedule_flip(to->port)
+      << workqueue >>                 ...
+      release_one_tty                 ...
+         pty_cleanup                  ...
+            kfree(tty->link->port)       << workqueue >>
+                                         flush_to_ldisc
+                                            tty = READ_ONCE(port->itty)
+                                            tty is 0x6b6b6b6b6b6b6b6b
+                                            !!PANIC!! access tty->ldisc
 
-Step 2: Clock B is registered and reparented to clock A (potentially
-through several other clocks). We are now in situation where the enable
-count of clock A is 1 while the enable count of its ancestors is 0, which
-is not good.
+ Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b6b93
+ pgd = ffffffc0eb1c3000
+ [6b6b6b6b6b6b6b93] *pgd=0000000000000000, *pud=0000000000000000
+ ------------[ cut here ]------------
+ Kernel BUG at ffffff800851154c [verbose debug info unavailable]
+ Internal error: Oops - BUG: 96000004 [#1] PREEMPT SMP
+ CPU: 3 PID: 265 Comm: kworker/u8:9 Tainted: G        W 3.18.31-g0a58eeb #1
+ Hardware name: Qualcomm Technologies, Inc. MSM 8996pro v1.1 + PMI8996 Carbide (DT)
+ Workqueue: events_unbound flush_to_ldisc
+ task: ffffffc0ed610ec0 ti: ffffffc0ed624000 task.ti: ffffffc0ed624000
+ PC is at ldsem_down_read_trylock+0x0/0x4c
+ LR is at tty_ldisc_ref+0x24/0x4c
+ pc : [<ffffff800851154c>] lr : [<ffffff800850f6c0>] pstate: 80400145
+ sp : ffffffc0ed627cd0
+ x29: ffffffc0ed627cd0 x28: 0000000000000000
+ x27: ffffff8009e05000 x26: ffffffc0d382cfa0
+ x25: 0000000000000000 x24: ffffff800a012f08
+ x23: 0000000000000000 x22: ffffffc0703fbc88
+ x21: 6b6b6b6b6b6b6b6b x20: 6b6b6b6b6b6b6b93
+ x19: 0000000000000000 x18: 0000000000000001
+ x17: 00e80000f80d6f53 x16: 0000000000000001
+ x15: 0000007f7d826fff x14: 00000000000000a0
+ x13: 0000000000000000 x12: 0000000000000109
+ x11: 0000000000000000 x10: 0000000000000000
+ x9 : ffffffc0ed624000 x8 : ffffffc0ed611580
+ x7 : 0000000000000000 x6 : ffffff800a42e000
+ x5 : 00000000000003fc x4 : 0000000003bd1201
+ x3 : 0000000000000001 x2 : 0000000000000001
+ x1 : ffffff800851004c x0 : 6b6b6b6b6b6b6b93
 
-Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
-clock B being 0, clock B is gated and and critical clock A actually gets
-disabled.
-
-This situation was found while adding fdiv_clk gates to the meson8b
-platform.  These clocks parent clk81 critical clock, which is the mother
-of all peripheral clocks in this system. Because of the issue described
-here, the system is crashing when clk_disable_unused() is called.
-
-The situation is solved by reverting
-commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration").
-To avoid breaking again the situation described in this commit
-description, enabling critical clock should be done before walking the
-orphan list. This way, a parent critical clock may not be accidentally
-disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
-
-Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration")
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk.c |   37 +++++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+ drivers/tty/tty_io.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2438,22 +2438,37 @@ static int __clk_core_init(struct clk_co
- 	core->rate = core->req_rate = rate;
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1702,6 +1702,8 @@ static void release_tty(struct tty_struc
+ 	if (tty->link)
+ 		tty->link->port->itty = NULL;
+ 	tty_buffer_cancel_work(tty->port);
++	if (tty->link)
++		tty_buffer_cancel_work(tty->link->port);
  
- 	/*
-+	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
-+	 * don't get accidentally disabled when walking the orphan tree and
-+	 * reparenting clocks
-+	 */
-+	if (core->flags & CLK_IS_CRITICAL) {
-+		unsigned long flags;
-+
-+		clk_core_prepare(core);
-+
-+		flags = clk_enable_lock();
-+		clk_core_enable(core);
-+		clk_enable_unlock(flags);
-+	}
-+
-+	/*
- 	 * walk the list of orphan clocks and reparent any that newly finds a
- 	 * parent.
- 	 */
- 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
- 		struct clk_core *parent = __clk_init_parent(orphan);
--		unsigned long flags;
- 
- 		/*
--		 * we could call __clk_set_parent, but that would result in a
--		 * redundant call to the .set_rate op, if it exists
-+		 * We need to use __clk_set_parent_before() and _after() to
-+		 * to properly migrate any prepare/enable count of the orphan
-+		 * clock. This is important for CLK_IS_CRITICAL clocks, which
-+		 * are enabled during init but might not have a parent yet.
- 		 */
- 		if (parent) {
- 			/* update the clk tree topology */
--			flags = clk_enable_lock();
--			clk_reparent(orphan, parent);
--			clk_enable_unlock(flags);
-+			__clk_set_parent_before(orphan, parent);
-+			__clk_set_parent_after(orphan, parent, NULL);
- 			__clk_recalc_accuracies(orphan);
- 			__clk_recalc_rates(orphan, 0);
- 		}
-@@ -2470,16 +2485,6 @@ static int __clk_core_init(struct clk_co
- 	if (core->ops->init)
- 		core->ops->init(core->hw);
- 
--	if (core->flags & CLK_IS_CRITICAL) {
--		unsigned long flags;
--
--		clk_core_prepare(core);
--
--		flags = clk_enable_lock();
--		clk_core_enable(core);
--		clk_enable_unlock(flags);
--	}
--
- 	kref_init(&core->ref);
- out:
- 	clk_prepare_unlock();
+ 	tty_kref_put(tty->link);
+ 	tty_kref_put(tty);
