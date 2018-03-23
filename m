@@ -1,84 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeCWVLk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 17:11:40 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:43549 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751288AbeCWVLi (ORCPT
+        id S1752119AbeCWVM3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 17:12:29 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42371 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751504AbeCWVM2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 17:11:38 -0400
-X-Google-Smtp-Source: AG47ELtWo/MQhvnSwCS1RYJyrAJAcTxdvbRQ6ZBGmawXJEknZA+Jj30q1FHMWwfRiC4b+N5V1pwZzA==
-Subject: Re: [PATCH net-next 4/8] dt-bindings: net: add DT bindings for
- Microsemi Ocelot Switch
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "David S . Miller" <davem@davemloft.net>
-Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org, Rob Herring <robh+dt@kernel.org>
-References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
- <20180323201117.8416-5-alexandre.belloni@bootlin.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <a5db6109-c5d9-f573-893c-f7d66c3168c2@gmail.com>
-Date: Fri, 23 Mar 2018 14:11:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 23 Mar 2018 17:12:28 -0400
+Date: Fri, 23 Mar 2018 22:12:24 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joelaf@google.com>
+Subject: rcu: Add might_sleep() check to synchronize_rcu()
+Message-ID: <alpine.DEB.2.21.1803232210110.1481@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180323201117.8416-5-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/2018 01:11 PM, Alexandre Belloni wrote:
-> DT bindings for the Ethernet switch found on Microsemi Ocelot platforms.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  .../devicetree/bindings/net/mscc-ocelot.txt        | 62 ++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/mscc-ocelot.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/net/mscc-ocelot.txt b/Documentation/devicetree/bindings/net/mscc-ocelot.txt
-> new file mode 100644
-> index 000000000000..ee092a85b5a0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/mscc-ocelot.txt
-> @@ -0,0 +1,62 @@
-> +Microsemi Ocelot network Switch
-> +===============================
-> +
-> +The Microsemi Ocelot network switch can be found on Microsemi SoCs (VSC7513,
-> +VSC7514)
-> +
-> +Required properties:
-> +- compatible: Should be "mscc,ocelot-switch"
-> +- reg: Must contain an (offset, length) pair of the register set for each
-> +  entry in reg-names.
-> +- reg-names: Must include the following entries:
-> +  - "sys"
-> +  - "rew"
-> +  - "qs"
-> +  - "hsio"
-> +  - "qsys"
-> +  - "ana"
-> +  - "portX" with X from 0 to the number of last port index available on that
-> +    switch
-> +- interrupts: Should contain the switch interrupts for frame extraction and
-> +  frame injection
-> +- interrupt-names: should contain the interrupt names: "xtr", "inj"
+Subject: rcu: Add might_sleep() check to synchronize_rcu()
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Fri, 23 Mar 2018 22:02:18 +0100
 
-You are not documenting the "ports" subnode(s).Please move the
-individual ports definition under a ports subnode, mainly for two reasons:
+Joel reported a debugobjects warning which is triggered by a RCU callback
+invoking synchronize_rcu(). RCU callbacks run in softirq context, so
+calling synchronize_rcu() is a bad idea as it might sleep.
 
-- it makes it easy at the .dtsi level to have all ports disabled by default
+debugobjects triggers because __wait_rcu_gp() uses on stack objects and
+invokes debug_object_init_on_stack(). That function checks the object
+address against current's task stack, which fails because the code runs on
+the softirq stack.
 
-- this makes you strictly conforming to the DSA binding for Ethernet
-switches and this is good for consistency (both parsing code and just
-representation).
--- 
-Florian
+synchronize_rcu() lacks a might_sleep() check which would have caught that
+issue way earlier because it would trigger with the minimal debug options
+enabled.
+
+Add a might_sleep() check to catch such cases.
+
+Reported-by: Joel Fernandes <joelaf@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+---
+ kernel/rcu/tree_plugin.h |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -753,6 +753,7 @@ void synchronize_rcu(void)
+ 			 "Illegal synchronize_rcu() in RCU read-side critical section");
+ 	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
+ 		return;
++	might_sleep();
+ 	if (rcu_gp_is_expedited())
+ 		synchronize_rcu_expedited();
+ 	else
