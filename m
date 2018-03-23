@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804332-2-10190202683622396057
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804331-2-12190661315683110761
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804331; b=pxLh+I8+3NzwgYC5Z2esaoIG/aKlRwFxbd8aVKiXlpbdaU5
-    3eZkTteVVUf6wVHOqE5bATeJG1zXgxE+A7UB070C+WJqh8f124EnfNWqfwf6xiKG
-    5Wt8RGDXVRocS1+0q3T5u/Lj0V5/d5mNdpX0ahMo5bKCUILDjsmUX/crEoWsb1We
-    NdNoMIsGB9B1qx7kYohl+bU2p1MazZR2q0JNgy6i2OzRutAGaRpxRRgERY8NlvF8
-    X8FYwsPRh9wcuCZG9n6BA/5Nq0sSSLdN7+6ta4i1sLrz3Y3zSXJgi0rvp5Jj9YY0
-    k4f9LCTf77berrrA3C2WC39p2plYo08ebnvrvsw==
+    t=1521804331; b=g82huK/gpvMDyHGrTVTlZPzMOrTV8X8x5RRPr07agkP5zwS
+    P3PdCbqfR1JVWZ0Je8wkFF3QvTlq3EmKxY7lZnWQ18qFnmy+Xju1k5B2DzuP+Z6o
+    xrVKzgrIcBbmC0zPbJZFRsBamSfShzXMxE/jojla/CyHWBK1JoU4dPHa6xEUPkk+
+    TriIs5Rqg0aQd5cgUZKBiO522yJrSSbNxZKQelZMD38GFIqOBPaYflTNXng/9YUg
+    Wjiso5iCeR+MN68++yC/X3KkdQfhy7iyeBndROmT3m/1ZzwDmytZK+m964x1Vq0v
+    CzII8NhzgEOGUuxapLQkSZDnTSANmVTdJggMfSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804331; bh=4co8Gbx4IR5XuB+JyupASvU8ou
-    LjDE2J21h8SjV9uzI=; b=sdaUtUlJIhQ8oaFHXHIYGhhpQ+vhhgjePRLGHySNpC
-    W/enl4zCOVVTXKkSbxt275W4bEKYj+T+nrenT4CWUxMT3k1Ngd0yg3VFiCMjnkcV
-    xrQdKAd0YF77V4nBg64dMmx6vZltZhpAaEpm5ZDTP+IjeP6ZATFGTBqDv2YnqRqR
-    +fAUvAxfh8IIhxQTgTArVaYNuPCnSBc8fggXUetfpO3M7aF0Yg9acra9sFJStqxv
-    VmznsKVy1kMO0VTXz4baOnzLJsKa4anvT4hPM+ShzhZ+DrlOyI4PIywexLivSDUM
-    ggRzWV6Zh2GoWkf/kwZBuX8vgkKwTQU3jLoGqu0AWpoQ==
+    :list-id; s=arctest; t=1521804331; bh=FIpWorFPzFRCH6IfhuNjXJ8a2U
+    UtJXjj1MsJ2vIoMBY=; b=vppPeYLrzfeMWApERKCmRpTR9w5LV7nep4jR5501PS
+    9hYMui60nDRbkyqm4P5EChZGAS6AL/nCcoe53QhzYzoBr3SXaf5h5DdkGPziuMpD
+    9/743Fj5cV5O8ZV9+47/jP8kgFnZh/Id+L2HOMj6WUXo8i+iKJ5Lwjs8mO5De6qM
+    27an3Le4sJxeR+Q5uns0yhBOq6hpqP/RGKMhzUjUT46wL+Ypo9T372dsgIP5UzGN
+    ffmvpT1L3YzxV9Kt/00RHz9ZPseoekTecnevHdziHs89bCwAX+rBU4OJQMK8w0Wj
+    myVQ7OrRkTtUvuF1f6o1jX7q/BU5/cWTwxrO9qoR1nlw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752173AbeCWLZI (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:25:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41294 "EHLO
+        id S1755281AbeCWKHb (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:07:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41262 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755317AbeCWKHc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:32 -0400
+        with ESMTP id S1755013AbeCWKH3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 063/177] wan: pc300too: abort path on failure
-Date: Fri, 23 Mar 2018 10:53:11 +0100
-Message-Id: <20180323094208.115951318@linuxfoundation.org>
+Subject: [PATCH 4.9 062/177] tipc: check return value of nlmsg_new
+Date: Fri, 23 Mar 2018 10:53:10 +0100
+Message-Id: <20180323094208.070539976@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -85,28 +85,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit 2a39e7aa8a98f777f0732ca7125b6c9668791760 ]
+[ Upstream commit 78302fd405769c9a9379e9adda119d533dce2eed ]
 
-In function pc300_pci_init_one(), on the ioremap error path, function
-pc300_pci_remove_one() is called to free the allocated memory. However,
-the path is not terminated, and the freed memory will be used later,
-resulting in use-after-free bugs. This path fixes the bug.
+Function nlmsg_new() will return a NULL pointer if there is no enough
+memory, and its return value should be checked before it is used.
+However, in function tipc_nl_node_get_monitor(), the validation of the
+return value of function nlmsg_new() is missed. This patch fixes the
+bug.
 
 Signed-off-by: Pan Bian <bianpan2016@163.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/pc300too.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/tipc/node.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wan/pc300too.c
-+++ b/drivers/net/wan/pc300too.c
-@@ -347,6 +347,7 @@ static int pc300_pci_init_one(struct pci
- 	    card->rambase == NULL) {
- 		pr_err("ioremap() failed\n");
- 		pc300_pci_remove_one(pdev);
-+		return -ENOMEM;
- 	}
+--- a/net/tipc/node.c
++++ b/net/tipc/node.c
+@@ -2094,6 +2094,8 @@ int tipc_nl_node_get_monitor(struct sk_b
+ 	int err;
  
- 	/* PLX PCI 9050 workaround for local configuration register read bug */
+ 	msg.skb = nlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
++	if (!msg.skb)
++		return -ENOMEM;
+ 	msg.portid = info->snd_portid;
+ 	msg.seq = info->snd_seq;
+ 
