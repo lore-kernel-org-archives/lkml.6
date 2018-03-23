@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521807015-2-16144356932971065259
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521807000-2-7829673532709196068
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807014; b=ILL5KC5+ZdHHDkEVxwaujp6sPWphPQlGcJ2wYqJly4B3dWo
-    G0kfqoy+TS/EgTjuRo6oRacvocrpGuLRFPHvo6D0IIqmIc2mVWkSMuO5FYdNk+tc
-    lWvebmvrJuFJ8UveldRxoUbRVXaeE/snTiDM3yV7KeUnAYily6kM2ckIq/6bbWfs
-    ZSuWoDS8AMh1IZtrijEGAfS7bKXS856vo6kQIVk1VtGoC700XUZbsB9nPupijp9o
-    l45tJXgKM60IzhT6IBFGRDXjUBr+sd+z2c1YwjV2cfvN0Tcferw0nxx/+RcRll9v
-    +ZfPYyuQQiU+pEhwZMautWywjZPBVyka24mU/6w==
+    t=1521806999; b=bYF6FBScKaO4LEaBET+Qvj2tiiGsBkvO2fpkUi0zi8lg9f0
+    4e8kXgNJwr0hvXk/twW8kQnucbsBJQ6965Qz3WIIH/ceszcKwemXcFEMesbCMK5f
+    BOwWN0XMBvMY3cmGmR5oq6o/q2o+d1lfk8A54C9D5Nl9a4c9TtvrPi2LqdWlMoa5
+    uVi/eonW24alaGl0YKwCpk/4pmme/3iwM5KYoyKlknh8lMsYrhbQOz5XvgNem6LV
+    gxU+rMKJ6Y5tQZLARZ89dBUdIHdfrlo1AZK1MdYu/avJdrX3IxRqM+euIfjGYs2H
+    zEYyLSd5bP7ZglFO/3cEMG3UC2/NBSn7+GaOMnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807014; bh=s+QBAJ+T3/gzmPFlUBsKwINQoG
-    cd/yLVmj4FZdlAw80=; b=hcP6ZvgiXvQe4HYbeGQOPXJ9uSda5EHDnLnKlj9Bxc
-    Ymo+u5v1ZlTQz6M4D0EY+2jNjB+uhPPqcCtLLnwdcnbwMIEkbCNVRauytSjrgDAY
-    g7hBXSDkrZDMUEQSlJlVtn7ZcGT7YRJhi36VyI7lXf6sDGPZ3JuYX31cGs/K/gJW
-    R7PsCliBRgI41UAgOKwp6r6j5xu5hCtpmH87gwTGUCb1AqnpTBulhev52fM6eIoQ
-    0TBfh3TgiraPTuxFpDHX+y6Z8zasWyw2a0V+PU2xDmtv5vfv5zz3Ybb/W73+GBcR
-    CXPBnAxsaU3/CNQZgUnQ4OMzx99J0V7Yzzcgf5lMGq+Q==
+    :list-id; s=arctest; t=1521806999; bh=RMOCEXU5XuVN36bYQS60nPGVE9
+    BSWc0gZ/LEJFPJQf4=; b=vrfsDwK5Zqdn5ER/5zDLZraNXEgOIVsep5usLOQsXy
+    cuyCVfM5dpWfyJb0UIlFtFhp6yoeT0wbaiXL9bB4rVXN+XEoHLeZbA6M8Tg862DX
+    1yuMBnCybCJT12WQRpfxLL10ULLmqM6yQHysuZiNvGpGIRbW9K5ImK3diDaqWZwW
+    Zz6ajnL+4mbiDbuzUqYBFDpHWocPtsscidyKBEftQ53cgwrPcuPcM/rglB2d96Td
+    ScdYMGAXlWirByF0TArW0quZbz1mrXQTyO2hjAimGZhhV1R5YFBQUPMF7LfN8aw3
+    vHDZxZMjj7L5IVrHaz3TdeMBMfrOBpM0JmREFM86DHHw==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753005AbeCWJ6F (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:58:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35548 "EHLO
+        id S1753264AbeCWMJl (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 08:09:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35620 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752966AbeCWJ6B (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:01 -0400
+        with ESMTP id S1753049AbeCWJ6O (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Erez Shitrit <erezsh@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 35/84] sfp: fix EEPROM reading in the case of non-SFF8472 SFPs
-Date: Fri, 23 Mar 2018 10:53:49 +0100
-Message-Id: <20180323095417.193331557@linuxfoundation.org>
+Subject: [PATCH 4.15 39/84] IB/ipoib: Avoid memory leak if the SA returns a different DGID
+Date: Fri, 23 Mar 2018 10:53:53 +0100
+Message-Id: <20180323095417.869947753@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -82,48 +83,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Erez Shitrit <erezsh@mellanox.com>
 
 
-[ Upstream commit 2794ffc441dde3109804085dc745e8014a4de224 ]
+[ Upstream commit 439000892ee17a9c92f1e4297818790ef8bb4ced ]
 
-The EEPROM reading was trying to read from the second EEPROM address
-if we requested the last byte from the SFF8079 EEPROM, which caused a
-failure when the second EEPROM is not present.  Discovered with a
-S-RJ01 SFP module.  Fix this.
+The ipoib path database is organized around DGIDs from the LLADDR, but the
+SA is free to return a different GID when asked for path. This causes a
+bug because the SA's modified DGID is copied into the database key, even
+though it is no longer the correct lookup key, causing a memory leak and
+other malfunctions.
 
-Fixes: 73970055450e ("sfp: add SFP module support")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Ensure the database key does not change after the SA query completes.
+
+Demonstration of the bug is as  follows
+ipoib wants to send to GID fe80:0000:0000:0000:0002:c903:00ef:5ee2, it
+creates new record in the DB with that gid as a key, and issues a new
+request to the SM.
+Now, the SM from some reason returns path-record with other SGID (for
+example, 2001:0000:0000:0000:0002:c903:00ef:5ee2 that contains the local
+subnet prefix) now ipoib will overwrite the current entry with the new
+one, and if new request to the original GID arrives ipoib  will not find
+it in the DB (was overwritten) and will create new record that in its
+turn will also be overwritten by the response from the SM, and so on
+till the driver eats all the device memory.
+
+Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/sfp.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/drivers/net/phy/sfp.c
-+++ b/drivers/net/phy/sfp.c
-@@ -683,20 +683,19 @@ static int sfp_module_eeprom(struct sfp
- 		len = min_t(unsigned int, last, ETH_MODULE_SFF_8079_LEN);
- 		len -= first;
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -775,6 +775,22 @@ static void path_rec_completion(int stat
+ 	spin_lock_irqsave(&priv->lock, flags);
  
--		ret = sfp->read(sfp, false, first, data, len);
-+		ret = sfp_read(sfp, false, first, data, len);
- 		if (ret < 0)
- 			return ret;
+ 	if (!IS_ERR_OR_NULL(ah)) {
++		/*
++		 * pathrec.dgid is used as the database key from the LLADDR,
++		 * it must remain unchanged even if the SA returns a different
++		 * GID to use in the AH.
++		 */
++		if (memcmp(pathrec->dgid.raw, path->pathrec.dgid.raw,
++			   sizeof(union ib_gid))) {
++			ipoib_dbg(
++				priv,
++				"%s got PathRec for gid %pI6 while asked for %pI6\n",
++				dev->name, pathrec->dgid.raw,
++				path->pathrec.dgid.raw);
++			memcpy(pathrec->dgid.raw, path->pathrec.dgid.raw,
++			       sizeof(union ib_gid));
++		}
++
+ 		path->pathrec = *pathrec;
  
- 		first += len;
- 		data += len;
- 	}
--	if (first >= ETH_MODULE_SFF_8079_LEN &&
--	    first < ETH_MODULE_SFF_8472_LEN) {
-+	if (first < ETH_MODULE_SFF_8472_LEN && last > ETH_MODULE_SFF_8079_LEN) {
- 		len = min_t(unsigned int, last, ETH_MODULE_SFF_8472_LEN);
- 		len -= first;
- 		first -= ETH_MODULE_SFF_8079_LEN;
- 
--		ret = sfp->read(sfp, true, first, data, len);
-+		ret = sfp_read(sfp, true, first, data, len);
- 		if (ret < 0)
- 			return ret;
- 	}
+ 		old_ah   = path->ah;
