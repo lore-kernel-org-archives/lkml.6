@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521807060-2-7468468958419729972
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521807060-2-4530588319862085601
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807059; b=OzfXWLSrZvVqYoKPLpzWk8Ml1PFDseOkUZBhvz9hV3VKjLT
-    JXMpcRM9NV4aVImjnoTcyC4D4tdb9cEFSZJHLh4oPabFBy9WJ1rjq3t5c5r5G/cX
-    hzQibk/tH9aCpMVjE7m2/bG58Z4gHyTTiQ/u/H53C/FehVIl4U10vjq/JnAzO5e/
-    XBiWF4yQYebtCk1UP0mXnp4ONw5oi6cQLQz32pORHJlNK/Q4D1ylARUWvkLkMvlY
-    dKQrr2erLo+Y2KB7tzV+w3vI05/tPCvUuzx6MGLrqzWHvfBg46xM2NKYr0y75VAY
-    xeWLuHjX0xjtB3NPEwsiTgJuHH16X/P7kli0opw==
+    t=1521807059; b=mZvVCicrTc0/ewY/RWMD2zdCCZijgaQQw+gCU1m6lrhELIu
+    3qBF6dB2nBJ2qJuSSuK3a2I7mQMl55AWLRt4j+8ACus7DNiFWKJZmXeya0n32Nw5
+    7nAaPua+JZ4CUFRVnyzPlhFMNshkE48bNMbuV1p0NxWfWgOjyMq3e+wyNrk08HFU
+    VUf04jM3KnOHT8IPczNRBE0Z9V2jDdcdB+M88TZvfY/36Erk7gAwCIM5JIOXTgO1
+    stEkqN8UPxvBfKpxMy8npCdzfs5MBzkaoGKCanfE6aQ06A2Y3ACrwlfX6nPWEsch
+    a9mHXAnt0w6aY5jP4GgIA+EfF8WShCZ1cEj2eHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807059; bh=qOci5u6fO7GwjDspV0qqpo00qg
-    ERiS3XMn3lpD4Mk0I=; b=CjR76QfsZIRB1o3seRLMqyvzHX5hYTR6FN707GCHZR
-    Rn0nE+yV7bLUcH47jaPegy0vQfqSVy3Xd5vFrJzPsvf92fwoFrvAHGf/NIEKdVTB
-    hffoeDxiMXTcwSRqtwBGl823hwPQ2+5bMiH4stGZgJEX91rW2IEcvogerFWDSzyc
-    259y6q9gf4lMjRyxmpUNQllMOMWgLNnOx6GI5kO7Cx0Kn5OaNkPGqXEG6VZgK6YB
-    g8BxR48rtZ3UIX+hUtjGqqHutxjBY8bmffC8wBFNeNBOvh2Go81XUADThZkKhS7r
-    dODNarAFYSksNMM8XSxplj5NbjpRmLSUzZ2jucNQGY0g==
+    :list-id; s=arctest; t=1521807059; bh=oi55sPSikm6Mx+EcRW+BBw9j7T
+    uGUDojxD2KTzdLig0=; b=ihO7B2HMbRyOtSY8RHkTcEzk+xp4+VNc5JVANiYw8r
+    CqeAf0xwOUsq3OGBsR/8bpzBNZJwiBZf29xa+ub/4b2AOLcdK52qsZ2MQ+3sCdVq
+    A/n//nALJ2PdYFw/ogVjbFYDKu0gFmdotB7+9PJotSFwUU9nfOhbbUi/KFYYkHxj
+    XsfI4SZS6mPrjSfgQg1o09yqfzgYg85+AmTyP2n89GhX5LF4vZE/tV/utESsL4K+
+    TBFhiES7+YgpdKq+7etqon+f/7llzen+/plBhwAIcO75yP8UZLMr7L4U/DFm/3U6
+    OBWi4vcUxyQrJ286Kh9BeVAY2bAdBzwxCTTZ9EUX4L2g==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752972AbeCWJ54 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:57:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35488 "EHLO
+        id S1753169AbeCWMKd (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 08:10:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35516 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752914AbeCWJ5y (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:54 -0400
+        with ESMTP id S1752984AbeCWJ55 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Holzheu <holzheu@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 33/84] /dev/mem: Add bounce buffer for copy-out
-Date: Fri, 23 Mar 2018 10:53:47 +0100
-Message-Id: <20180323095416.919944890@linuxfoundation.org>
+Subject: [PATCH 4.15 34/84] net: phy: meson-gxl: check phy_write return value
+Date: Fri, 23 Mar 2018 10:53:48 +0100
+Message-Id: <20180323095417.060448025@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -83,120 +83,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
 
-[ Upstream commit 22ec1a2aea73b9dfe340dff7945bd85af4cc6280 ]
+[ Upstream commit 9042b46eda33ef5db3cdfc9e12b3c8cabb196141 ]
 
-As done for /proc/kcore in
+Always check phy_write return values. Better to be safe than sorry
 
-  commit df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext data")
-
-this adds a bounce buffer when reading memory via /dev/mem. This
-is needed to allow kernel text memory to be read out when built with
-CONFIG_HARDENED_USERCOPY (which refuses to read out kernel text) and
-without CONFIG_STRICT_DEVMEM (which would have refused to read any RAM
-contents at all).
-
-Since this build configuration isn't common (most systems with
-CONFIG_HARDENED_USERCOPY also have CONFIG_STRICT_DEVMEM), this also tries
-to inform Kconfig about the recommended settings.
-
-This patch is modified from Brad Spengler/PaX Team's changes to /dev/mem
-code in the last public patch of grsecurity/PaX based on my understanding
-of the code. Changes or omissions from the original code are mine and
-don't reflect the original grsecurity/PaX code.
-
-Reported-by: Michael Holzheu <holzheu@linux.vnet.ibm.com>
-Fixes: f5509cc18daa ("mm: Hardened usercopy")
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/mem.c |   27 ++++++++++++++++++++++-----
- security/Kconfig   |    1 +
- 2 files changed, 23 insertions(+), 5 deletions(-)
+ drivers/net/phy/meson-gxl.c |   50 +++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 38 insertions(+), 12 deletions(-)
 
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -107,6 +107,8 @@ static ssize_t read_mem(struct file *fil
- 	phys_addr_t p = *ppos;
- 	ssize_t read, sz;
- 	void *ptr;
-+	char *bounce;
-+	int err;
+--- a/drivers/net/phy/meson-gxl.c
++++ b/drivers/net/phy/meson-gxl.c
+@@ -26,27 +26,53 @@
  
- 	if (p != *ppos)
- 		return 0;
-@@ -129,15 +131,22 @@ static ssize_t read_mem(struct file *fil
- 	}
- #endif
- 
-+	bounce = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+	if (!bounce)
-+		return -ENOMEM;
+ static int meson_gxl_config_init(struct phy_device *phydev)
+ {
++	int ret;
 +
- 	while (count > 0) {
- 		unsigned long remaining;
- 		int allowed;
+ 	/* Enable Analog and DSP register Bank access by */
+-	phy_write(phydev, 0x14, 0x0000);
+-	phy_write(phydev, 0x14, 0x0400);
+-	phy_write(phydev, 0x14, 0x0000);
+-	phy_write(phydev, 0x14, 0x0400);
++	ret = phy_write(phydev, 0x14, 0x0000);
++	if (ret)
++		return ret;
++	ret = phy_write(phydev, 0x14, 0x0400);
++	if (ret)
++		return ret;
++	ret = phy_write(phydev, 0x14, 0x0000);
++	if (ret)
++		return ret;
++	ret = phy_write(phydev, 0x14, 0x0400);
++	if (ret)
++		return ret;
  
- 		sz = size_inside_page(p, count);
+ 	/* Write Analog register 23 */
+-	phy_write(phydev, 0x17, 0x8E0D);
+-	phy_write(phydev, 0x14, 0x4417);
++	ret = phy_write(phydev, 0x17, 0x8E0D);
++	if (ret)
++		return ret;
++	ret = phy_write(phydev, 0x14, 0x4417);
++	if (ret)
++		return ret;
  
-+		err = -EPERM;
- 		allowed = page_is_allowed(p >> PAGE_SHIFT);
- 		if (!allowed)
--			return -EPERM;
-+			goto failed;
-+
-+		err = -EFAULT;
- 		if (allowed == 2) {
- 			/* Show zeros for restricted memory. */
- 			remaining = clear_user(buf, sz);
-@@ -149,24 +158,32 @@ static ssize_t read_mem(struct file *fil
- 			 */
- 			ptr = xlate_dev_mem_ptr(p);
- 			if (!ptr)
--				return -EFAULT;
--
--			remaining = copy_to_user(buf, ptr, sz);
-+				goto failed;
+ 	/* Enable fractional PLL */
+-	phy_write(phydev, 0x17, 0x0005);
+-	phy_write(phydev, 0x14, 0x5C1B);
++	ret = phy_write(phydev, 0x17, 0x0005);
++	if (ret)
++		return ret;
++	ret = phy_write(phydev, 0x14, 0x5C1B);
++	if (ret)
++		return ret;
  
-+			err = probe_kernel_read(bounce, ptr, sz);
- 			unxlate_dev_mem_ptr(p, ptr);
-+			if (err)
-+				goto failed;
-+
-+			remaining = copy_to_user(buf, bounce, sz);
- 		}
+ 	/* Program fraction FR_PLL_DIV1 */
+-	phy_write(phydev, 0x17, 0x029A);
+-	phy_write(phydev, 0x14, 0x5C1D);
++	ret = phy_write(phydev, 0x17, 0x029A);
++	if (ret)
++		return ret;
++	ret = phy_write(phydev, 0x14, 0x5C1D);
++	if (ret)
++		return ret;
  
- 		if (remaining)
--			return -EFAULT;
-+			goto failed;
+ 	/* Program fraction FR_PLL_DIV1 */
+-	phy_write(phydev, 0x17, 0xAAAA);
+-	phy_write(phydev, 0x14, 0x5C1C);
++	ret = phy_write(phydev, 0x17, 0xAAAA);
++	if (ret)
++		return ret;
++	ret = phy_write(phydev, 0x14, 0x5C1C);
++	if (ret)
++		return ret;
  
- 		buf += sz;
- 		p += sz;
- 		count -= sz;
- 		read += sz;
- 	}
-+	kfree(bounce);
- 
- 	*ppos += read;
- 	return read;
-+
-+failed:
-+	kfree(bounce);
-+	return err;
+ 	return 0;
  }
- 
- static ssize_t write_mem(struct file *file, const char __user *buf,
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -154,6 +154,7 @@ config HARDENED_USERCOPY
- 	bool "Harden memory copies between kernel and userspace"
- 	depends on HAVE_HARDENED_USERCOPY_ALLOCATOR
- 	select BUG
-+	imply STRICT_DEVMEM
- 	help
- 	  This option checks for obviously wrong memory regions when
- 	  copying memory to/from the kernel (via copy_to_user() and
