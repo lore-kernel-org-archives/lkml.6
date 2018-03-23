@@ -1,92 +1,346 @@
-Return-Path: <k.marinushkin@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521986014; cv=none;
-        d=google.com; s=arc-20160816;
-        b=QJCWRVG0v2ylii05rm42PHv5zTWhOdNsi2w0m3w5Y1f00Wv6GUKpknyebdXM7WFL7K
-         FPeGDtAGhKYPad5ipezo7KOHSZUnBN0DQjPV2zj9RSEpCAtV2GRly9YBx303xF3C/5tV
-         hA5bqoHLLel7GGFvancT+v1oWQ3N2J0DRAwP/74lf+MTs/4jsdnY83uqMZ0Z0gx6ADqY
-         ZoZu5nYUF7NeL0umBMQ5XJecRw38aw6F+CGv8U5//3ud6NyVb+/HE/3IZeuyBZDJoxk3
-         8R5vszmvFFsLZdynTc9gugZLz9IQOsDIobGPHOi49Krnu3oSHqAjo/v0Xe7T0gL5VMCf
-         GSXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=aRN7uevncaoQwLryoFdNRXl5ZSA5weeE32bHXXaZayw=;
-        b=fepsNyTArsRKWWo61AggLyt52ZUP7VwzD3cRJ27h0gWwbD2n8MONlom+RsfVxiMABE
-         yT1Mt0k3IOYXFNKY6WCdZXaP+s8/g++kXrTes4doGesFSLYM+MY0dr15INunWXxXqFwq
-         TJwXHkA1QVR41KFy/xZW7SYqx/vCYKOLaxxoHaVIdy3DuD/gVVFPTit5Sc8TKrjwNszU
-         W6v0wk4T6BPtRmjg2fSCGQl4P1UL9zBz9XDxvKRo9nwMMEtO8KZQX+xnza5jtFDWFzFR
-         qJbNXcBMu5/OhKRPnV2vbYLZfvVXfO7NlS5PDw6XddBfmqadsoUX1dsTy8RKwwfojC+P
-         tqVw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=diA9StqH;
-       spf=pass (google.com: domain of k.marinushkin@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=k.marinushkin@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=diA9StqH;
-       spf=pass (google.com: domain of k.marinushkin@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=k.marinushkin@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELvyK2pX8kjoK1BIwvX8snvDKFDoHZxds/s6K17nZhIkUVv4gXGaGmSkO/fm02Ou00SFU6V/GQ==
-Subject: Re: [PATCH v4] staging: bcm2835-audio: Release resources on
- module_exit()
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2029834-1521833565-2-7686548629168658099
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES roenda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521833564; b=gRj5l0ur2ESqluDPCA40ZWDWZgaPX4Ym0RCr+lBTzixOztX
+    5/QaYagdAj3cxIcJbL3tezGHqvNP4yRm38HPwZtyLIBY8h5md6YX+yOELCObw3Pb
+    jpsmfqd+3xLOyRR8g1Zj26XHsLruy6XX2wJ0F2LnqsKFxxztoDeFjvnq+LY3qLMS
+    aWLdWZJqDenBi7YlffuBXd/uI6QCiQoZj3XSCYsFwZCVcJ6ZcnMMJ96Q9ifQckJT
+    KA4U4Ep1mfC0vxPhytdjftdCaZmWMj023vOPWGG0iACq5ZU7jU7EKQTDX7pvT+mT
+    rE+YFX2FbQsKStP/5j946lmOD9P1MP3OmDSVFUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521833564; bh=F
+    RHMLkaMI+Sd0DUb7K9trBBYNVefVJeUy+8vW+FEyHs=; b=tGR2lS6RPX3tI8zvl
+    z1DG9zQCptR89vdHgUodj7L5VoU3kJLUqQza1exs1WEm/Eq82dvWSEMOuanKVG9C
+    k8Hw/Fwqiq9Kwnp7AMxFdww+Xdjlclsd/wX+86gzJl9QR68NCrmBa9kBqyUU1Ajt
+    oePjr94wx3g58keDzNP8mMbKzfAuqURt+ktQk6QWzDQCU/9iAL0pfm+aBi6eYuqT
+    ST8Jz46EzkTvYaR14mWOLdY/oFW4yjgNVhp50e6GZzzYkBtPlFCcvIMgavAzeM7x
+    Mg20zgiGv5IVNiJZD4UmaMVadt0aLeryrS+E9CS7NPIxYmt1gO6A0ypyXTfUyoi4
+    vriMg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cLaHescn x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=M0rXUVq5;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=cLaHescn x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=M0rXUVq5;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AG47ELu5FR0dkb1dTMZGyQYlOxnDC/0Ct9Sxng0exDfej/AJUmCdgcnGJ73K+tzQsrGeC53ksuHwlQ==
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>,
  Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>,
  Scott Branden <sbranden@broadcom.com>,
- bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
- Michael Zoran <mzoran@crowfest.net>, linux-rpi-kernel@lists.infradead.org,
- linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
- devel@driverdev.osuosl.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <f35d0f86-04b5-6edb-139f-4632edc493b3@gmail.com>
- <20180322213722.31822-1-k.marinushkin@gmail.com>
- <CAHp75VdYiySBzu99MYoBAZ8tORGP1R43z9d+=VRdktg+U=_ZDw@mail.gmail.com>
- <0524fb43-ed08-6c54-39ed-32bd96ccaca4@gmail.com>
- <CAHp75VfJjCHd5U1D22NANLCA1kAoTKLnDGSQPj3ay6OhKSoZxg@mail.gmail.com>
- <4e473a93-317a-5777-7444-6deb105c8f66@gmail.com>
- <CAHp75Vc0ok40nr0OXp4JcnQ77W_BK4PvDPtOY5ObkTXfwpW9cw@mail.gmail.com>
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
-Message-ID: <864c8503-0226-80cf-0140-9e9e33882b22@gmail.com>
-Date: Sun, 25 Mar 2018 15:54:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+ bcm-kernel-feedback-list@broadcom.com, Michael Zoran <mzoran@crowfest.net>
+Subject: [PATCH v5] staging: bcm2835-audio: Release resources on module_exit()
+Date: Fri, 23 Mar 2018 20:32:54 +0100
+Message-Id: <20180323193254.14417-1-k.marinushkin@gmail.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <CAHp75VdYiySBzu99MYoBAZ8tORGP1R43z9d+=VRdktg+U=_ZDw@mail.gmail.com>
+References: <CAHp75VdYiySBzu99MYoBAZ8tORGP1R43z9d+=VRdktg+U=_ZDw@mail.gmail.com>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+ linux-rpi-kernel@lists.infradead.org,
+ Kirill Marinushkin <k.marinushkin@gmail.com>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vc0ok40nr0OXp4JcnQ77W_BK4PvDPtOY5ObkTXfwpW9cw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594075828670099193?=
-X-GMAIL-MSGID: =?utf-8?q?1595918006798049042?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/25/18 15:03, Andy Shevchenko wrote:
-> On Sun, Mar 25, 2018 at 1:44 PM, Kirill Marinushkin
-> <k.marinushkin@gmail.com> wrote:
->> On 03/25/18 12:33, Andy Shevchenko wrote:
->>> On Fri, Mar 23, 2018 at 9:22 PM, Kirill Marinushkin
->>> <k.marinushkin@gmail.com> wrote:
->>>> On 03/23/18 17:23, Andy Shevchenko wrote:
->>>>> After addressing above, FWIW,
->>>>>
->>>>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->>> Seems you missed my tag in new version.
->>> When someone gives you a tag and you are going to send a new version
->>> (w/o drastic changes), it's your responsibility to append it
->>>
->>> I will send a new mail with it, so, this time no need to resend. Just
->>> keep it for the future contributions.
->>>
->> What is a "tag"?
->> I added in-reply-to this email, I added you as CC.
->> Isn't it enough to keep track of the versioning within a mailing list?
->>
->> Could you please clarify: what "tag" should I usually attach in addition?
-> Section 13) in Submitting Patches [1] explains that.
->
-> [1]: https://elixir.bootlin.com/linux/v4.16-rc6/source/Documentation/process/submitting-patches.rst
->
+In the current implementation, `rmmod snd_bcm2835` does not release
+resources properly. It causes an oops when trying to list sound devices.
 
-Thanks!
+This commit fixes it.
+
+The details WRT allocation / free are described below.
+
+Device structure WRT allocation:
+
+pdev
+  \childdev[]
+    \card
+      \chip
+        \pcm
+        \ctl
+
+Allocation / register sequence:
+
+* childdev: devm_kzalloc      - freed during driver detach
+* childdev: device_initialize - freed during device_unregister
+* pdev: devres_alloc          - freed during driver detach
+* childdev: device_add        - removed during device_unregister
+* pdev, childdev: devres_add  - freed during driver detach
+* card: snd_card_new          - freed during snd_card_free
+* chip: kzalloc               - freed during kfree
+* card, chip: snd_device_new  - freed during snd_device_free
+* chip: new_pcm               - TODO: free pcm
+* chip: new_ctl               - TODO: free ctl
+* card: snd_card_register     - unregistered during snd_card_free
+
+Free / unregister sequence:
+
+* card: snd_card_free
+* card, chip: snd_device_free
+* childdev: device_unregister
+* chip: kfree
+
+Steps to reproduce the issue before this commit:
+
+~~~~
+$ rmmod snd_bcm2835
+$ aplay -L
+[  138.648130] Unable to handle kernel paging request at virtual address 7f1343c0
+[  138.660415] pgd = ad8f0000
+[  138.665567] [7f1343c0] *pgd=3864c811, *pte=00000000, *ppte=00000000
+[  138.674887] Internal error: Oops: 7 [#1] SMP ARM
+[  138.683571] Modules linked in: sha256_generic cfg80211 rfkill snd_pcm snd_timer
+ snd fixed uio_pdrv_genirq uio ip_tables x_tables ipv6 [last unloaded: snd_bcm2835
+]
+[  138.706594] CPU: 3 PID: 463 Comm: aplay Tainted: G        WC       4.15.0-rc1-v
+7+ #6
+[  138.719833] Hardware name: BCM2835
+[  138.726016] task: b877ac00 task.stack: aebec000
+[  138.733408] PC is at try_module_get+0x38/0x24c
+[  138.740813] LR is at snd_ctl_open+0x58/0x194 [snd]
+[  138.748485] pc : [<801c4d5c>]    lr : [<7f0e6b2c>]    psr: 20000013
+[  138.757709] sp : aebedd60  ip : aebedd88  fp : aebedd84
+[  138.765884] r10: 00000000  r9 : 00000004  r8 : 7f0ed440
+[  138.774040] r7 : b7e469b0  r6 : 7f0e6b2c  r5 : afd91900  r4 : 7f1343c0
+[  138.783571] r3 : aebec000  r2 : 00000001  r1 : b877ac00  r0 : 7f1343c0
+[  138.793084] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
+[  138.803300] Control: 10c5387d  Table: 2d8f006a  DAC: 00000055
+[  138.812064] Process aplay (pid: 463, stack limit = 0xaebec210)
+[  138.820868] Stack: (0xaebedd60 to 0xaebee000)
+[  138.828207] dd60: 00000000 b848d000 afd91900 00000000 b7e469b0 7f0ed440 aebedda4 aebedd88
+[  138.842371] dd80: 7f0e6b2c 801c4d30 afd91900 7f0ea4dc 00000000 b7e469b0 aebeddcc aebedda8
+[  138.856611] dda0: 7f0e250c 7f0e6ae0 7f0e2464 b8478ec0 b7e469b0 afd91900 7f0ea388 00000000
+[  138.870864] ddc0: aebeddf4 aebeddd0 802ce590 7f0e2470 8090ab64 afd91900 afd91900 b7e469b0
+[  138.885301] dde0: afd91908 802ce4e4 aebede1c aebeddf8 802c57b4 802ce4f0 afd91900 aebedea8
+[  138.900110] de00: b7fa4c00 00000000 00000000 00000004 aebede3c aebede20 802c6ba8 802c56b4
+[  138.915260] de20: aebedea8 00000000 aebedf5c 00000000 aebedea4 aebede40 802d9a68 802c6b58
+[  138.930661] de40: b874ddd0 00000000 00000000 00000001 00000041 00000000 afd91900 aebede70
+[  138.946402] de60: 00000000 00000000 00000002 b7e469b0 b8a87610 b8d6ab80 801852f8 00080000
+[  138.962314] de80: aebedf5c aebedea8 00000001 80108464 aebec000 00000000 aebedf4c aebedea8
+[  138.978414] dea0: 802dacd4 802d970c b8a87610 b8d6ab80 a7982bc6 00000009 af363019 b9231480
+[  138.994617] dec0: 00000000 b8c038a0 b7e469b0 00000101 00000002 00000238 00000000 00000000
+[  139.010823] dee0: 00000000 aebedee8 00080000 0000000f aebedf3c aebedf00 802ed7e4 80843f94
+[  139.027025] df00: 00000003 00080000 b9231490 b9231480 00000000 00080000 af363000 00000000
+[  139.043229] df20: 00000005 00000002 ffffff9c 00000000 00080000 ffffff9c af363000 00000003
+[  139.059430] df40: aebedf94 aebedf50 802c6f70 802dac70 aebec000 00000000 00000001 00000000
+[  139.075629] df60: 00020000 00000004 00000100 00000001 7ebe577c 0002e038 00000000 00000005
+[  139.091828] df80: 80108464 aebec000 aebedfa4 aebedf98 802c7060 802c6e6c 00000000 aebedfa8
+[  139.108025] dfa0: 801082c0 802c7040 7ebe577c 0002e038 7ebe577c 00080000 00000b98 e81c8400
+[  139.124222] dfc0: 7ebe577c 0002e038 00000000 00000005 7ebe57e4 00a20af8 7ebe57f0 76f87394
+[  139.140419] dfe0: 00000000 7ebe55c4 76ec88e8 76df1d9c 60000010 7ebe577c 00000000 00000000
+[  139.156715] [<801c4d5c>] (try_module_get) from [<7f0e6b2c>] (snd_ctl_open+0x58/0x194 [snd])
+[  139.173222] [<7f0e6b2c>] (snd_ctl_open [snd]) from [<7f0e250c>] (snd_open+0xa8/0x14c [snd])
+[  139.189683] [<7f0e250c>] (snd_open [snd]) from [<802ce590>] (chrdev_open+0xac/0x188)
+[  139.205465] [<802ce590>] (chrdev_open) from [<802c57b4>] (do_dentry_open+0x10c/0x314)
+[  139.221347] [<802c57b4>] (do_dentry_open) from [<802c6ba8>] (vfs_open+0x5c/0x88)
+[  139.236788] [<802c6ba8>] (vfs_open) from [<802d9a68>] (path_openat+0x368/0x944)
+[  139.248270] [<802d9a68>] (path_openat) from [<802dacd4>] (do_filp_open+0x70/0xc4)
+[  139.263731] [<802dacd4>] (do_filp_open) from [<802c6f70>] (do_sys_open+0x110/0x1d4)
+[  139.279378] [<802c6f70>] (do_sys_open) from [<802c7060>] (SyS_open+0x2c/0x30)
+[  139.290647] [<802c7060>] (SyS_open) from [<801082c0>] (ret_fast_syscall+0x0/0x28)
+[  139.306021] Code: e3c3303f e5932004 e2822001 e5832004 (e5943000)
+[  139.316265] ---[ end trace 7f3f7f6193b663ed ]---
+[  139.324956] note: aplay[463] exited with preempt_count 1
+~~~~
+
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: Michael Zoran <mzoran@crowfest.net>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: devel@driverdev.osuosl.org
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ .../staging/vc04_services/bcm2835-audio/bcm2835.c  | 54 ++++++++++------------
+ 1 file changed, 25 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+index 8f2d508183b2..9030d71a3d0b 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.c
+@@ -36,6 +36,10 @@ MODULE_PARM_DESC(enable_compat_alsa,
+ static void snd_devm_unregister_child(struct device *dev, void *res)
+ {
+ 	struct device *childdev = *(struct device **)res;
++	struct bcm2835_chip *chip = dev_get_drvdata(childdev);
++	struct snd_card *card = chip->card;
++
++	snd_card_free(card);
+ 
+ 	device_unregister(childdev);
+ }
+@@ -61,6 +65,13 @@ static int snd_devm_add_child(struct device *dev, struct device *child)
+ 	return 0;
+ }
+ 
++static void snd_bcm2835_release(struct device *dev)
++{
++	struct bcm2835_chip *chip = dev_get_drvdata(dev);
++
++	kfree(chip);
++}
++
+ static struct device *
+ snd_create_device(struct device *parent,
+ 		  struct device_driver *driver,
+@@ -76,6 +87,7 @@ snd_create_device(struct device *parent,
+ 	device_initialize(device);
+ 	device->parent = parent;
+ 	device->driver = driver;
++	device->release = snd_bcm2835_release;
+ 
+ 	dev_set_name(device, "%s", name);
+ 
+@@ -86,18 +98,19 @@ snd_create_device(struct device *parent,
+ 	return device;
+ }
+ 
+-static int snd_bcm2835_free(struct bcm2835_chip *chip)
+-{
+-	kfree(chip);
+-	return 0;
+-}
+-
+ /* component-destructor
+  * (see "Management of Cards and Components")
+  */
+ static int snd_bcm2835_dev_free(struct snd_device *device)
+ {
+-	return snd_bcm2835_free(device->device_data);
++	struct bcm2835_chip *chip = device->device_data;
++	struct snd_card *card = chip->card;
++
++	/* TODO: free pcm, ctl */
++
++	snd_device_free(card, chip);
++
++	return 0;
+ }
+ 
+ /* chip-specific constructor
+@@ -122,7 +135,7 @@ static int snd_bcm2835_create(struct snd_card *card,
+ 
+ 	err = snd_device_new(card, SNDRV_DEV_LOWLEVEL, chip, &ops);
+ 	if (err) {
+-		snd_bcm2835_free(chip);
++		kfree(chip);
+ 		return err;
+ 	}
+ 
+@@ -130,31 +143,14 @@ static int snd_bcm2835_create(struct snd_card *card,
+ 	return 0;
+ }
+ 
+-static void snd_devm_card_free(struct device *dev, void *res)
++static struct snd_card *snd_bcm2835_card_new(struct device *dev)
+ {
+-	struct snd_card *snd_card = *(struct snd_card **)res;
+-
+-	snd_card_free(snd_card);
+-}
+-
+-static struct snd_card *snd_devm_card_new(struct device *dev)
+-{
+-	struct snd_card **dr;
+ 	struct snd_card *card;
+ 	int ret;
+ 
+-	dr = devres_alloc(snd_devm_card_free, sizeof(*dr), GFP_KERNEL);
+-	if (!dr)
+-		return ERR_PTR(-ENOMEM);
+-
+ 	ret = snd_card_new(dev, -1, NULL, THIS_MODULE, 0, &card);
+-	if (ret) {
+-		devres_free(dr);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+-
+-	*dr = card;
+-	devres_add(dev, dr);
+ 
+ 	return card;
+ }
+@@ -271,7 +267,7 @@ static int snd_add_child_device(struct device *device,
+ 		return PTR_ERR(child);
+ 	}
+ 
+-	card = snd_devm_card_new(child);
++	card = snd_bcm2835_card_new(child);
+ 	if (IS_ERR(card)) {
+ 		dev_err(child, "Failed to create card");
+ 		return PTR_ERR(card);
+@@ -313,7 +309,7 @@ static int snd_add_child_device(struct device *device,
+ 		return err;
+ 	}
+ 
+-	dev_set_drvdata(child, card);
++	dev_set_drvdata(child, chip);
+ 	dev_info(child, "card created with %d channels\n", numchans);
+ 
+ 	return 0;
+-- 
+2.13.6
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
