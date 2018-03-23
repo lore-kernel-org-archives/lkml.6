@@ -1,95 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752456AbeCWJUj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:20:39 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:9578 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751675AbeCWJPa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:15:30 -0400
-X-UUID: 86c8a38a92a84437a8af2083e96be6cd-20180323
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
-        <lee.jones@linaro.org>, <a.zummo@towertech.it>,
-        <alexandre.belloni@free-electrons.com>, <eddie.huang@mediatek.com>
-CC: <devicetree@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v1 08/16] rtc: mediatek: remove unnecessary irq_dispose_mapping
-Date: Fri, 23 Mar 2018 17:15:05 +0800
-Message-ID: <96f39ce7f57a4dcd7653e049eebc87c83bcbdfc9.1521794177.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1521794176.git.sean.wang@mediatek.com>
-References: <cover.1521794176.git.sean.wang@mediatek.com>
+        id S1752003AbeCWJYe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:24:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33600 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751668AbeCWJYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:24:33 -0400
+Date: Fri, 23 Mar 2018 10:24:30 +0100
+From: Jiri Olsa <jolsa@redhat.com>
+To: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v2 0/3] perf/core: expose thread context switch out event
+ type to user space
+Message-ID: <20180323092430.GB4096@krava>
+References: <713750a0-7cc1-0a27-7253-12ff4f3c9a8d@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23736.004
-X-TM-AS-Result: No-5.189400-8.000000-10
-X-TMASE-MatchedRID: x6uIgBUWMEw3XjqZll6IQaDH6drx3JPVYoHH/gi0K9uHlDUCu0I+XIny
-        HZfRmqmqTiQecD9aKoSRYJdMgDxPlhgEuFFWa742ypeMiaCPnxvGYnoF/CTeZclk/SMg0CpQo8W
-        MkQWv6iXBcIE78YqRWo6HM5rqDwqtb3C5dDGXC8YVT2mlXIA04VcJ/KqDzE0u8UmmLQxSAiVc+f
-        utAOX47EMMprcbiest
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--5.189400-8.000000
-X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23736.004
-X-TMASE-POSTMAN: 2-d;
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <713750a0-7cc1-0a27-7253-12ff4f3c9a8d@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Thu, Mar 22, 2018 at 07:08:25PM +0300, Alexey Budankov wrote:
+> 
+> Implementation of exposing context-switch-out type event as a part 
+> of PERF_RECORD_SWITCH[_CPU_WIDE] record.
+> 
+> Introduced types of events assumed to be:
+> a) preempt: when task->state == TASK_RUNNING
+> b) yield: !preempt, encoding is done using new bit 
+>    PERF_RECORD_MISC_SWITCH_OUT_YIELD like this:
+>    
+>    event_header->misc &= 
+> 	PERF_RECORD_MISC_SWITCH_OUT|PERF_RECORD_MISC_SWITCH_OUT_YIELD
+> 
+> Perf tool report and script commands output has been extended to decode 
+> new yield bit and the updated output looks like in the examples below.
+> 
+> The documentation has been updated to mention yield switch out events 
+> and its decoding symbols in perf script output.
+> 
+> The changes have been manually tested on Fedora 27 with the patched kernel:
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+> 
+> perf report -D -i system-wide.perf | grep _SWITCH: 
+> 
+> 1 113807080924003 0x26db26 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT        next pid/tid: 20495/20495
+> 1 113807080925644 0x26db4e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid: 31479/31479
+> 1 113807080937266 0x26db76 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:    16/16   
+> 1 113807080938445 0x26db9e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid: 20495/20495
+> 1 113807080945455 0x26dbc6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid: 20495/20495
+> 
+> perf script --show-switch-events -F +misc -I -i system-wide.perf:
+> 
+>   rcu_sched     8 [003]       113800.748548: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid:     0/0    
+>        perf 31479 [000] S     113800.748548: PERF_RECORD_SWITCH_CPU_WIDE OUT        next pid/tid:    59/59   
+> kworker/0:1    59 [000]       113800.748549: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid: 31479/31479
+>   rcu_sched     8 [003] Sy    113800.748551: PERF_RECORD_SWITCH_CPU_WIDE OUT yield  next pid/tid:     0/0    
+>     swapper     0 [003]       113800.748551: PERF_RECORD_SWITCH_CPU_WIDE IN         prev pid/tid:     8/8
 
-It's unnecessary doing irq_dispose_mapping as a reverse operation for
-platform_get_irq.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Ususally, irq_dispose_mapping should be called in error path or module
-removal to release the resources for irq_of_parse_and_map requested.
+thanks,
+jirka
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/rtc/rtc-mt6397.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index b62eaa8..cefb83b 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -17,7 +17,6 @@
- #include <linux/module.h>
- #include <linux/regmap.h>
- #include <linux/rtc.h>
--#include <linux/irqdomain.h>
- #include <linux/jiffies.h>
- #include <linux/platform_device.h>
- #include <linux/of_address.h>
-@@ -336,7 +335,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
- 			rtc->irq, ret);
--		goto out_dispose_irq;
-+		return ret;
- 	}
- 
- 	device_init_wakeup(&pdev->dev, 1);
-@@ -353,8 +352,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
- 
- out_free_irq:
- 	free_irq(rtc->irq, rtc->rtc_dev);
--out_dispose_irq:
--	irq_dispose_mapping(rtc->irq);
-+
- 	return ret;
- }
- 
-@@ -364,7 +362,6 @@ static int mtk_rtc_remove(struct platform_device *pdev)
- 
- 	rtc_device_unregister(rtc->rtc_dev);
- 	free_irq(rtc->irq, rtc->rtc_dev);
--	irq_dispose_mapping(rtc->irq);
- 
- 	return 0;
- }
--- 
-2.7.4
+> 
+> ---
+>  Alexey Budankov (3):
+> 	perf/core: store context switch out type into Perf trace
+> 	perf report: extend raw dump (-D) out with switch out event type
+> 	perf script: extend misc field decoding with switch out event type
+> 
+>  include/uapi/linux/perf_event.h          |  5 +++++
+>  kernel/events/core.c                     |  4 +++-
+>  tools/include/uapi/linux/perf_event.h    |  5 +++++
+>  tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
+>  tools/perf/builtin-script.c              |  5 ++++-
+>  tools/perf/util/event.c                  |  4 +++-
+>  6 files changed, 29 insertions(+), 11 deletions(-)
