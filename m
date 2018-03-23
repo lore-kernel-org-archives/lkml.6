@@ -1,76 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeCWCva (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 22:51:30 -0400
-Received: from mail-io0-f177.google.com ([209.85.223.177]:33887 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751844AbeCWCvZ (ORCPT
+        id S1751844AbeCWC6D (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 22:58:03 -0400
+Received: from mail-io0-f173.google.com ([209.85.223.173]:41980 "EHLO
+        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751758AbeCWC6B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 22:51:25 -0400
-X-Google-Smtp-Source: AG47ELs4fYtkO2VbxMxvIVjBZF72oZKj12nIY8Dug7hNYld2GrVeYR0bzWCpE0XYYkEjcSBYaFGL00Mgc+7der0ib4M=
+        Thu, 22 Mar 2018 22:58:01 -0400
+X-Google-Smtp-Source: AG47ELtl49XNoalIINhgUGjEZEtc4/HIOrvcfCvL/5V+vQWhH8OVBhacoACqOWg23a1+XE9WG9JpnyebBTjBVRt0r/k=
 MIME-Version: 1.0
-From: Joel Fernandes <joelaf@google.com>
-Date: Thu, 22 Mar 2018 19:51:23 -0700
-Message-ID: <CAJWu+oo1mnS=2v_SbnDCDih6AyystU2aXVCUEa5k0W0q0Ovk6w@mail.gmail.com>
-Subject: syzbot rcu/debugobjects warning
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Todd Poynor <toddpoynor@google.com>
+In-Reply-To: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com>
+References: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 23 Mar 2018 03:58:00 +0100
+Message-ID: <CACRpkdZHuNytoq_PnLJa5SWJzPruMC29XE7GH_JxsH0uZmBabQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] PINCTRL: Mediatek pinctrl driver for mt2712
+To: Zhiyong Tao <zhiyong.tao@mediatek.com>, sean.wang@mediatek.com
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, srv_heupstream@mediatek.com,
+        Liguo Zhang <liguo.zhang@mediatek.com>,
+        "Joe.C" <yingjoe.chen@mediatek.com>, hongkun.cao@mediatek.com,
+        Biao Huang <biao.huang@mediatek.com>, YT Shen <yt.shen@mediatek.com>,
+        Hongzhou Yang <hongzhou.yang@mediatek.com>,
+        Erin Lo <erin.lo@mediatek.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support"
+        <linux-mediatek@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul, Thomas,
+On Thu, Mar 22, 2018 at 3:58 AM, Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
 
-I received a crash report from syzbot on the android 4.9 kernel and I
-am looking into it, it seems the debugobjects subsystem is warning
-that a certain RCU structure is not allocated on the stack, but is
-annotated to be.
+> This series includes five patches:
+> 1.Add mt2712 pintcrl head file.
+> 2.Add mt2712 pinctrl device node.
+> 3.Add mt2712 pinctrl driver.
+> 4.Support bias-disable of generic and special pins simultaneously.
+> 5.fix check warnings.
+>
+> Changes in patch v4:
+> 1)fix check warnings for mt2712.
+> 2)add fix check warnings patch for other ICs.
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 0 at lib/debugobjects.c:300
-debug_object_is_on_stack lib/debugobjects.c:300 [inline]
-WARNING: CPU: 1 PID: 0 at lib/debugobjects.c:300
-__debug_object_init+0x526/0xc40 lib/debugobjects.c:326
-[...]
- <IRQ> [  150.631700]  [<ffffffff81d96069>] dump_stack+0xc1/0x128
-lib/dump_stack.c:51
- [<ffffffff8142fbd1>] panic+0x1bc/0x3a8 kernel/panic.c:179
- [<ffffffff81131894>] __warn+0x1c4/0x1e0 kernel/panic.c:542
- [<ffffffff81131afc>] warn_slowpath_null+0x2c/0x40 kernel/panic.c:585
- [<ffffffff81dfefb6>] debug_object_is_on_stack lib/debugobjects.c:300 [inline]
- [<ffffffff81dfefb6>] __debug_object_init+0x526/0xc40 lib/debugobjects.c:326
- [<ffffffff81dff709>] debug_object_init_on_stack+0x19/0x20
-lib/debugobjects.c:378
- [<ffffffff81287a93>] init_rcu_head_on_stack kernel/rcu/update.c:403 [inline]
- [<ffffffff81287a93>] __wait_rcu_gp+0x93/0x1b0 kernel/rcu/update.c:358
- [<ffffffff81290251>] synchronize_rcu.part.65+0x101/0x110
-kernel/rcu/tree_plugin.h:678
- [<ffffffff81290287>] synchronize_rcu+0x27/0x90 kernel/rcu/tree_plugin.h:679
- [<ffffffff83588b35>] __l2tp_session_unhash+0x3d5/0x550
-net/l2tp/l2tp_core.c:1792
+This looks good to me.
 
-The full report is here:
-https://syzkaller.appspot.com/bug?extid=e6a19b585ab2dba3eee8
+Can I get some ACK/Reviewed-by's from Sean so I can
+merge the driver for v4.17?
 
-It seems as per the code that the structure is on the stack so its
-weird why debugobjects thinks its not.
-The object in question is allocated on the stack by the __wait_rcu_gp
-macro when its called from synchronize_rcu:
-
-#define _wait_rcu_gp(checktiny, ...) \
-do {                                                                    \
-        call_rcu_func_t __crcu_array[] = { __VA_ARGS__ };               \
-        struct rcu_synchronize __rs_array[ARRAY_SIZE(__crcu_array)];    \
-        __wait_rcu_gp(checktiny, ARRAY_SIZE(__crcu_array),              \
-                        __crcu_array, __rs_array);                      \
-} while (0)
-
-
-Any debug ideas or thoughts about it?
-
-thanks for any help,
-
-- Joel
+Yours,
+Linus Walleij
