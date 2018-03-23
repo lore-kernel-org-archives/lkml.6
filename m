@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804092-2-2658952076152318604
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804075-2-14608862695408512624
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804092; b=JSZe6Td2VTEi8Y1fxBFImJ1kUhOeT9BhNSwbb40CGFOSapH
-    xtvT3bRTiDM2NdPXHj7vrH0nUnanZ0+CcPDO6z6wa2z6LD6QoC0lrg8DGIzqGbpI
-    ESny1FwDc6Jbh2Nfi5VY6uJJgL0asEw7hZamL7b2YIAGXFc33t4flHPOENSNnnXi
-    jqqJ+q6epVVKhihUb81sp2BcN+8DdX8wU2+6anIhbdckwBHWQZqesO4LiO//nSn/
-    SqdcNLiVI2WC0fuXCPWHKsz2CR2sMjWufJIiQc8X7k9Ru/g38qd47dhsdZogQnG3
-    0Pg6U11s8D2/JxX1CPXM7ALEGSN51qH6OeWE2ng==
+    t=1521804074; b=Yx/NbOwln3lShKbR6GDzUwt86DdOsGRaNkhsFo/D8Kt1zfs
+    Tng7u4JeIyR0+Lx23UyqxzjUhoHk48vRneD7b1BfNRHmOt5xoOHeOEqw+YcPu7Jk
+    xI+iTZXniYCDeQld7zBf1g7S+9GFo8k3mA25GoHLB+QZBA+g3Xisks/llBZf4UPU
+    JkVdRdYXIQv0Hhmdi3ccdqJ3C4ahIAn/6okoUj2G1/YrA6HiMxGf7IWxyTIDFP7R
+    GXFoszDDUjB451T7ulujTkyAi1wq/7dTeIs3ziXjO1vipWv1bwy9lYjPs9US7WN5
+    5BKMJfoNfKXWd4qynskUrRN4XAGtfHlnVgDDs2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804092; bh=YhwoWhq5UBpvNd9aGU0Q+61o1Y
-    65klClgbbocHHMnNk=; b=gibnfdNOqYJ5mOhzxL/momD3BFVPaKXobVsRFF5pgT
-    dg9GxqoQIsx5fm2FKVb+iCXdX29t0iStHTJg4D8Y56MpkFEQHTrffdRvsKczBS2U
-    93mTEhcVOuJyAORzkrGeFheIlwEYMglKTzqeWrCdU/rOowg/Tpm8tzxeiz+qitMD
-    h8AhZEfiA/3Z3xzk6UfkPKpnunDTaKxIy6tH8OHesU5T126Yi1k7cXC/v2k3I9Sh
-    LtBRSupMCfpcfpQr7VvmkPZBbhaw26wOLLGISVjbSsmh8OQcpnoD1BsXd+1A68kG
-    aISGp2oYHqqBBW5xS35q4M6+78emItNA79hiATzSMclw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804074; bh=UcMJnIoj6YeQch52MNDyIpAVQb
+    FvKwTgcPqKUbuiWJI=; b=DFJEe8+9JjxJl5B4mbawhtyOAG885tL/RiLLpfcw0y
+    eg+JdMs81Ktvvw1WYHFoatFW0MUkb9e80ltEQY02SU8gx6GP7BygjvANG9jtRLsQ
+    B8DBPFpI+RRbXF287BcC5HaoQXdb94rN1/Ydsj7VMqJ6sbpn9hw4AjkJSyRFMBP6
+    st1koWqtLBodlelt67P8b0qu8CaSIf+S970DPNTVt6mfQHaGfCBgzip373mUzaPr
+    6yQzQAvQeGtzjmdR/OEPVqDd9DEkDTCiaDJWvXvQdZipsBSBktvvjXgUDay7bgN5
+    BaE4IzxfMFs1WtwEMMWhBJdqOWiUZFnigCqO1f4oZjgQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,20 +50,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752410AbeCWLVQ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:21:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41696 "EHLO
+        id S1755568AbeCWKId (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:08:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41706 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755552AbeCWKI2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:28 -0400
+        with ESMTP id S1755507AbeCWKIa (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        stable@vger.kernel.org, Robert Lippert <rlippert@google.com>,
+        Corey Minyard <cminyard@mvista.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 089/177] staging: wilc1000: fix unchecked return value
-Date: Fri, 23 Mar 2018 10:53:37 +0100
-Message-Id: <20180323094209.219296838@linuxfoundation.org>
+Subject: [PATCH 4.9 098/177] ipmi/watchdog: fix wdog hang on panic waiting for ipmi response
+Date: Fri, 23 Mar 2018 10:53:46 +0100
+Message-Id: <20180323094209.608400602@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -81,32 +82,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Robert Lippert <roblip@gmail.com>
 
 
-[ Upstream commit 9e96652756ad647b7bcc03cb99ffc9756d7b5f93 ]
+[ Upstream commit 2c1175c2e8e5487233cabde358a19577562ac83e ]
 
-Function dev_alloc_skb() will return a NULL pointer if there is no
-enough memory. However, in function WILC_WFI_mon_xmit(), its return
-value is used without validation. This may result in a bad memory access
-bug. This patch fixes the bug.
+Commit c49c097610fe ("ipmi: Don't call receive handler in the
+panic context") means that the panic_recv_free is not called during a
+panic and the atomic count does not drop to 0.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix this by only expecting one decrement of the atomic variable
+which comes from panic_smi_free.
+
+Signed-off-by: Robert Lippert <rlippert@google.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/wilc1000/linux_mon.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/char/ipmi/ipmi_watchdog.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/staging/wilc1000/linux_mon.c
-+++ b/drivers/staging/wilc1000/linux_mon.c
-@@ -197,6 +197,8 @@ static netdev_tx_t WILC_WFI_mon_xmit(str
+--- a/drivers/char/ipmi/ipmi_watchdog.c
++++ b/drivers/char/ipmi/ipmi_watchdog.c
+@@ -515,7 +515,7 @@ static void panic_halt_ipmi_heartbeat(vo
+ 	msg.cmd = IPMI_WDOG_RESET_TIMER;
+ 	msg.data = NULL;
+ 	msg.data_len = 0;
+-	atomic_add(2, &panic_done_count);
++	atomic_add(1, &panic_done_count);
+ 	rv = ipmi_request_supply_msgs(watchdog_user,
+ 				      (struct ipmi_addr *) &addr,
+ 				      0,
+@@ -525,7 +525,7 @@ static void panic_halt_ipmi_heartbeat(vo
+ 				      &panic_halt_heartbeat_recv_msg,
+ 				      1);
+ 	if (rv)
+-		atomic_sub(2, &panic_done_count);
++		atomic_sub(1, &panic_done_count);
+ }
  
- 	if (skb->data[0] == 0xc0 && (!(memcmp(broadcast, &skb->data[4], 6)))) {
- 		skb2 = dev_alloc_skb(skb->len + sizeof(struct wilc_wfi_radiotap_cb_hdr));
-+		if (!skb2)
-+			return -ENOMEM;
- 
- 		memcpy(skb_put(skb2, skb->len), skb->data, skb->len);
- 
+ static struct ipmi_smi_msg panic_halt_smi_msg = {
+@@ -549,12 +549,12 @@ static void panic_halt_ipmi_set_timeout(
+ 	/* Wait for the messages to be free. */
+ 	while (atomic_read(&panic_done_count) != 0)
+ 		ipmi_poll_interface(watchdog_user);
+-	atomic_add(2, &panic_done_count);
++	atomic_add(1, &panic_done_count);
+ 	rv = i_ipmi_set_timeout(&panic_halt_smi_msg,
+ 				&panic_halt_recv_msg,
+ 				&send_heartbeat_now);
+ 	if (rv) {
+-		atomic_sub(2, &panic_done_count);
++		atomic_sub(1, &panic_done_count);
+ 		printk(KERN_WARNING PFX
+ 		       "Unable to extend the watchdog timeout.");
+ 	} else {
