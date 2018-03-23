@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvtDSBjxQDsKjZi1Td5cqArO+FjGW0e7EQVNfYhpGu/7LjMc7PBseq3N9hLhn4mb/phh+7L
-ARC-Seal: i=1; a=rsa-sha256; t=1521800178; cv=none;
+X-Google-Smtp-Source: AG47ELsY+rpGtEi9rpFOpLCdXMXArihYycvTT0qEs4EPr1pZ+PaJJh996qn39E2V2d/Y7Luo9XcO
+ARC-Seal: i=1; a=rsa-sha256; t=1521800175; cv=none;
         d=google.com; s=arc-20160816;
-        b=mdFFB8of5y7Nz54URnkA+TiSGwN17gH87cLCwbvDMN1qtcO0vPEeuz+9dtoXCj/xgz
-         0pjPtNw4ojq815LU4YC+67BY4Jc0nYc3Aff8LAiqT7dt59bjewvor6siaWh8B6NZJlNd
-         72FpZ6AarJxabTRmQO1OkwNo4snCau6+AVmhLl5TdeoOJDrf9h7YgDHV3pVV2x7VQ+WO
-         cnRL0mz4d5Eco1SseQ2eao0mrjjmj7U/vXApT1fWZLRWILvM4GchjLkpb6qFoH6WsZ9P
-         uIwrivUe6+s6yLPxBxr7RY+I6EYvGDEXyxgu16V7QozucsWojpQLnUlg8ke/9Oa9oXCC
-         /l0A==
+        b=lG8drVEIES+/qLMJyMtScRZcEL3fZ/Y6ccr9jVrC2pQC/CGsJHZc+E5k2sGV42HXpd
+         xzDMqQUAEU1WwmtbjaGDajYjYS7IqVlRemKhMlFrRuRCcoGLVlScTkDRJFHFIldl2/XT
+         8lmKad2ewiBbvTv9alLK/V9XwVs2yxjWYTnCtXr0331Nni0nI0cRsdJAu+/T1QLJJgyl
+         UdhetN50yP7MqbU+ALnJjFjMFBXWdsPj8kqOJe9E1k+xR6AMvmZkbkrTF2AV2bllqgcL
+         mWARzzCMP8Y9LEOpTR4I4hgOw27xiJ1S1fSFqS7Lst2VcUW8hJHmFtwh0lRd6Zpvh5Iq
+         S5wQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9jj03mo7AZBUKnlFQ4rzUyAWiXXVHBwlFIDJto3orAM=;
-        b=ne4YLUGs0bYadib8TMR6jwSnhigu2X1SiGChns9HQwLEsQjMLGElVMu5BsAFBJwRfy
-         0LmuOTjfdXwH4km4NkNjBt3L2rmtZK6c05lbn4qJS/eZcspW+lCs/7vux7lGG54Vt0pI
-         bEAEPY6ihuk8yy5kaChyJgoIISQfucqMiNNJSCymCHi9WXBmTbL/VaoeE1IwIaEaveOa
-         mqwKyHC/0q2lOoYC1MYLmRWw09u8FqMpKy01VStn+4qW2CKyhWE7CyiGGo9AGTQr8f7Q
-         iQwRN1acWiExfqvWBSTNrOPKIKJBtYxWpQ27jRXD1XAAYUYx5g9qegZ2AXGqW6arKLsC
-         +oRg==
+        bh=ggyNcff1GN10+ZSIp3MSdYwdYQP4KTZKjkmr9OExrAE=;
+        b=RCUXQaJ/ouI1DD2zDYgv+oEp8tnOGSeAgv2G7FC1Gp84lccIxx/Zx55ZdlDJoyraL9
+         /xUdmjeNYdVl9+IZIvfWLUH8xt6JyWhkxhTBtEg/0QaLY22Z22bjg8lQ2QCakVOT0g/o
+         COQjVzGhyafwjIIFhW9X0vDxPOcg6uZlBRBnPs4TYQx+uszSSSe7g46K7J7GccIRaaIr
+         XDdISKrqzl1Ug0NgR4v22UN+CjeFgiIhtQ1JesYmaHX9N+e62JVDTMBNJZyxuaHhD2np
+         hwdJUHx18UjkAmPUJj0qw4jEa6j74+ASEbuhgP2gsAGf5nJ6p52fsIF+MSImv5Q+ftW9
+         QN4Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Prakash Kamliya <pkamliya@codeaurora.org>,
+	Sharat Masetty <smasetty@codeaurora.org>,
+	Rob Clark <robdclark@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 76/97] RDMA/iwpm: Fix uninitialized error code in iwpm_send_mapinfo()
-Date: Fri, 23 Mar 2018 10:55:03 +0100
-Message-Id: <20180323094201.832652287@linuxfoundation.org>
+Subject: [PATCH 4.4 75/97] drm/msm: fix leak in failed get_pages
+Date: Fri, 23 Mar 2018 10:55:02 +0100
+Message-Id: <20180323094201.783718616@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721867135742160?=
-X-GMAIL-MSGID: =?utf-8?q?1595723144147158720?=
+X-GMAIL-THRID: =?utf-8?q?1595721904913881579?=
+X-GMAIL-MSGID: =?utf-8?q?1595723140636159632?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,38 +51,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Prakash Kamliya <pkamliya@codeaurora.org>
 
 
-[ Upstream commit 302d6424e4a293a5761997e6c9fc3dfb1e4c355f ]
+[ Upstream commit 62e3a3e342af3c313ab38603811ecdb1fcc79edb ]
 
-With gcc-4.1.2:
+get_pages doesn't keep a reference of the pages allocated
+when it fails later in the code path. This can lead to
+a memory leak. Keep reference of the allocated pages so
+that it can be freed when msm_gem_free_object gets called
+later during cleanup.
 
-    drivers/infiniband/core/iwpm_util.c: In function ‘iwpm_send_mapinfo’:
-    drivers/infiniband/core/iwpm_util.c:647: warning: ‘ret’ may be used uninitialized in this function
-
-Indeed, if nl_client is not found in any of the scanned has buckets, ret
-will be used uninitialized.
-
-Preinitialize ret to -EINVAL to fix this.
-
-Fixes: 30dc5e63d6a5ad24 ("RDMA/core: Add support for iWARP Port Mapper user space service")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Prakash Kamliya <pkamliya@codeaurora.org>
+Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/iwpm_util.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/msm/msm_gem.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/drivers/infiniband/core/iwpm_util.c
-+++ b/drivers/infiniband/core/iwpm_util.c
-@@ -663,6 +663,7 @@ int iwpm_send_mapinfo(u8 nl_client, int
- 	}
- 	skb_num++;
- 	spin_lock_irqsave(&iwpm_mapinfo_lock, flags);
-+	ret = -EINVAL;
- 	for (i = 0; i < IWPM_MAPINFO_HASH_SIZE; i++) {
- 		hlist_for_each_entry(map_info, &iwpm_hash_bucket[i],
- 				     hlist_node) {
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -89,14 +89,17 @@ static struct page **get_pages(struct dr
+ 			return p;
+ 		}
+ 
++		msm_obj->pages = p;
++
+ 		msm_obj->sgt = drm_prime_pages_to_sg(p, npages);
+ 		if (IS_ERR(msm_obj->sgt)) {
++			void *ptr = ERR_CAST(msm_obj->sgt);
++
+ 			dev_err(dev->dev, "failed to allocate sgt\n");
+-			return ERR_CAST(msm_obj->sgt);
++			msm_obj->sgt = NULL;
++			return ptr;
+ 		}
+ 
+-		msm_obj->pages = p;
+-
+ 		/* For non-cached buffers, ensure the new pages are clean
+ 		 * because display controller, GPU, etc. are not coherent:
+ 		 */
+@@ -119,7 +122,10 @@ static void put_pages(struct drm_gem_obj
+ 		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
+ 			dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
+ 					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
+-		sg_free_table(msm_obj->sgt);
++
++		if (msm_obj->sgt)
++			sg_free_table(msm_obj->sgt);
++
+ 		kfree(msm_obj->sgt);
+ 
+ 		if (use_pages(obj))
