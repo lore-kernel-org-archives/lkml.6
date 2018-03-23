@@ -1,62 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751597AbeCWPqL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 11:46:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41880 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751400AbeCWPqK (ORCPT
+        id S1751909AbeCWPq5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 11:46:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53290 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeCWPq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 11:46:10 -0400
-Date: Fri, 23 Mar 2018 08:46:51 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: mutt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: [PATCH RFC tools/lkmm 0/12] Reorganize RCU-related cat rules
-Reply-To: paulmck@linux.vnet.ibm.com
+        Fri, 23 Mar 2018 11:46:56 -0400
+Date: Fri, 23 Mar 2018 16:46:54 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: laurentiu.tudor@nxp.com, linux-kernel@vger.kernel.org,
+        stuyoder@gmail.com, ruxandra.radulescu@nxp.com, arnd@arndb.de,
+        razvan.stefanescu@nxp.com, Roy.Pledge@nxp.com
+Subject: Re: [PATCH v3 2/4] bus: fsl-mc: add restool userspace support
+Message-ID: <20180323154654.GA382@kroah.com>
+References: <cover.1521818402.git.ioana.ciornei@nxp.com>
+ <d8c243a9ead2fe1375dee242aec26d1276129409.1521818402.git.ioana.ciornei@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18032315-0052-0000-0000-000002CE1416
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008729; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01007283; UDB=6.00512933; IPR=6.00786571;
- MB=3.00020201; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-23 15:46:07
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032315-0053-0000-0000-00005C1732DD
-Message-Id: <20180323154651.GA28363@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-23_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803230181
+In-Reply-To: <d8c243a9ead2fe1375dee242aec26d1276129409.1521818402.git.ioana.ciornei@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On Fri, Mar 23, 2018 at 10:38:56AM -0500, Ioana Ciornei wrote:
+> +#include "fsl-mc-private.h"
+> +
+> +#define FSL_MC_BUS_MAX_MINORS	1
 
-This patch series reorganizes RCU-related cat-file rules:
+As you only need/want one character device here, why not just use the
+misc device api?  It's much simpler, and handles all of the housekeeping
+for you correctly.  It also means I don't have to audit all of your
+chardev code to verify it is correct :)
 
-1.	Renames link and rcu-path to rcu-link and rb, respectively.
-	This avoids unfortunate name collisions with "link" the rule and
-	"link" the concept.  Courtesy of Alan Stern.
+And it will save you lines-of-code, always a good thing.
 
-2.	Redefines "rb" in terms of rcu-fence, explicitly expressing
-	the fence-like properties of RCU grace periods.  Courtesy of
-	Alan Stern.
+thanks,
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
- Documentation/explanation.txt |  261 +++++++++++++++++++++++++-----------------
- linux-kernel.cat              |   49 ++++---
- 2 files changed, 184 insertions(+), 126 deletions(-)
+greg k-h
