@@ -1,31 +1,33 @@
-Return-Path: <dalias@aerifal.cx>
-X-Google-Smtp-Source: AG47ELsE+/o7Svs4EKrWhDGEjWFH6+4RQ7tKnEFvH2OgHdljN2+UOh83nIknrjZIevaqsNgbOXM5
-ARC-Seal: i=1; a=rsa-sha256; t=1521828469; cv=none;
+Return-Path: <willy@infradead.org>
+X-Google-Smtp-Source: AG47ELuSMttOvBCOyzW7yJrTctFRYBD8CJ0BHc5y4pSF/3CvvywxBHUwh2jyaGUmkAfc53Oa7gOm
+ARC-Seal: i=1; a=rsa-sha256; t=1521832034; cv=none;
         d=google.com; s=arc-20160816;
-        b=zaQOwBzRJ9BeRZYNOkZIvF7OmHQM44os7lWpNTyTXGuiwEIFtjx3RtBGNhNTWi4YKy
-         eNnDGl8j39n5aO4UsElQfhiu1IuR/Zwj2ORdBVUH4+7EsUzl9HzekH5rmCA/UdD78KK7
-         1cSA+uis9HgURvIpKCLwMFpqH0SCEyN1LKTVryprpPay50m+dxyZJpGbCE7SJnKgOvYU
-         cS1gUHm+Qg/qhRD09mm7tzLCB/HJ72Ngrnsf74xSUp9a4KxsshMhyIYJ06TF7H6Z2k3W
-         IOCOhSpDMD7QzWo7XyPJUAoRti+pj76JM7944KIm5dGbwvTJNIvJJCuX6kW7TVW2g2ZX
-         3D0w==
+        b=E+R6k8uSrybB3LIDaUvlnPW2db9nx77Eldi8ZwAeUJcs/yUOAhqK0eObIDVTuGjhDk
+         uTi386bVXuHmtRtvuFaEZF6/DmvGtibYp/tMlQsDnz8Zx2yQZFY5vz7mFMFZbgVrip/f
+         62SqBjS0OpXOZoSMTyU+z2TVRklo/B0prv/4+9DI+9Ihuak4/F4D5A1yyrKRTrOfCXKh
+         b9njBcXLT3YE1XEFxx8r7w+2W8g0CflHUYMZXr+wqZAM+/I4Dyg2dNXTwmozAQsqc8iT
+         DC9POSM+2Vze0KuUNRhJQLGiW/d6QsTsRhxFI6qr2xt0ItagZQTFqOpu8ZUysn6wVIPo
+         e+uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=sender:user-agent:in-reply-to:content-disposition:mime-version
-         :references:message-id:subject:cc:to:from:date
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=YH2wridiOIr7SJcRNRRNWocrwBcsJxUyWXsFYm77h1M=;
-        b=FYJXxuB9huxh3Dn9to7k5MrtyHAVGficuaa+aCIRBLyKf6GW6E4+ip6UucT7R/tubp
-         F0wEoF/OdukaNymhaBOZwFf14+ggUZq2ltGbyas8K5vAcfZxrnd80A/yRfg1mnI6L9/C
-         P2hj6Uuv4B+SbLmqX6V31h42ViW7nSiNfmPi9NNEVZ3jjnSaHMPWgN0WU8oh8l7OxFUm
-         0l/commOFdisUIa1kRAeHXMYm/7knGsRKQ/1yjOiGLwHvefFBXD+ma92U8VwGu1M8XyM
-         u47nQSJ0aRYhrGVVD9fzAR8JSvr74yXiexWo++mKqiQCBN35wJCP4ZsItPY5lgzudKGF
-         NukA==
+        bh=AFxcHieAc63yNfeQtW686kN7BToGXJsCLV/8x6Z1168=;
+        b=0sfNRYsat+aJXZqkpLHxJ2ivtOgHV5QqC6Vb3xzrMrWI0TvHQDzjWynqRU2g5VPRjG
+         boMAzOABacCOPtKSSgDnoWIHECplHtedQxixFBMQ5CRf6gP1kZRWi+/NY/RLezxsonVS
+         b+aLPUg/hZuYhe2AkMbasROXVH6btTEOihC7q+BmMQ4ramWZ91G2h/shjIuZZEEkMzv1
+         4Pfne58dcQkixJkv4KAIdWko5KGJCrXbX7GMyaFb9Yq/68SxqAQ+/UlrNoywoJHddxhg
+         jg9fYhBbYrHIB9Mx5V/Lp091/h0i8wZ4+ftodeRD8NFAcRcaJ+msBH9frav+Ie0TeatN
+         VYxQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=RhzzrjMI;
+       spf=pass (google.com: best guess record for domain of willy@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=willy@infradead.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
-Date: Fri, 23 Mar 2018 14:00:24 -0400
-From: Rich Felker <dalias@libc.org>
-To: Matthew Wilcox <willy@infradead.org>
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=RhzzrjMI;
+       spf=pass (google.com: best guess record for domain of willy@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=willy@infradead.org
+Date: Fri, 23 Mar 2018 12:06:18 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Rich Felker <dalias@libc.org>
 Cc: Ilya Smith <blackzert@gmail.com>, rth@twiddle.net,
 	ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@synopsys.com,
 	linux@armlinux.org.uk, tony.luck@intel.com, fenghua.yu@intel.com,
@@ -53,41 +55,57 @@ Cc: Ilya Smith <blackzert@gmail.com>, rth@twiddle.net,
 	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
 	sparclinux@vger.kernel.org, linux-mm@kvack.org
 Subject: Re: [RFC PATCH v2 0/2] Randomization of address chosen by mmap.
-Message-ID: <20180323180024.GB1436@brightrain.aerifal.cx>
+Message-ID: <20180323190618.GA23763@bombadil.infradead.org>
 References: <1521736598-12812-1-git-send-email-blackzert@gmail.com>
  <20180323124806.GA5624@bombadil.infradead.org>
+ <20180323180024.GB1436@brightrain.aerifal.cx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180323124806.GA5624@bombadil.infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-Sender: Rich Felker <dalias@aerifal.cx>
+In-Reply-To: <20180323180024.GB1436@brightrain.aerifal.cx>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595656488556903336?=
-X-GMAIL-MSGID: =?utf-8?q?1595752809220769185?=
+X-GMAIL-MSGID: =?utf-8?q?1595756548140206916?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 23, 2018 at 05:48:06AM -0700, Matthew Wilcox wrote:
-> On Thu, Mar 22, 2018 at 07:36:36PM +0300, Ilya Smith wrote:
-> > Current implementation doesn't randomize address returned by mmap.
-> > All the entropy ends with choosing mmap_base_addr at the process
-> > creation. After that mmap build very predictable layout of address
-> > space. It allows to bypass ASLR in many cases. This patch make
-> > randomization of address on any mmap call.
+On Fri, Mar 23, 2018 at 02:00:24PM -0400, Rich Felker wrote:
+> On Fri, Mar 23, 2018 at 05:48:06AM -0700, Matthew Wilcox wrote:
+> > On Thu, Mar 22, 2018 at 07:36:36PM +0300, Ilya Smith wrote:
+> > > Current implementation doesn't randomize address returned by mmap.
+> > > All the entropy ends with choosing mmap_base_addr at the process
+> > > creation. After that mmap build very predictable layout of address
+> > > space. It allows to bypass ASLR in many cases. This patch make
+> > > randomization of address on any mmap call.
+> > 
+> > Why should this be done in the kernel rather than libc?  libc is perfectly
+> > capable of specifying random numbers in the first argument of mmap.
 > 
-> Why should this be done in the kernel rather than libc?  libc is perfectly
-> capable of specifying random numbers in the first argument of mmap.
+> Generally libc does not have a view of the current vm maps, and thus
+> in passing "random numbers", they would have to be uniform across the
+> whole vm space and thus non-uniform once the kernel rounds up to avoid
+> existing mappings.
 
-Generally libc does not have a view of the current vm maps, and thus
-in passing "random numbers", they would have to be uniform across the
-whole vm space and thus non-uniform once the kernel rounds up to avoid
-existing mappings. Also this would impose requirements that libc be
-aware of the kernel's use of the virtual address space and what's
-available to userspace -- for example, on 32-bit archs whether 2GB,
-3GB, or full 4GB (for 32-bit-user-on-64-bit-kernel) is available, and
-on 64-bit archs where fewer than the full 64 bits are actually valid
-in addresses, what the actual usable pointer size is. There is
-currently no clean way of conveying this information to userspace.
+I'm aware that you're the musl author, but glibc somehow manages to
+provide etext, edata and end, demonstrating that it does know where at
+least some of the memory map lies.  Virtually everything after that is
+brought into the address space via mmap, which at least glibc intercepts,
+so it's entirely possible for a security-conscious libc to know where
+other things are in the memory map.  Not to mention that what we're
+primarily talking about here are libraries which are dynamically linked
+and are loaded by ld.so before calling main(); not dlopen() or even
+regular user mmaps.
 
-Rich
+> Also this would impose requirements that libc be
+> aware of the kernel's use of the virtual address space and what's
+> available to userspace -- for example, on 32-bit archs whether 2GB,
+> 3GB, or full 4GB (for 32-bit-user-on-64-bit-kernel) is available, and
+> on 64-bit archs where fewer than the full 64 bits are actually valid
+> in addresses, what the actual usable pointer size is. There is
+> currently no clean way of conveying this information to userspace.
+
+Huh, I thought libc was aware of this.  Also, I'd expect a libc-based
+implementation to restrict itself to, eg, only loading libraries in
+the bottom 1GB to avoid applications who want to map huge things from
+running out of unfragmented address space.
