@@ -1,65 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755487AbeCWKIL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 06:08:11 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:11260 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755426AbeCWKII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 06:08:08 -0400
-Subject: Re: [PATCH 04/19] powerpc/kvm: Mark variable tmp unused
-To: Mathieu Malaterre <malat@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-References: <20180322202007.23088-1-malat@debian.org>
- <20180322202007.23088-5-malat@debian.org>
-From: christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <db7962e0-88f8-b801-9ccb-1f57b14836d3@c-s.fr>
-Date: Fri, 23 Mar 2018 11:08:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932525AbeCWKJj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 06:09:39 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53653 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932483AbeCWKJc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 06:09:32 -0400
+Date: Fri, 23 Mar 2018 11:09:30 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv5,5/5] ARM: dts: omap4-droid4: add soundcard
+Message-ID: <20180323100930.GA21644@amd>
+References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
+ <20180322204804.GA26871@amd>
+ <20180322234832.o24ut5ahon46mdu4@earth.universe>
 MIME-Version: 1.0
-In-Reply-To: <20180322202007.23088-5-malat@debian.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
+Content-Disposition: inline
+In-Reply-To: <20180322234832.o24ut5ahon46mdu4@earth.universe>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Le 22/03/2018 à 21:19, Mathieu Malaterre a écrit :
-> Add gcc attribute unused to variable tmp. Fix warning treated as error with
-> W=1:
-> 
->    arch/powerpc/kernel/kvm.c:675:6: error: variable ‘tmp’ set but not used [-Werror=unused-but-set-variable]
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->   arch/powerpc/kernel/kvm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/kernel/kvm.c b/arch/powerpc/kernel/kvm.c
-> index 9ad37f827a97..cd3c088283f9 100644
-> --- a/arch/powerpc/kernel/kvm.c
-> +++ b/arch/powerpc/kernel/kvm.c
-> @@ -672,7 +672,7 @@ static void kvm_use_magic_page(void)
->   {
->   	u32 *p;
->   	u32 *start, *end;
-> -	u32 tmp;
-> +	u32 tmp __maybe_unused;
->   	u32 features;
->   
->   	/* Tell the host to map the magic page to -4096 on all CPUs */
-> 
+Hi!
 
-This fonction should use  fault_in_pages_readable() instead of 
-hardcoding the verification.
+> > # CONFIG_SND_OMAP_SOC_RX51 is not set
+> > # CONFIG_SND_OMAP_SOC_N9 is not set
+> > CONFIG_SND_OMAP_SOC_OMAP_TWL4030=3Dy
+> > CONFIG_SND_OMAP_SOC_OMAP_ABE_TWL6040=3Dy
+>=20
+> That's not needed (but does not hurt). The Droid 4
+> has no TWL companion chip and uses CPCAP instead.
 
-Christophe
+Aha, thanks. I was doing wild experiments to get something that
+boots... I turned them off.
 
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+> > Any ideas?
+>=20
+> You probably did not enable the soundcard driver, that binds against
+> "audio-graph-card" compatible and connects the codec driver with the
+> SoC driver: CONFIG_SND_AUDIO_GRAPH_CARD
+
+Ok, that certainly changed things; I am now getting this:
+
+Mar 23 08:39:17 devuan kernel: [   11.633605] asoc-audio-graph-card soundca=
+rd: GPIO lookup for
+ consumer pa
+Mar 23 08:39:17 devuan kernel: [   11.644958] asoc-audio-graph-card soundca=
+rd: using device tr
+ee for GPIO lookup
+Mar 23 08:39:17 devuan kernel: [   11.656677] of_get_named_gpiod_flags: can=
+'t parse 'pa-gpios'
+ property of node '/soundcard[0]'
+Mar 23 08:39:17 devuan kernel: [   11.669738] of_get_named_gpiod_flags: can=
+'t parse 'pa-gpio'=20
+property of node '/soundcard[0]'
+Mar 23 08:39:17 devuan kernel: [   11.682617] asoc-audio-graph-card soundca=
+rd: using lookup ta
+bles for GPIO lookup
+Mar 23 08:39:17 devuan kernel: [   11.694427] asoc-audio-graph-card soundca=
+rd: lookup for GPIO
+ pa failed
+
+Indeed the dts does not seem to contain any gpios
+
+        soundcard {
+                compatible =3D "audio-graph-card";
+                label =3D "Droid 4 Audio";
+
+                simple-graph-card,widgets =3D
+                        "Speaker", "Earpiece",
+                        "Speaker", "Loudspeaker",
+	                "Headphone", "Headphone Jack",
+	                "Microphone", "Internal Mic";
+
+                simple-graph-card,routing =3D
+	                "Earpiece", "EP",
+		        "Loudspeaker", "SPKR",
+                        "Headphone Jack", "HSL",
+                        "Headphone Jack", "HSR",
+	                "MICR", "Internal Mic";
+
+                dais =3D <&mcbsp2_port>, <&mcbsp3_port>;
+	};
+
+Any more ideas? :-)
+
+Thanks,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--BOKacYhQ+x31HxR3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq00loACgkQMOfwapXb+vL71wCfei9Wakmc6L0+DQQ6ydjcLxIl
+d54AnAmfV0UHVbqUBgYCCLQbQS1kZVmN
+=VTw6
+-----END PGP SIGNATURE-----
+
+--BOKacYhQ+x31HxR3--
