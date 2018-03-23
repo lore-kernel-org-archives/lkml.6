@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752161AbeCWQGE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:06:04 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53507 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751811AbeCWQGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:06:03 -0400
+        id S1752263AbeCWQGM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:06:12 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6687 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751811AbeCWQGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 12:06:10 -0400
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>
-Subject: [PATCH 8/8] scsi: hisi_sas: remove some unneeded structure members
-Date: Sat, 24 Mar 2018 00:05:15 +0800
-Message-ID: <1521821115-120040-9-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 7/8] scsi: hisi_sas: print device id for errors
+Date: Sat, 24 Mar 2018 00:05:14 +0800
+Message-ID: <1521821115-120040-8-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1521821115-120040-1-git-send-email-john.garry@huawei.com>
 References: <1521821115-120040-1-git-send-email-john.garry@huawei.com>
@@ -24,104 +24,50 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes unneeded structure elements:
-- hisi_sas_phy.dev_sas_addr: only ever written
-	- Also remove associated function which writes it,
-	  hisi_sas_init_add().
-- hisi_sas_device.attached_phy: only ever written
-	- Also remove code to set it in hisi_sas_dev_found()
+When we find an erroneous slot completion, to help aid
+debugging add the device index to the current debug
+log.
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 Reviewed-by: Xiang Chen <chenxiang66@hisilicon.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas.h       |  3 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 17 +----------------
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c |  2 --
- 3 files changed, 1 insertion(+), 21 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 4 ++--
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index d1153e8..d413d05 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -137,7 +137,6 @@ struct hisi_sas_phy {
- 	struct asd_sas_phy	sas_phy;
- 	struct sas_identify	identify;
- 	u64		port_id; /* from hw */
--	u64		dev_sas_addr;
- 	u64		frame_rcvd_size;
- 	u8		frame_rcvd[32];
- 	u8		phy_attached;
-@@ -174,7 +173,6 @@ struct hisi_sas_device {
- 	struct completion *completion;
- 	struct hisi_sas_dq	*dq;
- 	struct list_head	list;
--	u64 attached_phy;
- 	enum sas_device_type	dev_type;
- 	int device_id;
- 	int sata_idx;
-@@ -440,7 +438,6 @@ struct hisi_sas_slot_buf_table {
- extern struct scsi_host_template *hisi_sas_sht;
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index bed6afb..a5abde8 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -2459,10 +2459,10 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
+ 			slot_err_v2_hw(hisi_hba, task, slot, 2);
  
- extern void hisi_sas_stop_phys(struct hisi_hba *hisi_hba);
--extern void hisi_sas_init_add(struct hisi_hba *hisi_hba);
- extern int hisi_sas_alloc(struct hisi_hba *hisi_hba, struct Scsi_Host *shost);
- extern void hisi_sas_free(struct hisi_hba *hisi_hba);
- extern u8 hisi_sas_get_ata_protocol(struct host_to_dev_fis *fis,
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 8557fd0..d1a61b1 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -577,10 +577,8 @@ static int hisi_sas_dev_found(struct domain_device *device)
- 		for (phy_no = 0; phy_no < phy_num; phy_no++) {
- 			phy = &parent_dev->ex_dev.ex_phy[phy_no];
- 			if (SAS_ADDR(phy->attached_sas_addr) ==
--				SAS_ADDR(device->sas_addr)) {
--				sas_dev->attached_phy = phy_no;
-+				SAS_ADDR(device->sas_addr))
- 				break;
--			}
- 		}
- 
- 		if (phy_no == phy_num) {
-@@ -2079,17 +2077,6 @@ static struct Scsi_Host *hisi_sas_shost_alloc(struct platform_device *pdev,
- 	return NULL;
- }
- 
--void hisi_sas_init_add(struct hisi_hba *hisi_hba)
--{
--	int i;
--
--	for (i = 0; i < hisi_hba->n_phy; i++)
--		memcpy(&hisi_hba->phy[i].dev_sas_addr,
--		       hisi_hba->sas_addr,
--		       SAS_ADDR_SIZE);
--}
--EXPORT_SYMBOL_GPL(hisi_sas_init_add);
--
- int hisi_sas_probe(struct platform_device *pdev,
- 			 const struct hisi_sas_hw *hw)
- {
-@@ -2143,8 +2130,6 @@ int hisi_sas_probe(struct platform_device *pdev,
- 		sha->sas_port[i] = &hisi_hba->port[i].sas_port;
- 	}
- 
--	hisi_sas_init_add(hisi_hba);
--
- 	rc = scsi_add_host(shost, &pdev->dev);
- 	if (rc)
- 		goto err_out_ha;
+ 		if (ts->stat != SAS_DATA_UNDERRUN)
+-			dev_info(dev, "erroneous completion iptt=%d task=%p "
++			dev_info(dev, "erroneous completion iptt=%d task=%p dev id=%d "
+ 				"CQ hdr: 0x%x 0x%x 0x%x 0x%x "
+ 				"Error info: 0x%x 0x%x 0x%x 0x%x\n",
+-				slot->idx, task,
++				slot->idx, task, sas_dev->device_id,
+ 				complete_hdr->dw0, complete_hdr->dw1,
+ 				complete_hdr->act, complete_hdr->dw3,
+ 				error_info[0], error_info[1],
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 760724a..33735a7 100644
+index aa52d5e..760724a 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2134,8 +2134,6 @@ static int soft_reset_v3_hw(struct hisi_hba *hisi_hba)
- 		sha->sas_port[i] = &hisi_hba->port[i].sas_port;
- 	}
+@@ -1641,10 +1641,10 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
  
--	hisi_sas_init_add(hisi_hba);
--
- 	rc = scsi_add_host(shost, dev);
- 	if (rc)
- 		goto err_out_ha;
+ 		slot_err_v3_hw(hisi_hba, task, slot);
+ 		if (ts->stat != SAS_DATA_UNDERRUN)
+-			dev_info(dev, "erroneous completion iptt=%d task=%p "
++			dev_info(dev, "erroneous completion iptt=%d task=%p dev id=%d "
+ 				"CQ hdr: 0x%x 0x%x 0x%x 0x%x "
+ 				"Error info: 0x%x 0x%x 0x%x 0x%x\n",
+-				slot->idx, task,
++				slot->idx, task, sas_dev->device_id,
+ 				complete_hdr->dw0, complete_hdr->dw1,
+ 				complete_hdr->act, complete_hdr->dw3,
+ 				error_info[0], error_info[1],
 -- 
 1.9.1
