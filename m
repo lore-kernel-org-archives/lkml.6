@@ -1,90 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751912AbeCWJoe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:44:34 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:27319 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750789AbeCWJoc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:44:32 -0400
-X-UUID: beffa107f12e4b25a610c4e448fdc6ce-20180323
-Message-ID: <1521798262.28226.12.camel@mtkswgap22>
-Subject: Re: [PATCH v4 4/5] pintcrl: support bias-disable of generic and
- special pins simultaneously
-From: Sean Wang <sean.wang@mediatek.com>
-To: Zhiyong Tao <zhiyong.tao@mediatek.com>
-CC: <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <mark.rutland@arm.com>, <matthias.bgg@gmail.com>,
-        <devicetree@vger.kernel.org>, <hongkun.cao@mediatek.com>,
-        <srv_heupstream@mediatek.com>, <linux-gpio@vger.kernel.org>,
-        <biao.huang@mediatek.com>, <erin.lo@mediatek.com>,
-        <liguo.zhang@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <hongzhou.yang@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <linux-arm-kernel@lists.infradead.org>
-Date: Fri, 23 Mar 2018 17:44:22 +0800
-In-Reply-To: <1521687523-1604-5-git-send-email-zhiyong.tao@mediatek.com>
-References: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com>
-         <1521687523-1604-5-git-send-email-zhiyong.tao@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1752225AbeCWJpL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:45:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42826 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751964AbeCWJpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:45:09 -0400
+Date: Fri, 23 Mar 2018 10:45:07 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
+ patches.
+Message-ID: <20180323094507.smsqc5ft3yajnwqt@pathway.suse.cz>
+References: <20180307082039.10196-1-pmladek@suse.com>
+ <20180307082039.10196-6-pmladek@suse.com>
+ <20180313224613.sdkdkcvhpqv54s6c@treble>
+ <20180319150207.iz5ecbsogg5lpwac@pathway.suse.cz>
+ <20180319214324.riyp233trtfxbeto@treble>
+ <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
+ <20180320201502.2skkk3ld4zk2dxwg@treble>
 MIME-Version: 1.0
-X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23736.005
-X-TM-AS-Result: No-8.294700-8.000000-10
-X-TMASE-MatchedRID: +c13yJDs9016DVqDv3PkveKXIfYoQh97jLOy13Cgb4+iUP5F9sCEMAJj
-        LDMzzZnzvc7C3gy8W89iSVnIdboij5Coy9iDotiw2Ud/1nepkpOZ2scyRQcer9vpj5+dNlQvezY
-        C/kiT9SZBy76K08Yp1Uoy5WLoLWsKTX7PJ/OU3vKDGx/OQ1GV8rHlqZYrZqdI+gtHj7OwNO1/FU
-        QjcNJIg6gO76/Uu0kPfzHD7texLIG71Xng+2qL1RQc0V8V6TO6C2eA6MOI5eE7bU7W+0S4QAO7O
-        crK3BRIKuayjtbtUMvKGt2hOkaVr67hrSPr/veNEVQxz6vAprzRXFNhnxxSrFC5mAq4+G1LwL6S
-        xPpr1/I=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--8.294700-8.000000
-X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23736.005
-X-TMASE-POSTMAN: 2-d;
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180320201502.2skkk3ld4zk2dxwg@treble>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-03-22 at 10:58 +0800, Zhiyong Tao wrote:
-> For generic pins, parameter "arg" is 0 or 1.
-> For special pins, bias-disable is set by R0R1,
-> so we need transmited "00" to set bias-disable
-> When we set "bias-disable" as high-z property,
-> the parameter should be "MTK_PUPD_SET_R1R0_00".
+On Tue 2018-03-20 15:15:02, Josh Poimboeuf wrote:
+> On Tue, Mar 20, 2018 at 01:25:38PM +0100, Petr Mladek wrote:
+> > On Mon 2018-03-19 16:43:24, Josh Poimboeuf wrote:
+> > > On Mon, Mar 19, 2018 at 04:02:07PM +0100, Petr Mladek wrote:
+> > > > > Along those lines, I'd also propose that we constrain our existing patch
+> > > > > stacking even further.  Right now we allow a new patch to be registered
+> > > > > on top of a disabled patch, though we don't allow the new patch to be
+> > > > > enabled until the previous patch gets enabled.  I'd propose we no longer
+> > > > > allow that condition.  We should instead enforce that all existing
+> > > > > patches are *enabled* before allowing a new patch to be registered on
+> > > > > top.  That way the patch stacking is even more sane, and there are less
+> > > > > "unusual" conditions to worry about.  We have enough of those already.
+> > > > > Each additional bit of flexibility has a maintenance cost, and this one
+> > > > > isn't worth it IMO.
+> > > > 
+> > > > Again, this might make some things easier but it might also bring
+> > > > problems.
+> > > > 
+> > > > For example, we would need to solve the situation when the last
+> > > > patch is disabled and cannot be removed because the transition
+> > > > was forced. This might be more common after removing the immediate
+> > > > feature.
+> > > 
+> > > I would stop worrying about forced patches so much :-)
+> > 
+> > I have already seen blocked transition several times. It is true that
+> > it was with kGraft. But we just do not have enough real life experience
+> > with the upstream livepatch code.
 > 
-> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> ---
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index 3cf384f..f991ff3 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -293,7 +293,7 @@ static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
->  		unsigned int pin, bool enable, bool isup, unsigned int arg)
->  {
->  	unsigned int bit;
-> -	unsigned int reg_pullen, reg_pullsel;
-> +	unsigned int reg_pullen, reg_pullsel, r1r0;
->  	int ret;
->  
->  	/* Some pins' pull setting are very different,
-> @@ -301,8 +301,12 @@ static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
->  	 * resistor bit, so we need this special handle.
->  	 */
->  	if (pctl->devdata->spec_pull_set) {
-> +		/* For special pins, bias-disable is set by R1R0,
-> +		 * the parameter should be "MTK_PUPD_SET_R1R0_00".
-> +		 */
-> +		r1r0 = enable ? arg : MTK_PUPD_SET_R1R0_00;
->  		ret = pctl->devdata->spec_pull_set(mtk_get_regmap(pctl, pin),
-> -			pin, pctl->devdata->port_align, isup, arg);
-> +			pin, pctl->devdata->port_align, isup, r1r0);
->  		if (!ret)
->  			return 0;
->  	}
+> But we're talking about patching on top of a *disabled* patch.  Forced
+> or not, why would the patch be disabled in the first place?
 
-Reviewed-by: Sean Wang <sean.wang@mediatek.com>
+For example, it might be disabled because the transition stalled for
+too long and the user reverted it. Or just because it is possible
+to disable it.
+
+
+> We were just recently discussing the possibility of not allowing the
+> disabling of patches at all.  If we're not going that far, let's at
+> least further restrict it, for the sanity of our code, so we don't have
+> to worry about a nasty mismatched stack of enabled/disabled/enabled/etc,
+> at least for the cases where 'replace' patches aren't used.
+
+I am not completely sure where all these fears come from. From my
+point of view, this change is pretty safe and trivial thanks to NOPs
+and overall design. It would be a shame to do not have it. But I
+might be blind after spending so much time with the feature.
+
+BTW: It seems that I am more paranoid when being in the reviewer role.
+
+Anyway, I am getting close to send v11. This change is done by a separate
+and last code-related patch. So, it can be omitted rather easily.
+
+
+> After these discussions I realize that there are several motivations for
+> this patch set:
+> 
+> 1) Atomically reverting some functions in a previous patch while
+>    upgrading other functions: accomplished by inserting nops for
+>    reverted functions.  Could also be accomplished by tooling which
+>    patches functions with duplicates of the originals.
+> 
+> 2) Improving performance implications of #1: accomplished by removing
+>    the nops and old patch modules.
+> 
+> 3) Decreasing user confusion about stacking order and what patches are
+>    currently in effect: accomplished by permanently disabling and
+>    removing the replaced patches.  Could also be accomplished by a
+>    better sysfs interface and tooling.
+> 
+> 4) Improving debugging?  How?  (It seems to me that removing the
+>    replaced patches could make debugging more difficult, as it erases
+>    the patching history (similar to a git rebase))
+
+This explains why you might be against replacing disabled patches. It could
+confuse the history.
+
+On the other hand, it might also hide bugs and create mysterious ones.
+If we remove code that should not longer be used, the system should
+crash immediately if the removed code/data is accessed by mistake.
+IMHO, this should help to catch bugs early and in more clear situation.
+
+The history can be seen in the logs or in users reports. I know
+that both sources are not 100% reliable but...
+
+IMHO, it is case by case. I could imagine situations where the clean
+up might help and situations where it might cause loosing information.
+It is hard to judge. I still vote for the clean up ;-)
+
+
+> It would be good to document all those.
+> 
+> Anyway, I need to think about it some more, but I may be warming up to
+> the idea of permanently disabling the replaced patches.  Your package
+> management analogy helped me to understand it better.  Especially since
+> we'll be delivering these patches in packages, so the patch state would
+> mirror the patch state.  It might be good to describe that analogy in
+> the documentation as well.
+
+I have updated the documentation a bit. I did not have the energy
+to completely rewrite it though. Anyway, we still have to agree
+on the code first.
+
+Best Regards,
+Petr
