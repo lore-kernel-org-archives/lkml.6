@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521807158-2-7476640150798530277
+X-Cyrus-Session-Id: sloti22d1t05-1182439-1521807143-2-1345150553356241514
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807158; b=w7uOoq+1AYhF00bz0v3YX3/6Ud7GhUfiV+UaT2MEmW2r1km
-    x4DfSTc7Yv/nuLpR0qIb2urpNh6FrbMDQKhGIQspoc6TsKPgG87TgpjwOBXQORzL
-    MVvsbIbzq/Kiook5tdLph1VzgLPK6snOmFOoGDGGNLoBIocMr/pcTFhMHISuwCRE
-    LorsyX96JcvfU3nukIq5xTWcQ/4hHvf3n+gLRu3+4S8A+VcUYDPs//+tbTLv6WTe
-    ZZ5IgCcsbqs+upGLdfU0nWqD12xklWoO+NEBLQT4voYYb49NMuMg7Ld9Kq+sLsZt
-    VqvrFNctHiHaHXS0bURWK0kQUK8iQJ75Qj/oUAg==
+    t=1521807142; b=Hsl2dazY8pR2VlBpVp8Sm9LbONjl4MciqKEjWSeHy6EgTsv
+    VdpLdvQQK/T+0oevgQPDLi4OpbMUSh+tjosQ/CuyjWeTj4aNLh9NhCvkPEFuOOD2
+    HFAIgdtEqnLmO5aQ9+NNxHwm2emXEZpamFHmPcbFEDT0Vb0xZuxiPGCqfNcj3FSu
+    0FSlLH9F2ZpVU6L+OhC7/+0cmTIGCx9yLTSGHJV5FahEdVodQhn81HxUS5HFE/t+
+    d5zS0bnQLWwuSZDsIt57uiPZDpE073LMEomHYF77M7EfGmqg9d/Les1ad7jMcZBr
+    RmvGSO5Vpg5Szq5+agNDzryGUTV0Vv8YJjtYkDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807158; bh=wYL34wBzbivIOukQdP2Wt2aJeG
-    ainaKgpaOeywcgFv4=; b=f/eRls+0+kA+koxPV0B3Wur+r1CsG52k/a297VgOYD
-    Mh/Kvo+/bTThBSkq77+hGjK8wGrnD8Bby5BrvDkmC1EEibqGB2yV6a01+GheEdY2
-    By4LUEfTdSP8BRNPYBOQ92QCFCwv6mPk7Rd+OBiRzcsFrqgjez6wUq4wK6aq7afR
-    oox0DaQXFc3dYLyGyNqVCZ7Ijy7sxBDg9kpCJUvJPrbLc4wdOme7mMNyq3gGVqL2
-    EK3YgfslW2sj9j27tnW//CtufiFo67oqFkV1odB+kJHQBbWzEwLAN1Arag5NFt2E
-    teUmvL8Jl/ScmsuDTht+cDbaKdvX301sEawTIofR1+fQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521807142; bh=zY94CvymLjdgn482uPYi1eVwF5
+    UG4LVwqVXRUuy0EIM=; b=VU5q88lWoD30zzltDxZqUoyrNfw8nR75eEfJ8pu9NA
+    89ZuSr55BrZSxH7KgdwB2xETT0BJM8PsnlDIeAA1DoqHprDegj2YcukKJ6TETnJL
+    bZbGtEPKxIHRPNQP3YdnnfqBZ7o2cig4wA+TEkgKkz1EpWUm4A/s6YRt64Bs9o7t
+    hKWbBpFSRh/Skqj0bpyhDJ87tmjPEC9+RXQDPjAHm4L9FopOJonjzd7RP3k2G8Ja
+    /yh1MmVz1tKIJJ7MY0ZrgKIVDxLZxQYa4OP73W4Z1jQNpmgqOp8gt9uYh3T15tLx
+    LmUwmQ4iycb7jU6cySRcWYF03vF1DibsnGk/FoczM6MQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752878AbeCWJ5c (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:57:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34964 "EHLO
+        id S1753202AbeCWMMM (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 08:12:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35040 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752875AbeCWJ5a (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:30 -0400
+        with ESMTP id S1752886AbeCWJ5d (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Changcheng <changcheng.liu@intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Artemy Kovalyov <artemyko@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 32/84] mmc: block: fix logical error to avoid memory leak
-Date: Fri, 23 Mar 2018 10:53:46 +0100
-Message-Id: <20180323095416.741312213@linuxfoundation.org>
+Subject: [PATCH 4.15 41/84] IB/umem: Fix use of npages/nmap fields
+Date: Fri, 23 Mar 2018 10:53:55 +0100
+Message-Id: <20180323095418.169925242@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -84,31 +83,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Liu, Changcheng" <changcheng.liu@intel.com>
+From: Artemy Kovalyov <artemyko@mellanox.com>
 
 
-[ Upstream commit 0be55579a127916ebe39db2a74d906a2dfceed42 ]
+[ Upstream commit edf1a84fe37c51290e2c88154ecaf48dadff3d27 ]
 
-If the MMC_DRV_OP_GET_EXT_CSD request completes successfully, then
-ext_csd must be freed, but in one case it was not. Fix that.
+In ib_umem structure npages holds original number of sg entries, while
+nmap is number of DMA blocks returned by dma_map_sg.
 
-Signed-off-by: Liu Changcheng <changcheng.liu@intel.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: c5d76f130b28 ('IB/core: Add umem function to read data from user-space')
+Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/core/block.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/core/umem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -2623,6 +2623,7 @@ static int mmc_ext_csd_open(struct inode
- 
- 	if (n != EXT_CSD_STR_LEN) {
- 		err = -EINVAL;
-+		kfree(ext_csd);
- 		goto out_free;
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -352,7 +352,7 @@ int ib_umem_copy_from(void *dst, struct
+ 		return -EINVAL;
  	}
  
+-	ret = sg_pcopy_to_buffer(umem->sg_head.sgl, umem->nmap, dst, length,
++	ret = sg_pcopy_to_buffer(umem->sg_head.sgl, umem->npages, dst, length,
+ 				 offset + ib_umem_offset(umem));
+ 
+ 	if (ret < 0)
