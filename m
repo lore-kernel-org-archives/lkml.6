@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvXdfVJeqH9PI7sCGXnR3wW8kVMdsI8gZnrypmLvsOqiaSQdsmLoXS6fXPh5KVvKEnpOqgD
-ARC-Seal: i=1; a=rsa-sha256; t=1521799036; cv=none;
+X-Google-Smtp-Source: AG47ELucbut6bhuMdyoqKYpUPW01yMsYFnF4z72l0bOdF3Lnz1RXRXVy7ka3rXIMmrMGICM1uTXg
+ARC-Seal: i=1; a=rsa-sha256; t=1521798979; cv=none;
         d=google.com; s=arc-20160816;
-        b=Gzo2NJ8acolt9H2ZG8Vtk3SEjuLQus+hN9e+wPnuWL1Sz8ccDm0lVKo4dvofIFZ+F3
-         4arhsXi2J7zYFRHsgx8Xqn+llp83ryj4O0REGXuwK0fl2tZLrzWuHHSi0ew3w9BE/ZzQ
-         YrEC9N6i2wxDO35CzilHfTjwM2VFAUnzkGJtUAg25dpeNzVRUddrgzUI20wLUhIb70fn
-         33H2/AzVoc7uOSSZQT9dAki/HKGabalbSDNGjn9KCFJI0e6wwnpQFIxSAegArVqtC5VI
-         /NtoUIDbHk58H+Htwh5QvYw+E2Pz6OiB8PLGIsfLChtqPNlYfJeNVnG4nbgsdpgUGqwj
-         g8RQ==
+        b=BjknoZx8WdBxo3tx+EJSSRNMHsw71JsT6G6Q4PWWZ7NAUqVtarIhHxhc8gBV6kQio3
+         p2MqinIV5O1S8crO3ucpAkZb3CF0MZEbdhNFSaIBI2lU1xs/Vu33oAuX4XrfllR1lFBI
+         3LtAOpOo459Q9FXaB4r8BagqZ0KosKNp0DTHTKdoGS8Js4TMZihBChSA7xEZga4vJjA1
+         SJ4yHNvEeaCYSBzfyoYTABaRWcw63wxXq7ROPmV8KuuNfTcPbBj9ZNbA92z7JuEuKS4S
+         ZQbzgPlWnSQo6YljBRhP+gFImfadMRga0qRTJBANSthSk/ZYIW6nZI0V8GBKMy3C0nlS
+         +HyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xzIKSj962FDq80FN6HneAGIjw9STRpEo6qDjzAjw6F8=;
-        b=u0Kb4SCkmNP0ASWMLoDldkR/3PrD5mEyHOntR4M54DwLDXcJxMslm+jdoryewQYlds
-         wLhOnqxl7e2qA5Kfw2mTH9HXqJJPvQ8ApeqoPDtziqHBktTVZgKJ7XrE4yhbIyXMMij8
-         oHUPcIbvN0wEtMz3Nt4Azw9JA/x6LxubvJMxR6eExiAdnXh+vztwEohkwzi24KBDd4JI
-         NYna40xHGwTOHroQ8bjl5w83cSF+dddIWwyMZmtzYG5hjuzRjfsh93vb9X/aq2QGbaAD
-         Mt2jannkT1QhbAQzFRkXm00DBxd8rvcHaB5ZMsxTkF352wPN95F054Xh66BK79sX/t0f
-         RJqQ==
+        bh=tjHPkbLI6KcmxQuDwHEqANY6qvEH4WgRprs3/XCjfrc=;
+        b=MyioqG1w4hVPU99LAXGac5PzUEjAfU+7MhNTbrsA+BkmaF2zoqisIpYfI9Xuia3I9Z
+         YEbph/YbSxC+A4ODcY3JXPZqGWn1FfCyphMQMF7372xn3vwYQWYNmYdbknGWhbNujN5K
+         AxgsJlj76VFCzISMm+m1RCViLrK5aJYEMd9Dargm3n8J/V7XmmPEUurYLC09flEevtFv
+         7f1NJMY9NeEzU0ZzFfHd789T1BFnQOhRCKGI1OXwoMSb7WQtgQLP3gMfRFB4TP0xrQpl
+         KrFcXssx5cCUtK8K1n9ipRnatPrljtgSwyeTnDZ9CIAL23si2n2M65fiAgoqERdgcWaT
+         OQNw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-	"David S. Miller" <davem@davemloft.net>,
+	Pixel Ding <Pixel.Ding@amd.com>,
+	Monk Liu <monk.liu@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 22/84] qmi_wwan: set FLAG_SEND_ZLP to avoid network initiated disconnect
-Date: Fri, 23 Mar 2018 10:53:36 +0100
-Message-Id: <20180323095415.253246377@linuxfoundation.org>
+Subject: [PATCH 4.15 03/84] drm/amdgpu: use polling mem to set SDMA3 wptr for VF
+Date: Fri, 23 Mar 2018 10:53:17 +0100
+Message-Id: <20180323095412.450043326@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721946694563316?=
-X-GMAIL-MSGID: =?utf-8?q?1595721946694563316?=
+X-GMAIL-THRID: =?utf-8?q?1595721886764017225?=
+X-GMAIL-MSGID: =?utf-8?q?1595721886764017225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,44 +52,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Bj�rn Mork" <bjorn@mork.no>
+From: Pixel Ding <Pixel.Ding@amd.com>
 
 
-[ Upstream commit 245d21190aec547c0de64f70c0e6de871c185a24 ]
+[ Upstream commit 2ffe31deb27579e2f2c9444e01f4d8abf385d145 ]
 
-It has been reported that the dummy byte we add to avoid
-ZLPs can be forwarded by the modem to the PGW/GGSN, and that
-some operators will drop the connection if this happens.
+On Tonga VF, there're 2 sources updating wptr registers for
+sdma3: 1) polling mem and 2) doorbell. When doorbell and polling
+mem are both enabled on sdma3, there will be collision hit in
+occasion between those two sources when ucode and h/w are doing
+the updating on wptr register in parallel. Issue doesn't happen
+on CP GFX/Compute since CP drops all doorbell writes when VF is
+inactive. So enable polling mem and don't use doorbell for SDMA3.
 
-In theory, QMI devices are based on CDC ECM and should as such
-both support ZLPs and silently ignore the dummy byte.  The latter
-assumption failed.  Let's test out the first.
-
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Pixel Ding <Pixel.Ding@amd.com>
+Reviewed-by: Monk Liu <monk.liu@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/qmi_wwan.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ring.h |    1 +
+ drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c   |   27 +++++++++++++++++++--------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -826,7 +826,7 @@ err:
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ring.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ring.h
+@@ -187,6 +187,7 @@ struct amdgpu_ring {
+ 	uint64_t                eop_gpu_addr;
+ 	u32			doorbell_index;
+ 	bool			use_doorbell;
++	bool			use_pollmem;
+ 	unsigned		wptr_offs;
+ 	unsigned		fence_offs;
+ 	uint64_t		current_ctx;
+--- a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
+@@ -355,7 +355,7 @@ static uint64_t sdma_v3_0_ring_get_wptr(
+ 	struct amdgpu_device *adev = ring->adev;
+ 	u32 wptr;
  
- static const struct driver_info	qmi_wwan_info = {
- 	.description	= "WWAN/QMI device",
--	.flags		= FLAG_WWAN,
-+	.flags		= FLAG_WWAN | FLAG_SEND_ZLP,
- 	.bind		= qmi_wwan_bind,
- 	.unbind		= qmi_wwan_unbind,
- 	.manage_power	= qmi_wwan_manage_power,
-@@ -835,7 +835,7 @@ static const struct driver_info	qmi_wwan
+-	if (ring->use_doorbell) {
++	if (ring->use_doorbell || ring->use_pollmem) {
+ 		/* XXX check if swapping is necessary on BE */
+ 		wptr = ring->adev->wb.wb[ring->wptr_offs] >> 2;
+ 	} else {
+@@ -380,10 +380,13 @@ static void sdma_v3_0_ring_set_wptr(stru
  
- static const struct driver_info	qmi_wwan_info_quirk_dtr = {
- 	.description	= "WWAN/QMI device",
--	.flags		= FLAG_WWAN,
-+	.flags		= FLAG_WWAN | FLAG_SEND_ZLP,
- 	.bind		= qmi_wwan_bind,
- 	.unbind		= qmi_wwan_unbind,
- 	.manage_power	= qmi_wwan_manage_power,
+ 	if (ring->use_doorbell) {
+ 		u32 *wb = (u32 *)&adev->wb.wb[ring->wptr_offs];
+-
+ 		/* XXX check if swapping is necessary on BE */
+ 		WRITE_ONCE(*wb, (lower_32_bits(ring->wptr) << 2));
+ 		WDOORBELL32(ring->doorbell_index, lower_32_bits(ring->wptr) << 2);
++	} else if (ring->use_pollmem) {
++		u32 *wb = (u32 *)&adev->wb.wb[ring->wptr_offs];
++
++		WRITE_ONCE(*wb, (lower_32_bits(ring->wptr) << 2));
+ 	} else {
+ 		int me = (ring == &ring->adev->sdma.instance[0].ring) ? 0 : 1;
+ 
+@@ -718,10 +721,14 @@ static int sdma_v3_0_gfx_resume(struct a
+ 		WREG32(mmSDMA0_GFX_RB_WPTR_POLL_ADDR_HI + sdma_offsets[i],
+ 		       upper_32_bits(wptr_gpu_addr));
+ 		wptr_poll_cntl = RREG32(mmSDMA0_GFX_RB_WPTR_POLL_CNTL + sdma_offsets[i]);
+-		if (amdgpu_sriov_vf(adev))
+-			wptr_poll_cntl = REG_SET_FIELD(wptr_poll_cntl, SDMA0_GFX_RB_WPTR_POLL_CNTL, F32_POLL_ENABLE, 1);
++		if (ring->use_pollmem)
++			wptr_poll_cntl = REG_SET_FIELD(wptr_poll_cntl,
++						       SDMA0_GFX_RB_WPTR_POLL_CNTL,
++						       ENABLE, 1);
+ 		else
+-			wptr_poll_cntl = REG_SET_FIELD(wptr_poll_cntl, SDMA0_GFX_RB_WPTR_POLL_CNTL, F32_POLL_ENABLE, 0);
++			wptr_poll_cntl = REG_SET_FIELD(wptr_poll_cntl,
++						       SDMA0_GFX_RB_WPTR_POLL_CNTL,
++						       ENABLE, 0);
+ 		WREG32(mmSDMA0_GFX_RB_WPTR_POLL_CNTL + sdma_offsets[i], wptr_poll_cntl);
+ 
+ 		/* enable DMA RB */
+@@ -1203,9 +1210,13 @@ static int sdma_v3_0_sw_init(void *handl
+ 	for (i = 0; i < adev->sdma.num_instances; i++) {
+ 		ring = &adev->sdma.instance[i].ring;
+ 		ring->ring_obj = NULL;
+-		ring->use_doorbell = true;
+-		ring->doorbell_index = (i == 0) ?
+-			AMDGPU_DOORBELL_sDMA_ENGINE0 : AMDGPU_DOORBELL_sDMA_ENGINE1;
++		if (!amdgpu_sriov_vf(adev)) {
++			ring->use_doorbell = true;
++			ring->doorbell_index = (i == 0) ?
++				AMDGPU_DOORBELL_sDMA_ENGINE0 : AMDGPU_DOORBELL_sDMA_ENGINE1;
++		} else {
++			ring->use_pollmem = true;
++		}
+ 
+ 		sprintf(ring->name, "sdma%d", i);
+ 		r = amdgpu_ring_init(adev, ring, 1024,
