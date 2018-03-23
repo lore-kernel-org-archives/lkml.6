@@ -1,95 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751972AbeCWEOu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 00:14:50 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:37793 "EHLO extserv.mm-sol.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751675AbeCWEOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 00:14:47 -0400
-From: Todor Tomov <todor.tomov@linaro.org>
-To: mchehab@kernel.org, sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
-        laurent.pinchart@ideasonboard.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Todor Tomov <todor.tomov@linaro.org>, Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: media: Binding document for OV7251 camera sensor
-Date: Fri, 23 Mar 2018 12:14:19 +0800
-Message-Id: <1521778460-8717-2-git-send-email-todor.tomov@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521778460-8717-1-git-send-email-todor.tomov@linaro.org>
-References: <1521778460-8717-1-git-send-email-todor.tomov@linaro.org>
+        id S1751661AbeCWETG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 00:19:06 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:36514 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751080AbeCWETE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 00:19:04 -0400
+Date: Fri, 23 Mar 2018 00:19:00 -0400 (EDT)
+Message-Id: <20180323.001900.849305099701511845.davem@davemloft.net>
+To: dledford@redhat.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, jgg@mellanox.com,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        markb@mellanox.com, leonro@mellanox.com
+Subject: Re: linux-next: manual merge of the net-next tree with the
+ rdma-fixes tree
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1521163082.18703.191.camel@redhat.com>
+References: <20180316115610.3d7f232a@canb.auug.org.au>
+        <1521163082.18703.191.camel@redhat.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the document for ov7251 device tree binding.
+From: Doug Ledford <dledford@redhat.com>
+Date: Thu, 15 Mar 2018 21:18:02 -0400
 
-CC: Rob Herring <robh@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>
-CC: devicetree@vger.kernel.org
-Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/media/i2c/ov7251.txt       | 51 ++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/ov7251.txt
+> Here's the commit (from the rdma git repo) with the proper merge fix
+> (although it also has other minor merge stuff that needs to be ignored):
+> 
+> 2d873449a202 (Merge branch 'k.o/wip/dl-for-rc' into k.o/wip/dl-for-next)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ov7251.txt b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
-new file mode 100644
-index 0000000..4ee6888
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/ov7251.txt
-@@ -0,0 +1,51 @@
-+* Omnivision 1/7.5-Inch B&W VGA CMOS Digital Image Sensor
-+
-+The Omnivision OV7251 is a 1/7.5-Inch CMOS active pixel digital image sensor with
-+an active array size of 640H x 480V. It is programmable through a serial I2C
-+interface.
-+
-+Required Properties:
-+- compatible: Value should be "ovti,ov7251".
-+- clocks: Reference to the xclk clock.
-+- clock-names: Should be "xclk".
-+- clock-frequency: Frequency of the xclk clock.
-+- enable-gpios: Chip enable GPIO. Polarity is GPIO_ACTIVE_HIGH. This corresponds
-+  to the hardware pin XSHUTDOWN which is physically active low.
-+- vdddo-supply: Chip digital IO regulator.
-+- vdda-supply: Chip analog regulator.
-+- vddd-supply: Chip digital core regulator.
-+
-+The device node must contain one 'port' child node for its digital output
-+video port, in accordance with the video interface bindings defined in
-+Documentation/devicetree/bindings/media/video-interfaces.txt.
-+
-+Example:
-+
-+	&i2c1 {
-+		...
-+
-+		ov7251: camera-sensor@60 {
-+			compatible = "ovti,ov7251";
-+			reg = <0x60>;
-+
-+			enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&camera_bw_default>;
-+
-+			clocks = <&clks 200>;
-+			clock-names = "xclk";
-+			clock-frequency = <24000000>;
-+
-+			vdddo-supply = <&camera_dovdd_1v8>;
-+			vdda-supply = <&camera_avdd_2v8>;
-+			vddd-supply = <&camera_dvdd_1v2>;
-+
-+			port {
-+				ov7251_ep: endpoint {
-+					clock-lanes = <1>;
-+					data-lanes = <0>;
-+					remote-endpoint = <&csi0_ep>;
-+				};
-+			};
-+		};
-+	};
--- 
-2.7.4
+Really?
+
+[davem@localhost GIT]$ git clone --reference linux/.git git://git.kernel.org/pub/scm/linux/kernel/git/dledford/rdma.git
+Cloning into 'rdma'...
+remote: Counting objects: 32, done.        
+remote: Compressing objects: 100% (31/31), done.        
+remote: Total 32 (delta 0), reused 32 (delta 0)        
+Receiving objects: 100% (32/32), 186.52 KiB | 3.01 MiB/s, done.
+Checking connectivity: 5706198, done.
+Checking out files: 100% (61622/61622), done.
+[davem@localhost GIT]$ cd rdma
+[davem@localhost rdma]$ git show 2d873449a202
+fatal: ambiguous argument '2d873449a202': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+[davem@localhost rdma]$
