@@ -1,96 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751848AbeCWAuV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:50:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40218 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751819AbeCWAuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 20:50:20 -0400
-Date: Thu, 22 Mar 2018 20:50:17 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>
-Subject: Re: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM
- client quit v2
-Message-ID: <20180323005017.GB5011@redhat.com>
-References: <20180320020038.3360-5-jglisse@redhat.com>
- <20180321181614.9968-1-jglisse@redhat.com>
- <a9ba54c5-a2d9-49f6-16ad-46b79525b93c@nvidia.com>
- <20180321234110.GK3214@redhat.com>
- <cbc9dcba-0707-e487-d360-f6f7c8d5cb23@nvidia.com>
- <20180322233715.GA5011@redhat.com>
- <b858d92a-3a38-bfff-fe66-697c64ea2053@nvidia.com>
+        id S1751884AbeCWAvC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:51:02 -0400
+Received: from ozlabs.org ([103.22.144.67]:48275 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750982AbeCWAvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 20:51:01 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 23 Mar 2018 11:50:18 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Min He <min.he@intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: Re: linux-next: manual merge of the drm-intel tree with Linus' tree
+Message-ID: <20180323115018.1ae3ca1d@canb.auug.org.au>
+In-Reply-To: <20180322132129.6b953166@canb.auug.org.au>
+References: <20180322132129.6b953166@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b858d92a-3a38-bfff-fe66-697c64ea2053@nvidia.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6GYT71yLkaIpBNvnDM8_2Y1"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 05:13:14PM -0700, John Hubbard wrote:
-> On 03/22/2018 04:37 PM, Jerome Glisse wrote:
-> > On Thu, Mar 22, 2018 at 03:47:16PM -0700, John Hubbard wrote:
-> >> On 03/21/2018 04:41 PM, Jerome Glisse wrote:
-> >>> On Wed, Mar 21, 2018 at 04:22:49PM -0700, John Hubbard wrote:
-> >>>> On 03/21/2018 11:16 AM, jglisse@redhat.com wrote:
-> >>>>> From: Jérôme Glisse <jglisse@redhat.com>
-> 
-> <snip>
-> 
-> >>>
-> >>> No this code is correct. hmm->mm is set after hmm struct is allocated
-> >>> and before it is public so no one can race with that. It is clear in
-> >>> hmm_mirror_unregister() under the write lock hence checking it here
-> >>> under that same lock is correct.
-> >>
-> >> Are you implying that code that calls hmm_mirror_register() should do 
-> >> it's own locking, to prevent simultaneous calls to that function? Because
-> >> as things are right now, multiple threads can arrive at this point. The
-> >> fact that mirror->hmm is not "public" is irrelevant; what matters is that
-> >>> 1 thread can change it simultaneously.
-> > 
-> > The content of struct hmm_mirror should not be modified by code outside
-> > HMM after hmm_mirror_register() and before hmm_mirror_unregister(). This
-> > is a private structure to HMM and the driver should not touch it, ie it
-> > should be considered as read only/const from driver code point of view.
-> 
-> Yes, that point is clear and obvious.
-> 
-> > 
-> > It is also expected (which was obvious to me) that driver only call once
-> > and only once hmm_mirror_register(), and only once hmm_mirror_unregister()
-> > for any given hmm_mirror struct. Note that driver can register multiple
-> > _different_ mirror struct to same mm or differents mm.
-> > 
-> > There is no need of locking on the driver side whatsoever as long as the
-> > above rules are respected. I am puzzle if they were not obvious :)
-> 
-> Those rules were not obvious. It's unusual to claim that register and unregister
-> can run concurrently, but regiser and register cannot. Let's please document
-> the rules a bit in the comments.
+--Sig_/6GYT71yLkaIpBNvnDM8_2Y1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I am really surprise this was not obvious. All existing _register API
-in the kernel follow this. You register something once only and doing
-it twice for same structure (ie unique struct hmm_mirror *mirror pointer
-value) leads to serious bugs (doing so concurently or not).
+Hi all,
 
-For instance if you call mmu_notifier_register() twice (concurrently
-or not) with same pointer value for struct mmu_notifier *mn then bad
-thing will happen. Same for driver_register() but this one actualy
-have sanity check and complain loudly if that happens. I doubt there
-is any single *_register/unregister() in the kernel that does not
-follow this.
+On Thu, 22 Mar 2018 13:21:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the drm-intel tree got a conflict in:
+>=20
+>   drivers/gpu/drm/i915/gvt/scheduler.c
+>=20
+> between commit:
+>=20
+>   fa3dd623e559 ("drm/i915/gvt: keep oa config in shadow ctx")
+>=20
+> from Linus' tree and commit:
+>=20
+>   b20c0d5ce104 ("drm/i915/gvt: Update PDPs after a vGPU mm object is pinn=
+ed.")
+>=20
+> from the drm-intel tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc drivers/gpu/drm/i915/gvt/scheduler.c
+> index 068126404151,a55b4975c154..000000000000
+> --- a/drivers/gpu/drm/i915/gvt/scheduler.c
+> +++ b/drivers/gpu/drm/i915/gvt/scheduler.c
+> @@@ -52,54 -52,29 +52,77 @@@ static void set_context_pdp_root_pointe
+>   		pdp_pair[i].val =3D pdp[7 - i];
+>   }
+>  =20
+>  +/*
+>  + * when populating shadow ctx from guest, we should not overrride oa re=
+lated
+>  + * registers, so that they will not be overlapped by guest oa configs. =
+Thus
+>  + * made it possible to capture oa data from host for both host and gues=
+ts.
+>  + */
+>  +static void sr_oa_regs(struct intel_vgpu_workload *workload,
+>  +		u32 *reg_state, bool save)
+>  +{
+>  +	struct drm_i915_private *dev_priv =3D workload->vgpu->gvt->dev_priv;
+>  +	u32 ctx_oactxctrl =3D dev_priv->perf.oa.ctx_oactxctrl_offset;
+>  +	u32 ctx_flexeu0 =3D dev_priv->perf.oa.ctx_flexeu0_offset;
+>  +	int i =3D 0;
+>  +	u32 flex_mmio[] =3D {
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL0),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL1),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL2),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL3),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL4),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL5),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL6),
+>  +	};
+>  +
+>  +	if (!workload || !reg_state || workload->ring_id !=3D RCS)
+>  +		return;
+>  +
+>  +	if (save) {
+>  +		workload->oactxctrl =3D reg_state[ctx_oactxctrl + 1];
+>  +
+>  +		for (i =3D 0; i < ARRAY_SIZE(workload->flex_mmio); i++) {
+>  +			u32 state_offset =3D ctx_flexeu0 + i * 2;
+>  +
+>  +			workload->flex_mmio[i] =3D reg_state[state_offset + 1];
+>  +		}
+>  +	} else {
+>  +		reg_state[ctx_oactxctrl] =3D
+>  +			i915_mmio_reg_offset(GEN8_OACTXCONTROL);
+>  +		reg_state[ctx_oactxctrl + 1] =3D workload->oactxctrl;
+>  +
+>  +		for (i =3D 0; i < ARRAY_SIZE(workload->flex_mmio); i++) {
+>  +			u32 state_offset =3D ctx_flexeu0 + i * 2;
+>  +			u32 mmio =3D flex_mmio[i];
+>  +
+>  +			reg_state[state_offset] =3D mmio;
+>  +			reg_state[state_offset + 1] =3D workload->flex_mmio[i];
+>  +		}
+>  +	}
+>  +}
+>  +
+> + static void update_shadow_pdps(struct intel_vgpu_workload *workload)
+> + {
+> + 	struct intel_vgpu *vgpu =3D workload->vgpu;
+> + 	int ring_id =3D workload->ring_id;
+> + 	struct i915_gem_context *shadow_ctx =3D vgpu->submission.shadow_ctx;
+> + 	struct drm_i915_gem_object *ctx_obj =3D
+> + 		shadow_ctx->engine[ring_id].state->obj;
+> + 	struct execlist_ring_context *shadow_ring_context;
+> + 	struct page *page;
+> +=20
+> + 	if (WARN_ON(!workload->shadow_mm))
+> + 		return;
+> +=20
+> + 	if (WARN_ON(!atomic_read(&workload->shadow_mm->pincount)))
+> + 		return;
+> +=20
+> + 	page =3D i915_gem_object_get_page(ctx_obj, LRC_STATE_PN);
+> + 	shadow_ring_context =3D kmap(page);
+> + 	set_context_pdp_root_pointer(shadow_ring_context,
+> + 			(void *)workload->shadow_mm->ppgtt_mm.shadow_pdps);
+> + 	kunmap(page);
+> + }
+> +=20
+>   static int populate_shadow_context(struct intel_vgpu_workload *workload)
+>   {
+>   	struct intel_vgpu *vgpu =3D workload->vgpu;
 
-Note that doing register/unregister concurrently for the same unique
-hmm_mirror struct is also illegal. However concurrent register and
-unregister of different hmm_mirror struct is legal and this is the
-reasons for races we were discussing.
+This is now a conflict between the drm tree and Linus' tree.
 
+--=20
 Cheers,
-Jérôme
+Stephen Rothwell
+
+--Sig_/6GYT71yLkaIpBNvnDM8_2Y1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0T0oACgkQAVBC80lX
+0GxkeAf/VlX26jRufxf3NEO+fNBaJd0x1rIOloax6hd7boo6wk4xXeirpZu8NtAy
+JSgmWBrHuO5wKzZfLqfnpzEuLVCuYOUtduejZn+C+XeFW6UDMOS4dFSB9DSL1hAv
+dl4Nx4SUbiss9WEer5lvkQt8Ax2wMF2nftewJPdU3JwrH6+t3vT5evLgr7xqH1pm
+/js84TdXvwVOq66DTkek9hPVKvSo8pWWQ2QlXz7/UhUR5FY7UH4Rp7GFYIQXFaQt
+X0LHEkfXR+VRmr/92QoR/xWYR+5+ez3Agsh4FljOlYT29HVdqbILGzIztj9VHSY8
+N0Lm+exzf6oosPPPqTfmUUsKLP9wRg==
+=hLXn
+-----END PGP SIGNATURE-----
+
+--Sig_/6GYT71yLkaIpBNvnDM8_2Y1--
