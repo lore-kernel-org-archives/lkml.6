@@ -1,127 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754549AbeCWKDu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 06:03:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40428 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754507AbeCWKDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 06:03:42 -0400
-Date: Fri, 23 Mar 2018 11:03:30 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 04/10] drm/sun4i: Explicitly list and check formats
- supported by the backend
-Message-ID: <20180323100330.2sijtsp5bdyyel5a@flea>
-References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
- <20180321152904.22411-5-paul.kocialkowski@bootlin.com>
+        id S1754678AbeCWKEP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 06:04:15 -0400
+Received: from mailproxy03.manitu.net ([217.11.48.67]:35932 "EHLO
+        mailproxy03.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754642AbeCWKEL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 06:04:11 -0400
+Subject: Re: [PATCH v3 0/1] can: ucan: add driver for Theobroma Systems UCAN
+ devices
+To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180322135338.60923-1-jakob.unterwurzacher@theobroma-systems.com>
+ <d336fdf1-5247-5f97-4b83-ad2530ece41e@grandegger.com>
+ <7e818d10-3410-b144-9cfb-c58a9945a8b1@theobroma-systems.com>
+From: Wolfgang Grandegger <wg@grandegger.com>
+Message-ID: <e6d4bfc8-d43f-20ef-7b00-43ecf0a87f96@grandegger.com>
+Date: Fri, 23 Mar 2018 11:04:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180321152904.22411-5-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <7e818d10-3410-b144-9cfb-c58a9945a8b1@theobroma-systems.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 04:28:58PM +0100, Paul Kocialkowski wrote:
-> In order to check whether the backend supports a specific format, an
-> explicit list and a related helper are introduced.
+
+
+Am 23.03.2018 um 10:40 schrieb Jakob Unterwurzacher:
+> On 23.03.18 09:32, Wolfgang Grandegger wrote:
+>>> * add __func__ to all errors and warnings, and to info where it made
+>>> sense
+>>
+>> The final output messages in the driver should especially be useful for
+>> the end user... and not the developer! This is also true for the
+>> function names. You already use more "__func__" than all other CAN
+>> drivers together. Just my opinion!
 > 
-> They are then used to determine whether the frontend should be used for
-> a layer, when the format is not supported by the backend.
+> The idea was to make it clear which driver printed the message. In my
+> opinion, this is a problem:
 > 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_backend.c | 48 ++++++++++++++++++++++++++++++++++-
->  drivers/gpu/drm/sun4i/sun4i_backend.h |  1 +
->  2 files changed, 48 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> index 274a1db6fa8e..7703ba989743 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> @@ -172,6 +172,39 @@ static int sun4i_backend_drm_format_to_layer(u32 format, u32 *mode)
->  	return 0;
->  }
->  
-> +static const uint32_t sun4i_backend_formats[] = {
-> +	/* RGB */
-> +	DRM_FORMAT_ARGB4444,
-> +	DRM_FORMAT_RGBA4444,
-> +	DRM_FORMAT_ARGB1555,
-> +	DRM_FORMAT_RGBA5551,
-> +	DRM_FORMAT_RGB565,
-> +	DRM_FORMAT_RGB888,
-> +	DRM_FORMAT_XRGB8888,
-> +	DRM_FORMAT_BGRX8888,
-> +	DRM_FORMAT_ARGB8888,
-> +	/* YUV422 */
-> +	DRM_FORMAT_YUYV,
-> +	DRM_FORMAT_YVYU,
-> +	DRM_FORMAT_UYVY,
-> +	DRM_FORMAT_VYUY,
+>> drivers/net/can/usb$ git grep "No memory left for USB buffer"
+>> ems_usb.c:                      netdev_err(netdev, "No memory left for
+>> USB buffer\n");
+>> ems_usb.c:              netdev_err(netdev, "No memory left for USB
+>> buffer\n");
+>> esd_usb2.c:                              "No memory left for USB
+>> buffer\n");
+>> esd_usb2.c:             netdev_err(netdev, "No memory left for USB
+>> buffer\n");
+>> gs_usb.c:               netdev_err(netdev, "No memory left for USB
+>> buffer\n");
+>> gs_usb.c:                                          "No memory left for
+>> USB buffer\n");
+>> kvaser_usb.c:                            "No memory left for USB
+>> buffer\n");
+>> mcba_usb.c:                     netdev_err(netdev, "No memory left for
+>> USB buffer\n");
+>> usb_8dev.c:             netdev_err(netdev, "No memory left for USB
+>> buffer\n");
+>> usb_8dev.c:                     netdev_err(netdev, "No memory left for
+>> USB buffer\n");
 
-Ordering them by alphabetical order would be better.
+> But I'm open to other suggestions (use a fixed "ucan: " prefix?) or to
+> drop it entirely if you think it is not worth it.
 
-> +};
-> +
-> +bool sun4i_backend_format_is_supported(uint32_t fmt)
-> +{
-> +	bool found = false;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(sun4i_backend_formats); i++) {
-> +		if (sun4i_backend_formats[i] == fmt) {
-> +			found = true;
-> +			break;
+But there is already a device prefix, e.g.:
 
-return true?
+  peak_usb 1-6:1.0: PEAK-System PCAN-USB adapter hwrev 28 serial FFFFFFFF (1 channel)
+  peak_usb 1-6:1.0 can0: attached to PCAN-USB channel 0 (device 255)
+  ^^^^^^^^
 
-> +		}
-> +	}
-> +
-> +	return found;
-> +}
-> +
->  int sun4i_backend_update_layer_coord(struct sun4i_backend *backend,
->  				     int layer, struct drm_plane *plane)
->  {
-> @@ -436,15 +469,28 @@ static bool sun4i_backend_plane_uses_frontend(struct drm_plane_state *state)
->  {
->  	struct sun4i_layer *layer = plane_to_sun4i_layer(state->plane);
->  	struct sun4i_backend *backend = layer->backend;
-> +	struct drm_framebuffer *fb = state->fb;
->  
->  	if (IS_ERR(backend->frontend))
->  		return false;
->  
-> +	/*
-> +	 * Let's pretend that every format is either supported by the backend or
-> +	 * the frontend. This is not true in practice, as some tiling modes are
-> +	 * not supported by either. There is still room to check this later in
-> +	 * the atomic check process.
+No need to add another one!
 
-Then I guess there these tiling modes will not be exposed and we won't
-ever get that far, wouldn't we?
-
-> +	 */
-> +	if (!sun4i_backend_format_is_supported(fb->format->format))
-> +		return true;
-
-Even though there's a comment, this is not really natural. We are
-checking whether the frontend supports the current plane_state, so it
-just makes more sense to check whether the frontend supports the
-format, rather than if the backend doesn't support them.
-
-Maxime
-
--- 
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Wolfgang.
