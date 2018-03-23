@@ -1,90 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751953AbeCWVQW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 17:16:22 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:36852 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751595AbeCWVQT (ORCPT
+        id S1752161AbeCWVSG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 17:18:06 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36988 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751733AbeCWVSB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 17:16:19 -0400
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v6] ARM: dts: wheat: Fix ADV7513 address usage
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>
-References: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
- <20180323085140.g3golwdtpezo7fhi@verge.net.au>
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <a771042b-f63a-d00f-73a1-91a7e6089fe4@ideasonboard.com>
-Date: Fri, 23 Mar 2018 21:16:13 +0000
+        Fri, 23 Mar 2018 17:18:01 -0400
+X-Google-Smtp-Source: AG47ELuXDyK9EZ2v7LOS4XHG/0G6qkGg1iumtF58zUZke8dEAUKFvhH4s+tpB1RDe/daDwRzODjHUA==
+Subject: Re: [PATCH net-next 6/8] MIPS: mscc: Add switch to ocelot
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
+        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, James Hogan <jhogan@kernel.org>
+References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
+ <20180323201117.8416-7-alexandre.belloni@bootlin.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <e488fd29-0094-d005-a078-873f6f5add13@gmail.com>
+Date: Fri, 23 Mar 2018 14:17:48 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180323085140.g3golwdtpezo7fhi@verge.net.au>
+In-Reply-To: <20180323201117.8416-7-alexandre.belloni@bootlin.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Simon,
-
-On 23/03/18 08:51, Simon Horman wrote:
-> On Thu, Mar 22, 2018 at 09:30:40PM +0000, Kieran Bingham wrote:
->> The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
->> bus, however in low power mode the ADV7513 will reset it's slave maps to
->> use the hardware defined default addresses.
->>
->> The ADV7511 driver was adapted to allow the two devices to be registered
->> correctly - but it did not take into account the fault whereby the
->> devices reset the addresses.
->>
->> This results in an address conflict between the device using the default
->> addresses, and the other device if it is in low-power-mode.
->>
->> Repair this issue by moving both devices away from the default address
->> definitions.
+On 03/23/2018 01:11 PM, Alexandre Belloni wrote:
+> Ocelot has an integrated switch, add support for it.
 > 
-> Hi Kierean,
+> Cc: James Hogan <jhogan@kernel.org>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  arch/mips/boot/dts/mscc/ocelot.dtsi | 84 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 84 insertions(+)
 > 
-> as this is a fix
-> a) Does it warrant a fixes tag?
->    Fixes: f6eea82a87db ("ARM: dts: wheat: add DU support")
-> b) Does it warrant being posted as a fix for v4.16;
-> c) or v4.17?
+> diff --git a/arch/mips/boot/dts/mscc/ocelot.dtsi b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> index dd239cab2f9d..22a86373b1c9 100644
+> --- a/arch/mips/boot/dts/mscc/ocelot.dtsi
+> +++ b/arch/mips/boot/dts/mscc/ocelot.dtsi
+> @@ -91,6 +91,69 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		switch@1010000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "mscc,ocelot-switch";
+> +			reg = <0x1010000 0x10000>,
+> +			      <0x1030000 0x10000>,
+> +			      <0x1080000 0x100>,
+> +			      <0x10d0000 0x10000>,
+> +			      <0x11e0000 0x100>,
+> +			      <0x11f0000 0x100>,
+> +			      <0x1200000 0x100>,
+> +			      <0x1210000 0x100>,
+> +			      <0x1220000 0x100>,
+> +			      <0x1230000 0x100>,
+> +			      <0x1240000 0x100>,
+> +			      <0x1250000 0x100>,
+> +			      <0x1260000 0x100>,
+> +			      <0x1270000 0x100>,
+> +			      <0x1280000 0x100>,
+> +			      <0x1800000 0x80000>,
+> +			      <0x1880000 0x10000>;
+> +			reg-names = "sys", "rew", "qs", "hsio", "port0",
+> +				    "port1", "port2", "port3", "port4", "port5",
+> +				    "port6", "port7", "port8", "port9", "port10",
+> +				    "qsys", "ana";
+> +			interrupts = <21 22>;
+> +			interrupt-names = "xtr", "inj";
 
-Tricky one, yes it could but this DTS fix, will only actually 'fix' the issue if
-the corresponding driver updates to allow secondary addresses to be parsed are
-also backported.
+See my comment about the binding patch, this should be moved to a ports
+subnode so it is conforming to the existing DSA binding and makes it a
+lot easier to have all ports disabled by default at the .dsti level by
+not defini
 
-It should be safe to back port the dts fix without the driver updates, but the
-addresses specified by this patch will simply be ignored.
+> +
+> +			port0: port@0 {
+> +				reg = <0>;
+> +			};
+> +			port1: port@1 {
+> +				reg = <1>;
+> +			};
+> +			port2: port@2 {
+> +				reg = <2>;
+> +			};
+> +			port3: port@3 {
+> +				reg = <3>;
+> +			};
+> +			port4: port@4 {
+> +				reg = <4>;
+> +			};
+> +			port5: port@5 {
+> +				reg = <5>;
+> +			};
+> +			port6: port@6 {
+> +				reg = <6>;
+> +			};
+> +			port7: port@7 {
+> +				reg = <7>;
+> +			};
+> +			port8: port@8 {
+> +				reg = <8>;
+> +			};
+> +			port9: port@9 {
+> +				reg = <9>;
+> +			};
+> +			port10: port@10 {
+> +				reg = <10>;
+> +			};
+> +		};
+> +
+>  		reset@1070008 {
+>  			compatible = "mscc,ocelot-chip-reset";
+>  			reg = <0x1070008 0x4>;
+> @@ -113,5 +176,26 @@
+>  				function = "uart2";
+>  			};
+>  		};
+> +
+> +		mdio0: mdio@107009c {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "mscc,ocelot-miim";
+> +			reg = <0x107009c 0x36>, <0x10700f0 0x8>;
+> +			interrupts = <14>;
 
-Thus if this is marked with the fixes tag the corresponding patch "drm: adv7511:
-Add support for i2c_new_secondary_device" should also be marked.
+status = "disabled" by default?
 
-It looks like that patch has yet to be picked up by the DRM subsystem, so how
-about I bundle both of these two patches together in a repost along with the
-fixes tag.
+> +
+> +			phy0: ethernet-phy@0 {
+> +				reg = <0>;
+> +			};
+> +			phy1: ethernet-phy@1 {
+> +				reg = <1>;
+> +			};
+> +			phy2: ethernet-phy@2 {
+> +				reg = <2>;
+> +			};
+> +			phy3: ethernet-phy@3 {
+> +				reg = <3>;
+> +			};
 
-In fact, I don't think the ADV7511 dt-bindings update has made any progress
-either. (dt-bindings: adv7511: Extend bindings to allow specifying slave map
-addresses). The media tree variants for the adv7604 have already been picked up
-by Mauro I believe though.
-
-I presume it would be acceptable for this dts patch (or rather all three patches
-mentioned) to get integrated through the DRM tree ?
-
---
-Kieran
+These PHYs should be defined at the board DTS level.
+-- 
+Florian
