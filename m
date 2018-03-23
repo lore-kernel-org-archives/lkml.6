@@ -1,119 +1,240 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752213AbeCWXgi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 19:36:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44404 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751666AbeCWXgK (ORCPT
+        id S1751848AbeCWXil (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 19:38:41 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:45941 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751303AbeCWXik (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 19:36:10 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6B86B607B9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
-From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-To: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Cc: linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, kyan@codeaurora.org, ckadabi@codeaurora.org,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v1 1/2] Documentation: Documentaion for qcom, llcc
-Date: Fri, 23 Mar 2018 16:36:01 -0700
-Message-Id: <1521848162-11338-2-git-send-email-rishabhb@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521848162-11338-1-git-send-email-rishabhb@codeaurora.org>
-References: <1521848162-11338-1-git-send-email-rishabhb@codeaurora.org>
+        Fri, 23 Mar 2018 19:38:40 -0400
+X-Google-Smtp-Source: AG47ELvZyNz/Ujh0HwfQL/mK0BFSpvIvrK3oVMSfcw7s0IOzc73ykcPro0iyTYChuvfaqN0jM2ByIQ==
+Date: Fri, 23 Mar 2018 18:38:30 -0500
+From: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
+To: alsa-devel@alsa-project.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        linux-kernel@vger.kernel.org
+Subject: [alsa-devel][PATCH 3/3] ASoC: TSCS42xx: Add CCF support to get sysclk
+Message-ID: <20180323233820.GA20733@t7-ThinkPad-E560>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "ckadabi@codeaurora.org" <ckadabi@codeaurora.org>
+The TSCS42xx relies on set_sysclk to get a unique clock id and rate, which
+prevents it from being used with the simple-card.
 
-Documentation for last level cache controller device tree bindings,
-client bindings usage examples.
+Remove set_sysclk callback
+Add CCF support to get clock id and rate
+Add clocks and clock-names to device tree binding
 
-Change-Id: Ic2d6d6154ab8269cfce6828e9f2250320a0572e8
-Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
-Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Signed-off-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
 ---
- .../devicetree/bindings/arm/msm/qcom,llcc.txt      | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+ .../devicetree/bindings/sound/tscs42xx.txt         |  6 ++
+ sound/soc/codecs/tscs42xx.c                        | 98 ++++++++++++++--------
+ sound/soc/codecs/tscs42xx.h                        |  2 +-
+ 3 files changed, 69 insertions(+), 37 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
-new file mode 100644
-index 0000000..ceb20a4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
-@@ -0,0 +1,70 @@
-+== Introduction==
+diff --git a/Documentation/devicetree/bindings/sound/tscs42xx.txt b/Documentation/devicetree/bindings/sound/tscs42xx.txt
+index 2ac2f0996697..7eea32e9d078 100644
+--- a/Documentation/devicetree/bindings/sound/tscs42xx.txt
++++ b/Documentation/devicetree/bindings/sound/tscs42xx.txt
+@@ -8,9 +8,15 @@ Required Properties:
+ 	- reg : 	<0x71> for analog mic
+ 			<0x69> for digital mic
+ 
++	- clock-names:	Must one of  the following "mclk1", "xtal", "mclk2"
 +
-+LLCC (Last Level Cache Controller) driver is implemented as a platform device.
-+The driver Programs the SCT (system configuration table). The SCT programming 
-+divides the system cache into slices. Each slice is assigned an ID A.K.A 
-+SCID(Sub-cache ID).				
-+HW modules that are designated to use the system cache are known as clients.	
-+Each client must also be represented as a node in the device tree just like	
-+any other hw module.		
-+One client can have multiple SCID's assigned meaning each client could get		
-+multiple slices in the cache. Client can use the slices for various pre-defined
-+usecases. Each client defines a set of names for these usecases in its		
-+device tree binding.				
-+Client makes a request to LLCC device to get cache-slices properties for each	
-+of its usecase. Client gets the information like cache slice ID and size of the
-+cache slice.
++	- clocks:	phandle of the clock that provides the codec sysclk
 +
-+== llcc device ==
+ Example:
+ 
+ wookie: codec@69 {
+ 	compatible = "tempo,tscs42A2";
+ 	reg = <0x69>;
++	clock-names = "xtal";
++	clocks = <&audio_xtal>;
+ };
+diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
+index d41852a37ac6..081af0e05d33 100644
+--- a/sound/soc/codecs/tscs42xx.c
++++ b/sound/soc/codecs/tscs42xx.c
+@@ -12,6 +12,7 @@
+ #include <linux/module.h>
+ #include <linux/delay.h>
+ #include <linux/mutex.h>
++#include <linux/clk.h>
+ #include <sound/tlv.h>
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+@@ -40,6 +41,9 @@ struct tscs42xx {
+ 	struct mutex pll_lock;
+ 
+ 	struct regmap *regmap;
 +
-+Properties:
-+- compatible:
-+	 Usage: required
-+	 Value type: <string>
-+	 Definition: must be "qcom,sdm855-llcc"
++	struct clk *sysclk;
++	int sysclk_src_id;
+ };
+ 
+ struct coeff_ram_ctl {
+@@ -1251,13 +1255,46 @@ static int tscs42xx_set_dai_bclk_ratio(struct snd_soc_dai *codec_dai,
+ 	return 0;
+ }
+ 
+-static int tscs42xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+-	int clk_id, unsigned int freq, int dir)
++static const struct snd_soc_dai_ops tscs42xx_dai_ops = {
++	.hw_params	= tscs42xx_hw_params,
++	.mute_stream	= tscs42xx_mute_stream,
++	.set_fmt	= tscs42xx_set_dai_fmt,
++	.set_bclk_ratio = tscs42xx_set_dai_bclk_ratio,
++};
 +
-+- reg:
-+	 Usage: required
-+	 Value Type: <prop-encoded-array>
-+	 Definition: must be addresses and sizes of the LLCC registers
++static int part_is_valid(struct tscs42xx *tscs42xx)
+ {
+-	struct snd_soc_component *component = codec_dai->component;
++	int val;
+ 	int ret;
++	unsigned int reg;
+ 
+-	switch (clk_id) {
++	ret = regmap_read(tscs42xx->regmap, R_DEVIDH, &reg);
++	if (ret < 0)
++		return ret;
 +
-+- #cache-cells:
-+	 Usage: required
-+	 Value Type: <u32>
-+	 Definition: Number of cache cells, must be 1
++	val = reg << 8;
++	ret = regmap_read(tscs42xx->regmap, R_DEVIDL, &reg);
++	if (ret < 0)
++		return ret;
 +
-+- max-slices:
-+	 usage: required
-+	 Value Type: <u32>
-+	 Definition: Number of cache slices supported by hardware
++	val |= reg;
 +
-+Example:
-+
-+	llcc: qcom,sdm855-llcc@01100000 {
-+		compatible = "qcom,sdm845-llcc";
-+		reg = <0x01100000 0x250000>;
-+		#cache-cells = <1>;
-+		max-slices = <32>;
++	switch (val) {
++	case 0x4A74:
++	case 0x4A73:
++		return true;
++	default:
++		return false;
 +	};
++}
 +
-+== Client ==
++static int set_sysclk(struct snd_soc_component *component)
++{
++	struct tscs42xx *tscs42xx = snd_soc_component_get_drvdata(component);
++	unsigned long freq;
++	int ret;
 +
-+Required properties:
-+- cache-slice-names:
-+	 Usage: required
-+	 Value type: <stringlist>
-+	 Definition: A set of names that identify the usecase names of a client that
-+			uses cache slice. These strings are used to look up the cache slice
-+		    entries by name.
++	switch (tscs42xx->sysclk_src_id) {
+ 	case TSCS42XX_PLL_SRC_XTAL:
+ 	case TSCS42XX_PLL_SRC_MCLK1:
+ 		ret = snd_soc_component_write(component, R_PLLREFSEL,
+@@ -1285,6 +1322,7 @@ static int tscs42xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 		return -EINVAL;
+ 	}
+ 
++	freq = clk_get_rate(tscs42xx->sysclk);
+ 	ret = set_pll_ctl_from_input_freq(component, freq);
+ 	if (ret < 0) {
+ 		dev_err(component->dev,
+@@ -1295,41 +1333,13 @@ static int tscs42xx_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 	return 0;
+ }
+ 
+-static const struct snd_soc_dai_ops tscs42xx_dai_ops = {
+-	.hw_params	= tscs42xx_hw_params,
+-	.mute_stream	= tscs42xx_mute_stream,
+-	.set_fmt	= tscs42xx_set_dai_fmt,
+-	.set_bclk_ratio = tscs42xx_set_dai_bclk_ratio,
+-	.set_sysclk	= tscs42xx_set_dai_sysclk,
+-};
+-
+-static int part_is_valid(struct tscs42xx *tscs42xx)
++static int tscs42xx_probe(struct snd_soc_component *component)
+ {
+-	int val;
+-	int ret;
+-	unsigned int reg;
+-
+-	ret = regmap_read(tscs42xx->regmap, R_DEVIDH, &reg);
+-	if (ret < 0)
+-		return ret;
+-
+-	val = reg << 8;
+-	ret = regmap_read(tscs42xx->regmap, R_DEVIDL, &reg);
+-	if (ret < 0)
+-		return ret;
+-
+-	val |= reg;
+-
+-	switch (val) {
+-	case 0x4A74:
+-	case 0x4A73:
+-		return true;
+-	default:
+-		return false;
+-	};
++	return set_sysclk(component);
+ }
+ 
+ static const struct snd_soc_component_driver soc_codec_dev_tscs42xx = {
++	.probe			= tscs42xx_probe,
+ 	.dapm_widgets		= tscs42xx_dapm_widgets,
+ 	.num_dapm_widgets	= ARRAY_SIZE(tscs42xx_dapm_widgets),
+ 	.dapm_routes		= tscs42xx_intercon,
+@@ -1387,11 +1397,15 @@ static const struct reg_sequence tscs42xx_patch[] = {
+ 	{ R_AIC2, RV_AIC2_BLRCM_DAC_BCLK_LRCLK_SHARED },
+ };
+ 
++static char const * const src_names[TSCS42XX_PLL_SRC_CNT] = {
++	"xtal", "mclk1", "mclk2"};
 +
-+- cache-slices:
-+	 Usage: required
-+	 Value type: <prop-encoded-array>
-+	 Definition: The tuple has phandle to llcc device as the first argument and 
-+			the second argument is the usecase id of the client.
-+For Example:
+ static int tscs42xx_i2c_probe(struct i2c_client *i2c,
+ 		const struct i2c_device_id *id)
+ {
+ 	struct tscs42xx *tscs42xx;
+-	int ret = 0;
++	int src;
++	int ret;
+ 
+ 	tscs42xx = devm_kzalloc(&i2c->dev, sizeof(*tscs42xx), GFP_KERNEL);
+ 	if (!tscs42xx) {
+@@ -1402,6 +1416,18 @@ static int tscs42xx_i2c_probe(struct i2c_client *i2c,
+ 	}
+ 	i2c_set_clientdata(i2c, tscs42xx);
+ 
++	for (src = TSCS42XX_PLL_SRC_XTAL; src < TSCS42XX_PLL_SRC_CNT; src++) {
++		tscs42xx->sysclk = devm_clk_get(&i2c->dev, src_names[src]);
++		if (!IS_ERR(tscs42xx->sysclk)) {
++			break;
++		} else if (PTR_ERR(tscs42xx->sysclk) != -ENOENT) {
++			ret = PTR_ERR(tscs42xx->sysclk);
++			dev_err(&i2c->dev, "Failed to get sysclk (%d)\n", ret);
++			return ret;
++		}
++	}
++	tscs42xx->sysclk_src_id = src;
 +
-+	 venus {
-+	 	cache-slice-names = "vidsc0", "vidsc1";
-+	 	cache-slices = <&llcc 2>, <&llcc 3>;
-+	 };
+ 	tscs42xx->regmap = devm_regmap_init_i2c(i2c, &tscs42xx_regmap);
+ 	if (IS_ERR(tscs42xx->regmap)) {
+ 		ret = PTR_ERR(tscs42xx->regmap);
+diff --git a/sound/soc/codecs/tscs42xx.h b/sound/soc/codecs/tscs42xx.h
+index d4a30bcbf64b..814c8f3c4a68 100644
+--- a/sound/soc/codecs/tscs42xx.h
++++ b/sound/soc/codecs/tscs42xx.h
+@@ -7,10 +7,10 @@
+ #define __WOOKIE_H__
+ 
+ enum {
+-	TSCS42XX_PLL_SRC_NONE,
+ 	TSCS42XX_PLL_SRC_XTAL,
+ 	TSCS42XX_PLL_SRC_MCLK1,
+ 	TSCS42XX_PLL_SRC_MCLK2,
++	TSCS42XX_PLL_SRC_CNT,
+ };
+ 
+ #define R_HPVOLL        0x0
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.15.1
