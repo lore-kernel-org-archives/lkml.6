@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804600-2-3555588498481619176
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804592-2-11458770923121937986
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804599; b=GVdGzrZHIa4dJy8jqcxlMdXsoer2EqhBhpW9ib54R4/fgAu
-    0lKd8/95IcnY05Bm0sCsRDZNbRHZwGxPAx3GGAy0oNskWpVEbhE7V6+2CeQy2kCG
-    rHNgs0l5+DY6rwl+gq9zoUaHrfC6tZZrIiUy+i/nQsCQQdKgzc/qP9gNIExm291c
-    1ezBkAuTaXPboG0MSKuQBR5yL5C+X5CaUHExRxgj1bkYxq+LdIX76E16vNNwWj+H
-    +5UtidJEKpkb9sG5KXV63eJVkYdiCoFVl663O/uC9Q0Q6hDIJlWbyLxtNnjYbIOV
-    W4Eu+AT8OnsycXNyh5GtJziKu0ENHPSyoRNkkfQ==
+    t=1521804591; b=RWAay0/M5hWG5GJqL5ALOgq1WjGL90tMNSQkxZiuyYqiSW/
+    cy2x+EzI+eZxdNNjwgquh+eGYmxHJncvCrZXNiGqmW9pIxibbAUX1bJsCK4V6Tz1
+    usIEtgTaRRdwUDxQN5BfGJp4w5U8lWiwgPXyWVCkpHODR9jevL3n3WHNS/SpH8sa
+    LjJFZt4d9KpsUf6MfOaycRn8nlfhDQoy5ssIlHG+GLninVffS6BOx317MBdviJ8I
+    msPNrCfRB1/PMxPCvohcMrZRy6/shMg03Ab8HIE/QKsKtbjda1Sf3TS5FC+OFk+D
+    TbjE84r+beEn87ycaX2GMHzrkNJejQhahx+grLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804599; bh=gz+85UwX+/SdPs+SklBIUx0AWo
-    gg6ovnEXLqmer2ufs=; b=TV6R7u9bbZz9YnoE7bK5TN68M0KAC/nR87O7lkM9G5
-    8xrnDIexE0WhCfEey0ynAXD7M/u5oLM544PyIkFkr5A8B86GMgQLnF2eBmQdAegd
-    xtku4jjVI1ehb9LSMhdJ+/xuaId0xJQHWeFtuabHm9HW9q+uQzPr7V2jSHhN+ylA
-    QMq6rlUShZt/ftx5iFWALjvoxIlIgGv2sh82zrigJWr/epY7sOyW88B1TsCgGFJg
-    +INh7bnD+S7fMrUIbkYtLfHTgdh2Wha7tef1DRc5E+b84f1Kr+RG2Yllik/9keNR
-    EA3qk4IChU3hZZFHEYevJ2jx9e3HHIuW4DOwDeculxeA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804591; bh=Qf+FQNawkpN8QN4qC86w1VpLbB
+    WaON10HXq+BOGXKt8=; b=Hr7oBYIsrQAqgS66KXAXkGmji+kWw0O8/rDBdXvpg2
+    e3E6sM4SlSPq8fFWPjrz0PMMMYITF+rxK6dZ7KbYOjKjjWDq7hna3gJ1t+L9yU14
+    I5z/8v4r5ri7odn5JQjR34ItCzi+hxpdxW7oVYU9V/smVIm7yzBTjQmbqTVx242l
+    Z2e0kWMCjNpfyQW8a7QEJxYoTzS1iJIL5FCXvzlT60f1SZYHuufEir9SXas1dSSw
+    T5KwqGvONM3v6kO1zapb7mWgO9kooefWBBAn2xIGv9Bxx51hKOOaxjUqpc4BXAu+
+    THSTY2US/yFdgodeOnU4W1UETlfV7J9LQt+vQHFJspLQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,24 +50,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932065AbeCWKG2 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:06:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40774 "EHLO
+        id S1752862AbeCWL3h (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:29:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40796 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755207AbeCWKG0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:26 -0400
+        with ESMTP id S932083AbeCWKG3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bernd Faust <berndfaust@gmail.com>,
-        Sasha Neftin <sasha.neftin@intel.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Mikhail Paulyshka <me@mixaill.tk>,
+        Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 042/177] e1000e: fix timing for 82579 Gigabit Ethernet controller
-Date: Fri, 23 Mar 2018 10:52:50 +0100
-Message-Id: <20180323094207.068629627@linuxfoundation.org>
+Subject: [PATCH 4.9 043/177] ALSA: hda - Fix headset microphone detection for ASUS N551 and N751
+Date: Fri, 23 Mar 2018 10:52:51 +0100
+Message-Id: <20180323094207.152201801@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -85,43 +82,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bernd Faust <berndfaust@gmail.com>
+From: Mikhail Paulyshka <me@mixaill.tk>
 
 
-[ Upstream commit 5313eeccd2d7f486be4e5c7560e3e2be239ec8f7 ]
+[ Upstream commit fc7438b1eb12b6c93d7b7a62423779eb5dfc673c ]
 
-After an upgrade to Linux kernel v4.x the hardware timestamps of the
-82579 Gigabit Ethernet Controller are different than expected.
-The values that are being read are almost four times as big as before
-the kernel upgrade.
+Headset microphone does not work out of the box on ASUS Nx51
+laptops. This patch fixes it.
 
-The difference is that after the upgrade the driver sets the clock
-frequency to 25MHz, where before the upgrade it was set to 96MHz. Intel
-confirmed that the correct frequency for this network adapter is 96MHz.
+Patch tested on Asus N551 laptop. Asus N751 part is not tested, but
+according to [1] this laptop uses the same audiosystem.
 
-Signed-off-by: Bernd Faust <berndfaust@gmail.com>
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
-Acked-by: Jacob Keller <jacob.e.keller@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+1. https://bugzilla.kernel.org/show_bug.cgi?id=117781
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195437
+Signed-off-by: Mikhail Paulyshka <me@mixaill.tk>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/pci/hda/patch_realtek.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -3528,6 +3528,12 @@ s32 e1000e_get_base_timinca(struct e1000
- 
- 	switch (hw->mac.type) {
- 	case e1000_pch2lan:
-+		/* Stable 96MHz frequency */
-+		incperiod = INCPERIOD_96MHz;
-+		incvalue = INCVALUE_96MHz;
-+		shift = INCVALUE_SHIFT_96MHz;
-+		adapter->cc.shift = shift + INCPERIOD_SHIFT_96MHz;
-+		break;
- 	case e1000_pch_lpt:
- 		if (er32(TSYNCRXCTL) & E1000_TSYNCRXCTL_SYSCFI) {
- 			/* Stable 96MHz frequency */
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6780,6 +6780,7 @@ enum {
+ 	ALC668_FIXUP_DELL_DISABLE_AAMIX,
+ 	ALC668_FIXUP_DELL_XPS13,
+ 	ALC662_FIXUP_ASUS_Nx50,
++	ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
+ 	ALC668_FIXUP_ASUS_Nx51,
+ 	ALC891_FIXUP_HEADSET_MODE,
+ 	ALC891_FIXUP_DELL_MIC_NO_PRESENCE,
+@@ -7031,14 +7032,21 @@ static const struct hda_fixup alc662_fix
+ 		.chained = true,
+ 		.chain_id = ALC662_FIXUP_BASS_1A
+ 	},
++	[ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc_fixup_headset_mode_alc668,
++		.chain_id = ALC662_FIXUP_BASS_CHMAP
++	},
+ 	[ALC668_FIXUP_ASUS_Nx51] = {
+ 		.type = HDA_FIXUP_PINS,
+ 		.v.pins = (const struct hda_pintbl[]) {
+-			{0x1a, 0x90170151}, /* bass speaker */
++			{ 0x19, 0x03a1913d }, /* use as headphone mic, without its own jack detect */
++			{ 0x1a, 0x90170151 }, /* bass speaker */
++			{ 0x1b, 0x03a1113c }, /* use as headset mic, without its own jack detect */
+ 			{}
+ 		},
+ 		.chained = true,
+-		.chain_id = ALC662_FIXUP_BASS_CHMAP,
++		.chain_id = ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
+ 	},
+ 	[ALC891_FIXUP_HEADSET_MODE] = {
+ 		.type = HDA_FIXUP_FUNC,
