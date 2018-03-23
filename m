@@ -1,130 +1,105 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-887406-1521798460-2-9672587794065797220
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='hr', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521798459; b=qYqlmR9Lblf1nRWjBcJSLY6xdjaHVbkXL7z/i76wa88EMgd
-    2Sj8r9U0ic+ev5xWDKxoBX86BrTT1dpPIb+jsOT3YkPdWYfDhV+XZ9YpOQTkBG22
-    4B43Nisepwfl3BKgFk++mx3PCaM4H+cW2zNMfC8NwNb4Yaan8Y+6D9rZ6/m7QaGb
-    pBGm8dJWPgOW/GNFD89B0l1afAyCwd1VqFkAl7UgnO7IMOJPcAOqP7wnNvnxZASj
-    M+5dA2DGuiJu2xtpMzAEjhcHzExmHrWsfJ+wIUvH0CMD5XneNrVRL/EJdYtJ14+T
-    0Ja5mBR3I8a7jB9uTAGym4blh012o/d1ITaPahw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:date:message-id:subject:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521798459; bh=z
-    DXitOF/njrHi9gYvd+6V/yaY4j69p7GTJH4h1rOreA=; b=LentJr1uEc8BWbCIh
-    vLS1VGgcEY38lm5anlYJed272ChP6QR8xYFWS2shj5rPKYD/783/EIyBxvr++2Y0
-    ilGdAZhE0xGIbRTYxDS7PlgbELRQfXE0KLc1wOpH9x+77SahxQDlvVu8p+uZJD8M
-    9bBUaoPEPadmsQECEJ9rOQwyP37LtceJ6DZbobUQ6+D94P5BT44y67G62J35l4mb
-    tJPVMAsYHPEuZQKpNn/79jwBrtx4GrPmKsTTScYcuamhYYGGcGVfYJo/CB8S0fm+
-    YgGuN5jaCAkxpcdu15oyAu7OZNe5HEtGTyedalipro0t/k4ulQgamOJp/JDu2jfi
-    ULnGw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=carnet.hr;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=carnet.hr header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=carnet.hr;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=carnet.hr header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Valentin Vidic <Valentin.Vidic@CARNet.hr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 23 Mar 2018 10:47:25 +0100
-Message-Id: <20180323094725.4904-1-Valentin.Vidic@CARNet.hr>
-X-Mailer: git-send-email 2.16.2
-X-SA-Exim-Connect-IP: 161.53.12.131
-Subject: [PATCH] staging: pi433: add descriptions for mutex locks
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Derek Robson <robsonde@gmail.com>,
- Michael Panzlaff <michael.panzlaff@fau.de>,
- Valentin Vidic <Valentin.Vidic@CARNet.hr>,
- =?UTF-8?q?Luca=20S=C3=B6the?= <luca@acul.me>, linux-kernel@vger.kernel.org,
- Marcin Ciupak <marcin.s.ciupak@gmail.com>,
- Marcus Wolf <linux@Wolf-Entwicklungen.de>,
- =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
+Return-Path: <marcus.wolf@smarthome-wolf.de>
+X-Google-Smtp-Source: AG47ELtAtz1E2XkGGK1IlF2C1EihFsyudW3QUwfCzWmXtkUomgLeXtWs1Qj9UUQWfszRIkawVqd8
+ARC-Seal: i=1; a=rsa-sha256; t=1521800560; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Ho+7ZZ6QuD5ePLz0V7aVUjC7hzgX3Zr0eb9XKdxTLhONgSsW5VQndiY5+DQ6701fm6
+         aqx11hsiFtxAF5LHHlboO9BFmp/q54Xf5ON/QEVOkOh5MARXnirhNhTyfyzSO4QdyMI4
+         0AhpP+Reg5VAPdhNP277qF7iei4l8xesaEGn0kZQpYMK09v5HvVR28GOJOSFYfOeo+JC
+         ojBgshYCFqPvDTN2u9YM6L3j1H/XTzw7G7XqwkE6+qKQLIXcjdFBNlLzqipoYh+ISbwN
+         aaADjZub3CsTOSGitjbHl1j+HXyxs3os/udE/GNGGkVmaMCWY158o+jeVFQN86AIQUgs
+         yDpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
+         :message-id:from:references:cc:to:subject:arc-authentication-results;
+        bh=j9LK30LelhN87v3ss/OT3h31slG9u3PlMi6QUrKKVtI=;
+        b=AkVTtBblFj4BCVABp7UA6h/VodNpLEjw8tzv3wVNs25zP+yuh/Qw1C0JjgHwpG4vMI
+         2Cj9bbolnlwj2r/zgkxDMrZLffMoiY1IzJ0VVf+y5DFGhtW1SS+vo+sPd8WhxRV8+htq
+         2jGKX3roLfZHGQuHW8ktW27ftQNGs1/QaFjAd0U5m+jtNpXiyB5ceeTI8wyQgBMvHdJ6
+         XSM7oRsiqbhT5o/zizluQ3hGR+s64sriJpvK1uSOzCly+lLIXaxm+vYhd0rha1rxIdj6
+         XVa8XJxwFYvkFG8OXeW33iMYMCo33n8pGXhMxjElOs91aHz0cvcuIlADxosJEqd5It2p
+         JAVw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 85.13.155.146 is neither permitted nor denied by best guess record for domain of marcus.wolf@smarthome-wolf.de) smtp.mailfrom=marcus.wolf@smarthome-wolf.de
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 85.13.155.146 is neither permitted nor denied by best guess record for domain of marcus.wolf@smarthome-wolf.de) smtp.mailfrom=marcus.wolf@smarthome-wolf.de
+Subject: Re: [PATCH] staging: pi433: add descriptions for mutex locks
+To: Valentin Vidic <Valentin.Vidic@CARNet.hr>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: =?UTF-8?Q?Simon_Sandstr=c3=b6m?= <simon@nikanor.nu>,
+ Marcus Wolf <linux@Wolf-Entwicklungen.de>, =?UTF-8?Q?Luca_S=c3=b6the?=
+ <luca@acul.me>, Marcin Ciupak <marcin.s.ciupak@gmail.com>,
+ Michael Panzlaff <michael.panzlaff@fau.de>, Derek Robson
+ <robsonde@gmail.com>, devel@driverdev.osuosl.org,
+ linux-kernel@vger.kernel.org
+References: <20180323094725.4904-1-Valentin.Vidic@CARNet.hr>
+From: Marcus Wolf <marcus.wolf@smarthome-wolf.de>
+Message-ID: <d263c605-f652-fe24-2034-c699f2d27693@smarthome-wolf.de>
+Date: Fri, 23 Mar 2018 11:22:39 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180323094725.4904-1-Valentin.Vidic@CARNet.hr>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595721331728718925?=
+X-GMAIL-MSGID: =?utf-8?q?1595723545133715774?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Removes TODO for tx_fifo_lock as tx_fifo is modified from
-both pi433_tx_thread and pi433_write.
+Hi Valentin,
 
-Fixes checkpatch warning:
+could you please decribe in short words, why you think, that hte lock
+isn't obsolete?
 
-  CHECK: struct mutex definition without comment
+I wasn't sure, but close to remove the lock. That's why I putted the
+comment.
 
-Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
----
- drivers/staging/pi433/pi433_if.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks,
 
-diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index d1e0ddbc79ce..f6f106a3ff8e 100644
---- a/drivers/staging/pi433/pi433_if.c
-+++ b/drivers/staging/pi433/pi433_if.c
-@@ -87,7 +87,7 @@ struct pi433_device {
- 
- 	/* tx related values */
- 	STRUCT_KFIFO_REC_1(MSG_FIFO_SIZE) tx_fifo;
--	struct mutex		tx_fifo_lock; // TODO: check, whether necessary or obsolete
-+	struct mutex		tx_fifo_lock; /* serialize access to tx_fifo */
- 	struct task_struct	*tx_task_struct;
- 	wait_queue_head_t	tx_wait_queue;
- 	u8			free_in_fifo;
-@@ -100,7 +100,7 @@ struct pi433_device {
- 	u32			rx_bytes_to_drop;
- 	u32			rx_bytes_dropped;
- 	unsigned int		rx_position;
--	struct mutex		rx_lock;
-+	struct mutex		rx_lock; /* serialize read requests */
- 	wait_queue_head_t	rx_wait_queue;
- 
- 	/* fifo wait queue */
+Marcus
+
+Am 23.03.2018 um 10:47 schrieb Valentin Vidic:
+> Removes TODO for tx_fifo_lock as tx_fifo is modified from
+> both pi433_tx_thread and pi433_write.
+> 
+> Fixes checkpatch warning:
+> 
+>   CHECK: struct mutex definition without comment
+> 
+> Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
+> ---
+>  drivers/staging/pi433/pi433_if.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+> index d1e0ddbc79ce..f6f106a3ff8e 100644
+> --- a/drivers/staging/pi433/pi433_if.c
+> +++ b/drivers/staging/pi433/pi433_if.c
+> @@ -87,7 +87,7 @@ struct pi433_device {
+>  
+>  	/* tx related values */
+>  	STRUCT_KFIFO_REC_1(MSG_FIFO_SIZE) tx_fifo;
+> -	struct mutex		tx_fifo_lock; // TODO: check, whether necessary or obsolete
+> +	struct mutex		tx_fifo_lock; /* serialize access to tx_fifo */
+>  	struct task_struct	*tx_task_struct;
+>  	wait_queue_head_t	tx_wait_queue;
+>  	u8			free_in_fifo;
+> @@ -100,7 +100,7 @@ struct pi433_device {
+>  	u32			rx_bytes_to_drop;
+>  	u32			rx_bytes_dropped;
+>  	unsigned int		rx_position;
+> -	struct mutex		rx_lock;
+> +	struct mutex		rx_lock; /* serialize read requests */
+>  	wait_queue_head_t	rx_wait_queue;
+>  
+>  	/* fifo wait queue */
+> 
+
 -- 
-2.16.2
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Smarthome-Wolf UG (haftungsbeschränkt)
+Helene-Lange-Weg 23
+80637 München
+Amtsgericht München, HRB 223529
+Umastzsteuer-ID: DE304719911
+Geschäftsführer: Marcus Wolf
