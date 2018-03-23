@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804755-2-8502056998156635738
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804733-2-3737183746119119395
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804755; b=dDZ8aOS7pGx3WmnjOcoLh4ak8HEw8VnYbzrvzA2TNH1QoHn
-    dsYSj4WCS/yVcDv9YEYkTY7+l/RsWMdI1naQabjKeaVikTB53C3q3b+bSYNZq0Vo
-    4hK4A7C75kj6a4U4lkHLf/l6X3eLWd98mj3CX2+2toDuE2L5kLmqsacyBo9oCjjM
-    LKFHHTlO3HnUsJyR+214a9nMRfMT3J5drsu+zGB+UfPZV+bf9Cvpywn6lYja+jE+
-    pOk7U/e3N5/q2B7lRG8Pe7hsMx5zJtwkkF8Cx+ZIGtkg+f+l8WH4mS21SojjNvqd
-    /QbfAPXkOTG2P+bwqcjvpxMtuR3rjxrHIaaCswQ==
+    t=1521804732; b=QMWSezy18wtNnL3vkJm9knkMG6ikyE3/IqI29W/80Ezm+QR
+    iudxiSdGgF4g9ncNJTTY7B2k8p4/fakVmhUJOlU9o3RdZ7+niquJOklIzwrAxol/
+    UnZmYRKmkLAZdGRIkIAlqaoS2vG/vmam4d1OWD6k+Xobs4UDF8APWK6vuCO/TMkJ
+    fzSDMXuPccLgxwRVJ2IFho+/eTCuoG8LHqwPH55t4rebCIf7Jr5F7azXqul/cqJ8
+    lKbeAkqdxMe5V57q7CZJ2jqZyIaNc2Kubk4B3twrh4kRNyHmMAnBj4pXMA8r2fSW
+    VLTEogkTTC2xtV+rKZYE5sbCRGZ4p9uGKgjVm2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804755; bh=QfCFCc82uiMLEtJtXMIJMIAL3a
-    rcdQ8qLGbEW+3yWWE=; b=TCy0LsZnu53goXrzoTuaEWRw3R7vVqHSJSllF3U4wJ
-    V0cUeFO3P9OYlz8Stf6RjZk7A81wyfumniFq4ayQ2foCIQm213DY7LPkb8Dg/UEk
-    22B32sVqsTOGSotdqcCDYVgEdf2MHDnK1pUFQpbfeRQk6FBRc/s52Kvk7ZxlqiYJ
-    J4SaE9aX/E4r1qso0oKeoe+RQ45Itqk4Z20CII3vg6YlC7bCNtO5wpF5QRZA6ee7
-    d5gq3Jj61X8VnjutcyTcchwLfeB//ngaWABmPxUbDmiOWFh7lzi4uA22TxTkCnk9
-    vY3q+6cZbrP0yiupB/tub1PcAXa0rmbf2l3j5ZnowRfA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804732; bh=lwicMceTzq6ImF7nnM/3Uljsv4
+    wS0g1TLETV2FOYEFE=; b=v+WmrdsbNO28mVa1PHXm859CrkDLHgTbdiGcF2MxaE
+    PilKbAGHYhElmBTTfCv+Knqg6c6SqAKCf+HGw0kJ7Dgpn+OSG+zxRLgd8jDLCr4H
+    EtmvBjUDDxLtkAC5tnpWNJSitBDbCAVM9+QTypWpzrrmpclp/Q4APlqKx+WC+jmI
+    5fOwiLhODbwxsB7eXUofUkPZ9PedpPf/RsH/hnwrWTTz7x1T5a3vhWA5mxggwhS2
+    fA/gRSCkSATITXx1LZ/oq4vzBk9TBS1ufybINMbMIlV7ns7FpCLx9PILZwoai7td
+    2sU9ciAA//M/iNYWteS+ZHin1RzEofWOrpVqj0S1svQQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755130AbeCWKF5 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:05:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40582 "EHLO
+        id S1755221AbeCWLb5 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:31:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40620 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755081AbeCWKFx (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:53 -0400
+        with ESMTP id S1755131AbeCWKF5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 032/177] scsi: virtio_scsi: Always try to read VPD pages
-Date: Fri, 23 Mar 2018 10:52:40 +0100
-Message-Id: <20180323094206.594552915@linuxfoundation.org>
+Subject: [PATCH 4.9 033/177] KVM: PPC: Book3S PR: Exit KVM on failed mapping
+Date: Fri, 23 Mar 2018 10:52:41 +0100
+Message-Id: <20180323094206.632272999@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,84 +83,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Gibson <david@gibson.dropbear.id.au>
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
 
-[ Upstream commit 25d1d50e23275e141e3a3fe06c25a99f4c4bf4e0 ]
+[ Upstream commit bd9166ffe624000140fc6b606b256df01fc0d060 ]
 
-Passed through SCSI targets may have transfer limits which come from the
-host SCSI controller or something on the host side other than the target
-itself.
+At the moment kvmppc_mmu_map_page() returns -1 if
+mmu_hash_ops.hpte_insert() fails for any reason so the page fault handler
+resumes the guest and it faults on the same address again.
 
-To make this work properly, the hypervisor can adjust the target's VPD
-information to advertise these limits.  But for that to work, the guest
-has to look at the VPD pages, which we won't do by default if it is an
-SPC-2 device, even if it does actually support it.
+This adds distinction to kvmppc_mmu_map_page() to return -EIO if
+mmu_hash_ops.hpte_insert() failed for a reason other than full pteg.
+At the moment only pSeries_lpar_hpte_insert() returns -2 if
+plpar_pte_enter() failed with a code other than H_PTEG_FULL.
+Other mmu_hash_ops.hpte_insert() instances can only fail with
+-1 "full pteg".
 
-This adds a workaround to address this, forcing devices attached to a
-virtio-scsi controller to always check the VPD pages.  This is modelled
-on a similar workaround for the storvsc (Hyper-V) SCSI controller,
-although that exists for slightly different reasons.
+With this change, if PR KVM fails to update HPT, it can signal
+the userspace about this instead of returning to guest and having
+the very same page fault over and over again.
 
-A specific case which causes this is a volume from IBM's IPR RAID
-controller (which presents as an SPC-2 device, although it does support
-VPD) passed through with qemu's 'scsi-block' device.
-
-[mkp: fixed typo]
-
-Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/virtio_scsi.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/powerpc/kvm/book3s_64_mmu_host.c |    5 ++++-
+ arch/powerpc/kvm/book3s_pr.c          |    6 +++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/virtio_scsi.c
-+++ b/drivers/scsi/virtio_scsi.c
-@@ -28,6 +28,7 @@
- #include <scsi/scsi_device.h>
- #include <scsi/scsi_cmnd.h>
- #include <scsi/scsi_tcq.h>
-+#include <scsi/scsi_devinfo.h>
- #include <linux/seqlock.h>
+--- a/arch/powerpc/kvm/book3s_64_mmu_host.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_host.c
+@@ -177,12 +177,15 @@ map_again:
+ 	ret = mmu_hash_ops.hpte_insert(hpteg, vpn, hpaddr, rflags, vflags,
+ 				       hpsize, hpsize, MMU_SEGSIZE_256M);
  
- #define VIRTIO_SCSI_MEMPOOL_SZ 64
-@@ -705,6 +706,28 @@ static int virtscsi_device_reset(struct
- 	return virtscsi_tmf(vscsi, cmd);
- }
- 
-+static int virtscsi_device_alloc(struct scsi_device *sdevice)
-+{
-+	/*
-+	 * Passed through SCSI targets (e.g. with qemu's 'scsi-block')
-+	 * may have transfer limits which come from the host SCSI
-+	 * controller or something on the host side other than the
-+	 * target itself.
-+	 *
-+	 * To make this work properly, the hypervisor can adjust the
-+	 * target's VPD information to advertise these limits.  But
-+	 * for that to work, the guest has to look at the VPD pages,
-+	 * which we won't do by default if it is an SPC-2 device, even
-+	 * if it does actually support it.
-+	 *
-+	 * So, set the blist to always try to read the VPD pages.
-+	 */
-+	sdevice->sdev_bflags = BLIST_TRY_VPD_PAGES;
-+
-+	return 0;
-+}
-+
-+
- /**
-  * virtscsi_change_queue_depth() - Change a virtscsi target's queue depth
-  * @sdev:	Virtscsi target whose queue depth to change
-@@ -776,6 +799,7 @@ static struct scsi_host_template virtscs
- 	.change_queue_depth = virtscsi_change_queue_depth,
- 	.eh_abort_handler = virtscsi_abort,
- 	.eh_device_reset_handler = virtscsi_device_reset,
-+	.slave_alloc = virtscsi_device_alloc,
- 
- 	.can_queue = 1024,
- 	.dma_boundary = UINT_MAX,
+-	if (ret < 0) {
++	if (ret == -1) {
+ 		/* If we couldn't map a primary PTE, try a secondary */
+ 		hash = ~hash;
+ 		vflags ^= HPTE_V_SECONDARY;
+ 		attempt++;
+ 		goto map_again;
++	} else if (ret < 0) {
++		r = -EIO;
++		goto out_unlock;
+ 	} else {
+ 		trace_kvm_book3s_64_mmu_map(rflags, hpteg,
+ 					    vpn, hpaddr, orig_pte);
+--- a/arch/powerpc/kvm/book3s_pr.c
++++ b/arch/powerpc/kvm/book3s_pr.c
+@@ -627,7 +627,11 @@ int kvmppc_handle_pagefault(struct kvm_r
+ 			kvmppc_mmu_unmap_page(vcpu, &pte);
+ 		}
+ 		/* The guest's PTE is not mapped yet. Map on the host */
+-		kvmppc_mmu_map_page(vcpu, &pte, iswrite);
++		if (kvmppc_mmu_map_page(vcpu, &pte, iswrite) == -EIO) {
++			/* Exit KVM if mapping failed */
++			run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
++			return RESUME_HOST;
++		}
+ 		if (data)
+ 			vcpu->stat.sp_storage++;
+ 		else if (vcpu->arch.mmu.is_dcbz32(vcpu) &&
