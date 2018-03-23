@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806987-2-5460872722127401056
+X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806947-2-3430619510822612721
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806986; b=eumUxqrmDwUeI29ayr4Pu73+HgGMtnW2YViGq7WUZ6ELuD6
-    U44C47Ikd1FtN6lOJ1b1EPTjoX1mTiB9Oz/V3wrD7yg42wvKC5BJbkl9PzNNlw7u
-    hUlpkuYFUa0gO4VLVSw4J0Gn6XwKsDZeBCj8bpCvhhdJkSOkWRvD3BAsAbTatlnd
-    RKGNKaf1xDttR5mnMzuwWSWzhvD3/4vEIyuQuDK0gz7eEyNslpM957Ciz4hsZqWW
-    GVXMNuEXTzvxNUKqk7/YXrnK19rzs/Na9edCialSw8P7hCJdc8w5kctLYe89b99D
-    +ll9ITv9BTpJK3xEDf2IQAazFDFz3vlg0Vl0eCQ==
+    t=1521806947; b=MHpOHKfrfRRdD4HzSvkw2LE2mIcv24maKuDPMSwrt/E/8bF
+    XUOMTp1iGsJle35lXt5aniXqj51jVjIX27zgjE0ZOjbEMzQp2moSGeZpABzxmaUi
+    F4bCJZLq6Lqy5IHPSBazX8pnxJ8KqUMgf/1vlYq68NK9q+p1I7t0CP2rlnRGtgAN
+    oIvGIokuWg7e8Mn8JuMHFOa/mo/JE1LIYb8l7TjbEck6YVmKC4x+mqg4dE1mOORn
+    GSEAQzJOd3mfa8jXZJS5pPG7zTEq90zONRVosOFejQzBHtDXEOB7gZ1bJ+cBuyXb
+    flHt64Oii+Cqk+Iotk2RXvbzO95phVUjuLnaOQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806986; bh=AOCIE48RllYkDNQVoMChsaJW8i
-    r9K1cvHN8E0em2oH0=; b=vvrfh0Na1OZmNSe+TUAy0LiLs1uLfrCMwXGub2KsiD
-    Wlv4CKL+E5Rmq6rkZlehp04YzI6nFgeyWZEreRUl3RtrHTSBzoQ1UiCZHjwEiPr9
-    xPGYAP764cII0OTA+TXtWq3WMxDXOOuGFYkQHztBJ47WKQDCHjbn3FEGOhWP0ihT
-    oXlMskuChbg9VV26uaHvVHhqX1ZEamqgvnOYjG0w8H/rsEYgrJ2bPJHWZWz6Ebeq
-    2qOeNFoNoUu/C4Kfw1Di1PMqUlgNjg1n6qJO6KxLyWM1UTYU66HEau5VGmwKsPN5
-    s3CXO2uSNOD3E7/bEW2v6IQx1NgrGQ3hsGOEE/TSyS7g==
+    :list-id; s=arctest; t=1521806947; bh=0Y/YFLS3zU9+WWRBfBkZk3oj5B
+    hyeSPx8S+xPreKzho=; b=BH+55uuUWFi9BQVqall5sTtHfnznqXBOeZB+8Nk5z0
+    cz8rD5GFnx9wjWi3Y5clo78I4VjqLs8gX0qqCE9KBucg4uJ10xkI0Tw3wYxof8lu
+    OqQmKhT5pOSwo9RTXP+M5Jvvzo9ZwMIsiZsrZVqfsRAe5L8BXVbfSD11IgF18Bgs
+    ZwjYzVGPwHGvc0XY32g2k+Y1z5mRAmf2uBWZrw9StKZpviVVW7ikaevDCRIT6kTJ
+    DvH/72yHkUtQYwP2h/TMGRjK90qhkHCt6wHJ8cISkZ2q6h8527tA7fCn9QomkCQH
+    nA1aFkjFtzGXSYdoAqmAhiZdtRzBlupsVPXmsEj7a/lg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,20 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753053AbeCWJ6R (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:58:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35592 "EHLO
+        id S1753078AbeCWJ61 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:58:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35700 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753033AbeCWJ6L (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:11 -0400
+        with ESMTP id S1753104AbeCWJ6Y (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        stable@vger.kernel.org, Sahara <keun-o.park@darkmatter.ae>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 38/84] rtc: ac100: Fix multiple race conditions
-Date: Fri, 23 Mar 2018 10:53:52 +0100
-Message-Id: <20180323095417.706620097@linuxfoundation.org>
+Subject: [PATCH 4.15 49/84] pty: cancel pty slave port bufs work in tty_release
+Date: Fri, 23 Mar 2018 10:54:03 +0100
+Message-Id: <20180323095419.427804411@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -83,119 +81,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+From: Sahara <keun-o.park@darkmatter.ae>
 
 
-[ Upstream commit 994ec64c0a193940be7a6fd074668b9446d3b6c3 ]
+[ Upstream commit 2b022ab7542df60021ab57854b3faaaf42552eaf ]
 
-The probe function is not allowed to fail after registering the RTC because
-the following may happen:
+In case that CONFIG_SLUB_DEBUG is on and pty is used, races between
+release_one_tty and flush_to_ldisc work threads may happen and lead
+to use-after-free condition on tty->link->port. Because SLUB_DEBUG
+is turned on, freed tty->link->port is filled with POISON_FREE value.
+So far without SLUB_DEBUG, port was filled with zero and flush_to_ldisc
+could return without a problem by checking if tty is NULL.
 
-CPU0:                                CPU1:
-sys_load_module()
- do_init_module()
-  do_one_initcall()
-   cmos_do_probe()
-    rtc_device_register()
-     __register_chrdev()
-     cdev->owner = struct module*
-                                     open("/dev/rtc0")
-    rtc_device_unregister()
-  module_put()
-  free_module()
-   module_free(mod->module_core)
-   /* struct module *module is now
-      freed */
-                                      chrdev_open()
-                                       spin_lock(cdev_lock)
-                                       cdev_get()
-                                        try_module_get()
-                                         module_is_live()
-                                         /* dereferences already
-                                            freed struct module* */
+CPU 0                                 CPU 1
+-----                                 -----
+release_tty                           pty_write
+   cancel_work_sync(tty)                 to = tty->link
+   tty_kref_put(tty->link)               tty_schedule_flip(to->port)
+      << workqueue >>                 ...
+      release_one_tty                 ...
+         pty_cleanup                  ...
+            kfree(tty->link->port)       << workqueue >>
+                                         flush_to_ldisc
+                                            tty = READ_ONCE(port->itty)
+                                            tty is 0x6b6b6b6b6b6b6b6b
+                                            !!PANIC!! access tty->ldisc
 
-Also, the interrupt handler: ac100_rtc_irq() is dereferencing chip->rtc but
-this may still be NULL when it is called, resulting in:
-Unable to handle kernel NULL pointer dereference at virtual address 00000194
-pgd = (ptrval)
-[00000194] *pgd=00000000
-Internal error: Oops: 5 [#1] SMP ARM
-Modules linked in:
-CPU: 0 PID: 72 Comm: irq/71-ac100-rt Not tainted 4.15.0-rc1-next-20171201-dirty #120
-Hardware name: Allwinner sun8i Family
-task: (ptrval) task.stack: (ptrval)
-PC is at mutex_lock+0x14/0x3c
-LR is at ac100_rtc_irq+0x38/0xc8
-pc : [<c06543a4>]    lr : [<c04d9a2c>]    psr: 60000053
-sp : ee9c9f28  ip : 00000000  fp : ee9adfdc
-r10: 00000000  r9 : c0a04c48  r8 : c015ed18
-r7 : ee9bd600  r6 : ee9c9f28  r5 : ee9af590  r4 : c0a04c48
-r3 : ef3cb3c0  r2 : 00000000  r1 : ee9af590  r0 : 00000194
-Flags: nZCv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: 4000406a  DAC: 00000051
-Process irq/71-ac100-rt (pid: 72, stack limit = 0x(ptrval))
-Stack: (0xee9c9f28 to 0xee9ca000)
-9f20:                   00000000 7c2fd1be c015ed18 ee9adf40 ee9c0400 ee9c0400
-9f40: ee9adf40 c015ed34 ee9c8000 ee9adf64 ee9c0400 c015f040 ee9adf80 00000000
-9f60: c015ee24 7c2fd1be ee9adfc0 ee9adf80 00000000 ee9c8000 ee9adf40 c015eef4
-9f80: ef1eba34 c0138f14 ee9c8000 ee9adf80 c0138df4 00000000 00000000 00000000
-9fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
-9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-9fe0: 00000000 00000000 00000000 00000000 00000013 00000000 ffffffff ffffffff
-[<c06543a4>] (mutex_lock) from [<c04d9a2c>] (ac100_rtc_irq+0x38/0xc8)
-[<c04d9a2c>] (ac100_rtc_irq) from [<c015ed34>] (irq_thread_fn+0x1c/0x54)
-[<c015ed34>] (irq_thread_fn) from [<c015f040>] (irq_thread+0x14c/0x214)
-[<c015f040>] (irq_thread) from [<c0138f14>] (kthread+0x120/0x150)
-[<c0138f14>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+ Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b6b93
+ pgd = ffffffc0eb1c3000
+ [6b6b6b6b6b6b6b93] *pgd=0000000000000000, *pud=0000000000000000
+ ------------[ cut here ]------------
+ Kernel BUG at ffffff800851154c [verbose debug info unavailable]
+ Internal error: Oops - BUG: 96000004 [#1] PREEMPT SMP
+ CPU: 3 PID: 265 Comm: kworker/u8:9 Tainted: G        W 3.18.31-g0a58eeb #1
+ Hardware name: Qualcomm Technologies, Inc. MSM 8996pro v1.1 + PMI8996 Carbide (DT)
+ Workqueue: events_unbound flush_to_ldisc
+ task: ffffffc0ed610ec0 ti: ffffffc0ed624000 task.ti: ffffffc0ed624000
+ PC is at ldsem_down_read_trylock+0x0/0x4c
+ LR is at tty_ldisc_ref+0x24/0x4c
+ pc : [<ffffff800851154c>] lr : [<ffffff800850f6c0>] pstate: 80400145
+ sp : ffffffc0ed627cd0
+ x29: ffffffc0ed627cd0 x28: 0000000000000000
+ x27: ffffff8009e05000 x26: ffffffc0d382cfa0
+ x25: 0000000000000000 x24: ffffff800a012f08
+ x23: 0000000000000000 x22: ffffffc0703fbc88
+ x21: 6b6b6b6b6b6b6b6b x20: 6b6b6b6b6b6b6b93
+ x19: 0000000000000000 x18: 0000000000000001
+ x17: 00e80000f80d6f53 x16: 0000000000000001
+ x15: 0000007f7d826fff x14: 00000000000000a0
+ x13: 0000000000000000 x12: 0000000000000109
+ x11: 0000000000000000 x10: 0000000000000000
+ x9 : ffffffc0ed624000 x8 : ffffffc0ed611580
+ x7 : 0000000000000000 x6 : ffffff800a42e000
+ x5 : 00000000000003fc x4 : 0000000003bd1201
+ x3 : 0000000000000001 x2 : 0000000000000001
+ x1 : ffffff800851004c x0 : 6b6b6b6b6b6b6b93
 
-Solve both issues by moving to
-devm_rtc_allocate_device()/rtc_register_device()
-
-Reported-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-ac100.c |   19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/tty/tty_io.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/rtc/rtc-ac100.c
-+++ b/drivers/rtc/rtc-ac100.c
-@@ -567,6 +567,12 @@ static int ac100_rtc_probe(struct platfo
- 		return chip->irq;
- 	}
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1482,6 +1482,8 @@ static void release_tty(struct tty_struc
+ 	if (tty->link)
+ 		tty->link->port->itty = NULL;
+ 	tty_buffer_cancel_work(tty->port);
++	if (tty->link)
++		tty_buffer_cancel_work(tty->link->port);
  
-+	chip->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(chip->rtc))
-+		return PTR_ERR(chip->rtc);
-+
-+	chip->rtc->ops = &ac100_rtc_ops;
-+
- 	ret = devm_request_threaded_irq(&pdev->dev, chip->irq, NULL,
- 					ac100_rtc_irq,
- 					IRQF_SHARED | IRQF_ONESHOT,
-@@ -586,17 +592,16 @@ static int ac100_rtc_probe(struct platfo
- 	/* clear counter alarm pending interrupts */
- 	regmap_write(chip->regmap, AC100_ALM_INT_STA, AC100_ALM_INT_ENABLE);
- 
--	chip->rtc = devm_rtc_device_register(&pdev->dev, "rtc-ac100",
--					     &ac100_rtc_ops, THIS_MODULE);
--	if (IS_ERR(chip->rtc)) {
--		dev_err(&pdev->dev, "unable to register device\n");
--		return PTR_ERR(chip->rtc);
--	}
--
- 	ret = ac100_rtc_register_clks(chip);
- 	if (ret)
- 		return ret;
- 
-+	ret = rtc_register_device(chip->rtc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "unable to register device\n");
-+		return ret;
-+	}
-+
- 	dev_info(&pdev->dev, "RTC enabled\n");
- 
- 	return 0;
+ 	tty_kref_put(tty->link);
+ 	tty_kref_put(tty);
