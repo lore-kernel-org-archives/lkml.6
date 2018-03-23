@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806770-2-162901503462145465
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806743-2-10353184089378645080
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806769; b=tbHYXLGIff5DdIthUMNuwL650notqB1Q1D6hxRU49X8QJpl
-    Ao1O6Vu7HNnBs1/HH2tyApEMOiytsunWl7o2n83f/kEmvN4LUKz2s9fQ94umLHLw
-    5cyg8tvIFSMV6e+XFpBv8z7ZNHLd6R1DpcPXH/jABxcwha1l8Ikkq0RYnj06LnpT
-    4hmC4C9SaPBUQxB0eQd0FdLxRa8bWgFMlqOWr1itv+yY4ys7K4+9FmfH6SLJbYRE
-    q7kHBs8SwR2pQ91bIM7p25N6HdxC5mxayXj8qw9nM9Bze8U4axM5hSEMfx8D3tRB
-    bpSqprtVv3w/oeRCQ+TRdgmi0ydOeBDEgVaIZVg==
+    t=1521806742; b=N/OKnA7j6nGgu48wIxpIHhwxPo6lINVJEsAqli7yCNSErSt
+    wAq54W/6UH6tfWeuQSLP/s639+1GxqT1Z62RHP1OnBeyUwL/BQhFeqmcbuL1/Z8l
+    EPCgrNiEMPBcJSwOBWLDmVeiRftAvAsKJDF5MB/wq7eQcWCrCNnHNAzoTO/z6eT3
+    A5s4QeehaaKkOEOigS/a4ACFlufNFHvMUnNyAsqMcONAWZcxc/TP9ELqj+mfNcNL
+    BjQbM6Bz8iUK8t7VhRmkZI0WTGtTXdwnPrEhZqLbf+l8tJfHd0UTxd4odouhLCZq
+    uZ4zLCkefZ7HA3jupWY49ijnkfK+jN/Q6t9LXuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806769; bh=/jH0+XQSFhsQCJSysPtUxGVdW/
-    DT3RKPJD5QU8p+vWA=; b=FtBmvcQxn/7UYCeMpnNDI95rUQtT6ZAdhUtpvJ+mce
-    whsYqAedNumCcC9ffov/3M+aBHaK8T9yr4VWx7GE/YcvwcWbEUXPtmrhJy/BoG9p
-    Ghk5LXx69d1cbA1kX1HZpB5B2wqdQGaA1pMaPi8/uzupP/DMq+ktR+b401ifa+cd
-    EXniVKq7alwzsyzZ5jVJXx96rQMJw+3fyR+2FRzpZ1DPL2PBZQ033G1B6dNbCD3h
-    S0XRJ/QYOOHhkGchHSvS7BLOyj+0qXh3Z9Vuf5bcoDGRN+ueSuAtTu9mHy16TAXm
-    aso+vZfBvJ2U+b0i2HgntKKNCcp5hZjQNAHXJ8+F3q8g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521806742; bh=RbdeILOynkcn4EW7d2Hf4cbsiu
+    jwVEcsvNWh/47eMjk=; b=qyLqQppAnzHGpxKiy3V57VY8W93PRNp49YvY09JJe9
+    30deZwxeiwBBf5TrAYt+wyVKTtSMqi9hNvTs/5QM+pxPtk2nnSYlrgut4CIW/Yrd
+    IU7o84SaWh9eygP5SqvabbTZ/9E93eEmGERjuAoD9idL1OVK8nziqXyMxGF9Xdfu
+    CkPnHQ8yB75Pj5mWkLERqdFvF7LGRRdUMY8drf5zHT92vuwLZNMqJDYx0D5NLQ9W
+    BwFiyp2UZb+0yV5cqrinyLe02diTkC9u/yKM5u2CnyQQPa02KOu5A70ieMRrVaip
+    zwh1KYYyITZ2uejJ6A8IIeipNU2wDyA9ic3gKPmWXMoA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,24 +50,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753379AbeCWMFk (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 08:05:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36004 "EHLO
+        id S1753440AbeCWMFV (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 08:05:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36048 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753272AbeCWJ7H (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:07 -0400
+        with ESMTP id S1753286AbeCWJ7N (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
+        stable@vger.kernel.org, Lars Persson <larper@axis.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 64/84] soc: qcom: smsm: fix child-node lookup
-Date: Fri, 23 Mar 2018 10:54:18 +0100
-Message-Id: <20180323095421.607726864@linuxfoundation.org>
+Subject: [PATCH 4.15 74/84] crypto: artpec6 - set correct iv size for gcm(aes)
+Date: Fri, 23 Mar 2018 10:54:28 +0100
+Message-Id: <20180323095423.113300760@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -85,47 +82,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Lars Persson <lars.persson@axis.com>
 
 
-[ Upstream commit 8804517e9fc16c10081ff5e42e7d80704973a8e2 ]
+[ Upstream commit 6d6e71feb183aa588c849e20e7baa47cb162928a ]
 
-Fix child-node lookup during probe, which ended up searching the whole
-device tree depth-first starting at the parent rather than just matching
-on its children.
+The IV size should not include the 32 bit counter. Because we had the
+IV size set as 16 the transform only worked when the IV input was zero
+padded.
 
-Note that the original premature free of the parent node has already
-been fixed separately.
-
-Also note that this pattern of looking up the first child node with a
-given property is rare enough that a generic helper is probably not
-warranted.
-
-Fixes: c97c4090ff72 ("soc: qcom: smsm: Add driver for Qualcomm SMSM")
-Fixes: 3e8b55411468 ("soc: qcom: smsm: fix of_node refcnting problem")
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+Fixes: a21eb94fc4d3 ("crypto: axis - add ARTPEC-6/7 crypto accelerator driver")
+Signed-off-by: Lars Persson <larper@axis.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/soc/qcom/smsm.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/crypto/axis/artpec6_crypto.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/soc/qcom/smsm.c
-+++ b/drivers/soc/qcom/smsm.c
-@@ -496,8 +496,10 @@ static int qcom_smsm_probe(struct platfo
- 	if (!smsm->hosts)
- 		return -ENOMEM;
+--- a/drivers/crypto/axis/artpec6_crypto.c
++++ b/drivers/crypto/axis/artpec6_crypto.c
+@@ -22,6 +22,7 @@
+ #include <linux/slab.h>
  
--	local_node = of_find_node_with_property(of_node_get(pdev->dev.of_node),
--						"#qcom,smem-state-cells");
-+	for_each_child_of_node(pdev->dev.of_node, local_node) {
-+		if (of_find_property(local_node, "#qcom,smem-state-cells", NULL))
-+			break;
-+	}
- 	if (!local_node) {
- 		dev_err(&pdev->dev, "no state entry\n");
- 		return -EINVAL;
+ #include <crypto/aes.h>
++#include <crypto/gcm.h>
+ #include <crypto/internal/aead.h>
+ #include <crypto/internal/hash.h>
+ #include <crypto/internal/skcipher.h>
+@@ -1934,7 +1935,7 @@ static int artpec6_crypto_prepare_aead(s
+ 
+ 	memcpy(req_ctx->hw_ctx.J0, areq->iv, crypto_aead_ivsize(cipher));
+ 	// The HW omits the initial increment of the counter field.
+-	crypto_inc(req_ctx->hw_ctx.J0+12, 4);
++	memcpy(req_ctx->hw_ctx.J0 + GCM_AES_IV_SIZE, "\x00\x00\x00\x01", 4);
+ 
+ 	ret = artpec6_crypto_setup_out_descr(common, &req_ctx->hw_ctx,
+ 		sizeof(struct artpec6_crypto_aead_hw_ctx), false, false);
+@@ -2956,7 +2957,7 @@ static struct aead_alg aead_algos[] = {
+ 		.setkey = artpec6_crypto_aead_set_key,
+ 		.encrypt = artpec6_crypto_aead_encrypt,
+ 		.decrypt = artpec6_crypto_aead_decrypt,
+-		.ivsize = AES_BLOCK_SIZE,
++		.ivsize = GCM_AES_IV_SIZE,
+ 		.maxauthsize = AES_BLOCK_SIZE,
+ 
+ 		.base = {
