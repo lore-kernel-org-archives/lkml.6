@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805842-2-15139404924494710115
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805823-2-9959009074123986908
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805842; b=T77bC8Bihthc41nkbxqfMNrU++HqUiaXxuGoCxSIhNcpoz3
-    oBBA+OnNC8MaDRZyjPFopanS7xLbUwWgHLtL8ZnSnkSA3Twn8HbysWaFroIHYwEF
-    iDD9TjMZTzcoGDpphXuyHdGZhpU1AdMYRJoqzxPrTCEZUl8KzGnUGvqnYWUSQ2ev
-    am/wPAokKnMHvcaWOgwxsX4shZZJs5Yz9LbJCUbCp93SJpiAtfSeKWdig6nNkKeh
-    ivvSaifYHXBsiGVRuVN0tVrgjysMaocn0l/uyonwysV6TTmDI2+hdH0kRWjTdzpz
-    24ufvR6n5O7n/D6VSfD8p2p3rW2ZWxfXiuLBzHg==
+    t=1521805823; b=dcJy5mSvs34UK3vbp2HzZgCdQSDCXNz7gwaO0u9z8CxDRJr
+    Xvo48aXuutF007QjgjpP4WBQ+OXFU6h+brW7Buolj7R7rqel02n3VzNgQDH3EmrY
+    vEh0bBkNZOWyKoWv7tcaFuVLmZw6TH6AHxD4rAFtnLGVmNPzoI4TTF+4dW6AwYmU
+    4tLPvRV61CZjB3yIb1GBL+b+AB/TZvT4n3vLlU7YnFqAuYMqJ0k4KXmBm5/rHQBd
+    CcL/EA3PG9CBhDky5lQoGTuEQjRKof6FfUT158z/w22QILLeYat/8G+y+uRFjLri
+    lgB6WyfGR2Pw3UiQX8pxt67cpdg+Ckc9vHFrd9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805842; bh=YCUsZcLaUa3RegewBvqguB/UnB
-    H2BWHPnsJ8o6z4uiI=; b=D4zZJAJuzc9RbNVyxWZ+WrrRgLJpmV3YWFy55ScYpy
-    wbK+nRFKpDYSfr1633rysUcjPxyMlwj9iy/neOnAaa4C59jhY5vvE+7a23/niFBU
-    73cmszCwO8KBHnLRq+O80rr5+Y7A1vI8QvCzsU58NfYWqj+dj9xbm1Vwhw24wcEv
-    0uA7LHtZNjG+nnLfCWzoNbZLpTHQzIX++FNzR0knkhe6f3Xi7KLU6VdesnTnXKMv
-    RLztWV+IQ8i2EEmbzc4IeqAjwqOBUg0lRpPmBqACcun+wvb1C4XkbzUI47vlxAJU
-    XauvJ6rodubOjzT0dy5jAqWdUOig++sA9qsddnxhHf7Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805823; bh=xz98O7Ophqz01Zr32q/UWUdVKE
+    gQkVwM3Ecdjm0ahUg=; b=LSLxhlgRLLw0pVixbs1rFryMP6YuQ2emtCwoaKgECR
+    Wuq7vHQmTI19phMk/T4ciaWHbeYL6zjOKNRTPdZw2SQZAtAuCXWN5uDxh3T/UFsd
+    83dHoCeCf+gVE5yU29Q0d18Zpp1XZSBlvxbEW6EbRbW+Kp+hOlt2AsHRA92VP08f
+    zBw/eVLu+74fL9zLV4heKMwGwCzGgSNwdE2aV5iAHI8NxvzpfoV7D1a6R61r7Gii
+    2PU5yolnI8YCwK+w/s7Z+uMQkPPQW7KguQzSv0OyNZYrJlf5cetSYC+5dDsS5Ufe
+    S+bhJ6KjA0rsuiZ1AvK4Ikp+TWdMedXaUIOaaDaH4j9Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754342AbeCWLuW (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:50:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38314 "EHLO
+        id S1754167AbeCWKC1 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:02:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38302 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754202AbeCWKC0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:02:26 -0400
+        with ESMTP id S1752717AbeCWKCY (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:02:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Potnuri Bharat Teja <bharat@chelsio.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
+        stable@vger.kernel.org, Artemy Kovalyov <artemyko@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 38/77] iser-target: avoid reinitializing rdma contexts for isert commands
-Date: Fri, 23 Mar 2018 10:54:12 +0100
-Message-Id: <20180323094144.810455882@linuxfoundation.org>
+Subject: [PATCH 4.14 37/77] IB/umem: Fix use of npages/nmap fields
+Date: Fri, 23 Mar 2018 10:54:11 +0100
+Message-Id: <20180323094144.730645373@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,83 +83,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bharat Potnuri <bharat@chelsio.com>
+From: Artemy Kovalyov <artemyko@mellanox.com>
 
 
-[ Upstream commit 66f53e6f5400578bae58db0c06d85a8820831f40 ]
+[ Upstream commit edf1a84fe37c51290e2c88154ecaf48dadff3d27 ]
 
-isert commands that failed during isert_rdma_rw_ctx_post() are queued to
-Queue-Full(QF) queue and are scheduled to be reposted during queue-full
-queue processing. During this reposting, the rdma contexts are initialised
-again in isert_rdma_rw_ctx_post(), which is leaking significant memory.
+In ib_umem structure npages holds original number of sg entries, while
+nmap is number of DMA blocks returned by dma_map_sg.
 
-unreferenced object 0xffff8830201d9640 (size 64):
-  comm "kworker/0:2", pid 195, jiffies 4295374851 (age 4528.436s)
-  hex dump (first 32 bytes):
-    00 60 8b cb 2e 00 00 00 00 10 00 00 00 00 00 00  .`..............
-    00 90 e3 cb 2e 00 00 00 00 10 00 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff8170711e>] kmemleak_alloc+0x4e/0xb0
-    [<ffffffff811f8ba5>] __kmalloc+0x125/0x2b0
-    [<ffffffffa046b24f>] rdma_rw_ctx_init+0x15f/0x6f0 [ib_core]
-    [<ffffffffa07ab644>] isert_rdma_rw_ctx_post+0xc4/0x3c0 [ib_isert]
-    [<ffffffffa07ad972>] isert_put_datain+0x112/0x1c0 [ib_isert]
-    [<ffffffffa07dddce>] lio_queue_data_in+0x2e/0x30 [iscsi_target_mod]
-    [<ffffffffa076c322>] target_qf_do_work+0x2b2/0x4b0 [target_core_mod]
-    [<ffffffff81080c3b>] process_one_work+0x1db/0x5d0
-    [<ffffffff8108107d>] worker_thread+0x4d/0x3e0
-    [<ffffffff81088667>] kthread+0x117/0x150
-    [<ffffffff81713fa7>] ret_from_fork+0x27/0x40
-    [<ffffffffffffffff>] 0xffffffffffffffff
-
-Here is patch to use the older rdma contexts while reposting
-the isert commands intead of reinitialising them.
-
-Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Fixes: c5d76f130b28 ('IB/core: Add umem function to read data from user-space')
+Signed-off-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/isert/ib_isert.c |    7 +++++++
- drivers/infiniband/ulp/isert/ib_isert.h |    1 +
- 2 files changed, 8 insertions(+)
+ drivers/infiniband/core/umem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/isert/ib_isert.c
-+++ b/drivers/infiniband/ulp/isert/ib_isert.c
-@@ -2124,6 +2124,9 @@ isert_rdma_rw_ctx_post(struct isert_cmd
- 	u32 rkey, offset;
- 	int ret;
- 
-+	if (cmd->ctx_init_done)
-+		goto rdma_ctx_post;
-+
- 	if (dir == DMA_FROM_DEVICE) {
- 		addr = cmd->write_va;
- 		rkey = cmd->write_stag;
-@@ -2151,11 +2154,15 @@ isert_rdma_rw_ctx_post(struct isert_cmd
- 				se_cmd->t_data_sg, se_cmd->t_data_nents,
- 				offset, addr, rkey, dir);
- 	}
-+
- 	if (ret < 0) {
- 		isert_err("Cmd: %p failed to prepare RDMA res\n", cmd);
- 		return ret;
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -352,7 +352,7 @@ int ib_umem_copy_from(void *dst, struct
+ 		return -EINVAL;
  	}
  
-+	cmd->ctx_init_done = true;
-+
-+rdma_ctx_post:
- 	ret = rdma_rw_ctx_post(&cmd->rw, conn->qp, port_num, cqe, chain_wr);
+-	ret = sg_pcopy_to_buffer(umem->sg_head.sgl, umem->nmap, dst, length,
++	ret = sg_pcopy_to_buffer(umem->sg_head.sgl, umem->npages, dst, length,
+ 				 offset + ib_umem_offset(umem));
+ 
  	if (ret < 0)
- 		isert_err("Cmd: %p failed to post RDMA res\n", cmd);
---- a/drivers/infiniband/ulp/isert/ib_isert.h
-+++ b/drivers/infiniband/ulp/isert/ib_isert.h
-@@ -126,6 +126,7 @@ struct isert_cmd {
- 	struct rdma_rw_ctx	rw;
- 	struct work_struct	comp_work;
- 	struct scatterlist	sg;
-+	bool			ctx_init_done;
- };
- 
- static inline struct isert_cmd *tx_desc_to_cmd(struct iser_tx_desc *desc)
