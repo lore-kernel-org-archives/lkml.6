@@ -1,41 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752036AbeCWP0D (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 11:26:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54717 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751715AbeCWP0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 11:26:01 -0400
-Date: Fri, 23 Mar 2018 16:25:59 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v1] printk: change message to pr_info
-Message-ID: <20180323152559.gpdfsknsfk7vexqr@pathway.suse.cz>
-References: <20180322135833.16602-1-tomeu.vizoso@collabora.com>
+        id S1751923AbeCWP0I (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 11:26:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44322 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751675AbeCWP0F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 11:26:05 -0400
+Date: Fri, 23 Mar 2018 16:26:03 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Arnd Bergmann <arnd@arndb.de>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/21] eeprom: at24: driver refactoring
+Message-ID: <20180323152603.GA17081@kroah.com>
+References: <20180319091721.18193-1-brgl@bgdev.pl>
+ <CAHp75VevXq6NwpmvTU_2GzSdLjUQ47RLM__M3jNLBjZ1YoeQHw@mail.gmail.com>
+ <CAMRc=MdKor4Hb-VWqczVgiatLU+HKW-u6D-1=b_xnvz_QJhO9g@mail.gmail.com>
+ <CAHp75VfLzE===+4LpjyP5Zjzg7TCDiwf5udQEq-TtxjCbYXFpw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180322135833.16602-1-tomeu.vizoso@collabora.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CAHp75VfLzE===+4LpjyP5Zjzg7TCDiwf5udQEq-TtxjCbYXFpw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-03-22 14:58:33, Tomeu Vizoso wrote:
-> To allow userspace to prevent this message from appearing in the
-> console by changing the log priority.
+On Wed, Mar 21, 2018 at 04:52:19PM +0200, Andy Shevchenko wrote:
+> On Mon, Mar 19, 2018 at 5:21 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > 2018-03-19 15:43 GMT+01:00 Andy Shevchenko <andy.shevchenko@gmail.com>:
+> >> On Mon, Mar 19, 2018 at 11:17 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >>> This series contains what I hope to be a non-controversial refactoring
+> >>> of the at24 eeprom driver.
+> >>>
+> >>> Most changes revolve around at24_probe() which became quite complicated
+> >>> and hard to read.
+> >>>
+> >>> The only functional changes are: disabling the internal locking
+> >>> mechanisms of regmap (since we already take care of that in the driver)
+> >>> and removing an if checking if byte_len is a power of 2 (as we do
+> >>> support models for which it's not true).
+> >>>
+> >>> All other patches affect readability and code structure.
+> >>>
+> >>> Tested with a couple models and different both for device tree and
+> >>> platform data modes.
+> >>
+> >> Is there any available tree with that series applied?
+> >> I would test it on Intel Galileo Gen 2 which has ACPI enumerated AT24
+> >> EEPROM attached.
+> >>
+> >
+> > Yes, it's in my github tree:
+> >
+> >     https://github.com/brgl/linux    topic/at24/refactoring
+> >
+> > Thanks in advance for testing it!
 > 
-> This matches other informative messages that the power subsystem emits
-> when the system changes power states.
+> At least this didn't break AT24 on Intel Galileo Gen 2 board in ACPI mode.
+> 
+> Tested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Looks good:
+All applied except for patch 4.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+thanks,
 
-I have pushed it into printk.git, branch for-4.17.
-
-Best Regards,
-Petr
+greg k-h
