@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELutF0WW3lc9ow+9lnVg3bD39S2y2IRHmyRWrmJunEHKD3QB+1G2eJaw9/ECCT+R7ynTH2rH
-ARC-Seal: i=1; a=rsa-sha256; t=1521800382; cv=none;
+X-Google-Smtp-Source: AG47ELssmj40LfPjS1SFQTnci4+Gp9nv+Pi5eF/JbjegDIPtLAKJ2leSHorHEDMLoZjN71bQYTyV
+ARC-Seal: i=1; a=rsa-sha256; t=1521800379; cv=none;
         d=google.com; s=arc-20160816;
-        b=f/dnuTp7k2SrGdZjZtyFT1iQ9Mo0g+gAH0k2kbe3tiTvFkiu8zQtMKWBxON/Kg7Wkg
-         U8dxOOhaJ9+uJhjHz6Nk0hlSiQ2oUsZgPEjnSkYUeK+YhzfFitvndkPrXDOqwLdYeral
-         u1RqT89/FUE5rQOqI0dkEBW4yekQ7b8zq7h707Wxx6d7WsC5EAqjaIKYsy0oUt+S3xNK
-         KtXYjSfrib5KTBVTZwaR21pSOFbbkXSdSDeS6ng6hR1RQspCltf2h7LMPMVSyWh5MfRt
-         6z9q8I+saIiECPRwYb/I1IVfRH23JdO7EHUX+6PXtOGzIeeQOuuA2EZCLEm5+vdNSYUa
-         wDIQ==
+        b=jpfgWGOOKzze7hZWp0uFX+eNgVvRomnlknISCs0/PnG86xSzeXlODS7cHRjJkbu/Gt
+         kQeJpipMeSlFqRJwfosq7A7LNmMaaL1A9o/LclUqtsFY9v4OzwPf7XKSqQo3Av9D0OTz
+         EUDawUj5td+dBPjda93i6UxNpCl9xjCORe0bGby4GeA19zgneo4FL9ipe8ljjqQwp9N/
+         mLtTX6lpWx9bNpu/JrDExQ66gA6IaAzvMiSTOyM9Jn9A9HDEssUbnOn4RxbsXiTv8d6m
+         fmQht2bSltFg5cNvVqV8Oa3vCPhgQiQ3oR3AMJ5jVoSyUre+w7MCtQbkBz1tIQAla2ql
+         sJiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IFC/HH+Dw3K/Blyj8PX9QCkZ/ywR9/hKZj5jzQs+AcU=;
-        b=yiXDLpO8wOK0bVWoidDV7uoj83dZckmQTcEuQFiJgd8espdgnpH3u3D2GVBcMf8b31
-         VZJLv9v/PtahKfi5p94QJCM2Ea8H2wBvE/I2TPzosaK6l/i/PFYWRiu+CanMu6aIAy7H
-         J/1qD6lQjtrbWdNF+6JRMmgL3pPv5O6TUN8WJBquykVrsMy8i+polU4whhENVRt/4Azl
-         4FX9Q9wQ0+6aGBUW4GmUxZ9aTpKosLyyz0Iqq+xYB4OpOSGuOp+i4Aysw0TP1GCaOo8t
-         t5Te4s/F4qx0sHSXFjhCokmuaGb34xc9zccHvJIy3PcIsle/4jCtQo2A9KCRnurlrNgX
-         IW9g==
+        bh=JltOuw0Ot5aSFG+ilQRjN8GyrtaF/UVwDDi/bo45qWk=;
+        b=K8Px0GjBucobZhfv83t3W3cb+km6b2CzO7dlBdWw/aFU6Cu067MMq5CG1BiyWagEPf
+         ojWP5dqlaaFSuuggk2OCl3/57vsYXcBksv+ZJqZAD6eGLnfWXztaDeqiXMI4rXMPCi+x
+         +yGqOcrF9ATiyb2MXIGDzdRUAZA2LxyGSM0yAhSEcMnQS8K+G1K6oibXxeAeQUpZqGzd
+         qAHyGuRTlijqR0OUAdbSlisiOLWR48Oa5T/TJ9AgqHVwh2zAjgdMmWTSr3uj4GlW4ql9
+         cnyYaC7JCBaroEx/ewtAuwsq+O1U1/scVn4A2Tz8FOV1SBfbj9JdnDg5VIyFATgT+ZCB
+         fj+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Sean Hefty <sean.hefty@intel.com>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 3.18 47/47] RDMA/ucma: Fix access to non-initialized CM_ID object
-Date: Fri, 23 Mar 2018 10:55:38 +0100
-Message-Id: <20180323094250.140246043@linuxfoundation.org>
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rabeeh Khoury <rabeeh@solid-run.com>,
+	Sergej Sawazki <sergej@taudac.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 46/47] clk: si5351: Rename internal plls to avoid name collisions
+Date: Fri, 23 Mar 2018 10:55:37 +0100
+Message-Id: <20180323094250.086465302@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722127270801807?=
-X-GMAIL-MSGID: =?utf-8?q?1595723357971088965?=
+X-GMAIL-THRID: =?utf-8?q?1595722065816461272?=
+X-GMAIL-MSGID: =?utf-8?q?1595723354476506427?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,153 +52,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Sergej Sawazki <sergej@taudac.com>
 
-commit 7688f2c3bbf55e52388e37ac5d63ca471a7712e1 upstream.
 
-The attempt to join multicast group without ensuring that CMA device
-exists will lead to the following crash reported by syzkaller.
+[ Upstream commit cdba9a4fb0b53703959ac861e415816cb61aded4 ]
 
-[   64.076794] BUG: KASAN: null-ptr-deref in rdma_join_multicast+0x26e/0x12c0
-[   64.076797] Read of size 8 at addr 00000000000000b0 by task join/691
-[   64.076797]
-[   64.076800] CPU: 1 PID: 691 Comm: join Not tainted 4.16.0-rc1-00219-gb97853b65b93 #23
-[   64.076802] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
-[   64.076803] Call Trace:
-[   64.076809]  dump_stack+0x5c/0x77
-[   64.076817]  kasan_report+0x163/0x380
-[   64.085859]  ? rdma_join_multicast+0x26e/0x12c0
-[   64.086634]  rdma_join_multicast+0x26e/0x12c0
-[   64.087370]  ? rdma_disconnect+0xf0/0xf0
-[   64.088579]  ? __radix_tree_replace+0xc3/0x110
-[   64.089132]  ? node_tag_clear+0x81/0xb0
-[   64.089606]  ? idr_alloc_u32+0x12e/0x1a0
-[   64.090517]  ? __fprop_inc_percpu_max+0x150/0x150
-[   64.091768]  ? tracing_record_taskinfo+0x10/0xc0
-[   64.092340]  ? idr_alloc+0x76/0xc0
-[   64.092951]  ? idr_alloc_u32+0x1a0/0x1a0
-[   64.093632]  ? ucma_process_join+0x23d/0x460
-[   64.094510]  ucma_process_join+0x23d/0x460
-[   64.095199]  ? ucma_migrate_id+0x440/0x440
-[   64.095696]  ? futex_wake+0x10b/0x2a0
-[   64.096159]  ucma_join_multicast+0x88/0xe0
-[   64.096660]  ? ucma_process_join+0x460/0x460
-[   64.097540]  ? _copy_from_user+0x5e/0x90
-[   64.098017]  ucma_write+0x174/0x1f0
-[   64.098640]  ? ucma_resolve_route+0xf0/0xf0
-[   64.099343]  ? rb_erase_cached+0x6c7/0x7f0
-[   64.099839]  __vfs_write+0xc4/0x350
-[   64.100622]  ? perf_syscall_enter+0xe4/0x5f0
-[   64.101335]  ? kernel_read+0xa0/0xa0
-[   64.103525]  ? perf_sched_cb_inc+0xc0/0xc0
-[   64.105510]  ? syscall_exit_register+0x2a0/0x2a0
-[   64.107359]  ? __switch_to+0x351/0x640
-[   64.109285]  ? fsnotify+0x899/0x8f0
-[   64.111610]  ? fsnotify_unmount_inodes+0x170/0x170
-[   64.113876]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
-[   64.115813]  ? ring_buffer_record_is_on+0xd/0x20
-[   64.117824]  ? __fget+0xa8/0xf0
-[   64.119869]  vfs_write+0xf7/0x280
-[   64.122001]  SyS_write+0xa1/0x120
-[   64.124213]  ? SyS_read+0x120/0x120
-[   64.126644]  ? SyS_read+0x120/0x120
-[   64.128563]  do_syscall_64+0xeb/0x250
-[   64.130732]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-[   64.132984] RIP: 0033:0x7f5c994ade99
-[   64.135699] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   64.138740] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
-[   64.141056] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
-[   64.143536] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
-[   64.146017] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
-[   64.148608] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
-[   64.151060]
-[   64.153703] Disabling lock debugging due to kernel taint
-[   64.156032] BUG: unable to handle kernel NULL pointer dereference at 00000000000000b0
-[   64.159066] IP: rdma_join_multicast+0x26e/0x12c0
-[   64.161451] PGD 80000001d0298067 P4D 80000001d0298067 PUD 1dea39067 PMD 0
-[   64.164442] Oops: 0000 [#1] SMP KASAN PTI
-[   64.166817] CPU: 1 PID: 691 Comm: join Tainted: G    B 4.16.0-rc1-00219-gb97853b65b93 #23
-[   64.170004] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
-[   64.174985] RIP: 0010:rdma_join_multicast+0x26e/0x12c0
-[   64.177246] RSP: 0018:ffff8801c8207860 EFLAGS: 00010282
-[   64.179901] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff94789522
-[   64.183344] RDX: 1ffffffff2d50fa5 RSI: 0000000000000297 RDI: 0000000000000297
-[   64.186237] RBP: ffff8801c8207a50 R08: 0000000000000000 R09: ffffed0039040ea7
-[   64.189328] R10: 0000000000000001 R11: ffffed0039040ea6 R12: 0000000000000000
-[   64.192634] R13: 0000000000000000 R14: ffff8801e2022800 R15: ffff8801d4ac2400
-[   64.196105] FS:  00007f5c99b98700(0000) GS:ffff8801e5d00000(0000) knlGS:0000000000000000
-[   64.199211] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   64.202046] CR2: 00000000000000b0 CR3: 00000001d1c48004 CR4: 00000000003606a0
-[   64.205032] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   64.208221] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   64.211554] Call Trace:
-[   64.213464]  ? rdma_disconnect+0xf0/0xf0
-[   64.216124]  ? __radix_tree_replace+0xc3/0x110
-[   64.219337]  ? node_tag_clear+0x81/0xb0
-[   64.222140]  ? idr_alloc_u32+0x12e/0x1a0
-[   64.224422]  ? __fprop_inc_percpu_max+0x150/0x150
-[   64.226588]  ? tracing_record_taskinfo+0x10/0xc0
-[   64.229763]  ? idr_alloc+0x76/0xc0
-[   64.232186]  ? idr_alloc_u32+0x1a0/0x1a0
-[   64.234505]  ? ucma_process_join+0x23d/0x460
-[   64.237024]  ucma_process_join+0x23d/0x460
-[   64.240076]  ? ucma_migrate_id+0x440/0x440
-[   64.243284]  ? futex_wake+0x10b/0x2a0
-[   64.245302]  ucma_join_multicast+0x88/0xe0
-[   64.247783]  ? ucma_process_join+0x460/0x460
-[   64.250841]  ? _copy_from_user+0x5e/0x90
-[   64.253878]  ucma_write+0x174/0x1f0
-[   64.257008]  ? ucma_resolve_route+0xf0/0xf0
-[   64.259877]  ? rb_erase_cached+0x6c7/0x7f0
-[   64.262746]  __vfs_write+0xc4/0x350
-[   64.265537]  ? perf_syscall_enter+0xe4/0x5f0
-[   64.267792]  ? kernel_read+0xa0/0xa0
-[   64.270358]  ? perf_sched_cb_inc+0xc0/0xc0
-[   64.272575]  ? syscall_exit_register+0x2a0/0x2a0
-[   64.275367]  ? __switch_to+0x351/0x640
-[   64.277700]  ? fsnotify+0x899/0x8f0
-[   64.280530]  ? fsnotify_unmount_inodes+0x170/0x170
-[   64.283156]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
-[   64.286182]  ? ring_buffer_record_is_on+0xd/0x20
-[   64.288749]  ? __fget+0xa8/0xf0
-[   64.291136]  vfs_write+0xf7/0x280
-[   64.292972]  SyS_write+0xa1/0x120
-[   64.294965]  ? SyS_read+0x120/0x120
-[   64.297474]  ? SyS_read+0x120/0x120
-[   64.299751]  do_syscall_64+0xeb/0x250
-[   64.301826]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-[   64.304352] RIP: 0033:0x7f5c994ade99
-[   64.306711] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   64.309577] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
-[   64.312334] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
-[   64.315783] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
-[   64.318365] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
-[   64.320980] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
-[   64.323515] Code: e8 e8 79 08 ff 4c 89 ff 45 0f b6 a7 b8 01 00 00 e8 68 7c 08 ff 49 8b 1f 4d 89 e5 49 c1 e4 04 48 8
-[   64.330753] RIP: rdma_join_multicast+0x26e/0x12c0 RSP: ffff8801c8207860
-[   64.332979] CR2: 00000000000000b0
-[   64.335550] ---[ end trace 0c00c17a408849c1 ]---
+This drivers probe fails due to a clock name collision if a clock named
+'plla' or 'pllb' is already registered when registering this drivers
+internal plls.
 
-Reported-by: <syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com>
-Fixes: c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Sean Hefty <sean.hefty@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Fix it by renaming internal plls to avoid name collisions.
+
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+Signed-off-by: Sergej Sawazki <sergej@taudac.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/core/cma.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/clk-si5351.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -3350,6 +3350,9 @@ int rdma_join_multicast(struct rdma_cm_i
- 	struct cma_multicast *mc;
- 	int ret;
- 
-+	if (!id->device)
-+		return -EINVAL;
-+
- 	id_priv = container_of(id, struct rdma_id_private, id);
- 	if (!cma_comp(id_priv, RDMA_CM_ADDR_BOUND) &&
- 	    !cma_comp(id_priv, RDMA_CM_ADDR_RESOLVED))
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -72,7 +72,7 @@ static const char * const si5351_input_n
+ 	"xtal", "clkin"
+ };
+ static const char * const si5351_pll_names[] = {
+-	"plla", "pllb", "vxco"
++	"si5351_plla", "si5351_pllb", "si5351_vxco"
+ };
+ static const char * const si5351_msynth_names[] = {
+ 	"ms0", "ms1", "ms2", "ms3", "ms4", "ms5", "ms6", "ms7"
