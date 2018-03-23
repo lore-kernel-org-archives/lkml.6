@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521807074-2-15617930990261527873
+X-Cyrus-Session-Id: sloti22d1t05-1182439-1521807060-2-7468468958419729972
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807073; b=d/olMPPEkQCit+HubqgNBUw0wb4//bJk80GmDrrevZWqYbh
-    398awda7ZZ1/I5CSXt+7zZp6T5V7sdiAeAexdELqxLsr/y/K97ILAtckuczXRR7E
-    rzgR0LQeksY548tSaHtSoM08W8ZLJFkBjT50OTAZKHhtgR+WTp+x5lS9c3CalVuj
-    TCIz5v1tEQDKb1enJP/a4qsSUhGazwUUCuqbqJ132Kn+0CdwwQrPXDW/HkTdh/Sj
-    PZSlBlkJ2HQFWxkkOcc9wxAHokcS8okAfZkTkujCq4aHiU2k8SV5XZnd6S2WIRTF
-    08PsZdB23F6+mWGFh0JGowurQOTE6Mqw9rQps2w==
+    t=1521807059; b=OzfXWLSrZvVqYoKPLpzWk8Ml1PFDseOkUZBhvz9hV3VKjLT
+    JXMpcRM9NV4aVImjnoTcyC4D4tdb9cEFSZJHLh4oPabFBy9WJ1rjq3t5c5r5G/cX
+    hzQibk/tH9aCpMVjE7m2/bG58Z4gHyTTiQ/u/H53C/FehVIl4U10vjq/JnAzO5e/
+    XBiWF4yQYebtCk1UP0mXnp4ONw5oi6cQLQz32pORHJlNK/Q4D1ylARUWvkLkMvlY
+    dKQrr2erLo+Y2KB7tzV+w3vI05/tPCvUuzx6MGLrqzWHvfBg46xM2NKYr0y75VAY
+    xeWLuHjX0xjtB3NPEwsiTgJuHH16X/P7kli0opw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807073; bh=61sZBSQ93hRR0sk0KncVfMP4lb
-    21QYhQFqtrGEAWyHg=; b=TCrJEbkY2cJcEGD1TpencJ97JcfL7/Dn0E+0XtQMoG
-    azNop2QgKvXME7y7KhGQ6QHdg7GJIO2gxPEd7s2TS1RkTjrgEt5+765xAmhAK55z
-    qi/vBisF6QGA+zJnjlxOvFDrGRXrd1qhEHaeNxnFzVJoaIsZRX1U08L72gyt3bZ/
-    I7HWLIv29h/6kR95n1hyV+g1ifi/X1mNium/z0aEJEvCEGTCTfJRuG4As2pmRbiN
-    kkAN8Glsc8CKJ27yRmnuePShzsQr/3kivh2n44oLFnjHjFs6E6dp1CxH7oU8vAc5
-    zCq/E9OkazhSZSCvqBlgEyen0NGokY5W0DSyqdHzctIA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521807059; bh=qOci5u6fO7GwjDspV0qqpo00qg
+    ERiS3XMn3lpD4Mk0I=; b=CjR76QfsZIRB1o3seRLMqyvzHX5hYTR6FN707GCHZR
+    Rn0nE+yV7bLUcH47jaPegy0vQfqSVy3Xd5vFrJzPsvf92fwoFrvAHGf/NIEKdVTB
+    hffoeDxiMXTcwSRqtwBGl823hwPQ2+5bMiH4stGZgJEX91rW2IEcvogerFWDSzyc
+    259y6q9gf4lMjRyxmpUNQllMOMWgLNnOx6GI5kO7Cx0Kn5OaNkPGqXEG6VZgK6YB
+    g8BxR48rtZ3UIX+hUtjGqqHutxjBY8bmffC8wBFNeNBOvh2Go81XUADThZkKhS7r
+    dODNarAFYSksNMM8XSxplj5NbjpRmLSUzZ2jucNQGY0g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,20 +50,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752945AbeCWJ5u (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:57:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35446 "EHLO
+        id S1752972AbeCWJ54 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:57:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35488 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752914AbeCWJ5r (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:47 -0400
+        with ESMTP id S1752914AbeCWJ5y (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:54 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        stable@vger.kernel.org,
+        Michael Holzheu <holzheu@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 45/84] vgacon: Set VGA struct resource types
-Date: Fri, 23 Mar 2018 10:53:59 +0100
-Message-Id: <20180323095418.793264852@linuxfoundation.org>
+Subject: [PATCH 4.15 33/84] /dev/mem: Add bounce buffer for copy-out
+Date: Fri, 23 Mar 2018 10:53:47 +0100
+Message-Id: <20180323095416.919944890@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -81,108 +83,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+From: Kees Cook <keescook@chromium.org>
 
 
-[ Upstream commit c82084117f79bcae085e40da526253736a247120 ]
+[ Upstream commit 22ec1a2aea73b9dfe340dff7945bd85af4cc6280 ]
 
-Set the resource type when we reserve VGA-related I/O port resources.
+As done for /proc/kcore in
 
-The resource code doesn't actually look at the type, so it inserts
-resources without a type in the tree correctly even without this change.
-But if we ever print a resource without a type, it looks like this:
+  commit df04abfd181a ("fs/proc/kcore.c: Add bounce buffer for ktext data")
 
-  vga+ [??? 0x000003c0-0x000003df flags 0x0]
+this adds a bounce buffer when reading memory via /dev/mem. This
+is needed to allow kernel text memory to be read out when built with
+CONFIG_HARDENED_USERCOPY (which refuses to read out kernel text) and
+without CONFIG_STRICT_DEVMEM (which would have refused to read any RAM
+contents at all).
 
-Setting the type means it will be printed correctly as:
+Since this build configuration isn't common (most systems with
+CONFIG_HARDENED_USERCOPY also have CONFIG_STRICT_DEVMEM), this also tries
+to inform Kconfig about the recommended settings.
 
-  vga+ [io  0x000003c0-0x000003df]
+This patch is modified from Brad Spengler/PaX Team's changes to /dev/mem
+code in the last public patch of grsecurity/PaX based on my understanding
+of the code. Changes or omissions from the original code are mine and
+don't reflect the original grsecurity/PaX code.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reported-by: Michael Holzheu <holzheu@linux.vnet.ibm.com>
+Fixes: f5509cc18daa ("mm: Hardened usercopy")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/alpha/kernel/console.c    |    1 +
- drivers/video/console/vgacon.c |   34 ++++++++++++++++++++++++++--------
- 2 files changed, 27 insertions(+), 8 deletions(-)
+ drivers/char/mem.c |   27 ++++++++++++++++++++++-----
+ security/Kconfig   |    1 +
+ 2 files changed, 23 insertions(+), 5 deletions(-)
 
---- a/arch/alpha/kernel/console.c
-+++ b/arch/alpha/kernel/console.c
-@@ -21,6 +21,7 @@
- struct pci_controller *pci_vga_hose;
- static struct resource alpha_vga = {
- 	.name	= "alpha-vga+",
-+	.flags	= IORESOURCE_IO,
- 	.start	= 0x3C0,
- 	.end	= 0x3DF
- };
---- a/drivers/video/console/vgacon.c
-+++ b/drivers/video/console/vgacon.c
-@@ -422,7 +422,10 @@ static const char *vgacon_startup(void)
- 		vga_video_port_val = VGA_CRT_DM;
- 		if ((screen_info.orig_video_ega_bx & 0xff) != 0x10) {
- 			static struct resource ega_console_resource =
--			    { .name = "ega", .start = 0x3B0, .end = 0x3BF };
-+			    { .name	= "ega",
-+			      .flags	= IORESOURCE_IO,
-+			      .start	= 0x3B0,
-+			      .end	= 0x3BF };
- 			vga_video_type = VIDEO_TYPE_EGAM;
- 			vga_vram_size = 0x8000;
- 			display_desc = "EGA+";
-@@ -430,9 +433,15 @@ static const char *vgacon_startup(void)
- 					 &ega_console_resource);
- 		} else {
- 			static struct resource mda1_console_resource =
--			    { .name = "mda", .start = 0x3B0, .end = 0x3BB };
-+			    { .name	= "mda",
-+			      .flags	= IORESOURCE_IO,
-+			      .start	= 0x3B0,
-+			      .end	= 0x3BB };
- 			static struct resource mda2_console_resource =
--			    { .name = "mda", .start = 0x3BF, .end = 0x3BF };
-+			    { .name	= "mda",
-+			      .flags	= IORESOURCE_IO,
-+			      .start	= 0x3BF,
-+			      .end	= 0x3BF };
- 			vga_video_type = VIDEO_TYPE_MDA;
- 			vga_vram_size = 0x2000;
- 			display_desc = "*MDA";
-@@ -454,15 +463,21 @@ static const char *vgacon_startup(void)
- 			vga_vram_size = 0x8000;
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -107,6 +107,8 @@ static ssize_t read_mem(struct file *fil
+ 	phys_addr_t p = *ppos;
+ 	ssize_t read, sz;
+ 	void *ptr;
++	char *bounce;
++	int err;
  
- 			if (!screen_info.orig_video_isVGA) {
--				static struct resource ega_console_resource
--				    = { .name = "ega", .start = 0x3C0, .end = 0x3DF };
-+				static struct resource ega_console_resource =
-+				    { .name	= "ega",
-+				      .flags	= IORESOURCE_IO,
-+				      .start	= 0x3C0,
-+				      .end	= 0x3DF };
- 				vga_video_type = VIDEO_TYPE_EGAC;
- 				display_desc = "EGA";
- 				request_resource(&ioport_resource,
- 						 &ega_console_resource);
- 			} else {
--				static struct resource vga_console_resource
--				    = { .name = "vga+", .start = 0x3C0, .end = 0x3DF };
-+				static struct resource vga_console_resource =
-+				    { .name	= "vga+",
-+				      .flags	= IORESOURCE_IO,
-+				      .start	= 0x3C0,
-+				      .end	= 0x3DF };
- 				vga_video_type = VIDEO_TYPE_VGAC;
- 				display_desc = "VGA+";
- 				request_resource(&ioport_resource,
-@@ -494,7 +509,10 @@ static const char *vgacon_startup(void)
- 			}
- 		} else {
- 			static struct resource cga_console_resource =
--			    { .name = "cga", .start = 0x3D4, .end = 0x3D5 };
-+			    { .name	= "cga",
-+			      .flags	= IORESOURCE_IO,
-+			      .start	= 0x3D4,
-+			      .end	= 0x3D5 };
- 			vga_video_type = VIDEO_TYPE_CGA;
- 			vga_vram_size = 0x2000;
- 			display_desc = "*CGA";
+ 	if (p != *ppos)
+ 		return 0;
+@@ -129,15 +131,22 @@ static ssize_t read_mem(struct file *fil
+ 	}
+ #endif
+ 
++	bounce = kmalloc(PAGE_SIZE, GFP_KERNEL);
++	if (!bounce)
++		return -ENOMEM;
++
+ 	while (count > 0) {
+ 		unsigned long remaining;
+ 		int allowed;
+ 
+ 		sz = size_inside_page(p, count);
+ 
++		err = -EPERM;
+ 		allowed = page_is_allowed(p >> PAGE_SHIFT);
+ 		if (!allowed)
+-			return -EPERM;
++			goto failed;
++
++		err = -EFAULT;
+ 		if (allowed == 2) {
+ 			/* Show zeros for restricted memory. */
+ 			remaining = clear_user(buf, sz);
+@@ -149,24 +158,32 @@ static ssize_t read_mem(struct file *fil
+ 			 */
+ 			ptr = xlate_dev_mem_ptr(p);
+ 			if (!ptr)
+-				return -EFAULT;
+-
+-			remaining = copy_to_user(buf, ptr, sz);
++				goto failed;
+ 
++			err = probe_kernel_read(bounce, ptr, sz);
+ 			unxlate_dev_mem_ptr(p, ptr);
++			if (err)
++				goto failed;
++
++			remaining = copy_to_user(buf, bounce, sz);
+ 		}
+ 
+ 		if (remaining)
+-			return -EFAULT;
++			goto failed;
+ 
+ 		buf += sz;
+ 		p += sz;
+ 		count -= sz;
+ 		read += sz;
+ 	}
++	kfree(bounce);
+ 
+ 	*ppos += read;
+ 	return read;
++
++failed:
++	kfree(bounce);
++	return err;
+ }
+ 
+ static ssize_t write_mem(struct file *file, const char __user *buf,
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -154,6 +154,7 @@ config HARDENED_USERCOPY
+ 	bool "Harden memory copies between kernel and userspace"
+ 	depends on HAVE_HARDENED_USERCOPY_ALLOCATOR
+ 	select BUG
++	imply STRICT_DEVMEM
+ 	help
+ 	  This option checks for obviously wrong memory regions when
+ 	  copying memory to/from the kernel (via copy_to_user() and
