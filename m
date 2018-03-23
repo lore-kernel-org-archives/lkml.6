@@ -1,138 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752736AbeCWW5I (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 18:57:08 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:34756 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752163AbeCWW5G (ORCPT
+        id S1752227AbeCWXBJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 19:01:09 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:38034 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751632AbeCWXBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 18:57:06 -0400
-X-Google-Smtp-Source: AG47ELv6cNOjK5a3NGM6f/9hu1ZQ+YfQHU7acpLHMVsz9vr/XnYFzBpIdMTrUxJp7XTKpKj6hWv/UitjsbJZwUNcngo=
+        Fri, 23 Mar 2018 19:01:07 -0400
+X-Google-Smtp-Source: AIpwx4//WdpSu0dKbNIsmFrjUQfuXXrqud5ltwyrWXrKXRsWpsxQerT5gaxpSRgGVKV0j1uEIyRjBwcoB2ncRm9r4wM=
 MIME-Version: 1.0
-In-Reply-To: <20180323174023.60579f45@gandalf.local.home>
-References: <alpine.DEB.2.21.1803232210110.1481@nanos.tec.linutronix.de>
- <20180323172843.763579a9@gandalf.local.home> <alpine.DEB.2.21.1803232232410.1481@nanos.tec.linutronix.de>
- <20180323174023.60579f45@gandalf.local.home>
-From: Joel Fernandes <joelaf@google.com>
-Date: Fri, 23 Mar 2018 15:57:04 -0700
-Message-ID: <CAJWu+oqLnqGbuo9Y5DRJkskaMZ5=Krsxpbe1OhmEpd80CSG2mg@mail.gmail.com>
-Subject: Re: rcu: Add might_sleep() check to synchronize_rcu()
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
+In-Reply-To: <20180323140919.GB5942@localhost.localdomain>
+References: <20180323094740.GA5942@localhost.localdomain> <CACna6rx-QNQhVNkwFSabwAY9vM1qV_gTcWywsHFuP5B4NH4NXA@mail.gmail.com>
+ <20180323140919.GB5942@localhost.localdomain>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Sat, 24 Mar 2018 00:01:05 +0100
+Message-ID: <CACna6rwk04dn2oVYsQMhmzvRTmuDv8_AKPK7+kBwbjB_CLRALg@mail.gmail.com>
+Subject: Re: [QUESTION] Mainline support for B43_PHY_AC wifi cards
+To: Juri Lelli <juri.lelli@gmail.com>
+Cc: b43-dev <b43-dev@lists.infradead.org>,
+        Network Development <netdev@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2NN1EWL009134
 
-On Fri, Mar 23, 2018 at 2:40 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Fri, 23 Mar 2018 22:33:29 +0100 (CET)
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->
->> On Fri, 23 Mar 2018, Steven Rostedt wrote:
+On 23 March 2018 at 15:09, Juri Lelli <juri.lelli@gmail.com> wrote:
+> On 23/03/18 14:43, Rafał Miłecki wrote:
+>> Hi,
 >>
->> > On Fri, 23 Mar 2018 22:12:24 +0100 (CET)
->> > Thomas Gleixner <tglx@linutronix.de> wrote:
+>> On 23 March 2018 at 10:47, Juri Lelli <juri.lelli@gmail.com> wrote:
+>> > I've got a Dell XPS 13 9343/0TM99H (BIOS A15 01/23/2018) mounting a
+>> > BCM4352 802.11ac (rev 03) wireless card and so far I've been using it on
+>> > Fedora with broadcom-wl package (which I believe installs Broadcom's STA
+>> > driver?). It works good apart from occasional hiccups after suspend.
 >> >
->> > > synchronize_rcu() lacks a might_sleep() check which would have caught that
->> > > issue way earlier because it would trigger with the minimal debug options
->> > > enabled.
->> > >
->> > > Add a might_sleep() check to catch such cases.
+>> > I'd like to get rid of that dependency (you can understand that it's
+>> > particularly annoying when testing mainline kernels), but I found out
+>> > that support for my card is BROKEN in mainline [1]. Just to see what
+>> > happens, I forcibly enabled it witnessing that it indeed crashes like
+>> > below as Kconfig warns. :)
 >> >
->> > I'm not against the patch, but really? I would think that
->> > synchronize_rcu() would pretty much always schedule, and scheduling
->> > from atomic would have triggered with minimal debug options enabled.
+>> >  bcma: bus0: Found chip with id 0x4352, rev 0x03 and package 0x00
+>> >  bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
+>> >  bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
+>> >  bcma: bus0: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
+>> >  bcma: bus0: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
+>> >  bcma: bus0: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
+>> >  bcma: Unsupported SPROM revision: 11
+>> >  bcma: bus0: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
+>> >  bcma: bus0: Using fallback SPROM failed (err -2)
+>> >  bcma: bus0: No SPROM available
+>> >  bcma: bus0: Bus registered
+>> >  b43-phy0: Broadcom 4352 WLAN found (core revision 42)
+>> >  b43-phy0: Found PHY: Analog 12, Type 11 (AC), Revision 1
+>> >  b43-phy0: Found Radio: Manuf 0x17F, ID 0x2069, Revision 4, Version 0
+>> >  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
 >>
->> Dunno. The reported splat is here:
+>> This isn't really useful without a full backtrace.
+>
+> Sure. I cut it here because I didn't expect people to debug what is
+> already known to be broken (but still it seemed to carry useful
+> information about the hw). :)
+
+Please paste the remaining part if you still got it.
+
+
+>> > So, question: is replacing my card the only way I can get rid of this
+>> > downstream dependency? :(
 >>
->>        https://pastebin.com/raw/puvh0cXE
+>> It's definitely the cheapest way. Getting AC PHY into anything usable
+>> (proper setup that will allow Tx & Rx anything) would probably take
+>> weeks or months of development. I'm not even going to estimate cost of
+>> adding support for 802.11n and 802.11ac features. I was the last
+>> person actively working on b43, right now I spend my free time on
+>> other hobby projects. Few people were planning to help but it seems it
+>> never worked out for them.
 >
-> [  150.560848] ODEBUG: object is not on stack, but annotated
-> [  150.566398] ------------[ cut here ]------------
-> [  150.571133] WARNING: CPU: 1 PID: 0 at lib/debugobjects.c:300 __debug_object_init+0x526/0xc40
-> [  150.579682] Kernel panic - not syncing: panic_on_warn set ...
-> [  150.579682]
-> [  150.587012] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.9.89-g960923f #61
-> [  150.593906] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> [  150.603233]  ffff8801db307a08 ffffffff81d96069 ffffffff83a482c0 ffff8801db307ae0
-> [  150.611190]  ffffffff83c19700 ffffffff81dfefb6 0000000000000009 ffff8801db307ad0
-> [  150.619157]  ffffffff8142fbd1 0000000041b58ab3 ffffffff8418bd08 ffffffff8142fa15
-> [  150.627118] Call Trace:
-> [  150.629667]  <IRQ> [  150.631700]  [<ffffffff81d96069>] dump_stack+0xc1/0x128
-> [  150.637051]  [<ffffffff81dfefb6>] ? __debug_object_init+0x526/0xc40
-> [  150.643431]  [<ffffffff8142fbd1>] panic+0x1bc/0x3a8
-> [  150.648416]  [<ffffffff8142fa15>] ? percpu_up_read_preempt_enable.constprop.53+0xd7/0xd7
-> [  150.656611]  [<ffffffff81430835>] ? load_image_and_restore+0xf9/0xf9
-> [  150.663070]  [<ffffffff81269efd>] ? vprintk_default+0x1d/0x30
-> [  150.668925]  [<ffffffff81131879>] ? __warn+0x1a9/0x1e0
-> [  150.674170]  [<ffffffff81dfefb6>] ? __debug_object_init+0x526/0xc40
-> [  150.680543]  [<ffffffff81131894>] __warn+0x1c4/0x1e0
-> [  150.685614]  [<ffffffff81131afc>] warn_slowpath_null+0x2c/0x40
-> [  150.691972]  [<ffffffff81dfefb6>] __debug_object_init+0x526/0xc40
-> [  150.698174]  [<ffffffff81dfea90>] ? debug_object_fixup+0x30/0x30
-> [  150.704283]  [<ffffffff81dff709>] debug_object_init_on_stack+0x19/0x20
-> [  150.710917]  [<ffffffff81287a93>] __wait_rcu_gp+0x93/0x1b0
-> [  150.716508]  [<ffffffff81290251>] synchronize_rcu.part.65+0x101/0x110
-> [  150.723054]  [<ffffffff81290150>] ? rcu_pm_notify+0xc0/0xc0
-> [  150.728735]  [<ffffffff81292bc0>] ? __call_rcu.constprop.72+0x910/0x910
-> [  150.735459]  [<ffffffff81235221>] ? __lock_is_held+0xa1/0xf0
-> [  150.741223]  [<ffffffff81290287>] synchronize_rcu+0x27/0x90
-> [  150.746908]  [<ffffffff83588b35>] __l2tp_session_unhash+0x3d5/0x550
+> I see. Just wondering why even if Broadcom's STA solution seems to work
+> fine, it is not mainline. Maybe a maintenance problem? But Fedora ships
+> with very recent kernels, so I'd expect the driver to work with mainline
+> (I tried compiling that against mainline, but I got errors that I didn't
+> spend time figuring out how to fix).
 >
-> Looks like __l2tp_session_unhash() is the real culprit here.
->
-> [  150.753281]  [<ffffffff8358891f>] ? __l2tp_session_unhash+0x1bf/0x550
-> [  150.759828]  [<ffffffff8114596a>] ? __local_bh_enable_ip+0x6a/0xd0
-> [  150.766123]  [<ffffffff8358ddb0>] ? l2tp_udp_encap_recv+0xd90/0xd90
-> [  150.772497]  [<ffffffff83588e97>] l2tp_tunnel_closeall+0x1e7/0x3a0
-> [  150.778782]  [<ffffffff835897be>] l2tp_tunnel_destruct+0x30e/0x5a0
-> [  150.785067]  [<ffffffff8358965a>] ? l2tp_tunnel_destruct+0x1aa/0x5a0
-> [  150.791537]  [<ffffffff835894b0>] ? l2tp_tunnel_del_work+0x460/0x460
-> [  150.797997]  [<ffffffff82ee8053>] __sk_destruct+0x53/0x570
-> [  150.803588]  [<ffffffff81293918>] rcu_process_callbacks+0x898/0x1300
-> [  150.810048]  [<ffffffff812939f7>] ? rcu_process_callbacks+0x977/0x1300
-> [  150.816684]  [<ffffffff82ee8000>] ? __sk_dst_check+0x240/0x240
-> [  150.822625]  [<ffffffff838be5d6>] __do_softirq+0x206/0x951
-> [  150.828223]  [<ffffffff81147315>] irq_exit+0x165/0x190
-> [  150.833557]  [<ffffffff838bd1eb>] smp_apic_timer_interrupt+0x7b/0xa0
-> [  150.840018]  [<ffffffff838b9470>] apic_timer_interrupt+0xa0/0xb0
-> [  150.846132]  <EOI> [  150.848166]  [<ffffffff838b6756>] ? native_safe_halt+0x6/0x10
-> [  150.854036]  [<ffffffff8123bf2d>] ? trace_hardirqs_on+0xd/0x10
-> [  150.859973]  [<ffffffff838b5d85>] default_idle+0x55/0x360
-> [  150.865478]  [<ffffffff8106be0a>] arch_cpu_idle+0xa/0x10
->
-> I think you want this instead, as __l2tp_session_unhash is what looks
-> like might be hiding the call to synchronize_rcu(). It's not called in
-> all instances, and I don't think your patch would have triggered the
-> issues before hand. You want this:
->
-> diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-> index 194a7483bb93..857b494bee29 100644
-> --- a/net/l2tp/l2tp_core.c
-> +++ b/net/l2tp/l2tp_core.c
-> @@ -1677,6 +1677,8 @@ void __l2tp_session_unhash(struct l2tp_session *session)
->  {
->         struct l2tp_tunnel *tunnel = session->tunnel;
->
-> +       might_sleep();
-> +
->         /* Remove the session from core hashes */
->         if (tunnel) {
->                 /* Remove from the per-tunnel hash */
+> Do you know what's the deal w.r.t. the STA driver?
 
-Thanks Thomas and Steven, also shouldn't this code be calling
-synchronize_rcu_bh instead of synchronize_rcu, to complement the
-rcu_read_lock_bh? In which situations would you call one versus the
-other?
+Driver being closed source and company not willing to open source it
+is usually a big problem getting it mainline...
 
-Also it seems rcu_read_lock_bh does a might_sleep already in rcu_blocking_is_gp.
-
-thanks,
-
-- Joel
+-- 
+Rafał
