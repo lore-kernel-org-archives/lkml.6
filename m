@@ -1,48 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751883AbeCWHng (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 03:43:36 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:35754 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeCWHnf (ORCPT
+        id S1751793AbeCWHob (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 03:44:31 -0400
+Received: from zimbra1.kalray.eu ([92.103.151.219]:33280 "EHLO
+        zimbra1.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751491AbeCWHoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 03:43:35 -0400
-Date: Fri, 23 Mar 2018 08:38:58 +0100
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: gitster@pobox.com
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        git@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: git send-email and sending the cover-letter to all cc addresses
- found in a patch series
-Message-ID: <20180323073858.GA12077@light.dominikbrodowski.net>
-References: <20180322090059.19361-1-linux@dominikbrodowski.net>
- <20180322090059.19361-24-linux@dominikbrodowski.net>
- <20180322172959.GX4043@hirez.programming.kicks-ass.net>
- <CA+55aFwM8mMyZZ9wH2ExAkTKg9Mwie1hOtXz87ivi0nhsZ49Ug@mail.gmail.com>
+        Fri, 23 Mar 2018 03:44:30 -0400
+DKIM-Filter: OpenDKIM Filter v2.9.2 zimbra1.kalray.eu 7425328009D
+Date: Fri, 23 Mar 2018 08:44:27 +0100 (CET)
+From: Marta Rybczynska <mrybczyn@kalray.eu>
+To: Keith Busch <keith.busch@intel.com>
+Cc: Ming Lei <ming.lei@redhat.com>, axboe@fb.com, hch@lst.de,
+        sagi@grimberg.me, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
+Message-ID: <1716948335.5924942.1521791067272.JavaMail.zimbra@kalray.eu>
+In-Reply-To: <1220434088.5871933.1521648656789.JavaMail.zimbra@kalray.eu>
+References: <744877924.5841545.1521630049567.JavaMail.zimbra@kalray.eu> <20180321115037.GA26083@ming.t460p> <464125757.5843583.1521634231341.JavaMail.zimbra@kalray.eu> <20180321154807.GD22254@ming.t460p> <20180321160238.GF12909@localhost.localdomain> <1220434088.5871933.1521648656789.JavaMail.zimbra@kalray.eu>
+Subject: Re: [RFC PATCH] nvme: avoid race-conditions when enabling devices
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwM8mMyZZ9wH2ExAkTKg9Mwie1hOtXz87ivi0nhsZ49Ug@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+X-Originating-IP: [192.168.40.201]
+X-Mailer: Zimbra 8.6.0_GA_1182 (ZimbraWebClient - FF53 (Linux)/8.6.0_GA_1182)
+Thread-Topic: nvme: avoid race-conditions when enabling devices
+Thread-Index: SxyyWlgFmS/wFmNWcZKChEsEYx3W5njVsQt5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2N7ib2V021070
 
-On Thu, Mar 22, 2018 at 10:44:54AM -0700, Linus Torvalds wrote:
-> On Thu, Mar 22, 2018 at 10:29 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > But why !? Either Cc me on more of the series such that the whole makes
-> > sense, or better yet, write a proper Changelog.
+
+
+----- Mail original -----
+> De: "Marta Rybczynska" <mrybczyn@kalray.eu>
+> À: "Keith Busch" <keith.busch@intel.com>
+> Cc: "Ming Lei" <ming.lei@redhat.com>, axboe@fb.com, hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
+> linux-kernel@vger.kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, "Pierre-Yves Kerbrat"
+> <pkerbrat@kalray.eu>
+> Envoyé: Mercredi 21 Mars 2018 17:10:56
+> Objet: Re: [RFC PATCH] nvme: avoid race-conditions when enabling devices
+
+>> On Wed, Mar 21, 2018 at 11:48:09PM +0800, Ming Lei wrote:
+>>> On Wed, Mar 21, 2018 at 01:10:31PM +0100, Marta Rybczynska wrote:
+>>> > > On Wed, Mar 21, 2018 at 12:00:49PM +0100, Marta Rybczynska wrote:
+>>> > >> NVMe driver uses threads for the work at device reset, including enabling
+>>> > >> the PCIe device. When multiple NVMe devices are initialized, their reset
+>>> > >> works may be scheduled in parallel. Then pci_enable_device_mem can be
+>>> > >> called in parallel on multiple cores.
+>>> > >> 
+>>> > >> This causes a loop of enabling of all upstream bridges in
+>>> > >> pci_enable_bridge(). pci_enable_bridge() causes multiple operations
+>>> > >> including __pci_set_master and architecture-specific functions that
+>>> > >> call ones like and pci_enable_resources(). Both __pci_set_master()
+>>> > >> and pci_enable_resources() read PCI_COMMAND field in the PCIe space
+>>> > >> and change it. This is done as read/modify/write.
+>>> > >> 
+>>> > >> Imagine that the PCIe tree looks like:
+>>> > >> A - B - switch -  C - D
+>>> > >>                \- E - F
+>>> > >> 
+>>> > >> D and F are two NVMe disks and all devices from B are not enabled and bus
+>>> > >> mastering is not set. If their reset work are scheduled in parallel the two
+>>> > >> modifications of PCI_COMMAND may happen in parallel without locking and the
+>>> > >> system may end up with the part of PCIe tree not enabled.
+>>> > > 
+>>> > > Then looks serialized reset should be used, and I did see the commit
+>>> > > 79c48ccf2fe ("nvme-pci: serialize pci resets") fixes issue of 'failed
+>>> > > to mark controller state' in reset stress test.
+>>> > > 
+>>> > > But that commit only covers case of PCI reset from sysfs attribute, and
+>>> > > maybe other cases need to be dealt with in similar way too.
+>>> > > 
+>>> > 
+>>> > It seems to me that the serialized reset works for multiple resets of the
+>>> > same device, doesn't it? Our problem is linked to resets of different devices
+>>> > that share the same PCIe tree.
+>>> 
+>>> Given reset shouldn't be a frequent action, it might be fine to serialize all
+>>> reset from different devices.
+>> 
+>> The driver was much simpler when we had serialized resets in line with
+>> probe, but that had a bigger problems with certain init systems when
+>> you put enough nvme devices in your server, making them unbootable.
+>> 
+>> Would it be okay to serialize just the pci_enable_device across all
+>> other tasks messing with the PCI topology?
+>> 
+>> ---
+>> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+>> index cef5ce851a92..e0a2f6c0f1cf 100644
+>> --- a/drivers/nvme/host/pci.c
+>> +++ b/drivers/nvme/host/pci.c
+>> @@ -2094,8 +2094,11 @@ static int nvme_pci_enable(struct nvme_dev *dev)
+>>	int result = -ENOMEM;
+>>	struct pci_dev *pdev = to_pci_dev(dev->dev);
+>> 
+>> -	if (pci_enable_device_mem(pdev))
+>> -		return result;
+>> +	pci_lock_rescan_remove();
+>> +	result = pci_enable_device_mem(pdev);
+>> +	pci_unlock_rescan_remove();
+>> +	if (result)
+>> +		return -ENODEV;
+>> 
+>>	pci_set_master(pdev);
+>> 
 > 
-> This is a common issue. We should encourage people to always send at
-> least the cover-page to everybody who gets cc'd, even if they don't
-> get the whole series.
+> The problem may happen also with other device doing its probe and nvme running
+> its
+> workqueue (and we probably have seen it in practice too). We were thinking about
+> a lock
+> in the pci generic code too, that's why I've put the linux-pci@ list in copy.
+> 
 
-Will try to do that in future. Does git send-email have such an option? Or
-do I have to specify all cc addresses in the cover letter manually? I found
-some reference to an unresolved discussion on git@ of that topic in 2016, so
-I might not be the only one who could make use of that feature...
+Keith, it looks to me that this is going to fix the issue between two nvme driver
+instances at hotplug time. This is the one we didn't cover in the first patch.
 
-Thanks,
-	Dominik
+We can see the issue at driver load (so at boot) and the lock isn't taken by the
+generic non-rescan code. Other calls to pci_enable_device_mem aren't protected 
+neither (see Bjorns message).
+
+What do you think about applying both for now until we have a generic fix in pci?
+
+Marta
