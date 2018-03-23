@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804047-2-9442491451178961441
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804030-2-755487846830273712
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804047; b=sEqe6eDMnOQBa9Bkf11pAZGy9RQJMvpmc4acKtHBHiTkYBY
-    HL9ZknSPsKryc8unushnLzaT+rRyQhqpxAH9MJbmYGw90Qc1maLM0NfFhXrs710S
-    JTviXJ9rt9ehrl4l8Wkoh/EzjGXnNtWfzuHG4O8nuOg+Ef9k4P+2+0OROZLksVXE
-    ubudyOihCoD3vTSkIgmATCAmtX4OJmGrkMzdO2K5UOSOZ/4vSOJ32FLjAuBbSyNv
-    P4PzYTUNKb6VijtR6LOOXFVKBYSuLr2bBzLyAaVUAEX0EVe09F1QTycS8shmd74r
-    YLmLqNjnSLbltNgBc/+0N+CJNxpzOY3ctCVzE+Q==
+    t=1521804030; b=L2nhOlxMXky0JYSiLVQOkviOi5NJDwN3QmLYBWeihzJ2+P9
+    MQI4x/b1Z8WeliPztP3I+LejyeMrPNb58m52EoPQxm0x0P5AuzVzlemZwlGPpKxd
+    cG40s1l5BUlm5rzgEUaFVg7foJTgnMiVa++clYXaVTAtoZlGEPCHvGO+lznPOkxp
+    mcUKaJM0M4xqpmp2pyKOSK48BJ2ozKapegwxWVgcZGojgHTLu/gBphM6Vo0ZYybS
+    stcA2YAJSYqyUEh8zAfCVs6v/mht/o6hRh+Q4scYkkxmtK3nJQ63YE5Xrh/MDR23
+    0y7DSWlwbXyCwqrNBaBf15a2P/BoOxOBoKsYyCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804047; bh=zeQuApFWPZrOzWf8VzZQNVPExQ
-    w7IDiokfJtjl4AiWM=; b=Wrx7WzQZ2Wi6puK+6MSngfwQAl0yg9qE4b41BsLdj2
-    SwR27vjoniphE6kNMbJihp1p1tHbaz47kbgzV+Swrx2VO/5dE8XyddhgCuVUt49g
-    JhJVGIWWQ4CL1cH7aGwmjjeFEgKDLslJwYlpE2IDUrMo6neWzI6Q2PC+ol3vw0lo
-    opgbkfbwpanNo/yZvEp4thdBuPb6zB7d0tMWvjsP+yC254ULm14gIE/8Rl99WPXl
-    +Sx5oIkgD9kwTCJDi9KSIiZGDiScV3IDx5YLkq7BNpimg7iOWvzv0L9abiidCx5J
-    tVseDQ7yLlthg1Tejy5ER+YqRz4DCdMnPdt17OYAkpqg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804030; bh=Wx7OKly+DH7y3OSMPpKpvUF9BJ
+    mTth0sQqsstP6uAnM=; b=WZH3SNMHSijYdruqsQGRLkdRzwJRQ10QwQRuIzgrJ4
+    XTcOBpt57JjJIP6iWPG5x92e5moPTFxAXR48ULTE7HmjXRVs9yz+wXAxQLrJ8OOT
+    CJDkc5EG9W/2B1I8puacKXje+ArVcS411FFVVLM6y045uw3xvYivPxGWkgFs/rbM
+    96w2VFfQda/x80e5boEvsxHfgAVJXe9COtkA3tjJViWz2H3weEhlDCq9r5MKECYH
+    KN8zH/pj73Eb1au7yP/YrwyHK3nJ/XpL9jxyYGzdZp2B2+Q9HTSVNnSrEFnnTY4X
+    EKAS6JjzauW4Exvb5lf2+R1C/fIC1JOWriwKi+6y8v1w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,21 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751909AbeCWLU3 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:20:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41768 "EHLO
+        id S1755608AbeCWKIo (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:08:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41786 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755588AbeCWKIj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:39 -0400
+        with ESMTP id S1755601AbeCWKIm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mario Kleiner <mario.kleiner.de@gmail.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 101/177] drm/nouveau/kms: Increase max retries in scanout position queries.
-Date: Fri, 23 Mar 2018 10:53:49 +0100
-Message-Id: <20180323094209.745952203@linuxfoundation.org>
+Subject: [PATCH 4.9 102/177] jbd2: Fix lockdep splat with generic/270 test
+Date: Fri, 23 Mar 2018 10:53:50 +0100
+Message-Id: <20180323094209.786100619@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,57 +82,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mario Kleiner <mario.kleiner.de@gmail.com>
+From: Jan Kara <jack@suse.cz>
 
 
-[ Upstream commit 60b95d709525e3ce1c51e1fc93175dcd1755d345 ]
+[ Upstream commit c52c47e4b4fbe4284602fc2ccbfc4a4d8dc05b49 ]
 
-So far we only allowed for 1 retry and just failed the query
-- and thereby high precision vblank timestamping - if we did
-not get a reasonable result, as such a failure wasn't considered
-all too horrible. There are a few NVidia gpu models out there which
-may need a bit more than 1 retry to get a successful query result
-under some conditions.
+I've hit a lockdep splat with generic/270 test complaining that:
 
-Since Linux 4.4 the update code for vblank counter and timestamp
-in drm_update_vblank_count() changed so that the implementation
-assumes that high precision vblank timestamping of a kms driver
-either consistently succeeds or consistently fails for a given
-video mode and encoder/connector combo. Iow. switching from success
-to fail or vice versa on a modeset or connector change is ok, but
-spurious temporary failure for a given setup can confuse the core
-code and potentially cause bad miscounting of vblanks and confusion
-or hangs in userspace clients which rely on vblank  stuff, e.g.,
-desktop compositors.
+3216.fsstress.b/3533 is trying to acquire lock:
+ (jbd2_handle){++++..}, at: [<ffffffff813152e0>] jbd2_log_wait_commit+0x0/0x150
 
-Therefore change the max retry count to a larger number - more than
-any gpu so far is known to need to succeed, but still low enough
-so that these queries which do also happen in vblank interrupt are
-still fast enough to be not disastrously long if something would
-go badly wrong with them.
+but task is already holding lock:
+ (jbd2_handle){++++..}, at: [<ffffffff8130bd3b>] start_this_handle+0x35b/0x850
 
-As such sporadic retries only happen seldom even on affected gpu's,
-this could mean a vblank irq could take a few dozen microseconds
-longer every few hours of uptime -- better than a desktop compositor
-randomly hanging every couple of hours or days of uptime in a hard
-to reproduce manner.
+The underlying problem is that jbd2_journal_force_commit_nested()
+(called from ext4_should_retry_alloc()) may get called while a
+transaction handle is started. In such case it takes care to not wait
+for commit of the running transaction (which would deadlock) but only
+for a commit of a transaction that is already committing (which is safe
+as that doesn't wait for any filesystem locks).
 
-Signed-off-by: Mario Kleiner <mario.kleiner.de@gmail.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+In fact there are also other callers of jbd2_log_wait_commit() that take
+care to pass tid of a transaction that is already committing and for
+those cases, the lockdep instrumentation is too restrictive and leading
+to false positive reports. Fix the problem by calling
+jbd2_might_wait_for_commit() from jbd2_log_wait_commit() only if the
+transaction isn't already committing.
+
+Fixes: 1eaa566d368b214d99cbb973647c1b0b8102a9ae
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_display.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/jbd2/journal.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_display.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_display.c
-@@ -106,7 +106,7 @@ nouveau_display_scanoutpos_head(struct d
- 	};
- 	struct nouveau_display *disp = nouveau_display(crtc->dev);
- 	struct drm_vblank_crtc *vblank = &crtc->dev->vblank[drm_crtc_index(crtc)];
--	int ret, retry = 1;
-+	int ret, retry = 20;
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -691,8 +691,21 @@ int jbd2_log_wait_commit(journal_t *jour
+ {
+ 	int err = 0;
  
- 	do {
- 		ret = nvif_mthd(&disp->disp, 0, &args, sizeof(args));
+-	jbd2_might_wait_for_commit(journal);
+ 	read_lock(&journal->j_state_lock);
++#ifdef CONFIG_PROVE_LOCKING
++	/*
++	 * Some callers make sure transaction is already committing and in that
++	 * case we cannot block on open handles anymore. So don't warn in that
++	 * case.
++	 */
++	if (tid_gt(tid, journal->j_commit_sequence) &&
++	    (!journal->j_committing_transaction ||
++	     journal->j_committing_transaction->t_tid != tid)) {
++		read_unlock(&journal->j_state_lock);
++		jbd2_might_wait_for_commit(journal);
++		read_lock(&journal->j_state_lock);
++	}
++#endif
+ #ifdef CONFIG_JBD2_DEBUG
+ 	if (!tid_geq(journal->j_commit_request, tid)) {
+ 		printk(KERN_ERR
