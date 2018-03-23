@@ -1,59 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752229AbeCWQcl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:32:41 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:45945 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751479AbeCWQci (ORCPT
+        id S1752263AbeCWQdx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:33:53 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41769 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751471AbeCWQdv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:32:38 -0400
-X-Google-Smtp-Source: AG47ELuWCm+JhcKH9UsAQBRVLxAgntmvF1Vk1Rtv8RAXVThR2tt5A04DQI0GLtJFKPztVvuLyiXRT+wq380hY7tLE8U=
+        Fri, 23 Mar 2018 12:33:51 -0400
+Date: Fri, 23 Mar 2018 17:33:31 +0100
+From: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "acme@kernel.org" <acme@kernel.org>,
+        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
+        "daniel@bristot.me" <daniel@bristot.me>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "williams@redhat.com" <williams@redhat.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "lclaudio@redhat.com" <lclaudio@redhat.com>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
+Subject: Re: [PATCH] target: Use WARNON_NON_RT(!irqs_disabled())
+Message-ID: <20180323163331.ajxula7nj5bmqiwh@linutronix.de>
+References: <20180321153854.GB24312@kernel.org>
+ <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
+ <20180322093745.GC4229@kernel.org>
+ <20180323155513.dwbgvblenlji33as@linutronix.de>
+ <1521822325.2535.5.camel@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VeTxGu-pxqde_egsqUkLBdZujoJv=0YEj9cv8ujnthyPA@mail.gmail.com>
-References: <20180321165848.89751-1-swboyd@chromium.org> <20180321165848.89751-4-swboyd@chromium.org>
- <97380342-c3aa-5d34-7b22-f6ebbab4bafe@codeaurora.org> <1521804964.23017.96.camel@linux.intel.com>
- <152182210780.178046.13284917877743312593@swboyd.mtv.corp.google.com> <CAHp75VeTxGu-pxqde_egsqUkLBdZujoJv=0YEj9cv8ujnthyPA@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 23 Mar 2018 18:32:37 +0200
-Message-ID: <CAHp75Vcw9VkihRzwZXAvLEGYbVhrXgvDCEPyciU7d4a5G-uUow@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Don't allow protected pins to be requested
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Timur Tabi <timur@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Grant Likely <grant.likely@secretlab.ca>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1521822325.2535.5.camel@wdc.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 6:31 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Fri, Mar 23, 2018 at 6:21 PM, Stephen Boyd <swboyd@chromium.org> wrote:
->
->>        bitmap_zero(chip->valid_mask, max_gpios);
->>        for (i = 0; i < len; i++)
->>                set_bit(tmp[i], chip->valid_mask);
->
-> Looking to this code I just realized it would be nice to have
->
-> {of,device}_property_read_bitmask() where bitmask_parse() is called.
->
-> Since it related to change a binding, I would really take couple of
-> days to hear other opinions.
->
-> In the above case, you need to supply a string, like
->
-> "1-5,16,18,25"
+On 2018-03-23 16:25:25 [+0000], Bart Van Assche wrote:
+> On Fri, 2018-03-23 at 16:55 +0100, Sebastian Andrzej Siewior wrote:
+> > I am going take this into -RT tree for now until we have different
+> > solution.
+> 
+> Have you considered to delete the WARN_ON_ONCE(!irqs_disabled()) statement?
+> I think that check duplicates functionality that already exists in lockdep
+> since lockdep is already able to detect spinlock use inconsistencies.
 
+correct. That is why I suggested to use lockdep_assert_held() instead of
+this IRQ-check + the spin_lock_assert().
+The only downside is that this code (as of now) works with lockdep
+disabled. On the other hand, lockdep_assert_held() gives you a splat
+instead of a BUG() statement like spin_lock_assert() does so I clearly
+promote lockdep here :)
 
-s/bitmask/bitmap/g
+> Bart.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Sebastian
