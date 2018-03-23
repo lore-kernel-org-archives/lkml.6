@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806173-2-9890320006123564276
+X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806168-2-12659084083117190952
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806172; b=tDpOdljFi+Ea3UcuXsLqMJ614opm4CPlVKnvNMhA1eBRIdf
-    WD3Dawwh3qlING8wvlkWJ/0nTR4Fdb2sqKkXg3OJcQhM9TqeXgPAmlf5G87XmDO5
-    zMR55Tz69S8uTqo7s6p58+kRzmw3J+wKhZgb2twKJUPKNysONWrQf6Ivx217+OVS
-    qobXfQ3H+cJE8GgXLxG/Mk1eSCg4h7h6whAnmO1nnTVUUtimbST+p6EPfaqtkYnl
-    1/WywmOMmgJytfmNn/PnpBCg4ZsRjMWT5zTcmK2Nxp4JpIZQbJGbNPLCoTLnDIhR
-    dmr+mdZlz5A9avMIdvQDJi4VzDJk4XIy7Gh21Jg==
+    t=1521806167; b=Gl1vgQDKus3Giyi07vs3pV8FbtvM0HaT5zMHbR5ThFX59GW
+    8MaQ3dx6th5oJVKLMMJXC2bX1kya695lhWNaVXDYjryTJCxrlpDTCXYn4Yk4vSy/
+    cJxw6lnhnpCho5VDpHgQJ4dBY25SafxnmEJIHTXFygUoRMuk7zYOx9Pyxsl8yuAr
+    7fhGvJ+OS143hAqTOgXCQX7WZoaLKPDzN6eNyhruku957UsQb4gRFA4T1TsnCsI4
+    2tbqOcwiqJ97owEz8wG+0HtZ5PuUUYdLoaXs5IrvtKxY0vJ68HbTTYPYb9NX+3jB
+    vEbBIfsfHd4NvnYY0ypNeNbxOc4vTc1oAvD1o2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806172; bh=2AUk20E87YGM0NKacd9jb9dmXX
-    EXjEFrxNUOdd/TH4A=; b=a2QySMqA7bS31Hokd9U7IMXczy+Sr0A54fX808dtNk
-    qXhsh6ffTRsWllFBYmWtjdLQaVATzsP3zcvPELlhuDBgw9+oB6KWP7/eu5pPwb/g
-    6OfCzfcsBwv5IUx63hUfP8zZrgz6qLu7FACHFPGSsUQdGHxQr9K7aYu5U/oVUnK1
-    veleR0niUHUXhGFqnfu0TuqakocRwXIpzgHcmVWAWbBfaNSW7/yALll6YvUVrjaD
-    eIMFODIMn0xiqsakWcaNT39OJ78jx8OrZknQXdhJUXdWQYjkhon5quxpLLG2bzEz
-    lRICLNGDtzQLJahqou7AZ8YMP/1dEba+I9BKdpQxkfAg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521806167; bh=EWXOy2O/68e5qEHKndv5ZGU1cS
+    iAJ9lIe4Hjel4s734=; b=Bwd+/AYI6c/yMylv1XkBcyWX2+4sNkZo2SHh6ByoMx
+    RK9msl++7f71FUx7EDy//IO/9pHpwvSbrtSa5aRywk68089f5p6eqW0U0Ep/W3vZ
+    XDnH/aTtxrfkJyUKWEfAr+WiGdu6rtC8EriGWKpA0OPzPHN7iDjxgAtX3Wb+WmSZ
+    8BMeqJguwX/S1MFVbxHNmHkhNRIPh+8rLl8dWazzkd9LYjSoBK04hEC3i4bzLUN5
+    8RZBgZN224qmWLw8526HlKUmKTjgdSEoQkZgfypeISXK1WD4BquSjYmvrlKCrAXX
+    hdKFAIr+FmSqcpkkLFZDIVqfpMipAPe/bIP41WQS/nlg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,24 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753344AbeCWKBG (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:01:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37578 "EHLO
+        id S1752206AbeCWLzm (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:55:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37636 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753166AbeCWKBB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:01:01 -0400
+        with ESMTP id S1752537AbeCWKBI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:01:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Nematbakhsh <shawnn@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Javier Martinez Canillas <javier@osg.samsung.com>,
-        Benson Leung <bleung@chromium.org>,
+        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jyri Sarha <jsarha@ti.com>, Arnd Bergmann <arnd@arndb.de>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        David Airlie <airlied@linux.ie>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 24/77] platform/chrome: Use proper protocol transfer function
-Date: Fri, 23 Mar 2018 10:53:58 +0100
-Message-Id: <20180323094143.830028495@linuxfoundation.org>
+Subject: [PATCH 4.14 26/77] drm/tilcdc: ensure nonatomic iowrite64 is not used
+Date: Fri, 23 Mar 2018 10:54:00 +0100
+Message-Id: <20180323094143.983807505@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -84,54 +85,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shawn Nematbakhsh <shawnn@chromium.org>
+From: Logan Gunthorpe <logang@deltatee.com>
 
 
-[ Upstream commit d48b8c58c57f6edbe2965f0a5f62c5cf9593ca96 ]
+[ Upstream commit 4e5ca2d930aa8714400aedf4bf1dc959cb04280f ]
 
-pkt_xfer should be used for protocol v3, and cmd_xfer otherwise. We had
-one instance of these functions correct, but not the second, fall-back
-case. We use the fall-back only when the first command returns an
-IN_PROGRESS status, which is only used on some EC firmwares where we
-don't want to constantly poll the bus, but instead back off and
-sleep/retry for a little while.
+Add a check to ensure iowrite64 is only used if it is atomic.
 
-Fixes: 2c7589af3c4d ("mfd: cros_ec: add proto v3 skeleton")
-Signed-off-by: Shawn Nematbakhsh <shawnn@chromium.org>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Javier Martinez Canillas <javier@osg.samsung.com>
-Signed-off-by: Benson Leung <bleung@chromium.org>
+It was decided in [1] that the tilcdc driver should not be using an
+atomic operation (so it was left out of this patchset). However, it turns
+out that through the drm code, a nonatomic header is actually included:
+
+include/linux/io-64-nonatomic-lo-hi.h
+is included from include/drm/drm_os_linux.h:9:0,
+            from include/drm/drmP.h:74,
+            from include/drm/drm_modeset_helper.h:26,
+            from include/drm/drm_atomic_helper.h:33,
+            from drivers/gpu/drm/tilcdc/tilcdc_crtc.c:19:
+
+And thus, without this change, this patchset would inadvertantly
+change the behaviour of the tilcdc driver.
+
+[1] lkml.kernel.org/r/CAK8P3a2HhO_zCnsTzq7hmWSz5La5Thu19FWZpun16iMnyyNreQ@mail.gmail.com
+
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jyri Sarha <jsarha@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: David Airlie <airlied@linux.ie>
+Signed-off-by: Jyri Sarha <jsarha@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/chrome/cros_ec_proto.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/tilcdc/tilcdc_regs.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -60,12 +60,14 @@ static int send_command(struct cros_ec_d
- 			struct cros_ec_command *msg)
- {
- 	int ret;
-+	int (*xfer_fxn)(struct cros_ec_device *ec, struct cros_ec_command *msg);
+--- a/drivers/gpu/drm/tilcdc/tilcdc_regs.h
++++ b/drivers/gpu/drm/tilcdc/tilcdc_regs.h
+@@ -133,7 +133,7 @@ static inline void tilcdc_write64(struct
+ 	struct tilcdc_drm_private *priv = dev->dev_private;
+ 	volatile void __iomem *addr = priv->mmio + reg;
  
- 	if (ec_dev->proto_version > 2)
--		ret = ec_dev->pkt_xfer(ec_dev, msg);
-+		xfer_fxn = ec_dev->pkt_xfer;
- 	else
--		ret = ec_dev->cmd_xfer(ec_dev, msg);
-+		xfer_fxn = ec_dev->cmd_xfer;
- 
-+	ret = (*xfer_fxn)(ec_dev, msg);
- 	if (msg->result == EC_RES_IN_PROGRESS) {
- 		int i;
- 		struct cros_ec_command *status_msg;
-@@ -88,7 +90,7 @@ static int send_command(struct cros_ec_d
- 		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
- 			usleep_range(10000, 11000);
- 
--			ret = ec_dev->cmd_xfer(ec_dev, status_msg);
-+			ret = (*xfer_fxn)(ec_dev, status_msg);
- 			if (ret < 0)
- 				break;
- 
+-#ifdef iowrite64
++#if defined(iowrite64) && !defined(iowrite64_is_nonatomic)
+ 	iowrite64(data, addr);
+ #else
+ 	__iowmb();
