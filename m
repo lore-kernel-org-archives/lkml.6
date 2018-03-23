@@ -1,74 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752488AbeCWM1q (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 08:27:46 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40744 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752139AbeCWM1Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 08:27:16 -0400
-X-Google-Smtp-Source: AG47ELsb1NIbhfw4E1IQ4zlPlSMOXIkkUL/LCVsKEckqlBF8RMVm6Dod+tOPKlcrI+s79EPBntkCag==
-From: Paolo Pisati <p.pisati@gmail.com>
-To: Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt: bindings: fpga: add lattice machxo2 slave spi binding description
-Date: Fri, 23 Mar 2018 13:27:11 +0100
-Message-Id: <1521808032-29645-2-git-send-email-p.pisati@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521808032-29645-1-git-send-email-p.pisati@gmail.com>
-References: <1521808032-29645-1-git-send-email-p.pisati@gmail.com>
+        id S1752163AbeCWM3G (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:29:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44860 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751294AbeCWM3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 08:29:04 -0400
+Date: Fri, 23 Mar 2018 13:29:02 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: "Li,Rongqing" <lirongqing@baidu.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?=
+ =?utf-8?B?5aSNOiBbUEFUQ0g=?= =?utf-8?Q?=5D?= mm/memcontrol.c: speed up to
+ force empty a memory cgroup
+Message-ID: <20180323122902.GR23100@dhcp22.suse.cz>
+References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
+ <20180319085355.GQ23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com>
+ <20180319103756.GV23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
+ <2AD939572F25A448A3AE3CAEA61328C2374832C1@BC-MAIL-M28.internal.baidu.com>
+ <20180323100839.GO23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C2374EC73E@BC-MAIL-M28.internal.baidu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2AD939572F25A448A3AE3CAEA61328C2374EC73E@BC-MAIL-M28.internal.baidu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add dt binding documentation details for Lattice MachXO2 FPGA configuration
-over Slave SPI interface.
+On Fri 23-03-18 12:04:16, Li,Rongqing wrote:
+[...]
+> shrink_slab does not reclaim any memory, but take lots of time to
+> count lru
+>
+> maybe we can use the returning of shrink_slab to control if next
+> shrink_slab should be called?
 
-Signed-off-by: Paolo Pisati <p.pisati@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
-Acked-by: Alan Tull <atull@kernel.org>
----
- .../bindings/fpga/lattice-machxo2-spi.txt          | 29 ++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
+How? Different memcgs might have different amount of shrinkable memory.
 
-diff --git a/Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt b/Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
-new file mode 100644
-index 0000000..a8c362e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
-@@ -0,0 +1,29 @@
-+Lattice MachXO2 Slave SPI FPGA Manager
-+
-+Lattice MachXO2 FPGAs support a method of loading the bitstream over
-+a 'slave SPI' interface.
-+
-+See 'MachXO2ProgrammingandConfigurationUsageGuide.pdf' on www.latticesemi.com
-+
-+Required properties:
-+- compatible: should contain "lattice,machxo2-slave-spi"
-+- reg: spi chip select of the FPGA
-+
-+Example for full FPGA configuration:
-+
-+	fpga-region0 {
-+		compatible = "fpga-region";
-+		fpga-mgr = <&fpga_mgr_spi>;
-+		#address-cells = <0x1>;
-+		#size-cells = <0x1>;
-+	};
-+
-+	spi1: spi@2000 {
-+        ...
-+
-+		fpga_mgr_spi: fpga-mgr@0 {
-+			compatible = "lattice,machxo2-slave-spi";
-+			spi-max-frequency = <8000000>;
-+			reg = <0>;
-+		};
-+	};
+> Or define a slight list_lru_empty to check if sb->s_dentry_lru is
+> empty before calling list_lru_shrink_count, like below
+
+Does it really help to improve numbers?
+ 
+> diff --git a/fs/super.c b/fs/super.c
+> index 672538ca9831..954c22338833 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -130,8 +130,10 @@ static unsigned long super_cache_count(struct shrinker *shrink,
+>         if (sb->s_op && sb->s_op->nr_cached_objects)
+>                 total_objects = sb->s_op->nr_cached_objects(sb, sc);
+>  
+> -       total_objects += list_lru_shrink_count(&sb->s_dentry_lru, sc);
+> -       total_objects += list_lru_shrink_count(&sb->s_inode_lru, sc);
+> +       if (!list_lru_empty(sb->s_dentry_lru))
+> +               total_objects += list_lru_shrink_count(&sb->s_dentry_lru, sc);
+> +       if (!list_lru_empty(sb->s_inode_lru))
+> +               total_objects += list_lru_shrink_count(&sb->s_inode_lru, sc);
+>  
+>         total_objects = vfs_pressure_ratio(total_objects);
+>         return total_objects;
+
 -- 
-2.7.4
+Michal Hocko
+SUSE Labs
