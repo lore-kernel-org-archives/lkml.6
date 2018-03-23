@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802615-2-4411042161434174432
+X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802604-2-12346194490523544319
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802614; b=CpYO9ZSjX6XKHrAqw4FQMCmgnBlNFV8X0GG7DEBy0Lz9QKi
-    l0OkDzJ9kcHf6KpKAJcw+3VW01t2z3Njv5KrnRV6xwlV0g8anwBKL7ZNCQpNTuN7
-    6rbBp4Ye1cqGCsanr2nogpLvWQ5dZ1TzmIn+95sT+A7eRFUns8yvTF1Yu6ch0rZA
-    2fyTkNLmwOhUJMK9ziwWojiIODzzioAUcHCrw8c/b0cKmYf1QSB2LVggryQCV8MU
-    K8UPJEEjrKT5UL8DdL5q0Hjx/DW/XAucwxlewdgwfT6tOz3o/5shrGDVErdaBq72
-    woJv/eS0jSBkudVHdCGYYr5alKZXJRds4ijFvjA==
+    t=1521802603; b=MLHomj3cey6kjw54tbZ9H0pbzvKituPj2U2xoNmglZlCZjc
+    Pv0Yjg+mokeYkYXVdhQuqKj6DHXv9Us6cSub/fBCsxNIL99U+Vi9TSjxqcNWIAHC
+    RouCneZEqJMk3jRi7zIF/yduHOcxGYNyPh4YDNzwcnAbnq7KVhSxG+t8zwzT9TVo
+    XL97aORXyWXcaTr/OjLMSLOQPp719tkolpfNqHY4qRq1By7yf2l3mw0zrYwvc2+t
+    J2Fn54k4EeCNaK5P07HZoWjCEhHi+7k2123pt1353SEVThv7PBMzwffB+z86fG9x
+    bylR5rfeAGyKJl/U2SvE1ZkkCZqQo4WI3s0WYzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802614; bh=cZMVUCn0AfbNwtCJcM16ZjVQYJ
-    rjcGecBrgMS3KtoEY=; b=GMoK2qoaUTxi6PKXuI6o10M93ogntJKu5l0LRbFks4
-    BKXLYr5vGst3Y7u/V35Cq9kOgetPPoCChEc2mV0s1A6OcnC/2BrusaMEhSHb+ohN
-    D2eZqnjazGQLGiSdyaIULKRS0yrLHew/6WDj2XCdT1f9A/9NJKCFMpHwP9ADcfRn
-    pkHl8V81eJQPEJM1tw0lDdo55wimnMSyJlSAQch6dRLnMWjPd8gzrJDS91Czy82a
-    WL3cqBx4crKXXkDQdipytm5kyRtyGbLcamnJb9J8rHDElQhtUClYZxGh+WJt/pjO
-    gKIuRcvKuN5rQ2uyTk4AcgvS0T2uaCQtNh311GWle2fw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521802603; bh=/S3TLUfp4w+tla1u4KF1IMF+PH
+    L0kptiPifbu/N/FHM=; b=NSD2NYKW3uugnWxsk+sWTMM8oyYV3/UntWH5s0TCe/
+    IoLrAizjXi5X/2/f3UtzACwklN1TzP1guR30Jm9g///+NAzbys8jXf8eBY772kzK
+    GXdjpw8zb4SzVDxrnisP3Io/9S1SPGrmUJ4X2JZG7ADhEqpvaZDA5SqWpyXRldgY
+    45jwxLQFipWZ+cdXdztuZmLnQ9v6gwrI32ZXN/U773bmR+9roSpRsPMApAyzQhIg
+    L8sqL58PlS0aq2JItobyuaWcPMfDwDIXTym5WqNnKMw7nahcjEJm4/w1F67LMRMi
+    kmUkpK6+YK+5nuvwZJaMtVnkx3CjjQ5ky/hRIWKzySZQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,26 +50,28 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755613AbeCWKNE (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:13:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44542 "EHLO
+        id S1755895AbeCWK4a (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:56:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44582 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752413AbeCWKM7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:59 -0400
+        with ESMTP id S1755591AbeCWKNE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Boone <jeremy.boone@nccgroup.trust>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.4 01/97] tpm: fix potential buffer overruns caused by bit glitches on the bus
-Date: Fri, 23 Mar 2018 10:53:48 +0100
-Message-Id: <20180323094157.619109611@linuxfoundation.org>
+        stable@vger.kernel.org, Deepa Dinamani <deepa.kernel@gmail.com>,
+        arnd@arndb.de, y2038@lists.linaro.org, netdev@vger.kernel.org,
+        Richard Cochran <richardcochran@gmail.com>,
+        john.stultz@linaro.org, Thomas Gleixner <tglx@linutronix.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 11/97] time: Change posix clocks ops interfaces to use timespec64
+Date: Fri, 23 Mar 2018 10:53:58 +0100
+Message-Id: <20180323094158.122202599@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -82,63 +84,225 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeremy Boone <jeremy.boone@nccgroup.trust>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
 
-commit 3be23274755ee85771270a23af7691dc9b3a95db upstream.
 
-Discrete TPMs are often connected over slow serial buses which, on
-some platforms, can have glitches causing bit flips.  If a bit does
-flip it could cause an overrun if it's in one of the size parameters,
-so sanity check that we're not overrunning the provided buffer when
-doing a memcpy().
+[ Upstream commit d340266e19ddb70dbd608f9deedcfb35fdb9d419 ]
 
-Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
-Cc: stable@vger.kernel.org
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+struct timespec is not y2038 safe on 32 bit machines.
+
+The posix clocks apis use struct timespec directly and through struct
+itimerspec.
+
+Replace the posix clock interfaces to use struct timespec64 and struct
+itimerspec64 instead.  Also fix up their implementations accordingly.
+
+Note that the clock_getres() interface has also been changed to use
+timespec64 even though this particular interface is not affected by the
+y2038 problem. This helps verification for internal kernel code for y2038
+readiness by getting rid of time_t/ timeval/ timespec.
+
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: arnd@arndb.de
+Cc: y2038@lists.linaro.org
+Cc: netdev@vger.kernel.org
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: john.stultz@linaro.org
+Link: http://lkml.kernel.org/r/1490555058-4603-3-git-send-email-deepa.kernel@gmail.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/char/tpm/tpm-interface.c |    5 +++++
- drivers/char/tpm/tpm2-cmd.c      |    6 ++++++
- 2 files changed, 11 insertions(+)
+ drivers/ptp/ptp_clock.c     |   18 +++++++-----------
+ include/linux/posix-clock.h |   10 +++++-----
+ kernel/time/posix-clock.c   |   34 ++++++++++++++++++++++++----------
+ 3 files changed, 36 insertions(+), 26 deletions(-)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -1040,6 +1040,11 @@ int tpm_get_random(u32 chip_num, u8 *out
- 			break;
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -97,30 +97,26 @@ static s32 scaled_ppm_to_ppb(long ppm)
  
- 		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
-+		if (recd > num_bytes) {
-+			total = -EFAULT;
-+			break;
-+		}
-+
- 		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+ /* posix clock implementation */
  
- 		dest += recd;
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -622,6 +622,11 @@ static int tpm2_unseal_cmd(struct tpm_ch
- 	if (!rc) {
- 		data_len = be16_to_cpup(
- 			(__be16 *) &buf.data[TPM_HEADER_SIZE + 4]);
-+		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE + 1) {
-+			rc = -EFAULT;
-+			goto out;
-+		}
-+
- 		data = &buf.data[TPM_HEADER_SIZE + 6];
+-static int ptp_clock_getres(struct posix_clock *pc, struct timespec *tp)
++static int ptp_clock_getres(struct posix_clock *pc, struct timespec64 *tp)
+ {
+ 	tp->tv_sec = 0;
+ 	tp->tv_nsec = 1;
+ 	return 0;
+ }
  
- 		memcpy(payload->key, data, data_len - 1);
-@@ -629,6 +634,7 @@ static int tpm2_unseal_cmd(struct tpm_ch
- 		payload->migratable = data[data_len - 1];
+-static int ptp_clock_settime(struct posix_clock *pc, const struct timespec *tp)
++static int ptp_clock_settime(struct posix_clock *pc, const struct timespec64 *tp)
+ {
+ 	struct ptp_clock *ptp = container_of(pc, struct ptp_clock, clock);
+-	struct timespec64 ts = timespec_to_timespec64(*tp);
+ 
+-	return  ptp->info->settime64(ptp->info, &ts);
++	return  ptp->info->settime64(ptp->info, tp);
+ }
+ 
+-static int ptp_clock_gettime(struct posix_clock *pc, struct timespec *tp)
++static int ptp_clock_gettime(struct posix_clock *pc, struct timespec64 *tp)
+ {
+ 	struct ptp_clock *ptp = container_of(pc, struct ptp_clock, clock);
+-	struct timespec64 ts;
+ 	int err;
+ 
+-	err = ptp->info->gettime64(ptp->info, &ts);
+-	if (!err)
+-		*tp = timespec64_to_timespec(ts);
++	err = ptp->info->gettime64(ptp->info, tp);
+ 	return err;
+ }
+ 
+@@ -133,7 +129,7 @@ static int ptp_clock_adjtime(struct posi
+ 	ops = ptp->info;
+ 
+ 	if (tx->modes & ADJ_SETOFFSET) {
+-		struct timespec ts;
++		struct timespec64 ts;
+ 		ktime_t kt;
+ 		s64 delta;
+ 
+@@ -146,7 +142,7 @@ static int ptp_clock_adjtime(struct posi
+ 		if ((unsigned long) ts.tv_nsec >= NSEC_PER_SEC)
+ 			return -EINVAL;
+ 
+-		kt = timespec_to_ktime(ts);
++		kt = timespec64_to_ktime(ts);
+ 		delta = ktime_to_ns(kt);
+ 		err = ops->adjtime(ops, delta);
+ 	} else if (tx->modes & ADJ_FREQUENCY) {
+--- a/include/linux/posix-clock.h
++++ b/include/linux/posix-clock.h
+@@ -59,23 +59,23 @@ struct posix_clock_operations {
+ 
+ 	int  (*clock_adjtime)(struct posix_clock *pc, struct timex *tx);
+ 
+-	int  (*clock_gettime)(struct posix_clock *pc, struct timespec *ts);
++	int  (*clock_gettime)(struct posix_clock *pc, struct timespec64 *ts);
+ 
+-	int  (*clock_getres) (struct posix_clock *pc, struct timespec *ts);
++	int  (*clock_getres) (struct posix_clock *pc, struct timespec64 *ts);
+ 
+ 	int  (*clock_settime)(struct posix_clock *pc,
+-			      const struct timespec *ts);
++			      const struct timespec64 *ts);
+ 
+ 	int  (*timer_create) (struct posix_clock *pc, struct k_itimer *kit);
+ 
+ 	int  (*timer_delete) (struct posix_clock *pc, struct k_itimer *kit);
+ 
+ 	void (*timer_gettime)(struct posix_clock *pc,
+-			      struct k_itimer *kit, struct itimerspec *tsp);
++			      struct k_itimer *kit, struct itimerspec64 *tsp);
+ 
+ 	int  (*timer_settime)(struct posix_clock *pc,
+ 			      struct k_itimer *kit, int flags,
+-			      struct itimerspec *tsp, struct itimerspec *old);
++			      struct itimerspec64 *tsp, struct itimerspec64 *old);
+ 	/*
+ 	 * Optional character device methods:
+ 	 */
+--- a/kernel/time/posix-clock.c
++++ b/kernel/time/posix-clock.c
+@@ -300,14 +300,17 @@ out:
+ static int pc_clock_gettime(clockid_t id, struct timespec *ts)
+ {
+ 	struct posix_clock_desc cd;
++	struct timespec64 ts64;
+ 	int err;
+ 
+ 	err = get_clock_desc(id, &cd);
+ 	if (err)
+ 		return err;
+ 
+-	if (cd.clk->ops.clock_gettime)
+-		err = cd.clk->ops.clock_gettime(cd.clk, ts);
++	if (cd.clk->ops.clock_gettime) {
++		err = cd.clk->ops.clock_gettime(cd.clk, &ts64);
++		*ts = timespec64_to_timespec(ts64);
++	}
+ 	else
+ 		err = -EOPNOTSUPP;
+ 
+@@ -319,14 +322,17 @@ static int pc_clock_gettime(clockid_t id
+ static int pc_clock_getres(clockid_t id, struct timespec *ts)
+ {
+ 	struct posix_clock_desc cd;
++	struct timespec64 ts64;
+ 	int err;
+ 
+ 	err = get_clock_desc(id, &cd);
+ 	if (err)
+ 		return err;
+ 
+-	if (cd.clk->ops.clock_getres)
+-		err = cd.clk->ops.clock_getres(cd.clk, ts);
++	if (cd.clk->ops.clock_getres) {
++		err = cd.clk->ops.clock_getres(cd.clk, &ts64);
++		*ts = timespec64_to_timespec(ts64);
++	}
+ 	else
+ 		err = -EOPNOTSUPP;
+ 
+@@ -337,6 +343,7 @@ static int pc_clock_getres(clockid_t id,
+ 
+ static int pc_clock_settime(clockid_t id, const struct timespec *ts)
+ {
++	struct timespec64 ts64 = timespec_to_timespec64(*ts);
+ 	struct posix_clock_desc cd;
+ 	int err;
+ 
+@@ -350,7 +357,7 @@ static int pc_clock_settime(clockid_t id
  	}
  
-+out:
- 	tpm_buf_destroy(&buf);
- 	return rc;
+ 	if (cd.clk->ops.clock_settime)
+-		err = cd.clk->ops.clock_settime(cd.clk, ts);
++		err = cd.clk->ops.clock_settime(cd.clk, &ts64);
+ 	else
+ 		err = -EOPNOTSUPP;
+ out:
+@@ -403,29 +410,36 @@ static void pc_timer_gettime(struct k_it
+ {
+ 	clockid_t id = kit->it_clock;
+ 	struct posix_clock_desc cd;
++	struct itimerspec64 ts64;
+ 
+ 	if (get_clock_desc(id, &cd))
+ 		return;
+ 
+-	if (cd.clk->ops.timer_gettime)
+-		cd.clk->ops.timer_gettime(cd.clk, kit, ts);
+-
++	if (cd.clk->ops.timer_gettime) {
++		cd.clk->ops.timer_gettime(cd.clk, kit, &ts64);
++		*ts = itimerspec64_to_itimerspec(&ts64);
++	}
+ 	put_clock_desc(&cd);
  }
+ 
+ static int pc_timer_settime(struct k_itimer *kit, int flags,
+ 			    struct itimerspec *ts, struct itimerspec *old)
+ {
++	struct itimerspec64 ts64 = itimerspec_to_itimerspec64(ts);
+ 	clockid_t id = kit->it_clock;
+ 	struct posix_clock_desc cd;
++	struct itimerspec64 old64;
+ 	int err;
+ 
+ 	err = get_clock_desc(id, &cd);
+ 	if (err)
+ 		return err;
+ 
+-	if (cd.clk->ops.timer_settime)
+-		err = cd.clk->ops.timer_settime(cd.clk, kit, flags, ts, old);
++	if (cd.clk->ops.timer_settime) {
++		err = cd.clk->ops.timer_settime(cd.clk, kit, flags, &ts64, &old64);
++		if (old)
++			*old = itimerspec64_to_itimerspec(&old64);
++	}
+ 	else
+ 		err = -EOPNOTSUPP;
+ 
