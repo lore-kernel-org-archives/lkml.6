@@ -1,109 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752653AbeCWTd6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 15:33:58 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:40970 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752573AbeCWTdz (ORCPT
+        id S1752384AbeCWTey (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:34:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39178 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752077AbeCWTev (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 15:33:55 -0400
-X-Google-Smtp-Source: AG47ELuzwDJz5jfieFeZznDzBO5fKjtBBT63GE59BKm3mYBVIy8wDtmxFXXSaAFzNhv4cQPbDYp5Xg==
-Subject: Re: [PATCH] of_net: Implement of_get_nvmem_mac_address helper
-To: Mike Looijmans <mike.looijmans@topic.nl>, Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org, frowand.list@gmail.com
-References: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl>
- <20180323151101.GB24361@lunn.ch>
- <b68d4540-b15d-ec31-05a8-e1a4632bb5ee@topic.nl>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <886c94ef-e2c8-2afa-307d-1924c74c6dc0@gmail.com>
-Date: Fri, 23 Mar 2018 12:33:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 23 Mar 2018 15:34:51 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 700F6602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tsoni@codeaurora.org
+Subject: Re: [PATCH V3] Input: pm8941-pwrkey: add resin key capabilities
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Tirupathi Reddy <tirupath@codeaurora.org>, bjorn.andersson@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux-input@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1521786192-19487-1-git-send-email-tirupath@codeaurora.org>
+ <240c6cbc-886f-94c6-cba4-3c4eb3ed0b45@codeaurora.org>
+ <20180323192210.GE255819@dtor-ws>
+From: Trilok Soni <tsoni@codeaurora.org>
+Message-ID: <6928c292-b10b-3056-af02-f1ab70d8f494@codeaurora.org>
+Date: Fri, 23 Mar 2018 12:34:50 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:59.0) Gecko/20100101
+ Thunderbird/59.0
 MIME-Version: 1.0
-In-Reply-To: <b68d4540-b15d-ec31-05a8-e1a4632bb5ee@topic.nl>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180323192210.GE255819@dtor-ws>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/2018 12:20 PM, Mike Looijmans wrote:
-> On 23-3-2018 16:11, Andrew Lunn wrote:
->> On Fri, Mar 23, 2018 at 03:24:34PM +0100, Mike Looijmans wrote:
->>> It's common practice to store MAC addresses for network interfaces into
->>> nvmem devices. However the code to actually do this in the kernel lacks,
->>> so this patch adds of_get_nvmem_mac_address() for drivers to obtain the
->>> address from an nvmem cell provider.
->>>
->>> This is particulary useful on devices where the ethernet interface
->>> cannot
->>> be configured by the bootloader, for example because it's in an FPGA.
->>>
->>> Tested by adapting the cadence macb driver to call this instead of
->>> of_get_mac_address().
+Hi Dmitry,
+
 >>
->> Hi Mike
 >>
->> Please can you document the device tree binding. I assume you are
->> adding a nvmen-cells and nvmem-cell-names to the Ethernet node in
->> device tree.
+>> What happens if interrupts comes as soon as you have done the key_init(..)
+>> here? I see that you are registering the input device after it, right? Looks
+>> like you should do this at the end of probe?
 > 
-> Indeed. I'll add my settings as an example. Where should I put this
-> documentation, in the commit comment or somewhere in
-> Documents/devicetree/bindings?
+> It should be fine, input devices properly allocated (with
+> input_allocate_device() or devm- version) are able to accept events even
+> if input device has not been registered yet. It is and advertised
+> feature:
 > 
->>> +/**
->>> + * Search the device tree for a MAC address, by calling
->>> of_get_mac_address
->>> + * and if that doesn't provide an address, fetch it from an nvmem
->>> provider
->>> + * using the name 'mac-address'.
->>> + * On success, copies the new address is into memory pointed to by
->>> addr and
->>> + * returns 0. Returns a negative error code otherwise.
->>> + * @dev:    Pointer to the device containing the device_node
->>> + * @addr:    Pointer to receive the MAC address using ether_addr_copy()
->>> + */
->>> +int of_get_nvmem_mac_address(struct device *dev, char *addr)
->>> +{
->>> +    const char *mac;
->>> +    struct nvmem_cell *cell;
->>> +    size_t len;
->>> +    int ret;
->>> +
->>> +    mac = of_get_mac_address(dev->of_node);
->>> +    if (mac) {
->>> +        ether_addr_copy(addr, mac);
->>> +        return 0;
->>> +    }
->>
->> Is there a need to add a new API? Could of_get_mac_address() be
->> extended to look in NVMEM? The MAC driver does not care. It is saying,
->> using OF get me a MAC address. One API seems sufficient, and would
->> mean you don't need to change the MAC drivers.
+> drivers/input/input.c:
 > 
-> It's what I intended to do, but there were two problems with that:
-> - of_get_mac_address() returns a pointer to constant data in memory, but
-> the nvmem functions return an allocated memory object that must be freed
-> after use. This changes the way the call is to be made.
+> "
+>   * input_event() - report new input event
+> ...
+>   * NOTE: input_event() may be safely used right after input device was
+>   * allocated with input_allocate_device(), even before it is registered
+>   * with input_register_device(), but the event will not reach any of the
+>   * input handlers. Such early invocation of input_event() may be used
+>   * to 'seed' initial state of a switch or initial position of absolute
+>   * axis, etc.
 
-Yeah...
+Thanks. Looks good since input_allocate_device(...) is called before the 
+init.
 
-> - The nvmem functions need the "struct device" pointer as well, while
-> of_get_mac_address() only gets passed the DT node.
-
-Bummer, you can't assume there is always a struct device associated with
-a struct device_node. Also, bigger question is, how can we make this
-work, for e.g: ACPI systems and therefore use an abstract fw_node handle?
-
-> 
-> One approach would be to deprecate the of_get_mac_address() interface
-> and migrate existing drivers to the of_get_nvmem_mac_address() interface.
-
-Humm maybe, but clearly making of_get_mac_address() look for a nvmem is
-less error prone and does not require people to opt-in for the new
-helper, that seems beneficial to me.
 -- 
-Florian
+---Trilok Soni
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
