@@ -1,112 +1,270 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1673992-1521823832-2-9592574453787618015
+X-Cyrus-Session-Id: sloti22d1t05-1445372-1521815612-2-9869218692470326324
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521823832; b=gZC6II3qQZvQUl3I1I1UtLVT1dvWrNVSL8+wSVFZ/MqNE5R
-    HSJjBLU03b2vYntL3jXxcYsPJ4f9RUVXLVV+OsrLh5EQ8BwcFcmUHScRrGnrFioc
-    8VXoEdH5avQHsmKsB0aJX9Yg1PAfw7Oxrx9WsWt2Be1WPfzeVY66KeSNJMNX34q6
-    vp4Sma/yCLkd2f7kMsi0uoURfsewLrGC+FkkM5PpOAosKE1c/0JVI6C61MwwqNo2
-    YQdUX5ThHg/gWfUmk4yGkm+aCUfwgGAF2rT2e+y9vjfCpLLudALSl0wqkqRisG9B
-    z/cgrlSKcpX4tnxaHBL4s1at3Tb5Xyt3x/f96CA==
+    t=1521815611; b=ZlrINYyWyHvZvHEG0M05W6D33ZREUBVDOWAdQ2TEbUKWUXq
+    BIePfJgKfAJmhRHWt1EWSbe+Nhn/aaFPRC3vUtNl/UKbRiEer7ryPCjFHZyYhaz1
+    WxYFSJ0ET53RIxl+Rn7fTOBafJcXPoK6QPaD7Mz1zNcjDjx5h3kwxgLZAqQlWy6y
+    nRxQRDht9FR35xrpBykbQa5ZlWGmjltZKQ9+P4pLlfzt+/9eb/Z+VcRJRZMMLdFe
+    iFgihzy/Nv46CD7trSTVo3ZtVe2SVOJFHVKVqud5FwvpntP46XBiBuJueYvg0yGQ
+    ib1oL+Y4NYS3nBBzzyW29UEimLsShHtHALrxxKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521823832; bh=4drOUi4xwkgxXqyBsUlqhI65Wj
-    TuHVMKO3C2xJ609RY=; b=tthfV/WLGPFSGZ+yAZAYm6G3RqCJxDXTT32AeteADv
-    U17H8MGfItTvv+DmGz+eCfbt638Hu0MUFe1Znn50QZgnT6xOzryqh4SlOop1SzD0
-    fIL2dF96RuNFJ0Xq3Mcv5pFbCZ6WeHjTaqPFR6uQjwu1RTml8RuKFIhcTXaNeXRT
-    M5Z0IgQEmg1/FofhwbM0ZGK//9bRBYvSyp/BYg4lZPC9/3btAUSqsW0bWwrcVsxc
-    1TVDpV7WSV4E2GQyFVTP2JSX6YtMk4B+8YzLVQnV+hF0hyPAPHQkbQlTzTVjwx5r
-    drszNWmqmrAbWTuQKiKl9zYYNm5fjS068mt/V5O6csuQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1521815611; bh=ZiP+zmUhUYKZYTlG3DKGxpy/hsOyF+xsMJayR6UM4vo=; b=F
+    62vWwTZAcYQv2zXOG4b7VRYxwMt6AVANLKwZ2sdy41mdRD3eRI3s+iWv13RH26B2
+    KqMxI6R35eJ3JdHadGdkEou04ZzAqV+V/ig3TtlAjPtCoKb4pgtapx3oGIaoibau
+    lXkJuwgDCI9hmsIirAT/wHSVQF9rMKysm5xEMMTUErYqJ0WizQJO4DeKGFmYrY6s
+    wyQukQZPMwyuLq6YyBM20dQwsIbDljcYnwXCNIHIBQOvItzt3CtUKeUAjNL4YCdP
+    MeAQaQlCvCewp/xoyyGGtjPNxN3M1c2Ip0bxF75JrN1cf2yHd3Obe8yxitzquEQZ
+    /KcjjVaz/IC0Xsm3tDiNQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=dT1Rt/Ms x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EbBbZImY;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=dT1Rt/Ms x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EbBbZImY;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752390AbeCWQuB (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 12:50:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51290 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752173AbeCWQuA (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 12:50:00 -0400
-Date: Fri, 23 Mar 2018 17:49:09 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        shuahkh@osg.samsung.com, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/97] 4.4.124-stable review
-Message-ID: <20180323164909.GC7794@kroah.com>
-References: <20180323094157.535925724@linuxfoundation.org>
- <20180323150141.GA13338@localhost>
+        id S1751597AbeCWOdU (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 10:33:20 -0400
+Received: from mail-lf0-f42.google.com ([209.85.215.42]:35575 "EHLO
+        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbeCWOdT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 10:33:19 -0400
+X-Google-Smtp-Source: AG47ELuv2FyF3DlamBm0vPpDVM91yYmiWUT1WHBfUozk2KSly/PZbvm16uFFM7YmfkqKKo373QBUlv8DkTD125N/XW8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180323150141.GA13338@localhost>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
+References: <20180323094157.535925724@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 23 Mar 2018 20:03:15 +0530
+Message-ID: <CA+G9fYshqnJoKx1OkCQ=bqFZoWLzr69RspE2XPKYT-5CP+Bm-g@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/97] 4.4.124-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuahkh@osg.samsung.com>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 23, 2018 at 08:01:41AM -0700, Nathan Chancellor wrote:
-> On Fri, Mar 23, 2018 at 10:53:47AM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.4.124 release.
-> > There are 97 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun Mar 25 09:41:34 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.124-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Merged, compiled, and flashed onto my Pixel 2 XL and OnePlus 5.
-> 
-> Couple small conflicts from Qualcomm's changes but nothing major, I'm
-> sure kernel/common will have none.
-> 
-> No initial issues in general usage or dmesg.
+On 23 March 2018 at 15:23, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.4.124 release.
+> There are 97 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun Mar 25 09:41:34 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.4.124-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Great, thanks for testing and letting me know.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-greg k-h
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.124-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: 665508dd74d9b8c63dd59475827d439c62e81df2
+git describe: v4.4.123-98-g665508dd74d9
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.123-98-g665508dd74d9
+
+
+No regressions (compared to build v4.4.123-97-g3054df73e9af)
+
+Boards, architectures and test suites:
+-------------------------------------
+
+juno-r2 - arm64
+* boot - pass: 20
+* kselftest - skip: 29, pass: 34
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 53, pass: 28
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 2, pass: 61
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 4, pass: 10
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 152, pass: 998
+* ltp-timers-tests - skip: 1, pass: 12
+
+qemu_x86_64
+* boot - pass: 22
+* kselftest - skip: 33, pass: 47
+* kselftest-vsyscall-mode-native - skip: 33, pass: 47
+* kselftest-vsyscall-mode-none - skip: 33, pass: 47
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 6, pass: 57
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 1, pass: 13
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 150, pass: 1000
+* ltp-timers-tests - skip: 1, pass: 12
+
+x15 - arm
+* boot - pass: 20
+* kselftest - skip: 29, pass: 33
+* libhugetlbfs - skip: 1, pass: 87
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 2, pass: 61
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 2, pass: 20
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 1, pass: 13
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 98, pass: 1052
+* ltp-timers-tests - skip: 1, pass: 12
+
+x86_64
+* boot - pass: 22
+* kselftest - skip: 31, fail: 1, pass: 48
+* kselftest-vsyscall-mode-native - skip: 31, fail: 1, pass: 48
+* kselftest-vsyscall-mode-none - skip: 31, fail: 2, pass: 46
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 1, pass: 62
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 5, pass: 9
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 120, pass: 1030
+* ltp-timers-tests - skip: 1, pass: 12
+
+Hikey test results,
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.124-rc1
+git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
+git tag: 4.4.124-rc1-hikey-20180322-156
+git commit: 65a47c692aa0c3b23f55fe0ef2e6e594d9ea8680
+git describe: 4.4.124-rc1-hikey-20180322-156
+Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
+-oe/build/4.4.124-rc1-hikey-20180322-156
+
+
+No regressions (compared to build 4.4.123-rc3-hikey-20180321-154)
+
+Boards, architectures and test suites:
+-------------------------------------
+
+hi6220-hikey - arm64
+* boot - pass: 20
+* kselftest - skip: 32, pass: 30
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 53, pass: 28
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 2, pass: 61
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 1, pass: 21
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 4, pass: 10
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 154, pass: 996
+* ltp-timers-tests - skip: 1, pass: 12
+
+--
+Linaro QA (beta)
+https://qa-reports.linaro.org
