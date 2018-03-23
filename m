@@ -1,204 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752980AbeCWJ55 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:57:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40277 "EHLO mail.bootlin.com"
+        id S1753208AbeCWMOB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:14:01 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:37053 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752180AbeCWJ5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:57:53 -0400
-Date: Fri, 23 Mar 2018 10:57:40 +0100
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: sean.wang@mediatek.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, sre@kernel.org,
-        lee.jones@linaro.org, a.zummo@towertech.it, eddie.huang@mediatek.com,
-        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 11/16] rtc: mediatek: move the declaration into a
- globally visible header file
-Message-ID: <20180323095740.GD3417@piout.net>
-References: <cover.1521794176.git.sean.wang@mediatek.com>
- <53afbe8172fb1afd809ce9ba1afeda924b9ea705.1521794177.git.sean.wang@mediatek.com>
+        id S1753179AbeCWMN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 08:13:58 -0400
+Subject: Re: [PATCH 11/19] powerpc/powermac: Move pmac_pfunc_base_install
+ prototype to header file
+To: Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+References: <20180322202007.23088-1-malat@debian.org>
+ <20180322202007.23088-12-malat@debian.org>
+From: christophe leroy <christophe.leroy@c-s.fr>
+Message-ID: <fd5993b4-0b0a-3c65-65a8-b26445d0d440@c-s.fr>
+Date: Fri, 23 Mar 2018 13:13:50 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <53afbe8172fb1afd809ce9ba1afeda924b9ea705.1521794177.git.sean.wang@mediatek.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180322202007.23088-12-malat@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/03/2018 at 17:15:08 +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
+
+
+Le 22/03/2018 à 21:19, Mathieu Malaterre a écrit :
+> The pmac_pfunc_base_install prototype was declared in powermac/smp.c since
+> function was used there, move it to pmac_pfunc.h header to be visible in
+> pfunc_base.c. Fix a warning treated as error with W=1:
 > 
-> This is in preparation for allowing other drivers can share the
-> declaration, so move the declaration into a globally visible header file.
+>    arch/powerpc/platforms/powermac/pfunc_base.c:330:12: error: no previous prototype for ‘pmac_pfunc_base_install’ [-Werror=missing-prototypes]
 > 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 > ---
->  drivers/rtc/rtc-mt6397.c   | 53 +---------------------------------
->  include/linux/rtc/mt6397.h | 72 ++++++++++++++++++++++++++++++++++++++++++++++
-
-This should go in include/linux/mfd/
-
->  2 files changed, 73 insertions(+), 52 deletions(-)
->  create mode 100644 include/linux/rtc/mt6397.h
+>   arch/powerpc/include/asm/pmac_pfunc.h | 1 +
+>   arch/powerpc/platforms/powermac/smp.c | 1 -
+>   2 files changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-> index d133d1f..015609d 100644
-> --- a/drivers/rtc/rtc-mt6397.c
-> +++ b/drivers/rtc/rtc-mt6397.c
-> @@ -19,63 +19,12 @@
->  #include <linux/of_platform.h>
->  #include <linux/regmap.h>
->  #include <linux/rtc.h>
-> -#include <linux/jiffies.h>
->  #include <linux/platform_device.h>
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
->  #include <linux/io.h>
->  #include <linux/mfd/mt6397/core.h>
-> -
-> -#define RTC_BBPU		0x0000
-> -#define RTC_BBPU_CBUSY		BIT(6)
-> -
-> -#define RTC_WRTGR		0x003c
-> -
-> -#define RTC_IRQ_STA		0x0002
-> -#define RTC_IRQ_STA_AL		BIT(0)
-> -#define RTC_IRQ_STA_LP		BIT(3)
-> -
-> -#define RTC_IRQ_EN		0x0004
-> -#define RTC_IRQ_EN_AL		BIT(0)
-> -#define RTC_IRQ_EN_ONESHOT	BIT(2)
-> -#define RTC_IRQ_EN_LP		BIT(3)
-> -#define RTC_IRQ_EN_ONESHOT_AL	(RTC_IRQ_EN_ONESHOT | RTC_IRQ_EN_AL)
-> -
-> -#define RTC_AL_MASK		0x0008
-> -#define RTC_AL_MASK_DOW		BIT(4)
-> -
-> -#define RTC_TC_SEC		0x000a
-> -/* Min, Hour, Dom... register offset to RTC_TC_SEC */
-> -#define RTC_OFFSET_SEC		0
-> -#define RTC_OFFSET_MIN		1
-> -#define RTC_OFFSET_HOUR		2
-> -#define RTC_OFFSET_DOM		3
-> -#define RTC_OFFSET_DOW		4
-> -#define RTC_OFFSET_MTH		5
-> -#define RTC_OFFSET_YEAR		6
-> -#define RTC_OFFSET_COUNT	7
-> -
-> -#define RTC_AL_SEC		0x0018
-> -
-> -#define RTC_PDN2		0x002e
-> -#define RTC_PDN2_PWRON_ALARM	BIT(4)
-> -
-> -#define RTC_MIN_YEAR		1968
-> -#define RTC_BASE_YEAR		1900
-> -#define RTC_NUM_YEARS		128
-> -#define RTC_MIN_YEAR_OFFSET	(RTC_MIN_YEAR - RTC_BASE_YEAR)
-> -
-> -#define MTK_RTC_POLL_DELAY_US	10
-> -#define MTK_RTC_POLL_TIMEOUT	(jiffies_to_usecs(HZ))
-> -
-> -struct mt6397_rtc {
-> -	struct device		*dev;
-> -	struct rtc_device	*rtc_dev;
-> -	struct mutex		lock;
-> -	struct regmap		*regmap;
-> -	int			irq;
-> -	u32			addr_base;
-> -};
-> +#include <linux/rtc/mt6397.h>
->  
->  static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
->  {
-> diff --git a/include/linux/rtc/mt6397.h b/include/linux/rtc/mt6397.h
-> new file mode 100644
-> index 0000000..4b19f51
-> --- /dev/null
-> +++ b/include/linux/rtc/mt6397.h
-> @@ -0,0 +1,72 @@
-> +
+> diff --git a/arch/powerpc/include/asm/pmac_pfunc.h b/arch/powerpc/include/asm/pmac_pfunc.h
+> index 73bd8f28f2a8..99f7a288789a 100644
+> --- a/arch/powerpc/include/asm/pmac_pfunc.h
+> +++ b/arch/powerpc/include/asm/pmac_pfunc.h
+> @@ -245,6 +245,7 @@ extern void pmf_put_function(struct pmf_function *func);
+>   
+>   extern int pmf_call_one(struct pmf_function *func, struct pmf_args *args);
+>   
+> +extern int pmac_pfunc_base_install(void);
 
-Unnecessary empty line
 
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2014-2018 MediaTek Inc.
-> + *
-> + * Author: Tianping.Fang <tianping.fang@mediatek.com>
-> + *	   Sean Wang <sean.wang@mediatek.com>
-> + */
-> +
-> +#ifndef _LINUX_RTC_MT6397_H_
-> +#define _LINUX_RTC_MT6397_H_
-> +
-> +#include <linux/jiffies.h>
-> +#include <linux/mutex.h>
-> +#include <linux/regmap.h>
-> +#include <linux/rtc.h>
-> +
-> +#define RTC_BBPU		0x0000
-> +#define RTC_BBPU_CBUSY		BIT(6)
-> +
-> +#define RTC_WRTGR		0x003c
-> +
-> +#define RTC_IRQ_STA		0x0002
-> +#define RTC_IRQ_STA_AL		BIT(0)
-> +#define RTC_IRQ_STA_LP		BIT(3)
-> +
-> +#define RTC_IRQ_EN		0x0004
-> +#define RTC_IRQ_EN_AL		BIT(0)
-> +#define RTC_IRQ_EN_ONESHOT	BIT(2)
-> +#define RTC_IRQ_EN_LP		BIT(3)
-> +#define RTC_IRQ_EN_ONESHOT_AL	(RTC_IRQ_EN_ONESHOT | RTC_IRQ_EN_AL)
-> +
-> +#define RTC_AL_MASK		0x0008
-> +#define RTC_AL_MASK_DOW		BIT(4)
-> +
-> +#define RTC_TC_SEC		0x000a
-> +/* Min, Hour, Dom... register offset to RTC_TC_SEC */
-> +#define RTC_OFFSET_SEC		0
-> +#define RTC_OFFSET_MIN		1
-> +#define RTC_OFFSET_HOUR		2
-> +#define RTC_OFFSET_DOM		3
-> +#define RTC_OFFSET_DOW		4
-> +#define RTC_OFFSET_MTH		5
-> +#define RTC_OFFSET_YEAR		6
-> +#define RTC_OFFSET_COUNT	7
-> +
-> +#define RTC_AL_SEC		0x0018
-> +
-> +#define RTC_PDN2		0x002e
-> +#define RTC_PDN2_PWRON_ALARM	BIT(4)
-> +
-> +#define RTC_MIN_YEAR		1968
-> +#define RTC_BASE_YEAR		1900
-> +#define RTC_NUM_YEARS		128
-> +#define RTC_MIN_YEAR_OFFSET	(RTC_MIN_YEAR - RTC_BASE_YEAR)
-> +
-> +#define MTK_RTC_POLL_DELAY_US	10
-> +#define MTK_RTC_POLL_TIMEOUT	(jiffies_to_usecs(HZ))
-> +
-> +struct mt6397_rtc {
-> +	struct device		*dev;
-> +	struct rtc_device	*rtc_dev;
-> +
-> +	/* protect registers accessing */
-> +	struct mutex		lock;
-> +	struct regmap		*regmap;
-> +	int			irq;
-> +	u32			addr_base;
-> +};
-> +
-> +#endif /* _LINUX_RTC_MT6397_H_ */
-> +
-> -- 
-> 2.7.4
+extern keyword is not needed
+
+Christophe
+
+>   
+>   /* Suspend/resume code called by via-pmu directly for now */
+>   extern void pmac_pfunc_base_suspend(void);
+> diff --git a/arch/powerpc/platforms/powermac/smp.c b/arch/powerpc/platforms/powermac/smp.c
+> index 95275e0e2efa..447da6db450a 100644
+> --- a/arch/powerpc/platforms/powermac/smp.c
+> +++ b/arch/powerpc/platforms/powermac/smp.c
+> @@ -65,7 +65,6 @@
+>   #endif
+>   
+>   extern void __secondary_start_pmac_0(void);
+> -extern int pmac_pfunc_base_install(void);
+>   
+>   static void (*pmac_tb_freeze)(int freeze);
+>   static u64 timebase;
 > 
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
