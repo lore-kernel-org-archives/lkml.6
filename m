@@ -1,39 +1,70 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELssmj40LfPjS1SFQTnci4+Gp9nv+Pi5eF/JbjegDIPtLAKJ2leSHorHEDMLoZjN71bQYTyV
-ARC-Seal: i=1; a=rsa-sha256; t=1521800379; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jpfgWGOOKzze7hZWp0uFX+eNgVvRomnlknISCs0/PnG86xSzeXlODS7cHRjJkbu/Gt
-         kQeJpipMeSlFqRJwfosq7A7LNmMaaL1A9o/LclUqtsFY9v4OzwPf7XKSqQo3Av9D0OTz
-         EUDawUj5td+dBPjda93i6UxNpCl9xjCORe0bGby4GeA19zgneo4FL9ipe8ljjqQwp9N/
-         mLtTX6lpWx9bNpu/JrDExQ66gA6IaAzvMiSTOyM9Jn9A9HDEssUbnOn4RxbsXiTv8d6m
-         fmQht2bSltFg5cNvVqV8Oa3vCPhgQiQ3oR3AMJ5jVoSyUre+w7MCtQbkBz1tIQAla2ql
-         sJiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=JltOuw0Ot5aSFG+ilQRjN8GyrtaF/UVwDDi/bo45qWk=;
-        b=K8Px0GjBucobZhfv83t3W3cb+km6b2CzO7dlBdWw/aFU6Cu067MMq5CG1BiyWagEPf
-         ojWP5dqlaaFSuuggk2OCl3/57vsYXcBksv+ZJqZAD6eGLnfWXztaDeqiXMI4rXMPCi+x
-         +yGqOcrF9ATiyb2MXIGDzdRUAZA2LxyGSM0yAhSEcMnQS8K+G1K6oibXxeAeQUpZqGzd
-         qAHyGuRTlijqR0OUAdbSlisiOLWR48Oa5T/TJ9AgqHVwh2zAjgdMmWTSr3uj4GlW4ql9
-         cnyYaC7JCBaroEx/ewtAuwsq+O1U1/scVn4A2Tz8FOV1SBfbj9JdnDg5VIyFATgT+ZCB
-         fj+Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-999974-1521800379-2-14789667222530740449
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521800379; b=SkTiswKGpqvhzI3+dOvO81QXOucPsTZTyhVO2OAqGhm/aA2
+    r2gEAOT8/fiwuOjPEj6r3u8ww4gEA0RRW5D4ausdD4nYk7Wc+CT9YMhhiPoJPrV/
+    tsvlcmYBa3mvh4zdEsIdOFng/xnUYcNPzDgngaFFF46QhlnOUEPViggClXLywiQ5
+    2WoIZUmj5FvUzyXBU6rIsAElW5WV3q2eAtQlcPK9eiSGQmDkk3n/k71aOmg1i5wa
+    BCRhNlGq6PBwB+pW30j6GXGVs9JAGisppyj3OiCAUF+PaPg1e4tLvfKy0mwTO317
+    I4SgSD/IHdOj8uAJuhvdF3ENQaiIhfO2k5Jq69g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521800379; bh=L9grGTrcOL0NEi/3zDkOvAjXyc
+    GJ5MujKOBdkDd0GLk=; b=EfHcGIG75zGbWCvphQnst6IxGK0CPjKumscOoq8899
+    /xDNHe8mjgBLY+EZPbQFFMyXvsh//D2yCjClRO+IMY8hoK/MciT90v/tly0Y01a9
+    8O+GAjRfDXc6RCR/jEYrwpAnBbyIjxLC7RxppQ8bBlY/xvvhFNpRKRNbBMD0Wq59
+    eJ14y3VtdDApnfwLDxWpOLI1yAsIxLsF33Pb2FsXM263u5dKBEsc+UzH0phqGgAk
+    cL/kPDkqJ9F6tYTvd4G8k3YRpKUEmEVbIJ0niQ4jAyuqg5OU8uP5xsR7U8Eg6Q3w
+    syfXqDDR7NKA7p3hOM499UE8Wc05Aju82zTZRA7IrIDQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933989AbeCWKTe (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:19:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48110 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933985AbeCWKTc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:19:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Rabeeh Khoury <rabeeh@solid-run.com>,
-	Sergej Sawazki <sergej@taudac.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 46/47] clk: si5351: Rename internal plls to avoid name collisions
-Date: Fri, 23 Mar 2018 10:55:37 +0100
-Message-Id: <20180323094250.086465302@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <smfrench@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 36/47] cifs: small underflow in cnvrtDosUnixTm()
+Date: Fri, 23 Mar 2018 10:55:27 +0100
+Message-Id: <20180323094249.662758588@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -41,10 +72,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722065816461272?=
-X-GMAIL-MSGID: =?utf-8?q?1595723354476506427?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,35 +82,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sergej Sawazki <sergej@taudac.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit cdba9a4fb0b53703959ac861e415816cb61aded4 ]
+[ Upstream commit 564277eceeca01e02b1ef3e141cfb939184601b4 ]
 
-This drivers probe fails due to a clock name collision if a clock named
-'plla' or 'pllb' is already registered when registering this drivers
-internal plls.
+January is month 1.  There is no zero-th month.  If someone passes a
+zero month then it means we read from one space before the start of the
+total_days_of_prev_months[] array.
 
-Fix it by renaming internal plls to avoid name collisions.
+We may as well also be strict about days as well.
 
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Rabeeh Khoury <rabeeh@solid-run.com>
-Signed-off-by: Sergej Sawazki <sergej@taudac.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Fixes: 1bd5bbcb6531 ("[CIFS] Legacy time handling for Win9x and OS/2 part 1")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk-si5351.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/netmisc.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -72,7 +72,7 @@ static const char * const si5351_input_n
- 	"xtal", "clkin"
- };
- static const char * const si5351_pll_names[] = {
--	"plla", "pllb", "vxco"
-+	"si5351_plla", "si5351_pllb", "si5351_vxco"
- };
- static const char * const si5351_msynth_names[] = {
- 	"ms0", "ms1", "ms2", "ms3", "ms4", "ms5", "ms6", "ms7"
+--- a/fs/cifs/netmisc.c
++++ b/fs/cifs/netmisc.c
+@@ -980,10 +980,10 @@ struct timespec cnvrtDosUnixTm(__le16 le
+ 		cifs_dbg(VFS, "illegal hours %d\n", st->Hours);
+ 	days = sd->Day;
+ 	month = sd->Month;
+-	if ((days > 31) || (month > 12)) {
++	if (days < 1 || days > 31 || month < 1 || month > 12) {
+ 		cifs_dbg(VFS, "illegal date, month %d day: %d\n", month, days);
+-		if (month > 12)
+-			month = 12;
++		days = clamp(days, 1, 31);
++		month = clamp(month, 1, 12);
+ 	}
+ 	month -= 1;
+ 	days += total_days_of_prev_months[month];
