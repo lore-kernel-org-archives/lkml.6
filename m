@@ -1,75 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752524AbeCWJhc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:37:32 -0400
-Received: from mga07.intel.com ([134.134.136.100]:14643 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752405AbeCWJhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:37:17 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,349,1517904000";
-   d="scan'208";a="41512246"
-Date: Fri, 23 Mar 2018 17:36:38 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-Cc: kbuild-all@01.org,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, minchan@kernel.org, ngupta@vflare.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH 2/5 v4] crypto: add zBeWalgo to crypto-api
-Message-ID: <201803231728.EQZdGg40%fengguang.wu@intel.com>
-References: <1B59F77F-1AD8-484A-BA18-255502527323@informatik.uni-hamburg.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1B59F77F-1AD8-484A-BA18-255502527323@informatik.uni-hamburg.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S1752231AbeCWJgZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:36:25 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46624 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751912AbeCWJgS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:36:18 -0400
+X-Google-Smtp-Source: AG47ELsuawrzeFlA0C7akZesA9VezXksSqw2HPLk2iOhQP/yP38Aq1pyPZ8EJFGQrHAomttgGtq2OQ==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 2/8] ARM: davinci: dts: make psc0 a reset provider
+Date: Fri, 23 Mar 2018 10:36:03 +0100
+Message-Id: <20180323093609.24576-3-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
+References: <20180323093609.24576-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin,
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Thank you for the patch! Perhaps something to improve:
+The psc driver registers with the reset framework as a provider. Add
+the #reset-cells property to the psc0 node.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.16-rc6]
-[cannot apply to next-20180322]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Benjamin-Warnke/add-compression-algorithm-zBeWalgo/20180323-155925
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> lib/zbewalgo/zbewalgo.c:70:12: sparse: symbol 'zbewalgo_stat_combination' was not declared. Should it be static?
->> lib/zbewalgo/zbewalgo.c:71:12: sparse: symbol 'zbewalgo_stat_count' was not declared. Should it be static?
->> lib/zbewalgo/zbewalgo.c:79:9: sparse: symbol 'zbewalgo_combinations' was not declared. Should it be static?
->> lib/zbewalgo/zbewalgo.c:80:4: sparse: symbol 'zbewalgo_combinations_count' was not declared. Should it be static?
->> lib/zbewalgo/zbewalgo.c:92:5: sparse: symbol 'zbewalgo_early_abort_size' was not declared. Should it be static?
->> lib/zbewalgo/zbewalgo.c:97:36: sparse: symbol 'zbewalgo_main_data_ptr' was not declared. Should it be static?
->> lib/zbewalgo/zbewalgo.c:103:9: sparse: symbol 'zbewalgo_base_algorithms' was not declared. Should it be static?
->> lib/zbewalgo/zbewalgo.c:104:4: sparse: symbol 'zbewalgo_base_algorithms_count' was not declared. Should it be static?
---
->> lib/zbewalgo/JBE2.c:46:44: sparse: constant 0xF0F0F0F00F0F0F0F is so big it is unsigned long
->> lib/zbewalgo/JBE2.c:47:42: sparse: constant 0x0F0F0F0F00000000 is so big it is long
-   lib/zbewalgo/JBE2.c:127:40: sparse: constant 0xF0F0F0F00F0F0F0F is so big it is unsigned long
-   lib/zbewalgo/JBE2.c:128:40: sparse: constant 0x0F0F0F0F00000000 is so big it is long
-   lib/zbewalgo/JBE2.c:184:40: sparse: constant 0xF0F0F0F00F0F0F0F is so big it is unsigned long
-   lib/zbewalgo/JBE2.c:185:40: sparse: constant 0x0F0F0F0F00000000 is so big it is long
-
-Please review and possibly fold the followup patch.
-
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index a3b9a99b43ca..dad64dbf1f23 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -123,6 +123,7 @@
+ 			compatible = "ti,da850-psc0";
+ 			reg = <0x10000 0x1000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+ 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+-- 
+2.16.1
