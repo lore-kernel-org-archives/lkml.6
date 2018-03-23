@@ -1,23 +1,23 @@
 Return-Path: <jacob.jun.pan@linux.intel.com>
-X-Google-Smtp-Source: AG47ELsXK0XtFmy5BMoKpvZp/IWH9QYwFoP9jeV0skeNUStKO2XuZklJVivxB9P69W7AwaZ29Gjk
-ARC-Seal: i=1; a=rsa-sha256; t=1521774606; cv=none;
+X-Google-Smtp-Source: AG47ELsnV5i/qagcspePfOQBPA//Dsr0Ma1zDnrgpLurasX+nZKKYrrMVdbbXlacbeQg0QnFe/hb
+ARC-Seal: i=1; a=rsa-sha256; t=1521774605; cv=none;
         d=google.com; s=arc-20160816;
-        b=Afg1MU35BA6m02wFJnXE14DdvoSecgvglpfM8iI6nJG0iKx5o1kd+yTpIdQHaS+xvo
-         KJk7zq3ISaBJWHYbncKAMfQxDUAo40q5smkynfNpRzjtyfGyo3sIgWtBbZeANOuZF1XB
-         Km5AOR0aOdzClYg3FVfBqa5OxSow9gmhYBislWmcwSKGVwEpeVkb8PIWmLTuslb3elfR
-         +D7bveIDQAjDPE/NmMW2RqOgnfROnYxS3mVToB3IzvYR3BpYOlpSeO0TQ6yQHSseQdjQ
-         kc4yxbd7B9W3gZWLepykTr2LUdWW/7ZhNkWXtUbCr7NHP2bqSpqHPpchwdM97w+lCmoj
-         XsJw==
+        b=qKJltMnFQZx8p2jwsfdjEls544GDe+fp7F31lIrrVYv/mVGU50woJV9hhWnN5viMjW
+         jY+ZmKXgCzx263LYQByWqK1ZIhVf6hnlFXin6C1o4CecaCeQPX20c5usZwfcAmBFL9tx
+         qfiiXYeVt63KjWeDWl7cWSEOIr15ASZp+BySc0FhbOZ6hb8oLlfmYNXu62HxjFXabEB4
+         NRc5MLKjWAes7jKlOaMo6Ibi7tllnWktaq3oaHJvUNwIuWqrpmqb21gZ9eGBjDDdZxRs
+         Z2O1XIl0BFyqEbv5LWkEfI5pT18ZY0pGO9fgtwr/+oUZ7wvB0+i1gHBL+35WWzNNz6Zn
+         +U7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=7gdUj1E4BeUkheMRhK6YCFWQdTyvTLXhXaGJc4BgQjw=;
-        b=zATrqrAK+x8c991BUaa6FrudUTw3iZLyj5nQavCsPOKsgOXzwND/1nbWEbh3kKEcWH
-         hquFmbrkgiaG7OWd0PWnoyFQ/bExPmG9a/xNbBVf9QGuOlruN0Bi2VoHaDS1dEyhYzgA
-         QJu58Htx5vUTti0RjHTjrOvW5yZVcs68R1dfgrEXLskjYhd6/gzzWBddTPFEfav4EnNG
-         YjpXaKH2jf1ouS+vLlFLa4cZIGnRo8swCUVDS5JZwSLZcEYRHTJxI36fV1Q5PmqZcgKC
-         KkB8HAvGC4QMWY4jMce2OIE+AsdlKQuB6ODoF4BLJGiIpbpeNVRRAc43xQI1M78I4IxG
-         wW8g==
+        bh=wAL4CpgdnYEsVnoxgQ5pLtE6ckrDwkI9uhKmx9H4N2I=;
+        b=MGr3+K3l4/h2V57ZNQGoi23OK2QigbTAPofMD3dH5TAqTVAN3n30OKHCV4BGAluQSu
+         NKr31Y8zSjQSifNl9Dudcv0+y6xmpLGOtytmjGTlb/g7aeCX/ZegOL7vUMxcajprTvrv
+         6QS5MnYxV5Os7drGNaEy/z/9ddRZYeeZjFq62BmWd56aCCzynaO/D8bSe2uqVSn81zO5
+         nIpEILtsar3a82L29o0ODEVifEuiigRK5ha46RicrA7UaCtUQ3BvSvFcERNJXmnfYXot
+         xUWFOyEJpnT+e/3fcVx2GUD+rR3O4C18fD904wKSxuQwo8hk6shBtD3xCguyh6BoAdIN
+         zEwA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,348,1517904000";
-   d="scan'208";a="26315999"
+   d="scan'208";a="26315982"
 From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 To: iommu@lists.linux-foundation.org,
 	LKML <linux-kernel@vger.kernel.org>,
@@ -42,175 +42,102 @@ Cc: "Liu, Yi L" <yi.l.liu@intel.com>,
 	Alex Williamson <alex.williamson@redhat.com>,
 	Jean Delvare <khali@linux-fr.org>,
 	"Christoph Hellwig" <hch@infradead.org>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Liu,
-	Yi L <yi.l.liu@linux.intel.com>
-Subject: [PATCH v4 10/22] iommu: introduce device fault data
-Date: Thu, 22 Mar 2018 20:12:02 -0700
-Message-Id: <1521774734-48433-11-git-send-email-jacob.jun.pan@linux.intel.com>
+	Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 07/22] iommu/vt-d: fix dev iotlb pfsid use
+Date: Thu, 22 Mar 2018 20:11:59 -0700
+Message-Id: <1521774734-48433-8-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521774734-48433-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1521774734-48433-1-git-send-email-jacob.jun.pan@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595696329819160827?=
-X-GMAIL-MSGID: =?utf-8?q?1595696329819160827?=
+X-GMAIL-THRID: =?utf-8?q?1595696328450944312?=
+X-GMAIL-MSGID: =?utf-8?q?1595696328450944312?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Device faults detected by IOMMU can be reported outside IOMMU
-subsystem for further processing. This patch intends to provide
-a generic device fault data such that device drivers can be
-communicated with IOMMU faults without model specific knowledge.
-
-The proposed format is the result of discussion at:
-https://lkml.org/lkml/2017/11/10/291
-Part of the code is based on Jean-Philippe Brucker's patchset
-(https://patchwork.kernel.org/patch/9989315/).
-
-The assumption is that model specific IOMMU driver can filter and
-handle most of the internal faults if the cause is within IOMMU driver
-control. Therefore, the fault reasons can be reported are grouped
-and generalized based common specifications such as PCI ATS.
+PFSID should be used in the invalidation descriptor for flushing
+device IOTLBs on SRIOV VFs.
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
 ---
- include/linux/iommu.h | 102 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 100 insertions(+), 2 deletions(-)
+ drivers/iommu/dmar.c        |  6 +++---
+ drivers/iommu/intel-iommu.c | 16 +++++++++++++++-
+ include/linux/intel-iommu.h |  5 ++---
+ 3 files changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index da684a7..9eaa907 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -49,13 +49,17 @@ struct bus_type;
- struct device;
- struct iommu_domain;
- struct notifier_block;
-+struct iommu_fault_event;
+diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+index 9a7ffd1..78f7e70 100644
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -1339,8 +1339,8 @@ void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
+ 	qi_submit_sync(&desc, iommu);
+ }
  
- /* iommu fault flags */
--#define IOMMU_FAULT_READ	0x0
--#define IOMMU_FAULT_WRITE	0x1
-+#define IOMMU_FAULT_READ		(1 << 0)
-+#define IOMMU_FAULT_WRITE		(1 << 1)
-+#define IOMMU_FAULT_EXEC		(1 << 2)
-+#define IOMMU_FAULT_PRIV		(1 << 3)
- 
- typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
- 			struct device *, unsigned long, int, void *);
-+typedef int (*iommu_dev_fault_handler_t)(struct iommu_fault_event *, void *);
- 
- struct iommu_domain_geometry {
- 	dma_addr_t aperture_start; /* First address that can be mapped    */
-@@ -264,6 +268,99 @@ struct iommu_device {
- 	struct device *dev;
- };
- 
-+/*  Generic fault types, can be expanded IRQ remapping fault */
-+enum iommu_fault_type {
-+	IOMMU_FAULT_DMA_UNRECOV = 1,	/* unrecoverable fault */
-+	IOMMU_FAULT_PAGE_REQ,		/* page request fault */
-+};
-+
-+enum iommu_fault_reason {
-+	IOMMU_FAULT_REASON_UNKNOWN = 0,
-+
-+	/* IOMMU internal error, no specific reason to report out */
-+	IOMMU_FAULT_REASON_INTERNAL,
-+
-+	/* Could not access the PASID table */
-+	IOMMU_FAULT_REASON_PASID_FETCH,
-+
-+	/*
-+	 * PASID is out of range (e.g. exceeds the maximum PASID
-+	 * supported by the IOMMU) or disabled.
-+	 */
-+	IOMMU_FAULT_REASON_PASID_INVALID,
-+
-+	/* Could not access the page directory (Invalid PASID entry) */
-+	IOMMU_FAULT_REASON_PGD_FETCH,
-+
-+	/* Could not access the page table entry (Bad address) */
-+	IOMMU_FAULT_REASON_PTE_FETCH,
-+
-+	/* Protection flag check failed */
-+	IOMMU_FAULT_REASON_PERMISSION,
-+};
-+
-+/**
-+ * struct iommu_fault_event - Generic per device fault data
-+ *
-+ * - PCI and non-PCI devices
-+ * - Recoverable faults (e.g. page request), information based on PCI ATS
-+ * and PASID spec.
-+ * - Un-recoverable faults of device interest
-+ * - DMA remapping and IRQ remapping faults
-+
-+ * @type contains fault type.
-+ * @reason fault reasons if relevant outside IOMMU driver, IOMMU driver internal
-+ *         faults are not reported
-+ * @addr: tells the offending page address
-+ * @pasid: contains process address space ID, used in shared virtual memory(SVM)
-+ * @rid: requestor ID
-+ * @page_req_group_id: page request group index
-+ * @last_req: last request in a page request group
-+ * @pasid_valid: indicates if the PRQ has a valid PASID
-+ * @prot: page access protection flag, e.g. IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
-+ * @device_private: if present, uniquely identify device-specific
-+ *                  private data for an individual page request.
-+ * @iommu_private: used by the IOMMU driver for storing fault-specific
-+ *                 data. Users should not modify this field before
-+ *                 sending the fault response.
-+ */
-+struct iommu_fault_event {
-+	enum iommu_fault_type type;
-+	enum iommu_fault_reason reason;
-+	u64 addr;
-+	u32 pasid;
-+	u32 page_req_group_id;
-+	u32 last_req : 1;
-+	u32 pasid_valid : 1;
-+	u32 prot;
-+	u64 device_private;
-+	u64 iommu_private;
-+};
-+
-+/**
-+ * struct iommu_fault_param - per-device IOMMU fault data
-+ * @dev_fault_handler: Callback function to handle IOMMU faults at device level
-+ * @data: handler private data
-+ *
-+ */
-+struct iommu_fault_param {
-+	iommu_dev_fault_handler_t handler;
-+	void *data;
-+};
-+
-+/**
-+ * struct iommu_param - collection of per-device IOMMU data
-+ *
-+ * @fault_param: IOMMU detected device fault reporting data
-+ *
-+ * TODO: migrate other per device data pointers under iommu_dev_data, e.g.
-+ *	struct iommu_group	*iommu_group;
-+ *	struct iommu_fwspec	*iommu_fwspec;
-+ */
-+struct iommu_param {
-+	struct iommu_fault_param *fault_param;
-+};
-+
- int  iommu_device_register(struct iommu_device *iommu);
- void iommu_device_unregister(struct iommu_device *iommu);
- int  iommu_device_sysfs_add(struct iommu_device *iommu,
-@@ -437,6 +534,7 @@ struct iommu_ops {};
- struct iommu_group {};
- struct iommu_fwspec {};
- struct iommu_device {};
-+struct iommu_fault_param {};
- 
- static inline bool iommu_present(struct bus_type *bus)
+-void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+-			u64 addr, unsigned mask)
++void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
++			u16 qdep, u64 addr, unsigned mask)
  {
+ 	struct qi_desc desc;
+ 
+@@ -1355,7 +1355,7 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+ 		qdep = 0;
+ 
+ 	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
+-		   QI_DIOTLB_TYPE;
++		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
+ 
+ 	qi_submit_sync(&desc, iommu);
+ }
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 8667727..53e9b7b 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -1482,6 +1482,19 @@ static void iommu_enable_dev_iotlb(struct device_domain_info *info)
+ 		return;
+ 
+ 	pdev = to_pci_dev(info->dev);
++	/* For IOMMU that supports device IOTLB throttling (DIT), we assign
++	 * PFSID to the invalidation desc of a VF such that IOMMU HW can gauge
++	 * queue depth at PF level. If DIT is not set, PFSID will be treated as
++	 * reserved, which should be set to 0.
++	 */
++	if (!ecap_dit(info->iommu->ecap))
++		info->pfsid = 0;
++	else if (pdev && pdev->is_virtfn) {
++		if (ecap_dit(info->iommu->ecap))
++			dev_warn(&pdev->dev, "SRIOV VF device IOTLB enabled without flow control\n");
++		info->pfsid = PCI_DEVID(pdev->physfn->bus->number, pdev->physfn->devfn);
++	} else
++		info->pfsid = PCI_DEVID(info->bus, info->devfn);
+ 
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+ 	/* The PCIe spec, in its wisdom, declares that the behaviour of
+@@ -1547,7 +1560,8 @@ static void iommu_flush_dev_iotlb(struct dmar_domain *domain,
+ 
+ 		sid = info->bus << 8 | info->devfn;
+ 		qdep = info->ats_qdep;
+-		qi_flush_dev_iotlb(info->iommu, sid, qdep, addr, mask);
++		qi_flush_dev_iotlb(info->iommu, sid, info->pfsid,
++				qdep, addr, mask);
+ 	}
+ 	spin_unlock_irqrestore(&device_domain_lock, flags);
+ }
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index 0e3b618..1c9375b 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -477,9 +477,8 @@ extern void qi_flush_context(struct intel_iommu *iommu, u16 did, u16 sid,
+ 			     u8 fm, u64 type);
+ extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
+ 			  unsigned int size_order, u64 type);
+-extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+-			       u64 addr, unsigned mask);
+-
++extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
++			u16 qdep, u64 addr, unsigned mask);
+ extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
+ 
+ extern int dmar_ir_support(void);
 -- 
 2.7.4
