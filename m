@@ -1,138 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752412AbeCWMWj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 08:22:39 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:36914 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751595AbeCWMWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 08:22:37 -0400
-Subject: Re: [PATCH 19/19] powerpc/tau: Synchronize function prototypes and
- body
-To: Mathieu Malaterre <malat@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-References: <20180322202007.23088-1-malat@debian.org>
- <20180322202007.23088-20-malat@debian.org>
-From: christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <e7735711-c81a-55c4-ddc2-75f55e84b17e@c-s.fr>
-Date: Fri, 23 Mar 2018 13:22:29 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752440AbeCWMZQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:25:16 -0400
+Received: from mail-ot0-f181.google.com ([74.125.82.181]:39101 "EHLO
+        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751903AbeCWMZO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 08:25:14 -0400
+X-Google-Smtp-Source: AG47ELs+MAx8oil7cfeFoeZi/kbHZnVMIMWepSfFgu7p3IoTORTX/Jy6coLAeu0YEogp72TDNLqviD+0H8m1kNtjVB0=
 MIME-Version: 1.0
-In-Reply-To: <20180322202007.23088-20-malat@debian.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <97df68d1-d4fe-bf8e-7852-9b418eec042f@c-s.fr>
+References: <20180322202007.23088-1-malat@debian.org> <20180322202007.23088-15-malat@debian.org>
+ <97df68d1-d4fe-bf8e-7852-9b418eec042f@c-s.fr>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Fri, 23 Mar 2018 13:24:53 +0100
+X-Google-Sender-Auth: ED6DUJ_ePdJorOKnL40ktWzaQLU
+Message-ID: <CA+7wUsxVW1a2yvyhYv=YFNV1VEQCcro5JDN1RewghVaHDq5znw@mail.gmail.com>
+Subject: Re: [PATCH 14/19] powerpc/altivec: Add missing prototypes for altivec
+To: christophe leroy <christophe.leroy@c-s.fr>
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        LKML <linux-kernel@vger.kernel.org>, kvm-ppc@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2NCPLwq022395
 
+On Fri, Mar 23, 2018 at 1:19 PM, christophe leroy
+<christophe.leroy@c-s.fr> wrote:
+>
+>
+> Le 22/03/2018 à 21:20, Mathieu Malaterre a écrit :
+>>
+>> Some functions prototypes were missing for the non-altivec code. Add the
+>> missing prototypes directly in xor_vmx, fix warnings treated as errors
+>> with
+>> W=1:
+>>
+>>    arch/powerpc/lib/xor_vmx_glue.c:18:6: error: no previous prototype for
+>> ‘xor_altivec_2’ [-Werror=missing-prototypes]
+>>    arch/powerpc/lib/xor_vmx_glue.c:29:6: error: no previous prototype for
+>> ‘xor_altivec_3’ [-Werror=missing-prototypes]
+>>    arch/powerpc/lib/xor_vmx_glue.c:40:6: error: no previous prototype for
+>> ‘xor_altivec_4’ [-Werror=missing-prototypes]
+>>    arch/powerpc/lib/xor_vmx_glue.c:52:6: error: no previous prototype for
+>> ‘xor_altivec_5’ [-Werror=missing-prototypes]
+>>
+>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+>> ---
+>>   arch/powerpc/lib/xor_vmx.h | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
+>>
+>> diff --git a/arch/powerpc/lib/xor_vmx.h b/arch/powerpc/lib/xor_vmx.h
+>> index 5c2b0839b179..2173e3c84151 100644
+>> --- a/arch/powerpc/lib/xor_vmx.h
+>> +++ b/arch/powerpc/lib/xor_vmx.h
+>> @@ -19,3 +19,17 @@ void __xor_altivec_4(unsigned long bytes, unsigned long
+>> *v1_in,
+>>   void __xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
+>>                              unsigned long *v2_in, unsigned long *v3_in,
+>>                              unsigned long *v4_in, unsigned long *v5_in);
+>> +
+>> +void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
+>> +                            unsigned long *v2_in);
+>> +
+>
+>
+> Only used in one place, should be static instead of adding it in a .h
+>
+> Same for the other ones.
 
+$ git grep xor_altivec_2
+[...]
+arch/powerpc/lib/xor_vmx_glue.c:EXPORT_SYMBOL(xor_altivec_2);
 
-Le 22/03/2018 à 21:20, Mathieu Malaterre a écrit :
-> Some function prototypes and body for Thermal Assist Units were not in
-> sync. Update the function definition to match the existing function
-> declaration found in `setup-common.c`, changing an `int` return type to a
-> `u32` return type. Move the prototypes to a header file. Fix the following
-> warnings, treated as error with W=1:
-> 
->    arch/powerpc/kernel/tau_6xx.c:257:5: error: no previous prototype for ‘cpu_temp_both’ [-Werror=missing-prototypes]
->    arch/powerpc/kernel/tau_6xx.c:262:5: error: no previous prototype for ‘cpu_temp’ [-Werror=missing-prototypes]
->    arch/powerpc/kernel/tau_6xx.c:267:5: error: no previous prototype for ‘tau_interrupts’ [-Werror=missing-prototypes]
-> 
-> Compile tested with CONFIG_TAU_INT.
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Are you sure I can change this function to static ?
+
+> Christophe
+>
+>
+>> +void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
+>> +                            unsigned long *v2_in, unsigned long *v3_in);
+>> +
+>> +void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
+>> +                            unsigned long *v2_in, unsigned long *v3_in,
+>> +                            unsigned long *v4_in);
+>> +
+>> +void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
+>> +                            unsigned long *v2_in, unsigned long *v3_in,
+>> +                            unsigned long *v4_in, unsigned long *v5_in);
+>>
+>
 > ---
->   arch/powerpc/kernel/irq.c          | 2 +-
->   arch/powerpc/kernel/setup-common.c | 6 ------
->   arch/powerpc/kernel/setup.h        | 6 ++++++
->   arch/powerpc/kernel/tau_6xx.c      | 7 +++++--
->   4 files changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
-> index f88038847790..3777b6e09142 100644
-> --- a/arch/powerpc/kernel/irq.c
-> +++ b/arch/powerpc/kernel/irq.c
-> @@ -89,7 +89,7 @@ atomic_t ppc_n_lost_interrupts;
->   
->   #ifdef CONFIG_TAU_INT
->   extern int tau_initialized;
-> -extern int tau_interrupts(int);
-> +extern u32 tau_interrupts(unsigned long cpu);
->   #endif
->   #endif /* CONFIG_PPC32 */
->   
-> diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-> index d73ec518ef80..bd3675c3984b 100644
-> --- a/arch/powerpc/kernel/setup-common.c
-> +++ b/arch/powerpc/kernel/setup-common.c
-> @@ -192,12 +192,6 @@ void machine_halt(void)
->   	machine_hang();
->   }
->   
-> -
-> -#ifdef CONFIG_TAU
-> -extern u32 cpu_temp(unsigned long cpu);
-> -extern u32 cpu_temp_both(unsigned long cpu);
-> -#endif /* CONFIG_TAU */
-> -
->   #ifdef CONFIG_SMP
->   DEFINE_PER_CPU(unsigned int, cpu_pvr);
->   #endif
-> diff --git a/arch/powerpc/kernel/setup.h b/arch/powerpc/kernel/setup.h
-> index d768023a04bd..3c9c19430439 100644
-> --- a/arch/powerpc/kernel/setup.h
-> +++ b/arch/powerpc/kernel/setup.h
-> @@ -70,4 +70,10 @@ void kvm_cma_reserve(void);
->   static inline void kvm_cma_reserve(void) { };
->   #endif
->   
-> +#ifdef CONFIG_TAU
-> +extern u32 cpu_temp(unsigned long cpu);
-> +extern u32 cpu_temp_both(unsigned long cpu);
-> +extern u32 tau_interrupts(unsigned long cpu);
-
-extern keyword is not needed
-
-
-Christophe
-
-> +#endif /* CONFIG_TAU */
-> +
->   #endif /* __ARCH_POWERPC_KERNEL_SETUP_H */
-> diff --git a/arch/powerpc/kernel/tau_6xx.c b/arch/powerpc/kernel/tau_6xx.c
-> index 1fc6a89a978e..e2ab8a111b69 100644
-> --- a/arch/powerpc/kernel/tau_6xx.c
-> +++ b/arch/powerpc/kernel/tau_6xx.c
-> @@ -27,6 +27,9 @@
->   #include <asm/cache.h>
->   #include <asm/8xx_immap.h>
->   #include <asm/machdep.h>
-> +#include <asm/asm-prototypes.h>
-> +
-> +#include "setup.h"
->   
->   static struct tau_temp
->   {
-> @@ -259,12 +262,12 @@ u32 cpu_temp_both(unsigned long cpu)
->   	return ((tau[cpu].high << 16) | tau[cpu].low);
->   }
->   
-> -int cpu_temp(unsigned long cpu)
-> +u32 cpu_temp(unsigned long cpu)
->   {
->   	return ((tau[cpu].high + tau[cpu].low) / 2);
->   }
->   
-> -int tau_interrupts(unsigned long cpu)
-> +u32 tau_interrupts(unsigned long cpu)
->   {
->   	return (tau[cpu].interrupts);
->   }
-> 
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+> L'absence de virus dans ce courrier électronique a été vérifiée par le
+> logiciel antivirus Avast.
+> https://www.avast.com/antivirus
+>
