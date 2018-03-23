@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELubLG2RdIXHyvaaL9oVwyx/O7hdNaBI4bNQyvELyheLLTeL3SQ5nyLihslXu5THAp6blZg3
-ARC-Seal: i=1; a=rsa-sha256; t=1521800240; cv=none;
+X-Google-Smtp-Source: AG47ELuJOLT2hR48GD9Nc+8YmAnliyiAiGO7kzkwCYP2QHDMktIlj6KdvriLTW0lONBjq46hKkU4
+ARC-Seal: i=1; a=rsa-sha256; t=1521800237; cv=none;
         d=google.com; s=arc-20160816;
-        b=LhAvNduqj5wI63h8vXV5wnPlOYGzChMrCRCsjgH1HzpxP9+wJwVA0s3MOYwJ1z2m6C
-         AsQoSvqs77WH4gkA35P/w5z0KQ2hWgydB6ZRoQNwA4e1AJTszwmBhyp42HMreV+ZZ4bd
-         Rua8TkPF/oZkJfaLtxiazjsC7tihD0Jwb0iuWUQ5ddK/gDHoPZWfASkvi6bZWT7kNr13
-         FxRK2Dwzd/sR3pCNT/gBljuLAxzEgPt4gU+qmAelUJgLNxWmRkGjilBhywfjAUjj+6ow
-         FVxlx7cNv+mhuiQfrnbhoe9+wgZU4w9S0HXEAzp2oYaECdm2d88ri2rwdjL4Bew9OF/u
-         ffYQ==
+        b=mLCppugU+XE7bk3HTqDS7HZCJZ9+Mwo9eaFt2Rwrh3pmuNSUta6XUGyeT8Pk7DoH0D
+         jjPCc60aTl572BEhPiENSV9c14if290/TTCsev6iQsyeruTuy2k//qXoYEU/9kE8NoY5
+         umnblZ1Ao6cP8IN5pAe5s1mQ6MMvs0+qUnTw5eyT9Qjyto2cTz04lxaRWatcfGtBJ2sM
+         +6S2Fk/mW6XToPXBFMV81Kyc28VKnmj5+aAEbRRdc9X8PFO5P91+0bAIBu5yd2QnUt6b
+         jflc5VofMjc3ws6aGIGR0T9WEurjTo5gFQy43Hd0cjnv5VcRN54eid6HcAKvctU47osw
+         KNww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AcbCeDZxrQnIk9+anru679ksWgzXRHA4Yw81Y3AcsUI=;
-        b=fbCtCaqIshctc/4wrzCqtbLlL51CAVUXHCe/fdVQ6TYr9JqVF4ZLNHaEROGv5O/gNz
-         IoOFHVqYQwvxz8/+tQjWLRbM/G3tQssPEvl7zbU7J63kGHbzv5TOWqYbytrgM6Wx17wN
-         fk830s6ubCkNKA9aupKDONVngq0Sst4n/NlgUeUQNAA2AFOnju5hVbSPaVtPaPFvar9J
-         Cdg0pdD+CbkGKTphOrkszPVCdQouBzpRKaGO6nASdOicdf/dioMMGq60ItjnwU5aWwkY
-         5MC1Sn30A6BiPw+r53nmUJMr3CpiQ35n0JROgYC6p4AgAeoxeYe3aHfiGHYHPA0ONgBq
-         g7gw==
+        bh=KF/TP/iSL3stfNQaaU2NGhHia4Bh4Vn6rVFPMrcXB/Q=;
+        b=HFXbFfup55BojGjAvu0MVJkL3WcoNJhBb1lgpP4znNGD3g9QhrNV9q00MiQ0lcSzAL
+         QU1I3Cm6sNM9cfqDMiqX8xSY/Vyk3iBUZb/AE7EUV2k5cBpiGII9UfVFX8QFMu+TI4Fa
+         MGBuWi5ikYIcOZQ111nByfRCchqF7Sd3ATE54K6V5m8pVkUtRVO16Q/lFPq6wpXqNI9L
+         ZdldmM4kSS9jbkp4dCmsoRHorb1IMV+zcu3V6NKCXpu5lsHhmkBLWBcJUdyztZftRBEf
+         KOcJQ4SGWW03Sp1AAnSVaxpD3kdjZJAPlUBuZE4kmom7RPDFuB6qKWnGun99m55saPHg
+         ZP2w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Sean Hefty <sean.hefty@intel.com>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.4 97/97] RDMA/ucma: Fix access to non-initialized CM_ID object
-Date: Fri, 23 Mar 2018 10:55:24 +0100
-Message-Id: <20180323094202.880135555@linuxfoundation.org>
+	Vignesh R <vigneshr@ti.com>,
+	Peter Ujfalusi <peter.ujfalusi@ti.com>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 96/97] dmaengine: ti-dma-crossbar: Fix event mapping for TPCC_EVT_MUX_60_63
+Date: Fri, 23 Mar 2018 10:55:23 +0100
+Message-Id: <20180323094202.830273372@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722127270801807?=
-X-GMAIL-MSGID: =?utf-8?q?1595723208679045383?=
+X-GMAIL-THRID: =?utf-8?q?1595722074932352667?=
+X-GMAIL-MSGID: =?utf-8?q?1595723205726982660?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,153 +51,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Vignesh R <vigneshr@ti.com>
 
-commit 7688f2c3bbf55e52388e37ac5d63ca471a7712e1 upstream.
 
-The attempt to join multicast group without ensuring that CMA device
-exists will lead to the following crash reported by syzkaller.
+[ Upstream commit d087f15786021a9605b20f4c678312510be4cac1 ]
 
-[   64.076794] BUG: KASAN: null-ptr-deref in rdma_join_multicast+0x26e/0x12c0
-[   64.076797] Read of size 8 at addr 00000000000000b0 by task join/691
-[   64.076797]
-[   64.076800] CPU: 1 PID: 691 Comm: join Not tainted 4.16.0-rc1-00219-gb97853b65b93 #23
-[   64.076802] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
-[   64.076803] Call Trace:
-[   64.076809]  dump_stack+0x5c/0x77
-[   64.076817]  kasan_report+0x163/0x380
-[   64.085859]  ? rdma_join_multicast+0x26e/0x12c0
-[   64.086634]  rdma_join_multicast+0x26e/0x12c0
-[   64.087370]  ? rdma_disconnect+0xf0/0xf0
-[   64.088579]  ? __radix_tree_replace+0xc3/0x110
-[   64.089132]  ? node_tag_clear+0x81/0xb0
-[   64.089606]  ? idr_alloc_u32+0x12e/0x1a0
-[   64.090517]  ? __fprop_inc_percpu_max+0x150/0x150
-[   64.091768]  ? tracing_record_taskinfo+0x10/0xc0
-[   64.092340]  ? idr_alloc+0x76/0xc0
-[   64.092951]  ? idr_alloc_u32+0x1a0/0x1a0
-[   64.093632]  ? ucma_process_join+0x23d/0x460
-[   64.094510]  ucma_process_join+0x23d/0x460
-[   64.095199]  ? ucma_migrate_id+0x440/0x440
-[   64.095696]  ? futex_wake+0x10b/0x2a0
-[   64.096159]  ucma_join_multicast+0x88/0xe0
-[   64.096660]  ? ucma_process_join+0x460/0x460
-[   64.097540]  ? _copy_from_user+0x5e/0x90
-[   64.098017]  ucma_write+0x174/0x1f0
-[   64.098640]  ? ucma_resolve_route+0xf0/0xf0
-[   64.099343]  ? rb_erase_cached+0x6c7/0x7f0
-[   64.099839]  __vfs_write+0xc4/0x350
-[   64.100622]  ? perf_syscall_enter+0xe4/0x5f0
-[   64.101335]  ? kernel_read+0xa0/0xa0
-[   64.103525]  ? perf_sched_cb_inc+0xc0/0xc0
-[   64.105510]  ? syscall_exit_register+0x2a0/0x2a0
-[   64.107359]  ? __switch_to+0x351/0x640
-[   64.109285]  ? fsnotify+0x899/0x8f0
-[   64.111610]  ? fsnotify_unmount_inodes+0x170/0x170
-[   64.113876]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
-[   64.115813]  ? ring_buffer_record_is_on+0xd/0x20
-[   64.117824]  ? __fget+0xa8/0xf0
-[   64.119869]  vfs_write+0xf7/0x280
-[   64.122001]  SyS_write+0xa1/0x120
-[   64.124213]  ? SyS_read+0x120/0x120
-[   64.126644]  ? SyS_read+0x120/0x120
-[   64.128563]  do_syscall_64+0xeb/0x250
-[   64.130732]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-[   64.132984] RIP: 0033:0x7f5c994ade99
-[   64.135699] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   64.138740] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
-[   64.141056] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
-[   64.143536] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
-[   64.146017] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
-[   64.148608] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
-[   64.151060]
-[   64.153703] Disabling lock debugging due to kernel taint
-[   64.156032] BUG: unable to handle kernel NULL pointer dereference at 00000000000000b0
-[   64.159066] IP: rdma_join_multicast+0x26e/0x12c0
-[   64.161451] PGD 80000001d0298067 P4D 80000001d0298067 PUD 1dea39067 PMD 0
-[   64.164442] Oops: 0000 [#1] SMP KASAN PTI
-[   64.166817] CPU: 1 PID: 691 Comm: join Tainted: G    B 4.16.0-rc1-00219-gb97853b65b93 #23
-[   64.170004] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
-[   64.174985] RIP: 0010:rdma_join_multicast+0x26e/0x12c0
-[   64.177246] RSP: 0018:ffff8801c8207860 EFLAGS: 00010282
-[   64.179901] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff94789522
-[   64.183344] RDX: 1ffffffff2d50fa5 RSI: 0000000000000297 RDI: 0000000000000297
-[   64.186237] RBP: ffff8801c8207a50 R08: 0000000000000000 R09: ffffed0039040ea7
-[   64.189328] R10: 0000000000000001 R11: ffffed0039040ea6 R12: 0000000000000000
-[   64.192634] R13: 0000000000000000 R14: ffff8801e2022800 R15: ffff8801d4ac2400
-[   64.196105] FS:  00007f5c99b98700(0000) GS:ffff8801e5d00000(0000) knlGS:0000000000000000
-[   64.199211] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   64.202046] CR2: 00000000000000b0 CR3: 00000001d1c48004 CR4: 00000000003606a0
-[   64.205032] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[   64.208221] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[   64.211554] Call Trace:
-[   64.213464]  ? rdma_disconnect+0xf0/0xf0
-[   64.216124]  ? __radix_tree_replace+0xc3/0x110
-[   64.219337]  ? node_tag_clear+0x81/0xb0
-[   64.222140]  ? idr_alloc_u32+0x12e/0x1a0
-[   64.224422]  ? __fprop_inc_percpu_max+0x150/0x150
-[   64.226588]  ? tracing_record_taskinfo+0x10/0xc0
-[   64.229763]  ? idr_alloc+0x76/0xc0
-[   64.232186]  ? idr_alloc_u32+0x1a0/0x1a0
-[   64.234505]  ? ucma_process_join+0x23d/0x460
-[   64.237024]  ucma_process_join+0x23d/0x460
-[   64.240076]  ? ucma_migrate_id+0x440/0x440
-[   64.243284]  ? futex_wake+0x10b/0x2a0
-[   64.245302]  ucma_join_multicast+0x88/0xe0
-[   64.247783]  ? ucma_process_join+0x460/0x460
-[   64.250841]  ? _copy_from_user+0x5e/0x90
-[   64.253878]  ucma_write+0x174/0x1f0
-[   64.257008]  ? ucma_resolve_route+0xf0/0xf0
-[   64.259877]  ? rb_erase_cached+0x6c7/0x7f0
-[   64.262746]  __vfs_write+0xc4/0x350
-[   64.265537]  ? perf_syscall_enter+0xe4/0x5f0
-[   64.267792]  ? kernel_read+0xa0/0xa0
-[   64.270358]  ? perf_sched_cb_inc+0xc0/0xc0
-[   64.272575]  ? syscall_exit_register+0x2a0/0x2a0
-[   64.275367]  ? __switch_to+0x351/0x640
-[   64.277700]  ? fsnotify+0x899/0x8f0
-[   64.280530]  ? fsnotify_unmount_inodes+0x170/0x170
-[   64.283156]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
-[   64.286182]  ? ring_buffer_record_is_on+0xd/0x20
-[   64.288749]  ? __fget+0xa8/0xf0
-[   64.291136]  vfs_write+0xf7/0x280
-[   64.292972]  SyS_write+0xa1/0x120
-[   64.294965]  ? SyS_read+0x120/0x120
-[   64.297474]  ? SyS_read+0x120/0x120
-[   64.299751]  do_syscall_64+0xeb/0x250
-[   64.301826]  entry_SYSCALL_64_after_hwframe+0x21/0x86
-[   64.304352] RIP: 0033:0x7f5c994ade99
-[   64.306711] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   64.309577] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
-[   64.312334] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
-[   64.315783] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
-[   64.318365] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
-[   64.320980] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
-[   64.323515] Code: e8 e8 79 08 ff 4c 89 ff 45 0f b6 a7 b8 01 00 00 e8 68 7c 08 ff 49 8b 1f 4d 89 e5 49 c1 e4 04 48 8
-[   64.330753] RIP: rdma_join_multicast+0x26e/0x12c0 RSP: ffff8801c8207860
-[   64.332979] CR2: 00000000000000b0
-[   64.335550] ---[ end trace 0c00c17a408849c1 ]---
+Register layout of a typical TPCC_EVT_MUX_M_N register is such that the
+lowest numbered event is at the lowest byte address and highest numbered
+event at highest byte address. But TPCC_EVT_MUX_60_63 register layout is
+different,  in that the lowest numbered event is at the highest address
+and highest numbered event is at the lowest address. Therefore, modify
+ti_am335x_xbar_write() to handle TPCC_EVT_MUX_60_63 register
+accordingly.
 
-Reported-by: <syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com>
-Fixes: c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Reviewed-by: Sean Hefty <sean.hefty@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/core/cma.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/dma/ti-dma-crossbar.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -3743,6 +3743,9 @@ int rdma_join_multicast(struct rdma_cm_i
- 	struct cma_multicast *mc;
- 	int ret;
+--- a/drivers/dma/ti-dma-crossbar.c
++++ b/drivers/dma/ti-dma-crossbar.c
+@@ -51,7 +51,15 @@ struct ti_am335x_xbar_map {
  
-+	if (!id->device)
-+		return -EINVAL;
-+
- 	id_priv = container_of(id, struct rdma_id_private, id);
- 	if (!cma_comp(id_priv, RDMA_CM_ADDR_BOUND) &&
- 	    !cma_comp(id_priv, RDMA_CM_ADDR_RESOLVED))
+ static inline void ti_am335x_xbar_write(void __iomem *iomem, int event, u8 val)
+ {
+-	writeb_relaxed(val, iomem + event);
++	/*
++	 * TPCC_EVT_MUX_60_63 register layout is different than the
++	 * rest, in the sense, that event 63 is mapped to lowest byte
++	 * and event 60 is mapped to highest, handle it separately.
++	 */
++	if (event >= 60 && event <= 63)
++		writeb_relaxed(val, iomem + (63 - event % 4));
++	else
++		writeb_relaxed(val, iomem + event);
+ }
+ 
+ static void ti_am335x_xbar_free(struct device *dev, void *route_data)
