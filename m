@@ -1,215 +1,221 @@
-Return-Path: <fengguang.wu@intel.com>
-X-Google-Smtp-Source: AG47ELuUO8ChgrYoviT2DDuBEUYfleq+uWX1WGl8sSbfu6IymQVMWzkikJqxSCahiRXmtytmyj0u
-ARC-Seal: i=1; a=rsa-sha256; t=1521922430; cv=none;
+Return-Path: <ioana.ciornei@nxp.com>
+X-Google-Smtp-Source: AG47ELsGuFNC93M+VGyx41T59UNV6AGf85rerXPxz/d7pUj7NasRxlZpJ72FjuRsUtgpUEoLzEm+
+ARC-Seal: i=1; a=rsa-sha256; t=1521819592; cv=none;
         d=google.com; s=arc-20160816;
-        b=G7+XkWSx/AxhCQ4eFW2OJPEBb6u7cBkXtowKVQui6wMTwQDM1fU1Yep/ExilQwKsAk
-         rgqGiPsG2zjjik3uDWKHZBukAtcTWwZPYVY9RyrGXBin9yE+YXe56GQYyt/zHThRiwXj
-         1DiaBy1PrsqLOtg7nc+1dd9lOVk1gTNCK/Daz0l1KWq00UrCpafrWRMKzHPRIY66zbEO
-         O/b5mvCl+R8wvC+/pGPzpdL8i14ATUxQqOP36usjz3cef9VK/w2uFkk+KNERw1r+is1T
-         lun9RAs0FVBeX+zqCaVOglJR14uo1GLRhBJR+w7F+uZnYIzHm5BtlUtpjRXKPpoQ65SI
-         4mUg==
+        b=pNxJimCexu+y4tbzgsxJQoIq8wvd/mj/xGFbMo5jMkTwVJDVpU6jhlx51KPpWWVgPo
+         EtXiuucjNnWn8bqSHrV8zpeowYnuN+ejnoVkF2RAZJt7f4rC8R8FjB2XvxuZ4y9HR73+
+         95DeGucSrq0xS1AbPbrkoQgd1SGqoVV/P2McAk2O2qFwnu/inwu9PxspGaFurnGOQQJw
+         MwW/RVWegdIponwyGdmMEpJXHrKRVJYMoJoZwQufRixfxncMVLmC//89Zd0PlnvgaHB9
+         IAm/73/o5F27KPEbGuOM+fNFNxtMcqmUAPHM5ES8JVJtxJk5Jezv7s3f2Lw6n2lWYXOc
+         0r0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=bwt6RVGy/H4P5n8y264p0CO0JkE/b/tLR4+A3bn0eLw=;
-        b=VZ05gkLiq8F95jc948+FH2g5JdqTHZdbp8Q3QKdgvnZXj+hGPnCK04PTq6+W+jHSY1
-         VQn5Y5Rt5XYGhMZ9RSyx8op5jMtPNnzMsbtdyFvhO1hkI/hCgtd+jSotBNIJaJxPctB+
-         uelcQejMP1POPrbS8HR2m4MKSt924A3yrWY9VrIvMO60xnAHS2bYsn/oExuXC0jOUDEd
-         3zq2Huwgh80hrh//GqGzDQeApR763XipDu7CGjH5SdlMp7GjN8ypiN2+cI4e0dPZ5jKb
-         TWUL/VeRwh7+ykUucflB29rD5toA8a9b8oTmOHcP/peOpHWVWb4bQYrJ/RA9Zxnw0ASO
-         gH+w==
+        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=uHBo6eIFKlCv74r6Nx/6sXebOvjlN2x6+Mi0EDYwO4c=;
+        b=UIHPnF1BTeFBQi6bv31SCtEj2kOZHTPbT+aw5NHMAvVcTZU1vEKE7SpVBf6YLieYZy
+         BselmSuJCmonVNTPsgdthCEs4Vqk0Q603fXbp3UOLB+PWrYWjh6alQIWZ+L60v8auvv/
+         8g6pGtDDzT6lOkoFAvx8TqoYQEHB8HOqwu7DQltjzqjWHQeGgqtS4yZD+7jdlLu5TldS
+         phpVp9GRvowxnuJTq+mTVs8ZxWRV3whh4nvomJ6UxGsC9Bs1BtJTeimzLbShH0hDt3KZ
+         anpEAFsNlsU/5Uhe1BQNuhalqY8s0WU/mKBNrzeqPi/K1Kl5UIe+Vsm3q/af3JQrQxL6
+         kS1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=SjGxhvuh;
+       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 104.47.2.77 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,356,1517904000";
-   d="gz'50?scan'50,208,50";a="30951987"
-Date: Sun, 25 Mar 2018 04:12:47 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: kbuild-all@01.org, gregkh@linuxfoundation.org, laurentiu.tudor@nxp.com,
-	linux-kernel@vger.kernel.org, stuyoder@gmail.com,
-	ruxandra.radulescu@nxp.com, arnd@arndb.de,
-	razvan.stefanescu@nxp.com, Roy.Pledge@nxp.com,
+       dkim=pass header.i=@nxp.com header.s=selector1 header.b=SjGxhvuh;
+       spf=pass (google.com: domain of ioana.ciornei@nxp.com designates 104.47.2.77 as permitted sender) smtp.mailfrom=ioana.ciornei@nxp.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nxp.com
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ioana.ciornei@nxp.com;
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
+To: gregkh@linuxfoundation.org,
+	laurentiu.tudor@nxp.com
+Cc: linux-kernel@vger.kernel.org,
+	stuyoder@gmail.com,
+	ruxandra.radulescu@nxp.com,
+	arnd@arndb.de,
+	razvan.stefanescu@nxp.com,
+	Roy.Pledge@nxp.com,
 	Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: Re: [PATCH v3 1/4] bus: fsl-mc: move fsl_mc_command struct in a uapi
- header
-Message-ID: <201803250449.Qg2gS1qO%fengguang.wu@intel.com>
-References: <cffec87467e11ce5a8a581386d20497b6f695b71.1521818402.git.ioana.ciornei@nxp.com>
+Subject: [PATCH v3 3/4] bus: fsl-mc: add root dprc rescan attribute
+Date: Fri, 23 Mar 2018 10:38:57 -0500
+Message-Id: <7d4c4463871d4129c6c062265d83d886432af6aa.1521818403.git.ioana.ciornei@nxp.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <cover.1521818402.git.ioana.ciornei@nxp.com>
+References: <cover.1521818402.git.ioana.ciornei@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="VS++wcV0S1rZb1Fb"
-Content-Disposition: inline
-In-Reply-To: <cffec87467e11ce5a8a581386d20497b6f695b71.1521818402.git.ioana.ciornei@nxp.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Originating-IP: [192.88.168.1]
+X-ClientProxiedBy: MWHPR15CA0037.namprd15.prod.outlook.com
+ (2603:10b6:300:ad::23) To VI1PR04MB3216.eurprd04.prod.outlook.com
+ (2603:10a6:802:6::25)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: ab464a6f-5bab-41b4-14df-08d590d44fca
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3216;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3216;3:I/gpyQhlrGA5miylojJ+YLYPYsLFSXAXYceZ7EECPyA47436y8E+DDdVtnWbpLEMYDFHDDuKCDKDQR1UGcCcFtTVMP2ztfqzD6fcLp9eVpOjTPfeMk30Ags3zKNtczIsq0SMOCK216Tc+o6zBpNPLam4voze5HsaYNTWZHmtv1enkKRZHymWGRy4M13NBil3yuw2L0Y96S5JocUwxd5fqOOeLv1hoolXZfu1+IhQu50FaXvX8ZUUXOWRJuF0DVP/;25:0/nNIzSBRjKmpNDIw/DXyAx/mVCX+QM+1dN7C5rY7gyrWNWdRXQCRNYDdSguzsnJ/l8E9fiXYj4G+SBlUT9NzLeo/SkhZErHr2yV+KcZHk8gsE19CyZp9zeko5x2ITY+DTyDXonFdtnkRVaPcQE2l51oySD0M5glUQWNVutXNoBkeVxHwEVHMBMcoVgvNoCx8O48CxqDAH6maNjyeUjKNXeUOiS7Tb5pJ30Ms1n2IPziccgN+cfAIt27xjXpu3FpwXTHtOm6iTuCujOeNIRpin+Laq8mYj6sF6LPCZzbz3Up3upvPfK0bMCHqC0N5ARYBuKuZwNotBMh4hfMrNSCoA==;31:9BsPdNOE882MU9Vg90LArvVhzZO5p4q1RhY88b+SgaQeywQBkpWea5CWzdYUs78yhhyJRCnW9bOzsSLa5QxMGJHLHXkFbFSCVLITly4o+t4R68SfijX9j4nVg4UlnQ+4QiO8aBvH98YlOGzhkBVANj2JdVxmb7M3J+y2DFyRfgxmDVj4u62KfT2Td/fUmJwLq7qXXgLyPLCpsI2+20pgBX8kJn/gcp34K/0jID1QIuk=
+X-MS-TrafficTypeDiagnostic: VI1PR04MB3216:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3216;20:TwKipm6KtWLzRLKDlpWuQ/PbHDTwZ1T/Qt7qRoJn2SZqTj+0xHN5+4FQV4WEL/m5yBjfhq53Riu9ff33HT3U8DpA6eRXaNFnMCa85XzStyOERDkcG9oYyxkxfWvtcPxBqNASKlZh/m279/5Plpnn6ff+ChiziXnIcy0W/CTE3+L0W3Ix8MRMTchqWrxM9+lL/8w6/93xxsjwhZZLRHaZe2d6RHZCl4ZM4GnbOn/A8Zjmpf5cL+e9iF8NlVt0/SjciOFKuVmbUpAbd3PeBm2GSnumKDn3/YZyMUfh1Cf0/Ae5w1Y5rpY3WLVcD7RHUWEdcLEJTuETxM3gUdKP/kOykP4A2mE1Ffwk/DisOewsjsBEkyxRfoDFpnRUJd75a8azRxwC99FEOtrvjfCgc/VStOboq/k3QzPDz212PNnmZS5u+b3q7VMwE/0fwV4hJc9/TXHh7rG8XWrSoOY2CcdG2p5zRLR+ohoILvJ4mQiZZDcaa+R4rNDOcS1D5WMqMF8n;4:24QS/7Tt2vhG6PZI8L26am6ZTcNDX91VKj2/GTvMrgKzcgrxrsI4olwkrqVuEFCNVKlimz814Dw5bbzESeliabNgUSstCP7AOb0vZncG0Ka4IrJs8XIWCd2bWGTH5iXMDwmKLzsnsMyyBAxB+dHA3qci1nWE88CoKT4tW0qEjeHgHewtcQXcMDkAfu+activChv0dYjzxa0Wg92XW67w/+kVnXfhQJha6wrO/i4fsQxHReCr/lL/RyN5Kbt9HDjFwCvGL3xK5nOPcVpCVEsWiZmA0NQTLVkBoIpD0gnMgTwYvUAxFDfV2ZTgCU+qxvTk
+X-Microsoft-Antispam-PRVS: <VI1PR04MB3216D19D8EB2A2E7569A015AE0A80@VI1PR04MB3216.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:VI1PR04MB3216;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3216;
+X-Forefront-PRVS: 0620CADDF3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(376002)(39380400002)(366004)(199004)(189003)(50944005)(316002)(446003)(47776003)(66066001)(105586002)(59450400001)(5660300001)(16586007)(53936002)(6506007)(386003)(97736004)(86362001)(76176011)(305945005)(7736002)(6512007)(6486002)(3846002)(50226002)(81166006)(6116002)(16526019)(8936002)(50466002)(81156014)(478600001)(8676002)(6666003)(6636002)(118296001)(106356001)(39060400002)(48376002)(26005)(36756003)(25786009)(51416003)(68736007)(4326008)(52116002)(2906002)(11346002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3216;H:rhuath.am.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR04MB3216;23:ClpJNxlKXpH7bWxTZl3mAlP9chm0Mb5ZXuQ6R8BTS?=
+ =?us-ascii?Q?NHAKKfdpISHoNDgtgxYRCEDFW58OjyD+zGKnCq15vkOeKOcQgbShPSdbsgyd?=
+ =?us-ascii?Q?FI8Rx1SkK0XiePCMEvU9hsrl7AYZtLCbmxHBXTEkRIjqF2lcgbrlPBPGwxhH?=
+ =?us-ascii?Q?df51lY+nh5/hJDye93Mrt/W/86a638kUB7oOFOio6SI7ftXt47UmvmiuwjFB?=
+ =?us-ascii?Q?QMYKtvyxIp7l4YZurS8gwARddbQiNE5G58B20LFKhglmTLCzpHMemAWEnTdL?=
+ =?us-ascii?Q?rjJ3enML7IVNNXu/9BtL4i4ecEOKCbh9OAdOv/6HKMW+TeH3aWHioagt1d3T?=
+ =?us-ascii?Q?Ne5QLE5NpmVD4gX5ymsmXdn2SOmZxEdE4WtIkxcacpUN+xWv6Jo4xJfyIAwF?=
+ =?us-ascii?Q?vjICnqDIHTWNNkdgvVvYRSWja06bvFyDC6JeqkFpVyon3QIiL+K82p+Gyr8Y?=
+ =?us-ascii?Q?qPHCsYKUQxugMKfEf/fKbMujksceiOfQOwpQwFZFWPWlzbdnxUzBBaUKvwBh?=
+ =?us-ascii?Q?TVJHLK1GL1Iobm+abWBAetfzXVl9leWLRgCvVhK05sx9elxgSLePpgS+JPEH?=
+ =?us-ascii?Q?WTivh9MUajUsBMKPu8YmSI65vYbikLvvM4UF76Ws5KfpV4eTaEXwvLoPE42A?=
+ =?us-ascii?Q?mark0PPpMYfMP3POOxdHairT3IIYLCR1Ajw8za9T23IfFCYo4KndMFoh2W3E?=
+ =?us-ascii?Q?E73rJsQtvF1S07AD2f/P0lopQorlEO0Iowhm2u+ihEpu07AoVw1l9Mw9wDBk?=
+ =?us-ascii?Q?Ob2quapiXaI8ZAg5mQlm2t3ehwPz/BOc2YSJb301Fj+Ow8FFHuqoIES6EEen?=
+ =?us-ascii?Q?lM4ZFND63rkxnYmk1bA8HvbeLKY1SYeETd9hDIWlfXru9GVfkeokq5AXdKcS?=
+ =?us-ascii?Q?GuYqXtBpIBdWn7v4AmwCLTVmwL5OUUMwe92uMVGhyvJPxDbCGMMnaVwLwXUe?=
+ =?us-ascii?Q?ioxneDcPlqjPPNwVFEvpVxrYvDGUzMt2yv2eaOFWc9bMzur1293IYlMgpnUS?=
+ =?us-ascii?Q?70nD7z3/Hcew/8gvb89nU3leC3a4L8DXBvLSdf+liGUd8KN0awbn+DCQhnxi?=
+ =?us-ascii?Q?6qUOBQPFzMk3xoQXZgJiQ1G/9jc+gi/gokFiiBA7a1oYxYUYeVng1U2Wu/m/?=
+ =?us-ascii?Q?dWI/3QoNjVUDqQRGGijBEcd5DWKkEfL0EUmhRcHKOqmGgAh0ml4+B3lKSIfb?=
+ =?us-ascii?Q?CFUxHGwcZ9bnQnote9Lbqrpu7GE4O1Vq8lQ?=
+X-Microsoft-Antispam-Message-Info: WuKrHjZEd1ibUmc0nPuRkUzodeW6URaYR+2PMlqlQ27wTgBbfvptC1Jys9PkXJep7xkJHx8iAKHTHxwgdrIJaajiYRV+RWRhfpejt7HY7++i0X4ZHCcvM14W7XDYnou+Tst2jkvGcLEVdftr/EKZ89v8ISSvhj+AFj6I0OxL+Qr79Ob09BO1PF2CNjlLEmkV
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR04MB3216;6:o8ftoB6uNOWfBfPkkD1CZ4vKj8e8JTZr6DJiHstcMuXe5f0GwPvN4Bi6ZtZFH7S32hY7yzfa7q2WyLLuxq7PTDHlw9e0oWUPHro4zT/cC8WmDN/lpESxDm3L4WV3Rq/wqFJThEe24K2O3nUZsE/c5vzaGT7n67FLxLcF4999C1fXIHmFf8ZjBkKxyxleFfGvFONWpabyIpaFEf7mb4FV4SRpWBOfm/RPDOQSd+1UdwTlbXwtT6VYh6aGbSccJnqxV+9DaKhBDqgcF/+Owk9ZF3W6I7yKWZspDdiDBP8ngTbnCLXlFGGLPMiDyObl5EGhCtnHPHO+aDMfGVZusnn5S4QV9GJpYzeSJ6GLgcY4Fl4=;5:RgqF/LiHrbXdCY1FsTIzBGQ7Fv1+9HiPirfAgIi7HfpiJeOLjchr72WUAwzadVUebHNh8AZzFFPXtToczV4njEtF5I3nkzEggkmK59B8BNlEGVCnN9bON+olF/xikFKxTYURKWCxFtw9Of9BFeYgPn3k6XCV56E/DDDHBLUhlMw=;24:owMdv1UlczpqbNiSrt97ka4XWrq1UgeDe4Xc+0Wq8v3IY/BWW8nL6B+14pEsL+aTAJSb9sgOyJ094aIu2HmiKcD1OTsSjxEjAhyyiOCDXZw=;7:rgkQTPYlfNgfyWuFRPPDb3XtDJpmXvDLSMqQkxW4YzbU8DsMj92tM1sOcPbRJb4s7dJEDG5ngdWj0EgQL6Ug+jc0QC3xfXpalMPxA04yupRomeerUjq8/i3Nc+UPxiEZq3bnVSA7Mal7tKIE1hMKRXtVL8i/Ep0pwfDgkWfKkYTuIgkecWmvVh8QSPHQ2LF/YbWQJeeUJFLKu8PjrpvggPFrulHVLCID0hgBDc7lh0a97FVR3LwkeCw5c7FEvx3P
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2018 15:39:46.3590
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab464a6f-5bab-41b4-14df-08d590d44fca
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3216
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595743493974291957?=
-X-GMAIL-MSGID: =?utf-8?q?1595851333998606528?=
+X-GMAIL-THRID: =?utf-8?q?1595743500993999304?=
+X-GMAIL-MSGID: =?utf-8?q?1595743500993999304?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Introduce the rescan attribute as a device attribute to
+synchronize the fsl-mc bus objects and the MC firmware.
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+To rescan the root dprc only, e.g.
+echo 1 > /sys/bus/fsl-mc/devices/dprc.1/rescan
 
-Hi Ioana,
-
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on staging/staging-testing]
-[cannot apply to linus/master v4.16-rc6 next-20180323]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Ioana-Ciornei/bus-fsl-mc-enhance-Management-Complex-userspace-support/20180325-034313
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-All warnings (new ones prefixed by >>):
-
->> ./usr/include/linux/fsl_mc.h:19: found __[us]{8,16,32,64} type without #include <linux/types.h>
-
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Changes in v2:
+  - added proper documentation in /Documentation/ABI/
+  - updated the MAINTAINERS file
+Changes in v3:
+  - no change
 
---VS++wcV0S1rZb1Fb
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+ Documentation/ABI/stable/sysfs-bus-fsl-mc |  6 ++++++
+ MAINTAINERS                               |  1 +
+ drivers/bus/fsl-mc/dprc-driver.c          |  4 ++--
+ drivers/bus/fsl-mc/fsl-mc-bus.c           | 28 ++++++++++++++++++++++++++++
+ drivers/bus/fsl-mc/fsl-mc-private.h       |  3 +++
+ 5 files changed, 40 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/ABI/stable/sysfs-bus-fsl-mc
 
-H4sICCGutloAAy5jb25maWcAjFxbc+M2sn7Pr2AlVacmD5nxbRynTvkBAkEREUEyBCjJfmEp
-sjyjGlvySnIy8+9PN0CJt4b2bFU2EboB4tKXrxsN//LTLwF7P2xfF4f1cvHy8iP4stqsdovD
-6il4Xr+s/jcIsyDNTCBCaT4Cc7LevH//tL6+uw1uPl7efrz4bbe8DSar3Wb1EvDt5nn95R26
-r7ebn34Bdp6lkRxXtzcjaYL1PthsD8F+dfipbp/f3VbXV/c/Wr+bHzLVpii5kVlahYJnoSga
-YlaavDRVlBWKmfufVy/P11e/4bR+PnKwgsfQL3I/739e7JZfP32/u/20tLPc20VUT6tn9/vU
-L8n4JBR5pcs8zwrTfFIbxiemYFwMaUqVzQ/7ZaVYXhVpWMHKdaVken93js7m95e3NAPPVM7M
-fx2nw9YZLhUirPS4ChWrEpGOTdzMdSxSUUheSc2QPiTEMyHHsemvjj1UMZuKKudVFPKGWsy0
-UNWcx2MWhhVLxlkhTayG43KWyFHBjIAzSthDb/yY6YrnZVUAbU7RGI9FlcgUzkI+iobDTkoL
-U+ZVLgo7BitEa112M44koUbwK5KFNhWPy3Ti4cvZWNBsbkZyJIqUWUnNM63lKBE9Fl3qXMAp
-ecgzlpoqLuEruYKzimHOFIfdPJZYTpOMBt+wUqmrLDdSwbaEoEOwRzId+zhDMSrHdnksAcHv
-aCJoZpWwx4dqrH3dy7zIRqJFjuS8EqxIHuB3pUTr3POxYbBuEMCpSPT91UnLi7+qWVa0tnRU
-yiSEBYhKzF0f3dE1E8OB4tKiDP6vMkxjZ2tuxtZ4vaCJeX+DluOIRTYRaQVT0ipvGxhpKpFO
-YVGg9rBj5v76NC9ewElZpZJwWj//3Bizuq0yQlM2DbaRJVNRaJCGTr82oWKlyYjOVnwnIEwi
-qcaPMu8Jdk0ZAeWKJiWPbSVuU+aPvh6Zj3ADhNP0W7NqT7xPt3M7x4AzJFbenuWwS3Z+xBti
-QDD9rExAqzJtUqbgDD9stpvVr60T0Q96KnNOju3OH0Q4Kx4qZsD2xyRfqQUYMt9RWnVhJThP
-+BYcf3KUVBD7YP/+9/7H/rB6bST1ZI5BK6xuEZYaSDrOZjSlEFoUU2eKFLjMlrQDFdwlB6vg
-NKhjFnTOCi2QqWnj6Ap1VkIfMD+Gx2HWNyRtlpAZRneegq0P0dQnDC3oA0+IdVmNnzbb1PcX
-OB7YjtTos0R0kRUL/yy1IfhUhkYL53I8CLN+Xe321FnEj2j/ZRZK3pbJNEOKDBNByoMlk5QY
-/Ciej11pods8Divl5Sez2H8LDjClYLF5CvaHxWEfLJbL7fvmsN58aeZmJJ8458Z5VqbGneXp
-U3jWdj8b8uBzBS8DPVw18D5UQGsPBz/BFsNmUPZOO+Z2d93rjyZa4yjkvuDogK2SBC2rylIv
-k8MxYsxHieya3hOb9R2AgdIrWqvlxP2HT19LwJzO5QC+CJ1cUY54hOoADGWK8AtccRUlpY7b
-i+bjIitzTU7DjY4+wDLRK0ZYRC8ymYB1m1r/VYS09eInEIBKj4JsoXLKBbH0PncXUrEUbIlM
-wZjonqMoZXjZAuyouyYBSeEitwbIguVen5zrfAITSpjBGTVUJ2DtHVRgviXY14LeQ4BACgSr
-qk0GzfSgI32WI4pZ6tNlAGuAZ4bq2jAUMjUTjySO6S7d9dN9GZjiqPTNuDRiTlJEnvn2QY5T
-lkS0sNgFemjWqHpoOgb3SFKYpB02C6cSllafB72nMOaIFYX0HDtoDp/kGew72lKTFfTRTXD8
-B0V/YpRHZ2UCZc6Ch+7C+0FIM1MYLQXvkrVRu40tQhH25R+Grk5+rCUWlxcdFGNtdB1X56vd
-83b3utgsV4H4Z7UBp8DAPXB0C+C8GuPtGbxG+UiEpVVTZcE+ufSpcv0r6zd8cn+MNQta9nXC
-Rh5CSUElnWSj9nyxP+xuMRZHFOdTbgPBJuKOCnC1jCS3wMejqlkkk54jbB9M5jhaJ3hsqVIl
-nZK0J/lnqXIANCPhkSEXGtFIAL9ncyIQIYNmoi/gXGjtm5uIYG0Sj6VMuz16zgmPF30guOFq
-pGesH0BIEFH0WDA50yNN+rGcay2EIQngMOgOrhWDrYiy/1GZupSOKApwNTL9U9jfPTbY8l6L
-XZ8dMc6ySY+IqQ34beS4zEoCIELcZyFbDX2JjAIYYyMjwC4WshIMWpg6HCAn5oJSl7GqZrE0
-AkEKgR0g6H6AeAQRr/VetkdvyEKMNfjd0OWc6qOuWN7fE1w2tDoF79HiGeinYM5W9mhKzkGC
-GrK2X+x7d7CC0G7KIgVUC5sj2wm4vjEjTixmRYgAqsxhggaOuQYi1CDE94/2qqh3ISxVX5zt
-pjaK2N9FwIwOzUWFGB6pk7JKs0hAYJBjzqo3QN3qIncPLcxKTzoHIsvKRVXHbAAxeS04GtMK
-7IwZbO8YgFmelGOZdsx5q9lnMIDDbhrqud34VmDWJ8HhpqKDXAcccDplwjwOecANIp2lNPoZ
-MnsSISbGMA52SE4HJsZtsbQsTjSiAgL8PhsRBHlMSorRr6gzcJgM66tLFtanlQuObqaV+M3C
-MgFzh4ZXJCjHCWE7LAX0OVPDZOUwG9xjEHPwE6Td6va660pAlj8crZJJOvLTfBbmRmc1MB08
-Kq3JoeKFBCQGUCqfzEDFW/PNIPgCqFknO68HBHY09Y1AQAwLIXPj4KLojM+0k57iqu250xgT
-eTIbgLDkmCIqZjRi9jFTuGPgEAx4FtPq1L4q8JL63Z0AeXjy+EFXJutm5k/UAi83yrQTMx3b
-BuGDy4/ybPrb34v96in45qDl2277vH7p5BZO4yN3dcRAnaSMs061b3W+NxaoQa0sLsYwGpHm
-/WUL3Dt1Ibb1qEgGTDUY3Ay8RntdI3QkRDeb4IYP5WALyhSZujmsmm7VwNHP0ci+swKcua9z
-m9jt3c2UM5Ohyy/UrMeBhuOvUpSY2oBF2KyZn6WYUQxWnI4RSDUSEf4LPWedAWxCR9jcx25g
-ZeUi322Xq/1+uwsOP95c7ul5tTi871b79jXeI6p92E3fNmhc0XkMvEmIBAMYAf4WzbSfC7OD
-R1bMrtOsYzAmkfQYLoSrGZ4MbdYgpAF9DOl4Aucg5gYsF179nAvQ69sRWchz+R04ceNcU2VR
-lieijR8A6UBcDM5wXNJ3CmAhR1lm3IVKo0w3d7d0CP35DMFoOvJDmlJzSjVv7bVswwnG3chS
-SUkPdCKfp9Nbe6Te0NSJZ2GT3z3td3Q7L0qd0UKirDMSnjhSzWQKqCTnnonU5Gs6ZaJEwjzj
-jgUo63h+eYZaJbQXU/yhkHPvfk8l49cVfSljiZ69Q2vi6YXmzKsZtWPw3PdbRcBsYn2Jq2MZ
-mfvPbZbkskfrDJ+DSwIzQacykQHtpWWyuSJdtpKMSAYF6DbUUP72pt+cTbstSqZSlcqClghC
-uOTh/rZNt2EYN4nSnUwBTAXjN0TGIgHUSyEqGBF8hTNQLaxeN9vz7VRKHClMhQQ7qBAriyHB
-Yl0lDCPHKhV37Y1pyiHotZkP8rBDRaHD1N6ZawS8Y/RGEKcABCCJYGqHpBp6DQhNQw5uTOVm
-ELgc26dZAhCIFXT6vObyii/uai5pI2mloCt4zoG2MnSv2836sN05TNV8tRUqw6GBR5h5dtVq
-gACs/ABQ12PIvQSTgc6MaA8t72jEjB8sBDqYSM59VxaAXkCMQW39+6L964Hzk1QuNc3wVqzn
-1+qmGzqErKm3N1Qmb6p0noDXve5chzWtiPU9G+pYruiPNuT/OsIlNS9bQJJBbCPM/cV3fuH+
-17NrjDJo7Wwz6AsvHvJ+VikCqOKojCg8sSkIP9lapOM9N+LFlvmRCcphckQveI9bivuLU5Rz
-ru9xUoqlpU2eNODoNCNHIxZdd+6OVlmn4fq1EkHNcBATmnZs7mJ3oUZd5N5prgcdJEqPwc24
-zHs7FkrNIeptD9wNUmuk5gpU0p7GnCaNopIbOwVr3G562XXuz2RjUMjCsKiMt7BuKguDgeOo
-7ET+E60I5mOlhE0nuOvzsLi/ufjjtmVXiCyJP6J2eU4TQ5w+Yzml9+3qqklH+3kiWGrdP51B
-8oQfj3mW0Zn4x1FJg7FHPbwIOcYY9fHbWqZj1rzjakRh3SaInCdKATcyAn2NFfPckli7iAil
-GskMS42Kosz7p94x0VjagcHx7P62JS7KFLThtUfh0k7eCcAW+MM2Fy4BkqdZ6twlbaUfq8uL
-Cyo9+Vhdfb7oKM1jdd1l7Y1CD3MPw/QjrrjAwgj6QlDMBXXSqE2Sg5GDoyzQOF/2bXMhMP9r
-E8nn+tt7Geh/1ete35VNQ03fiXIV2kzCyCe/YFjxYiIJDXVp6eDH9t/VLgD4sfiyel1tDjaC
-ZzyXwfYNa3E7UXydnaNtCy0pOpKDb4L4B9Fu9Z/31Wb5I9gvFy89xGNRciH+InvKp5dVn9lb
-U2MFGU2GPvHh/WSeiHAw+Oh9f1x08CHnMlgdlh9/7SAxTqFWaLWlv4mwZX/YdiwR4ounFQI7
-YFkFy+3msNu+vLiiobe37Q4m6vjC1X79ZTNb7CxrwLfwH7rLgu1i8/S2XW8OvTkhGLaO9lxC
-lsqAucrd+nao3cGTmkAJJUlZ4qmFA9GmA89UmM+fL+iQNefoJv2G50FHo8Hpie+r5fth8ffL
-ypafBxZUH/bBp0C8vr8sBrI8AierDObXyQ/VZM0LmVNu0iWVs7KTQq07YfO5QZX0JFIwbMa7
-KirMc7bgul+8WWcHZdbzMrC/gy0KV/+sQRjD3fofd/ffVL6ul3VzkA3VvnT3+rFIcl84J6ZG
-5Z78O5jHNGSY+PcFVXb4SBZqxgp3C02ffjQDRWOhZxLokWe2vInax9ZcsaQhLOTUuxjLIKaF
-J+PoGDDNWA8Dhh4ifnp5IK2tPB3t8I81hmCh4LOSk2nuNhdefXmKPJE8LROs9h5JgIpSdAs6
-QN9tkXgI+xxFREYXzeCTlZSOEChDn0kWEXN1d0xY/X+q9QcEWD98aE7eNQ1mkE6V6Js/td4v
-qWnBMasHTJ+TkwMUlWQak8IIgPob25xRwTwpRdDUqjCatmH8ipy+EHA0qmXim+lYSvXHNZ/f
-DrqZ1ffFPpCb/WH3/mordfZfwSE8BYfdYrPHoQLwk6vgCXZi/Yb/edwb9nJY7RZBlI8Z2L7d
-67/oR562/25etoun4HX79A728AM63PVuBZ+44r8eu8rNYfUSgAUJ/ifYrV7s652eb2pYUDKc
-lTjSNJcR0TzNcqK1GSje7g9eIl/snqjPePm3b6c7CH2AFQSqQTMfeKbVr32Th/M7DdecDo89
-OGue2EspL5FF5dESZJ4kCLL1qr0bFaI+0DbyMjwVHWuuZa0HrYM6eWgtEfR1YmZs8928KMYB
-NmQ6rqc/LC2Wm7f3w/CDDVhI83KoAjGcoZVC+SkLsEsXRmJt9P/PaljWTgUDU4LUOg7KsliC
-IlBWwhg6oQfW1leICKSJj4azAtyOrqaHrJp9yZWsXIGo5+5mdi7ASqc+k5Tzu9+vb79X49xT
-KZmCyfISYUZjFzn6c7OGwz8eOA9RHe/fpzo5ueKkeHiqqXVO3zjoXNGEWNPteT6U2dzkwfJl
-u/zWN2ViY/EhBF6oihjpAEzCJ0QYi9kdAayiciz1O2xhvFVw+LoKFk9Pa8REixc36v5jB3/L
-lJuCjr/wGHxKP/NgX0zuVmzqqRq2VAznaYDp6Hh1nNACH898ZfImFoVi9DqOTziodJQetV+m
-NQepqXLNEQf4QbGPeskZ5/PfXw7r5/fNEnf/aIOeTqa8sWJRaCEfbeKQWGS6ErQkxgaxCQTi
-197uE6FyDyJFsjK31394LsKArJUvzmGj+eeLi/NTx7jdd58IZCMrpq6vP8/xboqFnvtZZFQe
-i+AKtIwHmioRSnasRRgc0Hi3ePu6Xu4pzQ+7F+AOqPA8+MDen9Zb8NqnyoFfB69/HbMKg2T9
-926x+xHstu8HADydU+feEiT4NPpawr7a/tFu8boK/n5/fgZnEQ6dRUQrLBYtJdY5JTyktuTE
-OR0zzO554oGsTKn7jBIUKYsxlSCNSewFl2Stwj+kDx4PY+MpzR/zjuMv9TBIxjaLJJ+6gAjb
-868/9viSO0gWP9CLDvUMvwaGkvY6WW7pcy7klORA6piFY4/pMhAj0eKLHcskl15fW87oE1PK
-ow9CaW+2LxUQZIqQ/pIrp5U2sHogDlGEjB9Dcs2LsvXO1pIGB1iA9QFR7TYofnlze3d5V1Ma
-VTX4Xo1pT1SqGBE8usBfMQj2yIwe1v5glRa93HIeSp37XhOVHpNirxAIQNlhkBmcQ1oO5qrW
-y912v30+BPGPt9Xut2nw5X0F4QJhYlxYjZbPe6cAejiWnopSe3NW1+pQcXfL0kDUJk68vscn
-ScLSbH6+/CeeHUu1hgDWIha9fd91vNxxDslEF7ySd1efW8WR0CqmhmgdJeGptTlOA5MEwOJ5
-ExE7TFhx9V8YlCnp4o4Th1H0gz2hagbQP09AIpNRRofbMlOq9PqiYvW6PawwFKRMFyZoDEbf
-fNjx7XX/heyTK32UVb8pn8lieKmv4TsftH0fGWQbiE3Wb78G+7fVcv18yrSdjC97fdl+gWa9
-5X27PNpBBL/cvlK09Uc1p9r/el+8QJd+n2bWZTqX/pQHTL0yw5z9HEs9v/vGnOP7mHk19bzT
-zK1+9TP6jVTMjRfj2BtiWhw8p5LPhi4f80NLOIRhyMxA98dgrRWbV2nRLjg9UqbXlfTc1Mkc
-S8h9bsnCdPu2pMgSXxgYqaFEoo9tv68dJAp9ThhQdDXJUoYu88rLhbFOPmfV1V2qMK6inWSH
-C8fzBxzccxGo+BCBEOUulGkv2NCLsc3Tbrt+arMBwCsySUPzkHluHrwhvzZ0u7vMNDTYtFk3
-kuCJWLX02DedSNWTJYdXjym9cKh4IvRkyo/JdFir7542BI9VFSNaZUMejpivijYbJ+L0CSKR
-+WW3aCUiO3m7CO9mnGS3vFvoivYgFG+9TmvtZP2elnE6PhVzdAnA5gozfDk4W42OHD5EACPU
-dTK+CopI2/dMnmzSGZp0tMr7KDliZ3r/VWaGljJL4YbeF7wmiPRN5bmYibDc0UPLALwB7uuR
-60vN5ddexKQHVRdO2fer96etvY9rjryxHeCNfZ+3NB7LJCwEfRL4QsJ34YRPt2n45f76zXlq
-5UWT7l8gJZ4B7HUBSpl7X0ozpclwS+vXul8Xy2/dP9Zg/2YUeK8oYWPdCh9sr7fdenP4ZvNY
-T68rADENwG8mrDMr9GP713NOFZK/nyq0QdewwmzAcVMf9vb1DY7vN/uXJeDcl9/29oNL176j
-ggp3P4ZFTLS22mqyCmwH/nWuvBAcYmXPG3LHqkr755ME+Y7DlcnjaPeXF1c3bXNeyLxiWlXe
-59z4gMN+gWna9Jcp6AhmYdQo87w6dwV6s/TsbWJXYI7yJvAuU7uVDV9da/e8FaVKYQLu/xq5
-luY2YSD8V3zsodPJ49IrxthRDYIAtpNcPG3Hk8mhmUwazzT/vvuQAIldJbfEuwjQY1mtvu+T
-53rkxN1aW6X+556mJmGWItt6JJWSjGP+A3M5PF0LmmKikp+RFSThr++L1enX+fExhrFiPxFJ
-otOia6QppXd3U5uutloY52bamujdsdZS5FUvkUWssiHdS8JXtITemo+RtyTuwDzDXacFFfba
-S/C6obTjfGArEiEiA0OieYe0RN2P9KvS02LwX5ckFCS9jDenXvomOpJ1AASYF4sS9rnnFw4j
-Nz+fH8PdSb3uI+avHKvnDGHlcdAIod2ymIzodLgVS9yTOWdhIcAqq6PUQrLHWFc24rYX0SIz
-4JkaJtnMswf132bxL+pyvMO2KBpJsQe7fFyViy9/X56e6Sjj6+LP+e307wR/INrpW4h3cmMp
-VCzi6YXCIkm0xOHATqjYcGgyJZlmX0riEhGgrffpPI4awBJs4ia+SldCl33wLHAb4sp3RbnW
-yWV0U5iGAwdNnmpDP7jGtLKVE4yUG8EYj7JHO9sVBXLOEkeJLlBxoEu9qaaM5KKy+cijS0Vj
-LwOQmiN5C+9ie5MJGRJKQMmfFZoNmkLUh+OBTH8iWCQ9PtWMPl6kgnXrwnhqkTidtWOrf5R9
-R8YqGMqmAtHZoo9PcAaVBEWfNJTeIKdYbGCwbtqsuZF9vHKFqOwRGomgL8k6OHPFNGXIG2G7
-GLk4mCs/AwtUxOoL7sLKE6AnqTYu9LEDxl7URzaQ0ZDHHvUDKp462H5c9J6WutTpRZmKZb0a
-Ge09ho6samSe9MiD325WwcEC/p9KP3bLLrPQMmQPKPTFhO5JoWzA7bOjrY9Wk6Aij3SqsycK
-RMd4viI408KSPSQfy7pjsoQigMbY+4TEFpX+e4QI6qevo09qxcqlHJb20PWH3BcbdqKo/aaN
-VVWZWlmVpmbxWzo2O17cfb8YE47YVkyYcqFtxwK6V7KVOHLXMxvdbAoXHg3KLm7w4PulfWyE
-Ex16zMWy6SNOs6m8year0BczvETdRNQ2Ggv47ih15oGeeVwrIXlnD8bCTk5nbMeOyNbuBkjX
-6ff59entXdpKb4t7pcZR5LvW9PcQgYqOas0kCpH01cpAgX6Rlo/0EJ+9MMAcCRyN0vh02YRV
-FVtDbVwsu+nCtvuA6eM2POZBV+1aGpu1LggEEFVOiOfAAnfdoPvUtzZv7mFM64pefA61RZey
-sIp1DUPtlJ+XRlAUReC+h21HpujnUWkKZQ5I27ApTagplrf5Mc9NL88AsF7KrE+8rr+8WBkZ
-Bo9m00Nuo1mv5XMBsMg0fDDIUJnSLKk5TVM3l+n4pJDrFGUZIi9wyMePMaXJ11fp7PvuAVXj
-E6bjMv8hztQOh27KPuSfMHbHTMHOSbOMa2xTJjY9mGisTIt7Wa28jS509K5iUCHtUTpmtZK3
-z6QmrEpDOjaiZox5dfF07gjEYwJVHwxjdiOOz3/UCHimcmAAAA==
-
---VS++wcV0S1rZb1Fb--
+diff --git a/Documentation/ABI/stable/sysfs-bus-fsl-mc b/Documentation/ABI/stable/sysfs-bus-fsl-mc
+new file mode 100644
+index 0000000..e530e8c
+--- /dev/null
++++ b/Documentation/ABI/stable/sysfs-bus-fsl-mc
+@@ -0,0 +1,6 @@
++What:		/sys/bus/fsl-mc/devices/dprc.*/rescan
++Date:		March. 2018
++KernelVersion:	4.16
++Contact:	Ioana Ciornei <ioana.ciornei@nxp.com>
++Description:	Root dprc rescan attribute
++Users:		Userspace drivers and management tools
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 861cf1d..e179dc6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11486,6 +11486,7 @@ F:	drivers/bus/fsl-mc/
+ F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+ F:	Documentation/networking/dpaa2/overview.rst
+ F:	include/uapi/linux/fsl_mc.h
++F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
+ 
+ QT1010 MEDIA DRIVER
+ M:	Antti Palosaari <crope@iki.fi>
+diff --git a/drivers/bus/fsl-mc/dprc-driver.c b/drivers/bus/fsl-mc/dprc-driver.c
+index 52c7e15..be80e3a 100644
+--- a/drivers/bus/fsl-mc/dprc-driver.c
++++ b/drivers/bus/fsl-mc/dprc-driver.c
+@@ -214,8 +214,8 @@ static void dprc_add_new_devices(struct fsl_mc_device *mc_bus_dev,
+  * populated before they can get allocation requests from probe callbacks
+  * of the device drivers for the non-allocatable devices.
+  */
+-static int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
+-			     unsigned int *total_irq_count)
++int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
++		      unsigned int *total_irq_count)
+ {
+ 	int num_child_objects;
+ 	int dprc_get_obj_failures;
+diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+index 0ade415..9d02984 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-bus.c
++++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+@@ -137,8 +137,36 @@ static ssize_t modalias_show(struct device *dev, struct device_attribute *attr,
+ }
+ static DEVICE_ATTR_RO(modalias);
+ 
++static ssize_t rescan_store(struct device *dev,
++			    struct device_attribute *attr,
++			    const char *buf, size_t count)
++{
++	struct fsl_mc_device *root_mc_dev;
++	struct fsl_mc_bus *root_mc_bus;
++	unsigned long val;
++
++	if (!fsl_mc_is_root_dprc(dev))
++		return -EINVAL;
++
++	root_mc_dev = to_fsl_mc_device(dev);
++	root_mc_bus = to_fsl_mc_bus(root_mc_dev);
++
++	if (kstrtoul(buf, 0, &val) < 0)
++		return -EINVAL;
++
++	if (val) {
++		mutex_lock(&root_mc_bus->scan_mutex);
++		dprc_scan_objects(root_mc_dev, NULL);
++		mutex_unlock(&root_mc_bus->scan_mutex);
++	}
++
++	return count;
++}
++static DEVICE_ATTR_WO(rescan);
++
+ static struct attribute *fsl_mc_dev_attrs[] = {
+ 	&dev_attr_modalias.attr,
++	&dev_attr_rescan.attr,
+ 	NULL,
+ };
+ 
+diff --git a/drivers/bus/fsl-mc/fsl-mc-private.h b/drivers/bus/fsl-mc/fsl-mc-private.h
+index 00cca7d..c1fc80e 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-private.h
++++ b/drivers/bus/fsl-mc/fsl-mc-private.h
+@@ -545,6 +545,9 @@ int __must_check fsl_mc_device_add(struct fsl_mc_obj_desc *obj_desc,
+ 
+ void dprc_driver_exit(void);
+ 
++int dprc_scan_objects(struct fsl_mc_device *mc_bus_dev,
++		      unsigned int *total_irq_count);
++
+ int __init fsl_mc_allocator_driver_init(void);
+ 
+ void fsl_mc_allocator_driver_exit(void);
+-- 
+1.9.1
