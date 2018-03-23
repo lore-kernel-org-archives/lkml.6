@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802257-2-15919284808325271868
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802246-2-17315460199884288567
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802256; b=GYCuksH3UahDX3nCL3mkBr+fzblHVj+U6bOt3lWmY/dOjCi
-    IZuqbq9rj3n9Xqwu8ctKLcpdJMMeL3HyqYqQX8a+pFxZIbPSrtLfcquUZgf+Qj5W
-    A7DiTxEQvg1E7drIseeAWlp3EjEWSdcREvlAjLsmHqlY3nJlLEwjMbC7wWYdydKA
-    YvrvtBhw4znAQ71CwxdqEhPyRE/GH8WnnzRnmz7l+JJCtV92QnKsvmBqKGR5eKod
-    ExjjZV/X5Z6894/K4qmeqLwqP7UEhLo6d6fqpRkBXjIIu/1IXJsy202zIa4L+2Uf
-    50Xlydpalzdyrz64e1MHdzHluR6u0n7tOXMQyLg==
+    t=1521802246; b=tZ8EowYUAFWTlL8bcOTj+PT4Hbiy+995Vh7hIf5kJfuwAPt
+    1YasvFQC4p8il71rq13oaFrHEf2FCDyO6+mO12rxwxXEYr1j/724+1CP5q+ovLL6
+    T8+ENLs+i/SlNPBVW9dg2ZHZInzoW20epWZutRweIf4xhKsW4BVtARjeKK7MutJp
+    TUiX8hbejYWWAzGk1jymZaC/8LGe/HdiMmUexZESWV2QqTi6lQZUvKlzkAaSoGf5
+    pig/2lNjwgXJzcJkQvvh427sEWyMpF+jVkq7iSccx4FyOWBZLHnZuEZPr8/U/lgs
+    xeDLdSO55RohcHv+l5zlkjSurDyqktNxtEcd5KQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802256; bh=PPWXRL91QQItJNGmVDOyn+TL+3
-    b3USnW5xToDo/EVC4=; b=Con2lEx+4glEfh9TiEQ8lYskDPPDsGe1xCw4/YlBMF
-    i9wgrvXX6IKBlI5f5UtwHOt/CoS5A3o9HKZV1aMXM6c6FBtOE7C41zyDmdXMTgXo
-    IgCEYZUbo3k3xCr9oEoVg9t4Dom7wYTx6jD5yPu+ftEsj5aeHlBlnZHokfDhVIa2
-    9DIDFBijmUVkbzE537kkrAn2pFtQd+vlAZ2m9imwMLqZsmL7l2HpaQe2GpnMqACe
-    WUYDDr9xWcbZJPuKg+NpWZI1U+jLLK9hvwYS6sQccMra3Q+YjxWisf3MYLB9LFqP
-    Nuj4amq1lJku+Bl/pWm5wWl6g4sp9Sv4MWlRg5ilYsNw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521802246; bh=Ji9IapHMJPVnSaRvhrUDyfggDt
+    rlq3GCUVz5Te/QCyI=; b=Wvr87prZogP1rPtyCM8zEHfUn02JbVTKmNX0B51KW7
+    0oIJHGkzrpbjK/z0/oftS+01PpRSzCWLEN7QS7k9OGAB6LpfOrXs3jyCgiMwi6JK
+    OnryXu0L1Fch7yvHwXBNZwYP3YAT5QrMUz4LRZSZpmLhDNmaUC9rNeiLqZxvHu4z
+    FK5XppRUA82M7Xa1l2YjiwrS1Oy7r+35465XAeL8lHRMGWoU3uIk8P53nnLi7TGj
+    SnSThg1N+n+E3vyQpp647j3Pg/TW+zgzz+KBlM0PyIbAN5jnRHLYAN35lpaIgGHR
+    p7ofY7Lxdi+mlMzsR15b5qEX/uwB1gzrp+KtuPGAWMBQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,25 +50,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752392AbeCWKuo (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:50:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45288 "EHLO
+        id S1755791AbeCWKOe (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:14:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45238 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755766AbeCWKOe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:14:34 -0400
+        with ESMTP id S933313AbeCWKOc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:14:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
-        Michael Brunner <Michael.Brunner@kontron.com>,
-        Viktor Krasnov <vkrasnov@dev.rtsoft.ru>,
-        Jean Delvare <jdelvare@suse.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
+        Joerg Roedel <jroedel@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 16/97] i2c: i2c-scmi: add a MS HID
-Date: Fri, 23 Mar 2018 10:54:03 +0100
-Message-Id: <20180323094158.399312214@linuxfoundation.org>
+Subject: [PATCH 4.4 25/97] iommu/omap: Register driver before setting IOMMU ops
+Date: Fri, 23 Mar 2018 10:54:12 +0100
+Message-Id: <20180323094159.033214117@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -86,64 +82,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+From: Suman Anna <s-anna@ti.com>
 
 
-[ Upstream commit e058e7a4bc89104540a8a303682248614b5df6f1 ]
+[ Upstream commit abaa7e5b054aae567861628b74dbc7fbf8ed79e8 ]
 
-Description of the problem:
- - i2c-scmi driver contains only two identifiers "SMBUS01" and "SMBUSIBM";
- - the fist HID (SMBUS01) is clearly defined in "SMBus Control Method
-   Interface Specification, version 1.0": "Each device must specify
-   'SMBUS01' as its _HID and use a unique _UID value";
- - unfortunately, BIOS vendors (like AMI) seem to ignore this requirement
-   and implement "SMB0001" HID instead of "SMBUS01";
- - I speculate that they do this because only "SMB0001" is hard coded in
-   Windows SMBus driver produced by Microsoft.
+Move the registration of the OMAP IOMMU platform driver before
+setting the IOMMU callbacks on the platform bus. This causes
+the IOMMU devices to be probed first before the .add_device()
+callback is invoked for all registered devices, and allows
+the iommu_group support to be added to the OMAP IOMMU driver.
 
-This leads to following situation:
- - SMBus works out of box in Windows but not in Linux;
- - board vendors are forced to add correct "SMBUS01" HID to BIOS to make
-   SMBus work in Linux. Moreover the same board vendors complain that
-   tools (3-rd party ASL compiler) do not like the "SMBUS01" identifier
-   and produce errors.  So they need to constantly patch the compiler for
-   each new version of BIOS.
+While at this, also check for the return status from bus_set_iommu.
 
-As it is very unlikely that BIOS vendors implement a correct HID in
-future, I would propose to consider whether it is possible to work around
-the problem by adding MS HID to the Linux i2c-scmi driver.
-
-v2: move the definition of the new HID to the driver itself.
-
-Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
-Signed-off-by: Michael Brunner <Michael.Brunner@kontron.com>
-Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-scmi.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/iommu/omap-iommu.c |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
---- a/drivers/i2c/busses/i2c-scmi.c
-+++ b/drivers/i2c/busses/i2c-scmi.c
-@@ -18,6 +18,9 @@
- #define ACPI_SMBUS_HC_CLASS		"smbus"
- #define ACPI_SMBUS_HC_DEVICE_NAME	"cmi"
+--- a/drivers/iommu/omap-iommu.c
++++ b/drivers/iommu/omap-iommu.c
+@@ -1295,6 +1295,7 @@ static int __init omap_iommu_init(void)
+ 	const unsigned long flags = SLAB_HWCACHE_ALIGN;
+ 	size_t align = 1 << 10; /* L2 pagetable alignement */
+ 	struct device_node *np;
++	int ret;
  
-+/* SMBUS HID definition as supported by Microsoft Windows */
-+#define ACPI_SMBUS_MS_HID		"SMB0001"
+ 	np = of_find_matching_node(NULL, omap_iommu_of_match);
+ 	if (!np)
+@@ -1308,11 +1309,25 @@ static int __init omap_iommu_init(void)
+ 		return -ENOMEM;
+ 	iopte_cachep = p;
+ 
+-	bus_set_iommu(&platform_bus_type, &omap_iommu_ops);
+-
+ 	omap_iommu_debugfs_init();
+ 
+-	return platform_driver_register(&omap_iommu_driver);
++	ret = platform_driver_register(&omap_iommu_driver);
++	if (ret) {
++		pr_err("%s: failed to register driver\n", __func__);
++		goto fail_driver;
++	}
 +
- ACPI_MODULE_NAME("smbus_cmi");
- 
- struct smbus_methods_t {
-@@ -51,6 +54,7 @@ static const struct smbus_methods_t ibm_
- static const struct acpi_device_id acpi_smbus_cmi_ids[] = {
- 	{"SMBUS01", (kernel_ulong_t)&smbus_methods},
- 	{ACPI_SMBUS_IBM_HID, (kernel_ulong_t)&ibm_smbus_methods},
-+	{ACPI_SMBUS_MS_HID, (kernel_ulong_t)&smbus_methods},
- 	{"", 0}
- };
- MODULE_DEVICE_TABLE(acpi, acpi_smbus_cmi_ids);
++	ret = bus_set_iommu(&platform_bus_type, &omap_iommu_ops);
++	if (ret)
++		goto fail_bus;
++
++	return 0;
++
++fail_bus:
++	platform_driver_unregister(&omap_iommu_driver);
++fail_driver:
++	kmem_cache_destroy(iopte_cachep);
++	return ret;
+ }
+ subsys_initcall(omap_iommu_init);
+ /* must be ready before omap3isp is probed */
