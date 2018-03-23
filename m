@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuPzZBF2iM3AesS8MvpBpRhpGLH/ZF9z64sorNX+aiAEXiCaN5ux5Tc/E7maWJzQyPPKoSZ
-ARC-Seal: i=1; a=rsa-sha256; t=1521800401; cv=none;
+X-Google-Smtp-Source: AG47ELsrn563knfm6NXb4AURsr6333GjnW1NfFRw6Yc0MzbT1D+YfgHxRuYTvNrqpM0fizYP2ZYv
+ARC-Seal: i=1; a=rsa-sha256; t=1521800398; cv=none;
         d=google.com; s=arc-20160816;
-        b=JSATaIU7knkpSGqAb/jbewkOILe+zHCD++IVEc1k8vopvsIi2AwrqSlbBj1lohUezH
-         Y38R2VU3clIDGr5k9jqbyQjgOwbFNP577whQZfZDt54JJ8wR+wDTwG69XO3pc9WUDoMT
-         yf67XCxgHvlaKR2mZgpw38VsG4GOZ5RhcIiWEQcEZltUYCbki47fg16/ZwzDWS2w+ve4
-         KwpcelvW9tdeYloBPERALpFDuUL2abtgPEnjB0MWY9xS+PFuWOzxQi/AxAOyTbkMTw7u
-         ulXre/E2UHO0dcnlx1xC6jHK+d12hKsGV+4Kuq+qGn+yejRVI+pW/5a/aVR56FbwZJC4
-         x9sQ==
+        b=e2jdBTrCUIMHpC4Dn3vCDKdvZahNvidjLYuBFmDXi41rvuKygBQGE5To5IUdN7Dc8o
+         LVdIk6zC0nkdE1rS1dtkxHzdJaMQPcbTFhy51dwWX/qTM4Ez0hEKIeQXSElPmPESO40R
+         YjD+VbunPgNWXAn+nHuQz3brGRroDvlrx1uv/uNpAmBeeZf99qeyDbjsHkHHZ/vq32xX
+         0Z/cbFIDZEadIMRBwdBmzNd++U51Honqy+VzkYt7++SzWtJXW7EY8ox0VdxrMp1Ql1E2
+         lxafSAy1nU4Zf6M/OmyhfMgDQdXLm2rQWpQBAv76bg/g+5sQXCTyYhpfZSUJ56cqF1Bk
+         D2KQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=u38D1Q1/OaZCSbWSFtTuLI1BVKhqK9/10mc4VuVuB6E=;
-        b=APTd00TZ7o7B596gIRmqa3jhAdMtVzoFfTIloC1SiUHH9eOtkiYpEbREYoXbliCqvb
-         qyh+Zo+EJ9k0w6MB/GYqiCSih7TZZOKiJLRvoYvUea50gJDCjRGkM6HQN7C7s8Hh7O0R
-         uj3gpY7qJ0M1TkrSNUQz5caOgEbgIk0kQgaX/KxKI7yRoNISLops9jMgi24FLOm1LAga
-         OAWAIh0/jEqWhAjRvskGj8ag0oKCpcJ59Me98ItMY/7/a2fg3mwX//cpZz5fn/WL+PBo
-         pCqvFx85njRJXP6FXcTvd1VvMxeXqxuNoQoVg0TPAhNR9iFXUNlF8Qns3g7MlKStc8ad
-         9Oww==
+        bh=+wjdX+L1JfxMA6j+CMSiFmsyp0EXSHY8eGnV28IIRvM=;
+        b=ns3QMytBLjj3/Dd2IHGzYFwTnNsZoriOEJqrysDFAKerlKUpf+UtugUppNwZC0o56g
+         +dZ3YkgYhA7SkerpF5guVwx2gH/665pMFtIvAp0dkeUm36gy0F5UFR9MHMZekN9Lxp07
+         tC2goBvsCwX/AsMwgaLwak4rK9FR+lw3en8xi9HwDAH4jwq0fhGTawtDH//dMR4aVwh7
+         2edXm45yX78Fm6zs05FzgBz4h+uOU5moKgNOMha3Gmoqu4jQf+qJOdHmUiIC+FUJ6BgY
+         f0+bs1e0RkphJEsyaMHqDvx8cLczOu08igLjqgANNdrN37eDTKSKQV3vNbTN0L+j9Vfy
+         dcBA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Erez Shitrit <erezsh@mellanox.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Daniel Drake <drake@endlessm.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 41/47] IB/ipoib: Avoid memory leak if the SA returns a different DGID
-Date: Fri, 23 Mar 2018 10:55:32 +0100
-Message-Id: <20180323094249.870367274@linuxfoundation.org>
+Subject: [PATCH 3.18 40/47] mmc: avoid removing non-removable hosts during suspend
+Date: Fri, 23 Mar 2018 10:55:31 +0100
+Message-Id: <20180323094249.825988801@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722007480729726?=
-X-GMAIL-MSGID: =?utf-8?q?1595723377795453515?=
+X-GMAIL-THRID: =?utf-8?q?1595722014093884855?=
+X-GMAIL-MSGID: =?utf-8?q?1595723374292371321?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +50,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Erez Shitrit <erezsh@mellanox.com>
+From: Daniel Drake <drake@endlessm.com>
 
 
-[ Upstream commit 439000892ee17a9c92f1e4297818790ef8bb4ced ]
+[ Upstream commit de8dcc3d2c0e08e5068ee1e26fc46415c15e3637 ]
 
-The ipoib path database is organized around DGIDs from the LLADDR, but the
-SA is free to return a different GID when asked for path. This causes a
-bug because the SA's modified DGID is copied into the database key, even
-though it is no longer the correct lookup key, causing a memory leak and
-other malfunctions.
+The Weibu F3C MiniPC has an onboard AP6255 module, presenting
+two SDIO functions on a single MMC host (Bluetooth/btsdio and
+WiFi/brcmfmac), and the mmc layer correctly detects this as
+non-removable.
 
-Ensure the database key does not change after the SA query completes.
+After suspend/resume, the wifi and bluetooth interfaces disappear
+and do not get probed again.
 
-Demonstration of the bug is as  follows
-ipoib wants to send to GID fe80:0000:0000:0000:0002:c903:00ef:5ee2, it
-creates new record in the DB with that gid as a key, and issues a new
-request to the SM.
-Now, the SM from some reason returns path-record with other SGID (for
-example, 2001:0000:0000:0000:0002:c903:00ef:5ee2 that contains the local
-subnet prefix) now ipoib will overwrite the current entry with the new
-one, and if new request to the original GID arrives ipoib  will not find
-it in the DB (was overwritten) and will create new record that in its
-turn will also be overwritten by the response from the SM, and so on
-till the driver eats all the device memory.
+The conditions here are:
 
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+ 1. During suspend, we reach mmc_pm_notify()
+
+ 2. mmc_pm_notify() calls mmc_sdio_pre_suspend() to see if we can
+    suspend the SDIO host. However, mmc_sdio_pre_suspend() returns
+    -ENOSYS because btsdio_driver does not have a suspend method.
+
+ 3. mmc_pm_notify() proceeds to remove the card
+
+ 4. Upon resume, mmc_rescan() does nothing with this host, because of
+    the rescan_entered check which aims to only scan a non-removable
+    device a single time (i.e. during boot).
+
+Fix the loss of functionality by detecting that we are unable to
+suspend a non-removable host, so avoid the forced removal in that
+case. The comment above this function already indicates that this
+code was only intended for removable devices.
+
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/mmc/core/core.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -488,6 +488,22 @@ static void path_rec_completion(int stat
- 	spin_lock_irqsave(&priv->lock, flags);
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -2656,6 +2656,14 @@ int mmc_pm_notify(struct notifier_block
+ 		if (!err)
+ 			break;
  
- 	if (!IS_ERR_OR_NULL(ah)) {
-+		/*
-+		 * pathrec.dgid is used as the database key from the LLADDR,
-+		 * it must remain unchanged even if the SA returns a different
-+		 * GID to use in the AH.
-+		 */
-+		if (memcmp(pathrec->dgid.raw, path->pathrec.dgid.raw,
-+			   sizeof(union ib_gid))) {
-+			ipoib_dbg(
-+				priv,
-+				"%s got PathRec for gid %pI6 while asked for %pI6\n",
-+				dev->name, pathrec->dgid.raw,
-+				path->pathrec.dgid.raw);
-+			memcpy(pathrec->dgid.raw, path->pathrec.dgid.raw,
-+			       sizeof(union ib_gid));
++		if (!mmc_card_is_removable(host)) {
++			dev_warn(mmc_dev(host),
++				 "pre_suspend failed for non-removable host: "
++				 "%d\n", err);
++			/* Avoid removing non-removable hosts */
++			break;
 +		}
 +
- 		path->pathrec = *pathrec;
- 
- 		old_ah   = path->ah;
+ 		/* Calling bus_ops->remove() with a claimed host can deadlock */
+ 		host->bus_ops->remove(host);
+ 		mmc_claim_host(host);
