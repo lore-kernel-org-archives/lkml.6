@@ -1,95 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752400AbeCWWPG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 18:15:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33078 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751880AbeCWWO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 18:14:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 140BB2184B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180323221427.994060310@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Fri, 23 Mar 2018 18:13:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH 4/4] selftests: ftrace: Add a testcase for probepoint
-References: <20180323221311.405667933@goodmis.org>
+        id S1752169AbeCWWSP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 18:18:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39001 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751715AbeCWWSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 18:18:14 -0400
+Subject: Re: [PATCH v3 2/2] x86, cpuid: allow cpuid_read() to schedule
+To: Eric Dumazet <edumazet@google.com>, x86 <x86@kernel.org>
+Cc: lkml <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@redhat.com>, Hugh Dickins <hughd@google.com>
+References: <20180323215818.127774-1-edumazet@google.com>
+ <20180323215818.127774-2-edumazet@google.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <3622b64c-bae6-00db-6a61-3ccf760144aa@zytor.com>
+Date: Fri, 23 Mar 2018 15:17:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0004-selftests-ftrace-Add-a-testcase-for-probepoint.patch
+In-Reply-To: <20180323215818.127774-2-edumazet@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+On 03/23/18 14:58, Eric Dumazet wrote:
+> I noticed high latencies caused by a daemon periodically reading various
+> MSR and cpuid on all cpus. KASAN kernels would see ~10ms latencies
+> simply reading one cpuid. Even without KASAN, sending IPI to CPU
+> in deep sleep state or blocking hard IRQ in a a long section,
+> then waiting for the answer can consume hundreds of usec or more.
+> 
+> Switching to smp_call_function_single_async() and a completion
+> allows to reschedule and not burn cpu cycles.
 
-Add a testcase for probe point definition. This tests
-symbol, address and symbol+offset syntax. The offset
-must be positive and smaller than UINT_MAX.
+That being said, the Right Way for a daemon to read multiple MSRs and
+CPUIDs on multiple CPUs is to spawn a thread for each CPU and use CPU
+affinity to lock them down.  No IPI is needed to access MSRs on the
+current CPU, and CPUID doesn't even need kernel entry.
 
-Link: http://lkml.kernel.org/r/152129043097.31874.14273580606301767394.stgit@devbox
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- .../selftests/ftrace/test.d/kprobe/probepoint.tc   | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-new file mode 100644
-index 000000000000..4fda01a08da4
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
-@@ -0,0 +1,43 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe events - probe points
-+
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+TARGET_FUNC=create_trace_kprobe
-+
-+dec_addr() { # hexaddr
-+  printf "%d" "0x"`echo $1 | tail -c 8`
-+}
-+
-+set_offs() { # prev target next
-+  A1=`dec_addr $1`
-+  A2=`dec_addr $2`
-+  A3=`dec_addr $3`
-+  TARGET="0x$2" # an address
-+  PREV=`expr $A1 - $A2` # offset to previous symbol
-+  NEXT=+`expr $A3 - $A2` # offset to next symbol
-+  OVERFLOW=+`printf "0x%x" ${PREV}` # overflow offset to previous symbol
-+}
-+
-+# We have to decode symbol addresses to get correct offsets.
-+# If the offset is not an instruction boundary, it cause -EILSEQ.
-+set_offs `grep -A1 -B1 ${TARGET_FUNC} /proc/kallsyms | cut -f 1 -d " " | xargs`
-+
-+UINT_TEST=no
-+# printf "%x" -1 returns (unsigned long)-1.
-+if [ `printf "%x" -1 | wc -c` != 9 ]; then
-+  UINT_TEST=yes
-+fi
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+echo "p:testprobe ${TARGET_FUNC}" > kprobe_events
-+echo "p:testprobe ${TARGET}" > kprobe_events
-+echo "p:testprobe ${TARGET_FUNC}${NEXT}" > kprobe_events
-+! echo "p:testprobe ${TARGET_FUNC}${PREV}" > kprobe_events
-+if [ "${UINT_TEST}" = yes ]; then
-+! echo "p:testprobe ${TARGET_FUNC}${OVERFLOW}" > kprobe_events
-+fi
-+echo > kprobe_events
-+clear_trace
--- 
-2.15.1
+	-hpa
