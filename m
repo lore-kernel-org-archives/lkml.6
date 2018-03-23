@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802668-2-16505973775668190977
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802654-2-3128223585078241665
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES rocaen,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802667; b=WT6CDrrw8mribvLX1GC+UTLmXqXBE2UU8GX94Wpc5cZmxmq
-    k1qfHwazJv1L2DamHmXk30e4ebcVn2hcU4s0z8TzkO4p/xFoecgJjmW83/6OKB3Z
-    O/S/m7XWHIjTroqs81xu4DdG/3ptrQ6l7ry24PK+dZpCHD5YiMowdqELINUw35Xr
-    7OxgJnO7pAm5F5UURSeorHVIyNDX6lz7oQn9wUSnrzXUAHPf3APes/Oj2grO/zfW
-    XeFUNPFf6miNjneQm5P2MUK1zBApSrTzuHqtefI69GOx28QR2E/3YxUlG9n0msi0
-    Swm4Vm5UWcfSh6x0aF+MJEVnp8TZRQKgY92rL0w==
+    t=1521802654; b=jj2kuuM80fggLhQhLpQ0AoLGDubOwBG3SOyC6BWNvRQT2YC
+    je8dpFPVGi559ZmINPUkriCHsO3fnPzquZfL/eOMh3gE73RYqszHCW7niGjFYEaR
+    YVrDDyLdZiDx2HsmEA78EUjQpp0SsHy0qOS5S7woCj26zlSXnLMXXVgF0vc9lKfq
+    n/EvAahrL01CMD6Ha/xJSInvAE4k5/VWaNnmmD+CrNgQtXVykqJfvW9Di3+u6RKU
+    RKaXBYa3sHS3BP83Ose29XamRriVB86+7JVHEJ48zWbTZlBiJXfHVAl8T83U7Vcy
+    2RLC8LoXx4IGMCrKq8SYOT/h4E3KGVHTNlF2NtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802667; bh=WqJ/N04afa0LNPdlDmcYM+n4LE
-    GwwwmlPugsKvjRx/E=; b=O/9fiCPvc95ijxwLMELZz+lL2bNJW7A9vlXn46dDEi
-    q5jVgYhXmRizScy6lB/0JvP2X2dIBDUJpd0Tri4Awam8LsAU6vPKLj/9n3gPNy+L
-    53vk/+n5ARbr0MX8pNy1K+0WYRjw04fPyD3PEskUuXm5+m+OZ0fjVpesWTGKMtvr
-    3jjIHBzphkVb3meiwXlW5rq0TrImIohYyvfvRUPi+TYvUg4jggNpAsbmgVdLg/9L
-    1O/ljwhnP/x/6YdF04jYT8iAoPwDYD0X9aj9PdBY4C0ZG5Rwi++FUQE4HwqEoz8I
-    Lzt2linnAflk6JBXu+BHiTyLM22hqr72jNHrGigDGRWw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521802654; bh=3Ul+8Ozl/oGxVDhoWbWBY0ZWa9
+    X3dTJvl6WFKj8Y3H8=; b=fgO/ke8X3XBySd+1GjvFGzQRxzlsU+HzgbNY+dX/4p
+    9PNSnsn8wX6e8TeSVPJD4YA1SWXo7qbEL91CxrILAEkyK91/t9TM71Rk4RdHW0pJ
+    cFeH9LgLkgzp4yNOO7BtUe1N1tJ+rO1gEx5QR0sqyVcyso56kpRD43kPZj2raESD
+    wFHUsB/+a1YWwTO+heo/E+saIjHxzcAgy+G4qbqVggaGOZqI5qtVqL6jlyqUnVDp
+    PBZj7jKN3epFQuiUMmpe+2LEYU3H2nMD4SEI78PIHXur6G3TFnCibDAsY+ctSr/U
+    mqGuymPflNUpFXAj9tAyODulzth8fid7RcyBeo+pGE4Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,23 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752791AbeCWK5d (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:57:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44486 "EHLO
+        id S1752216AbeCWKMu (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:12:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44476 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752333AbeCWKMu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:50 -0400
+        with ESMTP id S933293AbeCWKMr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+2287ac532caa81900a4e@syzkaller.appspotmail.com,
+        syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com,
         Leon Romanovsky <leonro@mellanox.com>,
         Sean Hefty <sean.hefty@intel.com>,
         Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.9 176/177] RDMA/ucma: Dont allow join attempts for unsupported AF family
-Date: Fri, 23 Mar 2018 10:55:04 +0100
-Message-Id: <20180323094212.906439445@linuxfoundation.org>
+Subject: [PATCH 4.9 175/177] RDMA/ucma: Fix access to non-initialized CM_ID object
+Date: Fri, 23 Mar 2018 10:55:03 +0100
+Message-Id: <20180323094212.856717987@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -86,95 +86,151 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 0c81ffc60d5280991773d17e84bda605387148b1 upstream.
+commit 7688f2c3bbf55e52388e37ac5d63ca471a7712e1 upstream.
 
-Users can provide garbage while calling to ucma_join_ip_multicast(),
-it will indirectly cause to rdma_addr_size() return 0, making the
-call to ucma_process_join(), which had the right checks, but it is
-better to check the input as early as possible.
+The attempt to join multicast group without ensuring that CMA device
+exists will lead to the following crash reported by syzkaller.
 
-The following crash from syzkaller revealed it.
+[   64.076794] BUG: KASAN: null-ptr-deref in rdma_join_multicast+0x26e/0x12c0
+[   64.076797] Read of size 8 at addr 00000000000000b0 by task join/691
+[   64.076797]
+[   64.076800] CPU: 1 PID: 691 Comm: join Not tainted 4.16.0-rc1-00219-gb97853b65b93 #23
+[   64.076802] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
+[   64.076803] Call Trace:
+[   64.076809]  dump_stack+0x5c/0x77
+[   64.076817]  kasan_report+0x163/0x380
+[   64.085859]  ? rdma_join_multicast+0x26e/0x12c0
+[   64.086634]  rdma_join_multicast+0x26e/0x12c0
+[   64.087370]  ? rdma_disconnect+0xf0/0xf0
+[   64.088579]  ? __radix_tree_replace+0xc3/0x110
+[   64.089132]  ? node_tag_clear+0x81/0xb0
+[   64.089606]  ? idr_alloc_u32+0x12e/0x1a0
+[   64.090517]  ? __fprop_inc_percpu_max+0x150/0x150
+[   64.091768]  ? tracing_record_taskinfo+0x10/0xc0
+[   64.092340]  ? idr_alloc+0x76/0xc0
+[   64.092951]  ? idr_alloc_u32+0x1a0/0x1a0
+[   64.093632]  ? ucma_process_join+0x23d/0x460
+[   64.094510]  ucma_process_join+0x23d/0x460
+[   64.095199]  ? ucma_migrate_id+0x440/0x440
+[   64.095696]  ? futex_wake+0x10b/0x2a0
+[   64.096159]  ucma_join_multicast+0x88/0xe0
+[   64.096660]  ? ucma_process_join+0x460/0x460
+[   64.097540]  ? _copy_from_user+0x5e/0x90
+[   64.098017]  ucma_write+0x174/0x1f0
+[   64.098640]  ? ucma_resolve_route+0xf0/0xf0
+[   64.099343]  ? rb_erase_cached+0x6c7/0x7f0
+[   64.099839]  __vfs_write+0xc4/0x350
+[   64.100622]  ? perf_syscall_enter+0xe4/0x5f0
+[   64.101335]  ? kernel_read+0xa0/0xa0
+[   64.103525]  ? perf_sched_cb_inc+0xc0/0xc0
+[   64.105510]  ? syscall_exit_register+0x2a0/0x2a0
+[   64.107359]  ? __switch_to+0x351/0x640
+[   64.109285]  ? fsnotify+0x899/0x8f0
+[   64.111610]  ? fsnotify_unmount_inodes+0x170/0x170
+[   64.113876]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
+[   64.115813]  ? ring_buffer_record_is_on+0xd/0x20
+[   64.117824]  ? __fget+0xa8/0xf0
+[   64.119869]  vfs_write+0xf7/0x280
+[   64.122001]  SyS_write+0xa1/0x120
+[   64.124213]  ? SyS_read+0x120/0x120
+[   64.126644]  ? SyS_read+0x120/0x120
+[   64.128563]  do_syscall_64+0xeb/0x250
+[   64.130732]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[   64.132984] RIP: 0033:0x7f5c994ade99
+[   64.135699] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   64.138740] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
+[   64.141056] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
+[   64.143536] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
+[   64.146017] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
+[   64.148608] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
+[   64.151060]
+[   64.153703] Disabling lock debugging due to kernel taint
+[   64.156032] BUG: unable to handle kernel NULL pointer dereference at 00000000000000b0
+[   64.159066] IP: rdma_join_multicast+0x26e/0x12c0
+[   64.161451] PGD 80000001d0298067 P4D 80000001d0298067 PUD 1dea39067 PMD 0
+[   64.164442] Oops: 0000 [#1] SMP KASAN PTI
+[   64.166817] CPU: 1 PID: 691 Comm: join Tainted: G    B 4.16.0-rc1-00219-gb97853b65b93 #23
+[   64.170004] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-proj4
+[   64.174985] RIP: 0010:rdma_join_multicast+0x26e/0x12c0
+[   64.177246] RSP: 0018:ffff8801c8207860 EFLAGS: 00010282
+[   64.179901] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff94789522
+[   64.183344] RDX: 1ffffffff2d50fa5 RSI: 0000000000000297 RDI: 0000000000000297
+[   64.186237] RBP: ffff8801c8207a50 R08: 0000000000000000 R09: ffffed0039040ea7
+[   64.189328] R10: 0000000000000001 R11: ffffed0039040ea6 R12: 0000000000000000
+[   64.192634] R13: 0000000000000000 R14: ffff8801e2022800 R15: ffff8801d4ac2400
+[   64.196105] FS:  00007f5c99b98700(0000) GS:ffff8801e5d00000(0000) knlGS:0000000000000000
+[   64.199211] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   64.202046] CR2: 00000000000000b0 CR3: 00000001d1c48004 CR4: 00000000003606a0
+[   64.205032] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   64.208221] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   64.211554] Call Trace:
+[   64.213464]  ? rdma_disconnect+0xf0/0xf0
+[   64.216124]  ? __radix_tree_replace+0xc3/0x110
+[   64.219337]  ? node_tag_clear+0x81/0xb0
+[   64.222140]  ? idr_alloc_u32+0x12e/0x1a0
+[   64.224422]  ? __fprop_inc_percpu_max+0x150/0x150
+[   64.226588]  ? tracing_record_taskinfo+0x10/0xc0
+[   64.229763]  ? idr_alloc+0x76/0xc0
+[   64.232186]  ? idr_alloc_u32+0x1a0/0x1a0
+[   64.234505]  ? ucma_process_join+0x23d/0x460
+[   64.237024]  ucma_process_join+0x23d/0x460
+[   64.240076]  ? ucma_migrate_id+0x440/0x440
+[   64.243284]  ? futex_wake+0x10b/0x2a0
+[   64.245302]  ucma_join_multicast+0x88/0xe0
+[   64.247783]  ? ucma_process_join+0x460/0x460
+[   64.250841]  ? _copy_from_user+0x5e/0x90
+[   64.253878]  ucma_write+0x174/0x1f0
+[   64.257008]  ? ucma_resolve_route+0xf0/0xf0
+[   64.259877]  ? rb_erase_cached+0x6c7/0x7f0
+[   64.262746]  __vfs_write+0xc4/0x350
+[   64.265537]  ? perf_syscall_enter+0xe4/0x5f0
+[   64.267792]  ? kernel_read+0xa0/0xa0
+[   64.270358]  ? perf_sched_cb_inc+0xc0/0xc0
+[   64.272575]  ? syscall_exit_register+0x2a0/0x2a0
+[   64.275367]  ? __switch_to+0x351/0x640
+[   64.277700]  ? fsnotify+0x899/0x8f0
+[   64.280530]  ? fsnotify_unmount_inodes+0x170/0x170
+[   64.283156]  ? __fsnotify_update_child_dentry_flags+0x30/0x30
+[   64.286182]  ? ring_buffer_record_is_on+0xd/0x20
+[   64.288749]  ? __fget+0xa8/0xf0
+[   64.291136]  vfs_write+0xf7/0x280
+[   64.292972]  SyS_write+0xa1/0x120
+[   64.294965]  ? SyS_read+0x120/0x120
+[   64.297474]  ? SyS_read+0x120/0x120
+[   64.299751]  do_syscall_64+0xeb/0x250
+[   64.301826]  entry_SYSCALL_64_after_hwframe+0x21/0x86
+[   64.304352] RIP: 0033:0x7f5c994ade99
+[   64.306711] RSP: 002b:00007f5c99b97d98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   64.309577] RAX: ffffffffffffffda RBX: 00000000200001e4 RCX: 00007f5c994ade99
+[   64.312334] RDX: 00000000000000a0 RSI: 00000000200001c0 RDI: 0000000000000015
+[   64.315783] RBP: 00007f5c99b97ec0 R08: 0000000000000000 R09: 0000000000000000
+[   64.318365] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5c99b97fc0
+[   64.320980] R13: 0000000000000000 R14: 00007fff660e1c40 R15: 00007f5c99b989c0
+[   64.323515] Code: e8 e8 79 08 ff 4c 89 ff 45 0f b6 a7 b8 01 00 00 e8 68 7c 08 ff 49 8b 1f 4d 89 e5 49 c1 e4 04 48 8
+[   64.330753] RIP: rdma_join_multicast+0x26e/0x12c0 RSP: ffff8801c8207860
+[   64.332979] CR2: 00000000000000b0
+[   64.335550] ---[ end trace 0c00c17a408849c1 ]---
 
-kernel BUG at lib/string.c:1052!
-invalid opcode: 0000 [#1] SMP KASAN Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 4113 Comm: syz-executor0 Not tainted 4.16.0-rc5+ #261
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:fortify_panic+0x13/0x20 lib/string.c:1051
-RSP: 0018:ffff8801ca81f8f0 EFLAGS: 00010286
-RAX: 0000000000000022 RBX: 1ffff10039503f23 RCX: 0000000000000000
-RDX: 0000000000000022 RSI: 1ffff10039503ed3 RDI: ffffed0039503f12
-RBP: ffff8801ca81f8f0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000006 R11: 0000000000000000 R12: ffff8801ca81f998
-R13: ffff8801ca81f938 R14: ffff8801ca81fa58 R15: 000000000000fa00
-FS:  0000000000000000(0000) GS:ffff8801db200000(0063) knlGS:000000000a12a900
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000008138024 CR3: 00000001cbb58004 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- memcpy include/linux/string.h:344 [inline]
- ucma_join_ip_multicast+0x36b/0x3b0 drivers/infiniband/core/ucma.c:1421
- ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1633
- __vfs_write+0xef/0x970 fs/read_write.c:480
- vfs_write+0x189/0x510 fs/read_write.c:544
- SYSC_write fs/read_write.c:589 [inline]
- SyS_write+0xef/0x220 fs/read_write.c:581
- do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
- do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
- entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f9ec99
-RSP: 002b:00000000ff8172cc EFLAGS: 00000282 ORIG_RAX: 0000000000000004
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000020000100
-RDX: 0000000000000063 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-Code: 08 5b 41 5c 41 5d 41 5e 41 5f 5d c3 0f 0b 48 89 df e8 42 2c e3 fb eb de
-55 48 89 fe 48 c7 c7 80 75 98 86 48 89 e5 e8 85 95 94 fb <0f> 0b 90 90 90 90
-90 90 90 90 90 90 90 55 48 89 e5 41 57 41 56
-RIP: fortify_panic+0x13/0x20 lib/string.c:1051 RSP: ffff8801ca81f8f0
-
-Fixes: 5bc2b7b397b0 ("RDMA/ucma: Allow user space to specify AF_IB when joining multicast")
-Reported-by: <syzbot+2287ac532caa81900a4e@syzkaller.appspotmail.com>
+Reported-by: <syzbot+e6aba77967bd72cbc9d6@syzkaller.appspotmail.com>
+Fixes: c8f6a362bf3e ("RDMA/cma: Add multicast communication support")
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Reviewed-by: Sean Hefty <sean.hefty@intel.com>
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/cma.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -1330,7 +1330,7 @@ static ssize_t ucma_process_join(struct
- 		return -ENOSPC;
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -4039,6 +4039,9 @@ int rdma_join_multicast(struct rdma_cm_i
+ 	struct cma_multicast *mc;
+ 	int ret;
  
- 	addr = (struct sockaddr *) &cmd->addr;
--	if (!cmd->addr_size || (cmd->addr_size != rdma_addr_size(addr)))
-+	if (cmd->addr_size != rdma_addr_size(addr))
- 		return -EINVAL;
- 
- 	if (cmd->join_flags == RDMA_MC_JOIN_FLAG_FULLMEMBER)
-@@ -1398,6 +1398,9 @@ static ssize_t ucma_join_ip_multicast(st
- 	join_cmd.uid = cmd.uid;
- 	join_cmd.id = cmd.id;
- 	join_cmd.addr_size = rdma_addr_size((struct sockaddr *) &cmd.addr);
-+	if (!join_cmd.addr_size)
++	if (!id->device)
 +		return -EINVAL;
 +
- 	join_cmd.join_flags = RDMA_MC_JOIN_FLAG_FULLMEMBER;
- 	memcpy(&join_cmd.addr, &cmd.addr, join_cmd.addr_size);
- 
-@@ -1413,6 +1416,9 @@ static ssize_t ucma_join_multicast(struc
- 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
- 		return -EFAULT;
- 
-+	if (!rdma_addr_size((struct sockaddr *)&cmd.addr))
-+		return -EINVAL;
-+
- 	return ucma_process_join(file, &cmd, out_len);
- }
- 
+ 	id_priv = container_of(id, struct rdma_id_private, id);
+ 	if (!cma_comp(id_priv, RDMA_CM_ADDR_BOUND) &&
+ 	    !cma_comp(id_priv, RDMA_CM_ADDR_RESOLVED))
