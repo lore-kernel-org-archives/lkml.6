@@ -1,68 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752352AbeCWQtv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:49:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751632AbeCWQtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:49:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A3421839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1752308AbeCWQvw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:51:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56732 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751632AbeCWQvu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 12:51:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2845B601D3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v5 3/5] bnx2x: Eliminate duplicate barriers on
+ weakly-ordered archs
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ariel.elior@cavium.com, everest-linux-l2@cavium.com,
+        linux-kernel@vger.kernel.org
+References: <1521738603-23596-4-git-send-email-okaya@codeaurora.org>
+ <20180323.122035.1380806748695640531.davem@davemloft.net>
+ <cb6a0522-2c53-b252-49db-5779d24963c6@codeaurora.org>
+ <20180323.124326.2170503491903886041.davem@davemloft.net>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <4bd9ccd2-df8f-acad-2513-eefe065dc852@codeaurora.org>
+Date: Fri, 23 Mar 2018 12:51:47 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Sekhar Nori <nsekhar@ti.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180323130455.11470-1-brgl@bgdev.pl>
-Cc: devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180323130455.11470-1-brgl@bgdev.pl>
-Message-ID: <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the reset
- framework
-Date: Fri, 23 Mar 2018 09:49:47 -0700
+In-Reply-To: <20180323.124326.2170503491903886041.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On 3/23/2018 12:43 PM, David Miller wrote:
+> From: Sinan Kaya <okaya@codeaurora.org>
+> Date: Fri, 23 Mar 2018 12:31:12 -0400
 > 
-> This series converts the only user of the handcoded, mach-specific reset
-> routines in the davinci platform to using the reset framework.
+>> Sorry, you got me confused now.
+>>
+>> If you look at the code closer, you'll see this.
+>>
+>> 	wmb();
+>>
+>> 	txdata->tx_db.data.prod += nbd;
+>> 	barrier();
+>>
+>> 	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
+>>
+>> and you also asked me to rename DOORBELL to DOORBELL_RELAXED() to make
+>> it obvious that we have a relaxed operator inside the macro.
 > 
-> Patch 1 modifies the way lookup entries are registered with the reset
-> framework.
+> This still doesn't match the stated pattern.
+
+I can certainly update the commit text for this or spin into its own
+patch to make it obvious.
+
 > 
-> Patches 2-4 add necessary lookups/DT-properties.
+> 	wmb();
+> 	/* no other memory or I/O or IOMEM operation */
+> 	writel();
 > 
-> Patches 5-7 convert the davinci-rproc driver to the reset framework.
+> There is a write to a producer index there and then no non-compiler
+> barrier or any kind before the writel().
 > 
-> Patch 8 removes now dead code.
-> 
-> Philipp: it turned out that it's indeed better to use the reset
-> controller's device name for the entry lookup.
-> 
-> Tested both in DT and legacy modes by booting the examples from
-> ti-ipc-rtos recipe in meta-ti.
-> 
-> This series applies on top of David Lechner's common-clk-v9 branch[1]
-> with Philipp Zabel's reset/next branch[2] pulled in.
-> 
-> It can be found in my github tree as well[3].
+> So, in fact, it might really need that implicit writel() barrier here!
 > 
 
-What's the merge strategy for the rest of the patches? I should apply
-the clk ones after the next -rc1?
+It could if txdata->tx_db was not a union. There is a data dependency
+between txdata->tx_db.data.prod and txdata->tx_db.raw. 
+
+So, no reordering.
+
+I can argue that barrier() here is useless in fact.
+
+Anyhow, I'll spin this piece out of this patch so that we pay special
+attention with a better description.
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
