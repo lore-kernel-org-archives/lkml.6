@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751909AbeCWAz5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:55:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49666 "EHLO mx1.redhat.com"
+        id S1752084AbeCWA4E (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:56:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52504 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751837AbeCWAzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 20:55:52 -0400
+        id S1751821AbeCWAzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 20:55:54 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -14,9 +14,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
         Evgeny Baskakov <ebaskakov@nvidia.com>,
         Ralph Campbell <rcampbell@nvidia.com>,
         Mark Hairgrove <mhairgrove@nvidia.com>
-Subject: [PATCH 07/15] mm/hmm: remove HMM_PFN_READ flag and ignore peculiar architecture v2
-Date: Thu, 22 Mar 2018 20:55:19 -0400
-Message-Id: <20180323005527.758-8-jglisse@redhat.com>
+Subject: [PATCH 12/15] mm/hmm: move hmm_pfns_clear() closer to where it is use
+Date: Thu, 22 Mar 2018 20:55:24 -0400
+Message-Id: <20180323005527.758-13-jglisse@redhat.com>
 In-Reply-To: <20180323005527.758-1-jglisse@redhat.com>
 References: <20180323005527.758-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -28,15 +28,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-Only peculiar architecture allow write without read thus assume that
-any valid pfn do allow for read. Note we do not care for write only
-because it does make sense with thing like atomic compare and exchange
-or any other operations that allow you to get the memory value through
-them.
-
-Changed since v1:
-  - Fail early on vma without read permission and return an error
-  - Improve comments
+Move hmm_pfns_clear() closer to where it is use to make it clear it
+is not use by page table walkers.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Reviewed-by: John Hubbard <jhubbard@nvidia.com>
@@ -44,157 +37,42 @@ Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
 Cc: Ralph Campbell <rcampbell@nvidia.com>
 Cc: Mark Hairgrove <mhairgrove@nvidia.com>
 ---
- include/linux/hmm.h | 16 +++++++---------
- mm/hmm.c            | 44 ++++++++++++++++++++++++++++++++++----------
- 2 files changed, 41 insertions(+), 19 deletions(-)
+ mm/hmm.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index d0d6760cdada..dd907f614dfe 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -83,8 +83,7 @@ struct hmm;
-  * hmm_pfn_t - HMM uses its own pfn type to keep several flags per page
-  *
-  * Flags:
-- * HMM_PFN_VALID: pfn is valid
-- * HMM_PFN_READ:  CPU page table has read permission set
-+ * HMM_PFN_VALID: pfn is valid. It has, at least, read permission.
-  * HMM_PFN_WRITE: CPU page table has write permission set
-  * HMM_PFN_ERROR: corresponding CPU page table entry points to poisoned memory
-  * HMM_PFN_EMPTY: corresponding CPU page table entry is pte_none()
-@@ -97,13 +96,12 @@ struct hmm;
- typedef unsigned long hmm_pfn_t;
- 
- #define HMM_PFN_VALID (1 << 0)
--#define HMM_PFN_READ (1 << 1)
--#define HMM_PFN_WRITE (1 << 2)
--#define HMM_PFN_ERROR (1 << 3)
--#define HMM_PFN_EMPTY (1 << 4)
--#define HMM_PFN_SPECIAL (1 << 5)
--#define HMM_PFN_DEVICE_UNADDRESSABLE (1 << 6)
--#define HMM_PFN_SHIFT 7
-+#define HMM_PFN_WRITE (1 << 1)
-+#define HMM_PFN_ERROR (1 << 2)
-+#define HMM_PFN_EMPTY (1 << 3)
-+#define HMM_PFN_SPECIAL (1 << 4)
-+#define HMM_PFN_DEVICE_UNADDRESSABLE (1 << 5)
-+#define HMM_PFN_SHIFT 6
- 
- /*
-  * hmm_pfn_t_to_page() - return struct page pointed to by a valid hmm_pfn_t
 diff --git a/mm/hmm.c b/mm/hmm.c
-index fc5057d7aa05..5da0f852a7aa 100644
+index c287fbbbf088..05b49a5d6674 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -417,11 +417,9 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 	hmm_pfn_t *pfns = range->pfns;
- 	unsigned long addr = start, i;
- 	bool write_fault;
--	hmm_pfn_t flag;
- 	pte_t *ptep;
+@@ -340,14 +340,6 @@ static int hmm_pfns_bad(unsigned long addr,
+ 	return 0;
+ }
  
- 	i = (addr - range->start) >> PAGE_SHIFT;
--	flag = vma->vm_flags & VM_READ ? HMM_PFN_READ : 0;
- 	write_fault = hmm_vma_walk->fault & hmm_vma_walk->write;
- 
- again:
-@@ -433,6 +431,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 
- 	if (pmd_devmap(*pmdp) || pmd_trans_huge(*pmdp)) {
- 		unsigned long pfn;
-+		hmm_pfn_t flag = 0;
- 		pmd_t pmd;
- 
- 		/*
-@@ -497,7 +496,6 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 				} else if (write_fault)
- 					goto fault;
- 				pfns[i] |= HMM_PFN_DEVICE_UNADDRESSABLE;
--				pfns[i] |= flag;
- 			} else if (is_migration_entry(entry)) {
- 				if (hmm_vma_walk->fault) {
- 					pte_unmap(ptep);
-@@ -517,7 +515,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 		if (write_fault && !pte_write(pte))
- 			goto fault;
- 
--		pfns[i] = hmm_pfn_t_from_pfn(pte_pfn(pte)) | flag;
-+		pfns[i] = hmm_pfn_t_from_pfn(pte_pfn(pte));
- 		pfns[i] |= pte_write(pte) ? HMM_PFN_WRITE : 0;
- 		continue;
- 
-@@ -534,7 +532,8 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+-static void hmm_pfns_clear(uint64_t *pfns,
+-			   unsigned long addr,
+-			   unsigned long end)
+-{
+-	for (; addr < end; addr += PAGE_SIZE, pfns++)
+-		*pfns = 0;
+-}
+-
  /*
-  * hmm_vma_get_pfns() - snapshot CPU page table for a range of virtual addresses
-  * @range: range being snapshotted
-- * Returns: -EINVAL if invalid argument, -ENOMEM out of memory, 0 success
-+ * Returns: -EINVAL if invalid argument, -ENOMEM out of memory, -EPERM invalid
-+ *          vma permission, 0 success
-  *
-  * This snapshots the CPU page table for a range of virtual addresses. Snapshot
-  * validity is tracked by range struct. See hmm_vma_range_done() for further
-@@ -573,6 +572,17 @@ int hmm_vma_get_pfns(struct hmm_range *range)
- 	if (!hmm->mmu_notifier.ops)
- 		return -EINVAL;
+  * hmm_vma_walk_hole() - handle a range lacking valid pmd or pte(s)
+  * @start: range virtual start address (inclusive)
+@@ -506,6 +498,14 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 	return 0;
+ }
  
-+	if (!(vma->vm_flags & VM_READ)) {
-+		/*
-+		 * If vma do not allow read access, then assume that it does
-+		 * not allow write access, either. Architecture that allow
-+		 * write without read access are not supported by HMM, because
-+		 * operations such has atomic access would not work.
-+		 */
-+		hmm_pfns_clear(range->pfns, range->start, range->end);
-+		return -EPERM;
-+	}
++static void hmm_pfns_clear(uint64_t *pfns,
++			   unsigned long addr,
++			   unsigned long end)
++{
++	for (; addr < end; addr += PAGE_SIZE, pfns++)
++		*pfns = 0;
++}
 +
- 	/* Initialize range to track CPU page table update */
- 	spin_lock(&hmm->lock);
- 	range->valid = true;
-@@ -686,6 +696,9 @@ EXPORT_SYMBOL(hmm_vma_range_done);
-  *     goto retry;
-  *   case 0:
-  *     break;
-+ *   case -ENOMEM:
-+ *   case -EINVAL:
-+ *   case -EPERM:
-  *   default:
-  *     // Handle error !
-  *     up_read(&mm->mmap_sem)
-@@ -727,11 +740,16 @@ int hmm_vma_fault(struct hmm_range *range, bool write, bool block)
- 	if (!hmm->mmu_notifier.ops)
- 		return -EINVAL;
- 
--	/* Initialize range to track CPU page table update */
--	spin_lock(&hmm->lock);
--	range->valid = true;
--	list_add_rcu(&range->list, &hmm->ranges);
--	spin_unlock(&hmm->lock);
-+	if (!(vma->vm_flags & VM_READ)) {
-+		/*
-+		 * If vma do not allow read access, then assume that it does
-+		 * not allow write access, either. Architecture that allow
-+		 * write without read access are not supported by HMM, because
-+		 * operations such has atomic access would not work.
-+		 */
-+		hmm_pfns_clear(range->pfns, range->start, range->end);
-+		return -EPERM;
-+	}
- 
- 	/* FIXME support hugetlb fs */
- 	if (is_vm_hugetlb_page(vma) || (vma->vm_flags & VM_SPECIAL)) {
-@@ -739,6 +757,12 @@ int hmm_vma_fault(struct hmm_range *range, bool write, bool block)
- 		return 0;
- 	}
- 
-+	/* Initialize range to track CPU page table update */
-+	spin_lock(&hmm->lock);
-+	range->valid = true;
-+	list_add_rcu(&range->list, &hmm->ranges);
-+	spin_unlock(&hmm->lock);
-+
- 	hmm_vma_walk.fault = true;
- 	hmm_vma_walk.write = write;
- 	hmm_vma_walk.block = block;
+ static void hmm_pfns_special(struct hmm_range *range)
+ {
+ 	unsigned long addr = range->start, i = 0;
 -- 
 2.14.3
