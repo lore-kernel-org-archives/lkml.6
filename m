@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803872-2-12281738770453622120
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803862-2-1839234473015885078
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803871; b=tbFeeADuZUF8G+0TG9YxV/lmEZpDHb6vWWuTXQv/miis62E
-    3DaSICxWJfuQwiLKvEVzKV2RxwyFQgqfc1F8zyCuO3wiOYkcnDVVkTxBj+uCrD2a
-    l2/2sSn3CunEUG4gGWgpgXWWTf1WDII0fCHMgoo63yG2yJXQwHnB3dgBXCUIBdmo
-    vq3/RfTSxqVvnYbyQIDCpvpf/qxqKxoRuY+pQh9M0tQQ6bQU3UN6ZCkNt3/MPTD6
-    JRxkmVENeT3BdJNYGWt2SomjVtB7Pl9vwChJrOxcZ3D4tEY05hoIHPKfZbK99xLx
-    u6BlILZPHbTglBsaD7UbzsHtfPDjZi85HwnpnTQ==
+    t=1521803862; b=PO6Dm/khs+MR1LbPlKdlApL9WPhYMHEx3YNE+0Uju+PzhsJ
+    L4lp8XDpa2x7gnLXaLQqyYxe1FSrE1/ZKyasaSgaeoqVkftQ4dVf4FM6oTnRROzD
+    5/dSNuoFl6PlZe3a93HjVIukwPV9aYdR37XRSAgKD9cmdjGauJYYWosifWiAl7R3
+    6QrAagBGDxn2ScI+XMshmBQ0H/VHpoCgUNNrTc8D1qQg+Ih90XiVFGh3bbY0jjXq
+    k/DfWiTzIJ9oSO9SeIPNuw0DtMxgdkq6byrwJgX9W0dZI3TQgetTm0B/XNcPrM1o
+    nVKt1S8ieAkgvbrI5nS/nKth79R3YeF4vFwoFzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803871; bh=x55/kutd7WBaACcaSB9M4CnfHp
-    JchcfxKq4gbqv/9So=; b=TPx7H7+AOPa4Aj/LBdqLdcAr86RUO25zAR2QSEYGrW
-    c4OTSrvRqHqn/cO2Z91rKZjfZBOI9GeJHA0jMmGI2QVThVm2yU+fB3KVuMUB9YiP
-    VOqkFJZfGnNPB/zcoE6PmTsNHSxE8AStvgHOfb+5Dk5vIupd2sSUhldYtus7PgqM
-    P01d68BvYzUl2auBG16oHRvyPto76bSoIQwHcxL6hpTztqbDGDvOCSIPPeMm0GGn
-    fHSs9lgkGE9z8rlQFBv8nnjoF6KAZACijIHvZdyzzXWdzDynC6ioTtftwOQSsHv2
-    a/xHjmmbBtHYtakJfuwFqv2jOHnrkc1ibVXq3UcANg0Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803862; bh=9Jkjdf8FJBTbTIvLxaW5UQgKSd
+    viFKHmmpmG5DjcMkM=; b=IZhaMYfhOhgiAQBDwKnYa31y0ORPnZ7SAUSSqLDJXg
+    mPk0CM6wljIvHMYIQAD/7w06Yiec0ctt5+K9kYCwJwgJ27NglxjrKrI5LeDH+Foz
+    2v5uX8xufRHigDNpOYK1f7JGNqMpLbohOxYpgK3RCjv2gQPQuXawyupW+KoTU7CA
+    HbamQGfRYSewzKkF+iAkd8hEcC+zrVGe1BhjiLTZ9ECjI8ydbnx1o/e3ZkrgDlgG
+    Ivh9Yjra5DMrNIWm1xVvazgLGk+vw+nng6QNX6JKkPTxZPu0U5DvUyMjqUmKh41a
+    F4Ws/xtFpxKx6oHTt3CZcCFXY2ySaDbC2DsATAiYD1Ng==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755745AbeCWKJT (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:09:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42034 "EHLO
+        id S1755767AbeCWKJZ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:09:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42090 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755742AbeCWKJS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:18 -0400
+        with ESMTP id S1755763AbeCWKJX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dean Jenkins <Dean_Jenkins@mentor.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
+        NeilBrown <neilb@suse.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 106/177] Bluetooth: hci_ldisc: Add protocol check to hci_uart_dequeue()
-Date: Fri, 23 Mar 2018 10:53:54 +0100
-Message-Id: <20180323094209.954357340@linuxfoundation.org>
+Subject: [PATCH 4.9 116/177] md/raid10: skip spare disk as first disk
+Date: Fri, 23 Mar 2018 10:54:04 +0100
+Message-Id: <20180323094210.377226478@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,57 +82,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dean Jenkins <Dean_Jenkins@mentor.com>
+From: Shaohua Li <shli@fb.com>
 
 
-[ Upstream commit 048e1bd3a27fbeb84ccdff52e165370c1339a193 ]
+[ Upstream commit b506335e5d2b4ec687dde392a3bdbf7601778f1d ]
 
-Before attempting to dequeue a Data Link protocol encapsulated message,
-check that the Data Link protocol is still bound to the HCI UART driver.
-This makes the code consistent with the usage of the other proto
-function pointers.
+Commit 6f287ca(md/raid10: reset the 'first' at the end of loop) ignores
+a case in reshape, the first rdev could be a spare disk, which shouldn't
+be accounted as the first disk since it doesn't include the offset info.
 
-Therefore, add a check for HCI_UART_PROTO_READY into hci_uart_dequeue()
-and return NULL if the Data Link protocol is not bound.
-
-This is needed for robustness as there is a scheduling race condition.
-hci_uart_write_work() is scheduled to run via work queue hu->write_work
-from hci_uart_tx_wakeup(). Therefore, there is a delay between
-scheduling hci_uart_write_work() to run and hci_uart_dequeue() running
-whereby the Data Link protocol layer could become unbound during the
-scheduling delay. In this case, without the check, the call to the
-unbound Data Link protocol layer dequeue function can crash.
-
-It is noted that hci_uart_tty_close() has a
-"cancel_work_sync(&hu->write_work)" statement but this only reduces
-the window of the race condition because it is possible for a new
-work-item to be added to work queue hu->write_work after the call to
-cancel_work_sync(). For example, Data Link layer retransmissions can
-be added to the work queue after the cancel_work_sync() has finished.
-
-Signed-off-by: Dean Jenkins <Dean_Jenkins@mentor.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Fix: 6f287ca(md/raid10: reset the 'first' at the end of loop)
+Cc: Guoqing Jiang <gqjiang@suse.com>
+Cc: NeilBrown <neilb@suse.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/hci_ldisc.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/md/raid10.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -113,10 +113,12 @@ static inline struct sk_buff *hci_uart_d
- {
- 	struct sk_buff *skb = hu->tx_skb;
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4089,6 +4089,7 @@ static int raid10_start_reshape(struct m
+ 				diff = 0;
+ 			if (first || diff < min_offset_diff)
+ 				min_offset_diff = diff;
++			first = 0;
+ 		}
+ 	}
  
--	if (!skb)
--		skb = hu->proto->dequeue(hu);
--	else
-+	if (!skb) {
-+		if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
-+			skb = hu->proto->dequeue(hu);
-+	} else {
- 		hu->tx_skb = NULL;
-+	}
- 
- 	return skb;
- }
