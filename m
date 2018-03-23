@@ -1,41 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeCWSpb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 14:45:31 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:37643 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751595AbeCWSp2 (ORCPT
+        id S1752209AbeCWSxN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 14:53:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46406 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752048AbeCWSxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 14:45:28 -0400
-X-Google-Smtp-Source: AIpwx48rIvQId2HuTQASH+l8W2lwyQ8j7Ya9gkBuSgX8oabcFKjTNexPONjOh/TPT629PNbTq8ERBchF2G+DQPv2eLk=
+        Fri, 23 Mar 2018 14:53:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 73A4860F78
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: jeffrey.t.kirsher@intel.com
+Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>, intel-wired-lan@lists.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 4/7] igb: eliminate duplicate barriers on weakly-ordered archs
+Date: Fri, 23 Mar 2018 14:52:57 -0400
+Message-Id: <1521831180-25014-5-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521831180-25014-1-git-send-email-okaya@codeaurora.org>
+References: <1521831180-25014-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180323181452.GJ5799@atomide.com>
-References: <20180323181452.GJ5799@atomide.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 23 Mar 2018 15:45:27 -0300
-Message-ID: <CAOMZO5Bmpk4cwav-qTnNA6L16DwdDPp5LeKC-jY9=QzfVBuKSQ@mail.gmail.com>
-Subject: Re: Regression with arm in next with stack protector
-To: Tony Lindgren <tony@atomide.com>
-Cc: Huacai Chen <chenhc@lemote.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, Rich Felker <dalias@libc.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-omap@vger.kernel.org,
-        James Hogan <james.hogan@mips.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 3:14 PM, Tony Lindgren <tony@atomide.com> wrote:
-> Hi,
->
-> Looks like commit 5638790dadae ("zboot: fix stack protector in
-> compressed boot phase") breaks booting on arm.
+Code includes wmb() followed by writel(). writel() already has a barrier
+on some architectures like arm64.
 
-Yes, almost all imx are broken in linux-next due to this commit:
-https://kernelci.org/soc/imx/job/next/kernel/next-20180323/
+This ends up CPU observing two barriers back to back before executing the
+register write.
+
+Since code already has an explicit barrier call, changing writel() to
+writel_relaxed().
+
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index 3d4ff3c..c501378 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -5674,7 +5674,7 @@ static int igb_tx_map(struct igb_ring *tx_ring,
+ 	igb_maybe_stop_tx(tx_ring, DESC_NEEDED);
+ 
+ 	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
+-		writel(i, tx_ring->tail);
++		writel_relaxed(i, tx_ring->tail);
+ 
+ 		/* we need this if more than one processor can write to our tail
+ 		 * at a time, it synchronizes IO on IA64/Altix systems
+@@ -8079,7 +8079,7 @@ void igb_alloc_rx_buffers(struct igb_ring *rx_ring, u16 cleaned_count)
+ 		 * such as IA-64).
+ 		 */
+ 		wmb();
+-		writel(i, rx_ring->tail);
++		writel_relaxed(i, rx_ring->tail);
+ 	}
+ }
+ 
+-- 
+2.7.4
