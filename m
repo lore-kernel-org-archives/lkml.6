@@ -1,123 +1,76 @@
-Return-Path: <kernel-hardening-return-12628-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELvXM0VzLMD5x5DCyRqnzxbFhSt23qlSIgLMzkIGK/vxV7eQ7fTbb/GIa6riy4EZJOqy7632
-ARC-Seal: i=1; a=rsa-sha256; t=1521112762; cv=none;
+Return-Path: <kernel-hardening-return-12725-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELueUpEMZmnLRS2ghLHRXxESO+DJ3HAX/Kf9o7amQBk5el+Ij4ECq2cGFZETPh1xI7qewWO4
+ARC-Seal: i=1; a=rsa-sha256; t=1521819445; cv=none;
         d=google.com; s=arc-20160816;
-        b=meZCumKF2ql4CO84J/jBxTRwsem+yZ5gRQtSwnQ8cJUjqeu6oHc6oQYW6V0Zo1CF62
-         s49K3EizXZdhISVNOWAIOotE5AkAQLdJ1Gi5zk87pX23SEeqqfV1hbnvy66fw3A9I/OQ
-         ohiUqe6LFSwX6V4+yrBcIEIlmJytpifQsHQJ7rlE6l6DiNATg/oqJ2eUH7qeozFg2iRb
-         wEqPtdGzOQl7vDU0BTXwGHxlve9eB1r31iQ4qyP9bAKQigE/D7S+4zvyPpBK5SjC5z0B
-         P+DQ5AuTNQp8m5zkXIMTjQmNyeK1SkwBzkZlwPiVLoDcNrNtb9/7eezbu1YGwI8Fy2b1
-         GHRg==
+        b=rXM25s6+MOvQ1UNBghhrCD82F5Iscqe2zjQ2Q/UgdpaCHwj/fpGeRW1+tcqVikwIZe
+         I0IsDklRq8PfMA1exN52GkjFZkeDS/tZWNPmJLUrFQnkeAlHlHvR3c7u61CZWOECplkZ
+         85EOHi/ahGCu+5sC5yfausEYckKtZ1HMuZ/wtRdB4f7USRV562cwMQBCwnuFQUxoAFof
+         J0VHBwNME3TNFjKkAaa2Geq4EOO2mCyptXKIHyxX/TNwyavLHSKhPn59bhhrRHCBHqWp
+         cxKTxCkKvNn15fIyMotq9Euc6SH2lbIBWfb+Q/LuaZ3RsWKpn3p0L4oLcRmISwzCQUWr
+         Fmew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=CCOraF1ENi0Qya1aqRcFbMsdYxqwQG8l0x5jyIxFoSE=;
-        b=ZxQh5875t2hZuxH58wq2gs9Yp+0W8BXkK3tWa2yyj1Daz6nX2wfdFzhvehzBv2J3vd
-         yn70VG5N/OKECAW85UVvZu6CDiFG16n1t2g8YnQ4gvxD5b00RRNqQr39U0tdD+e0STRp
-         WoMzUYnsP5HVLf1iFmQIFhWxWLM4SSBJ7SGCdTjkL2XaWAYVMfsV4gHV9w54Xsdmy+IT
-         5eIxZC1LWZPIYa1kmpMqCndsRV+oqBOuCXQE2qhJTSjoMihDJjVI3obUEqAN/YN2tIVO
-         TjD4OL21IoC+i1wP5iMNHM/y50+kpkkNm2L7zZZ/RFDoHfoadV4Iq8sFvmO+butLZUF8
-         AWnw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=F6Ov7VKY1kRTgpncyN7viPaDcM4ShwIU3IYlc4M7eKM=;
+        b=0i6uojtCmUMZB0nZkCECyYhrTdOnNHBZFByu3tkR2sA0yXOMjEmKGooaiLVqDOkY30
+         Lj2S3e9x6qtMDGCJ42JvpjlLjJUbh6k35pmY2x9JRvYBf7B3c0A+6VOhNJ5Bnk4alt1Y
+         pZTGE7HD6ytbUbvpXWb8ZD3lbmUylg/20ttYxrsV4vTOVi5CWNU77ss6zsI2ZyeeFb5G
+         Sn/r0iZr1irWvJXWl3LivgCZauxYQu2FSEXxYPkKeCiDxv5DnoZ1geTh0JbO3F0OWuzo
+         bBpw8rmqczVXnv9RhBRQCIZ8UkFvxf6AnnhPdUDD99080iXE8wRg6ZA8fEOoXwF8E0qV
+         nReA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=L094oNTW;
-       spf=pass (google.com: domain of kernel-hardening-return-12628-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12628-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12725-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12725-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=L094oNTW;
-       spf=pass (google.com: domain of kernel-hardening-return-12628-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12628-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of kernel-hardening-return-12725-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12725-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com,
+Date: Fri, 23 Mar 2018 23:36:52 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
 	linux-crypto@vger.kernel.org,
 	"David S. Miller" <davem@davemloft.net>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
 	Kees Cook <keescook@chromium.org>,
-	Salvatore Mesoraca <s.mesoraca16@gmail.com>,
 	Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH v2] crypto: ctr - avoid VLA use
-Date: Thu, 15 Mar 2018 12:18:58 +0100
-Message-Id: <1521112738-13250-1-git-send-email-s.mesoraca16@gmail.com>
-X-Mailer: git-send-email 1.9.1
+Subject: Re: [PATCH v2] crypto: ctr - avoid VLA use
+Message-ID: <20180323153652.GA1760@gondor.apana.org.au>
+References: <1521112738-13250-1-git-send-email-s.mesoraca16@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521112738-13250-1-git-send-email-s.mesoraca16@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595002335438491834?=
-X-GMAIL-MSGID: =?utf-8?q?1595002335438491834?=
+X-GMAIL-MSGID: =?utf-8?q?1595743346795989635?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-All ciphers implemented in Linux have a block size less than or
-equal to 16 bytes and the most demanding hw require 16 bytes
-alignment for the block buffer.
-We avoid 2 VLAs[1] by always allocating 16 bytes with 16 bytes
-alignment, unless the architecture supports efficient unaligned
-accesses.
-We also check the selected cipher at instance creation time, if
-it doesn't comply with these limits, we fail the creation.
+On Thu, Mar 15, 2018 at 12:18:58PM +0100, Salvatore Mesoraca wrote:
+>
+> +#define MAX_BLOCKSIZE 16
+> +
+> +#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
+> +#define MAX_ALIGNMASK 15
+> +#else
+> +#define MAX_ALIGNMASK 0
+> +#endif
+> +
 
-[1] https://lkml.org/lkml/2018/3/7/621
+Hmm, this won't work.  Just because you have efficient unaligned
+access in general doesn't mean that every implementation can live
+with unaligned access.  In particular, on x86 there are quite a
+few implementations that require alignment or they will fault.
 
-Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
----
- crypto/ctr.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+So please just make it 15 unconditionally.
 
-diff --git a/crypto/ctr.c b/crypto/ctr.c
-index 854d924..2c9f80f 100644
---- a/crypto/ctr.c
-+++ b/crypto/ctr.c
-@@ -21,6 +21,14 @@
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- 
-+#define MAX_BLOCKSIZE 16
-+
-+#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
-+#define MAX_ALIGNMASK 15
-+#else
-+#define MAX_ALIGNMASK 0
-+#endif
-+
- struct crypto_ctr_ctx {
- 	struct crypto_cipher *child;
- };
-@@ -58,7 +66,7 @@ static void crypto_ctr_crypt_final(struct blkcipher_walk *walk,
- 	unsigned int bsize = crypto_cipher_blocksize(tfm);
- 	unsigned long alignmask = crypto_cipher_alignmask(tfm);
- 	u8 *ctrblk = walk->iv;
--	u8 tmp[bsize + alignmask];
-+	u8 tmp[MAX_BLOCKSIZE + MAX_ALIGNMASK];
- 	u8 *keystream = PTR_ALIGN(tmp + 0, alignmask + 1);
- 	u8 *src = walk->src.virt.addr;
- 	u8 *dst = walk->dst.virt.addr;
-@@ -106,7 +114,7 @@ static int crypto_ctr_crypt_inplace(struct blkcipher_walk *walk,
- 	unsigned int nbytes = walk->nbytes;
- 	u8 *ctrblk = walk->iv;
- 	u8 *src = walk->src.virt.addr;
--	u8 tmp[bsize + alignmask];
-+	u8 tmp[MAX_BLOCKSIZE + MAX_ALIGNMASK];
- 	u8 *keystream = PTR_ALIGN(tmp + 0, alignmask + 1);
- 
- 	do {
-@@ -206,6 +214,14 @@ static struct crypto_instance *crypto_ctr_alloc(struct rtattr **tb)
- 	if (alg->cra_blocksize < 4)
- 		goto out_put_alg;
- 
-+	/* Block size must be <= MAX_BLOCKSIZE. */
-+	if (alg->cra_blocksize > MAX_BLOCKSIZE)
-+		goto out_put_alg;
-+
-+	/* Alignmask must be <= MAX_ALIGNMASK. */
-+	if (alg->cra_alignmask > MAX_ALIGNMASK)
-+		goto out_put_alg;
-+
- 	/* If this is false we'd fail the alignment of crypto_inc. */
- 	if (alg->cra_blocksize % 4)
- 		goto out_put_alg;
+Thanks,
 -- 
-1.9.1
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
