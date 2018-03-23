@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803553-2-8469723480103160829
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803533-2-16377363258341312261
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803553; b=Ag4ISX8lyJAmqjBA56UoLmlwzG+nDJU2STd7pdK1tpNF+Sf
-    vWxbnBOe3w07DnLPHFbQc3O9w4F8AeLqLfXLTpOm4a5jce2FnpNDBDZvBjvs27Eu
-    bSY9T9c92fIRqJEs7Zpz5Fgd9XGNFjhl28D3FYHSszOGT3Z5ZZgC/QTnfZSa8LcM
-    BsUtrylIaA4qpi+UimgdEHhSjhDl449tGIVxds1DvQlkpk+tRGZOT9ulqCPadeXD
-    x0ieSKAINBpnk+zFpELGVrAblZacPBeKf4o/fvucnqdyJQXVWWqd8tlbnH42T5/v
-    rNTNQki04ZZ7EbkExRroOveRcMy/x4TYDNyfSDQ==
+    t=1521803532; b=jCBiGf0Xba5M6xiCUfKiyPgx8s37mwkK/Eu4cU2L0cUtxdI
+    V+WHWhZbRZsu+gWSPX1bu0O1HYdYcRxBe+J9Q7GREGg6fTndW8+1MHCQanXiCtH3
+    hjQrtPmeHvoLc7evkWxJXIc+642IDD8Qy1U/4NPG3EngIrVDkrSs5YYqveFfHh3i
+    lps3uHnKQ1c4Jddm2tzkgt9B7s5X0wvRmWje/38iUwlTPkj4kivIP29MrAzZXlRJ
+    Mg0B3XKJlAj8fN0yVavYSh0HPsc4pd918JCqmCANzb1EQtqgr39W2ESbusabVuX+
+    5z0pNmfgPHitGGsFoKIAxtJQfKSytMXpdJ/stDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803553; bh=Rr3O0LyOrbafJvOIU/TPz0aunR
-    mhnbeDtGWIZ3+HHH8=; b=nD0jjHFim4jVM92Fvt4poJyZrBUYuaogwFuchGjIch
-    iM+hZu+ItqKC1FZ6Zgx/Kj97Szx3Kg4Io0NrXn7js2jVs1Bh1pCRoFdqrl9SwmOx
-    wQrL2Kvtvce7xFcoJiHSZQWmQt5blhpk+JGl9XaJVno+oSxsl5oro6P3VaAMavKo
-    HZg4EetTzfOk1HroDQgO5owXOsHG7sDUE0Fjskeuher+oUhpwgYdJWBWy6u21KzI
-    IqHoo5cl3d2YXFH25nI3BgoVXXAVZ/yOlJmSPuFC4Qp5uxAYFhOdX7OMDbE7xBHY
-    WKyW1gHzohPmkoZmcyzyTeTvC+BBB7hQ8tMylXZdQctg==
+    :list-id; s=arctest; t=1521803532; bh=LBNGmD2wtcwqJwmd6QQucdmN0f
+    k2VowgceNGuF5sldM=; b=MtjldWpsUyPG2xQt4/3mPoKkbpe+kQbEygEPnJzCEO
+    6LrTNJpWLwikaNiB//0YrfDAmP8DMD7FdKbKGUeT40pn02Sy6RH3x1eW3bcr+hkl
+    /Z3kSF65S4nEOPff3aunh9ZqmhUK8QCYIya4HCeSw1+SuNVjNnZSJTzObMWfCB3A
+    oJjEhNPUWDJPNxgjxl/IHgVWp74SEGN9IW5joZtXLeik2y0rKHMw0nCy/lIz4cAk
+    8ZdAzQOwP+2apUXnHePwaKR8I/uAzBGbvXAdBveVvnpPeZoZAiCOkJvVxyysodrf
+    Lq0oBq52K4KEb6Tnlcn/RWGUHwurrjW7LcRB4KMFDXCQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754245AbeCWLMS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:12:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43568 "EHLO
+        id S1752288AbeCWLL5 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:11:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43616 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932799AbeCWKKu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:10:50 -0400
+        with ESMTP id S932836AbeCWKK4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:10:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maksim Salau <maksim.salau@gmail.com>,
-        Bernie Thompson <bernie@plugable.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@iguana.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 121/177] video: fbdev: udlfb: Fix buffer on stack
-Date: Fri, 23 Mar 2018 10:54:09 +0100
-Message-Id: <20180323094210.589704842@linuxfoundation.org>
+Subject: [PATCH 4.9 146/177] watchdog: Fix potential kref imbalance when opening watchdog
+Date: Fri, 23 Mar 2018 10:54:34 +0100
+Message-Id: <20180323094211.635592178@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -84,51 +82,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maksim Salau <maksim.salau@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
 
-[ Upstream commit 45f580c42e5c125d55dbd8099750a1998de3d917 ]
+[ Upstream commit 4bcd615fad6adddc68b058d498b30a9e0e0db77a ]
 
-Allocate buffers on HEAP instead of STACK for local array
-that is to be sent using usb_control_msg().
+If a watchdog driver's open function sets WDOG_HW_RUNNING with the
+expectation that the watchdog can not be stopped, but then stops the
+watchdog anyway in its stop function, kref_get() wil not be called in
+watchdog_open(). If the watchdog then stops on close, WDOG_HW_RUNNING
+will be cleared and kref_put() will be called, causing a kref imbalance.
+As result the character device data structure will be released, which in
+turn will cause the system to crash on the next call to watchdog_open().
 
-Signed-off-by: Maksim Salau <maksim.salau@gmail.com>
-Cc: Bernie Thompson <bernie@plugable.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: ee142889e32f5 ("watchdog: Introduce WDOG_HW_RUNNING flag")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/udlfb.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/watchdog/watchdog_dev.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -1487,15 +1487,25 @@ static struct device_attribute fb_device
- static int dlfb_select_std_channel(struct dlfb_data *dev)
+--- a/drivers/watchdog/watchdog_dev.c
++++ b/drivers/watchdog/watchdog_dev.c
+@@ -760,6 +760,7 @@ static int watchdog_open(struct inode *i
  {
- 	int ret;
--	u8 set_def_chn[] = {	   0x57, 0xCD, 0xDC, 0xA7,
-+	void *buf;
-+	static const u8 set_def_chn[] = {
-+				0x57, 0xCD, 0xDC, 0xA7,
- 				0x1C, 0x88, 0x5E, 0x15,
- 				0x60, 0xFE, 0xC6, 0x97,
- 				0x16, 0x3D, 0x47, 0xF2  };
+ 	struct watchdog_core_data *wd_data;
+ 	struct watchdog_device *wdd;
++	bool hw_running;
+ 	int err;
  
-+	buf = kmemdup(set_def_chn, sizeof(set_def_chn), GFP_KERNEL);
-+
-+	if (!buf)
-+		return -ENOMEM;
-+
- 	ret = usb_control_msg(dev->udev, usb_sndctrlpipe(dev->udev, 0),
- 			NR_USB_REQUEST_CHANNEL,
- 			(USB_DIR_OUT | USB_TYPE_VENDOR), 0, 0,
--			set_def_chn, sizeof(set_def_chn), USB_CTRL_SET_TIMEOUT);
-+			buf, sizeof(set_def_chn), USB_CTRL_SET_TIMEOUT);
-+
-+	kfree(buf);
-+
- 	return ret;
- }
+ 	/* Get the corresponding watchdog device */
+@@ -779,7 +780,8 @@ static int watchdog_open(struct inode *i
+ 	 * If the /dev/watchdog device is open, we don't want the module
+ 	 * to be unloaded.
+ 	 */
+-	if (!watchdog_hw_running(wdd) && !try_module_get(wdd->ops->owner)) {
++	hw_running = watchdog_hw_running(wdd);
++	if (!hw_running && !try_module_get(wdd->ops->owner)) {
+ 		err = -EBUSY;
+ 		goto out_clear;
+ 	}
+@@ -790,7 +792,7 @@ static int watchdog_open(struct inode *i
  
+ 	file->private_data = wd_data;
+ 
+-	if (!watchdog_hw_running(wdd))
++	if (!hw_running)
+ 		kref_get(&wd_data->kref);
+ 
+ 	/* dev/watchdog is a virtual (and thus non-seekable) filesystem */
