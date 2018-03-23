@@ -1,46 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752169AbeCWWSP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 18:18:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39001 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751715AbeCWWSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 18:18:14 -0400
-Subject: Re: [PATCH v3 2/2] x86, cpuid: allow cpuid_read() to schedule
-To: Eric Dumazet <edumazet@google.com>, x86 <x86@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@redhat.com>, Hugh Dickins <hughd@google.com>
-References: <20180323215818.127774-1-edumazet@google.com>
- <20180323215818.127774-2-edumazet@google.com>
-From: "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <3622b64c-bae6-00db-6a61-3ccf760144aa@zytor.com>
-Date: Fri, 23 Mar 2018 15:17:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752324AbeCWWTU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 18:19:20 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:43750 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752275AbeCWWTT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 18:19:19 -0400
+X-Google-Smtp-Source: AG47ELuOGRiNfg0dP+kyN71/eZs3egzY67a1FCBT6Xs9ea26zEvJnYcH7B5C7jIPXkV3MmvoN4c9Tg==
+Subject: Re: [PATCH] dell_rbu: make firmware payload memory uncachable
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org
+References: <40006403-999f-fde5-316a-63e9a48ce11c@gmail.com>
+ <201803231026.VpXzK8BL%fengguang.wu@intel.com>
+From: Stuart Hayes <stuart.w.hayes@gmail.com>
+Message-ID: <aea5df34-6f26-df13-c6c6-5d287d42db4f@gmail.com>
+Date: Fri, 23 Mar 2018 17:19:15 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <20180323215818.127774-2-edumazet@google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <201803231026.VpXzK8BL%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/18 14:58, Eric Dumazet wrote:
-> I noticed high latencies caused by a daemon periodically reading various
-> MSR and cpuid on all cpus. KASAN kernels would see ~10ms latencies
-> simply reading one cpuid. Even without KASAN, sending IPI to CPU
-> in deep sleep state or blocking hard IRQ in a a long section,
-> then waiting for the answer can consume hundreds of usec or more.
+
+
+On 3/22/2018 9:58 PM, kbuild test robot wrote:
+> Hi Stuart,
 > 
-> Switching to smp_call_function_single_async() and a completion
-> allows to reschedule and not burn cpu cycles.
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.16-rc6 next-20180322]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Stuart-Hayes/dell_rbu-make-firmware-payload-memory-uncachable/20180323-094405
+> config: i386-randconfig-x014-201811 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
 
-That being said, the Right Way for a daemon to read multiple MSRs and
-CPUIDs on multiple CPUs is to spawn a thread for each CPU and use CPU
-affinity to lock them down.  No IPI is needed to access MSRs on the
-current CPU, and CPUID doesn't even need kernel entry.
-
-	-hpa
+Please disregard this one, will send a "v2" shortly.  Not sure how I managed to send this version...
+Thanks!
