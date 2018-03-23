@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806358-2-14628215433181509005
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806345-2-3599812000288757267
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806357; b=k8UpG7YH91Mix0lKbJAaBlU407z3hz/M5RzMidQs5Gcq2Qo
-    vO9D9BRJGJw/ZxWN6zVPA4DtNbUd8a8Gs5lhKE7H3Rk6Kr59McCGAYSM45xyf0+o
-    F8Snf0MoXjhclMX9m4t4WOV2+HOsGohgSHYuYsVbA03qmlErEyAGFz/fe8cfmUWx
-    on5FrSu61fRC+iGhPIKtgmKI8HEWIJBHdrSZG+TTZ/nNlhFFVMQhOZFL/6uHtf73
-    +Fhr1GV5hjYCC5oB9srSw6/WSY5LpYyNpXF0sBzDSMGOqW1HBS5tRPfoiKd3pwwq
-    pzSpw5bbGQUWyh1pqVtJ3F4DWASJNY1Mjg3THSg==
+    t=1521806344; b=qcwFOALtZBWBM+4mEgPvd3zOQZi/Fs7YkAhBvJTS2Y45GHc
+    9m7nDEx2vE283qAPM9H1GOLqq2TNyyWV+NTWJ9Tp/X44mJExfNZwztsE+01q5gGU
+    gQsiUYHyojygcA20KKj3+Hiqr3G8qVyI6Yze+vRp7IEfJr8CnBue7pzFdmoL+aBQ
+    UKYV0d9zVdQqdy2pzsUbddS4ZjcCJwfeDKtV3W34t/5+7Th1E4exwMlBgti4BucO
+    jelGwazIltkcTiIT88wdm0f/2kSXOf631SYlHNjoWI+APu7/qvoeswgqZO1cdE9Y
+    059JQLUJmU589EAtZ/6rGb0Cl9FONDeGFEmg3Bg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806357; bh=YFpzbIJ2mwav2mx6IjzMlYiwIc
-    ZFSJ2LclHXSmP7jc0=; b=gLADpXxNp3zX2hpqnJxF2RLYFA+z/yWWS1qhKg4p43
-    fjCI312R0Q3Ey27/+7qiCq3z2x20HwURWzHb9ioLMoQnSwNwzp0ehNrhAvvC24dC
-    7hk/B2mDmrNdI/Cbo1mL0pSnByZdw1fBHDt1mH2EiHziZHAEl97Gbve7Z2yDm4B+
-    sZvXgu+tN1g3/h7MABzhub53OmsiSM7cS9fdQFSLE9X7UfQZZPmpKqXrtAult4iu
-    vl9fLXidCVTgqitUg61hltVD2gead+nz6yEaeS+k7lJjsGP4wwqAizrvxgAGBBfI
-    uyrdkR78+3pNI1ZnPDC6heliYmEVlT5jfz4jIToVFeZA==
+    :list-id; s=arctest; t=1521806344; bh=l5qEjmGeUD8VkBNsdDxKbL4jBR
+    ZuFmVfOMSHJ5fGKKc=; b=bCAs5+qbmDgXzICBFJ3G2/ugQp2c+C1BFpt9+oYAN6
+    VKsKud4zeY+upeQoX15Ovrr/HUNXlrWPUZJVejVDg3iMAcL6+nAQDibmKWeWrpqW
+    uzaO3cVtxb5Bl5X1zfhOxWu7yz4QWXlUMf271CTwsvD+SBLTYLHJchEIFGRS8L6I
+    IgcNL/ypO7zbThdrJrX2lvqBP7ZpX5nmF6sSZX1tI83jMBHq4rOAwwdDWOTyPlp7
+    N1rmH5vP0pPwBd6E6e6smtGMCprnIZLBak7B5IPfP4P4t9h7VHfWKjG2wpQ9DGHY
+    iPcABhPT38thkWODPKNlp9bRyM4sII2lJi6e7QSVBhrA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753613AbeCWKAa (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:00:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36530 "EHLO
+        id S1753895AbeCWL6r (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:58:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36548 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753606AbeCWKAZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:00:25 -0400
+        with ESMTP id S1753620AbeCWKAb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:00:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 12/77] spi: sh-msiof: Avoid writing to registers from spi_master.setup()
-Date: Fri, 23 Mar 2018 10:53:46 +0100
-Message-Id: <20180323094143.040247348@linuxfoundation.org>
+        syzbot+d7a918a7a8e1c952bc36@syzkaller.appspotmail.com,
+        Yisheng Xie <xieyisheng1@huawei.com>,
+        "Joel Fernandes (Google)" <joel.opensrc@gmail.com>
+Subject: [PATCH 4.14 02/77] staging: android: ashmem: Fix possible deadlock in ashmem_ioctl
+Date: Fri, 23 Mar 2018 10:53:36 +0100
+Message-Id: <20180323094142.393504025@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,91 +83,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Yisheng Xie <xieyisheng1@huawei.com>
 
+commit 740a5759bf222332fbb5eda42f89aa25ba38f9b2 upstream.
 
-[ Upstream commit 7ff0b53c4051145d1cf992d2f60987e6447eed4f ]
+ashmem_mutex may create a chain of dependencies like:
 
-The spi_master.setup() callback must not change configuration registers,
-as that could corrupt I/O that is in progress for other SPI slaves.
+CPU0                                    CPU1
+ mmap syscall                           ioctl syscall
+ -> mmap_sem (acquired)                 -> ashmem_ioctl
+ -> ashmem_mmap                            -> ashmem_mutex (acquired)
+    -> ashmem_mutex (try to acquire)       -> copy_from_user
+                                              -> mmap_sem (try to acquire)
 
-The only exception is the configuration of the native chip select
-polarity in SPI master mode, as a wrong chip select polarity will cause
-havoc during all future transfers to any other SPI slave.
+There is a lock odering problem between mmap_sem and ashmem_mutex causing
+a lockdep splat[1] during a syzcaller test. This patch fixes the problem
+by move copy_from_user out of ashmem_mutex.
 
-Hence stop writing to registers in sh_msiof_spi_setup(), unless it is
-the first call for a controller using a native chip select, or unless
-native chip select polarity has changed (note that you'll loose anyway
-if I/O is in progress).  Even then, only do what is strictly necessary,
-instead of calling sh_msiof_spi_set_pin_regs().
+[1] https://www.spinics.net/lists/kernel/msg2733200.html
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: ce8a3a9e76d0 (staging: android: ashmem: Fix a race condition in pin ioctls)
+Reported-by: syzbot+d7a918a7a8e1c952bc36@syzkaller.appspotmail.com
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: "Joel Fernandes (Google)" <joel.opensrc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/spi/spi-sh-msiof.c |   35 ++++++++++++++++++++++++-----------
- 1 file changed, 24 insertions(+), 11 deletions(-)
 
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -55,6 +55,8 @@ struct sh_msiof_spi_priv {
- 	void *rx_dma_page;
- 	dma_addr_t tx_dma_addr;
- 	dma_addr_t rx_dma_addr;
-+	bool native_cs_inited;
-+	bool native_cs_high;
- 	bool slave_aborted;
- };
+---
+ drivers/staging/android/ashmem.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -709,16 +709,14 @@ static int ashmem_pin_unpin(struct ashme
+ 	size_t pgstart, pgend;
+ 	int ret = -EINVAL;
  
-@@ -528,8 +530,7 @@ static int sh_msiof_spi_setup(struct spi
- {
- 	struct device_node	*np = spi->master->dev.of_node;
- 	struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
--
--	pm_runtime_get_sync(&p->pdev->dev);
-+	u32 clr, set, tmp;
- 
- 	if (!np) {
- 		/*
-@@ -539,19 +540,31 @@ static int sh_msiof_spi_setup(struct spi
- 		spi->cs_gpio = (uintptr_t)spi->controller_data;
- 	}
- 
--	/* Configure pins before deasserting CS */
--	sh_msiof_spi_set_pin_regs(p, !!(spi->mode & SPI_CPOL),
--				  !!(spi->mode & SPI_CPHA),
--				  !!(spi->mode & SPI_3WIRE),
--				  !!(spi->mode & SPI_LSB_FIRST),
--				  !!(spi->mode & SPI_CS_HIGH));
--
--	if (spi->cs_gpio >= 0)
-+	if (spi->cs_gpio >= 0) {
- 		gpio_set_value(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
-+		return 0;
-+	}
++	if (unlikely(copy_from_user(&pin, p, sizeof(pin))))
++		return -EFAULT;
 +
-+	if (spi_controller_is_slave(p->master))
-+		return 0;
+ 	mutex_lock(&ashmem_mutex);
  
-+	if (p->native_cs_inited &&
-+	    (p->native_cs_high == !!(spi->mode & SPI_CS_HIGH)))
-+		return 0;
+ 	if (unlikely(!asma->file))
+ 		goto out_unlock;
  
-+	/* Configure native chip select mode/polarity early */
-+	clr = MDR1_SYNCMD_MASK;
-+	set = MDR1_TRMD | TMDR1_PCON | MDR1_SYNCMD_SPI;
-+	if (spi->mode & SPI_CS_HIGH)
-+		clr |= BIT(MDR1_SYNCAC_SHIFT);
-+	else
-+		set |= BIT(MDR1_SYNCAC_SHIFT);
-+	pm_runtime_get_sync(&p->pdev->dev);
-+	tmp = sh_msiof_read(p, TMDR1) & ~clr;
-+	sh_msiof_write(p, TMDR1, tmp | set);
- 	pm_runtime_put(&p->pdev->dev);
+-	if (unlikely(copy_from_user(&pin, p, sizeof(pin)))) {
+-		ret = -EFAULT;
+-		goto out_unlock;
+-	}
 -
-+	p->native_cs_high = spi->mode & SPI_CS_HIGH;
-+	p->native_cs_inited = true;
- 	return 0;
- }
- 
+ 	/* per custom, you can pass zero for len to mean "everything onward" */
+ 	if (!pin.len)
+ 		pin.len = PAGE_ALIGN(asma->size) - pin.offset;
