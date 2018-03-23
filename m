@@ -1,104 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752813AbeCWNFD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 09:05:03 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37589 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752230AbeCWNFA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:05:00 -0400
-X-Google-Smtp-Source: AG47ELs9tVw+QVlp2xKKfvt+5Iq8Bc1Ejws60GPEj0rlUIGmp+DxFTvjln4YF29uq41HstTUVK918w==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the reset framework
-Date: Fri, 23 Mar 2018 14:04:47 +0100
-Message-Id: <20180323130455.11470-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.16.1
+        id S1752281AbeCWNMo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 09:12:44 -0400
+Received: from mga05.intel.com ([192.55.52.43]:57827 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751938AbeCWNMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 09:12:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,350,1517904000";
+   d="scan'208";a="37536720"
+From: Kan Liang <kan.liang@linux.intel.com>
+To: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc: eranian@google.com, osk@google.com, mark@voidzero.net,
+        ak@linux.intel.com
+Subject: [RESEND PATCH 1/2] perf/x86/intel/uncore: Revert "Remove SBOX support for Broadwell server"
+Date: Fri, 23 Mar 2018 09:11:29 -0400
+Message-Id: <1521810690-2576-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Stephane Eranian <eranian@google.com>
 
-This series converts the only user of the handcoded, mach-specific reset
-routines in the davinci platform to using the reset framework.
+This reverts commit 3b94a891667c ("perf/x86/intel/uncore: Remove
+SBOX support for Broadwell server")
 
-Patch 1 modifies the way lookup entries are registered with the reset
-framework.
+Rvert because we have a workaround for Broadwell-EP servers without
+SBOX (subsequent patch). Note that BDX-DE does not have a SBOX.
 
-Patches 2-4 add necessary lookups/DT-properties.
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Reviewed-by: Kan Liang <kan.liang@intel.com>
+---
 
-Patches 5-7 convert the davinci-rproc driver to the reset framework.
+Here is the original patch set.
+https://lkml.org/lkml/2016/11/15/611
+Only rebase with lastest code.
 
-Patch 8 removes now dead code.
+ arch/x86/events/intel/uncore_snbep.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Philipp: it turned out that it's indeed better to use the reset
-controller's device name for the entry lookup.
-
-Tested both in DT and legacy modes by booting the examples from
-ti-ipc-rtos recipe in meta-ti.
-
-This series applies on top of David Lechner's common-clk-v9 branch[1]
-with Philipp Zabel's reset/next branch[2] pulled in.
-
-It can be found in my github tree as well[3].
-
-[1] git://github.com/dlech/ev3dev-kernel.git common-clk-v9
-[2] git://git.pengutronix.de/git/pza/linux reset/next
-[3] git@github.com:brgl/linux.git topic/davinci-reset
-
-v1 -> v2:
-- fixed the device tree patches the descriptions of which were mixed up
-- return -EPROBE_DEFER from davinci-rproc's probe() if we can't get the
-  reset provider, since it's possible that the lookup table was not yet
-  registered
-- made the local variable naming consistent in the davinci-rproc driver
-- fixed a typo in PATCH 5/8
-
-v2 -> v3:
-- modify PATCH 1/8: drop the provider argument from the function adding
-  lookup entries and instead pass the provider name to the RESET_LOOKUP
-  macro, return -EPROBE_DEFER if we locate a correct lookup entry but
-  cannot get the corresponding reset controller
-- modify the reset lookup entry in psc-da850
-- don't manually return -EPROBE_DEFER from davinci-rproc, instead don't
-  emit an error message if devm_reset_control_get_exclusive() returns
-  this error code
-
-v3 -> v4:
-- make index the second parameter in RESET_LOOKUP() (right after the
-  provider name)
-
-Bartosz Golaszewski (8):
-  reset: modify the way reset lookup works for board files
-  ARM: davinci: dts: make psc0 a reset provider
-  ARM: davinci: dts: add a reset control to the dsp node
-  clk: davinci: add a reset lookup table for psc0
-  remoteproc: da8xx: add the missing retval check for clk_enable()
-  remoteproc: da8xx: prepare and unprepare the clock where needed
-  remoteproc: da8xx: use the reset framework
-  clk: davinci: kill davinci_clk_reset_assert/deassert()
-
- arch/arm/boot/dts/da850.dtsi               |  2 ++
- arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------
- drivers/clk/davinci/psc-da850.c            |  7 +++++
- drivers/clk/davinci/psc.c                  | 19 +-------------
- drivers/remoteproc/da8xx_remoteproc.c      | 42 +++++++++++++++++++++++++-----
- drivers/reset/core.c                       | 38 ++++++++++++++++++++++-----
- include/linux/reset-controller.h           | 14 +++++-----
- 7 files changed, 84 insertions(+), 59 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
-
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 22ec65b..47c6910 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3028,10 +3028,27 @@ static struct intel_uncore_type bdx_uncore_cbox = {
+ 	.format_group		= &hswep_uncore_cbox_format_group,
+ };
+ 
++static struct intel_uncore_type bdx_uncore_sbox = {
++	.name			= "sbox",
++	.num_counters		= 4,
++	.num_boxes		= 4,
++	.perf_ctr_bits		= 48,
++	.event_ctl		= HSWEP_S0_MSR_PMON_CTL0,
++	.perf_ctr		= HSWEP_S0_MSR_PMON_CTR0,
++	.event_mask		= HSWEP_S_MSR_PMON_RAW_EVENT_MASK,
++	.box_ctl		= HSWEP_S0_MSR_PMON_BOX_CTL,
++	.msr_offset		= HSWEP_SBOX_MSR_OFFSET,
++	.ops			= &hswep_uncore_sbox_msr_ops,
++	.format_group		= &hswep_uncore_sbox_format_group,
++};
++
++#define BDX_MSR_UNCORE_SBOX	3
++
+ static struct intel_uncore_type *bdx_msr_uncores[] = {
+ 	&bdx_uncore_ubox,
+ 	&bdx_uncore_cbox,
+ 	&hswep_uncore_pcu,
++	&bdx_uncore_sbox,
+ 	NULL,
+ };
+ 
+@@ -3047,6 +3064,10 @@ void bdx_uncore_cpu_init(void)
+ 		bdx_uncore_cbox.num_boxes = boot_cpu_data.x86_max_cores;
+ 	uncore_msr_uncores = bdx_msr_uncores;
+ 
++	/* BDX-DE doesn't have SBOX */
++	if (boot_cpu_data.x86_model == 86)
++		uncore_msr_uncores[BDX_MSR_UNCORE_SBOX] = NULL;
++
+ 	hswep_uncore_pcu.constraints = bdx_uncore_pcu_constraints;
+ }
+ 
 -- 
-2.16.1
+2.4.11
