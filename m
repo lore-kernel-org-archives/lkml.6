@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752315AbeCWJTE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:19:04 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:30758 "EHLO
+        id S1752412AbeCWJT2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:19:28 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:39333 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752015AbeCWJPc (ORCPT
+        with ESMTP id S1752014AbeCWJPb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:15:32 -0400
-X-UUID: 324ecfafe73546ebba7a7575a69979a1-20180323
+        Fri, 23 Mar 2018 05:15:31 -0400
+X-UUID: fe5a481ed9394905b6a8be80373bccff-20180323
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
         <lee.jones@linaro.org>, <a.zummo@towertech.it>,
@@ -15,22 +15,23 @@ To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
 CC: <devicetree@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
         <linux-pm@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v1 05/16] rtc: mediatek: add MT6323 support to RTC driver
-Date: Fri, 23 Mar 2018 17:15:02 +0800
-Message-ID: <c49898db977a0b37363a35d3e3b297af891d7219.1521794177.git.sean.wang@mediatek.com>
+Subject: [PATCH v1 13/16] rtc: mediatek: update license converting to using SPDX identifiers
+Date: Fri, 23 Mar 2018 17:15:10 +0800
+Message-ID: <86450fc8dcc53c658e97ac739aac2bf7d1f94b64.1521794177.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1521794176.git.sean.wang@mediatek.com>
 References: <cover.1521794176.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23736.004
-X-TM-AS-Result: No-5.827400-8.000000-10
-X-TMASE-MatchedRID: TEv/LuC73NgxFdXyW/P+XW3NvezwBrVmTJDl9FKHbrkKogmGusPLb5g1
-        FOMOQofR/l3Eaff8G3C4LZzenDhGPx8TzIzimOwPlpYqKNmWxsHZs3HUcS/scCq2rl3dzGQ1Fti
-        yCwivF1UQyEmUp3PatH0YUdglkHG0YuAxZQ07Yh3z3KzY/7te+8C+ksT6a9fy
+X-TM-AS-Result: No-5.580400-8.000000-10
+X-TMASE-MatchedRID: d0WP0JJEp0RBHBd/Q+ztB+G5dRZCgxC3VBDQSDMig9HEosIs7IJbkGcv
+        LxxWTXnK7CW5xFA6WTJ8m0eKI/dFAJYfiJHiUPPG2Hdvv/MGE3WtfY6YPaw3YTzzULHH1XTjMA0
+        TvVWjWva98qutvhuYitwezITcev2HHxPMjOKY7A8LbigRnpKlKWxlRJiH4397Tk1v6FWn3kDeUW
+        2U/Cf2yeUE6zYBnqJBrH3PsN4Jf8Jpt/bXV4VNGg==
 X-TM-AS-User-Approved-Sender: No
 X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--5.827400-8.000000
+X-TMASE-Result: 10--5.580400-8.000000
 X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23736.004
 X-TMASE-POSTMAN: 2-d;
 X-MTK: N
@@ -40,24 +41,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-Just to add MT6323 support to the existent RTC driver.
+Update the license and as well convert to using SPDX identifiers.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 ---
- drivers/rtc/rtc-mt6397.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/rtc/rtc-mt6397.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index 385f830..0df7ccd 100644
+index f5dc70d..ad336a4 100644
 --- a/drivers/rtc/rtc-mt6397.c
 +++ b/drivers/rtc/rtc-mt6397.c
-@@ -398,6 +398,7 @@ static SIMPLE_DEV_PM_OPS(mt6397_pm_ops, mt6397_rtc_suspend,
- 			mt6397_rtc_resume);
+@@ -1,16 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+-* Copyright (c) 2014-2015 MediaTek Inc.
+-* Author: Tianping.Fang <tianping.fang@mediatek.com>
+-*
+-* This program is free software; you can redistribute it and/or modify
+-* it under the terms of the GNU General Public License version 2 as
+-* published by the Free Software Foundation.
+-*
+-* This program is distributed in the hope that it will be useful,
+-* but WITHOUT ANY WARRANTY; without even the implied warranty of
+-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-* GNU General Public License for more details.
+-*/
++ * MediaTek PMIC RTC driver
++ *
++ * Copyright (C) 2014-2018 MediaTek Inc.
++ *
++ * Author: Tianping.Fang <tianping.fang@mediatek.com>
++ *	   Sean Wang <sean.wang@mediatek.com>
++ */
  
- static const struct of_device_id mt6397_rtc_of_match[] = {
-+	{ .compatible = "mediatek,mt6323-rtc", },
- 	{ .compatible = "mediatek,mt6397-rtc", },
- 	{ }
- };
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
 -- 
 2.7.4
