@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754780AbeCWLr0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 07:47:26 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43564 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754346AbeCWLrS (ORCPT
+        id S1754745AbeCWLrd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 07:47:33 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33461 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754746AbeCWLrZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 07:47:18 -0400
-X-Google-Smtp-Source: AG47ELvcZe1dXuM8ZlMhVkTdC9sfoYQn2hjD904pXxey8hXG6Vyc40qIRH24N5SXJGIOdsWCK3xUng==
+        Fri, 23 Mar 2018 07:47:25 -0400
+X-Google-Smtp-Source: AG47ELtauukrp0ZEN3cKR9f3BRfXjXGsiBkimOFYzcqBeO+Wios8n8+2eSJJD2jVqH0/xM+ZlUoCig==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -21,9 +21,9 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v3 3/8] ARM: davinci: dts: add a reset control to the dsp node
-Date: Fri, 23 Mar 2018 12:47:04 +0100
-Message-Id: <20180323114709.20330-4-brgl@bgdev.pl>
+Subject: [PATCH v3 8/8] clk: davinci: kill davinci_clk_reset_assert/deassert()
+Date: Fri, 23 Mar 2018 12:47:09 +0100
+Message-Id: <20180323114709.20330-9-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180323114709.20330-1-brgl@bgdev.pl>
 References: <20180323114709.20330-1-brgl@bgdev.pl>
@@ -33,25 +33,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The davinci-rproc driver will soon use the reset framework. Add the
-resets property to the dsp node in da850.dtsi.
+This code is no longer used. Remove it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/boot/dts/da850.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
+ drivers/clk/davinci/psc.c                  | 18 ------------------
+ 2 files changed, 39 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
 
-diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
-index dad64dbf1f23..5b485e44b83e 100644
---- a/arch/arm/boot/dts/da850.dtsi
-+++ b/arch/arm/boot/dts/da850.dtsi
-@@ -109,6 +109,7 @@
- 		interrupt-parent = <&intc>;
- 		interrupts = <28>;
- 		clocks = <&psc0 15>;
-+		resets = <&psc0 15>;
- 		status = "disabled";
- 	};
- 	soc@1c00000 {
+diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
+deleted file mode 100644
+index 42ed4f2f5ce4..000000000000
+--- a/arch/arm/mach-davinci/include/mach/clock.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/*
+- * arch/arm/mach-davinci/include/mach/clock.h
+- *
+- * Clock control driver for DaVinci - header file
+- *
+- * Authors: Vladimir Barinov <source@mvista.com>
+- *
+- * 2007 (c) MontaVista Software, Inc. This file is licensed under
+- * the terms of the GNU General Public License version 2. This program
+- * is licensed "as is" without any warranty of any kind, whether express
+- * or implied.
+- */
+-#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
+-#define __ASM_ARCH_DAVINCI_CLOCK_H
+-
+-struct clk;
+-
+-int davinci_clk_reset_assert(struct clk *c);
+-int davinci_clk_reset_deassert(struct clk *c);
+-
+-#endif
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 063df62381ea..75c4bc6f23e3 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -295,24 +295,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
+ 	return 0;
+ }
+ 
+-/*
+- * REVISIT: These exported functions can be removed after a non-DT lookup is
+- * added to the reset controller framework and the davinci-rproc driver is
+- * updated to use the generic reset controller framework.
+- */
+-
+-int davinci_clk_reset_assert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, true);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_assert);
+-
+-int davinci_clk_reset_deassert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, false);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_deassert);
+-
+ static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
+ 				    unsigned long id)
+ {
 -- 
 2.16.1
