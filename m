@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeCWHkq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 03:40:46 -0400
-Received: from regular1.263xmail.com ([211.150.99.132]:58708 "EHLO
+        id S1751836AbeCWHjT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 03:39:19 -0400
+Received: from regular1.263xmail.com ([211.150.99.134]:43532 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbeCWHkp (ORCPT
+        with ESMTP id S1751668AbeCWHjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 03:40:45 -0400
+        Fri, 23 Mar 2018 03:39:16 -0400
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -16,7 +16,7 @@ X-RL-SENDER: jeffy.chen@rock-chips.com
 X-FST-TO: linux-kernel@vger.kernel.org
 X-SENDER-IP: 103.29.142.67
 X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <7d803a580c3024b47326608bba03cb2d>
+X-UNIQUE-TAG: <864d7bc539791ab8bcd0ca0099f022a6>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Jeffy Chen <jeffy.chen@rock-chips.com>
@@ -26,9 +26,9 @@ Cc: jcliang@chromium.org, robin.murphy@arm.com, xxm@rock-chips.com,
         Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
         iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v8 11/14] iommu/rockchip: Use OF_IOMMU to attach devices automatically
-Date: Fri, 23 Mar 2018 15:38:11 +0800
-Message-Id: <20180323073814.5802-12-jeffy.chen@rock-chips.com>
+Subject: [PATCH v8 03/14] iommu/rockchip: Request irqs in rk_iommu_probe()
+Date: Fri, 23 Mar 2018 15:38:03 +0800
+Message-Id: <20180323073814.5802-4-jeffy.chen@rock-chips.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180323073814.5802-1-jeffy.chen@rock-chips.com>
 References: <20180323073814.5802-1-jeffy.chen@rock-chips.com>
@@ -36,12 +36,11 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Converts the rockchip-iommu driver to use the OF_IOMMU infrastructure,
-which allows attaching master devices to their IOMMUs automatically
-according to DT properties.
+Move request_irq to the end of rk_iommu_probe().
 
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 ---
 
 Changes in v8: None
@@ -50,223 +49,90 @@ Changes in v6: None
 Changes in v5: None
 Changes in v4: None
 Changes in v3:
-Add struct rk_iommudata.
-Squash iommu/rockchip: Use iommu_group_get_for_dev() for add_device
+Loop platform_get_irq() as Robin suggested.
 
 Changes in v2: None
 
- drivers/iommu/rockchip-iommu.c | 135 ++++++++++++-----------------------------
- 1 file changed, 40 insertions(+), 95 deletions(-)
+ drivers/iommu/rockchip-iommu.c | 38 +++++++++-----------------------------
+ 1 file changed, 9 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index 7970d21b9858..bd8580b897e9 100644
+index 73117dbe839e..ec3ff936aa60 100644
 --- a/drivers/iommu/rockchip-iommu.c
 +++ b/drivers/iommu/rockchip-iommu.c
-@@ -19,6 +19,7 @@
- #include <linux/mm.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_iommu.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -104,6 +105,10 @@ struct rk_iommu {
- 	struct iommu_domain *domain; /* domain to which iommu is attached */
- };
+@@ -90,8 +90,6 @@ struct rk_iommu {
+ 	struct device *dev;
+ 	void __iomem **bases;
+ 	int num_mmu;
+-	int *irq;
+-	int num_irq;
+ 	bool reset_disabled;
+ 	struct iommu_device iommu;
+ 	struct list_head node; /* entry in rk_iommu_domain.iommus */
+@@ -830,13 +828,6 @@ static int rk_iommu_attach_device(struct iommu_domain *domain,
  
-+struct rk_iommudata {
-+	struct rk_iommu *iommu;
-+};
-+
- static struct device *dma_dev;
+ 	iommu->domain = domain;
  
- static inline void rk_table_flush(struct rk_iommu_domain *dom, dma_addr_t dma,
-@@ -807,18 +812,9 @@ static size_t rk_iommu_unmap(struct iommu_domain *domain, unsigned long _iova,
- 
- static struct rk_iommu *rk_iommu_from_dev(struct device *dev)
- {
--	struct iommu_group *group;
--	struct device *iommu_dev;
--	struct rk_iommu *rk_iommu;
-+	struct rk_iommudata *data = dev->archdata.iommu;
- 
--	group = iommu_group_get(dev);
--	if (!group)
--		return NULL;
--	iommu_dev = iommu_group_get_iommudata(group);
--	rk_iommu = dev_get_drvdata(iommu_dev);
--	iommu_group_put(group);
--
--	return rk_iommu;
-+	return data ? data->iommu : NULL;
- }
- 
- static int rk_iommu_attach_device(struct iommu_domain *domain,
-@@ -989,110 +985,53 @@ static void rk_iommu_domain_free(struct iommu_domain *domain)
- 		iommu_put_dma_cookie(&rk_domain->domain);
- }
- 
--static bool rk_iommu_is_dev_iommu_master(struct device *dev)
--{
--	struct device_node *np = dev->of_node;
--	int ret;
--
--	/*
--	 * An iommu master has an iommus property containing a list of phandles
--	 * to iommu nodes, each with an #iommu-cells property with value 0.
--	 */
--	ret = of_count_phandle_with_args(np, "iommus", "#iommu-cells");
--	return (ret > 0);
--}
--
--static int rk_iommu_group_set_iommudata(struct iommu_group *group,
--					struct device *dev)
-+static int rk_iommu_add_device(struct device *dev)
- {
--	struct device_node *np = dev->of_node;
--	struct platform_device *pd;
--	int ret;
--	struct of_phandle_args args;
-+	struct iommu_group *group;
-+	struct rk_iommu *iommu;
- 
--	/*
--	 * An iommu master has an iommus property containing a list of phandles
--	 * to iommu nodes, each with an #iommu-cells property with value 0.
--	 */
--	ret = of_parse_phandle_with_args(np, "iommus", "#iommu-cells", 0,
--					 &args);
--	if (ret) {
--		dev_err(dev, "of_parse_phandle_with_args(%pOF) => %d\n",
--			np, ret);
--		return ret;
+-	for (i = 0; i < iommu->num_irq; i++) {
+-		ret = devm_request_irq(iommu->dev, iommu->irq[i], rk_iommu_irq,
+-				       IRQF_SHARED, dev_name(dev), iommu);
+-		if (ret)
+-			return ret;
 -	}
--	if (args.args_count != 0) {
--		dev_err(dev, "incorrect number of iommu params found for %pOF (found %d, expected 0)\n",
--			args.np, args.args_count);
--		return -EINVAL;
--	}
-+	iommu = rk_iommu_from_dev(dev);
-+	if (!iommu)
-+		return -ENODEV;
+-
+ 	for (i = 0; i < iommu->num_mmu; i++) {
+ 		rk_iommu_write(iommu->bases[i], RK_MMU_DTE_ADDR,
+ 			       rk_domain->dt_dma);
+@@ -885,9 +876,6 @@ static void rk_iommu_detach_device(struct iommu_domain *domain,
+ 	}
+ 	rk_iommu_disable_stall(iommu);
  
--	pd = of_find_device_by_node(args.np);
--	of_node_put(args.np);
--	if (!pd) {
--		dev_err(dev, "iommu %pOF not found\n", args.np);
--		return -EPROBE_DEFER;
--	}
-+	group = iommu_group_get_for_dev(dev);
-+	if (IS_ERR(group))
-+		return PTR_ERR(group);
-+	iommu_group_put(group);
+-	for (i = 0; i < iommu->num_irq; i++)
+-		devm_free_irq(iommu->dev, iommu->irq[i], iommu);
+-
+ 	iommu->domain = NULL;
  
--	/* TODO(djkurtz): handle multiple slave iommus for a single master */
--	iommu_group_set_iommudata(group, &pd->dev, NULL);
-+	iommu_device_link(&iommu->iommu, dev);
- 
- 	return 0;
- }
- 
--static int rk_iommu_add_device(struct device *dev)
-+static void rk_iommu_remove_device(struct device *dev)
- {
--	struct iommu_group *group;
+ 	dev_dbg(dev, "Detached from iommu domain\n");
+@@ -1138,7 +1126,7 @@ static int rk_iommu_probe(struct platform_device *pdev)
  	struct rk_iommu *iommu;
--	int ret;
+ 	struct resource *res;
+ 	int num_res = pdev->num_resources;
+-	int err, i;
++	int err, i, irq;
+ 
+ 	iommu = devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
+ 	if (!iommu)
+@@ -1165,23 +1153,15 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ 	if (iommu->num_mmu == 0)
+ 		return PTR_ERR(iommu->bases[0]);
+ 
+-	iommu->num_irq = platform_irq_count(pdev);
+-	if (iommu->num_irq < 0)
+-		return iommu->num_irq;
+-	if (iommu->num_irq == 0)
+-		return -ENXIO;
++	i = 0;
++	while ((irq = platform_get_irq(pdev, i++)) != -ENXIO) {
++		if (irq < 0)
++			return irq;
+ 
+-	iommu->irq = devm_kcalloc(dev, iommu->num_irq, sizeof(*iommu->irq),
+-				  GFP_KERNEL);
+-	if (!iommu->irq)
+-		return -ENOMEM;
 -
--	if (!rk_iommu_is_dev_iommu_master(dev))
--		return -ENODEV;
--
--	group = iommu_group_get(dev);
--	if (!group) {
--		group = iommu_group_alloc();
--		if (IS_ERR(group)) {
--			dev_err(dev, "Failed to allocate IOMMU group\n");
--			return PTR_ERR(group);
+-	for (i = 0; i < iommu->num_irq; i++) {
+-		iommu->irq[i] = platform_get_irq(pdev, i);
+-		if (iommu->irq[i] < 0) {
+-			dev_err(dev, "Failed to get IRQ, %d\n", iommu->irq[i]);
+-			return -ENXIO;
 -		}
--	}
--
--	ret = iommu_group_add_device(group, dev);
--	if (ret)
--		goto err_put_group;
--
--	ret = rk_iommu_group_set_iommudata(group, dev);
--	if (ret)
--		goto err_remove_device;
++		err = devm_request_irq(iommu->dev, irq, rk_iommu_irq,
++				       IRQF_SHARED, dev_name(dev), iommu);
++		if (err)
++			return err;
+ 	}
  
- 	iommu = rk_iommu_from_dev(dev);
--	if (iommu)
--		iommu_device_link(&iommu->iommu, dev);
- 
--	iommu_group_put(group);
--
--	return 0;
--
--err_remove_device:
-+	iommu_device_unlink(&iommu->iommu, dev);
- 	iommu_group_remove_device(dev);
--err_put_group:
--	iommu_group_put(group);
--	return ret;
- }
- 
--static void rk_iommu_remove_device(struct device *dev)
-+static int rk_iommu_of_xlate(struct device *dev,
-+			     struct of_phandle_args *args)
- {
--	struct rk_iommu *iommu;
-+	struct platform_device *iommu_dev;
-+	struct rk_iommudata *data;
- 
--	if (!rk_iommu_is_dev_iommu_master(dev))
--		return;
-+	data = devm_kzalloc(dma_dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
- 
--	iommu = rk_iommu_from_dev(dev);
--	if (iommu)
--		iommu_device_unlink(&iommu->iommu, dev);
-+	iommu_dev = of_find_device_by_node(args->np);
- 
--	iommu_group_remove_device(dev);
-+	data->iommu = platform_get_drvdata(iommu_dev);
-+	dev->archdata.iommu = data;
-+
-+	of_dev_put(iommu_dev);
-+
-+	return 0;
- }
- 
- static const struct iommu_ops rk_iommu_ops = {
-@@ -1106,7 +1045,9 @@ static const struct iommu_ops rk_iommu_ops = {
- 	.add_device = rk_iommu_add_device,
- 	.remove_device = rk_iommu_remove_device,
- 	.iova_to_phys = rk_iommu_iova_to_phys,
-+	.device_group = generic_device_group,
- 	.pgsize_bitmap = RK_IOMMU_PGSIZE_BITMAP,
-+	.of_xlate = rk_iommu_of_xlate,
- };
- 
- static int rk_iommu_probe(struct platform_device *pdev)
-@@ -1178,6 +1119,8 @@ static int rk_iommu_probe(struct platform_device *pdev)
- 		goto err_unprepare_clocks;
- 
- 	iommu_device_set_ops(&iommu->iommu, &rk_iommu_ops);
-+	iommu_device_set_fwnode(&iommu->iommu, &dev->of_node->fwnode);
-+
- 	err = iommu_device_register(&iommu->iommu);
- 	if (err)
- 		goto err_remove_sysfs;
-@@ -1250,6 +1193,8 @@ static int __init rk_iommu_init(void)
- }
- subsys_initcall(rk_iommu_init);
- 
-+IOMMU_OF_DECLARE(rk_iommu_of, "rockchip,iommu");
-+
- MODULE_DESCRIPTION("IOMMU API for Rockchip");
- MODULE_AUTHOR("Simon Xue <xxm@rock-chips.com> and Daniel Kurtz <djkurtz@chromium.org>");
- MODULE_ALIAS("platform:rockchip-iommu");
+ 	iommu->reset_disabled = device_property_read_bool(dev,
 -- 
 2.11.0
