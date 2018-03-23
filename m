@@ -1,68 +1,69 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3841162-1521757289-2-10600966794892762228
+X-Cyrus-Session-Id: sloti22d1t05-212616-1521777560-2-14983539106568587264
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
   T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Attached: signature.asc
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521757289; b=riIKxzRzC49wRi/IkTRg68Of8kPznyRy3Ie2zxOWJgJ7dYi
-    amnISxLQBuRdFZox9lmISn1OYWnPStAxzvQmmhdgEO+sqP42W8yCFoFKKrIlmMMM
-    9V+gMv5CpaL7io8LKoNM32fr1DMhZmLTr9fThC+kliUg9L6YoZIE2W2BawLGuOzs
-    ZSKMre7kdGuui6HiDXWGJyNbCYfUnd5+j1f5VZ8emdwoJ/VpzGGdDJxrAnmIfaxm
-    tV5P5ImzbVGlIP4zXC1jLqLAJaD18aQfeb7kwjHahLk8JQXFqjiD4c8GqEAr/Q6j
-    xJc3GBZeUptANpGNKI/zcTFqt5s8hJ1va6mCZnQ==
+    t=1521777559; b=KzuVEzIxRUH7i243opK4zrI1fKoDITu3pDUtGWlPgSE5sat
+    oj2G5UcTEzWKQK240D9iMPQ3qg9XLOfQtNInbcup51sngWTkUtuxAN4eELO36WtO
+    NlKOV7UHRicKYbkQcgtg00g/HcQJHepBz4frDADCWvr/Dc9gYeyUZxdbgGNEYvkq
+    11NWFJcDUcbu9VXAERWQU+BDw915ZydjHKp3YNOY1GDpLNr9MdaEcBBWuNfogzio
+    DUHxD6FubeLeBAoZBBdzZ6rQFJAuuBNfox+iH7fu3zrtrANyOG6HNQp7e+y52x3J
+    zv/zuKWfvcEE6KLNN7VxL7ZOVyyRxj4GkVqJH2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=arctest; t=1521757289; bh=oilQoWjz2zoSNG71uKFtBPp+If
-    2CgjgKwfS3OeDeY5E=; b=NpVjGtPGjT67zCsgBYgzWZCIND2F1e6+HFcZkLtyxF
-    SPwNvOVOCBzPzIuOC1fIdtbzJV99161uNjggh39XoYbAxrR8fYLV+H3AfRE4xkgD
-    x3TrcDTbhKmTNZH8qfgicPD77VSbccZhi1RhmCCmaYljqepN9RZPXsmRtNEa4JrH
-    S2tKW1qqjf2XW5Tu1nru4dOR8G9R6X80y4xXTRtzY8bN3janI0j0fcSg+Np5vA8s
-    Mk7/KtMvDxmCVzrBRXBxfDh9VHteiJx2gtBXBKaHRkW6ysOVF4ryYfjcEXZx4Drc
-    4acJ/CUz1Y3YH4jElwTUxZFNFHVqiYUn4wRCzO1o4omg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=message-id:subject:from:to:cc:date
+    :in-reply-to:references:content-type:mime-version
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1521777559; bh=5SvjjoAUaysI2wrTTFD9UUpWnSloq+ThLng+isqMh9o=; b=b
+    PLEJ/lMYSLgo0F9Z9Oa6qLCtZQFBmzuGjCmRdVjVRFchDCIoGB+ao3JYWHtZxuP5
+    3G1MnG6Rc3JUJTYEZjzqwLBX8x05YIZu2FtGk/PF7hs28P75r3/cNTY04I4YQZXb
+    XYgdptbyNC2B9EZS/s7W0ySx4Ni7CmOXbieGZIfPkmoKdHSD0oLZUavudJGNpFp7
+    g2BUszfOH4VY+zAeHqzeCc7o/uqf/lOR65IQYGcuPl0vS58Fy1ZI04MBCoOWXf8M
+    5cfW/FC4AJf8J1bh1K0CIMiW9bLzQ3wai68jiVO4QZI2xhCsWsCX59nG/OpfgaSX
+    SFDkK0k+cMIutdIu18ymw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=flygoat.com header.i=@flygoat.com header.b=bOqWGPya x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
+    dkim=pass (1024-bit rsa key sha256) header.d=flygoat.com header.i=@flygoat.com header.b=lHkXx2N2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=flygoat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=flygoat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=flygoat.com header.i=@flygoat.com header.b=bOqWGPya x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
+    dkim=pass (1024-bit rsa key sha256) header.d=flygoat.com header.i=@flygoat.com header.b=lHkXx2N2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=flygoat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=flygoat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeCVWVQ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 22 Mar 2018 18:21:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751872AbeCVWVO (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 22 Mar 2018 18:21:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E3F21837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Thu, 22 Mar 2018 22:21:08 +0000
-From: James Hogan <jhogan@kernel.org>
-To: Huacai Chen <chenhc@lemote.com>
+        id S1751948AbeCWD7Q (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 22 Mar 2018 23:59:16 -0400
+Received: from forward106p.mail.yandex.net ([77.88.28.109]:46269 "EHLO
+        forward106p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751899AbeCWD7Q (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 22 Mar 2018 23:59:16 -0400
+Authentication-Results: smtp3o.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Message-ID: <1521777055.1510.9.camel@flygoat.com>
+Subject: Re: [PATCH V3] ZBOOT: fix stack protector in compressed boot phase
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+To: James Hogan <jhogan@kernel.org>, Huacai Chen <chenhc@lemote.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
         linux-mips@linux-mips.org, Russell King <linux@arm.linux.org.uk>,
@@ -70,84 +71,75 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH V3] ZBOOT: fix stack protector in compressed boot phase
-Message-ID: <20180322222107.GJ13126@saruman>
+Date: Fri, 23 Mar 2018 11:50:55 +0800
+In-Reply-To: <20180322222107.GJ13126@saruman>
 References: <1521186916-13745-1-git-send-email-chenhc@lemote.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="I/5syFLg1Ed7r+1G"
-Content-Disposition: inline
-In-Reply-To: <1521186916-13745-1-git-send-email-chenhc@lemote.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+         <20180322222107.GJ13126@saruman>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+在 2018-03-22四的 22:21 +0000，James Hogan写道：
+> On Fri, Mar 16, 2018 at 03:55:16PM +0800, Huacai Chen wrote:
+> > diff --git a/arch/mips/boot/compressed/decompress.c
+> > b/arch/mips/boot/compressed/decompress.c
+> > index fdf99e9..5ba431c 100644
+> > --- a/arch/mips/boot/compressed/decompress.c
+> > +++ b/arch/mips/boot/compressed/decompress.c
+> > @@ -78,11 +78,6 @@ void error(char *x)
+> >  
+> >  unsigned long __stack_chk_guard;
+> 
+> ...
+> 
+> > diff --git a/arch/mips/boot/compressed/head.S
+> > b/arch/mips/boot/compressed/head.S
+> > index 409cb48..00d0ee0 100644
+> > --- a/arch/mips/boot/compressed/head.S
+> > +++ b/arch/mips/boot/compressed/head.S
+> > @@ -32,6 +32,10 @@ start:
+> >  	bne	a2, a0, 1b
+> >  	 addiu	a0, a0, 4
+> >  
+> > +	PTR_LA	a0, __stack_chk_guard
+> > +	PTR_LI	a1, 0x000a0dff
+> > +	sw	a1, 0(a0)
+> 
 
---I/5syFLg1Ed7r+1G
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi James
 
-On Fri, Mar 16, 2018 at 03:55:16PM +0800, Huacai Chen wrote:
-> diff --git a/arch/mips/boot/compressed/decompress.c b/arch/mips/boot/comp=
-ressed/decompress.c
-> index fdf99e9..5ba431c 100644
-> --- a/arch/mips/boot/compressed/decompress.c
-> +++ b/arch/mips/boot/compressed/decompress.c
-> @@ -78,11 +78,6 @@ void error(char *x)
-> =20
->  unsigned long __stack_chk_guard;
+Huacai Can't reply this mail. His chenhc@lemote.com is blcoked by
+Linux-MIPS mailing list while his Gmail didn't receive this email, so
+I'm replying for him.
 
-=2E..
+> Should that not be LONG_S? Otherwise big endian MIPS64 would get a
+> word-swapped canary (which is probably mostly harmless, but still).
 
-> diff --git a/arch/mips/boot/compressed/head.S b/arch/mips/boot/compressed=
-/head.S
-> index 409cb48..00d0ee0 100644
-> --- a/arch/mips/boot/compressed/head.S
-> +++ b/arch/mips/boot/compressed/head.S
-> @@ -32,6 +32,10 @@ start:
->  	bne	a2, a0, 1b
->  	 addiu	a0, a0, 4
-> =20
-> +	PTR_LA	a0, __stack_chk_guard
-> +	PTR_LI	a1, 0x000a0dff
-> +	sw	a1, 0(a0)
+Yes, he said it's considerable.
 
-Should that not be LONG_S? Otherwise big endian MIPS64 would get a
-word-swapped canary (which is probably mostly harmless, but still).
+> 
+> Also I think it worth mentioning in the commit message the MIPS
+> configuration you hit this with, presumably a Loongson one? For me
+> decompress_kernel() gets a stack guard on loongson3_defconfig, but
+> not
+> malta_defconfig or malta_defconfig + 64-bit. I presume its sensitive
+> to
+> the compiler inlining stuff into decompress_kernel() or something
+> such
+> that it suddenly qualifies for a stack guard.
 
-Also I think it worth mentioning in the commit message the MIPS
-configuration you hit this with, presumably a Loongson one? For me
-decompress_kernel() gets a stack guard on loongson3_defconfig, but not
-malta_defconfig or malta_defconfig + 64-bit. I presume its sensitive to
-the compiler inlining stuff into decompress_kernel() or something such
-that it suddenly qualifies for a stack guard.
+Have you tested with CONFIG_CC_STACKPROTECTOR_STRONG=y ?
+Huacai reproduced the issue by this[1] config with GCC 4.9.
 
-Cheers
-James
+[1] https://github.com/loongson-community/linux-stable/blob/rebase-4.14
+/arch/mips/configs/loongson3_defconfig
 
---I/5syFLg1Ed7r+1G
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlq0LFMACgkQbAtpk944
-dnrmTQ/+JqSPbejJsFyxpccmWIyLBtYPujNEeohQv5ZthOfaooKRy7NvUQqirXxG
-HKpHT1EqQtZsXxir/BZxdpo0rN+M/7kMWU9XKLtFqkiz88k1i+k4o7dlrdQcZOqy
-HFBPtJnkchJrgBxxzPNxmHnWCxOFoYbK2HBxsn0cBGDm9sgLgXPkMwkAk29fG3uT
-ViYFSUhnlmNAo4GBgUkxSFK3rDZZQWq7DFHaMrTEKeJo0SdLtmCt7YD25grSOp0K
-klBR1sdHe+oIXQAcowD3xdsLNSNeRoRgtan2Y6ByBLs00+dE7A6D8buruvohh/m4
-B37/oeHOEg65kmOVVSnhseaW92YfUyBEkGosJHgV0a9/BoNeN8r1deLgKGb/VYCC
-bzOiN0pTzDzPZXvIsWEKibOMrrcm/2Et6Gkh4VawwFEKXZ2ZQAkvwUXFvBjXFwuq
-3/V3+bLsrS6mdkvDGe3HcqNEdRhGcjt9uISxGhQtPe30aK9EgtTYH/Ol9GNe/R2l
-b/1eEo5RGf0FAko1+xeE81q+xAUPoR4IECl5wj9LQy/KEP7rBSSJj2Ixxl2YMZGg
-osFHqfdRh1ihHViu8OMMsT0/qTCH/H953rgGZySpK4twyChK92FMfF2uO7z18NHC
-uAylLlojOuGKA0t6HsAEuB64oWg3HV2bYGu1p1yQK5XolLuLrWk=
-=1hrp
------END PGP SIGNATURE-----
-
---I/5syFLg1Ed7r+1G--
+> 
+> Cheers
+> James
