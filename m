@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752122AbeCWA5X (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:57:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49022 "EHLO mx1.redhat.com"
+        id S1752177AbeCWA5h (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:57:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49014 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751873AbeCWAz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 20:55:56 -0400
+        id S1751864AbeCWAzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 20:55:55 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -13,11 +13,10 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Evgeny Baskakov <ebaskakov@nvidia.com>,
         Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 15/15] mm/hmm: use device driver encoding for HMM pfn v2
-Date: Thu, 22 Mar 2018 20:55:27 -0400
-Message-Id: <20180323005527.758-16-jglisse@redhat.com>
+        Mark Hairgrove <mhairgrove@nvidia.com>
+Subject: [PATCH 13/15] mm/hmm: factor out pte and pmd handling to simplify hmm_vma_walk_pmd() v2
+Date: Thu, 22 Mar 2018 20:55:25 -0400
+Message-Id: <20180323005527.758-14-jglisse@redhat.com>
 In-Reply-To: <20180323005527.758-1-jglisse@redhat.com>
 References: <20180323005527.758-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -29,468 +28,245 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-User of hmm_vma_fault() and hmm_vma_get_pfns() provide a flags array
-and pfn shift value allowing them to define their own encoding for HMM
-pfn that are fill inside the pfns array of the hmm_range struct. With
-this device driver can get pfn that match their own private encoding
-out of HMM without having to do any conversion.
+No functional change, just create one function to handle pmd and one
+to handle pte (hmm_vma_handle_pmd() and hmm_vma_handle_pte()).
 
 Changed since v1:
-  - Split flags and special values for clarification
-  - Improved comments and provide examples
+  - s/pfns/pfn for pte as in that case we are dealing with a single pfn
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
 Cc: Ralph Campbell <rcampbell@nvidia.com>
 Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
 ---
- include/linux/hmm.h | 130 +++++++++++++++++++++++++++++++++++++---------------
- mm/hmm.c            |  84 ++++++++++++++++++---------------
- 2 files changed, 142 insertions(+), 72 deletions(-)
+ mm/hmm.c | 174 +++++++++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 102 insertions(+), 72 deletions(-)
 
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 0f7ea3074175..5d26e0a223d9 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -80,68 +80,145 @@
- struct hmm;
- 
- /*
-+ * hmm_pfn_flag_e - HMM flag enums
-+ *
-  * Flags:
-  * HMM_PFN_VALID: pfn is valid. It has, at least, read permission.
-  * HMM_PFN_WRITE: CPU page table has write permission set
-+ * HMM_PFN_DEVICE_PRIVATE: private device memory (ZONE_DEVICE)
-+ *
-+ * The driver provide a flags array, if driver valid bit for an entry is bit
-+ * 3 ie (entry & (1 << 3)) is true if entry is valid then driver must provide
-+ * an array in hmm_range.flags with hmm_range.flags[HMM_PFN_VALID] == 1 << 3.
-+ * Same logic apply to all flags. This is same idea as vm_page_prot in vma
-+ * except that this is per device driver rather than per architecture.
-+ */
-+enum hmm_pfn_flag_e {
-+	HMM_PFN_VALID = 0,
-+	HMM_PFN_WRITE,
-+	HMM_PFN_DEVICE_PRIVATE,
-+	HMM_PFN_FLAG_MAX
-+};
-+
-+/*
-+ * hmm_pfn_value_e - HMM pfn special value
-+ *
-+ * Flags:
-  * HMM_PFN_ERROR: corresponding CPU page table entry points to poisoned memory
-+ * HMM_PFN_NONE: corresponding CPU page table entry is pte_none()
-  * HMM_PFN_SPECIAL: corresponding CPU page table entry is special; i.e., the
-  *      result of vm_insert_pfn() or vm_insert_page(). Therefore, it should not
-  *      be mirrored by a device, because the entry will never have HMM_PFN_VALID
-  *      set and the pfn value is undefined.
-- * HMM_PFN_DEVICE_PRIVATE: unaddressable device memory (ZONE_DEVICE)
-+ *
-+ * Driver provide entry value for none entry, error entry and special entry,
-+ * driver can alias (ie use same value for error and special for instance). It
-+ * should not alias none and error or special.
-+ *
-+ * HMM pfn value returned by hmm_vma_get_pfns() or hmm_vma_fault() will be:
-+ * hmm_range.values[HMM_PFN_ERROR] if CPU page table entry is poisonous,
-+ * hmm_range.values[HMM_PFN_NONE] if there is no CPU page table
-+ * hmm_range.values[HMM_PFN_SPECIAL] if CPU page table entry is a special one
-  */
--#define HMM_PFN_VALID (1 << 0)
--#define HMM_PFN_WRITE (1 << 1)
--#define HMM_PFN_ERROR (1 << 2)
--#define HMM_PFN_SPECIAL (1 << 3)
--#define HMM_PFN_DEVICE_PRIVATE (1 << 4)
--#define HMM_PFN_SHIFT 5
-+enum hmm_pfn_value_e {
-+	HMM_PFN_ERROR,
-+	HMM_PFN_NONE,
-+	HMM_PFN_SPECIAL,
-+	HMM_PFN_VALUE_MAX
-+};
-+
-+/*
-+ * struct hmm_range - track invalidation lock on virtual address range
-+ *
-+ * @vma: the vm area struct for the range
-+ * @list: all range lock are on a list
-+ * @start: range virtual start address (inclusive)
-+ * @end: range virtual end address (exclusive)
-+ * @pfns: array of pfns (big enough for the range)
-+ * @flags: pfn flags to match device driver page table
-+ * @values: pfn value for some special case (none, special, error, ...)
-+ * @pfn_shifts: pfn shift value (should be <= PAGE_SHIFT)
-+ * @valid: pfns array did not change since it has been fill by an HMM function
-+ */
-+struct hmm_range {
-+	struct vm_area_struct	*vma;
-+	struct list_head	list;
-+	unsigned long		start;
-+	unsigned long		end;
-+	uint64_t		*pfns;
-+	const uint64_t		*flags;
-+	const uint64_t		*values;
-+	uint8_t			pfn_shift;
-+	bool			valid;
-+};
- 
- /*
-  * hmm_pfn_to_page() - return struct page pointed to by a valid HMM pfn
-+ * @range: range use to decode HMM pfn value
-  * @pfn: HMM pfn value to get corresponding struct page from
-  * Returns: struct page pointer if pfn is a valid HMM pfn, NULL otherwise
-  *
-  * If the HMM pfn is valid (ie valid flag set) then return the struct page
-  * matching the pfn value stored in the HMM pfn. Otherwise return NULL.
-  */
--static inline struct page *hmm_pfn_to_page(uint64_t pfn)
-+static inline struct page *hmm_pfn_to_page(const struct hmm_range *range,
-+					   uint64_t pfn)
- {
--	if (!(pfn & HMM_PFN_VALID))
-+	if (pfn == range->values[HMM_PFN_NONE])
-+		return NULL;
-+	if (pfn == range->values[HMM_PFN_ERROR])
-+		return NULL;
-+	if (pfn == range->values[HMM_PFN_SPECIAL])
- 		return NULL;
--	return pfn_to_page(pfn >> HMM_PFN_SHIFT);
-+	if (!(pfn & range->flags[HMM_PFN_VALID]))
-+		return NULL;
-+	return pfn_to_page(pfn >> range->pfn_shift);
- }
- 
- /*
-  * hmm_pfn_to_pfn() - return pfn value store in a HMM pfn
-+ * @range: range use to decode HMM pfn value
-  * @pfn: HMM pfn value to extract pfn from
-  * Returns: pfn value if HMM pfn is valid, -1UL otherwise
-  */
--static inline unsigned long hmm_pfn_to_pfn(uint64_t pfn)
-+static inline unsigned long hmm_pfn_to_pfn(const struct hmm_range *range,
-+					   uint64_t pfn)
- {
--	if (!(pfn & HMM_PFN_VALID))
-+	if (pfn == range->values[HMM_PFN_NONE])
-+		return -1UL;
-+	if (pfn == range->values[HMM_PFN_ERROR])
-+		return -1UL;
-+	if (pfn == range->values[HMM_PFN_SPECIAL])
- 		return -1UL;
--	return (pfn >> HMM_PFN_SHIFT);
-+	if (!(pfn & range->flags[HMM_PFN_VALID]))
-+		return -1UL;
-+	return (pfn >> range->pfn_shift);
- }
- 
- /*
-  * hmm_pfn_from_page() - create a valid HMM pfn value from struct page
-+ * @range: range use to encode HMM pfn value
-  * @page: struct page pointer for which to create the HMM pfn
-  * Returns: valid HMM pfn for the page
-  */
--static inline uint64_t hmm_pfn_from_page(struct page *page)
-+static inline uint64_t hmm_pfn_from_page(const struct hmm_range *range,
-+					 struct page *page)
- {
--	return (page_to_pfn(page) << HMM_PFN_SHIFT) | HMM_PFN_VALID;
-+	return (page_to_pfn(page) << range->pfn_shift) |
-+		range->flags[HMM_PFN_VALID];
- }
- 
- /*
-  * hmm_pfn_from_pfn() - create a valid HMM pfn value from pfn
-+ * @range: range use to encode HMM pfn value
-  * @pfn: pfn value for which to create the HMM pfn
-  * Returns: valid HMM pfn for the pfn
-  */
--static inline uint64_t hmm_pfn_from_pfn(unsigned long pfn)
-+static inline uint64_t hmm_pfn_from_pfn(const struct hmm_range *range,
-+					unsigned long pfn)
- {
--	return (pfn << HMM_PFN_SHIFT) | HMM_PFN_VALID;
-+	return (pfn << range->pfn_shift) |
-+		range->flags[HMM_PFN_VALID];
- }
- 
- 
-@@ -263,25 +340,6 @@ int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm);
- void hmm_mirror_unregister(struct hmm_mirror *mirror);
- 
- 
--/*
-- * struct hmm_range - track invalidation lock on virtual address range
-- *
-- * @vma: the vm area struct for the range
-- * @list: all range lock are on a list
-- * @start: range virtual start address (inclusive)
-- * @end: range virtual end address (exclusive)
-- * @pfns: array of pfns (big enough for the range)
-- * @valid: pfns array did not change since it has been fill by an HMM function
-- */
--struct hmm_range {
--	struct vm_area_struct	*vma;
--	struct list_head	list;
--	unsigned long		start;
--	unsigned long		end;
--	uint64_t		*pfns;
--	bool			valid;
--};
--
- /*
-  * To snapshot the CPU page table, call hmm_vma_get_pfns(), then take a device
-  * driver lock that serializes device page table updates, then call
 diff --git a/mm/hmm.c b/mm/hmm.c
-index 290c872062a1..e4742f6f1e05 100644
+index 05b49a5d6674..2cc4dda1fd2e 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -306,6 +306,7 @@ static int hmm_vma_do_fault(struct mm_walk *walk, unsigned long addr,
- {
- 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_REMOTE;
- 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
-+	struct hmm_range *range = hmm_vma_walk->range;
- 	struct vm_area_struct *vma = walk->vma;
- 	int r;
- 
-@@ -315,7 +316,7 @@ static int hmm_vma_do_fault(struct mm_walk *walk, unsigned long addr,
- 	if (r & VM_FAULT_RETRY)
- 		return -EBUSY;
- 	if (r & VM_FAULT_ERROR) {
--		*pfn = HMM_PFN_ERROR;
-+		*pfn = range->values[HMM_PFN_ERROR];
- 		return -EFAULT;
- 	}
- 
-@@ -333,7 +334,7 @@ static int hmm_pfns_bad(unsigned long addr,
- 
- 	i = (addr - range->start) >> PAGE_SHIFT;
- 	for (; addr < end; addr += PAGE_SIZE, i++)
--		pfns[i] = HMM_PFN_ERROR;
-+		pfns[i] = range->values[HMM_PFN_ERROR];
- 
- 	return 0;
+@@ -375,6 +375,99 @@ static int hmm_vma_walk_hole(unsigned long addr,
+ 	return hmm_vma_walk->fault ? -EAGAIN : 0;
  }
-@@ -362,7 +363,7 @@ static int hmm_vma_walk_hole_(unsigned long addr, unsigned long end,
- 	hmm_vma_walk->last = addr;
- 	i = (addr - range->start) >> PAGE_SHIFT;
- 	for (; addr < end; addr += PAGE_SIZE, i++) {
--		pfns[i] = 0;
-+		pfns[i] = range->values[HMM_PFN_NONE];
- 		if (fault || write_fault) {
- 			int ret;
  
-@@ -380,24 +381,27 @@ static inline void hmm_pte_need_fault(const struct hmm_vma_walk *hmm_vma_walk,
- 				      uint64_t pfns, uint64_t cpu_flags,
- 				      bool *fault, bool *write_fault)
- {
-+	struct hmm_range *range = hmm_vma_walk->range;
++static int hmm_vma_handle_pmd(struct mm_walk *walk,
++			      unsigned long addr,
++			      unsigned long end,
++			      uint64_t *pfns,
++			      pmd_t pmd)
++{
++	struct hmm_vma_walk *hmm_vma_walk = walk->private;
++	unsigned long pfn, i;
++	uint64_t flag = 0;
 +
- 	*fault = *write_fault = false;
- 	if (!hmm_vma_walk->fault)
- 		return;
- 
- 	/* We aren't ask to do anything ... */
--	if (!(pfns & HMM_PFN_VALID))
-+	if (!(pfns & range->flags[HMM_PFN_VALID]))
- 		return;
- 	/* If CPU page table is not valid then we need to fault */
--	*fault = cpu_flags & HMM_PFN_VALID;
-+	*fault = cpu_flags & range->flags[HMM_PFN_VALID];
- 	/* Need to write fault ? */
--	if ((pfns & HMM_PFN_WRITE) && !(cpu_flags & HMM_PFN_WRITE)) {
-+	if ((pfns & range->flags[HMM_PFN_WRITE]) &&
-+	    !(cpu_flags & range->flags[HMM_PFN_WRITE])) {
- 		*fault = *write_fault = false;
- 		return;
- 	}
- 	/* Do we fault on device memory ? */
--	if ((pfns & HMM_PFN_DEVICE_PRIVATE) &&
--	    (cpu_flags & HMM_PFN_DEVICE_PRIVATE)) {
--		*write_fault = pfns & HMM_PFN_WRITE;
-+	if ((pfns & range->flags[HMM_PFN_DEVICE_PRIVATE]) &&
-+	    (cpu_flags & range->flags[HMM_PFN_DEVICE_PRIVATE])) {
-+		*write_fault = pfns & range->flags[HMM_PFN_WRITE];
- 		*fault = true;
- 	}
- }
-@@ -439,13 +443,13 @@ static int hmm_vma_walk_hole(unsigned long addr, unsigned long end,
- 	return hmm_vma_walk_hole_(addr, end, fault, write_fault, walk);
- }
- 
--static inline uint64_t pmd_to_hmm_pfn_flags(pmd_t pmd)
-+static inline uint64_t pmd_to_hmm_pfn_flags(struct hmm_range *range, pmd_t pmd)
- {
- 	if (pmd_protnone(pmd))
- 		return 0;
--	return pmd_write(pmd) ? HMM_PFN_VALID |
--				HMM_PFN_WRITE :
--				HMM_PFN_VALID;
-+	return pmd_write(pmd) ? range->flags[HMM_PFN_VALID] |
-+				range->flags[HMM_PFN_WRITE] :
-+				range->flags[HMM_PFN_VALID];
- }
- 
- static int hmm_vma_handle_pmd(struct mm_walk *walk,
-@@ -455,12 +459,13 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk,
- 			      pmd_t pmd)
- {
- 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
-+	struct hmm_range *range = hmm_vma_walk->range;
- 	unsigned long pfn, npages, i;
--	uint64_t flag = 0, cpu_flags;
- 	bool fault, write_fault;
-+	uint64_t cpu_flags;
- 
- 	npages = (end - addr) >> PAGE_SHIFT;
--	cpu_flags = pmd_to_hmm_pfn_flags(pmd);
-+	cpu_flags = pmd_to_hmm_pfn_flags(range, pmd);
- 	hmm_range_need_fault(hmm_vma_walk, pfns, npages, cpu_flags,
- 			     &fault, &write_fault);
- 
-@@ -468,20 +473,19 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk,
- 		return hmm_vma_walk_hole_(addr, end, fault, write_fault, walk);
- 
- 	pfn = pmd_pfn(pmd) + pte_index(addr);
--	flag |= pmd_write(pmd) ? HMM_PFN_WRITE : 0;
- 	for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++)
--		pfns[i] = hmm_pfn_from_pfn(pfn) | flag;
-+		pfns[i] = hmm_pfn_from_pfn(range, pfn) | cpu_flags;
- 	hmm_vma_walk->last = end;
- 	return 0;
- }
- 
--static inline uint64_t pte_to_hmm_pfn_flags(pte_t pte)
-+static inline uint64_t pte_to_hmm_pfn_flags(struct hmm_range *range, pte_t pte)
- {
- 	if (pte_none(pte) || !pte_present(pte))
- 		return 0;
--	return pte_write(pte) ? HMM_PFN_VALID |
--				HMM_PFN_WRITE :
--				HMM_PFN_VALID;
-+	return pte_write(pte) ? range->flags[HMM_PFN_VALID] |
-+				range->flags[HMM_PFN_WRITE] :
-+				range->flags[HMM_PFN_VALID];
- }
- 
- static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
-@@ -489,13 +493,14 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 			      uint64_t *pfn)
- {
- 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
-+	struct hmm_range *range = hmm_vma_walk->range;
- 	struct vm_area_struct *vma = walk->vma;
- 	bool fault, write_fault;
- 	uint64_t cpu_flags;
- 	pte_t pte = *ptep;
- 
--	*pfn = 0;
--	cpu_flags = pte_to_hmm_pfn_flags(pte);
-+	*pfn = range->values[HMM_PFN_NONE];
-+	cpu_flags = pte_to_hmm_pfn_flags(range, pte);
- 	hmm_pte_need_fault(hmm_vma_walk, *pfn, cpu_flags,
- 			   &fault, &write_fault);
- 
-@@ -519,11 +524,16 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 		 * device and report anything else as error.
- 		 */
- 		if (is_device_private_entry(entry)) {
--			cpu_flags = HMM_PFN_VALID | HMM_PFN_DEVICE_PRIVATE;
-+			cpu_flags = range->flags[HMM_PFN_VALID] |
-+				range->flags[HMM_PFN_DEVICE_PRIVATE];
- 			cpu_flags |= is_write_device_private_entry(entry) ?
--					HMM_PFN_WRITE : 0;
--			*pfn = hmm_pfn_from_pfn(swp_offset(entry));
--			*pfn |= HMM_PFN_DEVICE_PRIVATE;
-+				range->flags[HMM_PFN_WRITE] : 0;
-+			hmm_pte_need_fault(hmm_vma_walk, *pfn, cpu_flags,
-+					   &fault, &write_fault);
-+			if (fault || write_fault)
++	if (pmd_protnone(pmd))
++		return hmm_vma_walk_hole(addr, end, walk);
++
++	if ((hmm_vma_walk->fault & hmm_vma_walk->write) && !pmd_write(pmd))
++		return hmm_vma_walk_hole(addr, end, walk);
++
++	pfn = pmd_pfn(pmd) + pte_index(addr);
++	flag |= pmd_write(pmd) ? HMM_PFN_WRITE : 0;
++	for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++)
++		pfns[i] = hmm_pfn_from_pfn(pfn) | flag;
++	hmm_vma_walk->last = end;
++	return 0;
++}
++
++static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
++			      unsigned long end, pmd_t *pmdp, pte_t *ptep,
++			      uint64_t *pfn)
++{
++	struct hmm_vma_walk *hmm_vma_walk = walk->private;
++	struct vm_area_struct *vma = walk->vma;
++	pte_t pte = *ptep;
++
++	*pfn = 0;
++
++	if (pte_none(pte)) {
++		*pfn = 0;
++		if (hmm_vma_walk->fault)
++			goto fault;
++		return 0;
++	}
++
++	if (!pte_present(pte)) {
++		swp_entry_t entry = pte_to_swp_entry(pte);
++
++		if (!non_swap_entry(entry)) {
++			if (hmm_vma_walk->fault)
 +				goto fault;
-+			*pfn = hmm_pfn_from_pfn(range, swp_offset(entry));
-+			*pfn |= cpu_flags;
- 			return 0;
- 		}
- 
-@@ -539,14 +549,14 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 		}
- 
- 		/* Report error for everything else */
--		*pfn = HMM_PFN_ERROR;
-+		*pfn = range->values[HMM_PFN_ERROR];
- 		return -EFAULT;
- 	}
- 
- 	if (fault || write_fault)
- 		goto fault;
- 
--	*pfn = hmm_pfn_from_pfn(pte_pfn(pte)) | cpu_flags;
-+	*pfn = hmm_pfn_from_pfn(range, pte_pfn(pte)) | cpu_flags;
- 	return 0;
- 
- fault:
-@@ -615,12 +625,13 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 	return 0;
- }
- 
--static void hmm_pfns_clear(uint64_t *pfns,
-+static void hmm_pfns_clear(struct hmm_range *range,
-+			   uint64_t *pfns,
- 			   unsigned long addr,
- 			   unsigned long end)
++			return 0;
++		}
++
++		/*
++		 * This is a special swap entry, ignore migration, use
++		 * device and report anything else as error.
++		 */
++		if (is_device_private_entry(entry)) {
++			*pfn = hmm_pfn_from_pfn(swp_offset(entry));
++			if (is_write_device_private_entry(entry)) {
++				*pfn |= HMM_PFN_WRITE;
++			} else if ((hmm_vma_walk->fault & hmm_vma_walk->write))
++				goto fault;
++			*pfn |= HMM_PFN_DEVICE_PRIVATE;
++			return 0;
++		}
++
++		if (is_migration_entry(entry)) {
++			if (hmm_vma_walk->fault) {
++				pte_unmap(ptep);
++				hmm_vma_walk->last = addr;
++				migration_entry_wait(vma->vm_mm,
++						pmdp, addr);
++				return -EAGAIN;
++			}
++			return 0;
++		}
++
++		/* Report error for everything else */
++		*pfn = HMM_PFN_ERROR;
++		return -EFAULT;
++	}
++
++	if ((hmm_vma_walk->fault & hmm_vma_walk->write) && !pte_write(pte))
++		goto fault;
++
++	*pfn = hmm_pfn_from_pfn(pte_pfn(pte));
++	*pfn |= pte_write(pte) ? HMM_PFN_WRITE : 0;
++	return 0;
++
++fault:
++	pte_unmap(ptep);
++	/* Fault any virtual address we were asked to fault */
++	return hmm_vma_walk_hole(addr, end, walk);
++}
++
+ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 			    unsigned long start,
+ 			    unsigned long end,
+@@ -382,25 +475,20 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
  {
- 	for (; addr < end; addr += PAGE_SIZE, pfns++)
--		*pfns = 0;
-+		*pfns = range->values[HMM_PFN_NONE];
+ 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+ 	struct hmm_range *range = hmm_vma_walk->range;
+-	struct vm_area_struct *vma = walk->vma;
+ 	uint64_t *pfns = range->pfns;
+ 	unsigned long addr = start, i;
+-	bool write_fault;
+ 	pte_t *ptep;
+ 
+ 	i = (addr - range->start) >> PAGE_SHIFT;
+-	write_fault = hmm_vma_walk->fault & hmm_vma_walk->write;
+ 
+ again:
+ 	if (pmd_none(*pmdp))
+ 		return hmm_vma_walk_hole(start, end, walk);
+ 
+-	if (pmd_huge(*pmdp) && vma->vm_flags & VM_HUGETLB)
++	if (pmd_huge(*pmdp) && (range->vma->vm_flags & VM_HUGETLB))
+ 		return hmm_pfns_bad(start, end, walk);
+ 
+ 	if (pmd_devmap(*pmdp) || pmd_trans_huge(*pmdp)) {
+-		unsigned long pfn;
+-		uint64_t flag = 0;
+ 		pmd_t pmd;
+ 
+ 		/*
+@@ -416,17 +504,8 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 		barrier();
+ 		if (!pmd_devmap(pmd) && !pmd_trans_huge(pmd))
+ 			goto again;
+-		if (pmd_protnone(pmd))
+-			return hmm_vma_walk_hole(start, end, walk);
+-
+-		if (write_fault && !pmd_write(pmd))
+-			return hmm_vma_walk_hole(start, end, walk);
+ 
+-		pfn = pmd_pfn(pmd) + pte_index(addr);
+-		flag |= pmd_write(pmd) ? HMM_PFN_WRITE : 0;
+-		for (; addr < end; addr += PAGE_SIZE, i++, pfn++)
+-			pfns[i] = hmm_pfn_from_pfn(pfn) | flag;
+-		return 0;
++		return hmm_vma_handle_pmd(walk, addr, end, &pfns[i], pmd);
+ 	}
+ 
+ 	if (pmd_bad(*pmdp))
+@@ -434,67 +513,18 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 
+ 	ptep = pte_offset_map(pmdp, addr);
+ 	for (; addr < end; addr += PAGE_SIZE, ptep++, i++) {
+-		pte_t pte = *ptep;
+-
+-		pfns[i] = 0;
+-
+-		if (pte_none(pte)) {
+-			pfns[i] = 0;
+-			if (hmm_vma_walk->fault)
+-				goto fault;
+-			continue;
+-		}
+-
+-		if (!pte_present(pte)) {
+-			swp_entry_t entry = pte_to_swp_entry(pte);
+-
+-			if (!non_swap_entry(entry)) {
+-				if (hmm_vma_walk->fault)
+-					goto fault;
+-				continue;
+-			}
++		int r;
+ 
+-			/*
+-			 * This is a special swap entry, ignore migration, use
+-			 * device and report anything else as error.
+-			 */
+-			if (is_device_private_entry(entry)) {
+-				pfns[i] = hmm_pfn_from_pfn(swp_offset(entry));
+-				if (is_write_device_private_entry(entry)) {
+-					pfns[i] |= HMM_PFN_WRITE;
+-				} else if (write_fault)
+-					goto fault;
+-				pfns[i] |= HMM_PFN_DEVICE_PRIVATE;
+-			} else if (is_migration_entry(entry)) {
+-				if (hmm_vma_walk->fault) {
+-					pte_unmap(ptep);
+-					hmm_vma_walk->last = addr;
+-					migration_entry_wait(vma->vm_mm,
+-							     pmdp, addr);
+-					return -EAGAIN;
+-				}
+-				continue;
+-			} else {
+-				/* Report error for everything else */
+-				pfns[i] = HMM_PFN_ERROR;
+-			}
+-			continue;
++		r = hmm_vma_handle_pte(walk, addr, end, pmdp, ptep, &pfns[i]);
++		if (r) {
++			/* hmm_vma_handle_pte() did unmap pte directory */
++			hmm_vma_walk->last = addr;
++			return r;
+ 		}
+-
+-		if (write_fault && !pte_write(pte))
+-			goto fault;
+-
+-		pfns[i] = hmm_pfn_from_pfn(pte_pfn(pte));
+-		pfns[i] |= pte_write(pte) ? HMM_PFN_WRITE : 0;
+-		continue;
+-
+-fault:
+-		pte_unmap(ptep);
+-		/* Fault any virtual address we were asked to fault */
+-		return hmm_vma_walk_hole(start, end, walk);
+ 	}
+ 	pte_unmap(ptep - 1);
+ 
++	hmm_vma_walk->last = addr;
+ 	return 0;
  }
  
- static void hmm_pfns_special(struct hmm_range *range)
-@@ -628,7 +639,7 @@ static void hmm_pfns_special(struct hmm_range *range)
- 	unsigned long addr = range->start, i = 0;
- 
- 	for (; addr < range->end; addr += PAGE_SIZE, i++)
--		range->pfns[i] = HMM_PFN_SPECIAL;
-+		range->pfns[i] = range->values[HMM_PFN_SPECIAL];
- }
- 
- /*
-@@ -681,7 +692,7 @@ int hmm_vma_get_pfns(struct hmm_range *range)
- 		 * write without read access are not supported by HMM, because
- 		 * operations such has atomic access would not work.
- 		 */
--		hmm_pfns_clear(range->pfns, range->start, range->end);
-+		hmm_pfns_clear(range, range->pfns, range->start, range->end);
- 		return -EPERM;
- 	}
- 
-@@ -834,7 +845,7 @@ int hmm_vma_fault(struct hmm_range *range, bool block)
- 
- 	hmm = hmm_register(vma->vm_mm);
- 	if (!hmm) {
--		hmm_pfns_clear(range->pfns, range->start, range->end);
-+		hmm_pfns_clear(range, range->pfns, range->start, range->end);
- 		return -ENOMEM;
- 	}
- 	/* Caller must have registered a mirror using hmm_mirror_register() */
-@@ -854,7 +865,7 @@ int hmm_vma_fault(struct hmm_range *range, bool block)
- 		 * write without read access are not supported by HMM, because
- 		 * operations such has atomic access would not work.
- 		 */
--		hmm_pfns_clear(range->pfns, range->start, range->end);
-+		hmm_pfns_clear(range, range->pfns, range->start, range->end);
- 		return -EPERM;
- 	}
- 
-@@ -887,7 +898,8 @@ int hmm_vma_fault(struct hmm_range *range, bool block)
- 		unsigned long i;
- 
- 		i = (hmm_vma_walk.last - range->start) >> PAGE_SHIFT;
--		hmm_pfns_clear(&range->pfns[i], hmm_vma_walk.last, range->end);
-+		hmm_pfns_clear(range, &range->pfns[i], hmm_vma_walk.last,
-+			       range->end);
- 		hmm_vma_range_done(range);
- 	}
- 	return ret;
 -- 
 2.14.3
