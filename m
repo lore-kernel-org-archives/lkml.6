@@ -1,69 +1,83 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3230827-1521739225-2-2704453566596578367
+X-Cyrus-Session-Id: sloti22d1t05-212613-1521781717-4-4517149866368657916
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  SPF_PASS -0.001, LANGUAGES daen, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521739224; b=giCmlWB/hBamsQK/yOG60mqJg2JyQ0r6MoRdvu7DuRPuhod
-    hXwYRKCTgBexmbmNM0aTCrL05Vui4DdGPeEturKFb8DwoTlVRHuCDOifys34MPCS
-    r36xJo1f7kyytHqYj8Iko3K9CcI3YmTvc4zb7t5pmAf7hUkGl3/7M1YfQ7FVcFQ1
-    RsqBYoaXqO9v9UoL/R/Xy1sYQ6t0p5b5vBcbTeEh8pvuzT0SWiT+5pQHGoWO4SkW
-    PXlOj0pfvDTc2TJT/yrpT9kB2sM8bUGzSfgc8OfIS2r5QIH+Oowp+4GW/tQJTlA1
-    XVC1BL2sEFiBh+S2Xtl/iUHbWrpHvQpvJAtIvgA==
+    t=1521781717; b=PKVOvv0RyMUINc8NV9uUsjYwnzhwYaFKXmE78jaEjX2Tkzd
+    e7keGGBqFAwJ3JhNolX22H32y8VPVtZiBNHxFBh7UnN+xf5iOWdq6omaqtivKi+H
+    D63U/wefxfQGw74VT4uR5yLw1kIApKTfxdW6kbCwSon2jEn2QwbrvJM+ip8qyq8N
+    5Z85LIEu2vGV6sUMbj8bF71z7SBhUFMp2i8C567veH5Jko3wvBZ2s/LKWK0WjhKi
+    +Nq+FnUGlGoswJE6Sf3+2f57+BtMGozoLcTLPdlsS5yBJo3kjtcH/Ir3kKSG7Iny
+    ddMWkzwfonPIF1CJx4QruTfJrVJC8577eIhXhTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521739224; bh=+
-    G3v/8aXM166UfEx2zw+jK9EtQ8wt/B2VLrbK8su2ro=; b=he+xzQpQRNh6hwFj8
-    Rw161vhkMXJtwh9vmBBs2x/TDJ2a7T85oWndw+CMxDh7BiHgx8P/fUZQJgc4LrdC
-    EZYqVwVjiywfdv/JUGZD17U1esAdVv/BVkxO8NqViGKK4sg3ARJMwILIAg5qRW9b
-    BIoouFFgxzMnd2gO2p4GOYSeQ58AwRvCYeutLE9MCBmKdkLDEQqdJyXLYlAQ1Gco
-    DLbohrsHaKlGZmNP9M95GbdNt9MyYO3BTH9mqZZkXQRdCWSOB0xSyFWRRuoAIEAt
-    E9v6Kdu/u1ogygEprTGt+eevuiJ0gAVY6GWDejs7QIrUy8fBzWkJmdEFxDDAoYUI
-    kKkgA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521781717; bh=C
+    CVnq7MXKq7Zn8+n+W0h2GsiDbMD50Jz2fKcWBWEi5s=; b=JgqwQh/GMdVHJYMUc
+    POJH3+8+3yc9qeC8BjPGANHG8XE7nAl7ws//aa/q0llwfGxCYP5GYY/deQsBYRl5
+    d0UonJYDYXV6LzpwXQq5BbvWol6lOlV166ecth9YUqVSKuMJmgH8bHItYe3NjhaF
+    TdJZPe/UVfevGpUVvOg08/O/vZbyZCPhnAw7E2eJdbz6FPspYe83Tmrpr4tEkjvK
+    zVq8G4IwfohLloWcF2/IbyRKNkfTJ2tuhP4OWTDy6RJCjSHqmRXRlEYya4hPXkK5
+    Ui19PWWXLJ/6DgaSy+4M7w1T/3WSfiwyeWNJWSj1WgT2CvofRAWCq3TkXmP7aHE5
+    L/hrA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=tamalin.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=tamalin.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 22 Mar 2018 18:20:14 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Quytelda Kahja <quytelda@tamalin.org>
-Subject: Re: [PATCH 1/6] staging: ks7010: Factor out repeated code.
-Message-ID: <20180322172014.GA6801@kroah.com>
-References: <20180319185125.GA13209@kroah.com>
- <20180320055815.32651-1-quytelda@tamalin.org>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180320055815.32651-1-quytelda@tamalin.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From: Quytelda Kahja <quytelda@tamalin.org>
+To: gregkh@linuxfoundation.org,
+	wsa@the-dreams.de
+Subject: [PATCH 1/7] staging: ks7010: Fix line over 80 characters.
+Date: Thu, 22 Mar 2018 22:07:39 -0700
+Message-Id: <20180323050745.28903-1-quytelda@tamalin.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180322172014.GA6801@kroah.com>
+References: <20180322172014.GA6801@kroah.com>
+X-Provags-ID: V03:K0:IUHT0SblspCvhBER43vZobQxfPTykIUsq2kRcDU7Rasozl4mCEC
+ JqBpsws5giwgsCULmf5nbHvngcPgV/V17bvWj5Uk6MF+KvFx9kUGXWT5gwaG1gOm+ULo4wv
+ b+kuv6QUiKdhDTdZ8haWy6+dQ6ed2BF9tggLe6IzLlajkaq1fcM33Onr9yvfLhzueWzvMcW
+ W6OTzJGZhi5t5t7p0vNGg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:gR22Q0bMXRI=:+6BF7JH823TRWRnd86BnPD
+ UHcuq4PCCeLnbUi/L6E2tt2qXC//kC0a2QVwga+A5q7W+W0o2lGAuUOLncBLAfOSc/KUFS/1f
+ mlXeKCBIAouaJc4d97nNztPpiQj483vytpIHeqbQu5lGOJsM+8QIh0ejlfEaz9el/eu+gC7TV
+ PaOIbvs+0Nsh/wCEfNbj2qRDgyaKNQk07aQdPv9D0+PcIUsKYRZdwPk6ckyR+/yPlLa0XcYvp
+ WPxSmIxZ5z/9deXfSc0IP/IS6KjIdcLUbntyBPGP0GGngBF4P1ZOGZDLcG+38l8p697tP1sNC
+ knf+vNPQWkDQGRenzxoh8PeO1VQ0SCs03SGNwC1VWjpxHVP1iNTKh3aAnF13hgzKBeVCCZg1S
+ ILih2Zlpf6tHTjd/rjAKhbUld88HtmPjby5DTsahYnQBYTNwrE2q31sCHB1ddecDQwGjRWe5O
+ 0Oc9cbQjwa1hebB9YsBbcRVA00pRK5cnJFQMnPFwqQLc7G6QgRtv62Lb9LapObKhw1Q1C9aZ4
+ +CN4pPP0Yqf+DVxmavhrmvjZcJ0a6HOM6yT7of7+ka+VSJvHE6fj59ffIluHds4fKppjg+all
+ PtnJKoHCgZmIdYdgQKvu9ntkLAD6lZcnuNmJa5W3UDXYgR4HXMXVrsQrP+NUQh+CQKIwC9Cp8
+ qDkYvO8UjmJJEhr6PeH4j9UVKJ4Wg+EQyQBjaIJriIEbaSwu8EkKsJuMdy4Z79VnRU8qHF2XU
+ o7qj/gk9JJC0RiFCZkiUnAKUcF+NXj0hggBodg==
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -75,7 +89,8 @@ List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org,
- linux-kernel@vger.kernel.org, wsa@the-dreams.de
+ linux-kernel@vger.kernel.org, Quytelda Kahja <quytelda@tamalin.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -84,23 +99,31 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 10:58:10PM -0700, Quytelda Kahja wrote:
-> Some of the code for reading IEs is replicated multiple times in the
-> switch statement for get_ap_information().  Factor that code out into
-> read_ie().
-> 
-> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
-> ---
->  drivers/staging/ks7010/ks_hostif.c | 48 +++++++++++++++++---------------------
->  1 file changed, 22 insertions(+), 26 deletions(-)
+There is no reason for comment describing the BSSID check for loop
+to be spaced so far to the right.  Move it above the for loop.
 
-Does not apply at all to my tree :(
+Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+---
+ drivers/staging/ks7010/ks_hostif.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Please rebase and resend the whole series.
+diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+index 3ef9126ab810..534cca95bfb9 100644
+--- a/drivers/staging/ks7010/ks_hostif.c
++++ b/drivers/staging/ks7010/ks_hostif.c
+@@ -777,7 +777,8 @@ void hostif_scan_indication(struct ks_wlan_private *priv)
+ 	ap_info = (struct ap_info_t *)(priv->rxp);
+ 
+ 	if (priv->scan_ind_count) {
+-		for (i = 0; i < priv->aplist.size; i++) {	/* bssid check */
++		/* bssid check */
++		for (i = 0; i < priv->aplist.size; i++) {
+ 			if (memcmp(ap_info->bssid,
+ 				   priv->aplist.ap[i].bssid, ETH_ALEN) != 0)
+ 				continue;
+-- 
+2.16.2
 
-thanks,
-
-greg k-h
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
