@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753375AbeCWNHI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 09:07:08 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:54396 "EHLO
+        id S1753253AbeCWNGN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 09:06:13 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:52673 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752166AbeCWNHG (ORCPT
+        with ESMTP id S1753124AbeCWNGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:07:06 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w2ND4mgf011418
+        Fri, 23 Mar 2018 09:06:00 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w2ND4mgX011418
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -18,55 +18,77 @@ Cc: Sam Ravnborg <sam@ravnborg.org>,
         Frank Rowand <frank.rowand@sony.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 09/10] kbuild: add *.asn1.[ch] to 'targets' automatically
-Date: Fri, 23 Mar 2018 22:04:38 +0900
-Message-Id: <1521810279-6282-9-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 01/10] .gitignore: move *.lex.c *.tab.[ch] patterns to the top-level .gitignore
+Date: Fri, 23 Mar 2018 22:04:30 +0900
+Message-Id: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use $(call if_changed,...) instead of $(call cmd,...) in case the
-build command is changed in the future.  Add intermediate files to
-'targets' automatically to include *.cmd files.
+These patterns are common to host programs that require lexer and parser.
+Move them to the top .gitignore.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- scripts/Makefile.build | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ .gitignore                  | 2 ++
+ scripts/dtc/.gitignore      | 3 ---
+ scripts/genksyms/.gitignore | 3 ---
+ scripts/kconfig/.gitignore  | 3 ---
+ 4 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 8c3ca61..cc081af 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -432,8 +432,9 @@ quiet_cmd_asn1_compiler = ASN.1   $@
- 
- .PRECIOUS: $(objtree)/$(obj)/%.asn1.c $(objtree)/$(obj)/%.asn1.h
- 
--$(obj)/%.asn1.c $(obj)/%.asn1.h: $(src)/%.asn1 $(objtree)/scripts/asn1_compiler
--	$(call cmd,asn1_compiler)
-+$(obj)/%.asn1.c $(obj)/%.asn1.h: $(src)/%.asn1 \
-+					$(objtree)/scripts/asn1_compiler FORCE
-+	$(call if_changed,asn1_compiler)
- 
- # Build the compiled-in targets
- # ---------------------------------------------------------------------------
-@@ -544,10 +545,12 @@ targets := $(filter-out $(PHONY), $(targets))
- intermediate_targets = $(foreach sfx, $(2), \
- 				$(patsubst %$(strip $(1)),%$(sfx), \
- 					$(filter %$(strip $(1)), $(targets))))
-+# %.asn1.o <- %.asn1.[ch] <- %.asn1
- # %.dtb.o <- %.dtb.S <- %.dtb <- %.dts
- # %.lex.o <- %.lex.c <- %.l
- # %.tab.o <- %.tab.[ch] <- %.y
--targets += $(call intermediate_targets, .dtb.o, .dtb.S .dtb) \
-+targets += $(call intermediate_targets, .asn1.o, .asn1.c .asn1.h) \
-+	   $(call intermediate_targets, .dtb.o, .dtb.S .dtb) \
- 	   $(call intermediate_targets, .lex.o, .lex.c) \
- 	   $(call intermediate_targets, .tab.o, .tab.c .tab.h)
- 
+diff --git a/.gitignore b/.gitignore
+index 85bcc26..1e82be1 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -22,6 +22,7 @@
+ *.gz
+ *.i
+ *.ko
++*.lex.c
+ *.ll
+ *.lst
+ *.lz4
+@@ -37,6 +38,7 @@
+ *.so.dbg
+ *.su
+ *.symtypes
++*.tab.[ch]
+ *.tar
+ *.xz
+ Module.symvers
+diff --git a/scripts/dtc/.gitignore b/scripts/dtc/.gitignore
+index cdabdc9..2e6e60d 100644
+--- a/scripts/dtc/.gitignore
++++ b/scripts/dtc/.gitignore
+@@ -1,4 +1 @@
+ dtc
+-dtc-lexer.lex.c
+-dtc-parser.tab.c
+-dtc-parser.tab.h
+diff --git a/scripts/genksyms/.gitignore b/scripts/genksyms/.gitignore
+index e7836b4..b119c7d 100644
+--- a/scripts/genksyms/.gitignore
++++ b/scripts/genksyms/.gitignore
+@@ -1,4 +1 @@
+-*.lex.c
+-*.tab.c
+-*.tab.h
+ genksyms
+diff --git a/scripts/kconfig/.gitignore b/scripts/kconfig/.gitignore
+index a76856e..2da579e 100644
+--- a/scripts/kconfig/.gitignore
++++ b/scripts/kconfig/.gitignore
+@@ -1,9 +1,6 @@
+ #
+ # Generated files
+ #
+-*.lex.c
+-*.tab.c
+-*.tab.h
+ *.moc
+ gconf.glade.h
+ *.pot
 -- 
 2.7.4
