@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752621AbeCWRt6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:49:58 -0400
-Received: from mga11.intel.com ([192.55.52.93]:18079 "EHLO mga11.intel.com"
+        id S1752553AbeCWRuT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:50:19 -0400
+Received: from mga12.intel.com ([192.55.52.136]:61817 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752043AbeCWRq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:46:57 -0400
+        id S1752209AbeCWRqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 13:46:52 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,351,1517904000";
-   d="scan'208";a="27909873"
-Subject: [PATCH 05/11] x86/mm: do not auto-massage page protections
+   d="scan'208";a="37596465"
+Subject: [PATCH 02/11] x86/mm: undo double _PAGE_PSE clearing
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
         aarcange@redhat.com, luto@kernel.org, torvalds@linux-foundation.org,
         keescook@google.com, hughd@google.com, jgross@suse.com, x86@kernel.org,
         namit@vmware.com
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 23 Mar 2018 10:44:54 -0700
+Date: Fri, 23 Mar 2018 10:44:50 -0700
 References: <20180323174447.55F35636@viggo.jf.intel.com>
 In-Reply-To: <20180323174447.55F35636@viggo.jf.intel.com>
-Message-Id: <20180323174454.CD00F614@viggo.jf.intel.com>
+Message-Id: <20180323174450.C9B99634@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,24 +29,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-A PTE is constructed from a physical address and a pgprotval_t.
-__PAGE_KERNEL, for instance, is a pgprot_t and must be converted
-into a pgprotval_t before it can be used to create a PTE.  This is
-done implicitly within functions like set_pte() by massage_pgprot().
+When clearing _PAGE_PRESENT on a huge page, we need to be careful
+to also clear _PAGE_PSE, otherwise it might still get confused
+for a valid large page table entry.
 
-However, this makes it very challenging to set bits (and keep them
-set) if your bit is being filtered out by massage_pgprot().
+We do that near the spot where we *set* _PAGE_PSE.  That's fine,
+but it's unnecessary.  pgprot_large_2_4k() already did it.
 
-This moves the bit filtering out of set_pte() and friends.  For
-users of PAGE_KERNEL*, filtering will be done automatically inside
-those macros but for users of __PAGE_KERNEL*, they need to do their
-own filtering now.
+BTW, I also noticed that pgprot_large_2_4k() and
+pgprot_4k_2_large() are not symmetric.  pgprot_large_2_4k() clears
+_PAGE_PSE (because it is aliased to _PAGE_PAT) but
+pgprot_4k_2_large() does not put _PAGE_PSE back.  Bummer.
 
-Note that we also just move pfn_pte/pmd/pud() over to check_pgprot()
-instead of massage_pgprot().  This way, we still *look* for
-unsupported bits and properly warn about them if we find them.  This
-might happen if an unfiltered __PAGE_KERNEL* value was passed in,
-for instance.
+Also, add some comments and change "promote" to "move".  "Promote"
+seems an odd word to move when we are logically moving a bit to a
+lower bit position.  Also add an extra line return to make it clear
+to which line the comment applies.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
@@ -59,234 +57,41 @@ Cc: x86@kernel.org
 Cc: Nadav Amit <namit@vmware.com>
 ---
 
- b/arch/x86/include/asm/pgtable.h |   27 ++++++++++++++++++++++-----
- b/arch/x86/kernel/head64.c       |    2 ++
- b/arch/x86/kernel/ldt.c          |    6 +++++-
- b/arch/x86/mm/ident_map.c        |    3 +++
- b/arch/x86/mm/iomap_32.c         |    6 ++++++
- b/arch/x86/mm/kasan_init_64.c    |   14 +++++++++++++-
- b/arch/x86/power/hibernate_64.c  |   20 +++++++++++++++-----
- b/mm/early_ioremap.c             |    3 +++
- 8 files changed, 69 insertions(+), 12 deletions(-)
+ b/arch/x86/mm/pageattr.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff -puN arch/x86/include/asm/pgtable.h~x86-no-auto-massage arch/x86/include/asm/pgtable.h
---- a/arch/x86/include/asm/pgtable.h~x86-no-auto-massage	2018-03-23 09:57:34.798820374 -0700
-+++ b/arch/x86/include/asm/pgtable.h	2018-03-23 09:57:34.846820374 -0700
-@@ -526,22 +526,39 @@ static inline pgprotval_t massage_pgprot
- 	return protval;
- }
- 
-+static inline pgprotval_t check_pgprot(pgprot_t pgprot)
-+{
-+	pgprotval_t massaged_val = massage_pgprot(pgprot);
-+
-+	/* mmdebug.h can not be included here because of dependencies */
-+#ifdef CONFIG_DEBUG_VM
-+	WARN_ONCE(pgprot_val(pgprot) != massaged_val,
-+		  "attempted to set unsupported pgprot: %016lx "
-+		  "bits: %016lx supported: %016lx\n",
-+		  pgprot_val(pgprot),
-+		  pgprot_val(pgprot) ^ massaged_val,
-+		  __supported_pte_mask);
-+#endif
-+
-+	return massaged_val;
-+}
-+
- static inline pte_t pfn_pte(unsigned long page_nr, pgprot_t pgprot)
- {
- 	return __pte(((phys_addr_t)page_nr << PAGE_SHIFT) |
--		     massage_pgprot(pgprot));
-+		     check_pgprot(pgprot));
- }
- 
- static inline pmd_t pfn_pmd(unsigned long page_nr, pgprot_t pgprot)
- {
- 	return __pmd(((phys_addr_t)page_nr << PAGE_SHIFT) |
--		     massage_pgprot(pgprot));
-+		     check_pgprot(pgprot));
- }
- 
- static inline pud_t pfn_pud(unsigned long page_nr, pgprot_t pgprot)
- {
- 	return __pud(((phys_addr_t)page_nr << PAGE_SHIFT) |
--		     massage_pgprot(pgprot));
-+		     check_pgprot(pgprot));
- }
- 
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
-@@ -553,7 +570,7 @@ static inline pte_t pte_modify(pte_t pte
- 	 * the newprot (if present):
+diff -puN arch/x86/mm/pageattr.c~kpti-undo-double-_PAGE_PSE-clear arch/x86/mm/pageattr.c
+--- a/arch/x86/mm/pageattr.c~kpti-undo-double-_PAGE_PSE-clear	2018-03-21 16:31:56.803192321 -0700
++++ b/arch/x86/mm/pageattr.c	2018-03-21 16:31:56.806192321 -0700
+@@ -583,6 +583,7 @@ try_preserve_large_page(pte_t *kpte, uns
+ 	 * up accordingly.
  	 */
- 	val &= _PAGE_CHG_MASK;
--	val |= massage_pgprot(newprot) & ~_PAGE_CHG_MASK;
-+	val |= check_pgprot(newprot) & ~_PAGE_CHG_MASK;
+ 	old_pte = *kpte;
++	/* Clear PSE (aka _PAGE_PAT) and move PAT bit to correct position */
+ 	req_prot = pgprot_large_2_4k(old_prot);
  
- 	return __pte(val);
- }
-@@ -563,7 +580,7 @@ static inline pmd_t pmd_modify(pmd_t pmd
- 	pmdval_t val = pmd_val(pmd);
- 
- 	val &= _HPAGE_CHG_MASK;
--	val |= massage_pgprot(newprot) & ~_HPAGE_CHG_MASK;
-+	val |= check_pgprot(newprot) & ~_HPAGE_CHG_MASK;
- 
- 	return __pmd(val);
- }
-diff -puN arch/x86/kernel/head64.c~x86-no-auto-massage arch/x86/kernel/head64.c
---- a/arch/x86/kernel/head64.c~x86-no-auto-massage	2018-03-23 09:57:34.800820374 -0700
-+++ b/arch/x86/kernel/head64.c	2018-03-23 09:57:34.846820374 -0700
-@@ -195,6 +195,8 @@ unsigned long __head __startup_64(unsign
- 	pud[i + 1] = (pudval_t)pmd + pgtable_flags;
- 
- 	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
-+	/* Filter out unsupported __PAGE_KERNEL_* bits: */
-+	pmd_entry &= __supported_pte_mask;
- 	pmd_entry += sme_get_me_mask();
- 	pmd_entry +=  physaddr;
- 
-diff -puN arch/x86/kernel/ldt.c~x86-no-auto-massage arch/x86/kernel/ldt.c
---- a/arch/x86/kernel/ldt.c~x86-no-auto-massage	2018-03-23 09:57:34.801820374 -0700
-+++ b/arch/x86/kernel/ldt.c	2018-03-23 09:57:34.847820374 -0700
-@@ -145,6 +145,7 @@ map_ldt_struct(struct mm_struct *mm, str
- 		unsigned long offset = i << PAGE_SHIFT;
- 		const void *src = (char *)ldt->entries + offset;
- 		unsigned long pfn;
-+		pgprot_t pte_prot;
- 		pte_t pte, *ptep;
- 
- 		va = (unsigned long)ldt_slot_va(slot) + offset;
-@@ -163,7 +164,10 @@ map_ldt_struct(struct mm_struct *mm, str
- 		 * target via some kernel interface which misses a
- 		 * permission check.
- 		 */
--		pte = pfn_pte(pfn, __pgprot(__PAGE_KERNEL_RO & ~_PAGE_GLOBAL));
-+	       	pte_prot = __pgprot(__PAGE_KERNEL_RO & ~_PAGE_GLOBAL);
-+		/* Filter out unsuppored __PAGE_KERNEL* bits: */
-+		pgprot_val(pte_prot) |= __supported_pte_mask;
-+		pte = pfn_pte(pfn, pte_prot);
- 		set_pte_at(mm, va, ptep, pte);
- 		pte_unmap_unlock(ptep, ptl);
- 	}
-diff -puN arch/x86/mm/ident_map.c~x86-no-auto-massage arch/x86/mm/ident_map.c
---- a/arch/x86/mm/ident_map.c~x86-no-auto-massage	2018-03-23 09:57:34.803820374 -0700
-+++ b/arch/x86/mm/ident_map.c	2018-03-23 09:57:34.847820374 -0700
-@@ -98,6 +98,9 @@ int kernel_ident_mapping_init(struct x86
- 	if (!info->kernpg_flag)
- 		info->kernpg_flag = _KERNPG_TABLE;
- 
-+	/* Filter out unsupported __PAGE_KERNEL_* bits: */
-+	info->kernpg_flag &= __default_kernel_pte_mask;
-+
- 	for (; addr < end; addr = next) {
- 		pgd_t *pgd = pgd_page + pgd_index(addr);
- 		p4d_t *p4d;
-diff -puN arch/x86/mm/iomap_32.c~x86-no-auto-massage arch/x86/mm/iomap_32.c
---- a/arch/x86/mm/iomap_32.c~x86-no-auto-massage	2018-03-23 09:57:34.805820374 -0700
-+++ b/arch/x86/mm/iomap_32.c	2018-03-23 09:57:34.847820374 -0700
-@@ -44,6 +44,9 @@ int iomap_create_wc(resource_size_t base
- 		return ret;
- 
- 	*prot = __pgprot(__PAGE_KERNEL | cachemode2protval(pcm));
-+	/* Filter out unsupported __PAGE_KERNEL* bits: */
-+	pgprot_val(*prot) &= __default_kernel_pte_mask;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(iomap_create_wc);
-@@ -88,6 +91,9 @@ iomap_atomic_prot_pfn(unsigned long pfn,
- 		prot = __pgprot(__PAGE_KERNEL |
- 				cachemode2protval(_PAGE_CACHE_MODE_UC_MINUS));
- 
-+	/* Filter out unsupported __PAGE_KERNEL* bits: */
-+	pgprot_val(prot) &= __default_kernel_pte_mask;
-+
- 	return (void __force __iomem *) kmap_atomic_prot_pfn(pfn, prot);
- }
- EXPORT_SYMBOL_GPL(iomap_atomic_prot_pfn);
-diff -puN arch/x86/mm/kasan_init_64.c~x86-no-auto-massage arch/x86/mm/kasan_init_64.c
---- a/arch/x86/mm/kasan_init_64.c~x86-no-auto-massage	2018-03-23 09:57:34.807820374 -0700
-+++ b/arch/x86/mm/kasan_init_64.c	2018-03-23 09:57:34.848820374 -0700
-@@ -269,6 +269,12 @@ void __init kasan_early_init(void)
- 	pudval_t pud_val = __pa_nodebug(kasan_zero_pmd) | _KERNPG_TABLE;
- 	p4dval_t p4d_val = __pa_nodebug(kasan_zero_pud) | _KERNPG_TABLE;
- 
-+	/* Mask out unsupported __PAGE_KERNEL bits: */
-+	pte_val &= __default_kernel_pte_mask;
-+	pmd_val &= __default_kernel_pte_mask;
-+	pud_val &= __default_kernel_pte_mask;
-+	p4d_val &= __default_kernel_pte_mask;
-+
- 	for (i = 0; i < PTRS_PER_PTE; i++)
- 		kasan_zero_pte[i] = __pte(pte_val);
- 
-@@ -371,7 +377,13 @@ void __init kasan_init(void)
- 	 */
- 	memset(kasan_zero_page, 0, PAGE_SIZE);
- 	for (i = 0; i < PTRS_PER_PTE; i++) {
--		pte_t pte = __pte(__pa(kasan_zero_page) | __PAGE_KERNEL_RO | _PAGE_ENC);
-+		pte_t pte;
-+		pgprot_t prot;
-+
-+		prot = __pgprot(__PAGE_KERNEL_RO | _PAGE_ENC);
-+		pgprot_val(prot) &= __default_kernel_pte_mask;
-+
-+		pte = __pte(__pa(kasan_zero_page) | pgprot_val(prot));
- 		set_pte(&kasan_zero_pte[i], pte);
- 	}
- 	/* Flush TLBs again to be sure that write protection applied. */
-diff -puN arch/x86/power/hibernate_64.c~x86-no-auto-massage arch/x86/power/hibernate_64.c
---- a/arch/x86/power/hibernate_64.c~x86-no-auto-massage	2018-03-23 09:57:34.809820374 -0700
-+++ b/arch/x86/power/hibernate_64.c	2018-03-23 09:58:20.228820261 -0700
-@@ -51,6 +51,12 @@ static int set_up_temporary_text_mapping
- 	pmd_t *pmd;
- 	pud_t *pud;
- 	p4d_t *p4d = NULL;
-+	pgprot_t pgtable_prot = __pgprot(_KERNPG_TABLE);
-+	pgprot_t pmd_text_prot = __pgprot(__PAGE_KERNEL_LARGE_EXEC);
-+
-+	/* Filter out unsupported __PAGE_KERNEL* bits: */
-+	pgprot_val(pmd_text_prot) &= __default_kernel_pte_mask;
-+	pgprot_val(pgtable_prot)  &= __default_kernel_pte_mask;
+ 	pgprot_val(req_prot) &= ~pgprot_val(cpa->mask_clr);
+@@ -597,8 +598,6 @@ try_preserve_large_page(pte_t *kpte, uns
+ 	req_prot = pgprot_clear_protnone_bits(req_prot);
+         if (pgprot_val(req_prot) & _PAGE_PRESENT)
+ 		pgprot_val(req_prot) |= _PAGE_PSE;
+-	else
+-		pgprot_val(req_prot) &= ~_PAGE_PSE;
+ 	req_prot = canon_pgprot(req_prot);
  
  	/*
- 	 * The new mapping only has to cover the page containing the image
-@@ -81,15 +87,19 @@ static int set_up_temporary_text_mapping
- 		return -ENOMEM;
- 
- 	set_pmd(pmd + pmd_index(restore_jump_address),
--		__pmd((jump_address_phys & PMD_MASK) | __PAGE_KERNEL_LARGE_EXEC));
-+		__pmd((jump_address_phys & PMD_MASK) | pgprot_val(pmd_text_prot)));
- 	set_pud(pud + pud_index(restore_jump_address),
--		__pud(__pa(pmd) | _KERNPG_TABLE));
-+		__pud(__pa(pmd) | pgprot_val(pgtable_prot)));
- 	if (p4d) {
--		set_p4d(p4d + p4d_index(restore_jump_address), __p4d(__pa(pud) | _KERNPG_TABLE));
--		set_pgd(pgd + pgd_index(restore_jump_address), __pgd(__pa(p4d) | _KERNPG_TABLE));
-+		p4d_t new_p4d = __p4d(__pa(pud) | pgprot_val(pgtable_prot));
-+		pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
+@@ -684,8 +683,12 @@ __split_large_page(struct cpa_data *cpa,
+ 	switch (level) {
+ 	case PG_LEVEL_2M:
+ 		ref_prot = pmd_pgprot(*(pmd_t *)kpte);
+-		/* clear PSE and promote PAT bit to correct position */
++		/*
++		 * Clear PSE (aka _PAGE_PAT) and move
++		 * PAT bit to correct position.
++		 */
+ 		ref_prot = pgprot_large_2_4k(ref_prot);
 +
-+		set_p4d(p4d + p4d_index(restore_jump_address), new_p4d);
-+		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
- 	} else {
- 		/* No p4d for 4-level paging: point the pgd to the pud page table */
--		set_pgd(pgd + pgd_index(restore_jump_address), __pgd(__pa(pud) | _KERNPG_TABLE));
-+		pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
-+		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
- 	}
+ 		ref_pfn = pmd_pfn(*(pmd_t *)kpte);
+ 		break;
  
- 	return 0;
-diff -puN mm/early_ioremap.c~x86-no-auto-massage mm/early_ioremap.c
---- a/mm/early_ioremap.c~x86-no-auto-massage	2018-03-23 09:57:34.811820374 -0700
-+++ b/mm/early_ioremap.c	2018-03-23 09:57:34.848820374 -0700
-@@ -113,6 +113,9 @@ __early_ioremap(resource_size_t phys_add
- 
- 	WARN_ON(system_state >= SYSTEM_RUNNING);
- 
-+	/* Sanitize 'prot' against any unsupported bits: */
-+	pgprot_val(prot) &= __default_kernel_pte_mask;
-+
- 	slot = -1;
- 	for (i = 0; i < FIX_BTMAPS_SLOTS; i++) {
- 		if (!prev_map[i]) {
 _
