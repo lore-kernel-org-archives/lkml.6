@@ -1,176 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752644AbeCWMwf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 08:52:35 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:37485 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752525AbeCWMwd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 08:52:33 -0400
-X-Google-Smtp-Source: AG47ELt6z7wlQaV3oLIpOUOD8oa1WqzDRi/KN0vCgrABNJOAP3294g4JM7AcSyRxztNUyID3X3PL0w==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <04D5C038-969C-49EB-A9AA-EBE0548521E6@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_AB9485BC-2831-4432-89FE-120E14B3DFD4";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: problem with bio handling on raid5 and pblk
-Date: Fri, 23 Mar 2018 13:52:28 +0100
-In-Reply-To: <97678ddd-140f-5a8b-75ee-cbb584308260@lightnvm.io>
-Cc: Jens Axboe <axboe@kernel.dk>, shli@kernel.org,
-        linux-raid@vger.kernel.org, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Huaicheng Li <huaicheng@cs.uchicago.edu>
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-References: <66350920-EC5E-447F-B5DF-0F3C2CDEAA65@javigon.com>
- <97678ddd-140f-5a8b-75ee-cbb584308260@lightnvm.io>
-X-Mailer: Apple Mail (2.3445.5.20)
+        id S1752718AbeCWMxE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:53:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6680 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752525AbeCWMxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 08:53:02 -0400
+Date: Fri, 23 Mar 2018 12:52:36 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: =?ISO-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>
+CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
+        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 08/11] staging: iio: ad7746: Add comments
+Message-ID: <20180323135236.00007d20@huawei.com>
+In-Reply-To: <1521642539-4845-9-git-send-email-hernan@vanguardiasur.com.ar>
+References: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
+        <1521642539-4845-9-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; i686-w64-mingw32)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.202.226.45]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 21 Mar 2018 11:28:56 -0300
+Hernán Gonzalez <hernan@vanguardiasur.com.ar> wrote:
 
---Apple-Mail=_AB9485BC-2831-4432-89FE-120E14B3DFD4
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+> Add comments to clarify some of the calculations made, specially when
+> reading or writing values.
+> 
+> Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+> ---
+>  drivers/staging/iio/cdc/ad7746.c | 34 ++++++++++++++++++++++++++++------
+>  1 file changed, 28 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
+> index 8abba71..b6b99e2 100644
+> --- a/drivers/staging/iio/cdc/ad7746.c
+> +++ b/drivers/staging/iio/cdc/ad7746.c
+> @@ -420,6 +420,7 @@ static int ad7746_write_raw(struct iio_dev *indio_dev,
+>  			goto out;
+>  		}
+>  
+> +		/* 2^16 in micro */
+>  		val = (val2 * 1024) / 15625;
+>  
+>  		switch (chan->type) {
+> @@ -546,6 +547,13 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
+>  		if (ret < 0)
+>  			goto out;
+>  
+> +		/*
+> +		 * Either for Capacitance, Voltage or Temperature,
+> +		 * the 0x000000 code represents negative full scale,
+> +		 * the 0x800000 code represents zero scale, and
+> +		 * the 0xFFFFFF code represents positive full scale.
+> +		 */
+> +
+>  		*val = (be32_to_cpu(chip->data.d32) & 0xFFFFFF) - 0x800000;
+This should be left for userspace to deal with.  That is it should be
+exported as an offset for the various channels rather than applied here.
 
-> On 22 Mar 2018, at 18.00, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 03/22/2018 03:34 PM, Javier Gonz=C3=A1lez wrote:
->> Hi,
->> I have been looking into a bug report when using pblk and raid5 on =
-top
->> and I am having problems understanding if the problem is in pblk's =
-bio
->> handling or on raid5's bio assumptions on the completion path.
->> The problem occurs on the read path. In pblk, we take a reference to
->> every read bio as it enters, and release it after completing the bio.
->>    generic_make_request()
->>    pblk_submit_read()
->>      bio_get()
->>      ...
->>      bio_endio()
->>      bio_put()
->> The problem seems to be that on raid5's bi_end_io completion path,
->> raid5_end_read_request(), bio_reset() is called. When put together
->> with pblk's bio handling:
->>    generic_make_request()
->>    pblk_submit_read()
->>      bio_get()
->>      ...
->>      bio_endio()
->>      raid5_end_read_request()
->>        bio_reset()
->>      bio_put()
->> it results in the newly reset bio being put immediately, thus freed.
->> When the bio is reused then, we have an invalid pointer. In the =
-report
->> we received things crash at BUG_ON(bio->bi_next) at
->> generic_make_request().
->> As far as I understand, it is part of the bio normal operation for
->> drivers under generic_make_request() to be able to take references =
-and
->> release them after bio completion. Thus, in this case, the assumption
->> made by raid5, that it can issue a bio_reset() is incorrect. But I =
-might
->> be missing an implicit cross layer rule that we are violating in =
-pblk.
->> Any ideas?
->> This said, after analyzing the problem from pblk's perspective, I see
->> not reason to use bio_get()/bio_put() in the read path as it is at =
-the
->> pblk level that we are submitting bio_endio(), thus we cannot risk =
-the
->> bio being freed underneath us. Is this reasoning correct? I remember =
-I
->> introduced these at the time there was a bug on the aio path, which =
-was
->> not cleaning up correctly and could trigger an early bio free, but
->> revisiting it now, it seems unnecessary.
->> Thanks for the help!
->> Javier
->=20
-> I think I sent a longer e-mail to you and Huaicheng about this a while =
-back.
+>  
+>  		switch (chan->type) {
+> @@ -557,7 +565,13 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
+>  			*val = (*val * 125) / 256;
+>  			break;
+>  		case IIO_VOLTAGE:
+> -			if (chan->channel == 1) /* supply_raw*/
+> +
+> +			/*
+> +			 * The voltage from the VDD pin is internally
+> +			 *  attenuated by 6.
+Extra space before attenuated.
+> +			 */
+> +
+> +			if (chan->channel == 1) /* supply_raw */
+>  				*val = *val * 6;
+>  			break;
+>  		default:
+> @@ -598,21 +612,28 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
+>  		ret = IIO_VAL_INT;
+>  		break;
+>  	case IIO_CHAN_INFO_OFFSET:
+> +
+> +		/*
+> +		 * CAPDAC Scale = 21pF_typ / 127
+> +		 * CIN Scale = 8.192pF / 2^24
+> +		 * Offset Scale = CAPDAC Scale / CIN Scale = 338646
+> +		 */
+> +
+>  		*val = AD7746_CAPDAC_DACP(chip->capdac[chan->channel]
+> -			[chan->differential]) * 338646;
+> +					  [chan->differential]) * 338646;
+This change should have been in the alignment fixing patch, not here.
 
-I don't think I was in that email.
-
-There are two parts to the question. One is raid5's bio completion
-assumptions and the other is whether we can avoid bio_get()/put() in
-pblk's read path. The first part is pblk independent and I would like to
-leave it open as I would like to understand how bio_reset() in this
-context is correct. Right now, I cannot see how this is correct
-behaviour.
-
-For the pblk specific part, see below.
-
-> The problem is that the pblk encapsulates the bio in its own request.
-> So the bio's are freed before the struct request completion is done
-> (as you identify). If you can make the completion path (as bio's are
-> completed before the struct request completion fn is called) to not
-> use the bio, then the bio_get/put code can be removed.
->=20
-> If it needs the bio on the completion path (e.g., for partial reads,
-> and if needed in the struct request completion path), one should clone
-> the bio, submit, and complete the original bio afterwards.
-
-I don't follow how the relationship with struct request completion is
-different with bio_get/put and without.
-
-The flow in terms of bio and struct request management is today:
-
-  generic_make_request()
-   pblk_submit_read()
-     bio_get()
-      ...
-     blk_init_request_from_bio()
-     blk_execute_rq_nowait() / blk_execute_rq() // denepnding on =
-sync/async
-      ...
-     bio_endio()
-     bio_put()
-      ...
-     blk_mq_free_request()
-
-bios risk to always freed in any case, as bio_put() will the last pblk
-reference. The only case in which this will not happen is that somebody
-else took a bio_get() on the way down. But we cannot assume anything.
-
-I guess the problem I am having understanding this is how we can risk
-the bio disappearing underneath when we are the ones completing the bio.
-As I understand it, in this case we are always guaranteed that the
-bio is alive due to the allocation reference. Therefore, bio_get()/put()
-is not needed. Am I missing anything?
-
-Thanks,
-Javier
-
-
---Apple-Mail=_AB9485BC-2831-4432-89FE-120E14B3DFD4
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlq0+IwACgkQPEYBfS0l
-eOB3zhAAhVwDJSaLzvCVdZko7Uv9gNaStmGwuWEonO6oD31DgeC48WeEb9nkIKwS
-Cp+EpEmIQV7G+oUB5lc74Rm6bHB/d2P8eGfzm0ZsCmDndAqppBnGghM+UEKH86OK
-jB0KpdFDxmpmwYcL+KCwAmtYBhHh1M99Jy/Z2GaHkej2LPbkVyQzySzTvWKOrI8q
-di1Ig5sbCfUYExgbLdXpaIsOwI2H+fFwHLzlmGGi4VB7KWv5kL14k0acZVleM3z5
-vllji7MzLHweLPxNOWplpzvFViFgXN0QlvpXMfCfhW3PWcCPqy0vaeW7GLAWA3Lg
-0yjz90Qeg2iea4rgsZMcny/ZrK1HbOIVJKmkw5TefkK/2ersKQOeNB9N82PBct1e
-/VWzMvxusF4TKOhjfgxXjhV0ixkL1SR/fYOk87uukEZCdroaVpMTrTUc+4vlPZUT
-hXTg3U71SJNN5hiAQojWkj1zBdrlh+/+9mKg+hz3R1p9bI+3yziDxCsy/mfxQ91w
-lZI4m8Q5IYXkQQvXDFI4pKgTjG+z8TU4UQwVwQPjwgeox6NStHEfVCFNoEiYTwS6
-iwGnlbHMwTKXURAqaMPmCeg1wuaHJLdLMGfw5klziWjRqKlo5l1iDfK9Zj3kQozn
-nEaoCGQHGe5bMEbAVcBH3zLQut7ttJif0EBTpRL0XSVOwaEWEic=
-=aqO6
------END PGP SIGNATURE-----
-
---Apple-Mail=_AB9485BC-2831-4432-89FE-120E14B3DFD4--
+>  
+>  		ret = IIO_VAL_INT;
+>  		break;
+>  	case IIO_CHAN_INFO_SCALE:
+>  		switch (chan->type) {
+>  		case IIO_CAPACITANCE:
+> -			/* 8.192pf / 2^24 */
+> +			/* CIN Scale: 8.192pf / 2^24 */
+>  			*val =  0;
+>  			*val2 = 488;
+>  			ret = IIO_VAL_INT_PLUS_NANO;
+>  			break;
+>  		case IIO_VOLTAGE:
+> -			/* 1170mV / 2^23 */
+> +			/* VIN Scale: 1170mV / 2^23 */
+>  			*val = 1170;
+>  			*val2 = 23;
+>  			ret = IIO_VAL_FRACTIONAL_LOG2;
+> @@ -666,7 +687,8 @@ static struct ad7746_platform_data *ad7746_parse_dt(struct device *dev)
+>  	unsigned int tmp;
+>  	int ret;
+>  
+> -	/* The default excitation outputs are not inverted, it should be stated
+> +	/*
+> +	 * The default excitation outputs are not inverted, it should be stated
+>  	 * in the dt if needed.
+>  	 */
+>  
+> @@ -678,7 +700,7 @@ static struct ad7746_platform_data *ad7746_parse_dt(struct device *dev)
+>  	ret = of_property_read_u32(np, "adi,exclvl", &tmp);
+>  	if (ret || tmp > 3) {
+>  		dev_warn(dev, "Wrong exclvl value, using default\n");
+> -		pdata->exclvl = 3; /* default value */
+> +		pdata->exclvl = 3;
+>  	} else {
+>  		pdata->exclvl = tmp;
+>  	}
