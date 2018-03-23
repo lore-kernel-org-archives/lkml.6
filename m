@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521807423-2-4064748929010803375
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521807422-2-15878580154823393050
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807422; b=h8iWJ8XGbwffTMXsfSfyFd+5ZchukGnatGfmfNrz6rN2rOy
-    V02IZXIm62CBl5DcCsUO3Otgq0AutFDS6TT94Wvt+EHfj3w34FrvVaTdgloXbYGe
-    SA2J5FjxhVlAazvGrD+NwLUxHfyU8UMaMhuRWrwdlWDEB4zkTcDRQFANPQsdHZ+M
-    w5/hGzEtyGRs2uyaFRAocrO6ALJXSb0fPzbF+IlZPwofmhl59Ltw+5EBN7TsxAJL
-    V9NodwkJj9qsutL7gsnD4MiXXyhKdSsikWGh5/ugjCHDPfbFO4YyQ+ZLE+ys5sEg
-    BEw1Dxzm5HQs70QvyqErcy8mgmoYuJ6wC2eLNaQ==
+    t=1521807422; b=o2jYnr0dcDl9sC/Murrte8o3Zv+gSSQYANoV5T46D3QP06Q
+    0TsS8O+LBSFA1dOb9jyFQ7ei/WLe2wsld66Do1UHRBgbzKGcXYYDyOVvhUxMQYs4
+    23IJLMQ0KYVQzWdokQxIksKZFRFZ1yde/6HqzBZRIpCbUFur18EEYygy5AdjF8ut
+    A0JD/s5+3e6czEcxgmgwr78BwfHWdROS/P52tGL78RDYA0d9OjxCGKv5ApQHfAUj
+    3j102t396uFSMWymVhoBXlsSehqbY+sJ2MfGLoVNc9nNg2ZVKgVM2PxMfmVV9OGZ
+    t9md4VKpYQW+vwQXlJQKad1ndG2TdYC5iPJzkBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807422; bh=wBmI7nt8gpYUqewPBWYm9DnUli
-    R2tVdPjw7MA+dx+o4=; b=MVeNnvgdH4Rn5Y0JBmJmU2uDF96WbQAQbIUAhZebk8
-    RrAh2M6CgoQzPYBiDdF6FMRTh6ctZgzLlKZ7SVTj/xDaEOtXXIgHL8C5M/UsLKmm
-    Jaw7T/M9eGWDX7oQjM26zK5rhUwLpjagQ0ZcrzTLCj2SO3nLbUS48x54wKADGy/k
-    ypSaRxDey/QGaKPMgYMdsKOC8mdRnGwm6ie4/6ermevosk+TfHTw4j251IM4W4Bc
-    EY5g9UhmtwbxqmCYhyOhWiyeOHYygs7nEgSory8lncBy2HCB8Tr2AmYs2s6Wpz1D
-    SDFYh6QaYYUzZc7OJBgZsYSoTVYPdRuJGgoV423DttZA==
+    :list-id; s=arctest; t=1521807422; bh=DnQ3Pg5HgcdxUmn8KeVeW/UbxX
+    nzn74zQje7HZN13jw=; b=uNu5bO/PT9ik0ef9wI0n07VfJKtVr+OXuISoZLVklG
+    sWyxU5xmsOAkqR4sLnrYFNuuLeSJgT4H93f1RXyoXcSCsvsdRb3GErw+cpQRKakr
+    LTdDWyIm7DZVbCdeNwKfsoaVeYHFaMTnqKaDKH8VMWxHLtlqTtZsPpGYqKzaETy0
+    WGlMSiztwSKeEYZM8wNcu7HBwK7AIElxrL8b1ugaiQ/0xbecWhM0V3iFcK/z36Dx
+    ESeuTx99xgkbZ1/rKkLql1O5WsawcE4RklAJZw3foCGITM+I3tciUxCDfgqkHRCV
+    wdJR3zD9MNeACvBs0D7x9LM59Gtn1ED0IRp8UgAGqe3g==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,21 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752305AbeCWJ42 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:56:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33968 "EHLO
+        id S1752342AbeCWJ4Y (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:56:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33948 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752232AbeCWJ40 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:56:26 -0400
+        with ESMTP id S1752232AbeCWJ4W (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:56:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
         Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 05/84] Bluetooth: btqcomsmd: Fix skb double free corruption
-Date: Fri, 23 Mar 2018 10:53:19 +0100
-Message-Id: <20180323095412.729878479@linuxfoundation.org>
+Subject: [PATCH 4.15 04/84] Bluetooth: hci_qca: Avoid setup failure on missing rampatch
+Date: Fri, 23 Mar 2018 10:53:18 +0100
+Message-Id: <20180323095412.593349330@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -85,32 +85,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Loic Poulain <loic.poulain@linaro.org>
 
 
-[ Upstream commit 67b8fbead4685b36d290a0ef91c6ddffc4920ec9 ]
+[ Upstream commit ba8f3597900291a93604643017fff66a14546015 ]
 
-In case of hci send frame failure, skb is still owned
-by the caller (hci_core) and then should not be freed.
+Assuming that the original code idea was to enable in-band sleeping
+only if the setup_rome method returns succes and run in 'standard'
+mode otherwise, we should not return setup_rome return value which
+makes qca_setup fail if no rampatch/nvm file found.
 
-This fixes crash on dragonboard-410c when sending SCO
-packet. skb is freed by both btqcomsmd and hci_core.
+This fixes BT issue on the dragonboard-820C p4 which includes the
+following QCA controller:
+hci0: Product:0x00000008
+hci0: Patch  :0x00000111
+hci0: ROM    :0x00000302
+hci0: SOC    :0x00000044
 
-Fixes: 1511cc750c3d ("Bluetooth: Introduce Qualcomm WCNSS SMD based HCI driver")
+Since there is no rampatch for this controller revision, just make
+it work as is.
+
 Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
 Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/btqcomsmd.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/bluetooth/hci_qca.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/bluetooth/btqcomsmd.c
-+++ b/drivers/bluetooth/btqcomsmd.c
-@@ -88,7 +88,8 @@ static int btqcomsmd_send(struct hci_dev
- 		break;
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -932,6 +932,9 @@ static int qca_setup(struct hci_uart *hu
+ 	if (!ret) {
+ 		set_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+ 		qca_debugfs_init(hdev);
++	} else if (ret == -ENOENT) {
++		/* No patch/nvm-config found, run with original fw/config */
++		ret = 0;
  	}
  
--	kfree_skb(skb);
-+	if (!ret)
-+		kfree_skb(skb);
- 
- 	return ret;
- }
+ 	/* Setup bdaddr */
