@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754090AbeCWMA6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 08:00:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39582 "EHLO mx2.suse.de"
+        id S1753948AbeCWMCC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:02:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39616 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753998AbeCWMAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 08:00:54 -0400
+        id S1753583AbeCWMA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 08:00:58 -0400
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
@@ -14,9 +14,9 @@ Cc: Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 3/8] livepatch: Add atomic replace
-Date: Fri, 23 Mar 2018 13:00:23 +0100
-Message-Id: <20180323120028.31451-4-pmladek@suse.com>
+Subject: [PATCH 5/8] livepatch: Remove replaced patches from the stack
+Date: Fri, 23 Mar 2018 13:00:25 +0100
+Message-Id: <20180323120028.31451-6-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180323120028.31451-1-pmladek@suse.com>
 References: <20180323120028.31451-1-pmladek@suse.com>
@@ -26,432 +26,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jason Baron <jbaron@akamai.com>
 
-Sometimes we would like to revert a particular fix. Currently, this
-is not easy because we want to keep all other fixes active and we
-could revert only the last applied patch.
+The stack of patches defines an order in which the patches must be enabled.
+It has some drawbacks, for example:
 
-One solution would be to apply new patch that implemented all
-the reverted functions like in the original code. It would work
-as expected but there will be unnecessary redirections. In addition,
-it would also require knowing which functions need to be reverted at
-build time.
+  + People could not disable earlier patches without disabling the later
+    ones even when they are independent.
 
-Another problem is when there are many patches that touch the same
-functions. There might be dependencies between patches that are
-not enforced on the kernel side. Also it might be pretty hard to
-actually prepare the patch and ensure compatibility with the other
-patches.
+  + The order is not clearly visible in /sys/kernel/livepatch. Users might
+    get lost.
 
-A better solution would be to create cumulative patch and say that
-it replaces all older ones.
+  + lsmod does not give a clue what patch is the last one and in use.
 
-This patch adds a new "replace" flag to struct klp_patch. When it is
-enabled, a set of 'nop' klp_func will be dynamically created for all
-functions that are already being patched but that will no longer be
-modified by the new patch. They used as a new target during the patch
-transition.
+  + Lots of unused data and code might be locked in memory.
 
-The idea is to handle Nops' structures like the static ones. When
-the dynamic structures are allocated, we initialize all values that
-are normally statically defined. The only exception is "new_func"
-in struct klp_func. It has to point to the original function. But
-the address is known only when the object (module) is loaded.
+Some of the above problems can already be solved by using cumulative
+patches (replace flag) and reasonable patch names.
 
-Nevertheless we still need to distinguish the dynamically allocated
-structures in some operations. For this, we add "nop" flag into
-struct klp_func and "dynamic" flag into struct klp_object. They
-need special handling in the following situations:
+This is expected. The atomic replace and cumulative patches are supposed
+to help managing and maintaining many patches. And they can resolve even
+more problems mentioned above when the replaced patches get removed from
+the stack. Then the unused patches might be unregistered and the modules
+unloaded.
 
-  + The structures are added into the lists of objects and functions
-    immediately. In fact, the lists were created for this purpose.
+Removing replaced patches will actually help even more. The patch
+will become the first on the stack:
 
-  + The address of the original function is known only when the patched
-    object (module) is loaded. Therefore it is copied later in
-    klp_init_object_loaded().
+  + Nops' structs will not longer be necessary and might be removed.
+    This would save memory, restore performance (no ftrace handler),
+    allow clear view on what is really patched.
 
-  + The ftrace handler must not set PC to func->new_addr. It would cause
-    infinite loop because the address points back to the beginning of
-    the original function.
+  + Disabling the patch will cause using the original code everywhere.
+    Therefore the livepatch callbacks could handle only one scenario.
+    Note that the complication is already complex enough when the patch
+    gets enabled. It is currently solved by calling callbacks only from
+    the new cumulative patch.
 
-  + The various free() functions must free the structure itself.
+Some people actually expected this behavior from the beginning. After all
+a cumulative patch is supposed to "completely" replace an existing one.
+It is like when a new version of an application replaces an older one.
 
-Note that other ways to detect the dynamic structures are not considered
-safe. For example, even the statically defined struct klp_object might
-include empty funcs array. It might be there just to run some callbacks.
+This patch does the first step. It removes the replaced patches from
+the stack. It is safe. The consistency model ensures that they are
+not longer used. By other words, each process works only with
+the structures from klp_transition_patch.
 
-Special callbacks handling:
-
-The callbacks from the replaced patches are _not_ called by intention.
-It would be pretty hard to define a reasonable semantic and implement it.
-
-It might even be counter-productive. The new patch is cumulative. It is
-supposed to include most of the changes from older patches. In most cases,
-it will not want to call pre_unpatch() post_unpatch() callbacks from
-the replaced patches. It would disable/break things for no good reasons.
-Also it should be easier to handle various scenarios in a single script
-in the new patch than think about interactions caused by running many
-scripts from older patches. Not to say that the old scripts even would
-not expect to be called in this situation.
+The removal is done by a special function. It combines actions done by
+__disable_patch() and klp_complete_transition(). But it is a fast
+track without all the transaction-related stuff.
 
 Signed-off-by: Jason Baron <jbaron@akamai.com>
-[pmladek@suse.com: Split, reuse existing code, simplified]
+[pmladek@suse.com: Split and refactored]
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Jessica Yu <jeyu@kernel.org>
 Cc: Jiri Kosina <jikos@kernel.org>
 Cc: Miroslav Benes <mbenes@suse.cz>
 ---
- include/linux/livepatch.h |   6 ++
- kernel/livepatch/core.c   | 193 +++++++++++++++++++++++++++++++++++++++++++++-
- kernel/livepatch/patch.c  |   8 ++
- 3 files changed, 204 insertions(+), 3 deletions(-)
+ kernel/livepatch/core.c       | 37 +++++++++++++++++++++++++++++++++++++
+ kernel/livepatch/core.h       |  3 +++
+ kernel/livepatch/transition.c |  3 +++
+ 3 files changed, 43 insertions(+)
 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index f0a5a28b1386..f28af280f9e0 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -47,6 +47,7 @@
-  * @stack_node:	list node for klp_ops func_stack list
-  * @old_size:	size of the old function
-  * @new_size:	size of the new function
-+ * @nop:        temporary patch to use the original code again; dyn. allocated
-  * @patched:	the func has been added to the klp_ops list
-  * @transition:	the func is currently being applied or reverted
-  *
-@@ -84,6 +85,7 @@ struct klp_func {
- 	struct list_head node;
- 	struct list_head stack_node;
- 	unsigned long old_size, new_size;
-+	bool nop;
- 	bool patched;
- 	bool transition;
- };
-@@ -122,6 +124,7 @@ struct klp_callbacks {
-  *		(NULL for vmlinux)
-  * @func_list:	dynamic list of the function entries
-  * @node:	list node for klp_patch obj_list
-+ * @dynamic:    temporary object for nop functions; dynamically allocated
-  * @patched:	the object's funcs have been added to the klp_ops list
-  */
- struct klp_object {
-@@ -135,6 +138,7 @@ struct klp_object {
- 	struct list_head func_list;
- 	struct list_head node;
- 	struct module *mod;
-+	bool dynamic;
- 	bool patched;
- };
- 
-@@ -142,6 +146,7 @@ struct klp_object {
-  * struct klp_patch - patch structure for live patching
-  * @mod:	reference to the live patch module
-  * @objs:	object entries for kernel objects to be patched
-+ * @replace:	replace all already registered patches
-  * @list:	list node for global list of registered patches
-  * @kobj:	kobject for sysfs resources
-  * @obj_list:	dynamic list of the object entries
-@@ -152,6 +157,7 @@ struct klp_patch {
- 	/* external */
- 	struct module *mod;
- 	struct klp_object *objs;
-+	bool replace;
- 
- 	/* internal */
- 	struct list_head list;
 diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index dcce028ecde8..18c400bd9a33 100644
+index 70c67a834e9a..35f4bbff395f 100644
 --- a/kernel/livepatch/core.c
 +++ b/kernel/livepatch/core.c
-@@ -113,6 +113,40 @@ static bool klp_initialized(void)
- 	return !!klp_root_kobj;
+@@ -332,6 +332,43 @@ static int klp_write_object_relocations(struct module *pmod,
+ 	return ret;
  }
- 
-+static struct klp_func *klp_find_func(struct klp_object *obj,
-+				      struct klp_func *old_func)
-+{
-+	struct klp_func *func;
-+
-+	klp_for_each_func(obj, func) {
-+		if ((strcmp(old_func->old_name, func->old_name) == 0) &&
-+		    (old_func->old_sympos == func->old_sympos)) {
-+			return func;
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
-+static struct klp_object *klp_find_object(struct klp_patch *patch,
-+					  struct klp_object *old_obj)
-+{
-+	struct klp_object *obj;
-+
-+	klp_for_each_object(patch, obj) {
-+		if (klp_is_module(old_obj)) {
-+			if (klp_is_module(obj) &&
-+			    strcmp(old_obj->name, obj->name) == 0) {
-+				return obj;
-+			}
-+		} else if (!klp_is_module(obj)) {
-+			return obj;
-+		}
-+	}
-+
-+	return NULL;
-+}
-+
- struct klp_find_arg {
- 	const char *objname;
- 	const char *name;
-@@ -610,6 +644,123 @@ static struct attribute *klp_patch_attrs[] = {
- 	NULL
- };
  
 +/*
-+ * Dynamically allocated objects and functions.
++ * This function removes replaced patches from both func_stack
++ * and klp_patches stack.
++ *
++ * We could be pretty aggressive here. It is called in the situation where
++ * these structures are no longer accessible. All functions are redirected
++ * by the klp_transition_patch. They use either a new code or they are in
++ * the original code because of the special nop function patches.
++ *
++ * The only exception is when the transition was forced. In this case,
++ * klp_ftrace_handler() might still see the replaced patch on the stack.
++ * Fortunately, it is carefully designed to work with removed functions
++ * thanks to RCU. We only have to keep the patches on the system. This
++ * is handled by @keep_module parameter.
 + */
-+static void klp_free_object_dynamic(struct klp_object *obj)
++void klp_discard_replaced_patches(struct klp_patch *new_patch, bool keep_module)
 +{
-+	kfree(obj->name);
-+	kfree(obj);
-+}
++	struct klp_patch *old_patch, *tmp_patch;
 +
-+static struct klp_object *klp_alloc_object_dynamic(const char *name)
-+{
-+	struct klp_object *obj;
++	list_for_each_entry_safe(old_patch, tmp_patch, &klp_patches, list) {
++		if (old_patch == new_patch)
++			return;
 +
-+	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
-+	if (!obj)
-+		return NULL;
++		klp_unpatch_objects(old_patch);
++		old_patch->enabled = false;
 +
-+	if (name) {
-+		obj->name = kstrdup(name, GFP_KERNEL);
-+		if (!obj->name) {
-+			kfree(obj);
-+			return NULL;
-+		}
++		if (!keep_module)
++			module_put(old_patch->mod);
++
++		/*
++		 * Replaced patches could not get re-enabled to keep
++		 * the code sane.
++		 */
++		list_del_init(&old_patch->list);
 +	}
-+
-+	INIT_LIST_HEAD(&obj->func_list);
-+	obj->dynamic = true;
-+
-+	return obj;
 +}
 +
-+static void klp_free_func_nop(struct klp_func *func)
-+{
-+	kfree(func->old_name);
-+	kfree(func);
-+}
-+
-+static struct klp_func *klp_alloc_func_nop(struct klp_func *old_func,
-+					   struct klp_object *obj)
-+{
-+	struct klp_func *func;
-+
-+	func = kzalloc(sizeof(*func), GFP_KERNEL);
-+	if (!func)
-+		return NULL;
-+
-+	if (old_func->old_name) {
-+		func->old_name = kstrdup(old_func->old_name, GFP_KERNEL);
-+		if (!func->old_name) {
-+			kfree(func);
-+			return NULL;
-+		}
-+	}
-+
-+	/*
-+	 * func->new_func is same as func->old_addr. These addresses are
-+	 * set when the object is loaded, see klp_init_object_loaded().
-+	 */
-+	func->old_sympos = old_func->old_sympos;
-+	func->nop = true;
-+
-+	return func;
-+}
-+
-+static int klp_add_object_nops(struct klp_patch *patch,
-+			       struct klp_object *old_obj)
-+{
-+	struct klp_object *obj;
-+	struct klp_func *func, *old_func;
-+
-+	obj = klp_find_object(patch, old_obj);
-+
-+	if (!obj) {
-+		obj = klp_alloc_object_dynamic(old_obj->name);
-+		if (!obj)
-+			return -ENOMEM;
-+
-+		list_add(&obj->node, &patch->obj_list);
-+	}
-+
-+	klp_for_each_func(old_obj, old_func) {
-+		func = klp_find_func(obj, old_func);
-+		if (func)
-+			continue;
-+
-+		func = klp_alloc_func_nop(old_func, obj);
-+		if (!func)
-+			return -ENOMEM;
-+
-+		list_add(&func->node, &obj->func_list);
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Add 'nop' functions which simply return to the caller to run
-+ * the original function. The 'nop' functions are added to a
-+ * patch to facilitate a 'replace' mode.
-+ */
-+static int klp_add_nops(struct klp_patch *patch)
-+{
-+	struct klp_patch *old_patch;
-+	struct klp_object *old_obj;
-+	int err = 0;
-+
-+	list_for_each_entry(old_patch, &klp_patches, list) {
-+		klp_for_each_object(old_patch, old_obj) {
-+			err = klp_add_object_nops(patch, old_obj);
-+			if (err)
-+				return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static void klp_kobj_release_patch(struct kobject *kobj)
+ static int __klp_disable_patch(struct klp_patch *patch)
  {
- 	struct klp_patch *patch;
-@@ -626,6 +777,12 @@ static struct kobj_type klp_ktype_patch = {
+ 	struct klp_object *obj;
+diff --git a/kernel/livepatch/core.h b/kernel/livepatch/core.h
+index 48a83d4364cf..2d2b724d56a4 100644
+--- a/kernel/livepatch/core.h
++++ b/kernel/livepatch/core.h
+@@ -6,6 +6,9 @@
  
- static void klp_kobj_release_object(struct kobject *kobj)
+ extern struct mutex klp_mutex;
+ 
++void klp_discard_replaced_patches(struct klp_patch *new_patch,
++				  bool keep_module);
++
+ static inline bool klp_is_object_loaded(struct klp_object *obj)
  {
-+	struct klp_object *obj;
+ 	return !obj->name || obj->mod;
+diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+index 7c6631e693bc..24daed700ee7 100644
+--- a/kernel/livepatch/transition.c
++++ b/kernel/livepatch/transition.c
+@@ -87,6 +87,9 @@ static void klp_complete_transition(void)
+ 		 klp_transition_patch->mod->name,
+ 		 klp_target_state == KLP_PATCHED ? "patching" : "unpatching");
+ 
++	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED)
++		klp_discard_replaced_patches(klp_transition_patch, klp_forced);
 +
-+	obj = container_of(kobj, struct klp_object, kobj);
-+
-+	if (obj->dynamic)
-+		klp_free_object_dynamic(obj);
- }
- 
- static struct kobj_type klp_ktype_object = {
-@@ -635,6 +792,12 @@ static struct kobj_type klp_ktype_object = {
- 
- static void klp_kobj_release_func(struct kobject *kobj)
- {
-+	struct klp_func *func;
-+
-+	func = container_of(kobj, struct klp_func, kobj);
-+
-+	if (func->nop)
-+		klp_free_func_nop(func);
- }
- 
- static struct kobj_type klp_ktype_func = {
-@@ -650,6 +813,8 @@ static void klp_free_funcs(struct klp_object *obj)
- 		/* Might be called from klp_init_patch() error path. */
- 		if (func->kobj.state_initialized)
- 			kobject_put(&func->kobj);
-+		else if (func->nop)
-+			klp_free_func_nop(func);
- 	}
- }
- 
-@@ -660,8 +825,12 @@ static void klp_free_object_loaded(struct klp_object *obj)
- 
- 	obj->mod = NULL;
- 
--	klp_for_each_func(obj, func)
-+	klp_for_each_func(obj, func) {
- 		func->old_addr = 0;
-+
-+		if (func->nop)
-+			func->new_func = NULL;
-+	}
- }
- 
- static void klp_free_objects(struct klp_patch *patch)
-@@ -674,6 +843,8 @@ static void klp_free_objects(struct klp_patch *patch)
- 		/* Might be called from klp_init_patch() error path. */
- 		if (obj->kobj.state_initialized)
- 			kobject_put(&obj->kobj);
-+		else if (obj->dynamic)
-+			klp_free_object_dynamic(obj);
- 	}
- }
- 
-@@ -687,7 +858,14 @@ static void klp_free_patch(struct klp_patch *patch)
- 
- static int klp_init_func(struct klp_object *obj, struct klp_func *func)
- {
--	if (!func->old_name || !func->new_func)
-+	if (!func->old_name)
-+		return -EINVAL;
-+
-+	/*
-+	 * NOPs get the address later. The the patched module must be loaded,
-+	 * see klp_init_object_loaded().
-+	 */
-+	if (!func->new_func && !func->nop)
- 		return -EINVAL;
- 
- 	INIT_LIST_HEAD(&func->stack_node);
-@@ -742,6 +920,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
- 			return -ENOENT;
- 		}
- 
-+		if (func->nop)
-+			func->new_func = (void *)func->old_addr;
-+
- 		ret = kallsyms_lookup_size_offset((unsigned long)func->new_func,
- 						  &func->new_size, NULL);
- 		if (!ret) {
-@@ -760,7 +941,7 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
- 	int ret;
- 	const char *name;
- 
--	if (!obj->funcs)
-+	if (!obj->funcs && !obj->dynamic)
- 		return -EINVAL;
- 
- 	obj->patched = false;
-@@ -810,6 +991,12 @@ static int klp_init_patch(struct klp_patch *patch)
- 		return ret;
- 	}
- 
-+	if (patch->replace) {
-+		ret = klp_add_nops(patch);
-+		if (ret)
-+			goto free;
-+	}
-+
- 	klp_for_each_object(patch, obj) {
- 		ret = klp_init_object(patch, obj);
- 		if (ret)
-diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
-index 82d584225dc6..fbf1a3a47fc3 100644
---- a/kernel/livepatch/patch.c
-+++ b/kernel/livepatch/patch.c
-@@ -118,7 +118,15 @@ static void notrace klp_ftrace_handler(unsigned long ip,
- 		}
- 	}
- 
-+	/*
-+	 * NOPs are used to replace existing patches with original code.
-+	 * Do nothing! Setting pc would cause an infinite loop.
-+	 */
-+	if (func->nop)
-+		goto unlock;
-+
- 	klp_arch_set_pc(regs, (unsigned long)func->new_func);
-+
- unlock:
- 	preempt_enable_notrace();
- }
+ 	if (klp_target_state == KLP_UNPATCHED) {
+ 		/*
+ 		 * All tasks have transitioned to KLP_UNPATCHED so we can now
 -- 
 2.13.6
