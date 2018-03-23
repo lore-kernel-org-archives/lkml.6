@@ -1,198 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752553AbeCWTcp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 15:32:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55012 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752324AbeCWTco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 15:32:44 -0400
-Subject: Re: [PATCH v3] KVM: arm/arm64 : add lpi info in vgic-debug
-To: Peng Hao <peng.hao2@zte.com.cn>, cdall@kernel.org
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org
-References: <1521852161-67603-1-git-send-email-peng.hao2@zte.com.cn>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <4a8fd699-7690-9056-d0b0-3e4c30778e69@arm.com>
-Date: Fri, 23 Mar 2018 19:32:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752570AbeCWTdX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:33:23 -0400
+Received: from mail-bl2nam02on0060.outbound.protection.outlook.com ([104.47.38.60]:59328
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752169AbeCWTdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 15:33:20 -0400
+Authentication-Results: spf=none (sender IP is 129.98.127.170)
+ smtp.mailfrom=einstein.yu.edu; vger.kernel.org; dkim=none (message not
+ signed) header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=einstein.yu.edu;
+From: Maurice R Volaski <maurice.volaski@einstein.yu.edu>
+To: Gabriel C <nix.or.die@gmail.com>, Willy Tarreau <w@1wt.eu>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Did kernel 3.11 never work?
+Thread-Topic: Did kernel 3.11 never work?
+Thread-Index: AQHTwrRxo/jE6/QgLkSKKNwiuRVesaPeK1QA//++JQCAAEjFgIAACJuAgAAE5wD///ZqgA==
+Date: Fri, 23 Mar 2018 19:33:15 +0000
+Message-ID: <EE382DC0-D88D-4673-B59E-F148C60AFF9B@einstein.yu.edu>
+References: <E513F076-24D5-4F67-A204-D2E6E1135FDE@einstein.yu.edu>
+ <20180323145428.GF15012@1wt.eu>
+ <8BF385DA-7EB8-446D-9005-64509D7C7CB8@einstein.yu.edu>
+ <20180323151913.GG15012@1wt.eu>
+ <CAEJqkgjj2dR4GLOEzsUJiWOsoqFWArioh32KW1We5xgp4qSb1Q@mail.gmail.com>
+ <CAEJqkgjW6HbzVM9CosveTzwQJkOWaUVFd4MNrw2XTvvkUxDRqw@mail.gmail.com>
+In-Reply-To: <CAEJqkgjW6HbzVM9CosveTzwQJkOWaUVFd4MNrw2XTvvkUxDRqw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.c.0.180314
+x-originating-ip: [10.49.98.85]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C63525EFC21A0D49BD87F4A61272B6A8@yuad.uds.yu.edu>
 MIME-Version: 1.0
-In-Reply-To: <1521852161-67603-1-git-send-email-peng.hao2@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:129.98.127.170;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(346002)(39860400002)(376002)(396003)(2980300002)(428003)(189003)(199004)(13464003)(377424004)(33656002)(786003)(105586002)(109096001)(229853002)(7736002)(110136005)(58126008)(305945005)(106466001)(4326008)(356003)(6116002)(2616005)(316002)(966005)(3846002)(2900100001)(446003)(102836004)(39060400002)(478600001)(76176011)(6306002)(83716003)(82746002)(53546011)(88552002)(8936002)(50466002)(336012)(8676002)(436003)(26005)(186003)(47776003)(11346002)(2906002)(6246003)(75432002)(86362001)(5660300001)(2486003)(23676004)(93886005)(246002)(781001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR0401MB0974;H:smtp.einstein.yu.edu;FPR:;SPF:None;PTR:aewexcph01.yuad.uds.yu.edu;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT024;1:egNNtzAdW1noS7Jg46wg0n5YLntLDe77Kt+XEmrA41XIMpU05HnTvjce05Y4BQM+6FiNPKmVQhHXfWMadL07M9v8FyLSzdo1+Yi4Hq27p8EX+sD7GjWQ5ZrD1qQAo8OK
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b2e647de-a560-4158-93b0-08d590f4ee22
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM2PR0401MB0974;
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR0401MB0974;3:GJNN3fACFjTgTFC8hY9gkNzA6VXKej1myMKVw4j1V8unQJGU6pLXXzq5MufEDHLN3BKNshPWaOwxmPf/v1kqP4XQKKvF6g6d2z/h18V4FnkPnX8J7BSLa3gHNt9qd8XqzM4w3yyQOdHYSbQ3HipkrTNNQzp7i5KTo9zQu+Hrshvofj3XMMpquclq5TAvW+a1rA1n9gJR+Ki1hljfmaZtwh8g2IVQUPRq9lLg44noVftZb/76fr21cSPQzAE45RgcP8vwGVqs7qnj0vgKuR9rA5Y9lLeO7zy5qz5gjw6MNUD50HOS3l0rhxsTe+8/7Rk72gVwTCgTFW+Tj1n8v1MwcR5uAXMWu84dLUNlEAY5SPQ=;25:IJvfRhVo9KgfDsDtY7WhGQazIbok6ku37Y91ufP5LwYHBvBG+jcSsYalMhjAH8Oi2GZP57zXrH8ej97p1ZSqmCDjTTnseN0D7P1uY87JFGMysYlbySVfib/0dVVVigAbSX5BqpRA5VMZ/G/hpT083B4FUAML433orREB6zOhERuZFsfSlFPX0soo/JIfCl31kvwQHQLJ0GwHxPCwCdO8u8Fi4b5N74z3iyRdJUlf2xUlcZSpSfNGnHDxBN0rR42k+docQI51jsh7G1GoXlF78Pr5sjzjlo7nXiswLrwVgrxTd0GCf1W7yNwEI33trIYn73QmjfMlFjVjSt+hQbuRyw==
+X-MS-TrafficTypeDiagnostic: DM2PR0401MB0974:
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR0401MB0974;31:wrIpD/HDyUAochTS6tVG64RoKKsTIv9REobOfzLPKtzntbDUNMXNaaqPCvUMEDq5yRGZvLHZnBs6thGHTa24L91l+ZI0Lui/9khrSLE25TIRo48uH2/9b4QPkXaB7ZsOSBjSnn4wfD0kEfr4oWq79l67aIbA2USmyu820VlaVipiUodOf/ctwqSeBI7XUw0/SaB79GqWDXOMIoQjbJkBO3PjabX7nz2yo+1YR5k4ZGE=;20:6vf28BguhvAJVtGq4m1ecs4HvVJJwBRZJhLvIYJwU8In14Mf711YMDkH1G/BFUkNWIEKjwWzmO/5JyC5ywqI074gWOsTM/PwSIvXJgng9E9f3cCbXAoq6dZo9OUgX2EGdC4aBKIwmiCvCPaUj1hj4hE84IM4ynzOznsWQtxqrDDvCx81RsqAXS4gfAtyy1KFyTdgVTZlT6iKF0tfKVLjfW8FT9tIdVoCk6zt9+doWgrQbtbWP9MACuAnKE2hr9abw7/Hz91xNacvFWfumOJx1IQH8Wh65s0JB6sYz0gJvD3riX7u0NcC/0Ff5xNxoGFQclNyW1UQbYNAVmQA2BWW1Hdlxh+g2tDq/vyKkqha7aHwE7I83jvxmXFmT/0DGI9IcQuOrWYJ50mTjxa6iiiFqLJmWXzKgv9Y3WAzs80yLY8uh76rLV8lR4xbTlXpePR9b+XeH/F+VWwO5D+92gcGg1+AwuVFeQmXOgNZwH6u10irDS1X12XGJZT2Ucr+lS4/
+X-Microsoft-Antispam-PRVS: <DM2PR0401MB09749F366479D5DDED634602AAA80@DM2PR0401MB0974.namprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(166708455590820)(9452136761055)(85827821059158)(150496076066914)(5447422754597);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(10201501046)(3002001)(3231221)(944501327)(52105095)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281529075)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:DM2PR0401MB0974;BCL:0;PCL:0;RULEID:;SRVR:DM2PR0401MB0974;
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR0401MB0974;4:eXVNxi9Ani1410joMONBABw57VTeXAHpRLy3I1l3FvAGeMfN7p7VxborzGwhahHreBywwzNoRJLFTrXlf5fPuuCBs1mZk8xZzCWJ4hla4bs4k6sj8CzauEX6fAucUsGF7rUi6VaBy+fdqVFhnkQvD441cASZTK/KkxDQ1/lgrcO8kFE/Wb/hB2IOxe6VkkMqm5Lt8341cwwFE3fVKDrwL/mF56wYi+UMNSBCq+uJVbh+Tm3iJfnbHEisIik7o6XNGgIBLSy9zP1oVgmY9pf3WMQvd3ZD791qjMW0AQk9S0dwlzbaZtUiI5dcdkb74ASnGV8UmnUEQ2LdgvNFn3jo6QWtgFo/H9hYZ+Oe7ld2y0kAH1e9G12FqvwdE1oNoBuggCzGCyrUVzLgHGDyKcXSLEcsud9Dq9IlU8jwtZRL9TZvvAs9wYa9ylRdwhl8pReF
+X-Forefront-PRVS: 0620CADDF3
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTJQUjA0MDFNQjA5NzQ7MjM6Y3V4WUpJVXRkSTNFb2J1UUxKb3JCQkdI?=
+ =?utf-8?B?Nzl6Y0UrWFhlR29RZTBrRUZYYnZBazFVZXh0ZFBRbmUyQUI5bGcwZGM1SDM1?=
+ =?utf-8?B?OXVPMFhNMXFQaFVOcm1MYzdiZ3F2c0t5d0NTKzlOdXF2ZUNVd3JKL0R6bmRU?=
+ =?utf-8?B?Y01NbmxLelY2T05GTzVFenVZbUhiKzFJdlZkenlCU3NuM0tSR3EvTHpHSXVV?=
+ =?utf-8?B?T2lSV20zd2hGUlFxQnlxb3c2a0UrUXJlTHlhQ2RhNjdFU1A1c20vcGJzUk44?=
+ =?utf-8?B?MXQ0ZE5SOSs4ajRhcUR0ODNiQzdSV1FFSjlvY0Zmd1p2UzhRM25UMTg3eHhr?=
+ =?utf-8?B?OWZ1cFNVWUlIdk9YcnJNSzE4OExNMXZwc2pvL0htb1U4cXFnQkd4SUljYWVt?=
+ =?utf-8?B?bGFVRjRyYmx4SEl5S1ZER2gvcHcxOFJTYWVGbXJ4UGlLZXRSSkErOG4zbkpH?=
+ =?utf-8?B?Tll2Snh2WEdQSTk4WnZtZHVMWE9VWGZuRisxR054Ui9ucEpFUlMvMkd2aHM4?=
+ =?utf-8?B?VHlEMzBCRXZsY2RLdzRONG1sYTdoemp4TXd6MysvTE82S0lPc3Fna3l6bUNU?=
+ =?utf-8?B?ejI5clZ4d29jZzgvTmpEWDgzN0RnOWxPVFVQamhOUFBxVkcrL0JidWdGZlFj?=
+ =?utf-8?B?ekZ2d2hlemFLT0lldjEwcmNlaEhhcDhWOVgrTUhZQWVHVFlBcVh0VmlPVUl0?=
+ =?utf-8?B?UDJjQVpiMVY5MHg2RDBUNVZSeXhrZ3JDMnRiWGVlNkVxQ2ZXZEtGSWNVSFAy?=
+ =?utf-8?B?MExsVXlIVGQ3SDVOTVNwZ1pVUkpCcm9qTXovcTdmVFBtTFphQXZlVTJuaXgw?=
+ =?utf-8?B?TGIxVEZvVGdReUFOVHBjbk5hcGNOVitIdnBCdmh0SkQyRXFNZUt5dWVYYkNJ?=
+ =?utf-8?B?MVp4UW5VdElpRXNFUWtPV1NwT1VCRmZTOFp5WDVrOWM5OFJER0NMazhPMHQr?=
+ =?utf-8?B?ZE9DOFZjMllpMGkrV0JqTEg3WTZFVDY4YkYyT1U3emdTcE5ERkMwZjNBY3d4?=
+ =?utf-8?B?NVN5aUZOS1AzVko3eUxBWkcxL2JrVThPU3lIOExEUFFXUnlJdWtzd3NTYm9l?=
+ =?utf-8?B?T1lEa0l4aW9MZ1doUURicFJucE1HekMwYnhnZXpybEFDRDhXdG9HMFh6RFNW?=
+ =?utf-8?B?UjBDSnJON0tLblFlOTJFMGxXUExGMUJ2dm1TWlVTQ2VWNk5RZlQzZ2ozak9F?=
+ =?utf-8?B?Z3FPTU1GWm8wQnBQRkRNYlIvamlaOXNVOGpLTTlMOCtZRFJFZkVHUzlmSFp2?=
+ =?utf-8?B?cW9ISWVLM29QZ2dRNXMwb0plc0lwQmhvVmVxd2R4bnJkY3Rsa2VQZXFEWHZ0?=
+ =?utf-8?B?YXIxR1RYa25XQWVWQVZlczZwUExHd0Z5MDkwMVFhOGRjczlzU0lLdjJ4UFBy?=
+ =?utf-8?B?WmN5cnZBMUNxUGVoWXFQWmJxaTRhMW5TWi9JZHhGN1FJMEYvMTIwZ04rOSs0?=
+ =?utf-8?B?UUY1c2tGN2k3RVRCSjFkN1hsTEUxYmtKdFVPYVNMSjQ2ZTR0OTE3ODI0emFW?=
+ =?utf-8?B?RkNPcWV3VEdjcjFMQVN0RUpnYVJmWkpTc3dKTE8wTXhHeHNRMk1xOW1LWFVC?=
+ =?utf-8?B?VFdMUlpISnFrTjNJOEprTTQyb0lwU1V3TVprbUpRRDlIZUdmbWdHNGx4b2dh?=
+ =?utf-8?B?RkxGcG9pZEloQlgyS2JQcTV6aEtmaG5CWThGMWc5bHNTamxtYzRrQUJQR0tz?=
+ =?utf-8?B?aDllYWcvaWNTTXRDMStnRVB1VE9uL1NYdFhzbDhvRm9FT0dVV3Fya3V5TUJG?=
+ =?utf-8?B?T0w3c2pQQ2tvdDg5Q0J0OWlBPT0=?=
+X-Microsoft-Antispam-Message-Info: OrCHNZS4cXqBxiPfEaHC/yh4u6Cs2/SLVSnYlcJGmPBlcaW9D+CgKb1jOeT/+qCh5BrwOvE4RYkSG0iWmxHX4oMg7QlRCQyUrycyJOQNMQJQedIRerIcGQGyPKcFaIGb5vXsEpVvZGqI50xk93aXvfbJq3uA88vWZ19LG26669i3OycaNBlJ0wVqlSZ3AjmW
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR0401MB0974;6:3+5eQyl79qJv0At7COo2fljpADyjKkCcCZsgrORHyZXN95TMsXxpsB6VXcLhe607Sm6IG65xN2c1zMkgcQqoHAPhfzma1a/yv9/hMA49ze99+5No5Z83LK6A16KkZHsh61vAFSrSkXDtKpa+xOpAy3K5QuA8frDNIrWnzH1Oed6RmKg5XA3fJOO9z8q86DQilgKPmHsRtp4ywjfjEELC7ioePYy+2H2nEi0AX/1nRoNd8N0OD/y+WABWMRbp0QZmwbn6smODDnGHLO1heUD1DPZuFCE7bkO61oqjrBVVIbJCYV+mXpv+drPq5gvUxc9sHJfwVYJp49cEBCjDL1SW9xJfo0rrdwW4beqdzAi5QGTjNkQRoDWMtvmvSuA/87/6F9/IEPzO0XctU5zV6SlXmh8tqAhGS7uzeV/BRb7bSGGxt0XmuqfZwERhretzSK8ZboRuMUwbqcc3vPOQkHYWwA==;5:9VhhiJRrP3n4sj4aYSDz+a/sA2AhsUpaGfe2aQoxHRhGNerF+3UZnIobFhquoc/PFagp6J9Q9T3h61lnkVjNg5oWvEfjvnqtLOzUulWI9FaU7NRR+2Aq0H9QP3VZ5A/iX4XeKrV+Dgjg3S55WGSC44xlVbMD+4frL0Dy72ZLtBw=;24:MH7w0NOtyw0tg6bFKTmMsMbf5oqQXFm1yyE+J2+UIhMevU+uGsP+kay+KC4g5dDV1PS9M5YQEFiFyG44WETqhJ/WFyNWhnmf3W7PL0OyMjo=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR0401MB0974;7:LRzCC3YCzu5/rngMKsK4j2QxkPKQ19At8GoAG30Of/+NNjTea4aCzvxF0df+DXlL6W6a3FyB2pQyC89I/LmuWQXIdOlpNQTRzgUBaJCxGMuW4sleCFf2VvKTroGcyRNdL1zvoEkOnFDr4QI782tKxRUV0yte7zXQwbdtyfKXgxRpJyJtP4ppdvX3g7CA7CLNh+eIeATvi8Gxos45VKqdLEiHwMIgW9H3KGxeGr3RtLnibXuSygPwyClrgz3GYarj
+X-OriginatorOrg: einstein.yu.edu
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2018 19:33:18.1175
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2e647de-a560-4158-93b0-08d590f4ee22
+X-MS-Exchange-CrossTenant-Id: 04c70eb4-8f26-4807-9934-e02e89266ad0
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=04c70eb4-8f26-4807-9934-e02e89266ad0;Ip=[129.98.127.170];Helo=[smtp.einstein.yu.edu]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR0401MB0974
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2NJXTZB005751
 
-On 24/03/18 00:42, Peng Hao wrote:
-> Add lpi debug info to vgic-stat.
-> The printed info like this:
->     SPI  287      0 000001        0        0   0 160      -1
->     LPI 8192      2 000100        0        0   0 160      -1
-> 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  virt/kvm/arm/vgic/vgic-debug.c | 59 ++++++++++++++++++++++++++++++++++++++----
->  virt/kvm/arm/vgic/vgic-its.c   | 16 ++++++------
->  virt/kvm/arm/vgic/vgic.h       |  1 +
->  3 files changed, 63 insertions(+), 13 deletions(-)
-> 
-> diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
-> index 10b3817..ddac6bd 100644
-> --- a/virt/kvm/arm/vgic/vgic-debug.c
-> +++ b/virt/kvm/arm/vgic/vgic-debug.c
-> @@ -36,9 +36,12 @@
->  struct vgic_state_iter {
->  	int nr_cpus;
->  	int nr_spis;
-> +	int nr_lpis;
->  	int dist_id;
->  	int vcpu_id;
->  	int intid;
-> +	int lpi_print_count;
-> +	struct vgic_irq **lpi_irqs;
->  };
->  
->  static void iter_next(struct vgic_state_iter *iter)
-> @@ -52,6 +55,39 @@ static void iter_next(struct vgic_state_iter *iter)
->  	if (iter->intid == VGIC_NR_PRIVATE_IRQS &&
->  	    ++iter->vcpu_id < iter->nr_cpus)
->  		iter->intid = 0;
-> +
-> +	if (iter->intid >= VGIC_NR_PRIVATE_IRQS + iter->nr_spis) {
-> +		if (iter->lpi_print_count < iter->nr_lpis)
-> +			iter->intid = iter->lpi_irqs[iter->lpi_print_count]->intid;
-> +		iter->lpi_print_count++;
-> +	}
-> +}
-> +
-> +static void vgic_debug_get_lpis(struct kvm *kvm, struct vgic_state_iter *iter)
-> +{
-> +	u32 *intids;
-> +	int i, irq_count;
-> +	struct vgic_irq *irq = NULL, **lpi_irqs;
-> +
-> +	iter->nr_lpis = 0;
-> +	irq_count = vgic_copy_lpi_list(kvm, NULL, &intids);
-> +	if (irq_count < 0)
-> +		return;
-> +
-> +	lpi_irqs = kmalloc_array(irq_count, sizeof(irq), GFP_KERNEL);
-> +	if (!lpi_irqs) {
-> +		kfree(intids);
-> +		return;
-> +	}
-> +
-> +	for (i = 0; i < irq_count; i++) {
-> +		irq = vgic_get_irq(kvm, NULL, intids[i]);
-> +		if (!irq)
-> +			continue;
-> +		lpi_irqs[iter->nr_lpis++] = irq;
-> +	}
-> +	iter->lpi_irqs = lpi_irqs;
-> +	kfree(intids);
+Oh, cool. Thank you. I would have never found this.
 
-You are still completely missing the point. Why are you allocating this
-array of pointers while you have a perfectly sensible array of intids,
-allowing you do treat all the irqs uniformly?
+﻿-----Original Message-----
+From: Gabriel C <nix.or.die@gmail.com>
+Date: Friday, March 23, 2018 at 12:08
+To: Willy Tarreau <w@1wt.eu>
+Cc: Maurice R Volaski <maurice.volaski@einstein.yu.edu>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Did kernel 3.11 never work?
 
->  }
->  
->  static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
-> @@ -64,6 +100,8 @@ static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
->  	iter->nr_cpus = nr_cpus;
->  	iter->nr_spis = kvm->arch.vgic.nr_spis;
->  
-> +	if (vgic_supports_direct_msis(kvm) && !pos)
-> +		vgic_debug_get_lpis(kvm, iter);
-
-Again: What is the point of this?
-
->  	/* Fast forward to the right position if needed */
->  	while (pos--)
->  		iter_next(iter);
-> @@ -73,7 +111,9 @@ static bool end_of_vgic(struct vgic_state_iter *iter)
->  {
->  	return iter->dist_id > 0 &&
->  		iter->vcpu_id == iter->nr_cpus &&
-> -		(iter->intid - VGIC_NR_PRIVATE_IRQS) == iter->nr_spis;
-> +		(iter->intid - VGIC_NR_PRIVATE_IRQS) >= iter->nr_spis &&
-> +		((iter->nr_lpis == 0) ||
-> +		(iter->lpi_print_count == iter->nr_lpis + 1));
->  }
->  
->  static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
-> @@ -130,6 +170,7 @@ static void vgic_debug_stop(struct seq_file *s, void *v)
->  
->  	mutex_lock(&kvm->lock);
->  	iter = kvm->arch.vgic.iter;
-> +	kfree(iter->lpi_irqs);
->  	kfree(iter);
->  	kvm->arch.vgic.iter = NULL;
->  	mutex_unlock(&kvm->lock);
-> @@ -154,7 +195,7 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
->  			 struct kvm_vcpu *vcpu)
->  {
->  	int id = 0;
-> -	char *hdr = "SPI ";
-> +	char *hdr = "Global";
->  
->  	if (vcpu) {
->  		hdr = "VCPU";
-> @@ -162,7 +203,10 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
->  	}
->  
->  	seq_printf(s, "\n");
-> -	seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
-> +	if (vcpu)
-> +		seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
-> +	else
-> +		seq_printf(s, "%s TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr);
->  	seq_printf(s, "---------------------------------------------------------------\n");
->  }
->  
-> @@ -174,8 +218,10 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
->  		type = "SGI";
->  	else if (irq->intid < VGIC_NR_PRIVATE_IRQS)
->  		type = "PPI";
-> -	else
-> +	else if (irq->intid < VGIC_MAX_SPI)
->  		type = "SPI";
-> +	else if (irq->intid >= VGIC_MIN_LPI)
-> +		type = "LPI";
->  
->  	if (irq->intid ==0 || irq->intid == VGIC_NR_PRIVATE_IRQS)
->  		print_header(s, irq, vcpu);
-> @@ -220,7 +266,9 @@ static int vgic_debug_show(struct seq_file *s, void *v)
->  	if (!kvm->arch.vgic.initialized)
->  		return 0;
->  
-> -	if (iter->vcpu_id < iter->nr_cpus) {
-> +	if (iter->intid >= VGIC_MIN_LPI)
-> +		irq = iter->lpi_irqs[iter->lpi_print_count - 1];
-> +	else if (iter->vcpu_id < iter->nr_cpus) {
->  		vcpu = kvm_get_vcpu(kvm, iter->vcpu_id);
->  		irq = &vcpu->arch.vgic_cpu.private_irqs[iter->intid];
->  	} else {
-> @@ -230,6 +278,7 @@ static int vgic_debug_show(struct seq_file *s, void *v)
->  	spin_lock(&irq->irq_lock);
->  	print_irq_state(s, irq, vcpu);
->  	spin_unlock(&irq->irq_lock);
-> +	vgic_put_irq(kvm, irq);
-
-Doesn't it shock you that you're doing a "put" on something you haven't
-done a "get" on?
-
-[...]
-
-Here's what I mean[1]. No double allocation, uniform access to the irq
-pointer, no imbalance in reference management.
-
-	M.
-
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=kvm-arm64/vgic-debug&id=7ab86b67167698d30a93b9f5079eb9f48f885bf6
--- 
-Jazz is not dead. It just smells funny...
+    2018-03-23 16:50 GMT+01:00 Gabriel C <nix.or.die@gmail.com>:
+    ...
+    > Maybe have a look there ?
+    > https://github.com/rapier1
+    >
+    
+    Latest kernel there is an 4.10
+    https://github.com/rapier1/web10g/releases/tag/kis-0.12-4.10
+    
