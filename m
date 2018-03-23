@@ -1,82 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751880AbeCWOnr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:43:47 -0400
-Received: from smtp.eu.citrix.com ([185.25.65.24]:3678 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751814AbeCWOnp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:43:45 -0400
-X-IronPort-AV: E=Sophos;i="5.48,350,1517875200";
-   d="scan'208";a="70469679"
-Subject: Re: [PATCH] KVM: X86: Fix the decoding of segment overrides in 64bit
- mode
-To: Wanpeng Li <kernellwp@gmail.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1521707651-9375-1-git-send-email-wanpengli@tencent.com>
- <aadc47c3-9d5f-b4d5-92d3-cb888a29563c@redhat.com>
- <49454fe4-16e2-4d8b-7ad5-9e488afc786e@citrix.com>
- <d1126eb9-7203-7044-f72b-174cac6607ab@redhat.com>
- <e9db6804-4881-be93-f570-e9631dbccac8@citrix.com>
- <9bd82cb0-d88f-4891-a111-3704802e1d4e@redhat.com>
- <CANRm+CwmJQCFZ7oe1_YatqoOXzzEU+SP9Z5qR6zU_ybd_DoGQQ@mail.gmail.com>
- <94bbfac5-2022-ab92-0b9a-1c3cd2275054@citrix.com>
- <CANRm+CwsFX7rVkPvENRM20D84zotonxFFJMSq98icS4BQm7o2Q@mail.gmail.com>
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Message-ID: <3cff8fb1-bfa7-0e63-4642-4d779454965a@citrix.com>
-Date: Fri, 23 Mar 2018 14:43:01 +0000
+        id S1751915AbeCWOpi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:45:38 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51760 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751400AbeCWOph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 10:45:37 -0400
+Subject: Re: [PATCH] KVM: arm/arm64 : add lpi info in vgic-debug
+To: peng.hao2@zte.com.cn
+Cc: Christoffer Dall <cdall@kernel.org>, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+References: <201803232133538520082@zte.com.cn>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <6d6b1a06-e07a-8caa-cbad-ea7a40997ee2@arm.com>
+Date: Fri, 23 Mar 2018 14:45:32 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CANRm+CwsFX7rVkPvENRM20D84zotonxFFJMSq98icS4BQm7o2Q@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <201803232133538520082@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/03/18 14:27, Wanpeng Li wrote:
-> 2018-03-22 21:53 GMT+08:00 Andrew Cooper <andrew.cooper3@citrix.com>:
->> On 22/03/18 13:39, Wanpeng Li wrote:
->>> 2018-03-22 20:38 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
->>>> On 22/03/2018 12:04, Andrew Cooper wrote:
->>>>> We've got a Force Emulation Prefix (ud2a; .ascii "xen") for doing
->>>>> magic.  Originally, this was used for PV guests to explicitly request an
->>>>> emulated CPUID, but I extended it to HVM guests for "emulate the next
->>>>> instruction", after we had some guest user => guest kernel privilege
->>>>> escalations because of incorrect emulation.
->>>> Wanpeng, why don't you add it behind a new kvm module parameter? :)
->>> Great point! I will have a try. Thanks Paolo and Andrew. :)
->> Using the force emulation prefix requires intercepting #UD, which is in
->> general a BadThing(tm) for security.  Therefore, we have a build time
-> Yeah, however kvm intercepts and emulates #UD by default, should we
-> add a new kvm module parameter to enable it and disable by default?
-> Paolo.
->
->> configuration option to compile in support, and require that test
->> systems explicitly opt into using it via a command line parameter.
->>
->> http://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=xen/arch/x86/hvm/hvm.c;h=db52312882205e65b32e587106ca795f4bfab2eb;hb=refs/heads/staging#l3741
->> is the general #UD intercept handler if you want a reference.  (You can
-> Thanks Andrew, it is useful. :) In addition, I didn't see the
-> test-memop-seg testcase has "Forced Emulation Prefix", when the prefix
-> is added to each instruction in the testcase?
+[fixing Christoffer's email address]
 
-It has ended up substantially more ugly than I first intended, due to
-several assembler bugs in older GCC and Clang toolchains.
+On 23/03/18 13:33, peng.hao2@zte.com.cn wrote:
+>> On 23/03/18 10:36, Peng Hao wrote:
+>>> Add lpi debug info to vgic-stat.
+>>> the printed info like this:
+>>>      SPI  287      0 000001        0        0   0 160      -1
+>>>      LPI 8192      2 000100        0        0   0 160      -1
+>>>
+>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>>> ---
+>>>  virt/kvm/arm/vgic/vgic-debug.c | 61 ++++++++++++++++++++++++++++++++++++++----
+>>>  1 file changed, 56 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
+>>> index 10b3817..444115e 100644
+>>> --- a/virt/kvm/arm/vgic/vgic-debug.c
+>>> +++ b/virt/kvm/arm/vgic/vgic-debug.c
+>>> @@ -36,9 +36,12 @@
+>>>  struct vgic_state_iter {
+>>>      int nr_cpus;
+>>>      int nr_spis;
+>>> +    int nr_lpis;
+>>>      int dist_id;
+>>>      int vcpu_id;
+>>>      int intid;
+>>> +    int lpi_print_count;
+>>> +    struct vgic_irq **lpi_irqs;
+>>>  };
+>>>  
+>>>  static void iter_next(struct vgic_state_iter *iter)
+>>> @@ -52,6 +55,40 @@ static void iter_next(struct vgic_state_iter *iter)
+>>>      if (iter->intid == VGIC_NR_PRIVATE_IRQS &&
+>>>          ++iter->vcpu_id < iter->nr_cpus)
+>>>          iter->intid = 0;
+>>> +
+>>> +    if (iter->intid >= VGIC_NR_PRIVATE_IRQS + iter->nr_spis) {
+>>> +        if (iter->lpi_print_count < iter->nr_lpis)
+>>> +            iter->intid = iter->lpi_irqs[iter->lpi_print_count]->intid;
+>>> +        iter->lpi_print_count++;
+>>> +    }
+>>> +}
+>>> +
+>>> +static void vgic_debug_get_lpis(struct kvm *kvm, struct vgic_state_iter *iter)
+>>> +{
+>>> +    struct vgic_dist *dist = &kvm->arch.vgic;
+>>> +    int i = 0;
+>>> +    struct vgic_irq *irq = NULL, **lpi_irqs;
+>>> +
+>>> +again:
+>>> +    iter->nr_lpis = dist->lpi_list_count;
+>>> +    lpi_irqs = kmalloc_array(iter->nr_lpis, sizeof(irq), GFP_KERNEL);
+>>> +    if (!lpi_irqs) {
+>>> +        iter->nr_lpis = 0;
+>>> +        return;
+>>> +    }
+>>> +    spin_lock(&dist->lpi_list_lock);
+>>> +    if (iter->nr_lpis != dist->lpi_list_count) {
+>>> +        kfree(lpi_irqs);
+>>> +        spin_unlock(&dist->lpi_list_lock);
+>>> +        goto again;
+>>> +    }
+> 
+>> Why do we need an exact count? It is fine to have a transient count, and
+>> the debug code should be able to come with that without performing this
+>> terrible loop.
+> yeah, it is enough to have a rough count for debug code .
+>> We also already have some code that snapshot the the LPIs (see
+>> vgic_copy_lpi_list), so please consider reusing that instead.
+> I can't reuse vgic_copy_lpi_list. It snapshots based on LPI's target vcpu. 
 
-http://xenbits.xen.org/gitweb/?p=xtf.git;a=blob;f=tests/memop-seg/asm.S;h=698661425bcdc9c181b235e323c2460e06c6e986;hb=HEAD#l35
+Guess what? You can also change it!
 
-I previously has FEP passed as a second parameter, but that becomes
-prohibitively complicated to extract when testing %ss or %esp.  FEP is
-now encoded in the bottom bit of the address passed in.
+>>> +
+>>> +    list_for_each_entry(irq, &dist->lpi_list_head, lpi_list) {
+>>> +        vgic_get_irq_kref(irq);
+>>> +        lpi_irqs[i++] = irq;
+>>> +    }
+>>> +    spin_unlock(&dist->lpi_list_lock);
+>>> +    iter->lpi_irqs = lpi_irqs;
+> 
+>> Messing with the internals of the refcounts is really a bad idea. Please
+>> use vgic_get_irq() in conjunction with the above, and allow it to fail
+>> gracefully.
+>   vgic_get_irq require intid as input  and vgic_get_lpi that vgic_get_irq calling will traverse the lpi_list with holding lpi_list_lock again,
+>   but here I has held lpi_list_lock. So I think calling vgic_get_irq_kref is safe with holding the
+>  lpi_list_lock. 
 
-This was the cleanest way I could find of testing every combination, but
-I'm open to improvements if anyone can spot any.
+It is safe but terribly ugly. Traversing the LPI list is completely
+fine, and we have this API for a reason (not reinventing the wheel). I
+don't think the debug code should sidestep it. If the list proves to be
+too slow to traverse, then we should adopt a better data structure.
 
-~Andrew
+>>>  }
+>>>  
+>>>  static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
+>>> @@ -64,6 +101,8 @@ static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
+>>>      iter->nr_cpus = nr_cpus;
+>>>      iter->nr_spis = kvm->arch.vgic.nr_spis;
+>>>  
+>>> +    if (vgic_supports_direct_msis(kvm) && !pos)
+>>> +        vgic_debug_get_lpis(kvm, iter);
+
+BTW, what's the point of this?
+
+>>>      /* Fast forward to the right position if needed */
+>>>      while (pos--)
+>>>          iter_next(iter);
+>>> @@ -73,7 +112,9 @@ static bool end_of_vgic(struct vgic_state_iter *iter)
+>>>  {
+>>>      return iter->dist_id > 0 &&
+>>>          iter->vcpu_id == iter->nr_cpus &&
+>>> -        (iter->intid - VGIC_NR_PRIVATE_IRQS) == iter->nr_spis;
+>>> +        (iter->intid - VGIC_NR_PRIVATE_IRQS) >= iter->nr_spis &&
+>>> +        ((iter->nr_lpis == 0) ||
+>>> +        (iter->lpi_print_count == iter->nr_lpis + 1));
+>>>  }
+>>>  
+>>>  static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
+>>> @@ -130,6 +171,7 @@ static void vgic_debug_stop(struct seq_file *s, void *v)
+>>>  
+>>>      mutex_lock(&kvm->lock);
+>>>      iter = kvm->arch.vgic.iter;
+>>> +    kfree(iter->lpi_irqs);
+>>>      kfree(iter);
+>>>      kvm->arch.vgic.iter = NULL;
+>>>      mutex_unlock(&kvm->lock);
+>>> @@ -154,7 +196,7 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
+>>>               struct kvm_vcpu *vcpu)
+>>>  {
+>>>      int id = 0;
+>>> -    char *hdr = "SPI ";
+>>> +    char *hdr = "S/LPI ";
+>>>  
+>>>      if (vcpu) {
+>>>          hdr = "VCPU";
+>>> @@ -162,7 +204,10 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
+>>>      }
+>>>  
+>>>      seq_printf(s, "\n");
+>>> -    seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
+>>> +    if (vcpu)
+>>> +        seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
+>>> +    else
+>>> +        seq_printf(s, "%s TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr);
+> 
+>> This feels like an unnecessary change. But if you really want that kind
+>> of detail, change your "S/LPI" to say something more generic, such as
+>> "Global".
+>   I modify this just for aligned print output. "Global" is great.
+>>> seq_printf(s, "---------------------------------------------------------------\n");>  }
+>>>  
+>>> @@ -174,8 +219,10 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
+>>>          type = "SGI";
+>>>      else if (irq->intid < VGIC_NR_PRIVATE_IRQS)
+>>>          type = "PPI";
+>>> -    else
+>>> +    else if (irq->intid < VGIC_MAX_SPI)
+>>>          type = "SPI";
+>>> +    else if (irq->intid >= VGIC_MIN_LPI)
+>>> +        type = "LPI";
+>>>  
+>>>      if (irq->intid ==0 || irq->intid == VGIC_NR_PRIVATE_IRQS)
+>>>          print_header(s, irq, vcpu);
+>>> @@ -220,7 +267,9 @@ static int vgic_debug_show(struct seq_file *s, void *v)
+>>>      if (!kvm->arch.vgic.initialized)
+>>>          return 0;
+>>>  
+>>> -    if (iter->vcpu_id < iter->nr_cpus) {
+>>> +    if (iter->intid >= VGIC_MIN_LPI)
+>>> +        irq = iter->lpi_irqs[iter->lpi_print_count - 1];
+>>> +    else if (iter->vcpu_id < iter->nr_cpus) {
+>>>          vcpu = kvm_get_vcpu(kvm, iter->vcpu_id);
+>>>          irq = &vcpu->arch.vgic_cpu.private_irqs[iter->intid];
+>>>      } else {
+>>> @@ -230,6 +279,8 @@ static int vgic_debug_show(struct seq_file *s, void *v)
+>>>      spin_lock(&irq->irq_lock);
+>>>      print_irq_state(s, irq, vcpu);
+>>>      spin_unlock(&irq->irq_lock);
+>>> +    if (iter->intid >= VGIC_MIN_LPI)
+>>> +        vgic_put_irq(kvm, irq);
+> 
+>> If you adopt the scheme I outlined above, you can have a balanced
+>> get/put behaviour, irrespective of the interrupt type, and a much nicer
+>> result.
+> yeah, "if (iter->intid >= VGIC_MIN_LPI)" is unnecessary.  
+
+I'm still adamant that you should have get/put for every interrupt. It
+won't cost anything, and the code will look better.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
