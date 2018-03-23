@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752452AbeCWRoM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:44:12 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46986 "EHLO
+        id S1752457AbeCWRoe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:44:34 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46974 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751595AbeCWRm5 (ORCPT
+        with ESMTP id S1751828AbeCWRm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:42:57 -0400
+        Fri, 23 Mar 2018 13:42:56 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: lee.jones@linaro.org, bleung@chromium.org
 Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
         gwendal@chromium.org, linux-kernel@vger.kernel.org,
         Olof Johansson <olof@lixom.net>
-Subject: [PATCH v4 3/6] platform/chrome: cros_ec_sysfs: use permission-specific DEVICE_ATTR variants
-Date: Fri, 23 Mar 2018 18:42:44 +0100
-Message-Id: <20180323174247.6680-4-enric.balletbo@collabora.com>
+Subject: [PATCH v4 1/6] platform/chrome: cros_ec_sysfs: Modify error handling
+Date: Fri, 23 Mar 2018 18:42:42 +0100
+Message-Id: <20180323174247.6680-2-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323174247.6680-1-enric.balletbo@collabora.com>
 References: <20180323174247.6680-1-enric.balletbo@collabora.com>
@@ -22,87 +22,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEVICE_ATTR variants for read/write attributes. This simplifies the
-source code, improves readbility, and reduces the chance of
-inconsistencies.
+From: Gwendal Grignou <gwendal@chromium.org>
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+When accessing a sysfs attribute, if the EC command fails, -EPROTO is
+now returned instead of an error message as it is unlikely an app is
+parsing the error message to do something meaningful.
+Also, this patch makes use of cros_ec_cmd_xfer_status() instead of
+cros_ec_cmd_xfer() so an error message is printed in the syslog.
+
+Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
 
 Changes in v4: None
-Changes in v3:
-- [3/6] Add Reviewed-by Andy Shevchenko
+Changes in v3: None
+Changes in v2: None
 
-Changes in v2:
-- [3/6] Use DEVICE_ATTR variants.
-
- drivers/platform/chrome/cros_ec_sysfs.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/platform/chrome/cros_ec_sysfs.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index 85bb9580439e..78ae0d3760e4 100644
+index da0a719d32f7..c03621e523a3 100644
 --- a/drivers/platform/chrome/cros_ec_sysfs.c
 +++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -38,8 +38,8 @@
- 
- /* Accessor functions */
- 
--static ssize_t show_ec_reboot(struct device *dev,
--			      struct device_attribute *attr, char *buf)
-+static ssize_t reboot_show(struct device *dev,
-+			   struct device_attribute *attr, char *buf)
- {
- 	int count = 0;
- 
-@@ -50,9 +50,9 @@ static ssize_t show_ec_reboot(struct device *dev,
+@@ -114,15 +114,9 @@ static ssize_t store_ec_reboot(struct device *dev,
+ 	msg->command = EC_CMD_REBOOT_EC + ec->cmd_offset;
+ 	msg->outsize = sizeof(*param);
+ 	msg->insize = 0;
+-	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
+-	if (ret < 0) {
++	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
++	if (ret < 0)
+ 		count = ret;
+-		goto exit;
+-	}
+-	if (msg->result != EC_RES_SUCCESS) {
+-		dev_dbg(ec->dev, "EC result %d\n", msg->result);
+-		count = -EINVAL;
+-	}
+ exit:
+ 	kfree(msg);
  	return count;
- }
+@@ -150,17 +144,11 @@ static ssize_t show_ec_version(struct device *dev,
+ 	msg->command = EC_CMD_GET_VERSION + ec->cmd_offset;
+ 	msg->insize = sizeof(*r_ver);
+ 	msg->outsize = 0;
+-	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
++	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+ 	if (ret < 0) {
+ 		count = ret;
+ 		goto exit;
+ 	}
+-	if (msg->result != EC_RES_SUCCESS) {
+-		count = scnprintf(buf, PAGE_SIZE,
+-				  "ERROR: EC returned %d\n", msg->result);
+-		goto exit;
+-	}
+-
+ 	r_ver = (struct ec_response_get_version *)msg->data;
+ 	/* Strings should be null-terminated, but let's be sure. */
+ 	r_ver->version_string_ro[sizeof(r_ver->version_string_ro) - 1] = '\0';
+@@ -255,14 +243,9 @@ static ssize_t show_ec_flashinfo(struct device *dev,
+ 	msg->command = EC_CMD_FLASH_INFO + ec->cmd_offset;
+ 	msg->insize = sizeof(*resp);
+ 	msg->outsize = 0;
+-	ret = cros_ec_cmd_xfer(ec->ec_dev, msg);
++	ret = cros_ec_cmd_xfer_status(ec->ec_dev, msg);
+ 	if (ret < 0)
+ 		goto exit;
+-	if (msg->result != EC_RES_SUCCESS) {
+-		ret = scnprintf(buf, PAGE_SIZE,
+-				"ERROR: EC returned %d\n", msg->result);
+-		goto exit;
+-	}
  
--static ssize_t store_ec_reboot(struct device *dev,
--			       struct device_attribute *attr,
--			       const char *buf, size_t count)
-+static ssize_t reboot_store(struct device *dev,
-+			    struct device_attribute *attr,
-+			    const char *buf, size_t count)
- {
- 	static const struct {
- 		const char * const str;
-@@ -123,8 +123,8 @@ static ssize_t store_ec_reboot(struct device *dev,
- 	return count;
- }
+ 	resp = (struct ec_response_flash_info *)msg->data;
  
--static ssize_t show_ec_version(struct device *dev,
--			       struct device_attribute *attr, char *buf)
-+static ssize_t version_show(struct device *dev,
-+			    struct device_attribute *attr, char *buf)
- {
- 	static const char * const image_names[] = {"unknown", "RO", "RW"};
- 	struct ec_response_get_version *r_ver;
-@@ -225,8 +225,8 @@ static ssize_t show_ec_version(struct device *dev,
- 	return count;
- }
- 
--static ssize_t show_ec_flashinfo(struct device *dev,
--				 struct device_attribute *attr, char *buf)
-+static ssize_t flashinfo_show(struct device *dev,
-+			      struct device_attribute *attr, char *buf)
- {
- 	struct ec_response_flash_info *resp;
- 	struct cros_ec_command *msg;
-@@ -260,9 +260,9 @@ static ssize_t show_ec_flashinfo(struct device *dev,
- 
- /* Module initialization */
- 
--static DEVICE_ATTR(reboot, S_IWUSR | S_IRUGO, show_ec_reboot, store_ec_reboot);
--static DEVICE_ATTR(version, S_IRUGO, show_ec_version, NULL);
--static DEVICE_ATTR(flashinfo, S_IRUGO, show_ec_flashinfo, NULL);
-+static DEVICE_ATTR_RW(reboot);
-+static DEVICE_ATTR_RO(version);
-+static DEVICE_ATTR_RO(flashinfo);
- 
- static struct attribute *__ec_attrs[] = {
- 	&dev_attr_reboot.attr,
 -- 
 2.16.2
