@@ -1,79 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752296AbeCWQxQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:53:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751691AbeCWQxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:53:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF592177B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1752308AbeCWQzy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:55:54 -0400
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:40004 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752227AbeCWQzs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 12:55:48 -0400
+X-Google-Smtp-Source: AIpwx4/xGlZ8yFgjO8nZh4a6IF2hrO1zMKmBv0rSGZaIViQY3FpDIzSQSC543BBowCHHf1nHZR6Rxekg9U0I9KU5A3g=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1521602391-30356-2-git-send-email-aisheng.dong@nxp.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mturquette@baylibre.com, hdegoede@redhat.com, b.zolnierkie@samsung.com,
-        linux@armlinux.org.uk, linux-fbdev@vger.kernel.org, linux-imx@nxp.com,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Russell King <linux@arm.linux.org.uk>
-References: <1521602391-30356-1-git-send-email-aisheng.dong@nxp.com>
- <1521602391-30356-2-git-send-email-aisheng.dong@nxp.com>
-Message-ID: <152182399342.178046.13139513462419815903@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH V2 1/4] clk: bulk: add of_clk_bulk_get()
-Date: Fri, 23 Mar 2018 09:53:13 -0700
+In-Reply-To: <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+References: <20180323130455.11470-1-brgl@bgdev.pl> <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 23 Mar 2018 17:55:47 +0100
+Message-ID: <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        Sekhar Nori <nsekhar@ti.com>, devicetree <devicetree@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Dong Aisheng (2018-03-20 20:19:48)
-> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-> index 4c10456..4b357b2 100644
-> --- a/drivers/clk/clk-bulk.c
-> +++ b/drivers/clk/clk-bulk.c
-> @@ -19,6 +19,38 @@
->  #include <linux/clk.h>
->  #include <linux/device.h>
->  #include <linux/export.h>
-> +#include <linux/of.h>
-> +
-> +#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> This series converts the only user of the handcoded, mach-specific reset
+>> routines in the davinci platform to using the reset framework.
+>>
+>> Patch 1 modifies the way lookup entries are registered with the reset
+>> framework.
+>>
+>> Patches 2-4 add necessary lookups/DT-properties.
+>>
+>> Patches 5-7 convert the davinci-rproc driver to the reset framework.
+>>
+>> Patch 8 removes now dead code.
+>>
+>> Philipp: it turned out that it's indeed better to use the reset
+>> controller's device name for the entry lookup.
+>>
+>> Tested both in DT and legacy modes by booting the examples from
+>> ti-ipc-rtos recipe in meta-ti.
+>>
+>> This series applies on top of David Lechner's common-clk-v9 branch[1]
+>> with Philipp Zabel's reset/next branch[2] pulled in.
+>>
+>> It can be found in my github tree as well[3].
+>>
+>
+> What's the merge strategy for the rest of the patches? I should apply
+> the clk ones after the next -rc1?
 
-Do we need these defines? of_clk_get() is a stub function when these
-configs are false.
+Or maybe Philipp can provide us with an immutable branch with the reset patches?
 
-> +static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
-> +                                       struct clk_bulk_data *clks)
-> +{
-> +       int ret;
-> +       int i;
-> +
-> +       for (i = 0; i < num_clks; i++)
-> +               clks[i].clk = NULL;
-> +
-> +       for (i = 0; i < num_clks; i++) {
-> +               clks[i].clk = of_clk_get(np, i);
-> +               if (IS_ERR(clks[i].clk)) {
-> +                       ret = PTR_ERR(clks[i].clk);
-> +                       pr_err("%pOF: Failed to get clk index: %d ret: %d\n",
-> +                              np, i, ret);
-> +                       clks[i].clk = NULL;
-> +                       goto err;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +
-> +err:
-> +       clk_bulk_put(i, clks);
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(of_clk_bulk_get);
+The you could apply the driver patches and let Sekhar take all the
+platform code?
 
-It's static, so don't export it.
+Best regards,
+Bartosz Golaszewski
