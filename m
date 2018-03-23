@@ -1,112 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751981AbeCWJHe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:07:34 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:45277 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751689AbeCWJHb (ORCPT
+        id S1752007AbeCWJHr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:07:47 -0400
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:45820 "EHLO
+        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751953AbeCWJHd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:07:31 -0400
-X-Google-Smtp-Source: AG47ELvn3GKGqiyjh5ub+CmsKbuz6w3L6rE86cpW5tUScAgXIuTTdm8ev6GL2GJ3g8B8XKNNlM6B0z6U6q88wdxcsds=
+        Fri, 23 Mar 2018 05:07:33 -0400
+X-Google-Smtp-Source: AG47ELtqpl9zKQKagqlM1k1NsvDspGDbAnFzABl4q0Neemzbt9LJ7fS+Qh6XPL1M+2L2nFKmnoBZ166bzs2bh+N9rnY=
 MIME-Version: 1.0
-In-Reply-To: <a4ca0ba3-5d31-2d8c-7fa6-f8e9ba9b4535@lechnology.com>
-References: <20180321120807.18032-1-brgl@bgdev.pl> <20180321120807.18032-5-brgl@bgdev.pl>
- <4b985ed2-0db0-b4ad-8a9f-b8804e6d4db4@lechnology.com> <CAMpxmJUELxNGv5fL1gdNM4nRxdJ9t39G2Nc29yjZRnS0fRyHYg@mail.gmail.com>
- <a4ca0ba3-5d31-2d8c-7fa6-f8e9ba9b4535@lechnology.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 23 Mar 2018 10:07:30 +0100
-Message-ID: <CAMRc=Mf_nT3WDzPwMxhNcmk5=BUXBj2SobUcad809knqaWyGBQ@mail.gmail.com>
-Subject: Re: [PATCH 4/8] clk: davinci: add a reset lookup table for psc0
-To: David Lechner <david@lechnology.com>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
+In-Reply-To: <CAJZ5v0iZVVkevY2oJnySoa6uQesMXcj_ZshV97utdXsW2w-aAA@mail.gmail.com>
+References: <4137867.C4jYrWdt8n@aspire.rjw.lan> <20180314120450.GT4043@hirez.programming.kicks-ass.net>
+ <004c01d3c255$c1f146a0$45d3d3e0$@net> <CAJZ5v0iZVVkevY2oJnySoa6uQesMXcj_ZshV97utdXsW2w-aAA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 23 Mar 2018 10:07:31 +0100
+X-Google-Sender-Auth: SogQBX-U4oo-4wTu1VJSn9KIg4I
+Message-ID: <CAJZ5v0j3yPem=dXGYyFpxT9WfKVYgk17Av__jp-xZxdsKWYLiw@mail.gmail.com>
+Subject: Re: [PATCH v2] cpuidle: poll_state: Add time limit to poll_idle()
+To: Doug Smythies <dsmythies@telus.net>
+Cc: Rik van Riel <riel@surriel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-21 17:17 GMT+01:00 David Lechner <david@lechnology.com>:
-> On 03/21/2018 11:08 AM, Bartosz Golaszewski wrote:
->>
->> 2018-03-21 17:01 GMT+01:00 David Lechner <david@lechnology.com>:
->>>
->>> On 03/21/2018 07:08 AM, Bartosz Golaszewski wrote:
+On Fri, Mar 23, 2018 at 9:57 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> On Fri, Mar 23, 2018 at 4:19 AM, Doug Smythies <dsmythies@telus.net> wrote:
+>> On 2018.03.22 12:12 Doug Smythies wrote:
+>>>On 2018.03.22 09:32 Rik van Riel wrote:
+>>>> On Wed, 2018-03-14 at 13:04 +0100, Peter Zijlstra wrote:
 >>>>
+>>>>> On x86 we don't have to use that time_check_counter thing,
+>>>>> sched_clock()
+>>>>> is really cheap, not sure if it makes sense on other platforms.
 >>>>
->>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>
->>>> In order to be able to use the reset framework in legacy boot mode as
->>>> well, add the reset lookup table to the psc driver for da850 variant.
->>>>
->>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>> ---
->>>>    drivers/clk/davinci/psc-da850.c | 8 ++++++++
->>>>    drivers/clk/davinci/psc.c       | 1 +
->>>>    2 files changed, 9 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/davinci/psc-da850.c
->>>> b/drivers/clk/davinci/psc-da850.c
->>>> index ccc7eb17bf3a..395db4b2c0ee 100644
->>>> --- a/drivers/clk/davinci/psc-da850.c
->>>> +++ b/drivers/clk/davinci/psc-da850.c
->>>> @@ -6,6 +6,7 @@
->>>>     */
->>>>      #include <linux/clk-provider.h>
->>>> +#include <linux/reset-controller.h>
->>>>    #include <linux/clk.h>
->>>>    #include <linux/clkdev.h>
->>>>    #include <linux/init.h>
->>>> @@ -66,8 +67,15 @@ LPSC_CLKDEV3(ecap_clkdev,    "fck",  "ecap.0",
->>>>                                  "fck",  "ecap.1",
->>>>                                  "fck",  "ecap.2");
->>>>    +static struct reset_control_lookup da850_psc0_reset_lookup_table[] =
->>>> {
->>>> +       RESET_LOOKUP("davinci-rproc.0", NULL, 15),
->>>> +};
->>>> +
->>>>    static int da850_psc0_init(struct device *dev, void __iomem *base)
->>>>    {
->>>> +       reset_controller_add_lookup("da850-psc0",
->>>> +                                   da850_psc0_reset_lookup_table,
->>>> +
->>>> ARRAY_SIZE(da850_psc0_reset_lookup_table));
+>>>> Are you sure? I saw a 5-10% increase in CPU use,
+>>>> for a constant query rate to a memcache style
+>>>> workload, with v3 of this patch.
 >>>
+>>> I would very much like to be able to repeat your test results.
+>>> However, I am not sure what you mean by "memcache style workload".
+>>> Is there a test you can point me to? Say a Phoronix type test, for example.
 >>>
->>>
->>> Could there be a race condition here since you are adding the lookup
->>> *before*
->>> you are adding the actual provider? It seems like
->>> reset_controller_add_lookup()
->>> should be after davinci_psc_register_clocks().
->>>
+>>> All of my tests with the V3 of this patch have been fine.
 >>
->> I don't think so, because reset_controller_add_lookup() only adds the
->> lookup structure to the list in reset/core.c. The actual reset
->> controller struct is only located and used when reset_control_get_*()
->> is called, so after probing the user. And it's all protected with
->> mutexes.
->>
->> This made me think though - maybe if we can't locate the controller,
->> we should return -EPROBE_DEFER from probe in davinci-rproc?
->>
->> Bart
->>
+>> What is the difference between sched_clock() talked about herein,
+>> and local_clock() used in the patch?
 >
-> Yes, especially since we know that the PSC driver itself does get
-> deferred already.
+> It is almost the same (modulo offset) unless sched_clock_stable()
+> returns 'false'.
+>
+>> I'm not sure how good it is but I made a test. I didn't believe
+>> the results, so I did it 3 times.
+>>
+>> V7.3 is as from the git branch.
+>> V7.3p is plus the patch adding the counter loop to poll_state.c
+>>
+>> The test is a tight loop (about 19600 loops per second) running
+>> on all 8 CPUs. I can not seem to get my system to use Idle State
+>> 0, so I disabled Idle States 1 and 2 to force use of Idle State 0.
+>>
+>> V7.3 uses a processor package power of 62.5 Watts
+>> V7.3p uses a processor package power of 53.4 Watts, or 14.6% less power.
+>>
+>> The loop times do not change.
+>> The Idle state 0 residency per unit time does not change.
+>
+> OK, so this means that the results should improve for Rik with this
+> patch too. :-)
 
-On the other hand if clk_get() succeeded, than the psc driver is
-already initialized and the subsequent call to reset_control_get()
-must succeed. But this is probably too machine-specific for a driver.
+BTW, can you possibly check how much of a difference it makes to
+reduce POLL_IDLE_COUNT in the patch to, say, 500 or even more?
 
-Bart
+The lower it is, the less noise it will introduce AFAICS.
