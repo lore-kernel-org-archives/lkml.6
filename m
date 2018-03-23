@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804669-2-614733358421131606
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804660-2-14626800228917442973
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804669; b=QqpJb0yVrDea7WvzBFbQlT+pwD8mLUiu0+aOwa67ECPVOcQ
-    ylFGcElrgMRMtlejEkhvoEE7XoxuSu9PBxjgXYR0ZasD/8ysXsAH7JZo90c9Spia
-    e2EbIHN6rtqbA1aeATFEnF1tWXwU4CATGPdz8IoTiJXgC25N3EX52cODo+qqeM+A
-    nWWN7s/6hA1HM/zwbQG1I/K18KdtjcpoaPm8mwo6NDtlfrZT1SqnUxZbI0xxVlDV
-    S4NsY/IMmW3qss4QDHmh6fWbb3RU1CwjOXBeFMDjRAC9UGWLXhS//GEm5fPzmIgX
-    o6hOiLADujQox5b8PB8WunXaE1CrQLy/FKjZ8Ig==
+    t=1521804659; b=h0QnULd3gL0JgUueJl+Gnk8oOJ/COiNG+7j/CI3pwQWSKhY
+    sJ1c8Scziw2+YSZHeqhgCW605OVxu1qf11cYZjAVYL1wGjbARcH1+XqKZQehscyz
+    ZA3TvUpvzhMtVkoz6kY+7RTnyoQ6F1An4jfwy9ldgqzbiZYGN8+tMWUqDRpnqUOV
+    E5cRStfp5ThNQllvDCG3qSjXJsg+FefNOopiM2Xr1L8VPipLgyfnejyYINw++4yH
+    /GfWWyJ29FRKOV7jrgQHw5RNuw+yUxsOkdNEYXsjVnXh4rY2SwYSDkZckuT+5qAi
+    uk6L48zWfHdVSl3M3TnWuy7SMjqq34nezGuYxBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804669; bh=vPN1bU7vcgyeOkjNVj+AMgpheC
-    LdUI8aac4I2qJlyJc=; b=wKHoucF6WNG/X8uH7CpaFC92U1XB2DywNfDDq/AfsK
-    ksboE6wj1+CHyH1moIHeApxSkAYCeWKPYL+TLv8aV7uP9GN7Z2eYPlRMtX21rcww
-    jBo2v6cwDDERzjVjL2BuZc2RKDWxf3dsqnJerQTNzeSIW/yV56FCGC9h2zlCemI8
-    FIIt8eKTtmSD0tiSJ8v+Hfw7ruDTmhij+PYGOSt5BSwV37yJD5ILjj5/2BSz/Vt1
-    Zgf2nsq0oNLUe+lvWZe2TFMujDppU0Vs0FuDmK5+NL5Ye0/RaPTHlWxw0bXPcIkG
-    YkOGn2Bsg55h8Cx+9wZ5E3DHyoCtNxLTpf8JADTo/5HQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804659; bh=F+grc00UXFo7y8hCrRysH4gbib
+    nx6OO5/gB3d6CUL64=; b=b+gHrVPbfm+cyd8diggK8uQc4w2lG9f/aMh08nJpva
+    n9d96ipaalQeTnU2coKkjKg0OZrsj+eGBWRlMnvKGRnE934MskxQQo6Asia4+hbu
+    Y81T68KJt0Qj0KcfwABbhJvlPayvsFAFQO1CL4BWYdqv0ajG0VunTdHgc6pMxm6o
+    6KP3XR5RTuqg/auWDA91EYpdQU5e/nukgk8NwnJhRGSSYGrpWhxM4B6h7rWk9jzD
+    RmkGbROGVDcL9uz6dyTwWFrLLS4ruA2anvAuGTXwbz8J5APKmmBSF9bgRnMxnEtO
+    dpCA52suLwC+UknNx7nd/skVhjA7vWPdzaRiK9AL9Lcg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,23 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755183AbeCWKGM (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:06:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40694 "EHLO
+        id S1754813AbeCWKGQ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:06:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40716 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755146AbeCWKGL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:11 -0400
+        with ESMTP id S1755146AbeCWKGO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maor Gottlieb <maorg@mellanox.com>,
+        stable@vger.kernel.org, Moni Shoua <monis@mellanox.com>,
+        Majd Dibbiny <majd@mellanox.com>,
         Leon Romanovsky <leon@kernel.org>,
         Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 050/177] IB/mlx5: Change vma from shared to private
-Date: Fri, 23 Mar 2018 10:52:58 +0100
-Message-Id: <20180323094207.532965515@linuxfoundation.org>
+Subject: [PATCH 4.9 051/177] IB/mlx5: Set correct SL in completion for RoCE
+Date: Fri, 23 Mar 2018 10:52:59 +0100
+Message-Id: <20180323094207.575845755@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,37 +84,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maor Gottlieb <maorg@mellanox.com>
+From: Moni Shoua <monis@mellanox.com>
 
 
-[ Upstream commit 1377661298d2820d675553d186c31b6f46c140d0 ]
+[ Upstream commit 12f8fedef2ec94c783f929126b20440a01512c14 ]
 
-Anonymous VMA (->vm_ops == NULL) cannot be shared, otherwise
-it would lead to SIGBUS.
+There is a difference when parsing a completion entry between Ethernet
+and IB ports. When link layer is Ethernet the bits describe the type of
+L3 header in the packet. In the case when link layer is Ethernet and VLAN
+header is present the value of SL is equal to the 3 UP bits in the VLAN
+header. If VLAN header is not present then the SL is undefined and consumer
+of the completion should check if IB_WC_WITH_VLAN is set.
 
-Remove the shared flags from the vma after we change it to be
-anonymous.
+While that, this patch also fills the vlan_id field in the completion if
+present.
 
-This is easily reproduced by doing modprobe -r while running a
-user-space application such as raw_ethernet_bw.
-
-Fixes: 7c2344c3bbf97 ('IB/mlx5: Implements disassociate_ucontext API')
-Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Reviewed-by: Majd Dibbiny <majd@mellanox.com>
 Signed-off-by: Leon Romanovsky <leon@kernel.org>
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/main.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/mlx5/cq.c |   19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -1323,6 +1323,7 @@ static void mlx5_ib_disassociate_ucontex
- 		/* context going to be destroyed, should
- 		 * not access ops any more.
- 		 */
-+		vma->vm_flags &= ~(VM_SHARED | VM_MAYSHARE);
- 		vma->vm_ops = NULL;
- 		list_del(&vma_private->list);
- 		kfree(vma_private);
+--- a/drivers/infiniband/hw/mlx5/cq.c
++++ b/drivers/infiniband/hw/mlx5/cq.c
+@@ -172,6 +172,8 @@ static void handle_responder(struct ib_w
+ 	struct mlx5_ib_srq *srq;
+ 	struct mlx5_ib_wq *wq;
+ 	u16 wqe_ctr;
++	u8  roce_packet_type;
++	bool vlan_present;
+ 	u8 g;
+ 
+ 	if (qp->ibqp.srq || qp->ibqp.xrcd) {
+@@ -223,7 +225,6 @@ static void handle_responder(struct ib_w
+ 		break;
+ 	}
+ 	wc->slid	   = be16_to_cpu(cqe->slid);
+-	wc->sl		   = (be32_to_cpu(cqe->flags_rqpn) >> 24) & 0xf;
+ 	wc->src_qp	   = be32_to_cpu(cqe->flags_rqpn) & 0xffffff;
+ 	wc->dlid_path_bits = cqe->ml_path;
+ 	g = (be32_to_cpu(cqe->flags_rqpn) >> 28) & 3;
+@@ -237,10 +238,22 @@ static void handle_responder(struct ib_w
+ 		wc->pkey_index = 0;
+ 	}
+ 
+-	if (ll != IB_LINK_LAYER_ETHERNET)
++	if (ll != IB_LINK_LAYER_ETHERNET) {
++		wc->sl = (be32_to_cpu(cqe->flags_rqpn) >> 24) & 0xf;
+ 		return;
++	}
++
++	vlan_present = cqe->l4_l3_hdr_type & 0x1;
++	roce_packet_type   = (be32_to_cpu(cqe->flags_rqpn) >> 24) & 0x3;
++	if (vlan_present) {
++		wc->vlan_id = (be16_to_cpu(cqe->vlan_info)) & 0xfff;
++		wc->sl = (be16_to_cpu(cqe->vlan_info) >> 13) & 0x7;
++		wc->wc_flags |= IB_WC_WITH_VLAN;
++	} else {
++		wc->sl = 0;
++	}
+ 
+-	switch (wc->sl & 0x3) {
++	switch (roce_packet_type) {
+ 	case MLX5_CQE_ROCE_L3_HEADER_TYPE_GRH:
+ 		wc->network_hdr_type = RDMA_NETWORK_IB;
+ 		break;
