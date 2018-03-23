@@ -1,40 +1,42 @@
 Return-Path: <blackzert@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521827346; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521827284; cv=none;
         d=google.com; s=arc-20160816;
-        b=JeeFGaOprqApt/WtqnnRsKFun/O9APMg9B1WWnRpiM0VEbNJ9X5SBEMJj4eh8wgpe0
-         0sHtVHSuy6CYFfnf3mtogtf3m72QwFD2KMz/K7WhCYFLtIgAB9BjxFji9O5kB6ekz19y
-         A1/IhsmDizwC96hkN6YtsNDfxRrEm57+aBac1Rx8uhuEZbVffPf5UQ9gsSaMJf9FkqhT
-         tQ69mLL6RVi+o+/yfAiNEMEihsCdWz8ELwI/lwnfXCqv1/ECI3bWuu/4e1VjyNKWC62c
-         ggslociYk/jxUGlwWQ+3VZINFP/9aFc9a0Tpmaikx5ZJB2jMIF2Oiiaph78/X1ig5sK0
-         dojA==
+        b=SCto+aqZKPHswJv+65Amz06XIOK62+r02XD55vaLrCbKL+vWvPUyfQOVnPlxFjzmr2
+         sbgatSvInYbdOVtTFMGRJcQvkN/19Zfd29KBl2xJP9LPtl392zwaojrRjc/zOn1VlFkq
+         2wr7dB7yew5zVBxkAo7lq6ewmzy/6du4L2GcbpGEjA5mwkcFZgwehtVQySgxhyrYlNsK
+         nNQAtTFz9P+TDGlZ6tPTgltdo0iHiwozAzpO0DrJULaLCEAq06JuB3tByJmciGuTotV0
+         C2qE24sPCRbPtzb3b1j5b5NSf/AOujx5WJO8v72g2qGHwWo97ImcSB7xvpl73GrG9wqK
+         s9Xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=jQmHZjnJbgzm5Bnta7AxMgcjy2Bp3CXXFf+gGk9Ctfs=;
-        b=CO+OT+RvMy7k9KiUoA932qilqjInumGRapTtlyJxuQM0upXhrir7xqdxsd3nvu8DLl
-         yfRNeA1IH28GTIFO8C45EQiZf7KDf6yoMJ8RWDAvg5jcC7KR69eoHaRdtKiBbviBNNet
-         YFbWIwf2hStRFJlIS+lCAlB2azN0pXIPKvsfvNMmQuiG+Jl1pt1SBZ7Ry9n3zGA7kInE
-         fFQkZRmUwRAIVx6PZTaSHwZxvDu11kKGU7lhr6apgma4Bwf/j1dU/E6xIsBTprYLQ95N
-         8b9xORT3+2A/rbDUujBDfGJiNhaExbEZGeYfGWzCSqEcjutnI58XSpPQofLKoMc7szDQ
-         5Ugg==
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:dkim-signature:arc-authentication-results;
+        bh=uetvGUCojhaZF1cGzHJVZuEIcoQzSG0BT2smcOYhyeQ=;
+        b=vAU/uX0JzBIdRF2h6FDqVgVKpLVY0iUdTLYU42iRzkc+5LuFC5KJ4nANkHfUTfSnC5
+         1CYQj44QJJjxfrlkJl1WdEz4tIu2lqBWQ/qIkgCl/SQn9RyenSPUurlWV9t/S9VmM+ng
+         W8LJZfBqrzDJWGYGATGvbqxMROg33yf2HvLoCJcY05xRBLIi7vCthENIrnTtSIVDp+gx
+         bCizeS0ICVs2IADVqPhVZTPSvBQZ9/cPhauzYD1hmn7PVZLmh9bsK4h9K1xtLQX6ZbBM
+         j3UPlWY35TblIM27wXXslH17hS8sGfroS+WwYFwg0jeibnir57b36m8Hhy+/4AO4Stiz
+         u/nw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=egpWFPxz;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kPomwbVs;
        spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=egpWFPxz;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=kPomwbVs;
        spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELuRtAiE5GxJ4PVlasYQbBVUoZzWlqey9KsMKVVJwaWDGj31q8vofooz0Xfhmk8aYru+zAB7Aw==
-Content-Type: text/plain;
-	charset=us-ascii
+X-Google-Smtp-Source: AG47ELvprX88V7gLuVZjyauKh2sGf/w8hTcCfNXTQOawcQ8luvrMZKgmu799Ex/UO4EerUiQDmWsxQ==
+From: Ilya Smith <blackzert@gmail.com>
+Message-Id: <5D55B1FC-1962-4941-BF56-1F83554FC64C@gmail.com>
+Content-Type: multipart/signed;
+	boundary="Apple-Mail=_B9437F76-CEDD-4524-828D-E63FF8E38C7F";
+	protocol="application/pgp-signature";
+	micalg=pgp-sha256
 Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
 Subject: Re: [RFC PATCH v2 2/2] Architecture defined limit on memory region
  random shift.
-From: Ilya Smith <blackzert@gmail.com>
+Date: Fri, 23 Mar 2018 20:48:00 +0300
 In-Reply-To: <20180322135448.046ada120ecd1ab3dd8f94aa@linux-foundation.org>
-Date: Fri, 23 Mar 2018 20:49:03 +0300
 Cc: rth@twiddle.net,
  ink@jurassic.park.msu.ru,
  mattst88@gmail.com,
@@ -42,10 +44,9 @@ Cc: rth@twiddle.net,
  linux@armlinux.org.uk,
  tony.luck@intel.com,
  fenghua.yu@intel.com,
- jhogan@kernel.org,
  ralf@linux-mips.org,
  jejb@parisc-linux.org,
- deller@gmx.de,
+ Helge Deller <deller@gmx.de>,
  benh@kernel.crashing.org,
  paulus@samba.org,
  mpe@ellerman.id.au,
@@ -63,31 +64,29 @@ Cc: rth@twiddle.net,
  arnd@arndb.de,
  gregkh@linuxfoundation.org,
  deepa.kernel@gmail.com,
- mhocko@suse.com,
- hughd@google.com,
+ Michal Hocko <mhocko@suse.com>,
+ Hugh Dickins <hughd@google.com>,
  kstewart@linuxfoundation.org,
  pombredanne@nexb.com,
  steve.capper@arm.com,
  punit.agrawal@arm.com,
- paul.burton@mips.com,
  aneesh.kumar@linux.vnet.ibm.com,
  npiggin@gmail.com,
- keescook@chromium.org,
+ Kees Cook <keescook@chromium.org>,
  bhsharma@redhat.com,
  riel@redhat.com,
  nitin.m.gupta@oracle.com,
- kirill.shutemov@linux.intel.com,
- dan.j.williams@intel.com,
- jack@suse.cz,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jan Kara <jack@suse.cz>,
  ross.zwisler@linux.intel.com,
- jglisse@redhat.com,
- willy@infradead.org,
- aarcange@redhat.com,
- oleg@redhat.com,
+ Jerome Glisse <jglisse@redhat.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Andrea Arcangeli <aarcange@redhat.com>,
+ Oleg Nesterov <oleg@redhat.com>,
  linux-alpha@vger.kernel.org,
- linux-kernel@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
  linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,
  linux-ia64@vger.kernel.org,
  linux-metag@vger.kernel.org,
  linux-mips@linux-mips.org,
@@ -96,19 +95,28 @@ Cc: rth@twiddle.net,
  linux-s390@vger.kernel.org,
  linux-sh@vger.kernel.org,
  sparclinux@vger.kernel.org,
- linux-mm@kvack.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <548B6BB8-FD6F-4F8D-B67F-2809305C617D@gmail.com>
+ Linux-MM <linux-mm@kvack.org>
+To: Andrew Morton <akpm@linux-foundation.org>
 References: <1521736598-12812-1-git-send-email-blackzert@gmail.com>
  <1521736598-12812-3-git-send-email-blackzert@gmail.com>
  <20180322135448.046ada120ecd1ab3dd8f94aa@linux-foundation.org>
-To: Andrew Morton <akpm@linux-foundation.org>
 X-Mailer: Apple Mail (2.3445.5.20)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595656493467338178?=
-X-GMAIL-MSGID: =?utf-8?q?1595751631673538172?=
+X-GMAIL-MSGID: =?utf-8?q?1595751566509464944?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+
+--Apple-Mail=_B9437F76-CEDD-4524-828D-E63FF8E38C7F
+Content-Type: multipart/alternative;
+	boundary="Apple-Mail=_302D41D8-B8D8-4A57-A90C-AE132EC44462"
+
+
+--Apple-Mail=_302D41D8-B8D8-4A57-A90C-AE132EC44462
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
 
 > On 22 Mar 2018, at 23:54, Andrew Morton <akpm@linux-foundation.org> =
@@ -121,14 +129,96 @@ wrote:
 this
 > is just a lump of random code?
 >=20
->=20
->=20
 Sorry, my bad. The main idea of this limit is to decrease possible =
-memory=20
+memory
 fragmentation. This is not so big problem on 64bit process, but really =
-big for=20
+big for
 32 bit processes since may cause failure memory allocation. To control =
-memory=20
+memory
 fragmentation and protect 32 bit systems (or architectures) this limit =
-was=20
-introduce by this patch. It could be also moved to CONFIG_ as well.=
+was
+introduce by this patch. It could be also moved to CONFIG_ as well.
+
+
+
+--Apple-Mail=_302D41D8-B8D8-4A57-A90C-AE132EC44462
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html;
+	charset=us-ascii
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; =
+charset=3Dus-ascii"></head><body style=3D"word-wrap: break-word; =
+-webkit-nbsp-mode: space; line-break: after-white-space;" class=3D""><br =
+class=3D""><div><blockquote type=3D"cite" class=3D""><div class=3D"">On =
+22 Mar 2018, at 23:54, Andrew Morton &lt;<a =
+href=3D"mailto:akpm@linux-foundation.org" =
+class=3D"">akpm@linux-foundation.org</a>&gt; wrote:</div><br =
+class=3D"Apple-interchange-newline"><div class=3D""><div class=3D""><br =
+class=3D"">Please add changelogs. &nbsp;An explanation of what a "limit =
+on memory<br class=3D"">region random shift" is would be nice ;) Why =
+does it exist, why are we<br class=3D"">doing this, etc. &nbsp;Surely =
+there's something to be said - at present this<br class=3D"">is just a =
+lump of random code?<br class=3D""><br =
+class=3D""></div></div></blockquote><div style=3D"margin: 0px; =
+font-stretch: normal; font-size: 11px; line-height: normal; font-family: =
+Menlo; background-color: rgb(255, 255, 255);" class=3D""><span =
+style=3D"font-variant-ligatures: no-common-ligatures" class=3D"">Sorry, =
+my bad. The main idea of this limit is to decrease possible =
+memory&nbsp;</span></div><div style=3D"margin: 0px; font-stretch: =
+normal; font-size: 11px; line-height: normal; font-family: Menlo; =
+background-color: rgb(255, 255, 255);" class=3D""><span =
+style=3D"font-variant-ligatures: no-common-ligatures" =
+class=3D"">fragmentation. This is not so big problem on 64bit process, =
+but really big for&nbsp;</span></div><div style=3D"margin: 0px; =
+font-stretch: normal; font-size: 11px; line-height: normal; font-family: =
+Menlo; background-color: rgb(255, 255, 255);" class=3D""><span =
+style=3D"font-variant-ligatures: no-common-ligatures" class=3D"">32 bit =
+processes since may cause failure memory allocation. To control =
+memory&nbsp;</span></div><div style=3D"margin: 0px; font-stretch: =
+normal; font-size: 11px; line-height: normal; font-family: Menlo; =
+background-color: rgb(255, 255, 255);" class=3D""><span =
+style=3D"font-variant-ligatures: no-common-ligatures" =
+class=3D"">fragmentation and protect 32 bit systems (or architectures) =
+this limit was&nbsp;</span></div><div style=3D"margin: 0px; =
+font-stretch: normal; font-size: 11px; line-height: normal; font-family: =
+Menlo; background-color: rgb(255, 255, 255);" class=3D""><span =
+style=3D"font-variant-ligatures: no-common-ligatures" class=3D"">introduce=
+ by this patch. It could be also moved to CONFIG_ as =
+well.</span></div><div style=3D"margin: 0px; font-stretch: normal; =
+font-size: 11px; line-height: normal; font-family: Menlo; =
+background-color: rgb(255, 255, 255);" class=3D""><span =
+style=3D"font-variant-ligatures: no-common-ligatures" class=3D""><br =
+class=3D""></span></div><div style=3D"margin: 0px; font-stretch: normal; =
+font-size: 11px; line-height: normal; font-family: Menlo; =
+background-color: rgb(255, 255, 255);" class=3D""><span =
+style=3D"font-variant-ligatures: no-common-ligatures" class=3D""><br =
+class=3D""></span></div></div></body></html>=
+
+--Apple-Mail=_302D41D8-B8D8-4A57-A90C-AE132EC44462--
+
+--Apple-Mail=_B9437F76-CEDD-4524-828D-E63FF8E38C7F
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEju7OBNw5xIMUzNy9WTzOquRR3DcFAlq1PdAACgkQWTzOquRR
+3Ddp9BAAmPUV7u9gSEqLavwAr5Hu+ZmmSJS7i95PzubMqxmQosuS52Z4/bUbBubG
+rpcg0eym8hpSfWnUs+SyF4od/d1elKMcF0Xy16b48F7xeGARHOBsxp2WXVdLDxVN
+veTQKZ5skp9MHHAPJZbrwJqslKksWdisVWxx14XXWt3o+LqeG5/O7XORxC4zqAEv
+wa4BvuDBg86I6/J+5+8aMVeucisrk/DKxG1sWWXWsRkQYDK8+V1pO0RUuxDSHu9K
+5YDyvXzdcXy1NML+LAmtPO9xDK+6jI0YVFY6Ifp1wbVYI5KwDLWiAchEYPnHTmcI
+719Wfy9aLBVnG8EyOCR1z86LegVJ0AKUidWovh+fhOZ3kO8rbmr9yv7FV0WXzf98
+1HUZBQWwW3UuDOb3t/83TMeNHtq/kb0NXD+bjb4NFJUnYS15lYDe9YPhO5MKCudT
+X0prbA/oipnJQojAzlITFNUt2N7N+53OxDEdXHzrQDuT0g/wdheM5q27VvQ+EdE5
+72YRH72brGkh+b/QhreLK3OjiGa6AWdWpqr+5ERn4TVt1IRBSfRAq5zHAxgDk97S
+81cRvJgLR0n2NEXHNrvyjIZebfLuc5CmPiTs4tLHpDYnrrUZtsuQyXk53hSiUmGs
+KzBn/WKQGxswsjPNqzFNDNIaf67VXSlf4QQmegh2Fl8GGC8v8pg=
+=6qWL
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_B9437F76-CEDD-4524-828D-E63FF8E38C7F--
