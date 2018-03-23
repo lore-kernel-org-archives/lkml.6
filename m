@@ -1,104 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751857AbeCWOTg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:19:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37744 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751388AbeCWOTf (ORCPT
+        id S1752005AbeCWOVz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:21:55 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:57684 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751682AbeCWOVm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:19:35 -0400
-Date: Fri, 23 Mar 2018 15:19:32 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: laurentiu.tudor@nxp.com, linux-kernel@vger.kernel.org,
-        stuyoder@gmail.com, ruxandra.radulescu@nxp.com,
-        razvan.stefanescu@nxp.com, Roy.Pledge@nxp.com, arnd@arndb.de
-Subject: Re: [PATCH v2 2/6] bus: fsl-mc: move fsl_mc_command struct in a uapi
- header
-Message-ID: <20180323141932.GA28906@kroah.com>
-References: <cover.1521132659.git.ioana.ciornei@nxp.com>
- <1b6473b17a61f2cea51258a7220c9a1b741c646b.1521132659.git.ioana.ciornei@nxp.com>
+        Fri, 23 Mar 2018 10:21:42 -0400
+Subject: Re: [PATCH 1/2] dt-bindings: clock: reset: Add AXG AO Clock and Reset
+ Bindings
+To: Philippe Ombredanne <pombredanne@nexb.com>
+References: <20180209070026.193879-1-yixun.lan@amlogic.com>
+ <20180209070026.193879-2-yixun.lan@amlogic.com>
+ <CAOFm3uFj-7kZNp6b3SerOzQ8Amfa5Usod+MxwvZJ1E1Z_V9VJA@mail.gmail.com>
+CC: <yixun.lan@amlogic.com>, Neil Armstrong <narmstrong@baylibre.com>,
+        "Jerome Brunet" <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
+        "Carlo Caione" <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>, Jian Hu <jian.hu@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <dffeba58-1326-1dbd-38fc-c3b0f51d9c73@amlogic.com>
+Date: Fri, 23 Mar 2018 22:06:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b6473b17a61f2cea51258a7220c9a1b741c646b.1521132659.git.ioana.ciornei@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAOFm3uFj-7kZNp6b3SerOzQ8Amfa5Usod+MxwvZJ1E1Z_V9VJA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [180.159.118.39]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 12:05:32PM -0500, Ioana Ciornei wrote:
-> Define "struct fsl_mc_command" as a structure that can cross the
-> user/kernel boundary. Also change the variable types used with
-> the proper ones.
-> 
-> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-> ---
-> Changes in v2:
->   - added the patch itself
-> 
->  MAINTAINERS                 |  1 +
->  include/linux/fsl/mc.h      |  8 +-------
->  include/uapi/linux/fsl_mc.h | 23 +++++++++++++++++++++++
->  3 files changed, 25 insertions(+), 7 deletions(-)
->  create mode 100644 include/uapi/linux/fsl_mc.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 473ac00..4f54765 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11463,6 +11463,7 @@ S:	Maintained
->  F:	drivers/bus/fsl-mc/
->  F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
->  F:	Documentation/networking/dpaa2/overview.rst
-> +F:	include/uapi/linux/fsl_mc.h
->  
->  QT1010 MEDIA DRIVER
->  M:	Antti Palosaari <crope@iki.fi>
-> diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
-> index f27cb14..19a352b 100644
-> --- a/include/linux/fsl/mc.h
-> +++ b/include/linux/fsl/mc.h
-> @@ -12,6 +12,7 @@
->  #include <linux/device.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/interrupt.h>
-> +#include <uapi/linux/fsl_mc.h>
->  
->  #define FSL_MC_VENDOR_FREESCALE	0x1957
->  
-> @@ -198,8 +199,6 @@ struct fsl_mc_device {
->  #define to_fsl_mc_device(_dev) \
->  	container_of(_dev, struct fsl_mc_device, dev)
->  
-> -#define MC_CMD_NUM_OF_PARAMS	7
-> -
->  struct mc_cmd_header {
->  	u8 src_id;
->  	u8 flags_hw;
-> @@ -209,11 +208,6 @@ struct mc_cmd_header {
->  	__le16 cmd_id;
->  };
->  
-> -struct fsl_mc_command {
-> -	u64 header;
-> -	u64 params[MC_CMD_NUM_OF_PARAMS];
-> -};
-> -
->  enum mc_cmd_status {
->  	MC_CMD_STATUS_OK = 0x0, /* Completed successfully */
->  	MC_CMD_STATUS_READY = 0x1, /* Ready to be processed */
-> diff --git a/include/uapi/linux/fsl_mc.h b/include/uapi/linux/fsl_mc.h
-> new file mode 100644
-> index 0000000..90892c4
-> --- /dev/null
-> +++ b/include/uapi/linux/fsl_mc.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
+Hi Philippe
 
-UAPI files should have the correct license on them:
-	/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+On 02/09/2018 07:07 PM, Philippe Ombredanne wrote:
+> On Fri, Feb 9, 2018 at 8:00 AM, Yixun Lan <yixun.lan@amlogic.com> wrote:
+>> Add dt-bindings headers for the Meson-AXG's AO clock and
+>> reset controller.
+>>
+>> CC: <devicetree@vger.kernel.org>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
+>>  include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
+>>  2 files changed, 46 insertions(+)
+>>  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
+>>  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+>>
+>> diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
+>> new file mode 100644
+>> index 000000000000..78683abb4247
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/axg-aoclkc.h
+>> @@ -0,0 +1,26 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR BSD) */
+> 
+> nit... BSD is not a valid license id as documented in LICENSES [1] :
+> please use one of these:
+> BSD-2-Clause or BSD-3-Clause
+> 
+> Thank you!
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/LICENSES/preferred
+> 
 
-thanks,
 
-greg k-h
+  Thanks for the hint
+
+  I'll update to BSD-3-Clause, since this license is just a copy from
+previous gxbb-aoclkc.h file.
+
+Yixun
