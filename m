@@ -1,56 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752308AbeCWJyu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:54:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60530 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751948AbeCWJyt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:54:49 -0400
-From: Colin King <colin.king@canonical.com>
-To: Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Peng Li <lipeng321@huawei.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: hns3: make function hclge_inform_reset_assert_to_vf static
-Date: Fri, 23 Mar 2018 09:54:44 +0000
-Message-Id: <20180323095444.26271-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        id S1752156AbeCWJzl convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:55:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40182 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751597AbeCWJzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:55:40 -0400
+Date: Fri, 23 Mar 2018 10:55:29 +0100
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH 02/10] drm/sun4i: Disable YUV channel when using the
+ frontend and set interlace
+Message-ID: <20180323095529.5nptn5achjt3esog@flea>
+References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
+ <20180321152904.22411-3-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180321152904.22411-3-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Mar 21, 2018 at 04:28:56PM +0100, Paul Kocialkowski wrote:
+> The YUV channel was only disabled in sun4i_backend_update_layer_formats,
+> which is not called when the frontend is selected.
+> 
+> Thus, creating a layer with a YUV format handled by the backend and then
+> switching to a format that requires the frontend would keep the YUV
+> channel enabled for the layer.
+> 
+> This explicitly disables the YUV channel for the layer when using the
+> frontend as well. It also sets the relevant interlace bit, which was
+> missing in the frontend path as well.
 
-The function hclge_inform_reset_assert_to_vf is local to the source and
-does not need to be in global scope, so make it static.
+This should be part of a separate patch. Usually, if you write "it
+also does..." at the end of your commit log, it's a pretty good
+indication that it should be another patch :)
 
-Cleans up sparse warning:
-drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c:82:5: warning:
-symbol 'hclge_inform_reset_assert_to_vf' was not declared. Should it
-be static?
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_backend.c | 17 ++++++++++++++++-
+>  drivers/gpu/drm/sun4i/sun4i_backend.h |  3 ++-
+>  drivers/gpu/drm/sun4i/sun4i_layer.c   |  2 +-
+>  3 files changed, 19 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> index e07a33adc51d..b98dafda52f8 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> @@ -294,8 +294,10 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
+>  }
+>  
+>  int sun4i_backend_update_layer_frontend(struct sun4i_backend *backend,
+> -					int layer, uint32_t fmt)
+> +					int layer, struct drm_plane *plane,
+> +					uint32_t fmt)
+>  {
+> +	bool interlaced = false;
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+There's no need to pass the full drm_plane pointer, you can just pass
+a boolean to tell if it is interlaced or not.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-index 39013334a613..a6f7ffa9c259 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-@@ -79,7 +79,7 @@ static int hclge_send_mbx_msg(struct hclge_vport *vport, u8 *msg, u16 msg_len,
- 	return status;
- }
- 
--int hclge_inform_reset_assert_to_vf(struct hclge_vport *vport)
-+static int hclge_inform_reset_assert_to_vf(struct hclge_vport *vport)
- {
- 	u8 msg_data[2];
- 	u8 dest_vfid;
+Maxime
+
 -- 
-2.15.1
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
