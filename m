@@ -1,54 +1,54 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1346284-1521812689-2-5301259705708409716
+X-Cyrus-Session-Id: sloti22d1t05-1346284-1521812687-2-14258316348526116579
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAD_ENC_HEADER 0.001, BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES ensv,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521812689; b=n2v61Uszym+3Hn4ki8mb5u0Ei9AKAays0laqbLUifAIu3ol
-    qa/VksSsMxgMALX5WpQxPbIxHjOq0OYL1/naoaXi7dpPnkFsF9ikNm3eE6T9mJ95
-    H7dZrGsjMDWowkaSHHwWrIv2PRsi+9/y3HmU4DwAWm6n+bfKOSlLi8yDdnf7u+mt
-    QGdGA0IojtfQnKSbKBctxpjnUOYmKfMzkI4ESZQlx6LcMV6TGcBCHovPlxL4fgLX
-    O4CUVzV84oEP7lyU7pJkLXrBoj8vdQapqPSMKPT4IJRx+7ADEOhRX0cVt40Sv8NN
-    iz5l/TQtMeBIf/0nlWQ01oK6RgINMegmDYKGCUA==
+    t=1521812686; b=jluCLAi85BBk+/6mV51KZD8VG3aGobDh+5v6XONgnagTN8Z
+    d5QryiOZbV9QZSxIITKqg2ZEtD8brjdwPVtrNG/irNqgDAw6Ww1nCoU8JcRZTX8i
+    IG6O5XqZa/HUmJUavlU3+omI1DN9+JkgNCeBsELoizJj2zMYZ95N1cKtkJTLLXX9
+    67ocHr+9oN4BG5uttu6UQwJeNtMFiRJmkN7LJ8fX+eACmi2Yzbg5PiCp2zjLcFAw
+    US4EoR3VxntRO9+6tq2wRu6o6TYa1lhoJALxNgmQd905miz43f+mT0md5wXIA8mO
+    pavaKy6weSmU36Oq0axPc6U+AWy98iLC5JH0OEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521812689; bh=w
-    0Si9ajhpOHRwAMD7O+eVsDvh3dh7VkaCT/2hsJ5BSU=; b=DTXv+/xqltJn4TX0e
-    es8u/4EybPAl7YHgZmSYPBXmU2wVFi4p1rkCq4m5Cc5+KH6jtwAaCkXTJB0rKFCH
-    y851Z4qk+vOKqZG+HU0c8Ecw/nzCal9SRk/vlB76WnCsJNtFTAKXvvmJYp4W0aIA
-    8zQHqK5yIw0MqwCPRAEj8F7Ruwu1JoaD2MPnNUh/yp+dNYjipoFAZR0miO4+fzpM
-    aOogV2Ua5VphRDuVEWn+MrtY6Oh5Js2Z2Epefl1F16BQhf8muVan3sZK87imSApL
-    rgn2hu9Fpga1cJM+5c+vuWdXhs/ksTnKKtSQoWGfw/00ShBQot8Y9JDRQOX2SDkU
-    U9/Fw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=G/amd9E1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :content-transfer-encoding:sender; s=arctest; t=1521812686; bh=g
+    xyeEH3SP7KZjXMnMuu94NVHPLAAR27xciAcVrBJbvE=; b=WTeRHS0MLQgr0KaNV
+    /eqH3Q6hfxdF33AVzca6Z0feiTTdC+/Wre5cgUo15QSv1tsY8m7SvC0zejWbcWd4
+    0Q2Yy0wXn1koIbg02dzBkYtxAG+Lb8AGxejt0PQ6gqptpHOiaBnCS4Lyv31SKnhR
+    48BAlWb90ZvDS7tmBDywoWoFdvQ7jkoiSX7KZLdXCw4FBsXtjZD+FreMeoeZ/Vx/
+    ATP2X1Xq/j6zXdrKXnIdlX3Nw3Yod8+teVEasaYR7hSQiS8mewd4aysncIkWMSR6
+    75WLy7o4udjCJ/TLTo91HAEkFeOgYdQLR49JaBzKgE0m/qNeY2v8BJnXeKf6JLE7
+    bT0Gg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=yRblaVph x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=G/amd9E1 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=yRblaVph x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=nxp.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=0 state=0
@@ -58,9 +58,9 @@ Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=ruxandra.radulescu@nxp.com;
 From: Ioana Radulescu <ruxandra.radulescu@nxp.com>
 To: gregkh@linuxfoundation.org
-Subject: [PATCH 6/9] staging: fsl-dpaa2/eth: Change link settings on the fly
-Date: Fri, 23 Mar 2018 08:44:10 -0500
-Message-Id: <20180323134413.1532-7-ruxandra.radulescu@nxp.com>
+Subject: [PATCH 5/9] staging: fsl-dpaa2/eth: Add DPNI version check
+Date: Fri, 23 Mar 2018 08:44:09 -0500
+Message-Id: <20180323134413.1532-6-ruxandra.radulescu@nxp.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180323134413.1532-1-ruxandra.radulescu@nxp.com>
 References: <20180323134413.1532-1-ruxandra.radulescu@nxp.com>
@@ -71,19 +71,19 @@ X-ClientProxiedBy: BN6PR05CA0014.namprd05.prod.outlook.com
  (2603:10a6:203:97::8)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 8fd8bcd1-a1ef-43ae-faf7-08d590c436d1
+X-MS-Office365-Filtering-Correlation-Id: 13e1c1e3-eae6-4cba-cae7-08d590c43610
 X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
  RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);
  SRVR:AM5PR0402MB2690;
 X-Microsoft-Exchange-Diagnostics: 1; AM5PR0402MB2690;
- 3:IOyhY7a/xWEKWjdALGYUp5ahB3njOL5/XTGkvb7DJv28o/nJuQkihdpfDnKGDQVg3xrwoThqP3/xPdB0KDl7YbQj6SpGKgpt4AKgL5EZxegOK6Wb54K58c7PsAcHQED2Agw629a5cXIJdbgrQTG6fzn2jk8USotUJIKy2FFYVt14DHz6u6SQiQqR57pP6cDRkkWs3AAeNd2EKVYvD7kW+S07FrUhvUILgdBZilG2T9t/0QwGB0mdE1mGchFNknHP;
- 25:4e2GFadYh3JwJy5MC88GjlK4L0XsrIKytOp3bEnw+gJ4SyKn7f9K5cqE5sw0bLP0DRLPvx6iZfSYRMS2HLBNAgpgii9ebUYbjXQrEBtqMcl3F7Pi+72aNSuHmPnpX6+kYWnqkeTCX6RrQC/C9Bkg1+P1+vibwo9LI0NMHffMtjndfA0zWNJdy8eflm+0gUcKgqmdW/s/uQqWn5YntWRPE9vcAcqjBcfHDi+W4h7FYEbXxBGrXAurGF3Key8mvOxYjqJS4tU+rJknEDSdLzhJ6che+ThuPVOy+JZGfyzWj1fMoI1Lji5/F7g5tnsKhILPRyM82yckS1pgToT4aSjWnA==;
- 31:jwIpJWhjDTTfe4zm5cl0FowsRePnANDuutbU+7A2ha+mV9KnzxQQriGiuRsTri19AVJlX1I+Wn4YjLv/P6dzUTorEeOxPd4BVeJDl/vUu76OQlcYeVSPq4aimuxVXwJQ+1Ipv2RQ0v7JJ34GeIGWX2UASJmhNghpDzbod6bxEYwgZMnG4ABcUrmRHC61bNFCexYEkqdxuhGSEAMFeCtIUoOuRXojrlXkF85ThGj6s1Y=
+ 3:cGEAHGnQ3UpbF7si8GoCfDTCvlWaVmG0oNCYdBoWmsmhYPVTDGDpXuU2WzjWrfK//HHboZkmi3VHwzDMkUSj76n+fYMdLDYvk254bEy4jJrGffC8gFwJKxRdvGAQHicq8ZBB4V0m8ul57gUXEuvHLgSBjlY+Wmi6noHIidXySLMadLmcq9X0VcTJhyFc3azKJy8sLy6GeJXuxhzVGmVNBBn9eSelVs0g3guGgDxtt6xzGSHmFtMyFF4mkqSV30pq;
+ 25:iKR6tBjE8aiPSeqBpvTGTl41Ey4tuNmz23oa1LHi8xMnWll+DPMZVaU6jEWgy2mjkTGlbTJ1SK7dwmtjXb0R300jfh594CRYaOZkJx/rb7QWzID2A6K1juPa42JRTCol8nwxAYuxGh/5a6gSgVLFlSLt6RyDEtsxdknJyfJvQWYy+51cNmQ6+QxOIqprqxNTkr1T1a3G8e+CBnEupPRB6O3ZfCraal1a15Bp4haTte0p1nlVSDznC4ESNmmYc53CPKBRwIDBVI/861vsczSEGQqkq8YHt6vUEXYTLG306d+OQmzwbNjvTGjHEZKZ6x11F812FC/UMFJi1aPzHMQVPA==;
+ 31:DPqQW0zz1ZHFCsyYUN/9LkgR9V6D6QHMltdP6UA4hoJemMxJI7/aizyMBXcI1YNbQ44ljQlPMtUwMCazKEy6KpAYzr2O7cARlZ789sTxv4Es85xW6R1bE4XgoqT+MNjvIMpiRA6nNh5MKxLd3GzrASrGzwN8HhcjvABj9/tLf/uZSLRdCwtsnm9Fu4iRxLAwgjWN1p65WGG+YIC+o9f52vbfM6R1bEme6MUprerC6u4=
 X-MS-TrafficTypeDiagnostic: AM5PR0402MB2690:
 X-Microsoft-Exchange-Diagnostics: 1; AM5PR0402MB2690;
- 20:flDZRaL9xuKREIbYF9wczsHXVZlEOGCNxwSewy8pgdbnQ5ZOpvl9eC409+2kjH3IvHAYKyNo+KTttGJiG6jB0m53Sc2giP3pi6Iw4pivbsT8NarY1yrC0UXgIxRJ5b22zVMUFBpF6HN+hmvXB6KSiNhK75XVknp01iHiLgmsUNqFPpknBWmz71l6kI6q+WJvyOlqt/MisC3Ssr0dNbu3YBe/g/5SAXxs/N/ZZcGHnTk/8Y/eroTVEp847ot89D5gViZ3Es4EDhXh2n4Zr2Zemn+hGog5GMQdMnLWXQ4LtVzKUQ0IsDhgkR4Uqew+2HRij6uhPvtaXyR9p/XBdQ3d1PjoCRV8/8yfGjj5xXMtM+jFOJfGH3GCGvUlj5wbyEJrzswzepqktNw3CHkpN9b346SjsU0W6Mi9wFD6a+WeyUgwq/+bz3KwXm9ewtpmHKjAPxD3TVy6ipF6qFjhWMyvHzvGRd7RRiA2NGpza6xND5GaAlC9WV2pp1v25A1EW4Ts;
- 4:oMM2IISzun5TcmigNKKQNo21V4VGa8/HeitWR5JOAXMtpNtw9uqbDyyyzTcDmmTYnjOINVKVwUfkxcoilK4msqdpv2i9eCILmwL6VWdZH64LYzBpgvVp8tM5bv6gPHPfCM8M5xOy0n/mxp0HN51gpmwpXZlfceVh+7HBgLyjlfjNvH+4zcuCY+hrxLRDIodCfALCUWcMDxrbulSBLDdR5H1vOVpzzjObVs457+0sReMmsfC3p/eer9wJy2FuKOGE9JoZi1HIUcwvOmEQ/IjqCoO/yvoMGWZxgCp4N06TRSOgJxQcjlbxy8I1BdzQ2PR4
-X-Microsoft-Antispam-PRVS: <AM5PR0402MB2690740DA669F7AC35194B9294A80@AM5PR0402MB2690.eurprd04.prod.outlook.com>
+ 20:ryXIpU0guEy1x9TJWUXkWUH0GQ18LYoF/mR9e0RAxPhIfKgZ38bdmr/cZj3BfN2EsrOaw9P1xLDwhWwMb95GCqyZ+5mpKTf3wUV6f6QdfxsLYhmAN1H8wdkDO7Suku500nwA7/26Rukg5YE4pSr/J/ETd5LUC/b/mXUF9LN+k5J84OlxlmhGOFkmGfqm9v4lFjH+5iSL1xdQNL7C5XQJqk3Oe5TjTaOq6BF4CVI5qjHfAdhzCwm/GtfHh96vSnv5xvne7mSt6cJPrNEZnNjEOKDu/n4XT7/XQWwE+ikvw181uDsf4WdsS2J2pb1EeEQ4fbC5eNc/LoLm6R2/4HenBI+d1EYy9JkqNyKkx5omGAVF7WGngv4y7gCK8/6wuONzRMWCDkJBTs7mr4LIayqR8ehV6nWaHob6NSXCxtqM69a2B61d9QM6myipBrjMTCktcTn668yVbw9HHHpTbXKS6MxPXSmIAwDVaCsskR3cHGZf33O5K3T1akHzMM2sLmZy;
+ 4:iwUm6ctZQeWVtnFuQr1WvwdHHi513gsgttdAWMdcr4JX0hZVYDYTV3q3Q4mMLTxflZnX1fsEPZYC8ckIjRcx4BCCymgD9CGTalFW+Q4UM8yBqEtwzzxdcSJrTiccYrgJhoWwYqAPKOMnujntJDkIoJ0AUFFF/dgQirg3hEZlCEbYY/N2x7Hjz+YUqPYUods+CIQIsOZ6bEphSOdEb/2U2gQ+bZSUgT15xDYoNMxk4KAiXaL2tdQDp5gug49f/x76vc34wGF7f9LEHXu+GEjnO8DyndE59yOtrnVLq2Om5mF7vx5gGg8ozEljIfQg6Bw4
+X-Microsoft-Antispam-PRVS: <AM5PR0402MB2690D8EF4C91F146E8BABA7B94A80@AM5PR0402MB2690.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
  RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);
@@ -94,39 +94,39 @@ X-Forefront-Antispam-Report: SFV:NSPM;
  DIR:OUT; SFP:1101; SCL:1; SRVR:AM5PR0402MB2690; H:rhuath.am.freescale.net;
  FPR:; SPF:None; PTR:InfoNoRecords; A:1; MX:1; LANG:en;
 X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1; AM5PR0402MB2690;
- 23:kNmoho5ElCIZf5aqlNEUf8SJnnbqXaddoElCwae?=
- =?us-ascii?Q?IWu7yM9U2Z0uXnv1/uEqnwd3GBZMu3pCPMwFdL8RShKq/y4faPwdjsJFNNlR?=
- =?us-ascii?Q?wVUUNOLlSll2RERb1V74vPbKPAMkEAfbZLu9MzBmoqmInT4ZnfMvwpYf6Evi?=
- =?us-ascii?Q?aViAFXMsnsKDZ/Ga7JxkYCJAmQBmoO17lT03JLuNWsaqODN0jE1MjPkEuWjd?=
- =?us-ascii?Q?OgGShNjYc3RaApW5c4hB9xWDuDY6OboB/XQVKWjXXgcaaJHnZNO7cpgg7Auw?=
- =?us-ascii?Q?5/rcEXwjfmuRCfqhHD+XD0tGStAI+VLIY1fogDIAktFjUu+zHK3gH7hprbgY?=
- =?us-ascii?Q?bo46bCD7nLwgELoHjUSJrpg3FUfDrY3NGbp5pNKR6eZAzXx9dsHcP7IqFmc1?=
- =?us-ascii?Q?5rbydERDQDr46MCRLg3TRSP12hqBWrDEXBzXpoagOliZ13UkDBlsWJ1+eYJd?=
- =?us-ascii?Q?XrdfOO5F53Ovf7M+ksxEMJcx1Mz2DQ9hdqdjw2v//LCKdGj95ZqHkmA70FHB?=
- =?us-ascii?Q?LQSA5oo1hqT4JXmW/GGr2cF3oZvdpVvjQLU8OaCcpn80W5NOy52qY165rO3I?=
- =?us-ascii?Q?xyHvBo6O+R92/daJ6Jsc7ZhHvzEmOkryGcA6L/CCYfG+/clT2LJe2nPbkpk9?=
- =?us-ascii?Q?fXpXerIHv3qBt1CKD9qcG1Lg4Z7w3fKgMnWdmD6dBF5LkOtHQ5NCETlsZgjY?=
- =?us-ascii?Q?L/EGSS/sj9CpTHnd2XVKE/DrHfrO7Sj4NBgm0NQF6lHa7Ytd+lk7HPtt4xXb?=
- =?us-ascii?Q?YOvswbmB6pezaXKvrPIrEcPjjsTEwokhy99ocwUO8S+jRAV3/HIJR8jai2q7?=
- =?us-ascii?Q?40TXIpGUnNca8AK/Y48INRMRaHjNCtlcZbGP+N2zAtD0nZVwbYVu9DhN/l40?=
- =?us-ascii?Q?xrr+bPJhOdy7tZXjGXgpSrgl7SMWi99l40+ugXXRhCRfnN8Zs6VwjUAnjw1b?=
- =?us-ascii?Q?4Hh1amPiwppl2THgOYzpA7F81T1dhnnDzga9PBUBPMNjh9eDAyglHlbywsSu?=
- =?us-ascii?Q?LgPZ//Kw6zuySnnhhA6XqLZHnCqf6AAxtQ6ulaQn21DzAdHbxFSv8rd79P/Y?=
- =?us-ascii?Q?NvzIUY3V7rXqslFONvsCL3dWVv0yw+o1AIOQ4tQ6O9xcW5VisvjbJqMmaNcI?=
- =?us-ascii?Q?s8PwSUAb1QvlL/WFrRC/XhPGDSVY+QMVhyuqo3sqdYec6GeUXDOz5/t1Rdf3?=
- =?us-ascii?Q?UcJX3eknkeeMNjQE=3D?=
-X-Microsoft-Antispam-Message-Info: pDBC+3fMJjrl5kjddXSySAHYHBBlSDHhKupBO0wU5sJ2yc/GJxEjghPOkXS95kQa8HdrA7WKaVrscx74iD2rl2GgHprDCgCHOBQOJ7s637H/0IElPWtf73K+Vll7P7HaX5XPBcUz9cxIHrMSi1cIRj0U525UfCPX2zL1o+I6c+sS4k9lpoWi27Zm4p5nLuap
+ 23:b2QrrU85lt/FBHxFc5W7WuYNtMZIYO8VDnWIvrq?=
+ =?us-ascii?Q?wYYjmbUfV9B2z2I9WR/7XbiwZIgsiJNLKjpvBaTVZiX3pFdBL7D+myrFRCEW?=
+ =?us-ascii?Q?wjF2mZv36uPvbZ4ht0wHT9umOEZIBSPOpEIm4/0ZNhSZFV3QW9nmZUu8p7O2?=
+ =?us-ascii?Q?XG+nQgiXzhoQKrTUyXDSKKxelUR3aN15biILTF5o+HO5I9lAkFBEqOLnW3Vk?=
+ =?us-ascii?Q?K+HfdAkNK9FkhfcNsJ+zxAMkGWnnmyDEQENkneWqjEzrmlkTUNDLQUWl2Im0?=
+ =?us-ascii?Q?eHRcBuJ+HBYrY+D2zp7rWykaa9mInYWgGkYJfOxenvkSl1AQ1BRLlcGptQVl?=
+ =?us-ascii?Q?hxmtef9tMfGnbjnnGA9cxQeS/FAVHLfMo+n8IYq4JAUDdBGHhkYn2wo2chGO?=
+ =?us-ascii?Q?SDjPdkaFIgbI0EusqUeW0MvJYLLgIZUZJrwm0HUbfk4JlTSI1RI6ts4t+rIw?=
+ =?us-ascii?Q?5GXyrd0lLxHkMDZgBbWlL71RfOgVOGtx4LA5Xdc703dUbwBgM/VN1eLpxVTe?=
+ =?us-ascii?Q?kw553kL8uXNCXYw4QbWl70Aa3iUrB/qZRmmPyUWYaPqZPXFGdQIkvAvjNl31?=
+ =?us-ascii?Q?+I6QfzfaAyIyrXCTG7E+/zwAQ01jt5VyY/qZ5KobFlBhYYRSkkcwUdBx/VcR?=
+ =?us-ascii?Q?KL+B2UL7jBa7ktMU/5DObsb3TKdu8z4OmgMDcGtbXz6NsVkgJ77ykrxlIQTI?=
+ =?us-ascii?Q?GgDhrD8Evt4g4I0aV5R/7zhDsQiL96GpynlfceKUOgumSTc7R7gs4rhYaptK?=
+ =?us-ascii?Q?izeqcu7PknGG2VULd+uXxDWnmlvJm67k1jekIrM4bp+0RBRvfC8RnwrIXFcZ?=
+ =?us-ascii?Q?TWdImPr76Lsc+X+DMmQ0XDNpGNfPbcP8KneFsd2ZcPsZzZ9iaW3FIoEdRdTG?=
+ =?us-ascii?Q?839BVDIEPuwu7dH8dHJ7KfQaG2qMFUWmvVHDV27vmFqCfll4uHb0e2aoTNLl?=
+ =?us-ascii?Q?d37XHIOj2kb5va80C8F7N6seoUMxqrAiWA/M5Z/zm410J0Bk4/bX0LEc26Gj?=
+ =?us-ascii?Q?GXWSclY1miEGRkUIW4GykyzZ3F25WP7DtQ22lCkJqpguQiJesw9scEc/8WYn?=
+ =?us-ascii?Q?/l8s7k6a5BYazbWDB0F/QHZbaqQfwtQVvmvFpUs0G05v6OFUflwza+W7UfAr?=
+ =?us-ascii?Q?GlHcuyyJL380zP4TSMuXkBeFqd0gzB+QlV/6r8OK4bg6S/yD+Levhq8hx3YJ?=
+ =?us-ascii?Q?3Y5uGMOzJDtf0h3I=3D?=
+X-Microsoft-Antispam-Message-Info: H6qXzS8ihHlVSWa47lRspR3yxLkoRCMJ6n3ouG2AWRXfAVUeAnLRoSqjjrxKZkAw7Y29nsxUmCQbXZ7chbAF0n/klnAsqh44tvdcALSHvf8sXGUQxo5IIHrzBQhM7T6hVMm+QW2DcUzT6y8wdreNQjq5+ZcXZacs/JELPXbBV23JrHRkQ9hxnyqsnS1qgRHG
 X-Microsoft-Exchange-Diagnostics: 1; AM5PR0402MB2690;
- 6:nCPb/doiFCAYgVM/3hw3vA/wvnM6TEvkFOZ5FNw6kwBiPMyiT0TmNRW72FCdpEnaKybUB7OIrPklsBlWHVjo2sg5xBDHUps0699wEH/raGS4tlx6YLRQJW4AaZevzopAXjzk6m90ch+MfVleN5fTaGeeKNprlJTtkIkRyL8txMWwRa3If362MAGQQRpBm7+57fUhZsbuKuye7WSY14RJ7vp2w9PyHkd9FBAnqx6blftQAk6VFpDySR2nTIFZsQOxuLA2hdxuP5XVtN6lSnE0lJIqq/nvrei+nk2ocZn7zdReTDVsAGwr7ZdVqLTEJ3tNf4l+3u75gHCwHIliGDCbBlld+XhZCr92Eh69QWziZeEdWs8iggVHNtP4ALUZVxKlSVoeRAWfBAp4ZTwGGMvA0IdNMoIKKbKy+oIluGW8Zi77zZfIrWcEEyH0aIbvLBCmpg1G6NouUAJWec5nFDDmdw==;
- 5:gobvEJ6QDTrmb93t768wRSbb/pronSn2I0zIylfZ8DCN9z0tF1tLRiimn6CFBkLjHEA9uT68/72ICF5MGwYUwZ4EkxBUQ8RQqRGHFfO28dM/i8Fo/6RS5JS9gSls//MlO1QJ+MT4Uw1l8y9oq7Ren2KJy0Iiy3oKwMRTUNToKbs=;
- 24:sk36XI3ZxUgIoTYF0Wfek8WtOlcbemr+c5dhehAagpLkr1ynaB9EWkwRd6+GHLTG8aKkSKZbQWBrHcqp9GZn9pMcEnsuGmcVlkDqDwOnIXY=
+ 6:2MzhP2JAi2jcH19b0Onn8O9L6LwKTwXYN+SkwaGBF1XuQxp337WgiEzBr61Gw3oYsBDvi0hvDhENeFcw2q6aT96vLn20Y37Eofx9pWas8QdFf6Xb5DfFCCOINJ5l4de13eoq/NjVQGGC+0+lc/aPSsAMY03yEUYJAZii76VhvFSK+MsN5N2AKuSH0YYompw1A/PAejfZEttzm5iOFqNhCiXjJsrQ0QnIByVUy2pmkrhCaKcaxzs4fcwe5G15o/LvdcQFH73oj+7Q/5ab5FGInM3lfhZzDbuWwD/zST0igGZKEkC4s5WGkHjaSg91WwA2LCcxLZ/0QD9vqOcRn2KRv6l+29y6J5tru9LQ1bwDnoJY11HrlEoEeUkCBFgDx4TYHN7Z5L8R3ABtOvDDO1dZ/Ms2hHgxkfIct2QCWjByDDLgnnJf2pX0Q/tIMofarWOxO2T3eoM26KDOtPcxw8zSEA==;
+ 5:o6xOqA+SILDJBhakoW8fyml+sjonW5GzzG/QNvnIcNUPe1zWLZWj1gIfBO2E5hD/UNB4T4YJK1j3CFxCvfqFVEdzbMTpVIIlya73pPeeRFSa1qeWsbCKxfEsG20okBKyzXBQ41ScQBBGQiZvtleePFEZSZ9sotWPpdlLM+u1j1Q=;
+ 24:9qazbRFQPuBPVChl/kn84XBKy4Fe0k2UkjeCiqu44iwZvTBbA+WJGyzYNQvrs5FKOd5URS5oyktg4o+AYaW/ExIbxJq3q6Y0ZLMVBq0xA4Q=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-Microsoft-Exchange-Diagnostics: 1; AM5PR0402MB2690;
- 7:zoMBNZGuKK590c5mNuOJJGUcQ3V60RIYoudhyZCF1ebpSvNrLhYD5yFVSHOjryuPuUGYa9Z9iOc5D3MKU0SKB5HvfQDEBm+UdbpdHa05ep7fEZbJ6yziOn3Vk1QzsZyJBV3tJc07a7gv05YrEQFJ2bIa7Dh9qhhVsK1JVevwibxUbCC9TwsHrZ6mmBeNnH2CKYGvovdg0QzdrhsQ1mIAK4oLCPpN7Vir27MmMX2LFCZVvfSWf1At/0rGU+ybGgTy
+ 7:DQivQQNYDlBAV8cpeKPXieYWBX1YSMt3Uk7hWy3OTGL9xrTSL44kYUAvLIEntJzBKfTJFQZAZUtJ7dlmNhKtC7tqugfb/unsIhFT8o8io+itxuNpThZxIrJMDwdJop32NtANlvXgx0sOBWWFTYkOgQRNrD01jg0jr+bWXqKDKeE3ePFR+DYicvntiDBw09+Qynx/5CPmWFTgaoOA295K1gaoAgewPb5lMrViY5zdfoJ1mlxmxiFxFi3fcvBZG8Un
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2018 13:44:34.1236 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8fd8bcd1-a1ef-43ae-faf7-08d590c436d1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2018 13:44:32.8565 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13e1c1e3-eae6-4cba-cae7-08d590c43610
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2690
@@ -149,51 +149,103 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Newer MC versions allow us to change link settings while the
-interface is up. Only check interface status if we are using
-an old version.
+The DPAA2 Ethernet driver assumes the DPNI objects that it
+uses to build network interfaces have a minimum supported
+API version, but until now it did nothing to enforce this
+requirement.
+
+Add a check at probe time to make sure the DPNI object is
+compatible with the set of MC commands we intend to use
+on it.
 
 Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
 ---
- drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c     | 15 +++++++++++++++
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h     | 10 ++++++++++
+ drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c | 11 ++---------
+ 3 files changed, 27 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
-index dfbfa94..bfc8b64 100644
---- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
-+++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
-@@ -119,6 +119,8 @@ dpaa2_eth_get_link_ksettings(struct net_device *net_dev,
- 	return err;
- }
- 
-+#define DPNI_DYNAMIC_LINK_SET_VER_MAJOR		7
-+#define DPNI_DYNAMIC_LINK_SET_VER_MINOR		1
- static int
- dpaa2_eth_set_link_ksettings(struct net_device *net_dev,
- 			     const struct ethtool_link_ksettings *link_settings)
-@@ -127,15 +129,16 @@ dpaa2_eth_set_link_ksettings(struct net_device *net_dev,
- 	struct dpaa2_eth_priv *priv = netdev_priv(net_dev);
- 	int err = 0;
- 
--	netdev_dbg(net_dev, "Setting link parameters...");
--
--	/* Due to a temporary MC limitation, the DPNI must be down
-+	/* If using an older MC version, the DPNI must be down
- 	 * in order to be able to change link settings. Taking steps to let
- 	 * the user know that.
- 	 */
--	if (netif_running(net_dev)) {
--		netdev_info(net_dev, "Sorry, interface must be brought down first.\n");
--		return -EACCES;
-+	if (dpaa2_eth_cmp_dpni_ver(priv, DPNI_DYNAMIC_LINK_SET_VER_MAJOR,
-+				   DPNI_DYNAMIC_LINK_SET_VER_MINOR) < 0) {
-+		if (netif_running(net_dev)) {
-+			netdev_info(net_dev, "Interface must be brought down first.\n");
-+			return -EACCES;
-+		}
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
+index 9fb88f2..f58c85a 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c
+@@ -1846,6 +1846,21 @@ static int setup_dpni(struct fsl_mc_device *ls_dev)
+ 		return err;
  	}
  
- 	cfg.rate = link_settings->base.speed;
++	/* Check if we can work with this DPNI object */
++	err = dpni_get_api_version(priv->mc_io, 0, &priv->dpni_ver_major,
++				   &priv->dpni_ver_minor);
++	if (err) {
++		dev_err(dev, "dpni_get_api_version() failed\n");
++		goto close;
++	}
++	if (dpaa2_eth_cmp_dpni_ver(priv, DPNI_VER_MAJOR, DPNI_VER_MINOR) < 0) {
++		dev_err(dev, "DPNI version %u.%u not supported, need >= %u.%u\n",
++			priv->dpni_ver_major, priv->dpni_ver_minor,
++			DPNI_VER_MAJOR, DPNI_VER_MINOR);
++		err = -ENOTSUPP;
++		goto close;
++	}
++
+ 	ls_dev->mc_io = priv->mc_io;
+ 	ls_dev->mc_handle = priv->mc_token;
+ 
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
+index c4816e6..5ac014f 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h
+@@ -311,6 +311,8 @@ struct dpaa2_eth_priv {
+ 	struct dpaa2_eth_channel *channel[DPAA2_ETH_MAX_DPCONS];
+ 
+ 	struct dpni_attr dpni_attrs;
++	u16 dpni_ver_major;
++	u16 dpni_ver_minor;
+ 	u16 tx_data_offset;
+ 
+ 	struct fsl_mc_device *dpbp_dev;
+@@ -354,6 +356,14 @@ struct dpaa2_eth_priv {
+ extern const struct ethtool_ops dpaa2_ethtool_ops;
+ extern const char dpaa2_eth_drv_version[];
+ 
++static inline int dpaa2_eth_cmp_dpni_ver(struct dpaa2_eth_priv *priv,
++					 u16 ver_major, u16 ver_minor)
++{
++	if (priv->dpni_ver_major == ver_major)
++		return priv->dpni_ver_minor - ver_minor;
++	return priv->dpni_ver_major - ver_major;
++}
++
+ /* Hardware only sees DPAA2_ETH_RX_BUF_SIZE, but the skb built around
+  * the buffer also needs space for its shared info struct, and we need
+  * to allocate enough to accommodate hardware alignment restrictions
+diff --git a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
+index 070a3f2..dfbfa94 100644
+--- a/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
++++ b/drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c
+@@ -78,20 +78,13 @@ static void dpaa2_eth_get_drvinfo(struct net_device *net_dev,
+ 				  struct ethtool_drvinfo *drvinfo)
+ {
+ 	struct dpaa2_eth_priv *priv = netdev_priv(net_dev);
+-	u16 fw_major, fw_minor;
+-	int err;
+ 
+ 	strlcpy(drvinfo->driver, KBUILD_MODNAME, sizeof(drvinfo->driver));
+ 	strlcpy(drvinfo->version, dpaa2_eth_drv_version,
+ 		sizeof(drvinfo->version));
+ 
+-	err =  dpni_get_api_version(priv->mc_io, 0, &fw_major, &fw_minor);
+-	if (!err)
+-		snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
+-			 "%u.%u", fw_major, fw_minor);
+-	else
+-		strlcpy(drvinfo->fw_version, "N/A",
+-			sizeof(drvinfo->fw_version));
++	snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
++		 "%u.%u", priv->dpni_ver_major, priv->dpni_ver_minor);
+ 
+ 	strlcpy(drvinfo->bus_info, dev_name(net_dev->dev.parent->parent),
+ 		sizeof(drvinfo->bus_info));
 -- 
 2.7.4
 
