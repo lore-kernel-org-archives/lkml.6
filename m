@@ -1,37 +1,71 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvfUvPC6hnZx1cNXXTSTslMWokYoiaH/ZQpu9LxjV4DbTTwKlirZu1e0HsJ2ZAk2L7brTcJ
-ARC-Seal: i=1; a=rsa-sha256; t=1521800121; cv=none;
-        d=google.com; s=arc-20160816;
-        b=A6P61eMA1gI+jwFZhRFr8PtdHj8g15Cm6LOlckb4tOhlP1bUZAs1WLDFI7lHKISRpU
-         vyKhRLerZ0uCRkYM5EF6Cahja8c/IMWLQDniyKfCpqYA/6Ol5HHmzovjpL7kpB0yRbSM
-         2m8QW8iTG427EZqZaUMv1++k9LFlE2v3z38eRXHJlN+MGtR0MwRHg7Lx9Y6QHjI3oUWk
-         I8wvJHoegozguL0h1bU1ep6HLr5uFPg0NkuoTghLOsga2d1O0gt1vuyMZpExdn5Ljjb3
-         pOCw4ejOdaixlS5V8A6A+JBKgmrqtpM/v9D73WqFbKUSfkiELobjFZD9XL7j/XXV5YbT
-         4XuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=zTtO3UzXprME3bW535wUbHyEq3yPhww9IlbmwvkFx80=;
-        b=hW9NPCAfAx3+VzPe6h/k5so+ocLGbLygVXjoq+l6UuxrWdB903G4GxWmIj3bqoMiAO
-         L8PSXATevFqQfxVfK2lIWaV/KG+ekrd5beS0yp1OJ4IBYYjbk4gzXBfwnBjLQaFxlamx
-         FMS0whYMg/P3/LJFBGoWbqtW73NUVYzZD0rR0SkBEH4p+lfVXXXnCtLl5v59USeRLBXz
-         kS/aMHTlrsIDALadvPa+yz2OXuhjrpUIWcrmbAIgoKw1RcvNgOHWLbaI1b+SNer+8ORl
-         yRbAFTEXu/n8Vxxkj49FVVLhOwyGnTdZW1EU8Uk+1JmFaPnYArzTrq7T9HNN/TWxGRVB
-         A+Og==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-977995-1521800119-2-10476600731503239381
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521800118; b=fIcMP9Q4EQdffseFiaTGJWoXB2VQsLFqNfRE5gaiKshsqF+
+    jUkLGRAOGpNf7BRKm2WfKyv9JxkPyreDfSSMvKY2XBM1g7LTjazdH1t3uMTcTd8Q
+    aNqrNQAasWoeZNmdsr1swgNU2IY15cAvqp61/BcrW3uNRMWsM3CFAJN3A3vypyIa
+    n+asVRT1h3bH4qfYMRj/7pSwJolj8yok0nrg2OkHkTSA+PsNcFoEcKmohDPBd34y
+    /GKkSdjdLPkDNISkWUaReal3BlwdjRgQ93v32btFSwwcyP/bWG07MCXITw5Xg0+Z
+    TOzbyM8YwfwVr+/VFOOvH4llWJ3vn3yVYOJJXEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521800118; bh=MuJjBN+q/7p0KoocwKEkcrhRTK
+    9GyotTJb9Wxu9/gt0=; b=PA2sU0MmCe0GEMBrWlyslh95xkjU6Fz+EfSIP+mYTL
+    bQzFCgAXGFRPrHYZacfa3xmCaTrctmBHUk+0RWVJHysYHSNm/e7Kn2mP4po+1RY4
+    rAPR9snNDsn6C6wLIoJPMniaj+1hS3FzDKs3CQ9NTcveWldeAPFiQAaAHQccFQfx
+    6Vqh/3xY2avXDQzz3eUpt3kmA4g+xf0/IdqGlGhePo8cp2YaruNgdPi4wNNmW7OX
+    uraiJoiBqw/zOd7Ahb9View92YY9hFPg8Gd8xpIAO5bEETgag7cDlV4csknVimiA
+    3YOBilGuEzSpgo2d0g56bUqQhnZXlfo9hFjgt6YFXujQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933421AbeCWKPM (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:15:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45516 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933400AbeCWKPJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:15:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Pan Bian <bianpan2016@163.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 41/97] wan: pc300too: abort path on failure
-Date: Fri, 23 Mar 2018 10:54:28 +0100
-Message-Id: <20180323094159.954567569@linuxfoundation.org>
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 37/97] Fix driver usage of 128B WQEs when WQ_CREATE is V1.
+Date: Fri, 23 Mar 2018 10:54:24 +0100
+Message-Id: <20180323094159.737455073@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -39,10 +73,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722592396394976?=
-X-GMAIL-MSGID: =?utf-8?q?1595723083755484431?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,31 +83,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: James Smart <jsmart2021@gmail.com>
 
 
-[ Upstream commit 2a39e7aa8a98f777f0732ca7125b6c9668791760 ]
+[ Upstream commit 3f247de750b8dd8f50a2c1390e2a1238790a9dff ]
 
-In function pc300_pci_init_one(), on the ioremap error path, function
-pc300_pci_remove_one() is called to free the allocated memory. However,
-the path is not terminated, and the freed memory will be used later,
-resulting in use-after-free bugs. This path fixes the bug.
+There are two versions of a structure for queue creation and setup that the
+driver shares with FW. The driver was only treating as version 0.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Verify WQ_CREATE with 128B WQEs in V0 and V1.
+
+Code review of another bug showed the driver passing
+128B WQEs and 8 pages in WQ CREATE and V0.
+Code inspection/instrumentation showed that the driver
+uses V0 in WQ_CREATE and if the caller passes queue->entry_size
+128B, the driver sets the hdr_version to V1 so all is good.
+When I tested the V1 WQ_CREATE, the mailbox failed causing
+the driver to unload.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wan/pc300too.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/lpfc/lpfc_sli.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/wan/pc300too.c
-+++ b/drivers/net/wan/pc300too.c
-@@ -347,6 +347,7 @@ static int pc300_pci_init_one(struct pci
- 	    card->rambase == NULL) {
- 		pr_err("ioremap() failed\n");
- 		pc300_pci_remove_one(pdev);
-+		return -ENOMEM;
- 	}
- 
- 	/* PLX PCI 9050 workaround for local configuration register read bug */
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -13493,6 +13493,9 @@ lpfc_wq_create(struct lpfc_hba *phba, st
+ 	case LPFC_Q_CREATE_VERSION_1:
+ 		bf_set(lpfc_mbx_wq_create_wqe_count, &wq_create->u.request_1,
+ 		       wq->entry_count);
++		bf_set(lpfc_mbox_hdr_version, &shdr->request,
++		       LPFC_Q_CREATE_VERSION_1);
++
+ 		switch (wq->entry_size) {
+ 		default:
+ 		case 64:
