@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804779-2-6420950604731557378
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804774-2-3950567152942934156
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804778; b=svnnbd02ONaHZuK2UDHP2tlulQtLt/6/dQVM7HzKxG207pG
-    PhiVTjrffiAsp5fLdVWxYE26snmUKaPd0aRhPIJqzR5rEHoDci7cv74Wfe344otP
-    MMsxYVib+MbiRs0LD44i9Ee5AU5DK7OxWAeCWeG+Er/qJofdJovsImGhGqpD3wL1
-    yCSM75VQTAPUUvLfBmHZiFEe1TlotFsrf7bqzt9cnG+nGsQqlsjyFzX8ybbCL8Oe
-    zCpLQveSq4ElS/rgzspIs3iinajxxwZmB691+6ztxfiDnFa6vFAMBRsudbmX+wU5
-    Z+YWeWT6UTvpcrlW4TmrxcSSQjCtA6tdgkP1wBA==
+    t=1521804773; b=WL/zxdPZlj3XMRjw2jRoLB0WjyScz4ZKyr+9fS56HusYCxo
+    UDZWJGQWFcxgQkFGPwyNCNY0ZX/U8pt9SPMumEzn3a817pmedq8Kxzny7h7Yi3PW
+    TuFe2KUkfMW7Wd7jZsIbGtJwpyD1n1DibnweZyCI3vWy4jvCklZDfl0ZNJBeRK+A
+    QVNAxlkenCwQLM+4/6R2A4Hob13ewacfPuJN4Mdx9FazO8qUHGuNxIIaTqQttbHF
+    gZktnM4R0y6uh3YUGbVAINoeFUazN2Up9+6hhkHnl7IRj7H6GZQxgOsgnvuaGEq4
+    8sWKbl4ICw4kq8BdCzd4aqh8TQF1Cw9HAGyUTuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804778; bh=GfEy9T1eCEr9OvTvhhaWq9mdNG
-    sVb+MivhBl80U0a4I=; b=Hu6EiFkjgzoDMp8kHdRyeF/a9+jhr8kwc8uAOOe4tN
-    ytiWgO8JEUwoTJFBe86Br62j3R9BaY8C8iRHuMjoW23VlcCu6iMqlNHqExLfSRfh
-    ADHNkN8wrlewTJ5ruVpmOl+bYNAS575nbR/Kzwnf0y6EB/+EUOwzkvAlOy58sNBY
-    UhLL+HbdRYGIj8AuhR+0PxfMLhMYhKUPJIqeXWZDH3u4Rizrqj0/qICB7PSWUHZo
-    ZlRkSdXEgMKES3kt1sG9poSog2bFuzZcKRY7AiMSUPXPmZOl2EFT//UPRKwiaLa/
-    UUoRlSMq4bt0UKYPrQgOQZmdlB0SoqnpNUjM3tQW3uQg==
+    :list-id; s=arctest; t=1521804773; bh=GV1nGJRN6e6ng0sDaExD4+UOA8
+    WZiaq1KOFm1t3lE0A=; b=C9qeoAwO/Wtmt6Ne6dV+fPFA7xmg18+UzdR1FPFqct
+    LTKKf4OwVjiRe9qr5aTu+l8EChcwHT+VGbjYxtXrYxRCrbMIjJsuZ9vZ8eFebbv5
+    8Ln3FDK8swQNrc/tgKwQcyeuVIYM3un1Yq3bntQM60bhMKi2G+vIK/nnPD0qIwED
+    jrn8TmiggtZREjRCRiVRN3geyV747JSJiecB4WBWy4v1/wgdIc0rNN9g+3GIZNaL
+    tvy5JccgSmkkxxvMZxr684hSSZ0n2VDv1vWjcE8w5GY/0D0Mdy78H8nbkU5/On97
+    qHYcYyrGF1yv4RmT7qdX0Rv81f7lrrP6M/ByhIfeP4rA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755062AbeCWKFn (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:05:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39806 "EHLO
+        id S1755086AbeCWKFt (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:05:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40298 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755009AbeCWKFk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:40 -0400
+        with ESMTP id S1755081AbeCWKFr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 028/177] ath: Fix updating radar flags for coutry code India
-Date: Fri, 23 Mar 2018 10:52:36 +0100
-Message-Id: <20180323094206.423733296@linuxfoundation.org>
+Subject: [PATCH 4.9 030/177] iwlwifi: split the handler and the wake parts of the notification infra
+Date: Fri, 23 Mar 2018 10:52:38 +0100
+Message-Id: <20180323094206.514615728@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,90 +83,165 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
 
-[ Upstream commit c0c345d4cacc6a1f39d4856f37dcf6e34f51a5e4 ]
+[ Upstream commit 2220fb2960b72915e7fd9da640a4695dceff238c ]
 
-As per latest regulatory update for India, channel 52, 56, 60, 64
-is no longer restricted to DFS. Enabling DFS/no infra flags in driver
-results in applying all DFS related restrictions (like doing CAC etc
-before this channel moves to 'available state') for these channels
-even though the country code is programmed as 'India' in he hardware,
-fix this by relaxing the frequency range while applying RADAR flags
-only if the country code is programmed to India. If the frequency range
-needs to modified based on different country code, ath_is_radar_freq
-can be extended/modified dynamically.
+The notification infrastructure (iwl_notification_wait_*
+functions) allows to wait until a list of notifications
+will come up from the firmware and to run a special handler
+(notif_wait handler) when those are received.
 
-Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+The operation mode notifies the notification infrastructure
+about any Rx being received by the mean of
+iwl_notification_wait_notify() which will do two things:
+1) call the notif_wait handler
+2) wakeup the thread that was waiting for the notification
+
+Typically, only after those two steps happened, the
+operation mode will run its own handler for the notification
+that was received from the firmware. This means that the
+thread that was waiting for that notification can be
+running before the operation mode's handler was called.
+
+When the operation mode's handler is ASYNC, things get even
+worse since the thread that was waiting for the
+notification isn't even guaranteed that the ASYNC callback
+was added to async_handlers_list before it starts to run.
+This means that even calling
+iwl_mvm_wait_for_async_handlers() can't guarantee that
+absolutely everything related to that notification has run.
+The following can happen:
+
+Thread sending the command        Operation mode's Rx path
+--------------------------        ------------------------
+iwl_init_notification_wait()
+iwl_mvm_send_cmd()
+                                  iwl_mvm_rx_common()
+                                  iwl_notification_wait_notify()
+iwl_mvm_wait_for_async_handlers()
+// Possibly free some data
+// structure
+                                  list_add_tail(async_handlers_list);
+                                  schedule_work(async_handlers_wk);
+                                  // Access the freed structure
+
+Split the 'run notif_wait's handler' and the 'wake up the
+thread' parts to fix this. This allows the operation mode
+to do the following:
+
+Thread sending the command        Operation mode's Rx path
+--------------------------        ------------------------
+iwl_init_notification_wait()
+iwl_mvm_send_cmd()
+                                  iwl_mvm_rx_common()
+                                  iwl_notification_wait()
+                                  // Will run the notif_wait's handler
+                                  list_add_tail(async_handlers_list);
+                                  schedule_work(async_handlers_wk);
+                                  iwl_notification_notify()
+iwl_mvm_wait_for_async_handlers()
+
+This way, the waiter is guaranteed that all the handlers
+have been run (if SYNC), or at least enqueued (if ASYNC)
+by the time it wakes up.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/regd.c |   19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/iwl-notif-wait.c |   10 +++-----
+ drivers/net/wireless/intel/iwlwifi/iwl-notif-wait.h |   25 ++++++++++++++++----
+ 2 files changed, 24 insertions(+), 11 deletions(-)
 
---- a/drivers/net/wireless/ath/regd.c
-+++ b/drivers/net/wireless/ath/regd.c
-@@ -254,8 +254,12 @@ bool ath_is_49ghz_allowed(u16 regdomain)
- EXPORT_SYMBOL(ath_is_49ghz_allowed);
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-notif-wait.c
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-notif-wait.c
+@@ -76,8 +76,8 @@ void iwl_notification_wait_init(struct i
+ }
+ IWL_EXPORT_SYMBOL(iwl_notification_wait_init);
  
- /* Frequency is one where radar detection is required */
--static bool ath_is_radar_freq(u16 center_freq)
-+static bool ath_is_radar_freq(u16 center_freq,
-+			      struct ath_regulatory *reg)
+-void iwl_notification_wait_notify(struct iwl_notif_wait_data *notif_wait,
+-				  struct iwl_rx_packet *pkt)
++bool iwl_notification_wait(struct iwl_notif_wait_data *notif_wait,
++			   struct iwl_rx_packet *pkt)
+ {
+ 	bool triggered = false;
+ 
+@@ -118,13 +118,11 @@ void iwl_notification_wait_notify(struct
+ 			}
+ 		}
+ 		spin_unlock(&notif_wait->notif_wait_lock);
+-
+ 	}
+ 
+-	if (triggered)
+-		wake_up_all(&notif_wait->notif_waitq);
++	return triggered;
+ }
+-IWL_EXPORT_SYMBOL(iwl_notification_wait_notify);
++IWL_EXPORT_SYMBOL(iwl_notification_wait);
+ 
+ void iwl_abort_notification_waits(struct iwl_notif_wait_data *notif_wait)
+ {
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-notif-wait.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-notif-wait.h
+@@ -6,7 +6,7 @@
+  * GPL LICENSE SUMMARY
+  *
+  * Copyright(c) 2007 - 2014 Intel Corporation. All rights reserved.
+- * Copyright(c) 2015 Intel Deutschland GmbH
++ * Copyright(c) 2015 - 2017 Intel Deutschland GmbH
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of version 2 of the GNU General Public License as
+@@ -32,6 +32,7 @@
+  * BSD LICENSE
+  *
+  * Copyright(c) 2005 - 2014 Intel Corporation. All rights reserved.
++ * Copyright(c) 2015 - 2017 Intel Deutschland GmbH
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -89,10 +90,10 @@ struct iwl_notif_wait_data {
+  *
+  * This structure is not used directly, to wait for a
+  * notification declare it on the stack, and call
+- * iwlagn_init_notification_wait() with appropriate
++ * iwl_init_notification_wait() with appropriate
+  * parameters. Then do whatever will cause the ucode
+  * to notify the driver, and to wait for that then
+- * call iwlagn_wait_notification().
++ * call iwl_wait_notification().
+  *
+  * Each notification is one-shot. If at some point we
+  * need to support multi-shot notifications (which
+@@ -114,10 +115,24 @@ struct iwl_notification_wait {
+ 
+ /* caller functions */
+ void iwl_notification_wait_init(struct iwl_notif_wait_data *notif_data);
+-void iwl_notification_wait_notify(struct iwl_notif_wait_data *notif_data,
+-				  struct iwl_rx_packet *pkt);
++bool iwl_notification_wait(struct iwl_notif_wait_data *notif_data,
++			   struct iwl_rx_packet *pkt);
+ void iwl_abort_notification_waits(struct iwl_notif_wait_data *notif_data);
+ 
++static inline void
++iwl_notification_notify(struct iwl_notif_wait_data *notif_data)
++{
++	wake_up_all(&notif_data->notif_waitq);
++}
 +
- {
-+	if (reg->country_code == CTRY_INDIA)
-+		return (center_freq >= 5500 && center_freq <= 5700);
- 	return (center_freq >= 5260 && center_freq <= 5700);
- }
- 
-@@ -306,7 +310,7 @@ __ath_reg_apply_beaconing_flags(struct w
- 				enum nl80211_reg_initiator initiator,
- 				struct ieee80211_channel *ch)
- {
--	if (ath_is_radar_freq(ch->center_freq) ||
-+	if (ath_is_radar_freq(ch->center_freq, reg) ||
- 	    (ch->flags & IEEE80211_CHAN_RADAR))
- 		return;
- 
-@@ -395,8 +399,9 @@ ath_reg_apply_ir_flags(struct wiphy *wip
- 	}
- }
- 
--/* Always apply Radar/DFS rules on freq range 5260 MHz - 5700 MHz */
--static void ath_reg_apply_radar_flags(struct wiphy *wiphy)
-+/* Always apply Radar/DFS rules on freq range 5500 MHz - 5700 MHz */
-+static void ath_reg_apply_radar_flags(struct wiphy *wiphy,
-+				      struct ath_regulatory *reg)
- {
- 	struct ieee80211_supported_band *sband;
- 	struct ieee80211_channel *ch;
-@@ -409,7 +414,7 @@ static void ath_reg_apply_radar_flags(st
- 
- 	for (i = 0; i < sband->n_channels; i++) {
- 		ch = &sband->channels[i];
--		if (!ath_is_radar_freq(ch->center_freq))
-+		if (!ath_is_radar_freq(ch->center_freq, reg))
- 			continue;
- 		/* We always enable radar detection/DFS on this
- 		 * frequency range. Additionally we also apply on
-@@ -505,7 +510,7 @@ void ath_reg_notifier_apply(struct wiphy
- 	struct ath_common *common = container_of(reg, struct ath_common,
- 						 regulatory);
- 	/* We always apply this */
--	ath_reg_apply_radar_flags(wiphy);
-+	ath_reg_apply_radar_flags(wiphy, reg);
- 
- 	/*
- 	 * This would happen when we have sent a custom regulatory request
-@@ -653,7 +658,7 @@ ath_regd_init_wiphy(struct ath_regulator
- 	}
- 
- 	wiphy_apply_custom_regulatory(wiphy, regd);
--	ath_reg_apply_radar_flags(wiphy);
-+	ath_reg_apply_radar_flags(wiphy, reg);
- 	ath_reg_apply_world_flags(wiphy, NL80211_REGDOM_SET_BY_DRIVER, reg);
- 	return 0;
- }
++static inline void
++iwl_notification_wait_notify(struct iwl_notif_wait_data *notif_data,
++			     struct iwl_rx_packet *pkt)
++{
++	if (iwl_notification_wait(notif_data, pkt))
++		iwl_notification_notify(notif_data);
++}
++
+ /* user functions */
+ void __acquires(wait_entry)
+ iwl_init_notification_wait(struct iwl_notif_wait_data *notif_data,
