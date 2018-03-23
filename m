@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804508-2-6846101868286703858
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804495-2-3126798592721412076
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804507; b=CxEbtIyJs9811RODPFxvNDHxdGsWRPl1/z0HuuNM3Qdr8CK
-    HGRfo9bLj6LEFvhvfpAe5VpceMVSbAKsWAv3MyrvyQaqFEq5siIY3HnzKTWETW6h
-    6WDnG193GF7oUF6Z5wuTr3WIXtsZnKiuVNLBtYQg/NauCSgqhsg0x2/xNi012akM
-    y4AGCrRlSWk0aykRmFwZe2ZexGBOBTDL/mEeZDrfV9BAjcgnzAxjjhG1p+rAYEfd
-    yEE94gy5+fhROQl/o0I14tzG5M9PstRgKbZQNvnuxZMsoHFsrlZCxQ+7vTz/73+b
-    5EEFu2FkPuFhTB2HtsDIAv95d00k8PyI0o2JBrQ==
+    t=1521804495; b=NnR9xOsFycgVIPomxBqvx99yqjJpVpwpoiNkeYpM1919wDF
+    2vQ3jftgSNmOZ3QRu949ifwm/6mh4s63gLzfs7vPb4TENuwaThpcNBzZKdHnPXdz
+    idC8esT3Odb8kfzpgkE8wPwftyXdjDiuuLg7qdaj9XYU1DVaDFJgpKv2+X9fbizn
+    ajU2Yj/VmC+hT3ND9SQEp0V2IWLqYwMCIwcTjdi0xG9WDumLvtqY/P7VMZVp4Ds3
+    GL7oKmYgf4O0TFwvInz16W5zdr+irxhQLWYa9SiVTmtzUpZhfiDwDeSJefQ0WClX
+    Bs/QjbGYwjqiuZ5tjwm3uvaKuHuYw2yl6g55Weg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804507; bh=vx9tslYIgTBqwxAdy3vwc5Hox0
-    iZb0+kRAefRnpcs3A=; b=W3J/FFHh7ymX8QLc+E6jQ+IWizUomQQd0DZfK3gqrS
-    XkIF3rAz3R4INEUW/jkyTcuf/Srrii3fMyYsKuy7weHygLc0xj6LJqyAYVLxf1T9
-    EQBWNo7i2/W9BijEq/++gvoZeVsh+nK7Ck20lV4iNKpNHf5OMTEYwlbQTf56JOgG
-    fveglOeiJTj3lFGhwSEsL+ejhVOO7DkriBX5yec7EBbuxekIAACpsxrOEcQWJl3I
-    ih70C9h1Xdb279PhdPG4FZLnmoxRLpb6ENjPO6XSAaEANWmxmZzKV08/1UEfDesg
-    HwOgCNTlGfNxqJDDdCeRFI4UEK1Qubaje0mVwg9FtZtA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804495; bh=Q3pQB7lrd288VpsLhgsDIC+iNx
+    anG54xqDsm1zE3+WA=; b=nTCzRS8xMi2y2FqdhmDW2O4Cy03GmEZZYtIipZeu1q
+    iuaMw3DFmsifQY4uUgXnjyxta/CPWYaFWrDA2gs9aXqG+uTy4XlyvIMj+A9GMknr
+    /a/IehbLq+7JtWWJ+/CqHbOdoxx0FXkajqXEo53XQZKFJF6rFmaGH86bTtbcgw5o
+    iZWN4EYvTY6n/pqWmcRVwtkqOgEkJt5+qTqFhrUmSPokik8l0x/qc0PFBcCu7ZZu
+    e+Jm76yov3wxFezFpZCWtFGjvxTfjlJ0zjQOD3CcbcBHT9C4TqgkSqLzcTklZDva
+    k3u/CA9IOR/p83O6nJO26NVdJXvw9sl1elupL3KRsk0Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932245AbeCWKGx (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:06:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40942 "EHLO
+        id S1755339AbeCWL2B (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:28:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41014 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932198AbeCWKGq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:46 -0400
+        with ESMTP id S932218AbeCWKGz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maor Gottlieb <maorg@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Robert White <rwhite@pobox.com>,
+        Liping Zhang <zlpnobody@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 049/177] IB/mlx5: Take write semaphore when changing the vma struct
-Date: Fri, 23 Mar 2018 10:52:57 +0100
-Message-Id: <20180323094207.497408437@linuxfoundation.org>
+Subject: [PATCH 4.9 065/177] netfilter: nft_dynset: continue to next expr if _OP_ADD succeeded
+Date: Fri, 23 Mar 2018 10:53:13 +0100
+Message-Id: <20180323094208.206701990@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,44 +83,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maor Gottlieb <maorg@mellanox.com>
+From: Liping Zhang <zlpnobody@gmail.com>
 
 
-[ Upstream commit ecc7d83be3243835c9396a1a2fb8ce95f205207b ]
+[ Upstream commit 277a292835c196894ef895d5e1fd6170bb916f55 ]
 
-When the driver disassociate user context, it changes the vma to
-anonymous by setting the vm_ops to null and zap the vma ptes.
+Currently, after adding the following nft rules:
+  # nft add set x target1 { type ipv4_addr \; flags timeout \;}
+  # nft add rule x y set add ip daddr timeout 1d @target1 counter
 
-In order to avoid race in the kernel, we need to take write lock
-before we change the vma entries.
+the counters will always be zero despite of the elements are added
+to the dynamic set "target1" or not, as we will break the nft expr
+traversal unconditionally:
+  # nft list ruleset
+  ...
+  set target1 {
+      ...
+      elements = { 8.8.8.8 expires 23h59m53s}
+  }
+  chain output {
+      ...
+      set add ip daddr timeout 1d @target1 counter packets 0 bytes 0
+                                                           ^       ^
+      ...
+  }
 
-Fixes: 7c2344c3bbf97 ('IB/mlx5: Implements disassociate_ucontext API')
-Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Since we add the elements to the set successfully, we should continue
+to the next expression.
+
+Additionally, if elements are added to "flow table" successfully, we
+will _always_ continue to the next expr, even if the operation is
+_OP_ADD. So it's better to keep them to be consistent.
+
+Fixes: 22fe54d5fefc ("netfilter: nf_tables: add support for dynamic set updates")
+Reported-by: Robert White <rwhite@pobox.com>
+Signed-off-by: Liping Zhang <zlpnobody@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/netfilter/nft_dynset.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -1313,7 +1313,7 @@ static void mlx5_ib_disassociate_ucontex
- 	/* need to protect from a race on closing the vma as part of
- 	 * mlx5_ib_vma_close.
- 	 */
--	down_read(&owning_mm->mmap_sem);
-+	down_write(&owning_mm->mmap_sem);
- 	list_for_each_entry_safe(vma_private, n, &context->vma_private_list,
- 				 list) {
- 		vma = vma_private->vma;
-@@ -1327,7 +1327,7 @@ static void mlx5_ib_disassociate_ucontex
- 		list_del(&vma_private->list);
- 		kfree(vma_private);
+--- a/net/netfilter/nft_dynset.c
++++ b/net/netfilter/nft_dynset.c
+@@ -82,8 +82,7 @@ static void nft_dynset_eval(const struct
+ 		    nft_set_ext_exists(ext, NFT_SET_EXT_EXPIRATION)) {
+ 			timeout = priv->timeout ? : set->timeout;
+ 			*nft_set_ext_expiration(ext) = jiffies + timeout;
+-		} else if (sexpr == NULL)
+-			goto out;
++		}
+ 
+ 		if (sexpr != NULL)
+ 			sexpr->ops->eval(sexpr, regs, pkt);
+@@ -92,7 +91,7 @@ static void nft_dynset_eval(const struct
+ 			regs->verdict.code = NFT_BREAK;
+ 		return;
  	}
--	up_read(&owning_mm->mmap_sem);
-+	up_write(&owning_mm->mmap_sem);
- 	mmput(owning_mm);
- 	put_task_struct(owning_process);
+-out:
++
+ 	if (!priv->invert)
+ 		regs->verdict.code = NFT_BREAK;
  }
