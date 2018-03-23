@@ -1,107 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751828AbeCWCVO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 22:21:14 -0400
-Received: from ozlabs.org ([103.22.144.67]:46341 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751595AbeCWCVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 22:21:13 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 23 Mar 2018 13:20:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Claudio Scordino <claudio@evidence.eu.com>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Message-ID: <20180323132001.7da7f3c4@canb.auug.org.au>
+        id S1751796AbeCWCXA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 22:23:00 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:5958 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751666AbeCWCW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 22:22:58 -0400
+From: "liwei (CM)" <liwei213@huawei.com>
+To: Arnd Bergmann <arnd@arndb.de>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "xuwei (O)" <xuwei5@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Gregory CLEMENT <gregory.clement@free-electrons.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Riku Voipio <riku.voipio@linaro.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Eric Anholt <eric@anholt.net>,
+        DTML <devicetree@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        zangleigang <zangleigang@hisilicon.com>,
+        Gengjianfeng <gengjianfeng@hisilicon.com>,
+        Guodong Xu <guodong.xu@linaro.org>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        "Fengbaopeng (kevin, Kirin Solution Dept)"
+        <fengbaopeng@hisilicon.com>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjggMi81XSBkdC1iaW5kaW5nczogc2NzaTogdWZz?=
+ =?utf-8?Q?:_add_document_for_hisi-ufs?=
+Thread-Topic: [PATCH v8 2/5] dt-bindings: scsi: ufs: add document for
+ hisi-ufs
+Thread-Index: AQHTpLNt7xq76dhVgkeSgBp0Vy2vQaOrAJgAgDJE6ZA=
+Date: Fri, 23 Mar 2018 02:22:33 +0000
+Message-ID: <1699CE87DE933F49876AD744B5DC140FA584ED@DGGEMM506-MBS.china.huawei.com>
+References: <20180213101412.5717-1-liwei213@huawei.com>
+ <20180213101412.5717-3-liwei213@huawei.com>
+ <CAK8P3a2b3rLHyM+vMppCkAR3VYbhw-b0LpuWfLCqjs7z9n+hyw@mail.gmail.com>
+In-Reply-To: <CAK8P3a2b3rLHyM+vMppCkAR3VYbhw-b0LpuWfLCqjs7z9n+hyw@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.189.155.72]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qWvjTvuySbM=9Uxz_p9U+ti"; protocol="application/pgp-signature"
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2N2N5oi014959
 
---Sig_/qWvjTvuySbM=9Uxz_p9U+ti
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi, Arnd
+Sorry to bother you again, please take the time to review the patch. Are there any other suggestions?
+Looking forward to your reply.
 
-Hi all,
+-----邮件原件-----
+发件人: arndbergmann@gmail.com [mailto:arndbergmann@gmail.com] 代表 Arnd Bergmann
+发送时间: 2018年2月19日 17:58
+收件人: liwei (CM)
+抄送: Rob Herring; Mark Rutland; xuwei (O); Catalin Marinas; Will Deacon; Vinayak Holikatti; James E.J. Bottomley; Martin K. Petersen; Kevin Hilman; Gregory CLEMENT; Thomas Petazzoni; Masahiro Yamada; Riku Voipio; Thierry Reding; Krzysztof Kozlowski; Eric Anholt; DTML; Linux Kernel Mailing List; Linux ARM; linux-scsi; zangleigang; Gengjianfeng; Guodong Xu; Zhangfei Gao; Fengbaopeng (kevin, Kirin Solution Dept)
+主题: Re: [PATCH v8 2/5] dt-bindings: scsi: ufs: add document for hisi-ufs
 
-Today's linux-next merge of the tip tree got a conflict in:
+On Tue, Feb 13, 2018 at 11:14 AM, Li Wei <liwei213@huawei.com> wrote:
+> add ufs node document for Hisilicon.
+>
+> Signed-off-by: Li Wei <liwei213@huawei.com>
+> ---
+>  Documentation/devicetree/bindings/ufs/ufs-hisi.txt | 37 
+> ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
 
-  kernel/sched/cpufreq_schedutil.c
 
-between commit:
+I'm pretty sure we've discussed it before, but can you make this so that the generic properties are part of the ufshcd binding, and you refer to it from here, only describing in what ways the hisi ufs binding differs from the standard?
 
-  0953feed3400 ("cpufreq: schedutil: rate limits for SCHED_DEADLINE")
+> diff --git a/Documentation/devicetree/bindings/ufs/ufs-hisi.txt 
+> b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
+> new file mode 100644
+> index 000000000000..0d21b57496cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
+> @@ -0,0 +1,37 @@
+> +* Hisilicon Universal Flash Storage (UFS) Host Controller
+> +
+> +UFS nodes are defined to describe on-chip UFS hardware macro.
+> +Each UFS Host Controller should have its own node.
+> +
+> +Required properties:
+> +- compatible        : compatible list, contains one of the following -
+> +                                       "hisilicon,hi3660-ufs", "jedec,ufs-1.1" for hisi ufs
+> +                                       host controller present on Hi36xx chipset.
+> +- reg               : should contain UFS register address space & UFS SYS CTRL register address,
+> +- interrupt-parent  : interrupt device
+> +- interrupts        : interrupt number
+> +- clocks               : List of phandle and clock specifier pairs
+> +- clock-names       : List of clock input name strings sorted in the same
+> +                                       order as the clocks property. 
+> +"ref_clk", "phy_clk" is optional
 
-from the pm tree and commit:
+The clock names sound generic enough, should we have both in the generic binding?
 
-  8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+Do you mean that add a "phy_clk" to ufshcd-pltfrm 's bindings? 
+At present, it seems that in the implementation of generic code, apart from "ref_clk" may have special processing, other clk will not have special processing and simply parse and enable;
+Referring to ufs-qcom binding, I think "phy_clk" can be named "iface_clk", this "iface_clk" exists in ufshcd-pltfrm bindings;If so, "ref_clk", "iface_clk" are both in the generic binding,we will remove them here. Is that okay?
 
-from the tip tree.
+> +- resets            : reset node register, one reset the clk and the other reset the controller
+> +- reset-names       : describe reset node register
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+This looks incomplete. What is the name of the reset line supposed to be?
+I'd also suggest you document it in the ufshcd binding instead.
 
---=20
-Cheers,
-Stephen Rothwell
+The "rst" corresponds to reset the whole UFS IP, and " arst " only reset the APB/AXI bus. Discussed with our soc colleagues that "arst" is assert by default and needs to deassert .
+But I think it may be difficult to add this to common code, or it may not be necessary; 
+Other manufacturers may not need to do this soc init because they probably already done in the bootloader phase. Even if they need to do it, it's probably different from us.
+We need to make sure that our ufs works even if not do soc init during the bootloader phase.
 
-diff --cc kernel/sched/cpufreq_schedutil.c
-index 04d3fe9ba7d2,89fe78ecb88c..000000000000
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@@ -280,11 -276,9 +286,11 @@@ static void sugov_update_single(struct=20
-  	unsigned int next_f;
-  	bool busy;
- =20
-- 	sugov_set_iowait_boost(sg_cpu, time);
-+ 	sugov_set_iowait_boost(sg_cpu, time, flags);
-  	sg_cpu->last_update =3D time;
- =20
- +	ignore_dl_rate_limit(sg_cpu, sg_policy);
- +
-  	if (!sugov_should_update_freq(sg_policy, time))
-  		return;
- =20
-@@@ -366,12 -353,7 +365,9 @@@ sugov_update_shared(struct update_util_
- =20
-  	raw_spin_lock(&sg_policy->update_lock);
- =20
- +	ignore_dl_rate_limit(sg_cpu, sg_policy);
- +
-- 	sugov_get_util(sg_cpu);
-- 	sg_cpu->flags =3D flags;
--=20
-- 	sugov_set_iowait_boost(sg_cpu, time);
-+ 	sugov_set_iowait_boost(sg_cpu, time, flags);
-  	sg_cpu->last_update =3D time;
- =20
-  	if (sugov_should_update_freq(sg_policy, time)) {
 
---Sig_/qWvjTvuySbM=9Uxz_p9U+ti
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0ZFEACgkQAVBC80lX
-0GwtjQf9H0HOALtMFdAwpRtMhNetBnrumX7u25Vij+HuYZWWZXtUll7p37AB/12b
-RB0lkzRvBPbs4pxd+ReePMc2m4OaBFKn4eNE4mZUPcOuJdCZXy2jBI/S8TsPGewL
-DSOziAIFa6fcYf4n93T3gRWGnAQ1i+/nr2lIrC2WoavKNfigeJ/bvf2pZS530EGE
-mRcdcQROoFC6SSBOTCT6+PZBWNFSRAY6jt+uI+4omnu4kxfu7ZI3nQOjO7KC36N+
-20Y5NekmMOkjqUA2VJSnEhef8TFJKXy10GmhVdywQshEK+C/ax1zQ+XHECH1P4Uy
-BmUWpx4CXuAJ+5EcFliIVPsr/yO2qg==
-=T7L6
------END PGP SIGNATURE-----
-
---Sig_/qWvjTvuySbM=9Uxz_p9U+ti--
+      Arnd
