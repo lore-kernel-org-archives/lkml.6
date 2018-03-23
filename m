@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804701-2-15577464203901892841
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804698-2-5704229352660472048
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804701; b=fPdxp1vhBjRLZLMpr6jDJ7nB5QkYtPqqTDlArkkPhb3aJk8
-    OfOZ3r0zf9x9fxwvPJnlDuj+7no9iNMMtT9qjyltdE15RvN8eZnhP4dojngo1nSz
-    AqDu4XZKkht2hVc89xsrvPpHA9dLOsD/nxbshvFOUtlPuWsZRIM4j+SEOUkoaS/B
-    PFxfAdU4zV8J4SuFAFwIQnED0fRxK65NZBSYO9Na3mEVy5X7vATEEvP608TmP0Tl
-    fyP8pbKEYelD9zdq7+5c87zVzuTkQhCD+8Rd0FQuPTBuJD2PYmDH0LKc/tAp+aG4
-    I510ZTH65hegb0/GHvFGZ+ysD2d/boCTsBWgtEA==
+    t=1521804698; b=Jl17DeZLzJtjPQnMfeCw0bVLhP0DNmW4kuFEwHRsjvLdDHQ
+    DNHg99XUQ4LECYIDdeVa0VcrGi5bwVfif58uWKJBnfp7P92+08vlg7i1UKiLQzY4
+    7moHfuTiNwFmnL3Q9z8ZP/y6RD8lnzcPltXNmmeDFXzEqfbLcERXtsdC5PCXs2kN
+    HwH+iHPkJ33fTPe6yYTSRGFwzMI2d178xEdq4RAZRgmeshEsynlmLbJHm4qDQVHM
+    YWwbbWZ4cmDXG4c0iXLuQ48HQd2vm3uyaVHxxFRLmQBOBcqxNUnhEpHZwKkRXxoM
+    fywFcbp7fY6rLOfqGIcBZcLehiDEY3pO1ljJKXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804701; bh=KdryLDj591OeTc6qHupJ7VpmEc
-    zC9lRsauaCOkrMPvw=; b=PXhA2ycRZHxcBcBTIHxRgW6iAipJ8F7roeB38ZM0DH
-    g8K74aD1p6d6CCWqLc/vjDQBJfwx7Zj8OEJ4nABMzaGRGbCdpCZNpKadN1YyDZHp
-    1tLBNAaigPqMIxiA4bCOHnoKCAd0d+8hbbe0LDPHNjuR/pNE7Zb9dg1vKSv+WuSr
-    gZYUnKqXOXyKIqVvYHXPxWHRW7uR9rrEpcl58C5Pd1qqIgov+BZrjOnVMtYku5ha
-    nXNKZg+kraRnddonIpTd0asggdpqyygyP7r/aF9u3AIREn7BiRf7rdOdWKXLR7In
-    aiK7k9eZm9KH5SnvHtgwj2WD2PtFYLFccGnEBedeqzRQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804698; bh=IfW/SXp98FvHFz+5UYMIMIN2ea
+    Ff9oA/kUxeAcHy1pk=; b=Fops+4q3qckYXzVKOVCrabmxOdF96j6mmlw+Y+2sZ5
+    SANO5ugCkhmoOg2ZkSrPZqKfJIJoIjWlxmUxEtUmTTyfQLVCGPCL9ds/EEMMH9JI
+    i0pzvwsy+ILq88/41V2mXOcGo1e7tmzbChN6tfakb35IQivsKom5to3RhCb5q+8N
+    JrO6XdhtaKClUbLFoRokLG6PJfJ0fOKNhgIWTpvRr4DuKMW9kdF2C6ghZ6I40GYR
+    cP76ImNrbUXg72opwPGEnZP0mFZQ82BUWZgFN7qn8NRM9VRAaRFZGX6ILBucNdbP
+    KHmZkDNDqz+YyKGBZrL/2ZM2aIs6X9iOf2+SAKebj1oQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755164AbeCWKGH (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:06:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40640 "EHLO
+        id S1752124AbeCWLbY (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:31:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40668 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755146AbeCWKGA (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:00 -0400
+        with ESMTP id S1755159AbeCWKGH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 034/177] mwifiex: dont leak chan_stats on reset
-Date: Fri, 23 Mar 2018 10:52:42 +0100
-Message-Id: <20180323094206.669962569@linuxfoundation.org>
+Subject: [PATCH 4.9 041/177] tcp: remove poll() flakes with FastOpen
+Date: Fri, 23 Mar 2018 10:52:49 +0100
+Message-Id: <20180323094206.991719112@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,64 +83,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brian Norris <briannorris@chromium.org>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit fb9e67bee3ab7111513130c516ffe378d885c0d0 ]
+[ Upstream commit 0f9fa831aecfc297b7b45d4f046759bcefcf87f0 ]
 
-'chan_stats' is (re)allocated in _mwifiex_fw_dpc() ->
-mwifiex_init_channel_scan_gap(), which is called whenever the device is
-initialized -- at probe or at reset.
+When using TCP FastOpen for an active session, we send one wakeup event
+from tcp_finish_connect(), right before the data eventually contained in
+the received SYNACK is queued to sk->sk_receive_queue.
 
-But we only free it in we completely unregister the adapter, meaning we
-leak a copy of it during every reset.
+This means that depending on machine load or luck, poll() users
+might receive POLLOUT events instead of POLLIN|POLLOUT
 
-Let's free it in the shutdown / removal paths instead (and in the
-error-handling path), to avoid the leak.
+To fix this, we need to move the call to sk->sk_state_change()
+after the (optional) call to tcp_rcv_fastopen_synack()
 
-Ideally, we can eventually unify much of mwifiex_shutdown_sw() and
-mwifiex_remove_card() (way too much copy-and-paste) to reduce the burden
-on bugfixes like this. But that's work for tomorrow.
-
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/marvell/mwifiex/main.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv4/tcp_input.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/main.c
-+++ b/drivers/net/wireless/marvell/mwifiex/main.c
-@@ -146,7 +146,6 @@ static int mwifiex_unregister(struct mwi
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -5606,10 +5606,6 @@ void tcp_finish_connect(struct sock *sk,
+ 	else
+ 		tp->pred_flags = 0;
  
- 	kfree(adapter->regd);
- 
--	vfree(adapter->chan_stats);
- 	kfree(adapter);
- 	return 0;
+-	if (!sock_flag(sk, SOCK_DEAD)) {
+-		sk->sk_state_change(sk);
+-		sk_wake_async(sk, SOCK_WAKE_IO, POLL_OUT);
+-	}
  }
-@@ -636,6 +635,7 @@ static void mwifiex_fw_dpc(const struct
- 	goto done;
  
- err_add_intf:
-+	vfree(adapter->chan_stats);
- 	wiphy_unregister(adapter->wiphy);
- 	wiphy_free(adapter->wiphy);
- err_init_fw:
-@@ -1429,6 +1429,7 @@ mwifiex_shutdown_sw(struct mwifiex_adapt
- 			mwifiex_del_virtual_intf(adapter->wiphy, &priv->wdev);
- 		rtnl_unlock();
- 	}
-+	vfree(adapter->chan_stats);
+ static bool tcp_rcv_fastopen_synack(struct sock *sk, struct sk_buff *synack,
+@@ -5678,6 +5674,7 @@ static int tcp_rcv_synsent_state_process
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct tcp_fastopen_cookie foc = { .len = -1 };
+ 	int saved_clamp = tp->rx_opt.mss_clamp;
++	bool fastopen_fail;
  
- 	up(sem);
- exit_sem_err:
-@@ -1729,6 +1730,7 @@ int mwifiex_remove_card(struct mwifiex_a
- 			mwifiex_del_virtual_intf(adapter->wiphy, &priv->wdev);
- 		rtnl_unlock();
- 	}
-+	vfree(adapter->chan_stats);
+ 	tcp_parse_options(skb, &tp->rx_opt, 0, &foc);
+ 	if (tp->rx_opt.saw_tstamp && tp->rx_opt.rcv_tsecr)
+@@ -5781,10 +5778,15 @@ static int tcp_rcv_synsent_state_process
  
- 	wiphy_unregister(adapter->wiphy);
- 	wiphy_free(adapter->wiphy);
+ 		tcp_finish_connect(sk, skb);
+ 
+-		if ((tp->syn_fastopen || tp->syn_data) &&
+-		    tcp_rcv_fastopen_synack(sk, skb, &foc))
+-			return -1;
++		fastopen_fail = (tp->syn_fastopen || tp->syn_data) &&
++				tcp_rcv_fastopen_synack(sk, skb, &foc);
+ 
++		if (!sock_flag(sk, SOCK_DEAD)) {
++			sk->sk_state_change(sk);
++			sk_wake_async(sk, SOCK_WAKE_IO, POLL_OUT);
++		}
++		if (fastopen_fail)
++			return -1;
+ 		if (sk->sk_write_pending ||
+ 		    icsk->icsk_accept_queue.rskq_defer_accept ||
+ 		    icsk->icsk_ack.pingpong) {
