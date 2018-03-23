@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805621-2-4150372785190956024
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805617-2-14868512887834640370
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805620; b=lz/cYQTqSZMUEe881xaejex6jEp5LdSsQn8Z4AqKfo1Io/d
-    YobD0RtZ81ktkc4SokkupIKWu3auGxu0DIOtS/+QcaF6jorwAkLcVxEBG6WnDHVB
-    CKkb6/kYlwXNldWtb/k6vxHEUpxLIj+vKE0HLU421XblWUcyGZ9TjGQsTxUueyE0
-    xY4D0UZWk7LdbLIhv//6nO4q/h9N8qvL4eekjdUAecbEjoAuM2rdB58SspWnaw1J
-    PLDlFa8z9LI0X1fNVSun09HGyHz0Gao0xBfaM6zelFm0ClXxMdOs/TI7D4RLFeun
-    sPi/VG9tcjsQK+/oZUN7pThkSobe/92sbs/O/0g==
+    t=1521805617; b=fhKhf2fN7LNDm3EniTsCvuRaXpbp/fuPan+aU4DPFyG8LJF
+    e3v3Ufc4lubwuVDv0NEOZnin/9w9MSAuupaMYbekqvAH0E2tzFVUngrrb/viFzV7
+    ZzNr86n2uhaDzT3ebTLKqrqExeYgkfb8LsP+9GqpWb8CTMfjeT7kK1+NPEBogQje
+    F7hE0f48ctcWKJ4Q34qNuVLlSamZTm2pL9/HgxxHZHCqlRetLUbiGQeGIOcpHprm
+    RIl8S/neqqddHndh69KB/pyFIWNFLq5INjWFK4iuIM3oF5MZnAe3NKgMLm1gW3Xx
+    U9ZSXVtWrzaMHpR9yT5xZpCJuao1RY/yQ9MrRyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805620; bh=KPprzAAP4pSgMeXXCnUbqFvmm4
-    +kLpAaRpgUnIdwgUM=; b=VjgxLKpUUXQ3x7QbkIf5d+kUcrbcjaJl/By29pagT8
-    Tn9eP5ZyVhQGzBnmNVaqo3pWZNZ5ezkeF7gjISB0bj6h1Zd0m6DB6O3uSSWOKKqc
-    FzEfta591Q4iShuwcknFc4NKgw+ZweNQkq4D6izFQfe2ss8J41nYXhUAntJx2neQ
-    11clayGkjOCkZWqIr8284IOMXAxkJBY0w3abhoxhO3TpP1PYi6PCHLZNxNw9h4Wh
-    ie2TqL39D+TX8lyTYbLNND5QebtgK3m3APoDCowJCEjIpBqBvcHty+G64x3hA/+Z
-    6PhrFwKEStuNAX7aG5nYZQcwZ3zV8s5GecGopIuw1tcA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805617; bh=gZsiE0bIFI5lJvcm1fuLOrXkFN
+    TBeKLoNAIqwYCib/M=; b=st33nEHORJJClPF3i/SlwQ2VjAoJmf9+5SQHCn43A7
+    YEp7GMqqROjZrjYcsgDBi3q4dzKTBYg7RefN3VvIy46Z5nuj460NEPceGPLw+Ipt
+    VNi5I0ePhOdq3lKWUKLaY4w7MirAvMJ8pZb0CVV9RJmO1WTO8WNCxzJvfjsWorXn
+    TUoNfoteGs2K1erXqAfgAViVo703ooOuddEjlQBtIq+Wv4CBE5kY4te/raf9wNra
+    1J7sqyB9Bgtmw108zS2uKxONbDSO8aPawyHVU55ZL4puVS3qwghVKYFj6ocsx5A6
+    6gCHzAYnYmr/7vHd2sp9KLadLG1UtlGyAQt4DRzXVN2w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,20 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754289AbeCWKCp (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:02:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38424 "EHLO
+        id S1754580AbeCWLqn (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:46:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38454 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754286AbeCWKCo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:02:44 -0400
+        with ESMTP id S1754296AbeCWKCq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:02:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 58/77] RDMA/ocrdma: Fix permissions for OCRDMA_RESET_STATS
-Date: Fri, 23 Mar 2018 10:54:32 +0100
-Message-Id: <20180323094146.165562754@linuxfoundation.org>
+Subject: [PATCH 4.14 59/77] ARM: dts: aspeed-evb: Add unit name to memory node
+Date: Fri, 23 Mar 2018 10:54:33 +0100
+Message-Id: <20180323094146.230026326@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,36 +81,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Joel Stanley <joel@jms.id.au>
 
 
-[ Upstream commit 744820869166c8c78be891240cf5f66e8a333694 ]
+[ Upstream commit e40ed274489a5f516da120186578eb379b452ac6 ]
 
-Debugfs file reset_stats is created with S_IRUSR permissions,
-but ocrdma_dbgfs_ops_read() doesn't support OCRDMA_RESET_STATS,
-whereas ocrdma_dbgfs_ops_write() supports only OCRDMA_RESET_STATS.
+Fixes a warning when building with W=1.
 
-The patch fixes misstype with permissions.
+All of the ASPEED device trees build without warnings now.
 
-Found by Linux Driver Verification project (linuxtesting.org).
-
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_stats.c |    2 +-
+ arch/arm/boot/dts/aspeed-ast2500-evb.dts |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-@@ -834,7 +834,7 @@ void ocrdma_add_port_stats(struct ocrdma
+--- a/arch/arm/boot/dts/aspeed-ast2500-evb.dts
++++ b/arch/arm/boot/dts/aspeed-ast2500-evb.dts
+@@ -16,7 +16,7 @@
+ 		bootargs = "console=ttyS4,115200 earlyprintk";
+ 	};
  
- 	dev->reset_stats.type = OCRDMA_RESET_STATS;
- 	dev->reset_stats.dev = dev;
--	if (!debugfs_create_file("reset_stats", S_IRUSR, dev->dir,
-+	if (!debugfs_create_file("reset_stats", 0200, dev->dir,
- 				&dev->reset_stats, &ocrdma_dbg_ops))
- 		goto err;
- 
+-	memory {
++	memory@80000000 {
+ 		reg = <0x80000000 0x20000000>;
+ 	};
+ };
