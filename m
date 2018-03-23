@@ -1,53 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeCWAoT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:44:19 -0400
-Received: from ozlabs.org ([103.22.144.67]:49905 "EHLO ozlabs.org"
+        id S1751739AbeCWAqc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:46:32 -0400
+Received: from ozlabs.org ([103.22.144.67]:59835 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751553AbeCWAoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 20:44:17 -0400
+        id S1751551AbeCWAqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 20:46:30 -0400
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 23 Mar 2018 11:43:26 +1100
+Date: Fri, 23 Mar 2018 11:45:48 +1100
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 To: DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
 Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
         Intel Graphics <intel-gfx@lists.freedesktop.org>,
         Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
+        Lukas Wunner <lukas@wunner.de>, Hans de Goede <hdegoede@redhat.com>,
+        Takashi Iwai <tiwai@suse.de>
 Subject: Re: linux-next: manual merge of the drm-misc tree with Linus' tree
-Message-ID: <20180323114326.6cb18906@canb.auug.org.au>
-In-Reply-To: <20180320120841.5b348bf4@canb.auug.org.au>
-References: <20180320120841.5b348bf4@canb.auug.org.au>
+Message-ID: <20180323114548.11171d5b@canb.auug.org.au>
+In-Reply-To: <20180315141425.49479b8b@canb.auug.org.au>
+References: <20180315141425.49479b8b@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bBvXSGChN1XQTvf0F840=bf"; protocol="application/pgp-signature"
+ boundary="Sig_/OBMZ_RtA822_CskO9ubQ5uD"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/bBvXSGChN1XQTvf0F840=bf
+--Sig_/OBMZ_RtA822_CskO9ubQ5uD
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Tue, 20 Mar 2018 12:08:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Thu, 15 Mar 2018 14:14:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
 > Today's linux-next merge of the drm-misc tree got a conflict in:
 >=20
->   drivers/gpu/drm/sun4i/sun4i_tcon.h
+>   sound/pci/hda/hda_intel.c
 >=20
-> between commit:
+> between commits:
 >=20
->   e742a17cd360 ("drm/sun4i: tcon: Reduce the scope of the LVDS error a bi=
-t")
+>   1ba8f9d30817 ("ALSA: hda: Add a power_save blacklist")
+>   40088dc4e1ea ("ALSA: hda - Revert power_save option default value")
 >=20
 > from Linus' tree and commit:
 >=20
->   6664e9dc5383 ("drm/sun4i: Add support for A80 TCONs")
+>   07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
 >=20
 > from the drm-misc tree.
 >=20
@@ -62,20 +62,55 @@ t")
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc drivers/gpu/drm/sun4i/sun4i_tcon.h
-> index abdc6ad6b384,d3a945b7bb60..000000000000
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-> @@@ -176,7 -176,7 +176,8 @@@ struct sun4i_tcon_quirks=20
->   	bool	has_channel_1;	/* a33 does not have channel 1 */
->   	bool	has_lvds_alt;	/* Does the LVDS clock have a parent other than the=
- TCON clock? */
->   	bool	needs_de_be_mux; /* sun6i needs mux to select backend */
->  +	bool	supports_lvds;   /* Does the TCON support an LVDS output? */
-> + 	bool    needs_edp_reset; /* a80 edp reset needed for tcon0 access */
+> diff --cc sound/pci/hda/hda_intel.c
+> index d5017adf9feb,ec4e6b829ee2..000000000000
+> --- a/sound/pci/hda/hda_intel.c
+> +++ b/sound/pci/hda/hda_intel.c
+> @@@ -2219,8 -2201,8 +2223,9 @@@ static int azx_probe_continue(struct az
+>   	struct hda_intel *hda =3D container_of(chip, struct hda_intel, chip);
+>   	struct hdac_bus *bus =3D azx_bus(chip);
+>   	struct pci_dev *pci =3D chip->pci;
+> + 	struct hda_codec *codec;
+>   	int dev =3D chip->dev_index;
+>  +	int val;
+>   	int err;
 >  =20
->   	/* callback to handle tcon muxing options */
->   	int	(*set_mux)(struct sun4i_tcon *, const struct drm_encoder *);
+>   	hda->probe_continued =3D 1;
+> @@@ -2302,21 -2284,16 +2307,30 @@@
+>   	chip->running =3D 1;
+>   	azx_add_card_list(chip);
+>  =20
+>  +	val =3D power_save;
+>  +#ifdef CONFIG_PM
+>  +	if (pm_blacklist) {
+>  +		const struct snd_pci_quirk *q;
+>  +
+>  +		q =3D snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
+>  +		if (q && val) {
+>  +			dev_info(chip->card->dev, "device %04x:%04x is on the power_save bla=
+cklist, forcing power_save to 0\n",
+>  +				 q->subvendor, q->subdevice);
+>  +			val =3D 0;
+>  +		}
+>  +	}
+>  +#endif /* CONFIG_PM */
+> ++
+> + 	/*
+> + 	 * The discrete GPU cannot power down unless the HDA controller runtime
+> + 	 * suspends, so activate runtime PM on codecs even if power_save =3D=
+=3D 0.
+> + 	 */
+> + 	if (use_vga_switcheroo(hda))
+> + 		list_for_each_codec(codec, &chip->bus)
+> + 			codec->auto_runtime_pm =3D 1;
+> +=20
+>  -	snd_hda_set_power_save(&chip->bus, power_save * 1000);
+>  +	snd_hda_set_power_save(&chip->bus, val * 1000);
+> - 	if (azx_has_pm_runtime(chip) || hda->use_vga_switcheroo)
+> + 	if (azx_has_pm_runtime(chip))
+>   		pm_runtime_put_autosuspend(&pci->dev);
+>  =20
+>   out_free:
 
 This is now a conflict between the drm tree and Linus' tree.
 
@@ -83,20 +118,20 @@ This is now a conflict between the drm tree and Linus' tree.
 Cheers,
 Stephen Rothwell
 
---Sig_/bBvXSGChN1XQTvf0F840=bf
+--Sig_/OBMZ_RtA822_CskO9ubQ5uD
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0Ta4ACgkQAVBC80lX
-0GxciQgAo6y4gPfV9B5LD7NpFBuM4K/EqFfSXt4zcRSIPKHkE8kAP3oQqy1ysIyM
-xsDKhJVX0geHZzeePf0rTfaz3PH+/dF4CWQ6df7La5G3NFy+jGkixSJr8zQw2wz7
-xO86DOw6iVQFzf+g5Dah3NXlq7IAE9FuSWdrCRzC1n/TefR/GW20eoMtWWyfDW9I
-6zIgzNlIbUnli39VTV+pow4qPWD6ZpAELBbRc+gtNk+wFiEWlV+3YoCO7HoBEYoE
-a6LHBku1GyJPlIDpNpBEA7YdwFGQwzTo33s99lJMQfogI7tjijBeXL/yh5I05yqA
-azfbIotI0jIfpy3MGT5t8ruplyO6SA==
-=46+c
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0TjwACgkQAVBC80lX
+0Gxo1Af9E2i+YLoJIQRVuU4I+CVf5O7s1i13MsSytqyu0bU/k8zcmbc1flUZsta3
+1uVWsVsq/L4bofzdskAkw8IluPEQyKlDg63VoPUPbItXwfHQw8N/Q0ZZMz7GaQE5
+7ce/muy7Nb5XpJaed2pxlZYjMAn0EPwg37OnjogHsLtWk0uLa2PAmv77qJQBTmoa
+RFipB8UvRbeD1ddv+3HsIUe4KMcF+hAAY+c8MZViyJgedTfzrV8aUFpVPTnDAToE
+aKiCua89D1EXVsdHS73Lj7Wtvy/x+PfV3J/nBEEk9KimxCjPUw3FFdT9PGzRLE80
+zUN+UNP+J6lRaURt5Mm2pW1THK+HFQ==
+=yNYw
 -----END PGP SIGNATURE-----
 
---Sig_/bBvXSGChN1XQTvf0F840=bf--
+--Sig_/OBMZ_RtA822_CskO9ubQ5uD--
