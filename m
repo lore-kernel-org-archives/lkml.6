@@ -1,61 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752109AbeCWV1z (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 17:27:55 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42399 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751713AbeCWV1y (ORCPT
+        id S1752227AbeCWV2V (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 17:28:21 -0400
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:43083 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751595AbeCWV2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 17:27:54 -0400
-Date: Fri, 23 Mar 2018 22:27:51 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Eric Dumazet <edumazet@google.com>
-cc: x86 <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH v2 1/2] x86, msr: add rdmsr_safe_on_cpu_resched() and
- use it in msr_read()
-In-Reply-To: <20180319152503.123372-1-edumazet@google.com>
-Message-ID: <alpine.DEB.2.21.1803232221550.1481@nanos.tec.linutronix.de>
-References: <20180319152503.123372-1-edumazet@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 23 Mar 2018 17:28:20 -0400
+X-Google-Smtp-Source: AG47ELv8OqLAkrscMYbnOBDmxRsJ/D1ZcX4I2vv2AKPjp5vRthP3ilN5/29W+/x90COX9+0Lgkgmig==
+To: Vincent Guittot <vincent.guittot@linaro.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Problem with commit 31e77c93e432 "sched/fair: Update blocked load
+ when newly idle"
+Message-ID: <e1da0be1-94d8-d5d0-8329-4507c51ddd64@gmail.com>
+Date: Fri, 23 Mar 2018 22:28:09 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Mar 2018, Eric Dumazet wrote:
+Recently I started to get the following problems with linux-next:
 
-> I noticed high latencies caused by a daemon periodically reading
-> various MSR on all cpus. KASAN kernels would see ~10ms latencies
-> simply reading one MSR. Even without KASAN, sending IPI to CPU
-> in deep sleep state or blocking hard IRQ in a a long section,
-> then waiting for the answer can consume hundreds of usec.
-> 
-> This patch adds rdmsr_safe_on_cpu_resched() which does not spin.
-> 
-> I use this function from msr_read() but future patches might
-> convert other callers to use this variant as well.
-> 
-> Overall daemon cpu usage was reduced by 35 %,
-> and latencies caused by msr_read() disappeared.
+- When working via Putty/SSH on the system the console frequently freezes
+  for few seconds. Sometimes only opening a second console makes the
+  first one react again.
 
-Looking at all call sites. None of them is performance critical and all of
-them are in preemptible context.
+- I get "INFO: rcu_sched detected stalls on CPUs/tasks:" warnings as
+  described in [1].
 
-So we simply can switch the rdmsr_safe_on_cpu() implementation over to wait
-mode completely.
+Bisecting the issue resulted in:
 
-> +/* Note: This version spins in smp_call_function_single().
-> + * Consider using rdmsr_safe_on_cpu_resched() variant instead.
+31e77c93e432dec79c7d90b888bbfc3652592741 is the first bad commit
+commit 31e77c93e432dec79c7d90b888bbfc3652592741
+Author: Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed Feb 14 16:26:46 2018 +0100
 
-Bah. This is not networking code. x86 uses sensible comment style :)
+    sched/fair: Update blocked load when newly idle
 
-Thanks,
+    When NEWLY_IDLE load balance is not triggered, we might need to update the
+    blocked load anyway. We can kick an ilb so an idle CPU will take care of
+    updating blocked load or we can try to update them locally before entering
+    idle. In the latter case, we reuse part of the nohz_idle_balance.
 
-	tglx
+After reversing this commit at least the issue with the freezing console
+is gone. The second one appeared only sporadically, I still have to see
+whether it pops up again.
+
+System is a Zotac CI321 mini PC with Intel Celeron 2961Y CPU.
+If you need more details, please let me know.
+
+Regards, Heiner
+
+[1] https://lkml.org/lkml/2018/3/22/605
