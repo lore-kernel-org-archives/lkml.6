@@ -1,63 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751883AbeCWTqF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 15:46:05 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42226 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751427AbeCWTqE (ORCPT
+        id S1751981AbeCWTr2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:47:28 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:35300 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751632AbeCWTr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 15:46:04 -0400
-Date: Fri, 23 Mar 2018 20:45:59 +0100 (CET)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Dave Hansen <dave.hansen@intel.com>
-cc: Shakeel Butt <shakeelb@google.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        linuxram@us.ibm.com, mpe@ellerman.id.au,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org
-Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from
- PROT_EXEC
-In-Reply-To: <alpine.DEB.2.21.1803232036140.1481@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1803232044350.1481@nanos.tec.linutronix.de>
-References: <20180323180903.33B17168@viggo.jf.intel.com> <20180323180911.E43ACAB8@viggo.jf.intel.com> <CALvZod6F8x-smAE7sEGfJ3Ds5p6M5Qj6gd-P-VLejuBxfU6niQ@mail.gmail.com> <f7897068-18a3-d88b-0458-5dcf05d7ffc2@intel.com>
- <alpine.DEB.2.21.1803232036140.1481@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 23 Mar 2018 15:47:26 -0400
+X-Google-Smtp-Source: AG47ELsIlIC1TjlUyWMyE2ZZaIgAAsxWAxoUiSh8avagSGGXNs887BIQE5SVmNuTy9TUCZjIHOtVIA==
+Date: Fri, 23 Mar 2018 12:47:22 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>
+Cc: cgroups@vger.kernel.org, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH cgroup/for-4.17 1/2] cgroup: Explicitly remove core interface
+ files
+Message-ID: <20180323194722.GE2149215@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Mar 2018, Thomas Gleixner wrote:
+The "cgroup." core interface files bypass the usual interface removal
+path and get removed recursively along with the cgroup itself.  While
+this works now, the subtle discrepancy gets in the way of implementing
+common mechanisms.
 
-> On Fri, 23 Mar 2018, Dave Hansen wrote:
-> 
-> > On 03/23/2018 12:15 PM, Shakeel Butt wrote:
-> > >> We had a check for PROT_READ/WRITE, but it did not work
-> > >> for PROT_NONE.  This entirely removes the PROT_* checks,
-> > >> which ensures that PROT_NONE now works.
-> > >>
-> > >> Reported-by: Shakeel Butt <shakeelb@google.com>
-> > >> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> > > Should there be a 'Fixes' tag? Also should this patch go to stable?
-> > 
-> > There could be, but I'm to lazy to dig up the original commit.  Does it
-> > matter?
-> > 
-> > And, yes, I think it probably makes sense for -stable.  I'll add that if
-> > I resend this series.
-> 
-> The fixes tag makes sense in general even if the patch is not tagged for
-> stable. It gives you immediate context and I use it a lot to look why this
-> went unnoticed or what the context of that change was.
+This patch updates cgroup core interface file handling so that it's
+consistent with controller interface files.  When added, the css is
+marked CSS_VISIBLE and they're explicitly removed before the cgroup is
+destroyed.
 
-That said, I'm even lazier than you and prefer you to dig up the original
-commit :)
+This doesn't cause user-visible behavior changes.
 
-Thanks,
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ kernel/cgroup/cgroup.c |   35 ++++++++++++++++++++++-------------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
 
-	tglx
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1573,8 +1573,17 @@ static void css_clear_dir(struct cgroup_
+ 
+ 	css->flags &= ~CSS_VISIBLE;
+ 
+-	list_for_each_entry(cfts, &css->ss->cfts, node)
++	if (!css->ss) {
++		if (cgroup_on_dfl(cgrp))
++			cfts = cgroup_base_files;
++		else
++			cfts = cgroup1_base_files;
++
+ 		cgroup_addrm_files(css, cgrp, cfts, false);
++	} else {
++		list_for_each_entry(cfts, &css->ss->cfts, node)
++			cgroup_addrm_files(css, cgrp, cfts, false);
++	}
+ }
+ 
+ /**
+@@ -1598,14 +1607,16 @@ static int css_populate_dir(struct cgrou
+ 		else
+ 			cfts = cgroup1_base_files;
+ 
+-		return cgroup_addrm_files(&cgrp->self, cgrp, cfts, true);
+-	}
+-
+-	list_for_each_entry(cfts, &css->ss->cfts, node) {
+-		ret = cgroup_addrm_files(css, cgrp, cfts, true);
+-		if (ret < 0) {
+-			failed_cfts = cfts;
+-			goto err;
++		ret = cgroup_addrm_files(&cgrp->self, cgrp, cfts, true);
++		if (ret < 0)
++			return ret;
++	} else {
++		list_for_each_entry(cfts, &css->ss->cfts, node) {
++			ret = cgroup_addrm_files(css, cgrp, cfts, true);
++			if (ret < 0) {
++				failed_cfts = cfts;
++				goto err;
++			}
+ 		}
+ 	}
+ 
+@@ -5097,10 +5108,8 @@ static int cgroup_destroy_locked(struct
+ 	for_each_css(css, ssid, cgrp)
+ 		kill_css(css);
+ 
+-	/*
+-	 * Remove @cgrp directory along with the base files.  @cgrp has an
+-	 * extra ref on its kn.
+-	 */
++	/* clear and remove @cgrp dir, @cgrp has an extra ref on its kn */
++	css_clear_dir(&cgrp->self);
+ 	kernfs_remove(cgrp->kn);
+ 
+ 	if (parent && cgroup_is_threaded(cgrp))
