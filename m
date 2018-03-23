@@ -1,129 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753426AbeCWMGb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 08:06:31 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37713 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753330AbeCWMG1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 08:06:27 -0400
-X-Google-Smtp-Source: AG47ELsIVnGvteziI65sq1FBvPAQc0S0qVlnNxBOOfpH3A7xwXGuYRO1j5URbiMT9CPZnKfbgHJY+A==
-Date: Fri, 23 Mar 2018 21:06:22 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        bugzilla-daemon@bugzilla.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, wen.yang99@zte.com.cn,
-        Petr Mladek <pmladek@suse.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [Bug 199003] console stalled, cause Hard LOCKUP.
-Message-ID: <20180323120622.GA510@jagdpanzerIV>
-References: <bug-199003-8243@https.bugzilla.kernel.org/>
- <bug-199003-8243-Txkdkdv5Cm@https.bugzilla.kernel.org/>
- <20180321094422.6e099480@gandalf.local.home>
- <20180322021437.GA3181@jagdpanzerIV>
- <20180322182517.511aad9d@gandalf.local.home>
+        id S1753391AbeCWMH3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:07:29 -0400
+Received: from ozlabs.org ([103.22.144.67]:54159 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752672AbeCWJ6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:58:44 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 23 Mar 2018 20:57:55 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Message-ID: <20180323205755.465b3f9f@canb.auug.org.au>
+In-Reply-To: <20180323083134.GB23865@lst.de>
+References: <20180323132853.67195c47@canb.auug.org.au>
+        <20180323083134.GB23865@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180322182517.511aad9d@gandalf.local.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Ws2TWC89h/wNzzKkjQ3PrHa"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Steven,
+--Sig_/Ws2TWC89h/wNzzKkjQ3PrHa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On (03/22/18 18:25), Steven Rostedt wrote:
-> > static void wait_for_xmitr(struct uart_8250_port *up, int bits)
-> > {
-> > 	unsigned int status, tmout = 10000;
-> > 
-> > 	/* Wait up to 10ms for the character(s) to be sent. */
-> > 	for (;;) {
-			....
-> > 		if (--tmout == 0)
-> > 			break;
-> > 		udelay(1);
-> > 		touch_nmi_watchdog();
-> > 	}
-> > 
-> > 	/* Wait up to 1s for flow control if necessary */
-> > 	if (up->port.flags & UPF_CONS_FLOW) {
-> > 		for (tmout = 1000000; tmout; tmout--) {
-			....
-> > 			udelay(1);
-> > 			touch_nmi_watchdog();
-> > 		}
-> > 	}
-> > 	...
-> > }
-> > 
-> > a 1+ second long busy loop in the console driver is quite close to
-> 
-> Yeah that's nasty but shouldn't ever hit 1 second unless there's
-> hardware issues.
+Hi Christoph,
 
-Would probably agree. But even without that 1 second UPF_CONS_FLOW loop
-(it seems that there are not so many consoles that have that flag set),
-we have a 10ms [10000 * udelay(1)] loop after every character. So if we
-print a 512-bytes kernel message [1/2 of a max printk message length]
-than its 0.01 * (512 + \r + \n) seconds. Which is a lot, unless I
-miscalculated 10000 * udelay(1). Delays in the first loop are normal,
-probably not always 10ms, tho, but still.
+On Fri, 23 Mar 2018 09:31:34 +0100 Christoph Hellwig <hch@lst.de> wrote:
+>
+> True.  I'll send a fixup.
 
-[..]
-> > Sometimes I really wish we had detached consoles. Direct printk()->console
-> > is nice and cool, but... we can't have it. I don't want to pressure for
-> > printk_kthread, but look at all those consoles. There are not so many ways
-> > out. What do you think?
-> 
-> If anything, perhaps we could have a printk thread that is triggered to
-> wake up if any print is taking a long time, or if there's a lot of
-> prints happening. And then it could try to print anything in the
-> buffer. Just the mere printk() in the thread should do the hand off.
+Thanks.
 
-OK. Let's think more about this. I have that "wake up printk_kthread if
-any print is taking a long time, or if there's a lot of prints happening"
-patch set: a watchdog threshold based solution. I didn't update it for a
-while, but can take a look. Detaching printouts does look to me like
-something we need to do.
+--=20
+Cheers,
+Stephen Rothwell
 
-Offloading does not work well enough with hand off (in its current
-form). Because the CPU that we offloaded printing from can re-take
-console_sem the very next time it calls printk().
+--Sig_/Ws2TWC89h/wNzzKkjQ3PrHa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Something like
+-----BEGIN PGP SIGNATURE-----
 
-       spin_lock(&lock)
-	printk() -> 8250
-	 console_unlock()
-	 offload		printk_kthread
-	printk() -> 8250	 console_unlock()
-	printk() -> 8250	  hand off
-	 console_unlock()
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0z6MACgkQAVBC80lX
+0GxV7Af/ZLWTng48hrdXUYnlHtC8t5EPNRyH62cULW3Cs6NsrQUcoxKy1obemRu4
+CLGVoUhx8OLfkTurh22N59lCvHhKMn30vt9YZojZL4Uk3stFXgPUcJtauf/ke0qo
+93KzoEzzFZ3z5mGc8A/+1fZ1grzecjpdCaLM2fwzNdVw4SZld/tGIffsFKgzm/2/
+TW+TfEuv45W8HURcgy2oQMFccxV/kOQAa/g/FU+pu6yQcf9stE3Soq+SDUh8SWKI
+10d9qVaYKgjSFKlpWy13ByV0wZ//ah1DGg6LfZeupQUpzgaM22SgsZSBnmP4OJbD
+TAcC/9oVpxa2i164f9dug2vIlRzQ1Q==
+=/wg8
+-----END PGP SIGNATURE-----
 
-so if printk() -> 8250 is very slow and is under some spin_lock
-(like in case of Bug 199003) then offloading doesn't make that much
-difference here. Right? If we don't hand off from printk_kthread
-then things do look different.
-
-> I wonder how bad it would be to wake the printk thread whenever a
-> printk() is executed. Printks really shouldn't be that common.
-
-That didn't work quite well for me. But I must admit that my previous
-printk_kthread version had some major design problems - preemption in
-printk path [including printk_kthread preemption], the lack of any
-reliable way for any CPU to control what printk_kthread is doing, and
-so on and on. Current version, I guess, is better. But I don't do
-"vprintk_emit() -> wake_up(printk_kthread)", instead I let "direct"
-printks and wake_up(printk_kthread) only when current CPU spent too
-much time in call_console_drivers(); it's quite easy to track given
-that printk->console_unlock() is preempt_disable() now. Besides,
-offloading from console_unlock() automatically handles various cases
-for use. Like printk_deferred() -> IRQ -> console_unlock() and so on.
-
-What do you think?
-
-	-ss
+--Sig_/Ws2TWC89h/wNzzKkjQ3PrHa--
