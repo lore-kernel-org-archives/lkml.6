@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751854AbeCWAzw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:55:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48990 "EHLO mx1.redhat.com"
+        id S1751909AbeCWAz5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:55:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49666 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751789AbeCWAzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 20:55:50 -0400
+        id S1751837AbeCWAzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 20:55:52 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
+        linux-kernel@vger.kernel.org,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
         Mark Hairgrove <mhairgrove@nvidia.com>
-Subject: [PATCH 03/15] mm/hmm: HMM should have a callback before MM is destroyed v3
-Date: Thu, 22 Mar 2018 20:55:15 -0400
-Message-Id: <20180323005527.758-4-jglisse@redhat.com>
+Subject: [PATCH 07/15] mm/hmm: remove HMM_PFN_READ flag and ignore peculiar architecture v2
+Date: Thu, 22 Mar 2018 20:55:19 -0400
+Message-Id: <20180323005527.758-8-jglisse@redhat.com>
 In-Reply-To: <20180323005527.758-1-jglisse@redhat.com>
 References: <20180323005527.758-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -25,107 +26,175 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ralph Campbell <rcampbell@nvidia.com>
+From: Jérôme Glisse <jglisse@redhat.com>
 
-The hmm_mirror_register() function registers a callback for when
-the CPU pagetable is modified. Normally, the device driver will
-call hmm_mirror_unregister() when the process using the device is
-finished. However, if the process exits uncleanly, the struct_mm
-can be destroyed with no warning to the device driver.
+Only peculiar architecture allow write without read thus assume that
+any valid pfn do allow for read. Note we do not care for write only
+because it does make sense with thing like atomic compare and exchange
+or any other operations that allow you to get the memory value through
+them.
 
 Changed since v1:
-  - dropped VM_BUG_ON()
-  - cc stable
-Changed since v2:
-  - drop stable
-  - Split list removale and call to driver release callback. This
-    allow the release callback to wait on any pending fault handler
-    without deadlock.
+  - Fail early on vma without read permission and return an error
+  - Improve comments
 
-Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
 Cc: Mark Hairgrove <mhairgrove@nvidia.com>
 ---
- include/linux/hmm.h | 10 ++++++++++
- mm/hmm.c            | 29 ++++++++++++++++++++++++++++-
- 2 files changed, 38 insertions(+), 1 deletion(-)
+ include/linux/hmm.h | 16 +++++++---------
+ mm/hmm.c            | 44 ++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 41 insertions(+), 19 deletions(-)
 
 diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 36dd21fe5caf..fa7b51f65905 100644
+index d0d6760cdada..dd907f614dfe 100644
 --- a/include/linux/hmm.h
 +++ b/include/linux/hmm.h
-@@ -218,6 +218,16 @@ enum hmm_update_type {
-  * @update: callback to update range on a device
-  */
- struct hmm_mirror_ops {
-+	/* release() - release hmm_mirror
-+	 *
-+	 * @mirror: pointer to struct hmm_mirror
-+	 *
-+	 * This is called when the mm_struct is being released.
-+	 * The callback should make sure no references to the mirror occur
-+	 * after the callback returns.
-+	 */
-+	void (*release)(struct hmm_mirror *mirror);
-+
- 	/* sync_cpu_device_pagetables() - synchronize page tables
- 	 *
- 	 * @mirror: pointer to struct hmm_mirror
+@@ -83,8 +83,7 @@ struct hmm;
+  * hmm_pfn_t - HMM uses its own pfn type to keep several flags per page
+  *
+  * Flags:
+- * HMM_PFN_VALID: pfn is valid
+- * HMM_PFN_READ:  CPU page table has read permission set
++ * HMM_PFN_VALID: pfn is valid. It has, at least, read permission.
+  * HMM_PFN_WRITE: CPU page table has write permission set
+  * HMM_PFN_ERROR: corresponding CPU page table entry points to poisoned memory
+  * HMM_PFN_EMPTY: corresponding CPU page table entry is pte_none()
+@@ -97,13 +96,12 @@ struct hmm;
+ typedef unsigned long hmm_pfn_t;
+ 
+ #define HMM_PFN_VALID (1 << 0)
+-#define HMM_PFN_READ (1 << 1)
+-#define HMM_PFN_WRITE (1 << 2)
+-#define HMM_PFN_ERROR (1 << 3)
+-#define HMM_PFN_EMPTY (1 << 4)
+-#define HMM_PFN_SPECIAL (1 << 5)
+-#define HMM_PFN_DEVICE_UNADDRESSABLE (1 << 6)
+-#define HMM_PFN_SHIFT 7
++#define HMM_PFN_WRITE (1 << 1)
++#define HMM_PFN_ERROR (1 << 2)
++#define HMM_PFN_EMPTY (1 << 3)
++#define HMM_PFN_SPECIAL (1 << 4)
++#define HMM_PFN_DEVICE_UNADDRESSABLE (1 << 5)
++#define HMM_PFN_SHIFT 6
+ 
+ /*
+  * hmm_pfn_t_to_page() - return struct page pointed to by a valid hmm_pfn_t
 diff --git a/mm/hmm.c b/mm/hmm.c
-index 320545b98ff5..8116727766f7 100644
+index fc5057d7aa05..5da0f852a7aa 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -160,6 +160,32 @@ static void hmm_invalidate_range(struct hmm *hmm,
- 	up_read(&hmm->mirrors_sem);
- }
+@@ -417,11 +417,9 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 	hmm_pfn_t *pfns = range->pfns;
+ 	unsigned long addr = start, i;
+ 	bool write_fault;
+-	hmm_pfn_t flag;
+ 	pte_t *ptep;
  
-+static void hmm_release(struct mmu_notifier *mn, struct mm_struct *mm)
-+{
-+	struct hmm_mirror *mirror;
-+	struct hmm *hmm = mm->hmm;
-+
-+	down_write(&hmm->mirrors_sem);
-+	mirror = list_first_entry_or_null(&hmm->mirrors, struct hmm_mirror,
-+					  list);
-+	while (mirror) {
-+		list_del_init(&mirror->list);
-+		if (mirror->ops->release) {
-+			/*
-+			 * Drop mirrors_sem so callback can wait on any pending
-+			 * work that might itself trigger mmu_notifier callback
-+			 * and thus would deadlock with us.
-+			 */
-+			up_write(&hmm->mirrors_sem);
-+			mirror->ops->release(mirror);
-+			down_write(&hmm->mirrors_sem);
-+		}
-+		mirror = list_first_entry_or_null(&hmm->mirrors,
-+						  struct hmm_mirror, list);
+ 	i = (addr - range->start) >> PAGE_SHIFT;
+-	flag = vma->vm_flags & VM_READ ? HMM_PFN_READ : 0;
+ 	write_fault = hmm_vma_walk->fault & hmm_vma_walk->write;
+ 
+ again:
+@@ -433,6 +431,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 
+ 	if (pmd_devmap(*pmdp) || pmd_trans_huge(*pmdp)) {
+ 		unsigned long pfn;
++		hmm_pfn_t flag = 0;
+ 		pmd_t pmd;
+ 
+ 		/*
+@@ -497,7 +496,6 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 				} else if (write_fault)
+ 					goto fault;
+ 				pfns[i] |= HMM_PFN_DEVICE_UNADDRESSABLE;
+-				pfns[i] |= flag;
+ 			} else if (is_migration_entry(entry)) {
+ 				if (hmm_vma_walk->fault) {
+ 					pte_unmap(ptep);
+@@ -517,7 +515,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 		if (write_fault && !pte_write(pte))
+ 			goto fault;
+ 
+-		pfns[i] = hmm_pfn_t_from_pfn(pte_pfn(pte)) | flag;
++		pfns[i] = hmm_pfn_t_from_pfn(pte_pfn(pte));
+ 		pfns[i] |= pte_write(pte) ? HMM_PFN_WRITE : 0;
+ 		continue;
+ 
+@@ -534,7 +532,8 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ /*
+  * hmm_vma_get_pfns() - snapshot CPU page table for a range of virtual addresses
+  * @range: range being snapshotted
+- * Returns: -EINVAL if invalid argument, -ENOMEM out of memory, 0 success
++ * Returns: -EINVAL if invalid argument, -ENOMEM out of memory, -EPERM invalid
++ *          vma permission, 0 success
+  *
+  * This snapshots the CPU page table for a range of virtual addresses. Snapshot
+  * validity is tracked by range struct. See hmm_vma_range_done() for further
+@@ -573,6 +572,17 @@ int hmm_vma_get_pfns(struct hmm_range *range)
+ 	if (!hmm->mmu_notifier.ops)
+ 		return -EINVAL;
+ 
++	if (!(vma->vm_flags & VM_READ)) {
++		/*
++		 * If vma do not allow read access, then assume that it does
++		 * not allow write access, either. Architecture that allow
++		 * write without read access are not supported by HMM, because
++		 * operations such has atomic access would not work.
++		 */
++		hmm_pfns_clear(range->pfns, range->start, range->end);
++		return -EPERM;
 +	}
-+	up_write(&hmm->mirrors_sem);
-+}
 +
- static void hmm_invalidate_range_start(struct mmu_notifier *mn,
- 				       struct mm_struct *mm,
- 				       unsigned long start,
-@@ -185,6 +211,7 @@ static void hmm_invalidate_range_end(struct mmu_notifier *mn,
- }
+ 	/* Initialize range to track CPU page table update */
+ 	spin_lock(&hmm->lock);
+ 	range->valid = true;
+@@ -686,6 +696,9 @@ EXPORT_SYMBOL(hmm_vma_range_done);
+  *     goto retry;
+  *   case 0:
+  *     break;
++ *   case -ENOMEM:
++ *   case -EINVAL:
++ *   case -EPERM:
+  *   default:
+  *     // Handle error !
+  *     up_read(&mm->mmap_sem)
+@@ -727,11 +740,16 @@ int hmm_vma_fault(struct hmm_range *range, bool write, bool block)
+ 	if (!hmm->mmu_notifier.ops)
+ 		return -EINVAL;
  
- static const struct mmu_notifier_ops hmm_mmu_notifier_ops = {
-+	.release		= hmm_release,
- 	.invalidate_range_start	= hmm_invalidate_range_start,
- 	.invalidate_range_end	= hmm_invalidate_range_end,
- };
-@@ -230,7 +257,7 @@ void hmm_mirror_unregister(struct hmm_mirror *mirror)
- 	struct hmm *hmm = mirror->hmm;
+-	/* Initialize range to track CPU page table update */
+-	spin_lock(&hmm->lock);
+-	range->valid = true;
+-	list_add_rcu(&range->list, &hmm->ranges);
+-	spin_unlock(&hmm->lock);
++	if (!(vma->vm_flags & VM_READ)) {
++		/*
++		 * If vma do not allow read access, then assume that it does
++		 * not allow write access, either. Architecture that allow
++		 * write without read access are not supported by HMM, because
++		 * operations such has atomic access would not work.
++		 */
++		hmm_pfns_clear(range->pfns, range->start, range->end);
++		return -EPERM;
++	}
  
- 	down_write(&hmm->mirrors_sem);
--	list_del(&mirror->list);
-+	list_del_init(&mirror->list);
- 	up_write(&hmm->mirrors_sem);
- }
- EXPORT_SYMBOL(hmm_mirror_unregister);
+ 	/* FIXME support hugetlb fs */
+ 	if (is_vm_hugetlb_page(vma) || (vma->vm_flags & VM_SPECIAL)) {
+@@ -739,6 +757,12 @@ int hmm_vma_fault(struct hmm_range *range, bool write, bool block)
+ 		return 0;
+ 	}
+ 
++	/* Initialize range to track CPU page table update */
++	spin_lock(&hmm->lock);
++	range->valid = true;
++	list_add_rcu(&range->list, &hmm->ranges);
++	spin_unlock(&hmm->lock);
++
+ 	hmm_vma_walk.fault = true;
+ 	hmm_vma_walk.write = write;
+ 	hmm_vma_walk.block = block;
 -- 
 2.14.3
