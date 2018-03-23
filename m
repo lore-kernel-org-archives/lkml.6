@@ -1,18 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752263AbeCWQGM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:06:12 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6687 "EHLO huawei.com"
+        id S1752309AbeCWQGQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:06:16 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6685 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751811AbeCWQGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:06:10 -0400
+        id S1752229AbeCWQGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 12:06:14 -0400
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, John Garry <john.garry@huawei.com>
-Subject: [PATCH 7/8] scsi: hisi_sas: print device id for errors
-Date: Sat, 24 Mar 2018 00:05:14 +0800
-Message-ID: <1521821115-120040-8-git-send-email-john.garry@huawei.com>
+        <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH 6/8] scsi: hisi_sas: check IPTT is valid before using it for v3 hw
+Date: Sat, 24 Mar 2018 00:05:13 +0800
+Message-ID: <1521821115-120040-7-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1521821115-120040-1-git-send-email-john.garry@huawei.com>
 References: <1521821115-120040-1-git-send-email-john.garry@huawei.com>
@@ -24,50 +25,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we find an erroneous slot completion, to help aid
-debugging add the device index to the current debug
-log.
+From: Xiaofei Tan <tanxiaofei@huawei.com>
 
+There is a bug of v3 hw development version. When AXI error
+happen, hw may return an abnormal CQ that IPTT value is 0xffff.
+This will cause IPTT out-of-bounds reference.
+
+This patch add an check of IPTT in cq_tasklet_v3_hw(), and
+discard invalid slot. This workaround scheme is just to enhance
+fault-tolerance of the driver. So, we will apply this scheme for
+all version of v3 hw, although release version has fixed this SoC
+bug.
+
+Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
-Reviewed-by: Xiang Chen <chenxiang66@hisilicon.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 4 ++--
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index bed6afb..a5abde8 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -2459,10 +2459,10 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
- 			slot_err_v2_hw(hisi_hba, task, slot, 2);
- 
- 		if (ts->stat != SAS_DATA_UNDERRUN)
--			dev_info(dev, "erroneous completion iptt=%d task=%p "
-+			dev_info(dev, "erroneous completion iptt=%d task=%p dev id=%d "
- 				"CQ hdr: 0x%x 0x%x 0x%x 0x%x "
- 				"Error info: 0x%x 0x%x 0x%x 0x%x\n",
--				slot->idx, task,
-+				slot->idx, task, sas_dev->device_id,
- 				complete_hdr->dw0, complete_hdr->dw1,
- 				complete_hdr->act, complete_hdr->dw3,
- 				error_info[0], error_info[1],
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index aa52d5e..760724a 100644
+index efe64bc..aa52d5e 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -1641,10 +1641,10 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
+@@ -1731,15 +1731,19 @@ static void cq_tasklet_v3_hw(unsigned long val)
  
- 		slot_err_v3_hw(hisi_hba, task, slot);
- 		if (ts->stat != SAS_DATA_UNDERRUN)
--			dev_info(dev, "erroneous completion iptt=%d task=%p "
-+			dev_info(dev, "erroneous completion iptt=%d task=%p dev id=%d "
- 				"CQ hdr: 0x%x 0x%x 0x%x 0x%x "
- 				"Error info: 0x%x 0x%x 0x%x 0x%x\n",
--				slot->idx, task,
-+				slot->idx, task, sas_dev->device_id,
- 				complete_hdr->dw0, complete_hdr->dw1,
- 				complete_hdr->act, complete_hdr->dw3,
- 				error_info[0], error_info[1],
+ 	while (rd_point != wr_point) {
+ 		struct hisi_sas_complete_v3_hdr *complete_hdr;
++		struct device *dev = hisi_hba->dev;
+ 		int iptt;
+ 
+ 		complete_hdr = &complete_queue[rd_point];
+ 
+ 		iptt = (complete_hdr->dw1) & CMPLT_HDR_IPTT_MSK;
+-		slot = &hisi_hba->slot_info[iptt];
+-		slot->cmplt_queue_slot = rd_point;
+-		slot->cmplt_queue = queue;
+-		slot_complete_v3_hw(hisi_hba, slot);
++		if (likely(iptt < HISI_SAS_COMMAND_ENTRIES_V3_HW)) {
++			slot = &hisi_hba->slot_info[iptt];
++			slot->cmplt_queue_slot = rd_point;
++			slot->cmplt_queue = queue;
++			slot_complete_v3_hw(hisi_hba, slot);
++		} else
++			dev_err(dev, "IPTT %d is invalid, discard it.\n", iptt);
+ 
+ 		if (++rd_point >= HISI_SAS_QUEUE_SLOTS)
+ 			rd_point = 0;
 -- 
 1.9.1
