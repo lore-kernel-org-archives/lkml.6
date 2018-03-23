@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803758-2-16769458893758567960
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803743-2-5233097983486569462
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803758; b=O5QsVrymbWJ0LAiiEHbRWlmDUCoDO4+IjGx6JFtvEn4Rqwb
-    qNhbJfl3nth4fd6/1DKfuQ+MLXM8tQekyRAfuNVdPtdf3GrZeXKbij/Gh3kxjjot
-    mXXyEgwv2QfYGN22I+qmsy4w7146mtXx8zeGDsyw6QWOCL3MsQtncVs9Guhr698A
-    TeOykunuVm7Ut9aUhwPCIBgMjlDzvuGIXTpx3DSh/0SB7n7L3SMy9xZ+bcLoRdTS
-    haHNBgIRx1eLyc7KcJoMmc6SiNUJpKGAjmIgT2cZILfibX3jmqvSwAUhM0EgXvNH
-    Z5AxH3ZBL+/TU+ihhlnS5TW1Gb5RB1WTHH17WHA==
+    t=1521803742; b=PzcjweM4YSLFO5WCHuWj/cN+o+m+myx94xeTA9+FvWXPpRQ
+    puNo60chbdeDuOf4QUrBIihWc4xg89a8LT6WA3kFDkkiJvLMZmisAH7rymh8v4ef
+    8XifJhU+E9aahko53OsKKgDpNDACjDcD/lRCrGwvi/ecv1Tqt1oHYFVKi8M4LSbr
+    lWAPbHXNp7LSlFjRBovbWfQNGdaeCSFtJBkR/bZQyee3PFlS0YbxeFXZ0DFVENgS
+    p7HF/PhoIeOZwLlbS4dzTIxsTS/ANf0IYk/zgFsFw93SiwDAIW+5/UpGTgNaUUfG
+    /eL6MOCasrfKzovs3RSJHSLwQYKCkOgXUYkIDZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803758; bh=qng4NUTxzLnhh6p09fmPc1i5lr
-    LQ57QJxdmGCLqJMzM=; b=dCw9p/Akom5kla4ZgU5jArrcGWGlBv5WexQjIMwRB6
-    bfV89DZ0MopXSi5boJ7r7OzQYR/kA86r35wfrr80pOKo7cja7p5gBLmG76tDtTp1
-    UzIS4hVE10ghzDO8gWKEQq2C9ZDZ1Bc42a8I7wVSTLRbvQW80S4P7Vy/Xxe0wroE
-    cUNFP8uqnva4ege4r65wfUdJo5qv21Ah7Wx97MH1BLXirc7XnX1FBTm4UBcBEDD3
-    mmXc7piO5W4OL8Ew8DPAmgX7WFcbQ0CmH4BLV0h+6VhMX1+xKSx8/diODv4xxIxK
-    osXGyyE8pJwxxyWREeNLdD+Tmwia1RfTNqxYc/GrpN0A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803742; bh=2v3/xjMXXUmxKKOAbJ43wZLXCN
+    Ds3mNxMzCTPRNR07w=; b=EbLSyTk77GCVjaKrmACWiHJ635ew9mhc22Zzg8Q1+J
+    fk2xZv6A/dPTYK52Q4P1VFfODpYkOl+g3ec0/oQlSkAMQGqkOmpOoYaUJ6KBW6Li
+    ba9gfpF27MMIxBJ3N6JhGs7SZzB6xjvfOox7CKLRWpNnQjs8BfIcBa+oS8sjIepO
+    VXrs2mrBYzWPGiAYddedjct+Bdib2AQrj6PbMSGm8DSeQxf61nPs896TRKLhthqt
+    CK/egyPEYoznDvQfPqkKT5hCDz5FuwDmkDmKafGQGKw4qoLAybDlxHY6U8hSeDSl
+    vl0nshTwbKLwli0KNrQVGtR3rYbDsLemMBrwCOIKExAw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,20 +50,23 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751595AbeCWLPo (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:15:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42290 "EHLO
+        id S932583AbeCWKJ4 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:09:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42306 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932343AbeCWKJu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:50 -0400
+        with ESMTP id S932539AbeCWKJx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Liam Breck <kernel@networkimprov.net>,
+        Tony Lindgren <tony@atomide.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 110/177] bnx2x: Align RX buffers
-Date: Fri, 23 Mar 2018 10:53:58 +0100
-Message-Id: <20180323094210.125362634@linuxfoundation.org>
+Subject: [PATCH 4.9 111/177] power: supply: bq24190_charger: Add disable-reset device-property
+Date: Fri, 23 Mar 2018 10:53:59 +0100
+Message-Id: <20180323094210.163452732@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -81,76 +84,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Scott Wood <swood@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit 9b70de6d0266888b3743f03802502e43131043c8 ]
+[ Upstream commit 6cf62a3b97e78ba41d31390e59a1ddc98a9e3622 ]
 
-The bnx2x driver is not providing proper alignment on the receive buffers it
-passes to build_skb(), causing skb_shared_info to be misaligned.
-skb_shared_info contains an atomic, and while PPC normally supports
-unaligned accesses, it does not support unaligned atomics.
+Allow platform-code to disable the reset on probe and suspend/resume
+by setting a "disable-reset" boolean device property on the device.
 
-Aligning the size of rx buffers will ensure that page_frag_alloc() returns
-aligned addresses.
+There are several reasons why the platform-code may want to disable
+the reset on probe and suspend/resume:
 
-This can be reproduced on PPC by setting the network MTU to 1450 (or other
-non-multiple-of-4) and then generating sufficient inbound network traffic
-(one or two large "wget"s usually does it), producing the following oops:
+1) Resetting the charger should never be necessary it should always have
+sane values programmed. If it is running with invalid values while we
+are not running (system turned off or suspended) there is a big problem
+as that may lead to overcharging the battery.
 
-Unable to handle kernel paging request for unaligned access at address 0xc00000ffc43af656
-Faulting instruction address: 0xc00000000080ef8c
-Oops: Kernel access of bad area, sig: 7 [#1]
-SMP NR_CPUS=2048
-NUMA
-PowerNV
-Modules linked in: vmx_crypto powernv_rng rng_core powernv_op_panel leds_powernv led_class nfsd ip_tables x_tables autofs4 xfs lpfc bnx2x mdio libcrc32c crc_t10dif crct10dif_generic crct10dif_common
-CPU: 104 PID: 0 Comm: swapper/104 Not tainted 4.11.0-rc8-00088-g4c761da #2
-task: c00000ffd4892400 task.stack: c00000ffd4920000
-NIP: c00000000080ef8c LR: c00000000080eee8 CTR: c0000000001f8320
-REGS: c00000ffffc33710 TRAP: 0600   Not tainted  (4.11.0-rc8-00088-g4c761da)
-MSR: 9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>
-  CR: 24082042  XER: 00000000
-CFAR: c00000000080eea0 DAR: c00000ffc43af656 DSISR: 00000000 SOFTE: 1
-GPR00: c000000000907f64 c00000ffffc33990 c000000000dd3b00 c00000ffcaf22100
-GPR04: c00000ffcaf22e00 0000000000000000 0000000000000000 0000000000000000
-GPR08: 0000000000b80008 c00000ffc43af636 c00000ffc43af656 0000000000000000
-GPR12: c0000000001f6f00 c00000000fe1a000 000000000000049f 000000000000c51f
-GPR16: 00000000ffffef33 0000000000000000 0000000000008a43 0000000000000001
-GPR20: c00000ffc58a90c0 0000000000000000 000000000000dd86 0000000000000000
-GPR24: c000007fd0ed10c0 00000000ffffffff 0000000000000158 000000000000014a
-GPR28: c00000ffc43af010 c00000ffc9144000 c00000ffcaf22e00 c00000ffcaf22100
-NIP [c00000000080ef8c] __skb_clone+0xdc/0x140
-LR [c00000000080eee8] __skb_clone+0x38/0x140
-Call Trace:
-[c00000ffffc33990] [c00000000080fb74] skb_clone+0x74/0x110 (unreliable)
-[c00000ffffc339c0] [c000000000907f64] packet_rcv+0x144/0x510
-[c00000ffffc33a40] [c000000000827b64] __netif_receive_skb_core+0x5b4/0xd80
-[c00000ffffc33b00] [c00000000082b2bc] netif_receive_skb_internal+0x2c/0xc0
-[c00000ffffc33b40] [c00000000082c49c] napi_gro_receive+0x11c/0x260
-[c00000ffffc33b80] [d000000066483d68] bnx2x_poll+0xcf8/0x17b0 [bnx2x]
-[c00000ffffc33d00] [c00000000082babc] net_rx_action+0x31c/0x480
-[c00000ffffc33e10] [c0000000000d5a44] __do_softirq+0x164/0x3d0
-[c00000ffffc33f00] [c0000000000d60a8] irq_exit+0x108/0x120
-[c00000ffffc33f20] [c000000000015b98] __do_irq+0x98/0x200
-[c00000ffffc33f90] [c000000000027f14] call_do_irq+0x14/0x24
-[c00000ffd4923a90] [c000000000015d94] do_IRQ+0x94/0x110
-[c00000ffd4923ae0] [c000000000008d90] hardware_interrupt_common+0x150/0x160
+2) The reset in suspend() is meant to put the charger back into default
+mode, but this is not necessary and not a good idea. If the charger has
+been programmed with a higher max charge_current / charge_voltage then
+putting it back in default-mode will reset those to the safe power-on
+defaults, leading to slower charging, or charging to a lower voltage
+(and thus not using the full capacity) while suspended which is
+undesirable. Reprogramming the max charge_current / charge_voltage
+after the reset will not help here as that will put the charger back
+in host mode and start the i2c watchdog if the host then does not do
+anything for 40s (iow if we're suspended for more then 40s) the watchdog
+expires resetting the device to default-mode, including resetting all
+the registers to there safe power-on defaults. So the only way to keep
+using custom charge settings while suspending is to keep the charger in
+its normal running state with the i2c watchdog disabled. This is fine
+as the charger will still automatically switch from constant current
+to constant voltage and stop charging when the battery is full.
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
+3) Besides never being necessary resetting the charger also causes
+problems on systems where the charge voltage limit is set higher then the
+reset value, if this is the case and the charger is reset while charging
+and the battery voltage is between the 2 voltages, then about half the
+time the charger gets confused and claims to be charging (REG08 contains
+0x64) but in reality the charger has decoupled itself from VBUS (Q1 off)
+and is drawing 0A from VBUS, leaving the system running from the battery.
+
+This last problem is happening on a GPD-win mini PC with a bq24292i
+charger chip combined with a max17047 fuel-gauge and a LiHV battery.
+I've checked and TI does not list any errata for the bq24292i which
+could explain this (there are no errata at all).
+
+Cc: Liam Breck <kernel@networkimprov.net>
+Cc: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Liam Breck <kernel@networkimprov.net>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/power/supply/bq24190_charger.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -2026,6 +2026,7 @@ static void bnx2x_set_rx_buf_size(struct
- 				  ETH_OVREHEAD +
- 				  mtu +
- 				  BNX2X_FW_RX_ALIGN_END;
-+		fp->rx_buf_size = SKB_DATA_ALIGN(fp->rx_buf_size);
- 		/* Note : rx_buf_size doesn't take into account NET_SKB_PAD */
- 		if (fp->rx_buf_size + NET_SKB_PAD <= PAGE_SIZE)
- 			fp->rx_frag_size = fp->rx_buf_size + NET_SKB_PAD;
+--- a/drivers/power/supply/bq24190_charger.c
++++ b/drivers/power/supply/bq24190_charger.c
+@@ -506,6 +506,9 @@ static int bq24190_register_reset(struct
+ 	int ret, limit = 100;
+ 	u8 v;
+ 
++	if (device_property_read_bool(bdi->dev, "disable-reset"))
++		return 0;
++
+ 	/* Reset the registers */
+ 	ret = bq24190_write_mask(bdi, BQ24190_REG_POC,
+ 			BQ24190_REG_POC_RESET_MASK,
