@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803850-2-6389365604905781526
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803846-2-14184970317261280019
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803850; b=AFwYKI7UKD77E/mEzB13TzvQqCaLZ57bwPLrFvXy68VrUo2
-    WbAgSGltsw0xLT87tbd5nDE6GnE9eTGVmbdIwEFVd9ngeP3AnFMHWSvHEk0eavVM
-    DK5BE4SEyKGzhNGyRpCp/xure28OgMC/keb7qCk4cutQQpO8+qqBTOpgpVMfhOGQ
-    Bt6/j1hVOUGn3aA74esDdf83CGI7QJ+CfPukKYCFxPWkIHg8ro8td+rivQqetqzu
-    VaUJWUb19fIWFe3VQXFdzSkQ5MI1u4enBD4y+OvhyDBC5vShG1NRfU3aV0w/IDkL
-    +H3VGDSvVdZo5lq0reBRNlW2WvYZ1eNqYkOrAwg==
+    t=1521803846; b=PLt+NjLquwofVWVSN0DtgVOk+HZRReZbzRMV/x4vxfaxTkP
+    P+E2JIY0XoeflewmzRzdr1hvZm9e7uxgWbFMQJHkwtycL1h2iJBdgNUNpzZc27YP
+    pvptZ/ii2Fttd4+C7dzcmx5soYoC3W+t4cuLGiaI197Qfr1rOcF1tApH0XssKzK1
+    ojC49fokb8z8P7cxnci+H1hLgS711gzxmY26/gWRQmQTarWKYOOZqrX0Nman/wK1
+    MTR5kEqFDVkNekGN16IqbtJ1bfuwv6r7AsvNBImyLi3v0/xgrU3ipSGQTxTi0A0r
+    h+EAY7/MpipQwsekW+w2uqnbPGnYlSXvnK7hjig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803850; bh=lfJA7WZNvp8pNqmHqOBJj6+26R
-    N/Vq25R4wJdg+pfKw=; b=m7azOwqE/KJPZ3OgBr98ILxcmv3QKJLcsE7gyy41hk
-    u6L++zuhwOJ4EgsYthQlVWN8GSDs2AW7Ac94U1LsYGW5Rnovr4M5wFDJshr+YEzj
-    ap4VR81V/i0xtLopl4DL+kPxBOIi/DWAn7bHH8I58Qfyj3Bi23eo12e9RKtV9YDf
-    7UsQ2EtUNSPyoskvgSfugbdnSdbmpXXPW7aSHPKUA9Z+f/9tk5XpKDuGE7FZddWM
-    bt950+mradWjdsl7dXtee+AMt9GRgHZCl+nT3MaaUcVlOfAzgvx7r6jMjpursg53
-    TRA3UWkphmOnrACd3xhXVGjmxnCOq6oCl5ZEUUYKRIQQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803846; bh=kH50jOqOekJac+jGdngyPjkrvg
+    Qsk9p3ezhM8VABLds=; b=Ro1ggm0/IOKKoL9qM6Q+9bjchXNNusgjLZjS43e127
+    K8k09TkEXwqpxoCbQgb6xZdQbuNwZ6Vu8sZgTPpH9O2iVNUktAlYQrFlIFfrHSo1
+    M/JkaSPUQLsPLV6uCFjfQeCvHwxif/aCRs4T0E/jHgNx4lwhv/RxOXp/gfiUgFU6
+    +4KaCFoznrCMP1ts/zr4/sFklc0rSb7X3HZClcgvtRzeRhZXCOOdZPzkOZT35PQs
+    Aza4LDii7g0LoL4oKTt2gjKk4lpQ+mA0lfiems9wxuy6swY3Tins+j00p4qLPgKl
+    zAkAYWN8Aa9nCbebkh3MDmVJ2m/j6jSZQhHkd+IvbnYQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,25 +50,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932464AbeCWKJ0 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:09:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42044 "EHLO
+        id S1751294AbeCWLRK (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:17:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42108 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755749AbeCWKJV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:21 -0400
+        with ESMTP id S932461AbeCWKJ0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Moni Shoua <monis@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 115/177] IB/rxe: Dont clamp residual length to mtu
-Date: Fri, 23 Mar 2018 10:54:03 +0100
-Message-Id: <20180323094210.328894806@linuxfoundation.org>
+Subject: [PATCH 4.9 117/177] ACPI / power: Delay turning off unused power resources after suspend
+Date: Fri, 23 Mar 2018 10:54:05 +0100
+Message-Id: <20180323094210.419860029@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -86,70 +82,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit d52418502e288b5c7e9e2e6cf1de5f1d3d79d2e1 ]
+[ Upstream commit 8ece1d83346bcc431090d59a2184276192189cdd ]
 
-When reading a RDMA WRITE FIRST packet we copy the DMA length from the RDMA
-header into the qp->resp.resid variable for later use. Later in check_rkey()
-we clamp it to the MTU if the packet is an  RDMA WRITE packet and has a
-residual length bigger than the MTU. Later in write_data_in() we subtract the
-payload of the packet from the residual length. If the packet happens to have a
-payload of exactly the MTU size we end up with a residual length of 0 despite
-the packet not being the last in the conversation. When the next packet in the
-conversation arrives, we don't have any residual length left and thus set the QP
-into an error state.
+Commit 660b1113e0f3 (ACPI / PM: Fix consistency check for power resources
+during resume) introduced a check for ACPI power resources which have
+been turned on by the BIOS during suspend and turns these back off again.
 
-This broke NVMe over Fabrics functionality over rdma_rxe.ko
+This is causing problems on a Dell Venue Pro 11 7130 (i5-4300Y) it causes
+the following messages to show up in dmesg:
 
-The patch was verified using the following test.
+[  131.014605] ACPI: Waking up from system sleep state S3
+[  131.150271] acpi LNXPOWER:07: Turning OFF
+[  131.150323] acpi LNXPOWER:06: Turning OFF
+[  131.150911] acpi LNXPOWER:00: Turning OFF
+[  131.169014] ACPI : EC: interrupt unblocked
+[  131.181811] xhci_hcd 0000:00:14.0: System wakeup disabled by ACPI
+[  133.535728] pci_raw_set_power_state: 76 callbacks suppressed
+[  133.535735] iwlwifi 0000:01:00.0: Refused to change power state,
+               currently in D3
+[  133.597672] PM: noirq resume of devices complete after 2428.891 msecs
 
- # echo eth0 > /sys/module/rdma_rxe/parameters/add
- # nvme connect -t rdma -a 192.168.155.101 -s 1023 -n nvmf-test
- # mkfs.xfs -fK /dev/nvme0n1
- meta-data=/dev/nvme0n1           isize=256    agcount=4, agsize=65536 blks
-          =                       sectsz=4096  attr=2, projid32bit=1
-          =                       crc=0        finobt=0, sparse=0
- data     =                       bsize=4096   blocks=262144, imaxpct=25
-          =                       sunit=0      swidth=0 blks
- naming   =version 2              bsize=4096   ascii-ci=0 ftype=1
- log      =internal log           bsize=4096   blocks=2560, version=2
-          =                       sectsz=4096  sunit=1 blks, lazy-count=1
- realtime =none                   extsz=4096   blocks=0, rtextents=0
- # mount /dev/nvme0n1 /tmp/
- [  148.923263] XFS (nvme0n1): Mounting V4 Filesystem
- [  148.961196] XFS (nvme0n1): Ending clean mount
- # dd if=/dev/urandom of=test.bin bs=1M count=128
- 128+0 records in
- 128+0 records out
- 134217728 bytes (134 MB, 128 MiB) copied, 0.437991 s, 306 MB/s
- # sha256sum test.bin
- cde42941f045efa8c4f0f157ab6f29741753cdd8d1cff93a6b03649d83c4129a  test.bin
- # cp test.bin /tmp/
- sha256sum /tmp/test.bin
- cde42941f045efa8c4f0f157ab6f29741753cdd8d1cff93a6b03649d83c4129a  /tmp/test.bin
+Followed by a bunch of iwlwifi errors later on and the pcie device
+dropping from the bus (acpiphp thinks it has been unplugged).
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Hannes Reinecke <hare@suse.de>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: Max Gurtovoy <maxg@mellanox.com>
-Acked-by: Moni Shoua <monis@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Disabling the turning off of unused power resources fixes this. Instead
+of adding a quirk for this system, this commit fixes this by moving the
+disabling of unused power resources to later in the resume sequence
+when the iwlwifi card has been moved out of D3 so the ref_count for
+its power resource no longer is 0.
+
+This new behavior seems to match the intend of the original commit which
+commit-msg says: "(... which means that no devices are going to need them
+any time soon) and we should turn them off".
+
+This also avoids power resources which we need when bringing devices out
+of D3 from getting bounced off and then back on again.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/sw/rxe/rxe_resp.c |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/acpi/power.c |   10 ++++++++++
+ drivers/acpi/sleep.c |    1 +
+ drivers/acpi/sleep.h |    1 +
+ 3 files changed, 12 insertions(+)
 
---- a/drivers/infiniband/sw/rxe/rxe_resp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-@@ -471,8 +471,6 @@ static enum resp_states check_rkey(struc
- 				state = RESPST_ERR_LENGTH;
- 				goto err;
- 			}
--
--			qp->resp.resid = mtu;
- 		} else {
- 			if (pktlen != resid) {
- 				state = RESPST_ERR_LENGTH;
+--- a/drivers/acpi/power.c
++++ b/drivers/acpi/power.c
+@@ -864,6 +864,16 @@ void acpi_resume_power_resources(void)
+ 
+ 		mutex_unlock(&resource->resource_lock);
+ 	}
++
++	mutex_unlock(&power_resource_list_lock);
++}
++
++void acpi_turn_off_unused_power_resources(void)
++{
++	struct acpi_power_resource *resource;
++
++	mutex_lock(&power_resource_list_lock);
++
+ 	list_for_each_entry_reverse(resource, &acpi_power_resource_list, list_node) {
+ 		int result, state;
+ 
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -474,6 +474,7 @@ static void acpi_pm_start(u32 acpi_state
+  */
+ static void acpi_pm_end(void)
+ {
++	acpi_turn_off_unused_power_resources();
+ 	acpi_scan_lock_release();
+ 	/*
+ 	 * This is necessary in case acpi_pm_finish() is not called during a
+--- a/drivers/acpi/sleep.h
++++ b/drivers/acpi/sleep.h
+@@ -6,6 +6,7 @@ extern struct list_head acpi_wakeup_devi
+ extern struct mutex acpi_device_lock;
+ 
+ extern void acpi_resume_power_resources(void);
++extern void acpi_turn_off_unused_power_resources(void);
+ 
+ static inline acpi_status acpi_set_waking_vector(u32 wakeup_address)
+ {
