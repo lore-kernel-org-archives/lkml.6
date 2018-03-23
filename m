@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752331AbeCWJgd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:36:33 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53736 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752246AbeCWJg2 (ORCPT
+        id S1752397AbeCWJgs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:36:48 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36600 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752288AbeCWJg3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:36:28 -0400
-X-Google-Smtp-Source: AG47ELvK9O6wNk+rOEP9TNTe3ppvetCY6hgbMl3sogkm3SYU4AU1yrQgsWClxtTAFHyPevVVZzF2Dg==
+        Fri, 23 Mar 2018 05:36:29 -0400
+X-Google-Smtp-Source: AG47ELuNJ/odFNPxXjNpypekldR5kBOiaHrkJcIAGOAWQOsXqamtG2ZPe3B+8stIKwYWF1edu4Zphw==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -21,9 +21,9 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 7/8] remoteproc: da8xx: use the reset framework
-Date: Fri, 23 Mar 2018 10:36:08 +0100
-Message-Id: <20180323093609.24576-8-brgl@bgdev.pl>
+Subject: [PATCH v2 8/8] clk: davinci: kill davinci_clk_reset_assert/deassert()
+Date: Fri, 23 Mar 2018 10:36:09 +0100
+Message-Id: <20180323093609.24576-9-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
 References: <20180323093609.24576-1-brgl@bgdev.pl>
@@ -33,115 +33,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Switch to using the reset framework instead of handcoded reset routines
-we used so far.
+This code is no longer used. Remove it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 34 +++++++++++++++++++++++++++++-----
- 1 file changed, 29 insertions(+), 5 deletions(-)
+ arch/arm/mach-davinci/include/mach/clock.h | 21 ---------------------
+ drivers/clk/davinci/psc.c                  | 18 ------------------
+ 2 files changed, 39 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/clock.h
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index f134192922e0..b99c0f0cc38e 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/bitops.h>
- #include <linux/clk.h>
-+#include <linux/reset.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -20,8 +21,6 @@
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
- 
--#include <mach/clock.h>   /* for davinci_clk_reset_assert/deassert() */
+diff --git a/arch/arm/mach-davinci/include/mach/clock.h b/arch/arm/mach-davinci/include/mach/clock.h
+deleted file mode 100644
+index 42ed4f2f5ce4..000000000000
+--- a/arch/arm/mach-davinci/include/mach/clock.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/*
+- * arch/arm/mach-davinci/include/mach/clock.h
+- *
+- * Clock control driver for DaVinci - header file
+- *
+- * Authors: Vladimir Barinov <source@mvista.com>
+- *
+- * 2007 (c) MontaVista Software, Inc. This file is licensed under
+- * the terms of the GNU General Public License version 2. This program
+- * is licensed "as is" without any warranty of any kind, whether express
+- * or implied.
+- */
+-#ifndef __ASM_ARCH_DAVINCI_CLOCK_H
+-#define __ASM_ARCH_DAVINCI_CLOCK_H
 -
- #include "remoteproc_internal.h"
- 
- static char *da8xx_fw_name;
-@@ -72,6 +71,7 @@ struct da8xx_rproc {
- 	struct da8xx_rproc_mem *mem;
- 	int num_mems;
- 	struct clk *dsp_clk;
-+	struct reset_control *dsp_reset;
- 	void (*ack_fxn)(struct irq_data *data);
- 	struct irq_data *irq_data;
- 	void __iomem *chipsig;
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	struct reset_control *dsp_reset = drproc->dsp_reset;
- 	int ret;
- 
- 	/* hw requires the start (boot) address be on 1KB boundary */
-@@ -155,7 +156,11 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 		return ret;
- 	}
- 
--	davinci_clk_reset_deassert(dsp_clk);
-+	ret = reset_control_deassert(dsp_reset);
-+	if (ret) {
-+		dev_err(dev, "reset_control_deassert() failed: %d\n", ret);
-+		return ret;
-+	}
- 
+-struct clk;
+-
+-int davinci_clk_reset_assert(struct clk *c);
+-int davinci_clk_reset_deassert(struct clk *c);
+-
+-#endif
+diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
+index 063df62381ea..75c4bc6f23e3 100644
+--- a/drivers/clk/davinci/psc.c
++++ b/drivers/clk/davinci/psc.c
+@@ -295,24 +295,6 @@ static int davinci_lpsc_clk_reset(struct clk *clk, bool reset)
  	return 0;
  }
-@@ -163,8 +168,15 @@ static int da8xx_rproc_start(struct rproc *rproc)
- static int da8xx_rproc_stop(struct rproc *rproc)
+ 
+-/*
+- * REVISIT: These exported functions can be removed after a non-DT lookup is
+- * added to the reset controller framework and the davinci-rproc driver is
+- * updated to use the generic reset controller framework.
+- */
+-
+-int davinci_clk_reset_assert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, true);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_assert);
+-
+-int davinci_clk_reset_deassert(struct clk *clk)
+-{
+-	return davinci_lpsc_clk_reset(clk, false);
+-}
+-EXPORT_SYMBOL(davinci_clk_reset_deassert);
+-
+ static int davinci_psc_reset_assert(struct reset_controller_dev *rcdev,
+ 				    unsigned long id)
  {
- 	struct da8xx_rproc *drproc = rproc->priv;
-+	int ret;
-+
-+	ret = reset_control_assert(drproc->dsp_reset);
-+	if (ret) {
-+		dev_err(rproc->dev.parent,
-+			"reset_control_assert() failed: %d\n", ret);
-+		return ret;
-+	}
- 
--	davinci_clk_reset_assert(drproc->dsp_clk);
- 	clk_disable_unprepare(drproc->dsp_clk);
- 
- 	return 0;
-@@ -232,6 +244,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	struct resource *bootreg_res;
- 	struct resource *chipsig_res;
- 	struct clk *dsp_clk;
-+	struct reset_control *dsp_reset;
- 	void __iomem *chipsig;
- 	void __iomem *bootreg;
- 	int irq;
-@@ -268,6 +281,17 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 		return PTR_ERR(dsp_clk);
- 	}
- 
-+	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
-+	if (IS_ERR(dsp_reset)) {
-+		/* The platform lookup may not be registered yet. */
-+		if (PTR_ERR(dsp_reset) == -ENOENT)
-+			return -EPROBE_DEFER;
-+
-+		dev_err(dev, "unable to get reset control: %ld\n",
-+			PTR_ERR(dsp_reset));
-+		return PTR_ERR(dsp_reset);
-+	}
-+
- 	if (dev->of_node) {
- 		ret = of_reserved_mem_device_init(dev);
- 		if (ret) {
-@@ -309,7 +333,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
- 	 * held in reset at the time it is called.
- 	 */
--	ret = davinci_clk_reset_assert(drproc->dsp_clk);
-+	ret = reset_control_assert(dsp_reset);
- 	if (ret)
- 		goto free_rproc;
- 
 -- 
 2.16.1
