@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELur070OXGYoxPCnvmCrQ1e8BrXURW9CunFVyNDMDqZ2MGrJ6dHA5twHIXAEqBlWQm5KlXKu
-ARC-Seal: i=1; a=rsa-sha256; t=1521800181; cv=none;
+X-Google-Smtp-Source: AG47ELvtDSBjxQDsKjZi1Td5cqArO+FjGW0e7EQVNfYhpGu/7LjMc7PBseq3N9hLhn4mb/phh+7L
+ARC-Seal: i=1; a=rsa-sha256; t=1521800178; cv=none;
         d=google.com; s=arc-20160816;
-        b=o0D2hIN8w8faeQ5l1CLjy3dxAopRAXNRwA7/SC4HKq3l74U7tX2yMhWL/b4E2fSrmc
-         O0IFXiY5HNbCAk2gh4q7AIcO6VKL3Ql9TJECa6EGYXrAJUaE+yrRkgTkAK4pGd8t5zEF
-         cX1e+wbYrWWjbow4YnOHSpBRNkKl5pCaY1Oiem3MnEd5zAhIl93JTuf6Lu33dw3SD+We
-         7LJDzdbVTz5KpFMz8mjjGAwCvtRCIUje10vr9FE4pFWknexQLMckDSkayEIsaHTzodsT
-         eNcIY7m5waXuUq1coa/rQRkJAv5/Ytto3fWaTt2lSBDqdGR+6sslHkYTutg94MULsfsp
-         r5zQ==
+        b=mdFFB8of5y7Nz54URnkA+TiSGwN17gH87cLCwbvDMN1qtcO0vPEeuz+9dtoXCj/xgz
+         0pjPtNw4ojq815LU4YC+67BY4Jc0nYc3Aff8LAiqT7dt59bjewvor6siaWh8B6NZJlNd
+         72FpZ6AarJxabTRmQO1OkwNo4snCau6+AVmhLl5TdeoOJDrf9h7YgDHV3pVV2x7VQ+WO
+         cnRL0mz4d5Eco1SseQ2eao0mrjjmj7U/vXApT1fWZLRWILvM4GchjLkpb6qFoH6WsZ9P
+         uIwrivUe6+s6yLPxBxr7RY+I6EYvGDEXyxgu16V7QozucsWojpQLnUlg8ke/9Oa9oXCC
+         /l0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1CSIgyf/a3YNG3LNPckgiLrXEfW4vSUN31xbub35ZRg=;
-        b=pzy1SIqHk84/TAeC5jBIgbmYiOAR7YSqMzzSwBM+LqJ2ddI0TPEXAR5Eqx0ZT1rpoY
-         MbClIFYgh1lKK3m+h58b7BeptTljaOQSgwPvD9SwXXpLLkAdQ0yqQtboYgGGyUJ0hOCa
-         MWr2rI4BKBGGQXvfsP8VZ7LZXTmWMxLlZlH/FiWBfRSoGgnZ5shwCDd/8w1lJjwOMcNq
-         SNFHHi64ZWTrjvOAonbeATbQE9FmUhehTs2f4pyS3UdDDmIVScJvsXrfEMjLSKVqKNiI
-         osmshUAXMeMFAjcPangvX8eZSWLTQaZYVNoq/sAneUmBOHohzBxP+uG1Yzr1DfAsvMSb
-         9ZQA==
+        bh=9jj03mo7AZBUKnlFQ4rzUyAWiXXVHBwlFIDJto3orAM=;
+        b=ne4YLUGs0bYadib8TMR6jwSnhigu2X1SiGChns9HQwLEsQjMLGElVMu5BsAFBJwRfy
+         0LmuOTjfdXwH4km4NkNjBt3L2rmtZK6c05lbn4qJS/eZcspW+lCs/7vux7lGG54Vt0pI
+         bEAEPY6ihuk8yy5kaChyJgoIISQfucqMiNNJSCymCHi9WXBmTbL/VaoeE1IwIaEaveOa
+         mqwKyHC/0q2lOoYC1MYLmRWw09u8FqMpKy01VStn+4qW2CKyhWE7CyiGGo9AGTQr8f7Q
+         iQwRN1acWiExfqvWBSTNrOPKIKJBtYxWpQ27jRXD1XAAYUYx5g9qegZ2AXGqW6arKLsC
+         +oRg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tsang-Shian Lin <thlin@realtek.com>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Finger <Larry.Finger@lwfinger.net>,
-	Yan-Hsuan Chuang <yhchuang@realtek.com>,
-	Birming Chiu <birming@realtek.com>,
-	Shaofu <shaofu@realtek.com>,
-	Steven Ting <steventing@realtek.com>,
-	Kalle Valo <kvalo@codeaurora.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 77/97] rtlwifi: rtl_pci: Fix the bug when inactiveps is enabled.
-Date: Fri, 23 Mar 2018 10:55:04 +0100
-Message-Id: <20180323094201.888502382@linuxfoundation.org>
+Subject: [PATCH 4.4 76/97] RDMA/iwpm: Fix uninitialized error code in iwpm_send_mapinfo()
+Date: Fri, 23 Mar 2018 10:55:03 +0100
+Message-Id: <20180323094201.832652287@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -47,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721915428712046?=
-X-GMAIL-MSGID: =?utf-8?q?1595723146606684911?=
+X-GMAIL-THRID: =?utf-8?q?1595721867135742160?=
+X-GMAIL-MSGID: =?utf-8?q?1595723144147158720?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,43 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tsang-Shian Lin <thlin@realtek.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
 
-[ Upstream commit b7573a0a27bfa8270dea9b145448f6884b7cacc1 ]
+[ Upstream commit 302d6424e4a293a5761997e6c9fc3dfb1e4c355f ]
 
-Reset the driver current tx read/write index to zero when inactiveps
-nic out of sync with HW state. Wrong driver tx read/write index will
-cause Tx fail.
+With gcc-4.1.2:
 
-Signed-off-by: Tsang-Shian Lin <thlin@realtek.com>
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Yan-Hsuan Chuang <yhchuang@realtek.com>
-Cc: Birming Chiu <birming@realtek.com>
-Cc: Shaofu <shaofu@realtek.com>
-Cc: Steven Ting <steventing@realtek.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+    drivers/infiniband/core/iwpm_util.c: In function ‘iwpm_send_mapinfo’:
+    drivers/infiniband/core/iwpm_util.c:647: warning: ‘ret’ may be used uninitialized in this function
+
+Indeed, if nl_client is not found in any of the scanned has buckets, ret
+will be used uninitialized.
+
+Preinitialize ret to -EINVAL to fix this.
+
+Fixes: 30dc5e63d6a5ad24 ("RDMA/core: Add support for iWARP Port Mapper user space service")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/realtek/rtlwifi/pci.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/infiniband/core/iwpm_util.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/realtek/rtlwifi/pci.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
-@@ -1572,7 +1572,14 @@ int rtl_pci_reset_trx_ring(struct ieee80
- 				dev_kfree_skb_irq(skb);
- 				ring->idx = (ring->idx + 1) % ring->entries;
- 			}
-+
-+			if (rtlpriv->use_new_trx_flow) {
-+				rtlpci->tx_ring[i].cur_tx_rp = 0;
-+				rtlpci->tx_ring[i].cur_tx_wp = 0;
-+			}
-+
- 			ring->idx = 0;
-+			ring->entries = rtlpci->txringcount[i];
- 		}
+--- a/drivers/infiniband/core/iwpm_util.c
++++ b/drivers/infiniband/core/iwpm_util.c
+@@ -663,6 +663,7 @@ int iwpm_send_mapinfo(u8 nl_client, int
  	}
- 	spin_unlock_irqrestore(&rtlpriv->locks.irq_th_lock, flags);
+ 	skb_num++;
+ 	spin_lock_irqsave(&iwpm_mapinfo_lock, flags);
++	ret = -EINVAL;
+ 	for (i = 0; i < IWPM_MAPINFO_HASH_SIZE; i++) {
+ 		hlist_for_each_entry(map_info, &iwpm_hash_bucket[i],
+ 				     hlist_node) {
