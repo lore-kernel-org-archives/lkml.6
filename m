@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752537AbeCWSLy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 14:11:54 -0400
-Received: from mga04.intel.com ([192.55.52.120]:12722 "EHLO mga04.intel.com"
+        id S1752305AbeCWSLO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 14:11:14 -0400
+Received: from mga07.intel.com ([134.134.136.100]:27172 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752334AbeCWSLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 14:11:17 -0400
+        id S1751691AbeCWSLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 14:11:10 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,351,1517904000";
-   d="scan'208";a="27915673"
-Subject: [PATCH 7/9] x86, pkeys, selftests: factor out "instruction page"
+   d="scan'208";a="26495466"
+Subject: [PATCH 2/9] x86, pkeys, selftests: save off 'prot' for allocations
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
         linuxram@us.ibm.com, tglx@linutronix.de, dave.hansen@intel.com,
         mpe@ellerman.id.au, mingo@kernel.org, akpm@linux-foundation.org,
         shuah@kernel.org
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 23 Mar 2018 11:09:15 -0700
+Date: Fri, 23 Mar 2018 11:09:07 -0700
 References: <20180323180903.33B17168@viggo.jf.intel.com>
 In-Reply-To: <20180323180903.33B17168@viggo.jf.intel.com>
-Message-Id: <20180323180915.F551A7C4@viggo.jf.intel.com>
+Message-Id: <20180323180907.2CA27831@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,10 +29,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-We currently have an execute-only test, but it is for
-the explicit mprotect_pkey() interface.  We will soon
-add a test for the implicit mprotect(PROT_EXEC)
-enterface.  We need this code in both tests.
+This makes it possible to to tell what 'prot' a given allocation
+is supposed to have.  That way, if we want to change just the
+pkey, we know what 'prot' to pass to mprotect_pkey().
+
+Also, keep a record of the most recent allocation so the tests
+can easily find it.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Ram Pai <linuxram@us.ibm.com>
@@ -44,48 +46,69 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Shuah Khan <shuah@kernel.org>
 ---
 
- b/tools/testing/selftests/x86/protection_keys.c |   21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ b/tools/testing/selftests/x86/protection_keys.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff -puN tools/testing/selftests/x86/protection_keys.c~pkeys-selftests-get_pointer_to_instructions tools/testing/selftests/x86/protection_keys.c
---- a/tools/testing/selftests/x86/protection_keys.c~pkeys-selftests-get_pointer_to_instructions	2018-03-21 15:47:51.447198918 -0700
-+++ b/tools/testing/selftests/x86/protection_keys.c	2018-03-21 15:47:51.450198918 -0700
-@@ -1277,12 +1277,9 @@ void test_ptrace_of_child(int *ptr, u16
- 	free(plain_ptr_unaligned);
+diff -puN tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-store-malloc-record tools/testing/selftests/x86/protection_keys.c
+--- a/tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-store-malloc-record	2018-03-21 15:47:48.740198925 -0700
++++ b/tools/testing/selftests/x86/protection_keys.c	2018-03-21 15:47:48.743198925 -0700
+@@ -674,10 +674,12 @@ int mprotect_pkey(void *ptr, size_t size
+ struct pkey_malloc_record {
+ 	void *ptr;
+ 	long size;
++	int prot;
+ };
+ struct pkey_malloc_record *pkey_malloc_records;
++struct pkey_malloc_record *pkey_last_malloc_record;
+ long nr_pkey_malloc_records;
+-void record_pkey_malloc(void *ptr, long size)
++void record_pkey_malloc(void *ptr, long size, int prot)
+ {
+ 	long i;
+ 	struct pkey_malloc_record *rec = NULL;
+@@ -709,6 +711,8 @@ void record_pkey_malloc(void *ptr, long
+ 		(int)(rec - pkey_malloc_records), rec, ptr, size);
+ 	rec->ptr = ptr;
+ 	rec->size = size;
++	rec->prot = prot;
++	pkey_last_malloc_record = rec;
+ 	nr_pkey_malloc_records++;
  }
  
--void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
-+void *get_pointer_to_instructions(void)
- {
- 	void *p1;
--	int scratch;
--	int ptr_contents;
--	int ret;
+@@ -753,7 +757,7 @@ void *malloc_pkey_with_mprotect(long siz
+ 	pkey_assert(ptr != (void *)-1);
+ 	ret = mprotect_pkey((void *)ptr, PAGE_SIZE, prot, pkey);
+ 	pkey_assert(!ret);
+-	record_pkey_malloc(ptr, size);
++	record_pkey_malloc(ptr, size, prot);
+ 	rdpkru();
  
- 	p1 = ALIGN_PTR_UP(&lots_o_noops_around_write, PAGE_SIZE);
- 	dprintf3("&lots_o_noops: %p\n", &lots_o_noops_around_write);
-@@ -1292,7 +1289,23 @@ void test_executing_on_unreadable_memory
- 	/* Point 'p1' at the *second* page of the function: */
- 	p1 += PAGE_SIZE;
+ 	dprintf1("%s() for pkey %d @ %p\n", __func__, pkey, ptr);
+@@ -774,7 +778,7 @@ void *malloc_pkey_anon_huge(long size, i
+ 	size = ALIGN_UP(size, HPAGE_SIZE * 2);
+ 	ptr = mmap(NULL, size, PROT_NONE, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
+ 	pkey_assert(ptr != (void *)-1);
+-	record_pkey_malloc(ptr, size);
++	record_pkey_malloc(ptr, size, prot);
+ 	mprotect_pkey(ptr, size, prot, pkey);
  
-+	/*
-+	 * Try to ensure we fault this in on next touch to ensure
-+	 * we get an instruction fault as opposed to a data one
-+	 */
- 	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
-+
-+	return p1;
-+}
-+
-+void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
-+{
-+	void *p1;
-+	int scratch;
-+	int ptr_contents;
-+	int ret;
-+
-+	p1 = get_pointer_to_instructions();
- 	lots_o_noops_around_write(&scratch);
- 	ptr_contents = read_ptr(p1);
- 	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
+ 	dprintf1("unaligned ptr: %p\n", ptr);
+@@ -847,7 +851,7 @@ void *malloc_pkey_hugetlb(long size, int
+ 	pkey_assert(ptr != (void *)-1);
+ 	mprotect_pkey(ptr, size, prot, pkey);
+ 
+-	record_pkey_malloc(ptr, size);
++	record_pkey_malloc(ptr, size, prot);
+ 
+ 	dprintf1("mmap()'d hugetlbfs for pkey %d @ %p\n", pkey, ptr);
+ 	return ptr;
+@@ -869,7 +873,7 @@ void *malloc_pkey_mmap_dax(long size, in
+ 
+ 	mprotect_pkey(ptr, size, prot, pkey);
+ 
+-	record_pkey_malloc(ptr, size);
++	record_pkey_malloc(ptr, size, prot);
+ 
+ 	dprintf1("mmap()'d for pkey %d @ %p\n", pkey, ptr);
+ 	close(fd);
 _
