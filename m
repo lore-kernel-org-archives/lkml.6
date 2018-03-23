@@ -1,55 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752383AbeCWXe2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 19:34:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45837 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752053AbeCWXeZ (ORCPT
+        id S1751890AbeCWXgL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 19:36:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44352 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751400AbeCWXgK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 19:34:25 -0400
-From: Colin King <colin.king@canonical.com>
-To: John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] apparmor: fix error returns checks by making size a ssize_t
-Date: Fri, 23 Mar 2018 23:34:22 +0000
-Message-Id: <20180323233422.7856-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 23 Mar 2018 19:36:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EE53E601EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Cc: linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, kyan@codeaurora.org, ckadabi@codeaurora.org,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Subject: [PATCH v1 0/2] SDM845 System Cache Driver
+Date: Fri, 23 Mar 2018 16:36:00 -0700
+Message-Id: <1521848162-11338-1-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+This series implements system cache or LLCC(Last Level Cache Controller) driver
+for SDM845 SOC. The purpose of the driver is to partition the system cache and
+program the settings such as priortiy, lines to probe while doing a look up
+in the system cache, low power related settings etc. The partitions are called
+cache slices. Each cache slice is associated with size and SCID(System Cache ID)
+The driver also provides API for clients to query the cache slice details,
+activate and deactivate them.
 
-Currently variable size is a unsigned size_t, hence comparisons to
-see if it is less than zero (for error checking) will always be
-false.  Fix this by making size a ssize_t
+The driver can be broadly classified into:
+* SOC specific driver: llcc-sdm845.c: Cache partitioning and cache slice
+properties for usecases on sdm845 that need to use system cache.
 
-Detected by CoverityScan, CID#1466080 ("Unsigned compared against 0")
+* API : llcc-slice.c: Exports APIs to clients to query cache slice details,
+activate and deactivate cache slices. Register the child devices using platform 
+APIs.
 
-Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/apparmor/domain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v0:
+* Removed the syscon and simple-mfd approach
+* Updated the device tree nodes to mention LLCC as a single HW block
+* Moved llcc bank offsets from device tree and handled the offset
+  in the driver.
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 57cc892e05a2..590b7e8cd21c 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
- 			   struct aa_profile *profile, unsigned int state)
- {
- 	int i;
--	size_t size;
-+	ssize_t size;
- 	struct dentry *d;
- 	char *value = NULL;
- 	int value_size = 0, ret = profile->xattr_count;
+
+ckadabi@codeaurora.org (2):
+  Documentation: Documentaion for qcom, llcc
+  drivers: soc: Add LLCC driver
+
+ .../devicetree/bindings/arm/msm/qcom,llcc.txt      |  78 ++++
+ drivers/soc/qcom/llcc-sdm845.c                     | 120 ++++++
+ drivers/soc/qcom/llcc-slice.c                      | 460 +++++++++++++++++++++
+ include/linux/soc/qcom/llcc-qcom.h                 | 178 ++++++++
+ 4 files changed, 836 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+ create mode 100644 drivers/soc/qcom/llcc-sdm845.c
+ create mode 100644 drivers/soc/qcom/llcc-slice.c
+ create mode 100644 include/linux/soc/qcom/llcc-qcom.h
+
 -- 
-2.15.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
