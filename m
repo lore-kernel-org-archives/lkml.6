@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvP8IwKtJ+jvqPtBicVqeS48c0hFaqLIbci7GQ3ikGkdeWWG40X74i5TO0mzOuxcOhOIQYq
-ARC-Seal: i=1; a=rsa-sha256; t=1521800100; cv=none;
+X-Google-Smtp-Source: AG47ELukY7cHBLzk0mYRXnClp55atUMMXdmrLsD/1gzyx6p6Hjqp+Rehs8vqvZN5fWGho7NvAhlb
+ARC-Seal: i=1; a=rsa-sha256; t=1521800097; cv=none;
         d=google.com; s=arc-20160816;
-        b=tACIu/ewID9YQQXaI+J+d62sQ+DbN3/xaVHGt7GtW86WWesQY1FMs2UC824RW9LbcD
-         kxDzAdp6/wYC8596e5b6EXIqF75SMNEDgsAmHU8zrX795PfmWKQwD9e7aHkSQtruP8dy
-         HRjPjo/vfTfbJVe1MvMFXSN18BPl+EO0tFNsKv8wtsGqPCKhB6F4hZsrS6ijjaBIPoOa
-         DBj8MrdtFoH7AvwBCDgOhQsz2m0p/UDiGzffu3uS8tjLRfObS/Pg0joeLyXIIYCsPkPZ
-         MObxXTa6cOfUH9XOXZ46dEQILOmng7sQ4RoecvmkPRwgA2zuqhDXv4Z+lIChux4uDfoe
-         SecA==
+        b=xDil7TBx7lI85XrJxSvbuGZ852eDIBvZk8zm+uKjuGLWwbK6XF2TtH5v4vsG1y2hEv
+         uPcql46aEK6xT8RUHmokJ9RnKN+wCisBt33DQB20NfPehGoEcMUTf0Vywgar3c32ALYp
+         ZvX1MiqxvO3/ov0dAFOtNTCMW1iIFv4Y9CLOkqP8TvUSXPoUKYczYRr9BQPRAZuDdOEq
+         ZVyMevB8ihj3mWdYPneEazUI14movSccpTk1kY3KJZaoRv/ZTH78I7nVfI7Wz/suXjjL
+         bey1f1jrSP/jHTeXssFPrl1DTsF+gyHMCuGk9Rm+wMtAYmE0wfd3Ezj4C5jUEiOz1Uc1
+         dl6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=hX/RHJxR7KJlHlNFcoDMZbfrpPsxpM8Lqz8e2AiE3as=;
-        b=xDBsHMq+/8msXssDeIHU+9yr/QjyTj/wboL5iVJayDo76zRWuimLTFT6CBp5XbmlpZ
-         gOZ4ITSL9ide+/4wKa1VFM00iPcGacQyLMZxvIZuRg5y3btLvvR3IOXOCE+aJLHS5GOA
-         UCzAI0UPAB/9OvJqSvpmkDpjP2alJZtMgmUkC7n9+mJl1VO5kUrX1+a/6KKafPrccqZn
-         /qIQJopLbvUM6kqDm1SMI9iRy9THmJ+8Hv+BxzcPtJ4TuYwIRnKvp8Z2EkaMK5U776YO
-         GN38Qxf2kHZ0LML1yd2W0tBdMQDnPjxYeE6vw3zkPis9iUgLFoODpKNZqFOmz9kGqfFh
-         cWbQ==
+        bh=JD5LTOXNNU1S0KKiG/x72+/vpGMbukTIcV/4T0gnZUA=;
+        b=XGZVaVg7nDNbNfEFbTYbLK79qzkncOdfx0F6ud+kOrCrG4Cx/eOgsxoKiKRe2mjblB
+         defY1cks8t35ISrEA0/aBn5W4A/7bkWWSedcD/diOr+v88UthydyAoFt+pPF+fLDFssk
+         pt3i2L/HVdFu0w7Flg7BWe6fdqpTgQ+pp5tMvzm5efUeoeLBbqaV25SX4VP8dwBafvD5
+         OhscihT8r28HWl6u2K3IyBFnfSUNkJcUJLMMyZ44t2yMrjMOOLfl6Tclc2dGHLrnI1Kf
+         K1kAJXaHQ6vbHdoxWePZ2ws7n/4uqhvgig+UxzKjsbsbnGJkxWnsZ0LWIAL54fLf5Bz+
+         hTuA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Maor Gottlieb <maorg@mellanox.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Doug Ledford <dledford@redhat.com>,
+	Pan Bian <bianpan2016@163.com>,
+	Kalle Valo <kvalo@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 34/97] IB/mlx4: Take write semaphore when changing the vma struct
-Date: Fri, 23 Mar 2018 10:54:21 +0100
-Message-Id: <20180323094159.597716749@linuxfoundation.org>
+Subject: [PATCH 4.4 48/97] rndis_wlan: add return value validation
+Date: Fri, 23 Mar 2018 10:54:35 +0100
+Message-Id: <20180323094200.302960637@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722537979467705?=
-X-GMAIL-MSGID: =?utf-8?q?1595723062516579607?=
+X-GMAIL-THRID: =?utf-8?q?1595722625840527825?=
+X-GMAIL-MSGID: =?utf-8?q?1595723059112028874?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,44 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maor Gottlieb <maorg@mellanox.com>
+From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit 22c3653d04bd0c67b75e99d85e0c0bdf83947df5 ]
+[ Upstream commit 9dc7efd3978aa67ae598129d2a3f240b390ce508 ]
 
-When the driver disassociate user context, it changes the vma to
-anonymous by setting the vm_ops to null and zap the vma ptes.
+Function create_singlethread_workqueue() will return a NULL pointer if
+there is no enough memory, and its return value should be validated
+before using. However, in function rndis_wlan_bind(), its return value
+is not checked. This may cause NULL dereference bugs. This patch fixes
+it.
 
-In order to avoid race in the kernel, we need to take write lock
-before we change the vma entries.
-
-Fixes: ae184ddeca5db ('IB/mlx4_ib: Disassociate support')
-Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx4/main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/rndis_wlan.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/infiniband/hw/mlx4/main.c
-+++ b/drivers/infiniband/hw/mlx4/main.c
-@@ -1041,7 +1041,7 @@ static void mlx4_ib_disassociate_ucontex
- 	/* need to protect from a race on closing the vma as part of
- 	 * mlx4_ib_vma_close().
- 	 */
--	down_read(&owning_mm->mmap_sem);
-+	down_write(&owning_mm->mmap_sem);
- 	for (i = 0; i < HW_BAR_COUNT; i++) {
- 		vma = context->hw_bar_info[i].vma;
- 		if (!vma)
-@@ -1059,7 +1059,7 @@ static void mlx4_ib_disassociate_ucontex
- 		context->hw_bar_info[i].vma->vm_ops = NULL;
- 	}
+--- a/drivers/net/wireless/rndis_wlan.c
++++ b/drivers/net/wireless/rndis_wlan.c
+@@ -3425,6 +3425,10 @@ static int rndis_wlan_bind(struct usbnet
  
--	up_read(&owning_mm->mmap_sem);
-+	up_write(&owning_mm->mmap_sem);
- 	mmput(owning_mm);
- 	put_task_struct(owning_process);
- }
+ 	/* because rndis_command() sleeps we need to use workqueue */
+ 	priv->workqueue = create_singlethread_workqueue("rndis_wlan");
++	if (!priv->workqueue) {
++		wiphy_free(wiphy);
++		return -ENOMEM;
++	}
+ 	INIT_WORK(&priv->work, rndis_wlan_worker);
+ 	INIT_DELAYED_WORK(&priv->dev_poller_work, rndis_device_poller);
+ 	INIT_DELAYED_WORK(&priv->scan_work, rndis_get_scan_results);
