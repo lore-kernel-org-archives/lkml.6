@@ -1,144 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752620AbeCWSMt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 14:12:49 -0400
-Received: from mga01.intel.com ([192.55.52.88]:38106 "EHLO mga01.intel.com"
+        id S1752223AbeCWSO7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 14:14:59 -0400
+Received: from muru.com ([72.249.23.125]:33488 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752189AbeCWSLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 14:11:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,351,1517904000";
-   d="scan'208";a="214308467"
-Subject: [PATCH 4/9] x86, pkeys: override pkey when moving away from PROT_EXEC
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        shakeelb@google.com, linuxram@us.ibm.com, tglx@linutronix.de,
-        dave.hansen@intel.com, mpe@ellerman.id.au, mingo@kernel.org,
-        akpm@linux-foundation.org, shuah@kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Fri, 23 Mar 2018 11:09:11 -0700
-References: <20180323180903.33B17168@viggo.jf.intel.com>
-In-Reply-To: <20180323180903.33B17168@viggo.jf.intel.com>
-Message-Id: <20180323180911.E43ACAB8@viggo.jf.intel.com>
+        id S1751595AbeCWSO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 14:14:58 -0400
+Date: Fri, 23 Mar 2018 11:14:53 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Huacai Chen <chenhc@lemote.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@mips.com>,
+        Russell King <linux@arm.linux.org.uk>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+Subject: Regression with arm in next with stack protector
+Message-ID: <20180323181452.GJ5799@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+Looks like commit 5638790dadae ("zboot: fix stack protector in
+compressed boot phase") breaks booting on arm.
 
-I got a bug report that the following code (roughly) was
-causing a SIGSEGV:
+This is all I get from the bootloader on omap3:
 
-	mprotect(ptr, size, PROT_EXEC);
-	mprotect(ptr, size, PROT_NONE);
-	mprotect(ptr, size, PROT_READ);
-	*ptr = 100;
+Starting kernel ...
 
-The problem is hit when the mprotect(PROT_EXEC)
-is implicitly assigned a protection key to the VMA, and made
-that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
-failed to remove the protection key, and the PROT_NONE->
-PROT_READ left the PTE usable, but the pkey still in place
-and left the memory inaccessible.
+data abort
+pc : [<810002d0>]          lr : [<100110a8>]
+reloc pc : [<9d6002d0>]    lr : [<2c6110a8>]
+sp : 81467c18  ip : 81466bf0     fp : 81466bf0
+r10: 80fc2c40  r9 : 81000258     r8 : 86fec000
+r7 : ffffffff  r6 : 81466bf8     r5 : 00000000  r4 : 80008000
+r3 : 81466c14  r2 : 81466c18     r1 : 000a0dff  r0 : 00466bf8
+Flags: nZCv  IRQs off  FIQs off  Mode SVC_32
+Resetting CPU ...
 
-To fix this, we ensure that we always "override" the pkee
-at mprotect() if the VMA does not have execute-only
-permissions, but the VMA has the execute-only pkey.
+resetting ...
 
-We had a check for PROT_READ/WRITE, but it did not work
-for PROT_NONE.  This entirely removes the PROT_* checks,
-which ensures that PROT_NONE now works.
+Regards,
 
-Reported-by: Shakeel Butt <shakeelb@google.com>
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>
----
-
- b/arch/x86/include/asm/pkeys.h |   12 +++++++++++-
- b/arch/x86/mm/pkeys.c          |   19 ++++++++++---------
- 2 files changed, 21 insertions(+), 10 deletions(-)
-
-diff -puN arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/include/asm/pkeys.h
---- a/arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively	2018-03-21 15:47:49.810198922 -0700
-+++ b/arch/x86/include/asm/pkeys.h	2018-03-21 15:47:49.816198922 -0700
-@@ -2,6 +2,8 @@
- #ifndef _ASM_X86_PKEYS_H
- #define _ASM_X86_PKEYS_H
- 
-+#define ARCH_DEFAULT_PKEY	0
-+
- #define arch_max_pkey() (boot_cpu_has(X86_FEATURE_OSPKE) ? 16 : 1)
- 
- extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
-@@ -15,7 +17,7 @@ extern int __execute_only_pkey(struct mm
- static inline int execute_only_pkey(struct mm_struct *mm)
- {
- 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
--		return 0;
-+		return ARCH_DEFAULT_PKEY;
- 
- 	return __execute_only_pkey(mm);
- }
-@@ -56,6 +58,14 @@ bool mm_pkey_is_allocated(struct mm_stru
- 		return false;
- 	if (pkey >= arch_max_pkey())
- 		return false;
-+	/*
-+	 * The exec-only pkey is set in the allocation map, but
-+	 * is not available to any of the user interfaces like
-+	 * mprotect_pkey().
-+	 */
-+	if (pkey == mm->context.execute_only_pkey)
-+		return false;
-+
- 	return mm_pkey_allocation_map(mm) & (1U << pkey);
- }
- 
-diff -puN arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/mm/pkeys.c
---- a/arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively	2018-03-21 15:47:49.812198922 -0700
-+++ b/arch/x86/mm/pkeys.c	2018-03-21 15:47:49.816198922 -0700
-@@ -94,15 +94,7 @@ int __arch_override_mprotect_pkey(struct
- 	 */
- 	if (pkey != -1)
- 		return pkey;
--	/*
--	 * Look for a protection-key-drive execute-only mapping
--	 * which is now being given permissions that are not
--	 * execute-only.  Move it back to the default pkey.
--	 */
--	if (vma_is_pkey_exec_only(vma) &&
--	    (prot & (PROT_READ|PROT_WRITE))) {
--		return 0;
--	}
-+
- 	/*
- 	 * The mapping is execute-only.  Go try to get the
- 	 * execute-only protection key.  If we fail to do that,
-@@ -113,7 +105,16 @@ int __arch_override_mprotect_pkey(struct
- 		pkey = execute_only_pkey(vma->vm_mm);
- 		if (pkey > 0)
- 			return pkey;
-+	} else if (vma_is_pkey_exec_only(vma)) {
-+		/*
-+		 * Protections are *not* PROT_EXEC, but the mapping
-+		 * is using the exec-only pkey.  This mapping was
-+		 * PROT_EXEC and will no longer be.  Move back to
-+		 * the default pkey.
-+		 */
-+		return ARCH_DEFAULT_PKEY;
- 	}
-+
- 	/*
- 	 * This is a vanilla, non-pkey mprotect (or we failed to
- 	 * setup execute-only), inherit the pkey from the VMA we
-_
+Tony
