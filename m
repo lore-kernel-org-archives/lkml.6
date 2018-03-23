@@ -1,80 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751876AbeCWIoJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 04:44:09 -0400
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:37974 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751675AbeCWIoH (ORCPT
+        id S1751853AbeCWIvr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 04:51:47 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:34420 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751797AbeCWIvp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 04:44:07 -0400
-X-Google-Smtp-Source: AG47ELssZCO1hBDdhVbWExfDbhcY7W+4SOeHWHuVJ18Eh30xxHTMpIglWdrz2tKHrpq41YqQ5TR9dcURor30IrNqDFg=
-From: Srinath Mannam <srinath.mannam@broadcom.com>
-References: <744877924.5841545.1521630049567.JavaMail.zimbra@kalray.eu>
- <20180321115037.GA26083@ming.t460p> <464125757.5843583.1521634231341.JavaMail.zimbra@kalray.eu>
- <20180321154807.GD22254@ming.t460p> <20180321160238.GF12909@localhost.localdomain>
- <1220434088.5871933.1521648656789.JavaMail.zimbra@kalray.eu>
- <20180321215308.GH38649@bhelgaas-glaptop.roam.corp.google.com> <2116255963.5924726.1521790087788.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <2116255963.5924726.1521790087788.JavaMail.zimbra@kalray.eu>
+        Fri, 23 Mar 2018 04:51:45 -0400
+Date: Fri, 23 Mar 2018 09:51:40 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6] ARM: dts: wheat: Fix ADV7513 address usage
+Message-ID: <20180323085140.g3golwdtpezo7fhi@verge.net.au>
+References: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQKUEOnFU2UVDrc3r39WZEWgKrnm8AKa1mcNAbL50P0Csp/JAgJw335UAsJU8eUBaw44cAHD2XPLoeHPMTA=
-Date: Fri, 23 Mar 2018 14:14:05 +0530
-Message-ID: <0b37cdbe43a350e46057efa197ba471a@mail.gmail.com>
-Subject: RE: [RFC PATCH] nvme: avoid race-conditions when enabling devices
-To: Marta Rybczynska <mrybczyn@kalray.eu>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Cc: Keith Busch <keith.busch@intel.com>, Ming Lei <ming.lei@redhat.com>,
-        axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, linux-pci@vger.kernel.org,
-        Pierre-Yves Kerbrat <pkerbrat@kalray.eu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marta,
+On Thu, Mar 22, 2018 at 09:30:40PM +0000, Kieran Bingham wrote:
+> The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
+> bus, however in low power mode the ADV7513 will reset it's slave maps to
+> use the hardware defined default addresses.
+> 
+> The ADV7511 driver was adapted to allow the two devices to be registered
+> correctly - but it did not take into account the fault whereby the
+> devices reset the addresses.
+> 
+> This results in an address conflict between the device using the default
+> addresses, and the other device if it is in low-power-mode.
+> 
+> Repair this issue by moving both devices away from the default address
+> definitions.
 
-I could not get time to work on this.
-The present patch works for our platforms. so we continue with that.
-I will update new changes little later.
-If you have time, please try the same patch and let us know if any issue you
-see.
+Hi Kierean,
 
-Regards,
-Srinath.
-
------Original Message-----
-From: Marta Rybczynska [mailto:mrybczyn@kalray.eu]
-Sent: Friday, March 23, 2018 12:58 PM
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Keith Busch <keith.busch@intel.com>; Ming Lei <ming.lei@redhat.com>;
-axboe@fb.com; hch@lst.de; sagi@grimberg.me; linux-nvme@lists.infradead.org;
-linux-kernel@vger.kernel.org; bhelgaas@google.com;
-linux-pci@vger.kernel.org; Pierre-Yves Kerbrat <pkerbrat@kalray.eu>; Srinath
-Mannam <srinath.mannam@broadcom.com>
-Subject: Re: [RFC PATCH] nvme: avoid race-conditions when enabling devices
-
-
-> On Wed, Mar 21, 2018 at 05:10:56PM +0100, Marta Rybczynska wrote:
->>
->> The problem may happen also with other device doing its probe and
->> nvme running its workqueue (and we probably have seen it in practice
->> too). We were thinking about a lock in the pci generic code too,
->> that's why I've put the linux-pci@ list in copy.
->
-> Yes, this is a generic problem in the PCI core.  We've tried to fix it
-> in the past but haven't figured it out yet.
->
-> See 40f11adc7cd9 ("PCI: Avoid race while enabling upstream bridges")
-> and 0f50a49e3008 ("Revert "PCI: Avoid race while enabling upstream
-> bridges"").
->
-> It's not trivial, but if you figure out a good way to fix this, I'd be
-> thrilled.
->
-
-Bjorn, Srinath, are you aware of anyone working on an updated fix for this
-one?
-
-Marta
+as this is a fix
+a) Does it warrant a fixes tag?
+   Fixes: f6eea82a87db ("ARM: dts: wheat: add DU support")
+b) Does it warrant being posted as a fix for v4.16;
+c) or v4.17?
