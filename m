@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521828382; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521828378; cv=none;
         d=google.com; s=arc-20160816;
-        b=AZPOLT03kjgqpzRWVv3x6JARwM+tVEDd51q4Hlj690wwMz1N4KK4pnrBPdlu36mpbN
-         n5acPIl5FHiOiqaZBraLOIU2cM8RP4NOJ9w4eLhv3UOEYhRiPP9PSwq/M703SRaOJQcU
-         LJuXX1trcf/7dzjUS00eYE1TCjGvSLxpliyEmOaqQljxrD66vaDbiw202/RzLl9bOTjH
-         GA/EF9D5jlsr3SWFwyXUbbIRpZcqoQc52QPs58sy6JbwvedGDa0mRTrJpftBfUwkS38P
-         7j/BzdACEA4tczkUju/NtNeSzNOdC6mPKbfP4V/g0obB8FtBw43gdIBvBF081uKSXxRJ
-         0Jrw==
+        b=bjthdQRLmksAjhtwUpOUVTGBB0Fug9bmN9gRhFGvD22NTs+SGus+tyTUqkSkKrCUL0
+         8hI6rFvn705k+e84G2C/nmh/bbZ9orXp5KrhlsM/mYW2YOXf4CS73AaFAoLjmDi5AaIW
+         tR3wSVqNPw/1UZWo4QgNHasoCVPepuIiOeLD/APZYdFhX0mUJatLpaWMjqGPwiw2kgOZ
+         3H7t4tFCzU61e9mqGXfhO+UnJsFq4lkxPypd9+xPZ0siUiO3whReh7cQH3qkoWLLR67H
+         vaz85BZG8lV0MS0K+6Hf0CZ7cvjNV094LeuG3h+l2LC2iKwH4l8mYimjCgfnWe2/LYLj
+         wUdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=035AGJ8AHy0d6paOfMcnm4r0vc608UqoXPevei7fKek=;
-        b=Sp+iI+7qhCMskybyBdgnMmnqM9VFNVBXLD3ShWj+g2GQMLgY8fmCCM2lTc76KHZxDu
-         3xKwubgPSam41qWw8QTeoHXPjNNwzVH31JwsiBpWDQ0CPhTybVnZD/u36bdiMUXIqxZ4
-         HRLI4ha7Cv1I+dctSo19FYWcVjibScWJDMSp9DLYzQA1ZvI2RlrmseQ8bUS58KDf0vYs
-         OKAyy7sZDxSf84o8zug6t9ujM1N/g2w7lmkp7Cqi5mC1XPkVjtjigqaeOuzVcDSN63H9
-         aSpVOmDbiteDSF8H1yXvH3dP/QqD1+hXjyovk/i1qBu4VJhtFgXt8dgr4zptds6bVQuA
-         5/gQ==
+        bh=h7UAM4u0ltxxy6L178zyCoaH+JXfuyTZuKiCHYRMeXU=;
+        b=waAxpVsrqv43odkId6FRqpfRjQvVVAzC8jujAM8UpOXFARFaZJx2sf+Ro1B1UDEa/J
+         spgIWcaN16Vl4xH4WWP2EcvaWMDd1xECaihJWHYTvX44zkPrFSm3jjiQvy5qV8nRu1l8
+         j+jZoGVCgExuDyGKhuNfnEZI4UbAnhFij/jjGkNxrWwDdWiSN/za0Z9SkqigHb5C64oI
+         332K7aRCqeO6Um3GQGxyS4k1NEsKeqrro4ZZScmhzngg4hlU9Mme9KDT4aD5JgiVyVr+
+         voPNePl99uWE1zWBJEeGnlpsaVLPPzuF1vOKseJonPdQuOM0cwEwTtcfttu8K/FImrDE
+         fUrw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=GV5CaW91;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Fs4ONDnJ;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=GV5CaW91;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Fs4ONDnJ;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELtGTdxlmClAqr+o7fWsdns5+biAetvS7T2mdYg7MeXWZHKO3ciJnUbIV7dhi3FbrYeysiH6+w==
+X-Google-Smtp-Source: AG47ELsuAzh6p7g7ra2+h+UClcAzKG/37YUeQ/5K9N+hkqo0hMa6Hv2Ylc89BIENdayTIbOX5w6V0Q==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Alexander Potapenko <glider@google.com>,
@@ -87,178 +87,68 @@ Cc: Kostya Serebryany <kcc@google.com>,
 	Kees Cook <keescook@google.com>,
 	Jann Horn <jannh@google.com>,
 	Mark Brand <markbrand@google.com>
-Subject: [RFC PATCH v2 12/15] khwasan: add bug reporting routines
-Date: Fri, 23 Mar 2018 19:05:48 +0100
-Message-Id: <1ebd9c89a812711429ff6d38c1672255d860228b.1521828274.git.andreyknvl@google.com>
+Subject: [RFC PATCH v2 10/15] khwasan, arm64: enable top byte ignore for the kernel
+Date: Fri, 23 Mar 2018 19:05:46 +0100
+Message-Id: <1dcf5f0ef52a08581f453e05101cd2193575249c.1521828274.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
 In-Reply-To: <cover.1521828273.git.andreyknvl@google.com>
 References: <cover.1521828273.git.andreyknvl@google.com>
 In-Reply-To: <cover.1521828273.git.andreyknvl@google.com>
 References: <cover.1521828273.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595752717905765821?=
-X-GMAIL-MSGID: =?utf-8?q?1595752717905765821?=
+X-GMAIL-THRID: =?utf-8?q?1595752713986341704?=
+X-GMAIL-MSGID: =?utf-8?q?1595752713986341704?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit adds rountines, that print KHWASAN error reports. Those are
-quite similar to KASAN, the difference is:
-
-1. The way KHWASAN finds the first bad shadow cell (with a mismatching
-   tag). KHWASAN compares memory tags from the shadow memory to the pointer
-   tag.
-
-2. KHWASAN reports all bugs with the "KASAN: invalid-access" header. This
-   is done, so various external tools that already parse the kernel logs
-   looking for KASAN reports wouldn't need to be changed.
+KHWASAN uses the Top Byte Ignore feature of arm64 CPUs to store a pointer
+tag in the top byte of each pointer. This commit enables the TCR_TBI1 bit,
+which enables Top Byte Ignore for the kernel, when KHWASAN is used.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- include/linux/kasan.h |  3 ++
- mm/kasan/report.c     | 88 ++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 82 insertions(+), 9 deletions(-)
+ arch/arm64/include/asm/pgtable-hwdef.h | 1 +
+ arch/arm64/mm/proc.S                   | 9 ++++++++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index a2869464a8be..54e7c437dc8f 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -161,6 +161,9 @@ void *khwasan_set_tag(const void *addr, u8 tag);
- u8 khwasan_get_tag(const void *addr);
- void *khwasan_reset_tag(const void *ptr);
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index cdfe3e657a9e..ae6b6405eacc 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -289,6 +289,7 @@
+ #define TCR_A1			(UL(1) << 22)
+ #define TCR_ASID16		(UL(1) << 36)
+ #define TCR_TBI0		(UL(1) << 37)
++#define TCR_TBI1		(UL(1) << 38)
+ #define TCR_HA			(UL(1) << 39)
+ #define TCR_HD			(UL(1) << 40)
  
-+void khwasan_report(unsigned long addr, size_t size, bool write,
-+			unsigned long ip);
-+
- #else /* CONFIG_KASAN_TAGS */
+diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+index c0af47617299..d64ce2ea40ec 100644
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -41,6 +41,12 @@
+ /* PTWs cacheable, inner/outer WBWA */
+ #define TCR_CACHE_FLAGS	TCR_IRGN_WBWA | TCR_ORGN_WBWA
  
- static inline void khwasan_init(void) { }
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index 5c169aa688fd..ed17168a083e 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -51,10 +51,9 @@ static const void *find_first_bad_addr(const void *addr, size_t size)
- 	return first_bad_addr;
- }
++#ifdef CONFIG_KASAN_TAGS
++#define KASAN_TCR_FLAGS TCR_TBI1
++#else
++#define KASAN_TCR_FLAGS 0
++#endif
++
+ #define MAIR(attr, mt)	((attr) << ((mt) * 8))
  
--static bool addr_has_shadow(struct kasan_access_info *info)
-+static bool addr_has_shadow(const void *addr)
- {
--	return (info->access_addr >=
--		kasan_shadow_to_mem((void *)KASAN_SHADOW_START));
-+	return (addr >= kasan_shadow_to_mem((void *)KASAN_SHADOW_START));
- }
+ /*
+@@ -432,7 +438,8 @@ ENTRY(__cpu_setup)
+ 	 * both user and kernel.
+ 	 */
+ 	ldr	x10, =TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
+-			TCR_TG_FLAGS | TCR_ASID16 | TCR_TBI0 | TCR_A1
++			TCR_TG_FLAGS | TCR_ASID16 | TCR_TBI0 | TCR_A1 | \
++			KASAN_TCR_FLAGS
+ 	tcr_set_idmap_t0sz	x10, x9
  
- static const char *get_shadow_bug_type(struct kasan_access_info *info)
-@@ -127,15 +126,14 @@ static const char *get_wild_bug_type(struct kasan_access_info *info)
- 
- static const char *get_bug_type(struct kasan_access_info *info)
- {
--	if (addr_has_shadow(info))
-+	if (addr_has_shadow(info->access_addr))
- 		return get_shadow_bug_type(info);
- 	return get_wild_bug_type(info);
- }
- 
--static void print_error_description(struct kasan_access_info *info)
-+static void print_error_description(struct kasan_access_info *info,
-+					const char *bug_type)
- {
--	const char *bug_type = get_bug_type(info);
--
- 	pr_err("BUG: KASAN: %s in %pS\n",
- 		bug_type, (void *)info->ip);
- 	pr_err("%s of size %zu at addr %px by task %s/%d\n",
-@@ -345,10 +343,10 @@ static void kasan_report_error(struct kasan_access_info *info)
- 
- 	kasan_start_report(&flags);
- 
--	print_error_description(info);
-+	print_error_description(info, get_bug_type(info));
- 	pr_err("\n");
- 
--	if (!addr_has_shadow(info)) {
-+	if (!addr_has_shadow(info->access_addr)) {
- 		dump_stack();
- 	} else {
- 		print_address_description((void *)info->access_addr);
-@@ -412,6 +410,78 @@ void kasan_report(unsigned long addr, size_t size,
- 	kasan_report_error(&info);
- }
- 
-+static inline void khwasan_print_tags(const void *addr)
-+{
-+	u8 addr_tag = get_tag(addr);
-+	void *untagged_addr = reset_tag(addr);
-+	u8 *shadow = (u8 *)kasan_mem_to_shadow(untagged_addr);
-+
-+	pr_err("Pointer tag: [%02x], memory tag: [%02x]\n", addr_tag, *shadow);
-+}
-+
-+static const void *khwasan_find_first_bad_addr(const void *addr, size_t size)
-+{
-+	u8 tag = get_tag((void *)addr);
-+	void *untagged_addr = reset_tag((void *)addr);
-+	u8 *shadow = (u8 *)kasan_mem_to_shadow(untagged_addr);
-+	const void *first_bad_addr = untagged_addr;
-+
-+	while (*shadow == tag && first_bad_addr < untagged_addr + size) {
-+		first_bad_addr += KASAN_SHADOW_SCALE_SIZE;
-+		shadow = (u8 *)kasan_mem_to_shadow(first_bad_addr);
-+	}
-+	return first_bad_addr;
-+}
-+
-+void khwasan_report(unsigned long addr, size_t size, bool write,
-+			unsigned long ip)
-+{
-+	struct kasan_access_info info;
-+	unsigned long flags;
-+	void *untagged_addr = reset_tag((void *)addr);
-+
-+	if (likely(!kasan_report_enabled()))
-+		return;
-+
-+	disable_trace_on_warning();
-+
-+	info.access_addr = (void *)addr;
-+	info.first_bad_addr = khwasan_find_first_bad_addr((void *)addr, size);
-+	info.access_size = size;
-+	info.is_write = write;
-+	info.ip = ip;
-+
-+	kasan_start_report(&flags);
-+
-+	print_error_description(&info, "invalid-access");
-+	khwasan_print_tags((void *)addr);
-+	pr_err("\n");
-+
-+	if (!addr_has_shadow(untagged_addr)) {
-+		dump_stack();
-+	} else {
-+		print_address_description(untagged_addr);
-+		pr_err("\n");
-+		print_shadow_for_address(info.first_bad_addr);
-+	}
-+
-+	kasan_end_report(&flags);
-+}
-+
-+void khwasan_report_invalid_free(void *object, unsigned long ip)
-+{
-+	unsigned long flags;
-+	void *untagged_addr = reset_tag((void *)object);
-+
-+	kasan_start_report(&flags);
-+	pr_err("BUG: KASAN: double-free or invalid-free in %pS\n", (void *)ip);
-+	khwasan_print_tags(object);
-+	pr_err("\n");
-+	print_address_description(untagged_addr);
-+	pr_err("\n");
-+	print_shadow_for_address(untagged_addr);
-+	kasan_end_report(&flags);
-+}
- 
- #define DEFINE_ASAN_REPORT_LOAD(size)                     \
- void __asan_report_load##size##_noabort(unsigned long addr) \
+ 	/*
 -- 
 2.17.0.rc0.231.g781580f067-goog
