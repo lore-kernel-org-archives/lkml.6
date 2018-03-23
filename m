@@ -1,150 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754106AbeCWMC2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 08:02:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39567 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753345AbeCWMAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 08:00:51 -0400
-From: Petr Mladek <pmladek@suse.com>
-To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Cc: Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 2/8] livepatch: Free only structures with initialized kobject
-Date: Fri, 23 Mar 2018 13:00:22 +0100
-Message-Id: <20180323120028.31451-3-pmladek@suse.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180323120028.31451-1-pmladek@suse.com>
-References: <20180323120028.31451-1-pmladek@suse.com>
+        id S1753827AbeCWMFm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:05:42 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48385 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753523AbeCWMFj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 08:05:39 -0400
+Message-ID: <1521806663.3406.6.camel@pengutronix.de>
+Subject: Re: [PATCH v3 1/8] reset: modify the way reset lookup works for
+ board files
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Fri, 23 Mar 2018 13:04:23 +0100
+In-Reply-To: <20180323114709.20330-2-brgl@bgdev.pl>
+References: <20180323114709.20330-1-brgl@bgdev.pl>
+         <20180323114709.20330-2-brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are going to add a feature called atomic replace. It will allow to
-create a patch that would replace all already registered patches.
-For this, we will need to dynamically create funcs and objects
-for functions that are no longer patched.
+Hi Bartosz,
 
-We will want to reuse the existing init() and free() functions. Up to now,
-the free() functions checked a limit and were called only for structures
-with initialized kobject. But we will want to call them also for structures
-that were allocated but where the kobject was not initialized yet.
+On Fri, 2018-03-23 at 12:47 +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
+> introduced reset control lookup mechanism for boards that still use
+> board files.
+> 
+> The routine used to register lookup entries takes the corresponding
+> reset_controlled_dev structure as argument.
+> 
+> It's been determined however that for the first user of this new
+> interface - davinci psc driver - it will be easier to register the
+> lookup entries using the reset controller device name.
+> 
+> This patch changes the way lookup entries are added.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/reset/core.c             | 38 +++++++++++++++++++++++++++++++-------
+>  include/linux/reset-controller.h | 12 +++++++-----
+>  2 files changed, 38 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 06fa4907afc4..f4a29c046995 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -153,12 +153,10 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+>  
+>  /**
+>   * reset_controller_add_lookup - register a set of lookup entries
+> - * @rcdev: initialized reset controller device owning the reset line
+>   * @lookup: array of reset lookup entries
+>   * @num_entries: number of entries in the lookup array
+>   */
+> -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+> -				 struct reset_control_lookup *lookup,
+> +void reset_controller_add_lookup(struct reset_control_lookup *lookup,
+>  				 unsigned int num_entries)
+>  {
+>  	struct reset_control_lookup *entry;
+> @@ -168,13 +166,12 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+>  	for (i = 0; i < num_entries; i++) {
+>  		entry = &lookup[i];
+>  
+> -		if (!entry->dev_id) {
+> -			pr_warn("%s(): reset lookup entry has no dev_id, skipping\n",
+> +		if (!entry->dev_id || !entry->provider) {
+> +			pr_warn("%s(): reset lookup entry badly specified, skipping\n",
+>  				__func__);
+>  			continue;
+>  		}
+>  
+> -		entry->rcdev = rcdev;
+>  		list_add_tail(&entry->list, &reset_lookup_list);
+>  	}
+>  	mutex_unlock(&reset_lookup_mutex);
+> @@ -526,11 +523,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+>  }
+>  EXPORT_SYMBOL_GPL(__of_reset_control_get);
+>  
+> +static struct reset_controller_dev *
+> +__reset_controller_by_name(const char *name)
+> +{
+> +	struct reset_controller_dev *rcdev;
+> +
+> +	lockdep_assert_held(&reset_list_mutex);
+> +
+> +	list_for_each_entry(rcdev, &reset_controller_list, list) {
+> +		if (!rcdev->dev)
+> +			continue;
+> +
+> +		if (!strcmp(name, dev_name(rcdev->dev)))
+> +			return rcdev;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+>  static struct reset_control *
+>  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>  				bool shared, bool optional)
+>  {
+>  	const struct reset_control_lookup *lookup;
+> +	struct reset_controller_dev *rcdev;
+>  	const char *dev_id = dev_name(dev);
+>  	struct reset_control *rstc = NULL;
+>  
+> @@ -547,7 +563,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>  		    ((con_id && lookup->con_id) &&
+>  		     !strcmp(con_id, lookup->con_id))) {
+>  			mutex_lock(&reset_list_mutex);
+> -			rstc = __reset_control_get_internal(lookup->rcdev,
+> +			rcdev = __reset_controller_by_name(lookup->provider);
+> +			if (!rcdev) {
+> +				mutex_unlock(&reset_list_mutex);
+> +				mutex_unlock(&reset_lookup_mutex);
+> +				/* Reset provider may not be ready yet. */
+> +				return -EPROBE_DEFER;
+> +			}
+> +
+> +			rstc = __reset_control_get_internal(rcdev,
+>  							    lookup->index,
+>  							    shared);
+>  			mutex_unlock(&reset_list_mutex);
+> diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
+> index 25698f6c1fae..c870acaa2e07 100644
+> --- a/include/linux/reset-controller.h
+> +++ b/include/linux/reset-controller.h
+> @@ -30,21 +30,22 @@ struct of_phandle_args;
+>   * struct reset_control_lookup - represents a single lookup entry
+>   *
+>   * @list: internal list of all reset lookup entries
+> - * @rcdev: reset controller device controlling this reset line
+> + * @provider: name of the reset controller device controlling this reset line
+>   * @index: ID of the reset controller in the reset controller device
+>   * @dev_id: name of the device associated with this reset line
+>   * @con_id name of the reset line (can be NULL)
+>   */
+>  struct reset_control_lookup {
+>  	struct list_head list;
+> -	struct reset_controller_dev *rcdev;
+> +	const char *provider;
+>  	unsigned int index;
+>  	const char *dev_id;
+>  	const char *con_id;
+>  };
+>  
+> -#define RESET_LOOKUP(_dev_id, _con_id, _index)				\
+> +#define RESET_LOOKUP(_provider, _dev_id, _con_id, _index)		\
 
-This patch removes the limit. It calls klp_free*() functions for all
-structures. But only the ones with initialized kobject are freed.
-The handling of un-initialized structures will be added later with
-the support for dynamic structures.
+Please move the _index before _dev_id and _con_id, right after
+_provider. Otherwise this looks fine to me.
 
-This patch does not change the existing behavior.
-
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Miroslav Benes <mbenes@suse.cz>
----
- kernel/livepatch/core.c | 44 ++++++++++++++++++--------------------------
- 1 file changed, 18 insertions(+), 26 deletions(-)
-
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 56cb0574c59c..dcce028ecde8 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -642,17 +642,15 @@ static struct kobj_type klp_ktype_func = {
- 	.sysfs_ops = &kobj_sysfs_ops,
- };
- 
--/*
-- * Free all functions' kobjects in the array up to some limit. When limit is
-- * NULL, all kobjects are freed.
-- */
--static void klp_free_funcs_limited(struct klp_object *obj,
--				   struct klp_func *limit)
-+static void klp_free_funcs(struct klp_object *obj)
- {
- 	struct klp_func *func;
- 
--	for (func = obj->funcs; func->old_name && func != limit; func++)
--		kobject_put(&func->kobj);
-+	klp_for_each_func(obj, func) {
-+		/* Might be called from klp_init_patch() error path. */
-+		if (func->kobj.state_initialized)
-+			kobject_put(&func->kobj);
-+	}
- }
- 
- /* Clean up when a patched object is unloaded */
-@@ -666,24 +664,23 @@ static void klp_free_object_loaded(struct klp_object *obj)
- 		func->old_addr = 0;
- }
- 
--/*
-- * Free all objects' kobjects in the array up to some limit. When limit is
-- * NULL, all kobjects are freed.
-- */
--static void klp_free_objects_limited(struct klp_patch *patch,
--				     struct klp_object *limit)
-+static void klp_free_objects(struct klp_patch *patch)
- {
- 	struct klp_object *obj;
- 
--	for (obj = patch->objs; obj->funcs && obj != limit; obj++) {
--		klp_free_funcs_limited(obj, NULL);
--		kobject_put(&obj->kobj);
-+	klp_for_each_object(patch, obj) {
-+		klp_free_funcs(obj);
-+
-+		/* Might be called from klp_init_patch() error path. */
-+		if (obj->kobj.state_initialized)
-+			kobject_put(&obj->kobj);
- 	}
- }
- 
- static void klp_free_patch(struct klp_patch *patch)
- {
--	klp_free_objects_limited(patch, NULL);
-+	klp_free_objects(patch);
-+
- 	if (!list_empty(&patch->list))
- 		list_del(&patch->list);
- }
-@@ -780,21 +777,16 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
- 	klp_for_each_func(obj, func) {
- 		ret = klp_init_func(obj, func);
- 		if (ret)
--			goto free;
-+			return ret;
- 	}
- 
- 	if (klp_is_object_loaded(obj)) {
- 		ret = klp_init_object_loaded(patch, obj);
- 		if (ret)
--			goto free;
-+			return ret;
- 	}
- 
- 	return 0;
--
--free:
--	klp_free_funcs_limited(obj, func);
--	kobject_put(&obj->kobj);
--	return ret;
- }
- 
- static int klp_init_patch(struct klp_patch *patch)
-@@ -831,7 +823,7 @@ static int klp_init_patch(struct klp_patch *patch)
- 	return 0;
- 
- free:
--	klp_free_objects_limited(patch, obj);
-+	klp_free_objects(patch);
- 
- 	mutex_unlock(&klp_mutex);
- 
--- 
-2.13.6
+regards
+Philipp
