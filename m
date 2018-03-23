@@ -1,120 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752216AbeCWA6Y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:58:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40366 "EHLO mx1.redhat.com"
+        id S1752231AbeCWA6w (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:58:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49738 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751677AbeCWAzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 20:55:51 -0400
-From: jglisse@redhat.com
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM client quit v3
-Date: Thu, 22 Mar 2018 20:55:16 -0400
-Message-Id: <20180323005527.758-5-jglisse@redhat.com>
-In-Reply-To: <20180323005527.758-1-jglisse@redhat.com>
-References: <20180323005527.758-1-jglisse@redhat.com>
+        id S1751551AbeCWA6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 20:58:50 -0400
+Date: Fri, 23 Mar 2018 08:58:45 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        takahiro.akashi@linaro.org, ebiederm@xmission.com, vgoyal@redhat.com,
+        dyoung@redhat.com, prudo@linux.vnet.ibm.com
+Subject: Re: [PATCH 1/2] resource: add walk_system_ram_res_rev()
+Message-ID: <20180323005845.GA25740@localhost.localdomain>
+References: <20180322033722.9279-1-bhe@redhat.com>
+ <20180322033722.9279-2-bhe@redhat.com>
+ <20180322152929.9b421af2f66cc819ad691207@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180322152929.9b421af2f66cc819ad691207@linux-foundation.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+Hi Andrew,
 
-This code was lost in translation at one point. This properly call
-mmu_notifier_unregister_no_release() once last user is gone. This
-fix the zombie mm_struct as without this patch we do not drop the
-refcount we have on it.
+Thanks a lot for your reviewing!
 
-Changed since v1:
-  - close race window between a last mirror unregistering and a new
-    mirror registering, which could have lead to use after free()
-    kind of bug
-Changed since v2:
-  - Avoid issue if there is multiple call to hmm_mirror_register()
-    (which lead to use after free).
+On 03/22/18 at 03:29pm, Andrew Morton wrote:
+> >  /*
+> > + * This function, being a variant of walk_system_ram_res(), calls the @func
+> > + * callback against all memory ranges of type System RAM which are marked as
+> > + * IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY in reversed order, i.e., from
+> > + * higher to lower.
+> > + */
+> 
+> This should document the return value, as should walk_system_ram_res().
+> Why does it return -1 on error rather than an errno (ENOMEM)?
 
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: Mark Hairgrove <mhairgrove@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
----
- mm/hmm.c | 38 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
+OK, will add sentences to tell this. So for walk_system_ram_res() only
+'-1' indicates the failure of finding, '0' the success. While in
+walk_system_ram_res_rev(), add '-ENOMEM' to indicate failure of vmalloc
+allocation.
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 8116727766f7..2d00769e8985 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -233,13 +233,24 @@ int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm)
- 	if (!mm || !mirror || !mirror->ops)
- 		return -EINVAL;
- 
-+again:
- 	mirror->hmm = hmm_register(mm);
- 	if (!mirror->hmm)
- 		return -ENOMEM;
- 
- 	down_write(&mirror->hmm->mirrors_sem);
--	list_add(&mirror->list, &mirror->hmm->mirrors);
--	up_write(&mirror->hmm->mirrors_sem);
-+	if (mirror->hmm->mm == NULL) {
-+		/*
-+		 * A racing hmm_mirror_unregister() is about to destroy the hmm
-+		 * struct. Try again to allocate a new one.
-+		 */
-+		up_write(&mirror->hmm->mirrors_sem);
-+		mirror->hmm = NULL;
-+		goto again;
-+	} else {
-+		list_add(&mirror->list, &mirror->hmm->mirrors);
-+		up_write(&mirror->hmm->mirrors_sem);
-+	}
- 
- 	return 0;
- }
-@@ -254,11 +265,32 @@ EXPORT_SYMBOL(hmm_mirror_register);
-  */
- void hmm_mirror_unregister(struct hmm_mirror *mirror)
- {
--	struct hmm *hmm = mirror->hmm;
-+	bool should_unregister = false;
-+	struct mm_struct *mm;
-+	struct hmm *hmm;
-+
-+	if (mirror->hmm == NULL)
-+		return;
- 
-+	hmm = mirror->hmm;
- 	down_write(&hmm->mirrors_sem);
- 	list_del_init(&mirror->list);
-+	should_unregister = list_empty(&hmm->mirrors);
-+	mirror->hmm = NULL;
-+	mm = hmm->mm;
-+	hmm->mm = NULL;
- 	up_write(&hmm->mirrors_sem);
-+
-+	if (!should_unregister || mm == NULL)
-+		return;
-+
-+	spin_lock(&mm->page_table_lock);
-+	if (mm->hmm == hmm)
-+		mm->hmm = NULL;
-+	spin_unlock(&mm->page_table_lock);
-+
-+	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
-+	kfree(hmm);
- }
- EXPORT_SYMBOL(hmm_mirror_unregister);
- 
--- 
-2.14.3
+> 
+> > +int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
+> > +				int (*func)(struct resource *, void *))
+> > +{
+> > +	struct resource res, *rams;
+> > +	int rams_size = 16, i;
+> > +	int ret = -1;
+> > +
+> > +	/* create a list */
+> > +	rams = vmalloc(sizeof(struct resource) * rams_size);
+> > +	if (!rams)
+> > +		return ret;
+> > +
+> > +	res.start = start;
+> > +	res.end = end;
+> > +	res.flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+> > +	i = 0;
+> > +	while ((res.start < res.end) &&
+> > +		(!find_next_iomem_res(&res, IORES_DESC_NONE, true))) {
+> > +		if (i >= rams_size) {
+> > +			/* re-alloc */
+> > +			struct resource *rams_new;
+> > +			int rams_new_size;
+> > +
+> > +			rams_new_size = rams_size + 16;
+> > +			rams_new = vmalloc(sizeof(struct resource)
+> > +							* rams_new_size);
+> > +			if (!rams_new)
+> > +				goto out;
+> > +
+> > +			memcpy(rams_new, rams,
+> > +					sizeof(struct resource) * rams_size);
+> > +			vfree(rams);
+> > +			rams = rams_new;
+> > +			rams_size = rams_new_size;
+> > +		}
+> > +
+> > +		rams[i].start = res.start;
+> > +		rams[i++].end = res.end;
+> > +
+> > +		res.start = res.end + 1;
+> > +		res.end = end;
+> > +	}
+> > +
+> > +	/* go reverse */
+> > +	for (i--; i >= 0; i--) {
+> > +		ret = (*func)(&rams[i], arg);
+> > +		if (ret)
+> > +			break;
+> > +	}
+> 
+> erk, this is pretty nasty.  Isn't there a better way :(
+
+Yes, this is not efficient.
+
+In struct resource{}, ->sibling list is a singly linked list. I ever
+thought about changing it to doubly linked list, yet not very sure if
+it will have effect since struct resource is a core data structure.
+AKASHI's method is more acceptable, and currently only kexec has this
+requirement.
+
+> 
+> > +out:
+> > +	vfree(rams);
+> > +	return ret;
+> > +}
+> 
