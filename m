@@ -1,55 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752175AbeCWPuf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 11:50:35 -0400
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:35158 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751504AbeCWPud (ORCPT
+        id S1751811AbeCWPwv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 11:52:51 -0400
+Received: from resqmta-ch2-10v.sys.comcast.net ([69.252.207.42]:46162 "EHLO
+        resqmta-ch2-10v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750789AbeCWPwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 11:50:33 -0400
-X-Google-Smtp-Source: AG47ELvnjAPPowy9IEeBLkNX66kEdQXtukOrHNnVSMII4mYCHNrxulRmrg0MD3w6Ix1pSDLlAKHwBo8XPd30iBxDlN0=
+        Fri, 23 Mar 2018 11:52:50 -0400
+Date: Fri, 23 Mar 2018 10:52:48 -0500 (CDT)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Mikulas Patocka <mpatocka@redhat.com>
+cc: Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] slab_common: remove test if cache name is accessible
+In-Reply-To: <alpine.LRH.2.02.1803231133310.22626@file01.intranet.prod.int.rdu2.redhat.com>
+Message-ID: <alpine.DEB.2.20.1803231052220.5289@nuc-kabylake>
+References: <alpine.LRH.2.02.1803231133310.22626@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <20180323151913.GG15012@1wt.eu>
-References: <E513F076-24D5-4F67-A204-D2E6E1135FDE@einstein.yu.edu>
- <20180323145428.GF15012@1wt.eu> <8BF385DA-7EB8-446D-9005-64509D7C7CB8@einstein.yu.edu>
- <20180323151913.GG15012@1wt.eu>
-From: Gabriel C <nix.or.die@gmail.com>
-Date: Fri, 23 Mar 2018 16:50:01 +0100
-Message-ID: <CAEJqkgjj2dR4GLOEzsUJiWOsoqFWArioh32KW1We5xgp4qSb1Q@mail.gmail.com>
-Subject: Re: Did kernel 3.11 never work?
-To: Willy Tarreau <w@1wt.eu>
-Cc: Maurice R Volaski <maurice.volaski@einstein.yu.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfDDGSPFdk8exYN89vMX+xpn+C+YGpsAVGdBnlKyQtOfPxXr04CM16scq/LSlXCJJ4QKKasSrG6jsaF3TeSKd152ipWxhj5rSrebIw+8m5jo/WKdShsWK
+ QjfcSWAJKjrmqwIMpAFLTK2Ac9Hcs0LQZqNi8ZyrM1/5PRynITMvPOeCk7J+DX+jkmGWiVqClTRtVGBg9KAx0Uq+ZWGgZZ+DRShSl56tKSELFUYmvpca/vp1
+ mQUlPPkWAmgXQGKRUTNsLgUZl/+rVvUm7ePL8VWXahXzJpepko10Zv/CzQ91pFyKtka89MigUgpMUaTPr7aJzAokE9vwb35yVJc0RfoIy5u1dpdaWrsQmzX8
+ 8Id609Q4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-23 16:19 GMT+01:00 Willy Tarreau <w@1wt.eu>:
-> On Fri, Mar 23, 2018 at 02:58:46PM +0000, Maurice R Volaski wrote:
->> I'm trying to build a computer with network diagnostic tool,
->> https://software.internet2.edu/ndt/ and it requires patches to the kernel,
->> https://www.web10g.org/. The latest kernel for which there are patches, 3.17,
->> doesn't compile with the patches, so I had to progressively retrogress until
->> I can found one that did.
->
-> In my opinion you'd waste much less time trying to port these patches to
-> a more recent, still maintained kernel. 3.16 is still maintained by Ben,
-> and not too far from 3.17 (less than 3.11). You may have more luck there
-> and also more luck to get it to boot on a recent machine.
->
-> Also on web10g I'm seeing patches for kernels 3.2 to 3.4. 3.2 is also
-> still maintained by Ben. You can try this one, maybe it'll work, who
-> knows.
->
+On Fri, 23 Mar 2018, Mikulas Patocka wrote:
 
-I don't really remeber  but some  TCP_ESTATS_* exists in 4.x kernels.
-So some based-on or these patches got somewho merged.
-Also some work  is still done from Chris Rapier on github.
+> Since the commit db265eca7700 ("mm/sl[aou]b: Move duping of slab name to
+> slab_common.c"), the kernel always duplicates the slab cache name when
+> creating a slab cache, so the test if the slab name is accessible is
+> useless.
 
-Maybe have a look there ?
-https://github.com/rapier1
-
-Regards,
-
-Gabriel C
+Acked-by: Christoph Lameter <cl@linux.com>
