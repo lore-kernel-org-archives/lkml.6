@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805289-2-17144863661755195081
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805284-2-10109990409093772089
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805288; b=wLtl1J4zUsaomiCN8tBx6qZf9WZNoIocGT+tEmmR+R1YE+f
-    Qjdg8LdgxsD2HTM+w0NbF7A+iXwPB6o9dxdmdPeRc7/9RtAyj5rXcPR/dinySp4h
-    Ql0WWqyVDceprprKMJfbiCKIQr/vyHD8mQvJJGQpcemMf68YEa12nYzJRAVMXPi8
-    LP/sMo34EOVJRLMXLuvmM7UJv5eR7vpkRQSIQgSRJ6EjQkI/vE/axZbnfABiFzSQ
-    GNUBiI+RgeiUdLe6jleF8R9QmSKzzbgNmhRfnk3I5LkeYOAOEW4uQMwFiaZGHJA6
-    RobCk0RzsWf8w/8GVG4XJc7eRa7bCvJJUXkYP8g==
+    t=1521805283; b=gf2wCkvANQd84WXhSN3Pky7BLcjSaj7h0f1q3QPTelweW3n
+    aIpjAMFU01Ye0TpFW8L67FMXZjYlg6dpCl84+AD5b8fe2gXZl4o08ESoHeeAb2GW
+    8pl20r3BKL/1nhOO2mlwXdgkLNhNtX2ZLMmdjAAcztZmoRNXlkzD31/AYUlBr0q2
+    w5tqB3YY/CPikwczWjaZu+uvIg24KMdA277kx4BBHoUYL05vbnH0Y7PW7kVZ7DeY
+    nzqNbNeJz0rJYnUeYNECYPQpX+g3qdnYxAo93XFtRygDWaV8NKYITLkn+5S3pyBT
+    7mepmA7LqN0uJENGDQDjGyf2Qt3L/Z2Cb/h1odg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805288; bh=TfaUFbH+xK7OKlzWNemA0QGFrs
-    /iT73oxruZigbvhws=; b=MH1B/5FEsLZ8W3n+foRzFokAV12WdHoYxSp9+jZ6qQ
-    A9LKwNdUHpMpSGh8y8AgOcwj/GjGzlkZvkZ8wK41SKju5Kzu7s5vlD8GcWmDcgdX
-    vcX6+qeOw7hJKb8CHP+3/TvsoXm1u35ydu2aDKwN0bFSwT9WhjUz7pEYnfK+gE86
-    g/no+b1QDlK6cfbidbDCxKh1xNaOHSGkxZY4yQL01YTYK8mfWGItRHSFb/Z5kjF/
-    m4DlR1Tqowro3wCpx0hrUR9ykNnA2mBf6Bi/2PDDxrnJdCdpqas2M7WrtgD+IYEP
-    uFlWvdWnIHQ/VZBuXDGM8EiOAZFMC1ASKaHAsbWJpjxw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805283; bh=mTVMpsDXEV8+mzTJx+FqF768tx
+    3o6yjYPkCJ5nfGCSc=; b=B4QbWKSFThAYBYzBz+UmqKO0cgCMFteVJ7CN3aOnah
+    VTK6QUofbkpWM7vOAjMeVjVba2AhURpN3SuJAiFK/N4Ci/KdtN9h/r+xMxxRsMdh
+    Ou7KF6MM4WBycGdWyLbqEqSlyd+XFVsWqq564j0aQEADd65TYywpz4/5PzR/Vs1g
+    uYf3GM1H8P3KzBE5W73s5qlJn62JlcvPhecYjjS3A3MxX7uXMLiv1ral+JbpslgE
+    tGh6csF/1F6oupdipG80WnfjjmtJof7CQW4WQeR8LVF9fUC88ffbpAkXcgKlEuGA
+    ESdLGNtm1+v2vYHUDE6d6zpKa/bquWGAADH/YEGpcZZg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754591AbeCWKED (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:04:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39020 "EHLO
+        id S1754600AbeCWKEE (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:04:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39008 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754550AbeCWKEC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:02 -0400
+        with ESMTP id S1754572AbeCWKEA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Hefty <sean.hefty@intel.com>,
-        Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
-        Shiraz Saleem <shiraz.saleem@intel.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.14 72/77] RDMA/core: Do not use invalid destination in determining port reuse
-Date: Fri, 23 Mar 2018 10:54:46 +0100
-Message-Id: <20180323094147.103833281@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nikola Ciprich <nikola.ciprich@linuxbox.cz>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.14 71/77] serial: 8250_pci: Dont fail on multiport card class
+Date: Fri, 23 Mar 2018 10:54:45 +0100
+Message-Id: <20180323094147.035333881@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,69 +82,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-commit 9dea9a2ff61c5efb4d4937ae23b14babd25a5547 upstream.
+commit e7f3e99cb1a667d04d60d02957fbed58b50d4e5a upstream.
 
-cma_port_is_unique() allows local port reuse if the quad (source
-address and port, destination address and port) for this connection
-is unique. However, if the destination info is zero or unspecified, it
-can't make a correct decision but still allows port reuse. For example,
-sometimes rdma_bind_addr() is called with unspecified destination and
-reusing the port can lead to creating a connection with a duplicate quad,
-after the destination is resolved. The issue manifests when MPI scale-up
-tests hang after the duplicate quad is used.
+Do not fail on multiport cards in serial_pci_is_class_communication().
 
-Set the destination address family and add checks for zero destination
-address and port to prevent source port reuse based on invalid destination.
+It restores behaviour for SUNIX multiport cards, that enumerated by
+class and have a custom board data.
 
-Fixes: 19b752a19dce ("IB/cma: Allow port reuse for rdma_id")
-Reviewed-by: Sean Hefty <sean.hefty@intel.com>
-Signed-off-by: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
-Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Moreover it allows users to reenumerate port-by-port from user space.
+
+Fixes: 7d8905d06405 ("serial: 8250_pci: Enable device after we check black list")
+Reported-by: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/cma.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/tty/serial/8250/8250_pci.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -3017,7 +3017,8 @@ static int cma_port_is_unique(struct rdm
- 			continue;
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -3389,11 +3389,9 @@ static int serial_pci_is_class_communica
+ 	/*
+ 	 * If it is not a communications device or the programming
+ 	 * interface is greater than 6, give up.
+-	 *
+-	 * (Should we try to make guesses for multiport serial devices
+-	 * later?)
+ 	 */
+ 	if ((((dev->class >> 8) != PCI_CLASS_COMMUNICATION_SERIAL) &&
++	     ((dev->class >> 8) != PCI_CLASS_COMMUNICATION_MULTISERIAL) &&
+ 	     ((dev->class >> 8) != PCI_CLASS_COMMUNICATION_MODEM)) ||
+ 	    (dev->class & 0xff) > 6)
+ 		return -ENODEV;
+@@ -3430,6 +3428,12 @@ serial_pci_guess_board(struct pci_dev *d
+ {
+ 	int num_iomem, num_port, first_port = -1, i;
  
- 		/* different dest port -> unique */
--		if (!cma_any_port(cur_daddr) &&
-+		if (!cma_any_port(daddr) &&
-+		    !cma_any_port(cur_daddr) &&
- 		    (dport != cur_dport))
- 			continue;
- 
-@@ -3028,7 +3029,8 @@ static int cma_port_is_unique(struct rdm
- 			continue;
- 
- 		/* different dst address -> unique */
--		if (!cma_any_addr(cur_daddr) &&
-+		if (!cma_any_addr(daddr) &&
-+		    !cma_any_addr(cur_daddr) &&
- 		    cma_addr_cmp(daddr, cur_daddr))
- 			continue;
- 
-@@ -3326,13 +3328,13 @@ int rdma_bind_addr(struct rdma_cm_id *id
- 		}
- #endif
- 	}
-+	daddr = cma_dst_addr(id_priv);
-+	daddr->sa_family = addr->sa_family;
++	/*
++	 * Should we try to make guesses for multiport serial devices later?
++	 */
++	if ((dev->class >> 8) == PCI_CLASS_COMMUNICATION_MULTISERIAL)
++		return -ENODEV;
 +
- 	ret = cma_get_port(id_priv);
- 	if (ret)
- 		goto err2;
- 
--	daddr = cma_dst_addr(id_priv);
--	daddr->sa_family = addr->sa_family;
--
- 	return 0;
- err2:
- 	if (id_priv->cma_dev)
+ 	num_iomem = num_port = 0;
+ 	for (i = 0; i < PCI_NUM_BAR_RESOURCES; i++) {
+ 		if (pci_resource_flags(dev, i) & IORESOURCE_IO) {
