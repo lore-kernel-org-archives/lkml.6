@@ -1,58 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751898AbeCWIv4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 04:51:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37734 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751668AbeCWIvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 04:51:55 -0400
-Date: Fri, 23 Mar 2018 09:51:53 +0100
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: linux-next: please clean up the alpine tree
-Message-ID: <20180323085153.GB9682@kwain>
-References: <20180323083315.58976d73@canb.auug.org.au>
+        id S1751843AbeCWI5m (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 04:57:42 -0400
+Received: from lhrrgout.huawei.com ([194.213.3.17]:30565 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751531AbeCWI5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 04:57:41 -0400
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Robin Murphy <robin.murphy@arm.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+CC: "eric.auger@redhat.com" <eric.auger@redhat.com>,
+        "pmorel@linux.vnet.ibm.com" <pmorel@linux.vnet.ibm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Linuxarm <linuxarm@huawei.com>, "John Garry" <john.garry@huawei.com>,
+        "xuwei (O)" <xuwei5@huawei.com>, Joerg Roedel <joro@8bytes.org>
+Subject: RE: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
+ back into dma specific path.
+Thread-Topic: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
+ back into dma specific path.
+Thread-Index: AQHTvHwDUO0hRZRsGUWYDJgBXn9Y+KPcagUAgAAQ8oCAARVX0A==
+Date: Fri, 23 Mar 2018 08:57:25 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA838679A60@FRAEML521-MBX.china.huawei.com>
+References: <20180315163509.17740-1-shameerali.kolothum.thodi@huawei.com>
+ <20180315163509.17740-8-shameerali.kolothum.thodi@huawei.com>
+ <20180322102148.29afce09@w520.home>
+ <3b481ba6-ffdd-fef1-12dc-f5eac8b589d5@arm.com>
+In-Reply-To: <3b481ba6-ffdd-fef1-12dc-f5eac8b589d5@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.227.237]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180323083315.58976d73@canb.auug.org.au>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2N8vom2007119
 
-Hi Stephen,
 
-On Fri, Mar 23, 2018 at 08:33:15AM +1100, Stephen Rothwell wrote:
+
+> -----Original Message-----
+> From: Robin Murphy [mailto:robin.murphy@arm.com]
+> Sent: Thursday, March 22, 2018 5:22 PM
+> To: Alex Williamson <alex.williamson@redhat.com>; Shameerali Kolothum
+> Thodi <shameerali.kolothum.thodi@huawei.com>
+> Cc: eric.auger@redhat.com; pmorel@linux.vnet.ibm.com;
+> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; iommu@lists.linux-
+> foundation.org; Linuxarm <linuxarm@huawei.com>; John Garry
+> <john.garry@huawei.com>; xuwei (O) <xuwei5@huawei.com>; Joerg Roedel
+> <joro@8bytes.org>
+> Subject: Re: [PATCH v5 7/7] iommu/dma: Move PCI window region reservation
+> back into dma specific path.
 > 
-> The alpine tree
-> (git://git.kernel.org/pub/scm/linux/kernel/git/atenart/linux.git#alpine/for-next)
-> only contains commits that have been upstreamed as different commits.
-> It also hasn't been updated since late March 2017.  Please clean it up
-> (it takes some time to merge - presumably just because of its age).
+> On 22/03/18 16:21, Alex Williamson wrote:
+> > On Thu, 15 Mar 2018 16:35:09 +0000
+> > Shameer Kolothum <shameerali.kolothum.thodi@huawei.com> wrote:
+> >
+> >> This pretty much reverts commit 273df9635385 ("iommu/dma: Make PCI
+> >> window reservation generic")  by moving the PCI window region
+> >> reservation back into the dma specific path so that these regions
+> >> doesn't get exposed via the IOMMU API interface. With this change,
+> >> the vfio interface will report only iommu specific reserved regions
+> >> to the user space.
+> >>
+> >> Cc: Robin Murphy <robin.murphy@arm.com>
+> >> Cc: Joerg Roedel <joro@8bytes.org>
+> >> Signed-off-by: Shameer Kolothum
+> <shameerali.kolothum.thodi@huawei.com>
+> >> ---
+> >
+> > As currently ordered, we expose the iova list to the user in 5/7 with
+> > the PCI window reservations still intact.  Isn't that a bisection
+> > problem?  This patch should come before the iova list is expose to the
+> > user.  This is otherwise independent, so I can pop it up in the stack on
+> > commit, but I'd need an ack from Joerg and Robin to take it via my
+> > tree.  Thanks,
 > 
-> Or, if it is no longer being used, please let me know and I will remove
-> it from linux-next.
+> If it counts, the changes look right, so:
+> 
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-Thanks for pointing this out, and sorry for the inconvenience. The
-Alpine tree isn't very active and I haven't got patches for quite
-some time.
+Thanks Robin.
+ 
+> but it does look like there's a hard dependency on Joerg's core branch
+> where Shameer's ITS workaround patches are currently queued. Otherwise,
+> though, I don't think there's anything else due to be touching iommu-dma
+> just yet.
 
-I updated alpine/next to point to v4.16-rc1 to fix the issue. It's not
-completely dead, but as it's not active you can also remove the
-alpine/for-next tree from linux-next. And when/if I get patches to merge
-in the future I'll ask to add it back. As you wish :)
+True, I have mentioned this dependency[1] in the cover letter.
 
-Thank you for making linux-next!
-Antoine
+Thanks,
+Shameer
 
--- 
-Antoine Ténart, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+1. https://kernel.googlesource.com/pub/scm/linux/kernel/git/joro/iommu/+log/core
+
+
+> Robin.
+> 
+> >
+> > Alex
+> >
+> >>   drivers/iommu/dma-iommu.c | 54 ++++++++++++++++++++++-----------------
+> --------
+> >>   1 file changed, 25 insertions(+), 29 deletions(-)
+> >>
+> >> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> >> index f05f3cf..ddcbbdb 100644
+> >> --- a/drivers/iommu/dma-iommu.c
+> >> +++ b/drivers/iommu/dma-iommu.c
+> >> @@ -167,40 +167,16 @@ EXPORT_SYMBOL(iommu_put_dma_cookie);
+> >>    * @list: Reserved region list from iommu_get_resv_regions()
+> >>    *
+> >>    * IOMMU drivers can use this to implement their .get_resv_regions
+> callback
+> >> - * for general non-IOMMU-specific reservations. Currently, this covers host
+> >> - * bridge windows for PCI devices and GICv3 ITS region reservation on ACPI
+> >> - * based ARM platforms that may require HW MSI reservation.
+> >> + * for general non-IOMMU-specific reservations. Currently, this covers
+> GICv3
+> >> + * ITS region reservation on ACPI based ARM platforms that may require
+> HW MSI
+> >> + * reservation.
+> >>    */
+> >>   void iommu_dma_get_resv_regions(struct device *dev, struct list_head
+> *list)
+> >>   {
+> >> -	struct pci_host_bridge *bridge;
+> >> -	struct resource_entry *window;
+> >> -
+> >> -	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode) &&
+> >> -		iort_iommu_msi_get_resv_regions(dev, list) < 0)
+> >> -		return;
+> >> -
+> >> -	if (!dev_is_pci(dev))
+> >> -		return;
+> >> -
+> >> -	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
+> >> -	resource_list_for_each_entry(window, &bridge->windows) {
+> >> -		struct iommu_resv_region *region;
+> >> -		phys_addr_t start;
+> >> -		size_t length;
+> >> -
+> >> -		if (resource_type(window->res) != IORESOURCE_MEM)
+> >> -			continue;
+> >>
+> >> -		start = window->res->start - window->offset;
+> >> -		length = window->res->end - window->res->start + 1;
+> >> -		region = iommu_alloc_resv_region(start, length, 0,
+> >> -				IOMMU_RESV_RESERVED);
+> >> -		if (!region)
+> >> -			return;
+> >> +	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode))
+> >> +		iort_iommu_msi_get_resv_regions(dev, list);
+> >>
+> >> -		list_add_tail(&region->list, list);
+> >> -	}
+> >>   }
+> >>   EXPORT_SYMBOL(iommu_dma_get_resv_regions);
+> >>
+> >> @@ -229,6 +205,23 @@ static int cookie_init_hw_msi_region(struct
+> iommu_dma_cookie *cookie,
+> >>   	return 0;
+> >>   }
+> >>
+> >> +static void iova_reserve_pci_windows(struct pci_dev *dev,
+> >> +		struct iova_domain *iovad)
+> >> +{
+> >> +	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
+> >> +	struct resource_entry *window;
+> >> +	unsigned long lo, hi;
+> >> +
+> >> +	resource_list_for_each_entry(window, &bridge->windows) {
+> >> +		if (resource_type(window->res) != IORESOURCE_MEM)
+> >> +			continue;
+> >> +
+> >> +		lo = iova_pfn(iovad, window->res->start - window->offset);
+> >> +		hi = iova_pfn(iovad, window->res->end - window->offset);
+> >> +		reserve_iova(iovad, lo, hi);
+> >> +	}
+> >> +}
+> >> +
+> >>   static int iova_reserve_iommu_regions(struct device *dev,
+> >>   		struct iommu_domain *domain)
+> >>   {
+> >> @@ -238,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device
+> *dev,
+> >>   	LIST_HEAD(resv_regions);
+> >>   	int ret = 0;
+> >>
+> >> +	if (dev_is_pci(dev))
+> >> +		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
+> >> +
+> >>   	iommu_get_resv_regions(dev, &resv_regions);
+> >>   	list_for_each_entry(region, &resv_regions, list) {
+> >>   		unsigned long lo, hi;
+> >
