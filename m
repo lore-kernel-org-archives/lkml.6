@@ -1,70 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752627AbeCWNnc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 09:43:32 -0400
-Received: from mail-oi0-f47.google.com ([209.85.218.47]:35490 "EHLO
-        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751294AbeCWNna (ORCPT
+        id S1752762AbeCWNnw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 09:43:52 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60167 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752686AbeCWNnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:43:30 -0400
-X-Google-Smtp-Source: AG47ELvs/mf7PX7upPSTa2EV5Fqxi1p9d5oOSsnr6AMdNNvYtXhL4ZMZiucf9yXoQjZFVwhIKCjF5Unwsl5okmdWPjs=
-MIME-Version: 1.0
-In-Reply-To: <20180323094740.GA5942@localhost.localdomain>
-References: <20180323094740.GA5942@localhost.localdomain>
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Fri, 23 Mar 2018 14:43:28 +0100
-Message-ID: <CACna6rx-QNQhVNkwFSabwAY9vM1qV_gTcWywsHFuP5B4NH4NXA@mail.gmail.com>
-Subject: Re: [QUESTION] Mainline support for B43_PHY_AC wifi cards
-To: Juri Lelli <juri.lelli@gmail.com>
-Cc: b43-dev <b43-dev@lists.infradead.org>,
-        Network Development <netdev@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Fri, 23 Mar 2018 09:43:49 -0400
+Message-ID: <1521812598.3406.8.camel@pengutronix.de>
+Subject: Re: [PATCH v4 1/8] reset: modify the way reset lookup works for
+ board files
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Fri, 23 Mar 2018 14:43:18 +0100
+In-Reply-To: <20180323130455.11470-2-brgl@bgdev.pl>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
+         <20180323130455.11470-2-brgl@bgdev.pl>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 2018-03-23 at 14:04 +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
+> introduced reset control lookup mechanism for boards that still use
+> board files.
+> 
+> The routine used to register lookup entries takes the corresponding
+> reset_controlled_dev structure as argument.
+> 
+> It's been determined however that for the first user of this new
+> interface - davinci psc driver - it will be easier to register the
+> lookup entries using the reset controller device name.
+> 
+> This patch changes the way lookup entries are added.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/reset/core.c             | 38 +++++++++++++++++++++++++++++++-------
+>  include/linux/reset-controller.h | 14 ++++++++------
+>  2 files changed, 39 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 06fa4907afc4..f4a29c046995 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -153,12 +153,10 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
+>  
+>  /**
+>   * reset_controller_add_lookup - register a set of lookup entries
+> - * @rcdev: initialized reset controller device owning the reset line
+>   * @lookup: array of reset lookup entries
+>   * @num_entries: number of entries in the lookup array
+>   */
+> -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+> -				 struct reset_control_lookup *lookup,
+> +void reset_controller_add_lookup(struct reset_control_lookup *lookup,
+>  				 unsigned int num_entries)
+>  {
+>  	struct reset_control_lookup *entry;
+> @@ -168,13 +166,12 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
+>  	for (i = 0; i < num_entries; i++) {
+>  		entry = &lookup[i];
+>  
+> -		if (!entry->dev_id) {
+> -			pr_warn("%s(): reset lookup entry has no dev_id, skipping\n",
+> +		if (!entry->dev_id || !entry->provider) {
+> +			pr_warn("%s(): reset lookup entry badly specified, skipping\n",
+>  				__func__);
+>  			continue;
+>  		}
+>  
+> -		entry->rcdev = rcdev;
+>  		list_add_tail(&entry->list, &reset_lookup_list);
+>  	}
+>  	mutex_unlock(&reset_lookup_mutex);
+> @@ -526,11 +523,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+>  }
+>  EXPORT_SYMBOL_GPL(__of_reset_control_get);
+>  
+> +static struct reset_controller_dev *
+> +__reset_controller_by_name(const char *name)
+> +{
+> +	struct reset_controller_dev *rcdev;
+> +
+> +	lockdep_assert_held(&reset_list_mutex);
+> +
+> +	list_for_each_entry(rcdev, &reset_controller_list, list) {
+> +		if (!rcdev->dev)
+> +			continue;
+> +
+> +		if (!strcmp(name, dev_name(rcdev->dev)))
+> +			return rcdev;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+>  static struct reset_control *
+>  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>  				bool shared, bool optional)
+>  {
+>  	const struct reset_control_lookup *lookup;
+> +	struct reset_controller_dev *rcdev;
+>  	const char *dev_id = dev_name(dev);
+>  	struct reset_control *rstc = NULL;
+>  
+> @@ -547,7 +563,15 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+>  		    ((con_id && lookup->con_id) &&
+>  		     !strcmp(con_id, lookup->con_id))) {
+>  			mutex_lock(&reset_list_mutex);
+> -			rstc = __reset_control_get_internal(lookup->rcdev,
+> +			rcdev = __reset_controller_by_name(lookup->provider);
+> +			if (!rcdev) {
+> +				mutex_unlock(&reset_list_mutex);
+> +				mutex_unlock(&reset_lookup_mutex);
+> +				/* Reset provider may not be ready yet. */
+> +				return -EPROBE_DEFER;
 
-On 23 March 2018 at 10:47, Juri Lelli <juri.lelli@gmail.com> wrote:
-> I've got a Dell XPS 13 9343/0TM99H (BIOS A15 01/23/2018) mounting a
-> BCM4352 802.11ac (rev 03) wireless card and so far I've been using it on
-> Fedora with broadcom-wl package (which I believe installs Broadcom's STA
-> driver?). It works good apart from occasional hiccups after suspend.
->
-> I'd like to get rid of that dependency (you can understand that it's
-> particularly annoying when testing mainline kernels), but I found out
-> that support for my card is BROKEN in mainline [1]. Just to see what
-> happens, I forcibly enabled it witnessing that it indeed crashes like
-> below as Kconfig warns. :)
->
->  bcma: bus0: Found chip with id 0x4352, rev 0x03 and package 0x00
->  bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
->  bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
->  bcma: bus0: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
->  bcma: bus0: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
->  bcma: bus0: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
->  bcma: Unsupported SPROM revision: 11
->  bcma: bus0: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
->  bcma: bus0: Using fallback SPROM failed (err -2)
->  bcma: bus0: No SPROM available
->  bcma: bus0: Bus registered
->  b43-phy0: Broadcom 4352 WLAN found (core revision 42)
->  b43-phy0: Found PHY: Analog 12, Type 11 (AC), Revision 1
->  b43-phy0: Found Radio: Manuf 0x17F, ID 0x2069, Revision 4, Version 0
->  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+Thanks, I've applied this patch to reset/next with the following change:
 
-This isn't really useful without a full backtrace.
+-                               return -EPROBE_DEFER;
++                               return ERR_PTR(-EPROBE_DEFER);
 
-
-> So, question: is replacing my card the only way I can get rid of this
-> downstream dependency? :(
-
-It's definitely the cheapest way. Getting AC PHY into anything usable
-(proper setup that will allow Tx & Rx anything) would probably take
-weeks or months of development. I'm not even going to estimate cost of
-adding support for 802.11n and 802.11ac features. I was the last
-person actively working on b43, right now I spend my free time on
-other hobby projects. Few people were planning to help but it seems it
-never worked out for them.
+regards
+Philipp
