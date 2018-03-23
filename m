@@ -1,81 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752412AbeCWJT2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:19:28 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:39333 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752014AbeCWJPb (ORCPT
+        id S1752478AbeCWJTd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:19:33 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35359 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752284AbeCWJT1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:15:31 -0400
-X-UUID: fe5a481ed9394905b6a8be80373bccff-20180323
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
-        <lee.jones@linaro.org>, <a.zummo@towertech.it>,
-        <alexandre.belloni@free-electrons.com>, <eddie.huang@mediatek.com>
-CC: <devicetree@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v1 13/16] rtc: mediatek: update license converting to using SPDX identifiers
-Date: Fri, 23 Mar 2018 17:15:10 +0800
-Message-ID: <86450fc8dcc53c658e97ac739aac2bf7d1f94b64.1521794177.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1521794176.git.sean.wang@mediatek.com>
-References: <cover.1521794176.git.sean.wang@mediatek.com>
+        Fri, 23 Mar 2018 05:19:27 -0400
+X-Google-Smtp-Source: AG47ELvTjfyNh0239aUsrejs52ZkPwx3HbA7g7UPdSFUOm/pXZcV22hdDK/txnR9aSDMgZVdo67XFfw8Ud71BDwxBGg=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23736.004
-X-TM-AS-Result: No-5.580400-8.000000-10
-X-TMASE-MatchedRID: d0WP0JJEp0RBHBd/Q+ztB+G5dRZCgxC3VBDQSDMig9HEosIs7IJbkGcv
-        LxxWTXnK7CW5xFA6WTJ8m0eKI/dFAJYfiJHiUPPG2Hdvv/MGE3WtfY6YPaw3YTzzULHH1XTjMA0
-        TvVWjWva98qutvhuYitwezITcev2HHxPMjOKY7A8LbigRnpKlKWxlRJiH4397Tk1v6FWn3kDeUW
-        2U/Cf2yeUE6zYBnqJBrH3PsN4Jf8Jpt/bXV4VNGg==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--5.580400-8.000000
-X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23736.004
-X-TMASE-POSTMAN: 2-d;
-X-MTK: N
+In-Reply-To: <20180323083847.GJ23100@dhcp22.suse.cz>
+References: <1521791852-7048-1-git-send-email-zhaoyang.huang@spreadtrum.com> <20180323083847.GJ23100@dhcp22.suse.cz>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Fri, 23 Mar 2018 17:19:26 +0800
+Message-ID: <CAGWkznHxTaymoEuFEQ+nN0ZvpPLhdE_fbwpT3pbDf+NQyHw-3g@mail.gmail.com>
+Subject: Re: [PATCH v1] mm: help the ALLOC_HARDER allocation pass the
+ watermarki when CMA on
+To: Michal Hocko <mhocko@kernel.org>
+Cc: zhaoyang.huang@spreadtrum.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        vel Tatashin <pasha.tatashin@oracle.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
-
-Update the license and as well convert to using SPDX identifiers.
-
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/rtc/rtc-mt6397.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-index f5dc70d..ad336a4 100644
---- a/drivers/rtc/rtc-mt6397.c
-+++ b/drivers/rtc/rtc-mt6397.c
-@@ -1,16 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
--* Copyright (c) 2014-2015 MediaTek Inc.
--* Author: Tianping.Fang <tianping.fang@mediatek.com>
--*
--* This program is free software; you can redistribute it and/or modify
--* it under the terms of the GNU General Public License version 2 as
--* published by the Free Software Foundation.
--*
--* This program is distributed in the hope that it will be useful,
--* but WITHOUT ANY WARRANTY; without even the implied warranty of
--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--* GNU General Public License for more details.
--*/
-+ * MediaTek PMIC RTC driver
-+ *
-+ * Copyright (C) 2014-2018 MediaTek Inc.
-+ *
-+ * Author: Tianping.Fang <tianping.fang@mediatek.com>
-+ *	   Sean Wang <sean.wang@mediatek.com>
-+ */
- 
- #include <linux/err.h>
- #include <linux/interrupt.h>
--- 
-2.7.4
+On Fri, Mar 23, 2018 at 4:38 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Fri 23-03-18 15:57:32, Zhaoyang Huang wrote:
+>> For the type of 'ALLOC_HARDER' page allocation, there is an express
+>> highway for the whole process which lead the allocation reach __rmqueue_xxx
+>> easier than other type.
+>> However, when CMA is enabled, the free_page within zone_watermark_ok() will
+>> be deducted for number the pages in CMA type, which may cause the watermark
+>> check fail, but there are possible enough HighAtomic or Unmovable and
+>> Reclaimable pages in the zone. So add 'alloc_harder' here to
+>> count CMA pages in to clean the obstacles on the way to the final.
+>
+> This is no longer the case in the current mmotm tree. Have a look at
+> Joonsoo's zone movable based CMA patchset http://lkml.kernel.org/r/1512114786-5085-1-git-send-email-iamjoonsoo.kim@lge.com
+>
+Thanks for the information. However, I can't find the commit in the
+latest mainline, is it merged?
+>> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
+>> ---
+>>  mm/page_alloc.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index 635d7dd..cc18620 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -3045,8 +3045,11 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
+>>
+>>
+>>  #ifdef CONFIG_CMA
+>> -     /* If allocation can't use CMA areas don't use free CMA pages */
+>> -     if (!(alloc_flags & ALLOC_CMA))
+>> +     /*
+>> +      * If allocation can't use CMA areas and no alloc_harder set for none
+>> +      * order0 allocation, don't use free CMA pages.
+>> +      */
+>> +     if (!(alloc_flags & ALLOC_CMA) && (!alloc_harder || !order))
+>>               free_pages -= zone_page_state(z, NR_FREE_CMA_PAGES);
+>>  #endif
+>>
+>> --
+>> 1.9.1
+>>
+>
+> --
+> Michal Hocko
+> SUSE Labs
