@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802640-2-9180266274698990836
+X-Cyrus-Session-Id: sloti22d1t05-947063-1521799973-2-5323290037837764724
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802639; b=aqUAASR+AS0I/eRvPkeyCYTRQX/OyLbA2h6y/4yn3A602oN
-    b6ZAQJwU1xhzKjlzLOlUiB8hHk0psGcxMklhzU58RpjnSsfZVAnqRrv9aTyVzGHj
-    LWnJUYVIGBIqkKVeOjJOfOTJhil1hm62yUbJ+zgMI9wTk1LE0zrrtRhVQctNhvif
-    sw0yBtjm0mLkBt7RTfMSXvyPnrAtuq7FvHVt3jbc/YhiBBG4SmZd73mBgQmLzTyb
-    viYKBMHea5UMP1ryenHtlY0SA/vtLCBTzIURev8EPubIn6TMWMS+uz0dD0e647SH
-    GzAfE4xK/ptgBNuF5tZEhpllgAQHT3mKZFi8ong==
+    t=1521799972; b=mwJA/fRWHMqI9Y16T6gOBafipwaAJ4nnMclzui18sTokuzl
+    KtGd7YD6v/jzdrvL4dVoJBUBkBoiRnaYEEu3MeKefAiBFVTpdKVUpPW8MP/q5vav
+    uADqjTRXRvBR1b9IGzoS/en7eTSEF93R1QU2Tt4PA3qQpjgyCw1dhnUhbfilgRIo
+    B0CGFlKW378hH81Icm1/8mbpo/AhADTReXRPSahxSfIavpM2xauWJjiHb3Szzwyz
+    QBquJ+GcAq28dlmmMnMwrkMiHgfcCD68YMqO3Rzr1UFACEvx5KMqVF4iX4vz5WvC
+    ctHqw4Q8lLFIglHm3sgcPi97yVADJe9nerP8xrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802639; bh=vHvT46/ypfk92QZxvfbpPCdibm
-    1tfKh3nf5w/1q4UxM=; b=uE6fV8ZITNu5jHk8oHhLvCjXXJBWDzBERbAvOkfiZO
-    C7gLv6dourYo7qOf3l97c6TvIG7/WToh+tywm4XU0YLKkIfBwy85T4AmJ9IGCO+m
-    o0WytbaYIxSBf+ZNCnJKxNKLPkUqcwesO0q4LRGnrQCn1LPRr1QZ789bl4It2sxs
-    nXxzk4Lg2oRuPXgSg6CwKC/Hs4epGsmQAROuflkcvfZ8JpfG2y9ADgPT3g3rjwzD
-    GYaDBSf3RE4M6SXG8PbCKIGEcPQYUmYH2c70/u+FhAbM2vULt5QmoaECAVp+QLmO
-    BjKx3pEdimaZ3xgsB1dvBDyYLCiI4NL6QKD9DQ9dfMFQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521799972; bh=SdOZUEOzPu24Gm/eqNlkJggicD
+    80jKXVFwfmmfHlRpM=; b=qXlOkFN3hV/IvOvlGGucNMpt5j+Bs5jDxAuojDX8yz
+    ScUMnp6RI2dMM3Yhj+R7B0DdC49CMl/AHvrnuU6DIWONKL0qVvVoJX6ZJcZo00Xh
+    EY8nnbm6V4G4OT2Mr0Zv8wp8HwNibg7GLg6rs0NNGwjXUfyAXOWq5tuLkob4IXsA
+    8ydbbaJxHdytyIUprgLUYDkaHj2NwOJI6zOKX5PsZHPkVVlv0ha2LDES+7NenCLy
+    E7GSTFl122NhEcXRGCiXd+VHZfv0Mj52aVjfhVD7WRcfK2J+Ws5mReYrY6v4MTQt
+    jZgVJPttIWjE0ARYBlYtVD4i2aOlhKWqH2EzNsc0G44A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,24 +50,25 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755297AbeCWK47 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:56:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44520 "EHLO
+        id S1751861AbeCWKMq (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:12:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44452 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752367AbeCWKM4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:56 -0400
+        with ESMTP id S1752088AbeCWKMo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
+        stable@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Dong Aisheng <aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 168/177] clk: Dont touch hardware when reparenting during registration
-Date: Fri, 23 Mar 2018 10:54:56 +0100
-Message-Id: <20180323094212.565447434@linuxfoundation.org>
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH 4.9 174/177] clk: migrate the count of orphaned clocks at init
+Date: Fri, 23 Mar 2018 10:55:02 +0100
+Message-Id: <20180323094212.819645938@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -85,105 +86,117 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephen Boyd <sboyd@codeaurora.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
+commit 99652a469df19086d594e8e89757d4081a812789 upstream.
 
-[ Upstream commit f8f8f1d04494d3a6546bee3f0618c4dba31d7b72 ]
+The orphan clocks reparents should migrate any existing count from the
+orphan clock to its new acestor clocks, otherwise we may have
+inconsistent counts in the tree and end-up with gated critical clocks
 
-The orphan clocks reparent operation shouldn't touch the hardware
-if clocks are enabled, otherwise it may get a chance to disable a
-newly registered critical clock which triggers the warning below.
+Assuming we have two clocks, A and B.
+* Clock A has CLK_IS_CRITICAL flag set.
+* Clock B is an ancestor of A which can gate. Clock B gate is left
+  enabled by the bootloader.
 
-Assuming we have two clocks: A and B, B is the parent of A.
-Clock A has flag: CLK_OPS_PARENT_ENABLE
-Clock B has flag: CLK_IS_CRITICAL
+Step 1: Clock A is registered. Since it is a critical clock, it is
+enabled. The clock being still an orphan, no parent are enabled.
 
-Step 1:
-Clock A is registered, then it becomes orphan.
+Step 2: Clock B is registered and reparented to clock A (potentially
+through several other clocks). We are now in situation where the enable
+count of clock A is 1 while the enable count of its ancestors is 0, which
+is not good.
 
-Step 2:
-Clock B is registered. Before clock B reach the critical clock enable
-operation, orphan A will find the newly registered parent B and do
-reparent operation, then parent B will be finally disabled in
-__clk_set_parent_after() due to CLK_OPS_PARENT_ENABLE flag as there's
-still no users of B which will then trigger the following warning.
+Step 3: in lateinit, clk_disable_unused() is called, the enable_count of
+clock B being 0, clock B is gated and and critical clock A actually gets
+disabled.
 
-WARNING: CPU: 0 PID: 0 at drivers/clk/clk.c:597 clk_core_disable+0xb4/0xe0
-Modules linked in:
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.11.0-rc1-00056-gdff1f66-dirty #1373
-Hardware name: Generic DT based system
-Backtrace:
-[<c010c4bc>] (dump_backtrace) from [<c010c764>] (show_stack+0x18/0x1c)
- r6:600000d3 r5:00000000 r4:c0e26358 r3:00000000
-[<c010c74c>] (show_stack) from [<c040599c>] (dump_stack+0xb4/0xe8)
-[<c04058e8>] (dump_stack) from [<c0125c94>] (__warn+0xd8/0x104)
- r10:c0c21cd0 r9:c048aa78 r8:00000255 r7:00000009 r6:c0c1cd90 r5:00000000
- r4:00000000 r3:c0e01d34
-[<c0125bbc>] (__warn) from [<c0125d74>] (warn_slowpath_null+0x28/0x30)
- r9:00000000 r8:ef00bf80 r7:c165ac4c r6:ef00bf80 r5:ef00bf80 r4:ef00bf80
-[<c0125d4c>] (warn_slowpath_null) from [<c048aa78>] (clk_core_disable+0xb4/0xe0)
-[<c048a9c4>] (clk_core_disable) from [<c048be88>] (clk_core_disable_lock+0x20/0x2c)
- r4:000000d3 r3:c0e0af00
-[<c048be68>] (clk_core_disable_lock) from [<c048c224>] (clk_core_disable_unprepare+0x14/0x28)
- r5:00000000 r4:ef00bf80
-[<c048c210>] (clk_core_disable_unprepare) from [<c048c270>] (__clk_set_parent_after+0x38/0x54)
- r4:ef00bd80 r3:000010a0
-[<c048c238>] (__clk_set_parent_after) from [<c048daa8>] (clk_register+0x4d0/0x648)
- r6:ef00d500 r5:ef00bf80 r4:ef00bd80 r3:ef00bfd4
-[<c048d5d8>] (clk_register) from [<c048dc30>] (clk_hw_register+0x10/0x1c)
- r9:00000000 r8:00000003 r7:00000000 r6:00000824 r5:00000001 r4:ef00d500
-[<c048dc20>] (clk_hw_register) from [<c048e698>] (_register_divider+0xcc/0x120)
-[<c048e5cc>] (_register_divider) from [<c048e730>] (clk_register_divider+0x44/0x54)
- r10:00000004 r9:00000003 r8:00000001 r7:00000000 r6:00000003 r5:00000001
- r4:f0810030
-[<c048e6ec>] (clk_register_divider) from [<c0d3ff58>] (imx7ulp_clocks_init+0x558/0xe98)
- r7:c0e296f8 r6:c165c808 r5:00000000 r4:c165c808
-[<c0d3fa00>] (imx7ulp_clocks_init) from [<c0d24db0>] (of_clk_init+0x118/0x1e0)
- r10:00000001 r9:c0e01f68 r8:00000000 r7:c0e01f60 r6:ef7f8974 r5:ef0035c0
- r4:00000006
-[<c0d24c98>] (of_clk_init) from [<c0d04a50>] (time_init+0x2c/0x38)
- r10:efffed40 r9:c0d61a48 r8:c0e78000 r7:c0e07900 r6:ffffffff r5:c0e78000
- r4:00000000
-[<c0d04a24>] (time_init) from [<c0d00b8c>] (start_kernel+0x218/0x394)
-[<c0d00974>] (start_kernel) from [<6000807c>] (0x6000807c)
- r10:00000000 r9:410fc075 r8:6000406a r7:c0e0c930 r6:c0d61a44 r5:c0e07918
- r4:c0e78294
+This situation was found while adding fdiv_clk gates to the meson8b
+platform.  These clocks parent clk81 critical clock, which is the mother
+of all peripheral clocks in this system. Because of the issue described
+here, the system is crashing when clk_disable_unused() is called.
 
-We know that the clk isn't enabled with any sort of prepare_count
-here so we don't need to enable anything to prevent a race. And
-we're holding the prepare mutex so set_rate/set_parent can't race
-here either. Based on an earlier patch by Dong Aisheng.
+The situation is solved by reverting
+commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration").
+To avoid breaking again the situation described in this commit
+description, enabling critical clock should be done before walking the
+orphan list. This way, a parent critical clock may not be accidentally
+disabled due to the CLK_OPS_PARENT_ENABLE mechanism.
 
-Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
-Cc: Michael Turquette <mturquette@baylibre.com>
+Fixes: f8f8f1d04494 ("clk: Don't touch hardware when reparenting during registration")
+Cc: Stephen Boyd <sboyd@codeaurora.org>
 Cc: Shawn Guo <shawnguo@kernel.org>
-Reported-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/clk/clk.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/clk.c |   37 +++++++++++++++++++++----------------
+ 1 file changed, 21 insertions(+), 16 deletions(-)
 
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -2443,14 +2443,17 @@ static int __clk_core_init(struct clk_co
+@@ -2438,22 +2438,37 @@ static int __clk_core_init(struct clk_co
+ 	core->rate = core->req_rate = rate;
+ 
+ 	/*
++	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
++	 * don't get accidentally disabled when walking the orphan tree and
++	 * reparenting clocks
++	 */
++	if (core->flags & CLK_IS_CRITICAL) {
++		unsigned long flags;
++
++		clk_core_prepare(core);
++
++		flags = clk_enable_lock();
++		clk_core_enable(core);
++		clk_enable_unlock(flags);
++	}
++
++	/*
+ 	 * walk the list of orphan clocks and reparent any that newly finds a
+ 	 * parent.
  	 */
  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
  		struct clk_core *parent = __clk_init_parent(orphan);
-+		unsigned long flags;
+-		unsigned long flags;
  
  		/*
- 		 * we could call __clk_set_parent, but that would result in a
- 		 * redundant call to the .set_rate op, if it exists
+-		 * we could call __clk_set_parent, but that would result in a
+-		 * redundant call to the .set_rate op, if it exists
++		 * We need to use __clk_set_parent_before() and _after() to
++		 * to properly migrate any prepare/enable count of the orphan
++		 * clock. This is important for CLK_IS_CRITICAL clocks, which
++		 * are enabled during init but might not have a parent yet.
  		 */
  		if (parent) {
--			__clk_set_parent_before(orphan, parent);
--			__clk_set_parent_after(orphan, parent, NULL);
-+			/* update the clk tree topology */
-+			flags = clk_enable_lock();
-+			clk_reparent(orphan, parent);
-+			clk_enable_unlock(flags);
+ 			/* update the clk tree topology */
+-			flags = clk_enable_lock();
+-			clk_reparent(orphan, parent);
+-			clk_enable_unlock(flags);
++			__clk_set_parent_before(orphan, parent);
++			__clk_set_parent_after(orphan, parent, NULL);
  			__clk_recalc_accuracies(orphan);
  			__clk_recalc_rates(orphan, 0);
  		}
+@@ -2470,16 +2485,6 @@ static int __clk_core_init(struct clk_co
+ 	if (core->ops->init)
+ 		core->ops->init(core->hw);
+ 
+-	if (core->flags & CLK_IS_CRITICAL) {
+-		unsigned long flags;
+-
+-		clk_core_prepare(core);
+-
+-		flags = clk_enable_lock();
+-		clk_core_enable(core);
+-		clk_enable_unlock(flags);
+-	}
+-
+ 	kref_init(&core->ref);
+ out:
+ 	clk_prepare_unlock();
