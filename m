@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521806017-2-11305990623929133239
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806001-2-5087811178412928765
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806017; b=oNXPlAmtPeZ93C8pYh5wfQngwtHiDUp7GNA57G9LioIK5Xu
-    oQKN92LKQrr374ceW2e+pzgR46Kek/sDtr1n7OyAK660Rr8mPqMZfojgQyCxxkiO
-    IVwwL+H52CtLKadi6UIVFXzlxNZd0w0P25cz5uhQ002U0r9eXBBvIkPJIn7cmhhs
-    LVcR0g7zjk9yB2Xyo/ihfNFJQY4sN66jw8IJpdQWuyFyZDPj6PV3kvNU8HyB1VGc
-    EcmIytw0WYLCxeiCh5S7bfpFREwjPDMt0XTt9YItYwBMVe+j6+nezc751eijJ7Ja
-    4poveUpvV7jgx2NRg1P0RVgN4zJYZFSek29X4gw==
+    t=1521806001; b=gm80SxzvGOsMTtwQwIy0WMcqVNJIKJsixiMera8FnHEmmHZ
+    23pfHfoXLkdAJHhFfCjvvnfsVHzLPCC+K3WcHLbu5YKK40phbhOGSRnZzdRt1eQr
+    U9LrtlxHeUYV0a20eydFmXZXnwbz/32O0PErL/9ESqdic2Tjj4pstuKsHgD/bbAq
+    L3ubPzCMb3i7tY9hw+KEgHX6xsT9cwvJteV8N+f9I84Yj9MlQWjn0ekuzay1rZ5m
+    yjWIaiXf1u3GJZqZEBFR/rhzcvw0F7+g4kYwFGsKAC+9GgqNileNCIpwaBkSL072
+    +Lp7Ex+B2I2S3cgbgIbkPHUkZJ+PQRdjqFdGXmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806017; bh=wdSVI99SQCVY6XYxc4KJHdSy0z
-    kr2UqXIgDeSN6wl5o=; b=D0cZxaMBVPOte7t8GV0e0Qj1ZrODWxHflNobFSFSg9
-    ZxswApFQakKunAJ7MJWkZ0HBGpMVKDD4up15T11BS5+zO+SYPJWvsndx1e4D+H8O
-    j3uVNigi+gyb7RiIV+/Rzpr0z2ek+Ol9T5EhwVlqErCvlypyL4SZJqM6q8pheW5z
-    Gw2kYfCMY5MgvolYnZY6qdiZw2+LRKsJmAvzqrYTzGeYl/Ya3GSL7PHtCYIApQUi
-    ei79k3fL5a8aZ0czPH2FRfwx8AuWMinM4kQur8c2IKW/06FKqxTIkjCyCYt2e2E+
-    WV9vgxuftijVMknw+gZahdyi/ZgZHyozdTAFTpMT7nXg==
+    :list-id; s=arctest; t=1521806001; bh=/PNrrlgUaKc47CmUhg6ir/GZzZ
+    pJ4QK7lUMRxfpDWe4=; b=KE0hbx8MbbvHBDRYLPbD/znwHeuZTstX6ej/ym3Fup
+    kcshqQ/t4K706ECuzvmbUcX7eMDdUelIcGNNfBFFU4FWRufaShZjvovMN32by13U
+    Vv5bOZJ2PjU8md8XnSPyPG/TtXpk9rBNMY3XVdLCufHcUMGUcSvntdyd2RiTuFfY
+    mGujnn0oe3xbke5qiB4rm42NQVRxhO1hYyDNXsdxPppkVWvVI2ofSi4TeLDyetD/
+    noI3TbydoE1OB6+2cAtW0RJtqvsOAKS4PcUZjS6HmE4+5QLsuhRsdlGIjWtnMT/x
+    gXvPqFATmtvaEghQXVbUPBYvG/4Y6EJehzmjoT8sv//g==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753346AbeCWLxU (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:53:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38072 "EHLO
+        id S1753988AbeCWKBt (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:01:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38054 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753987AbeCWKBt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:01:49 -0400
+        with ESMTP id S1751966AbeCWKBq (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:01:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Nicolas Iooss <nicolas.iooss_linux@m4x.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 31/77] sfp: fix EEPROM reading in the case of non-SFF8472 SFPs
-Date: Fri, 23 Mar 2018 10:54:05 +0100
-Message-Id: <20180323094144.321463737@linuxfoundation.org>
+Subject: [PATCH 4.14 14/77] rtlwifi: always initialize variables given to RT_TRACE()
+Date: Fri, 23 Mar 2018 10:53:48 +0100
+Message-Id: <20180323094143.177548489@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -82,48 +83,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
 
 
-[ Upstream commit 2794ffc441dde3109804085dc745e8014a4de224 ]
+[ Upstream commit e4779162f7377baa9fb9a044555ecaae22c3f125 ]
 
-The EEPROM reading was trying to read from the second EEPROM address
-if we requested the last byte from the SFF8079 EEPROM, which caused a
-failure when the second EEPROM is not present.  Discovered with a
-S-RJ01 SFP module.  Fix this.
+In rtl_rx_ampdu_apply(), when rtlpriv->cfg->ops->get_btc_status()
+returns false, RT_TRACE() is called with the values of variables
+reject_agg and agg_size, which have not been initialized.
 
-Fixes: 73970055450e ("sfp: add SFP module support")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Always initialize these variables in order to prevent using
+uninitialized values.
+
+This issue has been found with clang. The compiler reported:
+
+    drivers/net/wireless/realtek/rtlwifi/base.c:1665:6: error: variable
+    'agg_size' is used uninitialized whenever 'if' condition is false
+    [-Werror,-Wsometimes-uninitialized]
+            if (rtlpriv->cfg->ops->get_btc_status())
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    drivers/net/wireless/realtek/rtlwifi/base.c:1671:31: note:
+    uninitialized use occurs here
+                     reject_agg, ctrl_agg_size, agg_size);
+                                                ^~~~~~~~
+
+    drivers/net/wireless/realtek/rtlwifi/base.c:1665:6: error: variable
+    'reject_agg' is used uninitialized whenever 'if' condition
+          is false [-Werror,-Wsometimes-uninitialized]
+            if (rtlpriv->cfg->ops->get_btc_status())
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    drivers/net/wireless/realtek/rtlwifi/base.c:1671:4: note:
+    uninitialized use occurs here
+                     reject_agg, ctrl_agg_size, agg_size);
+                     ^~~~~~~~~~
+
+Fixes: 2635664e6e4a ("rtlwifi: Add rx ampdu cfg for btcoexist.")
+Signed-off-by: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/sfp.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/base.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/phy/sfp.c
-+++ b/drivers/net/phy/sfp.c
-@@ -667,20 +667,19 @@ static int sfp_module_eeprom(struct sfp
- 		len = min_t(unsigned int, last, ETH_MODULE_SFF_8079_LEN);
- 		len -= first;
+--- a/drivers/net/wireless/realtek/rtlwifi/base.c
++++ b/drivers/net/wireless/realtek/rtlwifi/base.c
+@@ -1664,7 +1664,7 @@ int rtl_tx_agg_oper(struct ieee80211_hw
+ void rtl_rx_ampdu_apply(struct rtl_priv *rtlpriv)
+ {
+ 	struct rtl_btc_ops *btc_ops = rtlpriv->btcoexist.btc_ops;
+-	u8 reject_agg, ctrl_agg_size = 0, agg_size;
++	u8 reject_agg = 0, ctrl_agg_size = 0, agg_size = 0;
  
--		ret = sfp->read(sfp, false, first, data, len);
-+		ret = sfp_read(sfp, false, first, data, len);
- 		if (ret < 0)
- 			return ret;
- 
- 		first += len;
- 		data += len;
- 	}
--	if (first >= ETH_MODULE_SFF_8079_LEN &&
--	    first < ETH_MODULE_SFF_8472_LEN) {
-+	if (first < ETH_MODULE_SFF_8472_LEN && last > ETH_MODULE_SFF_8079_LEN) {
- 		len = min_t(unsigned int, last, ETH_MODULE_SFF_8472_LEN);
- 		len -= first;
- 		first -= ETH_MODULE_SFF_8079_LEN;
- 
--		ret = sfp->read(sfp, true, first, data, len);
-+		ret = sfp_read(sfp, true, first, data, len);
- 		if (ret < 0)
- 			return ret;
- 	}
+ 	if (rtlpriv->cfg->ops->get_btc_status())
+ 		btc_ops->btc_get_ampdu_cfg(rtlpriv, &reject_agg,
