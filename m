@@ -1,38 +1,74 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvy/tV1qsa/MD/kFYk18s6s0qS2OLYKGEDfTnM1UWjsVfPGMx2b+Hgv4leKaDZ6QksV4db6
-ARC-Seal: i=1; a=rsa-sha256; t=1521799716; cv=none;
-        d=google.com; s=arc-20160816;
-        b=oXFo0CcewmcOvpr5djxOIOOgSChnKZE+2FO+5KtVEnQvshc3wnDs5uxYvlZyCnQO5h
-         LhWX7ZV5KSj/zNQlnONNY+6xz9ixCm5qUoXprQW8lJVwXZY0FAkYZRJM/JkdA3iuLzXv
-         t63PSyeETlx9ZtFbuZuwADq/o9XOwsrC9aAHbyYJzf5qd0V6U/dSmTQCW5Zyv1MkuJnf
-         Wz4xdeTxbmaxveCDMtlgq9nGubr7k4sTS1ygZqymzk83tajQj02jyP935eHr9AyEwege
-         ixu3oXD9jWHFYjIzjraMsEUYdRN8ltzyXyjurGp3Z/pNZPsVSpwBu9+Fs07KHw74tc3x
-         Naqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=HHH8qCH0TaIDubcQ5/UtrjUpeWVSY/4snHzowAasNhg=;
-        b=rXyFXPJKVfJ6NjBFmvEi+u7c8sJdd/5JxukKUGkr/3o4EB7ZCNUsyNeEUY4Aby1aY/
-         qoZhHy6WgG/xyny3wtUiPf/uE5uGDrUI6Z85VOMxCIzKMZk+AFVlszlR+nXmq+tbkABT
-         QeYQwVZK2mZfI3MaJyk51wis3twW3w7QiOiKN/QTO9uquXKzraY0UeBYEBeb4tRxXfke
-         yR2P8lV46i2STKy6EAlrLxlwvI4itIe8NNQZgzR2jkRfK2bECtDIdz66x6tR6M7re7fb
-         +f6BnZP7eQQHxh6kfuQysc33RfJCmjIgjVIIlaYAqHg2DKqwqVWAoRvjwrFJMzdXL1Xv
-         275Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-977995-1521799687-2-3056307634285914353
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521799686; b=ryx4lYGU+K7nXvt3NrpMPYR2RMjpPbj5QQ1NGNxZOMfaMR8
+    0rkAl6nPJ64nktXZON+tehWiUO0U03CIWLbyrsdZjpJwLn3j3lfGe71tWlVIJLJX
+    tQ4tTIRroF/pzScDEYLmw+HLmMZa2cwE3oCEfM2rhtXIFUqAXQRjdqMwHpN1FErY
+    3tlxa2wGNxf3mjy0iSK9+Qv+ozf8Gu3G0vfcX92kl0r61pxaOsz61UNg34p/Acy/
+    3s4b/aq2B/Wlb3JJ3PySHqhhSDLCcm+3Rb3vShh9yup+zjmEbae6Tcyqf4zWrfkC
+    lcaO8C4k5CYJ0zqgs9mkfAH4F9HPh1t+XimM7fA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521799686; bh=sP65NP6kwu3hSdk4qAv8uuQ2+O
+    WwOULWg0HFFJgdC/0=; b=LLPVmwqqsPiNCMbFJFnavwD1tVIxSfqoazT2KBV7Xq
+    QuFd6dT3eyDe4tyaUVLltEGG+DZQLD/Q9dI5RrgrLDBDXMzaO7UfvBbuO1RdmgSn
+    gvxl3ABQj4nBFjNK9SBXO6jEuMVbYB7itcSWe0tBJKReoA7rGzBQ+/hHLM/C8RRZ
+    FzOs3rlSczgAEFXGOGuBaLNp+As/VkkmBTeVTK3b0sl9qy/Q0gB5FQ10dg/LUXdv
+    1fS35N7zsu1Qg9f2jW+ASa3q6w8CZpwzlxxUVTlKE614pnafN/XOO835V+9Qya/W
+    ZNqobbO2Kj68Y6TOohPqipu1igBRrzwkVKZzrVVTsm+g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755421AbeCWKIB (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:08:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41496 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755403AbeCWKH6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Chunming Zhou <David1.Zhou@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 100/177] drm/amdgpu: fix gpu reset crash
-Date: Fri, 23 Mar 2018 10:53:48 +0100
-Message-Id: <20180323094209.696925119@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kuppuswamy Sathyanarayanan
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 087/177] gpio: gpio-wcove: fix GPIO IRQ status mask
+Date: Fri, 23 Mar 2018 10:53:35 +0100
+Message-Id: <20180323094209.131355136@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -40,10 +76,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722659521301890?=
-X-GMAIL-MSGID: =?utf-8?q?1595722659521301890?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,96 +86,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chunming Zhou <David1.Zhou@amd.com>
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
 
-[ Upstream commit 51687759be93fbc553f2727e86be25c38126ba93 ]
+[ Upstream commit 881ebd229f4a5ea88f269c1225245e50db9ba303 ]
 
-[  413.687439] BUG: unable to handle kernel NULL pointer dereference at 0000000000000548
-[  413.687479] IP: [<ffffffff8109b175>] to_live_kthread+0x5/0x60
-[  413.687507] PGD 1efd12067
-[  413.687519] PUD 1efd11067
-[  413.687531] PMD 0
+According to Whiskey Cove PMIC spec, bit 7 of GPIOIRQ0_REG belongs to
+battery IO. So we should skip this bit when checking for GPIO IRQ pending
+status. Otherwise, wcove_gpio_irq_handler() might go into the infinite
+loop until IRQ "pending" status becomes 0. This patch fixes this issue.
 
-[  413.687543] Oops: 0000 [#1] SMP
-[  413.687557] Modules linked in: amdgpu(OE) ttm(OE) drm_kms_helper(E) drm(E) i2c_algo_bit(E) fb_sys_fops(E) syscopyarea(E) sysfillrect(E) sysimgblt(E) rpcsec_gss_krb5(E) nfsv4(E) nfs(E) fscache(E) snd_hda_codec_realtek(E) snd_hda_codec_generic(E) snd_hda_codec_hdmi(E) snd_hda_intel(E) eeepc_wmi(E) snd_hda_codec(E) asus_wmi(E) snd_hda_core(E) sparse_keymap(E) snd_hwdep(E) video(E) snd_pcm(E) snd_seq_midi(E) joydev(E) snd_seq_midi_event(E) snd_rawmidi(E) snd_seq(E) snd_seq_device(E) snd_timer(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) snd(E) crc32_pclmul(E) ghash_clmulni_intel(E) soundcore(E) aesni_intel(E) aes_x86_64(E) lrw(E) gf128mul(E) glue_helper(E) ablk_helper(E) cryptd(E) shpchp(E) serio_raw(E) i2c_piix4(E) 8250_dw(E) i2c_designware_platform(E) i2c_designware_core(E) mac_hid(E) binfmt_misc(E)
-[  413.687894]  parport_pc(E) ppdev(E) lp(E) parport(E) nfsd(E) auth_rpcgss(E) nfs_acl(E) lockd(E) grace(E) sunrpc(E) autofs4(E) hid_generic(E) usbhid(E) hid(E) psmouse(E) ahci(E) r8169(E) mii(E) libahci(E) wmi(E)
-[  413.687989] CPU: 13 PID: 1134 Comm: kworker/13:2 Tainted: G           OE   4.9.0-custom #4
-[  413.688019] Hardware name: System manufacturer System Product Name/PRIME B350-PLUS, BIOS 0606 04/06/2017
-[  413.688089] Workqueue: events amd_sched_job_timedout [amdgpu]
-[  413.688116] task: ffff88020f9657c0 task.stack: ffffc90001a88000
-[  413.688139] RIP: 0010:[<ffffffff8109b175>]  [<ffffffff8109b175>] to_live_kthread+0x5/0x60
-[  413.688171] RSP: 0018:ffffc90001a8bd60  EFLAGS: 00010282
-[  413.688191] RAX: ffff88020f0073f8 RBX: ffff88020f000000 RCX: 0000000000000000
-[  413.688217] RDX: 0000000000000001 RSI: ffff88020f9670c0 RDI: 0000000000000000
-[  413.688243] RBP: ffffc90001a8bd78 R08: 0000000000000000 R09: 0000000000001000
-[  413.688269] R10: 0000006051b11a82 R11: 0000000000000001 R12: 0000000000000000
-[  413.688295] R13: ffff88020f002770 R14: ffff88020f004838 R15: ffff8801b23c2c60
-[  413.688321] FS:  0000000000000000(0000) GS:ffff88021ef40000(0000) knlGS:0000000000000000
-[  413.688352] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  413.688373] CR2: 0000000000000548 CR3: 00000001efd0f000 CR4: 00000000003406e0
-[  413.688399] Stack:
-[  413.688407]  ffffffff8109b304 ffff88020f000000 0000000000000070 ffffc90001a8bdf0
-[  413.688439]  ffffffffa05ce29d ffffffffa052feb7 ffffffffa07b5820 ffffc90001a8bda0
-[  413.688470]  ffffffff00000018 ffff8801bb88f060 0000000001a8bdb8 ffff88021ef59280
-[  413.688502] Call Trace:
-[  413.688514]  [<ffffffff8109b304>] ? kthread_park+0x14/0x60
-[  413.688555]  [<ffffffffa05ce29d>] amdgpu_gpu_reset+0x7d/0x670 [amdgpu]
-[  413.688589]  [<ffffffffa052feb7>] ? drm_printk+0x97/0xa0 [drm]
-[  413.688643]  [<ffffffffa0698136>] amdgpu_job_timedout+0x46/0x50 [amdgpu]
-[  413.688700]  [<ffffffffa06969e7>] amd_sched_job_timedout+0x17/0x20 [amdgpu]
-[  413.688727]  [<ffffffff81095493>] process_one_work+0x153/0x3f0
-[  413.688751]  [<ffffffff81095c5b>] worker_thread+0x12b/0x4b0
-[  413.688773]  [<ffffffff8100392e>] ? do_syscall_64+0x6e/0x180
-[  413.688795]  [<ffffffff81095b30>] ? rescuer_thread+0x350/0x350
-[  413.688818]  [<ffffffff8100392e>] ? do_syscall_64+0x6e/0x180
-[  413.688839]  [<ffffffff8109b423>] kthread+0xd3/0xf0
-[  413.688858]  [<ffffffff8109b350>] ? kthread_park+0x60/0x60
-[  413.688881]  [<ffffffff817e1ee5>] ret_from_fork+0x25/0x30
-[  413.688901] Code: 25 40 d3 00 00 48 8b 80 48 05 00 00 48 89 e5 5d 48 8b 40 c8 48 c1 e8 02 83 e0 01 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 <48> 8b b7 48 05 00 00 55 48 89 e5 48 85 f6 74 31 8b 97 f8 18 00
-[  413.689045] RIP  [<ffffffff8109b175>] to_live_kthread+0x5/0x60
-[  413.689064]  RSP <ffffc90001a8bd60>
-[  413.689076] CR2: 0000000000000548
-[  413.697985] ---[ end trace 0a314a64821f84e9 ]---
-
-The root cause is some ring doesn't have scheduler, like KIQ ring
-
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Chunming Zhou <David1.Zhou@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-wcove.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -2237,7 +2237,7 @@ int amdgpu_gpu_reset(struct amdgpu_devic
- 	for (i = 0; i < AMDGPU_MAX_RINGS; ++i) {
- 		struct amdgpu_ring *ring = adev->rings[i];
+--- a/drivers/gpio/gpio-wcove.c
++++ b/drivers/gpio/gpio-wcove.c
+@@ -51,6 +51,8 @@
+ #define GROUP1_NR_IRQS		6
+ #define IRQ_MASK_BASE		0x4e19
+ #define IRQ_STATUS_BASE		0x4e0b
++#define GPIO_IRQ0_MASK		GENMASK(6, 0)
++#define GPIO_IRQ1_MASK		GENMASK(5, 0)
+ #define UPDATE_IRQ_TYPE		BIT(0)
+ #define UPDATE_IRQ_MASK		BIT(1)
  
--		if (!ring)
-+		if (!ring || !ring->sched.thread)
- 			continue;
- 		kthread_park(ring->sched.thread);
- 		amd_sched_hw_job_reset(&ring->sched);
-@@ -2326,7 +2326,8 @@ retry:
- 		}
- 		for (i = 0; i < AMDGPU_MAX_RINGS; ++i) {
- 			struct amdgpu_ring *ring = adev->rings[i];
--			if (!ring)
-+
-+			if (!ring || !ring->sched.thread)
- 				continue;
+@@ -310,7 +312,7 @@ static irqreturn_t wcove_gpio_irq_handle
+ 		return IRQ_NONE;
+ 	}
  
- 			amd_sched_job_recovery(&ring->sched);
-@@ -2335,7 +2336,7 @@ retry:
- 	} else {
- 		dev_err(adev->dev, "asic resume failed (%d).\n", r);
- 		for (i = 0; i < AMDGPU_MAX_RINGS; ++i) {
--			if (adev->rings[i]) {
-+			if (adev->rings[i] && adev->rings[i]->sched.thread) {
- 				kthread_unpark(adev->rings[i]->sched.thread);
- 			}
+-	pending = p[0] | (p[1] << 8);
++	pending = (p[0] & GPIO_IRQ0_MASK) | ((p[1] & GPIO_IRQ1_MASK) << 7);
+ 	if (!pending)
+ 		return IRQ_NONE;
+ 
+@@ -334,7 +336,7 @@ static irqreturn_t wcove_gpio_irq_handle
+ 			break;
  		}
+ 
+-		pending = p[0] | (p[1] << 8);
++		pending = (p[0] & GPIO_IRQ0_MASK) | ((p[1] & GPIO_IRQ1_MASK) << 7);
+ 	}
+ 
+ 	return IRQ_HANDLED;
