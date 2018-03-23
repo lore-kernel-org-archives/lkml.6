@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu2Y74miqUPDfQ53cZBblFBYXT1iW92vLRI0rMcOi9/YWhNc8f6Fn+GOIPRHK03zC9fCCNo
-ARC-Seal: i=1; a=rsa-sha256; t=1521800231; cv=none;
+X-Google-Smtp-Source: AG47ELtbwL+PW3y+YtgH3xp3vymHE5QcC2shUOk4diJ4XmnnrcOLY5uWxgox6Vg5vmxlypAf4tlv
+ARC-Seal: i=1; a=rsa-sha256; t=1521800228; cv=none;
         d=google.com; s=arc-20160816;
-        b=XBXgtubzgfBgURdmFd3qxGhLuaYcYg62j1KuFgDAnxcUVBGGYQcNXRAolNOxVR6aW5
-         /tnquoAV4TVMyh2H7f4AEEssQ9/VhYcuA2MlXh97/gVPeFCiigM1ZOpCfJr67TgXDvxY
-         WsARN2d/ZGmc15eVziAK0sNDgE1jY5YTfIYtZ95BlG8mLicN7oE55b+5KRkgbTwyed1s
-         Qka9oiPESQ7rjXhIMahUTnu6LgR9wFbW2h4sNRuiPuEpk5PJd58a3/K2Dq7oUZ0nokoh
-         7eS+8chmbS7PyLlmRoolaU2/xE+SCMienFxwG7HU4K5DZIOjr6PuFGarBWZpjKWgEeYe
-         2FiQ==
+        b=v55HyKxcmlp6/hm+2QZrcqPBTQDfeFygRLnYC+XCz+RU4DEQzRpfK3t84p2AqDJlpE
+         1LRQzI41cZ5lTqTTWkyTgfUSlta0mUKeL76NVG0jLfIO18f9fqFUKDhjkR7Y8vzr0oKU
+         //9pkeoyM8A2J9hs0eqksOg2F5Lc2hH5PiFl3uV/NqRfzthn/AV7NyTRreDlAeMyt/rC
+         GmLfe3pCyqrQJegtoU2MWvBuqGk9ua0BzA5TKy+BtuMsqTO6r7XnMNiFLRTBWzuOEj22
+         y+y4+oa4mK5vTNzQL3ksANCBd1Zf7OXpba+uSk2MEaKaNARZupMzBzOZ9N7sMUZvCeid
+         brgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DB5D5cxWCx+BuCMHGLYAd2k9bfDA8TyHn3ER8rpB7s0=;
-        b=tlMW5W3cIQWfj0ct0qd9ih9WF8VDrbrLBjMXwQ5/Oa0BGzprUUw295MFXtmymFdINI
-         QqffsqsAq1qW1+KTjMWU+hdq9fHjB+/eVtWlpBYwocLqVvdiETVyvBWkpLMIWfxnPkoP
-         8ehLA7xc7Ba0P0s1+8XAdmciYdvnz70DHzRKocPFu4CBNbqt8nAUmR6ZmqPxaP6hxZSX
-         WgBkE5knR5ROwxTmfDt3hroVflRjDY0DrEV5XhtcuhKi7RVUfLt4qOSvUiHe981KAxzR
-         VY/UkcDUAREYT52DZtMTc4q/n1WkHieKJfn8eBuiJzoxTMBwl4HccyWKO9+0JYzT6jH2
-         FVhg==
+        bh=rm8aRQ3B0l5wriZ3QBLTlYRD5lzchp7S7Fj8OAhXFxA=;
+        b=JgMuHErw3oYLAUJr4zqVZczAfI4hW7c2+r0cmvFA3cyCJF6zKLQreZI9A7Jo5TU608
+         jQlGitbeNlQbyNbm7XudTC/PCLK/oTO1dgrHdiMLl+/+HHdwG8ykfAcYES+sD6CuHG1o
+         mjYhq9W6pWfs5XO9gAQMpv4mYLNaDmas/NDhJiVzO4Obht1EpeHl5LmFgYa73E56G6/Y
+         Ouisi46ixrihQe0wZiX/RDfPUo9wNiEubnPgMZfwoM/OiZWLJA40vfpml72vIqF71eOZ
+         bKq5XgBv/vmCpthUFkluk5+e4c8pAyFot/x1TJGZAqO2xskE91OGIROr3MvddxhvmIbl
+         9Kow==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Benjamin Coddington <bcodding@redhat.com>,
-	"J. Bruce Fields" <bfields@redhat.com>,
+	Anton Vasilyev <vasilyev@ispras.ru>,
+	Selvin Xavier <selvin.xavier@broadcom.com>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 94/97] nfsd4: permit layoutget of executable-only files
-Date: Fri, 23 Mar 2018 10:55:21 +0100
-Message-Id: <20180323094202.722483001@linuxfoundation.org>
+Subject: [PATCH 4.4 93/97] RDMA/ocrdma: Fix permissions for OCRDMA_RESET_STATS
+Date: Fri, 23 Mar 2018 10:55:20 +0100
+Message-Id: <20180323094202.680504261@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722103920181598?=
-X-GMAIL-MSGID: =?utf-8?q?1595723199711620495?=
+X-GMAIL-THRID: =?utf-8?q?1595722096549947834?=
+X-GMAIL-MSGID: =?utf-8?q?1595723196733957889?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,44 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Benjamin Coddington <bcodding@redhat.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
 
-[ Upstream commit 66282ec1cf004c09083c29cb5e49019037937bbd ]
+[ Upstream commit 744820869166c8c78be891240cf5f66e8a333694 ]
 
-Clients must be able to read a file in order to execute it, and for pNFS
-that means the client needs to be able to perform a LAYOUTGET on the file.
+Debugfs file reset_stats is created with S_IRUSR permissions,
+but ocrdma_dbgfs_ops_read() doesn't support OCRDMA_RESET_STATS,
+whereas ocrdma_dbgfs_ops_write() supports only OCRDMA_RESET_STATS.
 
-This behavior for executable-only files was added for OPEN in commit
-a043226bc140 "nfsd4: permit read opens of executable-only files".
+The patch fixes misstype with permissions.
 
-This fixes up xfstests generic/126 on block/scsi layouts.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfsd/nfs4proc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/ocrdma/ocrdma_stats.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1245,14 +1245,14 @@ nfsd4_layoutget(struct svc_rqst *rqstp,
- 	const struct nfsd4_layout_ops *ops;
- 	struct nfs4_layout_stateid *ls;
- 	__be32 nfserr;
--	int accmode;
-+	int accmode = NFSD_MAY_READ_IF_EXEC;
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+@@ -834,7 +834,7 @@ void ocrdma_add_port_stats(struct ocrdma
  
- 	switch (lgp->lg_seg.iomode) {
- 	case IOMODE_READ:
--		accmode = NFSD_MAY_READ;
-+		accmode |= NFSD_MAY_READ;
- 		break;
- 	case IOMODE_RW:
--		accmode = NFSD_MAY_READ | NFSD_MAY_WRITE;
-+		accmode |= NFSD_MAY_READ | NFSD_MAY_WRITE;
- 		break;
- 	default:
- 		dprintk("%s: invalid iomode %d\n",
+ 	dev->reset_stats.type = OCRDMA_RESET_STATS;
+ 	dev->reset_stats.dev = dev;
+-	if (!debugfs_create_file("reset_stats", S_IRUSR, dev->dir,
++	if (!debugfs_create_file("reset_stats", 0200, dev->dir,
+ 				&dev->reset_stats, &ocrdma_dbg_ops))
+ 		goto err;
+ 
