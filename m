@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803575-2-2650131415882231163
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803553-2-8469723480103160829
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803575; b=YgVAfoXAsI83gGNvUt0jfPz0FZa+TSOp/3roX12xOtdjN/b
-    JLiH8h/IRqQA40GUWJxyh+6vpCh5tyCN04W77glSWkrYrFw4xfX0yivWS450vhAa
-    0zHgg5FLoGk7AxYFHcyXLhy4aR1XJFOxCWn78h34lwgtTHX2ZpMj8tcipf31bWwB
-    YUXWjAWcdcrfNHMuxNZ4lX9vOnRzyph1CBpYn2RtQZyVT9R60xQSoRkdMZu1NE5n
-    3wlBkWDkUq8kZPXvcPBRMW4iJ+NrARvAv5pw63fHxeSUvTl+6GVMmsRrdFyTwsWx
-    GNctj+ke/zSsVSVXP7l2B+rBQlpZO8irgnKa/mw==
+    t=1521803553; b=Ag4ISX8lyJAmqjBA56UoLmlwzG+nDJU2STd7pdK1tpNF+Sf
+    vWxbnBOe3w07DnLPHFbQc3O9w4F8AeLqLfXLTpOm4a5jce2FnpNDBDZvBjvs27Eu
+    bSY9T9c92fIRqJEs7Zpz5Fgd9XGNFjhl28D3FYHSszOGT3Z5ZZgC/QTnfZSa8LcM
+    BsUtrylIaA4qpi+UimgdEHhSjhDl449tGIVxds1DvQlkpk+tRGZOT9ulqCPadeXD
+    x0ieSKAINBpnk+zFpELGVrAblZacPBeKf4o/fvucnqdyJQXVWWqd8tlbnH42T5/v
+    rNTNQki04ZZ7EbkExRroOveRcMy/x4TYDNyfSDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803575; bh=0fRCv24UwNW+R8jEJgz0NDVbkP
-    j04BgPQUnCP7jruMM=; b=j4BHj3SGIreuL1tWLf45eZK1vgPZ3mMb+h4AMu7YWR
-    eb3RmTu4WBPLqprxMRT09+E6OahJKRNUk5J2Oyq9Wnhzr2oIZac3f7DHr9Mm5Vaz
-    QhzgN/EIxDq4c3AOWWz/xv0NYVvoh85JYX0ed3AtEZOC42ktEvDfpHj2eILp5M23
-    XYjndJM4prwESRRHpevuRlkwVgIMGFYFgbcT3TY9UpGWTpuatAKXPr8SJl/CGKib
-    27e2tU/TqSX5Ch7fLV5AGCfRFyb1JZQD7ruTTmvQuTPbNmoCprB6GjdtCczQ36Bq
-    A1pdZqECrjhuMtzmIxc3g5mL8Asm3bDOh0cFzg5BeLMA==
+    :list-id; s=arctest; t=1521803553; bh=Rr3O0LyOrbafJvOIU/TPz0aunR
+    mhnbeDtGWIZ3+HHH8=; b=nD0jjHFim4jVM92Fvt4poJyZrBUYuaogwFuchGjIch
+    iM+hZu+ItqKC1FZ6Zgx/Kj97Szx3Kg4Io0NrXn7js2jVs1Bh1pCRoFdqrl9SwmOx
+    wQrL2Kvtvce7xFcoJiHSZQWmQt5blhpk+JGl9XaJVno+oSxsl5oro6P3VaAMavKo
+    HZg4EetTzfOk1HroDQgO5owXOsHG7sDUE0Fjskeuher+oUhpwgYdJWBWy6u21KzI
+    IqHoo5cl3d2YXFH25nI3BgoVXXAVZ/yOlJmSPuFC4Qp5uxAYFhOdX7OMDbE7xBHY
+    WKyW1gHzohPmkoZmcyzyTeTvC+BBB7hQ8tMylXZdQctg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,26 +50,23 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932781AbeCWKKo (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:10:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42726 "EHLO
+        id S1754245AbeCWLMS (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:12:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43568 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932734AbeCWKKm (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:10:42 -0400
+        with ESMTP id S932799AbeCWKKu (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:10:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        kernel test robot <lkp@intel.com>,
-        Xiaolong Ye <xiaolong.ye@intel.com>,
-        Chen Gong <gong.chen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Maksim Salau <maksim.salau@gmail.com>,
+        Bernie Thompson <bernie@plugable.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 128/177] mm: hwpoison: call shake_page() after try_to_unmap() for mlocked page
-Date: Fri, 23 Mar 2018 10:54:16 +0100
-Message-Id: <20180323094210.876445498@linuxfoundation.org>
+Subject: [PATCH 4.9 121/177] video: fbdev: udlfb: Fix buffer on stack
+Date: Fri, 23 Mar 2018 10:54:09 +0100
+Message-Id: <20180323094210.589704842@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -87,62 +84,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Maksim Salau <maksim.salau@gmail.com>
 
 
-[ Upstream commit 286c469a988fbaf68e3a97ddf1e6c245c1446968 ]
+[ Upstream commit 45f580c42e5c125d55dbd8099750a1998de3d917 ]
 
-Memory error handler calls try_to_unmap() for error pages in various
-states.  If the error page is a mlocked page, error handling could fail
-with "still referenced by 1 users" message.  This is because the page is
-linked to and stays in lru cache after the following call chain.
+Allocate buffers on HEAP instead of STACK for local array
+that is to be sent using usb_control_msg().
 
-  try_to_unmap_one
-    page_remove_rmap
-      clear_page_mlock
-        putback_lru_page
-          lru_cache_add
-
-memory_failure() calls shake_page() to hanlde the similar issue, but
-current code doesn't cover because shake_page() is called only before
-try_to_unmap().  So this patches adds shake_page().
-
-Fixes: 23a003bfd23ea9ea0b7756b920e51f64b284b468 ("mm/madvise: pass return code of memory_failure() to userspace")
-Link: http://lkml.kernel.org/r/20170417055948.GM31394@yexl-desktop
-Link: http://lkml.kernel.org/r/1493197841-23986-3-git-send-email-n-horiguchi@ah.jp.nec.com
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Cc: Xiaolong Ye <xiaolong.ye@intel.com>
-Cc: Chen Gong <gong.chen@linux.intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Maksim Salau <maksim.salau@gmail.com>
+Cc: Bernie Thompson <bernie@plugable.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/memory-failure.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/video/fbdev/udlfb.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -921,6 +921,7 @@ static int hwpoison_user_mappings(struct
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -1487,15 +1487,25 @@ static struct device_attribute fb_device
+ static int dlfb_select_std_channel(struct dlfb_data *dev)
+ {
  	int ret;
- 	int kill = 1, forcekill;
- 	struct page *hpage = *hpagep;
-+	bool mlocked = PageMlocked(hpage);
+-	u8 set_def_chn[] = {	   0x57, 0xCD, 0xDC, 0xA7,
++	void *buf;
++	static const u8 set_def_chn[] = {
++				0x57, 0xCD, 0xDC, 0xA7,
+ 				0x1C, 0x88, 0x5E, 0x15,
+ 				0x60, 0xFE, 0xC6, 0x97,
+ 				0x16, 0x3D, 0x47, 0xF2  };
  
- 	/*
- 	 * Here we are interested only in user-mapped pages, so skip any
-@@ -985,6 +986,13 @@ static int hwpoison_user_mappings(struct
- 		       pfn, page_mapcount(hpage));
- 
- 	/*
-+	 * try_to_unmap() might put mlocked page in lru cache, so call
-+	 * shake_page() again to ensure that it's flushed.
-+	 */
-+	if (mlocked)
-+		shake_page(hpage, 0);
++	buf = kmemdup(set_def_chn, sizeof(set_def_chn), GFP_KERNEL);
 +
-+	/*
- 	 * Now that the dirty bit has been propagated to the
- 	 * struct page and all unmaps done we can decide if
- 	 * killing is needed or not.  Only kill when the page
++	if (!buf)
++		return -ENOMEM;
++
+ 	ret = usb_control_msg(dev->udev, usb_sndctrlpipe(dev->udev, 0),
+ 			NR_USB_REQUEST_CHANNEL,
+ 			(USB_DIR_OUT | USB_TYPE_VENDOR), 0, 0,
+-			set_def_chn, sizeof(set_def_chn), USB_CTRL_SET_TIMEOUT);
++			buf, sizeof(set_def_chn), USB_CTRL_SET_TIMEOUT);
++
++	kfree(buf);
++
+ 	return ret;
+ }
+ 
