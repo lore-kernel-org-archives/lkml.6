@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802535-2-11560955654369908299
+X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802530-2-8953633286224955477
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802534; b=kpjBMKSCg+RNZDhbfOetKp8sZ90yp66gjIhNI8Wgu4xE/b0
-    sFnDdymybGPI8lcQAP9xbd17WOC40f4HhkC1ensiZEj4YUPXiOD8mNgIDlohI7SH
-    2Sosa9LzWos8mVbiJf1JzY3GPZIWTh/8aTU3FJ6oYBqFmsklLxJkZzKWmW9tX8Bu
-    vI7ByBKBMWRzMx8osXXOk6irq00Y+e3glJKnk5skTHKKao0ETCvJadyxYlti0773
-    ZUinVeeBS+GRqdPXr1R8qQQL9EksWmC6LvhhOoojzFpTQWETs/7A4dRPufvzrrXt
-    pyyRhGEQoWqEBJGxn2XBnq2GAyasNQk8oCw4J1g==
+    t=1521802530; b=EPUnzabxwncPUIR45Sbf50063hKhdBEn7NOLrGijBxvaDi6
+    2aH0tBsp1G2axNzpFb2JthJH4QwJiIpP3OvtTFImh7anq3KcPYzgFUWarAvnMMYY
+    yAMn1KJMKBBM/WZmRGpicJ57wCal8QSAwdDpp6EIHemIsDxs6OozlhlG3t+OdUR+
+    S49cSdlnlc+HNI5fctGtwOiZ4BNix5xX2rSsNWBGCw0ngNVfv4NOsYe76y3AkhEj
+    +OcP9RphONXkIj2mTf1WqjwcMUEkx1dTjM9k+XTRZfRExeQbcq/+VJRM0ZKJ0SFP
+    EhOUyaXotLXpIbZMK+hUIuhCwXA6BTbitEkvNEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802534; bh=4F0suyq8HHzBbIBPfQwXEwiA2t
-    u0j+FUrAIqzg1nJ1c=; b=QL4RMC5/R0pTRa3dtE0SQ4WsAaxRoxV6vOTn7aDZV/
-    mNBfBTDg0j97TwHs+ZK/RqxHcOxrM0ABvr8bDtPOWalLrkpvjTDlKzI5Nxni1owG
-    +4aYR1Pep47k7PdJTK1rweszkmZNjWIhgNW86PwJiPpIVJK121seu/ATf4RMz7Qu
-    fjpnOpFnHvSD77JTWZh3tvYRfo5tvnxsT2DQlAhCSieC19LPwyRLwkYNBLiR86QP
-    3tJ32H8GyFWLsTUnvQ57Ps9R4M6Xvs1/ilNIK1BcpUWEvZQF7QJh9qd2VmngCoQl
-    +/keThXsgLLTNGBM/0GbKC7yJxAZBi5DH0hf12I/qmGQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521802530; bh=OrWy35bBzeterRcezIZxSf3ge9
+    SWbXmkvhGWK8TeC/0=; b=jn6AZeB7MptG4aCIjhrC64vkLZgEZB/3FSetdG6Jqi
+    +D9MWBJ+Xism3sdyQFlHWIMFWiuYjJllNcMkPiKdi8akwvRFmimFZgZv6UzHncpw
+    IK0zkL/QT4OeLZNG5I7oGdgeZqqrl7r7Cmszy7jgMKuaWzN8ON/EEoKHSpQT1YGf
+    sB+d5SIOLQCofHq4ViZZIRqZXVSX2a9Q4fnE2KDMDD6MY1zd1GJ5u+hLhSsvzhZ9
+    LRoqvDPRAMRCHcFDGuAt4UM15bTRq1iV+fKN+1JQKGIvCkSHp1Cvb3GzwLDWGyGp
+    XEUHl6VF6eWGMPaeMQlZZWx3uTSevGWneL4YDU+7vftQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,20 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755829AbeCWKNV (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:13:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44758 "EHLO
+        id S1755843AbeCWKNX (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:13:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44784 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755809AbeCWKNT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:19 -0400
+        with ESMTP id S1755832AbeCWKNW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Boone <jeremy.boone@nccgroup.trust>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <james.morris@microsoft.com>
-Subject: [PATCH 4.4 02/97] tpm_tis: fix potential buffer overruns caused by bit glitches on the bus
-Date: Fri, 23 Mar 2018 10:53:49 +0100
-Message-Id: <20180323094157.664187597@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <smfrench@gmail.com>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Subject: [PATCH 4.4 03/97] SMB3: Validate negotiate request must always be signed
+Date: Fri, 23 Mar 2018 10:53:50 +0100
+Message-Id: <20180323094157.732693350@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -83,49 +81,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeremy Boone <jeremy.boone@nccgroup.trust>
+From: Steve French <smfrench@gmail.com>
 
-commit 6bb320ca4a4a7b5b3db8c8d7250cc40002046878 upstream.
+commit 4587eee04e2ac7ac3ac9fa2bc164fb6e548f99cd upstream.
 
-Discrete TPMs are often connected over slow serial buses which, on
-some platforms, can have glitches causing bit flips.  In all the
-driver _recv() functions, we need to use a u32 to unmarshal the
-response size, otherwise a bit flip of the 31st bit would cause the
-expected variable to go negative, which would then try to read a huge
-amount of data.  Also sanity check that the expected amount of data is
-large enough for the TPM header.
+According to MS-SMB2 3.2.55 validate_negotiate request must
+always be signed. Some Windows can fail the request if you send it unsigned
 
-Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
-Cc: stable@vger.kernel.org
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+See kernel bugzilla bug 197311
+
+CC: Stable <stable@vger.kernel.org>
+Acked-by: Ronnie Sahlberg <lsahlber.redhat.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
+Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm_tis.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/cifs/smb2pdu.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -283,7 +283,8 @@ static int recv_data(struct tpm_chip *ch
- static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	int size = 0;
--	int expected, status;
-+	int status;
-+	u32 expected;
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -1558,6 +1558,9 @@ SMB2_ioctl(const unsigned int xid, struc
+ 	} else
+ 		iov[0].iov_len = get_rfc1002_length(req) + 4;
  
- 	if (count < TPM_HEADER_SIZE) {
- 		size = -EIO;
-@@ -298,7 +299,7 @@ static int tpm_tis_recv(struct tpm_chip
- 	}
++	/* validate negotiate request must be signed - see MS-SMB2 3.2.5.5 */
++	if (opcode == FSCTL_VALIDATE_NEGOTIATE_INFO)
++		req->hdr.Flags |= SMB2_FLAGS_SIGNED;
  
- 	expected = be32_to_cpu(*(__be32 *) (buf + 2));
--	if (expected > count) {
-+	if (expected > count || expected < TPM_HEADER_SIZE) {
- 		size = -EIO;
- 		goto out;
- 	}
+ 	rc = SendReceive2(xid, ses, iov, num_iovecs, &resp_buftype, 0);
+ 	rsp = (struct smb2_ioctl_rsp *)iov[0].iov_base;
