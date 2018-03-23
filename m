@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeCWA4E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:56:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52504 "EHLO mx1.redhat.com"
+        id S1752041AbeCWA4D (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:56:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53424 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751821AbeCWAzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751863AbeCWAzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Mar 2018 20:55:54 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org
@@ -14,9 +14,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
         Evgeny Baskakov <ebaskakov@nvidia.com>,
         Ralph Campbell <rcampbell@nvidia.com>,
         Mark Hairgrove <mhairgrove@nvidia.com>
-Subject: [PATCH 12/15] mm/hmm: move hmm_pfns_clear() closer to where it is use
-Date: Thu, 22 Mar 2018 20:55:24 -0400
-Message-Id: <20180323005527.758-13-jglisse@redhat.com>
+Subject: [PATCH 11/15] mm/hmm: rename HMM_PFN_DEVICE_UNADDRESSABLE to HMM_PFN_DEVICE_PRIVATE
+Date: Thu, 22 Mar 2018 20:55:23 -0400
+Message-Id: <20180323005527.758-12-jglisse@redhat.com>
 In-Reply-To: <20180323005527.758-1-jglisse@redhat.com>
 References: <20180323005527.758-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -28,8 +28,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-Move hmm_pfns_clear() closer to where it is use to make it clear it
-is not use by page table walkers.
+Make naming consistent across code, DEVICE_PRIVATE is the name use
+outside HMM code so use that one.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
 Reviewed-by: John Hubbard <jhubbard@nvidia.com>
@@ -37,42 +37,42 @@ Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
 Cc: Ralph Campbell <rcampbell@nvidia.com>
 Cc: Mark Hairgrove <mhairgrove@nvidia.com>
 ---
- mm/hmm.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ include/linux/hmm.h | 4 ++--
+ mm/hmm.c            | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index cf283db22106..e8515cad5a00 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -88,13 +88,13 @@ struct hmm;
+  *      result of vm_insert_pfn() or vm_insert_page(). Therefore, it should not
+  *      be mirrored by a device, because the entry will never have HMM_PFN_VALID
+  *      set and the pfn value is undefined.
+- * HMM_PFN_DEVICE_UNADDRESSABLE: unaddressable device memory (ZONE_DEVICE)
++ * HMM_PFN_DEVICE_PRIVATE: unaddressable device memory (ZONE_DEVICE)
+  */
+ #define HMM_PFN_VALID (1 << 0)
+ #define HMM_PFN_WRITE (1 << 1)
+ #define HMM_PFN_ERROR (1 << 2)
+ #define HMM_PFN_SPECIAL (1 << 3)
+-#define HMM_PFN_DEVICE_UNADDRESSABLE (1 << 4)
++#define HMM_PFN_DEVICE_PRIVATE (1 << 4)
+ #define HMM_PFN_SHIFT 5
+ 
+ /*
 diff --git a/mm/hmm.c b/mm/hmm.c
-index c287fbbbf088..05b49a5d6674 100644
+index b8affe0bf4eb..c287fbbbf088 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -340,14 +340,6 @@ static int hmm_pfns_bad(unsigned long addr,
- 	return 0;
- }
- 
--static void hmm_pfns_clear(uint64_t *pfns,
--			   unsigned long addr,
--			   unsigned long end)
--{
--	for (; addr < end; addr += PAGE_SIZE, pfns++)
--		*pfns = 0;
--}
--
- /*
-  * hmm_vma_walk_hole() - handle a range lacking valid pmd or pte(s)
-  * @start: range virtual start address (inclusive)
-@@ -506,6 +498,14 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 	return 0;
- }
- 
-+static void hmm_pfns_clear(uint64_t *pfns,
-+			   unsigned long addr,
-+			   unsigned long end)
-+{
-+	for (; addr < end; addr += PAGE_SIZE, pfns++)
-+		*pfns = 0;
-+}
-+
- static void hmm_pfns_special(struct hmm_range *range)
- {
- 	unsigned long addr = range->start, i = 0;
+@@ -472,7 +472,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+ 					pfns[i] |= HMM_PFN_WRITE;
+ 				} else if (write_fault)
+ 					goto fault;
+-				pfns[i] |= HMM_PFN_DEVICE_UNADDRESSABLE;
++				pfns[i] |= HMM_PFN_DEVICE_PRIVATE;
+ 			} else if (is_migration_entry(entry)) {
+ 				if (hmm_vma_walk->fault) {
+ 					pte_unmap(ptep);
 -- 
 2.14.3
