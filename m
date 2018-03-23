@@ -1,216 +1,93 @@
-Return-Path: <blackzert@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522262839; cv=none;
+Return-Path: <dalias@aerifal.cx>
+X-Google-Smtp-Source: AG47ELsE+/o7Svs4EKrWhDGEjWFH6+4RQ7tKnEFvH2OgHdljN2+UOh83nIknrjZIevaqsNgbOXM5
+ARC-Seal: i=1; a=rsa-sha256; t=1521828469; cv=none;
         d=google.com; s=arc-20160816;
-        b=eaKLaQjogF4awvpX6FHuGm+8US0MhY558zVovEaMYSJZ8J75ZbUuLMKICohivQ4t48
-         O5iGqJVxms9q0ZYmeNepA8h6Z679x+0OL9c8S/Xi7dFo3jCvCV+2doVOWjOZtm7zVxDW
-         pLnWZVvAWDtUxIarWbJV54taWfSPQkLDp3jr+oRIMCWl3iJOkNmQu67gmsNHHHYoM1uH
-         QsWEUiFYRdxBKsSUVPmrXljSTys3YqGxgC0FLG2bYKyLmB8t4ugIgP55hcyz9OlXoopF
-         5WA6TNKaOFEjBofmERyqT7bcPDm+pBN3UfHCy5U79cDrU4V7Ga8UbsXGQw4gXrPxvlpn
-         bIAw==
+        b=zaQOwBzRJ9BeRZYNOkZIvF7OmHQM44os7lWpNTyTXGuiwEIFtjx3RtBGNhNTWi4YKy
+         eNnDGl8j39n5aO4UsElQfhiu1IuR/Zwj2ORdBVUH4+7EsUzl9HzekH5rmCA/UdD78KK7
+         1cSA+uis9HgURvIpKCLwMFpqH0SCEyN1LKTVryprpPay50m+dxyZJpGbCE7SJnKgOvYU
+         cS1gUHm+Qg/qhRD09mm7tzLCB/HJ72Ngrnsf74xSUp9a4KxsshMhyIYJ06TF7H6Z2k3W
+         IOCOhSpDMD7QzWo7XyPJUAoRti+pj76JM7944KIm5dGbwvTJNIvJJCuX6kW7TVW2g2ZX
+         3D0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:dkim-signature
+        h=sender:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:subject:cc:to:from:date
          :arc-authentication-results;
-        bh=egK4Hy+FSMVRapLItJLtWI4tYDufyZsulm/WqkNWwpk=;
-        b=e1Ue8NplhWj4xOEkOZ5JGSZA78/vYfMx9+w+LOqo2blzbUG6KSZkfC/9HaVvuIkbv2
-         q6tKdkDMgBeg3haSD5iyfcSovWxw1j0BvRxAvbpGL1GIQnylE1JhYFHIWJJMTHAm/UiD
-         aELwxDrlYF4ojjDm3I0bO1VP3OGT7gQkwrPgor4ALyVXvFD+LzTZJfhmJHp7SyTV0t+W
-         cErhy0fV4qnzotea+eNrwMEUOpeZootGIq3/Af/00sRUSSo4q+z4lI/Rl3+LetCNHhoA
-         KM0VRTE7E50Tg8UfXD1Uc9Qnz5/nghTtflaO6BIB/tF+5qlFIz1yABgApUfYuRpojd7F
-         hEcQ==
+        bh=YH2wridiOIr7SJcRNRRNWocrwBcsJxUyWXsFYm77h1M=;
+        b=FYJXxuB9huxh3Dn9to7k5MrtyHAVGficuaa+aCIRBLyKf6GW6E4+ip6UucT7R/tubp
+         F0wEoF/OdukaNymhaBOZwFf14+ggUZq2ltGbyas8K5vAcfZxrnd80A/yRfg1mnI6L9/C
+         P2hj6Uuv4B+SbLmqX6V31h42ViW7nSiNfmPi9NNEVZ3jjnSaHMPWgN0WU8oh8l7OxFUm
+         0l/commOFdisUIa1kRAeHXMYm/7knGsRKQ/1yjOiGLwHvefFBXD+ma92U8VwGu1M8XyM
+         u47nQSJ0aRYhrGVVD9fzAR8JSvr74yXiexWo++mKqiQCBN35wJCP4ZsItPY5lgzudKGF
+         NukA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rho/w/Gd;
-       spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rho/w/Gd;
-       spf=pass (google.com: domain of blackzert@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=blackzert@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+lsHvtjhLjCcXjBXBn1z49okua4IaPsbe3rtqidSroBGFiCxGLbyqUhhZnyXsQU/PgVs+kPg==
-Content-Type: text/plain;
-	charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
+Date: Fri, 23 Mar 2018 14:00:24 -0400
+From: Rich Felker <dalias@libc.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Ilya Smith <blackzert@gmail.com>, rth@twiddle.net,
+	ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@synopsys.com,
+	linux@armlinux.org.uk, tony.luck@intel.com, fenghua.yu@intel.com,
+	jhogan@kernel.org, ralf@linux-mips.org, jejb@parisc-linux.org,
+	deller@gmx.de, benh@kernel.crashing.org, paulus@samba.org,
+	mpe@ellerman.id.au, schwidefsky@de.ibm.com,
+	heiko.carstens@de.ibm.com, ysato@users.sourceforge.jp,
+	davem@davemloft.net, tglx@linutronix.de, mingo@redhat.com,
+	hpa@zytor.com, x86@kernel.org, nyc@holomorphy.com,
+	viro@zeniv.linux.org.uk, arnd@arndb.de, gregkh@linuxfoundation.org,
+	deepa.kernel@gmail.com, mhocko@suse.com, hughd@google.com,
+	kstewart@linuxfoundation.org, pombredanne@nexb.com,
+	akpm@linux-foundation.org, steve.capper@arm.com,
+	punit.agrawal@arm.com, paul.burton@mips.com,
+	aneesh.kumar@linux.vnet.ibm.com, npiggin@gmail.com,
+	keescook@chromium.org, bhsharma@redhat.com, riel@redhat.com,
+	nitin.m.gupta@oracle.com, kirill.shutemov@linux.intel.com,
+	dan.j.williams@intel.com, jack@suse.cz,
+	ross.zwisler@linux.intel.com, jglisse@redhat.com,
+	aarcange@redhat.com, oleg@redhat.com, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+	linux-metag@vger.kernel.org, linux-mips@linux-mips.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org
 Subject: Re: [RFC PATCH v2 0/2] Randomization of address chosen by mmap.
-From: Ilya Smith <blackzert@gmail.com>
-In-Reply-To: <20180327143820.GH5652@dhcp22.suse.cz>
-Date: Wed, 28 Mar 2018 21:47:15 +0300
-Cc: Matthew Wilcox <willy@infradead.org>,
- rth@twiddle.net,
- ink@jurassic.park.msu.ru,
- mattst88@gmail.com,
- vgupta@synopsys.com,
- linux@armlinux.org.uk,
- tony.luck@intel.com,
- fenghua.yu@intel.com,
- ralf@linux-mips.org,
- jejb@parisc-linux.org,
- Helge Deller <deller@gmx.de>,
- benh@kernel.crashing.org,
- paulus@samba.org,
- mpe@ellerman.id.au,
- schwidefsky@de.ibm.com,
- heiko.carstens@de.ibm.com,
- ysato@users.sourceforge.jp,
- dalias@libc.org,
- davem@davemloft.net,
- tglx@linutronix.de,
- mingo@redhat.com,
- hpa@zytor.com,
- x86@kernel.org,
- nyc@holomorphy.com,
- viro@zeniv.linux.org.uk,
- arnd@arndb.de,
- gregkh@linuxfoundation.org,
- deepa.kernel@gmail.com,
- Hugh Dickins <hughd@google.com>,
- kstewart@linuxfoundation.org,
- pombredanne@nexb.com,
- Andrew Morton <akpm@linux-foundation.org>,
- steve.capper@arm.com,
- punit.agrawal@arm.com,
- aneesh.kumar@linux.vnet.ibm.com,
- npiggin@gmail.com,
- Kees Cook <keescook@chromium.org>,
- bhsharma@redhat.com,
- riel@redhat.com,
- nitin.m.gupta@oracle.com,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jan Kara <jack@suse.cz>,
- ross.zwisler@linux.intel.com,
- Jerome Glisse <jglisse@redhat.com>,
- Andrea Arcangeli <aarcange@redhat.com>,
- Oleg Nesterov <oleg@redhat.com>,
- linux-alpha@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- linux-snps-arc@lists.infradead.org,
- linux-ia64@vger.kernel.org,
- linux-metag@vger.kernel.org,
- linux-mips@linux-mips.org,
- linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org,
- Linux-MM <linux-mm@kvack.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F9D157F8-F70F-45BC-B9E4-B5CB7CC419F4@gmail.com>
+Message-ID: <20180323180024.GB1436@brightrain.aerifal.cx>
 References: <1521736598-12812-1-git-send-email-blackzert@gmail.com>
  <20180323124806.GA5624@bombadil.infradead.org>
- <651E0DB6-4507-4DA1-AD46-9C26ED9792A8@gmail.com>
- <20180326084650.GC5652@dhcp22.suse.cz>
- <01A133F4-27DF-4AE2-80D6-B0368BF758CD@gmail.com>
- <20180327072432.GY5652@dhcp22.suse.cz>
- <0549F29C-12FC-4401-9E85-A430BC11DA78@gmail.com>
- <20180327143820.GH5652@dhcp22.suse.cz>
-To: Michal Hocko <mhocko@kernel.org>
-X-Mailer: Apple Mail (2.3445.5.20)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180323124806.GA5624@bombadil.infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Sender: Rich Felker <dalias@aerifal.cx>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595656488556903336?=
-X-GMAIL-MSGID: =?utf-8?q?1596208279504628775?=
+X-GMAIL-MSGID: =?utf-8?q?1595752809220769185?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Fri, Mar 23, 2018 at 05:48:06AM -0700, Matthew Wilcox wrote:
+> On Thu, Mar 22, 2018 at 07:36:36PM +0300, Ilya Smith wrote:
+> > Current implementation doesn't randomize address returned by mmap.
+> > All the entropy ends with choosing mmap_base_addr at the process
+> > creation. After that mmap build very predictable layout of address
+> > space. It allows to bypass ASLR in many cases. This patch make
+> > randomization of address on any mmap call.
+> 
+> Why should this be done in the kernel rather than libc?  libc is perfectly
+> capable of specifying random numbers in the first argument of mmap.
 
-> On 27 Mar 2018, at 17:38, Michal Hocko <mhocko@kernel.org> wrote:
->=20
-> On Tue 27-03-18 16:51:08, Ilya Smith wrote:
->>=20
->>> On 27 Mar 2018, at 10:24, Michal Hocko <mhocko@kernel.org> wrote:
->>>=20
->>> On Mon 26-03-18 22:45:31, Ilya Smith wrote:
->>>>=20
->>>>> On 26 Mar 2018, at 11:46, Michal Hocko <mhocko@kernel.org> wrote:
->>>>>=20
->>>>> On Fri 23-03-18 20:55:49, Ilya Smith wrote:
->>>>>>=20
->>>>>>> On 23 Mar 2018, at 15:48, Matthew Wilcox <willy@infradead.org> =
-wrote:
->>>>>>>=20
->>>>>>> On Thu, Mar 22, 2018 at 07:36:36PM +0300, Ilya Smith wrote:
->>>>>>>> Current implementation doesn't randomize address returned by =
-mmap.
->>>>>>>> All the entropy ends with choosing mmap_base_addr at the =
-process
->>>>>>>> creation. After that mmap build very predictable layout of =
-address
->>>>>>>> space. It allows to bypass ASLR in many cases. This patch make
->>>>>>>> randomization of address on any mmap call.
->>>>>>>=20
->>>>>>> Why should this be done in the kernel rather than libc?  libc is =
-perfectly
->>>>>>> capable of specifying random numbers in the first argument of =
-mmap.
->>>>>> Well, there is following reasons:
->>>>>> 1. It should be done in any libc implementation, what is not =
-possible IMO;
->>>>>=20
->>>>> Is this really so helpful?
->>>>=20
->>>> Yes, ASLR is one of very important mitigation techniques which are =
-really used=20
->>>> to protect applications. If there is no ASLR, it is very easy to =
-exploit=20
->>>> vulnerable application and compromise the system. We can=E2=80=99t =
-just fix all the=20
->>>> vulnerabilities right now, thats why we have mitigations - =
-techniques which are=20
->>>> makes exploitation more hard or impossible in some cases.
->>>>=20
->>>> Thats why it is helpful.
->>>=20
->>> I am not questioning ASLR in general. I am asking whether we really =
-need
->>> per mmap ASLR in general. I can imagine that some environments want =
-to
->>> pay the additional price and other side effects, but considering =
-this
->>> can be achieved by libc, why to add more code to the kernel?
->>=20
->> I believe this is the only one right place for it. Adding these 200+ =
-lines of=20
->> code we give this feature for any user - on desktop, on server, on =
-IoT device,=20
->> on SCADA, etc. But if only glibc will implement =E2=80=98user-mode-aslr=
-=E2=80=99 IoT and SCADA=20
->> devices will never get it.
->=20
-> I guess it would really help if you could be more specific about the
-> class of security issues this would help to mitigate. My first
-> understanding was that we we need some randomization between program
-> executable segments to reduce the attack space when a single address
-> leaks and you know the segments layout (ordering). But why do we need
-> _all_ mmaps to be randomized. Because that complicates the
-> implementation consirably for different reasons you have mentioned
-> earlier.
->=20
+Generally libc does not have a view of the current vm maps, and thus
+in passing "random numbers", they would have to be uniform across the
+whole vm space and thus non-uniform once the kernel rounds up to avoid
+existing mappings. Also this would impose requirements that libc be
+aware of the kernel's use of the virtual address space and what's
+available to userspace -- for example, on 32-bit archs whether 2GB,
+3GB, or full 4GB (for 32-bit-user-on-64-bit-kernel) is available, and
+on 64-bit archs where fewer than the full 64 bits are actually valid
+in addresses, what the actual usable pointer size is. There is
+currently no clean way of conveying this information to userspace.
 
-There are following reasons:
-1) To protect layout if one region was leaked (as you said).=20
-2) To protect against exploitation of Out-of-bounds vulnerabilities in =
-some=20
-cases (CWE-125 , CWE-787)
-3) To protect against exploitation of Buffer Overflows in some cases =
-(CWE-120)
-4) To protect application in cases when attacker need to guess the =
-address=20
-(paper ASLR-NG by  Hector Marco-Gisbert and  Ismael Ripoll-Ripoll)
-And may be more cases.
-
-> Do you have any specific CVE that would be mitigated by this
-> randomization approach?
-> I am sorry, I am not a security expert to see all the cosequences but =
-a
-> vague - the more randomization the better - sounds rather weak to me.
-
-It is hard to name concrete CVE number, sorry. Mitigations are made to =
-prevent=20
-exploitation but not to fix vulnerabilities. It means good mitigation =
-will make=20
-vulnerable application crash but not been compromised in most cases. =
-This means=20
-the better randomization, the less successful exploitation rate.
-
-
-Thanks,
-Ilya
+Rich
