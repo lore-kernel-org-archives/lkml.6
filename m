@@ -1,150 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752584AbeCWSy2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 14:54:28 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34683 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752563AbeCWSyX (ORCPT
+        id S1752105AbeCWSxL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 14:53:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46084 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751932AbeCWSxH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 14:54:23 -0400
-X-Google-Smtp-Source: AG47ELtpzLhMxqdUQCEZ/1EOO5GTcvFKnQWcpBXGOdT9Ar04zquNLsi8G0jqMcLEFcjqN2YYC1jucQ==
-Date: Fri, 23 Mar 2018 11:54:18 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Mark Rutland <mark.rutland@arm.com>, a.zummo@towertech.it,
-        devicetree@vger.kernel.org, linus.walleij@linaro.org,
-        jcsing.lee@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org,
-        javier@osg.samsung.com, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-        matthias.bgg@gmail.com, eddie.huang@mediatek.com,
-        Chen.Zhong@mediatek.com, beomho.seo@samsung.com,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v6 0/6] Add MediaTek PMIC keys support
-Message-ID: <20180323185418.GD255819@dtor-ws>
-References: <1508937364-30054-1-git-send-email-chen.zhong@mediatek.com>
- <808b2029da224ab687fb0553cbc1c68e@mtkmbs08n1.mediatek.inc>
- <1521685073.28226.10.camel@mtkswgap22>
+        Fri, 23 Mar 2018 14:53:07 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F305E6085F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: jeffrey.t.kirsher@intel.com
+Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>, intel-wired-lan@lists.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 1/7] i40e/i40evf: Eliminate duplicate barriers on weakly-ordered archs
+Date: Fri, 23 Mar 2018 14:52:54 -0400
+Message-Id: <1521831180-25014-2-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1521831180-25014-1-git-send-email-okaya@codeaurora.org>
+References: <1521831180-25014-1-git-send-email-okaya@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1521685073.28226.10.camel@mtkswgap22>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean,
+Code includes wmb() followed by writel(). writel() already has a barrier
+on some architectures like arm64.
 
-On Thu, Mar 22, 2018 at 10:17:53AM +0800, Sean Wang wrote:
-> Hi, Dmitry and Lee
-> 
-> The series seems not being got merged. Are they good enough to be ready
-> into the your tree?
-> 
-> Recently I've tested the series with focusing on pwrkey event generated
-> through interrupt when push and release the key on bpi-r2 board and then
-> finally it's working fine. but for homekey it cannot be found on the
-> board and thus I cannot have more tests more about it.
-> 
-> Tested-by: Sean Wang <sean.wang@mediatek.com>
+This ends up CPU observing two barriers back to back before executing the
+register write.
 
-You have my Ack on the input patch; I expect it go through Lee's tree as
-there are some dependencies on mfd core piece.
+Since code already has an explicit barrier call, changing writel() to
+writel_relaxed().
 
-Thanks.
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ drivers/net/ethernet/intel/i40e/i40e_txrx.c   | 14 ++++++++++----
+ drivers/net/ethernet/intel/i40evf/i40e_txrx.c |  4 ++--
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-> 
-> 	Sean
-> 
-> 
-> On Thu, 2018-03-22 at 10:03 +0800, Sean Wang (王志亘) wrote:
-> > 
-> > > -----Original Message-----
-> > > From: Linux-mediatek [mailto:linux-mediatek-bounces@lists.infradead.org] On
-> > > Behalf Of Chen Zhong
-> > > Sent: Wednesday, October 25, 2017 9:16 PM
-> > > To: Dmitry Torokhov <dmitry.torokhov@gmail.com>; Rob Herring
-> > > <robh+dt@kernel.org>; Lee Jones <lee.jones@linaro.org>; Alexandre Belloni
-> > > <alexandre.belloni@free-electrons.com>
-> > > Cc: Mark Rutland <mark.rutland@arm.com>; Alessandro Zummo
-> > > <a.zummo@towertech.it>; devicetree@vger.kernel.org; Linus Walleij
-> > > <linus.walleij@linaro.org>; Jaechul Lee <jcsing.lee@samsung.com>; linux-
-> > > kernel@vger.kernel.org; Krzysztof Kozlowski <krzk@kernel.org>; Javier
-> > > Martinez Canillas <javier@osg.samsung.com>; linux-
-> > > mediatek@lists.infradead.org; linux-arm-kernel@lists.infradead.org; linux-
-> > > input@vger.kernel.org; Matthias Brugger <matthias.bgg@gmail.com>; Eddie
-> > > Huang (S智) <eddie.huang@mediatek.com>; Chen Zhong (钟辰)
-> > > <Chen.Zhong@mediatek.com>; Beomho Seo <beomho.seo@samsung.com>;
-> > > linux-rtc@vger.kernel.org
-> > > Subject: [PATCH v6 0/6] Add MediaTek PMIC keys support
-> > > 
-> > > MediaTek PMIC are multi-function devices that can handle key interrupts,
-> > > typically there are two keys attached to PMIC, which called pwrkey and
-> > > homekey. PWRKEY usually used to wake up system from sleep. Homekey can
-> > > used as volume down key due to board design. Long press keys can shutdown
-> > > PMIC, the mode can be choose to be one key only or two keys together.
-> > > This series add support for key functions for MediaTek PMIC MT6397/MT6323.
-> > > 
-> > > Changes since v5:
-> > > - use __maybe_unused annotation instead of #ifdef guard
-> > > - use of_* API instead of device_* API
-> > > 
-> > > Changes since v4:
-> > > - rebase to Linux 4.14-rc1
-> > > - add a common keyboard binding document
-> > > - use child device tree node to define each key
-> > > 
-> > > Changes since v3:
-> > > - make the naming to be consistent as mtk_pmic or MTK_PMIC
-> > > - add suspend/resume functions to enable/disable irq
-> > > - change binding properties to define wakeup sources
-> > > 
-> > > Changes since v2:
-> > > - use standard properties for keycodes and debounce time
-> > > - change to use platform_get_irq in leaf drivers
-> > > - use better ways to define IRQ resources
-> > > 
-> > > Changes since v1:
-> > > - create irq mappings in mfd core driver instead of leaf drivers
-> > > - remove some unused parts in mtk-pmic-keys driver
-> > > 
-> > > Chen Zhong (6):
-> > >   mfd: mt6397: create irq mappings in mfd core driver
-> > >   dt-bindings: input: Add common keyboard document bindings
-> > >   dt-bindings: input: Add document bindings for mtk-pmic-keys
-> > >   dt-bindings: mfd: Add bindings for the keys as subnode of PMIC
-> > >   input: Add MediaTek PMIC keys support
-> > >   mfd: mt6397: Add PMIC keys support to MT6397 driver
-> > > 
-> > >  Documentation/devicetree/bindings/input/keys.txt   |   8 +
-> > >  .../devicetree/bindings/input/mtk-pmic-keys.txt    |  43 +++
-> > >  Documentation/devicetree/bindings/mfd/mt6397.txt   |   6 +
-> > >  drivers/input/keyboard/Kconfig                     |   9 +
-> > >  drivers/input/keyboard/Makefile                    |   1 +
-> > >  drivers/input/keyboard/mtk-pmic-keys.c             | 339
-> > > +++++++++++++++++++++
-> > >  drivers/mfd/mt6397-core.c                          |  26 +-
-> > >  drivers/rtc/rtc-mt6397.c                           |   7 +-
-> > >  8 files changed, 432 insertions(+), 7 deletions(-)  create mode 100644
-> > > Documentation/devicetree/bindings/input/keys.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/input/mtk-pmic-
-> > > keys.txt
-> > >  create mode 100644 drivers/input/keyboard/mtk-pmic-keys.c
-> > > 
-> > > --
-> > > 1.9.1
-> > > 
-> > > 
-> > > 
-> > > _______________________________________________
-> > > Linux-mediatek mailing list
-> > > Linux-mediatek@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
-> 
-> 
-
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_txrx.c b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
+index c6972bd..d970350 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_txrx.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
+@@ -186,7 +186,13 @@ static int i40e_program_fdir_filter(struct i40e_fdir_filter *fdir_data,
+ 	/* Mark the data descriptor to be watched */
+ 	first->next_to_watch = tx_desc;
+ 
+-	writel(tx_ring->next_to_use, tx_ring->tail);
++	writel_relaxed(tx_ring->next_to_use, tx_ring->tail);
++
++	/* We need this if more than one processor can write to our tail
++	 * at a time, it synchronizes IO on IA64/Altix systems
++	 */
++	mmiowb();
++
+ 	return 0;
+ 
+ dma_fail:
+@@ -1529,7 +1535,7 @@ static inline void i40e_release_rx_desc(struct i40e_ring *rx_ring, u32 val)
+ 	 * such as IA-64).
+ 	 */
+ 	wmb();
+-	writel(val, rx_ring->tail);
++	writel_relaxed(val, rx_ring->tail);
+ }
+ 
+ /**
+@@ -2412,7 +2418,7 @@ static int i40e_clean_rx_irq(struct i40e_ring *rx_ring, int budget)
+ 		 */
+ 		wmb();
+ 
+-		writel(xdp_ring->next_to_use, xdp_ring->tail);
++		writel_relaxed(xdp_ring->next_to_use, xdp_ring->tail);
+ 	}
+ 
+ 	rx_ring->skb = skb;
+@@ -3437,7 +3443,7 @@ static inline int i40e_tx_map(struct i40e_ring *tx_ring, struct sk_buff *skb,
+ 
+ 	/* notify HW of packet */
+ 	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
+-		writel(i, tx_ring->tail);
++		writel_relaxed(i, tx_ring->tail);
+ 
+ 		/* we need this if more than one processor can write to our tail
+ 		 * at a time, it synchronizes IO on IA64/Altix systems
+diff --git a/drivers/net/ethernet/intel/i40evf/i40e_txrx.c b/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
+index 1ae112f..5db5c50c 100644
+--- a/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
++++ b/drivers/net/ethernet/intel/i40evf/i40e_txrx.c
+@@ -810,7 +810,7 @@ static inline void i40e_release_rx_desc(struct i40e_ring *rx_ring, u32 val)
+ 	 * such as IA-64).
+ 	 */
+ 	wmb();
+-	writel(val, rx_ring->tail);
++	writel_relaxed(val, rx_ring->tail);
+ }
+ 
+ /**
+@@ -2379,7 +2379,7 @@ static inline void i40evf_tx_map(struct i40e_ring *tx_ring, struct sk_buff *skb,
+ 
+ 	/* notify HW of packet */
+ 	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
+-		writel(i, tx_ring->tail);
++		writel_relaxed(i, tx_ring->tail);
+ 
+ 		/* we need this if more than one processor can write to our tail
+ 		 * at a time, it synchronizes IO on IA64/Altix systems
 -- 
-Dmitry
+2.7.4
