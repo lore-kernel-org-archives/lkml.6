@@ -1,35 +1,33 @@
-Return-Path: <mingo.kernel.org@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522180948; cv=none;
+Return-Path: <andreyknvl@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521828380; cv=none;
         d=google.com; s=arc-20160816;
-        b=sHhV1tgbsQ1C02KR30Y+qh6mJ75uuqwbkyFOQcvmZbD+fxiHvYZktt+BmRVsy8mXKu
-         U/Qv0ljdK20+8ueIVtDMm6v7a8M+raiCG/Y+yQqvZvVRZDeek5LlDOei4Vjl8Rl9c2og
-         Ls2JIyb7eRU6MG2u2Y77xmDf/rRewMasQd6QkrKKZ13LYQVfd8rk8d62goYhVhWZXIeH
-         F11+rcbeTSgExWg1OTRI5D1eAm/8CDC6QN5pV3JZA0G13z6ehqOLo63vLDeppyZl+0IT
-         XfLFzOxpnT/V7APrjAPPC4h2fVQluf7T3s1jVO/aQoG3ZYexwJmDdvjrcdlsUwfuiqJJ
-         BDpA==
+        b=UHj0IYGd4IGpxHp0Vo5B3lFgNDiFivtaGAAdB2JYfNCCt3E6Cz7oL8vgvxA4s3Md3R
+         yFpIkWlr7z0054MEersvyaqDnKRyAPUZieqcLiKKKKWdQfrzNeiKNCME6mZUzJlgVV/C
+         khstmazwOKl+K4Dm7hvg7jtnPq+Lks4EXA9iqvCIc23NMsoDMGd/YKryUAYI9g3lpibg
+         RUvVCG+D3eBNCbtzoEcNhVCTnXt71c+mKF/o6B9CLQ4rCND16dTPxd7D882sjnSHX5HF
+         uYYxJMHV8XwpS4kHqIMfhimM0jVlsAHuh/A9/3FQvf2vX5Qsf881dwLW7PKLIQ7XWXw/
+         m11g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:sender:dkim-signature:arc-authentication-results;
-        bh=xP9hu6HCqyqwvJgWoQFZWWhzKoWYaLMIFOWPuqp0fo4=;
-        b=R1wLVtxarwL3UtMstG2qVWCv47w/ws0YLL3AvK7OVswW62GEYRMszUsGojGZ3GJvn6
-         iC5W1WwfAKUhKbq1j9cKbnTDheE4/Ed4sJcUSAWe7XPvBvjhav9ivxYIJMwgojzlu/V5
-         +HGNgvfxXuwP8RAib08hYXFkKoFx/dDo5500n2WHeDG8xL9XCBsYmIm6aYSjYx2X95Pq
-         9jUYeY39gRXBxflybD+4F1Z3mk9RfqZSEfJFteCaIorCk+A4EjkmJFx6Ew8JYRhOmj50
-         nvIjTnjdNM9h+NRKn3ejIoJOIzBMnsZRGfGyxJlJE9lm+4fwKtdgLRQKdwOadK2NYGkq
-         urxw==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=mUDeQOFtVJWXm0knc1bDJKVfDM0pxa/3uJzZ1chGIyw=;
+        b=ptyosl7GS+Np1OTOllpTtfsnJWSMFJEcV8r+dHbrtsdJDkfBUJidFAdlpgOC7dW+kY
+         hLfj3P5gSDzlqlMQLeZMazKRat0gv2mWb7oZxb/2RNl+hi1uce6QBHS1fJwQ34A3H49l
+         MGwHN2j96RELaTFzrOv1eskylK7747Wz4Ynzi2VcyGoIfbDVURuxGA4wJ/crtCK31Yzb
+         9vG7gN5VzCifbVBAlRU2y3P38Ah59l/Km05sf3fiDj8t2+HbaqJVwKZe8FgVFkvhkxuc
+         5n2+roBZl8tcJ5jsgbwXVCg55BymiuI+7xeq/Y++7K0Pq0DFxWUAvZOf8pFVoRKhKQ9i
+         b71Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vM8dX7/8;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=jIFClqM2;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vM8dX7/8;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
-X-Google-Smtp-Source: AIpwx4+VmzwoR9XzOhauPxy6VNdugboOYl6dZ4CBHT0qgQnYelgsxzZcZ52Y+adDRTVQG4HfSooHwg==
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Tue, 27 Mar 2018 22:02:23 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
+       dkim=pass header.i=@google.com header.s=20161025 header.b=jIFClqM2;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AG47ELuwVASQJuluZ/sxgns/L2ZBnFzahf5eN8QRG8B7Cl5vv15nFLehmUwm5Hp9VuoeLi93oMVzqw==
+From: Andrey Konovalov <andreyknvl@google.com>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Alexander Potapenko <glider@google.com>,
 	Dmitry Vyukov <dvyukov@google.com>,
 	Jonathan Corbet <corbet@lwn.net>,
@@ -38,12 +36,14 @@ Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Christoffer Dall <christoffer.dall@linaro.org>,
 	Marc Zyngier <marc.zyngier@arm.com>,
 	Christopher Li <sparse@chrisli.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
 	David Rientjes <rientjes@google.com>,
 	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Michal Marek <michal.lkml@markovi.net>,
+	"GitAuthor : Andrey Konovalov" <andreyknvl@google.com>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
 	Yury Norov <ynorov@caviumnetworks.com>,
@@ -60,6 +60,7 @@ Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	"Eric W . Biederman" <ebiederm@xmission.com>,
 	Stephen Boyd <stephen.boyd@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
 	Paul Lawrence <paullawrence@google.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	David Woodhouse <dwmw@amazon.co.uk>,
@@ -67,104 +68,63 @@ Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Kees Cook <keescook@chromium.org>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	kasan-dev <kasan-dev@googlegroups.com>, linux-doc@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	kvmarm@lists.cs.columbia.edu, linux-sparse@vger.kernel.org,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-	Kostya Serebryany <kcc@google.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.cs.columbia.edu,
+	linux-sparse@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kbuild@vger.kernel.org
+Cc: Kostya Serebryany <kcc@google.com>,
 	Evgeniy Stepanov <eugenis@google.com>,
 	Lee Smith <Lee.Smith@arm.com>,
 	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
 	Jacob Bramley <Jacob.Bramley@arm.com>,
 	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-	Kees Cook <keescook@google.com>, Jann Horn <jannh@google.com>,
+	Kees Cook <keescook@google.com>,
+	Jann Horn <jannh@google.com>,
 	Mark Brand <markbrand@google.com>
-Subject: Re: [RFC PATCH v2 03/15] khwasan: add CONFIG_KASAN_CLASSIC and
- CONFIG_KASAN_TAGS
-Message-ID: <20180327200223.5ku2eqkppi7z3sd2@gmail.com>
+Subject: [RFC PATCH v2 11/15] khwasan, mm: perform untagged pointers comparison in krealloc
+Date: Fri, 23 Mar 2018 19:05:47 +0100
+Message-Id: <6eb08c160ae23eb890bd937ddf8346ba211df09f.1521828274.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
+In-Reply-To: <cover.1521828273.git.andreyknvl@google.com>
 References: <cover.1521828273.git.andreyknvl@google.com>
- <1fb0a050a84d49f5c3b2210337339412475d1688.1521828273.git.andreyknvl@google.com>
- <20180324084332.u6qik7lkdbenqbb2@gmail.com>
- <CAAeHK+za1Zg2+1_CFrQbdn_Hwa9o_nZkHuMLaekV18W380jAoQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAeHK+za1Zg2+1_CFrQbdn_Hwa9o_nZkHuMLaekV18W380jAoQ@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <cover.1521828273.git.andreyknvl@google.com>
+References: <cover.1521828273.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595752701351251910?=
-X-GMAIL-MSGID: =?utf-8?q?1596122409839180075?=
+X-GMAIL-THRID: =?utf-8?q?1595752716297382191?=
+X-GMAIL-MSGID: =?utf-8?q?1595752716297382191?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The krealloc function checks where the same buffer was reused or a new one
+allocated by comparing kernel pointers. KHWASAN changes memory tag on the
+krealloc'ed chunk of memory and therefore also changes the pointer tag of
+the returned pointer. Therefore we need to perform comparison on untagged
+(with tags reset) pointers to check whether it's the same memory region or
+not.
 
-* Andrey Konovalov <andreyknvl@google.com> wrote:
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ mm/slab_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On Sat, Mar 24, 2018 at 9:43 AM, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > * Andrey Konovalov <andreyknvl@google.com> wrote:
-> >
-> >> This commit splits the current CONFIG_KASAN config option into two:
-> >> 1. CONFIG_KASAN_CLASSIC, that enables the classic KASAN version (the one
-> >>    that exists now);
-> >> 2. CONFIG_KASAN_TAGS, that enables KHWASAN.
-> >
-> > Sorry, but this is pretty obscure naming scheme that doesn't explain the primary
-> > difference between these KASAN models to users: that the first one is a pure
-> > software implementation and the other is hardware-assisted.
-> >
-> > Reminds me of the transparency of galactic buerocracy in "The Hitchhiker's Guide
-> > to the Galaxy":
-> >
-> >   “But look, you found the notice, didn’t you?”
-> >   “Yes,” said Arthur, “yes I did. It was on display in the bottom of a locked filing
-> >    cabinet stuck in a disused lavatory with a sign on the door saying ‘Beware of the
-> >    Leopard.”
-> >
-> > I'd suggest something more expressive, such as:
-> >
-> >         CONFIG_KASAN
-> >           CONFIG_KASAN_GENERIC
-> >           CONFIG_KASAN_HW_ASSIST
-> >
-> > or so?
-> >
-> > The 'generic' variant will basically run on any CPU. The 'hardware assisted' one
-> > needs support from the CPU.
-> >
-> > The following ones might also work:
-> >
-> >    CONFIG_KASAN_HWASSIST
-> >    CONFIG_KASAN_HW_TAGS
-> >    CONFIG_KASAN_HWTAGS
-> >
-> > ... or simply CONFIG_KASAN_SW/CONFIG_KASAN_HW.
-> >
-> > If other types of KASAN hardware acceleration are implemented in the future then
-> > the CONFIG_KASAN_HW namespace can be extended:
-> >
-> >         CONFIG_KASAN_HW_TAGS
-> >         CONFIG_KASAN_HW_KEYS
-> >         etc.
-> 
-> How about these two:
-> 
-> CONFIG_KASAN_GENERIC
-> CONFIG_KASAN_HW
-> 
-> ?
-> 
-> Shorter config name looks better to me and I think it makes sense to
-> name the new config just HW, as there's only one HW implementation
-> right now. When (and if) there are more, we can expand the config name
-> as you suggested (CONFIG_KASAN_HW_TAGS, CONFIG_KASAN_HW_KEYS, etc).
-
-Sure, sounds good to me!
-
-Thanks,
-
-	Ingo
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index a33e61315ca6..5911f2194cf7 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1494,7 +1494,7 @@ void *krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	}
+ 
+ 	ret = __do_krealloc(p, new_size, flags);
+-	if (ret && p != ret)
++	if (ret && khwasan_reset_tag(p) != khwasan_reset_tag(ret))
+ 		kfree(p);
+ 
+ 	return ret;
+-- 
+2.17.0.rc0.231.g781580f067-goog
