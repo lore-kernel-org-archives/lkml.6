@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803281-2-7018161991768223718
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803277-2-14644245347428588321
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803280; b=raGgb+h0JRiVibB8n1HzyQt3E8hzERB231eARmrw0EYHIHw
-    0+mwJxbEPC9aoGCRI7q7TAuMMwCW5dttlk/M4z66nMgdKkHRBvsOaDeZIJUn2xtF
-    Xixuq6/7yuW03GsnXauQzeoct1BCQBXCz/ImWrbV9PvYE1bVtX+duP2IQnAuws9Q
-    LZeJV0yicPnIEitVIpPWalILx+eNMZu1ODCqL8KVvGy/2kJ2YhMenxYeikQSoVTs
-    ImcOsvpYMm92pwI2hZsnAUZpChnqHpiiVLThskabSi85jcwtc+ESrv1X+obsGKty
-    8QRH6wf9hklb5N5B70kPqNcCjeRlbJg4/hv57Ng==
+    t=1521803277; b=EKvjqv9SewyJpXKZuRid3MflBKO+v/ZZUsX6NFah+Fk5Cat
+    12NVdUki5U3juEZ+QACczpQ/mNrwNB3Civh0kr55UXYOtDB5nsPwXHOS66OtVH29
+    tXpiJpr2mHwrCZAhsyKJSdjpGRgC1F9QY74F/7K50rFKfXGUiW2cNK7U4KdR3qD8
+    I6WaG8nJhySW91br85kzOQ9sAEBWFuve7+MusOqv0+uwZgsjr0vuu/yRP+XWUZNg
+    xUaPeXYphEJJIljfNQE4CFfxUVMNIYdvvgFamUyRE1ZT42gym3t6Y6R66iklFxLj
+    iVl4Y1RJ1I8oGsQQngagKak8F5EpeBKCcotzisQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803280; bh=ZU/uQQljll/DjTCkqsv+e8Yn67
-    AuYkQ/2gam30JQOOY=; b=UgXk5ieBWmyqtwq6X78j4cYTna5iDT0gI/159FhFzC
-    FbxVCsE4JYr14TTAP7MQ/SCXw4WfuIAf79Pi81Je/xfF3z7zrcof4nV+q5OuuUZs
-    iMKeQubvSc0gs8hBHUqOyyHcSEdFDwiETmRCWe83UpSDtioM59yyjhqDFaI0C6CA
-    Mdan8CAzlH2810/h1dVpm3lTUlAH2rzCl6s5+vnW/n8Q8gzcF6dvNcuVVC0M84te
-    FjaDOhq+0mH0YfrfsSY0JFMc0RVYZrYGcEQfAVf1KY4Dn9LByp5CojLBi+QuBA7e
-    cXy9oq4kWIsgiwxCOl0oyGD9dBejJxDTJybPimxgVr1Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803277; bh=EhIuIVe0XLD2THd3Np4T/PCfv9
+    vQE6D4a5AGQj9bVb0=; b=ENQrm2bbfHA86K0dJfG904POJ/cjg/D1PiJthCY5er
+    ZtdwsXGa1wL25VpigOW4UBjGfbak3sNP7FQJnA5qI45/byvml0sN2teMf/IOqmGN
+    uygdXXe0NHWpw8gPWgCOY7B1YL+pqHadxpfjs/xvVATLTRz1dDZfgS3Lzr5y5Ax/
+    ZXKHEZxXLAitROqAtnKlQWHrSJ4B6LfA82PXywBuFjix2Td1N+6gPmvn5eVaJvJH
+    zd+g7rBdkPEdD3SYqxjsGCglQ1OzoG0iaKLjRjFtN7uvCzKLDl6awbXplK4LPe3k
+    SNyGRz0dF4dOlfpH3I4LLOlFUKIfTcHI1CA4asvWqsPA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,20 +50,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932596AbeCWKLz (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:11:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44086 "EHLO
+        id S1751739AbeCWLHn (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:07:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44094 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933060AbeCWKLy (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:11:54 -0400
+        with ESMTP id S933082AbeCWKL4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:11:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 166/177] ARM: dts: aspeed-evb: Add unit name to memory node
-Date: Fri, 23 Mar 2018 10:54:54 +0100
-Message-Id: <20180323094212.490356786@linuxfoundation.org>
+Subject: [PATCH 4.9 167/177] nfsd4: permit layoutget of executable-only files
+Date: Fri, 23 Mar 2018 10:54:55 +0100
+Message-Id: <20180323094212.527666771@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -81,30 +82,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Benjamin Coddington <bcodding@redhat.com>
 
 
-[ Upstream commit e40ed274489a5f516da120186578eb379b452ac6 ]
+[ Upstream commit 66282ec1cf004c09083c29cb5e49019037937bbd ]
 
-Fixes a warning when building with W=1.
+Clients must be able to read a file in order to execute it, and for pNFS
+that means the client needs to be able to perform a LAYOUTGET on the file.
 
-All of the ASPEED device trees build without warnings now.
+This behavior for executable-only files was added for OPEN in commit
+a043226bc140 "nfsd4: permit read opens of executable-only files".
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+This fixes up xfstests generic/126 on block/scsi layouts.
+
+Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/aspeed-ast2500-evb.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfsd/nfs4proc.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/arm/boot/dts/aspeed-ast2500-evb.dts
-+++ b/arch/arm/boot/dts/aspeed-ast2500-evb.dts
-@@ -15,7 +15,7 @@
- 		bootargs = "console=ttyS4,115200 earlyprintk";
- 	};
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -1338,14 +1338,14 @@ nfsd4_layoutget(struct svc_rqst *rqstp,
+ 	const struct nfsd4_layout_ops *ops;
+ 	struct nfs4_layout_stateid *ls;
+ 	__be32 nfserr;
+-	int accmode;
++	int accmode = NFSD_MAY_READ_IF_EXEC;
  
--	memory {
-+	memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
- };
+ 	switch (lgp->lg_seg.iomode) {
+ 	case IOMODE_READ:
+-		accmode = NFSD_MAY_READ;
++		accmode |= NFSD_MAY_READ;
+ 		break;
+ 	case IOMODE_RW:
+-		accmode = NFSD_MAY_READ | NFSD_MAY_WRITE;
++		accmode |= NFSD_MAY_READ | NFSD_MAY_WRITE;
+ 		break;
+ 	default:
+ 		dprintk("%s: invalid iomode %d\n",
