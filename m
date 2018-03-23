@@ -1,39 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752638AbeCWNzj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 09:55:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34096 "EHLO mx2.suse.de"
+        id S1752737AbeCWN4V (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 09:56:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752281AbeCWNzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:55:37 -0400
-Date: Fri, 23 Mar 2018 14:55:36 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] HID core and multitouch fixups
-In-Reply-To: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
-Message-ID: <nycvar.YFH.7.76.1803231455220.15778@cbobk.fhfr.pm>
-References: <20180320110451.16582-1-benjamin.tissoires@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1752640AbeCWN4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 09:56:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6742168D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=dinguyen@kernel.org
+Subject: Re: [PATCH] arm: dts: socfpga: fix GIC PPI warning
+To: Philipp Puschmann <pp@emlix.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180323092215.1307-1-pp@emlix.com>
+From: Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <3b6eabf8-1d6b-7a58-03b1-3bff14c4127e@kernel.org>
+Date: Fri, 23 Mar 2018 08:56:17 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180323092215.1307-1-pp@emlix.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Mar 2018, Benjamin Tissoires wrote:
 
-> Patches 1 and 2 are related to the Razer Blade Stealth that has some dead zone
-> near the edges of the touchpad.
-> Patches 3 was previously sent and reviewed by Dmitry and he suggested patch 4
-> at the time.
-> Patches 5..7 are cleanups I realized while trying to merge hid-multitouch
-> into hid-core, so that other drivers could reuse the hid-mt logic (but it's
-> not that easy I must confess).
 
-I've split this into two logical sets, and applied. Thanks!
+On 03/23/2018 04:22 AM, Philipp Puschmann wrote:
+> Fixes the warning "GIC: PPI13 is secure or misconfigured" by
+> changing the interrupt type from level_low to edge_raising
+> 
+> Signed-off-by: Philipp Puschmann <pp@emlix.com>
+> ---
+>  arch/arm/boot/dts/socfpga.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+> index 595eb4f1a761..e9417551d7ea 100644
+> --- a/arch/arm/boot/dts/socfpga.dtsi
+> +++ b/arch/arm/boot/dts/socfpga.dtsi
+> @@ -815,7 +815,7 @@
+>  		timer@fffec600 {
+>  			compatible = "arm,cortex-a9-twd-timer";
+>  			reg = <0xfffec600 0x100>;
+> -			interrupts = <1 13 0xf04>;
+> +			interrupts = <1 13 0xf01>;
+>  			clocks = <&mpu_periph_clk>;
+>  		};
 
--- 
-Jiri Kosina
-SUSE Labs
+Applied, thanks!
+
+Dinh
