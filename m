@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeCWSWk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 14:22:40 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40880 "EHLO
+        id S1752195AbeCWSXm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 14:23:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40736 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751993AbeCWSVd (ORCPT
+        with ESMTP id S1751812AbeCWSVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 14:21:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D735460F8E
+        Fri, 23 Mar 2018 14:21:30 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0015D60F61
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
@@ -16,9 +16,9 @@ Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
         linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>, intel-wired-lan@lists.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 5/7] fm10k: Eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 23 Mar 2018 14:21:15 -0400
-Message-Id: <1521829277-9398-6-git-send-email-okaya@codeaurora.org>
+Subject: [PATCH v6 3/7] igbvf: eliminate duplicate barriers on weakly-ordered archs
+Date: Fri, 23 Mar 2018 14:21:13 -0400
+Message-Id: <1521829277-9398-4-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521829277-9398-1-git-send-email-okaya@codeaurora.org>
 References: <1521829277-9398-1-git-send-email-okaya@codeaurora.org>
@@ -28,30 +28,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a
-barrier on some architectures like arm64.
+Code includes wmb() followed by writel(). writel() already has a barrier
+on some architectures like arm64.
 
-This ends up CPU observing two barriers back to back before executing
-the register write.
+This ends up CPU observing two barriers back to back before executing the
+register write.
 
 Since code already has an explicit barrier call, changing writel() to
 writel_relaxed().
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/intel/fm10k/fm10k_main.c | 9 +++++++--
+ drivers/net/ethernet/intel/igbvf/netdev.c | 9 +++++++--
  1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_main.c b/drivers/net/ethernet/intel/fm10k/fm10k_main.c
-index 409554d..360ff9b 100644
---- a/drivers/net/ethernet/intel/fm10k/fm10k_main.c
-+++ b/drivers/net/ethernet/intel/fm10k/fm10k_main.c
-@@ -180,7 +180,12 @@ void fm10k_alloc_rx_buffers(struct fm10k_ring *rx_ring, u16 cleaned_count)
+diff --git a/drivers/net/ethernet/intel/igbvf/netdev.c b/drivers/net/ethernet/intel/igbvf/netdev.c
+index fa07876..6dfd3dc 100644
+--- a/drivers/net/ethernet/intel/igbvf/netdev.c
++++ b/drivers/net/ethernet/intel/igbvf/netdev.c
+@@ -252,7 +252,12 @@ static void igbvf_alloc_rx_buffers(struct igbvf_ring *rx_ring,
+ 		 * such as IA-64).
+ 		*/
  		wmb();
- 
- 		/* notify hardware of new descriptors */
--		writel(i, rx_ring->tail);
-+		writel_relaxed(i, rx_ring->tail);
+-		writel(i, adapter->hw.hw_addr + rx_ring->tail);
++		writel_relaxed(i, adapter->hw.hw_addr + rx_ring->tail);
 +
 +		/* We need this if more than one processor can write to our tail
 +		 * at a time, it synchronizes IO on IA64/Altix systems
@@ -60,14 +60,14 @@ index 409554d..360ff9b 100644
  	}
  }
  
-@@ -1055,7 +1060,7 @@ static void fm10k_tx_map(struct fm10k_ring *tx_ring,
+@@ -2298,7 +2303,7 @@ static inline void igbvf_tx_queue_adv(struct igbvf_adapter *adapter,
  
- 	/* notify HW of packet */
- 	if (netif_xmit_stopped(txring_txq(tx_ring)) || !skb->xmit_more) {
--		writel(i, tx_ring->tail);
-+		writel_relaxed(i, tx_ring->tail);
- 
- 		/* we need this if more than one processor can write to our tail
- 		 * at a time, it synchronizes IO on IA64/Altix systems
+ 	tx_ring->buffer_info[first].next_to_watch = tx_desc;
+ 	tx_ring->next_to_use = i;
+-	writel(i, adapter->hw.hw_addr + tx_ring->tail);
++	writel_relaxed(i, adapter->hw.hw_addr + tx_ring->tail);
+ 	/* we need this if more than one processor can write to our tail
+ 	 * at a time, it synchronizes IO on IA64/Altix systems
+ 	 */
 -- 
 2.7.4
