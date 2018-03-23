@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuWQwWB00PCDj1nk13JxfGDVBguO8Hl+VZkM1cbSrlrbqg+LlVjOuEva3QQUElvjkk4Fd04
-ARC-Seal: i=1; a=rsa-sha256; t=1521800304; cv=none;
+X-Google-Smtp-Source: AG47ELs1vjohs7ad9oeRlNmebd6iNR2ywoa+Td5MPI4xGQHd+H57tAarzCAgd3sL1p0olX33A+/u
+ARC-Seal: i=1; a=rsa-sha256; t=1521800298; cv=none;
         d=google.com; s=arc-20160816;
-        b=EHf/R1pp29eVtsQzkpJXbymtgK912JGzj5E1/4dL8iwWjHs1flc0TXLLvVLEQlaAY8
-         18RfBHzLDnpCiMnrEHY7SeCOaQ2FDRePJKQh2pfmY/sI4CdyMGAnHSFsxru3v1i2cGJ3
-         fB2j8m3pjcYSAdsOQ7SbVYGVtTQAPDrbzJ3MlPNqwkhL3JdRfpQ0OuqLiiUtDEbKEn6b
-         dBP+Pj/mtu+hrAoxlCgVw1cIozuXJ3UHB5VaRDTaKc4xOnpXfWonXHH6AWbVhTFOBgEC
-         XTM2VljnDqLoR8RFZhndB9s6Qc4Afo1q3rKhM2hDceW7o5lvtPiFSpdPScezX569D2Ys
-         FQ8Q==
+        b=vKP6nXFXFDc6krXPOArLHJVmlR4qe/F8hQjJIDAgOoeMxbFWJAlHlvmuZB3HyLteYt
+         z9ss4Rd1fvB/2qGnMuWWAhGGdeEd686ah7UjmCZFRBm5/lDZkJS3lL7kUuqipWSPt7HQ
+         /2UsWL+0Vxol2tbBEhYFn190DYLLPnwKzFuJ5WDwjZ50Cm7ARohuf9V5lmzxEAzkgvm+
+         MeBqY4akoOKalgrJbvvVDPogDjjcNXoOZlQyAoXnOr5/1Z3O8aDV6qf0TXRQqWgFPkMe
+         adAr3Jt2Bbep4Laev0/BWTrkKI73c73l0/1378H0qZw8i83M12uELpEza6zmkCI9I3BH
+         H0sA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1TQoPuRHd/4iDYRFrjy7M+k7/Hgq8NYk/KiaWC8KVvE=;
-        b=fh7bKp7bk/DpVr6jL9D61XXQ2Lo1XBcFvU1i2J1jVd3YqZF1keI/7ZQFZoAnLiO3qG
-         ErbB95lcF4IEGuThRTzhDqvmroVwCmDXf0qsV8XcKrIl57AJ/oIIfeIKslE6spjvfWsm
-         JQYfIYKQcIU85qSKdEtPJcfo6lV/Qn8d/6A4uZpA9vPTxSWvhVIJgENTTHnuJKUtu3bE
-         mE8sCDi1E2Q7jQWmXV6lg/T5r53ToZPVPXGSfhERe5ME48ufWSGopiTdEqIFhF6wPSST
-         ZuPTmtVxyKtrBCcEZpgwt9ST1iRnAJKxFcb3eY74BP/AC28GrQTBUyKay1TAQfE9MGID
-         Zxwg==
+        bh=WFdn2ljVVIt+c8nl4sE+Fw6WRa7AtfBCZmFSCHPjMAU=;
+        b=k4cH4r44XDZuyqdn6K3wPYsOdirwjAzCrBp6f29sIvHchEMJfgI9DdM/B9Fj/Qn3yC
+         nJ+9gco8wvU6V3LKPN7vhlRsxO9YPFtAduYKrS7Yn396dxDy5+TgB+KAsDPyAuzJNh9/
+         m+9YjqZ/nSxHP/HQomss47wMLJMm9QWTlIaWGtQH+2MSpaFltsWLxEtNznBrCsxHCe0Q
+         Pfw7+2BcqmWmxXFjsNxAfvm1lgDXJhTyxUbMnOwOsc7izXWiEGhxrXjZlnTg4tZvzf04
+         2N8ttI01iEjbRFVwq1fsqPeDALHbswm3Q7NW+L+v0cwbiIGYkbPPtS1Bn7N2rVqo+Q8W
+         IGJg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,25 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
-	Michael Brunner <Michael.Brunner@kontron.com>,
-	Viktor Krasnov <vkrasnov@dev.rtsoft.ru>,
-	Jean Delvare <jdelvare@suse.de>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Wolfram Sang <wsa@the-dreams.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Sebastian Siewior <bigeasy@linutronix.de>,
+	linux-pm@vger.kernel.org,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Tejun Heo <tj@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Len Brown <lenb@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 07/47] i2c: i2c-scmi: add a MS HID
-Date: Fri, 23 Mar 2018 10:54:58 +0100
-Message-Id: <20180323094248.435128683@linuxfoundation.org>
+Subject: [PATCH 3.18 05/47] cpufreq/sh: Replace racy task affinity logic
+Date: Fri, 23 Mar 2018 10:54:56 +0100
+Message-Id: <20180323094248.347689835@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -45,8 +54,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722411556560563?=
-X-GMAIL-MSGID: =?utf-8?q?1595723275753310523?=
+X-GMAIL-THRID: =?utf-8?q?1595722445513393814?=
+X-GMAIL-MSGID: =?utf-8?q?1595723269971198382?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,64 +63,125 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+From: Thomas Gleixner <tglx@linutronix.de>
 
 
-[ Upstream commit e058e7a4bc89104540a8a303682248614b5df6f1 ]
+[ Upstream commit 205dcc1ecbc566cbc20acf246e68de3b080b3ecf ]
 
-Description of the problem:
- - i2c-scmi driver contains only two identifiers "SMBUS01" and "SMBUSIBM";
- - the fist HID (SMBUS01) is clearly defined in "SMBus Control Method
-   Interface Specification, version 1.0": "Each device must specify
-   'SMBUS01' as its _HID and use a unique _UID value";
- - unfortunately, BIOS vendors (like AMI) seem to ignore this requirement
-   and implement "SMB0001" HID instead of "SMBUS01";
- - I speculate that they do this because only "SMB0001" is hard coded in
-   Windows SMBus driver produced by Microsoft.
+The target() callback must run on the affected cpu. This is achieved by
+temporarily setting the affinity of the calling thread to the requested CPU
+and reset it to the original affinity afterwards.
 
-This leads to following situation:
- - SMBus works out of box in Windows but not in Linux;
- - board vendors are forced to add correct "SMBUS01" HID to BIOS to make
-   SMBus work in Linux. Moreover the same board vendors complain that
-   tools (3-rd party ASL compiler) do not like the "SMBUS01" identifier
-   and produce errors.  So they need to constantly patch the compiler for
-   each new version of BIOS.
+That's racy vs. concurrent affinity settings for that thread resulting in
+code executing on the wrong CPU.
 
-As it is very unlikely that BIOS vendors implement a correct HID in
-future, I would propose to consider whether it is possible to work around
-the problem by adding MS HID to the Linux i2c-scmi driver.
+Replace it by work_on_cpu(). All call pathes which invoke the callbacks are
+already protected against CPU hotplug.
 
-v2: move the definition of the new HID to the driver itself.
-
-Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
-Signed-off-by: Michael Brunner <Michael.Brunner@kontron.com>
-Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Sebastian Siewior <bigeasy@linutronix.de>
+Cc: linux-pm@vger.kernel.org
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Len Brown <lenb@kernel.org>
+Link: http://lkml.kernel.org/r/20170412201042.958216363@linutronix.de
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-scmi.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/cpufreq/sh-cpufreq.c |   45 +++++++++++++++++++++++++------------------
+ 1 file changed, 27 insertions(+), 18 deletions(-)
 
---- a/drivers/i2c/busses/i2c-scmi.c
-+++ b/drivers/i2c/busses/i2c-scmi.c
-@@ -18,6 +18,9 @@
- #define ACPI_SMBUS_HC_CLASS		"smbus"
- #define ACPI_SMBUS_HC_DEVICE_NAME	"cmi"
+--- a/drivers/cpufreq/sh-cpufreq.c
++++ b/drivers/cpufreq/sh-cpufreq.c
+@@ -30,54 +30,63 @@
  
-+/* SMBUS HID definition as supported by Microsoft Windows */
-+#define ACPI_SMBUS_MS_HID		"SMB0001"
+ static DEFINE_PER_CPU(struct clk, sh_cpuclk);
+ 
++struct cpufreq_target {
++	struct cpufreq_policy	*policy;
++	unsigned int		freq;
++};
 +
- ACPI_MODULE_NAME("smbus_cmi");
+ static unsigned int sh_cpufreq_get(unsigned int cpu)
+ {
+ 	return (clk_get_rate(&per_cpu(sh_cpuclk, cpu)) + 500) / 1000;
+ }
  
- struct smbus_methods_t {
-@@ -51,6 +54,7 @@ static const struct smbus_methods_t ibm_
- static const struct acpi_device_id acpi_smbus_cmi_ids[] = {
- 	{"SMBUS01", (kernel_ulong_t)&smbus_methods},
- 	{ACPI_SMBUS_IBM_HID, (kernel_ulong_t)&ibm_smbus_methods},
-+	{ACPI_SMBUS_MS_HID, (kernel_ulong_t)&smbus_methods},
- 	{"", 0}
- };
- MODULE_DEVICE_TABLE(acpi, acpi_smbus_cmi_ids);
+-/*
+- * Here we notify other drivers of the proposed change and the final change.
+- */
+-static int sh_cpufreq_target(struct cpufreq_policy *policy,
+-			     unsigned int target_freq,
+-			     unsigned int relation)
++static long __sh_cpufreq_target(void *arg)
+ {
+-	unsigned int cpu = policy->cpu;
++	struct cpufreq_target *target = arg;
++	struct cpufreq_policy *policy = target->policy;
++	int cpu = policy->cpu;
+ 	struct clk *cpuclk = &per_cpu(sh_cpuclk, cpu);
+-	cpumask_t cpus_allowed;
+ 	struct cpufreq_freqs freqs;
+ 	struct device *dev;
+ 	long freq;
+ 
+-	cpus_allowed = current->cpus_allowed;
+-	set_cpus_allowed_ptr(current, cpumask_of(cpu));
+-
+-	BUG_ON(smp_processor_id() != cpu);
++	if (smp_processor_id() != cpu)
++		return -ENODEV;
+ 
+ 	dev = get_cpu_device(cpu);
+ 
+ 	/* Convert target_freq from kHz to Hz */
+-	freq = clk_round_rate(cpuclk, target_freq * 1000);
++	freq = clk_round_rate(cpuclk, target->freq * 1000);
+ 
+ 	if (freq < (policy->min * 1000) || freq > (policy->max * 1000))
+ 		return -EINVAL;
+ 
+-	dev_dbg(dev, "requested frequency %u Hz\n", target_freq * 1000);
++	dev_dbg(dev, "requested frequency %u Hz\n", target->freq * 1000);
+ 
+ 	freqs.old	= sh_cpufreq_get(cpu);
+ 	freqs.new	= (freq + 500) / 1000;
+ 	freqs.flags	= 0;
+ 
+-	cpufreq_freq_transition_begin(policy, &freqs);
+-	set_cpus_allowed_ptr(current, &cpus_allowed);
++	cpufreq_freq_transition_begin(target->policy, &freqs);
+ 	clk_set_rate(cpuclk, freq);
+-	cpufreq_freq_transition_end(policy, &freqs, 0);
++	cpufreq_freq_transition_end(target->policy, &freqs, 0);
+ 
+ 	dev_dbg(dev, "set frequency %lu Hz\n", freq);
+-
+ 	return 0;
+ }
+ 
++/*
++ * Here we notify other drivers of the proposed change and the final change.
++ */
++static int sh_cpufreq_target(struct cpufreq_policy *policy,
++			     unsigned int target_freq,
++			     unsigned int relation)
++{
++	struct cpufreq_target data = { .policy = policy, .freq = target_freq };
++
++	return work_on_cpu(policy->cpu, __sh_cpufreq_target, &data);
++}
++
+ static int sh_cpufreq_verify(struct cpufreq_policy *policy)
+ {
+ 	struct clk *cpuclk = &per_cpu(sh_cpuclk, policy->cpu);
