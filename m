@@ -1,58 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752331AbeCWQKA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:10:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34232 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752169AbeCWQJ7 (ORCPT
+        id S1752130AbeCWQLq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:11:46 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:39483 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751831AbeCWQLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:09:59 -0400
-Date: Fri, 23 Mar 2018 17:09:57 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ioana Ciornei <ioana.ciornei@nxp.com>
-Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stuyoder@gmail.com" <stuyoder@gmail.com>,
-        Ruxandra Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        Razvan Stefanescu <razvan.stefanescu@nxp.com>,
-        Roy Pledge <roy.pledge@nxp.com>
-Subject: Re: [PATCH v3 2/4] bus: fsl-mc: add restool userspace support
-Message-ID: <20180323160957.GA3113@kroah.com>
-References: <cover.1521818402.git.ioana.ciornei@nxp.com>
- <d8c243a9ead2fe1375dee242aec26d1276129409.1521818402.git.ioana.ciornei@nxp.com>
- <20180323154654.GA382@kroah.com>
- <HE1PR04MB32123F0FF506534B11A1CE5BE0A80@HE1PR04MB3212.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <HE1PR04MB32123F0FF506534B11A1CE5BE0A80@HE1PR04MB3212.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 23 Mar 2018 12:11:44 -0400
+X-Google-Smtp-Source: AG47ELtJs2Hl5lDxxsofHihEirb13Vd+pSu0EpEBcc+WiZWT3EL9EHDW0TyFa6GJyJ9JvwdYZG3L5Q==
+From: Anup Patel <anup@brainfault.org>
+To: Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anup Patel <anup@brainfault.org>
+Subject: [PATCH v2] rpmsg: Add driver_override device attribute for rpmsg_device
+Date: Fri, 23 Mar 2018 21:41:17 +0530
+Message-Id: <1521821477-31378-1-git-send-email-anup@brainfault.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 03:56:24PM +0000, Ioana Ciornei wrote:
-> 
-> > 
-> > On Fri, Mar 23, 2018 at 10:38:56AM -0500, Ioana Ciornei wrote:
-> > > +#include "fsl-mc-private.h"
-> > > +
-> > > +#define FSL_MC_BUS_MAX_MINORS	1
-> > 
-> > As you only need/want one character device here, why not just use the misc
-> > device api?  It's much simpler, and handles all of the housekeeping for you
-> > correctly.  It also means I don't have to audit all of your chardev code to verify it
-> > is correct :)
-> 
-> I have considered the misc device api but the fsl-mc bus, since it is
-> a platform driver, is probing before the misc char driver.
+This patch adds "driver_override" device attribute for rpmsg_device which
+will allow users to explicitly specify the rpmsg_driver to be used via
+sysfs entry.
 
-How?  The misc code is just "core code" there's nothing to "probe" here.
-Is this an init-call ordering issue somehow?  A platform driver probe
-should be after the misc core is initialized.  And if not, you can
-always defer your probe.
+The "driver_override" device attribute implemented here is very similar
+to "driver_override" implemented for platform, pci, and amba bus types.
 
-thanks,
+One important use-case of "driver_override" device attribute is to force
+use of rpmsg_chrdev driver for certain rpmsg_device instances.
 
-greg k-h
+Signed-off-by: Anup Patel <anup@brainfault.org>
+
+Changes since v1:
+ - Removed un-related changes from patch
+ - Renamed "path" to "member" in rpmsg_string_attr() macro
+ - Used strcspn() instead of strchr() in rpmsg_string_attr() macro
+
+---
+ Documentation/ABI/testing/sysfs-bus-rpmsg | 20 ++++++++++++++++
+ drivers/rpmsg/rpmsg_core.c                | 39 +++++++++++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-rpmsg b/Documentation/ABI/testing/sysfs-bus-rpmsg
+index 189e419..1c8599e 100644
+--- a/Documentation/ABI/testing/sysfs-bus-rpmsg
++++ b/Documentation/ABI/testing/sysfs-bus-rpmsg
+@@ -73,3 +73,23 @@ Description:
+ 		This sysfs entry tells us whether the channel is a local
+ 		server channel that is announced (values are either
+ 		true or false).
++
++What:		/sys/bus/rpmsg/devices/.../driver_override
++Date:		March 2018
++KernelVersion:	4.17
++Contact:	Ohad Ben-Cohen <ohad@wizery.com>
++Description:
++		Every rpmsg device is a communication channel with a remote
++		processor. Channels are identified by a textual name (see
++		/sys/bus/rpmsg/devices/.../name above) and have a local
++		("source") rpmsg address, and remote ("destination") rpmsg
++		address.
++
++		The listening entity (or client) which communicates with a
++		remote processor is referred as rpmsg driver. The rpmsg device
++		and rpmsg driver are matched based on rpmsg device name and
++		rpmsg driver ID table.
++
++		This sysfs entry allows the rpmsg driver for a rpmsg device
++		to be specified which will override standard OF, ID table
++		and name matching.
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 5a08176..3e71976 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -333,11 +333,49 @@ field##_show(struct device *dev,					\
+ }									\
+ static DEVICE_ATTR_RO(field);
+ 
++#define rpmsg_string_attr(field, member)				\
++static ssize_t								\
++field##_store(struct device *dev, struct device_attribute *attr,	\
++	      const char *buf, size_t sz)				\
++{									\
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
++	char *new, *old;						\
++									\
++	new = kstrndup(buf, sz, GFP_KERNEL);				\
++	if (!new)							\
++		return -ENOMEM;						\
++	new[strcspn(new, "\n")] = '\0';					\
++									\
++	device_lock(dev);						\
++	old = rpdev->member;						\
++	if (strlen(new)) {						\
++		rpdev->member = new;					\
++	} else {							\
++		kfree(new);						\
++		rpdev->member = NULL;					\
++	}								\
++	device_unlock(dev);						\
++									\
++	kfree(old);							\
++									\
++	return sz;							\
++}									\
++static ssize_t								\
++field##_show(struct device *dev,					\
++	     struct device_attribute *attr, char *buf)			\
++{									\
++	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
++									\
++	return sprintf(buf, "%s\n", rpdev->member);			\
++}									\
++static DEVICE_ATTR_RW(field)
++
+ /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
+ rpmsg_show_attr(name, id.name, "%s\n");
+ rpmsg_show_attr(src, src, "0x%x\n");
+ rpmsg_show_attr(dst, dst, "0x%x\n");
+ rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
++rpmsg_string_attr(driver_override, driver_override);
+ 
+ static ssize_t modalias_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buf)
+@@ -359,6 +397,7 @@ static struct attribute *rpmsg_dev_attrs[] = {
+ 	&dev_attr_dst.attr,
+ 	&dev_attr_src.attr,
+ 	&dev_attr_announce.attr,
++	&dev_attr_driver_override.attr,
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(rpmsg_dev);
+-- 
+2.7.4
