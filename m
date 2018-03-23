@@ -1,63 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752097AbeCWVZZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 17:25:25 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:40658 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751471AbeCWVZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 17:25:23 -0400
-Date: Fri, 23 Mar 2018 22:25:16 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH net-next 5/8] net: mscc: Add initial Ocelot switch support
-Message-ID: <20180323212516.GU24361@lunn.ch>
-References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
- <20180323201117.8416-6-alexandre.belloni@bootlin.com>
+        id S1752109AbeCWV1z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 17:27:55 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42399 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751713AbeCWV1y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 17:27:54 -0400
+Date: Fri, 23 Mar 2018 22:27:51 +0100 (CET)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Eric Dumazet <edumazet@google.com>
+cc: x86 <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH v2 1/2] x86, msr: add rdmsr_safe_on_cpu_resched() and
+ use it in msr_read()
+In-Reply-To: <20180319152503.123372-1-edumazet@google.com>
+Message-ID: <alpine.DEB.2.21.1803232221550.1481@nanos.tec.linutronix.de>
+References: <20180319152503.123372-1-edumazet@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180323201117.8416-6-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre
+On Mon, 19 Mar 2018, Eric Dumazet wrote:
 
-> +static int ocelot_port_bridge_join(struct ocelot_port *ocelot_port,
-> +				   struct net_device *bridge)
-> +{
-> +	struct ocelot *ocelot = ocelot_port->ocelot;
-> +
-> +	if (!ocelot->bridge_mask) {
-> +		ocelot->hw_bridge_dev = bridge;
-> +	} else {
-> +		if (ocelot->hw_bridge_dev != bridge)
-> +			return -ENODEV; //TODO: do something clever here
-> +	}
-> +
-> +	ocelot->bridge_mask |= BIT(ocelot_port->chip_port);
-> +
-> +	return 0;
-> +}
+> I noticed high latencies caused by a daemon periodically reading
+> various MSR on all cpus. KASAN kernels would see ~10ms latencies
+> simply reading one MSR. Even without KASAN, sending IPI to CPU
+> in deep sleep state or blocking hard IRQ in a a long section,
+> then waiting for the answer can consume hundreds of usec.
+> 
+> This patch adds rdmsr_safe_on_cpu_resched() which does not spin.
+> 
+> I use this function from msr_read() but future patches might
+> convert other callers to use this variant as well.
+> 
+> Overall daemon cpu usage was reduced by 35 %,
+> and latencies caused by msr_read() disappeared.
 
-I could be missing something here, but this looks way too simple.
+Looking at all call sites. None of them is performance critical and all of
+them are in preemptible context.
 
-By default, you have individual ports. They can just forward frames
-between the host CPU and the port. There is no port-to-port traffic
-allowed.
+So we simply can switch the rdmsr_safe_on_cpu() implementation over to wait
+mode completely.
 
-You then create a bridge, and add ports to the bridge. When you add a
-port, you need to program the hardware that it can now forward frames
-from this port to other parts in the same bridge. You also need to
-tell other parts in the same bridge it can forward frames to it.  You
-might also need to tell the port which forwarding database it should
-use, since each bridge might have its own.
+> +/* Note: This version spins in smp_call_function_single().
+> + * Consider using rdmsr_safe_on_cpu_resched() variant instead.
 
-     Andrew
+Bah. This is not networking code. x86 uses sensible comment style :)
+
+Thanks,
+
+	tglx
