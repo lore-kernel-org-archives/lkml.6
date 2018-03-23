@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtIYU5SQ78GbdJ378RA2LU5TzfXuUuKoUO//+j1T5dfDNh7f13QmL9Eqe1+bCtkjjWbIcI1
-ARC-Seal: i=1; a=rsa-sha256; t=1521800310; cv=none;
+X-Google-Smtp-Source: AG47ELscVLYYw/nURaoKRDTBpQjuKTw/9g3YXL1wYiJjtNkdOpM1nUxgTlAqEmPKK6Kxl6X3lNRN
+ARC-Seal: i=1; a=rsa-sha256; t=1521800307; cv=none;
         d=google.com; s=arc-20160816;
-        b=jbBelo+pT1FlCiNvDtJxsbAP3wtH/peO17FFyxixsIgaGsuY+SKc/LNbjWQw77swwz
-         U2S4JzSNxtx12fze0mqufaa9G5hzoKqIpzTDcCkt42qx32VTYXHZ7lrCtRomZm7UQFzE
-         AtkYBehfWjTXxkXNrsm3m0mjebcpt08mm2X3ZOoe3hAdXch3pZO88YOn+TBBuNo2mgqb
-         omB5KuEnBBh+zRswMW7vyAKM4GGr2MMNo5IMTJPQ85WFB7FC6qfrvFf8uauUzqrOZ6Oe
-         oNGp+omr3R4HfgxY+OjUdIirvceZCqTF9EVqs3WIBZYxlKMSn3yyXJmp1Y9k0fnCQOC9
-         iodQ==
+        b=t9+CKvDR5ulSxWXjVJyV0ryd2yAg1dyFUIUJlM755BG+HUNG3P95n9E+fWpauKWqa0
+         Z3cYrsen8hCCXyfPjbClfokPTex7TvSVDHp2fVdQE5rFrViCx7G9Luulp/BQKqeDmnSQ
+         Q5qSypdHOhTOsKijCm7sNi5YpmBjpqU8+ifps3OyP5ab8iNZL231tKSTiapAwOhfQK64
+         l5B+79dC63/hi13mPliXi/EvsmBo3xhsDVtBCErrosWfvOFo/sp7wEqxQys3Lz/R7l7P
+         m62HQaKT9yE+aD7f90oBkr8ike1S2gHwJ3+ytYmDmbcNhZ5XcR+CNNkbeDNYZWQPjO2c
+         HMtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7hz7rEX9eIXdz26EmTZbENug2cKIem6Hcb1fwL+wXS8=;
-        b=PSzlySFW9qJz270d42/OJkSC32zy7+D3bM448HRjPlnYKGPFGTtkzhobUw2msTjNB5
-         qO60rWUSvkHTYPw/IYioNR7rcN9N3vo70BzINOzekOYNsBChAEt2/zzKJ7exbw5im0kd
-         FVs//qPKF2yenkvItU1+qzr/B1X20JGIYw+sIcEz3YVcPWgn4YPm+D/JCZAoaYJ36tyI
-         /SPSWSkXKNOsZONG9Eyx3G7I97CY84o8lQR9Xq6/+6JgxXq83QmDsZT4GnluiDRCath6
-         l8aNDDFqd55fdDDdcDVVvaS8B9ZNAlNGnB/9nGyW6fkMEG8z3rMj+Bw6orM27uKGyCJb
-         6/FQ==
+        bh=rJTpKId8shgCf2uaJTJXy4rhe9OYnl48U0E7DY9An40=;
+        b=w1tbbyS//5vXPuFMTc2AEd88emQBGj/DsSXzkv91rJYhJ8z3lcs7I42IaArOH9qH7S
+         jIkCVeI7CZcE5ZjVzYODvMn9gkkjgwnxrbZDC6JFHBEd2v5eiF6TCk7ZJThlhmQLK5TR
+         wO2QWcDNrWIiZL+OTSNbcOjFTeK3Dee+gEq/528OTEI0dPHY7uS/pcTOuNdKxjGv9kY8
+         OaY9hpQTAHNyd8nPi1aDpgeboVJ8ZV/Lk88ch7w+st6yLthAsWM2at5m7W3MEnYU8fWG
+         cWQWXjr5lIXYgM6DD5ZYS7uL7Fs/Uy2W1fOC9rgOO01ozp6ywJCuyXv4fBnG+FlqPpPe
+         0Uqw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jasmin jessich <jasmin@anw.at>,
-	Ralph Metzler <rjkm@metzlerbros.de>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	David Ahern <dsa@cumulusnetworks.com>,
+	Hannes Frederic Sowa <hannes@stressinduktion.org>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 09/47] [media] media/dvb-core: Race condition when writing to CAM
-Date: Fri, 23 Mar 2018 10:55:00 +0100
-Message-Id: <20180323094248.522646244@linuxfoundation.org>
+Subject: [PATCH 3.18 08/47] net: ipv6: send unsolicited NA on admin up
+Date: Fri, 23 Mar 2018 10:54:59 +0100
+Message-Id: <20180323094248.489986312@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722417300385279?=
-X-GMAIL-MSGID: =?utf-8?q?1595723282318034068?=
+X-GMAIL-THRID: =?utf-8?q?1595722415025079471?=
+X-GMAIL-MSGID: =?utf-8?q?1595723279440041460?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,69 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jasmin J <jasmin@anw.at>
+From: David Ahern <dsa@cumulusnetworks.com>
 
 
-[ Upstream commit e7080d4471d805d921a9ea21b32f911a91e248cb ]
+[ Upstream commit 4a6e3c5def13c91adf2acc613837001f09af3baa ]
 
-It started with a sporadic message in syslog: "CAM tried to send a
-buffer larger than the ecount size" This message is not the fault
-itself, but a consecutive fault, after a read error from the CAM. This
-happens only on several CAMs, several hardware, and of course sporadic.
+ndisc_notify is the ipv6 equivalent to arp_notify. When arp_notify is
+set to 1, gratuitous arp requests are sent when the device is brought up.
+The same is expected when ndisc_notify is set to 1 (per ndisc_notify in
+Documentation/networking/ip-sysctl.txt). The NA is not sent on NETDEV_UP
+event; add it.
 
-It is a consecutive fault, if the last read from the CAM did fail. I
-guess this will not happen on all CAMs, but at least it did on mine.
-There was a write error to the CAM and during the re-initialization
-procedure, the CAM finished the last read, although it got a RS.
-
-The write error to the CAM happened because a race condition between HC
-write, checking DA and FR.
-
-This patch added an additional check for DA(RE), just after checking FR.
-It is important to read the CAMs status register again, to give the CAM
-the necessary time for a proper reaction to HC. Please note the
-description within the source code (patch below).
-
-[mchehab@s-opensource.com: make checkpatch happy]
-
-Signed-off-by: Jasmin jessich <jasmin@anw.at>
-Tested-by: Ralph Metzler <rjkm@metzlerbros.de>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes: 5cb04436eef6 ("ipv6: add knob to send unsolicited ND on link-layer address change")
+Signed-off-by: David Ahern <dsa@cumulusnetworks.com>
+Acked-by: Hannes Frederic Sowa <hannes@stressinduktion.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/dvb-core/dvb_ca_en50221.c |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ net/ipv6/ndisc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/dvb-core/dvb_ca_en50221.c
-+++ b/drivers/media/dvb-core/dvb_ca_en50221.c
-@@ -749,6 +749,29 @@ static int dvb_ca_en50221_write_data(str
- 		goto exit;
- 	}
- 
-+	/*
-+	 * It may need some time for the CAM to settle down, or there might
-+	 * be a race condition between the CAM, writing HC and our last
-+	 * check for DA. This happens, if the CAM asserts DA, just after
-+	 * checking DA before we are setting HC. In this case it might be
-+	 * a bug in the CAM to keep the FR bit, the lower layer/HW
-+	 * communication requires a longer timeout or the CAM needs more
-+	 * time internally. But this happens in reality!
-+	 * We need to read the status from the HW again and do the same
-+	 * we did for the previous check for DA
-+	 */
-+	status = ca->pub->read_cam_control(ca->pub, slot, CTRLIF_STATUS);
-+	if (status < 0)
-+		goto exit;
-+
-+	if (status & (STATUSREG_DA | STATUSREG_RE)) {
-+		if (status & STATUSREG_DA)
-+			dvb_ca_en50221_thread_wakeup(ca);
-+
-+		status = -EAGAIN;
-+		goto exit;
-+	}
-+
- 	/* send the amount of data */
- 	if ((status = ca->pub->write_cam_control(ca->pub, slot, CTRLIF_SIZE_HIGH, bytes_write >> 8)) != 0)
- 		goto exit;
+--- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -1646,6 +1646,8 @@ static int ndisc_netdev_event(struct not
+ 	case NETDEV_CHANGEADDR:
+ 		neigh_changeaddr(&nd_tbl, dev);
+ 		fib6_run_gc(0, net, false);
++		/* fallthrough */
++	case NETDEV_UP:
+ 		idev = in6_dev_get(dev);
+ 		if (!idev)
+ 			break;
