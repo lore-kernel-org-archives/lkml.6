@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806141-2-1919148652401122734
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806112-2-9031129787228439390
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806140; b=RnqkMUOzx5jN9BFfBjjjXIUA6xQ25r6SBfa9t554BCia2U0
-    VAB12GSw/XMrU7DxLRq2fMQGs3Vc6iodzCRifTQhNORSo2U3PKJnCu01r+GCOebk
-    KDQ6zFzqQaNvgFsXBa6S79GETMMbPYDgQ+QGsnHaCiDCi3f7J6aLcqQ9as3YFL5Q
-    WkXTAp4MTrglovjK2hslIgm4bzLuGNBxV8LLugf2HrQzxoLfX5pQMXXTbTyctRcx
-    cOA1OqGnWEP6Gutl29wYn8NhSYjGDFacpxUB/mpIyrJEy7dXOjVZbHbsbEulqSDQ
-    y5FQSexg6OUtSYDQMCfeZGF+NTTDDTxK1zrjYow==
+    t=1521806112; b=QSFVmiXMrgK7QL7tFbtHGRwBMonAi84LiKxoFqflxOslCa/
+    l7n8dTLHY/jaWfguECCWJbqvAmJohWDQ3sjTClQwNMR7yz/wtYYzzZv41lcAj1kZ
+    Esdk8+TCX8YZnhoTod0RghMF3+f3dEH2G/BM5mrc6dCFPaqdf/OjgJhLmTkfEwvg
+    vIao0RuIVSE5WlrIPtaNDfKpQHgtes31igZGeOOWIiqARZ6IUMU3RvjDx8g9Wbto
+    OE0SEaJOOJe0MIPQ2X5k6AVKxk9uDJCQh3HdEdfnDYB/0WKxgPEMOkrLU5oQFXkC
+    a8UHUqQAA0U50Zsfy9Emm5cuSU/2XOgBfdWHyFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806140; bh=wiPvB3WTydSZQyHngAbdLJdAm3
-    QD8XnosPkcKaXfku0=; b=GCOVXoCpJYtnjU3BqUyfMmj82elEvHPntkHcWr7jk9
-    yN+ccC+5rO6xNjU0OyQdqhonwETNofXr1cN/O5NzmSyrUdFFvEWiUG7r37bkCD/A
-    Pq/3pVaHSdQUxRBiBTZxJyVFVwgXowgPZxADNXsMqvYD/gLY3XmG5U+00IV3tesP
-    eFm6IdZY+FGdirDPgBygnjTdg44W3AcwavAHygyoFs6pFEVF2hI4tZKrvEGYi7Uh
-    Dd8MBjATUrWdfPG4RLnQ3lFBYmOKD+QJpuuoftRlMkwAhZAypPx4+SUnWSiXlUdZ
-    or+7U6dRdz623pdNcRxhtB9sVGVuQI1a7UkUeZ7GoDcw==
+    :list-id; s=arctest; t=1521806112; bh=BaUDnG93/PQKB85YPkmJuawTzs
+    FAGBj8sCQf+BAxNlw=; b=SAnfuEyCw1XmDiusHKp230D2vb20Uq9VqYOUyRQYMv
+    7WNvKslzxMiqP9nQzjA+6BtYDU32d5ajh0vbxGSzZgTl79cFlpka0DlDyuiOi9nh
+    OsZjUffMQSEZjJVmT4Vy8tGHEnm+ZHJxcFIJog/mLGHJ1n8Ul9tl/uG00bDG/bEr
+    CopHrJYJj0MKmI9JGK3FgVvTRZ90u3yO+LktNxnbjjgl/HE2usK6Z78Zw59B3P6e
+    9fYfItVK3V1wyV5VXGiUkq9ztHNxSCIbBYy7S4JhM9uh9c55gMVCXC5iv3rZtAGt
+    V32f/X4tolX8N9lGsoiua/Bp1U44cg+5Vs+HIeQ2ua7Q==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,23 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753380AbeCWKBN (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:01:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37664 "EHLO
+        id S1753852AbeCWKBR (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:01:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37700 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753166AbeCWKBM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:01:12 -0400
+        with ESMTP id S1753166AbeCWKBP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:01:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        stable@vger.kernel.org, Liu Changcheng <changcheng.liu@intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 27/77] mmc: avoid removing non-removable hosts during suspend
-Date: Fri, 23 Mar 2018 10:54:01 +0100
-Message-Id: <20180323094144.037440001@linuxfoundation.org>
+Subject: [PATCH 4.14 28/77] mmc: block: fix logical error to avoid memory leak
+Date: Fri, 23 Mar 2018 10:54:02 +0100
+Message-Id: <20180323094144.114193711@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -82,60 +84,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Drake <drake@endlessm.com>
+From: "Liu, Changcheng" <changcheng.liu@intel.com>
 
 
-[ Upstream commit de8dcc3d2c0e08e5068ee1e26fc46415c15e3637 ]
+[ Upstream commit 0be55579a127916ebe39db2a74d906a2dfceed42 ]
 
-The Weibu F3C MiniPC has an onboard AP6255 module, presenting
-two SDIO functions on a single MMC host (Bluetooth/btsdio and
-WiFi/brcmfmac), and the mmc layer correctly detects this as
-non-removable.
+If the MMC_DRV_OP_GET_EXT_CSD request completes successfully, then
+ext_csd must be freed, but in one case it was not. Fix that.
 
-After suspend/resume, the wifi and bluetooth interfaces disappear
-and do not get probed again.
-
-The conditions here are:
-
- 1. During suspend, we reach mmc_pm_notify()
-
- 2. mmc_pm_notify() calls mmc_sdio_pre_suspend() to see if we can
-    suspend the SDIO host. However, mmc_sdio_pre_suspend() returns
-    -ENOSYS because btsdio_driver does not have a suspend method.
-
- 3. mmc_pm_notify() proceeds to remove the card
-
- 4. Upon resume, mmc_rescan() does nothing with this host, because of
-    the rescan_entered check which aims to only scan a non-removable
-    device a single time (i.e. during boot).
-
-Fix the loss of functionality by detecting that we are unable to
-suspend a non-removable host, so avoid the forced removal in that
-case. The comment above this function already indicates that this
-code was only intended for removable devices.
-
-Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Liu Changcheng <changcheng.liu@intel.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/core/core.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/mmc/core/block.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -2751,6 +2751,14 @@ static int mmc_pm_notify(struct notifier
- 		if (!err)
- 			break;
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -2387,6 +2387,7 @@ static int mmc_ext_csd_open(struct inode
  
-+		if (!mmc_card_is_removable(host)) {
-+			dev_warn(mmc_dev(host),
-+				 "pre_suspend failed for non-removable host: "
-+				 "%d\n", err);
-+			/* Avoid removing non-removable hosts */
-+			break;
-+		}
-+
- 		/* Calling bus_ops->remove() with a claimed host can deadlock */
- 		host->bus_ops->remove(host);
- 		mmc_claim_host(host);
+ 	if (n != EXT_CSD_STR_LEN) {
+ 		err = -EINVAL;
++		kfree(ext_csd);
+ 		goto out_free;
+ 	}
+ 
