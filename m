@@ -1,73 +1,78 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3936627-1521898125-2-14134464655164417078
+X-Cyrus-Session-Id: sloti22d1t05-1445372-1521815231-2-6941621236828317926
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES rocaen, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521898124; b=nwuPY2SgmKkrKU3enIV3CSX5S866Ip/Y25m+oE1sOj9zQwI
-    B4JKGi0V4EzZjZQ2Wl5PR1ITzX1j5ykJCAA74FysUKOY1+A+r3CtgtYb22fN8AoD
-    DB/fN81r25boRUe6eaEVQ6fTVAIKHX+Olwa6PSKPglfPty3XR4wlmixAeodmYTug
-    3zPrc1GUv7I6nCkNCLoyiW2itUfrdqSXZotT+BbrrG1uuosXoBeS+zTZ0mS0/boM
-    EgXPm8lnqp4QKK/RBjMN2BGfTwc7rSIZLp7Ntivt/Y6AQgnRH1tSMqfWy0Wc7Rp2
-    BaEmhqhfm0DwjH1YueIf5bcXtKTpGbYb0v90TAA==
+    t=1521815230; b=vm82YusYubIGOZRACehZh88UTZgsbZJcAhFVrzJJ6pZV73W
+    PXZJVTKuj3RylCqX1cM8N/PRqPh4lVbYRtv913nTjRZOrMsmf9rGilfOa/EURSDu
+    pHYyIusP5IrVQTeuj1TGQnXNdEmbUPOBanjFPavh3WXf7XkTO9Td2x0AQAFn3RGE
+    Zi63SyMLyHX+S5WLMpwMUSnJsvFvXFG13/Xd0dBwuNMu9RLp4Mx8J90UfK1Kmlg5
+    U4yEQsnzHQFJkB/0dynB9//cNQK5LJ+JeYiGzfu/VqJ7xkxqhVACZrqCnbTE15bT
+    IiPKj+LBWPl55gu8FyGQG+oToFYrMSzH9BGtp4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521898124; bh=C
-    /tvDdI7ixY9YzHtddZW4F1BWcY5R6VHbLJ11evXm7w=; b=n+Tu+DIOdejL0o+OS
-    hjuTZg6wkJzcGcrArWpKjw7UEBn4uN0UBzROFK9tFro1eDh1gr3+hGDbZROVLUve
-    7jntW86BtHpPZq2onVwEzAWjXtn61x/I2zULEX8NHf6nBJa2bcCyr8/ncKeZ6Crb
-    wwpMtxuah7QCqjv8UydqnFbl4UekA+1SV4lQODJQoo/R1PIpPyF6zW88Y28HhVBp
-    +kgFcBdNvYdbRx36aXc3jtQqceH3HoU3wHa96dffRxAhVcBXlaamLe1ySrtuUjpj
-    xqSpg32JM5oB6x+YB6oyCwu351URs9v/Jw+3Qa/3u+BWljJ9kc8L8yGwylnz3cFK
-    jmxZA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    :content-transfer-encoding:sender; s=arctest; t=1521815230; bh=i
+    KO9McMyYeo6Yt4zCGknvmdDjFOIO35URCnZnjLJYjQ=; b=UuVcYDIjLoCj0Xkk2
+    PUYZC6zn4s/xgqdxim8tQV85oTR50CChRaXroBVJD7SlgPpWpEIRYND6KsHNmVY2
+    4DdoRje/xxQMSzGYLmtyRqHRzrBSTNM7/eLQ3zs8PJZ5hL88Mcg1C5aJ0i8kJF3t
+    mtc0Qo05vhLAQXpb2qgOQqdZI+mAfnm0RYvGU3LHfqjTnAB1twy6uN96D5BeGc4+
+    oFP3K48C+97ahBTafgxszcE9eEqeFLTHVFF2l5hHfLxsez9HWTAGtIfrsKVfs/oI
+    yZO1bO34dXa6bNY/1lCCBonjv3jv2cu+LwRvwSVbM8SAh0iwaHnNXOgY3XYsTIrj
+    l9+gA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TCVpjWuc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=hvMCOEiX;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TCVpjWuc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=hvMCOEiX;
     x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6097D21716
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 24 Mar 2018 13:28:32 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Subject: Re: [PATCH v3 7/8] staging:iio:ade7854: Rework SPI read function
-Message-ID: <20180324132832.4de33872@archlinux>
-In-Reply-To: <960df20b2a51e6517e9ccef2b5486ee116f35ba4.1521813782.git.rodrigosiqueiramelo@gmail.com>
+X-Google-Smtp-Source: AG47ELusAKKWIWaDyjS3CoJWAm6hCuqSgAF8lSzJTyw5KY9rKnLBL830wBNqStd/aK+qVdEZ4lSgQQ==
+Date: Fri, 23 Mar 2018 11:26:57 -0300
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: John Syne <john3909@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+ Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+ linux-kernel@vger.kernel.org, Barry Song <21cnbao@gmail.com>
+Subject: [PATCH v3 6/8] staging:iio:ade7854: Rework I2C read function
+Message-ID: <c7f86bb795b71e693692b228da854939be67cb1d.1521813782.git.rodrigosiqueiramelo@gmail.com>
 References: <cover.1521813782.git.rodrigosiqueiramelo@gmail.com>
- <960df20b2a51e6517e9ccef2b5486ee116f35ba4.1521813782.git.rodrigosiqueiramelo@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Disposition: inline
+In-Reply-To: <cover.1521813782.git.rodrigosiqueiramelo@gmail.com>
+User-Agent: NeoMutt/20180223
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -78,11 +83,8 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>,
- daniel.baluta@nxp.com
+Cc: linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+ daniel.baluta@nxp.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -91,213 +93,173 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 23 Mar 2018 11:27:12 -0300
-Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com> wrote:
+The read operation for the I2C function has many duplications that can
+be generalized into a single function. This patch reworks the read
+operation for I2C to centralizes all similar code in a single function.
 
-> Rework read SPI function to reduce the code duplication and centralizes
-> all the task in a single function.
-> 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+It is possible to remove all the old interface to use the new one,
+however, for keeping the things simple and working this patch maintain
+legacy interface.
 
-Thanks,
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+---
+Changes in v3:
+ - Remove the use of defines that not improve the readability
+ - Replace variable name "bytes" for "bits"
+ - Update commit message
 
-Jonathan
+ drivers/staging/iio/meter/ade7854-i2c.c | 106 +++++++++++---------------------
+ 1 file changed, 37 insertions(+), 69 deletions(-)
 
-> ---
-> Changes in v3:
->  - Remove the use of defines that not improve the readability
->  - Replace variable name "bytes" for "bits"
->  - Update commit message
-> 
->  drivers/staging/iio/meter/ade7854-spi.c | 136 ++++++++------------------------
->  1 file changed, 33 insertions(+), 103 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/meter/ade7854-spi.c b/drivers/staging/iio/meter/ade7854-spi.c
-> index be7397042850..ee6e4d166ece 100644
-> --- a/drivers/staging/iio/meter/ade7854-spi.c
-> +++ b/drivers/staging/iio/meter/ade7854-spi.c
-> @@ -67,9 +67,10 @@ static int ade7854_spi_write_reg(struct device *dev,
->  	return ret;
->  }
->  
-> -static int ade7854_spi_read_reg_8(struct device *dev,
-> -				  u16 reg_address,
-> -				  u8 *val)
-> +static int ade7854_spi_read_reg(struct device *dev,
-> +				u16 reg_address,
-> +				u32 *val,
-> +				int bits)
->  {
->  	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
->  	struct ade7854_state *st = iio_priv(indio_dev);
-> @@ -82,7 +83,7 @@ static int ade7854_spi_read_reg_8(struct device *dev,
->  		}, {
->  			.rx_buf = st->rx,
->  			.bits_per_word = 8,
-> -			.len = 1,
-> +			.len = bits,
->  		}
->  	};
->  
-> @@ -94,128 +95,57 @@ static int ade7854_spi_read_reg_8(struct device *dev,
->  
->  	ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
->  	if (ret) {
-> -		dev_err(&st->spi->dev, "problem when reading 8 bit register 0x%02X",
-> +		dev_err(&st->spi->dev, "problem when reading register 0x%02X",
->  			reg_address);
-> -		goto error_ret;
-> +		goto unlock;
-> +	}
-> +
-> +	switch (bits) {
-> +	case 8:
-> +		*val = st->rx[0];
-> +		break;
-> +	case 16:
-> +		*val = be16_to_cpup((const __be16 *)st->rx);
-> +		break;
-> +	case 24:
-> +		*val = (st->rx[0] << 16) | (st->rx[1] << 8) | st->rx[2];
-> +		break;
-> +	case 32:
-> +		*val = be32_to_cpup((const __be32 *)st->rx);
-> +		break;
->  	}
-> -	*val = st->rx[0];
->  
-> -error_ret:
-> +unlock:
->  	mutex_unlock(&st->buf_lock);
->  	return ret;
->  }
->  
-> +static int ade7854_spi_read_reg_8(struct device *dev,
-> +				  u16 reg_address,
-> +				  u8 *val)
-> +{
-> +	return ade7854_spi_read_reg(dev, reg_address, (u32 *)val, 8);
-> +}
-> +
->  static int ade7854_spi_read_reg_16(struct device *dev,
->  				   u16 reg_address,
->  				   u16 *val)
->  {
-> -	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> -	struct ade7854_state *st = iio_priv(indio_dev);
-> -	int ret;
-> -	struct spi_transfer xfers[] = {
-> -		{
-> -			.tx_buf = st->tx,
-> -			.bits_per_word = 8,
-> -			.len = 3,
-> -		}, {
-> -			.rx_buf = st->rx,
-> -			.bits_per_word = 8,
-> -			.len = 2,
-> -		}
-> -	};
-> -
-> -	mutex_lock(&st->buf_lock);
-> -	st->tx[0] = ADE7854_READ_REG;
-> -	st->tx[1] = (reg_address >> 8) & 0xFF;
-> -	st->tx[2] = reg_address & 0xFF;
-> -
-> -	ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
-> -	if (ret) {
-> -		dev_err(&st->spi->dev, "problem when reading 16 bit register 0x%02X",
-> -			reg_address);
-> -		goto error_ret;
-> -	}
-> -	*val = be16_to_cpup((const __be16 *)st->rx);
-> -
-> -error_ret:
-> -	mutex_unlock(&st->buf_lock);
-> -	return ret;
-> +	return ade7854_spi_read_reg(dev, reg_address, (u32 *)val, 16);
->  }
->  
->  static int ade7854_spi_read_reg_24(struct device *dev,
->  				   u16 reg_address,
->  				   u32 *val)
->  {
-> -	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> -	struct ade7854_state *st = iio_priv(indio_dev);
-> -	int ret;
-> -	struct spi_transfer xfers[] = {
-> -		{
-> -			.tx_buf = st->tx,
-> -			.bits_per_word = 8,
-> -			.len = 3,
-> -		}, {
-> -			.rx_buf = st->rx,
-> -			.bits_per_word = 8,
-> -			.len = 3,
-> -		}
-> -	};
-> -
-> -	mutex_lock(&st->buf_lock);
-> -
-> -	st->tx[0] = ADE7854_READ_REG;
-> -	st->tx[1] = (reg_address >> 8) & 0xFF;
-> -	st->tx[2] = reg_address & 0xFF;
-> -
-> -	ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
-> -	if (ret) {
-> -		dev_err(&st->spi->dev, "problem when reading 24 bit register 0x%02X",
-> -			reg_address);
-> -		goto error_ret;
-> -	}
-> -	*val = (st->rx[0] << 16) | (st->rx[1] << 8) | st->rx[2];
-> -
-> -error_ret:
-> -	mutex_unlock(&st->buf_lock);
-> -	return ret;
-> +	return ade7854_spi_read_reg(dev, reg_address, (u32 *)val, 24);
->  }
->  
->  static int ade7854_spi_read_reg_32(struct device *dev,
->  				   u16 reg_address,
->  				   u32 *val)
->  {
-> -	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> -	struct ade7854_state *st = iio_priv(indio_dev);
-> -	int ret;
-> -	struct spi_transfer xfers[] = {
-> -		{
-> -			.tx_buf = st->tx,
-> -			.bits_per_word = 8,
-> -			.len = 3,
-> -		}, {
-> -			.rx_buf = st->rx,
-> -			.bits_per_word = 8,
-> -			.len = 4,
-> -		}
-> -	};
-> -
-> -	mutex_lock(&st->buf_lock);
-> -
-> -	st->tx[0] = ADE7854_READ_REG;
-> -	st->tx[1] = (reg_address >> 8) & 0xFF;
-> -	st->tx[2] = reg_address & 0xFF;
-> -
-> -	ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
-> -	if (ret) {
-> -		dev_err(&st->spi->dev, "problem when reading 32 bit register 0x%02X",
-> -			reg_address);
-> -		goto error_ret;
-> -	}
-> -	*val = be32_to_cpup((const __be32 *)st->rx);
-> -
-> -error_ret:
-> -	mutex_unlock(&st->buf_lock);
-> -	return ret;
-> +	return ade7854_spi_read_reg(dev, reg_address, (u32 *)val, 32);
->  }
->  
->  static int ade7854_spi_probe(struct spi_device *spi)
+diff --git a/drivers/staging/iio/meter/ade7854-i2c.c b/drivers/staging/iio/meter/ade7854-i2c.c
+index 29e959fdb932..63793f9664c7 100644
+--- a/drivers/staging/iio/meter/ade7854-i2c.c
++++ b/drivers/staging/iio/meter/ade7854-i2c.c
+@@ -65,9 +65,10 @@ static int ade7854_i2c_write_reg(struct device *dev,
+ 	return ret < 0 ? ret : 0;
+ }
+ 
+-static int ade7854_i2c_read_reg_8(struct device *dev,
+-				  u16 reg_address,
+-				  u8 *val)
++static int ade7854_i2c_read_reg(struct device *dev,
++				u16 reg_address,
++				u32 *val,
++				int bits)
+ {
+ 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+ 	struct ade7854_state *st = iio_priv(indio_dev);
+@@ -79,95 +80,62 @@ static int ade7854_i2c_read_reg_8(struct device *dev,
+ 
+ 	ret = i2c_master_send(st->i2c, st->tx, 2);
+ 	if (ret < 0)
+-		goto out;
++		goto unlock;
+ 
+-	ret = i2c_master_recv(st->i2c, st->rx, 1);
++	ret = i2c_master_recv(st->i2c, st->rx, bits);
+ 	if (ret < 0)
+-		goto out;
++		goto unlock;
++
++	switch (bits) {
++	case 8:
++		*val = st->rx[0];
++		break;
++	case 16:
++		*val = (st->rx[0] << 8) | st->rx[1];
++		break;
++	case 24:
++		*val = (st->rx[0] << 16) | (st->rx[1] << 8) | st->rx[2];
++		break;
++	case 32:
++		*val = (st->rx[0] << 24) | (st->rx[1] << 16) |
++			(st->rx[2] << 8) | st->rx[3];
++		break;
++	default:
++		ret = -EINVAL;
++		goto unlock;
++	}
+ 
+-	*val = st->rx[0];
+-out:
++unlock:
+ 	mutex_unlock(&st->buf_lock);
+ 	return ret;
+ }
+ 
++static int ade7854_i2c_read_reg_8(struct device *dev,
++				  u16 reg_address,
++				  u8 *val)
++{
++	return ade7854_i2c_read_reg(dev, reg_address, (u32 *)val, 8);
++}
++
+ static int ade7854_i2c_read_reg_16(struct device *dev,
+ 				   u16 reg_address,
+ 				   u16 *val)
+ {
+-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+-	struct ade7854_state *st = iio_priv(indio_dev);
+-	int ret;
+-
+-	mutex_lock(&st->buf_lock);
+-	st->tx[0] = (reg_address >> 8) & 0xFF;
+-	st->tx[1] = reg_address & 0xFF;
+-
+-	ret = i2c_master_send(st->i2c, st->tx, 2);
+-	if (ret < 0)
+-		goto out;
+-
+-	ret = i2c_master_recv(st->i2c, st->rx, 2);
+-	if (ret < 0)
+-		goto out;
+-
+-	*val = (st->rx[0] << 8) | st->rx[1];
+-out:
+-	mutex_unlock(&st->buf_lock);
+-	return ret;
++	return ade7854_i2c_read_reg(dev, reg_address, (u32 *)val, 16);
+ }
+ 
+ static int ade7854_i2c_read_reg_24(struct device *dev,
+ 				   u16 reg_address,
+ 				   u32 *val)
+ {
+-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+-	struct ade7854_state *st = iio_priv(indio_dev);
+-	int ret;
+-
+-	mutex_lock(&st->buf_lock);
+-	st->tx[0] = (reg_address >> 8) & 0xFF;
+-	st->tx[1] = reg_address & 0xFF;
+-
+-	ret = i2c_master_send(st->i2c, st->tx, 2);
+-	if (ret < 0)
+-		goto out;
+-
+-	ret = i2c_master_recv(st->i2c, st->rx, 3);
+-	if (ret < 0)
+-		goto out;
+-
+-	*val = (st->rx[0] << 16) | (st->rx[1] << 8) | st->rx[2];
+-out:
+-	mutex_unlock(&st->buf_lock);
+-	return ret;
++	return ade7854_i2c_read_reg(dev, reg_address, (u32 *)val, 24);
+ }
+ 
+ static int ade7854_i2c_read_reg_32(struct device *dev,
+ 				   u16 reg_address,
+ 				   u32 *val)
+ {
+-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+-	struct ade7854_state *st = iio_priv(indio_dev);
+-	int ret;
+-
+-	mutex_lock(&st->buf_lock);
+-	st->tx[0] = (reg_address >> 8) & 0xFF;
+-	st->tx[1] = reg_address & 0xFF;
+-
+-	ret = i2c_master_send(st->i2c, st->tx, 2);
+-	if (ret < 0)
+-		goto out;
+-
+-	ret = i2c_master_recv(st->i2c, st->rx, 4);
+-	if (ret < 0)
+-		goto out;
+-
+-	*val = (st->rx[0] << 24) | (st->rx[1] << 16) |
+-		(st->rx[2] << 8) | st->rx[3];
+-out:
+-	mutex_unlock(&st->buf_lock);
+-	return ret;
++	return ade7854_i2c_read_reg(dev, reg_address, (u32 *)val, 32);
+ }
+ 
+ static int ade7854_i2c_probe(struct i2c_client *client,
+-- 
+2.16.2
 
 _______________________________________________
 devel mailing list
