@@ -1,105 +1,284 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752105AbeCWR4N (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:56:13 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:7351 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751892AbeCWRz6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:55:58 -0400
-X-IronPort-AV: E=Sophos;i="5.48,351,1517846400";
-   d="scan'208";a="74995772"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
-CC: "daniel@bristot.me" <daniel@bristot.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "nab@linux-iscsi.org" <nab@linux-iscsi.org>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "williams@redhat.com" <williams@redhat.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "lclaudio@redhat.com" <lclaudio@redhat.com>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>
-Subject: Re: [PATCH 2/2] target: remove spin_lock_assert() in
- __target_(attach|detach)_tg_pt_gp()
-Thread-Topic: [PATCH 2/2] target: remove spin_lock_assert() in
- __target_(attach|detach)_tg_pt_gp()
-Thread-Index: AQHTwssw/ek84VX6f0CewLK+jkAVz6PeF6yAgAABh4CAAAGVgA==
-Date: Fri, 23 Mar 2018 17:55:54 +0000
-Message-ID: <1521827753.2535.18.camel@wdc.com>
-References: <20180321153854.GB24312@kernel.org>
-         <CA+55aFwKN_JijmCt=0S4jF8KzGPmoKNbuYF59va7U4ziJLLryA@mail.gmail.com>
-         <20180322093745.GC4229@kernel.org>
-         <20180323155513.dwbgvblenlji33as@linutronix.de>
-         <1521822325.2535.5.camel@wdc.com>
-         <CA+55aFxVkuntSektVmwXktzvfEezdDTAM_zj4DJdp3qJxWf8aA@mail.gmail.com>
-         <20180323171736.bcyi2oiolge4l6hl@linutronix.de>
-         <20180323171959.7ac6klrqg4fdk3ey@linutronix.de>
-         <1521827085.2535.12.camel@wdc.com>
-         <20180323175013.6uucllg5ogyzfovt@linutronix.de>
-In-Reply-To: <20180323175013.6uucllg5ogyzfovt@linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [199.255.44.172]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0624;7:vQfKvS7GLV4ZEzogEXAHSFNrbRLY04gfGcbVbWx6kWe6saEDSG7G23HLDUl1S2Nj0kKq53E+OrK4oqbn4iwwIstKZrvmbW+AA0bB4kvxII12iflvTOvC1C7IAmxUPqwFSed07pAiLt62i8V3y9m/8ZXoPX1MkzYe8y5X2oGr1A0vf9vDXZRPk3KnUK8Mu4ptOxhVdRX49eBZgNJSxLQ5q5OZgATfXsEMFC9GCnWGNV9LH2txW7j1acDQZjRw9Lo7;20:BHPFq7uegWOo3BXz16K6pg6ZBD+R1q1nPs7pavNZQ+YKGhLkA8AYt5Bd80XX/yrHFimwtAfUk7IttfwHmy93vdjEx1jyHfjQ0+0bnt6Rwdv+vATKsaQhnQqQb4MlkMqUMekGm6HajbOw/DzEI+/6ZIHUS4EGcRZHob5EAxaCXYI=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 52ab6491-0c9e-4864-512d-08d590e752c2
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0624;
-x-ms-traffictypediagnostic: MWHPR04MB0624:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0624866B6FEF78A8DB8904D398A80@MWHPR04MB0624.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501327)(52105095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR04MB0624;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0624;
-x-forefront-prvs: 0620CADDF3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(366004)(396003)(376002)(39380400002)(199004)(189003)(377424004)(51444003)(81156014)(1730700003)(7736002)(316002)(3280700002)(68736007)(5640700003)(2351001)(3660700001)(478600001)(81166006)(2900100001)(8936002)(2501003)(5250100002)(11346002)(6116002)(3846002)(4326008)(97736004)(2906002)(105586002)(106356001)(103116003)(6506007)(53546011)(5660300001)(446003)(6512007)(8676002)(76176011)(26005)(6486002)(7416002)(53936002)(6436002)(305945005)(229853002)(186003)(59450400001)(66066001)(54906003)(99286004)(36756003)(93886005)(6916009)(6246003)(72206003)(25786009)(102836004)(86362001)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0624;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: 4WtSC/mOKk2ucxGuDeKMryO1NaqnpfFFdfGvAmgoUgapuXp6F4rydoZdJ9iqGxAxE60S81fWMeZF41L+5e+9t5B2TtJMGRQoiZFzARXXyqFw9Cec0Zse7aXodJXHmizo4fCJwrL9/4vB1sd4tQ44iZ/yeg15CtQQEd9Eu40S+Kwp29gdaJa0zhm+AkzsRYG/hFytnSHs2G9aDVkqpxaOo69LhOyem/PBNzvpvHYgtl3TiTS+UsU2JRsElaMd4tz5wjyajsbPtRbJpLbsc5YFzEs/YkPuvzcOaB0wyH1jHWGiDyd+NuYBSx/UqHk1grCkIWnf9QVLz7OQNIvQvDZL8w==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
+        id S1752113AbeCWR67 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:58:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49602 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751953AbeCWR65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 13:58:57 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3601A2177C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <10DDBCCF35C36246B75B0AB3D36CA660@namprd04.prod.outlook.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52ab6491-0c9e-4864-512d-08d590e752c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2018 17:55:54.2167
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0624
+Content-Transfer-Encoding: 8BIT
+To: avifishman70@gmail.com, brendanhiggins@google.com,
+        linux@armlinux.org.uk, mark.rutland@arm.com, mturquette@baylibre.com,
+        raltherr@google.com, robh+dt@kernel.org, sboyd@codeaurora.org,
+        tali.perry1@gmail.com, tmaimon77@gmail.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1521553249-6971-3-git-send-email-tali.perry1@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
+References: <1521553249-6971-1-git-send-email-tali.perry1@gmail.com>
+ <1521553249-6971-3-git-send-email-tali.perry1@gmail.com>
+Message-ID: <152182793651.178046.13824776927497999970@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v11 2/2] clk: npcm7xx: Nuvoton NPCM7XX Clock Controller driver
+Date: Fri, 23 Mar 2018 10:58:56 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2NHuJmk013594
 
-On Fri, 2018-03-23 at 18:50 +0100, bigeasy@linutronix.de wrote:
-> On 2018-03-23 17:44:46 [+0000], Bart Van Assche wrote:
-> > In other words, do we really need to remove these checks? I think that these
-> > checks are useful as documentation to people who read the SCSI target code.
-> > The target code is already hard to follow so I think any documentation,
-> > especially documentation in the form of code that is checked at runtime, is
-> > welcome.
-> 
-> so if I remove those two and add a kernel doc comment instead, saying
-> that the caller needs to ensure that "lun->lun_tg_pt_gp_lock" is held
-> then we would remove the obvious runtime check and add a piece of
-> documentation. Would that work?
+Quoting tali.perry1@gmail.com (2018-03-20 06:40:49)
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index 71ec41e6364f..353e94f2c25a 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -21,6 +21,7 @@ endif
+>  obj-$(CONFIG_MACH_ASM9260)             += clk-asm9260.o
+>  obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)    += clk-axi-clkgen.o
+>  obj-$(CONFIG_ARCH_AXXIA)               += clk-axm5516.o
+> +obj-$(CONFIG_ARCH_NPCM7XX)             += clk-npcm7xx.o
 
-Comments are not verified at runtime and hence can become outdated if the code
-is modified. assert_spin_locked() and lockdep_assert_held() assertions however
-are verified at runtime with the proper kernel configuration options enabled.
-Hence my preference for assert_spin_locked()/lockdep_assert_held() over source
-code comments.
+Please sort this by filename, not config name.
 
-Thanks,
+>  obj-$(CONFIG_COMMON_CLK_CDCE706)       += clk-cdce706.o
+>  obj-$(CONFIG_COMMON_CLK_CDCE925)       += clk-cdce925.o
+>  obj-$(CONFIG_ARCH_CLPS711X)            += clk-clps711x.o
+> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+> new file mode 100644
+> index 000000000000..0d373f8f114b
+> --- /dev/null
+> +++ b/drivers/clk/clk-npcm7xx.c
+> @@ -0,0 +1,757 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Nuvoton NPCM7xx Clock Generator
+[..]
+> +
+> +
+> +static struct clk_hw_onecell_data *npcm7xx_clk_data;
+> +static void __iomem *clk_base;
 
-Bart.
+Please remove static singletons and allocate them during init.
+
+> +static DEFINE_SPINLOCK(lock);
+
+Please give 'lock' a better name so that lockdep reports are
+meaningful.
+
+> +
+> +
+> +static const struct of_device_id npcm7xx_clk_match_table[] = {
+> +                               { .compatible = "nuvoton,npcm750-clk"},
+> +                               {},
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, npcm7xx_clk_match_table);
+
+Is this used?
+
+> +
+> +
+> +static void __init npcm7xx_clk_init(struct device_node *clk_np)
+> +{
+> +
+> +       struct resource res;
+> +       struct clk_hw *hw;
+> +       struct clk *clk;
+> +       int ret;
+> +       int i;
+> +
+> +       pr_debug("NPCM750: clock init: ");
+> +
+> +       clk_base = NULL;
+> +
+> +       ret = of_address_to_resource(clk_np, 0, &res);
+> +       if (ret) {
+> +               pr_err("\t%s: failed to get resource, ret %d\n", clk_np->name,
+> +                       ret);
+> +               return;
+> +       }
+> +
+> +
+> +       clk_base = ioremap(res.start, resource_size(&res));
+> +       if (IS_ERR(clk_base)) {
+> +               pr_err("\tnpcm7xx_clk_init: resource error\n");
+> +               goto npcm7xx_init_error;
+> +       }
+> +
+> +
+> +       npcm7xx_clk_data = kzalloc(sizeof(*npcm7xx_clk_data->hws) *
+> +               NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL);
+> +
+> +       npcm7xx_clk_data->num = 0;
+> +
+> +       if (!npcm7xx_clk_data->hws) {
+> +               pr_err("Can't alloc npcm7xx_clk_data\n");
+
+We don't need allocation error messages, kmalloc already prints a bunch
+of info.
+
+> +               goto npcm7xx_init_np_err;
+> +       }
+> +
+> +       npcm7xx_clk_data->num = NPCM7XX_NUM_CLOCKS;
+> +
+> +
+> +       /*
+> +        * This way all clock fetched before the platform device probes,
+
+What platform device?
+
+> +        * except those we assign here for early use, will be deferred.
+> +        */
+> +       pr_debug("\tclk init hws\n");
+> +       for (i = 0; i < NPCM7XX_NUM_CLOCKS; i++)
+> +               npcm7xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+> +
+> +       /* Read fixed clocks. These 3 clocks must be defined in DT */
+> +       clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
+> +       if (!IS_ERR(clk)) {
+> +               pr_err("failed to find external REFCLK: %ld\n",
+> +                       PTR_ERR(clk));
+> +               clk_put(clk);
+> +       }
+> +
+> +       clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
+> +       if (!IS_ERR(clk)) {
+> +               pr_err("failed to find external SYSBYPCK: %ld\n",
+> +                       PTR_ERR(clk));
+> +               clk_put(clk);
+> +       }
+> +
+> +       clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
+> +       if (!IS_ERR(clk)) {
+> +               pr_err("failed to find external MCBYPCK: %ld\n",
+> +                       PTR_ERR(clk));
+> +               clk_put(clk);
+> +       }
+> +
+> +       /* Register plls */
+> +       pr_debug("\tclk register pll\n");
+> +       for (i = 0; i < ARRAY_SIZE(npcm7xx_plls); i++) {
+> +               const struct npcm7xx_clk_pll_data *pll_data = &npcm7xx_plls[i];
+> +
+> +               pr_debug("\tclk reg pll%d, reg=0x%x, name=%s, p=%s\n", i,
+> +               (unsigned int)pll_data->reg, pll_data->name,
+> +               pll_data->parent_name);
+> +
+> +               hw = npcm7xx_clk_register_pll(clk_base + pll_data->reg,
+> +                       pll_data->name, pll_data->parent_name, pll_data->flags);
+> +               if (IS_ERR(hw)) {
+> +                       pr_err("npcm7xx_clk: Can't register pll\n");
+> +                       goto npcm7xx_init_fail;
+> +               }
+> +
+> +               if (pll_data->onecell_idx >= 0)
+> +                       npcm7xx_clk_data->hws[pll_data->onecell_idx] = hw;
+> +       }
+> +
+> +       /* Register fixed dividers */
+> +       pr_debug("\tclk register fixed divs\n");
+> +       clk = clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL1_DIV2,
+> +                       NPCM7XX_CLK_S_PLL1, 0, 1, 2);
+> +       if (IS_ERR(clk)) {
+> +               pr_err("npcm7xx_clk: Can't register fixed div\n");
+> +               goto npcm7xx_init_fail;
+> +       }
+> +
+> +
+> +       clk = clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL2_DIV2,
+> +                       NPCM7XX_CLK_S_PLL2, 0, 1, 2);
+> +
+> +       if (IS_ERR(clk)) {
+> +               pr_err("npcm7xx_clk: Can't register div2\n");
+> +               goto npcm7xx_init_fail;
+> +       }
+> +
+> +       /* Register muxes */
+> +       for (i = 0; i < ARRAY_SIZE(npcm7xx_muxes); i++) {
+> +               const struct npcm7xx_clk_mux_data *mux_data = &npcm7xx_muxes[i];
+> +
+> +               pr_debug("\tadd mux%d reg=0x%x name=%s p=%s num_p=%d\n",
+> +                   i, ((u32)clk_base + (u32)NPCM7XX_CLKSEL), mux_data->name,
+> +                       mux_data->parent_names[0], mux_data->num_parents);
+> +
+> +               hw = clk_hw_register_mux_table(NULL,
+> +                       mux_data->name,
+> +                       mux_data->parent_names, mux_data->num_parents,
+> +                       mux_data->flags, clk_base + NPCM7XX_CLKSEL,
+> +                       mux_data->shift, mux_data->mask, 0,
+> +                       mux_data->table, &lock);
+> +
+> +               if (IS_ERR(hw)) {
+> +                       pr_err("npcm7xx_clk: Can't register mux\n");
+> +                       goto npcm7xx_init_fail;
+> +               }
+> +
+> +               if (mux_data->onecell_idx >= 0)
+> +                       npcm7xx_clk_data->hws[mux_data->onecell_idx] = hw;
+> +       }
+> +
+> +       /* Register clock dividers specified in npcm7xx_divs. */
+> +       pr_debug("\tclk register divs\n");
+> +       for (i = 0; i < ARRAY_SIZE(npcm7xx_divs); i++) {
+> +               const struct npcm7xx_clk_div_data *div_data = &npcm7xx_divs[i];
+> +
+> +               pr_debug("\tadd div%d reg=0x%x name=%s, parent=%s\n",
+> +                               i, (unsigned int)div_data->reg,
+> +                               div_data->name, div_data->parent_name);
+
+Please remove all these debug prints.
+
+> +
+> +               hw = clk_hw_register_divider(NULL, div_data->name,
+> +                               div_data->parent_name,
+> +                               div_data->flags,
+> +                               clk_base + div_data->reg,
+> +                               div_data->shift, div_data->width,
+> +                               div_data->clk_divider_flags, &lock);
+> +               if (IS_ERR(hw)) {
+> +                       pr_err("npcm7xx_clk: Can't register div table\n");
+> +                       goto npcm7xx_init_fail;
+> +               }
+> +
+> +               if (div_data->onecell_idx >= 0)
+> +                       npcm7xx_clk_data->hws[div_data->onecell_idx] = hw;
+> +       }
+> +
+> +       ret = of_clk_add_hw_provider(clk_np, of_clk_hw_onecell_get,
+> +                                       npcm7xx_clk_data);
+> +       if (ret)
+> +               pr_err("failed to add DT provider: %d\n", ret);
+> +
+> +       pr_info("npcm7xx clk: %d dividers, %d muxes and %d plls registered.\n",
+> +               ARRAY_SIZE(npcm7xx_divs), ARRAY_SIZE(npcm7xx_muxes),
+> +               ARRAY_SIZE(npcm7xx_plls));
+
+Please remove this "I'm alive!" message.
+
+> +
+> +       of_node_put(clk_np);
+> +
+> +       return;
+> +
+> +npcm7xx_init_fail:
+> +       pr_debug("\tclk setup fail\n");
+
+Please don't put tabs at the beginning of printks.
+
+> +       if (npcm7xx_clk_data->num)
+> +               kfree(npcm7xx_clk_data->hws);
+> +npcm7xx_init_np_err:
+> +       if (clk_base != NULL)
+> +               iounmap(clk_base);
+> +npcm7xx_init_error:
+> +       of_node_put(clk_np);
+> +}
+> +
+> +CLK_OF_DECLARE(npcm7xx_clk_init, "nuvoton,npcm750-clk", npcm7xx_clk_init);
+
+Any reason this can't be a platform driver?
