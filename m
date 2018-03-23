@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182164-1521807329-2-16288532451066161284
+X-Cyrus-Session-Id: sloti22d1t05-1182439-1521807323-2-13452608208725270576
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807328; b=B7nTo7cXgpl7+IBI+rvREomKrLXTzfALCcl9SRIjg0kyeTn
-    5aHtS32N2fNqoQSlmZ5Rg+RjsLvPUtSWj6s3EgzzqLvqqrOWAYKJSv6VSgpV+sH5
-    wea0nNGxuHVx2HNLDRog/TRxUAGZWnMbckmLl+TgFaZNhWzE1zv3HB//JHCu9jTG
-    UNQdPmACxWOer5JEvgfP6ORv3tGYrjpQhDRnK9g2VFugNGbaSt0KrqhjSuouDuqo
-    A3Gzagf/Q6/pmt0ZCRQvNYoP3z9sJrtM19E/2s0CxKjiYwfLywyiVCGLWiEwjOLK
-    gfKLqNVuF7MyAcNbgSSVmfyKSn379HSsu4x6W1g==
+    t=1521807322; b=GMvd6xuj2NmYEihHhThggq4jqXy2h9F3SqMddnNEfta2DJS
+    Br8ioLwjHYI/yI8x1iNpR+RRCR10w4f4iXWHYhlMldnVpJ42CdABZal9FiLehQbe
+    3EhAob1PC+tCeGmqc9ZFeda39xm7l1lM5nkDzS98qILctKzcEmtv5RP8BkOIBS+j
+    NzcRWbO2427lCT/RK8GOklpxV9NlR1+XtPInbzpJLoC54NjUBXHv0XoBuB1mz+i1
+    ceqncM0HqOCre9aWamOKqdhdgvuzV5ZKGrbyI1RrPlv2J/u/1X8yji+qxiQEqbWL
+    6pnUcTiY62xtSmxvmW+88i5k1xcGdxxvey1KqWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807328; bh=c0hDAL8rNKhl/wl/LOuL9nWZQZ
-    O1Qg+xXkMen0iq/1Y=; b=C1p5LLdg4urMTGONxuCFCrIbi/REhLdY1lRQquUiBy
-    fdA9cx4XUEOKOxszcJy1jX6nEwtVn8RoHrFwwP8xpcPQ+Lsbhe1BttnznQzprMbf
-    LJ0339vGpJgkfsXAo5jwsbBIh5UY6UFpvb36pqe/3LzTIgwLctN5aNklxecracyc
-    iUN4Ttz9myoxIT5UfzVhTu0Dak7FF3vr4mNZX04P4lC6+uhSl8ARHBGL7+nT+v5E
-    w+GSJvAZqpo/O0dMmrxUxXa1o4RhdXkdrQ7LXBQkoroSSyuzCx0FAXWGiSR+6tCv
-    HVoJto6XHYR//TJJO0cMHRQd7VulYXWmVvJc6g8IN07w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521807322; bh=vJCdFSmpLEe5UjxpBCZwfyOojv
+    /d79h/LKEYEpujGdU=; b=jboQyTn2kJYWIHnx2pfijbGWJsNNMYR3nrWMwgG6bf
+    HiHdgEV+Im2fsINyBxGucBBs5MepJ4cg+L5X/oalfPzChIHtOpkWantW3OBlu5Xd
+    xkPynO7uTn7nNd4Eh4snU94GpeFAy76TIvxkR+T6W1+h4+xCZjMDRgvLnm8OSQHg
+    OPRmFXUMbmdSU3ScXFX2W1yNPgocILoIl57Ul+qnb2brL9gRmj26CwO5dG3rlVT2
+    w+9hG9ptLB3/FxJUdAyE1c2zqhyxYPcMw6j7pQWmzbCu1pM37Z+D68INUJHrzP1T
+    Spz61aiI0Afc9vxbopjyBDbPvrDsXH5EBDV9RP5DSa+g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752733AbeCWJ4y (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:56:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34132 "EHLO
+        id S1752800AbeCWMO7 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 08:14:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34166 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752686AbeCWJ4w (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:56:52 -0400
+        with ESMTP id S1752406AbeCWJ46 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:56:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@iguana.be>,
+        Kedareswara rao Appana <appanad@xilinx.com>,
+        Vinod Koul <vinod.koul@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 27/84] watchdog: Fix kref imbalance seen if handle_boot_enabled=0
-Date: Fri, 23 Mar 2018 10:53:41 +0100
-Message-Id: <20180323095416.016623189@linuxfoundation.org>
+Subject: [PATCH 4.15 29/84] dmaengine: zynqmp_dma: Fix race condition in the probe
+Date: Fri, 23 Mar 2018 10:53:43 +0100
+Message-Id: <20180323095416.293246720@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -84,51 +83,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Kedareswara rao Appana <appana.durga.rao@xilinx.com>
 
 
-[ Upstream commit 914d65f3f013ba2556c7beec5d3baac7b3292504 ]
+[ Upstream commit 5ba080aada5e739165e0f38d5cc3b04c82b323c8 ]
 
-If handle_boot_enabled is set to 0, the watchdog driver module use
-counter will not be increased and kref_get() will not be called when
-registering the watchdog. Subsequently, on open, this does not happen
-either because the code believes that it was already done because the
-hardware watchdog is marked as running.
+Incase of interrupt property is not present,
+Driver is trying to free an invalid irq,
+This patch fixes it by adding a check before freeing the irq.
 
-We could introduce a state variable to indicate this state, but let's
-just increase the module use counter and call kref_get() unconditionally
-if the hardware watchdog is running when a driver is registering itself
-to keep the code simple.
-
-Fixes: 2501b015313fe ("watchdog: core: add option to avoid early ...")
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+Signed-off-by: Kedareswara rao Appana <appanad@xilinx.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/watchdog_dev.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/dma/xilinx/zynqmp_dma.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/watchdog/watchdog_dev.c
-+++ b/drivers/watchdog/watchdog_dev.c
-@@ -967,14 +967,13 @@ static int watchdog_cdev_register(struct
- 	 * and schedule an immediate ping.
- 	 */
- 	if (watchdog_hw_running(wdd)) {
--		if (handle_boot_enabled) {
--			__module_get(wdd->ops->owner);
--			kref_get(&wd_data->kref);
-+		__module_get(wdd->ops->owner);
-+		kref_get(&wd_data->kref);
-+		if (handle_boot_enabled)
- 			queue_delayed_work(watchdog_wq, &wd_data->work, 0);
--		} else {
-+		else
- 			pr_info("watchdog%d running and kernel based pre-userspace handler disabled\n",
--					wdd->id);
--		}
-+				wdd->id);
- 	}
+--- a/drivers/dma/xilinx/zynqmp_dma.c
++++ b/drivers/dma/xilinx/zynqmp_dma.c
+@@ -838,7 +838,8 @@ static void zynqmp_dma_chan_remove(struc
+ 	if (!chan)
+ 		return;
  
- 	return 0;
+-	devm_free_irq(chan->zdev->dev, chan->irq, chan);
++	if (chan->irq)
++		devm_free_irq(chan->zdev->dev, chan->irq, chan);
+ 	tasklet_kill(&chan->tasklet);
+ 	list_del(&chan->common.device_node);
+ 	clk_disable_unprepare(chan->clk_apb);
