@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELv9NkTk+fR9yq03oxZSrtg8Ew7dqTedfp6a7RDTozJqDnLXBhg1bZu/YocVEqEpnjaq5It+
-ARC-Seal: i=1; a=rsa-sha256; t=1521800166; cv=none;
+X-Google-Smtp-Source: AG47ELvnnAa1uMkBdZAPaaTu6hBBnRzjihzdkczW5mEpRuVh7yNuWvnmITG6/R5PISwcoLWJynzF
+ARC-Seal: i=1; a=rsa-sha256; t=1521800164; cv=none;
         d=google.com; s=arc-20160816;
-        b=qHHNdiACaj9VXGzenDf8WhSYoVlsvYb+FVankrkd7C7E/e2k3qHynX7HGhTOs3Cj51
-         IAhamV1/a/0BIhnIQO0ejOCSxfq8TqYBr3drt8yN4A1Kubj69mGC9Qc2ec9YdVKByQJ9
-         8fXDjswX6LyvkPYz5xheSvCPXm9W5fOQS6IPsNKwPXVxcCTEsfoSv2OSnpyTI/A27Po+
-         b8wllOZ9qpmZpHorbaBo/pET89Ic3Hw4i8eAYAYNxJrv7mf82bdMx38zE3o6T4DKwnrm
-         /HbHB0JDMhuSzk6CJvaqqeRnw1fUvBtFNU/fZD35E6bXzM2CX+wy+d03cVQlviKjb6Kd
-         vitA==
+        b=k+r0JzKbEkmHr4hfyoP/3qvkryED7tDgV9CBTT7/LpCjB/peY83oZjQ1lHMG9S7rjm
+         2QlWSbqIV0QwP4Oz3RjMIzOmZPtZW9er6dNj13/4cjUyEP6GjomhDBjqptUWIR+ZFpoi
+         NI8B/UcSnWoYtxJi5l//D3Y3TvCBvW52osClR1IWvjpVbevtqwZWzOmHcsxWJhcnN9Oz
+         NALu3x+LyISUjdPlujJWFBAPP2wzkt2441IboyHD5FfrRijT2AX1z3b/2sKwHVlGd69Y
+         8lWxhSdVh6DwRwp1BeXBxIimaOk9wQ113rVOA5qCKhYlGnP84o024WPaKBN/7KS2oYgp
+         k3aw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GZUBqjv2rGx1i0YGReOgDu/z4E9F9qQCOQEH583BIbo=;
-        b=ShDqAom1e1AnixZ23NiigL0RqMe1CkS5yubFMhr0EQ40fOsZN7KuQzFZA7my7GPtwZ
-         3H+9gw0IzdzNB+Nh1hj3IBM0UxA2LzbwpGYdHT54aqSf4AUNjXka+YcrFz6t/88ksi9Y
-         VzNGv6P4L1JQO13Siw3xqeB2MKVPRlcD3HkiAOs5X1X+KY9rZc9zi2qN7KDD4HyJCWrR
-         9jMlDvuEzbR/12M3NWjret+fjhCok028DF4yZ7vDUhkgc/1bo+/nKavAvoZBWC/X+oQh
-         gvjTwqCUdQhYYzDIV73D7rh/wtUs7qlriiC103N366i0JstFCGJfvK3rMv5NQhbOPSyy
-         s6Hw==
+        bh=M2LX1T6DhVmd0ULCsSAPDA6u93AT2f8i9XBJfNTa3vg=;
+        b=CzcWvRbNY1ETt3yobPSjp9kcS9wR2CTd7uTg1M23yYkx+lc/gpAmOo26jabsOVJ1/q
+         9JtK9OyvpEAnNgnQnB3FRBEm1XgcKNwv9U0uJDeRIzwtJT6cOT1CCixtNRabeDEyE7fl
+         4bbvdK9AP3hUROzhZ1Qa/Rr/W/esmpXNcWiUSkrzuRKXSmUBLRYkDNPRCTDcfj8EKtIw
+         iiwexh0HIjlSKhnmr9V/Bk8AS6XkY6bYPmHZHQjJVqeBablbnEP+Yow1AaNwTJcTxOyu
+         hPpxH+pOcpQY3uS7B0BTImseEcuK/mFqSGgFLItAfi513N4B/BStA6m0NLpLJKzA4ZD3
+         w8dQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Filipe Manana <fdmanana@suse.com>,
-	Liu Bo <bo.li.liu@oracle.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 49/97] Btrfs: send, fix file hole not being preserved due to inline extent
-Date: Fri, 23 Mar 2018 10:54:36 +0100
-Message-Id: <20180323094200.358040036@linuxfoundation.org>
+Subject: [PATCH 4.4 58/97] ACPI / PMIC: xpower: Fix power_table addresses
+Date: Fri, 23 Mar 2018 10:54:45 +0100
+Message-Id: <20180323094200.892454673@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722632353760429?=
-X-GMAIL-MSGID: =?utf-8?q?1595723132113565912?=
+X-GMAIL-THRID: =?utf-8?q?1595722656164389359?=
+X-GMAIL-MSGID: =?utf-8?q?1595723128948741935?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,85 +51,157 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit e1cbfd7bf6dabdac561c75d08357571f44040a45 ]
+[ Upstream commit 2bde7c32b1db162692f05c6be066b5bcd3d9fdbe ]
 
-Normally we don't have inline extents followed by regular extents, but
-there's currently at least one harmless case where this happens. For
-example, when the page size is 4Kb and compression is enabled:
+The power table addresses should be contiguous, but there was a hole
+where 0x34 was missing. On most devices this is not a problem as
+addresses above 0x34 are used for the BUC# convertors which are not
+used in the DSDTs I've access to but after the BUC# convertors
+there is a field named GPI1 in the DSTDs, which does get used in some
+cases and ended up turning BUC6 on and off due to the wrong addresses,
+resulting in turning the entire device off (or causing it to reboot).
 
-  $ mkfs.btrfs -f /dev/sdb
-  $ mount -o compress /dev/sdb /mnt
-  $ xfs_io -f -c "pwrite -S 0xaa 0 4K" -c "fsync" /mnt/foobar
-  $ xfs_io -c "pwrite -S 0xbb 8K 4K" -c "fsync" /mnt/foobar
+Removing the hole in the addresses fixes this, fixing one of my
+Bay Trail tablets turning off while booting the mainline kernel.
 
-In this case we get a compressed inline extent, representing 4Kb of
-data, followed by a hole extent and then a regular data extent. The
-inline extent was not expanded/converted to a regular extent exactly
-because it represents 4Kb of data. This does not cause any apparent
-problem (such as the issue solved by commit e1699d2d7bf6
-("btrfs: add missing memset while reading compressed inline extents"))
-except trigger an unexpected case in the incremental send code path
-that makes us issue an operation to write a hole when it's not needed,
-resulting in more writes at the receiver and wasting space at the
-receiver.
+While at it add comments with the field names used in the DSDTs to
+make it easier to compare the register and bits used at each address
+with the datasheet.
 
-So teach the incremental send code to deal with this particular case.
-
-The issue can be currently triggered by running fstests btrfs/137 with
-compression enabled (MOUNT_OPTIONS="-o compress" ./check btrfs/137).
-
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/send.c |   23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ drivers/acpi/pmic/intel_pmic_xpower.c |   50 +++++++++++++++++-----------------
+ 1 file changed, 25 insertions(+), 25 deletions(-)
 
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -5008,13 +5008,19 @@ static int is_extent_unchanged(struct se
- 	while (key.offset < ekey->offset + left_len) {
- 		ei = btrfs_item_ptr(eb, slot, struct btrfs_file_extent_item);
- 		right_type = btrfs_file_extent_type(eb, ei);
--		if (right_type != BTRFS_FILE_EXTENT_REG) {
-+		if (right_type != BTRFS_FILE_EXTENT_REG &&
-+		    right_type != BTRFS_FILE_EXTENT_INLINE) {
- 			ret = 0;
- 			goto out;
- 		}
+--- a/drivers/acpi/pmic/intel_pmic_xpower.c
++++ b/drivers/acpi/pmic/intel_pmic_xpower.c
+@@ -28,97 +28,97 @@ static struct pmic_table power_table[] =
+ 		.address = 0x00,
+ 		.reg = 0x13,
+ 		.bit = 0x05,
+-	},
++	}, /* ALD1 */
+ 	{
+ 		.address = 0x04,
+ 		.reg = 0x13,
+ 		.bit = 0x06,
+-	},
++	}, /* ALD2 */
+ 	{
+ 		.address = 0x08,
+ 		.reg = 0x13,
+ 		.bit = 0x07,
+-	},
++	}, /* ALD3 */
+ 	{
+ 		.address = 0x0c,
+ 		.reg = 0x12,
+ 		.bit = 0x03,
+-	},
++	}, /* DLD1 */
+ 	{
+ 		.address = 0x10,
+ 		.reg = 0x12,
+ 		.bit = 0x04,
+-	},
++	}, /* DLD2 */
+ 	{
+ 		.address = 0x14,
+ 		.reg = 0x12,
+ 		.bit = 0x05,
+-	},
++	}, /* DLD3 */
+ 	{
+ 		.address = 0x18,
+ 		.reg = 0x12,
+ 		.bit = 0x06,
+-	},
++	}, /* DLD4 */
+ 	{
+ 		.address = 0x1c,
+ 		.reg = 0x12,
+ 		.bit = 0x00,
+-	},
++	}, /* ELD1 */
+ 	{
+ 		.address = 0x20,
+ 		.reg = 0x12,
+ 		.bit = 0x01,
+-	},
++	}, /* ELD2 */
+ 	{
+ 		.address = 0x24,
+ 		.reg = 0x12,
+ 		.bit = 0x02,
+-	},
++	}, /* ELD3 */
+ 	{
+ 		.address = 0x28,
+ 		.reg = 0x13,
+ 		.bit = 0x02,
+-	},
++	}, /* FLD1 */
+ 	{
+ 		.address = 0x2c,
+ 		.reg = 0x13,
+ 		.bit = 0x03,
+-	},
++	}, /* FLD2 */
+ 	{
+ 		.address = 0x30,
+ 		.reg = 0x13,
+ 		.bit = 0x04,
+-	},
++	}, /* FLD3 */
+ 	{
+-		.address = 0x38,
++		.address = 0x34,
+ 		.reg = 0x10,
+ 		.bit = 0x03,
+-	},
++	}, /* BUC1 */
+ 	{
+-		.address = 0x3c,
++		.address = 0x38,
+ 		.reg = 0x10,
+ 		.bit = 0x06,
+-	},
++	}, /* BUC2 */
+ 	{
+-		.address = 0x40,
++		.address = 0x3c,
+ 		.reg = 0x10,
+ 		.bit = 0x05,
+-	},
++	}, /* BUC3 */
+ 	{
+-		.address = 0x44,
++		.address = 0x40,
+ 		.reg = 0x10,
+ 		.bit = 0x04,
+-	},
++	}, /* BUC4 */
+ 	{
+-		.address = 0x48,
++		.address = 0x44,
+ 		.reg = 0x10,
+ 		.bit = 0x01,
+-	},
++	}, /* BUC5 */
+ 	{
+-		.address = 0x4c,
++		.address = 0x48,
+ 		.reg = 0x10,
+ 		.bit = 0x00
+-	},
++	}, /* BUC6 */
+ };
  
- 		right_disknr = btrfs_file_extent_disk_bytenr(eb, ei);
--		right_len = btrfs_file_extent_num_bytes(eb, ei);
-+		if (right_type == BTRFS_FILE_EXTENT_INLINE) {
-+			right_len = btrfs_file_extent_inline_len(eb, slot, ei);
-+			right_len = PAGE_ALIGN(right_len);
-+		} else {
-+			right_len = btrfs_file_extent_num_bytes(eb, ei);
-+		}
- 		right_offset = btrfs_file_extent_offset(eb, ei);
- 		right_gen = btrfs_file_extent_generation(eb, ei);
- 
-@@ -5028,6 +5034,19 @@ static int is_extent_unchanged(struct se
- 			goto out;
- 		}
- 
-+		/*
-+		 * We just wanted to see if when we have an inline extent, what
-+		 * follows it is a regular extent (wanted to check the above
-+		 * condition for inline extents too). This should normally not
-+		 * happen but it's possible for example when we have an inline
-+		 * compressed extent representing data with a size matching
-+		 * the page size (currently the same as sector size).
-+		 */
-+		if (right_type == BTRFS_FILE_EXTENT_INLINE) {
-+			ret = 0;
-+			goto out;
-+		}
-+
- 		left_offset_fixed = left_offset;
- 		if (key.offset < ekey->offset) {
- 			/* Fix the right offset for 2a and 7. */
+ /* TMP0 - TMP5 are the same, all from GPADC */
