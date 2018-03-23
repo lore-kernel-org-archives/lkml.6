@@ -1,37 +1,71 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsxicbIADVKxTLGDt6Vg8mgcZvemo5GI9NNMKOn4zQSw7Dveb4KjT+et+F9Av+ozHZYRQDU
-ARC-Seal: i=1; a=rsa-sha256; t=1521799288; cv=none;
-        d=google.com; s=arc-20160816;
-        b=mC52cadwo4UmT3uQDR2cEmlyjfd6hsgAQkrAbj1eDsXn6iXhCQPz88ryFTJ+Ti6cLC
-         KiGjo3Qn6RZ+9x8x5Iro/Pnn9wHelGeUthdK1hS8l5qoBVEs6ohH9IOtuwucFcQF4op3
-         fOsEgeptvqDpuYhreAntWNsWw9U/yVEY0I6S81o0qwR03PA/hJ5qk/tam1AAtVyhQs8m
-         Nj+EuBvLuhwPP9tCcRPOZNWUTEW9nmTm2WnaBrDoa0LMWIq2d6bESoQomoh6BUTd0vZZ
-         zRn2RRsu0r89RbrmR7TmWyzhXzC0Kf/CIfV/dqhTg4z+JJVzrtc/H7tuIt6GKKPzZnRT
-         w/TQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=vj0l0G7/SwLCZaaO3Zq1Gqm3YxQE9EVOl8j1BflGxuo=;
-        b=CoLL93/mJrZC7+0EPx9Bs2kZ26hJH4wR8K5StDrqWndHoePINMw3/9uPHE0JtzaVR8
-         aiMOmPrSsjAtfgrOBu78nnVDk3euv71q7T0naexQOX9r0iNB1MFCq8Jlotfw4l0XIlIn
-         J5+A6oRWMckiHnj40g/OyhvTNUEdwzARkqIRRC9I+7OkgceYE/ybIuCgCY12p5iAixtY
-         REHv7LMFRCztZAguA98Oi2BE51W3miH6B1mltUXmr5d/JME/rJwkrrvfgcnEVFQaoe0j
-         xjXVHr+JxcbCTQNQDMsIMyMMSCbhkO7mBMsSw4UZkVpPsr6z9TLkqyZEhcOlzU9Dya5y
-         xMmA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-947063-1521799269-2-11556847515744830033
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521799269; b=BGOi49yJmUd3jDxeLQtCNB+y2WMMinaNyL3AOYp4nGGv6qh
+    TM9Hd14aVX9WUBjqfyWaKrIn1TR43bxkAloS6bqbnPAHILU3fNcbLKQ4cUR9WOUm
+    Abs700bpuDdvAqiQU5CWZK7Bv2r4IjY0cdMGzGaL0zkmQYyatAiN8mLdi5rfUXfJ
+    sOwG+MW6Co/5/FDoO3PMsIZaGPzH4Dz5T6cFqhLTmnu5LPyeJU5qaurvlWSE4VRH
+    qGa8tF0rlBo746TEHVqhGf5Sfa/MaM6zLbKdfSjR1jWj8ZJm+miRignAUCBuficO
+    aAspUxb2vLRJ12cshr7U2Zn3VkS0rOmbPfs0EEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521799269; bh=/Tog9Km9BaB09ZFe4Wqvkyuyek
+    sYcw5Ewe8xMv5p6UI=; b=RJ/LChK9dkp/A4bFFzwlaGTQKXhGVjHVmsnSDs0F8q
+    7NIcmpFw3/dkDAinFZsaDLyJDH8aeovNRVEePGhnN0gazpffHYcdRCraY4OLAY79
+    GgL/hXO3XHS3acjrrSsk2OsV0uU8gBmhuDmidXV5afP0JPOmSjbRoBjjZoa+fCeC
+    PVPGsPBVX+3pWDRSS/k2VzHxlwZRwts3UXhGi+qUiNrR8Wi+etdA4b33QoxcXx/d
+    iXO3lv20nMQLmoXV8RocN6R47loEzgBoGeAGViktPnrip84DcL4/FjlWaIIjTJVu
+    zZEr/ruPvLXC3ZhUrWO6dHOC0uxuYa3YnCN9CbFgYMDQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753331AbeCWKBG (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:01:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37604 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752537AbeCWKBE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:01:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 18/77] qmi_wwan: set FLAG_SEND_ZLP to avoid network initiated disconnect
-Date: Fri, 23 Mar 2018 10:53:52 +0100
-Message-Id: <20180323094143.436287448@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kedareswara rao Appana <appanad@xilinx.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 25/77] dmaengine: zynqmp_dma: Fix race condition in the probe
+Date: Fri, 23 Mar 2018 10:53:59 +0100
+Message-Id: <20180323094143.903687111@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -39,10 +73,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721946694563316?=
-X-GMAIL-MSGID: =?utf-8?q?1595722210652218111?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,44 +83,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Bjørn Mork" <bjorn@mork.no>
+From: Kedareswara rao Appana <appana.durga.rao@xilinx.com>
 
 
-[ Upstream commit 245d21190aec547c0de64f70c0e6de871c185a24 ]
+[ Upstream commit 5ba080aada5e739165e0f38d5cc3b04c82b323c8 ]
 
-It has been reported that the dummy byte we add to avoid
-ZLPs can be forwarded by the modem to the PGW/GGSN, and that
-some operators will drop the connection if this happens.
+Incase of interrupt property is not present,
+Driver is trying to free an invalid irq,
+This patch fixes it by adding a check before freeing the irq.
 
-In theory, QMI devices are based on CDC ECM and should as such
-both support ZLPs and silently ignore the dummy byte.  The latter
-assumption failed.  Let's test out the first.
-
-Signed-off-by: BjÃ¸rn Mork <bjorn@mork.no>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Kedareswara rao Appana <appanad@xilinx.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/qmi_wwan.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/xilinx/zynqmp_dma.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -826,7 +826,7 @@ err:
+--- a/drivers/dma/xilinx/zynqmp_dma.c
++++ b/drivers/dma/xilinx/zynqmp_dma.c
+@@ -838,7 +838,8 @@ static void zynqmp_dma_chan_remove(struc
+ 	if (!chan)
+ 		return;
  
- static const struct driver_info	qmi_wwan_info = {
- 	.description	= "WWAN/QMI device",
--	.flags		= FLAG_WWAN,
-+	.flags		= FLAG_WWAN | FLAG_SEND_ZLP,
- 	.bind		= qmi_wwan_bind,
- 	.unbind		= qmi_wwan_unbind,
- 	.manage_power	= qmi_wwan_manage_power,
-@@ -835,7 +835,7 @@ static const struct driver_info	qmi_wwan
- 
- static const struct driver_info	qmi_wwan_info_quirk_dtr = {
- 	.description	= "WWAN/QMI device",
--	.flags		= FLAG_WWAN,
-+	.flags		= FLAG_WWAN | FLAG_SEND_ZLP,
- 	.bind		= qmi_wwan_bind,
- 	.unbind		= qmi_wwan_unbind,
- 	.manage_power	= qmi_wwan_manage_power,
+-	devm_free_irq(chan->zdev->dev, chan->irq, chan);
++	if (chan->irq)
++		devm_free_irq(chan->zdev->dev, chan->irq, chan);
+ 	tasklet_kill(&chan->tasklet);
+ 	list_del(&chan->common.device_node);
+ 	clk_disable_unprepare(chan->clk_apb);
