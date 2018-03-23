@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805504-2-11257056719297761172
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805489-2-4429949982473192198
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805503; b=ho21ZgyvJHH78ZlBvkI3dVMpsPGgAyiULdCQhuvG5hFmJZS
-    ky+mGfc/eBIJ0YakUtsV+oYujdMIpEcK0ny6cjyPeeGk9dtvzAwDBvpY1GaCnNTb
-    NW1riDsxRkKTq/3Hecs899xoXDjay5ZGYUlxFbbNBYAshLEp+fkR1/oSSLEWj3Pr
-    2Chuo7+Ffzje06C36o3hBhHSHqwOYcAFMyrem8cP+Pmz+8MutipDftkxYNwVNY20
-    o2Z/UZKNa+s3DaDvK1iCQZri3MEcEPYCzfMrZR0w8mws0grn8yTcpMyxxo4LLmLT
-    5Qgi2bP9zfkkYVgr9TlWTwo9b094W7f3VxU2XnA==
+    t=1521805489; b=S1EGIyZh4lCWzG+UG17ZKrlcwpPM5SC/DaEggW32u8VMVAQ
+    SG+lcylt1tSFnK0yhYi11ZGHZ9szxu68Gn0blKDAcdVGQ6ncGnXQkm1MUezzsjVy
+    dxAJb9OQYLq8rW0CfO1lZ05kSspKSaBh+GPf0nN+V40hR7HmA1UAgjGuyiJFR7WW
+    FpTlYybtIn8kt1I3B752hEJdGBhH+iirOcFdGPxBgru0K9nJ2S1XJsHokpS0q7fZ
+    Ng7H8R+ajOyQ8bxe+NvCxZ0wl/og8xKGfT6zyvcgLnmECDDbSqyc8Go30KDYOgNS
+    PKEOyej4qtTdQqG+5xxPnJVxD8EfNkFjkLmRxXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805503; bh=71WFCAGJRd9GWjtPQ0X95I+iQo
-    r8DA7rwDJ5gXvL3Hc=; b=EAJNgJAu5trDQBOMqj2rzl/b7e2ccJA0klPP8lS/5V
-    v9KJt+CcSBMG+mPYkueU+49VHnE/eLDDVm2HCyhxtHofifekxDUgT5ZahLi7BDgo
-    Wz6qY+LhuIbqVD3f55wzpcyhBjkW6hGmikueNLuf8hJlghBbVk5MpKVLCcfsJpbJ
-    9h2sNETJeVDxq1JXrpTcKvzuIBm3b7RcBRhBalZlUi16twbj+EFSAfhxq91Q2Y0E
-    N8W88JGg+k1VVBKiSFqFmbbSMdclhGZrtT5ZK7gRyv/0WXWq1hY5Thow/0ebGb7e
-    mdgTtBusALgb+byUSZJWVN2kxML1cQn6fxhKzlTya4SA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805489; bh=iMjM5cEL3wLi/u0hw4Er/dqMie
+    5maBjRnGgXG97nm4s=; b=kzFxxgAzP3kfYbx6rXcu42RCi8c6jyhXuDjVDNRu6T
+    WIPi1UL67Jn+6rGHtj6aZNJ+CPK+FSiHnbiF/4Wg5M5uFr3NOlqU6QVIELL0GzWl
+    W/ShRzb+uKc+b2OlUffm6ew8O4fwWRdJUVzZ6GM7mnFE4C6wtG/+YY/Uo/ufFtSM
+    dp1TuaKH0cxmtJ9AM+qNE1QtpJDc4O5sO0AANm1MJHjpDuLC4rNCr+4A+28r3GPj
+    jLmmnAunAroY4yN2bP/eCa0TVha86nYwIuX/st47L6MEjkKz8BDRm9LraHLP64NV
+    pvJWY48dnHPunx94ZJk4TXRDkb8B1GRjGdAxg0wwlzlA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,24 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753982AbeCWKDS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:03:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38710 "EHLO
+        id S1754558AbeCWLop (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:44:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38720 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754417AbeCWKDQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:16 -0400
+        with ESMTP id S1754421AbeCWKDT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, William Tu <u9012063@gmail.com>,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 54/77] ip_gre: fix potential memory leak in erspan_rcv
-Date: Fri, 23 Mar 2018 10:54:28 +0100
-Message-Id: <20180323094145.886610783@linuxfoundation.org>
+Subject: [PATCH 4.14 55/77] soc: qcom: smsm: fix child-node lookup
+Date: Fri, 23 Mar 2018 10:54:29 +0100
+Message-Id: <20180323094145.949586648@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,35 +85,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+From: Johan Hovold <johan@kernel.org>
 
 
-[ Upstream commit 50670b6ee9bc4ae8f9ce3112b437987adf273245 ]
+[ Upstream commit 8804517e9fc16c10081ff5e42e7d80704973a8e2 ]
 
-If md is NULL, tun_dst must be freed, otherwise it will cause memory
-leak.
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-Fixes: 1a66a836da6 ("gre: add collect_md mode to ERSPAN tunnel")
-Cc: William Tu <u9012063@gmail.com>
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Note that the original premature free of the parent node has already
+been fixed separately.
+
+Also note that this pattern of looking up the first child node with a
+given property is rare enough that a generic helper is probably not
+warranted.
+
+Fixes: c97c4090ff72 ("soc: qcom: smsm: Add driver for Qualcomm SMSM")
+Fixes: 3e8b55411468 ("soc: qcom: smsm: fix of_node refcnting problem")
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_gre.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/soc/qcom/smsm.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -303,8 +303,10 @@ static int erspan_rcv(struct sk_buff *sk
- 				return PACKET_REJECT;
+--- a/drivers/soc/qcom/smsm.c
++++ b/drivers/soc/qcom/smsm.c
+@@ -496,8 +496,10 @@ static int qcom_smsm_probe(struct platfo
+ 	if (!smsm->hosts)
+ 		return -ENOMEM;
  
- 			md = ip_tunnel_info_opts(&tun_dst->u.tun_info);
--			if (!md)
-+			if (!md) {
-+				dst_release((struct dst_entry *)tun_dst);
- 				return PACKET_REJECT;
-+			}
- 
- 			md->index = index;
- 			info = &tun_dst->u.tun_info;
+-	local_node = of_find_node_with_property(of_node_get(pdev->dev.of_node),
+-						"#qcom,smem-state-cells");
++	for_each_child_of_node(pdev->dev.of_node, local_node) {
++		if (of_find_property(local_node, "#qcom,smem-state-cells", NULL))
++			break;
++	}
+ 	if (!local_node) {
+ 		dev_err(&pdev->dev, "no state entry\n");
+ 		return -EINVAL;
