@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805890-2-10955020732458867921
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805880-2-12428190390054000391
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805889; b=PI0Lo0lwL+ZvJ7LqxffctMq71mzmUfBXUvFpoqFR4LrQLTp
-    0VF2KR72FJXDFiVwsPmHlS5xVpgOODIjwQUd7SRmCJe9wpwrxrm+NM8vMaiR/+2s
-    opcs214QRSEtb9CgPqborC6IAmAuUUHRY72zHyJk9HXUE02ZzUhLph2z5LhWUEdV
-    e2dlAmfOg8gLPfr3p1OSKB+p6hEbik2RIftz1lvoXxbq4sjYwtUsjD/XE+ZAxSIJ
-    ovfwVFzop75S6rd5ywTcQ90RkM09tQycseXlCRGu7y6nqM6Ki3uaa55V6e+yDkDb
-    sK17HGbyz1WMXZYMnSc5naFpxn5aipyulRzm+5g==
+    t=1521805879; b=T8tmnfHkrXS1ydhXAwPBPvkW+mbvoeMDie9/arI3KiUkvPh
+    japJXomymMpXUAi3ZhkRGUXhu+AJb5Jy1gVbzHbuDTFWbnxIDB20iBOQqniFORe3
+    qqwPcmm6zZCM57A+wrx0I5FRrpOG1kl7xTKyw83X3hXlA8fvgvgIx/RJNhJgWYeG
+    xjXsjcPk0QO5tSbvYfJ3pwaXqbdm517OU5dWL+zzekTWmaUvCFIu99pOCwGb97ZZ
+    q90zyWC1AOK/Jq1Ra4fpghtlLEpb58mScfLzpHNSr/NFFffbTzTb0DfAqpm1Cz6H
+    RuORai8hRc/ekSOB9kl6shMWTlvncE/0DfJS98A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805889; bh=vwLKSxEqRLbENLND7Beqp0jG1E
-    OG+RGV7JvxnbOLeg4=; b=WHtbEY/KD4wPxnWrj1pwUToq7stifIpsZwGSjFnuc6
-    CJWM9r+6wLc9Jm1zLBIuJKPwre0KSPvFs4DyMAJr6reMAxqLRGWny6pYw2jU7HzU
-    rU74uoD0UW4KT1wD6paXJZ6R1mQWTNyF2nZ1oK8DZbQvkQzgvL7SIiQ5CUMw6OGu
-    QaDqSf2LYIfQut8N02kCW/CBDgqOe8G/lCeVBmUbfrBV7elzY+4SbMjt/a7Ts2sW
-    cVzTOGS/oKG2miD16ofi2evtgSWuxK5ZvTMpZy5fLQReP0lhZIl6lvOYvI/QnIlF
-    ehfa0sMkwcKzTKm0sY3EqQt2j5NPTiAwFyNJg7PpY8Vg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805879; bh=l1nq+wkyUwgAZrw9+O8QGgGHw0
+    /VfSUKC7VK+JcXfVI=; b=r9vEaI7KiVXDPWTRsBHTbnpq4n95a+OFlmyCW0e640
+    tNZegrI4p86I3E9J7zbe8WDHDxxo5buWAst7gWW+tL1Cz4MEv7GP/R7xVjgFBYnm
+    gssQnGorEHG0MHAiLj3MGMmXhzwCZZ9e5MCYVeZMIpcFHUvHbmh+FbzBgPCyqPsE
+    wA615MD8DGBH2beYZ0Wi2BPMEL3kudgl4WV/2yl1+ZIKt7E+ORTx+okiY2XIA9Iz
+    JsLs9pebND5upU9vEb13HJ5sv0ylWS8empnUFhC8cvWdo3Sshw9aRzS5UWBlhmEe
+    RVfUES807QQoiHZex2Y427LVG2Xx57/3kcrNht9BhW2g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753607AbeCWKCN (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:02:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38240 "EHLO
+        id S1753768AbeCWKCQ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:02:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38264 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754132AbeCWKCM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:02:12 -0400
+        with ESMTP id S1754132AbeCWKCP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:02:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        stable@vger.kernel.org,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 33/77] media: s5p-mfc: Fix lock contention - request_firmware() once
-Date: Fri, 23 Mar 2018 10:54:07 +0100
-Message-Id: <20180323094144.484859164@linuxfoundation.org>
+Subject: [PATCH 4.14 34/77] rtc: ac100: Fix multiple race conditions
+Date: Fri, 23 Mar 2018 10:54:08 +0100
+Message-Id: <20180323094144.541616351@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,173 +83,119 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
 
-[ Upstream commit f45ce9877561044090010e0eb0fad644232ded04 ]
+[ Upstream commit 994ec64c0a193940be7a6fd074668b9446d3b6c3 ]
 
-Driver calls request_firmware() whenever the device is opened for the
-first time. As the device gets opened and closed, dev->num_inst == 1
-is true several times. This is not necessary since the firmware is saved
-in the fw_buf. s5p_mfc_load_firmware() copies the buffer returned by
-the request_firmware() to dev->fw_buf.
+The probe function is not allowed to fail after registering the RTC because
+the following may happen:
 
-fw_buf sticks around until it gets released from s5p_mfc_remove(), hence
-there is no need to keep requesting firmware and copying it to fw_buf.
+CPU0:                                CPU1:
+sys_load_module()
+ do_init_module()
+  do_one_initcall()
+   cmos_do_probe()
+    rtc_device_register()
+     __register_chrdev()
+     cdev->owner = struct module*
+                                     open("/dev/rtc0")
+    rtc_device_unregister()
+  module_put()
+  free_module()
+   module_free(mod->module_core)
+   /* struct module *module is now
+      freed */
+                                      chrdev_open()
+                                       spin_lock(cdev_lock)
+                                       cdev_get()
+                                        try_module_get()
+                                         module_is_live()
+                                         /* dereferences already
+                                            freed struct module* */
 
-This might have been overlooked when changes are made to free fw_buf from
-the device release interface s5p_mfc_release().
+Also, the interrupt handler: ac100_rtc_irq() is dereferencing chip->rtc but
+this may still be NULL when it is called, resulting in:
+Unable to handle kernel NULL pointer dereference at virtual address 00000194
+pgd = (ptrval)
+[00000194] *pgd=00000000
+Internal error: Oops: 5 [#1] SMP ARM
+Modules linked in:
+CPU: 0 PID: 72 Comm: irq/71-ac100-rt Not tainted 4.15.0-rc1-next-20171201-dirty #120
+Hardware name: Allwinner sun8i Family
+task: (ptrval) task.stack: (ptrval)
+PC is at mutex_lock+0x14/0x3c
+LR is at ac100_rtc_irq+0x38/0xc8
+pc : [<c06543a4>]    lr : [<c04d9a2c>]    psr: 60000053
+sp : ee9c9f28  ip : 00000000  fp : ee9adfdc
+r10: 00000000  r9 : c0a04c48  r8 : c015ed18
+r7 : ee9bd600  r6 : ee9c9f28  r5 : ee9af590  r4 : c0a04c48
+r3 : ef3cb3c0  r2 : 00000000  r1 : ee9af590  r0 : 00000194
+Flags: nZCv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 4000406a  DAC: 00000051
+Process irq/71-ac100-rt (pid: 72, stack limit = 0x(ptrval))
+Stack: (0xee9c9f28 to 0xee9ca000)
+9f20:                   00000000 7c2fd1be c015ed18 ee9adf40 ee9c0400 ee9c0400
+9f40: ee9adf40 c015ed34 ee9c8000 ee9adf64 ee9c0400 c015f040 ee9adf80 00000000
+9f60: c015ee24 7c2fd1be ee9adfc0 ee9adf80 00000000 ee9c8000 ee9adf40 c015eef4
+9f80: ef1eba34 c0138f14 ee9c8000 ee9adf80 c0138df4 00000000 00000000 00000000
+9fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
+9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9fe0: 00000000 00000000 00000000 00000000 00000013 00000000 ffffffff ffffffff
+[<c06543a4>] (mutex_lock) from [<c04d9a2c>] (ac100_rtc_irq+0x38/0xc8)
+[<c04d9a2c>] (ac100_rtc_irq) from [<c015ed34>] (irq_thread_fn+0x1c/0x54)
+[<c015ed34>] (irq_thread_fn) from [<c015f040>] (irq_thread+0x14c/0x214)
+[<c015f040>] (irq_thread) from [<c0138f14>] (kthread+0x120/0x150)
+[<c0138f14>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
 
-Fix s5p_mfc_load_firmware() to call request_firmware() once and keep state.
-Change _probe() to load firmware once fw_buf has been allocated.
+Solve both issues by moving to
+devm_rtc_allocate_device()/rtc_register_device()
 
-s5p_mfc_open() and it continues to call s5p_mfc_load_firmware() and init
-hardware which is the step where firmware is written to the device.
-
-This addresses the mfc_mutex contention due to repeated request_firmware()
-calls from open() in the following circular locking warning:
-
-[  552.194115] qtdemux0:sink/2710 is trying to acquire lock:
-[  552.199488]  (&dev->mfc_mutex){+.+.}, at: [<bf145544>] s5p_mfc_mmap+0x28/0xd4 [s5p_mfc]
-[  552.207459]
-               but task is already holding lock:
-[  552.213264]  (&mm->mmap_sem){++++}, at: [<c01df2e4>] vm_mmap_pgoff+0x44/0xb8
-[  552.220284]
-               which lock already depends on the new lock.
-
-[  552.228429]
-               the existing dependency chain (in reverse order) is:
-[  552.235881]
-               -> #2 (&mm->mmap_sem){++++}:
-[  552.241259]        __might_fault+0x80/0xb0
-[  552.245331]        filldir64+0xc0/0x2f8
-[  552.249144]        call_filldir+0xb0/0x14c
-[  552.253214]        ext4_readdir+0x768/0x90c
-[  552.257374]        iterate_dir+0x74/0x168
-[  552.261360]        SyS_getdents64+0x7c/0x1a0
-[  552.265608]        ret_fast_syscall+0x0/0x28
-[  552.269850]
-               -> #1 (&type->i_mutex_dir_key#2){++++}:
-[  552.276180]        down_read+0x48/0x90
-[  552.279904]        lookup_slow+0x74/0x178
-[  552.283889]        walk_component+0x1a4/0x2e4
-[  552.288222]        link_path_walk+0x174/0x4a0
-[  552.292555]        path_openat+0x68/0x944
-[  552.296541]        do_filp_open+0x60/0xc4
-[  552.300528]        file_open_name+0xe4/0x114
-[  552.304772]        filp_open+0x28/0x48
-[  552.308499]        kernel_read_file_from_path+0x30/0x78
-[  552.313700]        _request_firmware+0x3ec/0x78c
-[  552.318291]        request_firmware+0x3c/0x54
-[  552.322642]        s5p_mfc_load_firmware+0x54/0x150 [s5p_mfc]
-[  552.328358]        s5p_mfc_open+0x4e4/0x550 [s5p_mfc]
-[  552.333394]        v4l2_open+0xa0/0x104 [videodev]
-[  552.338137]        chrdev_open+0xa4/0x18c
-[  552.342121]        do_dentry_open+0x208/0x310
-[  552.346454]        path_openat+0x28c/0x944
-[  552.350526]        do_filp_open+0x60/0xc4
-[  552.354512]        do_sys_open+0x118/0x1c8
-[  552.358586]        ret_fast_syscall+0x0/0x28
-[  552.362830]
-               -> #0 (&dev->mfc_mutex){+.+.}:
-               -> #0 (&dev->mfc_mutex){+.+.}:
-[  552.368379]        lock_acquire+0x6c/0x88
-[  552.372364]        __mutex_lock+0x68/0xa34
-[  552.376437]        mutex_lock_interruptible_nested+0x1c/0x24
-[  552.382086]        s5p_mfc_mmap+0x28/0xd4 [s5p_mfc]
-[  552.386939]        v4l2_mmap+0x54/0x88 [videodev]
-[  552.391601]        mmap_region+0x3a8/0x638
-[  552.395673]        do_mmap+0x330/0x3a4
-[  552.399400]        vm_mmap_pgoff+0x90/0xb8
-[  552.403472]        SyS_mmap_pgoff+0x90/0xc0
-[  552.407632]        ret_fast_syscall+0x0/0x28
-[  552.411876]
-               other info that might help us debug this:
-
-[  552.419848] Chain exists of:
-                 &dev->mfc_mutex --> &type->i_mutex_dir_key#2 --> &mm->mmap_sem
-
-[  552.431200]  Possible unsafe locking scenario:
-
-[  552.437092]        CPU0                    CPU1
-[  552.441598]        ----                    ----
-[  552.446104]   lock(&mm->mmap_sem);
-[  552.449484]                                lock(&type->i_mutex_dir_key#2);
-[  552.456329]                                lock(&mm->mmap_sem);
-[  552.462222]   lock(&dev->mfc_mutex);
-[  552.465775]
-                *** DEADLOCK ***
-
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Reported-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c        |    6 ++++++
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    3 +++
- drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c   |    5 +++++
- 3 files changed, 14 insertions(+)
+ drivers/rtc/rtc-ac100.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1315,6 +1315,12 @@ static int s5p_mfc_probe(struct platform
- 		goto err_dma;
+--- a/drivers/rtc/rtc-ac100.c
++++ b/drivers/rtc/rtc-ac100.c
+@@ -567,6 +567,12 @@ static int ac100_rtc_probe(struct platfo
+ 		return chip->irq;
  	}
  
-+	/*
-+	 * Load fails if fs isn't mounted. Try loading anyway.
-+	 * _open() will load it, it it fails now. Ignore failure.
-+	 */
-+	s5p_mfc_load_firmware(dev);
++	chip->rtc = devm_rtc_allocate_device(&pdev->dev);
++	if (IS_ERR(chip->rtc))
++		return PTR_ERR(chip->rtc);
 +
- 	mutex_init(&dev->mfc_mutex);
- 	init_waitqueue_head(&dev->queue);
- 	dev->hw_lock = 0;
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -290,6 +290,8 @@ struct s5p_mfc_priv_buf {
-  * @mfc_cmds:		cmd structure holding HW commands function pointers
-  * @mfc_regs:		structure holding MFC registers
-  * @fw_ver:		loaded firmware sub-version
-+ * @fw_get_done		flag set when request_firmware() is complete and
-+ *			copied into fw_buf
-  * risc_on:		flag indicates RISC is on or off
-  *
-  */
-@@ -336,6 +338,7 @@ struct s5p_mfc_dev {
- 	struct s5p_mfc_hw_cmds *mfc_cmds;
- 	const struct s5p_mfc_regs *mfc_regs;
- 	enum s5p_mfc_fw_ver fw_ver;
-+	bool fw_get_done;
- 	bool risc_on; /* indicates if RISC is on or off */
- };
- 
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-@@ -55,6 +55,9 @@ int s5p_mfc_load_firmware(struct s5p_mfc
- 	 * into kernel. */
- 	mfc_debug_enter();
- 
-+	if (dev->fw_get_done)
-+		return 0;
++	chip->rtc->ops = &ac100_rtc_ops;
 +
- 	for (i = MFC_FW_MAX_VERSIONS - 1; i >= 0; i--) {
- 		if (!dev->variant->fw_name[i])
- 			continue;
-@@ -82,6 +85,7 @@ int s5p_mfc_load_firmware(struct s5p_mfc
- 	}
- 	memcpy(dev->fw_buf.virt, fw_blob->data, fw_blob->size);
- 	wmb();
-+	dev->fw_get_done = true;
- 	release_firmware(fw_blob);
- 	mfc_debug_leave();
- 	return 0;
-@@ -93,6 +97,7 @@ int s5p_mfc_release_firmware(struct s5p_
- 	/* Before calling this function one has to make sure
- 	 * that MFC is no longer processing */
- 	s5p_mfc_release_priv_buf(dev, &dev->fw_buf);
-+	dev->fw_get_done = false;
- 	return 0;
- }
+ 	ret = devm_request_threaded_irq(&pdev->dev, chip->irq, NULL,
+ 					ac100_rtc_irq,
+ 					IRQF_SHARED | IRQF_ONESHOT,
+@@ -586,17 +592,16 @@ static int ac100_rtc_probe(struct platfo
+ 	/* clear counter alarm pending interrupts */
+ 	regmap_write(chip->regmap, AC100_ALM_INT_STA, AC100_ALM_INT_ENABLE);
  
+-	chip->rtc = devm_rtc_device_register(&pdev->dev, "rtc-ac100",
+-					     &ac100_rtc_ops, THIS_MODULE);
+-	if (IS_ERR(chip->rtc)) {
+-		dev_err(&pdev->dev, "unable to register device\n");
+-		return PTR_ERR(chip->rtc);
+-	}
+-
+ 	ret = ac100_rtc_register_clks(chip);
+ 	if (ret)
+ 		return ret;
+ 
++	ret = rtc_register_device(chip->rtc);
++	if (ret) {
++		dev_err(&pdev->dev, "unable to register device\n");
++		return ret;
++	}
++
+ 	dev_info(&pdev->dev, "RTC enabled\n");
+ 
+ 	return 0;
