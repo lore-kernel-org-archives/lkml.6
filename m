@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvCJ08g4aqBtBmVQ6FXAmDBp3voZ6mgqvlA9RZGeyZzT3L43jrJ60APqm8Gq6WLi98V0tLn
-ARC-Seal: i=1; a=rsa-sha256; t=1521800266; cv=none;
+X-Google-Smtp-Source: AG47ELvolmTV11gCa67vx8O4ZAtYmetAtHivrW04Rz55YteucmwLBy8HqXSx9YqMiL8dd+y+Puz9
+ARC-Seal: i=1; a=rsa-sha256; t=1521800263; cv=none;
         d=google.com; s=arc-20160816;
-        b=W4qEGh2fiFWvuimPQ+Vhx0rMyWchGFjRTRbDNaCPR4fXWsLh1kXrA1M+EuLc9RhJSV
-         tgWBHE9xPiKMxtjQQ5v9m5tiVvoAeBfkuIy5To4Fj8+Rr/SOml82kl7KqPDPztBUjd5H
-         z8fjCyzHc8BdbGcczwd/1ei7cVopp6nBpKSU/v+5+5HJCb7gpD3Zrzh0GIIw99M2WVsL
-         7HiOrI2EBRU6msgWcqxwVAI2mLDaI/ms8ulxPgbfQZSGbn3KuLfo5Phqm/L2/bVh6mN8
-         QXtEftIDhaqk5Lxmk1nWxJ+Lb8HkSuNhFJSNoiNVgzBwMPjBao2QAtDBvrO2qUHpFzFn
-         ZTOA==
+        b=F8VpONVO/Fw11Rj6LIOKgK1x2nVRBjNGf+3V8j3CGiAugpnpCf1q6KfPD+GDSomWBX
+         CQnNhKqFLw4cDFU0yc3Ov8xJK8giIPH3WlQa2ybelqvZF5o/D0eZ/1WZ7eMtVL6LjX0C
+         6eXkHKGunxeaRa24OQ4K68lU8bYBXv+imJti6NBNJ0oaSxYkRUXs8XRMoc7EI03yP2Vw
+         BoeSfi+jvVjKNjCnmOh4IKsn1S3O0B8WOgXPAvVWVacRLljneEFjPIbpIJwFp2o2J/Tz
+         tHMODxjvglMLkDTDAPJn/N/fq4SweEGPJkKravDI50aoFpzoXqll2uuF06K3CZLoOSeR
+         6lvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Vlzol39d+O9aMF9F8XY03DsiM2Fnsx54KnYLVg22cik=;
-        b=ninwV6tLRfwQcwekuYED9WKUP2OEzldHhEjl1vTd9fBLDk8dORJ02hVP9o6vLxNR4c
-         1LPRs7NI2tm3Wt/UV0EVtNYq318NPm1phVPJKIDVPCUpVgy/jrQMDfD4uUIp2++2SLWQ
-         oKh6alA5Og942PPfW7Yfc9Q+JTQavgk/Y43AHk7ohd5TXoABRlO//v/GcUDEehj79TIy
-         A4AOsNA/4w9UpnAUGCqrD/2EDURg3x18KV1s57NapaPVQw/BQRX7HuKCwt/yZKC6Ybnx
-         rX+JXsjHW2AKuSLJKfucTgag1oV2gpxL9bj5uTIcDMP0c612GsZ9xAIHpBd1/x/47SQs
-         17eg==
+        bh=jVRBxG/L31iqylkfts6voMK9hf/wHEP4L1OdRSPnT9s=;
+        b=DaiRGBxAdP7K4GCG5ufacsdHsm3x4VlZbc23iycaIz7XdGfAjdXuvnywN5bpbRAeyF
+         J9o5+MiRI5nRQn7jPidviTwM0soOels+gxb4yE+mIodkcOBqAOJslhrUufSScnnu7WQ5
+         ef3WpIxVVw35QmIC8DnioVYrsyMj65Yw7rsXhxVJ/X942EJnEBrT28vD3JLJCAl4THoM
+         I9SLqUuBqwwhmLWEegygOHdnj6OtS99EOF8dkbluIL00wLwwZQkLN0WGGMfuad4MKd2B
+         X8vX0t40yIx49c3dY5h350iX/4WeswerFyQpSQ4I8Fm7md5kEa5c+hGhMN+pWJ+MPMRW
+         E/bA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Daniel Drake <drake@endlessm.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Ashok Raj <ashok.raj@intel.com>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 82/97] mmc: avoid removing non-removable hosts during suspend
-Date: Fri, 23 Mar 2018 10:55:09 +0100
-Message-Id: <20180323094202.121320977@linuxfoundation.org>
+Subject: [PATCH 4.4 91/97] iommu/vt-d: clean up pr_irq if request_threaded_irq fails
+Date: Fri, 23 Mar 2018 10:55:18 +0100
+Message-Id: <20180323094202.567389706@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722014093884855?=
-X-GMAIL-MSGID: =?utf-8?q?1595723236117862291?=
+X-GMAIL-THRID: =?utf-8?q?1595722026948237982?=
+X-GMAIL-MSGID: =?utf-8?q?1595723232324946115?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,60 +52,128 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Drake <drake@endlessm.com>
+From: Jerry Snitselaar <jsnitsel@redhat.com>
 
 
-[ Upstream commit de8dcc3d2c0e08e5068ee1e26fc46415c15e3637 ]
+[ Upstream commit 72d548113881dd32bf7f0b221d031e6586468437 ]
 
-The Weibu F3C MiniPC has an onboard AP6255 module, presenting
-two SDIO functions on a single MMC host (Bluetooth/btsdio and
-WiFi/brcmfmac), and the mmc layer correctly detects this as
-non-removable.
+It is unlikely request_threaded_irq will fail, but if it does for some
+reason we should clear iommu->pr_irq in the error path. Also
+intel_svm_finish_prq shouldn't try to clean up the page request
+interrupt if pr_irq is 0. Without these, if request_threaded_irq were
+to fail the following occurs:
 
-After suspend/resume, the wifi and bluetooth interfaces disappear
-and do not get probed again.
+fail with no fixes:
 
-The conditions here are:
+[    0.683147] ------------[ cut here ]------------
+[    0.683148] NULL pointer, cannot free irq
+[    0.683158] WARNING: CPU: 1 PID: 1 at kernel/irq/irqdomain.c:1632 irq_domain_free_irqs+0x126/0x140
+[    0.683160] Modules linked in:
+[    0.683163] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2 #3
+[    0.683165] Hardware name:                  /NUC7i3BNB, BIOS BNKBL357.86A.0036.2017.0105.1112 01/05/2017
+[    0.683168] RIP: 0010:irq_domain_free_irqs+0x126/0x140
+[    0.683169] RSP: 0000:ffffc90000037ce8 EFLAGS: 00010292
+[    0.683171] RAX: 000000000000001d RBX: ffff880276283c00 RCX: ffffffff81c5e5e8
+[    0.683172] RDX: 0000000000000001 RSI: 0000000000000096 RDI: 0000000000000246
+[    0.683174] RBP: ffff880276283c00 R08: 0000000000000000 R09: 000000000000023c
+[    0.683175] R10: 0000000000000007 R11: 0000000000000000 R12: 000000000000007a
+[    0.683176] R13: 0000000000000001 R14: 0000000000000000 R15: 0000010010000000
+[    0.683178] FS:  0000000000000000(0000) GS:ffff88027ec80000(0000) knlGS:0000000000000000
+[    0.683180] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.683181] CR2: 0000000000000000 CR3: 0000000001c09001 CR4: 00000000003606e0
+[    0.683182] Call Trace:
+[    0.683189]  intel_svm_finish_prq+0x3c/0x60
+[    0.683191]  free_dmar_iommu+0x1ac/0x1b0
+[    0.683195]  init_dmars+0xaaa/0xaea
+[    0.683200]  ? klist_next+0x19/0xc0
+[    0.683203]  ? pci_do_find_bus+0x50/0x50
+[    0.683205]  ? pci_get_dev_by_id+0x52/0x70
+[    0.683208]  intel_iommu_init+0x498/0x5c7
+[    0.683211]  pci_iommu_init+0x13/0x3c
+[    0.683214]  ? e820__memblock_setup+0x61/0x61
+[    0.683217]  do_one_initcall+0x4d/0x1a0
+[    0.683220]  kernel_init_freeable+0x186/0x20e
+[    0.683222]  ? set_debug_rodata+0x11/0x11
+[    0.683225]  ? rest_init+0xb0/0xb0
+[    0.683226]  kernel_init+0xa/0xff
+[    0.683229]  ret_from_fork+0x1f/0x30
+[    0.683259] Code: 89 ee 44 89 e7 e8 3b e8 ff ff 5b 5d 44 89 e7 44 89 ee 41 5c 41 5d 41 5e e9 a8 84 ff ff 48 c7 c7 a8 71 a7 81 31 c0 e8 6a d3 f9 ff <0f> ff 5b 5d 41 5c 41 5d 41 5
+e c3 0f 1f 44 00 00 66 2e 0f 1f 84
+[    0.683285] ---[ end trace f7650e42792627ca ]---
 
- 1. During suspend, we reach mmc_pm_notify()
+with iommu->pr_irq = 0, but no check in intel_svm_finish_prq:
 
- 2. mmc_pm_notify() calls mmc_sdio_pre_suspend() to see if we can
-    suspend the SDIO host. However, mmc_sdio_pre_suspend() returns
-    -ENOSYS because btsdio_driver does not have a suspend method.
+[    0.669561] ------------[ cut here ]------------
+[    0.669563] Trying to free already-free IRQ 0
+[    0.669573] WARNING: CPU: 3 PID: 1 at kernel/irq/manage.c:1546 __free_irq+0xa4/0x2c0
+[    0.669574] Modules linked in:
+[    0.669577] CPU: 3 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc2 #4
+[    0.669579] Hardware name:                  /NUC7i3BNB, BIOS BNKBL357.86A.0036.2017.0105.1112 01/05/2017
+[    0.669581] RIP: 0010:__free_irq+0xa4/0x2c0
+[    0.669582] RSP: 0000:ffffc90000037cc0 EFLAGS: 00010082
+[    0.669584] RAX: 0000000000000021 RBX: 0000000000000000 RCX: ffffffff81c5e5e8
+[    0.669585] RDX: 0000000000000001 RSI: 0000000000000086 RDI: 0000000000000046
+[    0.669587] RBP: 0000000000000000 R08: 0000000000000000 R09: 000000000000023c
+[    0.669588] R10: 0000000000000007 R11: 0000000000000000 R12: ffff880276253960
+[    0.669589] R13: ffff8802762538a4 R14: ffff880276253800 R15: ffff880276283600
+[    0.669593] FS:  0000000000000000(0000) GS:ffff88027ed80000(0000) knlGS:0000000000000000
+[    0.669594] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.669596] CR2: 0000000000000000 CR3: 0000000001c09001 CR4: 00000000003606e0
+[    0.669602] Call Trace:
+[    0.669616]  free_irq+0x30/0x60
+[    0.669620]  intel_svm_finish_prq+0x34/0x60
+[    0.669623]  free_dmar_iommu+0x1ac/0x1b0
+[    0.669627]  init_dmars+0xaaa/0xaea
+[    0.669631]  ? klist_next+0x19/0xc0
+[    0.669634]  ? pci_do_find_bus+0x50/0x50
+[    0.669637]  ? pci_get_dev_by_id+0x52/0x70
+[    0.669639]  intel_iommu_init+0x498/0x5c7
+[    0.669642]  pci_iommu_init+0x13/0x3c
+[    0.669645]  ? e820__memblock_setup+0x61/0x61
+[    0.669648]  do_one_initcall+0x4d/0x1a0
+[    0.669651]  kernel_init_freeable+0x186/0x20e
+[    0.669653]  ? set_debug_rodata+0x11/0x11
+[    0.669656]  ? rest_init+0xb0/0xb0
+[    0.669658]  kernel_init+0xa/0xff
+[    0.669661]  ret_from_fork+0x1f/0x30
+[    0.669662] Code: 7a 08 75 0e e9 c3 01 00 00 4c 39 7b 08 74 57 48 89 da 48 8b 5a 18 48 85 db 75 ee 89 ee 48 c7 c7 78 67 a7 81 31 c0 e8 4c 37 fa ff <0f> ff 48 8b 34 24 4c 89 ef e
+8 0e 4c 68 00 49 8b 46 40 48 8b 80
+[    0.669688] ---[ end trace 58a470248700f2fc ]---
 
- 3. mmc_pm_notify() proceeds to remove the card
-
- 4. Upon resume, mmc_rescan() does nothing with this host, because of
-    the rescan_entered check which aims to only scan a non-removable
-    device a single time (i.e. during boot).
-
-Fix the loss of functionality by detecting that we are unable to
-suspend a non-removable host, so avoid the forced removal in that
-case. The comment above this function already indicates that this
-code was only intended for removable devices.
-
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/core/core.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/iommu/intel-svm.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -2791,6 +2791,14 @@ int mmc_pm_notify(struct notifier_block
- 		if (!err)
- 			break;
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -127,6 +127,7 @@ int intel_svm_enable_prq(struct intel_io
+ 		pr_err("IOMMU: %s: Failed to request IRQ for page request queue\n",
+ 		       iommu->name);
+ 		dmar_free_hwirq(irq);
++		iommu->pr_irq = 0;
+ 		goto err;
+ 	}
+ 	dmar_writeq(iommu->reg + DMAR_PQH_REG, 0ULL);
+@@ -142,9 +143,11 @@ int intel_svm_finish_prq(struct intel_io
+ 	dmar_writeq(iommu->reg + DMAR_PQT_REG, 0ULL);
+ 	dmar_writeq(iommu->reg + DMAR_PQA_REG, 0ULL);
  
-+		if (!mmc_card_is_removable(host)) {
-+			dev_warn(mmc_dev(host),
-+				 "pre_suspend failed for non-removable host: "
-+				 "%d\n", err);
-+			/* Avoid removing non-removable hosts */
-+			break;
-+		}
-+
- 		/* Calling bus_ops->remove() with a claimed host can deadlock */
- 		host->bus_ops->remove(host);
- 		mmc_claim_host(host);
+-	free_irq(iommu->pr_irq, iommu);
+-	dmar_free_hwirq(iommu->pr_irq);
+-	iommu->pr_irq = 0;
++	if (iommu->pr_irq) {
++		free_irq(iommu->pr_irq, iommu);
++		dmar_free_hwirq(iommu->pr_irq);
++		iommu->pr_irq = 0;
++	}
+ 
+ 	free_pages((unsigned long)iommu->prq, PRQ_ORDER);
+ 	iommu->prq = NULL;
