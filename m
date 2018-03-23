@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804130-2-16862216561779658965
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804117-2-12075585760408343736
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804129; b=lqonXnjGk0UR1vhLe+349PxUq4Q7QBZNDhEgLPeRu29DqOJ
-    HC6Dr60r8AITj1SozIcM2I1R1xsQIfczL9cpXgAv1bwDNx1o1yQ73ou6/DodILoU
-    8xTFF4mkn4dEC3DMcAZDRoKtnjWOtivmISfNXPTbySOs1iXQ5Z5SapI8HoqHl/Iv
-    A4xDvv2OoQdk6U6DQQ/8U6Ynohi9Wr6bNi21RQTxtXiDkr742Bxu3zUVyRxDITsb
-    P5e6wHaxELFCXa+DUFdfq46KX5/rb4CXhEhpUuNjyoOzmWnjq3POQsUSY0ZlGO2N
-    Ds7jCGl/nfnciqrhlZwb9pLSHM+bBZprinaun+w==
+    t=1521804117; b=hHlSFYAWJ3nOsRzxOGc+8QsjbpAaRWwbJBLI/EMpi7I/UT4
+    ih+Apko2C+KMbqGmfQNNCygSXLnJRJ+z1fSHU+9BQpryRtCMft08hNLM1PSGCxl9
+    3TC9wac3DO+bXPJd2AqXxZzFIXZQUNiqFtdOghWsy6GdgA/bgj0p38HJKaVG8cLP
+    6ilxqd8r5a6SrKVGcMWAZay5NBkQ+cUX7IaffbOOveqh3rnlOA1NmW+6tLtrug1p
+    IXYCbn5ZZlt3KsOvx7ured48j+rTcMeWNNlH0HIYzzhk2j3bBYZIo0fDcvIE26Hb
+    BFF+I1yWmcmIUEIo46dHhNfERsjCREKHkfNFwyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804129; bh=67WGen8AB3Kniv3ms56S5YwTzR
-    XnJBzQ64hlsDM3OOE=; b=MfYWNx0+D4R83djmKNh0E6OnBjG1TycUqK/AgL09em
-    3uawZufQQTzNkUKtrol1hjl2LDxCbJTDx2a6YnsXf2+uCV+WLjReVJzKoeGGkHZb
-    3T4TsZNAoMV3kBp0PNxp5nczLu39ZB8vLlJ//8ymquCaOwPON+ep34pbDUKjt3Cj
-    NkJvrp49hLDSpi9J29RbKsWEKqh11l8lKepMU/ISjV+A7NIxYiBsw8nwO/LfCW7z
-    l8zQksbmO5IoaCxHc3QxVvAaA1Wpy8cak31k+q0tkpD8k2DaAV3Bzq41NzGQpjG/
-    7Z/1pxxXaqrlqhnoDixCM8wOr4l1veCXiOezXOK7V76w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804117; bh=iCCSKqVv80YAYSUNHUZ9yZ1u11
+    8/CNlMPGd0OQ+P8TI=; b=CJfZEPcwMzpuAI6+aPk5mOmnY0FGuICsQS8CwdHA5Y
+    YrYwzpgYhlLyOVK5JwmznEWTzFL6Vg+GoF1lV5tmMpE3OsmuEowbw4jEQaAbgXCf
+    S3KFlME1US6J0UbAC+IQy52OZ3jWBRPfbonA4U3KCOqG0W9277N7yfzMdAXABhrr
+    wj/HTfrxODxro5sj/CQ3vq7h2AgbT83nEepOGektvRnqw9uuWQwe9z1QyHnFqxDT
+    OffYznFDbPJGGrD3XFPJI6ATiDrXGivGpPZW9V9vuy7sVEuAzy3LRtliOxCd3vsE
+    9bTWbHlFjgQUnhz4FLhIkvPZkPYDy4xqZdMT881WHunw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,21 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752084AbeCWLVz (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:21:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41622 "EHLO
+        id S1755516AbeCWKIU (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:08:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41610 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755515AbeCWKIT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:19 -0400
+        with ESMTP id S1755507AbeCWKIQ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Martin Brandenburg <martin@omnibond.com>,
+        Mike Marshall <hubcap@omnibond.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 080/177] mac80211: dont parse encrypted management frames in ieee80211_frame_acked
-Date: Fri, 23 Mar 2018 10:53:28 +0100
-Message-Id: <20180323094208.834059742@linuxfoundation.org>
+Subject: [PATCH 4.9 079/177] orangefs: do not wait for timeout if umounting
+Date: Fri, 23 Mar 2018 10:53:27 +0100
+Message-Id: <20180323094208.792427775@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -84,46 +82,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Martin Brandenburg <martin@omnibond.com>
 
 
-[ Upstream commit cf147085fdda044622973a12e4e06f1c753ab677 ]
+[ Upstream commit b5a9d61eebdd0016ccb383b25a5c3d04977a6549 ]
 
-ieee80211_frame_acked is called when a frame is acked by
-the peer. In case this is a management frame, we check
-if this an SMPS frame, in which case we can update our
-antenna configuration.
+When the computer is turned off, all the processes are killed and then
+all the filesystems are umounted.  OrangeFS should not wait for the
+userspace daemon to come back in that case.
 
-When we parse the management frame we look at the category
-in case it is an action frame. That byte sits after the IV
-in case the frame was encrypted. This means that if the
-frame was encrypted, we basically look at the IV instead
-of looking at the category. It is then theorically
-possible that we think that an SMPS action frame was acked
-where really we had another frame that was encrypted.
+This only works for plain umount(2).  To actually take advantage of this
+interactively, `umount -f' is needed; otherwise umount will issue a
+statfs first, which will wait for the userspace daemon to come back.
 
-Since the only management frame whose ack needs to be
-tracked is the SMPS action frame, and that frame is not
-a robust management frame, it will never be encrypted.
-The easiest way to fix this problem is then to not look
-at frames that were encrypted.
-
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Martin Brandenburg <martin@omnibond.com>
+Signed-off-by: Mike Marshall <hubcap@omnibond.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/status.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/orangefs/waitqueue.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -200,6 +200,7 @@ static void ieee80211_frame_acked(struct
+--- a/fs/orangefs/waitqueue.c
++++ b/fs/orangefs/waitqueue.c
+@@ -124,7 +124,14 @@ retry_servicing:
+ 		gossip_debug(GOSSIP_WAIT_DEBUG,
+ 			     "%s:client core is NOT in service.\n",
+ 			     __func__);
+-		timeout = op_timeout_secs * HZ;
++		/*
++		 * Don't wait for the userspace component to return if
++		 * the filesystem is being umounted anyway.
++		 */
++		if (op->upcall.type == ORANGEFS_VFS_OP_FS_UMOUNT)
++			timeout = 0;
++		else
++			timeout = op_timeout_secs * HZ;
  	}
+ 	spin_unlock(&orangefs_request_list_lock);
  
- 	if (ieee80211_is_action(mgmt->frame_control) &&
-+	    !ieee80211_has_protected(mgmt->frame_control) &&
- 	    mgmt->u.action.category == WLAN_CATEGORY_HT &&
- 	    mgmt->u.action.u.ht_smps.action == WLAN_HT_ACTION_SMPS &&
- 	    ieee80211_sdata_running(sdata)) {
