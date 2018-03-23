@@ -1,60 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeCWQHt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:07:49 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6686 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751889AbeCWQGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:06:07 -0400
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, Xiang Chen <chenxiang66@hisilicon.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 4/8] scsi: hisi_sas: use dma_zalloc_coherent()
-Date: Sat, 24 Mar 2018 00:05:11 +0800
-Message-ID: <1521821115-120040-5-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521821115-120040-1-git-send-email-john.garry@huawei.com>
-References: <1521821115-120040-1-git-send-email-john.garry@huawei.com>
+        id S1752362AbeCWQII (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:08:08 -0400
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:34463 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751898AbeCWQIG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 12:08:06 -0400
+X-Google-Smtp-Source: AG47ELtgaKOv+89asV7zxZ0AK9lQTXh+Pkl+urSHMGYiMr4RwxcsA80PLiGx1u4w2p8KzRw2iJOzauUdXB9tZsTiRrI=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAEJqkgjj2dR4GLOEzsUJiWOsoqFWArioh32KW1We5xgp4qSb1Q@mail.gmail.com>
+References: <E513F076-24D5-4F67-A204-D2E6E1135FDE@einstein.yu.edu>
+ <20180323145428.GF15012@1wt.eu> <8BF385DA-7EB8-446D-9005-64509D7C7CB8@einstein.yu.edu>
+ <20180323151913.GG15012@1wt.eu> <CAEJqkgjj2dR4GLOEzsUJiWOsoqFWArioh32KW1We5xgp4qSb1Q@mail.gmail.com>
+From: Gabriel C <nix.or.die@gmail.com>
+Date: Fri, 23 Mar 2018 17:07:34 +0100
+Message-ID: <CAEJqkgjW6HbzVM9CosveTzwQJkOWaUVFd4MNrw2XTvvkUxDRqw@mail.gmail.com>
+Subject: Re: Did kernel 3.11 never work?
+To: Willy Tarreau <w@1wt.eu>
+Cc: Maurice R Volaski <maurice.volaski@einstein.yu.edu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+2018-03-23 16:50 GMT+01:00 Gabriel C <nix.or.die@gmail.com>:
+...
+> Maybe have a look there ?
+> https://github.com/rapier1
+>
 
-This is a warning coming from Coccinelle, and need to use
-new interface dma_zalloc_coherent() instead of
-dma_alloc_coherent()/memset().
-
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index a216795..9563dfa 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -1822,13 +1822,11 @@ int hisi_sas_alloc(struct hisi_hba *hisi_hba, struct Scsi_Host *shost)
- 		goto err_out;
- 
- 	s = HISI_SAS_MAX_ITCT_ENTRIES * sizeof(struct hisi_sas_itct);
--	hisi_hba->itct = dma_alloc_coherent(dev, s, &hisi_hba->itct_dma,
-+	hisi_hba->itct = dma_zalloc_coherent(dev, s, &hisi_hba->itct_dma,
- 					    GFP_KERNEL);
- 	if (!hisi_hba->itct)
- 		goto err_out;
- 
--	memset(hisi_hba->itct, 0, s);
--
- 	hisi_hba->slot_info = devm_kcalloc(dev, max_command_entries,
- 					   sizeof(struct hisi_sas_slot),
- 					   GFP_KERNEL);
--- 
-1.9.1
+Latest kernel there is an 4.10
+https://github.com/rapier1/web10g/releases/tag/kis-0.12-4.10
