@@ -1,100 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751858AbeCWHjU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 03:39:20 -0400
-Received: from regular1.263xmail.com ([211.150.99.133]:54146 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751761AbeCWHjT (ORCPT
+        id S1751890AbeCWHj3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 03:39:29 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:25809 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751866AbeCWHjY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 03:39:19 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <50f962a507dd32ab174f481b20983afe>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: jcliang@chromium.org, robin.murphy@arm.com, xxm@rock-chips.com,
-        tfiga@chromium.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v8 04/14] iommu/rockchip: Fix error handling in attach
-Date: Fri, 23 Mar 2018 15:38:04 +0800
-Message-Id: <20180323073814.5802-5-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180323073814.5802-1-jeffy.chen@rock-chips.com>
-References: <20180323073814.5802-1-jeffy.chen@rock-chips.com>
+        Fri, 23 Mar 2018 03:39:24 -0400
+From: Patrice CHOTARD <patrice.chotard@st.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Olof Johansson <olof@lixom.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc tree
+Thread-Topic: linux-next: Signed-off-by missing for commit in the arm-soc tree
+Thread-Index: AQHTvKAyo3qIygEQDEuiV6CRqIxuK6PRuPWAgACvWYCACk+lAIAAsfiA
+Date: Fri, 23 Mar 2018 07:38:43 +0000
+Message-ID: <e8eefe22-c1d1-d27b-68bb-036f6abb9814@st.com>
+References: <20180316075629.019b6560@canb.auug.org.au>
+ <CAK8P3a2-fUi0nnsLVJ6h_UuJCgwoNs2OEroYed2ofLd=FiPG0g@mail.gmail.com>
+ <6b239ab5-5ded-b32b-eefc-601075d33f25@st.com>
+ <20180322210144.GB3417@piout.net>
+In-Reply-To: <20180322210144.GB3417@piout.net>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.49]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3E009E61569CF64C8248A6B5F8859245@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-23_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2N7dZPY019860
 
-From: Tomasz Figa <tfiga@chromium.org>
+On 03/22/2018 10:01 PM, Alexandre Belloni wrote:
+> On 16/03/2018 at 07:34:06 +0000, Patrice CHOTARD wrote:
+>> Hi Arnd, Stephen
+>>
+>> On 03/15/2018 10:06 PM, Arnd Bergmann wrote:
+>>> On Thu, Mar 15, 2018 at 9:56 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>> Hi all,
+>>>>
+>>>> Commit
+>>>>
+>>>>     9a5f4879cd8d ("ARM: dts: stih4xx: Add missing #sound-dai-cells")
+>>>>
+>>>> is missing a Signed-off-by from its committer.
+>>>
+>>> Thanks for the report.
+>>>
+>>> What script do you use to find those? I guess I should check for
+>>> missing signoffs as well when pulling a branch.
+>>>
+>>> Patrice, I've dropped the merge now, and picked up the one
+>>> patch in it directly, with my signoff. This should fix the issue this
+>>> time, but please make sure you always sign off patches when
+>>> you apply them from the list.
+>>>
+>>>           Arnd
+>>>
+>>
+>> Ok i will update my script on my side with Stephen's script to avoid
+>> this in the future.
+>>
+> 
+> FWIW, last time this happened in the at91 tree, I've switched to use
+> Stephen's script as a pre-push hook:
+> https://raw.githubusercontent.com/alexandrebelloni/tools/master/pre-push_signed-off
+> 
+> 
 
-Currently if the driver encounters an error while attaching device, it
-will leave the IOMMU in an inconsistent state. Even though it shouldn't
-really happen in reality, let's just add proper error path to keep
-things consistent.
+Thanks Alexandre
 
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
----
-
-Changes in v8: None
-Changes in v7: None
-Changes in v6: None
-Changes in v5:
-Use out labels to save the duplication between the error and success paths.
-
-Changes in v4: None
-Changes in v3: None
-Changes in v2:
-Move irq request to probe(in patch[0])
-
- drivers/iommu/rockchip-iommu.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index ec3ff936aa60..5cbd5ceeb039 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -824,7 +824,7 @@ static int rk_iommu_attach_device(struct iommu_domain *domain,
- 
- 	ret = rk_iommu_force_reset(iommu);
- 	if (ret)
--		return ret;
-+		goto out_disable_stall;
- 
- 	iommu->domain = domain;
- 
-@@ -837,7 +837,7 @@ static int rk_iommu_attach_device(struct iommu_domain *domain,
- 
- 	ret = rk_iommu_enable_paging(iommu);
- 	if (ret)
--		return ret;
-+		goto out_disable_stall;
- 
- 	spin_lock_irqsave(&rk_domain->iommus_lock, flags);
- 	list_add_tail(&iommu->node, &rk_domain->iommus);
-@@ -845,9 +845,9 @@ static int rk_iommu_attach_device(struct iommu_domain *domain,
- 
- 	dev_dbg(dev, "Attached to iommu domain\n");
- 
-+out_disable_stall:
- 	rk_iommu_disable_stall(iommu);
--
--	return 0;
-+	return ret;
- }
- 
- static void rk_iommu_detach_device(struct iommu_domain *domain,
--- 
-2.11.0
+Patrice
