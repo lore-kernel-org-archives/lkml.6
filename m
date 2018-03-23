@@ -1,201 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756013AbeCWLI6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 07:08:58 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45677 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752580AbeCWLIx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 07:08:53 -0400
-Message-ID: <1521803301.3406.4.camel@pengutronix.de>
-Subject: Re: [PATCH v2 1/8] reset: modify the way reset lookup works for
- board files
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Fri, 23 Mar 2018 12:08:21 +0100
-In-Reply-To: <CAMRc=Mcf18jmRAM6WFBnuuOen11+5uzy4yo3xwvLQzLBSSNvHQ@mail.gmail.com>
-References: <20180323093609.24576-1-brgl@bgdev.pl>
-         <20180323093609.24576-2-brgl@bgdev.pl>
-         <1521800670.3406.1.camel@pengutronix.de>
-         <CAMRc=Mcf18jmRAM6WFBnuuOen11+5uzy4yo3xwvLQzLBSSNvHQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1755640AbeCWKIt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 06:08:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47244 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755583AbeCWKIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 06:08:42 -0400
+Date: Fri, 23 Mar 2018 11:08:39 +0100
+From: Michal Hocko <mhocko@kernel.org>
+To: "Li,Rongqing" <lirongqing@baidu.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRD?= =?utf-8?Q?H=5D?=
+ mm/memcontrol.c: speed up to force empty a memory cgroup
+Message-ID: <20180323100839.GO23100@dhcp22.suse.cz>
+References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
+ <20180319085355.GQ23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com>
+ <20180319103756.GV23100@dhcp22.suse.cz>
+ <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
+ <2AD939572F25A448A3AE3CAEA61328C2374832C1@BC-MAIL-M28.internal.baidu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2AD939572F25A448A3AE3CAEA61328C2374832C1@BC-MAIL-M28.internal.baidu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-23 at 11:46 +0100, Bartosz Golaszewski wrote:
-> 2018-03-23 11:24 GMT+01:00 Philipp Zabel <p.zabel@pengutronix.de>:
-> > Hi Bartosz,
-> > 
-> > On Fri, 2018-03-23 at 10:36 +0100, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > 
-> > > Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
-> > > introduced reset control lookup mechanism for boards that still use
-> > > board files.
-> > > 
-> > > The routine used to register lookup entries takes the corresponding
-> > > reset_controlled_dev structure as argument.
-> > > 
-> > > It's been determined however that for the first user of this new
-> > > interface - davinci psc driver - it will be easier to register the
-> > > lookup entries using the reset controller device name.
-> > 
-> > Thank you, this is what I expected in the first place.
-> > 
-> > > This patch changes the way lookup entries are added.
-> > > 
-> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > ---
-> > >  drivers/reset/core.c             | 33 +++++++++++++++++++++++++++++----
-> > >  include/linux/reset-controller.h |  8 +++++---
-> > >  2 files changed, 34 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> > > index 06fa4907afc4..f37048e55336 100644
-> > > --- a/drivers/reset/core.c
-> > > +++ b/drivers/reset/core.c
-> > > @@ -153,11 +153,11 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
-> > > 
-> > >  /**
-> > >   * reset_controller_add_lookup - register a set of lookup entries
-> > > - * @rcdev: initialized reset controller device owning the reset line
-> > > + * @provider: name of the reset controller provider
-> > >   * @lookup: array of reset lookup entries
-> > >   * @num_entries: number of entries in the lookup array
-> > >   */
-> > > -void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-> > > +void reset_controller_add_lookup(const char *provider,
-> > 
-> > Is there any reason not to drop the provider parameter completely?
-> > I'd just let the user add the provider device id to the lookup, see
-> > below.
-> > 
-> > >                                struct reset_control_lookup *lookup,
-> > >                                unsigned int num_entries)
-> > >  {
-> > > @@ -174,7 +174,7 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-> > >                       continue;
-> > >               }
-> > > 
-> > > -             entry->rcdev = rcdev;
-> > > +             entry->provider = provider;
-> > >               list_add_tail(&entry->list, &reset_lookup_list);
-> > >       }
-> > >       mutex_unlock(&reset_lookup_mutex);
-> > > @@ -526,11 +526,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(__of_reset_control_get);
-> > > 
-> > > +static struct reset_controller_dev *
-> > > +__reset_controller_by_name(const char *name)
-> > > +{
-> > > +     struct reset_controller_dev *rcdev;
-> > > +
-> > > +     lockdep_assert_held(&reset_list_mutex);
-> > > +
-> > > +     list_for_each_entry(rcdev, &reset_controller_list, list) {
-> > > +             if (!rcdev->dev)
-> > > +                     continue;
-> > > +
-> > > +             if (!strcmp(name, dev_name(rcdev->dev)))
-> > > +                     return rcdev;
-> > > +     }
-> > > +
-> > > +     return NULL;
-> > > +}
-> > > +
-> > >  static struct reset_control *
-> > >  __reset_control_get_from_lookup(struct device *dev, const char *con_id,
-> > >                               bool shared, bool optional)
-> > >  {
-> > >       const struct reset_control_lookup *lookup;
-> > > +     struct reset_controller_dev *rcdev;
-> > >       const char *dev_id = dev_name(dev);
-> > >       struct reset_control *rstc = NULL;
-> > > 
-> > > @@ -547,7 +566,13 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
-> > >                   ((con_id && lookup->con_id) &&
-> > >                    !strcmp(con_id, lookup->con_id))) {
-> > >                       mutex_lock(&reset_list_mutex);
-> > > -                     rstc = __reset_control_get_internal(lookup->rcdev,
-> > > +                     rcdev = __reset_controller_by_name(lookup->provider);
-> > > +                     if (!rcdev) {
-> > > +                             mutex_unlock(&reset_list_mutex);
-> > > +                             continue;
-> > 
-> > What is the reason to continue here? If we've found a matching lookup
-> > that contains a rcdev dev_id for which there is no reset controller,
-> > shouldn't we just return an error?
-> > 
+On Fri 23-03-18 02:58:36, Li,Rongqing wrote:
 > 
-> Indeed. This could be used to indicate to drivers that the reset
-> controller may not have yet been probed() or its probe() failed. How
-> about returning -EPROBE_DEFER here?
-
-That is a good point. The framework doesn't know whether the
-lookup->provider is bogus or whether it's correct and the corresponding
-driver just hasn't registered its reset controller yet. So we have to
-assume the latter and return -EPROBE_DEFER here.
-
-> Bart
 > 
-> > > +                     }
-> > > +
-> > > +                     rstc = __reset_control_get_internal(rcdev,
-> > >                                                           lookup->index,
-> > >                                                           shared);
-> > >                       mutex_unlock(&reset_list_mutex);
-> > > diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-> > > index 25698f6c1fae..1a6c25d825d3 100644
-> > > --- a/include/linux/reset-controller.h
-> > > +++ b/include/linux/reset-controller.h
-> > > @@ -30,14 +30,14 @@ struct of_phandle_args;
-> > >   * struct reset_control_lookup - represents a single lookup entry
-> > >   *
-> > >   * @list: internal list of all reset lookup entries
-> > > - * @rcdev: reset controller device controlling this reset line
-> > > + * @provider: name of the reset controller device controlling this reset line
-> > >   * @index: ID of the reset controller in the reset controller device
-> > >   * @dev_id: name of the device associated with this reset line
-> > >   * @con_id name of the reset line (can be NULL)
-> > >   */
-> > >  struct reset_control_lookup {
-> > >       struct list_head list;
-> > > -     struct reset_controller_dev *rcdev;
-> > > +     const char *provider;
+> > -----邮件原件-----
+> > 发件人: linux-kernel-owner@vger.kernel.org
+> > [mailto:linux-kernel-owner@vger.kernel.org] 代表 Li,Rongqing
+> > 发送时间: 2018年3月19日 18:52
+> > 收件人: Michal Hocko <mhocko@kernel.org>
+> > 抄送: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > cgroups@vger.kernel.org; hannes@cmpxchg.org; Andrey Ryabinin
+> > <aryabinin@virtuozzo.com>
+> > 主题: 答复: 答复: [PATCH] mm/memcontrol.c: speed up to force empty a
+> > memory cgroup
 > > 
-> > Looks good to me, but I'd also extend RESET_LOOKUP to set the provider
-> > instead of passing it to the reset_controller_add_lookup function,
-> > similarly to PWM_LOOKUP:
 > > 
-> > #define RESET_LOOKUP(_provider, _index, _dev_id, _con_id)
 > > 
+> > > -----邮件原件-----
+> > > 发件人: Michal Hocko [mailto:mhocko@kernel.org]
+> > > 发送时间: 2018年3月19日 18:38
+> > > 收件人: Li,Rongqing <lirongqing@baidu.com>
+> > > 抄送: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > > cgroups@vger.kernel.org; hannes@cmpxchg.org; Andrey Ryabinin
+> > > <aryabinin@virtuozzo.com>
+> > > 主题: Re: 答复: [PATCH] mm/memcontrol.c: speed up to force empty a
+> > memory
+> > > cgroup
+> > >
+> > > On Mon 19-03-18 10:00:41, Li,Rongqing wrote:
+> > > >
+> > > >
+> > > > > -----邮件原件-----
+> > > > > 发件人: Michal Hocko [mailto:mhocko@kernel.org]
+> > > > > 发送时间: 2018年3月19日 16:54
+> > > > > 收件人: Li,Rongqing <lirongqing@baidu.com>
+> > > > > 抄送: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > > > > cgroups@vger.kernel.org; hannes@cmpxchg.org; Andrey Ryabinin
+> > > > > <aryabinin@virtuozzo.com>
+> > > > > 主题: Re: [PATCH] mm/memcontrol.c: speed up to force empty a
+> > > memory
+> > > > > cgroup
+> > > > >
+> > > > > On Mon 19-03-18 16:29:30, Li RongQing wrote:
+> > > > > > mem_cgroup_force_empty() tries to free only 32
+> > > (SWAP_CLUSTER_MAX)
+> > > > > > pages on each iteration, if a memory cgroup has lots of page
+> > > > > > cache, it will take many iterations to empty all page cache, so
+> > > > > > increase the reclaimed number per iteration to speed it up. same
+> > > > > > as in
+> > > > > > mem_cgroup_resize_limit()
+> > > > > >
+> > > > > > a simple test show:
+> > > > > >
+> > > > > >   $dd if=aaa  of=bbb  bs=1k count=3886080
+> > > > > >   $rm -f bbb
+> > > > > >   $time echo
+> > > 100000000 >/cgroup/memory/test/memory.limit_in_bytes
+> > > > > >
+> > > > > > Before: 0m0.252s ===> after: 0m0.178s
+> > > > >
+> > > > > Andrey was proposing something similar [1]. My main objection was
+> > > > > that his approach might lead to over-reclaim. Your approach is
+> > > > > more conservative because it just increases the batch size. The
+> > > > > size is still rather arbitrary. Same as SWAP_CLUSTER_MAX but that
+> > > > > one is a commonly used unit of reclaim in the MM code.
+> > > > >
+> > > > > I would be really curious about more detailed explanation why
+> > > > > having a larger batch yields to a better performance because we
+> > > > > are doingg SWAP_CLUSTER_MAX batches at the lower reclaim level
+> > anyway.
+> > > > >
+> > > >
+> > > > Although SWAP_CLUSTER_MAX is used at the lower level, but the call
+> > > > stack of try_to_free_mem_cgroup_pages is too long, increase the
+> > > > nr_to_reclaim can reduce times of calling
+> > > > function[do_try_to_free_pages, shrink_zones, hrink_node ]
+> > > >
+> > > > mem_cgroup_resize_limit
+> > > > --->try_to_free_mem_cgroup_pages:  .nr_to_reclaim = max(1024,
+> > > > --->SWAP_CLUSTER_MAX),
+> > > >    ---> do_try_to_free_pages
+> > > >      ---> shrink_zones
+> > > >       --->shrink_node
+> > > >        ---> shrink_node_memcg
+> > > >          ---> shrink_list          <-------loop will happen in this place
+> > > [times=1024/32]
+> > > >            ---> shrink_page_list
+> > >
+> > > Can you actually measure this to be the culprit. Because we should
+> > > rethink our call path if it is too complicated/deep to perform well.
+> > > Adding arbitrary batch sizes doesn't sound like a good way to go to me.
+> > 
+> > Ok, I will try
+> > 
+> http://pasted.co/4edbcfff
 > 
-> I did it mostly for brevity - I don't mind changing it if you prefer
-> this version.
+> This is result from ftrace graph, it maybe prove that the deep call
+> path leads to low performance.
 
-Yes, please. I like the consistency, and seeing provider and index right
-next to each other will make the lookups easier to read and understand.
+Does it? Let's have a look at the condensed output:
+  6)               |    try_to_free_mem_cgroup_pages() {
+  6)               |      mem_cgroup_select_victim_node() {
+  6)   0.320 us    |        mem_cgroup_node_nr_lru_pages();
+  6)   0.151 us    |        mem_cgroup_node_nr_lru_pages();
+  6)   2.190 us    |      }
+  6)               |      do_try_to_free_pages() {
+  6)               |        shrink_node() {
+  6)               |          shrink_node_memcg() {
+  6)               |            shrink_inactive_list() {
+  6) + 23.131 us   |              shrink_page_list();
+  6) + 33.960 us   |            }
+  6) + 39.203 us   |          }
+  6)               |          shrink_slab() {
+  6) + 72.955 us   |          }
+  6) ! 116.529 us  |        }
+  6)               |        shrink_node() {
+  6)   0.050 us    |          mem_cgroup_iter();
+  6)   0.035 us    |          mem_cgroup_low();
+  6)               |          shrink_node_memcg() {
+  6)   3.955 us    |          }
+  6)               |          shrink_slab() {
+  6) + 54.296 us   |          }
+  6) + 61.502 us   |        }
+  6) ! 185.020 us  |      }
+  6) ! 188.165 us  |    }
 
-regards
-Philipp
+try_to_free_mem_cgroup_pages is the full memcg reclaim path taking
+188,165 us. The pure reclaim path is shrink_node and that took 116+61 = 177 us.
+So we have 11us spent on the way. Is this really making such a difference?
+How does the profile look when we do larger batches?
+
+> And when increase reclaiming page in try_to_free_mem_cgroup_pages, it
+> can reduce calling of shrink_slab, which save times, in my cases, page
+> caches occupy most memory, slab is little, but shrink_slab will be
+> called everytime
+
+OK, that makes more sense! shrink_slab is clearly visible here. It is
+more expensive than the page reclaim. This is something to look into.
+
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
