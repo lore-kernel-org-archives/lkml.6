@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806391-2-12009366421387437617
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806376-2-7837921530438680672
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806391; b=JbrZWkMcRu84V1Bjqx4cEIKqgyTHuKGrMijU0SsoveOp3TK
-    J4b4PE+075tgl1hXQ+oN87VV0bdjbZbUDTvF5Pg3yoBDBoF26Ixo9VTS5ZY3OqKN
-    t9P/GCX3oMFjHi+tWsF+bMtBj4xgklPFkD+qk1LAgdrXUUcykcmtD6RAOtvjCxQb
-    fznhif6hA7FMNI54mduTFd1xg+f0VEmRT2DHuGGs3N2ZsXt1HkJ9kR+07Vi5RY6B
-    ka33UbOATGeWapz3C5nozNSZiTq+2wDKip3NO314rH5PCrHSl9g92f9Dwl45BNEm
-    1sHysAJThoOAE2Rpc6K04gRzS8ZtiHjObEKS9Tw==
+    t=1521806376; b=MZhIfVRlOAlAZFQ1tf+VXsBm0SeLdv79mPzx5SqiEysI8CX
+    FcLz3y4wPOTtejc8vGUzswu2XMBVmb9BSnqN1bgNrdeqSyCmLRWGMhJuVSMlRYuf
+    BVzTUNsAlSTHbN6rYX/YRGX7RoWGiaDHKRtAl4yNUEXRK7oeH4IKeImN9deV3L2C
+    3vR5TvF6WHyCF+cMAY59oHLysw22pEpw8Bi3wops8qpkGx6P2JxDbFN8qvQPL8CD
+    FSjQizTXesIH+N4kug1NtiUH5p+qHC+HSfHD9Q4HYFZJDwSo03faFrfLz96FbJiK
+    lMZgKZTK8hglIvsqui+ri9ywuOdkxERpXVfps+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806391; bh=kNvhUjmmpW7bZYmGe4NJfqPdla
-    BTq0ehUkESxXW4lUM=; b=g2GxOOkArgXX3+YGBFInN92jhABUNyU2tqAYlbQcKO
-    C8I3+aGWKj+sG8vbkMIP05RWgpS2RW/D2yCiSsCWyoNjiaxQLig/hllt7Jr1eQqg
-    FwF8YYBwnwGksMPuypypN6F6bccPUGUryPJVFw+YV16XzLxsCO5AtcmzdZScmX46
-    0wsS5SoeQZeCZbbNxmm0/dMJfVssZmAhaBmRfjG7Ox11oHxef5ww3VWnwoTK1+iE
-    vyuICSdsocIdIMcci8KLywYSEVaHtzQl0z0AyibnlatKJtc2bRC2RCMpe34QO5WC
-    4UI/A69KkzhUccFzsX3timzIMKYuMVDMs9a4kznkYhzA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521806376; bh=Jxkkx9kWE+F77e+hMBjY/hrdag
+    UEPO5M4kBG/r7HOWY=; b=viONUoGCb+8cvrdWGqRqwQMF/eZag5BRSMmxetIusJ
+    NfJp5y7MwO+Y1Vsnb2rWwKd40tSEfOlmWyLDiH/V1FTJ9ZeQFDPbDdPApv0FryFX
+    CIbNsYQJs1J1uRW4qjAe6U4ZZfC2Uv42wQJQwku5N3MbKDLjCqeTZ0ZDgYJiJ5pa
+    6OtstZirIOiFp4J1fVpgNz5NQuLyrWmJvXXIMKKmvxDZnBE6pnygEADjCsENmCH9
+    4XwI/p5QiZlQvINYvrzTKFfBxYX7dwaCvoAq8CLMx2NfpYE/z6lvFebzSdtwrhgW
+    g0ZkbTflk9+RSxxQZ1rgh+LYVbg22/91MhLksRy7VGrA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,27 +50,27 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753559AbeCWKAS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:00:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36440 "EHLO
+        id S1753744AbeCWL7M (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:59:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753493AbeCWKAR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:00:17 -0400
+        with ESMTP id S1753589AbeCWKAW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:00:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Tomas Henzl <thenzl@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 01/77] scsi: megaraid_sas: Do not use 32-bit atomic request descriptor for Ventura controllers
-Date: Fri, 23 Mar 2018 10:53:35 +0100
-Message-Id: <20180323094142.319679627@linuxfoundation.org>
+        stable@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 11/77] hv_netvsc: Fix the TX/RX buffer default sizes
+Date: Fri, 23 Mar 2018 10:53:45 +0100
+Message-Id: <20180323094142.969418560@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -83,104 +83,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-commit 9ff97fa8db94caeab59a3c5401e975df468b4d8e upstream.
 
-Problem Statement: Sending I/O through 32 bit descriptors to Ventura series of
-controller results in IO timeout on certain conditions.
+[ Upstream commit 41f61db2cd24d5ad802386719cccde1479aa82a6 ]
 
-This error only occurs on systems with high I/O activity on Ventura series
-controllers.
+The values were not computed correctly. There are no significant
+visible impact, though.
 
-Changes in this patch will prevent driver from using 32 bit descriptor and use
-64 bit Descriptors.
+The intended size of RX buffer is 16 MB, and the default slot size is 1728.
+So, NETVSC_DEFAULT_RX should be 16*1024*1024 / 1728 = 9709.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Kashyap Desai <kashyap.desai@broadcom.com>
-Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Tomas Henzl <thenzl@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+The intended size of TX buffer is 1 MB, and the slot size is 6144.
+So, NETVSC_DEFAULT_TX should be 1024*1024 / 6144 = 170.
+
+The patch puts the formula directly into the macro, and moves them to
+hyperv_net.h, together with related macros.
+
+Fixes: 5023a6db73196 ("netvsc: increase default receive buffer size")
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/megaraid/megaraid_sas_fusion.c |   42 +++++++++-------------------
- 1 file changed, 14 insertions(+), 28 deletions(-)
+ drivers/net/hyperv/hyperv_net.h |   13 ++++++++++++-
+ drivers/net/hyperv/netvsc_drv.c |    4 ----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -190,36 +190,30 @@ inline void megasas_return_cmd_fusion(st
- /**
-  * megasas_fire_cmd_fusion -	Sends command to the FW
-  * @instance:			Adapter soft state
-- * @req_desc:			32bit or 64bit Request descriptor
-+ * @req_desc:			64bit Request descriptor
-  *
-- * Perform PCI Write. Ventura supports 32 bit Descriptor.
-- * Prior to Ventura (12G) MR controller supports 64 bit Descriptor.
-+ * Perform PCI Write.
-  */
+--- a/drivers/net/hyperv/hyperv_net.h
++++ b/drivers/net/hyperv/hyperv_net.h
+@@ -638,13 +638,24 @@ struct nvsp_message {
+ /* Max buffer sizes allowed by a host */
+ #define NETVSC_RECEIVE_BUFFER_SIZE		(1024 * 1024 * 31) /* 31MB */
+ #define NETVSC_RECEIVE_BUFFER_SIZE_LEGACY	(1024 * 1024 * 15) /* 15MB */
+-#define NETVSC_SEND_BUFFER_SIZE			(1024 * 1024 * 15)   /* 15MB */
++#define NETVSC_RECEIVE_BUFFER_DEFAULT		(1024 * 1024 * 16)
++
++#define NETVSC_SEND_BUFFER_SIZE			(1024 * 1024 * 15)  /* 15MB */
++#define NETVSC_SEND_BUFFER_DEFAULT		(1024 * 1024)
  
- static void
- megasas_fire_cmd_fusion(struct megasas_instance *instance,
- 		union MEGASAS_REQUEST_DESCRIPTOR_UNION *req_desc)
- {
--	if (instance->is_ventura)
--		writel(le32_to_cpu(req_desc->u.low),
--			&instance->reg_set->inbound_single_queue_port);
--	else {
- #if defined(writeq) && defined(CONFIG_64BIT)
--		u64 req_data = (((u64)le32_to_cpu(req_desc->u.high) << 32) |
--				le32_to_cpu(req_desc->u.low));
-+	u64 req_data = (((u64)le32_to_cpu(req_desc->u.high) << 32) |
-+		le32_to_cpu(req_desc->u.low));
+ #define NETVSC_INVALID_INDEX			-1
  
--		writeq(req_data, &instance->reg_set->inbound_low_queue_port);
-+	writeq(req_data, &instance->reg_set->inbound_low_queue_port);
- #else
--		unsigned long flags;
--		spin_lock_irqsave(&instance->hba_lock, flags);
--		writel(le32_to_cpu(req_desc->u.low),
--			&instance->reg_set->inbound_low_queue_port);
--		writel(le32_to_cpu(req_desc->u.high),
--			&instance->reg_set->inbound_high_queue_port);
--		mmiowb();
--		spin_unlock_irqrestore(&instance->hba_lock, flags);
-+	unsigned long flags;
-+	spin_lock_irqsave(&instance->hba_lock, flags);
-+	writel(le32_to_cpu(req_desc->u.low),
-+		&instance->reg_set->inbound_low_queue_port);
-+	writel(le32_to_cpu(req_desc->u.high),
-+		&instance->reg_set->inbound_high_queue_port);
-+	mmiowb();
-+	spin_unlock_irqrestore(&instance->hba_lock, flags);
- #endif
--	}
- }
+ #define NETVSC_SEND_SECTION_SIZE		6144
+ #define NETVSC_RECV_SECTION_SIZE		1728
  
- /**
-@@ -772,7 +766,6 @@ megasas_ioc_init_fusion(struct megasas_i
- 	const char *sys_info;
- 	MFI_CAPABILITIES *drv_ops;
- 	u32 scratch_pad_2;
--	unsigned long flags;
++/* Default size of TX buf: 1MB, RX buf: 16MB */
++#define NETVSC_MIN_TX_SECTIONS	10
++#define NETVSC_DEFAULT_TX	(NETVSC_SEND_BUFFER_DEFAULT \
++				 / NETVSC_SEND_SECTION_SIZE)
++#define NETVSC_MIN_RX_SECTIONS	10
++#define NETVSC_DEFAULT_RX	(NETVSC_RECEIVE_BUFFER_DEFAULT \
++				 / NETVSC_RECV_SECTION_SIZE)
++
+ #define NETVSC_RECEIVE_BUFFER_ID		0xcafe
+ #define NETVSC_SEND_BUFFER_ID			0
  
- 	fusion = instance->ctrl_context;
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -46,10 +46,6 @@
+ #include "hyperv_net.h"
  
-@@ -900,14 +893,7 @@ megasas_ioc_init_fusion(struct megasas_i
- 			break;
- 	}
+ #define RING_SIZE_MIN		64
+-#define NETVSC_MIN_TX_SECTIONS	10
+-#define NETVSC_DEFAULT_TX	192	/* ~1M */
+-#define NETVSC_MIN_RX_SECTIONS	10	/* ~64K */
+-#define NETVSC_DEFAULT_RX	10485   /* Max ~16M */
  
--	/* For Ventura also IOC INIT required 64 bit Descriptor write. */
--	spin_lock_irqsave(&instance->hba_lock, flags);
--	writel(le32_to_cpu(req_desc.u.low),
--	       &instance->reg_set->inbound_low_queue_port);
--	writel(le32_to_cpu(req_desc.u.high),
--	       &instance->reg_set->inbound_high_queue_port);
--	mmiowb();
--	spin_unlock_irqrestore(&instance->hba_lock, flags);
-+	megasas_fire_cmd_fusion(instance, &req_desc);
- 
- 	wait_and_poll(instance, cmd, MFI_POLL_TIMEOUT_SECS);
- 
+ #define LINKCHANGE_INT (2 * HZ)
+ #define VF_TAKEOVER_INT (HZ / 10)
