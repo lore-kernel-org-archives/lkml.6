@@ -1,39 +1,71 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELucbut6bhuMdyoqKYpUPW01yMsYFnF4z72l0bOdF3Lnz1RXRXVy7ka3rXIMmrMGICM1uTXg
-ARC-Seal: i=1; a=rsa-sha256; t=1521798979; cv=none;
-        d=google.com; s=arc-20160816;
-        b=BjknoZx8WdBxo3tx+EJSSRNMHsw71JsT6G6Q4PWWZ7NAUqVtarIhHxhc8gBV6kQio3
-         p2MqinIV5O1S8crO3ucpAkZb3CF0MZEbdhNFSaIBI2lU1xs/Vu33oAuX4XrfllR1lFBI
-         3LtAOpOo459Q9FXaB4r8BagqZ0KosKNp0DTHTKdoGS8Js4TMZihBChSA7xEZga4vJjA1
-         SJ4yHNvEeaCYSBzfyoYTABaRWcw63wxXq7ROPmV8KuuNfTcPbBj9ZNbA92z7JuEuKS4S
-         ZQbzgPlWnSQo6YljBRhP+gFImfadMRga0qRTJBANSthSk/ZYIW6nZI0V8GBKMy3C0nlS
-         +HyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=tjHPkbLI6KcmxQuDwHEqANY6qvEH4WgRprs3/XCjfrc=;
-        b=MyioqG1w4hVPU99LAXGac5PzUEjAfU+7MhNTbrsA+BkmaF2zoqisIpYfI9Xuia3I9Z
-         YEbph/YbSxC+A4ODcY3JXPZqGWn1FfCyphMQMF7372xn3vwYQWYNmYdbknGWhbNujN5K
-         AxgsJlj76VFCzISMm+m1RCViLrK5aJYEMd9Dargm3n8J/V7XmmPEUurYLC09flEevtFv
-         7f1NJMY9NeEzU0ZzFfHd789T1BFnQOhRCKGI1OXwoMSb7WQtgQLP3gMfRFB4TP0xrQpl
-         KrFcXssx5cCUtK8K1n9ipRnatPrljtgSwyeTnDZ9CIAL23si2n2M65fiAgoqERdgcWaT
-         OQNw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-947063-1521798970-2-14817431554653812969
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521798969; b=phFupx7lJERKwNT/JIpCZdOQ7WcDL6JUTbuU5fYlbWTU8KD
+    uinViGAcGl0BAGzCKCzXZG5BF8l0eFLULrDiGhkaWeIkqZqwtCBqKvxQpkzwiVCh
+    5DuRDA4fB3F9rJTRaIw1uEWt4jVaMwMfdHKZb3UR9sDkw5e4a6ljpsRMP18RZBzk
+    z/9lzWzvqu7An8VJ4E/7326hK1WSnj909x376YChRx+xqV6ot/2BIOE89gIgJ4Ik
+    oGz1sKGecVg9J+ECdHC7dRgDyowwSrEit6waWvBx/A7IMUs0A/s3qzXmHRJq67bK
+    2UjNBbqiRJ+ZaSYYFK7P7a/plrNKercftrQjGww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521798969; bh=rLHA+14SnB0f3Hr863897mAxMa
+    XWzqy9UIs+e1a+HY4=; b=msh8X8Okpku4L0YmHe9pSgpXRD1CW6MVb0FCz0w9zr
+    HeyoYC4bXfvK/wwQKFEGns+14PnKwpzqLRp1Dq8tR8WeVHI7M9KNlpEEUBoqmopV
+    tlYZmCj26pLZ2fjkD8bnRzksNViXMTdznbGy+5ePfvjpIjo25cSdOReUV7UuzTjs
+    aJ97KOaN8JYt+S7qZl0bwzs7glJOWTSgg9VgO/mrBMZ1mrKQRum1e/Z1ClmsK5id
+    Y3UkG8UNhS1dnqgvV6mYlpOOP+kWAn18YbatIax9n08EzRInm/Rm+hX31SOefanY
+    a29nA3Ft1Edkmt2J9FfmOBOK19F63RfKelZuEX1us6wQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752469AbeCWJ4G (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:56:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33854 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751687AbeCWJ4E (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:56:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Pixel Ding <Pixel.Ding@amd.com>,
-	Monk Liu <monk.liu@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 03/84] drm/amdgpu: use polling mem to set SDMA3 wptr for VF
-Date: Fri, 23 Mar 2018 10:53:17 +0100
-Message-Id: <20180323095412.450043326@linuxfoundation.org>
+        stable@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 12/84] hv_netvsc: Fix the receive buffer size limit
+Date: Fri, 23 Mar 2018 10:53:26 +0100
+Message-Id: <20180323095413.780081995@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -41,10 +73,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721886764017225?=
-X-GMAIL-MSGID: =?utf-8?q?1595721886764017225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,98 +83,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pixel Ding <Pixel.Ding@amd.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
 
-[ Upstream commit 2ffe31deb27579e2f2c9444e01f4d8abf385d145 ]
+[ Upstream commit 11b2b653102571ac791885324371d9a1a17b900e ]
 
-On Tonga VF, there're 2 sources updating wptr registers for
-sdma3: 1) polling mem and 2) doorbell. When doorbell and polling
-mem are both enabled on sdma3, there will be collision hit in
-occasion between those two sources when ucode and h/w are doing
-the updating on wptr register in parallel. Issue doesn't happen
-on CP GFX/Compute since CP drops all doorbell writes when VF is
-inactive. So enable polling mem and don't use doorbell for SDMA3.
+The max should be 31 MB on host with NVSP version > 2.
 
-Signed-off-by: Pixel Ding <Pixel.Ding@amd.com>
-Reviewed-by: Monk Liu <monk.liu@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+On legacy hosts (NVSP version <=2) only 15 MB receive buffer is allowed,
+otherwise the buffer request will be rejected by the host, resulting
+vNIC not coming up.
+
+The NVSP version is only available after negotiation. So, we add the
+limit checking for legacy hosts in netvsc_init_buf().
+
+Fixes: 5023a6db73196 ("netvsc: increase default receive buffer size")
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ring.h |    1 +
- drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c   |   27 +++++++++++++++++++--------
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ drivers/net/hyperv/hyperv_net.h |    6 ++++--
+ drivers/net/hyperv/netvsc.c     |    5 +++++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ring.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ring.h
-@@ -187,6 +187,7 @@ struct amdgpu_ring {
- 	uint64_t                eop_gpu_addr;
- 	u32			doorbell_index;
- 	bool			use_doorbell;
-+	bool			use_pollmem;
- 	unsigned		wptr_offs;
- 	unsigned		fence_offs;
- 	uint64_t		current_ctx;
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
-@@ -355,7 +355,7 @@ static uint64_t sdma_v3_0_ring_get_wptr(
- 	struct amdgpu_device *adev = ring->adev;
- 	u32 wptr;
+--- a/drivers/net/hyperv/hyperv_net.h
++++ b/drivers/net/hyperv/hyperv_net.h
+@@ -635,9 +635,11 @@ struct nvsp_message {
+ #define NETVSC_MTU 65535
+ #define NETVSC_MTU_MIN ETH_MIN_MTU
  
--	if (ring->use_doorbell) {
-+	if (ring->use_doorbell || ring->use_pollmem) {
- 		/* XXX check if swapping is necessary on BE */
- 		wptr = ring->adev->wb.wb[ring->wptr_offs] >> 2;
- 	} else {
-@@ -380,10 +380,13 @@ static void sdma_v3_0_ring_set_wptr(stru
- 
- 	if (ring->use_doorbell) {
- 		u32 *wb = (u32 *)&adev->wb.wb[ring->wptr_offs];
--
- 		/* XXX check if swapping is necessary on BE */
- 		WRITE_ONCE(*wb, (lower_32_bits(ring->wptr) << 2));
- 		WDOORBELL32(ring->doorbell_index, lower_32_bits(ring->wptr) << 2);
-+	} else if (ring->use_pollmem) {
-+		u32 *wb = (u32 *)&adev->wb.wb[ring->wptr_offs];
+-#define NETVSC_RECEIVE_BUFFER_SIZE		(1024*1024*16)	/* 16MB */
+-#define NETVSC_RECEIVE_BUFFER_SIZE_LEGACY	(1024*1024*15)  /* 15MB */
++/* Max buffer sizes allowed by a host */
++#define NETVSC_RECEIVE_BUFFER_SIZE		(1024 * 1024 * 31) /* 31MB */
++#define NETVSC_RECEIVE_BUFFER_SIZE_LEGACY	(1024 * 1024 * 15) /* 15MB */
+ #define NETVSC_SEND_BUFFER_SIZE			(1024 * 1024 * 15)   /* 15MB */
 +
-+		WRITE_ONCE(*wb, (lower_32_bits(ring->wptr) << 2));
- 	} else {
- 		int me = (ring == &ring->adev->sdma.instance[0].ring) ? 0 : 1;
+ #define NETVSC_INVALID_INDEX			-1
  
-@@ -718,10 +721,14 @@ static int sdma_v3_0_gfx_resume(struct a
- 		WREG32(mmSDMA0_GFX_RB_WPTR_POLL_ADDR_HI + sdma_offsets[i],
- 		       upper_32_bits(wptr_gpu_addr));
- 		wptr_poll_cntl = RREG32(mmSDMA0_GFX_RB_WPTR_POLL_CNTL + sdma_offsets[i]);
--		if (amdgpu_sriov_vf(adev))
--			wptr_poll_cntl = REG_SET_FIELD(wptr_poll_cntl, SDMA0_GFX_RB_WPTR_POLL_CNTL, F32_POLL_ENABLE, 1);
-+		if (ring->use_pollmem)
-+			wptr_poll_cntl = REG_SET_FIELD(wptr_poll_cntl,
-+						       SDMA0_GFX_RB_WPTR_POLL_CNTL,
-+						       ENABLE, 1);
- 		else
--			wptr_poll_cntl = REG_SET_FIELD(wptr_poll_cntl, SDMA0_GFX_RB_WPTR_POLL_CNTL, F32_POLL_ENABLE, 0);
-+			wptr_poll_cntl = REG_SET_FIELD(wptr_poll_cntl,
-+						       SDMA0_GFX_RB_WPTR_POLL_CNTL,
-+						       ENABLE, 0);
- 		WREG32(mmSDMA0_GFX_RB_WPTR_POLL_CNTL + sdma_offsets[i], wptr_poll_cntl);
+ #define NETVSC_SEND_SECTION_SIZE		6144
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@ -267,6 +267,11 @@ static int netvsc_init_buf(struct hv_dev
+ 	buf_size = device_info->recv_sections * device_info->recv_section_size;
+ 	buf_size = roundup(buf_size, PAGE_SIZE);
  
- 		/* enable DMA RB */
-@@ -1203,9 +1210,13 @@ static int sdma_v3_0_sw_init(void *handl
- 	for (i = 0; i < adev->sdma.num_instances; i++) {
- 		ring = &adev->sdma.instance[i].ring;
- 		ring->ring_obj = NULL;
--		ring->use_doorbell = true;
--		ring->doorbell_index = (i == 0) ?
--			AMDGPU_DOORBELL_sDMA_ENGINE0 : AMDGPU_DOORBELL_sDMA_ENGINE1;
-+		if (!amdgpu_sriov_vf(adev)) {
-+			ring->use_doorbell = true;
-+			ring->doorbell_index = (i == 0) ?
-+				AMDGPU_DOORBELL_sDMA_ENGINE0 : AMDGPU_DOORBELL_sDMA_ENGINE1;
-+		} else {
-+			ring->use_pollmem = true;
-+		}
- 
- 		sprintf(ring->name, "sdma%d", i);
- 		r = amdgpu_ring_init(adev, ring, 1024,
++	/* Legacy hosts only allow smaller receive buffer */
++	if (net_device->nvsp_version <= NVSP_PROTOCOL_VERSION_2)
++		buf_size = min_t(unsigned int, buf_size,
++				 NETVSC_RECEIVE_BUFFER_SIZE_LEGACY);
++
+ 	net_device->recv_buf = vzalloc(buf_size);
+ 	if (!net_device->recv_buf) {
+ 		netdev_err(ndev,
