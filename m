@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752474AbeCWWX1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 18:23:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35818 "EHLO
+        id S1752549AbeCWWXu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 18:23:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35916 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752230AbeCWWXX (ORCPT
+        with ESMTP id S1752440AbeCWWX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 18:23:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C48460F6D
+        Fri, 23 Mar 2018 18:23:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5426B60F6D
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>,
-        Ariel Elior <ariel.elior@cavium.com>, everest-linux-l2@cavium.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/6] bnx2x: Eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 23 Mar 2018 18:23:09 -0400
-Message-Id: <1521843791-21201-5-git-send-email-okaya@codeaurora.org>
+        Michael Chan <michael.chan@broadcom.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 6/6] bnxt_en: Eliminate duplicate barriers on weakly-ordered archs
+Date: Fri, 23 Mar 2018 18:23:11 -0400
+Message-Id: <1521843791-21201-7-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521843791-21201-1-git-send-email-okaya@codeaurora.org>
 References: <1521843791-21201-1-git-send-email-okaya@codeaurora.org>
@@ -28,125 +27,59 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a
-barrier on some architectures like arm64.
+Code includes wmb() followed by writel(). writel() already has a barrier on
+some architectures like arm64.
 
-This ends up CPU observing two barriers back to back before executing
-the register write.
+This ends up CPU observing two barriers back to back before executing the
+register write.
+
+Create a new wrapper function with relaxed write operator. Use the new
+wrapper when a write is following a wmb().
 
 Since code already has an explicit barrier call, changing writel() to
 writel_relaxed().
 
+Also add mmiowb() so that write code doesn't move outside of scope.
+
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h         | 12 ++++++++----
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c     |  2 +-
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h     |  4 ++--
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c |  2 +-
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c    |  4 ++--
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c    |  4 +++-
- 6 files changed, 17 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 3 ++-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h | 9 +++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-index 352beff..d847e1b 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-@@ -166,6 +166,12 @@ do {						\
- #define REG_RD8(bp, offset)		readb(REG_ADDR(bp, offset))
- #define REG_RD16(bp, offset)		readw(REG_ADDR(bp, offset))
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 1500243..fc8ea0d 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -1922,7 +1922,8 @@ static int bnxt_poll_work(struct bnxt *bp, struct bnxt_napi *bnapi, int budget)
+ 		/* Sync BD data before updating doorbell */
+ 		wmb();
  
-+#define REG_WR_RELAXED(bp, offset, val)	\
-+	writel_relaxed((u32)val, REG_ADDR(bp, offset))
-+
-+#define REG_WR16_RELAXED(bp, offset, val) \
-+	writew_relaxed((u16)val, REG_ADDR(bp, offset))
-+
- #define REG_WR(bp, offset, val)		writel((u32)val, REG_ADDR(bp, offset))
- #define REG_WR8(bp, offset, val)	writeb((u8)val, REG_ADDR(bp, offset))
- #define REG_WR16(bp, offset, val)	writew((u16)val, REG_ADDR(bp, offset))
-@@ -758,10 +764,8 @@ struct bnx2x_fastpath {
- #if (BNX2X_DB_SHIFT < BNX2X_DB_MIN_SHIFT)
- #error "Min DB doorbell stride is 8"
- #endif
--#define DOORBELL(bp, cid, val) \
--	do { \
--		writel((u32)(val), bp->doorbells + (bp->db_size * (cid))); \
--	} while (0)
-+#define DOORBELL_RELAXED(bp, cid, val) \
-+	writel_relaxed((u32)(val), (bp)->doorbells + ((bp)->db_size * (cid)))
+-		bnxt_db_write(bp, db, DB_KEY_TX | prod);
++		bnxt_db_write_relaxed(bp, db, DB_KEY_TX | prod);
++		mmiowb();
+ 	}
  
- /* TX CSUM helpers */
- #define SKB_CS_OFF(skb)		(offsetof(struct tcphdr, check) - \
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-index b97820f..91d2de6 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -4156,7 +4156,7 @@ netdev_tx_t bnx2x_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	/* make sur edescriptor update is observed by HW */
- 	wmb();
- 
--	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
-+	DOORBELL_RELAXED(bp, txdata->cid, txdata->tx_db.raw);
- 
- 	mmiowb();
- 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-index a5265e1..a8ce5c5 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-@@ -522,8 +522,8 @@ static inline void bnx2x_update_rx_prod(struct bnx2x *bp,
- 	wmb();
- 
- 	for (i = 0; i < sizeof(rx_prods)/4; i++)
--		REG_WR(bp, fp->ustorm_rx_prods_offset + i*4,
--		       ((u32 *)&rx_prods)[i]);
-+		REG_WR_RELAXED(bp, fp->ustorm_rx_prods_offset + i * 4,
-+			       ((u32 *)&rx_prods)[i]);
- 
- 	mmiowb(); /* keep prod updates ordered */
- 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-index 39af4f8..da18aa2 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
-@@ -2593,7 +2593,7 @@ static int bnx2x_run_loopback(struct bnx2x *bp, int loopback_mode)
- 	txdata->tx_db.data.prod += 2;
- 	/* make sure descriptor update is observed by the HW */
- 	wmb();
--	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
-+	DOORBELL_RELAXED(bp, txdata->cid, txdata->tx_db.raw);
- 
- 	mmiowb();
- 	barrier();
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 74fc9af..146c40d 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -3817,8 +3817,8 @@ static void bnx2x_sp_prod_update(struct bnx2x *bp)
- 	 */
- 	mb();
- 
--	REG_WR16(bp, BAR_XSTRORM_INTMEM + XSTORM_SPQ_PROD_OFFSET(func),
--		 bp->spq_prod_idx);
-+	REG_WR16_RELAXED(bp, BAR_XSTRORM_INTMEM + XSTORM_SPQ_PROD_OFFSET(func),
-+			 bp->spq_prod_idx);
- 	mmiowb();
+ 	cpr->cp_raw_cons = raw_cons;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+index 1989c47..5e453b9 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+@@ -1401,6 +1401,15 @@ static inline u32 bnxt_tx_avail(struct bnxt *bp, struct bnxt_tx_ring_info *txr)
+ 		((txr->tx_prod - txr->tx_cons) & bp->tx_ring_mask);
  }
  
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c
-index 76a4668..8e0a317 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_vfpf.c
-@@ -170,7 +170,9 @@ static int bnx2x_send_msg2pf(struct bnx2x *bp, u8 *done, dma_addr_t msg_mapping)
- 	wmb();
- 
- 	/* Trigger the PF FW */
--	writeb(1, &zone_data->trigger.vf_pf_channel.addr_valid);
-+	writeb_relaxed(1, &zone_data->trigger.vf_pf_channel.addr_valid);
++/* For TX and RX ring doorbells with no ordering guarantee*/
++static inline void bnxt_db_write_relaxed(struct bnxt *bp, void __iomem *db,
++					 u32 val)
++{
++	writel_relaxed(val, db);
++	if (bp->flags & BNXT_FLAG_DOUBLE_DB)
++		writel_relaxed(val, db);
++}
 +
-+	mmiowb();
- 
- 	/* Wait for PF to complete */
- 	while ((tout >= 0) && (!*done)) {
+ /* For TX and RX ring doorbells */
+ static inline void bnxt_db_write(struct bnxt *bp, void __iomem *db, u32 val)
+ {
 -- 
 2.7.4
