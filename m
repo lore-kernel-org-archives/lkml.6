@@ -1,71 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752098AbeCWS53 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 14:57:29 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33070 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751796AbeCWS52 (ORCPT
+        id S1752130AbeCWTJu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:09:50 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.45]:23027 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751595AbeCWTJt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 14:57:28 -0400
-Date: Fri, 23 Mar 2018 14:57:07 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: tglx@linutronix.de, mingo@elte.hu, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org
-Subject: Re: [PATCH] swiotlb: swiotlb_{alloc,free}_buffer should depend on
- CONFIG_DMA_DIRECT_OPS
-Message-ID: <20180323185707.GD25533@char.us.oracle.com>
-References: <20180323174930.17767-1-hch@lst.de>
+        Fri, 23 Mar 2018 15:09:49 -0400
+Subject: [RESEND] SHASH_DESC_ON_STACK macro
+References: <f662fa16-2cbb-a484-4efb-68bb3b39a792@embeddedor.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+X-Forwarded-Message-Id: <f662fa16-2cbb-a484-4efb-68bb3b39a792@embeddedor.com>
+Message-ID: <bda66faa-f52d-215d-f21b-763593b30f91@embeddedor.com>
+Date: Fri, 23 Mar 2018 14:09:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180323174930.17767-1-hch@lst.de>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8841 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803230205
+In-Reply-To: <f662fa16-2cbb-a484-4efb-68bb3b39a792@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.187
+X-Source-L: No
+X-Exim-ID: 1ezS4R-002zip-T8
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.67]) [189.145.54.187]:43434
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 06:49:30PM +0100, Christoph Hellwig wrote:
-> Otherwise we might get unused symbol warnings for configs that built
-> swiotlb.c only for use by xen-swiotlb.c and that don't otherwise select
-> CONFIG_DMA_DIRECT_OPS, which is possible on arm.
-> 
-> Fixes: 16e73adbca76 ("dma/swiotlb: Remove swiotlb_{alloc,free}_coherent()")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Hi Herbert,
+
+There is an ongoing effort to remove all VLAs from the code base [1] and 
+while working on that I came across the following macro at 
+include/crypto/hash.h:154:
+
+#define SHASH_DESC_ON_STACK(shash, ctx)                           \
+         char __##shash##_desc[sizeof(struct shash_desc) +         \
+                 crypto_shash_descsize(ctx)] CRYPTO_MINALIGN_ATTR; \
+         struct shash_desc *shash = (struct shash_desc *)__##shash##_desc
 
 
-Alternatively could we set the Kconfig to slect DMA_DIRECT_OPS?
+Currently, this macro is being used in 46 different places.
 
-> ---
->  lib/swiotlb.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-> index 15954b86f09e..47aeb04c1997 100644
-> --- a/lib/swiotlb.c
-> +++ b/lib/swiotlb.c
-> @@ -692,6 +692,7 @@ void swiotlb_tbl_sync_single(struct device *hwdev, phys_addr_t tlb_addr,
->  	}
->  }
->  
-> +#ifdef CONFIG_DMA_DIRECT_OPS
->  static inline bool dma_coherent_ok(struct device *dev, dma_addr_t addr,
->  		size_t size)
->  {
-> @@ -763,6 +764,7 @@ static bool swiotlb_free_buffer(struct device *dev, size_t size,
->  				 DMA_ATTR_SKIP_CPU_SYNC);
->  	return true;
->  }
-> +#endif
->  
->  static void
->  swiotlb_full(struct device *dev, size_t size, enum dma_data_direction dir,
-> -- 
-> 2.14.2
-> 
+I wonder how big can tfm->descsize can get?
+
+Do you think it is feasible to replace the call to crypto_shash_descsize 
+with a constant value and get rid of 46 VLA warnings?
+
+I have sent some patches to replace the use of this macro with dynamic 
+memory allocation instead, but it seems that this is not a suitable 
+solution for all cases due to performance issues.
+
+[1] https://lkml.org/lkml/2018/3/7/621
+
+I'd really appreciate any feedback.
+Thanks
+--
+Gustavo
