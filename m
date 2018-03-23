@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802646-2-3866200839829614768
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802640-2-9180266274698990836
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802645; b=L1Ysi6m6IwgOgAwKwEdgl4zf3ejKy2iekK3dljm9aXuqY8U
-    YM6mpQ0EdxlIPqHHJaynfeLFiUaG3cqYdepRc9jZNxgDRrJWMRe3hngFftnTovhR
-    OwOzHDlPc3JebImIsAT5vwX+34rKdg+kwxla0AyHR1BxXi1lc7ha8GWtZmX5Is3g
-    68oz+wLFgGho7S/mJbvhFKyN5wEr7OakZms7Uwgyfqugbiq0y0b4U3NXbVIm9Ugn
-    TxjHq4k/RKLEAlNtoWYjHFedNctiTHs3hCSlqRJ7Go9M5Jd7uYZq2yGqh0Lzu/TY
-    EL55aVCW4h2mPHzE1r7jsj2E5XInKm403fKls/A==
+    t=1521802639; b=aqUAASR+AS0I/eRvPkeyCYTRQX/OyLbA2h6y/4yn3A602oN
+    b6ZAQJwU1xhzKjlzLOlUiB8hHk0psGcxMklhzU58RpjnSsfZVAnqRrv9aTyVzGHj
+    LWnJUYVIGBIqkKVeOjJOfOTJhil1hm62yUbJ+zgMI9wTk1LE0zrrtRhVQctNhvif
+    sw0yBtjm0mLkBt7RTfMSXvyPnrAtuq7FvHVt3jbc/YhiBBG4SmZd73mBgQmLzTyb
+    viYKBMHea5UMP1ryenHtlY0SA/vtLCBTzIURev8EPubIn6TMWMS+uz0dD0e647SH
+    GzAfE4xK/ptgBNuF5tZEhpllgAQHT3mKZFi8ong==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802645; bh=1oykN3+bx7Cxnr49IWr8qHUDir
-    abb2G/wH9030MPomU=; b=Cjj/bMLw7bfkJFU8jVLAdOcR1Fwvi8Yt7rHkiF5ufv
-    9r5HI7tRzMT+T1TNF2ROO5Ykbst6Q6dEqq26UbbZs0PhOBPBYKfQj871pjj9HvQd
-    TxrG7hgDhCi/zBbc46DUCra6O7A+WCQmspHqjniyLqbkcRnTN3jKWG7Pw0BnWe+c
-    GdiDppcWQtWbZuzHDtKdU0IGICYTM2PDkJJWROnlAWHu0UIJcJDRXF8EXZtjkFi6
-    i0G2tmkudXgT5HG2FOIKiUywQKkdeoLwYud+F2NZ5Ae26JTO5Q9pRjuGb0vEkK7s
-    trYTV9eptUHl1yCPu1CARHyIf+Qs8iw4vLd07g97Jx5w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521802639; bh=vHvT46/ypfk92QZxvfbpPCdibm
+    1tfKh3nf5w/1q4UxM=; b=uE6fV8ZITNu5jHk8oHhLvCjXXJBWDzBERbAvOkfiZO
+    C7gLv6dourYo7qOf3l97c6TvIG7/WToh+tywm4XU0YLKkIfBwy85T4AmJ9IGCO+m
+    o0WytbaYIxSBf+ZNCnJKxNKLPkUqcwesO0q4LRGnrQCn1LPRr1QZ789bl4It2sxs
+    nXxzk4Lg2oRuPXgSg6CwKC/Hs4epGsmQAROuflkcvfZ8JpfG2y9ADgPT3g3rjwzD
+    GYaDBSf3RE4M6SXG8PbCKIGEcPQYUmYH2c70/u+FhAbM2vULt5QmoaECAVp+QLmO
+    BjKx3pEdimaZ3xgsB1dvBDyYLCiI4NL6QKD9DQ9dfMFQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,24 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752165AbeCWKMy (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:12:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44500 "EHLO
+        id S1755297AbeCWK47 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:56:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44520 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752367AbeCWKMx (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:53 -0400
+        with ESMTP id S1752367AbeCWKM4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Lechner <david@lechnology.com>,
-        Krzysztof Opasiak <k.opasiak@samsung.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.9 177/177] usb: gadget: f_hid: fix: Move IN request allocation to set_alt()
-Date: Fri, 23 Mar 2018 10:55:05 +0100
-Message-Id: <20180323094212.941020542@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 168/177] clk: Dont touch hardware when reparenting during registration
+Date: Fri, 23 Mar 2018 10:54:56 +0100
+Message-Id: <20180323094212.565447434@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,228 +85,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Krzysztof Opasiak <kopasiak90@gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
 
-commit 749494b6bdbbaf0899aa1c62a1ad74cd747bce47 upstream.
 
-Since commit: ba1582f22231 ("usb: gadget: f_hid: use alloc_ep_req()")
-we cannot allocate any requests in bind() as we check if we should
-align request buffer based on endpoint descriptor which is assigned
-in set_alt().
+[ Upstream commit f8f8f1d04494d3a6546bee3f0618c4dba31d7b72 ]
 
-Allocating request in bind() function causes a NULL pointer
-dereference.
+The orphan clocks reparent operation shouldn't touch the hardware
+if clocks are enabled, otherwise it may get a chance to disable a
+newly registered critical clock which triggers the warning below.
 
-This commit moves allocation of IN request from bind() to set_alt()
-to prevent this issue.
+Assuming we have two clocks: A and B, B is the parent of A.
+Clock A has flag: CLK_OPS_PARENT_ENABLE
+Clock B has flag: CLK_IS_CRITICAL
 
-Fixes: ba1582f22231 ("usb: gadget: f_hid: use alloc_ep_req()")
-Cc: stable@vger.kernel.org
-Tested-by: David Lechner <david@lechnology.com>
-Signed-off-by: Krzysztof Opasiak <k.opasiak@samsung.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc: Bin Liu <b-liu@ti.com>
+Step 1:
+Clock A is registered, then it becomes orphan.
+
+Step 2:
+Clock B is registered. Before clock B reach the critical clock enable
+operation, orphan A will find the newly registered parent B and do
+reparent operation, then parent B will be finally disabled in
+__clk_set_parent_after() due to CLK_OPS_PARENT_ENABLE flag as there's
+still no users of B which will then trigger the following warning.
+
+WARNING: CPU: 0 PID: 0 at drivers/clk/clk.c:597 clk_core_disable+0xb4/0xe0
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.11.0-rc1-00056-gdff1f66-dirty #1373
+Hardware name: Generic DT based system
+Backtrace:
+[<c010c4bc>] (dump_backtrace) from [<c010c764>] (show_stack+0x18/0x1c)
+ r6:600000d3 r5:00000000 r4:c0e26358 r3:00000000
+[<c010c74c>] (show_stack) from [<c040599c>] (dump_stack+0xb4/0xe8)
+[<c04058e8>] (dump_stack) from [<c0125c94>] (__warn+0xd8/0x104)
+ r10:c0c21cd0 r9:c048aa78 r8:00000255 r7:00000009 r6:c0c1cd90 r5:00000000
+ r4:00000000 r3:c0e01d34
+[<c0125bbc>] (__warn) from [<c0125d74>] (warn_slowpath_null+0x28/0x30)
+ r9:00000000 r8:ef00bf80 r7:c165ac4c r6:ef00bf80 r5:ef00bf80 r4:ef00bf80
+[<c0125d4c>] (warn_slowpath_null) from [<c048aa78>] (clk_core_disable+0xb4/0xe0)
+[<c048a9c4>] (clk_core_disable) from [<c048be88>] (clk_core_disable_lock+0x20/0x2c)
+ r4:000000d3 r3:c0e0af00
+[<c048be68>] (clk_core_disable_lock) from [<c048c224>] (clk_core_disable_unprepare+0x14/0x28)
+ r5:00000000 r4:ef00bf80
+[<c048c210>] (clk_core_disable_unprepare) from [<c048c270>] (__clk_set_parent_after+0x38/0x54)
+ r4:ef00bd80 r3:000010a0
+[<c048c238>] (__clk_set_parent_after) from [<c048daa8>] (clk_register+0x4d0/0x648)
+ r6:ef00d500 r5:ef00bf80 r4:ef00bd80 r3:ef00bfd4
+[<c048d5d8>] (clk_register) from [<c048dc30>] (clk_hw_register+0x10/0x1c)
+ r9:00000000 r8:00000003 r7:00000000 r6:00000824 r5:00000001 r4:ef00d500
+[<c048dc20>] (clk_hw_register) from [<c048e698>] (_register_divider+0xcc/0x120)
+[<c048e5cc>] (_register_divider) from [<c048e730>] (clk_register_divider+0x44/0x54)
+ r10:00000004 r9:00000003 r8:00000001 r7:00000000 r6:00000003 r5:00000001
+ r4:f0810030
+[<c048e6ec>] (clk_register_divider) from [<c0d3ff58>] (imx7ulp_clocks_init+0x558/0xe98)
+ r7:c0e296f8 r6:c165c808 r5:00000000 r4:c165c808
+[<c0d3fa00>] (imx7ulp_clocks_init) from [<c0d24db0>] (of_clk_init+0x118/0x1e0)
+ r10:00000001 r9:c0e01f68 r8:00000000 r7:c0e01f60 r6:ef7f8974 r5:ef0035c0
+ r4:00000006
+[<c0d24c98>] (of_clk_init) from [<c0d04a50>] (time_init+0x2c/0x38)
+ r10:efffed40 r9:c0d61a48 r8:c0e78000 r7:c0e07900 r6:ffffffff r5:c0e78000
+ r4:00000000
+[<c0d04a24>] (time_init) from [<c0d00b8c>] (start_kernel+0x218/0x394)
+[<c0d00974>] (start_kernel) from [<6000807c>] (0x6000807c)
+ r10:00000000 r9:410fc075 r8:6000406a r7:c0e0c930 r6:c0d61a44 r5:c0e07918
+ r4:c0e78294
+
+We know that the clk isn't enabled with any sort of prepare_count
+here so we don't need to enable anything to prevent a race. And
+we're holding the prepare mutex so set_rate/set_parent can't race
+here either. Based on an earlier patch by Dong Aisheng.
+
+Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents enable (part 2)")
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Reported-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/gadget/function/f_hid.c |   89 +++++++++++++++++++++++++++---------
- 1 file changed, 67 insertions(+), 22 deletions(-)
+ drivers/clk/clk.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/gadget/function/f_hid.c
-+++ b/drivers/usb/gadget/function/f_hid.c
-@@ -284,6 +284,7 @@ static ssize_t f_hidg_write(struct file
- 			    size_t count, loff_t *offp)
- {
- 	struct f_hidg *hidg  = file->private_data;
-+	struct usb_request *req;
- 	unsigned long flags;
- 	ssize_t status = -ENOMEM;
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2443,14 +2443,17 @@ static int __clk_core_init(struct clk_co
+ 	 */
+ 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+ 		struct clk_core *parent = __clk_init_parent(orphan);
++		unsigned long flags;
  
-@@ -293,7 +294,7 @@ static ssize_t f_hidg_write(struct file
- 	spin_lock_irqsave(&hidg->write_spinlock, flags);
- 
- #define WRITE_COND (!hidg->write_pending)
--
-+try_again:
- 	/* write queue */
- 	while (!WRITE_COND) {
- 		spin_unlock_irqrestore(&hidg->write_spinlock, flags);
-@@ -308,6 +309,7 @@ static ssize_t f_hidg_write(struct file
- 	}
- 
- 	hidg->write_pending = 1;
-+	req = hidg->req;
- 	count  = min_t(unsigned, count, hidg->report_length);
- 
- 	spin_unlock_irqrestore(&hidg->write_spinlock, flags);
-@@ -320,24 +322,38 @@ static ssize_t f_hidg_write(struct file
- 		goto release_write_pending;
- 	}
- 
--	hidg->req->status   = 0;
--	hidg->req->zero     = 0;
--	hidg->req->length   = count;
--	hidg->req->complete = f_hidg_req_complete;
--	hidg->req->context  = hidg;
-+	spin_lock_irqsave(&hidg->write_spinlock, flags);
-+
-+	/* we our function has been disabled by host */
-+	if (!hidg->req) {
-+		free_ep_req(hidg->in_ep, hidg->req);
-+		/*
-+		 * TODO
-+		 * Should we fail with error here?
-+		 */
-+		goto try_again;
-+	}
-+
-+	req->status   = 0;
-+	req->zero     = 0;
-+	req->length   = count;
-+	req->complete = f_hidg_req_complete;
-+	req->context  = hidg;
- 
- 	status = usb_ep_queue(hidg->in_ep, hidg->req, GFP_ATOMIC);
- 	if (status < 0) {
- 		ERROR(hidg->func.config->cdev,
- 			"usb_ep_queue error on int endpoint %zd\n", status);
--		goto release_write_pending;
-+		goto release_write_pending_unlocked;
- 	} else {
- 		status = count;
- 	}
-+	spin_unlock_irqrestore(&hidg->write_spinlock, flags);
- 
- 	return status;
- release_write_pending:
- 	spin_lock_irqsave(&hidg->write_spinlock, flags);
-+release_write_pending_unlocked:
- 	hidg->write_pending = 0;
- 	spin_unlock_irqrestore(&hidg->write_spinlock, flags);
- 
-@@ -541,12 +557,23 @@ static void hidg_disable(struct usb_func
- 		kfree(list);
- 	}
- 	spin_unlock_irqrestore(&hidg->read_spinlock, flags);
-+
-+	spin_lock_irqsave(&hidg->write_spinlock, flags);
-+	if (!hidg->write_pending) {
-+		free_ep_req(hidg->in_ep, hidg->req);
-+		hidg->write_pending = 1;
-+	}
-+
-+	hidg->req = NULL;
-+	spin_unlock_irqrestore(&hidg->write_spinlock, flags);
- }
- 
- static int hidg_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
- {
- 	struct usb_composite_dev		*cdev = f->config->cdev;
- 	struct f_hidg				*hidg = func_to_hidg(f);
-+	struct usb_request			*req_in = NULL;
-+	unsigned long				flags;
- 	int i, status = 0;
- 
- 	VDBG(cdev, "hidg_set_alt intf:%d alt:%d\n", intf, alt);
-@@ -567,6 +594,12 @@ static int hidg_set_alt(struct usb_funct
- 			goto fail;
+ 		/*
+ 		 * we could call __clk_set_parent, but that would result in a
+ 		 * redundant call to the .set_rate op, if it exists
+ 		 */
+ 		if (parent) {
+-			__clk_set_parent_before(orphan, parent);
+-			__clk_set_parent_after(orphan, parent, NULL);
++			/* update the clk tree topology */
++			flags = clk_enable_lock();
++			clk_reparent(orphan, parent);
++			clk_enable_unlock(flags);
+ 			__clk_recalc_accuracies(orphan);
+ 			__clk_recalc_rates(orphan, 0);
  		}
- 		hidg->in_ep->driver_data = hidg;
-+
-+		req_in = hidg_alloc_ep_req(hidg->in_ep, hidg->report_length);
-+		if (!req_in) {
-+			status = -ENOMEM;
-+			goto disable_ep_in;
-+		}
- 	}
- 
- 
-@@ -578,12 +611,12 @@ static int hidg_set_alt(struct usb_funct
- 					    hidg->out_ep);
- 		if (status) {
- 			ERROR(cdev, "config_ep_by_speed FAILED!\n");
--			goto fail;
-+			goto free_req_in;
- 		}
- 		status = usb_ep_enable(hidg->out_ep);
- 		if (status < 0) {
- 			ERROR(cdev, "Enable OUT endpoint FAILED!\n");
--			goto fail;
-+			goto free_req_in;
- 		}
- 		hidg->out_ep->driver_data = hidg;
- 
-@@ -599,17 +632,37 @@ static int hidg_set_alt(struct usb_funct
- 				req->context  = hidg;
- 				status = usb_ep_queue(hidg->out_ep, req,
- 						      GFP_ATOMIC);
--				if (status)
-+				if (status) {
- 					ERROR(cdev, "%s queue req --> %d\n",
- 						hidg->out_ep->name, status);
-+					free_ep_req(hidg->out_ep, req);
-+				}
- 			} else {
--				usb_ep_disable(hidg->out_ep);
- 				status = -ENOMEM;
--				goto fail;
-+				goto disable_out_ep;
- 			}
- 		}
- 	}
- 
-+	if (hidg->in_ep != NULL) {
-+		spin_lock_irqsave(&hidg->write_spinlock, flags);
-+		hidg->req = req_in;
-+		hidg->write_pending = 0;
-+		spin_unlock_irqrestore(&hidg->write_spinlock, flags);
-+
-+		wake_up(&hidg->write_queue);
-+	}
-+	return 0;
-+disable_out_ep:
-+	usb_ep_disable(hidg->out_ep);
-+free_req_in:
-+	if (req_in)
-+		free_ep_req(hidg->in_ep, req_in);
-+
-+disable_ep_in:
-+	if (hidg->in_ep)
-+		usb_ep_disable(hidg->in_ep);
-+
- fail:
- 	return status;
- }
-@@ -658,12 +711,6 @@ static int hidg_bind(struct usb_configur
- 		goto fail;
- 	hidg->out_ep = ep;
- 
--	/* preallocate request and buffer */
--	status = -ENOMEM;
--	hidg->req = alloc_ep_req(hidg->in_ep, hidg->report_length);
--	if (!hidg->req)
--		goto fail;
--
- 	/* set descriptor dynamic values */
- 	hidg_interface_desc.bInterfaceSubClass = hidg->bInterfaceSubClass;
- 	hidg_interface_desc.bInterfaceProtocol = hidg->bInterfaceProtocol;
-@@ -690,6 +737,8 @@ static int hidg_bind(struct usb_configur
- 		goto fail;
- 
- 	spin_lock_init(&hidg->write_spinlock);
-+	hidg->write_pending = 1;
-+	hidg->req = NULL;
- 	spin_lock_init(&hidg->read_spinlock);
- 	init_waitqueue_head(&hidg->write_queue);
- 	init_waitqueue_head(&hidg->read_queue);
-@@ -954,10 +1003,6 @@ static void hidg_unbind(struct usb_confi
- 	device_destroy(hidg_class, MKDEV(major, hidg->minor));
- 	cdev_del(&hidg->cdev);
- 
--	/* disable/free request and end point */
--	usb_ep_disable(hidg->in_ep);
--	free_ep_req(hidg->in_ep, hidg->req);
--
- 	usb_free_all_descriptors(f);
- }
- 
