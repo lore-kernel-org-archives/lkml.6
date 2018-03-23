@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804624-2-1485758601659310675
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804600-2-3555588498481619176
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804624; b=AVtCSnHNmKtbT7vX8jsz5M0O+FCs0FWStphizb5IVB3nwEq
-    pwtLJcMqFaM5Nft59n+6Z62XckKn2KiBgH9aMVLb1YX9H6Af2ALMyUzmGpAtIjME
-    LWcaTFG/w/Uy3S8to1YRcXoIlXMA1cY5Mnbtg4rrB6LLn4ueMnuNBDvXsN7x2zeN
-    /EExRYeWdZfdN28tCpMvEvyMT3gbnp4XjyH4JFsNC59tAn+crgE9FoRhXlqjeSLH
-    kkPnMEK0CPuv/uOoAaFFITH1ezatPOkQj7UMIifOyNqL0kK7gxPVGgGvL3wnFsd5
-    oImNispCGb7ofvS5L6EHndP2JqOfq3DgBOSeeuw==
+    t=1521804599; b=GVdGzrZHIa4dJy8jqcxlMdXsoer2EqhBhpW9ib54R4/fgAu
+    0lKd8/95IcnY05Bm0sCsRDZNbRHZwGxPAx3GGAy0oNskWpVEbhE7V6+2CeQy2kCG
+    rHNgs0l5+DY6rwl+gq9zoUaHrfC6tZZrIiUy+i/nQsCQQdKgzc/qP9gNIExm291c
+    1ezBkAuTaXPboG0MSKuQBR5yL5C+X5CaUHExRxgj1bkYxq+LdIX76E16vNNwWj+H
+    +5UtidJEKpkb9sG5KXV63eJVkYdiCoFVl663O/uC9Q0Q6hDIJlWbyLxtNnjYbIOV
+    W4Eu+AT8OnsycXNyh5GtJziKu0ENHPSyoRNkkfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804624; bh=pNGBBbhLRIizPbBzdAZ+CHWG87
-    qH7pSi/LwLypQEPXU=; b=XgiMJ4jHIWoN97TdYp82DXK7DJjtKVChEu8vJNbjuu
-    H3KaMafcTaikRT+UviDVixQX/0xX1H4g/0v3uQR9vTtVlT7S9IqQcInZCVwz50r3
-    HAVrI8HhaxRoJlS5VzW88ZG87WEcZ8G8OfDDMT+gUIJSJWFkNy/vtjYrJiYdq9FO
-    457Rlxq3MNS3fdtGMJaVbeuro7gTPZ+iYObCzvMEENBSUitrkZqy4RY4TdF6ysGM
-    zqHrdk7z7o3sfI3bgUDg01wmnNTz+g2b3hKwaD00IcBuhIE95VdBspDHhw3txQMF
-    wKGkBwPZCUUGzgT8T5qW/zHLen9M4p/yIZAc1S3aOBKQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804599; bh=gz+85UwX+/SdPs+SklBIUx0AWo
+    gg6ovnEXLqmer2ufs=; b=TV6R7u9bbZz9YnoE7bK5TN68M0KAC/nR87O7lkM9G5
+    8xrnDIexE0WhCfEey0ynAXD7M/u5oLM544PyIkFkr5A8B86GMgQLnF2eBmQdAegd
+    xtku4jjVI1ehb9LSMhdJ+/xuaId0xJQHWeFtuabHm9HW9q+uQzPr7V2jSHhN+ylA
+    QMq6rlUShZt/ftx5iFWALjvoxIlIgGv2sh82zrigJWr/epY7sOyW88B1TsCgGFJg
+    +INh7bnD+S7fMrUIbkYtLfHTgdh2Wha7tef1DRc5E+b84f1Kr+RG2Yllik/9keNR
+    EA3qk4IChU3hZZFHEYevJ2jx9e3HHIuW4DOwDeculxeA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,24 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755225AbeCWKGY (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:06:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40754 "EHLO
+        id S932065AbeCWKG2 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:06:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40774 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755207AbeCWKGX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:23 -0400
+        with ESMTP id S1755207AbeCWKG0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Bernd Faust <berndfaust@gmail.com>,
+        Sasha Neftin <sasha.neftin@intel.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 054/177] netvsc: Deal with rescinded channels correctly
-Date: Fri, 23 Mar 2018 10:53:02 +0100
-Message-Id: <20180323094207.738694716@linuxfoundation.org>
+Subject: [PATCH 4.9 042/177] e1000e: fix timing for 82579 Gigabit Ethernet controller
+Date: Fri, 23 Mar 2018 10:52:50 +0100
+Message-Id: <20180323094207.068629627@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,53 +85,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "K. Y. Srinivasan" <kys@microsoft.com>
+From: Bernd Faust <berndfaust@gmail.com>
 
 
-[ Upstream commit 73e64fa4f417b22d8d5521999a631ced8e2d442e ]
+[ Upstream commit 5313eeccd2d7f486be4e5c7560e3e2be239ec8f7 ]
 
-We will not be able to send packets over a channel that has been
-rescinded. Make necessary adjustments so we can properly cleanup
-even when the channel is rescinded. This issue can be trigerred
-in the NIC hot-remove path.
+After an upgrade to Linux kernel v4.x the hardware timestamps of the
+82579 Gigabit Ethernet Controller are different than expected.
+The values that are being read are almost four times as big as before
+the kernel upgrade.
 
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The difference is that after the upgrade the driver sets the clock
+frequency to 25MHz, where before the upgrade it was set to 96MHz. Intel
+confirmed that the correct frequency for this network adapter is 96MHz.
+
+Signed-off-by: Bernd Faust <berndfaust@gmail.com>
+Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+Acked-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/net/ethernet/intel/e1000e/netdev.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -151,6 +151,13 @@ static void netvsc_destroy_buf(struct hv
- 				       sizeof(struct nvsp_message),
- 				       (unsigned long)revoke_packet,
- 				       VM_PKT_DATA_INBAND, 0);
-+		/* If the failure is because the channel is rescinded;
-+		 * ignore the failure since we cannot send on a rescinded
-+		 * channel. This would allow us to properly cleanup
-+		 * even when the channel is rescinded.
-+		 */
-+		if (device->channel->rescind)
-+			ret = 0;
- 		/*
- 		 * If we failed here, we might as well return and
- 		 * have a leak rather than continue and a bugchk
-@@ -211,6 +218,15 @@ static void netvsc_destroy_buf(struct hv
- 				       sizeof(struct nvsp_message),
- 				       (unsigned long)revoke_packet,
- 				       VM_PKT_DATA_INBAND, 0);
-+
-+		/* If the failure is because the channel is rescinded;
-+		 * ignore the failure since we cannot send on a rescinded
-+		 * channel. This would allow us to properly cleanup
-+		 * even when the channel is rescinded.
-+		 */
-+		if (device->channel->rescind)
-+			ret = 0;
-+
- 		/* If we failed here, we might as well return and
- 		 * have a leak rather than continue and a bugchk
- 		 */
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -3528,6 +3528,12 @@ s32 e1000e_get_base_timinca(struct e1000
+ 
+ 	switch (hw->mac.type) {
+ 	case e1000_pch2lan:
++		/* Stable 96MHz frequency */
++		incperiod = INCPERIOD_96MHz;
++		incvalue = INCVALUE_96MHz;
++		shift = INCVALUE_SHIFT_96MHz;
++		adapter->cc.shift = shift + INCPERIOD_SHIFT_96MHz;
++		break;
+ 	case e1000_pch_lpt:
+ 		if (er32(TSYNCRXCTL) & E1000_TSYNCRXCTL_SYSCFI) {
+ 			/* Stable 96MHz frequency */
