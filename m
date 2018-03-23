@@ -1,25 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeCWWZV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 18:25:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35708 "EHLO
+        id S1752681AbeCWWZT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 18:25:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35788 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751899AbeCWWXU (ORCPT
+        with ESMTP id S1752112AbeCWWXV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 18:23:20 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 15BA960312
+        Fri, 23 Mar 2018 18:23:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E19B607E5
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Sinan Kaya <okaya@codeaurora.org>,
-        Harish Patil <harish.patil@cavium.com>,
-        Manish Chopra <manish.chopra@cavium.com>,
-        Dept-GELinuxNICDev@cavium.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/6] qlcnic: Eliminate duplicate barriers on weakly-ordered archs
-Date: Fri, 23 Mar 2018 18:23:07 -0400
-Message-Id: <1521843791-21201-3-git-send-email-okaya@codeaurora.org>
+        Ariel Elior <ariel.elior@cavium.com>, everest-linux-l2@cavium.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 3/6] bnx2x: Replace doorbell barrier() with wmb()
+Date: Fri, 23 Mar 2018 18:23:08 -0400
+Message-Id: <1521843791-21201-4-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521843791-21201-1-git-send-email-okaya@codeaurora.org>
 References: <1521843791-21201-1-git-send-email-okaya@codeaurora.org>
@@ -29,33 +28,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a
-barrier on some architectures like arm64.
+barrier() doesn't guarantee memory writes to be observed by the hardware on
+all architectures. barrier() only tells compiler not to move this code
+with respect to other read/writes.
 
-This ends up CPU observing two barriers back to back before executing
-the register write.
-
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
+If memory write needs to be observed by the HW, wmb() is the right choice.
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
-Acked-by: Manish Chopra <manish.chopra@cavium.com>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c     | 3 ++-
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-index 46b0372..97c146e7 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-@@ -478,7 +478,7 @@ irqreturn_t qlcnic_83xx_clear_legacy_intr(struct qlcnic_adapter *adapter)
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+index d7c98e8..b97820f 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+@@ -4153,7 +4153,8 @@ netdev_tx_t bnx2x_start_xmit(struct sk_buff *skb, struct net_device *dev)
  	wmb();
  
- 	/* clear the interrupt trigger control register */
--	writel(0, adapter->isr_int_vec);
-+	writel_relaxed(0, adapter->isr_int_vec);
- 	intr_val = readl(adapter->isr_int_vec);
- 	do {
- 		intr_val = readl(adapter->tgt_status_reg);
+ 	txdata->tx_db.data.prod += nbd;
+-	barrier();
++	/* make sur edescriptor update is observed by HW */
++	wmb();
+ 
+ 	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
+ 
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+index 1e33abd..39af4f8 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+@@ -2591,7 +2591,8 @@ static int bnx2x_run_loopback(struct bnx2x *bp, int loopback_mode)
+ 	wmb();
+ 
+ 	txdata->tx_db.data.prod += 2;
+-	barrier();
++	/* make sure descriptor update is observed by the HW */
++	wmb();
+ 	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
+ 
+ 	mmiowb();
 -- 
 2.7.4
