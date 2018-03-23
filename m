@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804763-2-13352072265401155225
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804755-2-8502056998156635738
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enca,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804762; b=qd9iMzR12jljLXwkEJ8+UatDZ4mkDCHji+LmIWHr/kljnau
-    34L+9de2oJfG7CLeJ458yFO6dgNjwLadX0Rl6JMKI4ubsLUa4b86OQpBGOunnNQ4
-    56YpZJWLLYwEimbQwP2x6b/O4m7iZFkv44zR96Ge6O/r97Rl70e8DTRyEwcWogO0
-    Cilm9o5rs6ia3NWU9gTQ8+EQdPSAoxT8bJ6X0oOUUQyUecv3PAz0eW6Sj4Pj6Wui
-    j4QEDN4F4dJXtH6tSxCQav9a3DIcAqGLh8WJJpxPusql5ttxojXiX0/qFwK5Z3Hm
-    XJLIlvaKyZGV0JC989fhlarMpt/TCCj5gjbvaPw==
+    t=1521804755; b=dDZ8aOS7pGx3WmnjOcoLh4ak8HEw8VnYbzrvzA2TNH1QoHn
+    dsYSj4WCS/yVcDv9YEYkTY7+l/RsWMdI1naQabjKeaVikTB53C3q3b+bSYNZq0Vo
+    4hK4A7C75kj6a4U4lkHLf/l6X3eLWd98mj3CX2+2toDuE2L5kLmqsacyBo9oCjjM
+    LKFHHTlO3HnUsJyR+214a9nMRfMT3J5drsu+zGB+UfPZV+bf9Cvpywn6lYja+jE+
+    pOk7U/e3N5/q2B7lRG8Pe7hsMx5zJtwkkF8Cx+ZIGtkg+f+l8WH4mS21SojjNvqd
+    /QbfAPXkOTG2P+bwqcjvpxMtuR3rjxrHIaaCswQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804762; bh=ujH0HfpOkYjtEZC4O+cIP0NPZf
-    mtjqMNLMXnd7Y8ZoI=; b=KQ+OyysZGl2C6zQePytLuiMbiRzdQO3pBf46W+iePT
-    V0ZPQ0pZKpcb+EZUhgSekSjoF/L6MGKUyAqT3MAZXmFube03bmzNHkTcNd/jdrUv
-    ee/lc4ILtfjSwF2WdwJTK3AHDehd7fOsbs264fGslND/yKgmn4GMf0Kz9GKuVtMD
-    KJcyMUPSd2YYapftyVeq7m5q6THkfeJLWb13iwpPH9MjHktLsCNPZ/5rBWLqJTKU
-    yUoRal6GkYn/zZdLtqBqiu0R/fdj2hoQGIPhW0AZAjMRSf5c7vzuhqBZUR+VbcyA
-    Lh0RFHqLoCJRtoC1fc4UER3lv022nXwctzvbsQzBRC9g==
+    :list-id; s=arctest; t=1521804755; bh=QfCFCc82uiMLEtJtXMIJMIAL3a
+    rcdQ8qLGbEW+3yWWE=; b=TCy0LsZnu53goXrzoTuaEWRw3R7vVqHSJSllF3U4wJ
+    V0cUeFO3P9OYlz8Stf6RjZk7A81wyfumniFq4ayQ2foCIQm213DY7LPkb8Dg/UEk
+    22B32sVqsTOGSotdqcCDYVgEdf2MHDnK1pUFQpbfeRQk6FBRc/s52Kvk7ZxlqiYJ
+    J4SaE9aX/E4r1qso0oKeoe+RQ45Itqk4Z20CII3vg6YlC7bCNtO5wpF5QRZA6ee7
+    d5gq3Jj61X8VnjutcyTcchwLfeB//ngaWABmPxUbDmiOWFh7lzi4uA22TxTkCnk9
+    vY3q+6cZbrP0yiupB/tub1PcAXa0rmbf2l3j5ZnowRfA==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755103AbeCWKFw (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:05:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40570 "EHLO
+        id S1755130AbeCWKF5 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:05:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40582 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755101AbeCWKFu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:50 -0400
+        with ESMTP id S1755081AbeCWKFx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liad Kaufman <liad.kaufman@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 031/177] iwlwifi: a000: fix memory offsets and lengths
-Date: Fri, 23 Mar 2018 10:52:39 +0100
-Message-Id: <20180323094206.550726900@linuxfoundation.org>
+Subject: [PATCH 4.9 032/177] scsi: virtio_scsi: Always try to read VPD pages
+Date: Fri, 23 Mar 2018 10:52:40 +0100
+Message-Id: <20180323094206.594552915@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,38 +83,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liad Kaufman <liad.kaufman@intel.com>
+From: David Gibson <david@gibson.dropbear.id.au>
 
 
-[ Upstream commit f4d1047914ea05e0f8393944da18f6ee5dad24c4 ]
+[ Upstream commit 25d1d50e23275e141e3a3fe06c25a99f4c4bf4e0 ]
 
-Memory offsets and lengths for A000 HW is different
-than currently specified.
+Passed through SCSI targets may have transfer limits which come from the
+host SCSI controller or something on the host side other than the target
+itself.
 
-Fixes: e34d975e40ff ("iwlwifi: Add a000 HW family support")
-Signed-off-by: Liad Kaufman <liad.kaufman@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+To make this work properly, the hypervisor can adjust the target's VPD
+information to advertise these limits.  But for that to work, the guest
+has to look at the VPD pages, which we won't do by default if it is an
+SPC-2 device, even if it does actually support it.
+
+This adds a workaround to address this, forcing devices attached to a
+virtio-scsi controller to always check the VPD pages.  This is modelled
+on a similar workaround for the storvsc (Hyper-V) SCSI controller,
+although that exists for slightly different reasons.
+
+A specific case which causes this is a volume from IBM's IPR RAID
+controller (which presents as an SPC-2 device, although it does support
+VPD) passed through with qemu's 'scsi-block' device.
+
+[mkp: fixed typo]
+
+Signed-off-by: David Gibson <david@gibson.dropbear.id.au>
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/iwl-a000.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/virtio_scsi.c |   24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/iwl-a000.c
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-a000.c
-@@ -65,12 +65,12 @@
- #define IWL_A000_TX_POWER_VERSION	0xffff /* meaningless */
+--- a/drivers/scsi/virtio_scsi.c
++++ b/drivers/scsi/virtio_scsi.c
+@@ -28,6 +28,7 @@
+ #include <scsi/scsi_device.h>
+ #include <scsi/scsi_cmnd.h>
+ #include <scsi/scsi_tcq.h>
++#include <scsi/scsi_devinfo.h>
+ #include <linux/seqlock.h>
  
- /* Memory offsets and lengths */
--#define IWL_A000_DCCM_OFFSET		0x800000
--#define IWL_A000_DCCM_LEN		0x18000
-+#define IWL_A000_DCCM_OFFSET		0x800000 /* LMAC1 */
-+#define IWL_A000_DCCM_LEN		0x10000 /* LMAC1 */
- #define IWL_A000_DCCM2_OFFSET		0x880000
- #define IWL_A000_DCCM2_LEN		0x8000
- #define IWL_A000_SMEM_OFFSET		0x400000
--#define IWL_A000_SMEM_LEN		0x68000
-+#define IWL_A000_SMEM_LEN		0xD0000
+ #define VIRTIO_SCSI_MEMPOOL_SZ 64
+@@ -705,6 +706,28 @@ static int virtscsi_device_reset(struct
+ 	return virtscsi_tmf(vscsi, cmd);
+ }
  
- #define IWL_A000_FW_PRE "iwlwifi-Qu-a0-jf-b0-"
- #define IWL_A000_MODULE_FIRMWARE(api) \
++static int virtscsi_device_alloc(struct scsi_device *sdevice)
++{
++	/*
++	 * Passed through SCSI targets (e.g. with qemu's 'scsi-block')
++	 * may have transfer limits which come from the host SCSI
++	 * controller or something on the host side other than the
++	 * target itself.
++	 *
++	 * To make this work properly, the hypervisor can adjust the
++	 * target's VPD information to advertise these limits.  But
++	 * for that to work, the guest has to look at the VPD pages,
++	 * which we won't do by default if it is an SPC-2 device, even
++	 * if it does actually support it.
++	 *
++	 * So, set the blist to always try to read the VPD pages.
++	 */
++	sdevice->sdev_bflags = BLIST_TRY_VPD_PAGES;
++
++	return 0;
++}
++
++
+ /**
+  * virtscsi_change_queue_depth() - Change a virtscsi target's queue depth
+  * @sdev:	Virtscsi target whose queue depth to change
+@@ -776,6 +799,7 @@ static struct scsi_host_template virtscs
+ 	.change_queue_depth = virtscsi_change_queue_depth,
+ 	.eh_abort_handler = virtscsi_abort,
+ 	.eh_device_reset_handler = virtscsi_device_reset,
++	.slave_alloc = virtscsi_device_alloc,
+ 
+ 	.can_queue = 1024,
+ 	.dma_boundary = UINT_MAX,
