@@ -1,33 +1,31 @@
-Return-Path: <willy@infradead.org>
-X-Google-Smtp-Source: AG47ELuq+RKK1eRELVesbrnsREJOqZmJQJpEBO9jIKE6WeVH/kz5zLncXB1ViO/2t2yXZ8/apX5x
-ARC-Seal: i=1; a=rsa-sha256; t=1521833428; cv=none;
+Return-Path: <dalias@aerifal.cx>
+X-Google-Smtp-Source: AG47ELuIQVe7m9U8QbvAWchtWah3KyLz4cVc9GPpM4lyUMKUTusRPQbKEvMG++esY/lqjCcjSp1u
+ARC-Seal: i=1; a=rsa-sha256; t=1521833848; cv=none;
         d=google.com; s=arc-20160816;
-        b=wpGdu/ATWzMyyW2W34yI3LjJLxK52NtMDfIuBne/d5KSerTRYEmB6gSwmWdvvIL7Zs
-         1qRNADEMt06HbePwoVkX0ziUCxLall23iBS1KjQN4T2l5GhQiOr4Pyg7FHc9/yOYLCXz
-         /kC2AtnL5G0TSHp6TDPmipYt5Put6U7CGdISrcr2CkFmLL1yCkKkb3El7sLdVhFKhp7r
-         1Pwy92rvsknfhovIrnfsjKnL0e2bwokfHLAfrn/q6HScYml2PbemaKDw1K5M7DoMQuKS
-         y3Lh9Ia5Q3E+Ca4Qi/OdkhB/tHTJdKRu56TPNCA3EBYvXirLcSwtS06/KUHDDT/cKX0c
-         vFMA==
+        b=Pqye1TDYZnMyafXF6tXXmza4ISeBmTObhw4Mkd61Z2/GIGszvtEvxy2Ag77FFqFgu8
+         HABf2/GOQw33zdfhQzR83AsFNUwpiej4EyigqGZMT1oU7kBJkxishNKmuVHgtSQjQ2ML
+         x3j8+ZgQqTv6JPbv2HeJ3p5aT2sNfJqYF4IttU4iUDlpZw/XQbnhdvbJe+kJcIPFTXub
+         NcjH2Fw+MoOsyWJi5sKBUicQamW2+9TslzfBEWC72AxQ2eE9+lph+uc5dd3rhx4a6fDy
+         n1WbuKx3pSx3v3iMgNlgEZfc0NayfssphQuaz3ujsf1oZV3SPq2thMYfEdIEuFC2hgqD
+         H3aQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
+        h=sender:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:subject:cc:to:from:date
          :arc-authentication-results;
-        bh=MirZhxLY8cA+YArmokNLxWyxSkmZVZH0lgxlZu/6dFA=;
-        b=As/bQvsd3Jqo5HRduPKCjyAGlCB8z1BuScQrJ6FUMpk3ot33zTATPG3hCQIC0Qo7CP
-         LGApCPK1IMpH6IcRH1wL4/F2y6/zraW28B5J4YobXXvzp6LJi+2W2OYrvzHTnlTF0vga
-         qtdYLsezmL62GQoYNDggSrbg+H9N0ksud7eqT5R9Mq7Ddeqz1GrNSFG2U1TbeH30weBt
-         NcD8JRFod57aoNMF4UcePSvaLhMnhgoZO291IoCU/xf10Gb9j+gQn1OlGmSwI3y+tHwd
-         BEUdhdMSURMo09cmRWigdVagVw9VcAxrKbg307oF8PZD+aq7MgnKUdingj8IFQkhxZjP
-         yB/g==
+        bh=2+QxX6O+Igrkn/nz2ymvMogKwIIXslJYvU+V8ojoHWc=;
+        b=Yh4EZ1c2E/vP+JF773ZS/9z3GZze7jO0XYjR/7Tx3HNcsEs2nnCJ3zEZ9e37+n6Y4r
+         MMgNe3lJhYAQjhA/m/17VpmQuKu5eH5M1iH44S8vzmR1Q4i9s0t7lFCQ8snyObi4hPut
+         AwCVYnHMHIoefUaqvcy6mLigpdGqtqx7nFWzr8PitXDRsbfN+prYLUDfshrA+aA6fwFC
+         QOFStJUp0/oAnWLm528T1vk4BO009iOh0XgP57e9HiOhgfTcebtWevwaOz6lFhY2s8Q1
+         wJuFIT3hWa7tXDemCaXMnF7avm3k+RejiuT2H/qwBpwJIvpZup4dZm6NwXXQQnVxDJfa
+         swbg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=taouZ44F;
-       spf=pass (google.com: best guess record for domain of willy@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=willy@infradead.org
+       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=taouZ44F;
-       spf=pass (google.com: best guess record for domain of willy@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=willy@infradead.org
-Date: Fri, 23 Mar 2018 12:29:52 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Rich Felker <dalias@libc.org>
+       spf=neutral (google.com: 216.12.86.13 is neither permitted nor denied by best guess record for domain of dalias@aerifal.cx) smtp.mailfrom=dalias@aerifal.cx
+Date: Fri, 23 Mar 2018 15:35:47 -0400
+From: Rich Felker <dalias@libc.org>
+To: Matthew Wilcox <willy@infradead.org>
 Cc: Ilya Smith <blackzert@gmail.com>, rth@twiddle.net,
 	ink@jurassic.park.msu.ru, mattst88@gmail.com, vgupta@synopsys.com,
 	linux@armlinux.org.uk, tony.luck@intel.com, fenghua.yu@intel.com,
@@ -55,50 +53,66 @@ Cc: Ilya Smith <blackzert@gmail.com>, rth@twiddle.net,
 	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
 	sparclinux@vger.kernel.org, linux-mm@kvack.org
 Subject: Re: [RFC PATCH v2 0/2] Randomization of address chosen by mmap.
-Message-ID: <20180323192952.GB23763@bombadil.infradead.org>
+Message-ID: <20180323193547.GD1436@brightrain.aerifal.cx>
 References: <1521736598-12812-1-git-send-email-blackzert@gmail.com>
  <20180323124806.GA5624@bombadil.infradead.org>
  <20180323180024.GB1436@brightrain.aerifal.cx>
  <20180323190618.GA23763@bombadil.infradead.org>
  <20180323191621.GC1436@brightrain.aerifal.cx>
+ <20180323192952.GB23763@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180323191621.GC1436@brightrain.aerifal.cx>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180323192952.GB23763@bombadil.infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+Sender: Rich Felker <dalias@aerifal.cx>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595656488556903336?=
-X-GMAIL-MSGID: =?utf-8?q?1595758008956081766?=
+X-GMAIL-MSGID: =?utf-8?q?1595758448837588197?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 23, 2018 at 03:16:21PM -0400, Rich Felker wrote:
-> > Huh, I thought libc was aware of this.  Also, I'd expect a libc-based
-> > implementation to restrict itself to, eg, only loading libraries in
-> > the bottom 1GB to avoid applications who want to map huge things from
-> > running out of unfragmented address space.
+On Fri, Mar 23, 2018 at 12:29:52PM -0700, Matthew Wilcox wrote:
+> On Fri, Mar 23, 2018 at 03:16:21PM -0400, Rich Felker wrote:
+> > > Huh, I thought libc was aware of this.  Also, I'd expect a libc-based
+> > > implementation to restrict itself to, eg, only loading libraries in
+> > > the bottom 1GB to avoid applications who want to map huge things from
+> > > running out of unfragmented address space.
+> > 
+> > That seems like a rather arbitrary expectation and I'm not sure why
+> > you'd expect it to result in less fragmentation rather than more. For
+> > example if it started from 1GB and worked down, you'd immediately
+> > reduce the contiguous free space from ~3GB to ~2GB, and if it started
+> > from the bottom and worked up, brk would immediately become
+> > unavailable, increasing mmap pressure elsewhere.
 > 
-> That seems like a rather arbitrary expectation and I'm not sure why
-> you'd expect it to result in less fragmentation rather than more. For
-> example if it started from 1GB and worked down, you'd immediately
-> reduce the contiguous free space from ~3GB to ~2GB, and if it started
-> from the bottom and worked up, brk would immediately become
-> unavailable, increasing mmap pressure elsewhere.
+> By *not* limiting yourself to the bottom 1GB, you'll almost immediately
+> fragment the address space even worse.  Just looking at 'ls' as a
+> hopefully-good example of a typical app, it maps:
+> 
+> 	linux-vdso.so.1 (0x00007ffef5eef000)
+> 	libselinux.so.1 => /lib/x86_64-linux-gnu/libselinux.so.1 (0x00007fb3657f5000)
+> 	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fb36543b000)
+> 	libpcre.so.3 => /lib/x86_64-linux-gnu/libpcre.so.3 (0x00007fb3651c9000)
+> 	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007fb364fc5000)
+> 	/lib64/ld-linux-x86-64.so.2 (0x00007fb365c3f000)
+> 	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007fb364da7000)
+> 
+> The VDSO wouldn't move, but look at the distribution of mapping 6 things
+> into a 3GB address space in random locations.  What are the odds you have
+> a contiguous 1GB chunk of address space?  If you restrict yourself to the
+> bottom 1GB before running out of room and falling back to a sequential
+> allocation, you'll prevent a lot of fragmentation.
 
-By *not* limiting yourself to the bottom 1GB, you'll almost immediately
-fragment the address space even worse.  Just looking at 'ls' as a
-hopefully-good example of a typical app, it maps:
+Oh, you're talking about "with random locations" case. Randomizing
+each map just hopelessly fragments things no matter what you do on
+32-bit. If you reduce the space over which you randomize to the point
+where it's not fragmenting/killing your available vm space, there are
+so few degrees of freedom left that it's trivial to brute-force. Maybe
+"libs randomized in low 1GB, everything else near-sequential in high
+addresses" works half decently, but I have a hard time believing you
+can get any ASLR that's significantly better than snake oil in a
+32-bit address space, and you certainly do pay a high price in total
+available vm space.
 
-	linux-vdso.so.1 (0x00007ffef5eef000)
-	libselinux.so.1 => /lib/x86_64-linux-gnu/libselinux.so.1 (0x00007fb3657f5000)
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fb36543b000)
-	libpcre.so.3 => /lib/x86_64-linux-gnu/libpcre.so.3 (0x00007fb3651c9000)
-	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007fb364fc5000)
-	/lib64/ld-linux-x86-64.so.2 (0x00007fb365c3f000)
-	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007fb364da7000)
-
-The VDSO wouldn't move, but look at the distribution of mapping 6 things
-into a 3GB address space in random locations.  What are the odds you have
-a contiguous 1GB chunk of address space?  If you restrict yourself to the
-bottom 1GB before running out of room and falling back to a sequential
-allocation, you'll prevent a lot of fragmentation.
+Rich
