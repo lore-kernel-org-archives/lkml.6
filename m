@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvpd2NU1VUH58EeCGF3LamctiWJg+EdvGGdhfZH2BMutSk5fXLjmNioO5mxT1xhHJeUblIU
-ARC-Seal: i=1; a=rsa-sha256; t=1521800333; cv=none;
+X-Google-Smtp-Source: AG47ELu70AMtGBkt2pZqzyTzlIEjkzaMo66eneT6Qa46r7MKzT+3Nza2v2P2yfNbvlRn2Mwq2Qh2
+ARC-Seal: i=1; a=rsa-sha256; t=1521800330; cv=none;
         d=google.com; s=arc-20160816;
-        b=IWQUZjvyubRmoR0dU14DuL0A8RoZCRpu2t2Gwu1L5tAtrUeww6phEthnwi/XNZ0oo3
-         SP8a8Bhi1CuDXUVZ9jHkTmk4yMc/Uo2AFnJOaHH2KVwBfkqGgb/mPV1FXj509HKeIWNJ
-         10z7TRvJCv+8KIVknU0dhYNT7kTWBh/+mJTN9VQ3X/pKDvDOsfSYMrFmLLUO96yOQrfR
-         GQ8CMGA1ocWnwUhD95Q1OK+eEK2Y4j/u2fXLKHqNTsFcJfKpXq5Lfi4aX5jWY4tLEqQO
-         naWE5PTZoMseaypHiJtbgta4872nAs+z/pK8vNLWbzcP/tHjC/mGpAk9N5PrXqI6DNny
-         LW2g==
+        b=hn9zVSQOKSGs+eIvYZgIKZLduHkJYOQdoZgGhOMLdbwCzSOqNAA2OXpwHVDlY3BTCl
+         LyPGhAN5LkDtUEjAI7fPA2PmqhhYLw3HwxvwK/9nKjRr3P/H7FPiMak+hCjs1YP4BGbE
+         ED70CvJVQc3v3mzyN+HHYM0B4vWX2Ff3+liQlzj/Z6R4FGWQVXWO/WHUvqCm4Law0d57
+         dGUSzDmSL2oJsETM4VM29lgo4wdrGvEQs5WsgIGt0Kq1V6muNTNnhK5fmUyThRAK4cSL
+         AY+sAzEI4r/7bCLtAl72gGh2xn5v+LrbEkkdWgR4l6sxjSxZp/eovKCc+do3OMKNS4yN
+         RMrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=l88goj88WdIXGLB8irFceQJKUoTuntUOjEJIVqI6fVc=;
-        b=pO9gHjkuWt28o1FcH4fpX8Xs7+Bt5KZrmAdX+NAvaq8CXM/WzVDtH3/OSpzaCNsG+Q
-         7xczN12kyD4Nfy8WhHtSeXWJC4VVTJlDu2W1vwM0Hgrug4hP2H2WvIYk0rRXxSiUXWRR
-         v9cwAoCBLAAiBJIC0OziyKfxSqNvuHPulShwkHRM/iLhCloh2YHrLgTbDypGAswmAw1X
-         9knb5JhbQTLz5fnbK7Mi8yM1j1OJ9xInQeFa9MsTFURUpIZHmRktoSsD6f0FzW0FMQt+
-         AT3Ff8GxH8GquRbyU6HzEm1p5RCUuHqi9TbWBUmOTrJ2YS8aUnvm3sYU0jTzvo3jpBhK
-         FKTg==
+        bh=ky7qKqnq1UEh9P5f7DxPdKBPiZ+2Cv73udqKYgrjCew=;
+        b=TJRyixMcmnpbrrHNOa10zltrrBKXr01JgMOy30TYVSTec6CxDfs9GE/lwpK/7mkmmN
+         +oQ1auyqHzB25qJBa9FCJwtHLB60i8TOhSG03MNJ0zPGPELZ0h4nH0nQOC3RYWBFHhs4
+         pu6mRT4d5ePT7NesOrInA0GIWxXpONqbU+eK4veq8aSh8T1lkIOh5YEPEjQLOXdCDEbb
+         v38CBVszsE9QtZOusFqlxyuyfvU2XV38tcTOMfrjawvxeloFwoDWn3nrUjFy41v+LWka
+         cni+v4KcoSvbuQxQExMHzqEOOxAyWumKVf4vn9K2qxdj80RLOsplCbE4rC87lOVOARcf
+         Tg3w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Anthony Brandon <anthony@amarulasolutions.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 31/47] power: supply: pda_power: move from timer to delayed_work
-Date: Fri, 23 Mar 2018 10:55:22 +0100
-Message-Id: <20180323094249.454862841@linuxfoundation.org>
+Subject: [PATCH 3.18 30/47] bnx2x: Align RX buffers
+Date: Fri, 23 Mar 2018 10:55:21 +0100
+Message-Id: <20180323094249.415206437@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722747735081780?=
-X-GMAIL-MSGID: =?utf-8?q?1595723306574903026?=
+X-GMAIL-THRID: =?utf-8?q?1595722737034413232?=
+X-GMAIL-MSGID: =?utf-8?q?1595723303296892444?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,177 +49,76 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Trimarchi <michael@amarulasolutions.com>
+From: Scott Wood <swood@redhat.com>
 
 
-[ Upstream commit 633e8799ddc09431be2744c4a1efdbda13af2b0b ]
+[ Upstream commit 9b70de6d0266888b3743f03802502e43131043c8 ]
 
-This changed is needed to avoid locking problem during
-boot as shown:
+The bnx2x driver is not providing proper alignment on the receive buffers it
+passes to build_skb(), causing skb_shared_info to be misaligned.
+skb_shared_info contains an atomic, and while PPC normally supports
+unaligned accesses, it does not support unaligned atomics.
 
-<5>[    8.824096] Registering SWP/SWPB emulation handler
-<6>[    8.977294] clock: disabling unused clocks to save power
-<3>[    9.108154] BUG: sleeping function called from invalid context at kernel_albert/kernel/mutex.c:269
-<3>[    9.122894] in_atomic(): 1, irqs_disabled(): 0, pid: 1, name: swapper/0
-<4>[    9.130249] 3 locks held by swapper/0/1:
-<4>[    9.134613]  #0:  (&__lockdep_no_validate__){......}, at: [<c0342430>] __driver_attach+0x58/0xa8
-<4>[    9.144500]  #1:  (&__lockdep_no_validate__){......}, at: [<c0342440>] __driver_attach+0x68/0xa8
-<4>[    9.154357]  #2:  (&polling_timer){......}, at: [<c0053770>] run_timer_softirq+0x108/0x3ec
-<4>[    9.163726] Backtrace:
-<4>[    9.166473] [<c001269c>] (dump_backtrace+0x0/0x114) from [<c067e5f0>] (dump_stack+0x20/0x24)
-<4>[    9.175811]  r6:00203230 r5:0000010d r4:d782e000 r3:60000113
-<4>[    9.182250] [<c067e5d0>] (dump_stack+0x0/0x24) from [<c007441c>] (__might_sleep+0x10c/0x128)
-<4>[    9.191650] [<c0074310>] (__might_sleep+0x0/0x128) from [<c0688f60>] (mutex_lock_nested+0x34/0x36c)
-<4>[    9.201660]  r5:c02d5350 r4:d79a0c64
-<4>[    9.205688] [<c0688f2c>] (mutex_lock_nested+0x0/0x36c) from [<c02d5350>] (regulator_set_current_limit+0x30/0x118)
-<4>[    9.217071] [<c02d5320>] (regulator_set_current_limit+0x0/0x118) from [<c0435ce0>] (update_charger+0x84/0xc4)
-<4>[    9.228027]  r7:d782fb20 r6:00000101 r5:c1767e94 r4:00000000
-<4>[    9.234436] [<c0435c5c>] (update_charger+0x0/0xc4) from [<c0435d40>] (psy_changed+0x20/0x48)
-<4>[    9.243804]  r5:d782e000 r4:c1767e94
-<4>[    9.247802] [<c0435d20>] (psy_changed+0x0/0x48) from [<c0435dec>] (polling_timer_func+0x84/0xb8)
-<4>[    9.257537]  r4:c1767e94 r3:00000002
-<4>[    9.261566] [<c0435d68>] (polling_timer_func+0x0/0xb8) from [<c00537e4>] (run_timer_softirq+0x17c/0x3ec)
-<4>[    9.272033]  r4:c1767eb0 r3:00000000
-<4>[    9.276062] [<c0053668>] (run_timer_softirq+0x0/0x3ec) from [<c004b000>] (__do_softirq+0xf0/0x298)
-<4>[    9.286010] [<c004af10>] (__do_softirq+0x0/0x298) from [<c004b650>] (irq_exit+0x98/0xa0)
-<4>[    9.295013] [<c004b5b8>] (irq_exit+0x0/0xa0) from [<c000edbc>] (handle_IRQ+0x60/0xc0)
-<4>[    9.303680]  r4:c1194e98 r3:c00bc778
-<4>[    9.307708] [<c000ed5c>] (handle_IRQ+0x0/0xc0) from [<c0008504>] (gic_handle_irq+0x34/0x68)
-<4>[    9.316955]  r8:000ac383 r7:d782fc3c r6:d782fc08 r5:c11936c4 r4:e0802100
-<4>[    9.324310] r3:c026ba48
-<4>[    9.327301] [<c00084d0>] (gic_handle_irq+0x0/0x68) from [<c068c2c0>] (__irq_svc+0x40/0x74)
-<4>[    9.336456] Exception stack(0xd782fc08 to 0xd782fc50)
-<4>[    9.342041] fc00:                   d6e30e6c ac383627 00000000 ac383417 ea19c000 ea200000
-<4>[    9.351104] fc20: beffffff 00000667 000ac383 d6e30670 d6e3066c d782fc94 d782fbe8 d782fc50
-<4>[    9.360168] fc40: c026ba48 c001d1f0 00000113 ffffffff
+Aligning the size of rx buffers will ensure that page_frag_alloc() returns
+aligned addresses.
 
-Fixes: b2998049cfae ("[BATTERY] pda_power platform driver")
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Anthony Brandon <anthony@amarulasolutions.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+This can be reproduced on PPC by setting the network MTU to 1450 (or other
+non-multiple-of-4) and then generating sufficient inbound network traffic
+(one or two large "wget"s usually does it), producing the following oops:
+
+Unable to handle kernel paging request for unaligned access at address 0xc00000ffc43af656
+Faulting instruction address: 0xc00000000080ef8c
+Oops: Kernel access of bad area, sig: 7 [#1]
+SMP NR_CPUS=2048
+NUMA
+PowerNV
+Modules linked in: vmx_crypto powernv_rng rng_core powernv_op_panel leds_powernv led_class nfsd ip_tables x_tables autofs4 xfs lpfc bnx2x mdio libcrc32c crc_t10dif crct10dif_generic crct10dif_common
+CPU: 104 PID: 0 Comm: swapper/104 Not tainted 4.11.0-rc8-00088-g4c761da #2
+task: c00000ffd4892400 task.stack: c00000ffd4920000
+NIP: c00000000080ef8c LR: c00000000080eee8 CTR: c0000000001f8320
+REGS: c00000ffffc33710 TRAP: 0600   Not tainted  (4.11.0-rc8-00088-g4c761da)
+MSR: 9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>
+  CR: 24082042  XER: 00000000
+CFAR: c00000000080eea0 DAR: c00000ffc43af656 DSISR: 00000000 SOFTE: 1
+GPR00: c000000000907f64 c00000ffffc33990 c000000000dd3b00 c00000ffcaf22100
+GPR04: c00000ffcaf22e00 0000000000000000 0000000000000000 0000000000000000
+GPR08: 0000000000b80008 c00000ffc43af636 c00000ffc43af656 0000000000000000
+GPR12: c0000000001f6f00 c00000000fe1a000 000000000000049f 000000000000c51f
+GPR16: 00000000ffffef33 0000000000000000 0000000000008a43 0000000000000001
+GPR20: c00000ffc58a90c0 0000000000000000 000000000000dd86 0000000000000000
+GPR24: c000007fd0ed10c0 00000000ffffffff 0000000000000158 000000000000014a
+GPR28: c00000ffc43af010 c00000ffc9144000 c00000ffcaf22e00 c00000ffcaf22100
+NIP [c00000000080ef8c] __skb_clone+0xdc/0x140
+LR [c00000000080eee8] __skb_clone+0x38/0x140
+Call Trace:
+[c00000ffffc33990] [c00000000080fb74] skb_clone+0x74/0x110 (unreliable)
+[c00000ffffc339c0] [c000000000907f64] packet_rcv+0x144/0x510
+[c00000ffffc33a40] [c000000000827b64] __netif_receive_skb_core+0x5b4/0xd80
+[c00000ffffc33b00] [c00000000082b2bc] netif_receive_skb_internal+0x2c/0xc0
+[c00000ffffc33b40] [c00000000082c49c] napi_gro_receive+0x11c/0x260
+[c00000ffffc33b80] [d000000066483d68] bnx2x_poll+0xcf8/0x17b0 [bnx2x]
+[c00000ffffc33d00] [c00000000082babc] net_rx_action+0x31c/0x480
+[c00000ffffc33e10] [c0000000000d5a44] __do_softirq+0x164/0x3d0
+[c00000ffffc33f00] [c0000000000d60a8] irq_exit+0x108/0x120
+[c00000ffffc33f20] [c000000000015b98] __do_irq+0x98/0x200
+[c00000ffffc33f90] [c000000000027f14] call_do_irq+0x14/0x24
+[c00000ffd4923a90] [c000000000015d94] do_IRQ+0x94/0x110
+[c00000ffd4923ae0] [c000000000008d90] hardware_interrupt_common+0x150/0x160
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/power/pda_power.c |   49 +++++++++++++++++++++++++---------------------
- 1 file changed, 27 insertions(+), 22 deletions(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/power/pda_power.c
-+++ b/drivers/power/pda_power.c
-@@ -30,9 +30,9 @@ static inline unsigned int get_irq_flags
- static struct device *dev;
- static struct pda_power_pdata *pdata;
- static struct resource *ac_irq, *usb_irq;
--static struct timer_list charger_timer;
--static struct timer_list supply_timer;
--static struct timer_list polling_timer;
-+static struct delayed_work charger_work;
-+static struct delayed_work polling_work;
-+static struct delayed_work supply_work;
- static int polling;
- 
- #if IS_ENABLED(CONFIG_USB_PHY)
-@@ -143,7 +143,7 @@ static void update_charger(void)
- 	}
- }
- 
--static void supply_timer_func(unsigned long unused)
-+static void supply_work_func(struct work_struct *work)
- {
- 	if (ac_status == PDA_PSY_TO_CHANGE) {
- 		ac_status = new_ac_status;
-@@ -164,11 +164,12 @@ static void psy_changed(void)
- 	 * Okay, charger set. Now wait a bit before notifying supplicants,
- 	 * charge power should stabilize.
- 	 */
--	mod_timer(&supply_timer,
--		  jiffies + msecs_to_jiffies(pdata->wait_for_charger));
-+	cancel_delayed_work(&supply_work);
-+	schedule_delayed_work(&supply_work,
-+			      msecs_to_jiffies(pdata->wait_for_charger));
- }
- 
--static void charger_timer_func(unsigned long unused)
-+static void charger_work_func(struct work_struct *work)
- {
- 	update_status();
- 	psy_changed();
-@@ -187,13 +188,14 @@ static irqreturn_t power_changed_isr(int
- 	 * Wait a bit before reading ac/usb line status and setting charger,
- 	 * because ac/usb status readings may lag from irq.
- 	 */
--	mod_timer(&charger_timer,
--		  jiffies + msecs_to_jiffies(pdata->wait_for_status));
-+	cancel_delayed_work(&charger_work);
-+	schedule_delayed_work(&charger_work,
-+			      msecs_to_jiffies(pdata->wait_for_status));
- 
- 	return IRQ_HANDLED;
- }
- 
--static void polling_timer_func(unsigned long unused)
-+static void polling_work_func(struct work_struct *work)
- {
- 	int changed = 0;
- 
-@@ -214,8 +216,9 @@ static void polling_timer_func(unsigned
- 	if (changed)
- 		psy_changed();
- 
--	mod_timer(&polling_timer,
--		  jiffies + msecs_to_jiffies(pdata->polling_interval));
-+	cancel_delayed_work(&polling_work);
-+	schedule_delayed_work(&polling_work,
-+			      msecs_to_jiffies(pdata->polling_interval));
- }
- 
- #if IS_ENABLED(CONFIG_USB_PHY)
-@@ -253,8 +256,9 @@ static int otg_handle_notification(struc
- 	 * Wait a bit before reading ac/usb line status and setting charger,
- 	 * because ac/usb status readings may lag from irq.
- 	 */
--	mod_timer(&charger_timer,
--		  jiffies + msecs_to_jiffies(pdata->wait_for_status));
-+	cancel_delayed_work(&charger_work);
-+	schedule_delayed_work(&charger_work,
-+			      msecs_to_jiffies(pdata->wait_for_status));
- 
- 	return NOTIFY_OK;
- }
-@@ -302,8 +306,8 @@ static int pda_power_probe(struct platfo
- 	if (!pdata->ac_max_uA)
- 		pdata->ac_max_uA = 500000;
- 
--	setup_timer(&charger_timer, charger_timer_func, 0);
--	setup_timer(&supply_timer, supply_timer_func, 0);
-+	INIT_DELAYED_WORK(&charger_work, charger_work_func);
-+	INIT_DELAYED_WORK(&supply_work, supply_work_func);
- 
- 	ac_irq = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "ac");
- 	usb_irq = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "usb");
-@@ -381,9 +385,10 @@ static int pda_power_probe(struct platfo
- 
- 	if (polling) {
- 		dev_dbg(dev, "will poll for status\n");
--		setup_timer(&polling_timer, polling_timer_func, 0);
--		mod_timer(&polling_timer,
--			  jiffies + msecs_to_jiffies(pdata->polling_interval));
-+		INIT_DELAYED_WORK(&polling_work, polling_work_func);
-+		cancel_delayed_work(&polling_work);
-+		schedule_delayed_work(&polling_work,
-+				      msecs_to_jiffies(pdata->polling_interval));
- 	}
- 
- 	if (ac_irq || usb_irq)
-@@ -429,9 +434,9 @@ static int pda_power_remove(struct platf
- 		free_irq(ac_irq->start, &pda_psy_ac);
- 
- 	if (polling)
--		del_timer_sync(&polling_timer);
--	del_timer_sync(&charger_timer);
--	del_timer_sync(&supply_timer);
-+		cancel_delayed_work_sync(&polling_work);
-+	cancel_delayed_work_sync(&charger_work);
-+	cancel_delayed_work_sync(&supply_work);
- 
- 	if (pdata->is_usb_online)
- 		power_supply_unregister(&pda_psy_usb);
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+@@ -2024,6 +2024,7 @@ static void bnx2x_set_rx_buf_size(struct
+ 				  ETH_OVREHEAD +
+ 				  mtu +
+ 				  BNX2X_FW_RX_ALIGN_END;
++		fp->rx_buf_size = SKB_DATA_ALIGN(fp->rx_buf_size);
+ 		/* Note : rx_buf_size doesn't take into account NET_SKB_PAD */
+ 		if (fp->rx_buf_size + NET_SKB_PAD <= PAGE_SIZE)
+ 			fp->rx_frag_size = fp->rx_buf_size + NET_SKB_PAD;
