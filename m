@@ -1,135 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeCWBbJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 21:31:09 -0400
-Received: from mx.socionext.com ([202.248.49.38]:57567 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751657AbeCWBbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 21:31:07 -0400
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To: Tejun Heo <tj@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH] ata: ahci-platform: add reset control support
-Date: Fri, 23 Mar 2018 10:30:53 +0900
-Message-Id: <1521768653-11824-1-git-send-email-hayashi.kunihiko@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751713AbeCWCGJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 22:06:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38374 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751551AbeCWCGI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 22:06:08 -0400
+Date: Thu, 22 Mar 2018 19:06:06 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        takahiro.akashi@linaro.org, ebiederm@xmission.com, vgoyal@redhat.com,
+        dyoung@redhat.com, prudo@linux.vnet.ibm.com
+Subject: Re: [PATCH 1/2] resource: add walk_system_ram_res_rev()
+Message-Id: <20180322190606.859a0f1c7e2d1b2958daeb9f@linux-foundation.org>
+In-Reply-To: <20180323005845.GA25740@localhost.localdomain>
+References: <20180322033722.9279-1-bhe@redhat.com>
+        <20180322033722.9279-2-bhe@redhat.com>
+        <20180322152929.9b421af2f66cc819ad691207@linux-foundation.org>
+        <20180323005845.GA25740@localhost.localdomain>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to get and control a list of resets for the device
-as optional and shared. These resets must be kept de-asserted until
-the device is enabled.
+On Fri, 23 Mar 2018 08:58:45 +0800 Baoquan He <bhe@redhat.com> wrote:
 
-This is specified as shared because some SoCs like UniPhier series
-have common reset controls with all ahci controller instances.
+> > erk, this is pretty nasty.  Isn't there a better way :(
+> 
+> Yes, this is not efficient.
+> 
+> In struct resource{}, ->sibling list is a singly linked list. I ever
+> thought about changing it to doubly linked list, yet not very sure if
+> it will have effect since struct resource is a core data structure.
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
----
- .../devicetree/bindings/ata/ahci-platform.txt      |  1 +
- drivers/ata/ahci.h                                 |  1 +
- drivers/ata/libahci_platform.c                     | 24 +++++++++++++++++++---
- 3 files changed, 23 insertions(+), 3 deletions(-)
+Switching to a list_head sounds OK.  The only issue really is memory
+consumption and surely we don't have tens of thousands of struct
+resources floating about(?).  Or if we do have a lot, the machine is
+presumably huge (hope?).
 
-diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-index c760ecb..f4006d3 100644
---- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
-+++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
-@@ -30,6 +30,7 @@ compatible:
- Optional properties:
- - dma-coherent      : Present if dma operations are coherent
- - clocks            : a list of phandle + clock specifier pairs
-+- resets            : a list of phandle + reset specifier pairs
- - target-supply     : regulator for SATA target power
- - phys              : reference to the SATA PHY node
- - phy-names         : must be "sata-phy"
-diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
-index 749fd94..47ec77a2 100644
---- a/drivers/ata/ahci.h
-+++ b/drivers/ata/ahci.h
-@@ -347,6 +347,7 @@ struct ahci_host_priv {
- 	u32			em_msg_type;	/* EM message type */
- 	bool			got_runtime_pm; /* Did we do pm_runtime_get? */
- 	struct clk		*clks[AHCI_MAX_CLKS]; /* Optional */
-+	struct reset_control	*rsts;		/* Optional */
- 	struct regulator	**target_pwrs;	/* Optional */
- 	/*
- 	 * If platform uses PHYs. There is a 1:1 relation between the port number and
-diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-index 341d0ef..3130db9 100644
---- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -25,6 +25,7 @@
- #include <linux/phy/phy.h>
- #include <linux/pm_runtime.h>
- #include <linux/of_platform.h>
-+#include <linux/reset.h>
- #include "ahci.h"
- 
- static void ahci_host_stop(struct ata_host *host);
-@@ -195,7 +196,8 @@ EXPORT_SYMBOL_GPL(ahci_platform_disable_regulators);
-  * following order:
-  * 1) Regulator
-  * 2) Clocks (through ahci_platform_enable_clks)
-- * 3) Phys
-+ * 3) Resets
-+ * 4) Phys
-  *
-  * If resource enabling fails at any point the previous enabled resources
-  * are disabled in reverse order.
-@@ -215,12 +217,19 @@ int ahci_platform_enable_resources(struct ahci_host_priv *hpriv)
- 	if (rc)
- 		goto disable_regulator;
- 
--	rc = ahci_platform_enable_phys(hpriv);
-+	rc = reset_control_deassert(hpriv->rsts);
- 	if (rc)
- 		goto disable_clks;
- 
-+	rc = ahci_platform_enable_phys(hpriv);
-+	if (rc)
-+		goto disable_resets;
-+
- 	return 0;
- 
-+disable_resets:
-+	reset_control_assert(hpriv->rsts);
-+
- disable_clks:
- 	ahci_platform_disable_clks(hpriv);
- 
-@@ -239,12 +248,15 @@ EXPORT_SYMBOL_GPL(ahci_platform_enable_resources);
-  * following order:
-  * 1) Phys
-  * 2) Clocks (through ahci_platform_disable_clks)
-- * 3) Regulator
-+ * 3) Resets
-+ * 4) Regulator
-  */
- void ahci_platform_disable_resources(struct ahci_host_priv *hpriv)
- {
- 	ahci_platform_disable_phys(hpriv);
- 
-+	reset_control_assert(hpriv->rsts);
-+
- 	ahci_platform_disable_clks(hpriv);
- 
- 	ahci_platform_disable_regulators(hpriv);
-@@ -393,6 +405,12 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
- 		hpriv->clks[i] = clk;
- 	}
- 
-+	hpriv->rsts = devm_reset_control_array_get_optional_shared(dev);
-+	if (IS_ERR(hpriv->rsts)) {
-+		rc = PTR_ERR(hpriv->rsts);
-+		goto err_out;
-+	}
-+
- 	hpriv->nports = child_nodes = of_get_child_count(dev->of_node);
- 
- 	/*
--- 
-2.7.4
+> AKASHI's method is more acceptable, and currently only kexec has this
+> requirement.
+
+What method is that?
