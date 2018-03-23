@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELu70AMtGBkt2pZqzyTzlIEjkzaMo66eneT6Qa46r7MKzT+3Nza2v2P2yfNbvlRn2Mwq2Qh2
-ARC-Seal: i=1; a=rsa-sha256; t=1521800330; cv=none;
+X-Google-Smtp-Source: AG47ELuuyVcW93OQpWChtrH9oW/P2eaxzMVaHUJUZsW3nmKMmWAJ1auXOBqwVDimPSOTnacH5MyX
+ARC-Seal: i=1; a=rsa-sha256; t=1521800327; cv=none;
         d=google.com; s=arc-20160816;
-        b=hn9zVSQOKSGs+eIvYZgIKZLduHkJYOQdoZgGhOMLdbwCzSOqNAA2OXpwHVDlY3BTCl
-         LyPGhAN5LkDtUEjAI7fPA2PmqhhYLw3HwxvwK/9nKjRr3P/H7FPiMak+hCjs1YP4BGbE
-         ED70CvJVQc3v3mzyN+HHYM0B4vWX2Ff3+liQlzj/Z6R4FGWQVXWO/WHUvqCm4Law0d57
-         dGUSzDmSL2oJsETM4VM29lgo4wdrGvEQs5WsgIGt0Kq1V6muNTNnhK5fmUyThRAK4cSL
-         AY+sAzEI4r/7bCLtAl72gGh2xn5v+LrbEkkdWgR4l6sxjSxZp/eovKCc+do3OMKNS4yN
-         RMrw==
+        b=a56ssZ669qKi8uId4AfQPU6QcNvcLYnT39ZnVgLjQRBD1peRtpp/woGr0JQHIKjNiM
+         X7Bf9+gfq3VzZBi44OmYAL5V6eGkoKxXw8osX4OOouG97+R7tlnFIGJlpSD/2Kc9gE50
+         sIFmhVJsr30iCIuf0ErU6zkgK3cmTQ+NE1OW6lWc40zSiCmXC61oikk03fmMCaVVdzWN
+         2Y3vo3ug8FdMJ7mq5rj16DDfYiO3H8rG2AhQK3fBz0IIzGPgfgG8AH1uIcW+9cSyxZmk
+         EQbNjxM4WRIijMOhF0JPUmhsipqRJgiRsMo4enix0pFyYxD9yWvyvC8KQ5T1IxfZT4Ex
+         kwCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ky7qKqnq1UEh9P5f7DxPdKBPiZ+2Cv73udqKYgrjCew=;
-        b=TJRyixMcmnpbrrHNOa10zltrrBKXr01JgMOy30TYVSTec6CxDfs9GE/lwpK/7mkmmN
-         +oQ1auyqHzB25qJBa9FCJwtHLB60i8TOhSG03MNJ0zPGPELZ0h4nH0nQOC3RYWBFHhs4
-         pu6mRT4d5ePT7NesOrInA0GIWxXpONqbU+eK4veq8aSh8T1lkIOh5YEPEjQLOXdCDEbb
-         v38CBVszsE9QtZOusFqlxyuyfvU2XV38tcTOMfrjawvxeloFwoDWn3nrUjFy41v+LWka
-         cni+v4KcoSvbuQxQExMHzqEOOxAyWumKVf4vn9K2qxdj80RLOsplCbE4rC87lOVOARcf
-         Tg3w==
+        bh=sJWpAyx6+sVtXQZrD2X1Wu0F1MOW2h+O00xCszRbaTw=;
+        b=y1D/HBvnIZjKrhQADVDsZPXYEhuKPqMk9LXyVq7P0rKi9YpiobNyOSXdeIQZAV1HXr
+         qu7C+z2woSHsR3ZJ+yWvE+ZbzpaaMkUX9JQ3H8lydiQ7z70IC2jKqAHNVaJPb937MWoH
+         gF3EEYK5ND9aD8Z+y7XTsl32NCfqotyyZDGlPg2x6TsTBg/TgQjiD8o0ZHiSJCMChKq2
+         Ai5J3jmWGawzcT86DAQOZKU+pLTL7ds2nzMWS6KORRuSPi2zSHE0EYHdfbLKNq0BAiFb
+         46AgAe2tJajjXotSaGC+Z8kNjI5K0kIGTNuqLTggUyt67NipK3g5oq22Xrf0QaIpF402
+         4llw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
+	Robert Lippert <rlippert@google.com>,
+	Corey Minyard <cminyard@mvista.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 30/47] bnx2x: Align RX buffers
-Date: Fri, 23 Mar 2018 10:55:21 +0100
-Message-Id: <20180323094249.415206437@linuxfoundation.org>
+Subject: [PATCH 3.18 29/47] ipmi/watchdog: fix wdog hang on panic waiting for ipmi response
+Date: Fri, 23 Mar 2018 10:55:20 +0100
+Message-Id: <20180323094249.361719351@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722737034413232?=
-X-GMAIL-MSGID: =?utf-8?q?1595723303296892444?=
+X-GMAIL-THRID: =?utf-8?q?1595722653980136364?=
+X-GMAIL-MSGID: =?utf-8?q?1595723300395807852?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,76 +50,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Scott Wood <swood@redhat.com>
+From: Robert Lippert <roblip@gmail.com>
 
 
-[ Upstream commit 9b70de6d0266888b3743f03802502e43131043c8 ]
+[ Upstream commit 2c1175c2e8e5487233cabde358a19577562ac83e ]
 
-The bnx2x driver is not providing proper alignment on the receive buffers it
-passes to build_skb(), causing skb_shared_info to be misaligned.
-skb_shared_info contains an atomic, and while PPC normally supports
-unaligned accesses, it does not support unaligned atomics.
+Commit c49c097610fe ("ipmi: Don't call receive handler in the
+panic context") means that the panic_recv_free is not called during a
+panic and the atomic count does not drop to 0.
 
-Aligning the size of rx buffers will ensure that page_frag_alloc() returns
-aligned addresses.
+Fix this by only expecting one decrement of the atomic variable
+which comes from panic_smi_free.
 
-This can be reproduced on PPC by setting the network MTU to 1450 (or other
-non-multiple-of-4) and then generating sufficient inbound network traffic
-(one or two large "wget"s usually does it), producing the following oops:
-
-Unable to handle kernel paging request for unaligned access at address 0xc00000ffc43af656
-Faulting instruction address: 0xc00000000080ef8c
-Oops: Kernel access of bad area, sig: 7 [#1]
-SMP NR_CPUS=2048
-NUMA
-PowerNV
-Modules linked in: vmx_crypto powernv_rng rng_core powernv_op_panel leds_powernv led_class nfsd ip_tables x_tables autofs4 xfs lpfc bnx2x mdio libcrc32c crc_t10dif crct10dif_generic crct10dif_common
-CPU: 104 PID: 0 Comm: swapper/104 Not tainted 4.11.0-rc8-00088-g4c761da #2
-task: c00000ffd4892400 task.stack: c00000ffd4920000
-NIP: c00000000080ef8c LR: c00000000080eee8 CTR: c0000000001f8320
-REGS: c00000ffffc33710 TRAP: 0600   Not tainted  (4.11.0-rc8-00088-g4c761da)
-MSR: 9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>
-  CR: 24082042  XER: 00000000
-CFAR: c00000000080eea0 DAR: c00000ffc43af656 DSISR: 00000000 SOFTE: 1
-GPR00: c000000000907f64 c00000ffffc33990 c000000000dd3b00 c00000ffcaf22100
-GPR04: c00000ffcaf22e00 0000000000000000 0000000000000000 0000000000000000
-GPR08: 0000000000b80008 c00000ffc43af636 c00000ffc43af656 0000000000000000
-GPR12: c0000000001f6f00 c00000000fe1a000 000000000000049f 000000000000c51f
-GPR16: 00000000ffffef33 0000000000000000 0000000000008a43 0000000000000001
-GPR20: c00000ffc58a90c0 0000000000000000 000000000000dd86 0000000000000000
-GPR24: c000007fd0ed10c0 00000000ffffffff 0000000000000158 000000000000014a
-GPR28: c00000ffc43af010 c00000ffc9144000 c00000ffcaf22e00 c00000ffcaf22100
-NIP [c00000000080ef8c] __skb_clone+0xdc/0x140
-LR [c00000000080eee8] __skb_clone+0x38/0x140
-Call Trace:
-[c00000ffffc33990] [c00000000080fb74] skb_clone+0x74/0x110 (unreliable)
-[c00000ffffc339c0] [c000000000907f64] packet_rcv+0x144/0x510
-[c00000ffffc33a40] [c000000000827b64] __netif_receive_skb_core+0x5b4/0xd80
-[c00000ffffc33b00] [c00000000082b2bc] netif_receive_skb_internal+0x2c/0xc0
-[c00000ffffc33b40] [c00000000082c49c] napi_gro_receive+0x11c/0x260
-[c00000ffffc33b80] [d000000066483d68] bnx2x_poll+0xcf8/0x17b0 [bnx2x]
-[c00000ffffc33d00] [c00000000082babc] net_rx_action+0x31c/0x480
-[c00000ffffc33e10] [c0000000000d5a44] __do_softirq+0x164/0x3d0
-[c00000ffffc33f00] [c0000000000d60a8] irq_exit+0x108/0x120
-[c00000ffffc33f20] [c000000000015b98] __do_irq+0x98/0x200
-[c00000ffffc33f90] [c000000000027f14] call_do_irq+0x14/0x24
-[c00000ffd4923a90] [c000000000015d94] do_IRQ+0x94/0x110
-[c00000ffd4923ae0] [c000000000008d90] hardware_interrupt_common+0x150/0x160
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Robert Lippert <rlippert@google.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/char/ipmi/ipmi_watchdog.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -2024,6 +2024,7 @@ static void bnx2x_set_rx_buf_size(struct
- 				  ETH_OVREHEAD +
- 				  mtu +
- 				  BNX2X_FW_RX_ALIGN_END;
-+		fp->rx_buf_size = SKB_DATA_ALIGN(fp->rx_buf_size);
- 		/* Note : rx_buf_size doesn't take into account NET_SKB_PAD */
- 		if (fp->rx_buf_size + NET_SKB_PAD <= PAGE_SIZE)
- 			fp->rx_frag_size = fp->rx_buf_size + NET_SKB_PAD;
+--- a/drivers/char/ipmi/ipmi_watchdog.c
++++ b/drivers/char/ipmi/ipmi_watchdog.c
+@@ -509,7 +509,7 @@ static void panic_halt_ipmi_heartbeat(vo
+ 	msg.cmd = IPMI_WDOG_RESET_TIMER;
+ 	msg.data = NULL;
+ 	msg.data_len = 0;
+-	atomic_add(2, &panic_done_count);
++	atomic_add(1, &panic_done_count);
+ 	rv = ipmi_request_supply_msgs(watchdog_user,
+ 				      (struct ipmi_addr *) &addr,
+ 				      0,
+@@ -519,7 +519,7 @@ static void panic_halt_ipmi_heartbeat(vo
+ 				      &panic_halt_heartbeat_recv_msg,
+ 				      1);
+ 	if (rv)
+-		atomic_sub(2, &panic_done_count);
++		atomic_sub(1, &panic_done_count);
+ }
+ 
+ static struct ipmi_smi_msg panic_halt_smi_msg = {
+@@ -543,12 +543,12 @@ static void panic_halt_ipmi_set_timeout(
+ 	/* Wait for the messages to be free. */
+ 	while (atomic_read(&panic_done_count) != 0)
+ 		ipmi_poll_interface(watchdog_user);
+-	atomic_add(2, &panic_done_count);
++	atomic_add(1, &panic_done_count);
+ 	rv = i_ipmi_set_timeout(&panic_halt_smi_msg,
+ 				&panic_halt_recv_msg,
+ 				&send_heartbeat_now);
+ 	if (rv) {
+-		atomic_sub(2, &panic_done_count);
++		atomic_sub(1, &panic_done_count);
+ 		printk(KERN_WARNING PFX
+ 		       "Unable to extend the watchdog timeout.");
+ 	} else {
