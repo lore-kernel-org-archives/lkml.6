@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803976-2-14554336176453673608
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521803969-2-2912605388333350952
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803975; b=Ym/43KM1efivYfVoBnscm+YK6oeX/KK4/wl8fL1GsCEH1z1
-    njOkXBODPa1HW4za6BQzeFv/LQ2susSAgvds6EjSsMGhaSszMaaOSFuvnVIrHPET
-    KloRBMxuqT/a7FxMsKZ4lThZ+Su6CYsYApBIA0Eiqa41V8K2BRm/oElz3cTDLiUM
-    K+dSiM7MX1Sm/YCTs2Axcx1N2NH2v0bQNVUoHK5IPceZwfb9qCDZmDjfllFPzGJC
-    tciad+hXp/SgMjdgVzM30tBBzzSU7jNk18xoeu+34eybZlf6w9L6DWfBmzdaoMnS
-    up9yHTWbQ88UmDrcF6hH+Wt1WSsUZkVITHqCAew==
+    t=1521803969; b=FRyZV38+QRwWc6JSqZNjz+6ENNzIxYeEhCZSPyrBw8XTPlp
+    6xhNFAqC1xJ0op3svYPzEgSm7fCtdq6sQ3FQUav3FkrvZaUQylOEzXE2TRiia6DH
+    xmk92dM/KocOOHZsWrsFrh8vAKZ1Ck3h0vZNbkii+6lM68ptzxe39fb9kAYZdmy0
+    TxV5MJCn9isaLHDhoWZABPVmVXE7JSE6ZRfp1GtiqvqnArFd1U/ad9leuD5pudkR
+    rquOF0qaC8nVMVDGkKsC0vhMKm2vz5XzJG12k2zg+QV2CrEse1n01iUgfX85fnqr
+    q5H3Fz7vx5vFps8tPJeluorp6ZGUx/AUOB0nbcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803975; bh=1+l3JcTgKCNiV1gPaQCzKwyWyH
-    wI/LYNhd8lRL/PQBY=; b=tyfHTFF7HAimHf5ozZDstvENXxBm/D2IHIsGFQJGly
-    JXee7RjLu7/8J7w/eoY2RjAfRh29cZAYap51q5OC5pDXe47aowkTTI8NV2NrSkGW
-    x18aLHq538CWLooco37FeCjCI2ykrvfLJL7J+St7IugRfTw7o/+KvPtEBygzPsMj
-    +xCXeSKC2XPCmja+IIL8pvE0NkGxG2tNmOtTIUYpKpM3Kj7nZKJjtdJ+T1zycT+d
-    6gtA540xS+y8hb/V8y2AMm4HptIsL1zDWLRoos7LflqEEOpQkKHat9rceK6lHgmi
-    GUoQZ0SzhHmjW6Y+EZtrmr2HGeF1699Y5I0jPJdmPgsg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803969; bh=llIwnrIlDPxmBoR6X49fZ/nkhy
+    Vj4iTtnrA6hm/+r/w=; b=X1srHaa1avX3MKQqLI6eBRhnBb5BoOLH6RMfXhfCcH
+    rF230S4J2t1dL9fYTugZavsPitpCv86iXQt84p3lQtDsZ2jI1hnRKLskS0Cla9WT
+    cm4OuobCr01nQwas/dF/Kc4RGoPNZ3kFbjofqVpYxJZYE3T2nvwRZvs/l4AtyoKm
+    RgEHCMF0R683wseEbm18ZZCUUNQEdl4Fdyfga0M2huGYOnqB6cUBBIw8sjavS5i+
+    Jz65knHuyKHCzMYO1udIU6JE/xJy3WUy7uTtTQ9SyQoHrVHPyhOr3vAi8ojeLGvm
+    3NBooykb3xjUW4eY3BmfhTYxpV9+r/il+yHYapiskhzA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx2.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753689AbeCWKIx (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:08:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41842 "EHLO
+        id S1752791AbeCWLTJ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:19:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41876 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755655AbeCWKIv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:51 -0400
+        with ESMTP id S1755238AbeCWKI5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        Julian Anastasov <ja@ssi.bg>,
-        Simon Horman <horms@verge.net.au>,
+        stable@vger.kernel.org, Yangbo Lu <yangbo.lu@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 090/177] ipvs: explicitly forbid ipv6 service/dest creation if ipv6 mod is disabled
-Date: Fri, 23 Mar 2018 10:53:38 +0100
-Message-Id: <20180323094209.263628915@linuxfoundation.org>
+Subject: [PATCH 4.9 092/177] mmc: sdhci-of-esdhc: limit SD clock for ls1012a/ls1046a
+Date: Fri, 23 Mar 2018 10:53:40 +0100
+Message-Id: <20180323094209.348809340@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,81 +83,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: yangbo lu <yangbo.lu@nxp.com>
 
 
-[ Upstream commit 1442f6f7c1b77de1c508318164a527e240c24a4d ]
+[ Upstream commit a627f025eb0534052ff451427c16750b3530634c ]
 
-When creating a new ipvs service, ipv6 addresses are always accepted
-if CONFIG_IP_VS_IPV6 is enabled. On dest creation the address family
-is not explicitly checked.
+The ls1046a datasheet specified that the max SD clock frequency
+for eSDHC SDR104/HS200 was 167MHz, and the ls1012a datasheet
+specified it's 125MHz for ls1012a. So this patch is to add the
+limitation.
 
-This allows the user-space to configure ipvs services even if the
-system is booted with ipv6.disable=1. On specific configuration, ipvs
-can try to call ipv6 routing code at setup time, causing the kernel to
-oops due to fib6_rules_ops being NULL.
-
-This change addresses the issue adding a check for the ipv6
-module being enabled while validating ipv6 service operations and
-adding the same validation for dest operations.
-
-According to git history, this issue is apparently present since
-the introduction of ipv6 support, and the oops can be triggered
-since commit 09571c7ae30865ad ("IPVS: Add function to determine
-if IPv6 address is local")
-
-Fixes: 09571c7ae30865ad ("IPVS: Add function to determine if IPv6 address is local")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Julian Anastasov <ja@ssi.bg>
-Signed-off-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/ipvs/ip_vs_ctl.c |   22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/mmc/host/sdhci-of-esdhc.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -3092,6 +3092,17 @@ nla_put_failure:
- 	return skb->len;
- }
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -432,6 +432,20 @@ static void esdhc_of_set_clock(struct sd
+ 	if (esdhc->vendor_ver < VENDOR_V_23)
+ 		pre_div = 2;
  
-+static bool ip_vs_is_af_valid(int af)
-+{
-+	if (af == AF_INET)
-+		return true;
-+#ifdef CONFIG_IP_VS_IPV6
-+	if (af == AF_INET6 && ipv6_mod_enabled())
-+		return true;
-+#endif
-+	return false;
-+}
++	/*
++	 * Limit SD clock to 167MHz for ls1046a according to its datasheet
++	 */
++	if (clock > 167000000 &&
++	    of_find_compatible_node(NULL, NULL, "fsl,ls1046a-esdhc"))
++		clock = 167000000;
 +
- static int ip_vs_genl_parse_service(struct netns_ipvs *ipvs,
- 				    struct ip_vs_service_user_kern *usvc,
- 				    struct nlattr *nla, int full_entry,
-@@ -3118,11 +3129,7 @@ static int ip_vs_genl_parse_service(stru
- 	memset(usvc, 0, sizeof(*usvc));
- 
- 	usvc->af = nla_get_u16(nla_af);
--#ifdef CONFIG_IP_VS_IPV6
--	if (usvc->af != AF_INET && usvc->af != AF_INET6)
--#else
--	if (usvc->af != AF_INET)
--#endif
-+	if (!ip_vs_is_af_valid(usvc->af))
- 		return -EAFNOSUPPORT;
- 
- 	if (nla_fwmark) {
-@@ -3624,6 +3631,11 @@ static int ip_vs_genl_set_cmd(struct sk_
- 		if (udest.af == 0)
- 			udest.af = svc->af;
- 
-+		if (!ip_vs_is_af_valid(udest.af)) {
-+			ret = -EAFNOSUPPORT;
-+			goto out;
-+		}
++	/*
++	 * Limit SD clock to 125MHz for ls1012a according to its datasheet
++	 */
++	if (clock > 125000000 &&
++	    of_find_compatible_node(NULL, NULL, "fsl,ls1012a-esdhc"))
++		clock = 125000000;
 +
- 		if (udest.af != svc->af && cmd != IPVS_CMD_DEL_DEST) {
- 			/* The synchronization protocol is incompatible
- 			 * with mixed family services
+ 	/* Workaround to reduce the clock frequency for p1010 esdhc */
+ 	if (of_find_compatible_node(NULL, NULL, "fsl,p1010-esdhc")) {
+ 		if (clock > 20000000)
