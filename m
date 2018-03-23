@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802620-2-16021390385367106708
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802615-2-4411042161434174432
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802619; b=p7+/2rHAFu/8kcH6S/SK8KBWA9+0do9s2QjvpszZXhQf882
-    iB5kDdXWALnFomShFFCdqLsJlFeZWDvEiIU2DNRNiQbeSRL9znQopjqUfpQ7eAA9
-    gUQPjGq44SafHf6kaoVB8/XFgyPYr9pyu21VDB7KHm0gAbSpurT/MPn/LbeoPALu
-    RAlsKJWSxYiCm1y/OvV/iA+fdjLhTa9pWmz8KAmo2lNE10HoXqETzxS9Be2VXMYf
-    Y7U8ciZiM4UMip5CvB+E8riNDiMq/wb0qyMrLHDbzCHq1iXwIyoIcDc3Lzv6LYbk
-    obIctq8Jm8nK6e0WN/89UXrdz7XcvHbO6z2AkiQ==
+    t=1521802614; b=CpYO9ZSjX6XKHrAqw4FQMCmgnBlNFV8X0GG7DEBy0Lz9QKi
+    l0OkDzJ9kcHf6KpKAJcw+3VW01t2z3Njv5KrnRV6xwlV0g8anwBKL7ZNCQpNTuN7
+    6rbBp4Ye1cqGCsanr2nogpLvWQ5dZ1TzmIn+95sT+A7eRFUns8yvTF1Yu6ch0rZA
+    2fyTkNLmwOhUJMK9ziwWojiIODzzioAUcHCrw8c/b0cKmYf1QSB2LVggryQCV8MU
+    K8UPJEEjrKT5UL8DdL5q0Hjx/DW/XAucwxlewdgwfT6tOz3o/5shrGDVErdaBq72
+    woJv/eS0jSBkudVHdCGYYr5alKZXJRds4ijFvjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802619; bh=5NGcNHgqoV/i8T5wGi98Lx90fr
-    RJe0AMBbwfw8QQ8T0=; b=pvoS4Ef3kV7gpXXqX/UyBHB63MY8MxUAMThR7QcxBL
-    YnoSUzUonoiEI9H4WXPV0j/nBZOPjdFE4hhNvzgdDRIPNFAV4MR8vSUGDzs22wlO
-    TJLVL4L6T5NJJlAZltLwlO6BTVCDYntIs8Y/6Wi8msl9J8rZVB0F0U/ipsgB/K+r
-    n8V8wwaSuYR7ywxIneQVWMChxe52rzCnZSVoQ/hl7F/i6+FkyETmc2ZXAoSuVkzl
-    7bPPTlm4RdzeaGJcQOlEmAu9bn4dPDlIBMd4upDlROH+68DLsO5mt/1ZPyzlds5p
-    keS+0bMclN4xCLcFZng6of/KBBlpOzQHcHEhcC5dRQNg==
+    :list-id; s=arctest; t=1521802614; bh=cZMVUCn0AfbNwtCJcM16ZjVQYJ
+    rjcGecBrgMS3KtoEY=; b=GMoK2qoaUTxi6PKXuI6o10M93ogntJKu5l0LRbFks4
+    BKXLYr5vGst3Y7u/V35Cq9kOgetPPoCChEc2mV0s1A6OcnC/2BrusaMEhSHb+ohN
+    D2eZqnjazGQLGiSdyaIULKRS0yrLHew/6WDj2XCdT1f9A/9NJKCFMpHwP9ADcfRn
+    pkHl8V81eJQPEJM1tw0lDdo55wimnMSyJlSAQch6dRLnMWjPd8gzrJDS91Czy82a
+    WL3cqBx4crKXXkDQdipytm5kyRtyGbLcamnJb9J8rHDElQhtUClYZxGh+WJt/pjO
+    gKIuRcvKuN5rQ2uyTk4AcgvS0T2uaCQtNh311GWle2fw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,28 +50,26 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752580AbeCWKND (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:13:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44570 "EHLO
+        id S1755613AbeCWKNE (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:13:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44542 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752464AbeCWKNB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:01 -0400
+        with ESMTP id S1752413AbeCWKM7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 10/97] Input: ar1021_i2c - fix too long name in drivers device table
-Date: Fri, 23 Mar 2018 10:53:57 +0100
-Message-Id: <20180323094158.078104191@linuxfoundation.org>
+        stable@vger.kernel.org, Jeremy Boone <jeremy.boone@nccgroup.trust>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <james.morris@microsoft.com>
+Subject: [PATCH 4.4 01/97] tpm: fix potential buffer overruns caused by bit glitches on the bus
+Date: Fri, 23 Mar 2018 10:53:48 +0100
+Message-Id: <20180323094157.619109611@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -84,41 +82,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Jeremy Boone <jeremy.boone@nccgroup.trust>
 
+commit 3be23274755ee85771270a23af7691dc9b3a95db upstream.
 
-[ Upstream commit 95123fc43560d6f4a60e74f72836e63cd8848f76 ]
+Discrete TPMs are often connected over slow serial buses which, on
+some platforms, can have glitches causing bit flips.  If a bit does
+flip it could cause an overrun if it's in one of the size parameters,
+so sanity check that we're not overrunning the provided buffer when
+doing a memcpy().
 
-The name field in structure i2c_device_id is 20 characters, and we expect
-it to be NULL-terminated, however we are trying to stuff it with 21 bytes
-and thus NULL-terminator is lost. This causes issues when one creates
-device with name "MICROCHIP_AR1021_I2C" as i2c core cuts off the last "C",
-and automatic module loading by alias does not work as result.
-
-The -I2C suffix in the device name is superfluous, we know what bus we are
-dealing with, so let's drop it. Also, no other driver uses capitals, and
-the manufacturer name is normally not included, except in very rare cases
-of incompatible name collisions.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=116211
-Fixes: dd4cae8bf166 ("Input: Add Microchip AR1021 i2c touchscreen")
-Reviewed-By: Christian Gmeiner <christian.gmeiner@gmail.com>
-Tested-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Jeremy Boone <jeremy.boone@nccgroup.trust>
+Cc: stable@vger.kernel.org
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/input/touchscreen/ar1021_i2c.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/input/touchscreen/ar1021_i2c.c
-+++ b/drivers/input/touchscreen/ar1021_i2c.c
-@@ -152,7 +152,7 @@ static int __maybe_unused ar1021_i2c_res
- static SIMPLE_DEV_PM_OPS(ar1021_i2c_pm, ar1021_i2c_suspend, ar1021_i2c_resume);
+---
+ drivers/char/tpm/tpm-interface.c |    5 +++++
+ drivers/char/tpm/tpm2-cmd.c      |    6 ++++++
+ 2 files changed, 11 insertions(+)
+
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -1040,6 +1040,11 @@ int tpm_get_random(u32 chip_num, u8 *out
+ 			break;
  
- static const struct i2c_device_id ar1021_i2c_id[] = {
--	{ "MICROCHIP_AR1021_I2C", 0 },
-+	{ "ar1021", 0 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(i2c, ar1021_i2c_id);
+ 		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
++		if (recd > num_bytes) {
++			total = -EFAULT;
++			break;
++		}
++
+ 		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+ 
+ 		dest += recd;
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -622,6 +622,11 @@ static int tpm2_unseal_cmd(struct tpm_ch
+ 	if (!rc) {
+ 		data_len = be16_to_cpup(
+ 			(__be16 *) &buf.data[TPM_HEADER_SIZE + 4]);
++		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE + 1) {
++			rc = -EFAULT;
++			goto out;
++		}
++
+ 		data = &buf.data[TPM_HEADER_SIZE + 6];
+ 
+ 		memcpy(payload->key, data, data_len - 1);
+@@ -629,6 +634,7 @@ static int tpm2_unseal_cmd(struct tpm_ch
+ 		payload->migratable = data[data_len - 1];
+ 	}
+ 
++out:
+ 	tpm_buf_destroy(&buf);
+ 	return rc;
+ }
