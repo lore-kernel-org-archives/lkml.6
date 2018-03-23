@@ -1,60 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752152AbeCWWOa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 18:14:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33030 "EHLO mail.kernel.org"
+        id S1752400AbeCWWPG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 18:15:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751668AbeCWWO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751880AbeCWWO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Mar 2018 18:14:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7517721777
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 140BB2184B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180323221311.405667933@goodmis.org>
+Message-Id: <20180323221427.994060310@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 23 Mar 2018 18:13:11 -0400
+Date: Fri, 23 Mar 2018 18:13:15 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH 0/4] [GIT PULL] tracing, kprobes: Fix kprobe symbol offset (for minus)
+Subject: [PATCH 4/4] selftests: ftrace: Add a testcase for probepoint
+References: <20180323221311.405667933@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0004-selftests-ftrace-Add-a-testcase-for-probepoint.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Linus,
+Add a testcase for probe point definition. This tests
+symbol, address and symbol+offset syntax. The offset
+must be positive and smaller than UINT_MAX.
 
-The documentation for kprobe events says that symbol offets can
-take both a + and - sign to get to before and after the symbol address.
-But in actuality, the code does not support the minus. This fixes
-that issue, and adds a few more selftests to kprobe events.
+Link: http://lkml.kernel.org/r/152129043097.31874.14273580606301767394.stgit@devbox
 
-Please pull the latest trace-v4.16-rc4 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.16-rc4
-
-Tag SHA1: d92df88947baacdf2ebfe80871fb1c6f9211aa80
-Head SHA1: dfa453bc90eca0febff33c8d292a656e53702158
-
-
-Masami Hiramatsu (4):
-      tracing: probeevent: Fix to support minus offset from symbol
-      selftests: ftrace: Add probe event argument syntax testcase
-      selftests: ftrace: Add a testcase for string type with kprobe_event
-      selftests: ftrace: Add a testcase for probepoint
-
-----
- kernel/trace/trace_kprobe.c                        |  4 +-
- kernel/trace/trace_probe.c                         |  8 +-
- kernel/trace/trace_probe.h                         |  2 +-
- .../ftrace/test.d/kprobe/kprobe_args_string.tc     | 46 ++++++++++
- .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     | 97 ++++++++++++++++++++++
- .../selftests/ftrace/test.d/kprobe/probepoint.tc   | 43 ++++++++++
- 6 files changed, 192 insertions(+), 8 deletions(-)
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ .../selftests/ftrace/test.d/kprobe/probepoint.tc   | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
  create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+new file mode 100644
+index 000000000000..4fda01a08da4
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
+@@ -0,0 +1,43 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Kprobe events - probe points
++
++[ -f kprobe_events ] || exit_unsupported # this is configurable
++
++TARGET_FUNC=create_trace_kprobe
++
++dec_addr() { # hexaddr
++  printf "%d" "0x"`echo $1 | tail -c 8`
++}
++
++set_offs() { # prev target next
++  A1=`dec_addr $1`
++  A2=`dec_addr $2`
++  A3=`dec_addr $3`
++  TARGET="0x$2" # an address
++  PREV=`expr $A1 - $A2` # offset to previous symbol
++  NEXT=+`expr $A3 - $A2` # offset to next symbol
++  OVERFLOW=+`printf "0x%x" ${PREV}` # overflow offset to previous symbol
++}
++
++# We have to decode symbol addresses to get correct offsets.
++# If the offset is not an instruction boundary, it cause -EILSEQ.
++set_offs `grep -A1 -B1 ${TARGET_FUNC} /proc/kallsyms | cut -f 1 -d " " | xargs`
++
++UINT_TEST=no
++# printf "%x" -1 returns (unsigned long)-1.
++if [ `printf "%x" -1 | wc -c` != 9 ]; then
++  UINT_TEST=yes
++fi
++
++echo 0 > events/enable
++echo > kprobe_events
++echo "p:testprobe ${TARGET_FUNC}" > kprobe_events
++echo "p:testprobe ${TARGET}" > kprobe_events
++echo "p:testprobe ${TARGET_FUNC}${NEXT}" > kprobe_events
++! echo "p:testprobe ${TARGET_FUNC}${PREV}" > kprobe_events
++if [ "${UINT_TEST}" = yes ]; then
++! echo "p:testprobe ${TARGET_FUNC}${OVERFLOW}" > kprobe_events
++fi
++echo > kprobe_events
++clear_trace
+-- 
+2.15.1
