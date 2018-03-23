@@ -1,96 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752241AbeCWDKX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 23:10:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56696 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752209AbeCWDKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 23:10:20 -0400
-Date: Fri, 23 Mar 2018 11:10:13 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        takahiro.akashi@linaro.org, ebiederm@xmission.com, vgoyal@redhat.com,
-        dyoung@redhat.com, prudo@linux.vnet.ibm.com
-Subject: Re: [PATCH 1/2] resource: add walk_system_ram_res_rev()
-Message-ID: <20180323031013.GB11150@localhost.localdomain>
-References: <20180322033722.9279-1-bhe@redhat.com>
- <20180322033722.9279-2-bhe@redhat.com>
- <20180322152929.9b421af2f66cc819ad691207@linux-foundation.org>
- <20180323005845.GA25740@localhost.localdomain>
- <20180322190606.859a0f1c7e2d1b2958daeb9f@linux-foundation.org>
+        id S1752364AbeCWDLm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 23:11:42 -0400
+Received: from mail-it0-f51.google.com ([209.85.214.51]:36695 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752343AbeCWDLi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 23:11:38 -0400
+X-Google-Smtp-Source: AG47ELuToqkhPsDjgzwMkJGXKpNDO6ntlikIVT9UY0uovhuPi01Xv3DXd+iF7YCu7kKtYGnoZcwgrZ9X1sI1ttgFndo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180322190606.859a0f1c7e2d1b2958daeb9f@linux-foundation.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180307161226.vweofwcvy6nvux5p@localhost.localdomain>
+References: <20180228155306.1006-1-rf@opensource.cirrus.com>
+ <CACRpkdYc1Ovvhwze37-uJJL+5YG5kHuW9rgDSbfhxLRP30aPWg@mail.gmail.com> <20180307161226.vweofwcvy6nvux5p@localhost.localdomain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 23 Mar 2018 04:11:37 +0100
+Message-ID: <CACRpkdbMnPRXpr48WWVV58y5-wkMUsHzBua4Lyj9wh+r+YbVtA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/22/18 at 07:06pm, Andrew Morton wrote:
-> On Fri, 23 Mar 2018 08:58:45 +0800 Baoquan He <bhe@redhat.com> wrote:
-> 
-> > > erk, this is pretty nasty.  Isn't there a better way :(
-> > 
-> > Yes, this is not efficient.
-> > 
-> > In struct resource{}, ->sibling list is a singly linked list. I ever
-> > thought about changing it to doubly linked list, yet not very sure if
-> > it will have effect since struct resource is a core data structure.
-> 
-> Switching to a list_head sounds OK.  The only issue really is memory
-> consumption and surely we don't have tens of thousands of struct
-> resources floating about(?).  Or if we do have a lot, the machine is
-> presumably huge (hope?).
+On Wed, Mar 7, 2018 at 5:12 PM, Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+> On Fri, Mar 02, 2018 at 09:42:54AM +0100, Linus Walleij wrote:
+>> On Wed, Feb 28, 2018 at 4:53 PM, Richard Fitzgerald
+>> <rf@opensource.cirrus.com> wrote:
+>>
+>> > When dt_to_map_one_config() is called with a pinctrl_dev passed
+>> > in, it should only be using this if the node being looked up
+>> > is a hog. The code was always using the passed pinctrl_dev
+>> > without checking whether the dt node referred to it.
+>> >
+>> > A pin controller can have pinctrl-n dependencies on other pin
+>> > controllers in these cases:
+>> >
+>> > - the pin controller hardware is external, for example I2C, so
+>> >   needs other pin controller(s) to be setup to communicate with
+>> >   the hardware device.
+>> >
+>> > - it is a child of a composite MFD so its of_node is shared with
+>> >   the parent MFD and other children of that MFD. Any part of that
+>> >   MFD could have dependencies on other pin controllers.
+>> >
+>> > Because of this, dt_to_map_one_config() can't assume that if it
+>> > has a pinctrl_dev passed in then the node it looks up must be
+>> > a hog. It could be a reference to some other pin controller.
+>> >
+>> > Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+>>
+>> Seems correct. Also the code is a little more clear
+>> after the patch.
+>>
+>> Patch applied.
+>>
+>> It'd be nice to see some testing of this, I hope linux-next is a good
+>> testing ground.
+>>
+>
+> Once we are happy on the testing front, how would you feel about
+> getting this forwarded to 4.14 stable as well?
 
-Yes. It doubles the memory consumption.
+Sadly too late for me to tag as stable, but you can suggest to
+Greg to pick it up for stable individually after v4.17-rc1.
 
-AFAIK, the biggest number of resrouces I heard of possibly is mentioned
-in this user space kexec_tools commit. In this commit, Xunlei told on
-SGI system with 64TB RAM, the array which we have been using to store
-"System RAM"|"Reserved"|"ACPI **" regions is not big enough. In that
-case, we need extra 8Byte*2048=16KB at most. With my understanding, this
-increase is system wide, since each resource instance only needs its own
-list_head member, right?
-
-commit 4a6d67d9e938a7accf128aff23f8ad4bda67f729
-Author: Xunlei Pang <xlpang@redhat.com>
-Date:   Thu Mar 23 19:16:59 2017 +0800
-
-    x86: Support large number of memory ranges
-    
-    We got a problem on one SGI 64TB machine, the current kexec-tools
-    failed to work due to the insufficient ranges(MAX_MEMORY_RANGES)
-    allowed which is defined as 1024(less than the ranges on the machine).
-    The kcore header is insufficient due to the same reason as well.
-    
-    To solve this, this patch simply doubles "MAX_MEMORY_RANGES" and
-    "KCORE_ELF_HEADERS_SIZE".
-    
-    Signed-off-by: Xunlei Pang <xlpang@redhat.com>
-    Tested-by: Frank Ramsay <frank.ramsay@hpe.com>
-    Signed-off-by: Simon Horman <horms@verge.net.au>
-
-diff --git a/kexec/arch/i386/kexec-x86.h b/kexec/arch/i386/kexec-x86.h
-index 33df352..51855f8 100644
---- a/kexec/arch/i386/kexec-x86.h
-+++ b/kexec/arch/i386/kexec-x86.h
-@@ -1,7 +1,7 @@
- #ifndef KEXEC_X86_H
- #define KEXEC_X86_H
- 
--#define MAX_MEMORY_RANGES 1024
-+#define MAX_MEMORY_RANGES 2048
-
-
-> 
-> > AKASHI's method is more acceptable, and currently only kexec has this
-> > requirement.
-> 
-> What method is that?
-
-I meant this patch is made by AKASHI, he posted a patchset to add
-kexec_file support for arm64. Among those patches this one is used to
-arm64 kernel at top of system RAM. Later they change a different way to
-search memory region to load kernel, so he dropped this patch.
+Yours,
+Linus Walleij
