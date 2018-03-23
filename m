@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELt//z1N2kPVIy5Wps+2qfUkJoagrrkCckq4gmRoH6hpTSklo+5VEk3lhmkpX1o/2LpWAJE0
-ARC-Seal: i=1; a=rsa-sha256; t=1521800223; cv=none;
+X-Google-Smtp-Source: AG47ELuxDd46rKH9Gly4aRPeOELV5mOlorefPrtTo4upr5XB/Nh+0qDIBuW0cKSz9g+pA735gWOY
+ARC-Seal: i=1; a=rsa-sha256; t=1521800219; cv=none;
         d=google.com; s=arc-20160816;
-        b=qJI7O2spA+pspIbb/DtixwSFhsVRPfsrT1Z8wM9fz5DLdRBWr7s4Hl+QT6Kk7uMJzY
-         QPkJIoIo/Bm6OiwCQBlr7v/fKXdHOVGXAOEu7T9fYonauM+Wi/lQnq1K4lMnY/LM5jx5
-         W87VAr6Zd9XAexTdOVZxidPvuyGZU7rAUoWbYBkdyUd73a5P3wS05aDpAO9eZybWHFJZ
-         TLSMIiOHlSWq81kSQcNZv4m+oxKwMWwxvLA37Nx1lxth2bsdE036wDeNTkng8ETGB2v3
-         lqsOaZn26udcGc1yxE0E4g6vf7r95408CPgOuObDWhK+7U1r0ElEw+S78CwbfuA4WLkJ
-         xB4Q==
+        b=om2WCoaLlOaSDAMtABgWgFQisufpCHUphQgvL8fpPXsWNCLZMgJGapLxGXjInXyLVv
+         1DvU3rOeNf4avOEnMjx9bxgIXWzRf3O6OjtD6xkF9QjL1IwZiFeYQ25rHPwWzahPkaCM
+         4JuDu2tiwRxwJt0Z/8EpYcF7XbLhX9dq6n0ouf5g/zAWTevuuPeAteJWVSrPTHl2O/gV
+         m3XgzGax2FLA6ZmfVST3rVxUM7lHv9QWfr4tWHMzTn6iSyBJMAW4621ASpAdx8afZqUZ
+         +qT6QmES7Es9XuFMnyNdwoIUB0+/NvVNoBLLSmYg4ZD832DTTJSqgDUSBdqJf1NnPv5J
+         Gk3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kgyQB6lDAME4hQk8bGzUI+4duTLp8UC/11pkI4f+Z3I=;
-        b=IV7Fu2IwZZbrRpI9vU3IVmpJ81uJ9AK194sC10aPFIPKgnk1sNU8ZKi5G3OH6j1Dwc
-         lx2zYxiMUAzarvHQOn7UXSB53jJhOwBmaPqUyx86q5+69mAku+T31IjB47D/pj74VVT1
-         bsO0cEoplvvtHUXeViG5g6W3zwABHUV/La/TsYsdQAa1EFt8owIWhyTxW82+rF/WKFoE
-         7G7/WA+VB3+2CkDbttSDT9p9nWPLPMnyGnIuBEfq3Xd9zTp+J3u28nHNnNijUJ6npUCU
-         DXXBfxg9IkptK1uksg5FFaYCe+9/pMFsNCjc3HRLHwl6/HhuDmOZbEzPPyqBMXJdy9XL
-         pVKw==
+        bh=Q4UszIgnbQa8wiCkZO6b8+CIYDjSu5Ifc9pDBJyy15U=;
+        b=YvsrReIEAIbW1bR9KOy7r7gDQmN0H8HRPPleFuBG04MCKaXrnGKPR346mGWFUAU+Ne
+         8ECzFSiqthyCSl12N7av/G6FDabseYmMVmNH/B2oKF8gX30pnhuPT94lZYECLPOMuWSY
+         ++Nc+EXadSl9ePeTLH+c1vzLddaOeVijpQwXuB0EiLa8yUfljAOpSXOeQ5F9gRP7XPcq
+         vu061j4Ixnr92+rpyuwzdRhvDjV9FLbgNWNL4fGMljpqxE9hDz8mkm+/HXKQWZ+IDLRj
+         3ui8YkQo419UQA+K/B4G/xtKM2dReGIfQGwnQrgDF/a2LqGxbVAYd9squ0fOVRvJ9q8t
+         x5kA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Erez Shitrit <erezsh@mellanox.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Markus Elfring <elfring@users.sourceforge.net>,
+	H J Lu <hjl.tools@gmail.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	=?UTF-8?q?=C3=89meric=20MASCHINO?= <emeric.maschino@gmail.com>,
+	Sergei Trofimovich <slyfox@gentoo.org>,
+	Tony Luck <tony.luck@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 83/97] IB/ipoib: Avoid memory leak if the SA returns a different DGID
-Date: Fri, 23 Mar 2018 10:55:10 +0100
-Message-Id: <20180323094202.165259339@linuxfoundation.org>
+Subject: [PATCH 4.4 64/97] ia64: fix module loading for gcc-5.4
+Date: Fri, 23 Mar 2018 10:54:51 +0100
+Message-Id: <20180323094201.218526418@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722007480729726?=
-X-GMAIL-MSGID: =?utf-8?q?1595723190682380470?=
+X-GMAIL-THRID: =?utf-8?q?1595722714775958192?=
+X-GMAIL-MSGID: =?utf-8?q?1595723187532460510?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +56,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Erez Shitrit <erezsh@mellanox.com>
+From: Sergei Trofimovich <slyfox@gentoo.org>
 
 
-[ Upstream commit 439000892ee17a9c92f1e4297818790ef8bb4ced ]
+[ Upstream commit a25fb8508c1b80dce742dbeaa4d75a1e9f2c5617 ]
 
-The ipoib path database is organized around DGIDs from the LLADDR, but the
-SA is free to return a different GID when asked for path. This causes a
-bug because the SA's modified DGID is copied into the database key, even
-though it is no longer the correct lookup key, causing a memory leak and
-other malfunctions.
+Starting from gcc-5.4+ gcc generates MLX instructions in more cases to
+refer local symbols:
 
-Ensure the database key does not change after the SA query completes.
+    https://gcc.gnu.org/PR60465
 
-Demonstration of the bug is as  follows
-ipoib wants to send to GID fe80:0000:0000:0000:0002:c903:00ef:5ee2, it
-creates new record in the DB with that gid as a key, and issues a new
-request to the SM.
-Now, the SM from some reason returns path-record with other SGID (for
-example, 2001:0000:0000:0000:0002:c903:00ef:5ee2 that contains the local
-subnet prefix) now ipoib will overwrite the current entry with the new
-one, and if new request to the original GID arrives ipoib  will not find
-it in the DB (was overwritten) and will create new record that in its
-turn will also be overwritten by the response from the SM, and so on
-till the driver eats all the device memory.
+That caused ia64 module loader to choke on such instructions:
 
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+    fuse: invalid slot number 1 for IMM64
+
+The Linux kernel used to handle only case where relocation pointed to
+slot=2 instruction in the bundle.  That limitation was fixed in linux by
+commit 9c184a073bfd ("[IA64] Fix 2.6 kernel for the new ia64 assembler")
+See
+
+    http://sources.redhat.com/bugzilla/show_bug.cgi?id=1433
+
+This change lifts the slot=2 restriction from the kernel module loader.
+
+Tested on 'fuse' and 'btrfs' kernel modules.
+
+Cc: Markus Elfring <elfring@users.sourceforge.net>
+Cc: H J Lu <hjl.tools@gmail.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Bug: https://bugs.gentoo.org/601014
+Tested-by: Émeric MASCHINO <emeric.maschino@gmail.com>
+Signed-off-by: Sergei Trofimovich <slyfox@gentoo.org>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/ia64/kernel/module.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -724,6 +724,22 @@ static void path_rec_completion(int stat
- 	spin_lock_irqsave(&priv->lock, flags);
- 
- 	if (!IS_ERR_OR_NULL(ah)) {
-+		/*
-+		 * pathrec.dgid is used as the database key from the LLADDR,
-+		 * it must remain unchanged even if the SA returns a different
-+		 * GID to use in the AH.
-+		 */
-+		if (memcmp(pathrec->dgid.raw, path->pathrec.dgid.raw,
-+			   sizeof(union ib_gid))) {
-+			ipoib_dbg(
-+				priv,
-+				"%s got PathRec for gid %pI6 while asked for %pI6\n",
-+				dev->name, pathrec->dgid.raw,
-+				path->pathrec.dgid.raw);
-+			memcpy(pathrec->dgid.raw, path->pathrec.dgid.raw,
-+			       sizeof(union ib_gid));
-+		}
-+
- 		path->pathrec = *pathrec;
- 
- 		old_ah   = path->ah;
+--- a/arch/ia64/kernel/module.c
++++ b/arch/ia64/kernel/module.c
+@@ -153,7 +153,7 @@ slot (const struct insn *insn)
+ static int
+ apply_imm64 (struct module *mod, struct insn *insn, uint64_t val)
+ {
+-	if (slot(insn) != 2) {
++	if (slot(insn) != 1 && slot(insn) != 2) {
+ 		printk(KERN_ERR "%s: invalid slot number %d for IMM64\n",
+ 		       mod->name, slot(insn));
+ 		return 0;
+@@ -165,7 +165,7 @@ apply_imm64 (struct module *mod, struct
+ static int
+ apply_imm60 (struct module *mod, struct insn *insn, uint64_t val)
+ {
+-	if (slot(insn) != 2) {
++	if (slot(insn) != 1 && slot(insn) != 2) {
+ 		printk(KERN_ERR "%s: invalid slot number %d for IMM60\n",
+ 		       mod->name, slot(insn));
+ 		return 0;
