@@ -1,39 +1,71 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvE06vmLyjFb1OAyR4lHMW90dMWT8fDiQAtxIoo+4i39xfsV6Pz494eKjgMpg5wCLRksCwy
-ARC-Seal: i=1; a=rsa-sha256; t=1521800115; cv=none;
-        d=google.com; s=arc-20160816;
-        b=IXH3e7ZIp6z0O+61W/W0HqHlni1qhgZqBWaZA6P/n+rerEsbGbmwe7HsVbLt9KyLiq
-         I19xvMX5LZCM/5KOi0Dn+JPBirlxyNDwFnT0g1uTa+I89F1RYMD04k1qrFPPQSoQXKWV
-         29CeQeT0Tvcqbocd88XrGmWUZ4nVh9nH2xWVPlY19xpeXXUYEk/67VYhB625KkShoLyT
-         E6XcJMCP4kxd3NfAjpXz5YpmA58VLrRQAbaeQs7BO4l7IHJIOUWhmALMpnEOWS/zvlol
-         w4QKmxw3/mJvxn/lvRbETQczNNM5/D05jongWGOthZ4Yn2fDjuhvi/cfb7r4R2Rya6Ew
-         xnkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=rG1gKJcnujbVrE9RytPDqoRAVz6scRhqIST/Qvn1vJ4=;
-        b=W7OA/0QB1gAlPP19OfxwuNK7m/viYC9npCoPq2xp9ay2qGv26jMAK9/vk7xubi76WC
-         uwEeOmR3UbXQJdjp68gGbFynZ3ynQK2kgwOJBp5b3bOQrn8tTpau3g+rWhCtkdoYhu9G
-         yaRbjsL+JoIsjLs20o9R0zEtGedyTS2VnuuXiSoynRhwIK4dSV5kyPequ64EP7wv+/La
-         fNzN+4V3PYC81SToX6XCLa5JQW5Ucbn0qZER0Jxx8kpIHPZmrk4UCGOonos5YX8sf6BX
-         sKsSiw0c4NteiP7/szsKhQVWZAp3DfMsT6VlInE3+18Hxv57bVQH8Gfe7NyhwaGxeP0k
-         a0Ag==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-977995-1521800113-2-17999860463168980304
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521800112; b=SQf2tWWwd1lvSM6fJ0DpIJ9B/fvVESq2cKUx4cTe8uLOEro
+    o3+/aeeTpeCBhj+ZCPJqV7F9v3KW7CDwoefeL3MAP+1kjraA/ANzlAGa2qRQxO3u
+    unSw4ARxPG/qiZgRdfxQY3W9VhzeMCsVsMWlnmXeqGbPdKCzFsNPgSkfT/1ElQ+O
+    Krki0Nfe/2nsu9Mta7gK11oJNfkyesSH/eSS3fX3gLc8Cxh6SHSpSj0ITXkab3Sp
+    g7G/QWvSP07P+SlolsR8USp6vR2LE6xeklBX8trrxQNsX6dNPpKyQBnnlPvsU0EQ
+    goufA1mzd1YVmfAzWwy0if7F+Wz4wRT02MsJqTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521800112; bh=MCdq3R031MJof8VkxQnKEtXyOx
+    2sgmhFWPubTkz/vCw=; b=moGRQFDXFqOcrT+XpWSahfxPr16oqH2CzJ7SSThD08
+    iTDCahurvrmz78/BxNU0cZg1pLixoKQbM6H8RK2HyIQ0IgpqBTcaK6sGbEeIP6jE
+    F2uBQpibJ9M/KhiaijI7K1jHYLZD0ZiDm9HNFvLsQOcNDWEdAtfwpdLafNMosQhL
+    BaIwuYv10LfOb3kZ22H84huKZQ8BNoGvuPt41U/7RSv24omvk60CqMbnPACShujk
+    cyKlQEVecxYQKoBwS04QGnnhCcwHFUKY8rHplu4HfoZKuDpNIIqv8uqlBwuW3KOF
+    sGRA6bEIC1nckQhtAhaITnPcFH8q3/EGA9M0EqmaeE2Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933401AbeCWKPG (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:15:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45472 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933400AbeCWKPD (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:15:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Yang Song <yangsong@vmware.com>,
-	Jarno Rajahalme <jarno@ovn.org>,
-	Joe Stringer <joe@ovn.org>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 39/97] openvswitch: Delete conntrack entry clashing with an expectation.
-Date: Fri, 23 Mar 2018 10:54:26 +0100
-Message-Id: <20180323094159.856017645@linuxfoundation.org>
+        stable@vger.kernel.org, Maor Gottlieb <maorg@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 35/97] IB/mlx4: Change vma from shared to private
+Date: Fri, 23 Mar 2018 10:54:22 +0100
+Message-Id: <20180323094159.639962651@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -41,10 +73,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722580602323313?=
-X-GMAIL-MSGID: =?utf-8?q?1595723078119329995?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,83 +83,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jarno Rajahalme <jarno@ovn.org>
+From: Maor Gottlieb <maorg@mellanox.com>
 
 
-[ Upstream commit cf5d70918877c6a6655dc1e92e2ebb661ce904fd ]
+[ Upstream commit ca37a664a8e4e9988b220988ceb4d79e3316f195 ]
 
-Conntrack helpers do not check for a potentially clashing conntrack
-entry when creating a new expectation.  Also, nf_conntrack_in() will
-check expectations (via init_conntrack()) only if a conntrack entry
-can not be found.  The expectation for a packet which also matches an
-existing conntrack entry will not be removed by conntrack, and is
-currently handled inconsistently by OVS, as OVS expects the
-expectation to be removed when the connection tracking entry matching
-that expectation is confirmed.
+Anonymous VMA (->vm_ops == NULL) cannot be shared, otherwise
+it would lead to SIGBUS.
 
-It should be noted that normally an IP stack would not allow reuse of
-a 5-tuple of an old (possibly lingering) connection for a new data
-connection, so this is somewhat unlikely corner case.  However, it is
-possible that a misbehaving source could cause conntrack entries be
-created that could then interfere with new related connections.
+Remove the shared flags from the vma after we change it to be
+anonymous.
 
-Fix this in the OVS module by deleting the clashing conntrack entry
-after an expectation has been matched.  This causes the following
-nf_conntrack_in() call also find the expectation and remove it when
-creating the new conntrack entry, as well as the forthcoming reply
-direction packets to match the new related connection instead of the
-old clashing conntrack entry.
+This is easily reproduced by doing modprobe -r while running a
+user-space application such as raw_ethernet_bw.
 
-Fixes: 7f8a436eaa2c ("openvswitch: Add conntrack action")
-Reported-by: Yang Song <yangsong@vmware.com>
-Signed-off-by: Jarno Rajahalme <jarno@ovn.org>
-Acked-by: Joe Stringer <joe@ovn.org>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: ae184ddeca5db ('IB/mlx4_ib: Disassociate support')
+Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/conntrack.c |   30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx4/main.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/openvswitch/conntrack.c
-+++ b/net/openvswitch/conntrack.c
-@@ -361,10 +361,38 @@ ovs_ct_expect_find(struct net *net, cons
- 		   u16 proto, const struct sk_buff *skb)
- {
- 	struct nf_conntrack_tuple tuple;
-+	struct nf_conntrack_expect *exp;
+--- a/drivers/infiniband/hw/mlx4/main.c
++++ b/drivers/infiniband/hw/mlx4/main.c
+@@ -1055,6 +1055,8 @@ static void mlx4_ib_disassociate_ucontex
+ 			BUG_ON(1);
+ 		}
  
- 	if (!nf_ct_get_tuplepr(skb, skb_network_offset(skb), proto, net, &tuple))
- 		return NULL;
--	return __nf_ct_expect_find(net, zone, &tuple);
-+
-+	exp = __nf_ct_expect_find(net, zone, &tuple);
-+	if (exp) {
-+		struct nf_conntrack_tuple_hash *h;
-+
-+		/* Delete existing conntrack entry, if it clashes with the
-+		 * expectation.  This can happen since conntrack ALGs do not
-+		 * check for clashes between (new) expectations and existing
-+		 * conntrack entries.  nf_conntrack_in() will check the
-+		 * expectations only if a conntrack entry can not be found,
-+		 * which can lead to OVS finding the expectation (here) in the
-+		 * init direction, but which will not be removed by the
-+		 * nf_conntrack_in() call, if a matching conntrack entry is
-+		 * found instead.  In this case all init direction packets
-+		 * would be reported as new related packets, while reply
-+		 * direction packets would be reported as un-related
-+		 * established packets.
-+		 */
-+		h = nf_conntrack_find_get(net, zone, &tuple);
-+		if (h) {
-+			struct nf_conn *ct = nf_ct_tuplehash_to_ctrack(h);
-+
-+			nf_ct_delete(ct, 0, 0);
-+			nf_conntrack_put(&ct->ct_general);
-+		}
-+	}
-+
-+	return exp;
- }
- 
- /* Determine whether skb->nfct is equal to the result of conntrack lookup. */
++		context->hw_bar_info[i].vma->vm_flags &=
++			~(VM_SHARED | VM_MAYSHARE);
+ 		/* context going to be destroyed, should not access ops any more */
+ 		context->hw_bar_info[i].vma->vm_ops = NULL;
+ 	}
