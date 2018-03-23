@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELshfcXwfU4sEzUiD7iIEJrXr3eny8TzYrsijWgjpQ+u1U9cydmcfCKyAcIKFQlb67nDSQ/b
-ARC-Seal: i=1; a=rsa-sha256; t=1521800158; cv=none;
+X-Google-Smtp-Source: AG47ELvgyp1Vez88C7EmMDQ7Z5Q5ycx66C4vO612duL2AYCo935Ot6ID+zQR0Fj5U1oJ4SRozh0h
+ARC-Seal: i=1; a=rsa-sha256; t=1521800155; cv=none;
         d=google.com; s=arc-20160816;
-        b=OoaW9bnhmDfr5P15K2HlsnCFYZXcYo3wg1gR5flcu0l4IZvgoigjKgkCrOR3zrOKC/
-         ETDMeiDuV3XaZ310wTOq3dLIbxb5kenq+C2+bsy92uyGK8Wf73NjeMSqy8hTTeBq4TAZ
-         OWH3FJ4rtzBLR4PuD/vPG4WlKsdeODUBBx7T2WK2FhhlPZxLyXTwynUwyBj3oN3Npskw
-         3yGb/bZmfmLV3Fl348EIc9w80YQp+lo3xDMtQpxxlHjgIo/bHLCMZK5DIgOdQHK2J3mp
-         /EEw+/TQu5+6LFTs4zi4NF50UO7YnaqVtV/Rkx6VXC1vz3if8h2DfC25AoXQ0uEtflrF
-         0T7g==
+        b=OxGSjjaEdaB08uCRIvov3L56tYTmu1OYiWcq6MPKOrhV0rOgW27LiHS980Y22fpTdv
+         Kn9ctlcHqSWsmrT5qJ3N/pW2DzC4LrF1pztgpiwlWeTej1jW/wJP162E6FAwUV3Fk3hH
+         GxRNGSRpZfDoaeXy7Wz1ss70u2sxWz6rms4RgzXr8xAdw3uZV/kYrju8RLSODmOBo11V
+         NGzjqSbgLO0t618OCZXNPfo8mrYsPRqoMSRL1hrRrEKtnJ6tBWYfKUwb4oxUKYzQAU13
+         ZEDAJ4z//fAlgp5kThBtYhywhp1wBmOXKE1DA3AAb7lpIxNxoVo6oEXxIFPzmPtuGTkN
+         bSdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=I+SJ8UOrn9sFA/AIaUEExHUMr1poAMZE8mPdHei18Xg=;
-        b=znZCKf5q6hCMopAiKVU6DgiOiN4HkWwcTSiDSHuPIXymPpVBKE+UckTyz4LUvX4vQu
-         IPuqx8zUY/R6MCSEf+WHkdz7FwI2hO51ej5xbv7AWqhEJxqI4JMZWWB8VhklLVAgemn8
-         PIunYg895Aoy/GPL2MEaUjvdAK3yILdLzymBbgU9qzoja3pC2LqFvwkop0Nv+EkV3zMv
-         2VQHBrtmx5wMlFk2Auw58NlHEBMfAcrYDC0yHvTdSLI791w6JJR3N5IY+T18qIMpP5j4
-         3hKg4fvK6BkO3N+gBV9fM58/AT5Isy8q8JtN44/u9yfVrRrxr7XlIud01RAKRvCRgS96
-         9fnQ==
+        bh=wdb4YuCSoOznzY9YyxGaq68f1edZJ9hmUldyNOwy1Yo=;
+        b=Bpfizf8LEysiynorOTBEY6j55yPqzAEMHzQRIsVyofMzOpKM3TUlS7kCeQcO+1eXXe
+         +AKjnINWcDeBD/UUDKMD1p40MnfVw0dBwhLJF8xO7RHf2ikyT+4H4J1fCEJQbyq22a5z
+         dt+86+X6/6R3wmV57YRDFOY9j5Ma3GLWRsqK6EBPqMuqO+FjDSrLUQAGcgw4Abijnh7x
+         D5CYthHtnrnuodS7PxtNpNQnQVg6zMUd5qesWABbO6BE6Ga6zD0Sl6h6aDDLuIAPX/CC
+         yBxzYrTxQc1HH3662XaUCIT9hKRT687AY03YCJkqVon4HmrI6hc1zzV76Ynfd3vA/TSM
+         PdlA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tony Lindgren <tony@atomide.com>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
+	Yangbo Lu <yangbo.lu@nxp.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 56/97] ARM: DRA7: clockdomain: Change the CLKTRCTRL of CM_PCIE_CLKSTCTRL to SW_WKUP
-Date: Fri, 23 Mar 2018 10:54:43 +0100
-Message-Id: <20180323094200.787374788@linuxfoundation.org>
+Subject: [PATCH 4.4 55/97] mmc: sdhci-of-esdhc: limit SD clock for ls1012a/ls1046a
+Date: Fri, 23 Mar 2018 10:54:42 +0100
+Message-Id: <20180323094200.742771593@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722687748983513?=
-X-GMAIL-MSGID: =?utf-8?q?1595723122310679272?=
+X-GMAIL-THRID: =?utf-8?q?1595722681152507399?=
+X-GMAIL-MSGID: =?utf-8?q?1595723119799482951?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +51,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: yangbo lu <yangbo.lu@nxp.com>
 
 
-[ Upstream commit 2c949ce38f4e81d7487f165fa3b8f77d74a2a6c4 ]
+[ Upstream commit a627f025eb0534052ff451427c16750b3530634c ]
 
-The PCIe programming sequence in TRM suggests CLKSTCTRL of PCIe should be
-set to SW_WKUP. There are no issues when CLKSTCTRL is set to HW_AUTO in RC
-mode. However in EP mode, the host system is not able to access the
-MEMSPACE and setting the CLKSTCTRL to SW_WKUP fixes it.
+The ls1046a datasheet specified that the max SD clock frequency
+for eSDHC SDR104/HS200 was 167MHz, and the ls1012a datasheet
+specified it's 125MHz for ls1012a. So this patch is to add the
+limitation.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/clockdomains7xx_data.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-of-esdhc.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/arch/arm/mach-omap2/clockdomains7xx_data.c
-+++ b/arch/arm/mach-omap2/clockdomains7xx_data.c
-@@ -524,7 +524,7 @@ static struct clockdomain pcie_7xx_clkdm
- 	.dep_bit	  = DRA7XX_PCIE_STATDEP_SHIFT,
- 	.wkdep_srcs	  = pcie_wkup_sleep_deps,
- 	.sleepdep_srcs	  = pcie_wkup_sleep_deps,
--	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
-+	.flags		  = CLKDM_CAN_SWSUP,
- };
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -418,6 +418,20 @@ static void esdhc_of_set_clock(struct sd
+ 	if (esdhc->vendor_ver < VENDOR_V_23)
+ 		pre_div = 2;
  
- static struct clockdomain atl_7xx_clkdm = {
++	/*
++	 * Limit SD clock to 167MHz for ls1046a according to its datasheet
++	 */
++	if (clock > 167000000 &&
++	    of_find_compatible_node(NULL, NULL, "fsl,ls1046a-esdhc"))
++		clock = 167000000;
++
++	/*
++	 * Limit SD clock to 125MHz for ls1012a according to its datasheet
++	 */
++	if (clock > 125000000 &&
++	    of_find_compatible_node(NULL, NULL, "fsl,ls1012a-esdhc"))
++		clock = 125000000;
++
+ 	/* Workaround to reduce the clock frequency for p1010 esdhc */
+ 	if (of_find_compatible_node(NULL, NULL, "fsl,p1010-esdhc")) {
+ 		if (clock > 20000000)
