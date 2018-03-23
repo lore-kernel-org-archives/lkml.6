@@ -1,19 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751806AbeCWAzu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:55:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52476 "EHLO mx1.redhat.com"
+        id S1752216AbeCWA6Y (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:58:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40366 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751669AbeCWAzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 20:55:49 -0400
+        id S1751677AbeCWAzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 20:55:51 -0400
 From: jglisse@redhat.com
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
-Subject: [PATCH 00/15] hmm: fixes and documentations v4
-Date: Thu, 22 Mar 2018 20:55:12 -0400
-Message-Id: <20180323005527.758-1-jglisse@redhat.com>
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM client quit v3
+Date: Thu, 22 Mar 2018 20:55:16 -0400
+Message-Id: <20180323005527.758-5-jglisse@redhat.com>
+In-Reply-To: <20180323005527.758-1-jglisse@redhat.com>
+References: <20180323005527.758-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -23,86 +29,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-Fixes and improvement to HMM only impact HMM user. Changes since the
-last posting:
+This code was lost in translation at one point. This properly call
+mmu_notifier_unregister_no_release() once last user is gone. This
+fix the zombie mm_struct as without this patch we do not drop the
+refcount we have on it.
 
-Allow release callback to wait on any device driver workqueue which
-is processing fault without having to worry for deadlock. Some driver
-do call migrate_vma() from their page fault workqueue which itself
-will trigger calls to mmu_notifier callback. If we take and keep the
-HMM semaphore in write mode while calling device driver release call
-back then those can not wait on their page fault workqueue as the
-workqueue might end up deadlocking (waiting to be able to take the
-HMM semaphore in read mode). Avoid this by dropping HMM semaphore
-while calling the device driver release callback.
+Changed since v1:
+  - close race window between a last mirror unregistering and a new
+    mirror registering, which could have lead to use after free()
+    kind of bug
+Changed since v2:
+  - Avoid issue if there is multiple call to hmm_mirror_register()
+    (which lead to use after free).
 
-Other changes from previous post are solely typos fixes (in comment
-not in code), s/pfns/pfn for one function argument, and usual patch
-formatting fixes (also added review tag for review receive so far).
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: Evgeny Baskakov <ebaskakov@nvidia.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Mark Hairgrove <mhairgrove@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+---
+ mm/hmm.c | 38 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 35 insertions(+), 3 deletions(-)
 
-Below are previous cover letter (everything in them are still true):
-
-----------------------------------------------------------------------
-cover letter for v3:
-
-Added a patch to fix zombie mm_struct (missing call to mmu notifier
-unregister) this was lost in translation at some point. Included all
-typos and comments received so far (and even more typos fixes). Added
-more comments. Updated individual patch version to reflect changes.
-
-----------------------------------------------------------------------
-cover letter for v2:
-
-Removed pointless VM_BUG_ON() cced stable when appropriate and splited
-the last patch into _many_ smaller patches to make it easier to review.
-The end result is same modulo comments i received so far and the extra
-documentation i added while splitting thing up. Below is previous cover
-letter (everything in it is still true):
-----------------------------------------------------------------------
-cover letter for v1:
-
-All patches only impact HMM user, there is no implication outside HMM.
-
-First patch improve documentation to better reflect what HMM is. Second
-patch fix #if/#else placement in hmm.h. The third patch add a call on
-mm release which helps device driver who use HMM to clean up early when
-a process quit. Finaly last patch modify the CPU snapshot and page fault
-helper to simplify device driver. The nouveau patchset i posted last
-week already depends on all of those patches.
-
-You can find them in a hmm-for-4.17 branch:
-
-git://people.freedesktop.org/~glisse/linux
-https://cgit.freedesktop.org/~glisse/linux/log/?h=hmm-for-4.17
-
-Jérôme Glisse (13):
-  mm/hmm: fix header file if/else/endif maze v2
-  mm/hmm: unregister mmu_notifier when last HMM client quit v3
-  mm/hmm: hmm_pfns_bad() was accessing wrong struct
-  mm/hmm: use struct for hmm_vma_fault(), hmm_vma_get_pfns() parameters
-    v2
-  mm/hmm: remove HMM_PFN_READ flag and ignore peculiar architecture v2
-  mm/hmm: use uint64_t for HMM pfn instead of defining hmm_pfn_t to
-    ulong v2
-  mm/hmm: cleanup special vma handling (VM_SPECIAL)
-  mm/hmm: do not differentiate between empty entry or missing directory
-    v3
-  mm/hmm: rename HMM_PFN_DEVICE_UNADDRESSABLE to HMM_PFN_DEVICE_PRIVATE
-  mm/hmm: move hmm_pfns_clear() closer to where it is use
-  mm/hmm: factor out pte and pmd handling to simplify hmm_vma_walk_pmd()
-    v2
-  mm/hmm: change hmm_vma_fault() to allow write fault on page basis
-  mm/hmm: use device driver encoding for HMM pfn v2
-
-Ralph Campbell (2):
-  mm/hmm: documentation editorial update to HMM documentation
-  mm/hmm: HMM should have a callback before MM is destroyed v3
-
- Documentation/vm/hmm.txt | 360 +++++++++++++++---------------
- MAINTAINERS              |   1 +
- include/linux/hmm.h      | 201 ++++++++++-------
- mm/hmm.c                 | 556 +++++++++++++++++++++++++++++++----------------
- 4 files changed, 675 insertions(+), 443 deletions(-)
-
+diff --git a/mm/hmm.c b/mm/hmm.c
+index 8116727766f7..2d00769e8985 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -233,13 +233,24 @@ int hmm_mirror_register(struct hmm_mirror *mirror, struct mm_struct *mm)
+ 	if (!mm || !mirror || !mirror->ops)
+ 		return -EINVAL;
+ 
++again:
+ 	mirror->hmm = hmm_register(mm);
+ 	if (!mirror->hmm)
+ 		return -ENOMEM;
+ 
+ 	down_write(&mirror->hmm->mirrors_sem);
+-	list_add(&mirror->list, &mirror->hmm->mirrors);
+-	up_write(&mirror->hmm->mirrors_sem);
++	if (mirror->hmm->mm == NULL) {
++		/*
++		 * A racing hmm_mirror_unregister() is about to destroy the hmm
++		 * struct. Try again to allocate a new one.
++		 */
++		up_write(&mirror->hmm->mirrors_sem);
++		mirror->hmm = NULL;
++		goto again;
++	} else {
++		list_add(&mirror->list, &mirror->hmm->mirrors);
++		up_write(&mirror->hmm->mirrors_sem);
++	}
+ 
+ 	return 0;
+ }
+@@ -254,11 +265,32 @@ EXPORT_SYMBOL(hmm_mirror_register);
+  */
+ void hmm_mirror_unregister(struct hmm_mirror *mirror)
+ {
+-	struct hmm *hmm = mirror->hmm;
++	bool should_unregister = false;
++	struct mm_struct *mm;
++	struct hmm *hmm;
++
++	if (mirror->hmm == NULL)
++		return;
+ 
++	hmm = mirror->hmm;
+ 	down_write(&hmm->mirrors_sem);
+ 	list_del_init(&mirror->list);
++	should_unregister = list_empty(&hmm->mirrors);
++	mirror->hmm = NULL;
++	mm = hmm->mm;
++	hmm->mm = NULL;
+ 	up_write(&hmm->mirrors_sem);
++
++	if (!should_unregister || mm == NULL)
++		return;
++
++	spin_lock(&mm->page_table_lock);
++	if (mm->hmm == hmm)
++		mm->hmm = NULL;
++	spin_unlock(&mm->page_table_lock);
++
++	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
++	kfree(hmm);
+ }
+ EXPORT_SYMBOL(hmm_mirror_unregister);
+ 
 -- 
 2.14.3
