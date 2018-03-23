@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806991-2-3023508532529627061
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806990-2-15618962260813316047
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES ensv,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806973; b=KEC88WvhEqTkybQjqLg093G5Xc7F/CNfS5omkPhrywfSLIO
-    7a8gT2Q6uxqS1c+YB3Ob5vqkhyLFlp13KyiwUIkP4bVoMZ8ni86nrd2Iy7Px3VBV
-    sBSRRCfIgHgPwARvrBKrcQCsXYYxfuC+N3RvWZA96meNrgG27Qv5zpSFdrfo/ZNB
-    uLWjdBsYMSjljWGcL8EbK8cERPR+lG1p3udGbkpu3UbVHgcvMr9OA27QVTWfJfoK
-    XCIBbwVcztefdqMqrz4K1aX3eAUAOxmqKTs6dpdou0rcFsqBVoKPPufR7hQQ6K92
-    eM8NFoi0LhhUvUjXe4xv2/G+KdjikTq8COSMoGQ==
+    t=1521806973; b=r1mvfmej44Y3Te4DTQLwNrWSJNuSFO3kThwKLalgm4PDHEd
+    ZMWGR3vG7LnI9q9ngWQddgw4EVZREDmWymA3OWaBPCcjmnfnZsBGiLeChQ23LyXF
+    /wLmSuaoCczvcStzF79SggMkaLxTMthmIBf3hMltxZDn2noiFieqMGRKjRjWfe63
+    OvbIvj3rdgTPIXqiE4XPf94U38kDHD/xYOhK985A6TcM05VeqLjuNO/t5gKdwBuj
+    e2K9e6dsnA/5YvUXEmVw8rYhyVlJlzgEEl64xa7eKMl/BDZpzr2tMfYTOXnGGeOF
+    +fa0iOZG2k4LEFF01nknXx1dSIQS0YLIeC5rpMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806973; bh=i3hueus1PPMl7PT7URzZnfmcSl
-    Pga3U0Z1vEA9z8IHs=; b=nuf/Sk12fME/NE3l2ltrv+YF4Wben0mVdq7L5hVtFa
-    ZCYnSCJFncK+SAroNlN2qIhl/HsD/xaigCO9svgoN4GC4fU9hlLSvTSWGkfAOsae
-    WyovrBw48EjFtHIzJsfK+SOXHIjFZtG2CNErihdROQt6hOVvYxCCzEb8/O3vH82u
-    /z/3Bmnh0c8ySYnC+1vdy6Y7I6moPIvSW9MxcNviuAhS4+E+PLgXynma+HSacwlt
-    HojWPGgM3G7KYBAguvnDD2J2RDE0WQ8Xvn2bLcvc9YILGDE4S1PN9WLvv7j3oAHJ
-    VialF9naQeOmTuG02rjfOKMrCeqy8AKYglTetQF1lGUw==
+    :list-id; s=arctest; t=1521806973; bh=d+kk2Uvi9gHTdc/m9ffRsTXh7c
+    1Nk/h7q7psCpo8suQ=; b=kLSOb0coXNHRWgHRz5m6r6ueuzSFAp0CewZhGZ9PdJ
+    YvBWbD58CwCXdPMju3kcQ8ZOy2jRAPHmOOscK6R+1B1FEVk1ycRJKh/b8S4EC9Qt
+    3O2uBlV4ys3YB8hw5ziyeYlydAOA0pCl2o6Nh9cRi7vQnt4GVM+ghmXNfM5hwGQB
+    4m+EwEMjlECohWG375HmJP3nMUBymnmBh1W3saENkZWfpaQQe5Ckn11MoHyKvTo4
+    wKSESy7p4TYScw5sDAtmfUP7nhkd6O9qWaGTtzjhuKdZ96ZXb5w7X9P8oQ3dKcYE
+    fGjQckt//KG9cybPUoywk9999CkPJuJa6K783jS8eldw==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753093AbeCWJ6X (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:58:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35672 "EHLO
+        id S1753082AbeCWJ6W (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:58:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35684 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753054AbeCWJ6S (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:18 -0400
+        with ESMTP id S1753074AbeCWJ6V (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 40/84] RDMA/cma: Use correct size when writing netlink stats
-Date: Fri, 23 Mar 2018 10:53:54 +0100
-Message-Id: <20180323095418.049917282@linuxfoundation.org>
+Subject: [PATCH 4.15 31/84] mmc: avoid removing non-removable hosts during suspend
+Date: Fri, 23 Mar 2018 10:53:45 +0100
+Message-Id: <20180323095416.609918246@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -84,33 +82,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Daniel Drake <drake@endlessm.com>
 
 
-[ Upstream commit 7baaa49af3716fb31877c61f59b74d029ce15b75 ]
+[ Upstream commit de8dcc3d2c0e08e5068ee1e26fc46415c15e3637 ]
 
-The code was using the src size when formatting the dst. They are almost
-certainly the same value but it reads wrong.
+The Weibu F3C MiniPC has an onboard AP6255 module, presenting
+two SDIO functions on a single MMC host (Bluetooth/btsdio and
+WiFi/brcmfmac), and the mmc layer correctly detects this as
+non-removable.
 
-Fixes: ce117ffac2e9 ("RDMA/cma: Export AF_IB statistics")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+After suspend/resume, the wifi and bluetooth interfaces disappear
+and do not get probed again.
+
+The conditions here are:
+
+ 1. During suspend, we reach mmc_pm_notify()
+
+ 2. mmc_pm_notify() calls mmc_sdio_pre_suspend() to see if we can
+    suspend the SDIO host. However, mmc_sdio_pre_suspend() returns
+    -ENOSYS because btsdio_driver does not have a suspend method.
+
+ 3. mmc_pm_notify() proceeds to remove the card
+
+ 4. Upon resume, mmc_rescan() does nothing with this host, because of
+    the rescan_entered check which aims to only scan a non-removable
+    device a single time (i.e. during boot).
+
+Fix the loss of functionality by detecting that we are unable to
+suspend a non-removable host, so avoid the forced removal in that
+case. The comment above this function already indicates that this
+code was only intended for removable devices.
+
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/cma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/core/core.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -4432,7 +4432,7 @@ static int cma_get_id_stats(struct sk_bu
- 					  RDMA_NL_RDMA_CM_ATTR_SRC_ADDR))
- 				goto out;
- 			if (ibnl_put_attr(skb, nlh,
--					  rdma_addr_size(cma_src_addr(id_priv)),
-+					  rdma_addr_size(cma_dst_addr(id_priv)),
- 					  cma_dst_addr(id_priv),
- 					  RDMA_NL_RDMA_CM_ATTR_DST_ADDR))
- 				goto out;
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -2959,6 +2959,14 @@ static int mmc_pm_notify(struct notifier
+ 		if (!err)
+ 			break;
+ 
++		if (!mmc_card_is_removable(host)) {
++			dev_warn(mmc_dev(host),
++				 "pre_suspend failed for non-removable host: "
++				 "%d\n", err);
++			/* Avoid removing non-removable hosts */
++			break;
++		}
++
+ 		/* Calling bus_ops->remove() with a claimed host can deadlock */
+ 		host->bus_ops->remove(host);
+ 		mmc_claim_host(host);
