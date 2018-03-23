@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELviUZ8R24WmmZILNJdVpl2w/rgvLfv62joyRCXFn9oTzZ4VWiFOljdJ4YDKfcKKG6aINS6V
-ARC-Seal: i=1; a=rsa-sha256; t=1521799769; cv=none;
+X-Google-Smtp-Source: AG47ELvy/tV1qsa/MD/kFYk18s6s0qS2OLYKGEDfTnM1UWjsVfPGMx2b+Hgv4leKaDZ6QksV4db6
+ARC-Seal: i=1; a=rsa-sha256; t=1521799716; cv=none;
         d=google.com; s=arc-20160816;
-        b=xybb46v5jJvS04duS0FAFslXg1qqGDr7CRtQT4AKlSkgf7Iuuno3SM+w75ZxDNQJ9v
-         u6qw7F2VbAvrpBZmlAtGO1ObPwYBqzB9oqMqfBpKd5zRBg9mQFxNW5oTJusCqvfcbZNN
-         tZuZTVVd1xuh9YqX7FB6mnihEuOORjxpLjO3GeSy0O8/fvzOW/qdSjSOHuEC2Qd7t7Uf
-         OY+i6pcZFiyenceeX+r3wTYhs5+6nQmFOyD1Kyw+TMg46Q+pjKLgu0/YgE1m8GkSlB9f
-         y9T1+5DSKW3fMaQAD1CU35VuQS7udyig+H0Lbxb8xJAxnjJzM/iwvwvGfuMYCgvay4G5
-         i4Tw==
+        b=oXFo0CcewmcOvpr5djxOIOOgSChnKZE+2FO+5KtVEnQvshc3wnDs5uxYvlZyCnQO5h
+         LhWX7ZV5KSj/zNQlnONNY+6xz9ixCm5qUoXprQW8lJVwXZY0FAkYZRJM/JkdA3iuLzXv
+         t63PSyeETlx9ZtFbuZuwADq/o9XOwsrC9aAHbyYJzf5qd0V6U/dSmTQCW5Zyv1MkuJnf
+         Wz4xdeTxbmaxveCDMtlgq9nGubr7k4sTS1ygZqymzk83tajQj02jyP935eHr9AyEwege
+         ixu3oXD9jWHFYjIzjraMsEUYdRN8ltzyXyjurGp3Z/pNZPsVSpwBu9+Fs07KHw74tc3x
+         Naqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=njdNo5lY1qZI4jY9GgIqgpDY0cK6bKuHhQIOHXorEV4=;
-        b=IH5gvUjyeoI+MeKFOfqvMcyK30j7tg6WL5lGVaNEtKl8sppA/HHr4S/CFAEntol4pb
-         0Mf+nbmq3hWBgIkRaGFc1XiI2QXSIFB5rf/A7/3OLw0HUHJshcZ3402gD0TaditjTZKS
-         O78medpTP1ckN7UC9XIwXiltLpQTJJXAg+f00MyOYTylma1Z0vuOSbEXg5k6hnFsak8H
-         csWRmWRqHiUjWgG1+THaudlQ/ViX6Uwv4Ao9DIY2cXFDilrubJ4ZDvEY8lbRhooCa73F
-         d1W/iKBID5LNT3R5d3/hYIS0u7XYSQIgUkuQxDu4RisCUwE0y7kpyL3Kxy+PidWwetZN
-         zf5Q==
+        bh=HHH8qCH0TaIDubcQ5/UtrjUpeWVSY/4snHzowAasNhg=;
+        b=rXyFXPJKVfJ6NjBFmvEi+u7c8sJdd/5JxukKUGkr/3o4EB7ZCNUsyNeEUY4Aby1aY/
+         qoZhHy6WgG/xyny3wtUiPf/uE5uGDrUI6Z85VOMxCIzKMZk+AFVlszlR+nXmq+tbkABT
+         QeYQwVZK2mZfI3MaJyk51wis3twW3w7QiOiKN/QTO9uquXKzraY0UeBYEBeb4tRxXfke
+         yR2P8lV46i2STKy6EAlrLxlwvI4itIe8NNQZgzR2jkRfK2bECtDIdz66x6tR6M7re7fb
+         +f6BnZP7eQQHxh6kfuQysc33RfJCmjIgjVIIlaYAqHg2DKqwqVWAoRvjwrFJMzdXL1Xv
+         275Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Markus Elfring <elfring@users.sourceforge.net>,
-	H J Lu <hjl.tools@gmail.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	=?UTF-8?q?=C3=89meric=20MASCHINO?= <emeric.maschino@gmail.com>,
-	Sergei Trofimovich <slyfox@gentoo.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Chunming Zhou <David1.Zhou@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 118/177] ia64: fix module loading for gcc-5.4
-Date: Fri, 23 Mar 2018 10:54:06 +0100
-Message-Id: <20180323094210.463109442@linuxfoundation.org>
+Subject: [PATCH 4.9 100/177] drm/amdgpu: fix gpu reset crash
+Date: Fri, 23 Mar 2018 10:53:48 +0100
+Message-Id: <20180323094209.696925119@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -47,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722714775958192?=
-X-GMAIL-MSGID: =?utf-8?q?1595722714775958192?=
+X-GMAIL-THRID: =?utf-8?q?1595722659521301890?=
+X-GMAIL-MSGID: =?utf-8?q?1595722659521301890?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,63 +51,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sergei Trofimovich <slyfox@gentoo.org>
+From: Chunming Zhou <David1.Zhou@amd.com>
 
 
-[ Upstream commit a25fb8508c1b80dce742dbeaa4d75a1e9f2c5617 ]
+[ Upstream commit 51687759be93fbc553f2727e86be25c38126ba93 ]
 
-Starting from gcc-5.4+ gcc generates MLX instructions in more cases to
-refer local symbols:
+[  413.687439] BUG: unable to handle kernel NULL pointer dereference at 0000000000000548
+[  413.687479] IP: [<ffffffff8109b175>] to_live_kthread+0x5/0x60
+[  413.687507] PGD 1efd12067
+[  413.687519] PUD 1efd11067
+[  413.687531] PMD 0
 
-    https://gcc.gnu.org/PR60465
+[  413.687543] Oops: 0000 [#1] SMP
+[  413.687557] Modules linked in: amdgpu(OE) ttm(OE) drm_kms_helper(E) drm(E) i2c_algo_bit(E) fb_sys_fops(E) syscopyarea(E) sysfillrect(E) sysimgblt(E) rpcsec_gss_krb5(E) nfsv4(E) nfs(E) fscache(E) snd_hda_codec_realtek(E) snd_hda_codec_generic(E) snd_hda_codec_hdmi(E) snd_hda_intel(E) eeepc_wmi(E) snd_hda_codec(E) asus_wmi(E) snd_hda_core(E) sparse_keymap(E) snd_hwdep(E) video(E) snd_pcm(E) snd_seq_midi(E) joydev(E) snd_seq_midi_event(E) snd_rawmidi(E) snd_seq(E) snd_seq_device(E) snd_timer(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) snd(E) crc32_pclmul(E) ghash_clmulni_intel(E) soundcore(E) aesni_intel(E) aes_x86_64(E) lrw(E) gf128mul(E) glue_helper(E) ablk_helper(E) cryptd(E) shpchp(E) serio_raw(E) i2c_piix4(E) 8250_dw(E) i2c_designware_platform(E) i2c_designware_core(E) mac_hid(E) binfmt_misc(E)
+[  413.687894]  parport_pc(E) ppdev(E) lp(E) parport(E) nfsd(E) auth_rpcgss(E) nfs_acl(E) lockd(E) grace(E) sunrpc(E) autofs4(E) hid_generic(E) usbhid(E) hid(E) psmouse(E) ahci(E) r8169(E) mii(E) libahci(E) wmi(E)
+[  413.687989] CPU: 13 PID: 1134 Comm: kworker/13:2 Tainted: G           OE   4.9.0-custom #4
+[  413.688019] Hardware name: System manufacturer System Product Name/PRIME B350-PLUS, BIOS 0606 04/06/2017
+[  413.688089] Workqueue: events amd_sched_job_timedout [amdgpu]
+[  413.688116] task: ffff88020f9657c0 task.stack: ffffc90001a88000
+[  413.688139] RIP: 0010:[<ffffffff8109b175>]  [<ffffffff8109b175>] to_live_kthread+0x5/0x60
+[  413.688171] RSP: 0018:ffffc90001a8bd60  EFLAGS: 00010282
+[  413.688191] RAX: ffff88020f0073f8 RBX: ffff88020f000000 RCX: 0000000000000000
+[  413.688217] RDX: 0000000000000001 RSI: ffff88020f9670c0 RDI: 0000000000000000
+[  413.688243] RBP: ffffc90001a8bd78 R08: 0000000000000000 R09: 0000000000001000
+[  413.688269] R10: 0000006051b11a82 R11: 0000000000000001 R12: 0000000000000000
+[  413.688295] R13: ffff88020f002770 R14: ffff88020f004838 R15: ffff8801b23c2c60
+[  413.688321] FS:  0000000000000000(0000) GS:ffff88021ef40000(0000) knlGS:0000000000000000
+[  413.688352] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  413.688373] CR2: 0000000000000548 CR3: 00000001efd0f000 CR4: 00000000003406e0
+[  413.688399] Stack:
+[  413.688407]  ffffffff8109b304 ffff88020f000000 0000000000000070 ffffc90001a8bdf0
+[  413.688439]  ffffffffa05ce29d ffffffffa052feb7 ffffffffa07b5820 ffffc90001a8bda0
+[  413.688470]  ffffffff00000018 ffff8801bb88f060 0000000001a8bdb8 ffff88021ef59280
+[  413.688502] Call Trace:
+[  413.688514]  [<ffffffff8109b304>] ? kthread_park+0x14/0x60
+[  413.688555]  [<ffffffffa05ce29d>] amdgpu_gpu_reset+0x7d/0x670 [amdgpu]
+[  413.688589]  [<ffffffffa052feb7>] ? drm_printk+0x97/0xa0 [drm]
+[  413.688643]  [<ffffffffa0698136>] amdgpu_job_timedout+0x46/0x50 [amdgpu]
+[  413.688700]  [<ffffffffa06969e7>] amd_sched_job_timedout+0x17/0x20 [amdgpu]
+[  413.688727]  [<ffffffff81095493>] process_one_work+0x153/0x3f0
+[  413.688751]  [<ffffffff81095c5b>] worker_thread+0x12b/0x4b0
+[  413.688773]  [<ffffffff8100392e>] ? do_syscall_64+0x6e/0x180
+[  413.688795]  [<ffffffff81095b30>] ? rescuer_thread+0x350/0x350
+[  413.688818]  [<ffffffff8100392e>] ? do_syscall_64+0x6e/0x180
+[  413.688839]  [<ffffffff8109b423>] kthread+0xd3/0xf0
+[  413.688858]  [<ffffffff8109b350>] ? kthread_park+0x60/0x60
+[  413.688881]  [<ffffffff817e1ee5>] ret_from_fork+0x25/0x30
+[  413.688901] Code: 25 40 d3 00 00 48 8b 80 48 05 00 00 48 89 e5 5d 48 8b 40 c8 48 c1 e8 02 83 e0 01 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 <48> 8b b7 48 05 00 00 55 48 89 e5 48 85 f6 74 31 8b 97 f8 18 00
+[  413.689045] RIP  [<ffffffff8109b175>] to_live_kthread+0x5/0x60
+[  413.689064]  RSP <ffffc90001a8bd60>
+[  413.689076] CR2: 0000000000000548
+[  413.697985] ---[ end trace 0a314a64821f84e9 ]---
 
-That caused ia64 module loader to choke on such instructions:
+The root cause is some ring doesn't have scheduler, like KIQ ring
 
-    fuse: invalid slot number 1 for IMM64
-
-The Linux kernel used to handle only case where relocation pointed to
-slot=2 instruction in the bundle.  That limitation was fixed in linux by
-commit 9c184a073bfd ("[IA64] Fix 2.6 kernel for the new ia64 assembler")
-See
-
-    http://sources.redhat.com/bugzilla/show_bug.cgi?id=1433
-
-This change lifts the slot=2 restriction from the kernel module loader.
-
-Tested on 'fuse' and 'btrfs' kernel modules.
-
-Cc: Markus Elfring <elfring@users.sourceforge.net>
-Cc: H J Lu <hjl.tools@gmail.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Bug: https://bugs.gentoo.org/601014
-Tested-by: Émeric MASCHINO <emeric.maschino@gmail.com>
-Signed-off-by: Sergei Trofimovich <slyfox@gentoo.org>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Chunming Zhou <David1.Zhou@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/ia64/kernel/module.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/arch/ia64/kernel/module.c
-+++ b/arch/ia64/kernel/module.c
-@@ -153,7 +153,7 @@ slot (const struct insn *insn)
- static int
- apply_imm64 (struct module *mod, struct insn *insn, uint64_t val)
- {
--	if (slot(insn) != 2) {
-+	if (slot(insn) != 1 && slot(insn) != 2) {
- 		printk(KERN_ERR "%s: invalid slot number %d for IMM64\n",
- 		       mod->name, slot(insn));
- 		return 0;
-@@ -165,7 +165,7 @@ apply_imm64 (struct module *mod, struct
- static int
- apply_imm60 (struct module *mod, struct insn *insn, uint64_t val)
- {
--	if (slot(insn) != 2) {
-+	if (slot(insn) != 1 && slot(insn) != 2) {
- 		printk(KERN_ERR "%s: invalid slot number %d for IMM60\n",
- 		       mod->name, slot(insn));
- 		return 0;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -2237,7 +2237,7 @@ int amdgpu_gpu_reset(struct amdgpu_devic
+ 	for (i = 0; i < AMDGPU_MAX_RINGS; ++i) {
+ 		struct amdgpu_ring *ring = adev->rings[i];
+ 
+-		if (!ring)
++		if (!ring || !ring->sched.thread)
+ 			continue;
+ 		kthread_park(ring->sched.thread);
+ 		amd_sched_hw_job_reset(&ring->sched);
+@@ -2326,7 +2326,8 @@ retry:
+ 		}
+ 		for (i = 0; i < AMDGPU_MAX_RINGS; ++i) {
+ 			struct amdgpu_ring *ring = adev->rings[i];
+-			if (!ring)
++
++			if (!ring || !ring->sched.thread)
+ 				continue;
+ 
+ 			amd_sched_job_recovery(&ring->sched);
+@@ -2335,7 +2336,7 @@ retry:
+ 	} else {
+ 		dev_err(adev->dev, "asic resume failed (%d).\n", r);
+ 		for (i = 0; i < AMDGPU_MAX_RINGS; ++i) {
+-			if (adev->rings[i]) {
++			if (adev->rings[i] && adev->rings[i]->sched.thread) {
+ 				kthread_unpark(adev->rings[i]->sched.thread);
+ 			}
+ 		}
