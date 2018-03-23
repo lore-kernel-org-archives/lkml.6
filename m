@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806610-2-11220629253919993790
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806603-2-17152087756325166490
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806610; b=ZF011AWrAoG21CH+pF53YAVGR4k5N2EQFsL1dLVGyzLIgNI
-    jPu5sjCAq1YDFqtzXA5NCirFptwRSPlTqJE/DCrO3WSBfqhxHyFOjqvRbxu0WBJT
-    huq0/hTaMMU8Nlr1dQ6OegPQbcnxIXCFgHFdYHumoudyMYJSLHLckwIAPbqg2tD6
-    hacqjQtpWEjjLKFKuBXN4Mo+j5V3EPWCsnvj9QlkFUE+hKd0kNw2mXFBSNt0xZ07
-    T6MJTMeyLrO+SyXVkoEzdWh7bQNHe7JYZKh5foxhm1EL/D1takOOuGa951JS7/dw
-    kBWP0P+eGIcnKxI/p5M5TK5luW8PWDBy2NgDSvQ==
+    t=1521806602; b=mFZLCreXinbhQ103Pml6dBZS5I/eucjBcqbrf9aEnpfnb09
+    Oknzq04CYdly19xUJMUQAzSFAts6+QgPD8iWXZwJS7SFaLCuNbfNyxvvZAbidHS4
+    5nvwk7iUqd88JoWEraAQRKbJ3Z9ZBCc0KuqDTilT9YWvVwRNaD0E0zi4LIrRLzVJ
+    T/919UFQpgBHzMzFDMCzVCemwRkRp6YJGMV+hybCUOmGLvy1xprikun3kE3BV+JD
+    yVDlL11i2aKMYG0OIWf7ioLWWpVNmNggrzB5cbZizIq/cHxoHhyM3Jg3kWrBxwHv
+    zoXX/cVsqWi7/hg8FuNxWjcRe15gk4QwRtBjy3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806610; bh=cg9BAwDYV2a//euARg8T5ZmCBO
-    IpLGu1DeDl3GZL+wA=; b=E8DYiHs9pDSXv/GoDXs2DlXdtK+zkZE3Ar2M60fXcJ
-    SKWmNY+oSs/S/g3Bsn3c+skN6Yug88g8rIVH0742C18AlGktf/7MZ7uoDoLnmeVJ
-    Y6hmE8NkRqClJpZusVhQzlCKcx/oc7uNr98KijfSszbIXtqj1CyOWRlRn/N9pWY3
-    6owxz/UpDuFNvZJEZTUq4stY6zbNyvPQgvdQeW5DnW0JIGDAcrYYcp1jwA6eeKKR
-    wWUjK31+HzKb1w8smoV66CoL98UH4O/m5R8qjW24zytd/51cuT828BdQF8kjgTOj
-    4SU6361NIJsCb17nbS/CEumdmLsRjnZPo8TQUsEKpORA==
+    :list-id; s=arctest; t=1521806602; bh=1ZXAsCorT0ZIl73tSfYbqLQv5n
+    +xb+CMCTSuh1uoSmI=; b=s6z+QuwkmLNjoYh8olawbVeF7u+97w1zrQpkqJhTR2
+    gMpSEWFpGcBSX2A/Ih+NcGdtZWAJOQzY8UYVzx3nBZyNKmmbxLKjhS0eax9qy7Ct
+    B7/4Hax5iVYi8kk8Ege8XSVhc75hFV77AUVCSvzSM7Acgw7uyKXKrnJ2AFy/ONPD
+    DuZ7P4d+fZacoOzlTfGtD5r9CJozwz9rtBHaAonaEhuNy1K8Qmw9844p0jRhZsQl
+    QBNYgrK0MW2XSMi6FaKUgxHPzMUKEdnIx69HIRmGyu6+NNdx5OIPx/MzuyK1DdMS
+    ++7CxU93WwxKexvg38VZGj5+B+2OJ0Ep38k3Ic6P+Usw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,24 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753079AbeCWJ7u (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:59:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36272 "EHLO
+        id S1753414AbeCWJ7v (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:59:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36292 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753352AbeCWJ7q (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:46 -0400
+        with ESMTP id S1752769AbeCWJ7t (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
+        stable@vger.kernel.org, Romain Izard <romain.izard.pro@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 69/84] nfsd4: permit layoutget of executable-only files
-Date: Fri, 23 Mar 2018 10:54:23 +0100
-Message-Id: <20180323095422.390997428@linuxfoundation.org>
+Subject: [PATCH 4.15 70/84] clk: at91: pmc: Wait for clocks when resuming
+Date: Fri, 23 Mar 2018 10:54:24 +0100
+Message-Id: <20180323095422.536619470@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -82,44 +85,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Benjamin Coddington <bcodding@redhat.com>
+From: Romain Izard <romain.izard.pro@gmail.com>
 
 
-[ Upstream commit 66282ec1cf004c09083c29cb5e49019037937bbd ]
+[ Upstream commit 960e1c4d93be86d3b118fe22d4edc69e401b28b5 ]
 
-Clients must be able to read a file in order to execute it, and for pNFS
-that means the client needs to be able to perform a LAYOUTGET on the file.
+Wait for the syncronization of all clocks when resuming, not only the
+UPLL clock. Do not use regmap_read_poll_timeout, as it will call BUG()
+when interrupts are masked, which is the case in here.
 
-This behavior for executable-only files was added for OPEN in commit
-a043226bc140 "nfsd4: permit read opens of executable-only files".
-
-This fixes up xfstests generic/126 on block/scsi layouts.
-
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfsd/nfs4proc.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/at91/pmc.c |   24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1363,14 +1363,14 @@ nfsd4_layoutget(struct svc_rqst *rqstp,
- 	const struct nfsd4_layout_ops *ops;
- 	struct nfs4_layout_stateid *ls;
- 	__be32 nfserr;
--	int accmode;
-+	int accmode = NFSD_MAY_READ_IF_EXEC;
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -107,10 +107,20 @@ static int pmc_suspend(void)
+ 	return 0;
+ }
  
- 	switch (lgp->lg_seg.iomode) {
- 	case IOMODE_READ:
--		accmode = NFSD_MAY_READ;
-+		accmode |= NFSD_MAY_READ;
- 		break;
- 	case IOMODE_RW:
--		accmode = NFSD_MAY_READ | NFSD_MAY_WRITE;
-+		accmode |= NFSD_MAY_READ | NFSD_MAY_WRITE;
- 		break;
- 	default:
- 		dprintk("%s: invalid iomode %d\n",
++static bool pmc_ready(unsigned int mask)
++{
++	unsigned int status;
++
++	regmap_read(pmcreg, AT91_PMC_SR, &status);
++
++	return ((status & mask) == mask) ? 1 : 0;
++}
++
+ static void pmc_resume(void)
+ {
+-	int i, ret = 0;
++	int i;
+ 	u32 tmp;
++	u32 mask = AT91_PMC_MCKRDY | AT91_PMC_LOCKA;
+ 
+ 	regmap_read(pmcreg, AT91_PMC_MCKR, &tmp);
+ 	if (pmc_cache.mckr != tmp)
+@@ -134,13 +144,11 @@ static void pmc_resume(void)
+ 			     AT91_PMC_PCR_CMD);
+ 	}
+ 
+-	if (pmc_cache.uckr & AT91_PMC_UPLLEN) {
+-		ret = regmap_read_poll_timeout(pmcreg, AT91_PMC_SR, tmp,
+-					       !(tmp & AT91_PMC_LOCKU),
+-					       10, 5000);
+-		if (ret)
+-			pr_crit("USB PLL didn't lock when resuming\n");
+-	}
++	if (pmc_cache.uckr & AT91_PMC_UPLLEN)
++		mask |= AT91_PMC_LOCKU;
++
++	while (!pmc_ready(mask))
++		cpu_relax();
+ }
+ 
+ static struct syscore_ops pmc_syscore_ops = {
