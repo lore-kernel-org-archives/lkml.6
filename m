@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805511-2-9923690411933333920
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805504-2-11257056719297761172
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805510; b=cKWEJ/t5g3pT264JvWSSgsL6tULwIelbPO7ttH6lvjKKw+X
-    DwD1hn5IkNKJtbrqceqWuomcdE/c7EvMvqTWfk3ER5odRn3ZZ/zj+9DAMVvpZk7j
-    d7FB02adBRWIhTTTUbgR6cmmhQuCKEm5eMaHgU56zXZKA3yz2ShxKmtCBznhLoGP
-    uuKgB8ks5xmeGPWi28YxGEWYOa6Uhb7h0moeSL+WxI4S2sKGlWKfoWKjO5x9UIQi
-    aT3yc6STVKdXFureRFKYTrIWq2D2HnjYqEwgF9NGTloJXbK1HIQLi9CXnY6fhPyG
-    yPXY/8xRaXXaXlrJfCN6NwB64a1w5YAxB3hX4VA==
+    t=1521805503; b=ho21ZgyvJHH78ZlBvkI3dVMpsPGgAyiULdCQhuvG5hFmJZS
+    ky+mGfc/eBIJ0YakUtsV+oYujdMIpEcK0ny6cjyPeeGk9dtvzAwDBvpY1GaCnNTb
+    NW1riDsxRkKTq/3Hecs899xoXDjay5ZGYUlxFbbNBYAshLEp+fkR1/oSSLEWj3Pr
+    2Chuo7+Ffzje06C36o3hBhHSHqwOYcAFMyrem8cP+Pmz+8MutipDftkxYNwVNY20
+    o2Z/UZKNa+s3DaDvK1iCQZri3MEcEPYCzfMrZR0w8mws0grn8yTcpMyxxo4LLmLT
+    5Qgi2bP9zfkkYVgr9TlWTwo9b094W7f3VxU2XnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805510; bh=CVUehAgOJyR8muWPRkl5tF3ohX
-    gx4ZKvyeLbe8ywHMs=; b=ivf2FBFhc3IpuyFbuG4GyXm36Fsv+nI+uFEK6AFWdS
-    KnzIwXz47BOhhFZZF40xOTOh0pEklzyyHhmam/soyERzvllCkIxP5SErs6d/ucHE
-    WVdBi2vQuYp5X7JnjWXY5JhAxa9A/W1U5BpgzsOCW+VtOy4o4fwLpsJ4W+3TQJlg
-    UNoyzUw/qJuRZKqJBPUcY+DnPeypSo7HHfCkxQV4nxi1qT6sTIMYOX4Z9tH8wxDn
-    damshDfL0gIbJ6TrhTpTVynmCvq3T3rAqvZIF2yu+O4/DFik/B4wCg1rxlOeq33g
-    vcjdrq9hkXz6UF0tzu54WCt35hz3jRySG0aUwbI+SUPA==
+    :list-id; s=arctest; t=1521805503; bh=71WFCAGJRd9GWjtPQ0X95I+iQo
+    r8DA7rwDJ5gXvL3Hc=; b=EAJNgJAu5trDQBOMqj2rzl/b7e2ccJA0klPP8lS/5V
+    v9KJt+CcSBMG+mPYkueU+49VHnE/eLDDVm2HCyhxtHofifekxDUgT5ZahLi7BDgo
+    Wz6qY+LhuIbqVD3f55wzpcyhBjkW6hGmikueNLuf8hJlghBbVk5MpKVLCcfsJpbJ
+    9h2sNETJeVDxq1JXrpTcKvzuIBm3b7RcBRhBalZlUi16twbj+EFSAfhxq91Q2Y0E
+    N8W88JGg+k1VVBKiSFqFmbbSMdclhGZrtT5ZK7gRyv/0WXWq1hY5Thow/0ebGb7e
+    mdgTtBusALgb+byUSZJWVN2kxML1cQn6fxhKzlTya4SA==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,12 +50,12 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754403AbeCWKDP (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:03:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38682 "EHLO
+        id S1753982AbeCWKDS (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:03:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38710 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754379AbeCWKDN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:13 -0400
+        with ESMTP id S1754417AbeCWKDQ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:16 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -63,9 +63,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 53/77] ip_gre: fix error path when erspan_rcv failed
-Date: Fri, 23 Mar 2018 10:54:27 +0100
-Message-Id: <20180323094145.801828772@linuxfoundation.org>
+Subject: [PATCH 4.14 54/77] ip_gre: fix potential memory leak in erspan_rcv
+Date: Fri, 23 Mar 2018 10:54:28 +0100
+Message-Id: <20180323094145.886610783@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -86,36 +86,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
 
-[ Upstream commit dd8d5b8c5b22e31079b259b8bfb686f1fac1080a ]
+[ Upstream commit 50670b6ee9bc4ae8f9ce3112b437987adf273245 ]
 
-When erspan_rcv call return PACKET_REJECT, we shoudn't call ipgre_rcv to
-process packets again, instead send icmp unreachable message in error
-path.
+If md is NULL, tun_dst must be freed, otherwise it will cause memory
+leak.
 
-Fixes: 84e54fe0a5ea ("gre: introduce native tunnel support for ERSPAN")
-Acked-by: William Tu <u9012063@gmail.com>
+Fixes: 1a66a836da6 ("gre: add collect_md mode to ERSPAN tunnel")
 Cc: William Tu <u9012063@gmail.com>
 Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_gre.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv4/ip_gre.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 --- a/net/ipv4/ip_gre.c
 +++ b/net/ipv4/ip_gre.c
-@@ -408,11 +408,13 @@ static int gre_rcv(struct sk_buff *skb)
- 	if (unlikely(tpi.proto == htons(ETH_P_ERSPAN))) {
- 		if (erspan_rcv(skb, &tpi, hdr_len) == PACKET_RCVD)
- 			return 0;
-+		goto out;
- 	}
+@@ -303,8 +303,10 @@ static int erspan_rcv(struct sk_buff *sk
+ 				return PACKET_REJECT;
  
- 	if (ipgre_rcv(skb, &tpi, hdr_len) == PACKET_RCVD)
- 		return 0;
+ 			md = ip_tunnel_info_opts(&tun_dst->u.tun_info);
+-			if (!md)
++			if (!md) {
++				dst_release((struct dst_entry *)tun_dst);
+ 				return PACKET_REJECT;
++			}
  
-+out:
- 	icmp_send(skb, ICMP_DEST_UNREACH, ICMP_PORT_UNREACH, 0);
- drop:
- 	kfree_skb(skb);
+ 			md->index = index;
+ 			info = &tun_dst->u.tun_info;
