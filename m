@@ -1,96 +1,124 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1521813660; cv=none;
-        d=google.com; s=arc-20160816;
-        b=b0kWnISGOR8KQfrb4NukYtpT6Rb2jU+YwKbFpWfx7/aKU0LhJxzVmyVsCEa/NJt7G9
-         +RdTo+BwNgCzYij3RdIHGINHVNYvzlptlNEDzJJWLq55l4SYYoLIzqYiVz/JBtU5t4AN
-         pq1jiq8TiOxn4eLfePc5YnkdOfbOnal9IP7YVrZp9u36A3no8CFm3arBb2aJD15UxdV3
-         MCwpqft0/OcmlzGZuum+PjjZyNKPfljqEgEKRy1a6kt5VYfIhceXBky92GfT+XEUhFom
-         KpfmbuGnhHN99SK8vZoWM1SZDb8xRfpugc/9FJGnb5BRebyJmeUuRuIXo26MsmbDRe37
-         tg4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=14Zw8MNZ28mkvz5HdJZHVhbi2WzzXK02JCneWKLC1gg=;
-        b=VqK2CeedZN7Gm4vLMRiiRgEAJnDuA0lGwy2bUchYhboUJUKQJpN38w3FbJkfY3PWuP
-         oZNY5KljpdbAbZ4diqZuPe443/Bky8KOIpNkKUhfliOqjFNFkL89I8HNIgu8LmJYI86x
-         3AI2dxR0hRtvslbq47fDFvhJYOfcc1qG/C8f8ok4xoUZymGWZKp57j04+0m/YNN5mWxq
-         SSdGM9SXVzyG12sr0Zbn7d9Xe3AyoGSt44Q4xRD1OwQAc3WtZcw0qZFrDNOxtAWsTCmA
-         Lx4yaSDUJqVcIVwj15lU2aIPuSEs2Wn5TT4+xO2MN0cRugC5D0e54xNLFG6N78XL24Y2
-         sp3A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELthFRWlbMEXAQH+12gIgpzMlXluLncXlaI6ALaMF/HRxbVQwK0NFIebIeAaS56P7DiE/xYtag==
-Message-ID: <5ab5089b.06d21c0a.4934e.3b14@mx.google.com>
-Date: Fri, 23 Mar 2018 07:00:59 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.4.y
-X-Kernelci-Kernel: v4.4.123-97-g3054df73e9af
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802620-2-16021390385367106708
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521802619; b=p7+/2rHAFu/8kcH6S/SK8KBWA9+0do9s2QjvpszZXhQf882
+    iB5kDdXWALnFomShFFCdqLsJlFeZWDvEiIU2DNRNiQbeSRL9znQopjqUfpQ7eAA9
+    gUQPjGq44SafHf6kaoVB8/XFgyPYr9pyu21VDB7KHm0gAbSpurT/MPn/LbeoPALu
+    RAlsKJWSxYiCm1y/OvV/iA+fdjLhTa9pWmz8KAmo2lNE10HoXqETzxS9Be2VXMYf
+    Y7U8ciZiM4UMip5CvB+E8riNDiMq/wb0qyMrLHDbzCHq1iXwIyoIcDc3Lzv6LYbk
+    obIctq8Jm8nK6e0WN/89UXrdz7XcvHbO6z2AkiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521802619; bh=5NGcNHgqoV/i8T5wGi98Lx90fr
+    RJe0AMBbwfw8QQ8T0=; b=pvoS4Ef3kV7gpXXqX/UyBHB63MY8MxUAMThR7QcxBL
+    YnoSUzUonoiEI9H4WXPV0j/nBZOPjdFE4hhNvzgdDRIPNFAV4MR8vSUGDzs22wlO
+    TJLVL4L6T5NJJlAZltLwlO6BTVCDYntIs8Y/6Wi8msl9J8rZVB0F0U/ipsgB/K+r
+    n8V8wwaSuYR7ywxIneQVWMChxe52rzCnZSVoQ/hl7F/i6+FkyETmc2ZXAoSuVkzl
+    7bPPTlm4RdzeaGJcQOlEmAu9bn4dPDlIBMd4upDlROH+68DLsO5mt/1ZPyzlds5p
+    keS+0bMclN4xCLcFZng6of/KBBlpOzQHcHEhcC5dRQNg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752580AbeCWKND (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:13:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44570 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752464AbeCWKNB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:01 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 10/97] Input: ar1021_i2c - fix too long name in drivers device table
+Date: Fri, 23 Mar 2018 10:53:57 +0100
+Message-Id: <20180323094158.078104191@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 00/97] 4.4.124-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595722980788493728?=
-X-GMAIL-MSGID: =?utf-8?q?1595737280599101918?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.4.y boot: 95 boots: 1 failed, 88 passed with 4 offline, 2=
- untried/unknown (v4.4.123-97-g3054df73e9af)
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.4.y/kernel/v4.4.123-97-g3054df73e9af/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
-/kernel/v4.4.123-97-g3054df73e9af/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.4.y
-Git Describe: v4.4.123-97-g3054df73e9af
-Git Commit: 3054df73e9afebfd4cd1ee545a4cb8d8022055cc
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 52 unique boards, 20 SoC families, 16 builds out of 178
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Boot Regressions Detected:
 
-arm:
+[ Upstream commit 95123fc43560d6f4a60e74f72836e63cd8848f76 ]
 
-    at91_dt_defconfig:
-        at91sam9261ek:
-            lab-free-electrons: new failure (last pass: v4.4.123)
+The name field in structure i2c_device_id is 20 characters, and we expect
+it to be NULL-terminated, however we are trying to stuff it with 21 bytes
+and thus NULL-terminator is lost. This causes issues when one creates
+device with name "MICROCHIP_AR1021_I2C" as i2c core cuts off the last "C",
+and automatic module loading by alias does not work as result.
 
-Boot Failure Detected:
+The -I2C suffix in the device name is superfluous, we know what bus we are
+dealing with, so let's drop it. Also, no other driver uses capitals, and
+the manufacturer name is normally not included, except in very rare cases
+of incompatible name collisions.
 
-arm:
-
-    at91_dt_defconfig
-        at91sam9261ek: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    tegra_defconfig:
-        tegra20-iris-512: 1 offline lab
-
-    multi_v7_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-        tegra20-iris-512: 1 offline lab
-
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=116211
+Fixes: dd4cae8bf166 ("Input: Add Microchip AR1021 i2c touchscreen")
+Reviewed-By: Christian Gmeiner <christian.gmeiner@gmail.com>
+Tested-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ drivers/input/touchscreen/ar1021_i2c.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/input/touchscreen/ar1021_i2c.c
++++ b/drivers/input/touchscreen/ar1021_i2c.c
+@@ -152,7 +152,7 @@ static int __maybe_unused ar1021_i2c_res
+ static SIMPLE_DEV_PM_OPS(ar1021_i2c_pm, ar1021_i2c_suspend, ar1021_i2c_resume);
+ 
+ static const struct i2c_device_id ar1021_i2c_id[] = {
+-	{ "MICROCHIP_AR1021_I2C", 0 },
++	{ "ar1021", 0 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(i2c, ar1021_i2c_id);
