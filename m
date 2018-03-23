@@ -1,23 +1,23 @@
 Return-Path: <boris.brezillon@bootlin.com>
-X-Google-Smtp-Source: AIpwx4+im+JhNIHbohRiUE/vD19BtVgkS7lYIxtiCrzYSqgvOxdglHstv8uFg+MOFhlyH+zgdGpx
-ARC-Seal: i=1; a=rsa-sha256; t=1521802838; cv=none;
+X-Google-Smtp-Source: AIpwx4+dZt994fx091M/GWO1cchxn/yGKfbyVNIzQAA9SISJj2JSJ7WoFIulaL3yG3x9HmauxzoT
+ARC-Seal: i=1; a=rsa-sha256; t=1521802836; cv=none;
         d=google.com; s=arc-20160816;
-        b=i5VwoMtyijXX0aSJvLXBicSAZ+RAYKk/VFJH75b3fj3c3GhDLXtU0NPm4LbZqBU0BU
-         tUBi6d7awITA4akPMdZ+RnDr/qzOBrNyGK2mQj+lHdwNuTU/2EYATCeo24NIEQy7xwwS
-         QFavjg6WXQtrCvs7v6d+iAn9it0YvW9I80e+XjEOwKQ4ptsZObiWU1NegtUhLSlR2mBj
-         M7+MlO0pYNwQUT4rWA26IrEjzTo/Ak39bTbz34LhvTw6jdjzA7KAQBiCVH6IE+4DRWNw
-         0xNJUqigP6NOA2nQvOzKsJm9Ekrc/4S6gcb4gTsaQe69ZaAmSSfK3n6Iv27uYn5760RA
-         WjZA==
+        b=vhr7Zx5CuGcnG5XzBkDBN5MuqLc8SZ48gKaE5TpwGfTSR9NygGWMF6EwYJN6r3TveB
+         XobNvptcHASVXIFlVaJ8lFpAKOeibTZFQCgU0mTXgEnUFWah1zUQAE3FxZM54PBuGIDi
+         GDDNAZKhCBJTy42aeKZiKN80/ji4fA/Rd6x4VajQisug499taxETCMMhb/CSq9rpDlec
+         lrs8pA+e4O6xv/pTiKYwDhgy86s6oP4Rzc6YNG0mta+5eKMJOPuT3c+84K6frWhAqY1U
+         gstcCbt+oO8zAv9OQPDLZWMwBBF9ERqhDadBGaMeaDXUyI52Phhr264wM7r8JtD4EisL
+         AgWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=qKR0HU8VYDBXm9UgRCb4ENJSygL2FGy40HUaSUBuhLo=;
-        b=CJWiHH1p3oUCtW2Jrr6mBEAOsWssTx9Q8s94mxuHY2YxrmOTPLrPH3o7SntMCfQn0O
-         Gf6jIVbGQuSBZdVEsRl3i1sMIAEMdqHJt8Df6yBFA8YkWt6kS0kqCjC0xChtZ9dpq8HD
-         S2WHzyYYUvj31DOYcjj2H2dfYOIpciPx7fxMddYESUb2A30yDU8RUny1dmt0WWEjPUzJ
-         sgEjkj8sPzZpGnJtZ+4xln6mOAMJ0ypucb0O/gtu1yoIcvzEt1Xbs2NPBmvZ7iiG6ROA
-         M59zRa8/5m1d7CgUr75cV7U5YYVR99VENjMDFGeo7HBfYhpdCGCK+0KVgEAVZt4gOIyw
-         8/mw==
+        bh=W/6MnRZi+WEsN8EAprhTM1LNw2eHPEcNOW9vCOyDBOQ=;
+        b=cDPHoOCFlGuS34gwIBKFFtTJMtiasap/A+46SDXKIHv3Ashr1AQTnYFMDt2O3a32n8
+         a9lGSQh+Qoa3GI46GcI8zqgXoHjRwivd6UUfZ7NjfsnR0dlhSooGNpMy/POiQmq3Mr7q
+         zoOQtyBrR74BaIoOoiUngfn/QO1BGTFrlDu4ECHaknjvqqeZ+7gTNNEEaJ9MXJaqhE4Y
+         Df3tBWtfrLoX44vSuo09EsvMBwiVZaXj++/MCucRkqjg8QMilScsdgFP+ppL4qMFJFw+
+         TwFoZTueEs51Pz7PWPYb6HD2nb8A2DKfuxYFb8hE13TCrA5rrinY4islPu/kqh4u8X9V
+         XZKw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of boris.brezillon@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=boris.brezillon@bootlin.com
 Authentication-Results: mx.google.com;
@@ -52,48 +52,132 @@ Cc: Przemyslaw Sroka <psroka@cadence.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Xiang Lin <Xiang.Lin@synaptics.com>,
 	linux-gpio@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH v3 07/11] MAINTAINERS: Add myself as the I3C subsystem maintainer
-Date: Fri, 23 Mar 2018 12:00:16 +0100
-Message-Id: <20180323110020.19080-8-boris.brezillon@bootlin.com>
+	Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v3 04/11] i3c: Add sysfs ABI spec
+Date: Fri, 23 Mar 2018 12:00:13 +0100
+Message-Id: <20180323110020.19080-5-boris.brezillon@bootlin.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180323110020.19080-1-boris.brezillon@bootlin.com>
 References: <20180323110020.19080-1-boris.brezillon@bootlin.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595725933444719555?=
-X-GMAIL-MSGID: =?utf-8?q?1595725933444719555?=
+X-GMAIL-THRID: =?utf-8?q?1595725931517706803?=
+X-GMAIL-MSGID: =?utf-8?q?1595725931517706803?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Create an entry for the I3C subsystem and mark it as maintained by me.
-There's no official git repository, patchwork instance, mailing list or
-website yet, but this will be added after the subsystem has been
-accepted.
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Document sysfs files/directories/symlinks exposed by the I3C subsystem.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 ---
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Changes in v2:
+- new patch
+---
+ Documentation/ABI/testing/sysfs-bus-i3c | 95 +++++++++++++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3bdc260e36b7..f323864131ed 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6669,6 +6669,15 @@ L:	linux-i2c@vger.kernel.org
- S:	Maintained
- F:	drivers/i2c/i2c-stub.c
- 
-+I3C SUBSYSTEM
-+M:	Boris Brezillon <boris.brezillon@bootlin.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/i3c/
-+F:	Documentation/driver-api/i3c
-+F:	drivers/i3c/
-+F:	include/linux/i3c/
-+F:	include/dt-bindings/i3c/
+diff --git a/Documentation/ABI/testing/sysfs-bus-i3c b/Documentation/ABI/testing/sysfs-bus-i3c
+new file mode 100644
+index 000000000000..5e88cc093e0e
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-i3c
+@@ -0,0 +1,95 @@
++What:		/sys/bus/i3c/devices/i3c-<bus-id>
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		An I3C bus. This directory will contain one sub-directory per
++		I3C device present on the bus.
 +
- IA64 (Itanium) PLATFORM
- M:	Tony Luck <tony.luck@intel.com>
- M:	Fenghua Yu <fenghua.yu@intel.com>
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/current_master
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		Expose the master that owns the bus (<bus-id>-<master-pid>) at
++		the time this file is read. Note that bus ownership can change
++		overtime, so there's no guarantee that when the read() call
++		returns, the value returned is still valid.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/mode
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		I3C bus mode. Can be "pure", "mixed-fast" or "mixed-slow". See
++		the I3C specification for a detailed description of what each
++		of these modes implies.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/i3c_scl_frequency
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		The frequency (expressed in Hz) of the SCL signal when
++		operating in I3C SDR mode.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/i2c_scl_frequency
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		The frequency (expressed in Hz) of the SCL signal when
++		operating in I2C mode.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		An I3C device present on I3C bus identified by <bus-id>. Note
++		that all devices are represented including the master driving
++		the bus.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/address
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		Dynamic address assigned to device <bus-id>-<device-pid>. This
++		address may change if the bus is re-initialized.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/bcr
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		BCR stands for Bus Characteristics Register and express the
++		device capabilities in term of speed, maximum read/write
++		length, etc. See the I3C specification for more details.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/dcr
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		DCR stands for Device Characteristics Register and express the
++		device capabilities in term of exposed features. See the I3C
++		specification for more details.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/pid
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		PID stands for Provisional ID and is used to uniquely identify
++		a device on a bus. This PID contains information about the
++		vendor, the part and an instance ID so that several devices of
++		the same type can be connected on the same bus.
++		See the I3C specification for more details.
++
++What:		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>/hdrcap
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		Expose the HDR (High Data Rate) capabilities of a device.
++		Returns a list of supported HDR mode, each element is separated
++		by space. Modes can be "hdr-ddr", "hdr-tsp" and "hdr-tsl".
++		See the I3C specification for more details about these HDR
++		modes.
++
++What:		/sys/bus/i3c/devices/<bus-id>-<device-pid>
++KernelVersion:  4.16
++Contact:	linux-i3c@vger.kernel.org
++Description:
++		These directories are just symbolic links to
++		/sys/bus/i3c/devices/i3c-<bus-id>/<bus-id>-<device-pid>.
 -- 
 2.14.1
