@@ -1,68 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752426AbeCWRn4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:43:56 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46984 "EHLO
+        id S1752154AbeCWRm4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:42:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46958 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751864AbeCWRm6 (ORCPT
+        with ESMTP id S1751595AbeCWRmz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:42:58 -0400
+        Fri, 23 Mar 2018 13:42:55 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: lee.jones@linaro.org, bleung@chromium.org
 Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
         gwendal@chromium.org, linux-kernel@vger.kernel.org,
         Olof Johansson <olof@lixom.net>
-Subject: [PATCH v4 4/6] platform/chrome: cros_ec_debugfs: Use octal permissions '0444'
-Date: Fri, 23 Mar 2018 18:42:45 +0100
-Message-Id: <20180323174247.6680-5-enric.balletbo@collabora.com>
+Subject: [PATCH v4 0/6] platform/chrome: cros_ec debugfs and sysfs updates
+Date: Fri, 23 Mar 2018 18:42:41 +0100
+Message-Id: <20180323174247.6680-1-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180323174247.6680-1-enric.balletbo@collabora.com>
-References: <20180323174247.6680-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed the following checkpatch warning:
+Hi,
 
-    WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider
-    using octal permissions '0444'.
+This is a four patchset that introduces some cros_ec debugfs and sysfs
+updates. This version is practically the same as version 3, it only
+fixes the issue pointed by Gwendal to only allocate one extra sensor
+intead of two.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
+First patch was already sent [1] but did not receive feedback so I am
+resending it. Needs to go through platform/chrome tree and can be
+picked without dependencies.
 
-Changes in v4: None
+Patches 2 to 4 are cleanups of current code, basically is the
+implementation of the changes suggested by Andy Shevchenko on the first
+series. Again these must go through platform/chrome tree.
+
+In Patch 5 I added a missing define, so now this patch can be picked
+without any dependency, although now needs the ack from mfd and
+platform/chrome maintainer as touches both sub-systems.
+
+Finally, patch 6 was already sent [2] but now needed to be reworked due
+the split of the cros_ec_devs in two parts [3]. This patch touches
+platform/chrome and mfd so we will probably need an immutable branch.
+This version also include a fix found by Gwendal.
+
+Best regards,
+  Enric
+
+Changes in v4:
+- [6/6] Allocate only one extra sensor (Gwendal)
+
 Changes in v3:
+- [2/6] Add Reviewed-by Andy Shevchenko
+- [3/6] Add Reviewed-by Andy Shevchenko
 - [4/6] Add Reviewed-by Andy Shevchenko
+- [5/6] Add EC_USB_PD_MAX_PORTS define to avoid interdependencies.
+- [5/6] Add Reviewed-by Andy Shevchenko
+- [6/6] Add Reviewed-by Andy Shevchenko
+- [6/6] Fix the code that has_kb_wake_angle in cros_ec_sensors_register().
 
 Changes in v2:
+- [2/6] Add a new define to get the cros_ec_dev.
+- [3/6] Use DEVICE_ATTR variants.
 - [4/6] Use octal permissions.
+- [5/6] Drop unrelated changes.
+- [6/6] Use DEVICE_ATTR_RW variant.
+- [6/6] Use one line when fits in 80 characters.
+- [6/6] Use the previous defined to_cros_ec_dev
 
- drivers/platform/chrome/cros_ec_debugfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Enric Balletbo i Serra (3):
+  platform/chrome: cros_ec_sysfs: introduce to_cros_ec_dev define.
+  platform/chrome: cros_ec_sysfs: use permission-specific DEVICE_ATTR
+    variants
+  platform/chrome: cros_ec_debugfs: Use octal permissions '0444'
 
-diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-index 0e88e18362c1..539403022568 100644
---- a/drivers/platform/chrome/cros_ec_debugfs.c
-+++ b/drivers/platform/chrome/cros_ec_debugfs.c
-@@ -288,7 +288,7 @@ static int cros_ec_create_console_log(struct cros_ec_debugfs *debug_info)
- 	init_waitqueue_head(&debug_info->log_wq);
- 
- 	if (!debugfs_create_file("console_log",
--				 S_IFREG | S_IRUGO,
-+				 S_IFREG | 0444,
- 				 debug_info->dir,
- 				 debug_info,
- 				 &cros_ec_console_log_fops))
-@@ -341,7 +341,7 @@ static int cros_ec_create_panicinfo(struct cros_ec_debugfs *debug_info)
- 	debug_info->panicinfo_blob.size = ret;
- 
- 	if (!debugfs_create_blob("panicinfo",
--				 S_IFREG | S_IRUGO,
-+				 S_IFREG | 0444,
- 				 debug_info->dir,
- 				 &debug_info->panicinfo_blob)) {
- 		ret = -ENOMEM;
+Gwendal Grignou (2):
+  platform/chrome: cros_ec_sysfs: Modify error handling
+  platform/chrome: mfd/cros_ec_dev: Add sysfs entry to set keyboard wake
+    lid angle
+
+Shawn Nematbakhsh (1):
+  platform/chrome: cros_ec_debugfs: Add PD port info to debugfs
+
+ drivers/mfd/cros_ec_dev.c                 |  31 +++----
+ drivers/platform/chrome/cros_ec_debugfs.c |  76 +++++++++++++++-
+ drivers/platform/chrome/cros_ec_sysfs.c   | 141 +++++++++++++++++++++---------
+ include/linux/mfd/cros_ec.h               |   2 +
+ include/linux/mfd/cros_ec_commands.h      |   3 +
+ 5 files changed, 194 insertions(+), 59 deletions(-)
+
 -- 
 2.16.2
