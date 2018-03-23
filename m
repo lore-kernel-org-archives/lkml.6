@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806938-2-18157294778051482361
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806933-2-12619923880121873922
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806938; b=ShgjWeCb2svBcUIb4yc6jz4DTCCrGUUimmNlFlvmMmShoqz
-    GAYHmHAwYUECA/AAgJMzhAA3c5su6LN5F/mdOEMRqbD2cckPBmRoJ4kkkKGmsK4r
-    i5vg39lvQocDTkGFdHGd2o7Fo9OdQ00AZCfsqJaTE7uk0gV60eHEdQgCvIsdn3en
-    1Zfo9qPy3XJFgTnW4FXdv8VeCl4Jgl4qVkDFCTWL7Eo4y461I1Tx64gPByjpl0Hj
-    D3jhjz0bgfNDMbLMRJOPz6oQ49EaOEziiamTlGfjnLA6XCWHBEzLVtZ+p25NfUHg
-    ml1P6MTvyqfF3agAvrVP+koj97/8OV+SMnFJ1Uw==
+    t=1521806933; b=VyzAovJUGhYZyFkgwZ4+duge+z6fhU9OORnWliWgewAYmVt
+    XdhHiQgHnB/IbL7TT7jOi4pd1YlcP8uSynnHiD0trTUFqDFndgh6/QI9qTee6p3L
+    by0YcLhkVd1W5eRRdj/HeMiBB2qlZT8wVvtzW0dGotfDm13x5RoUGHjep5kDcPl1
+    WKhuQfecHIOO5AWD7lx7B7pJWawXp9eOB5mGKsUA2EeFRYsDvKI8WCBa0RnysZN8
+    IEPOeDr98sYPbtnodoehUry8xROjTV5dUBvwq1SKDDokaeduuLRy8+ileE9/6w5/
+    5dML/VDwDZccbD9dNaG6CvQdkTA5U5YNpmgekWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806938; bh=reqJ0xM02M2lcVogkjF8xdx2Qo
-    SW6GynVza/9QWI/lY=; b=ZXeKYavludplqGyt8lSRhY3GqB1fc1E7j6CMHJBA+O
-    R2M5XdC3vtRs39tjBQrK/Ff2bwdccIZhlkdz3k571XcFRQwdhkjKTu+/bzzjvKSe
-    221A4AAJCvEkokvdGofioXo9t850O13Uqmg30OSGoxedL5DMUlqVzxZLYwXM4z83
-    dv69gQ/auFl554/NzLMorOZPyjbRralXA4ORbwIASZw9mn2+Pj0yKaI2W1SIcujs
-    jFPHtueqh+OQHNFNSvA0z+bHGActrhL3tF2ZI7D0QKbe/0sX6hoEow+iIRjP3k2o
-    woufkBf4/p9v9Hm9JFem3z/DNPTraZwZTYk1qSMgJDEA==
+    :list-id; s=arctest; t=1521806933; bh=HJylB0Op6bKGPNujFvlSQsevuj
+    /GXrRfYSzYPX4qAKk=; b=p4NYhqJ1MIh/umvKeLyuVHU+CBH1kKEtZJOsyUggL2
+    zd5P8D7+hS4OC2X2fma8fQH5Q1qsRjQ+fm7oY+Bd7nVIgxh5t/K8HQebC6wZGugT
+    tlYZeghcl4OYpfoaKdj7e1klpMfmj2HmTCZGxmwik+bF85vZyFd9kKZSPTHjY94G
+    6cG7Oy4kU9oCVpEB9rSDaUmcWv8LFkoGKZ0J+CMp4kBCto0LoayXb3PcL2tcAc4l
+    OFlV/PCpsQGnPZOsigng5PIYTsXPhDyRnv3qiGkLhcKD7xarkhY4/4U59khkByOi
+    yFUpvDaz28YVd0jFpGgp8JcZkWF45XdhPpfF1BgRLkzg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753130AbeCWJ6c (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:58:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35706 "EHLO
+        id S1753141AbeCWJ6d (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:58:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35746 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753113AbeCWJ61 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:27 -0400
+        with ESMTP id S1752635AbeCWJ6a (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:30 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 58/84] pinctrl: Really force states during suspend/resume
-Date: Fri, 23 Mar 2018 10:54:12 +0100
-Message-Id: <20180323095420.776620158@linuxfoundation.org>
+Subject: [PATCH 4.15 59/84] pinctrl: rockchip: enable clock when reading pin direction register
+Date: Fri, 23 Mar 2018 10:54:13 +0100
+Message-Id: <20180323095420.900537912@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -83,105 +83,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Brian Norris <briannorris@chromium.org>
 
 
-[ Upstream commit 981ed1bfbc6c4660b2ddaa8392893e20a6255048 ]
+[ Upstream commit 5c9d8c4f6b8168738a26bcf288516cc3a0886810 ]
 
-In case a platform only defaults a "default" set of pins, but not a
-"sleep" set of pins, and this particular platform suspends and resumes
-in a way that the pin states are not preserved by the hardware, when we
-resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
--> pinctrl_select_state() and the first thing we do is check that the
-pins state is the same as before, and do nothing.
+We generally leave the GPIO clock disabled, unless an interrupt is
+requested or we're accessing IO registers. We forgot to do this for the
+->get_direction() callback, which means we can sometimes [1] get
+incorrect results [2] from, e.g., /sys/kernel/debug/gpio.
 
-In order to fix this, decouple the actual state change from
-pinctrl_select_state() and move it pinctrl_commit_state(), while keeping
-the p->state == state check in pinctrl_select_state() not to change the
-caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
-are updated to bypass the state check by calling pinctrl_commit_state().
+Enable the clock, so we get the right results!
 
-[Linus Walleij]
-The forced pin control states are currently only used in some pin
-controller drivers that grab their own reference to their own pins.
-This is equal to the pin control hogs: pins taken by pin control
-devices since there are no corresponding device in the Linux device
-hierarchy, such as memory controller lines or unused GPIO lines,
-or GPIO lines that are used orthogonally from the GPIO subsystem
-but pincontrol-wise managed as hogs (non-strict mode, allowing
-simultaneous use by GPIO and pin control). For this case forcing
-the state from the drivers' suspend()/resume() callbacks makes
-sense and should semantically match the name of the function.
+[1] Sometimes, because many systems have 1 or mor interrupt requested on
+each GPIO bank, so they always leave their clock on.
 
-Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+[2] Incorrect, meaning the register returns 0, and so we interpret that
+as "input".
+
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/core.c |   24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1189,19 +1189,16 @@ struct pinctrl_state *pinctrl_lookup_sta
- EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
- 
- /**
-- * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
-  * @p: the pinctrl handle for the device that requests configuration
-  * @state: the state handle to select/activate/program
-  */
--int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2014,8 +2014,16 @@ static int rockchip_gpio_get_direction(s
  {
- 	struct pinctrl_setting *setting, *setting2;
- 	struct pinctrl_state *old_state = p->state;
- 	int ret;
+ 	struct rockchip_pin_bank *bank = gpiochip_get_data(chip);
+ 	u32 data;
++	int ret;
  
--	if (p->state == state)
--		return 0;
--
- 	if (p->state) {
- 		/*
- 		 * For each pinmux setting in the old state, forget SW's record
-@@ -1265,6 +1262,19 @@ unapply_new_state:
++	ret = clk_enable(bank->clk);
++	if (ret < 0) {
++		dev_err(bank->drvdata->dev,
++			"failed to enable clock for bank %s\n", bank->name);
++		return ret;
++	}
+ 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
++	clk_disable(bank->clk);
  
- 	return ret;
+ 	return !(data & BIT(offset));
  }
-+
-+/**
-+ * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * @p: the pinctrl handle for the device that requests configuration
-+ * @state: the state handle to select/activate/program
-+ */
-+int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+{
-+	if (p->state == state)
-+		return 0;
-+
-+	return pinctrl_commit_state(p, state);
-+}
- EXPORT_SYMBOL_GPL(pinctrl_select_state);
- 
- static void devm_pinctrl_release(struct device *dev, void *res)
-@@ -1430,7 +1440,7 @@ void pinctrl_unregister_map(const struct
- int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-@@ -1442,7 +1452,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
- int pinctrl_force_default(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_default);
