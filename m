@@ -1,149 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752384AbeCWTPL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 15:15:11 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37614 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752159AbeCWTPJ (ORCPT
+        id S1752531AbeCWTPe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:15:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58160 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752486AbeCWTPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 15:15:09 -0400
-X-Google-Smtp-Source: AG47ELsg454eQCO9my1ur4ieXATTeVEjtAcMUh4yBxwjNwCUyG1bFbRj/pRX8JEDEDBBIo8I2MLupXPxSlibGa5/bzk=
-MIME-Version: 1.0
-In-Reply-To: <20180323180911.E43ACAB8@viggo.jf.intel.com>
-References: <20180323180903.33B17168@viggo.jf.intel.com> <20180323180911.E43ACAB8@viggo.jf.intel.com>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Fri, 23 Mar 2018 12:15:06 -0700
-Message-ID: <CALvZod6F8x-smAE7sEGfJ3Ds5p6M5Qj6gd-P-VLejuBxfU6niQ@mail.gmail.com>
-Subject: Re: [PATCH 4/9] x86, pkeys: override pkey when moving away from PROT_EXEC
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        linuxram@us.ibm.com, Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, mpe@ellerman.id.au,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 23 Mar 2018 15:15:32 -0400
+Date: Fri, 23 Mar 2018 12:15:30 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Huacai Chen <chenhc@lemote.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, Rich Felker <dalias@libc.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-omap@vger.kernel.org,
+        James Hogan <james.hogan@mips.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Regression with arm in next with stack protector
+Message-Id: <20180323121530.f28dc29939d9395268911a4e@linux-foundation.org>
+In-Reply-To: <CAOMZO5Bmpk4cwav-qTnNA6L16DwdDPp5LeKC-jY9=QzfVBuKSQ@mail.gmail.com>
+References: <20180323181452.GJ5799@atomide.com>
+        <CAOMZO5Bmpk4cwav-qTnNA6L16DwdDPp5LeKC-jY9=QzfVBuKSQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 11:09 AM, Dave Hansen
-<dave.hansen@linux.intel.com> wrote:
->
-> From: Dave Hansen <dave.hansen@linux.intel.com>
->
-> I got a bug report that the following code (roughly) was
-> causing a SIGSEGV:
->
->         mprotect(ptr, size, PROT_EXEC);
->         mprotect(ptr, size, PROT_NONE);
->         mprotect(ptr, size, PROT_READ);
->         *ptr = 100;
->
-> The problem is hit when the mprotect(PROT_EXEC)
-> is implicitly assigned a protection key to the VMA, and made
-> that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
-> failed to remove the protection key, and the PROT_NONE->
-> PROT_READ left the PTE usable, but the pkey still in place
-> and left the memory inaccessible.
->
-> To fix this, we ensure that we always "override" the pkee
-> at mprotect() if the VMA does not have execute-only
-> permissions, but the VMA has the execute-only pkey.
->
-> We had a check for PROT_READ/WRITE, but it did not work
-> for PROT_NONE.  This entirely removes the PROT_* checks,
-> which ensures that PROT_NONE now works.
->
-> Reported-by: Shakeel Butt <shakeelb@google.com>
->
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+On Fri, 23 Mar 2018 15:45:27 -0300 Fabio Estevam <festevam@gmail.com> wrote:
 
-Should there be a 'Fixes' tag? Also should this patch go to stable?
+> On Fri, Mar 23, 2018 at 3:14 PM, Tony Lindgren <tony@atomide.com> wrote:
+> > Hi,
+> >
+> > Looks like commit 5638790dadae ("zboot: fix stack protector in
+> > compressed boot phase") breaks booting on arm.
+> 
+> Yes, almost all imx are broken in linux-next due to this commit:
+> https://kernelci.org/soc/imx/job/next/kernel/next-20180323/
 
-> Cc: Ram Pai <linuxram@us.ibm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Michael Ellermen <mpe@ellerman.id.au>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Shuah Khan <shuah@kernel.org>
-> ---
->
->  b/arch/x86/include/asm/pkeys.h |   12 +++++++++++-
->  b/arch/x86/mm/pkeys.c          |   19 ++++++++++---------
->  2 files changed, 21 insertions(+), 10 deletions(-)
->
-> diff -puN arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/include/asm/pkeys.h
-> --- a/arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively       2018-03-21 15:47:49.810198922 -0700
-> +++ b/arch/x86/include/asm/pkeys.h      2018-03-21 15:47:49.816198922 -0700
-> @@ -2,6 +2,8 @@
->  #ifndef _ASM_X86_PKEYS_H
->  #define _ASM_X86_PKEYS_H
->
-> +#define ARCH_DEFAULT_PKEY      0
-> +
->  #define arch_max_pkey() (boot_cpu_has(X86_FEATURE_OSPKE) ? 16 : 1)
->
->  extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
-> @@ -15,7 +17,7 @@ extern int __execute_only_pkey(struct mm
->  static inline int execute_only_pkey(struct mm_struct *mm)
->  {
->         if (!boot_cpu_has(X86_FEATURE_OSPKE))
-> -               return 0;
-> +               return ARCH_DEFAULT_PKEY;
->
->         return __execute_only_pkey(mm);
->  }
-> @@ -56,6 +58,14 @@ bool mm_pkey_is_allocated(struct mm_stru
->                 return false;
->         if (pkey >= arch_max_pkey())
->                 return false;
-> +       /*
-> +        * The exec-only pkey is set in the allocation map, but
-> +        * is not available to any of the user interfaces like
-> +        * mprotect_pkey().
-> +        */
-> +       if (pkey == mm->context.execute_only_pkey)
-> +               return false;
-> +
->         return mm_pkey_allocation_map(mm) & (1U << pkey);
->  }
->
-> diff -puN arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/mm/pkeys.c
-> --- a/arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively        2018-03-21 15:47:49.812198922 -0700
-> +++ b/arch/x86/mm/pkeys.c       2018-03-21 15:47:49.816198922 -0700
-> @@ -94,15 +94,7 @@ int __arch_override_mprotect_pkey(struct
->          */
->         if (pkey != -1)
->                 return pkey;
-> -       /*
-> -        * Look for a protection-key-drive execute-only mapping
-> -        * which is now being given permissions that are not
-> -        * execute-only.  Move it back to the default pkey.
-> -        */
-> -       if (vma_is_pkey_exec_only(vma) &&
-> -           (prot & (PROT_READ|PROT_WRITE))) {
-> -               return 0;
-> -       }
-> +
->         /*
->          * The mapping is execute-only.  Go try to get the
->          * execute-only protection key.  If we fail to do that,
-> @@ -113,7 +105,16 @@ int __arch_override_mprotect_pkey(struct
->                 pkey = execute_only_pkey(vma->vm_mm);
->                 if (pkey > 0)
->                         return pkey;
-> +       } else if (vma_is_pkey_exec_only(vma)) {
-> +               /*
-> +                * Protections are *not* PROT_EXEC, but the mapping
-> +                * is using the exec-only pkey.  This mapping was
-> +                * PROT_EXEC and will no longer be.  Move back to
-> +                * the default pkey.
-> +                */
-> +               return ARCH_DEFAULT_PKEY;
->         }
-> +
->         /*
->          * This is a vanilla, non-pkey mprotect (or we failed to
->          * setup execute-only), inherit the pkey from the VMA we
-> _
+Thanks, I dropped it and I expect Stephen will also do that.
