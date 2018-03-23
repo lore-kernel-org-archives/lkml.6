@@ -1,43 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752869AbeCWOG7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:06:59 -0400
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:34795 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752443AbeCWOG6 (ORCPT
+        id S1752924AbeCWOJ0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:09:26 -0400
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:38718 "EHLO
+        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752525AbeCWOJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:06:58 -0400
-X-Google-Smtp-Source: AIpwx4/giT5RGmj/vJo7xqK9Z0oyuTvc6E79WhtiTpoB+JTBxQNuwdoeTsM4yNN3l9rm7bWvTuTIEQI48MWGgV+MyVE=
+        Fri, 23 Mar 2018 10:09:24 -0400
+X-Google-Smtp-Source: AG47ELsM5qgCNQwDGe+0tq38YsvE8DZABW/qu6S0iXWqqD1bEmNEXbjWY5pHmpT2CtuQF0QzpSq0qQ==
+Date: Fri, 23 Mar 2018 15:09:19 +0100
+From: Juri Lelli <juri.lelli@gmail.com>
+To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: b43-dev <b43-dev@lists.infradead.org>,
+        Network Development <netdev@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [QUESTION] Mainline support for B43_PHY_AC wifi cards
+Message-ID: <20180323140919.GB5942@localhost.localdomain>
+References: <20180323094740.GA5942@localhost.localdomain>
+ <CACna6rx-QNQhVNkwFSabwAY9vM1qV_gTcWywsHFuP5B4NH4NXA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1521649925-13804-2-git-send-email-jason.vas.dias@gmail.com>
-References: <1521649925-13804-1-git-send-email-jason.vas.dias@gmail.com> <1521649925-13804-2-git-send-email-jason.vas.dias@gmail.com>
-From: Jason Vas Dias <jason.vas.dias@gmail.com>
-Date: Fri, 23 Mar 2018 14:06:55 +0000
-Message-ID: <CALyZvKyN+O3FAqZdHaq73=X9RBrrybt9mBm-6WpVUkNPzTGx4Q@mail.gmail.com>
-Subject: Re: [PATCH v4.16-rc6 1/1] x86/vdso: VDSO should handle
- clock_gettime(CLOCK_MONOTONIC_RAW) without syscall
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        peterz@infradead.org, andi@firstfloor.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACna6rx-QNQhVNkwFSabwAY9vM1qV_gTcWywsHFuP5B4NH4NXA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day -
+Hi,
 
-I believe the last patch I sent, with $subject,
-addresses all concerns raised so far by reviewers,
-and complies with all kernel coding standards .
+thanks a lot for your reply!
 
-Please, it would be most helpful if you could let
-me know whether the patch is now acceptable
-and will be applied at some stage or not - or if not,
-what is the problem with it .
+On 23/03/18 14:43, Rafał Miłecki wrote:
+> Hi,
+> 
+> On 23 March 2018 at 10:47, Juri Lelli <juri.lelli@gmail.com> wrote:
+> > I've got a Dell XPS 13 9343/0TM99H (BIOS A15 01/23/2018) mounting a
+> > BCM4352 802.11ac (rev 03) wireless card and so far I've been using it on
+> > Fedora with broadcom-wl package (which I believe installs Broadcom's STA
+> > driver?). It works good apart from occasional hiccups after suspend.
+> >
+> > I'd like to get rid of that dependency (you can understand that it's
+> > particularly annoying when testing mainline kernels), but I found out
+> > that support for my card is BROKEN in mainline [1]. Just to see what
+> > happens, I forcibly enabled it witnessing that it indeed crashes like
+> > below as Kconfig warns. :)
+> >
+> >  bcma: bus0: Found chip with id 0x4352, rev 0x03 and package 0x00
+> >  bcma: bus0: Core 0 found: ChipCommon (manuf 0x4BF, id 0x800, rev 0x2B, class 0x0)
+> >  bcma: bus0: Core 1 found: IEEE 802.11 (manuf 0x4BF, id 0x812, rev 0x2A, class 0x0)
+> >  bcma: bus0: Core 2 found: ARM CR4 (manuf 0x4BF, id 0x83E, rev 0x02, class 0x0)
+> >  bcma: bus0: Core 3 found: PCIe Gen2 (manuf 0x4BF, id 0x83C, rev 0x01, class 0x0)
+> >  bcma: bus0: Core 4 found: USB 2.0 Device (manuf 0x4BF, id 0x81A, rev 0x11, class 0x0)
+> >  bcma: Unsupported SPROM revision: 11
+> >  bcma: bus0: Invalid SPROM read from the PCIe card, trying to use fallback SPROM
+> >  bcma: bus0: Using fallback SPROM failed (err -2)
+> >  bcma: bus0: No SPROM available
+> >  bcma: bus0: Bus registered
+> >  b43-phy0: Broadcom 4352 WLAN found (core revision 42)
+> >  b43-phy0: Found PHY: Analog 12, Type 11 (AC), Revision 1
+> >  b43-phy0: Found Radio: Manuf 0x17F, ID 0x2069, Revision 4, Version 0
+> >  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> 
+> This isn't really useful without a full backtrace.
 
-My clients are asking whether the patch is going
-to be in the upstream kernel or not, and I need
-to tell them something.
+Sure. I cut it here because I didn't expect people to debug what is
+already known to be broken (but still it seemed to carry useful
+information about the hw). :)
 
-Thanks & Best Regards,
-Jason
+> > So, question: is replacing my card the only way I can get rid of this
+> > downstream dependency? :(
+> 
+> It's definitely the cheapest way. Getting AC PHY into anything usable
+> (proper setup that will allow Tx & Rx anything) would probably take
+> weeks or months of development. I'm not even going to estimate cost of
+> adding support for 802.11n and 802.11ac features. I was the last
+> person actively working on b43, right now I spend my free time on
+> other hobby projects. Few people were planning to help but it seems it
+> never worked out for them.
+
+I see. Just wondering why even if Broadcom's STA solution seems to work
+fine, it is not mainline. Maybe a maintenance problem? But Fedora ships
+with very recent kernels, so I'd expect the driver to work with mainline
+(I tried compiling that against mainline, but I got errors that I didn't
+spend time figuring out how to fix).
+
+Do you know what's the deal w.r.t. the STA driver?
+
+Best,
+
+- Juri
