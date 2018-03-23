@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805115-2-15787658033871795848
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805095-2-17881837262049393994
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805114; b=LacTUBSC8DXLcK6M99zQyAfuymQR1qupiwCAmD+3ImYwDlN
-    HEvZ8VTMmyYFV//CY3UKzDevCxPwyZEmC/f/OA99jRleYclj+rK7WuSmQ6z657nU
-    0Lrafy0pHLSCBxgY5h2OrpYQagYgairYtvBp4rLx2yYx8GQ1R7y7kQKka7zvPpHk
-    3rEJBvgdTQE0f5mGWoTHXX6dYPkdjkTOPhRqfV+kjkCDJvT810y1YlM5C8KFAyR3
-    mhZ0ybVggcoPltn/SD/YKteDnvAM/prm6TUs7Tzd94ksxwM6UkRtKui9z+2fysZO
-    dBaPXPyIdxBq4U4dT5Yr6S2c5xnzGpNvt6RyaqA==
+    t=1521805094; b=fXF2cK1yU/Ig2HrHlaLD4rXT/8UN5Rm5ux1WhUfPkOO00PI
+    R9nAw3mTanbFC84HO0+HNRj1rUu3Cz23zJNRV4UsOmD6kI0xywgl3c0XR97ainMA
+    JhKTfb2ulRzzuOJ7w84qsqCEv8G9LHbNeeDxbikTRbL64x6EFIM4gXAviEetsLCa
+    dYRvZseLuOxRfXRlrwsBxno2j6Iep1Om7K5dsdIuHERJikHnb5V7f1uiTrPOJ3rJ
+    yq96HtZlq2q1/hIxHWBLB9w3gOhMSf3zFhIYkSGXyE3azJbRnCDAz+QBz3fbLE8F
+    QiGB1h3g5661VcIYo2hlAQDq9uejvW0XmQKOMtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805114; bh=8Fsa6cTn3g3pzsuM/ka2hJwY8q
-    qFBKRdL1W8YY32Jrg=; b=nuv05Vh/vmIx9dvKbMa6K3ayRomCjxG2qNsMM3dqLL
-    BDcTcuqutbh1qz2oshxwISHaE2/craxtVYborfJp2NJ/AQLArOKNvxcQtW3C+DJf
-    8KPoROAEF0JFAgiJ7+3LTRoXjCxqFg63UXfIqZaLgNu15qHvtEzoI5tVGTqu8/fL
-    Lf7F3xMlnEAQRYlO/Dw/Bs25tGIq4w0q9juBCXKhdEaqCKlzX5hX1QW1sKHPo5Kg
-    mV0SIlCfBixBikVM63JmJyKFsC/+becyhIsguf60b7YOBOA6CJ3RoYkRTlAT+gJn
-    An4FZ+AOLvj+HbXy1vIfklydfnzENmr/yvKsFKn05FRg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805094; bh=zMK9ut2i1ow6VULibp0jTWMc5Z
+    MS2SyMgYYQzGPmipY=; b=lMRbTpqEC9wwsvEJ0/VzTZkGQcjNlOXaZITTw9wiIx
+    6HWErqX0ciw/G4MigExtOwU/WdpOG5Ph8iKXE/82vF5xi9sDPWwtW4GGbOyHF3+p
+    sXQy4wDwKQo/Tk6X+/rxYIlfJA07fja3IBaYzHkmhaHfsiyom91VfZnc7fhvYasa
+    aDtBRjX9+g1a/H1GfkAQvrbuMciKD8UlVMIox4rPB/k/LiZf4lWyPrjZ9Bcbe7Vy
+    FZmrWbxMac3KjSfw+QRD6Vb4IN6G3MkJ2AlngfLbK0GIAS3+YXe9r53sRCJibdhn
+    7sTU1tnB8IL4wRIy+wlJESXfGF642ApA1N+qWMkLZZuQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754775AbeCWKEn (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:04:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39220 "EHLO
+        id S1754800AbeCWKEr (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:04:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39284 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754747AbeCWKEh (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:37 -0400
+        with ESMTP id S1754747AbeCWKEp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Liam Breck <kernel@networkimprov.net>,
-        Sebastian Reichel <sre@kernel.org>,
+        stable@vger.kernel.org, Jasmin jessich <jasmin@anw.at>,
+        Ralph Metzler <rjkm@metzlerbros.de>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 011/177] power: supply: bq24190_charger: Limit over/under voltage fault logging
-Date: Fri, 23 Mar 2018 10:52:19 +0100
-Message-Id: <20180323094205.712019635@linuxfoundation.org>
+Subject: [PATCH 4.9 022/177] [media] media/dvb-core: Race condition when writing to CAM
+Date: Fri, 23 Mar 2018 10:52:30 +0100
+Message-Id: <20180323094206.173538297@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -84,45 +83,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liam Breck <kernel@networkimprov.net>
+From: Jasmin J <jasmin@anw.at>
 
 
-[ Upstream commit d63d07c6fc25182af6d3ab5b3b8737b0c1025ebd ]
+[ Upstream commit e7080d4471d805d921a9ea21b32f911a91e248cb ]
 
-If the charger is unplugged before the battery is full we may
-see an over/under voltage fault. Ignore this rather then emitting
-a message or uevent.
+It started with a sporadic message in syslog: "CAM tried to send a
+buffer larger than the ecount size" This message is not the fault
+itself, but a consecutive fault, after a read error from the CAM. This
+happens only on several CAMs, several hardware, and of course sporadic.
 
-This fixes messages like these getting logged on charger unplug + replug:
-bq24190-charger 15-006b: Fault: boost 0, charge 1, battery 0, ntc 0
-bq24190-charger 15-006b: Fault: boost 0, charge 0, battery 0, ntc 0
+It is a consecutive fault, if the last read from the CAM did fail. I
+guess this will not happen on all CAMs, but at least it did on mine.
+There was a write error to the CAM and during the re-initialization
+procedure, the CAM finished the last read, although it got a RS.
 
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Liam Breck <kernel@networkimprov.net>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Sebastian Reichel <sre@kernel.org>
+The write error to the CAM happened because a race condition between HC
+write, checking DA and FR.
+
+This patch added an additional check for DA(RE), just after checking FR.
+It is important to read the CAMs status register again, to give the CAM
+the necessary time for a proper reaction to HC. Please note the
+description within the source code (patch below).
+
+[mchehab@s-opensource.com: make checkpatch happy]
+
+Signed-off-by: Jasmin jessich <jasmin@anw.at>
+Tested-by: Ralph Metzler <rjkm@metzlerbros.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/power/supply/bq24190_charger.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/media/dvb-core/dvb_ca_en50221.c |   23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
---- a/drivers/power/supply/bq24190_charger.c
-+++ b/drivers/power/supply/bq24190_charger.c
-@@ -1184,8 +1184,13 @@ static irqreturn_t bq24190_irq_handler_t
- 		}
- 	} while (f_reg && ++i < 2);
+--- a/drivers/media/dvb-core/dvb_ca_en50221.c
++++ b/drivers/media/dvb-core/dvb_ca_en50221.c
+@@ -779,6 +779,29 @@ static int dvb_ca_en50221_write_data(str
+ 		goto exit;
+ 	}
  
-+	/* ignore over/under voltage fault after disconnect */
-+	if (f_reg == (1 << BQ24190_REG_F_CHRG_FAULT_SHIFT) &&
-+	    !(ss_reg & BQ24190_REG_SS_PG_STAT_MASK))
-+		f_reg = 0;
++	/*
++	 * It may need some time for the CAM to settle down, or there might
++	 * be a race condition between the CAM, writing HC and our last
++	 * check for DA. This happens, if the CAM asserts DA, just after
++	 * checking DA before we are setting HC. In this case it might be
++	 * a bug in the CAM to keep the FR bit, the lower layer/HW
++	 * communication requires a longer timeout or the CAM needs more
++	 * time internally. But this happens in reality!
++	 * We need to read the status from the HW again and do the same
++	 * we did for the previous check for DA
++	 */
++	status = ca->pub->read_cam_control(ca->pub, slot, CTRLIF_STATUS);
++	if (status < 0)
++		goto exit;
 +
- 	if (f_reg != bdi->f_reg) {
--		dev_info(bdi->dev,
-+		dev_warn(bdi->dev,
- 			"Fault: boost %d, charge %d, battery %d, ntc %d\n",
- 			!!(f_reg & BQ24190_REG_F_BOOST_FAULT_MASK),
- 			!!(f_reg & BQ24190_REG_F_CHRG_FAULT_MASK),
++	if (status & (STATUSREG_DA | STATUSREG_RE)) {
++		if (status & STATUSREG_DA)
++			dvb_ca_en50221_thread_wakeup(ca);
++
++		status = -EAGAIN;
++		goto exit;
++	}
++
+ 	/* send the amount of data */
+ 	if ((status = ca->pub->write_cam_control(ca->pub, slot, CTRLIF_SIZE_HIGH, bytes_write >> 8)) != 0)
+ 		goto exit;
