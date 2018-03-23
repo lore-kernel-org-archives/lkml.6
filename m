@@ -1,156 +1,74 @@
-Return-Path: <daniel.vetter@ffwll.ch>
-ARC-Seal: i=1; a=rsa-sha256; t=1521822378; cv=none;
+Return-Path: <brgl@bgdev.pl>
+ARC-Seal: i=1; a=rsa-sha256; t=1521821705; cv=none;
         d=google.com; s=arc-20160816;
-        b=I0i6riyCzzR4WKsE2sDZAF8qA9KidMJohtDiKkYcbPodxUNkvp8SrFkHNWCSHmANWE
-         oUhjESmV05HrEG1fDTi7CjJQh4I5ypAJkIJ7GpLz9FFmr74sESj9GC5jLHiw4PBYDJ5b
-         0/r/7lrP8/yn7lb9kUNulPb6InKr0BGkktxcUrxkFAG1pCBIEOamu58C/rb29wJNbbiV
-         DvTfl5WBtsJT0plqihnNYfdWppLAKFjINKw3NczHtqMPexYKXJUSn/nPh3rmWUeDcjon
-         YcVrM8QbFWO/PuFv00F8kOiaiZmINz3i04hQI7c9BzG/Ys/yEFTwdxkS/xg7FMtnVxNm
-         NVJg==
+        b=aHEbPuiMh7ZRRt9hIp85O/MODgHYmbJmdszHyoa+j1wd+3BSZDEX05efvcoizproYn
+         fRCWWVcNQ8PvKI7QO8VRU97XjysquXFN7H4KjDg/PgX3zzHNofPIPAsPF7fZj6k6Mv8Q
+         g8mrhbOAurnSSEPfpDX7euaLwzk+rRqcdI/RsHmZ32n7YlMqFfhpWhS8XgiQThmMDD4j
+         tUubzgf2gkNbq5dbr1KZ0aSkEcomATd4rvGOKnp5xmewnxVp5isddp65nqyoKD7wUh2L
+         LV8N7QPa8thi2bv88mbk/dPH7DFCy7Tv1pSG6Y0/M+CWXZWSymJNPY4qZviL5q2bOdPs
+         IL+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=mu3IM1dpXjw8PIKlPMlVOY/FoR6oOsUlvktwB+kK30c=;
-        b=qTMflGsTWKFCmfQe0UbXBgTnIkgxiHWGnPW8vIrPTnV93Qs4cdtw+4ou//Awk5LpsM
-         iLMkKuM4Xoloxb4hUbYuBOh0ZcP3otQI84p3WFr2r0U8+90bir8hkAGedF/TyDxT2Rai
-         QH6XJvB2UYE1ddHBK8KZwuY9HWEhK95jrDbW0a5quliEv8TkmJT/w2D9SpmAQ49cxOdT
-         CLSYBPeoB0RIfVVq+cVD/8EYRaFN/nJ6ujjkNex4A/l2Rnno8amY4qMo1dbR8aJmTPtN
-         j8aYuP28DEd0svhsmv0HDxXfIE50AS+iei/vF3Ru3QmD+m4/M4UjsAGHAvB1BBdxOMbn
-         bgxw==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=22V7Tf79C9gFiHu6wRYdNDdtzOoh5HnySd8HBENDiHI=;
+        b=tSkdhgUhwC5LFHhykcwsRFLJxDuZSnHF9cdskL71BnPt5xa69js5FqSeIurJMytLB2
+         57AdSrgXazUXyPo2RYsH6nRJs+tQxAgJ/jfpoWZ1v+E59EMqUjt5QBOeVyLXRW7QLzDF
+         8eXdqMD0E/tco9D+DWjjgE/uN9xisKZtbNLcS+WT9k6ozta9fs6HAQrplb2H24yTyvDa
+         uIxkVBQ1NJAEWmRxT1mjDzeQI3rdp0TIXllGm/FjZV/Bd6dDPsdKuQZ9aUNwxo8Cdlp9
+         JSRR+lQAH9OZMJcFvzGacL1bNd8IYuElW00rUC1oMrer2YQn0MA/PqUSM+OdBYfZIhw8
+         7wYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@ffwll.ch header.s=google header.b=EOFdwDnk;
-       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of daniel.vetter@ffwll.ch) smtp.mailfrom=daniel.vetter@ffwll.ch
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=nZRcrq0m;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@ffwll.ch header.s=google header.b=EOFdwDnk;
-       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of daniel.vetter@ffwll.ch) smtp.mailfrom=daniel.vetter@ffwll.ch
-X-Google-Smtp-Source: AIpwx4+uHGD/iJ+E3QPa0NkyAxK0zFW/XxQgYXpoGqe5RCcE+KSgwWYVK0WOqxa4t11wrnSla/IIz5oSSP71b9tSQgM=
-MIME-Version: 1.0
-X-Originating-IP: [212.51.149.109]
-In-Reply-To: <alpine.DEB.2.21.1803201929340.1714@nanos.tec.linutronix.de>
-References: <20180320160258.11381-1-daniel.vetter@ffwll.ch> <alpine.DEB.2.21.1803201929340.1714@nanos.tec.linutronix.de>
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date: Fri, 23 Mar 2018 17:26:17 +0100
-Message-ID: <CAKMK7uG7tFoCHk=enLh84GGMta_JSqY_mRrEiYqub-BfydyxAA@mail.gmail.com>
-Subject: Re: [PATCH] RFC: debugobjects: capture stack traces at _init() time
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Intel Graphics Development <intel-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>,
-	Philippe Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>, Waiman Long <longman@redhat.com>,
-	Daniel Vetter <daniel.vetter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=nZRcrq0m;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
+X-Google-Smtp-Source: AG47ELuqZSCWRZ0AkK6ej3AlpMpE807+uNACxqCJAMdq5BZpAoxIQFy6iY4S7eMqUHHgd1po49Alvw==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2] eeprom: at24: use SPDX identifier instead of GPL boiler-plate
+Date: Fri, 23 Mar 2018 17:15:02 +0100
+Message-Id: <20180323161502.28623-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.16.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595473170470511522?=
-X-GMAIL-MSGID: =?utf-8?q?1595746422092831325?=
+X-GMAIL-THRID: =?utf-8?q?1595745717159531476?=
+X-GMAIL-MSGID: =?utf-8?q?1595745717159531476?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 20, 2018 at 8:44 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Tue, 20 Mar 2018, Daniel Vetter wrote:
->
->> Sometimes it's really easy to know which object has gone boom and
->> where the offending code is, and sometimes it's really hard. One case
->> we're trying to hunt down is when module unload catches a live debug
->> object, with a module with lots of them.
->>
->> Capture a full stack trace from debug_object_init() and dump it when
->> there's a problem.
->>
->> FIXME: Should we have a separate Kconfig knob for the backtraces,
->> they're quite expensive? Atm I'm just selecting it for the general
->> debug object stuff.
->
-> Just make it boot time enabled. We really want to be able to switch it off.
->
->> +#define ODEBUG_STACKDEPTH 32
->
-> Do we really need it that deep? I doubt that.
+Replace the GPL (or later) header with the SPDX identifier
+for GPL-2.0+.
 
-Entirely arbitrary, I just needed this to start hunting a rare crash
-we're seeing in CI and stitched something together. I agree we
-probably don't need that much.
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Tested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/misc/eeprom/at24.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
->> +static noinline depot_stack_handle_t save_stack(struct debug_obj *obj)
->> +{
->> +     unsigned long entries[ODEBUG_STACKDEPTH];
->> +     struct stack_trace trace = {
->> +             .entries = entries,
->> +             .max_entries = ODEBUG_STACKDEPTH,
->> +             .skip = 2
->> +     };
->> +
->> +     save_stack_trace(&trace);
->> +     if (trace.nr_entries != 0 &&
->> +         trace.entries[trace.nr_entries-1] == ULONG_MAX)
->> +             trace.nr_entries--;
->> +
->> +     /* May be called under spinlock, so avoid sleeping */
->> +     return depot_save_stack(&trace, GFP_NOWAIT);
->
-> I really don't like the idea of unconditional allocations in that code
-> path. We went great length to make it perform halfways sane with the
-> pool. Though we should actually have per cpu pools to avoid the lock
-> contention, but thats a different problem.
->
-> I'd rather make the storage a fixed size allocation which is appended
-> to the debug object. Something like this:
->
-> struct debug_obj_trace {
->         struct stack_trace      trace;
->         unsigned long           entries[ODEBUG_STACKDEPTH];
-> };
->
-> struct debug_obj {
->         unsigned int            astate;
->         void                    *object;
->         struct debug_obj_descr  *descr;
->         struct debug_obj_trace  trace[0];
-> };
->
-> void __init debug_objects_mem_init(void)
-> {
->         unsigned long objsize = sizeof (struct debug_obj);
->
->         if (!debug_objects_enabled)
->                 return;
->
->         if (debug_objects_trace_stack)
->                 objsize += sizeof(struct debug_obj_trace);
->
->         obj_cache = kmem_cache_create("debug_objects_cache", objsize, 0,
->                                       SLAB_DEBUG_OBJECTS, NULL);
->
-> __debug_object_init(void *addr, struct debug_obj_descr *descr, int onstack)
-> {
->         ....
->         case ODEBUG_STATE_NONE:
->         case ODEBUG_STATE_INIT:
->         case ODEBUG_STATE_INACTIVE:
->                 if (debug_object_trace_stack) {
->                         obj->trace[0].trace.entries = obj->trace[0].entries;
->                         save_stack_trace(&trace[0].trace);
->                 }
->
-> That means we need to size the static objects which are used during early
-> boot with stack under the assumption that stack tracing is enabled, but
-> that's simple enough.
->
-> Hmm?
-
-Yeah looks reasonable, and gives us an easy Kconfig/boot-time option
-to enable/disable it. I'm a bit swamped, but I'll try to respin.
-Thanks very much for the look and suggesting a cleaner integration
-approach - the allocations and recursion into the stack depot really
-did not result in clean code.
-
-Thanks, Daniel
-
-> Thanks,
->
->         tglx
-
-
-
+diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+index 01f9c4921c50..a9a6cde23be9 100644
+--- a/drivers/misc/eeprom/at24.c
++++ b/drivers/misc/eeprom/at24.c
+@@ -1,14 +1,11 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * at24.c - handle most I2C EEPROMs
+  *
+  * Copyright (C) 2005-2007 David Brownell
+  * Copyright (C) 2008 Wolfram Sang, Pengutronix
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+  */
++
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.16.1
