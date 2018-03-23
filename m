@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803230-2-14666838437248761555
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803200-2-18158142387114746769
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803229; b=JOzrN3FGdLioCmmGlcx9LmG1dHcZqrWCPCPz2EsaJ95YUFz
-    Ub24gByWYzCG1RnM/iovjbg3iRNFg1mhJSku98Bn31nVnXpeXgRPlF4b1I3jwHNl
-    L2/5Ng4NW3eew4GLEwOyJeLu0S2JPujTGVKLhvXZxRHC7DL12uNzreRwNukh5Res
-    v+Cxi1q5NO8JvOOfy8EGEmYBt85QyxPBkSoKMT0n9q2237XtU6mOlMxNzgAxVzvv
-    hWGYi6JPyzjoHJysIEZvfSREr+1qZ8cLlx+yzzq/15tHOx0ijUTxB0kbZVnegxor
-    jljLzGQgL0LoxKl0K12oBgAf0+EGvNZlHslYDzw==
+    t=1521803199; b=S29woD8SA0tZ07Zf1GcthWaiyym380456kg8fv7coXtjWAd
+    LOVeUeEX4tIjajfqjDi4YpA7H4T4bgAZDTznsVfLtpNr7if2NNlfMKCWyRPkP800
+    xzPWgotcJgq2E3S3imn5/S1o1xP2kEmjh45Vh+TJOZRpSqNl9qKcDYNDSStAE28g
+    oIs0MOpQ5NzQyRoUemEArvYDccKbwX54+M2vKDUbwKdvNSE/PDxjSCQtIFgc1eTe
+    v75AuqCirVPoy3FlkhlKp8BP8D37WxmVx140jWaZpILKErGe0AnxWKuPWn2zv28l
+    dtIUvgVqybszMhoxfTvmMzSRlZhqYv8AHPXK6Ug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803229; bh=V0A947ZwrifthumS3iDmm2y0it
-    IYoZZRw2vRXD6paHg=; b=mGYAAisC6jfueQkqBz2LDtCAgm6No4b0blLa9IY//x
-    HgNvXqpdsEQTYSMzvU5p8NaQ1kleFQ6wyLZ9FSSpe1rnmDve9ez+y2Y6iTRvb5wP
-    GTi/5sSWszcT8Scg0kR6YIgu6grvvAmZkvocJuQESOnRWboawGYeRZn8ylqdIBX8
-    Y0S5bZnyk1ZKdDPVKr7DeltGc/eTe4R6bXdaPxh46TCxRyxujc/ZYxTfn2J6BeoN
-    GPT9pFtDxPKxr70uknsodOJM8O+8oNbqNmw8eQQGDk60WQVFP0nr7zYa4KL49KdQ
-    xkH1eNODzNhr19B+19vZMPtFUB4gfls8qIhA4cSfivbA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803199; bh=gQZkRvVIhJXujqMIHSuGZhXzVS
+    2r4LakbJ9tuxn26KA=; b=H/uiTPRN52DkloNrM17iZo8S1mk77uYZYoupx7yLUJ
+    m5uzNXVuqnkcjaNCnB0fo8WIQdcuuwrVAeKxMWU12Ve/IsPYCUl0pRC6fyMRTIkV
+    61CHDRw9D5111XUG1rBlm81ILXWAX+kB29wXmMxBSgrkSGdRqXOUlJiaVCn85vny
+    G50cpI1sLaLsTgdQ9npzwsC6ynwRmut5C+aeHFkokJnNMA4zuG8x447R6E4/DPxb
+    XOS0Zl9Ht4HF9ZgPiPE+y2C6AT81lrXs9O72xlwJJ+w19N8vDrWcZFjgJCK1d1CD
+    lfvFK4Kq/BGt8cuZFyHgIHbh624Fp6cUppX+sa5xKSeg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,20 +50,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933120AbeCWKMI (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:12:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44146 "EHLO
+        id S933106AbeCWKMO (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:12:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44188 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933060AbeCWKMF (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:05 -0400
+        with ESMTP id S932478AbeCWKMM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 156/177] vgacon: Set VGA struct resource types
-Date: Fri, 23 Mar 2018 10:54:44 +0100
-Message-Id: <20180323094212.071671781@linuxfoundation.org>
+Subject: [PATCH 4.9 158/177] drm/omap: DMM: Check for DMM readiness after successful transaction commit
+Date: Fri, 23 Mar 2018 10:54:46 +0100
+Message-Id: <20180323094212.159460222@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -81,108 +82,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
 
-[ Upstream commit c82084117f79bcae085e40da526253736a247120 ]
+[ Upstream commit b7ea6b286c4051e043f691781785e3c4672f014a ]
 
-Set the resource type when we reserve VGA-related I/O port resources.
+Check the status of the DMM engine after it is reported that the
+transaction was completed as in rare cases the engine might not reached a
+working state.
 
-The resource code doesn't actually look at the type, so it inserts
-resources without a type in the tree correctly even without this change.
-But if we ever print a resource without a type, it looks like this:
+The wait_status() will print information in case the DMM is not reached the
+expected state and the dmm_txn_commit() will return with an error code to
+make sure that we are not continuing with a broken setup.
 
-  vga+ [??? 0x000003c0-0x000003df flags 0x0]
-
-Setting the type means it will be printed correctly as:
-
-  vga+ [io  0x000003c0-0x000003df]
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/alpha/kernel/console.c    |    1 +
- drivers/video/console/vgacon.c |   34 ++++++++++++++++++++++++++--------
- 2 files changed, 27 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/alpha/kernel/console.c
-+++ b/arch/alpha/kernel/console.c
-@@ -20,6 +20,7 @@
- struct pci_controller *pci_vga_hose;
- static struct resource alpha_vga = {
- 	.name	= "alpha-vga+",
-+	.flags	= IORESOURCE_IO,
- 	.start	= 0x3C0,
- 	.end	= 0x3DF
- };
---- a/drivers/video/console/vgacon.c
-+++ b/drivers/video/console/vgacon.c
-@@ -405,7 +405,10 @@ static const char *vgacon_startup(void)
- 		vga_video_port_val = VGA_CRT_DM;
- 		if ((screen_info.orig_video_ega_bx & 0xff) != 0x10) {
- 			static struct resource ega_console_resource =
--			    { .name = "ega", .start = 0x3B0, .end = 0x3BF };
-+			    { .name	= "ega",
-+			      .flags	= IORESOURCE_IO,
-+			      .start	= 0x3B0,
-+			      .end	= 0x3BF };
- 			vga_video_type = VIDEO_TYPE_EGAM;
- 			vga_vram_size = 0x8000;
- 			display_desc = "EGA+";
-@@ -413,9 +416,15 @@ static const char *vgacon_startup(void)
- 					 &ega_console_resource);
- 		} else {
- 			static struct resource mda1_console_resource =
--			    { .name = "mda", .start = 0x3B0, .end = 0x3BB };
-+			    { .name	= "mda",
-+			      .flags	= IORESOURCE_IO,
-+			      .start	= 0x3B0,
-+			      .end	= 0x3BB };
- 			static struct resource mda2_console_resource =
--			    { .name = "mda", .start = 0x3BF, .end = 0x3BF };
-+			    { .name	= "mda",
-+			      .flags	= IORESOURCE_IO,
-+			      .start	= 0x3BF,
-+			      .end	= 0x3BF };
- 			vga_video_type = VIDEO_TYPE_MDA;
- 			vga_vram_size = 0x2000;
- 			display_desc = "*MDA";
-@@ -437,15 +446,21 @@ static const char *vgacon_startup(void)
- 			vga_vram_size = 0x8000;
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -298,7 +298,12 @@ static int dmm_txn_commit(struct dmm_txn
+ 				msecs_to_jiffies(100))) {
+ 			dev_err(dmm->dev, "timed out waiting for done\n");
+ 			ret = -ETIMEDOUT;
++			goto cleanup;
+ 		}
++
++		/* Check the engine status before continue */
++		ret = wait_status(engine, DMM_PATSTATUS_READY |
++				  DMM_PATSTATUS_VALID | DMM_PATSTATUS_DONE);
+ 	}
  
- 			if (!screen_info.orig_video_isVGA) {
--				static struct resource ega_console_resource
--				    = { .name = "ega", .start = 0x3C0, .end = 0x3DF };
-+				static struct resource ega_console_resource =
-+				    { .name	= "ega",
-+				      .flags	= IORESOURCE_IO,
-+				      .start	= 0x3C0,
-+				      .end	= 0x3DF };
- 				vga_video_type = VIDEO_TYPE_EGAC;
- 				display_desc = "EGA";
- 				request_resource(&ioport_resource,
- 						 &ega_console_resource);
- 			} else {
--				static struct resource vga_console_resource
--				    = { .name = "vga+", .start = 0x3C0, .end = 0x3DF };
-+				static struct resource vga_console_resource =
-+				    { .name	= "vga+",
-+				      .flags	= IORESOURCE_IO,
-+				      .start	= 0x3C0,
-+				      .end	= 0x3DF };
- 				vga_video_type = VIDEO_TYPE_VGAC;
- 				display_desc = "VGA+";
- 				request_resource(&ioport_resource,
-@@ -489,7 +504,10 @@ static const char *vgacon_startup(void)
- 			}
- 		} else {
- 			static struct resource cga_console_resource =
--			    { .name = "cga", .start = 0x3D4, .end = 0x3D5 };
-+			    { .name	= "cga",
-+			      .flags	= IORESOURCE_IO,
-+			      .start	= 0x3D4,
-+			      .end	= 0x3D5 };
- 			vga_video_type = VIDEO_TYPE_CGA;
- 			vga_vram_size = 0x2000;
- 			display_desc = "*CGA";
+ cleanup:
