@@ -1,231 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751625AbeCWBSL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 21:18:11 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40939 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751080AbeCWBSJ (ORCPT
+        id S1751687AbeCWB1W (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 21:27:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44978 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751303AbeCWB1V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 21:18:09 -0400
-X-Google-Smtp-Source: AG47ELvkqTflBR6vto9MM1ud+gYEfANogIoyTkjf6Wtm7r+DOep4hexBPglJpCzQVfdPJAnoSzUOcQ==
-From: Patrik Torstensson <totte@google.com>
-To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com
-Cc: linux-kernel@vger.kernel.org, ebiggers@google.com,
-        samitolvanen@google.com, gkaiser@google.com, paulcrowley@google.com,
-        Patrik Torstensson <totte@google.com>
-Subject: [PATCH v2] Add an option to dm-verity to validate hashes at most once
-Date: Thu, 22 Mar 2018 18:18:04 -0700
-Message-Id: <20180323011804.229924-1-totte@google.com>
-X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
+        Thu, 22 Mar 2018 21:27:21 -0400
+Date: Thu, 22 Mar 2018 18:27:16 -0700
+From: "Darren Hart (VMware)" <dvhart@infradead.org>
+To: LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Cc: Jan-Marek Glogowski <glogow@fbihome.de>,
+        =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
+        Jonathan Woithe <jwoithe@just42.net>
+Subject: [PATCH] platform/x86: fujitsu-laptop: Simplify soft key handling
+Message-ID: <2721b2f93063dd6d5586e151ec6cc14fcd39ec1b.1521768118.git.dvhart@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an option to dm-verity to validate hashes at most once
-to allow platforms that is CPU/memory contraint to be
-protected by dm-verity against offline attacks.
+The hardcoded BIT(X) used in the soft key handling can be confusing and
+prone to errors.
 
-The option introduces a bitset that is used to check if
-a block has been validated before or not. A block can
-be validated more than once as there is no thread protection
-for the bitset.
+Instead, use the status FLAG_* defines for the sparse keymap index.
+Rather than check for each known bit, use a bitmask to filter for all
+known soft keys, and use the for_each_set_bit iterator.
 
-This patch has been developed and tested on entry-level
-Android Go devices.
-
-Signed-off-by: Patrik Torstensson <totte@google.com>
+Cc: Jan-Marek Glogowski <glogow@fbihome.de>
+Cc: Michał Kępień <kernel@kempniu.pl>
+Cc: Jonathan Woithe <jwoithe@just42.net>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 ---
-Changes since version 1:
-   - added documentation about the new option
-   - added the new option into DM_TABLE_STATUS ioctl
-   - replaced 'io->block + b' with 'cur_block'
-   - increase minor version
- 
- Documentation/device-mapper/verity.txt | 11 +++++
- drivers/md/dm-verity-target.c          | 66 ++++++++++++++++++++++++--
- drivers/md/dm-verity.h                 |  1 +
- 3 files changed, 73 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/device-mapper/verity.txt b/Documentation/device-mapper/verity.txt
-index 89fd8f9a259f..b3d2e4a42255 100644
---- a/Documentation/device-mapper/verity.txt
-+++ b/Documentation/device-mapper/verity.txt
-@@ -109,6 +109,17 @@ fec_start <offset>
-     This is the offset, in <data_block_size> blocks, from the start of the
-     FEC device to the beginning of the encoding data.
+Note: this applies on top of Jan-Marek's recent RFKILL and MICMUTE hotkey patch.
+I'd really appreciate a Tested-by from Jan-Marek in particular. You can get the
+entire series ready for testing here:
+
+http://git.infradead.org/linux-platform-drivers-x86.git/shortlog/refs/heads/review-dvhart-fujitsu
+
+Also wondering if LID and DOCK might benefit from an input event...
+
+ drivers/platform/x86/fujitsu-laptop.c | 47 ++++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
+index cd95b6f3a064..6afeaece2f50 100644
+--- a/drivers/platform/x86/fujitsu-laptop.c
++++ b/drivers/platform/x86/fujitsu-laptop.c
+@@ -91,6 +91,9 @@
+ #define FLAG_RFKILL			BIT(5)
+ #define FLAG_LID			BIT(8)
+ #define FLAG_DOCK			BIT(9)
++#define FLAG_TOUCHPAD_TOGGLE		BIT(26)
++#define FLAG_MICMUTE			BIT(29)
++#define FLAG_SOFTKEYS			(FLAG_RFKILL | FLAG_TOUCHPAD_TOGGLE | FLAG_MICMUTE)
  
-+check_at_most_once
-+    Verify data blocks only the first time they are read from the data device,
-+    rather than every time.  This reduces the overhead of dm-verity so that it
-+    can be used on systems that are memory and/or CPU constrained.  However, it
-+    provides a reduced level of security because only offline tampering of the
-+    data device's content will be detected, not online tampering.
-+
-+    Hash blocks are still verified each time they are read from the hash device,
-+    since verification of hash blocks is less performance critical than data
-+    blocks, and a hash block will not be verified any more after all the data
-+    blocks it covers have been verified anyway.
+ /* FUNC interface - LED control */
+ #define FUNC_LED_OFF			BIT(0)
+@@ -456,14 +459,15 @@ static void acpi_fujitsu_bl_notify(struct acpi_device *device, u32 event)
+ /* ACPI device for hotkey handling */
  
- Theory of operation
- ===================
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index aedb8222836b..195a899e7466 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -32,6 +32,7 @@
- #define DM_VERITY_OPT_LOGGING		"ignore_corruption"
- #define DM_VERITY_OPT_RESTART		"restart_on_corruption"
- #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
-+#define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
- 
- #define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
- 
-@@ -432,6 +433,19 @@ static int verity_bv_zero(struct dm_verity *v, struct dm_verity_io *io,
- 	return 0;
- }
- 
-+/*
-+ * Moves the bio iter one data block forward.
-+ */
-+static inline void verity_bv_skip_block(struct dm_verity *v,
-+					struct dm_verity_io *io,
-+					struct bvec_iter *iter)
-+{
-+	struct bio *bio = dm_bio_from_per_bio_data(io,
-+						   v->ti->per_io_data_size);
-+
-+	bio_advance_iter(bio, iter, 1 << v->data_dev_block_bits);
-+}
-+
- /*
-  * Verify one "dm_verity_io" structure.
-  */
-@@ -445,9 +459,16 @@ static int verity_verify_io(struct dm_verity_io *io)
- 
- 	for (b = 0; b < io->n_blocks; b++) {
- 		int r;
-+		sector_t cur_block = io->block + b;
- 		struct ahash_request *req = verity_io_hash_req(v, io);
- 
--		r = verity_hash_for_block(v, io, io->block + b,
-+		if (v->validated_blocks &&
-+		    likely(test_bit(cur_block, v->validated_blocks))) {
-+			verity_bv_skip_block(v, io, &io->iter);
-+			continue;
-+		}
-+
-+		r = verity_hash_for_block(v, io, cur_block,
- 					  verity_io_want_digest(v, io),
- 					  &is_zero);
- 		if (unlikely(r < 0))
-@@ -481,13 +502,17 @@ static int verity_verify_io(struct dm_verity_io *io)
- 			return r;
- 
- 		if (likely(memcmp(verity_io_real_digest(v, io),
--				  verity_io_want_digest(v, io), v->digest_size) == 0))
-+				  verity_io_want_digest(v, io),
-+				  v->digest_size) == 0)) {
-+			if (v->validated_blocks)
-+				set_bit(cur_block, v->validated_blocks);
- 			continue;
-+		}
- 		else if (verity_fec_decode(v, io, DM_VERITY_BLOCK_TYPE_DATA,
--					   io->block + b, NULL, &start) == 0)
-+					   cur_block, NULL, &start) == 0)
- 			continue;
- 		else if (verity_handle_err(v, DM_VERITY_BLOCK_TYPE_DATA,
--					   io->block + b))
-+					   cur_block))
- 			return -EIO;
- 	}
- 
-@@ -673,6 +698,8 @@ static void verity_status(struct dm_target *ti, status_type_t type,
- 			args += DM_VERITY_OPTS_FEC;
- 		if (v->zero_digest)
- 			args++;
-+		if (v->validated_blocks)
-+			args++;
- 		if (!args)
- 			return;
- 		DMEMIT(" %u", args);
-@@ -691,6 +718,8 @@ static void verity_status(struct dm_target *ti, status_type_t type,
- 		}
- 		if (v->zero_digest)
- 			DMEMIT(" " DM_VERITY_OPT_IGN_ZEROES);
-+		if (v->validated_blocks)
-+			DMEMIT(" " DM_VERITY_OPT_AT_MOST_ONCE);
- 		sz = verity_fec_status_table(v, sz, result, maxlen);
- 		break;
- 	}
-@@ -740,6 +769,7 @@ static void verity_dtr(struct dm_target *ti)
- 	if (v->bufio)
- 		dm_bufio_client_destroy(v->bufio);
- 
-+	kvfree(v->validated_blocks);
- 	kfree(v->salt);
- 	kfree(v->root_digest);
- 	kfree(v->zero_digest);
-@@ -760,6 +790,26 @@ static void verity_dtr(struct dm_target *ti)
- 	kfree(v);
- }
- 
-+static int verity_alloc_most_once(struct dm_verity *v)
-+{
-+	struct dm_target *ti = v->ti;
-+
-+	/* the bitset can only handle INT_MAX blocks */
-+	if (v->data_blocks > INT_MAX) {
-+		ti->error = "device too large to use check_at_most_once";
-+		return -E2BIG;
-+	}
-+
-+	v->validated_blocks = kvzalloc(BITS_TO_LONGS(v->data_blocks)
-+				     * sizeof(unsigned long), GFP_KERNEL);
-+	if (!v->validated_blocks) {
-+		ti->error = "failed to allocate bitset for check_at_most_once";
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
- static int verity_alloc_zero_digest(struct dm_verity *v)
- {
- 	int r = -ENOMEM;
-@@ -829,6 +879,12 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
- 			}
- 			continue;
- 
-+		} else if (!strcasecmp(arg_name, DM_VERITY_OPT_AT_MOST_ONCE)) {
-+			r = verity_alloc_most_once(v);
-+			if (r)
-+				return r;
-+			continue;
-+
- 		} else if (verity_is_fec_opt_arg(arg_name)) {
- 			r = verity_fec_parse_opt_args(as, v, &argc, arg_name);
- 			if (r)
-@@ -1096,7 +1152,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 
- static struct target_type verity_target = {
- 	.name		= "verity",
--	.version	= {1, 3, 0},
-+	.version	= {1, 4, 0},
- 	.module		= THIS_MODULE,
- 	.ctr		= verity_ctr,
- 	.dtr		= verity_dtr,
-diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
-index b675bc015512..ace5ec781b5f 100644
---- a/drivers/md/dm-verity.h
-+++ b/drivers/md/dm-verity.h
-@@ -63,6 +63,7 @@ struct dm_verity {
- 	sector_t hash_level_block[DM_VERITY_MAX_LEVELS];
- 
- 	struct dm_verity_fec *fec;	/* forward error correction */
-+	unsigned long *validated_blocks; /* bitset blocks validated */
+ static const struct key_entry keymap_default[] = {
+-	{ KE_KEY, KEY1_CODE, { KEY_PROG1 } },
+-	{ KE_KEY, KEY2_CODE, { KEY_PROG2 } },
+-	{ KE_KEY, KEY3_CODE, { KEY_PROG3 } },
+-	{ KE_KEY, KEY4_CODE, { KEY_PROG4 } },
+-	{ KE_KEY, KEY5_CODE, { KEY_RFKILL } },
+-	{ KE_KEY, BIT(5),    { KEY_RFKILL } },
+-	{ KE_KEY, BIT(26),   { KEY_TOUCHPAD_TOGGLE } },
+-	{ KE_KEY, BIT(29),   { KEY_MICMUTE } },
++	{ KE_KEY, KEY1_CODE,            { KEY_PROG1 } },
++	{ KE_KEY, KEY2_CODE,            { KEY_PROG2 } },
++	{ KE_KEY, KEY3_CODE,            { KEY_PROG3 } },
++	{ KE_KEY, KEY4_CODE,            { KEY_PROG4 } },
++	{ KE_KEY, KEY5_CODE,            { KEY_RFKILL } },
++	/* Soft keys read from status flags */
++	{ KE_KEY, FLAG_RFKILL,          { KEY_RFKILL } },
++	{ KE_KEY, FLAG_TOUCHPAD_TOGGLE, { KEY_TOUCHPAD_TOGGLE } },
++	{ KE_KEY, FLAG_MICMUTE,         { KEY_MICMUTE } },
+ 	{ KE_END, 0 }
  };
  
- struct dm_verity_io {
+@@ -903,7 +907,8 @@ static void acpi_fujitsu_laptop_release(struct acpi_device *device)
+ static void acpi_fujitsu_laptop_notify(struct acpi_device *device, u32 event)
+ {
+ 	struct fujitsu_laptop *priv = acpi_driver_data(device);
+-	int scancode, i = 0, ret;
++	unsigned long flags;
++	int scancode, i = 0;
+ 	unsigned int irb;
+ 
+ 	if (event != ACPI_FUJITSU_NOTIFY_CODE) {
+@@ -930,21 +935,17 @@ static void acpi_fujitsu_laptop_notify(struct acpi_device *device, u32 event)
+ 					 "Unknown GIRB result [%x]\n", irb);
+ 	}
+ 
+-	/* On some models (first seen on the Skylake-based Lifebook
+-	 * E736/E746/E756), the touchpad toggle hotkey (Fn+F4) is
+-	 * handled in software; its state is queried using FUNC_FLAGS
++	/*
++	 * First seen on the Skylake-based Lifebook E736/E746/E756), the
++	 * touchpad toggle hotkey (Fn+F4) is handled in software. Other models
++	 * have since added additional "soft keys". These are reported in the
++	 * status flags queried using FUNC_FLAGS.
+ 	 */
+-	if (priv->flags_supported & (BIT(5) | BIT(26) | BIT(29))) {
+-		ret = call_fext_func(device, FUNC_FLAGS, 0x1, 0x0, 0x0);
+-		if (ret & BIT(5))
+-			sparse_keymap_report_event(priv->input,
+-						   BIT(5), 1, true);
+-		if (ret & BIT(26))
+-			sparse_keymap_report_event(priv->input,
+-						   BIT(26), 1, true);
+-		if (ret & BIT(29))
+-			sparse_keymap_report_event(priv->input,
+-						   BIT(29), 1, true);
++	if (priv->flags_supported & (FLAG_SOFTKEYS)) {
++		flags = call_fext_func(device, FUNC_FLAGS, 0x1, 0x0, 0x0);
++		flags &= (FLAG_SOFTKEYS);
++		for_each_set_bit(i, &flags, BITS_PER_LONG)
++			sparse_keymap_report_event(priv->input, BIT(i), 1, true);
+ 	}
+ }
+ 
 -- 
-2.17.0.rc0.231.g781580f067-goog
+2.14.3
+
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
