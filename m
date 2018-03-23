@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuuyVcW93OQpWChtrH9oW/P2eaxzMVaHUJUZsW3nmKMmWAJ1auXOBqwVDimPSOTnacH5MyX
-ARC-Seal: i=1; a=rsa-sha256; t=1521800327; cv=none;
+X-Google-Smtp-Source: AG47ELv/WB2txt9MRQ9uS3suoS3KBCUvsM+9l8LU0IK1wSqhUQ88VZ+gNZlLJPdsM2LgYpAnv4ee
+ARC-Seal: i=1; a=rsa-sha256; t=1521800324; cv=none;
         d=google.com; s=arc-20160816;
-        b=a56ssZ669qKi8uId4AfQPU6QcNvcLYnT39ZnVgLjQRBD1peRtpp/woGr0JQHIKjNiM
-         X7Bf9+gfq3VzZBi44OmYAL5V6eGkoKxXw8osX4OOouG97+R7tlnFIGJlpSD/2Kc9gE50
-         sIFmhVJsr30iCIuf0ErU6zkgK3cmTQ+NE1OW6lWc40zSiCmXC61oikk03fmMCaVVdzWN
-         2Y3vo3ug8FdMJ7mq5rj16DDfYiO3H8rG2AhQK3fBz0IIzGPgfgG8AH1uIcW+9cSyxZmk
-         EQbNjxM4WRIijMOhF0JPUmhsipqRJgiRsMo4enix0pFyYxD9yWvyvC8KQ5T1IxfZT4Ex
-         kwCw==
+        b=B0xA+s4NVNWfx/6PCicYR61Occeoz5AA3blPZXN2cFoEb9LFQVdZPmZ0ry2FtwWj7x
+         WNzdOnS5tgsAViEciC74iyDnJyiVuFfKlRlupIcjnxQod1X4F9fBOavhrHdB8KT7ffvt
+         zZkQNGfi7ggjQLWos/5oQbwlkfYQvWfmyk7ZsSrKWGpzx8b4REglomyw04R6m4ohz9Wo
+         j9u/qZn8jpQagv3bpQKHzTMvUUMLoiy4FfkCDCrwU2RcsQUW55KyRZ6pEmXfQHdjLQ8J
+         xyg7DOX2M9+4dTC4E+p733r5XhyiNg165fk0U1lfzpg9sPLyTmTHXHIRLnR1C1pZj0Sv
+         QLXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sJWpAyx6+sVtXQZrD2X1Wu0F1MOW2h+O00xCszRbaTw=;
-        b=y1D/HBvnIZjKrhQADVDsZPXYEhuKPqMk9LXyVq7P0rKi9YpiobNyOSXdeIQZAV1HXr
-         qu7C+z2woSHsR3ZJ+yWvE+ZbzpaaMkUX9JQ3H8lydiQ7z70IC2jKqAHNVaJPb937MWoH
-         gF3EEYK5ND9aD8Z+y7XTsl32NCfqotyyZDGlPg2x6TsTBg/TgQjiD8o0ZHiSJCMChKq2
-         Ai5J3jmWGawzcT86DAQOZKU+pLTL7ds2nzMWS6KORRuSPi2zSHE0EYHdfbLKNq0BAiFb
-         46AgAe2tJajjXotSaGC+Z8kNjI5K0kIGTNuqLTggUyt67NipK3g5oq22Xrf0QaIpF402
-         4llw==
+        bh=RUTaNurPMc+IznNqKzThTkIBzwK2G0tCecARXrMfeaE=;
+        b=BlLMF+yViYCLnxOpKcmsNE86Plrh5wkw1UskbuZQvleTYgpprly06crauuNBBdP/ly
+         i7aCjFf4dNS6JEylQdPxI50Uyciy+jfPoqidsY8ryQMvPYGJQNg+5w9U6WBBIikG842R
+         +0T54fKNTzF5sEW2RhK5sNWEAbZZgfr9Dlt+yiJsGMXa6JmOwF3ADUIeaUkJ1xCLhRRq
+         krvj1xLk4KANvJDScCviiRLcqwBnfEGcR8DeE3gcvPJdNKongZ37ydimdR2PAWcZJSj/
+         OjsklF3PiMbmxpcRexiApxTTMuGYu6dTzk1r33wxruRs7YNkV4LDe8dvdoePNWmg7xGR
+         dq5g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Robert Lippert <rlippert@google.com>,
-	Corey Minyard <cminyard@mvista.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 29/47] ipmi/watchdog: fix wdog hang on panic waiting for ipmi response
-Date: Fri, 23 Mar 2018 10:55:20 +0100
-Message-Id: <20180323094249.361719351@linuxfoundation.org>
+Subject: [PATCH 3.18 28/47] ARM: DRA7: clockdomain: Change the CLKTRCTRL of CM_PCIE_CLKSTCTRL to SW_WKUP
+Date: Fri, 23 Mar 2018 10:55:19 +0100
+Message-Id: <20180323094249.325117794@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722653980136364?=
-X-GMAIL-MSGID: =?utf-8?q?1595723300395807852?=
+X-GMAIL-THRID: =?utf-8?q?1595722687748983513?=
+X-GMAIL-MSGID: =?utf-8?q?1595723297454403813?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,58 +51,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Robert Lippert <roblip@gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 
 
-[ Upstream commit 2c1175c2e8e5487233cabde358a19577562ac83e ]
+[ Upstream commit 2c949ce38f4e81d7487f165fa3b8f77d74a2a6c4 ]
 
-Commit c49c097610fe ("ipmi: Don't call receive handler in the
-panic context") means that the panic_recv_free is not called during a
-panic and the atomic count does not drop to 0.
+The PCIe programming sequence in TRM suggests CLKSTCTRL of PCIe should be
+set to SW_WKUP. There are no issues when CLKSTCTRL is set to HW_AUTO in RC
+mode. However in EP mode, the host system is not able to access the
+MEMSPACE and setting the CLKSTCTRL to SW_WKUP fixes it.
 
-Fix this by only expecting one decrement of the atomic variable
-which comes from panic_smi_free.
-
-Signed-off-by: Robert Lippert <rlippert@google.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/ipmi/ipmi_watchdog.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/mach-omap2/clockdomains7xx_data.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/ipmi/ipmi_watchdog.c
-+++ b/drivers/char/ipmi/ipmi_watchdog.c
-@@ -509,7 +509,7 @@ static void panic_halt_ipmi_heartbeat(vo
- 	msg.cmd = IPMI_WDOG_RESET_TIMER;
- 	msg.data = NULL;
- 	msg.data_len = 0;
--	atomic_add(2, &panic_done_count);
-+	atomic_add(1, &panic_done_count);
- 	rv = ipmi_request_supply_msgs(watchdog_user,
- 				      (struct ipmi_addr *) &addr,
- 				      0,
-@@ -519,7 +519,7 @@ static void panic_halt_ipmi_heartbeat(vo
- 				      &panic_halt_heartbeat_recv_msg,
- 				      1);
- 	if (rv)
--		atomic_sub(2, &panic_done_count);
-+		atomic_sub(1, &panic_done_count);
- }
+--- a/arch/arm/mach-omap2/clockdomains7xx_data.c
++++ b/arch/arm/mach-omap2/clockdomains7xx_data.c
+@@ -524,7 +524,7 @@ static struct clockdomain pcie_7xx_clkdm
+ 	.dep_bit	  = DRA7XX_PCIE_STATDEP_SHIFT,
+ 	.wkdep_srcs	  = pcie_wkup_sleep_deps,
+ 	.sleepdep_srcs	  = pcie_wkup_sleep_deps,
+-	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
++	.flags		  = CLKDM_CAN_SWSUP,
+ };
  
- static struct ipmi_smi_msg panic_halt_smi_msg = {
-@@ -543,12 +543,12 @@ static void panic_halt_ipmi_set_timeout(
- 	/* Wait for the messages to be free. */
- 	while (atomic_read(&panic_done_count) != 0)
- 		ipmi_poll_interface(watchdog_user);
--	atomic_add(2, &panic_done_count);
-+	atomic_add(1, &panic_done_count);
- 	rv = i_ipmi_set_timeout(&panic_halt_smi_msg,
- 				&panic_halt_recv_msg,
- 				&send_heartbeat_now);
- 	if (rv) {
--		atomic_sub(2, &panic_done_count);
-+		atomic_sub(1, &panic_done_count);
- 		printk(KERN_WARNING PFX
- 		       "Unable to extend the watchdog timeout.");
- 	} else {
+ static struct clockdomain atl_7xx_clkdm = {
