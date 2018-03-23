@@ -1,54 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752069AbeCWOPv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 10:15:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41754 "EHLO mail.kernel.org"
+        id S1752120AbeCWOQ1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 10:16:27 -0400
+Received: from mga11.intel.com ([192.55.52.93]:5734 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751625AbeCWOPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 10:15:50 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A65B21839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 23 Mar 2018 10:15:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexei Starovoitov <ast@fb.com>
-Subject: Re: [PATCH] mm, vmscan, tracing: Use pointer to reclaim_stat struct
- in trace event
-Message-ID: <20180323101548.1f091c93@gandalf.local.home>
-In-Reply-To: <20180323135225.GV23100@dhcp22.suse.cz>
-References: <20180322121003.4177af15@gandalf.local.home>
-        <20180323134200.GT23100@dhcp22.suse.cz>
-        <20180323094753.760b2c86@gandalf.local.home>
-        <20180323135225.GV23100@dhcp22.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751699AbeCWOQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 10:16:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,350,1517904000";
+   d="scan'208";a="210742046"
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+To: DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20180323115018.1ae3ca1d@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+References: <20180322132129.6b953166@canb.auug.org.au>
+ <20180323115018.1ae3ca1d@canb.auug.org.au>
+Message-ID: <152181458133.5713.10693056590259814245@jlahtine-desk.ger.corp.intel.com>
+User-Agent: alot/0.6
+Subject: Re: [Intel-gfx] linux-next: manual merge of the drm-intel tree with Linus'
+ tree
+Date: Fri, 23 Mar 2018 16:16:21 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Mar 2018 14:52:25 +0100
-Michal Hocko <mhocko@kernel.org> wrote:
-
-> On Fri 23-03-18 09:47:53, Steven Rostedt wrote:
+Quoting Stephen Rothwell (2018-03-23 02:50:18)
+> Hi all,
+> 
+> On Thu, 22 Mar 2018 13:21:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the drm-intel tree got a conflict in:
 > > 
-> > The one solution is to pull the tracing file
-> > include/trace/events/vmscan.h into mm/ and have a local header to store
-> > the reclaim_stat structure that both vmscan.h and vmscan.c can
-> > reference.  
+> >   drivers/gpu/drm/i915/gvt/scheduler.c
+> > 
+> > between commit:
+> > 
+> >   fa3dd623e559 ("drm/i915/gvt: keep oa config in shadow ctx")
+> > 
+> > from Linus' tree and commit:
+> > 
+> >   b20c0d5ce104 ("drm/i915/gvt: Update PDPs after a vGPU mm object is pinned.")
+> > 
+> > from the drm-intel tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+
+Hi Stephen,
+
+Thanks for solving this, the resolution is correct.
+
+You may want to replace Daniel, as the recipient here, with the current
+i915 maintainers to get a faster feedback next time :)
+
+<SNIP>
+
+> This is now a conflict between the drm tree and Linus' tree.
 > 
-> I guess we can live with the public definition as well.
+
+My bad for not highlighting the merge conflict in my PR to Dave. He
+probably did not notice, getting the resolution automatically from
+drm-rerere, I'd guess. I've noted it in the ever improving draft of
+things to remember with the PRs.
+
+I'm very much currently flying based on what the previous PR authors
+have remembered to tell me. But after 4.17, the cycle is complete and we
+all "have been there, done that", and you can expect less of a turbulence.
+
+(We'll probably have more magnificent documentation, too.)
+
+Regards, Joonas
+
+> -- 
+> Cheers,
+> Stephen Rothwell
 > 
-
-Yes, that would be easier. Thanks!
-
-Then if Andrey's patches are not pulled, then this patch will be good
-to go.
-
--- Steve
+> 
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
