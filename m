@@ -1,68 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752363AbeCWQ0o (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:26:44 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:40986 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752156AbeCWQ0n (ORCPT
+        id S1752042AbeCWQbJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:31:09 -0400
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:45235 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751714AbeCWQbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:26:43 -0400
-X-Google-Smtp-Source: AG47ELt5DSshEDXtcqqVDrc2F3EyL1DuUIUSpLuwS5PY/MJRf5rbl5hn7v+Uwij7AvnHtw8GhqCPrqAXwO+NWGtPuT0=
+        Fri, 23 Mar 2018 12:31:06 -0400
+X-Google-Smtp-Source: AG47ELs//v7uHQ2kc1vnZY297WGTCLTX1NYe3ztEfZg9GAn83XIJcdmJSsxkNgbFGKtEkJgGE4dS62IWv2w/8XSza/E=
 MIME-Version: 1.0
-In-Reply-To: <cover.1521753738.git.ivan.gorinov@intel.com>
-References: <cover.1521753738.git.ivan.gorinov@intel.com>
+In-Reply-To: <152182210780.178046.13284917877743312593@swboyd.mtv.corp.google.com>
+References: <20180321165848.89751-1-swboyd@chromium.org> <20180321165848.89751-4-swboyd@chromium.org>
+ <97380342-c3aa-5d34-7b22-f6ebbab4bafe@codeaurora.org> <1521804964.23017.96.camel@linux.intel.com>
+ <152182210780.178046.13284917877743312593@swboyd.mtv.corp.google.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 23 Mar 2018 18:26:42 +0200
-Message-ID: <CAHp75VczQ9gxseTtBTxbnusorZNONKiCu4_c2X=xxARqLPWDSA@mail.gmail.com>
-Subject: Re: [PATCH v8 0/2] x86/devicetree: Enable multiprocessing
-To: Ivan Gorinov <ivan.gorinov@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Frank Rowand <frowand.list@gmail.com>,
+Date: Fri, 23 Mar 2018 18:31:05 +0200
+Message-ID: <CAHp75VeTxGu-pxqde_egsqUkLBdZujoJv=0YEj9cv8ujnthyPA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] pinctrl: qcom: Don't allow protected pins to be requested
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Timur Tabi <timur@codeaurora.org>, Stephen Boyd <sboyd@codeaurora.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Grant Likely <grant.likely@secretlab.ca>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 11:35 PM, Ivan Gorinov <ivan.gorinov@intel.com> wrote:
-> Current x86 implementation of Device Tree does not support multiprocessing,
-> and the bindings documentation describes the "reg" property of "cpu" nodes
-> as "CPU number" instead of hardware-assigned local APIC ID.
->
+On Fri, Mar 23, 2018 at 6:21 PM, Stephen Boyd <swboyd@chromium.org> wrote:
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>        bitmap_zero(chip->valid_mask, max_gpios);
+>        for (i = 0; i < len; i++)
+>                set_bit(tmp[i], chip->valid_mask);
 
-> v8:
->  * Fixed build error with CONFIG_X86_LOCAL_APIC=n reported by kbuild.
->
-> v7:
->  * Change log update.
->
-> v6:
->  * Calling of_property_read_u32() to get Local APIC ID from "reg".
->
->  * DT documentation changes: corrected CPU node example and changed
->    the "reg" property description.
->
-> v5:
->  * Using the "reg" property to specify Local APIC ID.
->
-> Ivan Gorinov (2):
->   of: Documentation: Specify local APIC ID in "reg"
->   x86/devicetree: Use CPU description from Device Tree
->
->  Documentation/devicetree/bindings/x86/ce4100.txt | 37 ++++++++++++++-----
->  arch/x86/kernel/devicetree.c                     | 45 +++++++++++++++++-------
->  2 files changed, 61 insertions(+), 21 deletions(-)
->
-> --
-> 2.7.4
->
+Looking to this code I just realized it would be nice to have
 
+{of,device}_property_read_bitmask() where bitmask_parse() is called.
 
+Since it related to change a binding, I would really take couple of
+days to hear other opinions.
+
+In the above case, you need to supply a string, like
+
+"1-5,16,18,25"
 
 -- 
 With Best Regards,
