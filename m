@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-977995-1521799687-2-3056307634285914353
+X-Cyrus-Session-Id: sloti22d1t05-977995-1521799507-2-7213821248909177716
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521799686; b=ryx4lYGU+K7nXvt3NrpMPYR2RMjpPbj5QQ1NGNxZOMfaMR8
-    0rkAl6nPJ64nktXZON+tehWiUO0U03CIWLbyrsdZjpJwLn3j3lfGe71tWlVIJLJX
-    tQ4tTIRroF/pzScDEYLmw+HLmMZa2cwE3oCEfM2rhtXIFUqAXQRjdqMwHpN1FErY
-    3tlxa2wGNxf3mjy0iSK9+Qv+ozf8Gu3G0vfcX92kl0r61pxaOsz61UNg34p/Acy/
-    3s4b/aq2B/Wlb3JJ3PySHqhhSDLCcm+3Rb3vShh9yup+zjmEbae6Tcyqf4zWrfkC
-    lcaO8C4k5CYJ0zqgs9mkfAH4F9HPh1t+XimM7fA==
+    t=1521799506; b=A27CghwB0x+Apghxwv4a0rdPRUdrJUcZqrRJ1GZstVkis5y
+    HB+X4jdZDuxeYfmZP2CpaVVz67oNHICzb7j0KcDf+nzfoUoUKsPn6cE+xQzpDAB/
+    mQuuB39uIgl7aO1BSCIjmiwMyBmJrdDRtVCdSYPlkKyoQumwKFL9uapmxne3GmqS
+    KXqeNxmgoe11QmRLudivafLUlp/mlu8MQ5QwRq8VgA5wrIlrnbv9zQhtnRujbebg
+    Qi63uT63hWSW2jW7EJMspQY8cR+oESPalKX/aqZGLTSRF9KCaXt9msEF+5mV0K5r
+    Wx2irCpOiT2IuvHiJGNpcFeRsWQkWckEr9BI1lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521799686; bh=sP65NP6kwu3hSdk4qAv8uuQ2+O
-    WwOULWg0HFFJgdC/0=; b=LLPVmwqqsPiNCMbFJFnavwD1tVIxSfqoazT2KBV7Xq
-    QuFd6dT3eyDe4tyaUVLltEGG+DZQLD/Q9dI5RrgrLDBDXMzaO7UfvBbuO1RdmgSn
-    gvxl3ABQj4nBFjNK9SBXO6jEuMVbYB7itcSWe0tBJKReoA7rGzBQ+/hHLM/C8RRZ
-    FzOs3rlSczgAEFXGOGuBaLNp+As/VkkmBTeVTK3b0sl9qy/Q0gB5FQ10dg/LUXdv
-    1fS35N7zsu1Qg9f2jW+ASa3q6w8CZpwzlxxUVTlKE614pnafN/XOO835V+9Qya/W
-    ZNqobbO2Kj68Y6TOohPqipu1igBRrzwkVKZzrVVTsm+g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521799506; bh=qdkyKPeLZyacCwjpl8/X4IAggl
+    6+8+6o3Ktj7waC7iQ=; b=nJmP5EUcwAVlg2JcajQHiMnBNJYxqy3J/35L0ohiDk
+    pCKUUo4waw+LHjz8LZD3jneOj7muiA6y8BClGcRaWMLGi7I31SETNEFF8hqG1voB
+    qtrxNzTesE7sHmP6HqGuLHDtbGAllxDmIrlIkCjws4Gr8hbWZmjH9JO8RGw1A4AU
+    UozmXn4cYymjB3JjgEC0w78kdr3BJC/KxvoySvXYEeCo0ABSHA9XQ1NmnBMdFIzb
+    lwHqTV6lphGaVeuvdy/0hwr1JuCbR21aocc9UjNpZQ+tMMVzJ1+RimEpESlixmZA
+    lbdrB3WhTyHbwQHVj/jUahvHap9aPPRquJLu2N9+mqRA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,25 +50,23 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755421AbeCWKIB (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:08:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41496 "EHLO
+        id S1753963AbeCWKFB (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:05:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39432 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755403AbeCWKH6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:58 -0400
+        with ESMTP id S1754854AbeCWKFA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Kuppuswamy Sathyanarayanan
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 087/177] gpio: gpio-wcove: fix GPIO IRQ status mask
-Date: Fri, 23 Mar 2018 10:53:35 +0100
-Message-Id: <20180323094209.131355136@linuxfoundation.org>
+Subject: [PATCH 4.9 014/177] Input: ar1021_i2c - fix too long name in drivers device table
+Date: Fri, 23 Mar 2018 10:52:22 +0100
+Message-Id: <20180323094205.831606458@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -86,52 +84,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
 
-[ Upstream commit 881ebd229f4a5ea88f269c1225245e50db9ba303 ]
+[ Upstream commit 95123fc43560d6f4a60e74f72836e63cd8848f76 ]
 
-According to Whiskey Cove PMIC spec, bit 7 of GPIOIRQ0_REG belongs to
-battery IO. So we should skip this bit when checking for GPIO IRQ pending
-status. Otherwise, wcove_gpio_irq_handler() might go into the infinite
-loop until IRQ "pending" status becomes 0. This patch fixes this issue.
+The name field in structure i2c_device_id is 20 characters, and we expect
+it to be NULL-terminated, however we are trying to stuff it with 21 bytes
+and thus NULL-terminator is lost. This causes issues when one creates
+device with name "MICROCHIP_AR1021_I2C" as i2c core cuts off the last "C",
+and automatic module loading by alias does not work as result.
 
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The -I2C suffix in the device name is superfluous, we know what bus we are
+dealing with, so let's drop it. Also, no other driver uses capitals, and
+the manufacturer name is normally not included, except in very rare cases
+of incompatible name collisions.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=116211
+Fixes: dd4cae8bf166 ("Input: Add Microchip AR1021 i2c touchscreen")
+Reviewed-By: Christian Gmeiner <christian.gmeiner@gmail.com>
+Tested-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-wcove.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/input/touchscreen/ar1021_i2c.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpio/gpio-wcove.c
-+++ b/drivers/gpio/gpio-wcove.c
-@@ -51,6 +51,8 @@
- #define GROUP1_NR_IRQS		6
- #define IRQ_MASK_BASE		0x4e19
- #define IRQ_STATUS_BASE		0x4e0b
-+#define GPIO_IRQ0_MASK		GENMASK(6, 0)
-+#define GPIO_IRQ1_MASK		GENMASK(5, 0)
- #define UPDATE_IRQ_TYPE		BIT(0)
- #define UPDATE_IRQ_MASK		BIT(1)
+--- a/drivers/input/touchscreen/ar1021_i2c.c
++++ b/drivers/input/touchscreen/ar1021_i2c.c
+@@ -152,7 +152,7 @@ static int __maybe_unused ar1021_i2c_res
+ static SIMPLE_DEV_PM_OPS(ar1021_i2c_pm, ar1021_i2c_suspend, ar1021_i2c_resume);
  
-@@ -310,7 +312,7 @@ static irqreturn_t wcove_gpio_irq_handle
- 		return IRQ_NONE;
- 	}
- 
--	pending = p[0] | (p[1] << 8);
-+	pending = (p[0] & GPIO_IRQ0_MASK) | ((p[1] & GPIO_IRQ1_MASK) << 7);
- 	if (!pending)
- 		return IRQ_NONE;
- 
-@@ -334,7 +336,7 @@ static irqreturn_t wcove_gpio_irq_handle
- 			break;
- 		}
- 
--		pending = p[0] | (p[1] << 8);
-+		pending = (p[0] & GPIO_IRQ0_MASK) | ((p[1] & GPIO_IRQ1_MASK) << 7);
- 	}
- 
- 	return IRQ_HANDLED;
+ static const struct i2c_device_id ar1021_i2c_id[] = {
+-	{ "MICROCHIP_AR1021_I2C", 0 },
++	{ "ar1021", 0 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(i2c, ar1021_i2c_id);
