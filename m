@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELvmIeYrEWPicwPAsbc1eCe2HXIv/ed46F3Bv3V/isIKFvEDb1WhbVVU3/xG5LJe8n7zhYl6
-ARC-Seal: i=1; a=rsa-sha256; t=1521800318; cv=none;
+X-Google-Smtp-Source: AG47ELurYMX6yvTSdlQu+Y7mtAxtW7TNCiCDYXMa/D6DcHC5AorifyVLrcGGjmvFSJhWO25+CBv3
+ARC-Seal: i=1; a=rsa-sha256; t=1521800316; cv=none;
         d=google.com; s=arc-20160816;
-        b=EVt0XIKmSIQp1xGBL3JE78DXVevBbE2XdLIfzIe9IWkwTvhyxUpihJkBLzOQxnQFVn
-         XeX66UeybWEhAC4NTG8nApo6KeXPIYWf3EuKk39saBpi2ELl+/bHznViQpsvVjITfiK0
-         ZkAcYKa/yHHp1CzxhPOnmt/IjMLrCJ8TL0siEHB4SbYsRdO+icoudjf07p3e1f9NBlvB
-         rF5IbLYqij6ZNdFAaKL/Nvim5y1Ku4xfXbbSs2lF2twWsclY5cSN1iHx5/+usPyRdap+
-         aBv2KofHwobHi+t70h1JNxvicPZst3jlgWFKqLvrcacFLlViNqnrxkU6TSKYyYJCT0Pf
-         Cr4Q==
+        b=vg0L4VMSXNN9BkQkWhtnLxMRHyqpdqi9APa7KlZonx04KvgIffLoiiO+GhHg/Gx4zf
+         qM2sHtTmNGJ1trGmOnI6+oDKKWNW4dwuviq15HLEPr2pmP4Bcwo+Mo04aegGT4TSW9MT
+         j0VBlLGbAFaP1v04PiS/9quLjmR7z/F4fgijA2peX/tUEASvLe604JJPCOT90NocILZP
+         xwiICSfEK0zjX4YLmF7kFWI7AZe7MSOrg2VFMr+oqIinq0ydj48Hsp8WCd19gWQVJScY
+         pVUd6bomHkHe7vnHfR9Tw8wvSnSvlKXObXJJ3umJkAfgAAj206ZtTAMBd8GDFUutnqz/
+         VEZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yV5tbDZaFiqafDeqqGCB/nioDY+3wRT3LN4iP/keS1Q=;
-        b=H6rXQ1J+mA59xMquxzD/MF5kZhxNitzgMZ8Ip/B7YMTp+r120KN1t+AkhI9EBedx1U
-         tWYO7g6+7k5g61rddnku4DZx//8AbcrZ7OQc0Pvgcz28OeSabNMGIv8Ey70yNLKWm52d
-         1tm4aI6LmscgKR77e1eF/ZDZWfNwR3CEc7EzdOr8xBle5vqnj3HNjpoUNa8AYN2DRXbv
-         l8qyV3Q2pfcIg3F9kIFSycLEf7wFrxGLmCLMd8h0dD4OitoAnRGU4VqZW3jIQq0mPkXy
-         8a3ypjrowZPyUSjKyCyBZYtEfOyh8zsR/WEzcZX3OD9NwkddMfmvrTdKbEQg6oq/MOiN
-         pSAw==
+        bh=q4xYuh0Sz/WmaD7zfkItrgmvLcEmTObKnBpGn49Dmuc=;
+        b=04LwxiCQJfyo1FFjd5xVvf0ff+oEKIdggdiAZe2L06vQ7NoAOKklIUocCQ5/0HH5cb
+         nVACYaEX2MPf0LH+EQ7Qg/bIdiI/Sd5T08m1cvWwXyjOFFlHY1irtwEIR9P/4V4eXzWu
+         mWgycX6pDnEe/CUBT4DewCwK4lW58MLuIEWJ1j6AAHs0dXyc0hoLktkp0xZrx3cO0rKd
+         2yXr/H+LgNF3DzTnMdomGF01EqSV1rnnF+5m+FPOOfBjJDCGAouCXvh2U774ZaK6USsk
+         ZJdEIGiKTaOBPl7wyRUdHKSBYqzR800Fjpr6q56heoPoCpyZU2M/0lpyP9kEWUaAG1XB
+         nPrg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	rtc-linux@googlegroups.com,
-	alexandre.belloni@free-electrons.com,
-	Hans de Goede <hdegoede@redhat.com>,
+	Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
+	Kalle Valo <kvalo@qca.qualcomm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 02/47] x86: i8259: export legacy_pic symbol
-Date: Fri, 23 Mar 2018 10:54:53 +0100
-Message-Id: <20180323094248.227501251@linuxfoundation.org>
+Subject: [PATCH 3.18 11/47] ath: Fix updating radar flags for coutry code India
+Date: Fri, 23 Mar 2018 10:55:02 +0100
+Message-Id: <20180323094248.604803239@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722426879921230?=
-X-GMAIL-MSGID: =?utf-8?q?1595723290936633489?=
+X-GMAIL-THRID: =?utf-8?q?1595722475232914260?=
+X-GMAIL-MSGID: =?utf-8?q?1595723288494518335?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,41 +50,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
 
 
-[ Upstream commit 7ee06cb2f840a96be46233181ed4557901a74385 ]
+[ Upstream commit c0c345d4cacc6a1f39d4856f37dcf6e34f51a5e4 ]
 
-The classic PC rtc-coms driver has a workaround for broken ACPI device
-nodes for it which lack an irq resource. This workaround used to
-unconditionally hardcode the irq to 8 in these cases.
+As per latest regulatory update for India, channel 52, 56, 60, 64
+is no longer restricted to DFS. Enabling DFS/no infra flags in driver
+results in applying all DFS related restrictions (like doing CAC etc
+before this channel moves to 'available state') for these channels
+even though the country code is programmed as 'India' in he hardware,
+fix this by relaxing the frequency range while applying RADAR flags
+only if the country code is programmed to India. If the frequency range
+needs to modified based on different country code, ath_is_radar_freq
+can be extended/modified dynamically.
 
-This was causing irq conflict problems on systems without a legacy-pic
-so a recent patch added an if (nr_legacy_irqs()) guard to the
-workaround to avoid this irq conflict.
-
-nr_legacy_irqs() uses the legacy_pic symbol under the hood causing
-an undefined symbol error if the rtc-cmos code is build as a module.
-
-This commit exports the legacy_pic symbol to fix this.
-
-Cc: rtc-linux@googlegroups.com
-Cc: alexandre.belloni@free-electrons.com
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/i8259.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/regd.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
---- a/arch/x86/kernel/i8259.c
-+++ b/arch/x86/kernel/i8259.c
-@@ -405,6 +405,7 @@ struct legacy_pic default_legacy_pic = {
- };
+--- a/drivers/net/wireless/ath/regd.c
++++ b/drivers/net/wireless/ath/regd.c
+@@ -254,8 +254,12 @@ bool ath_is_49ghz_allowed(u16 regdomain)
+ EXPORT_SYMBOL(ath_is_49ghz_allowed);
  
- struct legacy_pic *legacy_pic = &default_legacy_pic;
-+EXPORT_SYMBOL(legacy_pic);
- 
- static int __init i8259A_init_ops(void)
+ /* Frequency is one where radar detection is required */
+-static bool ath_is_radar_freq(u16 center_freq)
++static bool ath_is_radar_freq(u16 center_freq,
++			      struct ath_regulatory *reg)
++
  {
++	if (reg->country_code == CTRY_INDIA)
++		return (center_freq >= 5500 && center_freq <= 5700);
+ 	return (center_freq >= 5260 && center_freq <= 5700);
+ }
+ 
+@@ -306,7 +310,7 @@ __ath_reg_apply_beaconing_flags(struct w
+ 				enum nl80211_reg_initiator initiator,
+ 				struct ieee80211_channel *ch)
+ {
+-	if (ath_is_radar_freq(ch->center_freq) ||
++	if (ath_is_radar_freq(ch->center_freq, reg) ||
+ 	    (ch->flags & IEEE80211_CHAN_RADAR))
+ 		return;
+ 
+@@ -395,8 +399,9 @@ ath_reg_apply_ir_flags(struct wiphy *wip
+ 	}
+ }
+ 
+-/* Always apply Radar/DFS rules on freq range 5260 MHz - 5700 MHz */
+-static void ath_reg_apply_radar_flags(struct wiphy *wiphy)
++/* Always apply Radar/DFS rules on freq range 5500 MHz - 5700 MHz */
++static void ath_reg_apply_radar_flags(struct wiphy *wiphy,
++				      struct ath_regulatory *reg)
+ {
+ 	struct ieee80211_supported_band *sband;
+ 	struct ieee80211_channel *ch;
+@@ -409,7 +414,7 @@ static void ath_reg_apply_radar_flags(st
+ 
+ 	for (i = 0; i < sband->n_channels; i++) {
+ 		ch = &sband->channels[i];
+-		if (!ath_is_radar_freq(ch->center_freq))
++		if (!ath_is_radar_freq(ch->center_freq, reg))
+ 			continue;
+ 		/* We always enable radar detection/DFS on this
+ 		 * frequency range. Additionally we also apply on
+@@ -505,7 +510,7 @@ void ath_reg_notifier_apply(struct wiphy
+ 	struct ath_common *common = container_of(reg, struct ath_common,
+ 						 regulatory);
+ 	/* We always apply this */
+-	ath_reg_apply_radar_flags(wiphy);
++	ath_reg_apply_radar_flags(wiphy, reg);
+ 
+ 	/*
+ 	 * This would happen when we have sent a custom regulatory request
+@@ -653,7 +658,7 @@ ath_regd_init_wiphy(struct ath_regulator
+ 	}
+ 
+ 	wiphy_apply_custom_regulatory(wiphy, regd);
+-	ath_reg_apply_radar_flags(wiphy);
++	ath_reg_apply_radar_flags(wiphy, reg);
+ 	ath_reg_apply_world_flags(wiphy, NL80211_REGDOM_SET_BY_DRIVER, reg);
+ 	return 0;
+ }
