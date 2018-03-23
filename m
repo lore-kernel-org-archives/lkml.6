@@ -1,137 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751739AbeCWAqc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 20:46:32 -0400
-Received: from ozlabs.org ([103.22.144.67]:59835 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751551AbeCWAqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 20:46:30 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 23 Mar 2018 11:45:48 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>, Hans de Goede <hdegoede@redhat.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: Re: linux-next: manual merge of the drm-misc tree with Linus' tree
-Message-ID: <20180323114548.11171d5b@canb.auug.org.au>
-In-Reply-To: <20180315141425.49479b8b@canb.auug.org.au>
-References: <20180315141425.49479b8b@canb.auug.org.au>
+        id S1751848AbeCWAuV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 20:50:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40218 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751819AbeCWAuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 20:50:20 -0400
+Date: Thu, 22 Mar 2018 20:50:17 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>
+Subject: Re: [PATCH 04/15] mm/hmm: unregister mmu_notifier when last HMM
+ client quit v2
+Message-ID: <20180323005017.GB5011@redhat.com>
+References: <20180320020038.3360-5-jglisse@redhat.com>
+ <20180321181614.9968-1-jglisse@redhat.com>
+ <a9ba54c5-a2d9-49f6-16ad-46b79525b93c@nvidia.com>
+ <20180321234110.GK3214@redhat.com>
+ <cbc9dcba-0707-e487-d360-f6f7c8d5cb23@nvidia.com>
+ <20180322233715.GA5011@redhat.com>
+ <b858d92a-3a38-bfff-fe66-697c64ea2053@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OBMZ_RtA822_CskO9ubQ5uD"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b858d92a-3a38-bfff-fe66-697c64ea2053@nvidia.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/OBMZ_RtA822_CskO9ubQ5uD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 22, 2018 at 05:13:14PM -0700, John Hubbard wrote:
+> On 03/22/2018 04:37 PM, Jerome Glisse wrote:
+> > On Thu, Mar 22, 2018 at 03:47:16PM -0700, John Hubbard wrote:
+> >> On 03/21/2018 04:41 PM, Jerome Glisse wrote:
+> >>> On Wed, Mar 21, 2018 at 04:22:49PM -0700, John Hubbard wrote:
+> >>>> On 03/21/2018 11:16 AM, jglisse@redhat.com wrote:
+> >>>>> From: Jérôme Glisse <jglisse@redhat.com>
+> 
+> <snip>
+> 
+> >>>
+> >>> No this code is correct. hmm->mm is set after hmm struct is allocated
+> >>> and before it is public so no one can race with that. It is clear in
+> >>> hmm_mirror_unregister() under the write lock hence checking it here
+> >>> under that same lock is correct.
+> >>
+> >> Are you implying that code that calls hmm_mirror_register() should do 
+> >> it's own locking, to prevent simultaneous calls to that function? Because
+> >> as things are right now, multiple threads can arrive at this point. The
+> >> fact that mirror->hmm is not "public" is irrelevant; what matters is that
+> >>> 1 thread can change it simultaneously.
+> > 
+> > The content of struct hmm_mirror should not be modified by code outside
+> > HMM after hmm_mirror_register() and before hmm_mirror_unregister(). This
+> > is a private structure to HMM and the driver should not touch it, ie it
+> > should be considered as read only/const from driver code point of view.
+> 
+> Yes, that point is clear and obvious.
+> 
+> > 
+> > It is also expected (which was obvious to me) that driver only call once
+> > and only once hmm_mirror_register(), and only once hmm_mirror_unregister()
+> > for any given hmm_mirror struct. Note that driver can register multiple
+> > _different_ mirror struct to same mm or differents mm.
+> > 
+> > There is no need of locking on the driver side whatsoever as long as the
+> > above rules are respected. I am puzzle if they were not obvious :)
+> 
+> Those rules were not obvious. It's unusual to claim that register and unregister
+> can run concurrently, but regiser and register cannot. Let's please document
+> the rules a bit in the comments.
 
-Hi all,
+I am really surprise this was not obvious. All existing _register API
+in the kernel follow this. You register something once only and doing
+it twice for same structure (ie unique struct hmm_mirror *mirror pointer
+value) leads to serious bugs (doing so concurently or not).
 
-On Thu, 15 Mar 2018 14:14:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the drm-misc tree got a conflict in:
->=20
->   sound/pci/hda/hda_intel.c
->=20
-> between commits:
->=20
->   1ba8f9d30817 ("ALSA: hda: Add a power_save blacklist")
->   40088dc4e1ea ("ALSA: hda - Revert power_save option default value")
->=20
-> from Linus' tree and commit:
->=20
->   07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
->=20
-> from the drm-misc tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc sound/pci/hda/hda_intel.c
-> index d5017adf9feb,ec4e6b829ee2..000000000000
-> --- a/sound/pci/hda/hda_intel.c
-> +++ b/sound/pci/hda/hda_intel.c
-> @@@ -2219,8 -2201,8 +2223,9 @@@ static int azx_probe_continue(struct az
->   	struct hda_intel *hda =3D container_of(chip, struct hda_intel, chip);
->   	struct hdac_bus *bus =3D azx_bus(chip);
->   	struct pci_dev *pci =3D chip->pci;
-> + 	struct hda_codec *codec;
->   	int dev =3D chip->dev_index;
->  +	int val;
->   	int err;
->  =20
->   	hda->probe_continued =3D 1;
-> @@@ -2302,21 -2284,16 +2307,30 @@@
->   	chip->running =3D 1;
->   	azx_add_card_list(chip);
->  =20
->  +	val =3D power_save;
->  +#ifdef CONFIG_PM
->  +	if (pm_blacklist) {
->  +		const struct snd_pci_quirk *q;
->  +
->  +		q =3D snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
->  +		if (q && val) {
->  +			dev_info(chip->card->dev, "device %04x:%04x is on the power_save bla=
-cklist, forcing power_save to 0\n",
->  +				 q->subvendor, q->subdevice);
->  +			val =3D 0;
->  +		}
->  +	}
->  +#endif /* CONFIG_PM */
-> ++
-> + 	/*
-> + 	 * The discrete GPU cannot power down unless the HDA controller runtime
-> + 	 * suspends, so activate runtime PM on codecs even if power_save =3D=
-=3D 0.
-> + 	 */
-> + 	if (use_vga_switcheroo(hda))
-> + 		list_for_each_codec(codec, &chip->bus)
-> + 			codec->auto_runtime_pm =3D 1;
-> +=20
->  -	snd_hda_set_power_save(&chip->bus, power_save * 1000);
->  +	snd_hda_set_power_save(&chip->bus, val * 1000);
-> - 	if (azx_has_pm_runtime(chip) || hda->use_vga_switcheroo)
-> + 	if (azx_has_pm_runtime(chip))
->   		pm_runtime_put_autosuspend(&pci->dev);
->  =20
->   out_free:
+For instance if you call mmu_notifier_register() twice (concurrently
+or not) with same pointer value for struct mmu_notifier *mn then bad
+thing will happen. Same for driver_register() but this one actualy
+have sanity check and complain loudly if that happens. I doubt there
+is any single *_register/unregister() in the kernel that does not
+follow this.
 
-This is now a conflict between the drm tree and Linus' tree.
+Note that doing register/unregister concurrently for the same unique
+hmm_mirror struct is also illegal. However concurrent register and
+unregister of different hmm_mirror struct is legal and this is the
+reasons for races we were discussing.
 
---=20
 Cheers,
-Stephen Rothwell
-
---Sig_/OBMZ_RtA822_CskO9ubQ5uD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0TjwACgkQAVBC80lX
-0Gxo1Af9E2i+YLoJIQRVuU4I+CVf5O7s1i13MsSytqyu0bU/k8zcmbc1flUZsta3
-1uVWsVsq/L4bofzdskAkw8IluPEQyKlDg63VoPUPbItXwfHQw8N/Q0ZZMz7GaQE5
-7ce/muy7Nb5XpJaed2pxlZYjMAn0EPwg37OnjogHsLtWk0uLa2PAmv77qJQBTmoa
-RFipB8UvRbeD1ddv+3HsIUe4KMcF+hAAY+c8MZViyJgedTfzrV8aUFpVPTnDAToE
-aKiCua89D1EXVsdHS73Lj7Wtvy/x+PfV3J/nBEEk9KimxCjPUw3FFdT9PGzRLE80
-zUN+UNP+J6lRaURt5Mm2pW1THK+HFQ==
-=yNYw
------END PGP SIGNATURE-----
-
---Sig_/OBMZ_RtA822_CskO9ubQ5uD--
+Jérôme
