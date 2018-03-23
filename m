@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521828378; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521828377; cv=none;
         d=google.com; s=arc-20160816;
-        b=bjthdQRLmksAjhtwUpOUVTGBB0Fug9bmN9gRhFGvD22NTs+SGus+tyTUqkSkKrCUL0
-         8hI6rFvn705k+e84G2C/nmh/bbZ9orXp5KrhlsM/mYW2YOXf4CS73AaFAoLjmDi5AaIW
-         tR3wSVqNPw/1UZWo4QgNHasoCVPepuIiOeLD/APZYdFhX0mUJatLpaWMjqGPwiw2kgOZ
-         3H7t4tFCzU61e9mqGXfhO+UnJsFq4lkxPypd9+xPZ0siUiO3whReh7cQH3qkoWLLR67H
-         vaz85BZG8lV0MS0K+6Hf0CZ7cvjNV094LeuG3h+l2LC2iKwH4l8mYimjCgfnWe2/LYLj
-         wUdA==
+        b=Q+996TS9G3sUYfMhrnK7f3j0TCIvmbjeKkJVK2IQQLTtXM8EX/GiOXHpm3NfCvwLtD
+         fG+U6amD9wWNwiVgE+PfMnUJhnhmL+5gbUb2A4sx9ma5CNCJ2ztOHsNt51FeGUm1EcKP
+         UgfOPNjUkE9RJYNQC1OGbutSHpiaMq/KhijCBnN0XIXf8yuHAZ64KezKD87u+Ha81aLR
+         F87hQ5AOQsi7qYMXc/mpWw+GMTznThQH+SwR17tRMxM4H/TXCXuQFqhZ17L3/hPwdKXM
+         Z8NZnPutAwUOP4EdfWNPECPAvVhWBZzOa/vUfj371Viu6DLfqsfNtiTsCMTE4eFI1AMA
+         aFJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=h7UAM4u0ltxxy6L178zyCoaH+JXfuyTZuKiCHYRMeXU=;
-        b=waAxpVsrqv43odkId6FRqpfRjQvVVAzC8jujAM8UpOXFARFaZJx2sf+Ro1B1UDEa/J
-         spgIWcaN16Vl4xH4WWP2EcvaWMDd1xECaihJWHYTvX44zkPrFSm3jjiQvy5qV8nRu1l8
-         j+jZoGVCgExuDyGKhuNfnEZI4UbAnhFij/jjGkNxrWwDdWiSN/za0Z9SkqigHb5C64oI
-         332K7aRCqeO6Um3GQGxyS4k1NEsKeqrro4ZZScmhzngg4hlU9Mme9KDT4aD5JgiVyVr+
-         voPNePl99uWE1zWBJEeGnlpsaVLPPzuF1vOKseJonPdQuOM0cwEwTtcfttu8K/FImrDE
-         fUrw==
+        bh=ZiMM6b3IAluxvTLpuPTIUl4Abp6RYYb+GC3OuYDsEf4=;
+        b=AYYf0Zrzr7U6jabT4Nuxm1es7KFgj4EXt10gYskp6uh6OPoiscucfoLU+W9gtdExkM
+         sNppL2uSlvqnKfSakZ5pKwMd4CfiGgr1I+YL5iFtrjI90D3SiisIIfzcBUKfGF9atx9u
+         VYkuOl5pWQBMIHE+mcLWI5bYkICRrxa31S/bZ7Tx3opIKgGqMGg/grEJT4NpLhvUuvuy
+         lUg1grhhJ0OpuYk+WV3BjBup8vmCp/By8MsR8EqafLPyZYAjzXPKtCdK28EZlQY3AQXU
+         KcX/2pOBbFlvozu51CUfh7sv4xXPM8z2FwoMlkJrDBd5Yh16TCSmvrwPadBUoujjSq9t
+         bwaw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Fs4ONDnJ;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=k7fwifgG;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Fs4ONDnJ;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=k7fwifgG;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELsuAzh6p7g7ra2+h+UClcAzKG/37YUeQ/5K9N+hkqo0hMa6Hv2Ylc89BIENdayTIbOX5w6V0Q==
+X-Google-Smtp-Source: AG47ELvk9WhE5WUEMVsoqSg0h9QkUAircjB14UrBaNcb8W9MNavr6K0BZGR+BDkU3ySdQuhtOdtWJQ==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Alexander Potapenko <glider@google.com>,
@@ -87,68 +87,103 @@ Cc: Kostya Serebryany <kcc@google.com>,
 	Kees Cook <keescook@google.com>,
 	Jann Horn <jannh@google.com>,
 	Mark Brand <markbrand@google.com>
-Subject: [RFC PATCH v2 10/15] khwasan, arm64: enable top byte ignore for the kernel
-Date: Fri, 23 Mar 2018 19:05:46 +0100
-Message-Id: <1dcf5f0ef52a08581f453e05101cd2193575249c.1521828274.git.andreyknvl@google.com>
+Subject: [RFC PATCH v2 09/15] khwasan, kvm: untag pointers in kern_hyp_va
+Date: Fri, 23 Mar 2018 19:05:45 +0100
+Message-Id: <0e4b9cc6f99e2aabc8df77773c3d7e9649a6f2b7.1521828274.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
 In-Reply-To: <cover.1521828273.git.andreyknvl@google.com>
 References: <cover.1521828273.git.andreyknvl@google.com>
 In-Reply-To: <cover.1521828273.git.andreyknvl@google.com>
 References: <cover.1521828273.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595752713986341704?=
-X-GMAIL-MSGID: =?utf-8?q?1595752713986341704?=
+X-GMAIL-THRID: =?utf-8?q?1595752712377804881?=
+X-GMAIL-MSGID: =?utf-8?q?1595752712377804881?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-KHWASAN uses the Top Byte Ignore feature of arm64 CPUs to store a pointer
-tag in the top byte of each pointer. This commit enables the TCR_TBI1 bit,
-which enables Top Byte Ignore for the kernel, when KHWASAN is used.
+kern_hyp_va that converts kernel VA into a HYP VA relies on the top byte
+of kernel pointers being 0xff. Untag pointers passed to it with KHWASAN
+enabled.
+
+Also fix create_hyp_mappings() and create_hyp_io_mappings(), to use the
+untagged kernel pointers for address computations.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/include/asm/pgtable-hwdef.h | 1 +
- arch/arm64/mm/proc.S                   | 9 ++++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/kvm_mmu.h |  8 ++++++++
+ virt/kvm/arm/mmu.c               | 20 +++++++++++++++-----
+ 2 files changed, 23 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index cdfe3e657a9e..ae6b6405eacc 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -289,6 +289,7 @@
- #define TCR_A1			(UL(1) << 22)
- #define TCR_ASID16		(UL(1) << 36)
- #define TCR_TBI0		(UL(1) << 37)
-+#define TCR_TBI1		(UL(1) << 38)
- #define TCR_HA			(UL(1) << 39)
- #define TCR_HD			(UL(1) << 40)
- 
-diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
-index c0af47617299..d64ce2ea40ec 100644
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -41,6 +41,12 @@
- /* PTWs cacheable, inner/outer WBWA */
- #define TCR_CACHE_FLAGS	TCR_IRGN_WBWA | TCR_ORGN_WBWA
- 
+diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+index 7faed6e48b46..5149ff83b4c4 100644
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -97,6 +97,9 @@
+  * Should be completely invisible on any viable CPU.
+  */
+ .macro kern_hyp_va	reg
 +#ifdef CONFIG_KASAN_TAGS
-+#define KASAN_TCR_FLAGS TCR_TBI1
-+#else
-+#define KASAN_TCR_FLAGS 0
++	orr	\reg, \reg, #KASAN_PTR_TAG_MASK
 +#endif
+ alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
+ 	and     \reg, \reg, #HYP_PAGE_OFFSET_HIGH_MASK
+ alternative_else_nop_endif
+@@ -115,6 +118,11 @@ alternative_else_nop_endif
+ 
+ static inline unsigned long __kern_hyp_va(unsigned long v)
+ {
++#ifdef CONFIG_KASAN_TAGS
++	asm volatile("orr %0, %0, %1"
++		     : "+r" (v)
++		     : "i" (KASAN_PTR_TAG_MASK));
++#endif
+ 	asm volatile(ALTERNATIVE("and %0, %0, %1",
+ 				 "nop",
+ 				 ARM64_HAS_VIRT_HOST_EXTN)
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index b960acdd0c05..3dba9b60e0a0 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -21,6 +21,7 @@
+ #include <linux/io.h>
+ #include <linux/hugetlb.h>
+ #include <linux/sched/signal.h>
++#include <linux/kasan.h>
+ #include <trace/events/kvm.h>
+ #include <asm/pgalloc.h>
+ #include <asm/cacheflush.h>
+@@ -683,9 +684,13 @@ static phys_addr_t kvm_kaddr_to_phys(void *kaddr)
+ int create_hyp_mappings(void *from, void *to, pgprot_t prot)
+ {
+ 	phys_addr_t phys_addr;
+-	unsigned long virt_addr;
+-	unsigned long start = kern_hyp_va((unsigned long)from);
+-	unsigned long end = kern_hyp_va((unsigned long)to);
++	unsigned long virt_addr, start, end;
 +
- #define MAIR(attr, mt)	((attr) << ((mt) * 8))
++	from = khwasan_reset_tag(from);
++	to = khwasan_reset_tag(to);
++
++	start = kern_hyp_va((unsigned long)from);
++	end = kern_hyp_va((unsigned long)to);
  
- /*
-@@ -432,7 +438,8 @@ ENTRY(__cpu_setup)
- 	 * both user and kernel.
- 	 */
- 	ldr	x10, =TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
--			TCR_TG_FLAGS | TCR_ASID16 | TCR_TBI0 | TCR_A1
-+			TCR_TG_FLAGS | TCR_ASID16 | TCR_TBI0 | TCR_A1 | \
-+			KASAN_TCR_FLAGS
- 	tcr_set_idmap_t0sz	x10, x9
+ 	if (is_kernel_in_hyp_mode())
+ 		return 0;
+@@ -719,8 +724,13 @@ int create_hyp_mappings(void *from, void *to, pgprot_t prot)
+  */
+ int create_hyp_io_mappings(void *from, void *to, phys_addr_t phys_addr)
+ {
+-	unsigned long start = kern_hyp_va((unsigned long)from);
+-	unsigned long end = kern_hyp_va((unsigned long)to);
++	unsigned long start, end;
++
++	from = khwasan_reset_tag(from);
++	to = khwasan_reset_tag(to);
++
++	start = kern_hyp_va((unsigned long)from);
++	end = kern_hyp_va((unsigned long)to);
  
- 	/*
+ 	if (is_kernel_in_hyp_mode())
+ 		return 0;
 -- 
 2.17.0.rc0.231.g781580f067-goog
