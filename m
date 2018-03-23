@@ -1,90 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752066AbeCWRmR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:42:17 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:57318 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751595AbeCWRmN (ORCPT
+        id S1752230AbeCWRnA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:43:00 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46986 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752175AbeCWRm6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:42:13 -0400
-Date: Fri, 23 Mar 2018 12:42:02 -0500
-From: Julia Cartwright <julia@ni.com>
-To: Joe Korty <joe.korty@concurrent-rt.com>
-CC: <bigeasy@linutronix.de>, <mingo@redhat.com>, <tglx@linutronix.de>,
-        <rostedt@goodmis.org>, <linux-rt-users@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RT] Defer migrate_enable migration while task state !=
- TASK_RUNNING
-Message-ID: <20180323174202.GH10942@jcartwri.amer.corp.natinst.com>
-References: <20180323150959.GA16131@zipoli.concurrent-rt.com>
- <20180323165921.GG10942@jcartwri.amer.corp.natinst.com>
- <20180323172131.GA2670@zipoli.concurrent-rt.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180323172131.GA2670@zipoli.concurrent-rt.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-23_11:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+        Fri, 23 Mar 2018 13:42:58 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: lee.jones@linaro.org, bleung@chromium.org
+Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
+        gwendal@chromium.org, linux-kernel@vger.kernel.org,
+        Shawn Nematbakhsh <shawnn@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH v4 5/6] platform/chrome: cros_ec_debugfs: Add PD port info to debugfs
+Date: Fri, 23 Mar 2018 18:42:46 +0100
+Message-Id: <20180323174247.6680-6-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180323174247.6680-1-enric.balletbo@collabora.com>
+References: <20180323174247.6680-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 01:21:31PM -0400, joe.korty@concurrent-rt.com wrote:
-> On Fri, Mar 23, 2018 at 11:59:21AM -0500, Julia Cartwright wrote:
-> > On Fri, Mar 23, 2018 at 11:09:59AM -0400, joe.korty@concurrent-rt.com wrote:
-> > > I see the below kernel splat in 4.9-rt when I run a test program that
-> > > continually changes the affinity of some set of running pids:
-> > >
-> > >    do not call blocking ops when !TASK_RUNNING; state=2 set at ...
-> > >       ...
-> > >       stop_one_cpu+0x60/0x80
-> > >       migrate_enable+0x21f/0x3e0
-> > >       rt_spin_unlock+0x2f/0x40
-> > >       prepare_to_wait+0x5c/0x80
-> > >       ...
-> >
-> > This is clearly a problem.
-> >
-> > > The reason is that spin_unlock, write_unlock, and read_unlock call
-> > > migrate_enable, and since 4.4-rt, migrate_enable will sleep if it discovers
-> > > that a migration is in order.  But sleeping in the unlock services is not
-> > > expected by most kernel developers,
-> >
-> > I don't buy this, see below:
-> >
-> > > and where that counts most is in code sequences like the following:
-> > >
-> > >   set_current_state(TASK_UNINTERRUPIBLE);
-> > >   spin_unlock(&s);
-> > >   schedule();
-> >
-> > The analog in mainline is CONFIG_PREEMPT and the implicit
-> > preempt_enable() in spin_unlock().  In this configuration, a kernel
-> > developer should _absolutely_ expect their task to be suspended (and
-> > potentially migrated), _regardless of the task state_ if there is a
-> > preemption event on the CPU on which this task is executing.
-> >
-> > Similarly, on RT, there is nothing _conceptually_ wrong on RT with
-> > migrating on migrate_enable(), regardless of task state, if there is a
-> > pending migration event.
->
-> My understanding is, in standard Linux and in rt, setting
-> task state to anything other than TASK_RUNNING in of itself
-> blocks preemption.
+From: Shawn Nematbakhsh <shawnn@chromium.org>
 
-I'm assuming you're referring to the window of time between a task
-setting its state to !TASK_RUNNING and schedule()?  The task remains
-preemptible in this window.
+Add info useful for debugging USB-PD port state.
 
-> A preemption is not really needed here as it is expected that there is
-> a schedule() written in that will shortly be executed.
->
-> And if a 'involuntary schedule' (ie, preemption) were allowed to occur
-> between the task state set and the schedule(), that would change the
-> task state back to TASK_RUNNING;
+Signed-off-by: Shawn Nematbakhsh <shawnn@chromium.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
 
-This isn't the case.  A preempted task preserves its state.
+Changes in v4: None
+Changes in v3:
+- [5/6] Add EC_USB_PD_MAX_PORTS define to avoid interdependencies.
+- [5/6] Add Reviewed-by Andy Shevchenko
 
-   Julia
+Changes in v2:
+- [5/6] Drop unrelated changes.
+
+ drivers/platform/chrome/cros_ec_debugfs.c | 72 +++++++++++++++++++++++++++++++
+ include/linux/mfd/cros_ec_commands.h      |  3 ++
+ 2 files changed, 75 insertions(+)
+
+diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+index 539403022568..cc265ed8deb7 100644
+--- a/drivers/platform/chrome/cros_ec_debugfs.c
++++ b/drivers/platform/chrome/cros_ec_debugfs.c
+@@ -211,6 +211,58 @@ static int cros_ec_console_log_release(struct inode *inode, struct file *file)
+ 	return 0;
+ }
+ 
++static ssize_t cros_ec_pdinfo_read(struct file *file,
++				   char __user *user_buf,
++				   size_t count,
++				   loff_t *ppos)
++{
++	char read_buf[EC_USB_PD_MAX_PORTS * 40], *p = read_buf;
++	struct cros_ec_debugfs *debug_info = file->private_data;
++	struct cros_ec_device *ec_dev = debug_info->ec->ec_dev;
++	struct {
++		struct cros_ec_command msg;
++		union {
++			struct ec_response_usb_pd_control_v1 resp;
++			struct ec_params_usb_pd_control params;
++		};
++	} __packed ec_buf;
++	struct cros_ec_command *msg;
++	struct ec_response_usb_pd_control_v1 *resp;
++	struct ec_params_usb_pd_control *params;
++	int i;
++
++	msg = &ec_buf.msg;
++	params = (struct ec_params_usb_pd_control *)msg->data;
++	resp = (struct ec_response_usb_pd_control_v1 *)msg->data;
++
++	msg->command = EC_CMD_USB_PD_CONTROL;
++	msg->version = 1;
++	msg->insize = sizeof(*resp);
++	msg->outsize = sizeof(*params);
++
++	/*
++	 * Read status from all PD ports until failure, typically caused
++	 * by attempting to read status on a port that doesn't exist.
++	 */
++	for (i = 0; i < EC_USB_PD_MAX_PORTS; ++i) {
++		params->port = i;
++		params->role = 0;
++		params->mux = 0;
++		params->swap = 0;
++
++		if (cros_ec_cmd_xfer_status(ec_dev, msg) < 0)
++			break;
++
++		p += scnprintf(p, sizeof(read_buf) + read_buf - p,
++			       "p%d: %s en:%.2x role:%.2x pol:%.2x\n", i,
++			       resp->state, resp->enabled, resp->role,
++			       resp->polarity);
++	}
++
++	return simple_read_from_buffer(user_buf, count, ppos,
++				       read_buf, p - read_buf);
++}
++
+ const struct file_operations cros_ec_console_log_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = cros_ec_console_log_open,
+@@ -220,6 +272,13 @@ const struct file_operations cros_ec_console_log_fops = {
+ 	.release = cros_ec_console_log_release,
+ };
+ 
++const struct file_operations cros_ec_pdinfo_fops = {
++	.owner = THIS_MODULE,
++	.open = simple_open,
++	.read = cros_ec_pdinfo_read,
++	.llseek = default_llseek,
++};
++
+ static int ec_read_version_supported(struct cros_ec_dev *ec)
+ {
+ 	struct ec_params_get_cmd_versions_v1 *params;
+@@ -355,6 +414,15 @@ static int cros_ec_create_panicinfo(struct cros_ec_debugfs *debug_info)
+ 	return ret;
+ }
+ 
++static int cros_ec_create_pdinfo(struct cros_ec_debugfs *debug_info)
++{
++	if (!debugfs_create_file("pdinfo", 0444, debug_info->dir, debug_info,
++				 &cros_ec_pdinfo_fops))
++		return -ENOMEM;
++
++	return 0;
++}
++
+ int cros_ec_debugfs_init(struct cros_ec_dev *ec)
+ {
+ 	struct cros_ec_platform *ec_platform = dev_get_platdata(ec->dev);
+@@ -379,6 +447,10 @@ int cros_ec_debugfs_init(struct cros_ec_dev *ec)
+ 	if (ret)
+ 		goto remove_debugfs;
+ 
++	ret = cros_ec_create_pdinfo(debug_info);
++	if (ret)
++		goto remove_debugfs;
++
+ 	ec->debug_info = debug_info;
+ 
+ 	return 0;
+diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+index 2b96e630e3b6..f2edd9969b40 100644
+--- a/include/linux/mfd/cros_ec_commands.h
++++ b/include/linux/mfd/cros_ec_commands.h
+@@ -2948,6 +2948,9 @@ struct ec_response_usb_pd_control_v1 {
+ 
+ #define EC_CMD_USB_PD_PORTS 0x102
+ 
++/* Maximum number of PD ports on a device, num_ports will be <= this */
++#define EC_USB_PD_MAX_PORTS 8
++
+ struct ec_response_usb_pd_ports {
+ 	uint8_t num_ports;
+ } __packed;
+-- 
+2.16.2
