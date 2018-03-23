@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804053-2-9961718914022399110
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804047-2-9442491451178961441
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804052; b=QA4O2JX92uGplEKi+Oe+vbDQ3QyJs19QrDtkt6TvTa9ePMu
-    NJIPpd/bX7rgMk8jiBwY31aINkImA54ixTE55EPFHQurtbB1qx2Q7IZsj21iFOYW
-    3hE9smA+PTS+RjGbWg+iL5IFZRmjAiYCeWrpNvTkZz1XP6bnkslZSfKYeDEKbPNv
-    mY3jwpqi4yBPWBkgykY/kHPRdlkVqsMe8ASMktcsT/ZRRgEJaRxzDVPU4sizIb2c
-    y3SOJhcDDDzlHtZC5BYinq2w+aXc3Tg+NDxqToih9PBMXdSf6Yku5nW+eEd15HrP
-    VNJBSCKu/kPt0LQczRmZX0vzpC1cPOEIKcpOINA==
+    t=1521804047; b=sEqe6eDMnOQBa9Bkf11pAZGy9RQJMvpmc4acKtHBHiTkYBY
+    HL9ZknSPsKryc8unushnLzaT+rRyQhqpxAH9MJbmYGw90Qc1maLM0NfFhXrs710S
+    JTviXJ9rt9ehrl4l8Wkoh/EzjGXnNtWfzuHG4O8nuOg+Ef9k4P+2+0OROZLksVXE
+    ubudyOihCoD3vTSkIgmATCAmtX4OJmGrkMzdO2K5UOSOZ/4vSOJ32FLjAuBbSyNv
+    P4PzYTUNKb6VijtR6LOOXFVKBYSuLr2bBzLyAaVUAEX0EVe09F1QTycS8shmd74r
+    YLmLqNjnSLbltNgBc/+0N+CJNxpzOY3ctCVzE+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804052; bh=mGXANhpJyiBuGoGb1EJKgTSJWN
-    fKIBgqDbk6Ko/9m/o=; b=BHMTOsgG+353b+XGcPCxEruMyqOmAVsN98VngCPJZY
-    hLCVJBWjdd96hoRcppJLdUBZyYE0s6Gr2h7AXeux6bZbSsw9rRitFmFFc75gO1BD
-    ai2wS+CgyQOBU7qUOSbPbTwDmTgLYBuJ5a7WHe5OOCYth3+eFUNWO9Omg4h5hwGg
-    zbPuEboMH6MBNpS8CJia1pm9AvwJSzSX3wnNtCoGYC6z5CdvJV3l15DBqVn/YR1w
-    wXktACMmXlUAdw4cLpRq4jua6pqjVF3nflGJYnw+1+vI24MeTqp49x/xyaWbv67O
-    s/L8GJf2A5IO7khHqujHrxshbklfNprWGZj85n82dcCQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804047; bh=zeQuApFWPZrOzWf8VzZQNVPExQ
+    w7IDiokfJtjl4AiWM=; b=Wrx7WzQZ2Wi6puK+6MSngfwQAl0yg9qE4b41BsLdj2
+    SwR27vjoniphE6kNMbJihp1p1tHbaz47kbgzV+Swrx2VO/5dE8XyddhgCuVUt49g
+    JhJVGIWWQ4CL1cH7aGwmjjeFEgKDLslJwYlpE2IDUrMo6neWzI6Q2PC+ol3vw0lo
+    opgbkfbwpanNo/yZvEp4thdBuPb6zB7d0tMWvjsP+yC254ULm14gIE/8Rl99WPXl
+    +Sx5oIkgD9kwTCJDi9KSIiZGDiScV3IDx5YLkq7BNpimg7iOWvzv0L9abiidCx5J
+    tVseDQ7yLlthg1Tejy5ER+YqRz4DCdMnPdt17OYAkpqg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755585AbeCWKIi (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:08:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41718 "EHLO
+        id S1751909AbeCWLU3 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:20:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41768 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755575AbeCWKId (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:33 -0400
+        with ESMTP id S1755588AbeCWKIj (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Mario Kleiner <mario.kleiner.de@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 099/177] ACPI / PMIC: xpower: Fix power_table addresses
-Date: Fri, 23 Mar 2018 10:53:47 +0100
-Message-Id: <20180323094209.651558835@linuxfoundation.org>
+Subject: [PATCH 4.9 101/177] drm/nouveau/kms: Increase max retries in scanout position queries.
+Date: Fri, 23 Mar 2018 10:53:49 +0100
+Message-Id: <20180323094209.745952203@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,157 +82,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Mario Kleiner <mario.kleiner.de@gmail.com>
 
 
-[ Upstream commit 2bde7c32b1db162692f05c6be066b5bcd3d9fdbe ]
+[ Upstream commit 60b95d709525e3ce1c51e1fc93175dcd1755d345 ]
 
-The power table addresses should be contiguous, but there was a hole
-where 0x34 was missing. On most devices this is not a problem as
-addresses above 0x34 are used for the BUC# convertors which are not
-used in the DSDTs I've access to but after the BUC# convertors
-there is a field named GPI1 in the DSTDs, which does get used in some
-cases and ended up turning BUC6 on and off due to the wrong addresses,
-resulting in turning the entire device off (or causing it to reboot).
+So far we only allowed for 1 retry and just failed the query
+- and thereby high precision vblank timestamping - if we did
+not get a reasonable result, as such a failure wasn't considered
+all too horrible. There are a few NVidia gpu models out there which
+may need a bit more than 1 retry to get a successful query result
+under some conditions.
 
-Removing the hole in the addresses fixes this, fixing one of my
-Bay Trail tablets turning off while booting the mainline kernel.
+Since Linux 4.4 the update code for vblank counter and timestamp
+in drm_update_vblank_count() changed so that the implementation
+assumes that high precision vblank timestamping of a kms driver
+either consistently succeeds or consistently fails for a given
+video mode and encoder/connector combo. Iow. switching from success
+to fail or vice versa on a modeset or connector change is ok, but
+spurious temporary failure for a given setup can confuse the core
+code and potentially cause bad miscounting of vblanks and confusion
+or hangs in userspace clients which rely on vblank  stuff, e.g.,
+desktop compositors.
 
-While at it add comments with the field names used in the DSDTs to
-make it easier to compare the register and bits used at each address
-with the datasheet.
+Therefore change the max retry count to a larger number - more than
+any gpu so far is known to need to succeed, but still low enough
+so that these queries which do also happen in vblank interrupt are
+still fast enough to be not disastrously long if something would
+go badly wrong with them.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+As such sporadic retries only happen seldom even on affected gpu's,
+this could mean a vblank irq could take a few dozen microseconds
+longer every few hours of uptime -- better than a desktop compositor
+randomly hanging every couple of hours or days of uptime in a hard
+to reproduce manner.
+
+Signed-off-by: Mario Kleiner <mario.kleiner.de@gmail.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/pmic/intel_pmic_xpower.c |   50 +++++++++++++++++-----------------
- 1 file changed, 25 insertions(+), 25 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_display.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/acpi/pmic/intel_pmic_xpower.c
-+++ b/drivers/acpi/pmic/intel_pmic_xpower.c
-@@ -28,97 +28,97 @@ static struct pmic_table power_table[] =
- 		.address = 0x00,
- 		.reg = 0x13,
- 		.bit = 0x05,
--	},
-+	}, /* ALD1 */
- 	{
- 		.address = 0x04,
- 		.reg = 0x13,
- 		.bit = 0x06,
--	},
-+	}, /* ALD2 */
- 	{
- 		.address = 0x08,
- 		.reg = 0x13,
- 		.bit = 0x07,
--	},
-+	}, /* ALD3 */
- 	{
- 		.address = 0x0c,
- 		.reg = 0x12,
- 		.bit = 0x03,
--	},
-+	}, /* DLD1 */
- 	{
- 		.address = 0x10,
- 		.reg = 0x12,
- 		.bit = 0x04,
--	},
-+	}, /* DLD2 */
- 	{
- 		.address = 0x14,
- 		.reg = 0x12,
- 		.bit = 0x05,
--	},
-+	}, /* DLD3 */
- 	{
- 		.address = 0x18,
- 		.reg = 0x12,
- 		.bit = 0x06,
--	},
-+	}, /* DLD4 */
- 	{
- 		.address = 0x1c,
- 		.reg = 0x12,
- 		.bit = 0x00,
--	},
-+	}, /* ELD1 */
- 	{
- 		.address = 0x20,
- 		.reg = 0x12,
- 		.bit = 0x01,
--	},
-+	}, /* ELD2 */
- 	{
- 		.address = 0x24,
- 		.reg = 0x12,
- 		.bit = 0x02,
--	},
-+	}, /* ELD3 */
- 	{
- 		.address = 0x28,
- 		.reg = 0x13,
- 		.bit = 0x02,
--	},
-+	}, /* FLD1 */
- 	{
- 		.address = 0x2c,
- 		.reg = 0x13,
- 		.bit = 0x03,
--	},
-+	}, /* FLD2 */
- 	{
- 		.address = 0x30,
- 		.reg = 0x13,
- 		.bit = 0x04,
--	},
-+	}, /* FLD3 */
- 	{
--		.address = 0x38,
-+		.address = 0x34,
- 		.reg = 0x10,
- 		.bit = 0x03,
--	},
-+	}, /* BUC1 */
- 	{
--		.address = 0x3c,
-+		.address = 0x38,
- 		.reg = 0x10,
- 		.bit = 0x06,
--	},
-+	}, /* BUC2 */
- 	{
--		.address = 0x40,
-+		.address = 0x3c,
- 		.reg = 0x10,
- 		.bit = 0x05,
--	},
-+	}, /* BUC3 */
- 	{
--		.address = 0x44,
-+		.address = 0x40,
- 		.reg = 0x10,
- 		.bit = 0x04,
--	},
-+	}, /* BUC4 */
- 	{
--		.address = 0x48,
-+		.address = 0x44,
- 		.reg = 0x10,
- 		.bit = 0x01,
--	},
-+	}, /* BUC5 */
- 	{
--		.address = 0x4c,
-+		.address = 0x48,
- 		.reg = 0x10,
- 		.bit = 0x00
--	},
-+	}, /* BUC6 */
- };
+--- a/drivers/gpu/drm/nouveau/nouveau_display.c
++++ b/drivers/gpu/drm/nouveau/nouveau_display.c
+@@ -106,7 +106,7 @@ nouveau_display_scanoutpos_head(struct d
+ 	};
+ 	struct nouveau_display *disp = nouveau_display(crtc->dev);
+ 	struct drm_vblank_crtc *vblank = &crtc->dev->vblank[drm_crtc_index(crtc)];
+-	int ret, retry = 1;
++	int ret, retry = 20;
  
- /* TMP0 - TMP5 are the same, all from GPADC */
+ 	do {
+ 		ret = nvif_mthd(&disp->disp, 0, &args, sizeof(args));
