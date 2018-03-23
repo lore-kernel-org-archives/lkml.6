@@ -1,111 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755985AbeCWLF0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 07:05:26 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:46050 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755773AbeCWLFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 07:05:24 -0400
-Subject: Re: [PATCH 07/19] powerpc/powermac: Make some functions static
-To: Mathieu Malaterre <malat@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-References: <20180322202007.23088-1-malat@debian.org>
- <20180322202007.23088-8-malat@debian.org>
-From: christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <b7bd65f6-af40-1f35-a0be-3f9cc810db7f@c-s.fr>
-Date: Fri, 23 Mar 2018 12:05:13 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S932719AbeCWLGm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 07:06:42 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55076 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752113AbeCWLGj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 07:06:39 -0400
+Date: Fri, 23 Mar 2018 12:06:37 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv5,5/5] ARM: dts: omap4-droid4: add soundcard
+Message-ID: <20180323110637.GA23810@amd>
+References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
+ <20180322204804.GA26871@amd>
+ <20180322234832.o24ut5ahon46mdu4@earth.universe>
+ <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
 MIME-Version: 1.0
-In-Reply-To: <20180322202007.23088-8-malat@debian.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
+Content-Disposition: inline
+In-Reply-To: <20180323103006.alymgb3ywftb4gek@earth.universe>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--h31gzZEtNLTqOjlF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Le 22/03/2018 à 21:19, Mathieu Malaterre a écrit :
-> These functions can all be static, make it so. Fix warnings treated as
-> errors with W=1:
-> 
->    arch/powerpc/platforms/powermac/pci.c:1022:6: error: no previous prototype for ‘pmac_pci_fixup_ohci’ [-Werror=missing-prototypes]
->    arch/powerpc/platforms/powermac/pci.c:1057:6: error: no previous prototype for ‘pmac_pci_fixup_cardbus’ [-Werror=missing-prototypes]
->    arch/powerpc/platforms/powermac/pci.c:1094:6: error: no previous prototype for ‘pmac_pci_fixup_pciata’ [-Werror=missing-prototypes]
-> 
-> Also add gcc attribute unused to fix a warning treated as error with W=1:
-> 
->    arch/powerpc/platforms/powermac/pci.c:784:19: error: variable ‘has_address’ set but not used [-Werror=unused-but-set-variable]
->    arch/powerpc/platforms/powermac/pci.c:907:22: error: variable ‘ht’ set but not used [-Werror=unused-but-set-variable]
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->   arch/powerpc/platforms/powermac/pci.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powermac/pci.c b/arch/powerpc/platforms/powermac/pci.c
-> index 0b8174a79993..d3b9818dd880 100644
-> --- a/arch/powerpc/platforms/powermac/pci.c
-> +++ b/arch/powerpc/platforms/powermac/pci.c
-> @@ -781,7 +781,7 @@ static int __init pmac_add_bridge(struct device_node *dev)
->   	struct resource rsrc;
->   	char *disp_name;
->   	const int *bus_range;
-> -	int primary = 1, has_address = 0;
-> +	int primary = 1, has_address __maybe_unused = 0;
+Hi!
 
-YOu could remove it completely, it is never used
+> > > > Any ideas?
+> > >=20
+> > > You probably did not enable the soundcard driver, that binds against
+> > > "audio-graph-card" compatible and connects the codec driver with the
+> > > SoC driver: CONFIG_SND_AUDIO_GRAPH_CARD
+> >=20
+> > Ok, that certainly changed things; I am now getting this:
+> >=20
+> > Mar 23 08:39:17 devuan kernel: [   11.633605] asoc-audio-graph-card sou=
+ndcard: GPIO lookup for
+> >  consumer pa
+> > Mar 23 08:39:17 devuan kernel: [   11.644958] asoc-audio-graph-card sou=
+ndcard: using device tr
+> > ee for GPIO lookup
+> > Mar 23 08:39:17 devuan kernel: [   11.656677] of_get_named_gpiod_flags:=
+ can't parse 'pa-gpios'
+> >  property of node '/soundcard[0]'
+> > Mar 23 08:39:17 devuan kernel: [   11.669738] of_get_named_gpiod_flags:=
+ can't parse 'pa-gpio'=20
+> > property of node '/soundcard[0]'
+> > Mar 23 08:39:17 devuan kernel: [   11.682617] asoc-audio-graph-card sou=
+ndcard: using lookup ta
+> > bles for GPIO lookup
+> > Mar 23 08:39:17 devuan kernel: [   11.694427] asoc-audio-graph-card sou=
+ndcard: lookup for GPIO
+> >  pa failed
+>=20
+> That's not an error, but just some debug messages. Consider
+> disabling CONFIG_DEBUG_GPIO to get rid of them.
+>=20
+> > Indeed the dts does not seem to contain any gpios
+>=20
+> It's optional and does not exist on Droid 4.
+>=20
+> >         soundcard {
+> >                 compatible =3D "audio-graph-card";
+> >                 label =3D "Droid 4 Audio";
+> >=20
+> >                 simple-graph-card,widgets =3D
+> >                         "Speaker", "Earpiece",
+> >                         "Speaker", "Loudspeaker",
+> > 	                "Headphone", "Headphone Jack",
+> > 	                "Microphone", "Internal Mic";
+> >=20
+> >                 simple-graph-card,routing =3D
+> > 	                "Earpiece", "EP",
+> > 		        "Loudspeaker", "SPKR",
+> >                         "Headphone Jack", "HSL",
+> >                         "Headphone Jack", "HSR",
+> > 	                "MICR", "Internal Mic";
+> >=20
+> >                 dais =3D <&mcbsp2_port>, <&mcbsp3_port>;
+> > 	};
+> >=20
+> > Any more ideas? :-)
+>=20
+> Make sure, that the device was not proped properly (cat
+> /proc/asound/cards) and post the real error? :)
 
->   
->   	DBG("Adding PCI host bridge %pOF\n", dev);
->   
-> @@ -904,7 +904,7 @@ static int pmac_pci_root_bridge_prepare(struct pci_host_bridge *bridge)
->   void __init pmac_pci_init(void)
->   {
->   	struct device_node *np, *root;
-> -	struct device_node *ht = NULL;
-> +	struct device_node *ht __maybe_unused = NULL;
+Unfortunately, that are last messages from asoc-audio-graph-card
 
-Shouldn't ht be enclosed into #ifdef CONFIG_PPC64 instead ?
+Mar 23 08:39:17 devuan kernel: [   11.694427] asoc-audio-graph-card
+soundcard: lookup for GPIO pa failed
 
-Christophe
+and no, it is not detected:
 
->   
->   	pci_set_flags(PCI_CAN_SKIP_ISA_ALIGN);
->   
-> @@ -1019,7 +1019,7 @@ static bool pmac_pci_enable_device_hook(struct pci_dev *dev)
->   	return true;
->   }
->   
-> -void pmac_pci_fixup_ohci(struct pci_dev *dev)
-> +static void pmac_pci_fixup_ohci(struct pci_dev *dev)
->   {
->   	struct device_node *node = pci_device_to_OF_node(dev);
->   
-> @@ -1054,7 +1054,7 @@ void __init pmac_pcibios_after_init(void)
->   	}
->   }
->   
-> -void pmac_pci_fixup_cardbus(struct pci_dev* dev)
-> +static void pmac_pci_fixup_cardbus(struct pci_dev *dev)
->   {
->   	if (!machine_is(powermac))
->   		return;
-> @@ -1091,7 +1091,7 @@ void pmac_pci_fixup_cardbus(struct pci_dev* dev)
->   
->   DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_TI, PCI_ANY_ID, pmac_pci_fixup_cardbus);
->   
-> -void pmac_pci_fixup_pciata(struct pci_dev* dev)
-> +static void pmac_pci_fixup_pciata(struct pci_dev *dev)
->   {
->          u8 progif = 0;
->   
-> 
+root@devuan:/home/user# cat /proc/asound/cards
+ 0 [H58006000encode]: HDMI_58006000_e - HDMI 58006000.encoder
+                       HDMI 58006000.encoder
+root@devuan:/home/user#
 
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
+Hmm. Is it possible that EPROBEDEFFER is playing with me again?
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--h31gzZEtNLTqOjlF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq0370ACgkQMOfwapXb+vJrLACfcDaDljlGXEKaZIN/lqD9YFKT
+GjsAnRvlmnPynTbw9v3ypUGOuTAm76nL
+=wg8Y
+-----END PGP SIGNATURE-----
+
+--h31gzZEtNLTqOjlF--
