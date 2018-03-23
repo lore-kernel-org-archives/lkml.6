@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806842-2-15033171291477056661
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806821-2-12059761831942930977
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, URIBL_RHS_DOB 1.514,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806841; b=X3K/xvoUNIRYxq5YVk+SWtBuKX1U/bmcc/n1GkQU8zRIwtF
-    iA42mg1iDsfYdrknokUjafv3Dpbvu79ZUlQ0Yql+teDzvUnQwC7exd5MHlKXqqBJ
-    f+SX6CkNm6/YZTqRKfuW5EqpQf15VeVKOePUN2dgROqgQpJbB7Y8R7u2Awfk0sb4
-    sceTzUfFmrxTBB86V0qL/sVPVvH7cL2QD4tC0po/C1LDcStDPtVlkVT5XCc/ZxHr
-    CrY0X+Wz4M9rRJIUAicWOto87WVUE4g055MhlI2gjBlJZO2YUz3yL4J/OznpvOdY
-    gVG8HEWrIzZRfluGzByP7FKCjF08ZpvVWyksGWg==
+    t=1521806820; b=DtiznY642N5GKqR8peRDihhO4rWiS+BHyzfWV0jFMwjX9Sa
+    9/FakLbjO+89OLVnJ21sdYEUgDJTkYv/DCpPEP56/gKPpMLsp92ONVMjruJ2Lx7o
+    Y+b4aa/ehCIrV9Bairdcc6Fh16jgakyomRNngLmaYMcrVmRbGSs2u0y0nQiUHh6a
+    vMcE/+X8+lBkZfXFJ67P3z4d0LmRX0YF1DT/R2lykgoZVBTTwq9iq3gLcMe0mRoi
+    U7VAJ4+qL81SjoFi1JEKIheiw8uoML9tubZK6iyfqDjuoG6FI+HZM4ZeiDQMT3kO
+    APXd1gdppf1ome5vu7cFtC09avksSipPLfvVN9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806841; bh=C1WkGMcSFwfwfvG+x2jFpykGcF
-    w0eO9ClizfoaKEUMQ=; b=xDNo1PZY8VhH9t8aaSaw0yLQnlNzUnyOzIRQeckWu3
-    k3CDMkKAHf1DPKtaaujnjUS7z+Zp0v74CD0Zd99TAmnHjezAw6epL6ue6zWtv0gN
-    +SwJmr51OSi+GaNtQjcuP8XyWhHherdJIfA7fTAyCsYPU3o/OWSZ1G6iWxdUgoSA
-    unNniiCekerG64u4/dczjUUKBTGXwxFpV6h13g2g7w4gdhs+OxgHb1q7UBsTaEHe
-    5Egr7bLz+FAxv3sJyxYRTVTmepGKvL3E1lpdZpUfDCOY6XrjIE69tyl5iIptn7Jf
-    B6bV33I9zLJ/mkNxJvEF0BkhzD1Wqp3pBPJjxaFt5JmA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521806820; bh=ZZPFNlA/LPQU1PIQo63GQAib4e
+    eNznMaAe/KlQYaPnk=; b=XoaA1ohzcUmIb2srxMyYAdblMtRuokEavltkCzybGz
+    FO+arj/kwa2wBFSmm5jN12f5OfAPL3rZesZcjajMCvDVPTBClqJoxL8u7dfL1Lk3
+    PLdowdR8hju76S6i0MB4tb2UKe341nHmINtdMRbcjz4Vy7nr6Keeu3rAummmZ2pg
+    /Pf5KcCXclVI0Exw0C/a6kL1taolFXJW6p/XEfeIPAEJPG3ouU7oL32XK7Cm9hKj
+    0dO5UEwjH43FKNPUBDSOJ+ucIGNYFjD3lugURuqH0y7zL08lQzNP3R4lAofKQ0Dk
+    lOzbDT3wfRcmWSqx7SvTmXySbFfgfcayks1NElqeI7kw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeCWMHE (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 08:07:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35882 "EHLO
+        id S1751999AbeCWJ6y (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:58:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35894 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753196AbeCWJ6u (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:50 -0400
+        with ESMTP id S1752446AbeCWJ6x (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 53/84] PCI: rcar: Handle rcar_pcie_parse_request_of_pci_ranges() failures
-Date: Fri, 23 Mar 2018 10:54:07 +0100
-Message-Id: <20180323095419.997389319@linuxfoundation.org>
+Subject: [PATCH 4.15 54/84] media: davinci: fix a debug printk
+Date: Fri, 23 Mar 2018 10:54:08 +0100
+Message-Id: <20180323095420.133273752@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -83,43 +83,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
 
-[ Upstream commit 83c75ddd816e979802bd244ad494139f28152921 ]
+[ Upstream commit 4f6c11044f512356cb63d3df0f3b38db79dc6736 ]
 
-rcar_pcie_parse_request_of_pci_ranges() can fail and return an error
-code, but this is not checked nor handled.
+Two orthogonal changesets caused a breakage at a printk
+inside davinci. Commit a2d17962c9ca
+("[media] davinci: Switch from V4L2 OF to V4L2 fwnode")
+made davinci to use struct fwnode_handle instead of
+struct device_node. Commit 68d9c47b1679
+("media: Convert to using %pOF instead of full_name")
+changed the printk to not use ->full_name, but, instead,
+to rely on %pOF.
 
-Fix this by adding the missing error handling.
+With both patches applied, the Kernel will do the wrong
+thing, as warned by smatch:
+	drivers/media/platform/davinci/vpif_capture.c:1399 vpif_async_bound() error: '%pOF' expects argument of type 'struct device_node*', argument 5 has type 'void*'
 
-Fixes: 5d2917d469faab72 ("PCI: rcar: Convert to DT resource parsing API")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+So, change the logic to actually print the device name
+that was obtained before the print logic.
+
+Fixes: 68d9c47b1679 ("media: Convert to using %pOF instead of full_name")
+Fixes: a2d17962c9ca ("[media] davinci: Switch from V4L2 OF to V4L2 fwnode")
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/host/pcie-rcar.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/platform/davinci/vpif_capture.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -1123,7 +1123,9 @@ static int rcar_pcie_probe(struct platfo
- 
- 	INIT_LIST_HEAD(&pcie->resources);
- 
--	rcar_pcie_parse_request_of_pci_ranges(pcie);
-+	err = rcar_pcie_parse_request_of_pci_ranges(pcie);
-+	if (err)
-+		goto err_free_bridge;
- 
- 	err = rcar_pcie_get_resources(pcie);
- 	if (err < 0) {
-@@ -1178,6 +1180,7 @@ err_pm_disable:
- 
- err_free_resource_list:
- 	pci_free_resource_list(&pcie->resources);
-+err_free_bridge:
- 	pci_free_host_bridge(bridge);
- 
- 	return err;
+--- a/drivers/media/platform/davinci/vpif_capture.c
++++ b/drivers/media/platform/davinci/vpif_capture.c
+@@ -1397,9 +1397,9 @@ static int vpif_async_bound(struct v4l2_
+ 			vpif_obj.config->chan_config->inputs[i].subdev_name =
+ 				(char *)to_of_node(subdev->fwnode)->full_name;
+ 			vpif_dbg(2, debug,
+-				 "%s: setting input %d subdev_name = %pOF\n",
++				 "%s: setting input %d subdev_name = %s\n",
+ 				 __func__, i,
+-				 to_of_node(subdev->fwnode));
++				vpif_obj.config->chan_config->inputs[i].subdev_name);
+ 			return 0;
+ 		}
+ 	}
