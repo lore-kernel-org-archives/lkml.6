@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtbwL+PW3y+YtgH3xp3vymHE5QcC2shUOk4diJ4XmnnrcOLY5uWxgox6Vg5vmxlypAf4tlv
-ARC-Seal: i=1; a=rsa-sha256; t=1521800228; cv=none;
+X-Google-Smtp-Source: AG47ELs3yrGudBl9OUgxANsfGLv7fQgUuRE1vAy5G4ZstNrdG2mJwCRH5P/p4YirzCtUE7ugpAwB
+ARC-Seal: i=1; a=rsa-sha256; t=1521800225; cv=none;
         d=google.com; s=arc-20160816;
-        b=v55HyKxcmlp6/hm+2QZrcqPBTQDfeFygRLnYC+XCz+RU4DEQzRpfK3t84p2AqDJlpE
-         1LRQzI41cZ5lTqTTWkyTgfUSlta0mUKeL76NVG0jLfIO18f9fqFUKDhjkR7Y8vzr0oKU
-         //9pkeoyM8A2J9hs0eqksOg2F5Lc2hH5PiFl3uV/NqRfzthn/AV7NyTRreDlAeMyt/rC
-         GmLfe3pCyqrQJegtoU2MWvBuqGk9ua0BzA5TKy+BtuMsqTO6r7XnMNiFLRTBWzuOEj22
-         y+y4+oa4mK5vTNzQL3ksANCBd1Zf7OXpba+uSk2MEaKaNARZupMzBzOZ9N7sMUZvCeid
-         brgg==
+        b=guqxeYimFTEDVp5rI4+Cxq6cOkKS/hpVo8t3bQOHHHcvUIg3o6zKGev186p+9Hfmnt
+         spyoHFZrqooxgRSUe+JJ8SbPEHpRpLXj8y1EQHa93rCEEXf5bneK3qBprUzWfQOSDodg
+         QnoItUxlAQ4fVN/ldCUNyviInRhP5ZH6aPBMAs7z2nBhpKGNxw79/wafG1LPzp+qc/Kr
+         f0IspA3f0P3U5/FC+lo88kn+kwtYS/UCYmpaTM9ztsHkglvPIs7IOPfGLPKJUe2EiUCR
+         whRf3uJQfjOkqz0Ltdm92g04rhAB1WEuDp96N8OkynDg2mZXp2ZkuWhrZVGiWfnjT+rV
+         cKjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rm8aRQ3B0l5wriZ3QBLTlYRD5lzchp7S7Fj8OAhXFxA=;
-        b=JgMuHErw3oYLAUJr4zqVZczAfI4hW7c2+r0cmvFA3cyCJF6zKLQreZI9A7Jo5TU608
-         jQlGitbeNlQbyNbm7XudTC/PCLK/oTO1dgrHdiMLl+/+HHdwG8ykfAcYES+sD6CuHG1o
-         mjYhq9W6pWfs5XO9gAQMpv4mYLNaDmas/NDhJiVzO4Obht1EpeHl5LmFgYa73E56G6/Y
-         Ouisi46ixrihQe0wZiX/RDfPUo9wNiEubnPgMZfwoM/OiZWLJA40vfpml72vIqF71eOZ
-         bKq5XgBv/vmCpthUFkluk5+e4c8pAyFot/x1TJGZAqO2xskE91OGIROr3MvddxhvmIbl
-         9Kow==
+        bh=tOf6nbK7CUFqmAaGqPxD9O3+kc+zq7ig/VJBMMhGpoU=;
+        b=eXvuftpWsoKZ41FdfhxgxGiQ1rm6lkLmqRkzCRn4BgOiUSmMtv0m9S8CbrkxspygcX
+         5tDXNrfO5m8gp198S6h6GClOC7zoZRAxD8ewPYgjcIKzw1hRCZHIgUoUwTW/bjgyNAp3
+         xGyplXB7X4FHNgj/gCa/d2IoBQK4l+ObHNz29vEao3gfDL4NBa0Yx4T623UwIMstz23r
+         erTNEEjPE4VYaz6WFLSFVyr2oxJaCMS6nZMuglMoYZveg/63ldKdTDoPx62h5zH8WU0k
+         vj2ukCxv5XNcoWs6e0A7noxnQLgTBdsEKE4T9wN+HChAP25AIcbNIO8XfEDiWBeOBaoO
+         7omA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Anton Vasilyev <vasilyev@ispras.ru>,
-	Selvin Xavier <selvin.xavier@broadcom.com>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Petr Vorel <pvorel@suse.cz>,
+	Alexey Kodanev <alexey.kodanev@oracle.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 93/97] RDMA/ocrdma: Fix permissions for OCRDMA_RESET_STATS
-Date: Fri, 23 Mar 2018 10:55:20 +0100
-Message-Id: <20180323094202.680504261@linuxfoundation.org>
+Subject: [PATCH 4.4 92/97] ip6_vti: adjust vti mtu according to mtu of lower device
+Date: Fri, 23 Mar 2018 10:55:19 +0100
+Message-Id: <20180323094202.622913188@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722096549947834?=
-X-GMAIL-MSGID: =?utf-8?q?1595723196733957889?=
+X-GMAIL-THRID: =?utf-8?q?1595722029897098807?=
+X-GMAIL-MSGID: =?utf-8?q?1595723193798452395?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +51,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anton Vasilyev <vasilyev@ispras.ru>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
 
-[ Upstream commit 744820869166c8c78be891240cf5f66e8a333694 ]
+[ Upstream commit 53c81e95df1793933f87748d36070a721f6cb287 ]
 
-Debugfs file reset_stats is created with S_IRUSR permissions,
-but ocrdma_dbgfs_ops_read() doesn't support OCRDMA_RESET_STATS,
-whereas ocrdma_dbgfs_ops_write() supports only OCRDMA_RESET_STATS.
+LTP/udp6_ipsec_vti tests fail when sending large UDP datagrams over
+ip6_vti that require fragmentation and the underlying device has an
+MTU smaller than 1500 plus some extra space for headers. This happens
+because ip6_vti, by default, sets MTU to ETH_DATA_LEN and not updating
+it depending on a destination address or link parameter. Further
+attempts to send UDP packets may succeed because pmtu gets updated on
+ICMPV6_PKT_TOOBIG in vti6_err().
 
-The patch fixes misstype with permissions.
+In case the lower device has larger MTU size, e.g. 9000, ip6_vti works
+but not using the possible maximum size, output packets have 1500 limit.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+The above cases require manual MTU setup after ip6_vti creation. However
+ip_vti already updates MTU based on lower device with ip_tunnel_bind_dev().
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
-Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Here is the example when the lower device MTU is set to 9000:
+
+  # ip a sh ltp_ns_veth2
+      ltp_ns_veth2@if7: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 ...
+        inet 10.0.0.2/24 scope global ltp_ns_veth2
+        inet6 fd00::2/64 scope global
+
+  # ip li add vti6 type vti6 local fd00::2 remote fd00::1
+  # ip li show vti6
+      vti6@NONE: <POINTOPOINT,NOARP> mtu 1500 ...
+        link/tunnel6 fd00::2 peer fd00::1
+
+After the patch:
+  # ip li add vti6 type vti6 local fd00::2 remote fd00::1
+  # ip li show vti6
+      vti6@NONE: <POINTOPOINT,NOARP> mtu 8832 ...
+        link/tunnel6 fd00::2 peer fd00::1
+
+Reported-by: Petr Vorel <pvorel@suse.cz>
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/ocrdma/ocrdma_stats.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/ip6_vti.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-+++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
-@@ -834,7 +834,7 @@ void ocrdma_add_port_stats(struct ocrdma
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -614,6 +614,7 @@ static void vti6_link_config(struct ip6_
+ {
+ 	struct net_device *dev = t->dev;
+ 	struct __ip6_tnl_parm *p = &t->parms;
++	struct net_device *tdev = NULL;
  
- 	dev->reset_stats.type = OCRDMA_RESET_STATS;
- 	dev->reset_stats.dev = dev;
--	if (!debugfs_create_file("reset_stats", S_IRUSR, dev->dir,
-+	if (!debugfs_create_file("reset_stats", 0200, dev->dir,
- 				&dev->reset_stats, &ocrdma_dbg_ops))
- 		goto err;
+ 	memcpy(dev->dev_addr, &p->laddr, sizeof(struct in6_addr));
+ 	memcpy(dev->broadcast, &p->raddr, sizeof(struct in6_addr));
+@@ -626,6 +627,25 @@ static void vti6_link_config(struct ip6_
+ 		dev->flags |= IFF_POINTOPOINT;
+ 	else
+ 		dev->flags &= ~IFF_POINTOPOINT;
++
++	if (p->flags & IP6_TNL_F_CAP_XMIT) {
++		int strict = (ipv6_addr_type(&p->raddr) &
++			      (IPV6_ADDR_MULTICAST | IPV6_ADDR_LINKLOCAL));
++		struct rt6_info *rt = rt6_lookup(t->net,
++						 &p->raddr, &p->laddr,
++						 p->link, strict);
++
++		if (rt)
++			tdev = rt->dst.dev;
++		ip6_rt_put(rt);
++	}
++
++	if (!tdev && p->link)
++		tdev = __dev_get_by_index(t->net, p->link);
++
++	if (tdev)
++		dev->mtu = max_t(int, tdev->mtu - dev->hard_header_len,
++				 IPV6_MIN_MTU);
+ }
  
+ /**
