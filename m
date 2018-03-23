@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuJNB3/x9HkGiRsKvzYvbHLeZ1hFT8HfMiKfBAova6mY1hE7Ayhlsos818bVKAvcTBdTouP
-ARC-Seal: i=1; a=rsa-sha256; t=1521800389; cv=none;
+X-Google-Smtp-Source: AG47ELtW01Z5+sweqEj45I8OZnIwqRKQMRq/VJiVAXGisNBIAKnW8IvCrf1mRs1ID3ndMWLYzOI5
+ARC-Seal: i=1; a=rsa-sha256; t=1521800386; cv=none;
         d=google.com; s=arc-20160816;
-        b=oJAwkhw5zRdm/RYUoY4XXgQrt9dFa/1fox/xXbxwtRu6cpCh3+7ydmr1EUCKfbqahu
-         Cerbf/a8w8LkBproQbxYscoECoSZvO6wd9A6MV1gW1aWLfeZTaA/QCzWzMReiIhwpMkg
-         UOGnRf/7hBYPm6PKoLAoAW2+6aDqbbARIDUEwFEQTNzjiNyCpi0Spsf7c+VbNO5u8508
-         uX7soC8I7akcTv3rJPY5XUZK9HCh2EMgkmo0AQTKcb2my+tMynM0JCop6rfYTNR2zRfz
-         Apy1AR2pUCW8vIH01txo3mUZpFvrjUkAftGaqmvMZWl8RWgNzwI5N+qE7YqYZef1bEs1
-         ahMQ==
+        b=iLDTUmKsB5wmkV0CVikWnRPVYeyr9wOPL6zO+h+HT8oBAAoCaSUPXHKQbLRHdPZseb
+         p3tUHMg71Pz3beggzvObDkkY5cj1CHuYUv36J+HtM4kee6uwoVme2TSqJYGrcs3Swicr
+         nZlO1X6YYrt0J/MWo4MhdDG9oxlZH5QmW2CX5Lbt1IlYb1KYxZ5a+BLAi8Cc3wAC/9gf
+         IIkmcuxNha7qHtgFZ0d2PrSiNs2g1ttmYLTIc5em0umTX979Zvz1ZgYEl7I440as5l/S
+         aIAS5ZQYW04pgu3D+wb1ssNBCs3HpxABm+JJCZypmEFN6r3irr8Rpy4+ebQCaQ6QdJD5
+         zZUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GMn5FUd8eKkfvWoEzoEw7fyFmJzxiaxrRKgzmjE5mTs=;
-        b=zImCaed5JJKsWzTJOrbl+qtU+1h0cbifoHZbab1v5ovyfOH1QamRVdGIy+YRoFb3yz
-         UxayFIfWwJTMDkMArrJq7JD9/PcicDZIp3+yoP0/tlEKik9G/3VySZGmRsICpTjCNlAP
-         0fR7dxMKwGerat2zIO0EN4TBUVrgocG0Jk/SOGk86ju05Qn3aRZahc6sQ8NB82GRnBX3
-         hydOUL2r0jecHSZK1ni4FuatIUY8wjGGY73fu/nbmfwuTtukKAzDkiHH/ikrTi7EilFN
-         3x62pK7Q+yAfjlFUo9HUmER4pe6GRK4NZST6DolP9fUYfYJ46KS5AcNtSgcJRY82rQUL
-         VcXg==
+        bh=7VvVlf5epVKF/8K9bI6CNzTs7fzeSzPmRkoWvKNKU5g=;
+        b=INLagtaggRtSNgqAq2L5BicavI6BN/R8T+CCEdznGz5S4h6EF4YEq1LsphfO7kJnnw
+         eCXbteP9PS7GtWPXlaP62oKC2BmXRQqKKJmSx5iRtbD3qBm90vasUoR/2D+WC7MJtbRe
+         uLJMdv6wNOKkAX62rkeqapIafj5jHhovp6L5D2E14NthXPaEtfp4+kP1BxOQMdMx+onD
+         vsekZi0xb638KOaubh/dF983L+frHw91V7d2uEmxe+nRHoRz05qOfLA5eGOFfGuhJ0rB
+         7xbVd4j/I5A/PUyQnrG0nzrpY/r1fxnIa/XLisvFlJOFclC0j8n8sr+dd+LqpzrIDwu9
+         LnLA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Prakash Kamliya <pkamliya@codeaurora.org>,
+	Sharat Masetty <smasetty@codeaurora.org>,
+	Rob Clark <robdclark@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 38/47] media: bt8xx: Fix err bt878_probe()
-Date: Fri, 23 Mar 2018 10:55:29 +0100
-Message-Id: <20180323094249.740798325@linuxfoundation.org>
+Subject: [PATCH 3.18 37/47] drm/msm: fix leak in failed get_pages
+Date: Fri, 23 Mar 2018 10:55:28 +0100
+Message-Id: <20180323094249.700767402@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721938241360348?=
-X-GMAIL-MSGID: =?utf-8?q?1595723365427163526?=
+X-GMAIL-THRID: =?utf-8?q?1595721904913881579?=
+X-GMAIL-MSGID: =?utf-8?q?1595723361805894186?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +51,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Prakash Kamliya <pkamliya@codeaurora.org>
 
 
-[ Upstream commit 45392ff6881dbe56d41ef0b17c2e576065f8ffa1 ]
+[ Upstream commit 62e3a3e342af3c313ab38603811ecdb1fcc79edb ]
 
-This is odd to call 'pci_disable_device()' in an error path before a
-coresponding successful 'pci_enable_device()'.
+get_pages doesn't keep a reference of the pages allocated
+when it fails later in the code path. This can lead to
+a memory leak. Keep reference of the allocated pages so
+that it can be freed when msm_gem_free_object gets called
+later during cleanup.
 
-Return directly instead.
-
-Fixes: 77e0be12100a ("V4L/DVB (4176): Bug-fix: Fix memory overflow")
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Prakash Kamliya <pkamliya@codeaurora.org>
+Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/bt8xx/bt878.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/msm/msm_gem.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/drivers/media/pci/bt8xx/bt878.c
-+++ b/drivers/media/pci/bt8xx/bt878.c
-@@ -425,8 +425,7 @@ static int bt878_probe(struct pci_dev *d
- 	       bt878_num);
- 	if (bt878_num >= BT878_MAX) {
- 		printk(KERN_ERR "bt878: Too many devices inserted\n");
--		result = -ENOMEM;
--		goto fail0;
-+		return -ENOMEM;
- 	}
- 	if (pci_enable_device(dev))
- 		return -EIO;
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -83,14 +83,17 @@ static struct page **get_pages(struct dr
+ 			return p;
+ 		}
+ 
++		msm_obj->pages = p;
++
+ 		msm_obj->sgt = drm_prime_pages_to_sg(p, npages);
+ 		if (IS_ERR(msm_obj->sgt)) {
++			void *ptr = ERR_CAST(msm_obj->sgt);
++
+ 			dev_err(dev->dev, "failed to allocate sgt\n");
+-			return ERR_CAST(msm_obj->sgt);
++			msm_obj->sgt = NULL;
++			return ptr;
+ 		}
+ 
+-		msm_obj->pages = p;
+-
+ 		/* For non-cached buffers, ensure the new pages are clean
+ 		 * because display controller, GPU, etc. are not coherent:
+ 		 */
+@@ -113,7 +116,10 @@ static void put_pages(struct drm_gem_obj
+ 		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
+ 			dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
+ 					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
+-		sg_free_table(msm_obj->sgt);
++
++		if (msm_obj->sgt)
++			sg_free_table(msm_obj->sgt);
++
+ 		kfree(msm_obj->sgt);
+ 
+ 		if (iommu_present(&platform_bus_type))
