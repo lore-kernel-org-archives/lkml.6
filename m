@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802837-4-1562710561700055257
+X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802776-2-532596127233847877
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, URIBL_RHS_DOB 1.514,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802836; b=MElrbO1YL2FvoqAaMgXYNSWAH8Ayb/17jB8cEyvD2eRj2oc
-    TYnPJosRvWoj027ZBum+H95l9LXzyl2/7RkzIUlz9BuP5Of8Ht0eXlPukc73xCyY
-    tWXpFD53Q0kdHZRQDwGwY40mTc6DpwTIv6a4pRDb0Nq5BF2Qfm09Rud1PHyTQ1a1
-    KOPHPQOSfzGD+xSpDLDEmWsaa2SS2h4OQbCrurQBBUdpvOA4mp2vrhlWAk25Hwa+
-    wtIPTQUHWUxIzIWXIQEMfqG0TUfIakWUoMppaqWso3XSYqk5dpxaqf/KejueUBx6
-    8X6A7f4gGwlGRvceXW4Dd0tfm4zmO+L08gVtPUA==
+    t=1521802776; b=kXI7x7MLMYDnF3MBAuZkvgadeq6G9Nw8oKzTtt6w29yWsBx
+    wT1mxRqYzhP6qORHJUweVP/gdtrcge0cejs1ApY9FM4UAMSiZK/dU13KgSZAexrA
+    ZpIV1R7xrOw9D27m+H5raLNuGZMNt1d5qifdZd6rUUZnNtQJB1pymQ9eQE2Enaf9
+    HsieWTSDN4PCviDarcGIbt5L3ti3OXsAco19c83EN4aPWXH5Jh5Zks+mrApTY8GB
+    7rwZ9vIQyOh9xI1P/lEXc1IIb164yYNfTv+b47Pd7k2jizvfV668/ds8Xzol8JeM
+    73+dq7LKmG4ctffTk53Ggu7bngLUjvOOQ/BsFdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802836; bh=+/S8TSDQOrT5UgEkCItN+CyGu+
-    I2eEqFKqvLe2k2xlc=; b=rUZpFRxHXiLAxSJJmyA2SaB001pH7LY6eisxx7YnEG
-    E/3/5z0ljMk4Owb1+u/L/AnRfkH/h7HzE5ipQ4rD/8v2Ws/eXtjc/qtwiUAgMtpM
-    sMAdJuOuYJh+k0JtoMJoAs1sWwyqvsBVmw5s8IjAzrbekk3stgWQ2ZmofLGBbVKd
-    hXveA95nqjeWGI85iWQVJl2sDIWPA8yQnfavbucvCMTeSD1xbVPMJ33LyBAjcg1k
-    TNwLwz1cK22Kffg/IyBvgbZrBmOwFsdeVz01+2O39byq6km/RDzn8RRGlBsZu5BG
-    NnRxEfi4CtUw2xU0v/VfLe+fmBzVjnMWV2LRkYY45VyA==
+    :list-id; s=arctest; t=1521802776; bh=glLtkZ4MAWA3QYKuCiwUkX2AhD
+    badBzGB0JGOmxKi3w=; b=FkQGff7Gs8p0X35f0/Ik+nMfkHEi0oeM8+X+An/xqa
+    abP/xyMuLipwiydq28wcFyUkFH3GiKLQ6q7cXy1l1PKJEJ+6xa21Lgp0OGRjQ2py
+    XLTlWrufKLn44DYhHgueoyESgxeHjvcoS288f17wAVZVGegeGG2KBF4JFkJTcGt9
+    UhdF1EjRimcI1gaUF6zBAI9om+0hxVB402dWdXUhlDtP/57zuYiBZNfCkf0Q8j1i
+    tI0Yii5BkWzVchEqW6qZ0WbmllmHLBfQVTnM9TcT7nKAMNHlsV6sSHq+aBowR/XE
+    THqb+/YRXmUrqw8wzfkorIy9zfm8Ky03Pwo5u9TlVz/A==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,24 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755612AbeCWK7m (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:59:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44356 "EHLO
+        id S1751894AbeCWK7T (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:59:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44376 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933202AbeCWKM3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:29 -0400
+        with ESMTP id S933210AbeCWKMc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+        stable@vger.kernel.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rabeeh Khoury <rabeeh@solid-run.com>,
+        Sergej Sawazki <sergej@taudac.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 169/177] clk: axi-clkgen: Correctly handle nocount bit in recalc_rate()
-Date: Fri, 23 Mar 2018 10:54:57 +0100
-Message-Id: <20180323094212.610645709@linuxfoundation.org>
+Subject: [PATCH 4.9 170/177] clk: si5351: Rename internal plls to avoid name collisions
+Date: Fri, 23 Mar 2018 10:54:58 +0100
+Message-Id: <20180323094212.652789125@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,71 +85,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Sergej Sawazki <sergej@taudac.com>
 
 
-[ Upstream commit 063578dc5f407f67d149133818efabe457daafda ]
+[ Upstream commit cdba9a4fb0b53703959ac861e415816cb61aded4 ]
 
-If the nocount bit is set the divider is bypassed and the settings for the
-divider count should be ignored and a divider value of 1 should be assumed.
-Handle this correctly in the driver recalc_rate() callback.
+This drivers probe fails due to a clock name collision if a clock named
+'plla' or 'pllb' is already registered when registering this drivers
+internal plls.
 
-While the driver sets up the part so that the read back dividers values
-yield the correct result the power-on reset settings of the part might not
-reflect this and hence calling e.g. clk_get_rate() without prior calls to
-clk_set_rate() will yield the wrong result.
+Fix it by renaming internal plls to avoid name collisions.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Rabeeh Khoury <rabeeh@solid-run.com>
+Signed-off-by: Sergej Sawazki <sergej@taudac.com>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk-axi-clkgen.c |   29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ drivers/clk/clk-si5351.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -40,6 +40,10 @@
- #define MMCM_REG_FILTER1	0x4e
- #define MMCM_REG_FILTER2	0x4f
- 
-+#define MMCM_CLKOUT_NOCOUNT	BIT(6)
-+
-+#define MMCM_CLK_DIV_NOCOUNT	BIT(12)
-+
- struct axi_clkgen {
- 	void __iomem *base;
- 	struct clk_hw clk_hw;
-@@ -315,12 +319,27 @@ static unsigned long axi_clkgen_recalc_r
- 	unsigned int reg;
- 	unsigned long long tmp;
- 
--	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_1, &reg);
--	dout = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_2, &reg);
-+	if (reg & MMCM_CLKOUT_NOCOUNT) {
-+		dout = 1;
-+	} else {
-+		axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLKOUT0_1, &reg);
-+		dout = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+	}
-+
- 	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_DIV, &reg);
--	d = (reg & 0x3f) + ((reg >> 6) & 0x3f);
--	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB1, &reg);
--	m = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+	if (reg & MMCM_CLK_DIV_NOCOUNT)
-+		d = 1;
-+	else
-+		d = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+
-+	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB2, &reg);
-+	if (reg & MMCM_CLKOUT_NOCOUNT) {
-+		m = 1;
-+	} else {
-+		axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_FB1, &reg);
-+		m = (reg & 0x3f) + ((reg >> 6) & 0x3f);
-+	}
- 
- 	if (d == 0 || dout == 0)
- 		return 0;
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -72,7 +72,7 @@ static const char * const si5351_input_n
+ 	"xtal", "clkin"
+ };
+ static const char * const si5351_pll_names[] = {
+-	"plla", "pllb", "vxco"
++	"si5351_plla", "si5351_pllb", "si5351_vxco"
+ };
+ static const char * const si5351_msynth_names[] = {
+ 	"ms0", "ms1", "ms2", "ms3", "ms4", "ms5", "ms6", "ms7"
