@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802579-2-10797236348521063469
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802569-2-3246064903874757298
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802578; b=RmD9dvawDV/LHVxKCZm2uobDAS0Gf21xaos+boMijh5c8e8
-    kgYTkqb9PM3t1HinqzOEud2tqZYj3LX7u4PXHxfIViLWBiFb600mi23YVF4z2zMx
-    ZumDYZeivnTqoyQkCCQyEF9XQz6+YVhoMEhXDONRtVR0QOWcfE9VqHYL7M/gHhgJ
-    jj2UqN6IChC/p+vG9zNcJgjjuAhcRXQeYIHAZm71wpvt2u8+BdstdfIfvIfN7sw3
-    4hNN72LUtxIw4ZqfKMbRr9PRhASqrijpucX4uOy6wkp7a4tE9cr9zGRtEmTRjR2h
-    o6xSPBmPwK5SMP3E/o4Iyt7nQbBwC9Bw+q/s5mA==
+    t=1521802568; b=nGuLslvcyfMAUj+fxLrPsi/dTLcNubq4wAEkVS8PAISvVsS
+    g6VDIUBwtlGiz+nPgtrOyHK+zA12C41TEMSKQBxuYKmJIRP7UqFM0opiCG5rlTbH
+    nW0NlfzOz4rQMLPxY1wCppPXOYxlws0QNlztoU7232gQFOyd0PCL1By4EKqt2fq5
+    F0Hn7BimV5UXK/+w9vagesrUL6uT/71/8K4+sNG7o0hb2oOLNTIPysTLfxZpBfiS
+    JLuPOHTScrLK8rTxDInkyt0GFCU1CGps0yJP5y5JvtyxX3sANRQ92K32AXL00IRx
+    NdJZ8NMXYHwHQlyyh87zEPyj/QfVxVnTdu24lNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802578; bh=Qva2j5UvkRnRmuJxtH3ZXGB3FE
-    C7mIMwoo8TeZQeEQo=; b=gJLOnHecok3MBtyKjV45/zs6NB+QdvZRYhdkvBDxXt
-    7L6vazELpVqQTjkyN9y5oSwD/TpYYRkKBJGWW7JTUCJwpz2N7/+XCHsXVsZFRCyp
-    F++zjVRRY+p05+GgEnIYq1Xfzy7JvzM3o7bmhEdmbDDtciNsVtExKTMfYVmLTXMm
-    GMLPxSmAxXphjudYjojS+dD+/5VIdnNkuGGPDAnIyMrmAAEvzGUfSCmXutrw1876
-    +mjF+gofUL3LcXTVOUbetvxKeAbsHhvCH0OM4dHXjR8z52skJEoiNx2HqfeRSnmR
-    r0GWdHdhhgda2IFhJOvwsslqrQIvZygHEEeE7iJOGPCw==
+    :list-id; s=arctest; t=1521802568; bh=4R/Tsp6BhI1LRuepcyO6e5rCSu
+    D+eRQxoBjJ2kk6cBk=; b=wnYjS9c1Tc8+PAHeV7ozcgmTk/MxNPeJflk4javfz2
+    P1Z+SYiagPJjR/7Q7du72YmIgZrd9jr1pwa8iywJ+oRYrGGFW/93Q9F9aW+Lbbpu
+    aXD2F1cNNEpl/KzCYmS7+1MgS3rw65W6Q1lfMRM2YK4c8GHD1HB6Fvc2hkXES5ta
+    y/OUbx/c3OnwdkjtzYSCKbc+u6x1XxSUw/AMb6aDIQVgIA4zKZVsiayZZwdmGeLs
+    3goe9Ckd9inOuCOaIsB6CHpzz7nIjJXnKZx/JJupXNSbNpfsSBke0sVpSQgtaaWa
+    eKi0bFNmZX/7xKtdOvPFpj4nUvdCL0ElwfzcArqrT4yQ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,12 +50,12 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755778AbeCWKNK (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:13:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44610 "EHLO
+        id S1755793AbeCWKNM (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:13:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44666 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752469AbeCWKNH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:07 -0400
+        with ESMTP id S1752469AbeCWKNL (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:11 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -74,9 +74,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "David S. Miller" <davem@davemloft.net>,
         Len Brown <lenb@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 12/97] ACPI/processor: Fix error handling in __acpi_processor_start()
-Date: Fri, 23 Mar 2018 10:53:59 +0100
-Message-Id: <20180323094158.171665105@linuxfoundation.org>
+Subject: [PATCH 4.4 13/97] ACPI/processor: Replace racy task affinity logic
+Date: Fri, 23 Mar 2018 10:54:00 +0100
+Message-Id: <20180323094158.240658328@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -97,13 +97,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Thomas Gleixner <tglx@linutronix.de>
 
 
-[ Upstream commit a5cbdf693a60d5b86d4d21dfedd90f17754eb273 ]
+[ Upstream commit 8153f9ac43897f9f4786b30badc134fcc1a4fb11 ]
 
-When acpi_install_notify_handler() fails the cooling device stays
-registered and the sysfs files created via acpi_pss_perf_init() are
-leaked and the function returns success.
+acpi_processor_get_throttling() requires to invoke the getter function on
+the target CPU. This is achieved by temporarily setting the affinity of the
+calling user space thread to the requested CPU and reset it to the original
+affinity afterwards.
 
-Undo acpi_pss_perf_init() and return a proper error code.
+That's racy vs. CPU hotplug and concurrent affinity settings for that
+thread resulting in code executing on the wrong CPU and overwriting the
+new affinity setting.
+
+acpi_processor_get_throttling() is invoked in two ways:
+
+1) The CPU online callback, which is already running on the target CPU and
+   obviously protected against hotplug and not affected by affinity
+   settings.
+
+2) The ACPI driver probe function, which is not protected against hotplug
+   during modprobe.
+
+Switch it over to work_on_cpu() and protect the probe function against CPU
+hotplug.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Fenghua Yu <fenghua.yu@intel.com>
@@ -120,23 +135,157 @@ Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Tejun Heo <tj@kernel.org>
 Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Len Brown <lenb@kernel.org>
-Link: http://lkml.kernel.org/r/20170412201042.695499645@linutronix.de
+Link: http://lkml.kernel.org/r/20170412201042.785920903@linutronix.de
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/processor_driver.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/processor_driver.c     |    7 +++-
+ drivers/acpi/processor_throttling.c |   62 ++++++++++++++++++++----------------
+ 2 files changed, 42 insertions(+), 27 deletions(-)
 
 --- a/drivers/acpi/processor_driver.c
 +++ b/drivers/acpi/processor_driver.c
-@@ -259,6 +259,9 @@ static int __acpi_processor_start(struct
- 	if (ACPI_SUCCESS(status))
- 		return 0;
+@@ -270,11 +270,16 @@ err_power_exit:
+ static int acpi_processor_start(struct device *dev)
+ {
+ 	struct acpi_device *device = ACPI_COMPANION(dev);
++	int ret;
  
-+	result = -ENODEV;
-+	acpi_pss_perf_exit(pr, device);
+ 	if (!device)
+ 		return -ENODEV;
+ 
+-	return __acpi_processor_start(device);
++	/* Protect against concurrent CPU hotplug operations */
++	get_online_cpus();
++	ret = __acpi_processor_start(device);
++	put_online_cpus();
++	return ret;
+ }
+ 
+ static int acpi_processor_stop(struct device *dev)
+--- a/drivers/acpi/processor_throttling.c
++++ b/drivers/acpi/processor_throttling.c
+@@ -62,8 +62,8 @@ struct acpi_processor_throttling_arg {
+ #define THROTTLING_POSTCHANGE      (2)
+ 
+ static int acpi_processor_get_throttling(struct acpi_processor *pr);
+-int acpi_processor_set_throttling(struct acpi_processor *pr,
+-						int state, bool force);
++static int __acpi_processor_set_throttling(struct acpi_processor *pr,
++					   int state, bool force, bool direct);
+ 
+ static int acpi_processor_update_tsd_coord(void)
+ {
+@@ -891,7 +891,8 @@ static int acpi_processor_get_throttling
+ 			ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+ 				"Invalid throttling state, reset\n"));
+ 			state = 0;
+-			ret = acpi_processor_set_throttling(pr, state, true);
++			ret = __acpi_processor_set_throttling(pr, state, true,
++							      true);
+ 			if (ret)
+ 				return ret;
+ 		}
+@@ -901,36 +902,31 @@ static int acpi_processor_get_throttling
+ 	return 0;
+ }
+ 
+-static int acpi_processor_get_throttling(struct acpi_processor *pr)
++static long __acpi_processor_get_throttling(void *data)
+ {
+-	cpumask_var_t saved_mask;
+-	int ret;
++	struct acpi_processor *pr = data;
 +
- err_power_exit:
- 	acpi_processor_power_exit(pr);
- 	return result;
++	return pr->throttling.acpi_processor_get_throttling(pr);
++}
+ 
++static int acpi_processor_get_throttling(struct acpi_processor *pr)
++{
+ 	if (!pr)
+ 		return -EINVAL;
+ 
+ 	if (!pr->flags.throttling)
+ 		return -ENODEV;
+ 
+-	if (!alloc_cpumask_var(&saved_mask, GFP_KERNEL))
+-		return -ENOMEM;
+-
+ 	/*
+-	 * Migrate task to the cpu pointed by pr.
++	 * This is either called from the CPU hotplug callback of
++	 * processor_driver or via the ACPI probe function. In the latter
++	 * case the CPU is not guaranteed to be online. Both call sites are
++	 * protected against CPU hotplug.
+ 	 */
+-	cpumask_copy(saved_mask, &current->cpus_allowed);
+-	/* FIXME: use work_on_cpu() */
+-	if (set_cpus_allowed_ptr(current, cpumask_of(pr->id))) {
+-		/* Can't migrate to the target pr->id CPU. Exit */
+-		free_cpumask_var(saved_mask);
++	if (!cpu_online(pr->id))
+ 		return -ENODEV;
+-	}
+-	ret = pr->throttling.acpi_processor_get_throttling(pr);
+-	/* restore the previous state */
+-	set_cpus_allowed_ptr(current, saved_mask);
+-	free_cpumask_var(saved_mask);
+ 
+-	return ret;
++	return work_on_cpu(pr->id, __acpi_processor_get_throttling, pr);
+ }
+ 
+ static int acpi_processor_get_fadt_info(struct acpi_processor *pr)
+@@ -1080,8 +1076,15 @@ static long acpi_processor_throttling_fn
+ 			arg->target_state, arg->force);
+ }
+ 
+-int acpi_processor_set_throttling(struct acpi_processor *pr,
+-						int state, bool force)
++static int call_on_cpu(int cpu, long (*fn)(void *), void *arg, bool direct)
++{
++	if (direct)
++		return fn(arg);
++	return work_on_cpu(cpu, fn, arg);
++}
++
++static int __acpi_processor_set_throttling(struct acpi_processor *pr,
++					   int state, bool force, bool direct)
+ {
+ 	int ret = 0;
+ 	unsigned int i;
+@@ -1130,7 +1133,8 @@ int acpi_processor_set_throttling(struct
+ 		arg.pr = pr;
+ 		arg.target_state = state;
+ 		arg.force = force;
+-		ret = work_on_cpu(pr->id, acpi_processor_throttling_fn, &arg);
++		ret = call_on_cpu(pr->id, acpi_processor_throttling_fn, &arg,
++				  direct);
+ 	} else {
+ 		/*
+ 		 * When the T-state coordination is SW_ALL or HW_ALL,
+@@ -1163,8 +1167,8 @@ int acpi_processor_set_throttling(struct
+ 			arg.pr = match_pr;
+ 			arg.target_state = state;
+ 			arg.force = force;
+-			ret = work_on_cpu(pr->id, acpi_processor_throttling_fn,
+-				&arg);
++			ret = call_on_cpu(pr->id, acpi_processor_throttling_fn,
++					  &arg, direct);
+ 		}
+ 	}
+ 	/*
+@@ -1182,6 +1186,12 @@ int acpi_processor_set_throttling(struct
+ 	return ret;
+ }
+ 
++int acpi_processor_set_throttling(struct acpi_processor *pr, int state,
++				  bool force)
++{
++	return __acpi_processor_set_throttling(pr, state, force, false);
++}
++
+ int acpi_processor_get_throttling_info(struct acpi_processor *pr)
+ {
+ 	int result = 0;
