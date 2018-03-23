@@ -1,72 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751811AbeCWC3g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 22:29:36 -0400
-Received: from ozlabs.org ([103.22.144.67]:44997 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751617AbeCWC3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 22:29:35 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Fri, 23 Mar 2018 13:28:53 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: linux-next: build warning after merge of the tip tree
-Message-ID: <20180323132853.67195c47@canb.auug.org.au>
+        id S1751771AbeCWCis (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 22:38:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56252 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751674AbeCWCir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 22:38:47 -0400
+Subject: Re: [virtio-dev] Re: [PATCH v2] virtio_balloon: export hugetlb page
+ allocation counts
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jonathan Helman <jonathan.helman@oracle.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org
+References: <1521497654-24807-1-git-send-email-jonathan.helman@oracle.com>
+ <db6371af-f93d-4409-c910-2ff712196c5b@redhat.com>
+ <6ED6CAC9-FAD9-4A27-A9B1-C6EFC7627D68@oracle.com>
+ <c09d3570-a8f9-7a84-5dd6-46d385da2e15@redhat.com>
+ <20180322050842-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <3f8a1b91-c5ba-8a24-72b8-02d884a67826@redhat.com>
+Date: Fri, 23 Mar 2018 10:38:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yJu7wesszgLs6Fc3Q.9qCaA"; protocol="application/pgp-signature"
+In-Reply-To: <20180322050842-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/yJu7wesszgLs6Fc3Q.9qCaA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the tip tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+On 2018年03月22日 11:10, Michael S. Tsirkin wrote:
+> On Thu, Mar 22, 2018 at 09:52:18AM +0800, Jason Wang wrote:
+>> On 2018年03月20日 12:26, Jonathan Helman wrote:
+>>>> On Mar 19, 2018, at 7:31 PM, Jason Wang<jasowang@redhat.com>  wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2018年03月20日 06:14, Jonathan Helman wrote:
+>>>>> Export the number of successful and failed hugetlb page
+>>>>> allocations via the virtio balloon driver. These 2 counts
+>>>>> come directly from the vm_events HTLB_BUDDY_PGALLOC and
+>>>>> HTLB_BUDDY_PGALLOC_FAIL.
+>>>>>
+>>>>> Signed-off-by: Jonathan Helman<jonathan.helman@oracle.com>
+>>>> Reviewed-by: Jason Wang<jasowang@redhat.com>
+>>> Thanks.
+>>>
+>>>>> ---
+>>>>>    drivers/virtio/virtio_balloon.c     | 6 ++++++
+>>>>>    include/uapi/linux/virtio_balloon.h | 4 +++-
+>>>>>    2 files changed, 9 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+>>>>> index dfe5684..6b237e3 100644
+>>>>> --- a/drivers/virtio/virtio_balloon.c
+>>>>> +++ b/drivers/virtio/virtio_balloon.c
+>>>>> @@ -272,6 +272,12 @@ static unsigned int update_balloon_stats(struct virtio_balloon *vb)
+>>>>>    				pages_to_bytes(events[PSWPOUT]));
+>>>>>    	update_stat(vb, idx++, VIRTIO_BALLOON_S_MAJFLT, events[PGMAJFAULT]);
+>>>>>    	update_stat(vb, idx++, VIRTIO_BALLOON_S_MINFLT, events[PGFAULT]);
+>>>>> +#ifdef CONFIG_HUGETLB_PAGE
+>>>>> +	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGALLOC,
+>>>>> +		    events[HTLB_BUDDY_PGALLOC]);
+>>>>> +	update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGFAIL,
+>>>>> +		    events[HTLB_BUDDY_PGALLOC_FAIL]);
+>>>>> +#endif
+>>>>>    #endif
+>>>>>    	update_stat(vb, idx++, VIRTIO_BALLOON_S_MEMFREE,
+>>>>>    				pages_to_bytes(i.freeram));
+>>>>> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+>>>>> index 4e8b830..40297a3 100644
+>>>>> --- a/include/uapi/linux/virtio_balloon.h
+>>>>> +++ b/include/uapi/linux/virtio_balloon.h
+>>>>> @@ -53,7 +53,9 @@ struct virtio_balloon_config {
+>>>>>    #define VIRTIO_BALLOON_S_MEMTOT   5   /* Total amount of memory */
+>>>>>    #define VIRTIO_BALLOON_S_AVAIL    6   /* Available memory as in /proc */
+>>>>>    #define VIRTIO_BALLOON_S_CACHES   7   /* Disk caches */
+>>>>> -#define VIRTIO_BALLOON_S_NR       8
+>>>>> +#define VIRTIO_BALLOON_S_HTLB_PGALLOC  8  /* Hugetlb page allocations */
+>>>>> +#define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page allocation failures */
+>>>>> +#define VIRTIO_BALLOON_S_NR       10
+>>>>>      /*
+>>>>>     * Memory statistics structure.
+>>>> Not for this patch, but it looks to me that exporting such nr through uapi is fragile.
+>>> Sorry, can you explain what you mean here?
+>>>
+>>> Jon
+>> Spec said "Within an output buffer submitted to the statsq, the device MUST
+>> ignore entries with tag values that it does not recognize". So exporting
+>> VIRTIO_BALLOON_S_NR seems useless and device implementation can not depend
+>> on such number in uapi.
+>>
+>> Thanks
+> Suggestions? I don't like to break build for people ...
+>
 
-lib/swiotlb.c:748:13: warning: 'swiotlb_free_buffer' defined but not used [=
--Wunused-function]
- static bool swiotlb_free_buffer(struct device *dev, size_t size,
-             ^~~~~~~~~~~~~~~~~~~
-lib/swiotlb.c:706:1: warning: 'swiotlb_alloc_buffer' defined but not used [=
--Wunused-function]
- swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_hand=
-le,
- ^~~~~~~~~~~~~~~~~~~~
+Didn't have a good idea. But maybe we should keep VIRTIO_BALLOON_S_NR 
+unchanged, and add a comment here.
 
-Introduced by commit
-
-  16e73adbca76 ("dma/swiotlb: Remove swiotlb_{alloc,free}_coherent()")
-
-These are now only used with CONFIG_DMA_DIRECT_OPS.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/yJu7wesszgLs6Fc3Q.9qCaA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0ZmUACgkQAVBC80lX
-0GwnvQf/VilaxNYGNsf03m40RUOIMk913zVktU4IKXlCurYx5qJm961j47f5Bx5q
-nslyhGmi2tb1AEVRYRstz4aUyNk7D6Hc1YzB8wTNBSEXIyIxBvT9kBp6eVK+Qgpf
-oLMZaXbsszT8cNc7/vKDia/LbteWm4B0qibJUtmWAhgNiXUaHj0XZAU16kld+F+V
-fDfdV8C8qe8UQaY759iwTU4cIjhp64FWJW0lR3Qk8Q8Z+X+GDD9MfGwSIzjw7+S3
-+xG9tkQJOvcj+8U9AKUjgMFNVDP8h7j4t8l5znIHtQVeXc6ZPTY8JQypqSGYEhZD
-ZLHI3TJyXUJA+FhrdgRVGuFc2Jo3xQ==
-=4zGW
------END PGP SIGNATURE-----
-
---Sig_/yJu7wesszgLs6Fc3Q.9qCaA--
+Thanks
