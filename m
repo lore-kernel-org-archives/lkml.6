@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521804780-2-7509579724301328621
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804779-2-6420950604731557378
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enca,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804779; b=bZtHJpjH3DQ3/Xv02UDXdlPpPnGUg9yi7RnWBrYilppgJMn
-    Jov0E/BJIwoqRB1K4iM5SSTDmvgZhX5kDTbZrGUTWOumQRDCf4OHtLdV62k7Wf20
-    opjwLalUR0r4+OLeMvUtx35iz40n0s9NLJTsexohuKUo5UbxgA966Y1XmqeiaZao
-    +cWD2vod/BVqA7cvPOiNd1wQHWyGfwfVUHUdhK1dj1ZQKEfP/HV0gelBdmktPJNv
-    fk5qhYkjKg0plWVbcBF6B6jjqE85N6ZuJcoh12JkN/PZrsdsWzmxYN8t6ci6pJmo
-    LVUuD5L+W2nf781OPaIsIoo1s1Yhnx28grugYAg==
+    t=1521804778; b=svnnbd02ONaHZuK2UDHP2tlulQtLt/6/dQVM7HzKxG207pG
+    PhiVTjrffiAsp5fLdVWxYE26snmUKaPd0aRhPIJqzR5rEHoDci7cv74Wfe344otP
+    MMsxYVib+MbiRs0LD44i9Ee5AU5DK7OxWAeCWeG+Er/qJofdJovsImGhGqpD3wL1
+    yCSM75VQTAPUUvLfBmHZiFEe1TlotFsrf7bqzt9cnG+nGsQqlsjyFzX8ybbCL8Oe
+    zCpLQveSq4ElS/rgzspIs3iinajxxwZmB691+6ztxfiDnFa6vFAMBRsudbmX+wU5
+    Z+YWeWT6UTvpcrlW4TmrxcSSQjCtA6tdgkP1wBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804779; bh=rlJeu5rOLJSsTg7c1yc8Kzw1/e
-    MyNE97HNWzOaUwOXw=; b=jbb5yRZ/tNKMXpL2axwBkHb9XfOd8+YPDB78khev8z
-    2gOTvNHFTfScP/fe2JTmHIKRQleznbxujlyIJPwYU1nGkGaR8xflDOuxSrr2dj9w
-    ZF2724RS6lfZdiyDYLf5pOIVU4EZIgCu4a8OATyrzSITLRZfxSqJbOVGNDe/36by
-    +iTkjYYj4+BHhWHTIbidTgkCY503TD6h2xp4VFdPnDy2B0lWjuHu8V4fGLA8+h4Q
-    QrMX5BXg0WSiC+9FKx/nwFi1b2TW2UUDqlhUnB6V0a9N2gYGHJGwpJ3Kvww/X9xe
-    cfZQGP6AZKAl5/TE9P5EsW/6bqsRSzBNkKRUkz+PzhnQ==
+    :list-id; s=arctest; t=1521804778; bh=GfEy9T1eCEr9OvTvhhaWq9mdNG
+    sVb+MivhBl80U0a4I=; b=Hu6EiFkjgzoDMp8kHdRyeF/a9+jhr8kwc8uAOOe4tN
+    ytiWgO8JEUwoTJFBe86Br62j3R9BaY8C8iRHuMjoW23VlcCu6iMqlNHqExLfSRfh
+    ADHNkN8wrlewTJ5ruVpmOl+bYNAS575nbR/Kzwnf0y6EB/+EUOwzkvAlOy58sNBY
+    UhLL+HbdRYGIj8AuhR+0PxfMLhMYhKUPJIqeXWZDH3u4Rizrqj0/qICB7PSWUHZo
+    ZlRkSdXEgMKES3kt1sG9poSog2bFuzZcKRY7AiMSUPXPmZOl2EFT//UPRKwiaLa/
+    UUoRlSMq4bt0UKYPrQgOQZmdlB0SoqnpNUjM3tQW3uQg==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755286AbeCWLc6 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:32:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39818 "EHLO
+        id S1755062AbeCWKFn (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:05:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39806 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755060AbeCWKFn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:43 -0400
+        with ESMTP id S1755009AbeCWKFk (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>,
-        Jon Mason <jon.mason@broadcom.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+        Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 029/177] clk: ns2: Correct SDIO bits
-Date: Fri, 23 Mar 2018 10:52:37 +0100
-Message-Id: <20180323094206.466813212@linuxfoundation.org>
+Subject: [PATCH 4.9 028/177] ath: Fix updating radar flags for coutry code India
+Date: Fri, 23 Mar 2018 10:52:36 +0100
+Message-Id: <20180323094206.423733296@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -84,31 +83,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
+From: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
 
 
-[ Upstream commit 8973aa4aecac223548366ca81818309a0f0efa6d ]
+[ Upstream commit c0c345d4cacc6a1f39d4856f37dcf6e34f51a5e4 ]
 
-Corrected the bits for power and iso.
+As per latest regulatory update for India, channel 52, 56, 60, 64
+is no longer restricted to DFS. Enabling DFS/no infra flags in driver
+results in applying all DFS related restrictions (like doing CAC etc
+before this channel moves to 'available state') for these channels
+even though the country code is programmed as 'India' in he hardware,
+fix this by relaxing the frequency range while applying RADAR flags
+only if the country code is programmed to India. If the frequency range
+needs to modified based on different country code, ath_is_radar_freq
+can be extended/modified dynamically.
 
-Signed-off-by: Bharat Kumar Reddy Gooty <bharat.gooty@broadcom.com>
-Signed-off-by: Jon Mason <jon.mason@broadcom.com>
-Fixes: f7225a83 ("clk: ns2: add clock support for Broadcom Northstar 2 SoC")
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Mohammed Shafi Shajakhan <mohammed@qti.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/bcm/clk-ns2.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/regd.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
---- a/drivers/clk/bcm/clk-ns2.c
-+++ b/drivers/clk/bcm/clk-ns2.c
-@@ -103,7 +103,7 @@ CLK_OF_DECLARE(ns2_genpll_src_clk, "brcm
+--- a/drivers/net/wireless/ath/regd.c
++++ b/drivers/net/wireless/ath/regd.c
+@@ -254,8 +254,12 @@ bool ath_is_49ghz_allowed(u16 regdomain)
+ EXPORT_SYMBOL(ath_is_49ghz_allowed);
  
- static const struct iproc_pll_ctrl genpll_sw = {
- 	.flags = IPROC_CLK_AON | IPROC_CLK_PLL_SPLIT_STAT_CTRL,
--	.aon = AON_VAL(0x0, 2, 9, 8),
-+	.aon = AON_VAL(0x0, 1, 11, 10),
- 	.reset = RESET_VAL(0x4, 2, 1),
- 	.dig_filter = DF_VAL(0x0, 9, 3, 5, 4, 2, 3),
- 	.ndiv_int = REG_VAL(0x8, 4, 10),
+ /* Frequency is one where radar detection is required */
+-static bool ath_is_radar_freq(u16 center_freq)
++static bool ath_is_radar_freq(u16 center_freq,
++			      struct ath_regulatory *reg)
++
+ {
++	if (reg->country_code == CTRY_INDIA)
++		return (center_freq >= 5500 && center_freq <= 5700);
+ 	return (center_freq >= 5260 && center_freq <= 5700);
+ }
+ 
+@@ -306,7 +310,7 @@ __ath_reg_apply_beaconing_flags(struct w
+ 				enum nl80211_reg_initiator initiator,
+ 				struct ieee80211_channel *ch)
+ {
+-	if (ath_is_radar_freq(ch->center_freq) ||
++	if (ath_is_radar_freq(ch->center_freq, reg) ||
+ 	    (ch->flags & IEEE80211_CHAN_RADAR))
+ 		return;
+ 
+@@ -395,8 +399,9 @@ ath_reg_apply_ir_flags(struct wiphy *wip
+ 	}
+ }
+ 
+-/* Always apply Radar/DFS rules on freq range 5260 MHz - 5700 MHz */
+-static void ath_reg_apply_radar_flags(struct wiphy *wiphy)
++/* Always apply Radar/DFS rules on freq range 5500 MHz - 5700 MHz */
++static void ath_reg_apply_radar_flags(struct wiphy *wiphy,
++				      struct ath_regulatory *reg)
+ {
+ 	struct ieee80211_supported_band *sband;
+ 	struct ieee80211_channel *ch;
+@@ -409,7 +414,7 @@ static void ath_reg_apply_radar_flags(st
+ 
+ 	for (i = 0; i < sband->n_channels; i++) {
+ 		ch = &sband->channels[i];
+-		if (!ath_is_radar_freq(ch->center_freq))
++		if (!ath_is_radar_freq(ch->center_freq, reg))
+ 			continue;
+ 		/* We always enable radar detection/DFS on this
+ 		 * frequency range. Additionally we also apply on
+@@ -505,7 +510,7 @@ void ath_reg_notifier_apply(struct wiphy
+ 	struct ath_common *common = container_of(reg, struct ath_common,
+ 						 regulatory);
+ 	/* We always apply this */
+-	ath_reg_apply_radar_flags(wiphy);
++	ath_reg_apply_radar_flags(wiphy, reg);
+ 
+ 	/*
+ 	 * This would happen when we have sent a custom regulatory request
+@@ -653,7 +658,7 @@ ath_regd_init_wiphy(struct ath_regulator
+ 	}
+ 
+ 	wiphy_apply_custom_regulatory(wiphy, regd);
+-	ath_reg_apply_radar_flags(wiphy);
++	ath_reg_apply_radar_flags(wiphy, reg);
+ 	ath_reg_apply_world_flags(wiphy, NL80211_REGDOM_SET_BY_DRIVER, reg);
+ 	return 0;
+ }
