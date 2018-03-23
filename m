@@ -1,175 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752270AbeCWJil (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:38:41 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:55089 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751861AbeCWJgR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:36:17 -0400
-X-Google-Smtp-Source: AG47ELvljEfaunVqgoY9OiK9p0haQ8aiRvH84WmbF3fSqCG/4VyvNWA3g7el8StSbPNq7iCr3N39yg==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 1/8] reset: modify the way reset lookup works for board files
-Date: Fri, 23 Mar 2018 10:36:02 +0100
-Message-Id: <20180323093609.24576-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
-References: <20180323093609.24576-1-brgl@bgdev.pl>
+        id S1752378AbeCWJjJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:39:09 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:20690 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751901AbeCWJjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 05:39:07 -0400
+Subject: Re: [PATCH 02/19] powerpc/powermac: Mark variable x as unused
+To: Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+References: <20180322202007.23088-1-malat@debian.org>
+ <20180322202007.23088-3-malat@debian.org>
+From: christophe leroy <christophe.leroy@c-s.fr>
+Message-ID: <ae3d5a1a-3661-30a5-4f08-de1c6ed3a3e1@c-s.fr>
+Date: Fri, 23 Mar 2018 10:38:59 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180322202007.23088-3-malat@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Commit 7af1bb19f1d7 ("reset: add support for non-DT systems")
-introduced reset control lookup mechanism for boards that still use
-board files.
 
-The routine used to register lookup entries takes the corresponding
-reset_controlled_dev structure as argument.
+Le 22/03/2018 à 21:19, Mathieu Malaterre a écrit :
+> Since the value of x is never intended to be read, declare it with gcc
+> attribute as unused. Fix warning treated as error with W=1:
+> 
+>    arch/powerpc/platforms/powermac/udbg_scc.c:76:9: error: variable ‘x’ set but not used [-Werror=unused-but-set-variable]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>   arch/powerpc/platforms/powermac/udbg_scc.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/platforms/powermac/udbg_scc.c b/arch/powerpc/platforms/powermac/udbg_scc.c
+> index d83135a9830e..c38ca406df1a 100644
+> --- a/arch/powerpc/platforms/powermac/udbg_scc.c
+> +++ b/arch/powerpc/platforms/powermac/udbg_scc.c
+> @@ -73,7 +73,7 @@ void udbg_scc_init(int force_scc)
+>   	struct device_node *stdout = NULL, *escc = NULL, *macio = NULL;
+>   	struct device_node *ch, *ch_def = NULL, *ch_a = NULL;
+>   	const char *path;
+> -	int i, x;
+> +	int i, x __maybe_unused;
 
-It's been determined however that for the first user of this new
-interface - davinci psc driver - it will be easier to register the
-lookup entries using the reset controller device name.
+You could just replace 'x = in_8(sccc)' by 'in_8(sccc)' and get rid of 
+the x.
 
-This patch changes the way lookup entries are added.
+Christophe
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+>   
+>   	escc = of_find_node_by_name(NULL, "escc");
+>   	if (escc == NULL)
+> 
+
 ---
- drivers/reset/core.c             | 33 +++++++++++++++++++++++++++++----
- include/linux/reset-controller.h |  8 +++++---
- 2 files changed, 34 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 06fa4907afc4..f37048e55336 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -153,11 +153,11 @@ EXPORT_SYMBOL_GPL(devm_reset_controller_register);
- 
- /**
-  * reset_controller_add_lookup - register a set of lookup entries
-- * @rcdev: initialized reset controller device owning the reset line
-+ * @provider: name of the reset controller provider
-  * @lookup: array of reset lookup entries
-  * @num_entries: number of entries in the lookup array
-  */
--void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-+void reset_controller_add_lookup(const char *provider,
- 				 struct reset_control_lookup *lookup,
- 				 unsigned int num_entries)
- {
-@@ -174,7 +174,7 @@ void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
- 			continue;
- 		}
- 
--		entry->rcdev = rcdev;
-+		entry->provider = provider;
- 		list_add_tail(&entry->list, &reset_lookup_list);
- 	}
- 	mutex_unlock(&reset_lookup_mutex);
-@@ -526,11 +526,30 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
- }
- EXPORT_SYMBOL_GPL(__of_reset_control_get);
- 
-+static struct reset_controller_dev *
-+__reset_controller_by_name(const char *name)
-+{
-+	struct reset_controller_dev *rcdev;
-+
-+	lockdep_assert_held(&reset_list_mutex);
-+
-+	list_for_each_entry(rcdev, &reset_controller_list, list) {
-+		if (!rcdev->dev)
-+			continue;
-+
-+		if (!strcmp(name, dev_name(rcdev->dev)))
-+			return rcdev;
-+	}
-+
-+	return NULL;
-+}
-+
- static struct reset_control *
- __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 				bool shared, bool optional)
- {
- 	const struct reset_control_lookup *lookup;
-+	struct reset_controller_dev *rcdev;
- 	const char *dev_id = dev_name(dev);
- 	struct reset_control *rstc = NULL;
- 
-@@ -547,7 +566,13 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
- 		    ((con_id && lookup->con_id) &&
- 		     !strcmp(con_id, lookup->con_id))) {
- 			mutex_lock(&reset_list_mutex);
--			rstc = __reset_control_get_internal(lookup->rcdev,
-+			rcdev = __reset_controller_by_name(lookup->provider);
-+			if (!rcdev) {
-+				mutex_unlock(&reset_list_mutex);
-+				continue;
-+			}
-+
-+			rstc = __reset_control_get_internal(rcdev,
- 							    lookup->index,
- 							    shared);
- 			mutex_unlock(&reset_list_mutex);
-diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
-index 25698f6c1fae..1a6c25d825d3 100644
---- a/include/linux/reset-controller.h
-+++ b/include/linux/reset-controller.h
-@@ -30,14 +30,14 @@ struct of_phandle_args;
-  * struct reset_control_lookup - represents a single lookup entry
-  *
-  * @list: internal list of all reset lookup entries
-- * @rcdev: reset controller device controlling this reset line
-+ * @provider: name of the reset controller device controlling this reset line
-  * @index: ID of the reset controller in the reset controller device
-  * @dev_id: name of the device associated with this reset line
-  * @con_id name of the reset line (can be NULL)
-  */
- struct reset_control_lookup {
- 	struct list_head list;
--	struct reset_controller_dev *rcdev;
-+	const char *provider;
- 	unsigned int index;
- 	const char *dev_id;
- 	const char *con_id;
-@@ -57,6 +57,7 @@ struct reset_control_lookup {
-  * @owner: kernel module of the reset controller driver
-  * @list: internal list of reset controller devices
-  * @reset_control_head: head of internal list of requested reset controls
-+ * @dev: corresponding driver model device struct
-  * @of_node: corresponding device tree node as phandle target
-  * @of_reset_n_cells: number of cells in reset line specifiers
-  * @of_xlate: translation function to translate from specifier as found in the
-@@ -68,6 +69,7 @@ struct reset_controller_dev {
- 	struct module *owner;
- 	struct list_head list;
- 	struct list_head reset_control_head;
-+	struct device *dev;
- 	struct device_node *of_node;
- 	int of_reset_n_cells;
- 	int (*of_xlate)(struct reset_controller_dev *rcdev,
-@@ -82,7 +84,7 @@ struct device;
- int devm_reset_controller_register(struct device *dev,
- 				   struct reset_controller_dev *rcdev);
- 
--void reset_controller_add_lookup(struct reset_controller_dev *rcdev,
-+void reset_controller_add_lookup(const char *provider,
- 				 struct reset_control_lookup *lookup,
- 				 unsigned int num_entries);
- 
--- 
-2.16.1
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
