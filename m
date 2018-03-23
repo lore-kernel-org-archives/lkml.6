@@ -1,126 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752349AbeCWND3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 09:03:29 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57070 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751963AbeCWND1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:03:27 -0400
-Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
-To: Yang Shi <yang.shi@linux.alibaba.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
- <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
- <20180321130833.GM23100@dhcp22.suse.cz>
- <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
- <20180321172932.GE4780@bombadil.infradead.org>
- <f057a634-7e0a-1b51-eede-dcb6f128b18e@linux.alibaba.com>
- <20180321224631.GB3969@bombadil.infradead.org>
- <18a727fd-f006-9fae-d9ca-74b9004f0a8b@linux.vnet.ibm.com>
- <20180322154055.GB28468@bombadil.infradead.org>
- <0442fb0e-3da3-3f23-ce4d-0f6cbc3eac9a@linux.vnet.ibm.com>
- <20180322160547.GC28468@bombadil.infradead.org>
- <55ac947f-fd77-3754-ebfe-30d458c54403@linux.vnet.ibm.com>
- <d2fecab7-6e34-551f-7033-2a5df0dc5e5b@linux.alibaba.com>
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Date: Fri, 23 Mar 2018 14:03:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752707AbeCWNEs convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 09:04:48 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40358 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752628AbeCWNEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 09:04:46 -0400
+Date: Fri, 23 Mar 2018 13:04:27 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: =?ISO-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>
+CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
+        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/11] Move ad7746 out of staging
+Message-ID: <20180323140427.000018f3@huawei.com>
+In-Reply-To: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
+References: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; i686-w64-mingw32)
 MIME-Version: 1.0
-In-Reply-To: <d2fecab7-6e34-551f-7033-2a5df0dc5e5b@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18032313-0020-0000-0000-000004089C36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032313-0021-0000-0000-0000429CC3C0
-Message-Id: <ac8dbcce-4a77-76ae-09ed-b4d6803c9ccf@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-23_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803230150
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.202.226.45]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/03/2018 17:46, Yang Shi wrote:
-> 
-> 
-> On 3/22/18 9:18 AM, Laurent Dufour wrote:
->>
->> On 22/03/2018 17:05, Matthew Wilcox wrote:
->>> On Thu, Mar 22, 2018 at 04:54:52PM +0100, Laurent Dufour wrote:
->>>> On 22/03/2018 16:40, Matthew Wilcox wrote:
->>>>> On Thu, Mar 22, 2018 at 04:32:00PM +0100, Laurent Dufour wrote:
->>>>>> Regarding the page fault, why not relying on the PTE locking ?
->>>>>>
->>>>>> When munmap() will unset the PTE it will have to held the PTE lock, so this
->>>>>> will serialize the access.
->>>>>> If the page fault occurs before the mmap(MAP_FIXED), the page mapped will be
->>>>>> removed when mmap(MAP_FIXED) would do the cleanup. Fair enough.
->>>>> The page fault handler will walk the VMA tree to find the correct
->>>>> VMA and then find that the VMA is marked as deleted.Â  If it assumes
->>>>> that the VMA has been deleted because of munmap(), then it can raise
->>>>> SIGSEGV immediately.Â  But if the VMA is marked as deleted because of
->>>>> mmap(MAP_FIXED), it must wait until the new VMA is in place.
->>>> I'm wondering if such a complexity is required.
->>>> If the user space process try to access the page being overwritten through
->>>> mmap(MAP_FIXED) by another thread, there is no guarantee that it will
->>>> manipulate the *old* page or *new* one.
->>> Right; but it must return one or the other, it can't segfault.
->> Good point, I missed that...
->>
->>>> I'd think this is up to the user process to handle that concurrency.
->>>> What needs to be guaranteed is that once mmap(MAP_FIXED) returns the old page
->>>> are no more there, which is done through the mmap_sem and PTE locking.
->>> Yes, and allowing the fault handler to return the *old* page risks the
->>> old page being reinserted into the page tables after the unmapping task
->>> has done its work.
->> The PTE locking should prevent that.
->>
->>> It's *really* rare to page-fault on a VMA which is in the middle of
->>> being replaced.Â  Why are you trying to optimise it?
->> I was not trying to optimize it, but to not wait in the page fault handler.
->> This could become tricky in the case the VMA is removed once mmap(MAP_FIXED) is
->> done and before the waiting page fault got woken up. This means that the
->> removed VMA structure will have to remain until all the waiters are woken up
->> which implies ref_count or similar.
-> 
-> We may not need ref_count. After removing "locked-for-deletion" vmas when
-> mmap(MAP_FIXED) is done, just wake up page fault to re-lookup vma, then it will
-> find the new vma installed by mmap(MAP_FIXED), right?
+On Wed, 21 Mar 2018 11:28:48 -0300
+Hernán Gonzalez <hernan@vanguardiasur.com.ar> wrote:
 
-I do agree, as far as waking up would not require access to the VMA.
-
-> I'm not sure if completion can do this or not since I'm not quite familiar with
-> it :-(
-
-I don't know either :/
-
-Laurent.
-
-> Yang
+> This patch series aims to move the cdc ad7746 driver out of staging. I have some
+> design questions though so I would introduce them here, along with a short
+> description of each patch.
 > 
->>
->>>>> I think I was wrong to describe VMAs as being *deleted*.Â  I think we
->>>>> instead need the concept of a *locked* VMA that page faults will block on.
->>>>> Conceptually, it's a per-VMA rwsem, but I'd use a completion instead of
->>>>> an rwsem since the only reason to write-lock the VMA is because it is
->>>>> being deleted.
->>>> Such a lock would only makes sense in the case of mmap(MAP_FIXED) since when
->>>> the VMA is removed there is no need to wait. Isn't it ?
->>> I can't think of another reason.Â  I suppose we could mark the VMA as
->>> locked-for-deletion or locked-for-replacement and have the SIGSEGV happen
->>> early.Â  But I'm not sure that optimising for SIGSEGVs is a worthwhile
->>> use of our time.Â  Just always have the pagefault sleep for a deleted VMA.
+> *PATCH 0001 - Adjust arguments to match open parenthesis.
+> There were a couple CHECKS that still remained, so I got rid of them.
+Don't bother describing straight forward patches in the cover letter.
+Adds noise to the interesting message.
 > 
+> *PATCH 0002 - Fix multiple line dereference
+> In this case, I opted for avoiding the multiple line derefence and having a 80+
+> characters line instead as I consider that it improves readability. I may be
+> wrong though, so this patch could just be discarded.
 > 
+> *PATCH 0003 - Reorder includes alphabetically
 > 
+> *PATCH 0004 - Reorder variable declarations in an inverser-pyramid way
+> 
+> *PATCH 0005 - Remove unused defines
+> There were a few too many #defines that were not used at all, so I just removed
+> them. I guess if someone plans on extending the drivers functionality they can
+> be added again, but they were just wasting space as they were. Again, I could be
+> wrong with this decision so this patch could just be discarded.
+> 
+> *PATCH 0006 - Add dt-bindings
+> This patch adds dt bindings by populating the old pdata struct. It supports both
+> platform_data and dt-bindings but uses only one depending on CONFIG_OF. I chose
+> this way to avoid modifying too much the code, and introduce no errors (or as
+> few as I could), keeping the same functionality and maintaining support of the
+> platform_data.
+> 
+> *PATCH 0007 - Add remove()
+> I added a remove function so I could test that the driver probed properly when
+> compiled as a module with the new dt-bindings.
+> 
+> *PATCH 0008 - Add comments to clarify some of the calculations
+> I had to go through most of the datasheet to understand some of the math in the
+> code, so I added comments where I saw fit. (Comments on the comments are
+> welcome).
+> 
+> *PATCH 0009 - Add devicetree bindings documentation
+> Add documentation on the devicetree bindings, explaining the properties of it
+> and describing a short example.
+> 
+> *PATCH 0010 - Rename sysfs attrs to comply with the ABI
+> Comments are welcome on this one.
+> I shortened the names of the sysfs attrs to comply with the ABI:
+> <type>[Y]_calibbias_calibration -> <type>[Y]_calibbias
+> <type>[Y]_calibscale_calibration -> <type>[Y]_calibscale
+Hmm. so this one is interesting (note I didn't read the cover letter
+and most people don't so better to have put this discussion in that patches
+own description.
+
+> 
+> The device supports 2 ways of calibrating the gain (from the datasheet):
+> 'The gain can be changed by executing a capacitance gain
+> calibration mode, for which an external full-scale capacitance
+> needs to be connected to the capacitance input, or by writing a
+> user value to the capacitive gain register.'
+So the second case is valid for the calibscale ABI, the second not.
+> 
+> The same for the offset calibration:
+> 'One method of adjusting the offset is to connect a zero-scale
+> capacitance to the input and execute the capacitance offset
+> calibration mode. The calibration sets the midpoint of the
+> ±4.096 pF range (that is, Output Code 0x800000) to that
+> zero-scale input.
+> Another method would be to calculate and write the offset cali-
+> bration register value, the LSB is value 31.25 aF (4.096 pF/2^17 ).'
+> 
+> The driver only supports the first way in both cases, as it only writes the
+> register that starts the calibration mode and doesn't allow the user to write
+> anything on other registers.
+> 
+> What I understand from the ABI is not so different when explaining calibbias and
+> calibscale:
+> 'Description:
+> Hardware applied calibration {offset,scale factor} (assumed to fix production
+> inaccuracies).'
+> 
+> Maybe I'm missing something and the renaming is not good. I would be really
+> grateful if someone could shed some light on this for me.
+You are correct - it isn't good.  We can't 'bend' the ABI like this as
+userspace would have no idea what to do with it.
+
+This needs new ABI defining to cover the use case.  Please have a go and
+make sure to provide documentation of the new ABI
+/Documentation/ABI/testing/sysfs-bus-iio-ad7746 (for now - we can move
+to the shared docs if it makes sense later).
+
+> 
+> *PATCH 0011 - Move cdc ad7746 driver out of staging to mainline iio
+> Move the files, modify the proper Kconfigs and the documentation.
+> 
+> That'd be all. Any feedback is welcome. I hope this gets out of staging :)
+> 
+> Cheers,
+> 
+> Hernán
+> 
+> Hernán Gonzalez (11):
+>   staging: iio: ad7746: Adjust arguments to match open parenthesis
+>   staging: iio: ad7746: Fix multiple line dereference
+>   staging: iio: ad7746: Reorder includes alphabetically
+>   staging: iio: ad7746: Reorder variable declarations
+>   staging: iio: ad7746: Remove unused defines
+>   staging: iio: ad7746: Add dt-bindings
+>   staging: iio: ad7746: Add remove()
+>   staging: iio: ad7746: Add comments
+>   staging: iio: ad7746: Add devicetree bindings documentation
+>   staging: iio: ad7746: Rename sysfs attrs to comply with the ABI
+>   Move cdc ad7746 driver out of staging to mainline iio
+> 
+>  .../devicetree/bindings/iio/cdc/ad7746.txt         |  32 ++++
+>  drivers/iio/Kconfig                                |   1 +
+>  drivers/iio/cdc/Kconfig                            |  16 ++
+>  drivers/{staging => }/iio/cdc/ad7746.c             | 168 +++++++++++++++------
+>  drivers/staging/iio/cdc/Kconfig                    |  10 --
+>  .../staging => include/linux}/iio/cdc/ad7746.h     |   9 --
+>  6 files changed, 168 insertions(+), 68 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iio/cdc/ad7746.txt
+>  create mode 100644 drivers/iio/cdc/Kconfig
+>  rename drivers/{staging => }/iio/cdc/ad7746.c (84%)
+>  rename {drivers/staging => include/linux}/iio/cdc/ad7746.h (70%)
 > 
