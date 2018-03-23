@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELukXoEn/fYAY34BwbFFdVokxcLwqkrlgao//AzVn6p/6h49zgU9m/au+3SdkkHkugKv843a
-ARC-Seal: i=1; a=rsa-sha256; t=1521800184; cv=none;
+X-Google-Smtp-Source: AG47ELur070OXGYoxPCnvmCrQ1e8BrXURW9CunFVyNDMDqZ2MGrJ6dHA5twHIXAEqBlWQm5KlXKu
+ARC-Seal: i=1; a=rsa-sha256; t=1521800181; cv=none;
         d=google.com; s=arc-20160816;
-        b=NEMNYvmcWX83yrZ6mwIPFf9L5X1kZQKARC8+CRMxdVeoSsP1/97DL12QWnHLrOStod
-         5RjxCkNsbk9nh9n/YVfMXeO3Fmau5DyF9hjL9k/AMm9VbJBZ1xel+pNG08k5B0EZBP9V
-         VEepa02UIyIG0/JzLdSTkze1iZKONcyxMK04UceGda6m9mdo5w7Vneq67CgY0yS4xOXF
-         GLsliYvn0hGnwQjaxU0C702lnJ9sP0OH7C6YONVkho/MWWn+bJDceiFkAaqjSgxih6xO
-         Uz0t0aBZjgZWuEL60GEJGRztoVeGa07BL5E0CL0VUV0S3hdA50wQhPOwdNWvu8Pu/uGu
-         s2Yg==
+        b=o0D2hIN8w8faeQ5l1CLjy3dxAopRAXNRwA7/SC4HKq3l74U7tX2yMhWL/b4E2fSrmc
+         O0IFXiY5HNbCAk2gh4q7AIcO6VKL3Ql9TJECa6EGYXrAJUaE+yrRkgTkAK4pGd8t5zEF
+         cX1e+wbYrWWjbow4YnOHSpBRNkKl5pCaY1Oiem3MnEd5zAhIl93JTuf6Lu33dw3SD+We
+         7LJDzdbVTz5KpFMz8mjjGAwCvtRCIUje10vr9FE4pFWknexQLMckDSkayEIsaHTzodsT
+         eNcIY7m5waXuUq1coa/rQRkJAv5/Ytto3fWaTt2lSBDqdGR+6sslHkYTutg94MULsfsp
+         r5zQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iTmMcQX3UvQKcWNUlRr8CddgbFWzcUhKIGZN1c2EvJc=;
-        b=eUi2VxlE7LxMhCBLpFRQ7yWYAuEObDyCfHDZBdVeBAx5LcKsqdIgDSvGpjDIDMMAXh
-         8cj8nBrAXzY3qZJ1qWHGRMQ8cpjC9BFSfUnYa/Z9sToAi3cTlxSS9nFiieC+4pjGMdM0
-         1Gv8tgK3tH5Ausr/TKW5v7DWAQIJuwFJxJFOKtG41idZeJF4Sd1Ff/wSc10pN5ostDM5
-         efk9MZPd7c79gCsElHf0lR820WjpCynpv3vg+54NuxmtUeU0zwqn3QWxPG/uc0oSrsBw
-         35qB4kQoIXwUtSEqBDAD0qKxv1zeBT2RB5dybPNXcgl3q/m74AOC6zwuzEKzNRb4sFQm
-         Jk0w==
+        bh=1CSIgyf/a3YNG3LNPckgiLrXEfW4vSUN31xbub35ZRg=;
+        b=pzy1SIqHk84/TAeC5jBIgbmYiOAR7YSqMzzSwBM+LqJ2ddI0TPEXAR5Eqx0ZT1rpoY
+         MbClIFYgh1lKK3m+h58b7BeptTljaOQSgwPvD9SwXXpLLkAdQ0yqQtboYgGGyUJ0hOCa
+         MWr2rI4BKBGGQXvfsP8VZ7LZXTmWMxLlZlH/FiWBfRSoGgnZ5shwCDd/8w1lJjwOMcNq
+         SNFHHi64ZWTrjvOAonbeATbQE9FmUhehTs2f4pyS3UdDDmIVScJvsXrfEMjLSKVqKNiI
+         osmshUAXMeMFAjcPangvX8eZSWLTQaZYVNoq/sAneUmBOHohzBxP+uG1Yzr1DfAsvMSb
+         9ZQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Tsang-Shian Lin <thlin@realtek.com>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	Larry Finger <Larry.Finger@lwfinger.net>,
+	Yan-Hsuan Chuang <yhchuang@realtek.com>,
+	Birming Chiu <birming@realtek.com>,
+	Shaofu <shaofu@realtek.com>,
+	Steven Ting <steventing@realtek.com>,
+	Kalle Valo <kvalo@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 78/97] media: bt8xx: Fix err bt878_probe()
-Date: Fri, 23 Mar 2018 10:55:05 +0100
-Message-Id: <20180323094201.936884743@linuxfoundation.org>
+Subject: [PATCH 4.4 77/97] rtlwifi: rtl_pci: Fix the bug when inactiveps is enabled.
+Date: Fri, 23 Mar 2018 10:55:04 +0100
+Message-Id: <20180323094201.888502382@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -41,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721938241360348?=
-X-GMAIL-MSGID: =?utf-8?q?1595723149633337233?=
+X-GMAIL-THRID: =?utf-8?q?1595721915428712046?=
+X-GMAIL-MSGID: =?utf-8?q?1595723146606684911?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +56,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Tsang-Shian Lin <thlin@realtek.com>
 
 
-[ Upstream commit 45392ff6881dbe56d41ef0b17c2e576065f8ffa1 ]
+[ Upstream commit b7573a0a27bfa8270dea9b145448f6884b7cacc1 ]
 
-This is odd to call 'pci_disable_device()' in an error path before a
-coresponding successful 'pci_enable_device()'.
+Reset the driver current tx read/write index to zero when inactiveps
+nic out of sync with HW state. Wrong driver tx read/write index will
+cause Tx fail.
 
-Return directly instead.
-
-Fixes: 77e0be12100a ("V4L/DVB (4176): Bug-fix: Fix memory overflow")
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Tsang-Shian Lin <thlin@realtek.com>
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Yan-Hsuan Chuang <yhchuang@realtek.com>
+Cc: Birming Chiu <birming@realtek.com>
+Cc: Shaofu <shaofu@realtek.com>
+Cc: Steven Ting <steventing@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/bt8xx/bt878.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/pci.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/media/pci/bt8xx/bt878.c
-+++ b/drivers/media/pci/bt8xx/bt878.c
-@@ -422,8 +422,7 @@ static int bt878_probe(struct pci_dev *d
- 	       bt878_num);
- 	if (bt878_num >= BT878_MAX) {
- 		printk(KERN_ERR "bt878: Too many devices inserted\n");
--		result = -ENOMEM;
--		goto fail0;
-+		return -ENOMEM;
+--- a/drivers/net/wireless/realtek/rtlwifi/pci.c
++++ b/drivers/net/wireless/realtek/rtlwifi/pci.c
+@@ -1572,7 +1572,14 @@ int rtl_pci_reset_trx_ring(struct ieee80
+ 				dev_kfree_skb_irq(skb);
+ 				ring->idx = (ring->idx + 1) % ring->entries;
+ 			}
++
++			if (rtlpriv->use_new_trx_flow) {
++				rtlpci->tx_ring[i].cur_tx_rp = 0;
++				rtlpci->tx_ring[i].cur_tx_wp = 0;
++			}
++
+ 			ring->idx = 0;
++			ring->entries = rtlpci->txringcount[i];
+ 		}
  	}
- 	if (pci_enable_device(dev))
- 		return -EIO;
+ 	spin_unlock_irqrestore(&rtlpriv->locks.irq_th_lock, flags);
