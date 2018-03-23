@@ -1,98 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeCWWOc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 18:14:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33048 "EHLO mail.kernel.org"
+        id S1752152AbeCWWOa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 18:14:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751847AbeCWWO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751668AbeCWWO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Mar 2018 18:14:29 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D745221839
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7517721777
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Message-Id: <20180323221427.852659879@goodmis.org>
+Message-Id: <20180323221311.405667933@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 23 Mar 2018 18:13:14 -0400
+Date: Fri, 23 Mar 2018 18:13:11 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH 3/4] selftests: ftrace: Add a testcase for string type with kprobe_event
-References: <20180323221311.405667933@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0003-selftests-ftrace-Add-a-testcase-for-string-type-with.patch
+Subject: [PATCH 0/4] [GIT PULL] tracing, kprobes: Fix kprobe symbol offset (for minus)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Add a testcase for string type with kprobe event.
-This tests good/bad syntax combinations and also
-the traced data is correct in several way.
+Linus,
 
-Link: http://lkml.kernel.org/r/152129038381.31874.9201387794548737554.stgit@devbox
+The documentation for kprobe events says that symbol offets can
+take both a + and - sign to get to before and after the symbol address.
+But in actuality, the code does not support the minus. This fixes
+that issue, and adds a few more selftests to kprobe events.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- .../ftrace/test.d/kprobe/kprobe_args_string.tc     | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+Please pull the latest trace-v4.16-rc4 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+trace-v4.16-rc4
+
+Tag SHA1: d92df88947baacdf2ebfe80871fb1c6f9211aa80
+Head SHA1: dfa453bc90eca0febff33c8d292a656e53702158
+
+
+Masami Hiramatsu (4):
+      tracing: probeevent: Fix to support minus offset from symbol
+      selftests: ftrace: Add probe event argument syntax testcase
+      selftests: ftrace: Add a testcase for string type with kprobe_event
+      selftests: ftrace: Add a testcase for probepoint
+
+----
+ kernel/trace/trace_kprobe.c                        |  4 +-
+ kernel/trace/trace_probe.c                         |  8 +-
+ kernel/trace/trace_probe.h                         |  2 +-
+ .../ftrace/test.d/kprobe/kprobe_args_string.tc     | 46 ++++++++++
+ .../ftrace/test.d/kprobe/kprobe_args_syntax.tc     | 97 ++++++++++++++++++++++
+ .../selftests/ftrace/test.d/kprobe/probepoint.tc   | 43 ++++++++++
+ 6 files changed, 192 insertions(+), 8 deletions(-)
  create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-new file mode 100644
-index 000000000000..5ba73035e1d9
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-@@ -0,0 +1,46 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Kprobe event string type argument
-+
-+[ -f kprobe_events ] || exit_unsupported # this is configurable
-+
-+echo 0 > events/enable
-+echo > kprobe_events
-+
-+case `uname -m` in
-+x86_64)
-+  ARG2=%si
-+  OFFS=8
-+;;
-+i[3456]86)
-+  ARG2=%cx
-+  OFFS=4
-+;;
-+aarch64)
-+  ARG2=%x1
-+  OFFS=8
-+;;
-+arm*)
-+  ARG2=%r1
-+  OFFS=4
-+;;
-+*)
-+  echo "Please implement other architecture here"
-+  exit_untested
-+esac
-+
-+: "Test get argument (1)"
-+echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string" > kprobe_events
-+echo 1 > events/kprobes/testprobe/enable
-+! echo test >> kprobe_events
-+tail -n 1 trace | grep -qe "testprobe.* arg1=\"test\""
-+
-+echo 0 > events/kprobes/testprobe/enable
-+: "Test get argument (2)"
-+echo "p:testprobe create_trace_kprobe arg1=+0(+0(${ARG2})):string arg2=+0(+${OFFS}(${ARG2})):string" > kprobe_events
-+echo 1 > events/kprobes/testprobe/enable
-+! echo test1 test2 >> kprobe_events
-+tail -n 1 trace | grep -qe "testprobe.* arg1=\"test1\" arg2=\"test2\""
-+
-+echo 0 > events/enable
-+echo > kprobe_events
--- 
-2.15.1
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/kprobe/probepoint.tc
