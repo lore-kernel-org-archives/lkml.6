@@ -1,111 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755866AbeCWLAP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 07:00:15 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44559 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755779AbeCWLAL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 07:00:11 -0400
-X-Google-Smtp-Source: AG47ELsAUplYcUD8GdZOeQf1kG9UnjpP/LkqWDt/FUiPuVZdNjNT9VyRkFMdDKeT41i0JznRlOVbyw==
-Subject: Re: [PATCH 4/4] nvme: lightnvm: add late setup of block size and
- metadata
-To: Keith Busch <keith.busch@intel.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        javier@cnexlabs.com,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        Jens Axboe <axboe@kernel.dk>
-References: <20180205121505.27563-1-mb@lightnvm.io>
- <20180205121505.27563-5-mb@lightnvm.io>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <343f19d9-0428-f255-6ed0-519035eef46d@lightnvm.io>
-Date: Fri, 23 Mar 2018 12:00:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1755833AbeCWLBx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 07:01:53 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:65496 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752386AbeCWLBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 07:01:51 -0400
+Subject: Re: [PATCH 05/19] powerpc/chrp/setup: Add attribute unused and make
+ some functions static
+To: Mathieu Malaterre <malat@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+References: <20180322202007.23088-1-malat@debian.org>
+ <20180322202007.23088-6-malat@debian.org>
+From: christophe leroy <christophe.leroy@c-s.fr>
+Message-ID: <9c166091-970d-7f09-365e-6dceb4742da4@c-s.fr>
+Date: Fri, 23 Mar 2018 12:01:36 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180205121505.27563-5-mb@lightnvm.io>
+In-Reply-To: <20180322202007.23088-6-malat@debian.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/05/2018 01:15 PM, Matias Bjørling wrote:
-> The nvme driver sets up the size of the nvme namespace in two steps.
-> First it initializes the device with standard logical block and
-> metadata sizes, and then sets the correct logical block and metadata
-> size. Due to the OCSSD 2.0 specification relies on the namespace to
-> expose these sizes for correct initialization, let it be updated
-> appropriately on the LightNVM side as well.
+
+
+Le 22/03/2018 à 21:19, Mathieu Malaterre a écrit :
+> Add gcc attribute unused to silence a warning.
 > 
-> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+> These functions can all be static, make it so. Fix warnings treated as
+> errors with W=1:
+> 
+>    arch/powerpc/platforms/chrp/setup.c:97:6: error: no previous prototype for ‘chrp_show_cpuinfo’ [-Werror=missing-prototypes]
+>    arch/powerpc/platforms/chrp/setup.c:302:13: error: no previous prototype for ‘chrp_setup_arch’ [-Werror=missing-prototypes]
+>    arch/powerpc/platforms/chrp/setup.c:385:16: error: variable ‘idu_size’ set but not used [-Werror=unused-but-set-variable]
+>    arch/powerpc/platforms/chrp/setup.c:526:13: error: no previous prototype for ‘chrp_init_IRQ’ [-Werror=missing-prototypes]
+>    arch/powerpc/platforms/chrp/setup.c:559:1: error: no previous prototype for ‘chrp_init2’ [-Werror=missing-prototypes]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 > ---
->   drivers/nvme/host/core.c     | 2 ++
->   drivers/nvme/host/lightnvm.c | 8 ++++++++
->   drivers/nvme/host/nvme.h     | 2 ++
->   3 files changed, 12 insertions(+)
+>   arch/powerpc/platforms/chrp/setup.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index f837d666cbd4..740ceb28067c 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -1379,6 +1379,8 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
->   	if (ns->noiob)
->   		nvme_set_chunk_size(ns);
->   	nvme_update_disk_info(disk, ns, id);
-> +	if (ns->ndev)
-> +		nvme_nvm_update_nvm_info(ns);
->   #ifdef CONFIG_NVME_MULTIPATH
->   	if (ns->head->disk)
->   		nvme_update_disk_info(ns->head->disk, ns, id);
-> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-> index a9c010655ccc..8d4301854811 100644
-> --- a/drivers/nvme/host/lightnvm.c
-> +++ b/drivers/nvme/host/lightnvm.c
-> @@ -814,6 +814,14 @@ int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg)
+> diff --git a/arch/powerpc/platforms/chrp/setup.c b/arch/powerpc/platforms/chrp/setup.c
+> index 481ed133e04b..85df479fd631 100644
+> --- a/arch/powerpc/platforms/chrp/setup.c
+> +++ b/arch/powerpc/platforms/chrp/setup.c
+> @@ -94,7 +94,7 @@ static const char *chrp_names[] = {
+>   	"Total Impact Briq"
+>   };
+>   
+> -void chrp_show_cpuinfo(struct seq_file *m)
+> +static void chrp_show_cpuinfo(struct seq_file *m)
+>   {
+>   	int i, sdramen;
+>   	unsigned int t;
+> @@ -299,7 +299,7 @@ static __init void chrp_init(void)
+>   	of_node_put(node);
+>   }
+>   
+> -void __init chrp_setup_arch(void)
+> +static void __init chrp_setup_arch(void)
+>   {
+>   	struct device_node *root = of_find_node_by_path("/");
+>   	const char *machine = NULL;
+> @@ -382,7 +382,7 @@ static void __init chrp_find_openpic(void)
+>   {
+>   	struct device_node *np, *root;
+>   	int len, i, j;
+> -	int isu_size, idu_size;
+> +	int isu_size, idu_size __maybe_unused;
+
+idu_size is never used, you could remove it completely
+
+Christophe
+
+>   	const unsigned int *iranges, *opprop = NULL;
+>   	int oplen = 0;
+>   	unsigned long opaddr;
+> @@ -523,7 +523,7 @@ static void __init chrp_find_8259(void)
 >   	}
 >   }
 >   
-> +void nvme_nvm_update_nvm_info(struct nvme_ns *ns)
-> +{
-> +	struct nvm_dev *ndev = ns->ndev;
-> +
-> +	ndev->identity.csecs = ndev->geo.sec_size = 1 << ns->lba_shift;
-> +	ndev->identity.sos = ndev->geo.oob_size = ns->ms;
-> +}
-> +
->   int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node)
+> -void __init chrp_init_IRQ(void)
+> +static void __init chrp_init_IRQ(void)
 >   {
->   	struct request_queue *q = ns->queue;
-> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> index ea1aa5283e8e..1ca08f4993ba 100644
-> --- a/drivers/nvme/host/nvme.h
-> +++ b/drivers/nvme/host/nvme.h
-> @@ -451,12 +451,14 @@ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
->   #endif /* CONFIG_NVME_MULTIPATH */
+>   #if defined(CONFIG_VT) && defined(CONFIG_INPUT_ADBHID) && defined(CONFIG_XMON)
+>   	struct device_node *kbd;
+> @@ -555,7 +555,7 @@ void __init chrp_init_IRQ(void)
+>   #endif
+>   }
 >   
->   #ifdef CONFIG_NVM
-> +void nvme_nvm_update_nvm_info(struct nvme_ns *ns);
->   int nvme_nvm_register(struct nvme_ns *ns, char *disk_name, int node);
->   void nvme_nvm_unregister(struct nvme_ns *ns);
->   int nvme_nvm_register_sysfs(struct nvme_ns *ns);
->   void nvme_nvm_unregister_sysfs(struct nvme_ns *ns);
->   int nvme_nvm_ioctl(struct nvme_ns *ns, unsigned int cmd, unsigned long arg);
->   #else
-> +static inline void nvme_nvm_update_nvm_info(struct nvme_ns *ns) {};
->   static inline int nvme_nvm_register(struct nvme_ns *ns, char *disk_name,
->   				    int node)
+> -void __init
+> +static void __init
+>   chrp_init2(void)
 >   {
+>   #ifdef CONFIG_NVRAM
 > 
 
-Hi Keith,
-
-When going through the patches for 4.17, I forgot to run this patch by 
-you. It is part of adding OCSSD2.0 support to the kernel, and slides in 
-between a large refactoring, and the 2.0 part. May I add your reviewed 
-by and let Jens pick it up after the nvme patches for 4.17 has gone up?
-
-Thanks!
-
--Matias
+---
+L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
+https://www.avast.com/antivirus
