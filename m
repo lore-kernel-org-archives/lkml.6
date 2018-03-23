@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804282-2-2799783704308922365
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804276-2-18283071776353720621
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804282; b=WQGdGQgyvkwUo644KH1xA8rzmYM5GImU3kGOGxQTsrlTKvP
-    8BrvbGaVrkTGDAKhcvQ5a5t5IF/ON1v2vtAOzQPOicdJM6ZBfbpcL4eC2+B6R8p0
-    gjZxuAp+NluWrWvLKAn5N1tvKjfgliH9PxrmVMjO8+n95jT1H/nuHSRj6SYWMgSo
-    3/pC/iMbFkGFF14x/DOlrQsTljHFasKQh816Z8yL3MiP8o2xMXyndQPqLY2mUC46
-    /dc8lzFOzFyvEMeIki2sjA/RVYYqLH45SMDnCPAxA3ZZ5yiHo+UOfNzOgdy0rKUM
-    vtIlcXwQhPGecCpuyY9dAWft9RMXCvbfIrMXryQ==
+    t=1521804275; b=uIwd0aHwTsGfvAZnWVv7mIYX/2P3JgTuuxHdfmH9mr8bPBA
+    nd28L/tUKwkC9Cj2kxV1T5+InWr+TcH79oM5PmKBPT9HkWY9INL88HWJ8K23VReV
+    IH/hGOJEvftVPdCViNZJRfXPvPlHz+EM8AtwMa4j5VeIZDja/dMeyOpa35gzCKw5
+    UdHqmMIP04zw3TcG+Mf99leGnc61h6Ss8/OPOP9R1adb60z5we/qAGGyzdQfhbXe
+    KGgBRPGZ5F7W4pd6YnMKkM9G6WugUcMVLvcsw3EE9T9SSSIhIW02S1Si6KK2Fe4E
+    HR3HR/IzZeOR/N8DUETqNkSYXvqZirXkVrA/0Lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804282; bh=DE30urwUvj0406YuQtByZ8xq+a
-    yVKKdEGnBk6EZkXx0=; b=luV5vmEEm0ihYp8H0ODB6oXG0f//jwxMQS7QW0rLla
-    Dc68h11r9LODqYrm0Vw5KkEx52kvygpb9z06sb8yKZEtJ1T1FZOQGtx5/Q5I/IoK
-    r7Iio0oP53GjLEbsk2yyac1KPi2yxxCxGRh1Nzpp+komSa9VO8hyC78sQWPBLsfC
-    DAG/UwbQhpAx4EyfOrlHoZ5jH0ILJG0NP6VBS14EtqCBUtkxxOnbBDbRxUOqb+2F
-    Sj4iPAnNtV7n/VJ7ePf99nW37HfKZUgm0JT3+edIXaZCyIxK84veU1bZjuuTDUN4
-    vNivF6OCcGKpOGCLCYXLh6sdK58X8bWPtBtIAmm5mfFw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804275; bh=o61HV5zUmbzQ+hbB8ocweivZbH
+    npKZYUuBI22/QCChg=; b=P5UTsigFdntZFe7lc7m4IfycsanKnZ6Z56IFmg2LKA
+    Y6SScOgUMhCk+9LAD5AA4c8AI6CxpLEpS2Z1HyIOy6tGi3DmFXy3jct+xG91Tsc9
+    rPQdcLZCUngP8GPANoPQikJsR35mtQ8fqKTc7kO5xCzEzv/k/lXvXYfA2drg5iul
+    aKMWD5yo/axJanYqgfFADBD5bo4LeLfzlTsVO8cohCGGbLet9thoaLD/OCg72RpB
+    fBx1+/v3VXooQdZYhNRNjSbe5OsRAtTx3YXZGCcxoxqDffr++LFBujUB9/0PuyYu
+    fecXxtfTHZ3NgdEvTjP9OIlMs49EFtHvnQhN3GpFx3ZQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755354AbeCWKHo (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:07:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41338 "EHLO
+        id S1755363AbeCWKHp (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:07:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41318 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755328AbeCWKHl (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:41 -0400
+        with ESMTP id S1755338AbeCWKHi (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Jakub Kicinski <kubakici@wp.pl>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 073/177] mt7601u: check return value of alloc_skb
-Date: Fri, 23 Mar 2018 10:53:21 +0100
-Message-Id: <20180323094208.543629575@linuxfoundation.org>
+Subject: [PATCH 4.9 055/177] Fix driver usage of 128B WQEs when WQ_CREATE is V1.
+Date: Fri, 23 Mar 2018 10:53:03 +0100
+Message-Id: <20180323094207.775446512@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,54 +83,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: James Smart <jsmart2021@gmail.com>
 
 
-[ Upstream commit 5fb01e91daf84ad1e50edfcf63116ecbe31e7ba7 ]
+[ Upstream commit 3f247de750b8dd8f50a2c1390e2a1238790a9dff ]
 
-Function alloc_skb() will return a NULL pointer if there is no enough
-memory. However, in function mt7601u_mcu_msg_alloc(), its return value
-is not validated before it is used. This patch fixes it.
+There are two versions of a structure for queue creation and setup that the
+driver shares with FW. The driver was only treating as version 0.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Acked-by: Jakub Kicinski <kubakici@wp.pl>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Verify WQ_CREATE with 128B WQEs in V0 and V1.
+
+Code review of another bug showed the driver passing
+128B WQEs and 8 pages in WQ CREATE and V0.
+Code inspection/instrumentation showed that the driver
+uses V0 in WQ_CREATE and if the caller passes queue->entry_size
+128B, the driver sets the hdr_version to V1 so all is good.
+When I tested the V1 WQ_CREATE, the mailbox failed causing
+the driver to unload.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mediatek/mt7601u/mcu.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_sli.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/wireless/mediatek/mt7601u/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt7601u/mcu.c
-@@ -66,8 +66,10 @@ mt7601u_mcu_msg_alloc(struct mt7601u_dev
- 	WARN_ON(len % 4); /* if length is not divisible by 4 we need to pad */
- 
- 	skb = alloc_skb(len + MT_DMA_HDR_LEN + 4, GFP_KERNEL);
--	skb_reserve(skb, MT_DMA_HDR_LEN);
--	memcpy(skb_put(skb, len), data, len);
-+	if (skb) {
-+		skb_reserve(skb, MT_DMA_HDR_LEN);
-+		memcpy(skb_put(skb, len), data, len);
-+	}
- 
- 	return skb;
- }
-@@ -170,6 +172,8 @@ static int mt7601u_mcu_function_select(s
- 	};
- 
- 	skb = mt7601u_mcu_msg_alloc(dev, &msg, sizeof(msg));
-+	if (!skb)
-+		return -ENOMEM;
- 	return mt7601u_mcu_msg_send(dev, skb, CMD_FUN_SET_OP, func == 5);
- }
- 
-@@ -205,6 +209,8 @@ mt7601u_mcu_calibrate(struct mt7601u_dev
- 	};
- 
- 	skb = mt7601u_mcu_msg_alloc(dev, &msg, sizeof(msg));
-+	if (!skb)
-+		return -ENOMEM;
- 	return mt7601u_mcu_msg_send(dev, skb, CMD_CALIBRATION_OP, true);
- }
- 
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -13696,6 +13696,9 @@ lpfc_wq_create(struct lpfc_hba *phba, st
+ 	case LPFC_Q_CREATE_VERSION_1:
+ 		bf_set(lpfc_mbx_wq_create_wqe_count, &wq_create->u.request_1,
+ 		       wq->entry_count);
++		bf_set(lpfc_mbox_hdr_version, &shdr->request,
++		       LPFC_Q_CREATE_VERSION_1);
++
+ 		switch (wq->entry_size) {
+ 		default:
+ 		case 64:
