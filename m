@@ -1,132 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751823AbeCWBDq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 22 Mar 2018 21:03:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53634 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751670AbeCWBDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Mar 2018 21:03:45 -0400
-Date: Fri, 23 Mar 2018 09:03:34 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Philipp Rudo <prudo@linux.vnet.ibm.com>
-Cc: kexec@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v2 00/11] kexec_file: Clean up purgatory load
-Message-ID: <20180323010334.GA2541@dhcp-128-65.nay.redhat.com>
-References: <20180321112751.22196-1-prudo@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180321112751.22196-1-prudo@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1751625AbeCWBSL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 22 Mar 2018 21:18:11 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40939 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751080AbeCWBSJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Mar 2018 21:18:09 -0400
+X-Google-Smtp-Source: AG47ELvkqTflBR6vto9MM1ud+gYEfANogIoyTkjf6Wtm7r+DOep4hexBPglJpCzQVfdPJAnoSzUOcQ==
+From: Patrik Torstensson <totte@google.com>
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com
+Cc: linux-kernel@vger.kernel.org, ebiggers@google.com,
+        samitolvanen@google.com, gkaiser@google.com, paulcrowley@google.com,
+        Patrik Torstensson <totte@google.com>
+Subject: [PATCH v2] Add an option to dm-verity to validate hashes at most once
+Date: Thu, 22 Mar 2018 18:18:04 -0700
+Message-Id: <20180323011804.229924-1-totte@google.com>
+X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/21/18 at 12:27pm, Philipp Rudo wrote:
-> Hi everybody
-> 
-> here is the updated patch set including Dave's comments.
-> 
-> Changes v1 -> v2:
-> 	* Fix missing memcpy and memset definition in x86 purgatory
-> 	introduced by moving the sha256 implementation to common code.
-> 	* Update subject of patches #7-9 to be more precise.
-> 	* Add missing semicolon in patch #7 found by kbuild bot.
-> 	* Fix compile warnings found by kbuild bot by moving all kexec_file
-> 	specific function declarations into a 'ifdef CONFIG_KEXEC_FILE'
-> 	block (patch #5 and #10).
-> 
-> Thanks
-> Philipp
-> 
+Add an option to dm-verity to validate hashes at most once
+to allow platforms that is CPU/memory contraint to be
+protected by dm-verity against offline attacks.
 
-Philipp, thanks for the V2, it looks good and works for me.
+The option introduces a bitset that is used to check if
+a block has been validated before or not. A block can
+be validated more than once as there is no thread protection
+for the bitset.
 
-Can you rebase the series on top of AKASHI's patches which has been
-taken by Andrew?
+This patch has been developed and tested on entry-level
+Android Go devices.
 
-> ---
-> 
-> Hi everybody
-> 
-> following the discussion with Dave and AKASHI, here are the common code
-> patches extracted from my recent patch set (Add kexec_file_load support to
-> s390) [1]. The patches were extracted to allow upstream integration together
-> with AKASHI's common code patches before the arch code gets adjusted to the
-> new base.
-> 
-> The reason for this series is to prepare common code for adding
-> kexec_file_load to s390 as well as cleaning up the mis-use of the sh_offset
-> field during purgatory load. In detail this series contains:
-> 
-> Patch #1&2: Minor cleanups/fixes.
-> 
-> Patch #3-9: Clean up the purgatory load/relocation code. Especially remove
-> the mis-use of the purgatory_info->sechdrs->sh_offset field, currently
-> holding a pointer into either kexec_purgatory (ro) or purgatory_buf (rw)
-> depending on the section. With these patches the section address will be
-> calculated verbosely and sh_offset will contain the offset of the section
-> in the stripped purgatory binary (purgatory_buf).
-> 
-> Patch #10: Allows architectures to set the purgatory load address. This
-> patch is important for s390 as the kernel and purgatory have to be loaded
-> to fixed addresses. In current code this is impossible as the purgatory
-> load is opaque to the architecture.
-> 
-> Patch #11: Moves x86 purgatories sha implementation to common lib/
-> directory to allow reuse in other architectures.
-> 
-> The patches apply to v4.16-rc3. There are no changes compared to [1] (all
-> requested changes only affected s390 code). Please note that I had to touch
-> arch code for x86 and power a little. In theory this should not change the
-> behavior but I don't have a way to test it. Cross-compiling with
-> defconfig [2] works fine for both.
-> 
-> Thanks
-> Philipp
-> 
-> [1] http://lists.infradead.org/pipermail/kexec/2018-February/019926.html
-> [2] On x86 with the orc unwinder and stack validation turned off. objtool
->     SEGFAULTs on s390...
-> 
-> Philipp Rudo (11):
->   kexec_file: Silence compile warnings
->   kexec_file: Remove checks in kexec_purgatory_load
->   kexec_file: Make purgatory_info->ehdr const
->   kexec_file: Search symbols in read-only kexec_purgatory
->   kexec_file: Use read-only sections in arch_kexec_apply_relocations*
->   kexec_file: Split up __kexec_load_puragory
->   kexec_file: Remove unneeded for-loop in kexec_purgatory_setup_sechdrs
->   kexec_file: Remove unneeded variables in kexec_purgatory_setup_sechdrs
->   kexec_file: Remove mis-use of sh_offset field during purgatory load
->   kexec_file: Allow archs to set purgatory load address
->   kexec_file: Move purgatories sha256 to common code
-> 
->  arch/powerpc/kernel/kexec_elf_64.c             |   9 +-
->  arch/x86/kernel/kexec-bzimage64.c              |   8 +-
->  arch/x86/kernel/machine_kexec_64.c             |  66 ++---
->  arch/x86/purgatory/Makefile                    |   3 +
->  arch/x86/purgatory/purgatory.c                 |   2 +-
->  arch/x86/purgatory/string.c                    |  12 +
->  include/linux/kexec.h                          |  49 ++--
->  {arch/x86/purgatory => include/linux}/sha256.h |  11 +-
->  kernel/kexec_file.c                            | 379 ++++++++++++-------------
->  {arch/x86/purgatory => lib}/sha256.c           |   4 +-
->  10 files changed, 267 insertions(+), 276 deletions(-)
->  rename {arch/x86/purgatory => include/linux}/sha256.h (62%)
->  rename {arch/x86/purgatory => lib}/sha256.c (99%)
-> 
-> -- 
-> 2.13.5
-> 
+Signed-off-by: Patrik Torstensson <totte@google.com>
+---
+Changes since version 1:
+   - added documentation about the new option
+   - added the new option into DM_TABLE_STATUS ioctl
+   - replaced 'io->block + b' with 'cur_block'
+   - increase minor version
+ 
+ Documentation/device-mapper/verity.txt | 11 +++++
+ drivers/md/dm-verity-target.c          | 66 ++++++++++++++++++++++++--
+ drivers/md/dm-verity.h                 |  1 +
+ 3 files changed, 73 insertions(+), 5 deletions(-)
 
-Thanks
-Dave
+diff --git a/Documentation/device-mapper/verity.txt b/Documentation/device-mapper/verity.txt
+index 89fd8f9a259f..b3d2e4a42255 100644
+--- a/Documentation/device-mapper/verity.txt
++++ b/Documentation/device-mapper/verity.txt
+@@ -109,6 +109,17 @@ fec_start <offset>
+     This is the offset, in <data_block_size> blocks, from the start of the
+     FEC device to the beginning of the encoding data.
+ 
++check_at_most_once
++    Verify data blocks only the first time they are read from the data device,
++    rather than every time.  This reduces the overhead of dm-verity so that it
++    can be used on systems that are memory and/or CPU constrained.  However, it
++    provides a reduced level of security because only offline tampering of the
++    data device's content will be detected, not online tampering.
++
++    Hash blocks are still verified each time they are read from the hash device,
++    since verification of hash blocks is less performance critical than data
++    blocks, and a hash block will not be verified any more after all the data
++    blocks it covers have been verified anyway.
+ 
+ Theory of operation
+ ===================
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index aedb8222836b..195a899e7466 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -32,6 +32,7 @@
+ #define DM_VERITY_OPT_LOGGING		"ignore_corruption"
+ #define DM_VERITY_OPT_RESTART		"restart_on_corruption"
+ #define DM_VERITY_OPT_IGN_ZEROES	"ignore_zero_blocks"
++#define DM_VERITY_OPT_AT_MOST_ONCE	"check_at_most_once"
+ 
+ #define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
+ 
+@@ -432,6 +433,19 @@ static int verity_bv_zero(struct dm_verity *v, struct dm_verity_io *io,
+ 	return 0;
+ }
+ 
++/*
++ * Moves the bio iter one data block forward.
++ */
++static inline void verity_bv_skip_block(struct dm_verity *v,
++					struct dm_verity_io *io,
++					struct bvec_iter *iter)
++{
++	struct bio *bio = dm_bio_from_per_bio_data(io,
++						   v->ti->per_io_data_size);
++
++	bio_advance_iter(bio, iter, 1 << v->data_dev_block_bits);
++}
++
+ /*
+  * Verify one "dm_verity_io" structure.
+  */
+@@ -445,9 +459,16 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 
+ 	for (b = 0; b < io->n_blocks; b++) {
+ 		int r;
++		sector_t cur_block = io->block + b;
+ 		struct ahash_request *req = verity_io_hash_req(v, io);
+ 
+-		r = verity_hash_for_block(v, io, io->block + b,
++		if (v->validated_blocks &&
++		    likely(test_bit(cur_block, v->validated_blocks))) {
++			verity_bv_skip_block(v, io, &io->iter);
++			continue;
++		}
++
++		r = verity_hash_for_block(v, io, cur_block,
+ 					  verity_io_want_digest(v, io),
+ 					  &is_zero);
+ 		if (unlikely(r < 0))
+@@ -481,13 +502,17 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 			return r;
+ 
+ 		if (likely(memcmp(verity_io_real_digest(v, io),
+-				  verity_io_want_digest(v, io), v->digest_size) == 0))
++				  verity_io_want_digest(v, io),
++				  v->digest_size) == 0)) {
++			if (v->validated_blocks)
++				set_bit(cur_block, v->validated_blocks);
+ 			continue;
++		}
+ 		else if (verity_fec_decode(v, io, DM_VERITY_BLOCK_TYPE_DATA,
+-					   io->block + b, NULL, &start) == 0)
++					   cur_block, NULL, &start) == 0)
+ 			continue;
+ 		else if (verity_handle_err(v, DM_VERITY_BLOCK_TYPE_DATA,
+-					   io->block + b))
++					   cur_block))
+ 			return -EIO;
+ 	}
+ 
+@@ -673,6 +698,8 @@ static void verity_status(struct dm_target *ti, status_type_t type,
+ 			args += DM_VERITY_OPTS_FEC;
+ 		if (v->zero_digest)
+ 			args++;
++		if (v->validated_blocks)
++			args++;
+ 		if (!args)
+ 			return;
+ 		DMEMIT(" %u", args);
+@@ -691,6 +718,8 @@ static void verity_status(struct dm_target *ti, status_type_t type,
+ 		}
+ 		if (v->zero_digest)
+ 			DMEMIT(" " DM_VERITY_OPT_IGN_ZEROES);
++		if (v->validated_blocks)
++			DMEMIT(" " DM_VERITY_OPT_AT_MOST_ONCE);
+ 		sz = verity_fec_status_table(v, sz, result, maxlen);
+ 		break;
+ 	}
+@@ -740,6 +769,7 @@ static void verity_dtr(struct dm_target *ti)
+ 	if (v->bufio)
+ 		dm_bufio_client_destroy(v->bufio);
+ 
++	kvfree(v->validated_blocks);
+ 	kfree(v->salt);
+ 	kfree(v->root_digest);
+ 	kfree(v->zero_digest);
+@@ -760,6 +790,26 @@ static void verity_dtr(struct dm_target *ti)
+ 	kfree(v);
+ }
+ 
++static int verity_alloc_most_once(struct dm_verity *v)
++{
++	struct dm_target *ti = v->ti;
++
++	/* the bitset can only handle INT_MAX blocks */
++	if (v->data_blocks > INT_MAX) {
++		ti->error = "device too large to use check_at_most_once";
++		return -E2BIG;
++	}
++
++	v->validated_blocks = kvzalloc(BITS_TO_LONGS(v->data_blocks)
++				     * sizeof(unsigned long), GFP_KERNEL);
++	if (!v->validated_blocks) {
++		ti->error = "failed to allocate bitset for check_at_most_once";
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
+ static int verity_alloc_zero_digest(struct dm_verity *v)
+ {
+ 	int r = -ENOMEM;
+@@ -829,6 +879,12 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
+ 			}
+ 			continue;
+ 
++		} else if (!strcasecmp(arg_name, DM_VERITY_OPT_AT_MOST_ONCE)) {
++			r = verity_alloc_most_once(v);
++			if (r)
++				return r;
++			continue;
++
+ 		} else if (verity_is_fec_opt_arg(arg_name)) {
+ 			r = verity_fec_parse_opt_args(as, v, &argc, arg_name);
+ 			if (r)
+@@ -1096,7 +1152,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 
+ static struct target_type verity_target = {
+ 	.name		= "verity",
+-	.version	= {1, 3, 0},
++	.version	= {1, 4, 0},
+ 	.module		= THIS_MODULE,
+ 	.ctr		= verity_ctr,
+ 	.dtr		= verity_dtr,
+diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+index b675bc015512..ace5ec781b5f 100644
+--- a/drivers/md/dm-verity.h
++++ b/drivers/md/dm-verity.h
+@@ -63,6 +63,7 @@ struct dm_verity {
+ 	sector_t hash_level_block[DM_VERITY_MAX_LEVELS];
+ 
+ 	struct dm_verity_fec *fec;	/* forward error correction */
++	unsigned long *validated_blocks; /* bitset blocks validated */
+ };
+ 
+ struct dm_verity_io {
+-- 
+2.17.0.rc0.231.g781580f067-goog
