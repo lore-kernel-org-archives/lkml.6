@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-977995-1521799507-2-7213821248909177716
+X-Cyrus-Session-Id: sloti22d1t05-947063-1521799503-2-3397682144158470175
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521799506; b=A27CghwB0x+Apghxwv4a0rdPRUdrJUcZqrRJ1GZstVkis5y
-    HB+X4jdZDuxeYfmZP2CpaVVz67oNHICzb7j0KcDf+nzfoUoUKsPn6cE+xQzpDAB/
-    mQuuB39uIgl7aO1BSCIjmiwMyBmJrdDRtVCdSYPlkKyoQumwKFL9uapmxne3GmqS
-    KXqeNxmgoe11QmRLudivafLUlp/mlu8MQ5QwRq8VgA5wrIlrnbv9zQhtnRujbebg
-    Qi63uT63hWSW2jW7EJMspQY8cR+oESPalKX/aqZGLTSRF9KCaXt9msEF+5mV0K5r
-    Wx2irCpOiT2IuvHiJGNpcFeRsWQkWckEr9BI1lw==
+    t=1521799503; b=NQJmc0H2pLLXCkglzyb3XFPIAVKbGdzB8T6+F1pBF7vcCky
+    8OlI6E+SHyqlRfHDvvH4WHu0DTKOuw5EKP7dtGW5/pCdvN84eAa2hMCrU+HF2v8X
+    ExXdaXVQQJMLulb9X2LcB3kZlAwKnJbpdaoURw9C/0WQfjc2bWC43GR0daeEx421
+    c2QuCSsXAAA/BxERwuHm9jNCdwuMoGDLkL/hkZzLibVH+u4mCfXV4NPv1Ksx89Kc
+    8a/31yw6y6yr7akEKI9TVH5xbDcwDulQiVNsRGLBsy1ZwNgwlStVB8MnefhByb6M
+    Bzqx8h7eOZzJTJGL6yJHn8PBf95P/h9LFsfQQ5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521799506; bh=qdkyKPeLZyacCwjpl8/X4IAggl
-    6+8+6o3Ktj7waC7iQ=; b=nJmP5EUcwAVlg2JcajQHiMnBNJYxqy3J/35L0ohiDk
-    pCKUUo4waw+LHjz8LZD3jneOj7muiA6y8BClGcRaWMLGi7I31SETNEFF8hqG1voB
-    qtrxNzTesE7sHmP6HqGuLHDtbGAllxDmIrlIkCjws4Gr8hbWZmjH9JO8RGw1A4AU
-    UozmXn4cYymjB3JjgEC0w78kdr3BJC/KxvoySvXYEeCo0ABSHA9XQ1NmnBMdFIzb
-    lwHqTV6lphGaVeuvdy/0hwr1JuCbR21aocc9UjNpZQ+tMMVzJ1+RimEpESlixmZA
-    lbdrB3WhTyHbwQHVj/jUahvHap9aPPRquJLu2N9+mqRA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521799503; bh=oVDsaHK0GdX/JiCcv2PkfvAU6F
+    UiyDMPdYUKICRTWGw=; b=G3zklHqEOWtCMilQx/QgO1IQbJFyGtfjaUHdAHZWs6
+    Iy8SKQFN8s32KRZ0LKmcho+bNqFJ3LTlw1j/4DOw9soADGHck51BrwYSzzsORL+J
+    3RZ95fkzDwUlKwYoOb+X8+FDCvZfWyd5CbBAqQzzSqKZ4RfHWagFSlXCltOZRYqQ
+    JBaTIi1Fet33WRZbLnplBbtREYoNNhx+XOtQVrriWBRcGjbIeDreKjg6SwPEVtfY
+    qx4T8ERiAkrrrKqbjdO+QS/r5TFmaNnlp/WoMGUIXeCsve4MYTWqmCtG54X86lFH
+    d//XgTScMMyWKfjBbFPPjLlJCk88QwEvJIgyo/AkLkYg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,23 +50,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753963AbeCWKFB (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:05:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39432 "EHLO
+        id S1754471AbeCWKE7 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:04:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39408 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754854AbeCWKFA (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:05:00 -0400
+        with ESMTP id S1754148AbeCWKE5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 014/177] Input: ar1021_i2c - fix too long name in drivers device table
-Date: Fri, 23 Mar 2018 10:52:22 +0100
-Message-Id: <20180323094205.831606458@linuxfoundation.org>
+Subject: [PATCH 4.9 013/177] rtc: cmos: Do not assume irq 8 for rtc when there are no legacy irqs
+Date: Fri, 23 Mar 2018 10:52:21 +0100
+Message-Id: <20180323094205.789288206@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -84,41 +82,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit 95123fc43560d6f4a60e74f72836e63cd8848f76 ]
+[ Upstream commit a1e23a42f1bdc00e32fc4869caef12e4e6272f26 ]
 
-The name field in structure i2c_device_id is 20 characters, and we expect
-it to be NULL-terminated, however we are trying to stuff it with 21 bytes
-and thus NULL-terminator is lost. This causes issues when one creates
-device with name "MICROCHIP_AR1021_I2C" as i2c core cuts off the last "C",
-and automatic module loading by alias does not work as result.
+On some systems (e.g. Intel Bay Trail systems) the legacy PIC is not
+used, in this case virq 8 will be a random irq, rather then hw_irq 8
+from the PIC.
 
-The -I2C suffix in the device name is superfluous, we know what bus we are
-dealing with, so let's drop it. Also, no other driver uses capitals, and
-the manufacturer name is normally not included, except in very rare cases
-of incompatible name collisions.
+Requesting virq 8 in this case will not help us to get alarm irqs and
+may cause problems for other drivers which actually do need virq 8,
+for example on an Asus Transformer T100TA this leads to:
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=116211
-Fixes: dd4cae8bf166 ("Input: Add Microchip AR1021 i2c touchscreen")
-Reviewed-By: Christian Gmeiner <christian.gmeiner@gmail.com>
-Tested-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+[ 28.745155] genirq: Flags mismatch irq 8. 00000088 (mmc0) vs. 00000080 (rtc0)
+<snip oops>
+[ 28.753700] mmc0: Failed to request IRQ 8: -16
+[ 28.975934] sdhci-acpi: probe of 80860F14:01 failed with error -16
+
+This commit fixes this by making the rtc-cmos driver continue
+without using an irq rather then claiming irq 8 when no irq is
+specified in the pnp-info and there are no legacy-irqs.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/touchscreen/ar1021_i2c.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/rtc-cmos.c |   17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
---- a/drivers/input/touchscreen/ar1021_i2c.c
-+++ b/drivers/input/touchscreen/ar1021_i2c.c
-@@ -152,7 +152,7 @@ static int __maybe_unused ar1021_i2c_res
- static SIMPLE_DEV_PM_OPS(ar1021_i2c_pm, ar1021_i2c_suspend, ar1021_i2c_resume);
+--- a/drivers/rtc/rtc-cmos.c
++++ b/drivers/rtc/rtc-cmos.c
+@@ -41,6 +41,9 @@
+ #include <linux/pm.h>
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
++#ifdef CONFIG_X86
++#include <asm/i8259.h>
++#endif
  
- static const struct i2c_device_id ar1021_i2c_id[] = {
--	{ "MICROCHIP_AR1021_I2C", 0 },
-+	{ "ar1021", 0 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(i2c, ar1021_i2c_id);
+ /* this is for "generic access to PC-style RTC" using CMOS_READ/CMOS_WRITE */
+ #include <linux/mc146818rtc.h>
+@@ -1117,17 +1120,23 @@ static int cmos_pnp_probe(struct pnp_dev
+ {
+ 	cmos_wake_setup(&pnp->dev);
+ 
+-	if (pnp_port_start(pnp, 0) == 0x70 && !pnp_irq_valid(pnp, 0))
++	if (pnp_port_start(pnp, 0) == 0x70 && !pnp_irq_valid(pnp, 0)) {
++		unsigned int irq = 0;
++#ifdef CONFIG_X86
+ 		/* Some machines contain a PNP entry for the RTC, but
+ 		 * don't define the IRQ. It should always be safe to
+-		 * hardcode it in these cases
++		 * hardcode it on systems with a legacy PIC.
+ 		 */
++		if (nr_legacy_irqs())
++			irq = 8;
++#endif
+ 		return cmos_do_probe(&pnp->dev,
+-				pnp_get_resource(pnp, IORESOURCE_IO, 0), 8);
+-	else
++				pnp_get_resource(pnp, IORESOURCE_IO, 0), irq);
++	} else {
+ 		return cmos_do_probe(&pnp->dev,
+ 				pnp_get_resource(pnp, IORESOURCE_IO, 0),
+ 				pnp_irq(pnp, 0));
++	}
+ }
+ 
+ static void cmos_pnp_remove(struct pnp_dev *pnp)
