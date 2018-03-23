@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804231-2-2138324528921102030
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804227-2-17378643657379434770
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804230; b=R8YP50ttZdj1Q5Wdjl6bmjmnzToHrNMyTb9vOzf/qS3FXRy
-    iqokFilgbDFUywGLK8uanmZmpbY+a5Q/jHr7efygpE4opvY8PePiRDUwqdzBYfaA
-    9M+RiWfpJBFAncU9wEJwlZ04hmTNK5hvdQ6BzXJhRISlmUturAUFVVSBI9lttOVG
-    ld6/KjRNsDYDuEYAAFVJXpelUg9eyryejq7TxqayebIzGuWdV9/ErIcJkuFTU6Qg
-    cgH2TY6VtGqPrIBTsq4erNhLlW60ShrFfUV6HPeg5QrN0D7agVj8RZp1TFJUQYnw
-    q+v0g+QjWiymvK5Uv1vXL3R2ltP36uz246qyV2A==
+    t=1521804226; b=c9/r7BY8u5ykwRHDk+nCGeaxpz5bMkq2/GjUJvUeWp+r8ta
+    d/zxa7C8VDDRuGFFc1XOPVUAl9fbMrstaw28r3mfbq9Pua7TNaqDWJYprOHHD3Cs
+    tzglifO/b0/c1z6KxRC6OgstA37F57iulI6cjH1dFxNqjDDadonk6UkpTS6jWcZ1
+    dJFyuj/s8ZanScReWSOcDCgQXkdfuytBslZNBXL/TVjn3IYENxLrAMhJcPEV2HxX
+    Mt7D3NHqjuhGkmNjjWSVP9NxRRzFzAhH7WMkD2Q1XdKYz52Xx928i4+mq/IKHeer
+    qPxGE6BeeJoISTyiFV9riLjo3Rn90GLX9zI0zUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804230; bh=HrWLyeU8QebQknu7kXnZeNaug+
-    h9GUABWxv+xrBh5sQ=; b=oONpVQT1dwbAK7NNG5wOu3vQ2+kEm5YSCn8SQRzSiN
-    3C/gqmIQRY/4ThfIyyrFjOEEJljGA+Lw6FyR7907UdaSg7Gz79BIDsDF5qkJpCaI
-    SfoLxeisMu/nUG/ey8Z8IRQ3KrO3W5kM/H8+JoAdiV/51icymKo6sC3Y7JMLgsYB
-    T83M6ViHEnK1A5m3fR1IifW2Av12fXr6yEX4ZHlLV7xQtgZqr9OBKninzieqAO38
-    /HI0ijRShI1Dh2Qo7j4gh4w1MGJmspcneVpMbyGy5bkSAxr34z8/uyTNIJLWLSPN
-    +uhvWb3Ymx3FZj8B32TlckZoaSU5LkrJ21XUXUcWeVow==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521804226; bh=hRMKkijtIDujhIPtqeQmx1dGIK
+    /b5fwlknfPit+iCUs=; b=K7SW6RH1gzqBGs7EzHNbLNIA6op0u7vIEAR9zUxllA
+    vAb7Nkbn96pNVYBRRRQXmlxiKR/okOxK99ARREqbMWPB2BWjB9kNe/qh26Cg2IDm
+    XvF+6aFnfXCUsrUJ8QpoBFrD3JA5IK/bHfG6RGy5hUGi7ydj7nth42XRn4Reb/vz
+    OYU9CVomLMKwcwGUhAA+a6Qt/tP3rc1cPGCZH2VmPLCNpJg8k3JHdOX+V3m1aFtx
+    gbiohkVRbnBxOMg3YmfXZPzzqxtj8fMysdyX4ODCYMzRZ5eOHBt+DnDOIa2CsD5v
+    +Y1oqYuKoD7JHOJrEJ9ieDGMTUy/8v1yLQL3rpBvLHyg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,30 +50,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755423AbeCWKIB (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:08:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41460 "EHLO
+        id S1755432AbeCWKIC (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:08:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41512 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755416AbeCWKH4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:56 -0400
+        with ESMTP id S1755128AbeCWKIB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:08:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baoquan He <bhe@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Borislav Petkov <bp@suse.de>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 086/177] x86/KASLR: Fix kexec kernel boot crash when KASLR randomization fails
-Date: Fri, 23 Mar 2018 10:53:34 +0100
-Message-Id: <20180323094209.091700840@linuxfoundation.org>
+Subject: [PATCH 4.9 074/177] libertas: check return value of alloc_workqueue
+Date: Fri, 23 Mar 2018 10:53:22 +0100
+Message-Id: <20180323094208.581032010@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -91,74 +82,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Baoquan He <bhe@redhat.com>
+From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit da63b6b20077469bd6bd96e07991ce145fc4fbc4 ]
+[ Upstream commit dc3f89c38a8406554ffeffa370aad086a9c5e9de ]
 
-Dave found that a kdump kernel with KASLR enabled will reset to the BIOS
-immediately if physical randomization failed to find a new position for
-the kernel. A kernel with the 'nokaslr' option works in this case.
+Function alloc_workqueue() will return a NULL pointer if there is no
+enough memory, and its return value should be validated before using.
+However, in function if_spi_probe(), its return value is not checked.
+This may result in a NULL dereference bug. This patch fixes the bug.
 
-The reason is that KASLR will install a new page table for the identity
-mapping, while it missed building it for the original kernel location
-if KASLR physical randomization fails.
-
-This only happens in the kexec/kdump kernel, because the identity mapping
-has been built for kexec/kdump in the 1st kernel for the whole memory by
-calling init_pgtable(). Here if physical randomizaiton fails, it won't build
-the identity mapping for the original area of the kernel but change to a
-new page table '_pgtable'. Then the kernel will triple fault immediately
-caused by no identity mappings.
-
-The normal kernel won't see this bug, because it comes here via startup_32()
-and CR3 will be set to _pgtable already. In startup_32() the identity
-mapping is built for the 0~4G area. In KASLR we just append to the existing
-area instead of entirely overwriting it for on-demand identity mapping
-building. So the identity mapping for the original area of kernel is still
-there.
-
-To fix it we just switch to the new identity mapping page table when physical
-KASLR succeeds. Otherwise we keep the old page table unchanged just like
-"nokaslr" does.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Signed-off-by: Dave Young <dyoung@redhat.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Garnier <thgarnie@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yinghai Lu <yinghai@kernel.org>
-Link: http://lkml.kernel.org/r/1493278940-5885-1-git-send-email-bhe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/boot/compressed/kaslr.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/wireless/marvell/libertas/if_spi.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -460,10 +460,17 @@ void choose_random_location(unsigned lon
- 			add_identity_map(random_addr, output_size);
- 			*output = random_addr;
- 		}
-+
-+		/*
-+		 * This loads the identity mapping page table.
-+		 * This should only be done if a new physical address
-+		 * is found for the kernel, otherwise we should keep
-+		 * the old page table to make it be like the "nokaslr"
-+		 * case.
-+		 */
-+		finalize_identity_maps();
- 	}
+--- a/drivers/net/wireless/marvell/libertas/if_spi.c
++++ b/drivers/net/wireless/marvell/libertas/if_spi.c
+@@ -1181,6 +1181,10 @@ static int if_spi_probe(struct spi_devic
  
--	/* This actually loads the identity pagetable on x86_64. */
--	finalize_identity_maps();
+ 	/* Initialize interrupt handling stuff. */
+ 	card->workqueue = alloc_workqueue("libertas_spi", WQ_MEM_RECLAIM, 0);
++	if (!card->workqueue) {
++		err = -ENOMEM;
++		goto remove_card;
++	}
+ 	INIT_WORK(&card->packet_work, if_spi_host_to_card_worker);
+ 	INIT_WORK(&card->resume_work, if_spi_resume_worker);
  
- 	/* Pick random virtual address starting from LOAD_PHYSICAL_ADDR. */
- 	if (IS_ENABLED(CONFIG_X86_64))
+@@ -1209,6 +1213,7 @@ release_irq:
+ 	free_irq(spi->irq, card);
+ terminate_workqueue:
+ 	destroy_workqueue(card->workqueue);
++remove_card:
+ 	lbs_remove_card(priv); /* will call free_netdev */
+ free_card:
+ 	free_if_spi_card(card);
