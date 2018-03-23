@@ -1,23 +1,23 @@
 Return-Path: <jacob.jun.pan@linux.intel.com>
-X-Google-Smtp-Source: AG47ELtoIyUfVuEkgiG3gJxogeRj5ACOrOsts8SQLN7k0c5snL4UXPRtWyDb5KKtljsYVqlzOWry
+X-Google-Smtp-Source: AG47ELvuX7d/ouiFXPSBnIIrTyp+OXFhrhwCqEbzX6OzjJADnHTApd5JRJN61TqGYi4lxrJYCfve
 ARC-Seal: i=1; a=rsa-sha256; t=1521774604; cv=none;
         d=google.com; s=arc-20160816;
-        b=bUmBTFDXA9ssoNJOA8OdYcOxR3cO9E6wsXpVaGK8Y8Kp2b6N8YLFrP7YYy4tPUb24p
-         VHFkfFixzBAqP5yxnoyrUNdyclb5Du46mbHsja2EROqUxsyvKE/grnhJx6vMe4ScxHRW
-         aBNOY2IdLTP0WRY8OO0Juu8X68krzTyZznhbn26cCfrRMUuSpU6K6FYdkE3kFi2yRCp2
-         0he/ef3GkS07HkzuoJzcMYqMEgufvF0X3kPgxGEbhTfkG1HhzJ3A0Sxq3kxV4246oGm4
-         URI5GelTW+SfRErRELSNqFM9+ZnTPShmzRHamRXd6ZNQMlBOhWy4wGu8LDV5Vw/+xldh
-         9rRw==
+        b=Rsj4VBbZDyf/duzw4uZUoVOljp1sHHZXdO9Xiu3PCBPuCUM/VbgzhShtBGnHA863VL
+         tlvjSF7n5MA37g/Ye3Khxyf+M1ycBflS08JamE14LQmYmDzPBRJKkXfM4dywmGJKfEuo
+         lMokfO2qOFHTRbtOSo3Dra6h4JJdkxyY5WLvkhPjR8DVgfaJdRUr1hxyrbQwdPsG0Y87
+         rcybSf7kaiBWlYie6rSC054xb0WmoVTWG8wYVirlC1KyeboWugqaQOnNmEkngrIAV3ZL
+         q2VkRrMPBnOxBz6KpmTTVVCfjATIv0IJb+tvAbUWcU6KB/Xx0D22Xqx7JZTTQbwy4jmI
+         8iyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=Wu9ysDpyI4Kl5QVS7lW4a5OwoMW1MhCDYBiAy+uCDjw=;
-        b=A2/p0efK8C+z4rHZKo9MQq3OpT683LD2GCXHRsUliNGBfxHhtA1hyKJS6wNd/yTVRe
-         qrN1PpLFqAMaL20AKxNf71ltSdnwQjC+UsjC9do6CsmBnNy32bsMlwMqYOHYHkNc8U8j
-         7OqQHCFaXZUHOnQdxzUplbc1rvLVVuMhodDwHYBG7vIKBQWp/2TmNyxNRJD57upeQtgG
-         37q4787rge7gtxUraOxix/SNN5IxRbvpUOteee7TaxWPb1bbAJD1Af7UgGEsfvZtNrfx
-         f2W0Y1bTVArRxvbaq3ET7E5UWRwii2FlW+weCp4kZ/CK6V76FdOPZq3ft1MZAIQLYqqp
-         Xl8w==
+        bh=fS6UNudKRY6Gy6ePz8t4otL6+tBgnk7GoEoaODNPQAg=;
+        b=F3KIrQwnYyqkCFliuHH04nFcuDwIwPqzBqiqnYOW793lxUA8tzAGi/6xDuxHUJrlH1
+         sZ0v0GtRfyrceybnNjHvtaPzZEG0d9s6ui9I0lgJVUuCKT2Z06oJQP+7SlMoh6QUxyO2
+         dWZunyYmKAbsfjbZ2RQEjpuJzDJciAy7E4bBWPlDhVPYD+USFqi4t8rLSF99gup3XU2j
+         VpUvvuMFj61cbNToF2ZlTO9j3IFCkkSVbVpzzu5gtX9eehCxN6jhiBs6Apmhg8ewoa96
+         LW4k9MprfY46tbYRnygixjj+j2T3TBS38p+iRU/4MLDp6BFV2kiNqAfmD2q/s9WOGmU0
+         WtKw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,348,1517904000";
-   d="scan'208";a="26315977"
+   d="scan'208";a="26315969"
 From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 To: iommu@lists.linux-foundation.org,
 	LKML <linux-kernel@vger.kernel.org>,
@@ -42,66 +42,203 @@ Cc: "Liu, Yi L" <yi.l.liu@intel.com>,
 	Alex Williamson <alex.williamson@redhat.com>,
 	Jean Delvare <khali@linux-fr.org>,
 	"Christoph Hellwig" <hch@infradead.org>,
+	"Liu, Yi L" <yi.l.liu@linux.intel.com>,
+	Liu,
 	Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v4 06/22] iommu/vt-d: add definitions for PFSID
-Date: Thu, 22 Mar 2018 20:11:58 -0700
-Message-Id: <1521774734-48433-7-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 05/22] iommu: introduce iommu invalidate API function
+Date: Thu, 22 Mar 2018 20:11:57 -0700
+Message-Id: <1521774734-48433-6-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521774734-48433-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1521774734-48433-1-git-send-email-jacob.jun.pan@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595696327701556858?=
-X-GMAIL-MSGID: =?utf-8?q?1595696327701556858?=
+X-GMAIL-THRID: =?utf-8?q?1595696327259999038?=
+X-GMAIL-MSGID: =?utf-8?q?1595696327259999038?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When SRIOV VF device IOTLB is invalidated, we need to provide
-the PF source ID such that IOMMU hardware can gauge the depth
-of invalidation queue which is shared among VFs. This is needed
-when device invalidation throttle (DIT) capability is supported.
+From: "Liu, Yi L" <yi.l.liu@linux.intel.com>
 
-This patch adds bit definitions for checking and tracking PFSID.
+When an SVM capable device is assigned to a guest, the first level page
+tables are owned by the guest and the guest PASID table pointer is
+linked to the device context entry of the physical IOMMU.
 
+Host IOMMU driver has no knowledge of caching structure updates unless
+the guest invalidation activities are passed down to the host. The
+primary usage is derived from emulated IOMMU in the guest, where QEMU
+can trap invalidation activities before passing them down to the
+host/physical IOMMU.
+Since the invalidation data are obtained from user space and will be
+written into physical IOMMU, we must allow security check at various
+layers. Therefore, generic invalidation data format are proposed here,
+model specific IOMMU drivers need to convert them into their own format.
+
+Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
 ---
- include/linux/intel-iommu.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/iommu/iommu.c      | 14 ++++++++
+ include/linux/iommu.h      | 12 +++++++
+ include/uapi/linux/iommu.h | 79 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+)
 
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index e4a16dc..0e3b618 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -114,6 +114,7 @@
-  * Extended Capability Register
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 734ed09..466f789 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1344,6 +1344,20 @@ void iommu_unbind_pasid_table(struct iommu_domain *domain, struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(iommu_unbind_pasid_table);
+ 
++int iommu_sva_invalidate(struct iommu_domain *domain,
++		struct device *dev, struct tlb_invalidate_info *inv_info)
++{
++	int ret = 0;
++
++	if (unlikely(!domain->ops->sva_invalidate))
++		return -ENODEV;
++
++	ret = domain->ops->sva_invalidate(domain, dev, inv_info);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(iommu_sva_invalidate);
++
+ static void __iommu_detach_device(struct iommu_domain *domain,
+ 				  struct device *dev)
+ {
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 0f6f6c5..da684a7 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -190,6 +190,7 @@ struct iommu_resv_region {
+  * @pgsize_bitmap: bitmap of all possible supported page sizes
+  * @bind_pasid_table: bind pasid table pointer for guest SVM
+  * @unbind_pasid_table: unbind pasid table pointer and restore defaults
++ * @sva_invalidate: invalidate translation caches of shared virtual address
   */
+ struct iommu_ops {
+ 	bool (*capable)(enum iommu_cap);
+@@ -243,6 +244,8 @@ struct iommu_ops {
+ 				struct pasid_table_config *pasidt_binfo);
+ 	void (*unbind_pasid_table)(struct iommu_domain *domain,
+ 				struct device *dev);
++	int (*sva_invalidate)(struct iommu_domain *domain,
++		struct device *dev, struct tlb_invalidate_info *inv_info);
  
-+#define ecap_dit(e)		((e >> 41) & 0x1)
- #define ecap_pasid(e)		((e >> 40) & 0x1)
- #define ecap_pss(e)		((e >> 35) & 0x1f)
- #define ecap_eafs(e)		((e >> 34) & 0x1)
-@@ -284,6 +285,7 @@ enum {
- #define QI_DEV_IOTLB_SID(sid)	((u64)((sid) & 0xffff) << 32)
- #define QI_DEV_IOTLB_QDEP(qdep)	(((qdep) & 0x1f) << 16)
- #define QI_DEV_IOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
-+#define QI_DEV_IOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xff0) << 48))
- #define QI_DEV_IOTLB_SIZE	1
- #define QI_DEV_IOTLB_MAX_INVS	32
+ 	unsigned long pgsize_bitmap;
+ };
+@@ -309,6 +312,9 @@ extern int iommu_bind_pasid_table(struct iommu_domain *domain,
+ 		struct device *dev, struct pasid_table_config *pasidt_binfo);
+ extern void iommu_unbind_pasid_table(struct iommu_domain *domain,
+ 				struct device *dev);
++extern int iommu_sva_invalidate(struct iommu_domain *domain,
++		struct device *dev, struct tlb_invalidate_info *inv_info);
++
+ extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+ extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 		     phys_addr_t paddr, size_t size, int prot);
+@@ -720,6 +726,12 @@ void iommu_unbind_pasid_table(struct iommu_domain *domain, struct device *dev)
+ {
+ }
  
-@@ -308,6 +310,7 @@ enum {
- #define QI_DEV_EIOTLB_PASID(p)	(((u64)p) << 32)
- #define QI_DEV_EIOTLB_SID(sid)	((u64)((sid) & 0xffff) << 16)
- #define QI_DEV_EIOTLB_QDEP(qd)	((u64)((qd) & 0x1f) << 4)
-+#define QI_DEV_EIOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xff0) << 48))
- #define QI_DEV_EIOTLB_MAX_INVS	32
++static inline int iommu_sva_invalidate(struct iommu_domain *domain,
++		struct device *dev, struct tlb_invalidate_info *inv_info)
++{
++	return -EINVAL;
++}
++
+ #endif /* CONFIG_IOMMU_API */
  
- #define QI_PGRP_IDX(idx)	(((u64)(idx)) << 55)
-@@ -440,6 +443,7 @@ struct device_domain_info {
- 	struct list_head global; /* link to global list */
- 	u8 bus;			/* PCI bus number */
- 	u8 devfn;		/* PCI devfn number */
-+	u16 pfsid;		/* SRIOV physical function source ID */
- 	u8 pasid_supported:3;
- 	u8 pasid_enabled:1;
- 	u8 pri_supported:1;
+ #endif /* __LINUX_IOMMU_H */
+diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+index 9f7a6bf..4447943 100644
+--- a/include/uapi/linux/iommu.h
++++ b/include/uapi/linux/iommu.h
+@@ -29,4 +29,83 @@ struct pasid_table_config {
+ 	__u8 pasid_bits;
+ };
+ 
++/**
++ * enum iommu_inv_granularity - Generic invalidation granularity
++ *
++ * When an invalidation request is sent to IOMMU to flush translation caches,
++ * it may carry different granularity. These granularity levels are not specific
++ * to a type of translation cache. For an example, PASID selective granularity
++ * is only applicable to PASID cache invalidation.
++ * This enum is a collection of granularities for all types of translation
++ * caches. The idea is to make it easy for IOMMU model specific driver do
++ * conversion from generic to model specific value.
++ */
++enum iommu_inv_granularity {
++	IOMMU_INV_GRANU_DOMAIN = 1,	/* all TLBs associated with a domain */
++	IOMMU_INV_GRANU_DEVICE,		/* caching structure associated with a
++					 * device ID
++					 */
++	IOMMU_INV_GRANU_DOMAIN_PAGE,	/* address range with a domain */
++	IOMMU_INV_GRANU_ALL_PASID,	/* cache of a given PASID */
++	IOMMU_INV_GRANU_PASID_SEL,	/* only invalidate specified PASID */
++
++	IOMMU_INV_GRANU_NG_ALL_PASID,	/* non-global within all PASIDs */
++	IOMMU_INV_GRANU_NG_PASID,	/* non-global within a PASIDs */
++	IOMMU_INV_GRANU_PAGE_PASID,	/* page-selective within a PASID */
++	IOMMU_INV_NR_GRANU,
++};
++
++/** enum iommu_inv_type - Generic translation cache types for invalidation
++ *
++ * Invalidation requests sent to IOMMU may indicate which translation cache
++ * to be operated on.
++ * Combined with enum iommu_inv_granularity, model specific driver can do a
++ * simple lookup to convert generic type to model specific value.
++ */
++enum iommu_inv_type {
++	IOMMU_INV_TYPE_DTLB,	/* device IOTLB */
++	IOMMU_INV_TYPE_TLB,	/* IOMMU paging structure cache */
++	IOMMU_INV_TYPE_PASID,	/* PASID cache */
++	IOMMU_INV_TYPE_CONTEXT,	/* device context entry cache */
++	IOMMU_INV_NR_TYPE
++};
++
++/**
++ * Translation cache invalidation header that contains mandatory meta data.
++ * @version:	info format version, expecting future extesions
++ * @type:	type of translation cache to be invalidated
++ */
++struct tlb_invalidate_hdr {
++	__u32 version;
++#define TLB_INV_HDR_VERSION_1 1
++	enum iommu_inv_type type;
++};
++
++/**
++ * Translation cache invalidation information, contains generic IOMMU
++ * data which can be parsed based on model ID by model specific drivers.
++ *
++ * @granularity:	requested invalidation granularity, type dependent
++ * @size:		2^size of 4K pages, 0 for 4k, 9 for 2MB, etc.
++ * @pasid:		processor address space ID value per PCI spec.
++ * @addr:		page address to be invalidated
++ * @flags	IOMMU_INVALIDATE_PASID_TAGGED: DMA with PASID tagged,
++ *						@pasid validity can be
++ *						deduced from @granularity
++ *		IOMMU_INVALIDATE_ADDR_LEAF: leaf paging entries
++ *		IOMMU_INVALIDATE_GLOBAL_PAGE: global pages
++ *
++ */
++struct tlb_invalidate_info {
++	struct tlb_invalidate_hdr	hdr;
++	enum iommu_inv_granularity	granularity;
++	__u32		flags;
++#define IOMMU_INVALIDATE_NO_PASID	(1 << 0)
++#define IOMMU_INVALIDATE_ADDR_LEAF	(1 << 1)
++#define IOMMU_INVALIDATE_GLOBAL_PAGE	(1 << 2)
++#define IOMMU_INVALIDATE_PASID_TAGGED	(1 << 3)
++	__u8		size;
++	__u32		pasid;
++	__u64		addr;
++};
+ #endif /* _UAPI_IOMMU_H */
 -- 
 2.7.4
