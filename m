@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752553AbeCWJiA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 05:38:00 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46638 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752040AbeCWJgY (ORCPT
+        id S1752173AbeCWJgX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 05:36:23 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42934 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752040AbeCWJgT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 05:36:24 -0400
-X-Google-Smtp-Source: AG47ELvRt9P/7pw70uGXOCGAL3m76NMqRTBwaBE8eBzexRszvYG5HlkGgUZMpff1qv8+jVw27b9gdA==
+        Fri, 23 Mar 2018 05:36:19 -0400
+X-Google-Smtp-Source: AG47ELvOKrRUfTw/gCR7ho0826J2C6bYCtRz14axkpcQIk4MyDhAY3ZuvU99j+PU3Xh6KL0Lhi6jAA==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
@@ -21,9 +21,9 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 5/8] remoteproc: da8xx: add the missing retval check for clk_enable()
-Date: Fri, 23 Mar 2018 10:36:06 +0100
-Message-Id: <20180323093609.24576-6-brgl@bgdev.pl>
+Subject: [PATCH v2 3/8] ARM: davinci: dts: add a reset control to the dsp node
+Date: Fri, 23 Mar 2018 10:36:04 +0100
+Message-Id: <20180323093609.24576-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180323093609.24576-1-brgl@bgdev.pl>
 References: <20180323093609.24576-1-brgl@bgdev.pl>
@@ -33,39 +33,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The davinci platform is being switched to using the common clock
-framework, where clk_enable() can fail. Add the return value check.
+The davinci-rproc driver will soon use the reset framework. Add the
+resets property to the dsp node in da850.dtsi.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index bf3b9034c319..2b24291337b7 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	int ret;
- 
- 	/* hw requires the start (boot) address be on 1KB boundary */
- 	if (rproc->bootaddr & 0x3ff) {
-@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	clk_enable(dsp_clk);
-+	ret = clk_enable(dsp_clk);
-+	if (ret) {
-+		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		return ret;
-+	}
-+
- 	davinci_clk_reset_deassert(dsp_clk);
- 
- 	return 0;
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index dad64dbf1f23..5b485e44b83e 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -109,6 +109,7 @@
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <28>;
+ 		clocks = <&psc0 15>;
++		resets = <&psc0 15>;
+ 		status = "disabled";
+ 	};
+ 	soc@1c00000 {
 -- 
 2.16.1
