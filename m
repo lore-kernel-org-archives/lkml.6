@@ -1,75 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752300AbeCWQ7h (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:59:37 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:60244 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751668AbeCWQ7g (ORCPT
+        id S1752246AbeCWREV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:04:21 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:43962 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751427AbeCWREU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:59:36 -0400
-Date: Fri, 23 Mar 2018 11:59:21 -0500
-From: Julia Cartwright <julia@ni.com>
-To: Joe Korty <joe.korty@concurrent-rt.com>
-CC: <bigeasy@linutronix.de>, <mingo@redhat.com>, <tglx@linutronix.de>,
-        <rostedt@goodmis.org>, <linux-rt-users@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RT] Defer migrate_enable migration while task state !=
- TASK_RUNNING
-Message-ID: <20180323165921.GG10942@jcartwri.amer.corp.natinst.com>
-References: <20180323150959.GA16131@zipoli.concurrent-rt.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180323150959.GA16131@zipoli.concurrent-rt.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-23_11:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+        Fri, 23 Mar 2018 13:04:20 -0400
+Date: Fri, 23 Mar 2018 13:04:18 -0400 (EDT)
+Message-Id: <20180323.130418.2223623186761161723.davem@davemloft.net>
+To: okaya@codeaurora.org
+Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ariel.elior@cavium.com, everest-linux-l2@cavium.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] bnx2x: Eliminate duplicate barriers on
+ weakly-ordered archs
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <4bd9ccd2-df8f-acad-2513-eefe065dc852@codeaurora.org>
+References: <cb6a0522-2c53-b252-49db-5779d24963c6@codeaurora.org>
+        <20180323.124326.2170503491903886041.davem@davemloft.net>
+        <4bd9ccd2-df8f-acad-2513-eefe065dc852@codeaurora.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Joe-
+From: Sinan Kaya <okaya@codeaurora.org>
+Date: Fri, 23 Mar 2018 12:51:47 -0400
 
-Thanks for the writeup.
-
-On Fri, Mar 23, 2018 at 11:09:59AM -0400, joe.korty@concurrent-rt.com wrote:
-> I see the below kernel splat in 4.9-rt when I run a test program that
-> continually changes the affinity of some set of running pids:
+> It could if txdata->tx_db was not a union. There is a data dependency
+> between txdata->tx_db.data.prod and txdata->tx_db.raw. 
 > 
->    do not call blocking ops when !TASK_RUNNING; state=2 set at ...
->       ...
->       stop_one_cpu+0x60/0x80
->       migrate_enable+0x21f/0x3e0
->       rt_spin_unlock+0x2f/0x40
->       prepare_to_wait+0x5c/0x80
->       ...
+> So, no reordering.
 
-This is clearly a problem.
+I don't see it that way, the code requires that:
 
-> The reason is that spin_unlock, write_unlock, and read_unlock call
-> migrate_enable, and since 4.4-rt, migrate_enable will sleep if it discovers
-> that a migration is in order.  But sleeping in the unlock services is not
-> expected by most kernel developers,
+ 	txdata->tx_db.data.prod += nbd;
 
-I don't buy this, see below:
+is visible before the doorbell update.
 
-> and where that counts most is in code sequences like the following:
->
->   set_current_state(TASK_UNINTERRUPIBLE);
->   spin_unlock(&s);
->   schedule();
+barrier() doesn't provide that.
 
-The analog in mainline is CONFIG_PREEMPT and the implicit
-preempt_enable() in spin_unlock().  In this configuration, a kernel
-developer should _absolutely_ expect their task to be suspended (and
-potentially migrated), _regardless of the task state_ if there is a
-preemption event on the CPU on which this task is executing.
+Neither does writel_relaxed().  However plain writel() does.
 
-Similarly, on RT, there is nothing _conceptually_ wrong on RT with
-migrating on migrate_enable(), regardless of task state, if there is a
-pending migration event.
-
-It's clear, however, that the mechanism used here is broken ...
-
-   Julia
+Therefore the code is only correct as-is, and your change potentially
+adds a reordering problem.
