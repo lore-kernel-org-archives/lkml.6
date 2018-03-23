@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELujPwXjl2RalTW96iYlahgK9oEFZU4SY3ic1Si75vgy5srthUynSYlkLmPN8rQZ/u4/VR/5
-ARC-Seal: i=1; a=rsa-sha256; t=1521800172; cv=none;
+X-Google-Smtp-Source: AG47ELuQ1YnTR23o8SCei8sWsax4Z10y1Hysj6AnHlqikofkEiaFzSb0jJINBYHByRbCl9g80cJj
+ARC-Seal: i=1; a=rsa-sha256; t=1521800169; cv=none;
         d=google.com; s=arc-20160816;
-        b=a8yXgglf+G14usZw7+1PTF6pkV8y27y8FO7x8gBenORkYINidjLbA7OOPxGLKxiCV2
-         e8zUw4ZVeatiliocXu/l3tr0SEjf3w0ci+DGZVIFvG5yprdJ769LinyZlTurNcXfhBl3
-         63KDQcvzk2Q1tjcPK+uQiax4Z8vsk9thvacNo3WDQ1hdZzbnYrGzmR2S1Co0yKEYnQDq
-         ZZiT6SA8A8ujXBYnFeULSKdSA5TyVnUhO7Jv8pKSEMqjlMktF6t5glfqe1U3bYMrUXbJ
-         D+K+hU/5SX5Ob7j/VqMFV8gnWhcUgc90hWCWoHARHgnLxLBoP4xly3V7IzMdwlvV57BS
-         20lw==
+        b=PRaK7ZutuE2XccIZT5v4O6Vo056wUQTE9cyL/Plt3NsyHws3Ejkbn/N8E8Myb11og0
+         Htkxl61NarIELcBFzFJlDk2PYeUmF+QdV8RA6cClQyro/WwK2nRF/mpHsPAYoBrDm7cp
+         zt7SjDFxMGIm4M7877oFvTUAuMZkz1TGVv5RF9k+vHzoh8/MzHOr9VduAEm19pUOgeUx
+         ukUHdN6ZfoyzuzrR3DRxQjlC+GYTzVITSm7HQfphlJ2BKgMQqAyWC64CSfTT5BTULAdD
+         4JwJcwXLTpQV6Bwj+uSTXo9m1BXTP7IcYjxyFRpvzsN8xqI14NAKj5r/4WXcW6NuJzqT
+         1gAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=K9sY9KK9GqM2TRt+8gJlb05elZ14Re7mHWXL0zQO1gk=;
-        b=LrjUk5If15c2mZWFoMVbuqDuEbwrFSTuGAwxHvrJV2pYrYevztofvTr2D2dqAD75Xz
-         yUQmQ571PuHjLzBLK14V2ohqlMwqjQzHJyAwVItzt6G2pEyoZN9jJDAe4yc/FCl6P+6v
-         oR8iWjXnuULDtsbF7AOQh2VUUi/RtlhxuaS88RZUJyuU3Dp7Ds1TJDRXert+tOxONPi+
-         Bv7LHOJP9uABAc85TSK0+IMzxBB7A6Tk0DpMrlEWsmVNcunnwERzQ3xdZ9FuffbonhpQ
-         UiCLsF2YKswabqMiFAA6z6+bQ+z6sb+7wXnVeaBaIUJY8WN7629KmOwSa7sI2AFpHM0N
-         2deg==
+        bh=VLXttpuRcNoJ8PQh/5kD7pRTPsH5wbbJtNCZ/rHWGTY=;
+        b=yRgDDGnt0rJtWmcc77gk4jPSVOgqX6P5EDjfUZhEsWor8H9bIDXVeVOnhOGl+o/Z73
+         0udaE+W+YOh7r3KtJlQQf9RffVipDpFZ69Ajrp4DioixEtksyPdL4ttMYIDVAHpdnVur
+         /dXoW3wlSfVVBma9oEY1Miy9ZwrJ8AM7X4T7XzSc1C3DMYxd9uN4NAPCGMTve3HPDGD3
+         mRwpfNOgwDTp7QbaminlKL032ErTb56Zqp/Tsg1VJ3P3JDsyv/L+Ly9kte//bKFiBJgN
+         Xm34Lh3RHk8z9JMxk2OxwhQ0xDOl2DTD7SfJUE0GN4kE1O3dcEoU8QQLSUUl6X03pVlZ
+         WIew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-	Patrice Chotard <patrice.chotard@st.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Dmitry Monakhov <dmonakhov@openvz.org>,
+	Nicholas Bellinger <nab@linux-iscsi.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 74/97] media: c8sectpfe: fix potential NULL pointer dereference in c8sectpfe_timer_interrupt
-Date: Fri, 23 Mar 2018 10:55:01 +0100
-Message-Id: <20180323094201.738568591@linuxfoundation.org>
+Subject: [PATCH 4.4 65/97] tcm_fileio: Prevent information leak for short reads
+Date: Fri, 23 Mar 2018 10:54:52 +0100
+Message-Id: <20180323094201.280440066@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721901866186978?=
-X-GMAIL-MSGID: =?utf-8?q?1595723138003289240?=
+X-GMAIL-THRID: =?utf-8?q?1595722718647459874?=
+X-GMAIL-MSGID: =?utf-8?q?1595723134786948235?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,45 +50,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+From: Dmitry Monakhov <dmonakhov@openvz.org>
 
 
-[ Upstream commit baed3c4bc4c13de93e0dba0a26d601411ebcb389 ]
+[ Upstream commit f11b55d13563e9428c88c873f4f03a6bef11ec0a ]
 
-_channel_ is being dereferenced before it is null checked, hence there is a
-potential null pointer dereference. Fix this by moving the pointer dereference
-after _channel_ has been null checked.
+If we failed to read data from backing file (probably because some one
+truncate file under us), we must zerofill cmd's data, otherwise it will
+be returned as is. Most likely cmd's data are unitialized pages from
+page cache. This result in information leak.
 
-This issue was detected with the help of Coccinelle.
+(Change BUG_ON into -EINVAL se_cmd failure - nab)
 
-Fixes: c5f5d0f99794 ("[media] c8sectpfe: STiH407/10 Linux DVB demux support")
-
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+testcase: https://github.com/dmonakhov/xfstests/commit/e11a1b7b907ca67b1be51a1594025600767366d5
+Signed-off-by: Dmitry Monakhov <dmonakhov@openvz.org>
+Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/target/target_core_file.c |   23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
---- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-+++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
-@@ -83,7 +83,7 @@ static void c8sectpfe_timer_interrupt(un
- static void channel_swdemux_tsklet(unsigned long data)
- {
- 	struct channel_info *channel = (struct channel_info *)data;
--	struct c8sectpfei *fei = channel->fei;
-+	struct c8sectpfei *fei;
- 	unsigned long wp, rp;
- 	int pos, num_packets, n, size;
- 	u8 *buf;
-@@ -91,6 +91,8 @@ static void channel_swdemux_tsklet(unsig
- 	if (unlikely(!channel || !channel->irec))
- 		return;
+--- a/drivers/target/target_core_file.c
++++ b/drivers/target/target_core_file.c
+@@ -276,12 +276,11 @@ static int fd_do_rw(struct se_cmd *cmd,
+ 	else
+ 		ret = vfs_iter_read(fd, &iter, &pos);
  
-+	fei = channel->fei;
-+
- 	wp = readl(channel->irec + DMA_PRDS_BUSWP_TP(0));
- 	rp = readl(channel->irec + DMA_PRDS_BUSRP_TP(0));
+-	kfree(bvec);
+-
+ 	if (is_write) {
+ 		if (ret < 0 || ret != data_length) {
+ 			pr_err("%s() write returned %d\n", __func__, ret);
+-			return (ret < 0 ? ret : -EINVAL);
++			if (ret >= 0)
++				ret = -EINVAL;
+ 		}
+ 	} else {
+ 		/*
+@@ -294,17 +293,29 @@ static int fd_do_rw(struct se_cmd *cmd,
+ 				pr_err("%s() returned %d, expecting %u for "
+ 						"S_ISBLK\n", __func__, ret,
+ 						data_length);
+-				return (ret < 0 ? ret : -EINVAL);
++				if (ret >= 0)
++					ret = -EINVAL;
+ 			}
+ 		} else {
+ 			if (ret < 0) {
+ 				pr_err("%s() returned %d for non S_ISBLK\n",
+ 						__func__, ret);
+-				return ret;
++			} else if (ret != data_length) {
++				/*
++				 * Short read case:
++				 * Probably some one truncate file under us.
++				 * We must explicitly zero sg-pages to prevent
++				 * expose uninizialized pages to userspace.
++				 */
++				if (ret < data_length)
++					ret += iov_iter_zero(data_length - ret, &iter);
++				else
++					ret = -EINVAL;
+ 			}
+ 		}
+ 	}
+-	return 1;
++	kfree(bvec);
++	return ret;
+ }
  
+ static sense_reason_t
