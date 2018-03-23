@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806397-2-17523006988604724766
+X-Cyrus-Session-Id: sloti22d1t05-947063-1521799178-2-6378053324288201903
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806396; b=iqPGH0YdUDlNkVb9HCAzyISJBM8fWL2OhMyNz+kGnW+wWgZ
-    jIqNwJZwRtEvLsP/mcgoI0FnnzvZe5ID5IVhHnXVaJHaw8qpY82fhQR7cwVVFSuq
-    lN8EMoFJ0esiD+AepVVVyFoHDvhp5pBxl1BqoFX4Owsm3ky7B4uHWQlQecy5KLtt
-    LbN7HSUHV9VyaFnCrFjEaTuIeP2VbVwvbl8fXiAi79QvZkSV0pwnU0Z6upUUfpLJ
-    zOb9crDHbLgVIUOi0+2SVRpyPF/I7X1qraoOBMe5ubMTpsIXOkIfixQaQv6DLSiD
-    DWIKeD46YN6scIhGXHMX9dw2XQhtFnJo+38kCNQ==
+    t=1521799177; b=iNq2z9/8pOqZdz9V52vJ8dYRlpzEt/LyPH6aev2H3wHDBj/
+    CHwb5jLbWxl4wdYvG8JmbhmH8fJqTh/8TgsPSm327U296Q/tceAj0JqmH4Je92fz
+    wb+JHHfdMH74A+/ei8vR+ZYCxXAMmqWzD3EplGI0WKoKr1ZvqoF74eDA4tJiTLi2
+    h+5dgJpLKSH6o7zV344YyE8EE7frVP22LhWG7w00oBcMsbmlzKitp57cAZVnS5iM
+    TO/M/lsf206xJppfqGhhKBGkm9VeB0J5zAFshxcYmaQs6l29XLmRGoranQruZuW7
+    6o8w7giKmLqONRf5NZO2ITQBSiDlez9jjSXXSMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806396; bh=jrVLAxEn2UbIG9R7evXhYtt/Pj
-    zM7YQMH9jggP6nZjE=; b=beh4U8TZ1u3LjZuu8ir/VBJMfQpYob/k/TeY9w02le
-    YEW0NthBiR5POF5+zUWgWb32ShneNSTRnS72qmoUAhcBDnAt2UfShmGGdI+PZwlt
-    iAMC40gHdk3k4thYgt8KinQolzOb7FfQvPtSdWVz12f8rIL07reeNxAJZTWUoyZG
-    kqpk+rkEmD5gFMiC0mHXhHU3RI66U4H94geSh9IocahJ8uBJ54xyUed8rliI7/4q
-    71hk07BHEpoQ2kvdg+j5yMWrEQpCuhO+YmqrXel+Ttv1gSmluTNsWrAxJN/ZE/aa
-    6i/ncaanHbpICh2V2Ttg80wPEDxsBkwa1/ALH/UqOVOQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521799177; bh=W1w+lBfRY5U4V24s5vgDLM85Zp
+    BNjaoMrivciOcvs1I=; b=l78wcgRHHRfP7ofBSMsSJsvBdQPJb+fnJhuqbuSd/1
+    7RXZMIiXTs2LD+PurO4zXL61cJrT50uzG+UXkxvhaWP7/b+jYRLC6YSoFn9a/lGq
+    qtDNSW26vlnKivkWWc+UO/hIbecKTRgnre9cFffFToFlMp/V5c761hq5/k8sYyA4
+    wKRHBsDsfQ+oqHCJlYH0VCKh40V+wTUtO9lSBgqXqif2m5Zc4SfmLtbR+0kipuhX
+    Xqytyk3APlYTM762I/A/rXICMFEOVz8wnmthQBYxPdwdXpPne9hbEWCrFDgVMfjY
+    0G7Yw44F+YksgV+kcRhJ5NSA4laeXSjLNOWyoF+n+65Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,23 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753539AbeCWKAP (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:00:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36434 "EHLO
+        id S1753353AbeCWJ7e (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:59:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36188 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753493AbeCWKAO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:00:14 -0400
+        with ESMTP id S1753313AbeCWJ7c (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:59:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nikola Ciprich <nikola.ciprich@linuxbox.cz>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.15 80/84] serial: 8250_pci: Dont fail on multiport card class
-Date: Fri, 23 Mar 2018 10:54:34 +0100
-Message-Id: <20180323095424.049504740@linuxfoundation.org>
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 65/84] scsi: lpfc: Fix SCSI LUN discovery when SCSI and NVME enabled
+Date: Fri, 23 Mar 2018 10:54:19 +0100
+Message-Id: <20180323095421.793546385@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -82,52 +84,217 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: James Smart <jsmart2021@gmail.com>
 
-commit e7f3e99cb1a667d04d60d02957fbed58b50d4e5a upstream.
 
-Do not fail on multiport cards in serial_pci_is_class_communication().
+[ Upstream commit 9de416ac67b54d666327ba927a190f4b7259f4a0 ]
 
-It restores behaviour for SUNIX multiport cards, that enumerated by
-class and have a custom board data.
+When enabled for both SCSI and NVME support, and connected pt2pt to a
+SCSI only target, the driver nodelist entry for the remote port is left
+in PRLI_ISSUE state and no SCSI LUNs are discovered. Works fine if only
+configured for SCSI support.
 
-Moreover it allows users to reenumerate port-by-port from user space.
+Error was due to some of the prli points still reflecting the need to
+send only 1 PRLI. On a lot of fabric configs, targets were NVME only,
+which meant the fabric-reported protocol attributes were only telling
+the driver one protocol or the other. Thus things worked fine. With
+pt2pt, the driver must send a PRLI for both protocols as there are no
+hints on what the target supports. Thus pt2pt targets were hitting the
+multiple PRLI issues.
 
-Fixes: 7d8905d06405 ("serial: 8250_pci: Enable device after we check black list")
-Reported-by: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Nikola Ciprich <nikola.ciprich@linuxbox.cz>
+Complete the dual PRLI support. Track explicitly whether scsi (fcp) or
+nvme prli's have been sent. Accurately track protocol support detected
+on each node as reported by the fabric or probed by PRLI traffic.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/serial/8250/8250_pci.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/scsi/lpfc/lpfc_ct.c        |    1 +
+ drivers/scsi/lpfc/lpfc_els.c       |   30 ++++++++++++++++++++----------
+ drivers/scsi/lpfc/lpfc_nportdisc.c |   30 +++++++++++++-----------------
+ 3 files changed, 34 insertions(+), 27 deletions(-)
 
---- a/drivers/tty/serial/8250/8250_pci.c
-+++ b/drivers/tty/serial/8250/8250_pci.c
-@@ -3387,11 +3387,9 @@ static int serial_pci_is_class_communica
- 	/*
- 	 * If it is not a communications device or the programming
- 	 * interface is greater than 6, give up.
--	 *
--	 * (Should we try to make guesses for multiport serial devices
--	 * later?)
- 	 */
- 	if ((((dev->class >> 8) != PCI_CLASS_COMMUNICATION_SERIAL) &&
-+	     ((dev->class >> 8) != PCI_CLASS_COMMUNICATION_MULTISERIAL) &&
- 	     ((dev->class >> 8) != PCI_CLASS_COMMUNICATION_MODEM)) ||
- 	    (dev->class & 0xff) > 6)
- 		return -ENODEV;
-@@ -3428,6 +3426,12 @@ serial_pci_guess_board(struct pci_dev *d
- {
- 	int num_iomem, num_port, first_port = -1, i;
+--- a/drivers/scsi/lpfc/lpfc_ct.c
++++ b/drivers/scsi/lpfc/lpfc_ct.c
+@@ -471,6 +471,7 @@ lpfc_prep_node_fc4type(struct lpfc_vport
+ 				"Parse GID_FTrsp: did:x%x flg:x%x x%x",
+ 				Did, ndlp->nlp_flag, vport->fc_flag);
  
-+	/*
-+	 * Should we try to make guesses for multiport serial devices later?
-+	 */
-+	if ((dev->class >> 8) == PCI_CLASS_COMMUNICATION_MULTISERIAL)
-+		return -ENODEV;
++			ndlp->nlp_fc4_type &= ~(NLP_FC4_FCP | NLP_FC4_NVME);
+ 			/* By default, the driver expects to support FCP FC4 */
+ 			if (fc4_type == FC_TYPE_FCP)
+ 				ndlp->nlp_fc4_type |= NLP_FC4_FCP;
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -2088,6 +2088,10 @@ lpfc_cmpl_els_prli(struct lpfc_hba *phba
+ 	ndlp = (struct lpfc_nodelist *) cmdiocb->context1;
+ 	spin_lock_irq(shost->host_lock);
+ 	ndlp->nlp_flag &= ~NLP_PRLI_SND;
 +
- 	num_iomem = num_port = 0;
- 	for (i = 0; i < PCI_NUM_BAR_RESOURCES; i++) {
- 		if (pci_resource_flags(dev, i) & IORESOURCE_IO) {
++	/* Driver supports multiple FC4 types.  Counters matter. */
++	vport->fc_prli_sent--;
++	ndlp->fc4_prli_sent--;
+ 	spin_unlock_irq(shost->host_lock);
+ 
+ 	lpfc_debugfs_disc_trc(vport, LPFC_DISC_TRC_ELS_CMD,
+@@ -2095,9 +2099,6 @@ lpfc_cmpl_els_prli(struct lpfc_hba *phba
+ 		irsp->ulpStatus, irsp->un.ulpWord[4],
+ 		ndlp->nlp_DID);
+ 
+-	/* Ddriver supports multiple FC4 types.  Counters matter. */
+-	vport->fc_prli_sent--;
+-
+ 	/* PRLI completes to NPort <nlp_DID> */
+ 	lpfc_printf_vlog(vport, KERN_INFO, LOG_ELS,
+ 			 "0103 PRLI completes to NPort x%06x "
+@@ -2111,7 +2112,6 @@ lpfc_cmpl_els_prli(struct lpfc_hba *phba
+ 
+ 	if (irsp->ulpStatus) {
+ 		/* Check for retry */
+-		ndlp->fc4_prli_sent--;
+ 		if (lpfc_els_retry(phba, cmdiocb, rspiocb)) {
+ 			/* ELS command is being retried */
+ 			goto out;
+@@ -2190,6 +2190,15 @@ lpfc_issue_els_prli(struct lpfc_vport *v
+ 		ndlp->nlp_fc4_type |= NLP_FC4_NVME;
+ 	local_nlp_type = ndlp->nlp_fc4_type;
+ 
++	/* This routine will issue 1 or 2 PRLIs, so zero all the ndlp
++	 * fields here before any of them can complete.
++	 */
++	ndlp->nlp_type &= ~(NLP_FCP_TARGET | NLP_FCP_INITIATOR);
++	ndlp->nlp_type &= ~(NLP_NVME_TARGET | NLP_NVME_INITIATOR);
++	ndlp->nlp_fcp_info &= ~NLP_FCP_2_DEVICE;
++	ndlp->nlp_flag &= ~NLP_FIRSTBURST;
++	ndlp->nvme_fb_size = 0;
++
+  send_next_prli:
+ 	if (local_nlp_type & NLP_FC4_FCP) {
+ 		/* Payload is 4 + 16 = 20 x14 bytes. */
+@@ -2298,6 +2307,13 @@ lpfc_issue_els_prli(struct lpfc_vport *v
+ 	elsiocb->iocb_cmpl = lpfc_cmpl_els_prli;
+ 	spin_lock_irq(shost->host_lock);
+ 	ndlp->nlp_flag |= NLP_PRLI_SND;
++
++	/* The vport counters are used for lpfc_scan_finished, but
++	 * the ndlp is used to track outstanding PRLIs for different
++	 * FC4 types.
++	 */
++	vport->fc_prli_sent++;
++	ndlp->fc4_prli_sent++;
+ 	spin_unlock_irq(shost->host_lock);
+ 	if (lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0) ==
+ 	    IOCB_ERROR) {
+@@ -2308,12 +2324,6 @@ lpfc_issue_els_prli(struct lpfc_vport *v
+ 		return 1;
+ 	}
+ 
+-	/* The vport counters are used for lpfc_scan_finished, but
+-	 * the ndlp is used to track outstanding PRLIs for different
+-	 * FC4 types.
+-	 */
+-	vport->fc_prli_sent++;
+-	ndlp->fc4_prli_sent++;
+ 
+ 	/* The driver supports 2 FC4 types.  Make sure
+ 	 * a PRLI is issued for all types before exiting.
+--- a/drivers/scsi/lpfc/lpfc_nportdisc.c
++++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
+@@ -390,6 +390,11 @@ lpfc_rcv_plogi(struct lpfc_vport *vport,
+ 		break;
+ 	}
+ 
++	ndlp->nlp_type &= ~(NLP_FCP_TARGET | NLP_FCP_INITIATOR);
++	ndlp->nlp_type &= ~(NLP_NVME_TARGET | NLP_NVME_INITIATOR);
++	ndlp->nlp_fcp_info &= ~NLP_FCP_2_DEVICE;
++	ndlp->nlp_flag &= ~NLP_FIRSTBURST;
++
+ 	/* Check for Nport to NPort pt2pt protocol */
+ 	if ((vport->fc_flag & FC_PT2PT) &&
+ 	    !(vport->fc_flag & FC_PT2PT_PLOGI)) {
+@@ -742,9 +747,6 @@ lpfc_rcv_prli(struct lpfc_vport *vport,
+ 	lp = (uint32_t *) pcmd->virt;
+ 	npr = (PRLI *) ((uint8_t *) lp + sizeof (uint32_t));
+ 
+-	ndlp->nlp_type &= ~(NLP_FCP_TARGET | NLP_FCP_INITIATOR);
+-	ndlp->nlp_fcp_info &= ~NLP_FCP_2_DEVICE;
+-	ndlp->nlp_flag &= ~NLP_FIRSTBURST;
+ 	if ((npr->prliType == PRLI_FCP_TYPE) ||
+ 	    (npr->prliType == PRLI_NVME_TYPE)) {
+ 		if (npr->initiatorFunc) {
+@@ -769,8 +771,12 @@ lpfc_rcv_prli(struct lpfc_vport *vport,
+ 		 * type.  Target mode does not issue gft_id so doesn't get
+ 		 * the fc4 type set until now.
+ 		 */
+-		if ((phba->nvmet_support) && (npr->prliType == PRLI_NVME_TYPE))
++		if (phba->nvmet_support && (npr->prliType == PRLI_NVME_TYPE)) {
+ 			ndlp->nlp_fc4_type |= NLP_FC4_NVME;
++			lpfc_nlp_set_state(vport, ndlp, NLP_STE_UNMAPPED_NODE);
++		}
++		if (npr->prliType == PRLI_FCP_TYPE)
++			ndlp->nlp_fc4_type |= NLP_FC4_FCP;
+ 	}
+ 	if (rport) {
+ 		/* We need to update the rport role values */
+@@ -1552,7 +1558,6 @@ lpfc_rcv_prli_reglogin_issue(struct lpfc
+ 		if (ndlp->nlp_flag & NLP_RPI_REGISTERED) {
+ 			lpfc_rcv_prli(vport, ndlp, cmdiocb);
+ 			lpfc_els_rsp_prli_acc(vport, cmdiocb, ndlp);
+-			lpfc_nlp_set_state(vport, ndlp, NLP_STE_UNMAPPED_NODE);
+ 		} else {
+ 			/* RPI registration has not completed. Reject the PRLI
+ 			 * to prevent an illegal state transition when the
+@@ -1568,6 +1573,7 @@ lpfc_rcv_prli_reglogin_issue(struct lpfc
+ 			stat.un.b.lsRjtRsnCodeExp = LSEXP_CMD_IN_PROGRESS;
+ 			lpfc_els_rsp_reject(vport, stat.un.lsRjtError, cmdiocb,
+ 					    ndlp, NULL);
++			return ndlp->nlp_state;
+ 		}
+ 	} else {
+ 		/* Initiator mode. */
+@@ -1922,13 +1928,6 @@ lpfc_cmpl_prli_prli_issue(struct lpfc_vp
+ 		return ndlp->nlp_state;
+ 	}
+ 
+-	/* Check out PRLI rsp */
+-	ndlp->nlp_type &= ~(NLP_FCP_TARGET | NLP_FCP_INITIATOR);
+-	ndlp->nlp_fcp_info &= ~NLP_FCP_2_DEVICE;
+-
+-	/* NVME or FCP first burst must be negotiated for each PRLI. */
+-	ndlp->nlp_flag &= ~NLP_FIRSTBURST;
+-	ndlp->nvme_fb_size = 0;
+ 	if (npr && (npr->acceptRspCode == PRLI_REQ_EXECUTED) &&
+ 	    (npr->prliType == PRLI_FCP_TYPE)) {
+ 		lpfc_printf_vlog(vport, KERN_INFO, LOG_NVME_DISC,
+@@ -1945,8 +1944,6 @@ lpfc_cmpl_prli_prli_issue(struct lpfc_vp
+ 		if (npr->Retry)
+ 			ndlp->nlp_fcp_info |= NLP_FCP_2_DEVICE;
+ 
+-		/* PRLI completed.  Decrement count. */
+-		ndlp->fc4_prli_sent--;
+ 	} else if (nvpr &&
+ 		   (bf_get_be32(prli_acc_rsp_code, nvpr) ==
+ 		    PRLI_REQ_EXECUTED) &&
+@@ -1991,8 +1988,6 @@ lpfc_cmpl_prli_prli_issue(struct lpfc_vp
+ 				 be32_to_cpu(nvpr->word5),
+ 				 ndlp->nlp_flag, ndlp->nlp_fcp_info,
+ 				 ndlp->nlp_type);
+-		/* PRLI completed.  Decrement count. */
+-		ndlp->fc4_prli_sent--;
+ 	}
+ 	if (!(ndlp->nlp_type & NLP_FCP_TARGET) &&
+ 	    (vport->port_type == LPFC_NPIV_PORT) &&
+@@ -2016,7 +2011,8 @@ out_err:
+ 		ndlp->nlp_prev_state = NLP_STE_PRLI_ISSUE;
+ 		if (ndlp->nlp_type & (NLP_FCP_TARGET | NLP_NVME_TARGET))
+ 			lpfc_nlp_set_state(vport, ndlp, NLP_STE_MAPPED_NODE);
+-		else
++		else if (ndlp->nlp_type &
++			 (NLP_FCP_INITIATOR | NLP_NVME_INITIATOR))
+ 			lpfc_nlp_set_state(vport, ndlp, NLP_STE_UNMAPPED_NODE);
+ 	} else
+ 		lpfc_printf_vlog(vport,
