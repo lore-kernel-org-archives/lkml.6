@@ -1,70 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802174-2-16635931290662506231
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802173; b=bnq3MbO4JEL8JcpcUEGQG2NSxtFJKqWSYrcvjCSlXtJNh9L
-    8F6bB3q+IQtVWMv81qxilRwgCrujSDcP/VR32Iu7031LdEPPbuFw+aGO5lMnjrGa
-    5CzDJYcjExTE2Mie27+0NHrbjijmBTVSjYMc+Gwg1a7m1Oh2PvpyQX38+4Q9h+k8
-    WNR1pSi3ZbXa57Pp9gnTP7s87AAeGEkpSo7jgnTNqPyNPA6KtwxRzH6t9Mg5V3tV
-    gPz4oTwDdBJX0SrreLQWPOOYu66KFwbkq5qeJffyirFX9fZsBEsnWi1aRCRBXP/U
-    iWxatYdL6+ekKMtQHvEqfi1Yk1LFN9gho1uxR2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802173; bh=BDOqnD1JQyzn0/AjcDAiOHABPF
-    2fLnSAlLXfNy3q+Bs=; b=wzdJCOQdH1xBVNeaVRV2EyxUFUpCMTVFm8kMkE7IOl
-    ynXpqnXOezG3hhv37OnujUfU1bojTx+Q6iJh7RzBe+BzYzSCbfDrgu4FY/d6htqk
-    TDRj1lxh88yyGUgxSOqI2DSFJQKz0AkdxL5oCGFF4aa2+RnPU6frBRWuZQpta9kU
-    3cOFfIRomGYsX9m7RUmHNfsu4hjzd7fltkXEyGOv8iHhBhCKyKZW9KQt6INoAKkw
-    xOEHbDlg++JAouKRgBC+VHDYZCNN8+7gzrmBKTWsp4CgqEXulfwNlk05ZnEpW4Ef
-    WP4xAVarvn+NcOARy4WK73v7ALSSlojy9frRkMbbzCww==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752716AbeCWKOt (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:14:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45366 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933345AbeCWKOq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:14:46 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELvCJ08g4aqBtBmVQ6FXAmDBp3voZ6mgqvlA9RZGeyZzT3L43jrJ60APqm8Gq6WLi98V0tLn
+ARC-Seal: i=1; a=rsa-sha256; t=1521800266; cv=none;
+        d=google.com; s=arc-20160816;
+        b=W4qEGh2fiFWvuimPQ+Vhx0rMyWchGFjRTRbDNaCPR4fXWsLh1kXrA1M+EuLc9RhJSV
+         tgWBHE9xPiKMxtjQQ5v9m5tiVvoAeBfkuIy5To4Fj8+Rr/SOml82kl7KqPDPztBUjd5H
+         z8fjCyzHc8BdbGcczwd/1ei7cVopp6nBpKSU/v+5+5HJCb7gpD3Zrzh0GIIw99M2WVsL
+         7HiOrI2EBRU6msgWcqxwVAI2mLDaI/ms8ulxPgbfQZSGbn3KuLfo5Phqm/L2/bVh6mN8
+         QXtEftIDhaqk5Lxmk1nWxJ+Lb8HkSuNhFJSNoiNVgzBwMPjBao2QAtDBvrO2qUHpFzFn
+         ZTOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Vlzol39d+O9aMF9F8XY03DsiM2Fnsx54KnYLVg22cik=;
+        b=ninwV6tLRfwQcwekuYED9WKUP2OEzldHhEjl1vTd9fBLDk8dORJ02hVP9o6vLxNR4c
+         1LPRs7NI2tm3Wt/UV0EVtNYq318NPm1phVPJKIDVPCUpVgy/jrQMDfD4uUIp2++2SLWQ
+         oKh6alA5Og942PPfW7Yfc9Q+JTQavgk/Y43AHk7ohd5TXoABRlO//v/GcUDEehj79TIy
+         A4AOsNA/4w9UpnAUGCqrD/2EDURg3x18KV1s57NapaPVQw/BQRX7HuKCwt/yZKC6Ybnx
+         rX+JXsjHW2AKuSLJKfucTgag1oV2gpxL9bj5uTIcDMP0c612GsZ9xAIHpBd1/x/47SQs
+         17eg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlad Tsyrklevich <vlad@tsyrklevich.net>,
-        Doug Ledford <dledford@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 44/97] infiniband/uverbs: Fix integer overflows
-Date: Fri, 23 Mar 2018 10:54:31 +0100
-Message-Id: <20180323094200.109336079@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Daniel Drake <drake@endlessm.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 82/97] mmc: avoid removing non-removable hosts during suspend
+Date: Fri, 23 Mar 2018 10:55:09 +0100
+Message-Id: <20180323094202.121320977@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -72,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595722014093884855?=
+X-GMAIL-MSGID: =?utf-8?q?1595723236117862291?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,54 +50,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vlad Tsyrklevich <vlad@tsyrklevich.net>
+From: Daniel Drake <drake@endlessm.com>
 
 
-[ Upstream commit 4f7f4dcfff2c19debbcdbcc861c325610a15e0c5 ]
+[ Upstream commit de8dcc3d2c0e08e5068ee1e26fc46415c15e3637 ]
 
-The 'num_sge' variable is verfied to be smaller than the 'sge_count'
-variable; however, since both are user-controlled it's possible to cause
-an integer overflow for the kmalloc multiply on 32-bit platforms
-(num_sge and sge_count are both defined u32). By crafting an input that
-causes a smaller-than-expected allocation it's possible to write
-controlled data out-of-bounds.
+The Weibu F3C MiniPC has an onboard AP6255 module, presenting
+two SDIO functions on a single MMC host (Bluetooth/btsdio and
+WiFi/brcmfmac), and the mmc layer correctly detects this as
+non-removable.
 
-Signed-off-by: Vlad Tsyrklevich <vlad@tsyrklevich.net>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+After suspend/resume, the wifi and bluetooth interfaces disappear
+and do not get probed again.
+
+The conditions here are:
+
+ 1. During suspend, we reach mmc_pm_notify()
+
+ 2. mmc_pm_notify() calls mmc_sdio_pre_suspend() to see if we can
+    suspend the SDIO host. However, mmc_sdio_pre_suspend() returns
+    -ENOSYS because btsdio_driver does not have a suspend method.
+
+ 3. mmc_pm_notify() proceeds to remove the card
+
+ 4. Upon resume, mmc_rescan() does nothing with this host, because of
+    the rescan_entered check which aims to only scan a non-removable
+    device a single time (i.e. during boot).
+
+Fix the loss of functionality by detecting that we are unable to
+suspend a non-removable host, so avoid the forced removal in that
+case. The comment above this function already indicates that this
+code was only intended for removable devices.
+
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/uverbs_cmd.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/mmc/core/core.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -2436,9 +2436,13 @@ ssize_t ib_uverbs_destroy_qp(struct ib_u
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -2791,6 +2791,14 @@ int mmc_pm_notify(struct notifier_block
+ 		if (!err)
+ 			break;
  
- static void *alloc_wr(size_t wr_size, __u32 num_sge)
- {
-+	if (num_sge >= (U32_MAX - ALIGN(wr_size, sizeof (struct ib_sge))) /
-+		       sizeof (struct ib_sge))
-+		return NULL;
-+
- 	return kmalloc(ALIGN(wr_size, sizeof (struct ib_sge)) +
- 			 num_sge * sizeof (struct ib_sge), GFP_KERNEL);
--};
-+}
- 
- ssize_t ib_uverbs_post_send(struct ib_uverbs_file *file,
- 			    struct ib_device *ib_dev,
-@@ -2664,6 +2668,13 @@ static struct ib_recv_wr *ib_uverbs_unma
- 			ret = -EINVAL;
- 			goto err;
- 		}
-+
-+		if (user_wr->num_sge >=
-+		    (U32_MAX - ALIGN(sizeof *next, sizeof (struct ib_sge))) /
-+		    sizeof (struct ib_sge)) {
-+			ret = -EINVAL;
-+			goto err;
++		if (!mmc_card_is_removable(host)) {
++			dev_warn(mmc_dev(host),
++				 "pre_suspend failed for non-removable host: "
++				 "%d\n", err);
++			/* Avoid removing non-removable hosts */
++			break;
 +		}
- 
- 		next = kmalloc(ALIGN(sizeof *next, sizeof (struct ib_sge)) +
- 			       user_wr->num_sge * sizeof (struct ib_sge),
++
+ 		/* Calling bus_ops->remove() with a claimed host can deadlock */
+ 		host->bus_ops->remove(host);
+ 		mmc_claim_host(host);
