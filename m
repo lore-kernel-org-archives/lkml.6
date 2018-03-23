@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELsY+rpGtEi9rpFOpLCdXMXArihYycvTT0qEs4EPr1pZ+PaJJh996qn39E2V2d/Y7Luo9XcO
-ARC-Seal: i=1; a=rsa-sha256; t=1521800175; cv=none;
+X-Google-Smtp-Source: AG47ELujPwXjl2RalTW96iYlahgK9oEFZU4SY3ic1Si75vgy5srthUynSYlkLmPN8rQZ/u4/VR/5
+ARC-Seal: i=1; a=rsa-sha256; t=1521800172; cv=none;
         d=google.com; s=arc-20160816;
-        b=lG8drVEIES+/qLMJyMtScRZcEL3fZ/Y6ccr9jVrC2pQC/CGsJHZc+E5k2sGV42HXpd
-         xzDMqQUAEU1WwmtbjaGDajYjYS7IqVlRemKhMlFrRuRCcoGLVlScTkDRJFHFIldl2/XT
-         8lmKad2ewiBbvTv9alLK/V9XwVs2yxjWYTnCtXr0331Nni0nI0cRsdJAu+/T1QLJJgyl
-         UdhetN50yP7MqbU+ALnJjFjMFBXWdsPj8kqOJe9E1k+xR6AMvmZkbkrTF2AV2bllqgcL
-         mWARzzCMP8Y9LEOpTR4I4hgOw27xiJ1S1fSFqS7Lst2VcUW8hJHmFtwh0lRd6Zpvh5Iq
-         S5wQ==
+        b=a8yXgglf+G14usZw7+1PTF6pkV8y27y8FO7x8gBenORkYINidjLbA7OOPxGLKxiCV2
+         e8zUw4ZVeatiliocXu/l3tr0SEjf3w0ci+DGZVIFvG5yprdJ769LinyZlTurNcXfhBl3
+         63KDQcvzk2Q1tjcPK+uQiax4Z8vsk9thvacNo3WDQ1hdZzbnYrGzmR2S1Co0yKEYnQDq
+         ZZiT6SA8A8ujXBYnFeULSKdSA5TyVnUhO7Jv8pKSEMqjlMktF6t5glfqe1U3bYMrUXbJ
+         D+K+hU/5SX5Ob7j/VqMFV8gnWhcUgc90hWCWoHARHgnLxLBoP4xly3V7IzMdwlvV57BS
+         20lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ggyNcff1GN10+ZSIp3MSdYwdYQP4KTZKjkmr9OExrAE=;
-        b=RCUXQaJ/ouI1DD2zDYgv+oEp8tnOGSeAgv2G7FC1Gp84lccIxx/Zx55ZdlDJoyraL9
-         /xUdmjeNYdVl9+IZIvfWLUH8xt6JyWhkxhTBtEg/0QaLY22Z22bjg8lQ2QCakVOT0g/o
-         COQjVzGhyafwjIIFhW9X0vDxPOcg6uZlBRBnPs4TYQx+uszSSSe7g46K7J7GccIRaaIr
-         XDdISKrqzl1Ug0NgR4v22UN+CjeFgiIhtQ1JesYmaHX9N+e62JVDTMBNJZyxuaHhD2np
-         hwdJUHx18UjkAmPUJj0qw4jEa6j74+ASEbuhgP2gsAGf5nJ6p52fsIF+MSImv5Q+ftW9
-         QN4Q==
+        bh=K9sY9KK9GqM2TRt+8gJlb05elZ14Re7mHWXL0zQO1gk=;
+        b=LrjUk5If15c2mZWFoMVbuqDuEbwrFSTuGAwxHvrJV2pYrYevztofvTr2D2dqAD75Xz
+         yUQmQ571PuHjLzBLK14V2ohqlMwqjQzHJyAwVItzt6G2pEyoZN9jJDAe4yc/FCl6P+6v
+         oR8iWjXnuULDtsbF7AOQh2VUUi/RtlhxuaS88RZUJyuU3Dp7Ds1TJDRXert+tOxONPi+
+         Bv7LHOJP9uABAc85TSK0+IMzxBB7A6Tk0DpMrlEWsmVNcunnwERzQ3xdZ9FuffbonhpQ
+         UiCLsF2YKswabqMiFAA6z6+bQ+z6sb+7wXnVeaBaIUJY8WN7629KmOwSa7sI2AFpHM0N
+         2deg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Prakash Kamliya <pkamliya@codeaurora.org>,
-	Sharat Masetty <smasetty@codeaurora.org>,
-	Rob Clark <robdclark@gmail.com>,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+	Patrice Chotard <patrice.chotard@st.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 75/97] drm/msm: fix leak in failed get_pages
-Date: Fri, 23 Mar 2018 10:55:02 +0100
-Message-Id: <20180323094201.783718616@linuxfoundation.org>
+Subject: [PATCH 4.4 74/97] media: c8sectpfe: fix potential NULL pointer dereference in c8sectpfe_timer_interrupt
+Date: Fri, 23 Mar 2018 10:55:01 +0100
+Message-Id: <20180323094201.738568591@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721904913881579?=
-X-GMAIL-MSGID: =?utf-8?q?1595723140636159632?=
+X-GMAIL-THRID: =?utf-8?q?1595721901866186978?=
+X-GMAIL-MSGID: =?utf-8?q?1595723138003289240?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,58 +51,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Prakash Kamliya <pkamliya@codeaurora.org>
+From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
 
 
-[ Upstream commit 62e3a3e342af3c313ab38603811ecdb1fcc79edb ]
+[ Upstream commit baed3c4bc4c13de93e0dba0a26d601411ebcb389 ]
 
-get_pages doesn't keep a reference of the pages allocated
-when it fails later in the code path. This can lead to
-a memory leak. Keep reference of the allocated pages so
-that it can be freed when msm_gem_free_object gets called
-later during cleanup.
+_channel_ is being dereferenced before it is null checked, hence there is a
+potential null pointer dereference. Fix this by moving the pointer dereference
+after _channel_ has been null checked.
 
-Signed-off-by: Prakash Kamliya <pkamliya@codeaurora.org>
-Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+This issue was detected with the help of Coccinelle.
+
+Fixes: c5f5d0f99794 ("[media] c8sectpfe: STiH407/10 Linux DVB demux support")
+
+Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
+Acked-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/msm/msm_gem.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/msm/msm_gem.c
-+++ b/drivers/gpu/drm/msm/msm_gem.c
-@@ -89,14 +89,17 @@ static struct page **get_pages(struct dr
- 			return p;
- 		}
+--- a/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
++++ b/drivers/media/platform/sti/c8sectpfe/c8sectpfe-core.c
+@@ -83,7 +83,7 @@ static void c8sectpfe_timer_interrupt(un
+ static void channel_swdemux_tsklet(unsigned long data)
+ {
+ 	struct channel_info *channel = (struct channel_info *)data;
+-	struct c8sectpfei *fei = channel->fei;
++	struct c8sectpfei *fei;
+ 	unsigned long wp, rp;
+ 	int pos, num_packets, n, size;
+ 	u8 *buf;
+@@ -91,6 +91,8 @@ static void channel_swdemux_tsklet(unsig
+ 	if (unlikely(!channel || !channel->irec))
+ 		return;
  
-+		msm_obj->pages = p;
++	fei = channel->fei;
 +
- 		msm_obj->sgt = drm_prime_pages_to_sg(p, npages);
- 		if (IS_ERR(msm_obj->sgt)) {
-+			void *ptr = ERR_CAST(msm_obj->sgt);
-+
- 			dev_err(dev->dev, "failed to allocate sgt\n");
--			return ERR_CAST(msm_obj->sgt);
-+			msm_obj->sgt = NULL;
-+			return ptr;
- 		}
+ 	wp = readl(channel->irec + DMA_PRDS_BUSWP_TP(0));
+ 	rp = readl(channel->irec + DMA_PRDS_BUSRP_TP(0));
  
--		msm_obj->pages = p;
--
- 		/* For non-cached buffers, ensure the new pages are clean
- 		 * because display controller, GPU, etc. are not coherent:
- 		 */
-@@ -119,7 +122,10 @@ static void put_pages(struct drm_gem_obj
- 		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
- 			dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
- 					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
--		sg_free_table(msm_obj->sgt);
-+
-+		if (msm_obj->sgt)
-+			sg_free_table(msm_obj->sgt);
-+
- 		kfree(msm_obj->sgt);
- 
- 		if (use_pages(obj))
