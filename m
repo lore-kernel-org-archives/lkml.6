@@ -1,111 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752300AbeCWXcY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 19:32:24 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:41045 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751541AbeCWXcX (ORCPT
+        id S1752383AbeCWXe2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 19:34:28 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45837 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752053AbeCWXeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 19:32:23 -0400
-X-Google-Smtp-Source: AG47ELvajSsvaQfd2RrbI5fzF7oaEKkbTfk8tsO8lXQpztf1H1s8klhhX2tzBxfSY7cbX0FyIei5eQ==
-Date: Fri, 23 Mar 2018 18:32:11 -0500
-From: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
-To: alsa-devel@alsa-project.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-kernel@vger.kernel.org
-Subject: [alsa-devel][PATCH 2/3] ASoC: TSCS42xx: Cleanup private data members
-Message-ID: <20180323233136.GA20651@t7-ThinkPad-E560>
+        Fri, 23 Mar 2018 19:34:25 -0400
+From: Colin King <colin.king@canonical.com>
+To: John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] apparmor: fix error returns checks by making size a ssize_t
+Date: Fri, 23 Mar 2018 23:34:22 +0000
+Message-Id: <20180323233422.7856-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the TSCS42xx driver there are some unnecesarry private data members
+From: Colin Ian King <colin.king@canonical.com>
 
-Remove blrcm from private data
-Remove dev from private data
+Currently variable size is a unsigned size_t, hence comparisons to
+see if it is less than zero (for error checking) will always be
+false.  Fix this by making size a ssize_t
 
-Signed-off-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
+Detected by CoverityScan, CID#1466080 ("Unsigned compared against 0")
+
+Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/soc/codecs/tscs42xx.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ security/apparmor/domain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
-index 37636d6efe60..d41852a37ac6 100644
---- a/sound/soc/codecs/tscs42xx.c
-+++ b/sound/soc/codecs/tscs42xx.c
-@@ -31,7 +31,6 @@ struct tscs42xx {
- 
- 	int bclk_ratio;
- 	int samplerate;
--	unsigned int blrcm;
- 	struct mutex audio_params_lock;
- 
- 	u8 coeff_ram[COEFF_RAM_SIZE];
-@@ -41,8 +40,6 @@ struct tscs42xx {
- 	struct mutex pll_lock;
- 
- 	struct regmap *regmap;
--
--	struct device *dev;
- };
- 
- struct coeff_ram_ctl {
-@@ -1404,12 +1401,11 @@ static int tscs42xx_i2c_probe(struct i2c_client *i2c,
- 		return ret;
- 	}
- 	i2c_set_clientdata(i2c, tscs42xx);
--	tscs42xx->dev = &i2c->dev;
- 
- 	tscs42xx->regmap = devm_regmap_init_i2c(i2c, &tscs42xx_regmap);
- 	if (IS_ERR(tscs42xx->regmap)) {
- 		ret = PTR_ERR(tscs42xx->regmap);
--		dev_err(tscs42xx->dev, "Failed to allocate regmap (%d)\n", ret);
-+		dev_err(&i2c->dev, "Failed to allocate regmap (%d)\n", ret);
- 		return ret;
- 	}
- 
-@@ -1417,21 +1413,21 @@ static int tscs42xx_i2c_probe(struct i2c_client *i2c,
- 
- 	ret = part_is_valid(tscs42xx);
- 	if (ret <= 0) {
--		dev_err(tscs42xx->dev, "No valid part (%d)\n", ret);
-+		dev_err(&i2c->dev, "No valid part (%d)\n", ret);
- 		ret = -ENODEV;
- 		return ret;
- 	}
- 
- 	ret = regmap_write(tscs42xx->regmap, R_RESET, RV_RESET_ENABLE);
- 	if (ret < 0) {
--		dev_err(tscs42xx->dev, "Failed to reset device (%d)\n", ret);
-+		dev_err(&i2c->dev, "Failed to reset device (%d)\n", ret);
- 		return ret;
- 	}
- 
- 	ret = regmap_register_patch(tscs42xx->regmap, tscs42xx_patch,
- 			ARRAY_SIZE(tscs42xx_patch));
- 	if (ret < 0) {
--		dev_err(tscs42xx->dev, "Failed to apply patch (%d)\n", ret);
-+		dev_err(&i2c->dev, "Failed to apply patch (%d)\n", ret);
- 		return ret;
- 	}
- 
-@@ -1439,10 +1435,10 @@ static int tscs42xx_i2c_probe(struct i2c_client *i2c,
- 	mutex_init(&tscs42xx->coeff_ram_lock);
- 	mutex_init(&tscs42xx->pll_lock);
- 
--	ret = devm_snd_soc_register_component(tscs42xx->dev,
-+	ret = devm_snd_soc_register_component(&i2c->dev,
- 			&soc_codec_dev_tscs42xx, &tscs42xx_dai, 1);
- 	if (ret) {
--		dev_err(tscs42xx->dev, "Failed to register codec (%d)\n", ret);
-+		dev_err(&i2c->dev, "Failed to register codec (%d)\n", ret);
- 		return ret;
- 	}
- 
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 57cc892e05a2..590b7e8cd21c 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
+ 			   struct aa_profile *profile, unsigned int state)
+ {
+ 	int i;
+-	size_t size;
++	ssize_t size;
+ 	struct dentry *d;
+ 	char *value = NULL;
+ 	int value_size = 0, ret = profile->xattr_count;
 -- 
 2.15.1
