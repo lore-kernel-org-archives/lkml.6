@@ -1,89 +1,289 @@
-Return-Path: <jsimmons@infradead.org>
-X-Google-Smtp-Source: AIpwx4/FzIJNzZTparJrR/KiokjGH/QhUmBk465bQ75IiM4AFzYno+utdWm9dqmlqaz6ZtsgRCRn
-ARC-Seal: i=1; a=rsa-sha256; t=1522436211; cv=none;
+Return-Path: <andreyknvl@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521828358; cv=none;
         d=google.com; s=arc-20160816;
-        b=hYMxUN1MJApB1nlR/LcD5C8+r35qsCEELdqWRmj0I8NL373ik/53hn4YLPdMe7oW/R
-         e5SsY92IGVtkXfaJSdzi1rJNDgvG1bw8JQNxlB7kyXR/tXJxhixlMDv75Qs4yzPrs/Dx
-         zPwieNvzrFbq903ZxCgAbFV6OdW7IYNQ5DMdvZIUgOelniIuNxZnGA4QDKfnMGHZvukL
-         0bvI8TUIk68PTnjhuPX00XH8YTs1T2v4N4Hn181lNOPJvjLA7+/6zOyMvZBJEf7zJTww
-         F983m47gyhxrdbV66wwY8eR2P9qVmGRLagNMiDeRZs8NupBQHaxQY0FPPNOw03sE/tdS
-         z1pw==
+        b=Hg3x4e7n64Wps/aHkYKpSsOI9jAFfUH8gPu0PcN4xUIXjjO/YxOw3bGHazDvDtlqOA
+         oYr+z2xxlweqbOPr8XclWoSoScwrmASWi0wPz8F5A22jNd2Af1fkuEG9w/tq5VxIVWww
+         23O8TdDICbxC39Dsn+fgn3GLaU5e6hqhTSnDb76m+UJB69vjf3vEGTR8s4/t74Vt/xX0
+         UTq/xiXCzXj+QGrSC0C8X9p1AIFB/kRdz7roj6RzJDOrj7LDPyfcAsarFMDLKAtb1vzw
+         Qn4/5OmHta+sBTkXHZZ1M65ImiPedybyRlp3UQxLQqltU0ojHbhkcBr1NtcHyR41vZeY
+         Y1mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=2HoXMpMw1reW+gTjEjEvIDXKeMYsl4ov9tggmed1z0A=;
-        b=WafG4fa9PO/FncZTiMj9fBtE+9d5s29QRi2CMo7fMUgcj6gSq8uxJgUELWvMyCC5QF
-         NlWOyFdXPL+SQjYpRKSzJwEhvQeDOrq6ht1GR8rdU8BLi6OujUF00PI10szTkxCWzqE7
-         Fs5lKToHMgp5vWPmXfJk4R2qLc5i+FwFh/DJBV6naoXfe1AEyXEj+B2aW41DGwrZpej+
-         zbvms40FHmnFWco2CExYLVACneXDTag2o8stqZDz/jmhAmb/MdCQG/J7unDAHexb/V8n
-         2Oq/HPm6b0dpicnDIToaD4rvHDyo+72DnIUsFo2AqQzp2sKPpDere+4QT1xn6REwwJF3
-         ok7w==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=Ivf/kZ8LF7BtqVwH9Wy7ZjrkZ+dpP1vTYEg21SV2eek=;
+        b=l60jfE8Jzt2hVQqoeyeqF6Tp0kkmwu+BlaAoLTiC6eG5o1wFgzPPyiyWUTUYIHv9cH
+         EB+oV96KlYEPAvVRN8bT0fZjrPqfoeY9bQ8b2AC/orruj7v/NYVpHGHt2ku0iJIuE4dK
+         X8p1DLE7vqaO+ARpFut1ZRfFvzTEC4OwTeRDGPNeH4n/ypYeeuM+sF9nbFo45s6pHGaU
+         VPAIF6Efc+12idJcQrMEQOhETi95z0AeAbstCYdwgXswj5wrnpfmYzRDhV1GE7e0oLnx
+         1h9FgszPmkRuVaQOY5nWx+rGly1cJit/GkGIkyar7WqY6uRtP1/tVHIGWyi5A6cRWfw3
+         SixA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=YxHgJWC8;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
+       dkim=pass header.i=@google.com header.s=20161025 header.b=uvmisi5Z;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=YxHgJWC8;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
-Date: Fri, 30 Mar 2018 19:56:45 +0100 (BST)
-From: James Simmons <jsimmons@infradead.org>
-To: NeilBrown <neilb@suse.com>
-cc: Oleg Drokin <oleg.drokin@intel.com>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Andreas Dilger <andreas.dilger@intel.com>,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 01/17] staging: lustre: remove invariant in
- cl_io_read_ahead()
-In-Reply-To: <152229760825.27689.17083243052405696738.stgit@noble>
-Message-ID: <alpine.LFD.2.21.1803301956160.9681@casper.infradead.org>
-References: <152229732768.27689.4800156943561963977.stgit@noble> <152229760825.27689.17083243052405696738.stgit@noble>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20180330_195646_021394_C027CC93 
-X-CRM114-Status: GOOD (  13.58  )
-X-Spam-Score: -0.0 (/)
-X-Spam-Report: SpamAssassin version 3.4.1 on casper.infradead.org summary:
- Content analysis details:   (-0.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -0.0 NO_RELAYS              Informational: message was not relayed via SMTP
+       dkim=pass header.i=@google.com header.s=20161025 header.b=uvmisi5Z;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AG47ELsztnh4I0hauRCuoc+85L04mW+nEgQzE+oiAvkPwn4PzUXNnR52vMu81DFjbQ2sM6QCaR3oGg==
+From: Andrey Konovalov <andreyknvl@google.com>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Alexander Potapenko <glider@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Christoffer Dall <christoffer.dall@linaro.org>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Christopher Li <sparse@chrisli.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Michal Marek <michal.lkml@markovi.net>,
+	"GitAuthor : Andrey Konovalov" <andreyknvl@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Yury Norov <ynorov@caviumnetworks.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Kristina Martsenko <kristina.martsenko@arm.com>,
+	Punit Agrawal <punit.agrawal@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>,
+	Michael Weiser <michael.weiser@gmx.de>,
+	James Morse <james.morse@arm.com>,
+	Julien Thierry <julien.thierry@arm.com>,
+	Steve Capper <steve.capper@arm.com>,
+	Tyler Baicar <tbaicar@codeaurora.org>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	Stephen Boyd <stephen.boyd@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Paul Lawrence <paullawrence@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Sandipan Das <sandipan@linux.vnet.ibm.com>,
+	Kees Cook <keescook@chromium.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.cs.columbia.edu,
+	linux-sparse@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kbuild@vger.kernel.org
+Cc: Kostya Serebryany <kcc@google.com>,
+	Evgeniy Stepanov <eugenis@google.com>,
+	Lee Smith <Lee.Smith@arm.com>,
+	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+	Jacob Bramley <Jacob.Bramley@arm.com>,
+	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+	Kees Cook <keescook@google.com>,
+	Jann Horn <jannh@google.com>,
+	Mark Brand <markbrand@google.com>
+Subject: [RFC PATCH v2 00/15] khwasan: kernel hardware assisted address sanitizer
+Date: Fri, 23 Mar 2018 19:05:36 +0100
+Message-Id: <cover.1521828273.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596244766664542197?=
-X-GMAIL-MSGID: =?utf-8?q?1596390073453257184?=
+X-GMAIL-THRID: =?utf-8?q?1595752692799805688?=
+X-GMAIL-MSGID: =?utf-8?q?1595752692799805688?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi! This is the 2nd RFC version of the patchset.
 
-> This invariant can fail as ci_type is somtimes CIS_INIT.
-> 
-> According to Jinshan Xiong, or of the most recent significant
-> change to this code, "We should get rid of it."
-> 
-> So do that.
+This patchset adds a new mode to KASAN [1], which is called KHWASAN
+(Kernel HardWare assisted Address SANitizer). There's still some work to
+do and there are a few TODOs in the code, so I'm publishing this as an RFC
+to collect some initial feedback.
 
-Reviewed-by: James Simmons <jsimmons@infradead.org>
- 
-> Fixes: 1e1db2a97be5 ("staging: lustre: clio: Revise read ahead implementation")
-> Cc: Jinshan Xiong <jinshan.xiong@intel.com>
-> Signed-off-by: NeilBrown <neilb@suse.com>
-> ---
->  drivers/staging/lustre/lustre/obdclass/cl_io.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/staging/lustre/lustre/obdclass/cl_io.c b/drivers/staging/lustre/lustre/obdclass/cl_io.c
-> index ab84e011b560..fcdae6029258 100644
-> --- a/drivers/staging/lustre/lustre/obdclass/cl_io.c
-> +++ b/drivers/staging/lustre/lustre/obdclass/cl_io.c
-> @@ -599,7 +599,6 @@ int cl_io_read_ahead(const struct lu_env *env, struct cl_io *io,
->  	int		       result = 0;
->  
->  	LINVRNT(io->ci_type == CIT_READ || io->ci_type == CIT_FAULT);
-> -	LINVRNT(io->ci_state == CIS_IO_GOING || io->ci_state == CIS_LOCKED);
->  	LINVRNT(cl_io_invariant(io));
->  
->  	cl_io_for_each(scan, io) {
-> 
-> 
-> 
+The plan is to implement HWASan [2] for the kernel with the incentive,
+that it's going to have comparable to KASAN performance, but in the same
+time consume much less memory, trading that off for somewhat imprecise
+bug detection and being supported only for arm64.
+
+The overall idea of the approach used by KHWASAN is the following:
+
+1. By using the Top Byte Ignore arm64 CPU feature, we can store pointer
+   tags in the top byte of each kernel pointer.
+
+2. Using shadow memory, we can store memory tags for each chunk of kernel
+   memory.
+
+3. On each memory allocation, we can generate a random tag, embed it into
+   the returned pointer and set the memory tags that correspond to this
+   chunk of memory to the same value.
+
+4. By using compiler instrumentation, before each memory access we can add
+   a check that the pointer tag matches the tag of the memory that is being
+   accessed.
+
+5. On a tag mismatch we report an error.
+
+[1] https://www.kernel.org/doc/html/latest/dev-tools/kasan.html
+
+[2] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
+
+
+====== Technical details
+
+KHWASAN is implemented in a very similar way to KASAN. This patchset
+essentially does the following:
+
+1. TCR_TBI1 is set to enable Top Byte Ignore.
+
+2. Shadow memory is used (with a different scale, 1:16, so each shadow
+   byte corresponds to 16 bytes of kernel memory) to store memory tags.
+
+3. All slab objects are aligned to shadow scale, which is 16 bytes.
+
+4. All pointers returned from the slab allocator are tagged with a random
+   tag and the corresponding shadow memory is poisoned with the same value.
+
+5. Compiler instrumentation is used to insert tag checks. Either by
+   calling callbacks or by inlining them (CONFIG_KASAN_OUTLINE and
+   CONFIG_KASAN_INLINE flags are reused).
+
+6. When a tag mismatch is detected in callback instrumentation mode
+   KHWASAN simply prints a bug report. In case of inline instrumentation,
+   clang inserts a brk instruction, and KHWASAN has it's own brk handler,
+   which reports the bug.
+
+7. The memory in between slab objects is marked with a reserved tag, and
+   acts as a redzone.
+
+8. When a slab object is freed it's marked with a reserved tag.
+
+Bug detection is imprecise for two reasons:
+
+1. We won't catch some small out-of-bounds accesses, that fall into the
+   same shadow cell, as the last byte of a slab object.
+
+2. We only have 1 byte to store tags, which means we have a 1/256
+   probability of a tag match for an incorrect access (actually even
+   slightly less due to reserved tag values).
+
+
+====== Benchmarks
+
+The following numbers were collected on Odroid C2 board. Both KASAN and
+KHWASAN were used in inline instrumentation mode. These are the numbers
+I got with the current prototype and they might change.
+
+Boot time [1]:
+* ~4.5 sec for clean kernel
+* ~5.0 sec for KASAN
+* ~5.1 sec for KHWASAN
+
+Slab memory usage after boot [2]:
+* ~32 kb for clean kernel
+* ~95 kb + 1/8th shadow ~= 107 kb for KASAN
+* ~38 kb + 1/16th shadow ~= 40 kb for KHWASAN
+
+Network performance [3]:
+* 11.9 Gbits/sec for clean kernel
+* 3.08 Gbits/sec for KASAN
+* 3.02 Gbits/sec for KHWASAN
+
+Note, that KHWASAN (compared to KASAN) doesn't require quarantine.
+
+[1] Time before the ext4 driver is initialized.
+[2] Measured as `cat /proc/meminfo | grep Slab`.
+[3] Measured as `iperf -s & iperf -c 127.0.0.1 -t 30`.
+
+
+====== Some notes
+
+A few notes:
+
+1. The patchset can be found here:
+   https://github.com/xairy/kasan-prototype/tree/khwasan
+
+2. Building requires a recent LLVM version (r325711 or later) with this
+   patch applied: https://reviews.llvm.org/D44827.
+
+3. Stack instrumentation is not supported yet (in progress).
+
+4. There are still a few TODOs in the code, that need to be addressed.
+
+
+====== Changes
+
+Changes in RFC v2:
+- Removed explicit casts to u8 * for kasan_mem_to_shadow() calls.
+- Introduced KASAN_TCR_FLAGS for setting the TCR_TBI1 flag.
+- Added a comment regarding the non-atomic RMW sequence in
+  khwasan_random_tag().
+- Made all tag related functions accept const void *.
+- Untagged pointers in __kimg_to_phys, which is used by virt_to_phys.
+- Untagged pointers in show_ptr in fault handling logic.
+- Untagged pointers passed to KVM.
+- Added two reserved tag values: 0xFF and 0xFE.
+- Used the reserved tag 0xFF to disable validity checking (to resolve the
+  issue with pointer tag being lost after page_address + kmap usage).
+- Used the reserved tag 0xFE to mark redzones and freed objects.
+- Added mnemonics for esr manipulation in KHWASAN brk handler.
+- Added a comment about the -recover flag.
+- Some minor cleanups and fixes.
+- Rebased onto 3215b9d5 (4.16-rc6+).
+- Tested on real hardware (Odroid C2 board).
+- Added better benchmarks.
+
+Andrey Konovalov (15):
+  khwasan, mm: change kasan hooks signatures
+  khwasan: move common kasan and khwasan code to common.c
+  khwasan: add CONFIG_KASAN_CLASSIC and CONFIG_KASAN_TAGS
+  khwasan, arm64: adjust shadow size for CONFIG_KASAN_TAGS
+  khwasan: initialize shadow to 0xff
+  khwasan, arm64: untag virt address in __kimg_to_phys
+  khwasan, arm64: fix up fault handling logic
+  khwasan: add tag related helper functions
+  khwasan, kvm: untag pointers in kern_hyp_va
+  khwasan, arm64: enable top byte ignore for the kernel
+  khwasan, mm: perform untagged pointers comparison in krealloc
+  khwasan: add bug reporting routines
+  khwasan: add hooks implementation
+  khwasan, arm64: add brk handler for inline instrumentation
+  khwasan: update kasan documentation
+
+ Documentation/dev-tools/kasan.rst      | 212 ++++++++------
+ arch/arm64/Kconfig                     |   1 +
+ arch/arm64/Makefile                    |   2 +-
+ arch/arm64/include/asm/brk-imm.h       |   2 +
+ arch/arm64/include/asm/kvm_mmu.h       |   8 +
+ arch/arm64/include/asm/memory.h        |  22 +-
+ arch/arm64/include/asm/pgtable-hwdef.h |   1 +
+ arch/arm64/kernel/traps.c              |  61 ++++
+ arch/arm64/mm/fault.c                  |   3 +
+ arch/arm64/mm/kasan_init.c             |  13 +-
+ arch/arm64/mm/proc.S                   |   9 +-
+ include/linux/compiler-clang.h         |   9 +-
+ include/linux/compiler-gcc.h           |   4 +
+ include/linux/compiler.h               |   3 +-
+ include/linux/kasan.h                  |  84 +++++-
+ lib/Kconfig.kasan                      |  68 +++--
+ mm/kasan/Makefile                      |   9 +-
+ mm/kasan/common.c                      | 325 +++++++++++++++++++++
+ mm/kasan/kasan.c                       | 302 +-------------------
+ mm/kasan/kasan.h                       |  33 +++
+ mm/kasan/khwasan.c                     | 372 +++++++++++++++++++++++++
+ mm/kasan/report.c                      |  88 +++++-
+ mm/slab.c                              |  12 +-
+ mm/slab.h                              |   2 +-
+ mm/slab_common.c                       |   6 +-
+ mm/slub.c                              |  18 +-
+ scripts/Makefile.kasan                 |  32 ++-
+ virt/kvm/arm/mmu.c                     |  20 +-
+ 28 files changed, 1266 insertions(+), 455 deletions(-)
+ create mode 100644 mm/kasan/common.c
+ create mode 100644 mm/kasan/khwasan.c
+
+-- 
+2.17.0.rc0.231.g781580f067-goog
