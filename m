@@ -1,187 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752478AbeCWRLo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 13:11:44 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53296 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752445AbeCWRLi (ORCPT
+        id S1752384AbeCWRNv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 13:13:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51790 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752025AbeCWRNt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 13:11:38 -0400
-X-Google-Smtp-Source: AIpwx4+59D0+Izj4Li4vfGJzC19GQzkChtSqIlmDtGHltMlXncUmYFMEZofu161ZWpxc+c5YEtg5rGKtIcBtcuuVHGg=
+        Fri, 23 Mar 2018 13:13:49 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67AC66030F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v5 3/5] bnx2x: Eliminate duplicate barriers on
+ weakly-ordered archs
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ariel.elior@cavium.com, everest-linux-l2@cavium.com,
+        linux-kernel@vger.kernel.org
+References: <cb6a0522-2c53-b252-49db-5779d24963c6@codeaurora.org>
+ <20180323.124326.2170503491903886041.davem@davemloft.net>
+ <4bd9ccd2-df8f-acad-2513-eefe065dc852@codeaurora.org>
+ <20180323.130418.2223623186761161723.davem@davemloft.net>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <b4553d26-b326-15be-dcac-12594ea7c5b5@codeaurora.org>
+Date: Fri, 23 Mar 2018 13:13:46 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180309231433.tmlfy6vwbkvopmwd@rob-hp-laptop>
-References: <1520287361-12569-1-git-send-email-tharvey@gateworks.com>
- <1520287361-12569-2-git-send-email-tharvey@gateworks.com> <20180309231433.tmlfy6vwbkvopmwd@rob-hp-laptop>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Fri, 23 Mar 2018 10:11:35 -0700
-Message-ID: <CAJ+vNU3Nm0b30pMm-8aGCcFbTA05hU=rfyKMMOgRubf_GK1WyQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: mfd: Add Gateworks System Controller bindings
-To: Rob Herring <robh@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-        linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180323.130418.2223623186761161723.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 9, 2018 at 3:14 PM, Rob Herring <robh@kernel.org> wrote:
-> On Mon, Mar 05, 2018 at 02:02:38PM -0800, Tim Harvey wrote:
->> This patch adds documentation of device-tree bindings for the
->> Gateworks System Controller (GSC).
+On 3/23/2018 1:04 PM, David Miller wrote:
+> From: Sinan Kaya <okaya@codeaurora.org>
+> Date: Fri, 23 Mar 2018 12:51:47 -0400
+> 
+>> It could if txdata->tx_db was not a union. There is a data dependency
+>> between txdata->tx_db.data.prod and txdata->tx_db.raw. 
 >>
->> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
->> ---
->>  Documentation/devicetree/bindings/mfd/gsc.txt | 159 ++++++++++++++++++++++++++
->>  1 file changed, 159 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/gsc.txt
->>
-<snip>
->> +
->> +* hwmon:
->> +The GSC provides a set of Analog to Digitcal Converter (ADC) pins used for
->> +temperature and/or voltage monitoring.
->> +
->> +Required properties:
->> +- compatible: must be "gw,gsc-hwmon"
->> +
-<snip>
->> +
->> +             gsc_hwmon {
->
-> hwmon {
->
->> +                     compatible = "gw,gsc-hwmon";
->> +                     #address-cells = <1>;
->> +                     #size-cells = <0>;
->> +
->> +                     hwmon@0 { /* A0: Board Temperature */
->> +                             type = <0>;
->
-> Not documented.
->
->> +                             reg = <0x00>;
->> +                             label = "temp";
->> +                     };
->> +
->> +                     hwmon@1 { /* A1: Input Voltage */
->> +                             type = <1>;
->> +                             reg = <0x02>;
->> +                             label = "Vin";
->> +                     };
->> +
-<snip>
->> +
->> +                     hwmon@15 { /* fan0 */
->> +                             type = <2>;
->> +                             reg = <0x2c>;
->> +                             label = "fan_50p";
->> +                     };
->> +
-<snip>
->> +             };
->> +     };
+>> So, no reordering.
+> 
+> I don't see it that way, the code requires that:
+> 
+>  	txdata->tx_db.data.prod += nbd;
+> 
+> is visible before the doorbell update.> 
+> barrier() doesn't provide that.
+> 
+> Neither does writel_relaxed().  However plain writel() does.
 
-Hi Rob,
+Correct for some architectures including ARM but not correct universally.
 
-Thanks for the review. I will roll in your changes.
+writel() just guarantees register read/writes before and after to be
+ordered when HW observes it. 
 
-I'm looking for suggestions on how to better define the child nodes of
-the hwmon sub-device:
+writel() doesn't guarantee that the memory update is visible to the HW
+on all architectures.
 
-I have 4 types of hwmon child nodes supported by this device:
-1. temperature in C/10 (is that called deci-celcuis?): this is a 2byte value
-2. input voltage in mV: this is a 3 byte value pre-scaled by the GSC
-firmware from a 10bit ADC where the
-ref/bit-resolution/resistor-divider info is baked into the per-board
-firmware
-3. fan setpoint in C/10
-4. input voltage in mV: raw 2-byte value of a 12bit ADC that needs to
-be scaled based on a voltage-devider (pre-scaler), a ref voltage, and
-resolution (or bit width)
+If you need memory update visibility, that barrier() should have been a
+wmb()
 
-The example I posted above shows use of the first three types but not
-the more complicated fourth which requires the driver know more
-details in order to present a cooked milivolt value. Note that the two
-input types above would not both be present in any single board dts as
-they represent a change in the way ADC's are reported in the overall
-GSC version. A GSC typically has up to 16 different input ADC's and
-the voltage rails monitored vary per board.
+A correct multi-arch pattern is
 
-You mention that I don't document 'type' and your correct. I'm
-thinking this is best done with a string using compatible within the
-child node.
+wmb()
+writel_relaxed()
+mmiowb()
 
-Something like:
+We have decided to drop a similar patch on Infiniband due to incorrect
+usage of barrier(). If you feel strongly about it, I can remove the
+DOORBELL change.
 
-Required properties:
-...
-- hwmon: This is the list of child nodes that specify the hwmon nodes.
-...
+> 
+> Therefore the code is only correct as-is, and your change potentially
+> adds a reordering problem.
+> 
 
-hwmon required properties:
-- hwmon-compatible: Must be "fan-setpoint", "temperature",
-"input-raw", "input-cooked"
-- reg: register offset of the node
-- label: name of the input node
 
-hwmon optional properties:
-- gw,voltage-divider: an array of two integers containing the resistor
-values R1 and R2 of the voltage divider in ohms
-- gw,reference-voltage: the internal reference voltage of the ADC
-input in milivolts
-- gw,resolution: the resolution of the ADC input (ie 4096 for 12bit resolution)
-...
-
-Example:
-...
-hwmon {
-  compatible = "gw,gsc-hwmon";
-  #address-cells = <1>;
-  #size-cells = <0>;
-
-  hwmon@0 {
-    compatible = "temperature";
-    reg <0x00>;
-    label = "temp";
-  };
-
-  hwmon@2 {
-    compatible = "fan-setpoint";
-    reg <0x02>;
-    label = "fan_setpoint0";
-  };
-
-  /* this one represents the 3-byte ADC value that has been
-'pre-scaled' by the GSC from a raw 10bit ADC (older GSC
-version/firmware) */
-  hwmon@4 {
-    compatible = "input-cooked";
-    reg <0x02>;
-    label = "voltage1";
-  };
-
-  /* this one represents the 2-byte 12-bit ADC value that is 'raw'
-from the GSC and needs to be scaled by driver (newer GSC
-version/firmware) */
-  hwmon@4 {
-    compatible = "input-raw";
-    reg <0x04>;
-    label = "voltage2";
-    gw,voltage-divider = <10000 10000>; /* R1=10k R2=10k div-by-2 pre-scaler */
-    gw,referance-voltage = <2500>; /* 2.5V reference */
-    gw,resolution = <4096>; /* 12bit resolution */
-  };
-};
-
-If I add a byte-size (2|3) or bit-width (16|24) I could essentially
-combine the two input types.
-
-Suggestions?
-
-Regards,
-
-Tim
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
