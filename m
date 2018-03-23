@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1061450-1521803191-2-8238403649536446847
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803150-2-6658459596623518292
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803190; b=MlYKoPZAA+vdHjevMGYKBu4rwvpEchMmBej1cu8iWcrMtwm
-    FK5BequrTI5QZhsEBSRGeFVRvQswfcrKCPvoLDYM5fhnOqVnqPJ8c7W5RiURWU3/
-    oYqqEDUjUIjmxh7PuIgBc+Ix7w88g14CbuIC11m3yMpRib/D9Zs9vxLX0mWLCDEJ
-    vMkJj1go8eD1JTu4jh2scHYmdbXo253kHwPzy9LwuXsfJ/9wWb+zg5cLawiXAB6a
-    PRxMEO0MeyZ3OjMjKarkrke3jJKBCxKMU4dwmqUuBu1f4UoZ2XAAzCZ0XkoH6CQN
-    gv1+d4sj4XWjDvOLFKh5JXyJDXDSiZhimfjan7w==
+    t=1521803150; b=iLMHp07YIvC4oEsDPOgpPqLsgxO83w/ZHV41OwzZIkwX5f/
+    HFylm9I4Giyb2c5v/vxO3iLaoZuj1pXkcKesKyoMtfoz0RBcdOxVXoQgQ8o4Xhnf
+    rNKw51PVS+iTQ11+RDuHuXwPTFadn8Z+jXvVHUeL2zT2NBMqmai9hrtI9CtgfC8V
+    1yu5iyd2SR7N8AyHQlgkbFhGvTqy/mJqnT7woIhuji53pnrLcHYLcYwtonoThMOr
+    oE5O+sKxXOLK+MdpEOIWJ+9jZJA1T3TxEstTM6LsaoXbWtsyRev91rGrCw1LcsBO
+    4lHysHimob7Ta9QK/DeobUpFtr+zVWw0mcKcPYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803190; bh=LKQ9xN1zt7eQreyYjN9chhLezH
-    gm5RR5gonFBeVrvzo=; b=qNI3oUC8uKvyjsBrlqtHZybjjPiKNrxHkhqcBY6txc
-    4ctfeHtVUntGdef0mgEpX7rKvssKWeAS29WtFu+QPOaIRQugvlgEOlqrfV8Y9pSu
-    E98P98e0uwI0vX6nMvo3NEj8hWaV1FFeiPfMqg1thmWPoVcU9DO5Ch20ZP5O7f98
-    R/pHBEvEmEAlX1pE95p+ncU7Eai4HhlqUavMnt2piAVoeJRx4YZN8idEh8ewLVhr
-    1j/0zQ7X9KfLYuRrOTxqHT5ByrUpX8ndXZcaTYdU0nomXxyzZmrLiV5M9CmSaqzM
-    M4Etk3yLU9UJ7iAHX9Fkd4iNBgmnvLyc/un75uR+gtaw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803150; bh=VaEMctt9bYyKWOhd9DgY6Y21uL
+    DWSbxlqmA14AM8lW8=; b=J5pnP9xEYMoZJGewKu0A58uz0ljjYTwh9V16yOtUuU
+    l6ZQhEBWiX37ESpeGPoQP1SzassoKLqg8f/e0ih+WsDplmJLABGY/xLIN6/kOoGg
+    slrSLHrmWv3Fv1RQ99EHzuVwVe+3t0dgqIDgrp9x4a48nVL6/MFgUHizTHxsemZu
+    unkUXeqM0Kva4NFA1qk3gGn152amxc270dFM64IbkvnoiJ3ot4Yqyf99Sta9jhyc
+    XT6y2l67XsbbjERe9ljOEYFp6/ucOn/dnIUbm4qg6JXCQBnVoy/uzjW0ZGxIeS9V
+    o7AOrVAmYii2NSeUUhZN75cJp85u0k+rMhaDsMkf4sQA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752413AbeCWLGN (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:06:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44244 "EHLO
+        id S933183AbeCWKMZ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:12:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44286 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933165AbeCWKMT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:19 -0400
+        with ESMTP id S933179AbeCWKMW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Walker <robert.walker@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 160/177] coresight: Fix disabling of CoreSight TPIU
-Date: Fri, 23 Mar 2018 10:54:48 +0100
-Message-Id: <20180323094212.237630230@linuxfoundation.org>
+Subject: [PATCH 4.9 161/177] pinctrl: Really force states during suspend/resume
+Date: Fri, 23 Mar 2018 10:54:49 +0100
+Message-Id: <20180323094212.280968417@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,58 +83,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Robert Walker <robert.walker@arm.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
 
-[ Upstream commit 11595db8e17faaa05fadc25746c870e31276962f ]
+[ Upstream commit 981ed1bfbc6c4660b2ddaa8392893e20a6255048 ]
 
-The CoreSight TPIU should be disabled when tracing to other sinks to allow
-them to operate at full bandwidth.
+In case a platform only defaults a "default" set of pins, but not a
+"sleep" set of pins, and this particular platform suspends and resumes
+in a way that the pin states are not preserved by the hardware, when we
+resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
+-> pinctrl_select_state() and the first thing we do is check that the
+pins state is the same as before, and do nothing.
 
-This patch fixes tpiu_disable_hw() to correctly disable the TPIU by
-configuring the TPIU to stop on flush, initiating a manual flush, waiting
-for the flush to complete and then waits for the TPIU to indicate it has
-stopped.
+In order to fix this, decouple the actual state change from
+pinctrl_select_state() and move it pinctrl_commit_state(), while keeping
+the p->state == state check in pinctrl_select_state() not to change the
+caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
+are updated to bypass the state check by calling pinctrl_commit_state().
 
-Signed-off-by: Robert Walker <robert.walker@arm.com>
-Tested-by: Mike Leach <mike.leach@linaro.org>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[Linus Walleij]
+The forced pin control states are currently only used in some pin
+controller drivers that grab their own reference to their own pins.
+This is equal to the pin control hogs: pins taken by pin control
+devices since there are no corresponding device in the Linux device
+hierarchy, such as memory controller lines or unused GPIO lines,
+or GPIO lines that are used orthogonally from the GPIO subsystem
+but pincontrol-wise managed as hogs (non-strict mode, allowing
+simultaneous use by GPIO and pin control). For this case forcing
+the state from the drivers' suspend()/resume() callbacks makes
+sense and should semantically match the name of the function.
+
+Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwtracing/coresight/coresight-tpiu.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/pinctrl/core.c |   24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -46,8 +46,11 @@
- #define TPIU_ITATBCTR0		0xef8
- 
- /** register definition **/
-+/* FFSR - 0x300 */
-+#define FFSR_FT_STOPPED		BIT(1)
- /* FFCR - 0x304 */
- #define FFCR_FON_MAN		BIT(6)
-+#define FFCR_STOP_FI		BIT(12)
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -992,19 +992,16 @@ struct pinctrl_state *pinctrl_lookup_sta
+ EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
  
  /**
-  * @base:	memory mapped base address for this component.
-@@ -85,10 +88,14 @@ static void tpiu_disable_hw(struct tpiu_
+- * pinctrl_select_state() - select/activate/program a pinctrl state to HW
++ * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
+  * @p: the pinctrl handle for the device that requests configuration
+  * @state: the state handle to select/activate/program
+  */
+-int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
++static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
  {
- 	CS_UNLOCK(drvdata->base);
+ 	struct pinctrl_setting *setting, *setting2;
+ 	struct pinctrl_state *old_state = p->state;
+ 	int ret;
  
--	/* Clear formatter controle reg. */
--	writel_relaxed(0x0, drvdata->base + TPIU_FFCR);
-+	/* Clear formatter and stop on flush */
-+	writel_relaxed(FFCR_STOP_FI, drvdata->base + TPIU_FFCR);
- 	/* Generate manual flush */
--	writel_relaxed(FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
-+	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
-+	/* Wait for flush to complete */
-+	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
-+	/* Wait for formatter to stop */
-+	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
+-	if (p->state == state)
+-		return 0;
+-
+ 	if (p->state) {
+ 		/*
+ 		 * For each pinmux setting in the old state, forget SW's record
+@@ -1068,6 +1065,19 @@ unapply_new_state:
  
- 	CS_LOCK(drvdata->base);
+ 	return ret;
  }
++
++/**
++ * pinctrl_select_state() - select/activate/program a pinctrl state to HW
++ * @p: the pinctrl handle for the device that requests configuration
++ * @state: the state handle to select/activate/program
++ */
++int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
++{
++	if (p->state == state)
++		return 0;
++
++	return pinctrl_commit_state(p, state);
++}
+ EXPORT_SYMBOL_GPL(pinctrl_select_state);
+ 
+ static void devm_pinctrl_release(struct device *dev, void *res)
+@@ -1236,7 +1246,7 @@ void pinctrl_unregister_map(struct pinct
+ int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
+ {
+ 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
+-		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
++		return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
+@@ -1248,7 +1258,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
+ int pinctrl_force_default(struct pinctrl_dev *pctldev)
+ {
+ 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
+-		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
++		return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_force_default);
