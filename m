@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753714AbeCWMBa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 08:01:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39649 "EHLO mx2.suse.de"
+        id S1754129AbeCWMBA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:01:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39601 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753565AbeCWMBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 08:01:03 -0400
+        id S1753565AbeCWMA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 08:00:56 -0400
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
@@ -14,9 +14,9 @@ Cc: Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 7/8] livepatch: Allow to replace even disabled patches
-Date: Fri, 23 Mar 2018 13:00:27 +0100
-Message-Id: <20180323120028.31451-8-pmladek@suse.com>
+Subject: [PATCH 4/8] livepatch: Add an extra flag to distinguish registered patches
+Date: Fri, 23 Mar 2018 13:00:24 +0100
+Message-Id: <20180323120028.31451-5-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180323120028.31451-1-pmladek@suse.com>
 References: <20180323120028.31451-1-pmladek@suse.com>
@@ -24,65 +24,156 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patches without the replace flag might depend on each other. It makes
-sense to enforce the order in which they are enabled and disabled.
+The initial implementation of the atomic replace feature keeps the replaced
+patches on the stack. But people would like to remove the replaced patches
+from different reasons that will be described in the following patch.
 
-The situation is different when the patch replaces all existing ones.
-These patches should make the life easier for both: patch producers
-and users. Such a patch should be ready to replace basically any
-older patch. It should work well even in situations when the previous
-patches were not installed or when they were disabled from some reasons.
+This patch is just a small preparation step. We will need to keep
+the replaced patches registered even when they are not longer on the stack.
+It is because they are typically unregistered by the module exit script.
 
-The code is almost ready for this. There are needed two changes:
+Therefore we need to detect the registered patches another way. We could
+not use kobj.state_initialized because it is racy. The kobject is destroyed
+by an asynchronous call and could not be synchronized using klp_mutex.
 
-  + Disable only enabled patches in klp_discard_replaced_patches().
+This patch solves the problem by adding a flag into struct klp_patch.
+It is manipulated under klp_mutex and therefore it is safe. It is easy
+to understand and it is enough in most situations.
 
-  + Stop enforcing the stack order for the patches with the replace flag.
-    Instead, we need to make sure that they are still usable (not
-    replaced). This check is already there.
+The function klp_is_patch_registered() is not longer needed. Though
+it was renamed to klp_is_patch_on_stack() and used in __klp_enable_patch()
+as a new sanity check.
+
+This patch does not change the existing behavior.
 
 Signed-off-by: Petr Mladek <pmladek@suse.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Miroslav Benes <mbenes@suse.cz>
+Cc: Jason Baron <jbaron@akamai.com>
 ---
- kernel/livepatch/core.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ include/linux/livepatch.h |  2 ++
+ kernel/livepatch/core.c   | 24 ++++++++++++++++++------
+ 2 files changed, 20 insertions(+), 6 deletions(-)
 
+diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+index f28af280f9e0..d6e6d8176995 100644
+--- a/include/linux/livepatch.h
++++ b/include/linux/livepatch.h
+@@ -150,6 +150,7 @@ struct klp_object {
+  * @list:	list node for global list of registered patches
+  * @kobj:	kobject for sysfs resources
+  * @obj_list:	dynamic list of the object entries
++ * @registered: reliable way to check registration status
+  * @enabled:	the patch is enabled (but operation may be incomplete)
+  * @finish:	for waiting till it is safe to remove the patch module
+  */
+@@ -163,6 +164,7 @@ struct klp_patch {
+ 	struct list_head list;
+ 	struct kobject kobj;
+ 	struct list_head obj_list;
++	bool registered;
+ 	bool enabled;
+ 	struct completion finish;
+ };
 diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 0b3be6e14b80..c64371ffc063 100644
+index 18c400bd9a33..70c67a834e9a 100644
 --- a/kernel/livepatch/core.c
 +++ b/kernel/livepatch/core.c
-@@ -355,11 +355,13 @@ void klp_discard_replaced_patches(struct klp_patch *new_patch, bool keep_module)
- 		if (old_patch == new_patch)
- 			return;
+@@ -45,6 +45,11 @@
+  */
+ DEFINE_MUTEX(klp_mutex);
  
--		klp_unpatch_objects(old_patch);
--		old_patch->enabled = false;
-+		if (old_patch->enabled) {
-+			klp_unpatch_objects(old_patch);
-+			old_patch->enabled = false;
++/*
++ * Stack of patches. It defines the order in which the patches can be enabled.
++ * Only patches on this stack might be enabled. New patches are added when
++ * registered. They are removed when they are unregistered.
++ */
+ static LIST_HEAD(klp_patches);
  
--		if (!keep_module)
--			module_put(old_patch->mod);
-+			if (!keep_module)
-+				module_put(old_patch->mod);
-+		}
+ static struct kobject *klp_root_kobj;
+@@ -97,7 +102,7 @@ static void klp_find_object_module(struct klp_object *obj)
+ 	mutex_unlock(&module_mutex);
+ }
  
- 		/*
- 		 * Replaced patches could not get re-enabled to keep
-@@ -453,8 +455,13 @@ static int __klp_enable_patch(struct klp_patch *patch)
- 	if (!klp_is_patch_on_stack(patch))
+-static bool klp_is_patch_registered(struct klp_patch *patch)
++static bool klp_is_patch_on_stack(struct klp_patch *patch)
+ {
+ 	struct klp_patch *mypatch;
+ 
+@@ -378,7 +383,7 @@ int klp_disable_patch(struct klp_patch *patch)
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!patch->registered) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
+@@ -407,7 +412,11 @@ static int __klp_enable_patch(struct klp_patch *patch)
+ 	if (WARN_ON(patch->enabled))
  		return -EINVAL;
  
--	/* Only the first disabled patch can be enabled. */
--	if (patch->list.prev != &klp_patches &&
-+	/*
-+	 * Only the first disabled patch can be enabled. This is not required
-+	 * for patches with the replace flags. They override even disabled
-+	 * patches that were registered earlier.
-+	 */
-+	if (!patch->replace &&
-+	    patch->list.prev != &klp_patches &&
+-	/* enforce stacking: only the first disabled patch can be enabled */
++	/* Enforce stacking. */
++	if (!klp_is_patch_on_stack(patch))
++		return -EINVAL;
++
++	/* Only the first disabled patch can be enabled. */
+ 	if (patch->list.prev != &klp_patches &&
  	    !list_prev_entry(patch, list)->enabled)
  		return -EBUSY;
+@@ -478,7 +487,7 @@ int klp_enable_patch(struct klp_patch *patch)
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!patch->registered) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
+@@ -519,7 +528,7 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!patch->registered) {
+ 		/*
+ 		 * Module with the patch could either disappear meanwhile or is
+ 		 * not properly initialized yet.
+@@ -528,6 +537,7 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 		goto err;
+ 	}
+ 
++
+ 	if (patch->enabled == enabled) {
+ 		/* already in requested state */
+ 		ret = -EINVAL;
+@@ -1004,6 +1014,7 @@ static int klp_init_patch(struct klp_patch *patch)
+ 	}
+ 
+ 	list_add_tail(&patch->list, &klp_patches);
++	patch->registered = true;
+ 
+ 	mutex_unlock(&klp_mutex);
+ 
+@@ -1034,7 +1045,7 @@ int klp_unregister_patch(struct klp_patch *patch)
+ 
+ 	mutex_lock(&klp_mutex);
+ 
+-	if (!klp_is_patch_registered(patch)) {
++	if (!patch->registered) {
+ 		ret = -EINVAL;
+ 		goto err;
+ 	}
+@@ -1045,6 +1056,7 @@ int klp_unregister_patch(struct klp_patch *patch)
+ 	}
+ 
+ 	klp_free_patch(patch);
++	patch->registered = false;
+ 
+ 	mutex_unlock(&klp_mutex);
  
 -- 
 2.13.6
