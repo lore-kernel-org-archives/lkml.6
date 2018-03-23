@@ -1,31 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752267AbeCWTvi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 15:51:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54293 "EHLO
+        id S1752306AbeCWTwI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:52:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45553 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751930AbeCWTvh (ORCPT
+        with ESMTP id S1751828AbeCWTwH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 15:51:37 -0400
-Date: Fri, 23 Mar 2018 12:51:06 -0700
+        Fri, 23 Mar 2018 15:52:07 -0400
+Date: Fri, 23 Mar 2018 12:51:34 -0700
 From: tip-bot for Christoph Hellwig <tipbot@zytor.com>
-Message-ID: <tip-b468620f2a1dfdcfddfd6fa54367b8bcc1b51248@git.kernel.org>
-Cc: mingo@kernel.org, konrad.wilk@oracle.com, hch@lst.de,
-        dwmw2@infradead.org, thomas.lendacky@amd.com, peterz@infradead.org,
-        hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
-        jdmason@kudzu.us, joro@8bytes.org, mulix@mulix.org, jroedel@suse.de,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, jdmason@kudzu.us, joro@8bytes.org,
-        mulix@mulix.org, jroedel@suse.de, torvalds@linux-foundation.org,
-        hpa@zytor.com, peterz@infradead.org, tglx@linutronix.de,
-        dwmw2@infradead.org, thomas.lendacky@amd.com, mingo@kernel.org,
-        konrad.wilk@oracle.com, hch@lst.de
-In-Reply-To: <20180319103826.12853-8-hch@lst.de>
-References: <20180319103826.12853-8-hch@lst.de>
+Message-ID: <tip-d657c5c73ca987214a6f9436e435b34fc60f332a@git.kernel.org>
+Cc: mingo@kernel.org, peterz@infradead.org, dwmw2@infradead.org,
+        hpa@zytor.com, jdmason@kudzu.us, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, hch@lst.de, mulix@mulix.org,
+        konrad.wilk@oracle.com, joro@8bytes.org, torvalds@linux-foundation.org,
+        thomas.lendacky@amd.com
+Reply-To: joro@8bytes.org, thomas.lendacky@amd.com,
+        torvalds@linux-foundation.org, mulix@mulix.org, konrad.wilk@oracle.com,
+        linux-kernel@vger.kernel.org, hch@lst.de, mingo@kernel.org,
+        peterz@infradead.org, dwmw2@infradead.org, jdmason@kudzu.us,
+        hpa@zytor.com, tglx@linutronix.de
+In-Reply-To: <20180319103826.12853-9-hch@lst.de>
+References: <20180319103826.12853-9-hch@lst.de>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/dma] iommu/amd_iommu: Use CONFIG_DMA_DIRECT_OPS=y and
- dma_direct_{alloc,free}()
-Git-Commit-ID: b468620f2a1dfdcfddfd6fa54367b8bcc1b51248
+Subject: [tip:x86/dma] iommu/intel-iommu: Enable CONFIG_DMA_DIRECT_OPS=y and
+ clean up intel_{alloc,free}_coherent()
+Git-Commit-ID: d657c5c73ca987214a6f9436e435b34fc60f332a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,22 +38,20 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b468620f2a1dfdcfddfd6fa54367b8bcc1b51248
-Gitweb:     https://git.kernel.org/tip/b468620f2a1dfdcfddfd6fa54367b8bcc1b51248
+Commit-ID:  d657c5c73ca987214a6f9436e435b34fc60f332a
+Gitweb:     https://git.kernel.org/tip/d657c5c73ca987214a6f9436e435b34fc60f332a
 Author:     Christoph Hellwig <hch@lst.de>
-AuthorDate: Mon, 19 Mar 2018 11:38:19 +0100
+AuthorDate: Mon, 19 Mar 2018 11:38:20 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 20 Mar 2018 10:01:58 +0100
 
-iommu/amd_iommu: Use CONFIG_DMA_DIRECT_OPS=y and dma_direct_{alloc,free}()
+iommu/intel-iommu: Enable CONFIG_DMA_DIRECT_OPS=y and clean up intel_{alloc,free}_coherent()
 
-This cleans up the code a lot by removing duplicate logic.
+Use the dma_direct_*() helpers and clean up the code flow.
 
 Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
-Tested-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Joerg Roedel <jroedel@suse.de>
 Cc: David Woodhouse <dwmw2@infradead.org>
 Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Jon Mason <jdmason@kudzu.us>
@@ -62,124 +60,111 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Muli Ben-Yehuda <mulix@mulix.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: iommu@lists.linux-foundation.org
-Link: http://lkml.kernel.org/r/20180319103826.12853-8-hch@lst.de
+Link: http://lkml.kernel.org/r/20180319103826.12853-9-hch@lst.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/iommu/Kconfig     |  1 +
- drivers/iommu/amd_iommu.c | 68 +++++++++++++++--------------------------------
- 2 files changed, 22 insertions(+), 47 deletions(-)
+ drivers/iommu/Kconfig       |  1 +
+ drivers/iommu/intel-iommu.c | 62 ++++++++++++---------------------------------
+ 2 files changed, 17 insertions(+), 46 deletions(-)
 
 diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index f3a21343e636..dc7c1914645d 100644
+index dc7c1914645d..df171cb85822 100644
 --- a/drivers/iommu/Kconfig
 +++ b/drivers/iommu/Kconfig
-@@ -107,6 +107,7 @@ config IOMMU_PGTABLES_L2
- # AMD IOMMU support
- config AMD_IOMMU
- 	bool "AMD IOMMU support"
+@@ -143,6 +143,7 @@ config DMAR_TABLE
+ config INTEL_IOMMU
+ 	bool "Support for Intel IOMMU using DMA Remapping Devices"
+ 	depends on PCI_MSI && ACPI && (X86 || IA64_GENERIC)
 +	select DMA_DIRECT_OPS
- 	select SWIOTLB
- 	select PCI_MSI
- 	select PCI_ATS
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 0bf19423b588..83819d0cbf90 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -2600,51 +2600,32 @@ static void *alloc_coherent(struct device *dev, size_t size,
- 			    unsigned long attrs)
+ 	select IOMMU_API
+ 	select IOMMU_IOVA
+ 	select DMAR_TABLE
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index fd899b2a12bb..24d1b1b42013 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -31,6 +31,7 @@
+ #include <linux/pci.h>
+ #include <linux/dmar.h>
+ #include <linux/dma-mapping.h>
++#include <linux/dma-direct.h>
+ #include <linux/mempool.h>
+ #include <linux/memory.h>
+ #include <linux/cpu.h>
+@@ -3708,61 +3709,30 @@ static void *intel_alloc_coherent(struct device *dev, size_t size,
+ 				  dma_addr_t *dma_handle, gfp_t flags,
+ 				  unsigned long attrs)
  {
- 	u64 dma_mask = dev->coherent_dma_mask;
--	struct protection_domain *domain;
--	struct dma_ops_domain *dma_dom;
--	struct page *page;
+-	struct page *page = NULL;
+-	int order;
 -
--	domain = get_domain(dev);
--	if (PTR_ERR(domain) == -EINVAL) {
--		page = alloc_pages(flag, get_order(size));
--		*dma_addr = page_to_phys(page);
--		return page_address(page);
--	} else if (IS_ERR(domain))
+-	size = PAGE_ALIGN(size);
+-	order = get_order(size);
+-
+-	if (!iommu_no_mapping(dev))
+-		flags &= ~(GFP_DMA | GFP_DMA32);
+-	else if (dev->coherent_dma_mask < dma_get_required_mask(dev)) {
+-		if (dev->coherent_dma_mask < DMA_BIT_MASK(32))
+-			flags |= GFP_DMA;
+-		else
+-			flags |= GFP_DMA32;
+-	}
++	void *vaddr;
+ 
+-	if (gfpflags_allow_blocking(flags)) {
+-		unsigned int count = size >> PAGE_SHIFT;
++	vaddr = dma_direct_alloc(dev, size, dma_handle, flags, attrs);
++	if (iommu_no_mapping(dev) || !vaddr)
++		return vaddr;
+ 
+-		page = dma_alloc_from_contiguous(dev, count, order, flags);
+-		if (page && iommu_no_mapping(dev) &&
+-		    page_to_phys(page) + size > dev->coherent_dma_mask) {
+-			dma_release_from_contiguous(dev, page, count);
+-			page = NULL;
+-		}
+-	}
+-
+-	if (!page)
+-		page = alloc_pages(flags, order);
+-	if (!page)
 -		return NULL;
-+	struct protection_domain *domain = get_domain(dev);
-+	bool is_direct = false;
-+	void *virt_addr;
- 
--	dma_dom   = to_dma_ops_domain(domain);
--	size	  = PAGE_ALIGN(size);
--	dma_mask  = dev->coherent_dma_mask;
--	flag     &= ~(__GFP_DMA | __GFP_HIGHMEM | __GFP_DMA32);
--	flag     |= __GFP_ZERO;
+-	memset(page_address(page), 0, size);
 -
--	page = alloc_pages(flag | __GFP_NOWARN,  get_order(size));
--	if (!page) {
--		if (!gfpflags_allow_blocking(flag))
--			return NULL;
--
--		page = dma_alloc_from_contiguous(dev, size >> PAGE_SHIFT,
--						 get_order(size), flag);
--		if (!page)
-+	if (IS_ERR(domain)) {
-+		if (PTR_ERR(domain) != -EINVAL)
- 			return NULL;
-+		is_direct = true;
- 	}
- 
-+	virt_addr = dma_direct_alloc(dev, size, dma_addr, flag, attrs);
-+	if (!virt_addr || is_direct)
-+		return virt_addr;
-+
- 	if (!dma_mask)
- 		dma_mask = *dev->dma_mask;
- 
--	*dma_addr = __map_single(dev, dma_dom, page_to_phys(page),
--				 size, DMA_BIDIRECTIONAL, dma_mask);
--
-+	*dma_addr = __map_single(dev, to_dma_ops_domain(domain),
-+			virt_to_phys(virt_addr), PAGE_ALIGN(size),
-+			DMA_BIDIRECTIONAL, dma_mask);
- 	if (*dma_addr == AMD_IOMMU_MAPPING_ERROR)
- 		goto out_free;
--
--	return page_address(page);
-+	return virt_addr;
- 
- out_free:
--
+-	*dma_handle = __intel_map_single(dev, page_to_phys(page), size,
+-					 DMA_BIDIRECTIONAL,
+-					 dev->coherent_dma_mask);
+-	if (*dma_handle)
+-		return page_address(page);
 -	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
--		__free_pages(page, get_order(size));
--
-+	dma_direct_free(dev, size, virt_addr, *dma_addr, attrs);
+-		__free_pages(page, order);
++	*dma_handle = __intel_map_single(dev, virt_to_phys(vaddr),
++			PAGE_ALIGN(size), DMA_BIDIRECTIONAL,
++			dev->coherent_dma_mask);
++	if (!*dma_handle)
++		goto out_free_pages;
++	return vaddr;
+ 
++out_free_pages:
++	dma_direct_free(dev, size, vaddr, *dma_handle, attrs);
  	return NULL;
  }
  
-@@ -2655,24 +2636,17 @@ static void free_coherent(struct device *dev, size_t size,
- 			  void *virt_addr, dma_addr_t dma_addr,
- 			  unsigned long attrs)
+ static void intel_free_coherent(struct device *dev, size_t size, void *vaddr,
+ 				dma_addr_t dma_handle, unsigned long attrs)
  {
--	struct protection_domain *domain;
--	struct dma_ops_domain *dma_dom;
--	struct page *page;
-+	struct protection_domain *domain = get_domain(dev);
- 
--	page = virt_to_page(virt_addr);
- 	size = PAGE_ALIGN(size);
- 
--	domain = get_domain(dev);
--	if (IS_ERR(domain))
--		goto free_mem;
-+	if (!IS_ERR(domain)) {
-+		struct dma_ops_domain *dma_dom = to_dma_ops_domain(domain);
- 
--	dma_dom = to_dma_ops_domain(domain);
+-	int order;
+-	struct page *page = virt_to_page(vaddr);
 -
--	__unmap_single(dma_dom, dma_addr, size, DMA_BIDIRECTIONAL);
-+		__unmap_single(dma_dom, dma_addr, size, DMA_BIDIRECTIONAL);
-+	}
- 
--free_mem:
+-	size = PAGE_ALIGN(size);
+-	order = get_order(size);
+-
+-	intel_unmap(dev, dma_handle, size);
 -	if (!dma_release_from_contiguous(dev, page, size >> PAGE_SHIFT))
--		__free_pages(page, get_order(size));
-+	dma_direct_free(dev, size, virt_addr, dma_addr, attrs);
+-		__free_pages(page, order);
++	if (!iommu_no_mapping(dev))
++		intel_unmap(dev, dma_handle, PAGE_ALIGN(size));
++	dma_direct_free(dev, size, vaddr, dma_handle, attrs);
  }
  
- /*
+ static void intel_unmap_sg(struct device *dev, struct scatterlist *sglist,
