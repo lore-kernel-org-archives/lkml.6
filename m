@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELscVLYYw/nURaoKRDTBpQjuKTw/9g3YXL1wYiJjtNkdOpM1nUxgTlAqEmPKK6Kxl6X3lNRN
-ARC-Seal: i=1; a=rsa-sha256; t=1521800307; cv=none;
+X-Google-Smtp-Source: AG47ELuWQwWB00PCDj1nk13JxfGDVBguO8Hl+VZkM1cbSrlrbqg+LlVjOuEva3QQUElvjkk4Fd04
+ARC-Seal: i=1; a=rsa-sha256; t=1521800304; cv=none;
         d=google.com; s=arc-20160816;
-        b=t9+CKvDR5ulSxWXjVJyV0ryd2yAg1dyFUIUJlM755BG+HUNG3P95n9E+fWpauKWqa0
-         Z3cYrsen8hCCXyfPjbClfokPTex7TvSVDHp2fVdQE5rFrViCx7G9Luulp/BQKqeDmnSQ
-         Q5qSypdHOhTOsKijCm7sNi5YpmBjpqU8+ifps3OyP5ab8iNZL231tKSTiapAwOhfQK64
-         l5B+79dC63/hi13mPliXi/EvsmBo3xhsDVtBCErrosWfvOFo/sp7wEqxQys3Lz/R7l7P
-         m62HQaKT9yE+aD7f90oBkr8ike1S2gHwJ3+ytYmDmbcNhZ5XcR+CNNkbeDNYZWQPjO2c
-         HMtA==
+        b=EHf/R1pp29eVtsQzkpJXbymtgK912JGzj5E1/4dL8iwWjHs1flc0TXLLvVLEQlaAY8
+         18RfBHzLDnpCiMnrEHY7SeCOaQ2FDRePJKQh2pfmY/sI4CdyMGAnHSFsxru3v1i2cGJ3
+         fB2j8m3pjcYSAdsOQ7SbVYGVtTQAPDrbzJ3MlPNqwkhL3JdRfpQ0OuqLiiUtDEbKEn6b
+         dBP+Pj/mtu+hrAoxlCgVw1cIozuXJ3UHB5VaRDTaKc4xOnpXfWonXHH6AWbVhTFOBgEC
+         XTM2VljnDqLoR8RFZhndB9s6Qc4Afo1q3rKhM2hDceW7o5lvtPiFSpdPScezX569D2Ys
+         FQ8Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rJTpKId8shgCf2uaJTJXy4rhe9OYnl48U0E7DY9An40=;
-        b=w1tbbyS//5vXPuFMTc2AEd88emQBGj/DsSXzkv91rJYhJ8z3lcs7I42IaArOH9qH7S
-         jIkCVeI7CZcE5ZjVzYODvMn9gkkjgwnxrbZDC6JFHBEd2v5eiF6TCk7ZJThlhmQLK5TR
-         wO2QWcDNrWIiZL+OTSNbcOjFTeK3Dee+gEq/528OTEI0dPHY7uS/pcTOuNdKxjGv9kY8
-         OaY9hpQTAHNyd8nPi1aDpgeboVJ8ZV/Lk88ch7w+st6yLthAsWM2at5m7W3MEnYU8fWG
-         cWQWXjr5lIXYgM6DD5ZYS7uL7Fs/Uy2W1fOC9rgOO01ozp6ywJCuyXv4fBnG+FlqPpPe
-         0Uqw==
+        bh=1TQoPuRHd/4iDYRFrjy7M+k7/Hgq8NYk/KiaWC8KVvE=;
+        b=fh7bKp7bk/DpVr6jL9D61XXQ2Lo1XBcFvU1i2J1jVd3YqZF1keI/7ZQFZoAnLiO3qG
+         ErbB95lcF4IEGuThRTzhDqvmroVwCmDXf0qsV8XcKrIl57AJ/oIIfeIKslE6spjvfWsm
+         JQYfIYKQcIU85qSKdEtPJcfo6lV/Qn8d/6A4uZpA9vPTxSWvhVIJgENTTHnuJKUtu3bE
+         mE8sCDi1E2Q7jQWmXV6lg/T5r53ToZPVPXGSfhERe5ME48ufWSGopiTdEqIFhF6wPSST
+         ZuPTmtVxyKtrBCcEZpgwt9ST1iRnAJKxFcb3eY74BP/AC28GrQTBUyKay1TAQfE9MGID
+         Zxwg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Ahern <dsa@cumulusnetworks.com>,
-	Hannes Frederic Sowa <hannes@stressinduktion.org>,
-	"David S. Miller" <davem@davemloft.net>,
+	Edgar Cherkasov <echerkasov@dev.rtsoft.ru>,
+	Michael Brunner <Michael.Brunner@kontron.com>,
+	Viktor Krasnov <vkrasnov@dev.rtsoft.ru>,
+	Jean Delvare <jdelvare@suse.de>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 08/47] net: ipv6: send unsolicited NA on admin up
-Date: Fri, 23 Mar 2018 10:54:59 +0100
-Message-Id: <20180323094248.489986312@linuxfoundation.org>
+Subject: [PATCH 3.18 07/47] i2c: i2c-scmi: add a MS HID
+Date: Fri, 23 Mar 2018 10:54:58 +0100
+Message-Id: <20180323094248.435128683@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094248.117679641@linuxfoundation.org>
 References: <20180323094248.117679641@linuxfoundation.org>
@@ -42,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722415025079471?=
-X-GMAIL-MSGID: =?utf-8?q?1595723279440041460?=
+X-GMAIL-THRID: =?utf-8?q?1595722411556560563?=
+X-GMAIL-MSGID: =?utf-8?q?1595723275753310523?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +54,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Ahern <dsa@cumulusnetworks.com>
+From: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
 
 
-[ Upstream commit 4a6e3c5def13c91adf2acc613837001f09af3baa ]
+[ Upstream commit e058e7a4bc89104540a8a303682248614b5df6f1 ]
 
-ndisc_notify is the ipv6 equivalent to arp_notify. When arp_notify is
-set to 1, gratuitous arp requests are sent when the device is brought up.
-The same is expected when ndisc_notify is set to 1 (per ndisc_notify in
-Documentation/networking/ip-sysctl.txt). The NA is not sent on NETDEV_UP
-event; add it.
+Description of the problem:
+ - i2c-scmi driver contains only two identifiers "SMBUS01" and "SMBUSIBM";
+ - the fist HID (SMBUS01) is clearly defined in "SMBus Control Method
+   Interface Specification, version 1.0": "Each device must specify
+   'SMBUS01' as its _HID and use a unique _UID value";
+ - unfortunately, BIOS vendors (like AMI) seem to ignore this requirement
+   and implement "SMB0001" HID instead of "SMBUS01";
+ - I speculate that they do this because only "SMB0001" is hard coded in
+   Windows SMBus driver produced by Microsoft.
 
-Fixes: 5cb04436eef6 ("ipv6: add knob to send unsolicited ND on link-layer address change")
-Signed-off-by: David Ahern <dsa@cumulusnetworks.com>
-Acked-by: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This leads to following situation:
+ - SMBus works out of box in Windows but not in Linux;
+ - board vendors are forced to add correct "SMBUS01" HID to BIOS to make
+   SMBus work in Linux. Moreover the same board vendors complain that
+   tools (3-rd party ASL compiler) do not like the "SMBUS01" identifier
+   and produce errors.  So they need to constantly patch the compiler for
+   each new version of BIOS.
+
+As it is very unlikely that BIOS vendors implement a correct HID in
+future, I would propose to consider whether it is possible to work around
+the problem by adding MS HID to the Linux i2c-scmi driver.
+
+v2: move the definition of the new HID to the driver itself.
+
+Signed-off-by: Edgar Cherkasov <echerkasov@dev.rtsoft.ru>
+Signed-off-by: Michael Brunner <Michael.Brunner@kontron.com>
+Acked-by: Viktor Krasnov <vkrasnov@dev.rtsoft.ru>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ndisc.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/i2c/busses/i2c-scmi.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -1646,6 +1646,8 @@ static int ndisc_netdev_event(struct not
- 	case NETDEV_CHANGEADDR:
- 		neigh_changeaddr(&nd_tbl, dev);
- 		fib6_run_gc(0, net, false);
-+		/* fallthrough */
-+	case NETDEV_UP:
- 		idev = in6_dev_get(dev);
- 		if (!idev)
- 			break;
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -18,6 +18,9 @@
+ #define ACPI_SMBUS_HC_CLASS		"smbus"
+ #define ACPI_SMBUS_HC_DEVICE_NAME	"cmi"
+ 
++/* SMBUS HID definition as supported by Microsoft Windows */
++#define ACPI_SMBUS_MS_HID		"SMB0001"
++
+ ACPI_MODULE_NAME("smbus_cmi");
+ 
+ struct smbus_methods_t {
+@@ -51,6 +54,7 @@ static const struct smbus_methods_t ibm_
+ static const struct acpi_device_id acpi_smbus_cmi_ids[] = {
+ 	{"SMBUS01", (kernel_ulong_t)&smbus_methods},
+ 	{ACPI_SMBUS_IBM_HID, (kernel_ulong_t)&ibm_smbus_methods},
++	{ACPI_SMBUS_MS_HID, (kernel_ulong_t)&smbus_methods},
+ 	{"", 0}
+ };
+ MODULE_DEVICE_TABLE(acpi, acpi_smbus_cmi_ids);
