@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182164-1521807201-2-2708577770781962111
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521807187-2-16583929210857418372
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521807200; b=rhnFEau93PN1b0UclaanoQPEepnGniGRYOOF8CXgzEqyU4q
-    9o21JfyI6UwE02LKs2PGD718dvvBYNuGwsy+bata5LcYRYbgP+M5hs5sW+9iObai
-    0SZVyC+dGqTvigftLHkOLPHf4hGLwVdhfNfVqa7f5g8NCznpcUMWQUSZThnDgXS3
-    yYmBtY/TAW2ZknOx+ZIuZI8QdcJY1LjXv+RV5dV0r+pzmLKwwisKBBt5ivTNnan3
-    2Kp8R/mORFVEB1IvaC7Zx7huf7lMblwQ7QJwRUN6LAjYrsIpmfR44tUwhJnchYoT
-    zjaEXnpi6dWXKYxM2jlMwaF3aqMQCZhRSKmKKBw==
+    t=1521807187; b=edIHZH+oVmpX1Tcf4F7O9VAF9ceSyy4m/iTrrl+6HQOAhL8
+    TSz4ySUOJaYZ+IJyW2/eZeEvANhQeIVzarTG35ZUO/7PKY23h+KS5O4YKo6MSpQ1
+    PA4h9NRXsLmlMR0y2qNOzUc1KSbCtVq+Vb6vdueOm/BeUVlcGkRuHyquj3vMqYXH
+    JhAua229cHFzrRRrsz0uGYM4PNqKJkai2Rw9k/QVfh8IXVV2jZVgtneOT5+0V+qs
+    T1pbPX5VNRlAo2t/hcUUa9TTFSOrCXq0Uk1ay0sTIip65bgXYTSUBBVB83tes1LV
+    cd/6mQcReSo2Uu8I+WbRBKZkD1xoff7dNDvVOjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521807200; bh=mDxTpRRRejj1xtisVDwaqMi1Z5
-    p+MaOEM1cQ8J5LO7I=; b=ajqPdzlWdOJerk/Tpia4rFauQfghCBr6AGqg/SO0VS
-    lVetcrl2PGlURGnjv65hsNQl9lk+V/Mj2FKkNVyGL31aBnZSqULz44Hn/SAOgc0H
-    /FNgdC3BCaTcFKMRTYD2HYTzzC0BNyDXLP3sj3O5ZoR8W4lQhGVlBCVkaIYXTCD8
-    CTslkKvvrGHh76/6b+yWBXYGHiSB06p5hFi8j+pLCCrKKM9OIOb9Fu5I01WJDknW
-    xaaRZyGzLjNIrpd4VCTUF4lBSxKkLtJN1nLdItMCYO3xHZGFmOXsTwQOWrV6jseI
-    LPfGQMfeVESvL19vo2ApnRzh/YE33uONtpqYYs+ZxhnA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521807187; bh=BeoQsw5ClQHDWUsCfE8NoQUTHT
+    TKZqnCw5O+9lfLhK8=; b=rbeWjwjQ5GJUXTMaAPCqJ85de6htBORalRzz+T5LJ+
+    Bqn/EVX8uHoMtqfxkxWPPPZaACH15pgJZt7krWZILyShCT9Oz4wKQmWEwTxYBGvo
+    fvzhbwy8M+xOC36XJJYnR7BTLcLlMgUFVuREQdXT3i+/F2Ii+XqhFQfEKfm9L/Mn
+    kALD58tfhJNFNYaALK0F8YqhKN0fUmN25m3/15+N/6YD75s7aahQFHR5uRBkd0D+
+    wn6vd2IIcElboN+ngNkZ4ux1u48mNhTVFOfa3WVRbYAGheEPJyszmPbAu0s6PWwJ
+    88XmODlHysJzsfPda05AnZiktOfwwCjchi9dAa51SpYQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,21 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752830AbeCWJ5T (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:57:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34558 "EHLO
+        id S1752686AbeCWJ5W (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:57:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34668 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752686AbeCWJ5Q (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:16 -0400
+        with ESMTP id S1752361AbeCWJ5V (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:57:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Balaji Pothunoori <bpothuno@qti.qualcomm.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
+        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 20/84] ath10k: handling qos at STA side based on AP WMM enable/disable
-Date: Fri, 23 Mar 2018 10:53:34 +0100
-Message-Id: <20180323095415.000628052@linuxfoundation.org>
+Subject: [PATCH 4.15 24/84] serial: 8250_dw: Disable clock on error
+Date: Fri, 23 Mar 2018 10:53:38 +0100
+Message-Id: <20180323095415.560007225@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -83,43 +82,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Balaji Pothunoori <bpothuno@qti.qualcomm.com>
+From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
 
 
-[ Upstream commit 07ffb4497360ae8789f05555fec8171ee952304d ]
+[ Upstream commit 8af016aa5a27c6a2505460eb4d83f1e70c38dc43 ]
 
-Data packets are not sent by STA in case of STA joined to
-non QOS AP (WMM disabled AP). This is happening because of STA
-is sending data packets to firmware from host with qos enabled
-along with non qos queue value(TID = 16).
-Due to qos enabled, firmware is discarding the packet.
+If there is no clock rate for uartclk defined, disable the previously
+enabled clock again.
 
-This patch fixes this issue by updating the qos based on station
-WME capability field if WMM is disabled in AP.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-This patch is required by 10.4 family chipsets like
-QCA4019/QCA9888/QCA9884/QCA99X0.
-Firmware Versoin : 10.4-3.5.1-00018.
-
-For 10.2.4 family chipsets QCA988X/QCA9887 and QCA6174 this patch
-has no effect.
-
-Signed-off-by: Balaji Pothunoori <bpothuno@qti.qualcomm.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+Fixes: 23f5b3fdd04e serial: 8250_dw: only get the clock rate in one place
+Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_dw.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -2563,7 +2563,7 @@ static void ath10k_peer_assoc_h_qos(stru
- 		}
- 		break;
- 	case WMI_VDEV_TYPE_STA:
--		if (vif->bss_conf.qos)
-+		if (sta->wme)
- 			arg->peer_flags |= arvif->ar->wmi.peer_flags->qos;
- 		break;
- 	case WMI_VDEV_TYPE_IBSS:
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -509,7 +509,8 @@ static int dw8250_probe(struct platform_
+ 	/* If no clock rate is defined, fail. */
+ 	if (!p->uartclk) {
+ 		dev_err(dev, "clock rate not defined\n");
+-		return -EINVAL;
++		err = -EINVAL;
++		goto err_clk;
+ 	}
+ 
+ 	data->pclk = devm_clk_get(dev, "apb_pclk");
