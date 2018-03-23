@@ -1,39 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751897AbeCWQTT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:19:19 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:42532 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751471AbeCWQTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:19:18 -0400
-Date: Fri, 23 Mar 2018 11:18:49 -0500
-User-Agent: K-9 Mail for Android
-In-Reply-To: <239ed1f7-cf4a-f187-549f-ea7e08b4e765@maciej.szmigiero.name>
-References: <cover.1521150415.git.mail@maciej.szmigiero.name> <30562911-7fde-782b-d1b2-03e30b6987c5@maciej.szmigiero.name> <20180322161130.GA11575@cz.tnic> <239ed1f7-cf4a-f187-549f-ea7e08b4e765@maciej.szmigiero.name>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v4 06/10] x86/microcode/AMD: Check patch size in verify_and_add_patch()
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        id S1752189AbeCWQUj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:20:39 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:43296 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbeCWQUh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 12:20:37 -0400
+Date: Fri, 23 Mar 2018 12:20:35 -0400 (EDT)
+Message-Id: <20180323.122035.1380806748695640531.davem@davemloft.net>
+To: okaya@codeaurora.org
+Cc: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ariel.elior@cavium.com, everest-linux-l2@cavium.com,
         linux-kernel@vger.kernel.org
-From: Boris Petkov <bp@alien8.de>
-Message-ID: <B7ADE414-A93D-4FD1-9B0D-F5360747C2EE@alien8.de>
+Subject: Re: [PATCH v5 3/5] bnx2x: Eliminate duplicate barriers on
+ weakly-ordered archs
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1521738603-23596-4-git-send-email-okaya@codeaurora.org>
+References: <1521738603-23596-1-git-send-email-okaya@codeaurora.org>
+        <1521738603-23596-4-git-send-email-okaya@codeaurora.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On March 23, 2018 9:40:50 AM CDT, "Maciej S. Szmigiero" <mail@maciej.szmigiero.name> wrote:
->It is possible to keep verify_patch_size() unmodified (with unsigned
->int
->and u32) but microcode container files >4GB in size then may be
->rejected,
+From: Sinan Kaya <okaya@codeaurora.org>
+Date: Thu, 22 Mar 2018 13:10:00 -0400
 
-If we ever have to support that - which I'm pretty sure we won't - more changes to the container format and parsing will be needed anyway.
+> Code includes wmb() followed by writel(). writel() already has a
+> barrier on some architectures like arm64.
+ ...
+> @@ -4155,7 +4155,7 @@ netdev_tx_t bnx2x_start_xmit(struct sk_buff *skb, struct net_device *dev)
+>  	txdata->tx_db.data.prod += nbd;
+>  	barrier();
+>  
+> -	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
+> +	DOORBELL_RELAXED(bp, txdata->cid, txdata->tx_db.raw);
+>  
+>  	mmiowb();
+ ...
+> @@ -2592,7 +2592,7 @@ static int bnx2x_run_loopback(struct bnx2x *bp, int loopback_mode)
+>  
+>  	txdata->tx_db.data.prod += 2;
+>  	barrier();
+> -	DOORBELL(bp, txdata->cid, txdata->tx_db.raw);
+> +	DOORBELL_RELAXED(bp, txdata->cid, txdata->tx_db.raw);
 
-Thx.
+These are compiler barriers being used here, not wmb().
 
--- 
-Sent from a small device: formatting sux and brevity is inevitable. 
+Look, if I can't see a clear:
+
+	wmb()
+	writel()
+
+sequence in the patch hunks, I am going to keep pushing back on
+these changes.
+
+Thank you.
