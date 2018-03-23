@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752577AbeCWXNe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 19:13:34 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:37407 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751715AbeCWXN2 (ORCPT
+        id S1752734AbeCWXOj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 19:14:39 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:37410 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752534AbeCWXNd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 19:13:28 -0400
-X-Google-Smtp-Source: AG47ELsqiH/Wp+QjJoGIu1JQgqDrRhZOUKlkG5fX6i+uG/Sc/pN+7r9b/n+r+ad0LW64YTDm8Kx3Eg==
+        Fri, 23 Mar 2018 19:13:33 -0400
+X-Google-Smtp-Source: AG47ELsv9Rti7FAUHDSM1IZ5SdurRSnZe5Vv0igf/Tg1RBQFoQLhvEmI/LnPDxrw5qtrvDRzcziiNA==
 From: Tejun Heo <tj@kernel.org>
 To: lizefan@huawei.com, hannes@cmpxchg.org
 Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, guro@fb.com,
         kernel-team@fb.com, Tejun Heo <tj@kernel.org>
-Subject: [PATCH 3/8] cgroup: Distinguish base resource stat implementation from rstat
-Date: Fri, 23 Mar 2018 16:13:08 -0700
-Message-Id: <20180323231313.1254142-4-tj@kernel.org>
+Subject: [PATCH 5/8] cgroup: Factor out and expose cgroup_rstat_*() interface functions
+Date: Fri, 23 Mar 2018 16:13:10 -0700
+Message-Id: <20180323231313.1254142-6-tj@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180323231313.1254142-1-tj@kernel.org>
 References: <20180323231313.1254142-1-tj@kernel.org>
@@ -22,311 +22,159 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Base resource stat accounts universial (not specific to any
-controller) resource consumptions on top of rstat.  Currently, its
-implementation is intermixed with rstat implementation making the code
-confusing to follow.
+cgroup_rstat is being generalized so that controllers can use it too.
+This patch factors out and exposes the following interface functions.
 
-This patch clarifies the distintion by doing the followings.
+* cgroup_rstat_updated(): Renamed from cgroup_rstat_cpu_updated() for
+  consistency.
 
-* Encapsulate base resource stat counters, currently only cputime, in
-  struct cgroup_base_stat.
+* cgroup_rstat_flush_hold/release(): Factored out from base stat
+  implementation.
 
-* Move prev_cputime into struct cgroup and initialize it with cgroup.
+* cgroup_rstat_flush(): Verbatim expose.
 
-* Rename the related functions so that they start with cgroup_base_stat.
-
-* Prefix the related variables and field names with b.
-
-This patch doesn't make any functional changes.
+While at it, drop assert on cgroup_rstat_mutex in
+cgroup_base_stat_flush() as it crosses layers and make a minor comment
+update.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 ---
- include/linux/cgroup-defs.h     | 29 ++++++++++--------
- kernel/cgroup/cgroup-internal.h |  2 +-
- kernel/cgroup/cgroup.c          |  4 ++-
- kernel/cgroup/rstat.c           | 67 ++++++++++++++++++++---------------------
- 4 files changed, 52 insertions(+), 50 deletions(-)
+ include/linux/cgroup.h          | 11 +++++++++--
+ kernel/cgroup/cgroup-internal.h |  1 -
+ kernel/cgroup/rstat.c           | 41 +++++++++++++++++++++++++++++------------
+ 3 files changed, 38 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index 02625cf..cf9db7b 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -258,6 +258,10 @@ struct css_set {
- 	struct rcu_head rcu_head;
- };
+diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+index 473e0c0..5c6018f 100644
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -690,11 +690,18 @@ static inline void cgroup_path_from_kernfs_id(const union kernfs_node_id *id,
+ 	char *buf, size_t buflen) {}
+ #endif /* !CONFIG_CGROUPS */
  
-+struct cgroup_base_stat {
-+	struct task_cputime cputime;
-+};
-+
++#ifdef CONFIG_CGROUPS
  /*
-  * rstat - cgroup scalable recursive statistics.  Accounting is done
-  * per-cpu in cgroup_rstat_cpu which is then lazily propagated up the
-@@ -273,20 +277,24 @@ struct css_set {
-  * aren't active and stat may be read frequently.  The combination can
-  * become very expensive.  By propagating selectively, increasing reading
-  * frequency decreases the cost of each read.
-+ *
-+ * This struct hosts both the fields which implement the above -
-+ * updated_children and updated_next - and the fields which track basic
-+ * resource statistics on top of it - bsync, bstat and last_bstat.
+- * Basic resource stats.
++ * cgroup scalable recursive statistics.
   */
- struct cgroup_rstat_cpu {
- 	/*
--	 * ->sync protects all the current counters.  These are the only
--	 * fields which get updated in the hot path.
-+	 * ->bsync protects ->bstat.  These are the only fields which get
-+	 * updated in the hot path.
- 	 */
--	struct u64_stats_sync sync;
--	struct task_cputime cputime;
-+	struct u64_stats_sync bsync;
-+	struct cgroup_base_stat bstat;
+-#ifdef CONFIG_CGROUPS
++void cgroup_rstat_updated(struct cgroup *cgrp, int cpu);
++void cgroup_rstat_flush(struct cgroup *cgrp);
++void cgroup_rstat_flush_hold(struct cgroup *cgrp);
++void cgroup_rstat_flush_release(void);
  
- 	/*
- 	 * Snapshots at the last reading.  These are used to calculate the
- 	 * deltas to propagate to the global counters.
- 	 */
--	struct task_cputime last_cputime;
-+	struct cgroup_base_stat last_bstat;
- 
- 	/*
- 	 * Child cgroups with stat updates on this cpu since the last read
-@@ -303,12 +311,6 @@ struct cgroup_rstat_cpu {
- 	struct cgroup *updated_next;		/* NULL iff not on the list */
- };
- 
--struct cgroup_stat {
--	/* per-cpu statistics are collected into the folowing global counters */
--	struct task_cputime cputime;
--	struct prev_cputime prev_cputime;
--};
--
- struct cgroup {
- 	/* self css with NULL ->ss, points back to this cgroup */
- 	struct cgroup_subsys_state self;
-@@ -412,8 +414,9 @@ struct cgroup {
- 	struct cgroup_rstat_cpu __percpu *rstat_cpu;
- 
- 	/* cgroup basic resource statistics */
--	struct cgroup_stat pending_stat;	/* pending from children */
--	struct cgroup_stat stat;
-+	struct cgroup_base_stat pending_bstat;	/* pending from children */
-+	struct cgroup_base_stat bstat;
-+	struct prev_cputime prev_cputime;	/* for printing out cputime */
- 
- 	/*
- 	 * list of pidlists, up to two for each namespace (one for procs, one
++/*
++ * Basic resource stats.
++ */
+ #ifdef CONFIG_CGROUP_CPUACCT
+ void cpuacct_charge(struct task_struct *tsk, u64 cputime);
+ void cpuacct_account_field(struct task_struct *tsk, int index, u64 val);
 diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
-index 0927111..aab4d0a 100644
+index 2bf6fb4..b68e1a7 100644
 --- a/kernel/cgroup/cgroup-internal.h
 +++ b/kernel/cgroup/cgroup-internal.h
-@@ -206,7 +206,7 @@ int cgroup_task_count(const struct cgroup *cgrp);
- void cgroup_rstat_flush(struct cgroup *cgrp);
+@@ -203,7 +203,6 @@ int cgroup_task_count(const struct cgroup *cgrp);
+ /*
+  * rstat.c
+  */
+-void cgroup_rstat_flush(struct cgroup *cgrp);
  int cgroup_rstat_init(struct cgroup *cgrp);
  void cgroup_rstat_exit(struct cgroup *cgrp);
--void cgroup_stat_show_cputime(struct seq_file *seq);
-+void cgroup_base_stat_cputime_show(struct seq_file *seq);
  void cgroup_rstat_boot(void);
- 
- /*
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 5549a7c..0d3d093 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -54,6 +54,7 @@
- #include <linux/proc_ns.h>
- #include <linux/nsproxy.h>
- #include <linux/file.h>
-+#include <linux/sched/cputime.h>
- #include <net/sock.h>
- 
- #define CREATE_TRACE_POINTS
-@@ -1859,6 +1860,7 @@ static void init_cgroup_housekeeping(struct cgroup *cgrp)
- 	cgrp->dom_cgrp = cgrp;
- 	cgrp->max_descendants = INT_MAX;
- 	cgrp->max_depth = INT_MAX;
-+	prev_cputime_init(&cgrp->prev_cputime);
- 
- 	for_each_subsys(ss, ssid)
- 		INIT_LIST_HEAD(&cgrp->e_csets[ssid]);
-@@ -3396,7 +3398,7 @@ static int cpu_stat_show(struct seq_file *seq, void *v)
- 	struct cgroup __maybe_unused *cgrp = seq_css(seq)->cgroup;
- 	int ret = 0;
- 
--	cgroup_stat_show_cputime(seq);
-+	cgroup_base_stat_cputime_show(seq);
- #ifdef CONFIG_CGROUP_SCHED
- 	ret = cgroup_extra_stat_show(seq, cgrp, cpu_cgrp_id);
- #endif
 diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-index 6824047..7670191 100644
+index 87d7252..e3c4461 100644
 --- a/kernel/cgroup/rstat.c
 +++ b/kernel/cgroup/rstat.c
-@@ -128,30 +128,30 @@ static struct cgroup *cgroup_rstat_cpu_pop_updated(struct cgroup *pos,
- 	return pos;
+@@ -13,7 +13,7 @@ static struct cgroup_rstat_cpu *cgroup_rstat_cpu(struct cgroup *cgrp, int cpu)
  }
  
--static void cgroup_stat_accumulate(struct cgroup_stat *dst_stat,
--				   struct cgroup_stat *src_stat)
-+static void cgroup_base_stat_accumulate(struct cgroup_base_stat *dst_bstat,
-+					struct cgroup_base_stat *src_bstat)
+ /**
+- * cgroup_rstat_cpu_updated - keep track of updated rstat_cpu
++ * cgroup_rstat_updated - keep track of updated rstat_cpu
+  * @cgrp: target cgroup
+  * @cpu: cpu on which rstat_cpu was updated
+  *
+@@ -21,7 +21,7 @@ static struct cgroup_rstat_cpu *cgroup_rstat_cpu(struct cgroup *cgrp, int cpu)
+  * rstat_cpu->updated_children list.  See the comment on top of
+  * cgroup_rstat_cpu definition for details.
+  */
+-static void cgroup_rstat_cpu_updated(struct cgroup *cgrp, int cpu)
++void cgroup_rstat_updated(struct cgroup *cgrp, int cpu)
  {
--	dst_stat->cputime.utime += src_stat->cputime.utime;
--	dst_stat->cputime.stime += src_stat->cputime.stime;
--	dst_stat->cputime.sum_exec_runtime += src_stat->cputime.sum_exec_runtime;
-+	dst_bstat->cputime.utime += src_bstat->cputime.utime;
-+	dst_bstat->cputime.stime += src_bstat->cputime.stime;
-+	dst_bstat->cputime.sum_exec_runtime += src_bstat->cputime.sum_exec_runtime;
+ 	raw_spinlock_t *cpu_lock = per_cpu_ptr(&cgroup_rstat_cpu_lock, cpu);
+ 	struct cgroup *parent;
+@@ -167,6 +167,29 @@ void cgroup_rstat_flush(struct cgroup *cgrp)
+ 	mutex_unlock(&cgroup_rstat_mutex);
  }
  
--static void cgroup_cpu_stat_flush_one(struct cgroup *cgrp, int cpu)
-+static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu)
++/**
++ * cgroup_rstat_flush_begin - flush stats in @cgrp's subtree and hold
++ * @cgrp: target cgroup
++ *
++ * Flush stats in @cgrp's subtree and prevent further flushes.  Must be
++ * paired with cgroup_rstat_flush_release().
++ */
++void cgroup_rstat_flush_hold(struct cgroup *cgrp)
++	__acquires(&cgroup_rstat_mutex)
++{
++	mutex_lock(&cgroup_rstat_mutex);
++	cgroup_rstat_flush_locked(cgrp);
++}
++
++/**
++ * cgroup_rstat_flush_release - release cgroup_rstat_flush_hold()
++ */
++void cgroup_rstat_flush_release(void)
++	__releases(&cgroup_rstat_mutex)
++{
++	mutex_unlock(&cgroup_rstat_mutex);
++}
++
+ int cgroup_rstat_init(struct cgroup *cgrp)
  {
- 	struct cgroup *parent = cgroup_parent(cgrp);
- 	struct cgroup_rstat_cpu *rstatc = cgroup_rstat_cpu(cgrp, cpu);
--	struct task_cputime *last_cputime = &rstatc->last_cputime;
-+	struct task_cputime *last_cputime = &rstatc->last_bstat.cputime;
- 	struct task_cputime cputime;
--	struct cgroup_stat delta;
-+	struct cgroup_base_stat delta;
+ 	int cpu;
+@@ -239,15 +262,13 @@ static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu)
+ 	struct cgroup_base_stat delta;
  	unsigned seq;
  
- 	lockdep_assert_held(&cgroup_rstat_mutex);
- 
+-	lockdep_assert_held(&cgroup_rstat_mutex);
+-
  	/* fetch the current per-cpu values */
  	do {
--		seq = __u64_stats_fetch_begin(&rstatc->sync);
--		cputime = rstatc->cputime;
--	} while (__u64_stats_fetch_retry(&rstatc->sync, seq));
-+		seq = __u64_stats_fetch_begin(&rstatc->bsync);
-+		cputime = rstatc->bstat.cputime;
-+	} while (__u64_stats_fetch_retry(&rstatc->bsync, seq));
+ 		seq = __u64_stats_fetch_begin(&rstatc->bsync);
+ 		cputime = rstatc->bstat.cputime;
+ 	} while (__u64_stats_fetch_retry(&rstatc->bsync, seq));
  
- 	/* accumulate the deltas to propgate */
+-	/* accumulate the deltas to propgate */
++	/* calculate the delta to propgate */
  	delta.cputime.utime = cputime.utime - last_cputime->utime;
-@@ -161,13 +161,13 @@ static void cgroup_cpu_stat_flush_one(struct cgroup *cgrp, int cpu)
- 	*last_cputime = cputime;
- 
- 	/* transfer the pending stat into delta */
--	cgroup_stat_accumulate(&delta, &cgrp->pending_stat);
--	memset(&cgrp->pending_stat, 0, sizeof(cgrp->pending_stat));
-+	cgroup_base_stat_accumulate(&delta, &cgrp->pending_bstat);
-+	memset(&cgrp->pending_bstat, 0, sizeof(cgrp->pending_bstat));
- 
- 	/* propagate delta into the global stat and the parent's pending */
--	cgroup_stat_accumulate(&cgrp->stat, &delta);
-+	cgroup_base_stat_accumulate(&cgrp->bstat, &delta);
- 	if (parent)
--		cgroup_stat_accumulate(&parent->pending_stat, &delta);
-+		cgroup_base_stat_accumulate(&parent->pending_bstat, &delta);
- }
- 
- /* see cgroup_rstat_flush() */
-@@ -184,7 +184,7 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
- 
- 		raw_spin_lock_irq(cpu_lock);
- 		while ((pos = cgroup_rstat_cpu_pop_updated(pos, cgrp, cpu)))
--			cgroup_cpu_stat_flush_one(pos, cpu);
-+			cgroup_base_stat_flush(pos, cpu);
- 		raw_spin_unlock_irq(cpu_lock);
- 	}
- }
-@@ -208,19 +208,19 @@ void cgroup_rstat_flush(struct cgroup *cgrp)
- }
- 
- static struct cgroup_rstat_cpu *
--cgroup_cpu_stat_account_begin(struct cgroup *cgrp)
-+cgroup_base_stat_cputime_account_begin(struct cgroup *cgrp)
+ 	delta.cputime.stime = cputime.stime - last_cputime->stime;
+ 	delta.cputime.sum_exec_runtime = cputime.sum_exec_runtime -
+@@ -278,7 +299,7 @@ static void cgroup_base_stat_cputime_account_end(struct cgroup *cgrp,
+ 						 struct cgroup_rstat_cpu *rstatc)
  {
- 	struct cgroup_rstat_cpu *rstatc;
- 
- 	rstatc = get_cpu_ptr(cgrp->rstat_cpu);
--	u64_stats_update_begin(&rstatc->sync);
-+	u64_stats_update_begin(&rstatc->bsync);
- 	return rstatc;
- }
- 
--static void cgroup_cpu_stat_account_end(struct cgroup *cgrp,
--					struct cgroup_rstat_cpu *rstatc)
-+static void cgroup_base_stat_cputime_account_end(struct cgroup *cgrp,
-+						 struct cgroup_rstat_cpu *rstatc)
- {
--	u64_stats_update_end(&rstatc->sync);
-+	u64_stats_update_end(&rstatc->bsync);
- 	cgroup_rstat_cpu_updated(cgrp, smp_processor_id());
+ 	u64_stats_update_end(&rstatc->bsync);
+-	cgroup_rstat_cpu_updated(cgrp, smp_processor_id());
++	cgroup_rstat_updated(cgrp, smp_processor_id());
  	put_cpu_ptr(rstatc);
  }
-@@ -229,9 +229,9 @@ void __cgroup_account_cputime(struct cgroup *cgrp, u64 delta_exec)
- {
- 	struct cgroup_rstat_cpu *rstatc;
  
--	rstatc = cgroup_cpu_stat_account_begin(cgrp);
--	rstatc->cputime.sum_exec_runtime += delta_exec;
--	cgroup_cpu_stat_account_end(cgrp, rstatc);
-+	rstatc = cgroup_base_stat_cputime_account_begin(cgrp);
-+	rstatc->bstat.cputime.sum_exec_runtime += delta_exec;
-+	cgroup_base_stat_cputime_account_end(cgrp, rstatc);
- }
+@@ -323,14 +344,10 @@ void cgroup_base_stat_cputime_show(struct seq_file *seq)
+ 	if (!cgroup_parent(cgrp))
+ 		return;
  
- void __cgroup_account_cputime_field(struct cgroup *cgrp,
-@@ -239,26 +239,26 @@ void __cgroup_account_cputime_field(struct cgroup *cgrp,
- {
- 	struct cgroup_rstat_cpu *rstatc;
- 
--	rstatc = cgroup_cpu_stat_account_begin(cgrp);
-+	rstatc = cgroup_base_stat_cputime_account_begin(cgrp);
- 
- 	switch (index) {
- 	case CPUTIME_USER:
- 	case CPUTIME_NICE:
--		rstatc->cputime.utime += delta_exec;
-+		rstatc->bstat.cputime.utime += delta_exec;
- 		break;
- 	case CPUTIME_SYSTEM:
- 	case CPUTIME_IRQ:
- 	case CPUTIME_SOFTIRQ:
--		rstatc->cputime.stime += delta_exec;
-+		rstatc->bstat.cputime.stime += delta_exec;
- 		break;
- 	default:
- 		break;
- 	}
- 
--	cgroup_cpu_stat_account_end(cgrp, rstatc);
-+	cgroup_base_stat_cputime_account_end(cgrp, rstatc);
- }
- 
--void cgroup_stat_show_cputime(struct seq_file *seq)
-+void cgroup_base_stat_cputime_show(struct seq_file *seq)
- {
- 	struct cgroup *cgrp = seq_css(seq)->cgroup;
- 	u64 usage, utime, stime;
-@@ -270,9 +270,8 @@ void cgroup_stat_show_cputime(struct seq_file *seq)
- 
- 	cgroup_rstat_flush_locked(cgrp);
- 
--	usage = cgrp->stat.cputime.sum_exec_runtime;
--	cputime_adjust(&cgrp->stat.cputime, &cgrp->stat.prev_cputime,
--		       &utime, &stime);
-+	usage = cgrp->bstat.cputime.sum_exec_runtime;
-+	cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime, &utime, &stime);
- 
- 	mutex_unlock(&cgroup_rstat_mutex);
- 
-@@ -302,11 +301,9 @@ int cgroup_rstat_init(struct cgroup *cgrp)
- 		struct cgroup_rstat_cpu *rstatc = cgroup_rstat_cpu(cgrp, cpu);
- 
- 		rstatc->updated_children = cgrp;
--		u64_stats_init(&rstatc->sync);
-+		u64_stats_init(&rstatc->bsync);
- 	}
- 
--	prev_cputime_init(&cgrp->stat.prev_cputime);
+-	mutex_lock(&cgroup_rstat_mutex);
 -
- 	return 0;
- }
+-	cgroup_rstat_flush_locked(cgrp);
+-
++	cgroup_rstat_flush_hold(cgrp);
+ 	usage = cgrp->bstat.cputime.sum_exec_runtime;
+ 	cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime, &utime, &stime);
+-
+-	mutex_unlock(&cgroup_rstat_mutex);
++	cgroup_rstat_flush_release();
  
+ 	do_div(usage, NSEC_PER_USEC);
+ 	do_div(utime, NSEC_PER_USEC);
 -- 
 2.9.5
