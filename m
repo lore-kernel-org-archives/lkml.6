@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELuv3KMsj0UMBOU6FbwMnce7web5+njBJhCSa/KWmi3gbbjJ9ZD5gvorR1UOIqOcxVTO7D4k
-ARC-Seal: i=1; a=rsa-sha256; t=1521800186; cv=none;
+X-Google-Smtp-Source: AG47ELukXoEn/fYAY34BwbFFdVokxcLwqkrlgao//AzVn6p/6h49zgU9m/au+3SdkkHkugKv843a
+ARC-Seal: i=1; a=rsa-sha256; t=1521800184; cv=none;
         d=google.com; s=arc-20160816;
-        b=nerV8cePjVeRGP1HwuEWHnpSUmmWycA49nqWc1wSW2QYIoewHenH7mH1WR5k+JcruG
-         ldkpn0+YRI4EYuQOTF4IIhv2WZMFGekMVi81Y0huaTFwdL2KNxEIOid3noDLdFRMx6S5
-         etbLuilSr7stMQStNfzwjjtqqayQEF2PpqxBw4TakED6N+sD1Awspn/zaiL4GBR2QFzu
-         p5OZx+KnyfGVh0GpCtGb0OKswUXjV3Bu1idYhaWG9HXLzYKMfx6Ee8xXLw60GsXQkScM
-         246MNW9FCpmqKP79dyHUSKYsH0rE70kIPklDhG3GtDegMdUsBMO7mPO2sit5/3Xzgktn
-         i8eg==
+        b=NEMNYvmcWX83yrZ6mwIPFf9L5X1kZQKARC8+CRMxdVeoSsP1/97DL12QWnHLrOStod
+         5RjxCkNsbk9nh9n/YVfMXeO3Fmau5DyF9hjL9k/AMm9VbJBZ1xel+pNG08k5B0EZBP9V
+         VEepa02UIyIG0/JzLdSTkze1iZKONcyxMK04UceGda6m9mdo5w7Vneq67CgY0yS4xOXF
+         GLsliYvn0hGnwQjaxU0C702lnJ9sP0OH7C6YONVkho/MWWn+bJDceiFkAaqjSgxih6xO
+         Uz0t0aBZjgZWuEL60GEJGRztoVeGa07BL5E0CL0VUV0S3hdA50wQhPOwdNWvu8Pu/uGu
+         s2Yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aztDldpL6JCgpNplZhzlecAi6iVWtJmMZ7gtSe47eJc=;
-        b=rxYj4F/nl1B3S84xb51XV7oObKan3TaZQF5RQeQXttJBVnAY784TjUnMTVUAlh5psC
-         BWizVxfFZDJIAilzqqMOk4jG1J59afkLOUBD1auHwkNG1WuySlT+Hv82hOULUQFy7Wo3
-         6rrqbFSPscxHh6t8RIms/+OoywbfCa7YYYCO0LVKfspZNBlnFiK+RpWg/jhA+NDZEc9u
-         SzmIq1VA4BGhOghGDN3Ih9Vgk+qP536mxPSbYzlrz0qWPUo0QZAKoOnhiCS6V6zsJw1V
-         SZDeEzhzQbFvZKp42nKfvwyIS2jcem3R6Bkf6OJFW8yf9POoHCYSSb3oNSohTcYdjiF8
-         AJfg==
+        bh=iTmMcQX3UvQKcWNUlRr8CddgbFWzcUhKIGZN1c2EvJc=;
+        b=eUi2VxlE7LxMhCBLpFRQ7yWYAuEObDyCfHDZBdVeBAx5LcKsqdIgDSvGpjDIDMMAXh
+         8cj8nBrAXzY3qZJ1qWHGRMQ8cpjC9BFSfUnYa/Z9sToAi3cTlxSS9nFiieC+4pjGMdM0
+         1Gv8tgK3tH5Ausr/TKW5v7DWAQIJuwFJxJFOKtG41idZeJF4Sd1Ff/wSc10pN5ostDM5
+         efk9MZPd7c79gCsElHf0lR820WjpCynpv3vg+54NuxmtUeU0zwqn3QWxPG/uc0oSrsBw
+         35qB4kQoIXwUtSEqBDAD0qKxv1zeBT2RB5dybPNXcgl3q/m74AOC6zwuzEKzNRb4sFQm
+         Jk0w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ron Economos <w6rz@comcast.net>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 79/97] media: [RESEND] media: dvb-frontends: Add delay to Si2168 restart
-Date: Fri, 23 Mar 2018 10:55:06 +0100
-Message-Id: <20180323094201.979111490@linuxfoundation.org>
+Subject: [PATCH 4.4 78/97] media: bt8xx: Fix err bt878_probe()
+Date: Fri, 23 Mar 2018 10:55:05 +0100
+Message-Id: <20180323094201.936884743@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595721946835267818?=
-X-GMAIL-MSGID: =?utf-8?q?1595723152343246327?=
+X-GMAIL-THRID: =?utf-8?q?1595721938241360348?=
+X-GMAIL-MSGID: =?utf-8?q?1595723149633337233?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ron Economos <w6rz@comcast.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 380a6c86457573aa42d27ae11e025eb25941a0b7 ]
+[ Upstream commit 45392ff6881dbe56d41ef0b17c2e576065f8ffa1 ]
 
-On faster CPUs a delay is required after the resume command and the restart command. Without the delay, the restart command often returns -EREMOTEIO and the Si2168 does not restart.
+This is odd to call 'pci_disable_device()' in an error path before a
+coresponding successful 'pci_enable_device()'.
 
-Note that this patch fixes the same issue as https://patchwork.linuxtv.org/patch/44304/, but I believe my udelay() fix addresses the actual problem.
+Return directly instead.
 
-Signed-off-by: Ron Economos <w6rz@comcast.net>
+Fixes: 77e0be12100a ("V4L/DVB (4176): Bug-fix: Fix memory overflow")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/dvb-frontends/si2168.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/pci/bt8xx/bt878.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/media/dvb-frontends/si2168.c
-+++ b/drivers/media/dvb-frontends/si2168.c
-@@ -14,6 +14,8 @@
-  *    GNU General Public License for more details.
-  */
- 
-+#include <linux/delay.h>
-+
- #include "si2168_priv.h"
- 
- static const struct dvb_frontend_ops si2168_ops;
-@@ -420,6 +422,7 @@ static int si2168_init(struct dvb_fronte
- 		if (ret)
- 			goto err;
- 
-+		udelay(100);
- 		memcpy(cmd.args, "\x85", 1);
- 		cmd.wlen = 1;
- 		cmd.rlen = 1;
+--- a/drivers/media/pci/bt8xx/bt878.c
++++ b/drivers/media/pci/bt8xx/bt878.c
+@@ -422,8 +422,7 @@ static int bt878_probe(struct pci_dev *d
+ 	       bt878_num);
+ 	if (bt878_num >= BT878_MAX) {
+ 		printk(KERN_ERR "bt878: Too many devices inserted\n");
+-		result = -ENOMEM;
+-		goto fail0;
++		return -ENOMEM;
+ 	}
+ 	if (pci_enable_device(dev))
+ 		return -EIO;
