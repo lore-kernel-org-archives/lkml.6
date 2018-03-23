@@ -1,53 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeCWVI6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 17:08:58 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:44618 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752119AbeCWVI5 (ORCPT
+        id S1751880AbeCWVLk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 17:11:40 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:43549 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751288AbeCWVLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 17:08:57 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Claudio Scordino <claudio@evidence.eu.com>
-Subject: Re: linux-next: manual merge of the tip tree with the pm tree
-Date: Fri, 23 Mar 2018 22:09:20 +0100
-Message-ID: <6072268.CPFKWgAbKZ@aspire.rjw.lan>
-In-Reply-To: <20180323060924.jeppeix62c3wza6l@gmail.com>
-References: <20180323132001.7da7f3c4@canb.auug.org.au> <20180323060924.jeppeix62c3wza6l@gmail.com>
+        Fri, 23 Mar 2018 17:11:38 -0400
+X-Google-Smtp-Source: AG47ELtWo/MQhvnSwCS1RYJyrAJAcTxdvbRQ6ZBGmawXJEknZA+Jj30q1FHMWwfRiC4b+N5V1pwZzA==
+Subject: Re: [PATCH net-next 4/8] dt-bindings: net: add DT bindings for
+ Microsemi Ocelot Switch
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
+        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org, Rob Herring <robh+dt@kernel.org>
+References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
+ <20180323201117.8416-5-alexandre.belloni@bootlin.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <a5db6109-c5d9-f573-893c-f7d66c3168c2@gmail.com>
+Date: Fri, 23 Mar 2018 14:11:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180323201117.8416-5-alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, March 23, 2018 7:09:24 AM CET Ingo Molnar wrote:
+On 03/23/2018 01:11 PM, Alexandre Belloni wrote:
+> DT bindings for the Ethernet switch found on Microsemi Ocelot platforms.
 > 
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  .../devicetree/bindings/net/mscc-ocelot.txt        | 62 ++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/mscc-ocelot.txt
 > 
-> > Hi all,
-> > 
-> > Today's linux-next merge of the tip tree got a conflict in:
-> > 
-> >   kernel/sched/cpufreq_schedutil.c
-> > 
-> > between commit:
-> > 
-> >   0953feed3400 ("cpufreq: schedutil: rate limits for SCHED_DEADLINE")
-> 
-> Rafael, could you please send that to the scheduler tree?
+> diff --git a/Documentation/devicetree/bindings/net/mscc-ocelot.txt b/Documentation/devicetree/bindings/net/mscc-ocelot.txt
+> new file mode 100644
+> index 000000000000..ee092a85b5a0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/mscc-ocelot.txt
+> @@ -0,0 +1,62 @@
+> +Microsemi Ocelot network Switch
+> +===============================
+> +
+> +The Microsemi Ocelot network switch can be found on Microsemi SoCs (VSC7513,
+> +VSC7514)
+> +
+> +Required properties:
+> +- compatible: Should be "mscc,ocelot-switch"
+> +- reg: Must contain an (offset, length) pair of the register set for each
+> +  entry in reg-names.
+> +- reg-names: Must include the following entries:
+> +  - "sys"
+> +  - "rew"
+> +  - "qs"
+> +  - "hsio"
+> +  - "qsys"
+> +  - "ana"
+> +  - "portX" with X from 0 to the number of last port index available on that
+> +    switch
+> +- interrupts: Should contain the switch interrupts for frame extraction and
+> +  frame injection
+> +- interrupt-names: should contain the interrupt names: "xtr", "inj"
 
-You can apply from
+You are not documenting the "ports" subnode(s).Please move the
+individual ports definition under a ports subnode, mainly for two reasons:
 
-https://patchwork.kernel.org/patch/10278127/
+- it makes it easy at the .dtsi level to have all ports disabled by default
 
-and I will drop it from my tree.
-
-Thanks!
+- this makes you strictly conforming to the DSA binding for Ethernet
+switches and this is good for consistency (both parsing code and just
+representation).
+-- 
+Florian
