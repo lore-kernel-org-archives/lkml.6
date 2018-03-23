@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803150-2-6658459596623518292
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521803148-2-15531892560498531450
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803150; b=iLMHp07YIvC4oEsDPOgpPqLsgxO83w/ZHV41OwzZIkwX5f/
-    HFylm9I4Giyb2c5v/vxO3iLaoZuj1pXkcKesKyoMtfoz0RBcdOxVXoQgQ8o4Xhnf
-    rNKw51PVS+iTQ11+RDuHuXwPTFadn8Z+jXvVHUeL2zT2NBMqmai9hrtI9CtgfC8V
-    1yu5iyd2SR7N8AyHQlgkbFhGvTqy/mJqnT7woIhuji53pnrLcHYLcYwtonoThMOr
-    oE5O+sKxXOLK+MdpEOIWJ+9jZJA1T3TxEstTM6LsaoXbWtsyRev91rGrCw1LcsBO
-    4lHysHimob7Ta9QK/DeobUpFtr+zVWw0mcKcPYQ==
+    t=1521803147; b=YtouNOKOLx+VEgquBt6ojRgxEea/HNQ9N9gexwrComlRIQb
+    vGJxRiUTTqK32bE40jo+Jfok1Z2+jLqEKSuXuIyEFtlsEFyivQzG7x+9K9mk5nIz
+    GgMMHUsqnqlJWJkbsWaVS6TAI0qgn8wu6gNB356pNpoUGEhLJ20Ewf9hx6TSzK8X
+    HMuT04gIv4TE3Vjy8eNqVoYHtQX3SokdNcUCAq6fPiqispxRs/1hL1dAtow4TYu0
+    o78p9dblYYOwdrWEU4v/NYA0hMClYxIR3lXl0uOwlky3ih4h2ooC1F62gDRRz95z
+    Ez5TAfwTyW802aJISJLl/Nt/6/Xxv6I6AJI81oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803150; bh=VaEMctt9bYyKWOhd9DgY6Y21uL
-    DWSbxlqmA14AM8lW8=; b=J5pnP9xEYMoZJGewKu0A58uz0ljjYTwh9V16yOtUuU
-    l6ZQhEBWiX37ESpeGPoQP1SzassoKLqg8f/e0ih+WsDplmJLABGY/xLIN6/kOoGg
-    slrSLHrmWv3Fv1RQ99EHzuVwVe+3t0dgqIDgrp9x4a48nVL6/MFgUHizTHxsemZu
-    unkUXeqM0Kva4NFA1qk3gGn152amxc270dFM64IbkvnoiJ3ot4Yqyf99Sta9jhyc
-    XT6y2l67XsbbjERe9ljOEYFp6/ucOn/dnIUbm4qg6JXCQBnVoy/uzjW0ZGxIeS9V
-    o7AOrVAmYii2NSeUUhZN75cJp85u0k+rMhaDsMkf4sQA==
+    :list-id; s=arctest; t=1521803147; bh=GF0SbPhDn7CxE5eUu4ZRHRkJWq
+    AHE3jtlWgT77P4aE8=; b=Th7ZjGApBRi4WYg60WwfGaXMyiQxLoFPntYSVI2cyO
+    lzdVx6BQh2LgJJSJ3iTELecTJqhmvqaGbnlTvyYaxl9P9ON9kxBScj67o2KAp7k7
+    p6IRS/3BcrrFtdokvrpWp/88obbciQkhl6p/ZSpkYBGdgnFTJTuD3fGxOEjfVR7r
+    rmRd/ptzrJnzJ19BCEucdcaEbK68X38BwzSg0iJ0I/MeisrsDO0GAlZYHVW1o4LP
+    fatnpLSV8HHQYbVHrC/fAGe3Re9iOQuQGm5DNX+tJP8cciHP4MHm5xXWyTpvtVns
+    T+K3hi8KVxBAqz5nWF+W5ZBb1JjMC5WoV/lPFbwn/0qw==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933183AbeCWKMZ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:12:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44286 "EHLO
+        id S1752917AbeCWLFB (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:05:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44346 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933179AbeCWKMW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:22 -0400
+        with ESMTP id S933181AbeCWKMZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:12:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Erez Shitrit <erezsh@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 161/177] pinctrl: Really force states during suspend/resume
-Date: Fri, 23 Mar 2018 10:54:49 +0100
-Message-Id: <20180323094212.280968417@linuxfoundation.org>
+Subject: [PATCH 4.9 152/177] IB/ipoib: Avoid memory leak if the SA returns a different DGID
+Date: Fri, 23 Mar 2018 10:54:40 +0100
+Message-Id: <20180323094211.896399808@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,105 +83,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Erez Shitrit <erezsh@mellanox.com>
 
 
-[ Upstream commit 981ed1bfbc6c4660b2ddaa8392893e20a6255048 ]
+[ Upstream commit 439000892ee17a9c92f1e4297818790ef8bb4ced ]
 
-In case a platform only defaults a "default" set of pins, but not a
-"sleep" set of pins, and this particular platform suspends and resumes
-in a way that the pin states are not preserved by the hardware, when we
-resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
--> pinctrl_select_state() and the first thing we do is check that the
-pins state is the same as before, and do nothing.
+The ipoib path database is organized around DGIDs from the LLADDR, but the
+SA is free to return a different GID when asked for path. This causes a
+bug because the SA's modified DGID is copied into the database key, even
+though it is no longer the correct lookup key, causing a memory leak and
+other malfunctions.
 
-In order to fix this, decouple the actual state change from
-pinctrl_select_state() and move it pinctrl_commit_state(), while keeping
-the p->state == state check in pinctrl_select_state() not to change the
-caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
-are updated to bypass the state check by calling pinctrl_commit_state().
+Ensure the database key does not change after the SA query completes.
 
-[Linus Walleij]
-The forced pin control states are currently only used in some pin
-controller drivers that grab their own reference to their own pins.
-This is equal to the pin control hogs: pins taken by pin control
-devices since there are no corresponding device in the Linux device
-hierarchy, such as memory controller lines or unused GPIO lines,
-or GPIO lines that are used orthogonally from the GPIO subsystem
-but pincontrol-wise managed as hogs (non-strict mode, allowing
-simultaneous use by GPIO and pin control). For this case forcing
-the state from the drivers' suspend()/resume() callbacks makes
-sense and should semantically match the name of the function.
+Demonstration of the bug is as  follows
+ipoib wants to send to GID fe80:0000:0000:0000:0002:c903:00ef:5ee2, it
+creates new record in the DB with that gid as a key, and issues a new
+request to the SM.
+Now, the SM from some reason returns path-record with other SGID (for
+example, 2001:0000:0000:0000:0002:c903:00ef:5ee2 that contains the local
+subnet prefix) now ipoib will overwrite the current entry with the new
+one, and if new request to the original GID arrives ipoib  will not find
+it in the DB (was overwritten) and will create new record that in its
+turn will also be overwritten by the response from the SM, and so on
+till the driver eats all the device memory.
 
-Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/core.c |   24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -992,19 +992,16 @@ struct pinctrl_state *pinctrl_lookup_sta
- EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -799,6 +799,22 @@ static void path_rec_completion(int stat
+ 	spin_lock_irqsave(&priv->lock, flags);
  
- /**
-- * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
-  * @p: the pinctrl handle for the device that requests configuration
-  * @state: the state handle to select/activate/program
-  */
--int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
- {
- 	struct pinctrl_setting *setting, *setting2;
- 	struct pinctrl_state *old_state = p->state;
- 	int ret;
- 
--	if (p->state == state)
--		return 0;
--
- 	if (p->state) {
- 		/*
- 		 * For each pinmux setting in the old state, forget SW's record
-@@ -1068,6 +1065,19 @@ unapply_new_state:
- 
- 	return ret;
- }
+ 	if (!IS_ERR_OR_NULL(ah)) {
++		/*
++		 * pathrec.dgid is used as the database key from the LLADDR,
++		 * it must remain unchanged even if the SA returns a different
++		 * GID to use in the AH.
++		 */
++		if (memcmp(pathrec->dgid.raw, path->pathrec.dgid.raw,
++			   sizeof(union ib_gid))) {
++			ipoib_dbg(
++				priv,
++				"%s got PathRec for gid %pI6 while asked for %pI6\n",
++				dev->name, pathrec->dgid.raw,
++				path->pathrec.dgid.raw);
++			memcpy(pathrec->dgid.raw, path->pathrec.dgid.raw,
++			       sizeof(union ib_gid));
++		}
 +
-+/**
-+ * pinctrl_select_state() - select/activate/program a pinctrl state to HW
-+ * @p: the pinctrl handle for the device that requests configuration
-+ * @state: the state handle to select/activate/program
-+ */
-+int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
-+{
-+	if (p->state == state)
-+		return 0;
-+
-+	return pinctrl_commit_state(p, state);
-+}
- EXPORT_SYMBOL_GPL(pinctrl_select_state);
+ 		path->pathrec = *pathrec;
  
- static void devm_pinctrl_release(struct device *dev, void *res)
-@@ -1236,7 +1246,7 @@ void pinctrl_unregister_map(struct pinct
- int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
-@@ -1248,7 +1258,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
- int pinctrl_force_default(struct pinctrl_dev *pctldev)
- {
- 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
--		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
-+		return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pinctrl_force_default);
+ 		old_ah   = path->ah;
