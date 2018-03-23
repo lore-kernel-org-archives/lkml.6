@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753226AbeCWNGL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 09:06:11 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:52680 "EHLO
+        id S1753200AbeCWNGK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 09:06:10 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:52876 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753147AbeCWNGA (ORCPT
+        with ESMTP id S1753173AbeCWNGH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 09:06:00 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w2ND4mgY011418
+        Fri, 23 Mar 2018 09:06:07 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w2ND4mgb011418
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -18,9 +18,9 @@ Cc: Sam Ravnborg <sam@ravnborg.org>,
         Frank Rowand <frank.rowand@sony.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 02/10] kbuild: clean up *.lex.c and *.tab.[ch] patterns from top-level Makefile
-Date: Fri, 23 Mar 2018 22:04:31 +0900
-Message-Id: <1521810279-6282-2-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 05/10] kbuild: add %.dtb.S and %.dtb to 'targets' automatically
+Date: Fri, 23 Mar 2018 22:04:34 +0900
+Message-Id: <1521810279-6282-5-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com>
@@ -28,70 +28,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Files suffixed by .lex.c, .tab.[ch] are generated lexers, parsers,
-respectively.  Clean them up globally from the top Makefile.
+Another common pattern that consists of chained commands is to compile
+a DTB as binary data into the kernel image or a module.  It is used in
+several places in the source tree.  Let's support it in the build core.
 
-Some of the final host programs they are linked into are needed for
-building external modules, but those intermediates are unneeded.
-They can be cleaned away by 'make clean' instead of 'make mrproper'.
+$(call if_changed,dt_S_dtb) is more suitable than $(call cmd,dt_S_dtb)
+in case cmd_dt_S_dtb is changed in the future.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- Makefile                  | 1 +
- scripts/dtc/Makefile      | 6 ++----
- scripts/genksyms/Makefile | 2 --
- scripts/kconfig/Makefile  | 2 +-
- 4 files changed, 4 insertions(+), 7 deletions(-)
+ drivers/of/unittest-data/Makefile | 2 --
+ scripts/Makefile.build            | 4 +++-
+ scripts/Makefile.lib              | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 493e267..168432e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1613,6 +1613,7 @@ clean: $(clean-dirs)
- 		-o -name '*.dwo' -o -name '*.lst' \
- 		-o -name '*.su'  \
- 		-o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
-+		-o -name '*.lex.c' -o -name '*.tab.[ch]' \
- 		-o -name '*.symtypes' -o -name 'modules.order' \
- 		-o -name modules.builtin -o -name '.tmp_*.o.*' \
- 		-o -name .cache.mk \
-diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
-index a88b8c9..d17ba64 100644
---- a/scripts/dtc/Makefile
-+++ b/scripts/dtc/Makefile
-@@ -28,7 +28,5 @@ HOSTCFLAGS_dtc-parser.tab.o := $(HOSTCFLAGS_DTC)
- # dependencies on generated files need to be listed explicitly
- $(obj)/dtc-lexer.lex.o: $(obj)/dtc-parser.tab.h
+diff --git a/drivers/of/unittest-data/Makefile b/drivers/of/unittest-data/Makefile
+index df69797..333bc4c 100644
+--- a/drivers/of/unittest-data/Makefile
++++ b/drivers/of/unittest-data/Makefile
+@@ -7,8 +7,6 @@ obj-$(CONFIG_OF_OVERLAY) += overlay.dtb.o \
+ 			    overlay_bad_symbol.dtb.o \
+ 			    overlay_base.dtb.o
  
--# generated files need to include *.cmd and be cleaned explicitly
--generated-files	:= dtc-lexer.lex.c dtc-parser.tab.c dtc-parser.tab.h
--targets		:= $(generated-files)
--clean-files	:= $(generated-files)
-+# generated files need to include *.cmd
-+targets := dtc-lexer.lex.c dtc-parser.tab.c dtc-parser.tab.h
-diff --git a/scripts/genksyms/Makefile b/scripts/genksyms/Makefile
-index 34d6ab1..0ccac51 100644
---- a/scripts/genksyms/Makefile
-+++ b/scripts/genksyms/Makefile
-@@ -11,5 +11,3 @@ HOSTCFLAGS_lex.lex.o := -I$(src)
- 
- # dependencies on generated files need to be listed explicitly
- $(obj)/lex.lex.o: $(obj)/parse.tab.h
+-targets += $(foreach suffix, dtb dtb.S, $(patsubst %.dtb.o,%.$(suffix),$(obj-y)))
 -
--clean-files	:= lex.lex.c parse.tab.c parse.tab.h
-diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-index f9bdd02..1dcd797 100644
---- a/scripts/kconfig/Makefile
-+++ b/scripts/kconfig/Makefile
-@@ -209,7 +209,7 @@ hostprogs-y := conf nconf mconf kxgettext qconf gconf
+ # enable creation of __symbols__ node
+ DTC_FLAGS_overlay := -@
+ DTC_FLAGS_overlay_bad_phandle := -@
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 36f7990..15b3bbb 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -544,9 +544,11 @@ targets := $(filter-out $(PHONY), $(targets))
+ intermediate_targets = $(foreach sfx, $(2), \
+ 				$(patsubst %$(strip $(1)),%$(sfx), \
+ 					$(filter %$(strip $(1)), $(targets))))
++# %.dtb.o <- %.dtb.S <- %.dtb <- %.dts
+ # %.lex.o <- %.lex.c <- %.l
+ # %.tab.o <- %.tab.[ch] <- %.y
+-targets += $(call intermediate_targets, .lex.o, .lex.c) \
++targets += $(call intermediate_targets, .dtb.o, .dtb.S .dtb) \
++	   $(call intermediate_targets, .lex.o, .lex.c) \
+ 	   $(call intermediate_targets, .tab.o, .tab.c .tab.h)
  
- targets		+= zconf.tab.c zconf.lex.c
- clean-files	:= qconf.moc .tmp_qtcheck .tmp_gtkcheck
--clean-files	+= zconf.tab.c zconf.lex.c gconf.glade.h
-+clean-files	+= gconf.glade.h
- clean-files     += config.pot linux.pot
+ # Descending
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index b7d2c97..7a1fa92 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -278,8 +278,8 @@ cmd_dt_S_dtb=						\
+ 	echo '.balign STRUCT_ALIGNMENT'; 		\
+ ) > $@
  
- # Check that we have the required ncurses stuff installed for lxdialog (menuconfig)
+-$(obj)/%.dtb.S: $(obj)/%.dtb
+-	$(call cmd,dt_S_dtb)
++$(obj)/%.dtb.S: $(obj)/%.dtb FORCE
++	$(call if_changed,dt_S_dtb)
+ 
+ quiet_cmd_dtc = DTC     $@
+ cmd_dtc = mkdir -p $(dir ${dtc-tmp}) ; \
 -- 
 2.7.4
