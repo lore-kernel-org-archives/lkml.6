@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804570-2-10412119175416631378
+X-Cyrus-Session-Id: sloti22d1t05-1092440-1521804570-2-4418970660220690184
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804569; b=VCci7OvI8BZawMk3hJFeT/Gp5+QDi047g/tJiB7j0xRTWkM
-    dmqXlPQDULUq31zZlUPw8VdsWQ0ikrrWFbVDChpdpejBDNH5Tn1sUGw/iXBMWtob
-    5TFRYJTtPl8Y/nAhWH9eEHFWcSt/HhVhvOB0DBdM4KsEmsGBCTKOmJ0Ckpx5HizF
-    QBJNjwsl2TRqWtwiwFrDhFSgkEeZ91WqQGRKYusup5EQsUa1F0azZGoe3PQMWh9f
-    3TwRPiSu/EbcQXsbTw9i9pG/ORI9eQbJ/4+Mvzpq+YnMRQU1m/R4KOhyXwksRqxk
-    ydRzi41XGoeKx+2wCc9OOy6pDMe91lvBkuOeOmw==
+    t=1521804570; b=BSm4LLIfaEZn03IMsBjrZqQB9y/Ut1Rex+wc0DbCmmbBr9c
+    aMUKQD1pAvfod7fh1Pr6kNulokw4QSnT80pzy/5F835jHp6p7hjj24L2tHpxgIOe
+    RsC3RdqQGtYFg/UafJ6rsOC+22GCQ2CYFZMTYC3257YM0wpwe8z9Mfpq0+JoceGo
+    bY67f2wXkwtUuy7QTKJWhbImNRw5Co9Hvyh+Ys3ncOScMkwuU9pMmq/NOWF0r/6j
+    +vB3AX05gADPPKG4IxIMIWIt2TKjmMSsjtKduv2JSgQPebW9rZQyjyhZ/w3aAPNw
+    xF/5nA4xoSXvY2XrUBj3SqbCTGmUdSfQyy5v+yQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804569; bh=PquaHfza/vkRR94BDgZbOtyBrr
-    uQlp024VV7JwFTwJc=; b=YId11TUGR31FblpH4FRopbDEgNC5jVeKXKwKX4JH13
-    v5BrwMVpTZf4mdgdNKAjzIY9kCw7QqZ1DjWnXcGSH36IJy9KHbYY738ay6jNx/AW
-    I65Fg9dziqsuS8y0Iq9hrekEmUPYfgbxJS+R8W6pjVJHGmyI8/XvbGHYYKGniFw8
-    Xv640CKGCb1BNst5kK+9zNMHAR7kPOk06xSq+GcZpOvAvPFVqwTyenvDN3YjwmI8
-    ijoEgaF72b4W8wd32tX16XdGwILq0LACZ9Z1JJi37dHt/NcXQSqt3JdHRWdT/5PP
-    vx4tNLCRpDHsts5CZ1h83vxHP3J/pNI0hyH4Cx9WhO0A==
+    :list-id; s=arctest; t=1521804570; bh=+sU5MkqdO6nWydj8BgmOMTdAbh
+    vEtqO/6q3ycjbmt6A=; b=fz3H1lUR9JWrhr0xH0MmRWwhxz/ZYLNoUj9XZSwxuE
+    vxY1spToc6YVxiKr7MdZdXwWKxXsfkbQTlWFqbUGP/FgiMFcIdPDWplI/6gBHiSq
+    LSwn8gtwWXpeMM9y2i/LLLsd9y3nubWjVTlkN37DQdMuhKBC1euSCbFoM6bRQGCA
+    OW/zJXO8QFgECR3DlpflGQFdbbP/xe1UquJ7i4mISeCwoy5wOH0DjDTHJjnYLSGW
+    y3X6rrE8FTUllFNyBXvdS4BmzCgxhaxnHGCZPM0PD/dPN+aDBNQkuNWEsgMaeaAs
+    dnNKz3QaY2vOUVByvFlvW/VKyfa75lZmZ4TqJMoN0ixw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,24 +50,21 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755264AbeCWKGj (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:06:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40872 "EHLO
+        id S1755269AbeCWKGk (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:06:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40900 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755260AbeCWKGe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:34 -0400
+        with ESMTP id S1754912AbeCWKGh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:06:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Feras Daoud <ferasda@mellanox.com>,
-        Erez Shitrit <erezsh@mellanox.com>,
-        Alex Vesker <valex@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Sebastian Reichel <sre@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 045/177] IB/ipoib: Update broadcast object if PKey value was changed in index 0
-Date: Fri, 23 Mar 2018 10:52:53 +0100
-Message-Id: <20180323094207.269972686@linuxfoundation.org>
+Subject: [PATCH 4.9 046/177] HSI: ssi_protocol: double free in ssip_pn_xmit()
+Date: Fri, 23 Mar 2018 10:52:54 +0100
+Message-Id: <20180323094207.327301117@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -85,54 +82,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Feras Daoud <ferasda@mellanox.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 9a9b8112699d78e7f317019b37f377e90023f3ed ]
+[ Upstream commit 3026050179a3a9a6f5c892c414b5e36ecf092081 ]
 
-Update the broadcast address in the priv->broadcast object when the
-Pkey value changes in index 0, otherwise the multicast GID value will
-keep the previous value of the PKey, and will not be updated.
-This leads to interface state down because the interface will keep the
-old PKey value.
+If skb_pad() fails then it frees skb and we don't need to free it again
+at the end of the function.
 
-For example, in SR-IOV environment, if the PF changes the value of PKey
-index 0 for one of the VFs, then the VF receives PKey change event that
-triggers heavy flush. This flush calls update_parent_pkey that update the
-broadcast object and its relevant members. If in this case the multicast
-GID will not be updated, the interface state will be down.
-
-Fixes: c2904141696e ("IPoIB: Fix pkey change flow for virtualization environments")
-Signed-off-by: Feras Daoud <ferasda@mellanox.com>
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Reviewed-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Fixes: dc7bf5d7 ("HSI: Introduce driver for SSI Protocol")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Sebastian Reichel <sre@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_ib.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/hsi/clients/ssi_protocol.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-@@ -974,6 +974,19 @@ static inline int update_parent_pkey(str
- 		 */
- 		priv->dev->broadcast[8] = priv->pkey >> 8;
- 		priv->dev->broadcast[9] = priv->pkey & 0xff;
-+
-+		/*
-+		 * Update the broadcast address in the priv->broadcast object,
-+		 * in case it already exists, otherwise no one will do that.
-+		 */
-+		if (priv->broadcast) {
-+			spin_lock_irq(&priv->lock);
-+			memcpy(priv->broadcast->mcmember.mgid.raw,
-+			       priv->dev->broadcast + 4,
-+			sizeof(union ib_gid));
-+			spin_unlock_irq(&priv->lock);
-+		}
-+
- 		return 0;
- 	}
+--- a/drivers/hsi/clients/ssi_protocol.c
++++ b/drivers/hsi/clients/ssi_protocol.c
+@@ -989,7 +989,7 @@ static int ssip_pn_xmit(struct sk_buff *
+ 		goto drop;
+ 	/* Pad to 32-bits - FIXME: Revisit*/
+ 	if ((skb->len & 3) && skb_pad(skb, 4 - (skb->len & 3)))
+-		goto drop;
++		goto inc_dropped;
  
+ 	/*
+ 	 * Modem sends Phonet messages over SSI with its own endianess...
+@@ -1041,8 +1041,9 @@ static int ssip_pn_xmit(struct sk_buff *
+ drop2:
+ 	hsi_free_msg(msg);
+ drop:
+-	dev->stats.tx_dropped++;
+ 	dev_kfree_skb(skb);
++inc_dropped:
++	dev->stats.tx_dropped++;
+ 
+ 	return 0;
+ }
