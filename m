@@ -1,72 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752180AbeCWT0a (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 15:26:30 -0400
-Received: from mga18.intel.com ([134.134.136.126]:5959 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751632AbeCWT03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 15:26:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,351,1517904000";
-   d="scan'208";a="185455139"
-Subject: Re: [PATCH 05/11] x86/mm: do not auto-massage page protections
-To: Nadav Amit <namit@vmware.com>
-References: <20180323174447.55F35636@viggo.jf.intel.com>
- <20180323174454.CD00F614@viggo.jf.intel.com>
- <224464E0-1D3A-4ED8-88E0-A8E84C4265FC@vmware.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "keescook@google.com" <keescook@google.com>,
-        "hughd@google.com" <hughd@google.com>,
-        "jgross@suse.com" <jgross@suse.com>, "x86@kernel.org" <x86@kernel.org>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <ed72b04d-de86-113e-ab45-e1577e5c4226@linux.intel.com>
-Date: Fri, 23 Mar 2018 12:26:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752546AbeCWT0y (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 15:26:54 -0400
+Received: from smtp05.mail.online.nl ([194.134.25.75]:10641 "EHLO
+        smtp05.mail.online.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752390AbeCWT0w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 15:26:52 -0400
+Subject: Re: [PATCH] of_net: Implement of_get_nvmem_mac_address helper
+To: Andrew Lunn <andrew@lunn.ch>
+References: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl>
+ <20180323151101.GB24361@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, f.fainelli@gmail.com, robh+dt@kernel.org,
+        frowand.list@gmail.com
+From: Mike Looijmans <mike.looijmans@topic.nl>
+Organization: Topic
+Message-ID: <b68d4540-b15d-ec31-05a8-e1a4632bb5ee@topic.nl>
+Date: Fri, 23 Mar 2018 20:20:52 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <224464E0-1D3A-4ED8-88E0-A8E84C4265FC@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180323151101.GB24361@lunn.ch>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/2018 12:15 PM, Nadav Amit wrote:
->> A PTE is constructed from a physical address and a pgprotval_t.
->> __PAGE_KERNEL, for instance, is a pgprot_t and must be converted
->> into a pgprotval_t before it can be used to create a PTE.  This is
->> done implicitly within functions like set_pte() by massage_pgprot().
+On 23-3-2018 16:11, Andrew Lunn wrote:
+> On Fri, Mar 23, 2018 at 03:24:34PM +0100, Mike Looijmans wrote:
+>> It's common practice to store MAC addresses for network interfaces into
+>> nvmem devices. However the code to actually do this in the kernel lacks,
+>> so this patch adds of_get_nvmem_mac_address() for drivers to obtain the
+>> address from an nvmem cell provider.
 >>
->> However, this makes it very challenging to set bits (and keep them
->> set) if your bit is being filtered out by massage_pgprot().
+>> This is particulary useful on devices where the ethernet interface cannot
+>> be configured by the bootloader, for example because it's in an FPGA.
 >>
->> This moves the bit filtering out of set_pte() and friends.  For
-> 
-> I don’t see that set_pte() filters the bits, so I am confused by this
-> sentence...
+>> Tested by adapting the cadence macb driver to call this instead of
+>> of_get_mac_address().
+>
+> Hi Mike
+>
+> Please can you document the device tree binding. I assume you are
+> adding a nvmen-cells and nvmem-cell-names to the Ethernet node in
+> device tree.
 
-This was a typo/thinko.  It should be pfn_pte().
+Indeed. I'll add my settings as an example. Where should I put this 
+documentation, in the commit comment or somewhere in 
+Documents/devicetree/bindings?
 
->> +static inline pgprotval_t check_pgprot(pgprot_t pgprot)
+>> +/**
+>> + * Search the device tree for a MAC address, by calling of_get_mac_address
+>> + * and if that doesn't provide an address, fetch it from an nvmem provider
+>> + * using the name 'mac-address'.
+>> + * On success, copies the new address is into memory pointed to by addr and
+>> + * returns 0. Returns a negative error code otherwise.
+>> + * @dev:	Pointer to the device containing the device_node
+>> + * @addr:	Pointer to receive the MAC address using ether_addr_copy()
+>> + */
+>> +int of_get_nvmem_mac_address(struct device *dev, char *addr)
 >> +{
->> +	pgprotval_t massaged_val = massage_pgprot(pgprot);
+>> +	const char *mac;
+>> +	struct nvmem_cell *cell;
+>> +	size_t len;
+>> +	int ret;
 >> +
->> +	/* mmdebug.h can not be included here because of dependencies */
->> +#ifdef CONFIG_DEBUG_VM
->> +	WARN_ONCE(pgprot_val(pgprot) != massaged_val,
->> +		  "attempted to set unsupported pgprot: %016lx "
->> +		  "bits: %016lx supported: %016lx\n",
->> +		  pgprot_val(pgprot),
->> +		  pgprot_val(pgprot) ^ massaged_val,
->> +		  __supported_pte_mask);
->> +#endif
-> Why not to use VM_WARN_ON_ONCE() and avoid the ifdef?
+>> +	mac = of_get_mac_address(dev->of_node);
+>> +	if (mac) {
+>> +		ether_addr_copy(addr, mac);
+>> +		return 0;
+>> +	}
+>
+> Is there a need to add a new API? Could of_get_mac_address() be
+> extended to look in NVMEM? The MAC driver does not care. It is saying,
+> using OF get me a MAC address. One API seems sufficient, and would
+> mean you don't need to change the MAC drivers.
 
-I wanted a message.  VM_WARN_ON_ONCE() doesn't let you give a message.
+It's what I intended to do, but there were two problems with that:
+- of_get_mac_address() returns a pointer to constant data in memory, but 
+the nvmem functions return an allocated memory object that must be freed 
+after use. This changes the way the call is to be made.
+- The nvmem functions need the "struct device" pointer as well, while 
+of_get_mac_address() only gets passed the DT node.
+
+One approach would be to deprecate the of_get_mac_address() interface 
+and migrate existing drivers to the of_get_nvmem_mac_address() interface.
+
+
+-- 
+Mike Looijmans
