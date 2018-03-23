@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804421-2-422324832200402308
+X-Cyrus-Session-Id: sloti22d1t05-1098017-1521804402-2-3486820852140900416
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521804421; b=oM4iew2r41bR+3K6+VWirpxegzVG2bGJH2O54oyfT3wIo5U
-    g2LXuFJxgoX/mtNAFAwXAR+OSUAemliSVQBAcXx075jAshrIxXfR9Y+EjFp6rT+w
-    ho95ougqpTiLXptSbx73QIvg+3Yqc+ZG6PPOCLuRH8b+nsp53DoWNN3X5A8mt+E+
-    0vpxRl7RWmiqnoVPdWEQXvyW6xDIehDqVeR+oNK1ZOiX+CYiK2Df/FTkddDfG160
-    DNFPl19E0Gekom6d9QwbWPs8f8xuCZTs+L35gPUkbpNTfwCOnhoq94Qw1hUVkGl1
-    VG50Mv/jhul6E9plZz0bRbVEZK7kkgBqnpr1caQ==
+    t=1521804401; b=A3Mw2rgv1enxwqZq+BEqz6zE+N2wG9CWP5zRLjcO0GSvcdi
+    7fghiLnCaEfYJZ8b8RZvNImRM8mStt3H6Jt2SCK06DVexoRt9WRz6vt8EFM2wJF9
+    YezJBd89Bu7M54vBZKA7nrZU/n4dPfDIsGYoXK09qNDHbdCJEBBAd3H9W6YdQdMQ
+    6H5qTkq03yyK5HM4tojzbw0X8o2iWgeCn+cJmXYQJNgH8yx8bNAgQ+RtM8acBdCD
+    Iw9MiTv+RYuENNbsg7uBomtCmfCiodc3wA4BwP8hCKb4dG2i8WPp0fbqM8Qn62u6
+    bErGtbm3vEN5XZFf1/k4oRtqluVCfBYf9dUKTaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521804421; bh=E11eB6qTOqc+oJ2rHDDJnOwtwK
-    jaW3eckG8zI7pE4zk=; b=bYlNrt1S520om8dFdmRsgu+jaAo4gLaUuabc7RvMNH
-    CcUaIrOfjt/J9uB71k4Lv2RMBOZn6anLDmT48lj0jhAJwCnX0ug9U+Tv6oHacUk8
-    20M+8AFEcqEQFdMwyhW3icXnvvsWSM7SVoOYV92SUkBFIgunTA+Zg0s+uGNslZz/
-    sI7bisFNgzTBcyC7yg1xaKDcRGf2YQAhrtEskd5a+/rWAZbjUFePliY3xU1ylE9S
-    0T3y0cEiCj9uVSpZZFULwU89ZXyp3s+/r26Wnt/quk3Hd2f+Erkb1L1S9VfoXZEk
-    imFwFnG7cNCGBznf58ucMNC6LDuQ6jO6DaPqKOn3GolA==
+    :list-id; s=arctest; t=1521804401; bh=gIEA1qQ+LxtR7ULVwdyncygG7M
+    g+8vbZUK3pH4vIGD8=; b=G532aQcJGrduA7RGDy6S+BET0u4GKo1pXQlXshdvnx
+    fC2h10/EN2NPU7qHgyekaJnkKEXPqovVbDse+NvV56ij7xctgla1fW5738GcPrXm
+    ouxX7DEEJlqPAg9K5O1iaMAA5qS+F0hxYnlH3XMiTDygxxaAbqrWgMw3mmKG9csm
+    nBbkAbIiljKxe+VBJ3O2FdoOsYxRTDZixzhqHzLu1/vOuziUeJVO1V6AzFLl4yz4
+    PrWCuOTb33I3sAr5Y/F29fQ/xGPYvYs4Zxt5Trnvo0z/vdJimToURzryEwodYlDA
+    HScwn7u2jBX2UH9OkKW0sw4GWDhqOwO/4cbOuQok+a1A==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,21 +50,23 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932365AbeCWKHM (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:07:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41094 "EHLO
+        id S932421AbeCWKHQ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:07:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41144 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932345AbeCWKHG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:06 -0400
+        with ESMTP id S932395AbeCWKHP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:07:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Kuppuswamy Sathyanarayanan
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 069/177] pNFS: Fix use after free issues in pnfs_do_read()
-Date: Fri, 23 Mar 2018 10:53:17 +0100
-Message-Id: <20180323094208.373666529@linuxfoundation.org>
+Subject: [PATCH 4.9 057/177] gpio: gpio-wcove: fix irq pending status bit width
+Date: Fri, 23 Mar 2018 10:53:05 +0100
+Message-Id: <20180323094207.861957137@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -82,46 +84,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
 
-[ Upstream commit 6aeafd05eca9bc8ab6b03d7e56d09ffd18190f44 ]
+[ Upstream commit 7c2d176fe3f8dce632b948f79c7e89916ffe2c70 ]
 
-The assumption should be that if the caller returns PNFS_ATTEMPTED, then hdr
-has been consumed, and so we should not be testing hdr->task.tk_status.
-If the caller returns PNFS_TRY_AGAIN, then we need to recoalesce and
-free hdr.
+Whiskey cove PMIC has three GPIO banks with total number of 13 GPIO
+pins. But when checking for the pending status, for_each_set_bit() uses
+bit width of 7 and hence it only checks the status for first 7 GPIO pins
+missing to check/clear the status of rest of the GPIO pins. This patch
+fixes this issue.
 
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/pnfs.c |   16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-wcove.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/nfs/pnfs.c
-+++ b/fs/nfs/pnfs.c
-@@ -2308,10 +2308,20 @@ pnfs_do_read(struct nfs_pageio_descripto
- 	enum pnfs_try_status trypnfs;
- 
- 	trypnfs = pnfs_try_to_read_data(hdr, call_ops, lseg);
--	if (trypnfs == PNFS_TRY_AGAIN)
--		pnfs_read_resend_pnfs(hdr);
--	if (trypnfs == PNFS_NOT_ATTEMPTED || hdr->task.tk_status)
-+	switch (trypnfs) {
-+	case PNFS_NOT_ATTEMPTED:
- 		pnfs_read_through_mds(desc, hdr);
-+	case PNFS_ATTEMPTED:
-+		break;
-+	case PNFS_TRY_AGAIN:
-+		/* cleanup hdr and prepare to redo pnfs */
-+		if (!test_and_set_bit(NFS_IOHDR_REDO, &hdr->flags)) {
-+			struct nfs_pgio_mirror *mirror = nfs_pgio_current_mirror(desc);
-+			list_splice_init(&hdr->pages, &mirror->pg_list);
-+			mirror->pg_recoalesce = 1;
-+		}
-+		hdr->mds_ops->rpc_release(hdr);
-+	}
- }
- 
- static void pnfs_readhdr_free(struct nfs_pgio_header *hdr)
+--- a/drivers/gpio/gpio-wcove.c
++++ b/drivers/gpio/gpio-wcove.c
+@@ -318,7 +318,7 @@ static irqreturn_t wcove_gpio_irq_handle
+ 	while (pending) {
+ 		/* One iteration is for all pending bits */
+ 		for_each_set_bit(gpio, (const unsigned long *)&pending,
+-						 GROUP0_NR_IRQS) {
++						 WCOVE_GPIO_NUM) {
+ 			offset = (gpio > GROUP0_NR_IRQS) ? 1 : 0;
+ 			mask = (offset == 1) ? BIT(gpio - GROUP0_NR_IRQS) :
+ 								BIT(gpio);
