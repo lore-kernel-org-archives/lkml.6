@@ -1,23 +1,23 @@
 Return-Path: <jacob.jun.pan@linux.intel.com>
-X-Google-Smtp-Source: AG47ELsvt8gL6KH/bbIzy95MdFHLAKnl3AcnsEBfK00HU6Ji/Em65eo/pnzZDFV8sj7kP2aT/hfq
+X-Google-Smtp-Source: AG47ELsXK0XtFmy5BMoKpvZp/IWH9QYwFoP9jeV0skeNUStKO2XuZklJVivxB9P69W7AwaZ29Gjk
 ARC-Seal: i=1; a=rsa-sha256; t=1521774606; cv=none;
         d=google.com; s=arc-20160816;
-        b=YBWSZEY1GyrNu0gsFdCI4TTTHZY7t740fbXEzOL90Wea4Znn4wLBQqKQykoCLSG/at
-         +Cv3rOaGlNUtTGajeo0yV5H28Bp+G8eJqG/z1xJKPc6we1ua+95drGh/Vdi18dtl8wNm
-         +BezFL/KsJRTClKFT28d1VRmuax1p/hBLmj6fUtFqc7nucHSuPvew+FAWrhj6UmWZ7b6
-         C11aYwupmEmuKD6qykcwShLcFqxr382cPiyawhTxiEzznLyu/ExG5MPkHqWXP6KfsBFz
-         bF38vZSaZJKHscLTMv33v4M3W1TB6BUPyyokoZz3JL9LhYLpk6HwQKqHy3svE7wxzvEb
-         k9FQ==
+        b=Afg1MU35BA6m02wFJnXE14DdvoSecgvglpfM8iI6nJG0iKx5o1kd+yTpIdQHaS+xvo
+         KJk7zq3ISaBJWHYbncKAMfQxDUAo40q5smkynfNpRzjtyfGyo3sIgWtBbZeANOuZF1XB
+         Km5AOR0aOdzClYg3FVfBqa5OxSow9gmhYBislWmcwSKGVwEpeVkb8PIWmLTuslb3elfR
+         +D7bveIDQAjDPE/NmMW2RqOgnfROnYxS3mVToB3IzvYR3BpYOlpSeO0TQ6yQHSseQdjQ
+         kc4yxbd7B9W3gZWLepykTr2LUdWW/7ZhNkWXtUbCr7NHP2bqSpqHPpchwdM97w+lCmoj
+         XsJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=XfX6SDtXA3ptPGJfUztcv15Vf8CFSeB6csK5nlQl9N4=;
-        b=TLafifHxPVIDeIOriQp7AXjxUfNXkLp9+kOdjflXgUq3Akfr5lFHjw06uRWgp4GtTm
-         bd7N/NCb6Y4FNCbiTJ7Uw0U7lVqr1/w6UFM6qSxpAlu0kOgP1pwp1g+dN1gPeLvnCan1
-         S6IZIRVqIxqiSn4rFTwo4u8SGUmM8UR7y7hcro8QRBUzo889+rujt0Qgaaqzw1g3rAfW
-         8l+UF8l7RqzQP/4s8tgYsWr9z2iVlOhbKBXPHaWTOIIlvgJBPjx7rgto/WbFnrehCser
-         MO6tJI3vxrVA/RzNsF7VZIm8oxnALD4/8JkKqD1MBMb/KJqIWPgSD7Bhc6hPq6EKwpmQ
-         nPsA==
+        bh=7gdUj1E4BeUkheMRhK6YCFWQdTyvTLXhXaGJc4BgQjw=;
+        b=zATrqrAK+x8c991BUaa6FrudUTw3iZLyj5nQavCsPOKsgOXzwND/1nbWEbh3kKEcWH
+         hquFmbrkgiaG7OWd0PWnoyFQ/bExPmG9a/xNbBVf9QGuOlruN0Bi2VoHaDS1dEyhYzgA
+         QJu58Htx5vUTti0RjHTjrOvW5yZVcs68R1dfgrEXLskjYhd6/gzzWBddTPFEfav4EnNG
+         YjpXaKH2jf1ouS+vLlFLa4cZIGnRo8swCUVDS5JZwSLZcEYRHTJxI36fV1Q5PmqZcgKC
+         KkB8HAvGC4QMWY4jMce2OIE+AsdlKQuB6ODoF4BLJGiIpbpeNVRRAc43xQI1M78I4IxG
+         wW8g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,348,1517904000";
-   d="scan'208";a="26315992"
+   d="scan'208";a="26315999"
 From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 To: iommu@lists.linux-foundation.org,
 	LKML <linux-kernel@vger.kernel.org>,
@@ -45,227 +45,172 @@ Cc: "Liu, Yi L" <yi.l.liu@intel.com>,
 	Jacob Pan <jacob.jun.pan@linux.intel.com>,
 	Liu,
 	Yi L <yi.l.liu@linux.intel.com>
-Subject: [PATCH v4 09/22] iommu/vt-d: add svm/sva invalidate function
-Date: Thu, 22 Mar 2018 20:12:01 -0700
-Message-Id: <1521774734-48433-10-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 10/22] iommu: introduce device fault data
+Date: Thu, 22 Mar 2018 20:12:02 -0700
+Message-Id: <1521774734-48433-11-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521774734-48433-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1521774734-48433-1-git-send-email-jacob.jun.pan@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595696329404278473?=
-X-GMAIL-MSGID: =?utf-8?q?1595696329404278473?=
+X-GMAIL-THRID: =?utf-8?q?1595696329819160827?=
+X-GMAIL-MSGID: =?utf-8?q?1595696329819160827?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When Shared Virtual Address (SVA) is enabled for a guest OS via
-vIOMMU, we need to provide invalidation support at IOMMU API and driver
-level. This patch adds Intel VT-d specific function to implement
-iommu passdown invalidate API for shared virtual address.
+Device faults detected by IOMMU can be reported outside IOMMU
+subsystem for further processing. This patch intends to provide
+a generic device fault data such that device drivers can be
+communicated with IOMMU faults without model specific knowledge.
 
-The use case is for supporting caching structure invalidation
-of assigned SVM capable devices. Emulated IOMMU exposes queue
-invalidation capability and passes down all descriptors from the guest
-to the physical IOMMU.
+The proposed format is the result of discussion at:
+https://lkml.org/lkml/2017/11/10/291
+Part of the code is based on Jean-Philippe Brucker's patchset
+(https://patchwork.kernel.org/patch/9989315/).
 
-The assumption is that guest to host device ID mapping should be
-resolved prior to calling IOMMU driver. Based on the device handle,
-host IOMMU driver can replace certain fields before submit to the
-invalidation queue.
+The assumption is that model specific IOMMU driver can filter and
+handle most of the internal faults if the cause is within IOMMU driver
+control. Therefore, the fault reasons can be reported are grouped
+and generalized based common specifications such as PCI ATS.
 
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
 Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/intel-iommu.c | 170 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 170 insertions(+)
+ include/linux/iommu.h | 102 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 100 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 53e9b7b..771ee1e 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5026,6 +5026,175 @@ static void intel_iommu_detach_device(struct iommu_domain *domain,
- 	dmar_remove_one_dev_info(to_dmar_domain(domain), dev);
- }
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index da684a7..9eaa907 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -49,13 +49,17 @@ struct bus_type;
+ struct device;
+ struct iommu_domain;
+ struct notifier_block;
++struct iommu_fault_event;
  
-+/*
-+ * 3D array for converting IOMMU generic type-granularity to VT-d granularity
-+ * X indexed by enum iommu_inv_type
-+ * Y indicates request without and with PASID
-+ * Z indexed by enum iommu_inv_granularity
+ /* iommu fault flags */
+-#define IOMMU_FAULT_READ	0x0
+-#define IOMMU_FAULT_WRITE	0x1
++#define IOMMU_FAULT_READ		(1 << 0)
++#define IOMMU_FAULT_WRITE		(1 << 1)
++#define IOMMU_FAULT_EXEC		(1 << 2)
++#define IOMMU_FAULT_PRIV		(1 << 3)
+ 
+ typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
+ 			struct device *, unsigned long, int, void *);
++typedef int (*iommu_dev_fault_handler_t)(struct iommu_fault_event *, void *);
+ 
+ struct iommu_domain_geometry {
+ 	dma_addr_t aperture_start; /* First address that can be mapped    */
+@@ -264,6 +268,99 @@ struct iommu_device {
+ 	struct device *dev;
+ };
+ 
++/*  Generic fault types, can be expanded IRQ remapping fault */
++enum iommu_fault_type {
++	IOMMU_FAULT_DMA_UNRECOV = 1,	/* unrecoverable fault */
++	IOMMU_FAULT_PAGE_REQ,		/* page request fault */
++};
++
++enum iommu_fault_reason {
++	IOMMU_FAULT_REASON_UNKNOWN = 0,
++
++	/* IOMMU internal error, no specific reason to report out */
++	IOMMU_FAULT_REASON_INTERNAL,
++
++	/* Could not access the PASID table */
++	IOMMU_FAULT_REASON_PASID_FETCH,
++
++	/*
++	 * PASID is out of range (e.g. exceeds the maximum PASID
++	 * supported by the IOMMU) or disabled.
++	 */
++	IOMMU_FAULT_REASON_PASID_INVALID,
++
++	/* Could not access the page directory (Invalid PASID entry) */
++	IOMMU_FAULT_REASON_PGD_FETCH,
++
++	/* Could not access the page table entry (Bad address) */
++	IOMMU_FAULT_REASON_PTE_FETCH,
++
++	/* Protection flag check failed */
++	IOMMU_FAULT_REASON_PERMISSION,
++};
++
++/**
++ * struct iommu_fault_event - Generic per device fault data
 + *
-+ * For an example, if we want to find the VT-d granularity encoding for IOTLB
-+ * type, DMA request with PASID, and page selective. The look up indices are:
-+ * [1][1][8], where
-+ * 1: IOMMU_INV_TYPE_TLB
-+ * 1: with PASID
-+ * 8: IOMMU_INV_GRANU_PAGE_PASID
-+ *
-+ * Granu_map array indicates validity of the table. 1: valid, 0: invalid
++ * - PCI and non-PCI devices
++ * - Recoverable faults (e.g. page request), information based on PCI ATS
++ * and PASID spec.
++ * - Un-recoverable faults of device interest
++ * - DMA remapping and IRQ remapping faults
++
++ * @type contains fault type.
++ * @reason fault reasons if relevant outside IOMMU driver, IOMMU driver internal
++ *         faults are not reported
++ * @addr: tells the offending page address
++ * @pasid: contains process address space ID, used in shared virtual memory(SVM)
++ * @rid: requestor ID
++ * @page_req_group_id: page request group index
++ * @last_req: last request in a page request group
++ * @pasid_valid: indicates if the PRQ has a valid PASID
++ * @prot: page access protection flag, e.g. IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
++ * @device_private: if present, uniquely identify device-specific
++ *                  private data for an individual page request.
++ * @iommu_private: used by the IOMMU driver for storing fault-specific
++ *                 data. Users should not modify this field before
++ *                 sending the fault response.
++ */
++struct iommu_fault_event {
++	enum iommu_fault_type type;
++	enum iommu_fault_reason reason;
++	u64 addr;
++	u32 pasid;
++	u32 page_req_group_id;
++	u32 last_req : 1;
++	u32 pasid_valid : 1;
++	u32 prot;
++	u64 device_private;
++	u64 iommu_private;
++};
++
++/**
++ * struct iommu_fault_param - per-device IOMMU fault data
++ * @dev_fault_handler: Callback function to handle IOMMU faults at device level
++ * @data: handler private data
 + *
 + */
-+const static int inv_type_granu_map[IOMMU_INV_NR_TYPE][2][IOMMU_INV_NR_GRANU] = {
-+	/* extended dev IOTLBs, for dev-IOTLB, only global is valid,
-+	   for dev-EXIOTLB, two valid granu */
-+	{
-+		{1},
-+		{0, 0, 0, 0, 1, 1, 0, 0, 0}
-+	},
-+	/* IOTLB and EIOTLB */
-+	{
-+		{1, 1, 0, 1, 0, 0, 0, 0, 0},
-+		{0, 0, 0, 0, 1, 0, 1, 1, 1}
-+	},
-+	/* PASID cache */
-+	{
-+		{0},
-+		{0, 0, 0, 0, 1, 1, 0, 0, 0}
-+	},
-+	/* context cache */
-+	{
-+		{1, 1, 1}
-+	}
++struct iommu_fault_param {
++	iommu_dev_fault_handler_t handler;
++	void *data;
 +};
 +
-+const static u64 inv_type_granu_table[IOMMU_INV_NR_TYPE][2][IOMMU_INV_NR_GRANU] = {
-+	/* extended dev IOTLBs, only global is valid */
-+	{
-+		{QI_DEV_IOTLB_GRAN_ALL},
-+		{0, 0, 0, 0, QI_DEV_IOTLB_GRAN_ALL, QI_DEV_IOTLB_GRAN_PASID_SEL, 0, 0, 0}
-+	},
-+	/* IOTLB and EIOTLB */
-+	{
-+		{DMA_TLB_GLOBAL_FLUSH, DMA_TLB_DSI_FLUSH, 0, DMA_TLB_PSI_FLUSH},
-+		{0, 0, 0, 0, QI_GRAN_ALL_ALL, 0, QI_GRAN_NONG_ALL, QI_GRAN_NONG_PASID, QI_GRAN_PSI_PASID}
-+	},
-+	/* PASID cache */
-+	{
-+		{0},
-+		{0, 0, 0, 0, QI_PC_ALL_PASIDS, QI_PC_PASID_SEL}
-+	},
-+	/* context cache */
-+	{
-+		{DMA_CCMD_GLOBAL_INVL, DMA_CCMD_DOMAIN_INVL, DMA_CCMD_DEVICE_INVL}
-+	}
++/**
++ * struct iommu_param - collection of per-device IOMMU data
++ *
++ * @fault_param: IOMMU detected device fault reporting data
++ *
++ * TODO: migrate other per device data pointers under iommu_dev_data, e.g.
++ *	struct iommu_group	*iommu_group;
++ *	struct iommu_fwspec	*iommu_fwspec;
++ */
++struct iommu_param {
++	struct iommu_fault_param *fault_param;
 +};
 +
-+static inline int to_vtd_granularity(int type, int granu, int with_pasid, u64 *vtd_granu)
-+{
-+	if (type >= IOMMU_INV_NR_TYPE || granu >= IOMMU_INV_NR_GRANU || with_pasid > 1)
-+		return -EINVAL;
-+
-+	if (inv_type_granu_map[type][with_pasid][granu] == 0)
-+		return -EINVAL;
-+
-+	*vtd_granu = inv_type_granu_table[type][with_pasid][granu];
-+
-+	return 0;
-+}
-+
-+static int intel_iommu_sva_invalidate(struct iommu_domain *domain,
-+		struct device *dev, struct tlb_invalidate_info *inv_info)
-+{
-+	struct intel_iommu *iommu;
-+	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
-+	struct device_domain_info *info;
-+	u16 did, sid;
-+	u8 bus, devfn;
-+	int ret = 0;
-+	u64 granu;
-+	unsigned long flags;
-+
-+	if (!inv_info || !dmar_domain)
-+		return -EINVAL;
-+
-+	iommu = device_to_iommu(dev, &bus, &devfn);
-+	if (!iommu)
-+		return -ENODEV;
-+
-+	if (!dev || !dev_is_pci(dev))
-+		return -ENODEV;
-+
-+	did = dmar_domain->iommu_did[iommu->seq_id];
-+	sid = PCI_DEVID(bus, devfn);
-+	ret = to_vtd_granularity(inv_info->hdr.type, inv_info->granularity,
-+				!!(inv_info->flags & IOMMU_INVALIDATE_PASID_TAGGED), &granu);
-+	if (ret) {
-+		pr_err("Invalid range type %d, granu %d\n", inv_info->hdr.type,
-+			inv_info->granularity);
-+		return ret;
-+	}
-+
-+	spin_lock(&iommu->lock);
-+	spin_lock_irqsave(&device_domain_lock, flags);
-+
-+	switch (inv_info->hdr.type) {
-+	case IOMMU_INV_TYPE_CONTEXT:
-+		iommu->flush.flush_context(iommu, did, sid,
-+					DMA_CCMD_MASK_NOBIT, granu);
-+		break;
-+	case IOMMU_INV_TYPE_TLB:
-+		/* We need to deal with two scenarios:
-+		 * - IOTLB for request w/o PASID
-+		 * - extended IOTLB for request with PASID.
-+		 */
-+		if (inv_info->size &&
-+			(inv_info->addr & ((1 << (VTD_PAGE_SHIFT + inv_info->size)) - 1))) {
-+			pr_err("Addr out of range, addr 0x%llx, size order %d\n",
-+				inv_info->addr, inv_info->size);
-+			ret = -ERANGE;
-+			goto out_unlock;
-+		}
-+
-+		if (inv_info->flags & IOMMU_INVALIDATE_PASID_TAGGED)
-+			qi_flush_eiotlb(iommu, did, mm_to_dma_pfn(inv_info->addr),
-+					inv_info->pasid,
-+					inv_info->size, granu,
-+					inv_info->flags & IOMMU_INVALIDATE_GLOBAL_PAGE);
-+		else
-+			qi_flush_iotlb(iommu, did, mm_to_dma_pfn(inv_info->addr),
-+				inv_info->size, granu);
-+		/**
-+		 * Always flush device IOTLB if ATS is enabled since guest
-+		 * vIOMMU exposes CM = 1, no device IOTLB flush will be passed
-+		 * down.
-+		 */
-+		info = iommu_support_dev_iotlb(dmar_domain, iommu, bus, devfn);
-+		if (info && info->ats_enabled) {
-+			if (inv_info->flags & IOMMU_INVALIDATE_PASID_TAGGED)
-+				qi_flush_dev_eiotlb(iommu, sid,
-+						inv_info->pasid, info->ats_qdep,
-+						inv_info->addr, inv_info->size,
-+						granu);
-+			else
-+				qi_flush_dev_iotlb(iommu, sid, info->pfsid,
-+						info->ats_qdep, inv_info->addr,
-+						inv_info->size);
-+		}
-+		break;
-+	case IOMMU_INV_TYPE_PASID:
-+		qi_flush_pasid(iommu, did, granu, inv_info->pasid);
-+
-+		break;
-+	default:
-+		dev_err(dev, "Unknown IOMMU invalidation type %d\n",
-+			inv_info->hdr.type);
-+		ret = -EINVAL;
-+	}
-+out_unlock:
-+	spin_unlock(&iommu->lock);
-+	spin_unlock_irqrestore(&device_domain_lock, flags);
-+
-+	return ret;
-+}
-+
- static int intel_iommu_map(struct iommu_domain *domain,
- 			   unsigned long iova, phys_addr_t hpa,
- 			   size_t size, int iommu_prot)
-@@ -5455,6 +5624,7 @@ const struct iommu_ops intel_iommu_ops = {
- #ifdef CONFIG_INTEL_IOMMU_SVM
- 	.bind_pasid_table	= intel_iommu_bind_pasid_table,
- 	.unbind_pasid_table	= intel_iommu_unbind_pasid_table,
-+	.sva_invalidate		= intel_iommu_sva_invalidate,
- #endif
- 	.map			= intel_iommu_map,
- 	.unmap			= intel_iommu_unmap,
+ int  iommu_device_register(struct iommu_device *iommu);
+ void iommu_device_unregister(struct iommu_device *iommu);
+ int  iommu_device_sysfs_add(struct iommu_device *iommu,
+@@ -437,6 +534,7 @@ struct iommu_ops {};
+ struct iommu_group {};
+ struct iommu_fwspec {};
+ struct iommu_device {};
++struct iommu_fault_param {};
+ 
+ static inline bool iommu_present(struct bus_type *bus)
+ {
 -- 
 2.7.4
