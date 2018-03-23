@@ -1,62 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751600AbeCWH5n (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 03:57:43 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37797 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751221AbeCWH5m (ORCPT
+        id S1751682AbeCWH76 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 03:59:58 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34526 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751395AbeCWH74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 03:57:42 -0400
-X-Google-Smtp-Source: AG47ELuPDb53aoLcO81hIXeKk2hAw9REd/m5//iwf+R20TEhPXIIKx/jmh3pRfj7XAoqmacI1cNpFw==
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-X-Google-Original-From: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
-To: zhaoyang.huang@spreadtrum.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
+        Fri, 23 Mar 2018 03:59:56 -0400
+X-Google-Smtp-Source: AG47ELtfV1QRgiWdzJfoaELolBI0rfMIbq7eLYft0xy3rBmBAVT1NQzNJgKPmFj+n5FshGjlghfX2g==
+Date: Fri, 23 Mar 2018 08:59:52 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
-        vel Tatashin <pasha.tatashin@oracle.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-patch-test@lists.linaro.org
-Subject: [PATCH v1] mm: help the ALLOC_HARDER allocation pass the watermarki when CMA on
-Date: Fri, 23 Mar 2018 15:57:32 +0800
-Message-Id: <1521791852-7048-1-git-send-email-zhaoyang.huang@spreadtrum.com>
-X-Mailer: git-send-email 1.7.9.5
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v6 2/2] cpuset: Add cpuset.sched_load_balance to v2
+Message-ID: <20180323075952.GA4763@localhost.localdomain>
+References: <1521649309-26690-1-git-send-email-longman@redhat.com>
+ <1521649309-26690-3-git-send-email-longman@redhat.com>
+ <20180322084120.GE7231@localhost.localdomain>
+ <e754e128-0a93-800e-e71b-2c8dc316ba8a@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e754e128-0a93-800e-e71b-2c8dc316ba8a@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the type of 'ALLOC_HARDER' page allocation, there is an express
-highway for the whole process which lead the allocation reach __rmqueue_xxx
-easier than other type.
-However, when CMA is enabled, the free_page within zone_watermark_ok() will
-be deducted for number the pages in CMA type, which may cause the watermark
-check fail, but there are possible enough HighAtomic or Unmovable and
-Reclaimable pages in the zone. So add 'alloc_harder' here to
-count CMA pages in to clean the obstacles on the way to the final.
+On 22/03/18 17:50, Waiman Long wrote:
+> On 03/22/2018 04:41 AM, Juri Lelli wrote:
+> > On 21/03/18 12:21, Waiman Long wrote:
 
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@spreadtrum.com>
----
- mm/page_alloc.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+[...]
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 635d7dd..cc18620 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3045,8 +3045,11 @@ bool __zone_watermark_ok(struct zone *z, unsigned int order, unsigned long mark,
- 
- 
- #ifdef CONFIG_CMA
--	/* If allocation can't use CMA areas don't use free CMA pages */
--	if (!(alloc_flags & ALLOC_CMA))
-+	/*
-+	 * If allocation can't use CMA areas and no alloc_harder set for none
-+	 * order0 allocation, don't use free CMA pages.
-+	 */
-+	if (!(alloc_flags & ALLOC_CMA) && (!alloc_harder || !order))
- 		free_pages -= zone_page_state(z, NR_FREE_CMA_PAGES);
- #endif
- 
--- 
-1.9.1
+> >> +  cpuset.sched_load_balance
+> >> +	A read-write single value file which exists on non-root cgroups.
+> >> +	The default is "1" (on), and the other possible value is "0"
+> >> +	(off).
+> >> +
+> >> +	When it is on, tasks within this cpuset will be load-balanced
+> >> +	by the kernel scheduler.  Tasks will be moved from CPUs with
+> >> +	high load to other CPUs within the same cpuset with less load
+> >> +	periodically.
+> >> +
+> >> +	When it is off, there will be no load balancing among CPUs on
+> >> +	this cgroup.  Tasks will stay in the CPUs they are running on
+> >> +	and will not be moved to other CPUs.
+> >> +
+> >> +	This flag is hierarchical and is inherited by child cpusets. It
+> >> +	can be turned off only when the CPUs in this cpuset aren't
+> >> +	listed in the cpuset.cpus of other sibling cgroups, and all
+> >> +	the child cpusets, if present, have this flag turned off.
+> >> +
+> >> +	Once it is off, it cannot be turned back on as long as the
+> >> +	parent cgroup still has this flag in the off state.
+> >> +
+> > I'm afraid that this will not work for SCHED_DEADLINE (at least for how
+> > it is implemented today). As you can see in Documentation [1] the only
+> > way a user has to perform partitioned/clustered scheduling is to create
+> > subset of exclusive cpusets and then assign deadline tasks to them. The
+> > other thing to take into account here is that a root_domain is created
+> > for each exclusive set and we use such root_domain to keep information
+> > about admitted bandwidth and speed up load balancing decisions (there is
+> > a max heap tracking deadlines of active tasks on each root_domain).
+> > Now, AFAIR distinct root_domain(s) are created when parent group has
+> > sched_load_balance disabled and cpus_exclusive set (in cgroup v1 that
+> > is). So, what we normally do is create, say, cpus_exclusive groups for
+> > the different clusters and then disable sched_load_balance at root level
+> > (so that each cluster gets its own root_domain). Also,
+> > sched_load_balance is enabled in children groups (as load balancing
+> > inside clusters is what we actually needed :).
+> 
+> That looks like an undocumented side effect to me. I would rather see an
+> explicit control file that enable root_domain and break it free from
+> cpu_exclusive && !sched_load_balance, e.g. sched_root_domain(?).
+
+Mmm, it actually makes some sort of sense to me that as long as parent
+groups can't load balance (because !sched_load_balance) and this group
+can't have CPUs overlapping with some other group (because
+cpu_exclusive) a data structure (root_domain) is created to handle load
+balancing for this isolated subsystem. I agree that it should be better
+documented, though.
+
+> > IIUC your proposal this will not be permitted with cgroup v2 because
+> > sched_load_balance won't be present at root level and children groups
+> > won't be able to set sched_load_balance back to 1 if that was set to 0
+> > in some parent. Is that true?
+> 
+> Yes, that is the current plan.
+
+OK, thanks for confirming. Can you tell again however why do you think
+we need to remove sched_load_balance from root level? Won't we end up
+having tasks put on isolated sets?
+
+Also, I guess children groups with more than one CPU will need to be
+able to load balance across their CPUs, no matter what their parent
+group does?
+
+Thanks,
+
+- Juri
