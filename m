@@ -1,70 +1,43 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-947063-1521799792-2-18091809355925301383
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521799792; b=U38rhE+EYrqMhBb6nO+vPMwS7ChL1y+W/BsA1BaxurF5TiY
-    11JWR6oXjNX80dng3aHaLXb42wmchL1SeFh/mai9BYT7FvFNzQecwCBlLSyEzzfR
-    o87vatQQmP/8saABzzorgpHp9/ijDvtqVmNkx1dWrqdNTMREiuZeh5Rmbx+OvRxn
-    DSa2YJR3aZDzKJ2uMeJ12dDGAfPB7wKH3F0rY4vqkzVWjB0WpE9RhtV+UPzEaHES
-    8+bjWkxzgkx4znKcX/DNYTirK36utyLdqvv4qKOSY9LVTBiWKEg+yRYV9BAPh1zB
-    6MNYepflJBt+g/LZHbqmEDhDZIC3XsLjsA4NHWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521799792; bh=xT0jFPzQTTopHesJl7tZiGgEFw
-    +0yvbOkpbSiTtvIhA=; b=gnPaYxGvnGExFpLNnjA2zNpBxOYsLr4yf8BrBTJthL
-    vyZsBQaZ2GmIUWkaFtgHp6jHgr72TMKvrkQAx5d6plL1A7wPhCcIzeV7yrJUDjCb
-    GfdROFvrtbR9nenpTu4KNHbpdkFWiIzSKgmDItYAOX8vlAcLG+OBOvTwsxAMa8XE
-    dZAtIZUc4CL94G52nx84KJupvMRTkPv5UoAynBYV2z/QwGGfsF9WO48tV786zYCq
-    3VuzlG87MmqpFdeqGeStLQ5IP1X03YTamCn50jVR7n9O375/vOMIheRyeEZVm4or
-    eepiZb0nMny3dM2Dw9/jRfY7QxSJQeOTUwnej8R3icVg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932550AbeCWKJs (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:09:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42264 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932539AbeCWKJn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:09:43 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AG47ELviUZ8R24WmmZILNJdVpl2w/rgvLfv62joyRCXFn9oTzZ4VWiFOljdJ4YDKfcKKG6aINS6V
+ARC-Seal: i=1; a=rsa-sha256; t=1521799769; cv=none;
+        d=google.com; s=arc-20160816;
+        b=xybb46v5jJvS04duS0FAFslXg1qqGDr7CRtQT4AKlSkgf7Iuuno3SM+w75ZxDNQJ9v
+         u6qw7F2VbAvrpBZmlAtGO1ObPwYBqzB9oqMqfBpKd5zRBg9mQFxNW5oTJusCqvfcbZNN
+         tZuZTVVd1xuh9YqX7FB6mnihEuOORjxpLjO3GeSy0O8/fvzOW/qdSjSOHuEC2Qd7t7Uf
+         OY+i6pcZFiyenceeX+r3wTYhs5+6nQmFOyD1Kyw+TMg46Q+pjKLgu0/YgE1m8GkSlB9f
+         y9T1+5DSKW3fMaQAD1CU35VuQS7udyig+H0Lbxb8xJAxnjJzM/iwvwvGfuMYCgvay4G5
+         i4Tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=njdNo5lY1qZI4jY9GgIqgpDY0cK6bKuHhQIOHXorEV4=;
+        b=IH5gvUjyeoI+MeKFOfqvMcyK30j7tg6WL5lGVaNEtKl8sppA/HHr4S/CFAEntol4pb
+         0Mf+nbmq3hWBgIkRaGFc1XiI2QXSIFB5rf/A7/3OLw0HUHJshcZ3402gD0TaditjTZKS
+         O78medpTP1ckN7UC9XIwXiltLpQTJJXAg+f00MyOYTylma1Z0vuOSbEXg5k6hnFsak8H
+         csWRmWRqHiUjWgG1+THaudlQ/ViX6Uwv4Ao9DIY2cXFDilrubJ4ZDvEY8lbRhooCa73F
+         d1W/iKBID5LNT3R5d3/hYIS0u7XYSQIgUkuQxDu4RisCUwE0y7kpyL3Kxy+PidWwetZN
+         zf5Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Benc <jbenc@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 108/177] vxlan: correctly handle ipv6.disable module parameter
-Date: Fri, 23 Mar 2018 10:53:56 +0100
-Message-Id: <20180323094210.042037001@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Markus Elfring <elfring@users.sourceforge.net>,
+	H J Lu <hjl.tools@gmail.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	=?UTF-8?q?=C3=89meric=20MASCHINO?= <emeric.maschino@gmail.com>,
+	Sergei Trofimovich <slyfox@gentoo.org>,
+	Tony Luck <tony.luck@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 118/177] ia64: fix module loading for gcc-5.4
+Date: Fri, 23 Mar 2018 10:54:06 +0100
+Message-Id: <20180323094210.463109442@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -72,9 +45,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1595722714775958192?=
+X-GMAIL-MSGID: =?utf-8?q?1595722714775958192?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -82,51 +56,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Benc <jbenc@redhat.com>
+From: Sergei Trofimovich <slyfox@gentoo.org>
 
 
-[ Upstream commit d074bf9600443403aa24fbc12c1f18eadc90f5aa ]
+[ Upstream commit a25fb8508c1b80dce742dbeaa4d75a1e9f2c5617 ]
 
-When IPv6 is compiled but disabled at runtime, __vxlan_sock_add returns
--EAFNOSUPPORT. For metadata based tunnels, this causes failure of the whole
-operation of bringing up the tunnel.
+Starting from gcc-5.4+ gcc generates MLX instructions in more cases to
+refer local symbols:
 
-Ignore failure of IPv6 socket creation for metadata based tunnels caused by
-IPv6 not being available.
+    https://gcc.gnu.org/PR60465
 
-Fixes: b1be00a6c39f ("vxlan: support both IPv4 and IPv6 sockets in a single vxlan device")
-Signed-off-by: Jiri Benc <jbenc@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+That caused ia64 module loader to choke on such instructions:
+
+    fuse: invalid slot number 1 for IMM64
+
+The Linux kernel used to handle only case where relocation pointed to
+slot=2 instruction in the bundle.  That limitation was fixed in linux by
+commit 9c184a073bfd ("[IA64] Fix 2.6 kernel for the new ia64 assembler")
+See
+
+    http://sources.redhat.com/bugzilla/show_bug.cgi?id=1433
+
+This change lifts the slot=2 restriction from the kernel module loader.
+
+Tested on 'fuse' and 'btrfs' kernel modules.
+
+Cc: Markus Elfring <elfring@users.sourceforge.net>
+Cc: H J Lu <hjl.tools@gmail.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Bug: https://bugs.gentoo.org/601014
+Tested-by: Émeric MASCHINO <emeric.maschino@gmail.com>
+Signed-off-by: Sergei Trofimovich <slyfox@gentoo.org>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vxlan.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/ia64/kernel/module.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/vxlan.c
-+++ b/drivers/net/vxlan.c
-@@ -2816,17 +2816,21 @@ static int __vxlan_sock_add(struct vxlan
- 
- static int vxlan_sock_add(struct vxlan_dev *vxlan)
+--- a/arch/ia64/kernel/module.c
++++ b/arch/ia64/kernel/module.c
+@@ -153,7 +153,7 @@ slot (const struct insn *insn)
+ static int
+ apply_imm64 (struct module *mod, struct insn *insn, uint64_t val)
  {
--	bool ipv6 = vxlan->flags & VXLAN_F_IPV6;
- 	bool metadata = vxlan->flags & VXLAN_F_COLLECT_METADATA;
-+	bool ipv6 = vxlan->flags & VXLAN_F_IPV6 || metadata;
-+	bool ipv4 = !ipv6 || metadata;
- 	int ret = 0;
- 
- 	RCU_INIT_POINTER(vxlan->vn4_sock, NULL);
- #if IS_ENABLED(CONFIG_IPV6)
- 	RCU_INIT_POINTER(vxlan->vn6_sock, NULL);
--	if (ipv6 || metadata)
-+	if (ipv6) {
- 		ret = __vxlan_sock_add(vxlan, true);
-+		if (ret < 0 && ret != -EAFNOSUPPORT)
-+			ipv4 = false;
-+	}
- #endif
--	if (!ret && (!ipv6 || metadata))
-+	if (ipv4)
- 		ret = __vxlan_sock_add(vxlan, false);
- 	if (ret < 0)
- 		vxlan_sock_release(vxlan);
+-	if (slot(insn) != 2) {
++	if (slot(insn) != 1 && slot(insn) != 2) {
+ 		printk(KERN_ERR "%s: invalid slot number %d for IMM64\n",
+ 		       mod->name, slot(insn));
+ 		return 0;
+@@ -165,7 +165,7 @@ apply_imm64 (struct module *mod, struct
+ static int
+ apply_imm60 (struct module *mod, struct insn *insn, uint64_t val)
+ {
+-	if (slot(insn) != 2) {
++	if (slot(insn) != 1 && slot(insn) != 2) {
+ 		printk(KERN_ERR "%s: invalid slot number %d for IMM60\n",
+ 		       mod->name, slot(insn));
+ 		return 0;
