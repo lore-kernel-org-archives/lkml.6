@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805340-3-13442207293386691013
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805332-2-9726282997478685250
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES daensv,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES roensk.us-ascii,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805339; b=USEDEOoEaTwaDsmnsFR6bZ6ZFihuT9HwzdgPjupWsZ5VH65
-    Xh0BRJvpGMyFy7HVBmfGUkJTRf7k06jwBJE+RGGd0CvcABHLKNvR76tRg/8NzVpl
-    5CrRiVwk1frT4FeOggcwu0utrUYmqw1EwbGyBb8toZmScKkV0dO84Pv356dROHxt
-    hIaFfeiCxXK46NzQEKqBjht6TtTlcihJ4xJ7ceh0hvxiaAFuQlHvfedUH0y8peVn
-    P0EsxOU82VqbhdCo5BV2yOajDBPLY+6wxMeu2om4rA10nzKKL1IzwOu08cpb/+K1
-    xzin5eOSG0AZZPi6iBYvi9dPBJNEwwRYTKvdReg==
+    t=1521805331; b=JMeWgd99Dw1rY3d4j9VDk6NfYs62M2vBqorPicZAmqDk4Mm
+    d+9GV3iXKvxv47yUHFL5pxZ6SvRJn29z+FA8I1TsuUixqxA432fuT60gG3gxMUuN
+    +AQoorkKasqOjjKBsVc1OH3cKubRDc9l6DzMokVpvcY6mEsCIYdJwOVhtNeLq109
+    TJo3Q2x3LnCtMqu2FL+7Td6KM+3x2tfL6NEiUlQQUCqA4QIXU1zWBX0eatEAe04c
+    +YCi+z0bKbBzVPDpWbrlv/X9DSDH8Qfa9OGoRKQDbqDoKehxBYIg3/nSTGMcG1kN
+    gS2IQbejeoEKOQ95TEK7QeI3kUfx6poWPhxBqJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805339; bh=T5U+A+OLkNEeiH1i9+LOuZGNc4
-    kTxjVNbLJ1SdiKAjw=; b=SdteMFLJjZetsOQoYpNFl/g0tdBc8oHYczui1paGLs
-    0jliik+5Gpn08j+KO7k147ieBA7UQ5/GXjlzZM316eSWmj/+DVfA6ZGXH4/G+nju
-    Pev3wsvYiNXB9l8skLqOal3f2diMzvh/9ZSn4jD0iI+FXi1lPWYOOF3qIomLt6L8
-    hxwAZsgtvyAgqUfWO6QtjTQGhsh62G0aK5g58LlcAqdCer7CIcnIKgm+dB4XNfWQ
-    rWEBmgKNSnM+lz4/XblOXpgyb5CcoxtuTMl8FyTY+pPM9C9g8jjeEqtO1eeZ+LdP
-    37yNlWaAnsaSWw7a4FkTiBWi8c8WVRK8mXkbDEKZ6JbQ==
+    :list-id; s=arctest; t=1521805331; bh=7MXKFovDa9nTMwYB7RKCdLyypQ
+    Vk8lcVGuKLizUvUbU=; b=CEWJClUxU6BbljZIfcq77es5ET+LhReI3Rw/Oo3nXe
+    nZhPQRmA9ajc53mBaXKuZTB2CzGJSh9rKZryg/d5inWwd1ytFvuwfyosN1mYTa4F
+    xmJRboC0W2rIbJ7AIdZi32RSZlOcum69ir6Ra/5/T2y0zAiAQpkIGpJEe32zfktB
+    0NnwD7C85/MG67R43N0vhNth6gWdRYmH6w6DR7Pzjvy40ZNeXuxuSWjA6ZUxxtyr
+    m5gV0yA6aNbLWk6xBTaOA2NSMWS60XYsHlm1dmYb+MTFWecHCi3REzM42IO+ECD6
+    Wr0EjxcExHrjpBh2OWqxPO7MDKgojzdaQdYU0+EtbY1Q==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754554AbeCWKDx (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:03:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38924 "EHLO
+        id S1754570AbeCWKD6 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:03:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38968 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754550AbeCWKDv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:51 -0400
+        with ESMTP id S1754550AbeCWKD4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 68/77] scsi: mpt3sas: wait for and flush running commands on shutdown/unload
-Date: Fri, 23 Mar 2018 10:54:42 +0100
-Message-Id: <20180323094146.843289647@linuxfoundation.org>
+        stable@vger.kernel.org, syzkaller <syzkaller@googlegroups.com>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.14 70/77] IB/mlx5: Fix out-of-bounds read in create_raw_packet_qp_rq
+Date: Fri, 23 Mar 2018 10:54:44 +0100
+Message-Id: <20180323094146.974649817@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,107 +83,205 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+From: Boris Pismenny <borisp@mellanox.com>
 
-commit c666d3be99c000bb889a33353e9be0fa5808d3de upstream.
+commit 2c292dbb398ee46fc1343daf6c3cf9715a75688e upstream.
 
-This patch finishes all outstanding SCSI IO commands (but not other commands,
-e.g., task management) in the shutdown and unload paths.
+Add a check for the length of the qpin structure to prevent out-of-bounds reads
 
-It first waits for the commands to complete (this is done after setting
-'ioc->remove_host = 1 ', which prevents new commands to be queued) then it
-flushes commands that might still be running.
+BUG: KASAN: slab-out-of-bounds in create_raw_packet_qp+0x114c/0x15e2
+Read of size 8192 at addr ffff880066b99290 by task syz-executor3/549
 
-This avoids triggering error handling (e.g., abort command) for all commands
-possibly completed by the adapter after interrupts disabled.
+CPU: 3 PID: 549 Comm: syz-executor3 Not tainted 4.15.0-rc2+ #27 Hardware
+name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.7.5-0-ge51488c-20140602_164612-nilsson.home.kraxel.org 04/01/2014
+Call Trace:
+ dump_stack+0x8d/0xd4
+ print_address_description+0x73/0x290
+ kasan_report+0x25c/0x370
+ ? create_raw_packet_qp+0x114c/0x15e2
+ memcpy+0x1f/0x50
+ create_raw_packet_qp+0x114c/0x15e2
+ ? create_raw_packet_qp_tis.isra.28+0x13d/0x13d
+ ? lock_acquire+0x370/0x370
+ create_qp_common+0x2245/0x3b50
+ ? destroy_qp_user.isra.47+0x100/0x100
+ ? kasan_kmalloc+0x13d/0x170
+ ? sched_clock_cpu+0x18/0x180
+ ? fs_reclaim_acquire.part.15+0x5/0x30
+ ? __lock_acquire+0xa11/0x1da0
+ ? sched_clock_cpu+0x18/0x180
+ ? kmem_cache_alloc_trace+0x17e/0x310
+ ? mlx5_ib_create_qp+0x30e/0x17b0
+ mlx5_ib_create_qp+0x33d/0x17b0
+ ? sched_clock_cpu+0x18/0x180
+ ? create_qp_common+0x3b50/0x3b50
+ ? lock_acquire+0x370/0x370
+ ? __radix_tree_lookup+0x180/0x220
+ ? uverbs_try_lock_object+0x68/0xc0
+ ? rdma_lookup_get_uobject+0x114/0x240
+ create_qp.isra.5+0xce4/0x1e20
+ ? ib_uverbs_ex_create_cq_cb+0xa0/0xa0
+ ? copy_ah_attr_from_uverbs.isra.2+0xa00/0xa00
+ ? ib_uverbs_cq_event_handler+0x160/0x160
+ ? __might_fault+0x17c/0x1c0
+ ib_uverbs_create_qp+0x21b/0x2a0
+ ? ib_uverbs_destroy_cq+0x2e0/0x2e0
+ ib_uverbs_write+0x55a/0xad0
+ ? ib_uverbs_destroy_cq+0x2e0/0x2e0
+ ? ib_uverbs_destroy_cq+0x2e0/0x2e0
+ ? ib_uverbs_open+0x760/0x760
+ ? futex_wake+0x147/0x410
+ ? check_prev_add+0x1680/0x1680
+ ? do_futex+0x3d3/0xa60
+ ? sched_clock_cpu+0x18/0x180
+ __vfs_write+0xf7/0x5c0
+ ? ib_uverbs_open+0x760/0x760
+ ? kernel_read+0x110/0x110
+ ? lock_acquire+0x370/0x370
+ ? __fget+0x264/0x3b0
+ vfs_write+0x18a/0x460
+ SyS_write+0xc7/0x1a0
+ ? SyS_read+0x1a0/0x1a0
+ ? trace_hardirqs_on_thunk+0x1a/0x1c
+ entry_SYSCALL_64_fastpath+0x18/0x85
+RIP: 0033:0x4477b9
+RSP: 002b:00007f1822cadc18 EFLAGS: 00000292 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00000000004477b9
+RDX: 0000000000000070 RSI: 000000002000a000 RDI: 0000000000000005
+RBP: 0000000000708000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 00000000ffffffff
+R13: 0000000000005d70 R14: 00000000006e6e30 R15: 0000000020010ff0
 
-[mauricfo: introduced something in commit message.]
+Allocated by task 549:
+ __kmalloc+0x15e/0x340
+ kvmalloc_node+0xa1/0xd0
+ create_user_qp.isra.46+0xd42/0x1610
+ create_qp_common+0x2e63/0x3b50
+ mlx5_ib_create_qp+0x33d/0x17b0
+ create_qp.isra.5+0xce4/0x1e20
+ ib_uverbs_create_qp+0x21b/0x2a0
+ ib_uverbs_write+0x55a/0xad0
+ __vfs_write+0xf7/0x5c0
+ vfs_write+0x18a/0x460
+ SyS_write+0xc7/0x1a0
+ entry_SYSCALL_64_fastpath+0x18/0x85
 
-Signed-off-by: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Tested-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[mauricfo: backport to linux-4.14.y (a few updates to context lines)]
-Signed-off-by: Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
+Freed by task 368:
+ kfree+0xeb/0x2f0
+ kernfs_fop_release+0x140/0x180
+ __fput+0x266/0x700
+ task_work_run+0x104/0x180
+ exit_to_usermode_loop+0xf7/0x110
+ syscall_return_slowpath+0x298/0x370
+ entry_SYSCALL_64_fastpath+0x83/0x85
+
+The buggy address belongs to the object at ffff880066b99180  which
+belongs to the cache kmalloc-512 of size 512 The buggy address is
+located 272 bytes inside of  512-byte region [ffff880066b99180,
+ffff880066b99380) The buggy address belongs to the page:
+page:000000006040eedd count:1 mapcount:0 mapping:          (null)
+index:0x0 compound_mapcount: 0
+flags: 0x4000000000008100(slab|head)
+raw: 4000000000008100 0000000000000000 0000000000000000 0000000180190019
+raw: ffffea00019a7500 0000000b0000000b ffff88006c403080 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff880066b99180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff880066b99200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff880066b99280: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                         ^
+ ffff880066b99300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff880066b99380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+
+Cc: syzkaller <syzkaller@googlegroups.com>
+Fixes: 0fb2ed66a14c ("IB/mlx5: Add create and destroy functionality for Raw Packet QP")
+Signed-off-by: Boris Pismenny <borisp@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/mpt3sas/mpt3sas_base.c  |    8 ++++----
- drivers/scsi/mpt3sas/mpt3sas_base.h  |    3 +++
- drivers/scsi/mpt3sas/mpt3sas_scsih.c |   10 +++++++++-
- 3 files changed, 16 insertions(+), 5 deletions(-)
+ drivers/infiniband/hw/mlx5/qp.c |   24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
---- a/drivers/scsi/mpt3sas/mpt3sas_base.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
-@@ -5659,14 +5659,14 @@ _base_reset_handler(struct MPT3SAS_ADAPT
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -1130,7 +1130,7 @@ static void destroy_raw_packet_qp_sq(str
+ 	ib_umem_release(sq->ubuffer.umem);
  }
  
- /**
-- * _wait_for_commands_to_complete - reset controller
-+ * mpt3sas_wait_for_commands_to_complete - reset controller
-  * @ioc: Pointer to MPT_ADAPTER structure
-  *
-  * This function waiting(3s) for all pending commands to complete
-  * prior to putting controller in reset.
-  */
--static void
--_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc)
-+void
-+mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc)
+-static int get_rq_pas_size(void *qpc)
++static size_t get_rq_pas_size(void *qpc)
  {
- 	u32 ioc_state;
- 	unsigned long flags;
-@@ -5745,7 +5745,7 @@ mpt3sas_base_hard_reset_handler(struct M
- 			is_fault = 1;
+ 	u32 log_page_size = MLX5_GET(qpc, qpc, log_page_size) + 12;
+ 	u32 log_rq_stride = MLX5_GET(qpc, qpc, log_rq_stride);
+@@ -1146,7 +1146,8 @@ static int get_rq_pas_size(void *qpc)
+ }
+ 
+ static int create_raw_packet_qp_rq(struct mlx5_ib_dev *dev,
+-				   struct mlx5_ib_rq *rq, void *qpin)
++				   struct mlx5_ib_rq *rq, void *qpin,
++				   size_t qpinlen)
+ {
+ 	struct mlx5_ib_qp *mqp = rq->base.container_mibqp;
+ 	__be64 *pas;
+@@ -1155,9 +1156,12 @@ static int create_raw_packet_qp_rq(struc
+ 	void *rqc;
+ 	void *wq;
+ 	void *qpc = MLX5_ADDR_OF(create_qp_in, qpin, qpc);
+-	int inlen;
++	size_t rq_pas_size = get_rq_pas_size(qpc);
++	size_t inlen;
+ 	int err;
+-	u32 rq_pas_size = get_rq_pas_size(qpc);
++
++	if (qpinlen < rq_pas_size + MLX5_BYTE_OFF(create_qp_in, pas))
++		return -EINVAL;
+ 
+ 	inlen = MLX5_ST_SZ_BYTES(create_rq_in) + rq_pas_size;
+ 	in = kvzalloc(inlen, GFP_KERNEL);
+@@ -1236,7 +1240,7 @@ static void destroy_raw_packet_qp_tir(st
+ }
+ 
+ static int create_raw_packet_qp(struct mlx5_ib_dev *dev, struct mlx5_ib_qp *qp,
+-				u32 *in,
++				u32 *in, size_t inlen,
+ 				struct ib_pd *pd)
+ {
+ 	struct mlx5_ib_raw_packet_qp *raw_packet_qp = &qp->raw_packet_qp;
+@@ -1266,7 +1270,7 @@ static int create_raw_packet_qp(struct m
+ 
+ 		if (qp->flags & MLX5_IB_QP_CVLAN_STRIPPING)
+ 			rq->flags |= MLX5_IB_RQ_CVLAN_STRIPPING;
+-		err = create_raw_packet_qp_rq(dev, rq, in);
++		err = create_raw_packet_qp_rq(dev, rq, in, inlen);
+ 		if (err)
+ 			goto err_destroy_sq;
+ 
+@@ -1781,11 +1785,16 @@ static int create_qp_common(struct mlx5_
+ 		qp->flags |= MLX5_IB_QP_LSO;
  	}
- 	_base_reset_handler(ioc, MPT3_IOC_PRE_RESET);
--	_wait_for_commands_to_complete(ioc);
-+	mpt3sas_wait_for_commands_to_complete(ioc);
- 	_base_mask_interrupts(ioc);
- 	r = _base_make_ioc_ready(ioc, type);
- 	if (r)
---- a/drivers/scsi/mpt3sas/mpt3sas_base.h
-+++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
-@@ -1292,6 +1292,9 @@ void mpt3sas_base_update_missing_delay(s
  
- int mpt3sas_port_enable(struct MPT3SAS_ADAPTER *ioc);
- 
-+void
-+mpt3sas_wait_for_commands_to_complete(struct MPT3SAS_ADAPTER *ioc);
++	if (inlen < 0) {
++		err = -EINVAL;
++		goto err;
++	}
 +
+ 	if (init_attr->qp_type == IB_QPT_RAW_PACKET ||
+ 	    qp->flags & MLX5_IB_QP_UNDERLAY) {
+ 		qp->raw_packet_qp.sq.ubuffer.buf_addr = ucmd.sq_buf_addr;
+ 		raw_packet_qp_copy_info(qp, &qp->raw_packet_qp);
+-		err = create_raw_packet_qp(dev, qp, in, pd);
++		err = create_raw_packet_qp(dev, qp, in, inlen, pd);
+ 	} else {
+ 		err = mlx5_core_create_qp(dev->mdev, &base->mqp, in, inlen);
+ 	}
+@@ -1825,6 +1834,7 @@ err_create:
+ 	else if (qp->create_type == MLX5_QP_KERNEL)
+ 		destroy_qp_kernel(dev, qp);
  
- /* scsih shared API */
- u8 mpt3sas_scsih_event_callback(struct MPT3SAS_ADAPTER *ioc, u8 msix_index,
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -3960,7 +3960,7 @@ _scsih_flush_running_cmds(struct MPT3SAS
- 		_scsih_set_satl_pending(scmd, false);
- 		mpt3sas_base_free_smid(ioc, smid);
- 		scsi_dma_unmap(scmd);
--		if (ioc->pci_error_recovery)
-+		if (ioc->pci_error_recovery || ioc->remove_host)
- 			scmd->result = DID_NO_CONNECT << 16;
- 		else
- 			scmd->result = DID_RESET << 16;
-@@ -8243,6 +8243,10 @@ static void scsih_remove(struct pci_dev
- 	unsigned long flags;
- 
- 	ioc->remove_host = 1;
-+
-+	mpt3sas_wait_for_commands_to_complete(ioc);
-+	_scsih_flush_running_cmds(ioc);
-+
- 	_scsih_fw_event_cleanup_queue(ioc);
- 
- 	spin_lock_irqsave(&ioc->fw_event_lock, flags);
-@@ -8313,6 +8317,10 @@ scsih_shutdown(struct pci_dev *pdev)
- 	unsigned long flags;
- 
- 	ioc->remove_host = 1;
-+
-+	mpt3sas_wait_for_commands_to_complete(ioc);
-+	_scsih_flush_running_cmds(ioc);
-+
- 	_scsih_fw_event_cleanup_queue(ioc);
- 
- 	spin_lock_irqsave(&ioc->fw_event_lock, flags);
++err:
+ 	kvfree(in);
+ 	return err;
+ }
