@@ -1,126 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752269AbeCWV7b (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 17:59:31 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:46597 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752152AbeCWV71 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 17:59:27 -0400
-X-Google-Smtp-Source: AG47ELsW98P55+AOGWXrkPv1oseBx5bk0dC6Ywc/ruR5300Hjpg+JHrhe61mK6+In7Ln3Uav/2wA5g==
-From: Eric Dumazet <edumazet@google.com>
-To: x86 <x86@kernel.org>
-Cc: lkml <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        Hugh Dickins <hughd@google.com>
-Subject: [PATCH v3 2/2] x86, cpuid: allow cpuid_read() to schedule
-Date: Fri, 23 Mar 2018 14:58:18 -0700
-Message-Id: <20180323215818.127774-2-edumazet@google.com>
-X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
-In-Reply-To: <20180323215818.127774-1-edumazet@google.com>
-References: <20180323215818.127774-1-edumazet@google.com>
+        id S1752348AbeCWV75 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 17:59:57 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:44276 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752297AbeCWV7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 17:59:54 -0400
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        Stephen Bates <sbates@raithlin.com>
+Cc: Sinan Kaya <okaya@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <3e738f95-d73c-4182-2fa1-8664aafb1ab7@deltatee.com>
+ <703aa92c-0c1c-4852-5887-6f6e6ccde0fb@codeaurora.org>
+ <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+ <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+ <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
+ <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
+ <C90AA66C-FFC6-4CCA-B959-7BBECA65509C@raithlin.com>
+ <20180323215046.GC210003@bhelgaas-glaptop.roam.corp.google.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <dc414fa5-1af9-0ba7-e12e-4cd9df313119@deltatee.com>
+Date: Fri, 23 Mar 2018 15:59:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180323215046.GC210003@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org, sbates@raithlin.com, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I noticed high latencies caused by a daemon periodically reading various
-MSR and cpuid on all cpus. KASAN kernels would see ~10ms latencies
-simply reading one cpuid. Even without KASAN, sending IPI to CPU
-in deep sleep state or blocking hard IRQ in a a long section,
-then waiting for the answer can consume hundreds of usec or more.
 
-Switching to smp_call_function_single_async() and a completion
-allows to reschedule and not burn cpu cycles.
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Hugh Dickins <hughd@google.com>
----
- arch/x86/kernel/cpuid.c | 34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+On 23/03/18 03:50 PM, Bjorn Helgaas wrote:
+> Popping way up the stack, my original point was that I'm trying to
+> remove restrictions on what devices can participate in peer-to-peer
+> DMA.  I think it's fairly clear that in conventional PCI, any devices
+> in the same PCI hierarchy, i.e., below the same host-to-PCI bridge,
+> should be able to DMA to each other.
 
-diff --git a/arch/x86/kernel/cpuid.c b/arch/x86/kernel/cpuid.c
-index 0931a105ffe16cde4640e759efa600b23a756d84..1d300f96df4b316dbe3392c8221467cfd8593272 100644
---- a/arch/x86/kernel/cpuid.c
-+++ b/arch/x86/kernel/cpuid.c
-@@ -40,6 +40,7 @@
- #include <linux/notifier.h>
- #include <linux/uaccess.h>
- #include <linux/gfp.h>
-+#include <linux/completion.h>
- 
- #include <asm/processor.h>
- #include <asm/msr.h>
-@@ -47,19 +48,27 @@
- static struct class *cpuid_class;
- static enum cpuhp_state cpuhp_cpuid_state;
- 
-+struct cpuid_regs_done {
-+	struct cpuid_regs regs;
-+	struct completion done;
-+};
-+
- static void cpuid_smp_cpuid(void *cmd_block)
- {
--	struct cpuid_regs *cmd = (struct cpuid_regs *)cmd_block;
-+	struct cpuid_regs_done *cmd = cmd_block;
-+
-+	cpuid_count(cmd->regs.eax, cmd->regs.ecx,
-+		    &cmd->regs.eax, &cmd->regs.ebx,
-+		    &cmd->regs.ecx, &cmd->regs.edx);
- 
--	cpuid_count(cmd->eax, cmd->ecx,
--		    &cmd->eax, &cmd->ebx, &cmd->ecx, &cmd->edx);
-+	complete(&cmd->done);
- }
- 
- static ssize_t cpuid_read(struct file *file, char __user *buf,
- 			  size_t count, loff_t *ppos)
- {
- 	char __user *tmp = buf;
--	struct cpuid_regs cmd;
-+	struct cpuid_regs_done cmd;
- 	int cpu = iminor(file_inode(file));
- 	u64 pos = *ppos;
- 	ssize_t bytes = 0;
-@@ -68,19 +77,28 @@ static ssize_t cpuid_read(struct file *file, char __user *buf,
- 	if (count % 16)
- 		return -EINVAL;	/* Invalid chunk size */
- 
-+	init_completion(&cmd.done);
- 	for (; count; count -= 16) {
--		cmd.eax = pos;
--		cmd.ecx = pos >> 32;
--		err = smp_call_function_single(cpu, cpuid_smp_cpuid, &cmd, 1);
-+		call_single_data_t csd = {
-+			.func = cpuid_smp_cpuid,
-+			.info = &cmd,
-+		};
-+
-+		cmd.regs.eax = pos;
-+		cmd.regs.ecx = pos >> 32;
-+
-+		err = smp_call_function_single_async(cpu, &csd);
- 		if (err)
- 			break;
--		if (copy_to_user(tmp, &cmd, 16)) {
-+		wait_for_completion(&cmd.done);
-+		if (copy_to_user(tmp, &cmd.regs, 16)) {
- 			err = -EFAULT;
- 			break;
- 		}
- 		tmp += 16;
- 		bytes += 16;
- 		*ppos = ++pos;
-+		reinit_completion(&cmd.done);
- 	}
- 
- 	return bytes ? bytes : err;
--- 
-2.17.0.rc0.231.g781580f067-goog
+Yup, we are working on this.
+
+> The routing behavior of PCIe is supposed to be compatible with
+> conventional PCI, and I would argue that this effectively requires
+> multi-function PCIe devices to have the internal routing required to
+> avoid the route-to-self issue.
+
+That would be very nice but many devices do not support the internal
+route. We've had to work around this in the past and as I mentioned
+earlier that NVMe devices have a flag indicating support. However, if a
+device wants to be involved in P2P it must support it and we can exclude
+devices that don't support it by simply not enabling their drivers.
+
+Logan
