@@ -1,78 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752119AbeCWUtr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 16:49:47 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:40618 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751747AbeCWUtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 16:49:45 -0400
-Date: Fri, 23 Mar 2018 21:49:39 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH net-next 3/8] net: mscc: Add MDIO driver
-Message-ID: <20180323204939.GS24361@lunn.ch>
-References: <20180323201117.8416-1-alexandre.belloni@bootlin.com>
- <20180323201117.8416-4-alexandre.belloni@bootlin.com>
+        id S1752163AbeCWUum (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 16:50:42 -0400
+Received: from mail-io0-f169.google.com ([209.85.223.169]:36335 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbeCWUuk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 16:50:40 -0400
+X-Google-Smtp-Source: AG47ELu7SVRv8CGSOagy705KOKoVogbExrxiyXZU1BUPD8EfE+fjewlB9MqOf2JR5WRb2WzaSvqqJAh4Y/UgD8IMeiI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180323201117.8416-4-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180323201634.GA16350@gmail.com>
+References: <CACT4Y+babw_2NJa+oym2VN7-Z4Bt_rZx2sMi68AD+1KzNpr=KQ@mail.gmail.com>
+ <CA+55aFzxDYGLUPY802rJN=wgJ1aEZHLRE+W8J82eFz2nzKOMBg@mail.gmail.com>
+ <CACT4Y+YDqJMb4mC6c--Ku=ZL9MpELmUKMXe4uQJ6H0av2FJC9w@mail.gmail.com> <20180323201634.GA16350@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 23 Mar 2018 13:50:39 -0700
+X-Google-Sender-Auth: Ubd8lAYnPDl5yDLVASCKdMWucYA
+Message-ID: <CA+55aFwZpMB=VUTCNUgc4dcCEy9_T4iE0R0pAfDets=zDFJunQ@mail.gmail.com>
+Subject: Re: syzbot dashboard
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 09:11:12PM +0100, Alexandre Belloni wrote:
-> Add a driver for the Microsemi MII Management controller (MIIM) found on
-> Microsemi SoCs.
-> On Ocelot, there are two controllers, one is connected to the internal
-> PHYs, the other one can communicate with external PHYs.
+On Fri, Mar 23, 2018 at 1:16 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+>
+> A compromise could be to remove the raw.log from the emails, and send the config
+> in 'defconfig' format rather than the full config
 
-Hi Alexandre
+I really don't think the config is very legible, and isn't something
+that people will look at to judge whether it's intrresting or not.
+It's still "many hundreds of lines of line noise"
 
-This looks to be standalone. Such drivers we try to put in
-drivers/net/phy.
+And it shouldn't really be part of the consideration whether a bug is
+really worth looking at or not anyway, although *after* you've found
+the bug as a developer, you may decide "ok, that configuration isn't
+valid, so I should just disallow it in Kconfig". But that's still a
+bugfix.
 
-> +static int mscc_miim_read(struct mii_bus *bus, int mii_id, int regnum)
-> +{
-> +	struct mscc_miim_dev *miim = bus->priv;
-> +	u32 val;
-> +	int ret;
-> +
-> +	mutex_lock(&miim->lock);
+So I think the config can stay purely on the web (for when you go "so
+how do I *reproduce* this?") along with the actual reproducer and the
+full logs.
 
-What are you locking against here?
+I'd rather make the emails be small and legible, and contain the
+minimum amount of information.
 
-And you don't appear to initialize the mutex anywhere.
+Because I really do *not* need a few hundred emails from some
+automated source that each have a roughly thousand-line config
+attachements.
 
-> +static int mscc_miim_reset(struct mii_bus *bus)
-> +{
-> +	struct mscc_miim_dev *miim = bus->priv;
-> +	int i;
-> +
-> +	if (miim->phy_regs) {
-> +		writel(0, miim->phy_regs + MSCC_PHY_REG_PHY_CFG);
-> +		writel(0x1ff, miim->phy_regs + MSCC_PHY_REG_PHY_CFG);
-> +		mdelay(500);
-> +	}
-> +
-> +	for (i = 0; i < PHY_MAX_ADDR; i++) {
-> +		if (mscc_miim_read(bus, i, MII_PHYSID1) < 0)
-> +			bus->phy_mask |= BIT(i);
-> +	}
+An email with 50 lines of THE ACTUAL DECODED OOPS? Sure. That's
+critical information. That doesn't make me go "why does this stupid
+bot spew garbage at me"?
 
-Why do this? Especially so for the external bus, where the PHYs might
-have a GPIO reset line, and won't respond until the gpio is
-released. The core code does that just before it scans the bus, or
-just before it scans the particular address on the bus, depending on
-the scope of the GPIO.
-
-Otherwise, pretty good :-)
-
-	   Andrew
+              Linus
