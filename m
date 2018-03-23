@@ -1,23 +1,23 @@
 Return-Path: <jacob.jun.pan@linux.intel.com>
-X-Google-Smtp-Source: AG47ELuXrQfvKLFiPwTwCQRYcvHC7EXalIhmKLhaRI9x5cTkBGjLJ9Mg0GjcXkRkOHloswmNTZaW
-ARC-Seal: i=1; a=rsa-sha256; t=1521774605; cv=none;
+X-Google-Smtp-Source: AG47ELtoIyUfVuEkgiG3gJxogeRj5ACOrOsts8SQLN7k0c5snL4UXPRtWyDb5KKtljsYVqlzOWry
+ARC-Seal: i=1; a=rsa-sha256; t=1521774604; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZhGpliRiJhsDjuSSEyE1yjBQKP5oN6ej1LEQrlHwkORBlSH7CaWba0/5jZdtxcZLN2
-         vq3EvOlZ7jXsbAa9BSW9egOLiNXhKeu48lvrOdlKvh4Dr/oFhrgoiSiSdz9b+AVQqD2x
-         7Hb4eUOlFtt5rnBRzlofq6bzrTb9LiAgWdOwyNVpPCgmT97zidve6kasUB/fH9wEeu6b
-         mgvKb2Mv3KSzeWiK76UI4QUX1Zc/eoPOt0+xLIylsae5b6FY88wE3s0WSt6X1zFmHhoN
-         uGB5GC7FzWPX9vm48XdQlU2C6pekHb8MeY8hb9XV2RP9mx0qeS/DZRgoSgbUHjaRapCz
-         9X4w==
+        b=bUmBTFDXA9ssoNJOA8OdYcOxR3cO9E6wsXpVaGK8Y8Kp2b6N8YLFrP7YYy4tPUb24p
+         VHFkfFixzBAqP5yxnoyrUNdyclb5Du46mbHsja2EROqUxsyvKE/grnhJx6vMe4ScxHRW
+         aBNOY2IdLTP0WRY8OO0Juu8X68krzTyZznhbn26cCfrRMUuSpU6K6FYdkE3kFi2yRCp2
+         0he/ef3GkS07HkzuoJzcMYqMEgufvF0X3kPgxGEbhTfkG1HhzJ3A0Sxq3kxV4246oGm4
+         URI5GelTW+SfRErRELSNqFM9+ZnTPShmzRHamRXd6ZNQMlBOhWy4wGu8LDV5Vw/+xldh
+         9rRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=K8r+BsQYX9DObV6NpZx5F9PCQMNv7ZekW8qT5g8Qn0o=;
-        b=GJJi0W4Y3Vf1+av9S3s89jEeM214c3wMB9rQo/tyCDKFXtcI4RNCLGMk9Oy7X43qqb
-         AxPaWvY7XQqn/XXObOA/n9Dc6HeMaU9aFQwKrZd15I3u9BAOjx4TSlPvvDxZO95kutjR
-         ebpGMjkvaVHQZdKbsrTeUicdAq0GYTHfoRNE1iHcByOIaFYvX4CQSrO9HZF6icFshg/1
-         6LoyPQPXasnGhAPTZx2+KnYWhIi2ogp6htWR9zEFCF40HWP48E38sIqayDWVxxkkoN0n
-         uT8mFqqY6Ix44hebPKEXOZkMnvSmNHwXK9/XE2RjPkgM7GX+niSByxPGHLfRrwk+EGNl
-         DnJg==
+        bh=Wu9ysDpyI4Kl5QVS7lW4a5OwoMW1MhCDYBiAy+uCDjw=;
+        b=A2/p0efK8C+z4rHZKo9MQq3OpT683LD2GCXHRsUliNGBfxHhtA1hyKJS6wNd/yTVRe
+         qrN1PpLFqAMaL20AKxNf71ltSdnwQjC+UsjC9do6CsmBnNy32bsMlwMqYOHYHkNc8U8j
+         7OqQHCFaXZUHOnQdxzUplbc1rvLVVuMhodDwHYBG7vIKBQWp/2TmNyxNRJD57upeQtgG
+         37q4787rge7gtxUraOxix/SNN5IxRbvpUOteee7TaxWPb1bbAJD1Af7UgGEsfvZtNrfx
+         f2W0Y1bTVArRxvbaq3ET7E5UWRwii2FlW+weCp4kZ/CK6V76FdOPZq3ft1MZAIQLYqqp
+         Xl8w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,348,1517904000";
-   d="scan'208";a="26315987"
+   d="scan'208";a="26315977"
 From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 To: iommu@lists.linux-foundation.org,
 	LKML <linux-kernel@vger.kernel.org>,
@@ -43,152 +43,65 @@ Cc: "Liu, Yi L" <yi.l.liu@intel.com>,
 	Jean Delvare <khali@linux-fr.org>,
 	"Christoph Hellwig" <hch@infradead.org>,
 	Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v4 08/22] iommu/vt-d: support flushing more translation cache types
-Date: Thu, 22 Mar 2018 20:12:00 -0700
-Message-Id: <1521774734-48433-9-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 06/22] iommu/vt-d: add definitions for PFSID
+Date: Thu, 22 Mar 2018 20:11:58 -0700
+Message-Id: <1521774734-48433-7-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521774734-48433-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1521774734-48433-1-git-send-email-jacob.jun.pan@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595696328986822181?=
-X-GMAIL-MSGID: =?utf-8?q?1595696328986822181?=
+X-GMAIL-THRID: =?utf-8?q?1595696327701556858?=
+X-GMAIL-MSGID: =?utf-8?q?1595696327701556858?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When Shared Virtual Memory is exposed to a guest via vIOMMU, extended
-IOTLB invalidation may be passed down from outside IOMMU subsystems.
-This patch adds invalidation functions that can be used for additional
-translation cache types.
+When SRIOV VF device IOTLB is invalidated, we need to provide
+the PF source ID such that IOMMU hardware can gauge the depth
+of invalidation queue which is shared among VFs. This is needed
+when device invalidation throttle (DIT) capability is supported.
+
+This patch adds bit definitions for checking and tracking PFSID.
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/dmar.c        | 44 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/intel-iommu.h | 21 +++++++++++++++++++--
- 2 files changed, 63 insertions(+), 2 deletions(-)
+ include/linux/intel-iommu.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 78f7e70..2ed4979 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1339,6 +1339,18 @@ void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 	qi_submit_sync(&desc, iommu);
- }
- 
-+void qi_flush_eiotlb(struct intel_iommu *iommu, u16 did, u64 addr, u32 pasid,
-+		unsigned int size_order, u64 granu, bool global)
-+{
-+	struct qi_desc desc;
-+
-+	desc.low = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
-+		QI_EIOTLB_GRAN(granu) | QI_EIOTLB_TYPE;
-+	desc.high = QI_EIOTLB_ADDR(addr) | QI_EIOTLB_GL(global) |
-+		QI_EIOTLB_IH(0) | QI_EIOTLB_AM(size_order);
-+	qi_submit_sync(&desc, iommu);
-+}
-+
- void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
- 			u16 qdep, u64 addr, unsigned mask)
- {
-@@ -1360,6 +1372,38 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
- 	qi_submit_sync(&desc, iommu);
- }
- 
-+void qi_flush_dev_eiotlb(struct intel_iommu *iommu, u16 sid,
-+		u32 pasid,  u16 qdep, u64 addr, unsigned size, u64 granu)
-+{
-+	struct qi_desc desc;
-+
-+	desc.low = QI_DEV_EIOTLB_PASID(pasid) | QI_DEV_EIOTLB_SID(sid) |
-+		QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE;
-+	desc.high |= QI_DEV_EIOTLB_GLOB(granu);
-+
-+	/* If S bit is 0, we only flush a single page. If S bit is set,
-+	 * The least significant zero bit indicates the size. VT-d spec
-+	 * 6.5.2.6
-+	 */
-+	if (!size)
-+		desc.high = QI_DEV_EIOTLB_ADDR(addr) & ~QI_DEV_EIOTLB_SIZE;
-+	else {
-+		unsigned long mask = 1UL << (VTD_PAGE_SHIFT + size);
-+
-+		desc.high = QI_DEV_EIOTLB_ADDR(addr & ~mask) | QI_DEV_EIOTLB_SIZE;
-+	}
-+	qi_submit_sync(&desc, iommu);
-+}
-+
-+void qi_flush_pasid(struct intel_iommu *iommu, u16 did, u64 granu, int pasid)
-+{
-+	struct qi_desc desc;
-+
-+	desc.high = 0;
-+	desc.low = QI_PC_TYPE | QI_PC_DID(did) | QI_PC_GRAN(granu) | QI_PC_PASID(pasid);
-+
-+	qi_submit_sync(&desc, iommu);
-+}
- /*
-  * Disable Queued Invalidation interface.
-  */
 diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 1c9375b..245ac7e 100644
+index e4a16dc..0e3b618 100644
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -262,6 +262,10 @@ enum {
- #define QI_PGRP_RESP_TYPE	0x9
- #define QI_PSTRM_RESP_TYPE	0xa
+@@ -114,6 +114,7 @@
+  * Extended Capability Register
+  */
  
-+#define QI_DID(did)		(((u64)did & 0xffff) << 16)
-+#define QI_DID_MASK		GENMASK(31, 16)
-+#define QI_TYPE_MASK		GENMASK(3, 0)
-+
- #define QI_IEC_SELECTIVE	(((u64)1) << 4)
- #define QI_IEC_IIDEX(idx)	(((u64)(idx & 0xffff) << 32))
- #define QI_IEC_IM(m)		(((u64)(m & 0x1f) << 27))
-@@ -293,8 +297,9 @@ enum {
- #define QI_PC_DID(did)		(((u64)did) << 16)
- #define QI_PC_GRAN(gran)	(((u64)gran) << 4)
++#define ecap_dit(e)		((e >> 41) & 0x1)
+ #define ecap_pasid(e)		((e >> 40) & 0x1)
+ #define ecap_pss(e)		((e >> 35) & 0x1f)
+ #define ecap_eafs(e)		((e >> 34) & 0x1)
+@@ -284,6 +285,7 @@ enum {
+ #define QI_DEV_IOTLB_SID(sid)	((u64)((sid) & 0xffff) << 32)
+ #define QI_DEV_IOTLB_QDEP(qdep)	(((qdep) & 0x1f) << 16)
+ #define QI_DEV_IOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
++#define QI_DEV_IOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xff0) << 48))
+ #define QI_DEV_IOTLB_SIZE	1
+ #define QI_DEV_IOTLB_MAX_INVS	32
  
--#define QI_PC_ALL_PASIDS	(QI_PC_TYPE | QI_PC_GRAN(0))
--#define QI_PC_PASID_SEL		(QI_PC_TYPE | QI_PC_GRAN(1))
-+/* PASID cache invalidation granu */
-+#define QI_PC_ALL_PASIDS	0
-+#define QI_PC_PASID_SEL		1
+@@ -308,6 +310,7 @@ enum {
+ #define QI_DEV_EIOTLB_PASID(p)	(((u64)p) << 32)
+ #define QI_DEV_EIOTLB_SID(sid)	((u64)((sid) & 0xffff) << 16)
+ #define QI_DEV_EIOTLB_QDEP(qd)	((u64)((qd) & 0x1f) << 4)
++#define QI_DEV_EIOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xff0) << 48))
+ #define QI_DEV_EIOTLB_MAX_INVS	32
  
- #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
- #define QI_EIOTLB_GL(gl)	(((u64)gl) << 7)
-@@ -304,6 +309,10 @@ enum {
- #define QI_EIOTLB_DID(did)	(((u64)did) << 16)
- #define QI_EIOTLB_GRAN(gran) 	(((u64)gran) << 4)
- 
-+/* QI Dev-IOTLB inv granu */
-+#define QI_DEV_IOTLB_GRAN_ALL		0
-+#define QI_DEV_IOTLB_GRAN_PASID_SEL	1
-+
- #define QI_DEV_EIOTLB_ADDR(a)	((u64)(a) & VTD_PAGE_MASK)
- #define QI_DEV_EIOTLB_SIZE	(((u64)1) << 11)
- #define QI_DEV_EIOTLB_GLOB(g)	((u64)g)
-@@ -332,6 +341,7 @@ enum {
- #define QI_RESP_INVALID		0x1
- #define QI_RESP_FAILURE		0xf
- 
-+/* QI EIOTLB inv granu */
- #define QI_GRAN_ALL_ALL			0
- #define QI_GRAN_NONG_ALL		1
- #define QI_GRAN_NONG_PASID		2
-@@ -477,8 +487,15 @@ extern void qi_flush_context(struct intel_iommu *iommu, u16 did, u16 sid,
- 			     u8 fm, u64 type);
- extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 			  unsigned int size_order, u64 type);
-+extern void qi_flush_eiotlb(struct intel_iommu *iommu, u16 did, u64 addr,
-+			u32 pasid, unsigned int size_order, u64 type, bool global);
- extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
- 			u16 qdep, u64 addr, unsigned mask);
-+
-+extern void qi_flush_dev_eiotlb(struct intel_iommu *iommu, u16 sid,
-+			u32 pasid, u16 qdep, u64 addr, unsigned size, u64 granu);
-+extern void qi_flush_pasid(struct intel_iommu *iommu, u16 did, u64 granu, int pasid);
-+
- extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
- 
- extern int dmar_ir_support(void);
+ #define QI_PGRP_IDX(idx)	(((u64)(idx)) << 55)
+@@ -440,6 +443,7 @@ struct device_domain_info {
+ 	struct list_head global; /* link to global list */
+ 	u8 bus;			/* PCI bus number */
+ 	u8 devfn;		/* PCI devfn number */
++	u16 pfsid;		/* SRIOV physical function source ID */
+ 	u8 pasid_supported:3;
+ 	u8 pasid_enabled:1;
+ 	u8 pri_supported:1;
 -- 
 2.7.4
