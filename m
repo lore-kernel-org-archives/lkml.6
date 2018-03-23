@@ -1,54 +1,57 @@
 Return-Path: <Adam.Thomson.Opensource@diasemi.com>
-X-Google-Smtp-Source: AG47ELuTnI7PMfS2VazvDiyM/CEE54N7yLmvDHkWGFH3wbA8hl7NEGskTtYQAOOGT2KcWHhaCp5h
-ARC-Seal: i=1; a=rsa-sha256; t=1521799941; cv=none;
+X-Google-Smtp-Source: AG47ELsUGZgXUzq8MhfkBy+5bqCFIU0G56iTg5oNKB4p+O8hzlNvLHa5vNd69Z8Idtvo5+CfISzd
+ARC-Seal: i=1; a=rsa-sha256; t=1521799944; cv=none;
         d=google.com; s=arc-20160816;
-        b=ST1lTsNF4a2QZ/Om/7QINT3vekPOosbvJ11Q1duVCNMrtOJ6IVuK++Wyotx6zwx7cc
-         QXLDl/hC5rUhMU9v2VyqM1TEkUSnejnNzJ3V7jOFzMMSdAr0Ww3bQ9FQiW4W5glRqKy2
-         5e7bIcYyaFK7dGmKUrhRH1Go7Yfg0sjviEv3f4z2mX9IYIB9wTN4AmYkA7qRdi7rHHag
-         Nxo+i/lvHTHEx/FVzFUApBWu/vIqPhxOYAHYiaV76I5pEptBhine1m+HQwJyPP6Yc3Ax
-         R/rF63BIp/9NsBWn/uYaibOtQm0zEywHQ+HXwErbU3ox3nCl6csP5TMqrPAG0pxaDNC8
-         qRMg==
+        b=gdazs0rnNukCP/CGPyhuEgoMTq7Yer+F6LdW9wmhAq5InA1x7odRa7tj42QzhT0QSm
+         CpslR3cff3lTbg38Zb5Yg6Q3Ic4MCvfGI15FCAk0DhFidnY9N5MJntGB63sbFX44d2p4
+         X4SfXTn9yL0+00suG9qHsas9mqHsie7uF/nFCs1g3LrMVvYgg6lU1TpH0YcSeLPQUxdW
+         jG4a7vWeLhePUF7Mb7+TMoUQDbIw5ekXgqIt+xdqkxCZiqHaiq4ZM1t34Ah3Ey5D2/vY
+         SovTuI/kSGqwzPig5AFDfwiKOES3M5vVn+w2j8e78qi9bCwyxI6ViaVxpGO2ocdD0avT
+         hm8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:cc:to:subject:date:from:message-id
-         :arc-authentication-results;
-        bh=TjijfiyF3jaJTj4N9c/crpTf1PRv0UXLuTT8DwojBvI=;
-        b=SpkpePIAqHdD4HHOl7vQ0FJfsnD/laRRI8D15/U0mY/O1NZtCYCMBcHF/d6YTlmF73
-         +UoQgYPQe6jIgKuslKarhxlLGMXldwjAHM70+1TO32V89VZrP2RYGP0++5fdlmAfMdZ3
-         8maJu5O3KwQApwZ/uy1pfG6mRTG2bgScgjrXf65Y6pOo/3y4PxneEqiLxLr3lXM8OLUN
-         dzbseGOxMIycI0w8OjisuYxQrMjWpInAOSc8YRyDtO/hyj4PhQfgg/Cu1OBpzTpSdZsg
-         0jfolxrjmwEm+JgWciZXlYPeX8rwbFGua3tcq+9x7Je8S/JqPAxdkZbo1NkAce+v1JPq
-         IO+A==
+        h=mime-version:cc:to:subject:date:from:references:in-reply-to
+         :message-id:arc-authentication-results;
+        bh=tG09lClptmkq1r46ZjfEvaP1UVhoySqs8Vk9mknnCsw=;
+        b=pGVSZAyKEaF2iGSpyZpIlvTbvqm65qMjgtBpaOGFaeoGaMDTChi5FdaX3wzq0HPZar
+         QbO4fTEk+dFaTGXvt8NFxP8vv5qcQLXq8AhooSTO28x9OoRZF1JXsNr9oWcsKuK3QWh+
+         Wu3mwI37AF7Wr9tN+zjcZjtoasLwHPDQogm+O74U7kGipP0ZV/nWDFGnDaHwmG8CD0F1
+         hLMIsk6lM5gQIas8q5Kzd5zLd/JXyldmTfxL+Sxxk68llHrzyAf2WGWUMndWa3O9EtlZ
+         gfeOPPfrTsMygbnhfG/nC5+vLzPXn8V7XoU1iYOCMnklB0I1V9OJgf5pkG9jQWTPnGGm
+         9Xyg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 85.158.142.112 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
+       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 85.158.142.2 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=diasemi.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 85.158.142.112 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
+       spf=pass (google.com: domain of adam.thomson.opensource@diasemi.com designates 85.158.142.2 as permitted sender) smtp.mailfrom=Adam.Thomson.Opensource@diasemi.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=diasemi.com
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHIsWRWlGSWpSXmKPExsUSt3OpsS7L5S1
-  RBuvmqVg0L17PZvHm+HQmi67VO1ksrh3rZbK4vGsOm8Xn3iOMFouWtTJbPFl4hsni9O4SB06P
-  Tas62TzmnQz02D93DbvHxnc7mDze77vK5rHzewO7x+dNcgHsUayZeUn5FQmsGbPPPGYvmKxW8
-  a3jE3sD4z65LkYuDiGB9YwSvzZPYO9i5ARyKiQevb7OBmLzCrhJzP9/EMxmE7CQmHziAZjNIq
-  AqcfDyF0YQW1jASeL8nPtMIINEBN4zSnx6/IEFJMEsUCfR+/stC8QgQYmTM59AxSUkDr54wQy
-  xzEDi9IJGsLiEgL3E9PdXgeIcQLa+ROOxWIiwocT3Wd+gSswlZp3dwTaBkX8WkqmzkExdwMi0
-  itEyqSgzPaMkNzEzR9fQwEDX0NBY11TX0NJcL7FKN0kvtVQ3OTWvpCgRKKuXWF6sV1yZm5yTo
-  peXWrKJERgXDECwg3HTl8RDjJIcTEqivJnHt0QJ8SXlp1RmJBZnxBeV5qQWH2KU4eBQkuDluQ
-  SUEyxKTU+tSMvMAUYoTFqCg0dJhFcLJM1bXJCYW5yZDpE6xajLcePF6zZmIZa8/LxUKXFefpA
-  iAZCijNI8uBGwZHGJUVZKmJcR6CghnoLUotzMElT5V4ziHIxKwrzfLgJN4cnMK4Hb9AroCCag
-  I3ymgB1RkoiQkmpg3B/45MHzI0/N+epi6hY6Vl1QD3OJP3BiQoctR2rA0qP//CXc29STeVIyl
-  CREFJfVNqVLixQvCl00c6bHw9z1vzjUmL4xyTp+2v59RlX2AuWjTLtrdzVaTFh59VKT0ra5P4
-  q+JF4T90uf/P9/j8oWu02My/efamH8u6WoQPNWC+N6oVDFCTM0lViKMxINtZiLihMBnPV5axE
-  DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMKsWRWlGSWpSXmKPExsUSt3OpsS775S1
+  RBvceSFk0L17PZvHm+HQmi67VO1ksrh3rZbK4vGsOm8Xn3iOMFouWtTJbPFl4hsni9O4SB06P
+  Tas62TzmnQz02D93DbvHxnc7mDze77vK5rHzewO7x+dNcgHsUayZeUn5FQmsGc86WAr+l1dsf
+  /yTvYHxcWoXIxeHkMB6Rom2Pf2sXYycQE6FRP/JV4xdjBwcvAKZEu/3G4KEOQXcJe697GQCCQ
+  sJuEns+cQMEmYTsJCYfOIBG4jNIqAq0bj7OlhcWCBKYv75I4wg40UE3jNKfHr8gQUkwSxQJ9H
+  7+y2YzSsgKHFy5hOouITEwRcvmCFOMJA4vaARLC4hYC8x/f1VZpC9EgL6Eo3HYiHChhLfZ32D
+  KjGXmHV2B9sERsFZSKbOQjJ1ASPTKkbLpKLM9IyS3MTMHF1DAwNdQ0NjXSNdI0NjvcQq3US91
+  FLd5NS8kqJEoKxeYnmxXnFlbnJOil5easkmRmAEMQDBDsbDZxMPMUpyMCmJ8mYe3xIlxJeUn1
+  KZkVicEV9UmpNafIhRhoNDSYKX5xJQTrAoNT21Ii0zBxjLMGkJDh4lEV4tkDRvcUFibnFmOkT
+  qFKMux40Xr9uYhVjy8vNSpcR5+UGKBECKMkrz4EbA0solRlkpYV5GoKOEeApSi3IzS1DlXzGK
+  czAqCfN+uwg0hSczrwRu0yugI5iAjvCZAnZESSJCSqqB0fTLcs/Slyf1/snu6/+xwITjE8vFN
+  kunPd5ZC5l0JhX+Mz56a67ALnd/2QK+zYu5OxjOu9uq8V1c8DXygvv2hL9Hf28QmCB9xubcsd
+  ApgU/8/yjdEcrumuiy7aDayo0/398yyJx0Ytu6K4v83SfWL/6YECC1RMHV65XlG245a8H4Azv
+  3h35vklFiKc5INNRiLipOBABM+5FfJgMAAA==
 X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-26.tower-239.messagelabs.com!1521799940!577028!1
+X-Msg-Ref: server-30.tower-223.messagelabs.com!1521799943!673353!1
 X-Originating-IP: [94.185.165.51]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.9.15; banners=-,-,-
 X-VirusChecked: Checked
-Message-ID: <cover.1521799705.git.Adam.Thomson.Opensource@diasemi.com>
+Message-ID: <0a26f379c29d65b6e0fa416a4b73aea010b9f718.1521799705.git.Adam.Thomson.Opensource@diasemi.com>
+In-Reply-To: <cover.1521799705.git.Adam.Thomson.Opensource@diasemi.com>
+References: <cover.1521799705.git.Adam.Thomson.Opensource@diasemi.com>
 From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date: Fri, 23 Mar 2018 10:12:19 +0000
-Subject: [PATCH v7 0/6] typec: tcpm: Add sink side support for PPS
+Date: Fri, 23 Mar 2018 10:12:21 +0000
+Subject: [PATCH v7 2/6] Documentation: power: Initial effort to document
+ power_supply ABI
 To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Guenter Roeck
 	<linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Sebastian Reichel <sre@kernel.org>, Hans de Goede <hdegoede@redhat.com>, Jun
@@ -62,106 +65,484 @@ X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
 X-KSE-Antivirus-Interceptor-Info: scan successful
 X-KSE-Antivirus-Info: Clean, bases: 23/03/2018 08:40:00
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595722895403408333?=
-X-GMAIL-MSGID: =?utf-8?q?1595722895403408333?=
+X-GMAIL-THRID: =?utf-8?q?1595722898272542995?=
+X-GMAIL-MSGID: =?utf-8?q?1595722898272542995?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch set adds sink side support for the PPS feature introduced in the
-USB PD 3.0 specification.
+This commit adds generic ABI information regarding power_supply
+properties. This is an initial attempt to try and align the usage
+of these properties between drivers. As part of this commit,
+common Battery and USB related properties have been listed.
 
-The source PPS supply is represented using the Power Supply framework to provide
-access and control APIs for dealing with it's operating voltage and current,
-and switching between a standard PDO and PPS APDO operation. During standard PDO
-operation the voltage and current is read-only, but for APDO PPS these are
-writable as well to allow for control.
-
-It should be noted that the keepalive for PPS is not handled within TCPM. The
-expectation is that the external user will be required to ensure re-requests
-occur regularly to ensure PPS remains and the source does not hard reset.
-
-Changes in v7:
- - Further tidy up with bracket usage and unwanted initialisation.
- - Stop using else if statement after break.
- - Added NULL checking of psy_name after devm_kzalloc().
- - Reinstate PD_ROLE_SWAP_TIMEOUT and revert role swap functions to use this.
- - Add PD_PPS_CTRL_TIMEOUT for PPS related control functions.
-
-Changes in v6:
- - Remove unnecessary use of 'data' variable and associated kzalloc/kfree call
-   for extended message handling.
- - Add patch for error checking psy_desc struct in psy register code.
- - Add error checking of usb_type property in psy register code.
- - Cosmetic () and initialisation changes as requested by Guenter.
- - Removed Acked-by and Reviewed-by, from Heikki and Sebastian respectively, on
-   patch 04 as there have been changes to error handling with regards to
-   usb_type, so didn't feel appropriate to keep them.
-
-Changes in v5:
- - Rebase on branch with 'Revert "typec: tcpm: Only request matching pdos"' and
-   header changes already included.
- - Update power_supply registration to make power_supply names unique per port,
-   to avoid errors creating duplicate psy instances. New name uses port
-   dev name as a suffix.
- - Renamed 'connected_type' psy property to 'usb_type', as requested by
-   maintainer.
- - Added initial attempt at generic ABI documentation for common psy class
-   properties for Battery and USB type supplies.
- - Small update to PPS APDO selection code to limit maximum current requested
-   based on sink maximum allowed current. Have left Heikki's 'Acked-by' tag as
-   it's a minor change, but can remove if that's not deemed appropriate.
-
-Changes in v4:
- - For PD 3.0 definitions patch, make it benign with regards to existing TCPM
-   code so build isn't broken if this one patch is applied, as suggested by
-   kbuild robot. Update for dynamic revision is moved to be part of sink side
-   PPS support patch.
- - Use PTR_ERR_OR_ZERO macro to simplify return of devm_tcpm_psy_register()
-   function, as suggested by kbuild robot.
- - Make devm_tcpm_psy_register() static as not used outside this file.
-
-Changes in v3:
- - Drop 'RFC' from patch series titles
- - Rename PPS related defines to be PPS specific rather than generic APDO titles
- - Update source caps logging to only print PPS APDOs, and for others report as
-   undefined.
- - Add ABI documentation for tcpm-source-psy sysfs properties
- - Rebase PDO selection on top of 'typec: tcpm: Only request matching pdos'
-   patch.
- - Update capabilities validation introduced in
-   'typec: tcpm: Validate source and sink caps' to support PPS APDOs.
- - Dropped power_supply 'type' property update for PPS addition
- - Added 'connected_type' property to power_supply framework, to support
-   supplies which can report multiple connected types (e.g. USB), as discussed
-   with Heikki.
-
-Changes in v2:
- - Use USB_PD and usb_pd prefixes for macros and inline functions in headers.
- - Negotiate spec revision of PD headers during initial contract agreement.
- - New headers now use SPDX tags for referencing correct license.
-
-NOTE: Code changes based on usb-next (027bd6cafd9a1e3a109b5e5682c85ac84e804a8d)
-
-Adam Thomson (6):
-  typec: tcpm: Add core support for sink side PPS
-  Documentation: power: Initial effort to document power_supply ABI
-  power: supply: Add error checking of psy desc during registration
-  power: supply: Add 'usb_type' property and supporting code
-  typec: tcpm: Represent source supply through power_supply
-  typec: tcpm: Add support for sink PPS related messages
-
- Documentation/ABI/testing/sysfs-class-power | 455 ++++++++++++++
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+---
+ Documentation/ABI/testing/sysfs-class-power | 443 ++++++++++++++++++++++++++++
  MAINTAINERS                                 |   1 +
- drivers/power/supply/power_supply_core.c    |  11 +-
- drivers/power/supply/power_supply_sysfs.c   |  45 ++
- drivers/usb/typec/Kconfig                   |   1 +
- drivers/usb/typec/fusb302/Kconfig           |   2 +-
- drivers/usb/typec/fusb302/fusb302.c         |  63 +-
- drivers/usb/typec/tcpm.c                    | 903 +++++++++++++++++++++++++++-
- include/linux/power_supply.h                |  16 +
- include/linux/usb/pd.h                      |   4 +-
- include/linux/usb/tcpm.h                    |   1 +
- 11 files changed, 1417 insertions(+), 85 deletions(-)
+ 2 files changed, 444 insertions(+)
 
+diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentation/ABI/testing/sysfs-class-power
+index f85ce9e..e046566 100644
+--- a/Documentation/ABI/testing/sysfs-class-power
++++ b/Documentation/ABI/testing/sysfs-class-power
+@@ -1,3 +1,446 @@
++===== General Properties =====
++
++What:		/sys/class/power_supply/<supply_name>/manufacturer
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the name of the device manufacturer.
++
++		Access: Read
++		Valid values: Represented as string
++
++What:		/sys/class/power_supply/<supply_name>/model_name
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the name of the device model.
++
++		Access: Read
++		Valid values: Represented as string
++
++What:		/sys/class/power_supply/<supply_name>/serial_number
++Date:		January 2008
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the serial number of the device.
++
++		Access: Read
++		Valid values: Represented as string
++
++What:		/sys/class/power_supply/<supply_name>/type
++Date:		May 2010
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Describes the main type of the supply.
++
++		Access: Read
++		Valid values: "Battery", "UPS", "Mains", "USB"
++
++===== Battery Properties =====
++
++What:		/sys/class/power_supply/<supply_name>/capacity
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Fine grain representation of battery capacity.
++		Access: Read
++		Valid values: 0 - 100 (percent)
++
++What:		/sys/class/power_supply/<supply_name>/capacity_alert_max
++Date:		July 2012
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Maximum battery capacity trip-wire value where the supply will
++		notify user-space of the event. This is normally used for the
++		battery discharging scenario where user-space needs to know the
++		battery has dropped to an upper level so it can take
++		appropriate action (e.g. warning user that battery level is
++		low).
++
++		Access: Read, Write
++		Valid values: 0 - 100 (percent)
++
++What:		/sys/class/power_supply/<supply_name>/capacity_alert_min
++Date:		July 2012
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Minimum battery capacity trip-wire value where the supply will
++		notify user-space of the event. This is normally used for the
++		battery discharging scenario where user-space needs to know the
++		battery has dropped to a lower level so it can take
++		appropriate action (e.g. warning user that battery level is
++		critically low).
++
++		Access: Read, Write
++		Valid values: 0 - 100 (percent)
++
++What:		/sys/class/power_supply/<supply_name>/capacity_level
++Date:		June 2009
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Coarse representation of battery capacity.
++
++		Access: Read
++		Valid values: "Unknown", "Critical", "Low", "Normal", "High",
++			      "Full"
++
++What:		/sys/class/power_supply/<supply_name>/current_avg
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports an average IBAT current reading for the battery, over a
++		fixed period. Normally devices will provide a fixed interval in
++		which they average readings to smooth out the reported value.
++
++		Access: Read
++		Valid values: Represented in microamps
++
++What:		/sys/class/power_supply/<supply_name>/current_max
++Date:		October 2010
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the maximum IBAT current allowed into the battery.
++
++		Access: Read
++		Valid values: Represented in microamps
++
++What:		/sys/class/power_supply/<supply_name>/current_now
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports an instant, single IBAT current reading for the battery.
++		This value is not averaged/smoothed.
++
++		Access: Read
++		Valid values: Represented in microamps
++
++What:		/sys/class/power_supply/<supply_name>/charge_type
++Date:		July 2009
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Represents the type of charging currently being applied to the
++		battery.
++
++		Access: Read
++		Valid values: "Unknown", "N/A", "Trickle", "Fast"
++
++What:		/sys/class/power_supply/<supply_name>/charge_term_current
++Date:		July 2014
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the charging current value which is used to determine
++		when the battery is considered full and charging should end.
++
++		Access: Read
++		Valid values: Represented in microamps
++
++What:		/sys/class/power_supply/<supply_name>/health
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the health of the battery or battery side of charger
++		functionality.
++
++		Access: Read
++		Valid values: "Unknown", "Good", "Overheat", "Dead",
++			      "Over voltage", "Unspecified failure", "Cold",
++			      "Watchdog timer expire", "Safety timer expire"
++
++What:		/sys/class/power_supply/<supply_name>/precharge_current
++Date:		June 2017
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the charging current applied during pre-charging phase
++		for a battery charge cycle.
++
++		Access: Read
++		Valid values: Represented in microamps
++
++What:		/sys/class/power_supply/<supply_name>/present
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports whether a battery is present or not in the system.
++
++		Access: Read
++		Valid values:
++			0: Absent
++			1: Present
++
++What:		/sys/class/power_supply/<supply_name>/status
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Represents the charging status of the battery. Normally this
++		is read-only reporting although for some supplies this can be
++		used to enable/disable charging to the battery.
++
++		Access: Read, Write
++		Valid values: "Unknown", "Charging", "Discharging",
++			      "Not charging", "Full"
++
++What:		/sys/class/power_supply/<supply_name>/technology
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Describes the battery technology supported by the supply.
++
++		Access: Read
++		Valid values: "Unknown", "NiMH", "Li-ion", "Li-poly", "LiFe",
++			      "NiCd", "LiMn"
++
++What:		/sys/class/power_supply/<supply_name>/temp
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the current TBAT battery temperature reading.
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What:		/sys/class/power_supply/<supply_name>/temp_alert_max
++Date:		July 2012
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Maximum TBAT temperature trip-wire value where the supply will
++		notify user-space of the event. This is normally used for the
++		battery charging scenario where user-space needs to know the
++		battery temperature has crossed an upper threshold so it can
++		take appropriate action (e.g. warning user that battery level is
++		critically high, and charging has stopped).
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What:		/sys/class/power_supply/<supply_name>/temp_alert_min
++Date:		July 2012
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Minimum TBAT temperature trip-wire value where the supply will
++		notify user-space of the event. This is normally used for the
++		battery charging scenario where user-space needs to know the
++		battery temperature has crossed a lower threshold so it can take
++		appropriate action (e.g. warning user that battery level is
++		high, and charging current has been reduced accordingly to
++		remedy the situation).
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What:		/sys/class/power_supply/<supply_name>/temp_max
++Date:		July 2014
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the maximum allowed TBAT battery temperature for
++		charging.
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What:		/sys/class/power_supply/<supply_name>/temp_min
++Date:		July 2014
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the minimum allowed TBAT battery temperature for
++		charging.
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What:		/sys/class/power_supply/<supply_name>/voltage_avg,
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports an average VBAT voltage reading for the battery, over a
++		fixed period. Normally devices will provide a fixed interval in
++		which they average readings to smooth out the reported value.
++
++		Access: Read
++		Valid values: Represented in microvolts
++
++What:		/sys/class/power_supply/<supply_name>/voltage_max,
++Date:		January 2008
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the maximum safe VBAT voltage permitted for the battery,
++		during charging.
++
++		Access: Read
++		Valid values: Represented in microvolts
++
++What:		/sys/class/power_supply/<supply_name>/voltage_min,
++Date:		January 2008
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the minimum safe VBAT voltage permitted for the battery,
++		during discharging.
++
++		Access: Read
++		Valid values: Represented in microvolts
++
++What:		/sys/class/power_supply/<supply_name>/voltage_now,
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports an instant, single VBAT voltage reading for the battery.
++		This value is not averaged/smoothed.
++
++		Access: Read
++		Valid values: Represented in microvolts
++
++===== USB Properties =====
++
++What: 		/sys/class/power_supply/<supply_name>/current_avg
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports an average IBUS current reading over a fixed period.
++		Normally devices will provide a fixed interval in which they
++		average readings to smooth out the reported value.
++
++		Access: Read
++		Valid values: Represented in microamps
++
++
++What: 		/sys/class/power_supply/<supply_name>/current_max
++Date:		October 2010
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the maximum IBUS current the supply can support.
++
++		Access: Read
++		Valid values: Represented in microamps
++
++What: 		/sys/class/power_supply/<supply_name>/current_now
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the IBUS current supplied now. This value is generally
++		read-only reporting, unless the 'online' state of the supply
++		is set to be programmable, in which case this value can be set
++		within the reported min/max range.
++
++		Access: Read, Write
++		Valid values: Represented in microamps
++
++What:		/sys/class/power_supply/<supply_name>/input_current_limit
++Date:		July 2014
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Details the incoming IBUS current limit currently set in the
++		supply. Normally this is configured based on the type of
++		connection made (e.g. A configured SDP should output a maximum
++		of 500mA so the input current limit is set to the same value).
++
++		Access: Read, Write
++		Valid values: Represented in microamps
++
++What:		/sys/class/power_supply/<supply_name>/online,
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Indicates if VBUS is present for the supply. When the supply is
++		online, and the supply allows it, then it's possible to switch
++		between online states (e.g. Fixed -> Programmable for a PD_PPS
++		USB supply so voltage and current can be controlled).
++
++		Access: Read, Write
++		Valid values:
++			0: Offline
++			1: Online Fixed - Fixed Voltage Supply
++			2: Online Programmable - Programmable Voltage Supply
++
++What:		/sys/class/power_supply/<supply_name>/temp
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the current supply temperature reading. This would
++		normally be the internal temperature of the device itself (e.g
++		TJUNC temperature of an IC)
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What:		/sys/class/power_supply/<supply_name>/temp_alert_max
++Date:		July 2012
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Maximum supply temperature trip-wire value where the supply will
++		notify user-space of the event. This is normally used for the
++		charging scenario where user-space needs to know the supply
++		temperature has crossed an upper threshold so it can take
++		appropriate action (e.g. warning user that the supply
++		temperature is critically high, and charging has stopped to
++		remedy the situation).
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What:		/sys/class/power_supply/<supply_name>/temp_alert_min
++Date:		July 2012
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Minimum supply temperature trip-wire value where the supply will
++		notify user-space of the event. This is normally used for the
++		charging scenario where user-space needs to know the supply
++		temperature has crossed a lower threshold so it can take
++		appropriate action (e.g. warning user that the supply
++		temperature is high, and charging current has been reduced
++		accordingly to remedy the situation).
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What:		/sys/class/power_supply/<supply_name>/temp_max
++Date:		July 2014
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the maximum allowed supply temperature for operation.
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What:		/sys/class/power_supply/<supply_name>/temp_min
++Date:		July 2014
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the mainimum allowed supply temperature for operation.
++
++		Access: Read
++		Valid values: Represented in 1/10 Degrees Celsius
++
++What: 		/sys/class/power_supply/<supply_name>/voltage_max
++Date:		January 2008
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the maximum VBUS voltage the supply can support.
++
++		Access: Read
++		Valid values: Represented in microvolts
++
++What: 		/sys/class/power_supply/<supply_name>/voltage_min
++Date:		January 2008
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the minimum VBUS voltage the supply can support.
++
++		Access: Read
++		Valid values: Represented in microvolts
++
++What: 		/sys/class/power_supply/<supply_name>/voltage_now
++Date:		May 2007
++Contact:	linux-pm@vger.kernel.org
++Description:
++		Reports the VBUS voltage supplied now. This value is generally
++		read-only reporting, unless the 'online' state of the supply
++		is set to be programmable, in which case this value can be set
++		within the reported min/max range.
++
++		Access: Read, Write
++		Valid values: Represented in microvolts
++
++===== Device Specific Properties =====
++
+ What:		/sys/class/power/ds2760-battery.*/charge_now
+ Date:		May 2010
+ KernelVersion:	2.6.35
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2bee7ac..5bb0a10 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11098,6 +11098,7 @@ M:	Sebastian Reichel <sre@kernel.org>
+ L:	linux-pm@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
+ S:	Maintained
++F:	Documentation/ABI/testing/sysfs-class-power
+ F:	Documentation/devicetree/bindings/power/supply/
+ F:	include/linux/power_supply.h
+ F:	drivers/power/supply/
 -- 
 1.9.1
