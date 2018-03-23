@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805549-2-16061184578119661572
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805531-2-6322522623912712691
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805548; b=MCEuFghrzihFF+QuWJ9H1jqRBuqVX93OfZr4yWfOTDO/GIM
-    ofiSQEuUpc5ipmFJii2qF78A3lBGu1nLFHdHCAd+lFCjS33WbaKYINKnz9tHx0UH
-    0q2sIw2LcrN6DGhJduKH/MHyljFcYzQ8mLVd7TGffhCj84byjTgOkxrdJ0mZiktv
-    TSUqqoX1cQuo0UHyE/87ewDokKkw537WqmPgd98vh/NGzCe0Y3qj6wrAAqrhzlHP
-    U1/HsEC3cXxh1G8LI4EWzl8wsqPL4LaOqK0vBu2CRT+JQ1Q3/hfmM+0jHj8EDt3m
-    mGhLvvtyMQeD1WAK5JMUB6H42iTGAv6ddsYlURg==
+    t=1521805531; b=w+kKpQjMEgreQsF/E49VZBfnE1CWD/9RPJxK1mGhYE3Syrd
+    S1lVNsfF91U343uwZKTp2D82wynh+UA69Qrzyr7OCHPvyOYTPCfZjXP8hnnS8iHH
+    CLlvIvu+U5fDrBFv5MAqgLEs7qVN/S7kHOe1d5Ipqh0xxEHmkgepW1uk7K8H8ZvE
+    42vuSHfXKlD7aGnfskyHdblfazQxBrVHir9HlKDSzKkODHQJzFZn2sCIGVhH1NRh
+    O5ytw7+hin5pjIaI6hUoOiYabqMUduoxVEGfaRNY5aPtPpDyGCzJQ8g7Ltag0nz7
+    USu4vuSBum4t7Bs2wQj2mXwyzKvuC8+lTaCyERA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805548; bh=2pjz0KYs7UWGjuF+u2o8p3hBq4
-    g8HXbMZF4QqxtF3mY=; b=ENiUTc9xZS+c1aO93KKwr/2wG7hgT4ZGf/FXZxHJex
-    xi2FUdzke2J5N/MPlGA+ojfG7l57Xu53jYzB1XdY8gQtI5Z0LFiEZqY2yvjwg9zH
-    nmdkmh5hICMmJYAExcVeGEhPFh0FeeJItcn04NMuF87f2bXYH3LMp5JUfauIWAsq
-    K5MVW0vcdKIa4YNPyx41Thf1mirOCcOBsZlrT1sajbqFNfLdmleCLNWJ5UvBI/FG
-    lBCIrY9jQiXHevH1uwWaQbQkFw8lNnBOv/LoDtpUO/3PMFqRvC0i0thFvN50RjKb
-    HZRP2FoPDA09vKfEq2axxCoLBC9UjZCsu38IvKJU3BdA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805531; bh=u/sTDUHk/9ooaWa/HxYNf3HTJG
+    v/1r90l5DDBMB2cck=; b=bhm/HjEbejsXGNFiiIEIdw2iiJd4kaLwM7mu/E+mFD
+    tbgrQu0gAyjo/CIuVd7oz6lekPBlGci/kwwceiGmgnCYgzLKvJTe5twtAfadXzL9
+    AdEjjSE0y4GvdYkI7Ww738tLsgBc4OQaYpbRMOUvBROJVjMkXRM58A2goLq+wdeE
+    oCjiogLftG9feZ385bxpAJUtTpeD7wTg7/wxbkuzLbUfGwRbRNacVuBxxAefDLw5
+    dqvxhST1lZeNGPObc1HUnJ+OfFQkOpBobr8p5k4aXnxcUyNIaUa7VMtgHQyBgmHq
+    ZdqahUAgjINP3c+3rKoj+B3x32zjhIDDWrgNKmpRNn0A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754449AbeCWLpe (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 07:45:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38620 "EHLO
+        id S1754605AbeCWLpR (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:45:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38648 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754365AbeCWKDE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:04 -0400
+        with ESMTP id S1754383AbeCWKDK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:03:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 50/77] pinctrl: rockchip: enable clock when reading pin direction register
-Date: Fri, 23 Mar 2018 10:54:24 +0100
-Message-Id: <20180323094145.600454435@linuxfoundation.org>
+Subject: [PATCH 4.14 52/77] ip6_vti: adjust vti mtu according to mtu of lower device
+Date: Fri, 23 Mar 2018 10:54:26 +0100
+Message-Id: <20180323094145.739285432@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,49 +83,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Brian Norris <briannorris@chromium.org>
+From: Alexey Kodanev <alexey.kodanev@oracle.com>
 
 
-[ Upstream commit 5c9d8c4f6b8168738a26bcf288516cc3a0886810 ]
+[ Upstream commit 53c81e95df1793933f87748d36070a721f6cb287 ]
 
-We generally leave the GPIO clock disabled, unless an interrupt is
-requested or we're accessing IO registers. We forgot to do this for the
-->get_direction() callback, which means we can sometimes [1] get
-incorrect results [2] from, e.g., /sys/kernel/debug/gpio.
+LTP/udp6_ipsec_vti tests fail when sending large UDP datagrams over
+ip6_vti that require fragmentation and the underlying device has an
+MTU smaller than 1500 plus some extra space for headers. This happens
+because ip6_vti, by default, sets MTU to ETH_DATA_LEN and not updating
+it depending on a destination address or link parameter. Further
+attempts to send UDP packets may succeed because pmtu gets updated on
+ICMPV6_PKT_TOOBIG in vti6_err().
 
-Enable the clock, so we get the right results!
+In case the lower device has larger MTU size, e.g. 9000, ip6_vti works
+but not using the possible maximum size, output packets have 1500 limit.
 
-[1] Sometimes, because many systems have 1 or mor interrupt requested on
-each GPIO bank, so they always leave their clock on.
+The above cases require manual MTU setup after ip6_vti creation. However
+ip_vti already updates MTU based on lower device with ip_tunnel_bind_dev().
 
-[2] Incorrect, meaning the register returns 0, and so we interpret that
-as "input".
+Here is the example when the lower device MTU is set to 9000:
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+  # ip a sh ltp_ns_veth2
+      ltp_ns_veth2@if7: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 ...
+        inet 10.0.0.2/24 scope global ltp_ns_veth2
+        inet6 fd00::2/64 scope global
+
+  # ip li add vti6 type vti6 local fd00::2 remote fd00::1
+  # ip li show vti6
+      vti6@NONE: <POINTOPOINT,NOARP> mtu 1500 ...
+        link/tunnel6 fd00::2 peer fd00::1
+
+After the patch:
+  # ip li add vti6 type vti6 local fd00::2 remote fd00::1
+  # ip li show vti6
+      vti6@NONE: <POINTOPOINT,NOARP> mtu 8832 ...
+        link/tunnel6 fd00::2 peer fd00::1
+
+Reported-by: Petr Vorel <pvorel@suse.cz>
+Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/pinctrl-rockchip.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/ipv6/ip6_vti.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -1989,8 +1989,16 @@ static int rockchip_gpio_get_direction(s
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -626,6 +626,7 @@ static void vti6_link_config(struct ip6_
  {
- 	struct rockchip_pin_bank *bank = gpiochip_get_data(chip);
- 	u32 data;
-+	int ret;
+ 	struct net_device *dev = t->dev;
+ 	struct __ip6_tnl_parm *p = &t->parms;
++	struct net_device *tdev = NULL;
  
-+	ret = clk_enable(bank->clk);
-+	if (ret < 0) {
-+		dev_err(bank->drvdata->dev,
-+			"failed to enable clock for bank %s\n", bank->name);
-+		return ret;
+ 	memcpy(dev->dev_addr, &p->laddr, sizeof(struct in6_addr));
+ 	memcpy(dev->broadcast, &p->raddr, sizeof(struct in6_addr));
+@@ -638,6 +639,25 @@ static void vti6_link_config(struct ip6_
+ 		dev->flags |= IFF_POINTOPOINT;
+ 	else
+ 		dev->flags &= ~IFF_POINTOPOINT;
++
++	if (p->flags & IP6_TNL_F_CAP_XMIT) {
++		int strict = (ipv6_addr_type(&p->raddr) &
++			      (IPV6_ADDR_MULTICAST | IPV6_ADDR_LINKLOCAL));
++		struct rt6_info *rt = rt6_lookup(t->net,
++						 &p->raddr, &p->laddr,
++						 p->link, strict);
++
++		if (rt)
++			tdev = rt->dst.dev;
++		ip6_rt_put(rt);
 +	}
- 	data = readl_relaxed(bank->reg_base + GPIO_SWPORT_DDR);
-+	clk_disable(bank->clk);
- 
- 	return !(data & BIT(offset));
++
++	if (!tdev && p->link)
++		tdev = __dev_get_by_index(t->net, p->link);
++
++	if (tdev)
++		dev->mtu = max_t(int, tdev->mtu - dev->hard_header_len,
++				 IPV6_MIN_MTU);
  }
+ 
+ /**
