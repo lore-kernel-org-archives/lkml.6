@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1061450-1521802375-2-4060585508254533743
+X-Cyrus-Session-Id: sloti22d1t05-1025519-1521802361-2-4420126398350463658
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521802374; b=l6uvMsOytVorHDC50rqWiNP5DsaT0fD0fnZBVkcwrUsUA0N
-    YGzxuAUXa30aGxUAf/mPX5d2thtcq5eGb2y2sqrQcpFtFe5NPZ9aOhJgzYJurK/K
-    bMoUbMWrVM3AiCzO1QX8gBxOa7U8gIF5ebAw/M4CKCxR41XkCQbzWCCULqatow2i
-    gi7c2+2vp6+yLLnVQZI2BZSy6g1+IOfToujqS0Gypla/VZ52MouEUZ+vv1vZgjzQ
-    cCUWZC0HaeZhLpmQUB0+fv5lR0RSWjwi2GN7D1QtOPZrqVAZ5hKt0kIMuMka7lMD
-    Xpg5PWHjD6jRMEVNiX3vL7yBs11R05V2e7q6wEg==
+    t=1521802360; b=E3956O8j9JlFEUrBGPDpWwXsmvQ0th9yCvOOj7/wp76zqFE
+    YdjZXZdQALkR4tQb9h0+JYFfaSK8Isf4IXoJ4fiiA5Z64/FfrIntZuyLuToeioTy
+    kwKjOIHpXpQMQj1u778LMCkT6guiB+803owUFP25HQNKQGQrA895p5T33m6vVHiN
+    BYt7mdCjeHUSGjtlJmfX0sTAhTgVOpgX1ewRNc/Qcp1Js5+DO9zRJl+f0znXeray
+    qpQVvyQLVn2niWbsg7gXjgWu4wt0milerVEhGgIS9DpEc+uJwiPgMaUDlZciRL4W
+    Ar8HjtQiEBE/2kSoNBJLBAOv/yclWpzMG0cdb+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521802374; bh=YfYXgSBYn76hOaymaB+2WDBO3U
-    0IdiTiLkz7A7bQd6Q=; b=vjSPsctthWO81gnr0TDY5NfKxZDO60O4Nyk5xqp4+g
-    hFifE51Lroy0u8ncZSXvK69MvuQgfFU9Ndvg4/8efZKywgLuJwOehIzf/E6ZoXow
-    fX8spA9ex/USIDRgxeNz/tIwUyqxJ0kYQV1IXaq48JarkAu9uD+FdfjV04Ghxs0b
-    EMCkZ4V8fOua1B9uiC8rPcFo6GMghl9yWIyKJdwDONCyBeBG3/lKM8WiADXL+rt6
-    bS7MxOVCpswKHH5x+T+KaT1byNrejNhmkFd85gfq+J0a6dA9yx7ydpBKIpujozpz
-    KMqSt7TDLpbvTaH1AV7U6JgEb0ZH53vpnuT5y4AgYyhQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521802360; bh=5hFStPEXbwYQf0y2DASHlnybKa
+    h/4QDtjhfu9Mv2hks=; b=fvhsUGRHqu3R2rEtWFB4QR2FZgs05DQMKY5C81EQUR
+    Pkk5WQGHFsPKQhtOE6jc2JWmSHhSR/3B7vPZbt+/usC7TWbpVn+wgzRbMZp8iuWI
+    DQ1Gndi6By5Aji8gbP5P5OcA7BzHq+Gs5XIKjB2APxHAnMfW1KUCB/SPbGzqMYLK
+    zdUEc+XxNsTdBymeD7dVgZQxZiJKv3D0AOi/jjv0v2Pdl60tEoisRBsMFv76qfw0
+    wEvhJJPOEJ8I/oY2rrD3QzOj8igq307z+xZsnnZouK/TyNha7x6F1c9jMbJuHgoh
+    dRatwQOP4mx4u57R8tKyGXKeBOvBE3FRhHkK5bxTwKhQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,24 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755946AbeCWKN7 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:13:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45014 "EHLO
+        id S1755970AbeCWKOD (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:14:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45036 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755901AbeCWKN4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:13:56 -0400
+        with ESMTP id S1755901AbeCWKOA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:14:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Bernd Faust <berndfaust@gmail.com>,
+        Sasha Neftin <sasha.neftin@intel.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 28/97] tcp: remove poll() flakes with FastOpen
-Date: Fri, 23 Mar 2018 10:54:15 +0100
-Message-Id: <20180323094159.200488589@linuxfoundation.org>
+Subject: [PATCH 4.4 29/97] e1000e: fix timing for 82579 Gigabit Ethernet controller
+Date: Fri, 23 Mar 2018 10:54:16 +0100
+Message-Id: <20180323094159.269039346@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -83,67 +85,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Bernd Faust <berndfaust@gmail.com>
 
 
-[ Upstream commit 0f9fa831aecfc297b7b45d4f046759bcefcf87f0 ]
+[ Upstream commit 5313eeccd2d7f486be4e5c7560e3e2be239ec8f7 ]
 
-When using TCP FastOpen for an active session, we send one wakeup event
-from tcp_finish_connect(), right before the data eventually contained in
-the received SYNACK is queued to sk->sk_receive_queue.
+After an upgrade to Linux kernel v4.x the hardware timestamps of the
+82579 Gigabit Ethernet Controller are different than expected.
+The values that are being read are almost four times as big as before
+the kernel upgrade.
 
-This means that depending on machine load or luck, poll() users
-might receive POLLOUT events instead of POLLIN|POLLOUT
+The difference is that after the upgrade the driver sets the clock
+frequency to 25MHz, where before the upgrade it was set to 96MHz. Intel
+confirmed that the correct frequency for this network adapter is 96MHz.
 
-To fix this, we need to move the call to sk->sk_state_change()
-after the (optional) call to tcp_rcv_fastopen_synack()
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Bernd Faust <berndfaust@gmail.com>
+Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+Acked-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/intel/e1000e/netdev.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -5464,10 +5464,6 @@ void tcp_finish_connect(struct sock *sk,
- 	else
- 		tp->pred_flags = 0;
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -3526,6 +3526,12 @@ s32 e1000e_get_base_timinca(struct e1000
  
--	if (!sock_flag(sk, SOCK_DEAD)) {
--		sk->sk_state_change(sk);
--		sk_wake_async(sk, SOCK_WAKE_IO, POLL_OUT);
--	}
- }
- 
- static bool tcp_rcv_fastopen_synack(struct sock *sk, struct sk_buff *synack,
-@@ -5531,6 +5527,7 @@ static int tcp_rcv_synsent_state_process
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	struct tcp_fastopen_cookie foc = { .len = -1 };
- 	int saved_clamp = tp->rx_opt.mss_clamp;
-+	bool fastopen_fail;
- 
- 	tcp_parse_options(skb, &tp->rx_opt, 0, &foc);
- 	if (tp->rx_opt.saw_tstamp && tp->rx_opt.rcv_tsecr)
-@@ -5633,10 +5630,15 @@ static int tcp_rcv_synsent_state_process
- 
- 		tcp_finish_connect(sk, skb);
- 
--		if ((tp->syn_fastopen || tp->syn_data) &&
--		    tcp_rcv_fastopen_synack(sk, skb, &foc))
--			return -1;
-+		fastopen_fail = (tp->syn_fastopen || tp->syn_data) &&
-+				tcp_rcv_fastopen_synack(sk, skb, &foc);
- 
-+		if (!sock_flag(sk, SOCK_DEAD)) {
-+			sk->sk_state_change(sk);
-+			sk_wake_async(sk, SOCK_WAKE_IO, POLL_OUT);
-+		}
-+		if (fastopen_fail)
-+			return -1;
- 		if (sk->sk_write_pending ||
- 		    icsk->icsk_accept_queue.rskq_defer_accept ||
- 		    icsk->icsk_ack.pingpong) {
+ 	switch (hw->mac.type) {
+ 	case e1000_pch2lan:
++		/* Stable 96MHz frequency */
++		incperiod = INCPERIOD_96MHz;
++		incvalue = INCVALUE_96MHz;
++		shift = INCVALUE_SHIFT_96MHz;
++		adapter->cc.shift = shift + INCPERIOD_SHIFT_96MHz;
++		break;
+ 	case e1000_pch_lpt:
+ 		if (er32(TSYNCRXCTL) & E1000_TSYNCRXCTL_SYSCFI) {
+ 			/* Stable 96MHz frequency */
