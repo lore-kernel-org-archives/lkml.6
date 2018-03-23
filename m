@@ -1,186 +1,164 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-947063-1521798958-2-7933929963918934643
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3955644-1521764223-2-3645986355748886335
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521798957; b=lsrMiOMgNHEf1txGH94THURTyoPv+6P1OyipN9ftj1nbVwP
-    o0ajq+uQ+BJHFsGTqOKuwczOabcBuTSqdb5SasKehxpg4YlSdxYB7/kHE1v90/BP
-    JMKysK0syaI20IW7XAHAYOjXNOp35pviuuTGAhkTbK7u5PMnluDnamjoWj6qML6l
-    cifDqlOJAZ+MeTVPptAQJvGzyRh6nPa1zu0YS/Mbtz+vdgWmbihsnTXA1D/nCIfH
-    nDeMYAJU72bOv7miaNhywrYx1JZ3fU6kXRBa85qMENMGaot/76M7jg0tUF+MCuvc
-    uI+d9Uioz3mIeuEutFntbSePzbqVuOKPVd/9RFw==
+    t=1521764222; b=hVLLl2WOlxLb1Ig1dUima0qWlkvhWt2xdvstWOoOv8Wxo+H
+    KalytbgIFQ4yMvh+/ftXKs9yZuOI+ARHweCjQnxt73bK6aNr4zBAlOWn0ALKFMb/
+    uyuuyPyl8jlhYUTwZ1gjEaCrh8J670uwPrCFYWaehBhEHdVuqio7GEiDfqcyR3Vp
+    oKn49pkRw1xM1dWqHg2cliWmcUxYuFr921PmO7OwQtDtyNL7qZCGknqkJJiRuAKw
+    vMUSUJ9Tyo9DAnnfWP31+qIRnVVoLibnH2PWJ2YzdTVvMqtlqjJLpstxQeLraEwW
+    CcDk4Ca6+1ALGKxAqVyF7samGohFdZEI4dfssfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521798957; bh=PZahZBVxVtFg2ZPJz/C6a8tfoU
-    ZlpRR+B331MhWExvg=; b=o6XQLfSw4yFb2i4mCYt6YErnk9O8Z+aRHvPGTEjeXp
-    ZpZVJqFoGEhjeuATcwYSy2kwcfs5ClM5qUZDzT6kpvQBoE/6Tc8avYv3hNVCINpD
-    4Lgp5JEtVojo4+iOBhW7IDAet5VcVJSP/TwnL3vlsm+oMD9ip83zAiLBBzxjH9i5
-    fHr1YszI3XOnWTqRxxkvNBX6/DdJKaDPCNXoRj5Ggt/nz6L8TRkrBo8qBAzDiQ8s
-    zM6zHy5Dm7evb0ZXxl0yO5WRfsRFoCAgSqpe1VgNz8YsjumGycPxhLSNQnH3+eOT
-    yfSBOHQ0bF0IQilRDrFS+TZx8jtuoQ1xHy8EzFDUxEAQ==
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521764222; bh=P
+    /qQc2fdn84lGW+UqkBs8oViQu7ypw0H5RwhLzRa9e0=; b=qrFg6PyLD6dFptiV9
+    56fMqINa9eTvr0tUpRilQKolZ9fjon+P6yjYSFV7PyRUPEVCROHFUGWu+m2QUqla
+    riZJun6N/Y2bDV2lHy2WMlSLcy2zncpnWBYjdxJJa3Mq8c8k5vLZRAtiihFxzQQh
+    396+y77LowPNWgmEPR0mYpcaUzKBTDDwYeHTcw/iOvLcDNItam9ba+XYx4gx0z6U
+    dMyHnlFB1+oCz8nzg6jMzo2PBG3dKZ/BVSwgTcCtystAevs7E7qFIg4k8oK4FpeE
+    7y5GYIGG6EEb9gZ0D47h2XyEBGOY8IlbvFp7SWxNennGL2MvzTzdT0WubWxA3DLk
+    3VmsA==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxonhyperv.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxonhyperv.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxonhyperv.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxonhyperv.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752087AbeCWJz4 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:55:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33796 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751687AbeCWJzz (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:55:55 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Tomas Henzl <thenzl@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 01/84] scsi: megaraid_sas: Do not use 32-bit atomic request descriptor for Ventura controllers
-Date: Fri, 23 Mar 2018 10:53:15 +0100
-Message-Id: <20180323095412.129952666@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
-References: <20180323095411.913234798@linuxfoundation.org>
-User-Agent: quilt/0.65
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+x-originating-ip: 107.180.71.197
+From: Long Li <longli@linuxonhyperv.com>
+To: "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>,
+ Stephen Hemminger <sthemmin@microsoft.com>,
+ "James E . J . Bottomley" <JBottomley@odin.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ devel@linuxdriverproject.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] Vmbus: Add function to report available ring buffer to
+ write in total ring size percentage
+Date: Thu, 22 Mar 2018 17:15:36 -0700
+Message-Id: <20180323001538.31876-1-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+X-CMAE-Envelope: MS4wfOMlhT6CUbBhekVNpPBE852wfm96Z32mMVTFv9G2RIOWmdiHTCNC9fUYp20cjpmEhkKoRJ2ZQtgV1tv4Ff3qIwjdmkh37K8IAmVjVBBUj/u6gqEQeAsj
+ ngaZ6lrmL0XJE6SrX6KjCzds5wQavQcz03Knn2HNnHqoG4V7DZg+3DSYN/St2Knohyvt+FqkxzLqdtUaCyhSUp0hGM0rkhsRJFomMWEAFqe5j8TsM8Is6VId
+ 0jfMyrJKM+t3IpBPJRK1jMtKM039cViX23sNu7T/fsPCL299RTSQLhIJNKibp1twhFx29Z8dkr7MqDZzeINLeNarNt+dkGLB7o30/98xiyOFU6y+URGx2I31
+ f8l/zxlGsrMecltHEIbG89B+mhooukh9Ir1SBQXcvfceI1Fw07VjHlwotDU7ygWHRTtTbnrH4Lbz69RcwbYRIRVi+bdRr6S5h8kyInqjgADDyxfcRDJMIZq9
+ 9Ql4vg9ulCHg2/l+VRm6LhEccRDlHdfuuekMSvj8a+i6XRxRvc4I+iq86VY=
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.15-stable review patch.  If anyone has any objections, please let me know.
+From: Long Li <longli@microsoft.com>
 
-------------------
+Netvsc has a similar function to calculate how much ring buffer in
+percentage is available to write. This function is useful for storvsc and
+other vmbus devices.
 
-From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Define a similar function in vmbus to be used by storvsc.
 
-commit 9ff97fa8db94caeab59a3c5401e975df468b4d8e upstream.
-
-Problem Statement: Sending I/O through 32 bit descriptors to Ventura series of
-controller results in IO timeout on certain conditions.
-
-This error only occurs on systems with high I/O activity on Ventura series
-controllers.
-
-Changes in this patch will prevent driver from using 32 bit descriptor and use
-64 bit Descriptors.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Kashyap Desai <kashyap.desai@broadcom.com>
-Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Tomas Henzl <thenzl@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/scsi/megaraid/megaraid_sas_fusion.c |   42 +++++++++-------------------
- 1 file changed, 14 insertions(+), 28 deletions(-)
+ drivers/hv/ring_buffer.c |  2 ++
+ include/linux/hyperv.h   | 12 ++++++++++++
+ 2 files changed, 14 insertions(+)
 
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -216,36 +216,30 @@ inline void megasas_return_cmd_fusion(st
- /**
-  * megasas_fire_cmd_fusion -	Sends command to the FW
-  * @instance:			Adapter soft state
-- * @req_desc:			32bit or 64bit Request descriptor
-+ * @req_desc:			64bit Request descriptor
-  *
-- * Perform PCI Write. Ventura supports 32 bit Descriptor.
-- * Prior to Ventura (12G) MR controller supports 64 bit Descriptor.
-+ * Perform PCI Write.
-  */
+diff --git a/drivers/hv/ring_buffer.c b/drivers/hv/ring_buffer.c
+index 8699bb969e7e..3c836c099a8f 100644
+--- a/drivers/hv/ring_buffer.c
++++ b/drivers/hv/ring_buffer.c
+@@ -227,6 +227,8 @@ int hv_ringbuffer_init(struct hv_ring_buffer_info *ring_info,
+ 	ring_info->ring_buffer->feature_bits.value = 1;
  
- static void
- megasas_fire_cmd_fusion(struct megasas_instance *instance,
- 		union MEGASAS_REQUEST_DESCRIPTOR_UNION *req_desc)
- {
--	if (instance->adapter_type == VENTURA_SERIES)
--		writel(le32_to_cpu(req_desc->u.low),
--			&instance->reg_set->inbound_single_queue_port);
--	else {
- #if defined(writeq) && defined(CONFIG_64BIT)
--		u64 req_data = (((u64)le32_to_cpu(req_desc->u.high) << 32) |
--				le32_to_cpu(req_desc->u.low));
-+	u64 req_data = (((u64)le32_to_cpu(req_desc->u.high) << 32) |
-+		le32_to_cpu(req_desc->u.low));
+ 	ring_info->ring_size = page_cnt << PAGE_SHIFT;
++	ring_info->ring_size_div10_reciprocal =
++		reciprocal_value(ring_info->ring_size / 10);
+ 	ring_info->ring_datasize = ring_info->ring_size -
+ 		sizeof(struct hv_ring_buffer);
  
--		writeq(req_data, &instance->reg_set->inbound_low_queue_port);
-+	writeq(req_data, &instance->reg_set->inbound_low_queue_port);
- #else
--		unsigned long flags;
--		spin_lock_irqsave(&instance->hba_lock, flags);
--		writel(le32_to_cpu(req_desc->u.low),
--			&instance->reg_set->inbound_low_queue_port);
--		writel(le32_to_cpu(req_desc->u.high),
--			&instance->reg_set->inbound_high_queue_port);
--		mmiowb();
--		spin_unlock_irqrestore(&instance->hba_lock, flags);
-+	unsigned long flags;
-+	spin_lock_irqsave(&instance->hba_lock, flags);
-+	writel(le32_to_cpu(req_desc->u.low),
-+		&instance->reg_set->inbound_low_queue_port);
-+	writel(le32_to_cpu(req_desc->u.high),
-+		&instance->reg_set->inbound_high_queue_port);
-+	mmiowb();
-+	spin_unlock_irqrestore(&instance->hba_lock, flags);
- #endif
--	}
+diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+index 2048f3c3b68a..eb7204851089 100644
+--- a/include/linux/hyperv.h
++++ b/include/linux/hyperv.h
+@@ -36,6 +36,7 @@
+ #include <linux/device.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/interrupt.h>
++#include <linux/reciprocal_div.h>
+ 
+ #define MAX_PAGE_BUFFER_COUNT				32
+ #define MAX_MULTIPAGE_BUFFER_COUNT			32 /* 128K */
+@@ -121,6 +122,7 @@ struct hv_ring_buffer {
+ struct hv_ring_buffer_info {
+ 	struct hv_ring_buffer *ring_buffer;
+ 	u32 ring_size;			/* Include the shared header */
++	struct reciprocal_value ring_size_div10_reciprocal;
+ 	spinlock_t ring_lock;
+ 
+ 	u32 ring_datasize;		/* < ring_size */
+@@ -155,6 +157,16 @@ static inline u32 hv_get_bytes_to_write(const struct hv_ring_buffer_info *rbi)
+ 	return write;
  }
  
- /**
-@@ -982,7 +976,6 @@ megasas_ioc_init_fusion(struct megasas_i
- 	const char *sys_info;
- 	MFI_CAPABILITIES *drv_ops;
- 	u32 scratch_pad_2;
--	unsigned long flags;
- 	struct timeval tv;
- 	bool cur_fw_64bit_dma_capable;
- 
-@@ -1121,14 +1114,7 @@ megasas_ioc_init_fusion(struct megasas_i
- 			break;
- 	}
- 
--	/* For Ventura also IOC INIT required 64 bit Descriptor write. */
--	spin_lock_irqsave(&instance->hba_lock, flags);
--	writel(le32_to_cpu(req_desc.u.low),
--	       &instance->reg_set->inbound_low_queue_port);
--	writel(le32_to_cpu(req_desc.u.high),
--	       &instance->reg_set->inbound_high_queue_port);
--	mmiowb();
--	spin_unlock_irqrestore(&instance->hba_lock, flags);
-+	megasas_fire_cmd_fusion(instance, &req_desc);
- 
- 	wait_and_poll(instance, cmd, MFI_POLL_TIMEOUT_SECS);
- 
++static inline u32 hv_get_avail_to_write_percent(
++		const struct hv_ring_buffer_info *rbi)
++{
++	u32 avail_write = hv_get_bytes_to_write(rbi);
++
++	return reciprocal_divide(
++			(avail_write  << 3) + (avail_write << 1),
++			rbi->ring_size_div10_reciprocal);
++}
++
+ /*
+  * VMBUS version is 32 bit entity broken up into
+  * two 16 bit quantities: major_number. minor_number.
+-- 
+2.14.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
