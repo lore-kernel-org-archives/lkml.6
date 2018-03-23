@@ -1,632 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756279AbeCWKaR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 06:30:17 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42340 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753538AbeCWKaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 06:30:14 -0400
-Date: Fri, 23 Mar 2018 11:30:01 +0100
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
-        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 07/10] drm/sun4i: Add support for YUV formats through the
- frontend
-Message-ID: <20180323103001.4xn4ueutkcghzrfn@flea>
-References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
- <20180321152904.22411-8-paul.kocialkowski@bootlin.com>
+        id S1756291AbeCWKaz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 06:30:55 -0400
+Received: from mail-by2nam01on0043.outbound.protection.outlook.com ([104.47.34.43]:30263
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752874AbeCWKav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 06:30:51 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=George.Cherian@cavium.com;
+From: George Cherian <george.cherian@cavium.com>
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        George Cherian <george.cherian@cavium.com>
+Subject: [PATCH] cpufreq: cppc: Use transition_delay_us depending on the transition_latency
+Date: Fri, 23 Mar 2018 03:30:31 -0700
+Message-Id: <1521801031-158659-1-git-send-email-george.cherian@cavium.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180321152904.22411-8-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain
+X-Originating-IP: [50.233.148.156]
+X-ClientProxiedBy: CO2PR04CA0104.namprd04.prod.outlook.com
+ (2603:10b6:104:6::30) To BL2PR07MB2321.namprd07.prod.outlook.com
+ (2a01:111:e400:c753::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6bd142e7-7c88-42a9-5f4a-08d590a92517
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BL2PR07MB2321;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2321;3:gy8ts8o91ZU1a8rEL+oPHukKPCCCBKWaoZXyNwCWFK6SuhKFzvuTi4CMeBgcA1T7WETSdkefSwTtICOXlB0PmMSenp7THNkJGbAnXCHgL0nN82/odDAs9Ua4kF/PrO2dDYMDyCgwXKr9NNVrgtxREJmqq5SGS3FXNKmloMvvj8fWrflZyx97KNU9yNazN1UQJWYjO97ng2KAfPlgKOykQ7dSAKNjyT+5TY5D8hMTPhi13m9S8aB3XjQZJCqmsEQY;25:eSPc6HxtYySQOZJjjqGg6XOsdbiAXuBIt50wrNSmwht7znPf1dX2/zxuwTa8MFAffu8J6oKllr18TgvJGyGHLaEdTR8VmV0ftzO0sKeu+dVS/f8102XJ9/+MaF0vHVCs1gPEDwL08LXlZkHC9CkbS6DAfrgHg1LB+f3/wNDZnyKtO/Dg089Qthkr/rVaVP9EjCfa7ncGJcqJxzEz2wCMudNP4adFQFSM+4f+fW6NoKkEkS+LANHl6oJZJXhVbJrTcTRHTiLh6Tz44YHfDZfIzyBrYkfrDf7ftHD9QK/Ep3xgvhhZ3SoxNB58dnGKRRRuYo7HyWM6dQ+eljAP1nLxsg==;31:u27AdQrQ2/2Wal/5l+MDYlCDdHi2Bp1NJurYmAx5g9XhLQStFE6x34ZGsbFWeMAAjz822wvIuOzOWrmh+kXah4yOVPoQaOpOtJrMhOSbmlzsf7BP7Q8gbTDU7CFdMutAJQkzO/CVvHuK97oKgN9foocINJvyAAsv5QZKACz0ZoqEJJBoqtgBVNYGmAtCMi+eLV3ByPapCKju+LiY3j3cXQEHm329FxGm7HIqR5abgCQ=
+X-MS-TrafficTypeDiagnostic: BL2PR07MB2321:
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2321;20:6YcDRsXr490JSoDKw32PKqAHjUm0DeP0FvlGDB5oTK+fiB2KZqvOKwVm+elvYxLVJAxh0wIEHgfI2UTxirlhyRfWpdlVMy0mBHCgdWtC8zpsYNvYokLGBCFFmZorYSlhNgOi0G7ctmGnXo0dn1n3SWcKcC9/SLq+8eckjLN6O4EjlvwaGPXlU+eUGZU41NGqTnBV6qfc/CMps0s5SJx+WxsQFAwihMmE5zOGWNyhkhcgzliMSQoPlqGV43ibr/8cCiOkH6Ix8kO6JGmjP7OGOsVROJI/ZJ/ZE+XiN2cqIE2PGRsUrrH9xFvk+JQvPWOTDeOTUIQQC1z6/HefsLrhdCQpXni961fmaeAtmKZCk5UHy0fQ4D09IfIUtp2QaVUWnuznOqIZXADQnXV5Es+OwHIT0g67VD6VYcoiaRbRmfB3vQssqgnhycEVz2jCbsawVmE8dpeGEdqnAgQKM6jCHKfDduT8dgFP1LfpyiPSoLhCm3rfooZu/OBrH7Pwjo6u;4:e+DqD4TH9xquxTI/EPNDeXkuRSSZ235SjWFLhOz5NzVNej6hVKFf5u5xzsfsSmf2H2e/owGZD3CNUQ1kEs9jZ6s54tauMxdJZ3LfnR+lt4GY5RN67vJ2xzLq1++/tRsupVq1wuRGdl/Tb/QE14/uihDeEW6Ah/YpfvKYtoofLBFMvsTHtY0u/rqoJqWt05bhbgaopUpLOiOWgrWHCQF0LWywhZfd7QCqh7/HP4QAC5b0n/N6Gq50HUafbTsfpJ7acwovdqyYjeyZgrhHBwXn+g==
+X-Microsoft-Antispam-PRVS: <BL2PR07MB23211A08386F90D50545B256F9A80@BL2PR07MB2321.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:BL2PR07MB2321;BCL:0;PCL:0;RULEID:;SRVR:BL2PR07MB2321;
+X-Forefront-PRVS: 0620CADDF3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(39380400002)(396003)(366004)(39860400002)(346002)(376002)(199004)(189003)(478600001)(52116002)(6512007)(16586007)(51416003)(316002)(6116002)(3846002)(53416004)(6486002)(66066001)(107886003)(47776003)(68736007)(26005)(6506007)(186003)(16526019)(69596002)(386003)(1857600001)(53936002)(48376002)(50226002)(50466002)(81166006)(8936002)(36756003)(7736002)(97736004)(5660300001)(2906002)(8676002)(4720700003)(6666003)(105586002)(4326008)(72206003)(25786009)(106356001)(81156014)(305945005)(86362001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR07MB2321;H:sbr2s-28.caveonetworks.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR07MB2321;23:GfNzASPaccK4/dpCxrZykxkKlGJ+wi9sScuZxVfen?=
+ =?us-ascii?Q?DDcQSvesUlvswUWj6HvAWOD26IL7YyKE8tQMpMM2Snd8YIV5Tun33VYHqABR?=
+ =?us-ascii?Q?YLFrb2aSgzweB2czcg7xhEfpNayfP4rMqU3Z7hVvb8v/pQn11v/xjYZIYOFl?=
+ =?us-ascii?Q?eGbn7xHTeCUYQyiRAyeZUtO19JUUC9bAhQUn5VWRVzfPa7gc4OL1qWbjI3yL?=
+ =?us-ascii?Q?4iuY5JdNgaLuawmcB07TiiCiIHxxJ1UHgdUM/SZ1ZVygzAScZFl/lxxgDWA4?=
+ =?us-ascii?Q?Yyl0W68g4ndtE3RFjahYdDvm/7befHkEkL/xRRpru2mjLnp1hkiM041p4vuW?=
+ =?us-ascii?Q?9hbf9OWfzGJjgtO83trXCayx1bs5sqHTbByxgJgpgak17OgoFAQxmNJ7WmiF?=
+ =?us-ascii?Q?MmRNDX5v0M0Ctd/9uRMszkoxsmBpBy9SWMVyJzxGe2ZupIDmYSDdRVjH0d/H?=
+ =?us-ascii?Q?nXtZGHkmPAonBdrW+LWYTBTYasTf2WXFt2kHKWNjfRi9y5b7DI6iO6Foa9fl?=
+ =?us-ascii?Q?4893maRibfNyWhNuuPT0f1An2Bk+JtTHhGMB3ftzz67ut879r91z/8WVlvqx?=
+ =?us-ascii?Q?eugqW/+Z7cvN0o7SXT29IwuRGMS9966FTQYnJLC3pPu/Fz0B+z7oTGY5jMmc?=
+ =?us-ascii?Q?ZqFJeMXTGWDCnuOhT5ABebmN7bBerg159C7Kp0M8gFjYPz8QzlxDfOejNjAy?=
+ =?us-ascii?Q?XUMhsC/Z5+LDqsYhCup3bdUV+MKNC4wbdFbhaPMUihwgKpKCIO8Qrv249spO?=
+ =?us-ascii?Q?WkSlvTob6y3cF1ZTctxCA+5BwgQOnOTYtK+qLGXU6AXlSZbIhvl7dZkQbXx7?=
+ =?us-ascii?Q?uvT7bNTK5qxDwMCv0JJUCG4g/iPj0Cwvk2tUhK11TKWqyi9u0pZtZktCYO0s?=
+ =?us-ascii?Q?gfYv79CN3KFcQKOs++Ahko86MmfVHhVck0gnzDWyF8sdl6pK8gDNlIOO4xn8?=
+ =?us-ascii?Q?wPDDTY+NVBi1OAeQflY9AoKpMZTb6MpPZiTVUilTBa0xMCHbypyUQqX0TbRI?=
+ =?us-ascii?Q?gFDpueogpf2CtoK90a6TMENiS21KLdPBMa453glh0m4WJ8i0SVZaohGZRjKG?=
+ =?us-ascii?Q?oaWwaMBxulj3AxUy+VvpTr5aGpKGKayyCBZJDooheGiVSOQd2x4KWYiizClO?=
+ =?us-ascii?Q?B2oxBY8ZZgBvOhAvIFsxP3sE/sW/XZDq6nif6+8cfaE3ZWwjov13uX7KxtO+?=
+ =?us-ascii?Q?szu8gbAZsxpY3DSWa/uwb9/xrSD0eR5b/SrStpv5q1PhY/mRGV9ej2xqtIHg?=
+ =?us-ascii?Q?PUW3dg2mBx2qf8TCImlZj/P0bRkNfxBNiTXSz4J?=
+X-Microsoft-Antispam-Message-Info: qlBaHkR/l6ZIjjN9UGVngZNph9yVX35mvg2n0p0H7o81uycZcXfyhHJsls3q/kJkg1GGTtDyhgvUjiU8IkMPWKkOeqvqMRnKR4bOY5u/1HGHkW8yZGZSIhxucWp/ZCWLwtnCRov5YV3fqYRsOlsViCoTh2KouOi9ExERU7DG1Vh722TTT2uxobPT54+nHB7z
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2321;6:RWYEL3nJdbP7wKDRVn7cIJVrWqdH19wzhThzLy3qPV0zn4BKfMXfnJ/rCmWKNCHnjKQpVU67s62pa8N29w99JqpCsTOkIeAY55ZEm/FhSFy61KymM2d2kvvMtnoeCGCZ/8E7JqASc1kz7t4dXuICR+iCJc31scADziPaVcGGZXNMIOhMRm7OtaObhagkof9m/xk5Fex82TRLFJNa2SwZ82glFgYQbmchL9f7h2dxQV6t9UecQk15lKaLpX01IJ2XA5lg613Ob24xd23f9XT3MgQTuYjwr8uK0TZ3xAi5URjOXwnCm2MtoaFOh7Y8UnHpqa03iRgWLBpj99udEYU0vLzgGP+1+gUGRFniK+cYj0W37+JdAY828V94x4Ug+VnOF2B6Hpv83gL3QIvvCv/lUlDB2vXfMpUugy8AoBvsGRwlg/MtLByvARAUd8k5c/ZcrZ4CB1TWf6+8PHfP9pr/vw==;5:6GL9LvNZK2WhRj6/Rm0z1X99ErMQ8E+GirRKkrmA9C/AJ6GzpygbwhrPvECCcyeUPcRbLppFtAIF00Oq79zh538C821k7r02igFdifqWxY9BKhF6q3os21nvRZKJWMk1Oid1kGbIRx+aMfnJdWHghVV/7Fd3KZ2cYIpUWh9DPVs=;24:7UHlCwzUs/9ag05eiXxZy8wmNSt7iOnd1X7OxO06cBjuP2qeWrMgLnP4LMrGHXZNaPJ/sXaLjPh2ve9QNzidzSozpgyY9i5t7VKbrFdnxIc=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR07MB2321;7:r/QRRYbPSEhOa805Bk/1zxUF6TDh/Yrp/4TN5UHeaqy/Cdh5zcNT+IxRHvsZE7Sp7OmF1y4NITGtTvJjgTj0QcXR3xuENrYcMA0QiTUFGAvoJ2UdwyknzDmBAGYmh/7t5oTa+oBsRAgNAabeS2TOARkMXEkWMXf3CyWW/XbsBqWtPU7wK7BCNbbnbsxB/KQSvF6EPoPMiEhC4hid4wRnNRqU9CDGy6KTs85COjMXu+n8rHvC9Cp4liliD2D6k7T8
+X-OriginatorOrg: cavium.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2018 10:30:48.2319 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bd142e7-7c88-42a9-5f4a-08d590a92517
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR07MB2321
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 04:29:01PM +0100, Paul Kocialkowski wrote:
-> The frontend supports many YUV formats as input and also contains a
-> color-space converter (CSC) block that can convert YUV input into
-> RGB output. It also allows scaling between the input and output for
-> every possible combination of supported formats.
-> 
-> This adds support for all the (untiled) YUV video formats supported by
-> the frontend, with associated changes in the backend and layer
-> management.
-> 
-> A specific dumb GEM create function translates a hardware constraint,
-> that the stride must be an even number, when allocating dumb (linear)
-> buffers.
+With commit e948bc8fbee0 ("cpufreq: Cap the default transition delay
+value to 10 ms")  the cpufreq was not honouring the delay passed via
+ACPI (PCCT). Due to which on ARM based platforms using CPPC the cpufreq
+governor tries to change the frequency of CPU faster than expeted.
 
-This should be in a separate, potentially preliminary, patch.
+This leads to continuous error messages like the following.
+" ACPI CPPC: PCC check channel failed. Status=0 "
 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_backend.c  |  10 +-
->  drivers/gpu/drm/sun4i/sun4i_drv.c      |  11 +-
->  drivers/gpu/drm/sun4i/sun4i_drv.h      |   4 +
->  drivers/gpu/drm/sun4i/sun4i_frontend.c | 234 ++++++++++++++++++++++++++++-----
->  drivers/gpu/drm/sun4i/sun4i_frontend.h |  48 ++++++-
->  drivers/gpu/drm/sun4i/sun4i_layer.c    |  34 +++--
->  6 files changed, 293 insertions(+), 48 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> index e8af9f3cf20b..3de7f3a427c3 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-> @@ -500,6 +500,11 @@ static int sun4i_backend_atomic_check(struct sunxi_engine *engine,
->  			layer_state->uses_frontend = true;
->  			num_frontend_planes++;
->  		} else {
-> +			if (sun4i_format_is_yuv(fb->format->format)) {
-> +				DRM_DEBUG_DRIVER("Plane FB format is YUV\n");
-> +				num_yuv_planes++;
-> +			}
-> +
->  			layer_state->uses_frontend = false;
->  		}
->  
-> @@ -510,11 +515,6 @@ static int sun4i_backend_atomic_check(struct sunxi_engine *engine,
->  		if (fb->format->has_alpha)
->  			num_alpha_planes++;
->  
-> -		if (sun4i_format_is_yuv(fb->format->format)) {
-> -			DRM_DEBUG_DRIVER("Plane FB format is YUV\n");
-> -			num_yuv_planes++;
-> -		}
-> -
+Earlier (without above commit) the default transition delay was
+taken form the value passed from PCCT. Use the same value provided by PCCT
+to set the transition_delay_us.
 
-Why is this needed?
+Fixes: e948bc8fbee0 (cpufreq: Cap the default transition delay value to 10 ms)
+Signed-off-by: George Cherian <george.cherian@cavium.com>
+---
+ drivers/cpufreq/cppc_cpufreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
->  		DRM_DEBUG_DRIVER("Plane zpos is %d\n",
->  				 plane_state->normalized_zpos);
->  
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-> index 3957c2ff6870..d374bb61c565 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-> @@ -42,7 +42,7 @@ static struct drm_driver sun4i_drv_driver = {
->  	.minor			= 0,
->  
->  	/* GEM Operations */
-> -	.dumb_create		= drm_gem_cma_dumb_create,
-> +	.dumb_create		= drm_sun4i_gem_dumb_create,
->  	.gem_free_object_unlocked = drm_gem_cma_free_object,
->  	.gem_vm_ops		= &drm_gem_cma_vm_ops,
->  
-> @@ -60,6 +60,15 @@ static struct drm_driver sun4i_drv_driver = {
->  	/* Frame Buffer Operations */
->  };
->  
-> +int drm_sun4i_gem_dumb_create(struct drm_file *file_priv,
-> +			      struct drm_device *drm,
-> +			      struct drm_mode_create_dumb *args)
-> +{
-> +	args->pitch = ALIGN(DIV_ROUND_UP(args->width * args->bpp, 8), 2);
-> +
-> +	return drm_gem_cma_dumb_create_internal(file_priv, drm, args);
-> +}
-> +
->  static void sun4i_remove_framebuffers(void)
->  {
->  	struct apertures_struct *ap;
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.h b/drivers/gpu/drm/sun4i/sun4i_drv.h
-> index 5750b8ce8b31..47969711a889 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_drv.h
-> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.h
-> @@ -23,4 +23,8 @@ struct sun4i_drv {
->  	struct list_head	tcon_list;
->  };
->  
-> +int drm_sun4i_gem_dumb_create(struct drm_file *file_priv,
-> +			      struct drm_device *drm,
-> +			      struct drm_mode_create_dumb *args);
-> +
-
-I'm not sure this is needed, you just need to move the function before
-the structure definition.
-
->  #endif /* _SUN4I_DRV_H_ */
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> index 2dc33383be22..d9e58e96119c 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> @@ -16,6 +16,7 @@
->  #include <linux/reset.h>
->  
->  #include "sun4i_drv.h"
-> +#include "sun4i_format.h"
->  #include "sun4i_frontend.h"
->  
->  static const u32 sun4i_frontend_vert_coef[32] = {
-> @@ -89,26 +90,135 @@ void sun4i_frontend_update_buffer(struct sun4i_frontend *frontend,
->  {
->  	struct drm_plane_state *state = plane->state;
->  	struct drm_framebuffer *fb = state->fb;
-> +	uint32_t format = fb->format->format;
-> +	uint32_t width, height;
-> +	uint32_t stride, offset;
-> +	bool swap;
->  	dma_addr_t paddr;
->  
-> -	/* Set the line width */
-> -	DRM_DEBUG_DRIVER("Frontend stride: %d bytes\n", fb->pitches[0]);
-
-Keeping that debug message would be valuable.
-
-> +	width = state->src_w >> 16;
-> +	height = state->src_h >> 16;
-> +
-
-You don't seem to be using these values anywhere.
-
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD0_REG,
->  		     fb->pitches[0]);
->  
-> +	if (drm_format_num_planes(format) > 1)
-> +		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD1_REG,
-> +			     fb->pitches[1]);
-> +
-> +	if (drm_format_num_planes(format) > 2)
-> +		regmap_write(frontend->regs, SUN4I_FRONTEND_LINESTRD2_REG,
-> +			     fb->pitches[2]);
-> +
->  	/* Set the physical address of the buffer in memory */
->  	paddr = drm_fb_cma_get_gem_addr(fb, state, 0);
->  	paddr -= PHYS_OFFSET;
-> -	DRM_DEBUG_DRIVER("Setting buffer address to %pad\n", &paddr);
-> +	DRM_DEBUG_DRIVER("Setting buffer #0 address to %pad\n", &paddr);
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_BUF_ADDR0_REG, paddr);
-> +
-> +	/* Some planar formats require chroma channel swapping by hand. */
-> +	swap = sun4i_frontend_format_chroma_requires_swap(format);
-> +
-> +	if (drm_format_num_planes(format) > 1) {
-> +		paddr = drm_fb_cma_get_gem_addr(fb, state, swap ? 2 : 1);
-> +		paddr -= PHYS_OFFSET;
-> +		DRM_DEBUG_DRIVER("Setting buffer #1 address to %pad\n", &paddr);
-> +		regmap_write(frontend->regs, SUN4I_FRONTEND_BUF_ADDR1_REG,
-> +			     paddr);
-> +	}
-> +
-> +	if (drm_format_num_planes(format) > 2) {
-> +		paddr = drm_fb_cma_get_gem_addr(fb, state, swap ? 1 : 2);
-> +		paddr -= PHYS_OFFSET;
-> +		DRM_DEBUG_DRIVER("Setting buffer #2 address to %pad\n", &paddr);
-> +		regmap_write(frontend->regs, SUN4I_FRONTEND_BUF_ADDR2_REG,
-> +			     paddr);
-> +	}
->  }
->  EXPORT_SYMBOL(sun4i_frontend_update_buffer);
->  
->  static int sun4i_frontend_drm_format_to_input_fmt(uint32_t fmt, u32 *val)
->  {
-> +	if (sun4i_format_is_rgb(fmt))
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
-> +	else if (sun4i_format_is_yuv411(fmt))
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV411;
-> +	else if (sun4i_format_is_yuv420(fmt))
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV420;
-> +	else if (sun4i_format_is_yuv422(fmt))
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422;
-> +	else if (sun4i_format_is_yuv444(fmt))
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV444;
-> +	else
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int sun4i_frontend_drm_format_to_input_mode(uint32_t fmt, u32 *val)
-> +{
-> +	if (sun4i_format_is_packed(fmt))
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED;
-> +	else if (sun4i_format_is_semiplanar(fmt))
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR;
-> +	else if (sun4i_format_is_planar(fmt))
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR;
-> +	else
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int sun4i_frontend_drm_format_to_input_sequence(uint32_t fmt, u32 *val)
-> +{
-> +	/* Planar formats have an explicit input sequence. */
-> +	if (sun4i_format_is_planar(fmt)) {
-> +		*val = 0;
-> +		return 0;
-> +	}
-> +
->  	switch (fmt) {
-> +	/* RGB */
->  	case DRM_FORMAT_XRGB8888:
-> -		*val = 5;
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_BGRX8888:
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX;
-> +		return 0;
-> +
-> +	/* YUV420 */
-> +	case DRM_FORMAT_NV12:
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UV;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_NV21:
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VU;
-> +		return 0;
-> +
-> +	/* YUV422 */
-> +	case DRM_FORMAT_YUYV:
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YUYV;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_VYUY:
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VYUY;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_YVYU:
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YVYU;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_UYVY:
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_NV16:
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UV;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_NV61:
-> +		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VU;
->  		return 0;
->  
->  	default:
-> @@ -120,7 +230,11 @@ static int sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
->  {
->  	switch (fmt) {
->  	case DRM_FORMAT_XRGB8888:
-> -		*val = 2;
-> +		*val = SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_XRGB8888;
-> +		return 0;
-> +
-> +	case DRM_FORMAT_BGRX8888:
-> +		*val = SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_BGRX8888;
->  		return 0;
-
-Are we using this anywhere?
-
->  
->  	default:
-> @@ -172,22 +286,52 @@ bool sun4i_frontend_format_is_supported(uint32_t fmt)
->  	return true;
->  }
->  
-> +bool sun4i_frontend_format_chroma_requires_swap(uint32_t fmt)
-> +{
-> +	switch (fmt) {
-> +	case DRM_FORMAT_YVU444:
-> +	case DRM_FORMAT_YVU422:
-> +	case DRM_FORMAT_YVU420:
-> +	case DRM_FORMAT_YVU411:
-> +		return true;
-> +
-> +	default:
-> +		return false;
-> +	}
-> +}
-> +
->  int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
->  				  struct drm_plane *plane, uint32_t out_fmt)
->  {
->  	struct drm_plane_state *state = plane->state;
->  	struct drm_framebuffer *fb = state->fb;
-> +	uint32_t format = fb->format->format;
->  	u32 out_fmt_val;
->  	u32 in_fmt_val;
-> +	u32 in_mod_val;
-> +	u32 in_ps_val;
-> +	u32 bypass;
-> +	unsigned int i;
->  	int ret;
->  
-> -	ret = sun4i_frontend_drm_format_to_input_fmt(fb->format->format,
-> -						     &in_fmt_val);
-> +	ret = sun4i_frontend_drm_format_to_input_fmt(format, &in_fmt_val);
->  	if (ret) {
->  		DRM_DEBUG_DRIVER("Invalid input format\n");
->  		return ret;
->  	}
->  
-> +	ret = sun4i_frontend_drm_format_to_input_mode(format, &in_mod_val);
-> +	if (ret) {
-> +		DRM_DEBUG_DRIVER("Invalid input mode\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = sun4i_frontend_drm_format_to_input_sequence(format, &in_ps_val);
-> +	if (ret) {
-> +		DRM_DEBUG_DRIVER("Invalid pixel sequence\n");
-> +		return ret;
-> +	}
-> +
->  	ret = sun4i_frontend_drm_format_to_output_fmt(out_fmt, &out_fmt_val);
->  	if (ret) {
->  		DRM_DEBUG_DRIVER("Invalid output format\n");
-> @@ -205,10 +349,30 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTPHASE1_REG, 0x400);
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTPHASE1_REG, 0x400);
->  
-> +	if (sun4i_format_is_yuv(format) &&
-> +	    !sun4i_format_is_yuv(out_fmt)) {
-> +		/* Setup the CSC engine for YUV to RGB conversion. */
-> +
-> +		for (i = 0; i < ARRAY_SIZE(sunxi_bt601_yuv2rgb_coef); i++)
-> +			regmap_write(frontend->regs,
-> +				     SUN4I_FRONTEND_CSC_COEF_REG(i),
-> +				     sunxi_bt601_yuv2rgb_coef[i]);
-> +
-> +		regmap_update_bits(frontend->regs,
-> +				   SUN4I_FRONTEND_FRM_CTRL_REG,
-> +				   SUN4I_FRONTEND_FRM_CTRL_COEF_RDY,
-> +				   SUN4I_FRONTEND_FRM_CTRL_COEF_RDY);
-> +
-> +		bypass = 0;
-> +	} else {
-> +		bypass = SUN4I_FRONTEND_BYPASS_CSC_EN;
-
-I guess this is also something you introduce that should be in a
-separate patch.
-
-> +	}
-> +
-> +	regmap_update_bits(frontend->regs, SUN4I_FRONTEND_BYPASS_REG,
-> +			   SUN4I_FRONTEND_BYPASS_CSC_EN, bypass);
-> +
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_INPUT_FMT_REG,
-> -		     SUN4I_FRONTEND_INPUT_FMT_DATA_MOD(1) |
-> -		     SUN4I_FRONTEND_INPUT_FMT_DATA_FMT(in_fmt_val) |
-> -		     SUN4I_FRONTEND_INPUT_FMT_PS(1));
-> +		     in_mod_val | in_fmt_val | in_ps_val);
->  
->  	/*
->  	 * TODO: It look like the A31 and A80 at least will need the
-> @@ -216,7 +380,7 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
->  	 * ARGB8888).
->  	 */
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_OUTPUT_FMT_REG,
-> -		     SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT(out_fmt_val));
-> +		     out_fmt_val);
->  
->  	return 0;
->  }
-> @@ -226,31 +390,45 @@ void sun4i_frontend_update_coord(struct sun4i_frontend *frontend,
->  				 struct drm_plane *plane)
->  {
->  	struct drm_plane_state *state = plane->state;
-> +	struct drm_framebuffer *fb = state->fb;
-> +	uint32_t format = fb->format->format;
-> +	uint32_t luma_width, luma_height;
-> +	uint32_t chroma_width, chroma_height;
->  
->  	/* Set height and width */
-> -	DRM_DEBUG_DRIVER("Frontend size W: %u H: %u\n",
-> +	DRM_DEBUG_DRIVER("Frontend crtc size W: %u H: %u\n",
-
-The frontend is not the CRTC
-
->  			 state->crtc_w, state->crtc_h);
-> -	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_INSIZE_REG,
-> -		     SUN4I_FRONTEND_INSIZE(state->src_h >> 16,
-> -					   state->src_w >> 16));
-> -	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_INSIZE_REG,
-> -		     SUN4I_FRONTEND_INSIZE(state->src_h >> 16,
-> -					   state->src_w >> 16));
->  
-> +	luma_width = chroma_width = state->src_w >> 16;
-> +	luma_height = chroma_height = state->src_h >> 16;
-> +
-> +	if (sun4i_format_is_yuv411(format)) {
-> +		chroma_width = DIV_ROUND_UP(luma_width, 4);
-> +	} else if (sun4i_format_is_yuv420(format)) {
-> +		chroma_width = DIV_ROUND_UP(luma_width, 2);
-> +		chroma_height = DIV_ROUND_UP(luma_height, 2);
-> +	} else if (sun4i_format_is_yuv422(format)) {
-> +		chroma_width = DIV_ROUND_UP(luma_width, 2);
-> +	}
-> +
-> +	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_INSIZE_REG,
-> +		     SUN4I_FRONTEND_INSIZE(luma_height, luma_width));
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_OUTSIZE_REG,
->  		     SUN4I_FRONTEND_OUTSIZE(state->crtc_h, state->crtc_w));
-> +	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_HORZFACT_REG,
-> +		     (luma_width << 16) / state->crtc_w);
-> +	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTFACT_REG,
-> +		     (luma_height << 16) / state->crtc_h);
-> +
-> +	/* These also have to be specified, even for interleaved formats. */
-> +	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_INSIZE_REG,
-> +		     SUN4I_FRONTEND_INSIZE(chroma_height, chroma_width));
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_OUTSIZE_REG,
->  		     SUN4I_FRONTEND_OUTSIZE(state->crtc_h, state->crtc_w));
-> -
-> -	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_HORZFACT_REG,
-> -		     state->src_w / state->crtc_w);
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_HORZFACT_REG,
-> -		     state->src_w / state->crtc_w);
-> -
-> -	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTFACT_REG,
-> -		     state->src_h / state->crtc_h);
-> +		     (chroma_width << 16) / state->crtc_w);
->  	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTFACT_REG,
-> -		     state->src_h / state->crtc_h);
-> +		     (chroma_height << 16) / state->crtc_h);
->  
->  	regmap_write_bits(frontend->regs, SUN4I_FRONTEND_FRM_CTRL_REG,
->  			  SUN4I_FRONTEND_FRM_CTRL_REG_RDY,
-> @@ -382,10 +560,6 @@ static int sun4i_frontend_runtime_resume(struct device *dev)
->  			   SUN4I_FRONTEND_EN_EN,
->  			   SUN4I_FRONTEND_EN_EN);
->  
-> -	regmap_update_bits(frontend->regs, SUN4I_FRONTEND_BYPASS_REG,
-> -			   SUN4I_FRONTEND_BYPASS_CSC_EN,
-> -			   SUN4I_FRONTEND_BYPASS_CSC_EN);
-> -
->  	sun4i_frontend_scaler_init(frontend);
->  
->  	return 0;
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-> index a9cb908ced16..6dd1d18752f4 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
-> +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-> @@ -21,17 +21,56 @@
->  #define SUN4I_FRONTEND_BYPASS_REG		0x008
->  #define SUN4I_FRONTEND_BYPASS_CSC_EN			BIT(1)
->  
-> +#define SUN4I_FRONTEND_AGTH_SEL_REG		0x00C
-> +#define SUN4I_FRONTEND_AGTH_SEL_ORIGINAL		BIT(8)
-> +
->  #define SUN4I_FRONTEND_BUF_ADDR0_REG		0x020
-> +#define SUN4I_FRONTEND_BUF_ADDR1_REG		0x024
-> +#define SUN4I_FRONTEND_BUF_ADDR2_REG		0x028
-> +
-> +#define SUN4I_FRONTEND_TB_OFF0_REG		0x030
-> +#define SUN4I_FRONTEND_TB_OFF1_REG		0x034
-> +#define SUN4I_FRONTEND_TB_OFF2_REG		0x038
-> +
-> +#define SUN4I_FRONTEND_TB_OFF_X1(x1)			((x1) << 16)
-> +#define SUN4I_FRONTEND_TB_OFF_Y0(y0)			((y0) << 8)
-> +#define SUN4I_FRONTEND_TB_OFF_X0(x0)			(x0)
->  
->  #define SUN4I_FRONTEND_LINESTRD0_REG		0x040
-> +#define SUN4I_FRONTEND_LINESTRD1_REG		0x044
-> +#define SUN4I_FRONTEND_LINESTRD2_REG		0x048
->  
->  #define SUN4I_FRONTEND_INPUT_FMT_REG		0x04c
-> -#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD(mod)		((mod) << 8)
-> -#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT(fmt)		((fmt) << 4)
-> -#define SUN4I_FRONTEND_INPUT_FMT_PS(ps)			(ps)
-> +
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MASK			GENMASK(10, 8)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR		(0 << 8)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED		(1 << 8)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR		(2 << 8)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_PLANAR		(4 << 8)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_SEMIPLANAR	(6 << 8)
-> +
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_MASK			GENMASK(6, 4)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV444		(0 << 4)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422		(1 << 4)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV420		(2 << 4)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV411		(3 << 4)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB			(5 << 4)
-> +
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_MASK			GENMASK(1, 0)
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY			0
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YUYV			1
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VYUY			2
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YVYU			3
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UV			0
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VU			1
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB			0
-> +#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX			1
->  
->  #define SUN4I_FRONTEND_OUTPUT_FMT_REG		0x05c
-> -#define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT(fmt)		(fmt)
-> +#define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_BGRX8888	1
-> +#define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_XRGB8888	2
-> +
-> +#define SUN4I_FRONTEND_CSC_COEF_REG(c)		(0x070 + (0x4 * (c)))
->  
->  #define SUN4I_FRONTEND_CH0_INSIZE_REG		0x100
->  #define SUN4I_FRONTEND_INSIZE(h, w)			((((h) - 1) << 16) | (((w) - 1)))
-> @@ -96,5 +135,6 @@ void sun4i_frontend_update_coord(struct sun4i_frontend *frontend,
->  int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
->  				  struct drm_plane *plane, uint32_t out_fmt);
->  bool sun4i_frontend_format_is_supported(uint32_t fmt);
-> +bool sun4i_frontend_format_chroma_requires_swap(uint32_t fmt);
->  
->  #endif /* _SUN4I_FRONTEND_H_ */
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
-> index 15238211a61a..a39eed6a0e75 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_layer.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-> @@ -128,19 +128,37 @@ static const struct drm_plane_funcs sun4i_backend_layer_funcs = {
->  	.update_plane		= drm_atomic_helper_update_plane,
->  };
->  
-> -static const uint32_t sun4i_backend_layer_formats[] = {
-> -	DRM_FORMAT_ARGB8888,
-> +static const uint32_t sun4i_layer_formats[] = {
-> +	/* RGB */
->  	DRM_FORMAT_ARGB4444,
-> +	DRM_FORMAT_RGBA4444,
->  	DRM_FORMAT_ARGB1555,
->  	DRM_FORMAT_RGBA5551,
-> -	DRM_FORMAT_RGBA4444,
-> -	DRM_FORMAT_RGB888,
->  	DRM_FORMAT_RGB565,
-> -	DRM_FORMAT_UYVY,
-> -	DRM_FORMAT_VYUY,
-> +	DRM_FORMAT_RGB888,
->  	DRM_FORMAT_XRGB8888,
-> +	DRM_FORMAT_BGRX8888,
-> +	DRM_FORMAT_ARGB8888,
-> +	/* YUV444 */
-> +	DRM_FORMAT_YUV444,
-> +	DRM_FORMAT_YVU444,
-> +	/* YUV422 */
->  	DRM_FORMAT_YUYV,
->  	DRM_FORMAT_YVYU,
-> +	DRM_FORMAT_UYVY,
-> +	DRM_FORMAT_VYUY,
-> +	DRM_FORMAT_NV16,
-> +	DRM_FORMAT_NV61,
-> +	DRM_FORMAT_YUV422,
-> +	DRM_FORMAT_YVU422,
-> +	/* YUV420 */
-> +	DRM_FORMAT_NV12,
-> +	DRM_FORMAT_NV21,
-> +	DRM_FORMAT_YUV420,
-> +	DRM_FORMAT_YVU420,
-> +	/* YUV411 */
-> +	DRM_FORMAT_YUV411,
-> +	DRM_FORMAT_YVU411,
->  };
->  
->  static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
-> @@ -157,8 +175,8 @@ static struct sun4i_layer *sun4i_layer_init_one(struct drm_device *drm,
->  	/* possible crtcs are set later */
->  	ret = drm_universal_plane_init(drm, &layer->plane, 0,
->  				       &sun4i_backend_layer_funcs,
-> -				       sun4i_backend_layer_formats,
-> -				       ARRAY_SIZE(sun4i_backend_layer_formats),
-> +				       sun4i_layer_formats,
-> +				       ARRAY_SIZE(sun4i_layer_formats),
->  				       NULL, type, NULL);
-
-I stopped reviewing this, because it should be split in at least the
-following commits, possibly more:
-  - one to add the custom GEM allocator
-  - one to move the yuv number check in atomic_check
-  - one to enable the input sequence computation
-  - one to enable the input mode computation
-  - one to move the CSC bypass setting from the probe to the update_fomats function
-  - one to introduce the interleaved YUV formats
-  - one to introduce the multi-planar YUV formats
-  - one to rename the sun4i_backend_layer_formats array
-
-Maxime
-
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index a1c3025..dcb1cb9 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -20,6 +20,7 @@
+ #include <linux/cpu.h>
+ #include <linux/cpufreq.h>
+ #include <linux/dmi.h>
++#include <linux/time.h>
+ #include <linux/vmalloc.h>
+ 
+ #include <asm/unaligned.h>
+@@ -162,6 +163,8 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	policy->cpuinfo.max_freq = cppc_dmi_max_khz;
+ 
+ 	policy->cpuinfo.transition_latency = cppc_get_transition_latency(cpu_num);
++	policy->transition_delay_us = cppc_get_transition_latency(cpu_num) /
++		NSEC_PER_USEC;
+ 	policy->shared_type = cpu->shared_type;
+ 
+ 	if (policy->shared_type == CPUFREQ_SHARED_TYPE_ANY)
 -- 
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+1.8.3.1
