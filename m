@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805184-2-14693395509105024000
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805175-2-13087176489502480090
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805184; b=ICLJa3RSRRhOgKOuUwqVjHhCsFit6tftL3m5lCvWJjp1jnk
-    IpxDr6qMeE1/TsvNGY5X8bnvvRIy/vDeHnnxJyJEVcRISnrcNkIfNPSU4ZDXBX2n
-    AL265NFzYKC7ZEAzGntfCrKZc6Wresz+JKh3dLDOuWTKCkQZ0+iBQCi2OMtByDFr
-    Ry/IKeeLJpCySh/TnseDjtyX9sWxHRrYyPS3ARhgE0h8ayELiNkG9TTwAlf8z9UU
-    h+6fBC57qvX+eNryKz4wSVS0WN0gM+HmvBzNZzihEepwSuAMCu+L2+pJ0y16SvqV
-    WdXeZtqJypPZKRdD/urimDtxN6o/KHAWa7GiwoA==
+    t=1521805175; b=vqXU6iquWUAAtx3255xFSXSNuNINl0XmLRMecIkJGxpruso
+    C13u/e0ROAveQ0P3YZ4wXaOfyOUlCmKksPn3JyH4j75QvSYKJdO2nTuuPuk01yZ6
+    7M8wHLTVbiMg09bib1MVqQJrjVIFx+amC1LNLnQoNFNSV/D50+Bcg2TtlEmkUwFu
+    RNLmP1c1xNqCQh2b5JSuWyKwLj1p6EWT1cCssGpYE4lPSwu/njEn9USSTOqb1u8I
+    Jm0vfJIumZeb9T2O2ISEDgj72wwxreCwi/AIwR6mUWSCtAKz8T3ery46M2MCUlNe
+    L1OyxKkQQkl7btYxkKNFDf6htyunthzeQUdzGuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805184; bh=VUenVBdoBaI1bUTM6qbr6VqRk4
-    KN7hJdylcW4u4T4+E=; b=YLnjkaqg3cwT1ph8BdZaRYdSDLMcowqaVwPkMXLjX4
-    JvMS8U3SEFZIInmBmGBdsMg4jCUI1NQ6BajySnXrqgmZF3s0Wk2TFTq9MxWndRrm
-    ki9m3yMFjXPKfxzEZp1l+4k+Yo+ZL9Vd+TtGVNetY5lLUYAoWWGCEFMAe+lVfidK
-    54vODMeiHtrn2nI2fan6Jrer3AYclIz6XuypHmcV++mjkxlJ7B51RHf/QvcSHWoX
-    Vz+EqXwg21SVeZNGMQofPNpqT3DVYVjF+UOWUgeWfROCMVDG6GjFIYvwMUA7NcNl
-    8C/Am0flRmo1mszSmBAzpH2RSyIvr/4KeqYbileMO7Gg==
+    :list-id; s=arctest; t=1521805175; bh=BHRqH412Em7MfmtrfeJueSFpid
+    5sj2W3pFoLlfGz8m8=; b=DqtmKSqsl/C2r17ALItP7p3N2C8rtuzgyaOBPB7q02
+    iE6TQ63KD7IGFCneZYoIGQlNEIBXsdDd2bI1cKjfYjqxq2qPwQ3k27XnWI+hKDea
+    0Op09WPNJn4TZlBBjVIk9kbxEm3fSpoODXsNz3bVrztSliOsHmSBP/0p7e9IbRrE
+    UVFdh8ycWRszY1x98VhUQ2f0YGqgbJmG5MnlFmLRVYUJbqEGOqWFz7kj0sijPxZF
+    m38tUBuEN0fmQXWrvnjOzN0jOOwyVnFmm0/7B5AppEvmYL7SDdMTizjE3xTJWarJ
+    GcZYRXEKHtYeseAfD4L9YdOE+JjnuGvEDRdRPSWttBkQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754702AbeCWKEY (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:04:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39126 "EHLO
+        id S1754722AbeCWKE1 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:04:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39142 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754686AbeCWKEW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:22 -0400
+        with ESMTP id S1754714AbeCWKEZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Matthias Schiffer <mschiffer@universe-factory.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 4.9 006/177] Revert "led: core: Fix brightness setting when setting delay_off=0"
-Date: Fri, 23 Mar 2018 10:52:14 +0100
-Message-Id: <20180323094205.493198018@linuxfoundation.org>
+        "linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, pavel@ucw.cz,
+        jacek.anaszewski@gmail.com, Matthieu CASTET"
+        <matthieu.castet@parrot.com>
+Subject: [PATCH 4.9 007/177] led: core: Clear LED_BLINK_SW flag in led_blink_set()
+Date: Fri, 23 Mar 2018 10:52:15 +0100
+Message-Id: <20180323094205.532542495@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -85,30 +85,26 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-This reverts commit 86b9fa2190907f4f550d9d6bf490c5f89ca33836 which was
-commit 2b83ff96f51d0b039c4561b9f95c824d7bddb85c upstream.
+[Only needed in 4.9.y due to other fixes in mainline - gregkh]
 
-The commit being reverted has two flaws:
- - it introduces a regression, fixed in the upstream
-   commit 7b6af2c53192f1766892ef40c8f48a413509ed72.
- - it has truncated commit message
+With the current code, the following sequence won't work :
+echo timer > trigger
 
-Reported-by: Sasha Levin <Alexander.Levin@microsoft.com>
-Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
-Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+echo 0 >  delay_off
+* at this point we call
+** led_delay_off_store
+** led_blink_set
 ---
- drivers/leds/led-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/leds/led-core.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/drivers/leds/led-core.c
 +++ b/drivers/leds/led-core.c
-@@ -186,7 +186,7 @@ void led_blink_set(struct led_classdev *
- 		   unsigned long *delay_on,
- 		   unsigned long *delay_off)
+@@ -188,6 +188,7 @@ void led_blink_set(struct led_classdev *
  {
--	led_stop_software_blink(led_cdev);
-+	del_timer_sync(&led_cdev->blink_timer);
+ 	del_timer_sync(&led_cdev->blink_timer);
  
++	led_cdev->flags &= ~LED_BLINK_SW;
  	led_cdev->flags &= ~LED_BLINK_ONESHOT;
  	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
+ 
