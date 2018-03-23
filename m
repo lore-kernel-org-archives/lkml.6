@@ -1,89 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752518AbeCWMzO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 08:55:14 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40648 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751983AbeCWMzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 08:55:12 -0400
-Date: Fri, 23 Mar 2018 12:54:55 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: =?ISO-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>
-CC: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
-        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 09/11] staging: iio: ad7746: Add devicetree bindings
- documentation
-Message-ID: <20180323135455.00007341@huawei.com>
-In-Reply-To: <1521642539-4845-10-git-send-email-hernan@vanguardiasur.com.ar>
-References: <1521642539-4845-1-git-send-email-hernan@vanguardiasur.com.ar>
-        <1521642539-4845-10-git-send-email-hernan@vanguardiasur.com.ar>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; i686-w64-mingw32)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+        id S1752405AbeCWM5C convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 08:57:02 -0400
+Received: from mailhost.informatik.uni-hamburg.de ([134.100.9.70]:32862 "EHLO
+        mailhost.informatik.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751776AbeCWM5B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 08:57:01 -0400
+From: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+Content-Type: text/plain;
+        charset=us-ascii
 Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.202.226.45]
-X-CFilter-Loop: Reflected
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: [RFC PATCH v5 5/5] crypto: add flag for unstable encoding
+Message-Id: <F324487F-A4C4-4573-A517-1E45AF871770@informatik.uni-hamburg.de>
+Date: Fri, 23 Mar 2018 13:56:55 +0100
+Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, minchan@kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        ngupta@vflare.org, Philippe Ombredanne <pombredanne@nexb.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Stephan Mueller <smueller@chronox.de>
+To: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018 11:28:57 -0300
-Hernán Gonzalez <hernan@vanguardiasur.com.ar> wrote:
+The data-format of zBeWalgo, and some other algorithms is unstable. To
+identify such unstable algorithms this patch adds a new flag to the
+crypto-api.
 
-> Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
-Device tree bindings must be cc'd to the device tree binding maintainers
-and the devicetree binding list.
+Signed-off-by: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+---
+ crypto/zbewalgo.c      | 2 +-
+ include/linux/crypto.h | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Comments inline but don't forget to cc them on v2.
-
-Jonathan
-
-> ---
->  .../devicetree/bindings/staging/iio/cdc/ad7746.txt | 32 ++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/staging/iio/cdc/ad7746.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/staging/iio/cdc/ad7746.txt b/Documentation/devicetree/bindings/staging/iio/cdc/ad7746.txt
-> new file mode 100644
-> index 0000000..13d0056
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/staging/iio/cdc/ad7746.txt
-> @@ -0,0 +1,32 @@
-> +Analog Devices AD7746/5/7 capacitive sensor driver
-> +
-> +Required properties:
-> +	- compatible: Should be one of
-> +		* "adi,ad7745": When using the AD7745 device
-> +		* "adi,ad7746": When using the AD7746 device
-> +		* "adi,ad7747": When using the AD7747 device
-The when using bit is kind of obvious.  Probably no need to state.
-
-> +	- reg: The 7-bits long I2c address of the device
-> +
-> +Optional properties:
-> +	- adi,exclvl: 0 = +-VDD/8
-> +                1 = +-VDD/4
-> +                2 = +-VDD * 3/8
-> +                3 = +-VDD/2 (Default)
-That needs a comment to explain what exactly it is rather than
-just documenting the enum values.
-
-> +	- adi,nexca_en: Invert excitation output A.
-> +	- adi,nexcb_en:	Invert excitation output B.
-> +
-> +Example:
-> +Here exclvl would be 1 (VDD/4), Excitation pin A would be inverted and
-> +Excitation pin B would NOT be inverted.
-> +
-> +i2c2 {
-> +
-> +      < . . . >
-> +
-> +      ad7746: ad7746@60 {
-> +              compatible = "ad7746";
-> +              reg = <0x60>;
-> +              adi,exclvl = <1>;
-> +              adi,nexca_en;
-> +      };
-> +};
+diff --git a/crypto/zbewalgo.c b/crypto/zbewalgo.c
+index 9db0d43be..e57b5ced5 100644
+--- a/crypto/zbewalgo.c
++++ b/crypto/zbewalgo.c
+@@ -134,7 +134,7 @@ static int zbewalgo_decompress_crypto_unsafe(struct crypto_tfm *tfm,
+ 
+ static struct crypto_alg crypto_alg_zbewalgo = {
+ 	.cra_name = "zbewalgo",
+-	.cra_flags = CRYPTO_ALG_TYPE_COMPRESS,
++	.cra_flags = CRYPTO_ALG_TYPE_COMPRESS | CRYPTO_ALG_UNSTABLE_ENCODING,
+ 	.cra_ctxsize = sizeof(struct zbewalgo_ctx),
+ 	.cra_module = THIS_MODULE,
+ 	.cra_init = zbewalgo_init,
+diff --git a/include/linux/crypto.h b/include/linux/crypto.h
+index 63420dac0..372893569 100644
+--- a/include/linux/crypto.h
++++ b/include/linux/crypto.h
+@@ -112,6 +112,12 @@
+  */
+ #define CRYPTO_ALG_OPTIONAL_KEY		0x00004000
+ 
++/*
++ * Set if the algorithm is new and it is likely that the encoding may
++ * change in near future
++ */
++#define CRYPTO_ALG_UNSTABLE_ENCODING	0x00008000
++
+ /*
+  * Transform masks and values (for crt_flags).
+  */
+-- 
+2.14.1
