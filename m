@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1092440-1521803306-2-16088530959630451710
+X-Cyrus-Session-Id: sloti22d1t05-1061450-1521803289-2-2757724962950839506
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521803305; b=tCYuX59O6DvAiSae9bdDzMGfvhYu6JK9HckexZpXkUbA8CU
-    LU84ph4Rl/mK+UHcJD+Gd4EaCYLaGxJ2L5Rf/HcNH9sYRt9MGM1+0SYQilxBi0bR
-    o4G96T8bWcNClEQb9FJqXfUapymZV54GcJRKrCI95fHP4SoR0rIFKM2bztGnReIh
-    bUYZq6xgZ1XC18NlCkj9p4V8PShydGGSOwyhmaOc7YBV6c8LO9mpdCnrBekC0ovA
-    V2DhWvRXIBjlX8NPIJzKAEZSP7gUxUyxkrOOnHtREQ1Jdf6y6l37h3rxo68Sujn9
-    /KcIx01ozRKNkcWsP0t2SjgYIMCPuq6/efDUkHg==
+    t=1521803288; b=N33aa3/Zm1C4zEXDVD3JKRAOa1q5ofURRQJUi75LI2ZEwbo
+    R/KWuJeZwnlqX1162KmmEoRK+BL566+JgXuPWaJ8lfd2NA+VD4JSqniroFMmMXMk
+    20GNzjiUDCpExOjhHxOQka2jhwHo3hC7/rsM0xpp8x0VCgSfas5sjmKiQLwJ2s2H
+    gsbh0g8gyLS/6eBam7qf9k/cV90w5m4F0fU0GgTwZVCsdgYzmwwfomLnTrzgWU1s
+    vT9Yg8ZEiQhXfNP8FYmrHVTSKLf9dwNz82/jG1Q42OD+oM4b8K4hmxE4hyTMitG2
+    UPOve8cKi2UCkzALEMjsE0jAHzaO1Pss+8sVYbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521803305; bh=nJXV+7wk/5/c58rpEPqEhCGI/4
-    Tz5Hi0t5pfaFEY7oE=; b=BM6kVNbOFRMDfVr7/NCh/YpJz6Jibj/OsaGtaVuURZ
-    j85dICeBUncLTYHrc+rBuR83lPdkA8rBITI6ME4HrWN0g+icLXY4kRGLQPXBGwkv
-    /08/9KIKVcGYogj7AZXdCOsMk5efTRZSjv6qTmgaKGr1/03MenXXb8Nxhbzyi5qB
-    J8ybgJQl9LQwfRLEoqAjoVaqde1cmla+7cTCm10doneE/dwlqu0XSzAs3gXKsRBY
-    lT1BxI1Ujmwo3FAj7vxbFMmohAwYGJsNtT0gujDusrW4SODNyok4BYPP+mmX0fK0
-    uc0+x+C8EoRLQ0U04DSWS/yuOUFNaURuMFHO+TuYgrlQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521803288; bh=H0VkNRlYfmzUw+b3cPLE2AaK6u
+    Cx44iwklqPTlUwn04=; b=uKD9TpJEl+ZD5UdjFdnf2NdSB+vmuKb9A8cDVOv+Ps
+    l4OfM8kQ3x9h6dsU08dBEdf8QRQkcfytqHoVBulDl38SlZkanhAPNlfxn3IWuL3B
+    QjgC5FSBw4R9xq36Z8DE5a4CSKw/GatLJ+HQDz8cHX82UWQUCDx//46OKKty7WCI
+    sqVyJzWaJvhyynNeACM1uTw4yIgaYswtozsuRbFOFBcgNNB0rGOqxx59ON2dYlwW
+    aJBGyVRdui/ssprOOeWXXfHWRxMpNcbmqpws3yU5HVVd/xzv/6V8PEak8Ytc+wSj
+    o/PgbBiF9PE8aLWohSa0wlr3t0/4X78xHlCX0GIWe4Cg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx4.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932688AbeCWKLu (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:11:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44050 "EHLO
+        id S1755925AbeCWLIF (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 07:08:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44060 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933060AbeCWKLs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:11:48 -0400
+        with ESMTP id S933065AbeCWKLv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:11:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
-        Alexey Kodanev <alexey.kodanev@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Anton Vasilyev <vasilyev@ispras.ru>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 164/177] ip6_vti: adjust vti mtu according to mtu of lower device
-Date: Fri, 23 Mar 2018 10:54:52 +0100
-Message-Id: <20180323094212.406862532@linuxfoundation.org>
+Subject: [PATCH 4.9 165/177] RDMA/ocrdma: Fix permissions for OCRDMA_RESET_STATS
+Date: Fri, 23 Mar 2018 10:54:53 +0100
+Message-Id: <20180323094212.446099275@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,85 +83,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Anton Vasilyev <vasilyev@ispras.ru>
 
 
-[ Upstream commit 53c81e95df1793933f87748d36070a721f6cb287 ]
+[ Upstream commit 744820869166c8c78be891240cf5f66e8a333694 ]
 
-LTP/udp6_ipsec_vti tests fail when sending large UDP datagrams over
-ip6_vti that require fragmentation and the underlying device has an
-MTU smaller than 1500 plus some extra space for headers. This happens
-because ip6_vti, by default, sets MTU to ETH_DATA_LEN and not updating
-it depending on a destination address or link parameter. Further
-attempts to send UDP packets may succeed because pmtu gets updated on
-ICMPV6_PKT_TOOBIG in vti6_err().
+Debugfs file reset_stats is created with S_IRUSR permissions,
+but ocrdma_dbgfs_ops_read() doesn't support OCRDMA_RESET_STATS,
+whereas ocrdma_dbgfs_ops_write() supports only OCRDMA_RESET_STATS.
 
-In case the lower device has larger MTU size, e.g. 9000, ip6_vti works
-but not using the possible maximum size, output packets have 1500 limit.
+The patch fixes misstype with permissions.
 
-The above cases require manual MTU setup after ip6_vti creation. However
-ip_vti already updates MTU based on lower device with ip_tunnel_bind_dev().
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Here is the example when the lower device MTU is set to 9000:
-
-  # ip a sh ltp_ns_veth2
-      ltp_ns_veth2@if7: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 ...
-        inet 10.0.0.2/24 scope global ltp_ns_veth2
-        inet6 fd00::2/64 scope global
-
-  # ip li add vti6 type vti6 local fd00::2 remote fd00::1
-  # ip li show vti6
-      vti6@NONE: <POINTOPOINT,NOARP> mtu 1500 ...
-        link/tunnel6 fd00::2 peer fd00::1
-
-After the patch:
-  # ip li add vti6 type vti6 local fd00::2 remote fd00::1
-  # ip li show vti6
-      vti6@NONE: <POINTOPOINT,NOARP> mtu 8832 ...
-        link/tunnel6 fd00::2 peer fd00::1
-
-Reported-by: Petr Vorel <pvorel@suse.cz>
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+Acked-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_vti.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/infiniband/hw/ocrdma/ocrdma_stats.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -625,6 +625,7 @@ static void vti6_link_config(struct ip6_
- {
- 	struct net_device *dev = t->dev;
- 	struct __ip6_tnl_parm *p = &t->parms;
-+	struct net_device *tdev = NULL;
+--- a/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
++++ b/drivers/infiniband/hw/ocrdma/ocrdma_stats.c
+@@ -836,7 +836,7 @@ void ocrdma_add_port_stats(struct ocrdma
  
- 	memcpy(dev->dev_addr, &p->laddr, sizeof(struct in6_addr));
- 	memcpy(dev->broadcast, &p->raddr, sizeof(struct in6_addr));
-@@ -637,6 +638,25 @@ static void vti6_link_config(struct ip6_
- 		dev->flags |= IFF_POINTOPOINT;
- 	else
- 		dev->flags &= ~IFF_POINTOPOINT;
-+
-+	if (p->flags & IP6_TNL_F_CAP_XMIT) {
-+		int strict = (ipv6_addr_type(&p->raddr) &
-+			      (IPV6_ADDR_MULTICAST | IPV6_ADDR_LINKLOCAL));
-+		struct rt6_info *rt = rt6_lookup(t->net,
-+						 &p->raddr, &p->laddr,
-+						 p->link, strict);
-+
-+		if (rt)
-+			tdev = rt->dst.dev;
-+		ip6_rt_put(rt);
-+	}
-+
-+	if (!tdev && p->link)
-+		tdev = __dev_get_by_index(t->net, p->link);
-+
-+	if (tdev)
-+		dev->mtu = max_t(int, tdev->mtu - dev->hard_header_len,
-+				 IPV6_MIN_MTU);
- }
+ 	dev->reset_stats.type = OCRDMA_RESET_STATS;
+ 	dev->reset_stats.dev = dev;
+-	if (!debugfs_create_file("reset_stats", S_IRUSR, dev->dir,
++	if (!debugfs_create_file("reset_stats", 0200, dev->dir,
+ 				&dev->reset_stats, &ocrdma_dbg_ops))
+ 		goto err;
  
- /**
