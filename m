@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805880-2-12428190390054000391
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521805862-2-3850702073954045744
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805879; b=T8tmnfHkrXS1ydhXAwPBPvkW+mbvoeMDie9/arI3KiUkvPh
-    japJXomymMpXUAi3ZhkRGUXhu+AJb5Jy1gVbzHbuDTFWbnxIDB20iBOQqniFORe3
-    qqwPcmm6zZCM57A+wrx0I5FRrpOG1kl7xTKyw83X3hXlA8fvgvgIx/RJNhJgWYeG
-    xjXsjcPk0QO5tSbvYfJ3pwaXqbdm517OU5dWL+zzekTWmaUvCFIu99pOCwGb97ZZ
-    q90zyWC1AOK/Jq1Ra4fpghtlLEpb58mScfLzpHNSr/NFFffbTzTb0DfAqpm1Cz6H
-    RuORai8hRc/ekSOB9kl6shMWTlvncE/0DfJS98A==
+    t=1521805861; b=ZibxNGfkUjAjIo4bHUdDTh7p4x+EEiC5haRAu3X3BUoi+Bp
+    1g4lUVsks1MDhNflaXv0Y7e3p4Err8XEf4NtmkJibwHAm9DlS2lZ1/hIz7AOYDR8
+    Ra4u+gh+b8LvwkgNUDNdTVQGG0+p4LQB1tQqHiOnbTtBPxBYOWP4N3m/rv1fkYa7
+    Le+bjeJoiFfntt2N+VIYe2u2oSvWcnwLV1CT26+IlfwCkj72ccUXC9qRwHfcYe/R
+    CR3D6uS2ILbJfLtW3WKDj8SBKsmNCwIOOeWeAH6vKODaPCEswDHzEp4RxgfylcSW
+    LdO2PUCp9vRm8XVSerm4btjaGqXEC5gib4znLWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805879; bh=l1nq+wkyUwgAZrw9+O8QGgGHw0
-    /VfSUKC7VK+JcXfVI=; b=r9vEaI7KiVXDPWTRsBHTbnpq4n95a+OFlmyCW0e640
-    tNZegrI4p86I3E9J7zbe8WDHDxxo5buWAst7gWW+tL1Cz4MEv7GP/R7xVjgFBYnm
-    gssQnGorEHG0MHAiLj3MGMmXhzwCZZ9e5MCYVeZMIpcFHUvHbmh+FbzBgPCyqPsE
-    wA615MD8DGBH2beYZ0Wi2BPMEL3kudgl4WV/2yl1+ZIKt7E+ORTx+okiY2XIA9Iz
-    JsLs9pebND5upU9vEb13HJ5sv0ylWS8empnUFhC8cvWdo3Sshw9aRzS5UWBlhmEe
-    RVfUES807QQoiHZex2Y427LVG2Xx57/3kcrNht9BhW2g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521805861; bh=08ixiMiicwGv4KuupdaCy0WcTs
+    Vih/UyHiXRghAl1Mg=; b=tqIcSOHzm7TjlsXROCFkxddFst5/dtfmi8AP4q1PK4
+    HzInNksX1A2nSUjgFcJ6yZYMbYx0IPObJGJcoW6hAeZW/ZSsgEUEaHzEVCHu+Kg5
+    Y3qok7aJbIfiTZ/NAYcTpygpt+V1tHzsFRL0ESefpMOEQAwsNsRKFc1oQoZcKssq
+    HE7QAgeYjZCH1nveXJ4WpB9w9gY8A0WZdWXdOqrpW+kqdgBoxPPDM74bhP9vkz6F
+    tWhp9lkg+ls3s9hvKkchqI1q2o6ALKgRbttWiMDZBSvFyBM+yzXsofuAlPLvB0kS
+    cAifpZJmWEXttLmbzr2xuV6O0FvCH0iM/SEXoUXuqgrQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753768AbeCWKCQ (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:02:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38264 "EHLO
+        id S1754169AbeCWKCT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:02:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38274 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754132AbeCWKCP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:02:15 -0400
+        with ESMTP id S1754167AbeCWKCS (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:02:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        stable@vger.kernel.org, Erez Shitrit <erezsh@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 34/77] rtc: ac100: Fix multiple race conditions
-Date: Fri, 23 Mar 2018 10:54:08 +0100
-Message-Id: <20180323094144.541616351@linuxfoundation.org>
+Subject: [PATCH 4.14 35/77] IB/ipoib: Avoid memory leak if the SA returns a different DGID
+Date: Fri, 23 Mar 2018 10:54:09 +0100
+Message-Id: <20180323094144.608746231@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
 References: <20180323094142.260022880@linuxfoundation.org>
@@ -83,119 +83,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+From: Erez Shitrit <erezsh@mellanox.com>
 
 
-[ Upstream commit 994ec64c0a193940be7a6fd074668b9446d3b6c3 ]
+[ Upstream commit 439000892ee17a9c92f1e4297818790ef8bb4ced ]
 
-The probe function is not allowed to fail after registering the RTC because
-the following may happen:
+The ipoib path database is organized around DGIDs from the LLADDR, but the
+SA is free to return a different GID when asked for path. This causes a
+bug because the SA's modified DGID is copied into the database key, even
+though it is no longer the correct lookup key, causing a memory leak and
+other malfunctions.
 
-CPU0:                                CPU1:
-sys_load_module()
- do_init_module()
-  do_one_initcall()
-   cmos_do_probe()
-    rtc_device_register()
-     __register_chrdev()
-     cdev->owner = struct module*
-                                     open("/dev/rtc0")
-    rtc_device_unregister()
-  module_put()
-  free_module()
-   module_free(mod->module_core)
-   /* struct module *module is now
-      freed */
-                                      chrdev_open()
-                                       spin_lock(cdev_lock)
-                                       cdev_get()
-                                        try_module_get()
-                                         module_is_live()
-                                         /* dereferences already
-                                            freed struct module* */
+Ensure the database key does not change after the SA query completes.
 
-Also, the interrupt handler: ac100_rtc_irq() is dereferencing chip->rtc but
-this may still be NULL when it is called, resulting in:
-Unable to handle kernel NULL pointer dereference at virtual address 00000194
-pgd = (ptrval)
-[00000194] *pgd=00000000
-Internal error: Oops: 5 [#1] SMP ARM
-Modules linked in:
-CPU: 0 PID: 72 Comm: irq/71-ac100-rt Not tainted 4.15.0-rc1-next-20171201-dirty #120
-Hardware name: Allwinner sun8i Family
-task: (ptrval) task.stack: (ptrval)
-PC is at mutex_lock+0x14/0x3c
-LR is at ac100_rtc_irq+0x38/0xc8
-pc : [<c06543a4>]    lr : [<c04d9a2c>]    psr: 60000053
-sp : ee9c9f28  ip : 00000000  fp : ee9adfdc
-r10: 00000000  r9 : c0a04c48  r8 : c015ed18
-r7 : ee9bd600  r6 : ee9c9f28  r5 : ee9af590  r4 : c0a04c48
-r3 : ef3cb3c0  r2 : 00000000  r1 : ee9af590  r0 : 00000194
-Flags: nZCv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: 4000406a  DAC: 00000051
-Process irq/71-ac100-rt (pid: 72, stack limit = 0x(ptrval))
-Stack: (0xee9c9f28 to 0xee9ca000)
-9f20:                   00000000 7c2fd1be c015ed18 ee9adf40 ee9c0400 ee9c0400
-9f40: ee9adf40 c015ed34 ee9c8000 ee9adf64 ee9c0400 c015f040 ee9adf80 00000000
-9f60: c015ee24 7c2fd1be ee9adfc0 ee9adf80 00000000 ee9c8000 ee9adf40 c015eef4
-9f80: ef1eba34 c0138f14 ee9c8000 ee9adf80 c0138df4 00000000 00000000 00000000
-9fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
-9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-9fe0: 00000000 00000000 00000000 00000000 00000013 00000000 ffffffff ffffffff
-[<c06543a4>] (mutex_lock) from [<c04d9a2c>] (ac100_rtc_irq+0x38/0xc8)
-[<c04d9a2c>] (ac100_rtc_irq) from [<c015ed34>] (irq_thread_fn+0x1c/0x54)
-[<c015ed34>] (irq_thread_fn) from [<c015f040>] (irq_thread+0x14c/0x214)
-[<c015f040>] (irq_thread) from [<c0138f14>] (kthread+0x120/0x150)
-[<c0138f14>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+Demonstration of the bug is as  follows
+ipoib wants to send to GID fe80:0000:0000:0000:0002:c903:00ef:5ee2, it
+creates new record in the DB with that gid as a key, and issues a new
+request to the SM.
+Now, the SM from some reason returns path-record with other SGID (for
+example, 2001:0000:0000:0000:0002:c903:00ef:5ee2 that contains the local
+subnet prefix) now ipoib will overwrite the current entry with the new
+one, and if new request to the original GID arrives ipoib  will not find
+it in the DB (was overwritten) and will create new record that in its
+turn will also be overwritten by the response from the SM, and so on
+till the driver eats all the device memory.
 
-Solve both issues by moving to
-devm_rtc_allocate_device()/rtc_register_device()
-
-Reported-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Tested-by: Quentin Schulz <quentin.schulz@free-electrons.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-ac100.c |   19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/drivers/rtc/rtc-ac100.c
-+++ b/drivers/rtc/rtc-ac100.c
-@@ -567,6 +567,12 @@ static int ac100_rtc_probe(struct platfo
- 		return chip->irq;
- 	}
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -776,6 +776,22 @@ static void path_rec_completion(int stat
+ 	spin_lock_irqsave(&priv->lock, flags);
  
-+	chip->rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(chip->rtc))
-+		return PTR_ERR(chip->rtc);
+ 	if (!IS_ERR_OR_NULL(ah)) {
++		/*
++		 * pathrec.dgid is used as the database key from the LLADDR,
++		 * it must remain unchanged even if the SA returns a different
++		 * GID to use in the AH.
++		 */
++		if (memcmp(pathrec->dgid.raw, path->pathrec.dgid.raw,
++			   sizeof(union ib_gid))) {
++			ipoib_dbg(
++				priv,
++				"%s got PathRec for gid %pI6 while asked for %pI6\n",
++				dev->name, pathrec->dgid.raw,
++				path->pathrec.dgid.raw);
++			memcpy(pathrec->dgid.raw, path->pathrec.dgid.raw,
++			       sizeof(union ib_gid));
++		}
 +
-+	chip->rtc->ops = &ac100_rtc_ops;
-+
- 	ret = devm_request_threaded_irq(&pdev->dev, chip->irq, NULL,
- 					ac100_rtc_irq,
- 					IRQF_SHARED | IRQF_ONESHOT,
-@@ -586,17 +592,16 @@ static int ac100_rtc_probe(struct platfo
- 	/* clear counter alarm pending interrupts */
- 	regmap_write(chip->regmap, AC100_ALM_INT_STA, AC100_ALM_INT_ENABLE);
+ 		path->pathrec = *pathrec;
  
--	chip->rtc = devm_rtc_device_register(&pdev->dev, "rtc-ac100",
--					     &ac100_rtc_ops, THIS_MODULE);
--	if (IS_ERR(chip->rtc)) {
--		dev_err(&pdev->dev, "unable to register device\n");
--		return PTR_ERR(chip->rtc);
--	}
--
- 	ret = ac100_rtc_register_clks(chip);
- 	if (ret)
- 		return ret;
- 
-+	ret = rtc_register_device(chip->rtc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "unable to register device\n");
-+		return ret;
-+	}
-+
- 	dev_info(&pdev->dev, "RTC enabled\n");
- 
- 	return 0;
+ 		old_ah   = path->ah;
