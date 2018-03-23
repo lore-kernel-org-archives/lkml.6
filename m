@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1182439-1521806947-2-3430619510822612721
+X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806938-2-18157294778051482361
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806947; b=MHpOHKfrfRRdD4HzSvkw2LE2mIcv24maKuDPMSwrt/E/8bF
-    XUOMTp1iGsJle35lXt5aniXqj51jVjIX27zgjE0ZOjbEMzQp2moSGeZpABzxmaUi
-    F4bCJZLq6Lqy5IHPSBazX8pnxJ8KqUMgf/1vlYq68NK9q+p1I7t0CP2rlnRGtgAN
-    oIvGIokuWg7e8Mn8JuMHFOa/mo/JE1LIYb8l7TjbEck6YVmKC4x+mqg4dE1mOORn
-    GSEAQzJOd3mfa8jXZJS5pPG7zTEq90zONRVosOFejQzBHtDXEOB7gZ1bJ+cBuyXb
-    flHt64Oii+Cqk+Iotk2RXvbzO95phVUjuLnaOQw==
+    t=1521806938; b=ShgjWeCb2svBcUIb4yc6jz4DTCCrGUUimmNlFlvmMmShoqz
+    GAYHmHAwYUECA/AAgJMzhAA3c5su6LN5F/mdOEMRqbD2cckPBmRoJ4kkkKGmsK4r
+    i5vg39lvQocDTkGFdHGd2o7Fo9OdQ00AZCfsqJaTE7uk0gV60eHEdQgCvIsdn3en
+    1Zfo9qPy3XJFgTnW4FXdv8VeCl4Jgl4qVkDFCTWL7Eo4y461I1Tx64gPByjpl0Hj
+    D3jhjz0bgfNDMbLMRJOPz6oQ49EaOEziiamTlGfjnLA6XCWHBEzLVtZ+p25NfUHg
+    ml1P6MTvyqfF3agAvrVP+koj97/8OV+SMnFJ1Uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806947; bh=0Y/YFLS3zU9+WWRBfBkZk3oj5B
-    hyeSPx8S+xPreKzho=; b=BH+55uuUWFi9BQVqall5sTtHfnznqXBOeZB+8Nk5z0
-    cz8rD5GFnx9wjWi3Y5clo78I4VjqLs8gX0qqCE9KBucg4uJ10xkI0Tw3wYxof8lu
-    OqQmKhT5pOSwo9RTXP+M5Jvvzo9ZwMIsiZsrZVqfsRAe5L8BXVbfSD11IgF18Bgs
-    ZwjYzVGPwHGvc0XY32g2k+Y1z5mRAmf2uBWZrw9StKZpviVVW7ikaevDCRIT6kTJ
-    DvH/72yHkUtQYwP2h/TMGRjK90qhkHCt6wHJ8cISkZ2q6h8527tA7fCn9QomkCQH
-    nA1aFkjFtzGXSYdoAqmAhiZdtRzBlupsVPXmsEj7a/lg==
+    :list-id; s=arctest; t=1521806938; bh=reqJ0xM02M2lcVogkjF8xdx2Qo
+    SW6GynVza/9QWI/lY=; b=ZXeKYavludplqGyt8lSRhY3GqB1fc1E7j6CMHJBA+O
+    R2M5XdC3vtRs39tjBQrK/Ff2bwdccIZhlkdz3k571XcFRQwdhkjKTu+/bzzjvKSe
+    221A4AAJCvEkokvdGofioXo9t850O13Uqmg30OSGoxedL5DMUlqVzxZLYwXM4z83
+    dv69gQ/auFl554/NzLMorOZPyjbRralXA4ORbwIASZw9mn2+Pj0yKaI2W1SIcujs
+    jFPHtueqh+OQHNFNSvA0z+bHGActrhL3tF2ZI7D0QKbe/0sX6hoEow+iIRjP3k2o
+    woufkBf4/p9v9Hm9JFem3z/DNPTraZwZTYk1qSMgJDEA==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,20 +50,22 @@ Authentication-Results: mx5.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753078AbeCWJ61 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:58:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35700 "EHLO
+        id S1753130AbeCWJ6c (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:58:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35706 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753104AbeCWJ6Y (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:24 -0400
+        with ESMTP id S1753113AbeCWJ61 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sahara <keun-o.park@darkmatter.ae>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 49/84] pty: cancel pty slave port bufs work in tty_release
-Date: Fri, 23 Mar 2018 10:54:03 +0100
-Message-Id: <20180323095419.427804411@linuxfoundation.org>
+Subject: [PATCH 4.15 58/84] pinctrl: Really force states during suspend/resume
+Date: Fri, 23 Mar 2018 10:54:12 +0100
+Message-Id: <20180323095420.776620158@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -81,78 +83,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sahara <keun-o.park@darkmatter.ae>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
 
-[ Upstream commit 2b022ab7542df60021ab57854b3faaaf42552eaf ]
+[ Upstream commit 981ed1bfbc6c4660b2ddaa8392893e20a6255048 ]
 
-In case that CONFIG_SLUB_DEBUG is on and pty is used, races between
-release_one_tty and flush_to_ldisc work threads may happen and lead
-to use-after-free condition on tty->link->port. Because SLUB_DEBUG
-is turned on, freed tty->link->port is filled with POISON_FREE value.
-So far without SLUB_DEBUG, port was filled with zero and flush_to_ldisc
-could return without a problem by checking if tty is NULL.
+In case a platform only defaults a "default" set of pins, but not a
+"sleep" set of pins, and this particular platform suspends and resumes
+in a way that the pin states are not preserved by the hardware, when we
+resume, we would call pinctrl_single_resume() -> pinctrl_force_default()
+-> pinctrl_select_state() and the first thing we do is check that the
+pins state is the same as before, and do nothing.
 
-CPU 0                                 CPU 1
------                                 -----
-release_tty                           pty_write
-   cancel_work_sync(tty)                 to = tty->link
-   tty_kref_put(tty->link)               tty_schedule_flip(to->port)
-      << workqueue >>                 ...
-      release_one_tty                 ...
-         pty_cleanup                  ...
-            kfree(tty->link->port)       << workqueue >>
-                                         flush_to_ldisc
-                                            tty = READ_ONCE(port->itty)
-                                            tty is 0x6b6b6b6b6b6b6b6b
-                                            !!PANIC!! access tty->ldisc
+In order to fix this, decouple the actual state change from
+pinctrl_select_state() and move it pinctrl_commit_state(), while keeping
+the p->state == state check in pinctrl_select_state() not to change the
+caller assumptions. pinctrl_force_sleep() and pinctrl_force_default()
+are updated to bypass the state check by calling pinctrl_commit_state().
 
- Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b6b93
- pgd = ffffffc0eb1c3000
- [6b6b6b6b6b6b6b93] *pgd=0000000000000000, *pud=0000000000000000
- ------------[ cut here ]------------
- Kernel BUG at ffffff800851154c [verbose debug info unavailable]
- Internal error: Oops - BUG: 96000004 [#1] PREEMPT SMP
- CPU: 3 PID: 265 Comm: kworker/u8:9 Tainted: G        W 3.18.31-g0a58eeb #1
- Hardware name: Qualcomm Technologies, Inc. MSM 8996pro v1.1 + PMI8996 Carbide (DT)
- Workqueue: events_unbound flush_to_ldisc
- task: ffffffc0ed610ec0 ti: ffffffc0ed624000 task.ti: ffffffc0ed624000
- PC is at ldsem_down_read_trylock+0x0/0x4c
- LR is at tty_ldisc_ref+0x24/0x4c
- pc : [<ffffff800851154c>] lr : [<ffffff800850f6c0>] pstate: 80400145
- sp : ffffffc0ed627cd0
- x29: ffffffc0ed627cd0 x28: 0000000000000000
- x27: ffffff8009e05000 x26: ffffffc0d382cfa0
- x25: 0000000000000000 x24: ffffff800a012f08
- x23: 0000000000000000 x22: ffffffc0703fbc88
- x21: 6b6b6b6b6b6b6b6b x20: 6b6b6b6b6b6b6b93
- x19: 0000000000000000 x18: 0000000000000001
- x17: 00e80000f80d6f53 x16: 0000000000000001
- x15: 0000007f7d826fff x14: 00000000000000a0
- x13: 0000000000000000 x12: 0000000000000109
- x11: 0000000000000000 x10: 0000000000000000
- x9 : ffffffc0ed624000 x8 : ffffffc0ed611580
- x7 : 0000000000000000 x6 : ffffff800a42e000
- x5 : 00000000000003fc x4 : 0000000003bd1201
- x3 : 0000000000000001 x2 : 0000000000000001
- x1 : ffffff800851004c x0 : 6b6b6b6b6b6b6b93
+[Linus Walleij]
+The forced pin control states are currently only used in some pin
+controller drivers that grab their own reference to their own pins.
+This is equal to the pin control hogs: pins taken by pin control
+devices since there are no corresponding device in the Linux device
+hierarchy, such as memory controller lines or unused GPIO lines,
+or GPIO lines that are used orthogonally from the GPIO subsystem
+but pincontrol-wise managed as hogs (non-strict mode, allowing
+simultaneous use by GPIO and pin control). For this case forcing
+the state from the drivers' suspend()/resume() callbacks makes
+sense and should semantically match the name of the function.
 
-Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 6e5e959dde0d ("pinctrl: API changes to support multiple states per device")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/tty_io.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/core.c |   24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1482,6 +1482,8 @@ static void release_tty(struct tty_struc
- 	if (tty->link)
- 		tty->link->port->itty = NULL;
- 	tty_buffer_cancel_work(tty->port);
-+	if (tty->link)
-+		tty_buffer_cancel_work(tty->link->port);
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -1189,19 +1189,16 @@ struct pinctrl_state *pinctrl_lookup_sta
+ EXPORT_SYMBOL_GPL(pinctrl_lookup_state);
  
- 	tty_kref_put(tty->link);
- 	tty_kref_put(tty);
+ /**
+- * pinctrl_select_state() - select/activate/program a pinctrl state to HW
++ * pinctrl_commit_state() - select/activate/program a pinctrl state to HW
+  * @p: the pinctrl handle for the device that requests configuration
+  * @state: the state handle to select/activate/program
+  */
+-int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
++static int pinctrl_commit_state(struct pinctrl *p, struct pinctrl_state *state)
+ {
+ 	struct pinctrl_setting *setting, *setting2;
+ 	struct pinctrl_state *old_state = p->state;
+ 	int ret;
+ 
+-	if (p->state == state)
+-		return 0;
+-
+ 	if (p->state) {
+ 		/*
+ 		 * For each pinmux setting in the old state, forget SW's record
+@@ -1265,6 +1262,19 @@ unapply_new_state:
+ 
+ 	return ret;
+ }
++
++/**
++ * pinctrl_select_state() - select/activate/program a pinctrl state to HW
++ * @p: the pinctrl handle for the device that requests configuration
++ * @state: the state handle to select/activate/program
++ */
++int pinctrl_select_state(struct pinctrl *p, struct pinctrl_state *state)
++{
++	if (p->state == state)
++		return 0;
++
++	return pinctrl_commit_state(p, state);
++}
+ EXPORT_SYMBOL_GPL(pinctrl_select_state);
+ 
+ static void devm_pinctrl_release(struct device *dev, void *res)
+@@ -1430,7 +1440,7 @@ void pinctrl_unregister_map(const struct
+ int pinctrl_force_sleep(struct pinctrl_dev *pctldev)
+ {
+ 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_sleep))
+-		return pinctrl_select_state(pctldev->p, pctldev->hog_sleep);
++		return pinctrl_commit_state(pctldev->p, pctldev->hog_sleep);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
+@@ -1442,7 +1452,7 @@ EXPORT_SYMBOL_GPL(pinctrl_force_sleep);
+ int pinctrl_force_default(struct pinctrl_dev *pctldev)
+ {
+ 	if (!IS_ERR(pctldev->p) && !IS_ERR(pctldev->hog_default))
+-		return pinctrl_select_state(pctldev->p, pctldev->hog_default);
++		return pinctrl_commit_state(pctldev->p, pctldev->hog_default);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(pinctrl_force_default);
