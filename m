@@ -1,102 +1,126 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1521812445; cv=none;
-        d=google.com; s=arc-20160816;
-        b=SwSDHVx3EMHYRfNDH0xWX5UfwVE8v7LVO4ihKSImoJ4RLruq84BnysROBycsaPTAph
-         QgrWQ49qS5Yu94mwuaEKGWjnGsFvK4/mOGQpk1mshAIa2slF0kZPYqjUIEUiugzhLRIi
-         bSoecRcp7Ftto0k3ziu5EFjzH4NNzjs+0ZEFUgXu6fduV7WBDCFmARR422ile9ewQzNo
-         cYgibbXJ8SNXPi3xWky4lPwZmKPr5mYyM0uK1G4Mq3cn70B7f8rSNSza3cltoHhJCIqm
-         2gYo7Uv7WxBLhDdL82HLfI9AeYqW4pDvayHQ/ONgNvWG/XYjAxaiaNgl94T6B3JQSYPn
-         kB8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=6Eg6nHZtWWBFmEw3ndEIlTbK6FhtfB3YOYSdKXl5HX8=;
-        b=i6WGU9cHk9ilszkmIa4VcuOUzSmjaa7URCLdp55lM0PEJyHZ9bhWuPSEc+6ULeHJJx
-         dcf7usPj7CY5S843kCGsn4+udwE9W4v6kQh6MJa4EcMrK2BmVNZxT/EiaXUU4ggxLQxn
-         WD4zcEQLn2lq0eGSlFngoz+3GeXBnwLMoin+b+B1lsTkfhfU14t9P8fDhsPzLbJFJEbM
-         Q+h4g5YCscAvbCJfK8j1UzmlQqIcdBA/KtySDrPqg7vEp9lISMf+qfnMSuVAjNEcUdPA
-         qkACX2XTD4ctLCuVmwySwMnK/+Of6h4pPWnzY0PYs1QLTjIi+AfVdQi2SYDto6l1iEJy
-         fgOA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AG47ELt0OCgtbHIecVmfwvd0VZwFCICgUxT9jDhYUExEV1m69+2+Bubm6VsaDPCQwiPNR6Ltb1cVHw==
-Message-ID: <5ab503dc.01b9df0a.fdb52.22cc@mx.google.com>
-Date: Fri, 23 Mar 2018 06:40:44 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.15.y
-X-Kernelci-Kernel: v4.15.12-85-gbd2925ccfad3
-X-Kernelci-Report-Type: boot
-X-Kernelci-Tree: stable-rc
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1182439-1521807636-2-11130213654517996419
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521807636; b=P4G+b84YG+N0XY4+EtnYz2U19v67ZzfDpdcdTrIruDCl4Hz
+    u2/TdMrGAaIP5SqGwk21wMFaooplDBR8dGIfZuxbZoGkLK3MtSG17kwxP713s6+4
+    PE5VTjwqv+c1xiDzvgtNW7F5aiUikSyHPIcv7GRjeYLbndGtWYHoXc8WgEews+o7
+    VGak4OG8f1ECky9ZIp+QnpYMMsnuY2EDjwFJo4D368JKKOIwtzFNB6TjojabafFk
+    QzdsfcMT0ZjUnzdYUY9W470sqivkvmzH2t2t8o5e2qfOpJVUz8QynRLq3SsZUq1i
+    9RJOAdjDxBZKh801IShd3hydRdx6qBlyKN8COIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1521807636; bh=ZFaAEZO0J2WDQvXmVJWIRAn7cf
+    LU7SuV0x5gKhJwUNo=; b=KqDDkvTu3cqaRRhJ42u+GLX+M7Q2WWqnhIZ1xouvMo
+    tbepI4EcrXRBPiW/BD9FWhdcsVufqYcd7foCton7LhEhvDGbAvRXfMowcwZIYFR4
+    tKhRZr1hNlmWQ0Bp0ySBWHp31Mc7NF59vKESzzdHf5XcDQ8SM6S3xMqZ5HbHEP0G
+    AwCqXHN887tntd36rUQ1wKZ87RSQo9TNSsJE1ggB3ZQHNBOalou26x2ylQXxQXNP
+    kyulzt9Js12A+F9cZJthgL+gzRZ235rMS/ONWoXC9dbijmG8OfWQMouakbtWpyUD
+    89I2gJkKBPqtEDwcjGT1mBbg3+IFzpQq6xfIA5oHB+eA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752427AbeCWJz7 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:55:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33808 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751687AbeCWJz6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:55:58 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Yuval Shaia <yuval.shaia@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 10/84] IB/ipoib: Warn when one port fails to initialize
+Date: Fri, 23 Mar 2018 10:53:24 +0100
+Message-Id: <20180323095413.485430317@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
-Subject: Re: [PATCH 4.15 00/84] 4.15.13-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595721912137540632?=
-X-GMAIL-MSGID: =?utf-8?q?1595736007468866025?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.15.y boot: 59 boots: 0 failed, 53 passed with 4 offline, =
-1 untried/unknown, 1 conflict (v4.15.12-85-gbd2925ccfad3)
+4.15-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.15.y/kernel/v4.15.12-85-gbd2925ccfad3/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.15.=
-y/kernel/v4.15.12-85-gbd2925ccfad3/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.15.y
-Git Describe: v4.15.12-85-gbd2925ccfad3
-Git Commit: bd2925ccfad3e41c318d4d1df9a476620b71a50b
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 49 unique boards, 18 SoC families, 14 builds out of 185
+From: Yuval Shaia <yuval.shaia@oracle.com>
 
-Boot Regressions Detected:
 
-arm:
+[ Upstream commit ac6dbf7fa4707c75a247b540cc0b5c881f3d0ba8 ]
 
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-baylibre-seattle: failing since 1 day (last pass: v4.15.11-=
-53-g3c07abdbc9bc - first fail: v4.15.12)
+If one port fails to initialize an error message should indicate the
+reason and driver should continue serving the working port(s) and other
+HCA(s).
 
-Offline Platforms:
-
-arm:
-
-    tegra_defconfig:
-        tegra20-iris-512: 1 offline lab
-
-    exynos_defconfig:
-        exynos5410-odroidxu: 1 offline lab
-
-arm64:
-
-    defconfig:
-        meson-gxbb-odroidc2: 1 offline lab
-        mt7622-rfb1: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-
-    exynos_defconfig:
-        exynos5800-peach-pi:
-            lab-collabora: PASS
-            lab-baylibre-seattle: FAIL
-
+Fixes: e4b2d06892c7 ("IB/ipoib: Remove device when one port fails to init").
+Signed-off-by: Yuval Shaia <yuval.shaia@oracle.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ drivers/infiniband/ulp/ipoib/ipoib_main.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -2207,8 +2207,10 @@ static struct net_device *ipoib_add_port
+ 	int result = -ENOMEM;
+ 
+ 	priv = ipoib_intf_alloc(hca, port, format);
+-	if (!priv)
++	if (!priv) {
++		pr_warn("%s, %d: ipoib_intf_alloc failed\n", hca->name, port);
+ 		goto alloc_mem_failed;
++	}
+ 
+ 	SET_NETDEV_DEV(priv->dev, hca->dev.parent);
+ 	priv->dev->dev_id = port - 1;
+@@ -2337,8 +2339,7 @@ static void ipoib_add_one(struct ib_devi
+ 	}
+ 
+ 	if (!count) {
+-		pr_err("Failed to init port, removing it\n");
+-		ipoib_remove_one(device, dev_list);
++		kfree(dev_list);
+ 		return;
+ 	}
+ 
