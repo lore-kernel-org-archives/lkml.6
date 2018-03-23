@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AG47ELtsNwu2GNOlVlI9rdtlgHcYDhMUPavlFHuOVal13nTzEV1lTmwqaU70+gMejee5kl1KZGQi
-ARC-Seal: i=1; a=rsa-sha256; t=1521800123; cv=none;
+X-Google-Smtp-Source: AG47ELvfUvPC6hnZx1cNXXTSTslMWokYoiaH/ZQpu9LxjV4DbTTwKlirZu1e0HsJ2ZAk2L7brTcJ
+ARC-Seal: i=1; a=rsa-sha256; t=1521800121; cv=none;
         d=google.com; s=arc-20160816;
-        b=xeMP6fbZmJGotiOrHzA8IF4qa9UfH8w6NdQGjQ6uRtINmHjkvvD3yhhnBEGH5AxVPS
-         UGRefx1gYwsRG+tjuqluV6Ea3oZpu5BZhcgPWql792h+DTMly0BG7nGI4EABkp8yk/pB
-         5iJBOkduoRHr/gPp0e3zWbfYKUcjZhq6aOjlq290CXH5CP6UA+wxQzVsGgPiIG9K6XJU
-         0ppSQlG9XDyptByjtBIxKccvulTugFJ/nfRfoeQCeu4kcLF++gzj1OaGik35AmZuHZ1z
-         Nr/orLV0ycsmtJPa3awg+tye/8bMUIixYl7jKOJiWlbHnp28W8f23r/Z016pobdJ6JiJ
-         YoeQ==
+        b=A6P61eMA1gI+jwFZhRFr8PtdHj8g15Cm6LOlckb4tOhlP1bUZAs1WLDFI7lHKISRpU
+         vyKhRLerZ0uCRkYM5EF6Cahja8c/IMWLQDniyKfCpqYA/6Ol5HHmzovjpL7kpB0yRbSM
+         2m8QW8iTG427EZqZaUMv1++k9LFlE2v3z38eRXHJlN+MGtR0MwRHg7Lx9Y6QHjI3oUWk
+         I8wvJHoegozguL0h1bU1ep6HLr5uFPg0NkuoTghLOsga2d1O0gt1vuyMZpExdn5Ljjb3
+         pOCw4ejOdaixlS5V8A6A+JBKgmrqtpM/v9D73WqFbKUSfkiELobjFZD9XL7j/XXV5YbT
+         4XuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SHquMumQ9GXe0RqCKUPM1aoV+4yN50NkyLrqv7tTRFU=;
-        b=Itp0zQW7HnApUMMQbM5pwZJnxcnL8cmg15M+CWwVfVUcEFPRawIvMFPTr9lAq8lBgu
-         ZOwYtc0/rN540+BiJv7fZ8cTjK/Bu1aBcCO7rpeVgieUJniD+c6+w9Wp7DeuNnM4eWnD
-         RIOxwKqVbywsI2Kzkj+gBCn9g279FgFYs8hfE3mswByv5rj54mQ4oyQxzL6IyZCn1z2T
-         QrvulQSpwNA9mPYEdvIXKwOQ8n7F4WN5fCTbt7hcEU6QfstYxmsL54khky43z0hi1ghx
-         sd52sBLXlUU0WmZbeaTytviNyKVN80qw1K7nNFiImUq5yJyZPEh6rkhoawqK9bAKnndw
-         UfpA==
+        bh=zTtO3UzXprME3bW535wUbHyEq3yPhww9IlbmwvkFx80=;
+        b=hW9NPCAfAx3+VzPe6h/k5so+ocLGbLygVXjoq+l6UuxrWdB903G4GxWmIj3bqoMiAO
+         L8PSXATevFqQfxVfK2lIWaV/KG+ekrd5beS0yp1OJ4IBYYjbk4gzXBfwnBjLQaFxlamx
+         FMS0whYMg/P3/LJFBGoWbqtW73NUVYzZD0rR0SkBEH4p+lfVXXXnCtLl5v59USeRLBXz
+         kS/aMHTlrsIDALadvPa+yz2OXuhjrpUIWcrmbAIgoKw1RcvNgOHWLbaI1b+SNer+8ORl
+         yRbAFTEXu/n8Vxxkj49FVVLhOwyGnTdZW1EU8Uk+1JmFaPnYArzTrq7T9HNN/TWxGRVB
+         A+Og==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Feras Daoud <ferasda@mellanox.com>,
-	Erez Shitrit <erezsh@mellanox.com>,
-	Alex Vesker <valex@mellanox.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Doug Ledford <dledford@redhat.com>,
+	Pan Bian <bianpan2016@163.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 32/97] IB/ipoib: Update broadcast object if PKey value was changed in index 0
-Date: Fri, 23 Mar 2018 10:54:19 +0100
-Message-Id: <20180323094159.466111317@linuxfoundation.org>
+Subject: [PATCH 4.4 41/97] wan: pc300too: abort path on failure
+Date: Fri, 23 Mar 2018 10:54:28 +0100
+Message-Id: <20180323094159.954567569@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094157.535925724@linuxfoundation.org>
 References: <20180323094157.535925724@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1595722532065984207?=
-X-GMAIL-MSGID: =?utf-8?q?1595723087181292044?=
+X-GMAIL-THRID: =?utf-8?q?1595722592396394976?=
+X-GMAIL-MSGID: =?utf-8?q?1595723083755484431?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,54 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Feras Daoud <ferasda@mellanox.com>
+From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit 9a9b8112699d78e7f317019b37f377e90023f3ed ]
+[ Upstream commit 2a39e7aa8a98f777f0732ca7125b6c9668791760 ]
 
-Update the broadcast address in the priv->broadcast object when the
-Pkey value changes in index 0, otherwise the multicast GID value will
-keep the previous value of the PKey, and will not be updated.
-This leads to interface state down because the interface will keep the
-old PKey value.
+In function pc300_pci_init_one(), on the ioremap error path, function
+pc300_pci_remove_one() is called to free the allocated memory. However,
+the path is not terminated, and the freed memory will be used later,
+resulting in use-after-free bugs. This path fixes the bug.
 
-For example, in SR-IOV environment, if the PF changes the value of PKey
-index 0 for one of the VFs, then the VF receives PKey change event that
-triggers heavy flush. This flush calls update_parent_pkey that update the
-broadcast object and its relevant members. If in this case the multicast
-GID will not be updated, the interface state will be down.
-
-Fixes: c2904141696e ("IPoIB: Fix pkey change flow for virtualization environments")
-Signed-off-by: Feras Daoud <ferasda@mellanox.com>
-Signed-off-by: Erez Shitrit <erezsh@mellanox.com>
-Reviewed-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_ib.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/net/wan/pc300too.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-@@ -945,6 +945,19 @@ static inline int update_parent_pkey(str
- 		 */
- 		priv->dev->broadcast[8] = priv->pkey >> 8;
- 		priv->dev->broadcast[9] = priv->pkey & 0xff;
-+
-+		/*
-+		 * Update the broadcast address in the priv->broadcast object,
-+		 * in case it already exists, otherwise no one will do that.
-+		 */
-+		if (priv->broadcast) {
-+			spin_lock_irq(&priv->lock);
-+			memcpy(priv->broadcast->mcmember.mgid.raw,
-+			       priv->dev->broadcast + 4,
-+			sizeof(union ib_gid));
-+			spin_unlock_irq(&priv->lock);
-+		}
-+
- 		return 0;
+--- a/drivers/net/wan/pc300too.c
++++ b/drivers/net/wan/pc300too.c
+@@ -347,6 +347,7 @@ static int pc300_pci_init_one(struct pci
+ 	    card->rambase == NULL) {
+ 		pr_err("ioremap() failed\n");
+ 		pc300_pci_remove_one(pdev);
++		return -ENOMEM;
  	}
  
+ 	/* PLX PCI 9050 workaround for local configuration register read bug */
