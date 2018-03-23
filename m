@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806906-2-8530292530940867753
+X-Cyrus-Session-Id: sloti22d1t05-1182164-1521806881-2-10089757724074870045
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806905; b=hSmT7DzmCPtAu86SnEcx5zXiCBE9uVpeg0RM82Kfxss4Eqi
-    +xQPp11lEr/qTmmQ6qJYozmIccfXX6R0Snpbxx3opGBkd6Lm0KraARqYjbEj0Qfq
-    iRHn0sNKu4qyEBcPvgxRvldIkiWImFmJZgHXOSdy6nIKCVU4IG1oOyWrcRNvTEv4
-    bkHgQjK8QsNQXTEETtJc2HG9gNJkiCtIweCSvOLiUv4DIcT6TzAR4iYqGhJt7QH4
-    TGUk9NLlcaXTrL9/Sa3GYmzmk5lJEUXRgJlOfzcp4DGbU6eKG3JlH0VWEvhoREaA
-    8hdtJv5I1EZrqPGIt8JKfFxJrfEneB/J5GqAxDg==
+    t=1521806880; b=NbO5iy/cBrXB1Wg0KQPsZkj5ExVjDjEknUJR6g6qwa4DB9d
+    5Zs1oQq+gYWE7d9/VCt7bfG7cuX7Uus7uN2iXrBD02t8BeOAAv4EAnLqZqx4zueb
+    /tpkyVaOXh6vjYP+ny26XpXsbelZq4Cae9K9KWzewy6fJajP23OfSpYEUrowQTg6
+    cK5A6+FPF6veCQedpFMseMLr4/ZeoqscL1Rul4ohaFav9ptsWJs3h95maDfHJrGD
+    onNy/w8KajRGOa6yNATq3xPkawnXTPpD2AYnaNUXyXxFyWz70HxKmtrEjQypDf6O
+    v+yUxfCxHV+Ibx3XB0muVwm52r3cNoilIPTdErg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521806905; bh=gaJHehjNi+DfK8Y4X+kTGQfu3K
-    Ood3hr24l510MvVgQ=; b=LwsP/FHwjvXNBQ7JFwXjOoSlvFocukY9U9tUzcBhCG
-    H8f1Jt4KSvlZNKnzlWHz8e2qcq7HKxhmDkVdXX2kpa52g4gZTT2OrMGNpDS/v5SW
-    kHqcK7DGIIwvs5d2NSRFil03YrP+KGO2IynBoWnAfh7cbcospkhyGcg+7PRlCEnJ
-    HtIDFMqMCgYTXiHGVVrv1qln2JAbCLPbkCDcNEZAuG2TgvK+WNij85d9QTr84ROR
-    QIZVuZ72Lp/UebTpQCJwoQTzS1AZHbLLzoQKp88npZ+IRnNMHdUvUXcpnzaEgyAe
-    NwEuTa7vXfzI7uDPSnLPvpcfXXTgUNy1C1BEkp5Luecg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1521806880; bh=SDhnAWy1PLuU1yJi6xfjxtLbor
+    Eswfe8Tl6CFXfZ1w4=; b=A+Ut4vb8H+HkjNh7jH95sKETFsI5dPoiN07vEZQR7K
+    EtzKdHlPWNrwM+Np391yx6X2dEpsj+Zlkll4UUPK6XKROAcmjl9OAhWciXz41CP8
+    1564R4gEJ5f6dbgpw+KSySEQhl+M8LXPRcp5I5f5oR9jaVACOfu1ap97TvHzYmNG
+    TdrVsJUqm0MTbBwe3QXHicqpgAtTzA2X+e2rLxuFdNtmQjbrBI7zNTPUrhTRUO7q
+    23wKUz4MD/IIIRvOwjMNlggb6VYjX6LlywfRbXS60sKUyPuVbJIFqNgh2R8SHTaP
+    t6/BeClx1McbnOGYzzpK5c4QhcAEWmLuJ8bJY8etJkmg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,7 +38,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751983AbeCWJ6i (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 05:58:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35770 "EHLO
+        id S1753177AbeCWJ6o (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 05:58:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35814 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753150AbeCWJ6g (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:36 -0400
+        with ESMTP id S1753150AbeCWJ6l (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 05:58:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
-        Alexey Kodanev <alexey.kodanev@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Robert Walker <robert.walker@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 61/84] ip6_vti: adjust vti mtu according to mtu of lower device
-Date: Fri, 23 Mar 2018 10:54:15 +0100
-Message-Id: <20180323095421.211833920@linuxfoundation.org>
+Subject: [PATCH 4.15 50/84] coresight: Fix disabling of CoreSight TPIU
+Date: Fri, 23 Mar 2018 10:54:04 +0100
+Message-Id: <20180323095419.563969489@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323095411.913234798@linuxfoundation.org>
 References: <20180323095411.913234798@linuxfoundation.org>
@@ -83,85 +83,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Robert Walker <robert.walker@arm.com>
 
 
-[ Upstream commit 53c81e95df1793933f87748d36070a721f6cb287 ]
+[ Upstream commit 11595db8e17faaa05fadc25746c870e31276962f ]
 
-LTP/udp6_ipsec_vti tests fail when sending large UDP datagrams over
-ip6_vti that require fragmentation and the underlying device has an
-MTU smaller than 1500 plus some extra space for headers. This happens
-because ip6_vti, by default, sets MTU to ETH_DATA_LEN and not updating
-it depending on a destination address or link parameter. Further
-attempts to send UDP packets may succeed because pmtu gets updated on
-ICMPV6_PKT_TOOBIG in vti6_err().
+The CoreSight TPIU should be disabled when tracing to other sinks to allow
+them to operate at full bandwidth.
 
-In case the lower device has larger MTU size, e.g. 9000, ip6_vti works
-but not using the possible maximum size, output packets have 1500 limit.
+This patch fixes tpiu_disable_hw() to correctly disable the TPIU by
+configuring the TPIU to stop on flush, initiating a manual flush, waiting
+for the flush to complete and then waits for the TPIU to indicate it has
+stopped.
 
-The above cases require manual MTU setup after ip6_vti creation. However
-ip_vti already updates MTU based on lower device with ip_tunnel_bind_dev().
-
-Here is the example when the lower device MTU is set to 9000:
-
-  # ip a sh ltp_ns_veth2
-      ltp_ns_veth2@if7: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 ...
-        inet 10.0.0.2/24 scope global ltp_ns_veth2
-        inet6 fd00::2/64 scope global
-
-  # ip li add vti6 type vti6 local fd00::2 remote fd00::1
-  # ip li show vti6
-      vti6@NONE: <POINTOPOINT,NOARP> mtu 1500 ...
-        link/tunnel6 fd00::2 peer fd00::1
-
-After the patch:
-  # ip li add vti6 type vti6 local fd00::2 remote fd00::1
-  # ip li show vti6
-      vti6@NONE: <POINTOPOINT,NOARP> mtu 8832 ...
-        link/tunnel6 fd00::2 peer fd00::1
-
-Reported-by: Petr Vorel <pvorel@suse.cz>
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Robert Walker <robert.walker@arm.com>
+Tested-by: Mike Leach <mike.leach@linaro.org>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_vti.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/hwtracing/coresight/coresight-tpiu.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -626,6 +626,7 @@ static void vti6_link_config(struct ip6_
- {
- 	struct net_device *dev = t->dev;
- 	struct __ip6_tnl_parm *p = &t->parms;
-+	struct net_device *tdev = NULL;
+--- a/drivers/hwtracing/coresight/coresight-tpiu.c
++++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+@@ -46,8 +46,11 @@
+ #define TPIU_ITATBCTR0		0xef8
  
- 	memcpy(dev->dev_addr, &p->laddr, sizeof(struct in6_addr));
- 	memcpy(dev->broadcast, &p->raddr, sizeof(struct in6_addr));
-@@ -638,6 +639,25 @@ static void vti6_link_config(struct ip6_
- 		dev->flags |= IFF_POINTOPOINT;
- 	else
- 		dev->flags &= ~IFF_POINTOPOINT;
-+
-+	if (p->flags & IP6_TNL_F_CAP_XMIT) {
-+		int strict = (ipv6_addr_type(&p->raddr) &
-+			      (IPV6_ADDR_MULTICAST | IPV6_ADDR_LINKLOCAL));
-+		struct rt6_info *rt = rt6_lookup(t->net,
-+						 &p->raddr, &p->laddr,
-+						 p->link, strict);
-+
-+		if (rt)
-+			tdev = rt->dst.dev;
-+		ip6_rt_put(rt);
-+	}
-+
-+	if (!tdev && p->link)
-+		tdev = __dev_get_by_index(t->net, p->link);
-+
-+	if (tdev)
-+		dev->mtu = max_t(int, tdev->mtu - dev->hard_header_len,
-+				 IPV6_MIN_MTU);
- }
+ /** register definition **/
++/* FFSR - 0x300 */
++#define FFSR_FT_STOPPED		BIT(1)
+ /* FFCR - 0x304 */
+ #define FFCR_FON_MAN		BIT(6)
++#define FFCR_STOP_FI		BIT(12)
  
  /**
+  * @base:	memory mapped base address for this component.
+@@ -85,10 +88,14 @@ static void tpiu_disable_hw(struct tpiu_
+ {
+ 	CS_UNLOCK(drvdata->base);
+ 
+-	/* Clear formatter controle reg. */
+-	writel_relaxed(0x0, drvdata->base + TPIU_FFCR);
++	/* Clear formatter and stop on flush */
++	writel_relaxed(FFCR_STOP_FI, drvdata->base + TPIU_FFCR);
+ 	/* Generate manual flush */
+-	writel_relaxed(FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	writel_relaxed(FFCR_STOP_FI | FFCR_FON_MAN, drvdata->base + TPIU_FFCR);
++	/* Wait for flush to complete */
++	coresight_timeout(drvdata->base, TPIU_FFCR, FFCR_FON_MAN, 0);
++	/* Wait for formatter to stop */
++	coresight_timeout(drvdata->base, TPIU_FFSR, FFSR_FT_STOPPED, 1);
+ 
+ 	CS_LOCK(drvdata->base);
+ }
