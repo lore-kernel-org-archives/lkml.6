@@ -1,177 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755640AbeCWKIt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 06:08:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47244 "EHLO mx2.suse.de"
+        id S1755599AbeCWLU5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 07:20:57 -0400
+Received: from foss.arm.com ([217.140.101.70]:49218 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755583AbeCWKIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 06:08:42 -0400
-Date: Fri, 23 Mar 2018 11:08:39 +0100
-From: Michal Hocko <mhocko@kernel.org>
-To: "Li,Rongqing" <lirongqing@baidu.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRD?= =?utf-8?Q?H=5D?=
- mm/memcontrol.c: speed up to force empty a memory cgroup
-Message-ID: <20180323100839.GO23100@dhcp22.suse.cz>
-References: <1521448170-19482-1-git-send-email-lirongqing@baidu.com>
- <20180319085355.GQ23100@dhcp22.suse.cz>
- <2AD939572F25A448A3AE3CAEA61328C23745764B@BC-MAIL-M28.internal.baidu.com>
- <20180319103756.GV23100@dhcp22.suse.cz>
- <2AD939572F25A448A3AE3CAEA61328C2374589DC@BC-MAIL-M28.internal.baidu.com>
- <2AD939572F25A448A3AE3CAEA61328C2374832C1@BC-MAIL-M28.internal.baidu.com>
+        id S1752192AbeCWLU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 07:20:56 -0400
+Subject: Re: [PATCH] KVM: arm/arm64 : add lpi info in vgic-debug
+To: Peng Hao <peng.hao2@zte.com.cn>, christoffer.dall@linaro.org
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+References: <1521801365-63266-1-git-send-email-peng.hao2@zte.com.cn>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <620e27fa-7bf7-ee68-1a76-3f8f0789b4f0@arm.com>
+Date: Fri, 23 Mar 2018 11:20:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <1521801365-63266-1-git-send-email-peng.hao2@zte.com.cn>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2AD939572F25A448A3AE3CAEA61328C2374832C1@BC-MAIL-M28.internal.baidu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23-03-18 02:58:36, Li,Rongqing wrote:
+On 23/03/18 10:36, Peng Hao wrote:
+> Add lpi debug info to vgic-stat.
+> the printed info like this:
+>      SPI  287      0 000001        0        0   0 160      -1
+>      LPI 8192      2 000100        0        0   0 160      -1
 > 
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  virt/kvm/arm/vgic/vgic-debug.c | 61 ++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 56 insertions(+), 5 deletions(-)
 > 
-> > -----邮件原件-----
-> > 发件人: linux-kernel-owner@vger.kernel.org
-> > [mailto:linux-kernel-owner@vger.kernel.org] 代表 Li,Rongqing
-> > 发送时间: 2018年3月19日 18:52
-> > 收件人: Michal Hocko <mhocko@kernel.org>
-> > 抄送: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > cgroups@vger.kernel.org; hannes@cmpxchg.org; Andrey Ryabinin
-> > <aryabinin@virtuozzo.com>
-> > 主题: 答复: 答复: [PATCH] mm/memcontrol.c: speed up to force empty a
-> > memory cgroup
-> > 
-> > 
-> > 
-> > > -----邮件原件-----
-> > > 发件人: Michal Hocko [mailto:mhocko@kernel.org]
-> > > 发送时间: 2018年3月19日 18:38
-> > > 收件人: Li,Rongqing <lirongqing@baidu.com>
-> > > 抄送: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > > cgroups@vger.kernel.org; hannes@cmpxchg.org; Andrey Ryabinin
-> > > <aryabinin@virtuozzo.com>
-> > > 主题: Re: 答复: [PATCH] mm/memcontrol.c: speed up to force empty a
-> > memory
-> > > cgroup
-> > >
-> > > On Mon 19-03-18 10:00:41, Li,Rongqing wrote:
-> > > >
-> > > >
-> > > > > -----邮件原件-----
-> > > > > 发件人: Michal Hocko [mailto:mhocko@kernel.org]
-> > > > > 发送时间: 2018年3月19日 16:54
-> > > > > 收件人: Li,Rongqing <lirongqing@baidu.com>
-> > > > > 抄送: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > > > > cgroups@vger.kernel.org; hannes@cmpxchg.org; Andrey Ryabinin
-> > > > > <aryabinin@virtuozzo.com>
-> > > > > 主题: Re: [PATCH] mm/memcontrol.c: speed up to force empty a
-> > > memory
-> > > > > cgroup
-> > > > >
-> > > > > On Mon 19-03-18 16:29:30, Li RongQing wrote:
-> > > > > > mem_cgroup_force_empty() tries to free only 32
-> > > (SWAP_CLUSTER_MAX)
-> > > > > > pages on each iteration, if a memory cgroup has lots of page
-> > > > > > cache, it will take many iterations to empty all page cache, so
-> > > > > > increase the reclaimed number per iteration to speed it up. same
-> > > > > > as in
-> > > > > > mem_cgroup_resize_limit()
-> > > > > >
-> > > > > > a simple test show:
-> > > > > >
-> > > > > >   $dd if=aaa  of=bbb  bs=1k count=3886080
-> > > > > >   $rm -f bbb
-> > > > > >   $time echo
-> > > 100000000 >/cgroup/memory/test/memory.limit_in_bytes
-> > > > > >
-> > > > > > Before: 0m0.252s ===> after: 0m0.178s
-> > > > >
-> > > > > Andrey was proposing something similar [1]. My main objection was
-> > > > > that his approach might lead to over-reclaim. Your approach is
-> > > > > more conservative because it just increases the batch size. The
-> > > > > size is still rather arbitrary. Same as SWAP_CLUSTER_MAX but that
-> > > > > one is a commonly used unit of reclaim in the MM code.
-> > > > >
-> > > > > I would be really curious about more detailed explanation why
-> > > > > having a larger batch yields to a better performance because we
-> > > > > are doingg SWAP_CLUSTER_MAX batches at the lower reclaim level
-> > anyway.
-> > > > >
-> > > >
-> > > > Although SWAP_CLUSTER_MAX is used at the lower level, but the call
-> > > > stack of try_to_free_mem_cgroup_pages is too long, increase the
-> > > > nr_to_reclaim can reduce times of calling
-> > > > function[do_try_to_free_pages, shrink_zones, hrink_node ]
-> > > >
-> > > > mem_cgroup_resize_limit
-> > > > --->try_to_free_mem_cgroup_pages:  .nr_to_reclaim = max(1024,
-> > > > --->SWAP_CLUSTER_MAX),
-> > > >    ---> do_try_to_free_pages
-> > > >      ---> shrink_zones
-> > > >       --->shrink_node
-> > > >        ---> shrink_node_memcg
-> > > >          ---> shrink_list          <-------loop will happen in this place
-> > > [times=1024/32]
-> > > >            ---> shrink_page_list
-> > >
-> > > Can you actually measure this to be the culprit. Because we should
-> > > rethink our call path if it is too complicated/deep to perform well.
-> > > Adding arbitrary batch sizes doesn't sound like a good way to go to me.
-> > 
-> > Ok, I will try
-> > 
-> http://pasted.co/4edbcfff
+> diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
+> index 10b3817..444115e 100644
+> --- a/virt/kvm/arm/vgic/vgic-debug.c
+> +++ b/virt/kvm/arm/vgic/vgic-debug.c
+> @@ -36,9 +36,12 @@
+>  struct vgic_state_iter {
+>  	int nr_cpus;
+>  	int nr_spis;
+> +	int nr_lpis;
+>  	int dist_id;
+>  	int vcpu_id;
+>  	int intid;
+> +	int lpi_print_count;
+> +	struct vgic_irq **lpi_irqs;
+>  };
+>  
+>  static void iter_next(struct vgic_state_iter *iter)
+> @@ -52,6 +55,40 @@ static void iter_next(struct vgic_state_iter *iter)
+>  	if (iter->intid == VGIC_NR_PRIVATE_IRQS &&
+>  	    ++iter->vcpu_id < iter->nr_cpus)
+>  		iter->intid = 0;
+> +
+> +	if (iter->intid >= VGIC_NR_PRIVATE_IRQS + iter->nr_spis) {
+> +		if (iter->lpi_print_count < iter->nr_lpis)
+> +			iter->intid = iter->lpi_irqs[iter->lpi_print_count]->intid;
+> +		iter->lpi_print_count++;
+> +	}
+> +}
+> +
+> +static void vgic_debug_get_lpis(struct kvm *kvm, struct vgic_state_iter *iter)
+> +{
+> +	struct vgic_dist *dist = &kvm->arch.vgic;
+> +	int i = 0;
+> +	struct vgic_irq *irq = NULL, **lpi_irqs;
+> +
+> +again:
+> +	iter->nr_lpis = dist->lpi_list_count;
+> +	lpi_irqs = kmalloc_array(iter->nr_lpis, sizeof(irq), GFP_KERNEL);
+> +	if (!lpi_irqs) {
+> +		iter->nr_lpis = 0;
+> +		return;
+> +	}
+> +	spin_lock(&dist->lpi_list_lock);
+> +	if (iter->nr_lpis != dist->lpi_list_count) {
+> +		kfree(lpi_irqs);
+> +		spin_unlock(&dist->lpi_list_lock);
+> +		goto again;
+> +	}
+
+Why do we need an exact count? It is fine to have a transient count, and
+the debug code should be able to come with that without performing this
+terrible loop.
+
+We also already have some code that snapshot the the LPIs (see
+vgic_copy_lpi_list), so please consider reusing that instead.
+
+> +
+> +	list_for_each_entry(irq, &dist->lpi_list_head, lpi_list) {
+> +		vgic_get_irq_kref(irq);
+> +		lpi_irqs[i++] = irq;
+> +	}
+> +	spin_unlock(&dist->lpi_list_lock);
+> +	iter->lpi_irqs = lpi_irqs;
+
+Messing with the internals of the refcounts is really a bad idea. Please
+use vgic_get_irq() in conjunction with the above, and allow it to fail
+gracefully.
+
+>  }
+>  
+>  static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
+> @@ -64,6 +101,8 @@ static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
+>  	iter->nr_cpus = nr_cpus;
+>  	iter->nr_spis = kvm->arch.vgic.nr_spis;
+>  
+> +	if (vgic_supports_direct_msis(kvm) && !pos)
+> +		vgic_debug_get_lpis(kvm, iter);
+>  	/* Fast forward to the right position if needed */
+>  	while (pos--)
+>  		iter_next(iter);
+> @@ -73,7 +112,9 @@ static bool end_of_vgic(struct vgic_state_iter *iter)
+>  {
+>  	return iter->dist_id > 0 &&
+>  		iter->vcpu_id == iter->nr_cpus &&
+> -		(iter->intid - VGIC_NR_PRIVATE_IRQS) == iter->nr_spis;
+> +		(iter->intid - VGIC_NR_PRIVATE_IRQS) >= iter->nr_spis &&
+> +		((iter->nr_lpis == 0) ||
+> +		(iter->lpi_print_count == iter->nr_lpis + 1));
+>  }
+>  
+>  static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
+> @@ -130,6 +171,7 @@ static void vgic_debug_stop(struct seq_file *s, void *v)
+>  
+>  	mutex_lock(&kvm->lock);
+>  	iter = kvm->arch.vgic.iter;
+> +	kfree(iter->lpi_irqs);
+>  	kfree(iter);
+>  	kvm->arch.vgic.iter = NULL;
+>  	mutex_unlock(&kvm->lock);
+> @@ -154,7 +196,7 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
+>  			 struct kvm_vcpu *vcpu)
+>  {
+>  	int id = 0;
+> -	char *hdr = "SPI ";
+> +	char *hdr = "S/LPI ";
+>  
+>  	if (vcpu) {
+>  		hdr = "VCPU";
+> @@ -162,7 +204,10 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
+>  	}
+>  
+>  	seq_printf(s, "\n");
+> -	seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
+> +	if (vcpu)
+> +		seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
+> +	else
+> +		seq_printf(s, "%s TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr);
+
+This feels like an unnecessary change. But if you really want that kind
+of detail, change your "S/LPI" to say something more generic, such as
+"Global".
+
+>  	seq_printf(s, "---------------------------------------------------------------\n");
+>  }
+>  
+> @@ -174,8 +219,10 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
+>  		type = "SGI";
+>  	else if (irq->intid < VGIC_NR_PRIVATE_IRQS)
+>  		type = "PPI";
+> -	else
+> +	else if (irq->intid < VGIC_MAX_SPI)
+>  		type = "SPI";
+> +	else if (irq->intid >= VGIC_MIN_LPI)
+> +		type = "LPI";
+>  
+>  	if (irq->intid ==0 || irq->intid == VGIC_NR_PRIVATE_IRQS)
+>  		print_header(s, irq, vcpu);
+> @@ -220,7 +267,9 @@ static int vgic_debug_show(struct seq_file *s, void *v)
+>  	if (!kvm->arch.vgic.initialized)
+>  		return 0;
+>  
+> -	if (iter->vcpu_id < iter->nr_cpus) {
+> +	if (iter->intid >= VGIC_MIN_LPI)
+> +		irq = iter->lpi_irqs[iter->lpi_print_count - 1];
+> +	else if (iter->vcpu_id < iter->nr_cpus) {
+>  		vcpu = kvm_get_vcpu(kvm, iter->vcpu_id);
+>  		irq = &vcpu->arch.vgic_cpu.private_irqs[iter->intid];
+>  	} else {
+> @@ -230,6 +279,8 @@ static int vgic_debug_show(struct seq_file *s, void *v)
+>  	spin_lock(&irq->irq_lock);
+>  	print_irq_state(s, irq, vcpu);
+>  	spin_unlock(&irq->irq_lock);
+> +	if (iter->intid >= VGIC_MIN_LPI)
+> +		vgic_put_irq(kvm, irq);
+
+If you adopt the scheme I outlined above, you can have a balanced
+get/put behaviour, irrespective of the interrupt type, and a much nicer
+result.
+
+>  
+>  	return 0;
+>  }
 > 
-> This is result from ftrace graph, it maybe prove that the deep call
-> path leads to low performance.
 
-Does it? Let's have a look at the condensed output:
-  6)               |    try_to_free_mem_cgroup_pages() {
-  6)               |      mem_cgroup_select_victim_node() {
-  6)   0.320 us    |        mem_cgroup_node_nr_lru_pages();
-  6)   0.151 us    |        mem_cgroup_node_nr_lru_pages();
-  6)   2.190 us    |      }
-  6)               |      do_try_to_free_pages() {
-  6)               |        shrink_node() {
-  6)               |          shrink_node_memcg() {
-  6)               |            shrink_inactive_list() {
-  6) + 23.131 us   |              shrink_page_list();
-  6) + 33.960 us   |            }
-  6) + 39.203 us   |          }
-  6)               |          shrink_slab() {
-  6) + 72.955 us   |          }
-  6) ! 116.529 us  |        }
-  6)               |        shrink_node() {
-  6)   0.050 us    |          mem_cgroup_iter();
-  6)   0.035 us    |          mem_cgroup_low();
-  6)               |          shrink_node_memcg() {
-  6)   3.955 us    |          }
-  6)               |          shrink_slab() {
-  6) + 54.296 us   |          }
-  6) + 61.502 us   |        }
-  6) ! 185.020 us  |      }
-  6) ! 188.165 us  |    }
+Thanks,
 
-try_to_free_mem_cgroup_pages is the full memcg reclaim path taking
-188,165 us. The pure reclaim path is shrink_node and that took 116+61 = 177 us.
-So we have 11us spent on the way. Is this really making such a difference?
-How does the profile look when we do larger batches?
-
-> And when increase reclaiming page in try_to_free_mem_cgroup_pages, it
-> can reduce calling of shrink_slab, which save times, in my cases, page
-> caches occupy most memory, slab is little, but shrink_slab will be
-> called everytime
-
-OK, that makes more sense! shrink_slab is clearly visible here. It is
-more expensive than the page reclaim. This is something to look into.
-
-Thanks!
+	M.
 -- 
-Michal Hocko
-SUSE Labs
+Jazz is not dead. It just smells funny...
