@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805175-2-13087176489502480090
+X-Cyrus-Session-Id: sloti22d1t05-1133089-1521805172-2-15036314939306181220
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enda,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521805175; b=vqXU6iquWUAAtx3255xFSXSNuNINl0XmLRMecIkJGxpruso
-    C13u/e0ROAveQ0P3YZ4wXaOfyOUlCmKksPn3JyH4j75QvSYKJdO2nTuuPuk01yZ6
-    7M8wHLTVbiMg09bib1MVqQJrjVIFx+amC1LNLnQoNFNSV/D50+Bcg2TtlEmkUwFu
-    RNLmP1c1xNqCQh2b5JSuWyKwLj1p6EWT1cCssGpYE4lPSwu/njEn9USSTOqb1u8I
-    Jm0vfJIumZeb9T2O2ISEDgj72wwxreCwi/AIwR6mUWSCtAKz8T3ery46M2MCUlNe
-    L1OyxKkQQkl7btYxkKNFDf6htyunthzeQUdzGuw==
+    t=1521805171; b=OkPCNt1cvRJmRE7zBI3bssRpfqbPOuVdilBLaBrDSdP/dkP
+    RLLX5ujxYnPTYfP9viyUMak3GG3nKfXEi9ZF46R8kP0YwQIxdFpCyonhg6rKwGmc
+    1RA1guld7VL7FefeoV+S+ZkRZXRdKMMNuK98uzwnKrbcO8bc/KFlAXEML/OtMumc
+    PeHzZyHSuxRuKTBrY0bjK2rW5w3HFVy8NByBWtOOn9AyD7PYtdHXC7cbG+Izi9YQ
+    DJsQ9gNaS3B3Egen6P7vNo3M3LivI/5q+066U8i7ioJpXtFtTIqYtAtEw4LWAfC1
+    qsm3+g2Jk7PfwBJfcio0po19SHxmrZBJjbKv97g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1521805175; bh=BHRqH412Em7MfmtrfeJueSFpid
-    5sj2W3pFoLlfGz8m8=; b=DqtmKSqsl/C2r17ALItP7p3N2C8rtuzgyaOBPB7q02
-    iE6TQ63KD7IGFCneZYoIGQlNEIBXsdDd2bI1cKjfYjqxq2qPwQ3k27XnWI+hKDea
-    0Op09WPNJn4TZlBBjVIk9kbxEm3fSpoODXsNz3bVrztSliOsHmSBP/0p7e9IbRrE
-    UVFdh8ycWRszY1x98VhUQ2f0YGqgbJmG5MnlFmLRVYUJbqEGOqWFz7kj0sijPxZF
-    m38tUBuEN0fmQXWrvnjOzN0jOOwyVnFmm0/7B5AppEvmYL7SDdMTizjE3xTJWarJ
-    GcZYRXEKHtYeseAfD4L9YdOE+JjnuGvEDRdRPSWttBkQ==
+    :list-id; s=arctest; t=1521805171; bh=sJeTmd2dAZUw5LRWvgCkRW1VkF
+    ml4uxr2jjxtg9Iqvo=; b=cafzL85hUoYQ0wTw2QXovwrK4lYGjNCAHd8pdc3OKu
+    w1F8OGHJ+sxl/rmCaStIFD66VR1ocQhcrC6C7RhM1QnmBXb/U/PWHKL5/6lJuoX7
+    fFumjaCrvTejhDTG9XoHtIrZTWSY2GanBcZKucs9iti9CLuDy5JcBbnI9rBvgFbA
+    H1SOwLKTXDP63HnrL0/4MGr8QxbAIT6Df4BCcl7CBBZFObqYjl3ijNa/w6UwPUel
+    OOBEcR0GMYblYis+fU8jUzch2H1RNdgkUzqREnnE1olKuoLcbQw4gQMZfGfAIzbe
+    hE9XhHPo2rTkOdQhySUGVO5gD9stEkif/ynBjbrlbeVQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -50,22 +50,22 @@ Authentication-Results: mx6.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754722AbeCWKE1 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:04:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39142 "EHLO
+        id S1754737AbeCWKEa (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 06:04:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39154 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754714AbeCWKEZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:25 -0400
+        with ESMTP id S1754714AbeCWKE2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:04:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, pavel@ucw.cz,
-        jacek.anaszewski@gmail.com, Matthieu CASTET"
-        <matthieu.castet@parrot.com>
-Subject: [PATCH 4.9 007/177] led: core: Clear LED_BLINK_SW flag in led_blink_set()
-Date: Fri, 23 Mar 2018 10:52:15 +0100
-Message-Id: <20180323094205.532542495@linuxfoundation.org>
+        Santeri Toivonen <santeri.toivonen@vatsul.com>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 008/177] platform/x86: asus-nb-wmi: Add wapf4 quirk for the X302UA
+Date: Fri, 23 Mar 2018 10:52:16 +0100
+Message-Id: <20180323094205.577726459@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180323094205.090519271@linuxfoundation.org>
 References: <20180323094205.090519271@linuxfoundation.org>
@@ -83,28 +83,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+From: Santeri Toivonen <santeri.toivonen@vatsul.com>
 
-[Only needed in 4.9.y due to other fixes in mainline - gregkh]
 
-With the current code, the following sequence won't work :
-echo timer > trigger
+[ Upstream commit f35823619db8bbaa2afea8705f239c3cecb9d22f ]
 
-echo 0 >  delay_off
-* at this point we call
-** led_delay_off_store
-** led_blink_set
+Asus laptop X302UA starts up with Wi-Fi disabled,
+without a way to enable it. Set wapf=4 to fix the problem.
+
+Signed-off-by: Santeri Toivonen <santeri.toivonen@vatsul.com>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/leds/led-core.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/platform/x86/asus-nb-wmi.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -188,6 +188,7 @@ void led_blink_set(struct led_classdev *
- {
- 	del_timer_sync(&led_cdev->blink_timer);
- 
-+	led_cdev->flags &= ~LED_BLINK_SW;
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT;
- 	led_cdev->flags &= ~LED_BLINK_ONESHOT_STOP;
- 
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -152,6 +152,15 @@ static const struct dmi_system_id asus_q
+ 	},
+ 	{
+ 		.callback = dmi_matched,
++		.ident = "ASUSTeK COMPUTER INC. X302UA",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "X302UA"),
++		},
++		.driver_data = &quirk_asus_wapf4,
++	},
++	{
++		.callback = dmi_matched,
+ 		.ident = "ASUSTeK COMPUTER INC. X401U",
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
