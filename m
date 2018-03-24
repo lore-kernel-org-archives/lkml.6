@@ -1,76 +1,82 @@
-Return-Path: <kernel-hardening-return-12726-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELuuHFEM0hislljDs8OmO3aLmBbP3DJKLKmv/hLrpAiiYcX0DeEfYjcDG0iMy1wnlCCqd48K
-ARC-Seal: i=1; a=rsa-sha256; t=1521897752; cv=none;
+Return-Path: <joeypabalinas@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521890857; cv=none;
         d=google.com; s=arc-20160816;
-        b=0srUbOUArB3s7S5NvmwS7fa/Rwv9L/AXw3j+uUBOh8FGmN/CDkCPc62NgOb5xmk5Z+
-         8oRg4l1d1dKdgnlex6jtdzRfkZTw9UQGEFw+KflpsAPhRMkifYMIMlqOI1FdMZXMTCfU
-         PjwhORdNikfJn4q+zyQVku1ckEYISu7OP+YG27yvKJwkpxSgJ5GaVaq3T0vyCt5TYDHn
-         w6wbmyuFCvmpcr5jO8HV09hbSPrcIAyN/0MEj8lfesz6p0zqEDcE3ZlIhd7hcW2Z2A1b
-         WThBcMa+wLPI6kZbivwhuUn2cnhxkDGyUnG7d88kOvsHo3HbDz+pW1WagqMQ0xapJjhv
-         NFMw==
+        b=LWzZdVJRJdQnKla4r99f4nINHWyC0On3XuTnnCBBBmgFVpcZcuCRAivPltDg156gSI
+         jISefhTwFm5E71eqeevBqgacQZny8OopQOrATrkCV2VLdcQ0QvkeMBBE1VM48FNS/K4d
+         ANIENz5z8X+J7dB99tUGhnU+Us/qxK+z4MaQkCyYvtI918KubISUOiJFc6acBZwypToD
+         725nz1vuAPRV+sqRvoMD1H/omfeNu6Dl+6p9DDF/kQZbmr+NJGUmquBXsbQNva8CKMTK
+         XNEpWVDVL1CeGRXZn3nds1M1oNkezvAO1aGTl58H+QTW0uC9t2rbvlHSR1L221YYet6S
+         utLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=Cd7iKtbNcuPvapAx/357fv4gU89YZ1X0Mfj6OLfuaAU=;
-        b=zEY/ONBbMQkr6gB6AGJnF37soQElF1HhTl2FJm/iLGLWHrm7GXBeh6ZRlRdiwmT9kd
-         POfwCEGT6jST1XkJ+lSfVhKPfHEYiwVUcwdHnM+OCA/hCGM/0rn4lm9cHdPJ/vpZV/ZS
-         7colpixcA0+FwJKSuiQ6RJa2viqowdqZ+Td7fk+06Pd9ExhAqGv48tTnTeNtgrDjAx2O
-         mmVC+eDGPpPGoW3S23gSgz8MTHNjmIIXUkalu4PeNPmBOyJgCeo0oUOfg9OWiwdvx+tW
-         3/Vc6d5aEBNJ9krdPW+zXsPQQfRwNCceqQYly5NJvwaW8MCJMKNt+EN2C4UHiIdD0GWW
-         8Tsg==
+        bh=iZjILLBYCv3JAh08tb+VMuqiCOqZo48JjhUspyQ3Lnc=;
+        b=g0bzv9UhpmTckkZU4tLhkYTBTQbVV/uEQe1t3aqqJImgDa7d4OPsUbTc4angWOC+q9
+         L1Ea0Y3p+iLLeS+/2G5AQjO/QJMBO41XhxrHMBS/xDXvW7k2fLKBvdUOWdzYs5BjoljA
+         KQuAraXKFEDiSDrL7wn5hLVOU7Mn2r5hgVR8GQiKZmcKVFwckxzJOGBXmaRdqSoYnqe8
+         yuqgdDbbh4/knp/FRj/WP11/nT3DHV7u2PzNZkdqTjUxilL6Bo4JvQY0Jvj5HZIBa7K0
+         2YXaXv4XwZJ0sIUEMPg6589+tads+laWLDlU/4hhYLGjThfJvaFDquIHR17/9w3srmRQ
+         yfJQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=VmomHk7m;
-       spf=pass (google.com: domain of kernel-hardening-return-12726-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12726-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XZUEZ0ay;
+       spf=pass (google.com: domain of joeypabalinas@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joeypabalinas@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=VmomHk7m;
-       spf=pass (google.com: domain of kernel-hardening-return-12726-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12726-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=XZUEZ0ay;
+       spf=pass (google.com: domain of joeypabalinas@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joeypabalinas@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-In-Reply-To: <20180323153652.GA1760@gondor.apana.org.au>
-References: <1521112738-13250-1-git-send-email-s.mesoraca16@gmail.com> <20180323153652.GA1760@gondor.apana.org.au>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date: Sat, 24 Mar 2018 14:21:53 +0100
-Message-ID: <CAJHCu1K-gFnt2mR6LkP=BH-eB-cHUoPyWWGCgPNe7B1B4no8Sg@mail.gmail.com>
-Subject: Re: [PATCH v2] crypto: ctr - avoid VLA use
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-kernel@vger.kernel.org,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, linux-crypto@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>, Kees Cook <keescook@chromium.org>,
-	Eric Biggers <ebiggers3@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Google-Smtp-Source: AG47ELu7EaBq1Y9wom9uk3B1QTYjAipRKmg0CRq7QtyiFWH7zcGTRnlc4Ld8s02MFdxlXCKuMqMNyg==
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joey Pabalinas <joeypabalinas@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Jiri Slaby <jslaby@suse.cz>,
+	Tomasz Kramkowsk <tk@the-tk.com>
+Subject: [PATCH v2 0/4] tty/nozomi: general module cleanup
+Date: Sat, 24 Mar 2018 01:27:28 -1000
+Message-Id: <20180324112732.29424-1-joeypabalinas@gmail.com>
+X-Mailer: git-send-email 2.16.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595002335438491834?=
-X-GMAIL-MSGID: =?utf-8?q?1595825458050662350?=
+X-GMAIL-THRID: =?utf-8?q?1595776952281826235?=
+X-GMAIL-MSGID: =?utf-8?q?1595818227259285843?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-2018-03-23 16:36 GMT+01:00 Herbert Xu <herbert@gondor.apana.org.au>:
-> On Thu, Mar 15, 2018 at 12:18:58PM +0100, Salvatore Mesoraca wrote:
->>
->> +#define MAX_BLOCKSIZE 16
->> +
->> +#ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
->> +#define MAX_ALIGNMASK 15
->> +#else
->> +#define MAX_ALIGNMASK 0
->> +#endif
->> +
->
-> Hmm, this won't work.  Just because you have efficient unaligned
-> access in general doesn't mean that every implementation can live
-> with unaligned access.  In particular, on x86 there are quite a
-> few implementations that require alignment or they will fault.
->
-> So please just make it 15 unconditionally.
+Sorry, totally screwed up git send-email CC's there; resending
+the patchset.
 
-Oh, thank you for pointing it out. I'll fix this in v3.
+The nozomi module code has a fair amount of sections which could
+use a bit of improvement; both style and clarity could be improved
+while maintaining equivalent semantics.
 
-Salvatore
+Cleanup messy portions of the module code while preserving existing
+behavior by:
+
+ - Replacing constructs like `len__ > TMP_BUF_MAX ? TMP_BUF_MAX : len__`
+   with `min_t(u32, len__, TMP_BUF_MAX)` and function calls like
+   snprintf(tbuf, ..., "%s", ...). with strscpy(tbuf, ..., ...).
+ - Rename identifiers more descriptively (where appropriate).
+ - Simplify deeply nested conditionals by replacing them with shallower
+   (but semantically equivalent) logic.
+ - Coalesce return paths / loop conditionals.
+ - Remove pointless initializations and redundant parentheses/break
+   statements.
+ - Correct inconsistently indented lines and extraneous whitespace.
+
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Arnd Bergmann <arnd@arndb.de>
+CC: Jiri Slaby <jslaby@suse.cz>
+CC: Tomasz Kramkowsk <tk@the-tk.com>
+
+Joey Pabalinas (4):
+  tty/nozomi: cleanup DUMP() macro
+  tty/nozomi: fix inconsistent indentation
+  tty/nozomi: improve code readability and style
+  tty/nozomi: refactor conditional statements
+
+ drivers/tty/nozomi.c | 362 +++++++++++++++++++++++++--------------------------
+ 1 file changed, 181 insertions(+), 181 deletions(-)
+
+-- 
+2.16.3
