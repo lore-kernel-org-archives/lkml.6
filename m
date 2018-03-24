@@ -1,201 +1,120 @@
-Return-Path: <outreachy-kernel+bncBDYZDG4VSMIRB44KX7KQKGQEMZ5R3WI@googlegroups.com>
-ARC-Seal: i=3; a=rsa-sha256; t=1521468788; cv=pass;
-        d=google.com; s=arc-20160816;
-        b=DmMCxecFJjTzAXMFqK6KkE7RhDgR/nWn8WkKPUce7Qw2/0bKe6k98csWDzsvQ3ni/O
-         Iryn88GGKc3bduOOOD3hBrAU7I+oq1wETU63wUNqj5V8ioQIGJwNJtOG/Vs2Gi0JhChC
-         7dQxqsYIh+j3NC3h66duT9BZ+8szrfGo+fZfW7PXXvggqI03lHw/XYp0zupU4YZ3FAmP
-         sZidqqWfum2ueXoGKssJXbd2FvMsrqCDCZlnum3eesL5ZN235QVK8KGwzJ/KSYlMyqcI
-         /2yCZRqjazKagJVDoXAjCA1KTagBph7Cotc3u+P0341yJn552GtI+9mKf/znGwS4NDSm
-         XfiQ==
-ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:in-reply-to:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:sender:arc-authentication-results:arc-message-signature
-         :arc-authentication-results:arc-message-signature
-         :arc-authentication-results;
-        bh=btlH5rlj4XbcaahnU2Hy7M2nUvApyn/YkHIh9Fwlxgs=;
-        b=yG6axaP/woJDgnkiiu3FOe2JosloTzE+NFTKdoMhT2deNldQUnCb17XRdMkmpnZEJc
-         /OAGPvB858b3x1jYrBtXcK+zsaRoinLuJp11/gFKZct0dVKCijm83ux/yeTElH2Qn49P
-         zyOhTROscj4VBHcGIlEKefERqSFdOdf/MlNGm6WnW/f7llFEuzAS/soYBDdLqQjYCQ4X
-         YCDw43ZxgZvsaPlp1/ckcHsY/ZcE8uqOxu6OR+PqQ/A6U0wBHj3MDdZhWCT4LChjwW6n
-         uJ+pHuyOi6BDRLgJu5xTUKYauTrA92VjXXEJa8lV8iGBngiv6kLHE+lMr9U9fiEEo36r
-         0TKA==
-ARC-Authentication-Results: i=3; mx.google.com;
-       arc=pass (i=2 dkim=pass dkdomain=ffwll.ch);
-       spf=pass (google.com: domain of outreachy-kernel+bncbdyzdg4vsmirb44kx7kqkgqemz5r3wi@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBDYZDG4VSMIRB44KX7KQKGQEMZ5R3WI@googlegroups.com
-Authentication-Results: mx.google.com;
-       arc=pass (i=2 dkim=pass dkdomain=ffwll.ch);
-       spf=pass (google.com: domain of outreachy-kernel+bncbdyzdg4vsmirb44kx7kqkgqemz5r3wi@googlegroups.com designates 209.85.220.55 as permitted sender) smtp.mailfrom=outreachy-kernel+bncBDYZDG4VSMIRB44KX7KQKGQEMZ5R3WI@googlegroups.com
-ARC-Seal: i=2; a=rsa-sha256; t=1521468788; cv=pass;
-        d=google.com; s=arc-20160816;
-        b=Vioo3EFKmk3PiOQ1AJml3o+UKjKaCKOpgScgIHG+OEwB3c59AMxvoLHQoIC2xBEcHd
-         YqyakHF0mbtWASBNOs5+cmf7JVl6DfnpVRZQd+ACqcQxSRgr4VcGwdzRnl/LEvbL4a7s
-         eyIFyNIxq/wS/L2ccSPTjH48bv/T+VqV6cyXTzFh6PNkoB8SNdlNDqULtp550WOTthIM
-         8iRa+qZVFIzoQHY4HyJ0fEnjwrGG8tBhzmv+/mgR8DngFSjTckj+MJdMEdvc9GuFLOA8
-         gPOmfZjEiUGc3f1FUFnd3DuV+f6miSXIK7q8q/ReecEPNQ1M0ZcsrpFdON9MavHnBzbL
-         qXqA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-unsubscribe:list-archive:list-help:list-post:list-id
-         :mailing-list:precedence:user-agent:in-reply-to:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:sender:arc-authentication-results:arc-message-signature
-         :arc-authentication-results;
-        bh=btlH5rlj4XbcaahnU2Hy7M2nUvApyn/YkHIh9Fwlxgs=;
-        b=1K8KZvREg07e+VEg4RN3zUz49QPhIMhjSG3kFddbpuujtmYQwOGofZtu3cp2xNtO0B
-         S6jZmGtH0nZQlORTN6A9gKtywo9DANqvvJwJ8SnyF+M+Vaipl0k7ejx1m/8mmESIRdSI
-         LZTm74I5dyT4aj1nNtctN+t9hTAgNnUCyLbChs6wZTAYfPV6znwKBhoQuZGjsiQGa3sg
-         ijr7mVfIa3wTmT0b620MRVDvLlBrQ7wtMmecQKhJ530n6v08D6Y3ruLav0z/Dti7HL4m
-         MYqHBX57p/P67pP4+cDE/rCnw6Q9V13I/tap9+x7dllWwUmTThVJNb2B6Pu/2OZRqcDT
-         ZJng==
-ARC-Authentication-Results: i=2; gmr-mx.google.com;
-       dkim=pass header.i=@ffwll.ch header.s=google header.b=J05XW8L3;
-       spf=neutral (google.com: 2a00:1450:400c:c09::236 is neither permitted nor denied by best guess record for domain of daniel@ffwll.ch) smtp.mailfrom=daniel@ffwll.ch
-X-Google-Smtp-Source: AG47ELuxM7Xnv/+SFNmbAIp55oGbKzB2imj/OSk8ODE6PCBVFLLJWDLCCmdcnsxsmDot8AxFv4n+RA==
-X-BeenThere: outreachy-kernel@googlegroups.com
-ARC-Seal: i=1; a=rsa-sha256; t=1521468787; cv=none;
-        d=google.com; s=arc-20160816;
-        b=hmm9UD7tq26RlUxUvxhlJZ12S6cflJWgUGDGYOnKRgZPtJHz5umUpi91LMFMq64JoK
-         Nz+Wdjxro7R8So0t6+QVhxsWQJXychfYPNy8HklehmRShJLOEKLmAAmWKOXhuWU/WzAK
-         ethyzrUj9PHEbEQABKzzZYQyL01l50K6ghcNK8RqMwbhMmJwF5Sev7kdY6ptfcO8RKDp
-         jnk2cpacRBSExvoVi6DUnvvl5hbtM3iMre3wuDUmiSpMm7v14SDvFkF9oIjo/h2Gzp7r
-         xwIpWvtGFvz7KzZWeIscrFWKJc4/Q93MCHfWI+eKOKVl5Q6cJOV58QptTa4tR7x9FCmx
-         U9tw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:sender
-         :dkim-signature:arc-authentication-results;
-        bh=ErkHpsCZwuNJAcBMGqsubnJQStBFZDyIcUzZotoleXM=;
-        b=xbk0s+zzOhj2/PR4Wno5i0WrwHRF4xs6akoHVEp6yRpQBQk7WE6ml3sl/ccbwhPCdK
-         cz8EYzrFZ4luc76rvKlB4Bu/LtLtOgYjv/uYqMhJ56UMo11C2cfZaOMkSdf/5t4YA61P
-         6fLsjJuNWGu7vIyouVM8ZmBWxk4K+oZaORGH2VZS5SZrOaOgO+4YaMXqVwqrWyHV2tzS
-         mz5dJs/gQKafzyskHb/IGeUbMQhofKxczvmMsallvIZCivA6wlGL9hzw5HFYadHQcs7i
-         7Z7cSLbNXXKfA4fs7x5nKB6i7aqWeb7QBfBdeZugCZNiMd7VbwZFDgB0XKuv2NSN1hQC
-         mufw==
-ARC-Authentication-Results: i=1; gmr-mx.google.com;
-       dkim=pass header.i=@ffwll.ch header.s=google header.b=J05XW8L3;
-       spf=neutral (google.com: 2a00:1450:400c:c09::236 is neither permitted nor denied by best guess record for domain of daniel@ffwll.ch) smtp.mailfrom=daniel@ffwll.ch
-Sender: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date: Mon, 19 Mar 2018 15:13:04 +0100
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-Cc: daniel.vetter@intel.com, Gustavo Padovan <gustavo@padovan.org>,
-	Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-	Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-	outreachy-kernel@googlegroups.com
-Subject: Re: [Outreachy kernel] [PATCH] gpu: drm: Use list_{next/prev}_entry
- instead of list_entry
-Message-ID: <20180319141304.GP14155@phenom.ffwll.local>
-Mail-Followup-To: Arushi Singhal <arushisinghal19971997@gmail.com>,
-	daniel.vetter@intel.com, Gustavo Padovan <gustavo@padovan.org>,
-	Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-	Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-	outreachy-kernel@googlegroups.com
-References: <20180319050530.GA25589@seema-Inspiron-15-3567>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-393451-1521921979-5-18396355140243149916
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521921978; b=sGdX1gNc87FQYhn9b86aliSxjgCkPeptewvBgi8T6UP7UaP
+    PDXEFtSXPcXyYiXI6FW7Y8kNsks+W8x9uyQEsmvgMgTYoh14ffZgNd+pS9OLR3X5
+    9yxxgOh4Np1OOWp4OpBOJQwG3TVjy/Zhmbt2zk1VQsct/hfu2PVQsxIhUqk0LR9T
+    8e2v7ydV3qDzP8jojlWgYrqBFC186g/bPAI9L7oUCEjoIoPIdTMWpeS+7d32yBZv
+    f/IpiOL4hTEfd3r9oxa+0baM0WdARLC6ltC0jxnvXuG2kf5u5aw27AE3JVEJydfM
+    f/4Hzaf/4to7agc3ezHu9NLSa4oD5nIq2mffc3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1521921978; bh=a
+    JWkXr2bLeq3fZaL+tGYJ8pGozh1SgYHaxKDWNJMKgw=; b=kgmvSLyekhHDWcbRu
+    5bb1ku4GBRm6AU2cKlFLdVfOApTzBuWU78Mx/RjPCksXHzVG/WkC3z7KN1Q1NV3Z
+    4mtOKoC1fyIOZnKKwiZPMmpRQsUujCbWcEaQGA2WE4Tvdu9od1bPUk7+ZRWH5MZy
+    qLSEOJRrVLkTSbEEcjHEBS1WMcfTZHKbfQWHKb+0LbNv/8hKHsaL57AASqwBagf1
+    u72U8FtWzjL/0OGbHG40/Uk20Rk/Slsf1zjDsYb7qnQ4siyvBwwjacOiwyDJ693g
+    5PUpYnkxjzrMWgPu1z3IU3WbkiKcO7poGxBnvsMhNLlpj6V5jerU2X4g+cVeG6rO
+    jKfMA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=ehDOAgRK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=onstation.org header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=onstation.org header.i=@onstation.org header.b=ehDOAgRK x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=onstation.org header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Brian Masney <masneyb@onstation.org>
+To: jic23@kernel.org,
+	linux-iio@vger.kernel.org
+Subject: [PATCH 0/4] staging: iio: tsl2x7x: move out of staging
+Date: Sat, 24 Mar 2018 16:05:51 -0400
+Message-Id: <20180324200555.1403-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.14.3
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, lars@metafoo.de, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, Jon.Brenner@ams.com, pmeerw@pmeerw.net,
+ knaack.h@gmx.de
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-In-Reply-To: <20180319050530.GA25589@seema-Inspiron-15-3567>
-X-Operating-System: Linux phenom 4.15.0-1-amd64
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Original-Sender: daniel@ffwll.ch
-X-Original-Authentication-Results: gmr-mx.google.com;       dkim=pass
- header.i=@ffwll.ch header.s=google header.b=J05XW8L3;       spf=neutral
- (google.com: 2a00:1450:400c:c09::236 is neither permitted nor denied by best
- guess record for domain of daniel@ffwll.ch) smtp.mailfrom=daniel@ffwll.ch
-Mailing-list: list outreachy-kernel@googlegroups.com; contact outreachy-kernel+owners@googlegroups.com
-X-Spam-Checked-In-Group: outreachy-kernel@googlegroups.com
-X-Google-Group-Id: 672804067692
-List-Post: <https://groups.google.com/group/outreachy-kernel/post>, <mailto:outreachy-kernel@googlegroups.com>
-List-Help: <https://groups.google.com/support/>, <mailto:outreachy-kernel+help@googlegroups.com>
-List-Archive: <https://groups.google.com/group/outreachy-kernel
-List-Unsubscribe: <mailto:googlegroups-manage+672804067692+unsubscribe@googlegroups.com>,
- <https://groups.google.com/group/outreachy-kernel/subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595341254275374860?=
-X-GMAIL-MSGID: =?utf-8?q?1595375656331699775?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 19, 2018 at 10:35:30AM +0530, Arushi Singhal wrote:
-> This patch replace list_entry with list_{next/prev}_entry as it makes
-> the code more clear to read.
-> Done using coccinelle:
-> 
-> @@
-> expression e1;
-> identifier e3;
-> type t;
-> @@
-> (
-> - list_entry(e1->e3.next,t,e3)
-> + list_next_entry(e1,e3)
-> |
-> - list_entry(e1->e3.prev,t,e3)
-> + list_prev_entry(e1,e3)
-> )
-> 
-> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+Here is a patch series to move the tsl2x7x driver out of staging and
+into mainline. Driver was tested using various TSL2X7X devices on a
+Raspberry Pi 2.
 
-Thanks for your patch. Looks correct, but for merge technical reasons can
-you please split it into 2 patches? One for drm_lease.c, with a drm/lease:
-prefix, and one for the nouveau driver change, with a nouveau: prefix.
-Both patches need to be submitted to slightly different sets of
-maintainers too, pls consult scripts/get_maintainers.pl
+Datasheet for the TSl2772:
+https://ams.com/eng/content/download/291503/1066377/file/TSL2772_DS000181_2-00.pdf
 
-Thanks, Daniel
+Brian Masney (4):
+  staging: iio: tsl2x7x: use auto increment I2C protocol
+  staging: iio: tsl2x7x: move IIO_CHAN_INFO_CALIB{SCALE,BIAS} to
+    IIO_LIGHT channel
+  staging: iio: tsl2x7x: use either direction for
+    IIO_EV_INFO_{ENABLE,PERIOD}
+  staging: iio: tsl2x7x: move out of staging
 
-> ---
->  drivers/gpu/drm/drm_lease.c                    | 2 +-
->  drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
-> index 1402c0e..4dcfb5f 100644
-> --- a/drivers/gpu/drm/drm_lease.c
-> +++ b/drivers/gpu/drm/drm_lease.c
-> @@ -340,7 +340,7 @@ static void _drm_lease_revoke(struct drm_master *top)
->  				break;
->  
->  			/* Over */
-> -			master = list_entry(master->lessee_list.next, struct drm_master, lessee_list);
-> +			master = list_next_entry(master, lessee_list);
->  		}
->  	}
->  }
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
-> index e4c8d31..81c3567 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
-> @@ -134,7 +134,7 @@ nvkm_cstate_find_best(struct nvkm_clk *clk, struct nvkm_pstate *pstate,
->  			       nvkm_volt_map(volt, volt->max2_id, clk->temp));
->  
->  	for (cstate = start; &cstate->head != &pstate->list;
-> -	     cstate = list_entry(cstate->head.prev, typeof(*cstate), head)) {
-> +	     cstate = list_prev_entry(cstate, head)) {
->  		if (nvkm_cstate_valid(clk, cstate, max_volt, clk->temp))
->  			break;
->  	}
-> -- 
-> 2.7.4
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
-> To post to this group, send email to outreachy-kernel@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180319050530.GA25589%40seema-Inspiron-15-3567.
-> For more options, visit https://groups.google.com/d/optout.
+ drivers/iio/light/Kconfig                          |   8 ++
+ drivers/iio/light/Makefile                         |   1 +
+ drivers/{staging => }/iio/light/tsl2x7x.c          | 135 +++++++++++++--------
+ drivers/staging/iio/Kconfig                        |   1 -
+ drivers/staging/iio/Makefile                       |   1 -
+ drivers/staging/iio/light/Kconfig                  |  14 ---
+ drivers/staging/iio/light/Makefile                 |   5 -
+ .../linux/platform_data}/tsl2x7x.h                 |   0
+ 8 files changed, 93 insertions(+), 72 deletions(-)
+ rename drivers/{staging => }/iio/light/tsl2x7x.c (95%)
+ delete mode 100644 drivers/staging/iio/light/Kconfig
+ delete mode 100644 drivers/staging/iio/light/Makefile
+ rename {drivers/staging/iio/light => include/linux/platform_data}/tsl2x7x.h (100%)
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.14.3
 
--- 
-You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
-To post to this group, send email to outreachy-kernel@googlegroups.com.
-To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/20180319141304.GP14155%40phenom.ffwll.local.
-For more options, visit https://groups.google.com/d/optout.
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
