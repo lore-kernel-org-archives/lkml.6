@@ -1,145 +1,76 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AG47ELsqyuG+Jw65zspKrvGaJu3zxks9q5panTTh+0BVrxlUNUkVA/ct+Yuvin+8wimxM4VEfpuF
-ARC-Seal: i=1; a=rsa-sha256; t=1521899287; cv=none;
+Return-Path: <linus.walleij@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1521909258; cv=none;
         d=google.com; s=arc-20160816;
-        b=xtNpNcjVQcpIbUfhEuqdaYOS0oHI8UCYci/Y3UxMsp0NrO9YcY9HQvF1ybFIT2xCHa
-         skDTqPiKcyiTQqy4HN5ayER7okUFUUlca+RIvVvW4GQiGAetLwGzH+dLUIRn3O5j6K8K
-         IpAcOA0x35D0GQmKJSJQj6c9jkcqBY43PGICxWeNar5CUfGMOeB9n9nC7sjeZVo0C+kp
-         QET0iPMC+Aiiz+JDqGfCi/iBIkkux4gd+eFciv/3tWzpwC2cRJGpa7BRB22a9WBy433R
-         ErRs8CM9WKTpooUOn4YryhXdJBQf7tQgsxhfzmI7Z86/aNieUwtiH4VKdov8/d1/tHjO
-         +Yfg==
+        b=1FY2axvu73ZYb+Sn+x2dt1jnQl7ZefD9pFEky3jO2ddBgS1Df3/a7TPEnLM4wGq7PY
+         VroNh+5ESBckX4qQ4WXUtDuEglp4t6SFIT/CQ8XcTnmtNq2D6c6khbLKrPHvbKQLLCSG
+         wjWzeNMujsSM/g8kPlRWhjHT6CYRkO35Qk5B3S1lDKY9jCuPLNlj9CL2saNC9SISNDv5
+         jx2vxnPKDipbsj0xWUiWYpIGEvF07UPF97oFLWWXke+OIBLcaRSSOZ9n6dCufX8+mgf9
+         SHwQbyK3cjIVSk7SpKDz1uicwwnFmNtuY+/tdJ/yVBdSNW6fm/HNTIqBhCt9N+T46Nzk
+         BOLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=w+aXvYlDyfiyICqK3Uehp0VRYtheNIXyxhI3wme72VM=;
-        b=v+IiOvHhSKlETeQvuns9JWcvcwB4777/2PslZb9cPsr++uVKTFSDgRiVRcHibkgtmQ
-         KCcr2x7KjsWX7D4AL9ou2LuZo21RpVbf673JFUDpDykW4XuQVLGw79NkXqrai158uX+n
-         f26HHqbTfdmUKOUElQWjkF4N6oCRoiuThS5sl7fd5nQwBAzH1zmYcIUBi/RIaTGHZyCA
-         CH3CntI+bYnu3jTNJqSp/Ry1E5R88krvPhQ7yy5lL218k73/NN56dmULCqCMKNzsDWAQ
-         rMfNSooOzIai2ShzPJawwrazkXjPyc8Z3rlhoKwKL/tq38WgG6vEjtR8bLPdv1upjzHq
-         bG5A==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=aBhyvkMzqH5zoNRN64eTSHUwgS+l8bOo17+XyTHCrt8=;
+        b=YjjKCDPC7mxJFoHZoqgDBkWZahZqC5kV15unTgAXSS+6mbL/TbeCBDG53OgqepR9Ad
+         7UdlHMKfqhKDlsNN25GcyXfxyZUkha2KHPQaWurhVY1ZHfOnqqLGdT5/MPA3sg5J40vk
+         vd4d8WgL+ahhuKvIPcG91G3tg8rXwFTBre7mazJZVk8VdKu4tpLv55y2WC9E/dxbIzkk
+         Q4fjtYYsOBOM+CA56vDyGTBxx8Qay11o6wa4o4/+8P0TGeoBMj6DKi7HTfAOJprjWlC/
+         WCO98EaQPO+eApRCG6i29pv8LbnctEZGxMzirDn5beaSODBco1jrC+LOHC7rWTM106sT
+         ZK0w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+       dkim=pass header.i=@linaro.org header.s=google header.b=CTyU6QQ9;
+       spf=pass (google.com: domain of linus.walleij@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus.walleij@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ADEB21772
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 24 Mar 2018 13:48:01 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-kernel@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter
- Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Rob
- Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "David
- S. Miller" <davem@davemloft.net>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>, Randy Dunlap
- <rdunlap@infradead.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/3] iio: add unit converter
-Message-ID: <20180324134801.0e6254ee@archlinux>
-In-Reply-To: <0863dfa7-c1da-7691-a896-9b414e2fddfa@axentia.se>
-References: <20180319170246.26830-1-peda@axentia.se>
-	<20180323141401.000031cc@huawei.com>
-	<0863dfa7-c1da-7691-a896-9b414e2fddfa@axentia.se>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+       dkim=pass header.i=@linaro.org header.s=google header.b=CTyU6QQ9;
+       spf=pass (google.com: domain of linus.walleij@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus.walleij@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AG47ELt5CT29+3bF6eFZGUKy4bCJAUDFIzVlEB3+858tdab8KMTawdywkEiscxK1hFpnbZjV7/7i4F27UlhCwFfzayg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180324134801.0e6254ee@archlinux>
+References: <20180319170246.26830-1-peda@axentia.se> <20180323141401.000031cc@huawei.com>
+ <0863dfa7-c1da-7691-a896-9b414e2fddfa@axentia.se> <20180324134801.0e6254ee@archlinux>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 24 Mar 2018 17:34:17 +0100
+Message-ID: <CACRpkdYPayHqYdFMmts20yLRdMEy6SW-qqnC+BsYip-RdN2HSQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] iio: add unit converter
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Peter Rosin <peda@axentia.se>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+	Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, "David S. Miller" <davem@davemloft.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, linux-iio@vger.kernel.org,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595386339632135527?=
-X-GMAIL-MSGID: =?utf-8?q?1595827067726796905?=
+X-GMAIL-MSGID: =?utf-8?q?1595837522794873569?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 23 Mar 2018 14:59:41 +0100
-Peter Rosin <peda@axentia.se> wrote:
+On Sat, Mar 24, 2018 at 2:48 PM, Jonathan Cameron <jic23@kernel.org> wrote:
+> On Fri, 23 Mar 2018 14:59:41 +0100
+> Peter Rosin <peda@axentia.se> wrote:
 
-> On 2018-03-23 14:14, Jonathan Cameron wrote:
-> > On Mon, 19 Mar 2018 18:02:43 +0100
-> > Peter Rosin <peda@axentia.se> wrote:
-> >   
-> >> Hi!
-> >>
-> >> This moves the iio-mux driver to a new category, since I think
-> >> it will be the single driver in that category forever, and now
-> >> I'm adding a new driver that is somewhat similar in nature...
-> >>
-> >> But that rename is not very interesting, it's just reshuffling.
-> >> It's the new driver that I need. Specifically, I need to allow
-> >> linear scaling and modification of the type of an io-channel.
-> >> I don't know exactly how that is accomplished in the best way,
-> >> but this is what I came up with.
-> >>
-> >> The use cases are an ADC hooked up to measure a "big" voltage by
-> >> looking at the midpoint of a voltage divider, and an ADC used
-> >> to measure the current by looking at the voltage over a resistor.
-> >>
-> >> Comments?  
-> > It is pretty much how I would have implemented it as well.
-> > 
-> > Will probably do a detailed review over the weekend.
-> > Not convinced entirely on the 'wrapper' naming though.
-> > Will think about it...  
-> 
-> Yeah, let's put 'Wrapper' in the crapper. Not married to it.
-> 
-> Miscellaneous?
-> 
-> So, not super-happy about that either. And maybe leave the mux
-> where it is? It's just that I have the feeling that the iio-mux
-> is never going to get any friends in its category, and the mux
-> and the unit-converter are kind of related in that they operate
-> on other channels. But maybe that's only logical it you know how
-> they are implemented...
-Perhaps Analog Front ends?
-We could move the amplifier driver into the same directory as well,
-though right now that driver is not passing the channels through
-(it's often used without there being an IIO ADC behind it I think...)
+>> So, not super-happy about that either. And maybe leave the mux
+>> where it is? It's just that I have the feeling that the iio-mux
+>> is never going to get any friends in its category, and the mux
+>> and the unit-converter are kind of related in that they operate
+>> on other channels. But maybe that's only logical it you know how
+>> they are implemented...
+>
+> Perhaps Analog Front ends?
+> We could move the amplifier driver into the same directory as well,
+> though right now that driver is not passing the channels through
+> (it's often used without there being an IIO ADC behind it I think...)
 
-Jonathan
+(passive) linear scaler?
+analog linear scaler?
+But maybe these supersets are not broad enough.
 
+Or just invent another acronym akin to "PHY" such as
+"AIF" (analog interface)?
 
-> 
-> Cheers,
-> Peter
-> 
-> > 
-> > Jonathan
-> >   
-> >>
-> >> Cheers,
-> >> Peter
-> >>
-> >> Peter Rosin (3):
-> >>   iio: rename the multiplexer category to wrapper
-> >>   dt-bindings: iio: wrapper: add io-channel-unit-converter
-> >>   iio: wrapper: unit-converter: new driver
-> >>
-> >>  .../{multiplexer => wrapper}/io-channel-mux.txt    |   0
-> >>  .../iio/wrapper/io-channel-unit-converter.txt      |  84 +++++++
-> >>  MAINTAINERS                                        |  11 +-
-> >>  drivers/iio/Kconfig                                |   2 +-
-> >>  drivers/iio/Makefile                               |   2 +-
-> >>  drivers/iio/multiplexer/Makefile                   |   6 -
-> >>  drivers/iio/{multiplexer => wrapper}/Kconfig       |  13 +-
-> >>  drivers/iio/wrapper/Makefile                       |   7 +
-> >>  drivers/iio/{multiplexer => wrapper}/iio-mux.c     |   0
-> >>  drivers/iio/wrapper/iio-unit-converter.c           | 268 +++++++++++++++++++++
-> >>  10 files changed, 381 insertions(+), 12 deletions(-)
-> >>  rename Documentation/devicetree/bindings/iio/{multiplexer => wrapper}/io-channel-mux.txt (100%)
-> >>  create mode 100644 Documentation/devicetree/bindings/iio/wrapper/io-channel-unit-converter.txt
-> >>  delete mode 100644 drivers/iio/multiplexer/Makefile
-> >>  rename drivers/iio/{multiplexer => wrapper}/Kconfig (53%)
-> >>  create mode 100644 drivers/iio/wrapper/Makefile
-> >>  rename drivers/iio/{multiplexer => wrapper}/iio-mux.c (100%)
-> >>  create mode 100644 drivers/iio/wrapper/iio-unit-converter.c
-> >>  
-> >   
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
