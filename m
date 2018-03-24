@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752831AbeCXUDU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 16:03:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36872 "EHLO mail.kernel.org"
+        id S1752975AbeCXUDL (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 16:03:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753005AbeCXUDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:03:16 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE472178B
+        id S1752947AbeCXUDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 16:03:09 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7B32183B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -17,9 +17,9 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
         Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 06/44] perf annotate: Move annotation_line array from TUI to generic code
-Date: Sat, 24 Mar 2018 17:01:33 -0300
-Message-Id: <20180324200211.21326-7-acme@kernel.org>
+Subject: [PATCH 04/44] perf annotate tui: Use annotate_browser__cycles_width() mroe
+Date: Sat, 24 Mar 2018 17:01:31 -0300
+Message-Id: <20180324200211.21326-5-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180324200211.21326-1-acme@kernel.org>
 References: <20180324200211.21326-1-acme@kernel.org>
@@ -29,9 +29,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-This is needed to reduce the differences between the TUI mode and the
-other annotation UIs, next csets will move that code to the UI-neutral
-annotation library. Leaving it in place for now to ease review.
+Instead of an open coded equivalent, will reduce a bit noise in
+the following patches.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -40,189 +39,34 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-gz09ahsd5xm1eip7ura5ow6x@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-pnwn1dg9345zawhgiorpsadf@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/annotate.c | 41 ++++++++++++++++++---------------------
- tools/perf/util/annotate.h        |  1 +
- 2 files changed, 20 insertions(+), 22 deletions(-)
+ tools/perf/ui/browsers/annotate.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 0dd64707125a..e89b68612408 100644
+index ca3d99c1e4d9..0f84a52b4088 100644
 --- a/tools/perf/ui/browsers/annotate.c
 +++ b/tools/perf/ui/browsers/annotate.c
-@@ -40,7 +40,6 @@ struct annotate_browser {
- 	struct rb_root		    entries;
- 	struct rb_node		   *curr_hot;
- 	struct annotation_line	   *selection;
--	struct annotation_line	  **offsets;
- 	struct arch		   *arch;
- 	int			    nr_events;
- 	u64			    start;
-@@ -335,9 +334,9 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
- 	 *  name right after the '<' token and probably treating this like a
- 	 *  'call' instruction.
- 	 */
--	target = ab->offsets[cursor->ops.target.offset];
-+	target = notes->offsets[cursor->ops.target.offset];
- 	if (target == NULL) {
--		ui_helpline__printf("WARN: jump target inconsistency, press 'o', ab->offsets[%#x] = NULL\n",
-+		ui_helpline__printf("WARN: jump target inconsistency, press 'o', notes->offsets[%#x] = NULL\n",
- 				    cursor->ops.target.offset);
- 		return;
- 	}
-@@ -969,25 +968,25 @@ int hist_entry__tui_annotate(struct hist_entry *he, struct perf_evsel *evsel,
- }
- 
- 
--static unsigned count_insn(struct annotate_browser *browser, u64 start, u64 end)
-+static unsigned count_insn(struct annotation *notes, u64 start, u64 end)
- {
- 	unsigned n_insn = 0;
- 	u64 offset;
- 
- 	for (offset = start; offset <= end; offset++) {
--		if (browser->offsets[offset])
-+		if (notes->offsets[offset])
- 			n_insn++;
- 	}
- 	return n_insn;
- }
- 
--static void count_and_fill(struct annotate_browser *browser, u64 start, u64 end,
-+static void count_and_fill(struct annotation *notes, u64 start, u64 end,
- 			   struct cyc_hist *ch)
- {
- 	unsigned n_insn;
- 	u64 offset;
- 
--	n_insn = count_insn(browser, start, end);
-+	n_insn = count_insn(notes, start, end);
- 	if (n_insn && ch->num && ch->cycles) {
- 		float ipc = n_insn / ((double)ch->cycles / (double)ch->num);
- 
-@@ -996,7 +995,7 @@ static void count_and_fill(struct annotate_browser *browser, u64 start, u64 end,
- 			return;
- 
- 		for (offset = start; offset <= end; offset++) {
--			struct annotation_line *al = browser->offsets[offset];
-+			struct annotation_line *al = notes->offsets[offset];
- 
- 			if (al)
- 				al->ipc = ipc;
-@@ -1009,11 +1008,9 @@ static void count_and_fill(struct annotate_browser *browser, u64 start, u64 end,
-  * annotate, but right now we need the per byte offsets arrays,
-  * which are only here.
-  */
--static void annotate__compute_ipc(struct annotate_browser *browser, size_t size,
--			   struct symbol *sym)
-+static void annotate__compute_ipc(struct annotation *notes, size_t size)
- {
- 	u64 offset;
--	struct annotation *notes = symbol__annotation(sym);
- 
- 	if (!notes->src || !notes->src->cycles_hist)
- 		return;
-@@ -1027,8 +1024,8 @@ static void annotate__compute_ipc(struct annotate_browser *browser, size_t size,
- 			struct annotation_line *al;
- 
- 			if (ch->have_start)
--				count_and_fill(browser, ch->start, offset, ch);
--			al = browser->offsets[offset];
-+				count_and_fill(notes, ch->start, offset, ch);
-+			al = notes->offsets[offset];
- 			if (al && ch->num_aggr)
- 				al->cycles = ch->cycles_aggr / ch->num_aggr;
- 			notes->have_cycles = true;
-@@ -1043,13 +1040,14 @@ static void annotate_browser__mark_jump_targets(struct annotate_browser *browser
- 	u64 offset;
- 	struct map_symbol *ms = browser->b.priv;
+@@ -308,7 +308,7 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
+ 	struct map_symbol *ms = ab->b.priv;
  	struct symbol *sym = ms->sym;
-+	struct annotation *notes = symbol__annotation(sym);
+ 	u8 pcnt_width = annotate_browser__pcnt_width(ab);
+-	int width = 0;
++	int width;
  
  	/* PLT symbols contain external offsets */
  	if (strstr(sym->name, "@plt"))
- 		return;
- 
- 	for (offset = 0; offset < size; ++offset) {
--		struct annotation_line *al = browser->offsets[offset];
-+		struct annotation_line *al = notes->offsets[offset];
- 		struct disasm_line *dl;
- 		struct browser_line *blt;
- 
-@@ -1058,7 +1056,7 @@ static void annotate_browser__mark_jump_targets(struct annotate_browser *browser
- 		if (!disasm_line__is_valid_jump(dl, sym))
- 			continue;
- 
--		al = browser->offsets[dl->ops.target.offset];
-+		al = notes->offsets[dl->ops.target.offset];
- 
- 		/*
-  		 * FIXME: Oops, no jump target? Buggy disassembler? Or do we
-@@ -1089,7 +1087,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 			 struct hist_browser_timer *hbt)
- {
- 	struct annotation_line *al;
--	struct annotation *notes;
-+	struct annotation *notes = symbol__annotation(sym);
- 	size_t size;
- 	struct map_symbol ms = {
- 		.map = map,
-@@ -1116,8 +1114,8 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 	if (map->dso->annotate_warned)
- 		return -1;
- 
--	browser.offsets = zalloc(size * sizeof(struct annotation_line *));
--	if (browser.offsets == NULL) {
-+	notes->offsets = zalloc(size * sizeof(struct annotation_line *));
-+	if (notes->offsets == NULL) {
- 		ui__error("Not enough memory!");
- 		return -1;
- 	}
-@@ -1137,7 +1135,6 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 
- 	ui_helpline__push("Press ESC to exit");
- 
--	notes = symbol__annotation(sym);
- 	browser.start = map__rip_2objdump(map, sym->start);
- 
- 	list_for_each_entry(al, &notes->src->source, node) {
-@@ -1158,13 +1155,13 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 			 * E.g. copy_user_generic_unrolled
-  			 */
- 			if (al->offset < (s64)size)
--				browser.offsets[al->offset] = al;
-+				notes->offsets[al->offset] = al;
- 		} else
- 			bpos->idx_asm = -1;
+@@ -355,8 +355,7 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
+ 		to = (u64)btarget->idx;
  	}
  
- 	annotate_browser__mark_jump_targets(&browser, size);
--	annotate__compute_ipc(&browser, size, sym);
-+	annotate__compute_ipc(notes, size);
+-	if (ab->have_cycles)
+-		width = ANNOTATION__IPC_WIDTH + ANNOTATION__CYCLES_WIDTH;
++	width = annotate_browser__cycles_width(ab);
  
- 	browser.addr_width = browser.target_width = browser.min_addr_width = hex_width(size);
- 	browser.max_addr_width = hex_width(sym->end);
-@@ -1184,7 +1181,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 	annotated_source__purge(notes->src);
- 
- out_free_offsets:
--	free(browser.offsets);
-+	zfree(&notes->offsets);
- 	return ret;
- }
- 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 23d2f32b7bf0..d2c3436830a9 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -164,6 +164,7 @@ struct annotated_source {
- struct annotation {
- 	pthread_mutex_t		lock;
- 	u64			max_coverage;
-+	struct annotation_line	**offsets;
- 	bool			have_cycles;
- 	struct annotated_source *src;
- };
+ 	ui_browser__set_color(browser, HE_COLORSET_JUMP_ARROWS);
+ 	__ui_browser__line_arrow(browser,
 -- 
 2.14.3
