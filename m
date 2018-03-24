@@ -1,148 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751999AbeCXK5t (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 06:57:49 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:44953 "EHLO
-        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751843AbeCXK5r (ORCPT
+        id S1751964AbeCXLCr (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 07:02:47 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:43052 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751843AbeCXLCq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 06:57:47 -0400
-From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-To: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: davem@davemloft.net, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
-        stephen@networkplumber.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
-        nirranjan@chelsio.com, indranil@chelsio.com,
-        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Subject: [PATCH net-next v2 2/2] cxgb4: collect hardware dump in second kernel
-Date: Sat, 24 Mar 2018 16:26:34 +0530
-Message-Id: <f06cca21650affa10d83a28dbd7fb577792e35a9.1521888444.git.rahul.lakkireddy@chelsio.com>
-X-Mailer: git-send-email 2.5.3
-In-Reply-To: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
-References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
-In-Reply-To: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
-References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
+        Sat, 24 Mar 2018 07:02:46 -0400
+From: Stefan Agner <stefan@agner.ch>
+To: herbert@gondor.apana.org.au, davem@davemloft.net,
+        raveendra.padasalagi@broadcom.com, clabbe.montjoie@gmail.com
+Cc: scott.branden@broadcom.com, steven.lin1@broadcom.com,
+        garsilva@embeddedor.com, pravin.shedge4linux@gmail.com,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [RFC PATCH] crypto: brcm - explicitly cast cipher to hash type
+Date: Sat, 24 Mar 2018 12:02:42 +0100
+Message-Id: <20180324110242.9474-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register callback to collect hardware/firmware dumps in second kernel
-before hardware/firmware is initialized.  The dumps for each device
-will be available under /sys/kernel/crashdd/cxgb4/ directory in second
-kernel.
+In the AES cases enum spu_cipher_type and enum hash_type have
+the same values, so the assignment is fine. Explicitly cast
+the enum type conversion.
 
-Signed-off-by: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+This fixes two warnings when building with clang:
+  drivers/crypto/bcm/cipher.c:821:34: warning: implicit conversion from
+      enumeration type 'enum spu_cipher_type' to different enumeration
+      type 'enum hash_type' [-Wenum-conversion]
+                hash_parms.type = cipher_parms.type;
+                                ~ ~~~~~~~~~~~~~^~~~
+  drivers/crypto/bcm/cipher.c:1412:26: warning: implicit conversion from
+      enumeration type 'enum spu_cipher_type' to different enumeration
+      type 'enum hash_type' [-Wenum-conversion]
+                hash_parms.type = ctx->cipher_type;
+                                ~ ~~~~~^~~~~~~~~~~
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
-v2:
-- No Changes.
+I am not familar with the IP... I would be glad if somebody with
+better insight could have a look whether that patch makes sense.
 
-Changes since rfc v2:
-- Update comments and commit message for sysfs change.
+ drivers/crypto/bcm/cipher.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-rfc v2:
-- Updated dump registration to the new API in patch 1.
-
- drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |  4 ++++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c | 25 ++++++++++++++++++++++++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |  3 +++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  | 12 ++++++++++++
- 4 files changed, 44 insertions(+)
-
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-index 688f95440af2..79a123bfb628 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
-@@ -50,6 +50,7 @@
- #include <linux/net_tstamp.h>
- #include <linux/ptp_clock_kernel.h>
- #include <linux/ptp_classify.h>
-+#include <linux/crashdd.h>
- #include <asm/io.h>
- #include "t4_chip_type.h"
- #include "cxgb4_uld.h"
-@@ -964,6 +965,9 @@ struct adapter {
- 	struct hma_data hma;
+diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
+index 2b75f95bbe1b..309c67c7012f 100644
+--- a/drivers/crypto/bcm/cipher.c
++++ b/drivers/crypto/bcm/cipher.c
+@@ -818,7 +818,7 @@ static int handle_ahash_req(struct iproc_reqctx_s *rctx)
  
- 	struct srq_data *srq;
-+
-+	/* Dump buffer for collecting logs in kdump kernel */
-+	struct crashdd_data crashdd_buf;
- };
+ 	/* AES hashing keeps key size in type field, so need to copy it here */
+ 	if (hash_parms.alg == HASH_ALG_AES)
+-		hash_parms.type = cipher_parms.type;
++		hash_parms.type = (enum hash_type)cipher_parms.type;
+ 	else
+ 		hash_parms.type = spu->spu_hash_type(rctx->total_sent);
  
- /* Support for "sched-class" command to allow a TX Scheduling Class to be
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c
-index 143686c60234..ce9f544781af 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c
-@@ -488,3 +488,28 @@ void cxgb4_init_ethtool_dump(struct adapter *adapter)
- 	adapter->eth_dump.version = adapter->params.fw_vers;
- 	adapter->eth_dump.len = 0;
- }
-+
-+static int cxgb4_cudbg_crashdd_collect(struct crashdd_data *data, void *buf)
-+{
-+	struct adapter *adap = container_of(data, struct adapter, crashdd_buf);
-+	u32 len = data->size;
-+
-+	return cxgb4_cudbg_collect(adap, buf, &len, CXGB4_ETH_DUMP_ALL);
-+}
-+
-+int cxgb4_cudbg_crashdd_add_dump(struct adapter *adap)
-+{
-+	struct crashdd_data *data = &adap->crashdd_buf;
-+	u32 len;
-+
-+	len = sizeof(struct cudbg_hdr) +
-+	      sizeof(struct cudbg_entity_hdr) * CUDBG_MAX_ENTITY;
-+	len += CUDBG_DUMP_BUFF_SIZE;
-+
-+	data->size = len;
-+	snprintf(data->name, sizeof(data->name), "%s_%s", cxgb4_driver_name,
-+		 adap->name);
-+	data->crashdd_callback = cxgb4_cudbg_crashdd_collect;
-+
-+	return crashdd_add_dump(cxgb4_driver_name, data);
-+}
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h
-index ce1ac9a1c878..095c6f04357e 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h
-@@ -41,8 +41,11 @@ enum CXGB4_ETHTOOL_DUMP_FLAGS {
- 	CXGB4_ETH_DUMP_HW = (1 << 1), /* various FW and HW dumps */
- };
+@@ -1409,7 +1409,7 @@ static int handle_aead_req(struct iproc_reqctx_s *rctx)
+ 						rctx->iv_ctr_len);
  
-+#define CXGB4_ETH_DUMP_ALL (CXGB4_ETH_DUMP_MEM | CXGB4_ETH_DUMP_HW)
-+
- u32 cxgb4_get_dump_length(struct adapter *adap, u32 flag);
- int cxgb4_cudbg_collect(struct adapter *adap, void *buf, u32 *buf_size,
- 			u32 flag);
- void cxgb4_init_ethtool_dump(struct adapter *adapter);
-+int cxgb4_cudbg_crashdd_add_dump(struct adapter *adap);
- #endif /* __CXGB4_CUDBG_H__ */
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-index e880be8e3c45..265cb026f868 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -5527,6 +5527,18 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (err)
- 		goto out_free_adapter;
+ 	if (ctx->auth.alg == HASH_ALG_AES)
+-		hash_parms.type = ctx->cipher_type;
++		hash_parms.type = (enum hash_type)ctx->cipher_type;
  
-+	if (is_kdump_kernel()) {
-+		/* Collect hardware state and append to
-+		 * /sys/kernel/crashdd/cxgb4/ directory
-+		 */
-+		err = cxgb4_cudbg_crashdd_add_dump(adapter);
-+		if (err) {
-+			dev_warn(adapter->pdev_dev,
-+				 "Fail collecting crash device dump, err: %d. Continuing\n",
-+				 err);
-+			err = 0;
-+		}
-+	}
- 
- 	if (!is_t4(adapter->params.chip)) {
- 		s_qpp = (QUEUESPERPAGEPF0_S +
+ 	/* General case AAD padding (CCM and RFC4543 special cases below) */
+ 	aead_parms.aad_pad_len = spu->spu_gcm_ccm_pad_len(ctx->cipher.mode,
 -- 
-2.14.1
+2.16.2
