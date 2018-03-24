@@ -1,64 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752909AbeCXXUR (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 19:20:17 -0400
-Received: from mga14.intel.com ([192.55.52.115]:7131 "EHLO mga14.intel.com"
+        id S1752798AbeCXXZY (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 19:25:24 -0400
+Received: from sauhun.de ([88.99.104.3]:44922 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752827AbeCXXUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 19:20:16 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,356,1517904000";
-   d="scan'208";a="30979916"
-Date: Sun, 25 Mar 2018 07:19:37 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: kbuild-all@01.org, iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>, Lan Tianyu <tianyu.lan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>, Raj Ashok <ashok.raj@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean Delvare <khali@linux-fr.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [RFC PATCH] iommu/vt-d: intel_iommu_page_response() can be static
-Message-ID: <20180324231937.GA9962@xian.lkp.intel.com>
-References: <1521774734-48433-21-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1752174AbeCXXZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 19:25:23 -0400
+Date: Sun, 25 Mar 2018 00:25:21 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, jassisinghbrar@gmail.com,
+        andy.shevchenko@gmail.com
+Subject: Re: [PATCH v5 2/2] i2c: add support for Socionext SynQuacer I2C
+ controller
+Message-ID: <20180324232521.ofzk3fikda42ywep@ninjato>
+References: <20180302083123.7259-1-ard.biesheuvel@linaro.org>
+ <20180302083123.7259-3-ard.biesheuvel@linaro.org>
+ <20180324231910.unzvwty3xia4mqu2@ninjato>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wyihmnao436dfmvi"
 Content-Disposition: inline
-In-Reply-To: <1521774734-48433-21-git-send-email-jacob.jun.pan@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180324231910.unzvwty3xia4mqu2@ninjato>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Fixes: 49c5977b4ee7 ("iommu/vt-d: add intel iommu page response function")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
----
- intel-iommu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--wyihmnao436dfmvi
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 8d73ff0..06be796 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5195,7 +5195,7 @@ static int intel_iommu_sva_invalidate(struct iommu_domain *domain,
- 	return ret;
- }
- 
--int intel_iommu_page_response(struct device *dev, struct page_response_msg *msg)
-+static int intel_iommu_page_response(struct device *dev, struct page_response_msg *msg)
- {
- 	struct qi_desc resp;
- 	struct intel_iommu *iommu;
+My code checkers mention this:
+
+    CPPCHECK
+drivers/i2c/busses/i2c-synquacer.c:422: style: Checking if unsigned variabl=
+e 'timeout' is less than zero.
+
+
+  CC      drivers/i2c/busses/i2c-synquacer.o
+drivers/i2c/busses/i2c-synquacer.c: In function =E2=80=98synquacer_i2c_prob=
+e=E2=80=99:
+drivers/i2c/busses/i2c-synquacer.c:678:15: warning: comparison of unsigned =
+expression < 0 is always false [-Wtype-limits]
+  if (i2c->irq < 0) {
+               ^
+
+--wyihmnao436dfmvi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq23mEACgkQFA3kzBSg
+KbaCSA/+O7XpntYVfmQJehXglIPajwoNqQSgW2U5sGGrtAbwqBhUa71E+bA1IcOH
+usumkWUvH9c6Vf1s9oaWlF0B5LrIKmqfBA369rOTIGOXtMOHZQvaOPdUlS7czhR0
+dvrI206HhJIL8rmmpgUUz4kAuCGMxdZUzH1MrsqkjM6md3xjLPeedCxG0WHCXu9K
+WqXKxwJGUM/rkJGQfqedvQA7lXIZrWyEPh3DmSijJed2sSWzGuRcJnSswcH6ZNR3
+q8NHIotOkU6GeB5/8W5F412w5vYYhhBGPAPpI4AJywhWho2+ZRZI8F2D83JjiQMs
+tb/9ps8Jp3aP4qXxeUk4uyIVF4crkbqJJrODcHiZbYi1H/k8a1YP2sBjM3ax57xK
+0a6YuRISLvlo1YtmVnubLDDxzyihidq8IvllaP7iWGgXiCHHfM+Gu1/roqgsRBnS
+N+VJFY9TJlwUtX7/XSKdHu/gaLUys95kz0QN1WxWULHhdSxv9NvDCAUhqhDQtKLF
+oSeZgwwUBJXt2sNJH/7xgLBmKGCkWJWScdn3PJSS8nDYTadW09HX1HjzwJ5d+TWk
+RSYOSxEq5PFb6FH+JywJjr20Bh0nGlkeXb9xFycKykLsz0jL4+S7QD43N8whu8U0
+Hk/p1YdEjwcRzr/lasUWZqMv8ZPYgokkKPnFMTP7ntL46tyYmqU=
+=mnKS
+-----END PGP SIGNATURE-----
+
+--wyihmnao436dfmvi--
