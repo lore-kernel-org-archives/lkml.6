@@ -1,105 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752121AbeCWQYG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 12:24:06 -0400
-Received: from mail-io0-f169.google.com ([209.85.223.169]:39326 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeCWQYE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 12:24:04 -0400
-X-Google-Smtp-Source: AG47ELtiCIy5odHjN490ihKdZ1U5H+907PCOHBcw9p3ReqdimcAw1BAMj4Lw74QJ2FxaGWVnKQPhEYIqXFMHJS1eh54=
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1803231004130.4625@nanos.tec.linutronix.de>
-References: <CAJWu+oo1mnS=2v_SbnDCDih6AyystU2aXVCUEa5k0W0q0Ovk6w@mail.gmail.com>
- <alpine.DEB.2.21.1803231004130.4625@nanos.tec.linutronix.de>
-From: Joel Fernandes <joelaf@google.com>
-Date: Fri, 23 Mar 2018 09:24:02 -0700
-Message-ID: <CAJWu+ooHzLpJZxsFq7hifmaEh7fOdYsExKz6pGLgSPQUxAB4Nw@mail.gmail.com>
-Subject: Re: syzbot rcu/debugobjects warning
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Todd Poynor <toddpoynor@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752203AbeCWQYZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 12:24:25 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:48778 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752159AbeCWQYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 12:24:24 -0400
+From: Peng Hao <peng.hao2@zte.com.cn>
+To: cdall@kernel.org, marc.zyngier@arm.com
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH v3] KVM: arm/arm64 : add lpi info in vgic-debug
+Date: Sat, 24 Mar 2018 08:42:41 +0800
+Message-Id: <1521852161-67603-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-03-24 00:24:19,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-03-24 00:23:53,
+        Serialize complete at 2018-03-24 00:23:53
+X-MAIL: mse01.zte.com.cn w2NGO99u026061
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 2:11 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Thu, 22 Mar 2018, Joel Fernandes wrote:
->
->> Hi Paul, Thomas,
->>
->> I received a crash report from syzbot on the android 4.9 kernel and I
->> am looking into it, it seems the debugobjects subsystem is warning
->> that a certain RCU structure is not allocated on the stack, but is
->> annotated to be.
->>
->> ------------[ cut here ]------------
->> WARNING: CPU: 1 PID: 0 at lib/debugobjects.c:300
->> debug_object_is_on_stack lib/debugobjects.c:300 [inline]
->> WARNING: CPU: 1 PID: 0 at lib/debugobjects.c:300
->> __debug_object_init+0x526/0xc40 lib/debugobjects.c:326
->> [...]
->>  <IRQ> [  150.631700]  [<ffffffff81d96069>] dump_stack+0xc1/0x128
->> lib/dump_stack.c:51
->>  [<ffffffff8142fbd1>] panic+0x1bc/0x3a8 kernel/panic.c:179
->>  [<ffffffff81131894>] __warn+0x1c4/0x1e0 kernel/panic.c:542
->>  [<ffffffff81131afc>] warn_slowpath_null+0x2c/0x40 kernel/panic.c:585
->>  [<ffffffff81dfefb6>] debug_object_is_on_stack lib/debugobjects.c:300 [inline]
->>  [<ffffffff81dfefb6>] __debug_object_init+0x526/0xc40 lib/debugobjects.c:326
->>  [<ffffffff81dff709>] debug_object_init_on_stack+0x19/0x20
->> lib/debugobjects.c:378
->>  [<ffffffff81287a93>] init_rcu_head_on_stack kernel/rcu/update.c:403 [inline]
->>  [<ffffffff81287a93>] __wait_rcu_gp+0x93/0x1b0 kernel/rcu/update.c:358
->>  [<ffffffff81290251>] synchronize_rcu.part.65+0x101/0x110
->> kernel/rcu/tree_plugin.h:678
->>  [<ffffffff81290287>] synchronize_rcu+0x27/0x90 kernel/rcu/tree_plugin.h:679
->>  [<ffffffff83588b35>] __l2tp_session_unhash+0x3d5/0x550
->> net/l2tp/l2tp_core.c:1792
->>
->> The full report is here:
->> https://syzkaller.appspot.com/bug?extid=e6a19b585ab2dba3eee8
->
-> This is beyond useless. That brings me to a google 'Sign in' page. Please
-> use accessible storage. That information is hardly secrit.
+Add lpi debug info to vgic-stat.
+The printed info like this:
+    SPI  287      0 000001        0        0   0 160      -1
+    LPI 8192      2 000100        0        0   0 160      -1
 
-Sorry. Here is the raw crash log: https://pastebin.com/raw/puvh0cXE
-(The kernel logs are toward the end with the above).
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ virt/kvm/arm/vgic/vgic-debug.c | 59 ++++++++++++++++++++++++++++++++++++++----
+ virt/kvm/arm/vgic/vgic-its.c   | 16 ++++++------
+ virt/kvm/arm/vgic/vgic.h       |  1 +
+ 3 files changed, 63 insertions(+), 13 deletions(-)
 
->
->> It seems as per the code that the structure is on the stack so its
->> weird why debugobjects thinks its not.
->> The object in question is allocated on the stack by the __wait_rcu_gp
->> macro when its called from synchronize_rcu:
->>
->> #define _wait_rcu_gp(checktiny, ...) \
->> do {                                                                    \
->>         call_rcu_func_t __crcu_array[] = { __VA_ARGS__ };               \
->>         struct rcu_synchronize __rs_array[ARRAY_SIZE(__crcu_array)];    \
->>         __wait_rcu_gp(checktiny, ARRAY_SIZE(__crcu_array),              \
->>                         __crcu_array, __rs_array);                      \
->> } while (0)
->>
->>
->> Any debug ideas or thoughts about it?
->
-> I assume it emitted:
->      pr_warn("object is not on stack, but annotated\n");
->
-
-Yes that is the warning.
-
-> before dumping the WARN_ON(). Right? If so, then you might have run into a
-> stack corruption. But hard to tell. Please add something like this:
->
->      pr_warn("object %p is not on stack %p, but annotated\n", obj,
->              task_stack_page(current));
-
-Sounds good, I will make this change into android-4.9 kernel for debug
-purpose and hopefully the bot hits it soon (that's likely since its
-been reported many times). Will let you know once we hit it.
-
-Thanks a lot for the ideas,
-
-- Joel
+diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
+index 10b3817..ddac6bd 100644
+--- a/virt/kvm/arm/vgic/vgic-debug.c
++++ b/virt/kvm/arm/vgic/vgic-debug.c
+@@ -36,9 +36,12 @@
+ struct vgic_state_iter {
+ 	int nr_cpus;
+ 	int nr_spis;
++	int nr_lpis;
+ 	int dist_id;
+ 	int vcpu_id;
+ 	int intid;
++	int lpi_print_count;
++	struct vgic_irq **lpi_irqs;
+ };
+ 
+ static void iter_next(struct vgic_state_iter *iter)
+@@ -52,6 +55,39 @@ static void iter_next(struct vgic_state_iter *iter)
+ 	if (iter->intid == VGIC_NR_PRIVATE_IRQS &&
+ 	    ++iter->vcpu_id < iter->nr_cpus)
+ 		iter->intid = 0;
++
++	if (iter->intid >= VGIC_NR_PRIVATE_IRQS + iter->nr_spis) {
++		if (iter->lpi_print_count < iter->nr_lpis)
++			iter->intid = iter->lpi_irqs[iter->lpi_print_count]->intid;
++		iter->lpi_print_count++;
++	}
++}
++
++static void vgic_debug_get_lpis(struct kvm *kvm, struct vgic_state_iter *iter)
++{
++	u32 *intids;
++	int i, irq_count;
++	struct vgic_irq *irq = NULL, **lpi_irqs;
++
++	iter->nr_lpis = 0;
++	irq_count = vgic_copy_lpi_list(kvm, NULL, &intids);
++	if (irq_count < 0)
++		return;
++
++	lpi_irqs = kmalloc_array(irq_count, sizeof(irq), GFP_KERNEL);
++	if (!lpi_irqs) {
++		kfree(intids);
++		return;
++	}
++
++	for (i = 0; i < irq_count; i++) {
++		irq = vgic_get_irq(kvm, NULL, intids[i]);
++		if (!irq)
++			continue;
++		lpi_irqs[iter->nr_lpis++] = irq;
++	}
++	iter->lpi_irqs = lpi_irqs;
++	kfree(intids);
+ }
+ 
+ static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
+@@ -64,6 +100,8 @@ static void iter_init(struct kvm *kvm, struct vgic_state_iter *iter,
+ 	iter->nr_cpus = nr_cpus;
+ 	iter->nr_spis = kvm->arch.vgic.nr_spis;
+ 
++	if (vgic_supports_direct_msis(kvm) && !pos)
++		vgic_debug_get_lpis(kvm, iter);
+ 	/* Fast forward to the right position if needed */
+ 	while (pos--)
+ 		iter_next(iter);
+@@ -73,7 +111,9 @@ static bool end_of_vgic(struct vgic_state_iter *iter)
+ {
+ 	return iter->dist_id > 0 &&
+ 		iter->vcpu_id == iter->nr_cpus &&
+-		(iter->intid - VGIC_NR_PRIVATE_IRQS) == iter->nr_spis;
++		(iter->intid - VGIC_NR_PRIVATE_IRQS) >= iter->nr_spis &&
++		((iter->nr_lpis == 0) ||
++		(iter->lpi_print_count == iter->nr_lpis + 1));
+ }
+ 
+ static void *vgic_debug_start(struct seq_file *s, loff_t *pos)
+@@ -130,6 +170,7 @@ static void vgic_debug_stop(struct seq_file *s, void *v)
+ 
+ 	mutex_lock(&kvm->lock);
+ 	iter = kvm->arch.vgic.iter;
++	kfree(iter->lpi_irqs);
+ 	kfree(iter);
+ 	kvm->arch.vgic.iter = NULL;
+ 	mutex_unlock(&kvm->lock);
+@@ -154,7 +195,7 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
+ 			 struct kvm_vcpu *vcpu)
+ {
+ 	int id = 0;
+-	char *hdr = "SPI ";
++	char *hdr = "Global";
+ 
+ 	if (vcpu) {
+ 		hdr = "VCPU";
+@@ -162,7 +203,10 @@ static void print_header(struct seq_file *s, struct vgic_irq *irq,
+ 	}
+ 
+ 	seq_printf(s, "\n");
+-	seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
++	if (vcpu)
++		seq_printf(s, "%s%2d TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr, id);
++	else
++		seq_printf(s, "%s TYP   ID TGT_ID PLAEHC     HWID   TARGET SRC PRI VCPU_ID\n", hdr);
+ 	seq_printf(s, "---------------------------------------------------------------\n");
+ }
+ 
+@@ -174,8 +218,10 @@ static void print_irq_state(struct seq_file *s, struct vgic_irq *irq,
+ 		type = "SGI";
+ 	else if (irq->intid < VGIC_NR_PRIVATE_IRQS)
+ 		type = "PPI";
+-	else
++	else if (irq->intid < VGIC_MAX_SPI)
+ 		type = "SPI";
++	else if (irq->intid >= VGIC_MIN_LPI)
++		type = "LPI";
+ 
+ 	if (irq->intid ==0 || irq->intid == VGIC_NR_PRIVATE_IRQS)
+ 		print_header(s, irq, vcpu);
+@@ -220,7 +266,9 @@ static int vgic_debug_show(struct seq_file *s, void *v)
+ 	if (!kvm->arch.vgic.initialized)
+ 		return 0;
+ 
+-	if (iter->vcpu_id < iter->nr_cpus) {
++	if (iter->intid >= VGIC_MIN_LPI)
++		irq = iter->lpi_irqs[iter->lpi_print_count - 1];
++	else if (iter->vcpu_id < iter->nr_cpus) {
+ 		vcpu = kvm_get_vcpu(kvm, iter->vcpu_id);
+ 		irq = &vcpu->arch.vgic_cpu.private_irqs[iter->intid];
+ 	} else {
+@@ -230,6 +278,7 @@ static int vgic_debug_show(struct seq_file *s, void *v)
+ 	spin_lock(&irq->irq_lock);
+ 	print_irq_state(s, irq, vcpu);
+ 	spin_unlock(&irq->irq_lock);
++	vgic_put_irq(kvm, irq);
+ 
+ 	return 0;
+ }
+diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
+index 4650953..3e8a47d 100644
+--- a/virt/kvm/arm/vgic/vgic-its.c
++++ b/virt/kvm/arm/vgic/vgic-its.c
+@@ -307,13 +307,13 @@ static int update_lpi_config(struct kvm *kvm, struct vgic_irq *irq,
+ }
+ 
+ /*
+- * Create a snapshot of the current LPIs targeting @vcpu, so that we can
+- * enumerate those LPIs without holding any lock.
++ * Create a snapshot of the current LPIs targeting @vcpu if @vcpu!=NULL or all
++ * LPIs, so that we can enumerate those LPIs without holding any lock.
+  * Returns their number and puts the kmalloc'ed array into intid_ptr.
+  */
+-static int vgic_copy_lpi_list(struct kvm_vcpu *vcpu, u32 **intid_ptr)
++int vgic_copy_lpi_list(struct kvm *kvm, struct kvm_vcpu *vcpu, u32 **intid_ptr)
+ {
+-	struct vgic_dist *dist = &vcpu->kvm->arch.vgic;
++	struct vgic_dist *dist = &kvm->arch.vgic;
+ 	struct vgic_irq *irq;
+ 	u32 *intids;
+ 	int irq_count = dist->lpi_list_count, i = 0;
+@@ -332,7 +332,7 @@ static int vgic_copy_lpi_list(struct kvm_vcpu *vcpu, u32 **intid_ptr)
+ 	spin_lock(&dist->lpi_list_lock);
+ 	list_for_each_entry(irq, &dist->lpi_list_head, lpi_list) {
+ 		/* We don't need to "get" the IRQ, as we hold the list lock. */
+-		if (irq->target_vcpu != vcpu)
++		if (vcpu && irq->target_vcpu != vcpu)
+ 			continue;
+ 		intids[i++] = irq->intid;
+ 	}
+@@ -423,7 +423,7 @@ static int its_sync_lpi_pending_table(struct kvm_vcpu *vcpu)
+ 	unsigned long flags;
+ 	u8 pendmask;
+ 
+-	nr_irqs = vgic_copy_lpi_list(vcpu, &intids);
++	nr_irqs = vgic_copy_lpi_list(vcpu->kvm, vcpu, &intids);
+ 	if (nr_irqs < 0)
+ 		return nr_irqs;
+ 
+@@ -1147,7 +1147,7 @@ static int vgic_its_cmd_handle_invall(struct kvm *kvm, struct vgic_its *its,
+ 
+ 	vcpu = kvm_get_vcpu(kvm, collection->target_addr);
+ 
+-	irq_count = vgic_copy_lpi_list(vcpu, &intids);
++	irq_count = vgic_copy_lpi_list(kvm, vcpu, &intids);
+ 	if (irq_count < 0)
+ 		return irq_count;
+ 
+@@ -1195,7 +1195,7 @@ static int vgic_its_cmd_handle_movall(struct kvm *kvm, struct vgic_its *its,
+ 	vcpu1 = kvm_get_vcpu(kvm, target1_addr);
+ 	vcpu2 = kvm_get_vcpu(kvm, target2_addr);
+ 
+-	irq_count = vgic_copy_lpi_list(vcpu1, &intids);
++	irq_count = vgic_copy_lpi_list(kvm, vcpu1, &intids);
+ 	if (irq_count < 0)
+ 		return irq_count;
+ 
+diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
+index f5b8519..68b5ed2 100644
+--- a/virt/kvm/arm/vgic/vgic.h
++++ b/virt/kvm/arm/vgic/vgic.h
+@@ -257,5 +257,6 @@ int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
+ void vgic_v4_teardown(struct kvm *kvm);
+ int vgic_v4_sync_hwstate(struct kvm_vcpu *vcpu);
+ int vgic_v4_flush_hwstate(struct kvm_vcpu *vcpu);
++int vgic_copy_lpi_list(struct kvm *kvm, struct kvm_vcpu *vcpu, u32 **intid_ptr);
+ 
+ #endif
+-- 
+1.8.3.1
