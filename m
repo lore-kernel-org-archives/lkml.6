@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1153886-1521806195-2-10512223567661148057
+X-Cyrus-Session-Id: sloti22d1t05-4191223-1521908238-2-11406666211749904732
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,421 +13,218 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521806194; b=HlaJMBZsykhoauGHrz21AjWiWhEf4zq3NW7g/dtBoFaMly5
-    jI1gvcOEq6Q9+LxMF0z2lsjXV9U2VgvWvGHsSNQuZxpmo7teZdvVCIDevxHQunBS
-    7AIpEoRHRupdOqt+WMLAp81W59mh1oDw92vCgzYazUEopUebn7Cnn9biE6haujaL
-    Ova5QZO4YnSdtbQwA5GMH3K10MJ3eD1topEBJyF/F8iNkvp7J4wfgB5z7F6PmuE5
-    cqzgnECJPP/HKFyX/IxHFNAYE+LuXp421xareiZS0/9o8Ng+Zh5i61VUV/HBYHXX
-    4oGjSA7TsqcE0m4n8ung6NDRMBpyfrduWudfhig==
+    t=1521908237; b=bMvC1d4bOnnkir0vPc/n4N3hdb2o8n4I/FUi5q1i8xM6gjN
+    Ubq2kPtD336U6TKhHNU/IafXgyb/hIuScDWldFuLD9NaKd/IfUuGP7i/cr2QKqpX
+    Th0Dj+VI5K7x9NxtgXQRvVm2REBuZFBGU/SKHdq+niBIa9RCWk0JUIrwE0VxXIP+
+    vm8QuwD7B3tg4H8PWXslULpMNr2DQ/XEg7+qjD7oyeVGhYDLD+XiZW+OiZ7bruC/
+    BU9epXR7l337UkB5Ybqhrmrq1A2UsQ/rVmHnujufycpo7HokiLPJJgmK44xgIv1D
+    E87WLRoMU43tzzySQLvT8Gn4AybKWgQWPpySp6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=arctest; t=1521806194; bh=9ABOxjGxJN/Iv8YjLzyQ0HpB6/
-    2yFAB5UyCP9kbLz+M=; b=VSNrsAUy1AJa/TemluKyahWVBAMWPbvel96Ro3/vnw
-    M920fmZBTx50HqA0JZEsncst3r+VJ2DX4ft712hqMNOkrz0h9tL27eEA6TyexIg9
-    eEE3U++qmuu9GaZzH6vU/alSg8EbnIgiZlJmwfD8brsOe+W+/OkHfQiF6tZDLcr1
-    2MdMKVLd36emTgJ6T1Kgl908HP+heBu22Y8b9xRyJkDPLVjuzo/462DIqmG1IaM5
-    H1MGhnS7J2pYnJSin1imqX4OOe50Hh4tJaqvV54mqCKarXlDheBdCZ6q926j54iM
-    ykq5D8rwzjWW1RwGXRfoVrNH5fHsC/KNoF2sawVmzWsg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type
+    :content-transfer-encoding:sender:list-id; s=arctest; t=
+    1521908237; bh=qTpnNT3cIuPvB5EJGffW5Wv5qN6pX1u7p2JRVRlpYU0=; b=I
+    qUVdA4U26615w1UJ3rX5HlJhVWCU7XSbRrA4rutvONYDI0MRaXXVtANbcOZ3+Tyo
+    n6bALO7LT5l8Ml9lWpuQrUgLyCehMtr5ZjLL7EggwolYf+tcPqJRCmF8Uy1QSsVc
+    Maez251FASvX2aed/2SRP/0DaYjqWnualzllNFe+NWWtcEqByYBUwZgwf///Bf49
+    x0FZ7gFQ4qeTOeVkI4+V1pQY7N6pQV5niqzQmi13V3qehXLczCK5MKP8V4B7kG1p
+    pD8Bnuwwls54BLJXUWSweKs5Xf88eCUwMl+7avjuUH/XGepKTe8khYYw3S1EYiHy
+    DLT6PYz4qOhjAlvUD+gcQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=JPXbIlHg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PUf5qnlM;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=JPXbIlHg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PUf5qnlM;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753788AbeCWKA5 (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 23 Mar 2018 06:00:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37524 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753773AbeCWKAy (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 23 Mar 2018 06:00:54 -0400
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuahkh@osg.samsung.com, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 00/77] 4.14.30-stable review
-Date: Fri, 23 Mar 2018 10:53:34 +0100
-Message-Id: <20180323094142.260022880@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.2
+        id S1752446AbeCXQRP (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 24 Mar 2018 12:17:15 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39797 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752331AbeCXQRO (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 24 Mar 2018 12:17:14 -0400
+X-Google-Smtp-Source: AG47ELu+KBHtsk2+as7Fmk2x2HE8u+SlYarGrMY2qB34i5ds3dZZmvXCcTP5R7UA4ysMvzo3IGZH/wNvQVLg7F1r2yQ=
 MIME-Version: 1.0
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.30-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.30-rc1
-X-KernelTest-Deadline: 2018-03-25T09:41+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180323094142.260022880@linuxfoundation.org>
+References: <20180323094142.260022880@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 24 Mar 2018 21:47:12 +0530
+Message-ID: <CA+G9fYv3CkK7TfrXh9Hnvf6K33TUZwDByxLGUnm6GUYoDGLnyg@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/77] 4.14.30-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuahkh@osg.samsung.com>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.14.30 release.
-There are 77 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Sun Mar 25 09:41:18 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.30-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.30-rc1
-
-Adit Ranadive <aditr@vmware.com>
-    RDMA/vmw_pvrdma: Fix usage of user response structures in ABI file
-
-Nick Desaulniers <ndesaulniers@google.com>
-    kbuild: fix linker feature test macros when cross compiling with Clang
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/ucma: Don't allow join attempts for unsupported AF family
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/ucma: Fix access to non-initialized CM_ID object
-
-Jerome Brunet <jbrunet@baylibre.com>
-    clk: migrate the count of orphaned clocks at init
-
-Tatyana Nikolova <tatyana.e.nikolova@intel.com>
-    RDMA/core: Do not use invalid destination in determining port reuse
-
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-    serial: 8250_pci: Don't fail on multiport card class
-
-Boris Pismenny <borisp@mellanox.com>
-    IB/mlx5: Fix out-of-bounds read in create_raw_packet_qp_rq
-
-Boris Pismenny <borisp@mellanox.com>
-    IB/mlx5: Fix integer overflows in mlx5_ib_create_srq
-
-Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-    scsi: mpt3sas: wait for and flush running commands on shutdown/unload
-
-Mauricio Faria de Oliveira <mauricfo@linux.vnet.ibm.com>
-    scsi: mpt3sas: fix oops in error handlers after shutdown/unload
-
-Vignesh R <vigneshr@ti.com>
-    dmaengine: ti-dma-crossbar: Fix event mapping for TPCC_EVT_MUX_60_63
-
-Lars Persson <lars.persson@axis.com>
-    crypto: artpec6 - set correct iv size for gcm(aes)
-
-Sergej Sawazki <sergej@taudac.com>
-    clk: si5351: Rename internal plls to avoid name collisions
-
-Lars-Peter Clausen <lars@metafoo.de>
-    clk: axi-clkgen: Correctly handle nocount bit in recalc_rate()
-
-Stephen Boyd <sboyd@codeaurora.org>
-    clk: Don't touch hardware when reparenting during registration
-
-Romain Izard <romain.izard.pro@gmail.com>
-    clk: at91: pmc: Wait for clocks when resuming
-
-Benjamin Coddington <bcodding@redhat.com>
-    nfsd4: permit layoutget of executable-only files
-
-Joel Stanley <joel@jms.id.au>
-    ARM: dts: aspeed-evb: Add unit name to memory node
-
-Anton Vasilyev <vasilyev@ispras.ru>
-    RDMA/ocrdma: Fix permissions for OCRDMA_RESET_STATS
-
-James Smart <jsmart2021@gmail.com>
-    scsi: lpfc: Fix issues connecting with nvme initiator
-
-James Smart <jsmart2021@gmail.com>
-    scsi: lpfc: Fix SCSI LUN discovery when SCSI and NVME enabled
-
-Johan Hovold <johan@kernel.org>
-    soc: qcom: smsm: fix child-node lookup
-
-Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-    ip_gre: fix potential memory leak in erspan_rcv
-
-Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-    ip_gre: fix error path when erspan_rcv failed
-
-Alexey Kodanev <alexey.kodanev@oracle.com>
-    ip6_vti: adjust vti mtu according to mtu of lower device
-
-Jerry Snitselaar <jsnitsel@redhat.com>
-    iommu/vt-d: clean up pr_irq if request_threaded_irq fails
-
-Brian Norris <briannorris@chromium.org>
-    pinctrl: rockchip: enable clock when reading pin direction register
-
-Florian Fainelli <f.fainelli@gmail.com>
-    pinctrl: Really force states during suspend/resume
-
-Mauro Carvalho Chehab <mchehab@kernel.org>
-    media: davinci: fix a debug printk
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    PCI: rcar: Handle rcar_pcie_parse_request_of_pci_ranges() failures
-
-Niklas Cassel <niklas.cassel@axis.com>
-    PCI: endpoint: Fix find_first_zero_bit() usage
-
-Kishon Vijay Abraham I <kishon@ti.com>
-    PCI: designware-ep: Fix ->get_msi() to check MSI_EN bit
-
-Robert Walker <robert.walker@arm.com>
-    coresight: Fix disabling of CoreSight TPIU
-
-Sahara <keun-o.park@darkmatter.ae>
-    pty: cancel pty slave port buf's work in tty_release
-
-Peter Ujfalusi <peter.ujfalusi@ti.com>
-    drm/omap: DMM: Check for DMM readiness after successful transaction commit
-
-Zhoujie Wu <zjwu@marvell.com>
-    mmc: sdhci-xenon: wait 5ms after set 1.8V signal enable
-
-H. Nikolaus Schaller <hns@goldelico.com>
-    omapdrm: panel: fix compatible vendor string for td028ttec1
-
-Bjorn Helgaas <bhelgaas@google.com>
-    vgacon: Set VGA struct resource types
-
-Bharat Potnuri <bharat@chelsio.com>
-    iser-target: avoid reinitializing rdma contexts for isert commands
-
-Artemy Kovalyov <artemyko@mellanox.com>
-    IB/umem: Fix use of npages/nmap fields
-
-Parav Pandit <parav@mellanox.com>
-    RDMA/cma: Use correct size when writing netlink stats
-
-Erez Shitrit <erezsh@mellanox.com>
-    IB/ipoib: Avoid memory leak if the SA returns a different DGID
-
-Alexandre Belloni <alexandre.belloni@free-electrons.com>
-    rtc: ac100: Fix multiple race conditions
-
-Shuah Khan <shuah@kernel.org>
-    media: s5p-mfc: Fix lock contention - request_firmware() once
-
-Russell King <rmk+kernel@armlinux.org.uk>
-    sfp: fix non-detection of PHY
-
-Russell King <rmk+kernel@armlinux.org.uk>
-    sfp: fix EEPROM reading in the case of non-SFF8472 SFPs
-
-Jerome Brunet <jbrunet@baylibre.com>
-    net: phy: meson-gxl: check phy_write return value
-
-Kees Cook <keescook@chromium.org>
-    /dev/mem: Add bounce buffer for copy-out
-
-Liu, Changcheng <changcheng.liu@intel.com>
-    mmc: block: fix logical error to avoid memory leak
-
-Daniel Drake <drake@endlessm.com>
-    mmc: avoid removing non-removable hosts during suspend
-
-Logan Gunthorpe <logang@deltatee.com>
-    drm/tilcdc: ensure nonatomic iowrite64 is not used
-
-Kedareswara rao Appana <appana.durga.rao@xilinx.com>
-    dmaengine: zynqmp_dma: Fix race condition in the probe
-
-Shawn Nematbakhsh <shawnn@chromium.org>
-    platform/chrome: Use proper protocol transfer function
-
-Guenter Roeck <linux@roeck-us.net>
-    watchdog: Fix kref imbalance seen if handle_boot_enabled=0
-
-Guenter Roeck <linux@roeck-us.net>
-    watchdog: Fix potential kref imbalance when opening watchdog
-
-Arnd Bergmann <arnd@arndb.de>
-    cros_ec: fix nul-termination for firmware build info
-
-Stefan Potyra <Stefan.Potyra@elektrobit.com>
-    serial: 8250_dw: Disable clock on error
-
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-    tty: goldfish: Enable 'earlycon' only if built-in
-
-Bjørn Mork <bjorn@mork.no>
-    qmi_wwan: set FLAG_SEND_ZLP to avoid network initiated disconnect
-
-Ron Economos <w6rz@comcast.net>
-    media: [RESEND] media: dvb-frontends: Add delay to Si2168 restart
-
-Balaji Pothunoori <bpothuno@qti.qualcomm.com>
-    ath10k: handling qos at STA side based on AP WMM enable/disable
-
-Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    media: bt8xx: Fix err 'bt878_probe()'
-
-Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-    rtlwifi: always initialize variables given to RT_TRACE()
-
-Tsang-Shian Lin <thlin@realtek.com>
-    rtlwifi: rtl_pci: Fix the bug when inactiveps is enabled.
-
-Geert Uytterhoeven <geert+renesas@glider.be>
-    spi: sh-msiof: Avoid writing to registers from spi_master.setup()
-
-Haiyang Zhang <haiyangz@microsoft.com>
-    hv_netvsc: Fix the TX/RX buffer default sizes
-
-Haiyang Zhang <haiyangz@microsoft.com>
-    hv_netvsc: Fix the receive buffer size limit
-
-Geert Uytterhoeven <geert@linux-m68k.org>
-    RDMA/iwpm: Fix uninitialized error code in iwpm_send_mapinfo()
-
-Richard Leitner <richard.leitner@skidata.com>
-    net: fec: add phy_reset_after_clk_enable() support
-
-Prakash Kamliya <pkamliya@codeaurora.org>
-    drm/msm: fix leak in failed get_pages
-
-Gustavo A. R. Silva <garsilva@embeddedor.com>
-    media: c8sectpfe: fix potential NULL pointer dereference in c8sectpfe_timer_interrupt
-
-Viresh Kumar <viresh.kumar@linaro.org>
-    cpufreq: longhaul: Revert transition_delay_us to 200 ms
-
-Loic Poulain <loic.poulain@linaro.org>
-    Bluetooth: btqcomsmd: Fix skb double free corruption
-
-Loic Poulain <loic.poulain@linaro.org>
-    Bluetooth: hci_qca: Avoid setup failure on missing rampatch
-
-Yisheng Xie <xieyisheng1@huawei.com>
-    staging: android: ashmem: Fix possible deadlock in ashmem_ioctl
-
-Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-    scsi: megaraid_sas: Do not use 32-bit atomic request descriptor for Ventura controllers
-
-
--------------
-
-Diffstat:
-
- .../{toppoly,td028ttec1.txt => tpo,td028ttec1.txt} |  4 +-
- Makefile                                           |  4 +-
- arch/alpha/kernel/console.c                        |  1 +
- arch/arm/boot/dts/aspeed-ast2500-evb.dts           |  2 +-
- drivers/bluetooth/btqcomsmd.c                      |  3 +-
- drivers/bluetooth/hci_qca.c                        |  3 ++
- drivers/char/mem.c                                 | 27 +++++++++---
- drivers/clk/at91/pmc.c                             | 24 +++++++----
- drivers/clk/clk-axi-clkgen.c                       | 29 ++++++++++---
- drivers/clk/clk-si5351.c                           |  2 +-
- drivers/clk/clk.c                                  | 32 ++++++++------
- drivers/cpufreq/longhaul.c                         |  2 +-
- drivers/crypto/axis/artpec6_crypto.c               |  5 ++-
- drivers/dma/ti-dma-crossbar.c                      | 10 ++++-
- drivers/dma/xilinx/zynqmp_dma.c                    |  3 +-
- drivers/gpu/drm/msm/msm_gem.c                      | 14 ++++--
- .../drm/omapdrm/displays/panel-tpo-td028ttec1.c    |  3 ++
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c           |  5 +++
- drivers/gpu/drm/tilcdc/tilcdc_regs.h               |  2 +-
- drivers/hwtracing/coresight/coresight-tpiu.c       | 13 ++++--
- drivers/infiniband/core/cma.c                      | 17 +++++---
- drivers/infiniband/core/iwpm_util.c                |  1 +
- drivers/infiniband/core/ucma.c                     |  8 +++-
- drivers/infiniband/core/umem.c                     |  2 +-
- drivers/infiniband/hw/mlx5/qp.c                    | 24 ++++++++---
- drivers/infiniband/hw/mlx5/srq.c                   | 15 ++++---
- drivers/infiniband/hw/ocrdma/ocrdma_stats.c        |  2 +-
- drivers/infiniband/hw/vmw_pvrdma/pvrdma_cq.c       |  4 +-
- drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c    |  4 +-
- drivers/infiniband/ulp/ipoib/ipoib_main.c          | 16 +++++++
- drivers/infiniband/ulp/isert/ib_isert.c            |  7 +++
- drivers/infiniband/ulp/isert/ib_isert.h            |  1 +
- drivers/iommu/intel-svm.c                          |  9 ++--
- drivers/media/dvb-frontends/si2168.c               |  3 ++
- drivers/media/pci/bt8xx/bt878.c                    |  3 +-
- drivers/media/platform/davinci/vpif_capture.c      |  4 +-
- drivers/media/platform/s5p-mfc/s5p_mfc.c           |  6 +++
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |  3 ++
- drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c      |  5 +++
- .../media/platform/sti/c8sectpfe/c8sectpfe-core.c  |  4 +-
- drivers/mmc/core/block.c                           |  1 +
- drivers/mmc/core/core.c                            |  8 ++++
- drivers/mmc/host/sdhci-xenon.c                     |  7 +++
- drivers/net/ethernet/freescale/fec_main.c          | 20 +++++++++
- drivers/net/hyperv/hyperv_net.h                    | 19 ++++++--
- drivers/net/hyperv/netvsc.c                        |  5 +++
- drivers/net/hyperv/netvsc_drv.c                    |  4 --
- drivers/net/phy/meson-gxl.c                        | 50 ++++++++++++++++------
- drivers/net/phy/sfp.c                              | 15 +++----
- drivers/net/usb/qmi_wwan.c                         |  4 +-
- drivers/net/wireless/ath/ath10k/mac.c              |  2 +-
- drivers/net/wireless/realtek/rtlwifi/base.c        |  2 +-
- drivers/net/wireless/realtek/rtlwifi/pci.c         |  7 +++
- drivers/pci/dwc/pcie-designware-ep.c               | 12 ++----
- drivers/pci/dwc/pcie-designware.h                  |  1 +
- drivers/pci/endpoint/pci-ep-cfs.c                  |  5 ++-
- drivers/pci/host/pcie-rcar.c                       |  5 ++-
- drivers/pinctrl/core.c                             | 24 ++++++++---
- drivers/pinctrl/pinctrl-rockchip.c                 |  8 ++++
- drivers/platform/chrome/cros_ec_proto.c            |  8 ++--
- drivers/platform/chrome/cros_ec_sysfs.c            |  2 +-
- drivers/rtc/rtc-ac100.c                            | 19 +++++---
- drivers/scsi/lpfc/lpfc_ct.c                        |  1 +
- drivers/scsi/lpfc/lpfc_els.c                       | 30 ++++++++-----
- drivers/scsi/lpfc/lpfc_nportdisc.c                 | 34 +++++++--------
- drivers/scsi/megaraid/megaraid_sas_fusion.c        | 42 ++++++------------
- drivers/scsi/mpt3sas/mpt3sas_base.c                |  8 ++--
- drivers/scsi/mpt3sas/mpt3sas_base.h                |  3 ++
- drivers/scsi/mpt3sas/mpt3sas_scsih.c               | 21 ++++++---
- drivers/soc/qcom/smsm.c                            |  6 ++-
- drivers/spi/spi-sh-msiof.c                         | 35 ++++++++++-----
- drivers/staging/android/ashmem.c                   |  8 ++--
- drivers/tty/Kconfig                                |  6 ++-
- drivers/tty/goldfish.c                             |  2 +
- drivers/tty/serial/8250/8250_dw.c                  |  3 +-
- drivers/tty/serial/8250/8250_pci.c                 | 10 +++--
- drivers/tty/tty_io.c                               |  2 +
- drivers/video/console/vgacon.c                     | 34 +++++++++++----
- .../omap2/omapfb/displays/panel-tpo-td028ttec1.c   |  3 ++
- drivers/watchdog/watchdog_dev.c                    | 17 ++++----
- fs/nfsd/nfs4proc.c                                 |  6 +--
- include/linux/mlx5/driver.h                        |  4 +-
- net/ipv4/ip_gre.c                                  |  6 ++-
- net/ipv6/ip6_vti.c                                 | 20 +++++++++
- scripts/Kbuild.include                             |  5 ++-
- security/Kconfig                                   |  1 +
- 86 files changed, 606 insertions(+), 255 deletions(-)
+On 23 March 2018 at 15:23, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.14.30 release.
+> There are 77 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun Mar 25 09:41:18 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.14.30-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
+
+NOTE:
+Due to Infrastructure issues test did not run on Hikey and dragon board.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.14.30-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.14.y
+git commit: 8a1e5a46f6ea39a0f19f55bbe7daabda2b8e75f0
+git describe: v4.14.29-77-g8a1e5a46f6ea
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.29-77-g8a1e5a46f6ea
+
+
+No regressions (compared to build v4.14.29-78-g4a9cf243a20b)
+
+Boards, architectures and test suites:
+-------------------------------------
+juno-r2 - arm64
+* boot - pass: 21
+* kselftest - skip: 17, pass: 48
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 2, pass: 61
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 4, pass: 10
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 149, pass: 1001
+* ltp-timers-tests - skip: 1, pass: 12
+
+qemu_x86_64
+* boot - pass: 22
+* kselftest - skip: 22, pass: 58
+* kselftest-vsyscall-mode-native - skip: 22, pass: 58
+* kselftest-vsyscall-mode-none - skip: 22, pass: 58
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 6, pass: 57
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 1, pass: 13
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 149, pass: 1001
+* ltp-timers-tests - skip: 1, pass: 12
+
+x15 - arm
+* boot - pass: 25
+* kselftest - skip: 19, fail: 2, pass: 41
+* libhugetlbfs - skip: 1, pass: 87
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, fail: 2, pass: 62
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 4, pass: 122
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 2, pass: 20
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 8
+* ltp-sched-tests - skip: 2, pass: 26
+* ltp-securebits-tests - pass: 8
+* ltp-syscalls-tests - skip: 97, pass: 1053
+* ltp-timers-tests - skip: 1, pass: 12
+
+x86_64
+* boot - pass: 22
+* kselftest - skip: 19, pass: 61
+* kselftest-vsyscall-mode-native - skip: 19, pass: 61
+* kselftest-vsyscall-mode-none - skip: 19, fail: 1, pass: 60
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 1, pass: 62
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 5, pass: 9
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 119, pass: 1031
+* ltp-timers-tests - skip: 1, pass: 12
+
+--
+Linaro QA (beta)
+https://qa-reports.linaro.org
