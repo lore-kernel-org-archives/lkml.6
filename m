@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753519AbeCXUFZ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 16:05:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38340 "EHLO mail.kernel.org"
+        id S1753504AbeCXUFR (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 16:05:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752769AbeCXUFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:05:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6412B21839
+        id S1753153AbeCXUFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 16:05:13 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EFBE2178E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -17,9 +17,9 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
         Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 44/44] perf annotate: Use absolute addresses to calculate jump target offsets
-Date: Sat, 24 Mar 2018 17:02:11 -0300
-Message-Id: <20180324200211.21326-45-acme@kernel.org>
+Subject: [PATCH 42/44] perf annotate: Support jumping from one function to another
+Date: Sat, 24 Mar 2018 17:02:09 -0300
+Message-Id: <20180324200211.21326-43-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180324200211.21326-1-acme@kernel.org>
 References: <20180324200211.21326-1-acme@kernel.org>
@@ -32,246 +32,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-These types of jumps were confusing the annotate browser:
+For instance:
 
-entry_SYSCALL_64  /lib/modules/4.16.0-rc5-00086-gdf09348f78dc/build/vmlinux
+  entry_SYSCALL_64  /lib/modules/4.16.0-rc5-00086-gdf09348f78dc/build/vmlinux
+    5.50 │     → callq  do_syscall_64
+   14.56 │       mov    0x58(%rsp),%rcx
+    7.44 │       mov    0x80(%rsp),%r11
+    0.32 │       cmp    %rcx,%r11
+         │     → jne    swapgs_restore_regs_and_return_to_usermode
+    0.32 │       shl    $0x10,%rcx
+    0.32 │       sar    $0x10,%rcx
+    3.24 │       cmp    %rcx,%r11
+         │     → jne    swapgs_restore_regs_and_return_to_usermode
+    2.27 │       cmpq   $0x33,0x88(%rsp)
+    1.29 │     → jne    swapgs_restore_regs_and_return_to_usermode
+         │       mov    0x30(%rsp),%r11
+    8.74 │       cmp    %r11,0x90(%rsp)
+         │     → jne    swapgs_restore_regs_and_return_to_usermode
+    0.32 │       test   $0x10100,%r11
+         │     → jne    swapgs_restore_regs_and_return_to_usermode
+    0.32 │       cmpq   $0x2b,0xa0(%rsp)
+    0.65 │     → jne    swapgs_restore_regs_and_return_to_usermode
 
-entry_SYSCALL_64  /lib/modules/4.16.0-rc5-00086-gdf09348f78dc/build/vmlinux
-  Percent│ffffffff81a00020:   swapgs
-  <SNIP>
-         │ffffffff81a00128: ↓ jae    ffffffff81a00139 <syscall_return_via_sysret+0x53>
-  <SNIP>
-         │ffffffff81a00155: → jmpq   *0x825d2d(%rip)   # ffffffff82225e88 <pv_cpu_ops+0xe8>
+It'll behave just like a "call" instruction, i.e. press enter or right
+arrow over one such line and the browser will navigate to the annotated
+disassembly of that function, which when exited, via left arrow or esc,
+will come back to the calling function.
 
-I.e. the syscall_return_via_sysret function is actually "inside" the
-entry_SYSCALL_64 function, and the offsets in jumps like these (+0x53)
-are relative to syscall_return_via_sysret, not to syscall_return_via_sysret.
-
-Or this may be some artifact in how the assembler marks the start and
-end of a function and how this ends up in the ELF symtab for vmlinux,
-i.e. syscall_return_via_sysret() isn't "inside" entry_SYSCALL_64, but
-just right after it.
-
->From readelf -sw vmlinux:
-
- 80267: ffffffff81a00020   315 NOTYPE  GLOBAL DEFAULT    1 entry_SYSCALL_64
-   316: ffffffff81a000e6     0 NOTYPE  LOCAL  DEFAULT    1 syscall_return_via_sysret
-
- 0xffffffff81a00020 + 315 > 0xffffffff81a000e6
-
-So instead of looking for offsets after that last '+' sign, calculate
-offsets for jump target addresses that are inside the function being
-disassembled from the absolute address, 0xffffffff81a00139 in this case,
-subtracting from it the objdump address for the start of the function
-being disassembled, entry_SYSCALL_64() in this case.
-
-So, before this patch:
-
-entry_SYSCALL_64  /lib/modules/4.16.0-rc5-00086-gdf09348f78dc/build/vmlinux
-Percent│       pop    %r10
-       │       pop    %r9
-       │       pop    %r8
-       │       pop    %rax
-       │       pop    %rsi
-       │       pop    %rdx
-       │       pop    %rsi
-       │       mov    %rsp,%rdi
-       │       mov    %gs:0x5004,%rsp
-       │       pushq  0x28(%rdi)
-       │       pushq  (%rdi)
-       │       push   %rax
-       │     ↑ jmp    6c
-       │       mov    %cr3,%rdi
-       │     ↑ jmp    62
-       │       mov    %rdi,%rax
-       │       and    $0x7ff,%rdi
-       │       bt     %rdi,%gs:0x2219a
-       │     ↑ jae    53
-       │       btr    %rdi,%gs:0x2219a
-       │       mov    %rax,%rdi
-       │     ↑ jmp    5b
-
-After:
-
-entry_SYSCALL_64  /lib/modules/4.16.0-rc5-00086-gdf09348f78dc/build/vmlinux
-  0.65 │     → jne    swapgs_restore_regs_and_return_to_usermode
-       │       pop    %r10
-       │       pop    %r9
-       │       pop    %r8
-       │       pop    %rax
-       │       pop    %rsi
-       │       pop    %rdx
-       │       pop    %rsi
-       │       mov    %rsp,%rdi
-       │       mov    %gs:0x5004,%rsp
-       │       pushq  0x28(%rdi)
-       │       pushq  (%rdi)
-       │       push   %rax
-       │     ↓ jmp    132
-       │       mov    %cr3,%rdi
-       │    ┌──jmp    128
-       │    │  mov    %rdi,%rax
-       │    │  and    $0x7ff,%rdi
-       │    │  bt     %rdi,%gs:0x2219a
-       │    │↓ jae    119
-       │    │  btr    %rdi,%gs:0x2219a
-       │    │  mov    %rax,%rdi
-       │    │↓ jmp    121
-       │119:│  mov    %rax,%rdi
-       │    │  bts    $0x3f,%rdi
-       │121:│  or     $0x800,%rdi
-       │128:└─→or     $0x1000,%rdi
-       │       mov    %rdi,%cr3
-       │132:   pop    %rax
-       │       pop    %rdi
-       │       pop    %rsp
-       │     → jmpq   *0x825d2d(%rip)        # ffffffff82225e88 <pv_cpu_ops+0xe8>
-
-With those at least navigating to the right destination, an improvement
-for these cases seems to be to be to somehow mark those inner functions,
-which in this case could be:
-
-entry_SYSCALL_64  /lib/modules/4.16.0-rc5-00086-gdf09348f78dc/build/vmlinux
-       │syscall_return_via_sysret:
-       │       pop    %r15
-       │       pop    %r14
-       │       pop    %r13
-       │       pop    %r12
-       │       pop    %rbp
-       │       pop    %rbx
-       │       pop    %rsi
-       │       pop    %r10
-       │       pop    %r9
-       │       pop    %r8
-       │       pop    %rax
-       │       pop    %rsi
-       │       pop    %rdx
-       │       pop    %rsi
-       │       mov    %rsp,%rdi
-       │       mov    %gs:0x5004,%rsp
-       │       pushq  0x28(%rdi)
-       │       pushq  (%rdi)
-       │       push   %rax
-       │     ↓ jmp    132
-       │       mov    %cr3,%rdi
-       │    ┌──jmp    128
-       │    │  mov    %rdi,%rax
-       │    │  and    $0x7ff,%rdi
-       │    │  bt     %rdi,%gs:0x2219a
-       │    │↓ jae    119
-       │    │  btr    %rdi,%gs:0x2219a
-       │    │  mov    %rax,%rdi
-       │    │↓ jmp    121
-       │119:│  mov    %rax,%rdi
-       │    │  bts    $0x3f,%rdi
-       │121:│  or     $0x800,%rdi
-       │128:└─→or     $0x1000,%rdi
-       │       mov    %rdi,%cr3
-       │132:   pop    %rax
-       │       pop    %rdi
-       │       pop    %rsp
-       │     → jmpq   *0x825d2d(%rip)        # ffffffff82225e88 <pv_cpu_ops+0xe8>
-
-This all gets much better viewed if one uses 'perf report --ignore-vmlinux'
-forcing the usage of /proc/kcore + /proc/kallsyms, when the above
-actually gets down to:
-
-  # perf report --ignore-vmlinux
-  ## do '/64', will show the function names containing '64',
-  ## navigate to /entry_SYSCALL_64_after_hwframe.annotation,
-  ## press 'A' to annotate, then 'P' to print that annotation
-  ## to a file
-  ## From another xterm (or see on screen, this 'P' thing is for
-  ## getting rid of those right side scroll bars/spaces):
-  # cat /entry_SYSCALL_64_after_hwframe.annotation
-  entry_SYSCALL_64_after_hwframe() /proc/kcore
-  Event: cycles:ppp
-
-  Percent
-              Disassembly of section load0:
-
-              ffffffff9aa00044 <load0>:
-   11.97        push   %rax
-    4.85        push   %rdi
-                push   %rsi
-    2.59        push   %rdx
-    2.27        push   %rcx
-    0.32        pushq  $0xffffffffffffffda
-    1.29        push   %r8
-                xor    %r8d,%r8d
-    1.62        push   %r9
-    0.65        xor    %r9d,%r9d
-    1.62        push   %r10
-                xor    %r10d,%r10d
-    5.50        push   %r11
-                xor    %r11d,%r11d
-    3.56        push   %rbx
-                xor    %ebx,%ebx
-    4.21        push   %rbp
-                xor    %ebp,%ebp
-    2.59        push   %r12
-    0.97        xor    %r12d,%r12d
-    3.24        push   %r13
-                xor    %r13d,%r13d
-    2.27        push   %r14
-                xor    %r14d,%r14d
-    4.21        push   %r15
-                xor    %r15d,%r15d
-    0.97        mov    %rsp,%rdi
-    5.50      → callq  do_syscall_64
-   14.56        mov    0x58(%rsp),%rcx
-    7.44        mov    0x80(%rsp),%r11
-    0.32        cmp    %rcx,%r11
-              → jne    swapgs_restore_regs_and_return_to_usermode
-    0.32        shl    $0x10,%rcx
-    0.32        sar    $0x10,%rcx
-    3.24        cmp    %rcx,%r11
-              → jne    swapgs_restore_regs_and_return_to_usermode
-    2.27        cmpq   $0x33,0x88(%rsp)
-    1.29      → jne    swapgs_restore_regs_and_return_to_usermode
-                mov    0x30(%rsp),%r11
-    8.74        cmp    %r11,0x90(%rsp)
-              → jne    swapgs_restore_regs_and_return_to_usermode
-    0.32        test   $0x10100,%r11
-              → jne    swapgs_restore_regs_and_return_to_usermode
-    0.32        cmpq   $0x2b,0xa0(%rsp)
-    0.65      → jne    swapgs_restore_regs_and_return_to_usermode
-
-I.e. using kallsyms makes the function start/end be done differently
-than using what is in the vmlinux ELF symtab and actually the hits
-goes to entry_SYSCALL_64_after_hwframe, which is a GLOBAL() after the
-start of entry_SYSCALL_64:
-
-  ENTRY(entry_SYSCALL_64)
-          UNWIND_HINT_EMPTY
-  <SNIP>
-          pushq   $__USER_CS                      /* pt_regs->cs */
-          pushq   %rcx                            /* pt_regs->ip */
-  GLOBAL(entry_SYSCALL_64_after_hwframe)
-          pushq   %rax                            /* pt_regs->orig_ax */
-
-          PUSH_AND_CLEAR_REGS rax=$-ENOSYS
-
-And it goes and ends at:
-
-          cmpq    $__USER_DS, SS(%rsp)            /* SS must match SYSRET */
-          jne     swapgs_restore_regs_and_return_to_usermode
-
-          /*
-           * We win! This label is here just for ease of understanding
-           * perf profiles. Nothing jumps here.
-           */
-  syscall_return_via_sysret:
-          /* rcx and r11 are already restored (see code above) */
-          UNWIND_HINT_EMPTY
-          POP_REGS pop_rdi=0 skip_r11rcx=1
-
-So perhaps some people should really just play with '--ignore-vmlinux'
-to force /proc/kcore + kallsyms.
-
-One idea is to do both, i.e. have a vmlinux annotation and a
-kcore+kallsyms one, when possible, and even show the patched location,
-etc.
+Now to support jump to an offset on a different function...
 
 Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
@@ -281,34 +69,101 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-r11knxv8voesav31xokjiuo6@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-78o508mqvr8inhj63ddtw7mo@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/annotate.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ tools/perf/ui/browsers/annotate.c | 23 ++++++++++++++++++-----
+ tools/perf/util/annotate.c        |  6 ++++--
+ 2 files changed, 22 insertions(+), 7 deletions(-)
 
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index d77896a99570..c02fb437ac8e 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -384,6 +384,15 @@ static int sym_title(struct symbol *sym, struct map *map, char *title,
+ 	return snprintf(title, sz, "%s  %s", sym->name, map->dso->long_name);
+ }
+ 
++/*
++ * This can be called from external jumps, i.e. jumps from one functon
++ * to another, like from the kernel's entry_SYSCALL_64 function to the
++ * swapgs_restore_regs_and_return_to_usermode() function.
++ *
++ * So all we check here is that dl->ops.target.sym is set, if it is, just
++ * go to that function and when exiting from its disassembly, come back
++ * to the calling function.
++ */
+ static bool annotate_browser__callq(struct annotate_browser *browser,
+ 				    struct perf_evsel *evsel,
+ 				    struct hist_browser_timer *hbt)
+@@ -393,9 +402,6 @@ static bool annotate_browser__callq(struct annotate_browser *browser,
+ 	struct annotation *notes;
+ 	char title[SYM_TITLE_MAX_SIZE];
+ 
+-	if (!ins__is_call(&dl->ins))
+-		return false;
+-
+ 	if (!dl->ops.target.sym) {
+ 		ui_helpline__puts("The called function was not found.");
+ 		return true;
+@@ -436,7 +442,9 @@ struct disasm_line *annotate_browser__find_offset(struct annotate_browser *brows
+ 	return NULL;
+ }
+ 
+-static bool annotate_browser__jump(struct annotate_browser *browser)
++static bool annotate_browser__jump(struct annotate_browser *browser,
++				   struct perf_evsel *evsel,
++				   struct hist_browser_timer *hbt)
+ {
+ 	struct disasm_line *dl = disasm_line(browser->selection);
+ 	u64 offset;
+@@ -445,6 +453,11 @@ static bool annotate_browser__jump(struct annotate_browser *browser)
+ 	if (!ins__is_jump(&dl->ins))
+ 		return false;
+ 
++	if (dl->ops.target.outside) {
++		annotate_browser__callq(browser, evsel, hbt);
++		return true;
++	}
++
+ 	offset = dl->ops.target.offset;
+ 	dl = annotate_browser__find_offset(browser, offset, &idx);
+ 	if (dl == NULL) {
+@@ -731,7 +744,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 				goto show_sup_ins;
+ 			else if (ins__is_ret(&dl->ins))
+ 				goto out;
+-			else if (!(annotate_browser__jump(browser) ||
++			else if (!(annotate_browser__jump(browser, evsel, hbt) ||
+ 				     annotate_browser__callq(browser, evsel, hbt))) {
+ show_sup_ins:
+ 				ui_helpline__puts("Actions are only available for function call/return & jump/branch instructions.");
 diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index f730e0cf8a26..3a428d7c59b9 100644
+index 9524f322f597..5fa270b24eea 100644
 --- a/tools/perf/util/annotate.c
 +++ b/tools/perf/util/annotate.c
-@@ -280,7 +280,6 @@ static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *op
- 	struct addr_map_symbol target = {
- 		.map = map,
- 	};
--	const char *s = strchr(ops->raw, '+');
- 	const char *c = strchr(ops->raw, ',');
- 	u64 start, end;
- 	/*
-@@ -337,8 +336,8 @@ static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *op
+@@ -332,11 +332,10 @@ static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *op
+ 	 *
+ 	 * Actual navigation will come next, with further understanding of how
+ 	 * the symbol searching and disassembly should be done.
+-
++	 */
+ 	if (map_groups__find_ams(&target) == 0 &&
  	    map__rip_2objdump(target.map, map->map_ip(target.map, target.addr)) == ops->target.addr)
  		ops->target.sym = target.sym;
+-	 */
  
--	if (s++ != NULL) {
--		ops->target.offset = strtoull(s, NULL, 16);
-+	if (!ops->target.outside) {
-+		ops->target.offset = target.addr - start;
- 		ops->target.offset_avail = true;
- 	} else {
- 		ops->target.offset_avail = false;
+ 	if (s++ != NULL) {
+ 		ops->target.offset = strtoull(s, NULL, 16);
+@@ -356,6 +355,9 @@ static int jump__scnprintf(struct ins *ins, char *bf, size_t size,
+ 	if (!ops->target.addr || ops->target.offset < 0)
+ 		return ins__raw_scnprintf(ins, bf, size, ops);
+ 
++	if (ops->target.outside && ops->target.sym != NULL)
++		return scnprintf(bf, size, "%-6s %s", ins->name, ops->target.sym->name);
++
+ 	if (c != NULL) {
+ 		const char *c2 = strchr(c + 1, ',');
+ 
 -- 
 2.14.3
