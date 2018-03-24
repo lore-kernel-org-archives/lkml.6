@@ -1,43 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753023AbeCXVXI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 17:23:08 -0400
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:39164 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752801AbeCXVXG (ORCPT
+        id S1753070AbeCXViD (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 17:38:03 -0400
+Received: from smtp1.stealer.net ([88.198.224.204]:52596 "EHLO
+        smtp1.stealer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752931AbeCXViC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 17:23:06 -0400
-X-Google-Smtp-Source: AG47ELvXua25ER6tWjgPQ1q13q+zysj0UFQy9fGF2pVcKkXXL2pZk/7Jhb9kHw5jqAPJdZuMXELEbw==
-Subject: Re: [PATCH 1/3] ieee80211: Replace bit shifts with the BIT() macro
- for WLAN_CAPABILITY_*.
-To: Quytelda Kahja <quytelda@tamalin.org>, johannes@sipsolutions.net
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180324041027.6498-1-quytelda@tamalin.org>
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <e31eb13b-598b-e7c7-607b-c98664818563@lwfinger.net>
-Date: Sat, 24 Mar 2018 16:23:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sat, 24 Mar 2018 17:38:02 -0400
+Date: Sat, 24 Mar 2018 22:21:13 +0100 (CET)
+From: Sven Wegener <sven.wegener@stealer.net>
+To: x86@kernel.org
+cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/purgatory: Remove -MD from KBUILD_CFLAGS
+Message-ID: <alpine.LNX.2.21.1803242219380.30139@titan.int.lan.stealer.net>
+User-Agent: Alpine 2.21 (LNX 202 2017-01-01)
+Organization: STEALER.net
 MIME-Version: 1.0
-In-Reply-To: <20180324041027.6498-1-quytelda@tamalin.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -1.1
+X-Spam-Bar: -
+X-Spam-Report: Scanned by SpamAssassin 3.4.1 2015-04-28 on smtp1.stealer.net at Sat, 24 Mar 2018 21:21:33 +0000
+ Bayes: 0.0000 Tokens: new, 21; hammy, 104; neutral, 54; spammy, 2.
+ AutoLearn: no autolearn_force=no
+ * -1.9 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+ *      [score: 0.0000]
+ *  0.8 RDNS_NONE Delivered to internal network by a host with no rDNS
+X-Spam-Signature: 84efb85b8077eafccc75ed74e9104b6f8e73e507
+X-DomainKey-Status: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/2018 11:10 PM, Quytelda Kahja wrote:
-> It is neater and more consistent with the rest of the document to use the
-> BIT() macro from 'linux/bitops.h' to define the WLAN_CAPABILITY_*
-> bitmasks.  In the case of WLAN_CAPABILITY_DMG_TYPE_{IBSS, PBSS, AP},
-> bitshifting integers by 0 does nothing, so there is no reason to do it in
-> the code; replace these values with plain integers.
-> 
-> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+The kernel build system already takes care of generating the dependency
+files. Having the additional -MD in KBUILD_CFLAGS leads to stray
+.<pid>.d files in the build directory when we call the cc-option macro.
 
-In the commit message for all of these, what is the "document" to which you refer?
+Signed-off-by: Sven Wegener <sven.wegener@stealer.net>
+---
+ arch/x86/purgatory/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm not quite sure why you split these changes into 3 parts, but I guess that is OK.
-
-Larry
+diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
+index 2f15a2ac4209..d70c15de417b 100644
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@ -16,7 +16,7 @@ KCOV_INSTRUMENT := n
+ # in turn leaves some undefined symbols like __fentry__ in purgatory and not
+ # sure how to relocate those. Like kexec-tools, use custom flags.
+ 
+-KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes -fno-zero-initialized-in-bss -fno-builtin -ffreestanding -c -MD -Os -mcmodel=large
++KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes -fno-zero-initialized-in-bss -fno-builtin -ffreestanding -c -Os -mcmodel=large
+ KBUILD_CFLAGS += -m$(BITS)
+ KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
+ 
