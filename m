@@ -1,43 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752781AbeCXSx2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 14:53:28 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:41176 "EHLO vps0.lunn.ch"
+        id S1752829AbeCXSxz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 14:53:55 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47171 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752633AbeCXSx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 14:53:27 -0400
-Date: Sat, 24 Mar 2018 19:53:24 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, frowand.list@gmail.com
-Subject: Re: [PATCH] of_net: Implement of_get_nvmem_mac_address helper
-Message-ID: <20180324185324.GG31941@lunn.ch>
-References: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl>
- <20180323151101.GB24361@lunn.ch>
- <b68d4540-b15d-ec31-05a8-e1a4632bb5ee@topic.nl>
- <886c94ef-e2c8-2afa-307d-1924c74c6dc0@gmail.com>
- <cb12ea29-a7b0-cf66-7f5a-c09d36f443f0@topic.nl>
+        id S1752633AbeCXSxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 14:53:53 -0400
+Date: Sat, 24 Mar 2018 19:53:30 +0100
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Sean Wang <sean.wang@mediatek.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, sre@kernel.org,
+        lee.jones@linaro.org, a.zummo@towertech.it, eddie.huang@mediatek.com,
+        devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 06/16] rtc: mediatek: remove unnecessary parentheses
+Message-ID: <20180324185330.GO3417@piout.net>
+References: <cover.1521794176.git.sean.wang@mediatek.com>
+ <92d07e90f43899981a82fbc684c3d15aaecaf591.1521794177.git.sean.wang@mediatek.com>
+ <20180323102123.GG3417@piout.net>
+ <1521875652.28226.29.camel@mtkswgap22>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cb12ea29-a7b0-cf66-7f5a-c09d36f443f0@topic.nl>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1521875652.28226.29.camel@mtkswgap22>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> A quick survey for the of_get_mac_address users learns that most of them do
-> a memcpy (or similar) right after it, so for these drivers the
-> "of_get_nvmem_mac_address" style signature that performs the memcpy (or
-> better, ether_addr_copy) is a better fit, e.g.:
+On 24/03/2018 at 15:14:12 +0800, Sean Wang wrote:
+> On Fri, 2018-03-23 at 11:21 +0100, Alexandre Belloni wrote:
+> > On 23/03/2018 at 17:15:03 +0800, sean.wang@mediatek.com wrote:
+> > > From: Sean Wang <sean.wang@mediatek.com>
+> > > 
+> > > Remove unnecessary parentheses due to explicit C operator precedence.
+> > > 
+> > > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > > ---
+> > >  drivers/rtc/rtc-mt6397.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+> > > index 0df7ccd..4411c08 100644
+> > > --- a/drivers/rtc/rtc-mt6397.c
+> > > +++ b/drivers/rtc/rtc-mt6397.c
+> > > @@ -106,7 +106,7 @@ static irqreturn_t mtk_rtc_irq_handler_thread(int irq, void *data)
+> > >  	int ret;
+> > >  
+> > >  	ret = regmap_read(rtc->regmap, rtc->addr_base + RTC_IRQ_STA, &irqsta);
+> > > -	if ((ret >= 0) && (irqsta & RTC_IRQ_STA_AL)) {
+> > > +	if (ret >= 0 && irqsta & RTC_IRQ_STA_AL) {
+> > 
+> > I don't think this makes the code particularly clearer.
+> > 
 > 
-> int of_get_mac_address(struct device_node *np, void *addr)
+> But it is still a one of check items in checkpatch
+> 
+> CHECK:UNNECESSARY_PARENTHESES: Unnecessary parentheses around 'ret >= 0'
+> #126: FILE: drivers/rtc/rtc-xxx.c:109:
+> +       if ((ret >= 0) && (irqsta & RTC_IRQ_STA_AL)) {
+> 
+> 
+> or we still want to keep it in parentheses around here?
+> 
 
-Hi Mike
+Yeah, this is a matter of taste, I would keep the parentheses.
 
-This is a nicer solution, but it is quite a lot of work, there are a
-lot of users. Maybe Coccinelle can help?
 
-    Andrew
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
