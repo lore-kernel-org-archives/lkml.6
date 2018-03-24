@@ -1,69 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeCXLhw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 07:37:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42200 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751858AbeCXLhv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 07:37:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDE47603AF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=architt@codeaurora.org
-Subject: Re: [PATCH] drm/msm/dsi: use correct enum in dsi_get_cmd_fmt
-To: Stefan Agner <stefan@agner.ch>, robdclark@gmail.com, airlied@linux.ie
-Cc: seanpaul@chromium.org, ssusheel@codeaurora.org, robh@kernel.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20180319212632.11260-1-stefan@agner.ch>
-From: Archit Taneja <architt@codeaurora.org>
-Message-ID: <46b36451-8b2c-fdb4-16b3-64a52cb80954@codeaurora.org>
-Date: Sat, 24 Mar 2018 17:07:42 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751997AbeCXLnz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 07:43:55 -0400
+Received: from mga07.intel.com ([134.134.136.100]:39378 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751858AbeCXLnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 07:43:53 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,354,1517904000";
+   d="scan'208";a="28063281"
+Date: Sat, 24 Mar 2018 19:43:47 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: kbuild-all@01.org, jakob.unterwurzacher@theobroma-systems.com,
+        Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] can: ucan: add driver for Theobroma Systems UCAN
+ devices
+Message-ID: <201803241907.upf6wIeD%fengguang.wu@intel.com>
+References: <20180322135338.60923-2-jakob.unterwurzacher@theobroma-systems.com>
 MIME-Version: 1.0
-In-Reply-To: <20180319212632.11260-1-stefan@agner.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180322135338.60923-2-jakob.unterwurzacher@theobroma-systems.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jakob,
+
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on net-next/master]
+[also build test WARNING on v4.16-rc6]
+[cannot apply to next-20180323]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Jakob-Unterwurzacher/can-ucan-add-driver-for-Theobroma-Systems-UCAN-devices/20180324-164143
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-On Tuesday 20 March 2018 02:56 AM, Stefan Agner wrote:
-> The function dsi_get_cmd_fmt returns enum dsi_cmd_dst_format,
-> use the correct enum value also for MIPI_DSI_FMT_RGB666/_PACKED.
-> 
-> This has been discovered using clang:
->    drivers/gpu/drm/msm/dsi/dsi_host.c:743:35: warning: implicit conversion
->          from enumeration type 'enum dsi_vid_dst_format' to different
->          enumeration type 'enum dsi_cmd_dst_format' [-Wenum-conversion]
->            case MIPI_DSI_FMT_RGB666:       return VID_DST_FORMAT_RGB666;
->                                            ~~~~~~ ^~~~~~~~~~~~~~~~~~~~~
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+sparse warnings: (new ones prefixed by >>)
 
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
+>> drivers/net/can/usb/ucan.c:301:16: sparse: restricted __le32 degrades to integer
+   drivers/net/can/usb/ucan.c:414:32: sparse: incorrect type in argument 5 (different base types) @@    expected unsigned short [unsigned] [usertype] value @@    got  short [unsigned] [usertype] value @@
+   drivers/net/can/usb/ucan.c:414:32:    expected unsigned short [unsigned] [usertype] value
+   drivers/net/can/usb/ucan.c:414:32:    got restricted __le16 [usertype] <noident>
+   drivers/net/can/usb/ucan.c:428:32: sparse: incorrect type in argument 5 (different base types) @@    expected unsigned short [unsigned] [usertype] value @@    got  short [unsigned] [usertype] value @@
+   drivers/net/can/usb/ucan.c:428:32:    expected unsigned short [unsigned] [usertype] value
+   drivers/net/can/usb/ucan.c:428:32:    got restricted __le16 [usertype] <noident>
+   drivers/net/can/usb/ucan.c:683:44: sparse: incorrect type in argument 2 (different base types) @@    expected unsigned long [unsigned] [usertype] size @@    got d long [unsigned] [usertype] size @@
+   drivers/net/can/usb/ucan.c:683:44:    expected unsigned long [unsigned] [usertype] size
+   drivers/net/can/usb/ucan.c:683:44:    got restricted __le16 [usertype] wMaxPacketSize
+   drivers/net/can/usb/ucan.c:700:44: sparse: incorrect type in argument 2 (different base types) @@    expected unsigned long [unsigned] [usertype] size @@    got d long [unsigned] [usertype] size @@
+   drivers/net/can/usb/ucan.c:700:44:    expected unsigned long [unsigned] [usertype] size
+   drivers/net/can/usb/ucan.c:700:44:    got restricted __le16 [usertype] wMaxPacketSize
+   drivers/net/can/usb/ucan.c:752:25: sparse: cast to restricted __le16
+   drivers/net/can/usb/ucan.c:779:36: sparse: incorrect type in argument 5 (different base types) @@    expected int [signed] buffer_length @@    got restricted __le1int [signed] buffer_length @@
+   drivers/net/can/usb/ucan.c:779:36:    expected int [signed] buffer_length
+   drivers/net/can/usb/ucan.c:779:36:    got restricted __le16 [usertype] wMaxPacketSize
+   drivers/net/can/usb/ucan.c:793:54: sparse: incorrect type in argument 2 (different base types) @@    expected unsigned long [unsigned] [usertype] size @@    got d long [unsigned] [usertype] size @@
+   drivers/net/can/usb/ucan.c:793:54:    expected unsigned long [unsigned] [usertype] size
+   drivers/net/can/usb/ucan.c:793:54:    got restricted __le16 [usertype] wMaxPacketSize
+   drivers/net/can/usb/ucan.c:853:62: sparse: incorrect type in argument 2 (different base types) @@    expected unsigned long [unsigned] [usertype] size @@    got d long [unsigned] [usertype] size @@
+   drivers/net/can/usb/ucan.c:853:62:    expected unsigned long [unsigned] [usertype] size
+   drivers/net/can/usb/ucan.c:853:62:    got restricted __le16 [usertype] wMaxPacketSize
+   drivers/net/can/usb/ucan.c:877:61: sparse: incorrect type in argument 2 (different base types) @@    expected unsigned long [unsigned] [usertype] size @@    got d long [unsigned] [usertype] size @@
+   drivers/net/can/usb/ucan.c:877:61:    expected unsigned long [unsigned] [usertype] size
+   drivers/net/can/usb/ucan.c:877:61:    got restricted __le16 [usertype] wMaxPacketSize
+   drivers/net/can/usb/ucan.c:891:44: sparse: incorrect type in argument 5 (different base types) @@    expected int [signed] buffer_length @@    got restricted __le1int [signed] buffer_length @@
+   drivers/net/can/usb/ucan.c:891:44:    expected int [signed] buffer_length
+   drivers/net/can/usb/ucan.c:891:44:    got restricted __le16 [usertype] wMaxPacketSize
+>> drivers/net/can/usb/ucan.c:1238:41: sparse: incorrect type in assignment (different base types) @@    expected restricted __le16 [usertype] sample_point @@    got restricted __le16 [usertype] sample_point @@
+   drivers/net/can/usb/ucan.c:1238:41:    expected restricted __le16 [usertype] sample_point
+   drivers/net/can/usb/ucan.c:1238:41:    got restricted __le32 [usertype] <noident>
+   drivers/net/can/usb/ucan.c:1368:18: sparse: restricted __le16 degrades to integer
+   drivers/net/can/usb/ucan.c:1373:19: sparse: restricted __le16 degrades to integer
+   drivers/net/can/usb/ucan.c:1407:31: sparse: incorrect type in argument 5 (different base types) @@    expected unsigned short [unsigned] [usertype] value @@    got  short [unsigned] [usertype] value @@
+   drivers/net/can/usb/ucan.c:1407:31:    expected unsigned short [unsigned] [usertype] value
+   drivers/net/can/usb/ucan.c:1407:31:    got restricted __le16 [usertype] <noident>
+   drivers/net/can/usb/ucan.c:1448:31: sparse: incorrect type in argument 5 (different base types) @@    expected unsigned short [unsigned] [usertype] value @@    got  short [unsigned] [usertype] value @@
+   drivers/net/can/usb/ucan.c:1448:31:    expected unsigned short [unsigned] [usertype] value
+   drivers/net/can/usb/ucan.c:1448:31:    got restricted __le16 [usertype] <noident>
 
-Archit
+vim +301 drivers/net/can/usb/ucan.c
 
-> ---
->   drivers/gpu/drm/msm/dsi/dsi_host.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> index 0f7324a686ca..d729b2b4b66d 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -740,7 +740,7 @@ static inline enum dsi_cmd_dst_format dsi_get_cmd_fmt(
->   	switch (mipi_fmt) {
->   	case MIPI_DSI_FMT_RGB888:	return CMD_DST_FORMAT_RGB888;
->   	case MIPI_DSI_FMT_RGB666_PACKED:
-> -	case MIPI_DSI_FMT_RGB666:	return VID_DST_FORMAT_RGB666;
-> +	case MIPI_DSI_FMT_RGB666:	return CMD_DST_FORMAT_RGB666;
->   	case MIPI_DSI_FMT_RGB565:	return CMD_DST_FORMAT_RGB565;
->   	default:			return CMD_DST_FORMAT_RGB888;
->   	}
-> 
+   298	
+   299	static u8 ucan_get_can_dlc(struct ucan_can_msg *msg, u16 len)
+   300	{
+ > 301		if (msg->id & CAN_RTR_FLAG)
+   302			return get_can_dlc(msg->dlc);
+   303		else
+   304			return get_can_dlc(len - (UCAN_IN_HDR_SIZE + sizeof(msg->id)));
+   305	}
+   306	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
