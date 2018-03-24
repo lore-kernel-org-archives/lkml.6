@@ -1,156 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752754AbeCXXTN (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 19:19:13 -0400
-Received: from sauhun.de ([88.99.104.3]:44876 "EHLO pokefinder.org"
+        id S1752963AbeCXXUT (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 19:20:19 -0400
+Received: from mga07.intel.com ([134.134.136.100]:59457 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752174AbeCXXTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 19:19:12 -0400
-Date: Sun, 25 Mar 2018 00:19:10 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, jassisinghbrar@gmail.com,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH v5 2/2] i2c: add support for Socionext SynQuacer I2C
- controller
-Message-ID: <20180324231910.unzvwty3xia4mqu2@ninjato>
-References: <20180302083123.7259-1-ard.biesheuvel@linaro.org>
- <20180302083123.7259-3-ard.biesheuvel@linaro.org>
+        id S1752880AbeCXXUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 19:20:17 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,356,1517904000";
+   d="scan'208";a="214555170"
+Date: Sun, 25 Mar 2018 07:19:14 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: kbuild-all@01.org, iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>, Lan Tianyu <tianyu.lan@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>, Raj Ashok <ashok.raj@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean Delvare <khali@linux-fr.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v4 20/22] iommu/vt-d: add intel iommu page response
+ function
+Message-ID: <201803250714.oP5hRa5Y%fengguang.wu@intel.com>
+References: <1521774734-48433-21-git-send-email-jacob.jun.pan@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xdoxo5t6zpkvtr52"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180302083123.7259-3-ard.biesheuvel@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1521774734-48433-21-git-send-email-jacob.jun.pan@linux.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jacob,
 
---xdoxo5t6zpkvtr52
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I love your patch! Perhaps something to improve:
 
-Hi Ard,
+[auto build test WARNING on iommu/next]
+[also build test WARNING on v4.16-rc6 next-20180323]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> +static int synquacer_i2c_master_start(struct synquacer_i2c *i2c,
-> +				      struct i2c_msg *pmsg)
-> +{
-> +	unsigned char bsr, bcr;
-> +
-> +	if (pmsg->flags & I2C_M_RD)
-> +		writeb((pmsg->addr << 1) | 1,
-> +		       i2c->base + SYNQUACER_I2C_REG_DAR);
-> +	else
-> +		writeb(pmsg->addr << 1,
-> +		       i2c->base + SYNQUACER_I2C_REG_DAR);
-
-writeb(i2c_8bit_addr_from_msg(pmsg), i2c->base + SYNQUACER_I2C_REG_DAR);
-
-?
-
-> +static int synquacer_i2c_master_recover(struct synquacer_i2c *i2c)
-> +{
-
-This is the bus recovery mechanism with toggling SCL pulses, right?
-That should be implemented using a 'struct i2c_bus_recovery_info' and
-the core helpers.
-
-> +static int synquacer_i2c_doxfer(struct synquacer_i2c *i2c,
-> +				struct i2c_msg *msgs, int num)
-> +{
-> +	unsigned char bsr;
-> +	unsigned long timeout, bb_timeout;
-> +	int ret;
-> +
-> +	if (i2c->is_suspended)
-> +		return -EBUSY;
-> +
-> +	synquacer_i2c_hw_init(i2c);
-> +	bsr = readb(i2c->base + SYNQUACER_I2C_REG_BSR);
-> +	if (bsr & SYNQUACER_I2C_BSR_BB) {
-> +		dev_err(i2c->dev, "cannot get bus (bus busy)\n");
-> +		return -EBUSY;
-> +	}
-> +
-> +	init_completion(&i2c->completion);
-
-reinit_completion? And init_completion() in probe()?
-
-> +	/* ensure the stop has been through the bus */
-> +	bb_timeout = jiffies + HZ;
-> +	do {
-> +		bsr = readb(i2c->base + SYNQUACER_I2C_REG_BSR);
-> +		if (!(bsr & SYNQUACER_I2C_BSR_BB))
-> +			return 0;
-> +	} while (time_before(jiffies, bb_timeout));
-
-Busy looping for one second? And won't the bus_free detection at the
-beginning of a transfer do?
-
-> +static int synquacer_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
-> +			      int num)
-> +{
-> +	struct synquacer_i2c *i2c;
-> +	int retry;
-> +	int ret;
-> +
-> +	if (!msgs)
-> +		return -EINVAL;
-> +	if (num <= 0)
-> +		return -EINVAL;
-
-Hmm, this should be done by the core. I am surprised it doesn't do that yet :/
-
-> +
-> +	i2c = i2c_get_adapdata(adap);
-> +	i2c->timeout_ms = calc_timeout_ms(i2c, msgs, num);
-> +
-> +	dev_dbg(i2c->dev, "calculated timeout %d ms\n", i2c->timeout_ms);
-> +
-> +	for (retry = 0; retry < adap->retries; retry++) {
-> +
-> +		ret = synquacer_i2c_doxfer(i2c, msgs, num);
-> +		if (ret != -EAGAIN)
-> +			return ret;
-> +
-> +		dev_dbg(i2c->dev, "Retrying transmission (%d)\n", retry);
-> +
-> +		synquacer_i2c_master_recover(i2c);
-
-Recovery is only when SDA is stuck low, held by a client. That is
-nothing you should do just on any error.
-
-If you want the driver in v4.17, I'd suggest to drop
-synquacer_i2c_master_recover() now and add it incrementally later, using
-the existing recovery infrastructure. The rest is only minor stuff and
-needs not much further discussion IMO.
-
-Regards,
-
-   Wolfram
+url:    https://github.com/0day-ci/linux/commits/Jacob-Pan/IOMMU-and-VT-d-driver-support-for-Shared-Virtual-Address-SVA/20180325-024555
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
---xdoxo5t6zpkvtr52
-Content-Type: application/pgp-signature; name="signature.asc"
+sparse warnings: (new ones prefixed by >>)
 
------BEGIN PGP SIGNATURE-----
+   drivers/iommu/intel-iommu.c:500:5: sparse: symbol 'intel_iommu_gfx_mapped' was not declared. Should it be static?
+   drivers/iommu/intel-iommu.c:3066:41: sparse: incorrect type in argument 1 (different address spaces) @@    expected void volatile [noderef] <asn:2>*addr @@    got ile [noderef] <asn:2>*addr @@
+   drivers/iommu/intel-iommu.c:3066:41:    expected void volatile [noderef] <asn:2>*addr
+   drivers/iommu/intel-iommu.c:3066:41:    got struct context_entry *old_ce
+>> drivers/iommu/intel-iommu.c:5198:5: sparse: symbol 'intel_iommu_page_response' was not declared. Should it be static?
+>> drivers/iommu/intel-iommu.c:5224:48: sparse: right shift by bigger than source value
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq23OoACgkQFA3kzBSg
-KbbwJxAAm1FGeUzbmwo/o5Mrx6xfwUvV0CusEuugDltUu63t94EiXXtvhe1bupY/
-XY7G9DFuWiM8VvOHRpxrje257Cl4kw0G1dn8IMQQRXUWNei8ToLH6fZtC4pQI9t/
-LalMLb1vIiP+qo67ERMb288IrjtyQvNWiSuvUczKombvjyCeTvp1oTvRUdiuqv6+
-KYLXDPzjeyGWk7MSuePKLS2qukTk1A4byJqGxIoJtZGWCUyalbwTZzFnm9f/mntT
-isFRx+HpV2sBopn71wYpYOtnKfswR8kH004DLB6AWMz/12qpGFPqAyK23dP3A/hP
-Pd9QEYpcR5skFDbl/jZtbuAJ6sG5DVDQliyJA4g2x87kBB9CbB1Y3rCvXIOyWRBm
-mCGb2TBp+dDjQ7EAJ0AwYjT6uoJN8X/czCoBVsu8693ZQ+q4d8DuGFmcan6JJ4z/
-msr0wurlcQmOvbS5bKmYH4kkTFsUW3lM3WZ2H2a6gUbxKVKXy99rX4jJIlil5Ttg
-DEDqEbJcCbYxCTO2W0zmwZFFE/E4lGzY/A9UQ0cmI7mz/l8ih+E+HTPy6LwdUvLy
-kVsBOp1wavQNYgvnZRb1nfp3bwgA8Pyzy/MCR7GRWN0v4Kqxh05HaxC1cY3IDhXj
-ynUK3H0bhZLVx6+7HcZOstpatEtOLLxRxdov7P8fnkraKzKIDdM=
-=SoKr
------END PGP SIGNATURE-----
+Please review and possibly fold the followup patch.
 
---xdoxo5t6zpkvtr52--
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
