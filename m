@@ -1,67 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752453AbeCXNdj (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 09:33:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49018 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752377AbeCXNdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 09:33:36 -0400
-Date: Sat, 24 Mar 2018 21:33:30 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: prudo@linux.vnet.ibm.com, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, takahiro.akashi@linaro.org,
-        ebiederm@xmission.com, dyoung@redhat.com, vgoyal@redhat.com
-Subject: Re: [PATCH 1/2] resource: add walk_system_ram_res_rev()
-Message-ID: <20180324133330.GD25740@localhost.localdomain>
-References: <20180322033722.9279-1-bhe@redhat.com>
- <20180322033722.9279-2-bhe@redhat.com>
- <20180322152929.9b421af2f66cc819ad691207@linux-foundation.org>
- <20180323005845.GA25740@localhost.localdomain>
- <20180322190606.859a0f1c7e2d1b2958daeb9f@linux-foundation.org>
- <20180323031013.GB11150@localhost.localdomain>
- <20180323130620.7d60fc442463ed5c21898387@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180323130620.7d60fc442463ed5c21898387@linux-foundation.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752477AbeCXNdq (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 09:33:46 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44802 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752416AbeCXNdm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 09:33:42 -0400
+X-Google-Smtp-Source: AG47ELs3Z9X+KnRcmme6/ZDj4YPJXZqO4SEr07I2F/Kk19pRL9aNc4RCHIG6JZtk+7curRd/qY7SvA==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, viresh.kumar@linaro.org,
+        hzhang@ucrobotics.com, bdong@ucrobotics.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v6 05/11] clk: actions: Add mux clock support
+Date: Sat, 24 Mar 2018 19:01:53 +0530
+Message-Id: <20180324133159.4824-6-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/18 at 01:06pm, Andrew Morton wrote:
-> On Fri, 23 Mar 2018 11:10:13 +0800 Baoquan He <bhe@redhat.com> wrote:
-> 
-> > On 03/22/18 at 07:06pm, Andrew Morton wrote:
-> > > On Fri, 23 Mar 2018 08:58:45 +0800 Baoquan He <bhe@redhat.com> wrote:
-> > > 
-> > > > > erk, this is pretty nasty.  Isn't there a better way :(
-> > > > 
-> > > > Yes, this is not efficient.
-> > > > 
-> > > > In struct resource{}, ->sibling list is a singly linked list. I ever
-> > > > thought about changing it to doubly linked list, yet not very sure if
-> > > > it will have effect since struct resource is a core data structure.
-> > > 
-> > > Switching to a list_head sounds OK.  The only issue really is memory
-> > > consumption and surely we don't have tens of thousands of struct
-> > > resources floating about(?).  Or if we do have a lot, the machine is
-> > > presumably huge (hope?).
-> > 
-> > Yes. It doubles the memory consumption.
-> > 
-> > AFAIK, the biggest number of resrouces I heard of possibly is mentioned
-> > in this user space kexec_tools commit. In this commit, Xunlei told on
-> > SGI system with 64TB RAM, the array which we have been using to store
-> > "System RAM"|"Reserved"|"ACPI **" regions is not big enough. In that
-> > case, we need extra 8Byte*2048=16KB at most. With my understanding, this
-> > increase is system wide, since each resource instance only needs its own
-> > list_head member, right?
-> 
-> Yes.  That sounds perfectly acceptable.
-> 
-> It would be interesting to see what this approach looks like, if you
-> have time to toss something together?
+Add support for Actions Semi mux clock together with helper
+functions to be used in composite clock.
 
-OK, will make patches for reviewing. Thanks!
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/clk/actions/Makefile  |  1 +
+ drivers/clk/actions/owl-mux.c | 60 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/actions/owl-mux.h | 61 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/clk/actions/owl-mux.c
+ create mode 100644 drivers/clk/actions/owl-mux.h
+
+diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
+index 1f0917872c9d..2d4aa8f35d90 100644
+--- a/drivers/clk/actions/Makefile
++++ b/drivers/clk/actions/Makefile
+@@ -2,3 +2,4 @@ obj-$(CONFIG_CLK_ACTIONS)	+= clk-owl.o
+ 
+ clk-owl-y			+= owl-common.o
+ clk-owl-y			+= owl-gate.o
++clk-owl-y			+= owl-mux.o
+diff --git a/drivers/clk/actions/owl-mux.c b/drivers/clk/actions/owl-mux.c
+new file mode 100644
+index 000000000000..f9c6cf2540e4
+--- /dev/null
++++ b/drivers/clk/actions/owl-mux.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#include <linux/clk-provider.h>
++#include <linux/regmap.h>
++
++#include "owl-mux.h"
++
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw)
++{
++	u32 reg;
++	u8 parent;
++
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	parent = reg >> mux_hw->shift;
++	parent &= BIT(mux_hw->width) - 1;
++
++	return parent;
++}
++
++static u8 owl_mux_get_parent(struct clk_hw *hw)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
++
++	return owl_mux_helper_get_parent(&mux->common, &mux->mux_hw);
++}
++
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index)
++{
++	u32 reg;
++
++	regmap_read(common->regmap, mux_hw->reg, &reg);
++	reg &= ~GENMASK(mux_hw->width + mux_hw->shift - 1, mux_hw->shift);
++	regmap_write(common->regmap, mux_hw->reg,
++			reg | (index << mux_hw->shift));
++
++	return 0;
++}
++
++static int owl_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct owl_mux *mux = hw_to_owl_mux(hw);
++
++	return owl_mux_helper_set_parent(&mux->common, &mux->mux_hw, index);
++}
++
++const struct clk_ops owl_mux_ops = {
++	.get_parent = owl_mux_get_parent,
++	.set_parent = owl_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
++};
+diff --git a/drivers/clk/actions/owl-mux.h b/drivers/clk/actions/owl-mux.h
+new file mode 100644
+index 000000000000..834284c8c3ae
+--- /dev/null
++++ b/drivers/clk/actions/owl-mux.h
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL mux clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++#ifndef _OWL_MUX_H_
++#define _OWL_MUX_H_
++
++#include "owl-common.h"
++
++struct owl_mux_hw {
++	u32			reg;
++	u8			shift;
++	u8			width;
++};
++
++struct owl_mux {
++	struct owl_mux_hw	mux_hw;
++	struct owl_clk_common	common;
++};
++
++#define OWL_MUX_HW(_reg, _shift, _width)		\
++	{						\
++		.reg	= _reg,				\
++		.shift	= _shift,			\
++		.width	= _width,			\
++	}
++
++#define OWL_MUX(_struct, _name, _parents, _reg,				\
++		_shift, _width, _flags)					\
++	struct owl_mux _struct = {					\
++		.mux_hw	= OWL_MUX_HW(_reg, _shift, _width),		\
++		.common = {						\
++			.regmap = NULL,					\
++			.hw.init = CLK_HW_INIT_PARENTS(_name,		\
++						       _parents,	\
++						       &owl_mux_ops,	\
++						       _flags),		\
++		},							\
++	}
++
++static inline struct owl_mux *hw_to_owl_mux(const struct clk_hw *hw)
++{
++	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
++
++	return container_of(common, struct owl_mux, common);
++}
++
++u8 owl_mux_helper_get_parent(const struct owl_clk_common *common,
++			     const struct owl_mux_hw *mux_hw);
++int owl_mux_helper_set_parent(const struct owl_clk_common *common,
++			      struct owl_mux_hw *mux_hw, u8 index);
++
++extern const struct clk_ops owl_mux_ops;
++
++#endif /* _OWL_MUX_H_ */
+-- 
+2.14.1
