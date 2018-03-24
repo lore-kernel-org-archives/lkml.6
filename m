@@ -1,31 +1,31 @@
 Return-Path: <joeypabalinas@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521890865; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1521890863; cv=none;
         d=google.com; s=arc-20160816;
-        b=KUktEDOnfFvWSbMrSxG759t7HGgVlgVZXZFxOsRT99oAR6ZPwX4dkWn307RCQzmzZN
-         xrNkJgY89fa3kOBCZZZolBXwuOMIfRsDfrdjfo/7ak47mlA7dwox+7KZZSCYv6PSeCJ4
-         oVlmS+uR4E0yBWiysFUmbBfKumuBgOgbAasmew7IezLgbZ8KkBWNF2VonW4l0kqMxI1V
-         73lLy78AN6gy9RAc8wbzVKhrfo5rJAXbFXmdNMLrqP8rTW5PpHcDUPQfAkeUQu0BHEGg
-         HqhtHnnxOwmXO7SrZyBbd/W7K97rfsiMTf6OsuK23Q5UkOCF/KaJCc/PQyWpqYBrKi6C
-         46ug==
+        b=oDI/mXxWo3Zzgp3WKloKVpEfOJi+pVooNrLiZDSoY1xZhp6PPcOkHegOj2VgpQ0iMf
+         opZ3uC3oyEtJDznEYqgX2GT2jGr1vs1MotRyCqhe+LllP0gY6xjbwoBq4F/w9yO6WaOS
+         k8doB2yii2hZA7A28+SGgxYZVX2cY/1zPNph26zW0Edkc+daeXTnLGW+PdIExJDW2nWO
+         cBGjD/Lc13HW5Z0bpJ3vlAgPo+clAUhjYnPS3lNhID3dlyh4NZ2wrI/t0A3mRbsKMkP3
+         +M71PRLxppiMmPSEDbh+a/rzZiV3wYmYQf/2r/2oGFnYxn9Qb9viIk2TVo2zgWrj2HsA
+         Ol3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=zGYTGc5YYf2xixTp847E6evxuKfoqAKbbnXQrl+hgwk=;
-        b=w6c9ZYWUlplwbtH5VHi29uQQc97+Vc1e6czK5HLMOx5l74PymQ1tOGyJ1qreJIcxzT
-         zalsd2K/w0y5hqnG28BP96XCuXAV8TuisFJEz990x9haeRhqpjTkT1nhjjQYsOLxT/SD
-         Yv99Nk2Cjf+R7WmjfdtcxF55dH74dxtjo9A99ZpqQvWOsyB5ItAwubD89qgSEPVV/WX5
-         DEGAccpMEAdcwPcuFxeIQLIXXDheY+KavxaSTUOD1T/V8FC09FZOiyG0fBD5qyhKBehz
-         TUWczxwlif+ofUA3mxUhOkMJbMzEfE2kLmgWQIxYv9uAvO/8vWYx2FdAy+zRFJVnw1Uj
-         XEnw==
+        bh=pIhEl0ybfsXRsmmR9ekW/zSIUdqpVW2Ilw2JyjieyCk=;
+        b=JPTV7cFJnOyLBq3SnsOUdDS6Jirdc5mnR/HgHyLdHcWQ1cbWMjvq8fuC6I/SJc7nDu
+         zctzKUpHxW+odXIwUN9MkQgOSeGH9kXiXGmxas0OJ9YrO41mlNa2lYn0Ke9/0aql4aGh
+         01+m6fh5zIf2ZrVzOcPjEZO06m6YGV3Hs7rs+Uaq0mPt+NJnbC8TzdO6I7iq55YMlwHG
+         UT9RrFgYAdgQTon+9SVz7o0IfRWM25+A5tknLDfgv3XnW5UhdWhZyZAlqCRqluDaLKwU
+         fLh5PSX8t9Io78cAPoLGrq3x3TsHOHlpnG14wABFtBXKrMbO/4Z7dheqU0HUBgikCwd0
+         2n5w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HVu421Ju;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=n/Zh2aDo;
        spf=pass (google.com: domain of joeypabalinas@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joeypabalinas@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HVu421Ju;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=n/Zh2aDo;
        spf=pass (google.com: domain of joeypabalinas@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=joeypabalinas@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AG47ELv5awo4epgA//+45qJFTrjpg/SCkjHsDXRWtQ4gBmdqq9/QcQr11o3AglYo039SXzDAoEIwKA==
+X-Google-Smtp-Source: AG47ELuAkXyoWSy/wsb2hR0JkuLJIJU5n/de7mW53tM2v2JHkaPGeQ/tndQdXfkWSL2e5ZAwH8msiA==
 From: Joey Pabalinas <joeypabalinas@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Joey Pabalinas <joeypabalinas@gmail.com>,
@@ -33,224 +33,495 @@ Cc: Joey Pabalinas <joeypabalinas@gmail.com>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Jiri Slaby <jslaby@suse.cz>,
 	Tomasz Kramkowsk <tk@the-tk.com>
-Subject: [PATCH v2 4/4] tty/nozomi: refactor conditional statements
-Date: Sat, 24 Mar 2018 01:27:32 -1000
-Message-Id: <20180324112732.29424-5-joeypabalinas@gmail.com>
+Subject: [PATCH v2 3/4] tty/nozomi: improve code readability and style
+Date: Sat, 24 Mar 2018 01:27:31 -1000
+Message-Id: <20180324112732.29424-4-joeypabalinas@gmail.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180324112732.29424-1-joeypabalinas@gmail.com>
 References: <20180324112732.29424-1-joeypabalinas@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595818236344537946?=
-X-GMAIL-MSGID: =?utf-8?q?1595818236344537946?=
+X-GMAIL-THRID: =?utf-8?q?1595818234171756236?=
+X-GMAIL-MSGID: =?utf-8?q?1595818234171756236?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Reduce unnecessarily deep nesting of blocks and simplify
-control flow (e.g. "if/else" constructs changed to "if/return"
-and single case "switch" statements changed to "if" conditionals
-where possible).
+Improve code clarity by renaming identifiers and reorganizing
+function control flow.
 
 Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
 
- 1 file changed, 52 insertions(+), 50 deletions(-)
+ 1 file changed, 92 insertions(+), 91 deletions(-)
+
+ 1 file changed, 76 insertions(+), 90 deletions(-)
 
 diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
-index a5074a59d3e3d33e68..0ea3e1de23c093e808 100644
+index 0fcb4db721d2a42f08..a5074a59d3e3d33e68 100644
 --- a/drivers/tty/nozomi.c
 +++ b/drivers/tty/nozomi.c
-@@ -694,12 +694,13 @@ static void enable_transmit_ul(enum port_type port, struct nozomi *dc)
+@@ -401,7 +401,7 @@ static inline struct port *get_port_by_tty(const struct tty_struct *tty)
+ static void read_mem32(u32 *buf, const void __iomem *mem_addr_start,
+ 			u32 size_bytes)
  {
- 	static const u16 mask[] = {MDM_UL, DIAG_UL, APP1_UL, APP2_UL, CTRL_UL};
+-	u32 i = 0;
++	u32 nread = 0;
+ 	const u32 __iomem *ptr = mem_addr_start;
+ 	u16 *buf16;
  
--	if (port < NOZOMI_MAX_PORTS) {
--		dc->last_ier |= mask[port];
--		writew(dc->last_ier, dc->reg_ier);
--	} else {
-+	if (port >= NOZOMI_MAX_PORTS) {
- 		dev_err(&dc->pdev->dev, "Called with wrong port?\n");
-+		return;
+@@ -411,30 +411,27 @@ static void read_mem32(u32 *buf, const void __iomem *mem_addr_start,
+ 	/* shortcut for extremely often used cases */
+ 	switch (size_bytes) {
+ 	case 2:	/* 2 bytes */
+-		buf16 = (u16 *) buf;
++		buf16 = (u16 *)buf;
+ 		*buf16 = __le16_to_cpu(readw(ptr));
+ 		goto out;
+-		break;
+ 	case 4:	/* 4 bytes */
+-		*(buf) = __le32_to_cpu(readl(ptr));
++		*buf = __le32_to_cpu(readl(ptr));
+ 		goto out;
+-		break;
+ 	}
+ 
+-	while (i < size_bytes) {
+-		if (size_bytes - i == 2) {
++	for (; nread < size_bytes; buf++, ptr++) {
++		if (size_bytes - nread == 2) {
+ 			/* Handle 2 bytes in the end */
+-			buf16 = (u16 *) buf;
+-			*(buf16) = __le16_to_cpu(readw(ptr));
+-			i += 2;
++			buf16 = (u16 *)buf;
++			*buf16 = __le16_to_cpu(readw(ptr));
++			nread += 2;
+ 		} else {
+ 			/* Read 4 bytes */
+-			*(buf) = __le32_to_cpu(readl(ptr));
+-			i += 4;
++			*buf = __le32_to_cpu(readl(ptr));
++			nread += 4;
+ 		}
+-		buf++;
+-		ptr++;
  	}
 +
-+	dc->last_ier |= mask[port];
-+	writew(dc->last_ier, dc->reg_ier);
+ out:
+ 	return;
  }
- 
- /* Disable uplink interrupts  */
-@@ -708,12 +709,13 @@ static void disable_transmit_ul(enum port_type port, struct nozomi *dc)
- 	static const u16 mask[] =
- 		{~MDM_UL, ~DIAG_UL, ~APP1_UL, ~APP2_UL, ~CTRL_UL};
- 
--	if (port < NOZOMI_MAX_PORTS) {
--		dc->last_ier &= mask[port];
--		writew(dc->last_ier, dc->reg_ier);
--	} else {
-+	if (port >= NOZOMI_MAX_PORTS) {
- 		dev_err(&dc->pdev->dev, "Called with wrong port?\n");
-+		return;
- 	}
-+
-+	dc->last_ier &= mask[port];
-+	writew(dc->last_ier, dc->reg_ier);
- }
- 
- /* Enable downlink interrupts */
-@@ -721,12 +723,13 @@ static void enable_transmit_dl(enum port_type port, struct nozomi *dc)
+@@ -447,7 +444,7 @@ static void read_mem32(u32 *buf, const void __iomem *mem_addr_start,
+ static u32 write_mem32(void __iomem *mem_addr_start, const u32 *buf,
+ 			u32 size_bytes)
  {
- 	static const u16 mask[] = {MDM_DL, DIAG_DL, APP1_DL, APP2_DL, CTRL_DL};
+-	u32 i = 0;
++	u32 nwritten = 0;
+ 	u32 __iomem *ptr = mem_addr_start;
+ 	const u16 *buf16;
  
--	if (port < NOZOMI_MAX_PORTS) {
--		dc->last_ier |= mask[port];
--		writew(dc->last_ier, dc->reg_ier);
--	} else {
-+	if (port >= NOZOMI_MAX_PORTS) {
- 		dev_err(&dc->pdev->dev, "Called with wrong port?\n");
-+		return;
+@@ -460,7 +457,6 @@ static u32 write_mem32(void __iomem *mem_addr_start, const u32 *buf,
+ 		buf16 = (const u16 *)buf;
+ 		writew(__cpu_to_le16(*buf16), ptr);
+ 		return 2;
+-		break;
+ 	case 1: /*
+ 		 * also needs to write 4 bytes in this case
+ 		 * so falling through..
+@@ -468,24 +464,22 @@ static u32 write_mem32(void __iomem *mem_addr_start, const u32 *buf,
+ 	case 4: /* 4 bytes */
+ 		writel(__cpu_to_le32(*buf), ptr);
+ 		return 4;
+-		break;
  	}
-+
-+	dc->last_ier |= mask[port];
-+	writew(dc->last_ier, dc->reg_ier);
- }
  
- /* Disable downlink interrupts */
-@@ -735,12 +738,13 @@ static void disable_transmit_dl(enum port_type port, struct nozomi *dc)
- 	static const u16 mask[] =
- 		{~MDM_DL, ~DIAG_DL, ~APP1_DL, ~APP2_DL, ~CTRL_DL};
- 
--	if (port < NOZOMI_MAX_PORTS) {
--		dc->last_ier &= mask[port];
--		writew(dc->last_ier, dc->reg_ier);
--	} else {
-+	if (port >= NOZOMI_MAX_PORTS) {
- 		dev_err(&dc->pdev->dev, "Called with wrong port?\n");
-+		return;
- 	}
-+
-+	dc->last_ier &= mask[port];
-+	writew(dc->last_ier, dc->reg_ier);
- }
- 
- /*
-@@ -1028,33 +1032,31 @@ static int handle_data_dl(struct nozomi *dc, enum port_type port, u8 *toggle,
- 	if (*toggle == 0 && read_iir & mask1) {
- 		if (receive_data(port, dc)) {
- 			writew(mask1, dc->reg_fcr);
--			*toggle = !(*toggle);
-+			*toggle = !*toggle;
+-	while (i < size_bytes) {
+-		if (size_bytes - i == 2) {
++	for (; nwritten < size_bytes; buf++, ptr++) {
++		if (size_bytes - nwritten == 2) {
+ 			/* 2 bytes */
+ 			buf16 = (const u16 *)buf;
+ 			writew(__cpu_to_le16(*buf16), ptr);
+-			i += 2;
++			nwritten += 2;
+ 		} else {
+ 			/* 4 bytes */
+ 			writel(__cpu_to_le32(*buf), ptr);
+-			i += 4;
++			nwritten += 4;
  		}
+-		buf++;
+-		ptr++;
+ 	}
+-	return i;
++
++	return nwritten;
+ }
  
--		if (read_iir & mask2) {
--			if (receive_data(port, dc)) {
--				writew(mask2, dc->reg_fcr);
--				*toggle = !(*toggle);
+ /* Setup pointers to different channels and also setup buffer sizes. */
+@@ -632,9 +626,10 @@ static int nozomi_read_config_table(struct nozomi *dc)
+ 		return 0;
+ 	}
+ 
+-	if ((dc->config_table.version == 0)
+-	    || (dc->config_table.toggle.enabled == TOGGLE_VALID)) {
++	if (!dc->config_table.version
++			|| dc->config_table.toggle.enabled == TOGGLE_VALID) {
+ 		int i;
++
+ 		DBG1("Second phase, configuring card");
+ 
+ 		nozomi_setup_memory(dc);
+@@ -659,12 +654,14 @@ static int nozomi_read_config_table(struct nozomi *dc)
+ 
+ 		dc->state = NOZOMI_STATE_ALLOCATED;
+ 		dev_info(&dc->pdev->dev, "Initialization OK!\n");
++
+ 		return 1;
+ 	}
+ 
+-	if ((dc->config_table.version > 0)
+-	    && (dc->config_table.toggle.enabled != TOGGLE_VALID)) {
++	if (dc->config_table.version > 0
++			&& dc->config_table.toggle.enabled != TOGGLE_VALID) {
+ 		u32 offset = 0;
++
+ 		DBG1("First phase: pushing upload buffers, clearing download");
+ 
+ 		dev_info(&dc->pdev->dev, "Version of card: %d\n",
+@@ -752,7 +749,7 @@ static void disable_transmit_dl(enum port_type port, struct nozomi *dc)
+  */
+ static int send_data(enum port_type index, struct nozomi *dc)
+ {
+-	u32 size = 0;
++	u32 size;
+ 	struct port *port = &dc->port[index];
+ 	const u8 toggle = port->toggle_ul;
+ 	void __iomem *addr = port->ul_addr[toggle];
+@@ -762,7 +759,7 @@ static int send_data(enum port_type index, struct nozomi *dc)
+ 	size = kfifo_out(&port->fifo_ul, dc->send_buf,
+ 			   ul_size < SEND_BUF_MAX ? ul_size : SEND_BUF_MAX);
+ 
+-	if (size == 0) {
++	if (!size) {
+ 		DBG4("No more data to send, disable link:");
+ 		return 0;
+ 	}
+@@ -770,8 +767,8 @@ static int send_data(enum port_type index, struct nozomi *dc)
+ 	/* DUMP(buf, size); */
+ 
+ 	/* Write length + data */
+-	write_mem32(addr, (u32 *) &size, 4);
+-	write_mem32(addr + 4, (u32 *) dc->send_buf, size);
++	write_mem32(addr, (u32 *)&size, 4);
++	write_mem32(addr + 4, (u32 *)dc->send_buf, size);
+ 
+ 	tty_port_tty_wakeup(&port->port);
+ 
+@@ -781,13 +778,12 @@ static int send_data(enum port_type index, struct nozomi *dc)
+ /* If all data has been read, return 1, else 0 */
+ static int receive_data(enum port_type index, struct nozomi *dc)
+ {
+-	u8 buf[RECEIVE_BUF_MAX] = { 0 };
+-	int size;
++	u8 buf[RECEIVE_BUF_MAX] = {0};
+ 	u32 offset = 4;
+ 	struct port *port = &dc->port[index];
+ 	void __iomem *addr = port->dl_addr[port->toggle_dl];
+ 	struct tty_struct *tty = tty_port_tty_get(&port->port);
+-	int i, ret;
++	int size, ret, i;
+ 
+ 	size = __le32_to_cpu(readl(addr));
+ 	/*  DBG1( "%d bytes port: %d", size, index); */
+@@ -802,14 +798,14 @@ static int receive_data(enum port_type index, struct nozomi *dc)
+ 		goto put;
+ 	}
+ 
+-	if (unlikely(size == 0)) {
++	if (unlikely(!size)) {
+ 		dev_err(&dc->pdev->dev, "size == 0?\n");
+ 		ret = 1;
+ 		goto put;
+ 	}
+ 
+ 	while (size > 0) {
+-		read_mem32((u32 *) buf, addr + offset, RECEIVE_BUF_MAX);
++		read_mem32((u32 *)buf, addr + offset, RECEIVE_BUF_MAX);
+ 
+ 		if (size == 1) {
+ 			tty_insert_flip_char(&port->port, buf[0], TTY_NORMAL);
+@@ -937,9 +933,7 @@ static int receive_flow_control(struct nozomi *dc)
+ 		DBG1("Disable interrupt (0x%04X) on port: %d",
+ 			enable_ier, port);
+ 		disable_transmit_ul(port, dc);
+-
+ 	} else if (old_ctrl.CTS == 0 && ctrl_dl.CTS == 1) {
+-
+ 		if (kfifo_len(&dc->port[port].fifo_ul)) {
+ 			DBG1("Enable interrupt (0x%04X) on port: %d",
+ 				enable_ier, port);
+@@ -989,7 +983,7 @@ static enum ctrl_port_type port2ctrl(enum port_type port,
+ 		return CTRL_APP2;
+ 	default:
+ 		dev_err(&dc->pdev->dev,
+-			"ERROR: send flow control " \
++			"ERROR: send flow control "
+ 			"received for non-existing port\n");
+ 	}
+ 	return CTRL_ERROR;
+@@ -1002,23 +996,24 @@ static enum ctrl_port_type port2ctrl(enum port_type port,
+  */
+ static int send_flow_control(struct nozomi *dc)
+ {
+-	u32 i, more_flow_control_to_be_updated = 0;
++	u32 more_flow_control_to_be_updated = 0;
++	u32 i;
+ 	u16 *ctrl;
+ 
+ 	for (i = PORT_MDM; i < MAX_PORT; i++) {
+ 		if (dc->port[i].update_flow_control) {
+-			if (more_flow_control_to_be_updated) {
+-				/* We have more flow control to be updated */
++			if (more_flow_control_to_be_updated)
+ 				return 1;
 -			}
-+		if (read_iir & mask2 && receive_data(port, dc)) {
-+			writew(mask2, dc->reg_fcr);
-+			*toggle = !*toggle;
- 		}
 +
-+		return 1;
- 	} else if (*toggle == 1 && read_iir & mask2) {
- 		if (receive_data(port, dc)) {
- 			writew(mask2, dc->reg_fcr);
--			*toggle = !(*toggle);
-+			*toggle = !*toggle;
+ 			dc->port[i].ctrl_ul.port = port2ctrl(i, dc);
+ 			ctrl = (u16 *)&dc->port[i].ctrl_ul;
+-			write_mem32(dc->port[PORT_CTRL].ul_addr[0], \
+-				(u32 *) ctrl, 2);
++			write_mem32(dc->port[PORT_CTRL].ul_addr[0],
++					(u32 *)ctrl, 2);
+ 			dc->port[i].update_flow_control = 0;
+ 			more_flow_control_to_be_updated = 1;
  		}
- 
--		if (read_iir & mask1) {
--			if (receive_data(port, dc)) {
--				writew(mask1, dc->reg_fcr);
--				*toggle = !(*toggle);
--			}
-+		if (read_iir & mask1 && receive_data(port, dc)) {
-+			writew(mask1, dc->reg_fcr);
-+			*toggle = !*toggle;
- 		}
--	} else {
--		dev_err(&dc->pdev->dev, "port out of sync!, toggle:%d\n",
--			*toggle);
--		return 0;
-+
-+		return 1;
  	}
--	return 1;
 +
-+	dev_err(&dc->pdev->dev, "port out of sync!, toggle:%d\n", *toggle);
-+	return 0;
+ 	return 0;
  }
  
- /*
-@@ -1087,6 +1089,7 @@ static int handle_data_ul(struct nozomi *dc, enum port_type port, u16 read_iir)
- 			}
- 		}
+@@ -1069,7 +1064,7 @@ static int handle_data_dl(struct nozomi *dc, enum port_type port, u8 *toggle,
+  */
+ static int handle_data_ul(struct nozomi *dc, enum port_type port, u16 read_iir)
+ {
+-	u8 *toggle = &(dc->port[port].toggle_ul);
++	u8 *toggle = &dc->port[port].toggle_ul;
  
-+		return 1;
- 	} else if (*toggle == 1 && read_iir & MDM_UL2) {
+ 	if (*toggle == 0 && read_iir & MDM_UL1) {
  		dc->last_ier &= ~MDM_UL;
- 		writew(dc->last_ier, dc->reg_ier);
-@@ -1107,12 +1110,13 @@ static int handle_data_ul(struct nozomi *dc, enum port_type port, u16 read_iir)
- 				*toggle = !*toggle;
- 			}
- 		}
--	} else {
--		writew(read_iir & MDM_UL, dc->reg_fcr);
--		dev_err(&dc->pdev->dev, "port out of sync!\n");
--		return 0;
-+
-+		return 1;
- 	}
--	return 1;
-+
-+	writew(read_iir & MDM_UL, dc->reg_fcr);
-+	dev_err(&dc->pdev->dev, "port out of sync!\n");
-+	return 0;
- }
- 
+@@ -1123,7 +1118,7 @@ static int handle_data_ul(struct nozomi *dc, enum port_type port, u16 read_iir)
  static irqreturn_t interrupt_handler(int irq, void *dev_id)
-@@ -1121,7 +1125,7 @@ static irqreturn_t interrupt_handler(int irq, void *dev_id)
- 	unsigned int i;
+ {
+ 	struct nozomi *dc = dev_id;
+-	unsigned int a;
++	unsigned int i;
  	u16 read_iir;
  
--	if (!dc)
-+	if (unlikely(!dc))
- 		return IRQ_NONE;
+ 	if (!dc)
+@@ -1141,10 +1136,9 @@ static irqreturn_t interrupt_handler(int irq, void *dev_id)
+ 	 */
+ 	read_iir &= dc->last_ier;
  
- 	spin_lock(&dc->spin_mutex);
-@@ -1344,8 +1348,9 @@ static int nozomi_card_init(struct pci_dev *pdev,
+-	if (read_iir == 0)
++	if (!read_iir)
+ 		goto none;
+ 
+-
+ 	DBG4("%s irq:0x%04X, prev:0x%04X", interrupt2str(read_iir), read_iir,
+ 		dc->last_ier);
+ 
+@@ -1235,9 +1229,9 @@ static irqreturn_t interrupt_handler(int irq, void *dev_id)
+ exit_handler:
+ 	spin_unlock(&dc->spin_mutex);
+ 
+-	for (a = 0; a < NOZOMI_MAX_PORTS; a++)
+-		if (test_and_clear_bit(a, &dc->flip))
+-			tty_flip_buffer_push(&dc->port[a].port);
++	for (i = 0; i < NOZOMI_MAX_PORTS; i++)
++		if (test_and_clear_bit(i, &dc->flip))
++			tty_flip_buffer_push(&dc->port[i].port);
+ 
+ 	return IRQ_HANDLED;
+ none:
+@@ -1318,10 +1312,8 @@ static int nozomi_card_init(struct pci_dev *pdev,
+ 				      const struct pci_device_id *ent)
+ {
+ 	resource_size_t start;
+-	int ret;
+-	struct nozomi *dc = NULL;
+-	int ndev_idx;
+-	int i;
++	struct nozomi *dc;
++	int ndev_idx, ret, i;
+ 
+ 	dev_dbg(&pdev->dev, "Init, new card found\n");
+ 
+@@ -1352,8 +1344,8 @@ static int nozomi_card_init(struct pci_dev *pdev,
  
  	ret = pci_request_regions(dc->pdev, NOZOMI_NAME);
  	if (ret) {
--		/* nozomi_private.io_addr */
--		dev_err(&pdev->dev, "I/O address 0x%04x already in use\n", 0);
-+		dev_err(&pdev->dev, "I/O address 0x%04x already in use\n",
-+			/* (int) nozomi_private.io_addr */ 0);
-+
+-		dev_err(&pdev->dev, "I/O address 0x%04x already in use\n",
+-			(int) /* nozomi_private.io_addr */ 0);
++		/* nozomi_private.io_addr */
++		dev_err(&pdev->dev, "I/O address 0x%04x already in use\n", 0);
  		goto err_disable_device;
  	}
  
-@@ -1752,18 +1757,15 @@ static int ntty_ioctl(struct tty_struct *tty,
+@@ -1429,19 +1421,18 @@ static int nozomi_card_init(struct pci_dev *pdev,
+ 		port->port.ops = &noz_tty_port_ops;
+ 		tty_dev = tty_port_register_device(&port->port, ntty_driver,
+ 				dc->index_start + i, &pdev->dev);
++		if (likely(!IS_ERR(tty_dev)))
++			continue;
  
- 	DBG1("******** IOCTL, cmd: %d", cmd);
- 
--	switch (cmd) {
--	case TIOCMIWAIT: {
--		struct async_icount cprev = port->tty_icount;
--		rval = wait_event_interruptible(port->tty_wait,
--				ntty_cflags_changed(port, arg, &cprev));
--		break;
--	}
--	default:
-+	if (cmd != TIOCMIWAIT) {
- 		DBG1("ERR: 0x%08X, %d", cmd, cmd);
--		break;
-+		goto no_ioctl;
+-		if (IS_ERR(tty_dev)) {
+-			ret = PTR_ERR(tty_dev);
+-			dev_err(&pdev->dev, "Could not allocate tty?\n");
+-			tty_port_destroy(&port->port);
+-			goto err_free_tty;
+-		}
++		ret = PTR_ERR(tty_dev);
++		dev_err(&pdev->dev, "Could not allocate tty?\n");
++		tty_port_destroy(&port->port);
++		goto err_free_tty;
  	}
  
-+	rval = wait_event_interruptible(port->tty_wait,
-+			ntty_cflags_changed(port, arg, &port->tty_icount));
+ 	return 0;
+-
+ err_free_tty:
+-	for (i = 0; i < MAX_PORT; ++i) {
++	for (i = 0; i < MAX_PORT; i++) {
+ 		tty_unregister_device(ntty_driver, dc->index_start + i);
+ 		tty_port_destroy(&dc->port[i].port);
+ 	}
+@@ -1463,18 +1454,19 @@ static int nozomi_card_init(struct pci_dev *pdev,
+ 
+ static void tty_exit(struct nozomi *dc)
+ {
+-	unsigned int i;
++	int i;
+ 
+ 	DBG1(" ");
+ 
+-	for (i = 0; i < MAX_PORT; ++i)
++	for (i = 0; i < MAX_PORT; i++)
+ 		tty_port_tty_hangup(&dc->port[i].port, false);
+ 
+ 	/* Racy below - surely should wait for scheduled work to be done or
+ 	   complete off a hangup method ? */
+ 	while (dc->open_ttys)
+ 		msleep(1);
+-	for (i = 0; i < MAX_PORT; ++i) {
 +
-+no_ioctl:
- 	return rval;
++	for (i = 0; i < MAX_PORT; i++) {
+ 		tty_unregister_device(ntty_driver, dc->index_start + i);
+ 		tty_port_destroy(&dc->port[i].port);
+ 	}
+@@ -1483,9 +1475,9 @@ static void tty_exit(struct nozomi *dc)
+ /* Deallocate memory for one device */
+ static void nozomi_card_exit(struct pci_dev *pdev)
+ {
+-	int i;
+-	struct ctrl_ul ctrl;
+ 	struct nozomi *dc = pci_get_drvdata(pdev);
++	struct ctrl_ul ctrl;
++	int i;
+ 
+ 	/* Disable all interrupts */
+ 	dc->last_ier = 0;
+@@ -1559,7 +1551,7 @@ static int ntty_install(struct tty_driver *driver, struct tty_struct *tty)
+ 	if (!port || !dc || dc->state != NOZOMI_STATE_READY)
+ 		return -ENODEV;
+ 	ret = tty_standard_install(driver, tty);
+-	if (ret == 0)
++	if (!ret)
+ 		tty->driver_data = port;
+ 	return ret;
+ }
+@@ -1599,7 +1591,7 @@ static void ntty_shutdown(struct tty_port *tport)
+ 
+ 	DBG1("close: %d", port->token_dl);
+ 	spin_lock_irqsave(&dc->spin_mutex, flags);
+-	dc->last_ier &= ~(port->token_dl);
++	dc->last_ier &= ~port->token_dl;
+ 	writew(dc->last_ier, dc->reg_ier);
+ 	dc->open_ttys--;
+ 	spin_unlock_irqrestore(&dc->spin_mutex, flags);
+@@ -1626,21 +1618,21 @@ static void ntty_hangup(struct tty_struct *tty)
+ static int ntty_write(struct tty_struct *tty, const unsigned char *buffer,
+ 		      int count)
+ {
+-	int rval = -EINVAL;
+ 	struct nozomi *dc = get_dc_by_tty(tty);
+ 	struct port *port = tty->driver_data;
+ 	unsigned long flags;
++	int rval;
+ 
+ 	/* DBG1( "WRITEx: %d, index = %d", count, index); */
+ 
+-	if (!dc || !port)
++	if (unlikely(!dc || !port))
+ 		return -ENODEV;
+ 
+ 	rval = kfifo_in(&port->fifo_ul, (unsigned char *)buffer, count);
+ 
+ 	spin_lock_irqsave(&dc->spin_mutex, flags);
+ 	/* CTS is only valid on the modem channel */
+-	if (port == &(dc->port[PORT_MDM])) {
++	if (port == &dc->port[PORT_MDM]) {
+ 		if (port->ctrl_dl.CTS) {
+ 			DBG4("Enable interrupt");
+ 			enable_transmit_ul(tty->index % MAX_PORT, dc);
+@@ -1668,13 +1660,12 @@ static int ntty_write(struct tty_struct *tty, const unsigned char *buffer,
+ static int ntty_write_room(struct tty_struct *tty)
+ {
+ 	struct port *port = tty->driver_data;
+-	int room = 4096;
+ 	const struct nozomi *dc = get_dc_by_tty(tty);
+ 
+-	if (dc)
+-		room = kfifo_avail(&port->fifo_ul);
++	if (unlikely(!dc))
++		return 4096;
+ 
+-	return room;
++	return kfifo_avail(&port->fifo_ul);
  }
  
+ /* Gets io control parameters */
+@@ -1749,6 +1740,7 @@ static int ntty_tiocgicount(struct tty_struct *tty,
+ 	icount->parity = cnow.parity;
+ 	icount->brk = cnow.brk;
+ 	icount->buf_overrun = cnow.buf_overrun;
++
+ 	return 0;
+ }
+ 
+@@ -1763,7 +1755,6 @@ static int ntty_ioctl(struct tty_struct *tty,
+ 	switch (cmd) {
+ 	case TIOCMIWAIT: {
+ 		struct async_icount cprev = port->tty_icount;
+-
+ 		rval = wait_event_interruptible(port->tty_wait,
+ 				ntty_cflags_changed(port, arg, &cprev));
+ 		break;
+@@ -1813,16 +1804,11 @@ static s32 ntty_chars_in_buffer(struct tty_struct *tty)
+ {
+ 	struct port *port = tty->driver_data;
+ 	struct nozomi *dc = get_dc_by_tty(tty);
+-	s32 rval = 0;
+ 
+-	if (unlikely(!dc || !port)) {
+-		goto exit_in_buffer;
+-	}
++	if (unlikely(!dc || !port))
++		return 0;
+ 
+-	rval = kfifo_len(&port->fifo_ul);
+-
+-exit_in_buffer:
+-	return rval;
++	return kfifo_len(&port->fifo_ul);
+ }
+ 
+ static const struct tty_port_operations noz_tty_port_ops = {
 -- 
 2.16.3
