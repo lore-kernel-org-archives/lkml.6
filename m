@@ -1,153 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeCXPVr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 11:21:47 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:40382 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752331AbeCXPVq (ORCPT
+        id S1752510AbeCXPWB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 11:22:01 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:41841 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752315AbeCXPV7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 11:21:46 -0400
-X-Google-Smtp-Source: AIpwx4+yvxoXRddbMrLuG5ZGvMUhkz/5B8exvvFGPp3cNOzS9EMKxYhSc2X5kK9nU9BHiPOTgcnCRjn+sM/DoI9VOVI=
+        Sat, 24 Mar 2018 11:21:59 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+Cc: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, viro@zeniv.linux.org.uk,
+        stephen@networkplumber.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
+        nirranjan@chelsio.com, indranil@chelsio.com
+References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
+Date: Sat, 24 Mar 2018 10:20:52 -0500
+In-Reply-To: <cover.1521888444.git.rahul.lakkireddy@chelsio.com> (Rahul
+        Lakkireddy's message of "Sat, 24 Mar 2018 16:26:32 +0530")
+Message-ID: <87muyxlctn.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <87370pvdcm.fsf@xps13.shealevy.com>
-References: <mhng-381d004e-2fbd-4012-9ccc-e845dd5396c0@palmer-si-x1c4> <87370pvdcm.fsf@xps13.shealevy.com>
-From: Zong Li <zongbox@gmail.com>
-Date: Sat, 24 Mar 2018 23:21:44 +0800
-Message-ID: <CA+ZOyaiyz8OwG4txdEoYXOpzA3F7syxuOEoGaD=BatYwUfqG+Q@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
-To: Shea Levy <shea@shealevy.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>, Zong Li <zong@andestech.com>,
-        greentime@andestech.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        albert@sifive.com, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1ezkzO-0005n5-5U;;;mid=<87muyxlctn.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.121.173;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19bEikqnTxQxDJpI0Q0p4k/1dMUePOJOws=
+X-SA-Exim-Connect-IP: 97.119.121.173
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  0.0 TVD_RCVD_IP Message was received from an IP address
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4983]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1055 ms - load_scoreonly_sql: 0.09 (0.0%),
+        signal_user_changed: 3.5 (0.3%), b_tie_ro: 2.2 (0.2%), parse: 1.60 (0.2%),
+        extract_message_metadata: 43 (4.1%), get_uri_detail_list: 7 (0.7%),
+        tests_pri_-1000: 23 (2.1%), tests_pri_-950: 2.2 (0.2%), tests_pri_-900: 1.81
+        (0.2%), tests_pri_-400: 47 (4.5%), check_bayes: 45 (4.3%), b_tokenize: 20
+        (1.9%), b_tok_get_all: 11 (1.1%), b_comp_prob: 6 (0.6%), b_tok_touch_all: 3.2
+        (0.3%), b_finish: 0.80 (0.1%), tests_pri_0: 916 (86.9%),
+        check_dkim_signature: 1.10 (0.1%), check_dkim_adsp: 5 (0.5%), tests_pri_500:
+        10 (1.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH net-next v2 0/2] kernel: add support to collect hardware logs in crash recovery kernel
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-24 20:59 GMT+08:00 Shea Levy <shea@shealevy.com>:
-> Hi Palmer, Zong,
+
+Rahul Lakkireddy <rahul.lakkireddy@chelsio.com> writes:
+
+> On production servers running variety of workloads over time, kernel
+> panic can happen sporadically after days or even months. It is
+> important to collect as much debug logs as possible to root cause
+> and fix the problem, that may not be easy to reproduce. Snapshot of
+> underlying hardware/firmware state (like register dump, firmware
+> logs, adapter memory, etc.), at the time of kernel panic will be very
+> helpful while debugging the culprit device driver.
 >
-> Palmer Dabbelt <palmer@sifive.com> writes:
+> This series of patches add new generic framework that enable device
+> drivers to collect device specific snapshot of the hardware/firmware
+> state of the underlying device in the crash recovery kernel. In crash
+> recovery kernel, the collected logs are exposed via /sys/kernel/crashdd/
+> directory, which is copied by user space scripts for post-analysis.
 >
->> On Thu, 15 Mar 2018 01:50:40 PDT (-0700), zong@andestech.com wrote:
->>> These patches resolve the some issues of loadable module.
->>>   - symbol out of ranges
->>>   - unknown relocation types
->>>
->>> The reference of external variable and function symbols
->>> cannot exceed 32-bit offset ranges in kernel module.
->>> The module only can work on the 32-bit OS or the 64-bit
->>> OS with sv32 virtual addressing.
->>>
->>> These patches will generate the .got, .got.plt and
->>> .plt sections during loading module, let it can refer
->>> to the symbol which locate more than 32-bit offset.
->>> These sections depend on the relocation types:
->>>  - R_RISCV_GOT_HI20
->>>  - R_RISCV_CALL_PLT
->>>
->>> These patches also support more relocation types
->>>  - R_RISCV_CALL
->>>  - R_RISCV_HI20
->>>  - R_RISCV_LO12_I
->>>  - R_RISCV_LO12_S
->>>  - R_RISCV_RVC_BRANCH
->>>  - R_RISCV_RVC_JUMP
->>>  - R_RISCV_ALIGN
->>>  - R_RISCV_ADD32
->>>  - R_RISCV_SUB32
->>>
->>> This is the list of testing modules:
->>> # lsmod
->>> btrfs 7876158 0 - Live 0xffffffd00745d000
->>> ramoops 90806 0 - Live 0xffffffd0024b8000
->>> lzo 10554 0 - Live 0xffffffd002050000
->>> zstd_decompress 567575 1 btrfs, Live 0xffffffd00238b000
->>> zstd_compress 1543837 1 btrfs, Live 0xffffffd002211000
->>> zram 101300 0 - Live 0xffffffd0021b8000
->>> xxhash 62254 2 zstd_decompress,zstd_compress, Live 0xffffffd0020cf000
->>> xor 33246 1 btrfs, Live 0xffffffd002042000
->>> xfs 4395343 0 - Live 0xffffffd00399e000
->>> tun 252041 0 - Live 0xffffffd0038e0000
->>> test_user_copy 5265 0 - Live 0xffffffd003783000
->>> test_static_keys 19606 0 - Live 0xffffffd003717000
->>> test_static_key_base 7374 1 test_static_keys, Live 0xffffffd0036dc000
->>> test_printf 7804 0 [permanent], Live 0xffffffd00369c000
->>> test_module 1557 0 - Live 0xffffffd003646000
->>> test_kmod 49100 0 - Live 0xffffffd0035f2000
->>> test_bpf 1599301 0 - Live 0xffffffd003000000
->>> test_bitmap 4403 0 - Live 0xffffffd002dd8000
->>> reed_solomon 38866 1 ramoops, Live 0xffffffd002d86000
->>> raid6_pq 161872 1 btrfs, Live 0xffffffd002b9e000
->>> netdevsim 65401 0 - Live 0xffffffd002910000
->>>
->>> Signed-off-by: Zong Li <zong@andestech.com>
->>> ---
->>> Change in v2:
->>>  - Add compile option 'mno-relax' for build kernel module
->>>  - Just fail on ALIGN type, this is unexpected type with mno-relax.
->>>
->>> Zong Li (11):
->>>   RISC-V: Add sections of PLT and GOT for kernel module
->>>   RISC-V: Add section of GOT.PLT for kernel module
->>>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
->>>   RISC-V: Support CALL relocation type in kernel module
->>>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
->>>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
->>>   RISC-V: Support ALIGN relocation type in kernel module
->>>   RISC-V: Support ADD32 relocation type in kernel module
->>>   RISC-V: Support SUB32 relocation type in kernel module
->>>   RISC-V: Enable module support in defconfig
->>>   RISC-V: Add definition of relocation types
->>>
->>>  arch/riscv/Kconfig                  |   5 +
->>>  arch/riscv/Makefile                 |   5 +
->>>  arch/riscv/configs/defconfig        |   2 +
->>>  arch/riscv/include/asm/module.h     | 113 +++++++++++++++++++++++
->>>  arch/riscv/include/uapi/asm/elf.h   |   7 ++
->>>  arch/riscv/kernel/Makefile          |   1 +
->>>  arch/riscv/kernel/module-sections.c | 156 +++++++++++++++++++++++++++++++
->>>  arch/riscv/kernel/module.c          | 179 ++++++++++++++++++++++++++++++++++--
->>>  arch/riscv/kernel/module.lds        |   8 ++
->>>  9 files changed, 470 insertions(+), 6 deletions(-)
->>>  create mode 100644 arch/riscv/include/asm/module.h
->>>  create mode 100644 arch/riscv/kernel/module-sections.c
->>>  create mode 100644 arch/riscv/kernel/module.lds
->>
->> Thanks!  I've added this to our for-next branch, so it should start to get a
->> bit more testing soon.  I've had a bit of the flu and am therefor a bit out of
->> it, so I'll try to look closer before the next merge window.
->>
+> A kernel module crashdd is newly added. In crash recovery kernel,
+> crashdd exposes /sys/kernel/crashdd/ directory containing device
+> specific hardware/firmware logs.
+
+Have you looked at instead of adding a sysfs file adding the dumps
+as additional elf notes in /proc/vmcore?
+
+That should allow existing tools to capture your extended dump
+information with no code changes, and it will allow having a single file
+core dump for storing the information.
+
+Both of which should mean something that will integrate better into
+existing flows.
+
+The interface logic of the driver should be essentially the same.
+
+
+Also have you tested this and seen how well your current logic captures
+the device information?
+
+
 >
-> I've updated my kernel to point to riscv-all, and now I'm getting:
+> The sequence of actions done by device drivers to append their device
+> specific hardware/firmware logs to /sys/kernel/crashdd/ directory are
+> as follows:
 >
-> scsi_mod: target ffffffe000029a80 can not be addressed by the 32-bit offset from PC = 00000000fe3be867
+> 1. During probe (before hardware is initialized), device drivers
+> register to the crashdd module (via crashdd_add_dump()), with
+> callback function, along with buffer size and log name needed for
+> firmware/hardware log collection.
 >
-> Any idea why this might be? My patchset had a patch [1] to ensure
-> modules were loaded within a 32 bit offset of the kernel text, do we
-> need to include that?
+> 2. Crashdd creates a driver's directory under /sys/kernel/crashdd/<driver>.
+> Then, it allocates the buffer with requested size and invokes the
+> device driver's registered callback function.
+>
+> 3. Device driver collects all hardware/firmware logs into the buffer
+> and returns control back to crashdd.
+>
+> 4. Crashdd exposes the buffer as a file via
+> /sys/kernel/crashdd/<driver>/<dump_file>.
+>
+> 5. User space script (/usr/lib/kdump/kdump-lib-initramfs.sh) copies
+> the entire /sys/kernel/crashdd/ directory to /var/crash/ directory.
+>
+> Patch 1 adds crashdd module to allow drivers to register callback to
+> collect the device specific hardware/firmware logs.  The module also
+> exports /sys/kernel/crashdd/ directory containing the hardware/firmware
+> logs.
+>
+> Patch 2 shows a cxgb4 driver example using the API to collect
+> hardware/firmware logs in crash recovery kernel, before hardware is
+> initialized.  The logs for the devices are made available under
+> /sys/kernel/crashdd/cxgb4/ directory.
 >
 > Thanks,
-> Shea
+> Rahul
 >
-> [1] http://lists.infradead.org/pipermail/linux-riscv/2018-February/000083.html
+> RFC v1: https://lkml.org/lkml/2018/3/2/542
+> RFC v2: https://lkml.org/lkml/2018/3/16/326
 >
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
-
-Hi Shea,
-
-I'm not sure what is the relocation type or program behavior on your situation.
-
-For the code generation, the following relocation types only allow the
-target offset in the 32 bit range:
-- RISCV_PCREL_HI20
-- RISCV_HI20
-- RISCV_CALL
-- RISCV_CALL_PLT without enabling MODULES_SECTIONS
-
-In my view, we cannot limit the start address of kernel text is always
-adjacent to the module region.
+> ---
+> v2:
+> - Added ABI Documentation for crashdd.
+> - Directly use octal permission instead of macro.
+>
+> Changes since rfc v2:
+> - Moved exporting crashdd from procfs to sysfs. Suggested by
+>   Stephen Hemminger <stephen@networkplumber.org>
+> - Moved code from fs/proc/crashdd.c to fs/crashdd/ directory.
+> - Replaced all proc API with sysfs API and updated comments.
+> - Calling driver callback before creating the binary file under
+>   crashdd sysfs.
+> - Changed binary dump file permission from S_IRUSR to S_IRUGO.
+> - Changed module name from CRASH_DRIVER_DUMP to CRASH_DEVICE_DUMP.
+>
+> rfc v2:
+> - Collecting logs in 2nd kernel instead of during kernel panic.
+>   Suggested by Eric Biederman <ebiederm@xmission.com>.
+> - Added new crashdd module that exports /proc/crashdd/ containing
+>   driver's registered hardware/firmware logs in patch 1.
+> - Replaced the API to allow drivers to register their hardware/firmware
+>   log collect routine in crash recovery kernel in patch 1.
+> - Updated patch 2 to use the new API in patch 1.
+>
+>
+> Rahul Lakkireddy (2):
+>   fs/crashdd: add API to collect hardware dump in second kernel
+>   cxgb4: collect hardware dump in second kernel
+>
+>  Documentation/ABI/testing/sysfs-kernel-crashdd   |  34 ++++
+>  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |   4 +
+>  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c |  25 +++
+>  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |   3 +
+>  drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |  12 ++
+>  fs/Kconfig                                       |   1 +
+>  fs/Makefile                                      |   1 +
+>  fs/crashdd/Kconfig                               |  10 +
+>  fs/crashdd/Makefile                              |   3 +
+>  fs/crashdd/crashdd.c                             | 233 +++++++++++++++++++++++
+>  fs/crashdd/crashdd_internal.h                    |  24 +++
+>  include/linux/crashdd.h                          |  24 +++
+>  12 files changed, 374 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-kernel-crashdd
+>  create mode 100644 fs/crashdd/Kconfig
+>  create mode 100644 fs/crashdd/Makefile
+>  create mode 100644 fs/crashdd/crashdd.c
+>  create mode 100644 fs/crashdd/crashdd_internal.h
+>  create mode 100644 include/linux/crashdd.h
