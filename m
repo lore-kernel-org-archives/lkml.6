@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753348AbeCXUO3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 16:14:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36930 "EHLO mail.kernel.org"
+        id S1753299AbeCXUPU (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 16:15:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753038AbeCXUDW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:03:22 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E902178B
+        id S1752914AbeCXUDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 16:03:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4097521839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -17,9 +17,9 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
         Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 08/44] perf annotate: Move nr_events from annotate_browser to annotation struct
-Date: Sat, 24 Mar 2018 17:01:35 -0300
-Message-Id: <20180324200211.21326-9-acme@kernel.org>
+Subject: [PATCH 03/44] perf annotate: Move cycles/IPC formatting width constants outside TUI
+Date: Sat, 24 Mar 2018 17:01:30 -0300
+Message-Id: <20180324200211.21326-4-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180324200211.21326-1-acme@kernel.org>
 References: <20180324200211.21326-1-acme@kernel.org>
@@ -29,8 +29,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Paving the way to move more stuff out of TUI and into the generic
-annotation library.
+These will be used in --stdio2 so lets move it first to reduce noise in
+the following patches.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -39,74 +39,84 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-8vqax6wgfqohelot8j8zsfvs@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-fisud7pcak3prk7uwsvs3g2e@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/annotate.c | 11 ++++++-----
- tools/perf/util/annotate.h        |  1 +
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ tools/perf/ui/browsers/annotate.c | 19 ++++++++-----------
+ tools/perf/util/annotate.h        |  3 +++
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 353edff3fdbb..8a110765b328 100644
+index 69ec968ac0be..ca3d99c1e4d9 100644
 --- a/tools/perf/ui/browsers/annotate.c
 +++ b/tools/perf/ui/browsers/annotate.c
-@@ -41,7 +41,6 @@ struct annotate_browser {
- 	struct rb_node		   *curr_hot;
- 	struct annotation_line	   *selection;
- 	struct arch		   *arch;
--	int			    nr_events;
- 	u64			    start;
- 	int			    nr_asm_entries;
- 	int			    nr_entries;
-@@ -97,7 +96,9 @@ static int annotate_browser__set_jumps_percent_color(struct annotate_browser *br
+@@ -22,9 +22,6 @@ struct disasm_line_samples {
+ 	struct sym_hist_entry he;
+ };
  
- static int annotate_browser__pcnt_width(struct annotate_browser *ab)
+-#define IPC_WIDTH 6
+-#define CYCLES_WIDTH 6
+-
+ struct browser_line {
+ 	u32	idx;
+ 	int	idx_asm;
+@@ -107,7 +104,7 @@ static int annotate_browser__pcnt_width(struct annotate_browser *ab)
+ 
+ static int annotate_browser__cycles_width(struct annotate_browser *ab)
  {
--	return (annotate_browser__opts.show_total_period ? 12 : 7) * ab->nr_events;
-+	struct map_symbol *ms = ab->b.priv;
-+	struct annotation *notes = symbol__annotation(ms->sym);
-+	return (annotate_browser__opts.show_total_period ? 12 : 7) * notes->nr_events;
+-	return ab->have_cycles ? IPC_WIDTH + CYCLES_WIDTH : 0;
++	return ab->have_cycles ? ANNOTATION__IPC_WIDTH + ANNOTATION__CYCLES_WIDTH : 0;
  }
  
  static void disasm_line__write(struct disasm_line *dl, struct ui_browser *browser,
-@@ -145,7 +146,7 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
- 	char bf[256];
- 	bool show_title = false;
- 
--	for (i = 0; i < ab->nr_events; i++) {
-+	for (i = 0; i < notes->nr_events; i++) {
- 		if (al->samples[i].percent > percent_max)
- 			percent_max = al->samples[i].percent;
+@@ -194,19 +191,19 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
  	}
-@@ -159,7 +160,7 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
+ 	if (ab->have_cycles) {
+ 		if (al->ipc)
+-			ui_browser__printf(browser, "%*.2f ", IPC_WIDTH - 1, al->ipc);
++			ui_browser__printf(browser, "%*.2f ", ANNOTATION__IPC_WIDTH - 1, al->ipc);
+ 		else if (!show_title)
+-			ui_browser__write_nstring(browser, " ", IPC_WIDTH);
++			ui_browser__write_nstring(browser, " ", ANNOTATION__IPC_WIDTH);
+ 		else
+-			ui_browser__printf(browser, "%*s ", IPC_WIDTH - 1, "IPC");
++			ui_browser__printf(browser, "%*s ", ANNOTATION__IPC_WIDTH - 1, "IPC");
+ 
+ 		if (al->cycles)
+ 			ui_browser__printf(browser, "%*" PRIu64 " ",
+-					   CYCLES_WIDTH - 1, al->cycles);
++					   ANNOTATION__CYCLES_WIDTH - 1, al->cycles);
+ 		else if (!show_title)
+-			ui_browser__write_nstring(browser, " ", CYCLES_WIDTH);
++			ui_browser__write_nstring(browser, " ", ANNOTATION__CYCLES_WIDTH);
+ 		else
+-			ui_browser__printf(browser, "%*s ", CYCLES_WIDTH - 1, "Cycle");
++			ui_browser__printf(browser, "%*s ", ANNOTATION__CYCLES_WIDTH - 1, "Cycle");
  	}
  
- 	if (al->offset != -1 && percent_max != 0.0) {
--		for (i = 0; i < ab->nr_events; i++) {
-+		for (i = 0; i < notes->nr_events; i++) {
- 			ui_browser__set_percent_color(browser,
- 						al->samples[i].percent,
- 						current_entry);
-@@ -1099,7 +1100,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 	browser.addr_width = browser.target_width = browser.min_addr_width = hex_width(size);
- 	browser.max_addr_width = hex_width(sym->end);
- 	browser.jumps_width = width_jumps(browser.max_jump_sources);
--	browser.nr_events = nr_pcnt;
-+	notes->nr_events = nr_pcnt;
- 	browser.b.nr_entries = browser.nr_entries;
- 	browser.b.entries = &notes->src->source,
- 	browser.b.width += 18; /* Percentage */
+ 	SLsmg_write_char(' ');
+@@ -359,7 +356,7 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
+ 	}
+ 
+ 	if (ab->have_cycles)
+-		width = IPC_WIDTH + CYCLES_WIDTH;
++		width = ANNOTATION__IPC_WIDTH + ANNOTATION__CYCLES_WIDTH;
+ 
+ 	ui_browser__set_color(browser, HE_COLORSET_JUMP_ARROWS);
+ 	__ui_browser__line_arrow(browser,
 diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 21fa5d7cd9e0..5d15cdf22fc9 100644
+index e924033432a3..0407234b5157 100644
 --- a/tools/perf/util/annotate.h
 +++ b/tools/perf/util/annotate.h
-@@ -165,6 +165,7 @@ struct annotation {
- 	pthread_mutex_t		lock;
- 	u64			max_coverage;
- 	struct annotation_line	**offsets;
-+	int			nr_events;
- 	bool			have_cycles;
- 	struct annotated_source *src;
- };
+@@ -58,6 +58,9 @@ bool ins__is_lock(const struct ins *ins);
+ int ins__scnprintf(struct ins *ins, char *bf, size_t size, struct ins_operands *ops);
+ bool ins__is_fused(struct arch *arch, const char *ins1, const char *ins2);
+ 
++#define ANNOTATION__IPC_WIDTH 6
++#define ANNOTATION__CYCLES_WIDTH 6
++
+ struct annotation_options {
+ 	bool hide_src_code,
+ 	     use_offset,
 -- 
 2.14.3
