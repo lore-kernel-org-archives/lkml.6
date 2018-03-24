@@ -1,65 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751962AbeCXAXV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 20:23:21 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:46342 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeCXAXT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 20:23:19 -0400
-Subject: Re: [PATCH][next] apparmor: fix error returns checks by making size a
- ssize_t
-To: Colin King <colin.king@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180323233422.7856-1-colin.king@canonical.com>
-From: John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-Message-ID: <e0117644-3bed-5374-6697-3fa2734b379d@canonical.com>
-Date: Fri, 23 Mar 2018 17:23:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180323233422.7856-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1751993AbeCXA0n (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 20:26:43 -0400
+Received: from mail.CARNet.hr ([161.53.123.6]:52578 "EHLO mail.carnet.hr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751632AbeCXA0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 20:26:43 -0400
+From: Valentin Vidic <Valentin.Vidic@CARNet.hr>
+To: Stefani Seibold <stefani@seibold.net>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Jiri Kosina <jkosina@suse.cz>, Sean Young <sean@mess.org>,
+        linux-kernel@vger.kernel.org,
+        Valentin Vidic <Valentin.Vidic@CARNet.hr>
+Date: Sat, 24 Mar 2018 01:26:30 +0100
+Message-Id: <20180324002630.13046-1-Valentin.Vidic@CARNet.hr>
+X-Mailer: git-send-email 2.16.2
+X-SA-Exim-Connect-IP: 161.53.12.131
+Subject: [PATCH] kfifo: fix comment
+X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/2018 04:34 PM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently variable size is a unsigned size_t, hence comparisons to
-> see if it is less than zero (for error checking) will always be
-> false.  Fix this by making size a ssize_t
-> 
-> Detected by CoverityScan, CID#1466080 ("Unsigned compared against 0")
-> 
-> Fixes: 8e51f9087f40 ("apparmor: Add support for attaching profiles via xattr, presence and value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
+Cleanup unusual formatting in the note about locking.
 
-and pulled into apparmor-next
+Signed-off-by: Valentin Vidic <Valentin.Vidic@CARNet.hr>
+---
+ include/linux/kfifo.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> ---
->  security/apparmor/domain.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 57cc892e05a2..590b7e8cd21c 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -314,7 +314,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
->  			   struct aa_profile *profile, unsigned int state)
->  {
->  	int i;
-> -	size_t size;
-> +	ssize_t size;
->  	struct dentry *d;
->  	char *value = NULL;
->  	int value_size = 0, ret = profile->xattr_count;
-> 
+diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
+index e251533a5939..89fc8dc7bf38 100644
+--- a/include/linux/kfifo.h
++++ b/include/linux/kfifo.h
+@@ -41,11 +41,11 @@
+  */
+ 
+ /*
+- * Note about locking : There is no locking required until only * one reader
+- * and one writer is using the fifo and no kfifo_reset() will be * called
+- *  kfifo_reset_out() can be safely used, until it will be only called
++ * Note about locking: There is no locking required until only one reader
++ * and one writer is using the fifo and no kfifo_reset() will be called.
++ * kfifo_reset_out() can be safely used, until it will be only called
+  * in the reader thread.
+- *  For multiple writer and one reader there is only a need to lock the writer.
++ * For multiple writer and one reader there is only a need to lock the writer.
+  * And vice versa for only one writer and multiple reader there is only a need
+  * to lock the reader.
+  */
+-- 
+2.16.2
