@@ -1,49 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751798AbeCXC7v (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 22:59:51 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:35377 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751288AbeCXC7u (ORCPT
+        id S1751894AbeCXC7x (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 22:59:53 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:40739 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751531AbeCXC7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 22:59:50 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0T--L1Xh_1521860387;
+        Fri, 23 Mar 2018 22:59:51 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R281e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0T--Ioa8_1521860388;
 From: Jia Zhang <zhang.jia@linux.alibaba.com>
 To: jeyu@kernel.org
 Cc: linux-kernel@vger.kernel.org, zhang.jia@linux.alibaba.com
-Subject: [PATCH v3 0/3][RESEND] modsign enhancement
-Date: Sat, 24 Mar 2018 10:59:46 +0800
-Message-Id: <1521860389-19262-1-git-send-email-zhang.jia@linux.alibaba.com>
+Subject: [PATCH 2/3] module: Create the entry point initialize_module()
+Date: Sat, 24 Mar 2018 10:59:48 +0800
+Message-Id: <1521860389-19262-3-git-send-email-zhang.jia@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1521860389-19262-1-git-send-email-zhang.jia@linux.alibaba.com>
+References: <1521860389-19262-1-git-send-email-zhang.jia@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series allows to disable module validity enforcement
-in runtime through the control switch located in securityfs.
+This entry point currently includes the procfs initialization,
+and will include a securityfs initialization.
 
-In order to keep /sys/module/module/parameters/sig_enforce simple,
-the disablement switch is located at
-/sys/kernel/security/modsign/disable_enforce.
+Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+---
+ kernel/module.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-Assuming CONFIG_MODULE_SIG_FORCE=n, here are the instructions to
-test this control switch.
-
-# cat /sys/module/module/parameters/sig_enforce
-N
-# echo 1 > /sys/module/module/parameters/sig_enforce
-# cat /sys/module/module/parameters/sig_enforce
-Y
-# echo -n 0 > no_sig_enforce
-# openssl smime -sign -nocerts -noattr -binary -in no_sig_enforce \
-    -inkey <system_trusted_key> -signer <cert> -outform der \
-    -out /sys/kernel/security/modsign/disable_enforce
-# cat /sys/module/module/parameters/sig_enforce
-N
-
-Changelog:
-v3:
-- The control switch now doesn't support showing the status of sig_enforce.
-
-v2:
-- Support to disable validity enforcement in runtime.
+diff --git a/kernel/module.c b/kernel/module.c
+index 003d0ab..79825ea 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -4243,7 +4243,11 @@ static int __init proc_modules_init(void)
+ 	proc_create("modules", 0, NULL, &proc_modules_operations);
+ 	return 0;
+ }
+-module_init(proc_modules_init);
++#else	/* CONFIG_PROC_FS */
++static int __init proc_modules_init(void)
++{
++        return 0;
++}
+ #endif
+ 
+ /* Given an address, look for it in the module exception tables. */
+@@ -4388,3 +4392,11 @@ void module_layout(struct module *mod,
+ }
+ EXPORT_SYMBOL(module_layout);
+ #endif
++
++static int __init initialize_module(void)
++{
++	proc_modules_init();
++
++	return 0;
++}
++module_init(initialize_module);
+-- 
+1.8.3.1
