@@ -1,72 +1,49 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1603377-1521961821-5-8440808060802942862
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES encaro, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii', plain='us-ascii', plain='us-ascii'
-X-Attached: ADE7878-ABI-Table 1.csv
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521961820; b=hwOXW74tKeAmpQrguOrLVIBB1yJ4/aALJNrgA00DHesEKyq
-    Y46ubx1PYuwEP+QhlJaJwdMfzinh5/Ptm7Q6l1M3nI9cc5ZR9r+hBhDbKHwRgqjV
-    advl61hfrvWoE7Ur1QoQ/RITXid17iKL/pLv2rTA3OABhlyoPxcWY9H0Q3U0tyQn
-    9LKFZvFiPWbW8IYXjpyct/IVRaizXJjdmA8pUw71CYfnN+orhTMKj5V56HA35NRm
-    O7uBkY48IDYyStJ7UKm0zDFUOcXlum7mUeaavBMDzFx7m5eYOYHC1K/F5Mass1kK
-    4odINvl2JbkZfFxOtDgpgEhsGgbe3Kh8shEDwPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:message-id:content-type:mime-version
-    :subject:date:in-reply-to:to:references:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:sender; s=
-    arctest; t=1521961820; bh=PNlHznbgNBePkHF66dv8Kq+Bom20IVUjBDzOgt
-    jfzzQ=; b=VVGWnSUwqJq1DUVWja+TD9FA9rFDlq2ZfP/pmNfXRB5cEk+GW+hci2
-    2lS3BIoO7mlyNtLq2fphKE2V9fs8ShCPrLQ+no3HXz3gmTMdBbDwjajjVOTs4USC
-    yhO0wCaB5ZhxfpkLpAtNw/qd/QDnwfpPXZhbdti02NpbvPCqHxj19Cp+mQl0E187
-    cblRY4aQAeiKpOGUgHkIqklg14jJD9Ybpajp0GOR60c9F4OknOAOo4f7Czd5suWL
-    troYyWVD8QSUvI8uV3yQpblK7IsFSficYIu7h0K3fsRlIOJHQl94bfmsqEGPXVI4
-    5ezvefUgvb7gS5oo1p+OwH+ynuUn6JFw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=b/jZ+BwG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sjV4Udov;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=b/jZ+BwG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sjV4Udov;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AG47ELv3p3iZLFTgIGuwCgDHYuYi60aVpOswXyW3JiL3BULY8LWpO4mwyv36vRogfO1KeELrbsjiHw==
+Return-Path: <john3909@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1521933502; cv=none;
+        d=google.com; s=arc-20160816;
+        b=dqZCapgueKjqpGP1vZEQG/OzfLzrkg69mU6l85R6GMgWhaN89SfluVsQOuMr+2b0ic
+         hPNZQW5+YUjWWZAJrKoStph3BAGv7sKwpkKvNjH6jhki7lbs+a16Ok/N+yPv8U3s3WPk
+         nBkg2IHK+LhzB/HQMegMAFoqRbouW3JBT7Tzdbb3THh9HNW7miKl1qmf/4b1bsSsLzJd
+         c+t+4U5tuTAPA1qe5HTZiWD2uw2MPgDj6lLggTeP3B8ZXUYk+c8RGvFREtNWP+89kgvu
+         BiPCqruHx88PKRaIaY7wPBbVecLfO24saSEg44zhJC+V4JvZbEI3iqgz3jBNf2mFj1Gt
+         +4pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:dkim-signature:arc-authentication-results;
+        bh=pDOTnxHinUar1KFgRhcUAjZ58c6fZIEFLnvM4n9KnUQ=;
+        b=Nux8noApSa4ptqMDxlzP79gHd9ObfwM5yKVG4PY7KVBOZ85x/dtJWNzNMjF+ISuLrm
+         OgDKZDbi16xBFyKZdxTOykCOn9Zpk6lsfblzeUQ5pDEETzyxRLZaXuY32cVJdngtiY5s
+         PrUDZTZRzgCyNgqY2ozgrVYGiLwCoot1o2aIpL00+zDqg4T1EawdETzGMX8QdhaY1QfY
+         yn6T4KhL8BVaO66oi99OHRstsp9MZ5ZxcR5b73hT9p8epSbZWs0ONT3m9leVR0ajsEgf
+         NqCsuzvaWYjOvWLpMgMu/sgUmjPCqAUtlldwiy+4ui5X0G6wbFyWqpVfPy7SSDs4dSoE
+         cDyQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HHQqidL/;
+       spf=pass (google.com: domain of john3909@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=john3909@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HHQqidL/;
+       spf=pass (google.com: domain of john3909@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=john3909@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AG47ELsT5joVWPlqDw0ryLx6DlPU01wIfwxCs1MK7m61J/oYlFmos5pFoY62x73OYFrH2Ouh74lyGg==
 From: John Syne <john3909@gmail.com>
-Message-Id: <4E6473D1-1B27-4FF2-9BAD-36E8543C91DD@gmail.com>
-Content-Type: multipart/mixed;
- boundary="Apple-Mail=_FC117329-CF3C-46DF-B54B-D04F6864601C"
+Message-Id: <F9946A8D-5D19-4D2E-8CED-665E645D7B1A@gmail.com>
+Content-Type: multipart/alternative;
+	boundary="Apple-Mail=_A00996E7-8CF4-4A1E-B8C4-BAFECABA1AF0"
 Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
 Subject: Re: meter ABI: (was Re: [PATCH v2 1/3] staging:iio:meter: Replaces
  IIO_DEV_ATTR_CH_OFF by IIO_DEVICE_ATTR)
-Date: Sun, 25 Mar 2018 00:10:03 -0700
+Date: Sat, 24 Mar 2018 16:18:15 -0700
 In-Reply-To: <20180324151829.7d03ad15@archlinux>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ devel@driverdev.osuosl.org,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ linux-iio@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+ Hartmut Knaack <knaack.h@gmx.de>,
+ daniel.baluta@nxp.com
 To: Jonathan Cameron <jic23@kernel.org>
 References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <3af0e5a795059a8418cf08ff29f05f8d5e00da9b.1520382753.git.rodrigosiqueiramelo@gmail.com>
@@ -80,29 +57,14 @@ References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <F6FE75D3-5289-4675-9345-F46CABEFA99E@gmail.com>
  <20180324151829.7d03ad15@archlinux>
 X-Mailer: Apple Mail (2.3445.5.20)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, linux-iio@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Hartmut Knaack <knaack.h@gmx.de>,
- daniel.baluta@nxp.com
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1595278152164006674?=
+X-GMAIL-MSGID: =?utf-8?q?1595862944735921062?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
---Apple-Mail=_FC117329-CF3C-46DF-B54B-D04F6864601C
+--Apple-Mail=_A00996E7-8CF4-4A1E-B8C4-BAFECABA1AF0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain;
 	charset=us-ascii
@@ -341,7 +303,892 @@ LPOILVL	LPOILVL	DT				=09
 CONFIG2	CONFIG2	DT				=09
 
 
---Apple-Mail=_FC117329-CF3C-46DF-B54B-D04F6864601C
+
+Regards,
+John
+
+
+
+
+
+
+--Apple-Mail=_A00996E7-8CF4-4A1E-B8C4-BAFECABA1AF0
+Content-Type: multipart/mixed;
+	boundary="Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04"
+
+
+--Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html;
+	charset=us-ascii
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; =
+charset=3Dus-ascii"></head><body style=3D"word-wrap: break-word; =
+-webkit-nbsp-mode: space; line-break: after-white-space;" class=3D""><div =
+class=3D"">Hi Jonathan,</div><div class=3D""><br class=3D""></div><div =
+class=3D"">I have attached a CSV version of this table below. Hopefully =
+that will make things easier for you.</div><div class=3D""><br =
+class=3D""></div><div class=3D"">Register<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>IIO Attribute<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>Device =
+Tree or Code<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>Direction<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>type<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>Index<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>Modifier<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>Info Mask</div><div class=3D"">AIGAIN<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">	</span>in_current0_phaseA_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">AVGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_voltage0_phaseA_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">BIGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_current0_phaseB_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">BVGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_voltage0_phaseB_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">CIGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_current0_phaseC_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">CVGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_voltage0_phaseC_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">NIGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_current0_neutral_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>neutral<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">AIRMSOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_current0_phaseA_rms_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">AVRMSOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_voltage0_phaseA_rms_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">BIRMSOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_current0_phaseB_rms_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">BVRMSOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_voltage0_phaseB_rms_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">CIRMSOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_current0_phaseC_rms_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">CVRMSOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_voltage0_phaseC_rms_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">NIRMSOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_current0_neutral_rms_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>neutral<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">AVAGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerapparent0_phaseA_scale<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerapparent<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseA<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">BVAGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerapparent0_phaseB_scale<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerapparent<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseB<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">CVAGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerapparent0_phaseC_scale<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerapparent<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseC<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">AWGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_power0_phaseA_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">AWATTOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_power0_phaseA_offset<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">BWGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_power0_phaseB_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">BWATTOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_power0_phaseB_offset<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">CWGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_power0_PhaseC_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">CWATTOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_power0_phaseC_offset<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">AVARGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseA_scale<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseA<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">AVAROS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseA_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseA<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">BVARGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseB_scale<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseB<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">BVAROS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseB_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseB<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">CVARGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseC_scale<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseC<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">CVAROS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseC_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseC<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">AFWGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power0_phaseA_fundamental_scale<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA_fundamental<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>scale</div><div =
+class=3D"">AFWATTOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power0_phaseA_fundamental_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA_fundamental<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>offset</div><div =
+class=3D"">BFWGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power0_phaseB_fundamental_scale<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB_fundamental<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>scale</div><div =
+class=3D"">BFWATTOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power0_phaseB_fundamental_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB_fundamental<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>offset</div><div =
+class=3D"">CFWGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power0_phaseC_fundamental_scale<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC_fundamental<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>scale</div><div =
+class=3D"">CFWATTOS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power0_phaseC_fundamental_offset<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>power<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC_fundamental<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>offset</div><div =
+class=3D"">AFVARGAIN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseA_fundamental_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseA_fundamental<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">AFVAROS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseA_fundamental_offset<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseA_fundamental<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">BFVARGAIN<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseB_fundamental_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseB_fundamental<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">BFVAROS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseB_fundamental_offset<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseB_fundamental<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">CFVARGAIN<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseC_fundamental_scale<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseC_fundamental<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>scale</div><div class=3D"">CFVAROS<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseC_fundamental_offset<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>powerreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseC_fundamental<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>offset</div><div class=3D"">VATHR1<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>VATHR1<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">VATHR0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>VATHR0<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">WTHR1<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>WTHR1<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">	</span>DT<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">					=
+</span></div><div class=3D"">WTHR0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>WTHR0<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">	</span>DT<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">					=
+</span></div><div class=3D"">VARTHR1<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>VARTHR1<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">VARTHR0<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">	</span>VARTHR0<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">Reserved<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>Reserved<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+					</span></div><div =
+class=3D"">VANOLOAD<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>VANOLOAD<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">APNOLOAD<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>APNOLOAD<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">VLEVEL<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>VLEVEL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">DICOEFF<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DICOEFF<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">HPFDIS<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>HPFDIS<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">ISUMLVL<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>ISUMLVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+		</span></div><div class=3D"">ISUM<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_current0_phaseA&amp;phaseB&amp;phaseC_sum<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA&amp;phaseB&amp;phaseC<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>sum</div><div class=3D"">AIRMS<span=
+ class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_current0_phaseA_rms_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>raw</div><div class=3D"">AVRMS<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_voltage0_phaseA_rms_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>raw</div><div class=3D"">BIRMS<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_current0_phaseB_rms_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>raw</div><div class=3D"">BVRMS<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_voltage0_phaseB_rms_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>raw</div><div class=3D"">CIRMS<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_current0_phaseC_rms_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>raw</div><div class=3D"">CVRMS<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_voltage0_phaseC_rms_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC_rms<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>raw</div><div class=3D"">NIRMS<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_current0_neutral_rms_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>neutral_rms<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>raw</div><div class=3D"">Run<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>Code<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+		</span></div><div class=3D"">AWATTHR<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_energy0_phaseA_raw_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">BWATTHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_energy0_phaseB_raw_raw<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">CWATTHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_energy0_phaseC_raw_raw<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">AFWATTHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energy0_phaseA_fundamental_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseA_fundamental<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>raw</div><div =
+class=3D"">BFWATTHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energy0_phaseB_fundamental_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseB_fundamental<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>raw</div><div =
+class=3D"">CFWATTHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energy0_phaseC_fundamental_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energy<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>phaseC_fundamental<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>raw</div><div =
+class=3D"">AVARHR<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>in_energyreactive0_phaseA_raw<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energyreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseA<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">BVARHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energyreactive0_phaseB_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energyreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseB<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">CVARHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energyreactive0_phaseC_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energyreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseC<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">AFVARHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energyreactive0_phaseA_fundamental_raw<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energyreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseA_fundamental<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">BFVARHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energyreactive0_phaseB_fundamental_raw<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energyreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseB_fundamental<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">CFVARHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energyreactive0_phaseC_fundamental_raw<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energyreactive<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseC_fundamental<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">AVAHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energyapparent0_phaseA_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energyapparent<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseA<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">BVAHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energyapparent0_phaseB_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energyapparent<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseB<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">CVAHR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_energyapparent0_phaseC_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>energyapparent<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>phaseC<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">IPEAK<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_current0_peak<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>peak</div><div class=3D"">VPEAK<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_voltage0_peak<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>voltage<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>peak</div><div class=3D"">STATUS0<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>event<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">STATUS1<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">		</span>event<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">AIMAV<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_current0_phaseA_mav_raw<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>phaseA_mav<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>raw</div><div class=3D"">BIMAV<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_current0_phaseB_mav_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>phaseB_mav<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>raw</div><div class=3D"">CIMAV<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_current0_phaseC_mav_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>current<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>phaseC_mav<span class=3D"Apple-tab-span" style=3D"white-space:pre">=
+	</span>raw</div><div class=3D"">OILVL<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>OILVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">OVLVL<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>OVLVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">SAGLVL<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>SAGLVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">MASK0<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_mask0_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>mask<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>0<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>raw</div><div class=3D"">MASK1<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>in_mask1_raw<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>in<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>mask<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>1<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>raw</div><div class=3D"">IAWV<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_current0_phaseA_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">IBWV<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_current0_phaseB_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">ICWV<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_current0_phaseC_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">INWV<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_current0_phaseN_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">VAWV<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_voltage0_phaseA_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">VBWV<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_voltage0_phaseB_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">VCWV<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_voltage0_phaseC_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">AWATT<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power0_phaseA_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">BWATT<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power0_phaseB_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">CWATT<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_power0_phaseC_instantaneous<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">						=
+</span></div><div class=3D"">AVAR<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseA_instantaneous<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+		</span></div><div class=3D"">BVAR<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseB_instantaneous<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+		</span></div><div class=3D"">CVAR<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_powerreactive0_phaseC_instantaneous<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+		</span></div><div class=3D"">AVA<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_powerapparent0_phaseA_instantaneous<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+		</span></div><div class=3D"">BVA<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_powerapparent0_phaseB_instantaneous<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+		</span></div><div class=3D"">CVA<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_powerappatent0_phaseC_instantaneous<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+		</span></div><div class=3D"">CHECKSUM<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>CHECKSUM<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>Code<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">VNOM<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>VNOM<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">PHSTATUS<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>event<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">ANGLE0<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>ANGLE0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">ANGLE1<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>ANGLE1<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">ANGLE2<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>ANGLE2<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">Reserved<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+			</span></div><div class=3D"">PERIOD<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_period_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>period<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+	</span>raw</div><div class=3D"">PHNOLOAD<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>event<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">LINECYC<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_count0_cycle_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>count<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>0<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>cycle<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>raw</div><div class=3D"">ZXTOUT<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>ZXTOUT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">COMPMODE<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>COMPMODE<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">Gain<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>Gain<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">CFMODE<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>CFMODE<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">CF1DEN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>CF1DEN<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">CF2DEN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>CF2DEN<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">CF3DEN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>CF3DEN<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">APHCAL<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>APHCAL<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">BPHCAL<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>BPHCAL<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">CPHCAL<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>CPHCAL<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">PHSIGN<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>PHSIGN<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">CONFIG<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>CONFIG<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">MMODE<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>MMODE<span class=3D"Apple-tab-span"=
+ style=3D"white-space:pre">	</span>DT<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">					=
+</span></div><div class=3D"">ACCMODE<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">	</span>ACCMODE<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	</span>DT<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">				=
+	</span></div><div class=3D"">LCYCMODE<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>LCYCMODE<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">PEAKCYC<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>PEAKCYC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">SAGCYC<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>SAGCYC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">CFCYC<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>CFCYC<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">HSDC_CFG<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>HSDC_CFG<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">Version<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>in_version_raw<span class=3D"Apple-tab-span" =
+style=3D"white-space:pre">		</span>in<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>version<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+	</span>raw</div><div class=3D"">Reserved<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">LPOILVL<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>LPOILVL<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D"">CONFIG2<span =
+class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>CONFIG2<span class=3D"Apple-tab-span" style=3D"white-space:pre">	=
+</span>DT<span class=3D"Apple-tab-span" style=3D"white-space:pre">		=
+			</span></div><div class=3D""><br =
+class=3D"webkit-block-placeholder"></div><div =
+class=3D""></div></body></html>=
+
+--Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04
 Content-Disposition: attachment;
 	filename="ADE7878-ABI-Table 1.csv"
 Content-Type: text/csv;
@@ -538,30 +1385,36 @@ Reserved,,DT,,,,,=0D
 LPOILVL,LPOILVL,DT,,,,,=0D
 CONFIG2,CONFIG2,DT,,,,,=
 
---Apple-Mail=_FC117329-CF3C-46DF-B54B-D04F6864601C
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
+--Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html;
 	charset=us-ascii
 
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; =
+charset=3Dus-ascii"></head><body style=3D"word-wrap: break-word; =
+-webkit-nbsp-mode: space; line-break: after-white-space;" class=3D""><div =
+class=3D""></div><div class=3D"">
+<div style=3D"color: rgb(0, 0, 0); font-family: Helvetica; font-size: =
+12px; font-style: normal; font-variant-caps: normal; font-weight: =
+normal; letter-spacing: normal; orphans: auto; text-align: start; =
+text-indent: 0px; text-transform: none; white-space: normal; widows: =
+auto; word-spacing: 0px; -webkit-text-size-adjust: auto; =
+-webkit-text-stroke-width: 0px; word-wrap: break-word; =
+-webkit-nbsp-mode: space; line-break: after-white-space;" class=3D""><div =
+class=3D""><br class=3D"Apple-interchange-newline">Regards,</div><div =
+class=3D"">John</div><div class=3D""><br class=3D""></div><div =
+class=3D""><br class=3D""></div></div><br =
+class=3D"Apple-interchange-newline" style=3D"color: rgb(0, 0, 0); =
+font-family: Helvetica; font-size: 12px; font-style: normal; =
+font-variant-caps: normal; font-weight: normal; letter-spacing: normal; =
+orphans: auto; text-align: start; text-indent: 0px; text-transform: =
+none; white-space: normal; widows: auto; word-spacing: 0px; =
+-webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px;"><br =
+class=3D"Apple-interchange-newline">
 
+</div>
+<div><br class=3D""></div></body></html>=
 
-Regards,
-John
+--Apple-Mail=_C4D1D58A-44E6-499C-9DB8-004A86417E04--
 
-
-
-
-
-
---Apple-Mail=_FC117329-CF3C-46DF-B54B-D04F6864601C
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---Apple-Mail=_FC117329-CF3C-46DF-B54B-D04F6864601C--
+--Apple-Mail=_A00996E7-8CF4-4A1E-B8C4-BAFECABA1AF0--
