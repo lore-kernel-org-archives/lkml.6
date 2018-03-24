@@ -1,98 +1,203 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752446AbeCXP2s (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 11:28:48 -0400
-Received: from mail-eopbgr660118.outbound.protection.outlook.com ([40.107.66.118]:18160
-        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752302AbeCXP2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 11:28:45 -0400
-From: "Stephen  Bates" <sbates@raithlin.com>
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-CC: Sinan Kaya <okaya@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Alex Williamson" <alex.williamson@redhat.com>
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-Thread-Topic: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-Thread-Index: AQHTujlZo8bTZRn+4ECdETRRU1rPhqPNgjSAgADeTICAABJggIAAD1YAgAAHVACAAAJxAIAACW8AgAAO3oCAAAopgIAACqIA//+kE4CAAG7lAIANjCGAgAIVYACAAAJeAIAAYfGAgABN7gA=
-Date: Sat, 24 Mar 2018 15:28:43 +0000
-Message-ID: <121026DC-40C7-4F4E-BE27-BDA652BDEB6A@raithlin.com>
-References: <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
- <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
- <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
- <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
- <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
- <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
- <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
- <C90AA66C-FFC6-4CCA-B959-7BBECA65509C@raithlin.com>
- <20180323215046.GC210003@bhelgaas-glaptop.roam.corp.google.com>
- <dc414fa5-1af9-0ba7-e12e-4cd9df313119@deltatee.com>
- <20180324034947.GE210003@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180324034947.GE210003@bhelgaas-glaptop.roam.corp.google.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.b.0.180311
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com;
-x-originating-ip: [70.65.224.121]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;YTOPR0101MB0762;7:WISGhpmlndfEXA1t9pwFskMLJxwHbXizS8yTx81gL1aHJ1I+oibY39OxGh1RVUdSmuu1GS1iUGS1rRsMraPxDZoykbRf3iZRWqsze1/nv0AexeqfPuZ6wRxdFQUHgG5kmDM0zIj49D+pJ36zTn+UdZSr8NoR9MDuUn17hzOJTXQCXlSJIqtVQQydfvkWbPaI4R/nTdQYsZE9uguk8rDcmAfeoYT5m08YRMthdvsoDgjHTgTIuDuSvnWrZVeQfsvO
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3010346b-1b94-4f84-e15c-08d5919bed66
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(3008032)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:YTOPR0101MB0762;
-x-ms-traffictypediagnostic: YTOPR0101MB0762:
-x-microsoft-antispam-prvs: <YTOPR0101MB07622B77D27601A5EAAF4DA7AAAF0@YTOPR0101MB0762.CANPRD01.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501327)(52105095)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(2016111802025)(6043046)(6072148)(201708071742011);SRVR:YTOPR0101MB0762;BCL:0;PCL:0;RULEID:;SRVR:YTOPR0101MB0762;
-x-forefront-prvs: 0621E7E436
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(39830400003)(396003)(376002)(346002)(199004)(189003)(86362001)(8676002)(5250100002)(316002)(81166006)(81156014)(105586002)(8936002)(99286004)(54906003)(2900100001)(110136005)(36756003)(6486002)(93886005)(229853002)(2616005)(6506007)(106356001)(58126008)(53936002)(6512007)(6436002)(186003)(26005)(6246003)(66066001)(82746002)(76176011)(68736007)(102836004)(4326008)(7416002)(2906002)(5660300001)(11346002)(305945005)(7736002)(6116002)(3280700002)(25786009)(3846002)(97736004)(33656002)(14454004)(478600001)(3660700001)(446003)(83716003);DIR:OUT;SFP:1102;SCL:1;SRVR:YTOPR0101MB0762;H:YTOPR0101MB2043.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-x-microsoft-antispam-message-info: rPTrF7RTE/aENh1h7q80bnr0h2veA6zR43TUn2pd1Pjn0hEt9sjzgaS9VTdTuKY9o2lKBRXsi/aADcd7YVYw+ei7rNzbrPYkPzmKUvHqok+MN+6Z7iE5LHyADtLpC+19nwKCxCM2cfwG6VCWSYVEqajoGBpvcSCtKcbv5/z4Ny1MnMyZ6ewJ74z63jfE4s6cy78PUamdcnKmYW/KwGOU2fHmBjX2HvkwJjT9Q1wu6NTc7po9Z3QvFCjpBSVzn6KAAyuCZyWNuRA2udWnjnGpTR8PVo0+EZc8L1nS8Fee2bauJzFMbbHFOiCNvroZMdAS3oU1m0UKuRjR7mvTcLG2og==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <40F4DE2D03BE0945B1840DC8069596E8@CANPRD01.PROD.OUTLOOK.COM>
+        id S1752270AbeCXP7N (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 11:59:13 -0400
+Received: from smtprelay0043.hostedemail.com ([216.40.44.43]:33905 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751907AbeCXP7M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 11:59:12 -0400
+X-Session-Marker: 7368656140736865616C6576792E636F6D
+X-Spam-Summary: 2,-10,0,,d41d8cd98f00b204,shea@shealevy.com,:::::::::::::,RULES_HIT:2:41:334:355:368:369:379:599:800:871:960:967:973:988:989:1000:1260:1263:1313:1314:1345:1359:1437:1516:1518:1535:1575:1605:1730:1747:1777:1792:2393:2525:2553:2559:2564:2682:2685:2692:2693:2859:2895:2903:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4049:4119:4250:4321:4362:4605:4860:5007:6117:6119:6238:6261:6506:6747:7281:7514:7875:7903:7909:8660:9010:9025:9036:9040:9388:10004:10049:10848:11026:11232:11473:11658:11914:12043:12291:12296:12379:12438:12555:12663:12683:12740:12776:12895:12926:12986:13148:13161:13229:13230:14096:14106:14107:21060:21063:21080:21433:21451:21627:21740:30003:30012:30054:30056:30060:30070:30089:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:no
+X-HE-Tag: rose11_15e71c6aede45
+X-Filterd-Recvd-Size: 8094
+From: Shea Levy <shea@shealevy.com>
+To: Zong Li <zongbox@gmail.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Zong Li <zong@andestech.com>,
+        greentime@andestech.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        albert@sifive.com, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+In-Reply-To: <CA+ZOyaiyz8OwG4txdEoYXOpzA3F7syxuOEoGaD=BatYwUfqG+Q@mail.gmail.com>
+References: <mhng-381d004e-2fbd-4012-9ccc-e845dd5396c0@palmer-si-x1c4> <87370pvdcm.fsf@xps13.shealevy.com> <CA+ZOyaiyz8OwG4txdEoYXOpzA3F7syxuOEoGaD=BatYwUfqG+Q@mail.gmail.com>
+Date: Sat, 24 Mar 2018 11:59:09 -0400
+Message-ID: <87zi2xtqgi.fsf@xps13.shealevy.com>
 MIME-Version: 1.0
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3010346b-1b94-4f84-e15c-08d5919bed66
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2018 15:28:43.0756
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTOPR0101MB0762
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2OFSrQ6004878
 
-> That would be very nice but many devices do not support the internal
-> route. 
+--=-=-=
+Content-Type: text/plain
 
-But Logan in the NVMe case we are discussing movement within a single function (i.e. from a NVMe namespace to a NVMe CMB on the same function). Bjorn is discussing movement between two functions (PFs or VFs) in the same PCIe EP. In the case of multi-function endpoints I think the standard requires those devices to support internal DMAs for transfers between those functions (but does not require it within a function).
+Hi Zong,
 
-So I think the summary is:
+Zong Li <zongbox@gmail.com> writes:
 
-1. There is no requirement for a single function to support internal DMAs but in the case of NVMe we do have a protocol specific way for a NVMe function to indicate it supports via the CMB BAR. Other protocols may also have such methods but I am not aware of them at this time.
+> 2018-03-24 20:59 GMT+08:00 Shea Levy <shea@shealevy.com>:
+>> Hi Palmer, Zong,
+>>
+>> Palmer Dabbelt <palmer@sifive.com> writes:
+>>
+>>> On Thu, 15 Mar 2018 01:50:40 PDT (-0700), zong@andestech.com wrote:
+>>>> These patches resolve the some issues of loadable module.
+>>>>   - symbol out of ranges
+>>>>   - unknown relocation types
+>>>>
+>>>> The reference of external variable and function symbols
+>>>> cannot exceed 32-bit offset ranges in kernel module.
+>>>> The module only can work on the 32-bit OS or the 64-bit
+>>>> OS with sv32 virtual addressing.
+>>>>
+>>>> These patches will generate the .got, .got.plt and
+>>>> .plt sections during loading module, let it can refer
+>>>> to the symbol which locate more than 32-bit offset.
+>>>> These sections depend on the relocation types:
+>>>>  - R_RISCV_GOT_HI20
+>>>>  - R_RISCV_CALL_PLT
+>>>>
+>>>> These patches also support more relocation types
+>>>>  - R_RISCV_CALL
+>>>>  - R_RISCV_HI20
+>>>>  - R_RISCV_LO12_I
+>>>>  - R_RISCV_LO12_S
+>>>>  - R_RISCV_RVC_BRANCH
+>>>>  - R_RISCV_RVC_JUMP
+>>>>  - R_RISCV_ALIGN
+>>>>  - R_RISCV_ADD32
+>>>>  - R_RISCV_SUB32
+>>>>
+>>>> This is the list of testing modules:
+>>>> # lsmod
+>>>> btrfs 7876158 0 - Live 0xffffffd00745d000
+>>>> ramoops 90806 0 - Live 0xffffffd0024b8000
+>>>> lzo 10554 0 - Live 0xffffffd002050000
+>>>> zstd_decompress 567575 1 btrfs, Live 0xffffffd00238b000
+>>>> zstd_compress 1543837 1 btrfs, Live 0xffffffd002211000
+>>>> zram 101300 0 - Live 0xffffffd0021b8000
+>>>> xxhash 62254 2 zstd_decompress,zstd_compress, Live 0xffffffd0020cf000
+>>>> xor 33246 1 btrfs, Live 0xffffffd002042000
+>>>> xfs 4395343 0 - Live 0xffffffd00399e000
+>>>> tun 252041 0 - Live 0xffffffd0038e0000
+>>>> test_user_copy 5265 0 - Live 0xffffffd003783000
+>>>> test_static_keys 19606 0 - Live 0xffffffd003717000
+>>>> test_static_key_base 7374 1 test_static_keys, Live 0xffffffd0036dc000
+>>>> test_printf 7804 0 [permanent], Live 0xffffffd00369c000
+>>>> test_module 1557 0 - Live 0xffffffd003646000
+>>>> test_kmod 49100 0 - Live 0xffffffd0035f2000
+>>>> test_bpf 1599301 0 - Live 0xffffffd003000000
+>>>> test_bitmap 4403 0 - Live 0xffffffd002dd8000
+>>>> reed_solomon 38866 1 ramoops, Live 0xffffffd002d86000
+>>>> raid6_pq 161872 1 btrfs, Live 0xffffffd002b9e000
+>>>> netdevsim 65401 0 - Live 0xffffffd002910000
+>>>>
+>>>> Signed-off-by: Zong Li <zong@andestech.com>
+>>>> ---
+>>>> Change in v2:
+>>>>  - Add compile option 'mno-relax' for build kernel module
+>>>>  - Just fail on ALIGN type, this is unexpected type with mno-relax.
+>>>>
+>>>> Zong Li (11):
+>>>>   RISC-V: Add sections of PLT and GOT for kernel module
+>>>>   RISC-V: Add section of GOT.PLT for kernel module
+>>>>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>>>>   RISC-V: Support CALL relocation type in kernel module
+>>>>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>>>>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>>>>   RISC-V: Support ALIGN relocation type in kernel module
+>>>>   RISC-V: Support ADD32 relocation type in kernel module
+>>>>   RISC-V: Support SUB32 relocation type in kernel module
+>>>>   RISC-V: Enable module support in defconfig
+>>>>   RISC-V: Add definition of relocation types
+>>>>
+>>>>  arch/riscv/Kconfig                  |   5 +
+>>>>  arch/riscv/Makefile                 |   5 +
+>>>>  arch/riscv/configs/defconfig        |   2 +
+>>>>  arch/riscv/include/asm/module.h     | 113 +++++++++++++++++++++++
+>>>>  arch/riscv/include/uapi/asm/elf.h   |   7 ++
+>>>>  arch/riscv/kernel/Makefile          |   1 +
+>>>>  arch/riscv/kernel/module-sections.c | 156 +++++++++++++++++++++++++++++++
+>>>>  arch/riscv/kernel/module.c          | 179 ++++++++++++++++++++++++++++++++++--
+>>>>  arch/riscv/kernel/module.lds        |   8 ++
+>>>>  9 files changed, 470 insertions(+), 6 deletions(-)
+>>>>  create mode 100644 arch/riscv/include/asm/module.h
+>>>>  create mode 100644 arch/riscv/kernel/module-sections.c
+>>>>  create mode 100644 arch/riscv/kernel/module.lds
+>>>
+>>> Thanks!  I've added this to our for-next branch, so it should start to get a
+>>> bit more testing soon.  I've had a bit of the flu and am therefor a bit out of
+>>> it, so I'll try to look closer before the next merge window.
+>>>
+>>
+>> I've updated my kernel to point to riscv-all, and now I'm getting:
+>>
+>> scsi_mod: target ffffffe000029a80 can not be addressed by the 32-bit offset from PC = 00000000fe3be867
+>>
+>> Any idea why this might be? My patchset had a patch [1] to ensure
+>> modules were loaded within a 32 bit offset of the kernel text, do we
+>> need to include that?
+>>
+>> Thanks,
+>> Shea
+>>
+>> [1] http://lists.infradead.org/pipermail/linux-riscv/2018-February/000083.html
+>>
+>>> _______________________________________________
+>>> linux-riscv mailing list
+>>> linux-riscv@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>
+> Hi Shea,
+>
+> I'm not sure what is the relocation type or program behavior on your situation.
+>
 
-2. For multi-function end-points I think it is a requirement that DMAs *between* functions are supported via an internal path but this can be over-ridden by ACS when supported in the EP.
+I'm building Palmer's riscv-all branch (with an unrelated initrd patch
+on top), I can attach kernel config if need be. I just tried to load the
+scsi_mod module.
 
-3. For multi-function end-points there is no requirement to support internal DMA within each individual function (i.e. a la point 1 but extended to each function in a MF device). 
+>
+> For the code generation, the following relocation types only allow the
+> target offset in the 32 bit range:
+> - RISCV_PCREL_HI20
+> - RISCV_HI20
+> - RISCV_CALL
+> - RISCV_CALL_PLT without enabling MODULES_SECTIONS
+>
+> In my view, we cannot limit the start address of kernel text is always
+> adjacent to the module region.
 
-Based on my review of the specification I concur with Bjorn that p2pdma between functions in a MF end-point should be assured to be supported via the standard. However if the p2pdma involves only a single function in a MF device then we can only support NVMe CMBs for now. Let's review and see what the options are for supporting this in the next respin.
+Why not? Other architectures do this (e.g. arm limits modules to within
+32MB of kernel text) and I had this use case working with the patch I
+referenced.
 
-Stephen
+I understand it would be desirable long-term to load modules in
+arbitrary locations, and that we can use indirections in the PLT to get
+there in principle, but in the mean time isn't being able to load
+modules at all better than being able to load them anywhere?
+
+Thanks,
+Shea
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE6ESKvwKkwnxgMLnaXAvWlX2G/icFAlq2dc0ACgkQXAvWlX2G
+/idq6RAAq9kvkkQaT3OD8QM8dTABczeOxJ4RQb9rHJ04jPeJUjU1L9ou7jdiTvoC
+a2qzunxMkbJ/KeFoOM8mdzG1dt9kYpbm0ffN3ynWnQa820XJKD5sshdm7jQeZXVE
+2+7jP7z8v33ILhyaekIOmQfrqHHmm5AhOjOcsfq2vVwBNjSD51ih0kDf6bNnFfHR
+q6WimaIDC7j8aTxeRvMK/YH+NpetVQVSQ7e9/+3rlO0MFGmCCLhswYxWyao84yGx
+DmQe83KkCxCUan7oA5kt4beTbGbJvO5cuegaaQMrzJKpMdVRJEVkPxYl/ryKUxHr
+ufHnyixi68ofEPzkVdc185dARokY29XLPk+piC3qcR9w5YKgpj2TfjaEm65/UbZB
+x7jAEnp4i7RAfPl+XdLl1T1LGN5wQ3y6etpoymJr0VyVy9SBNo1CAGHhhBQqhtki
+k6UJsqM7blJisWIr89Kd05L4bu2RS8jfn7xLCSGkHrBbAt2GhnrX8IXLq2XjNVmT
+3ZF6kxzzMiez3CVN/hRudTSF3dyrTbqca8a5M+2C1mUcaufiVbucFnogW0HoNDDZ
+A9zCFfRK/YlADrAHlbnbzhEtt8U99CifLN4NXAKgvObte31LQDF9+ir8LrI3ztjv
+T9WscDrdWJLXI4UzTTI4RWJgOnyQ3lABM1ykSKO1LipC/fJ1Fks=
+=SCuI
+-----END PGP SIGNATURE-----
+--=-=-=--
