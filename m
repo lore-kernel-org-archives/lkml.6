@@ -1,47 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752831AbeCXUAF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 16:00:05 -0400
-Received: from mail-ot0-f169.google.com ([74.125.82.169]:38836 "EHLO
-        mail-ot0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752736AbeCXUAD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:00:03 -0400
-X-Google-Smtp-Source: AG47ELsksQyOMXH1NLBxlxf4BEZDz2WDJkTqFefHwqXIS4t9HFRkrW7W8ZF0LNPgG95QDhnqNKwcj5P3zxlfbmgaBdE=
-MIME-Version: 1.0
-In-Reply-To: <53afbe8172fb1afd809ce9ba1afeda924b9ea705.1521794177.git.sean.wang@mediatek.com>
-References: <cover.1521794176.git.sean.wang@mediatek.com> <53afbe8172fb1afd809ce9ba1afeda924b9ea705.1521794177.git.sean.wang@mediatek.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sat, 24 Mar 2018 17:00:02 -0300
-Message-ID: <CAOMZO5DuVpcCrQYzoWfN=ZqXeTGC-U1FfwoDFxhQ8frno5-1GQ@mail.gmail.com>
-Subject: Re: [PATCH v1 11/16] rtc: mediatek: move the declaration into a
- globally visible header file
-To: sean.wang@mediatek.com
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Sebastian Reichel <sre@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        eddie.huang@mediatek.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM"
-        <linux-rtc@vger.kernel.org>,
-        linux-pm@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752906AbeCXUDB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 16:03:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36692 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752681AbeCXUC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 16:02:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB4D2183B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Martin Vuille <jpmv27@aim.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 01/44] perf unwind: Report error from dwfl_attach_state
+Date: Sat, 24 Mar 2018 17:01:28 -0300
+Message-Id: <20180324200211.21326-2-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180324200211.21326-1-acme@kernel.org>
+References: <20180324200211.21326-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 6:15 AM,  <sean.wang@mediatek.com> wrote:
+From: Martin Vuille <jpmv27@aim.com>
 
-> --- /dev/null
-> +++ b/include/linux/rtc/mt6397.h
-> @@ -0,0 +1,72 @@
-> +
-> +// SPDX-License-Identifier: GPL-2.0
+In verbose level 2, errors returned by libdw are reported in most cases,
+but not when calling dwfl_attach_state.
 
-According to Documentation/process/license-rules.rst the SPDX notation
-for C header file should be:
+Since elfutils v 0.160 (2014), dwfl_attach_state sets the error code to
+report failure cause. On failure, log the reported error.
 
-/* SPDX-License-Identifier: GPL-2.0 */
+Signed-off-by: Martin Vuille <jpmv27@aim.com>
+Reviewed-by: Kim Phillips <kim.phillips@arm.com>
+Link: http://lkml.kernel.org/r/20180318175053.4222-1-jpmv27@aim.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/unwind-libdw.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
+index 8e969f28cc59..7bdd239c795c 100644
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -236,7 +236,8 @@ int unwind__get_entries(unwind_entry_cb_t cb, void *arg,
+ 	if (err)
+ 		goto out;
+ 
+-	if (!dwfl_attach_state(ui->dwfl, EM_NONE, thread->tid, &callbacks, ui))
++	err = !dwfl_attach_state(ui->dwfl, EM_NONE, thread->tid, &callbacks, ui);
++	if (err)
+ 		goto out;
+ 
+ 	err = dwfl_getthread_frames(ui->dwfl, thread->tid, frame_callback, ui);
+-- 
+2.14.3
