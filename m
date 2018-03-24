@@ -1,124 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752112AbeCXLDX (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 07:03:23 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34792 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751891AbeCXLDV (ORCPT
+        id S1751953AbeCXLFk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 07:05:40 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37127 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751861AbeCXLFi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 07:03:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 96ACE60FF0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: pull-request: wireless-drivers 2018-03-24
-Date: Sat, 24 Mar 2018 13:03:13 +0200
-Message-ID: <87sh8prb0u.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Sat, 24 Mar 2018 07:05:38 -0400
+X-Google-Smtp-Source: AG47ELuEQImunjihu5uk984/JzXmO0f7ApH3wXNDI1N2FFZcShXZGHKzLaRfDFesijsj0WdK2FIzSQ==
+Date: Sat, 24 Mar 2018 12:05:34 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
+        Hugh Dickins <hughd@google.com>,
+        =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>,
+        the arch/x86 maintainers <x86@kernel.org>, namit@vmware.com
+Subject: Re: [PATCH 00/11] Use global pages with PTI
+Message-ID: <20180324110534.t52m5gvn4r7kvmnj@gmail.com>
+References: <20180323174447.55F35636@viggo.jf.intel.com>
+ <CA+55aFwEC1O+6qRc35XwpcuLSgJ+0GP6ciqw_1Oc-msX=efLvQ@mail.gmail.com>
+ <be2e683c-bf0a-e9ce-2f02-4905f6bd56d3@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be2e683c-bf0a-e9ce-2f02-4905f6bd56d3@linux.intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2OB3Tp0022988
 
-Hi Dave,
 
-This is a pull request to the net tree for 4.16. I'm not planning to
-send anything more in this cycle for 4.16, unless something really major
-comes up.
+* Dave Hansen <dave.hansen@linux.intel.com> wrote:
 
-Please let me know if you have any problems.
+> This is time doing a modestly-sized kernel compile on a 4-core Skylake
+> desktop.
+> 
+>                         User Time       Kernel Time     Clock Elapsed
+> Baseline ( 0 GLB PTEs)  803.79          67.77           237.30
+> w/series (28 GLB PTEs)  807.70 (+0.7%)  68.07 (+0.7%)   238.07 (+0.3%)
+> 
+> Without PCIDs, it behaves the way I would expect.
+>
+> I'll ask around, but I'm open to any ideas about what the heck might be
+> causing this.
 
-Kalle
+Hm, so it's a bit weird that while user time and kernel time both increased by 
+about 0.7%, elapsed time only increased by 0.3%? Typically kernel builds are much 
+more parallel for that to be typical, so maybe there's some noise in the 
+measurement?
 
-The following changes since commit 87de1201ddaa39d4f3fafa9f35ac143e582517e6:
+Before spending too much time on the global-TLB patch angle I'd suggest investing 
+a bit of time into making sure that the regression you are seeing is actually 
+real:
 
-  Merge branch 'erspan-fixes' (2018-03-09 13:03:57 -0500)
+You haven't described how you have measured kernel build times and "+0.7% 
+regression" might turn out to be the real number, but sub-1% accuracy kernel build 
+times are *awfully* susceptible to:
 
-are available in the git repository at:
+ - various sources of noise
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2018-03-24
+ - systematic statistical errors which doesn't show up as 
+   measurement-to-measurement noise but which skews the results:
+   such as the boot-to-boot memory layout of the source code and
+   object files.
 
-for you to fetch changes up to 9b9322db5c5a1917a66c71fe47c3848a9a31227e:
+ - cpufreq artifacts
 
-  brcmfmac: Fix check for ISO3166 code (2018-03-20 12:07:58 +0200)
+Even repeated builds with 'make clean' inbetween can be misleading because the 
+exact layout of key include files and binaries which get accessed the most often 
+during a build are set into stone once they've been read into the page cache for 
+the first time after bootup. Automated reboots between measurements can be 
+misleading as well, if the file layout after bootup is too deterministic.
 
-----------------------------------------------------------------
-wireless-drivers fixes for 4.16
+So here's a pretty reliable way to measure kernel build time, which tries to avoid 
+the various pitfalls of caching.
 
-Some fixes for 4.16, only for iwlwifi and brcmfmac this time. All
-pretty small.
+First I make sure that cpufreq is set to 'performance':
 
-iwlwifi
+  for ((cpu=0; cpu<120; cpu++)); do
+    G=/sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor
+    [ -f $G ] && echo performance > $G
+  done
 
-* fix an issue with the multicast queue
+[ ... because it can be *really* annoying to discover that an ostensible 
+  performance regression was a cpufreq artifact ... again. ;-) ]
 
-* fix IGTK handling
+Then I copy a kernel tree to /tmp (ramfs) as root:
 
-* fix some missing return value checks
+	cd /tmp
+	rm -rf linux
+	git clone ~/linux linux
+	cd linux
+	make defconfig >/dev/null
+	
+... and then we can build the kernel in such a loop (as root again):
 
-* add support for a HW workaround for issues on some platforms
+  perf stat --repeat 10 --null --pre			'\
+	cp -a kernel ../kernel.copy.$(date +%s);	 \
+	rm -rf *;					 \
+	git checkout .;					 \
+	echo 1 > /proc/sys/vm/drop_caches;		 \
+	find ../kernel* -type f | xargs cat >/dev/null;  \
+	make -j kernel >/dev/null;			 \
+	make clean >/dev/null 2>&1;			 \
+	sync						'\
+							 \
+	make -j16 >/dev/null
 
-* a couple of fixes for channel-switch
+( I have tested these by pasting them into a terminal. Adjust the ~/linux source 
+  git tree and the '-j16' to your system. )
 
-* a few fixes for the aggregation handling code
+Notes:
 
-brcmfmac
+ - the 'pre' script portion is not timed by 'perf stat', only the raw build times
 
-* drop Inter-Access Point Protocol packets by default
+ - we flush all caches via drop_caches and re-establish everything again, but:
 
-* fix check for ISO3166 regulatory code
+ - we also introduce an intentional memory leak by slowly filling up ramfs with 
+   copies of 'kernel/', thus continously changing the layout of free memory, 
+   cached data such as compiler binaries and the source code hierarchy. (Note 
+   that the leak is about 8MB per iteration, so it isn't massive.)
 
-----------------------------------------------------------------
-Andrei Otcheretianski (2):
-      iwlwifi: mvm: Increase session protection time after CS
-      iwlwifi: mvm: Move unused phy's to a default channel
+With 10 iterations this is the statistical stability I get this on a big box:
 
-Avraham Stern (3):
-      iwlwifi: mvm: clear tx queue id when unreserving aggregation queue
-      iwlwifi: mvm: make sure internal station has a valid id
-      iwlwifi: mvm: fix array out of bounds reference
+ Performance counter stats for 'make -j128 kernel' (10 runs):
 
-Beni Lev (1):
-      iwlwifi: mvm: Correctly set IGTK for AP
+      26.346436425 seconds time elapsed    (+- 0.19%)
 
-Emmanuel Grumbach (1):
-      iwlwifi: mvm: set the correct tid when we flush the MCAST sta
+... which, despite a high iteration count of 10, is still surprisingly noisy, 
+right?
 
-Johannes Berg (1):
-      iwlwifi: mvm: fix error checking for multi/broadcast sta
+A 0.2% stddev is probably not enough to call a 0.7% regression with good 
+confidence, so I had to use *30* iterations to make measurement noise to be about 
+an order of magnitude lower than the effect I'm trying to measure:
 
-Kalle Valo (2):
-      Merge tag 'iwlwifi-for-kalle-2018-03-16' of git://git.kernel.org/.../iwlwifi/iwlwifi-fixes
-      Merge tag 'iwlwifi-for-kalle-2018-03-19' of git://git.kernel.org/.../iwlwifi/iwlwifi-fixes
+ Performance counter stats for 'make -j128' (30 runs):
 
-Luca Coelho (1):
-      iwlwifi: add shared clock PHY config flag for some devices
+      26.334767571 seconds time elapsed    (+- 0.09% )
 
-Rafał Miłecki (1):
-      brcmfmac: drop Inter-Access Point Protocol packets by default
+i.e. "26.334 +- 0.023" seconds is a number we can have pretty high confidence in, 
+on this system.
 
-Stefan Wahren (1):
-      brcmfmac: Fix check for ISO3166 code
+And just to demonstrate that it's all real, I repeated the whole 30-iteration 
+measurement again:
 
- .../broadcom/brcm80211/brcmfmac/cfg80211.c         |  2 +-
- .../wireless/broadcom/brcm80211/brcmfmac/common.c  |  5 ++
- .../wireless/broadcom/brcm80211/brcmfmac/common.h  |  1 +
- .../wireless/broadcom/brcm80211/brcmfmac/core.c    | 57 +++++++++++++++++
- drivers/net/wireless/intel/iwlwifi/cfg/9000.c      | 62 ++++++++++++++++++
- drivers/net/wireless/intel/iwlwifi/fw/file.h       |  1 +
- drivers/net/wireless/intel/iwlwifi/iwl-config.h    |  5 ++
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c        |  4 ++
- drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |  9 ++-
- drivers/net/wireless/intel/iwlwifi/mvm/mvm.h       |  3 +
- drivers/net/wireless/intel/iwlwifi/mvm/phy-ctxt.c  | 21 ++++--
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c       | 74 ++++++++++------------
- .../net/wireless/intel/iwlwifi/mvm/time-event.c    | 15 +++--
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c        | 10 ++-
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c      | 38 +++++------
- 15 files changed, 225 insertions(+), 82 deletions(-)
+ Performance counter stats for 'make -j128' (30 runs):
+
+      26.311166142 seconds time elapsed    (+- 0.07%)
+
+Even if in the end you get a similar result, close to the +0.7% overhead you 
+already measured, we should have more confidence in blaming global TLBs for the 
+performance regression.
+
+BYMMV.
+
+Thanks,
+
+	Ingo
+
+[*] Note that even this doesn't eliminate certain sources of measurement error: 
+    such as the boot-to-boot variance in the layout of certain key kernel data
+    structures - but kernel builds are mostly user-space dominated, so drop_caches 
+    should be good enough.
