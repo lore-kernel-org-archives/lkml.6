@@ -1,10 +1,10 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4047559-1521900972-2-11770028614866868161
+X-Cyrus-Session-Id: sloti22d1t05-4047559-1521900934-2-7103288891565010269
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
-  SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  SPF_PASS -0.001, LANGUAGES ensv, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -12,24 +12,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521900972; b=dsHezZYzz8cAwdOWzGyIeB/PLVyzRJigmxq9Rg9I5znpW6d
-    RPsIvD0+zz0Jj+2OEG/D8zrO2Qs6EmC5w1NRW2tttlnUgxmAGWeyAQc4bGOqR6U/
-    GFTX1c6LG+A/xA2q5Tc0f0OKk1P4yOZrnSkaf826PbdQgzQjC7qGAx8Gw7yVFNK3
-    /7ihbGabG91eREPCarleS6G5OIw2iJ9Y+YfmKSOf3eYYC5LrGeqrmb+Y3o1mZjtK
-    fL2QO29WJEq9SiBAsu5heENp56fHT++ZcgAhORY2DQnKn3YLWaIW5RgQSlm98AaY
-    No26w6Gb/cuJ+A5DEjiWhOEmXDxoNE+XcXBPNRQ==
+    t=1521900933; b=POs7x2jrq9M9T3mPHLIwBY4p1tIa65QahE4hiIXHWjZciL1
+    dBmAdAd78cL/vCYabVnezqck9eLBXyLNPiL5xsWdHTveqcB7zQGV5o4BzkbXNvgQ
+    /TvjxBhAl4lBNgmgpJHyt+qoAm1FuGYU56Eze90P6C279wir7ETDw1Pq5uUVdinO
+    U1zp+rW3MZD6OjLPEiO8bGdHSYDDCON0CfO2SxMKZopIQnZ9zKyCapB+omrN56Ph
+    y/yislu6N3hcp7SracUgd5/SvLx1efw0inTU/ALzbKaWhLOOy4rGlRMhE7i3AmFA
+    CYKvJ6QuWpAd17wyJ/eQMCcAxlBczJg2bDaPIuw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
     :in-reply-to:references:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521900972; bh=6
-    j74FBnO0ZON5VWDz1qR1Mz2b3ZLARE4J/1aT+9qx+w=; b=qoi8LJX1N0/QplUJJ
-    gtr6CzzrghqS88Fp/ctKOX15bSr6pSlf8/JXCwOa9Pnb6kWHfZ0zhYi1fknWPxII
-    6t3gXG/BxH7zbB8YyhK6VtNolDjqy8et0uXAIDtDs9RUCVDmOn2IuyyjOmS1iPPF
-    DDJaob1KqeEYUj2oeVziZ2rpgnnB7Q+pbDmnbgaEyPgH61QdKebeLeXxWVZmOeQc
-    oaeGJRafA3ZnAPHjEBniu10dZrkAUnbuTTX/jsuPIrxozlEIN1tNQTudREjAUEgW
-    M35AycgPS+P5NiW0fp/zfrLmTwYrkgphJSdG9zGzoc/xpyFPv4Gdqqn5LU9Kr+7R
-    CHhhw==
+    :content-transfer-encoding:sender; s=arctest; t=1521900933; bh=Z
+    qq/Qy5RG2K4N6Bvv1TW9SmL925LVIL8v9oGEJ5iCAE=; b=ss0eNoJPvUjyoDlEw
+    7d5DCIjIrMcMEIQw18naWPt6T8SSqTU/A4p3TL7bqZQY22vN87GrDAVLLD7sxCZ7
+    IRrY+YDuGFlsrT2InYCCcIIOJdAIzidKPtwXnzrAAIxKM2pDZQidFYZpbNdLYFOL
+    SJ/sa1zwMq3AZy9QluZe/pbGxxNCQjsGE01UMSQgOhJixKQkyJMJ2AfbNhLKt5V3
+    3Q9R1NJUzdLGOfqJVfxc0aWsTqwHdkUlts998a8tSRuPEXqJsC44pfNfiv9Hxnwm
+    1xoZxZJYPzYkPSu1t0Dp3jukHVreuCAXV/Wcsvr9mFpZx98NZCe0EGNFt+N0T4SL
+    EUxig==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
@@ -53,20 +53,19 @@ Authentication-Results: mx3.messagingengine.com;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C1721770
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A39921770
 Authentication-Results: mail.kernel.org;
  dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org;
  spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 24 Mar 2018 14:16:01 +0000
+Date: Sat, 24 Mar 2018 14:15:22 +0000
 From: Jonathan Cameron <jic23@kernel.org>
 To: Himanshu Jha <himanshujha199640@gmail.com>
-Subject: Re: [PATCH 2/4] Staging: iio: accel: adis16201: Use GENMASK
-Message-ID: <20180324141601.7faf0c8e@archlinux>
-In-Reply-To: <1521745965-26972-2-git-send-email-himanshujha199640@gmail.com>
+Subject: Re: [PATCH 1/4] Staging: iio: accel: adis16201: Remove unused headers
+Message-ID: <20180324141522.497c96dc@archlinux>
+In-Reply-To: <1521745965-26972-1-git-send-email-himanshujha199640@gmail.com>
 References: <1521230786-18155-10-git-send-email-himanshujha199640@gmail.com>
  <1521745965-26972-1-git-send-email-himanshujha199640@gmail.com>
- <1521745965-26972-2-git-send-email-himanshujha199640@gmail.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
@@ -90,71 +89,44 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 23 Mar 2018 00:42:43 +0530
+On Fri, 23 Mar 2018 00:42:42 +0530
 Himanshu Jha <himanshujha199640@gmail.com> wrote:
 
-> Use GENMASK to improve readability and remove the local variables used to
-> store intermediate data.
+> Remove few unused headers files since the adis core handles the buffer and
+> sysfs support.
 > 
 > Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
-Applied to the togreg branch of iio.git.
+Applied to the togreg branch of iio.git and pushed out as testing.
 
 Thanks,
 
 Jonathan
 
 > ---
->  drivers/staging/iio/accel/adis16201.c | 34 +++++++++++++++-------------------
->  1 file changed, 15 insertions(+), 19 deletions(-)
+>  drivers/staging/iio/accel/adis16201.c | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
 > diff --git a/drivers/staging/iio/accel/adis16201.c b/drivers/staging/iio/accel/adis16201.c
-> index b04dbb3..e7593fa 100644
+> index 97e25a3..b04dbb3 100644
 > --- a/drivers/staging/iio/accel/adis16201.c
 > +++ b/drivers/staging/iio/accel/adis16201.c
-> @@ -185,28 +185,24 @@ static int adis16201_write_raw(struct iio_dev *indio_dev,
->  			       long mask)
->  {
->  	struct adis *st = iio_priv(indio_dev);
-> -	int bits;
-> -	s16 val16;
-> -	u8 addr;
-> +	int m;
+> @@ -6,7 +6,6 @@
+>   * Licensed under the GPL-2 or later.
+>   */
 >  
-> -	switch (mask) {
-> -	case IIO_CHAN_INFO_CALIBBIAS:
-> -		switch (chan->type) {
-> -		case IIO_ACCEL:
-> -			bits = 12;
-> -			break;
-> -		case IIO_INCLI:
-> -			bits = 9;
-> -			break;
-> -		default:
-> -			return -EINVAL;
-> +	if (mask != IIO_CHAN_INFO_CALIBBIAS)
-> +		return -EINVAL;
-> +
-> +	switch (chan->type) {
-> +	case IIO_ACCEL:
-> +		m = GENMASK(11, 0);
-> +		break;
-> +	case IIO_INCLI:
-> +		m = GENMASK(8, 0);
-> +		break;
-> +	default:
-> +		return -EINVAL;
->  		}
-> -		val16 = val & ((1 << bits) - 1);
-> -		addr = adis16201_addresses[chan->scan_index];
-> -		return adis_write_reg_16(st, addr, val16);
-> -	}
+> -#include <linux/delay.h>
+>  #include <linux/device.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> @@ -16,8 +15,6 @@
+>  #include <linux/sysfs.h>
 >  
-> -	return -EINVAL;
-> +	return adis_write_reg_16(st, adis16201_addresses[chan->scan_index],
-> +				 val & m);
->  }
+>  #include <linux/iio/iio.h>
+> -#include <linux/iio/sysfs.h>
+> -#include <linux/iio/buffer.h>
+>  #include <linux/iio/imu/adis.h>
 >  
->  static const struct iio_chan_spec adis16201_channels[] = {
+>  #define ADIS16201_STARTUP_DELAY_MS			220
 
 _______________________________________________
 devel mailing list
