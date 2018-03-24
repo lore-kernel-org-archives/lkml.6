@@ -1,126 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeCXM5d (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 08:57:33 -0400
-Received: from sessmg23.ericsson.net ([193.180.251.45]:58676 "EHLO
-        sessmg23.ericsson.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751891AbeCXM5b (ORCPT
+        id S1752122AbeCXM70 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 08:59:26 -0400
+Received: from smtprelay0234.hostedemail.com ([216.40.44.234]:32836 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751879AbeCXM7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 08:57:31 -0400
-X-AuditID: c1b4fb2d-4b1ff70000005540-bd-5ab64b397152
-From: Jon Maloy <jon.maloy@ericsson.com>
-To: kbuild test robot <fengguang.wu@intel.com>
-CC: "kbuild-all@01.org" <kbuild-all@01.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Ying Xue <ying.xue@windriver.com>,
-        "tipc-discussion@lists.sourceforge.net"
-        <tipc-discussion@lists.sourceforge.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH net-next] tipc: tipc_disc_addr_trial_msg() can be
- static
-Thread-Topic: [RFC PATCH net-next] tipc: tipc_disc_addr_trial_msg() can be
- static
-Thread-Index: AQHTwuAAJ5RavaOC0E+4kQgFiPqvlKPfWTjw
-Date: Sat, 24 Mar 2018 12:57:25 +0000
-Message-ID: <BN6PR15MB1553A26B07E45C59B7BDC58D9AAF0@BN6PR15MB1553.namprd15.prod.outlook.com>
-References: <201803240317.PGXU57zT%fengguang.wu@intel.com>
- <20180323194742.GA68339@athens>
-In-Reply-To: <20180323194742.GA68339@athens>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jon.maloy@ericsson.com;
-x-originating-ip: [24.225.233.31]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR15MB1329;7:NoCpYMXJsPfayfh6h1kvoBIBxpcR9fRzp857sUxIMLC3v/VESsECAR2H22ZTwCbUFq6oD8ZnJfDDSd5aR51T13aYErAkhEn90XLT1seNAdh1/p8OEcilqgKgqt/D2rGzIZB1Fg79nZF5O7GRqKopHmtNE2+hPKm5/YrcLK8BaM9m08nDp73A172Wl66LQSt4kp7IW+04EnorPJfJfa1R4l7xc2rdqMqr2+keDxpdHFvgtFimUOV2vzrIJNop9f48
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c6481a1c-0e7e-46ce-19a0-08d59186cb35
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN6PR15MB1329;
-x-ms-traffictypediagnostic: BN6PR15MB1329:
-x-microsoft-antispam-prvs: <BN6PR15MB13292E687CC58E322A48501D9AAF0@BN6PR15MB1329.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(37575265505322)(143289334528602)(9452136761055)(42262312472803)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:BN6PR15MB1329;BCL:0;PCL:0;RULEID:;SRVR:BN6PR15MB1329;
-x-forefront-prvs: 0621E7E436
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(346002)(366004)(376002)(39860400002)(396003)(13464003)(189003)(199004)(2906002)(86362001)(55016002)(6916009)(6246003)(66066001)(53936002)(9686003)(4326008)(6116002)(25786009)(8676002)(68736007)(81156014)(3660700001)(575784001)(5660300001)(81166006)(2900100001)(3280700002)(305945005)(74316002)(7736002)(229853002)(3846002)(6436002)(8936002)(77096007)(316002)(6506007)(53546011)(54906003)(102836004)(186003)(106356001)(97736004)(7696005)(26005)(76176011)(11346002)(446003)(478600001)(33656002)(105586002)(14454004)(99286004)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR15MB1329;H:BN6PR15MB1553.namprd15.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-x-microsoft-antispam-message-info: T6uoK9Cwd2nDtc7Y087vw9oNjioBDrMVjSTxl/DcR2UiMR6jUccnz+GW5dMqyGLTm+IsAieFnS4ttIcPeJ79eYGsTR7MxrubkdYRPDdN27LoIQrvIQSPa/1EV1OyJQHsyzeOyg4k0W1j6hRz5xW0TACVSGIXqMRp7Xpt59NP7AyUNNJP9u+WY9+6cu1MCu+5BYCpe6qSimH4AtmxR6E0G9WEIKrk5qWhUyNhQFDd+AmaWBjowVkqr7Vp1GTkv53U3Bu33lXPpQtbBeFL19HBKopvYTKYDUPkS/2CUlXTH5O6PhRXAA2gx330s5xZ5SYh8SLdufnsnj7f0QfCjVM7jg==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        Sat, 24 Mar 2018 08:59:25 -0400
+X-Session-Marker: 7368656140736865616C6576792E636F6D
+X-Spam-Summary: 2,-10,0,,d41d8cd98f00b204,shea@shealevy.com,::::::::::::::,RULES_HIT:41:334:355:368:369:379:599:800:871:960:967:973:988:989:1000:1260:1263:1313:1314:1345:1359:1437:1516:1518:1535:1544:1575:1605:1711:1730:1747:1777:1792:2393:2525:2553:2559:2564:2682:2685:2693:2859:2895:2903:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4117:4250:4321:4362:4605:4860:5007:6117:6119:6238:6261:6506:6747:7281:7875:7903:7909:8660:9010:9025:9040:9388:10004:10049:10848:11026:11232:11473:11658:11914:12043:12291:12379:12438:12555:12663:12683:12740:12776:12895:12986:13148:13230:14106:14107:14180:14181:14721:14849:21060:21063:21080:21433:21451:21627:21740:30054:30056:30060:30070:30089:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: fog30_34dc0f053bb5a
+X-Filterd-Recvd-Size: 6556
+From: Shea Levy <shea@shealevy.com>
+To: Palmer Dabbelt <palmer@sifive.com>, zong@andestech.com
+Cc: greentime@andestech.com, linux-kernel@vger.kernel.org,
+        zongbox@gmail.com, zong@andestech.com, albert@sifive.com,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 00/11] RISC-V: Resolve the issue of loadable module on 64-bit
+In-Reply-To: <mhng-381d004e-2fbd-4012-9ccc-e845dd5396c0@palmer-si-x1c4>
+References: <mhng-381d004e-2fbd-4012-9ccc-e845dd5396c0@palmer-si-x1c4>
+Date: Sat, 24 Mar 2018 08:59:21 -0400
+Message-ID: <87370pvdcm.fsf@xps13.shealevy.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6481a1c-0e7e-46ce-19a0-08d59186cb35
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2018 12:57:26.1401
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR15MB1329
-X-OriginatorOrg: ericsson.com
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTYRTHee69m9fh6nG+HbSSRkKYrrQXh0immExDFBXKZdjSi2/zhV0T
-        rS9CKaL7kJXVrNBlE7XCGFOXOskJlhYphQwtjXJhsnxBRRMrc/ca9O13zv//nPM/8NCkpFng
-        S+cWljCaQpVaKhRRunPdB4LDz3Qpj7RVuMgXZztI+ZCtjpR/6HkglA81ectNo3nyGZuNPCVU
-        fLa4KJr75ghFb9MKoVgx7lN0mDqJJIFSFJHFqHNLGc3hkxdFOT/Mv1Bxt7hM97YXVSCLqAa5
-        0oCPQeXyJnKyBA8iGDfvqkGibTYhGKgzuPDFOoK25jmSLwwEdBm+cAqFlwlo3xjZUW4RMG80
-        I74YQtDc00o6JwvxQZi7U81t8cQyaNVXcSYS6wjo0E0IahBNe+BkqG0JdKInTgH9TTVvD4XF
-        6lmBkykcAKbf/dwYMU6HiflJgg+eDh9fOCgnu+IgWLdZubUIe8P6yFPOQ2IfmLQ3EvzRGB73
-        jZI8e8HczB8uAcJp8OZbGt/eD6PPH+1Y9sL7xlouMWATAdNjdiEvBMNSfT3pfAs4AfTvknnP
-        awSvFrYEvCcQ1haNO/58qJg0I56vQp32J3kDhTT8F4/nIGjqXRbyfAha9A6ygTvZHYZ1dqoJ
-        Ue3Ii2VYtiA79KiM0eRmsmxRoayQKTGi7a8zYNoMNqMnjigrwjSSuokjo7uUEoGqlC0vsCKg
-        SamnuMxtuyXOUpVfYTRFGZrLaoa1Ij+akvqIh+PESgnOVpUw+QxTzGj+qQTt6luB7sdM1Sa3
-        3ctMsTwbvqZcPSuzhKWtLV2It3TMCyajq2Kn74ZbDava0jHP0fGZCL+vASeGIvURVOTDTCUR
-        x+R6bET7a78nFinjvffYPw1eSpzKuF7l0IaXBG6lKrQiqSkxyr8zeeFlnyI74bwtLP94TNJp
-        a57S/ba+sqs/NnX3uJRic1QhgaSGVf0FJFYWpjYDAAA=
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2OCvedP029992
 
-Acked-by: Jon Maloy jon.maloy@ericsson.com
+--=-=-=
+Content-Type: text/plain
 
-Thanks, Fengguang
+Hi Palmer, Zong,
 
-> -----Original Message-----
-> From: netdev-owner@vger.kernel.org [mailto:netdev-
-> owner@vger.kernel.org] On Behalf Of kbuild test robot
-> Sent: Friday, March 23, 2018 15:48
-> To: Jon Maloy <jon.maloy@ericsson.com>
-> Cc: kbuild-all@01.org; netdev@vger.kernel.org; Ying Xue
-> <ying.xue@windriver.com>; tipc-discussion@lists.sourceforge.net; linux-
-> kernel@vger.kernel.org
-> Subject: [RFC PATCH net-next] tipc: tipc_disc_addr_trial_msg() can be static
-> 
-> 
-> Fixes: 25b0b9c4e835 ("tipc: handle collisions of 32-bit node address hash
-> values")
-> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-> ---
->  discover.c |   14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/net/tipc/discover.c b/net/tipc/discover.c index e765573..9f666e0
-> 100644
-> --- a/net/tipc/discover.c
-> +++ b/net/tipc/discover.c
-> @@ -134,13 +134,13 @@ static void disc_dupl_alert(struct tipc_bearer *b,
-> u32 node_addr,
-> 
->  /* tipc_disc_addr_trial(): - handle an address uniqueness trial from peer
->   */
-> -bool tipc_disc_addr_trial_msg(struct tipc_discoverer *d,
-> -			      struct tipc_media_addr *maddr,
-> -			      struct tipc_bearer *b,
-> -			      u32 dst, u32 src,
-> -			      u32 sugg_addr,
-> -			      u8 *peer_id,
-> -			      int mtyp)
-> +static bool tipc_disc_addr_trial_msg(struct tipc_discoverer *d,
-> +				     struct tipc_media_addr *maddr,
-> +				     struct tipc_bearer *b,
-> +				     u32 dst, u32 src,
-> +				     u32 sugg_addr,
-> +				     u8 *peer_id,
-> +				     int mtyp)
->  {
->  	struct net *net = d->net;
->  	struct tipc_net *tn = tipc_net(net);
+Palmer Dabbelt <palmer@sifive.com> writes:
+
+> On Thu, 15 Mar 2018 01:50:40 PDT (-0700), zong@andestech.com wrote:
+>> These patches resolve the some issues of loadable module.
+>>   - symbol out of ranges
+>>   - unknown relocation types
+>>
+>> The reference of external variable and function symbols
+>> cannot exceed 32-bit offset ranges in kernel module.
+>> The module only can work on the 32-bit OS or the 64-bit
+>> OS with sv32 virtual addressing.
+>>
+>> These patches will generate the .got, .got.plt and
+>> .plt sections during loading module, let it can refer
+>> to the symbol which locate more than 32-bit offset.
+>> These sections depend on the relocation types:
+>>  - R_RISCV_GOT_HI20
+>>  - R_RISCV_CALL_PLT
+>>
+>> These patches also support more relocation types
+>>  - R_RISCV_CALL
+>>  - R_RISCV_HI20
+>>  - R_RISCV_LO12_I
+>>  - R_RISCV_LO12_S
+>>  - R_RISCV_RVC_BRANCH
+>>  - R_RISCV_RVC_JUMP
+>>  - R_RISCV_ALIGN
+>>  - R_RISCV_ADD32
+>>  - R_RISCV_SUB32
+>>
+>> This is the list of testing modules:
+>> # lsmod
+>> btrfs 7876158 0 - Live 0xffffffd00745d000
+>> ramoops 90806 0 - Live 0xffffffd0024b8000
+>> lzo 10554 0 - Live 0xffffffd002050000
+>> zstd_decompress 567575 1 btrfs, Live 0xffffffd00238b000
+>> zstd_compress 1543837 1 btrfs, Live 0xffffffd002211000
+>> zram 101300 0 - Live 0xffffffd0021b8000
+>> xxhash 62254 2 zstd_decompress,zstd_compress, Live 0xffffffd0020cf000
+>> xor 33246 1 btrfs, Live 0xffffffd002042000
+>> xfs 4395343 0 - Live 0xffffffd00399e000
+>> tun 252041 0 - Live 0xffffffd0038e0000
+>> test_user_copy 5265 0 - Live 0xffffffd003783000
+>> test_static_keys 19606 0 - Live 0xffffffd003717000
+>> test_static_key_base 7374 1 test_static_keys, Live 0xffffffd0036dc000
+>> test_printf 7804 0 [permanent], Live 0xffffffd00369c000
+>> test_module 1557 0 - Live 0xffffffd003646000
+>> test_kmod 49100 0 - Live 0xffffffd0035f2000
+>> test_bpf 1599301 0 - Live 0xffffffd003000000
+>> test_bitmap 4403 0 - Live 0xffffffd002dd8000
+>> reed_solomon 38866 1 ramoops, Live 0xffffffd002d86000
+>> raid6_pq 161872 1 btrfs, Live 0xffffffd002b9e000
+>> netdevsim 65401 0 - Live 0xffffffd002910000
+>>
+>> Signed-off-by: Zong Li <zong@andestech.com>
+>> ---
+>> Change in v2:
+>>  - Add compile option 'mno-relax' for build kernel module
+>>  - Just fail on ALIGN type, this is unexpected type with mno-relax.
+>>
+>> Zong Li (11):
+>>   RISC-V: Add sections of PLT and GOT for kernel module
+>>   RISC-V: Add section of GOT.PLT for kernel module
+>>   RISC-V: Support GOT_HI20/CALL_PLT relocation type in kernel module
+>>   RISC-V: Support CALL relocation type in kernel module
+>>   RISC-V: Support HI20/LO12_I/LO12_S relocation type in kernel module
+>>   RISC-V: Support RVC_BRANCH/JUMP relocation type in kernel modulewq
+>>   RISC-V: Support ALIGN relocation type in kernel module
+>>   RISC-V: Support ADD32 relocation type in kernel module
+>>   RISC-V: Support SUB32 relocation type in kernel module
+>>   RISC-V: Enable module support in defconfig
+>>   RISC-V: Add definition of relocation types
+>>
+>>  arch/riscv/Kconfig                  |   5 +
+>>  arch/riscv/Makefile                 |   5 +
+>>  arch/riscv/configs/defconfig        |   2 +
+>>  arch/riscv/include/asm/module.h     | 113 +++++++++++++++++++++++
+>>  arch/riscv/include/uapi/asm/elf.h   |   7 ++
+>>  arch/riscv/kernel/Makefile          |   1 +
+>>  arch/riscv/kernel/module-sections.c | 156 +++++++++++++++++++++++++++++++
+>>  arch/riscv/kernel/module.c          | 179 ++++++++++++++++++++++++++++++++++--
+>>  arch/riscv/kernel/module.lds        |   8 ++
+>>  9 files changed, 470 insertions(+), 6 deletions(-)
+>>  create mode 100644 arch/riscv/include/asm/module.h
+>>  create mode 100644 arch/riscv/kernel/module-sections.c
+>>  create mode 100644 arch/riscv/kernel/module.lds
+>
+> Thanks!  I've added this to our for-next branch, so it should start to get a
+> bit more testing soon.  I've had a bit of the flu and am therefor a bit out of
+> it, so I'll try to look closer before the next merge window.
+>
+
+I've updated my kernel to point to riscv-all, and now I'm getting:
+
+scsi_mod: target ffffffe000029a80 can not be addressed by the 32-bit offset from PC = 00000000fe3be867
+
+Any idea why this might be? My patchset had a patch [1] to ensure
+modules were loaded within a 32 bit offset of the kernel text, do we
+need to include that?
+
+Thanks,
+Shea
+
+[1] http://lists.infradead.org/pipermail/linux-riscv/2018-February/000083.html
+
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE6ESKvwKkwnxgMLnaXAvWlX2G/icFAlq2S6kACgkQXAvWlX2G
+/iczghAAxGGhuBZV4qDsVtF1vXd1Tgm0WL1gHRITlu9IZn8guXRdv5HSJoQBctj7
+pcpmRJSCkxy8ff03lDET+JdF2SK7n08mNDEv2wQuUCC5dBnLdfMO4BP+1UJevItj
+sJIQfrb1nGQ8VH0Wj3mM33GqB8YVVcoBdbBJf8vDtOz1fg+2zdHHRuBwy7WRXIkg
+Rlvad9+nAHOwVgZXDUzHGnkJjQNnOntYSGh5OzWsPqjeL7cYip++krqo5VLDAAfd
+sBfPfkV6/8ADcQPdEAKDcITLO+MCkf7KaWEgMJVEHUtK0AYsoDdyfLaQUk1j6KjU
+af4AZZvhXVnY3Sn6xTiWHc2nXF+XKNKnfmMWFEH7JDO/mRkGIH5mK1zbJ8ccSMuX
+HHEMSUEhVd4ZparZ39j2ybqzh3BcJMPlge0A/qfMEIScXKFD9SaOS831QFDSYjK+
+JQJQqlRcwYjyHrUXZZIImg/oo3h4vq1a0Bn3ZSumHLDdjCAHo+sTfQotkF8tH3K4
+jrrIuiHybPedUyvXR/TTjuX3OY/urdfpZ0X623UCtTlcoqu61nSX6+MoF13TMQNS
+GCVU/X8h6AQcSrWKu32x4xF20uCkLVghg6RaBJrVsg8HHe9qJWNzmiTNym7lrLO3
+uw2undabOz/DdQv9g54tmTORU/tN/dmh5rQyChH/AAzwM6pUFPs=
+=T6fE
+-----END PGP SIGNATURE-----
+--=-=-=--
