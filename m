@@ -1,351 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeCXNef (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 09:34:35 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36268 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752590AbeCXNec (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 09:34:32 -0400
-X-Google-Smtp-Source: AG47ELu8QXAFfEPF1wf5U7FOJC+RqwJHO2VGzeaFx2OVJvYVsXm8ea12hs4Rgqm3/8D0+muP2VQGng==
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mturquette@baylibre.com, sboyd@kernel.org, afaerber@suse.de,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        davem@davemloft.net, mchehab@kernel.org, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, viresh.kumar@linaro.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, manivannanece23@gmail.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 10/11] clk: actions: Add pll clock support
-Date: Sat, 24 Mar 2018 19:01:58 +0530
-Message-Id: <20180324133159.4824-11-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
-References: <20180324133159.4824-1-manivannan.sadhasivam@linaro.org>
+        id S1752186AbeCXOMN (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 10:12:13 -0400
+Received: from mga03.intel.com ([134.134.136.65]:29087 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751891AbeCXOMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 10:12:12 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,355,1517904000";
+   d="gz'50?scan'50,208,50";a="36474814"
+Date: Sat, 24 Mar 2018 22:11:19 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+Cc: kbuild-all@01.org, rostedt@goodmis.org, mingo@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] trace: instrument security and console initcall
+Message-ID: <201803242225.CpaSAi5v%fengguang.wu@intel.com>
+References: <1521765208.19745.2.camel@polymtl.ca>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="pWyiEgJYm5f9v55/"
+Content-Disposition: inline
+In-Reply-To: <1521765208.19745.2.camel@polymtl.ca>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Actions Semi PLL clock.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi Abderrahmane,
+
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.16-rc6 next-20180323]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Abderrahmane-Benbachir/trace-instrument-security-and-console-initcall/20180324-215004
+config: i386-tinyconfig (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
+
+All errors (new ones prefixed by >>):
+
+>> kernel/printk/printk.c:55:10: fatal error: trace/events/boot.h: No such file or directory
+    #include <trace/events/boot.h>
+             ^~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+vim +55 kernel/printk/printk.c
+
+    54	
+  > 55	#include <trace/events/boot.h>
+    56	#define CREATE_TRACE_POINTS
+    57	#include <trace/events/printk.h>
+    58	
+
 ---
- drivers/clk/actions/Makefile  |   1 +
- drivers/clk/actions/owl-pll.c | 194 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/actions/owl-pll.h |  92 ++++++++++++++++++++
- 3 files changed, 287 insertions(+)
- create mode 100644 drivers/clk/actions/owl-pll.c
- create mode 100644 drivers/clk/actions/owl-pll.h
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-diff --git a/drivers/clk/actions/Makefile b/drivers/clk/actions/Makefile
-index 53431aef6e9c..31b68eab9309 100644
---- a/drivers/clk/actions/Makefile
-+++ b/drivers/clk/actions/Makefile
-@@ -6,3 +6,4 @@ clk-owl-y			+= owl-mux.o
- clk-owl-y			+= owl-divider.o
- clk-owl-y			+= owl-factor.o
- clk-owl-y			+= owl-composite.o
-+clk-owl-y			+= owl-pll.o
-diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
-new file mode 100644
-index 000000000000..058e06d7099f
---- /dev/null
-+++ b/drivers/clk/actions/owl-pll.c
-@@ -0,0 +1,194 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL pll clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#include <linux/clk-provider.h>
-+#include <linux/slab.h>
-+#include <linux/io.h>
-+#include <linux/delay.h>
-+
-+#include "owl-pll.h"
-+
-+static u32 owl_pll_calculate_mul(struct owl_pll_hw *pll_hw, unsigned long rate)
-+{
-+	u32 mul;
-+
-+	mul = DIV_ROUND_CLOSEST(rate, pll_hw->bfreq);
-+	if (mul < pll_hw->min_mul)
-+		mul = pll_hw->min_mul;
-+	else if (mul > pll_hw->max_mul)
-+		mul = pll_hw->max_mul;
-+
-+	return mul &= mul_mask(pll_hw);
-+}
-+
-+static unsigned long _get_table_rate(const struct clk_pll_table *table,
-+		unsigned int val)
-+{
-+	const struct clk_pll_table *clkt;
-+
-+	for (clkt = table; clkt->rate; clkt++)
-+		if (clkt->val == val)
-+			return clkt->rate;
-+
-+	return 0;
-+}
-+
-+static const struct clk_pll_table *_get_pll_table(
-+		const struct clk_pll_table *table, unsigned long rate)
-+{
-+	const struct clk_pll_table *clkt;
-+
-+	for (clkt = table; clkt->rate; clkt++) {
-+		if (clkt->rate == rate) {
-+			table = clkt;
-+			break;
-+		} else if (clkt->rate < rate)
-+			table = clkt;
-+	}
-+
-+	return table;
-+}
-+
-+static long owl_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct clk_pll_table *clkt;
-+	u32 mul;
-+
-+	if (pll_hw->table) {
-+		clkt = _get_pll_table(pll_hw->table, rate);
-+		return clkt->rate;
-+	}
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return pll_hw->bfreq;
-+
-+	mul = owl_pll_calculate_mul(pll_hw, rate);
-+
-+	return pll_hw->bfreq * mul;
-+}
-+
-+static unsigned long owl_pll_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	u32 val;
-+
-+	if (pll_hw->table) {
-+		regmap_read(common->regmap, pll_hw->reg, &val);
-+
-+		val = val >> pll_hw->shift;
-+		val &= mul_mask(pll_hw);
-+
-+		return _get_table_rate(pll_hw->table, val);
-+	}
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return pll_hw->bfreq;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &val);
-+
-+	val = val >> pll_hw->shift;
-+	val &= mul_mask(pll_hw);
-+
-+	return pll_hw->bfreq * val;
-+}
-+
-+static int owl_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	u32 reg;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	return !!(reg & BIT(pll_hw->bit_idx));
-+}
-+
-+static void owl_pll_set(const struct owl_clk_common *common,
-+		       const struct owl_pll_hw *pll_hw, bool enable)
-+{
-+	u32 reg;
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	if (enable)
-+		reg |= BIT(pll_hw->bit_idx);
-+	else
-+		reg &= ~BIT(pll_hw->bit_idx);
-+
-+	regmap_write(common->regmap, pll_hw->reg, reg);
-+}
-+
-+static int owl_pll_enable(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	const struct owl_clk_common *common = &pll->common;
-+
-+	owl_pll_set(common, &pll->pll_hw, true);
-+
-+	return 0;
-+}
-+
-+static void owl_pll_disable(struct clk_hw *hw)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	const struct owl_clk_common *common = &pll->common;
-+
-+	owl_pll_set(common, &pll->pll_hw, false);
-+}
-+
-+static int owl_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct owl_pll *pll = hw_to_owl_pll(hw);
-+	struct owl_pll_hw *pll_hw = &pll->pll_hw;
-+	const struct owl_clk_common *common = &pll->common;
-+	const struct clk_pll_table *clkt;
-+	u32 val, reg;
-+
-+	/* fixed frequency */
-+	if (pll_hw->width == 0)
-+		return 0;
-+
-+	if (pll_hw->table) {
-+		clkt = _get_pll_table(pll_hw->table, rate);
-+		val = clkt->val;
-+	} else {
-+		val = owl_pll_calculate_mul(pll_hw, rate);
-+	}
-+
-+	regmap_read(common->regmap, pll_hw->reg, &reg);
-+
-+	reg &= ~mul_mask(pll_hw);
-+	reg |= val << pll_hw->shift;
-+
-+	regmap_write(common->regmap, pll_hw->reg, reg);
-+
-+	udelay(PLL_STABILITY_WAIT_US);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops owl_pll_ops = {
-+	.enable = owl_pll_enable,
-+	.disable = owl_pll_disable,
-+	.is_enabled = owl_pll_is_enabled,
-+	.round_rate = owl_pll_round_rate,
-+	.recalc_rate = owl_pll_recalc_rate,
-+	.set_rate = owl_pll_set_rate,
-+};
-diff --git a/drivers/clk/actions/owl-pll.h b/drivers/clk/actions/owl-pll.h
-new file mode 100644
-index 000000000000..0aae30abd5dc
---- /dev/null
-+++ b/drivers/clk/actions/owl-pll.h
-@@ -0,0 +1,92 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// OWL pll clock driver
-+//
-+// Copyright (c) 2014 Actions Semi Inc.
-+// Author: David Liu <liuwei@actions-semi.com>
-+//
-+// Copyright (c) 2018 Linaro Ltd.
-+// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+#ifndef _OWL_PLL_H_
-+#define _OWL_PLL_H_
-+
-+#include "owl-common.h"
-+
-+/* last entry should have rate = 0 */
-+struct clk_pll_table {
-+	unsigned int		val;
-+	unsigned long		rate;
-+};
-+
-+struct owl_pll_hw {
-+	u32			reg;
-+	u32			bfreq;
-+	u8			bit_idx;
-+	u8			shift;
-+	u8			width;
-+	u8			min_mul;
-+	u8			max_mul;
-+	const struct clk_pll_table *table;
-+};
-+
-+struct owl_pll {
-+	struct owl_pll_hw	pll_hw;
-+	struct owl_clk_common	common;
-+};
-+
-+#define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,			\
-+		   _width, _min_mul, _max_mul, _table)			\
-+	{								\
-+		.reg		= _reg,					\
-+		.bfreq		= _bfreq,				\
-+		.bit_idx	= _bit_idx,				\
-+		.shift		= _shift,				\
-+		.width		= _width,				\
-+		.min_mul	= _min_mul,				\
-+		.max_mul	= _max_mul,				\
-+		.table		= _table,				\
-+	}
-+
-+#define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,	\
-+		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
-+	struct owl_pll _struct = {					\
-+		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
-+				     _width, _min_mul,			\
-+				     _max_mul, _table),			\
-+		.common = {						\
-+			.regmap = NULL,					\
-+			.hw.init = CLK_HW_INIT(_name,			\
-+					       _parent,			\
-+					       &owl_pll_ops,		\
-+					       _flags),			\
-+		},							\
-+	}
-+
-+#define OWL_PLL_NO_PARENT(_struct, _name, _reg, _bfreq, _bit_idx,	\
-+		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
-+	struct owl_pll _struct = {					\
-+		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
-+				     _width, _min_mul,			\
-+				     _max_mul, _table),			\
-+		.common = {						\
-+			.regmap = NULL,					\
-+			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
-+					       &owl_pll_ops,		\
-+					       _flags),			\
-+		},							\
-+	}
-+
-+#define mul_mask(m)		((1 << ((m)->width)) - 1)
-+#define PLL_STABILITY_WAIT_US	(50)
-+
-+static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
-+{
-+	struct owl_clk_common *common = hw_to_owl_clk_common(hw);
-+
-+	return container_of(common, struct owl_pll, common);
-+}
-+
-+extern const struct clk_ops owl_pll_ops;
-+
-+#endif /* _OWL_PLL_H_ */
--- 
-2.14.1
+--pWyiEgJYm5f9v55/
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--pWyiEgJYm5f9v55/--
