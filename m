@@ -1,33 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751221AbeCXEas (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 00:30:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50294 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750727AbeCXEar (ORCPT
+        id S1751541AbeCXE4v (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 00:56:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44130 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750730AbeCXE4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 00:30:47 -0400
-Date: Fri, 23 Mar 2018 21:30:44 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: adobriyan@gmail.com, mhocko@kernel.org, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-Message-ID: <20180324043044.GA22733@bombadil.infradead.org>
-References: <1521851771-108673-1-git-send-email-yang.shi@linux.alibaba.com>
+        Sat, 24 Mar 2018 00:56:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521851771-108673-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Sat, 24 Mar 2018 12:56:48 +0800
+From: yuankuiz@codeaurora.org
+To: cgroups@vger.kernel.org, tj@kernel.or, lizefan@huawei.com,
+        hannes@cmpxchg.org
+Cc: linux-kernel@vger.kernel.org, pkondeti@codeaurora.org
+Subject: [PATCH]cgroup: __cpuset_node_allowed return bool
+Message-ID: <d2f9fe6096235032f445ab88e562560f@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> So, introduce a new rwlock in mm_struct to protect the concurrent access
-> to arg_start|end and env_start|end.
+as a bool, __cpuset_node_allowed(...) return should be bool.
 
-I don't think an rwlock makes much sense here.  There is almost no
-concurrency on the read side, and an rwlock is more expensive than
-a spinlock.  Just use a spinlock.
+Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
+
+--- kernel/cgroup/cpuset.c.orig	2018-03-24 12:39:27.854178608 +0800
++++ kernel/cgroup/cpuset.c	2018-03-24 12:40:51.020708670 +0800
+@@ -2552,7 +2552,7 @@ static struct cpuset *nearest_hardwall_a
+  bool __cpuset_node_allowed(int node, gfp_t gfp_mask)
+  {
+  	struct cpuset *cs;		/* current cpuset ancestors */
+-	int allowed;			/* is allocation in zone z allowed? */
++	bool allowed;			/* is allocation in zone z allowed? */
+  	unsigned long flags;
+
+  	if (in_interrupt())
