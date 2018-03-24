@@ -1,73 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752798AbeCXXZY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 19:25:24 -0400
-Received: from sauhun.de ([88.99.104.3]:44922 "EHLO pokefinder.org"
+        id S1752951AbeCXXZt (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 19:25:49 -0400
+Received: from smtp4-g21.free.fr ([212.27.42.4]:59738 "EHLO smtp4-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752174AbeCXXZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 19:25:23 -0400
-Date: Sun, 25 Mar 2018 00:25:21 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, jassisinghbrar@gmail.com,
-        andy.shevchenko@gmail.com
-Subject: Re: [PATCH v5 2/2] i2c: add support for Socionext SynQuacer I2C
- controller
-Message-ID: <20180324232521.ofzk3fikda42ywep@ninjato>
-References: <20180302083123.7259-1-ard.biesheuvel@linaro.org>
- <20180302083123.7259-3-ard.biesheuvel@linaro.org>
- <20180324231910.unzvwty3xia4mqu2@ninjato>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wyihmnao436dfmvi"
-Content-Disposition: inline
-In-Reply-To: <20180324231910.unzvwty3xia4mqu2@ninjato>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1752856AbeCXXZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 19:25:48 -0400
+From: Alban Bedel <albeu@free.fr>
+To: linux-kernel@vger.kernel.org
+Cc: Alban Bedel <albeu@free.fr>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: [PATCH v3 0/3] mtd: Add support for reading MTD devices via the nvmem API
+Date: Sun, 25 Mar 2018 00:24:56 +0100
+Message-Id: <1521933899-362-1-git-send-email-albeu@free.fr>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
---wyihmnao436dfmvi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+this series add support for reading MTD devices via the nvmem API, this
+is mostly needed on embedded devices where things like MAC address and
+calibration data is often stored in a partition on the main flash device.
 
-My code checkers mention this:
+Adding support for the nvmem API to the MTD core is trivial, however there
+is a clash in the OF binding used by both subsystems. The current nvmem
+binding expect nvmem cell to be subnode of the nvmem device, without any
+compatible string. But MTD devices used a similar scheme for partition in
+the past, so a subnode from an MTD device could be a partition using the
+old binding or an nvmem cell.
 
-    CPPCHECK
-drivers/i2c/busses/i2c-synquacer.c:422: style: Checking if unsigned variabl=
-e 'timeout' is less than zero.
+To avoid this problem we update the nvmem cell binding to use a 'nvmem-cells'
+subnode with compatible string to hold the list of nvmem cells. This new
+binding make sure that any kind of device can be used as nvmem provider.
 
+Alban Bedel (3):
+  nvmem: Update the OF binding to use a subnode for the cells list
+  doc: bindings: Add bindings documentation for mtd nvmem
+  mtd: Add support for reading MTD devices via the nvmem API
 
-  CC      drivers/i2c/busses/i2c-synquacer.o
-drivers/i2c/busses/i2c-synquacer.c: In function =E2=80=98synquacer_i2c_prob=
-e=E2=80=99:
-drivers/i2c/busses/i2c-synquacer.c:678:15: warning: comparison of unsigned =
-expression < 0 is always false [-Wtype-limits]
-  if (i2c->irq < 0) {
-               ^
+ .../devicetree/bindings/nvmem/mtd-nvmem.txt        | 27 ++++++++++
+ Documentation/devicetree/bindings/nvmem/nvmem.txt  | 55 +++++++++++++-------
+ drivers/mtd/Kconfig                                |  1 +
+ drivers/mtd/mtdcore.c                              | 59 ++++++++++++++++++++++
+ drivers/nvmem/core.c                               | 10 ++++
+ include/linux/mtd/mtd.h                            |  2 +
+ 6 files changed, 137 insertions(+), 17 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/mtd-nvmem.txt
 
---wyihmnao436dfmvi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq23mEACgkQFA3kzBSg
-KbaCSA/+O7XpntYVfmQJehXglIPajwoNqQSgW2U5sGGrtAbwqBhUa71E+bA1IcOH
-usumkWUvH9c6Vf1s9oaWlF0B5LrIKmqfBA369rOTIGOXtMOHZQvaOPdUlS7czhR0
-dvrI206HhJIL8rmmpgUUz4kAuCGMxdZUzH1MrsqkjM6md3xjLPeedCxG0WHCXu9K
-WqXKxwJGUM/rkJGQfqedvQA7lXIZrWyEPh3DmSijJed2sSWzGuRcJnSswcH6ZNR3
-q8NHIotOkU6GeB5/8W5F412w5vYYhhBGPAPpI4AJywhWho2+ZRZI8F2D83JjiQMs
-tb/9ps8Jp3aP4qXxeUk4uyIVF4crkbqJJrODcHiZbYi1H/k8a1YP2sBjM3ax57xK
-0a6YuRISLvlo1YtmVnubLDDxzyihidq8IvllaP7iWGgXiCHHfM+Gu1/roqgsRBnS
-N+VJFY9TJlwUtX7/XSKdHu/gaLUys95kz0QN1WxWULHhdSxv9NvDCAUhqhDQtKLF
-oSeZgwwUBJXt2sNJH/7xgLBmKGCkWJWScdn3PJSS8nDYTadW09HX1HjzwJ5d+TWk
-RSYOSxEq5PFb6FH+JywJjr20Bh0nGlkeXb9xFycKykLsz0jL4+S7QD43N8whu8U0
-Hk/p1YdEjwcRzr/lasUWZqMv8ZPYgokkKPnFMTP7ntL46tyYmqU=
-=mnKS
------END PGP SIGNATURE-----
-
---wyihmnao436dfmvi--
+-- 
+2.7.4
