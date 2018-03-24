@@ -1,146 +1,104 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1071429-1522071600-2-888530779849786998
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-577984-1521925775-2-4771513120346571052
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: cc='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522071600; b=LJhVzW7zhgtL9Jzw1R9aAeRmCDp4wSo1Ef+gHr53yCymVUf
-    qRgku1DTp3v8tXT/c/LyywMsryqoreFZEKIcTGbvcxPvFqKL+DywADugGUOKrvcB
-    2Ssi2hdyW3Jsn5BAeDnAvpmA78wDNB8AAGUz6OrenjX2AlNyjiWOtlq2pzGVSIx8
-    k/IFU1Spfw2syt+0Zbk226JP1vI7+wFN81za/y/9CFWqqNtyQZ3l5WpurYYGUEOJ
-    60CJMtHQA6fNWxioDg6a1JtNDgfkZfMs7lYkk+8PuDp0rjFwj/O5U21a+f1MF7xS
-    EIVtTjNBQ2AQDcz+20ujKzlioHnpCa+2OXEEurQ==
+    t=1521925774; b=wC3tVZs5rp2YzBfkrtDY/aRK9vUMlYTeTLiZMIPI1YAgQjg
+    BUOX+9lpo6cOGpjF/KIsg+sekeo+UGG6L24Ubh073MZsnoNAKHpIdpbxw3ry5UqS
+    LLTRP3/A9LQTGCF2I/GO2Ojw3/6gSnB/I+nCTOBSLFYEhrexLkQVWSjxZDOq3EM1
+    bub7MJgUq59OqAIo5jC/JA/H/pQN19cYqYfbQv9iQgEl5di66mtJyrYHNXnJvIdk
+    mhn4A8TP19tNN0Xda/P2btHI0dJHtwVpjVpWr145ttMld6Qa1AW+8XA1b9/Nb4qz
+    f3N8QSWdBeG9qp05lZVBYst1wUDPK7duCsLZI5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:reply-to:from
-    :message-id:date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1522071600; bh=f34492AQsxOmYG0aTa/eD2bHuAVaUzkSIC/afVr1aB4=; b=U
-    iSDDsVFZgRZG107rDfpt2COc4XjNxgZoyV4Xo/XNfPzrbLdc0qO9QJZCGn6s6wbp
-    U/dhQjHzvWyvG1/fnpXwYxIaqMNp3UPvU9VsZ61M/igjVdOD9dQlMHrmQWkTsYaz
-    8DIezJnG9Zgpdy6WdxXgCqFbhgYVSthrIx9VE+IoWOCSUGjqqV5l5QPzlmr3VAmc
-    GBvD+Xb7altHjWD7c3as4jZZK4taVKp4PqwTh0qU7ms2KaW0B6HZuY0SuA5JacZH
-    VAj9KXNFsukoyK2k6SIq43IBKNpMg3rUmCXp1W5zqlVFcsoU2xlOrfKLQQePLVyx
-    DsKbPczdS4K8MaZwTkNbw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qhzPkG3+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ideasonboard.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=arctest; t=1521925774; bh=QofX2vBdUQTxHeOaoKqi9MEcO1
+    2ERXyu1arYDGB0qUc=; b=FzY//7x2YPID41oFMa5GlmwMN02WkcarCkBOe2w8ix
+    kapOGItim6wkjEGa3o51vVU0L8Y0XCUuHlthNocI8MBMY4pQekxOypoJACXiliPo
+    m+OcCwbflIO05tfmBRLnqfr7s3C4G7MD6r+Kls8bcW5fTZOqutwBF0ulN7RBs3IE
+    GNRYf318uUDMG1EPm8yA8rSdXeO2hnxEHfkA4jBl8LN8R+0g4QCCiLyVAc9sk7VD
+    jkd6dEaMaR0aCTVBu6x7M8QwRiuMw89dIxB3H09GBvkvobsucxmQi4nGOL6MstTM
+    qrqHti3A//fQ/NIKeSwVqCL2xTqlIYzETL2nNvqc28gg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hDPtu/Ie x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YIkDgz3b;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ideasonboard.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qhzPkG3+ x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=mail;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ideasonboard.com;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=hDPtu/Ie x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=YIkDgz3b;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ideasonboard.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCHHxkDUeNm1Igw9x/2wTGziGqgFjCislDODHDgtMCzG//RDPimtHIC+dcjkmnBVzOEn45aUcYieBTo5xGVcqE7woCxZv9DOHLN9KHZ1+VFVadtfASBF
-    mLrBgkNijVqUMayge2/ycxcgqtupGY9uAQD+epveKRFkGwwyrsut3LXrS70q2cBkBiXCbRw72t550vCUCiWZXH0wVabCr4Y/uBM6HhDIrV/W6fw1aM5NCqXm
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=VwQbUJbxAAAA:8 a=vQBBkBfzAAAA:8 a=P1BnusSwAAAA:8 a=1PV7r5bBiXHNVB1y23IA:9
-    a=gKwz8JNiChnoWoiK:21 a=shvQcO0wfR65to6K:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=NGXS0kB0m_rannUenejW:22 a=D0XLA9XvdZm18NrgonBM:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751160AbeCZNj4 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 26 Mar 2018 09:39:56 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:43063 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750955AbeCZNjz (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 26 Mar 2018 09:39:55 -0400
-Subject: Re: [PATCH] media: vsp1: Fix BRx conditional path in WPF
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        stable@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-References: <1522070958-24295-1-git-send-email-kieran.bingham@ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <da2ab7ff-c236-60da-f502-f15292add028@ideasonboard.com>
-Date: Mon, 26 Mar 2018 14:39:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <1522070958-24295-1-git-send-email-kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+        id S1752925AbeCXVJS (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 24 Mar 2018 17:09:18 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:34394 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752801AbeCXVJR (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Sat, 24 Mar 2018 17:09:17 -0400
+X-Google-Smtp-Source: AG47ELt2kyaZZGwfF+rWLwSZGAEHVUUK8KACupBrr7zx9QCdFPorbA/MFvP+VWKvc6hVC4vUqUhTCA==
+From: Pawel Dembicki <paweldembicki@gmail.com>
+To: linux-usb@vger.kernel.org
+Cc: Pawel Dembicki <paweldembicki@gmail.com>,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net: qmi_wwan: add BroadMobi BM806U 2020:2033
+Date: Sat, 24 Mar 2018 22:08:14 +0100
+Message-Id: <1521925694-15433-1-git-send-email-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.7.4
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Sorry,
+BroadMobi BM806U is an Qualcomm MDM9225 based 3G/4G modem.
+Tested hardware BM806U is mounted on D-Link DWR-921-C3 router.
+The USB id is added to qmi_wwan.c to allow QMI communication with
+the BM806U.
 
-This should have been from my +renesas to support Renesas' statistics and
-filtering of course.
+Tested on 4.14 kernel and OpenWRT.
 
-On 26/03/18 14:29, Kieran Bingham wrote:
-> When a BRx is provided by a pipeline, the WPF must determine the master
-> layer. Currently the condition to check this identifies pipe->bru ||
-> pipe->num_inputs > 1.
-> 
-> The code then moves on to dereference pipe->bru, thus the check fails
-> static analysers on the possibility that pipe->num_inputs could be
-> greater than 1 without pipe->bru being set.
-> 
-> The reality is that the pipeline must have a BRx to support more than
-> one input, thus this could never cause a fault - however it also
-> identifies that the num_inputs > 1 check is redundant.
-> 
-> Remove the redundant check - and always configure the master layer
-> appropriately when we have a BRx configured in our pipeline.
-> 
-> Fixes: 6134148f6098 ("v4l: vsp1: Add support for the BRS entity")
-> Cc: stable@vger.kernel.org
-> 
-> Suggested-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+---
+ drivers/net/usb/qmi_wwan.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-And thus:
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index 76ac480..7ced288 100644
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -1180,6 +1180,7 @@ static const struct usb_device_id products[] = {
+ 	{QMI_FIXED_INTF(0x19d2, 0x2002, 4)},	/* ZTE (Vodafone) K3765-Z */
+ 	{QMI_FIXED_INTF(0x2001, 0x7e19, 4)},	/* D-Link DWM-221 B1 */
+ 	{QMI_FIXED_INTF(0x2001, 0x7e35, 4)},	/* D-Link DWM-222 */
++	{QMI_FIXED_INTF(0x2020, 0x2033, 4)},	/* BroadMobi BM806U */
+ 	{QMI_FIXED_INTF(0x0f3d, 0x68a2, 8)},    /* Sierra Wireless MC7700 */
+ 	{QMI_FIXED_INTF(0x114f, 0x68a2, 8)},    /* Sierra Wireless MC7750 */
+ 	{QMI_FIXED_INTF(0x1199, 0x68a2, 8)},	/* Sierra Wireless MC7710 in QMI mode */
+-- 
+2.7.4
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-
-> ---
->  drivers/media/platform/vsp1/vsp1_wpf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-> index f7f3b4b2c2de..8bd6b2f1af15 100644
-> --- a/drivers/media/platform/vsp1/vsp1_wpf.c
-> +++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-> @@ -452,7 +452,7 @@ static void wpf_configure(struct vsp1_entity *entity,
->  			: VI6_WPF_SRCRPF_RPF_ACT_SUB(input->entity.index);
->  	}
->  
-> -	if (pipe->bru || pipe->num_inputs > 1)
-> +	if (pipe->bru)
->  		srcrpf |= pipe->bru->type == VSP1_ENTITY_BRU
->  			? VI6_WPF_SRCRPF_VIRACT_MST
->  			: VI6_WPF_SRCRPF_VIRACT2_MST;
-> 
