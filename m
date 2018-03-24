@@ -1,184 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752510AbeCXPWB (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 11:22:01 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:41841 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752315AbeCXPV7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 11:21:59 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Cc: netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        davem@davemloft.net, viro@zeniv.linux.org.uk,
-        stephen@networkplumber.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
-        nirranjan@chelsio.com, indranil@chelsio.com
-References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
-Date: Sat, 24 Mar 2018 10:20:52 -0500
-In-Reply-To: <cover.1521888444.git.rahul.lakkireddy@chelsio.com> (Rahul
-        Lakkireddy's message of "Sat, 24 Mar 2018 16:26:32 +0530")
-Message-ID: <87muyxlctn.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S1752446AbeCXP2s (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 11:28:48 -0400
+Received: from mail-eopbgr660118.outbound.protection.outlook.com ([40.107.66.118]:18160
+        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752302AbeCXP2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 11:28:45 -0400
+From: "Stephen  Bates" <sbates@raithlin.com>
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+CC: Sinan Kaya <okaya@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "Alex Williamson" <alex.williamson@redhat.com>
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+Thread-Topic: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+Thread-Index: AQHTujlZo8bTZRn+4ECdETRRU1rPhqPNgjSAgADeTICAABJggIAAD1YAgAAHVACAAAJxAIAACW8AgAAO3oCAAAopgIAACqIA//+kE4CAAG7lAIANjCGAgAIVYACAAAJeAIAAYfGAgABN7gA=
+Date: Sat, 24 Mar 2018 15:28:43 +0000
+Message-ID: <121026DC-40C7-4F4E-BE27-BDA652BDEB6A@raithlin.com>
+References: <a0af83f8-2cbc-862b-6f8b-231991527cfc@deltatee.com>
+ <3ea80992-a0fc-08f2-d93d-ae0ec4e3f4ce@codeaurora.org>
+ <4eb6850c-df1b-fd44-3ee0-d43a50270b53@deltatee.com>
+ <757fca36-dee4-e070-669e-f2788bd78e41@codeaurora.org>
+ <4f761f55-4e9a-dccb-d12f-c59d2cd689db@deltatee.com>
+ <BB94077B-7EB3-49C4-862D-BF77D0A692CC@raithlin.com>
+ <20180313230850.GA45763@bhelgaas-glaptop.roam.corp.google.com>
+ <C90AA66C-FFC6-4CCA-B959-7BBECA65509C@raithlin.com>
+ <20180323215046.GC210003@bhelgaas-glaptop.roam.corp.google.com>
+ <dc414fa5-1af9-0ba7-e12e-4cd9df313119@deltatee.com>
+ <20180324034947.GE210003@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20180324034947.GE210003@bhelgaas-glaptop.roam.corp.google.com>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.b.0.180311
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com;
+x-originating-ip: [70.65.224.121]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YTOPR0101MB0762;7:WISGhpmlndfEXA1t9pwFskMLJxwHbXizS8yTx81gL1aHJ1I+oibY39OxGh1RVUdSmuu1GS1iUGS1rRsMraPxDZoykbRf3iZRWqsze1/nv0AexeqfPuZ6wRxdFQUHgG5kmDM0zIj49D+pJ36zTn+UdZSr8NoR9MDuUn17hzOJTXQCXlSJIqtVQQydfvkWbPaI4R/nTdQYsZE9uguk8rDcmAfeoYT5m08YRMthdvsoDgjHTgTIuDuSvnWrZVeQfsvO
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3010346b-1b94-4f84-e15c-08d5919bed66
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(3008032)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:YTOPR0101MB0762;
+x-ms-traffictypediagnostic: YTOPR0101MB0762:
+x-microsoft-antispam-prvs: <YTOPR0101MB07622B77D27601A5EAAF4DA7AAAF0@YTOPR0101MB0762.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231221)(944501327)(52105095)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(2016111802025)(6043046)(6072148)(201708071742011);SRVR:YTOPR0101MB0762;BCL:0;PCL:0;RULEID:;SRVR:YTOPR0101MB0762;
+x-forefront-prvs: 0621E7E436
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(366004)(39830400003)(396003)(376002)(346002)(199004)(189003)(86362001)(8676002)(5250100002)(316002)(81166006)(81156014)(105586002)(8936002)(99286004)(54906003)(2900100001)(110136005)(36756003)(6486002)(93886005)(229853002)(2616005)(6506007)(106356001)(58126008)(53936002)(6512007)(6436002)(186003)(26005)(6246003)(66066001)(82746002)(76176011)(68736007)(102836004)(4326008)(7416002)(2906002)(5660300001)(11346002)(305945005)(7736002)(6116002)(3280700002)(25786009)(3846002)(97736004)(33656002)(14454004)(478600001)(3660700001)(446003)(83716003);DIR:OUT;SFP:1102;SCL:1;SRVR:YTOPR0101MB0762;H:YTOPR0101MB2043.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-microsoft-antispam-message-info: rPTrF7RTE/aENh1h7q80bnr0h2veA6zR43TUn2pd1Pjn0hEt9sjzgaS9VTdTuKY9o2lKBRXsi/aADcd7YVYw+ei7rNzbrPYkPzmKUvHqok+MN+6Z7iE5LHyADtLpC+19nwKCxCM2cfwG6VCWSYVEqajoGBpvcSCtKcbv5/z4Ny1MnMyZ6ewJ74z63jfE4s6cy78PUamdcnKmYW/KwGOU2fHmBjX2HvkwJjT9Q1wu6NTc7po9Z3QvFCjpBSVzn6KAAyuCZyWNuRA2udWnjnGpTR8PVo0+EZc8L1nS8Fee2bauJzFMbbHFOiCNvroZMdAS3oU1m0UKuRjR7mvTcLG2og==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <40F4DE2D03BE0945B1840DC8069596E8@CANPRD01.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1ezkzO-0005n5-5U;;;mid=<87muyxlctn.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.121.173;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19bEikqnTxQxDJpI0Q0p4k/1dMUePOJOws=
-X-SA-Exim-Connect-IP: 97.119.121.173
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  0.0 TVD_RCVD_IP Message was received from an IP address
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4983]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1055 ms - load_scoreonly_sql: 0.09 (0.0%),
-        signal_user_changed: 3.5 (0.3%), b_tie_ro: 2.2 (0.2%), parse: 1.60 (0.2%),
-        extract_message_metadata: 43 (4.1%), get_uri_detail_list: 7 (0.7%),
-        tests_pri_-1000: 23 (2.1%), tests_pri_-950: 2.2 (0.2%), tests_pri_-900: 1.81
-        (0.2%), tests_pri_-400: 47 (4.5%), check_bayes: 45 (4.3%), b_tokenize: 20
-        (1.9%), b_tok_get_all: 11 (1.1%), b_comp_prob: 6 (0.6%), b_tok_touch_all: 3.2
-        (0.3%), b_finish: 0.80 (0.1%), tests_pri_0: 916 (86.9%),
-        check_dkim_signature: 1.10 (0.1%), check_dkim_adsp: 5 (0.5%), tests_pri_500:
-        10 (1.0%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH net-next v2 0/2] kernel: add support to collect hardware logs in crash recovery kernel
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3010346b-1b94-4f84-e15c-08d5919bed66
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2018 15:28:43.0756
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTOPR0101MB0762
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2OFSrQ6004878
 
+> That would be very nice but many devices do not support the internal
+> route. 
 
-Rahul Lakkireddy <rahul.lakkireddy@chelsio.com> writes:
+But Logan in the NVMe case we are discussing movement within a single function (i.e. from a NVMe namespace to a NVMe CMB on the same function). Bjorn is discussing movement between two functions (PFs or VFs) in the same PCIe EP. In the case of multi-function endpoints I think the standard requires those devices to support internal DMAs for transfers between those functions (but does not require it within a function).
 
-> On production servers running variety of workloads over time, kernel
-> panic can happen sporadically after days or even months. It is
-> important to collect as much debug logs as possible to root cause
-> and fix the problem, that may not be easy to reproduce. Snapshot of
-> underlying hardware/firmware state (like register dump, firmware
-> logs, adapter memory, etc.), at the time of kernel panic will be very
-> helpful while debugging the culprit device driver.
->
-> This series of patches add new generic framework that enable device
-> drivers to collect device specific snapshot of the hardware/firmware
-> state of the underlying device in the crash recovery kernel. In crash
-> recovery kernel, the collected logs are exposed via /sys/kernel/crashdd/
-> directory, which is copied by user space scripts for post-analysis.
->
-> A kernel module crashdd is newly added. In crash recovery kernel,
-> crashdd exposes /sys/kernel/crashdd/ directory containing device
-> specific hardware/firmware logs.
+So I think the summary is:
 
-Have you looked at instead of adding a sysfs file adding the dumps
-as additional elf notes in /proc/vmcore?
+1. There is no requirement for a single function to support internal DMAs but in the case of NVMe we do have a protocol specific way for a NVMe function to indicate it supports via the CMB BAR. Other protocols may also have such methods but I am not aware of them at this time.
 
-That should allow existing tools to capture your extended dump
-information with no code changes, and it will allow having a single file
-core dump for storing the information.
+2. For multi-function end-points I think it is a requirement that DMAs *between* functions are supported via an internal path but this can be over-ridden by ACS when supported in the EP.
 
-Both of which should mean something that will integrate better into
-existing flows.
+3. For multi-function end-points there is no requirement to support internal DMA within each individual function (i.e. a la point 1 but extended to each function in a MF device). 
 
-The interface logic of the driver should be essentially the same.
+Based on my review of the specification I concur with Bjorn that p2pdma between functions in a MF end-point should be assured to be supported via the standard. However if the p2pdma involves only a single function in a MF device then we can only support NVMe CMBs for now. Let's review and see what the options are for supporting this in the next respin.
 
-
-Also have you tested this and seen how well your current logic captures
-the device information?
-
-
->
-> The sequence of actions done by device drivers to append their device
-> specific hardware/firmware logs to /sys/kernel/crashdd/ directory are
-> as follows:
->
-> 1. During probe (before hardware is initialized), device drivers
-> register to the crashdd module (via crashdd_add_dump()), with
-> callback function, along with buffer size and log name needed for
-> firmware/hardware log collection.
->
-> 2. Crashdd creates a driver's directory under /sys/kernel/crashdd/<driver>.
-> Then, it allocates the buffer with requested size and invokes the
-> device driver's registered callback function.
->
-> 3. Device driver collects all hardware/firmware logs into the buffer
-> and returns control back to crashdd.
->
-> 4. Crashdd exposes the buffer as a file via
-> /sys/kernel/crashdd/<driver>/<dump_file>.
->
-> 5. User space script (/usr/lib/kdump/kdump-lib-initramfs.sh) copies
-> the entire /sys/kernel/crashdd/ directory to /var/crash/ directory.
->
-> Patch 1 adds crashdd module to allow drivers to register callback to
-> collect the device specific hardware/firmware logs.  The module also
-> exports /sys/kernel/crashdd/ directory containing the hardware/firmware
-> logs.
->
-> Patch 2 shows a cxgb4 driver example using the API to collect
-> hardware/firmware logs in crash recovery kernel, before hardware is
-> initialized.  The logs for the devices are made available under
-> /sys/kernel/crashdd/cxgb4/ directory.
->
-> Thanks,
-> Rahul
->
-> RFC v1: https://lkml.org/lkml/2018/3/2/542
-> RFC v2: https://lkml.org/lkml/2018/3/16/326
->
-> ---
-> v2:
-> - Added ABI Documentation for crashdd.
-> - Directly use octal permission instead of macro.
->
-> Changes since rfc v2:
-> - Moved exporting crashdd from procfs to sysfs. Suggested by
->   Stephen Hemminger <stephen@networkplumber.org>
-> - Moved code from fs/proc/crashdd.c to fs/crashdd/ directory.
-> - Replaced all proc API with sysfs API and updated comments.
-> - Calling driver callback before creating the binary file under
->   crashdd sysfs.
-> - Changed binary dump file permission from S_IRUSR to S_IRUGO.
-> - Changed module name from CRASH_DRIVER_DUMP to CRASH_DEVICE_DUMP.
->
-> rfc v2:
-> - Collecting logs in 2nd kernel instead of during kernel panic.
->   Suggested by Eric Biederman <ebiederm@xmission.com>.
-> - Added new crashdd module that exports /proc/crashdd/ containing
->   driver's registered hardware/firmware logs in patch 1.
-> - Replaced the API to allow drivers to register their hardware/firmware
->   log collect routine in crash recovery kernel in patch 1.
-> - Updated patch 2 to use the new API in patch 1.
->
->
-> Rahul Lakkireddy (2):
->   fs/crashdd: add API to collect hardware dump in second kernel
->   cxgb4: collect hardware dump in second kernel
->
->  Documentation/ABI/testing/sysfs-kernel-crashdd   |  34 ++++
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h       |   4 +
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.c |  25 +++
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4_cudbg.h |   3 +
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |  12 ++
->  fs/Kconfig                                       |   1 +
->  fs/Makefile                                      |   1 +
->  fs/crashdd/Kconfig                               |  10 +
->  fs/crashdd/Makefile                              |   3 +
->  fs/crashdd/crashdd.c                             | 233 +++++++++++++++++++++++
->  fs/crashdd/crashdd_internal.h                    |  24 +++
->  include/linux/crashdd.h                          |  24 +++
->  12 files changed, 374 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-crashdd
->  create mode 100644 fs/crashdd/Kconfig
->  create mode 100644 fs/crashdd/Makefile
->  create mode 100644 fs/crashdd/crashdd.c
->  create mode 100644 fs/crashdd/crashdd_internal.h
->  create mode 100644 include/linux/crashdd.h
+Stephen
