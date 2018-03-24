@@ -1,99 +1,128 @@
-Return-Path: <bleung@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521913395; cv=none;
-        d=google.com; s=arc-20160816;
-        b=OwAvB2c7Ewz45xICVTZEZOlM6+D5vZFedAFKc52o7Wnnt6K0+krAEANPOqUOfCeM0Y
-         k/kRL/Eazzo3Qo4cvPRrP5jreclEUkucHni3GMgJh9OFyv0tCrr7LzXvSqZi68WjYQpr
-         tct5i/JDjLGsuR87lwkVxGqwC9Mw9iLgwGDoNkAdVaz37Vqpa7o+ctv5z6xgTg/efwot
-         gLpbB18MHK+HTtmORteQ+gy1y8X6I7/oW5GNq5mYzzep5P2QqJ3axF+gd6qMukmMiwEG
-         7wOVmWSe4BBCsYyE1ky/TA1mglSLZAFEvNYLS7jdJDzv1tOx67Pgu9jwGJkuQmvvx3ot
-         d+dg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=SRcT2Wvv4SVpOot9VGgKbt5zt8TbJCx+SOJ2e5TqCY4=;
-        b=iMccj0m5oykpnkLzFJhfKZUTMCL+NQd1WEU23T0Bt267S4bI0nDNLyy7iBSbsjwFtJ
-         4y2pUbUvoMgeyYEpdHRwUfwnU9pS7PRFiBY6tolehfV3fDcth0JtWeNaurpXNlZrSq06
-         QVYAJRD0JI/dVpLxVDJOqkRdsZaIlJkJFOLVYCRcc8lz3+eSrjuo6dwhxV03Lw4/MMZ/
-         lv1JvbjiGdw/aW931sGTXu77ObM2mP6PvRRJ1wnZhgiWsgxiR/Ks9rCvwfnZs8ul5Npf
-         gjVK3zDD0d5p+gswrGvwZSghEJbYDQPTSgU58ME8BsS3aCSdQ1B4Q8q6OGTf5K4vCNuo
-         sx2Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=wVYTeezA;
-       spf=pass (google.com: domain of bleung@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=bleung@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=wVYTeezA;
-       spf=pass (google.com: domain of bleung@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=bleung@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AG47ELtU9pcBirGPQBvo6fQHqZWaVS6x2nCtLbQxWbZjlEydjX0Sm+wo68aBndrYze1FPJKoxxKQ9w==
-Date: Sat, 24 Mar 2018 10:43:11 -0700
-From: Benson Leung <bleung@google.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Benson Leung <bleung@chromium.org>, gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	achant@google.com
-Subject: Re: [PATCH v2] USB: announce bcdDevice as well as idVendor,
- idProduct.
-Message-ID: <20180324174311.GA12922@decatoncale.mtv.corp.google.com>
-References: <20180324013154.230119-1-bleung@chromium.org>
- <Pine.LNX.4.44L0.1803241155560.30456-100000@netrider.rowland.org>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2600559-1521852574-2-11530064449158841971
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES endaro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521852573; b=GEdAnOIdCi4s2AJQM4+zNYAANzLvBSA6e333JovU/SvQQlE
+    m+RhUfAVSUWYHRm/PrNFumny88Hvxy7YEJK2zm/KRCmErW8F+lN5SoWbaS09KHKg
+    Pg2ip8yJtdgiszgdtLxXL76Rur1BARz86+jeViATq1VpyUOnv7gtL1sxPTJKgIrd
+    zNpsMi2puK3TyNcDlxkE5Vu6GiZlAFoPMmz/oH1wFlLmU6DiN+RBL3BNM2RBGuWX
+    x6llgLP3AgPLxIaoyWMDF9YpkoFL6Bdi7r+N2fFC9UmQN4+RbCa5ps4cY+9tSBNb
+    BcktXubOLT+I1eEX90VLZ9cHaD4lKUXemxvqimA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    arctest; t=1521852573; bh=OH9uq36QIExRqSYyPf+8N/4rh6UJyYcDnIms89
+    gIoac=; b=cbRqvo/dpdkF3xMzuj/EPN/nzdNhS3IrRe+5aLjIQq7O8aXHlStd0m
+    AuHk4fDzn6rW1iiZXlZvSt4OdB3iJh0+uQg1iSq/0pDiJ15QI4b3+jy2cgGfBQ55
+    kn60vcd8RUioxgNtDBmQlOAFC0VTXuH1q7Y3U2kZg5GH/oUzWCPLSBS92vbCa5ic
+    4m2catX0ho68GDeD8RS3r7Dz2P0GX+fq1gDWgK2u0E7I7p/bzdrQyutwgY1MOQm7
+    89jcPtbqLTQOuaSsCfEPXxqRmf1m/nTK56ulNNU2pBv/KoR8zq0jacG5L6M5E+jM
+    RPg5h78peR8KUX+LF1tAyx5qx5CfaYvw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=gYO4GWV+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=eCTz+z5V;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=gYO4GWV+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=eCTz+z5V;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751890AbeCXAtT (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 23 Mar 2018 20:49:19 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:33933 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751677AbeCXAtS (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 23 Mar 2018 20:49:18 -0400
+X-Google-Smtp-Source: AG47ELvxACEcdwS+zWQhmeMj5qVzjeOWuBWrctu74ESH6/gES+qVtzamXYCYAsZVpPKNX8xnk2QoWo/5Y8zrzBXzfHE=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1803241155560.30456-100000@netrider.rowland.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180324003330.180726-1-bleung@chromium.org>
+References: <20180324003330.180726-1-bleung@chromium.org>
+From: Andrew Chant <achant@google.com>
+Date: Fri, 23 Mar 2018 17:48:37 -0700
+Message-ID: <CANVWZtHTuU-_zjvj8gjXXA-2VUU2zxsu=afcqZC8Oen_bFmk6A@mail.gmail.com>
+Subject: Re: [PATCH] USB: announce bcdDevice as well as idVendor, idProduct.
+To: Benson Leung <bleung@chromium.org>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Benson Leung <bleung@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595777100282268882?=
-X-GMAIL-MSGID: =?utf-8?q?1595841859930913983?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Fri, Mar 23, 2018 at 5:33 PM, Benson Leung <bleung@chromium.org> wrote:
+> Print bcdDevice which is used by vendors to identify different versions
+> of the same product (or different versions of firmware).
+>
+> Adding this to the logs will be useful for support purposes.
+>
+> Signed-off-by: Benson Leung <bleung@chromium.org>
+> ---
+>  drivers/usb/core/hub.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index aaeef03c0d83..739d599814b6 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -2192,14 +2192,16 @@ static void show_string(struct usb_device *udev, char *id, char *string)
+>
+>  static void announce_device(struct usb_device *udev)
+>  {
+> -       dev_info(&udev->dev, "New USB device found, idVendor=%04x, idProduct=%04x\n",
+> -               le16_to_cpu(udev->descriptor.idVendor),
+> -               le16_to_cpu(udev->descriptor.idProduct));
+>         dev_info(&udev->dev,
+> -               "New USB device strings: Mfr=%d, Product=%d, SerialNumber=%d\n",
+> -               udev->descriptor.iManufacturer,
+> -               udev->descriptor.iProduct,
+> -               udev->descriptor.iSerialNumber);
+> +                "New USB device found, idVendor=%04x, idProduct=%04x, bcdDevice=%04x\n",
+> +                le16_to_cpu(udev->descriptor.idVendor),
+> +                le16_to_cpu(udev->descriptor.idProduct),
+> +                le16_to_cpu(udev->descriptor.bcdDevice));
+> +       dev_info(&udev->dev,
+> +                "New USB device strings: Mfr=%d, Product=%d, SerialNumber=%d\n",
+> +                udev->descriptor.iManufacturer,
+> +                udev->descriptor.iProduct,
+> +                udev->descriptor.iSerialNumber);
+>         show_string(udev, "Product", udev->product);
+>         show_string(udev, "Manufacturer", udev->manufacturer);
+>         show_string(udev, "SerialNumber", udev->serial);
+> --
+> 2.17.0.rc0.231.g781580f067-goog
+>
 
---u3/rZRmxL6MmkK24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +                "New USB device found, idVendor=%04x, idProduct=%04x, bcdDevice=%04x\n",
+Can you please decode bcdDevice into a decimal string?
 
-On Sat, Mar 24, 2018 at 12:06:20PM -0400, Alan Stern wrote:
-> > +	dev_info(&udev->dev,
-> > +		 "New USB device found, idVendor=3D%04x, idProduct=3D%04x, bcdDevice=
-=3D%2x.%02x\n",
-> > +		 le16_to_cpu(udev->descriptor.idVendor),
->=20
-> Unnecessary and incorrect whitespace changes.
-=20
-Thanks Alan. Fixed in v3.
-
-Benson
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---u3/rZRmxL6MmkK24
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlq2ji4ACgkQHwn1ewov
-5lhTgg/8Dx1wnMG4urKuxxykwAvk7GiDaAAbZANZl+DDl6oT9fIxbx/jSo2naEMy
-/FZfFz1XYNw5jnZJn0udlaQKmtYaUr5bXMINjpH7GB8fSBZjduSSMj8yWz2yuywA
-o8s+lC/pS4psu3rv1/ZLnjXr5Nv/CWu4ZkpJg1NGVnnL+PraF03LrDAG2VmqtU78
-8TXphFS2WY0XxEt5o40XAflltGl7XiehAwNN1BwjzLGbFUxjq+ojYOzreXi9/Zwq
-kaNoVQsjTHPPak2aqXSEuGmojngHFJb6l/+MnEQy/oV271absSqyGLbgHqBuckqt
-bqMz59Dm3aBjgdCLl/n5L8H2a64r/0m1VlK5yzH61r4fzaz3t1OtHuYZPvIIMU27
-6k3D6SuNPQ887+yLopoCf2yroBrAdzWmgOVyLbvClywbPzItcZNSU4Jja9SQ8Z6G
-DLjHP8d9+YeTlZH2bjDBOuB6Q7b2Q/YpZIYCoOoE5GiaKCKbix6ocGXJxOnZuEsx
-Ve6/6FPJdjrLinSFcSBRSm2n/1nEWmhGZnGsU8V2IGIs4Fr6tpUDPsRwohfd9jzd
-4Fp8OaOVdseT2D1WsPyEZgB7uPniIwfx+liPK25IthraEgH4a8DmyFirNHSvWfHV
-euby7qvSK+SOr165icKozOKdb0Zx0bfxW2/B7NMD9Gi4EpmehCY=
-=uI0Z
------END PGP SIGNATURE-----
-
---u3/rZRmxL6MmkK24--
+lsusb -v does this (bcdDevice: 0.03 for example) and in my experience
+it has generally matched up with how hardware manufacturers refer
+to their firmware.
