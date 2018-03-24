@@ -1,202 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752762AbeCXWiy (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 18:38:54 -0400
-Received: from smtp4-g21.free.fr ([212.27.42.4]:38576 "EHLO smtp4-g21.free.fr"
+        id S1752624AbeCXWnf (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 18:43:35 -0400
+Received: from sauhun.de ([88.99.104.3]:44588 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752686AbeCXWiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 18:38:52 -0400
-From: Alban Bedel <albeu@free.fr>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Alban Bedel <albeu@free.fr>, linux-kernel@vger.kernel.org
-Subject: [PATCH] phy: Add a driver for the ATH79 USB phy
-Date: Sat, 24 Mar 2018 23:38:40 +0100
-Message-Id: <1521931120-31118-1-git-send-email-albeu@free.fr>
-X-Mailer: git-send-email 2.7.4
+        id S1752216AbeCXWnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 18:43:33 -0400
+Date: Sat, 24 Mar 2018 23:43:32 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] i2c: i2c-stm32f7: Add 10-bit address support
+Message-ID: <20180324224332.apsixpklrgtelak7@ninjato>
+References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+ <1521650940-11651-2-git-send-email-pierre-yves.mordret@st.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qyhavai5wehuyvdj"
+Content-Disposition: inline
+In-Reply-To: <1521650940-11651-2-git-send-email-pierre-yves.mordret@st.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ATH79 USB phy is very simple, it only have a reset. On some SoC a
-second reset is used to force the phy in suspend mode regardless of the
-USB controller status.
 
-This driver is added to the qualcom directory as atheros is now part
-of qualcom and newer SoC of this familly are marketed under the
-qualcom name.
+--qyhavai5wehuyvdj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
----
- MAINTAINERS                          |   8 +++
- drivers/phy/qualcomm/Kconfig         |  11 +++-
- drivers/phy/qualcomm/Makefile        |   1 +
- drivers/phy/qualcomm/phy-ath79-usb.c | 108 +++++++++++++++++++++++++++++++++++
- 4 files changed, 127 insertions(+), 1 deletion(-)
- create mode 100644 drivers/phy/qualcomm/phy-ath79-usb.c
+On Wed, Mar 21, 2018 at 05:48:55PM +0100, Pierre-Yves MORDRET wrote:
+> This patch adds support for 10-bit device address for STM32F7 I2C
+>=20
+> Signed-off-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
+> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 73c0cda..ce5ecd6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2294,6 +2294,14 @@ S:	Maintained
- F:	drivers/gpio/gpio-ath79.c
- F:	Documentation/devicetree/bindings/gpio/gpio-ath79.txt
- 
-+ATHEROS 71XX/9XXX USB PHY DRIVER
-+M:	Alban Bedel <albeu@free.fr>
-+W:	https://github.com/AlbanBedel/linux
-+T:	git git://github.com/AlbanBedel/linux
-+S:	Maintained
-+F:	drivers/phy/qualcomm/phy-ath79-usb.c
-+F:	Documentation/devicetree/bindings/phy/phy-ath79-usb.txt
-+
- ATHEROS ATH GENERIC UTILITIES
- M:	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
- L:	linux-wireless@vger.kernel.org
-diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
-index 7bfa64b..632a0e7 100644
---- a/drivers/phy/qualcomm/Kconfig
-+++ b/drivers/phy/qualcomm/Kconfig
-@@ -1,6 +1,15 @@
- #
--# Phy drivers for Qualcomm platforms
-+# Phy drivers for Qualcomm and Atheros platforms
- #
-+config PHY_ATH79_USB
-+	tristate "Atheros AR71XX/9XXX USB PHY driver"
-+	depends on OF && (ATH79 || COMPILE_TEST)
-+	default y if USB_EHCI_HCD_PLATFORM || USB_OHCI_HCD_PLATFORM
-+	select RESET_CONTROLLER
-+	select GENERIC_PHY
-+	help
-+	  Enable this to support the USB PHY on Atheros AR71XX/9XXX SoCs.
-+
- config PHY_QCOM_APQ8064_SATA
- 	tristate "Qualcomm APQ8064 SATA SerDes/PHY driver"
- 	depends on ARCH_QCOM
-diff --git a/drivers/phy/qualcomm/Makefile b/drivers/phy/qualcomm/Makefile
-index 9abb789..deb831f4 100644
---- a/drivers/phy/qualcomm/Makefile
-+++ b/drivers/phy/qualcomm/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_PHY_ATH79_USB)		+= phy-ath79-usb.o
- obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
- obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)	+= phy-qcom-ipq806x-sata.o
- obj-$(CONFIG_PHY_QCOM_QMP)		+= phy-qcom-qmp.o
-diff --git a/drivers/phy/qualcomm/phy-ath79-usb.c b/drivers/phy/qualcomm/phy-ath79-usb.c
-new file mode 100644
-index 0000000..6fd6e07
---- /dev/null
-+++ b/drivers/phy/qualcomm/phy-ath79-usb.c
-@@ -0,0 +1,108 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Atheros AR71XX/9XXX USB PHY driver
-+ *
-+ * Copyright (C) 2015-2018 Alban Bedel <albeu@free.fr>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
-+#include <linux/reset.h>
-+
-+struct ath79_usb_phy {
-+	struct reset_control *reset;
-+	/* The suspend override logic is inverted, hence the no prefix
-+	 * to make the code a bit easier to understand.
-+	 */
-+	struct reset_control *no_suspend_override;
-+};
-+
-+static int ath79_usb_phy_power_on(struct phy *phy)
-+{
-+	struct ath79_usb_phy *priv = phy_get_drvdata(phy);
-+	int err = 0;
-+
-+	if (priv->no_suspend_override) {
-+		err = reset_control_assert(priv->no_suspend_override);
-+		if (err)
-+			return err;
-+	}
-+
-+	err = reset_control_deassert(priv->reset);
-+	if (err && priv->no_suspend_override)
-+		reset_control_assert(priv->no_suspend_override);
-+
-+	return err;
-+}
-+
-+static int ath79_usb_phy_power_off(struct phy *phy)
-+{
-+	struct ath79_usb_phy *priv = phy_get_drvdata(phy);
-+	int err = 0;
-+
-+	err = reset_control_assert(priv->reset);
-+	if (err)
-+		return err;
-+
-+	if (priv->no_suspend_override) {
-+		err = reset_control_deassert(priv->no_suspend_override);
-+		if (err)
-+			reset_control_deassert(priv->reset);
-+	}
-+
-+	return err;
-+}
-+
-+static const struct phy_ops ath79_usb_phy_ops = {
-+	.power_on	= ath79_usb_phy_power_on,
-+	.power_off	= ath79_usb_phy_power_off,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int ath79_usb_phy_probe(struct platform_device *pdev)
-+{
-+	struct ath79_usb_phy *priv;
-+	struct phy *phy;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->reset = devm_reset_control_get(&pdev->dev, "usb-phy");
-+	if (IS_ERR(priv->reset))
-+		return PTR_ERR(priv->reset);
-+
-+	priv->no_suspend_override = devm_reset_control_get_optional(
-+		&pdev->dev, "usb-suspend-override");
-+	if (IS_ERR(priv->no_suspend_override))
-+		return PTR_ERR(priv->no_suspend_override);
-+
-+	phy = devm_phy_create(&pdev->dev, NULL, &ath79_usb_phy_ops);
-+	if (IS_ERR(phy))
-+		return PTR_ERR(phy);
-+
-+	phy_set_drvdata(phy, priv);
-+
-+	return PTR_ERR_OR_ZERO(devm_of_phy_provider_register(
-+				&pdev->dev, of_phy_simple_xlate));
-+}
-+
-+static const struct of_device_id ath79_usb_phy_of_match[] = {
-+	{ .compatible = "qca,ar7100-usb-phy" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, ath79_usb_phy_of_match);
-+
-+static struct platform_driver ath79_usb_phy_driver = {
-+	.probe	= ath79_usb_phy_probe,
-+	.driver = {
-+		.of_match_table	= ath79_usb_phy_of_match,
-+		.name		= "ath79-usb-phy",
-+	}
-+};
-+module_platform_driver(ath79_usb_phy_driver);
-+
-+MODULE_DESCRIPTION("ATH79 USB PHY driver");
-+MODULE_AUTHOR("Alban Bedel <albeu@free.fr>");
-+MODULE_LICENSE("GPL");
--- 
-2.7.4
+Out of curiosity: how did you test this patch? I never managed to find a
+10-bit client (except for an SoC with 10-bit slave mode).
+
+> ---
+>   Version history:
+>      v1:
+>         * Initial
+>      v2:
+> ---
+> ---
+>  drivers/i2c/busses/i2c-stm32f7.c | 22 +++++++++++++++++-----
+>  1 file changed, 17 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-st=
+m32f7.c
+> index f273e28..ae0d15c 100644
+> --- a/drivers/i2c/busses/i2c-stm32f7.c
+> +++ b/drivers/i2c/busses/i2c-stm32f7.c
+> @@ -65,7 +65,12 @@
+>  #define STM32F7_I2C_CR2_NACK			BIT(15)
+>  #define STM32F7_I2C_CR2_STOP			BIT(14)
+>  #define STM32F7_I2C_CR2_START			BIT(13)
+> +#define STM32F7_I2C_CR2_HEAD10R			BIT(12)
+> +#define STM32F7_I2C_CR2_ADD10			BIT(11)
+>  #define STM32F7_I2C_CR2_RD_WRN			BIT(10)
+> +#define STM32F7_I2C_CR2_SADD10_MASK		GENMASK(9, 0)
+> +#define STM32F7_I2C_CR2_SADD10(n)		(((n) & \
+> +						STM32F7_I2C_CR2_SADD10_MASK))
+>  #define STM32F7_I2C_CR2_SADD7_MASK		GENMASK(7, 1)
+>  #define STM32F7_I2C_CR2_SADD7(n)		(((n) & 0x7f) << 1)
+> =20
+> @@ -176,14 +181,14 @@ struct stm32f7_i2c_timings {
+> =20
+>  /**
+>   * struct stm32f7_i2c_msg - client specific data
+> - * @addr: 8-bit slave addr, including r/w bit
+> + * @addr: 8-bit or 10-bit slave addr, including r/w bit
+>   * @count: number of bytes to be transferred
+>   * @buf: data buffer
+>   * @result: result of the transfer
+>   * @stop: last I2C msg to be sent, i.e. STOP to be generated
+>   */
+>  struct stm32f7_i2c_msg {
+> -	u8 addr;
+> +	u16 addr;
+>  	u32 count;
+>  	u8 *buf;
+>  	int result;
+> @@ -629,8 +634,15 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_=
+dev *i2c_dev,
+>  		cr2 |=3D STM32F7_I2C_CR2_RD_WRN;
+> =20
+>  	/* Set slave address */
+> -	cr2 &=3D ~STM32F7_I2C_CR2_SADD7_MASK;
+> -	cr2 |=3D STM32F7_I2C_CR2_SADD7(f7_msg->addr);
+> +	cr2 &=3D ~(STM32F7_I2C_CR2_HEAD10R | STM32F7_I2C_CR2_ADD10);
+> +	if (msg->flags & I2C_M_TEN) {
+> +		cr2 &=3D ~STM32F7_I2C_CR2_SADD10_MASK;
+> +		cr2 |=3D STM32F7_I2C_CR2_SADD10(f7_msg->addr);
+> +		cr2 |=3D STM32F7_I2C_CR2_ADD10;
+> +	} else {
+> +		cr2 &=3D ~STM32F7_I2C_CR2_SADD7_MASK;
+> +		cr2 |=3D STM32F7_I2C_CR2_SADD7(f7_msg->addr);
+> +	}
+> =20
+>  	/* Set nb bytes to transfer and reload if needed */
+>  	cr2 &=3D ~(STM32F7_I2C_CR2_NBYTES_MASK | STM32F7_I2C_CR2_RELOAD);
+> @@ -798,7 +810,7 @@ static int stm32f7_i2c_xfer(struct i2c_adapter *i2c_a=
+dap,
+> =20
+>  static u32 stm32f7_i2c_func(struct i2c_adapter *adap)
+>  {
+> -	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+> +	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR;
+>  }
+> =20
+>  static struct i2c_algorithm stm32f7_i2c_algo =3D {
+> --=20
+> 2.7.4
+>=20
+
+--qyhavai5wehuyvdj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq21JQACgkQFA3kzBSg
+KbbTfA/+NyOduO5HWmywdlcLg1bw0BTUzMhsljNhgtDIbbfTQFzNBPCwFV4kImwB
+5VY1rCTwdMJJ1qo8Lp66tqb0ifSRngB+r/MKsyuYc597cemP0pH72trqBVmW6RJN
+Eiad24F7xI5JkOEfwAhuBbnulPwWMmYyE8nJSMHG6wGU3PfsnMAyyNydNkCl6yxq
+yHlDZMy8wWhGNc5IV2FVrXL5owWWmezETL/lLKKylRHTZYQHiuqaOayJVPAIQyE3
+ZZCkJnvGf9cm/kes1C5UE5Ncu7MRUETzUsSarVT+MHnz5iY8mj7TKr12B/gcHrOb
+U5fzZJ2fOBCo6Sv0gjZM/hC2TEEewhEZlojVPsa/cyxAypuacmqHF/E4PD2oBAfC
+dTdI85YjCbOzpkPiqoa7NaXN9vEQKWYGbFSSqIZwE2TEkcZEJto90xuzDDIBLqmm
+/LHByutuJEGlaBz4OV7rUU1kTtYkynbKBRAR7jPRcX6J33/rVc0K4kktFxo/xEz4
+VFABvJBpJlJ6rFSCdcGfY+Wx8xN1HMS8bmdpIf4GNYEazJy/ZPvcbqSB5U1Sp0o+
+0VJnYvL0VRTBQJsXgDGkgEKQ5lqe+xQhKRrcFD8dQhsNV5Ns/nnG3fT1HwILM0FJ
+axrdQuYnI//6o2lyygreBjOZbxGCRLPc6rdi5H0NUmpSuIrvEF8=
+=1AhT
+-----END PGP SIGNATURE-----
+
+--qyhavai5wehuyvdj--
