@@ -1,125 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752559AbeCXQRu (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 12:17:50 -0400
-Received: from smtp04.mail.online.nl ([194.134.25.74]:28066 "EHLO
-        smtp04.mail.online.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752512AbeCXQRs (ORCPT
+        id S1752496AbeCXQ0q (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 12:26:46 -0400
+Received: from orthanc.universe-factory.net ([104.238.176.138]:53240 "EHLO
+        orthanc.universe-factory.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752167AbeCXQ0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 12:17:48 -0400
-Subject: Re: [PATCH] of_net: Implement of_get_nvmem_mac_address helper
-To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org, frowand.list@gmail.com
-References: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl>
- <20180323151101.GB24361@lunn.ch>
- <b68d4540-b15d-ec31-05a8-e1a4632bb5ee@topic.nl>
- <886c94ef-e2c8-2afa-307d-1924c74c6dc0@gmail.com>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Organization: Topic
-Message-ID: <cb12ea29-a7b0-cf66-7f5a-c09d36f443f0@topic.nl>
-Date: Sat, 24 Mar 2018 17:17:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <886c94ef-e2c8-2afa-307d-1924c74c6dc0@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sat, 24 Mar 2018 12:26:44 -0400
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+To: rostedt@goodmis.org, mingo@redhat.com
+Cc: linux-kernel@vger.kernel.org, mschiffer@universe-factory.net
+Subject: [PATCH] ftrace: fix stddev calculation in function profiler (again)
+Date: Sat, 24 Mar 2018 17:26:38 +0100
+Message-Id: <f208c5c360f1e86327b0adbb879d61f4779e8ddd.1521908409.git.mschiffer@universe-factory.net>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-03-18 20:33, Florian Fainelli wrote:
-> On 03/23/2018 12:20 PM, Mike Looijmans wrote:
->> On 23-3-2018 16:11, Andrew Lunn wrote:
->>> On Fri, Mar 23, 2018 at 03:24:34PM +0100, Mike Looijmans wrote:
->>>> It's common practice to store MAC addresses for network interfaces into
->>>> nvmem devices. However the code to actually do this in the kernel lacks,
->>>> so this patch adds of_get_nvmem_mac_address() for drivers to obtain the
->>>> address from an nvmem cell provider.
->>>>
->>>> This is particulary useful on devices where the ethernet interface
->>>> cannot
->>>> be configured by the bootloader, for example because it's in an FPGA.
->>>>
->>>> Tested by adapting the cadence macb driver to call this instead of
->>>> of_get_mac_address().
->>>
->>> Hi Mike
->>>
->>> Please can you document the device tree binding. I assume you are
->>> adding a nvmen-cells and nvmem-cell-names to the Ethernet node in
->>> device tree.
->>
->> Indeed. I'll add my settings as an example. Where should I put this
->> documentation, in the commit comment or somewhere in
->> Documents/devicetree/bindings?
->>
->>>> +/**
->>>> + * Search the device tree for a MAC address, by calling
->>>> of_get_mac_address
->>>> + * and if that doesn't provide an address, fetch it from an nvmem
->>>> provider
->>>> + * using the name 'mac-address'.
->>>> + * On success, copies the new address is into memory pointed to by
->>>> addr and
->>>> + * returns 0. Returns a negative error code otherwise.
->>>> + * @dev:    Pointer to the device containing the device_node
->>>> + * @addr:    Pointer to receive the MAC address using ether_addr_copy()
->>>> + */
->>>> +int of_get_nvmem_mac_address(struct device *dev, char *addr)
->>>> +{
->>>> +    const char *mac;
->>>> +    struct nvmem_cell *cell;
->>>> +    size_t len;
->>>> +    int ret;
->>>> +
->>>> +    mac = of_get_mac_address(dev->of_node);
->>>> +    if (mac) {
->>>> +        ether_addr_copy(addr, mac);
->>>> +        return 0;
->>>> +    }
->>>
->>> Is there a need to add a new API? Could of_get_mac_address() be
->>> extended to look in NVMEM? The MAC driver does not care. It is saying,
->>> using OF get me a MAC address. One API seems sufficient, and would
->>> mean you don't need to change the MAC drivers.
->>
->> It's what I intended to do, but there were two problems with that:
->> - of_get_mac_address() returns a pointer to constant data in memory, but
->> the nvmem functions return an allocated memory object that must be freed
->> after use. This changes the way the call is to be made.
-> 
-> Yeah...
-> 
->> - The nvmem functions need the "struct device" pointer as well, while
->> of_get_mac_address() only gets passed the DT node.
-> 
-> Bummer, you can't assume there is always a struct device associated with
-> a struct device_node. Also, bigger question is, how can we make this
-> work, for e.g: ACPI systems and therefore use an abstract fw_node handle?
-> 
+It is well-known that it is not possible to accurately calculate variances
+just by accumulating squared samples; in fact, such an approach can even
+result in negative numbers. An earlier attempt to fix the calculation
+referred to Welford's method, but did not implement it correctly, leading
+to meeaningless output like the following:
 
-Andrew Lunn's suggestion of using "of_nvmem_cell_get()" should solve this.
+  nf_conntrack_proto_fini     50    373.523 us    7.470 us    3234315951 us
 
->> One approach would be to deprecate the of_get_mac_address() interface
->> and migrate existing drivers to the of_get_nvmem_mac_address() interface.
-> 
-> Humm maybe, but clearly making of_get_mac_address() look for a nvmem is
-> less error prone and does not require people to opt-in for the new
-> helper, that seems beneficial to me.
+Welford's method uses one do_div() in the tracing path; this cannot be
+avoided. The average time is added to struct ftrace_profile, so only a
+single division is required. I also considered the following alternatives:
 
-Totally agree. But I can't think of a way that doesn't change the 
-method's signature. At some point the allocated nvmem buffer must be freed.
+1) Only keeping the avg field and removing the aggregated time would
+greatly lead to severe rounding errors in calculating the total time based
+on counter and avg.
 
-A quick survey for the of_get_mac_address users learns that most of them 
-do a memcpy (or similar) right after it, so for these drivers the 
-"of_get_nvmem_mac_address" style signature that performs the memcpy (or 
-better, ether_addr_copy) is a better fit, e.g.:
+2) Calculating both the old and the new average in profile_graph_return()
+instead of storing it in struct ftrace_profile would require a second
+division.
 
-int of_get_mac_address(struct device_node *np, void *addr)
+3) I managed to transform Welford's equations in a way that uses the total
+time instead of the average and requires only a single division.
+Unfortunately, the divisor is counter^3 in this case, easily overflowing
+even 64bit integers.
 
+Ruling out the above alternatives, I chose the present approach to fix the
+issue.
 
+Fixes: e330b3bcd831 ("tracing: Show sample std dev in function profiling")
+Fixes: 52d85d763086 ("ftrace: Fix stddev calculation in function profiler")
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+---
+ kernel/trace/ftrace.c | 33 +++++++++++++++++++--------------
+ 1 file changed, 19 insertions(+), 14 deletions(-)
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index eac9ce2c57a2..16dce67b855a 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -460,7 +460,8 @@ struct ftrace_profile {
+ 	unsigned long			counter;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	unsigned long long		time;
+-	unsigned long long		time_squared;
++	unsigned long long		avg;
++	unsigned long long		stddev;
+ #endif
+ };
+ 
+@@ -580,7 +581,6 @@ static int function_stat_show(struct seq_file *m, void *v)
+ 	int ret = 0;
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	static struct trace_seq s;
+-	unsigned long long avg;
+ 	unsigned long long stddev;
+ #endif
+ 	mutex_lock(&ftrace_profile_lock);
+@@ -592,9 +592,7 @@ static int function_stat_show(struct seq_file *m, void *v)
+ 	}
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+-	avg = rec->time;
+-	do_div(avg, rec->counter);
+-	if (tracing_thresh && (avg < tracing_thresh))
++	if (tracing_thresh && (rec->avg < tracing_thresh))
+ 		goto out;
+ #endif
+ 
+@@ -608,24 +606,19 @@ static int function_stat_show(struct seq_file *m, void *v)
+ 	if (rec->counter <= 1)
+ 		stddev = 0;
+ 	else {
+-		/*
+-		 * Apply Welford's method:
+-		 * s^2 = 1 / (n * (n-1)) * (n * \Sum (x_i)^2 - (\Sum x_i)^2)
+-		 */
+-		stddev = rec->counter * rec->time_squared -
+-			 rec->time * rec->time;
++		stddev = rec->stddev;
+ 
+ 		/*
+ 		 * Divide only 1000 for ns^2 -> us^2 conversion.
+ 		 * trace_print_graph_duration will divide 1000 again.
+ 		 */
+-		do_div(stddev, rec->counter * (rec->counter - 1) * 1000);
++		do_div(stddev, 1000 * (rec->counter - 1));
+ 	}
+ 
+ 	trace_seq_init(&s);
+ 	trace_print_graph_duration(rec->time, &s);
+ 	trace_seq_puts(&s, "    ");
+-	trace_print_graph_duration(avg, &s);
++	trace_print_graph_duration(rec->avg, &s);
+ 	trace_seq_puts(&s, "    ");
+ 	trace_print_graph_duration(stddev, &s);
+ 	trace_print_seq(m, &s);
+@@ -905,8 +898,20 @@ static void profile_graph_return(struct ftrace_graph_ret *trace)
+ 
+ 	rec = ftrace_find_profiled_func(stat, trace->func);
+ 	if (rec) {
++		unsigned long long avg, delta1, delta2;
++
+ 		rec->time += calltime;
+-		rec->time_squared += calltime * calltime;
++
++		/* Apply Welford's method */
++		delta1 = calltime - rec->avg;
++
++		avg = rec->time;
++		do_div(avg, rec->counter);
++		rec->avg = avg;
++
++		delta2 = calltime - rec->avg;
++
++		rec->stddev += delta1 * delta2;
+ 	}
+ 
+  out:
 -- 
-Mike Looijmans
+2.16.2
