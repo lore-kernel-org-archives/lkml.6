@@ -1,55 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752889AbeCXUZU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 16:25:20 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54974 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752801AbeCXUZS (ORCPT
+        id S1752959AbeCXUom (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 16:44:42 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:34443 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752822AbeCXUol (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:25:18 -0400
-To: LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Petru Mihancea <petrum@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] sysctl: fix sizeof argument to match variable name
-Message-ID: <e0d0531f-361e-ef5f-8499-32743ba907e1@infradead.org>
-Date: Sat, 24 Mar 2018 13:23:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sat, 24 Mar 2018 16:44:41 -0400
+X-Google-Smtp-Source: AG47ELvSj7DBZQR5j89hLzpYboy3y8tIx37ydtgtQvl6WSmc2kvBkR6r4MS9XyYiwColtRQKT0KD/A==
+Date: Sat, 24 Mar 2018 13:44:35 -0700
+From: Tejun Heo <tj@kernel.org>
+To: lizefan@huawei.com, hannes@cmpxchg.org
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, guro@fb.com,
+        kernel-team@fb.com
+Subject: [PATCH v2 5/8] cgroup: Factor out and expose cgroup_rstat_*()
+ interface functions
+Message-ID: <20180324204435.GG2149215@devbig577.frc2.facebook.com>
+References: <20180323231313.1254142-1-tj@kernel.org>
+ <20180323231313.1254142-6-tj@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180323231313.1254142-6-tj@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+>From 6139f87ac4a5650fed5c8be5611becbce96d7f1c Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Sat, 24 Mar 2018 13:39:36 -0700
 
-Fix sizeof argument to be the same as the data variable name.
-Probably a copy/paste error.
-Mostly harmless since both variables are unsigned int.
+cgroup_rstat is being generalized so that controllers can use it too.
+This patch factors out and exposes the following interface functions.
 
-Fixes kernel bugzilla #197371:
-  Possible access to unintended variable in "kernel/sysctl.c" line 1339
-https://bugzilla.kernel.org/show_bug.cgi?id=197371
+* cgroup_rstat_updated(): Renamed from cgroup_rstat_cpu_updated() for
+  consistency.
 
-Reported-by: Petru Mihancea <petrum@gmail.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+* cgroup_rstat_flush_hold/release(): Factored out from base stat
+  implementation.
+
+* cgroup_rstat_flush(): Verbatim expose.
+
+While at it, drop assert on cgroup_rstat_mutex in
+cgroup_base_stat_flush() as it crosses layers and make a minor comment
+update.
+
+v2: Added EXPORT_SYMBOL_GPL(cgroup_rstat_updated) to fix a build bug.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
 ---
- kernel/sysctl.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/cgroup.h          | 11 +++++++++--
+ kernel/cgroup/cgroup-internal.h |  1 -
+ kernel/cgroup/rstat.c           | 42 +++++++++++++++++++++++++++++------------
+ 3 files changed, 39 insertions(+), 15 deletions(-)
 
---- lnx-416-rc6.orig/kernel/sysctl.c
-+++ lnx-416-rc6/kernel/sysctl.c
-@@ -1329,7 +1329,7 @@ static struct ctl_table vm_table[] = {
- 	{
- 		.procname	= "dirtytime_expire_seconds",
- 		.data		= &dirtytime_expire_interval,
--		.maxlen		= sizeof(dirty_expire_interval),
-+		.maxlen		= sizeof(dirtytime_expire_interval),
- 		.mode		= 0644,
- 		.proc_handler	= dirtytime_interval_handler,
- 		.extra1		= &zero,
+diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+index 473e0c0..5c6018f 100644
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -690,11 +690,18 @@ static inline void cgroup_path_from_kernfs_id(const union kernfs_node_id *id,
+ 	char *buf, size_t buflen) {}
+ #endif /* !CONFIG_CGROUPS */
+ 
++#ifdef CONFIG_CGROUPS
+ /*
+- * Basic resource stats.
++ * cgroup scalable recursive statistics.
+  */
+-#ifdef CONFIG_CGROUPS
++void cgroup_rstat_updated(struct cgroup *cgrp, int cpu);
++void cgroup_rstat_flush(struct cgroup *cgrp);
++void cgroup_rstat_flush_hold(struct cgroup *cgrp);
++void cgroup_rstat_flush_release(void);
+ 
++/*
++ * Basic resource stats.
++ */
+ #ifdef CONFIG_CGROUP_CPUACCT
+ void cpuacct_charge(struct task_struct *tsk, u64 cputime);
+ void cpuacct_account_field(struct task_struct *tsk, int index, u64 val);
+diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
+index 2bf6fb4..b68e1a7 100644
+--- a/kernel/cgroup/cgroup-internal.h
++++ b/kernel/cgroup/cgroup-internal.h
+@@ -203,7 +203,6 @@ int cgroup_task_count(const struct cgroup *cgrp);
+ /*
+  * rstat.c
+  */
+-void cgroup_rstat_flush(struct cgroup *cgrp);
+ int cgroup_rstat_init(struct cgroup *cgrp);
+ void cgroup_rstat_exit(struct cgroup *cgrp);
+ void cgroup_rstat_boot(void);
+diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+index 87d7252..d49bf92 100644
+--- a/kernel/cgroup/rstat.c
++++ b/kernel/cgroup/rstat.c
+@@ -13,7 +13,7 @@ static struct cgroup_rstat_cpu *cgroup_rstat_cpu(struct cgroup *cgrp, int cpu)
+ }
+ 
+ /**
+- * cgroup_rstat_cpu_updated - keep track of updated rstat_cpu
++ * cgroup_rstat_updated - keep track of updated rstat_cpu
+  * @cgrp: target cgroup
+  * @cpu: cpu on which rstat_cpu was updated
+  *
+@@ -21,7 +21,7 @@ static struct cgroup_rstat_cpu *cgroup_rstat_cpu(struct cgroup *cgrp, int cpu)
+  * rstat_cpu->updated_children list.  See the comment on top of
+  * cgroup_rstat_cpu definition for details.
+  */
+-static void cgroup_rstat_cpu_updated(struct cgroup *cgrp, int cpu)
++void cgroup_rstat_updated(struct cgroup *cgrp, int cpu)
+ {
+ 	raw_spinlock_t *cpu_lock = per_cpu_ptr(&cgroup_rstat_cpu_lock, cpu);
+ 	struct cgroup *parent;
+@@ -59,6 +59,7 @@ static void cgroup_rstat_cpu_updated(struct cgroup *cgrp, int cpu)
+ 
+ 	raw_spin_unlock_irqrestore(cpu_lock, flags);
+ }
++EXPORT_SYMBOL_GPL(cgroup_rstat_updated);
+ 
+ /**
+  * cgroup_rstat_cpu_pop_updated - iterate and dismantle rstat_cpu updated tree
+@@ -167,6 +168,29 @@ void cgroup_rstat_flush(struct cgroup *cgrp)
+ 	mutex_unlock(&cgroup_rstat_mutex);
+ }
+ 
++/**
++ * cgroup_rstat_flush_begin - flush stats in @cgrp's subtree and hold
++ * @cgrp: target cgroup
++ *
++ * Flush stats in @cgrp's subtree and prevent further flushes.  Must be
++ * paired with cgroup_rstat_flush_release().
++ */
++void cgroup_rstat_flush_hold(struct cgroup *cgrp)
++	__acquires(&cgroup_rstat_mutex)
++{
++	mutex_lock(&cgroup_rstat_mutex);
++	cgroup_rstat_flush_locked(cgrp);
++}
++
++/**
++ * cgroup_rstat_flush_release - release cgroup_rstat_flush_hold()
++ */
++void cgroup_rstat_flush_release(void)
++	__releases(&cgroup_rstat_mutex)
++{
++	mutex_unlock(&cgroup_rstat_mutex);
++}
++
+ int cgroup_rstat_init(struct cgroup *cgrp)
+ {
+ 	int cpu;
+@@ -239,15 +263,13 @@ static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu)
+ 	struct cgroup_base_stat delta;
+ 	unsigned seq;
+ 
+-	lockdep_assert_held(&cgroup_rstat_mutex);
+-
+ 	/* fetch the current per-cpu values */
+ 	do {
+ 		seq = __u64_stats_fetch_begin(&rstatc->bsync);
+ 		cputime = rstatc->bstat.cputime;
+ 	} while (__u64_stats_fetch_retry(&rstatc->bsync, seq));
+ 
+-	/* accumulate the deltas to propgate */
++	/* calculate the delta to propgate */
+ 	delta.cputime.utime = cputime.utime - last_cputime->utime;
+ 	delta.cputime.stime = cputime.stime - last_cputime->stime;
+ 	delta.cputime.sum_exec_runtime = cputime.sum_exec_runtime -
+@@ -278,7 +300,7 @@ static void cgroup_base_stat_cputime_account_end(struct cgroup *cgrp,
+ 						 struct cgroup_rstat_cpu *rstatc)
+ {
+ 	u64_stats_update_end(&rstatc->bsync);
+-	cgroup_rstat_cpu_updated(cgrp, smp_processor_id());
++	cgroup_rstat_updated(cgrp, smp_processor_id());
+ 	put_cpu_ptr(rstatc);
+ }
+ 
+@@ -323,14 +345,10 @@ void cgroup_base_stat_cputime_show(struct seq_file *seq)
+ 	if (!cgroup_parent(cgrp))
+ 		return;
+ 
+-	mutex_lock(&cgroup_rstat_mutex);
+-
+-	cgroup_rstat_flush_locked(cgrp);
+-
++	cgroup_rstat_flush_hold(cgrp);
+ 	usage = cgrp->bstat.cputime.sum_exec_runtime;
+ 	cputime_adjust(&cgrp->bstat.cputime, &cgrp->prev_cputime, &utime, &stime);
+-
+-	mutex_unlock(&cgroup_rstat_mutex);
++	cgroup_rstat_flush_release();
+ 
+ 	do_div(usage, NSEC_PER_USEC);
+ 	do_div(utime, NSEC_PER_USEC);
+-- 
+2.9.5
