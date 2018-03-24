@@ -1,70 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeCXAlA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 20:41:00 -0400
-Received: from mga01.intel.com ([192.55.52.88]:55975 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751806AbeCXAk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 20:40:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,352,1517904000";
-   d="scan'208";a="36364722"
+        id S1751864AbeCXAqp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 20:46:45 -0400
+Received: from mail-it0-f42.google.com ([209.85.214.42]:54676 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbeCXAqn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Mar 2018 20:46:43 -0400
+X-Google-Smtp-Source: AG47ELu9Fm1kX8PjPaA6E4QKHkrRY+C5yDQAbwl4/3TWQwdRIBYO0BHi/7dlYi4WLzs0meajWlwG/ynAyhPRPm7WK9Y=
+MIME-Version: 1.0
+In-Reply-To: <be2e683c-bf0a-e9ce-2f02-4905f6bd56d3@linux.intel.com>
+References: <20180323174447.55F35636@viggo.jf.intel.com> <CA+55aFwEC1O+6qRc35XwpcuLSgJ+0GP6ciqw_1Oc-msX=efLvQ@mail.gmail.com>
+ <be2e683c-bf0a-e9ce-2f02-4905f6bd56d3@linux.intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 23 Mar 2018 17:46:42 -0700
+X-Google-Sender-Auth: HIBzCSzq1S-fIdVDXF1BcMoNpWc
+Message-ID: <CA+55aFxn=NiAhtz77nrx1_10em8bume-M0UzYZU2eVm5n71juA@mail.gmail.com>
 Subject: Re: [PATCH 00/11] Use global pages with PTI
-To: Linus Torvalds <torvalds@linux-foundation.org>
-References: <20180323174447.55F35636@viggo.jf.intel.com>
- <CA+55aFwEC1O+6qRc35XwpcuLSgJ+0GP6ciqw_1Oc-msX=efLvQ@mail.gmail.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-mm <linux-mm@kvack.org>, Andrea Arcangeli <aarcange@redhat.com>,
         Andrew Lutomirski <luto@kernel.org>, Kees Cook <keescook@google.com>,
         Hugh Dickins <hughd@google.com>,
         =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        the arch/x86 maintainers <x86@kernel.org>, namit@vmware.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <be2e683c-bf0a-e9ce-2f02-4905f6bd56d3@linux.intel.com>
-Date: Fri, 23 Mar 2018 17:40:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CA+55aFwEC1O+6qRc35XwpcuLSgJ+0GP6ciqw_1Oc-msX=efLvQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        "the arch/x86 maintainers" <x86@kernel.org>, namit@vmware.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/2018 11:26 AM, Linus Torvalds wrote:
-> On Fri, Mar 23, 2018 at 10:44 AM, Dave Hansen
-> <dave.hansen@linux.intel.com> wrote:
->>
->> This adds one major change from the last version of the patch set
->> (present in the last patch).  It makes all kernel text global for non-
->> PCID systems.  This keeps kernel data protected always, but means that
->> it will be easier to find kernel gadgets via meltdown on old systems
->> without PCIDs.  This heuristic is, I think, a reasonable one and it
->> keeps us from having to create any new pti=foo options
-> 
-> Sounds sane.
-> 
-> The patches look reasonable, but I hate seeing a patch series like
-> this where the only ostensible reason is performance, and there are no
-> performance numbers anywhere..
+On Fri, Mar 23, 2018 at 5:40 PM, Dave Hansen
+<dave.hansen@linux.intel.com> wrote:
+>
+> Well, rats.  This somehow makes things slower with PCIDs on.
 
-Well, rats.  This somehow makes things slower with PCIDs on.  I thought
-I reversed the numbers, but I actually do a "grep -c GLB
-/sys/kernel/debug/page_tables/kernel" and record that in my logs right
-next to the output of time(1), so it's awfully hard to screw up.
+.. what happens when you enable global pages with PCID? You disabled
+them explicitly because you thought they wouldn't matter..
 
-This is time doing a modestly-sized kernel compile on a 4-core Skylake
-desktop.
+Even with PCID, a global TLB entry for the shared pages would make
+sense, because it's now just *one* entry in the TLB rather that "one
+per PCID and one for the kernel mapping".
 
-                        User Time       Kernel Time     Clock Elapsed
-Baseline ( 0 GLB PTEs)  803.79          67.77           237.30
-w/series (28 GLB PTEs)  807.70 (+0.7%)  68.07 (+0.7%)   238.07 (+0.3%)
+So even if in theory the lifetime of the TLB entry is the same, when
+you have capacity misses it most definitely isn't.
 
-Without PCIDs, it behaves the way I would expect.
+And for process tear-down and build-up the per-PCID TLB entry does
+nothing at all. While for a true global entry, it gets shared even
+across process creation/deletion. So even ignoring TLB capacity
+issues, with lots of shortlived processes global TLB entries are much
+better.
 
-I'll ask around, but I'm open to any ideas about what the heck might be
-causing this.
+It is, of course, possible that I misunderstood what you actually
+benchmarked. But I assume the above benchmark numbers are with the
+whole "don't even do global entries if you have PCID".
+
+               Linus
