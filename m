@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752813AbeCXSuL (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 14:50:11 -0400
+        id S1752842AbeCXSuQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 14:50:16 -0400
 Received: from mail-bn3nam01on0083.outbound.protection.outlook.com ([104.47.33.83]:57948
         "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752783AbeCXSuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 14:50:07 -0400
+        id S1752783AbeCXSuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 14:50:12 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Yazen.Ghannam@amd.com;
 From: Yazen Ghannam <Yazen.Ghannam@amd.com>
@@ -14,9 +14,9 @@ To: linux-efi@vger.kernel.org
 Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, linux-kernel@vger.kernel.org,
         ard.biesheuvel@linaro.org, x86@kernel.org, bp@suse.de,
         tony.luck@intel.com
-Subject: [PATCH v3 4/8] efi: Decode UEFI-defined IA32/X64 Error Structure GUIDs
-Date: Sat, 24 Mar 2018 13:49:36 -0500
-Message-Id: <20180324184940.19762-5-Yazen.Ghannam@amd.com>
+Subject: [PATCH v3 7/8] efi: Decode IA32/X64 MS Check structure
+Date: Sat, 24 Mar 2018 13:49:39 -0500
+Message-Id: <20180324184940.19762-8-Yazen.Ghannam@amd.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180324184940.19762-1-Yazen.Ghannam@amd.com>
 References: <20180324184940.19762-1-Yazen.Ghannam@amd.com>
@@ -28,47 +28,47 @@ X-ClientProxiedBy: BN6PR14CA0036.namprd14.prod.outlook.com
  (2603:10b6:300:114::13)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 1229fbea-b676-45e5-924c-08d591b80d7c
+X-MS-Office365-Filtering-Correlation-Id: b04f974a-3999-4a84-947e-08d591b8106b
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR12MB1919;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1919;3:1bvDxSLenwReC5b8xrLvG79sHto4LcReZ4gPbfl8uc4ApzIW/+6h5IphrtGoItDXQ3EMTiPuEbQBV1DgYdjkB8e+ourYkz6Q1hy8xyMckPlE1HIzHL9RuKBzLWHxxzzxvxKZgkzesFOnHwTRnYNv/JLJWY5KQHZ2YkRg1kthSOFOQV8Ag3qRljJO0nXNVxlsX71940jcGndpq6ku0Tgd/HCG6DtiNAt21CGes8xlTt1qCGuBdQ+ANV05l9RuSVed;25:sJmp2NzFyg7FIhPqiX/K+PUlXOWNoQCRxrWTi246sehMjfuwfxwktxNO0jgfJ2LFzfo09MEbB5d26uCUYDfs/lhIyZJq4va6xObeyK4jvshHWJAtzglyBXQh8LY3q0nMDxKMIPf7cAlTkZRaoh5cn6gMntk4PV2S3O0q0ZMPf4KQgmdcD7mP1C5pcsUauXlmf8KEkfNlTNR3tN060WbVkBsP1ckndQy7+bYg2ehc7Ruse+Fp+udA1I7+oI4xBfkZPoTxR+VYFfeqIm0eY81H4pktgmXSsoxnWPzE/uDiW1foSCDp4hUhAG7gagAh7db4gSC+tyvMIbokQRkRb7xQQQ==;31:Pr3/uMApFZOwJISYPoF4AZNDyt16XwRfM2NRmGhKoukcB16Dvp31rfD6GwOlVmV9mXlXrPc6N3v6zfXm5pqrZaV4PMtYWsS146O33DCDY/5NPOFdpo1NRBG1NgHs80xaWnB4jkgT0ncCHyxD0RvkzFqtXpAXRghRy+Jf74YJBXUg15TB6cLL2yMjdA8T2Db1DxVLC7TZjGD+r5kYsea20HJhMEXU0dalFJYwPMKVAfs=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1919;3:GANDbr/VGtBtIC5IH6v2Y3Pszs4eLsGMH+7zw+x1xTTPRruywqqWrMtHZuwqXQ1TzKpqB66IceR+Qgy157rSSBbGCRF5UY8rDCuY6Rc1EAvdNnimFMxcWfHbFkg4aX96Xp70fHoOzb1OKGAFhLlF80ekkG82/WYduWjcvAXKfrUtiVDqEav2UBUW0Hu9zP9OpfGtyPa+TgX/btFltmdAdXY5nWmECw/l/xyWUSTVShNqI39BHwU2Wt6Lx3oNqp8c;25:TGWDtPAAiE6Yce1th3ewbiM5ZEUgA3NrdoUag2BkePxVmUBNLHuOV6O4vlF0BpNOFLm5hZ2Nl9rDMxMVOVCWeuub3Z4Z1AXLpmaEcsCFSzVBkMz2FPQIuWJYzUUzwB7cdpoeLi4JzaHXtUec/VbVfpwrQXxPuAuEpn2hQ3X7J7cTL6xE2+vkkKsLeKm25xfxR07Dys4xyzyO8dWWInb1DT+N1p8hob6Ic1ET1TDvDvM9LBF9E0UsmF5LPwOFFBmaZY76YTdhYz/DTfxinsPrMYC4tg+S3OmhwlPKa99Ao71LHycVegLX3x2gmxXuLu1XUVINTiT4veQ+jPbHMeYK4w==;31:Uuad1KQiC4heIPdnFSxD6hyjECGLM3SxSJUpns+srhFAqS4Zg/cz6wBChryrtYKU/u9CrWQ5y0lqk4JzBK5XIR/mnT8y/Qaoym0Ng47hL6LCu+BBxI15pAERpvZdbd1pVCBhIz45nHxfGdcaoYP0j4q4MHk+lJTGdeJ6Ojig1JtZaAhitp3+V/u8qVbsBuO+o4BOc2/pQcAGQsuZuvbNmtwyPVST2HIUFm45HpqjKTE=
 X-MS-TrafficTypeDiagnostic: MWHPR12MB1919:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1919;20:0/xeXvdlXT74RaFEcszZ20chqP6CjeoqC0/TUZkEVDQZ+R1MrZwJb66yYCq3cCddOqU51WkuRafBOC0sW9RkEwjWywCDQZ7ayCaB83V9DGEsA3aR3RgOsLxg3SNna2qXMNBJOGL9a4dsqBUVo+LVbISxPi3K9okUbeaMVP9IExgEg7LcVgtTQ9/w3aizbLyROrUE4cFRhCroIdemb9PU22R5qpsl2ZK/Kj/m9QHfpCi6SWVKC2aVUgOKiZq+F8OaCO584a6P3sxNDePL2RttGKGapUKU2dcF6HgmeLBUU31EE8xboi/o3S8In27dbTl31AI9L3wcGn5p1REZub+pS7/GZhMy955LDSpCMuKMh14PWbvdhARRsjr/009jiu6qTXs1gR+Fs3q5tapq3YjCbojGjvDE6PWLUU0wRU+Y8hcvbFvIkhI9cFml1eDqyq54Vd2krNfcr+gHqZ0t99ZHCvJkTyyrBnQNgMJdZQlKkimr7BRi+joF0Mmwjo/bxQb+;4:Pfb07wY34A2mHxaHKktiSabQ3iJ+XUrwhpskRWjPV75BxSdrhwAyQ6/EHJuBTsupZU0P260AavlbPH9/dA2YXnEPBPU8afD1wgH2oizZK66nkDPV3tcjkRxOR1Bj9BYqTE5GTDkhPEDpDCBQ66vW7PSIPEzytVfPB+raIL4B7iYE9SMhTXH4QeefqHotvO568u06Eug/TaktgoTDCHHgEnWVHavZ7MIwvY6qRgypN4VZpVAqscGWY2m8NFf6EMbG1KoB0u8tcVv7YFjcbeygxtf5o3DfbYxBQu7TG8KIVbExqjypn0wRSpuLhPGM3mwlse01AFVaZNTvIsKo+O5wEg==
-X-Microsoft-Antispam-PRVS: <MWHPR12MB1919C44DD375D97808860DBEF8AF0@MWHPR12MB1919.namprd12.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1919;20:cxXXiXdFTbj37Xg3B8Q29MHJUWX6gOpvgUpKNaAIvMdsEjxysp39lvxGs5KBYnM7lh+qKpHqFkTEBsFY769CI5HaCw3qXYdd9VSy2ScXnbuhpp+ny3+Eb2AnA35iWZ1s2qZwdMgnEZCTnrhd5XBO8EufQfXx50YfOCAEaz29IQQKmxzDEoLnnxj9c97thpQ4yqHOF2m3kshcEAsY1PUrxuCknqNfGG1txuiFcDx/BozjGLMDKDqHxX7y/xDiWjAZbzmcH2vTnEo+5eOMydi7wSwp8f7oltQZeStfBDaIOcvN33K8JA1VDm0h0kzKdBdboZqjdwuDr+knCmok4sBpM09Xsoa0XIAe5CQwkl8Ti3EH7emycvOGRg7TJTKwNis0ppZw4n4uon+JqPRW3anw8CYPGuSuu9OuDpwwlIaKndaHoMRUIXT/vHv/ZnWUsp1Meedf8j6EU5BWwtFUrTOPw2/FWZuSmBzNB9loLcNaOrzR/cwHVUPcRCvGmrM1wl09;4:I6JycloIoOEISx6YJ3QHNTiogja6vZLW2qS/+lpfkyEUMyybVHnnzfGu8u5T0cxeZhTnIMBwKVomnopyEd3JHehXBTpcFkoy/yqRFPNhrKG70LylqdPwhZN/kQAEAKaGLWScKJx7Wj8Dw52ujHtjNDwS1pIGAobu1owtJCXm4QEWWGy9xQc8KCyvyuvyhDZo2MTgiSuSshR9ClUUPkzIAbkf0v6JEWuL1rMp7bC/v/TrdcEnvYGRQQ/5epVHzlFM1FSbvubdJymQVPH4JOJsCPrTmF5yox6y0B0hYvlh7kGMdJnXmZnfvV6cLRerQmV4DizIGlqYq1woh0e7Iw07/ewaN7EBKlAWxAuPibPRAf8=
+X-Microsoft-Antispam-PRVS: <MWHPR12MB19197C448D0502B942DB055DF8AF0@MWHPR12MB1919.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(42068640409301);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(10201501046)(3002001)(6055026)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:MWHPR12MB1919;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1919;
 X-Forefront-PRVS: 0621E7E436
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(346002)(366004)(39380400002)(199004)(189003)(2351001)(2906002)(66066001)(36756003)(52116002)(316002)(4326008)(51416003)(25786009)(7696005)(53416004)(97736004)(5660300001)(106356001)(16586007)(76176011)(68736007)(11346002)(2616005)(386003)(956004)(7736002)(86362001)(47776003)(575784001)(305945005)(446003)(45080400002)(966005)(186003)(2361001)(48376002)(72206003)(53936002)(1076002)(6116002)(6306002)(3846002)(16526019)(26005)(6486002)(50466002)(105586002)(81156014)(6916009)(8676002)(478600001)(50226002)(8936002)(81166006)(6666003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1919;H:yaz-diesel.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR12MB1919;23:OBQ+cjJHURJNb44Z6cDbqWi8ANKLGBK1HFT55m+Ex?=
- =?us-ascii?Q?htbtwRjnrRo4QPkOBxuwQGwANFunNKLyaD6k7q0y5fRr/xtmgUzQZ0DmOCaO?=
- =?us-ascii?Q?1Dt1l7F3YEKZjOVSIyHogkx8N9cB102NeWwNTgYA/Dyry8Dcp8Sr+g9fll/s?=
- =?us-ascii?Q?s656PLy4WmYd5xmDve1RjzwkqLsiTAFLsw7D6bM3it7TU+KafFbX56NoSwJe?=
- =?us-ascii?Q?eieeTnooTidqxNuiIgyVLPWsI6BNqvK2xiz8pQKO4ixX9Ymo5GCkRmD7RXOC?=
- =?us-ascii?Q?u4ItlMVBCK62h0MegGrVm9uUEAnxFry0O1BcRq5i2aW+EDnZ83b1s6Fk0QeP?=
- =?us-ascii?Q?0LfxhUtfOrZUELTs0cU6Ys255mNWKOF9tsMt5CWLIeUxKFjL5QvwVjKyaqk2?=
- =?us-ascii?Q?CIhdDjEJyqsnOkC7jo+pA6iqvUhqxgHKrlEcXziiK6yXsKT00IGJYosIvF4q?=
- =?us-ascii?Q?BNzQrL+da+EA6vCeuDDs5uSgXW2WCxjic/WJmIzVwStyULiCylch+ZYhFE8D?=
- =?us-ascii?Q?dpTal1YILwd5fjabL6E4a0yOlm/Bu7Mn2slHlAIW+3/eYuybNWDKj6P8e5r9?=
- =?us-ascii?Q?hYI6e1acv7OFG+foAX3MNh5PMQNNG/EDY+S7Thp8kcdSSX8lCgMcKdAwfNOg?=
- =?us-ascii?Q?3pB7iKKNoJGjympfmdkoPbBpsqF+nWvyQoWDxvFEF24Uq1wsNty9L9QpVp9p?=
- =?us-ascii?Q?pm+CI/Og6YwD2JhKrlF6GZOZu0hcklw1fE9bs68G4UxNohhOawKHsvDZYNSa?=
- =?us-ascii?Q?8qdyLP6v/utvfNAunULs2M9Djsbg76xw/KlyXm05Sm1ZIVFJwv2BcPuI4spU?=
- =?us-ascii?Q?5cTxAYTm4JHV2yKwU+sRXcbTIWj5FN9fVMExO/rmyjUfHEUhXVOFenQWy5Ih?=
- =?us-ascii?Q?Sfe/4F02vtxze34RXPvor7EDhetsTzoZzB/H02GGcVIPP5Rbe26ShvCVFB7q?=
- =?us-ascii?Q?PSvJNKv9FYrdw7ep6yJBfO9dter/eYJdxMmGTlOfBbZ59ic+B4F77sgZGQxM?=
- =?us-ascii?Q?eo6kUJc0FAmG/qPhsPc0FxXVTlOAwEkXviUFo9Q51vcCsO2gogCFHVLTWNRI?=
- =?us-ascii?Q?o1+gkS5vF9j43rJTDl994k4ruLtooe6HxOZljBB57v7Lt9GsRCJfwAB3gDr3?=
- =?us-ascii?Q?u3lLdNYd/mxll1CVh/CeF6SKJGFl8wGEhvbUQ/yg8hJnVZLdF7CnV5VxvtYq?=
- =?us-ascii?Q?4AZEAl7GBtx+o7KMIU7bcybjtsjqIL20Su8HIrfVGmhPfh2qNN/ujtCs33yg?=
- =?us-ascii?Q?cCiy24I6dNsh5tsSCTLk68TJ7ckbvde25Muuz2JB2Z3E7kOJ3epvZWxk5SLF?=
- =?us-ascii?Q?2N5ESPsVrGTTILxf4869/E=3D?=
-X-Microsoft-Antispam-Message-Info: 0rneGJe8oGj5vubFwgYBkv4FlYeYykMzsx4hLdOe3eAarM+yXYHsNfj6PdrytXgzhflvYXYwmZ0DwNmM+Kh+pVmWUa/HUSvVWWywokHSO1MgLFzDtKoVON6Q6qxodUs7BHf8HgTI66O5spBeAV+AfBPETfGSl8k+MDuzfXzSacDjqbT2ecKLp+8HVbYEe166
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1919;6:Kk9S4yuMNpjP1DhvLcdPCmtnWS+3wVZOhbWD21ar6pHQ+XLri9KsSJkJuv28m9mTTgqgCPcgcVfPo4aJsRJabU63vJzd0+NPr3T+NNT3643rakJrJEqY1hl1JpSVo7nmS9lQzMMFMYNg+nqiQjY+8RlLZ6Tr2mW+9L/cv4FXDk/W+Fv4D6VXuxmkWe3iakFu0+TbuBeRscsPHPUFSF5aJ4z32aK33shWVs5RUlRUuf4OzBcsUiTxwsNcgCZZbmlbQ58dYkbo87HlZhBZ0X08+Av+4IARqMTwmZCtghV86OqPFjcHcC1EA959s7XxVLClxrJqH9P2TrXKVFEv8im0QJ5VjmijL8jqfnAuS8Ob716jnZson7+GP9PQ2Yhj3fJYMB1UQDAlnXGUDQhFEnjCtSBfOrmHwfof8VJISOTYNUeSTxrHjAKPIP8k8oMgCjZdYx+2snTygtSJP4/l8eHWzw==;5:bWxCTNS+9Ji1ByTcprfJwymxln42TvkfYbwFBIr+qL3oqqlcPdfvgYq6/fUbWKIBQXRVryjnkKWrUJxJcKQ0StKX55MKPqghgkRj4LOJ8U2DRhGlTbZFDl4ByLYIkZN6JLbgVHKj/JTkpznbO6FLKWjhdvOl07/AHTKCxN6mTmI=;24:EwxJ0ocSTpGoqEC1YN+AEiXJSOW36PQQ/LREsCxS5iA8snjFaT2azKMRKnkGjbf+OMFv9aYkurgfdQflWRJCEtPx6IcjnDh88flRgW9cleE=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(346002)(366004)(39380400002)(199004)(189003)(2351001)(2906002)(66066001)(36756003)(52116002)(316002)(4326008)(51416003)(25786009)(7696005)(53416004)(97736004)(5660300001)(106356001)(16586007)(76176011)(68736007)(59450400001)(11346002)(551934003)(2616005)(386003)(956004)(7736002)(86362001)(47776003)(305945005)(446003)(966005)(186003)(2361001)(48376002)(72206003)(53936002)(1076002)(6116002)(6306002)(3846002)(16526019)(26005)(6486002)(50466002)(105586002)(81156014)(6916009)(8676002)(478600001)(50226002)(8936002)(81166006)(6666003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1919;H:yaz-diesel.amd.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR12MB1919;23:EiRabZAnzRmTVlUeLVio4oyq/Er3YMjrEaDXzcfyZ?=
+ =?us-ascii?Q?+//Jr5v7yDK4sK/bjDoOUmvNvS9UpJdjTJ06BpINch5xfRSTK+Pqt1u+o70A?=
+ =?us-ascii?Q?qdQesJaKfJxqu9jJlxQYKCQPlf9KboPLvA7ykGekciZ3AcS4ZpHQJBu57VBv?=
+ =?us-ascii?Q?G9ComnLGxOthn+nasD6bSJT8LuBgz944vFIqQdyplC52oQjdWebwvr5kpfR7?=
+ =?us-ascii?Q?aKahS0Tj7aU5Oafl4Zbe9P4mfA0s77Aw5Fkj2CncJZbmqRPbgBpV6cc6Pczw?=
+ =?us-ascii?Q?I9q9FwBb3Cd2j0mfwxrIDfCMcqdw6iLxffDIZsAe40wh3TDDWP9r/m18/Qem?=
+ =?us-ascii?Q?3JhyAUEdt52vxSciLGySR20+xz50JVAEQ9uyZwsp8FruJ5xsQ64xUGR+z7Zp?=
+ =?us-ascii?Q?t33Rkj2oFAZxthHv09nmIVHwHW58JIz7OuG3BOzsgv/mldniKev3tyLOy1LM?=
+ =?us-ascii?Q?uNo2nWi6bpEjnHnOTx8WXPF0FEeuJo7o6lC2uNOynDDe5RfRP8SY89RjmXaQ?=
+ =?us-ascii?Q?vQGphi8ud5S0UxOg7MdxukHgvPI2qtlo/zv1G5mqQejoluJSNlsTi3Uvb41m?=
+ =?us-ascii?Q?9i/bfStwVz6jDoN2997dgvond+gBRsln16GwJGnaLJxOm6Pq56XF5dcADeZ1?=
+ =?us-ascii?Q?WmTGgdprnwvknDhxkxYFaGkgLjQ4I+Jl6zDpcM4sgeVenQek4abBq/yjoHEK?=
+ =?us-ascii?Q?577jAlKyBRTO69k1h/CtyTz8EsH597FTheu7GwtnptWUkwtjhcydrWlFwcnz?=
+ =?us-ascii?Q?ZwlMThj/NIHZoMyOSRBXJMmD7MToOxXwdCwfKYRKkSBu6rjskhI5aDPqd8nj?=
+ =?us-ascii?Q?dEEnNBBC5HzRxRjCAYLOh6MLGoo5bKmBbtjdkNig/P37Saqkd9WHGyfsxAw3?=
+ =?us-ascii?Q?bsLQkyQ5Nc/cfCD9Q6Os5Rcqr3JqkliLTevgTZ5K2EvWVQSxggTYzhEuOpqH?=
+ =?us-ascii?Q?ckVDikBNqn+b5WOnBqDGWrh65FIr4M2QtNy/ArLDCKIE1V+aBooV/eauWGYU?=
+ =?us-ascii?Q?CA2fTFV4AHtUsSJvPH16JwjxOkJLsYtu1whqIOOp1WWGy7KlCkM+pL3zyXzz?=
+ =?us-ascii?Q?UPR1irWOQzg0dA/posgI6/yLgl5LYarqwIhjizim81i2MnJp5z8EaDFTzgYl?=
+ =?us-ascii?Q?rAmgkTaNG+NGMn2PbmdDXngFKZ+kG8itT6MeiDQEunaFLNusQT+nH0Rox9ws?=
+ =?us-ascii?Q?xY3/TVoBxlCMBZGrF4LYhBzkCeCuKWN1whUmuypXiEmQmCrCp6SrsvDKzEIi?=
+ =?us-ascii?Q?OtXCKisrNZ036S8XTeF4IhIQs1rlOzflQb+HY5O41oj3wG4arczsDgWrEom8?=
+ =?us-ascii?Q?RbjDTIhnuF7jg3bkpQP+kA=3D?=
+X-Microsoft-Antispam-Message-Info: ItDFfgluw9MM7ddyMxXn7qHqWtVHkxGBzcZhZY6lQTWE2QVqwpTdLMWHgZaCDnoYQjk1kn8JMAVfoskbRE6prF2UJOuNcf0InrSBksqbas1hZXyBVNgqBhmoqIdFfaaXaUOy1d56za6PedvFXHLFdOp5LIz27CY2j3sPpl5lHdpouydSXV/KqRouwLo+9dTe
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1919;6:01sw9xcDMFQR5fLLz2Bgeryc4H1lcMDEyuzvs5H6ZUAAdcYavgV9HMRs3N29e6369D03QUTjIg8rTr4inhkBwZJ5CLrUh2sMs7vhr4vtkyD26IPASBnBLN37fWoPzv/Tih2Hb0vaiE4Auo3GCLN5iCEDvhaWl4NtKdcUxhw2345Jy31hlAYu+56O/27VS5oTGfCkiSJjeqHZ28KTzCNPHOf7czcekOPmBtvQ9k8z+UEaAetsJGphuEKZKf93AtgFhKeTqGWDyZvojmzlS958RVpw1wD6cmxiO1GwnBeEPgUhh2TktacBaM26Srxq5olIxO/Afrko2XFC8DX8Z8AnvMOBDZDuPxU8DU7JbZrRc6Op+tqVtNwsVmf6Mp/pyZ6SB7m1tQ0uhcHhS9VHogkc5tLCPIO4kNIsery3h/1KNA8H36+QhIL+hL+oVbPbKxMGc2Xy4BaOfVUWp6AL2vu0IQ==;5:829qHhFTG6la38X8qFYYYbeoiZJHxEerqkUxG74MS7HmOCsmDdw2vboUsdK45JqaVRadrRTvjqf0aEQdi/4eLj3+lXhCUuEW/oXnc/WhLYR4ogJg+48ejpY2OIsu6MzickyuXmVOWfhp1fHjvcmnmYBh2tpHy6mLF/voCOou1eE=;24:tQEt7xVeW4AF6PXulfCGF2hcoXTKVaEqGz8U+sXsUKtOWEEnCfJIXPyIV4JrnpWlV+POrld4qcJFFHIOa4oelxopKb8ZDE6k7kT2+0M8XVM=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1919;7:azAHfQBxl9FpxEHdt0QtzTYp+64O/sFr61CVP8iysIql/ozVKd31eDme38VAuyO2qf2ZBhWvGI+PVGC0SVxe+VlZ4d5rqdAcyCkEcQzZRimxsh2BOvEQsHkaa9dlyZItDZXBHk7k7s7L3JApS4/WFIUuhGvec4dbNmHzPkwcO4/uxPuqgzH9tftYC9SXZcGh1qTRYdv/FzGkJX/eAw/UBItVQ11cD7ByJRqmWINJSfV3c0E43IDvcr3j1C3uYP38;20:umIww7gKWt6sZWKyvIcGqTe1zUm9OaXTzvNEue0ZIK7/QEgE53eru3nby8cUxbo83L3z/fMUtTcZup9uny3SIKDxdvAodxXclDCkyhhUPYepx2FWB2Iib9JgQ1zneBttINrjY1rIV58VmD6pGT0qdonHn4kfGeNJF0DoQ7BpiNv61ywm8uvArEd22G8Pwk9LTI6GpAFNH0+MQjtZbinf3Q3PS+lgB7ITLEMlvHmrM5NXEVJh6IzdHl+HT8k0Lkyt
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1919;7:0Wim23xhCVMeqI0QdLI/nMNtUQHYM2QeHmIFfj+Jr/1W6GpIA0wlZNFT+Ai7DPITiBfF3w5T8f4sWkcwNQ37pjIjnfDMn7JB80Voo1BpQFJrTZC40LtSaqAFtlg2/4T4arBok7XHRKH73aDWLrlPuKGKvRoB9p04Ty9UffzSMIBCsqoJF+W7vU9r5V3HStLLGVF0kVtBjUNa5YvIh0F526TVd/uj4L7MCXgjpR9YDBXZ8LSrnjvvwzlo1s7S7dvX;20:xQ30u2T/Q4loCG+J2JsyTY/EICZ14jH+yXh99Qh9LD1S3L5OMzAVNbp4MRd1fcLlmG/Ux4eda5ICvqrcHmE5Px1L783/AyaO4+a9qQW5FV8pVqotOJAx+uAjZPhJO5oDbzRQdrypNhJJf61uwplwfEACoA876pABJ1opcMNu8TRwp21QEz4JfxFr4qD9ttHqjunRLNqVKpXb1lr283gUAF0GuQkQqOD3+WUaITjfmuUQrFmYUMpRG/9CGvcAcCFv
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2018 18:50:01.7977 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1229fbea-b676-45e5-924c-08d591b80d7c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2018 18:50:06.7195 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b04f974a-3999-4a84-947e-08d591b8106b
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1919
@@ -78,106 +78,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-For easier handling, match the known IA32/X64 error structure GUIDs to
-enums.
+The IA32/X64 MS Check structure varies from the other Check structures
+in the the bit positions of its fields, and it includes an additional
+"Error Type" field.
 
-Also, print out the name of the matching Error Structure Type.
+Decode the MS Check structure in a separate function.
 
-Only print the GUID for unknown types.
-
-GUIDs taken from UEFI 2.7 section N.2.4.2.1 IA32/X64 Processor Error
-Information Structure.
+Based on UEFI 2.7 Table 257. IA32/X64 MS Check Field Description.
 
 Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 ---
 Link:
-https://lkml.kernel.org/r/20180226193904.20532-5-Yazen.Ghannam@amd.com
+https://lkml.kernel.org/r/20180226193904.20532-8-Yazen.Ghannam@amd.com
 
 v2->v3:
-* Only print raw GUID for unknown error types.
+* Fix table number in commit message.
 
 v1->v2:
-* Change use of enum type to u8.
+* Add parantheses around "check" expression in macro.
 * Fix indentation on multi-line statements.
 
- drivers/firmware/efi/cper-x86.c | 47 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
+ drivers/firmware/efi/cper-x86.c | 55 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
-index a9ab3bbf7986..57fbea5b3a8c 100644
+index 54bd32d241b7..ffc01483cac2 100644
 --- a/drivers/firmware/efi/cper-x86.c
 +++ b/drivers/firmware/efi/cper-x86.c
-@@ -13,17 +13,53 @@
- #define VALID_CPUID_INFO		BIT_ULL(1)
- #define VALID_PROC_ERR_INFO_NUM(bits)	(((bits) & GENMASK_ULL(7, 2)) >> 2)
+@@ -59,6 +59,20 @@
+ #define CHECK_BUS_TIME_OUT		BIT_ULL(32)
+ #define CHECK_BUS_ADDR_SPACE(check)	(((check) & GENMASK_ULL(34, 33)) >> 33)
  
-+#define INFO_ERR_STRUCT_TYPE_CACHE					\
-+	GUID_INIT(0xA55701F5, 0xE3EF, 0x43DE, 0xAC, 0x72, 0x24, 0x9B,	\
-+		  0x57, 0x3F, 0xAD, 0x2C)
-+#define INFO_ERR_STRUCT_TYPE_TLB					\
-+	GUID_INIT(0xFC06B535, 0x5E1F, 0x4562, 0x9F, 0x25, 0x0A, 0x3B,	\
-+		  0x9A, 0xDB, 0x63, 0xC3)
-+#define INFO_ERR_STRUCT_TYPE_BUS					\
-+	GUID_INIT(0x1CF3F8B3, 0xC5B1, 0x49a2, 0xAA, 0x59, 0x5E, 0xEF,	\
-+		  0x92, 0xFF, 0xA6, 0x3C)
-+#define INFO_ERR_STRUCT_TYPE_MS						\
-+	GUID_INIT(0x48AB7F57, 0xDC34, 0x4f6c, 0xA7, 0xD3, 0xB0, 0xB5,	\
-+		  0xB0, 0xA7, 0x43, 0x14)
++#define CHECK_VALID_MS_ERR_TYPE		BIT_ULL(0)
++#define CHECK_VALID_MS_PCC		BIT_ULL(1)
++#define CHECK_VALID_MS_UNCORRECTED	BIT_ULL(2)
++#define CHECK_VALID_MS_PRECISE_IP	BIT_ULL(3)
++#define CHECK_VALID_MS_RESTARTABLE_IP	BIT_ULL(4)
++#define CHECK_VALID_MS_OVERFLOW		BIT_ULL(5)
 +
- #define INFO_VALID_CHECK_INFO		BIT_ULL(0)
- #define INFO_VALID_TARGET_ID		BIT_ULL(1)
- #define INFO_VALID_REQUESTOR_ID		BIT_ULL(2)
- #define INFO_VALID_RESPONDER_ID		BIT_ULL(3)
- #define INFO_VALID_IP			BIT_ULL(4)
++#define CHECK_MS_ERR_TYPE(check)	(((check) & GENMASK_ULL(18, 16)) >> 16)
++#define CHECK_MS_PCC			BIT_ULL(19)
++#define CHECK_MS_UNCORRECTED		BIT_ULL(20)
++#define CHECK_MS_PRECISE_IP		BIT_ULL(21)
++#define CHECK_MS_RESTARTABLE_IP		BIT_ULL(22)
++#define CHECK_MS_OVERFLOW		BIT_ULL(23)
++
+ enum err_types {
+ 	ERR_TYPE_CACHE = 0,
+ 	ERR_TYPE_TLB,
+@@ -113,17 +127,56 @@ static const char * const ia_check_bus_addr_space_strs[] = {
+ 	"Other Transaction",
+ };
  
-+enum err_types {
-+	ERR_TYPE_CACHE = 0,
-+	ERR_TYPE_TLB,
-+	ERR_TYPE_BUS,
-+	ERR_TYPE_MS,
-+	N_ERR_TYPES
++static const char * const ia_check_ms_error_type_strs[] = {
++	"No Error",
++	"Unclassified",
++	"Microcode ROM Parity Error",
++	"External Error",
++	"FRC Error",
++	"Internal Unclassified",
 +};
 +
-+static enum err_types cper_get_err_type(const guid_t *err_type)
+ static inline void print_bool(char *str, const char *pfx, u64 check, u64 bit)
+ {
+ 	printk("%s%s: %s\n", pfx, str, (check & bit) ? "true" : "false");
+ }
+ 
++static void print_err_info_ms(const char *pfx, u16 validation_bits, u64 check)
 +{
-+	if (guid_equal(err_type, &INFO_ERR_STRUCT_TYPE_CACHE))
-+		return ERR_TYPE_CACHE;
-+	else if (guid_equal(err_type, &INFO_ERR_STRUCT_TYPE_TLB))
-+		return ERR_TYPE_TLB;
-+	else if (guid_equal(err_type, &INFO_ERR_STRUCT_TYPE_BUS))
-+		return ERR_TYPE_BUS;
-+	else if (guid_equal(err_type, &INFO_ERR_STRUCT_TYPE_MS))
-+		return ERR_TYPE_MS;
-+	else
-+		return N_ERR_TYPES;
++	if (validation_bits & CHECK_VALID_MS_ERR_TYPE) {
++		u8 err_type = CHECK_MS_ERR_TYPE(check);
++
++		printk("%sError Type: %u, %s\n", pfx, err_type,
++		       err_type < ARRAY_SIZE(ia_check_ms_error_type_strs) ?
++		       ia_check_ms_error_type_strs[err_type] : "unknown");
++	}
++
++	if (validation_bits & CHECK_VALID_MS_PCC)
++		print_bool("Processor Context Corrupt", pfx, check, CHECK_MS_PCC);
++
++	if (validation_bits & CHECK_VALID_MS_UNCORRECTED)
++		print_bool("Uncorrected", pfx, check, CHECK_MS_UNCORRECTED);
++
++	if (validation_bits & CHECK_VALID_MS_PRECISE_IP)
++		print_bool("Precise IP", pfx, check, CHECK_MS_PRECISE_IP);
++
++	if (validation_bits & CHECK_VALID_MS_RESTARTABLE_IP)
++		print_bool("Restartable IP", pfx, check, CHECK_MS_RESTARTABLE_IP);
++
++	if (validation_bits & CHECK_VALID_MS_OVERFLOW)
++		print_bool("Overflow", pfx, check, CHECK_MS_OVERFLOW);
 +}
 +
- void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
+ static void print_err_info(const char *pfx, u8 err_type, u64 check)
  {
- 	int i;
- 	struct cper_ia_err_info *err_info;
- 	char newpfx[64];
-+	u8 err_type;
+ 	u16 validation_bits = CHECK_VALID_BITS(check);
  
- 	if (proc->validation_bits & VALID_LAPIC_ID)
- 		printk("%sLocal APIC_ID: 0x%llx\n", pfx, proc->lapic_id);
-@@ -40,8 +76,15 @@ void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
- 	for (i = 0; i < VALID_PROC_ERR_INFO_NUM(proc->validation_bits); i++) {
- 		printk("%sError Information Structure %d:\n", pfx, i);
++	/*
++	 * The MS Check structure varies a lot from the others, so use a
++	 * separate function for decoding.
++	 */
+ 	if (err_type == ERR_TYPE_MS)
+-		return;
++		return print_err_info_ms(pfx, validation_bits, check);
  
--		printk("%sError Structure Type: %pUl\n", newpfx,
--		       &err_info->err_type);
-+		err_type = cper_get_err_type(&err_info->err_type);
-+		printk("%sError Structure Type: %s\n", newpfx,
-+		       err_type < ARRAY_SIZE(cper_proc_error_type_strs) ?
-+		       cper_proc_error_type_strs[err_type] : "unknown");
-+
-+		if (err_type >= N_ERR_TYPES) {
-+			printk("%sError Structure Type: %pUl\n", newpfx,
-+			       &err_info->err_type);
-+		}
- 
- 		if (err_info->validation_bits & INFO_VALID_CHECK_INFO) {
- 			printk("%sCheck Information: 0x%016llx\n", newpfx,
+ 	if (validation_bits & CHECK_VALID_TRANS_TYPE) {
+ 		u8 trans_type = CHECK_TRANS_TYPE(check);
 -- 
 2.14.1
