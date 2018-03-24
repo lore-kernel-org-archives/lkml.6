@@ -1,82 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752545AbeCXWih (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 18:38:37 -0400
-Received: from sauhun.de ([88.99.104.3]:44504 "EHLO pokefinder.org"
+        id S1752762AbeCXWiy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 18:38:54 -0400
+Received: from smtp4-g21.free.fr ([212.27.42.4]:38576 "EHLO smtp4-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751894AbeCXWie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 18:38:34 -0400
-Date: Sat, 24 Mar 2018 23:38:32 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>, Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v3 01/11] i2c: Export of_i2c_get_board_info()
-Message-ID: <20180324223832.7wvhghw77ech4orn@ninjato>
-References: <20180323110020.19080-1-boris.brezillon@bootlin.com>
- <20180323110020.19080-2-boris.brezillon@bootlin.com>
- <20180324223518.g5jsi5zvoxa75psy@ninjato>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="o4bfgnh3t6tv5z4f"
-Content-Disposition: inline
-In-Reply-To: <20180324223518.g5jsi5zvoxa75psy@ninjato>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1752686AbeCXWiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 18:38:52 -0400
+From: Alban Bedel <albeu@free.fr>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Alban Bedel <albeu@free.fr>, linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: Add a driver for the ATH79 USB phy
+Date: Sat, 24 Mar 2018 23:38:40 +0100
+Message-Id: <1521931120-31118-1-git-send-email-albeu@free.fr>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The ATH79 USB phy is very simple, it only have a reset. On some SoC a
+second reset is used to force the phy in suspend mode regardless of the
+USB controller status.
 
---o4bfgnh3t6tv5z4f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This driver is added to the qualcom directory as atheros is now part
+of qualcom and newer SoC of this familly are marketed under the
+qualcom name.
 
+Signed-off-by: Alban Bedel <albeu@free.fr>
+---
+ MAINTAINERS                          |   8 +++
+ drivers/phy/qualcomm/Kconfig         |  11 +++-
+ drivers/phy/qualcomm/Makefile        |   1 +
+ drivers/phy/qualcomm/phy-ath79-usb.c | 108 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 127 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/phy/qualcomm/phy-ath79-usb.c
 
-> > -	info.archdata =3D &dev_ad;
->=20
-> Why did you drop this?
-
-If the removal is safe, it should be a seperate patch, I mean.
-
-
---o4bfgnh3t6tv5z4f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq202gACgkQFA3kzBSg
-KbZS0A/+Lxx+NqaVVtw4RxyUPhSWqMVhhNa7swJZTt0ufwzzE9KofdnKTTx04CT5
-spVxRVG8F6vb2fg2bzzEUGlj34ZZsdoN7cno1Y5jybrrumyrUj5n4FFrn8bbG21D
-uOZanhBrEsRR10OPB+hQTNo/O7zX6d3akaqhfzxMmFRZoAJFHIKeJgokXAscv0A1
-/AV//KCOx1vBHAKQdOBnRYDi8SuK210Zi3DNs2i6k3IOsFQZiCeNMFiFCrEgOGii
-DJx6sc84xtZLHJz4F80wG2hYMH6eT1cLN2l91H2P4hqoHj6dxJIp7WZrKJZM8Q2a
-3Ps09Rsar5Bkb1O0r4PCatjJeRqizKY4FfeswIE0npGTPD9FKKgvD21k9FYHut/c
-59XvhVtFVsfER3D0pXstnlj2Amqs9fDrorhEKY5VqoFpSdkVuA5Ff60PwPsu2IJs
-CszhIxfgB0DvLj9dsMTwLrjbI2tD5EjPIytUeG/wru+B7vwCJ1Y4jLY8zVWtVnhv
-qQtGJFTcq48NEex834+nGynGGPryLN7pvMpTx8Z5wUEZ4Dzm7WBiElqkVUUthaVO
-FxtlK2yz/E1p6Kvk3Hnes2VEpjuhFKqQURLpbejEVxpDSeyqcyu7WGvHBETg2G/+
-SC08ebAJVGkUQn5FVcheAZ7t2qcZFrrIBCUoF6f7C1JHH2aZ0VI=
-=3Qtg
------END PGP SIGNATURE-----
-
---o4bfgnh3t6tv5z4f--
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 73c0cda..ce5ecd6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2294,6 +2294,14 @@ S:	Maintained
+ F:	drivers/gpio/gpio-ath79.c
+ F:	Documentation/devicetree/bindings/gpio/gpio-ath79.txt
+ 
++ATHEROS 71XX/9XXX USB PHY DRIVER
++M:	Alban Bedel <albeu@free.fr>
++W:	https://github.com/AlbanBedel/linux
++T:	git git://github.com/AlbanBedel/linux
++S:	Maintained
++F:	drivers/phy/qualcomm/phy-ath79-usb.c
++F:	Documentation/devicetree/bindings/phy/phy-ath79-usb.txt
++
+ ATHEROS ATH GENERIC UTILITIES
+ M:	"Luis R. Rodriguez" <mcgrof@do-not-panic.com>
+ L:	linux-wireless@vger.kernel.org
+diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
+index 7bfa64b..632a0e7 100644
+--- a/drivers/phy/qualcomm/Kconfig
++++ b/drivers/phy/qualcomm/Kconfig
+@@ -1,6 +1,15 @@
+ #
+-# Phy drivers for Qualcomm platforms
++# Phy drivers for Qualcomm and Atheros platforms
+ #
++config PHY_ATH79_USB
++	tristate "Atheros AR71XX/9XXX USB PHY driver"
++	depends on OF && (ATH79 || COMPILE_TEST)
++	default y if USB_EHCI_HCD_PLATFORM || USB_OHCI_HCD_PLATFORM
++	select RESET_CONTROLLER
++	select GENERIC_PHY
++	help
++	  Enable this to support the USB PHY on Atheros AR71XX/9XXX SoCs.
++
+ config PHY_QCOM_APQ8064_SATA
+ 	tristate "Qualcomm APQ8064 SATA SerDes/PHY driver"
+ 	depends on ARCH_QCOM
+diff --git a/drivers/phy/qualcomm/Makefile b/drivers/phy/qualcomm/Makefile
+index 9abb789..deb831f4 100644
+--- a/drivers/phy/qualcomm/Makefile
++++ b/drivers/phy/qualcomm/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_PHY_ATH79_USB)		+= phy-ath79-usb.o
+ obj-$(CONFIG_PHY_QCOM_APQ8064_SATA)	+= phy-qcom-apq8064-sata.o
+ obj-$(CONFIG_PHY_QCOM_IPQ806X_SATA)	+= phy-qcom-ipq806x-sata.o
+ obj-$(CONFIG_PHY_QCOM_QMP)		+= phy-qcom-qmp.o
+diff --git a/drivers/phy/qualcomm/phy-ath79-usb.c b/drivers/phy/qualcomm/phy-ath79-usb.c
+new file mode 100644
+index 0000000..6fd6e07
+--- /dev/null
++++ b/drivers/phy/qualcomm/phy-ath79-usb.c
+@@ -0,0 +1,108 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Atheros AR71XX/9XXX USB PHY driver
++ *
++ * Copyright (C) 2015-2018 Alban Bedel <albeu@free.fr>
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/phy/phy.h>
++#include <linux/reset.h>
++
++struct ath79_usb_phy {
++	struct reset_control *reset;
++	/* The suspend override logic is inverted, hence the no prefix
++	 * to make the code a bit easier to understand.
++	 */
++	struct reset_control *no_suspend_override;
++};
++
++static int ath79_usb_phy_power_on(struct phy *phy)
++{
++	struct ath79_usb_phy *priv = phy_get_drvdata(phy);
++	int err = 0;
++
++	if (priv->no_suspend_override) {
++		err = reset_control_assert(priv->no_suspend_override);
++		if (err)
++			return err;
++	}
++
++	err = reset_control_deassert(priv->reset);
++	if (err && priv->no_suspend_override)
++		reset_control_assert(priv->no_suspend_override);
++
++	return err;
++}
++
++static int ath79_usb_phy_power_off(struct phy *phy)
++{
++	struct ath79_usb_phy *priv = phy_get_drvdata(phy);
++	int err = 0;
++
++	err = reset_control_assert(priv->reset);
++	if (err)
++		return err;
++
++	if (priv->no_suspend_override) {
++		err = reset_control_deassert(priv->no_suspend_override);
++		if (err)
++			reset_control_deassert(priv->reset);
++	}
++
++	return err;
++}
++
++static const struct phy_ops ath79_usb_phy_ops = {
++	.power_on	= ath79_usb_phy_power_on,
++	.power_off	= ath79_usb_phy_power_off,
++	.owner		= THIS_MODULE,
++};
++
++static int ath79_usb_phy_probe(struct platform_device *pdev)
++{
++	struct ath79_usb_phy *priv;
++	struct phy *phy;
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->reset = devm_reset_control_get(&pdev->dev, "usb-phy");
++	if (IS_ERR(priv->reset))
++		return PTR_ERR(priv->reset);
++
++	priv->no_suspend_override = devm_reset_control_get_optional(
++		&pdev->dev, "usb-suspend-override");
++	if (IS_ERR(priv->no_suspend_override))
++		return PTR_ERR(priv->no_suspend_override);
++
++	phy = devm_phy_create(&pdev->dev, NULL, &ath79_usb_phy_ops);
++	if (IS_ERR(phy))
++		return PTR_ERR(phy);
++
++	phy_set_drvdata(phy, priv);
++
++	return PTR_ERR_OR_ZERO(devm_of_phy_provider_register(
++				&pdev->dev, of_phy_simple_xlate));
++}
++
++static const struct of_device_id ath79_usb_phy_of_match[] = {
++	{ .compatible = "qca,ar7100-usb-phy" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, ath79_usb_phy_of_match);
++
++static struct platform_driver ath79_usb_phy_driver = {
++	.probe	= ath79_usb_phy_probe,
++	.driver = {
++		.of_match_table	= ath79_usb_phy_of_match,
++		.name		= "ath79-usb-phy",
++	}
++};
++module_platform_driver(ath79_usb_phy_driver);
++
++MODULE_DESCRIPTION("ATH79 USB PHY driver");
++MODULE_AUTHOR("Alban Bedel <albeu@free.fr>");
++MODULE_LICENSE("GPL");
+-- 
+2.7.4
