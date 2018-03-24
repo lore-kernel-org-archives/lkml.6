@@ -1,42 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeCXCRO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 22:17:14 -0400
-Received: from mail-pl0-f49.google.com ([209.85.160.49]:45334 "EHLO
-        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751551AbeCXCRM (ORCPT
+        id S1751798AbeCXC7v (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 22:59:51 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:35377 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751288AbeCXC7u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 22:17:12 -0400
-X-Google-Smtp-Source: AG47ELv9WKyKqdyg36sVBJlvu+TFuUUE0d3MDK8vspn2kGAnv1eAGX7np8M1hpOYQSiyk36QrIHNjg==
-Date: Fri, 23 Mar 2018 19:17:08 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com
-Subject: Re: [PATCH v5 00/13] ARM: dts: ipq: updates to enable a few
- peripherals
-Message-ID: <20180324021708.onpakgbxc544cwz2@localhost>
-References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 23 Mar 2018 22:59:50 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0T--L1Xh_1521860387;
+From: Jia Zhang <zhang.jia@linux.alibaba.com>
+To: jeyu@kernel.org
+Cc: linux-kernel@vger.kernel.org, zhang.jia@linux.alibaba.com
+Subject: [PATCH v3 0/3][RESEND] modsign enhancement
+Date: Sat, 24 Mar 2018 10:59:46 +0800
+Message-Id: <1521860389-19262-1-git-send-email-zhang.jia@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 03:48:43PM +0530, Sricharan R wrote:
-> [v5]
->     * Fixed a minor comment that i missed earlier.
+This patch series allows to disable module validity enforcement
+in runtime through the control switch located in securityfs.
 
-I tried booting this series with qcom_defconfig on my custom,
-dk07-like board.  It works!
+In order to keep /sys/module/module/parameters/sig_enforce simple,
+the disablement switch is located at
+/sys/kernel/security/modsign/disable_enforce.
 
-Thanks a bunch,
-Richard
+Assuming CONFIG_MODULE_SIG_FORCE=n, here are the instructions to
+test this control switch.
+
+# cat /sys/module/module/parameters/sig_enforce
+N
+# echo 1 > /sys/module/module/parameters/sig_enforce
+# cat /sys/module/module/parameters/sig_enforce
+Y
+# echo -n 0 > no_sig_enforce
+# openssl smime -sign -nocerts -noattr -binary -in no_sig_enforce \
+    -inkey <system_trusted_key> -signer <cert> -outform der \
+    -out /sys/kernel/security/modsign/disable_enforce
+# cat /sys/module/module/parameters/sig_enforce
+N
+
+Changelog:
+v3:
+- The control switch now doesn't support showing the status of sig_enforce.
+
+v2:
+- Support to disable validity enforcement in runtime.
