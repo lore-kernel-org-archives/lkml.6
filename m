@@ -1,62 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752846AbeCXW5d (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 18:57:33 -0400
-Received: from sauhun.de ([88.99.104.3]:44740 "EHLO pokefinder.org"
+        id S1752702AbeCXXC2 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 19:02:28 -0400
+Received: from mout.perfora.net ([74.208.4.197]:58447 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752095AbeCXW5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 18:57:32 -0400
-Date: Sat, 24 Mar 2018 23:57:30 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Add different features for I2C
-Message-ID: <20180324225730.drpjbvr7nl7yol5q@ninjato>
-References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+        id S1752174AbeCXXC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 19:02:27 -0400
+X-Google-Smtp-Source: AG47ELsyozL/C/z+7OuERYkmzYyoK7s6Vyzy8jxx/HOcHDW+t2SUn/Vc+YQNdtuZVjh4UtRlM0JhUQyDl+G0JN4bl9E=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jsauxyjddxejapp2"
-Content-Disposition: inline
-In-Reply-To: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <e31eb13b-598b-e7c7-607b-c98664818563@lwfinger.net>
+References: <20180324041027.6498-1-quytelda@tamalin.org> <e31eb13b-598b-e7c7-607b-c98664818563@lwfinger.net>
+From: Quytelda Kahja <quytelda@tamalin.org>
+Date: Sat, 24 Mar 2018 16:02:24 -0700
+X-Gmail-Original-Message-ID: <CAFLvi20sgO4aKTLYutvwUr5aN9TLaqLWVghC9Y9MrKZvcixAYA@mail.gmail.com>
+Message-ID: <CAFLvi20sgO4aKTLYutvwUr5aN9TLaqLWVghC9Y9MrKZvcixAYA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ieee80211: Replace bit shifts with the BIT() macro
+ for WLAN_CAPABILITY_*.
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: johannes@sipsolutions.net, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K0:781fKwMWKbcz+oMNI8aL8ms8MLWSX8MpasNKFbmAZvWpsK1zbJv
+ qqujV3PW3RRNBDWLQjo2UFXgU0wQ8vz/vxyHzO0Mz9kXfjzFWujQJhoyR7UleIEe3THrT68
+ JqQHNg9HJ35M29MJxDbxwLCkGcrHi5u3q4QTipajTknZz2hGJDhdjjIu+gusaWdMxYgxSol
+ tR8TuJidw2pkrHwY4CAjw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lonYFvSsRHE=:EKqqkVVhsQnaJfdeueAjHW
+ KuStuAdweUZTFR+FIDoJ05gY1Dl9sDmKzWR4s/uzea6pGF6fMGKSpI4odKnXNZC+UvZtEmw6a
+ Wb4b2yW8ef+MVDFEPlI5VTkmHeLghDBoJOocPYNahXNzUWlSa+FplJPnRpExGa6+kHXc30KiB
+ /d2TLubHkyaY455egFUiKFg0SEHsdChJGkUBbmc3jiPg/5kPjacesqGc/CneFEqMNDfTHCc/M
+ Eqv1gVRNYmX4HKIVDZFY4dQyqFMoioURsjrUHPLdkCo61M1PA5WkaIOHWDNTUFsnS0dV67drG
+ eBy39qxonhHr2AmgKjQqldRgKbBojUfBn2NmmA7oAaRvTIvINX+J6SK52YqoTVrYtbiPpqXbm
+ g3UqjYUKb3SPaoLozDYOz3V0ripTbSWmrEUwPbKMixWdFD4Kmrz08J+RFGonfahxXBu+4ud08
+ G1RVRQv0vd1g9oFbCjSSRCOHE7q2QVphHOeaLHqbNAnocNX6YIWpMlsm1El1x8MoFER617gGb
+ ukJwF5MoAZl9GMyvUe/Kwnbwmqiynp+J11ILd6lSlcu76CNcufxZEhiiIkCFfbZTYdltBjcUI
+ FzdIpb8lw3AceRAmqm/A6IwlGexAKtRqCA+WdIQRPajUs1fH1MGqHfoydHDjKlVrNRcKz59dX
+ 81C3m5QFzixgZOysI+F3w2Nt4BMsrOQ9y17l1DiBaivx23bd5lNpzp7awOG8nJXoDXaq7J89s
+ o2e8w4xUCTJTYqE3xfhySD2jqAUPIxl50t9qYS2ebE3FcR/Ik+tLFzvxnnE=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The "document" refers to the file in which the changes were made
+('include/linux/ieee80211.h').
 
---jsauxyjddxejapp2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I tend to try to split my commits into the smallest logically related
+changes possible, hence the three patch series.  This particular case
+may be a little on the extreme side, but if the maintainer desires,
+they can always squash them together or ask me to resubmit as one
+patch.
 
-On Wed, Mar 21, 2018 at 05:48:54PM +0100, Pierre-Yves MORDRET wrote:
-> Append new I2C STM32F7 feature set. This includes 10 bit support, slave
-> support, SMBBus protocols support, DMA Support and eventually an I2C recovery
-> mechanism.
-
-So, I gave a few comments. For hardware details (especially DMA), some
-additional review from Maxime or Alexandre would be great.
-
-
---jsauxyjddxejapp2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlq219oACgkQFA3kzBSg
-KbYAig//Y7P2q2lmOYbFvDtXHezFlzJjlRR4oSuniUjRvIeX5mdDqe5kRpiLSiax
-6azwUzVrXL+6pl2c+KSNaemHj74Z1v3lnInbH8HblyYeUFNlQwF6Oz1rrQV8hWKd
-7vzAox/QQTUAATB7c72h0+zuzk5HZaXC3jtrwfzZ/0UNY+1i3BvfnfwnBuZmIDP+
-yzKcq70ZNNmrU0ZlF88f1PenAsWBjurx7hMkpl6EwJnpJdoTIjLZCFelnCGNIIbb
-4mq9Kxx9m9lwXfkbrBUbXZrrPGonMQ6rCpVqnuUacdYkjxM4o7AhQDVbvezFsFy1
-FSNKj+JEpba/zG8YDuBye3KBjrUHsm2zy/ZQwfqkfEKzyeKbVlsm/YPpwyoilxy2
-Ovbj4p4K72wfDHpxf0WWEgrLrm2YWo5CMXPd35ETw7XqsMqzOegefr/zjDzdqMBb
-3hGQaZK6up+WQVrNbReF+S1T2lB4GCIYFwycXpoEKBabY1DvEOhxVlGosvyu6n2G
-12x5qk0WLvsSQ0fSRYWgtpQakokB2Fbo4g/GWpKrX5IUyTwJwVOEKZ/79wOOIaRY
-i5hQFrj6LLv0+mITjsASXdEcniMjFkGBkm53F4b7AKYnFNO8Ef0kk0IUPbifo2OF
-RM+9F4vhIwfkceJ8cAazCflr/zbxPDFWc3UhsTOBLSgytWPu1n4=
-=8wJL
------END PGP SIGNATURE-----
-
---jsauxyjddxejapp2--
+On 3/24/18, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> On 03/23/2018 11:10 PM, Quytelda Kahja wrote:
+>> It is neater and more consistent with the rest of the document to use the
+>> BIT() macro from 'linux/bitops.h' to define the WLAN_CAPABILITY_*
+>> bitmasks.  In the case of WLAN_CAPABILITY_DMG_TYPE_{IBSS, PBSS, AP},
+>> bitshifting integers by 0 does nothing, so there is no reason to do it in
+>> the code; replace these values with plain integers.
+>>
+>> Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+>
+> In the commit message for all of these, what is the "document" to which you
+> refer?
+>
+> I'm not quite sure why you split these changes into 3 parts, but I guess
+> that is OK.
+>
+> Larry
+>
+-- 
+Thank you,
+Quytelda Kahja
