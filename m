@@ -1,67 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752760AbeCXRpz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 13:45:55 -0400
-Received: from smtprelay0183.hostedemail.com ([216.40.44.183]:40999 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752722AbeCXRpu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 13:45:50 -0400
-X-Session-Marker: 7368656140736865616C6576792E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:800:960:966:973:988:989:1260:1345:1359:1534:1540:1711:1714:1730:1747:1777:1792:2194:2196:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3351:3876:3877:4250:4321:4385:5007:6114:6261:6642:6737:9592:10004:10848:11026:11473:11658:11914:12048:12114:12438:12533:12555:12895:12986:13069:13311:13357:14096:14181:14384:14394:14721:21080:21627,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.4.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: sail78_4fc960a553662
-X-Filterd-Recvd-Size: 1968
-From: Shea Levy <shea@shealevy.com>
-To: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-m68k@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        user-mode-linux-devel@lists.sourceforge.net
-Cc: Shea Levy <shea@shealevy.com>
-Subject: [PATCH 04/16] arc: Use INITRAMFS_GENERIC_UNLOAD
-Date: Sat, 24 Mar 2018 13:44:46 -0400
-Message-Id: <20180324174458.26423-5-shea@shealevy.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180324174458.26423-1-shea@shealevy.com>
-References: <20180324174458.26423-1-shea@shealevy.com>
+        id S1752686AbeCXSYE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 14:24:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55502 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752253AbeCXSYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 14:24:03 -0400
+Date: Sat, 24 Mar 2018 14:24:00 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>,
+        Michal Hocko <mhocko@kernel.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH 1/8] mm: mmap: unmap large mapping by section
+Message-ID: <20180324182359.GB4928@redhat.com>
+References: <1521581486-99134-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1521581486-99134-2-git-send-email-yang.shi@linux.alibaba.com>
+ <20180321130833.GM23100@dhcp22.suse.cz>
+ <f88deb20-bcce-939f-53a6-1061c39a9f6c@linux.alibaba.com>
+ <20180321172932.GE4780@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180321172932.GE4780@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Shea Levy <shea@shealevy.com>
----
- arch/arc/Kconfig   | 1 +
- arch/arc/mm/init.c | 7 -------
- 2 files changed, 1 insertion(+), 7 deletions(-)
+On Wed, Mar 21, 2018 at 10:29:32AM -0700, Matthew Wilcox wrote:
+> On Wed, Mar 21, 2018 at 09:31:22AM -0700, Yang Shi wrote:
+> > On 3/21/18 6:08 AM, Michal Hocko wrote:
+> > > Yes, this definitely sucks. One way to work that around is to split the
+> > > unmap to two phases. One to drop all the pages. That would only need
+> > > mmap_sem for read and then tear down the mapping with the mmap_sem for
+> > > write. This wouldn't help for parallel mmap_sem writers but those really
+> > > need a different approach (e.g. the range locking).
+> > 
+> > page fault might sneak in to map a page which has been unmapped before?
+> > 
+> > range locking should help a lot on manipulating small sections of a large
+> > mapping in parallel or multiple small mappings. It may not achieve too much
+> > for single large mapping.
+> 
+> I don't think we need range locking.  What if we do munmap this way:
+> 
+> Take the mmap_sem for write
+> Find the VMA
+>   If the VMA is large(*)
+>     Mark the VMA as deleted
+>     Drop the mmap_sem
+>     zap all of the entries
+>     Take the mmap_sem
+>   Else
+>     zap all of the entries
+> Continue finding VMAs
+> Drop the mmap_sem
+> 
+> Now we need to change everywhere which looks up a VMA to see if it needs
+> to care the the VMA is deleted (page faults, eg will need to SIGBUS; mmap
+> does not care; munmap will need to wait for the existing munmap operation
+> to complete), but it gives us the atomicity, at least on a per-VMA basis.
+> 
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index d76bf4a83740..2844ce5b910c 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -44,6 +44,7 @@ config ARC
- 	select HAVE_GENERIC_DMA_COHERENT
- 	select HAVE_KERNEL_GZIP
- 	select HAVE_KERNEL_LZMA
-+	select INITRAMFS_GENERIC_UNLOAD
- 
- config MIGHT_HAVE_PCI
- 	bool
-diff --git a/arch/arc/mm/init.c b/arch/arc/mm/init.c
-index ba145065c579..7bcf23ab1756 100644
---- a/arch/arc/mm/init.c
-+++ b/arch/arc/mm/init.c
-@@ -229,10 +229,3 @@ void __ref free_initmem(void)
- {
- 	free_initmem_default(-1);
- }
--
--#ifdef CONFIG_BLK_DEV_INITRD
--void __init free_initrd_mem(unsigned long start, unsigned long end)
--{
--	free_reserved_area((void *)start, (void *)end, -1, "initrd");
--}
--#endif
--- 
-2.16.2
+What about something that should fix all issues:
+    struct list_head to_free_puds;
+    ...
+    down_write(&mm->mmap_sem);
+    ...
+    unmap_vmas(&tlb, vma, start, end, &to_free_puds);
+    arch_unmap(mm, vma, start, end);
+    /* Fix up all other VM information */
+    remove_vma_list(mm, vma);
+    ...
+    up_write(&mm->mmap_sem);
+    ...
+    zap_pud_list(rss_update_info, to_free_puds);
+    update_rss(rss_update_info)
+
+We collect pud that need to be free/zap we update the page table PUD
+entry to pud_none under the write sem and CPU page table lock, add the
+pud to the list that need zapping. We only collect pud fully cover,
+and usual business for partialy covered pud.
+
+Everything behave as today except that we do not free memory. Care
+must be take with the anon vma and we should probably not free the
+vma struct either before the zap but all other mm struct can be
+updated. The rss_counter would also to be updated post zap pud.
+
+We would need special code to zap pud list, no need to take lock or
+do special arch tlb flushing, ptep_get_clear, ... when walking down
+those puds. So it should scale a lot better too.
+
+Did i miss something ?
+
+Cheers,
+Jérôme
