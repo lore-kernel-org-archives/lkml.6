@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753257AbeCXUEI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 16:04:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37426 "EHLO mail.kernel.org"
+        id S1753148AbeCXUDm (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 16:03:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752842AbeCXUEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 16:04:05 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCB2A2183B
+        id S1753133AbeCXUDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Mar 2018 16:03:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71FF52172B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -17,9 +17,9 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
         Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 21/44] perf annotate: Move update_column_widths() to the generic lib
-Date: Sat, 24 Mar 2018 17:01:48 -0300
-Message-Id: <20180324200211.21326-22-acme@kernel.org>
+Subject: [PATCH 13/44] perf annotate: Move jumps_percent_color to ui_browser
+Date: Sat, 24 Mar 2018 17:01:40 -0300
+Message-Id: <20180324200211.21326-14-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180324200211.21326-1-acme@kernel.org>
 References: <20180324200211.21326-1-acme@kernel.org>
@@ -29,8 +29,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Previous patch left it where it was to ease review, move it to its
-right place.
+Since all it needs is in ui_browser and annotation structs members.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -39,73 +38,57 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ikdjr014p7k5kachgyjrgiey@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-9f8c2f9aetbibcw33d615y9o@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/annotate.c | 13 -------------
- tools/perf/util/annotate.c        | 13 +++++++++++++
- tools/perf/util/annotate.h        |  1 +
- 3 files changed, 14 insertions(+), 13 deletions(-)
+ tools/perf/ui/browsers/annotate.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
 diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 07d0d2268008..ab4d004fc184 100644
+index 3bc003fe0b1d..6e2eea09a9b0 100644
 --- a/tools/perf/ui/browsers/annotate.c
 +++ b/tools/perf/ui/browsers/annotate.c
-@@ -698,19 +698,6 @@ bool annotate_browser__continue_search_reverse(struct annotate_browser *browser,
- 	return __annotate_browser__search_reverse(browser);
+@@ -81,12 +81,11 @@ static bool disasm_line__filter(struct ui_browser *browser, void *entry)
+ 	return false;
  }
  
--static void annotation__update_column_widths(struct annotation *notes)
--{
--	if (notes->options->use_offset)
--		notes->widths.target = notes->widths.min_addr;
--	else
--		notes->widths.target = notes->widths.max_addr;
--
--	notes->widths.addr = notes->widths.target;
--
--	if (notes->options->show_nr_jumps)
--		notes->widths.addr += notes->widths.jumps + 1;
--}
--
- static int annotate_browser__run(struct annotate_browser *browser,
- 				 struct perf_evsel *evsel,
- 				 struct hist_browser_timer *hbt)
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index b976e3951662..8a2fda80a221 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2084,6 +2084,19 @@ void annotation__set_offsets(struct annotation *notes, s64 size)
- 	}
+-static int annotate_browser__jumps_percent_color(struct annotate_browser *browser,
+-						 int nr, bool current)
++static int ui_browser__jumps_percent_color(struct ui_browser *browser, int nr, bool current)
+ {
+-	struct annotation *notes = browser__annotation(&browser->b);
++	struct annotation *notes = browser__annotation(browser);
+ 
+-	if (current && (!browser->b.use_navkeypressed || browser->b.navkeypressed))
++	if (current && (!browser->use_navkeypressed || browser->navkeypressed))
+ 		return HE_COLORSET_SELECTED;
+ 	if (nr == notes->max_jump_sources)
+ 		return HE_COLORSET_TOP;
+@@ -95,11 +94,10 @@ static int annotate_browser__jumps_percent_color(struct annotate_browser *browse
+ 	return HE_COLORSET_NORMAL;
  }
  
-+void annotation__update_column_widths(struct annotation *notes)
-+{
-+	if (notes->options->use_offset)
-+		notes->widths.target = notes->widths.min_addr;
-+	else
-+		notes->widths.target = notes->widths.max_addr;
-+
-+	notes->widths.addr = notes->widths.target;
-+
-+	if (notes->options->show_nr_jumps)
-+		notes->widths.addr += notes->widths.jumps + 1;
-+}
-+
- static void annotation__calc_lines(struct annotation *notes, struct map *map,
- 				  struct rb_root *root, u64 start)
+-static int annotate_browser__set_jumps_percent_color(struct annotate_browser *browser,
+-						     int nr, bool current)
++static int ui_browser__set_jumps_percent_color(struct ui_browser *browser, int nr, bool current)
  {
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 0aa77c154fe3..a8bea758490a 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -203,6 +203,7 @@ static inline int annotation__pcnt_width(struct annotation *notes)
- void annotation__set_offsets(struct annotation *notes, s64 size);
- void annotation__compute_ipc(struct annotation *notes, size_t size);
- void annotation__mark_jump_targets(struct annotation *notes, struct symbol *sym);
-+void annotation__update_column_widths(struct annotation *notes);
+-	 int color = annotate_browser__jumps_percent_color(browser, nr, current);
+-	 return ui_browser__set_color(&browser->b, color);
++	 int color = ui_browser__jumps_percent_color(browser, nr, current);
++	 return ui_browser__set_color(browser, color);
+ }
  
- static inline struct sym_hist *annotation__histogram(struct annotation *notes, int idx)
- {
+ static void disasm_line__write(struct disasm_line *dl, struct ui_browser *browser,
+@@ -237,8 +235,8 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
+ 					printed = scnprintf(bf, sizeof(bf), "%*d ",
+ 							    ab->jumps_width,
+ 							    bl->jump_sources);
+-					prev = annotate_browser__set_jumps_percent_color(ab, bl->jump_sources,
+-											 current_entry);
++					prev = ui_browser__set_jumps_percent_color(browser, bl->jump_sources,
++										   current_entry);
+ 					ui_browser__write_nstring(browser, bf, printed);
+ 					ui_browser__set_color(browser, prev);
+ 				}
 -- 
 2.14.3
