@@ -1,503 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752173AbeCXAbz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 20:31:55 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:45879 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeCXAbk (ORCPT
+        id S1752234AbeCXAcD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 20:32:03 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:62933 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751490AbeCXAb6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 20:31:40 -0400
-X-Google-Smtp-Source: AG47ELsZGS+KWsqyXVyIlTEeO5a1+4XchZNNZHvpfWlXKFhdIrAyJOvAupY1BtXDSUlg/W7ZF76f6A==
-From: Joey Pabalinas <joeypabalinas@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Joey Pabalinas <joeypabalinas@gmail.com>
-Subject: [PATCH 3/4] tty/nozomi: improve code readability and style
-Date: Fri, 23 Mar 2018 14:31:26 -1000
-Message-Id: <20180324003127.4287-4-joeypabalinas@gmail.com>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180324003127.4287-1-joeypabalinas@gmail.com>
-References: <20180324003127.4287-1-joeypabalinas@gmail.com>
+        Fri, 23 Mar 2018 20:31:58 -0400
+Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+CC: David Lechner <david@lechnology.com>,
+        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        Sekhar Nori <nsekhar@ti.com>, devicetree <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
+ <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+ <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
+ <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
+ <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
+Date: Fri, 23 Mar 2018 19:30:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Improve code clarity by renaming identifiers and reorganizing
-function control flow.
+Hi Bart,
 
-Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+On 03/23/2018 12:16 PM, Bartosz Golaszewski wrote:
+> 2018-03-23 18:08 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+>> Quoting Bartosz Golaszewski (2018-03-23 09:55:47)
+>>> 2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
+>>>> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
+>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>
+>>>>> This series converts the only user of the handcoded, mach-specific reset
+>>>>> routines in the davinci platform to using the reset framework.
+>>>>>
+>>>>> Patch 1 modifies the way lookup entries are registered with the reset
+>>>>> framework.
+>>>>>
+>>>>> Patches 2-4 add necessary lookups/DT-properties.
+>>>>>
+>>>>> Patches 5-7 convert the davinci-rproc driver to the reset framework.
+>>>>>
+>>>>> Patch 8 removes now dead code.
+>>>>>
+>>>>> Philipp: it turned out that it's indeed better to use the reset
+>>>>> controller's device name for the entry lookup.
+>>>>>
+>>>>> Tested both in DT and legacy modes by booting the examples from
+>>>>> ti-ipc-rtos recipe in meta-ti.
+>>>>>
+>>>>> This series applies on top of David Lechner's common-clk-v9 branch[1]
+>>>>> with Philipp Zabel's reset/next branch[2] pulled in.
+>>>>>
+>>>>> It can be found in my github tree as well[3].
+>>>>>
+>>>>
+>>>> What's the merge strategy for the rest of the patches? I should apply
+>>>> the clk ones after the next -rc1?
+>>>
+>>> Or maybe Philipp can provide us with an immutable branch with the reset patches?
+>>>
+>>> The you could apply the driver patches and let Sekhar take all the
+>>> platform code?
+>>>
+>>
+>> Ok that could work too.
+> 
+> Ohad, Bjorn can you ack the remoteproc patches? Are you OK with
+> Stephen taking them through the clock tree? Otherwise it would get
+> complicated since they depend on the first clk patch and the last clk
+> patch depends on them.
 
- 1 file changed, 92 insertions(+), 91 deletions(-)
+I will take a closer look and test on Mon. A quick glance of the
+remoteproc changes seem to be fine. I will let Bjorn comment on the
+patch flow.
 
- 1 file changed, 76 insertions(+), 90 deletions(-)
+The only reason I had to use the clock in the driver was for the reset
+before, and hopefully this will allow me to actually switch to using
+pm_runtime API like I do with the rest of the TI remoteproc drivers
+(Keystone remoteproc driver also uses PSC for clock and reset but then
+it goes through different set of drivers).
 
-diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
-index 0fcb4db721d2a42f08..a5074a59d3e3d33e68 100644
---- a/drivers/tty/nozomi.c
-+++ b/drivers/tty/nozomi.c
-@@ -401,7 +401,7 @@ static inline struct port *get_port_by_tty(const struct tty_struct *tty)
- static void read_mem32(u32 *buf, const void __iomem *mem_addr_start,
- 			u32 size_bytes)
- {
--	u32 i = 0;
-+	u32 nread = 0;
- 	const u32 __iomem *ptr = mem_addr_start;
- 	u16 *buf16;
- 
-@@ -411,30 +411,27 @@ static void read_mem32(u32 *buf, const void __iomem *mem_addr_start,
- 	/* shortcut for extremely often used cases */
- 	switch (size_bytes) {
- 	case 2:	/* 2 bytes */
--		buf16 = (u16 *) buf;
-+		buf16 = (u16 *)buf;
- 		*buf16 = __le16_to_cpu(readw(ptr));
- 		goto out;
--		break;
- 	case 4:	/* 4 bytes */
--		*(buf) = __le32_to_cpu(readl(ptr));
-+		*buf = __le32_to_cpu(readl(ptr));
- 		goto out;
--		break;
- 	}
- 
--	while (i < size_bytes) {
--		if (size_bytes - i == 2) {
-+	for (; nread < size_bytes; buf++, ptr++) {
-+		if (size_bytes - nread == 2) {
- 			/* Handle 2 bytes in the end */
--			buf16 = (u16 *) buf;
--			*(buf16) = __le16_to_cpu(readw(ptr));
--			i += 2;
-+			buf16 = (u16 *)buf;
-+			*buf16 = __le16_to_cpu(readw(ptr));
-+			nread += 2;
- 		} else {
- 			/* Read 4 bytes */
--			*(buf) = __le32_to_cpu(readl(ptr));
--			i += 4;
-+			*buf = __le32_to_cpu(readl(ptr));
-+			nread += 4;
- 		}
--		buf++;
--		ptr++;
- 	}
-+
- out:
- 	return;
- }
-@@ -447,7 +444,7 @@ static void read_mem32(u32 *buf, const void __iomem *mem_addr_start,
- static u32 write_mem32(void __iomem *mem_addr_start, const u32 *buf,
- 			u32 size_bytes)
- {
--	u32 i = 0;
-+	u32 nwritten = 0;
- 	u32 __iomem *ptr = mem_addr_start;
- 	const u16 *buf16;
- 
-@@ -460,7 +457,6 @@ static u32 write_mem32(void __iomem *mem_addr_start, const u32 *buf,
- 		buf16 = (const u16 *)buf;
- 		writew(__cpu_to_le16(*buf16), ptr);
- 		return 2;
--		break;
- 	case 1: /*
- 		 * also needs to write 4 bytes in this case
- 		 * so falling through..
-@@ -468,24 +464,22 @@ static u32 write_mem32(void __iomem *mem_addr_start, const u32 *buf,
- 	case 4: /* 4 bytes */
- 		writel(__cpu_to_le32(*buf), ptr);
- 		return 4;
--		break;
- 	}
- 
--	while (i < size_bytes) {
--		if (size_bytes - i == 2) {
-+	for (; nwritten < size_bytes; buf++, ptr++) {
-+		if (size_bytes - nwritten == 2) {
- 			/* 2 bytes */
- 			buf16 = (const u16 *)buf;
- 			writew(__cpu_to_le16(*buf16), ptr);
--			i += 2;
-+			nwritten += 2;
- 		} else {
- 			/* 4 bytes */
- 			writel(__cpu_to_le32(*buf), ptr);
--			i += 4;
-+			nwritten += 4;
- 		}
--		buf++;
--		ptr++;
- 	}
--	return i;
-+
-+	return nwritten;
- }
- 
- /* Setup pointers to different channels and also setup buffer sizes. */
-@@ -632,9 +626,10 @@ static int nozomi_read_config_table(struct nozomi *dc)
- 		return 0;
- 	}
- 
--	if ((dc->config_table.version == 0)
--	    || (dc->config_table.toggle.enabled == TOGGLE_VALID)) {
-+	if (!dc->config_table.version
-+			|| dc->config_table.toggle.enabled == TOGGLE_VALID) {
- 		int i;
-+
- 		DBG1("Second phase, configuring card");
- 
- 		nozomi_setup_memory(dc);
-@@ -659,12 +654,14 @@ static int nozomi_read_config_table(struct nozomi *dc)
- 
- 		dc->state = NOZOMI_STATE_ALLOCATED;
- 		dev_info(&dc->pdev->dev, "Initialization OK!\n");
-+
- 		return 1;
- 	}
- 
--	if ((dc->config_table.version > 0)
--	    && (dc->config_table.toggle.enabled != TOGGLE_VALID)) {
-+	if (dc->config_table.version > 0
-+			&& dc->config_table.toggle.enabled != TOGGLE_VALID) {
- 		u32 offset = 0;
-+
- 		DBG1("First phase: pushing upload buffers, clearing download");
- 
- 		dev_info(&dc->pdev->dev, "Version of card: %d\n",
-@@ -752,7 +749,7 @@ static void disable_transmit_dl(enum port_type port, struct nozomi *dc)
-  */
- static int send_data(enum port_type index, struct nozomi *dc)
- {
--	u32 size = 0;
-+	u32 size;
- 	struct port *port = &dc->port[index];
- 	const u8 toggle = port->toggle_ul;
- 	void __iomem *addr = port->ul_addr[toggle];
-@@ -762,7 +759,7 @@ static int send_data(enum port_type index, struct nozomi *dc)
- 	size = kfifo_out(&port->fifo_ul, dc->send_buf,
- 			   ul_size < SEND_BUF_MAX ? ul_size : SEND_BUF_MAX);
- 
--	if (size == 0) {
-+	if (!size) {
- 		DBG4("No more data to send, disable link:");
- 		return 0;
- 	}
-@@ -770,8 +767,8 @@ static int send_data(enum port_type index, struct nozomi *dc)
- 	/* DUMP(buf, size); */
- 
- 	/* Write length + data */
--	write_mem32(addr, (u32 *) &size, 4);
--	write_mem32(addr + 4, (u32 *) dc->send_buf, size);
-+	write_mem32(addr, (u32 *)&size, 4);
-+	write_mem32(addr + 4, (u32 *)dc->send_buf, size);
- 
- 	tty_port_tty_wakeup(&port->port);
- 
-@@ -781,13 +778,12 @@ static int send_data(enum port_type index, struct nozomi *dc)
- /* If all data has been read, return 1, else 0 */
- static int receive_data(enum port_type index, struct nozomi *dc)
- {
--	u8 buf[RECEIVE_BUF_MAX] = { 0 };
--	int size;
-+	u8 buf[RECEIVE_BUF_MAX] = {0};
- 	u32 offset = 4;
- 	struct port *port = &dc->port[index];
- 	void __iomem *addr = port->dl_addr[port->toggle_dl];
- 	struct tty_struct *tty = tty_port_tty_get(&port->port);
--	int i, ret;
-+	int size, ret, i;
- 
- 	size = __le32_to_cpu(readl(addr));
- 	/*  DBG1( "%d bytes port: %d", size, index); */
-@@ -802,14 +798,14 @@ static int receive_data(enum port_type index, struct nozomi *dc)
- 		goto put;
- 	}
- 
--	if (unlikely(size == 0)) {
-+	if (unlikely(!size)) {
- 		dev_err(&dc->pdev->dev, "size == 0?\n");
- 		ret = 1;
- 		goto put;
- 	}
- 
- 	while (size > 0) {
--		read_mem32((u32 *) buf, addr + offset, RECEIVE_BUF_MAX);
-+		read_mem32((u32 *)buf, addr + offset, RECEIVE_BUF_MAX);
- 
- 		if (size == 1) {
- 			tty_insert_flip_char(&port->port, buf[0], TTY_NORMAL);
-@@ -937,9 +933,7 @@ static int receive_flow_control(struct nozomi *dc)
- 		DBG1("Disable interrupt (0x%04X) on port: %d",
- 			enable_ier, port);
- 		disable_transmit_ul(port, dc);
--
- 	} else if (old_ctrl.CTS == 0 && ctrl_dl.CTS == 1) {
--
- 		if (kfifo_len(&dc->port[port].fifo_ul)) {
- 			DBG1("Enable interrupt (0x%04X) on port: %d",
- 				enable_ier, port);
-@@ -989,7 +983,7 @@ static enum ctrl_port_type port2ctrl(enum port_type port,
- 		return CTRL_APP2;
- 	default:
- 		dev_err(&dc->pdev->dev,
--			"ERROR: send flow control " \
-+			"ERROR: send flow control "
- 			"received for non-existing port\n");
- 	}
- 	return CTRL_ERROR;
-@@ -1002,23 +996,24 @@ static enum ctrl_port_type port2ctrl(enum port_type port,
-  */
- static int send_flow_control(struct nozomi *dc)
- {
--	u32 i, more_flow_control_to_be_updated = 0;
-+	u32 more_flow_control_to_be_updated = 0;
-+	u32 i;
- 	u16 *ctrl;
- 
- 	for (i = PORT_MDM; i < MAX_PORT; i++) {
- 		if (dc->port[i].update_flow_control) {
--			if (more_flow_control_to_be_updated) {
--				/* We have more flow control to be updated */
-+			if (more_flow_control_to_be_updated)
- 				return 1;
--			}
-+
- 			dc->port[i].ctrl_ul.port = port2ctrl(i, dc);
- 			ctrl = (u16 *)&dc->port[i].ctrl_ul;
--			write_mem32(dc->port[PORT_CTRL].ul_addr[0], \
--				(u32 *) ctrl, 2);
-+			write_mem32(dc->port[PORT_CTRL].ul_addr[0],
-+					(u32 *)ctrl, 2);
- 			dc->port[i].update_flow_control = 0;
- 			more_flow_control_to_be_updated = 1;
- 		}
- 	}
-+
- 	return 0;
- }
- 
-@@ -1069,7 +1064,7 @@ static int handle_data_dl(struct nozomi *dc, enum port_type port, u8 *toggle,
-  */
- static int handle_data_ul(struct nozomi *dc, enum port_type port, u16 read_iir)
- {
--	u8 *toggle = &(dc->port[port].toggle_ul);
-+	u8 *toggle = &dc->port[port].toggle_ul;
- 
- 	if (*toggle == 0 && read_iir & MDM_UL1) {
- 		dc->last_ier &= ~MDM_UL;
-@@ -1123,7 +1118,7 @@ static int handle_data_ul(struct nozomi *dc, enum port_type port, u16 read_iir)
- static irqreturn_t interrupt_handler(int irq, void *dev_id)
- {
- 	struct nozomi *dc = dev_id;
--	unsigned int a;
-+	unsigned int i;
- 	u16 read_iir;
- 
- 	if (!dc)
-@@ -1141,10 +1136,9 @@ static irqreturn_t interrupt_handler(int irq, void *dev_id)
- 	 */
- 	read_iir &= dc->last_ier;
- 
--	if (read_iir == 0)
-+	if (!read_iir)
- 		goto none;
- 
--
- 	DBG4("%s irq:0x%04X, prev:0x%04X", interrupt2str(read_iir), read_iir,
- 		dc->last_ier);
- 
-@@ -1235,9 +1229,9 @@ static irqreturn_t interrupt_handler(int irq, void *dev_id)
- exit_handler:
- 	spin_unlock(&dc->spin_mutex);
- 
--	for (a = 0; a < NOZOMI_MAX_PORTS; a++)
--		if (test_and_clear_bit(a, &dc->flip))
--			tty_flip_buffer_push(&dc->port[a].port);
-+	for (i = 0; i < NOZOMI_MAX_PORTS; i++)
-+		if (test_and_clear_bit(i, &dc->flip))
-+			tty_flip_buffer_push(&dc->port[i].port);
- 
- 	return IRQ_HANDLED;
- none:
-@@ -1318,10 +1312,8 @@ static int nozomi_card_init(struct pci_dev *pdev,
- 				      const struct pci_device_id *ent)
- {
- 	resource_size_t start;
--	int ret;
--	struct nozomi *dc = NULL;
--	int ndev_idx;
--	int i;
-+	struct nozomi *dc;
-+	int ndev_idx, ret, i;
- 
- 	dev_dbg(&pdev->dev, "Init, new card found\n");
- 
-@@ -1352,8 +1344,8 @@ static int nozomi_card_init(struct pci_dev *pdev,
- 
- 	ret = pci_request_regions(dc->pdev, NOZOMI_NAME);
- 	if (ret) {
--		dev_err(&pdev->dev, "I/O address 0x%04x already in use\n",
--			(int) /* nozomi_private.io_addr */ 0);
-+		/* nozomi_private.io_addr */
-+		dev_err(&pdev->dev, "I/O address 0x%04x already in use\n", 0);
- 		goto err_disable_device;
- 	}
- 
-@@ -1429,19 +1421,18 @@ static int nozomi_card_init(struct pci_dev *pdev,
- 		port->port.ops = &noz_tty_port_ops;
- 		tty_dev = tty_port_register_device(&port->port, ntty_driver,
- 				dc->index_start + i, &pdev->dev);
-+		if (likely(!IS_ERR(tty_dev)))
-+			continue;
- 
--		if (IS_ERR(tty_dev)) {
--			ret = PTR_ERR(tty_dev);
--			dev_err(&pdev->dev, "Could not allocate tty?\n");
--			tty_port_destroy(&port->port);
--			goto err_free_tty;
--		}
-+		ret = PTR_ERR(tty_dev);
-+		dev_err(&pdev->dev, "Could not allocate tty?\n");
-+		tty_port_destroy(&port->port);
-+		goto err_free_tty;
- 	}
- 
- 	return 0;
--
- err_free_tty:
--	for (i = 0; i < MAX_PORT; ++i) {
-+	for (i = 0; i < MAX_PORT; i++) {
- 		tty_unregister_device(ntty_driver, dc->index_start + i);
- 		tty_port_destroy(&dc->port[i].port);
- 	}
-@@ -1463,18 +1454,19 @@ static int nozomi_card_init(struct pci_dev *pdev,
- 
- static void tty_exit(struct nozomi *dc)
- {
--	unsigned int i;
-+	int i;
- 
- 	DBG1(" ");
- 
--	for (i = 0; i < MAX_PORT; ++i)
-+	for (i = 0; i < MAX_PORT; i++)
- 		tty_port_tty_hangup(&dc->port[i].port, false);
- 
- 	/* Racy below - surely should wait for scheduled work to be done or
- 	   complete off a hangup method ? */
- 	while (dc->open_ttys)
- 		msleep(1);
--	for (i = 0; i < MAX_PORT; ++i) {
-+
-+	for (i = 0; i < MAX_PORT; i++) {
- 		tty_unregister_device(ntty_driver, dc->index_start + i);
- 		tty_port_destroy(&dc->port[i].port);
- 	}
-@@ -1483,9 +1475,9 @@ static void tty_exit(struct nozomi *dc)
- /* Deallocate memory for one device */
- static void nozomi_card_exit(struct pci_dev *pdev)
- {
--	int i;
--	struct ctrl_ul ctrl;
- 	struct nozomi *dc = pci_get_drvdata(pdev);
-+	struct ctrl_ul ctrl;
-+	int i;
- 
- 	/* Disable all interrupts */
- 	dc->last_ier = 0;
-@@ -1559,7 +1551,7 @@ static int ntty_install(struct tty_driver *driver, struct tty_struct *tty)
- 	if (!port || !dc || dc->state != NOZOMI_STATE_READY)
- 		return -ENODEV;
- 	ret = tty_standard_install(driver, tty);
--	if (ret == 0)
-+	if (!ret)
- 		tty->driver_data = port;
- 	return ret;
- }
-@@ -1599,7 +1591,7 @@ static void ntty_shutdown(struct tty_port *tport)
- 
- 	DBG1("close: %d", port->token_dl);
- 	spin_lock_irqsave(&dc->spin_mutex, flags);
--	dc->last_ier &= ~(port->token_dl);
-+	dc->last_ier &= ~port->token_dl;
- 	writew(dc->last_ier, dc->reg_ier);
- 	dc->open_ttys--;
- 	spin_unlock_irqrestore(&dc->spin_mutex, flags);
-@@ -1626,21 +1618,21 @@ static void ntty_hangup(struct tty_struct *tty)
- static int ntty_write(struct tty_struct *tty, const unsigned char *buffer,
- 		      int count)
- {
--	int rval = -EINVAL;
- 	struct nozomi *dc = get_dc_by_tty(tty);
- 	struct port *port = tty->driver_data;
- 	unsigned long flags;
-+	int rval;
- 
- 	/* DBG1( "WRITEx: %d, index = %d", count, index); */
- 
--	if (!dc || !port)
-+	if (unlikely(!dc || !port))
- 		return -ENODEV;
- 
- 	rval = kfifo_in(&port->fifo_ul, (unsigned char *)buffer, count);
- 
- 	spin_lock_irqsave(&dc->spin_mutex, flags);
- 	/* CTS is only valid on the modem channel */
--	if (port == &(dc->port[PORT_MDM])) {
-+	if (port == &dc->port[PORT_MDM]) {
- 		if (port->ctrl_dl.CTS) {
- 			DBG4("Enable interrupt");
- 			enable_transmit_ul(tty->index % MAX_PORT, dc);
-@@ -1668,13 +1660,12 @@ static int ntty_write(struct tty_struct *tty, const unsigned char *buffer,
- static int ntty_write_room(struct tty_struct *tty)
- {
- 	struct port *port = tty->driver_data;
--	int room = 4096;
- 	const struct nozomi *dc = get_dc_by_tty(tty);
- 
--	if (dc)
--		room = kfifo_avail(&port->fifo_ul);
-+	if (unlikely(!dc))
-+		return 4096;
- 
--	return room;
-+	return kfifo_avail(&port->fifo_ul);
- }
- 
- /* Gets io control parameters */
-@@ -1749,6 +1740,7 @@ static int ntty_tiocgicount(struct tty_struct *tty,
- 	icount->parity = cnow.parity;
- 	icount->brk = cnow.brk;
- 	icount->buf_overrun = cnow.buf_overrun;
-+
- 	return 0;
- }
- 
-@@ -1763,7 +1755,6 @@ static int ntty_ioctl(struct tty_struct *tty,
- 	switch (cmd) {
- 	case TIOCMIWAIT: {
- 		struct async_icount cprev = port->tty_icount;
--
- 		rval = wait_event_interruptible(port->tty_wait,
- 				ntty_cflags_changed(port, arg, &cprev));
- 		break;
-@@ -1813,16 +1804,11 @@ static s32 ntty_chars_in_buffer(struct tty_struct *tty)
- {
- 	struct port *port = tty->driver_data;
- 	struct nozomi *dc = get_dc_by_tty(tty);
--	s32 rval = 0;
- 
--	if (unlikely(!dc || !port)) {
--		goto exit_in_buffer;
--	}
-+	if (unlikely(!dc || !port))
-+		return 0;
- 
--	rval = kfifo_len(&port->fifo_ul);
--
--exit_in_buffer:
--	return rval;
-+	return kfifo_len(&port->fifo_ul);
- }
- 
- static const struct tty_port_operations noz_tty_port_ops = {
--- 
-2.16.3
+So, I see a mix of driver and dts patches in the series, are all the dts
+patches coming through Sekhar?
+
+regards
+Suman
+
+> 
+> Thanks,
+> Bart
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
