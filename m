@@ -1,67 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeCXO0p (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 10:26:45 -0400
-Received: from mail-pf0-f174.google.com ([209.85.192.174]:43851 "EHLO
-        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752048AbeCXO0m (ORCPT
+        id S1752362AbeCXO3w (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 10:29:52 -0400
+Received: from mail-pg0-f53.google.com ([74.125.83.53]:45660 "EHLO
+        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752258AbeCXO3v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 10:26:42 -0400
-X-Google-Smtp-Source: AG47ELttE8B3Oj5dk68RXjzaqGQbHi1PTBBTqsfQ3TaSejPAxy0Ab3pVsPEaJd8+FzEPbn2yu32S4Q==
-Subject: Re: [bug, bisected] pfifo_fast causes packet reordering
-To: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
-        Dave Taht <dave.taht@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        Martin Elshuber <martin.elshuber@theobroma-systems.com>
-References: <946dbe16-a2eb-eca8-8069-468859ccc78d@theobroma-systems.com>
- <CAA93jw5FSbvg8AZ=EmneW8juqd8LCgp=xUrSxYm2GBEucKkT3w@mail.gmail.com>
- <95844480-d020-9000-53ef-0da8b965ce6e@gmail.com>
- <3a959e50-8656-5d9c-97b9-227d733948f8@theobroma-systems.com>
- <5aeb54ba-2d96-4ab5-53c4-2d3691be7acc@gmail.com>
- <340a6c54-6031-5522-98f5-eafdd3a37a38@theobroma-systems.com>
- <00cc2d41-6861-9a9c-603f-ba8013b2e2ce@theobroma-systems.com>
- <4e33aae4-9e87-22b4-7f09-008183ea553a@gmail.com>
- <983427eb-2e25-f201-c953-4cff22569deb@theobroma-systems.com>
- <ffdc6ca9-bf64-5514-bac9-7b107f9b443b@gmail.com>
- <9cf7a278-7269-9571-c378-ad98a5cd281b@theobroma-systems.com>
-From: John Fastabend <john.fastabend@gmail.com>
-Message-ID: <456f45a6-43b5-2ee5-bdcc-859f8d7d4a9a@gmail.com>
-Date: Sat, 24 Mar 2018 07:26:25 -0700
+        Sat, 24 Mar 2018 10:29:51 -0400
+X-Google-Smtp-Source: AG47ELtky3+O26icCn2v421KIseWhGjHC8qZHh/5+L3NGQdbq41m4h4b7PPzb0IUhRAXJ0j/lzCSdA==
+Subject: Re: [PATCH v3 1/2] x86, msr: allow rdmsr_safe_on_cpu() to schedule
+To: Ingo Molnar <mingo@kernel.org>, Eric Dumazet <edumazet@google.com>
+Cc: x86 <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Hugh Dickins <hughd@google.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+References: <20180323215818.127774-1-edumazet@google.com>
+ <20180324080946.3db4xdkl5i6jx2rc@gmail.com>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <336355a3-c11d-44fc-0642-671670980ac0@gmail.com>
+Date: Sat, 24 Mar 2018 07:29:48 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <9cf7a278-7269-9571-c378-ad98a5cd281b@theobroma-systems.com>
+In-Reply-To: <20180324080946.3db4xdkl5i6jx2rc@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/22/2018 03:16 AM, Jakob Unterwurzacher wrote:
-> On 21.03.18 21:52, John Fastabend wrote:
->> Can you try this,
+
+
+On 03/24/2018 01:09 AM, Ingo Molnar wrote:
+> 
+> * Eric Dumazet <edumazet@google.com> wrote:
+> 
+>> I noticed high latencies caused by a daemon periodically reading
+>> various MSR on all cpus. KASAN kernels would see ~10ms latencies
+>> simply reading one MSR. Even without KASAN, sending IPI to CPU
+>> in deep sleep state or blocking hard IRQ in a a long section,
+>> then waiting for the answer can consume hundreds of usec.
 >>
->> diff --git a/include/net/sch_generic.h b/include/net/sch_generic.h
->> index d4907b5..1e596bd 100644
->> --- a/include/net/sch_generic.h
->> +++ b/include/net/sch_generic.h
->> @@ -30,6 +30,7 @@ struct qdisc_rate_table {
->>   enum qdisc_state_t {
->>          __QDISC_STATE_SCHED,
->>          __QDISC_STATE_DEACTIVATED,
->> +       __QDISC_STATE_RUNNING,
->>   };
->> [...]
+>> Converts rdmsr_safe_on_cpu() to use a completion instead
+>> of busy polling.
+>>
+>> Overall daemon cpu usage was reduced by 35 %,
+>> and latencies caused by msr_read() disappeared.
 > 
-> Tested, looks good. No OOO observed, no side effects observed, iperf
-> numbers on Gigabit Ethernet look the same.
-> 
-> Thanks,
-> Jakob
+> What "daemon" is this and why is it reading MSRs?
 
-Thanks, I'll send out an official patch today.
+It is named gsysd, "Google System Tool", a daemon+cli that is run 
+on all machines in production to provide a generic interface
+for interacting with the system hardware.
 
-.John
+I am not sure if this answers your question, I probably 
+could give a rough estimation of MWh this daemon consumes on the planet
+if that helps.
+
+Note that the source of the problem is not reading the MSR, but having cpus
+blocking hard irqs for a long time.
+
+Ingo, it looks like any loop protected by unlock_task_sighand() might be the main
+offender.
+
+Application writers seem to love getrusage() for example.
+Can we rewrite it to not block hard irqs ?
+
+Thanks !
