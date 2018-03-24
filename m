@@ -1,118 +1,232 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeCXAcD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 23 Mar 2018 20:32:03 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:62933 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeCXAb6 (ORCPT
+        id S1752125AbeCXAbx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 23 Mar 2018 20:31:53 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46360 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751999AbeCXAbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Mar 2018 20:31:58 -0400
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-CC: David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Sekhar Nori <nsekhar@ti.com>, devicetree <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
- <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
- <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
- <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
- <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
-From: Suman Anna <s-anna@ti.com>
-Message-ID: <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
-Date: Fri, 23 Mar 2018 19:30:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 23 Mar 2018 20:31:41 -0400
+X-Google-Smtp-Source: AG47ELsG+u1TJYCCmdiTVlBjTsXpOOYN8MzzKuarpF8CByqDt19s/4L0OL9GYROuvG1iprYHHM+bTA==
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: [PATCH 4/4] tty/nozomi: refactor conditional statements
+Date: Fri, 23 Mar 2018 14:31:27 -1000
+Message-Id: <20180324003127.4287-5-joeypabalinas@gmail.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180324003127.4287-1-joeypabalinas@gmail.com>
+References: <20180324003127.4287-1-joeypabalinas@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart,
+Reduce unnecessarily deep nesting of blocks and simplify
+control flow (e.g. "if/else" constructs changed to "if/return"
+and single case "switch" statements changed to "if" conditionals
+where possible).
 
-On 03/23/2018 12:16 PM, Bartosz Golaszewski wrote:
-> 2018-03-23 18:08 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
->> Quoting Bartosz Golaszewski (2018-03-23 09:55:47)
->>> 2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
->>>> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
->>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>>
->>>>> This series converts the only user of the handcoded, mach-specific reset
->>>>> routines in the davinci platform to using the reset framework.
->>>>>
->>>>> Patch 1 modifies the way lookup entries are registered with the reset
->>>>> framework.
->>>>>
->>>>> Patches 2-4 add necessary lookups/DT-properties.
->>>>>
->>>>> Patches 5-7 convert the davinci-rproc driver to the reset framework.
->>>>>
->>>>> Patch 8 removes now dead code.
->>>>>
->>>>> Philipp: it turned out that it's indeed better to use the reset
->>>>> controller's device name for the entry lookup.
->>>>>
->>>>> Tested both in DT and legacy modes by booting the examples from
->>>>> ti-ipc-rtos recipe in meta-ti.
->>>>>
->>>>> This series applies on top of David Lechner's common-clk-v9 branch[1]
->>>>> with Philipp Zabel's reset/next branch[2] pulled in.
->>>>>
->>>>> It can be found in my github tree as well[3].
->>>>>
->>>>
->>>> What's the merge strategy for the rest of the patches? I should apply
->>>> the clk ones after the next -rc1?
->>>
->>> Or maybe Philipp can provide us with an immutable branch with the reset patches?
->>>
->>> The you could apply the driver patches and let Sekhar take all the
->>> platform code?
->>>
->>
->> Ok that could work too.
-> 
-> Ohad, Bjorn can you ack the remoteproc patches? Are you OK with
-> Stephen taking them through the clock tree? Otherwise it would get
-> complicated since they depend on the first clk patch and the last clk
-> patch depends on them.
+Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
 
-I will take a closer look and test on Mon. A quick glance of the
-remoteproc changes seem to be fine. I will let Bjorn comment on the
-patch flow.
+ 1 file changed, 52 insertions(+), 50 deletions(-)
 
-The only reason I had to use the clock in the driver was for the reset
-before, and hopefully this will allow me to actually switch to using
-pm_runtime API like I do with the rest of the TI remoteproc drivers
-(Keystone remoteproc driver also uses PSC for clock and reset but then
-it goes through different set of drivers).
-
-So, I see a mix of driver and dts patches in the series, are all the dts
-patches coming through Sekhar?
-
-regards
-Suman
-
-> 
-> Thanks,
-> Bart
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
+index a5074a59d3e3d33e68..0ea3e1de23c093e808 100644
+--- a/drivers/tty/nozomi.c
++++ b/drivers/tty/nozomi.c
+@@ -694,12 +694,13 @@ static void enable_transmit_ul(enum port_type port, struct nozomi *dc)
+ {
+ 	static const u16 mask[] = {MDM_UL, DIAG_UL, APP1_UL, APP2_UL, CTRL_UL};
+ 
+-	if (port < NOZOMI_MAX_PORTS) {
+-		dc->last_ier |= mask[port];
+-		writew(dc->last_ier, dc->reg_ier);
+-	} else {
++	if (port >= NOZOMI_MAX_PORTS) {
+ 		dev_err(&dc->pdev->dev, "Called with wrong port?\n");
++		return;
+ 	}
++
++	dc->last_ier |= mask[port];
++	writew(dc->last_ier, dc->reg_ier);
+ }
+ 
+ /* Disable uplink interrupts  */
+@@ -708,12 +709,13 @@ static void disable_transmit_ul(enum port_type port, struct nozomi *dc)
+ 	static const u16 mask[] =
+ 		{~MDM_UL, ~DIAG_UL, ~APP1_UL, ~APP2_UL, ~CTRL_UL};
+ 
+-	if (port < NOZOMI_MAX_PORTS) {
+-		dc->last_ier &= mask[port];
+-		writew(dc->last_ier, dc->reg_ier);
+-	} else {
++	if (port >= NOZOMI_MAX_PORTS) {
+ 		dev_err(&dc->pdev->dev, "Called with wrong port?\n");
++		return;
+ 	}
++
++	dc->last_ier &= mask[port];
++	writew(dc->last_ier, dc->reg_ier);
+ }
+ 
+ /* Enable downlink interrupts */
+@@ -721,12 +723,13 @@ static void enable_transmit_dl(enum port_type port, struct nozomi *dc)
+ {
+ 	static const u16 mask[] = {MDM_DL, DIAG_DL, APP1_DL, APP2_DL, CTRL_DL};
+ 
+-	if (port < NOZOMI_MAX_PORTS) {
+-		dc->last_ier |= mask[port];
+-		writew(dc->last_ier, dc->reg_ier);
+-	} else {
++	if (port >= NOZOMI_MAX_PORTS) {
+ 		dev_err(&dc->pdev->dev, "Called with wrong port?\n");
++		return;
+ 	}
++
++	dc->last_ier |= mask[port];
++	writew(dc->last_ier, dc->reg_ier);
+ }
+ 
+ /* Disable downlink interrupts */
+@@ -735,12 +738,13 @@ static void disable_transmit_dl(enum port_type port, struct nozomi *dc)
+ 	static const u16 mask[] =
+ 		{~MDM_DL, ~DIAG_DL, ~APP1_DL, ~APP2_DL, ~CTRL_DL};
+ 
+-	if (port < NOZOMI_MAX_PORTS) {
+-		dc->last_ier &= mask[port];
+-		writew(dc->last_ier, dc->reg_ier);
+-	} else {
++	if (port >= NOZOMI_MAX_PORTS) {
+ 		dev_err(&dc->pdev->dev, "Called with wrong port?\n");
++		return;
+ 	}
++
++	dc->last_ier &= mask[port];
++	writew(dc->last_ier, dc->reg_ier);
+ }
+ 
+ /*
+@@ -1028,33 +1032,31 @@ static int handle_data_dl(struct nozomi *dc, enum port_type port, u8 *toggle,
+ 	if (*toggle == 0 && read_iir & mask1) {
+ 		if (receive_data(port, dc)) {
+ 			writew(mask1, dc->reg_fcr);
+-			*toggle = !(*toggle);
++			*toggle = !*toggle;
+ 		}
+ 
+-		if (read_iir & mask2) {
+-			if (receive_data(port, dc)) {
+-				writew(mask2, dc->reg_fcr);
+-				*toggle = !(*toggle);
+-			}
++		if (read_iir & mask2 && receive_data(port, dc)) {
++			writew(mask2, dc->reg_fcr);
++			*toggle = !*toggle;
+ 		}
++
++		return 1;
+ 	} else if (*toggle == 1 && read_iir & mask2) {
+ 		if (receive_data(port, dc)) {
+ 			writew(mask2, dc->reg_fcr);
+-			*toggle = !(*toggle);
++			*toggle = !*toggle;
+ 		}
+ 
+-		if (read_iir & mask1) {
+-			if (receive_data(port, dc)) {
+-				writew(mask1, dc->reg_fcr);
+-				*toggle = !(*toggle);
+-			}
++		if (read_iir & mask1 && receive_data(port, dc)) {
++			writew(mask1, dc->reg_fcr);
++			*toggle = !*toggle;
+ 		}
+-	} else {
+-		dev_err(&dc->pdev->dev, "port out of sync!, toggle:%d\n",
+-			*toggle);
+-		return 0;
++
++		return 1;
+ 	}
+-	return 1;
++
++	dev_err(&dc->pdev->dev, "port out of sync!, toggle:%d\n", *toggle);
++	return 0;
+ }
+ 
+ /*
+@@ -1087,6 +1089,7 @@ static int handle_data_ul(struct nozomi *dc, enum port_type port, u16 read_iir)
+ 			}
+ 		}
+ 
++		return 1;
+ 	} else if (*toggle == 1 && read_iir & MDM_UL2) {
+ 		dc->last_ier &= ~MDM_UL;
+ 		writew(dc->last_ier, dc->reg_ier);
+@@ -1107,12 +1110,13 @@ static int handle_data_ul(struct nozomi *dc, enum port_type port, u16 read_iir)
+ 				*toggle = !*toggle;
+ 			}
+ 		}
+-	} else {
+-		writew(read_iir & MDM_UL, dc->reg_fcr);
+-		dev_err(&dc->pdev->dev, "port out of sync!\n");
+-		return 0;
++
++		return 1;
+ 	}
+-	return 1;
++
++	writew(read_iir & MDM_UL, dc->reg_fcr);
++	dev_err(&dc->pdev->dev, "port out of sync!\n");
++	return 0;
+ }
+ 
+ static irqreturn_t interrupt_handler(int irq, void *dev_id)
+@@ -1121,7 +1125,7 @@ static irqreturn_t interrupt_handler(int irq, void *dev_id)
+ 	unsigned int i;
+ 	u16 read_iir;
+ 
+-	if (!dc)
++	if (unlikely(!dc))
+ 		return IRQ_NONE;
+ 
+ 	spin_lock(&dc->spin_mutex);
+@@ -1344,8 +1348,9 @@ static int nozomi_card_init(struct pci_dev *pdev,
+ 
+ 	ret = pci_request_regions(dc->pdev, NOZOMI_NAME);
+ 	if (ret) {
+-		/* nozomi_private.io_addr */
+-		dev_err(&pdev->dev, "I/O address 0x%04x already in use\n", 0);
++		dev_err(&pdev->dev, "I/O address 0x%04x already in use\n",
++			/* (int) nozomi_private.io_addr */ 0);
++
+ 		goto err_disable_device;
+ 	}
+ 
+@@ -1752,18 +1757,15 @@ static int ntty_ioctl(struct tty_struct *tty,
+ 
+ 	DBG1("******** IOCTL, cmd: %d", cmd);
+ 
+-	switch (cmd) {
+-	case TIOCMIWAIT: {
+-		struct async_icount cprev = port->tty_icount;
+-		rval = wait_event_interruptible(port->tty_wait,
+-				ntty_cflags_changed(port, arg, &cprev));
+-		break;
+-	}
+-	default:
++	if (cmd != TIOCMIWAIT) {
+ 		DBG1("ERR: 0x%08X, %d", cmd, cmd);
+-		break;
++		goto no_ioctl;
+ 	}
+ 
++	rval = wait_event_interruptible(port->tty_wait,
++			ntty_cflags_changed(port, arg, &port->tty_icount));
++
++no_ioctl:
+ 	return rval;
+ }
+ 
+-- 
+2.16.3
