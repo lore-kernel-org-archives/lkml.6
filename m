@@ -1,90 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeCYWcw (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 18:32:52 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37587 "EHLO
+        id S1752096AbeCYW4w (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:56:52 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:39210 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750839AbeCYWcs (ORCPT
+        with ESMTP id S1752006AbeCYW4s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 18:32:48 -0400
-X-Google-Smtp-Source: AG47ELvEAY/gOIWnBj7vDFotrj4VNE00E5Od4J95cs17M7+JHEz1tbechCGxImjXwKg3GUWKGxlmKA==
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kbuild@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] objtool: fix build with future Make
-Date: Mon, 26 Mar 2018 00:32:39 +0200
-Message-Id: <20180325223239.14778-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.15.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sun, 25 Mar 2018 18:56:48 -0400
+X-Google-Smtp-Source: AG47ELtBL0Wz/i+va/VT0MiXVXuBnP3avyB6kQL8t2n5zT0Jv0H+zGVq56C9dBTrgnGWFCKb16okww==
+From: Nasser Afshin <afshin.nasser@gmail.com>
+X-Google-Original-From: Nasser Afshin <Afshin.Nasser@gmail.com>
+To: mchehab@kernel.org
+Cc: p.zabel@pengutronix.de, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, bparrot@ti.com, garsilva@embeddedor.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nasser Afshin <Afshin.Nasser@gmail.com>
+Subject: [PATCH] media: i2c: tvp5150: fix color burst lock instability on some hardware
+Date: Mon, 26 Mar 2018 03:26:33 +0430
+Message-Id: <20180325225633.5899-1-Afshin.Nasser@gmail.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I tried building using a freshly built Make (4.2.1-69-g8a731d1), but the
-objtool build broke with
+According to the datasheet, INTREQ/GPCL/VBLK should have a pull-up/down
+resistor if it's been disabled. On hardware that does not have such
+resistor, we should use the default output enable value.
+This prevents the color burst lock instability problem.
 
-orc_dump.c: In function ‘orc_dump’:
-orc_dump.c:106:2: error: ‘elf_getshnum’ is deprecated [-Werror=deprecated-declarations]
-  if (elf_getshdrnum(elf, &nr_sections)) {
-
-Turns out that with that new Make, the backslash was not removed, so cpp
-didn't see a #include directive, grep found nothing, and
--DLIBELF_USE_DEPRECATED was wrongly put in CFLAGS.
-
-Now, that new Make behaviour is documented in their NEWS file:
-
-  * WARNING: Backward-incompatibility!
-    Number signs (#) appearing inside a macro reference or function invocation
-    no longer introduce comments and should not be escaped with backslashes:
-    thus a call such as:
-      foo := $(shell echo '#')
-    is legal.  Previously the number sign needed to be escaped, for example:
-      foo := $(shell echo '\#')
-    Now this latter will resolve to "\#".  If you want to write makefiles
-    portable to both versions, assign the number sign to a variable:
-      C := \#
-      foo := $(shell echo '$C')
-    This was claimed to be fixed in 3.81, but wasn't, for some reason.
-    To detect this change search for 'nocomment' in the .FEATURES variable.
-
-There are likely other places in the tree that will need fixing, so
-cc-ing Kbuild, but with this at least a x86-64 defconfig builds.
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Nasser Afshin <Afshin.Nasser@gmail.com>
 ---
- tools/objtool/Makefile         | 2 +-
- tools/scripts/Makefile.include | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/i2c/tvp5150.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index e6acc281dd37..8ae824dbfca3 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -35,7 +35,7 @@ CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
- LDFLAGS  += -lelf $(LIBSUBCMD)
- 
- # Allow old libelf to be used:
--elfshdr := $(shell echo '\#include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
-+elfshdr := $(shell echo '$(pound)include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
- CFLAGS += $(if $(elfshdr),,-DLIBELF_USE_DEPRECATED)
- 
- AWK = awk
-diff --git a/tools/scripts/Makefile.include b/tools/scripts/Makefile.include
-index dd614463d4d6..495066bafbe3 100644
---- a/tools/scripts/Makefile.include
-+++ b/tools/scripts/Makefile.include
-@@ -120,3 +120,5 @@ ifneq ($(silent),1)
- 	QUIET_UNINST   = @printf '  UNINST   %s\n' $1;
-   endif
- endif
-+
-+pound := \#
+diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
+index 2476d812f669..0e9713814816 100644
+--- a/drivers/media/i2c/tvp5150.c
++++ b/drivers/media/i2c/tvp5150.c
+@@ -328,7 +328,7 @@ static const struct i2c_reg_value tvp5150_init_default[] = {
+ 		TVP5150_OP_MODE_CTL,0x00
+ 	},
+ 	{ /* 0x03 */
+-		TVP5150_MISC_CTL,0x01
++		TVP5150_MISC_CTL,0x21
+ 	},
+ 	{ /* 0x06 */
+ 		TVP5150_COLOR_KIL_THSH_CTL,0x10
+@@ -1072,7 +1072,8 @@ static int tvp5150_s_stream(struct v4l2_subdev *sd, int enable)
+ 		 * Enable the YCbCr and clock outputs. In discrete sync mode
+ 		 * (non-BT.656) additionally enable the the sync outputs.
+ 		 */
+-		val |= TVP5150_MISC_CTL_YCBCR_OE | TVP5150_MISC_CTL_CLOCK_OE;
++		val |= TVP5150_MISC_CTL_YCBCR_OE | TVP5150_MISC_CTL_CLOCK_OE |
++			TVP5150_MISC_CTL_INTREQ_OE;
+ 		if (decoder->mbus_type == V4L2_MBUS_PARALLEL)
+ 			val |= TVP5150_MISC_CTL_SYNC_OE;
+ 	}
 -- 
-2.15.1
+2.15.0
