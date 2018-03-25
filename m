@@ -1,139 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753192AbeCYG3q (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 02:29:46 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:53975 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751029AbeCYG3o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 02:29:44 -0400
-X-Google-Smtp-Source: AG47ELsfzQc2KEvnKwYIV+SU95djfI6ctXIfHcg9uQUeWQRZYbJA4ySG726mEmLCFMgf1lra2VY06QlsD1YmUi3XVeU=
+        id S1753220AbeCYHlg (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 03:41:36 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:50286 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751029AbeCYHlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 03:41:35 -0400
+Subject: Re: efisubsys_init takes more than a few milliseconds
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <305249de-7892-fca4-b462-a493aa65d177@molgen.mpg.de>
+ <CAKv+Gu84h2+zofb4v-QrVE7rqCrGC7MaHEw7tB+z2J8DczjoKw@mail.gmail.com>
+From: Paul Menzel <pmenzel+linux-efi@molgen.mpg.de>
+Message-ID: <f94af2ed-3492-4db5-c1bc-30c4c1855947@molgen.mpg.de>
+Date: Sun, 25 Mar 2018 09:41:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1803232133450.1481@nanos.tec.linutronix.de>
-References: <CAJWu+oo1mnS=2v_SbnDCDih6AyystU2aXVCUEa5k0W0q0Ovk6w@mail.gmail.com>
- <alpine.DEB.2.21.1803231004130.4625@nanos.tec.linutronix.de>
- <CAJWu+ooHzLpJZxsFq7hifmaEh7fOdYsExKz6pGLgSPQUxAB4Nw@mail.gmail.com> <alpine.DEB.2.21.1803232133450.1481@nanos.tec.linutronix.de>
-From: Joel Fernandes <joelaf@google.com>
-Date: Sat, 24 Mar 2018 23:29:42 -0700
-Message-ID: <CAJWu+or1YJEZX8R1fwJrb=cUc05_uzwZHJhD5-SMEycUO7W1mQ@mail.gmail.com>
-Subject: Re: syzbot rcu/debugobjects warning
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        "open list:BPF (Safe dynamic programs and tools)"
-        <netdev@vger.kernel.org>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guillaume Nault <g.nault@alphalink.fr>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKv+Gu84h2+zofb4v-QrVE7rqCrGC7MaHEw7tB+z2J8DczjoKw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 1:41 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Fri, 23 Mar 2018, Joel Fernandes wrote:
->> On Fri, Mar 23, 2018 at 2:11 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->> > On Thu, 22 Mar 2018, Joel Fernandes wrote:
->> Sorry. Here is the raw crash log: https://pastebin.com/raw/puvh0cXE
->> (The kernel logs are toward the end with the above).
->
-> And that is interesting:
->
-> [  150.629667]  <IRQ> [  150.631700]  [<ffffffff81d96069>] dump_stack+0xc1/0x128
-> [  150.637051]  [<ffffffff81dfefb6>] ? __debug_object_init+0x526/0xc40
-> [  150.643431]  [<ffffffff8142fbd1>] panic+0x1bc/0x3a8
-> [  150.648416]  [<ffffffff8142fa15>] ? percpu_up_read_preempt_enable.constprop.53+0xd7/0xd7
-> [  150.656611]  [<ffffffff81430835>] ? load_image_and_restore+0xf9/0xf9
-> [  150.663070]  [<ffffffff81269efd>] ? vprintk_default+0x1d/0x30
-> [  150.668925]  [<ffffffff81131879>] ? __warn+0x1a9/0x1e0
-> [  150.674170]  [<ffffffff81dfefb6>] ? __debug_object_init+0x526/0xc40
-> [  150.680543]  [<ffffffff81131894>] __warn+0x1c4/0x1e0
-> [  150.685614]  [<ffffffff81131afc>] warn_slowpath_null+0x2c/0x40
-> [  150.691972]  [<ffffffff81dfefb6>] __debug_object_init+0x526/0xc40
-> [  150.698174]  [<ffffffff81dfea90>] ? debug_object_fixup+0x30/0x30
-> [  150.704283]  [<ffffffff81dff709>] debug_object_init_on_stack+0x19/0x20
-> [  150.710917]  [<ffffffff81287a93>] __wait_rcu_gp+0x93/0x1b0
-> [  150.716508]  [<ffffffff81290251>] synchronize_rcu.part.65+0x101/0x110
-> [  150.723054]  [<ffffffff81290150>] ? rcu_pm_notify+0xc0/0xc0
-> [  150.728735]  [<ffffffff81292bc0>] ? __call_rcu.constprop.72+0x910/0x910
-> [  150.735459]  [<ffffffff81235221>] ? __lock_is_held+0xa1/0xf0
-> [  150.741223]  [<ffffffff81290287>] synchronize_rcu+0x27/0x90
->
-> So this calls synchronize_rcu from a rcu callback. That's a nono. This is
-> on the back of an interrupt in softirq context and __wait_rcu_gp() can
-> sleep, which is obviously a bad idea in softirq context....
->
-> Cc'ed netdev ....
->
-> And that also explains the debug object splat because this is not running
-> on the task stack. It's running on the softirq stack ....
->
-> [  150.746908]  [<ffffffff83588b35>] __l2tp_session_unhash+0x3d5/0x550
-> [  150.753281]  [<ffffffff8358891f>] ? __l2tp_session_unhash+0x1bf/0x550
-> [  150.759828]  [<ffffffff8114596a>] ? __local_bh_enable_ip+0x6a/0xd0
-> [  150.766123]  [<ffffffff8358ddb0>] ? l2tp_udp_encap_recv+0xd90/0xd90
-> [  150.772497]  [<ffffffff83588e97>] l2tp_tunnel_closeall+0x1e7/0x3a0
-> [  150.778782]  [<ffffffff835897be>] l2tp_tunnel_destruct+0x30e/0x5a0
-> [  150.785067]  [<ffffffff8358965a>] ? l2tp_tunnel_destruct+0x1aa/0x5a0
-> [  150.791537]  [<ffffffff835894b0>] ? l2tp_tunnel_del_work+0x460/0x460
-> [  150.797997]  [<ffffffff82ee8053>] __sk_destruct+0x53/0x570
-> [  150.803588]  [<ffffffff81293918>] rcu_process_callbacks+0x898/0x1300
-> [  150.810048]  [<ffffffff812939f7>] ? rcu_process_callbacks+0x977/0x1300
-> [  150.816684]  [<ffffffff82ee8000>] ? __sk_dst_check+0x240/0x240
-> [  150.822625]  [<ffffffff838be5d6>] __do_softirq+0x206/0x951
-> [  150.828223]  [<ffffffff81147315>] irq_exit+0x165/0x190
-> [  150.833557]  [<ffffffff838bd1eb>] smp_apic_timer_interrupt+0x7b/0xa0
-> [  150.840018]  [<ffffffff838b9470>] apic_timer_interrupt+0xa0/0xb0
-> [  150.846132]  <EOI> [  150.848166]  [<ffffffff838b6756>] ? native_safe_halt+0x6/0x10
-> [  150.854036]  [<ffffffff8123bf2d>] ? trace_hardirqs_on+0xd/0x10
-> [  150.859973]  [<ffffffff838b5d85>] default_idle+0x55/0x360
-> [  150.865478]  [<ffffffff8106be0a>] arch_cpu_idle+0xa/0x10
-> [  150.870896]  [<ffffffff838b6b96>] default_idle_call+0x36/0x60
-> [  150.876751]  [<ffffffff81226cb0>] cpu_startup_entry+0x2b0/0x380
-> [  150.882787]  [<ffffffff81226a00>] ? cpu_in_idle+0x20/0x20
-> [  150.888291]  [<ffffffff812d2343>] ? clockevents_register_device+0x123/0x200
-> [  150.895358]  [<ffffffff810b0693>] start_secondary+0x303/0x3e0
-> [  150.901209]  [<ffffffff810b0390>] ? set_cpu_sibling_map+0x11f0/0x11f0
+Dear Ard,
 
-Thomas, thanks a lot. It appears this issue will not happen on
-mainline since from commit  765924e362d1  (subject "l2tp: don't close
-sessions in l2tp_tunnel_destruct()"), l2tp_tunnel_closeall is no
-longer called from l2tp_tunnel_destruct. From that commit message it
-seems one of the motivations is to solve scheduling from atomic issue.
 
-However for this change to be applied to android-4.9 and/or 4.9
-stable, it depends on several other l2p patches and they aren't
-straight forward cherry-picks from mainline (and I don't have much
-background with this driver).
+Thank you for the quick reply.
 
-v3.16.56 stable seems to be further along with l2tp than v4.9.89, in
-that it atleast has more of the upstream patches adapted for it, that
-the above patch depends on. Since this also related to stable, I am
-CC'ing Greg kh and Ben.
 
-Here are some of the commits in 3.16 stable that I couldn't find
-applied to v4.9 stable. The above fix quotes the below patches as
-dependencies so they would need to be stable backported. Also CC'ing
-Guillaume since he authored the above mentioned fix.
+On 03/24/2018 11:35 PM, Ard Biesheuvel wrote:
 
-0c15ddabbcf l2tp: don't register sessions in l2tp_session_create()
-a3c5d5b70f4e l2tp: fix race condition in l2tp_tunnel_delete
-5b216e8dcda2 l2tp: prevent creation of sessions on terminated tunnels
-76ff5e22f1e0 l2tp: hold tunnel while looking up sessions in l2tp_netlink
-ceb8f6b23a38 l2tp: define parameters of l2tp_session_get*() as "const"
-0295d020b63f l2tp: initialise session's refcount before making it reachable
-29a77518927e l2tp: take reference on sessions being dumped
-b301c9b7782f l2tp: take a reference on sessions used in genetlink handlers
+> On 24 March 2018 at 22:10, Paul Menzel <pmenzel+linux-efi@molgen.mpg.de> wrote:
+>> Dear Ard,
+>>
+>>
+>> According to `initcall_debug`, `efisubsys_init` takes more than a few
+>> milliseconds to execute on a Dell XPS 13 9370 (Intel(R) Core(TM) i7-8550U
+>> CPU @ 1.80GHz).
+>>
+>>> ```
+>>> […]
+>>> [ 0.144474] calling  efisubsys_init+0x0/0x2cf @ 1
+>>> [ 0.144474] Registered efivars operations
+>>> [ 0.173690] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343 usecs
+>>> […]
+>>> ```
+>>
+>>
+>> To get a vanilla Linux kernel to boot in well under one second, it’d be nice
+>> if the time could be improved. Do you know, why it takes so long?
+>>
+>> According to `bootgraph.py` from pm-graph [1][2] it takes even a little
+>> longer.
+>>
+>>> efisubsys_init: start=690.841, end=720.493, length(w/o overhead)=31.250
+>>> ms, return=0
+>>
+>> There are several dozen calls to `virt_efi_get_next_variable()` all but one
+>> taking around 0.335 ms. This path needs to be optimized. Is that possible?
+> 
+> That depends. These are firmware calls, so to make these calls faster,
+> you need to modify the firmware, not the kernel.
 
-By the way I think the reason why scheduling while atomic checks
-didn't show up is because the debugobjects warning caused a panic
-first, before that could happen.
+Yeah, unfortunately, no free firmware runs on this laptop, and Dell 
+doesn’t respond to these kind of reports, as they think, it’s not important.
 
-- Joel
+> We may be able to make more intrusive changes to get rid of this
+> delay, e.g., spin up a special kernel thread, but I'd have to check in
+> more detail.
 
-PS: There's also 12d656af4e3d2 ("l2tp: Avoid schedule while atomic in
-exit_net") which was fixing a call to synchronize_rcu in the same
-path/function, but the caller originated from l2tp_exit_net. But this
-patch is already in the stable trees. I am just mentioning it here for
-completeness.
+That’d be great.
+
+> In the mean time, you can try passing 'efi=noruntime' to the kernel.
+
+Thank you, I didn’t know about that. Unfortunately, initcall_debug still 
+reports the same time although the one message is gone.
+
+```
+$ sudo dmesg | grep efisubsys
+[    0.145779] calling  efisubsys_init+0x0/0x2cf @ 1
+[    0.172034] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343 
+usecs
+```
+
+>> To reproduce this, clone the pm-graph repository [2], use `sudo
+>> ./bootgraph.py -f -fstat -maxdepth 10 -manual` to see what to add to
+>> `/boot/grub/grub.cfg`. Then reboot, and execute `sudo ./bootgraph.py -f
+>> -fstat -maxdepth 10`.
+>>
+>> If your system is powerful enough, you can use a higher maximum depth. I
+>> didn’t get around how `-cgfilter` works to get smaller HTML files.
+
+
+Kind regards,
+
+Paul
+
+
+>> [1] https://01.org/suspendresume
+>> [2] https://github.com/01org/pm-graph
