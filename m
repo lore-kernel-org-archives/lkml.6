@@ -1,63 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753155AbeCYBaG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 24 Mar 2018 21:30:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45520 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752216AbeCYBaE (ORCPT
+        id S1753182AbeCYDNj (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 24 Mar 2018 23:13:39 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:16638 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750839AbeCYDNh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Mar 2018 21:30:04 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 372CD60312
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
-From: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-To: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Cc: linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, kyan@codeaurora.org, ckadabi@codeaurora.org,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Subject: [PATCH v2 0/2] SDM845 System Cache Driver
-Date: Sat, 24 Mar 2018 18:29:14 -0700
-Message-Id: <1521941356-12361-1-git-send-email-rishabhb@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Sat, 24 Mar 2018 23:13:37 -0400
+X-UUID: d8ba0071385f41ae80572e2839aaadfe-20180325
+Message-ID: <1521947610.18424.1.camel@mtkswgap22>
+Subject: Re: [PATCH v1 11/16] rtc: mediatek: move the declaration into a
+ globally visible header file
+From: Sean Wang <sean.wang@mediatek.com>
+To: Fabio Estevam <festevam@gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Sebastian Reichel <sre@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        <eddie.huang@mediatek.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM"
+        <linux-rtc@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date: Sun, 25 Mar 2018 11:13:30 +0800
+In-Reply-To: <CAOMZO5DuVpcCrQYzoWfN=ZqXeTGC-U1FfwoDFxhQ8frno5-1GQ@mail.gmail.com>
+References: <cover.1521794176.git.sean.wang@mediatek.com>
+         <53afbe8172fb1afd809ce9ba1afeda924b9ea705.1521794177.git.sean.wang@mediatek.com>
+         <CAOMZO5DuVpcCrQYzoWfN=ZqXeTGC-U1FfwoDFxhQ8frno5-1GQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23738.005
+X-TM-AS-Result: No-15.709000-8.000000-10
+X-TMASE-MatchedRID: pBwXUM+nCwsZax9TsUmzySa1MaKuob8PC/ExpXrHizyrmaMm8BwMJLmn
+        rGB/kwGM9dqfQ8cn44qyjFcEJZpflPgN61BAK04FTVa+L3Zgqc5lrsuS5tC+P/sjWGMJ4K8WRTD
+        39eC2Iiri8zVgXoAltkWL4rBlm20vExAtD/T72EbdB/CxWTRRuyUIayx+Skid
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--15.709000-8.000000
+X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23738.005
+X-TMASE-POSTMAN: 2-d;
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series implements system cache or LLCC(Last Level Cache Controller) driver
-for SDM845 SOC. The purpose of the driver is to partition the system cache and
-program the settings such as priortiy, lines to probe while doing a look up
-in the system cache, low power related settings etc. The partitions are called
-cache slices. Each cache slice is associated with size and SCID(System Cache ID)
-The driver also provides API for clients to query the cache slice details,
-activate and deactivate them.
+On Sat, 2018-03-24 at 17:00 -0300, Fabio Estevam wrote:
+> On Fri, Mar 23, 2018 at 6:15 AM,  <sean.wang@mediatek.com> wrote:
+> 
+> > --- /dev/null
+> > +++ b/include/linux/rtc/mt6397.h
+> > @@ -0,0 +1,72 @@
+> > +
+> > +// SPDX-License-Identifier: GPL-2.0
+> 
+> According to Documentation/process/license-rules.rst the SPDX notation
+> for C header file should be:
+> 
+> /* SPDX-License-Identifier: GPL-2.0 */
 
-The driver can be broadly classified into:
-* SOC specific driver: llcc-sdm845.c: Cache partitioning and cache slice
-properties for usecases on sdm845 that need to use system cache.
 
-* API : llcc-slice.c: Exports APIs to clients to query cache slice details,
-activate and deactivate cache slices. Register the child devices using platform 
-APIs.
-
-Changes since v1:
-* Added Makefile and Kconfig.
-
-ckadabi@codeaurora.org (2):
-  Documentation: Documentaion for qcom, llcc
-  drivers: soc: Add LLCC driver
-
- .../devicetree/bindings/arm/msm/qcom,llcc.txt      |  70 ++++
- drivers/soc/qcom/Kconfig                           |  16 +
- drivers/soc/qcom/Makefile                          |   2 +
- drivers/soc/qcom/llcc-sdm845.c                     | 120 ++++++
- drivers/soc/qcom/llcc-slice.c                      | 454 +++++++++++++++++++++
- include/linux/soc/qcom/llcc-qcom.h                 | 178 ++++++++
- 6 files changed, 840 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
- create mode 100644 drivers/soc/qcom/llcc-sdm845.c
- create mode 100644 drivers/soc/qcom/llcc-slice.c
- create mode 100644 include/linux/soc/qcom/llcc-qcom.h
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thank you, I'll have an improvement according to the license rule.
