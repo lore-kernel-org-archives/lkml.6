@@ -1,78 +1,109 @@
-Date: Tue, 27 Mar 2018 09:53:32 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: mchehab@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Linux 3.18.102
-Message-ID: <20180327075332.GA3224@kroah.com>
-References: <CGME20180325090010epcas1p2864bb6fe3cbc420bc71eb0e7f1c847f1@epcas1p2.samsung.com>
- <20180325085952.GA31575@kroah.com>
- <5AB9A111.1080105@samsung.com>
- <20180327070528.GB31193@kroah.com>
- <5AB9F365.2030309@samsung.com>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2234106-1521979959-2-16806154346521028644
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1521979959; b=dBlJKI3+WVwpvBC7VT1jSNgoAsTxd4qrFgNEZdz9mUeYkDR
+    3y1DwVtyy7eq20TyFIdktllPGROR4xnugVJirerHmUxA5ayyvpZHEPEJlSdyl1TZ
+    Y4Ef/5tkNhrHAjUSAhpswcMA0glP385DaM4bH5upYzMP3TedtBuoWjUJixrFVLjU
+    /S9LmeHfdWXlo7osfIwBVGQYUX216dn9N8M7xu6YCnEVNrAVW16TtMiP7enliL9+
+    ZQEtvwsQtYOUQvsUG0VWhQ8KpvpkdL4yXRveSJE5RyOdaG1oQ9I1pGWLEnlYsPcF
+    1NyfMKCh3M5SowQHCu4SW/x3WsVbZxL7QnWYl+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:in-reply-to:references:mime-version
+    :content-type:content-transfer-encoding:subject:to:cc:from
+    :message-id:sender:list-id; s=arctest; t=1521979959; bh=lM73CNno
+    pXQF7mEhexKN5yt86kTFKDVq2+RrA/BTFOM=; b=ALrRPwPRZ8A0k7Un5hDR9T2v
+    /2HCXgBF1UnxDvZ2jnq5pF8rFjiGVjfWbxweEQK4kOeEJq+W7W+sioXxAYDfXvnx
+    B5pvFZmfvVmnpT7fDBAPxaCCvbZ3Nnjp6EvwXowO/XMyzm5IVAu1e0gDQ8eDfiHd
+    G7ght3o/W/OXycz4cn9wvqsUM+fjtu1vsyexAGIz4lyLuqAA1w0559X02mRnPbNx
+    iC3s/faAwxAKoEVPMzalaG1RbCqx2dCLC7SbvPMb+1MDvoL2ZmLUncGL3Ebg7Eo9
+    03Q4XCwSsvXHFfh5wZkKR+ibnBaWIm0b5yF2VaGpHhx1bSEBR97eOkFxg7XN4g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=AJW2KXNK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BWtWLbvM;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=spam score=190 state=1
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=AJW2KXNK x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BWtWLbvM;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=spam score=190 state=1
+X-ME-VSCategory: spam
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752707AbeCYMMh (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 25 Mar 2018 08:12:37 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45324 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751997AbeCYMMh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sun, 25 Mar 2018 08:12:37 -0400
+X-Google-Smtp-Source: AG47ELs56ire6gWnPQ8HVP6pUNcWCBJIipwi2v5pYAaF71/kjcVRQTAJn5de0+dVGL84MxqDGk5s4Q==
+Date: Sun, 25 Mar 2018 15:21:07 +0530
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20180325085952.GA31575@kroah.com>
+References: <20180325085952.GA31575@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5AB9F365.2030309@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: Linux 3.18.102
+To: Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+CC: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+From: Harsh Shandilya <msfjarvis@gmail.com>
+Message-ID: <42C0153F-EB4A-47D6-A401-313B88CBCAFD@gmail.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 27, 2018 at 04:31:49PM +0900, Seung-Woo Kim wrote:
-> 
-> 
-> On 2018년 03월 27일 16:05, Greg KH wrote:
-> > On Tue, Mar 27, 2018 at 10:40:33AM +0900, Seung-Woo Kim wrote:
-> >> Hello,
-> >>
-> >> Until 3.18.102, it looks like following patch series for v4l2 seems missed.
-> >>
-> >> 273caa2 media: v4l2-compat-ioctl32.c: make ctrl_is_pointer work for subdevs
-> >> a1dfb4c media: v4l2-compat-ioctl32.c: refactor compat ioctl32 logic
-> >> d83a824 media: v4l2-compat-ioctl32.c: don't copy back the result for
-> >> certain errors
-> >> 169f24c media: v4l2-compat-ioctl32.c: drop pr_info for unknown buffer type
-> >> a751be5 media: v4l2-compat-ioctl32.c: copy clip list in put_v4l2_window32
-> >> b8c601e media: v4l2-compat-ioctl32.c: fix ctrl_is_pointer
-> >> 8ed5a59 media: v4l2-compat-ioctl32.c: copy m.userptr in put_v4l2_plane32
-> >> 333b1e9 media: v4l2-compat-ioctl32.c: avoid sizeof(type)
-> >> 486c521 media: v4l2-compat-ioctl32.c: move 'helper' functions to
-> >> __get/put_v4l2_format32
-> >> b7b957d media: v4l2-compat-ioctl32.c: fix the indentation
-> >> 3ee6d04 media: v4l2-compat-ioctl32.c: add missing VIDIOC_PREPARE_BUF
-> >> 181a4a2 media: v4l2-ioctl.c: don't copy back the result for -ENOTTY
-> > 
-> > That is correct.
-> > 
-> >> Any plan to apply the series?
-> > 
-> > Do you have a backported version of this series that will apply to that
-> > kernel tree?  If so, I'll be glad to apply it but I'm pretty sure the
-> > reason I did not apply them was because they did not apply correctly.
-> 
-> I dit not do it myself. I just checked the series is applied on other
-> stable trees.
 
-Yes because those trees needed that series.  Also, 3.18.y is barely
-alive, if you need to rely on this kernel tree for a device, you are
-already maintaining it yourself, right?
 
-> > Also, are you even sure you need these patches for 3.18.y?  Do you have
-> > a v4l2 device that relies on these fixes?
-> 
-> I've just expected A-34624167 is also fixed from other ARM64 devices
-> based on 3.18.y.
+On 25 March 2018 2:29:52 PM IST, Greg KH <gregkh@linuxfoundation=2Eorg> wr=
+ote:
+>I'm announcing the release of the 3=2E18=2E102 kernel=2E
+>
+>All users of the 3=2E18 kernel series must upgrade=2E
+>
+>The updated 3=2E18=2Ey git tree can be found at:
+>	git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/stable/linux-stable=2E=
+git
+>linux-3=2E18=2Ey
+>and can be browsed at the normal kernel=2Eorg git web browser:
+>	http://git=2Ekernel=2Eorg/?p=3Dlinux/kernel/git/stable/linux-stable=2Egi=
+t;a=3Dsummary
+Builds and boots on the OnePlus3T, no regressions noticed so far=2E Thanks=
+!
 
-What is "A-34624167"?
+>thanks,
+>
+>greg k-h
 
-Again, do you have a v4l2 device that uses this interface that needs
-these fixes?  In looking at the 3.18.y tree, that's a very small list of
-devices that are very old and rare from what I remember.
-
-And if you do have such a device, can you just move to 4.4.y instead?
-If you need these patches on 3.18.y, I'll be glad to apply them if you
-provide a backported series that you can verify work for you.
-
-thanks,
-
-greg k-h
+--=20
+Harsh Shandilya
+PRJKT Development LLC
