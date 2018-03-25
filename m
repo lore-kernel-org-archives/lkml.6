@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753110AbeCYLAN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 07:00:13 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36710 "EHLO
+        id S1752788AbeCYLAL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 07:00:11 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52971 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751873AbeCYLAH (ORCPT
+        with ESMTP id S1752115AbeCYLAF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 07:00:07 -0400
-X-Google-Smtp-Source: AG47ELt2/RPFP+KFT1I2uo/XpV9anVM9FW200RoE0eLPf3iA9c5h8NgBgXLb3J8Zcdswr97Y6dgh4g==
+        Sun, 25 Mar 2018 07:00:05 -0400
+X-Google-Smtp-Source: AG47ELtTajhgf4vVO+MNX1D19whZMQ+jh4WxoGcR+2Pq9cFB8V50wfs+L+ZvzO0SMj/5SuyobjFCMQ==
 From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 To: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
         dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] drm/amdgpu: print DMA-buf status in debugfs
-Date: Sun, 25 Mar 2018 12:59:57 +0200
-Message-Id: <20180325110000.2238-5-christian.koenig@amd.com>
+Subject: [PATCH 3/8] PCI: Add pci_peer_traffic_supported()
+Date: Sun, 25 Mar 2018 12:59:55 +0200
+Message-Id: <20180325110000.2238-3-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180325110000.2238-1-christian.koenig@amd.com>
 References: <20180325110000.2238-1-christian.koenig@amd.com>
@@ -27,41 +27,159 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just note if a BO was imported/exported.
+From: "wdavis@nvidia.com" <wdavis@nvidia.com>
 
+Add checks for topology and ACS configuration to determine whether or not
+peer traffic should be supported between two PCI devices.
+
+Signed-off-by: Will Davis <wdavis@nvidia.com>
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/pci/pci.c   | 112 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/pci.h |   1 +
+ 2 files changed, 113 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-index 46b9ea4e6103..7c1f761bb1a5 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -777,6 +777,8 @@ static int amdgpu_debugfs_gem_bo_info(int id, void *ptr, void *data)
- 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(gobj);
- 	struct seq_file *m = data;
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index f6a4dd10d9b0..efdca3c9dad1 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -28,6 +28,7 @@
+ #include <linux/device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/pci_hotplug.h>
++#include <linux/iommu.h>
+ #include <linux/vmalloc.h>
+ #include <linux/pci-ats.h>
+ #include <asm/setup.h>
+@@ -5285,6 +5286,117 @@ void pci_ignore_hotplug(struct pci_dev *dev)
+ }
+ EXPORT_SYMBOL_GPL(pci_ignore_hotplug);
  
-+	struct dma_buf_attachment *attachment;
-+	struct dma_buf *dma_buf;
- 	unsigned domain;
- 	const char *placement;
- 	unsigned pin_count;
-@@ -805,6 +807,15 @@ static int amdgpu_debugfs_gem_bo_info(int id, void *ptr, void *data)
- 	pin_count = READ_ONCE(bo->pin_count);
- 	if (pin_count)
- 		seq_printf(m, " pin count %d", pin_count);
++static bool pci_peer_host_traffic_supported(struct pci_host_bridge *host)
++{
++	struct pci_dev *bridge = pci_get_slot(host->bus, PCI_DEVFN(0, 0));
++	unsigned short vendor, device;
 +
-+	dma_buf = READ_ONCE(bo->gem_base.dma_buf);
-+	attachment = READ_ONCE(bo->gem_base.import_attach);
++	if (!bridge)
++		return false;
 +
-+	if (attachment)
-+		seq_printf(m, " imported from %p", dma_buf);
-+	else if (dma_buf)
-+		seq_printf(m, " exported as %p", dma_buf);
++	vendor = bridge->vendor;
++	device = bridge->device;
++	pci_dev_put(bridge);
 +
- 	seq_printf(m, "\n");
- 
++	/* AMD ZEN host bridges can do peer to peer */
++	if (vendor == PCI_VENDOR_ID_AMD && device == 0x1450)
++		return true;
++
++	/* TODO: Extend that to a proper whitelist */
++	return false;
++}
++
++bool pci_peer_traffic_supported(struct pci_dev *dev, struct pci_dev *peer)
++{
++	struct pci_dev *rp_dev, *rp_peer, *common_upstream;
++	struct pci_host_bridge *peer_host_bridge;
++	struct pci_host_bridge *dev_host_bridge;
++	int pos;
++	u16 cap;
++
++	/* This is tricky enough, focus on PCIe for now */
++	if (!pci_is_pcie(dev) || !pci_is_pcie(peer))
++		return false;
++
++	/*
++	 * Disallow the peer-to-peer traffic if the devices do not share a
++	 * host bridge. The PCI specifications does not make any guarantees
++	 * about P2P capabilities between devices under separate domains.
++	 *
++	 * PCI Local Bus Specification Revision 3.0, section 3.10:
++	 *    "Peer-to-peer transactions crossing multiple host bridges
++	 *     PCI host bridges may, but are not required to, support PCI
++	 *     peer-to-peer transactions that traverse multiple PCI host
++	 *     bridges."
++	 */
++	dev_host_bridge = pci_find_host_bridge(dev->bus);
++	peer_host_bridge = pci_find_host_bridge(peer->bus);
++	if (dev_host_bridge != peer_host_bridge)
++		return pci_peer_host_traffic_supported(dev_host_bridge);
++
++	rp_dev = pcie_find_root_port(dev);
++	rp_peer = pcie_find_root_port(peer);
++	common_upstream = pci_find_common_upstream_dev(dev, peer);
++
++	/*
++	 * Access Control Services (ACS) Checks
++	 *
++	 * ACS has a capability bit for P2P Request Redirects (RR),
++	 * but unfortunately it doesn't tell us much about the real
++	 * capabilities of the hardware.
++	 *
++	 * PCI Express Base Specification Revision 3.0, section
++	 * 6.12.1.1:
++	 *    "ACS P2P Request Redirect: must be implemented by Root
++	 *     Ports that support peer-to-peer traffic with other
++	 *     Root Ports; [80]"
++	 * but
++	 *    "[80] Root Port indication of ACS P2P Request Redirect
++	 *     or ACS P2P Completion Redirect support does not imply
++	 *     any particular level of peer-to-peer support by the
++	 *     Root Complex, or that peer-to-peer traffic is
++	 *     supported at all"
++	 */
++
++	/*
++	 * If ACS is not implemented, we have no idea about P2P
++	 * support. Optimistically allow this if there is a common
++	 * upstream device.
++	 */
++	pos = pci_find_ext_capability(rp_dev, PCI_EXT_CAP_ID_ACS);
++	if (!pos)
++		return common_upstream != NULL;
++
++	/*
++	 * If the devices are under the same root port and have a common
++	 * upstream device, allow if the root port is further upstream
++	 * from the common upstream device and the common upstream
++	 * device has Upstream Forwarding disabled, or if the root port
++	 * is the common upstream device and ACS is not implemented.
++	 */
++	pci_read_config_word(rp_dev, pos + PCI_ACS_CAP, &cap);
++	if ((rp_dev == rp_peer && common_upstream) &&
++	    (((common_upstream != rp_dev) &&
++	      !pci_acs_enabled(common_upstream, PCI_ACS_UF)) ||
++	     ((common_upstream == rp_dev) && ((cap & PCI_ACS_RR) == 0))))
++		return true;
++
++	/*
++	 * If ACS RR is implemented and disabled, allow only if the
++	 * devices are under the same root port.
++	 */
++	if (cap & PCI_ACS_RR && !pci_acs_enabled(rp_dev, PCI_ACS_RR))
++		return rp_dev == rp_peer;
++
++	/*
++	 * If ACS RR is not implemented, or is implemented and enabled,
++	 * only allow if there's a translation agent enabled to do the
++	 * redirect.
++	 */
++	return iommu_present(&pci_bus_type);
++}
++EXPORT_SYMBOL(pci_peer_traffic_supported);
++
+ resource_size_t __weak pcibios_default_alignment(void)
+ {
  	return 0;
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 0d29f5cdcb04..3c8eaa505991 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -921,6 +921,7 @@ void pci_remove_root_bus(struct pci_bus *bus);
+ void pci_setup_cardbus(struct pci_bus *bus);
+ void pcibios_setup_bridge(struct pci_bus *bus, unsigned long type);
+ void pci_sort_breadthfirst(void);
++bool pci_peer_traffic_supported(struct pci_dev *dev, struct pci_dev *peer);
+ #define dev_is_pci(d) ((d)->bus == &pci_bus_type)
+ #define dev_is_pf(d) ((dev_is_pci(d) ? to_pci_dev(d)->is_physfn : false))
+ 
 -- 
 2.14.1
