@@ -1,51 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753499AbeCYPkM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 11:40:12 -0400
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:38812 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753418AbeCYPkK (ORCPT
+        id S1753506AbeCYQHX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 12:07:23 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35741 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753396AbeCYQHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 11:40:10 -0400
-X-Google-Smtp-Source: AG47ELtoVy9bpmHGgb0UCmR1MvfWF/3ewvcpHFrXjXBMmETP8/mMPPwHHUpGe5w5ewVMWnLM7DYwbOohs44Js7uEsnY=
+        Sun, 25 Mar 2018 12:07:19 -0400
+X-Google-Smtp-Source: AIpwx49lxG3RA0j2cOio/uBG+H4PUqaMqzBc66bZDAiRM2lox2m+3hjwtzqKkJF7L3tc7V2yLIaXPQ==
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20VUCHENER?= <clement.vuchener@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>, Cameron Gutman <aicommander@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>
+Cc: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Subject: [PATCH v7 0/2] hid-steam driver with user mode client dection
+Date: Sun, 25 Mar 2018 18:07:01 +0200
+Message-Id: <20180325160703.15997-1-rodrigorivascosta@gmail.com>
+X-Mailer: git-send-email 2.16.2
 MIME-Version: 1.0
-From: "\\0xDynamite" <dreamingforward@gmail.com>
-Date: Sun, 25 Mar 2018 15:40:07 +0000
-Message-ID: <CAMjeLr96FkAEK5aJMeeLjC0SOx-aQAHF3QFo67eitp4h=YHNvw@mail.gmail.com>
-Subject: SPECTRE, MELTDOWN, boot loaders, and cursors: A shot out of the blue....
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I apogize for what is probably going to be a VERY unusual and perhaps
-rude email to the kernel list, but I'm taking a wild shot at something
-in order to fix the Meltdown and Spectre bugs which perhaps were
-wrongly blamed on Intel and now maybe AMD.  The issue, lads, may be
-*interdimensional*.
+This is a reroll of the Steam Controller driver.
 
-Firstly, don't trust the media reports on these issues.  What I've
-seen sounds partly right, but way off base.
+This time the client usage is detected by using exposing a custom hidraw
+device (hid_ll_driver) to userland and forwarding that to the real one.
 
-Secondly, here's what you need to track down:  the cursor.  Track down
-the whole process at boot, down to the BIOS, because at least PART of
-the problem has nothing to do with Intel.  What puts the cursor on the
-screen and how is it kept track of?  I don't have the IBM technical
-reference manuals (purple binder) at my disposal anymore, but that's
-where you should look.
+About how the lizard-mode/hidraw-client issue is handled, I have added a
+module parameter (I don't know if that is the best option, but it helps me
+illustrate different approaches to the problem):
 
-It is an I/O confusion somewhere, perhaps a motherboard bug.  I
-believe that Javascript has excersized the problem due to its
-contention for resources and its operating at browser (or other)
-priveleges instead of a virtual machine.
+Independently of the lizard_mode parameter value:
 
-Try NOT to complain about Intel.  They have not yet understood this
-problem, I suspect.
+ 1. When a hidraw client is running:
+   a. I will not send any lizard-mode command to the device, so the client is
+      in full control.
+   b. The input device will not send any input message. However it will not
+      dissappear nor return any error message. Maybe it could return ENODEV if
+      they try to open the input device when hidraw client is running?
 
-Don't ask me how I know this.
+If lizard_mode == 0 ('disabled'):
+ 2.0. When a hidraw client is not running, lizard_mode is disabled.
 
-Marxos
-the restaurant at the end of the universe.
+If lizard_mode == 1, ('auto', the default):
+ 2.1. When a hidraw client is not running:
+   a. When the input device is not in use, lizard mode is enabled.
+   b. When the input device is in use, lizard mode is disabled.
 
-P.S.  Oh, and change the name of GRUB to GRUE
+If lizard_mode == 2 ('usermode'):
+ 2.2. This driver does not send any lizard_mode-related command. So it is up
+      to user mode to configure it, with steamctrl or whatever.
+
+Note that when Steam Client opens it always disables lizard-mode (it creates
+keyboard/mouse XTest inputs with the same function, though). And when it closed
+(but not when it crashes, I think) it always re-enables the lizard mode.
+
+About the input buttons/axes mapping, as per Clément suggestion, I tried to
+conform to Documentation/gamepad.rst, but with a few caveats and doubts:
+ * BTN_NORTH/BTN_WEST are alias of BTN_X/BTN_Y, but those buttons in this
+   controller have the labels changed (BTN_NORTH is actually Y). I don't know
+   the best option, so for now I'm mapping 'Y' to BTN_Y and 'X' to BTN_X.
+ * I'm mapping the lpad clicks to BTN_DPAD_{UP,RIGHT,DOWN,LEFT} but I'm not
+   sure if that is such a good idea: it cannot do diagonals, for example.
+   Maybe we could fake the whole dpad from the touch position?
+ * I'm mapping pressing the joystick to BTN_THUMBL and clicking the rpad to
+   BTN_THUMBR. Clicking the lpad is unmapped because that is used for the
+   dpad, depending on where it is clicked.
+ * Currently I'm mapping the lpad-touch to BTN_THUMB and rpad-touch to
+   BTN_THUMB2, but I don't know if that is so useful. lpad-touch will overlap
+   with any use of the dpad. And rpad-touch will overlap with rpad-click...
+
+Changes in v7:
+ * All the automatic lizard_mode stuff.
+ * Added the lizard_mode parameter.
+ * The patchset is reduced to 2 commits. The separation of the
+   steam_get_serial command no longer makes sense, since I need the
+   steam_send_cmd in the first commit to implement the lizard mode.
+ * Change the input mapping to conform to Documentation/gamepad.rst.
+
+(v6 was a RFC, it does not count).
+
+Changes in v5:
+ * Fix license SPDX to GPL-2.0+.
+ * Minor stylistic changes (BIT(3) instead 0x08 and so on).
+
+Changes in v4:
+ * Add command to check the wireless connection status on probe, without
+   waiting for a message (thanks to Clément Vuchener for the tip).
+ * Removed the error code on redundant connection/disconnection messages. That
+   was harmless but polluted dmesg.
+ * Added buttons for touching the left-pad and right-pad.
+ * Fixed a misplaced #include from 2/4 to 1/4.
+
+Changes in v3:
+ * Use RCU to do the dynamic connec/disconnect of wireless devices.
+ * Remove entries in hid-quirks.c as they are no longer needed. This allows
+   this module to be blacklisted without side effects.
+ * Do not bypass the virtual keyboard/mouse HID devices to avoid breaking
+   existing use cases (lizard mode). A user-space tool to do that is
+   linked.
+ * Fully separated axes for joystick and left-pad. As it happens.
+ * Add fuzz values for left/right pad axes, they are a little wiggly.
+
+Changes in v2:
+ * Remove references to USB. Now the interesting interfaces are selected by
+   looking for the ones with feature reports.
+ * Feature reports buffers are allocated with hid_alloc_report_buf().
+ * Feature report length is checked, to avoid overflows in case of
+   corrupt/malicius USB devices.
+ * Resolution added to the ABS axes.
+ * A lot of minor cleanups.
+
+Rodrigo Rivas Costa (2):
+  HID: add driver for Valve Steam Controller
+  HID: steam: add battery device.
+
+ drivers/hid/Kconfig     |   8 +
+ drivers/hid/Makefile    |   1 +
+ drivers/hid/hid-ids.h   |   4 +
+ drivers/hid/hid-steam.c | 978 ++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/hid.h     |   1 +
+ 5 files changed, 992 insertions(+)
+ create mode 100644 drivers/hid/hid-steam.c
+
+-- 
+2.16.2
