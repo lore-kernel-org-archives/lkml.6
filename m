@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeCYI5X (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 04:57:23 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54675 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751594AbeCYI5V (ORCPT
+        id S1752249AbeCYJAw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 05:00:52 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41161 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751686AbeCYJAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 04:57:21 -0400
-X-Google-Smtp-Source: AG47ELvC/QJEmqTpewLMOFMhUxR/tQaG/y6EYg3MfpC6hBzNviex5dvFbxoN4IVS6CzQWPS2on474g==
-Date: Sun, 25 Mar 2018 10:57:17 +0200
+        Sun, 25 Mar 2018 05:00:49 -0400
+X-Google-Smtp-Source: AG47ELu9JX5E5IdH4rWYTd1TG4wgZAqS7USgYISuSqUCnZv0jQ/5PAJs5vTGywhTJjHiBqqRTsm9hA==
+Date: Sun, 25 Mar 2018 11:00:44 +0200
 From: Ingo Molnar <mingo@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] scheduler fixes
-Message-ID: <20180325085717.c5ixdcmeibbsof4l@gmail.com>
+Subject: [GIT PULL] timer fix
+Message-ID: <20180325090044.u5ayc5pej24piodm@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -26,94 +27,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-Please pull the latest sched-urgent-for-linus git tree from:
+Please pull the latest timers-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
 
-   # HEAD: e9ca267096674eadd1fd479279bcb58df1486049 sched/debug: Adjust newlines for better alignment
+   # HEAD: 19b558db12f9f4e45a22012bae7b4783e62224da posix-timers: Protect posix clock array access against speculation
 
-Two sched debug output related fixes: a console output fix and formatting fixes.
+Make posix clock ID usage Spectre-safe.
 
  Thanks,
 
 	Ingo
 
 ------------------>
-Joe Lawrence (2):
-      sched/debug: Fix per-task line continuation for console output
-      sched/debug: Adjust newlines for better alignment
+Thomas Gleixner (1):
+      posix-timers: Protect posix clock array access against speculation
 
 
- kernel/sched/debug.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ kernel/time/posix-timers.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 1ca0130ed4f9..72c401b3b15c 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -32,7 +32,7 @@ static DEFINE_SPINLOCK(sched_debug_lock);
- 	if (m)					\
- 		seq_printf(m, x);		\
- 	else					\
--		printk(x);			\
-+		pr_cont(x);			\
-  } while (0)
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 75043046914e..10b7186d0638 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -50,6 +50,7 @@
+ #include <linux/export.h>
+ #include <linux/hashtable.h>
+ #include <linux/compat.h>
++#include <linux/nospec.h>
  
- /*
-@@ -501,12 +501,12 @@ static void print_rq(struct seq_file *m, struct rq *rq, int rq_cpu)
+ #include "timekeeping.h"
+ #include "posix-timers.h"
+@@ -1346,11 +1347,15 @@ static const struct k_clock * const posix_clocks[] = {
+ 
+ static const struct k_clock *clockid_to_kclock(const clockid_t id)
  {
- 	struct task_struct *g, *p;
+-	if (id < 0)
++	clockid_t idx = id;
++
++	if (id < 0) {
+ 		return (id & CLOCKFD_MASK) == CLOCKFD ?
+ 			&clock_posix_dynamic : &clock_posix_cpu;
++	}
  
--	SEQ_printf(m,
--	"\nrunnable tasks:\n"
--	" S           task   PID         tree-key  switches  prio"
--	"     wait-time             sum-exec        sum-sleep\n"
--	"-------------------------------------------------------"
--	"----------------------------------------------------\n");
-+	SEQ_printf(m, "\n");
-+	SEQ_printf(m, "runnable tasks:\n");
-+	SEQ_printf(m, " S           task   PID         tree-key  switches  prio"
-+		   "     wait-time             sum-exec        sum-sleep\n");
-+	SEQ_printf(m, "-------------------------------------------------------"
-+		   "----------------------------------------------------\n");
- 
- 	rcu_read_lock();
- 	for_each_process_thread(g, p) {
-@@ -527,9 +527,11 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
- 	unsigned long flags;
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--	SEQ_printf(m, "\ncfs_rq[%d]:%s\n", cpu, task_group_path(cfs_rq->tg));
-+	SEQ_printf(m, "\n");
-+	SEQ_printf(m, "cfs_rq[%d]:%s\n", cpu, task_group_path(cfs_rq->tg));
- #else
--	SEQ_printf(m, "\ncfs_rq[%d]:\n", cpu);
-+	SEQ_printf(m, "\n");
-+	SEQ_printf(m, "cfs_rq[%d]:\n", cpu);
- #endif
- 	SEQ_printf(m, "  .%-30s: %Ld.%06ld\n", "exec_clock",
- 			SPLIT_NS(cfs_rq->exec_clock));
-@@ -595,9 +597,11 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
- void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
- {
- #ifdef CONFIG_RT_GROUP_SCHED
--	SEQ_printf(m, "\nrt_rq[%d]:%s\n", cpu, task_group_path(rt_rq->tg));
-+	SEQ_printf(m, "\n");
-+	SEQ_printf(m, "rt_rq[%d]:%s\n", cpu, task_group_path(rt_rq->tg));
- #else
--	SEQ_printf(m, "\nrt_rq[%d]:\n", cpu);
-+	SEQ_printf(m, "\n");
-+	SEQ_printf(m, "rt_rq[%d]:\n", cpu);
- #endif
- 
- #define P(x) \
-@@ -624,7 +628,8 @@ void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
- {
- 	struct dl_bw *dl_bw;
- 
--	SEQ_printf(m, "\ndl_rq[%d]:\n", cpu);
-+	SEQ_printf(m, "\n");
-+	SEQ_printf(m, "dl_rq[%d]:\n", cpu);
- 
- #define PU(x) \
- 	SEQ_printf(m, "  .%-30s: %lu\n", #x, (unsigned long)(dl_rq->x))
+-	if (id >= ARRAY_SIZE(posix_clocks) || !posix_clocks[id])
++	if (id >= ARRAY_SIZE(posix_clocks))
+ 		return NULL;
+-	return posix_clocks[id];
++
++	return posix_clocks[array_index_nospec(idx, ARRAY_SIZE(posix_clocks))];
+ }
