@@ -1,322 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752315AbeCYWVI (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 18:21:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59585 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751076AbeCYWVE (ORCPT
+        id S1752567AbeCYWTt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:19:49 -0400
+Received: from smtprelay0108.hostedemail.com ([216.40.44.108]:36079 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752412AbeCYWTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 18:21:04 -0400
-Date: Sun, 25 Mar 2018 15:20:51 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-6cte5o8z84mbivbvqlg14uh1@git.kernel.org>
-Cc: acme@redhat.com, hpa@zytor.com, dsahern@gmail.com, mingo@kernel.org,
-        jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
-        yao.jin@linux.intel.com, wangnan0@huawei.com, tglx@linutronix.de,
-        ak@linux.intel.com, linux-kernel@vger.kernel.org
-Reply-To: mingo@kernel.org, dsahern@gmail.com, hpa@zytor.com, acme@redhat.com,
-        namhyung@kernel.org, jolsa@kernel.org, wangnan0@huawei.com,
-        adrian.hunter@intel.com, yao.jin@linux.intel.com,
-        linux-kernel@vger.kernel.org, ak@linux.intel.com, tglx@linutronix.de
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Introduce the --stdio2 output mode
-Git-Commit-ID: befd2a38a632b1f27ad652fea67c8cf97ce59409
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Sun, 25 Mar 2018 18:19:31 -0400
+X-Session-Marker: 7368656140736865616C6576792E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:800:960:966:973:988:989:1260:1345:1359:1534:1540:1711:1714:1730:1747:1777:1792:2194:2196:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3351:3876:3877:4385:5007:6114:6261:6642:6737:9592:10004:10848:11026:11473:11658:11914:12048:12114:12296:12438:12533:12555:12895:13069:13311:13357:14096:14181:14384:14394:14721:21080:21627,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.4.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
+X-HE-Tag: store30_35cd37b5a3050
+X-Filterd-Recvd-Size: 2032
+From: Shea Levy <shea@shealevy.com>
+To: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        uclinux-h8-devel@lists.sourceforge.jp, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
+        user-mode-linux-devel@lists.sourceforge.net
+Cc: Shea Levy <shea@shealevy.com>
+Subject: [PATCH v2 09/16] m68k: Use INITRAMFS_GENERIC_UNLOAD
+Date: Sun, 25 Mar 2018 18:18:46 -0400
+Message-Id: <20180325221853.10839-10-shea@shealevy.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180325221853.10839-1-shea@shealevy.com>
+References: <20180324174458.26423-1-shea@shealevy.com>
+ <20180325221853.10839-1-shea@shealevy.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  befd2a38a632b1f27ad652fea67c8cf97ce59409
-Gitweb:     https://git.kernel.org/tip/befd2a38a632b1f27ad652fea67c8cf97ce59409
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 15 Mar 2018 23:44:34 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 21 Mar 2018 12:53:26 -0300
-
-perf annotate: Introduce the --stdio2 output mode
-
-This uses the TUI augmented formatting routines, modulo interactivity.
-
-  # perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave
-  _raw_spin_lock_irqsave() /proc/kcore
-  Event: cycles:ppp
-
-  Percent
-
-              Disassembly of section load0:
-
-              ffffffff9a8734b0 <load0>:
-                nop
-                push   %rbx
-   50.00        pushfq
-                pop    %rax
-                nop
-                mov    %rax,%rbx
-                cli
-                nop
-                xor    %eax,%eax
-                mov    $0x1,%edx
-   50.00        lock   cmpxchg %edx,(%rdi)
-                test   %eax,%eax
-              ↓ jne    2b
-                mov    %rbx,%rax
-                pop    %rbx
-              ← retq
-          2b:   mov    %eax,%esi
-              → callq  queued_spin_lock_slowpath
-                mov    %rbx,%rax
-                pop    %rbx
-              ← retq
-
-Tested-by: Jin Yao <yao.jin@linux.intel.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-6cte5o8z84mbivbvqlg14uh1@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Shea Levy <shea@shealevy.com>
 ---
- tools/perf/Documentation/perf-annotate.txt |  2 +
- tools/perf/builtin-annotate.c              | 23 +++++---
- tools/perf/util/annotate.c                 | 92 ++++++++++++++++++++++++++++++
- tools/perf/util/annotate.h                 |  5 ++
- 4 files changed, 115 insertions(+), 7 deletions(-)
+ arch/m68k/Kconfig   | 1 +
+ arch/m68k/mm/init.c | 7 -------
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
-index 292809c3c0ca..c29c7fc93023 100644
---- a/tools/perf/Documentation/perf-annotate.txt
-+++ b/tools/perf/Documentation/perf-annotate.txt
-@@ -69,6 +69,8 @@ OPTIONS
+diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+index 785612b576f7..47913a68529e 100644
+--- a/arch/m68k/Kconfig
++++ b/arch/m68k/Kconfig
+@@ -24,6 +24,7 @@ config M68K
+ 	select MODULES_USE_ELF_RELA
+ 	select OLD_SIGSUSPEND3
+ 	select OLD_SIGACTION
++	select INITRAMFS_GENERIC_UNLOAD
  
- --stdio:: Use the stdio interface.
- 
-+--stdio2:: Use the stdio2 interface, non-interactive, uses the TUI formatting.
-+
- --stdio-color=<mode>::
- 	'always', 'never' or 'auto', allowing configuring color output
- 	via the command line, in addition to via "color.ui" .perfconfig.
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index ead6ae4549e5..e03f9bea9303 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -40,7 +40,7 @@
- struct perf_annotate {
- 	struct perf_tool tool;
- 	struct perf_session *session;
--	bool	   use_tui, use_stdio, use_gtk;
-+	bool	   use_tui, use_stdio, use_stdio2, use_gtk;
- 	bool	   full_paths;
- 	bool	   print_line;
- 	bool	   skip_missing;
-@@ -202,6 +202,11 @@ static int process_branch_callback(struct perf_evsel *evsel,
- 	return ret;
+ config CPU_BIG_ENDIAN
+ 	def_bool y
+diff --git a/arch/m68k/mm/init.c b/arch/m68k/mm/init.c
+index e85acd131fa8..e20bef09258c 100644
+--- a/arch/m68k/mm/init.c
++++ b/arch/m68k/mm/init.c
+@@ -172,10 +172,3 @@ void __init mem_init(void)
+ 	mem_init_print_info(NULL);
+ 	print_memmap();
  }
- 
-+static bool has_annotation(struct perf_annotate *ann)
-+{
-+	return ui__has_annotation() || ann->use_stdio2;
-+}
-+
- static int perf_evsel__add_sample(struct perf_evsel *evsel,
- 				  struct perf_sample *sample,
- 				  struct addr_location *al,
-@@ -212,7 +217,7 @@ static int perf_evsel__add_sample(struct perf_evsel *evsel,
- 	struct hist_entry *he;
- 	int ret;
- 
--	if ((!ann->has_br_stack || !ui__has_annotation()) &&
-+	if ((!ann->has_br_stack || !has_annotation(ann)) &&
- 	    ann->sym_hist_filter != NULL &&
- 	    (al->sym == NULL ||
- 	     strcmp(ann->sym_hist_filter, al->sym->name) != 0)) {
-@@ -236,7 +241,7 @@ static int perf_evsel__add_sample(struct perf_evsel *evsel,
- 	 */
- 	process_branch_stack(sample->branch_stack, al, sample);
- 
--	if (ann->has_br_stack && ui__has_annotation())
-+	if (ann->has_br_stack && has_annotation(ann))
- 		return process_branch_callback(evsel, sample, al, ann, machine);
- 
- 	he = hists__add_entry(hists, al, NULL, NULL, NULL, sample, true);
-@@ -282,8 +287,11 @@ static int hist_entry__tty_annotate(struct hist_entry *he,
- 				    struct perf_evsel *evsel,
- 				    struct perf_annotate *ann)
- {
--	return symbol__tty_annotate(he->ms.sym, he->ms.map, evsel,
--				    ann->print_line, ann->full_paths, 0, 0);
-+	if (!ann->use_stdio2)
-+		return symbol__tty_annotate(he->ms.sym, he->ms.map, evsel,
-+					    ann->print_line, ann->full_paths, 0, 0);
-+	return symbol__tty_annotate2(he->ms.sym, he->ms.map, evsel,
-+				     ann->print_line, ann->full_paths);
- }
- 
- static void hists__find_annotations(struct hists *hists,
-@@ -487,6 +495,7 @@ int cmd_annotate(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "gtk", &annotate.use_gtk, "Use the GTK interface"),
- 	OPT_BOOLEAN(0, "tui", &annotate.use_tui, "Use the TUI interface"),
- 	OPT_BOOLEAN(0, "stdio", &annotate.use_stdio, "Use the stdio interface"),
-+	OPT_BOOLEAN(0, "stdio2", &annotate.use_stdio2, "Use the stdio interface"),
- 	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
- 		   "file", "vmlinux pathname"),
- 	OPT_BOOLEAN('m', "modules", &symbol_conf.use_modules,
-@@ -569,7 +578,7 @@ int cmd_annotate(int argc, const char **argv)
- 	if (ret < 0)
- 		goto out_delete;
- 
--	if (annotate.use_stdio)
-+	if (annotate.use_stdio || annotate.use_stdio2)
- 		use_browser = 0;
- 	else if (annotate.use_tui)
- 		use_browser = 1;
-@@ -578,7 +587,7 @@ int cmd_annotate(int argc, const char **argv)
- 
- 	setup_browser(true);
- 
--	if (use_browser == 1 && annotate.has_br_stack) {
-+	if ((use_browser == 1 || annotate.use_stdio2) && annotate.has_br_stack) {
- 		sort__mode = SORT_MODE__BRANCH;
- 		if (setup_sorting(annotate.session->evlist) < 0)
- 			usage_with_options(annotate_usage, options);
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 11ad73211538..98cf3e5380bc 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1965,6 +1965,72 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
- 	return more;
- }
- 
-+static void FILE__set_percent_color(void *fp __maybe_unused,
-+				    double percent __maybe_unused,
-+				    bool current __maybe_unused)
-+{
-+}
-+
-+static int FILE__set_jumps_percent_color(void *fp __maybe_unused,
-+					 int nr __maybe_unused, bool current __maybe_unused)
-+{
-+	return 0;
-+}
-+
-+static int FILE__set_color(void *fp __maybe_unused, int color __maybe_unused)
-+{
-+	return 0;
-+}
-+
-+static void FILE__printf(void *fp, const char *fmt, ...)
-+{
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	vfprintf(fp, fmt, args);
-+	va_end(args);
-+}
-+
-+static void FILE__write_graph(void *fp, int graph)
-+{
-+	const char *s;
-+	switch (graph) {
-+
-+	case DARROW_CHAR: s = "↓"; break;
-+	case UARROW_CHAR: s = "↑"; break;
-+	case LARROW_CHAR: s = "←"; break;
-+	case RARROW_CHAR: s = "→"; break;
-+	default:		s = "?"; break;
-+	}
-+
-+	fputs(s, fp);
-+}
-+
-+int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp)
-+{
-+	struct annotation *notes = symbol__annotation(sym);
-+	struct annotation_write_ops ops = {
-+		.first_line		 = true,
-+		.obj			 = fp,
-+		.set_color		 = FILE__set_color,
-+		.set_percent_color	 = FILE__set_percent_color,
-+		.set_jumps_percent_color = FILE__set_jumps_percent_color,
-+		.printf			 = FILE__printf,
-+		.write_graph		 = FILE__write_graph,
-+	};
-+	struct annotation_line *al;
-+
-+	list_for_each_entry(al, &notes->src->source, node) {
-+		if (annotation_line__filter(al, notes))
-+			continue;
-+		annotation_line__write(al, notes, &ops);
-+		fputc('\n', fp);
-+		ops.first_line = false;
-+	}
-+
-+	return 0;
-+}
-+
- void symbol__annotate_zero_histogram(struct symbol *sym, int evidx)
- {
- 	struct annotation *notes = symbol__annotation(sym);
-@@ -2165,6 +2231,32 @@ static void symbol__calc_lines(struct symbol *sym, struct map *map,
- 	annotation__calc_lines(notes, map, root, start);
- }
- 
-+int symbol__tty_annotate2(struct symbol *sym, struct map *map,
-+			  struct perf_evsel *evsel, bool print_lines,
-+			  bool full_paths)
-+{
-+	struct dso *dso = map->dso;
-+	struct rb_root source_line = RB_ROOT;
-+	struct annotation_options opts = {
-+		.use_offset	= true,
-+	};
-+
-+	if (symbol__annotate2(sym, map, evsel, &opts, NULL) < 0)
-+		return -1;
-+
-+	if (print_lines) {
-+		srcline_full_filename = full_paths;
-+		symbol__calc_lines(sym, map, &source_line);
-+		print_summary(&source_line, dso->long_name);
-+	}
-+
-+	symbol__annotate_fprintf2(sym, stdout);
-+
-+	annotated_source__purge(symbol__annotation(sym)->src);
-+
-+	return 0;
-+}
-+
- int symbol__tty_annotate(struct symbol *sym, struct map *map,
- 			 struct perf_evsel *evsel, bool print_lines,
- 			 bool full_paths, int min_pcnt, int max_lines)
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 165845de1243..cf32cbc87930 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -281,6 +281,7 @@ int symbol__strerror_disassemble(struct symbol *sym, struct map *map,
- int symbol__annotate_printf(struct symbol *sym, struct map *map,
- 			    struct perf_evsel *evsel, bool full_paths,
- 			    int min_pcnt, int max_lines, int context);
-+int symbol__annotate_fprintf2(struct symbol *sym, FILE *fp);
- void symbol__annotate_zero_histogram(struct symbol *sym, int evidx);
- void symbol__annotate_decay_histogram(struct symbol *sym, int evidx);
- void annotated_source__purge(struct annotated_source *as);
-@@ -291,6 +292,10 @@ int symbol__tty_annotate(struct symbol *sym, struct map *map,
- 			 struct perf_evsel *evsel, bool print_lines,
- 			 bool full_paths, int min_pcnt, int max_lines);
- 
-+int symbol__tty_annotate2(struct symbol *sym, struct map *map,
-+			  struct perf_evsel *evsel, bool print_lines,
-+			  bool full_paths);
-+
- #ifdef HAVE_SLANG_SUPPORT
- int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 			 struct perf_evsel *evsel,
+-
+-#ifdef CONFIG_BLK_DEV_INITRD
+-void free_initrd_mem(unsigned long start, unsigned long end)
+-{
+-	free_reserved_area((void *)start, (void *)end, -1, "initrd");
+-}
+-#endif
+-- 
+2.16.2
