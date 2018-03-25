@@ -1,223 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753414AbeCYPHt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 11:07:49 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:45622 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753321AbeCYPHr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 11:07:47 -0400
-X-IronPort-AV: E=Sophos;i="5.48,360,1517871600";
-   d="scan'208";a="319839455"
-Date: Sun, 25 Mar 2018 11:07:44 -0400 (EDT)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Arushi Singhal <arushisinghal19971997@gmail.com>
-cc: daniel.vetter@intel.com, Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>, nouveau@lists.freedesktop.org,
-        outreachy-kernel <outreachy-kernel@googlegroups.com>
-Subject: Re: [Outreachy kernel] [PATCH] gpu: drm: Use list_{next/prev}_entry
- instead of list_entry
-In-Reply-To: <CA+XqjF9jHrOFL4LosK5GdbAgpmQRd9=08eNzvfzYxFaeXk972g@mail.gmail.com>
-Message-ID: <alpine.DEB.2.20.1803251107190.2488@hadrien>
-References: <20180319050530.GA25589@seema-Inspiron-15-3567> <alpine.DEB.2.20.1803190805260.2864@hadrien> <CA+XqjF9jHrOFL4LosK5GdbAgpmQRd9=08eNzvfzYxFaeXk972g@mail.gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1753437AbeCYPVr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 11:21:47 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:37012 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753321AbeCYPVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 11:21:44 -0400
+Subject: Re: efisubsys_init takes more than a few milliseconds
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <305249de-7892-fca4-b462-a493aa65d177@molgen.mpg.de>
+ <CAKv+Gu84h2+zofb4v-QrVE7rqCrGC7MaHEw7tB+z2J8DczjoKw@mail.gmail.com>
+ <f94af2ed-3492-4db5-c1bc-30c4c1855947@molgen.mpg.de>
+From: Paul Menzel <pmenzel+linux-efi@molgen.mpg.de>
+Message-ID: <676c44ce-6909-f002-4ea3-0c6f68b6b781@molgen.mpg.de>
+Date: Sun, 25 Mar 2018 17:21:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-783883557-1521990465=:2488"
+In-Reply-To: <f94af2ed-3492-4db5-c1bc-30c4c1855947@molgen.mpg.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---8323329-783883557-1521990465=:2488
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Dear Ard,
 
 
+On 03/25/2018 09:41 AM, Paul Menzel wrote:
 
-On Sun, 25 Mar 2018, Arushi Singhal wrote:
+> On 03/24/2018 11:35 PM, Ard Biesheuvel wrote:
+> 
+>> On 24 March 2018 at 22:10, Paul Menzel wrote:
 
->
->
-> On Mon, Mar 19, 2018 at 12:44 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
->
->
->       On Mon, 19 Mar 2018, Arushi Singhal wrote:
->
->       > This patch replace list_entry with list_{next/prev}_entry as
->       it makes
->       > the code more clear to read.
->       > Done using coccinelle:
->       >
->       > @@
->       > expression e1;
->       > identifier e3;
->       > type t;
->       > @@
->       > (
->       > - list_entry(e1->e3.next,t,e3)
->       > + list_next_entry(e1,e3)
->       > |
->       > - list_entry(e1->e3.prev,t,e3)
->       > + list_prev_entry(e1,e3)
->       > )
->
->       This looks like a rule that could be nice for the Linux kernel
->       in general,
->       because the code really is much simpler.
->
->       I would suggest to write the rule in a more robust way, as
->       follows:
->
->       @@
->       identifier e3;
->       type t;
->       t *e1;
->       @@
->
->       (
->       - list_entry(e1->e3.next,t,e3)
->       + list_next_entry(e1,e3)
->       |
->       - list_entry(e1->e3.prev,t,e3)
->       + list_prev_entry(e1,e3)
->       )
->
->       @@
->       expression e1;
->       identifier e3;
->       @@
->
->       (
->       - list_entry(e1->e3.next,typeof(*e1),e3)
->       + list_next_entry(e1,e3)
->       |
->       - list_entry(e1->e3.prev,typeof(*e1),e3)
->       + list_prev_entry(e1,e3)
->
->       This checks that the type that is specified corresponds to the
->       one on e1.
->       It could actually be that the call is getting the first element
->       of a list,
->       from some different type, and coincidentally the two types have
->       the same
->       field name for the list element.
->
->       Unfortunately, the second rule, with the typeof call, doesn't
->       currently
->       work in Coccinelle, because the semantic patch language doesn't
->       actually
->       support typeof, and thinks that it is a function call.  I will
->       fix this.
->
->       To make a semantic patch for the kernel, you can try running
->       spgen on the
->       above file and answer the questions that it asks.  You can find
->       examples
->       in the coccinelle/scripts directory.  Just run
->
->       spgen foo.cocci
->
->       Then answer the questions.  Then run
->
->       spgen foo.cocci > foo_for_kernel.cocci
->
->       The second run will use the results of the first run to print
->       the semantic
->       patch.  Let me know if you have any questions.  You can always
->       adjust the
->       semantic patch that is generated by hand afterwards if needed.
->
->
-> Hi Julia,
->
-> I tried spgen and found that second rule is still not working. It's not able
-> to detect the second rule.
-> Is it working for you?
+>>> According to `initcall_debug`, `efisubsys_init` takes more than a few
+>>> milliseconds to execute on a Dell XPS 13 9370 (Intel(R) Core(TM) 
+>>> i7-8550U CPU @ 1.80GHz).
+>>>
+>>>> ```
+>>>> […]
+>>>> [ 0.144474] calling  efisubsys_init+0x0/0x2cf @ 1
+>>>> [ 0.144474] Registered efivars operations
+>>>> [ 0.173690] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343 
+>>>> usecs
+>>>> […]
+>>>> ```
+>>>
+>>>
+>>> To get a vanilla Linux kernel to boot in well under one second, it’d 
+>>> be nice
+>>> if the time could be improved. Do you know, why it takes so long?
+>>>
+>>> According to `bootgraph.py` from pm-graph [1][2] it takes even a little
+>>> longer.
+>>>
+>>>> efisubsys_init: start=690.841, end=720.493, length(w/o overhead)=31.250
+>>>> ms, return=0
+>>>
+>>> There are several dozen calls to `virt_efi_get_next_variable()` all 
+>>> but one
+>>> taking around 0.335 ms. This path needs to be optimized. Is that 
+>>> possible?
+>>
+>> That depends. These are firmware calls, so to make these calls faster,
+>> you need to modify the firmware, not the kernel.
+> 
+> Yeah, unfortunately, no free firmware runs on this laptop, and Dell 
+> doesn’t respond to these kind of reports, as they think, it’s not 
+> important.
+> 
+>> We may be able to make more intrusive changes to get rid of this
+>> delay, e.g., spin up a special kernel thread, but I'd have to check in
+>> more detail.
+> 
+> That’d be great.
+> 
+>> In the mean time, you can try passing 'efi=noruntime' to the kernel.
+> 
+> Thank you, I didn’t know about that. Unfortunately, initcall_debug still 
+> reports the same time although the one message is gone.
+> 
+> ```
+> $ sudo dmesg | grep efisubsys
+> [    0.145779] calling  efisubsys_init+0x0/0x2cf @ 1
+> [    0.172034] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343 usecs
+> ```
 
-No, I didn't have a chance to fix it yet.
+Hmm, it looks like, I only edited `/etc/default/grub` and didn’t run 
+`sudo update-grub`.
 
-julia
+```
+$ sudo dmesg | grep efisubsys
+[    0.776339] calling  efisubsys_init+0x0/0x2cf @ 1
+[    0.776339] initcall efisubsys_init+0x0/0x2cf returned 0 after 0 usecs
+```
+
+>>> To reproduce this, clone the pm-graph repository [2], use `sudo
+>>> ./bootgraph.py -f -fstat -maxdepth 10 -manual` to see what to add to
+>>> `/boot/grub/grub.cfg`. Then reboot, and execute `sudo ./bootgraph.py -f
+>>> -fstat -maxdepth 10`.
+>>>
+>>> If your system is powerful enough, you can use a higher maximum depth. I
+>>> didn’t get around how `-cgfilter` works to get smaller HTML files.
 
 
->
-> Thanks,
-> Arushi
->
->
->       julia
->
->
->       >
->       > Signed-off-by: Arushi Singhal
->       <arushisinghal19971997@gmail.com>
->       > ---
->       >  drivers/gpu/drm/drm_lease.c                    | 2 +-
->       >  drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c | 2 +-
->       >  2 files changed, 2 insertions(+), 2 deletions(-)
->       >
->       > diff --git a/drivers/gpu/drm/drm_lease.c
->       b/drivers/gpu/drm/drm_lease.c
->       > index 1402c0e..4dcfb5f 100644
->       > --- a/drivers/gpu/drm/drm_lease.c
->       > +++ b/drivers/gpu/drm/drm_lease.c
->       > @@ -340,7 +340,7 @@ static void _drm_lease_revoke(struct
->       drm_master *top)
->       >                               break;
->       >
->       >                       /* Over */
->       > -                     master =
->       list_entry(master->lessee_list.next, struct drm_master,
->       lessee_list);
->       > +                     master = list_next_entry(master,
->       lessee_list);
->       >               }
->       >       }
->       >  }
->       > diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
->       b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
->       > index e4c8d31..81c3567 100644
->       > --- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
->       > +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
->       > @@ -134,7 +134,7 @@ nvkm_cstate_find_best(struct nvkm_clk
->       *clk, struct nvkm_pstate *pstate,
->       >                              nvkm_volt_map(volt,
->       volt->max2_id, clk->temp));
->       >
->       >       for (cstate = start; &cstate->head != &pstate->list;
->       > -          cstate = list_entry(cstate->head.prev,
->       typeof(*cstate), head)) {
->       > +          cstate = list_prev_entry(cstate, head)) {
->       >               if (nvkm_cstate_valid(clk, cstate, max_volt,
->       clk->temp))
->       >                       break;
->       >       }
->       > --
->       > 2.7.4
->       >
-> > --
-> > You received this message because you are subscribed to the Google
-> Groups "outreachy-kernel" group.
-> > To unsubscribe from this group and stop receiving emails from it,
-> send an email to outreachy-kernel+unsubscribe@googlegroups.com.
-> > To post to this group, send email to
-> outreachy-kernel@googlegroups.com.
-> > To view this discussion on the web visithttps://groups.google.com/d/msgid/outreachy-kernel/20180319050530.GA25589%4
-> 0seema-Inspiron-15-3567.
-> > For more options, visit https://groups.google.com/d/optout.
-> >
->
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "outreachy-kernel" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to outreachy-kernel+unsubscribe@googlegroups.com.
-> To post to this group, send email to outreachy-kernel@googlegroups.com.
-> To view this discussion on the web visithttps://groups.google.com/d/msgid/outreachy-kernel/CA%2BXqjF9jHrOFL4LosK5Gd
-> bAgpmQRd9%3D08eNzvfzYxFaeXk972g%40mail.gmail.com.
-> For more options, visit https://groups.google.com/d/optout.
->
->
---8323329-783883557-1521990465=:2488--
+Kind regards,
+
+Paul
+
+
+>>> [1] https://01.org/suspendresume
+>>> [2] https://github.com/01org/pm-graph
