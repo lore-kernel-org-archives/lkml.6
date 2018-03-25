@@ -1,71 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752183AbeCYWVz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 18:21:55 -0400
-Received: from smtprelay0056.hostedemail.com ([216.40.44.56]:44090 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752031AbeCYWTl (ORCPT
+        id S1752548AbeCYWW1 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:22:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33701 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbeCYWWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 18:19:41 -0400
-X-Session-Marker: 7368656140736865616C6576792E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,,:::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:800:960:966:973:988:989:1260:1345:1359:1437:1534:1541:1711:1730:1747:1777:1792:2194:2196:2199:2200:2393:2559:2562:3138:3139:3140:3141:3142:3352:3865:3871:3872:4250:4321:4385:5007:6119:6261:6737:7903:9592:10004:10848:11026:11473:11658:11914:12043:12048:12114:12296:12438:12533:12555:12895:12986:13069:13311:13357:14096:14181:14384:14394:14721:14877:21080:21450:21627:30054:30089,0,RBL:71.235.10.46:@shealevy.com:.lbl8.mailshell.net-62.4.0.191 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:16,LUA_SUMMARY:none
-X-HE-Tag: tent06_373a01bf72102
-X-Filterd-Recvd-Size: 2269
-From: Shea Levy <shea@shealevy.com>
-To: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-m68k@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        user-mode-linux-devel@lists.sourceforge.net
-Cc: Shea Levy <shea@shealevy.com>
-Subject: [PATCH v2 14/16] powerpc: Use INITRAMFS_GENERIC_UNLOAD
-Date: Sun, 25 Mar 2018 18:18:51 -0400
-Message-Id: <20180325221853.10839-15-shea@shealevy.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180325221853.10839-1-shea@shealevy.com>
-References: <20180324174458.26423-1-shea@shealevy.com>
- <20180325221853.10839-1-shea@shealevy.com>
+        Sun, 25 Mar 2018 18:22:23 -0400
+Date: Sun, 25 Mar 2018 15:22:12 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-i86yfyzl8m194ioxgj1jo32f@git.kernel.org>
+Cc: acme@redhat.com, yao.jin@linux.intel.com, ak@linux.intel.com,
+        linux-kernel@vger.kernel.org, wangnan0@huawei.com, jolsa@kernel.org,
+        namhyung@kernel.org, adrian.hunter@intel.com, mingo@kernel.org,
+        tglx@linutronix.de, dsahern@gmail.com, hpa@zytor.com
+Reply-To: hpa@zytor.com, dsahern@gmail.com, namhyung@kernel.org,
+        jolsa@kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        adrian.hunter@intel.com, yao.jin@linux.intel.com,
+        linux-kernel@vger.kernel.org, wangnan0@huawei.com, ak@linux.intel.com,
+        acme@redhat.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf annotate: Add function header to --stdio2
+Git-Commit-ID: 864298f224f20fb7b981b05dd0f77315c75eb189
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Shea Levy <shea@shealevy.com>
----
- arch/powerpc/Kconfig  | 1 +
- arch/powerpc/mm/mem.c | 7 -------
- 2 files changed, 1 insertion(+), 7 deletions(-)
+Commit-ID:  864298f224f20fb7b981b05dd0f77315c75eb189
+Gitweb:     https://git.kernel.org/tip/864298f224f20fb7b981b05dd0f77315c75eb189
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 16 Mar 2018 15:17:23 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 21 Mar 2018 12:53:41 -0300
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 73ce5dd07642..8cf384068e79 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -223,6 +223,7 @@ config PPC
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_VIRT_CPU_ACCOUNTING
- 	select HAVE_IRQ_TIME_ACCOUNTING
-+	select INITRAMFS_GENERIC_UNLOAD
- 	select IRQ_DOMAIN
- 	select IRQ_FORCED_THREADING
- 	select MODULES_USE_ELF_RELA
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index fe8c61149fb8..e85b2a3cd264 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -404,13 +404,6 @@ void free_initmem(void)
- 	free_initmem_default(POISON_FREE_INITMEM);
- }
+perf annotate: Add function header to --stdio2
+
+  # perf annotate --stdio2 _raw_spin_lock_irqsave
+  _raw_spin_lock_irqsave() /lib/modules/4.16.0-rc4/build/vmlinux
+  Event: anon group { cycles, instructions }
+
+    0.00   3.17      → callq  __fentry__
+    0.00   7.94        push   %rbx
+    7.69  36.51      → callq  __page_file_index
+                       mov    %rax,%rbx
+    7.69   3.17      → callq  *ffffffff82225cd0
+                       xor    %eax,%eax
+                       mov    $0x1,%edx
+   80.77  49.21        lock   cmpxchg %edx,(%rdi)
+                       test   %eax,%eax
+                     ↓ jne    2b
+    3.85   0.00        mov    %rbx,%rax
+                       pop    %rbx
+                     ← retq
+                 2b:   mov    %eax,%esi
+                     → callq  queued_spin_lock_slowpath
+                       mov    %rbx,%rax
+                       pop    %rbx
+                     ← retq
+  #
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-i86yfyzl8m194ioxgj1jo32f@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/annotate.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index ea83b9754ab0..7a6a85f9fea6 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -2244,6 +2244,8 @@ int symbol__tty_annotate2(struct symbol *sym, struct map *map,
+ 	struct dso *dso = map->dso;
+ 	struct rb_root source_line = RB_ROOT;
+ 	struct annotation_options opts = annotation__default_options;
++	const char *ev_name = perf_evsel__name(evsel);
++	char buf[1024];
  
--#ifdef CONFIG_BLK_DEV_INITRD
--void __init free_initrd_mem(unsigned long start, unsigned long end)
--{
--	free_reserved_area((void *)start, (void *)end, -1, "initrd");
--}
--#endif
--
- /*
-  * This is called when a page has been modified by the kernel.
-  * It just marks the page as not i-cache clean.  We do the i-cache
--- 
-2.16.2
+ 	if (symbol__annotate2(sym, map, evsel, &opts, NULL) < 0)
+ 		return -1;
+@@ -2254,6 +2256,12 @@ int symbol__tty_annotate2(struct symbol *sym, struct map *map,
+ 		print_summary(&source_line, dso->long_name);
+ 	}
+ 
++	if (perf_evsel__is_group_event(evsel)) {
++		perf_evsel__group_desc(evsel, buf, sizeof(buf));
++		ev_name = buf;
++	}
++
++	fprintf(stdout, "%s() %s\nEvent: %s\n\n", sym->name, dso->long_name, ev_name);
+ 	symbol__annotate_fprintf2(sym, stdout);
+ 
+ 	annotated_source__purge(symbol__annotation(sym)->src);
