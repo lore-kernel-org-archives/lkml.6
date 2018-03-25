@@ -1,88 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753357AbeCYLBk (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 07:01:40 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35829 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751985AbeCYLAE (ORCPT
+        id S1752526AbeCYLuw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 07:50:52 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43711 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752004AbeCYLuv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 07:00:04 -0400
-X-Google-Smtp-Source: AG47ELtBqyddKEp6NKBA4Ug0ewu05nvVO6GclUCDbNQG4wUv1E9IBcmIjzS1RQuSh6H5ycV7j6Ii1A==
-From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
-        <ckoenig.leichtzumerken@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-To: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] PCI: Add pci_find_common_upstream_dev()
-Date: Sun, 25 Mar 2018 12:59:54 +0200
-Message-Id: <20180325110000.2238-2-christian.koenig@amd.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180325110000.2238-1-christian.koenig@amd.com>
-References: <20180325110000.2238-1-christian.koenig@amd.com>
+        Sun, 25 Mar 2018 07:50:51 -0400
+Date: Sun, 25 Mar 2018 13:50:40 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Anshuman Gupta <anshuman.gupta@intel.com>
+cc: glx@linutronix.de, x86@kernel.org, mingo@redhat.com, hpa@zytor.com,
+        rjw@rjwysocki.net, andriy.shevchenko@linux.intel.com,
+        alan@linux.intel.com, linux-kernel@vger.kernel.org,
+        rajneesh.bhardwaj@intel.com
+Subject: Re: [PATCH v3] x86: i8237: Register based on FADT legacy boot flag
+In-Reply-To: <1521714118-31282-1-git-send-email-anshuman.gupta@intel.com>
+Message-ID: <alpine.DEB.2.21.1803251348190.1481@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1803191152450.2010@nanos.tec.linutronix.de> <1521714118-31282-1-git-send-email-anshuman.gupta@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "wdavis@nvidia.com" <wdavis@nvidia.com>
+On Thu, 22 Mar 2018, Anshuman Gupta wrote:
 
-Add an interface to find the first device which is upstream of both
-devices.
+> From: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+> 
+> >From Skylake onwards, the platform controller hub (Sunrisepoint PCH) does
+> not support legacy DMA operations to IO ports 81h-83h, 87h, 89h-8Bh, 8Fh.
+> Currently this driver registers as syscore ops and its resume function is
+> called on every resume from S3. On Skylake and Kabylake, this causes a
+> resume delay of around 100ms due to port IO operations, which is a problem.
+> 
+> This change allows to load the driver only when the platform bios
+> explicitly supports such devices or has a cut-off date earlier than 2017.
 
-Signed-off-by: Will Davis <wdavis@nvidia.com>
-Signed-off-by: Christian König <christian.koenig@amd.com>
----
- drivers/pci/search.c | 24 ++++++++++++++++++++++++
- include/linux/pci.h  |  2 ++
- 2 files changed, 26 insertions(+)
+Please explain WHY 2017 is the cut-off date. I still have no clue how that
+is decided aside of being a random number.
 
-diff --git a/drivers/pci/search.c b/drivers/pci/search.c
-index bc1e023f1353..446648f4238b 100644
---- a/drivers/pci/search.c
-+++ b/drivers/pci/search.c
-@@ -393,3 +393,27 @@ int pci_dev_present(const struct pci_device_id *ids)
- 	return 0;
- }
- EXPORT_SYMBOL(pci_dev_present);
-+
-+/**
-+ * pci_find_common_upstream_dev - Returns the first common upstream device
-+ * @dev: the PCI device from which the bus hierarchy walk will start
-+ * @other: the PCI device whose bus number will be used for the search
-+ *
-+ * Walks up the bus hierarchy from the @dev device, looking for the first bus
-+ * which the @other device is downstream of. Returns %NULL if the devices do
-+ * not share any upstream devices.
-+ */
-+struct pci_dev *pci_find_common_upstream_dev(struct pci_dev *dev,
-+					     struct pci_dev *other)
-+{
-+	struct pci_dev *pdev = dev;
-+
-+	while (pdev != NULL) {
-+		if ((other->bus->number >= pdev->bus->busn_res.start) &&
-+		    (other->bus->number <= pdev->bus->busn_res.end))
-+			return pdev;
-+		pdev = pci_upstream_bridge(pdev);
-+	}
-+
-+	return NULL;
-+}
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 024a1beda008..0d29f5cdcb04 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -956,6 +956,8 @@ static inline struct pci_dev *pci_get_bus_and_slot(unsigned int bus,
- }
- struct pci_dev *pci_get_class(unsigned int class, struct pci_dev *from);
- int pci_dev_present(const struct pci_device_id *ids);
-+struct pci_dev *pci_find_common_upstream_dev(struct pci_dev *from,
-+					     struct pci_dev *to);
- 
- int pci_bus_read_config_byte(struct pci_bus *bus, unsigned int devfn,
- 			     int where, u8 *val);
--- 
-2.14.1
+Thanks,
+
+	tglx
