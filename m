@@ -1,80 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeCYVub (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 17:50:31 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:39524 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752275AbeCYVuQ (ORCPT
+        id S1752318AbeCYWBK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:01:10 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39092 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752015AbeCYWBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 17:50:16 -0400
-X-Google-Smtp-Source: AG47ELtakUOOQ82f/qaAbeGlRLo7d85OzdiNMepYELNPBEGVhL5mWsLAspRNQq+4qbqw95bAOoqcLQ==
-Date: Sun, 25 Mar 2018 14:50:15 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 05/24] mm: Introduce pte_spinlock for
- FAULT_FLAG_SPECULATIVE
-In-Reply-To: <1520963994-28477-6-git-send-email-ldufour@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1803251446180.80485@chino.kir.corp.google.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-6-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Sun, 25 Mar 2018 18:01:08 -0400
+X-Google-Smtp-Source: AG47ELvHfONtHy9k3M/nnrqgy2sIDy7L2OxP7AtFxDDnx00fCTRkH8jvONHSxfxc4CCv39HfGH09cw==
+From: =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
+To: "brian m. carlson" <sandals@crustytoothpaste.net>
+Cc: git@vger.kernel.org, Junio C Hamano <gitster@pobox.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Wong <e@80x24.org>
+Subject: Re: [PATCH 2/2] send-email: supply a --send-delay=1 by default
+References: <20180325182803.30036-1-avarab@gmail.com> <20180325182803.30036-3-avarab@gmail.com> <20180325210132.GE74743@genre.crustytoothpaste.net>
+User-agent: Debian GNU/Linux 9.4 (stretch); Emacs 25.1.1; mu4e 1.1.0
+In-reply-to: <20180325210132.GE74743@genre.crustytoothpaste.net>
+Date: Mon, 26 Mar 2018 00:01:05 +0200
+Message-ID: <87605jyfvi.fsf@evledraar.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018, Laurent Dufour wrote:
 
-> When handling page fault without holding the mmap_sem the fetch of the
-> pte lock pointer and the locking will have to be done while ensuring
-> that the VMA is not touched in our back.
-> 
-> So move the fetch and locking operations in a dedicated function.
-> 
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  mm/memory.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 8ac241b9f370..21b1212a0892 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2288,6 +2288,13 @@ int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
->  }
->  EXPORT_SYMBOL_GPL(apply_to_page_range);
->  
-> +static bool pte_spinlock(struct vm_fault *vmf)
+On Sun, Mar 25 2018, brian m. carlson wrote:
 
-inline?
+> On Sun, Mar 25, 2018 at 06:28:03PM +0000, Ævar Arnfjörð Bjarmason wrote:
+>> The earlier change to add this option described the problem this
+>> option is trying to solve.
+>>
+>> This turns it on by default with a value of 1 second, which'll
+>> hopefully solve it, and if not user reports as well as the
+>> X-Mailer-Send-Delay header should help debug it.
+>>
+>> I think the trade-off of slowing down E-Mail sending to turn this on
+>> makes sense because:
+>>
+>>  * GMail is a really common client, git.git's own unique authors by
+>>    %aE are ~30% @gmail.com, ~20% for linux.git. That's just patch
+>>    submitters, my guess is this it's much more common among those who
+>>    mostly read the list, and those users who aren't using mu4e / mutt
+>>    etc. anyway.
+>>
+>>  * There's really no point in having this feature at all if it's not
+>>    made the default, since the entire point is to be able to read a
+>>    list like the git ML or the LKML and have patches from others show
+>>    up in order.
+>>
+>>  * I don't think anyone's really sensitive to the sending part of
+>>    send-email taking longer. You just choose "all" and then switch to
+>>    another terminal while it does its thing if you have a huge series,
+>>    and for 1-3 patches I doubt anyone would notice this anyway.
+>
+> I'm not sure that this is going to have the effect you want it to have.
+> Let me give an example to demonstrate why.
+>
+> If I send a series to the list, in order for this to work, you need my
+> SMTP server (Postfix) to essentially send mails slowly enough to
+> vger.kernel.org (ZMailer) that it doesn't batch them when it sends them
+> to GMail.  The problem is that with my mail server, due to filtering and
+> such, already takes at least a second to accept, process, and relay
+> submitted messages.  vger still batched them and delivered them back to
+> me out of order.  This will be even worse with large series.
+>
+> You are also assuming that my mail server will not have batched them and
+> delivered them out of order, which it might well do, since Postfix uses
+> a connection cache to machines that don't do STARTTLS (which, much to my
+> annoyance, vger doesn't offer).
+>
+> In short, I don't think this is going to be especially helpful because
+> it won't change the status quo for a lot of senders.  You'd have to
+> insert some significant delay in order to get the effect you desire, and
+> even then things could still be delivered out of order.
 
-> +{
-> +	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
-> +	spin_lock(vmf->ptl);
-> +	return true;
-> +}
-> +
->  static bool pte_map_lock(struct vm_fault *vmf)
->  {
->  	vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd,
+Good point. I also see that (via git log --author=Ævar --grep='^\[PATCH
+') that this series itself arrived out of order (0 -> 2 -> 1), but I
+don't know to what extent public-inbox itself might be batching things.
 
-Shouldn't pte_unmap_same() take struct vm_fault * and use the new 
-pte_spinlock()?
+It would be interesting to get reports from other GMail users as to what
+order these mails were shown in, but I think as soon as they're replied
+to that info's gone, at least for 2/2, which is the potentially out of
+order one in this case.
+
+In general I realize that this won't be a general solution that'll work
+in all cases. E.g. I have a local SMTP on my laptop, if I'm on a plane
+it wouldn't matter if the delay was 2 hours, it would be batched up
+locally and sent all at once.
+
+I was hoping we could find some sweet spot where the systems along the
+way (common smtpd's, majordomo, public-inbox's git repo) would as a
+result get this right most of the time for the purposes of appeasing
+this really common mail client, but maybe that's not going to work out.
