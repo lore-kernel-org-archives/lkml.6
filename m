@@ -1,94 +1,325 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753587AbeCYQ3v (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 12:29:51 -0400
-Received: from mga09.intel.com ([134.134.136.24]:20798 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753281AbeCYQ3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 12:29:49 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,360,1517904000";
-   d="scan'208";a="214689344"
-Date: Mon, 26 Mar 2018 00:29:40 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: kbuild-all@01.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mturquette@baylibre.com, hdegoede@redhat.com, b.zolnierkie@samsung.com,
-        linux@armlinux.org.uk, linux-fbdev@vger.kernel.org, linux-imx@nxp.com,
-        sboyd@kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH V2 4/4] video: simplefb: switch to use clk_bulk API to
- simplify clock operations
-Message-ID: <201803260023.gnm8GYCI%fengguang.wu@intel.com>
-References: <1521600894-29919-5-git-send-email-aisheng.dong@nxp.com>
+        id S1753672AbeCYQxW (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 12:53:22 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:29266 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753632AbeCYQxS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 12:53:18 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w2PGr7sX011448
+X-Nifty-SrcIP: [209.85.213.50]
+X-Google-Smtp-Source: AG47ELumjYgqlnzbIahK0lhPpsaUSk/7b03bmlcCetiqkH2kLEO3ebdBFZhjDHvgYWbpyEC9bWTR47r1rUzZ2OPdSa4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521600894-29919-5-git-send-email-aisheng.dong@nxp.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180310105659.7e34lk4kvcbl64lg@gmail.com>
+References: <20180310105659.7e34lk4kvcbl64lg@gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 26 Mar 2018 01:52:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASOFW41HO3S4kUWsR4ro4BgSjPYXG8vrtwVhzMAV3gw0A@mail.gmail.com>
+Message-ID: <CAK7LNASOFW41HO3S4kUWsR4ro4BgSjPYXG8vrtwVhzMAV3gw0A@mail.gmail.com>
+Subject: Re: [PATCH v2] scripts/kconfig: cleanup symbol handling code
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Ulf Magnusson <ulfalizer@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dong,
+2018-03-10 19:56 GMT+09:00 Joey Pabalinas <joeypabalinas@gmail.com>:
+> Many of the variable names in scripts/kconfig/symbol.c are
+> far too terse to the point of not at all identifying _what_
+> they are actually used for (`p` and `l` as a couple examples),
+> and overall there is a large amount of code that could use
+> some cleaning up.
+>
+> Give more explicit names to these variables, fix a couple cases
+> where different variables were sharing the same name and shadowing
+> each other, and overall cleanup a bit of the messiness in
+> sym_expand_string_value() and sym_escape_string_value()
+> while maintaining equivalent program behavior.
+>
+> Suggested-by: Ulf Magnusson <ulfalizer@gmail.com>
+> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+>
+>  1 file changed, 69 insertions(+), 61 deletions(-)
 
-Thank you for the patch! Perhaps something to improve:
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on v4.16-rc6 next-20180323]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+First of all, I can not compile Kconfig with this patch.
 
-url:    https://github.com/0day-ci/linux/commits/Dong-Aisheng/clk-new-APIs-to-handle-all-available-clocks/20180323-185821
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
 
-smatch warnings:
-drivers/video/fbdev/simplefb.c:222 simplefb_clocks_get() warn: unsigned 'par->clk_count' is never less than zero.
+masahiro@grover:~/workspace/linux$ make defconfig
+  HOSTLD  scripts/kconfig/conf
+scripts/kconfig/zconf.tab.o: In function `sym_expand_string_value':
+zconf.tab.c:(.text+0x81a2): undefined reference to `strscpy'
+zconf.tab.c:(.text+0x8287): undefined reference to `strscpy'
+zconf.tab.c:(.text+0x82b5): undefined reference to `strscpy'
+scripts/kconfig/zconf.tab.o: In function `sym_escape_string_value':
+zconf.tab.c:(.text+0x869b): undefined reference to `strscpy'
+scripts/kconfig/zconf.tab.o: In function `menu_add_option':
+zconf.tab.c:(.text+0x99b7): undefined reference to `likely'
+collect2: error: ld returned 1 exit status
+scripts/Makefile.host:99: recipe for target 'scripts/kconfig/conf' failed
+make[1]: *** [scripts/kconfig/conf] Error 1
+Makefile:512: recipe for target 'defconfig' failed
+make: *** [defconfig] Error 2
 
-vim +222 drivers/video/fbdev/simplefb.c
 
-   193	
-   194	#if defined CONFIG_OF && defined CONFIG_COMMON_CLK
-   195	/*
-   196	 * Clock handling code.
-   197	 *
-   198	 * Here we handle the clocks property of our "simple-framebuffer" dt node.
-   199	 * This is necessary so that we can make sure that any clocks needed by
-   200	 * the display engine that the bootloader set up for us (and for which it
-   201	 * provided a simplefb dt node), stay up, for the life of the simplefb
-   202	 * driver.
-   203	 *
-   204	 * When the driver unloads, we cleanly disable, and then release the clocks.
-   205	 *
-   206	 * We only complain about errors here, no action is taken as the most likely
-   207	 * error can only happen due to a mismatch between the bootloader which set
-   208	 * up simplefb, and the clock definitions in the device tree. Chances are
-   209	 * that there are no adverse effects, and if there are, a clean teardown of
-   210	 * the fb probe will not help us much either. So just complain and carry on,
-   211	 * and hope that the user actually gets a working fb at the end of things.
-   212	 */
-   213	static int simplefb_clocks_get(struct simplefb_par *par,
-   214				       struct platform_device *pdev)
-   215	{
-   216		struct device_node *np = pdev->dev.of_node;
-   217	
-   218		if (dev_get_platdata(&pdev->dev) || !np)
-   219			return 0;
-   220	
-   221		par->clk_count = clk_bulk_get_all(&pdev->dev, &par->clks);
- > 222		if ((par->clk_count < 0) && (par->clk_count == -EPROBE_DEFER))
-   223			return -EPROBE_DEFER;
-   224	
-   225		return 0;
-   226	}
-   227	
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+
+
+> diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+> index 2220bc4b051bd914e3..9ee32ddb44e193719c 100644
+> --- a/scripts/kconfig/symbol.c
+> +++ b/scripts/kconfig/symbol.c
+> @@ -5,8 +5,8 @@
+>
+>  #include <ctype.h>
+>  #include <stdlib.h>
+> -#include <string.h>
+>  #include <regex.h>
+> +#include <linux/string.h>
+>  #include <sys/utsname.h>
+
+
+<string.h> is correct.
+
+
+
+I want to see Kconfig improvements in a bigger picture.
+
+The changes below are noise.
+
+
+
+>  #include "lkc.h"
+> @@ -337,7 +337,7 @@ void sym_calc_value(struct symbol *sym)
+>  {
+>         struct symbol_value newval, oldval;
+>         struct property *prop;
+> -       struct expr *e;
+> +       struct expr *expr;
+>
+>         if (!sym)
+>                 return;
+> @@ -469,7 +469,7 @@ void sym_calc_value(struct symbol *sym)
+>                 struct symbol *choice_sym;
+>
+>                 prop = sym_get_choice_prop(sym);
+> -               expr_list_for_each_sym(prop->expr, e, choice_sym) {
+> +               expr_list_for_each_sym(prop->expr, expr, choice_sym) {
+>                         if ((sym->flags & SYMBOL_WRITE) &&
+>                             choice_sym->visible != no)
+>                                 choice_sym->flags |= SYMBOL_WRITE;
+> @@ -899,94 +899,100 @@ struct symbol *sym_find(const char *name)
+>   * name to be expanded shall be prefixed by a '$'. Unknown symbol expands to
+>   * the empty string.
+>   */
+> -char *sym_expand_string_value(const char *in)
+> +char *sym_expand_string_value(const char *src)
+>  {
+> -       const char *src;
+> -       char *res;
+> -       size_t reslen;
+> +       const char *in;
+> +       char *res, *out;
+> +       size_t res_len, src_len;
+>
+>         /*
+> -        * Note: 'in' might come from a token that's about to be
+> +        * Note: 'src' might come from a token that'src about to be
+>          * freed, so make sure to always allocate a new string
+>          */
+> -       reslen = strlen(in) + 1;
+> -       res = xmalloc(reslen);
+> -       res[0] = '\0';
+> +       res_len = strlen(src) + 1;
+> +       res = xmalloc(res_len);
+> +       out = res;
+>
+> -       while ((src = strchr(in, '$'))) {
+> +       while ((in = strchr(src, '$'))) {
+>                 char *p, name[SYMBOL_MAXLENGTH];
+> -               const char *symval = "";
+> +               const char *sym_val = "";
+>                 struct symbol *sym;
+> -               size_t newlen;
+> +               size_t new_len, sym_len;
+>
+> -               strncat(res, in, src - in);
+> -               src++;
+> +               strscpy(out, src, in - src);
+> +               out += in - src;
+> +               in++;
+>
+>                 p = name;
+> -               while (isalnum(*src) || *src == '_')
+> -                       *p++ = *src++;
+> +               while (isalnum(*in) || *in == '_')
+> +                       *p++ = *in++;
+>                 *p = '\0';
+>
+>                 sym = sym_find(name);
+>                 if (sym != NULL) {
+>                         sym_calc_value(sym);
+> -                       symval = sym_get_string_value(sym);
+> +                       sym_val = sym_get_string_value(sym);
+>                 }
+>
+> -               newlen = strlen(res) + strlen(symval) + strlen(src) + 1;
+> -               if (newlen > reslen) {
+> -                       reslen = newlen;
+> -                       res = xrealloc(res, reslen);
+> +               sym_len = strlen(sym_val);
+> +               new_len = sym_len + strlen(res) + strlen(in) + 1;
+> +               if (new_len > res_len) {
+> +                       res_len = new_len;
+> +                       res = xrealloc(res, res_len);
+>                 }
+>
+> -               strcat(res, symval);
+> -               in = src;
+> +               strscpy(out, sym_val, sym_len);
+> +               out += sym_len;
+> +               src = in;
+>         }
+> -       strcat(res, in);
+> +       src_len = strlen(src);
+> +       strscpy(out, src, src_len);
+> +       out += src_len;
+> +       *out = '\0';
+>
+>         return res;
+>  }
+>
+> -const char *sym_escape_string_value(const char *in)
+> +const char *sym_escape_string_value(const char *src)
+>  {
+> -       const char *p;
+> -       size_t reslen;
+> -       char *res;
+> -       size_t l;
+> +       const char *in;
+> +       size_t res_len, in_len;
+> +       char *res, *out;
+>
+> -       reslen = strlen(in) + strlen("\"\"") + 1;
+> +       res_len = strlen(src) + strlen("\"\"") + 1;
+>
+> -       p = in;
+> +       in = src;
+>         for (;;) {
+> -               l = strcspn(p, "\"\\");
+> -               p += l;
+> +               in_len = strcspn(in, "\"\\");
+> +               in += in_len;
+>
+> -               if (p[0] == '\0')
+> +               if (*in == '\0')
+>                         break;
+>
+> -               reslen++;
+> -               p++;
+> +               res_len++;
+> +               in++;
+>         }
+>
+> -       res = xmalloc(reslen);
+> -       res[0] = '\0';
+> +       res = xmalloc(res_len);
+> +       out = res;
+> +       *out++ = '\"';
+>
+> -       strcat(res, "\"");
+> -
+> -       p = in;
+> +       in = src;
+>         for (;;) {
+> -               l = strcspn(p, "\"\\");
+> -               strncat(res, p, l);
+> -               p += l;
+> +               in_len = strcspn(in, "\"\\");
+> +               strscpy(out, in, in_len);
+> +               in += in_len;
+> +               out += in_len;
+>
+> -               if (p[0] == '\0')
+> +               if (*in == '\0')
+>                         break;
+>
+> -               strcat(res, "\\");
+> -               strncat(res, p++, 1);
+> +               *out++ = '\\';
+> +               *out++ = *in++;
+>         }
+> +       *out++ = '\"';
+> +       *out = '\0';
+>
+> -       strcat(res, "\"");
+>         return res;
+>  }
+>
+> @@ -1014,8 +1020,8 @@ static int sym_rel_comp(const void *sym1, const void *sym2)
+>          * exactly; if this is the case, we can't decide which comes first,
+>          * and we fallback to sorting alphabetically.
+>          */
+> -       exact1 = (s1->eo - s1->so) == strlen(s1->sym->name);
+> -       exact2 = (s2->eo - s2->so) == strlen(s2->sym->name);
+> +       exact1 = (s1->eo - s1->so) == (off_t)strlen(s1->sym->name);
+> +       exact2 = (s2->eo - s2->so) == (off_t)strlen(s2->sym->name);
+>         if (exact1 && !exact2)
+>                 return -1;
+>         if (!exact1 && exact2)
+> @@ -1390,31 +1396,33 @@ const char *prop_get_type_name(enum prop_type type)
+>         return "unknown";
+>  }
+>
+> -static void prop_add_env(const char *env)
+> +static void prop_add_env(const char *env_key)
+>  {
+>         struct symbol *sym, *sym2;
+>         struct property *prop;
+> -       char *p;
+> +       char *env_val;
+>
+>         sym = current_entry->sym;
+>         sym->flags |= SYMBOL_AUTO;
+>         for_all_properties(sym, prop, P_ENV) {
+>                 sym2 = prop_get_symbol(prop);
+> -               if (strcmp(sym2->name, env))
+> +               if (strcmp(sym2->name, env_key))
+>                         menu_warn(current_entry, "redefining environment symbol from %s",
+>                                   sym2->name);
+>                 return;
+>         }
+>
+>         prop = prop_alloc(P_ENV, sym);
+> -       prop->expr = expr_alloc_symbol(sym_lookup(env, SYMBOL_CONST));
+> +       prop->expr = expr_alloc_symbol(sym_lookup(env_key, SYMBOL_CONST));
+>
+>         sym_env_list = expr_alloc_one(E_LIST, sym_env_list);
+>         sym_env_list->right.sym = sym;
+> +       env_val = getenv(env_key);
+>
+> -       p = getenv(env);
+> -       if (p)
+> -               sym_add_default(sym, p);
+> -       else
+> -               menu_warn(current_entry, "environment variable %s undefined", env);
+> +       if (likely(env_val)) {
+> +               sym_add_default(sym, env_val);
+> +               return;
+> +       }
+> +
+> +       menu_warn(current_entry, "environment variable %s undefined", env_key);
+>  }
+> --
+> 2.16.2
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
