@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753293AbeCYLAY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 07:00:24 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37152 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752577AbeCYLAI (ORCPT
+        id S1753244AbeCYLAR (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 07:00:17 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38169 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752496AbeCYLAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 07:00:08 -0400
-X-Google-Smtp-Source: AG47ELtlZ0bGtUsB16/1hJ7HvxHB1Lw24XGa3wJQAbyrnEjIjTU4d5rlfbtenuUwnoSVo0YRtyea5g==
+        Sun, 25 Mar 2018 07:00:06 -0400
+X-Google-Smtp-Source: AIpwx4+1NhG8pBgcMlh8eQgpIXRUayADYya3w//sUelH1FOBqShcTv8ht0e/Tgu92THl2i93sOPhfg==
 From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 To: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
         dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 7/8] drm/amdgpu: add amdgpu_gem_attach
-Date: Sun, 25 Mar 2018 12:59:59 +0200
-Message-Id: <20180325110000.2238-7-christian.koenig@amd.com>
+Subject: [PATCH 4/8] dma-buf: add peer2peer flag
+Date: Sun, 25 Mar 2018 12:59:56 +0200
+Message-Id: <20180325110000.2238-4-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180325110000.2238-1-christian.koenig@amd.com>
 References: <20180325110000.2238-1-christian.koenig@amd.com>
@@ -27,54 +27,62 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check if we can do peer2peer on the PCIe bus.
+Add a peer2peer flag noting that the importer can deal with device
+resources which are not backed by pages.
 
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/dma-buf/dma-buf.c | 1 +
+ include/linux/dma-buf.h   | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
-index 2566268806c3..133596df0775 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
-@@ -134,6 +134,29 @@ amdgpu_gem_prime_import_sg_table(struct drm_device *dev,
- 	return obj;
- }
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index ffaa2f9a9c2c..f420225f93c6 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -565,6 +565,7 @@ struct dma_buf_attachment *dma_buf_attach(const struct dma_buf_attach_info *info
  
-+static int amdgpu_gem_attach(struct dma_buf *dma_buf, struct device *dev,
-+			     struct dma_buf_attachment *attach)
-+{
-+	struct drm_gem_object *obj = dma_buf->priv;
-+	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
-+	struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
-+
-+	if (!attach->peer2peer)
-+		return 0;
-+
-+	if (!dev_is_pci(dev))
-+		goto no_peer2peer;
-+
-+	if (!pci_peer_traffic_supported(adev->pdev, to_pci_dev(dev)))
-+		goto no_peer2peer;
-+
-+	return 0;
-+
-+no_peer2peer:
-+	attach->peer2peer = false;
-+	return 0;
-+}
-+
- static struct sg_table *
- amdgpu_gem_map_dma_buf(struct dma_buf_attachment *attach,
- 		       enum dma_data_direction dir)
-@@ -274,6 +297,7 @@ static int amdgpu_gem_begin_cpu_access(struct dma_buf *dma_buf,
- }
+ 	attach->dev = info->dev;
+ 	attach->dmabuf = dmabuf;
++	attach->peer2peer = info->peer2peer;
+ 	attach->priv = info->priv;
+ 	attach->invalidate = info->invalidate;
  
- static const struct dma_buf_ops amdgpu_dmabuf_ops = {
-+	.attach = amdgpu_gem_attach,
- 	.map_dma_buf = amdgpu_gem_map_dma_buf,
- 	.unmap_dma_buf = amdgpu_gem_unmap_dma_buf,
- 	.release = drm_gem_dmabuf_release,
+diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
+index 15dd8598bff1..1ef50bd9bc5b 100644
+--- a/include/linux/dma-buf.h
++++ b/include/linux/dma-buf.h
+@@ -313,6 +313,7 @@ struct dma_buf {
+  * @dmabuf: buffer for this attachment.
+  * @dev: device attached to the buffer.
+  * @node: list of dma_buf_attachment.
++ * @peer2peer: true if the importer can handle peer resources without pages.
+  * @priv: exporter specific attachment data.
+  *
+  * This structure holds the attachment information between the dma_buf buffer
+@@ -328,6 +329,7 @@ struct dma_buf_attachment {
+ 	struct dma_buf *dmabuf;
+ 	struct device *dev;
+ 	struct list_head node;
++	bool peer2peer;
+ 	void *priv;
+ 
+ 	/**
+@@ -392,6 +394,7 @@ struct dma_buf_export_info {
+  * @dmabuf:	the exported dma_buf
+  * @dev:	the device which wants to import the attachment
+  * @priv:	private data of importer to this attachment
++ * @peer2peer:	true if the importer can handle peer resources without pages
+  * @invalidate:	callback to use for invalidating mappings
+  *
+  * This structure holds the information required to attach to a buffer. Used
+@@ -401,6 +404,7 @@ struct dma_buf_attach_info {
+ 	struct dma_buf *dmabuf;
+ 	struct device *dev;
+ 	void *priv;
++	bool peer2peer;
+ 	void (*invalidate)(struct dma_buf_attachment *attach);
+ };
+ 
 -- 
 2.14.1
