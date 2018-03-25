@@ -1,29 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752297AbeCYWLA (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 18:11:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49407 "EHLO
+        id S1751903AbeCYWLy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:11:54 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43685 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751076AbeCYWK5 (ORCPT
+        with ESMTP id S1750788AbeCYWLx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 18:10:57 -0400
-Date: Sun, 25 Mar 2018 15:10:46 -0700
+        Sun, 25 Mar 2018 18:11:53 -0400
+Date: Sun, 25 Mar 2018 15:11:43 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-8vqax6wgfqohelot8j8zsfvs@git.kernel.org>
-Cc: mingo@kernel.org, jolsa@kernel.org, ak@linux.intel.com,
-        wangnan0@huawei.com, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, acme@redhat.com, yao.jin@linux.intel.com,
-        namhyung@kernel.org, dsahern@gmail.com, tglx@linutronix.de,
-        hpa@zytor.com
-Reply-To: acme@redhat.com, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        namhyung@kernel.org, dsahern@gmail.com, yao.jin@linux.intel.com,
-        mingo@kernel.org, jolsa@kernel.org, wangnan0@huawei.com,
-        ak@linux.intel.com
+Message-ID: <tip-kh5bbbgd7l4agv9oc5hnw0ui@git.kernel.org>
+Cc: yao.jin@linux.intel.com, wangnan0@huawei.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com, tglx@linutronix.de,
+        namhyung@kernel.org, jolsa@kernel.org, mingo@kernel.org,
+        dsahern@gmail.com, adrian.hunter@intel.com, ak@linux.intel.com
+Reply-To: mingo@kernel.org, jolsa@kernel.org, ak@linux.intel.com,
+        adrian.hunter@intel.com, dsahern@gmail.com, wangnan0@huawei.com,
+        yao.jin@linux.intel.com, namhyung@kernel.org, acme@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Move nr_events from annotate_browser
- to annotation struct
-Git-Commit-ID: 0553e83dc10831ac5127c86fa5a78af940fa92a2
+Subject: [tip:perf/core] perf annotate: Move pcnt_with() to the annotation
+ library
+Git-Commit-ID: 6af612d2b10593cdd8bba4427741a981bdd57c86
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,17 +34,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0553e83dc10831ac5127c86fa5a78af940fa92a2
-Gitweb:     https://git.kernel.org/tip/0553e83dc10831ac5127c86fa5a78af940fa92a2
+Commit-ID:  6af612d2b10593cdd8bba4427741a981bdd57c86
+Gitweb:     https://git.kernel.org/tip/6af612d2b10593cdd8bba4427741a981bdd57c86
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 15 Mar 2018 11:52:32 -0300
+AuthorDate: Thu, 15 Mar 2018 12:41:39 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 20 Mar 2018 13:19:28 -0300
 
-perf annotate: Move nr_events from annotate_browser to annotation struct
+perf annotate: Move pcnt_with() to the annotation library
 
-Paving the way to move more stuff out of TUI and into the generic
-annotation library.
+Out of the TUI code, since now all it touches is what is in 'struct
+annotation'.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -55,72 +53,75 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-8vqax6wgfqohelot8j8zsfvs@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-kh5bbbgd7l4agv9oc5hnw0ui@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/annotate.c | 11 ++++++-----
- tools/perf/util/annotate.h        |  1 +
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ tools/perf/ui/browsers/annotate.c | 14 +++-----------
+ tools/perf/util/annotate.h        |  5 +++++
+ 2 files changed, 8 insertions(+), 11 deletions(-)
 
 diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 353edff3fdbb..8a110765b328 100644
+index b20e0ae72466..3b030ee4505f 100644
 --- a/tools/perf/ui/browsers/annotate.c
 +++ b/tools/perf/ui/browsers/annotate.c
-@@ -41,7 +41,6 @@ struct annotate_browser {
- 	struct rb_node		   *curr_hot;
- 	struct annotation_line	   *selection;
- 	struct arch		   *arch;
--	int			    nr_events;
- 	u64			    start;
- 	int			    nr_asm_entries;
- 	int			    nr_entries;
-@@ -97,7 +96,9 @@ static int annotate_browser__set_jumps_percent_color(struct annotate_browser *br
- 
- static int annotate_browser__pcnt_width(struct annotate_browser *ab)
- {
--	return (annotate_browser__opts.show_total_period ? 12 : 7) * ab->nr_events;
-+	struct map_symbol *ms = ab->b.priv;
-+	struct annotation *notes = symbol__annotation(ms->sym);
-+	return (annotate_browser__opts.show_total_period ? 12 : 7) * notes->nr_events;
+@@ -96,13 +96,6 @@ static int annotate_browser__set_jumps_percent_color(struct annotate_browser *br
+ 	 return ui_browser__set_color(&browser->b, color);
  }
  
+-static int annotate_browser__pcnt_width(struct annotate_browser *ab)
+-{
+-	struct map_symbol *ms = ab->b.priv;
+-	struct annotation *notes = symbol__annotation(ms->sym);
+-	return (notes->options->show_total_period ? 12 : 7) * notes->nr_events;
+-}
+-
  static void disasm_line__write(struct disasm_line *dl, struct ui_browser *browser,
-@@ -145,7 +146,7 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
+ 			       char *bf, size_t size)
+ {
+@@ -145,7 +138,7 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
+ 			     (!current_entry || (browser->use_navkeypressed &&
+ 					         !browser->navkeypressed)));
+ 	int width = browser->width, printed;
+-	int i, pcnt_width = annotate_browser__pcnt_width(ab),
++	int i, pcnt_width = annotation__pcnt_width(notes),
+ 	       cycles_width = annotation__cycles_width(notes);
+ 	double percent_max = 0.0;
  	char bf[256];
- 	bool show_title = false;
+@@ -310,7 +303,7 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
+ 	struct map_symbol *ms = ab->b.priv;
+ 	struct symbol *sym = ms->sym;
+ 	struct annotation *notes = symbol__annotation(sym);
+-	u8 pcnt_width = annotate_browser__pcnt_width(ab);
++	u8 pcnt_width = annotation__pcnt_width(notes);
+ 	int width;
  
--	for (i = 0; i < ab->nr_events; i++) {
-+	for (i = 0; i < notes->nr_events; i++) {
- 		if (al->samples[i].percent > percent_max)
- 			percent_max = al->samples[i].percent;
- 	}
-@@ -159,7 +160,7 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
- 	}
+ 	/* PLT symbols contain external offsets */
+@@ -375,11 +368,10 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
  
- 	if (al->offset != -1 && percent_max != 0.0) {
--		for (i = 0; i < ab->nr_events; i++) {
-+		for (i = 0; i < notes->nr_events; i++) {
- 			ui_browser__set_percent_color(browser,
- 						al->samples[i].percent,
- 						current_entry);
-@@ -1099,7 +1100,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 	browser.addr_width = browser.target_width = browser.min_addr_width = hex_width(size);
- 	browser.max_addr_width = hex_width(sym->end);
- 	browser.jumps_width = width_jumps(browser.max_jump_sources);
--	browser.nr_events = nr_pcnt;
-+	notes->nr_events = nr_pcnt;
- 	browser.b.nr_entries = browser.nr_entries;
- 	browser.b.entries = &notes->src->source,
- 	browser.b.width += 18; /* Percentage */
+ static unsigned int annotate_browser__refresh(struct ui_browser *browser)
+ {
+-	struct annotate_browser *ab = container_of(browser, struct annotate_browser, b);
+ 	struct map_symbol *ms = browser->priv;
+ 	struct annotation *notes = symbol__annotation(ms->sym);
+ 	int ret = ui_browser__list_head_refresh(browser);
+-	int pcnt_width = annotate_browser__pcnt_width(ab);
++	int pcnt_width = annotation__pcnt_width(notes);
+ 
+ 	if (notes->options->jump_arrows)
+ 		annotate_browser__draw_current_jump(browser);
 diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 21fa5d7cd9e0..5d15cdf22fc9 100644
+index 5936605b5dac..17cd5d274fe5 100644
 --- a/tools/perf/util/annotate.h
 +++ b/tools/perf/util/annotate.h
-@@ -165,6 +165,7 @@ struct annotation {
- 	pthread_mutex_t		lock;
- 	u64			max_coverage;
- 	struct annotation_line	**offsets;
-+	int			nr_events;
- 	bool			have_cycles;
- 	struct annotated_source *src;
- };
+@@ -176,6 +176,11 @@ static inline int annotation__cycles_width(struct annotation *notes)
+ 	return notes->have_cycles ? ANNOTATION__IPC_WIDTH + ANNOTATION__CYCLES_WIDTH : 0;
+ }
+ 
++static inline int annotation__pcnt_width(struct annotation *notes)
++{
++	return (notes->options->show_total_period ? 12 : 7) * notes->nr_events;
++}
++
+ void annotation__compute_ipc(struct annotation *notes, size_t size);
+ 
+ static inline struct sym_hist *annotation__histogram(struct annotation *notes, int idx)
