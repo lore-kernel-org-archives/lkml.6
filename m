@@ -1,116 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeCYVKT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 17:10:19 -0400
-Received: from injection.crustytoothpaste.net ([192.241.140.119]:42616 "EHLO
-        injection.crustytoothpaste.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751142AbeCYVKQ (ORCPT
+        id S1752122AbeCYVZw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 17:25:52 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50277 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751208AbeCYVZt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 17:10:16 -0400
-Date: Sun, 25 Mar 2018 21:01:32 +0000
-From: "brian m. carlson" <sandals@crustytoothpaste.net>
-To: =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
-Cc: git@vger.kernel.org, Junio C Hamano <gitster@pobox.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] send-email: supply a --send-delay=1 by default
-Message-ID: <20180325210132.GE74743@genre.crustytoothpaste.net>
-Mail-Followup-To: "brian m. carlson" <sandals@crustytoothpaste.net>,
-        =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>,
-        git@vger.kernel.org, Junio C Hamano <gitster@pobox.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180325182803.30036-1-avarab@gmail.com>
- <20180325182803.30036-3-avarab@gmail.com>
+        Sun, 25 Mar 2018 17:25:49 -0400
+X-Google-Smtp-Source: AG47ELs8HSUZQcbjHp1+g5mNudyYmnfNfZMnbj/Mew7OQY2kR8/auMIWVBDzsKEiW4bTs3RW8v64+g==
+Date: Sun, 25 Mar 2018 23:25:41 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Masaki Ota <masaki.ota@jp.alps.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aaron Ma <aaron.ma@canonical.com>
+Subject: Re: [PATCH] Input: ALPS - fix DualPoint flag for 74 03 28 devices
+Message-ID: <20180325212541.5wzpvlkcbayfktrz@pali>
+References: <20171115063404.10066-1-aaron.ma@canonical.com>
+ <20171115083529.jmlpcj4td4evj3xl@pali>
+ <TYXPR01MB07195A0116F835764DE99882C72E0@TYXPR01MB0719.jpnprd01.prod.outlook.com>
+ <20180129225138.voujq54itw7yblbi@dtor-ws>
+ <CAKdAkRRjMrpdjuaivh-5bKCCgYpcySqDCKzbuvso1_x_+Qkp1w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZInfyf7laFu/Kiw7"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="hourbr4b45jzelti"
 Content-Disposition: inline
-In-Reply-To: <20180325182803.30036-3-avarab@gmail.com>
-X-Machine: Running on genre using GNU/Linux on x86_64 (Linux kernel
- 4.16.0-rc5-amd64)
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Spam-Score: -1.205 BAYES_00,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,RDNS_NONE,SPF_FAIL,URIBL_BLOCKED
+In-Reply-To: <CAKdAkRRjMrpdjuaivh-5bKCCgYpcySqDCKzbuvso1_x_+Qkp1w@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ZInfyf7laFu/Kiw7
+--hourbr4b45jzelti
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 25, 2018 at 06:28:03PM +0000, =C3=86var Arnfj=C3=B6r=C3=B0 Bjar=
-mason wrote:
-> The earlier change to add this option described the problem this
-> option is trying to solve.
+On Tuesday 20 March 2018 11:47:26 Dmitry Torokhov wrote:
+> On Mon, Jan 29, 2018 at 2:51 PM, dmitry.torokhov@gmail.com
+> <dmitry.torokhov@gmail.com> wrote:
+> > Hi,
+> >
+> > On Thu, Nov 16, 2017 at 07:27:02AM +0000, Masaki Ota wrote:
+> >> Hi, Pali, Aaron,
+> >>
+> >> Current code is correct device setting, previous code is wrong.
+> >> If the trackstick does not work(DUALPOINT flag disable), Device Firmwa=
+re setting is wrong.
+> >>
+> >> But recently I received the same report from Thinkpad L570 user, and I=
+ checked this device and found this device Firmware setting is wrong. Sorry=
+ for our mistake.
+> >> Is your laptop L570 ?
+> >>
+> >> I will add code that supports the trackstick for this device.
+> >
+> > Sorry for resurrecting this old thread, I am just trying to understand
+> > what went wrong here. Is the sequence of "f0 f0 e9" and "ea ea e9" is
+> > important in getting the correct OTP data and we originally got this
+> > order wrong? It is not clear from the original patch and discussion that
+> > this change was intentional.
 >=20
-> This turns it on by default with a value of 1 second, which'll
-> hopefully solve it, and if not user reports as well as the
-> X-Mailer-Send-Delay header should help debug it.
+> Could I please get an answer to my question?
 >=20
-> I think the trade-off of slowing down E-Mail sending to turn this on
-> makes sense because:
->=20
->  * GMail is a really common client, git.git's own unique authors by
->    %aE are ~30% @gmail.com, ~20% for linux.git. That's just patch
->    submitters, my guess is this it's much more common among those who
->    mostly read the list, and those users who aren't using mu4e / mutt
->    etc. anyway.
->=20
->  * There's really no point in having this feature at all if it's not
->    made the default, since the entire point is to be able to read a
->    list like the git ML or the LKML and have patches from others show
->    up in order.
->=20
->  * I don't think anyone's really sensitive to the sending part of
->    send-email taking longer. You just choose "all" and then switch to
->    another terminal while it does its thing if you have a huge series,
->    and for 1-3 patches I doubt anyone would notice this anyway.
+> Thanks!
 
-I'm not sure that this is going to have the effect you want it to have.
-Let me give an example to demonstrate why.
+Masaki, this question is for you =E2=86=91=E2=86=91=E2=86=91
 
-If I send a series to the list, in order for this to work, you need my
-SMTP server (Postfix) to essentially send mails slowly enough to
-vger.kernel.org (ZMailer) that it doesn't batch them when it sends them
-to GMail.  The problem is that with my mail server, due to filtering and
-such, already takes at least a second to accept, process, and relay
-submitted messages.  vger still batched them and delivered them back to
-me out of order.  This will be even worse with large series.
+> >
+> > Thanks.
+> >
+> >>
+> >> Best Regards,
+> >> Masaki Ota
+> >> -----Original Message-----
+> >> From: Pali Roh=C3=A1r [mailto:pali.rohar@gmail.com]
+> >> Sent: Wednesday, November 15, 2017 5:35 PM
+> >> To: =E5=A4=AA=E7=94=B0 =E7=9C=9F=E5=96=9C Masaki Ota <masaki.ota@jp.al=
+ps.com>
+> >> Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; dmitry.=
+torokhov@gmail.com; Aaron Ma <aaron.ma@canonical.com>
+> >> Subject: Re: [PATCH] Input: ALPS - fix DualPoint flag for 74 03 28 dev=
+ices
+> >>
+> >> On Wednesday 15 November 2017 14:34:04 Aaron Ma wrote:
+> >> > There is a regression of commit 4a646580f793 ("Input: ALPS - fix
+> >> > two-finger scroll breakage"), ALPS device fails with log:
+> >> >
+> >> > psmouse serio1: alps: Rejected trackstick packet from non DualPoint
+> >> > device
+> >> >
+> >> > ALPS device with id "74 03 28" report OTP[0] data 0xCE after commit
+> >> > 4a646580f793, after restore the OTP reading order, it becomes to 0x10
+> >> > as before and reports the right flag.
+> >> >
+> >> > Fixes: 4a646580f793 ("Input: ALPS - fix two-finger scroll breakage")
+> >> > Cc: <stable@vger.kernel.org>
+> >> > Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
+> >> > ---
+> >> >  drivers/input/mouse/alps.c | 4 ++--
+> >> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >> >
+> >> > diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
+> >> > index 579b899add26..c59b8f7ca2fc 100644
+> >> > --- a/drivers/input/mouse/alps.c
+> >> > +++ b/drivers/input/mouse/alps.c
+> >> > @@ -2562,8 +2562,8 @@ static int alps_set_defaults_ss4_v2(struct
+> >> > psmouse *psmouse,
+> >> >
+> >> >     memset(otp, 0, sizeof(otp));
+> >> >
+> >> > -   if (alps_get_otp_values_ss4_v2(psmouse, 1, &otp[1][0]) ||
+> >> > -       alps_get_otp_values_ss4_v2(psmouse, 0, &otp[0][0]))
+> >> > +   if (alps_get_otp_values_ss4_v2(psmouse, 0, &otp[0][0]) ||
+> >> > +       alps_get_otp_values_ss4_v2(psmouse, 1, &otp[1][0]))
+> >> >             return -1;
+> >> >
+> >> >     alps_update_device_area_ss4_v2(otp, priv);
+> >>
+> >> Masaki Ota, please look at this patch as it partially revert your comm=
+it
+> >> 4a646580f793 ("Input: ALPS - fix two-finger scroll breakage"). Somethi=
+ng smells here.
+> >>
+> >> --
+> >> Pali Roh=C3=A1r
+> >> pali.rohar@gmail.com
+> >
+> > --
+> > Dmitry
+>=20
+>=20
+>=20
 
-You are also assuming that my mail server will not have batched them and
-delivered them out of order, which it might well do, since Postfix uses
-a connection cache to machines that don't do STARTTLS (which, much to my
-annoyance, vger doesn't offer).
-
-In short, I don't think this is going to be especially helpful because
-it won't change the status quo for a lot of senders.  You'd have to
-insert some significant delay in order to get the effect you desire, and
-even then things could still be delivered out of order.
 --=20
-brian m. carlson / brian with sandals: Houston, Texas, US
-https://www.crustytoothpaste.net/~bmc | My opinion only
-OpenPGP: https://keybase.io/bk2204
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
---ZInfyf7laFu/Kiw7
+--hourbr4b45jzelti
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.2.5 (GNU/Linux)
 
-iQIzBAABCgAdFiEEX8OngXdrJt+H9ww3v1NdgR9S9osFAlq4DiwACgkQv1NdgR9S
-9otDQw/9H8FPstoFfE9ZLLry8V6c9Wxx61F1h/GrR1fWcMsa111DVlEvYjb4Fq2q
-XjG7MCTPbQAJ9fPEdNHyqMdczGKdrWU4MYEl39pDUBCCiAL3X9WsHZps/glGxuQx
-yVJ7D5fHKHY8Xh3Ovps9cdpes3it9I5AzA0wMj7oY1s18A8VTKH5vVb/hwEEP/lw
-NiqrGAucbr8I1t05Y3IIqpFAY7HAuwk4Ik2nIS9cfGl9WpjkmBF9lJaMNp49KB0A
-YvqOAe6fsJRrqr1BZ/06RaTQPxmPOi/hdVep8qIBmna3GBmfCv/wxaUTweYeUkib
-XTAI8Q/muLzW4MlSFifu4L7XKDW+zlPyKGCCzcFZ9ENup4xr87gWuO87FEvKgq8/
-+p9855UDEOQeCL2ZrvcdXCtiuBuXGbzuhYEGXty5TejIhE7i+osY+19gxomAhEzc
-NZaCtgb/dxhIywniqKUCCL+woFVY7lQjsMZldFKa1MIkhmv3iG5VbNWYDTZj1M46
-NXiGRYogRQlq8TTMf/B8OLSnHRWicNJs8aIqGFHfrCMg6amEipCOEBK+q7FOgu2c
-BzolRL5y53O2MR2qHSSg0mGPzd/ENqNQePFy9wT//GuHapEUFMODDfRcyh36VyUx
-9n5z9u7bQ+ewlq5pNk4bUA7ffDbYcyK1ZvANmeiOu0cZeOdrm6k=
-=NQDg
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWrgT0wAKCRCL8Mk9A+RD
+UuaRAJ4p664SWEJfFgtN6lE4jWv+S26AggCfec/0mzYbg27Qd8Bf4d7TousmJtQ=
+=9V3V
 -----END PGP SIGNATURE-----
 
---ZInfyf7laFu/Kiw7--
+--hourbr4b45jzelti--
