@@ -1,249 +1,357 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753977AbeCYS3B (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 14:29:01 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41937 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753703AbeCYS2e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 14:28:34 -0400
-X-Google-Smtp-Source: AG47ELu+YJQcB5EXyxiDegBBKt76ApEwI6yK4Z0cMaJ7JchSNYKpG0FV2eUV14h8yjBdngoiN7N9lA==
-From: =?UTF-8?q?=C3=86var=20Arnfj=C3=B6r=C3=B0=20Bjarmason?=
-        <avarab@gmail.com>
-To: git@vger.kernel.org
-Cc: Junio C Hamano <gitster@pobox.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?q?=C3=86var=20Arnfj=C3=B6r=C3=B0=20Bjarmason?=
-        <avarab@gmail.com>
-Subject: [PATCH 1/2] send-email: add an option to impose delay sent E-Mails
-Date: Sun, 25 Mar 2018 18:28:02 +0000
-Message-Id: <20180325182803.30036-2-avarab@gmail.com>
-X-Mailer: git-send-email 2.17.0.rc1.37.g46b2b28759
-In-Reply-To: <20180325182803.30036-1-avarab@gmail.com>
-References: <20180325182803.30036-1-avarab@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer-Send-Delay: 1
+        id S1753887AbeCYSll (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 14:41:41 -0400
+Received: from foss.arm.com ([217.140.101.70]:34444 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751449AbeCYSlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 14:41:37 -0400
+From: Yael Chemla <yael.chemla@foss.arm.com>
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        ofir.drang@gmail.com, Yael Chemla <yael.chemla@arm.com>
+Cc: Yael Chemla <yael.chemla@foss.arm.com>
+Subject: [PATCH 1/2] md: dm-verity: aggregate crypto API calls
+Date: Sun, 25 Mar 2018 19:41:29 +0100
+Message-Id: <1522003290-27243-1-git-send-email-yael.chemla@foss.arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a --send-delay option with a corresponding sendemail.smtpSendDelay
-configuration variable. When set to e.g. 2, this causes send-email to
-sleep 2 seconds before sending the next E-Mail. We'll only sleep
-between sends, not before the first send, or after the last.
+ Current implementation makes multiple crypto API calls per block
+ implementation makes multiple crypto API calls per single block, 
+ forcing underlying crypto tfm implementation to "stop & go",
+ leading to under utilization of HW engines.
+ To fix it unify calls to crypto init/update/final into a digest call
+ with a single sg which contains multiple buffers.
+ This is also needed as an enabler for the next patch in the series.
 
-This option is useful because certain popular E-Mail clients
-completely ignore the "Date" header, which format-patch is careful to
-set such that the patches will be displayed in order, and instead sort
-by the time the E-mail was received.
-
-Google's GMail is a good example of such a client. It ostensibly sorts
-by some approximation of received time (although not by any "Received"
-header). It's more usual than not to see patches showing out of order
-in GMail. To take a few examples of orders seen on recent patches on
-the Git mailing list:
-
-    1 -> 3 -> 4 -> 2 -> 8 -> 7 (completion by Nguyễn Thái Ngọc Duy)
-    2 -> 0 -> 1 -> 3 (pack search by Derrick Stolee)
-    3 -> 2 -> 1 (fast-import by Jameson Miller)
-    2 -> 3 -> 1 -> 5 -> 4 -> 6 (diff-highlight by Jeff King)
-
-My own patches to Git are always in order because this bothers me
-enough that I never use the "all" option to send-email, instead I wait
-a second and manually type "y" for each one, so I have years of
-anecdotal data showing that this works with GMail. This new option
-will allow me to set a config to do what I've been doing manually.
-
-I've also noticed that E-Mail from some other contributors tends to be
-in order, e.g. Michael Haggerty's usually are. When I asked him about
-he just uses the "all" option, but digging further revealed that the
-details of his mail routing were imposing a similar delay, so his
-mails similarly arrived at Google with some delay.
-
-The reason to add the new "X-Mailer-Send-Delay" header is to make it
-easy to tell what the imposed delay was, if any. A subsequent change
-will seek to make this option the default, being able to see from the
-headers how long the sleep was.
-
-The reason for why the getopt format is "send-delay=s" instead of
-"send-delay=d" is because we're doing manual validation of the value
-we get passed, which getopt would corrupt in cases of e.g. float
-values before we could show a sensible error message.
-
-Signed-off-by: Ævar Arnfjörð Bjarmason <avarab@gmail.com>
+ 
+Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
 ---
- Documentation/config.txt         |  6 ++++
- Documentation/git-send-email.txt |  4 +++
- git-send-email.perl              | 14 ++++++--
- t/t9001-send-email.sh            | 55 ++++++++++++++++++++++++++++++++
- 4 files changed, 77 insertions(+), 2 deletions(-)
+ drivers/md/dm-verity-target.c | 220 ++++++++++++++++++++++++------------------
+ 1 file changed, 127 insertions(+), 93 deletions(-)
 
-diff --git a/Documentation/config.txt b/Documentation/config.txt
-index ce9102cea8..f155d349c0 100644
---- a/Documentation/config.txt
-+++ b/Documentation/config.txt
-@@ -3068,6 +3068,12 @@ sendemail.smtpReloginDelay::
- 	Seconds wait before reconnecting to smtp server.
- 	See also the `--relogin-delay` option of linkgit:git-send-email[1].
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index aedb822..a281b83 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -35,10 +35,18 @@
  
-+sendemail.smtpSendDelay::
-+	Seconds wait in between message sending before sending another
-+	message. Set it to 0 to impose no extra delay, defaults to 0.
-++
-+See also the `--send-delay` option of linkgit:git-send-email[1].
+ #define DM_VERITY_OPTS_MAX		(2 + DM_VERITY_OPTS_FEC)
+ 
++/* only two elements in static scatter list: salt and data */
++#define SG_FIXED_ITEMS	2
 +
- showbranch.default::
- 	The default set of branches for linkgit:git-show-branch[1].
- 	See linkgit:git-show-branch[1].
-diff --git a/Documentation/git-send-email.txt b/Documentation/git-send-email.txt
-index 71ef97ba9b..169ad78a2b 100644
---- a/Documentation/git-send-email.txt
-+++ b/Documentation/git-send-email.txt
-@@ -268,6 +268,10 @@ must be used for each option.
- 	with --batch-size option.  Defaults to the `sendemail.smtpReloginDelay`
- 	configuration variable.
+ static unsigned dm_verity_prefetch_cluster = DM_VERITY_DEFAULT_PREFETCH_SIZE;
  
-+--send-delay=<int>::
-+	Wait $<int> between sending emails. Defaults to the
-+	`sendemail.smtpSendDelay` configuration variable.
+ module_param_named(prefetch_cluster, dm_verity_prefetch_cluster, uint, S_IRUGO | S_IWUSR);
+ 
++enum salt_location {
++	START_SG,
++	END_SG
++};
 +
- Automating
- ~~~~~~~~~~
+ struct dm_verity_prefetch_work {
+ 	struct work_struct work;
+ 	struct dm_verity *v;
+@@ -92,82 +100,68 @@ static sector_t verity_position_at_level(struct dm_verity *v, sector_t block,
+ 	return block >> (level * v->hash_per_block_bits);
+ }
  
-diff --git a/git-send-email.perl b/git-send-email.perl
-index 2fa7818ca9..013277ede2 100755
---- a/git-send-email.perl
-+++ b/git-send-email.perl
-@@ -89,6 +89,7 @@ git send-email --dump-aliases
-     --batch-size            <int>  * send max <int> message per connection.
-     --relogin-delay         <int>  * delay <int> seconds between two successive login.
-                                      This option can only be used with --batch-size
-+    --send-delay            <int>  * ensure that <int> seconds pass between two successive sends.
+-static int verity_hash_update(struct dm_verity *v, struct ahash_request *req,
+-				const u8 *data, size_t len,
+-				struct crypto_wait *wait)
+-{
+-	struct scatterlist sg;
+-
+-	sg_init_one(&sg, data, len);
+-	ahash_request_set_crypt(req, &sg, NULL, len);
+-
+-	return crypto_wait_req(crypto_ahash_update(req), wait);
+-}
+-
+ /*
+- * Wrapper for crypto_ahash_init, which handles verity salting.
++ * verity_is_salt_required - check if according to verity version and
++ * verity salt's size if there's a need to insert a salt.
++ * note: salt goes last for 0th version and first for all others
++ * @where - START_SG - before buffer / END_SG - after buffer
+  */
+-static int verity_hash_init(struct dm_verity *v, struct ahash_request *req,
+-				struct crypto_wait *wait)
++static inline bool verity_is_salt_required(struct dm_verity *v,
++		enum salt_location where)
+ {
+-	int r;
++	/* No salt, no problem */
++	if (likely(!v->salt_size))
++		return false;
  
-   Automating:
-     --identity              <str>  * Use the sendemail.<id> options.
-@@ -225,7 +226,7 @@ my ($cover_cc, $cover_to);
- my ($to_cmd, $cc_cmd);
- my ($smtp_server, $smtp_server_port, @smtp_server_options);
- my ($smtp_authuser, $smtp_encryption, $smtp_ssl_cert_path);
--my ($batch_size, $relogin_delay);
-+my ($batch_size, $relogin_delay, $send_delay);
- my ($identity, $aliasfiletype, @alias_files, $smtp_domain, $smtp_auth);
- my ($validate, $confirm);
- my (@suppress_cc);
-@@ -259,6 +260,7 @@ my %config_settings = (
-     "smtpauth" => \$smtp_auth,
-     "smtpbatchsize" => \$batch_size,
-     "smtprelogindelay" => \$relogin_delay,
-+    "smtpsenddelay" => \$send_delay,
-     "to" => \@initial_to,
-     "tocmd" => \$to_cmd,
-     "cc" => \@initial_cc,
-@@ -373,6 +375,7 @@ $rc = GetOptions(
- 		    "no-xmailer" => sub {$use_xmailer = 0},
- 		    "batch-size=i" => \$batch_size,
- 		    "relogin-delay=i" => \$relogin_delay,
-+		    "send-delay=s" => \$send_delay,
- 	 );
+-	ahash_request_set_tfm(req, v->tfm);
+-	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
+-					CRYPTO_TFM_REQ_MAY_BACKLOG,
+-					crypto_req_done, (void *)wait);
+-	crypto_init_wait(wait);
+-
+-	r = crypto_wait_req(crypto_ahash_init(req), wait);
+-
+-	if (unlikely(r < 0)) {
+-		DMERR("crypto_ahash_init failed: %d", r);
+-		return r;
+-	}
+-
+-	if (likely(v->salt_size && (v->version >= 1)))
+-		r = verity_hash_update(v, req, v->salt, v->salt_size, wait);
+-
+-	return r;
++	if (likely(v->version))
++		return (where == START_SG);
++	else
++		return (where == END_SG);
+ }
  
- usage() if $help;
-@@ -484,6 +487,8 @@ if ($confirm_unconfigured) {
- };
- die sprintf(__("Unknown --confirm setting: '%s'\n"), $confirm)
- 	unless $confirm =~ /^(?:auto|cc|compose|always|never)/;
-+die sprintf(__("Invalid --send-delay setting: '%s'\n"), $send_delay)
-+	if defined $send_delay and $send_delay !~ /^[0-9]+$/s;
+-static int verity_hash_final(struct dm_verity *v, struct ahash_request *req,
+-			     u8 *digest, struct crypto_wait *wait)
++/*
++ * verity_add_salt - add verity's salt into a scatterlist
++ * @nents - number of elements already inserted into sg
++ * @total_len - total number of items in scatterlist array
++ */
++static void verity_add_salt(struct dm_verity *v, struct scatterlist *sg,
++	unsigned int *nents, unsigned int *total_len)
+ {
+-	int r;
+-
+-	if (unlikely(v->salt_size && (!v->version))) {
+-		r = verity_hash_update(v, req, v->salt, v->salt_size, wait);
+-
+-		if (r < 0) {
+-			DMERR("verity_hash_final failed updating salt: %d", r);
+-			goto out;
+-		}
+-	}
+-
+-	ahash_request_set_crypt(req, NULL, digest, 0);
+-	r = crypto_wait_req(crypto_ahash_final(req), wait);
+-out:
+-	return r;
++	sg_set_buf(&sg[*nents], v->salt, v->salt_size);
++	(*nents)++;
++	(*total_len) += v->salt_size;
+ }
  
- # Debugging, print out the suppressions.
- if (0) {
-@@ -1552,7 +1557,8 @@ $references = $initial_in_reply_to || '';
- $subject = $initial_subject;
- $message_num = 0;
+ int verity_hash(struct dm_verity *v, struct ahash_request *req,
+ 		const u8 *data, size_t len, u8 *digest)
+ {
+-	int r;
++	int r, total_len = 0, indx = 0;
++	struct scatterlist sg[SG_FIXED_ITEMS];
+ 	struct crypto_wait wait;
  
--foreach my $t (@files) {
-+foreach my $i (0 .. $#files) {
-+	my $t = $files[$i];
- 	open my $fh, "<", $t or die sprintf(__("can't open file %s"), $t);
+-	r = verity_hash_init(v, req, &wait);
+-	if (unlikely(r < 0))
+-		goto out;
++	sg_init_table(sg, SG_FIXED_ITEMS);
++	ahash_request_set_tfm(req, v->tfm);
++	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
++					CRYPTO_TFM_REQ_MAY_BACKLOG,
++					crypto_req_done, (void *)&wait);
++	if (verity_is_salt_required(v, START_SG))
++		verity_add_salt(v, sg, &indx, &total_len);
  
- 	my $author = undef;
-@@ -1732,6 +1738,10 @@ foreach my $t (@files) {
- 	if (defined $xfer_encoding or $has_content_type) {
- 		unshift @xh, 'MIME-Version: 1.0' unless $has_mime_version;
- 	}
-+	if ($send_delay && $i > 0) {
-+		push @xh, "X-Mailer-Send-Delay: $send_delay";
-+		sleep $send_delay;
+-	r = verity_hash_update(v, req, data, len, &wait);
+-	if (unlikely(r < 0))
+-		goto out;
++	sg_set_buf(&sg[indx], data, len);
++	indx++;
++	total_len += len;
++	if (verity_is_salt_required(v, END_SG))
++		verity_add_salt(v, sg, &indx, &total_len);
+ 
+-	r = verity_hash_final(v, req, digest, &wait);
++	ahash_request_set_crypt(req, sg, digest, len + v->salt_size);
++	crypto_init_wait(&wait);
+ 
+-out:
++	r = crypto_wait_req(crypto_ahash_digest(req), &wait);
++
++	if (unlikely(r < 0)) {
++		DMERR("crypto_ahash_digest failed: %d", r);
++		return r;
 +	}
+ 	return r;
+ }
  
- 	$needs_confirm = (
- 		$confirm eq "always" or
-diff --git a/t/t9001-send-email.sh b/t/t9001-send-email.sh
-index e80eacbb1b..fafa61c5d6 100755
---- a/t/t9001-send-email.sh
-+++ b/t/t9001-send-email.sh
-@@ -1702,6 +1702,61 @@ test_expect_success '--dump-aliases must be used alone' '
- 	test_must_fail git send-email --dump-aliases --to=janice@example.com -1 refs/heads/accounting
- '
+@@ -347,44 +341,54 @@ int verity_hash_for_block(struct dm_verity *v, struct dm_verity_io *io,
+ /*
+  * Calculates the digest for the given bio
+  */
+-int verity_for_io_block(struct dm_verity *v, struct dm_verity_io *io,
+-			struct bvec_iter *iter, struct crypto_wait *wait)
++void verity_for_io_block(struct dm_verity *v, struct dm_verity_io *io,
++			struct bvec_iter *iter, struct scatterlist *sg,
++			unsigned int *nents, unsigned int *total_len)
+ {
+ 	unsigned int todo = 1 << v->data_dev_block_bits;
+ 	struct bio *bio = dm_bio_from_per_bio_data(io, v->ti->per_io_data_size);
+-	struct scatterlist sg;
+-	struct ahash_request *req = verity_io_hash_req(v, io);
  
-+test_expect_success '--send-delay expects whole non-negative seconds' '
-+	test_must_fail git send-email --send-delay=-1 HEAD~ 2>errors &&
-+	test_i18ngrep "Invalid --send-delay setting" errors &&
-+	test_must_fail git send-email --send-delay=1.5 HEAD~ 2>errors &&
-+	test_i18ngrep "Invalid --send-delay setting" errors &&
-+	test_must_fail git -c sendemail.smtpSendDelay=-1 send-email HEAD~ 2>errors &&
-+	test_i18ngrep "Invalid --send-delay setting" errors &&
-+	test_must_fail git -c sendemail.smtpSendDelay=1.5 send-email HEAD~ 2>errors &&
-+	test_i18ngrep "Invalid --send-delay setting" errors
-+'
+ 	do {
+-		int r;
+ 		unsigned int len;
+ 		struct bio_vec bv = bio_iter_iovec(bio, *iter);
+ 
+-		sg_init_table(&sg, 1);
+-
+ 		len = bv.bv_len;
+ 
+ 		if (likely(len >= todo))
+ 			len = todo;
+-		/*
+-		 * Operating on a single page at a time looks suboptimal
+-		 * until you consider the typical block size is 4,096B.
+-		 * Going through this loops twice should be very rare.
+-		 */
+-		sg_set_page(&sg, bv.bv_page, len, bv.bv_offset);
+-		ahash_request_set_crypt(req, &sg, NULL, len);
+-		r = crypto_wait_req(crypto_ahash_update(req), wait);
+-
+-		if (unlikely(r < 0)) {
+-			DMERR("verity_for_io_block crypto op failed: %d", r);
+-			return r;
+-		}
++		sg_set_page(&sg[*nents], bv.bv_page, len, bv.bv_offset);
+ 
+ 		bio_advance_iter(bio, iter, len);
+ 		todo -= len;
++		(*nents)++;
++		(*total_len) += len;
+ 	} while (todo);
++}
+ 
+-	return 0;
++/* calculate how many buffers required to accomudate bio_vec starting
++ * from iter
++ */
++unsigned int verity_calc_buffs_for_bv(struct dm_verity *v,
++	struct dm_verity_io *io, struct bvec_iter iter)
++{
++	unsigned int todo = 1 << v->data_dev_block_bits;
++	struct bio *bio = dm_bio_from_per_bio_data(io, v->ti->per_io_data_size);
++	unsigned int buff_count = 0;
 +
-+test_expect_success $PREREQ "there is no default --send-delay" '
-+	clean_fake_sendmail &&
-+	rm -fr outdir &&
-+	git format-patch -3 -o outdir &&
-+	git send-email \
-+		--from="Example <nobody@example.com>" \
-+		--to=nobody@example.com \
-+		--smtp-server="$(pwd)/fake.sendmail" \
-+		outdir/*.patch \
-+		2>stderr >stdout &&
-+	test $(grep -c "X-Mailer:" stdout) = 3 &&
-+	test $(grep -c "X-Mailer-Send-Delay:" stdout) = 0
-+'
++	do {
++		unsigned int len;
++		struct bio_vec bv = bio_iter_iovec(bio, iter);
 +
-+test_expect_success $PREREQ '--send-delay adds a X-Mailer-Send-Delay header to affected E-Mails' '
-+	clean_fake_sendmail &&
-+	rm -fr outdir &&
-+	git format-patch -3 -o outdir &&
-+	git send-email \
-+		--from="Example <nobody@example.com>" \
-+		--to=nobody@example.com \
-+		--smtp-server="$(pwd)/fake.sendmail" \
-+		--send-delay=2 \
-+		outdir/*.patch \
-+		2>stderr >stdout &&
-+	test $(grep -c "X-Mailer:" stdout) = 3 &&
-+	test $(grep -c "X-Mailer-Send-Delay:" stdout) = 2
-+'
++		len = bv.bv_len;
++		if (likely(len >= todo))
++			len = todo;
 +
-+test_expect_success $PREREQ '--send-delay=0 disables any imposed delay on E-Mail sending' '
-+	clean_fake_sendmail &&
-+	rm -fr outdir &&
-+	git format-patch -3 -o outdir &&
-+	git -c sendemail.smtpSendDelay=3 send-email \
-+		--from="Example <nobody@example.com>" \
-+		--to=nobody@example.com \
-+		--smtp-server="$(pwd)/fake.sendmail" \
-+		--send-delay=0 \
-+		outdir/*.patch \
-+		2>stderr >stdout &&
-+	test $(grep -c "X-Mailer:" stdout) = 3 &&
-+	test $(grep -c "X-Mailer-Send-Delay:" stdout) = 0
-+'
++		bio_advance_iter(bio, &iter, len);
++		todo -= len;
++		buff_count++;
++	} while (todo);
 +
- test_sendmail_aliases () {
- 	msg="$1" && shift &&
- 	expect="$@" &&
++	return buff_count;
+ }
+ 
+ /*
+@@ -442,16 +446,30 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 	struct bvec_iter start;
+ 	unsigned b;
+ 	struct crypto_wait wait;
++	struct scatterlist *sg;
++	int r;
+ 
+ 	for (b = 0; b < io->n_blocks; b++) {
+-		int r;
++		unsigned int nents;
++		unsigned int total_len = 0;
++		unsigned int num_of_buffs = 0;
+ 		struct ahash_request *req = verity_io_hash_req(v, io);
+ 
++		/* an extra one for the salt buffer */
++		num_of_buffs = verity_calc_buffs_for_bv(v, io, io->iter) + 1;
++		WARN_ON(num_of_buffs < 1);
++
++		sg = kmalloc_array(num_of_buffs, sizeof(struct scatterlist),
++				     GFP_KERNEL);
++		if (!sg)
++			return -ENOMEM;
++		sg_init_table(sg, num_of_buffs);
++
+ 		r = verity_hash_for_block(v, io, io->block + b,
+ 					  verity_io_want_digest(v, io),
+ 					  &is_zero);
+ 		if (unlikely(r < 0))
+-			return r;
++			goto err_memfree;
+ 
+ 		if (is_zero) {
+ 			/*
+@@ -461,25 +479,37 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 			r = verity_for_bv_block(v, io, &io->iter,
+ 						verity_bv_zero);
+ 			if (unlikely(r < 0))
+-				return r;
++				goto err_memfree;
+ 
+ 			continue;
+ 		}
+ 
+-		r = verity_hash_init(v, req, &wait);
+-		if (unlikely(r < 0))
+-			return r;
++		ahash_request_set_tfm(req, v->tfm);
++		ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
++					CRYPTO_TFM_REQ_MAY_BACKLOG,
++					crypto_req_done, (void *)&wait);
++		nents = 0;
++		total_len = 0;
++		if (verity_is_salt_required(v, START_SG))
++			verity_add_salt(v, sg, &nents, &total_len);
+ 
+ 		start = io->iter;
+-		r = verity_for_io_block(v, io, &io->iter, &wait);
+-		if (unlikely(r < 0))
+-			return r;
++		verity_for_io_block(v, io, &io->iter, sg, &nents, &total_len);
++		if (verity_is_salt_required(v, END_SG))
++			verity_add_salt(v, sg, &nents, &total_len);
++		/*
++		 * need to mark end of chain, since we might have allocated
++		 * more than we actually use
++		 */
++		sg_mark_end(&sg[nents-1]);
++		ahash_request_set_crypt(req, sg, verity_io_real_digest(v, io),
++				total_len);
++		crypto_init_wait(&wait);
++		r = crypto_wait_req(crypto_ahash_digest(req), &wait);
+ 
+-		r = verity_hash_final(v, req, verity_io_real_digest(v, io),
+-					&wait);
+ 		if (unlikely(r < 0))
+-			return r;
+-
++			goto err_memfree;
++		kfree(sg);
+ 		if (likely(memcmp(verity_io_real_digest(v, io),
+ 				  verity_io_want_digest(v, io), v->digest_size) == 0))
+ 			continue;
+@@ -492,6 +522,10 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 	}
+ 
+ 	return 0;
++
++err_memfree:
++	kfree(sg);
++	return r;
+ }
+ 
+ /*
 -- 
-2.16.2.804.g6dcf76e118
+2.7.4
