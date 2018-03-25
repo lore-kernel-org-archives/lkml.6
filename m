@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeCYLAL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 07:00:11 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52971 "EHLO
+        id S1753339AbeCYLBY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 07:01:24 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34301 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752115AbeCYLAF (ORCPT
+        with ESMTP id S1752628AbeCYLAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 07:00:05 -0400
-X-Google-Smtp-Source: AG47ELtTajhgf4vVO+MNX1D19whZMQ+jh4WxoGcR+2Pq9cFB8V50wfs+L+ZvzO0SMj/5SuyobjFCMQ==
+        Sun, 25 Mar 2018 07:00:09 -0400
+X-Google-Smtp-Source: AG47ELsOZ9Ydq1wIiE0JCserkJHrsbI+bITXVu1k40u3tWKOMcOcf801yBJmyCNje998sBbGVT50lw==
 From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 To: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
         dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/8] PCI: Add pci_peer_traffic_supported()
-Date: Sun, 25 Mar 2018 12:59:55 +0200
-Message-Id: <20180325110000.2238-3-christian.koenig@amd.com>
+Subject: [PATCH 8/8] drm/amdgpu: add support for exporting VRAM using DMA-buf
+Date: Sun, 25 Mar 2018 13:00:00 +0200
+Message-Id: <20180325110000.2238-8-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180325110000.2238-1-christian.koenig@amd.com>
 References: <20180325110000.2238-1-christian.koenig@amd.com>
@@ -27,159 +27,210 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "wdavis@nvidia.com" <wdavis@nvidia.com>
+We should be able to do this now after checking all the prerequisites.
 
-Add checks for topology and ACS configuration to determine whether or not
-peer traffic should be supported between two PCI devices.
-
-Signed-off-by: Will Davis <wdavis@nvidia.com>
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/pci/pci.c   | 112 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/pci.h |   1 +
- 2 files changed, 113 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c    | 44 +++++++++++---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h      |  9 +++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c | 91 ++++++++++++++++++++++++++++
+ 3 files changed, 135 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index f6a4dd10d9b0..efdca3c9dad1 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -28,6 +28,7 @@
- #include <linux/device.h>
- #include <linux/pm_runtime.h>
- #include <linux/pci_hotplug.h>
-+#include <linux/iommu.h>
- #include <linux/vmalloc.h>
- #include <linux/pci-ats.h>
- #include <asm/setup.h>
-@@ -5285,6 +5286,117 @@ void pci_ignore_hotplug(struct pci_dev *dev)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+index 133596df0775..86d983a0678b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+@@ -197,23 +197,44 @@ amdgpu_gem_map_dma_buf(struct dma_buf_attachment *attach,
+ 	} else {
+ 		/* move buffer into GTT */
+ 		struct ttm_operation_ctx ctx = { false, false };
++		unsigned domains = AMDGPU_GEM_DOMAIN_GTT;
+ 
+-		amdgpu_ttm_placement_from_domain(bo, AMDGPU_GEM_DOMAIN_GTT);
++		if (bo->preferred_domains & AMDGPU_GEM_DOMAIN_VRAM &&
++		    attach->peer2peer) {
++			bo->flags |= AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED;
++			domains |= AMDGPU_GEM_DOMAIN_VRAM;
++		}
++		amdgpu_ttm_placement_from_domain(bo, domains);
+ 		r = ttm_bo_validate(&bo->tbo, &bo->placement, &ctx);
+ 		if (r)
+ 			goto error_unreserve;
+ 	}
+ 
+-	sgt = drm_prime_pages_to_sg(bo->tbo.ttm->pages, bo->tbo.num_pages);
+-	if (IS_ERR(sgt)) {
+-		r = PTR_ERR(sgt);
++	switch (bo->tbo.mem.mem_type) {
++	case TTM_PL_TT:
++		sgt = drm_prime_pages_to_sg(bo->tbo.ttm->pages,
++					    bo->tbo.num_pages);
++		if (IS_ERR(sgt)) {
++			r = PTR_ERR(sgt);
++			goto error_unreserve;
++		}
++
++		if (!dma_map_sg_attrs(attach->dev, sgt->sgl, sgt->nents, dir,
++				      DMA_ATTR_SKIP_CPU_SYNC))
++			goto error_free;
++		break;
++
++	case TTM_PL_VRAM:
++		r = amdgpu_vram_mgr_alloc_sgt(adev, &bo->tbo.mem, attach->dev,
++					      dir, &sgt);
++		if (r)
++			goto error_unreserve;
++		break;
++	default:
++		r = -EINVAL;
+ 		goto error_unreserve;
+ 	}
+ 
+-	if (!dma_map_sg_attrs(attach->dev, sgt->sgl, sgt->nents, dir,
+-			      DMA_ATTR_SKIP_CPU_SYNC))
+-		goto error_free;
+-
+ 	if (attach->dev->driver != adev->dev->driver)
+ 		bo->prime_shared_count++;
+ 
+@@ -254,10 +275,15 @@ static void amdgpu_gem_unmap_dma_buf(struct dma_buf_attachment *attach,
+ 	if (!attach->invalidate)
+ 		amdgpu_bo_unreserve(bo);
+ 
+-	if (sgt) {
++	if (!sgt)
++		return;
++
++	if (sgt->sgl->page_link) {
+ 		dma_unmap_sg(attach->dev, sgt->sgl, sgt->nents, dir);
+ 		sg_free_table(sgt);
+ 		kfree(sgt);
++	} else {
++		amdgpu_vram_mgr_free_sgt(adev, attach->dev, dir, sgt);
+ 	}
  }
- EXPORT_SYMBOL_GPL(pci_ignore_hotplug);
  
-+static bool pci_peer_host_traffic_supported(struct pci_host_bridge *host)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
+index 6ea7de863041..b483900abed2 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h
+@@ -73,6 +73,15 @@ bool amdgpu_gtt_mgr_has_gart_addr(struct ttm_mem_reg *mem);
+ uint64_t amdgpu_gtt_mgr_usage(struct ttm_mem_type_manager *man);
+ int amdgpu_gtt_mgr_recover(struct ttm_mem_type_manager *man);
+ 
++int amdgpu_vram_mgr_alloc_sgt(struct amdgpu_device *adev,
++			      struct ttm_mem_reg *mem,
++			      struct device *dev,
++			      enum dma_data_direction dir,
++			      struct sg_table **sgt);
++void amdgpu_vram_mgr_free_sgt(struct amdgpu_device *adev,
++			      struct device *dev,
++			      enum dma_data_direction dir,
++			      struct sg_table *sgt);
+ uint64_t amdgpu_vram_mgr_usage(struct ttm_mem_type_manager *man);
+ uint64_t amdgpu_vram_mgr_vis_usage(struct ttm_mem_type_manager *man);
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c
+index 9aca653bec07..eb8f75525a81 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c
+@@ -233,6 +233,97 @@ static void amdgpu_vram_mgr_del(struct ttm_mem_type_manager *man,
+ 	mem->mm_node = NULL;
+ }
+ 
++/**
++ * amdgpu_vram_mgr_alloc_sgt - allocate and fill a sg table
++ *
++ * @adev: amdgpu device pointer
++ * @mem: TTM memory object
++ * @dev: the other device
++ * @dir: dma direction
++ * @sgt: resulting sg table
++ *
++ * Allocate and fill a sg table from a VRAM allocation.
++ */
++int amdgpu_vram_mgr_alloc_sgt(struct amdgpu_device *adev,
++			      struct ttm_mem_reg *mem,
++			      struct device *dev,
++			      enum dma_data_direction dir,
++			      struct sg_table **sgt)
 +{
-+	struct pci_dev *bridge = pci_get_slot(host->bus, PCI_DEVFN(0, 0));
-+	unsigned short vendor, device;
++	struct drm_mm_node *node = mem->mm_node;
++	struct scatterlist *sg;
++	int num_entries;
++	int i, r;
 +
-+	if (!bridge)
-+		return false;
++	*sgt = kmalloc(sizeof(*sgt), GFP_KERNEL);
++	if (!*sgt)
++		return -ENOMEM;
 +
-+	vendor = bridge->vendor;
-+	device = bridge->device;
-+	pci_dev_put(bridge);
++	num_entries = DIV_ROUND_UP(mem->num_pages, node->size);
++	r = sg_alloc_table(*sgt, num_entries, GFP_KERNEL);
++	if (r)
++		goto error_free;
 +
-+	/* AMD ZEN host bridges can do peer to peer */
-+	if (vendor == PCI_VENDOR_ID_AMD && device == 0x1450)
-+		return true;
++	for_each_sg((*sgt)->sgl, sg, num_entries, i)
++		sg->length = 0;
 +
-+	/* TODO: Extend that to a proper whitelist */
-+	return false;
++	for_each_sg((*sgt)->sgl, sg, num_entries, i) {
++		phys_addr_t phys = (node->start << PAGE_SHIFT) +
++			adev->gmc.aper_base;
++		size_t size = node->size << PAGE_SHIFT;
++		dma_addr_t addr;
++
++		++node;
++		addr = dma_map_resource(dev, phys, size, dir,
++					DMA_ATTR_SKIP_CPU_SYNC);
++		r = dma_mapping_error(dev, addr);
++		if (r)
++			goto error_unmap;
++
++		sg_set_dma_addr(sg, addr, size, 0);
++	}
++	return 0;
++
++error_unmap:
++	for_each_sg((*sgt)->sgl, sg, num_entries, i) {
++		if (!sg->length)
++			continue;
++
++		dma_unmap_resource(dev, sg->dma_address,
++				   sg->length, dir,
++				   DMA_ATTR_SKIP_CPU_SYNC);
++	}
++	sg_free_table(*sgt);
++
++error_free:
++	kfree(*sgt);
++	return r;
 +}
 +
-+bool pci_peer_traffic_supported(struct pci_dev *dev, struct pci_dev *peer)
++/**
++ * amdgpu_vram_mgr_alloc_sgt - allocate and fill a sg table
++ *
++ * @adev: amdgpu device pointer
++ * @sgt: sg table to free
++ *
++ * Free a previously allocate sg table.
++ */
++void amdgpu_vram_mgr_free_sgt(struct amdgpu_device *adev,
++			      struct device *dev,
++			      enum dma_data_direction dir,
++			      struct sg_table *sgt)
 +{
-+	struct pci_dev *rp_dev, *rp_peer, *common_upstream;
-+	struct pci_host_bridge *peer_host_bridge;
-+	struct pci_host_bridge *dev_host_bridge;
-+	int pos;
-+	u16 cap;
++	struct scatterlist *sg;
++	int i;
 +
-+	/* This is tricky enough, focus on PCIe for now */
-+	if (!pci_is_pcie(dev) || !pci_is_pcie(peer))
-+		return false;
-+
-+	/*
-+	 * Disallow the peer-to-peer traffic if the devices do not share a
-+	 * host bridge. The PCI specifications does not make any guarantees
-+	 * about P2P capabilities between devices under separate domains.
-+	 *
-+	 * PCI Local Bus Specification Revision 3.0, section 3.10:
-+	 *    "Peer-to-peer transactions crossing multiple host bridges
-+	 *     PCI host bridges may, but are not required to, support PCI
-+	 *     peer-to-peer transactions that traverse multiple PCI host
-+	 *     bridges."
-+	 */
-+	dev_host_bridge = pci_find_host_bridge(dev->bus);
-+	peer_host_bridge = pci_find_host_bridge(peer->bus);
-+	if (dev_host_bridge != peer_host_bridge)
-+		return pci_peer_host_traffic_supported(dev_host_bridge);
-+
-+	rp_dev = pcie_find_root_port(dev);
-+	rp_peer = pcie_find_root_port(peer);
-+	common_upstream = pci_find_common_upstream_dev(dev, peer);
-+
-+	/*
-+	 * Access Control Services (ACS) Checks
-+	 *
-+	 * ACS has a capability bit for P2P Request Redirects (RR),
-+	 * but unfortunately it doesn't tell us much about the real
-+	 * capabilities of the hardware.
-+	 *
-+	 * PCI Express Base Specification Revision 3.0, section
-+	 * 6.12.1.1:
-+	 *    "ACS P2P Request Redirect: must be implemented by Root
-+	 *     Ports that support peer-to-peer traffic with other
-+	 *     Root Ports; [80]"
-+	 * but
-+	 *    "[80] Root Port indication of ACS P2P Request Redirect
-+	 *     or ACS P2P Completion Redirect support does not imply
-+	 *     any particular level of peer-to-peer support by the
-+	 *     Root Complex, or that peer-to-peer traffic is
-+	 *     supported at all"
-+	 */
-+
-+	/*
-+	 * If ACS is not implemented, we have no idea about P2P
-+	 * support. Optimistically allow this if there is a common
-+	 * upstream device.
-+	 */
-+	pos = pci_find_ext_capability(rp_dev, PCI_EXT_CAP_ID_ACS);
-+	if (!pos)
-+		return common_upstream != NULL;
-+
-+	/*
-+	 * If the devices are under the same root port and have a common
-+	 * upstream device, allow if the root port is further upstream
-+	 * from the common upstream device and the common upstream
-+	 * device has Upstream Forwarding disabled, or if the root port
-+	 * is the common upstream device and ACS is not implemented.
-+	 */
-+	pci_read_config_word(rp_dev, pos + PCI_ACS_CAP, &cap);
-+	if ((rp_dev == rp_peer && common_upstream) &&
-+	    (((common_upstream != rp_dev) &&
-+	      !pci_acs_enabled(common_upstream, PCI_ACS_UF)) ||
-+	     ((common_upstream == rp_dev) && ((cap & PCI_ACS_RR) == 0))))
-+		return true;
-+
-+	/*
-+	 * If ACS RR is implemented and disabled, allow only if the
-+	 * devices are under the same root port.
-+	 */
-+	if (cap & PCI_ACS_RR && !pci_acs_enabled(rp_dev, PCI_ACS_RR))
-+		return rp_dev == rp_peer;
-+
-+	/*
-+	 * If ACS RR is not implemented, or is implemented and enabled,
-+	 * only allow if there's a translation agent enabled to do the
-+	 * redirect.
-+	 */
-+	return iommu_present(&pci_bus_type);
++	for_each_sg(sgt->sgl, sg, sgt->nents, i)
++		dma_unmap_resource(dev, sg->dma_address,
++				   sg->length, dir,
++				   DMA_ATTR_SKIP_CPU_SYNC);
++	sg_free_table(sgt);
++	kfree(sgt);
 +}
-+EXPORT_SYMBOL(pci_peer_traffic_supported);
 +
- resource_size_t __weak pcibios_default_alignment(void)
- {
- 	return 0;
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 0d29f5cdcb04..3c8eaa505991 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -921,6 +921,7 @@ void pci_remove_root_bus(struct pci_bus *bus);
- void pci_setup_cardbus(struct pci_bus *bus);
- void pcibios_setup_bridge(struct pci_bus *bus, unsigned long type);
- void pci_sort_breadthfirst(void);
-+bool pci_peer_traffic_supported(struct pci_dev *dev, struct pci_dev *peer);
- #define dev_is_pci(d) ((d)->bus == &pci_bus_type)
- #define dev_is_pf(d) ((dev_is_pci(d) ? to_pci_dev(d)->is_physfn : false))
- 
+ /**
+  * amdgpu_vram_mgr_usage - how many bytes are used in this domain
+  *
 -- 
 2.14.1
