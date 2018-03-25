@@ -1,23 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752454AbeCYLAF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 07:00:05 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53284 "EHLO
+        id S1753293AbeCYLAY (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 07:00:24 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37152 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751873AbeCYLAD (ORCPT
+        with ESMTP id S1752577AbeCYLAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 07:00:03 -0400
-X-Google-Smtp-Source: AG47ELvwwBAOxX4kUelnOGu6zCSqT74bNuM36ebp4K+39XIYrLdmVvDEOU9Gs9pReiltBNzjdHLtXw==
+        Sun, 25 Mar 2018 07:00:08 -0400
+X-Google-Smtp-Source: AG47ELtlZ0bGtUsB16/1hJ7HvxHB1Lw24XGa3wJQAbyrnEjIjTU4d5rlfbtenuUwnoSVo0YRtyea5g==
 From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 To: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
         dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/8] lib/scatterlist: add sg_set_dma_addr() helper
-Date: Sun, 25 Mar 2018 12:59:53 +0200
-Message-Id: <20180325110000.2238-1-christian.koenig@amd.com>
+Subject: [PATCH 7/8] drm/amdgpu: add amdgpu_gem_attach
+Date: Sun, 25 Mar 2018 12:59:59 +0200
+Message-Id: <20180325110000.2238-7-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180325110000.2238-1-christian.koenig@amd.com>
+References: <20180325110000.2238-1-christian.koenig@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -25,48 +27,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use this function to set an sg entry to point to device resources mapped
-using dma_map_resource(). The page pointer is set to NULL and only the DMA
-address, length and offset values are valid.
+Check if we can do peer2peer on the PCIe bus.
 
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- include/linux/scatterlist.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-index 22b2131bcdcd..f944ee4e482c 100644
---- a/include/linux/scatterlist.h
-+++ b/include/linux/scatterlist.h
-@@ -149,6 +149,29 @@ static inline void sg_set_buf(struct scatterlist *sg, const void *buf,
- 	sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+index 2566268806c3..133596df0775 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+@@ -134,6 +134,29 @@ amdgpu_gem_prime_import_sg_table(struct drm_device *dev,
+ 	return obj;
  }
  
-+/**
-+ * sg_set_dma_addr - Set sg entry to point at specified dma address
-+ * @sg:		 SG entry
-+ * @address:	 DMA address to set
-+ * @len:	 Length of data
-+ * @offset:	 Offset into page
-+ *
-+ * Description:
-+ *   Use this function to set an sg entry to point to device resources mapped
-+ *   using dma_map_resource(). The page pointer is set to NULL and only the DMA
-+ *   address, length and offset values are valid.
-+ *
-+ **/
-+static inline void sg_set_dma_addr(struct scatterlist *sg, dma_addr_t address,
-+				   unsigned int len, unsigned int offset)
++static int amdgpu_gem_attach(struct dma_buf *dma_buf, struct device *dev,
++			     struct dma_buf_attachment *attach)
 +{
-+	sg_set_page(sg, NULL, len, offset);
-+	sg->dma_address = address;
-+#ifdef CONFIG_NEED_SG_DMA_LENGTH
-+	sg->dma_length = len;
-+#endif
++	struct drm_gem_object *obj = dma_buf->priv;
++	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
++	struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
++
++	if (!attach->peer2peer)
++		return 0;
++
++	if (!dev_is_pci(dev))
++		goto no_peer2peer;
++
++	if (!pci_peer_traffic_supported(adev->pdev, to_pci_dev(dev)))
++		goto no_peer2peer;
++
++	return 0;
++
++no_peer2peer:
++	attach->peer2peer = false;
++	return 0;
 +}
 +
- /*
-  * Loop over each sg element, following the pointer to a new list if necessary
-  */
+ static struct sg_table *
+ amdgpu_gem_map_dma_buf(struct dma_buf_attachment *attach,
+ 		       enum dma_data_direction dir)
+@@ -274,6 +297,7 @@ static int amdgpu_gem_begin_cpu_access(struct dma_buf *dma_buf,
+ }
+ 
+ static const struct dma_buf_ops amdgpu_dmabuf_ops = {
++	.attach = amdgpu_gem_attach,
+ 	.map_dma_buf = amdgpu_gem_map_dma_buf,
+ 	.unmap_dma_buf = amdgpu_gem_unmap_dma_buf,
+ 	.release = drm_gem_dmabuf_release,
 -- 
 2.14.1
