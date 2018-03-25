@@ -1,79 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeCYW2h (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 18:28:37 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49129 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750839AbeCYW2d (ORCPT
+        id S1751776AbeCYWcw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:32:52 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37587 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbeCYWcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 18:28:33 -0400
-Date: Sun, 25 Mar 2018 15:27:36 -0700
-From: tip-bot for Sven Wegener <tipbot@zytor.com>
-Message-ID: <tip-e847f6aaf68f6156a5e9b26afe1a7316b9ab697e@git.kernel.org>
-Cc: sven.wegener@stealer.net, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org, mka@chromium.org,
-        mingo@kernel.org, tglx@linutronix.de, vgoyal@redhat.com,
-        peterz@infradead.org, sam@ravnborg.org, hpa@zytor.com
-Reply-To: hpa@zytor.com, peterz@infradead.org, sam@ravnborg.org,
-        vgoyal@redhat.com, tglx@linutronix.de, keescook@chromium.org,
-        mingo@kernel.org, mka@chromium.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, sven.wegener@stealer.net
-In-Reply-To: <alpine.LNX.2.21.1803242219380.30139@titan.int.lan.stealer.net>
-References: <alpine.LNX.2.21.1803242219380.30139@titan.int.lan.stealer.net>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/purgatory: Avoid creating stray .<pid>.d
- files, remove -MD from KBUILD_CFLAGS
-Git-Commit-ID: e847f6aaf68f6156a5e9b26afe1a7316b9ab697e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sun, 25 Mar 2018 18:32:48 -0400
+X-Google-Smtp-Source: AG47ELvEAY/gOIWnBj7vDFotrj4VNE00E5Od4J95cs17M7+JHEz1tbechCGxImjXwKg3GUWKGxlmKA==
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kbuild@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] objtool: fix build with future Make
+Date: Mon, 26 Mar 2018 00:32:39 +0200
+Message-Id: <20180325223239.14778-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e847f6aaf68f6156a5e9b26afe1a7316b9ab697e
-Gitweb:     https://git.kernel.org/tip/e847f6aaf68f6156a5e9b26afe1a7316b9ab697e
-Author:     Sven Wegener <sven.wegener@stealer.net>
-AuthorDate: Sat, 24 Mar 2018 22:21:13 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sun, 25 Mar 2018 11:04:02 +0200
+I tried building using a freshly built Make (4.2.1-69-g8a731d1), but the
+objtool build broke with
 
-x86/purgatory: Avoid creating stray .<pid>.d files, remove -MD from KBUILD_CFLAGS
+orc_dump.c: In function ‘orc_dump’:
+orc_dump.c:106:2: error: ‘elf_getshnum’ is deprecated [-Werror=deprecated-declarations]
+  if (elf_getshdrnum(elf, &nr_sections)) {
 
-The kernel build system already takes care of generating the dependency
-files. Having the additional -MD in KBUILD_CFLAGS leads to stray
-.<pid>.d files in the build directory when we call the cc-option macro.
+Turns out that with that new Make, the backslash was not removed, so cpp
+didn't see a #include directive, grep found nothing, and
+-DLIBELF_USE_DEPRECATED was wrongly put in CFLAGS.
 
-Signed-off-by: Sven Wegener <sven.wegener@stealer.net>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Link: http://lkml.kernel.org/r/alpine.LNX.2.21.1803242219380.30139@titan.int.lan.stealer.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Now, that new Make behaviour is documented in their NEWS file:
+
+  * WARNING: Backward-incompatibility!
+    Number signs (#) appearing inside a macro reference or function invocation
+    no longer introduce comments and should not be escaped with backslashes:
+    thus a call such as:
+      foo := $(shell echo '#')
+    is legal.  Previously the number sign needed to be escaped, for example:
+      foo := $(shell echo '\#')
+    Now this latter will resolve to "\#".  If you want to write makefiles
+    portable to both versions, assign the number sign to a variable:
+      C := \#
+      foo := $(shell echo '$C')
+    This was claimed to be fixed in 3.81, but wasn't, for some reason.
+    To detect this change search for 'nocomment' in the .FEATURES variable.
+
+There are likely other places in the tree that will need fixing, so
+cc-ing Kbuild, but with this at least a x86-64 defconfig builds.
+
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- arch/x86/purgatory/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/objtool/Makefile         | 2 +-
+ tools/scripts/Makefile.include | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 2f15a2ac4209..d70c15de417b 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -16,7 +16,7 @@ KCOV_INSTRUMENT := n
- # in turn leaves some undefined symbols like __fentry__ in purgatory and not
- # sure how to relocate those. Like kexec-tools, use custom flags.
+diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+index e6acc281dd37..8ae824dbfca3 100644
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -35,7 +35,7 @@ CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
+ LDFLAGS  += -lelf $(LIBSUBCMD)
  
--KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes -fno-zero-initialized-in-bss -fno-builtin -ffreestanding -c -MD -Os -mcmodel=large
-+KBUILD_CFLAGS := -fno-strict-aliasing -Wall -Wstrict-prototypes -fno-zero-initialized-in-bss -fno-builtin -ffreestanding -c -Os -mcmodel=large
- KBUILD_CFLAGS += -m$(BITS)
- KBUILD_CFLAGS += $(call cc-option,-fno-PIE)
+ # Allow old libelf to be used:
+-elfshdr := $(shell echo '\#include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
++elfshdr := $(shell echo '$(pound)include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
+ CFLAGS += $(if $(elfshdr),,-DLIBELF_USE_DEPRECATED)
  
+ AWK = awk
+diff --git a/tools/scripts/Makefile.include b/tools/scripts/Makefile.include
+index dd614463d4d6..495066bafbe3 100644
+--- a/tools/scripts/Makefile.include
++++ b/tools/scripts/Makefile.include
+@@ -120,3 +120,5 @@ ifneq ($(silent),1)
+ 	QUIET_UNINST   = @printf '  UNINST   %s\n' $1;
+   endif
+ endif
++
++pound := \#
+-- 
+2.15.1
