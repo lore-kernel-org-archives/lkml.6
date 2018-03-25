@@ -1,31 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeCYK5H (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 06:57:07 -0400
-Received: from smtp.gls-italy.com ([93.62.193.36]:46438 "EHLO
-        smtp.gls-italy.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751821AbeCYK5E (ORCPT
+        id S1752454AbeCYLAF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 07:00:05 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53284 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751873AbeCYLAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 06:57:04 -0400
-Date: Sun, 25 Mar 2018 12:50:00 +0200 (CEST)
-From: Jack <micaela.dorigoni@gls-italy.com>
-Reply-To: Jack <2936410069@qq.com>
-Message-ID: <977453548.144532774.1521975000290.JavaMail.zimbra@gls-italy.com>
-Subject: Hello Beautiful
+        Sun, 25 Mar 2018 07:00:03 -0400
+X-Google-Smtp-Source: AG47ELvwwBAOxX4kUelnOGu6zCSqT74bNuM36ebp4K+39XIYrLdmVvDEOU9Gs9pReiltBNzjdHLtXw==
+From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
+        <ckoenig.leichtzumerken@gmail.com>
+X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+To: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/8] lib/scatterlist: add sg_set_dma_addr() helper
+Date: Sun, 25 Mar 2018 12:59:53 +0200
+Message-Id: <20180325110000.2238-1-christian.koenig@amd.com>
+X-Mailer: git-send-email 2.14.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [41.190.3.239]
-X-Mailer: Zimbra 8.6.0_GA_1194 (zclient/8.6.0_GA_1194)
-Thread-Topic: Hello Beautiful
-Thread-Index: NCuhTDOledTz8bZ/HbxgFff3pesO7Q==
-To: unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dear, my name is Jack and i am seeking for a relationship in which i will feel loved after a series of failed relationships. 
+Use this function to set an sg entry to point to device resources mapped
+using dma_map_resource(). The page pointer is set to NULL and only the DMA
+address, length and offset values are valid.
 
-I am hoping that you would be interested and we could possibly get to know each other more if you do not mind. I am open to answering questions from you as i think my approach is a little inappropriate. Hope to hear back from you.
+Signed-off-by: Christian König <christian.koenig@amd.com>
+---
+ include/linux/scatterlist.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Jack.
+diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
+index 22b2131bcdcd..f944ee4e482c 100644
+--- a/include/linux/scatterlist.h
++++ b/include/linux/scatterlist.h
+@@ -149,6 +149,29 @@ static inline void sg_set_buf(struct scatterlist *sg, const void *buf,
+ 	sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
+ }
+ 
++/**
++ * sg_set_dma_addr - Set sg entry to point at specified dma address
++ * @sg:		 SG entry
++ * @address:	 DMA address to set
++ * @len:	 Length of data
++ * @offset:	 Offset into page
++ *
++ * Description:
++ *   Use this function to set an sg entry to point to device resources mapped
++ *   using dma_map_resource(). The page pointer is set to NULL and only the DMA
++ *   address, length and offset values are valid.
++ *
++ **/
++static inline void sg_set_dma_addr(struct scatterlist *sg, dma_addr_t address,
++				   unsigned int len, unsigned int offset)
++{
++	sg_set_page(sg, NULL, len, offset);
++	sg->dma_address = address;
++#ifdef CONFIG_NEED_SG_DMA_LENGTH
++	sg->dma_length = len;
++#endif
++}
++
+ /*
+  * Loop over each sg element, following the pointer to a new list if necessary
+  */
+-- 
+2.14.1
