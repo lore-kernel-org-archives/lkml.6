@@ -1,173 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752384AbeCYVpb (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 17:45:31 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:49738 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752025AbeCYVpa (ORCPT
+        id S1752234AbeCYVuJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 17:50:09 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45599 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751208AbeCYVuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 17:45:30 -0400
-Message-ID: <1522014313.6308.48.camel@surriel.com>
-Subject: Re: [PATCH v3] cpuidle: poll_state: Add time limit to poll_idle()
-From: Rik van Riel <riel@surriel.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Sun, 25 Mar 2018 17:45:13 -0400
-In-Reply-To: <5810003.D8QGLjubHr@aspire.rjw.lan>
-References: <3111105.SmgpqUHPkp@aspire.rjw.lan>
-         <4731938.EeADOapqQb@aspire.rjw.lan> <1522008952.6308.46.camel@surriel.com>
-         <5810003.D8QGLjubHr@aspire.rjw.lan>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ZFMY3iDGLZraJ1sd1QWH"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Sun, 25 Mar 2018 17:50:05 -0400
+X-Google-Smtp-Source: AG47ELtIuVp+gW7Qu0jTlghV3rFQSTRV2nEJMv8xKNg7H9la0lOqDx9ql6Qh3GF78s4G0SzQRuYDaQ==
+Date: Sun, 25 Mar 2018 14:50:03 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 01/24] mm: Introduce CONFIG_SPECULATIVE_PAGE_FAULT
+In-Reply-To: <1520963994-28477-2-git-send-email-ldufour@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1803251442090.80485@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-2-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 13 Mar 2018, Laurent Dufour wrote:
 
---=-ZFMY3iDGLZraJ1sd1QWH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, 2018-03-25 at 23:34 +0200, Rafael J. Wysocki wrote:
-> On Sunday, March 25, 2018 10:15:52 PM CEST Rik van Riel wrote:
-> >=20
-> > --=3D-e8yLbs0aoH4SrxOskwwl
-> > Content-Type: text/plain; charset=3D"UTF-8"
-> > Content-Transfer-Encoding: quoted-printable
-> >=20
-> > On Thu, 2018-03-22 at 18:09 +0100, Rafael J. Wysocki wrote:
-> > > =3D20
-> > > +++ linux-pm/drivers/cpuidle/poll_state.c
-> > > @@ -10,6 +10,7 @@
-> > >  #include <linux/sched/idle.h>
-> > > =3D20
-> > >  #define POLL_IDLE_TIME_LIMIT	(TICK_NSEC / 16)
-> > > +#define POLL_IDLE_COUNT		1000
-> > > =3D20
-> > >  static int __cpuidle poll_idle(struct cpuidle_device *dev,
-> > >  			       struct cpuidle_driver *drv, int
-> > > index)
-> > > @@ -18,9 +19,14 @@ static int __cpuidle poll_idle(struct cp
-> > > =3D20
-> > >  	local_irq_enable();
-> > >  	if (!current_set_polling_and_test()) {
-> > > +		unsigned int loop_count =3D3D 0;
-> > > +
-> > >  		while (!need_resched()) {
-> > >  			cpu_relax();
-> > > +			if (loop_count++ < POLL_IDLE_COUNT)
-> > > +				continue;
-> > > =3D20
-> > > +			loop_count =3D3D 0;
-> > >  			if (local_clock() - time_start >
-> > > POLL_IDLE_TIME_LIMIT)
-> > >  				break;
-> > >  		}
-> >=20
-> > OK, I am still seeing a performance
-> > degradation with the above, though
-> > not throughout the entire workload.
-> >=20
-> > It appears that making the idle loop
-> > do anything besides cpu_relax() for
-> > a significant amount of time slows
-> > things down.
->=20
-> I see.
->=20
-> > I plan to try two more things:
-> >=20
-> > 1) Disable polling on SMT systems, with
-> >    the idea that putting one thread to
-> >    sleep with monitor/mwait in C1 will
-> >    allow the other thread to run faster.
->=20
-> Sounds plausible.
->=20
-> > 2) Insert more cpu_relax() calls into the
-> >    main loop, so the CPU core spends more
-> >    of its time in cpu_relax() and less
-> >    time doing other things:
->=20
-> Well, maybe it's a matter of doing cpu_relax() between any other bits
-> of
-> significant computation in there:
-
-That sounds like a plausible thing to try.
-Let me kick off a test with that variant, too.
-
->  drivers/cpuidle/poll_state.c |   13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
->=20
-> Index: linux-pm/drivers/cpuidle/poll_state.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-pm.orig/drivers/cpuidle/poll_state.c
-> +++ linux-pm/drivers/cpuidle/poll_state.c
-> @@ -10,6 +10,7 @@
->  #include <linux/sched/idle.h>
-> =20
->  #define POLL_IDLE_TIME_LIMIT	(TICK_NSEC / 16)
-> +#define POLL_IDLE_COUNT		200
-> =20
->  static int __cpuidle poll_idle(struct cpuidle_device *dev,
->  			       struct cpuidle_driver *drv, int
-> index)
-> @@ -18,11 +19,21 @@ static int __cpuidle poll_idle(struct cp
-> =20
->  	local_irq_enable();
->  	if (!current_set_polling_and_test()) {
-> +		unsigned int loop_count =3D 0;
+> This configuration variable will be used to build the code needed to
+> handle speculative page fault.
+> 
+> By default it is turned off, and activated depending on architecture
+> support.
+> 
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> ---
+>  mm/Kconfig | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index abefa573bcd8..07c566c88faf 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -759,3 +759,6 @@ config GUP_BENCHMARK
+>  	  performance of get_user_pages_fast().
+>  
+>  	  See tools/testing/selftests/vm/gup_benchmark.c
 > +
->  		while (!need_resched()) {
->  			cpu_relax();
-> -
-> +			if (loop_count++ < POLL_IDLE_COUNT) {
-> +				cpu_relax();
-> +				continue;
-> +			}
-> +			cpu_relax();
-> +			loop_count =3D 0;
-> +			cpu_relax();
->  			if (local_clock() - time_start >
-> POLL_IDLE_TIME_LIMIT)
->  				break;
-> +
-> +			cpu_relax();
->  		}
->  	}
->  	current_clr_polling();
->=20
->=20
---=20
-All Rights Reversed.
---=-ZFMY3iDGLZraJ1sd1QWH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+> +config SPECULATIVE_PAGE_FAULT
+> +       bool
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlq4GGkACgkQznnekoTE
-3oNmewf+LKhvCL9xrdPdPmTkvQSLjU5nwhCRDhQF3lr/yyJKDRbiAhrtYoSG/le6
-1yypmhl14aFDY4ZmdAkcn9AMxLC7EsjsG6wFoOEBIE4PsddlNu3v9xe9iSuEuFin
-nL03fNGOLQK/9vDePAUK8kZN3eHKRX0MrNhhATVw7Ry162+ICyjRlmj6kW4V63Uk
-TWaC9BXIv/W70TAdOn0pd8PcG+BOfDd/R8cmqZd5CgfxzzKFTP0/ynwropKbySDl
-xe35FL+bTYtnc1zaSWXUvyW+CszDyevoigk0WpVMKOcLRDWC/6e8jaf38Z9fCWxp
-NGufFwQKD78qD22Wv/ZsSiNmDYYsOg==
-=2I7/
------END PGP SIGNATURE-----
-
---=-ZFMY3iDGLZraJ1sd1QWH--
+Should this be configurable even if the arch supports it?
