@@ -1,50 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753903AbeCYSDF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 14:03:05 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40976 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753862AbeCYSC5 (ORCPT
+        id S1753923AbeCYSKH (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 14:10:07 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:53905 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753821AbeCYSKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 14:02:57 -0400
-X-Google-Smtp-Source: AG47ELvh2yvSM1VKIOQdFbLVuIYVE1/J5jMDZUUQUJdBgItpGvehdZe3XODfV3MDAt7ZK7Hw0vESjw==
-From: Arushi Singhal <arushisinghal19971997@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        seanpaul@chromium.org, gustavo@padovan.org, daniel.vetter@intel.com,
-        nouveau@lists.freedesktop.org, bskeggs@redhat.com,
-        Arushi Singhal <arushisinghal19971997@gmail.com>
-Subject: [PATCH v2 2/2] gpu: drm: nouveau: Use list_{next/prev}_entry instead of list_entry
-Date: Sun, 25 Mar 2018 23:31:33 +0530
-Message-Id: <1522000893-5331-3-git-send-email-arushisinghal19971997@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522000893-5331-1-git-send-email-arushisinghal19971997@gmail.com>
-References: <1522000893-5331-1-git-send-email-arushisinghal19971997@gmail.com>
+        Sun, 25 Mar 2018 14:10:04 -0400
+From: Stefan Agner <stefan@agner.ch>
+To: linux@armlinux.org.uk, ard.biesheuvel@linaro.org, arnd@arndb.de
+Cc: robin.murphy@arm.com, nicolas.pitre@linaro.org, marc.zyngier@arm.com,
+        behanw@converseincode.com, keescook@chromium.org,
+        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v2 1/6] bus: arm-cci: use asm unreachable
+Date: Sun, 25 Mar 2018 20:09:54 +0200
+Message-Id: <20180325180959.28008-2-stefan@agner.ch>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180325180959.28008-1-stefan@agner.ch>
+References: <20180325180959.28008-1-stefan@agner.ch>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's better to use list_entry instead of list_{next/prev}_entry
-as it makes the code more clear to read.
-This patch replace list_entry with list_{next/prev}_entry.
+Mixing asm and C code is not recommended in a naked function by
+gcc and leads to an error when using clang:
+  drivers/bus/arm-cci.c:2107:2: error: non-ASM statement in naked
+  function is not supported
+        unreachable();
+        ^
 
-Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+While the function is marked __naked it actually properly return
+in asm. There is no need for the unreachable() call.
+
+Suggested-by: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- Don't add assembly ASM_UNREACHABLE, just drop unreachable()
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
-index e4c8d31..81c3567 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
-@@ -134,7 +134,7 @@ nvkm_cstate_find_best(struct nvkm_clk *clk, struct nvkm_pstate *pstate,
- 			       nvkm_volt_map(volt, volt->max2_id, clk->temp));
+ drivers/bus/arm-cci.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+index 5426c04fe24b..fc2da3a617ac 100644
+--- a/drivers/bus/arm-cci.c
++++ b/drivers/bus/arm-cci.c
+@@ -2103,8 +2103,6 @@ asmlinkage void __naked cci_enable_port_for_self(void)
+ 	[sizeof_struct_cpu_port] "i" (sizeof(struct cpu_port)),
+ 	[sizeof_struct_ace_port] "i" (sizeof(struct cci_ace_port)),
+ 	[offsetof_port_phys] "i" (offsetof(struct cci_ace_port, phys)) );
+-
+-	unreachable();
+ }
  
- 	for (cstate = start; &cstate->head != &pstate->list;
--	     cstate = list_entry(cstate->head.prev, typeof(*cstate), head)) {
-+	     cstate = list_prev_entry(cstate, head)) {
- 		if (nvkm_cstate_valid(clk, cstate, max_volt, clk->temp))
- 			break;
- 	}
+ /**
 -- 
-2.7.4
+2.16.2
