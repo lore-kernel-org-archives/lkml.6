@@ -1,37 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753485AbeCYQOr (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 12:14:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46577 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750832AbeCYQOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 12:14:46 -0400
-Date: Sun, 25 Mar 2018 09:02:31 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] proc: move /proc/sysvipc creation to where it belongs
-Message-ID: <20180325160231.nbg5deo63sydyfqx@linux-n805>
-References: <20180216161732.GA10297@avx2>
+        id S1753515AbeCYQVx (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 12:21:53 -0400
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:42981 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753391AbeCYQVw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 12:21:52 -0400
+X-Google-Smtp-Source: AIpwx48bVAkruAK/NG2oEEh3EC/ZibEQIVv/OyYTHPklIS4VlhzvWhYtGhPk4zoG4+/EgLdH/2sPviAE9BvVWflQg1k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180216161732.GA10297@avx2>
-User-Agent: NeoMutt/20170421 (1.8.2)
+From: "\\0xDynamite" <dreamingforward@gmail.com>
+Date: Sun, 25 Mar 2018 16:21:50 +0000
+Message-ID: <CAMjeLr-+pxiOFzOE_-X-kqBL-mxGNWG9QqH3p-Xu-ZQ78Vg0_A@mail.gmail.com>
+Subject: One more thing...
+To: linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2PGMGYi010688
 
-On Fri, 16 Feb 2018, Alexey Dobriyan wrote:
+Sorry, once again, but there's another critical piece of info you
+need, whether you know it or not.
 
->Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+rEFIt, the Mac boot loader, bridged two vectors of the intel machine,
+formerally separate FOR DECADES between Apple and PC worlds.  This has
+also exercised the hardware and software issues for the screen I/O.
 
-Acked. However, a small redundant description might be nice.
+X, the mouse cursor, and Javascript.  These are places to explore.  I
+have personally witnessed several mouse and X cursor screen takeovers
+in Linux.  Gnome and Enlightenment are probably totally hosed.
 
-"
-Move the proc_mkdir() call within the sysvipc subsystem such that we avoid
-polluting proc_root_init() with petty cpp.
-"
-
-Thanks,
-Davidlohr
+Marxos, aka Lone Ranger
+----
+"First they ignore you,
+then they mock you,
+then they fight you,
+then you win” -- Mahatma Gandhi.
+First they ignore you,
+Then they mock you,
+The n
