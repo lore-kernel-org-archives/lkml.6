@@ -1,538 +1,431 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeCYJHI (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 05:07:08 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41511 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751821AbeCYJHF (ORCPT
+        id S1752077AbeCYJRt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 05:17:49 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40865 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751915AbeCYJRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 05:07:05 -0400
-X-Google-Smtp-Source: AG47ELu6/3eUcRXEndw49bdevxqqLFBfhERK8NK5cEMBjN8YweflTz7zHxxXAdn418pp8tTblD/YYQ==
-From: Mathieu Malaterre <malat@debian.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] xmon: Use __printf markup to silence compiler
-Date: Sun, 25 Mar 2018 11:06:47 +0200
-Message-Id: <20180325090648.1029-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180316110224.12260-2-malat@debian.org>
-References: <20180316110224.12260-2-malat@debian.org>
+        Sun, 25 Mar 2018 05:17:47 -0400
+X-Google-Smtp-Source: AIpwx49rlNYindon5qCE2za69HeVaH7AIC9F6aCsQfM1J9t+Q0mn6i0E+yYi24cYtxvPwlCpnf0Nrg==
+Date: Sun, 25 Mar 2018 11:17:42 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [GIT PULL] x86 and PTI fixes
+Message-ID: <20180325091742.7cu77urjb7j6b6pg@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the other prototype declarations in asm/xmon.h.
+Linus,
 
-Silence warnings (triggered at W=1) by adding relevant __printf attribute.
-Move #define at bottom of the file to prevent conflict with gcc attribute.
+Please pull the latest x86-pti-for-linus git tree from:
 
-Solve the original warning:
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-pti-for-linus
 
-  arch/powerpc/xmon/nonstdio.c:178:2: error: function might be possible candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
+   # HEAD: d8ba61ba58c88d5207c1ba2f7d9a2280e7d03be9 x86/entry/64: Don't use IST entry for #BP stack
 
-In turn this uncovered the following (partial list) warnings (treated as
-errors with W=1):
+Misc fixes:
 
-  arch/powerpc/xmon/xmon.c:2866:17: error: format ‘%x’ expects argument of type ‘unsigned int’, but argument 2 has type ‘unsigned char *’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:1607:31: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘struct pt_regs *’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:1611:9: error: too many arguments for format [-Werror=format-extra-args]
-  arch/powerpc/xmon/xmon.c:1623:26: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 2 has type ‘struct task_struct *’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:630:36: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 2 has type ‘int’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:1392:15: error: format ‘%x’ expects argument of type ‘unsigned int’, but argument 2 has type ‘long int’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:2570:16: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘u64 {aka long long unsigned int}’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:1629:25: error: format ‘%ld’ expects argument of type ‘long int’, but argument 2 has type ‘pid_t {aka int}’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:1168:18: error: format ‘%x’ expects argument of type ‘unsigned int’, but argument 2 has type ‘long unsigned int’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:3016:24: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 2 has type ‘pgd_t * {aka struct <anonymous> *}’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:2339:9: error: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘u64 {aka long long unsigned int}’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:2339:9: error: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 5 has type ‘long unsigned int’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:3827:10: error: format ‘%p’ expects argument of type ‘void *’, but argument 4 has type ‘long long unsigned int’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:3896:50: error: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘long unsigned int’ [-Werror=format=]
-  arch/powerpc/xmon/spu-dis.c:137:18: error: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘long unsigned int’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:3827:10: error: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘u64 {aka long long unsigned int}’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:1665:17: error: format ‘%ld’ expects argument of type ‘long int’, but argument 2 has type ‘int’ [-Werror=format=]
-  arch/powerpc/xmon/xmon.c:2339:9: error: '#' flag used with ‘%p’ gnu_printf format [-Werror=format=]
+ - fix EFI pagetables freeing
+ - fix vsyscall pagetable setting on Xen PV guests
+ - remove ancient CONFIG_X86_PPRO_FENCE=y - x86 is TSO again
+ - fix two binutils (ld) development version related incompatibilities
+ - clean up breakpoint handling
+ - fix an x86 self-test
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
-v2: resubmit patch series a single patch
+ Thanks,
 
- arch/powerpc/include/asm/xmon.h |   2 +-
- arch/powerpc/xmon/nonstdio.h    |   8 +--
- arch/powerpc/xmon/spu-dis.c     |  18 +++---
- arch/powerpc/xmon/xmon.c        | 133 ++++++++++++++++++++--------------------
- 4 files changed, 82 insertions(+), 79 deletions(-)
+	Ingo
 
-diff --git a/arch/powerpc/include/asm/xmon.h b/arch/powerpc/include/asm/xmon.h
-index eb42a0c6e1d9..30ff69bd8f43 100644
---- a/arch/powerpc/include/asm/xmon.h
-+++ b/arch/powerpc/include/asm/xmon.h
-@@ -29,7 +29,7 @@ static inline void xmon_register_spus(struct list_head *list) { };
- extern int cpus_are_in_xmon(void);
- #endif
+------------------>
+Andy Lutomirski (2):
+      selftests/x86/ptrace_syscall: Fix for yet more glibc interference
+      x86/entry/64: Don't use IST entry for #BP stack
+
+Boris Ostrovsky (1):
+      x86/vsyscall/64: Use proper accessor to update P4D entry
+
+Christoph Hellwig (1):
+      x86/cpu: Remove the CONFIG_X86_PPRO_FENCE=y quirk
+
+H.J. Lu (2):
+      x86/build/64: Force the linker to use 2MB page size
+      x86/boot/64: Verify alignment of the LOAD segment
+
+Waiman Long (1):
+      x86/efi: Free efi_pgd with free_pages()
+
+
+ arch/x86/Kconfig.cpu                         | 13 ------------
+ arch/x86/Makefile                            |  9 +++++++++
+ arch/x86/boot/compressed/misc.c              |  4 ++++
+ arch/x86/entry/entry_64.S                    |  2 +-
+ arch/x86/entry/vdso/vdso32/vclock_gettime.c  |  2 --
+ arch/x86/entry/vsyscall/vsyscall_64.c        |  2 +-
+ arch/x86/include/asm/barrier.h               | 30 ----------------------------
+ arch/x86/include/asm/io.h                    | 15 --------------
+ arch/x86/kernel/idt.c                        |  2 --
+ arch/x86/kernel/pci-nommu.c                  | 19 ------------------
+ arch/x86/kernel/traps.c                      | 15 +++++++-------
+ arch/x86/platform/efi/efi_64.c               |  2 +-
+ arch/x86/um/asm/barrier.h                    |  4 ----
+ tools/testing/selftests/x86/ptrace_syscall.c |  8 ++++++--
+ 14 files changed, 30 insertions(+), 97 deletions(-)
+
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 65a9a4716e34..f0c5ef578153 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -315,19 +315,6 @@ config X86_L1_CACHE_SHIFT
+ 	default "4" if MELAN || M486 || MGEODEGX1
+ 	default "5" if MWINCHIP3D || MWINCHIPC6 || MCRUSOE || MEFFICEON || MCYRIXIII || MK6 || MPENTIUMIII || MPENTIUMII || M686 || M586MMX || M586TSC || M586 || MVIAC3_2 || MGEODE_LX
  
--extern void xmon_printf(const char *format, ...);
-+extern __printf(1, 2) void xmon_printf(const char *format, ...);
- 
- #endif /* __KERNEL __ */
- #endif /* __ASM_POWERPC_XMON_H */
-diff --git a/arch/powerpc/xmon/nonstdio.h b/arch/powerpc/xmon/nonstdio.h
-index 2202ec61972c..e8deac6c84e2 100644
---- a/arch/powerpc/xmon/nonstdio.h
-+++ b/arch/powerpc/xmon/nonstdio.h
-@@ -1,13 +1,13 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #define EOF	(-1)
- 
--#define printf	xmon_printf
--#define putchar	xmon_putchar
+-config X86_PPRO_FENCE
+-	bool "PentiumPro memory ordering errata workaround"
+-	depends on M686 || M586MMX || M586TSC || M586 || M486 || MGEODEGX1
+-	---help---
+-	  Old PentiumPro multiprocessor systems had errata that could cause
+-	  memory operations to violate the x86 ordering standard in rare cases.
+-	  Enabling this option will attempt to work around some (but not all)
+-	  occurrences of this problem, at the cost of much heavier spinlock and
+-	  memory barrier operations.
 -
- extern void xmon_set_pagination_lpp(unsigned long lpp);
- extern void xmon_start_pagination(void);
- extern void xmon_end_pagination(void);
- extern int xmon_putchar(int c);
- extern void xmon_puts(const char *);
- extern char *xmon_gets(char *, int);
--extern void xmon_printf(const char *, ...);
-+extern __printf(1, 2) void xmon_printf(const char *fmt, ...);
+-	  If unsure, say n here. Even distro kernels should think twice before
+-	  enabling this: there are few systems, and an unlikely bug.
+-
+ config X86_F00F_BUG
+ 	def_bool y
+ 	depends on M586MMX || M586TSC || M586 || M486
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 498c1b812300..1c4d012550ec 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -223,6 +223,15 @@ KBUILD_CFLAGS += $(cfi) $(cfi-sigframe) $(cfi-sections) $(asinstr) $(avx_instr)
+ 
+ LDFLAGS := -m elf_$(UTS_MACHINE)
+ 
++#
++# The 64-bit kernel must be aligned to 2MB.  Pass -z max-page-size=0x200000 to
++# the linker to force 2MB page size regardless of the default page size used
++# by the linker.
++#
++ifdef CONFIG_X86_64
++LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
++endif
 +
-+#define printf	xmon_printf
-+#define putchar	xmon_putchar
-diff --git a/arch/powerpc/xmon/spu-dis.c b/arch/powerpc/xmon/spu-dis.c
-index e5f89837c82e..4cbc7da88524 100644
---- a/arch/powerpc/xmon/spu-dis.c
-+++ b/arch/powerpc/xmon/spu-dis.c
-@@ -102,7 +102,7 @@ print_insn_spu (unsigned long insn, unsigned long memaddr)
+ # Speed up the build
+ KBUILD_CFLAGS += -pipe
+ # Workaround for a gcc prelease that unfortunately was shipped in a suse release
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 98761a1576ce..252fee320816 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -309,6 +309,10 @@ static void parse_elf(void *output)
  
-   if (index == 0)
-     {
--      printf(".long 0x%x", insn);
-+      printf(".long 0x%lx", insn);
-     }
-   else
-     {
-@@ -134,27 +134,27 @@ print_insn_spu (unsigned long insn, unsigned long memaddr)
- 	  switch (arg)
- 	    {
- 	    case A_T:
--	      printf("$%d",
-+	      printf("$%lu",
- 				     DECODE_INSN_RT (insn));
- 	      break;
- 	    case A_A:
--	      printf("$%d",
-+	      printf("$%lu",
- 				     DECODE_INSN_RA (insn));
- 	      break;
- 	    case A_B:
--	      printf("$%d",
-+	      printf("$%lu",
- 				     DECODE_INSN_RB (insn));
- 	      break;
- 	    case A_C:
--	      printf("$%d",
-+	      printf("$%lu",
- 				     DECODE_INSN_RC (insn));
- 	      break;
- 	    case A_S:
--	      printf("$sp%d",
-+	      printf("$sp%lu",
- 				     DECODE_INSN_RA (insn));
- 	      break;
- 	    case A_H:
--	      printf("$ch%d",
-+	      printf("$ch%lu",
- 				     DECODE_INSN_RA (insn));
- 	      break;
- 	    case A_P:
-@@ -162,11 +162,11 @@ print_insn_spu (unsigned long insn, unsigned long memaddr)
- 	      printf("(");
- 	      break;
- 	    case A_U7A:
--	      printf("%d",
-+	      printf("%lu",
- 				     173 - DECODE_INSN_U8 (insn));
- 	      break;
- 	    case A_U7B:
--	      printf("%d",
-+	      printf("%lu",
- 				     155 - DECODE_INSN_U8 (insn));
- 	      break;
- 	    case A_S3:
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index ee113a6e008c..edd7ea85272f 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -627,7 +627,7 @@ static int xmon_core(struct pt_regs *regs, int fromipi)
- 		excprint(regs);
- 		bp = at_breakpoint(regs->nip);
- 		if (bp) {
--			printf("Stopped at breakpoint %lx (", BP_NUM(bp));
-+			printf("Stopped at breakpoint %tx (", BP_NUM(bp));
- 			xmon_print_symbol(regs->nip, " ", ")\n");
- 		}
- 		if (unrecoverable_excp(regs))
-@@ -1165,7 +1165,7 @@ static int cpu_cmd(void)
- 	}
- 	/* try to switch to cpu specified */
- 	if (!cpumask_test_cpu(cpu, &cpus_in_xmon)) {
--		printf("cpu 0x%x isn't in xmon\n", cpu);
-+		printf("cpu 0x%lx isn't in xmon\n", cpu);
- 		return 0;
- 	}
- 	xmon_taken = 0;
-@@ -1179,7 +1179,7 @@ static int cpu_cmd(void)
- 			/* take control back */
- 			mb();
- 			xmon_owner = smp_processor_id();
--			printf("cpu 0x%x didn't take control\n", cpu);
-+			printf("cpu 0x%lx didn't take control\n", cpu);
- 			return 0;
- 		}
- 		barrier();
-@@ -1362,7 +1362,7 @@ bpt_cmds(void)
- 			}
- 		}
+ 		switch (phdr->p_type) {
+ 		case PT_LOAD:
++#ifdef CONFIG_X86_64
++			if ((phdr->p_align % 0x200000) != 0)
++				error("Alignment of LOAD segment isn't multiple of 2MB");
++#endif
+ #ifdef CONFIG_RELOCATABLE
+ 			dest = output;
+ 			dest += (phdr->p_paddr - LOAD_PHYSICAL_ADDR);
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index d5c7f18f79ac..9b114675fbc0 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1138,7 +1138,7 @@ apicinterrupt3 HYPERV_REENLIGHTENMENT_VECTOR \
+ #endif /* CONFIG_HYPERV */
  
--		printf("Cleared breakpoint %lx (", BP_NUM(bp));
-+		printf("Cleared breakpoint %tx (", BP_NUM(bp));
- 		xmon_print_symbol(bp->address, " ", ")\n");
- 		bp->enabled = 0;
- 		break;
-@@ -1389,7 +1389,7 @@ bpt_cmds(void)
- 			for (bp = bpts; bp < &bpts[NBPTS]; ++bp) {
- 				if (!bp->enabled)
- 					continue;
--				printf("%2x %s   ", BP_NUM(bp),
-+				printf("%tx %s   ", BP_NUM(bp),
- 				    (bp->enabled & BP_CIABR) ? "inst": "trap");
- 				xmon_print_symbol(bp->address, "  ", "\n");
- 			}
-@@ -1604,11 +1604,11 @@ static void excprint(struct pt_regs *fp)
- #endif /* CONFIG_SMP */
+ idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+-idtentry int3			do_int3			has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
++idtentry int3			do_int3			has_error_code=0
+ idtentry stack_segment		do_stack_segment	has_error_code=1
  
- 	trap = TRAP(fp);
--	printf("Vector: %lx %s at [%lx]\n", fp->trap, getvecname(trap), fp);
-+	printf("Vector: %lx %s at [%p]\n", fp->trap, getvecname(trap), fp);
- 	printf("    pc: ");
- 	xmon_print_symbol(fp->nip, ": ", "\n");
- 
--	printf("    lr: ", fp->link);
-+	printf("    lr: ");
- 	xmon_print_symbol(fp->link, ": ", "\n");
- 
- 	printf("    sp: %lx\n", fp->gpr[1]);
-@@ -1620,13 +1620,13 @@ static void excprint(struct pt_regs *fp)
- 			printf(" dsisr: %lx\n", fp->dsisr);
- 	}
- 
--	printf("  current = 0x%lx\n", current);
-+	printf("  current = 0x%p\n", current);
- #ifdef CONFIG_PPC64
--	printf("  paca    = 0x%lx\t softe: %d\t irq_happened: 0x%02x\n",
-+	printf("  paca    = 0x%p\t softe: %d\t irq_happened: 0x%02x\n",
- 	       local_paca, local_paca->irq_soft_mask, local_paca->irq_happened);
- #endif
- 	if (current) {
--		printf("    pid   = %ld, comm = %s\n",
-+		printf("    pid   = %d, comm = %s\n",
- 		       current->pid, current->comm);
- 	}
- 
-@@ -1662,16 +1662,16 @@ static void prregs(struct pt_regs *fp)
- #ifdef CONFIG_PPC64
- 	if (FULL_REGS(fp)) {
- 		for (n = 0; n < 16; ++n)
--			printf("R%.2ld = "REG"   R%.2ld = "REG"\n",
-+			printf("R%.2d = "REG"   R%.2d = "REG"\n",
- 			       n, fp->gpr[n], n+16, fp->gpr[n+16]);
- 	} else {
- 		for (n = 0; n < 7; ++n)
--			printf("R%.2ld = "REG"   R%.2ld = "REG"\n",
-+			printf("R%.2d = "REG"   R%.2d = "REG"\n",
- 			       n, fp->gpr[n], n+7, fp->gpr[n+7]);
- 	}
- #else
- 	for (n = 0; n < 32; ++n) {
--		printf("R%.2d = %.8x%s", n, fp->gpr[n],
-+		printf("R%.2d = %.8lx%s", n, fp->gpr[n],
- 		       (n & 3) == 3? "\n": "   ");
- 		if (n == 12 && !FULL_REGS(fp)) {
- 			printf("\n");
-@@ -1775,9 +1775,9 @@ static void dump_206_sprs(void)
- 
- 	/* Actually some of these pre-date 2.06, but whatevs */
- 
--	printf("srr0   = %.16lx  srr1  = %.16lx dsisr  = %.8x\n",
-+	printf("srr0   = %.16lx  srr1  = %.16lx dsisr  = %.8lx\n",
- 		mfspr(SPRN_SRR0), mfspr(SPRN_SRR1), mfspr(SPRN_DSISR));
--	printf("dscr   = %.16lx  ppr   = %.16lx pir    = %.8x\n",
-+	printf("dscr   = %.16lx  ppr   = %.16lx pir    = %.8lx\n",
- 		mfspr(SPRN_DSCR), mfspr(SPRN_PPR), mfspr(SPRN_PIR));
- 	printf("amr    = %.16lx  uamor = %.16lx\n",
- 		mfspr(SPRN_AMR), mfspr(SPRN_UAMOR));
-@@ -1785,11 +1785,11 @@ static void dump_206_sprs(void)
- 	if (!(mfmsr() & MSR_HV))
- 		return;
- 
--	printf("sdr1   = %.16lx  hdar  = %.16lx hdsisr = %.8x\n",
-+	printf("sdr1   = %.16lx  hdar  = %.16lx hdsisr = %.8lx\n",
- 		mfspr(SPRN_SDR1), mfspr(SPRN_HDAR), mfspr(SPRN_HDSISR));
- 	printf("hsrr0  = %.16lx hsrr1  = %.16lx hdec   = %.16lx\n",
- 		mfspr(SPRN_HSRR0), mfspr(SPRN_HSRR1), mfspr(SPRN_HDEC));
--	printf("lpcr   = %.16lx  pcr   = %.16lx lpidr  = %.8x\n",
-+	printf("lpcr   = %.16lx  pcr   = %.16lx lpidr  = %.8lx\n",
- 		mfspr(SPRN_LPCR), mfspr(SPRN_PCR), mfspr(SPRN_LPID));
- 	printf("hsprg0 = %.16lx hsprg1 = %.16lx amor   = %.16lx\n",
- 		mfspr(SPRN_HSPRG0), mfspr(SPRN_HSPRG1), mfspr(SPRN_AMOR));
-@@ -1806,10 +1806,10 @@ static void dump_207_sprs(void)
- 	if (!cpu_has_feature(CPU_FTR_ARCH_207S))
- 		return;
- 
--	printf("dpdes  = %.16lx  tir   = %.16lx cir    = %.8x\n",
-+	printf("dpdes  = %.16lx  tir   = %.16lx cir    = %.8lx\n",
- 		mfspr(SPRN_DPDES), mfspr(SPRN_TIR), mfspr(SPRN_CIR));
- 
--	printf("fscr   = %.16lx  tar   = %.16lx pspb   = %.8x\n",
-+	printf("fscr   = %.16lx  tar   = %.16lx pspb   = %.8lx\n",
- 		mfspr(SPRN_FSCR), mfspr(SPRN_TAR), mfspr(SPRN_PSPB));
- 
- 	msr = mfmsr();
-@@ -1822,12 +1822,12 @@ static void dump_207_sprs(void)
- 
- 	printf("mmcr0  = %.16lx  mmcr1 = %.16lx mmcr2  = %.16lx\n",
- 		mfspr(SPRN_MMCR0), mfspr(SPRN_MMCR1), mfspr(SPRN_MMCR2));
--	printf("pmc1   = %.8x pmc2 = %.8x  pmc3 = %.8x  pmc4   = %.8x\n",
-+	printf("pmc1   = %.8lx pmc2 = %.8lx  pmc3 = %.8lx  pmc4   = %.8lx\n",
- 		mfspr(SPRN_PMC1), mfspr(SPRN_PMC2),
- 		mfspr(SPRN_PMC3), mfspr(SPRN_PMC4));
--	printf("mmcra  = %.16lx   siar = %.16lx pmc5   = %.8x\n",
-+	printf("mmcra  = %.16lx   siar = %.16lx pmc5   = %.8lx\n",
- 		mfspr(SPRN_MMCRA), mfspr(SPRN_SIAR), mfspr(SPRN_PMC5));
--	printf("sdar   = %.16lx   sier = %.16lx pmc6   = %.8x\n",
-+	printf("sdar   = %.16lx   sier = %.16lx pmc6   = %.8lx\n",
- 		mfspr(SPRN_SDAR), mfspr(SPRN_SIER), mfspr(SPRN_PMC6));
- 	printf("ebbhr  = %.16lx  ebbrr = %.16lx bescr  = %.16lx\n",
- 		mfspr(SPRN_EBBHR), mfspr(SPRN_EBBRR), mfspr(SPRN_BESCR));
-@@ -2337,22 +2337,25 @@ static void dump_one_paca(int cpu)
- 
- #define DUMP(paca, name, format) \
- 	printf(" %-*s = %#-*"format"\t(0x%lx)\n", 20, #name, 18, paca->name, \
--		offsetof(struct paca_struct, name));
-+		offsetof(struct paca_struct, name))
-+#define DUMPPTR(paca, name, format) \
-+	printf(" %-*s = %-*"format"\t(0x%lx)\n", 20, #name, 18, paca->name, \
-+		offsetof(struct paca_struct, name))
- 
- 	DUMP(p, lock_token, "x");
- 	DUMP(p, paca_index, "x");
--	DUMP(p, kernel_toc, "lx");
--	DUMP(p, kernelbase, "lx");
--	DUMP(p, kernel_msr, "lx");
--	DUMP(p, emergency_sp, "px");
-+	DUMP(p, kernel_toc, "llx");
-+	DUMP(p, kernelbase, "llx");
-+	DUMP(p, kernel_msr, "llx");
-+	DUMPPTR(p, emergency_sp, "p");
- #ifdef CONFIG_PPC_BOOK3S_64
--	DUMP(p, nmi_emergency_sp, "px");
--	DUMP(p, mc_emergency_sp, "px");
-+	DUMPPTR(p, nmi_emergency_sp, "p");
-+	DUMPPTR(p, mc_emergency_sp, "p");
- 	DUMP(p, in_nmi, "x");
- 	DUMP(p, in_mce, "x");
- 	DUMP(p, hmi_event_available, "x");
- #endif
--	DUMP(p, data_offset, "lx");
-+	DUMP(p, data_offset, "llx");
- 	DUMP(p, hw_cpu_id, "x");
- 	DUMP(p, cpu_start, "x");
- 	DUMP(p, kexec_state, "x");
-@@ -2367,16 +2370,16 @@ static void dump_one_paca(int cpu)
- 		vsid = be64_to_cpu(p->slb_shadow_ptr->save_area[i].vsid);
- 
- 		if (esid || vsid) {
--			printf(" slb_shadow[%d]:       = 0x%016lx 0x%016lx\n",
-+			printf(" slb_shadow[%d]:       = 0x%016llx 0x%016llx\n",
- 				i, esid, vsid);
- 		}
- 	}
- 	DUMP(p, vmalloc_sllp, "x");
- 	DUMP(p, slb_cache_ptr, "x");
- 	for (i = 0; i < SLB_CACHE_ENTRIES; i++)
--		printf(" slb_cache[%d]:        = 0x%016lx\n", i, p->slb_cache[i]);
-+		printf(" slb_cache[%d]:        = 0x%016x\n", i, p->slb_cache[i]);
- 
--	DUMP(p, rfi_flush_fallback_area, "px");
-+	DUMPPTR(p, rfi_flush_fallback_area, "p");
- #endif
- 	DUMP(p, dscr_default, "llx");
- #ifdef CONFIG_PPC_BOOK3E
-@@ -2387,11 +2390,11 @@ static void dump_one_paca(int cpu)
- 	DUMP(p, crit_kstack, "px");
- 	DUMP(p, dbg_kstack, "px");
- #endif
--	DUMP(p, __current, "px");
--	DUMP(p, kstack, "lx");
--	printf(" kstack_base          = 0x%016lx\n", p->kstack & ~(THREAD_SIZE - 1));
--	DUMP(p, stab_rr, "lx");
--	DUMP(p, saved_r1, "lx");
-+	DUMPPTR(p, __current, "p");
-+	DUMP(p, kstack, "llx");
-+	printf(" kstack_base          = 0x%016llx\n", p->kstack & ~(THREAD_SIZE - 1));
-+	DUMP(p, stab_rr, "llx");
-+	DUMP(p, saved_r1, "llx");
- 	DUMP(p, trap_save, "x");
- 	DUMP(p, irq_soft_mask, "x");
- 	DUMP(p, irq_happened, "x");
-@@ -2405,20 +2408,20 @@ static void dump_one_paca(int cpu)
+ #ifdef CONFIG_XEN
+diff --git a/arch/x86/entry/vdso/vdso32/vclock_gettime.c b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
+index 7780bbfb06ef..9242b28418d5 100644
+--- a/arch/x86/entry/vdso/vdso32/vclock_gettime.c
++++ b/arch/x86/entry/vdso/vdso32/vclock_gettime.c
+@@ -5,8 +5,6 @@
+ #undef CONFIG_OPTIMIZE_INLINING
  #endif
  
- #ifdef CONFIG_PPC_POWERNV
--	DUMP(p, core_idle_state_ptr, "px");
-+	DUMPPTR(p, core_idle_state_ptr, "p");
- 	DUMP(p, thread_idle_state, "x");
- 	DUMP(p, thread_mask, "x");
- 	DUMP(p, subcore_sibling_mask, "x");
+-#undef CONFIG_X86_PPRO_FENCE
+-
+ #ifdef CONFIG_X86_64
+ 
+ /*
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+index 8560ef68a9d6..317be365bce3 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -347,7 +347,7 @@ void __init set_vsyscall_pgtable_user_bits(pgd_t *root)
+ 	set_pgd(pgd, __pgd(pgd_val(*pgd) | _PAGE_USER));
+ 	p4d = p4d_offset(pgd, VSYSCALL_ADDR);
+ #if CONFIG_PGTABLE_LEVELS >= 5
+-	p4d->p4d |= _PAGE_USER;
++	set_p4d(p4d, __p4d(p4d_val(*p4d) | _PAGE_USER));
+ #endif
+ 	pud = pud_offset(p4d, VSYSCALL_ADDR);
+ 	set_pud(pud, __pud(pud_val(*pud) | _PAGE_USER));
+diff --git a/arch/x86/include/asm/barrier.h b/arch/x86/include/asm/barrier.h
+index e1259f043ae9..042b5e892ed1 100644
+--- a/arch/x86/include/asm/barrier.h
++++ b/arch/x86/include/asm/barrier.h
+@@ -52,11 +52,7 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
+ #define barrier_nospec() alternative_2("", "mfence", X86_FEATURE_MFENCE_RDTSC, \
+ 					   "lfence", X86_FEATURE_LFENCE_RDTSC)
+ 
+-#ifdef CONFIG_X86_PPRO_FENCE
+-#define dma_rmb()	rmb()
+-#else
+ #define dma_rmb()	barrier()
+-#endif
+ #define dma_wmb()	barrier()
+ 
+ #ifdef CONFIG_X86_32
+@@ -68,30 +64,6 @@ static inline unsigned long array_index_mask_nospec(unsigned long index,
+ #define __smp_wmb()	barrier()
+ #define __smp_store_mb(var, value) do { (void)xchg(&var, value); } while (0)
+ 
+-#if defined(CONFIG_X86_PPRO_FENCE)
+-
+-/*
+- * For this option x86 doesn't have a strong TSO memory
+- * model and we should fall back to full barriers.
+- */
+-
+-#define __smp_store_release(p, v)					\
+-do {									\
+-	compiletime_assert_atomic_type(*p);				\
+-	__smp_mb();							\
+-	WRITE_ONCE(*p, v);						\
+-} while (0)
+-
+-#define __smp_load_acquire(p)						\
+-({									\
+-	typeof(*p) ___p1 = READ_ONCE(*p);				\
+-	compiletime_assert_atomic_type(*p);				\
+-	__smp_mb();							\
+-	___p1;								\
+-})
+-
+-#else /* regular x86 TSO memory ordering */
+-
+ #define __smp_store_release(p, v)					\
+ do {									\
+ 	compiletime_assert_atomic_type(*p);				\
+@@ -107,8 +79,6 @@ do {									\
+ 	___p1;								\
+ })
+ 
+-#endif
+-
+ /* Atomic operations are already serializing on x86 */
+ #define __smp_mb__before_atomic()	barrier()
+ #define __smp_mb__after_atomic()	barrier()
+diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
+index 95e948627fd0..f6e5b9375d8c 100644
+--- a/arch/x86/include/asm/io.h
++++ b/arch/x86/include/asm/io.h
+@@ -232,21 +232,6 @@ extern void set_iounmap_nonlazy(void);
+  */
+ #define __ISA_IO_base ((char __iomem *)(PAGE_OFFSET))
+ 
+-/*
+- *	Cache management
+- *
+- *	This needed for two cases
+- *	1. Out of order aware processors
+- *	2. Accidentally out of order processors (PPro errata #51)
+- */
+-
+-static inline void flush_write_buffers(void)
+-{
+-#if defined(CONFIG_X86_PPRO_FENCE)
+-	asm volatile("lock; addl $0,0(%%esp)": : :"memory");
+-#endif
+-}
+-
+ #endif /* __KERNEL__ */
+ 
+ extern void native_io_delay(void);
+diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
+index 56d99be3706a..50bee5fe1140 100644
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -160,7 +160,6 @@ static const __initconst struct idt_data early_pf_idts[] = {
+  */
+ static const __initconst struct idt_data dbg_idts[] = {
+ 	INTG(X86_TRAP_DB,	debug),
+-	INTG(X86_TRAP_BP,	int3),
+ };
  #endif
  
--	DUMP(p, accounting.utime, "llx");
--	DUMP(p, accounting.stime, "llx");
--	DUMP(p, accounting.utime_scaled, "llx");
--	DUMP(p, accounting.starttime, "llx");
--	DUMP(p, accounting.starttime_user, "llx");
--	DUMP(p, accounting.startspurr, "llx");
--	DUMP(p, accounting.utime_sspurr, "llx");
--	DUMP(p, accounting.steal_time, "llx");
-+	DUMP(p, accounting.utime, "lx");
-+	DUMP(p, accounting.stime, "lx");
-+	DUMP(p, accounting.utime_scaled, "lx");
-+	DUMP(p, accounting.starttime, "lx");
-+	DUMP(p, accounting.starttime_user, "lx");
-+	DUMP(p, accounting.startspurr, "lx");
-+	DUMP(p, accounting.utime_sspurr, "lx");
-+	DUMP(p, accounting.steal_time, "lx");
- #undef DUMP
- 
- 	catch_memory_errors = 0;
-@@ -2564,7 +2567,7 @@ static void dump_by_size(unsigned long addr, long count, int size)
- 			default: val = 0;
- 			}
- 
--			printf("%0*lx", size * 2, val);
-+			printf("%0*llx", size * 2, val);
- 		}
- 		printf("\n");
- 	}
-@@ -2728,7 +2731,7 @@ generic_inst_dump(unsigned long adr, long count, int praddr,
- 		dotted = 0;
- 		last_inst = inst;
- 		if (praddr)
--			printf(REG"  %.8x", adr, inst);
-+			printf(REG"  %.8lx", adr, inst);
- 		printf("\t");
- 		dump_func(inst, adr);
- 		printf("\n");
-@@ -2860,7 +2863,7 @@ memdiffs(unsigned char *p1, unsigned char *p2, unsigned nb, unsigned maxpr)
- 	for( n = nb; n > 0; --n )
- 		if( *p1++ != *p2++ )
- 			if( ++prt <= maxpr )
--				printf("%.16x %.2x # %.16x %.2x\n", p1 - 1,
-+				printf("%p %.2x # %p %.2x\n", p1 - 1,
- 					p1[-1], p2 - 1, p2[-1]);
- 	if( prt > maxpr )
- 		printf("Total of %d differences\n", prt);
-@@ -2920,13 +2923,13 @@ memzcan(void)
- 		if (ok && !ook) {
- 			printf("%.8x .. ", a);
- 		} else if (!ok && ook)
--			printf("%.8x\n", a - mskip);
-+			printf("%.8lx\n", a - mskip);
- 		ook = ok;
- 		if (a + mskip < a)
- 			break;
- 	}
- 	if (ook)
--		printf("%.8x\n", a - mskip);
-+		printf("%.8lx\n", a - mskip);
+@@ -183,7 +182,6 @@ gate_desc debug_idt_table[IDT_ENTRIES] __page_aligned_bss;
+ static const __initconst struct idt_data ist_idts[] = {
+ 	ISTG(X86_TRAP_DB,	debug,		DEBUG_STACK),
+ 	ISTG(X86_TRAP_NMI,	nmi,		NMI_STACK),
+-	SISTG(X86_TRAP_BP,	int3,		DEBUG_STACK),
+ 	ISTG(X86_TRAP_DF,	double_fault,	DOUBLEFAULT_STACK),
+ #ifdef CONFIG_X86_MCE
+ 	ISTG(X86_TRAP_MC,	&machine_check,	MCE_STACK),
+diff --git a/arch/x86/kernel/pci-nommu.c b/arch/x86/kernel/pci-nommu.c
+index 618285e475c6..ac7ea3a8242f 100644
+--- a/arch/x86/kernel/pci-nommu.c
++++ b/arch/x86/kernel/pci-nommu.c
+@@ -37,7 +37,6 @@ static dma_addr_t nommu_map_page(struct device *dev, struct page *page,
+ 	WARN_ON(size == 0);
+ 	if (!check_addr("map_single", dev, bus, size))
+ 		return NOMMU_MAPPING_ERROR;
+-	flush_write_buffers();
+ 	return bus;
  }
  
- static void show_task(struct task_struct *tsk)
-@@ -3010,13 +3013,13 @@ static void show_pte(unsigned long addr)
+@@ -72,25 +71,9 @@ static int nommu_map_sg(struct device *hwdev, struct scatterlist *sg,
+ 			return 0;
+ 		s->dma_length = s->length;
+ 	}
+-	flush_write_buffers();
+ 	return nents;
+ }
+ 
+-static void nommu_sync_single_for_device(struct device *dev,
+-			dma_addr_t addr, size_t size,
+-			enum dma_data_direction dir)
+-{
+-	flush_write_buffers();
+-}
+-
+-
+-static void nommu_sync_sg_for_device(struct device *dev,
+-			struct scatterlist *sg, int nelems,
+-			enum dma_data_direction dir)
+-{
+-	flush_write_buffers();
+-}
+-
+ static int nommu_mapping_error(struct device *dev, dma_addr_t dma_addr)
+ {
+ 	return dma_addr == NOMMU_MAPPING_ERROR;
+@@ -101,8 +84,6 @@ const struct dma_map_ops nommu_dma_ops = {
+ 	.free			= dma_generic_free_coherent,
+ 	.map_sg			= nommu_map_sg,
+ 	.map_page		= nommu_map_page,
+-	.sync_single_for_device = nommu_sync_single_for_device,
+-	.sync_sg_for_device	= nommu_sync_sg_for_device,
+ 	.is_phys		= 1,
+ 	.mapping_error		= nommu_mapping_error,
+ 	.dma_supported		= x86_dma_supported,
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 3d9b2308e7fa..03f3d7695dac 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -577,7 +577,6 @@ do_general_protection(struct pt_regs *regs, long error_code)
+ }
+ NOKPROBE_SYMBOL(do_general_protection);
+ 
+-/* May run on IST stack. */
+ dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
+ {
+ #ifdef CONFIG_DYNAMIC_FTRACE
+@@ -592,6 +591,13 @@ dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
+ 	if (poke_int3_handler(regs))
  		return;
+ 
++	/*
++	 * Use ist_enter despite the fact that we don't use an IST stack.
++	 * We can be called from a kprobe in non-CONTEXT_KERNEL kernel
++	 * mode or even during context tracking state changes.
++	 *
++	 * This means that we can't schedule.  That's okay.
++	 */
+ 	ist_enter(regs);
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+ #ifdef CONFIG_KGDB_LOW_LEVEL_TRAP
+@@ -609,15 +615,10 @@ dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
+ 			SIGTRAP) == NOTIFY_STOP)
+ 		goto exit;
+ 
+-	/*
+-	 * Let others (NMI) know that the debug stack is in use
+-	 * as we may switch to the interrupt stack.
+-	 */
+-	debug_stack_usage_inc();
+ 	cond_local_irq_enable(regs);
+ 	do_trap(X86_TRAP_BP, SIGTRAP, "int3", regs, error_code, NULL);
+ 	cond_local_irq_disable(regs);
+-	debug_stack_usage_dec();
++
+ exit:
+ 	ist_exit(regs);
+ }
+diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
+index c310a8284358..f9cfbc0d1f33 100644
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -227,7 +227,7 @@ int __init efi_alloc_page_tables(void)
+ 	if (!pud) {
+ 		if (CONFIG_PGTABLE_LEVELS > 4)
+ 			free_page((unsigned long) pgd_page_vaddr(*pgd));
+-		free_page((unsigned long)efi_pgd);
++		free_pages((unsigned long)efi_pgd, PGD_ALLOCATION_ORDER);
+ 		return -ENOMEM;
  	}
  
--	printf("pgd  @ 0x%016lx\n", pgdir);
-+	printf("pgd  @ 0x%p\n", pgdir);
+diff --git a/arch/x86/um/asm/barrier.h b/arch/x86/um/asm/barrier.h
+index b7d73400ea29..f31e5d903161 100644
+--- a/arch/x86/um/asm/barrier.h
++++ b/arch/x86/um/asm/barrier.h
+@@ -30,11 +30,7 @@
  
- 	if (pgd_huge(*pgdp)) {
- 		format_pte(pgdp, pgd_val(*pgdp));
- 		return;
- 	}
--	printf("pgdp @ 0x%016lx = 0x%016lx\n", pgdp, pgd_val(*pgdp));
-+	printf("pgdp @ 0x%p = 0x%016lx\n", pgdp, pgd_val(*pgdp));
+ #endif /* CONFIG_X86_32 */
  
- 	pudp = pud_offset(pgdp, addr);
+-#ifdef CONFIG_X86_PPRO_FENCE
+-#define dma_rmb()	rmb()
+-#else /* CONFIG_X86_PPRO_FENCE */
+ #define dma_rmb()	barrier()
+-#endif /* CONFIG_X86_PPRO_FENCE */
+ #define dma_wmb()	barrier()
  
-@@ -3030,7 +3033,7 @@ static void show_pte(unsigned long addr)
- 		return;
- 	}
+ #include <asm-generic/barrier.h>
+diff --git a/tools/testing/selftests/x86/ptrace_syscall.c b/tools/testing/selftests/x86/ptrace_syscall.c
+index 1ae1c5a7392e..6f22238f3217 100644
+--- a/tools/testing/selftests/x86/ptrace_syscall.c
++++ b/tools/testing/selftests/x86/ptrace_syscall.c
+@@ -183,8 +183,10 @@ static void test_ptrace_syscall_restart(void)
+ 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
+ 			err(1, "PTRACE_TRACEME");
  
--	printf("pudp @ 0x%016lx = 0x%016lx\n", pudp, pud_val(*pudp));
-+	printf("pudp @ 0x%p = 0x%016lx\n", pudp, pud_val(*pudp));
++		pid_t pid = getpid(), tid = syscall(SYS_gettid);
++
+ 		printf("\tChild will make one syscall\n");
+-		raise(SIGSTOP);
++		syscall(SYS_tgkill, pid, tid, SIGSTOP);
  
- 	pmdp = pmd_offset(pudp, addr);
+ 		syscall(SYS_gettid, 10, 11, 12, 13, 14, 15);
+ 		_exit(0);
+@@ -301,9 +303,11 @@ static void test_restart_under_ptrace(void)
+ 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
+ 			err(1, "PTRACE_TRACEME");
  
-@@ -3043,7 +3046,7 @@ static void show_pte(unsigned long addr)
- 		format_pte(pmdp, pmd_val(*pmdp));
- 		return;
- 	}
--	printf("pmdp @ 0x%016lx = 0x%016lx\n", pmdp, pmd_val(*pmdp));
-+	printf("pmdp @ 0x%p = 0x%016lx\n", pmdp, pmd_val(*pmdp));
++		pid_t pid = getpid(), tid = syscall(SYS_gettid);
++
+ 		printf("\tChild will take a nap until signaled\n");
+ 		setsigign(SIGUSR1, SA_RESTART);
+-		raise(SIGSTOP);
++		syscall(SYS_tgkill, pid, tid, SIGSTOP);
  
- 	ptep = pte_offset_map(pmdp, addr);
- 	if (pte_none(*ptep)) {
-@@ -3847,19 +3850,19 @@ static void dump_spu_fields(struct spu *spu)
- 	DUMP_FIELD(spu, "0x%lx", ls_size);
- 	DUMP_FIELD(spu, "0x%x", node);
- 	DUMP_FIELD(spu, "0x%lx", flags);
--	DUMP_FIELD(spu, "%d", class_0_pending);
--	DUMP_FIELD(spu, "0x%lx", class_0_dar);
--	DUMP_FIELD(spu, "0x%lx", class_1_dar);
--	DUMP_FIELD(spu, "0x%lx", class_1_dsisr);
--	DUMP_FIELD(spu, "0x%lx", irqs[0]);
--	DUMP_FIELD(spu, "0x%lx", irqs[1]);
--	DUMP_FIELD(spu, "0x%lx", irqs[2]);
-+	DUMP_FIELD(spu, "%llu", class_0_pending);
-+	DUMP_FIELD(spu, "0x%llx", class_0_dar);
-+	DUMP_FIELD(spu, "0x%llx", class_1_dar);
-+	DUMP_FIELD(spu, "0x%llx", class_1_dsisr);
-+	DUMP_FIELD(spu, "0x%x", irqs[0]);
-+	DUMP_FIELD(spu, "0x%x", irqs[1]);
-+	DUMP_FIELD(spu, "0x%x", irqs[2]);
- 	DUMP_FIELD(spu, "0x%x", slb_replace);
- 	DUMP_FIELD(spu, "%d", pid);
- 	DUMP_FIELD(spu, "0x%p", mm);
- 	DUMP_FIELD(spu, "0x%p", ctx);
- 	DUMP_FIELD(spu, "0x%p", rq);
--	DUMP_FIELD(spu, "0x%p", timestamp);
-+	DUMP_FIELD(spu, "0x%llx", timestamp);
- 	DUMP_FIELD(spu, "0x%lx", problem_phys);
- 	DUMP_FIELD(spu, "0x%p", problem);
- 	DUMP_VALUE("0x%x", problem->spu_runcntl_RW,
-@@ -3890,7 +3893,7 @@ static void dump_spu_ls(unsigned long num, int subcmd)
- 		__delay(200);
- 	} else {
- 		catch_memory_errors = 0;
--		printf("*** Error: accessing spu info for spu %d\n", num);
-+		printf("*** Error: accessing spu info for spu %ld\n", num);
- 		return;
- 	}
- 	catch_memory_errors = 0;
--- 
-2.11.0
+ 		syscall(SYS_pause, 0, 0, 0, 0, 0, 0);
+ 		_exit(0);
