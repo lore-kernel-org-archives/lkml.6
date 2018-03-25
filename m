@@ -1,104 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753220AbeCYHlg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 03:41:36 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:50286 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751029AbeCYHlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 03:41:35 -0400
-Subject: Re: efisubsys_init takes more than a few milliseconds
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <305249de-7892-fca4-b462-a493aa65d177@molgen.mpg.de>
- <CAKv+Gu84h2+zofb4v-QrVE7rqCrGC7MaHEw7tB+z2J8DczjoKw@mail.gmail.com>
-From: Paul Menzel <pmenzel+linux-efi@molgen.mpg.de>
-Message-ID: <f94af2ed-3492-4db5-c1bc-30c4c1855947@molgen.mpg.de>
-Date: Sun, 25 Mar 2018 09:41:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu84h2+zofb4v-QrVE7rqCrGC7MaHEw7tB+z2J8DczjoKw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1751658AbeCYHqP (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 03:46:15 -0400
+Received: from smtprelay0145.hostedemail.com ([216.40.44.145]:37608 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750782AbeCYHqO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 03:46:14 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:599:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1537:1560:1593:1594:1711:1714:1730:1747:1777:1792:1978:2393:2559:2562:2693:2828:2890:3138:3139:3140:3141:3142:3622:3865:3866:3871:4042:4321:5007:10004:10400:10848:11658:11914:12740:12760:12895:13069:13311:13357:13439:14181:14659:21080:21450:21627:30001:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: stove98_8d73f47c9013e
+X-Filterd-Recvd-Size: 1201
+Message-ID: <1521963970.24655.16.camel@perches.com>
+Subject: Re: [PATCH v5 1/8] counter: Introduce the Generic Counter interface
+From: Joe Perches <joe@perches.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        benjamin.gaignard@st.com, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Sun, 25 Mar 2018 00:46:10 -0700
+In-Reply-To: <20180324173358.571e2fd8@archlinux>
+References: <cover.1520614431.git.vilhelm.gray@gmail.com>
+         <e64e423c19d69a9578e95de9db6ca41e231d63da.1520614431.git.vilhelm.gray@gmail.com>
+         <20180324173358.571e2fd8@archlinux>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Ard,
+On Sat, 2018-03-24 at 17:33 +0000, Jonathan Cameron wrote:
+> checkpatch.pl --strict (but take into account some of the warnings will
+> be silly so don't fix them all).
 
-
-Thank you for the quick reply.
-
-
-On 03/24/2018 11:35 PM, Ard Biesheuvel wrote:
-
-> On 24 March 2018 at 22:10, Paul Menzel <pmenzel+linux-efi@molgen.mpg.de> wrote:
->> Dear Ard,
->>
->>
->> According to `initcall_debug`, `efisubsys_init` takes more than a few
->> milliseconds to execute on a Dell XPS 13 9370 (Intel(R) Core(TM) i7-8550U
->> CPU @ 1.80GHz).
->>
->>> ```
->>> […]
->>> [ 0.144474] calling  efisubsys_init+0x0/0x2cf @ 1
->>> [ 0.144474] Registered efivars operations
->>> [ 0.173690] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343 usecs
->>> […]
->>> ```
->>
->>
->> To get a vanilla Linux kernel to boot in well under one second, it’d be nice
->> if the time could be improved. Do you know, why it takes so long?
->>
->> According to `bootgraph.py` from pm-graph [1][2] it takes even a little
->> longer.
->>
->>> efisubsys_init: start=690.841, end=720.493, length(w/o overhead)=31.250
->>> ms, return=0
->>
->> There are several dozen calls to `virt_efi_get_next_variable()` all but one
->> taking around 0.335 ms. This path needs to be optimized. Is that possible?
-> 
-> That depends. These are firmware calls, so to make these calls faster,
-> you need to modify the firmware, not the kernel.
-
-Yeah, unfortunately, no free firmware runs on this laptop, and Dell 
-doesn’t respond to these kind of reports, as they think, it’s not important.
-
-> We may be able to make more intrusive changes to get rid of this
-> delay, e.g., spin up a special kernel thread, but I'd have to check in
-> more detail.
-
-That’d be great.
-
-> In the mean time, you can try passing 'efi=noruntime' to the kernel.
-
-Thank you, I didn’t know about that. Unfortunately, initcall_debug still 
-reports the same time although the one message is gone.
-
-```
-$ sudo dmesg | grep efisubsys
-[    0.145779] calling  efisubsys_init+0x0/0x2cf @ 1
-[    0.172034] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343 
-usecs
-```
-
->> To reproduce this, clone the pm-graph repository [2], use `sudo
->> ./bootgraph.py -f -fstat -maxdepth 10 -manual` to see what to add to
->> `/boot/grub/grub.cfg`. Then reboot, and execute `sudo ./bootgraph.py -f
->> -fstat -maxdepth 10`.
->>
->> If your system is powerful enough, you can use a higher maximum depth. I
->> didn’t get around how `-cgfilter` works to get smaller HTML files.
-
-
-Kind regards,
-
-Paul
-
-
->> [1] https://01.org/suspendresume
->> [2] https://github.com/01org/pm-graph
+What checkpatch output is silly?
