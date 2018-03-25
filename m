@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753637AbeCYOlF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 10:41:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59468 "EHLO
+        id S1753429AbeCYOjg (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 10:39:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59004 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753433AbeCYOjh (ORCPT
+        with ESMTP id S1753368AbeCYOj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 10:39:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8E1C160F8D
+        Sun, 25 Mar 2018 10:39:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9942660390
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 From: Sinan Kaya <okaya@codeaurora.org>
 To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Michael Chan <michael.chan@broadcom.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 6/7] bnxt_en: Eliminate duplicate barriers on weakly-ordered archs
-Date: Sun, 25 Mar 2018 10:39:20 -0400
-Message-Id: <1521988761-30344-7-git-send-email-okaya@codeaurora.org>
+        Sinan Kaya <okaya@codeaurora.org>, Dept-GELinuxNICDev@cavium.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 1/7] net: qla3xxx: Eliminate duplicate barriers on weakly-ordered archs
+Date: Sun, 25 Mar 2018 10:39:15 -0400
+Message-Id: <1521988761-30344-2-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1521988761-30344-1-git-send-email-okaya@codeaurora.org>
 References: <1521988761-30344-1-git-send-email-okaya@codeaurora.org>
@@ -27,58 +27,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a barrier on
-some architectures like arm64.
+Code includes wmb() followed by writel(). writel() already has a
+barrier on some architectures like arm64.
 
-This ends up CPU observing two barriers back to back before executing the
-register write.
+This ends up CPU observing two barriers back to back before executing
+the register write.
 
-Create a new wrapper function with relaxed write operator. Use the new
-wrapper when a write is following a wmb().
+Since code already has an explicit barrier call, changing code to
 
-Since code already has an explicit barrier call, changing writel() to
-writel_relaxed().
+wmb()
+writel_relaxed()
+mmiowb()
 
-Also add mmiowb() so that write code doesn't move outside of scope.
+for multi-arch support.
 
 Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 2 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.h | 9 +++++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qla3xxx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 1500243..befb538 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -1922,7 +1922,7 @@ static int bnxt_poll_work(struct bnxt *bp, struct bnxt_napi *bnapi, int budget)
- 		/* Sync BD data before updating doorbell */
+diff --git a/drivers/net/ethernet/qlogic/qla3xxx.c b/drivers/net/ethernet/qlogic/qla3xxx.c
+index 9e5264d..b48f761 100644
+--- a/drivers/net/ethernet/qlogic/qla3xxx.c
++++ b/drivers/net/ethernet/qlogic/qla3xxx.c
+@@ -1858,8 +1858,9 @@ static void ql_update_small_bufq_prod_index(struct ql3_adapter *qdev)
+ 			qdev->small_buf_release_cnt -= 8;
+ 		}
  		wmb();
- 
--		bnxt_db_write(bp, db, DB_KEY_TX | prod);
-+		bnxt_db_write_relaxed(bp, db, DB_KEY_TX | prod);
+-		writel(qdev->small_buf_q_producer_index,
+-			&port_regs->CommonRegs.rxSmallQProducerIndex);
++		writel_relaxed(qdev->small_buf_q_producer_index,
++			       &port_regs->CommonRegs.rxSmallQProducerIndex);
++		mmiowb();
  	}
- 
- 	cpr->cp_raw_cons = raw_cons;
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index 1989c47..5e453b9 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1401,6 +1401,15 @@ static inline u32 bnxt_tx_avail(struct bnxt *bp, struct bnxt_tx_ring_info *txr)
- 		((txr->tx_prod - txr->tx_cons) & bp->tx_ring_mask);
  }
  
-+/* For TX and RX ring doorbells with no ordering guarantee*/
-+static inline void bnxt_db_write_relaxed(struct bnxt *bp, void __iomem *db,
-+					 u32 val)
-+{
-+	writel_relaxed(val, db);
-+	if (bp->flags & BNXT_FLAG_DOUBLE_DB)
-+		writel_relaxed(val, db);
-+}
-+
- /* For TX and RX ring doorbells */
- static inline void bnxt_db_write(struct bnxt *bp, void __iomem *db, u32 val)
- {
 -- 
 2.7.4
