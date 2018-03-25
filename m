@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753244AbeCYLAR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 07:00:17 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38169 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752496AbeCYLAG (ORCPT
+        id S1753277AbeCYLAW (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 07:00:22 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37150 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752526AbeCYLAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 07:00:06 -0400
-X-Google-Smtp-Source: AIpwx4+1NhG8pBgcMlh8eQgpIXRUayADYya3w//sUelH1FOBqShcTv8ht0e/Tgu92THl2i93sOPhfg==
+        Sun, 25 Mar 2018 07:00:07 -0400
+X-Google-Smtp-Source: AG47ELtrKERvqXoBKXmBPlp8DQ3oLjKGs3J+8GocffaCTOUGdHD5koWGjNI8Rl16dA5v375PKsZHRQ==
 From: "=?UTF-8?q?Christian=20K=C3=B6nig?="
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
 To: linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org,
         dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] dma-buf: add peer2peer flag
-Date: Sun, 25 Mar 2018 12:59:56 +0200
-Message-Id: <20180325110000.2238-4-christian.koenig@amd.com>
+Subject: [PATCH 6/8] drm/amdgpu: note that we can handle peer2peer DMA-buf
+Date: Sun, 25 Mar 2018 12:59:58 +0200
+Message-Id: <20180325110000.2238-6-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180325110000.2238-1-christian.koenig@amd.com>
 References: <20180325110000.2238-1-christian.koenig@amd.com>
@@ -27,62 +27,24 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a peer2peer flag noting that the importer can deal with device
-resources which are not backed by pages.
+Importing should work out of the box.
 
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/dma-buf/dma-buf.c | 1 +
- include/linux/dma-buf.h   | 4 ++++
- 2 files changed, 5 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index ffaa2f9a9c2c..f420225f93c6 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -565,6 +565,7 @@ struct dma_buf_attachment *dma_buf_attach(const struct dma_buf_attach_info *info
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+index fb43faf88eb0..2566268806c3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+@@ -353,6 +353,7 @@ struct drm_gem_object *amdgpu_gem_prime_import(struct drm_device *dev,
+ 	if (IS_ERR(obj))
+ 		return obj;
  
- 	attach->dev = info->dev;
- 	attach->dmabuf = dmabuf;
-+	attach->peer2peer = info->peer2peer;
- 	attach->priv = info->priv;
- 	attach->invalidate = info->invalidate;
- 
-diff --git a/include/linux/dma-buf.h b/include/linux/dma-buf.h
-index 15dd8598bff1..1ef50bd9bc5b 100644
---- a/include/linux/dma-buf.h
-+++ b/include/linux/dma-buf.h
-@@ -313,6 +313,7 @@ struct dma_buf {
-  * @dmabuf: buffer for this attachment.
-  * @dev: device attached to the buffer.
-  * @node: list of dma_buf_attachment.
-+ * @peer2peer: true if the importer can handle peer resources without pages.
-  * @priv: exporter specific attachment data.
-  *
-  * This structure holds the attachment information between the dma_buf buffer
-@@ -328,6 +329,7 @@ struct dma_buf_attachment {
- 	struct dma_buf *dmabuf;
- 	struct device *dev;
- 	struct list_head node;
-+	bool peer2peer;
- 	void *priv;
- 
- 	/**
-@@ -392,6 +394,7 @@ struct dma_buf_export_info {
-  * @dmabuf:	the exported dma_buf
-  * @dev:	the device which wants to import the attachment
-  * @priv:	private data of importer to this attachment
-+ * @peer2peer:	true if the importer can handle peer resources without pages
-  * @invalidate:	callback to use for invalidating mappings
-  *
-  * This structure holds the information required to attach to a buffer. Used
-@@ -401,6 +404,7 @@ struct dma_buf_attach_info {
- 	struct dma_buf *dmabuf;
- 	struct device *dev;
- 	void *priv;
-+	bool peer2peer;
- 	void (*invalidate)(struct dma_buf_attachment *attach);
- };
- 
++	attach_info.peer2peer = true;
+ 	attach_info.priv = obj;
+ 	attach = dma_buf_attach(&attach_info);
+ 	if (IS_ERR(attach)) {
 -- 
 2.14.1
