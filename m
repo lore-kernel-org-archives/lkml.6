@@ -1,115 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753437AbeCYPVr (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 11:21:47 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:37012 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753321AbeCYPVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 11:21:44 -0400
-Subject: Re: efisubsys_init takes more than a few milliseconds
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <305249de-7892-fca4-b462-a493aa65d177@molgen.mpg.de>
- <CAKv+Gu84h2+zofb4v-QrVE7rqCrGC7MaHEw7tB+z2J8DczjoKw@mail.gmail.com>
- <f94af2ed-3492-4db5-c1bc-30c4c1855947@molgen.mpg.de>
-From: Paul Menzel <pmenzel+linux-efi@molgen.mpg.de>
-Message-ID: <676c44ce-6909-f002-4ea3-0c6f68b6b781@molgen.mpg.de>
-Date: Sun, 25 Mar 2018 17:21:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753470AbeCYPin (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 11:38:43 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44725 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753427AbeCYPil (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 11:38:41 -0400
+X-Google-Smtp-Source: AG47ELuquxecWmubL7mwQI+jvhVtl125yb0ZvRH3sMBQBClATaoULrQk2IkLZkWSMn3qXzhBbmU9Lg==
+Date: Sun, 25 Mar 2018 21:07:43 +0530
+From: Arushi Singhal <arushisinghal19971997@gmail.com>
+To: dwmw2@infradead.org
+Cc: Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: Use DIV_ROUND_UP()
+Message-ID: <20180325153743.GA16063@seema-Inspiron-15-3567>
 MIME-Version: 1.0
-In-Reply-To: <f94af2ed-3492-4db5-c1bc-30c4c1855947@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Ard,
+The kernel.h macro DIV_ROUND_UP performs the computation
+(((n) + (d) - 1) / (d)) but is perhaps more readable.
 
+Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+---
+ drivers/mtd/ftl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 03/25/2018 09:41 AM, Paul Menzel wrote:
-
-> On 03/24/2018 11:35 PM, Ard Biesheuvel wrote:
-> 
->> On 24 March 2018 at 22:10, Paul Menzel wrote:
-
->>> According to `initcall_debug`, `efisubsys_init` takes more than a few
->>> milliseconds to execute on a Dell XPS 13 9370 (Intel(R) Core(TM) 
->>> i7-8550U CPU @ 1.80GHz).
->>>
->>>> ```
->>>> […]
->>>> [ 0.144474] calling  efisubsys_init+0x0/0x2cf @ 1
->>>> [ 0.144474] Registered efivars operations
->>>> [ 0.173690] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343 
->>>> usecs
->>>> […]
->>>> ```
->>>
->>>
->>> To get a vanilla Linux kernel to boot in well under one second, it’d 
->>> be nice
->>> if the time could be improved. Do you know, why it takes so long?
->>>
->>> According to `bootgraph.py` from pm-graph [1][2] it takes even a little
->>> longer.
->>>
->>>> efisubsys_init: start=690.841, end=720.493, length(w/o overhead)=31.250
->>>> ms, return=0
->>>
->>> There are several dozen calls to `virt_efi_get_next_variable()` all 
->>> but one
->>> taking around 0.335 ms. This path needs to be optimized. Is that 
->>> possible?
->>
->> That depends. These are firmware calls, so to make these calls faster,
->> you need to modify the firmware, not the kernel.
-> 
-> Yeah, unfortunately, no free firmware runs on this laptop, and Dell 
-> doesn’t respond to these kind of reports, as they think, it’s not 
-> important.
-> 
->> We may be able to make more intrusive changes to get rid of this
->> delay, e.g., spin up a special kernel thread, but I'd have to check in
->> more detail.
-> 
-> That’d be great.
-> 
->> In the mean time, you can try passing 'efi=noruntime' to the kernel.
-> 
-> Thank you, I didn’t know about that. Unfortunately, initcall_debug still 
-> reports the same time although the one message is gone.
-> 
-> ```
-> $ sudo dmesg | grep efisubsys
-> [    0.145779] calling  efisubsys_init+0x0/0x2cf @ 1
-> [    0.172034] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343 usecs
-> ```
-
-Hmm, it looks like, I only edited `/etc/default/grub` and didn’t run 
-`sudo update-grub`.
-
-```
-$ sudo dmesg | grep efisubsys
-[    0.776339] calling  efisubsys_init+0x0/0x2cf @ 1
-[    0.776339] initcall efisubsys_init+0x0/0x2cf returned 0 after 0 usecs
-```
-
->>> To reproduce this, clone the pm-graph repository [2], use `sudo
->>> ./bootgraph.py -f -fstat -maxdepth 10 -manual` to see what to add to
->>> `/boot/grub/grub.cfg`. Then reboot, and execute `sudo ./bootgraph.py -f
->>> -fstat -maxdepth 10`.
->>>
->>> If your system is powerful enough, you can use a higher maximum depth. I
->>> didn’t get around how `-cgfilter` works to get smaller HTML files.
-
-
-Kind regards,
-
-Paul
-
-
->>> [1] https://01.org/suspendresume
->>> [2] https://github.com/01org/pm-graph
+diff --git a/drivers/mtd/ftl.c b/drivers/mtd/ftl.c
+index a048429..61d5cf8 100644
+--- a/drivers/mtd/ftl.c
++++ b/drivers/mtd/ftl.c
+@@ -425,8 +425,8 @@ static int prepare_xfer(partition_t *part, int i)
+     }
+ 
+     /* Write the BAM stub */
+-    nbam = (part->BlocksPerUnit * sizeof(uint32_t) +
+-	    le32_to_cpu(part->header.BAMOffset) + SECTOR_SIZE - 1) / SECTOR_SIZE;
++    nbam = DIV_ROUND_UP(part->BlocksPerUnit * sizeof(uint32_t) +
++			le32_to_cpu(part->header.BAMOffset), SECTOR_SIZE);
+ 
+     offset = xfer->Offset + le32_to_cpu(part->header.BAMOffset);
+     ctl = cpu_to_le32(BLOCK_CONTROL);
+-- 
+2.7.4
