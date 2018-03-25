@@ -1,111 +1,219 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-133288-1522172162-2-15448146535994813931
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1000858-1521940919-5-14087213942044559617
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES endaro, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
+  T_RP_MATCHES_RCVD -0.01, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522172162; b=jydnZ/zNNriSJNugHJPEcB6KDF78QYqxpq0vM+O5hjFf+jx
-    vsLNBD1Y2xh/ebrZ98RIhWEHCbob21EeDHTteTqlsr4lL2gjG9EPuh4GWMpufIsB
-    EdwEDRGF+A5Bl3UUIFa96G6p91C7C7li8r6ClVZ6b9RmraDj79Zloz5iL5Dso+yL
-    1wE9Eq73Asw9aKPcMIDiHMZgpAD50hThCtXqFTqubQZ2kveXEepfHdu4wD8lRcwP
-    HTf74faJ9f6sq/nF6FE/2bCu8vXGYn0tohfqsAK2vcelXwxbCdaDdfSTktRiNHrg
-    7K+ko9jYMFZttbAtHpGyeul7YMrQt3NZMdqoLZA==
+    t=1521940918; b=hRd5jRWX753bSiZBIogr2SpB5K+GN2ww5QxKhM7y/LQNiC/
+    NqliXzH1uWru6RFsjKH0EUl9AEOIBB5je2naPf9f8Hsu8aozUXxkQNt81nAY4AYq
+    aSUOKumeFUX8S9qKtIm+hsq0IsaLM2hSnP0g5az/IzVnsjMNtlVADxowcWFLlmUG
+    S0nRbWCiZVhBrbhzo8wFkv1/xVhydygOTZo3IEK/NQ53Iaf9//gy510ziHHNF4xW
+    GTAd9t3+odZN4JhV7N33lWKSlBqUjsV4Y9Lo9Az9YW1Qy+THBRhWFrjN2Dl1Cx9A
+    MZ+xMXZMeYh2pIMwyY/dsSy5/C4cPuF1npO1FhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:references:in-reply-to:from
+    messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    arctest; t=1522172162; bh=BOTomRhf/DSaGwso3NC9ucsfC5nLE9vZzUTwlR
-    cAGfs=; b=KQxTuqLsf3S0n3Tse4m/s76HVQG0S2Bka3yL8TFwGvMEfmydCcR9Bu
-    8s/qQk/Msp/7TSbiFVrqioLKhcalTTVHXLUtTCl21wou5fcueoq/o5ynTiS3CoUn
-    gCWzNse5FQvA99nPpmjSfp0/LR573EbYtszplFTiAQv2IN1mCTCEc20r2iO5PZa9
-    4TYMDADocEY2/TbKKWhWAzIzZSwMpcVqNxAIynVdh3uk1yh6sgfF60dkvwL7WFEA
-    K3TExuHK2we2/5zdydwsbkWEdnFzE+A5SQubuL9XVqlz7EUBYIOQUPEIP2y7ew6p
-    dUOFinRvSrzKOaE+0OB/3ej9wxSm+Rww==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=bqt64my4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    arctest; t=1521940918; bh=eV3Nl7JPqgfXAcpnXutPb/ti3XobtxzZlDbGpF
+    IGHto=; b=GxNcjiCOO4Hy5xo3tlrLUauoAEXbpyiX4PQE0pdf/PZ8ec7covUokL
+    5GHzEHnZahfhQjuGmMa4rxqlwFvtrJXDCUw/oWDPDOEAGkJxQ/BE+bMl+kKiabzo
+    cz1/2voKISC3rCyOVNJchIbDxJG7R/JMeKK76aZBVi7n9CN7lqlQFJwJbQ6LArD/
+    6P5YiugnmsUgapakI42dDstgA4yISMwJVI12z81LiciPyPMporigAaL9nGA3QdJe
+    ndaQIZhRT8epeGAH9b9IaQ8yFNOypZuu8+/2064OrMADnO2wTSPjeYn4OhFTzXSm
+    ZobgXHTDtZFrenaKR4Uvxv9J77rwVFGw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=RVw9vO4N x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qwImblGD;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oJiUO9i1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=chromium.org header.i=@chromium.org header.b=bqt64my4 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=RVw9vO4N x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=qwImblGD;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=oJiUO9i1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=chromium.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPLdV/XIrX29FqNCvwKSd8qnC39fimWNmyqNR6U0Ka1ERklrymOvqT4r0YkdswYtvEl8gZEqkjp758ZphdLbuGYXd8oURDU0yt92x1xUBcSUTIs4tziZ
-    ftFwYGG7MuOxiKQFkFqeXh0KzP7vrb1atTOZZBvFMTxoDLN7KQJ0cFOE1U+Ymr6H9CtLI0mWmdVSGuS6M/MX98tYOLSVqHr9tCRdIkgRexug32TlP3e5VM/L
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=LpQP-O61AAAA:8 a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8 a=K6uW_v_grZFRU5XRMuEA:9
-    a=QEXdDO2ut3YA:10 a=pioyyrs4ZptJ924tMmac:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=xmb-EsYY8bH0VWELuYED:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754502AbeC0Rfn (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 13:35:43 -0400
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:35029 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754436AbeC0Rfk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 13:35:40 -0400
-X-Google-Smtp-Source: AIpwx48+PSBKBsaO9qxRBCIpCMQZArFz70ZYGSYFHYtKDTNoPPCYnTcZ9hrTlUL+VqfhEiWTpbUQBQ==
+        id S1752862AbeCYBVw (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 24 Mar 2018 21:21:52 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36531 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752216AbeCYBVv (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Sat, 24 Mar 2018 21:21:51 -0400
+X-Google-Smtp-Source: AG47ELsVoTuHZ9H9U1iRjf+Wx9LZ5Aluvc6y5DcwXZaI7cXtKGxY/ag3e3zQMsN1wDn2DRJZ0fmMi7KyODuGp72Jw5o=
 MIME-Version: 1.0
-References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org> <1521785487-29866-3-git-send-email-mgautam@codeaurora.org>
-In-Reply-To: <1521785487-29866-3-git-send-email-mgautam@codeaurora.org>
-From: Evan Green <evgreen@chromium.org>
-Date: Tue, 27 Mar 2018 17:35:02 +0000
-X-Gmail-Original-Message-ID: <CAE=gft67HuudBajKESOgZtgMz7owJqdoYPJp_6LpyB37a0-iYQ@mail.gmail.com>
-Message-ID: <CAE=gft67HuudBajKESOgZtgMz7owJqdoYPJp_6LpyB37a0-iYQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] phy: qcom-qusb2: Fix crash if nvmem cell not specified
-To: Manu Gautam <mgautam@codeaurora.org>
-Cc: kishon@ti.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, stable@vger.kernel.org,
-        vivek.gautam@codeaurora.org, jh80.chung@samsung.com,
-        yoshihiro.shimoda.uh@renesas.com
+In-Reply-To: <20180208035501.10711-1-jeffy.chen@rock-chips.com>
+References: <20180208035501.10711-1-jeffy.chen@rock-chips.com>
+From: Jonathan Liu <net147@gmail.com>
+Date: Sun, 25 Mar 2018 12:21:48 +1100
+Message-ID: <CANwerB1BBnQhGoCrna48dtwb36iqC1UcsYJ-1Xnk6K0ce2OiGg@mail.gmail.com>
+Subject: Re: [v6] usb: ohci: Proper handling of ed_rm_list to handle race
+ condition between usb_kill_urb() and finish_unlinks()
+To: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        briannorris@chromium.org, stern@rowland.harvard.edu,
+        mka@chromium.org, dianders@chromium.org,
+        AMAN DEEP <aman.deep@samsung.com>, stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 22, 2018 at 11:13 PM Manu Gautam <mgautam@codeaurora.org> wrote:
+Hi,
 
-> Driver currently crashes due to NULL pointer deference
-> while updating PHY tune register if nvmem cell is NULL.
-> Since, fused value for Tune1/2 register is optional,
-> we'd rather bail out.
-
-> Fixes: ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on Qcom
-chips")
-> Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: stable <stable@vger.kernel.org> # 4.14+
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+On 8 February 2018 at 14:55, Jeffy Chen <jeffy.chen@rock-chips.com> wrote:
+> From: AMAN DEEP <aman.deep@samsung.com>
+>
+> There is a race condition between finish_unlinks->finish_urb() function
+> and usb_kill_urb() in ohci controller case. The finish_urb calls
+> spin_unlock(&ohci->lock) before usb_hcd_giveback_urb() function call,
+> then if during this time, usb_kill_urb is called for another endpoint,
+> then new ed will be added to ed_rm_list at beginning for unlink, and
+> ed_rm_list will point to newly added.
+>
+> When finish_urb() is completed in finish_unlinks() and ed->td_list
+> becomes empty as in below code (in finish_unlinks() function):
+>
+>         if (list_empty(&ed->td_list)) {
+>                 *last = ed->ed_next;
+>                 ed->ed_next = NULL;
+>         } else if (ohci->rh_state == OHCI_RH_RUNNING) {
+>                 *last = ed->ed_next;
+>                 ed->ed_next = NULL;
+>                 ed_schedule(ohci, ed);
+>         }
+>
+> The *last = ed->ed_next will make ed_rm_list to point to ed->ed_next
+> and previously added ed by usb_kill_urb will be left unreferenced by
+> ed_rm_list. This causes usb_kill_urb() hang forever waiting for
+> finish_unlink to remove added ed from ed_rm_list.
+>
+> The main reason for hang in this race condtion is addition and removal
+> of ed from ed_rm_list in the beginning during usb_kill_urb and later
+> last* is modified in finish_unlinks().
+>
+> As suggested by Alan Stern, the solution for proper handling of
+> ohci->ed_rm_list is to remove ed from the ed_rm_list before finishing
+> any URBs. Then at the end, we can add ed back to the list if necessary.
+>
+> This properly handle the updated ohci->ed_rm_list in usb_kill_urb().
+>
+> Fixes:977dcfdc6031("USB:OHCI:don't lose track of EDs when a controller dies")
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> CC: <stable@vger.kernel.org>
+> Signed-off-by: Aman Deep <aman.deep@samsung.com>
+> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
 > ---
->   drivers/phy/qualcomm/phy-qcom-qusb2.c | 4 ++++
->   1 file changed, 4 insertions(+)
+>
+> Changes in v6:
+> This is a resend of Aman Deep's v5 patch [0], which solved the hang we
+> hit [1]. (Thanks Aman :)
+>
+> The v5 has some format issues, so i slightly adjust the commit message.
+>
+> [0] https://www.spinics.net/lists/linux-usb/msg129010.html
+> [1] https://bugs.chromium.org/p/chromium/issues/detail?id=803749
+>
+>  drivers/usb/host/ohci-q.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/usb/host/ohci-q.c b/drivers/usb/host/ohci-q.c
+> index b2ec8c399363..4ccb85a67bb3 100644
+> --- a/drivers/usb/host/ohci-q.c
+> +++ b/drivers/usb/host/ohci-q.c
+> @@ -1019,6 +1019,8 @@ static void finish_unlinks(struct ohci_hcd *ohci)
+>                  * have modified this list.  normally it's just prepending
+>                  * entries (which we'd ignore), but paranoia won't hurt.
+>                  */
+> +               *last = ed->ed_next;
+> +               ed->ed_next = NULL;
+>                 modified = 0;
+>
+>                 /* unlink urbs as requested, but rescan the list after
+> @@ -1077,21 +1079,22 @@ static void finish_unlinks(struct ohci_hcd *ohci)
+>                         goto rescan_this;
+>
+>                 /*
+> -                * If no TDs are queued, take ED off the ed_rm_list.
+> +                * If no TDs are queued, ED is now idle.
+>                  * Otherwise, if the HC is running, reschedule.
+> -                * If not, leave it on the list for further dequeues.
+> +                * If the HC isn't running, add ED back to the
+> +                * start of the list for later processing.
+>                  */
+>                 if (list_empty(&ed->td_list)) {
+> -                       *last = ed->ed_next;
+> -                       ed->ed_next = NULL;
+>                         ed->state = ED_IDLE;
+>                         list_del(&ed->in_use_list);
+>                 } else if (ohci->rh_state == OHCI_RH_RUNNING) {
+> -                       *last = ed->ed_next;
+> -                       ed->ed_next = NULL;
+>                         ed_schedule(ohci, ed);
+>                 } else {
+> -                       last = &ed->ed_next;
+> +                       ed->ed_next = ohci->ed_rm_list;
+> +                       ohci->ed_rm_list = ed;
+> +                       /* Don't loop on the same ED */
+> +                       if (last == &ohci->ed_rm_list)
+> +                               last = &ed->ed_next;
+>                 }
+>
+>                 if (modified)
 
+I am experiencing a USB function call hang from userspace with OCHI
+(full speed USB device) after updating from Linux 4.14.15 to 4.14.24
+and noticed this commit.
 
-Reviewed-by: Evan Green <evgreen@chromium.org>
+Here is the Linux 4.14.24 kernel stack trace (extracted from SysRq+w
+and amended with addr2line):
+[<c05cbd64>] (__schedule) from [<c05cc148>] (schedule+0x50/0xb4)
+kernel/sched/core.c:2792
+[<c05cc148>] (schedule) from [<c042789c>]
+(usb_kill_urb.part.3+0x78/0xa8) include/asm-generic/preempt.h:59
+[<c042789c>] (usb_kill_urb.part.3) from [<c0433a3c>]
+(usbdev_ioctl+0x1288/0x1cf0) drivers/usb/core/urb.c:690
+[<c0433a3c>] (usbdev_ioctl) from [<c0217db8>]
+(do_vfs_ioctl+0x9c/0x8ec) drivers/usb/core/devio.c:1835
+[<c0217db8>] (do_vfs_ioctl) from [<c021863c>] (SyS_ioctl+0x34/0x5c)
+fs/ioctl.c:47
+[<c021863c>] (SyS_ioctl) from [<c0107820>] (ret_fast_syscall+0x0/0x54)
+include/linux/file.h:39
+
+Afterwards the kernel is unresponsive to disconnect/connect of the
+full speed USB device but I can connect/disconnect a high speed USB
+device to the same port and communicate to it without problem since it
+uses EHCI (OHCI is companion controller). If I try to connect the full
+speed USB device again it is still unresponsive. The userspace
+application is still hanging after all this.
+
+Could this commit be causing the issue?
+
+Thanks.
+
+Regards,
+Jonathan
