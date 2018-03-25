@@ -1,240 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751839AbeCYWKE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 18:10:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36347 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750788AbeCYWKB (ORCPT
+        id S1752183AbeCYWKe (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:10:34 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36831 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750981AbeCYWKb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 18:10:01 -0400
-Date: Sun, 25 Mar 2018 15:09:49 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-gz09ahsd5xm1eip7ura5ow6x@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, yao.jin@linux.intel.com, hpa@zytor.com,
-        ak@linux.intel.com, mingo@kernel.org, wangnan0@huawei.com,
-        adrian.hunter@intel.com, tglx@linutronix.de, dsahern@gmail.com,
-        jolsa@kernel.org, acme@redhat.com, namhyung@kernel.org
-Reply-To: tglx@linutronix.de, dsahern@gmail.com, jolsa@kernel.org,
-        acme@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        yao.jin@linux.intel.com, ak@linux.intel.com, hpa@zytor.com,
-        mingo@kernel.org, wangnan0@huawei.com, adrian.hunter@intel.com
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Move annotation_line array from TUI
- to generic code
-Git-Commit-ID: 9d6bb41d1ced7288b54a79a2c15d750085012215
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sun, 25 Mar 2018 18:10:31 -0400
+X-Google-Smtp-Source: AG47ELscej693e3b6XwnXYBnY1cyb0KEhduaokTfcbbS76nxIL6qlKQvEOFx5XSwY66rs6+bM4CzLQ==
+Date: Sun, 25 Mar 2018 15:10:29 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: kernel test robot <fengguang.wu@intel.com>, paulmck@linux.vnet.ibm.com,
+        peterz@infradead.org, akpm@linux-foundation.org, kirill@shutemov.name,
+        ak@linux.intel.com, mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, lkp@01.org
+Subject: Re: [mm] b1f0502d04: INFO:trying_to_register_non-static_key
+In-Reply-To: <792c0f75-7e7f-cd81-44ae-4205f6e4affc@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1803251510040.80485@chino.kir.corp.google.com>
+References: <20180317075119.u6yuem2bhxvggbz3@inn> <792c0f75-7e7f-cd81-44ae-4205f6e4affc@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9d6bb41d1ced7288b54a79a2c15d750085012215
-Gitweb:     https://git.kernel.org/tip/9d6bb41d1ced7288b54a79a2c15d750085012215
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 15 Mar 2018 10:47:54 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 20 Mar 2018 13:19:28 -0300
+On Wed, 21 Mar 2018, Laurent Dufour wrote:
 
-perf annotate: Move annotation_line array from TUI to generic code
+> I found the root cause of this lockdep warning.
+> 
+> In mmap_region(), unmap_region() may be called while vma_link() has not been
+> called. This happens during the error path if call_mmap() failed.
+> 
+> The only to fix that particular case is to call
+> seqcount_init(&vma->vm_sequence) when initializing the vma in mmap_region().
+> 
 
-This is needed to reduce the differences between the TUI mode and the
-other annotation UIs, next csets will move that code to the UI-neutral
-annotation library. Leaving it in place for now to ease review.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-gz09ahsd5xm1eip7ura5ow6x@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/ui/browsers/annotate.c | 41 ++++++++++++++++++---------------------
- tools/perf/util/annotate.h        |  1 +
- 2 files changed, 20 insertions(+), 22 deletions(-)
-
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 0dd64707125a..e89b68612408 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -40,7 +40,6 @@ struct annotate_browser {
- 	struct rb_root		    entries;
- 	struct rb_node		   *curr_hot;
- 	struct annotation_line	   *selection;
--	struct annotation_line	  **offsets;
- 	struct arch		   *arch;
- 	int			    nr_events;
- 	u64			    start;
-@@ -335,9 +334,9 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
- 	 *  name right after the '<' token and probably treating this like a
- 	 *  'call' instruction.
- 	 */
--	target = ab->offsets[cursor->ops.target.offset];
-+	target = notes->offsets[cursor->ops.target.offset];
- 	if (target == NULL) {
--		ui_helpline__printf("WARN: jump target inconsistency, press 'o', ab->offsets[%#x] = NULL\n",
-+		ui_helpline__printf("WARN: jump target inconsistency, press 'o', notes->offsets[%#x] = NULL\n",
- 				    cursor->ops.target.offset);
- 		return;
- 	}
-@@ -969,25 +968,25 @@ int hist_entry__tui_annotate(struct hist_entry *he, struct perf_evsel *evsel,
- }
- 
- 
--static unsigned count_insn(struct annotate_browser *browser, u64 start, u64 end)
-+static unsigned count_insn(struct annotation *notes, u64 start, u64 end)
- {
- 	unsigned n_insn = 0;
- 	u64 offset;
- 
- 	for (offset = start; offset <= end; offset++) {
--		if (browser->offsets[offset])
-+		if (notes->offsets[offset])
- 			n_insn++;
- 	}
- 	return n_insn;
- }
- 
--static void count_and_fill(struct annotate_browser *browser, u64 start, u64 end,
-+static void count_and_fill(struct annotation *notes, u64 start, u64 end,
- 			   struct cyc_hist *ch)
- {
- 	unsigned n_insn;
- 	u64 offset;
- 
--	n_insn = count_insn(browser, start, end);
-+	n_insn = count_insn(notes, start, end);
- 	if (n_insn && ch->num && ch->cycles) {
- 		float ipc = n_insn / ((double)ch->cycles / (double)ch->num);
- 
-@@ -996,7 +995,7 @@ static void count_and_fill(struct annotate_browser *browser, u64 start, u64 end,
- 			return;
- 
- 		for (offset = start; offset <= end; offset++) {
--			struct annotation_line *al = browser->offsets[offset];
-+			struct annotation_line *al = notes->offsets[offset];
- 
- 			if (al)
- 				al->ipc = ipc;
-@@ -1009,11 +1008,9 @@ static void count_and_fill(struct annotate_browser *browser, u64 start, u64 end,
-  * annotate, but right now we need the per byte offsets arrays,
-  * which are only here.
-  */
--static void annotate__compute_ipc(struct annotate_browser *browser, size_t size,
--			   struct symbol *sym)
-+static void annotate__compute_ipc(struct annotation *notes, size_t size)
- {
- 	u64 offset;
--	struct annotation *notes = symbol__annotation(sym);
- 
- 	if (!notes->src || !notes->src->cycles_hist)
- 		return;
-@@ -1027,8 +1024,8 @@ static void annotate__compute_ipc(struct annotate_browser *browser, size_t size,
- 			struct annotation_line *al;
- 
- 			if (ch->have_start)
--				count_and_fill(browser, ch->start, offset, ch);
--			al = browser->offsets[offset];
-+				count_and_fill(notes, ch->start, offset, ch);
-+			al = notes->offsets[offset];
- 			if (al && ch->num_aggr)
- 				al->cycles = ch->cycles_aggr / ch->num_aggr;
- 			notes->have_cycles = true;
-@@ -1043,13 +1040,14 @@ static void annotate_browser__mark_jump_targets(struct annotate_browser *browser
- 	u64 offset;
- 	struct map_symbol *ms = browser->b.priv;
- 	struct symbol *sym = ms->sym;
-+	struct annotation *notes = symbol__annotation(sym);
- 
- 	/* PLT symbols contain external offsets */
- 	if (strstr(sym->name, "@plt"))
- 		return;
- 
- 	for (offset = 0; offset < size; ++offset) {
--		struct annotation_line *al = browser->offsets[offset];
-+		struct annotation_line *al = notes->offsets[offset];
- 		struct disasm_line *dl;
- 		struct browser_line *blt;
- 
-@@ -1058,7 +1056,7 @@ static void annotate_browser__mark_jump_targets(struct annotate_browser *browser
- 		if (!disasm_line__is_valid_jump(dl, sym))
- 			continue;
- 
--		al = browser->offsets[dl->ops.target.offset];
-+		al = notes->offsets[dl->ops.target.offset];
- 
- 		/*
-  		 * FIXME: Oops, no jump target? Buggy disassembler? Or do we
-@@ -1089,7 +1087,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 			 struct hist_browser_timer *hbt)
- {
- 	struct annotation_line *al;
--	struct annotation *notes;
-+	struct annotation *notes = symbol__annotation(sym);
- 	size_t size;
- 	struct map_symbol ms = {
- 		.map = map,
-@@ -1116,8 +1114,8 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 	if (map->dso->annotate_warned)
- 		return -1;
- 
--	browser.offsets = zalloc(size * sizeof(struct annotation_line *));
--	if (browser.offsets == NULL) {
-+	notes->offsets = zalloc(size * sizeof(struct annotation_line *));
-+	if (notes->offsets == NULL) {
- 		ui__error("Not enough memory!");
- 		return -1;
- 	}
-@@ -1137,7 +1135,6 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 
- 	ui_helpline__push("Press ESC to exit");
- 
--	notes = symbol__annotation(sym);
- 	browser.start = map__rip_2objdump(map, sym->start);
- 
- 	list_for_each_entry(al, &notes->src->source, node) {
-@@ -1158,13 +1155,13 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 			 * E.g. copy_user_generic_unrolled
-  			 */
- 			if (al->offset < (s64)size)
--				browser.offsets[al->offset] = al;
-+				notes->offsets[al->offset] = al;
- 		} else
- 			bpos->idx_asm = -1;
- 	}
- 
- 	annotate_browser__mark_jump_targets(&browser, size);
--	annotate__compute_ipc(&browser, size, sym);
-+	annotate__compute_ipc(notes, size);
- 
- 	browser.addr_width = browser.target_width = browser.min_addr_width = hex_width(size);
- 	browser.max_addr_width = hex_width(sym->end);
-@@ -1184,7 +1181,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 	annotated_source__purge(notes->src);
- 
- out_free_offsets:
--	free(browser.offsets);
-+	zfree(&notes->offsets);
- 	return ret;
- }
- 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 23d2f32b7bf0..d2c3436830a9 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -164,6 +164,7 @@ struct annotated_source {
- struct annotation {
- 	pthread_mutex_t		lock;
- 	u64			max_coverage;
-+	struct annotation_line	**offsets;
- 	bool			have_cycles;
- 	struct annotated_source *src;
- };
+Ack, although that would require a fixup to dup_mmap() as well.
