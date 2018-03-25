@@ -1,89 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753686AbeCYOld (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 10:41:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59366 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753408AbeCYOjf (ORCPT
+        id S1753414AbeCYPHt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 11:07:49 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:45622 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753321AbeCYPHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 10:39:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DD32C60F6D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: netdev@vger.kernel.org, timur@codeaurora.org, sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Harish Patil <harish.patil@cavium.com>,
-        Manish Chopra <manish.chopra@cavium.com>,
-        Dept-GELinuxNICDev@cavium.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 5/7] net: qlge: Eliminate duplicate barriers on weakly-ordered archs
-Date: Sun, 25 Mar 2018 10:39:19 -0400
-Message-Id: <1521988761-30344-6-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1521988761-30344-1-git-send-email-okaya@codeaurora.org>
-References: <1521988761-30344-1-git-send-email-okaya@codeaurora.org>
+        Sun, 25 Mar 2018 11:07:47 -0400
+X-IronPort-AV: E=Sophos;i="5.48,360,1517871600";
+   d="scan'208";a="319839455"
+Date: Sun, 25 Mar 2018 11:07:44 -0400 (EDT)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Arushi Singhal <arushisinghal19971997@gmail.com>
+cc: daniel.vetter@intel.com, Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>, nouveau@lists.freedesktop.org,
+        outreachy-kernel <outreachy-kernel@googlegroups.com>
+Subject: Re: [Outreachy kernel] [PATCH] gpu: drm: Use list_{next/prev}_entry
+ instead of list_entry
+In-Reply-To: <CA+XqjF9jHrOFL4LosK5GdbAgpmQRd9=08eNzvfzYxFaeXk972g@mail.gmail.com>
+Message-ID: <alpine.DEB.2.20.1803251107190.2488@hadrien>
+References: <20180319050530.GA25589@seema-Inspiron-15-3567> <alpine.DEB.2.20.1803190805260.2864@hadrien> <CA+XqjF9jHrOFL4LosK5GdbAgpmQRd9=08eNzvfzYxFaeXk972g@mail.gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; BOUNDARY="8323329-783883557-1521990465=:2488"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code includes wmb() followed by writel(). writel() already has a barrier on
-some architectures like arm64.
+--8323329-783883557-1521990465=:2488
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-This ends up CPU observing two barriers back to back before executing the
-register write.
 
-Create a new wrapper function with relaxed write operator. Use the new
-wrapper when a write is following a wmb().
 
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/net/ethernet/qlogic/qlge/qlge.h      | 16 ++++++++++++++++
- drivers/net/ethernet/qlogic/qlge/qlge_main.c |  3 ++-
- 2 files changed, 18 insertions(+), 1 deletion(-)
+On Sun, 25 Mar 2018, Arushi Singhal wrote:
 
-diff --git a/drivers/net/ethernet/qlogic/qlge/qlge.h b/drivers/net/ethernet/qlogic/qlge/qlge.h
-index 84ac50f..3e71b65 100644
---- a/drivers/net/ethernet/qlogic/qlge/qlge.h
-+++ b/drivers/net/ethernet/qlogic/qlge/qlge.h
-@@ -2185,6 +2185,22 @@ static inline void ql_write_db_reg(u32 val, void __iomem *addr)
- }
- 
- /*
-+ * Doorbell Registers:
-+ * Doorbell registers are virtual registers in the PCI memory space.
-+ * The space is allocated by the chip during PCI initialization.  The
-+ * device driver finds the doorbell address in BAR 3 in PCI config space.
-+ * The registers are used to control outbound and inbound queues. For
-+ * example, the producer index for an outbound queue.  Each queue uses
-+ * 1 4k chunk of memory.  The lower half of the space is for outbound
-+ * queues. The upper half is for inbound queues.
-+ * Caller has to guarantee ordering.
-+ */
-+static inline void ql_write_db_reg_relaxed(u32 val, void __iomem *addr)
-+{
-+	writel_relaxed(val, addr);
-+}
-+
-+/*
-  * Shadow Registers:
-  * Outbound queues have a consumer index that is maintained by the chip.
-  * Inbound queues have a producer index that is maintained by the chip.
-diff --git a/drivers/net/ethernet/qlogic/qlge/qlge_main.c b/drivers/net/ethernet/qlogic/qlge/qlge_main.c
-index 50038d9..8293c202 100644
---- a/drivers/net/ethernet/qlogic/qlge/qlge_main.c
-+++ b/drivers/net/ethernet/qlogic/qlge/qlge_main.c
-@@ -2700,7 +2700,8 @@ static netdev_tx_t qlge_send(struct sk_buff *skb, struct net_device *ndev)
- 		tx_ring->prod_idx = 0;
- 	wmb();
- 
--	ql_write_db_reg(tx_ring->prod_idx, tx_ring->prod_idx_db_reg);
-+	ql_write_db_reg_relaxed(tx_ring->prod_idx, tx_ring->prod_idx_db_reg);
-+	mmiowb();
- 	netif_printk(qdev, tx_queued, KERN_DEBUG, qdev->ndev,
- 		     "tx queued, slot %d, len %d\n",
- 		     tx_ring->prod_idx, skb->len);
--- 
-2.7.4
+>
+>
+> On Mon, Mar 19, 2018 at 12:44 PM, Julia Lawall <julia.lawall@lip6.fr> wrote:
+>
+>
+>       On Mon, 19 Mar 2018, Arushi Singhal wrote:
+>
+>       > This patch replace list_entry with list_{next/prev}_entry as
+>       it makes
+>       > the code more clear to read.
+>       > Done using coccinelle:
+>       >
+>       > @@
+>       > expression e1;
+>       > identifier e3;
+>       > type t;
+>       > @@
+>       > (
+>       > - list_entry(e1->e3.next,t,e3)
+>       > + list_next_entry(e1,e3)
+>       > |
+>       > - list_entry(e1->e3.prev,t,e3)
+>       > + list_prev_entry(e1,e3)
+>       > )
+>
+>       This looks like a rule that could be nice for the Linux kernel
+>       in general,
+>       because the code really is much simpler.
+>
+>       I would suggest to write the rule in a more robust way, as
+>       follows:
+>
+>       @@
+>       identifier e3;
+>       type t;
+>       t *e1;
+>       @@
+>
+>       (
+>       - list_entry(e1->e3.next,t,e3)
+>       + list_next_entry(e1,e3)
+>       |
+>       - list_entry(e1->e3.prev,t,e3)
+>       + list_prev_entry(e1,e3)
+>       )
+>
+>       @@
+>       expression e1;
+>       identifier e3;
+>       @@
+>
+>       (
+>       - list_entry(e1->e3.next,typeof(*e1),e3)
+>       + list_next_entry(e1,e3)
+>       |
+>       - list_entry(e1->e3.prev,typeof(*e1),e3)
+>       + list_prev_entry(e1,e3)
+>
+>       This checks that the type that is specified corresponds to the
+>       one on e1.
+>       It could actually be that the call is getting the first element
+>       of a list,
+>       from some different type, and coincidentally the two types have
+>       the same
+>       field name for the list element.
+>
+>       Unfortunately, the second rule, with the typeof call, doesn't
+>       currently
+>       work in Coccinelle, because the semantic patch language doesn't
+>       actually
+>       support typeof, and thinks that it is a function call.  I will
+>       fix this.
+>
+>       To make a semantic patch for the kernel, you can try running
+>       spgen on the
+>       above file and answer the questions that it asks.  You can find
+>       examples
+>       in the coccinelle/scripts directory.  Just run
+>
+>       spgen foo.cocci
+>
+>       Then answer the questions.  Then run
+>
+>       spgen foo.cocci > foo_for_kernel.cocci
+>
+>       The second run will use the results of the first run to print
+>       the semantic
+>       patch.  Let me know if you have any questions.  You can always
+>       adjust the
+>       semantic patch that is generated by hand afterwards if needed.
+>
+>
+> Hi Julia,
+>
+> I tried spgen and found that second rule is still not working. It's not able
+> to detect the second rule.
+> Is it working for you?
+
+No, I didn't have a chance to fix it yet.
+
+julia
+
+
+>
+> Thanks,
+> Arushi
+>
+>
+>       julia
+>
+>
+>       >
+>       > Signed-off-by: Arushi Singhal
+>       <arushisinghal19971997@gmail.com>
+>       > ---
+>       >  drivers/gpu/drm/drm_lease.c                    | 2 +-
+>       >  drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c | 2 +-
+>       >  2 files changed, 2 insertions(+), 2 deletions(-)
+>       >
+>       > diff --git a/drivers/gpu/drm/drm_lease.c
+>       b/drivers/gpu/drm/drm_lease.c
+>       > index 1402c0e..4dcfb5f 100644
+>       > --- a/drivers/gpu/drm/drm_lease.c
+>       > +++ b/drivers/gpu/drm/drm_lease.c
+>       > @@ -340,7 +340,7 @@ static void _drm_lease_revoke(struct
+>       drm_master *top)
+>       >                               break;
+>       >
+>       >                       /* Over */
+>       > -                     master =
+>       list_entry(master->lessee_list.next, struct drm_master,
+>       lessee_list);
+>       > +                     master = list_next_entry(master,
+>       lessee_list);
+>       >               }
+>       >       }
+>       >  }
+>       > diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
+>       b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
+>       > index e4c8d31..81c3567 100644
+>       > --- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
+>       > +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
+>       > @@ -134,7 +134,7 @@ nvkm_cstate_find_best(struct nvkm_clk
+>       *clk, struct nvkm_pstate *pstate,
+>       >                              nvkm_volt_map(volt,
+>       volt->max2_id, clk->temp));
+>       >
+>       >       for (cstate = start; &cstate->head != &pstate->list;
+>       > -          cstate = list_entry(cstate->head.prev,
+>       typeof(*cstate), head)) {
+>       > +          cstate = list_prev_entry(cstate, head)) {
+>       >               if (nvkm_cstate_valid(clk, cstate, max_volt,
+>       clk->temp))
+>       >                       break;
+>       >       }
+>       > --
+>       > 2.7.4
+>       >
+> > --
+> > You received this message because you are subscribed to the Google
+> Groups "outreachy-kernel" group.
+> > To unsubscribe from this group and stop receiving emails from it,
+> send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+> > To post to this group, send email to
+> outreachy-kernel@googlegroups.com.
+> > To view this discussion on the web visithttps://groups.google.com/d/msgid/outreachy-kernel/20180319050530.GA25589%4
+> 0seema-Inspiron-15-3567.
+> > For more options, visit https://groups.google.com/d/optout.
+> >
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "outreachy-kernel" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to outreachy-kernel+unsubscribe@googlegroups.com.
+> To post to this group, send email to outreachy-kernel@googlegroups.com.
+> To view this discussion on the web visithttps://groups.google.com/d/msgid/outreachy-kernel/CA%2BXqjF9jHrOFL4LosK5Gd
+> bAgpmQRd9%3D08eNzvfzYxFaeXk972g%40mail.gmail.com.
+> For more options, visit https://groups.google.com/d/optout.
+>
+>
+--8323329-783883557-1521990465=:2488--
