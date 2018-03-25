@@ -1,33 +1,33 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AG47ELugIyeij6yyUwfRAJFQUy1uw5Q/Sdk2oDVCSia5czs09LnTue7xG8ooa9hrMU37Hb2NX+Ot
-ARC-Seal: i=1; a=rsa-sha256; t=1521829383; cv=none;
+Return-Path: <david@fromorbit.com>
+X-Google-Smtp-Source: AIpwx4/cBit5XFelMvDm9dXXDwLUAd3Ut63qOoAXHKwi7Dtxe1hoRX9sl9HeIq0YgzxFKSRE/gPd
+ARC-Seal: i=1; a=rsa-sha256; t=1522017258; cv=none;
         d=google.com; s=arc-20160816;
-        b=vaUYe0/BOz0vj2sGUXb5uY6zm2Ab+2lAwHvUgHNtm/VcKn1EL63h91los/gDu1Zcg2
-         I27rm8AcNEgYFbsnWqImXpm05Ay9FlEGrpae94GmZ+366Q2cFM7TwD4ys8+Wtw4paJQ3
-         ywAtbpVZ6Y3DCs2kcX4GoirfIPoe7GsD0bAjBbLgHCuUaNsD75N1F3jgI7L83zVDAMIH
-         IMBnKd7INagw3iTgBSxx/f/nfTGzDTooW8Zf4sXY/mQU494WjMwTx6aCIaKoYAeFJhTm
-         B6V+rk29kvWytcjIdV/siPt+CEI8OpZxnE4ApDvTZDbq1fOYli40pGQzGwNeNAJnIFfx
-         Swrg==
+        b=tlgIzPmty80wTaDlNJPRp5GQkwo5at+kEEPlfqQVaVyRFgSWMJbXLb9PSXZSqbfUDp
+         hamFVdqQiLfPr8Q4wy0pncS9f26n4TS2SpzwwRFy5AhRVUNNVnZn/KQ7nMqRJBx7YHzm
+         jF6E11GSo9h2QzeU0cdWtcjQp9p4LUOApx1ai1Qhyoojipf79hnjiKhDq9ktiFwJ96wZ
+         LvVRj8PDdxl/OE059MclhtcD/qjcc3HS3+F7WUr9jJwPikZ1NDqWQ5XmwoslA9pXW1cb
+         ydq8Jm/5tKedQ2CcYar0UggYPnBF7YnrS9GIZL766+7NAUr5wjhZAhdNaknvJXa0o7SZ
+         XQXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=zCGP/g8GP10fIvXTziB9adPoI4EAP1C/QH5qxeCUP+w=;
-        b=erKCmQa9A9hF481Eiwpg/8JuwJ11qwef30BPXc+Yg+KwlGbZW/fHTTcUULPNKbjRGT
-         Dk5Oxk6QchoUtKxjbmDXZgTqAZScbtsLVF/dGlsdQd1sNyh9uV90XO/Ho2ToHuWFBkoG
-         Phop7rIB6otFpCrL0fPbVuPrctVII+QAdNbsVNsCQQzE1AZxA/ulYEkG7p9f5VKvSpDm
-         mHe+vwD/y6UDI5lANUIuv3q1/7OUBlZ4vxH6g547GMmE+uDJrz6eCems6JuqKjcR/DMY
-         Af8ehaj0y+34AXElRUfAOZxHEh0Anb9jPYmhTo7dmzlJRQ8Movon4H1mSFYvETKDLbV0
-         Wojg==
+        bh=rtUNXrHnX0Fxnoxp8s2rZcTLMxtvOLG7IbrxsygIFJ4=;
+        b=G5So9eskn1JZxh+kmMCFjBROO/326kERR1QXIzyIaRZO8Tao63NWwvI0OZqI12dd0t
+         MBatnywE7fEIpsb22ZPlTE+1ONphb5ZSHRDN3sZdCdkNZOKvR5MBuoFJdU7giCgiW/FT
+         KiejzTPThcO0QlcEXDQnQVJPBsa6HVnaCmoSvTPXqntPE3fv/b9Uh/N1I+5BrGWpvjI0
+         vdV5LEVd4+cgWEMp+jjIa0kMmiRHkfz3nDFdTVekfOpdOAgSp/1o5caRYF5GR7/FykUA
+         GTvQJtSDw03NrsPPKhxnTbhsreCvZkrJ5h0aPHiUaQVygT++OAX3ozuHi1osLYzADgYR
+         /z9g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+       spf=neutral (google.com: 150.101.137.143 is neither permitted nor denied by best guess record for domain of david@fromorbit.com) smtp.mailfrom=david@fromorbit.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
-Date: Fri, 23 Mar 2018 18:23:02 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: "Darrick J. Wong" <darrick.wong@oracle.com>,
-	Christoph Hellwig <hch@lst.de>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-	xfs <linux-xfs@vger.kernel.org>, linux-kernel@vger.kernel.org,
+       spf=neutral (google.com: 150.101.137.143 is neither permitted nor denied by best guess record for domain of david@fromorbit.com) smtp.mailfrom=david@fromorbit.com
+Date: Mon, 26 Mar 2018 09:33:57 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+	Christoph Hellwig <hch@lst.de>, xfs <linux-xfs@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
 	Sasha Levin <alexander.levin@microsoft.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Julia Lawall <julia.lawall@lip6.fr>,
@@ -35,107 +35,116 @@ Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
 	Michal Hocko <mhocko@kernel.org>, Joerg Roedel <joro@8bytes.org>
 Subject: Re: [PATCH] xfs: always free inline data before resetting inode fork
  during ifree
-Message-ID: <20180323182302.GB9190@wotan.suse.de>
+Message-ID: <20180325223357.GJ18129@dastard>
 References: <20171123060137.GL2135@magnolia>
  <20180323013037.GA9190@wotan.suse.de>
  <20180323034145.GH4818@magnolia>
  <20180323170813.GD30543@wotan.suse.de>
  <20180323172620.GK4818@magnolia>
+ <20180323182302.GB9190@wotan.suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180323172620.GK4818@magnolia>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180323182302.GB9190@wotan.suse.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1595753768288631831?=
-X-GMAIL-MSGID: =?utf-8?q?1595753768288631831?=
+X-GMAIL-MSGID: =?utf-8?q?1595950768867963736?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Mar 23, 2018 at 10:26:20AM -0700, Darrick J. Wong wrote:
-> On Fri, Mar 23, 2018 at 05:08:13PM +0000, Luis R. Rodriguez wrote:
-> > On Thu, Mar 22, 2018 at 08:41:45PM -0700, Darrick J. Wong wrote:
-> > > On Fri, Mar 23, 2018 at 01:30:37AM +0000, Luis R. Rodriguez wrote:
-> > > > On Wed, Nov 22, 2017 at 10:01:37PM -0800, Darrick J. Wong wrote:
-> > > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > > > > index 61d1cb7..8012741 100644
-> > > > > --- a/fs/xfs/xfs_inode.c
-> > > > > +++ b/fs/xfs/xfs_inode.c
-> > > > > @@ -2401,6 +2401,24 @@ xfs_ifree_cluster(
-> > > > >  }
-> > > > >  
-> > > > >  /*
-> > > > > + * Free any local-format buffers sitting around before we reset to
-> > > > > + * extents format.
-> > > > > + */
-> > > > > +static inline void
-> > > > > +xfs_ifree_local_data(
-> > > > > +	struct xfs_inode	*ip,
-> > > > > +	int			whichfork)
-> > > > > +{
-> > > > > +	struct xfs_ifork	*ifp;
-> > > > > +
-> > > > > +	if (XFS_IFORK_FORMAT(ip, whichfork) != XFS_DINODE_FMT_LOCAL)
-> > > > > +		return;
+On Fri, Mar 23, 2018 at 06:23:02PM +0000, Luis R. Rodriguez wrote:
+> On Fri, Mar 23, 2018 at 10:26:20AM -0700, Darrick J. Wong wrote:
+> > On Fri, Mar 23, 2018 at 05:08:13PM +0000, Luis R. Rodriguez wrote:
+> > > On Thu, Mar 22, 2018 at 08:41:45PM -0700, Darrick J. Wong wrote:
+> > > > On Fri, Mar 23, 2018 at 01:30:37AM +0000, Luis R. Rodriguez wrote:
+> > > > > On Wed, Nov 22, 2017 at 10:01:37PM -0800, Darrick J. Wong wrote:
+> > > > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > > > > > index 61d1cb7..8012741 100644
+> > > > > > --- a/fs/xfs/xfs_inode.c
+> > > > > > +++ b/fs/xfs/xfs_inode.c
+> > > > > > @@ -2401,6 +2401,24 @@ xfs_ifree_cluster(
+> > > > > >  }
+> > > > > >  
+> > > > > >  /*
+> > > > > > + * Free any local-format buffers sitting around before we reset to
+> > > > > > + * extents format.
+> > > > > > + */
+> > > > > > +static inline void
+> > > > > > +xfs_ifree_local_data(
+> > > > > > +	struct xfs_inode	*ip,
+> > > > > > +	int			whichfork)
+> > > > > > +{
+> > > > > > +	struct xfs_ifork	*ifp;
+> > > > > > +
+> > > > > > +	if (XFS_IFORK_FORMAT(ip, whichfork) != XFS_DINODE_FMT_LOCAL)
+> > > > > > +		return;
+> > > > > 
+> > > > > I'm new to all this so this was a bit hard to follow. I'm confused with how
+> > > > > commit 43518812d2 ("xfs: remove support for inlining data/extents into the
+> > > > > inode fork") exacerbated the leak, isn't that commit about
+> > > > > XFS_DINODE_FMT_EXTENTS?
 > > > > 
-> > > > I'm new to all this so this was a bit hard to follow. I'm confused with how
-> > > > commit 43518812d2 ("xfs: remove support for inlining data/extents into the
-> > > > inode fork") exacerbated the leak, isn't that commit about
-> > > > XFS_DINODE_FMT_EXTENTS?
+> > > > Not specifically _EXTENTS, merely any fork (EXTENTS or LOCAL) whose
+> > > > incore data was small enough to fit in if_inline_ata.
 > > > 
-> > > Not specifically _EXTENTS, merely any fork (EXTENTS or LOCAL) whose
-> > > incore data was small enough to fit in if_inline_ata.
-> > 
-> > Got it, I thought those were XFS_DINODE_FMT_EXTENTS by definition.
-> > 
-> > > > Did we have cases where the format was XFS_DINODE_FMT_LOCAL and yet
-> > > > ifp->if_u1.if_data == ifp->if_u2.if_inline_data ?
+> > > Got it, I thought those were XFS_DINODE_FMT_EXTENTS by definition.
 > > > 
-> > > An empty directory is 6 bytes, which is what you get with a fresh mkdir
-> > > or after deleting everything in the directory.  Prior to the 43518812d2
-> > > patch we could get away with not even checking if we had to free if_data
-> > > when deleting a directory because it fit within if_inline_data.
+> > > > > Did we have cases where the format was XFS_DINODE_FMT_LOCAL and yet
+> > > > > ifp->if_u1.if_data == ifp->if_u2.if_inline_data ?
+> > > > 
+> > > > An empty directory is 6 bytes, which is what you get with a fresh mkdir
+> > > > or after deleting everything in the directory.  Prior to the 43518812d2
+> > > > patch we could get away with not even checking if we had to free if_data
+> > > > when deleting a directory because it fit within if_inline_data.
+> > > 
+> > > Ah got it. So your fix *is* also applicable even prior to commit 43518812d2.
 > > 
-> > Ah got it. So your fix *is* also applicable even prior to commit 43518812d2.
+> > You'd have to modify the patch so that it doesn't try to kmem_free
+> > if_data if if_data == if_inline_data but otherwise (in theory) I think
+> > that the concept applies to pre-4.15 kernels.
+> > 
+> > (YMMV, please do run this through QA/kmemleak just in case I'm wrong, etc...)
 > 
-> You'd have to modify the patch so that it doesn't try to kmem_free
-> if_data if if_data == if_inline_data but otherwise (in theory) I think
-> that the concept applies to pre-4.15 kernels.
-> 
-> (YMMV, please do run this through QA/kmemleak just in case I'm wrong, etc...)
+> Well... so we need a resolution and better get testing this already given that
+> *I believe* the new auto-selection algorithm used to cherry pick patches onto
+> stable for linux-4.14.y (covered on a paper [0] and when used, stable patches
+> are prefixed with AUTOSEL, a recent discussion covered this in November 2017
+> [1]) recommended to merge your commit 98c4f78dcdd8 ("xfs: always free inline
+> data before resetting inode fork during ifree") as stable commit 1eccdbd4836a41
+> on v4.14.17 *without* merging commit 43518812d2 ("xfs: remove support for
+> inlining data/extents into the inode fork").
 
-Well... so we need a resolution and better get testing this already given that
-*I believe* the new auto-selection algorithm used to cherry pick patches onto
-stable for linux-4.14.y (covered on a paper [0] and when used, stable patches
-are prefixed with AUTOSEL, a recent discussion covered this in November 2017
-[1]) recommended to merge your commit 98c4f78dcdd8 ("xfs: always free inline
-data before resetting inode fork during ifree") as stable commit 1eccdbd4836a41
-on v4.14.17 *without* merging commit 43518812d2 ("xfs: remove support for
-inlining data/extents into the inode fork").
+Yikes. That sets off all my "how to break filesysetms for fun and
+profit" alarm bells. This is like playing russian roulette with all
+our user's data.  XFS fixes that look like they are simple often
+have subtle dependencies in them that automated backports won't ever
+be able to understand, and if we don't get that right, we break
+stuff.
 
-Sasha, Greg,
+Filesystems aren't like drivers or memory management - you can't
+reboot to fix a filesystem corruption or data loss bug. User's tend
+to care a lot more about their data and cat photos than they do
+about how often the dodgy hardware they bought on ebay needs OS
+rebooting to get working again..
 
-Can you confirm if the algorithm was used in this case?
+> I do wonder if other XFS folks are *at least* aware that the auto-selection
+> algorithm now currently merging patches onto stable for XFS?
 
-Since both commits are merged on v4.15, this is a non-issue on >= 4.15.
+No I wasn't aware that this was happening.  I'm kinda shit scared
+right now hearing about how automated backports of random kernel
+patches are being done with minimal oversight and no visibility to
+the subsystem developers. When did this start happening?
 
-I do wonder if other XFS folks are *at least* aware that the auto-selection
-algorithm now currently merging patches onto stable for XFS?
+At this point I'd be much more comfortable if XFS was blacklisted
+until there's solid subsystem developer visibility of the iautomated
+backports, not to mention a solid set of automated regression
+testing backing this automated backport proceedure.
 
-FWIW I just finished completing review *all* the other stable commits merged on
-XFS on v4.14 *and* v4.13.y and this was the only one that cried out as fishy...
-so I would not use this as a reason to say we shouldn't use it for XFS,
-specially in lieu of any formal active process which we can count on always
-takes place for XFS stable patches. In fact, I'd say that if the auto-selection
-algorithm was used we should be able to fine tune it with a bit more subsystem
-involvement.  I can at least volunteer to help try to review the candidate
-patches that AUTOSEL comes up with (any others?), but note I'm new to XFS... I
-can also think of a few modifications to the algorithm but which I can make in
-a separate thread. Anyway, provided this is reasonable with others, then
-perhaps we can keep using it for XFS?
+Cheers,
 
-[0] https://soarsmu.github.io/papers/icse12-patch.pdf
-[1] https://lkml.org/lkml/2017/11/21/486
-
-  Luis
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
