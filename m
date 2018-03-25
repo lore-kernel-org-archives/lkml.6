@@ -1,69 +1,71 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-158926-1521910980-2-11742038309760120644
+X-Cyrus-Session-Id: sloti22d1t05-956397-1521939457-2-14809766593415196894
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521910978; b=Yfv7wqNO4WU55OeBfogFMkXREyEqJv/gjzlCS9OLrb+PORG
-    YK5f6zhNQWsrbVoNdLM6mKdkNonmEaBokSl0Fv/mTzoB1R3IwrENuE1qbHK94n4H
-    Pf8PsN9MuR6T0l5b8UiDo1Kj1IgPV8OVu92bl3sKLMxngdsJ+aIlPZABFbBNK+0K
-    J8Ts751kbSe3IhZOnSH02c7cb7a10hz44wS4P5sGA6k2HBiYm+eYCFYiVKnN9X7o
-    EXM8FtfEN19bpPseh5EQKczAp/HK9nfyvOi+V1U7nail9uEWnYG6FKXhgI/02MGN
-    Auba1t3e7HcdcqJzZULOei0DrN4m5goopST3MdQ==
+    t=1521939457; b=b+zLizYPhY8VE1LOUCjX59W+gCoqJdQ3beWoj5G7XGHm/ZX
+    PMRuOdADKs9m0CUJIVXOsd4H6euMF4Gpsv0sSGNPMulcWBmxIAdVexRfXycTEtTT
+    MX8BvD/caE+g1/5ghhZBJEstNNfsmGQzRQ/cYT/rB5eQdtU2C/xl4jRvuWmraCTA
+    34qDnF+H3EGXSlTnNtIO12MLak91VGR7PwtL+dXEzpd2vwe9DhasRO6vXnME/myf
+    vGpL/jAN+BJYZblgYPtz6YGdGIfi1bdr+fuiC500iHW0WXpcD71kshaqAgaLVCQS
+    ZdyHooNGJkcr0LrDAZT3peqkh/p/JKi2opurKbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :references:in-reply-to:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521910978; bh=J
-    gdn9dwviR8Gsc+1/+AtZLCx43vZp4NENCLmUHHYOwQ=; b=k1f1nZO8InuCobf8Z
-    QC9DoRtnWXaW17/Wy2IZYX92U6H1p7uco0c+r5NdHYFPnKwdKb9oz5fGuP4dkehb
-    nF8Ag5VgNjWfo5h7rT2rg8ZvPJ3/TF3+0K1NI0Qkvtv5zY8299WvM61ayeSpbGhd
-    Qb52UkRWgfE0GSWnw8haM9dZEfr/rrWadY+xcvrqq4hEvo/L4yxF1S+42qYQ/zJl
-    kVq+99+FJ9hLtPKCa62cZ4sWJ99ZEtxgD935hshF5oTY3WC59Kwiko+PtHD2K29C
-    cUfi/ZaK2jfrAMcmLxeQLs3dPRMnTQLgNMHL6+JHm4w8SdhlQ9CTC7OSsvsnwNM5
-    gqe8w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=K4U3Il4a x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :content-transfer-encoding:sender; s=arctest; t=1521939457; bh=S
+    3KCMMIrGR3yCCvEOZvwcVpJPqAEoKvxsxDd8aTllBU=; b=bYlNDflP1bW2o4Bmd
+    NfeUKBeK0K4EXrMpZH02kFzZM+grBj3p/O4AYB2p/Xf99Nsbpi9glh/xYPOIfTIa
+    kkzVVoogTVk6mTOtkizCCIEcmRHx8Q1rusYguNNPfQG48K2VrnclOErzfZF4crfc
+    psNnvoQOu+Gk6GXeFH57ZCJtYY42qLurBjhYPAg26ALCJe2oKBnDky1eSp0GGdT7
+    nogOauDTJapFvMr15Lv1+n6+QNEO16woFaiOiElK2KTdFAVQfPxIHHw1cGw2n7YN
+    YtVmB/hQ9xb+PDxslQkWbxcXsfPqhQledkrRWMHuVi3sSKkGiEMKK98sk5FWxFv/
+    6z1xA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Z9Wtdc7y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=K4U3Il4a x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Z9Wtdc7y x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-To: Haiyang Zhang <haiyangz@microsoft.com>, "davem@davemloft.net"
- <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+From: Haiyang Zhang <haiyangz@microsoft.com>
+To: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+ "davem@davemloft.net" <davem@davemloft.net>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>
 Subject: RE: [PATCH net-next,1/2] hv_netvsc: Fix the return status in RX path
 Thread-Topic: [PATCH net-next, 1/2] hv_netvsc: Fix the return status in RX path
-Thread-Index: AQHTwhHxH07LHDYeH0ychb4hJXWI5qPfmCSg
-Date: Sat, 24 Mar 2018 16:48:07 +0000
-Message-ID: <DM5PR2101MB103003AA72955A6C6AD44D0CDCAF0@DM5PR2101MB1030.namprd21.prod.outlook.com>
+Thread-Index: AQHTwhBZzy0DeWsSN022dpFRpCYf5KPfm6SAgACCAMA=
+Date: Sun, 25 Mar 2018 00:41:37 +0000
+Message-ID: <BL0PR2101MB110877CEB926DEB399ABA564CAAE0@BL0PR2101MB1108.namprd21.prod.outlook.com>
 References: <20180322190114.25596-1-haiyangz@linuxonhyperv.com>
  <20180322190114.25596-2-haiyangz@linuxonhyperv.com>
-In-Reply-To: <20180322190114.25596-2-haiyangz@linuxonhyperv.com>
+ <DM5PR2101MB103003AA72955A6C6AD44D0CDCAF0@DM5PR2101MB1030.namprd21.prod.outlook.com>
+In-Reply-To: <DM5PR2101MB103003AA72955A6C6AD44D0CDCAF0@DM5PR2101MB1030.namprd21.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -77,41 +79,41 @@ msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
  Information Protection;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
  Sensitivity=General
-x-originating-ip: [24.22.167.197]
+x-originating-ip: [69.130.166.81]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1; DM5PR2101MB1030;
- 7:wpwtes6u7VoLa+A1dTdW9HoNPD7UwpICwyeneoJSzaFRVexVGXNqRCd8vljWrBF+1aLGvn1sIEYct0xoHL4y4yprLV70Cv1tNXSyjq0IaJe3oObi7mB/hX1TTMKrCqG8Nxr2voe7oFdqL8TVMxXiylvil34hVkfOV7EXU94lXjr9TaAlrISQAVpr3dQbK9M4GStRAujQQ5VOTGLK0c+4Ati6k+t+zlmrYkTJGI/oy+nUuannnt/I6LiRI5+zcMUs;
- 20:K100CYKd01mUBlf1omGwXOKBcnrG0nNAL8sm/eyIt2bmGfGq3kWtS68ntdkES2mWvBR/l/UIn5rrt+xpyeDE5wd7Yd5ii7X/dY8syBgj+bVA0by8KI+D1mEG+Z4QNYatRfybVwZGey0Nx/pNyewiOsXUmX94/dMj8D798mhk86A=
+x-microsoft-exchange-diagnostics: 1; BL0PR2101MB0977;
+ 7:KyKSBKOYQRUF7S2dBeIv6qLtz8jMDdRA9s6BF/gPCIbOr3/OA0X5atbdTMSfgLb2UEQd+3MKLTRGVl0M8zYyF6fY4zkXl8Yzth3pyYIyD+uOqEr1gdWk6cT6wgeVeBV0IpWj6pzcVHJ9IcA1BN5FLFXcEr3LYyMDSmsMlAK1IZM9II5PtOM7A7brYpu5ap0omRwN0dc+l7lSV6cSf670ly2HFQALtvX59I3EhHOpmnFun40cIWDG35QxiCWIEUfJ;
+ 20:WGKDRGSBXjaiBWf23zWrky4IWJP3D2cPttfO98QR1HaTBui6up69hhzCdizsXTisD+ZnuDKkyod+JaxyMzJlyUWXuCiTnoKm29RmPiKEp7FTeYHSkxLvColS+n7XiPoh9FzPqUXJdOaw/R40idctt2FU/8Qv/V8kb24ifCdRj2Q=
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 6fbbfc3a-c8dc-462d-494a-08d591a70580
+x-ms-office365-filtering-correlation-id: dc97eaae-af28-438f-8205-08d591e92ad5
 x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
  RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603328)(7193020);
- SRVR:DM5PR2101MB1030;
-x-ms-traffictypediagnostic: DM5PR2101MB1030:
-x-microsoft-antispam-prvs: <DM5PR2101MB1030C0B192664324A9A05B75DCAF0@DM5PR2101MB1030.namprd21.prod.outlook.com>
+ SRVR:BL0PR2101MB0977;
+x-ms-traffictypediagnostic: BL0PR2101MB0977:
+x-microsoft-antispam-prvs: <BL0PR2101MB097744A9E925CEB1E49CE8DCCAAE0@BL0PR2101MB0977.namprd21.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(28532068793085)(20558992708506)(89211679590171)(9452136761055); 
 x-exchange-antispam-report-cfa-test: BCL:0; PCL:0;
  RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231221)(944501327)(52105095)(6055026)(61426038)(61427038)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(6072148)(201708071742011);
- SRVR:DM5PR2101MB1030; BCL:0; PCL:0; RULEID:; SRVR:DM5PR2101MB1030;
-x-forefront-prvs: 0621E7E436
+ SRVR:BL0PR2101MB0977; BCL:0; PCL:0; RULEID:; SRVR:BL0PR2101MB0977;
+x-forefront-prvs: 0622A98CD5
 x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(39380400002)(366004)(39860400002)(346002)(376002)(396003)(189003)(199004)(13464003)(22452003)(305945005)(74316002)(7736002)(478600001)(33656002)(5660300001)(14454004)(446003)(11346002)(316002)(8676002)(81156014)(110136005)(54906003)(8936002)(105586002)(229853002)(6116002)(3846002)(3280700002)(2906002)(72206003)(10290500003)(81166006)(86612001)(6346003)(76176011)(8990500004)(102836004)(26005)(59450400001)(25786009)(2900100001)(10090500001)(4326008)(5250100002)(7696005)(6506007)(53546011)(2501003)(66066001)(99286004)(6246003)(106356001)(1511001)(6436002)(55016002)(68736007)(53936002)(9686003)(97736004)(3660700001)(2201001)(86362001);
- DIR:OUT; SFP:1102; SCL:1; SRVR:DM5PR2101MB1030;
- H:DM5PR2101MB1030.namprd21.prod.outlook.com; FPR:; SPF:None; LANG:en;
+ SFS:(10019020)(346002)(376002)(396003)(366004)(39860400002)(39380400002)(189003)(199004)(13464003)(229853002)(8676002)(66066001)(76176011)(4326008)(74316002)(86362001)(14454004)(53936002)(54906003)(102836004)(26005)(8936002)(6116002)(6246003)(81166006)(6506007)(81156014)(110136005)(8990500004)(53546011)(2900100001)(99286004)(3846002)(86612001)(6346003)(9686003)(55016002)(10090500001)(316002)(106356001)(5250100002)(6436002)(2501003)(478600001)(22452003)(10290500003)(7696005)(446003)(5660300001)(7736002)(97736004)(1511001)(25786009)(68736007)(3280700002)(105586002)(33656002)(2906002)(305945005)(3660700001)(11346002)(2201001);
+ DIR:OUT; SFP:1102; SCL:1; SRVR:BL0PR2101MB0977;
+ H:BL0PR2101MB1108.namprd21.prod.outlook.com; FPR:; SPF:None; LANG:en;
  PTR:InfoNoRecords; MX:1; A:1;
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michael.H.Kelley@microsoft.com;
-x-microsoft-antispam-message-info: sVZa18mJmbN25uGI6syqxqfn8rDBQkx7oghM/zyAiWuwFeASkDC6FpBDuUDUPSNB6pG4MD8nLr/E4DVdmu0e/1n7mQy+cnMX4JGGai2nGrbQzt1ca3qr0Q8PaMmVW0bYv3gGjVlx30IC+hwIvALRHFE5byA67+0by5dn8jrTyAk1WsrWqD9pIZFhFM4bi8qCt822nccKGtm/Cw7qwkVsy3J+tRKkQjmWxMfg3AhpmyB69PeFeSLAbT1VXIDexwo5vU2MSFNQradG1M8BThB1B4JcJFQo1cCIshI5cnFfrUSqMoFBS1dtzyI4BNJrV0X9m77LtaaJ0a5HlFRfi+f5OA==
+ smtp.mailfrom=haiyangz@microsoft.com;
+x-microsoft-antispam-message-info: ZDHp8cyavxvcD5r/78rjb1ggbL8pIyNeBG8pQ2fiG3VIR96E+M3MDQaqQTyZWovWSBkGsN4/2BjczOgGSvsdEuUZCpR8TRqL3zl03ACVAgVuyfWUlSZBBxhNJo3VTYi0STmq0+CQzW91AgmImoWPaiQPvWOZ11f+gu3usXdYxszey7JmZMmG3hM+c3cSJA5ub+miO7cbfILVofXyHVIH15bQ2ntg2PWFi5rA2iMkbdGkUkT+YjCD4ySv4mGhCrskiXA7oZyxRxUzQycG25FHxTrtVqUBIJuL3m0sBLMKOerPXXRT24kvtlSC7znFdCxx3A+RlKPFmrtPGymWvuja6g==
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6fbbfc3a-c8dc-462d-494a-08d591a70580
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2018 16:48:07.9211 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc97eaae-af28-438f-8205-08d591e92ad5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2018 00:41:37.2994 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1030
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB0977
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -135,102 +137,72 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+
+
 > -----Original Message-----
-> From: linux-kernel-owner@vger.kernel.org <linux-kernel-owner@vger.kernel.org> On Behalf
-> Of Haiyang Zhang
-> Sent: Thursday, March 22, 2018 12:01 PM
-> To: davem@davemloft.net; netdev@vger.kernel.org
-> Cc: Haiyang Zhang <haiyangz@microsoft.com>; KY Srinivasan <kys@microsoft.com>; Stephen
-> Hemminger <sthemmin@microsoft.com>; olaf@aepfle.de; vkuznets@redhat.com;
+> From: Michael Kelley (EOSG)
+> Sent: Saturday, March 24, 2018 12:48 PM
+> To: Haiyang Zhang <haiyangz@microsoft.com>; davem@davemloft.net;
+> netdev@vger.kernel.org
+> Cc: KY Srinivasan <kys@microsoft.com>; Stephen Hemminger
+> <sthemmin@microsoft.com>; olaf@aepfle.de; vkuznets@redhat.com;
 > devel@linuxdriverproject.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH net-next,1/2] hv_netvsc: Fix the return status in RX path
+> Subject: RE: [PATCH net-next,1/2] hv_netvsc: Fix the return status in RX path
 > 
-> From: Haiyang Zhang <haiyangz@microsoft.com>
+> > -----Original Message-----
+> > From: linux-kernel-owner@vger.kernel.org
+> > <linux-kernel-owner@vger.kernel.org> On Behalf Of Haiyang Zhang
+> > Sent: Thursday, March 22, 2018 12:01 PM
+> > To: davem@davemloft.net; netdev@vger.kernel.org
+> > Cc: Haiyang Zhang <haiyangz@microsoft.com>; KY Srinivasan
+> > <kys@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>;
+> > olaf@aepfle.de; vkuznets@redhat.com; devel@linuxdriverproject.org;
+> > linux-kernel@vger.kernel.org
+> > Subject: [PATCH net-next,1/2] hv_netvsc: Fix the return status in RX
+> > path
+> >
+> > From: Haiyang Zhang <haiyangz@microsoft.com>
+> >
+> > As defined in hyperv_net.h, the NVSP_STAT_SUCCESS is one not zero.
+> > Some functions returns 0 when it actually means NVSP_STAT_SUCCESS.
+> > This patch fixes them.
+> >
+> > In netvsc_receive(), it puts the last RNDIS packet's receive status
+> > for all packets in a vmxferpage which may contain multiple RNDIS
+> > packets.
+> > This patch puts NVSP_STAT_FAIL in the receive completion if one of the
+> > packets in a vmxferpage fails.
 > 
-> As defined in hyperv_net.h, the NVSP_STAT_SUCCESS is one not zero.
-> Some functions returns 0 when it actually means NVSP_STAT_SUCCESS.
-> This patch fixes them.
-> 
-> In netvsc_receive(), it puts the last RNDIS packet's receive status
-> for all packets in a vmxferpage which may contain multiple RNDIS
-> packets.
-> This patch puts NVSP_STAT_FAIL in the receive completion if one of
-> the packets in a vmxferpage fails.
+> This patch changes the status field that is being reported back to the Hyper-V
+> host in the receive completion message in
+> enq_receive_complete().   The current code reports 0 on success,
+> and with the patch, it will report 1 on success.  So does this change affect
+> anything on the Hyper-V side?  Or is Hyper-V just ignoring
+> the value?   If this change doesn't have any impact on the
+> interactions with Hyper-V, perhaps it would be good to explain why in the
+> commit message.
 
-This patch changes the status field that is being reported back to
-the Hyper-V host in the receive completion message in
-enq_receive_complete().   The current code reports 0 on success,
-and with the patch, it will report 1 on success.  So does this change
-affect anything on the Hyper-V side?  Or is Hyper-V just ignoring
-the value?   If this change doesn't have any impact on the
-interactions with Hyper-V, perhaps it would be good to explain
-why in the commit message.
+Here is the definition of each status code for NetVSP. 
+enum {
+        NVSP_STAT_NONE = 0,
+        NVSP_STAT_SUCCESS,
+        NVSP_STAT_FAIL,
+        NVSP_STAT_PROTOCOL_TOO_NEW,
+        NVSP_STAT_PROTOCOL_TOO_OLD,
+        NVSP_STAT_INVALID_RNDIS_PKT,
+        NVSP_STAT_BUSY,
+        NVSP_STAT_PROTOCOL_UNSUPPORTED,
+        NVSP_STAT_MAX,
+};
 
-Michael
+Existing code returns NVSP_STAT_NONE = 0, and with this patch
+we return NVSP_STAT_SUCCESS = 1. 
+Based on testing, either way works for now. But for correctness
+and future stability (e.g. host side becomes more stringent), we
+should follow the protocol.
 
-> 
-> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-> ---
->  drivers/net/hyperv/netvsc.c       | 8 ++++++--
->  drivers/net/hyperv/netvsc_drv.c   | 2 +-
->  drivers/net/hyperv/rndis_filter.c | 4 ++--
->  3 files changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-> index aa95e81af6e5..1ddb2c39b6e4 100644
-> --- a/drivers/net/hyperv/netvsc.c
-> +++ b/drivers/net/hyperv/netvsc.c
-> @@ -1098,12 +1098,16 @@ static int netvsc_receive(struct net_device *ndev,
->  		void *data = recv_buf
->  			+ vmxferpage_packet->ranges[i].byte_offset;
->  		u32 buflen = vmxferpage_packet->ranges[i].byte_count;
-> +		int ret;
-> 
->  		trace_rndis_recv(ndev, q_idx, data);
-> 
->  		/* Pass it to the upper layer */
-> -		status = rndis_filter_receive(ndev, net_device,
-> -					      channel, data, buflen);
-> +		ret = rndis_filter_receive(ndev, net_device,
-> +					   channel, data, buflen);
-> +
-> +		if (unlikely(ret != NVSP_STAT_SUCCESS))
-> +			status = NVSP_STAT_FAIL;
->  	}
-> 
->  	enq_receive_complete(ndev, net_device, q_idx,
-> diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-> index cdb78eefab67..33607995be62 100644
-> --- a/drivers/net/hyperv/netvsc_drv.c
-> +++ b/drivers/net/hyperv/netvsc_drv.c
-> @@ -818,7 +818,7 @@ int netvsc_recv_callback(struct net_device *net,
->  	u64_stats_update_end(&rx_stats->syncp);
-> 
->  	napi_gro_receive(&nvchan->napi, skb);
-> -	return 0;
-> +	return NVSP_STAT_SUCCESS;
->  }
-> 
->  static void netvsc_get_drvinfo(struct net_device *net,
-> diff --git a/drivers/net/hyperv/rndis_filter.c b/drivers/net/hyperv/rndis_filter.c
-> index 2dc00f714482..591fb8080f11 100644
-> --- a/drivers/net/hyperv/rndis_filter.c
-> +++ b/drivers/net/hyperv/rndis_filter.c
-> @@ -443,10 +443,10 @@ int rndis_filter_receive(struct net_device *ndev,
->  			"unhandled rndis message (type %u len %u)\n",
->  			   rndis_msg->ndis_msg_type,
->  			   rndis_msg->msg_len);
-> -		break;
-> +		return NVSP_STAT_FAIL;
->  	}
-> 
-> -	return 0;
-> +	return NVSP_STAT_SUCCESS;
->  }
-> 
->  static int rndis_filter_query_device(struct rndis_device *dev,
-> --
-> 2.15.1
+Thanks,
+- Haiyang
 
 _______________________________________________
 devel mailing list
