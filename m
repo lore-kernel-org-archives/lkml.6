@@ -1,70 +1,70 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2861279-1521996255-2-7990312432656695620
+X-Cyrus-Session-Id: sloti22d1t05-3426895-1522010683-2-10007305336099156527
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_MED -2.3,
   SPF_PASS -0.001, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1521996255; b=OH5EntTiFV2wSkQdkupoVl9YoM7XPcAxulhIM54uVBh213y
-    LEaNWgIfggMUdAA4CyBHh5CqcABwVDvMkD3bR6tqTYpgbTb/4iRwae4tHmZHoJRD
-    5ZmgXbmGNVf52D7lc2B7SvubBMsg/ToIu37FWbox6qPkjkBsnWr2Y/0rCjpeq4VC
-    1ph9yl2GfMica/ul0pOQsBHqsqRkqbCZN35yYXEzHhlR6bqwHSjsN7jQQKJlKK2B
-    cpqhQdPDFAnjKXMfnqRgjjDn5OAsPH4PdGTxBSn9+Bu3bAaeVe6uvokhcd5eJ98O
-    gqo+RFuCzy0CT5D3g4pCabYPPx5Hk3TObGhm6xA==
+    t=1522010683; b=MkXevZw0rIG5h0hdBL0s4Nq72F885sO2y/8Vpdi/hqsAE3o
+    3zTeWNSscIlQv3kWU325PQrIGAv8TMnv3mpOriXe6OIqEkcn7HfaIwdGK6Gld8wq
+    qLGt9vICfc9mnMQhkeDUR52YlWqk02nWKxLl5iQbXMWDarU/K+jLK8/2rrmnGUjy
+    BgpYdOel7DRnacW4gV5ZmuKQv8y1Asj1TQrUrTQRYkwLHJnhdz2h2twI8PLuHaFy
+    XDFFevknratzX+feS0ma10D3IvkQNG2Iu6ElqxeChOM5ChcsthY41baOGt5H+6Gc
+    uvoe2ZRHzuB6KBE7DmwwAb4T2ZIWUnSteR8F1hg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    messagingengine.com; h=mime-version:subject:from:in-reply-to
+    :date:message-id:references:to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=arctest; t=1521996255; bh=i
-    MRvuayP0hTTU3jRGqJMX58ICIJehc6w6rbLZjaFPtc=; b=wJDXcNWSIP20TdBZI
-    Ebp6MTgHY6JZl9vrmf0o42pO0pcCunJxybDx05DFyyj07NEwZ+AwF796mOa6TxWX
-    L4bZs/92jBl61ooe/ltanTe2Um4K8ZjgLWP/EvgJxovCl0VHReBK06b+KKNs4g92
-    XUUCoB6TiIIhg6E6bLXA8GPkIlJ2Ugv/wzF9S0cCLT8zlldjwUh5WpWcIzNks4g1
-    +mkUujT6FTMsAAK9Cbxvphf7gexrhNm2vvld5sQJAiwIQrlluICqeX9IJn/sR/Pc
-    AYJXIHxLpgOcLENxxCdSFxwREzo7G/hSgurCZ4mBKzpEU6hPeABmbQwXVksYC8o2
-    HaisQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    :content-transfer-encoding:sender; s=arctest; t=1522010683; bh=G
+    Z06HyW1sKiETwWJJcRjWVhplQzE/JXjmUTw/Fyf3N0=; b=ArOOdMdSm4RunMxk2
+    pTBd5mZr84yezwoq6f6hdARCwJDPZGsOFqdecxXpxQgQB7TgIfK2rvZvkRAw7Huf
+    3r3hR130Q938bukifYHo/yxq/ndhNJvjP+f7pSJyQ9hAlgV/fvWXWHgPhku2Mxr9
+    1OwMv+s9JH9Y43KDJyfEw57fm2b8Vb02eSfNAqq9EBtsEXJJCqSqzMZROINjaZDx
+    PvOBPgrPx6pi//pdDAKDC4Igc8kRkIyeaHDoMYZlcbmdMWqrE0u4XM8sgICWcl8/
+    gZxG7HIemoGxFxdmKb0cZUq3scdR2AeuXWv2TB0rS18tjcjUMLhap8cSE6WSiADn
+    /+61A==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=q4XkwcwS x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=R3HUJdg0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=q4XkwcwS x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=R3HUJdg0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 017A121836
-Authentication-Results: mail.kernel.org;
- dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org;
- spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 25 Mar 2018 17:44:01 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: John Syne <john3909@gmail.com>
+X-Google-Smtp-Source: AIpwx4+B4FD5VbQV8yr0kNitZhcy0AKG6lZd84Uw8/PHVEGbVyXF380/fJx3yvNF24WaQLmb0JfHuw==
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
 Subject: Re: meter ABI: (was Re: [PATCH v2 1/3] staging:iio:meter: Replaces
  IIO_DEV_ATTR_CH_OFF by IIO_DEVICE_ATTR)
-Message-ID: <20180325174401.43310fc1@archlinux>
-In-Reply-To: <21395383-9236-4312-AA1A-3378F4E5B0BC@gmail.com>
+From: John Syne <john3909@gmail.com>
+In-Reply-To: <20180325174401.43310fc1@archlinux>
+Date: Sun, 25 Mar 2018 13:44:30 -0700
+Message-Id: <D08F528D-0AC8-4D39-80C4-6DDAA50AF943@gmail.com>
 References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <3af0e5a795059a8418cf08ff29f05f8d5e00da9b.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <20180307200730.08ed3c2f@archlinux>
@@ -77,8 +77,9 @@ References: <cover.1520382753.git.rodrigosiqueiramelo@gmail.com>
  <F6FE75D3-5289-4675-9345-F46CABEFA99E@gmail.com>
  <20180324151829.7d03ad15@archlinux>
  <21395383-9236-4312-AA1A-3378F4E5B0BC@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+ <20180325174401.43310fc1@archlinux>
+To: Jonathan Cameron <jic23@kernel.org>
+X-Mailer: Apple Mail (2.3445.5.20)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -102,54 +103,61 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gU2F0LCAyNCBNYXIgMjAxOCAxNjowNjoxNyAtMDcwMApKb2huIFN5bmUgPGpvaG4zOTA5QGdt
-YWlsLmNvbT4gd3JvdGU6CgpUaGlzIHRocmVhZCBpcyBiZWNvbWluZyB1bm1hbmFnZWFibGUgc28g
-SSBhbSBjcm9wcGluZyB0aGlzIGRvd24gdG8ganVzdAp0aGUgcXVlc3Rpb25zIHRoYXQgcmVtYWlu
-IG9wZW4uCgo+ID4+IFByb2JhYmx5IGVhc2llciB0byBjb3B5IGFuZCBwYXN0ZSB0aGlzIHRhYmxl
-IGludG8gYSBzcHJlYWRzaGVldC4gTGV0IG1lIGtub3cgaWYgdGhlcmUgaXMgYW55dGhpbmcgSSBn
-b3Qgd3JvbmcuIFRoYW5rIHlvdSBhZ2FpbiBmb3IgYWxsIHlvdXIgaGVscC4gIAo+ID4gWWVhaCwg
-d2UgbmVlZCB0byBzaHJpbmsgdGhpcyBpZiB3ZSBkbyBpdCBhZ2Fpbi4gIAo+IEnigJlsbCBzZW5k
-IGFuIHVwZGF0ZWQgY29weSBhZnRlciB0aGlzIGUtbWFpbC4gQ2FuIHlvdSBhY2NlcHQgYSBzcHJl
-YWRzaGVldCAKPiBhdHRhY2htZW50IG9yIGEgQ1NWIGZpbGU/CldlIG5lZWQgdG8ga2VlcCB0aGUg
-ZGlzY3Vzc2lvbiB2aXNpYmxlIG9uIGxpc3Qgc28gaXQgbmVlZHMgdG8gc3RheSBpbgpwbGFpbiB0
-ZXh0LiAgSnVzdCBuZWVkIHRvIGRyb3AgYW55IGNvbHVtbnMgd2UgYXJlbid0IGNhcmluZyBhYm91
-dCB0byBtYWtlCml0IGVhc2llciB0byByZWFkLgo+ID4gCi4uLgo+ID4+IDB4NDM5QwlDVkFST1MJ
-aW5fcG93ZXJyZWFjdGl2ZTBfcGhhc2VDX29mZnNldAkJaW4JcG93ZXJyZWFjdGl2ZQkwCXBoYXNl
-QwlvZmZzZXQJUi9XCTI0CTMyIFpQU0UJUwkweDAwMDAwMAlQaGFzZSBDIHRvdGFsIHJlYWN0aXZl
-IHBvd2VyIG9mZnNldCBhZGp1c3QgKEFERTc4NTgsIEFERTc4NjgsIGFuZCBBREU3ODc4KS4KPiA+
-PiAweDQzOUQJQUZXR0FJTglpbl9wb3dlcjBfcGhhc2VBX2Z1bmRhbWVudGFsX3NjYWxlCQlpbglw
-b3dlcgkwCXBoYXNlQV9mdW5kYW1lbnRhbAlzY2FsZQlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAw
-CVBoYXNlIEEgZnVuZGFtZW50YWwgYWN0aXZlIHBvd2VyIGdhaW4gYWRqdXN0LiBMb2NhdGlvbiBy
-ZXNlcnZlZCBmb3IgQURFNzg1NCwgQURFNzg1OCwgYW5kIEFERTc4NjguICAKPiA+IEhtbS4gRnVu
-ZGFtZW50YWwgbmVlZHMgdG8gYmUgcmVwcmVzZW50ZWQgdXNpbmcgYSBzZXBhcmF0ZSBjaGFubmVs
-IGluZGV4Cj4gPiBhbmQgZGVzY3JpcHRpb24gb2YgdGhlIGZyZXF1ZW5jeSBmaWx0ZXJzIGFwcGxp
-ZWQuICBUaGF0IHNob3VsZCBtYXAgaXQKPiA+IGEgZ2VuZXJpYyB3YXkuICAKPiBIb3cgZG8gSSBk
-byB0aGlzPwpEZWZpbmUgYWRkaXRpb25hbCBjaGFubmVscyB3aXRoIGRpZmZlcmVudCBpbmRleCBh
-bmQgZm9yIHRoZW0KdXNlIHRoZSB0aGUgaW5mb21hc2sgZWxlbWVudHMKSUlPX0NIQU5fSU5GT19M
-T1dfUEFTU19GSUxURVJfM0RCX0ZSRVFVRU5DWSwKSUlPX0NIQU5fSU5GT19ISUdIX1BBU1NfRklM
-VEVSXzNEQl9GUkVRVUVOQ1kKYW5kIHByb3ZpZGUgc3VpdGFibGUgdmFsdWVzIGZyb20gdGhlIHJl
-YWRfcmF3IGNhbGxiYWNrcyBmb3IgdGhhdApjaGFubmVsLgoKLi4uCj4gPj4gMHg0M0MwCUFJUk1T
-CWluX2N1cnJlbnQwX3BoYXNlQV9ybXMJCWluCWN1cnJlbnQJMAlwaGFzZUFfcm1zCQlSCTI0CTMy
-IFpQCVMJTi9BNAlQaGFzZSBBIGN1cnJlbnQgcm1zIHZhbHVlLiAgCj4gPiBpbl9jdXJyZW50MF9w
-aGFzZUFfcm1zX3JhdyBhcyBvdGhlcndpc2Ugd2UgZG9uJ3Qga25vdyB3ZSBuZWVkIHRvIGFwcGx5
-Cj4gPiBpbl9jdXJyZW50MF9waGFzZUFfcm1zX3NjYWxlIHRvIGl0IChvciB0aGUgc2hhcmVkIHZh
-bHVlIHRoYXQgbWFwcyB0byB0aGF0KS4gIAo+IFllYWgsIHRoaXMgaXMgc3RpbGwgY29uZnVzaW9u
-IHRvIG1lLiBUaGlzIHNob3VsZCByZWFkIGluX2N1cnJlbnQwX3BoYXNlQV9ybXNfZ2FpbiAKPiBh
-cyBpdCBkaXJlY3RseSBhZmZlY3RzIHRoZSB2YWx1ZSBpbl9jdXJyZW50MF9waGFzZUFfcm1zX3Jh
-dy4gV2Ugc3RpbGwgaGF2ZSB0byBhcHBseQo+IGEgc2NhbGUgdmFsdWUgdG8gdHVybiB0aGlzIGNy
-eXB0aWMgbnVtYmVyIGludG8gc29tZXRoaW5nIG1lYW5pbmdmdWwuIApTbyBJJ20gYSBsaXR0bGUg
-bG9zdC4gV2UgaGF2ZSB2YXJpYWJsZSBnYWluIGZpbmUuCkRvZXMgaXQgZWZmZWN0IHRoZSBuZWNl
-c3Nhcnkgc2NhbGUgZmFjdG9yIHRvIGdvIGZyb20gcmF3IHRvIHJlYWwgdmFsdWUgb3Igbm90Pwox
-KSBZZXMgaXQgZG9lcyAtIHRoZW4gcm9sbCBpdCBhcyBhcHByb3ByaWF0ZSBpbnRvIHRoZSBfc2Nh
-bGUgYXR0cmlidXRlLiAKICAgSXQgc2hvdWxkIG5vdCBiZSBzZXBhcmF0ZWQuICBUaGlzIG9mdGVu
-IHJlcXVpcmVzIHNvbWUgaW50ZXJlc3RpbmcgbWF0aHMKICAgYnV0IGlzIGEgb25ldGltZSB0aGlu
-ZyBhcyB0aGUgdmFsdWUgaXNuJ3QgY2hhbmdpbmcgZHluYW1pY2FsbHkuCgoyKSBObyBpdCBkb2Vz
-bid0IC0gdGhlbiBpdCBpcyBjYWxpYmdhaW4gYXMgaXQgcmVwcmVzZW50cyBhIG5lY2Vzc2FyeQog
-ICBwYXJhbWV0ZXIgdG8gY2hhbmdlIHRoZSBpbmNvbWluZyBjaXJjdWl0IHRvIGNvbXBlbnNhdGUg
-Zm9yIGV4dGVybmFsIGVmZmVjdHMuCgpJdCBpcyBwb3NzaWJsZSB5b3UgaGF2ZSBhIG1peHR1cmUg
-b2YgdGhlIHR3byBhbmQgaGVuY2UgbmVlZCBib3RoIGJ1dCB0aGF0CmlzIG5vcm1hbGx5IG9ubHkg
-dGhlIGNhc2Ugd2l0aCBkZXZpY2VzIHdoZXJlIHRoZSBjYWxpYmdhaW4gaXMgYWJvdXQgZml4aW5n
-CnRoZSBmYWN0b3J5IGNhbGlicmF0aW9uLgoKLi4uCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+PiAKPiBPbiBNYXIgMjUsIDIwMTgsIGF0IDk6NDQgQU0sIEpvbmF0aGFuIENhbWVyb24gPGppYzIz
+QGtlcm5lbC5vcmc+IHdyb3RlOgo+IAo+IE9uIFNhdCwgMjQgTWFyIDIwMTggMTY6MDY6MTcgLTA3
+MDAKPiBKb2huIFN5bmUgPGpvaG4zOTA5QGdtYWlsLmNvbT4gd3JvdGU6Cj4gCj4gVGhpcyB0aHJl
+YWQgaXMgYmVjb21pbmcgdW5tYW5hZ2VhYmxlIHNvIEkgYW0gY3JvcHBpbmcgdGhpcyBkb3duIHRv
+IGp1c3QKPiB0aGUgcXVlc3Rpb25zIHRoYXQgcmVtYWluIG9wZW4uCj4gCj4+Pj4gUHJvYmFibHkg
+ZWFzaWVyIHRvIGNvcHkgYW5kIHBhc3RlIHRoaXMgdGFibGUgaW50byBhIHNwcmVhZHNoZWV0LiBM
+ZXQgbWUga25vdyBpZiB0aGVyZSBpcyBhbnl0aGluZyBJIGdvdCB3cm9uZy4gVGhhbmsgeW91IGFn
+YWluIGZvciBhbGwgeW91ciBoZWxwLiAgCj4+PiBZZWFoLCB3ZSBuZWVkIHRvIHNocmluayB0aGlz
+IGlmIHdlIGRvIGl0IGFnYWluLiAgCj4+IEnigJlsbCBzZW5kIGFuIHVwZGF0ZWQgY29weSBhZnRl
+ciB0aGlzIGUtbWFpbC4gQ2FuIHlvdSBhY2NlcHQgYSBzcHJlYWRzaGVldCAKPj4gYXR0YWNobWVu
+dCBvciBhIENTViBmaWxlPwo+IFdlIG5lZWQgdG8ga2VlcCB0aGUgZGlzY3Vzc2lvbiB2aXNpYmxl
+IG9uIGxpc3Qgc28gaXQgbmVlZHMgdG8gc3RheSBpbgo+IHBsYWluIHRleHQuICBKdXN0IG5lZWQg
+dG8gZHJvcCBhbnkgY29sdW1ucyB3ZSBhcmVuJ3QgY2FyaW5nIGFib3V0IHRvIG1ha2UKPiBpdCBl
+YXNpZXIgdG8gcmVhZC4KRG9uZQo+Pj4gCj4gLi4uCj4+Pj4gMHg0MzlDCUNWQVJPUwlpbl9wb3dl
+cnJlYWN0aXZlMF9waGFzZUNfb2Zmc2V0CQlpbglwb3dlcnJlYWN0aXZlCTAJcGhhc2VDCW9mZnNl
+dAlSL1cJMjQJMzIgWlBTRQlTCTB4MDAwMDAwCVBoYXNlIEMgdG90YWwgcmVhY3RpdmUgcG93ZXIg
+b2Zmc2V0IGFkanVzdCAoQURFNzg1OCwgQURFNzg2OCwgYW5kIEFERTc4NzgpLgo+Pj4+IDB4NDM5
+RAlBRldHQUlOCWluX3Bvd2VyMF9waGFzZUFfZnVuZGFtZW50YWxfc2NhbGUJCWluCXBvd2VyCTAJ
+cGhhc2VBX2Z1bmRhbWVudGFsCXNjYWxlCVIvVwkyNAkzMiBaUFNFCVMJMHgwMDAwMDAJUGhhc2Ug
+QSBmdW5kYW1lbnRhbCBhY3RpdmUgcG93ZXIgZ2FpbiBhZGp1c3QuIExvY2F0aW9uIHJlc2VydmVk
+IGZvciBBREU3ODU0LCBBREU3ODU4LCBhbmQgQURFNzg2OC4gIAo+Pj4gSG1tLiBGdW5kYW1lbnRh
+bCBuZWVkcyB0byBiZSByZXByZXNlbnRlZCB1c2luZyBhIHNlcGFyYXRlIGNoYW5uZWwgaW5kZXgK
+Pj4+IGFuZCBkZXNjcmlwdGlvbiBvZiB0aGUgZnJlcXVlbmN5IGZpbHRlcnMgYXBwbGllZC4gIFRo
+YXQgc2hvdWxkIG1hcCBpdAo+Pj4gYSBnZW5lcmljIHdheS4gIAo+PiBIb3cgZG8gSSBkbyB0aGlz
+Pwo+IERlZmluZSBhZGRpdGlvbmFsIGNoYW5uZWxzIHdpdGggZGlmZmVyZW50IGluZGV4IGFuZCBm
+b3IgdGhlbQo+IHVzZSB0aGUgdGhlIGluZm9tYXNrIGVsZW1lbnRzCj4gSUlPX0NIQU5fSU5GT19M
+T1dfUEFTU19GSUxURVJfM0RCX0ZSRVFVRU5DWSwKPiBJSU9fQ0hBTl9JTkZPX0hJR0hfUEFTU19G
+SUxURVJfM0RCX0ZSRVFVRU5DWQo+IGFuZCBwcm92aWRlIHN1aXRhYmxlIHZhbHVlcyBmcm9tIHRo
+ZSByZWFkX3JhdyBjYWxsYmFja3MgZm9yIHRoYXQKPiBjaGFubmVsLgo+IAo+IC4uLgo+Pj4+IDB4
+NDNDMAlBSVJNUwlpbl9jdXJyZW50MF9waGFzZUFfcm1zCQlpbgljdXJyZW50CTAJcGhhc2VBX3Jt
+cwkJUgkyNAkzMiBaUAlTCU4vQTQJUGhhc2UgQSBjdXJyZW50IHJtcyB2YWx1ZS4gIAo+Pj4gaW5f
+Y3VycmVudDBfcGhhc2VBX3Jtc19yYXcgYXMgb3RoZXJ3aXNlIHdlIGRvbid0IGtub3cgd2UgbmVl
+ZCB0byBhcHBseQo+Pj4gaW5fY3VycmVudDBfcGhhc2VBX3Jtc19zY2FsZSB0byBpdCAob3IgdGhl
+IHNoYXJlZCB2YWx1ZSB0aGF0IG1hcHMgdG8gdGhhdCkuICAKPj4gWWVhaCwgdGhpcyBpcyBzdGls
+bCBjb25mdXNpb24gdG8gbWUuIFRoaXMgc2hvdWxkIHJlYWQgaW5fY3VycmVudDBfcGhhc2VBX3Jt
+c19nYWluIAo+PiBhcyBpdCBkaXJlY3RseSBhZmZlY3RzIHRoZSB2YWx1ZSBpbl9jdXJyZW50MF9w
+aGFzZUFfcm1zX3Jhdy4gV2Ugc3RpbGwgaGF2ZSB0byBhcHBseQo+PiBhIHNjYWxlIHZhbHVlIHRv
+IHR1cm4gdGhpcyBjcnlwdGljIG51bWJlciBpbnRvIHNvbWV0aGluZyBtZWFuaW5nZnVsLiAKPiBT
+byBJJ20gYSBsaXR0bGUgbG9zdC4gV2UgaGF2ZSB2YXJpYWJsZSBnYWluIGZpbmUuCj4gRG9lcyBp
+dCBlZmZlY3QgdGhlIG5lY2Vzc2FyeSBzY2FsZSBmYWN0b3IgdG8gZ28gZnJvbSByYXcgdG8gcmVh
+bCB2YWx1ZSBvciBub3Q/Clllcwo+IDEpIFllcyBpdCBkb2VzIC0gdGhlbiByb2xsIGl0IGFzIGFw
+cHJvcHJpYXRlIGludG8gdGhlIF9zY2FsZSBhdHRyaWJ1dGUuIAo+ICBJdCBzaG91bGQgbm90IGJl
+IHNlcGFyYXRlZC4gIFRoaXMgb2Z0ZW4gcmVxdWlyZXMgc29tZSBpbnRlcmVzdGluZyBtYXRocwo+
+ICBidXQgaXMgYSBvbmV0aW1lIHRoaW5nIGFzIHRoZSB2YWx1ZSBpc24ndCBjaGFuZ2luZyBkeW5h
+bWljYWxseS4KCgo+IAo+IDIpIE5vIGl0IGRvZXNuJ3QgLSB0aGVuIGl0IGlzIGNhbGliZ2FpbiBh
+cyBpdCByZXByZXNlbnRzIGEgbmVjZXNzYXJ5Cj4gIHBhcmFtZXRlciB0byBjaGFuZ2UgdGhlIGlu
+Y29taW5nIGNpcmN1aXQgdG8gY29tcGVuc2F0ZSBmb3IgZXh0ZXJuYWwgZWZmZWN0cy4KVGhlIGhh
+cmR3YXJlZ2FpbiBhbmQgY2FsaWJnYWluIGFyZSBzZXR1cCBvbmx5IG9uY2UgYW5kIGRvIG5vdCB2
+YXJ5LgpUaGUgQURFNzg1NCBjYW4gYWNjZXB0IHZhcmlvdXMgaW5wdXQgcmFuZ2VzIHN1Y2ggYXMg
+MC0yNTBtViwgMC01ViwgZXRjClRoZSBjYWxpYmdhaW4gaXMgdXNlZCB0byBjb21wZW5zYXRlIGZv
+ciB0aGUgaW5hY2N1cmFjaWVzIG9mIHRoZSBzZW5zb3JzCmFuZCB0aGUgdGVybWluYXRpb24gY29t
+cG9uZW50cy4gCj4gCj4gSXQgaXMgcG9zc2libGUgeW91IGhhdmUgYSBtaXh0dXJlIG9mIHRoZSB0
+d28gYW5kIGhlbmNlIG5lZWQgYm90aCBidXQgdGhhdAo+IGlzIG5vcm1hbGx5IG9ubHkgdGhlIGNh
+c2Ugd2l0aCBkZXZpY2VzIHdoZXJlIHRoZSBjYWxpYmdhaW4gaXMgYWJvdXQgZml4aW5nCj4gdGhl
+IGZhY3RvcnkgY2FsaWJyYXRpb24uCj4gCj4gLi4uCl9fX19fX19fX19fX19fX19fX19fX19fX19f
 X19fX19fX19fX19fX19fX19fX19fCmRldmVsIG1haWxpbmcgbGlzdApkZXZlbEBsaW51eGRyaXZl
 cnByb2plY3Qub3JnCmh0dHA6Ly9kcml2ZXJkZXYubGludXhkcml2ZXJwcm9qZWN0Lm9yZy9tYWls
 bWFuL2xpc3RpbmZvL2RyaXZlcmRldi1kZXZlbAo=
