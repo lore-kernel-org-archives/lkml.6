@@ -1,26 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752691AbeCYWUf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 18:20:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46453 "EHLO
+        id S1752629AbeCYWUA (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:20:00 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59581 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750960AbeCYWUc (ORCPT
+        with ESMTP id S1751824AbeCYWTo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 18:20:32 -0400
-Date: Sun, 25 Mar 2018 15:20:24 -0700
+        Sun, 25 Mar 2018 18:19:44 -0400
+Date: Sun, 25 Mar 2018 15:19:30 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-g0ckz9ajy6unswrv2iy39mxk@git.kernel.org>
-Cc: ak@linux.intel.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        yao.jin@linux.intel.com, mingo@kernel.org, jolsa@kernel.org,
-        hpa@zytor.com, wangnan0@huawei.com, namhyung@kernel.org,
-        adrian.hunter@intel.com, tglx@linutronix.de, dsahern@gmail.com
-Reply-To: dsahern@gmail.com, wangnan0@huawei.com, tglx@linutronix.de,
-        adrian.hunter@intel.com, namhyung@kernel.org, acme@redhat.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
-        mingo@kernel.org, yao.jin@linux.intel.com, ak@linux.intel.com
+Message-ID: <tip-5uo6yvwnxtsbe8y6v0ysaakf@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, wangnan0@huawei.com,
+        yao.jin@linux.intel.com, acme@redhat.com, dsahern@gmail.com,
+        hpa@zytor.com, jolsa@kernel.org, adrian.hunter@intel.com,
+        tglx@linutronix.de, ak@linux.intel.com, namhyung@kernel.org,
+        mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, wangnan0@huawei.com,
+        yao.jin@linux.intel.com, acme@redhat.com, dsahern@gmail.com,
+        hpa@zytor.com, adrian.hunter@intel.com, tglx@linutronix.de,
+        jolsa@kernel.org, ak@linux.intel.com, namhyung@kernel.org,
+        mingo@kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Introduce annotation_line__filter()
-Git-Commit-ID: 9b80d1f946ee40923f7bf51c69cb3a6ac6097e4a
+Subject: [tip:perf/core] perf annotate: Finish the generalization of
+ annotate_browser__write()
+Git-Commit-ID: a1e9b74cc2ef80131b9f955c0e1acc25285dc88c
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,19 +36,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9b80d1f946ee40923f7bf51c69cb3a6ac6097e4a
-Gitweb:     https://git.kernel.org/tip/9b80d1f946ee40923f7bf51c69cb3a6ac6097e4a
+Commit-ID:  a1e9b74cc2ef80131b9f955c0e1acc25285dc88c
+Gitweb:     https://git.kernel.org/tip/a1e9b74cc2ef80131b9f955c0e1acc25285dc88c
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 16 Mar 2018 10:39:24 -0300
+AuthorDate: Thu, 15 Mar 2018 19:12:39 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 20 Mar 2018 15:36:22 -0300
+CommitDate: Tue, 20 Mar 2018 13:19:30 -0300
 
-perf annotate: Introduce annotation_line__filter()
+perf annotate: Finish the generalization of annotate_browser__write()
 
-Out of the TUI logic that allows toggling the presentation of source
-code lines.
-
-Will be used in the upcoming --stdio2 mode.
+We pass some more callbacks and all of annotate_browser__write() seems
+to be free of TUI code (except for some arrow constants, will fix).
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -54,90 +55,314 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-g0ckz9ajy6unswrv2iy39mxk@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-5uo6yvwnxtsbe8y6v0ysaakf@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/annotate.c | 19 +++++++------------
- tools/perf/util/annotate.h        |  4 ++++
- 2 files changed, 11 insertions(+), 12 deletions(-)
+ tools/perf/ui/browsers/annotate.c |  97 +++++---------------------------
+ tools/perf/util/annotate.c        | 113 +++++++++++++++++++++++++++++++++++---
+ tools/perf/util/annotate.h        |  13 +++--
+ 3 files changed, 127 insertions(+), 96 deletions(-)
 
 diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index bed647807d37..74a26f4e9b06 100644
+index 9b77a016e299..2b18c462b882 100644
 --- a/tools/perf/ui/browsers/annotate.c
 +++ b/tools/perf/ui/browsers/annotate.c
-@@ -48,14 +48,8 @@ static inline struct annotation *browser__annotation(struct ui_browser *browser)
- static bool disasm_line__filter(struct ui_browser *browser, void *entry)
+@@ -71,38 +71,20 @@ static int ui_browser__jumps_percent_color(struct ui_browser *browser, int nr, b
+ 	return HE_COLORSET_NORMAL;
+ }
+ 
+-static int ui_browser__set_jumps_percent_color(struct ui_browser *browser, int nr, bool current)
++static int ui_browser__set_jumps_percent_color(void *browser, int nr, bool current)
  {
- 	struct annotation *notes = browser__annotation(browser);
+ 	 int color = ui_browser__jumps_percent_color(browser, nr, current);
+ 	 return ui_browser__set_color(browser, color);
+ }
+ 
+-static void disasm_line__write(struct disasm_line *dl, struct ui_browser *browser,
+-			       char *bf, size_t size)
++static int annotate_browser__set_color(void *browser, int color)
+ {
+-	struct annotation *notes = browser__annotation(browser);
 -
--	if (notes->options->hide_src_code) {
--		struct annotation_line *al = list_entry(entry, struct annotation_line, node);
+-	if (dl->ins.ops && dl->ins.ops->scnprintf) {
+-		if (ins__is_jump(&dl->ins)) {
+-			bool fwd = dl->ops.target.offset > dl->al.offset;
 -
--		return al->offset == -1;
+-			ui_browser__write_graph(browser, fwd ? SLSMG_DARROW_CHAR :
+-							    SLSMG_UARROW_CHAR);
+-			SLsmg_write_char(' ');
+-		} else if (ins__is_call(&dl->ins)) {
+-			ui_browser__write_graph(browser, SLSMG_RARROW_CHAR);
+-			SLsmg_write_char(' ');
+-		} else if (ins__is_ret(&dl->ins)) {
+-			ui_browser__write_graph(browser, SLSMG_LARROW_CHAR);
+-			SLsmg_write_char(' ');
+-		} else {
+-			ui_browser__write_nstring(browser, " ", 2);
+-		}
+-	} else {
+-		ui_browser__write_nstring(browser, " ", 2);
 -	}
--
--	return false;
-+	struct annotation_line *al = list_entry(entry, struct annotation_line, node);
-+	return annotation_line__filter(al, notes);
- }
- 
- static int ui_browser__jumps_percent_color(struct ui_browser *browser, int nr, bool current)
-@@ -268,6 +262,7 @@ static void disasm_rb_tree__insert(struct rb_root *root, struct annotation_line
- static void annotate_browser__set_top(struct annotate_browser *browser,
- 				      struct annotation_line *pos, u32 idx)
- {
-+	struct annotation *notes = browser__annotation(&browser->b);
- 	unsigned back;
- 
- 	ui_browser__refresh_dimensions(&browser->b);
-@@ -277,7 +272,7 @@ static void annotate_browser__set_top(struct annotate_browser *browser,
- 	while (browser->b.top_idx != 0 && back != 0) {
- 		pos = list_entry(pos->node.prev, struct annotation_line, node);
- 
--		if (disasm_line__filter(&browser->b, &pos->node))
-+		if (annotation_line__filter(pos, notes))
- 			continue;
- 
- 		--browser->b.top_idx;
-@@ -440,7 +435,7 @@ struct disasm_line *annotate_browser__find_offset(struct annotate_browser *brows
- 	list_for_each_entry(pos, &notes->src->source, al.node) {
- 		if (pos->al.offset == offset)
- 			return pos;
--		if (!disasm_line__filter(&browser->b, &pos->al.node))
-+		if (!annotation_line__filter(&pos->al, notes))
- 			++*idx;
- 	}
- 
-@@ -477,7 +472,7 @@ struct annotation_line *annotate_browser__find_string(struct annotate_browser *b
- 
- 	*idx = browser->b.index;
- 	list_for_each_entry_continue(al, &notes->src->source, node) {
--		if (disasm_line__filter(&browser->b, &al->node))
-+		if (annotation_line__filter(al, notes))
- 			continue;
- 
- 		++*idx;
-@@ -514,7 +509,7 @@ struct annotation_line *annotate_browser__find_string_reverse(struct annotate_br
- 
- 	*idx = browser->b.index;
- 	list_for_each_entry_continue_reverse(al, &notes->src->source, node) {
--		if (disasm_line__filter(&browser->b, &al->node))
-+		if (annotation_line__filter(al, notes))
- 			continue;
- 
- 		--*idx;
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 6fbb34b9bd77..165845de1243 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -215,6 +215,10 @@ static inline int annotation__pcnt_width(struct annotation *notes)
- 	return (notes->options->show_total_period ? 12 : 7) * notes->nr_events;
- }
- 
-+static inline bool annotation_line__filter(struct annotation_line *al, struct annotation *notes)
-+{
-+	return notes->options->hide_src_code && al->offset == -1;
++	return ui_browser__set_color(browser, color);
 +}
  
- void annotation__set_offsets(struct annotation *notes, s64 size);
- void annotation__compute_ipc(struct annotation *notes, size_t size);
+-	disasm_line__scnprintf(dl, bf, size, !notes->options->use_offset);
++static void annotate_browser__write_graph(void *browser, int graph)
++{
++	ui_browser__write_graph(browser, graph);
+ }
+ 
+ static void annotate_browser__set_percent_color(void *browser, double percent, bool current)
+@@ -128,68 +110,19 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
+ 	bool change_color = (!notes->options->hide_src_code &&
+ 			     (!current_entry || (browser->use_navkeypressed &&
+ 					         !browser->navkeypressed)));
+-	int width = browser->width, printed;
+-	int pcnt_width = annotation__pcnt_width(notes),
+-	    cycles_width = annotation__cycles_width(notes);
+-	char bf[256];
+-
+-	annotation_line__print_start(al, notes, row == 0, current_entry, browser,
+-				     annotate_browser__set_percent_color,
+-				     annotate_browser__printf);
++	int width = browser->width;
+ 
+ 	/* The scroll bar isn't being used */
+ 	if (!browser->navkeypressed)
+ 		width += 1;
+ 
+-	if (!*al->line)
+-		ui_browser__write_nstring(browser, " ", width - pcnt_width - cycles_width);
+-	else if (al->offset == -1) {
+-		if (al->line_nr && notes->options->show_linenr)
+-			printed = scnprintf(bf, sizeof(bf), "%-*d ", notes->widths.addr + 1, al->line_nr);
+-		else
+-			printed = scnprintf(bf, sizeof(bf), "%*s  ", notes->widths.addr, " ");
+-		ui_browser__write_nstring(browser, bf, printed);
+-		ui_browser__write_nstring(browser, al->line, width - printed - pcnt_width - cycles_width + 1);
+-	} else {
+-		u64 addr = al->offset;
+-		int color = -1;
+-
+-		if (!notes->options->use_offset)
+-			addr += notes->start;
+-
+-		if (!notes->options->use_offset) {
+-			printed = scnprintf(bf, sizeof(bf), "%" PRIx64 ": ", addr);
+-		} else {
+-			if (al->jump_sources) {
+-				if (notes->options->show_nr_jumps) {
+-					int prev;
+-					printed = scnprintf(bf, sizeof(bf), "%*d ",
+-							    notes->widths.jumps,
+-							    al->jump_sources);
+-					prev = ui_browser__set_jumps_percent_color(browser, al->jump_sources,
+-										   current_entry);
+-					ui_browser__write_nstring(browser, bf, printed);
+-					ui_browser__set_color(browser, prev);
+-				}
+-
+-				printed = scnprintf(bf, sizeof(bf), "%*" PRIx64 ": ",
+-						    notes->widths.target, addr);
+-			} else {
+-				printed = scnprintf(bf, sizeof(bf), "%*s  ",
+-						    notes->widths.addr, " ");
+-			}
+-		}
+-
+-		if (change_color)
+-			color = ui_browser__set_color(browser, HE_COLORSET_ADDR);
+-		ui_browser__write_nstring(browser, bf, printed);
+-		if (change_color)
+-			ui_browser__set_color(browser, color);
+-
+-		disasm_line__write(disasm_line(al), browser, bf, sizeof(bf));
+-
+-		ui_browser__write_nstring(browser, bf, width - pcnt_width - cycles_width - 3 - printed);
+-	}
++	annotation_line__write(al, notes, row == 0, current_entry, change_color,
++			       width, browser,
++			       annotate_browser__set_color,
++			       annotate_browser__set_percent_color,
++			       ui_browser__set_jumps_percent_color,
++			       annotate_browser__printf,
++			       annotate_browser__write_graph);
+ 
+ 	if (current_entry)
+ 		ab->selection = al;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 046feda11052..45a52e2658c8 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -27,6 +27,18 @@
+ #include <linux/bitops.h>
+ #include <linux/kernel.h>
+ 
++/* FIXME: For the HE_COLORSET */
++#include "ui/browser.h"
++
++/*
++ * FIXME: Using the same values as slang.h,
++ * but that header may not be available everywhere
++ */
++#define LARROW_CHAR	0x1B
++#define RARROW_CHAR	0x1A
++#define DARROW_CHAR	0x19
++#define UARROW_CHAR	0x18
++
+ #include "sane_ctype.h"
+ 
+ const char 	*disassembler_style;
+@@ -2204,14 +2216,48 @@ static void set_percent_color_stub(void *obj __maybe_unused,
+ {
+ }
+ 
+-void annotation_line__print_start(struct annotation_line *al, struct annotation *notes,
+-				  bool first_line, bool current_entry,
+-				  void *obj,
+-				  void (*obj__set_percent_color)(void *obj, double percent, bool current),
+-				  void (*obj__printf)(void *obj, const char *fmt, ...))
++static void disasm_line__write(struct disasm_line *dl, struct annotation *notes,
++			       void *obj, char *bf, size_t size,
++			       void (*obj__printf)(void *obj, const char *fmt, ...),
++			       void (*obj__write_graph)(void *obj, int graph))
++{
++	if (dl->ins.ops && dl->ins.ops->scnprintf) {
++		if (ins__is_jump(&dl->ins)) {
++			bool fwd = dl->ops.target.offset > dl->al.offset;
++
++			obj__write_graph(obj, fwd ? DARROW_CHAR : UARROW_CHAR);
++			obj__printf(obj, " ");
++		} else if (ins__is_call(&dl->ins)) {
++			obj__write_graph(obj, RARROW_CHAR);
++			obj__printf(obj, " ");
++		} else if (ins__is_ret(&dl->ins)) {
++			obj__write_graph(obj, LARROW_CHAR);
++			obj__printf(obj, " ");
++		} else {
++			obj__printf(obj, "  ");
++		}
++	} else {
++		obj__printf(obj, "  ");
++	}
++
++	disasm_line__scnprintf(dl, bf, size, !notes->options->use_offset);
++}
++
++void annotation_line__write(struct annotation_line *al, struct annotation *notes,
++			    bool first_line, bool current_entry, bool change_color, int width,
++			    void *obj,
++			    int  (*obj__set_color)(void *obj, int color),
++			    void (*obj__set_percent_color)(void *obj, double percent, bool current),
++			    int  (*obj__set_jumps_percent_color)(void *obj, int nr, bool current),
++			    void (*obj__printf)(void *obj, const char *fmt, ...),
++			    void (*obj__write_graph)(void *obj, int graph))
+ {
+ 	double percent_max = annotation_line__max_percent(al, notes);
++	int pcnt_width = annotation__pcnt_width(notes),
++	    cycles_width = annotation__cycles_width(notes);
+ 	bool show_title = false;
++	char bf[256];
++	int printed;
+ 
+ 	if (first_line && (al->offset == -1 || percent_max == 0.0)) {
+ 		if (notes->have_cycles) {
+@@ -2240,14 +2286,12 @@ void annotation_line__print_start(struct annotation_line *al, struct annotation
+ 			}
+ 		}
+ 	} else {
+-		int pcnt_width = annotation__pcnt_width(notes);
+-
+ 		obj__set_percent_color(obj, 0, current_entry);
+ 
+ 		if (!show_title)
+-			obj__printf(obj, "%*s", pcnt_width, " ");
++			obj__printf(obj, "%-*s", pcnt_width, " ");
+ 		else {
+-			obj__printf(obj, "%*s", pcnt_width,
++			obj__printf(obj, "%-*s", pcnt_width,
+ 					   notes->options->show_total_period ? "Period" :
+ 					   notes->options->show_nr_samples ? "Samples" : "Percent");
+ 		}
+@@ -2271,6 +2315,57 @@ void annotation_line__print_start(struct annotation_line *al, struct annotation
+ 	}
+ 
+ 	obj__printf(obj, " ");
++
++	if (!*al->line)
++		obj__printf(obj, "%-*s", width - pcnt_width - cycles_width, " ");
++	else if (al->offset == -1) {
++		if (al->line_nr && notes->options->show_linenr)
++			printed = scnprintf(bf, sizeof(bf), "%-*d ", notes->widths.addr + 1, al->line_nr);
++		else
++			printed = scnprintf(bf, sizeof(bf), "%-*s  ", notes->widths.addr, " ");
++		obj__printf(obj, bf);
++		obj__printf(obj, "%-*s", width - printed - pcnt_width - cycles_width + 1, al->line);
++	} else {
++		u64 addr = al->offset;
++		int color = -1;
++
++		if (!notes->options->use_offset)
++			addr += notes->start;
++
++		if (!notes->options->use_offset) {
++			printed = scnprintf(bf, sizeof(bf), "%" PRIx64 ": ", addr);
++		} else {
++			if (al->jump_sources) {
++				if (notes->options->show_nr_jumps) {
++					int prev;
++					printed = scnprintf(bf, sizeof(bf), "%*d ",
++							    notes->widths.jumps,
++							    al->jump_sources);
++					prev = obj__set_jumps_percent_color(obj, al->jump_sources,
++									    current_entry);
++					obj__printf(obj, bf);
++					obj__set_color(obj, prev);
++				}
++
++				printed = scnprintf(bf, sizeof(bf), "%*" PRIx64 ": ",
++						    notes->widths.target, addr);
++			} else {
++				printed = scnprintf(bf, sizeof(bf), "%-*s  ",
++						    notes->widths.addr, " ");
++			}
++		}
++
++		if (change_color)
++			color = obj__set_color(obj, HE_COLORSET_ADDR);
++		obj__printf(obj, bf);
++		if (change_color)
++			obj__set_color(obj, color);
++
++		disasm_line__write(disasm_line(al), notes, obj, bf, sizeof(bf), obj__printf, obj__write_graph);
++
++		obj__printf(obj, "%-*s", width - pcnt_width - cycles_width - 3 - printed, bf);
++	}
++
+ }
+ 
+ int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *evsel,
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index 84c99774bfed..27fcdacbb497 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -126,11 +126,14 @@ struct annotation_line *
+ annotation_line__next(struct annotation_line *pos, struct list_head *head);
+ 
+ double annotation_line__max_percent(struct annotation_line *al, struct annotation *notes);
+-void annotation_line__print_start(struct annotation_line *al, struct annotation *notes,
+-				  bool first_line, bool current_entry,
+-				  void *obj,
+-				  void (*obj__set_percent_color)(void *obj, double percent, bool current),
+-				  void (*obj__printf)(void *obj, const char *fmt, ...));
++void annotation_line__write(struct annotation_line *al, struct annotation *notes,
++			    bool first_line, bool current_entry, bool change_color, int width,
++			    void *obj,
++			    int  (*obj__set_color)(void *obj, int color),
++			    void (*obj__set_percent_color)(void *obj, double percent, bool current),
++			    int  (*obj__set_jumps_percent_color)(void *obj, int nr, bool current),
++			    void (*obj__printf)(void *obj, const char *fmt, ...),
++			    void (*obj__write_graph)(void *obj, int graph));
+ 
+ int disasm_line__scnprintf(struct disasm_line *dl, char *bf, size_t size, bool raw);
+ size_t disasm__fprintf(struct list_head *head, FILE *fp);
