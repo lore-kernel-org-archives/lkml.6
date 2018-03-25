@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752124AbeCYWQC (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 18:16:02 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48939 "EHLO
+        id S1752139AbeCYWQ3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:16:29 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38607 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750994AbeCYWQB (ORCPT
+        with ESMTP id S1750832AbeCYWQ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 18:16:01 -0400
-Date: Sun, 25 Mar 2018 15:15:50 -0700
+        Sun, 25 Mar 2018 18:16:27 -0400
+Date: Sun, 25 Mar 2018 15:16:17 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-ek20dnd8z2y5v54pcepihybz@git.kernel.org>
-Cc: dsahern@gmail.com, yao.jin@linux.intel.com, adrian.hunter@intel.com,
-        acme@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
-        hpa@zytor.com, mingo@kernel.org, ak@linux.intel.com, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, mingo@kernel.org, ak@linux.intel.com,
-        namhyung@kernel.org, wangnan0@huawei.com, acme@redhat.com,
-        yao.jin@linux.intel.com, adrian.hunter@intel.com, dsahern@gmail.com
+Message-ID: <tip-86h6ftebc62ij1rx8q9zkpwk@git.kernel.org>
+Cc: ak@linux.intel.com, namhyung@kernel.org, adrian.hunter@intel.com,
+        acme@redhat.com, wangnan0@huawei.com, mingo@kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, yao.jin@linux.intel.com,
+        jolsa@kernel.org, dsahern@gmail.com, linux-kernel@vger.kernel.org
+Reply-To: jolsa@kernel.org, yao.jin@linux.intel.com,
+        linux-kernel@vger.kernel.org, dsahern@gmail.com, mingo@kernel.org,
+        wangnan0@huawei.com, adrian.hunter@intel.com, acme@redhat.com,
+        ak@linux.intel.com, namhyung@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Introduce set_offsets() method out
- of TUI code
-Git-Commit-ID: 5bc49f6120203c9fbe8e63fdcb9598e0ba615de7
+Subject: [tip:perf/core] perf annotate: Move the column widths from the TUI
+ to generic lib
+Git-Commit-ID: 9761e86e36c0957e76c1b7c328953687a1a38655
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,17 +35,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5bc49f6120203c9fbe8e63fdcb9598e0ba615de7
-Gitweb:     https://git.kernel.org/tip/5bc49f6120203c9fbe8e63fdcb9598e0ba615de7
+Commit-ID:  9761e86e36c0957e76c1b7c328953687a1a38655
+Gitweb:     https://git.kernel.org/tip/9761e86e36c0957e76c1b7c328953687a1a38655
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 15 Mar 2018 15:59:01 -0300
+AuthorDate: Thu, 15 Mar 2018 16:18:21 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 20 Mar 2018 13:19:29 -0300
 
-perf annotate: Introduce set_offsets() method out of TUI code
+perf annotate: Move the column widths from the TUI to generic lib
 
-More non-strictly TUI code being moved to the UI neutral annotation
-library, to be used in the upcoming --stdio2 output mode.
+This also will be used in other output formats, such as --stdio2.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -53,113 +53,167 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-ek20dnd8z2y5v54pcepihybz@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-86h6ftebc62ij1rx8q9zkpwk@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/annotate.c | 24 ++----------------------
- tools/perf/util/annotate.c        | 28 ++++++++++++++++++++++++++++
- tools/perf/util/annotate.h        |  3 +++
- 3 files changed, 33 insertions(+), 22 deletions(-)
+ tools/perf/ui/browsers/annotate.c | 45 +++++++++++++++++----------------------
+ tools/perf/util/annotate.h        |  7 ++++++
+ 2 files changed, 26 insertions(+), 26 deletions(-)
 
 diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 00b88349a3c2..977c7e9fdadb 100644
+index 977c7e9fdadb..07d0d2268008 100644
 --- a/tools/perf/ui/browsers/annotate.c
 +++ b/tools/perf/ui/browsers/annotate.c
-@@ -938,7 +938,6 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 			 struct perf_evsel *evsel,
- 			 struct hist_browser_timer *hbt)
+@@ -36,11 +36,6 @@ struct annotate_browser {
+ 	struct annotation_line	   *selection;
+ 	struct arch		   *arch;
+ 	bool			    searching_backwards;
+-	u8			    addr_width;
+-	u8			    jumps_width;
+-	u8			    target_width;
+-	u8			    min_addr_width;
+-	u8			    max_addr_width;
+ 	char			    search_bf[128];
+ };
+ 
+@@ -194,10 +189,10 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
+ 	else if (al->offset == -1) {
+ 		if (al->line_nr && notes->options->show_linenr)
+ 			printed = scnprintf(bf, sizeof(bf), "%-*d ",
+-					ab->addr_width + 1, al->line_nr);
++					notes->widths.addr + 1, al->line_nr);
+ 		else
+ 			printed = scnprintf(bf, sizeof(bf), "%*s  ",
+-				    ab->addr_width, " ");
++				    notes->widths.addr, " ");
+ 		ui_browser__write_nstring(browser, bf, printed);
+ 		ui_browser__write_nstring(browser, al->line, width - printed - pcnt_width - cycles_width + 1);
+ 	} else {
+@@ -214,7 +209,7 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
+ 				if (notes->options->show_nr_jumps) {
+ 					int prev;
+ 					printed = scnprintf(bf, sizeof(bf), "%*d ",
+-							    ab->jumps_width,
++							    notes->widths.jumps,
+ 							    al->jump_sources);
+ 					prev = ui_browser__set_jumps_percent_color(browser, al->jump_sources,
+ 										   current_entry);
+@@ -223,10 +218,10 @@ static void annotate_browser__write(struct ui_browser *browser, void *entry, int
+ 				}
+ 
+ 				printed = scnprintf(bf, sizeof(bf), "%*" PRIx64 ": ",
+-						    ab->target_width, addr);
++						    notes->widths.target, addr);
+ 			} else {
+ 				printed = scnprintf(bf, sizeof(bf), "%*s  ",
+-						    ab->addr_width, " ");
++						    notes->widths.addr, " ");
+ 			}
+ 		}
+ 
+@@ -322,12 +317,12 @@ static void annotate_browser__draw_current_jump(struct ui_browser *browser)
+ 
+ 	ui_browser__set_color(browser, HE_COLORSET_JUMP_ARROWS);
+ 	__ui_browser__line_arrow(browser,
+-				 pcnt_width + 2 + ab->addr_width + width,
++				 pcnt_width + 2 + notes->widths.addr + width,
+ 				 from, to);
+ 
+ 	if (is_fused(ab, cursor)) {
+ 		ui_browser__mark_fused(browser,
+-				       pcnt_width + 3 + ab->addr_width + width,
++				       pcnt_width + 3 + notes->widths.addr + width,
+ 				       from - 1,
+ 				       to > from ? true : false);
+ 	}
+@@ -703,19 +698,17 @@ bool annotate_browser__continue_search_reverse(struct annotate_browser *browser,
+ 	return __annotate_browser__search_reverse(browser);
+ }
+ 
+-static void annotate_browser__update_addr_width(struct annotate_browser *browser)
++static void annotation__update_column_widths(struct annotation *notes)
  {
--	struct annotation_line *al;
- 	struct annotation *notes = symbol__annotation(sym);
- 	size_t size;
- 	struct map_symbol ms = {
-@@ -991,27 +990,8 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
- 
- 	notes->start = map__rip_2objdump(map, sym->start);
- 
--	list_for_each_entry(al, &notes->src->source, node) {
--		size_t line_len = strlen(al->line);
+-	struct annotation *notes = browser__annotation(&browser->b);
 -
--		if (browser.b.width < line_len)
--			browser.b.width = line_len;
--		al->idx = notes->nr_entries++;
--		if (al->offset != -1) {
--			al->idx_asm = notes->nr_asm_entries++;
--			/*
--			 * FIXME: short term bandaid to cope with assembly
--			 * routines that comes with labels in the same column
--			 * as the address in objdump, sigh.
--			 *
--			 * E.g. copy_user_generic_unrolled
-- 			 */
--			if (al->offset < (s64)size)
--				notes->offsets[al->offset] = al;
--		} else
--			al->idx_asm = -1;
--	}
--
-+	annotation__set_offsets(notes, size);
-+	browser.b.width = notes->max_line_len;
+ 	if (notes->options->use_offset)
+-		browser->target_width = browser->min_addr_width;
++		notes->widths.target = notes->widths.min_addr;
+ 	else
+-		browser->target_width = browser->max_addr_width;
++		notes->widths.target = notes->widths.max_addr;
+ 
+-	browser->addr_width = browser->target_width;
++	notes->widths.addr = notes->widths.target;
+ 
+ 	if (notes->options->show_nr_jumps)
+-		browser->addr_width += browser->jumps_width + 1;
++		notes->widths.addr += notes->widths.jumps + 1;
+ }
+ 
+ static int annotate_browser__run(struct annotate_browser *browser,
+@@ -820,14 +813,14 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 			continue;
+ 		case 'o':
+ 			notes->options->use_offset = !notes->options->use_offset;
+-			annotate_browser__update_addr_width(browser);
++			annotation__update_column_widths(notes);
+ 			continue;
+ 		case 'j':
+ 			notes->options->jump_arrows = !notes->options->jump_arrows;
+ 			continue;
+ 		case 'J':
+ 			notes->options->show_nr_jumps = !notes->options->show_nr_jumps;
+-			annotate_browser__update_addr_width(browser);
++			annotation__update_column_widths(notes);
+ 			continue;
+ 		case '/':
+ 			if (annotate_browser__search(browser, delay_secs)) {
+@@ -884,7 +877,7 @@ show_sup_ins:
+ 				notes->options->show_nr_samples = false;
+ 			else
+ 				notes->options->show_total_period = true;
+-			annotate_browser__update_addr_width(browser);
++			annotation__update_column_widths(notes);
+ 			continue;
+ 		case K_LEFT:
+ 		case K_ESC:
+@@ -995,9 +988,9 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
  	annotation__mark_jump_targets(notes, sym);
  	annotation__compute_ipc(notes, size);
  
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 330275680a1a..b976e3951662 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2056,6 +2056,34 @@ void annotation__mark_jump_targets(struct annotation *notes, struct symbol *sym)
- 	}
- }
+-	browser.addr_width = browser.target_width = browser.min_addr_width = hex_width(size);
+-	browser.max_addr_width = hex_width(sym->end);
+-	browser.jumps_width = width_jumps(notes->max_jump_sources);
++	notes->widths.addr = notes->widths.target = notes->widths.min_addr = hex_width(size);
++	notes->widths.max_addr = hex_width(sym->end);
++	notes->widths.jumps = width_jumps(notes->max_jump_sources);
+ 	notes->nr_events = nr_pcnt;
+ 	browser.b.nr_entries = notes->nr_entries;
+ 	browser.b.entries = &notes->src->source,
+@@ -1006,7 +999,7 @@ int symbol__tui_annotate(struct symbol *sym, struct map *map,
+ 	if (notes->options->hide_src_code)
+ 		ui_browser__init_asm_mode(&browser.b);
  
-+void annotation__set_offsets(struct annotation *notes, s64 size)
-+{
-+	struct annotation_line *al;
-+
-+	notes->max_line_len = 0;
-+
-+	list_for_each_entry(al, &notes->src->source, node) {
-+		size_t line_len = strlen(al->line);
-+
-+		if (notes->max_line_len < line_len)
-+			notes->max_line_len = line_len;
-+		al->idx = notes->nr_entries++;
-+		if (al->offset != -1) {
-+			al->idx_asm = notes->nr_asm_entries++;
-+			/*
-+			 * FIXME: short term bandaid to cope with assembly
-+			 * routines that comes with labels in the same column
-+			 * as the address in objdump, sigh.
-+			 *
-+			 * E.g. copy_user_generic_unrolled
-+ 			 */
-+			if (al->offset < size)
-+				notes->offsets[al->offset] = al;
-+		} else
-+			al->idx_asm = -1;
-+	}
-+}
-+
- static void annotation__calc_lines(struct annotation *notes, struct map *map,
- 				  struct rb_root *root, u64 start)
- {
+-	annotate_browser__update_addr_width(&browser);
++	annotation__update_column_widths(notes);
+ 
+ 	ret = annotate_browser__run(&browser, evsel, hbt);
+ 
 diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 0c34eb0bd7c8..8a61ec9a5291 100644
+index 8a61ec9a5291..0aa77c154fe3 100644
 --- a/tools/perf/util/annotate.h
 +++ b/tools/perf/util/annotate.h
-@@ -177,6 +177,7 @@ struct annotation {
- 	int			max_jump_sources;
+@@ -178,6 +178,13 @@ struct annotation {
  	int			nr_entries;
  	int			nr_asm_entries;
-+	u16			max_line_len;
+ 	u16			max_line_len;
++	struct {
++		u8		addr;
++		u8		jumps;
++		u8		target;
++		u8		min_addr;
++		u8		max_addr;
++	} widths;
  	bool			have_cycles;
  	struct annotated_source *src;
  };
-@@ -191,6 +192,8 @@ static inline int annotation__pcnt_width(struct annotation *notes)
- 	return (notes->options->show_total_period ? 12 : 7) * notes->nr_events;
- }
- 
-+
-+void annotation__set_offsets(struct annotation *notes, s64 size);
- void annotation__compute_ipc(struct annotation *notes, size_t size);
- void annotation__mark_jump_targets(struct annotation *notes, struct symbol *sym);
- 
