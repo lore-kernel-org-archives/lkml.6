@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752638AbeCYWWw (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 18:22:52 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60895 "EHLO
+        id S1752664AbeCYWXB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 18:23:01 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41437 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbeCYWWs (ORCPT
+        with ESMTP id S1752036AbeCYWWz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 18:22:48 -0400
-Date: Sun, 25 Mar 2018 15:22:39 -0700
+        Sun, 25 Mar 2018 18:22:55 -0400
+Date: Sun, 25 Mar 2018 15:21:46 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-wz8d269hxkcwaczr0r4rhyjg@git.kernel.org>
-Cc: ak@linux.intel.com, acme@redhat.com, wangnan0@huawei.com,
-        jolsa@kernel.org, dsahern@gmail.com, yao.jin@linux.intel.com,
-        hpa@zytor.com, adrian.hunter@intel.com, namhyung@kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: hpa@zytor.com, adrian.hunter@intel.com, namhyung@kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        acme@redhat.com, ak@linux.intel.com, wangnan0@huawei.com,
-        jolsa@kernel.org, dsahern@gmail.com, yao.jin@linux.intel.com
+Message-ID: <tip-nu4rxg5zkdtgs1b2gc40p7v7@git.kernel.org>
+Cc: mingo@kernel.org, tglx@linutronix.de, wangnan0@huawei.com,
+        acme@redhat.com, yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, ak@linux.intel.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, dsahern@gmail.com, jolsa@kernel.org
+Reply-To: wangnan0@huawei.com, tglx@linutronix.de, acme@redhat.com,
+        yao.jin@linux.intel.com, mingo@kernel.org, namhyung@kernel.org,
+        adrian.hunter@intel.com, dsahern@gmail.com, jolsa@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, ak@linux.intel.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf annotate: Introduce --ignore-vmlinux command
- line option
-Git-Commit-ID: be316409e9819423fc965e11486e6631734520ba
+Subject: [tip:perf/core] perf annotate: Use the default annotation options
+ for --stdio2
+Git-Commit-ID: 3563289208ecef339853692ecbf8690084744b53
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,103 +34,91 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  be316409e9819423fc965e11486e6631734520ba
-Gitweb:     https://git.kernel.org/tip/be316409e9819423fc965e11486e6631734520ba
+Commit-ID:  3563289208ecef339853692ecbf8690084744b53
+Gitweb:     https://git.kernel.org/tip/3563289208ecef339853692ecbf8690084744b53
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 16 Mar 2018 15:58:35 -0300
+AuthorDate: Fri, 16 Mar 2018 14:37:33 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 21 Mar 2018 12:53:42 -0300
+CommitDate: Wed, 21 Mar 2018 12:53:41 -0300
 
-perf annotate: Introduce --ignore-vmlinux command line option
+perf annotate: Use the default annotation options for --stdio2
 
-This is already present in 'perf top', albeit undocumented (will fix),
-and is useful to use /proc/kcore instead of vmlinux and then get what is
-really in place, not what the kernel starts with, before alternatives,
-ftrace .text patching, etc, see the differences:
+With an empty '[annotate]' section in ~/.perfconfig:
 
-  # perf annotate --stdio2 _raw_spin_lock_irqsave
-  _raw_spin_lock_irqsave() /lib/modules/4.16.0-rc4/build/vmlinux
-  Event: anon group { cycles, instructions }
+  # perf record -a --all-kernel -e '{cycles,instructions}:P' sleep 5
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 2.243 MB perf.data (5513 samples) ]
+  # perf annotate --stdio2 _raw_spin_lock | head -20
 
-    0.00   3.17      → callq  __fentry__
-    0.00   7.94        push   %rbx
-    7.69  36.51      → callq  __page_file_index
-                       mov    %rax,%rbx
-    7.69   3.17      → callq  *ffffffff82225cd0
+                     Disassembly of section .text:
+
+                     ffffffff81868790 <_raw_spin_lock>:
+                     _raw_spin_lock():
+                     EXPORT_SYMBOL(_raw_spin_trylock_bh);
+                     #endif
+
+                     #ifndef CONFIG_INLINE_SPIN_LOCK
+                     void __lockfunc _raw_spin_lock(raw_spinlock_t *lock)
+                     {
+                     → callq  __fentry__
+                     atomic_cmpxchg():
+                             return xadd(&v->counter, -i);
+                     }
+
+                     static __always_inline int atomic_cmpxchg(atomic_t *v, int old, int new)
+                     {
+  # perf annotate --stdio2 _raw_spin_lock | head -20
+                     → callq  __fentry__
                        xor    %eax,%eax
                        mov    $0x1,%edx
-   80.77  49.21        lock   cmpxchg %edx,(%rdi)
-                       test   %eax,%eax
-                     ↓ jne    2b
-    3.85   0.00        mov    %rbx,%rax
-                       pop    %rbx
-                     ← retq
-                 2b:   mov    %eax,%esi
-                     → callq  queued_spin_lock_slowpath
-                       mov    %rbx,%rax
-                       pop    %rbx
-                     ← retq
-  [root@jouet ~]# perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave
-  _raw_spin_lock_irqsave() /proc/kcore
-  Event: anon group { cycles, instructions }
-
-    0.00   3.17        nop
-    0.00   7.94        push   %rbx
-    0.00  23.81        pushfq
-    7.69  12.70        pop    %rax
-                       nop
-                       mov    %rax,%rbx
-    7.69   3.17        cli
-                       nop
-                       xor    %eax,%eax
-                       mov    $0x1,%edx
-   80.77  49.21        lock   cmpxchg %edx,(%rdi)
-                       test   %eax,%eax
-                     ↓ jne    2b
-    3.85   0.00        mov    %rbx,%rax
-                       pop    %rbx
-                     ← retq
-                 2b:   mov    %eax,%esi
-                     → callq  *ffffffff820e96b0
-                       mov    %rbx,%rax
-                       pop    %rbx
-                     ← retq
+   87.50 100.00        lock   cmpxchg %edx,(%rdi)
+    6.25   0.00        test   %eax,%eax
+                     ↓ jne    16
+    6.25   0.00        repz   retq
+                 16:   mov    %eax,%esi
+                     ↑ jmpq   ffffffff810e96b0 <queued_spin_lock_slowpath>
   #
+  # cat ~/.perfconfig
+  [annotate]
 
-Diff of the output of those commands:
+    hide_src_code = false
+    show_linenr = true
+  # perf annotate --stdio2 _raw_spin_lock | head -20
 
-  # perf annotate --stdio2 _raw_spin_lock_irqsave > /tmp/vmlinux
-  # perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave > /tmp/kcore
-  # diff -y /tmp/vmlinux /tmp/kcore
-  _raw_spin_lock_irqsave() vmlinux             | _raw_spin_lock_irqsave() /proc/kcore
-  Event: anon group { cycles, instructions }     Event: anon group { cycles, instructions }
+                 3   Disassembly of section .text:
 
-   0.00  3.17  → callq __fentry__              |  0.00  3.17     nop
-   0.00  7.94    push  %rbx                       0.00  7.94     push  %rbx
-   7.69 36.51  → callq __page_file_index       |  0.00 23.81     pushfq
-                                               >  7.69 12.70     pop   %rax
-                                               >                 nop
-                 mov   %rax,%rbx                                 mov   %rax,%rbx
-   7.69  3.17  → callq *ffffffff82225cd0       |  7.69  3.17     cli
-                                               >                 nop
-                 xor   %eax,%eax                                 xor   %eax,%eax
-                 mov   $0x1,%edx                                 mov   $0x1,%edx
-  80.77 49.21    lock  cmpxchg %edx,(%rdi)       80.77 49.21     lock  cmpxchg %edx,(%rdi)
-                 test  %eax,%eax                                 test  %eax,%eax
-               ↓ jne   2b                                      ↓ jne   2b
-   3.85  0.00    mov   %rbx,%rax                  3.85  0.00     mov   %rbx,%rax
-                 pop   %rbx                                      pop   %rbx
-               ← retq                                          ← retq
-            2b:  mov   %eax,%esi                            2b:  mov   %eax,%esi
-               → callq queued_spin_lock_slowpath|              → callq *ffffffff820e96b0
-                 mov   %rbx,%rax                                 mov   %rbx,%rax
-                 pop   %rbx                                      pop   %rbx
-               ← retq                                          ← retq
+                 5   ffffffff81868790 <_raw_spin_lock>:
+                 6   _raw_spin_lock():
+                 143 EXPORT_SYMBOL(_raw_spin_trylock_bh);
+                 144 #endif
+
+                 146 #ifndef CONFIG_INLINE_SPIN_LOCK
+                 147 void __lockfunc _raw_spin_lock(raw_spinlock_t *lock)
+                 148 {
+                     → callq  __fentry__
+                 150 atomic_cmpxchg():
+                 187         return xadd(&v->counter, -i);
+                 188 }
+
+                 190 static __always_inline int atomic_cmpxchg(atomic_t *v, int old, int new)
+                 191 {
   #
+  # cat ~/.perfconfig
+  [annotate]
 
-This should be further streamlined by doing both annotations and
-allowing the TUI to toggle initial/current, and show the patched
-instructions in a slightly different color.
+    hide_src_code = true
+    show_total_period = true
+  # perf annotate --stdio2 _raw_spin_lock | head -20
+                               → callq  __fentry__
+                                 xor    %eax,%eax
+                                 mov    $0x1,%edx
+      1411316      152339        lock   cmpxchg %edx,(%rdi)
+       344694           0        test   %eax,%eax
+                               ↓ jne    16
+        80806           0        repz   retq
+                           16:   mov    %eax,%esi
+                               ↑ jmpq   ffffffff810e96b0 <queued_spin_lock_slowpath>
+  #
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -139,37 +127,24 @@ Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-wz8d269hxkcwaczr0r4rhyjg@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-nu4rxg5zkdtgs1b2gc40p7v7@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-annotate.txt | 3 +++
- tools/perf/builtin-annotate.c              | 2 ++
- 2 files changed, 5 insertions(+)
+ tools/perf/util/annotate.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
-index c29c7fc93023..749cc6055dac 100644
---- a/tools/perf/Documentation/perf-annotate.txt
-+++ b/tools/perf/Documentation/perf-annotate.txt
-@@ -55,6 +55,9 @@ OPTIONS
- --vmlinux=<file>::
-         vmlinux pathname.
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index cfa641bc1df6..ea83b9754ab0 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -2243,9 +2243,7 @@ int symbol__tty_annotate2(struct symbol *sym, struct map *map,
+ {
+ 	struct dso *dso = map->dso;
+ 	struct rb_root source_line = RB_ROOT;
+-	struct annotation_options opts = {
+-		.use_offset	= true,
+-	};
++	struct annotation_options opts = annotation__default_options;
  
-+--ignore-vmlinux::
-+	Ignore vmlinux files.
-+
- -m::
- --modules::
-         Load module symbols. WARNING: use only with -k and LIVE kernel.
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index fd5aac3fd949..51709a961496 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -496,6 +496,8 @@ int cmd_annotate(int argc, const char **argv)
- 	OPT_BOOLEAN(0, "tui", &annotate.use_tui, "Use the TUI interface"),
- 	OPT_BOOLEAN(0, "stdio", &annotate.use_stdio, "Use the stdio interface"),
- 	OPT_BOOLEAN(0, "stdio2", &annotate.use_stdio2, "Use the stdio interface"),
-+	OPT_BOOLEAN(0, "ignore-vmlinux", &symbol_conf.ignore_vmlinux,
-+                    "don't load vmlinux even if found"),
- 	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
- 		   "file", "vmlinux pathname"),
- 	OPT_BOOLEAN('m', "modules", &symbol_conf.use_modules,
+ 	if (symbol__annotate2(sym, map, evsel, &opts, NULL) < 0)
+ 		return -1;
