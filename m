@@ -1,45 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752269AbeCZOwm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:52:42 -0400
-Received: from mga07.intel.com ([134.134.136.100]:60780 "EHLO mga07.intel.com"
+        id S1752277AbeCZOzJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:55:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50083 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751132AbeCZOwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:52:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,365,1517904000";
-   d="scan'208";a="28522101"
-Message-ID: <1522075953.16723.11.camel@linux.intel.com>
-Subject: Re: [PATCH v3] x86: i8237: Register based on FADT legacy boot flag
-From: Alan Cox <alan@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Anshuman Gupta <anshuman.gupta@intel.com>
-Cc: glx@linutronix.de, x86@kernel.org, mingo@redhat.com, hpa@zytor.com,
-        rjw@rjwysocki.net, andriy.shevchenko@linux.intel.com,
-        linux-kernel@vger.kernel.org, rajneesh.bhardwaj@intel.com
-Date: Mon, 26 Mar 2018 15:52:33 +0100
-In-Reply-To: <alpine.DEB.2.21.1803251348190.1481@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1803191152450.2010@nanos.tec.linutronix.de>
-         <1521714118-31282-1-git-send-email-anshuman.gupta@intel.com>
-         <alpine.DEB.2.21.1803251348190.1481@nanos.tec.linutronix.de>
-Organization: Intel Corporation
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751127AbeCZOzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:55:08 -0400
+Date: Mon, 26 Mar 2018 16:55:05 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>,
+        Matthew Wilcox <willy@infradead.org>, adobriyan@gmail.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+Message-ID: <20180326145505.GM5652@dhcp22.suse.cz>
+References: <1521851771-108673-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180324043044.GA22733@bombadil.infradead.org>
+ <aed7f679-a32f-d8d7-eb59-ec05fc49a70e@linux.alibaba.com>
+ <a766b98b-80b4-5f1b-9588-dd1c5506cbdc@i-love.sakura.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a766b98b-80b4-5f1b-9588-dd1c5506cbdc@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Please explain WHY 2017 is the cut-off date. I still have no clue how
-> that
-> is decided aside of being a random number.
+On Mon 26-03-18 23:49:18, Tetsuo Handa wrote:
+[...]
+> Also, even if we succeeded to avoid mmap_sem contention at that location,
+> won't we after all get mmap_sem contention messages a bit later, for
+> access_remote_vm() holds mmap_sem which would lead to traces like above
+> if mmap_sem is already contended?
 
-Because if it's prior to 2017 then it'll almost certainly have those
-registers even if the firmware says otherwise. After that point we
-think the firmware is going to give valid answers (although the 0xFF
-check is actually the important one in reality).
+Yes, but at least we get rid of the mmap_sem for something that can use
+a more fine grained locking.
 
-Alan
+Maybe we can get a finer grained range locking for mmap_sem one day and
+not having the full range locked section will be a plus.
+
+-- 
+Michal Hocko
+SUSE Labs
