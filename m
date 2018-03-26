@@ -1,77 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751793AbeCZIpO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:45:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750983AbeCZIpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:45:02 -0400
-Date: Mon, 26 Mar 2018 10:44:55 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Cc: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, freude@de.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v3 01/14] KVM: s390: refactor crypto initialization
-Message-ID: <20180326104455.7773be7b.cohuck@redhat.com>
-In-Reply-To: <3227b02e-4a16-295d-9a01-043702cf149d@linux.vnet.ibm.com>
-References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1521051954-25715-2-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <f87a6adb-8982-c194-7925-0c88060ebef2@linux.vnet.ibm.com>
-        <d0b44d6e-8b98-f8ca-7cf5-dfcdf38c79f6@linux.vnet.ibm.com>
-        <3227b02e-4a16-295d-9a01-043702cf149d@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1751380AbeCZIqy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:46:54 -0400
+Received: from mail-pg0-f47.google.com ([74.125.83.47]:43415 "EHLO
+        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeCZIqw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 04:46:52 -0400
+X-Google-Smtp-Source: AG47ELt6tVa8rC6KVnAuUZiqJ9H4VBfWUerfNq6PUMPxavL4U4ypmJ8oZEAM64KQv4eZexWtoGcoEY9gE6sDQPWqico=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CA+55aFwZpMB=VUTCNUgc4dcCEy9_T4iE0R0pAfDets=zDFJunQ@mail.gmail.com>
+References: <CACT4Y+babw_2NJa+oym2VN7-Z4Bt_rZx2sMi68AD+1KzNpr=KQ@mail.gmail.com>
+ <CA+55aFzxDYGLUPY802rJN=wgJ1aEZHLRE+W8J82eFz2nzKOMBg@mail.gmail.com>
+ <CACT4Y+YDqJMb4mC6c--Ku=ZL9MpELmUKMXe4uQJ6H0av2FJC9w@mail.gmail.com>
+ <20180323201634.GA16350@gmail.com> <CA+55aFwZpMB=VUTCNUgc4dcCEy9_T4iE0R0pAfDets=zDFJunQ@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 26 Mar 2018 10:46:31 +0200
+Message-ID: <CACT4Y+YjD68zBdN7zCViB5ab9-R2JgBEf5OBiDauxMsyuEkLRw@mail.gmail.com>
+Subject: Re: syzbot dashboard
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Eric Biggers <ebiggers3@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Mar 2018 15:55:39 +0100
-Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+On Fri, Mar 23, 2018 at 9:50 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Fri, Mar 23, 2018 at 1:16 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+>>
+>> A compromise could be to remove the raw.log from the emails, and send the config
+>> in 'defconfig' format rather than the full config
+>
+> I really don't think the config is very legible, and isn't something
+> that people will look at to judge whether it's intrresting or not.
+> It's still "many hundreds of lines of line noise"
+>
+> And it shouldn't really be part of the consideration whether a bug is
+> really worth looking at or not anyway, although *after* you've found
+> the bug as a developer, you may decide "ok, that configuration isn't
+> valid, so I should just disallow it in Kconfig". But that's still a
+> bugfix.
+>
+> So I think the config can stay purely on the web (for when you go "so
+> how do I *reproduce* this?") along with the actual reproducer and the
+> full logs.
+>
+> I'd rather make the emails be small and legible, and contain the
+> minimum amount of information.
+>
+> Because I really do *not* need a few hundred emails from some
+> automated source that each have a roughly thousand-line config
+> attachements.
+>
+> An email with 50 lines of THE ACTUAL DECODED OOPS? Sure. That's
+> critical information. That doesn't make me go "why does this stupid
+> bot spew garbage at me"?
 
-> On 15/03/2018 15:48, Tony Krowiak wrote:
-> > On 03/15/2018 08:26 AM, Pierre Morel wrote:  
-> >> On 14/03/2018 19:25, Tony Krowiak wrote:  
 
-> >>> diff --git a/arch/s390/kvm/Kconfig b/arch/s390/kvm/Kconfig
-> >>> index a3dbd45..4ca9077 100644
-> >>> --- a/arch/s390/kvm/Kconfig
-> >>> +++ b/arch/s390/kvm/Kconfig
-> >>> @@ -33,6 +33,7 @@ config KVM
-> >>>       select HAVE_KVM_INVALID_WAKEUPS
-> >>>       select SRCU
-> >>>       select KVM_VFIO
-> >>> +    select ZCRYPT  
-> >>
-> >> I do not think it is a good solution to *always* enable ZCRYPT
-> >> when we have KVM.  
-> > If CONFIG_ZCRYPT is not selected, then the kvm_ap_apxa_installed() 
-> > function will not compile
-> > because it calls a zcrypt interface. How would you suggest we make 
-> > sure zcrypt interfaces
-> > used in KVM are built if CONFIG_ZCRYPT is not selected?  
-> 
-> if zcrypt is not configured, I suppose that the KVM code initializaing CRYCB
-> has no use but the function will be called from KVM.
-> So I would do something like:
-> 
-> #ifdef ZCRYPT
-> external definitions.
-> #else
-> stubs returning error -ENOZCRYPT (or whatever)
-> #endif
+I've switched emails to links instead of attachments, here are few
+recent examples:
+https://lkml.org/lkml/2018/3/25/31
+https://lkml.org/lkml/2018/3/25/256
+https://lkml.org/lkml/2018/3/25/257
 
-The kvm code used some kind of detection for crycb before (IIRC it was
-for the key-wrapping stuff). I assume that usage is independent of
-zcrypt driver usage in the host?
+Filed https://github.com/google/syzkaller/issues/550 for periodic
+pings and noted your requirements. In particular, we will need
+something for "I'm not the right person for this report", and some
+plan for gradual rollout. It will take some time to implement.
+Meanwhile developers are welcome to look at the dashboard
+https://syzkaller.appspot.com/
 
-So, I think that apxa detection function should be used to s390
-architecture base code and not be conditional on anything.
+Thanks again
