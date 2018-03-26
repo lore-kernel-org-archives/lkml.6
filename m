@@ -1,60 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752315AbeCZPhU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 11:37:20 -0400
-Received: from muru.com ([72.249.23.125]:33934 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752082AbeCZPhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 11:37:18 -0400
-Date: Mon, 26 Mar 2018 08:37:14 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: =?utf-8?B?6ZmI5Y2O5omN?= <chenhc@lemote.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, Rich Felker <dalias@libc.org>,
-        Russell King <linux@arm.linux.org.uk>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        James Hogan <james.hogan@mips.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: Regression with arm in next with stack protector
-Message-ID: <20180326153714.GG5700@atomide.com>
-References: <20180323181452.GJ5799@atomide.com>
- <CAOMZO5Bmpk4cwav-qTnNA6L16DwdDPp5LeKC-jY9=QzfVBuKSQ@mail.gmail.com>
- <20180323121530.f28dc29939d9395268911a4e@linux-foundation.org>
- <tencent_79FD53B203715FD7439C6EAB@qq.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <tencent_79FD53B203715FD7439C6EAB@qq.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752343AbeCZPie (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 11:38:34 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:52188 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751868AbeCZPic (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 11:38:32 -0400
+Date: Mon, 26 Mar 2018 11:38:30 -0400 (EDT)
+Message-Id: <20180326.113830.932262386304702367.davem@davemloft.net>
+To: mdf@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, robh+dt@kernel.org, andrew@lunn.ch,
+        f.fainelli@gmail.com
+Subject: Re: [PATCH v5 2/2] net: ethernet: nixge: Add support for National
+ Instruments XGE netdev
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180323204128.29783-2-mdf@kernel.org>
+References: <20180323204128.29783-1-mdf@kernel.org>
+        <20180323204128.29783-2-mdf@kernel.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* 陈华才 <chenhc@lemote.com> [180326 06:59]:
-> Hi, Tony and Fabio,
-> 
-> Could you please upload your kernel binary to somewhere for me? I don't understand why some ARM boards is OK while others are broken.
+From: Moritz Fischer <mdf@kernel.org>
+Date: Fri, 23 Mar 2018 13:41:28 -0700
 
-Well the kernel I'm testing is just current Linux next cross
-compiled omap2plus_defconfig kernel. I do have few more config
-options enabled like LOCKDEP and DEBUG_ATOMIC_SLEEP, but I
-doubt they matter here :)
+> +static void nixge_hw_dma_bd_release(struct net_device *ndev)
+> +{
+> +	int i;
+> +	struct nixge_priv *priv = netdev_priv(ndev);
 
-Then I'm using gcc-7.3.0 and binutils-2.30 built with the
-buildall.git scripts:
+Please order local variables from longest to shortest line (ie. reverse
+christmas tree layout).
 
-git://git.infradead.org/users/segher/buildall.git
+> +static int nixge_hw_dma_bd_init(struct net_device *ndev)
+> +{
+> +	u32 cr;
+> +	int i;
+> +	struct sk_buff *skb;
+> +	struct nixge_priv *priv = netdev_priv(ndev);
 
-If you still need binaries, let me know.
+Likewise.
 
-Do you know which arm devices are working with your patch?
+> +static void __nixge_device_reset(struct nixge_priv *priv, off_t offset)
+> +{
+> +	u32 status;
+> +	int err;
+> +	/* Reset Axi DMA. This would reset NIXGE Ethernet core as well.
+> +	 * The reset process of Axi DMA takes a while to complete as all
+> +	 * pending commands/transfers will be flushed or completed during
+> +	 * this reset process.
+> +	 */
 
-Regards,
-
-Tony
+Please put an empty line between the local variable declarations
+and this comment.
