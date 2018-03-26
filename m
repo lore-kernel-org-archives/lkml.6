@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeCZUNC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 16:13:02 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:41031 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751076AbeCZUNA (ORCPT
+        id S1752125AbeCZUNI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 16:13:08 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:36053 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751765AbeCZUNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 16:13:00 -0400
+        Mon, 26 Mar 2018 16:13:02 -0400
 From: Murali Karicheri <m-karicheri2@ti.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
         <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [net-next PATCH 4/5] Revert "net: netcp: remove dead code from the driver"
-Date: Mon, 26 Mar 2018 16:15:11 -0400
-Message-ID: <1522095312-23249-5-git-send-email-m-karicheri2@ti.com>
+Subject: [net-next PATCH 2/5] soc: ti: K2G: provide APIs to support driver probe deferral
+Date: Mon, 26 Mar 2018 16:15:09 -0400
+Message-ID: <1522095312-23249-3-git-send-email-m-karicheri2@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
 References: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
@@ -25,42 +25,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the probe sequence is not guaranteed contrary to the assumption
-of the commit 2d8e276a9030, same has to be reverted.
-
-commit 2d8e276a9030 ("net: netcp: remove dead code from the driver")
+This patch provide APIs to allow client drivers to support
+probe deferral. On K2G SoC, devices can be probed only
+after the ti_sci_pm_domains driver is probed and ready.
+As drivers may get probed at different order, any driver
+that depends on knav dma and qmss drivers, for example
+netcp network driver, needs to defer probe until
+knav devices are probed and ready to service. To do this,
+add an API to query the device ready status from the knav
+dma and qmss devices.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
 ---
- drivers/net/ethernet/ti/netcp_core.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/soc/ti/knav_dma.c        |  8 ++++++++
+ drivers/soc/ti/knav_qmss_queue.c |  8 ++++++++
+ include/linux/soc/ti/knav_dma.h  | 12 ++++++++++++
+ include/linux/soc/ti/knav_qmss.h |  1 +
+ 4 files changed, 29 insertions(+)
 
-diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-index f5a7eb2..9c51b25 100644
---- a/drivers/net/ethernet/ti/netcp_core.c
-+++ b/drivers/net/ethernet/ti/netcp_core.c
-@@ -2155,6 +2155,7 @@ static int netcp_probe(struct platform_device *pdev)
- 	struct device_node *child, *interfaces;
- 	struct netcp_device *netcp_device;
- 	struct device *dev = &pdev->dev;
-+	struct netcp_module *module;
- 	int ret;
+diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
+index 026182d..224d7dd 100644
+--- a/drivers/soc/ti/knav_dma.c
++++ b/drivers/soc/ti/knav_dma.c
+@@ -134,6 +134,13 @@ struct knav_dma_chan {
  
- 	if (!node) {
-@@ -2203,6 +2204,14 @@ static int netcp_probe(struct platform_device *pdev)
- 	/* Add the device instance to the list */
- 	list_add_tail(&netcp_device->device_list, &netcp_devices);
+ static struct knav_dma_pool_device *kdev;
  
-+	/* Probe & attach any modules already registered */
-+	mutex_lock(&netcp_modules_lock);
-+	for_each_netcp_module(module) {
-+		ret = netcp_module_probe(netcp_device, module);
-+		if (ret < 0)
-+			dev_err(dev, "module(%s) probe failed\n", module->name);
-+	}
-+	mutex_unlock(&netcp_modules_lock);
++static bool device_ready;
++bool knav_dma_device_ready(void)
++{
++	return device_ready;
++}
++EXPORT_SYMBOL_GPL(knav_dma_device_ready);
++
+ static bool check_config(struct knav_dma_chan *chan, struct knav_dma_cfg *cfg)
+ {
+ 	if (!memcmp(&chan->cfg, cfg, sizeof(*cfg)))
+@@ -773,6 +780,7 @@ static int knav_dma_probe(struct platform_device *pdev)
+ 	debugfs_create_file("knav_dma", S_IFREG | S_IRUGO, NULL, NULL,
+ 			    &knav_dma_debug_ops);
+ 
++	device_ready = true;
+ 	return ret;
+ }
+ 
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index 5b2c4e9..f0e67aa 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -74,6 +74,13 @@
+  */
+ const char *knav_acc_firmwares[] = {"ks2_qmss_pdsp_acc48.bin"};
+ 
++static bool device_ready;
++bool knav_qmss_device_ready(void)
++{
++	return device_ready;
++}
++EXPORT_SYMBOL_GPL(knav_qmss_device_ready);
++
+ /**
+  * knav_queue_notify: qmss queue notfier call
+  *
+@@ -1849,6 +1856,7 @@ static int knav_queue_probe(struct platform_device *pdev)
+ 
+ 	debugfs_create_file("qmss", S_IFREG | S_IRUGO, NULL, NULL,
+ 			    &knav_queue_debug_ops);
++	device_ready = true;
  	return 0;
  
- probe_quit_interface:
+ err:
+diff --git a/include/linux/soc/ti/knav_dma.h b/include/linux/soc/ti/knav_dma.h
+index 66693bc..7127ec3 100644
+--- a/include/linux/soc/ti/knav_dma.h
++++ b/include/linux/soc/ti/knav_dma.h
+@@ -167,6 +167,8 @@ struct knav_dma_desc {
+ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 				struct knav_dma_cfg *config);
+ void knav_dma_close_channel(void *channel);
++int knav_dma_get_flow(void *channel);
++bool knav_dma_device_ready(void);
+ #else
+ static inline void *knav_dma_open_channel(struct device *dev, const char *name,
+ 				struct knav_dma_cfg *config)
+@@ -176,6 +178,16 @@ static inline void *knav_dma_open_channel(struct device *dev, const char *name,
+ static inline void knav_dma_close_channel(void *channel)
+ {}
+ 
++static inline int knav_dma_get_flow(void *channel)
++{
++	return -EINVAL;
++}
++
++static inline bool knav_dma_device_ready(void)
++{
++	return false;
++}
++
+ #endif
+ 
+ #endif /* __SOC_TI_KEYSTONE_NAVIGATOR_DMA_H__ */
+diff --git a/include/linux/soc/ti/knav_qmss.h b/include/linux/soc/ti/knav_qmss.h
+index 9f0ebb3b..9745df6 100644
+--- a/include/linux/soc/ti/knav_qmss.h
++++ b/include/linux/soc/ti/knav_qmss.h
+@@ -86,5 +86,6 @@ int knav_pool_desc_map(void *ph, void *desc, unsigned size,
+ void *knav_pool_desc_unmap(void *ph, dma_addr_t dma, unsigned dma_sz);
+ dma_addr_t knav_pool_desc_virt_to_dma(void *ph, void *virt);
+ void *knav_pool_desc_dma_to_virt(void *ph, dma_addr_t dma);
++bool knav_qmss_device_ready(void);
+ 
+ #endif /* __SOC_TI_KNAV_QMSS_H__ */
 -- 
 1.9.1
