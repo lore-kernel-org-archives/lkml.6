@@ -1,64 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751091AbeCZAi1 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 20:38:27 -0400
-Received: from mga06.intel.com ([134.134.136.31]:6982 "EHLO mga06.intel.com"
+        id S1751732AbeCZAjx (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 20:39:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39633 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750832AbeCZAi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 20:38:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,362,1517904000";
-   d="scan'208";a="40544373"
-Subject: Re: [PATCH 0/3] iommu/vt-d: Global PASID name space
-To: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>
-References: <1521081501-30119-1-git-send-email-baolu.lu@linux.intel.com>
-Cc: ashok.raj@intel.com, sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
-        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5AB840FD.8020600@linux.intel.com>
-Date: Mon, 26 Mar 2018 08:38:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1750832AbeCZAju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 20:39:50 -0400
+Date: Sun, 25 Mar 2018 17:27:32 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Wanpeng Li <kernellwp@gmail.com>, peterz@infradead.org
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Kr??m??? <rkrcmar@redhat.com>, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 1/2] KVM: X86: Fix setup the virt_spin_lock_key before
+ static key get initialized
+Message-ID: <20180326002732.qks4cp7qq2xzysnx@linux-n805>
+References: <1521951444-5087-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-In-Reply-To: <1521081501-30119-1-git-send-email-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1521951444-5087-1-git-send-email-wanpengli@tencent.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg,
+On Sat, 24 Mar 2018, Wanpeng Li wrote:
 
-A gentle ping. :-)
+>Note: Peterz pointed out in the IRC we have to audit all the architectures that
+>implement smp_prepare_boot_cpu() to see what they depend on if we want to move
+>jump_label_init() before smp_prepare_boot_cpu(). So what this patch does is
+>similar to the issue which handled in xen ca5d376e.
 
-Any comments on this patch set?
+After some auditing, the jump_label_init() being moved before smp_prepare_boot_cpu()
+seems fine, however, bulky mechanisms to update text segments conflict with early smp
+bootup stages, such as this patch. So, while the disabling virt_spin_lock_key would
+be done correctly _after_ jump_label_init(), it is still fragile in that we want to
+be using lightweight patching such as jump_label_transform_static() -- which doesn't
+take the text_mutex (blocking is out of the question), for example.
 
-Best regards,
-Lu Baolu
+For pretty much all archs this means using the transform_static() version. For example
+x86, this means using text_poke_early(). -- also ouchy on the !PageReserved(pages[0])
+warning for text_poke().
 
-On 03/15/2018 10:38 AM, Lu Baolu wrote:
-> Hi,
->
-> This patch series is trying to change the scope of PASID management
-> used in Intel IOMMU driver from per IOMMU to driver global. This is
-> required for some cases where current per-IOMMU PASID name space
-> doesn't work. For an example, one application (associated with one
-> PASID) might talk to two physical devices simultaneously where two
-> devices could reside behind two different IOMMU units.
->
-> Best regards,
-> Lu Baolu
->
-> Lu Baolu (3):
->   iommu/vt-d: Global PASID name space
->   iommu/vt-d: Decouple idr bond pointer from svm
->   iommu/vt-d: Use global PASID for SVM usage
->
->  drivers/iommu/intel-iommu.c | 64 +++++++++++++++++++++++++++++++++++++++++++++
->  drivers/iommu/intel-svm.c   | 34 +++++++++++++-----------
->  include/linux/intel-iommu.h |  7 ++++-
->  3 files changed, 89 insertions(+), 16 deletions(-)
->
+I'm not sure yet of the best way to teach jump_label_transform() to behave like
+jump_label_transform_static() under pre-smp bootup, such as when disabling hypervisor
+pvspinlocks.
+
+The s390 implementation seems safe as is given that stop_machine is now safe for early
+pre-smp boot.
+
+Thanks,
+Davidlohr
