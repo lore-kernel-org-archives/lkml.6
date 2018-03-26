@@ -1,60 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751614AbeCZMbq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 08:31:46 -0400
-Received: from mail7.hitachi.co.jp ([133.145.228.42]:57925 "EHLO
-        mail7.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbeCZMbo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 08:31:44 -0400
-From: =?utf-8?B?5LqA5LqV5LuB5b+XIC8gS0FNRUnvvIxISVRPU0hJ?=
-        <hitoshi.kamei.xm@hitachi.com>
-To: Ilya Dryomov <idryomov@gmail.com>
-CC: Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        "sage@redhat.com" <sage@redhat.com>,
-        "elder@kernel.org" <elder@kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: Re: Re: [PATCH 1/2] rbd: RBD_DEV_FLAG_THICK rbd_dev_flags
- bit
-Thread-Topic: [!!]Re: Re: [PATCH 1/2] rbd: RBD_DEV_FLAG_THICK rbd_dev_flags
- bit
-Thread-Index: AQHTwonEUhXsyCvpRUulPb6EV3xvyKPc+DOAgAV87eA=
-Date: Mon, 26 Mar 2018 12:31:14 +0000
-Deferred-Delivery: Mon, 26 Mar 2018 12:30:55 +0000
-Message-ID: <C8603108370B1949BF3CC7742DDE5D35B8B42988@GSJPTKYDCEMBX32.service.hitachi.net>
-References: <5AAFA682.2080901@hitachi.com> <5AB0E4F3.8090108@easystack.cn>
- <C8603108370B1949BF3CC7742DDE5D35B8B39FD9@GSjpTKYDCembx31.service.hitachi.net>
- <CAOi1vP8eLcc6u-XhpSu33+3eDygy3Mp+_tJXT7ygdwsnUs-RmQ@mail.gmail.com>
- <CAOi1vP_7La=nCs71wG3=HbYLaxM3uBFytv8pjGJLuR_uuB0GLg@mail.gmail.com>
-In-Reply-To: <CAOi1vP_7La=nCs71wG3=HbYLaxM3uBFytv8pjGJLuR_uuB0GLg@mail.gmail.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.232.29.202]
-Content-Type: text/plain; charset="utf-8"
+        id S1751765AbeCZMd2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 08:33:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50284 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751076AbeCZMd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 08:33:27 -0400
+Date: Mon, 26 Mar 2018 14:33:24 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@ZenIV.linux.org.uk, arnd@arndb.de, linux-arch@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 19/45] fs/quota: use COMPAT_SYSCALL_DEFINE for
+ sys32_quotactl()
+Message-ID: <20180326123324.rmjtr5fkdodojvb3@quack2.suse.cz>
+References: <20180322090059.19361-1-linux@dominikbrodowski.net>
+ <20180322090059.19361-20-linux@dominikbrodowski.net>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180322090059.19361-20-linux@dominikbrodowski.net>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2QCVn12029648
 
-Hi Ilya,
+On Thu 22-03-18 10:00:33, Dominik Brodowski wrote:
+> While sys32_quotactl() is only needed on x86, it can use the recommended
+> COMPAT_SYSCALL_DEFINEx() machinery for its setup.
+> 
+> Cc: Jan Kara <jack@suse.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 
-I think your patch fully completes our purpose and I confirmed
-that the kernel with the patch could work well by testing in my environment.
+Looks good AFAICT. You can add:
 
-I added the notrim option to rbd map command in accordance with
-your kernel rbd driver patch, and I pushed the patch to GitHub
-(https://github.com/hitoshikamei/ceph/tree/rbdmap-notrim).
+Acked-by: Jan Kara <jack@suse.cz>
 
-So, could you please merge your patch to the kernel? If your patch is merged,
-then my patch can work, so I will send the Pull Request.
+								Honza
 
-Regards,
 
+> ---
+>  arch/x86/entry/syscalls/syscall_32.tbl | 2 +-
+>  fs/quota/compat.c                      | 5 +++--
+>  include/linux/compat.h                 | 3 +++
+>  include/linux/syscalls.h               | 4 +---
+>  kernel/sys_ni.c                        | 2 +-
+>  5 files changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> index 2a5e99cff859..09338dd2bd94 100644
+> --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> @@ -137,7 +137,7 @@
+>  128	i386	init_module		sys_init_module
+>  129	i386	delete_module		sys_delete_module
+>  130	i386	get_kernel_syms
+> -131	i386	quotactl		sys_quotactl			sys32_quotactl
+> +131	i386	quotactl		sys_quotactl			compat_sys_quotactl32
+>  132	i386	getpgid			sys_getpgid
+>  133	i386	fchdir			sys_fchdir
+>  134	i386	bdflush			sys_bdflush
+> diff --git a/fs/quota/compat.c b/fs/quota/compat.c
+> index 1577a2fd51f4..c30572857619 100644
+> --- a/fs/quota/compat.c
+> +++ b/fs/quota/compat.c
+> @@ -41,8 +41,9 @@ struct compat_fs_quota_stat {
+>  	__u16		qs_iwarnlimit;
+>  };
+>  
+> -asmlinkage long sys32_quotactl(unsigned int cmd, const char __user *special,
+> -						qid_t id, void __user *addr)
+> +COMPAT_SYSCALL_DEFINE4(quotactl32, unsigned int, cmd,
+> +		       const char __user *, special, qid_t, id,
+> +		       void __user *, addr)
+>  {
+>  	unsigned int cmds;
+>  	struct if_dqblk __user *dqblk;
+> diff --git a/include/linux/compat.h b/include/linux/compat.h
+> index 16c3027074a2..f1649a5e6716 100644
+> --- a/include/linux/compat.h
+> +++ b/include/linux/compat.h
+> @@ -461,6 +461,9 @@ asmlinkage ssize_t compat_sys_pwritev2(compat_ulong_t fd,
+>  		const struct compat_iovec __user *vec,
+>  		compat_ulong_t vlen, u32 pos_low, u32 pos_high, rwf_t flags);
+>  
+> +asmlinkage long compat_sys_quotactl32(unsigned int cmd,
+> +		const char __user *special, qid_t id, void __user *addr);
+> +
+>  #ifdef __ARCH_WANT_COMPAT_SYS_PREADV64
+>  asmlinkage long compat_sys_preadv64(unsigned long fd,
+>  		const struct compat_iovec __user *vec,
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index f30083190ae4..a3f42f5f3b08 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -241,8 +241,6 @@ static inline void addr_limit_user_check(void)
+>  #endif
+>  }
+>  
+> -asmlinkage long sys32_quotactl(unsigned int cmd, const char __user *special,
+> -			       qid_t id, void __user *addr);
+>  asmlinkage long sys_time(time_t __user *tloc);
+>  asmlinkage long sys_stime(time_t __user *tptr);
+>  asmlinkage long sys_gettimeofday(struct timeval __user *tv,
+> @@ -625,7 +623,7 @@ asmlinkage long sys_chdir(const char __user *filename);
+>  asmlinkage long sys_fchdir(unsigned int fd);
+>  asmlinkage long sys_rmdir(const char __user *pathname);
+>  asmlinkage long sys_lookup_dcookie(u64 cookie64, char __user *buf, size_t len);
+> -asmlinkage long sys_quotactl(unsigned int cmd, const char __user *special,
+> +asmlinkage long sys_quotactl32(unsigned int cmd, const char __user *special,
+>  				qid_t id, void __user *addr);
+>  asmlinkage long sys_getdents(unsigned int fd,
+>  				struct linux_dirent __user *dirent,
+> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> index b5189762d275..951dbda5c2b4 100644
+> --- a/kernel/sys_ni.c
+> +++ b/kernel/sys_ni.c
+> @@ -18,7 +18,7 @@ asmlinkage long sys_ni_syscall(void)
+>  }
+>  
+>  cond_syscall(sys_quotactl);
+> -cond_syscall(sys32_quotactl);
+> +cond_syscall(compat_sys_quotactl32);
+>  cond_syscall(sys_acct);
+>  cond_syscall(sys_lookup_dcookie);
+>  cond_syscall(compat_sys_lookup_dcookie);
+> -- 
+> 2.16.2
+> 
+> 
 -- 
-Hitoshi Kamei
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
