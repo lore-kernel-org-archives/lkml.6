@@ -1,71 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751765AbeCZCHN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 22:07:13 -0400
-Received: from ozlabs.org ([103.22.144.67]:50327 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750977AbeCZCHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 22:07:12 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 26 Mar 2018 13:06:25 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Wolfram Sang <wsa@the-dreams.de>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the i2c tree with the asm-generic tree
-Message-ID: <20180326130625.46b94712@canb.auug.org.au>
+        id S1751831AbeCZCWS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 22:22:18 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:6802 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750981AbeCZCWP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 22:22:15 -0400
+X-UUID: a5c1c0ec193549bab37ab1da917e8aa9-20180326
+Message-ID: <1522030927.18424.11.camel@mtkswgap22>
+Subject: Re: [PATCH v1 08/16] rtc: mediatek: remove unnecessary
+ irq_dispose_mapping
+From: Sean Wang <sean.wang@mediatek.com>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
+        <lee.jones@linaro.org>, <a.zummo@towertech.it>,
+        <eddie.huang@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-rtc@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Mon, 26 Mar 2018 10:22:07 +0800
+In-Reply-To: <20180323103801.GH3417@piout.net>
+References: <cover.1521794176.git.sean.wang@mediatek.com>
+         <96f39ce7f57a4dcd7653e049eebc87c83bcbdfc9.1521794177.git.sean.wang@mediatek.com>
+         <20180323103801.GH3417@piout.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Vw/+VGODpb3pYak+6voHrrM"; protocol="application/pgp-signature"
+X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23742.001
+X-TM-AS-Result: No-14.000600-8.000000-10
+X-TMASE-MatchedRID: zGP2F0O7j/sOwH4pD14DsPHkpkyUphL9+Vb3woyMZbue9toQ6h6LE0pf
+        KXQfMT86H3lWWKVbXhC9sYX2+qE8BIn+iWUVQ4IpA9lly13c/gGy4iyjvVWTon5h6y4KCSJc+1B
+        ysa1PtqTe+sZpexN5TeHwkHtQo9Mgm3dhKZgH9Y6xNxaTG4Ot0kGtrAxy5ENOBWVBTXPjgu3doI
+        qucUXTC48EGqy20orUbmBzhk9GAxuR9GF2J2xqMzl/1fD/GopdcmfM3DjaQLHEQdG7H66TyH4gK
+        q42LRYkZqlyFshj5DEsaboXAOWsJTnexiIBWpqnNj2HfT8uz1Z+3BndfXUhXQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--14.000600-8.000000
+X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23742.001
+X-TMASE-POSTMAN: 2-d;
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Vw/+VGODpb3pYak+6voHrrM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 2018-03-23 at 11:38 +0100, Alexandre Belloni wrote:
+> On 23/03/2018 at 17:15:05 +0800, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > It's unnecessary doing irq_dispose_mapping as a reverse operation for
+> > platform_get_irq.
+> > 
+> > Ususally, irq_dispose_mapping should be called in error path or module
+> > removal to release the resources for irq_of_parse_and_map requested.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  drivers/rtc/rtc-mt6397.c | 7 ++-----
+> >  1 file changed, 2 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+> > index b62eaa8..cefb83b 100644
+> > --- a/drivers/rtc/rtc-mt6397.c
+> > +++ b/drivers/rtc/rtc-mt6397.c
+> > @@ -17,7 +17,6 @@
+> >  #include <linux/module.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/rtc.h>
+> > -#include <linux/irqdomain.h>
+> >  #include <linux/jiffies.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/of_address.h>
+> > @@ -336,7 +335,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+> >  	if (ret) {
+> >  		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
+> >  			rtc->irq, ret);
+> > -		goto out_dispose_irq;
+> > +		return ret;
+> >  	}
+> >  
+> >  	device_init_wakeup(&pdev->dev, 1);
+> > @@ -353,8 +352,7 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+> >  
+> >  out_free_irq:
+> >  	free_irq(rtc->irq, rtc->rtc_dev);
+> > -out_dispose_irq:
+> > -	irq_dispose_mapping(rtc->irq);
+> > +
+> 
+> Don't you still have a irq_create_mapping?
+> 
 
-Hi Wolfram,
+Sorry for that I didn't mention in the beginning that the series must
+depend on another patch [1]. With the patch, the job irq_create_mapping
+had been moved from rtc to mfd, so here it should be better to cleanup
+up irq_dispose_mapping in all paths.
 
-Today's linux-next merge of the i2c tree got a conflict in:
+[1] https://patchwork.kernel.org/patch/9954643/
 
-  arch/blackfin/mach-bf561/boards/acvilon.c
-
-between commit:
-
-  120090af2745 ("arch: remove blackfin port")
-
-from the asm-generic tree and commit:
-
-  eb49778c8c6c ("i2c: pca-platform: drop gpio from platform data")
-
-from the i2c tree.
-
-I fixed it up (I removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Vw/+VGODpb3pYak+6voHrrM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4VaEACgkQAVBC80lX
-0Gxdlwf+Puj4YXCpigp37W29PKgBvMwJl9a45CEgdMEz1MfdY1aT6cr/Cqv/kAFE
-wmw3S/ZFiqniPGEHJr5fgV252d1Ma6jR9G6NqW2hK80C2c/2Hki8490UIdFfsGl9
-2Hq+iOy5lUlG2pKiHuMLn+w118738GEpZ85UCHAU3cc8RBulHZdYlVfXR4ufhso7
-kBgMvLqf5BSzJaP5xHBAF6liJ59f54jzealy8/2/nyv09UKEqfBZrSsdJL6QjADS
-5kL+ALjcsXP7+6W0N3Fmj1Iwr889ITLJbKPeTnB+KqLk35y9X+sig5HCioa433LZ
-eCYyvxnGMcLy8heSqxD1BTpNenJzgg==
-=KFGQ
------END PGP SIGNATURE-----
-
---Sig_/Vw/+VGODpb3pYak+6voHrrM--
+> >  	return ret;
+> >  }
+> >  
+> > @@ -364,7 +362,6 @@ static int mtk_rtc_remove(struct platform_device *pdev)
+> >  
+> >  	rtc_device_unregister(rtc->rtc_dev);
+> >  	free_irq(rtc->irq, rtc->rtc_dev);
+> > -	irq_dispose_mapping(rtc->irq);
+> >  
+> >  	return 0;
+> >  }
+> > -- 
+> > 2.7.4
+> > 
+> 
