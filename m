@@ -1,164 +1,96 @@
-Return-Path: <Ajay.Kathat@microchip.com>
-X-Google-Smtp-Source: AG47ELsYe8kVjduQDvVKqdWO4qlde0IxWaQ/rW1SEXfWkyguHndzH0bokui1FkrNl7L0JwEgCJAj
-ARC-Seal: i=1; a=rsa-sha256; t=1522127462; cv=none;
+Return-Path: <christophe.jaillet@wanadoo.fr>
+X-Google-Smtp-Source: AG47ELuDo0BPFSgSj1hh3f4Ewi78WUhhbMUVK/ymDV7n0ZsOW6mS+p9FnplhocY9WWq3Apc3RSAL
+ARC-Seal: i=1; a=rsa-sha256; t=1522086649; cv=none;
         d=google.com; s=arc-20160816;
-        b=FBPayClyzMJqmVNEteE1M4K1ZPfqrCNlwzc1Qs7QNq67QR8X+qUcMwU6YP+ZPFu3Y7
-         DMxESubS3ezZEF3YqpFmVukSw6f9kARpAQfeqzseUa3gd6AKN1yQIaXk7C4T7SN+PZgl
-         tw6z3iFKo8sHO9m6WJXCtfRHwhtYFxFF2lYLnzeeXBQPz+9AZKqvlYmL+C440vwKSjg+
-         Xi6pOAs/ZYgf0Ehl2m574Eo1NfhZqSNBR1U5G4JEnDsRQAr1jp/lrSoG5C2iZNjWunP6
-         w8u5Ke4ItilvRAK0yI3U/W7u15to9KE676h0u0Uvt1WCsNyhq6yRMb7vIVKjCujdoG7E
-         WAbw==
+        b=ywnsAqQnM02mnngGWvwcfkYi/1pFs0QdRSVVKfzHiaMyK5hAwTgIfJqCAXb0BX7nST
+         a2yYPvSSKj784bTs81DRIU3jDisghSjdf3Y30k/FofmVXL//1HPS9xttMlq8YGgav/ob
+         wWWIagzMn37PXDl/LyB3Z37OvfELY/m9c6jlx64dJ54Hg67ePUd+Rmpshld/vZECNeGZ
+         /3/SYoi36scJzpe0R6WGzBbVXs6YObfFRnhPyhqUh9Lm6KJAAXd2ywe8H6p8GQvCjPfY
+         mbAi2VmPRflQLtmLYcMbmwoo1ooULV+NV76XK1K+321l1tEz0IDPFxs38/B5o9vSIyE4
+         AHQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:newsgroups:cc:to:subject
          :arc-authentication-results;
-        bh=KgR4alzYrirIFZ8OV69ZxEMBkN8PWVP0lUkNeD7SGBU=;
-        b=eR81bqCYNkAr5pFJp6UR7YShRNCMITFdLGlN5HfmcEAD1PUSlnlwKW5Ccy0JUiQkMa
-         wHJUIyz0owlou02b6Mq/plDaq/6Zt7U1Vdmt6mRhxMAwTz2nfgskC29RCdftmhysLIwX
-         h3v9HCmE1gJSTqv7/cZQOhH954oJwq2v/Ujs2cL+LubfmGaUJLwinh7z51Hf/VDCKfM2
-         sOsjZ8Gu7QQoRZP+CRkQrnnSHB4o/++6dgkHWJ0SnYTPJbagKPK+4kswPL8OMx7RkeKD
-         sao6F8HxL6oOaUEyusOTRAV+E0cgAjIXnYlAZxb6uBui4CiEFySgIRZqmmXY2IX4Z7Ln
-         rCOw==
+        bh=7zd36t6WIgtd/DBvkxp+/4Bhho7LUFLEjKwpOJPO3f8=;
+        b=1FOojBxBID7h4jKGfzIu7mkXksB31LwehZ37ylywA56qU4b9bxvTtnjFZ5MmoKXMEg
+         q//XPjq6VPH5ODoZqjr0sfHkX3YU71L8rHJ7PZCehajl6YfSW+gT4SrHVWR0d8kG9ZBY
+         GmsugOqGPg46XPsC+rulw9Tp+6i3Ll00zXRlzfS5mjKysuhtqGFla2xqcuMpQLBReh0D
+         npQedL44trEYM10VQgnm/rty1nqG6JOq1J5f+Akhoz/6eKNVEwHxAaRYdA9dqKGZttCV
+         EXRiwB016GY6LU1RTmu8LS6Q1RpaVqI73Yy7lxaRUv+spv50EPVJZfKqMupX8mdtwpin
+         slew==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ajay.kathat@microchip.com designates 68.232.154.123 as permitted sender) smtp.mailfrom=Ajay.Kathat@microchip.com
+       spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of christophe.jaillet@wanadoo.fr) smtp.mailfrom=christophe.jaillet@wanadoo.fr
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ajay.kathat@microchip.com designates 68.232.154.123 as permitted sender) smtp.mailfrom=Ajay.Kathat@microchip.com
-X-IronPort-AV: E=Sophos;i="5.48,366,1517900400";
-   d="scan'208";a="12426291"
-Date: Tue, 27 Mar 2018 10:40:54 +0530
-From: Ajay Singh <ajay.kathat@microchip.com>
-To: Colin King <colin.king@canonical.com>
-CC: Aditya Shankar <aditya.shankar@microchip.com>, Ganesh Krishna
-	<ganesh.krishna@microchip.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, <linux-wireless@vger.kernel.org>,
-	<devel@driverdev.osuosl.org>, <kernel-janitors@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: wilc1000: replace kmalloc + memcpy with
- kmemdup
-Message-ID: <20180327104054.69479b47@ajaysk-VirtualBox>
-In-Reply-To: <20180326171629.28700-1-colin.king@canonical.com>
+       spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of christophe.jaillet@wanadoo.fr) smtp.mailfrom=christophe.jaillet@wanadoo.fr
+X-ME-Helo: [192.168.0.14]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 26 Mar 2018 19:50:48 +0200
+X-ME-IP: 77.198.79.136
+Subject: Re: [PATCH] staging: wilc1000: replace kmalloc + memcpy with kmemdup
+To: Colin King <colin.king@canonical.com>,
+ Aditya Shankar <aditya.shankar@microchip.com>,
+ Ganesh Krishna <ganesh.krishna@microchip.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Newsgroups: gmane.linux.drivers.driver-project.devel,gmane.linux.kernel.wireless.general,gmane.linux.kernel.janitors,gmane.linux.kernel
 References: <20180326171629.28700-1-colin.king@canonical.com>
-Organization: Microchip Techonology
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Message-ID: <c65d1ac5-d5bc-3703-9516-45173a37bac4@wanadoo.fr>
+Date: Mon, 26 Mar 2018 19:50:44 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180326171629.28700-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596021371817996393?=
-X-GMAIL-MSGID: =?utf-8?q?1596066326386756550?=
+X-GMAIL-MSGID: =?utf-8?q?1596023530163998257?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 26 Mar 2018 18:16:29 +0100
-Colin King <colin.king@canonical.com> wrote:
-
+Le 26/03/2018 à 19:16, Colin King a écrit :
 > From: Colin Ian King <colin.king@canonical.com>
 > 
 > Replace several allocation and memcpys with kmemdup and add in some
-> missing memory allocation failure checks.  Also fix an incorrect 
+> missing memory allocation failure checks.  Also fix an incorrect
 > -EFAULT return with -ENOMEM.
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/staging/wilc1000/host_interface.c | 75 +++++++++++++++++++------------
->  1 file changed, 46 insertions(+), 29 deletions(-)
+>   drivers/staging/wilc1000/host_interface.c | 75 +++++++++++++++++++------------
+>   1 file changed, 46 insertions(+), 29 deletions(-)
 > 
 > diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
 > index 9b9b86654958..8fd367f87fa5 100644
 > --- a/drivers/staging/wilc1000/host_interface.c
 > +++ b/drivers/staging/wilc1000/host_interface.c
-> @@ -797,6 +797,10 @@ static s32 handle_scan(struct wilc_vif *vif, struct scan_attr *scan_info)
->  	for (i = 0; i < hidden_net->n_ssids; i++)
->  		valuesize += ((hidden_net->net_info[i].ssid_len) + 1);
->  	hdn_ntwk_wid_val = kmalloc(valuesize + 1, GFP_KERNEL);
-> +	if (!hdn_ntwk_wid_val) {
-> +		result = -ENOMEM;
-> +		goto error;
-> +	}
-
-Please do not apply this changes. It will change the code
-flow differently. Check for NULl value in '(wid_list[index].val)' is 
-already presented.  It has to proceed with the below flow instead of
-returning from there.
-
->  	wid_list[index].val = hdn_ntwk_wid_val;
->  	if (wid_list[index].val) {
->  		buffer = wid_list[index].val;
-> @@ -943,39 +947,35 @@ static s32 handle_connect(struct wilc_vif *vif,
->  	}
->  
->  	if (conn_attr->bssid) {
-> -		hif_drv->usr_conn_req.bssid = kmalloc(6, GFP_KERNEL);
-> +		hif_drv->usr_conn_req.bssid = kmemdup(conn_attr->bssid, 6,
-> +						      GFP_KERNEL);
->  		if (!hif_drv->usr_conn_req.bssid) {
->  			result = -ENOMEM;
->  			goto error;
->  		}
-> -		memcpy(hif_drv->usr_conn_req.bssid, conn_attr->bssid, 6);
->  	}
->  
->  	hif_drv->usr_conn_req.ssid_len = conn_attr->ssid_len;
->  	if (conn_attr->ssid) {
+[...]
+>   
+>   	hif_drv->usr_conn_req.ssid_len = conn_attr->ssid_len;
+>   	if (conn_attr->ssid) {
 > -		hif_drv->usr_conn_req.ssid = kmalloc(conn_attr->ssid_len + 1,
 > +		hif_drv->usr_conn_req.ssid = kmemdup(conn_attr->ssid,
 > +						     conn_attr->ssid_len + 1,
->  						     GFP_KERNEL);
-
-Sorry, I too missed to see that scenario. As suggested, kmemdup can not be
-used directly to replace kmalloc & memcpy in this case. The size used for
-kmalloc is not equal to size of data copy in memcpy i.e kmalloc is done
-for 1 byte extra to keep the NULL character. The direct replacement of
-kmalloc with kmemdup is not applicable here.
-
-
->  		if (!hif_drv->usr_conn_req.ssid) {
->  			result = -ENOMEM;
->  			goto error;
->  		}
+>   						     GFP_KERNEL);
+>   		if (!hif_drv->usr_conn_req.ssid) {
+>   			result = -ENOMEM;
+>   			goto error;
+>   		}
 > -		memcpy(hif_drv->usr_conn_req.ssid,
 > -		       conn_attr->ssid,
 > -		       conn_attr->ssid_len);
->  		hif_drv->usr_conn_req.ssid[conn_attr->ssid_len] = '\0';
->  	}
->  
->  	hif_drv->usr_conn_req.ies_len = conn_attr->ies_len;
->  	if (conn_attr->ies) {
-> -		hif_drv->usr_conn_req.ies = kmalloc(conn_attr->ies_len,
-> +		hif_drv->usr_conn_req.ies = kmemdup(conn_attr->ies,
-> +						    conn_attr->ies_len,
->  						    GFP_KERNEL);
->  		if (!hif_drv->usr_conn_req.ies) {
->  			result = -ENOMEM;
->  			goto error;
->  		}
-> -		memcpy(hif_drv->usr_conn_req.ies,
-> -		       conn_attr->ies,
-> -		       conn_attr->ies_len);
->  	}
->  
->  	hif_drv->usr_conn_req.security = conn_attr->security;
-> @@ -1009,9 +1009,12 @@ static s32 handle_connect(struct wilc_vif *vif,
->  
->  	if (memcmp("DIRECT-", conn_attr->ssid, 7)) {
->  		info_element_size = hif_drv->usr_conn_req.ies_len;
-> -		info_element = kmalloc(info_element_size, GFP_KERNEL);
-> -		memcpy(info_element, hif_drv->usr_conn_req.ies,
-> -		       info_element_size);
-> +		info_element = kmemdup(hif_drv->usr_conn_req.ies,
-> +				       info_element_size, GFP_KERNEL);
-> +		if (!info_element) {
-> +			result = -ENOMEM;
-> +			goto error;
-> +		}
->  	}
+ >               hif_drv->usr_conn_req.ssid[conn_attr->ssid_len] = '\0';
 
-"info_element" variable was removed in my previous submitted patchset.
-Those changes are still not included in Greg's staging repo. Few changes
-in this patch are already included in previous patchset,which might give
-conflict. But few changes are not present which can be applied like
-returning -ENOMEM in case of allocation failure.
+I don't know if it is an issue, but now the memcpy is 1 more byte 
+(conn_attr->ssid_len   vs   conn_attr->ssid_len + 1)
 
+kmemdup_nul(conn_attr->ssid, conn_attr->ssid_len, GFP_KERNEL)
+and remove hif_drv->usr_conn_req.ssid[conn_attr->ssid_len] = '\0'  ?
 
-Regards,
-Ajay
+CJ
+
+[...]
