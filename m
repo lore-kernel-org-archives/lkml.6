@@ -1,61 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752122AbeCZOHP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:07:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39449 "EHLO mx2.suse.de"
+        id S1752055AbeCZOJh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:09:37 -0400
+Received: from mga17.intel.com ([192.55.52.151]:54092 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750983AbeCZOHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:07:13 -0400
-Date: Mon, 26 Mar 2018 06:54:56 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: peterz@infradead.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 2/3] drivers/irqchip: update supports_deactivate static
- key to modern api
-Message-ID: <20180326135456.a6z6tvbx2kdqbopr@linux-n805>
-References: <20180325191056.24598-1-dave@stgolabs.net>
- <20180325191056.24598-3-dave@stgolabs.net>
- <671202a1-4080-0104-abd8-4718c53dd61e@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <671202a1-4080-0104-abd8-4718c53dd61e@arm.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1751024AbeCZOJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:09:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
+   d="scan'208";a="36905996"
+From: thor.thayer@linux.intel.com
+To: cyrille.pitchen@wedev4u.fr, marek.vasut@gmail.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        richard@nod.at
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        thor.thayer@linux.intel.com
+Subject: [PATCHv2] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
+Date: Mon, 26 Mar 2018 09:12:17 -0500
+Message-Id: <1522073537-27386-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Mar 2018, Marc Zyngier wrote:
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
->>  static struct gic_chip_data gic_data __read_mostly;
->> -static struct static_key supports_deactivate = STATIC_KEY_INIT_TRUE;
->> +DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
->
->When you combine this...
->
->[...]
->
->> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
->> index ac2e62d613d1..9b7630cee56c 100644
->> --- a/drivers/irqchip/irq-gic.c
->> +++ b/drivers/irqchip/irq-gic.c
->> @@ -121,7 +121,7 @@ static DEFINE_RAW_SPINLOCK(cpu_map_lock);
->>  #define NR_GIC_CPU_IF 8
->>  static u8 gic_cpu_map[NR_GIC_CPU_IF] __read_mostly;
->>
->> -static struct static_key supports_deactivate = STATIC_KEY_INIT_TRUE;
->> +DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
->
->...with that, bad things happen:
->
->drivers/irqchip/irq-gic-v3.o:(.data+0x278): multiple definition of `supports_deactivate_key'
->drivers/irqchip/irq-gic.o:(.data+0x18): first defined here
->Makefile:1032: recipe for target 'vmlinux' failed
->make: *** [vmlinux] Error 1
+The current Cadence QSPI driver caused a kernel panic when loading
+a Root Filesystem from QSPI. The problem was caused by reading more
+bytes than needed because the QSPI operated on 4 bytes at a time.
+<snip>
+[    7.947754] spi_nor_read[1048]:from 0x037cad74, len 1 [bfe07fff]
+[    7.956247] cqspi_read[910]:offset 0x58502516, buffer=bfe07fff
+[    7.956247]
+[    7.966046] Unable to handle kernel paging request at virtual
+address bfe08002
+[    7.973239] pgd = eebfc000
+[    7.975931] [bfe08002] *pgd=2fffb811, *pte=00000000, *ppte=00000000
+</snip>
+Notice above how only 1 byte needed to be read but by reading 4 bytes
+into the end of a mapped page, an unrecoverable page fault occurred.
 
-Hmm both were (cross) compile tested, I'll have a look.
+This patch uses a temporary buffer to hold the 4 bytes read and then
+copies only the bytes required into the buffer. A min() function is
+used to limit the length to prevent buffer overflows.
 
-Thanks,
-Davidlohr
+Request testing of this patch on other platforms. This was tested
+on the Intel Arria10 SoCFPGA DevKit.
+
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+---
+v2  Changes to only write dangling bytes at end of transfer since
+      previous patch may have multiple dangling byte transfers.
+    Remove write patch since no errors reported and write timeout
+      needs more investigation.
+---
+ drivers/mtd/spi-nor/cadence-quadspi.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+index 4b8e9183489a..5872f31eaa60 100644
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -501,7 +501,9 @@ static int cqspi_indirect_read_execute(struct spi_nor *nor, u8 *rxbuf,
+ 	void __iomem *reg_base = cqspi->iobase;
+ 	void __iomem *ahb_base = cqspi->ahb_base;
+ 	unsigned int remaining = n_rx;
++	unsigned int mod_bytes = n_rx % 4;
+ 	unsigned int bytes_to_read = 0;
++	u8 *rxbuf_end = rxbuf + n_rx;
+ 	int ret = 0;
+ 
+ 	writel(from_addr, reg_base + CQSPI_REG_INDIRECTRDSTARTADDR);
+@@ -530,11 +532,24 @@ static int cqspi_indirect_read_execute(struct spi_nor *nor, u8 *rxbuf,
+ 		}
+ 
+ 		while (bytes_to_read != 0) {
++			unsigned int word_remain = round_down(remaining, 4);
++
+ 			bytes_to_read *= cqspi->fifo_width;
+ 			bytes_to_read = bytes_to_read > remaining ?
+ 					remaining : bytes_to_read;
+-			ioread32_rep(ahb_base, rxbuf,
+-				     DIV_ROUND_UP(bytes_to_read, 4));
++			bytes_to_read = round_down(bytes_to_read, 4);
++			/* Read 4 byte word chunks then single bytes */
++			if (bytes_to_read) {
++				ioread32_rep(ahb_base, rxbuf,
++					     (bytes_to_read / 4));
++			} else if (!word_remain && mod_bytes) {
++				unsigned int temp = ioread32(ahb_base);
++
++				bytes_to_read = mod_bytes;
++				memcpy(rxbuf, &temp, min((unsigned int)
++							 (rxbuf_end - rxbuf),
++							 bytes_to_read));
++			}
+ 			rxbuf += bytes_to_read;
+ 			remaining -= bytes_to_read;
+ 			bytes_to_read = cqspi_get_rd_sram_level(cqspi);
+-- 
+2.7.4
