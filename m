@@ -1,59 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752591AbeCZWXj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:23:39 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:43925 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752507AbeCZWXf (ORCPT
+        id S1752683AbeCZWYf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:24:35 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:44565 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751907AbeCZWYc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:23:35 -0400
-X-Google-Smtp-Source: AG47ELsJoWDay1SRz0IgGtn7mXPoesZZn9vvmSAVxc/kNekWRGJdt+J2j8kJrNh2w9uVqMln4te4kA==
-Date: Mon, 26 Mar 2018 17:23:33 -0500
+        Mon, 26 Mar 2018 18:24:32 -0400
+X-Google-Smtp-Source: AIpwx4/5Id6MXkza8QajaTfxn46NvJNokQs5CEpJ66kQCTyE1byqmazU2dyeE6Y4f5xoFNIVTbvxZg==
+Date: Mon, 26 Mar 2018 17:24:30 -0500
 From: Rob Herring <robh@kernel.org>
-To: Thierry Escande <thierry.escande@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] dt-bindings: net: bluetooth: Add
- qualcomm-bluetooth
-Message-ID: <20180326222333.mety3fcwcgcfcaqv@rob-hp-laptop>
-References: <20180320032331.29865-1-thierry.escande@linaro.org>
- <20180320032331.29865-3-thierry.escande@linaro.org>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/7] drm/panel: add panel CDTech S070_WV95_CT16 to
+ panel-simple
+Message-ID: <20180326222430.jysohrvgcmlsdclj@rob-hp-laptop>
+References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <1521662593-25468-2-git-send-email-giulio.benetti@micronovasrl.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180320032331.29865-3-thierry.escande@linaro.org>
+In-Reply-To: <1521662593-25468-2-git-send-email-giulio.benetti@micronovasrl.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 04:23:30AM +0100, Thierry Escande wrote:
-> Add binding document for serial bluetooth chips using Qualcomm protocol.
-> 
-> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+On Wed, Mar 21, 2018 at 09:03:08PM +0100, Giulio Benetti wrote:
+> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 > ---
+>  .../display/panel/cdtech,s070wv95-ct16.txt         |  7 ++++++
+>  drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++++++++++++++++
+>  2 files changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/cdtech,s070wv95-ct16.txt
 > 
-> v5:
-> - Rename 'bt-disable-n' gpio as 'enable'
-> 
-> v4:
-> - Move bt-disable-n-gpios to required properties section
-> - Add clocks and pinctrl-0 as required properties
-> 
-> v3: no change
-> v2: no change
-> 
->  .../devicetree/bindings/net/qualcomm-bluetooth.txt | 34 ++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
+> diff --git a/Documentation/devicetree/bindings/display/panel/cdtech,s070wv95-ct16.txt b/Documentation/devicetree/bindings/display/panel/cdtech,s070wv95-ct16.txt
+> new file mode 100644
+> index 0000000..b00d6c7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/cdtech,s070wv95-ct16.txt
+> @@ -0,0 +1,7 @@
+> +CDTech(H.K.) Electronics Limited 7" 800x480 color TFT-LCD panel
+> +
+> +Required properties:
+> +- compatible: should be "cdtech,s070wv95-ct16"
+> +
+> +This binding is compatible with the simple-panel binding, which is specified
+> +in simple-panel.txt in this directory.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Please be specific as to what properties apply. In particular, are you 
+not describing the power supply and it has multiple supplies or the 
+panel has a single supply?
+
+Rob
