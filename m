@@ -1,46 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751160AbeCZGG2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 02:06:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43004 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750955AbeCZGG1 (ORCPT
+        id S1751125AbeCZGPg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 02:15:36 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:40500 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750783AbeCZGPe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 02:06:27 -0400
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] media: cx231xx: Add support for AverMedia DVD EZMaker 7
-Date: Mon, 26 Mar 2018 14:06:16 +0800
-Message-Id: <20180326060616.5354-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Mon, 26 Mar 2018 02:15:34 -0400
+X-Google-Smtp-Source: AG47ELsYuh5vZPJVBYTKpLXNXcPAwzM2eXJHqf7f8ohFafGgIhKjn+9BSf7Kl/kTNywqaSwG/OIl7qr4xYwrnc3Jnac=
+MIME-Version: 1.0
+In-Reply-To: <20180326034750.GN30522@ZenIV.linux.org.uk>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net>
+ <20180318161056.5377-5-linux@dominikbrodowski.net> <20180318174014.GR30522@ZenIV.linux.org.uk>
+ <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
+ <20180318181848.GU30522@ZenIV.linux.org.uk> <20180319042300.GW30522@ZenIV.linux.org.uk>
+ <20180319092920.tbh2xwkruegshzqe@gmail.com> <20180319232342.GX30522@ZenIV.linux.org.uk>
+ <20180322001532.GA18399@ZenIV.linux.org.uk> <20180326004017.GA2211@ZenIV.linux.org.uk>
+ <20180326034750.GN30522@ZenIV.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 25 Mar 2018 20:15:32 -1000
+X-Google-Sender-Auth: YDx_DvZd3_qAcavXpUX35UTCypQ
+Message-ID: <CA+55aFw8VGnVgaWHVFP-LChMNaoANOwT18jJEWzSCRLFeRGcmA@mail.gmail.com>
+Subject: Re: [RFC] new SYSCALL_DEFINE/COMPAT_SYSCALL_DEFINE wrappers
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-User reports AverMedia DVD EZMaker 7 can be driven by VIDEO_GRABBER.
-Add the device to the id_table to make it work.
+On Sun, Mar 25, 2018 at 5:47 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Linus, Dominik - how do you plan dealing with that fun?
 
-BugLink: https://bugs.launchpad.net/bugs/1620762
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/media/usb/cx231xx/cx231xx-cards.c | 3 +++
- 1 file changed, 3 insertions(+)
+Secretly, I was hoping to kill x32, because it's not being used afaik.
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
-index f9ec7fedcd5b..da01c5125acb 100644
---- a/drivers/media/usb/cx231xx/cx231xx-cards.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-@@ -945,6 +945,9 @@ struct usb_device_id cx231xx_id_table[] = {
- 	 .driver_info = CX231XX_BOARD_CNXT_RDE_250},
- 	{USB_DEVICE(0x0572, 0x58A0),
- 	 .driver_info = CX231XX_BOARD_CNXT_RDU_250},
-+	/* AverMedia DVD EZMaker 7 */
-+	{USB_DEVICE(0x07ca, 0xc039),
-+	 .driver_info = CX231XX_BOARD_CNXT_VIDEO_GRABBER},
- 	{USB_DEVICE(0x2040, 0xb110),
- 	 .driver_info = CX231XX_BOARD_HAUPPAUGE_USB2_FM_PAL},
- 	{USB_DEVICE(0x2040, 0xb111),
--- 
-2.15.1
+More realistically, I was thinking we'd just use a separate table or
+system calls, and generate different versions.
+
+In fact, you can see exactly that in my WIP branch, except it uses the
+wrong name.
+
+So see the "WIP-syscall" branch in my normal git kernel repo, and in
+particular the patch to <linux/syscalls.h>, which generates
+"sys_x64##name" and "sys_i86##name()" inline functions that do that
+mapping correcty for native x86-64, and for the (misnamed) x32 cases.
+
+So there are three different cases:
+
+ - native: sys_x64_name() generated by SYSCALL_DEFINEx()
+
+ - compat -bit: compat_sys_i86_name() generated by COMPAT_SYSCALL_DEFINEx()
+
+ - x32: sys_i86_name() generated by SYSCALL_DEFINEx().
+
+and then I actually changed the names in the tables (ie in
+arch/x86/entry/syscalls/syscall_64.tbl etc).
+
+HOWEVER.
+
+I didn't actually test any of the compat or x32 ones, and the way I
+did it there also was no type-checking or other automated catching of
+getting it wrong. So it's almost certainly completely buggy, but the
+_intent_ is there and there is a remote possibility that it might even
+work.
+
+              Linus
