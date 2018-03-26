@@ -1,53 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752133AbeCZOKx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:10:53 -0400
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:39091 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751840AbeCZOKv (ORCPT
+        id S1752166AbeCZOLA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:11:00 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37596 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752040AbeCZOK4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:10:51 -0400
-X-Google-Smtp-Source: AIpwx4/Gqc75E7pEw3GjNIhuXRa3bYFpz1BRb3A9g21euQZzkJO/7CCfq9cRVOp5tIWgqugxtONZGi6E70r7K+ieWEA=
+        Mon, 26 Mar 2018 10:10:56 -0400
+X-Google-Smtp-Source: AG47ELuflQIoNxexxZTGSLFC4CsuFXSBEiVorlSxR7/EzgbbgaPkV7S/DB26k0a0k26Vshdnhs892g==
+Subject: Re: [PATCH 2/2] clocksource/drivers/imx-tpm: add different counter
+ width support
+To: Anson Huang <Anson.Huang@nxp.com>, tglx@linutronix.de,
+        robh+dt@kernel.org, mark.rutland@arm.com, aisheng.dong@nxp.com
+Cc: Linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1522050461-19043-1-git-send-email-Anson.Huang@nxp.com>
+ <1522050461-19043-2-git-send-email-Anson.Huang@nxp.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <e6e6026c-37bb-35ff-bf1b-a00d47e0aa2e@linaro.org>
+Date: Mon, 26 Mar 2018 16:10:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180326002732.qks4cp7qq2xzysnx@linux-n805>
-References: <1521951444-5087-1-git-send-email-wanpengli@tencent.com> <20180326002732.qks4cp7qq2xzysnx@linux-n805>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Mon, 26 Mar 2018 22:10:50 +0800
-Message-ID: <CANRm+CxaDNcVdySSH7O3ikyhbmpO9ZVGRx9GxL2gi28s9RoqVQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] KVM: X86: Fix setup the virt_spin_lock_key before
- static key get initialized
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Radim Kr??m???" <rkrcmar@redhat.com>,
-        Davidlohr Bueso <dbueso@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1522050461-19043-2-git-send-email-Anson.Huang@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-26 8:27 GMT+08:00 Davidlohr Bueso <dave@stgolabs.net>:
-> On Sat, 24 Mar 2018, Wanpeng Li wrote:
->
->> Note: Peterz pointed out in the IRC we have to audit all the architectures
->> that
->> implement smp_prepare_boot_cpu() to see what they depend on if we want to
->> move
->> jump_label_init() before smp_prepare_boot_cpu(). So what this patch does
->> is
->> similar to the issue which handled in xen ca5d376e.
->
->
-> After some auditing, the jump_label_init() being moved before
-> smp_prepare_boot_cpu()
-> seems fine, however, bulky mechanisms to update text segments conflict with
-> early smp
-> bootup stages, such as this patch. So, while the disabling
+On 26/03/2018 09:47, Anson Huang wrote:
+> Different TPM modules have different width counters which
+> is 16-bit or 32-bit, the counter width can be read from
+> TPM_PARAM register bit[23:16], this patch adds dynamic
+> check for counter width to support both 16-bit and 32-bit
+> TPM modules.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-I didn't see any issue when testing this patch, could you elaborate
-what's the bulky mechanism and how it conflicts with early smp bootup
-stages? In addition, do you mean the xen fix is also not suitable?
+Are you sure you shouldn't use a prescalar with 16b and reduce its
+rating? What will be the duration of the clocksource before wrapping up?
 
-Regards,
-Wanpeng Li
+Also, can you do the change to prevent computing the mask at each
+'read_count' call ?
+
+> ---
+>  drivers/clocksource/timer-imx-tpm.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
+> index 7403e49..5063b77 100644
+> --- a/drivers/clocksource/timer-imx-tpm.c
+> +++ b/drivers/clocksource/timer-imx-tpm.c
+> @@ -17,6 +17,9 @@
+>  #include <linux/of_irq.h>
+>  #include <linux/sched_clock.h>
+>  
+> +#define TPM_PARAM			0x4
+> +#define TPM_PARAM_WIDTH_SHIFT		16
+> +#define TPM_PARAM_WIDTH_MASK		(0xff << 16)
+>  #define TPM_SC				0x10
+>  #define TPM_SC_CMOD_INC_PER_CNT		(0x1 << 3)
+>  #define TPM_SC_CMOD_DIV_DEFAULT		0x3
+> @@ -33,6 +36,7 @@
+>  #define TPM_C0SC_CHF_MASK		(0x1 << 7)
+>  #define TPM_C0V				0x24
+>  
+> +static int counter_width;
+>  static void __iomem *timer_base;
+>  static struct clock_event_device clockevent_tpm;
+>  
+> @@ -66,7 +70,7 @@ static struct delay_timer tpm_delay_timer;
+>  
+>  static inline unsigned long tpm_read_counter(void)
+>  {
+> -	return readl(timer_base + TPM_CNT);
+> +	return readl(timer_base + TPM_CNT) & GENMASK(counter_width - 1, 0);
+>  }
+>  
+>  static unsigned long tpm_read_current_timer(void)
+> @@ -85,10 +89,11 @@ static int __init tpm_clocksource_init(unsigned long rate)
+>  	tpm_delay_timer.freq = rate;
+>  	register_current_timer_delay(&tpm_delay_timer);
+>  
+> -	sched_clock_register(tpm_read_sched_clock, 32, rate);
+> +	sched_clock_register(tpm_read_sched_clock, counter_width, rate);
+>  
+>  	return clocksource_mmio_init(timer_base + TPM_CNT, "imx-tpm",
+> -				     rate, 200, 32, clocksource_mmio_readl_up);
+> +				     rate, 200, counter_width,
+> +				     clocksource_mmio_readl_up);
+>  }
+>  
+>  static int tpm_set_next_event(unsigned long delta,
+> @@ -153,8 +158,8 @@ static int __init tpm_clockevent_init(unsigned long rate, int irq)
+>  
+>  	clockevent_tpm.cpumask = cpumask_of(0);
+>  	clockevent_tpm.irq = irq;
+> -	clockevents_config_and_register(&clockevent_tpm,
+> -					rate, 300, 0xfffffffe);
+> +	clockevents_config_and_register(&clockevent_tpm, rate, 300,
+> +					GENMASK(counter_width - 1, 1));
+>  
+>  	return ret;
+>  }
+> @@ -199,6 +204,8 @@ static int __init tpm_timer_init(struct device_node *np)
+>  		goto err_per_clk_enable;
+>  	}
+>  
+> +	counter_width = (readl(timer_base + TPM_PARAM) & TPM_PARAM_WIDTH_MASK)
+> +		>> TPM_PARAM_WIDTH_SHIFT;
+>  	/*
+>  	 * Initialize tpm module to a known state
+>  	 * 1) Counter disabled
+> @@ -220,7 +227,7 @@ static int __init tpm_timer_init(struct device_node *np)
+>  		     timer_base + TPM_SC);
+>  
+>  	/* set MOD register to maximum for free running mode */
+> -	writel(0xffffffff, timer_base + TPM_MOD);
+> +	writel(GENMASK(counter_width - 1, 0), timer_base + TPM_MOD);
+>  
+>  	rate = clk_get_rate(per) >> 3;
+>  	ret = tpm_clocksource_init(rate);
+> 
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
