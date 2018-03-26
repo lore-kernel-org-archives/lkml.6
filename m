@@ -1,77 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752195AbeCZIN0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:13:26 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:21942 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752096AbeCZINY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:13:24 -0400
-Subject: Re: [PATCH v2 3/6] i2c: i2c-stm32f7: Add initial SMBus protocols
- support
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
- <1521650940-11651-4-git-send-email-pierre-yves.mordret@st.com>
- <20180324224911.xz3fz2jojcdrovb4@ninjato>
-From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <2fadcd7f-3bfc-997e-a30e-808f6d854f2c@st.com>
-Date: Mon, 26 Mar 2018 10:13:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752218AbeCZIOB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:14:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35456 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751071AbeCZIOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 04:14:00 -0400
+Date: Mon, 26 Mar 2018 10:13:56 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: jglisse@redhat.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        David Rientjes <rientjes@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Evgeny Baskakov <ebaskakov@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Dimitri Sivanich <sivanich@sgi.com>
+Subject: Re: [RFC PATCH 0/3] mmu_notifier contextual information
+Message-ID: <20180326081356.GA5652@dhcp22.suse.cz>
+References: <20180323171748.20359-1-jglisse@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180324224911.xz3fz2jojcdrovb4@ninjato>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-26_04:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180323171748.20359-1-jglisse@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I haven't read through the whole thread, I just wanted to clarify the
+OOM aspect.
+On Fri 23-03-18 13:17:45, jglisse@redhat.com wrote:
+[...]
+> OOM is also an interesting case, recently a patchset was added to
+> avoid OOM on a mm if a blocking mmu_notifier listener have been
+> registered [1].
 
+This is not quite right. We only skip oom _reaper_ (aka async oom victim
+address space tear down). We still do allow such a task to be selected
+as an OOM victim and killed. So the worst case that we might kill
+another task if the current victim is not able to make a forward
+progress on its own.
 
-On 03/24/2018 11:49 PM, Wolfram Sang wrote:
-> On Wed, Mar 21, 2018 at 05:48:57PM +0100, Pierre-Yves MORDRET wrote:
->> This patch adds SMBus support for I2C controller embedded in STM32F7 Soc.
-> 
->> All SMBus protocols are implemented except SMBus-specific protocols.
-> 
-> What does that mean?
+> This can be improve by adding a new OOM event type and
+> having listener take special path on those. All mmu_notifier i know
+> can easily have a special path for OOM that do not block (beside
+> taking a short lived, across driver, spinlock). If mmu_notifier usage
+> grows (from a point of view of more process using devices that rely on
+> them) then we should also make sure OOM can do its bidding.
 
-It miss SMBus Host Notification and SMBBus Alert. They are almost ready but I'm
-struggling to put them back to operational state after recent changes related to
-SMBust Host Notification. A more "classic" interrupt base solution has been put
-in place but I fail to use implement it in my side.
-Another patch set is going to be delivered for these 2 commands.
-
-> 
->>
->> Signed-off-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
->> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
->> ---
->>   Version history:
->>     v1:
->>        * Initial
->>     v2:
->>        * fix Kbuild test robot issue (Unneeded semicolon)
->> ---
->>
->> fixup! i2c: i2c-stm32f7: Add initial SMBus protocols support
->> ---
->>  drivers/i2c/busses/i2c-stm32f7.c | 377 ++++++++++++++++++++++++++++++++++++++-
->>  1 file changed, 368 insertions(+), 9 deletions(-)
-> 
-> That is quite some complexity considering we have I2C_FUNC_SMBUS_EMUL. I
-> don't mind, but you really want that?
-> 
-
-All SMBBus commands are implemented as such. I never try to emulation commands.
-Should we use emulation SMBus commands or real commands... Don't know.
+If we can distinguish the OOM path and enforce no locks or indirect
+dependencies on the memory allocation the the situation would improve
+for sure.
+-- 
+Michal Hocko
+SUSE Labs
