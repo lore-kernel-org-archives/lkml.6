@@ -1,128 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751714AbeCZKSt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 06:18:49 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:38830 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751010AbeCZKSs (ORCPT
+        id S1751865AbeCZKTX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 06:19:23 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:59105 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750973AbeCZKTV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 06:18:48 -0400
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: peterz@infradead.org, mingo@redhat.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Borislav Petkov <bp@suse.de>, David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@suse.com>, Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] lockdep: Show address of "struct lockdep_map" at print_lock().
-Date: Mon, 26 Mar 2018 19:18:33 +0900
-Message-Id: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 26 Mar 2018 06:19:21 -0400
+From: Tali Perry <tali.perry1@gmail.com>
+To: sboyd@kernel.org, brendanhiggins@google.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux@armlinux.org.uk, avifishman70@gmail.com,
+        tmaimon77@gmail.com, raltherr@google.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        Tali Perry <tali.perry1@gmail.com>
+Subject: [PATCH v12 1/2] dt-binding: clk: npcm750: add binding
+Date: Mon, 26 Mar 2018 13:16:25 +0300
+Message-Id: <1522059386-20601-2-git-send-email-tali.perry1@gmail.com>
+X-Mailer: git-send-email 1.8.3.4
+In-Reply-To: <1522059386-20601-1-git-send-email-tali.perry1@gmail.com>
+References: <1522059386-20601-1-git-send-email-tali.perry1@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, print_lock() is printing hlock->acquire_ip field in both
-"[<%px>]" and "%pS" format. But "[<%px>]" is little useful nowadays, for
-we use scripts/faddr2line which receives "%pS" for finding the location
-in the source code.
+* Nuvoton NPCM7XX Clock Controller
 
-Since "struct lockdep_map" is embedded into lock objects, we can know
-which instance of a lock object is acquired using hlock->instance field.
-This will help finding which threads are causing a lock contention when
-e.g. the OOM reaper failed to acquire an OOM victim's mmap_sem for read.
+Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
+generates and supplies clocks to all modules within the BMC.
 
-Thus, this patch replaces "[<%px>]" for printing hlock->acquire_ip field
-with "[%px]" for printing hlock->instance field.
 
-----------------------------------------
-[  561.490202] Out of memory: Kill process 58945 (anacron) score 0 or sacrifice child
-[  561.494119] Killed process 58945 (anacron) total-vm:123220kB, anon-rss:232kB, file-rss:4kB, shmem-rss:0kB
-(...snipped...)
-[  562.208348] Out of memory: Kill process 636 (atd) score 0 or sacrifice child
-[  562.212077] Killed process 636 (atd) total-vm:25868kB, anon-rss:204kB, file-rss:0kB, shmem-rss:0kB
-(...snipped...)
-[  562.944890] Out of memory: Kill process 971 (agetty) score 0 or sacrifice child
-[  562.948586] Killed process 971 (agetty) total-vm:110056kB, anon-rss:124kB, file-rss:4kB, shmem-rss:0kB
-(...snipped...)
-[  563.599714] Out of memory: Kill process 116521 (a.out) score 0 or sacrifice child
-[  563.603599] Killed process 118444 (a.out) total-vm:4176kB, anon-rss:88kB, file-rss:0kB, shmem-rss:0kB
-[  564.664223] oom_reaper: unable to reap pid:118444 (a.out)
-[  564.667311]
-[  564.667311] Showing all locks held in the system:
-(...snipped...)
-[  564.731611] 1 lock held by kswapd0/76:
-[  564.734415]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
-(...snipped...)
-[  564.864860] 1 lock held by atd/636:
-[  564.868524]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: unlink_file_vma+0x28/0x50
-[  564.874354] 1 lock held by agetty/971:
-[  564.878085]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: unlink_file_vma+0x28/0x50
-(...snipped...)
-[  564.977497] 1 lock held by anacron/58945:
-[  564.981365]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: unlink_file_vma+0x28/0x50
-(...snipped...)
-[  569.866283] 3 locks held by a.out/118444:
-[  569.869992]  #0: [ffffa3b4df1c0c88] (&mm->mmap_sem){++++}, at: copy_process.part.40+0x1090/0x1fa0
-[  569.876392]  #1: [ffffa3b4dfeaae48] (&mm->mmap_sem/1){+.+.}, at: copy_process.part.40+0x10b9/0x1fa0
-[  569.882393]  #2: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: copy_process.part.40+0x12ad/0x1fa0
-(...snipped...)
-[  581.237572] 3 locks held by a.out/121276:
-[  581.241318]  #0: [ffffa3b40cd071c8] (&mm->mmap_sem){++++}, at: copy_process.part.40+0x1090/0x1fa0
-[  581.247326]  #1: [ffffa3b465bb44c8] (&mm->mmap_sem/1){+.+.}, at: copy_process.part.40+0x10b9/0x1fa0
-[  581.253370]  #2: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
-(...snipped...)
-[  589.357139] 1 lock held by a.out/122960:
-[  589.363224]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
-(...snipped...)
-[  594.255168] 3 locks held by a.out/124002:
-[  594.258956]  #0: [ffffa3b42fead008] (&mm->mmap_sem){++++}, at: copy_process.part.40+0x1090/0x1fa0
-[  594.265047]  #1: [ffffa3b4e7b52308] (&mm->mmap_sem/1){+.+.}, at: copy_process.part.40+0x10b9/0x1fa0
-[  594.271051]  #2: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: copy_process.part.40+0x12ad/0x1fa0
-(...snipped...)
-[  594.286952] 3 locks held by a.out/124004:
-[  594.290884]  #0: [ffffa3b42feac4c8] (&mm->mmap_sem){++++}, at: copy_process.part.40+0x1090/0x1fa0
-[  594.296956]  #1: [ffffa3b3db86db48] (&mm->mmap_sem/1){+.+.}, at: copy_process.part.40+0x10b9/0x1fa0
-[  594.303139]  #2: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
-(...snipped...)
-[  604.765878] 2 locks held by a.out/126388:
-[  604.769899]  #0: [ffffa3b3c70cb988] (&mm->mmap_sem){++++}, at: __do_page_fault+0x16f/0x4d0
-[  604.775890]  #1: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
-(...snipped...)
-[  614.240787] 2 locks held by a.out/128585:
-[  614.244655]  #0: [ffffa3b461e1a308] (&mm->mmap_sem){++++}, at: __do_page_fault+0x16f/0x4d0
-[  614.250489]  #1: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
-(...snipped...)
-[  628.863629] 2 locks held by a.out/1165:
-[  628.867533]  #0: [ffffa3b438472e48] (&mm->mmap_sem){++++}, at: __do_page_fault+0x16f/0x4d0
-[  628.873570]  #1: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
-----------------------------------------
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Michal Hocko <mhocko@suse.com>
----
- kernel/locking/lockdep.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 12a2805..7835233 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -556,9 +556,9 @@ static void print_lock(struct held_lock *hlock)
- 		return;
- 	}
- 
-+	printk(KERN_CONT "[%px]", hlock->instance);
- 	print_lock_name(lock_classes + class_idx - 1);
--	printk(KERN_CONT ", at: [<%px>] %pS\n",
--		(void *)hlock->acquire_ip, (void *)hlock->acquire_ip);
-+	printk(KERN_CONT ", at: %pS\n", (void *)hlock->acquire_ip);
- }
- 
- static void lockdep_print_held_locks(struct task_struct *curr)
+
+
+ .../bindings/clock/nuvoton,npcm750-clk.txt         | 100 +++++++++++++++++++++
+ include/dt-bindings/clock/nuvoton,npcm7xx-clock.h  |  44 +++++++++
+ 2 files changed, 144 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+ create mode 100644 include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+
+diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+new file mode 100644
+index 000000000000..f82064546d11
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nuvoton,npcm750-clk.txt
+@@ -0,0 +1,100 @@
++* Nuvoton NPCM7XX Clock Controller
++
++Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
++generates and supplies clocks to all modules within the BMC.
++
++External clocks:
++
++There are six fixed clocks that are generated outside the BMC. All clocks are of
++a known fixed value that cannot be changed. clk_refclk, clk_mcbypck and
++clk_sysbypck are inputs to the clock controller.
++clk_rg1refck, clk_rg2refck and clk_xin are external clocks suppling the
++network. They are set on the device tree, but not used by the clock module. The
++network devices use them directly.
++Example can be found below.
++
++All available clocks are defined as preprocessor macros in:
++dt-bindings/clock/nuvoton,npcm7xx-clock.h
++and can be reused as DT sources.
++
++Required Properties of clock controller:
++
++	- compatible: "nuvoton,npcm750-clk" : for clock controller of Nuvoton
++		  Poleg BMC NPCM750
++
++	- reg: physical base address of the clock controller and length of
++		memory mapped region.
++
++	- #clock-cells: should be 1.
++
++Example: Clock controller node:
++
++	clk: clock-controller@f0801000 {
++		compatible = "nuvoton,npcm750-clk";
++		#clock-cells = <1>;
++		reg = <0xf0801000 0x1000>;
++		clock-names = "refclk", "sysbypck", "mcbypck";
++		clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
++	};
++
++Example: Required external clocks for network:
++
++	/* external reference clock */
++	clk_refclk: clk-refclk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++		clock-output-names = "refclk";
++	};
++
++	/* external reference clock for cpu. float in normal operation */
++	clk_sysbypck: clk-sysbypck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <800000000>;
++		clock-output-names = "sysbypck";
++	};
++
++	/* external reference clock for MC. float in normal operation */
++	clk_mcbypck: clk-mcbypck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <800000000>;
++		clock-output-names = "mcbypck";
++	};
++
++	 /* external clock signal rg1refck, supplied by the phy */
++	clk_rg1refck: clk-rg1refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++		clock-output-names = "clk_rg1refck";
++	};
++
++	 /* external clock signal rg2refck, supplied by the phy */
++	clk_rg2refck: clk-rg2refck {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <125000000>;
++		clock-output-names = "clk_rg2refck";
++	};
++
++	clk_xin: clk-xin {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <50000000>;
++		clock-output-names = "clk_xin";
++	};
++
++
++Example: GMAC controller node that consumes two clocks: a generated clk by the
++clock controller and a fixed clock from DT (clk_rg1refck).
++
++	ethernet0: ethernet@f0802000 {
++		compatible = "snps,dwmac";
++		reg = <0xf0802000 0x2000>;
++		interrupts = <0 14 4>;
++		interrupt-names = "macirq";
++		clocks	= <&clk_rg1refck>, <&clk NPCM7XX_CLK_AHB>;
++		clock-names = "stmmaceth", "clk_gmac";
++	};
+diff --git a/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+new file mode 100644
+index 000000000000..f21522605b94
+--- /dev/null
++++ b/include/dt-bindings/clock/nuvoton,npcm7xx-clock.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Nuvoton NPCM7xx Clock Generator binding
++ * clock binding number for all clocks supportted by nuvoton,npcm7xx-clk
++ *
++ * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
++ *
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_NPCM7XX_H
++#define __DT_BINDINGS_CLOCK_NPCM7XX_H
++
++
++#define NPCM7XX_CLK_CPU 0
++#define NPCM7XX_CLK_GFX_PIXEL 1
++#define NPCM7XX_CLK_MC 2
++#define NPCM7XX_CLK_ADC 3
++#define NPCM7XX_CLK_AHB 4
++#define NPCM7XX_CLK_TIMER 5
++#define NPCM7XX_CLK_UART 6
++#define NPCM7XX_CLK_MMC  7
++#define NPCM7XX_CLK_SPI3 8
++#define NPCM7XX_CLK_PCI  9
++#define NPCM7XX_CLK_AXI 10
++#define NPCM7XX_CLK_APB4 11
++#define NPCM7XX_CLK_APB3 12
++#define NPCM7XX_CLK_APB2 13
++#define NPCM7XX_CLK_APB1 14
++#define NPCM7XX_CLK_APB5 15
++#define NPCM7XX_CLK_CLKOUT 16
++#define NPCM7XX_CLK_GFX  17
++#define NPCM7XX_CLK_SU   18
++#define NPCM7XX_CLK_SU48 19
++#define NPCM7XX_CLK_SDHC 20
++#define NPCM7XX_CLK_SPI0 21
++#define NPCM7XX_CLK_SPIX 22
++
++#define NPCM7XX_CLK_REFCLK 23
++#define NPCM7XX_CLK_SYSBYPCK 24
++#define NPCM7XX_CLK_MCBYPCK 25
++
++#define NPCM7XX_NUM_CLOCKS	 (NPCM7XX_CLK_MCBYPCK+1)
++
++#endif
 -- 
-1.8.3.1
+2.14.1
