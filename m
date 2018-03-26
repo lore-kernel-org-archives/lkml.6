@@ -1,104 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752069AbeCZOGn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:06:43 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55008 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752015AbeCZOGl (ORCPT
+        id S1752109AbeCZOG4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:06:56 -0400
+Received: from smtp02.citrix.com ([66.165.176.63]:60558 "EHLO
+        SMTP02.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeCZOGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:06:41 -0400
-X-Google-Smtp-Source: AG47ELvWmYcdEaFh6ejf1pyUpLhZMMtfZ1WgwQz16qNSKMqe4kI71tQmSvTZv+HEbnUMTChMZJBbAA==
-From: Paolo Valente <paolo.valente@linaro.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        khlebnikov@yandex-team.ru, Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX] block, bfq: lower-bound the estimated peak rate to 1
-Date: Mon, 26 Mar 2018 16:06:24 +0200
-Message-Id: <20180326140624.2295-1-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.16.1
+        Mon, 26 Mar 2018 10:06:55 -0400
+X-IronPort-AV: E=Sophos;i="5.48,364,1517875200";
+   d="scan'208";a="467288257"
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
+To: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>
+Subject: [PATCH] scsi: devinfo: Add Microsoft iSCSI target to 1024 sector blacklist
+Date: Mon, 26 Mar 2018 14:56:51 +0100
+Message-ID: <20180326135651.8193-1-ross.lagerwall@citrix.com>
+X-Mailer: git-send-email 2.9.5
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a storage device handled by BFQ happens to be slower than 7.5 KB/s
-for a certain amount of time (in the order of a second), then the
-estimated peak rate of the device, maintained in BFQ, becomes equal to
-0. The reason is the limited precision with which the rate is
-represented (details on the range of representable values in the
-comments introduced by this commit). This leads to a division-by-zero
-error where the estimated peak rate is used as divisor. Such a type of
-failure has been reported in [1].
+The Windows Server 2016 iSCSI target doesn't work with the Linux kernel
+initiator since the kernel started sending larger requests by default,
+nor does it implement the block limits VPD page. Apply the sector limit
+workaround for these targets.
 
-This commit addresses this issue by:
-1. Lower-bounding the estimated peak rate to 1
-2. Adding and improving comments on the range of rates representable
-
-[1] https://www.spinics.net/lists/kernel/msg2739205.html
-
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
 ---
- block/bfq-iosched.c | 25 ++++++++++++++++++++++++-
- block/bfq-iosched.h |  2 +-
- 2 files changed, 25 insertions(+), 2 deletions(-)
+ drivers/scsi/scsi_devinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index aeca22d91101..f0ecd98509d8 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -201,7 +201,20 @@ static struct kmem_cache *bfq_pool;
- /* Target observation time interval for a peak-rate update (ns) */
- #define BFQ_RATE_REF_INTERVAL	NSEC_PER_SEC
- 
--/* Shift used for peak rate fixed precision calculations. */
-+/*
-+ * Shift used for peak-rate fixed precision calculations.
-+ * With
-+ * - the current shift: 16 positions
-+ * - the current type used to store rate: u32
-+ * - the current unit of measure for rate: [sectors/usec], or, more precisely,
-+ *   [(sectors/usec) / 2^BFQ_RATE_SHIFT] to take into account the shift,
-+ * the range of rates that can be stored is
-+ * [1 / 2^BFQ_RATE_SHIFT, 2^(32 - BFQ_RATE_SHIFT)] sectors/usec =
-+ * [1 / 2^16, 2^16] sectors/usec = [15e-6, 65536] sectors/usec =
-+ * [15, 65G] sectors/sec
-+ * Which, assuming a sector size of 512B, corresponds to a range of
-+ * [7.5K, 33T] B/sec
-+ */
- #define BFQ_RATE_SHIFT		16
- 
- /*
-@@ -2637,6 +2650,16 @@ static void bfq_update_rate_reset(struct bfq_data *bfqd, struct request *rq)
- 	rate /= divisor; /* smoothing constant alpha = 1/divisor */
- 
- 	bfqd->peak_rate += rate;
-+
-+	/*
-+	 * For a very slow device, bfqd->peak_rate can reach 0 (see
-+	 * the minimum representable values reported in the comments
-+	 * on BFQ_RATE_SHIFT). Push to 1 if this happens, to avoid
-+	 * divisions by zero where bfqd->peak_rate is used as a
-+	 * divisor.
-+	 */
-+	bfqd->peak_rate = max_t(u32, 1, bfqd->peak_rate);
-+
- 	update_thr_responsiveness_params(bfqd);
- 
- reset_computation:
-diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-index 350c39ae2896..ae2f3dadec44 100644
---- a/block/bfq-iosched.h
-+++ b/block/bfq-iosched.h
-@@ -499,7 +499,7 @@ struct bfq_data {
- 	u64 delta_from_first;
- 	/*
- 	 * Current estimate of the device peak rate, measured in
--	 * [BFQ_RATE_SHIFT * sectors/usec]. The left-shift by
-+	 * [(sectors/usec) / 2^BFQ_RATE_SHIFT]. The left-shift by
- 	 * BFQ_RATE_SHIFT is performed to increase precision in
- 	 * fixed-point calculations.
- 	 */
+diff --git a/drivers/scsi/scsi_devinfo.c b/drivers/scsi/scsi_devinfo.c
+index f3b1172..5cb748a 100644
+--- a/drivers/scsi/scsi_devinfo.c
++++ b/drivers/scsi/scsi_devinfo.c
+@@ -213,7 +213,7 @@ static struct {
+ 	{"Medion", "Flash XL  MMC/SD", "2.6D", BLIST_FORCELUN},
+ 	{"MegaRAID", "LD", NULL, BLIST_FORCELUN},
+ 	{"MICROP", "4110", NULL, BLIST_NOTQ},
+-	{"MSFT", "Virtual HD", NULL, BLIST_NO_RSOC},
++	{"MSFT", "Virtual HD", NULL, BLIST_MAX_1024 | BLIST_NO_RSOC},
+ 	{"MYLEX", "DACARMRB", "*", BLIST_REPORTLUN2},
+ 	{"nCipher", "Fastness Crypto", NULL, BLIST_FORCELUN},
+ 	{"NAKAMICH", "MJ-4.8S", NULL, BLIST_FORCELUN | BLIST_SINGLELUN},
 -- 
-2.16.1
+2.9.5
