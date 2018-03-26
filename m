@@ -1,75 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeCZJoD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:44:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54440 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751765AbeCZJoC (ORCPT
+        id S1751071AbeCZJrv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:47:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46686 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750972AbeCZJrs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:44:02 -0400
-Date: Mon, 26 Mar 2018 06:43:53 -0300
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Nasser Afshin <afshin.nasser@gmail.com>
-Cc: p.zabel@pengutronix.de, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, bparrot@ti.com, garsilva@embeddedor.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: i2c: tvp5150: fix color burst lock instability
- on some hardware
-Message-ID: <20180326064353.187f752c@vento.lan>
-In-Reply-To: <20180325225633.5899-1-Afshin.Nasser@gmail.com>
-References: <20180325225633.5899-1-Afshin.Nasser@gmail.com>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 26 Mar 2018 05:47:48 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Mon, 26 Mar 2018 15:17:46 +0530
+From: sricharan@codeaurora.org
+To: Craig Tatlor <ctatlor97@gmail.com>
+Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux@arm.linux.org.uk
+Subject: Re: [v9,04/15] clk: qcom: Add HFPLL driver
+In-Reply-To: <20180325193341.27845-1-ctatlor97@gmail.com>
+References: <520347148-27852-5-git-send-email-sricharan@codeaurora.org>
+ <20180325193341.27845-1-ctatlor97@gmail.com>
+Message-ID: <0132a9e1371c7e690d174cb4d65bc951@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nasser,
-
-Em Mon, 26 Mar 2018 03:26:33 +0430
-Nasser Afshin <afshin.nasser@gmail.com> escreveu:
-
-> According to the datasheet, INTREQ/GPCL/VBLK should have a pull-up/down
-> resistor if it's been disabled. On hardware that does not have such
-> resistor, we should use the default output enable value.
-> This prevents the color burst lock instability problem.
-
-If this is hardware-dependent, you should instead store it at
-OF (for SoC) or pass via platform_data (for PCI/USB devices).
-
+On 2018-03-26 01:03, Craig Tatlor wrote:
+> This doesn't seem to work correctly with the higher clocks on 8974pro,
+> specifically 2150400000 hz or above, maybe its something to do with
+> being bigger than an unsigned long.
 > 
-> Signed-off-by: Nasser Afshin <Afshin.Nasser@gmail.com>
-> ---
->  drivers/media/i2c/tvp5150.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-> index 2476d812f669..0e9713814816 100644
-> --- a/drivers/media/i2c/tvp5150.c
-> +++ b/drivers/media/i2c/tvp5150.c
-> @@ -328,7 +328,7 @@ static const struct i2c_reg_value tvp5150_init_default[] = {
->  		TVP5150_OP_MODE_CTL,0x00
->  	},
->  	{ /* 0x03 */
-> -		TVP5150_MISC_CTL,0x01
-> +		TVP5150_MISC_CTL,0x21
->  	},
->  	{ /* 0x06 */
->  		TVP5150_COLOR_KIL_THSH_CTL,0x10
-> @@ -1072,7 +1072,8 @@ static int tvp5150_s_stream(struct v4l2_subdev *sd, int enable)
->  		 * Enable the YCbCr and clock outputs. In discrete sync mode
->  		 * (non-BT.656) additionally enable the the sync outputs.
->  		 */
-> -		val |= TVP5150_MISC_CTL_YCBCR_OE | TVP5150_MISC_CTL_CLOCK_OE;
-> +		val |= TVP5150_MISC_CTL_YCBCR_OE | TVP5150_MISC_CTL_CLOCK_OE |
-> +			TVP5150_MISC_CTL_INTREQ_OE;
->  		if (decoder->mbus_type == V4L2_MBUS_PARALLEL)
->  			val |= TVP5150_MISC_CTL_SYNC_OE;
->  	}
+> When i try to set any higher frequency it jumps down to 300mhz.
 
 
+  Thanks for testing this series. Not sure i got dropped from the list.
+  So i will check on this and come back.
 
-Thanks,
-Mauro
+Regards,
+  Sricharan
