@@ -1,74 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752157AbeCZVqD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 17:46:03 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39413 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751134AbeCZVqC (ORCPT
+        id S1752165AbeCZVsf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 17:48:35 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:55426 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751614AbeCZVse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:46:02 -0400
-X-Google-Smtp-Source: AG47ELspAAuPSzSe5F19iQ87fRCdeRAcu7OrWKXhO1zek/K/pBYeEkSGAWiKbnm4DGgCVYpyF00dgkN2FVcv2GMNRmI=
-MIME-Version: 1.0
-In-Reply-To: <d5a326b6c284f7389301b265716dc58fda492c98.1521358552.git.arvind.yadav.cs@gmail.com>
-References: <d5a326b6c284f7389301b265716dc58fda492c98.1521358552.git.arvind.yadav.cs@gmail.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 26 Mar 2018 15:46:00 -0600
-Message-ID: <CANLsYkymOF2oG7TmKbRTakYKw0ECN_DXfkX5b8WjmS0Lz0sfig@mail.gmail.com>
-Subject: Re: [PATCH] coresight: use put_device() instead of kfree()
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 26 Mar 2018 17:48:34 -0400
+Message-ID: <1522100902.6308.60.camel@surriel.com>
+Subject: Re: [PATCH v3] cpuidle: poll_state: Add time limit to poll_idle()
+From: Rik van Riel <riel@surriel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Mon, 26 Mar 2018 17:48:22 -0400
+In-Reply-To: <CAJZ5v0itoXKB+46w+yb1N5zyYF4bNsZ-1dgm2KqF2oDM426M6w@mail.gmail.com>
+References: <3111105.SmgpqUHPkp@aspire.rjw.lan>
+         <4731938.EeADOapqQb@aspire.rjw.lan> <1522008952.6308.46.camel@surriel.com>
+         <5810003.D8QGLjubHr@aspire.rjw.lan> <1522081932.6308.54.camel@surriel.com>
+         <CAJZ5v0itoXKB+46w+yb1N5zyYF4bNsZ-1dgm2KqF2oDM426M6w@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-U3BNb7gsyiUFaRPejQ5Y"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/hwtracing/coresight/coresight.c
-On 18 March 2018 at 01:38, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
-> Never directly free @dev after calling device_register(), even
-> if it returned an error. Always use put_device() to give up the
-> reference initialized.
->
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  drivers/hwtracing/coresight/coresight.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-> index 389c4ba..132dfbc 100644
-> --- a/drivers/hwtracing/coresight/coresight.c
-> +++ b/drivers/hwtracing/coresight/coresight.c
-> @@ -1026,8 +1026,10 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
->         dev_set_name(&csdev->dev, "%s", desc->pdata->name);
->
->         ret = device_register(&csdev->dev);
-> -       if (ret)
-> -               goto err_device_register;
-> +       if (ret) {
-> +               put_device(&csdev->dev);
-> +               goto err_kzalloc_csdev;
-> +       }
->
->         mutex_lock(&coresight_mutex);
->
-> @@ -1038,8 +1040,6 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
->
->         return csdev;
->
-> -err_device_register:
-> -       kfree(conns);
 
-Apologies for the late reply, I was travelling.
+--=-U3BNb7gsyiUFaRPejQ5Y
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I suggest to simply replace kfree() with put_device() in order to
-concentrate the error handling code in the same area and make sure
-that memory allocated for @conns and @refcnts is freed.
+On Mon, 2018-03-26 at 23:44 +0200, Rafael J. Wysocki wrote:
+> On Mon, Mar 26, 2018 at 6:32 PM, Rik van Riel <riel@surriel.com>
+> wrote:
+> > On Sun, 2018-03-25 at 23:34 +0200, Rafael J. Wysocki wrote:
+> >=20
+> > I tried that, as well, and some other variations.
+> >=20
+> > Every single change to poll_idle() that I tried
+> > seems to result in a 9-10% relative increase in
+> > CPU use during the peak load of the test.
+> >=20
+> > During the busiest parts of the load, every CPU
+> > sees on the order of 20k context switches a second.
 
-Thanks,
-Mathieu
+... and I did something wrong in the tests :/
 
->  err_kzalloc_conns:
->         kfree(refcnts);
->  err_kzalloc_refcnts:
-> --
-> 2.7.4
->
+> Hmm.  Basically, you are saying that
+>=20
+> while (something)
+>     cpu_relax();
+>=20
+> is measurably less overhead than
+>=20
+> while (something) {
+>     cpu_relax();
+>     check something else;
+>     cpu_relax();
+> }
+>=20
+> which honestly makes me wonder how this is possible at all.
+
+Part of the mystery is solved. Apparently the
+control kernel was not the one I thought it
+was, or the one that was printed in the=20
+output messages :(
+
+I am re-running the tests now with a few
+variations, and seeing what works best.
+
+My apologies for wasting everybody's time.
+
+I should have valid results later tonight.
+Fingers crossed.
+
+--=20
+All Rights Reversed.
+--=-U3BNb7gsyiUFaRPejQ5Y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlq5aqYACgkQznnekoTE
+3oN4VwgAtfoJxcK52dl8HW2KC+Z2Sn8ysHIVzWCk5Un8HDvveCkMY7zDLOIqrosS
+DCZ/v4HY9FqtPfWv1fayKkUSvsFHpm+Rj1ATEwZLigud5vqabWkr/Sb0ysSIRoLc
+2z7N5XW+p4mZeijZAxSv6iCyO3KUcPgcTS3V5P41Xll0EIqTR2upy01gpam+33bu
+UBEk8omiG30xvazRbkFbtwi1NARWU2m3lezmv1i9t7PZgQ3AtfrxgpCK6JTFiC0b
+VuxQi8uXJoR3dJ61jmxNS0z5LJzP8Rb76zqkX68atgKEbX/+YimmDo/uNKC10zOx
+20NUirm2kZGv71qChH+ZNH939foteg==
+=BtGk
+-----END PGP SIGNATURE-----
+
+--=-U3BNb7gsyiUFaRPejQ5Y--
