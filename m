@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752649AbeCZOTG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:19:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:40986 "EHLO foss.arm.com"
+        id S1752217AbeCZONR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:13:17 -0400
+Received: from foss.arm.com ([217.140.101.70]:40966 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751980AbeCZONT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:13:19 -0400
+        id S1752130AbeCZONO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:13:14 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, dave.martin@arm.com, will.deacon@arm.com,
         catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
         ckadabi@codeaurora.org, shankerd@codeaurora.org,
         ard.biesheuvel@linaro.org, jnair@caviumnetworks.com,
-        robin.murphy@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v5 03/22] arm64: capabilities: Move errata processing code
-Date: Mon, 26 Mar 2018 15:12:30 +0100
-Message-Id: <1522073569-29174-4-git-send-email-suzuki.poulose@arm.com>
+        robin.murphy@arm.com, Andre Przywara <andre.przywara@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v5 01/22] arm64: capabilities: Update prototype for enable call back
+Date: Mon, 26 Mar 2018 15:12:28 +0100
+Message-Id: <1522073569-29174-2-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522073569-29174-1-git-send-email-suzuki.poulose@arm.com>
 References: <1522073569-29174-1-git-send-email-suzuki.poulose@arm.com>
@@ -24,160 +25,512 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have errata work around processing code in cpu_errata.c,
-which calls back into helpers defined in cpufeature.c. Now
-that we are going to make the handling of capabilities
-generic, by adding the information to each capability,
-move the errata work around specific processing code.
-No functional changes.
+From: Dave Martin <dave.martin@arm.com>
+
+We issue the enable() call back for all CPU hwcaps capabilities
+available on the system, on all the CPUs. So far we have ignored
+the argument passed to the call back, which had a prototype to
+accept a "void *" for use with on_each_cpu() and later with
+stop_machine(). However, with commit 0a0d111d40fd1
+("arm64: cpufeature: Pass capability structure to ->enable callback"),
+there are some users of the argument who wants the matching capability
+struct pointer where there are multiple matching criteria for a single
+capability. Clean up the declaration of the call back to make it clear.
+
+ 1) Renamed to cpu_enable(), to imply taking necessary actions on the
+    called CPU for the entry.
+ 2) Pass const pointer to the capability, to allow the call back to
+    check the entry. (e.,g to check if any action is needed on the CPU)
+ 3) We don't care about the result of the call back, turning this to
+    a void.
 
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Dave Martin <dave.martin@arm.com>
+[
+ Rebased to for-next/core converting more users, rename call back,
+ drop call back results
+]
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/cpufeature.h |  7 ------
- arch/arm64/kernel/cpu_errata.c      | 33 ----------------------------
- arch/arm64/kernel/cpufeature.c      | 43 ++++++++++++++++++++++++++++++++++---
- 3 files changed, 40 insertions(+), 43 deletions(-)
+ arch/arm64/include/asm/cpufeature.h |  7 ++++-
+ arch/arm64/include/asm/fpsimd.h     |  4 ++-
+ arch/arm64/include/asm/processor.h  |  7 ++---
+ arch/arm64/kernel/cpu_errata.c      | 53 +++++++++++++++++--------------------
+ arch/arm64/kernel/cpufeature.c      | 42 ++++++++++++++++-------------
+ arch/arm64/kernel/fpsimd.c          |  5 ++--
+ arch/arm64/kernel/traps.c           |  4 +--
+ arch/arm64/mm/fault.c               |  3 +--
+ 8 files changed, 67 insertions(+), 58 deletions(-)
 
 diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index cba67cb..8efbda2 100644
+index fbf0aab..cba67cb 100644
 --- a/arch/arm64/include/asm/cpufeature.h
 +++ b/arch/arm64/include/asm/cpufeature.h
-@@ -245,15 +245,8 @@ static inline bool id_aa64pfr0_sve(u64 pfr0)
- }
+@@ -100,7 +100,12 @@ struct arm64_cpu_capabilities {
+ 	u16 capability;
+ 	int def_scope;			/* default scope */
+ 	bool (*matches)(const struct arm64_cpu_capabilities *caps, int scope);
+-	int (*enable)(void *);		/* Called on all active CPUs */
++	/*
++	 * Take the appropriate actions to enable this capability for this CPU.
++	 * For each successfully booted CPU, this method is called for each
++	 * globally detected capability.
++	 */
++	void (*cpu_enable)(const struct arm64_cpu_capabilities *cap);
+ 	union {
+ 		struct {	/* To be used for erratum handling only */
+ 			u32 midr_model;
+diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
+index 8857a0f..7623762 100644
+--- a/arch/arm64/include/asm/fpsimd.h
++++ b/arch/arm64/include/asm/fpsimd.h
+@@ -83,7 +83,9 @@ extern void sve_save_state(void *state, u32 *pfpsr);
+ extern void sve_load_state(void const *state, u32 const *pfpsr,
+ 			   unsigned long vq_minus_1);
+ extern unsigned int sve_get_vl(void);
+-extern int sve_kernel_enable(void *);
++
++struct arm64_cpu_capabilities;
++extern void sve_kernel_enable(const struct arm64_cpu_capabilities *__unused);
  
- void __init setup_cpu_features(void);
--
--void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
--			    const char *info);
--void enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps);
- void check_local_cpu_capabilities(void);
+ extern int __ro_after_init sve_max_vl;
  
--void update_cpu_errata_workarounds(void);
--void __init enable_errata_workarounds(void);
--void verify_local_cpu_errata_workarounds(void);
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index fce604e..4fc8867 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -37,6 +37,7 @@
+ #include <linux/string.h>
  
- u64 read_sanitised_ftr_reg(u32 id);
+ #include <asm/alternative.h>
++#include <asm/cpufeature.h>
+ #include <asm/fpsimd.h>
+ #include <asm/hw_breakpoint.h>
+ #include <asm/lse.h>
+@@ -227,9 +228,9 @@ static inline void spin_lock_prefetch(const void *ptr)
  
+ #endif
+ 
+-int cpu_enable_pan(void *__unused);
+-int cpu_enable_cache_maint_trap(void *__unused);
+-int cpu_clear_disr(void *__unused);
++void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused);
++void cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__unused);
++void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused);
+ 
+ /* Userspace interface for PR_SVE_{SET,GET}_VL prctl()s: */
+ #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
 diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 74f0584..0de0ab6 100644
+index 186c0fc..74f0584 100644
 --- a/arch/arm64/kernel/cpu_errata.c
 +++ b/arch/arm64/kernel/cpu_errata.c
-@@ -450,36 +450,3 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 	{
+@@ -65,11 +65,11 @@ has_mismatched_cache_line_size(const struct arm64_cpu_capabilities *entry,
+ 		(arm64_ftr_reg_ctrel0.sys_val & arm64_ftr_reg_ctrel0.strict_mask);
+ }
+ 
+-static int cpu_enable_trap_ctr_access(void *__unused)
++static void
++cpu_enable_trap_ctr_access(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	/* Clear SCTLR_EL1.UCT */
+ 	config_sctlr_el1(SCTLR_EL1_UCT, 0);
+-	return 0;
+ }
+ 
+ #ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
+@@ -173,25 +173,25 @@ static void call_hvc_arch_workaround_1(void)
+ 	arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_WORKAROUND_1, NULL);
+ }
+ 
+-static int enable_smccc_arch_workaround_1(void *data)
++static void
++enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+ {
+-	const struct arm64_cpu_capabilities *entry = data;
+ 	bp_hardening_cb_t cb;
+ 	void *smccc_start, *smccc_end;
+ 	struct arm_smccc_res res;
+ 
+ 	if (!entry->matches(entry, SCOPE_LOCAL_CPU))
+-		return 0;
++		return;
+ 
+ 	if (psci_ops.smccc_version == SMCCC_VERSION_1_0)
+-		return 0;
++		return;
+ 
+ 	switch (psci_ops.conduit) {
+ 	case PSCI_CONDUIT_HVC:
+ 		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ 		if (res.a0)
+-			return 0;
++			return;
+ 		cb = call_hvc_arch_workaround_1;
+ 		smccc_start = __smccc_workaround_1_hvc_start;
+ 		smccc_end = __smccc_workaround_1_hvc_end;
+@@ -201,19 +201,19 @@ static int enable_smccc_arch_workaround_1(void *data)
+ 		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ 				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ 		if (res.a0)
+-			return 0;
++			return;
+ 		cb = call_smc_arch_workaround_1;
+ 		smccc_start = __smccc_workaround_1_smc_start;
+ 		smccc_end = __smccc_workaround_1_smc_end;
+ 		break;
+ 
+ 	default:
+-		return 0;
++		return;
  	}
- };
--
--/*
-- * The CPU Errata work arounds are detected and applied at boot time
-- * and the related information is freed soon after. If the new CPU requires
-- * an errata not detected at boot, fail this CPU.
-- */
--void verify_local_cpu_errata_workarounds(void)
--{
--	const struct arm64_cpu_capabilities *caps = arm64_errata;
--
--	for (; caps->matches; caps++) {
--		if (cpus_have_cap(caps->capability)) {
--			if (caps->cpu_enable)
--				caps->cpu_enable(caps);
--		} else if (caps->matches(caps, SCOPE_LOCAL_CPU)) {
--			pr_crit("CPU%d: Requires work around for %s, not detected"
--					" at boot time\n",
--				smp_processor_id(),
--				caps->desc ? : "an erratum");
--			cpu_die_early();
--		}
--	}
--}
--
--void update_cpu_errata_workarounds(void)
--{
--	update_cpu_capabilities(arm64_errata, "enabling workaround for");
--}
--
--void __init enable_errata_workarounds(void)
--{
--	enable_cpu_capabilities(arm64_errata);
--}
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index b4cbcfe..205c18c 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -509,6 +509,9 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
- 	reg->user_mask = user_mask;
+ 
+ 	install_bp_hardening_cb(entry, cb, smccc_start, smccc_end);
+ 
+-	return 0;
++	return;
  }
  
-+extern const struct arm64_cpu_capabilities arm64_errata[];
-+static void update_cpu_errata_workarounds(void);
-+
- void __init init_cpu_features(struct cpuinfo_arm64 *info)
- {
- 	/* Before we start using the tables, make sure it is sorted */
-@@ -1252,8 +1255,8 @@ static bool __this_cpu_has_cap(const struct arm64_cpu_capabilities *cap_array,
- 	return false;
+ static void qcom_link_stack_sanitization(void)
+@@ -228,15 +228,12 @@ static void qcom_link_stack_sanitization(void)
+ 		     : "=&r" (tmp));
  }
  
--void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
--			    const char *info)
-+static void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
-+				    const char *info)
+-static int qcom_enable_link_stack_sanitization(void *data)
++static void
++qcom_enable_link_stack_sanitization(const struct arm64_cpu_capabilities *entry)
  {
+-	const struct arm64_cpu_capabilities *entry = data;
+-
+ 	install_bp_hardening_cb(entry, qcom_link_stack_sanitization,
+ 				__qcom_hyp_sanitize_link_stack_start,
+ 				__qcom_hyp_sanitize_link_stack_end);
+-
+-	return 0;
+ }
+ #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+ 
+@@ -266,7 +263,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 		.desc = "ARM errata 826319, 827319, 824069",
+ 		.capability = ARM64_WORKAROUND_CLEAN_CACHE,
+ 		MIDR_RANGE(MIDR_CORTEX_A53, 0x00, 0x02),
+-		.enable = cpu_enable_cache_maint_trap,
++		.cpu_enable = cpu_enable_cache_maint_trap,
+ 	},
+ #endif
+ #ifdef CONFIG_ARM64_ERRATUM_819472
+@@ -275,7 +272,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 		.desc = "ARM errata 819472",
+ 		.capability = ARM64_WORKAROUND_CLEAN_CACHE,
+ 		MIDR_RANGE(MIDR_CORTEX_A53, 0x00, 0x01),
+-		.enable = cpu_enable_cache_maint_trap,
++		.cpu_enable = cpu_enable_cache_maint_trap,
+ 	},
+ #endif
+ #ifdef CONFIG_ARM64_ERRATUM_832075
+@@ -365,7 +362,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 		.capability = ARM64_MISMATCHED_CACHE_LINE_SIZE,
+ 		.matches = has_mismatched_cache_line_size,
+ 		.def_scope = SCOPE_LOCAL_CPU,
+-		.enable = cpu_enable_trap_ctr_access,
++		.cpu_enable = cpu_enable_trap_ctr_access,
+ 	},
+ #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
+ 	{
+@@ -404,27 +401,27 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR_V1),
+-		.enable = qcom_enable_link_stack_sanitization,
++		.cpu_enable = qcom_enable_link_stack_sanitization,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BP_POST_GUEST_EXIT,
+@@ -433,7 +430,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_QCOM_FALKOR),
+-		.enable = qcom_enable_link_stack_sanitization,
++		.cpu_enable = qcom_enable_link_stack_sanitization,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BP_POST_GUEST_EXIT,
+@@ -442,12 +439,12 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ 	{
+ 		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
+ 		MIDR_ALL_VERSIONS(MIDR_CAVIUM_THUNDERX2),
+-		.enable = enable_smccc_arch_workaround_1,
++		.cpu_enable = enable_smccc_arch_workaround_1,
+ 	},
+ #endif
+ 	{
+@@ -465,8 +462,8 @@ void verify_local_cpu_errata_workarounds(void)
+ 
  	for (; caps->matches; caps++) {
- 		if (!caps->matches(caps, caps->def_scope))
-@@ -1277,7 +1280,8 @@ static int __enable_cpu_capability(void *arg)
-  * Run through the enabled capabilities and enable() it on all active
-  * CPUs
-  */
--void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
-+static void __init
-+enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
- {
- 	for (; caps->matches; caps++) {
- 		unsigned int num = caps->capability;
-@@ -1362,6 +1366,39 @@ static void verify_sve_features(void)
- }
- 
- /*
-+ * The CPU Errata work arounds are detected and applied at boot time
-+ * and the related information is freed soon after. If the new CPU requires
-+ * an errata not detected at boot, fail this CPU.
-+ */
-+static void verify_local_cpu_errata_workarounds(void)
-+{
-+	const struct arm64_cpu_capabilities *caps = arm64_errata;
-+
-+	for (; caps->matches; caps++) {
-+		if (cpus_have_cap(caps->capability)) {
+ 		if (cpus_have_cap(caps->capability)) {
+-			if (caps->enable)
+-				caps->enable((void *)caps);
 +			if (caps->cpu_enable)
 +				caps->cpu_enable(caps);
-+		} else if (caps->matches(caps, SCOPE_LOCAL_CPU)) {
-+			pr_crit("CPU%d: Requires work around for %s, not detected"
-+					" at boot time\n",
-+				smp_processor_id(),
-+				caps->desc ? : "an erratum");
-+			cpu_die_early();
-+		}
-+	}
-+}
-+
-+static void update_cpu_errata_workarounds(void)
+ 		} else if (caps->matches(caps, SCOPE_LOCAL_CPU)) {
+ 			pr_crit("CPU%d: Requires work around for %s, not detected"
+ 					" at boot time\n",
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index de4ea6a..d66f64b 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -909,7 +909,8 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+ 						     ID_AA64PFR0_CSV3_SHIFT);
+ }
+ 
+-static int kpti_install_ng_mappings(void *__unused)
++static void
++kpti_install_ng_mappings(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	typedef void (kpti_remap_fn)(int, int, phys_addr_t);
+ 	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+@@ -919,7 +920,7 @@ static int kpti_install_ng_mappings(void *__unused)
+ 	int cpu = smp_processor_id();
+ 
+ 	if (kpti_applied)
+-		return 0;
++		return;
+ 
+ 	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
+ 
+@@ -930,7 +931,7 @@ static int kpti_install_ng_mappings(void *__unused)
+ 	if (!cpu)
+ 		kpti_applied = true;
+ 
+-	return 0;
++	return;
+ }
+ 
+ static int __init parse_kpti(char *str)
+@@ -947,7 +948,7 @@ static int __init parse_kpti(char *str)
+ __setup("kpti=", parse_kpti);
+ #endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
+ 
+-static int cpu_copy_el2regs(void *__unused)
++static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	/*
+ 	 * Copy register values that aren't redirected by hardware.
+@@ -959,8 +960,6 @@ static int cpu_copy_el2regs(void *__unused)
+ 	 */
+ 	if (!alternatives_applied)
+ 		write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
+-
+-	return 0;
+ }
+ 
+ static const struct arm64_cpu_capabilities arm64_features[] = {
+@@ -984,7 +983,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.field_pos = ID_AA64MMFR1_PAN_SHIFT,
+ 		.sign = FTR_UNSIGNED,
+ 		.min_field_value = 1,
+-		.enable = cpu_enable_pan,
++		.cpu_enable = cpu_enable_pan,
+ 	},
+ #endif /* CONFIG_ARM64_PAN */
+ #if defined(CONFIG_AS_LSE) && defined(CONFIG_ARM64_LSE_ATOMICS)
+@@ -1032,7 +1031,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.capability = ARM64_HAS_VIRT_HOST_EXTN,
+ 		.def_scope = SCOPE_SYSTEM,
+ 		.matches = runs_at_el2,
+-		.enable = cpu_copy_el2regs,
++		.cpu_enable = cpu_copy_el2regs,
+ 	},
+ 	{
+ 		.desc = "32-bit EL0 Support",
+@@ -1056,7 +1055,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
+ 		.def_scope = SCOPE_SYSTEM,
+ 		.matches = unmap_kernel_at_el0,
+-		.enable = kpti_install_ng_mappings,
++		.cpu_enable = kpti_install_ng_mappings,
+ 	},
+ #endif
+ 	{
+@@ -1087,7 +1086,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.field_pos = ID_AA64PFR0_SVE_SHIFT,
+ 		.min_field_value = ID_AA64PFR0_SVE,
+ 		.matches = has_cpuid_feature,
+-		.enable = sve_kernel_enable,
++		.cpu_enable = sve_kernel_enable,
+ 	},
+ #endif /* CONFIG_ARM64_SVE */
+ #ifdef CONFIG_ARM64_RAS_EXTN
+@@ -1100,7 +1099,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.sign = FTR_UNSIGNED,
+ 		.field_pos = ID_AA64PFR0_RAS_SHIFT,
+ 		.min_field_value = ID_AA64PFR0_RAS_V1,
+-		.enable = cpu_clear_disr,
++		.cpu_enable = cpu_clear_disr,
+ 	},
+ #endif /* CONFIG_ARM64_RAS_EXTN */
+ 	{
+@@ -1260,6 +1259,14 @@ void update_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
+ 	}
+ }
+ 
++static int __enable_cpu_capability(void *arg)
 +{
-+	update_cpu_capabilities(arm64_errata, "enabling workaround for");
++	const struct arm64_cpu_capabilities *cap = arg;
++
++	cap->cpu_enable(cap);
++	return 0;
 +}
 +
-+static void __init enable_errata_workarounds(void)
-+{
-+	enable_cpu_capabilities(arm64_errata);
-+}
-+
-+/*
-  * Run through the enabled system capabilities and enable() it on this CPU.
-  * The capabilities were decided based on the available CPUs at the boot time.
-  * Any new CPU should match the system wide status of the capability. If the
+ /*
+  * Run through the enabled capabilities and enable() it on all active
+  * CPUs
+@@ -1275,14 +1282,15 @@ void __init enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps)
+ 		/* Ensure cpus_have_const_cap(num) works */
+ 		static_branch_enable(&cpu_hwcap_keys[num]);
+ 
+-		if (caps->enable) {
++		if (caps->cpu_enable) {
+ 			/*
+ 			 * Use stop_machine() as it schedules the work allowing
+ 			 * us to modify PSTATE, instead of on_each_cpu() which
+ 			 * uses an IPI, giving us a PSTATE that disappears when
+ 			 * we return.
+ 			 */
+-			stop_machine(caps->enable, (void *)caps, cpu_online_mask);
++			stop_machine(__enable_cpu_capability, (void *)caps,
++				     cpu_online_mask);
+ 		}
+ 	}
+ }
+@@ -1325,8 +1333,8 @@ verify_local_cpu_features(const struct arm64_cpu_capabilities *caps_list)
+ 					smp_processor_id(), caps->desc);
+ 			cpu_die_early();
+ 		}
+-		if (caps->enable)
+-			caps->enable((void *)caps);
++		if (caps->cpu_enable)
++			caps->cpu_enable(caps);
+ 	}
+ }
+ 
+@@ -1544,10 +1552,8 @@ static int __init enable_mrs_emulation(void)
+ 
+ core_initcall(enable_mrs_emulation);
+ 
+-int cpu_clear_disr(void *__unused)
++void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	/* Firmware may have left a deferred SError in this register. */
+ 	write_sysreg_s(0, SYS_DISR_EL1);
+-
+-	return 0;
+ }
+diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+index 20a5b30..91f9f4f 100644
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -41,6 +41,7 @@
+ 
+ #include <asm/esr.h>
+ #include <asm/fpsimd.h>
++#include <asm/cpufeature.h>
+ #include <asm/cputype.h>
+ #include <asm/simd.h>
+ #include <asm/sigcontext.h>
+@@ -757,12 +758,10 @@ static void __init sve_efi_setup(void)
+  * Enable SVE for EL1.
+  * Intended for use by the cpufeatures code during CPU boot.
+  */
+-int sve_kernel_enable(void *__always_unused p)
++void sve_kernel_enable(const struct arm64_cpu_capabilities *__always_unused p)
+ {
+ 	write_sysreg(read_sysreg(CPACR_EL1) | CPACR_EL1_ZEN_EL1EN, CPACR_EL1);
+ 	isb();
+-
+-	return 0;
+ }
+ 
+ void __init sve_setup(void)
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 2b47856..ba964da 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -38,6 +38,7 @@
+ 
+ #include <asm/atomic.h>
+ #include <asm/bug.h>
++#include <asm/cpufeature.h>
+ #include <asm/daifflags.h>
+ #include <asm/debug-monitors.h>
+ #include <asm/esr.h>
+@@ -407,10 +408,9 @@ asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
+ 	force_signal_inject(SIGILL, ILL_ILLOPC, regs->pc);
+ }
+ 
+-int cpu_enable_cache_maint_trap(void *__unused)
++void cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	config_sctlr_el1(SCTLR_EL1_UCI, 0);
+-	return 0;
+ }
+ 
+ #define __user_cache_maint(insn, address, res)			\
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 551d044..4165485 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -804,7 +804,7 @@ asmlinkage int __exception do_debug_exception(unsigned long addr,
+ NOKPROBE_SYMBOL(do_debug_exception);
+ 
+ #ifdef CONFIG_ARM64_PAN
+-int cpu_enable_pan(void *__unused)
++void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused)
+ {
+ 	/*
+ 	 * We modify PSTATE. This won't work from irq context as the PSTATE
+@@ -814,6 +814,5 @@ int cpu_enable_pan(void *__unused)
+ 
+ 	config_sctlr_el1(SCTLR_EL1_SPAN, 0);
+ 	asm(SET_PSTATE_PAN(1));
+-	return 0;
+ }
+ #endif /* CONFIG_ARM64_PAN */
 -- 
 2.7.4
