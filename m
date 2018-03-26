@@ -1,58 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752414AbeCZQvf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 12:51:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751782AbeCZQve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 12:51:34 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E6F82172B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 26 Mar 2018 12:51:31 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Matthias Schiffer <mschiffer@universe-factory.net>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ftrace: fix stddev calculation in function profiler
- (again)
-Message-ID: <20180326125131.15fba249@gandalf.local.home>
-In-Reply-To: <f208c5c360f1e86327b0adbb879d61f4779e8ddd.1521908409.git.mschiffer@universe-factory.net>
-References: <f208c5c360f1e86327b0adbb879d61f4779e8ddd.1521908409.git.mschiffer@universe-factory.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1752624AbeCZQ6U (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 12:58:20 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:53274 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752523AbeCZQ6S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 12:58:18 -0400
+Date: Mon, 26 Mar 2018 12:58:16 -0400 (EDT)
+Message-Id: <20180326.125816.1498152294570222508.davem@davemloft.net>
+To: mike.looijmans@topic.nl
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
+        robh+dt@kernel.org, frowand.list@gmail.com
+Subject: Re: [PATCH v2] of_net: Implement of_get_nvmem_mac_address helper
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1522046489-19652-1-git-send-email-mike.looijmans@topic.nl>
+References: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl>
+        <20180323151101.GB24361@lunn.ch>
+        <1522046489-19652-1-git-send-email-mike.looijmans@topic.nl>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 24 Mar 2018 17:26:38 +0100
-Matthias Schiffer <mschiffer@universe-factory.net> wrote:
+From: Mike Looijmans <mike.looijmans@topic.nl>
+Date: Mon, 26 Mar 2018 08:41:29 +0200
 
-> @@ -905,8 +898,20 @@ static void profile_graph_return(struct ftrace_graph_ret *trace)
->  
->  	rec = ftrace_find_profiled_func(stat, trace->func);
->  	if (rec) {
-> +		unsigned long long avg, delta1, delta2;
-> +
->  		rec->time += calltime;
-> -		rec->time_squared += calltime * calltime;
-> +
-> +		/* Apply Welford's method */
-> +		delta1 = calltime - rec->avg;
-> +
-> +		avg = rec->time;
-> +		do_div(avg, rec->counter);
+> It's common practice to store MAC addresses for network interfaces into
+> nvmem devices. However the code to actually do this in the kernel lacks,
+> so this patch adds of_get_nvmem_mac_address() for drivers to obtain the
+> address from an nvmem cell provider.
+> 
+> This is particulary useful on devices where the ethernet interface cannot
+> be configured by the bootloader, for example because it's in an FPGA.
+> 
+> Tested by adapting the cadence macb driver to call this instead of
+> of_get_mac_address().
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> ---
+> v2: Use of_nvmem_cell_get to avoid needing the assiciated device
+>     Use void* instead of char*
+>     Add devicetree binding doc
 
-Can you find a way not to do a divide in every function call?
+Like Andrew, I think you should add a new interface for getting the MAC
+address from nvmem.
 
--- Steve
+And drivers can call both of them if they want OF device tree and
+NVMEM probing for MAC addresses.
 
-> +		rec->avg = avg;
-> +
-> +		delta2 = calltime - rec->avg;
-> +
-> +		rec->stddev += delta1 * delta2;
->  	}
->  
->   out:
+Later you can add a consolidated interface, if necessary, which does
+both and also take a reference to the MAC address buffer of the driver
+in order to deal with the resource allocation issues.
+
+Thanks.
