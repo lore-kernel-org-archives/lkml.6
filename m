@@ -1,81 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751890AbeCZNah (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:30:37 -0400
-Received: from mail-qk0-f170.google.com ([209.85.220.170]:44346 "EHLO
-        mail-qk0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751109AbeCZNag (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:30:36 -0400
-X-Google-Smtp-Source: AG47ELu4hAvUXuqP/VXqej3DqhhhrL4tRc/s0amFZyB4NED5Aqg2MpyRHCyK9Htlx+INGpeHIM1EVKvWLl8xrWApFqg=
-MIME-Version: 1.0
-In-Reply-To: <cover.1521399976.git.ren_guo@c-sky.com>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 26 Mar 2018 15:30:34 +0200
-X-Google-Sender-Auth: 7auwH5d5khGqB23Ssh3zXSXCn64
-Message-ID: <CAK8P3a3KwvNpYUXG-CqfF7V0GQ3sv_CoPmajq_+06aqkLiUFXw@mail.gmail.com>
-Subject: Re: [PATCH 00/19] C-SKY(csky) Linux Kernel Port
-To: Guo Ren <ren_guo@c-sky.com>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1752006AbeCZNen (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 09:34:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44049 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751692AbeCZNem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 09:34:42 -0400
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: [PATCH net-next 0/2] net: mvpp2: Remove unnecessary dynamic allocs
+Date: Mon, 26 Mar 2018 15:34:21 +0200
+Message-Id: <20180326133423.14779-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 18, 2018 at 8:51 PM, Guo Ren <ren_guo@c-sky.com> wrote:
-> This patchset adds architecture support to Linux for C-SKY's 32-bit embedded
-> CPU cores and the patches are based on linux-4.16-rc5.
->
-> There are two ABI versions with several CPU cores in this patchset:
->   ABIv1: ck610 (16-bit instruction, 32-bit data path, VIPT Cache ...)
->   ABIv2: ck807 ck810 (16/32-bit variable length instruction, PIPT Cache ...)
->
-> More information: http://en.c-sky.com
->
-> I'm from Hangzhou,China C-SKY Microsystems and responsible for C-SKY Linux
-> port. My development repo is github.com/c-sky/csky-linux and use buildroot
-> as our CI-test enviornment. "LTP, Lmbench, uclibc-ng-test ..." will be tested
-> for every commit. See here for more details:
->   https://gitlab.com/c-sky/buildroot/pipelines
->
-> You can try C-SKY linux in a few steps:
->   $ git clone https://github.com/c-sky/buildroot.git
->   $ cd buildroot
->   $ make qemu_csky_ck807_uclibc_bt_defconfig
->   $ make
-> It will download "linux uclibc-ng gcc binutils qemu busybox" source code and build
-> them into one image. How to run, See:
->   https://github.com/c-sky/buildroot/blob/master/board/qemu/csky/readme.txt
->
-> I've finished uClibc-ng.org upstream and "gcc glibc binutils qemu ..." upstream is
-> on going and the source code is here:
->   https://github.com/c-sky
->
-> It's my first patchset to linux and any feedback is welcome :)
+Some utility functions in mvpp2 make use of dynamic alloc to exchange temporary
+objects representing Parser Entries (which are generic filtering entries in the
+PPv2 controller).
 
-Thanks for your submission. I had started reviewing it over a week
-ago, but never
-completed since I was travelling in the meantime. I've completed my first pass
-now and will wait for a new version before I take a more detailed look.
+These objects are small (44 bytes each), we can use the stack to exchange them.
 
-Overall, it looks nice, but changing the rest of the system call interface will
-take a while, this includes several points I've mentioned already, but
-to clarify,
-every file in arch/csky/include/uapi/asm/ needs to be carefully reviewed to
-contain only the minimum required additions to the asm-generic version.
+Some previous discussion on this topic showed that the mvpp2_prs_hw_read, which
+initializes a struct mvpp2_prs_entry based on one of its fields, can easily lead
+to erroneous code if we don't zero-out the struct beforehand :
 
-Changing the ABI will obviously get in the way of testing, but this should
-be over as soon as the port is merged.
+https://lkml.org/lkml/2018/3/21/739
 
-Another interesting question is the status of your toolchain support. I see your
-github account contains binutils and gcc repositories, but they are not upstream
-yet. Are you working on getting those included in the respective upstream
-projects already?
+To fix this, I propose to rename mvpp2_prs_hw_read into mvpp2_prs_init_from_hw,
+make it zero-out the struct and take the index as a parameter. That's what's
+done in the first patch of the series.
 
-      Arnd
+The second patch is the V3 of
+("net: mvpp2: Don't use dynamic allocs for local variables"), making use of
+mvpp2_prs_init_from_hw and taking previous comments into account.
+
+Maxime Chevallier (2):
+  net: mvpp2: Make mvpp2_prs_hw_read a parser entry init function
+  net: mvpp2: Don't use dynamic allocs for local variables
+
+ drivers/net/ethernet/marvell/mvpp2.c | 320 +++++++++++++++--------------------
+ 1 file changed, 137 insertions(+), 183 deletions(-)
+
+-- 
+2.11.0
