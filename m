@@ -1,70 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751091AbeCZBcc (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 21:32:32 -0400
-Received: from ozlabs.org ([103.22.144.67]:46151 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750832AbeCZBca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 21:32:30 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 26 Mar 2018 12:31:43 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: linux-next: build failure after merge of the pci tree
-Message-ID: <20180326123143.38630ea3@canb.auug.org.au>
+        id S1751174AbeCZBsk (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 21:48:40 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35780 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750977AbeCZBsi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 21:48:38 -0400
+X-Google-Smtp-Source: AIpwx4+cKEOa98v+d1y3jj5UUy/OWP60AyasWurkZ/Rqh62tIft/d77oVDKvqL4wSrvYQvWIo8aCLQ==
+From: Junio C Hamano <gitster@pobox.com>
+To: "brian m. carlson" <sandals@crustytoothpaste.net>
+Cc: =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>,
+        git@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] send-email: supply a --send-delay=1 by default
+References: <20180325182803.30036-1-avarab@gmail.com>
+        <20180325182803.30036-3-avarab@gmail.com>
+        <20180325210132.GE74743@genre.crustytoothpaste.net>
+Date: Sun, 25 Mar 2018 18:48:35 -0700
+In-Reply-To: <20180325210132.GE74743@genre.crustytoothpaste.net> (brian
+        m. carlson's message of "Sun, 25 Mar 2018 21:01:32 +0000")
+Message-ID: <xmqqpo3rehe4.fsf@gitster-ct.c.googlers.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/L79H_nkXR/UMWki4toIs6c9"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/L79H_nkXR/UMWki4toIs6c9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+"brian m. carlson" <sandals@crustytoothpaste.net> writes:
 
-Hi Bjorn,
+> I'm not sure that this is going to have the effect you want it to have.
+> Let me give an example to demonstrate why.
+> ...
+> In short, I don't think this is going to be especially helpful because
+> it won't change the status quo for a lot of senders.  You'd have to
+> insert some significant delay in order to get the effect you desire, and
+> even then things could still be delivered out of order.
 
-After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Thanks for explaining it clearly.
 
-In file included from /home/sfr/next/next/drivers/pci/host/pcie-iproc.c:16:=
-0: =20
-/home/sfr/next/next/include/linux/irqchip/arm-gic-v3.h:560:10: fatal error:=
- asm/arch_gicv3.h: No such file or directory
- #include <asm/arch_gicv3.h>
-          ^~~~~~~~~~~~~~~~~~
-
-Caused by commit
-
-  af3c73473d10 ("PCI: Improve host drivers compile test coverage")
-
-I used the pci tree from next-20180323 for today.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/L79H_nkXR/UMWki4toIs6c9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4TX8ACgkQAVBC80lX
-0Gy5hwgAi/xRcCmWvcTfCwjQARDpRh2xb07XoWph9iUwKiFdBdlzIUjaTDya4cve
-h6R3S9ahj00PdTud8lEQZURhT/2xtyZVhuxbfaQF+EJoBPU5fwp5L8+Bk3wFwzMx
-GnMDnZkq6vwF5Fwcd+h1gs9nr+Ji3V8U9uGVbH8+4r3GaDjrnOSqVjm9+bHxk1Xn
-F6OkW/p8T8BN7MAxryOBYEhNj7tevnzk7TaaaQqpXxnPQiwL2LOlo+nYCdIfVTs7
-rId+uRlliLVLK9XeNUqsQl4jqN/9vYNYKttxJ6SFuWW/XBOTB9/nEJkr+SemKoYV
-OSqjjZ2mwPqZdnstm5uet9benRpp7Q==
-=y6+H
------END PGP SIGNATURE-----
-
---Sig_/L79H_nkXR/UMWki4toIs6c9--
+In the past on this list those who do not get the store-and-forward
+nature of e-mail transport have brought this up a few times, but
+this approach fundamentally do not work, at least for the purpose of
+forcing ordering of messages at the receiving end.
