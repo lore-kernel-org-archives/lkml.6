@@ -1,47 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeCZU25 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 16:28:57 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:42660 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751134AbeCZU2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 16:28:55 -0400
-Date: Mon, 26 Mar 2018 22:28:42 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Murali Karicheri <m-karicheri2@ti.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, ssantosh@kernel.org,
-        malat@debian.org, w-kwok2@ti.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        davem@davemloft.net, netdev@vger.kernel.org
-Subject: Re: [net-next PATCH 3/5] net: netcp: ethss enhancements to support
- 2u cpsw h/w on K2G SoC
-Message-ID: <20180326202842.GB5862@lunn.ch>
-References: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
- <1522095312-23249-4-git-send-email-m-karicheri2@ti.com>
+        id S1751739AbeCZUb5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 16:31:57 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51095 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751109AbeCZUb4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 16:31:56 -0400
+Date: Mon, 26 Mar 2018 22:31:54 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180326203154.GA9334@amd>
+References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
+ <20180322204804.GA26871@amd>
+ <20180322234832.o24ut5ahon46mdu4@earth.universe>
+ <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
+ <20180326141638.GB1450@amd>
+ <20180326155828.ttnduivadob4iqmd@earth.universe>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
 Content-Disposition: inline
-In-Reply-To: <1522095312-23249-4-git-send-email-m-karicheri2@ti.com>
+In-Reply-To: <20180326155828.ttnduivadob4iqmd@earth.universe>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 04:15:10PM -0400, Murali Karicheri wrote:
-> K2G SoC uses 2u cpsw h/w. It uses RGMII instead of SGMII to interface with
-> Phy. This patch enhances the driver to check RGMII status instead of SGMII
-> status for link state determination. Also map all of the vlan priorities
-> to zero as the packet DMA is enabled to receive only flow id 0 which maps
-> to priority zero.
-> 
-> Additionally, When a phy with rgmii interface requires internal delay, the
-> same is set in the phy driver. To support such phy devices, add a phy-mode
-> handling code in the driver using of_get_phy_mode() and pass the obtained
-> phy mode to of_phy_connect()
 
-Hi Murali
+--3V7upXqbjpZ4EhLz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please break this patch up. One patch should do one thing. That makes
-it easy to review. There are too many things going on at once here.
+Hi!
 
-   Andrew
+> On Mon, Mar 26, 2018 at 04:16:38PM +0200, Pavel Machek wrote:
+> > Do you have any ideas what needs to be done for voice calls
+> > support?
+>=20
+> Sure.
+
+:-).
+
+> > I can talk to the modem and start a call.
+>=20
+> Doing an AT query is the easy part :)
+
+Well, yes. Doing it right (ofono, etc) is not that easy.
+
+> > Then something like this (untested!) is certainly needed.
+> > Probably more...
+>=20
+> I intentionally left this part out. The CPCAP codec has two DAIs
+> and not 3+. The code you just added is a hack from Motorola. Their
+> driver is full of hacks and it's obvious its author(s) did not
+> fully understand the ASoC APIs.
+
+Ok.
+
+> My understanding is, that we only need to replace the audio-graph-card
+> driver to something more complex. The VOICE DAI needs to be configured
+> differently based on the use case:
+>=20
+> call:
+> 	* mode=3Di2s
+> 	* freq=3D26000000
+> 	* samprate=3D16000 or samprate=3D8000
+
+Ok, lets ignore bluetooth for now. There is "normal" mode, and then
+there's "call" mode, right? Where's "normal" mode configured?
+
+Could we simply always configure the VOICE DAI in the call mode? Yes,
+it would limit samplerates to 8 or 16k, but .. that's not too
+important limitation for voice codec...?
+
+> "audio-graph-card" is not capable of doing this. I was planning to
+> try "audio-graph-scu-card" in combination with adding codecs for the
+> modem and BT to DT. If that does not work we need a Droid 4 specific
+> soundcard driver.
+>=20
+> Either way "audio-graph-card" is not the correct driver for D4. I
+> added it nevertheless, since it gets audio working for now and there
+> is no risk of DT breakage. Old *.dtb will continue to work with the
+> "audio-graph-card" even after we switch to something else.
+
+Well, you'll still cause regressions when you change the dts, as
+people will have wrong .config for new dts.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--3V7upXqbjpZ4EhLz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq5WLoACgkQMOfwapXb+vLhUgCdH06JqVN5ITPivIsW8Zb/RK53
+QFQAn2jIaSk5wuOSV70BAWIfItf3k3G3
+=tVRF
+-----END PGP SIGNATURE-----
+
+--3V7upXqbjpZ4EhLz--
