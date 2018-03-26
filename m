@@ -1,103 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeCZOpU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:45:20 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47090 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752154AbeCZOpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:45:19 -0400
-Date: Mon, 26 Mar 2018 16:45:07 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Joonas =?utf-8?B?S3lsbcOkbMOk?= <joonas.kylmala@iki.fi>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Preferring cursor plane over overlay plane
-Message-ID: <20180326144507.s5vit2cb7rjm6csk@flea>
-References: <5edad360-d05d-1bb8-c1f2-925138784fef@iki.fi>
- <CAGb2v64j5KHS5164V3naBwjJs0U3CE0nQBPBEvQBjSt=0s=nTQ@mail.gmail.com>
+        id S1752225AbeCZOuA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:50:00 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:12882 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751374AbeCZOt7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:49:59 -0400
+Subject: Re: [PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+To: Yang Shi <yang.shi@linux.alibaba.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc: adobriyan@gmail.com, mhocko@kernel.org, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1521851771-108673-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180324043044.GA22733@bombadil.infradead.org>
+ <aed7f679-a32f-d8d7-eb59-ec05fc49a70e@linux.alibaba.com>
+From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <a766b98b-80b4-5f1b-9588-dd1c5506cbdc@i-love.sakura.ne.jp>
+Date: Mon, 26 Mar 2018 23:49:18 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="blpnstsklbc25qwo"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v64j5KHS5164V3naBwjJs0U3CE0nQBPBEvQBjSt=0s=nTQ@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <aed7f679-a32f-d8d7-eb59-ec05fc49a70e@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018/03/24 9:36, Yang Shi wrote:
+> And, the mmap_sem contention may cause unexpected issue like below:
+> 
+> INFO: task ps:14018 blocked for more than 120 seconds.
+>        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> message.
+>  ps              D    0 14018      1 0x00000004
+>   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>  Call Trace:
+>   [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>   [<ffffffff817159e6>] schedule+0x36/0x80
+>   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>   [<ffffffff81717db0>] down_read+0x20/0x40
+>   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>   [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>   [<ffffffff81242266>] vfs_read+0x96/0x130
+>   [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
 
---blpnstsklbc25qwo
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, but
 
-On Mon, Mar 26, 2018 at 10:22:45PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Mar 26, 2018 at 10:14 PM, Joonas Kylm=E4l=E4 <joonas.kylmala@iki.=
-fi> wrote:
-> > Hi DRM subsystem developers,
-> >
-> > I ran into this patch where overlay plane was switched to cursor plane
-> > because there was no proper cursor plane available on the display
-> > hardware: <https://lkml.org/lkml/2018/3/17/120>. Can we discuss whether
-> > to have a policy of using a normal plane for cursor plane in case a
-> > dedicated HW cursor plane is missing?
-> >
-> > Daniel Vetter suggests that it might be fine to use normal plane for
-> > cursor plane because how to use the plane would be only "a hint to
-> > userspace" (see the email linked).
-> >
-> > My motivation for having this discussion is that the newer Allwinner
-> > SoCs don't have dedicated HW cursor plane and the sun4i DRM driver
-> > currently uses the extra planes as overlay planes which makes moving the
-> > cursor on Xfce4 DE a terrible experience. To have better cursor moving
-> > experience one overlay plane would need to be sacrificed.
->=20
-> If you look at the development history, we've never supported cursor plan=
-es.
+> 
+> Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
+> for them to mitigate the abuse of mmap_sem.
+> 
+> So, introduce a new rwlock in mm_struct to protect the concurrent access
+> to arg_start|end and env_start|end.
 
-X can use an overlay to put the cursor though.
+does arg_lock really help?
 
-> At the beginning we supported one main plane and one overlay plane. That =
-was
-> it. The Display Engine 1.0 does have support for an extra hardware cursor,
-> but we haven't done the work to support it yet. I don't know about the
-> Display Engine 2.0 though.
+I wonder whether per "struct mm_struct" granularity is needed if arg_lock
+protects only a few atomic reads. A global lock would be sufficient.
 
-An issue with supporting the hardware cursor we have is that as far as
-I understood, the cursor plane in DRM has the assumption that it would
-be an ARGB format. In the first display engine, the format is actually
-an 8-bit palette with 1 bit of alpha iirc.
+Also, even if we succeeded to avoid mmap_sem contention at that location,
+won't we after all get mmap_sem contention messages a bit later, for
+access_remote_vm() holds mmap_sem which would lead to traces like above
+if mmap_sem is already contended?
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---blpnstsklbc25qwo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq5B3IACgkQ0rTAlCFN
-r3SBMA/8DHgdIjUlBzmbc9g0r2iz6DHa6f8cpu46f5jI91r39Nthop6udgpHBq3n
-INTL4I5SUSw1e9MqPKrDSNE68s8NKgcPW+wn88lJyfz4coQ1jan18/WwCmVu25Rf
-eFnE3LHOdDvGEjBjVK46N4uZ91zCmFPwE0+wsFrwUWyWrkxMCk3wQYlzTu6Gy3vU
-wrGL54OpSf9v+sMw68Jk/BBKFCPhtkAdx2qIOPq6tw8Nv7K/MySbnSRJZ3NOLB6d
-THb2c/QvY/Y1X3ChA7mN0cr2Mze229EiIPcaJoOTWRd6HDES07WRobR6gP6y8a+Y
-Znk8NKJGTYETphvSd5ubgqGr+zRhzws/t/Ocx6YeLoFFhNkvMflv0eNKDh+94aOK
-ub6fMfIaJRrDdTWXvaNWQT+n16zYDBtlYuakuVWasQfOr+5fiiU4coDQZ/1NjqGP
-vWi+uHNWdGVQby5gCSY+2NcXeidiT3Yv8EXul9cj7BZ6f2sSCqxa2q8t64Q6eCp0
-ec28tOXrI0vs3NeqeYh5vtuvE6IHk0lAB3+Ydo0jYF81DBl/MBEd+riJ4GSPXDgm
-+xGunS2Y7Mi+6aSjWTz1GpvWdrFte0YtubmDGGKVnlne8hF0QVp86SxSNrZa25bc
-vpLA+MTJ7ZnpLdtp6TgvxtD598VqLxsHA9jyKwJcTfms+Q5XAUQ=
-=za9L
------END PGP SIGNATURE-----
-
---blpnstsklbc25qwo--
+> 
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> ---
+>  fs/proc/base.c           | 8 ++++----
+>  include/linux/mm_types.h | 2 ++
+>  kernel/fork.c            | 1 +
+>  kernel/sys.c             | 6 ++++++
+>  mm/init-mm.c             | 1 +
+>  5 files changed, 14 insertions(+), 4 deletions(-)
