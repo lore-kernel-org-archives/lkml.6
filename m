@@ -1,94 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752128AbeCZIbv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:31:51 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:44840 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752053AbeCZIbs (ORCPT
+        id S1752237AbeCZIb7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:31:59 -0400
+Received: from mailhost.informatik.uni-hamburg.de ([134.100.9.70]:34120 "EHLO
+        mailhost.informatik.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752053AbeCZIbz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:31:48 -0400
-Date: Mon, 26 Mar 2018 10:31:43 +0200
-From: Simon Horman <horms@verge.net.au>
-To: kieran.bingham@ideasonboard.com
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6] ARM: dts: wheat: Fix ADV7513 address usage
-Message-ID: <20180326083143.r6jz6csckd4ljnpu@verge.net.au>
-References: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
- <20180323085140.g3golwdtpezo7fhi@verge.net.au>
- <a771042b-f63a-d00f-73a1-91a7e6089fe4@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a771042b-f63a-d00f-73a1-91a7e6089fe4@ideasonboard.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 26 Mar 2018 04:31:55 -0400
+From: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: [PATCH v6 5/5] crypto: add flag for unstable encoding
+Message-Id: <5B389AE0-162B-4E42-98CA-776F9900A625@informatik.uni-hamburg.de>
+Date: Mon, 26 Mar 2018 10:31:45 +0200
+Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, minchan@kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        ngupta@vflare.org, Philippe Ombredanne <pombredanne@nexb.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        Stephan Mueller <smueller@chronox.de>
+To: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 09:16:13PM +0000, Kieran Bingham wrote:
-> Hi Simon,
-> 
-> On 23/03/18 08:51, Simon Horman wrote:
-> > On Thu, Mar 22, 2018 at 09:30:40PM +0000, Kieran Bingham wrote:
-> >> The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
-> >> bus, however in low power mode the ADV7513 will reset it's slave maps to
-> >> use the hardware defined default addresses.
-> >>
-> >> The ADV7511 driver was adapted to allow the two devices to be registered
-> >> correctly - but it did not take into account the fault whereby the
-> >> devices reset the addresses.
-> >>
-> >> This results in an address conflict between the device using the default
-> >> addresses, and the other device if it is in low-power-mode.
-> >>
-> >> Repair this issue by moving both devices away from the default address
-> >> definitions.
-> > 
-> > Hi Kierean,
-> > 
-> > as this is a fix
-> > a) Does it warrant a fixes tag?
-> >    Fixes: f6eea82a87db ("ARM: dts: wheat: add DU support")
-> > b) Does it warrant being posted as a fix for v4.16;
-> > c) or v4.17?
-> 
-> Tricky one, yes it could but this DTS fix, will only actually 'fix' the issue if
-> the corresponding driver updates to allow secondary addresses to be parsed are
-> also backported.
-> 
-> It should be safe to back port the dts fix without the driver updates, but the
-> addresses specified by this patch will simply be ignored.
+The data-format of zBeWalgo, and some other algorithms is unstable. To
+identify such unstable algorithms this patch adds a new flag to the
+crypto-api.
 
-In that case I think its safe to add the fixes tag and take the DTS patch
-via the renesas tree. Perhaps applying it for v4.18 and allowing automatic
-backporting to take its course is the cleanest option.
+Signed-off-by: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
+---
+ crypto/zbewalgo.c      | 2 +-
+ include/linux/crypto.h | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-> Thus if this is marked with the fixes tag the corresponding patch "drm: adv7511:
-> Add support for i2c_new_secondary_device" should also be marked.
-> 
-> It looks like that patch has yet to be picked up by the DRM subsystem, so how
-> about I bundle both of these two patches together in a repost along with the
-> fixes tag.
-> 
-> In fact, I don't think the ADV7511 dt-bindings update has made any progress
-> either. (dt-bindings: adv7511: Extend bindings to allow specifying slave map
-> addresses). The media tree variants for the adv7604 have already been picked up
-> by Mauro I believe though.
-> 
-> I presume it would be acceptable for this dts patch (or rather all three patches
-> mentioned) to get integrated through the DRM tree ?
-
-Unless there is a strong reason I would prefer the dts patch to go via
-my tree. The reason is to avoid merge conflicts bubbling up to Linus,
-which really is something best avoided.
+diff --git a/crypto/zbewalgo.c b/crypto/zbewalgo.c
+index 9db0d43be..e57b5ced5 100644
+--- a/crypto/zbewalgo.c
++++ b/crypto/zbewalgo.c
+@@ -134,7 +134,7 @@ static int zbewalgo_decompress_crypto_unsafe(struct crypto_tfm *tfm,
+ 
+ static struct crypto_alg crypto_alg_zbewalgo = {
+ 	.cra_name = "zbewalgo",
+-	.cra_flags = CRYPTO_ALG_TYPE_COMPRESS,
++	.cra_flags = CRYPTO_ALG_TYPE_COMPRESS | CRYPTO_ALG_UNSTABLE_ENCODING,
+ 	.cra_ctxsize = sizeof(struct zbewalgo_ctx),
+ 	.cra_module = THIS_MODULE,
+ 	.cra_init = zbewalgo_init,
+diff --git a/include/linux/crypto.h b/include/linux/crypto.h
+index 63420dac0..372893569 100644
+--- a/include/linux/crypto.h
++++ b/include/linux/crypto.h
+@@ -112,6 +112,12 @@
+  */
+ #define CRYPTO_ALG_OPTIONAL_KEY		0x00004000
+ 
++/*
++ * Set if the algorithm is new and it is likely that the encoding may
++ * change in near future
++ */
++#define CRYPTO_ALG_UNSTABLE_ENCODING	0x00008000
++
+ /*
+  * Transform masks and values (for crt_flags).
+  */
+-- 
+2.14.1
