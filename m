@@ -1,80 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752778AbeCZRcE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 13:32:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38754 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752531AbeCZRcD (ORCPT
+        id S1752655AbeCZRfi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 13:35:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35632 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751684AbeCZRfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 13:32:03 -0400
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Matthew Wilcox <mawilcox@microsoft.com>
-Subject: [RFC 0/1] New IDA API
-Date: Mon, 26 Mar 2018 10:30:36 -0700
-Message-Id: <20180326173037.11824-1-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
+        Mon, 26 Mar 2018 13:35:37 -0400
+Date: Mon, 26 Mar 2018 10:35:23 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+        dave.hansen@intel.com, mpe@ellerman.id.au, mingo@kernel.org,
+        akpm@linux-foundation.org, shuah@kernel.org
+Subject: Re: [PATCH 1/9] x86, pkeys: do not special case protection key 0
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20180323180903.33B17168@viggo.jf.intel.com>
+ <20180323180905.B40984E6@viggo.jf.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180323180905.B40984E6@viggo.jf.intel.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18032617-0040-0000-0000-000004271CAD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032617-0041-0000-0000-0000262A31C9
+Message-Id: <20180326173522.GB5743@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-26_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803260180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+On Fri, Mar 23, 2018 at 11:09:05AM -0700, Dave Hansen wrote:
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> mm_pkey_is_allocated() treats pkey 0 as unallocated.  That is
+> inconsistent with the manpages, and also inconsistent with
+> mm->context.pkey_allocation_map.  Stop special casing it and only
+> disallow values that are actually bad (< 0).
+> 
+> The end-user visible effect of this is that you can now use
+> mprotect_pkey() to set pkey=0.
+> 
+> This is a bit nicer than what Ram proposed because it is simpler
+> and removes special-casing for pkey 0.  On the other hand, it does
+> allow applciations to pkey_free() pkey-0, but that's just a silly
+> thing to do, so we are not going to protect against it.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Ram Pai <linuxram@us.ibm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Michael Ellermen <mpe@ellerman.id.au>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>p
+> Cc: Shuah Khan <shuah@kernel.org>
+> ---
+> 
+>  b/arch/x86/include/asm/mmu_context.h |    2 +-
+>  b/arch/x86/include/asm/pkeys.h       |    6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff -puN arch/x86/include/asm/mmu_context.h~x86-pkey-0-default-allocated arch/x86/include/asm/mmu_context.h
+> --- a/arch/x86/include/asm/mmu_context.h~x86-pkey-0-default-allocated	2018-03-21 15:47:48.182198927 -0700
+> +++ b/arch/x86/include/asm/mmu_context.h	2018-03-21 15:47:48.187198927 -0700
+> @@ -192,7 +192,7 @@ static inline int init_new_context(struc
+> 
+>  #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+>  	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
+> -		/* pkey 0 is the default and always allocated */
+> +		/* pkey 0 is the default and allocated implicitly */
+>  		mm->context.pkey_allocation_map = 0x1;
 
-I have a tree locally with no more calls to ida_pre_get(),
-ida_get_new_above(), ida_get_new() or ida_remove(), leaving us with only
-calls to ida_simple_get() and ida_simple_remove().  With no 'complex'
-versions, naming the functions ida_simple_* seems pointless.  I also
-don't think that 'get' and 'remove' are antonyms.
+In the second patch, you introduce DEFAULT_KEY. Maybe you 
+should introduce here and express the above code as
 
-The percpu_ida has the right names, in my opinion, 'alloc' and 'free'.
-We're used to alloc and free from kmalloc/kfree and many other examples.
-Looking through the existing users, ida_simple_get() is a little too
-flexible for some users, so I included helper wrappers which allow
-*most* users to just call ida_alloc(), while those that want a bounded
-end can call ida_alloc_min() or ida_alloc_max().  ida_alloc_range() is
-available for those who want to specify both ends of the range.
+		mm->context.pkey_allocation_map = (0x1 << DEFAULT_KEY);
 
-The most controversial thing is how to specify the upper bound on the
-ID to allocate.  The current ida_simple_get() specifies an exclusive
-bound (ie one higher than the maximum ID to return), while
-ida_alloc_max() / ida_alloc_range() specify an inclusive bound (the
-maximum ID to return).  Both styles of bound specification have their
-adherents within the kernel, and current users seem about equally split
-whether they would prefer 'end' or 'max':
+Incase your default key changes to something else, you are still good.
 
-drivers/block/virtio_blk.c:     err = ida_simple_get(&vd_index_ida, 0, minor_to_index(1 << MINORBITS),
-drivers/dax/super.c:    minor = ida_simple_get(&dax_minor_ida, 0, MINORMASK+1, GFP_KERNEL);
-
-Some have been confused by the current convention:
-
-drivers/fsi/fsi-core.c: master->idx = ida_simple_get(&master_ida, 0, INT_MAX, GFP_KERNEL);
-(pretty sure they'd be OK with returning INT_MAX)
-
-One aspect I particularly like about specifying an inclusive rather than
-exclusive bound is that this is not an uncommon pattern:
-	id = ida_simple_get(&rtc_ida, of_id, of_id + 1, GFP_KERNEL);
-
-and transforming that to
-	id = ida_alloc_range(&rtc_ida, of_id, of_id, GFP_KERNEL);
-makes more sense.  Also, there is a bug in the current implementation
-of ida_simple_get where the above call would not just fail to allocate
-an ID but actually BUG() if of_id happened to be INT_MAX.
-
-I'm still musing whether the API should be expressed in terms of int,
-or whether 64-bit systems might appreciate having the extra space of
-'long'.  The underlying data structure supports 'unsigned long', but an
-API that uses that is much harder to use and in the absence of any users,
-I'm not going to add it.  Converting from int to long would hardly
-change the interface, but it would lead to a situation where you could
-allocate IDs on 64-bit systems that could never be allocated on 32-bit
-systems.
-
-Matthew Wilcox (1):
-  ida: Add new API
-
- include/linux/idr.h | 59 +++++++++++++++++++++++++++++++++++++++++---
- lib/idr.c           | 70 ++++++++++++++++++++++++-----------------------------
- 2 files changed, 87 insertions(+), 42 deletions(-)
+>  		/* -1 means unallocated or invalid */
+>  		mm->context.execute_only_pkey = -1;
+> diff -puN arch/x86/include/asm/pkeys.h~x86-pkey-0-default-allocated arch/x86/include/asm/pkeys.h
+> --- a/arch/x86/include/asm/pkeys.h~x86-pkey-0-default-allocated	2018-03-21 15:47:48.184198927 -0700
+> +++ b/arch/x86/include/asm/pkeys.h	2018-03-21 15:47:48.188198927 -0700
+> @@ -49,10 +49,10 @@ bool mm_pkey_is_allocated(struct mm_stru
+>  {
+>  	/*
+>  	 * "Allocated" pkeys are those that have been returned
+> -	 * from pkey_alloc().  pkey 0 is special, and never
+> -	 * returned from pkey_alloc().
+> +	 * from pkey_alloc() or pkey 0 which is allocated
+> +	 * implicitly when the mm is created.
+>  	 */
+> -	if (pkey <= 0)
+> +	if (pkey < 0)
+>  		return false;
+>  	if (pkey >= arch_max_pkey())
+>  		return false;
+> _
 
 -- 
-2.16.2
+Ram Pai
