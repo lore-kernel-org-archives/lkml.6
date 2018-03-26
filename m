@@ -1,92 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752169AbeCZINR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:13:17 -0400
-Received: from mga03.intel.com ([134.134.136.65]:56660 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752096AbeCZIMw (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:12:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
-   d="scan'208";a="214862090"
-From: Jin Yao <yao.jin@linux.intel.com>
-To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v1 3/3] perf: Support perf -vv
-Date: Tue, 27 Mar 2018 00:07:04 +0800
-Message-Id: <1522080424-12912-4-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
-References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
+        id S1752195AbeCZIN0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:13:26 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:21942 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752096AbeCZINY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 04:13:24 -0400
+Subject: Re: [PATCH v2 3/6] i2c: i2c-stm32f7: Add initial SMBus protocols
+ support
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+ <1521650940-11651-4-git-send-email-pierre-yves.mordret@st.com>
+ <20180324224911.xz3fz2jojcdrovb4@ninjato>
+From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Message-ID: <2fadcd7f-3bfc-997e-a30e-808f6d854f2c@st.com>
+Date: Mon, 26 Mar 2018 10:13:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180324224911.xz3fz2jojcdrovb4@ninjato>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-26_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We keep having bug reports that when users build perf on their own,
-but they don't install some needed libraries such as libelf,
-libbfd/libibery.
 
-The perf can build, but it is missing important functionality.
 
-This patch provides a new option '-vv' which will print the
-compiled-in status of libraries.
+On 03/24/2018 11:49 PM, Wolfram Sang wrote:
+> On Wed, Mar 21, 2018 at 05:48:57PM +0100, Pierre-Yves MORDRET wrote:
+>> This patch adds SMBus support for I2C controller embedded in STM32F7 Soc.
+> 
+>> All SMBus protocols are implemented except SMBus-specific protocols.
+> 
+> What does that mean?
 
-For example:
+It miss SMBus Host Notification and SMBBus Alert. They are almost ready but I'm
+struggling to put them back to operational state after recent changes related to
+SMBust Host Notification. A more "classic" interrupt base solution has been put
+in place but I fail to use implement it in my side.
+Another patch set is going to be delivered for these 2 commands.
 
-$ ./perf -vv
-perf version 4.13.rc5.g9b7a81b
-                 dwarf: [  on ]
-    dwarf_getlocations: [  on ]
-                 glibc: [  on ]
-                  gtk2: [  on ]
-              libaudit: [ off ]
-                libbfd: [  on ]
-                libelf: [  on ]
-               libnuma: [  on ]
-numa_num_possible_cpus: [  on ]
-               libperl: [  on ]
-             libpython: [  on ]
-              libslang: [  on ]
-             libcrypto: [  on ]
-             libunwind: [  on ]
-    libdw-dwarf-unwind: [  on ]
-                  zlib: [  on ]
-                  lzma: [  on ]
-             get_cpuid: [  on ]
-                   bpf: [  on ]
+> 
+>>
+>> Signed-off-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
+>> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+>> ---
+>>   Version history:
+>>     v1:
+>>        * Initial
+>>     v2:
+>>        * fix Kbuild test robot issue (Unneeded semicolon)
+>> ---
+>>
+>> fixup! i2c: i2c-stm32f7: Add initial SMBus protocols support
+>> ---
+>>  drivers/i2c/busses/i2c-stm32f7.c | 377 ++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 368 insertions(+), 9 deletions(-)
+> 
+> That is quite some complexity considering we have I2C_FUNC_SMBUS_EMUL. I
+> don't mind, but you really want that?
+> 
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/perf.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index 1b3fc8e..300c83d 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -64,6 +64,7 @@ static struct cmd_struct commands[] = {
- 	{ "top",	cmd_top,	0 },
- 	{ "annotate",	cmd_annotate,	0 },
- 	{ "version",	cmd_version,	0 },
-+	{ "version2",	cmd_version2,	0 },
- 	{ "script",	cmd_script,	0 },
- 	{ "sched",	cmd_sched,	0 },
- #ifdef HAVE_LIBELF_SUPPORT
-@@ -190,6 +191,11 @@ static int handle_options(const char ***argv, int *argc, int *envchanged)
- 			break;
- 		}
- 
-+		if (!strcmp(cmd, "-vv")) {
-+			(*argv)[0] = "--version2";
-+			break;
-+		}
-+
- 		/*
- 		 * Check remaining flags.
- 		 */
--- 
-2.7.4
+All SMBBus commands are implemented as such. I never try to emulation commands.
+Should we use emulation SMBus commands or real commands... Don't know.
