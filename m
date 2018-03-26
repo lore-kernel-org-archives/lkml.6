@@ -1,50 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751981AbeCZUsk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 16:48:40 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44391 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeCZUsj (ORCPT
+        id S1751903AbeCZU6y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 16:58:54 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:15164 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751076AbeCZU6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 16:48:39 -0400
-X-Google-Smtp-Source: AG47ELsbbiYUQsy+UQqK6Hlq7ARBDJVaCEbt8lf/LV+6gc7sT5T7US1ZLKcM8wGFYTzIt/+ukPpM5g==
-Date: Mon, 26 Mar 2018 13:48:36 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [RFC PATCH] tracepoint: Provide tracepoint_kernel_find_by_name
-Message-ID: <20180326204834.npkr26bdf5aprwnv@ast-mbp.dhcp.thefacebook.com>
-References: <20180326191031.14939-1-mathieu.desnoyers@efficios.com>
-MIME-Version: 1.0
+        Mon, 26 Mar 2018 16:58:53 -0400
+To: peterz@infradead.org
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        bp@suse.de, rientjes@google.com, mhocko@suse.com, tglx@linutronix.de
+Subject: Re: [PATCH] lockdep: Show address of "struct lockdep_map" at print_lock().
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        <20180326160549.GL4043@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180326160549.GL4043@hirez.programming.kicks-ass.net>
+Message-Id: <201803270558.HCA41032.tVFJOFOMOFLHSQ@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Tue, 27 Mar 2018 05:58:49 +0900
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326191031.14939-1-mathieu.desnoyers@efficios.com>
-User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 03:10:31PM -0400, Mathieu Desnoyers wrote:
-> Provide an API allowing eBPF to lookup core kernel tracepoints by name.
+Peter Zijlstra wrote:
+> On Mon, Mar 26, 2018 at 07:18:33PM +0900, Tetsuo Handa wrote:
+> > [  628.863629] 2 locks held by a.out/1165:
+> > [  628.867533]  #0: [ffffa3b438472e48] (&mm->mmap_sem){++++}, at: __do_page_fault+0x16f/0x4d0
+> > [  628.873570]  #1: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
 > 
-> Given that a lookup by name explicitly requires tracepoint definitions
-> to be unique for a given name (no duplicate keys), include a
-> WARN_ON_ONCE() check that only a single match is encountered at runtime.
-> This should always be the case, given that a DEFINE_TRACE emits a
-> __tracepoint_##name symbol, which would cause a link-time error if more
-> than one instance is found. Nevertheless, check this at runtime with
-> WARN_ON_ONCE() to stay on the safe side.
+> Maybe change the string a little, because from the above it's not at all
+> effident that the [] thing is the lock instance.
 > 
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> CC: Steven Rostedt <rostedt@goodmis.org>
-> CC: Alexei Starovoitov <ast@kernel.org>
-> CC: Peter Zijlstra <peterz@infradead.org>
-> CC: Ingo Molnar <mingo@kernel.org>
+> > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> > index 12a2805..7835233 100644
+> > --- a/kernel/locking/lockdep.c
+> > +++ b/kernel/locking/lockdep.c
+> > @@ -556,9 +556,9 @@ static void print_lock(struct held_lock *hlock)
+> >  		return;
+> >  	}
+> >  
+> > +	printk(KERN_CONT "[%px]", hlock->instance);
+> 
+> And yeah, what Michal said, that wants to be %p, we're fine with the
+> thing being hashed, all we want to do is equivalience, which can be done
+> with hashed pinters too.
+> 
+> >  	print_lock_name(lock_classes + class_idx - 1);
+> > -	printk(KERN_CONT ", at: [<%px>] %pS\n",
+> > -		(void *)hlock->acquire_ip, (void *)hlock->acquire_ip);
+> > +	printk(KERN_CONT ", at: %pS\n", (void *)hlock->acquire_ip);
+> >  }
+> 
+> Otherwise no real objection to the patch.
+> 
 
-Mathieu, that's not enough.
-Commit log is also wrong.
-It needs to state that something like this is needed only because
-changing for_each_tracepoint_range() semantics will break lttng.
-I'll post a follow up patch shortly.
+I see. What about plain
+
+-	printk(KERN_CONT "[%px]", hlock->instance);
++	printk(KERN_CONT "%p", hlock->instance);
+
+because we don't need to use [] ?
+
+I'm trying to remove "[<%px>]" for hlock->acquire_ip field in order to
+reduce amount of output, for debug_show_all_locks() prints a lot.
