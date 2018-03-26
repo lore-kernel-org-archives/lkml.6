@@ -1,45 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752638AbeCZWY3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:24:29 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:36768 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752179AbeCZWYY (ORCPT
+        id S1752718AbeCZWa4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:30:56 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:38202 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752540AbeCZWY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:24:24 -0400
-X-Google-Smtp-Source: AIpwx4+CZurK+v7tv2OFFcvnUlWnH+YqFN0V2Kom/tw8PfagXfasCrkARZEHGybxo80bfqM1+Qy9JQ==
-Date: Mon, 26 Mar 2018 17:24:22 -0500
+        Mon, 26 Mar 2018 18:24:26 -0400
+X-Google-Smtp-Source: AG47ELtI5derd1yBBSVMuFwrm3Ky2dpa5J1E4EheHsrja6+4MEGCGK6eu9YXDd0R/AjbphI8+owqXg==
+Date: Mon, 26 Mar 2018 17:24:25 -0500
 From: Rob Herring <robh@kernel.org>
-To: Can Guo <cang@codeaurora.org>
-Cc: subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        vivek.gautam@codeaurora.org, mgautam@codeaurora.org, kishon@ti.com,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: phy-qcom-qmp: Add UFS phy compitable
- string for sdm845
-Message-ID: <20180326061514.3rgc5ucww5gwqboi@rob-hp-laptop>
-References: <20180321053720.12780-1-cang@codeaurora.org>
- <20180321053720.12780-3-cang@codeaurora.org>
+To: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: nvmem: Add binding for RAVE SP EEPROM
+ driver
+Message-ID: <20180326222424.7vr2gmwwezqhiy6m@rob-hp-laptop>
+References: <20180321134710.29757-1-andrew.smirnov@gmail.com>
+ <20180321134710.29757-2-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180321053720.12780-3-cang@codeaurora.org>
+In-Reply-To: <20180321134710.29757-2-andrew.smirnov@gmail.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 01:37:20PM +0800, Can Guo wrote:
-> Update the compatible string for UFS QMP PHY on SDM845.
+On Wed, Mar 21, 2018 at 06:47:09AM -0700, Andrey Smirnov wrote:
+> Add Device Tree bindings for RAVE SP EEPROM driver - an MFD cell of
+> parent RAVE SP driver (documented in
+> Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
 
-typo in the subject.
+I'd prefer to get all the child nodes at once rather than as you 
+upstream the drivers. IOW, please completely describe the device. Then I 
+may have opinions on whether you need these child nodes or not. 
 
-> 
-> Signed-off-by: Can Guo <cang@codeaurora.org>
+
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Aleksander Morgado <aleksander@aleksander.es>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 > ---
->  Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  .../bindings/nvmem/zii,rave-sp-eeprom.txt          | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+> new file mode 100644
+> index 000000000000..556abfa70524
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+> @@ -0,0 +1,23 @@
+> +Zodiac Inflight Innovations RAVE EEPROM Bindings
+> +
+> +RAVE SP EEPROM device is a "MFD cell" device exposing physical EEPROM
+> +attached to RAVE Supervisory Processor. It is expected that its Device
+> +Tree node is specified as a child of the node corresponding to the
+> +parent RAVE SP device (as documented in
+> +Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
+> +
+> +Required properties:
+> +
+> +- compatible: Should be "zii,rave-sp-eeprom"
+> +
+> +Example:
+> +
+> +	rave-sp {
+> +		compatible = "zii,rave-sp-rdu1";
+> +		current-speed = <38400>;
+> +
+> +		dds-eeprom {
+> +			compatible = "zii,rave-sp-eeprom";
+> +			reg = <0xA3 0x2000>;
 
-Otherwise,
+Child nodes? #nvmem-cells? I assume you have some data in this you need. 
+If not, you don't really need a child node here.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Rob
