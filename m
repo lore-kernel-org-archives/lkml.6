@@ -1,103 +1,67 @@
-Return-Path: <kernel-hardening-return-12797-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/txsXawXDzZfiucfLC73nrMtLzBHXvIpzDk0Pd/ZATGJppQVbCDKz5rBcNKAve4smOknss
-ARC-Seal: i=1; a=rsa-sha256; t=1522258052; cv=none;
+Return-Path: <kernel-hardening-return-12730-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtjgTnwlaLjPGeYpoZl+XaJvJ/9DLHd+A4YkEDf4OFowogU81TLrTq1fPg3G4l/0IJVGvHA
+ARC-Seal: i=1; a=rsa-sha256; t=1522055399; cv=none;
         d=google.com; s=arc-20160816;
-        b=wee3tC8FU9KTeMb+iGUBv6XEQxLuWB2h4xW+AM3v16Hmf2IgGRoTG/kwx006ntBGUr
-         tAkGR+BMAzutek8hY/s3eTM03FPptVYJ4kuuA3pAWnxQ+4ouOtPaiTWVyDU0qSv6skX3
-         dUsDLwRjlhf4nnVUyxaEIVvTF5n6r4ZjDcxxL13tacQTL4ugHFBd2kg26pA3/SOFy7Ba
-         sfd6SYWUty/hOSYqofNspxSwpWsFAWIv2ghixWkS3dPnvqcrTD+2jItBbz6dALgYlJ36
-         gc7NC5X5WcK9L+Icd1P0ijhKrp/2ihrcoeRbBjCQ7ImlpogPnw4DmWeAfdXXJtQnmyhV
-         qLyw==
+        b=ldVjHBEdicap694W7IyFXclGE7EXxzoSAWuHfM1izEnBPNW0PUSfNBFXzeRENEBv29
+         GT+h04/3hpYUdiGOEHoVzDcxIxZ3fhlqXowsoCTvY5kR8FvOuEt+RtQfHGrUrYgQLIL/
+         Vv4fiBtkPVVdJQZmCw3Vi5csuMZvb7GxQz5a4C1BgMaoXyD5XWhA3e78OtAEZcl9dQ5S
+         1TsW9YPbDVfNEQTq6gHxgd6Rf72iJ9/UGJp9DT8D/d35hzpzRmXMHcmJjMbYaFvoCpO0
+         wqBUxYS9eKB01z6ypYubwJKGx732buyJpsfmh1Uxfvvm64RdCr6gqEYPV/TsUJImCFJF
+         hmbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
-         :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=jYRj05PWGR0ZEkGV2hPsj+r4dS8rjyY3Lq/IrfYyOx0=;
-        b=IwoZ+iZrGS7vOhB8S9223qYPhHeEYBTNuZ+G4I3mcsPTYugZ12a69Y1tQicCiJ6Xpo
-         dYniIlD3BB3tYKSjrkWUTXkI5asPJCezDg2Da12reaaOn+OsQww6uLCLfu/e/sPVTtp1
-         hRYkBqHq2RbhLSDRVdF0Sckhyu8Wq3IX2ureLdIfiixXiCFExkimuf1vE8x+mvi6ZxiM
-         s772RiqPBFUPnbTFsPdHIOnwfBUFcu8CBIdHTTWZ251ucXbAM2foWcTUdXUiOGLPJWsx
-         w2YySfAdbea39LcC9NBV7Z6g3tKWOKoetCa46FtXF/fH9Spgb5gl/HgObwXKmkUOO0pD
-         DJew==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=C2NlxjT3FPtQzWPnsOx4AnnRs/vhk2VrkYJQvEdB284=;
+        b=kKdtCUAyNp1eGNFJEi7whlNrXsz/z9bxpCh3eSWeWeP9KA+bxQVX31WATzTzkOrm19
+         pmoSnyaAFyBXFxk1WKVCDUVkbm6s+NBXOp6FzHGP6uIuAGEaxCrCSSgk9AB7UiSrvz6E
+         tS5HcIp5+zvbPGv/sa+VkozbjHlF4URr5EEHOnmHzBYM2hTAYA5pvQM1erSI18XBtZYN
+         hB/wh3PR2OurAdWH1doBf0tis36dGRorAT+WQz0d1LeaBIP7iFFnMNetUCuw46pvJerP
+         /zaAPzJ1rjvUS6fLTOUQjfUDqj8XiLe275zXnYnF853TttCHhO+JUuo/SRsErn2HAYur
+         9r/A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12797-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12797-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=hOcwL1O+;
+       spf=pass (google.com: domain of kernel-hardening-return-12730-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12730-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12797-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12797-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=hOcwL1O+;
+       spf=pass (google.com: domain of kernel-hardening-return-12730-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12730-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCH 3/4] gpio: Remove VLA from xra1403 driver
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Kees Cook <keescook@chromium.org>,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- kernel-hardening@lists.openwall.com
-References: <20180310001021.6437-1-labbott@redhat.com>
- <20180310001021.6437-4-labbott@redhat.com>
- <CAMuHMdUfGp_rn_fMWdOfWxPvyE1Y9oemm2piXszFTvBi9sQ5Eg@mail.gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <90ca44b5-52d0-be74-f36c-55d6f4a9bf25@redhat.com>
-Date: Wed, 28 Mar 2018 10:27:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUfGp_rn_fMWdOfWxPvyE1Y9oemm2piXszFTvBi9sQ5Eg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180310001021.6437-4-labbott@redhat.com>
+References: <20180310001021.6437-1-labbott@redhat.com> <20180310001021.6437-4-labbott@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Mar 2018 11:09:16 +0200
+Message-ID: <CACRpkdbahPzpDpruGz3zrGvG-xskjp_YnVAadkqS1iPU=1NAXw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] gpio: Remove VLA from xra1403 driver
+To: Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>, Nandor Han <nandor.han@ge.com>,
+	Semi Malinen <semi.malinen@ge.com>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594507318656304803?=
-X-GMAIL-MSGID: =?utf-8?q?1596203260251850317?=
+X-GMAIL-MSGID: =?utf-8?q?1595990762917397063?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Sat, Mar 10, 2018 at 1:10 AM, Laura Abbott <labbott@redhat.com> wrote:
 
+> The new challenge is to remove VLAs from the kernel
+> (see https://lkml.org/lkml/2018/3/7/621)
+>
+> This patch replaces a VLA with an appropriate call to kmalloc_array.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 
-On 03/28/2018 12:27 AM, Geert Uytterhoeven wrote:
-> Hi Laura,
-> 
-> On Sat, Mar 10, 2018 at 1:10 AM, Laura Abbott <labbott@redhat.com> wrote:
->> The new challenge is to remove VLAs from the kernel
->> (see https://lkml.org/lkml/2018/3/7/621)
->>
->> This patch replaces a VLA with an appropriate call to kmalloc_array.
->>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/drivers/gpio/gpio-xra1403.c
->> +++ b/drivers/gpio/gpio-xra1403.c
->> @@ -126,11 +126,16 @@ static void xra1403_dbg_show(struct seq_file *s, struct gpio_chip *chip)
->>   {
->>          int reg;
->>          struct xra1403 *xra = gpiochip_get_data(chip);
->> -       int value[xra1403_regmap_cfg.max_register];
-> 
-> Apparently xra1403_regmap_cfg.max_register is always 0x15?
-> 
-> What about adding
-> 
->          #define XRA_LAST 15
-> 
-> at the top, and replacing both "XRA_IFR | 0x01" and
-> xra1403_regmap_cfg.max_register by XRA_LAST instead?
-> That would avoid doing yet another memory allocation over and over.
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+Patch applied with Nandor's review tag.
 
-I'm okay with making the change but I think Linus already picked
-up the patch into his gpio trees. Linus, do you want a patch on
-top of your -devel branch or should I just send a new patch?
-
-Thanks,
-Laura
+Yours,
+Linus Walleij
