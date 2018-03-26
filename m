@@ -1,160 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752487AbeCZVXA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 17:23:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47218 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752455AbeCZVW4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:22:56 -0400
-Date: Mon, 26 Mar 2018 14:22:54 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Wei Wang <wei.w.wang@intel.com>
-Cc: virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        pbonzini@redhat.com, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com, huangzhichao@huawei.com
-Subject: Re: [PATCH v29 1/4] mm: support reporting free page blocks
-Message-Id: <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
-In-Reply-To: <1522031994-7246-2-git-send-email-wei.w.wang@intel.com>
-References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>
-        <1522031994-7246-2-git-send-email-wei.w.wang@intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752543AbeCZVXz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 17:23:55 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:38852 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752221AbeCZVWJ (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Mon, 26 Mar 2018 17:22:09 -0400
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: peterz@infradead.org, mingo@kernel.org, akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 5/6] net/ipv4: Update ip_tunnel_metadata_cnt static key to modern api
+Date: Mon, 26 Mar 2018 14:09:28 -0700
+Message-Id: <20180326210929.5244-6-dave@stgolabs.net>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180326210929.5244-1-dave@stgolabs.net>
+References: <20180326210929.5244-1-dave@stgolabs.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Mar 2018 10:39:51 +0800 Wei Wang <wei.w.wang@intel.com> wrote:
+No changes in refcount semantics -- key init is false; replace
 
-> This patch adds support to walk through the free page blocks in the
-> system and report them via a callback function. Some page blocks may
-> leave the free list after zone->lock is released, so it is the caller's
-> responsibility to either detect or prevent the use of such pages.
-> 
-> One use example of this patch is to accelerate live migration by skipping
-> the transfer of free pages reported from the guest. A popular method used
-> by the hypervisor to track which part of memory is written during live
-> migration is to write-protect all the guest memory. So, those pages that
-> are reported as free pages but are written after the report function
-> returns will be captured by the hypervisor, and they will be added to the
-> next round of memory transfer.
-> 
-> ...
->
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4912,6 +4912,102 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
->  	show_swap_cache_info();
->  }
->  
-> +/*
-> + * Walk through a free page list and report the found pfn range via the
-> + * callback.
-> + *
-> + * Return 0 if it completes the reporting. Otherwise, return the non-zero
-> + * value returned from the callback.
-> + */
-> +static int walk_free_page_list(void *opaque,
-> +			       struct zone *zone,
-> +			       int order,
-> +			       enum migratetype mt,
-> +			       int (*report_pfn_range)(void *,
-> +						       unsigned long,
-> +						       unsigned long))
-> +{
-> +	struct page *page;
-> +	struct list_head *list;
-> +	unsigned long pfn, flags;
-> +	int ret = 0;
-> +
-> +	spin_lock_irqsave(&zone->lock, flags);
-> +	list = &zone->free_area[order].free_list[mt];
-> +	list_for_each_entry(page, list, lru) {
-> +		pfn = page_to_pfn(page);
-> +		ret = report_pfn_range(opaque, pfn, 1 << order);
-> +		if (ret)
-> +			break;
-> +	}
-> +	spin_unlock_irqrestore(&zone->lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * walk_free_mem_block - Walk through the free page blocks in the system
-> + * @opaque: the context passed from the caller
-> + * @min_order: the minimum order of free lists to check
-> + * @report_pfn_range: the callback to report the pfn range of the free pages
-> + *
-> + * If the callback returns a non-zero value, stop iterating the list of free
-> + * page blocks. Otherwise, continue to report.
-> + *
-> + * Please note that there are no locking guarantees for the callback and
-> + * that the reported pfn range might be freed or disappear after the
-> + * callback returns so the caller has to be very careful how it is used.
-> + *
-> + * The callback itself must not sleep or perform any operations which would
-> + * require any memory allocations directly (not even GFP_NOWAIT/GFP_ATOMIC)
-> + * or via any lock dependency. It is generally advisable to implement
-> + * the callback as simple as possible and defer any heavy lifting to a
-> + * different context.
-> + *
-> + * There is no guarantee that each free range will be reported only once
-> + * during one walk_free_mem_block invocation.
-> + *
-> + * pfn_to_page on the given range is strongly discouraged and if there is
-> + * an absolute need for that make sure to contact MM people to discuss
-> + * potential problems.
-> + *
-> + * The function itself might sleep so it cannot be called from atomic
-> + * contexts.
+static_key_slow_inc|dec   with   static_branch_inc|dec
+static_key_false          with   static_branch_unlikely
 
-I don't see how walk_free_mem_block() can sleep.
+Added a '_key' suffix to i2c_trace_msg, for better self
+documentation.
 
-> + * In general low orders tend to be very volatile and so it makes more
-> + * sense to query larger ones first for various optimizations which like
-> + * ballooning etc... This will reduce the overhead as well.
-> + *
-> + * Return 0 if it completes the reporting. Otherwise, return the non-zero
-> + * value returned from the callback.
-> + */
-> +int walk_free_mem_block(void *opaque,
-> +			int min_order,
-> +			int (*report_pfn_range)(void *opaque,
-> +			unsigned long pfn,
-> +			unsigned long num))
-> +{
-> +	struct zone *zone;
-> +	int order;
-> +	enum migratetype mt;
-> +	int ret;
-> +
-> +	for_each_populated_zone(zone) {
-> +		for (order = MAX_ORDER - 1; order >= min_order; order--) {
-> +			for (mt = 0; mt < MIGRATE_TYPES; mt++) {
-> +				ret = walk_free_page_list(opaque, zone,
-> +							  order, mt,
-> +							  report_pfn_range);
-> +				if (ret)
-> +					return ret;
-> +			}
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(walk_free_mem_block);
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ include/net/ip_tunnels.h  | 4 ++--
+ net/ipv4/ip_tunnel_core.c | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-This looks like it could take a long time.  Will we end up needing to
-add cond_resched() in there somewhere?
-
->  static void zoneref_set_zone(struct zone *zone, struct zoneref *zoneref)
->  {
->  	zoneref->zone = zone;
-> -- 
-> 2.7.4
+diff --git a/include/net/ip_tunnels.h b/include/net/ip_tunnels.h
+index 540a4b4417bf..fc494b48a64a 100644
+--- a/include/net/ip_tunnels.h
++++ b/include/net/ip_tunnels.h
+@@ -466,12 +466,12 @@ static inline struct ip_tunnel_info *lwt_tun_info(struct lwtunnel_state *lwtstat
+ 	return (struct ip_tunnel_info *)lwtstate->data;
+ }
+ 
+-extern struct static_key ip_tunnel_metadata_cnt;
++DECLARE_STATIC_KEY_FALSE(ip_tunnel_metadata_cnt);
+ 
+ /* Returns > 0 if metadata should be collected */
+ static inline int ip_tunnel_collect_metadata(void)
+ {
+-	return static_key_false(&ip_tunnel_metadata_cnt);
++	return static_branch_unlikely(&ip_tunnel_metadata_cnt);
+ }
+ 
+ void __init ip_tunnel_core_init(void);
+diff --git a/net/ipv4/ip_tunnel_core.c b/net/ipv4/ip_tunnel_core.c
+index 2f39479be92f..dde671e97829 100644
+--- a/net/ipv4/ip_tunnel_core.c
++++ b/net/ipv4/ip_tunnel_core.c
+@@ -423,17 +423,17 @@ void __init ip_tunnel_core_init(void)
+ 	lwtunnel_encap_add_ops(&ip6_tun_lwt_ops, LWTUNNEL_ENCAP_IP6);
+ }
+ 
+-struct static_key ip_tunnel_metadata_cnt = STATIC_KEY_INIT_FALSE;
++DEFINE_STATIC_KEY_FALSE(ip_tunnel_metadata_cnt);
+ EXPORT_SYMBOL(ip_tunnel_metadata_cnt);
+ 
+ void ip_tunnel_need_metadata(void)
+ {
+-	static_key_slow_inc(&ip_tunnel_metadata_cnt);
++	static_branch_inc(&ip_tunnel_metadata_cnt);
+ }
+ EXPORT_SYMBOL_GPL(ip_tunnel_need_metadata);
+ 
+ void ip_tunnel_unneed_metadata(void)
+ {
+-	static_key_slow_dec(&ip_tunnel_metadata_cnt);
++	static_branch_dec(&ip_tunnel_metadata_cnt);
+ }
+ EXPORT_SYMBOL_GPL(ip_tunnel_unneed_metadata);
+-- 
+2.13.6
