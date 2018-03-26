@@ -1,45 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752703AbeCZWcH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:32:07 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:40956 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752129AbeCZWWu (ORCPT
+        id S1752171AbeCZWgU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:36:20 -0400
+Received: from mail-pf0-f177.google.com ([209.85.192.177]:38583 "EHLO
+        mail-pf0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751160AbeCZWgT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:22:50 -0400
-X-Google-Smtp-Source: AIpwx49PRrU+HJvW5qihGEO7U5cD+QiI8Uo6y7CodQG47ohx6Wx1ukQnoYeldqrr/RXhYV3UUwAbSA==
-Date: Mon, 26 Mar 2018 17:22:48 -0500
-From: Rob Herring <robh@kernel.org>
-To: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
-        ulf.hansson@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] dt-bindings: opp: Introduce qcom-opp bindings
-Message-ID: <20180326222248.c6g2q2tmueyqkq2r@rob-hp-laptop>
-References: <20180316040824.21472-1-rnayak@codeaurora.org>
- <20180316040824.21472-4-rnayak@codeaurora.org>
+        Mon, 26 Mar 2018 18:36:19 -0400
+X-Google-Smtp-Source: AG47ELtjUz0O36qSVjQM7P761dvX1E8L74K/k9UreaSOiY1EqCXKR9mcpQ2V8roOPuOMNjinFg4NRQ==
+Date: Mon, 26 Mar 2018 15:36:16 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Joe Perches <joe@perches.com>
+cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Hugh Dickins <hughd@google.com>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Seth Jennings <sjenning@redhat.com>, Dan Streetman <ddstreet@ieee.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: Use octal not symbolic permissions
+In-Reply-To: <2e032ef111eebcd4c5952bae86763b541d373469.1522102887.git.joe@perches.com>
+Message-ID: <alpine.DEB.2.20.1803261535460.93873@chino.kir.corp.google.com>
+References: <2e032ef111eebcd4c5952bae86763b541d373469.1522102887.git.joe@perches.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180316040824.21472-4-rnayak@codeaurora.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 09:38:20AM +0530, Rajendra Nayak wrote:
-> On Qualcomm platforms, an OPP node needs to describe an
-> additional level/corner value that is then communicated to
-> a remote microprocessor by the CPU, which then takes some
-> actions (like adjusting voltage values across various rails)
-> based on the value passed.
-> 
-> Describe these bindings in the qcom-opp bindings document.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/opp/qcom-opp.txt | 25 ++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/opp/qcom-opp.txt
+On Mon, 26 Mar 2018, Joe Perches wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> mm/*.c files use symbolic and octal styles for permissions.
+> 
+> Using octal and not symbolic permissions is preferred by many as more
+> readable.
+> 
+> https://lkml.org/lkml/2016/8/2/1945
+> 
+> Prefer the direct use of octal for permissions.
+> 
+> Done using
+> $ scripts/checkpatch.pl -f --types=SYMBOLIC_PERMS --fix-inplace mm/*.c
+> and some typing.
+> 
+> Before:	 $ git grep -P -w "0[0-7]{3,3}" mm | wc -l
+> 44
+> After:	 $ git grep -P -w "0[0-7]{3,3}" mm | wc -l
+> 86
+> 
+> Miscellanea:
+> 
+> o Whitespace neatening around these conversions.
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
+
+Acked-by: David Rientjes <rientjes@google.com>
+
+although extending some of these lines to be >80 characters also improves 
+the readability imo.
