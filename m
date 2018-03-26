@@ -1,87 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752113AbeCZIPP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:15:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35624 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750940AbeCZIPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:15:14 -0400
-Date: Mon, 26 Mar 2018 10:15:12 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: jglisse@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        David Rientjes <rientjes@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Evgeny Baskakov <ebaskakov@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>
-Subject: Re: [RFC PATCH 0/3] mmu_notifier contextual information
-Message-ID: <20180326081512.GB5652@dhcp22.suse.cz>
-References: <20180323171748.20359-1-jglisse@redhat.com>
- <e22988c5-2d58-45bb-e2f7-c7ca7bdb9e49@amd.com>
+        id S1751981AbeCZIRk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:17:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37760 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750923AbeCZIRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 04:17:39 -0400
+Subject: Re: [PATCH 2/3] drivers/irqchip: update supports_deactivate static
+ key to modern api
+To: Davidlohr Bueso <dave@stgolabs.net>, peterz@infradead.org,
+        akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>, Davidlohr Bueso <dbueso@suse.de>
+References: <20180325191056.24598-1-dave@stgolabs.net>
+ <20180325191056.24598-3-dave@stgolabs.net>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <671202a1-4080-0104-abd8-4718c53dd61e@arm.com>
+Date: Mon, 26 Mar 2018 09:17:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e22988c5-2d58-45bb-e2f7-c7ca7bdb9e49@amd.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180325191056.24598-3-dave@stgolabs.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23-03-18 19:34:04, Christian König wrote:
-> Am 23.03.2018 um 18:17 schrieb jglisse@redhat.com:
-> > From: Jérôme Glisse <jglisse@redhat.com>
-> > 
-> > This patchset are the improvements to mmu_notifier i wish to discuss
-> > at next LSF/MM. I am sending now to give time to people to look at
-> > them and think about them.
-> > 
-> > git://people.freedesktop.org/~glisse/linux mmu-notifier-rfc
-> > https://cgit.freedesktop.org/~glisse/linux/log/?h=mmu-notifier-rfc
-> > 
-> > First patch just use a struct for invalidate_range_start/end arguments
-> > this make the other 2 patches easier and smaller.
-> > 
-> > The idea is to provide more information to mmu_notifier listener on
-> > the context of each invalidation. When a range is invalidated this
-> > can be for various reasons (munmap, protection change, OOM, ...). If
-> > listener can distinguish between those it can take better action.
-> > 
-> > For instance if device driver allocate structure to track a range of
-> > virtual address prior to this patch it always have to assume that it
-> > has to free those on each mmu_notifieir callback (having to assume it
-> > is a munmap) and reallocate those latter when the device try to do
-> > something with that range again.
-> > 
-> > OOM is also an interesting case, recently a patchset was added to
-> > avoid OOM on a mm if a blocking mmu_notifier listener have been
-> > registered [1]. This can be improve by adding a new OOM event type and
-> > having listener take special path on those. All mmu_notifier i know
-> > can easily have a special path for OOM that do not block (beside
-> > taking a short lived, across driver, spinlock). If mmu_notifier usage
-> > grows (from a point of view of more process using devices that rely on
-> > them) then we should also make sure OOM can do its bidding.
-> 
-> +1 for better handling that.
-> 
-> The fact that the OOM killer now avoids processes which might sleep during
-> their MM destruction gave me a few sleepless night recently.
+Hi Davidlohr,
 
-I have tried to clarify this [1] but could you be more specific about
-the issue you were seeing?
+On 25/03/18 20:10, Davidlohr Bueso wrote:
+> Minor changes in semantics -- key init is true; replace
+> 
+> static_key_slow_dec       with   static_branch_disable
+> static_key_true           with   static_branch_likely
+> 
+> The first is because we never actually do any couterpart incs,
+> thus there is really no reference counting semantics going on.
+> Use the more proper static_branch_disable() construct.
+> 
+> Also added a '_key' suffix to supports_deactivate, for better
+> self documentation.
+> 
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> ---
+>  drivers/irqchip/irq-gic-v3.c | 20 ++++++++++----------
+>  drivers/irqchip/irq-gic.c    | 22 +++++++++++-----------
+>  2 files changed, 21 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 56c8de84a72b..f32b1814278b 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -61,7 +61,7 @@ struct gic_chip_data {
+>  };
+>  
+>  static struct gic_chip_data gic_data __read_mostly;
+> -static struct static_key supports_deactivate = STATIC_KEY_INIT_TRUE;
+> +DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
 
-[1] http://lkml.kernel.org/r/20180326081356.GA5652@dhcp22.suse.cz
+When you combine this...
+
+[...]
+
+> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+> index ac2e62d613d1..9b7630cee56c 100644
+> --- a/drivers/irqchip/irq-gic.c
+> +++ b/drivers/irqchip/irq-gic.c
+> @@ -121,7 +121,7 @@ static DEFINE_RAW_SPINLOCK(cpu_map_lock);
+>  #define NR_GIC_CPU_IF 8
+>  static u8 gic_cpu_map[NR_GIC_CPU_IF] __read_mostly;
+>  
+> -static struct static_key supports_deactivate = STATIC_KEY_INIT_TRUE;
+> +DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
+
+...with that, bad things happen:
+
+drivers/irqchip/irq-gic-v3.o:(.data+0x278): multiple definition of `supports_deactivate_key'
+drivers/irqchip/irq-gic.o:(.data+0x18): first defined here
+Makefile:1032: recipe for target 'vmlinux' failed
+make: *** [vmlinux] Error 1
+
+Thanks,
+
+	M.
 -- 
-Michal Hocko
-SUSE Labs
+Jazz is not dead. It just smells funny...
