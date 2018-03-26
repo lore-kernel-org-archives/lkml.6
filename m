@@ -1,147 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752338AbeCZXK2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 19:10:28 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38432 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751866AbeCZXK0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 19:10:26 -0400
-Date: Tue, 27 Mar 2018 01:10:22 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
- omap4-droid4: add soundcard
-Message-ID: <20180326231022.vilvxwqkniffk775@earth.universe>
-References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
- <20180322204804.GA26871@amd>
- <20180322234832.o24ut5ahon46mdu4@earth.universe>
- <20180323100930.GA21644@amd>
- <20180323103006.alymgb3ywftb4gek@earth.universe>
- <20180326141638.GB1450@amd>
- <20180326155828.ttnduivadob4iqmd@earth.universe>
- <20180326203154.GA9334@amd>
+        id S1752392AbeCZXM2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 19:12:28 -0400
+Received: from ozlabs.org ([103.22.144.67]:49967 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751866AbeCZXM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 19:12:26 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 27 Mar 2018 10:11:25 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>
+Subject: linux-next: manual merge of the powerpc tree with the powerpc-fixes
+ tree
+Message-ID: <20180327101125.145e4dc5@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="i5uadt65azdtfiis"
-Content-Disposition: inline
-In-Reply-To: <20180326203154.GA9334@amd>
-User-Agent: NeoMutt/20180223
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WD67ZlZokXL67XNA7GOI/8M"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---i5uadt65azdtfiis
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/WD67ZlZokXL67XNA7GOI/8M
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi all,
 
-On Mon, Mar 26, 2018 at 10:31:54PM +0200, Pavel Machek wrote:
-> Hi!
->=20
-> > On Mon, Mar 26, 2018 at 04:16:38PM +0200, Pavel Machek wrote:
-> > > Do you have any ideas what needs to be done for voice calls
-> > > support?
-> >=20
-> > Sure.
->=20
-> :-).
->=20
-> > > I can talk to the modem and start a call.
-> >=20
-> > Doing an AT query is the easy part :)
->=20
-> Well, yes. Doing it right (ofono, etc) is not that easy.
+Today's linux-next merge of the powerpc tree got a conflict in:
 
-I agree. That can be worked on independently.
+  arch/powerpc/include/asm/cputable.h
+  arch/powerpc/kernel/dt_cpu_ftrs.c
 
-> > > Then something like this (untested!) is certainly needed.
-> > > Probably more...
-> >=20
-> > I intentionally left this part out. The CPCAP codec has two DAIs
-> > and not 3+. The code you just added is a hack from Motorola. Their
-> > driver is full of hacks and it's obvious its author(s) did not
-> > fully understand the ASoC APIs.
->=20
-> Ok.
->=20
-> > My understanding is, that we only need to replace the audio-graph-card
-> > driver to something more complex. The VOICE DAI needs to be configured
-> > differently based on the use case:
-> >=20
-> > call:
-> > 	* mode=3Di2s
-> > 	* freq=3D26000000
-> > 	* samprate=3D16000 or samprate=3D8000
->=20
-> Ok, lets ignore bluetooth for now. There is "normal" mode, and then
-> there's "call" mode, right? Where's "normal" mode configured?
+between commit:
 
-mcbsp3_port: port {
-	cpu_dai3: endpoint {
-		dai-format =3D "dsp_a";
-		frame-master =3D <&cpcap_audio_codec1>;
-		bitclock-master =3D <&cpcap_audio_codec1>;
-		remote-endpoint =3D <&cpcap_audio_codec1>;
-	};
-};
+  a5d4b5891c2f ("powerpc/mm: Fixup tlbie vs store ordering issue on POWER9")
 
-> Could we simply always configure the VOICE DAI in the call mode? Yes,
-> it would limit samplerates to 8 or 16k, but .. that's not too
-> important limitation for voice codec...?
+from the powerpc-fixes tree and commits:
 
-I think we could configure "normal" mode to use the same settings
-as call mode. But ASoC will disable CPCAP, since there will be no
-active user without ASoC knowing about the modem.
+  9bbf0b576d32 ("powerpc: Free up CPU feature bits on 64-bit machines")
+  b5af4f279323 ("powerpc: Add CPU feature bits for TM bug workarounds on PO=
+WER9 v2.2")
 
-> > "audio-graph-card" is not capable of doing this. I was planning to
-> > try "audio-graph-scu-card" in combination with adding codecs for the
-> > modem and BT to DT. If that does not work we need a Droid 4 specific
-> > soundcard driver.
-> >=20
-> > Either way "audio-graph-card" is not the correct driver for D4. I
-> > added it nevertheless, since it gets audio working for now and there
-> > is no risk of DT breakage. Old *.dtb will continue to work with the
-> > "audio-graph-card" even after we switch to something else.
->=20
-> Well, you'll still cause regressions when you change the dts, as
-> people will have wrong .config for new dts.
+from the powerpc tree.
 
-That's correct, the .config needs to change. I think that's
-ok, because the only alternative is having no audio support
-at all until the soundcard driver is ready. This means, that
-you also need to change .config once its ready (in case you
-want to use it).
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
--- Sebastian
+--=20
+Cheers,
+Stephen Rothwell
 
---i5uadt65azdtfiis
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --cc arch/powerpc/include/asm/cputable.h
+index 2e2bacbdf6ed,ecee84dea7e7..000000000000
+--- a/arch/powerpc/include/asm/cputable.h
++++ b/arch/powerpc/include/asm/cputable.h
+@@@ -174,38 -181,40 +181,41 @@@ static inline void cpu_feature_keys_ini
+  #define LONG_ASM_CONST(x)		0
+  #endif
+ =20
+- #define CPU_FTR_HVMODE			LONG_ASM_CONST(0x0000000100000000)
+- #define CPU_FTR_ARCH_201		LONG_ASM_CONST(0x0000000200000000)
+- #define CPU_FTR_ARCH_206		LONG_ASM_CONST(0x0000000400000000)
+- #define CPU_FTR_ARCH_207S		LONG_ASM_CONST(0x0000000800000000)
+- #define CPU_FTR_ARCH_300		LONG_ASM_CONST(0x0000001000000000)
+- #define CPU_FTR_MMCRA			LONG_ASM_CONST(0x0000002000000000)
+- #define CPU_FTR_CTRL			LONG_ASM_CONST(0x0000004000000000)
+- #define CPU_FTR_SMT			LONG_ASM_CONST(0x0000008000000000)
+- #define CPU_FTR_PAUSE_ZERO		LONG_ASM_CONST(0x0000010000000000)
+- #define CPU_FTR_PURR			LONG_ASM_CONST(0x0000020000000000)
+- #define CPU_FTR_CELL_TB_BUG		LONG_ASM_CONST(0x0000040000000000)
+- #define CPU_FTR_SPURR			LONG_ASM_CONST(0x0000080000000000)
+- #define CPU_FTR_DSCR			LONG_ASM_CONST(0x0000100000000000)
+- #define CPU_FTR_VSX			LONG_ASM_CONST(0x0000200000000000)
+- #define CPU_FTR_SAO			LONG_ASM_CONST(0x0000400000000000)
+- #define CPU_FTR_CP_USE_DCBTZ		LONG_ASM_CONST(0x0000800000000000)
+- #define CPU_FTR_UNALIGNED_LD_STD	LONG_ASM_CONST(0x0001000000000000)
+- #define CPU_FTR_ASYM_SMT		LONG_ASM_CONST(0x0002000000000000)
+- #define CPU_FTR_STCX_CHECKS_ADDRESS	LONG_ASM_CONST(0x0004000000000000)
+- #define CPU_FTR_POPCNTB			LONG_ASM_CONST(0x0008000000000000)
+- #define CPU_FTR_POPCNTD			LONG_ASM_CONST(0x0010000000000000)
+- #define CPU_FTR_PKEY			LONG_ASM_CONST(0x0020000000000000)
+- #define CPU_FTR_VMX_COPY		LONG_ASM_CONST(0x0040000000000000)
+- #define CPU_FTR_TM			LONG_ASM_CONST(0x0080000000000000)
+- #define CPU_FTR_CFAR			LONG_ASM_CONST(0x0100000000000000)
+- #define	CPU_FTR_HAS_PPR			LONG_ASM_CONST(0x0200000000000000)
+- #define CPU_FTR_DAWR			LONG_ASM_CONST(0x0400000000000000)
+- #define CPU_FTR_DABRX			LONG_ASM_CONST(0x0800000000000000)
+- #define CPU_FTR_PMAO_BUG		LONG_ASM_CONST(0x1000000000000000)
+- #define CPU_FTR_P9_TLBIE_BUG		LONG_ASM_CONST(0x2000000000000000)
+- #define CPU_FTR_POWER9_DD1		LONG_ASM_CONST(0x4000000000000000)
+- #define CPU_FTR_POWER9_DD2_1		LONG_ASM_CONST(0x8000000000000000)
++ #define CPU_FTR_REAL_LE			LONG_ASM_CONST(0x0000000000001000)
++ #define CPU_FTR_HVMODE			LONG_ASM_CONST(0x0000000000002000)
++ #define CPU_FTR_ARCH_201		LONG_ASM_CONST(0x0000000000004000)
++ #define CPU_FTR_ARCH_206		LONG_ASM_CONST(0x0000000000008000)
++ #define CPU_FTR_ARCH_207S		LONG_ASM_CONST(0x0000000000010000)
++ #define CPU_FTR_ARCH_300		LONG_ASM_CONST(0x0000000000020000)
++ #define CPU_FTR_MMCRA			LONG_ASM_CONST(0x0000000000040000)
++ #define CPU_FTR_CTRL			LONG_ASM_CONST(0x0000000000080000)
++ #define CPU_FTR_SMT			LONG_ASM_CONST(0x0000000000100000)
++ #define CPU_FTR_PAUSE_ZERO		LONG_ASM_CONST(0x0000000000200000)
++ #define CPU_FTR_PURR			LONG_ASM_CONST(0x0000000000400000)
++ #define CPU_FTR_CELL_TB_BUG		LONG_ASM_CONST(0x0000000000800000)
++ #define CPU_FTR_SPURR			LONG_ASM_CONST(0x0000000001000000)
++ #define CPU_FTR_DSCR			LONG_ASM_CONST(0x0000000002000000)
++ #define CPU_FTR_VSX			LONG_ASM_CONST(0x0000000004000000)
++ #define CPU_FTR_SAO			LONG_ASM_CONST(0x0000000008000000)
++ #define CPU_FTR_CP_USE_DCBTZ		LONG_ASM_CONST(0x0000000010000000)
++ #define CPU_FTR_UNALIGNED_LD_STD	LONG_ASM_CONST(0x0000000020000000)
++ #define CPU_FTR_ASYM_SMT		LONG_ASM_CONST(0x0000000040000000)
++ #define CPU_FTR_STCX_CHECKS_ADDRESS	LONG_ASM_CONST(0x0000000080000000)
++ #define CPU_FTR_POPCNTB			LONG_ASM_CONST(0x0000000100000000)
++ #define CPU_FTR_POPCNTD			LONG_ASM_CONST(0x0000000200000000)
++ #define CPU_FTR_PKEY			LONG_ASM_CONST(0x0000000400000000)
++ #define CPU_FTR_VMX_COPY		LONG_ASM_CONST(0x0000000800000000)
++ #define CPU_FTR_TM			LONG_ASM_CONST(0x0000001000000000)
++ #define CPU_FTR_CFAR			LONG_ASM_CONST(0x0000002000000000)
++ #define	CPU_FTR_HAS_PPR			LONG_ASM_CONST(0x0000004000000000)
++ #define CPU_FTR_DAWR			LONG_ASM_CONST(0x0000008000000000)
++ #define CPU_FTR_DABRX			LONG_ASM_CONST(0x0000010000000000)
++ #define CPU_FTR_PMAO_BUG		LONG_ASM_CONST(0x0000020000000000)
++ #define CPU_FTR_POWER9_DD1		LONG_ASM_CONST(0x0000040000000000)
++ #define CPU_FTR_POWER9_DD2_1		LONG_ASM_CONST(0x0000080000000000)
++ #define CPU_FTR_P9_TM_HV_ASSIST		LONG_ASM_CONST(0x0000100000000000)
++ #define CPU_FTR_P9_TM_XER_SO_BUG	LONG_ASM_CONST(0x0000200000000000)
+++#define CPU_FTR_P9_TLBIE_BUG		LONG_ASM_CONST(0x0000400000000000)
+ =20
+  #ifndef __ASSEMBLY__
+ =20
+diff --cc arch/powerpc/kernel/dt_cpu_ftrs.c
+index 8ca5d5b74618,0a0c601c6ade..000000000000
+--- a/arch/powerpc/kernel/dt_cpu_ftrs.c
++++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
+@@@ -709,9 -710,9 +710,12 @@@ static __init void cpufeatures_cpu_quir
+  		cur_cpu_spec->cpu_features |=3D CPU_FTR_POWER9_DD1;
+  	else if ((version & 0xffffefff) =3D=3D 0x004e0201)
+  		cur_cpu_spec->cpu_features |=3D CPU_FTR_POWER9_DD2_1;
++ 	else if ((version & 0xffffefff) =3D=3D 0x004e0202)
++ 		cur_cpu_spec->cpu_features |=3D CPU_FTR_P9_TM_HV_ASSIST |
++ 			CPU_FTR_P9_TM_XER_SO_BUG;
+ +
+ +	if ((version & 0xffff0000) =3D=3D 0x004e0000)
+ +		cur_cpu_spec->cpu_features |=3D CPU_FTR_P9_TLBIE_BUG;
+  }
+ =20
+  static void __init cpufeatures_setup_finished(void)
+
+--Sig_/WD67ZlZokXL67XNA7GOI/8M
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlq5fdsACgkQ2O7X88g7
-+prhZRAApQkHNTKBiekdTd0mHMdQBdikbMO5XeqxlFQ98eR0aXm0tKf6Akf0ogLh
-pPIp8NOjCJhAG3oSQbK9ouuc12GhEqHZXBwYbHl9GUudpOrR3eBCjwQ/6/KBFu28
-pRye5PXGK1aTWYco2+QPqFYfJAvkXlOYfgf26DvphSGsRwuvn/O48YVljbFRRjWx
-cQv6lFWT68S4Wes+2OO7KEO6a6OiS3SMvK0D6KzQ5VImTaARtN/H8eZ0qTs7KSYn
-7XRmepBhvp1IEjZsfjmo2pvbo/AmA0PrO/QVmXl2PsQSPGt79l/jZnxOj6Hynyl2
-QHcWp2PHevxQVfOnuZCVud4DFwe4VZrADMOCcjcBuHbS0uLIJPL/xOyDOvBi+TIW
-KPtQX0vc3Pi+6xFE3nYRukp7rPh+vs30Z8v4tt5sMDJzJHvInLrQX2Wbxm/1WRc5
-g0k1SREexBPfgn5mulrFH6VY0SWAvG2EvWl9mw9ZwjAS6u1EARHT87CGY7H1kegx
-w0fOkMrTvcHkNwZq4V7ETzsmVCdCgCiyksQLgeI8olK6oc20SQRn5BdjF6ajUVoV
-Yj46zhSoERZsZ5u2bcL25UuDd8t/n/LwKN5O4BD8ECOHA7Dnf+tlS9LkyHhnqL/j
-DN8NWLVgCeFnyvn758PD2E2l6S8IWbxFfX2yEnISTSU0KfXvPO0=
-=PU4x
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5fh0ACgkQAVBC80lX
+0GxWPggAmZPYs85ShmegxV2eibDw7nAqp0d4Itu1A8+iBeFZwKnVHPXFo7rVQaxD
+SOwQrhaF82LF6GZIdBHeDRJsnurIzTMyWMsaMxQmRFhJwpGDLpA2yeL4uWxiA6FQ
+OoFxFsR162ToLjIsKxDu7meu+I2EJ/OjSHGW+uDv62q3fKizwNdtjGn7weoDZ+Nt
+Aop61npnDca8x3lneyhJ1jKatP5q/tzbIEEwxVfd1nHHMmL4+Wxpp3iKQSzc+Zeo
+R55CgZJ9d1wUOXSP9LZLpsqsrNxH6TGDHHelHCK6PK2MiPKu1EHyBk35RfkKQiA1
+RsYVEL8B4FV0HLqXuJu3GHPYuNShmA==
+=GXzT
 -----END PGP SIGNATURE-----
 
---i5uadt65azdtfiis--
+--Sig_/WD67ZlZokXL67XNA7GOI/8M--
