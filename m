@@ -1,135 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752427AbeCZPbD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 11:31:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50432 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752374AbeCZPbB (ORCPT
+        id S1752487AbeCZPbW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 11:31:22 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:47168 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752109AbeCZPbU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 11:31:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E141D603AF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Mon, 26 Mar 2018 09:30:59 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 09/10] drivers: qcom: rpmh: add support for batch RPMH
- request
-Message-ID: <20180326153059.GB22084@codeaurora.org>
-References: <20180302164317.10554-1-ilina@codeaurora.org>
- <20180302164317.10554-10-ilina@codeaurora.org>
- <152054637377.219802.5175262314364284431@swboyd.mtv.corp.google.com>
- <20180308225540.GB3577@codeaurora.org>
- <152121964417.179821.6748540781312701645@swboyd.mtv.corp.google.com>
+        Mon, 26 Mar 2018 11:31:20 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T-8AJAS_1522078265;
+Subject: Re: [PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Matthew Wilcox <willy@infradead.org>
+Cc: adobriyan@gmail.com, mhocko@kernel.org, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1521851771-108673-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180324043044.GA22733@bombadil.infradead.org>
+ <aed7f679-a32f-d8d7-eb59-ec05fc49a70e@linux.alibaba.com>
+ <a766b98b-80b4-5f1b-9588-dd1c5506cbdc@i-love.sakura.ne.jp>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <579be4ee-58d0-1ffd-6b73-0202c7b28f08@linux.alibaba.com>
+Date: Mon, 26 Mar 2018 11:31:03 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <152121964417.179821.6748540781312701645@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a766b98b-80b4-5f1b-9588-dd1c5506cbdc@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16 2018 at 11:00 -0600, Stephen Boyd wrote:
->Quoting Lina Iyer (2018-03-08 14:55:40)
->> On Thu, Mar 08 2018 at 14:59 -0700, Stephen Boyd wrote:
->> >Quoting Lina Iyer (2018-03-02 08:43:16)
->> >> @@ -343,6 +346,146 @@ int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
->> >>  }
->> >>  EXPORT_SYMBOL(rpmh_write);
->> >>
->> >> +static int cache_batch(struct rpmh_client *rc,
->> >> +                     struct rpmh_request **rpm_msg, int count)
->> >> +{
->> >> +       struct rpmh_ctrlr *rpm = rc->ctrlr;
->> >> +       unsigned long flags;
->> >> +       int ret = 0;
->> >> +       int index = 0;
->> >> +       int i;
->> >> +
->> >> +       spin_lock_irqsave(&rpm->lock, flags);
->> >> +       while (rpm->batch_cache[index])
->> >
->> >If batch_cache is full.
->> >And if adjacent memory has bits set....
->> >
->> >This loop can go forever?
->> >
->> >Please add bounds.
->> >
->> How so? The if() below will ensure that it will not exceed bounds.
->
->Right, the if below will make sure we don't run off the end, but unless
->rpm->batch_cache has a sentinel at the end we can't guarantee we won't
->run off the end of the array and into some other portion of memory that
->also has a bit set in a word. And then we may read into some unallocated
->space. Or maybe I missed something.
->
-The rpmh_write_batch checks to make sure the number of requests do not
-exceed the max and would not exceed the value. This is ensured by the
-write_batch request.
-A write_batch follows an invalidate and therefore would ensure that that
-the batch_cache does not overflow, but I can add a simple check, though
-its unnecessary with the general use of this API.
 
->>
->> >> +               index++;
->> >> +       if (index + count >=  2 * RPMH_MAX_REQ_IN_BATCH) {
->> >> +               ret = -ENOMEM;
->> >> +               goto fail;
->> >> +       }
->> >> +
->> >> +       for (i = 0; i < count; i++)
->> >> +               rpm->batch_cache[index + i] = rpm_msg[i];
->> >> +fail:
->> >> +       spin_unlock_irqrestore(&rpm->lock, flags);
->> >> +
->> >> +       return ret;
->> >> +}
->> >> +
->>
->> >> + * @state: Active/sleep set
->> >> + * @cmd: The payload data
->> >> + * @n: The array of count of elements in each batch, 0 terminated.
->> >> + *
->> >> + * Write a request to the mailbox controller without caching. If the request
->> >> + * state is ACTIVE, then the requests are treated as completion request
->> >> + * and sent to the controller immediately. The function waits until all the
->> >> + * commands are complete. If the request was to SLEEP or WAKE_ONLY, then the
->> >> + * request is sent as fire-n-forget and no ack is expected.
->> >> + *
->> >> + * May sleep. Do not call from atomic contexts for ACTIVE_ONLY requests.
->> >> + */
->> >> +int rpmh_write_batch(struct rpmh_client *rc, enum rpmh_state state,
->> >> +                   struct tcs_cmd *cmd, int *n)
->> >
->> >I'm lost why n is a pointer, and cmd is not a double pointer if n stays
->> >as a pointer. Are there clients calling this API with a contiguous chunk
->> >of commands but then they want to break that chunk up into many
->> >requests?
->> >
->> That is correct. Clients want to provide a big buffer that this API will
->> break it up into requests specified in *n.
->
->Is that for bus scaling?
->
-Yes.
 
->> >> +               /* For those unsent requests, spoof tx_done */
->> >
->> >Why? Comments shouldn't say what the code is doing, but explain why
->> >things don't make sense.
->> >
->> Will remove..
+On 3/26/18 10:49 AM, Tetsuo Handa wrote:
+> On 2018/03/24 9:36, Yang Shi wrote:
+>> And, the mmap_sem contention may cause unexpected issue like below:
 >>
+>> INFO: task ps:14018 blocked for more than 120 seconds.
+>>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+>> message.
+>>   ps              D    0 14018      1 0x00000004
+>>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>>   Call Trace:
+>>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>>    [<ffffffff817159e6>] schedule+0x36/0x80
+>>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>>    [<ffffffff81717db0>] down_read+0x20/0x40
+>>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>>    [<ffffffff81242266>] vfs_read+0x96/0x130
+>>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+> Yes, but
 >
->Oh, I was hoping for more details, not less.
-Hmm.. I thought it was fairly obvious that we spoof tx_done so we could
-complete when the wait_count reaches 0. I will add that to the comments.
+>> Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
+>> for them to mitigate the abuse of mmap_sem.
+>>
+>> So, introduce a new rwlock in mm_struct to protect the concurrent access
+>> to arg_start|end and env_start|end.
+> does arg_lock really help?
+>
+> I wonder whether per "struct mm_struct" granularity is needed if arg_lock
+> protects only a few atomic reads. A global lock would be sufficient.
 
-Thanks,
-Lina
+However, a global lock might be hard to know what it is used for, and 
+might be abused again.
+
+And, it may introduce unexpected contention for parallel reading for /proc
+
+>
+> Also, even if we succeeded to avoid mmap_sem contention at that location,
+> won't we after all get mmap_sem contention messages a bit later, for
+> access_remote_vm() holds mmap_sem which would lead to traces like above
+> if mmap_sem is already contended?
+
+Yes, definitely, this patch is aimed to remove the abuse to mmap_sem. 
+The mmap_sem contention will be addressed separately.
+
+Yang
+
+>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+>> Cc: Alexey Dobriyan <adobriyan@gmail.com>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> ---
+>>   fs/proc/base.c           | 8 ++++----
+>>   include/linux/mm_types.h | 2 ++
+>>   kernel/fork.c            | 1 +
+>>   kernel/sys.c             | 6 ++++++
+>>   mm/init-mm.c             | 1 +
+>>   5 files changed, 14 insertions(+), 4 deletions(-)
