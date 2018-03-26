@@ -1,62 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752233AbeCZOZc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:25:32 -0400
-Received: from mail-yb0-f177.google.com ([209.85.213.177]:44282 "EHLO
-        mail-yb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752053AbeCZOZb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:25:31 -0400
-X-Google-Smtp-Source: AG47ELtgOYcTtOIsAxei/D2YP6s8xzTj8FjSzVudAZ+d1axPaTBg973FucmVbMPY6YsGTqxNgiojig==
-Date: Mon, 26 Mar 2018 07:25:27 -0700
-From: Tejun Heo <tj@kernel.org>
-To: yuankuiz@codeaurora.org
-Cc: cgroups@vger.kernel.org, lizefan@huawei.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, pkondeti@codeaurora.org,
-        cgroups-owner@vger.kernel.org
-Subject: Re: [PATCH]cgroup: __cpuset_node_allowed return bool
-Message-ID: <20180326142527.GJ2149215@devbig577.frc2.facebook.com>
-References: <d2f9fe6096235032f445ab88e562560f@codeaurora.org>
- <0fee75e4a1b12f5fca30e04306a95788@codeaurora.org>
- <20180326141212.GI2149215@devbig577.frc2.facebook.com>
- <3540bc7869927f54c409b697c743938a@codeaurora.org>
+        id S1752281AbeCZO0I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:26:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751750AbeCZO0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:26:07 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 114652172B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 26 Mar 2018 11:26:04 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        namhyung@kernel.org, wangnan0@huawei.com
+Subject: Re: [PATCH] perf mmap: Fix accessing unmapped mmap in
+ perf_mmap__read_done()
+Message-ID: <20180326142604.GE18897@kernel.org>
+References: <1522071729-16776-1-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3540bc7869927f54c409b697c743938a@codeaurora.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1522071729-16776-1-git-send-email-kan.liang@linux.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 10:20:43PM +0800, yuankuiz@codeaurora.org wrote:
->  1) return int type variable in bool function:
->  bool enabled()
->  {
->  	int ret = 1;
->  	return ret;
->  }
-...
->  2)
->  bool enabled()
->  {
->  	bool ret = 1;
->  	return ret;
->  }
-...
->  so the #1) style function can generate significant instructions
-> than the #2).
+Em Mon, Mar 26, 2018 at 09:42:09AM -0400, kan.liang@linux.intel.com escreveu:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> There is segmentation fault when running perf trace. For example,
+>   [root@jouet e]# perf trace -e *chdir -o /tmp/bla perf report
+>   --ignore-vmlinux -i ../perf.data
+> 
+> The perf_mmap__consume() could unmap the mmap. It needs to check the
+> refcnt in perf_mmap__read_done().
+> 
+> Fixes: ee023de05f35 ("perf mmap: Introduce perf_mmap__read_done()")
+> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 
-That is a problem for the compiler, not the code.
+Seems insuficient:
 
->  While, this is happened only when "-On" is not used with *-gcc
-> together. Though, it is oftern there, it is best to provide this
-> with decoupling of which option is used for optimization.
+[root@jouet ~]# perf trace -e *chdir -o /tmp/bla perf report --ignore-vmlinux
+perf: Segmentation fault
+Obtained 9 stack frames.
+perf(sighandler_dump_stack+0x3e) [0x4fe31e]
+/lib64/libc.so.6(+0x346df) [0x7fc0c3ced6df]
+perf(perf_mmap__read_init+0x26) [0x4ccd06]
+perf(cmd_trace+0x1bf6) [0x47bb76]
+perf() [0x4a824e]
+perf() [0x4a8550]
+perf(main+0x331) [0x42bef1]
+/lib64/libc.so.6(__libc_start_main+0xe9) [0x7fc0c3cd9f29]
+perf(_start+0x29) [0x42c319]
+Segmentation fault (core dumped)
+[root@jouet ~]#
 
-We don't want to dictate minute coding styles to avoid things which
-are trivially optimized by compilers.
-
-Thanks.
-
--- 
-tejun
+- Arnaldo
