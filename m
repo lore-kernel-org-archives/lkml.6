@@ -1,148 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeCZGln (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 02:41:43 -0400
-Received: from atl4mhob19.registeredsite.com ([209.17.115.112]:44946 "EHLO
-        atl4mhob19.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751938AbeCZGlm (ORCPT
+        id S1752008AbeCZGo4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 02:44:56 -0400
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:58913 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751864AbeCZGox (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 02:41:42 -0400
-X-TCPREMOTEIP: 37.74.225.130
-X-Authenticated-UID: mike@milosoftware.com
-From: Mike Looijmans <mike.looijmans@topic.nl>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        andrew@lunn.ch, f.fainelli@gmail.com, robh+dt@kernel.org,
-        frowand.list@gmail.com, Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v2] of_net: Implement of_get_nvmem_mac_address helper
-Date: Mon, 26 Mar 2018 08:41:29 +0200
-Message-Id: <1522046489-19652-1-git-send-email-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl>
-References: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl> <20180323151101.GB24361@lunn.ch>
+        Mon, 26 Mar 2018 02:44:53 -0400
+Subject: Re: [RFC] new SYSCALL_DEFINE/COMPAT_SYSCALL_DEFINE wrappers
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net>
+ <20180318161056.5377-5-linux@dominikbrodowski.net>
+ <20180318174014.GR30522@ZenIV.linux.org.uk>
+ <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
+ <20180318181848.GU30522@ZenIV.linux.org.uk>
+ <20180319042300.GW30522@ZenIV.linux.org.uk>
+ <20180319092920.tbh2xwkruegshzqe@gmail.com>
+ <20180319232342.GX30522@ZenIV.linux.org.uk>
+ <20180322001532.GA18399@ZenIV.linux.org.uk>
+ <20180326004017.GA2211@ZenIV.linux.org.uk>
+ <20180326034750.GN30522@ZenIV.linux.org.uk>
+ <CA+55aFw8VGnVgaWHVFP-LChMNaoANOwT18jJEWzSCRLFeRGcmA@mail.gmail.com>
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <428751c8-6920-096b-8694-a3f1b8990bdf@physik.fu-berlin.de>
+Date: Mon, 26 Mar 2018 15:44:18 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFw8VGnVgaWHVFP-LChMNaoANOwT18jJEWzSCRLFeRGcmA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: 118.241.248.194
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's common practice to store MAC addresses for network interfaces into
-nvmem devices. However the code to actually do this in the kernel lacks,
-so this patch adds of_get_nvmem_mac_address() for drivers to obtain the
-address from an nvmem cell provider.
+Hi Linus!
 
-This is particulary useful on devices where the ethernet interface cannot
-be configured by the bootloader, for example because it's in an FPGA.
+On 03/26/2018 03:15 PM, Linus Torvalds wrote:
+> Secretly, I was hoping to kill x32, because it's not being used afaik.
+FWIW, we are maintaining an x32 port in Debian and there are some people
+actually using it [1]. There is one build instance running on VMWare that
+I am hosting [2] and around 10800 out of 12900 source packages build fine
+on x32 (12900 being the number for x86_64).
 
-Tested by adapting the cadence macb driver to call this instead of
-of_get_mac_address().
+The port is mostly stable but the fact that it's a 32-bit target with a
+64-bit kernel API often blows up in people's faces because they don't
+expect things like a 64-bit time_t on a 32-bit system.
 
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
-v2: Use of_nvmem_cell_get to avoid needing the assiciated device
-    Use void* instead of char*
-    Add devicetree binding doc
- Documentation/devicetree/bindings/net/ethernet.txt |  2 +
- drivers/of/of_net.c                                | 47 ++++++++++++++++++++++
- include/linux/of_net.h                             |  6 +++
- 3 files changed, 55 insertions(+)
+The port also has some issues with software unaware of the x32 and builds
+fail when they just test for __x86_64__ but not for __ILP32__, but overall
+it's usable and stable and has some performance advantages over x86_64.
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet.txt b/Documentation/devicetree/bindings/net/ethernet.txt
-index 2974e63..cfc376b 100644
---- a/Documentation/devicetree/bindings/net/ethernet.txt
-+++ b/Documentation/devicetree/bindings/net/ethernet.txt
-@@ -10,6 +10,8 @@ Documentation/devicetree/bindings/phy/phy-bindings.txt.
-   the boot program; should be used in cases where the MAC address assigned to
-   the device by the boot program is different from the "local-mac-address"
-   property;
-+- nvmem-cells: phandle, reference to an nvmem node for the MAC address;
-+- nvmem-cell-names: string, should be "mac-address" if nvmem is to be used;
- - max-speed: number, specifies maximum speed in Mbit/s supported by the device;
- - max-frame-size: number, maximum transfer unit (IEEE defined MTU), rather than
-   the maximum frame size (there's contradiction in the Devicetree
-diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
-index d820f3e..8999745 100644
---- a/drivers/of/of_net.c
-+++ b/drivers/of/of_net.c
-@@ -7,6 +7,7 @@
-  */
- #include <linux/etherdevice.h>
- #include <linux/kernel.h>
-+#include <linux/nvmem-consumer.h>
- #include <linux/of_net.h>
- #include <linux/phy.h>
- #include <linux/export.h>
-@@ -80,3 +81,49 @@ const void *of_get_mac_address(struct device_node *np)
- 	return of_get_mac_addr(np, "address");
- }
- EXPORT_SYMBOL(of_get_mac_address);
-+
-+/**
-+ * Search the device tree for a MAC address, by calling of_get_mac_address
-+ * and if that doesn't provide an address, fetch it from an nvmem provider
-+ * using the name 'mac-address'.
-+ * On success, copies the new address is into memory pointed to by addr and
-+ * returns 0. Returns a negative error code otherwise.
-+ * @dev:	Pointer to the device containing the device_node
-+ * @addr:	Pointer to receive the MAC address using ether_addr_copy()
-+ */
-+int of_get_nvmem_mac_address(struct device_node *np, void *addr)
-+{
-+	const void *mac;
-+	struct nvmem_cell *cell;
-+	size_t len;
-+	int ret;
-+
-+	mac = of_get_mac_address(np);
-+	if (mac) {
-+		ether_addr_copy(addr, mac);
-+		return 0;
-+	}
-+
-+	cell = of_nvmem_cell_get(np, "mac-address");
-+	if (IS_ERR(cell))
-+		return PTR_ERR(cell);
-+
-+	mac = nvmem_cell_read(cell, &len);
-+
-+	nvmem_cell_put(cell);
-+
-+	if (IS_ERR(mac))
-+		return PTR_ERR(mac);
-+
-+	if (len < 6 || !is_valid_ether_addr(mac)) {
-+		ret = -EINVAL;
-+	} else {
-+		ether_addr_copy(addr, mac);
-+		ret = 0;
-+	}
-+
-+	kfree(mac);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(of_get_nvmem_mac_address);
-diff --git a/include/linux/of_net.h b/include/linux/of_net.h
-index 9cd72aa..90d81ee 100644
---- a/include/linux/of_net.h
-+++ b/include/linux/of_net.h
-@@ -13,6 +13,7 @@
- struct net_device;
- extern int of_get_phy_mode(struct device_node *np);
- extern const void *of_get_mac_address(struct device_node *np);
-+extern int of_get_nvmem_mac_address(struct device_node *np, void *addr);
- extern struct net_device *of_find_net_device_by_node(struct device_node *np);
- #else
- static inline int of_get_phy_mode(struct device_node *np)
-@@ -25,6 +26,11 @@ static inline const void *of_get_mac_address(struct device_node *np)
- 	return NULL;
- }
- 
-+static inline int of_get_nvmem_mac_address(struct device_node *np, void *addr)
-+{
-+	return -ENODEV;
-+}
-+
- static inline struct net_device *of_find_net_device_by_node(struct device_node *np)
- {
- 	return NULL;
+Adrian
+
+> [1] http://debian-x32.org/
+> [2] https://buildd.debian.org/status/architecture.php?a=x32&suite=sid
+
 -- 
-1.9.1
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
