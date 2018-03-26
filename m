@@ -1,80 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752213AbeCZWAR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:00:17 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40543 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751739AbeCZWAQ (ORCPT
+        id S1752288AbeCZWBA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:01:00 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:44893 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752035AbeCZWA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:00:16 -0400
-X-Google-Smtp-Source: AG47ELvO6DylWzfeMB/deE/MeGdeQu6gU8SNcJQ7kljVzqs2nmoBqsHd7Q4LrNTw6rcV7SlUmpEapg==
-Subject: Re: [PATCH] aspeed: watchdog: Add status function
-To: Eddie James <eajames@linux.vnet.ibm.com>,
-        linux-watchdog@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, wim@linux-watchdog.org, joel@jms.id.au,
-        openbmc@lists.ozlabs.org
-References: <1522099028-20347-1-git-send-email-eajames@linux.vnet.ibm.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <eeaa2de8-937d-4371-1b32-931b3221f6ce@roeck-us.net>
-Date: Mon, 26 Mar 2018 15:00:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1522099028-20347-1-git-send-email-eajames@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 26 Mar 2018 18:00:59 -0400
+To: gorcunov@gmail.com
+Cc: willy@infradead.org, yang.shi@linux.alibaba.com, adobriyan@gmail.com,
+        mhocko@kernel.org, mguzik@redhat.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and env_start|end in mm_struct
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
+        <20180326183725.GB27373@bombadil.infradead.org>
+        <20180326192132.GE2236@uranus>
+        <0bfa8943-a2fe-b0ab-99a2-347094a2bcec@i-love.sakura.ne.jp>
+        <20180326212944.GF2236@uranus>
+In-Reply-To: <20180326212944.GF2236@uranus>
+Message-Id: <201803270700.IJB35465.HJQFSFMVLFOtOO@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Tue, 27 Mar 2018 07:00:56 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/26/2018 02:17 PM, Eddie James wrote:
-> Populate the status watchdog operation to return the "timeout status"
-> register of the ASPEED watchdog.
+Cyrill Gorcunov wrote:
+> On Tue, Mar 27, 2018 at 06:10:09AM +0900, Tetsuo Handa wrote:
+> > On 2018/03/27 4:21, Cyrill Gorcunov wrote:
+> > > That said I think using read-lock here would be a bug.
+> > 
+> > If I understand correctly, the caller can't set both fields atomically, for
+> > prctl() does not receive both fields at one call.
+> > 
+> >   prctl(PR_SET_MM, PR_SET_MM_ARG_START xor PR_SET_MM_ARG_END xor PR_SET_MM_ENV_START xor PR_SET_MM_ENV_END, new value, 0, 0);
+> > 
 > 
-> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
-> ---
->   drivers/watchdog/aspeed_wdt.c | 9 +++++++++
->   1 file changed, 9 insertions(+)
+> True, but the key moment is that two/three/four system calls can
+> run simultaneously. And while previously they are ordered by "write",
+> with read lock they are completely unordered and this is really
+> worries me.
+
+Yes, we need exclusive lock when updating these fields.
+
+>             To be fair I would prefer to drop this old per-field
+> interface completely. This per-field interface was rather an ugly
+> solution from my side.
+
+But this is userspace visible API and thus we cannot change.
+
 > 
-> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
-> index a5b8eb2..d6dd5c9 100644
-> --- a/drivers/watchdog/aspeed_wdt.c
-> +++ b/drivers/watchdog/aspeed_wdt.c
-> @@ -55,6 +55,7 @@ struct aspeed_wdt_config {
->   #define   WDT_CTRL_WDT_INTR		BIT(2)
->   #define   WDT_CTRL_RESET_SYSTEM		BIT(1)
->   #define   WDT_CTRL_ENABLE		BIT(0)
-> +#define WDT_TIMEOUT_STATUS	0x10
->   
->   /*
->    * WDT_RESET_WIDTH controls the characteristics of the external pulse (if
-> @@ -138,6 +139,13 @@ static int aspeed_wdt_ping(struct watchdog_device *wdd)
->   	return 0;
->   }
->   
-> +static unsigned int aspeed_wdt_status(struct watchdog_device *wdd)
-> +{
-> +	struct aspeed_wdt *wdt = to_aspeed_wdt(wdd);
-> +
-> +	return readl(wdt->base + WDT_TIMEOUT_STATUS);
-> +}
-
-Does the register report WDIOF_* status flags/bits as defined in the API ?
-This seems more than unlikely.
-
-Guenter
-
-> +
->   static int aspeed_wdt_set_timeout(struct watchdog_device *wdd,
->   				  unsigned int timeout)
->   {
-> @@ -171,6 +179,7 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
->   	.start		= aspeed_wdt_start,
->   	.stop		= aspeed_wdt_stop,
->   	.ping		= aspeed_wdt_ping,
-> +	.status		= aspeed_wdt_status,
->   	.set_timeout	= aspeed_wdt_set_timeout,
->   	.restart	= aspeed_wdt_restart,
->   	.owner		= THIS_MODULE,
+> > Then, I wonder whether reading arg_start|end and env_start|end atomically makes
+> > sense. Just retry reading if arg_start > env_end or env_start > env_end is fine?
 > 
+> Tetsuo, let me re-read this code tomorrow, maybe I miss something obvious.
+> 
+
+You are not missing my point. What I thought is
+
++retry:
+-	down_read(&mm->mmap_sem);
+ 	arg_start = mm->arg_start;
+ 	arg_end = mm->arg_end;
+ 	env_start = mm->env_start;
+ 	env_end = mm->env_end;
+-	up_read(&mm->mmap_sem);
+ 
+-	BUG_ON(arg_start > arg_end);
+-	BUG_ON(env_start > env_end);
++	if (unlikely(arg_start > arg_end || env_start > env_end)) {
++		cond_resched();
++		goto retry;
++	}
+
+for reading these fields.
+
+By the way, /proc/pid/ readers are serving as a canary who tells something
+mm_mmap related problem is happening. On the other hand, it is sad that
+such canary cannot be terminated by signal due to use of unkillable waits.
+I wish we can use killable waits.
