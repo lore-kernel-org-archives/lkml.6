@@ -1,92 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751134AbeCZJLZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:11:25 -0400
-Received: from mga11.intel.com ([192.55.52.93]:49796 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750864AbeCZJLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:11:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
-   d="scan'208";a="186022827"
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 0/3] perf/core: expose thread context switch out event type
- to user space
-Message-ID: <0b5dcf43-cfd4-b64e-3d0d-6aa743ff4d4a@linux.intel.com>
-Date: Mon, 26 Mar 2018 12:10:52 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751335AbeCZJMG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:12:06 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45078 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751013AbeCZJMF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 05:12:05 -0400
+Date: Mon, 26 Mar 2018 11:11:51 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+cc: Anshuman Gupta <anshuman.gupta@intel.com>, glx@linutronix.de,
+        x86@kernel.org, mingo@redhat.com, hpa@zytor.com, rjw@rjwysocki.net,
+        andriy.shevchenko@linux.intel.com, alan@linux.intel.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] x86: i8237: Register based on FADT legacy boot flag
+In-Reply-To: <20180326054833.GA25173@raj-desk2.iind.intel.com>
+Message-ID: <alpine.DEB.2.21.1803261110430.1585@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1803191152450.2010@nanos.tec.linutronix.de> <1521714118-31282-1-git-send-email-anshuman.gupta@intel.com> <alpine.DEB.2.21.1803251348190.1481@nanos.tec.linutronix.de> <20180326054833.GA25173@raj-desk2.iind.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 26 Mar 2018, Rajneesh Bhardwaj wrote:
 
-Implementation of exposing context-switch-out type event as a part 
-of PERF_RECORD_SWITCH[_CPU_WIDE] record.
+> On Sun, Mar 25, 2018 at 01:50:40PM +0200, Thomas Gleixner wrote:
+> > On Thu, 22 Mar 2018, Anshuman Gupta wrote:
+> > 
+> > > From: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+> > > 
+> > > >From Skylake onwards, the platform controller hub (Sunrisepoint PCH) does
+> > > not support legacy DMA operations to IO ports 81h-83h, 87h, 89h-8Bh, 8Fh.
+> > > Currently this driver registers as syscore ops and its resume function is
+> > > called on every resume from S3. On Skylake and Kabylake, this causes a
+> > > resume delay of around 100ms due to port IO operations, which is a problem.
+> > > 
+> > > This change allows to load the driver only when the platform bios
+> > > explicitly supports such devices or has a cut-off date earlier than 2017.
+> > 
+> > Please explain WHY 2017 is the cut-off date. I still have no clue how that
+> > is decided aside of being a random number.
+> 
+> Hello Thomas,
+> 
+> We tested on few Intel platforms such as Skylake, Kabylake, Geminilake etc
+> and realized that the BIOS always sets the FADT flag to be true though the
+> device may not be physically present on the SoC. This is a BIOS bug. To keep
+> the impact minimum, we decided to add a cut-off date since we are not aware
+> of any BIOS (other than the coreboot link provided in the commit msg) that
+> properly sets this field. SoCs released after Skylake will not have this DMA
+> device on the PCH. So, because of these two reasons, we decided to add a
+> cut-off date as 2017.
+> 
+> Please let us know if you feel strongly about it and we can change it or
+> remove it if you feel so.
 
-Introduced types of events assumed to be:
+I don't feel strongly about the cut off itself, but I want a reasonable
+explanation in the changelog or code comment because half a year from now
+nobody remembers ....
 
-a) preempt: when task->state == TASK_RUNNING, encoding is implemented using
-   new PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit
-   event_header->misc &= 
-	PERF_RECORD_MISC_SWITCH_OUT|PERF_RECORD_MISC_SWITCH_OUT_PREEMPT
+Thanks,
 
-b) !preempt: encoding is implemented the only PERF_RECORD_MISC_SWITCH_OUT bit
-   event_header->misc &= PERF_RECORD_MISC_SWITCH_OUT
-
-Perf tool report and script commands output has been extended to decode 
-new PREEMPT bit and the updated output looks like in the examples below.
-
-The documentation has been updated to mention PREEMPT switch out events 
-and its decoding symbols in perf script output.
-
-The changes have been manually tested on Fedora 27 with the patched kernel:
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-
-tools/perf/perf report -D -i perf.data | grep _SWITCH
-
-0 768361415226 0x27f076 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     8/8    
-4 768362216813 0x28f45e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-4 768362217824 0x28f486 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
-0 768362414027 0x27f0ce [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:     8/8    
-0 768362414367 0x27f0f6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-
-perf script --show-switch-events -F +misc -I -i perf.data:
-
-          hdparm  4073 [004] U       762.198265:     380194 cycles:ppp:      7faf727f5a23 strchr (/usr/lib64/ld-2.26.so)
-          hdparm  4073 [004] K       762.198366:     441572 cycles:ppp:  ffffffffb9218435 alloc_set_pte (/lib/modules/4.16.0-rc6+/build/vmlinux)
-          hdparm  4073 [004] S       762.198391: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-         swapper     0 [004]         762.198392: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
-         swapper     0 [004] Sp      762.198477: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  4073/4073 
-          hdparm  4073 [004]         762.198478: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-         swapper     0 [007] K       762.198514:    2303073 cycles:ppp:  ffffffffb98b0c66 intel_idle (/lib/modules/4.16.0-rc6+/build/vmlinux)
-         swapper     0 [007] Sp      762.198561: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  1134/1134 
-  kworker/u16:18  1134 [007]         762.198562: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-  kworker/u16:18  1134 [007] S       762.198567: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-
----
- Alexey Budankov (3):
-	perf/core: store context switch out type into Perf trace
-	perf report: extend raw dump (-D) out with switch out event type
-	perf script: extend misc field decoding with switch out event type
-
- include/uapi/linux/perf_event.h          |  4 ++++
- kernel/events/core.c                     |  4 +++-
- tools/include/uapi/linux/perf_event.h    |  4 ++++
- tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
- tools/perf/builtin-script.c              |  5 ++++-
- tools/perf/util/event.c                  |  4 +++-
- 6 files changed, 27 insertions(+), 11 deletions(-)
+	tglx
