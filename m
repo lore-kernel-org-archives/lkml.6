@@ -1,122 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752040AbeCZNGg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:06:36 -0400
-Received: from mga01.intel.com ([192.55.52.88]:57487 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751141AbeCZNGf (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:06:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
-   d="scan'208";a="214731220"
-Subject: Re: [PATCH v1 0/3] Support perf -vv
-To: Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, kan.liang@intel.com, yao.jin@intel.com
-References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
- <20180326090031.GN13724@tassilo.jf.intel.com> <20180326090704.GH6207@krava>
-From: "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <03729f52-2112-d9dc-141e-5ac927fadb7c@linux.intel.com>
-Date: Mon, 26 Mar 2018 21:06:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751380AbeCZNQg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 09:16:36 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39796 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750955AbeCZNQd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 09:16:33 -0400
+X-Google-Smtp-Source: AG47ELvuhVQTw4P2/GgFSSl3bxoD51aKF8y3AH946gxbM96zrdEA32ddlhC5wm7KcADXEg6y/rN53glVYrFLGiUu4vs=
 MIME-Version: 1.0
-In-Reply-To: <20180326090704.GH6207@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <8a9c9b588cdfdf8b25ca9d449bf5c862d329c1d8.1521399976.git.ren_guo@c-sky.com>
+References: <cover.1521399976.git.ren_guo@c-sky.com> <8a9c9b588cdfdf8b25ca9d449bf5c862d329c1d8.1521399976.git.ren_guo@c-sky.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 26 Mar 2018 15:16:31 +0200
+X-Google-Sender-Auth: W5HQGYOEZV62gd587MHNpaQKiD0
+Message-ID: <CAK8P3a3L-zO3K5qcmBPChhSqh+E6WtNRFV1cJRbksGZ74uaEAQ@mail.gmail.com>
+Subject: Re: [PATCH 17/19] csky: defconfig
+To: Guo Ren <ren_guo@c-sky.com>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Mar 18, 2018 at 8:51 PM, Guo Ren <ren_guo@c-sky.com> wrote:
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  arch/csky/configs/gx66xx_defconfig     | 549 +++++++++++++++++++++++++++++++++
+>  arch/csky/configs/qemu_ck807_defconfig | 541 ++++++++++++++++++++++++++++++++
+>  2 files changed, 1090 insertions(+)
+>  create mode 100644 arch/csky/configs/gx66xx_defconfig
+>  create mode 100644 arch/csky/configs/qemu_ck807_defconfig
 
+These look a lot longer than they should be, they contain many symbols
+that I suspenc
+are not needed or useful for you.
 
-On 3/26/2018 5:07 PM, Jiri Olsa wrote:
-> On Mon, Mar 26, 2018 at 02:00:31AM -0700, Andi Kleen wrote:
->> On Tue, Mar 27, 2018 at 12:07:01AM +0800, Jin Yao wrote:
->>> We keep having bug reports that when users build perf on their own,
->>> but they don't install some needed libraries such as libelf,
->>> libbfd/libibery.
->>>
->>> The perf can build, but it is missing important functionality. And
->>> users may complain that perf has issue or bug.
->>>
->>> This patch-set support 'perf -vv' which will print the compiled-in
->>> status of libraries. Once users think perf missing some functionality,
->>> it should be very easy for them to check the libraries status.
->>
->> I don't think this solves the problem. How should the user know
->> that they need to run perf -vv. Also normal users don't know
->> that libelf is needed for symbols for example.
->>
->> We need a warning that is visible together with the symbols
->> and that clearly describes the problem.
-> 
-> IIRC we decided to go *with* the message in the perf report
-> or other affected command that would suggest to run 'perf -vv'
-> for more details
-> 
-> jirka
-> 
+> diff --git a/arch/csky/configs/gx66xx_defconfig b/arch/csky/configs/gx66xx_defconfig
+> new file mode 100644
+> index 0000000..7f2a987
+> --- /dev/null
+> +++ b/arch/csky/configs/gx66xx_defconfig
+> @@ -0,0 +1,549 @@
+> +# CONFIG_LOCALVERSION_AUTO is not set
+> +CONFIG_DEFAULT_HOSTNAME="github.com/c-sky"
 
-Hi Andi,
+This is not a well-formed hostname
 
-For how the users know they should run 'perf -vv', as the discussion 
-with Jiri and Arnaldo, the message will be displayed if necessary when 
-users perform perf report or other perf commands. That could be 
-implemented in a follow-up patch (not in this patch-set).
+> +# CONFIG_SWAP is not set
+> +CONFIG_SYSVIPC=y
+> +CONFIG_POSIX_MQUEUE=y
+> +# CONFIG_FHANDLE is not set
+> +CONFIG_USELIB=y
+> +CONFIG_AUDIT=y
+> +CONFIG_IRQ_DOMAIN_DEBUG=y
+> +CONFIG_NO_HZ_IDLE=y
+> +CONFIG_HIGH_RES_TIMERS=y
+> +CONFIG_BSD_PROCESS_ACCT=y
+> +CONFIG_BSD_PROCESS_ACCT_V3=y
+> +CONFIG_RELAY=y
+> +CONFIG_SYSCTL_SYSCALL=y
+> +CONFIG_KALLSYMS_ALL=y
+> +# CONFIG_AIO is not set
 
-For let user know what the library they need, maybe we can add more 
-information in 'perf -vv', for example, add something like,
+Disabling swap, fhandle or AIO seems odd, those are commonly
+used symbols.
 
-"Please install libelf-dev, libelf-devel or elfutils-libelf-devel before 
-building perf"
+> +CONFIG_USERFAULTFD=y
+> +CONFIG_EMBEDDED=y
 
-Thanks
-Jin Yao
+CONFIG_EMBEDDED should generally not be selected, it's only for
+very unusual configurations that need to disable symbols that are
+normally required.
 
->>
->> -Andi
->>
->>>
->>> For example:
->>>
->>> $ ./perf -vv
->>> perf version 4.13.rc5.g9b7a81b
->>>                   dwarf: [  on ]
->>>      dwarf_getlocations: [  on ]
->>>                   glibc: [  on ]
->>>                    gtk2: [  on ]
->>>                libaudit: [ off ]
->>>                  libbfd: [  on ]
->>>                  libelf: [  on ]
->>>                 libnuma: [  on ]
->>> numa_num_possible_cpus: [  on ]
->>>                 libperl: [  on ]
->>>               libpython: [  on ]
->>>                libslang: [  on ]
->>>               libcrypto: [  on ]
->>>               libunwind: [  on ]
->>>      libdw-dwarf-unwind: [  on ]
->>>                    zlib: [  on ]
->>>                    lzma: [  on ]
->>>               get_cpuid: [  on ]
->>>                     bpf: [  on ]
->>>
->>> Jin Yao (3):
->>>    perf config: Add -DNO_GLIBC to CFLAGS
->>>    perf version: Print the status of compiled-in libraries
->>>    perf: Support perf -vv
->>>
->>>   tools/perf/Makefile.config   |   2 +
->>>   tools/perf/builtin-version.c | 125 +++++++++++++++++++++++++++++++++++++++++++
->>>   tools/perf/builtin.h         |   1 +
->>>   tools/perf/perf.c            |   6 +++
->>>   4 files changed, 134 insertions(+)
->>>
->>> -- 
->>> 2.7.4
->>>
+> +# CONFIG_PERF_EVENTS is not set
+> +# CONFIG_SLUB_DEBUG is not set
+> +# CONFIG_COMPAT_BRK is not set
+> +CONFIG_PROFILING=y
+> +CONFIG_OPROFILE=y
+
+oprofile can go now, since you said you'd remove the code.
+
+> +CONFIG_MODULES=y
+> +CONFIG_MODULE_UNLOAD=y
+
+> +CONFIG_BLK_DEV_BSGLIB=y
+> +CONFIG_BLK_DEV_INTEGRITY=y
+> +CONFIG_PARTITION_ADVANCED=y
+> +CONFIG_ACORN_PARTITION=y
+> +CONFIG_ACORN_PARTITION_ICS=y
+> +CONFIG_ACORN_PARTITION_RISCIX=y
+> +CONFIG_AIX_PARTITION=y
+> +CONFIG_OSF_PARTITION=y
+> +CONFIG_AMIGA_PARTITION=y
+> +CONFIG_ATARI_PARTITION=y
+> +CONFIG_MAC_PARTITION=y
+> +CONFIG_BSD_DISKLABEL=y
+> +CONFIG_MINIX_SUBPARTITION=y
+> +CONFIG_SOLARIS_X86_PARTITION=y
+> +CONFIG_UNIXWARE_DISKLABEL=y
+> +CONFIG_LDM_PARTITION=y
+> +CONFIG_SGI_PARTITION=y
+> +CONFIG_ULTRIX_PARTITION=y
+> +CONFIG_SUN_PARTITION=y
+> +CONFIG_KARMA_PARTITION=y
+> +CONFIG_SYSV68_PARTITION=y
+
+These block device configuration options all seem misplaced
+here, it's extremely unlikely that you need them.
+
+> +CONFIG_CMDLINE_PARTITION=y
+> +CONFIG_DEFAULT_DEADLINE=y
+> +CONFIG_FB_NATIONALCHIP=y
+> +CONFIG_RAM_BASE=0x10000000
+> +# CONFIG_SUSPEND is not set
+> +# CONFIG_COMPACTION is not set
+> +CONFIG_NET=y
+> +CONFIG_PACKET=y
+> +CONFIG_UNIX=y
+> +CONFIG_INET=y
+> +CONFIG_IP_MULTICAST=y
+> +CONFIG_IP_PNP=y
+> +CONFIG_IP_PNP_DHCP=y
+> +CONFIG_IP_PNP_BOOTP=y
+> +CONFIG_IP_PNP_RARP=y
+> +# CONFIG_IPV6 is not set
+> +CONFIG_CFG80211=y
+> +CONFIG_CFG80211_DEBUGFS=y
+> +CONFIG_CFG80211_WEXT=y
+
+I would guess you want IPV6 but not WEXT here.
+
+> +CONFIG_MAC80211=y
+> +CONFIG_MAC80211_DEBUGFS=y
+> +CONFIG_RFKILL=y
+> +CONFIG_RFKILL_INPUT=y
+> +CONFIG_RFKILL_GPIO=y
+> +CONFIG_DEVTMPFS=y
+> +CONFIG_DEVTMPFS_MOUNT=y
+> +# CONFIG_STANDALONE is not set
+
+No need to turn this off, it might just get in the way of build
+testing.
+
+> +CONFIG_KEYBOARD_ADP5588=m
+> +CONFIG_KEYBOARD_ADP5589=m
+> +CONFIG_KEYBOARD_QT1070=m
+> +CONFIG_KEYBOARD_QT2160=m
+> +CONFIG_KEYBOARD_LKKBD=m
+
+There are many input devices listed here, most of which you almost
+certainly won't need.
+
+> +CONFIG_IPMI_HANDLER=y
+> +CONFIG_IPMI_DEVICE_INTERFACE=m
+> +CONFIG_IPMI_SI=m
+> +CONFIG_IPMI_WATCHDOG=m
+> +CONFIG_IPMI_POWEROFF=m
+
+Are you sure you have IPMI hardware?
+
+> +CONFIG_FB=y
+> +CONFIG_FB_TILEBLITTING=y
+> +CONFIG_FB_SIMPLE=y
+> +CONFIG_BACKLIGHT_LCD_SUPPORT=y
+> +# CONFIG_LCD_CLASS_DEVICE is not set
+> +# CONFIG_BACKLIGHT_CLASS_DEVICE is not set
+> +# CONFIG_VGA_CONSOLE is not set
+> +CONFIG_FRAMEBUFFER_CONSOLE=y
+> +CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+> +CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+> +CONFIG_LOGO=y
+> +# CONFIG_LOGO_LINUX_MONO is not set
+> +# CONFIG_LOGO_LINUX_VGA16 is not set
+
+For new platforms, using the DRM subsystem is the recommend
+way to do graphics, it mostly replaces the framebuffer subsystem
+here.
+
+> +CONFIG_STE_MODEM_RPROC=m
+
+I think this is no longer there.
+
+> +CONFIG_EXT2_FS=y
+> +CONFIG_EXT2_FS_XATTR=y
+> +CONFIG_EXT2_FS_POSIX_ACL=y
+> +CONFIG_EXT2_FS_SECURITY=y
+> +CONFIG_EXT3_FS=y
+> +CONFIG_EXT3_FS_POSIX_ACL=y
+> +CONFIG_EXT3_FS_SECURITY=y
+
+Better use EXT4 for the defconfig instead.
+
+        Arnd
