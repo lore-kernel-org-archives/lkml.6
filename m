@@ -1,103 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751827AbeCZDZn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 23:25:43 -0400
-Received: from mga02.intel.com ([134.134.136.20]:15734 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750994AbeCZDZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 23:25:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,363,1517904000";
-   d="scan'208";a="42130183"
-From: "Wang, Wei W" <wei.w.wang@intel.com>
-To: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC: "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
-Subject: RE: [PATCH v29 3/4] mm/page_poison: expose page_poisoning_enabled
- to kernel modules
-Thread-Topic: [PATCH v29 3/4] mm/page_poison: expose page_poisoning_enabled
- to kernel modules
-Thread-Index: AQHTxK5iK61oAF7ciky/ImA628viDaPh1G9A
-Date: Mon, 26 Mar 2018 03:24:00 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F739485741@shsmsx102.ccr.corp.intel.com>
-References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>
- <1522031994-7246-4-git-send-email-wei.w.wang@intel.com>
-In-Reply-To: <1522031994-7246-4-git-send-email-wei.w.wang@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjU5ZjdiODUtZmVlMS00Y2EyLWI2OWQtMjlhMGZkZjYwZmZhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6ImZOdk52YVR5SllKc25kbUJDUys4VytNaEJmOU5PXC82ZVVwVXVabDVIS3BjPSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1751964AbeCZDjJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 23:39:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57574 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751074AbeCZDjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 23:39:08 -0400
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com, virtualization@lists.linux-foundation.org
+Cc: kvm@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>
+Subject: [RFC PATCH V2 0/8] Packed ring for vhost
+Date: Mon, 26 Mar 2018 11:38:45 +0800
+Message-Id: <1522035533-11786-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, March 26, 2018 10:40 AM, Wang, Wei W wrote:
-> Subject: [PATCH v29 3/4] mm/page_poison: expose page_poisoning_enabled
-> to kernel modules
-> 
-> In some usages, e.g. virtio-balloon, a kernel module needs to know if page
-> poisoning is in use. This patch exposes the page_poisoning_enabled function
-> to kernel modules.
-> 
-> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> ---
->  mm/page_poison.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/mm/page_poison.c b/mm/page_poison.c index e83fd44..762b472
-> 100644
-> --- a/mm/page_poison.c
-> +++ b/mm/page_poison.c
-> @@ -17,6 +17,11 @@ static int early_page_poison_param(char *buf)  }
-> early_param("page_poison", early_page_poison_param);
-> 
-> +/**
-> + * page_poisoning_enabled - check if page poisoning is enabled
-> + *
-> + * Return true if page poisoning is enabled, or false if not.
-> + */
->  bool page_poisoning_enabled(void)
->  {
->  	/*
-> @@ -29,6 +34,7 @@ bool page_poisoning_enabled(void)
-> 
-> 	(!IS_ENABLED(CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC) &&
->  		debug_pagealloc_enabled()));
->  }
-> +EXPORT_SYMBOL_GPL(page_poisoning_enabled);
-> 
->  static void poison_page(struct page *page)  {
-> --
-> 2.7.4
+Hi all:
 
+This RFC implement packed ring layout. The code were tested with pmd
+implement by Jens at
+http://dpdk.org/ml/archives/dev/2018-January/089417.html. Minor change
+was needed for pmd codes to kick virtqueue since it assumes a busy
+polling backend.
 
-Could we get a review of this patch? We've reviewed other parts, and this one seems to be the last part of this feature. Thanks.
+Test were done between localhost and guest. Testpmd (rxonly) in guest
+reports 2.4Mpps. Testpmd (txonly) repots about 2.1Mpps.
 
-Best,
-Wei
+Notes: The event suppression /indirect descriptor support is complied
+       test only because of lacked driver support.
+
+Changes from V1:
+
+- Refactor vhost used elem code to avoid open coding on used elem
+- Event suppression support (compile test only).
+- Indirect descriptor support (compile test only).
+- Zerocopy support.
+- vIOMMU support.
+- SCSI/VSOCK support (compile test only).
+- Fix several bugs
+
+For simplicity, I don't implement batching or other optimizations.
+
+Please review.
+
+Thanks
+
+Jason Wang (8):
+  vhost: move get_rx_bufs to vhost.c
+  vhost: hide used ring layout from device
+  vhost: do not use vring_used_elem
+  vhost_net: do not explicitly manipulate vhost_used_elem
+  vhost: vhost_put_user() can accept metadata type
+  virtio: introduce packed ring defines
+  vhost: packed ring support
+  vhost: event suppression for packed ring
+
+ drivers/vhost/net.c                | 138 ++-----
+ drivers/vhost/scsi.c               |  62 +--
+ drivers/vhost/vhost.c              | 818 ++++++++++++++++++++++++++++++++++---
+ drivers/vhost/vhost.h              |  46 ++-
+ drivers/vhost/vsock.c              |  42 +-
+ include/uapi/linux/virtio_config.h |   9 +
+ include/uapi/linux/virtio_ring.h   |  32 ++
+ 7 files changed, 921 insertions(+), 226 deletions(-)
+
+-- 
+2.7.4
