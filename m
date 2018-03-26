@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751398AbeCZJw0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:52:26 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34270 "EHLO
+        id S1751903AbeCZJw2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:52:28 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34336 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750864AbeCZJwX (ORCPT
+        with ESMTP id S1751138AbeCZJw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:52:23 -0400
+        Mon, 26 Mar 2018 05:52:26 -0400
 From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To: Lee Jones <lee.jones@linaro.org>,
         Daniel Thompson <daniel.thompson@linaro.org>,
@@ -20,80 +20,52 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
         linux-kernel@vger.kernel.org, groeck@chromium.org,
         linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org,
         devicetree@vger.kernel.org, kernel@collabora.com
-Subject: [PATCH v6 1/5] pwm-backlight: enable/disable the PWM before/after LCD enable toggle.
-Date: Mon, 26 Mar 2018 11:52:09 +0200
-Message-Id: <20180326095213.18362-1-enric.balletbo@collabora.com>
+Subject: [PATCH v6 4/5] ARM: dts: rockchip: set PWM delay backlight settings for Veyron.
+Date: Mon, 26 Mar 2018 11:52:12 +0200
+Message-Id: <20180326095213.18362-4-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180326095213.18362-1-enric.balletbo@collabora.com>
+References: <20180326095213.18362-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before this patch the enable signal was set before the PWM signal and
-vice-versa on power off. This sequence is wrong, at least, it is on
-the different panels datasheets that I checked, so I inverted the sequence
-to follow the specs.
-
-For reference the following panels have the mentioned sequence:
-  - N133HSE-EA1 (Innolux)
-  - N116BGE (Innolux)
-  - N156BGE-L21 (Innolux)
-  - B101EAN0 (Auo)
-  - B101AW03 (Auo)
-  - LTN101NT05 (Samsung)
-  - CLAA101WA01A (Chunghwa)
+For veyron the binding should provide both PWM timings, the delay between
+you enable the PWM and set the enable signal, and the delay between you
+disable the PWM signal and clear the enable signal. Update the binding
+accordingly, in this case the panels connected to the veyron boards have
+a symmetric power sequence, hence the same value is used.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
-Acked-by: Thierry Reding <thierry.reding@gmail.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
 Changes since v5:
- - Add Acked-by: Thierry Reding <thierry.reding@gmail.com>
+ - None.
 Changes since v4:
- - Rebase on top of mainline.
- - Add the acks from Daniel Thompson and Jingoo Han.
+ - Rebased on top of mainline.
 Changes since v3:
- - List the part numbers for the panel checked (Daniel Thompson)
+ - Use new -ms names for proprieties.
 Changes since v2:
- - Add this as a separate patch (Thierry Reding)
+ - Use new names for proprieties.
 Changes since v1:
- - None
+ - Add this new patch to fix current binding on veyron.
 ---
- drivers/video/backlight/pwm_bl.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 1c2289ddd555..698ec68bcdc9 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -54,10 +54,11 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
- 	if (err < 0)
- 		dev_err(pb->dev, "failed to enable power supply\n");
+diff --git a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
+index d752a315f884..5a8c7f3abb38 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
++++ b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
+@@ -96,7 +96,8 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&bl_en>;
+ 		pwms = <&pwm0 0 1000000 0>;
+-		pwm-delay-us = <10000>;
++		post-pwm-on-delay-ms = <10>;
++		pwm-off-delay-ms = <10>;
+ 	};
  
-+	pwm_enable(pb->pwm);
-+
- 	if (pb->enable_gpio)
- 		gpiod_set_value_cansleep(pb->enable_gpio, 1);
- 
--	pwm_enable(pb->pwm);
- 	pb->enabled = true;
- }
- 
-@@ -66,12 +67,12 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
- 	if (!pb->enabled)
- 		return;
- 
--	pwm_config(pb->pwm, 0, pb->period);
--	pwm_disable(pb->pwm);
--
- 	if (pb->enable_gpio)
- 		gpiod_set_value_cansleep(pb->enable_gpio, 0);
- 
-+	pwm_config(pb->pwm, 0, pb->period);
-+	pwm_disable(pb->pwm);
-+
- 	regulator_disable(pb->power_supply);
- 	pb->enabled = false;
- }
+ 	gpio-charger {
 -- 
 2.16.2
