@@ -1,58 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752479AbeCZPfZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 11:35:25 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52622 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752447AbeCZPfW (ORCPT
+        id S1752503AbeCZPfd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 11:35:33 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59871 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbeCZPfa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 11:35:22 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C080460131
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Mon, 26 Mar 2018 09:35:20 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: David Collins <collinsd@codeaurora.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, broonie@kernel.org,
-        lgirdwood@gmail.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rnayak@codeaurora.org
-Subject: Re: [PATCH 1/2] regulator: add QCOM RPMh regulator driver
-Message-ID: <20180326153520.GC22084@codeaurora.org>
-References: <cover.1521246069.git.collinsd@codeaurora.org>
- <71fab82672524b95632cdb588c16edfc9711866a.1521246069.git.collinsd@codeaurora.org>
- <152165924074.91116.13025068669916027026@swboyd.mtv.corp.google.com>
- <493c1f5d-df99-ca68-0f90-a7937a696f5d@codeaurora.org>
+        Mon, 26 Mar 2018 11:35:30 -0400
+Date: Mon, 26 Mar 2018 17:35:29 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] genirq: Pass desc to __irq_free instead of irq number
+Message-ID: <20180326153529.upw6dpxrwscf3wvy@pengutronix.de>
+References: <20180319105202.9794-1-u.kleine-koenig@pengutronix.de>
+ <20180325221213.ub5vurux7dqdkldd@pengutronix.de>
+ <alpine.DEB.2.21.1803261141230.1585@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <493c1f5d-df99-ca68-0f90-a7937a696f5d@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1803261141230.1585@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22 2018 at 19:30 -0600, David Collins wrote:
->Hello Stephen,
->
->Thank you for the very detailed review feedback.
->
->On 03/21/2018 12:07 PM, Stephen Boyd wrote:
->> Quoting David Collins (2018-03-16 18:09:10)
+Hello Thomas,
 
->>> +static int rpmh_regulator_remove(struct platform_device *pdev)
->>> +{
->>> +       struct rpmh_pmic *pmic = platform_get_drvdata(pdev);
->>> +
->>> +       rpmh_release(pmic->rpmh_client);
->>
->> I'm still lost on what rpmh_client is giving us besides more code we
->> don't need. I'll ping the rpmh thread again.
->
->Let's see if Lina is willing to add some devm_* calls so that no cleanup
->is required.
->
-I will look into this.
+On Mon, Mar 26, 2018 at 11:43:27AM +0200, Thomas Gleixner wrote:
+> On Mon, 26 Mar 2018, Uwe Kleine-König wrote:
+> > 
+> > On Mon, Mar 19, 2018 at 11:52:02AM +0100, Uwe Kleine-König wrote:
+> > > Given that irq_to_desc() is a radix_tree_lookup and the reverse
+> > > operation is only a pointer dereference and that all callers of
+> > > __free_irq already have the desc, pass the desc instead of the irq
+> > > number.
+> > > 
+> > > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > > ---
+> > > Hello,
+> > > 
+> > > this is a micro optimisation I noticed while looking at the irq code.
+> > 
+> > This made it into next as 83ac4ca943affce56a2c408ddb2f5232f478fb11 and
+> > ba63053f018721a0ad60b083e21a15e324a4a8c4. Is it right that it is there
+> > twice?
+> 
+> No. It's only one instance.
 
--- Lina
+$ git log --oneline linus/master..next/master --grep='genirq: Pass desc to __irq_free'
+83ac4ca943af genirq: Pass desc to __irq_free instead of irq number
+ba63053f0187 genirq: Pass desc to __irq_free instead of irq number
+
+$ git show 83ac4ca943af ba63053f0187 | git patch-id
+ee0091f074eb45677b190f29e30ab97adad449d9 83ac4ca943affce56a2c408ddb2f5232f478fb11
+ee0091f074eb45677b190f29e30ab97adad449d9 ba63053f018721a0ad60b083e21a15e324a4a8c4
+
+They both come into next by commit c5b27fb35b1a ("Merge remote-tracking branch
+'tip/auto-latest'"):
+
+$ git rev-parse c5b27fb35b1a^2^2~4
+83ac4ca943affce56a2c408ddb2f5232f478fb11
+$ git rev-parse c5b27fb35b1a^2~25^2
+ba63053f018721a0ad60b083e21a15e324a4a8c4
+
+You still claim there is only one instance, I assume that's because the branch
+that is pulled into next (tip/auto-latest) is autogenerated and contains some
+cruft?
+
+> > And in the Author line the - in my name is missing. Would be great if
+> > that could be fixed up.
+> 
+> Sorry, I'm surely not rebasing that branch just to add a missing dash.
+
+:-| I wonder how this error happend. Is there a script to fix? If so I'd
+like to take a look.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
