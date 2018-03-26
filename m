@@ -1,63 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751997AbeCZUNG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 16:13:06 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:36052 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751732AbeCZUNC (ORCPT
+        id S1752139AbeCZUNy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 16:13:54 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39918 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751115AbeCZUNw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 16:13:02 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
-        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [net-next PATCH 0/5] Add support for netcp driver on K2G SoC
-Date: Mon, 26 Mar 2018 16:15:07 -0400
-Message-ID: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 26 Mar 2018 16:13:52 -0400
+From: Tim Tianyang Chen <tianyang.chen@oracle.com>
+To: rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org, dhaval.giani@oracle.com
+Subject: [PATCH v3 4/4] Ktest: add email options to sample.config
+Date: Mon, 26 Mar 2018 13:08:04 -0700
+Message-Id: <1522094884-22718-5-git-send-email-tianyang.chen@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1522094884-22718-1-git-send-email-tianyang.chen@oracle.com>
+References: <1522094884-22718-1-git-send-email-tianyang.chen@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8844 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803260203
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-K2G SoC is another variant of Keystone family of SoCs. This patch
-series add support for NetCP driver on this SoC. The QMSS found on
-K2G SoC is a cut down version of the QMSS found on other keystone
-devices with less number of queues, internal link ram etc. The patch
-series has 2 patch sets that goes into the drivers/soc and the
-rest has to be applied to net sub system. Please review and merge
-if this looks good.
+A block of email options is added under the optional config section.
 
-Thanks
+Suggested-by: Dhaval Giani <dhaval.giani@oracle.com>
+Signed-off-by: Tim Tianyang Chen <tianyang.chen@oracle.com>
 
-The boot logs on K2G ICE board (tftp boot over Ethernet)
-is at https://pastebin.ubuntu.com/p/VQTv3c2XBS/
+---
+    Changes since v2:
+    Added comments and defaults for each option
+---
+ sample.conf | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-The boot logs on K2G GP board (tftp boot over Ethernet)
-is at https://pastebin.ubuntu.com/p/6Vh55DW8vT/
-
-This series applies to net-next master branch.
-
-Murali Karicheri (5):
-  soc: ti: K2G: enhancement to support QMSS in NSS
-  soc: ti: K2G: provide APIs to support driver probe deferral
-  net: netcp: ethss enhancements to support 2u cpsw h/w on K2G SoC
-  Revert "net: netcp: remove dead code from the driver"
-  net: netcp: support probe deferral
-
- .../bindings/soc/ti/keystone-navigator-qmss.txt    |  7 ++
- drivers/net/ethernet/ti/netcp.h                    |  3 +
- drivers/net/ethernet/ti/netcp_core.c               | 13 +++
- drivers/net/ethernet/ti/netcp_ethss.c              | 75 ++++++++++++++---
- drivers/soc/ti/knav_dma.c                          |  8 ++
- drivers/soc/ti/knav_qmss.h                         |  6 ++
- drivers/soc/ti/knav_qmss_queue.c                   | 98 +++++++++++++++++-----
- include/linux/soc/ti/knav_dma.h                    | 12 +++
- include/linux/soc/ti/knav_qmss.h                   |  1 +
- 9 files changed, 190 insertions(+), 33 deletions(-)
-
+diff --git a/sample.conf b/sample.conf
+index 6c58cd8bbbae..ba3dd4a9c7fb 100644
+--- a/sample.conf
++++ b/sample.conf
+@@ -396,6 +396,28 @@
+ 
+ #### Optional Config Options (all have defaults) ####
+ 
++# Email options for receiving notifications. Users must setup
++# the specified mailer prior to using this feature.
++#
++# (default undefined)
++#MAILTO =
++#
++# Supported mailers: sendmail, mail, mailx
++# (default sendmail)
++#MAILER = sendmail
++#
++# Errors are defined as those would terminate the script
++# (default 1)
++#EMAIL_ON_ERROR = 1
++# (default 1)
++#EMAIL_WHEN_FINISHED = 1
++# (default 0)
++#EMAIL_WHEN_STARTED = 1
++#
++# Users can cancel the test by Ctrl^C
++# (default 0)
++#EMAIL_WHEN_CANCELED = 1
++
+ # Start a test setup. If you leave this off, all options
+ # will be default and the test will run once.
+ # This is a label and not really an option (it takes no value).
 -- 
-1.9.1
+2.15.1
