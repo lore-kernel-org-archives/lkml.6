@@ -1,98 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752856AbeCZRbH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 13:31:07 -0400
-Received: from mga17.intel.com ([192.55.52.151]:1189 "EHLO mga17.intel.com"
+        id S1752874AbeCZRb1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 13:31:27 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:55568 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752628AbeCZR3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 13:29:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,365,1517904000";
-   d="scan'208";a="211442201"
-Subject: [PATCH 3/9] x86, pkeys, selftests: add a test for pkey 0
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        linuxram@us.ibm.com, tglx@linutronix.de, dave.hansen@intel.com,
-        mpe@ellerman.id.au, mingo@kernel.org, akpm@linux-foundation.org,
-        shuah@kernel.org
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Mon, 26 Mar 2018 10:27:25 -0700
-References: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
-In-Reply-To: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
-Message-Id: <20180326172725.619C683B@viggo.jf.intel.com>
+        id S1752862AbeCZRbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 13:31:24 -0400
+To: Jason Gunthorpe <jgg@mellanox.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Eric Wehage <Eric.Wehage@huawei.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <20180326121138.00005e30@huawei.com> <20180326164129.GF15530@mellanox.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <6ead7f19-c0e5-5584-2518-1e1889a007e4@deltatee.com>
+Date: Mon, 26 Mar 2018 11:30:38 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180326164129.GF15530@mellanox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: Eric.Wehage@huawei.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org, Jonathan.Cameron@huawei.com, jgg@mellanox.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
 
-Protection key 0 is the default key for all memory and will
-not normally come back from pkey_alloc().  But, you might
-still want pass it to mprotect_pkey().
+On 26/03/18 10:41 AM, Jason Gunthorpe wrote:
+> On Mon, Mar 26, 2018 at 12:11:38PM +0100, Jonathan Cameron wrote:
+>> On Tue, 13 Mar 2018 10:43:55 -0600
+>> Logan Gunthorpe <logang@deltatee.com> wrote:
+>>
+>>> On 12/03/18 09:28 PM, Sinan Kaya wrote:
+>>>> On 3/12/2018 3:35 PM, Logan Gunthorpe wrote:
+>>>> Regarding the switch business, It is amazing how much trouble you went into
+>>>> limit this functionality into very specific hardware.
+>>>>
+>>>> I thought that we reached to an agreement that code would not impose
+>>>> any limits on what user wants.
+>>>>
+>>>> What happened to all the emails we exchanged?  
+>>>
+>>> It turns out that root ports that support P2P are far less common than 
+>>> anyone thought. So it will likely have to be a white list.
+>>
+>> This came as a bit of a surprise to our PCIe architect.
+> 
+> I don't think it is a hardware problem.
 
-This check ensures that you can use pkey 0.
+The latest and greatest Power9 CPUs still explicitly do not support
+this. And, if I recall correctly, the ARM64 device we played with did
+not either -- but I suspect that will differ depending on vendor.
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>
----
+The latest Intel devices of course do support it, but go back 3-4 years
+or so and the performance is pretty much unusable (at least for the
+purposes of what this patchset implements). Even older CPUs did not
+support it.
 
- b/tools/testing/selftests/x86/protection_keys.c |   30 ++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+We haven't done any testing on AMD devices but I assume they are similar
+to Intel.
 
-diff -puN tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-with-pkey-0-test tools/testing/selftests/x86/protection_keys.c
---- a/tools/testing/selftests/x86/protection_keys.c~pkeys-update-selftests-with-pkey-0-test	2018-03-26 10:22:34.841170194 -0700
-+++ b/tools/testing/selftests/x86/protection_keys.c	2018-03-26 10:22:34.844170194 -0700
-@@ -1169,6 +1169,35 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 	}
- }
- 
-+/*
-+ * pkey 0 is special.  It is allocated by default, so you do not
-+ * have to call pkey_alloc() to use it first.  Make sure that it
-+ * is usable.
-+ */
-+void test_mprotect_with_pkey_0(int *ptr, u16 pkey)
-+{
-+	long size;
-+	int prot;
-+
-+	assert(pkey_last_malloc_record);
-+	size = pkey_last_malloc_record->size;
-+	/*
-+	 * This is a bit of a hack.  But mprotect() requires
-+	 * huge-page-aligned sizes when operating on hugetlbfs.
-+	 * So, make sure that we use something that's a multiple
-+	 * of a huge page when we can.
-+	 */
-+	if (size >= HPAGE_SIZE)
-+		size = HPAGE_SIZE;
-+	prot = pkey_last_malloc_record->prot;
-+
-+	/* Use pkey 0 */
-+	mprotect_pkey(ptr, size, prot, 0);
-+
-+	/* Make sure that we can set it back to the original pkey. */
-+	mprotect_pkey(ptr, size, prot, pkey);
-+}
-+
- void test_ptrace_of_child(int *ptr, u16 pkey)
- {
- 	__attribute__((__unused__)) int peek_result;
-@@ -1306,6 +1335,7 @@ void (*pkey_tests[])(int *ptr, u16 pkey)
- 	test_kernel_gup_of_access_disabled_region,
- 	test_kernel_gup_write_to_write_disabled_region,
- 	test_executing_on_unreadable_memory,
-+	test_mprotect_with_pkey_0,
- 	test_ptrace_of_child,
- 	test_pkey_syscalls_on_non_allocated_pkey,
- 	test_pkey_syscalls_bad_args,
-_
+In any case, even if every CPU manufactured today supported it well,
+there are still older devices out there without support that we need to
+ensure are handled properly.
+
+Logan
