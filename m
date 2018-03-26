@@ -1,125 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751995AbeCZLja (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 07:39:30 -0400
-Received: from la.guarana.org ([173.254.219.205]:47754 "EHLO la.guarana.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751890AbeCZLj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 07:39:29 -0400
-Date: Mon, 26 Mar 2018 07:39:29 -0400
-From: Kevin Easton <kevin@guarana.org>
-To: Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] af_key: Always verify length of provided sadb_key
-Message-ID: <43d418aeb2390080eb71ef4161bc029758118f93.1522063171.git.kevin@guarana.org>
-References: <cover.1522063171.git.kevin@guarana.org>
+        id S1752040AbeCZLjk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 07:39:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39806 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751890AbeCZLji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 07:39:38 -0400
+Date: Mon, 26 Mar 2018 12:39:33 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: "Ji.Zhang" <ji.zhang@mediatek.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Michael Weiser <michael.weiser@gmx.de>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Xie XiuQi <xiexiuqi@huawei.com>, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        wsd_upstream@mediatek.com, shadanji@163.com
+Subject: Re: [PATCH] arm64: avoid race condition issue in dump_backtrace
+Message-ID: <20180326113932.2i6qp3776jtmcqk4@lakrids.cambridge.arm.com>
+References: <1521687960-3744-1-git-send-email-ji.zhang@mediatek.com>
+ <20180322055929.z25brvwlmdighz66@salmiak>
+ <1521711329.26617.31.camel@mtksdccf07>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1522063171.git.kevin@guarana.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1521711329.26617.31.camel@mtksdccf07>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Key extensions (struct sadb_key) include a user-specified number of key
-bits.  The kernel uses that number to determine how much key data to copy
-out of the message in pfkey_msg2xfrm_state().
+On Thu, Mar 22, 2018 at 05:35:29PM +0800, Ji.Zhang wrote:
+> On Thu, 2018-03-22 at 05:59 +0000, Mark Rutland wrote:
+> > On Thu, Mar 22, 2018 at 11:06:00AM +0800, Ji Zhang wrote:
+> > > When we dump the backtrace of some specific task, there is a potential race
+> > > condition due to the task may be running on other cores if SMP enabled.
+> > > That is because for current implementation, if the task is not the current
+> > > task, we will get the registers used for unwind from cpu_context saved in
+> > > thread_info, which is the snapshot before context switch, but if the task
+> > > is running on other cores, the registers and the content of stack are
+> > > changed.
+> > > This may cause that we get the wrong backtrace or incomplete backtrace or
+> > > even crash the kernel.
+> > 
+> > When do we call dump_backtrace() on a running task that is not current?
+> > 
+> > AFAICT, we don't do that in the arm64-specific callers of dump_backtrace(), and
+> > this would have to be some caller of show_stack() in generic code.
+> Yes, show_stack() can make caller specify a task and dump its backtrace.
+> For example, SysRq-T (echo t > /proc/sysrq-trigger) will use this to
+> dump the backtrace of specific tasks.
 
-The length of the sadb_key message must be verified to be long enough,
-even in the case of SADB_X_AALG_NULL.  Furthermore, the sadb_key_len value
-must be long enough to include both the key data and the struct sadb_key
-itself.
+Ok. I see that this eventually calls show_state_filter(0), where we call
+sched_show_task() for every task.
 
-Introduce a helper function verify_key_len(), and call it from
-parse_exthdrs() where other exthdr types are similarly checked for
-correctness.
+> > We pin the task's stack via try_get_task_stack(), so this cannot be unmapped
+> > while we walk it. In unwind_frame() we check that the frame record falls
+> > entirely within the task's stack. So AFAICT, we cannot crash the kernel here,
+> > though the backtrace may be misleading (and we could potentially get stuck in
+> > an infinite loop).
+> You are right, I have checked the code and it seems that the check for
+> fp in unwind_frame() is strong enough to handle the case which stack
+> being changed due to task running. And as you mentioned, if
+> unfortunately fp is point to the address of itself, the unwind will be
+> an infinite loop, but it is a very small probability event, so we can
+> ignore this, is that right?
 
-Signed-off-by: Kevin Easton <kevin@guarana.org>
-Reported-by: syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com
----
- net/key/af_key.c | 45 +++++++++++++++++++++++++++++++++++----------
- 1 file changed, 35 insertions(+), 10 deletions(-)
+I think that it would be preferable to try to avoid the inifinite loop
+case. We could hit that by accident if we're tracing a live task.
 
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index 911b68d..f3ebb84 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -437,6 +437,24 @@ static int verify_address_len(const void *p)
- 	return 0;
- }
- 
-+static inline int sadb_key_len(const struct sadb_key *key)
-+{
-+	int key_bytes = DIV_ROUND_UP(key->sadb_key_bits, 8);
-+
-+	return DIV_ROUND_UP(sizeof(struct sadb_key) + key_bytes,
-+			    sizeof(uint64_t));
-+}
-+
-+static int verify_key_len(const void *p)
-+{
-+	const struct sadb_key *key = p;
-+
-+	if (sadb_key_len(key) > key->sadb_key_len)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static inline int pfkey_sec_ctx_len(const struct sadb_x_sec_ctx *sec_ctx)
- {
- 	return DIV_ROUND_UP(sizeof(struct sadb_x_sec_ctx) +
-@@ -533,16 +551,25 @@ static int parse_exthdrs(struct sk_buff *skb, const struct sadb_msg *hdr, void *
- 				return -EINVAL;
- 			if (ext_hdrs[ext_type-1] != NULL)
- 				return -EINVAL;
--			if (ext_type == SADB_EXT_ADDRESS_SRC ||
--			    ext_type == SADB_EXT_ADDRESS_DST ||
--			    ext_type == SADB_EXT_ADDRESS_PROXY ||
--			    ext_type == SADB_X_EXT_NAT_T_OA) {
-+			switch (ext_type) {
-+			case SADB_EXT_ADDRESS_SRC:
-+			case SADB_EXT_ADDRESS_DST:
-+			case SADB_EXT_ADDRESS_PROXY:
-+			case SADB_X_EXT_NAT_T_OA:
- 				if (verify_address_len(p))
- 					return -EINVAL;
--			}
--			if (ext_type == SADB_X_EXT_SEC_CTX) {
-+				break;
-+			case SADB_X_EXT_SEC_CTX:
- 				if (verify_sec_ctx_len(p))
- 					return -EINVAL;
-+				break;
-+			case SADB_EXT_KEY_AUTH:
-+			case SADB_EXT_KEY_ENCRYPT:
-+				if (verify_key_len(p))
-+					return -EINVAL;
-+				break;
-+			default:
-+				break;
- 			}
- 			ext_hdrs[ext_type-1] = (void *) p;
- 		}
-@@ -1105,14 +1132,12 @@ static struct xfrm_state * pfkey_msg2xfrm_state(struct net *net,
- 	key = ext_hdrs[SADB_EXT_KEY_AUTH - 1];
- 	if (key != NULL &&
- 	    sa->sadb_sa_auth != SADB_X_AALG_NULL &&
--	    (DIV_ROUND_UP(key->sadb_key_bits, 8) == 0 ||
--	     DIV_ROUND_UP(key->sadb_key_bits, 8) > key->sadb_key_len * sizeof(uint64_t)))
-+	    key->sadb_key_bits == 0)
- 		return ERR_PTR(-EINVAL);
- 	key = ext_hdrs[SADB_EXT_KEY_ENCRYPT-1];
- 	if (key != NULL &&
- 	    sa->sadb_sa_encrypt != SADB_EALG_NULL &&
--	    (DIV_ROUND_UP(key->sadb_key_bits, 8) == 0 ||
--	     DIV_ROUND_UP(key->sadb_key_bits, 8) > key->sadb_key_len * sizeof(uint64_t)))
-+	    key->sadb_key_bits == 0)
- 		return ERR_PTR(-EINVAL);
- 
- 	x = xfrm_state_alloc(net);
--- 
-2.8.1
+It's a little tricky to ensure that we don't loop, since we can have
+traces that span several stacks, e.g. overflow -> irq -> task, so we
+need to know where the last frame was, and we need to defnie a strict
+order for stack nesting.
+
+> > > To avoid this case, do not dump the backtrace of the tasks which are
+> > > running on other cores.
+> > > This patch cannot solve the issue completely but can shrink the window of
+> > > race condition.
+> > 
+> > > @@ -113,6 +113,9 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+> > >  	if (tsk == current) {
+> > >  		frame.fp = (unsigned long)__builtin_frame_address(0);
+> > >  		frame.pc = (unsigned long)dump_backtrace;
+> > > +	else if (tsk->state == TASK_RUNNING) {
+> > > +		pr_notice("Do not dump other running tasks\n");
+> > > +		return;
+> > 
+> > As you note, if we can race with the task being scheduled, this doesn't help.
+> > 
+> > Can we rule this out at a higher level?
+> > Thanks,
+> > Mark.
+> Actually, according to my previous understanding, the low level function
+> should be transparent to callers and should provide the right result and
+> handle some unexpected cases, which means that if the result may be
+> misleading, we should drop it. That is why I bypass all TASK_RUNNING
+> tasks. I am not sure if this understanding is reasonable for this case.
+
+Given that this can change under our feet, I think this only provides a
+false sense of security and complicates the code.
+
+> And as you mentioned that rule this out at a higher level, is there any
+> suggestions, handle this in the caller of show_stack()?
+
+Unfortunately, it doesn't look like we can do this in general given
+cases like sysrq-t.
+
+Thanks,
+Mark.
