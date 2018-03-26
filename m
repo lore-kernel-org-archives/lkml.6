@@ -1,202 +1,109 @@
-Return-Path: <prvs=615d01a9e=ohad.sharabi@sandisk.com>
-X-Google-Smtp-Source: AG47ELsOpZ9mZ1Op+cWCuze8aXgL0CUHSXm3fzN4rSA+QU3OABeIc9P+6vSm5A6Mlgwess/JPM8o
-ARC-Seal: i=1; a=rsa-sha256; t=1521961702; cv=none;
+Return-Path: <prvs=6169d87a0=Bart.VanAssche@wdc.com>
+X-Google-Smtp-Source: AIpwx4+rotMX80QOGZjaXhiqqE96Ypfc4mIiCwD2w/HxPO3a/bZY0Npkcpa/Ae7rgy9sZ++zlK4Z
+ARC-Seal: i=1; a=rsa-sha256; t=1522104546; cv=none;
         d=google.com; s=arc-20160816;
-        b=BDhhjEaRb7eoaUSG36MREFEF87ayS6ILhadnYFMjWXmVQQI8gnEhOq7aM/Z6ISne42
-         8MTpKdgoCiuFeWGeKMl6ciRpJ+aAqvKpwK/StFcpxQNhoA6aAwbPuoAZH03XVKukNIi+
-         htq+RIMVvpmkVp0YAjV/2iY8onuwhouXi2qc4xMBH1Z+iSWIbBhSl8KdJYcqXYT8llB+
-         BW5JQ1tBYkj2joe/jDZveUMY96GKhnkBmEo7e1+xzwO7ygKm33AbSzbaqVchJsV1ncyG
-         LJ4tQqRAhwxkgOIRpN5AJv5eWdaD3z5kF8UPVQnoCXIcAzykoFhM6gTRI4+TgV07UXOC
-         ST2Q==
+        b=Gaz2PohliqUJaxrIqU1WBQy3rHTazF2AbWmVNKN2miTocgIteM5E1HssHOOj5DmXA7
+         sTn22KbeercRX9WR89WUcFmlRVG4Z+FN8n1hvJAGjCFQjp7eBksbn/T2HPRhwVam/1v6
+         jXBFC0C6ygf/NZOR/a22Ds4xU592oHqT6Uyc+DPIeDftsNHghcc6zcvmlE3FQIjYJOO/
+         v3CNRr0RjtBi124RbdgfmU77lBVrP790KCRa3AGi+ylma/p0OI1DBTm6cB6gtOyrkAz0
+         Ua1pbSUGQOI8nhGYSt4Lwa8CgYTT+dqTZyRrSNqJjQL67NeUJ+tKizttkmY/kN1BbcsY
+         DQzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=VEtXK7I1BF4FXjKec65Tv85HDXynugSzUMK9RwAA+54=;
-        b=mcSyfTZR+hoOwX1rAGTkslnekGbKnku9F66ibUH7JpaMQ+3rQcxHufx7pDT4gPyLAH
-         NKVT6msk0edFHLbmJxRacyqV3RcWB9w7FIH1A8TI73Vj7wstyVKv2J3rMMaDb8Jbzwa/
-         KbLSr2DHSq/LnoukXxUNyT9BDZr/Z/x+sAXlBkCuTQl0au594Yx++8Lz4yjWSDHJmYQR
-         09jO4eC0jf26cjxy5fjZEYocK/bmJ9s3oapO9QkoAO28zv5kpvjjXgsmXLWAIsuJ+mNV
-         S0HVVlAFpT+f8/ycDWFoo06seeov/z335qFkCcEP4+nm0oeZlNhzfvqT+4V1wcsrAArH
-         ZRxg==
+        h=mime-version:content-transfer-encoding:content-id
+         :spamdiagnosticmetadata:spamdiagnosticoutput:wdcipoutbound
+         :content-language:accept-language:in-reply-to:references:message-id
+         :date:thread-index:thread-topic:subject:cc:to:from:dkim-signature
+         :dkim-signature:arc-authentication-results;
+        bh=ZhjoDpn0e7K5JzGsr0yNG/aocFyHPR8/7D38XAozZ6M=;
+        b=orsm80AKWKsYRO/T9ZMoCg0KB71f+wNwN8jkT6drlLyDNCoi9ObbMW8lCNmtl6HEeE
+         8DFmNcpFvSFyj9u+DEBsjFkbIbAOdTcmiaDt0swtdLDKItO9hS6j5bUlQUWRMBBBKvdW
+         i+Y9BafjOb8NqgIzUlM4D0Ttn5rSvObgtEyPbBhoTl1BKe2jhFRvFheYCZvoU48MQspi
+         eYclv5V6318eljIzccX55+/Z8Gmi9OBTDqfcZlKrk/c1BYykw+ILIdvM5+02KjykTiTt
+         IPavYGD8htiZgvtCW5MYuXzbFvnzm1XF5XG+SSiU35HvwQwHQ8uzjM5y4+uifsU64/Vy
+         vM9Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sandisk.com header.s=dkim.sandisk.com header.b=evlCxlo1;
-       spf=pass (google.com: domain of prvs=615d01a9e=ohad.sharabi@sandisk.com designates 216.71.154.45 as permitted sender) smtp.mailfrom=prvs=615d01a9e=ohad.sharabi@sandisk.com
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=aceRWSZu;
+       dkim=pass header.i=@sharedspace.onmicrosoft.com header.s=selector1-wdc-com header.b=hhccUsMd;
+       spf=pass (google.com: domain of prvs=6169d87a0=bart.vanassche@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=6169d87a0=Bart.VanAssche@wdc.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sandisk.com header.s=dkim.sandisk.com header.b=evlCxlo1;
-       spf=pass (google.com: domain of prvs=615d01a9e=ohad.sharabi@sandisk.com designates 216.71.154.45 as permitted sender) smtp.mailfrom=prvs=615d01a9e=ohad.sharabi@sandisk.com
-X-IronPort-AV: E=Sophos;i="5.48,358,1517846400";
-   d="scan'208";a="75019972"
-From: Ohad Sharabi <ohad.sharabi@sandisk.com>
-To: stanislav.nijnikov@wdc.com,
-	jejb@linux.vnet.ibm.com,
-	martin.petersen@oracle.com,
-	gregkh@linuxfoundation.org
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	alex.lemberg@wdc.com,
-	Ohad Sharabi <ohad.sharabi@sandisk.com>
-Subject: [PATCH v3] scsi: ufs: add trace event for ufs upiu
-Date: Sun, 25 Mar 2018 10:08:04 +0300
-Message-Id: <1521961684-13588-1-git-send-email-ohad.sharabi@sandisk.com>
-X-Mailer: git-send-email 1.9.1
+       dkim=pass header.i=@wdc.com header.s=dkim.wdc.com header.b=aceRWSZu;
+       dkim=pass header.i=@sharedspace.onmicrosoft.com header.s=selector1-wdc-com header.b=hhccUsMd;
+       spf=pass (google.com: domain of prvs=6169d87a0=bart.vanassche@wdc.com designates 68.232.143.124 as permitted sender) smtp.mailfrom=prvs=6169d87a0=Bart.VanAssche@wdc.com
+X-IronPort-AV: E=Sophos;i="5.48,365,1517846400";
+   d="scan'208";a="171107972"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: Ohad Sharabi <Ohad.Sharabi@wdc.com>, "jejb@linux.vnet.ibm.com"
+	<jejb@linux.vnet.ibm.com>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, Stanislav Nijnikov
+	<Stanislav.Nijnikov@wdc.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alex Lemberg
+	<Alex.Lemberg@wdc.com>
+Subject: Re: [PATCH v3] scsi: ufs: add trace event for ufs upiu
+Thread-Topic: [PATCH v3] scsi: ufs: add trace event for ufs upiu
+Thread-Index: AQHTxAgdzQUwmgl5yUC2AkxigzyoJaPjISkA
+Date: Mon, 26 Mar 2018 22:48:53 +0000
+Message-ID: <1522104532.3102.24.camel@wdc.com>
+References: <1521961684-13588-1-git-send-email-ohad.sharabi@sandisk.com>
+In-Reply-To: <1521961684-13588-1-git-send-email-ohad.sharabi@sandisk.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [199.255.44.172]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB1214;7:eaahuHLivgVuzJCinhNNPWF5QA9gww/Vz9RsV3WlrKGcEnpfJvxYhXJuj5b5eOOqk5k6fusccZi7TS2cDve6Z/dLd+tZbjGbgLHvsSwCTt2eWGeD7jZkCggMTYlD7qh7MHvdcu26Xe/thfrgodSb1Jt+Qo99KGitEWbEiLZlkp6OPoUUaNHwj4aWi+2Hoeb0MeUuvRI2HKbSOknhkbPmaIdHcB7SDwLzJr5afxCQSQu/JaAC95NAg8oCxkbgLn55;20:bgWx6eZrVNehdl1XEPRMabt12emeESEmp6BlvH6PVtosZ1U8+TX5samoPxEbkp7TilHrilmoy3O8v4SdQ1dT53ik7ujWYA9WBn2/XNfvRVRx2o24TdLxXEHnivSMcJcoZfIJDAn3Wekfpc2sbNRRn6xmzLt17sgftq6nA+UqK0U=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 8fbf8328-b987-4713-20af-08d5936bbff1
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB1214;
+x-ms-traffictypediagnostic: MWHPR04MB1214:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB1214B732F11AECA47FDCEBAE98AD0@MWHPR04MB1214.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:MWHPR04MB1214;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB1214;
+x-forefront-prvs: 06237E4555
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39860400002)(366004)(39380400002)(346002)(377424004)(189003)(199004)(54534003)(105586002)(25786009)(72206003)(229853002)(76176011)(97736004)(66066001)(3660700001)(2501003)(2900100001)(6506007)(476003)(5250100002)(2906002)(36756003)(99286004)(3280700002)(14454004)(4326008)(6486002)(551934003)(103116003)(7736002)(6512007)(8936002)(305945005)(53936002)(8676002)(81166006)(81156014)(5660300001)(6436002)(106356001)(26005)(6116002)(478600001)(446003)(316002)(2616005)(102836004)(54906003)(11346002)(110136005)(2201001)(6246003)(68736007)(86362001)(3846002)(486005)(486005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB1214;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+x-microsoft-antispam-message-info: myeCn/YDeXzE0zAFR1XwnXKdFQ39SBOzhtKNPvA/VlKwd8jJ8SYQpvUt/vY7aVtspqTlbJ8ZRb5Rv6O8jwyaWWxRz5CTJXbH81rsfIj2G5IwOgcBgj9ZVgn4Epze1mgwGVNoR5oGG3zQ0Ftt7Y/XQ8E3SqfF8G+9/N5a7m8EVblQdC6i3b+LOYNcY4OrbNWqihTSL/SEHdbX6T2QjXM8ZSxqso6o6CXepPkALqx9sLMcExtCAXxzseRcFtJUSPpRk7QebslmGYLY1goNlaOzxTDjipcePI3w4W5PhPgN1RfeRpnGGesFbKj5hnRWvLZOxpeiw90sxr6YlUw2JDfE0Q==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A3087C897FB9304282B568755AC539C0@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fbf8328-b987-4713-20af-08d5936bbff1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2018 22:48:53.2890
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB1214
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595892513876179134?=
-X-GMAIL-MSGID: =?utf-8?q?1595892513876179134?=
+X-GMAIL-MSGID: =?utf-8?q?1596042297002482913?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add UFS Protocol Information Units(upiu) trace events for ufs driver,
-used to trace various ufs transaction types- command, task-management
-and device management.
-The trace-point format is generic and can be easily adapted to trace
-other upius if needed.
-Currently tracing ufs transaction of type 'device management', which
-this patch introduce, cannot be obtained from any other trace.
-Device management transactions are used for communication with the
-device such as reading and writing descriptor or attributes etc.
-
-v2->v3:
-    - modify args 3,4 of trace_ufshcd_upiu to be void *
-
-v1->v2:
-    - split to transaction specific functions (fix warnings and simplifies
-      code)
-    - adding traces when sending query command
-
-Signed-off-by: Ohad Sharabi <ohad.sharabi@sandisk.com>
----
- drivers/scsi/ufs/ufshcd.c  | 40 ++++++++++++++++++++++++++++++++++++++++
- include/trace/events/ufs.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 67 insertions(+)
-
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index c7da2c1..23ffaed 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -274,6 +274,35 @@ static inline void ufshcd_remove_non_printable(char *val)
- 		*val = ' ';
- }
- 
-+static void ufshcd_add_cmd_upiu_trace(struct ufs_hba *hba, unsigned int tag,
-+		const char *str)
-+{
-+	struct utp_upiu_req *rq = hba->lrb[tag].ucd_req_ptr;
-+
-+	trace_ufshcd_upiu(dev_name(hba->dev), str, &rq->header, &rq->sc.cdb);
-+}
-+
-+static void ufshcd_add_query_upiu_trace(struct ufs_hba *hba, unsigned int tag,
-+		const char *str)
-+{
-+	struct utp_upiu_req *rq = hba->lrb[tag].ucd_req_ptr;
-+
-+	trace_ufshcd_upiu(dev_name(hba->dev), str, &rq->header, &rq->qr);
-+}
-+
-+static void ufshcd_add_tm_upiu_trace(struct ufs_hba *hba, unsigned int tag,
-+		const char *str)
-+{
-+	struct utp_task_req_desc *descp;
-+	struct utp_upiu_task_req *task_req;
-+	int off = (int)tag - hba->nutrs;
-+
-+	descp = &hba->utmrdl_base_addr[off];
-+	task_req = (struct utp_upiu_task_req *)descp->task_req_upiu;
-+	trace_ufshcd_upiu(dev_name(hba->dev), str, &task_req->header,
-+			&task_req->input_param1);
-+}
-+
- static void ufshcd_add_command_trace(struct ufs_hba *hba,
- 		unsigned int tag, const char *str)
- {
-@@ -283,6 +312,9 @@ static void ufshcd_add_command_trace(struct ufs_hba *hba,
- 	struct ufshcd_lrb *lrbp;
- 	int transfer_len = -1;
- 
-+	/* trace UPIU also */
-+	ufshcd_add_cmd_upiu_trace(hba, tag, str);
-+
- 	if (!trace_ufshcd_command_enabled())
- 		return;
- 
-@@ -2584,6 +2616,7 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
- 
- 	hba->dev_cmd.complete = &wait;
- 
-+	ufshcd_add_query_upiu_trace(hba, tag, "query_send");
- 	/* Make sure descriptors are ready before ringing the doorbell */
- 	wmb();
- 	spin_lock_irqsave(hba->host->host_lock, flags);
-@@ -2593,6 +2626,9 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
- 
- 	err = ufshcd_wait_for_dev_cmd(hba, lrbp, timeout);
- 
-+	ufshcd_add_query_upiu_trace(hba, tag,
-+			err ? "query_complete_err" : "query_complete");
-+
- out_put_tag:
- 	ufshcd_put_dev_cmd_tag(hba, tag);
- 	wake_up(&hba->dev_cmd.tag_wq);
-@@ -5464,11 +5500,14 @@ static int ufshcd_issue_tm_cmd(struct ufs_hba *hba, int lun_id, int task_id,
- 
- 	spin_unlock_irqrestore(host->host_lock, flags);
- 
-+	ufshcd_add_tm_upiu_trace(hba, task_tag, "tm_send");
-+
- 	/* wait until the task management command is completed */
- 	err = wait_event_timeout(hba->tm_wq,
- 			test_bit(free_slot, &hba->tm_condition),
- 			msecs_to_jiffies(TM_CMD_TIMEOUT));
- 	if (!err) {
-+		ufshcd_add_tm_upiu_trace(hba, task_tag, "tm_complete_err");
- 		dev_err(hba->dev, "%s: task management cmd 0x%.2x timed-out\n",
- 				__func__, tm_function);
- 		if (ufshcd_clear_tm_cmd(hba, free_slot))
-@@ -5477,6 +5516,7 @@ static int ufshcd_issue_tm_cmd(struct ufs_hba *hba, int lun_id, int task_id,
- 		err = -ETIMEDOUT;
- 	} else {
- 		err = ufshcd_task_req_compl(hba, free_slot, tm_response);
-+		ufshcd_add_tm_upiu_trace(hba, task_tag, "tm_complete");
- 	}
- 
- 	clear_bit(free_slot, &hba->tm_condition);
-diff --git a/include/trace/events/ufs.h b/include/trace/events/ufs.h
-index bf6f826..f8260e5 100644
---- a/include/trace/events/ufs.h
-+++ b/include/trace/events/ufs.h
-@@ -257,6 +257,33 @@
- 	)
- );
- 
-+TRACE_EVENT(ufshcd_upiu,
-+	TP_PROTO(const char *dev_name, const char *str, void *hdr, void *tsf),
-+
-+	TP_ARGS(dev_name, str, hdr, tsf),
-+
-+	TP_STRUCT__entry(
-+		__string(dev_name, dev_name)
-+		__string(str, str)
-+		__array(unsigned char, hdr, 12)
-+		__array(unsigned char, tsf, 16)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(dev_name, dev_name);
-+		__assign_str(str, str);
-+		memcpy(__entry->hdr, hdr, sizeof(__entry->hdr));
-+		memcpy(__entry->tsf, tsf, sizeof(__entry->tsf));
-+	),
-+
-+	TP_printk(
-+		"%s: %s: HDR:%s, CDB:%s",
-+		__get_str(str), __get_str(dev_name),
-+		__print_hex(__entry->hdr, sizeof(__entry->hdr)),
-+		__print_hex(__entry->tsf, sizeof(__entry->tsf))
-+	)
-+);
-+
- #endif /* if !defined(_TRACE_UFS_H) || defined(TRACE_HEADER_MULTI_READ) */
- 
- /* This part must be outside protection */
--- 
-1.9.1
+T24gU3VuLCAyMDE4LTAzLTI1IGF0IDEwOjA4ICswMzAwLCBPaGFkIFNoYXJhYmkgd3JvdGU6DQo+
+IEFkZCBVRlMgUHJvdG9jb2wgSW5mb3JtYXRpb24gVW5pdHModXBpdSkgdHJhY2UgZXZlbnRzIGZv
+ciB1ZnMgZHJpdmVyLA0KPiB1c2VkIHRvIHRyYWNlIHZhcmlvdXMgdWZzIHRyYW5zYWN0aW9uIHR5
+cGVzLSBjb21tYW5kLCB0YXNrLW1hbmFnZW1lbnQNCj4gYW5kIGRldmljZSBtYW5hZ2VtZW50Lg0K
+PiBUaGUgdHJhY2UtcG9pbnQgZm9ybWF0IGlzIGdlbmVyaWMgYW5kIGNhbiBiZSBlYXNpbHkgYWRh
+cHRlZCB0byB0cmFjZQ0KPiBvdGhlciB1cGl1cyBpZiBuZWVkZWQuDQo+IEN1cnJlbnRseSB0cmFj
+aW5nIHVmcyB0cmFuc2FjdGlvbiBvZiB0eXBlICdkZXZpY2UgbWFuYWdlbWVudCcsIHdoaWNoDQo+
+IHRoaXMgcGF0Y2ggaW50cm9kdWNlLCBjYW5ub3QgYmUgb2J0YWluZWQgZnJvbSBhbnkgb3RoZXIg
+dHJhY2UuDQo+IERldmljZSBtYW5hZ2VtZW50IHRyYW5zYWN0aW9ucyBhcmUgdXNlZCBmb3IgY29t
+bXVuaWNhdGlvbiB3aXRoIHRoZQ0KPiBkZXZpY2Ugc3VjaCBhcyByZWFkaW5nIGFuZCB3cml0aW5n
+IGRlc2NyaXB0b3Igb3IgYXR0cmlidXRlcyBldGMuDQo+IA0KPiB2Mi0+djM6DQo+ICAgICAtIG1v
+ZGlmeSBhcmdzIDMsNCBvZiB0cmFjZV91ZnNoY2RfdXBpdSB0byBiZSB2b2lkICoNCj4gDQo+IHYx
+LT52MjoNCj4gICAgIC0gc3BsaXQgdG8gdHJhbnNhY3Rpb24gc3BlY2lmaWMgZnVuY3Rpb25zIChm
+aXggd2FybmluZ3MgYW5kIHNpbXBsaWZpZXMNCj4gICAgICAgY29kZSkNCj4gICAgIC0gYWRkaW5n
+IHRyYWNlcyB3aGVuIHNlbmRpbmcgcXVlcnkgY29tbWFuZA0KDQpUaGUgY2hhbmdlbG9nIGZvciBh
+IHBhdGNoIHNob3VsZCBhcHBlYXIgdW5kZXIgdGhlIHRocmVlIGh5cGhlbnMgc3VjaCB0aGF0IGl0
+DQpnZXRzIGRpc2NhcmRlZCBhdXRvbWF0aWNhbGx5IGJ5IHRvb2xzIGxpa2UgImdpdCBhbSIuIE1h
+cnRpbiB3aWxsIGhhdmUgdG8NCnJlbW92ZSB0aGUgYWJvdmUgY2hhbmdlbG9nIG1hbnVhbGx5LiBB
+bnl3YXk6DQoNClJldmlld2VkLWJ5OiBCYXJ0IFZhbiBBc3NjaGUgPGJhcnQudmFuYXNzY2hlQHdk
+Yy5jb20+DQoNCg0KDQoNCg==
