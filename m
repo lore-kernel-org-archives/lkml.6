@@ -1,70 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751398AbeCZJXE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:23:04 -0400
-Received: from mga02.intel.com ([134.134.136.20]:39843 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750923AbeCZJXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:23:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
-   d="scan'208";a="40649028"
-Subject: [PATCH v3 2/3] perf report: extend raw dump (-D) out with switch out
- event type
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <0b5dcf43-cfd4-b64e-3d0d-6aa743ff4d4a@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <7aad4900-bf12-3263-5b5a-bd1bd1fc83aa@linux.intel.com>
-Date: Mon, 26 Mar 2018 12:22:59 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751686AbeCZJXl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:23:41 -0400
+Received: from mail-it0-f44.google.com ([209.85.214.44]:33261 "EHLO
+        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750973AbeCZJXj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 05:23:39 -0400
+X-Google-Smtp-Source: AIpwx49JGk31S3DxXbtqp0eyK2o5zTfW3UZRRsCf811d4Bafzt/8caHiRqnSAmJi+sZVNT0eiz2Zns0Wv1mYaUNss9w=
 MIME-Version: 1.0
-In-Reply-To: <0b5dcf43-cfd4-b64e-3d0d-6aa743ff4d4a@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <676c44ce-6909-f002-4ea3-0c6f68b6b781@molgen.mpg.de>
+References: <305249de-7892-fca4-b462-a493aa65d177@molgen.mpg.de>
+ <CAKv+Gu84h2+zofb4v-QrVE7rqCrGC7MaHEw7tB+z2J8DczjoKw@mail.gmail.com>
+ <f94af2ed-3492-4db5-c1bc-30c4c1855947@molgen.mpg.de> <676c44ce-6909-f002-4ea3-0c6f68b6b781@molgen.mpg.de>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Mon, 26 Mar 2018 10:23:38 +0100
+Message-ID: <CAKv+Gu-3Db8ZAHqojs8YQfN7W7YjheKFCAVU2MzV=DU45JbPcA@mail.gmail.com>
+Subject: Re: efisubsys_init takes more than a few milliseconds
+To: Paul Menzel <pmenzel+linux-efi@molgen.mpg.de>
+Cc: linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2Q9NlAg018685
 
+On 25 March 2018 at 16:21, Paul Menzel <pmenzel+linux-efi@molgen.mpg.de> wrote:
+> Dear Ard,
+>
+>
+> On 03/25/2018 09:41 AM, Paul Menzel wrote:
+>
+>> On 03/24/2018 11:35 PM, Ard Biesheuvel wrote:
+>>
+>>> On 24 March 2018 at 22:10, Paul Menzel wrote:
+>
+>
+>>>> According to `initcall_debug`, `efisubsys_init` takes more than a few
+>>>> milliseconds to execute on a Dell XPS 13 9370 (Intel(R) Core(TM)
+>>>> i7-8550U CPU @ 1.80GHz).
+>>>>
+>>>>> ```
+>>>>> […]
+>>>>> [ 0.144474] calling  efisubsys_init+0x0/0x2cf @ 1
+>>>>> [ 0.144474] Registered efivars operations
+>>>>> [ 0.173690] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343
+>>>>> usecs
+>>>>> […]
+>>>>> ```
+>>>>
+>>>>
+>>>>
+>>>> To get a vanilla Linux kernel to boot in well under one second, it’d be
+>>>> nice
+>>>> if the time could be improved. Do you know, why it takes so long?
+>>>>
+>>>> According to `bootgraph.py` from pm-graph [1][2] it takes even a little
+>>>> longer.
+>>>>
+>>>>> efisubsys_init: start=690.841, end=720.493, length(w/o overhead)=31.250
+>>>>> ms, return=0
+>>>>
+>>>>
+>>>> There are several dozen calls to `virt_efi_get_next_variable()` all but
+>>>> one
+>>>> taking around 0.335 ms. This path needs to be optimized. Is that
+>>>> possible?
+>>>
+>>>
+>>> That depends. These are firmware calls, so to make these calls faster,
+>>> you need to modify the firmware, not the kernel.
+>>
+>>
+>> Yeah, unfortunately, no free firmware runs on this laptop, and Dell
+>> doesn’t respond to these kind of reports, as they think, it’s not important.
+>>
+>>> We may be able to make more intrusive changes to get rid of this
+>>> delay, e.g., spin up a special kernel thread, but I'd have to check in
+>>> more detail.
+>>
+>>
+>> That’d be great.
+>>
+>>> In the mean time, you can try passing 'efi=noruntime' to the kernel.
+>>
+>>
+>> Thank you, I didn’t know about that. Unfortunately, initcall_debug still
+>> reports the same time although the one message is gone.
+>>
+>> ```
+>> $ sudo dmesg | grep efisubsys
+>> [    0.145779] calling  efisubsys_init+0x0/0x2cf @ 1
+>> [    0.172034] initcall efisubsys_init+0x0/0x2cf returned 0 after 27343
+>> usecs
+>> ```
+>
+>
+> Hmm, it looks like, I only edited `/etc/default/grub` and didn’t run `sudo
+> update-grub`.
+>
+> ```
+> $ sudo dmesg | grep efisubsys
+> [ 0.776339] calling  efisubsys_init+0x0/0x2cf @ 1
+> [ 0.776339] initcall efisubsys_init+0x0/0x2cf returned 0 after 0 usecs
+>
+> ```
+>
 
-Print additional 'preempt' tag for PERF_RECORD_SWITCH[_CPU_WIDE] OUT records when
-event header misc field contains PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit set 
-designating preemption context switch out event:
-
-tools/perf/perf report -D -i perf.data | grep _SWITCH
-
-0 768361415226 0x27f076 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     8/8    
-4 768362216813 0x28f45e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
-4 768362217824 0x28f486 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
-0 768362414027 0x27f0ce [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:     8/8    
-0 768362414367 0x27f0f6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- tools/perf/util/event.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index f0a6cbd033cc..98ff3a6a3d50 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1421,7 +1421,9 @@ size_t perf_event__fprintf_itrace_start(union perf_event *event, FILE *fp)
- size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp)
- {
- 	bool out = event->header.misc & PERF_RECORD_MISC_SWITCH_OUT;
--	const char *in_out = out ? "OUT" : "IN ";
-+	const char *in_out = !out ? "IN         " :
-+		!(event->header.misc & PERF_RECORD_MISC_SWITCH_OUT_PREEMPT) ?
-+				    "OUT        " : "OUT preempt";
- 
- 	if (event->header.type == PERF_RECORD_SWITCH)
- 		return fprintf(fp, " %s\n", in_out);
+Excellent! If you want it any faster than that, I can't really help you :-)
