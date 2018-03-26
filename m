@@ -1,59 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752444AbeCZPfT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 11:35:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752377AbeCZPfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 11:35:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC9E21773
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 26 Mar 2018 11:35:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: joe.korty@concurrent-rt.com
-Cc: Julia Cartwright <julia@ni.com>, <bigeasy@linutronix.de>,
-        <mingo@redhat.com>, <tglx@linutronix.de>,
-        <linux-rt-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RT] Defer migrate_enable migration while task state !=
- TASK_RUNNING
-Message-ID: <20180326113515.720e7fb3@gandalf.local.home>
-In-Reply-To: <20180323172131.GA2670@zipoli.concurrent-rt.com>
-References: <20180323150959.GA16131@zipoli.concurrent-rt.com>
-        <20180323165921.GG10942@jcartwri.amer.corp.natinst.com>
-        <20180323172131.GA2670@zipoli.concurrent-rt.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752479AbeCZPfZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 11:35:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52622 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752447AbeCZPfW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 11:35:22 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C080460131
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Mon, 26 Mar 2018 09:35:20 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: David Collins <collinsd@codeaurora.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, broonie@kernel.org,
+        lgirdwood@gmail.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rnayak@codeaurora.org
+Subject: Re: [PATCH 1/2] regulator: add QCOM RPMh regulator driver
+Message-ID: <20180326153520.GC22084@codeaurora.org>
+References: <cover.1521246069.git.collinsd@codeaurora.org>
+ <71fab82672524b95632cdb588c16edfc9711866a.1521246069.git.collinsd@codeaurora.org>
+ <152165924074.91116.13025068669916027026@swboyd.mtv.corp.google.com>
+ <493c1f5d-df99-ca68-0f90-a7937a696f5d@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <493c1f5d-df99-ca68-0f90-a7937a696f5d@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Mar 2018 13:21:31 -0400
-joe.korty@concurrent-rt.com wrote:
+On Thu, Mar 22 2018 at 19:30 -0600, David Collins wrote:
+>Hello Stephen,
+>
+>Thank you for the very detailed review feedback.
+>
+>On 03/21/2018 12:07 PM, Stephen Boyd wrote:
+>> Quoting David Collins (2018-03-16 18:09:10)
 
-> My understanding is, in standard Linux and in rt, setting
-> task state to anything other than TASK_RUNNING in of itself
-> blocks preemption.
+>>> +static int rpmh_regulator_remove(struct platform_device *pdev)
+>>> +{
+>>> +       struct rpmh_pmic *pmic = platform_get_drvdata(pdev);
+>>> +
+>>> +       rpmh_release(pmic->rpmh_client);
+>>
+>> I'm still lost on what rpmh_client is giving us besides more code we
+>> don't need. I'll ping the rpmh thread again.
+>
+>Let's see if Lina is willing to add some devm_* calls so that no cleanup
+>is required.
+>
+I will look into this.
 
-That is clearly false. The only thing that blocks preemption with a
-CONFIG_PREEMPT kernel is preempt_disable() and local_irq*() disabling.
-
-(Note spin_locks call preempt_disable in non RT).
-
-Otherwise, nothing will stop preemption.
-
->  A preemption is not really needed here
-> as it is expected that there is a schedule() written in that
-> will shortly be executed.  And if a 'involuntary schedule'
-> (ie, preemption) were allowed to occur between the task
-> state set and the schedule(), that would change the task
-> state back to TASK_RUNNING, which would cause the schedule
-> to NOP.  Thus we risk not having paused long enough here
-> for the condition we were waiting for to become true.
-
-That is also incorrect. As Julia mentioned, a preemption keeps the
-state of the task.
-
--- Steve
+-- Lina
