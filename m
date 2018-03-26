@@ -1,155 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752159AbeCZTDg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 15:03:36 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:44866 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750983AbeCZTDe (ORCPT
+        id S1752649AbeCZS4f (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 14:56:35 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43529 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752173AbeCZS4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 15:03:34 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>
-Subject: Re: [RFC PATCH 2/3] drm: bridge: panel: allow override of the bus format
-Date: Mon, 26 Mar 2018 22:03:31 +0300
-Message-ID: <1986009.iWteaM7My3@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <e0f5d89d-83ee-31ae-0b48-e34fe94883c5@axentia.se>
-References: <20180317221525.18534-1-peda@axentia.se> <7015227.p44CVkfgjM@avalon> <e0f5d89d-83ee-31ae-0b48-e34fe94883c5@axentia.se>
+        Mon, 26 Mar 2018 14:56:33 -0400
+X-Google-Smtp-Source: AG47ELvsY2Ry0qdqHC1gPlAB0+nZpLPFCjIm+6Xb9tkoT0kG8kOQud6GQDKR0s7h5ViLynn37ON/pcXkZxkgcH8k58o=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <878tb2etva.fsf@concordia.ellerman.id.au>
+References: <20180225172236.29650-1-malat@debian.org> <20180225172236.29650-18-malat@debian.org>
+ <87muzoglga.fsf@concordia.ellerman.id.au> <CA+7wUsyMQcvEOOAuthFg4Sc783x4KBqtjkgB81KzJqPxQnwdYA@mail.gmail.com>
+ <878tb2etva.fsf@concordia.ellerman.id.au>
+From: Mathieu Malaterre <malat@debian.org>
+Date: Mon, 26 Mar 2018 20:56:12 +0200
+X-Google-Sender-Auth: DmXUiLH4I65AZZAGjg-QUhVX60A
+Message-ID: <CA+7wUszeX3vdctpddcEvx+j-evwSBbX=Q7Mh1-mx+GNFbFh0=A@mail.gmail.com>
+Subject: Re: [PATCH 17/21] powerpc: Add missing prototype for sys_debug_setcontext
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, Jiri Slaby <jslaby@suse.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2QJA5kv025503
 
-Hi Peter,
+Michael,
 
-(CC'ing Jacopo Mondi)
+On Thu, Mar 8, 2018 at 11:36 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+> Mathieu Malaterre <malat@debian.org> writes:
+>
+>> On Sun, Mar 4, 2018 at 11:54 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+>>> Mathieu Malaterre <malat@debian.org> writes:
+>>>
+>>>> In commit 81e7009ea46c ("powerpc: merge ppc signal.c and ppc64 signal32.c")
+>>>> the function sys_debug_setcontext was added without a prototype.
+>>>>
+>>>> Fix compilation warning (treated as error in W=1):
+>>>>
+>>>>   CC      arch/powerpc/kernel/signal_32.o
+>>>> arch/powerpc/kernel/signal_32.c:1227:5: error: no previous prototype for ‘sys_debug_setcontext’ [-Werror=missing-prototypes]
+>>>>  int sys_debug_setcontext(struct ucontext __user *ctx,
+>>>>      ^~~~~~~~~~~~~~~~~~~~
+>>>> cc1: all warnings being treated as errors
+>>>
+>>> This one should actually be using the SYSCALL_DEFINE syntax, so that it
+>>> can be used with CONFIG_FTRACE_SYSCALLS.
+>>>
+>>> See eg. our mmap:
+>>>
+>>>   SYSCALL_DEFINE6(mmap, unsigned long, addr, size_t, len,
+>>>                 unsigned long, prot, unsigned long, flags,
+>>>                 unsigned long, fd, off_t, offset)
+>>>   {
+>>>         return do_mmap2(addr, len, prot, flags, fd, offset, PAGE_SHIFT);
+>>>   }
+>>>
+>>>
+>>> We probably still need this patch, but I'm not entirely sure because the
+>>> SYSCALL_DEFINE macro does all sorts of shenanigans.
+>>
+>> I see. Could you please drop this patch then. The patch does not look
+>> that trivial anymore. I'll need to dig a bit more on how to do the
+>> syscall stuff with a 7 params function.
+>
+> Ergh, yuck, seems we're the first suckers to need do that.
+>
+> I think I'll take this patch for now, it's still good for now at least,
+> and then the SYSCALL_DEFINE stuff can be an addition.
 
-On Sunday, 25 March 2018 15:01:11 EEST Peter Rosin wrote:
-> On 2018-03-20 14:56, Laurent Pinchart wrote:
-> > Hi Peter,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Sunday, 18 March 2018 00:15:24 EET Peter Rosin wrote:
-> >> Useful if the bridge does some kind of conversion of the bus format.
-> >> 
-> >> Signed-off-by: Peter Rosin <peda@axentia.se>
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/bridge/panel.c | 22 +++++++++++++++++++++-
-> >>  include/drm/drm_bridge.h       |  1 +
-> >>  2 files changed, 22 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/bridge/panel.c
-> >> b/drivers/gpu/drm/bridge/panel.c index 6d99d4a3beb3..ccef0283ff41 100644
-> >> --- a/drivers/gpu/drm/bridge/panel.c
-> >> +++ b/drivers/gpu/drm/bridge/panel.c
-> >> @@ -22,6 +22,7 @@ struct panel_bridge {
-> >>  	struct drm_connector connector;
-> >>  	struct drm_panel *panel;
-> >>  	u32 connector_type;
-> >> +	u32 bus_format;
-> >>  };
-> >>  
-> >>  static inline struct panel_bridge *
-> >> @@ -40,8 +41,15 @@ static int panel_bridge_connector_get_modes(struct
-> >> drm_connector *connector) {
-> >>  	struct panel_bridge *panel_bridge =
-> >>  		drm_connector_to_panel_bridge(connector);
-> >> 
-> >> +	int ret;
-> >> +
-> >> +	ret = drm_panel_get_modes(panel_bridge->panel);
-> >> +
-> >> +	if (panel_bridge->bus_format)
-> >> +		drm_display_info_set_bus_formats(&connector->display_info,
-> >> +						 &panel_bridge->bus_format, 1);
-> > 
-> > While I agree with the problem statement and, to some extent, the DT
-> > bindings, I don't think this is the right implementation. You've
-> > correctly noted that display controller shouldn't blindly use the formats
-> > reported by the panel through the connector formats, and that hacking the
-> > panel driver to override the formats isn't a good idea, so I wouldn't
-> > override the formats reported by the connector. I would instead extend
-> > the drm_bridge API to report formats at bridge inputs. This would be more
-> > generic and allow each bridge to configure itself according to the next
-> > bridge in the chain.
-> > 
-> > I'm not sure whether this API extension should be in the form of a new
-> > bridge function, or if the formats should be stored in the drm_bridge
-> > structure directly as done for connectors in the display info structure.
-> > I'm tempted by the former, but I'm open to discussions.
-> 
-> Ok, I can look into that, but let me check if I got this right. From the
-> very little of the code that I have looked at, I have gathered that display
-> controllers handle bridges explicitly, right?
+Just to close the loop (for later reference). Here is what Al Viro
+told me about this function
 
-That's correct, yes. Or, rather, they handle the first bridge in the chain, 
-and then other bridges are handled recursively.
+[begin quote]
+int sys_debug_setcontext(struct ucontext __user *ctx,
+                         int ndbg, struct sig_dbg_op __user *dbg,
+                         int r6, int r7, int r8,
+                         struct pt_regs *regs)
 
-> If so, by extending the bridge (with either a new function or new data) you
-> impose changes to all display controllers wanting to handle this new bridge
-> input-format. If so, I assume I can leave out the changes to all display
-> controllers that I do not care about. Correct?
+can't be converted to SYSCALL_DEFINE... not because it's a 7-argument
+syscall (it isn't); the problem is that the last argument here does
+*not* come from userland.  What it really is trying to be is
+3-argument syscall:
+SYSCALL_DEFINE3(debug_setcontext, struct ucontext __user *, ctx,
+                                  int, ndbg,
+                                  struct sig_dbg_op __user *, dbg)
+with no dummy r6/r7/r8.  The thing is, ppc dispatcher combines the
+"pass 6 arguments" and "pass pt_regs *" by passing both.
 
-That's correct.
+debug_setcontext(), swapcontext(), sigreturn() and rt_sigreturn() are,
+AFAICS, the only ppc syscalls that make use of that argument.  All of
+those are relying upon regs == current_pt_regs() == current->thread.regs,
+[...]
+But in any case, these are not 7-argument syscalls - debug_setcontext(2)
+and swapcontext(2) are 3-argument and sigreturn()/rt_sigreturn() have
+no arguments at all.
+[end quote]
 
-> Also, don't hold your breath waiting for a v2, but I'll try to get to it :-)
+Sorry about the wrong analysis in the number of arguments count. I
+believe commit 0d60619e1c0ca (powerpc/next) should be just fine for
+now.
 
-I won't hold my breath, but Jacopo might :-) He has a similar issue to solve 
-(reporting the LVDS modes supported by the bridge).
-
-> >> -	return drm_panel_get_modes(panel_bridge->panel);
-> >> +	return ret;
-> >>  }
-> >>  
-> >>  static const struct drm_connector_helper_funcs
-> >> @@ -203,6 +211,18 @@ void drm_panel_bridge_remove(struct drm_bridge
-> >> *bridge)
-> >>  }
-> >>  EXPORT_SYMBOL(drm_panel_bridge_remove);
-> >> 
-> >> +void drm_panel_bridge_set_bus_format(struct drm_bridge *bridge, u32
-> >> bus_format)
-> >> +{
-> >> +	struct panel_bridge *panel_bridge;
-> >> +
-> >> +	if (!bridge)
-> >> +		return;
-> >> +
-> >> +	panel_bridge = drm_bridge_to_panel_bridge(bridge);
-> >> +	panel_bridge->bus_format = bus_format;
-> >> +}
-> >> +EXPORT_SYMBOL(drm_panel_bridge_set_bus_format);
-> >> +
-> >>  static void devm_drm_panel_bridge_release(struct device *dev, void *res)
-> >>  {
-> >>  	struct drm_bridge **bridge = res;
-> >> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> >> index 682d01ba920c..81903b92f187 100644
-> >> --- a/include/drm/drm_bridge.h
-> >> +++ b/include/drm/drm_bridge.h
-> >> @@ -268,6 +268,7 @@ void drm_bridge_enable(struct drm_bridge *bridge);
-> >>  struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
-> >>  					u32 connector_type);
-> >>  void drm_panel_bridge_remove(struct drm_bridge *bridge);
-> >> +void drm_panel_bridge_set_bus_format(struct drm_bridge *bridge, u32
-> >> bus_format);
-> >> struct drm_bridge *devm_drm_panel_bridge_add(struct device *dev,
-> >>  					     struct drm_panel *panel,
-> >>  					     u32 connector_type);
-
--- 
-Regards,
-
-Laurent Pinchart
+2cts
