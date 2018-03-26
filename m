@@ -1,91 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751890AbeCZNqs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:46:48 -0400
-Received: from stargate.chelsio.com ([12.32.117.8]:19758 "EHLO
-        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751099AbeCZNqr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:46:47 -0400
-Date: Mon, 26 Mar 2018 19:15:40 +0530
-From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "stephen@networkplumber.org" <stephen@networkplumber.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Ganesh GR <ganeshgr@chelsio.com>,
-        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
-        Indranil Choudhury <indranil@chelsio.com>
-Subject: Re: [PATCH net-next v2 0/2] kernel: add support to collect hardware
- logs in crash recovery kernel
-Message-ID: <20180326134539.GA15852@chelsio.com>
-References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
- <87muyxlctn.fsf@xmission.com>
+        id S1752021AbeCZNr7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 09:47:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39716 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751109AbeCZNr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 09:47:57 -0400
+Date: Mon, 26 Mar 2018 15:47:53 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, borntraeger@de.ibm.com, pasic@linux.vnet.ibm.com,
+        pmorel@linux.vnet.ibm.com
+Subject: Re: [PATCH 3/4] vfio: ccw: set ccw->cda to NULL defensively
+Message-ID: <20180326154753.327503ba.cohuck@redhat.com>
+In-Reply-To: <20180321020822.86255-4-bjsdjshi@linux.vnet.ibm.com>
+References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
+        <20180321020822.86255-4-bjsdjshi@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87muyxlctn.fsf@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday, March 03/24/18, 2018 at 20:50:52 +0530, Eric W. Biederman wrote:
-> 
-> Rahul Lakkireddy <rahul.lakkireddy@chelsio.com> writes:
-> 
-> > On production servers running variety of workloads over time, kernel
-> > panic can happen sporadically after days or even months. It is
-> > important to collect as much debug logs as possible to root cause
-> > and fix the problem, that may not be easy to reproduce. Snapshot of
-> > underlying hardware/firmware state (like register dump, firmware
-> > logs, adapter memory, etc.), at the time of kernel panic will be very
-> > helpful while debugging the culprit device driver.
-> >
-> > This series of patches add new generic framework that enable device
-> > drivers to collect device specific snapshot of the hardware/firmware
-> > state of the underlying device in the crash recovery kernel. In crash
-> > recovery kernel, the collected logs are exposed via /sys/kernel/crashdd/
-> > directory, which is copied by user space scripts for post-analysis.
-> >
-> > A kernel module crashdd is newly added. In crash recovery kernel,
-> > crashdd exposes /sys/kernel/crashdd/ directory containing device
-> > specific hardware/firmware logs.
-> 
-> Have you looked at instead of adding a sysfs file adding the dumps
-> as additional elf notes in /proc/vmcore?
-> 
+On Wed, 21 Mar 2018 03:08:21 +0100
+Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
 
-I see the crash recovery kernel's memory is not present in any of the
-the PT_LOAD headers.  So, makedumpfile is not collecting the dumps
-that are in crash recovery kernel's memory.
+> Let's avoid free on ccw->cda that points to a guest address
+> or a already freed memory area by setting it to NULL if memory
+> allocation didn't happen or failed.
 
-Also, are you suggesting exporting the dumps themselves as PT_NOTE
-instead?  I'll look into doing it this way.
+Does not hurt, I guess.
 
-> That should allow existing tools to capture your extended dump
-> information with no code changes, and it will allow having a single file
-> core dump for storing the information.
 > 
-> Both of which should mean something that will integrate better into
-> existing flows.
+> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+> ---
+>  drivers/s390/cio/vfio_ccw_cp.c | 28 +++++++++++++++++++---------
+>  1 file changed, 19 insertions(+), 9 deletions(-)
 > 
-> The interface logic of the driver should be essentially the same.
-> 
-> 
-> Also have you tested this and seen how well your current logic captures
-> the device information?
-> 
+> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+> index 3abc9770910a..5958c35ab343 100644
+> --- a/drivers/s390/cio/vfio_ccw_cp.c
+> +++ b/drivers/s390/cio/vfio_ccw_cp.c
+> @@ -491,7 +491,7 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
+>  	struct ccw1 *ccw;
+>  	struct pfn_array_table *pat;
+>  	unsigned long *idaws;
+> -	int idaw_nr;
+> +	int idaw_nr, ret;
+>  
+>  	ccw = chain->ch_ccw + idx;
+>  
+> @@ -511,18 +511,20 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
+>  	 * needed when translating a direct ccw to a idal ccw.
+>  	 */
+>  	pat = chain->ch_pat + idx;
+> -	if (pfn_array_table_init(pat, 1))
+> -		return -ENOMEM;
+> -	idaw_nr = pfn_array_alloc_pin(pat->pat_pa, cp->mdev,
+> +	ret = pfn_array_table_init(pat, 1);
+> +	if (ret)
+> +		goto out_init;
+> +
+> +	idaw_nr = ret = pfn_array_alloc_pin(pat->pat_pa, cp->mdev,
 
-Yes, the hardware snapshot is pretty close to the state during kernel
-panic.  It is better than risking not being able to collect anything
-at all during kernel panic.
+Ugh, I don't like setting both at the same time... only set idaw_nr for
+ret > 0? (personal preference)
 
-Thanks,
-Rahul
+>  				      ccw->cda, ccw->count);
+> -	if (idaw_nr < 0)
+> -		return idaw_nr;
+> +	if (ret < 0)
+> +		goto out_init;
