@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751174AbeCZBsk (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 21:48:40 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35780 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750977AbeCZBsi (ORCPT
+        id S1751150AbeCZB4U (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 21:56:20 -0400
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:55471 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbeCZB4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 21:48:38 -0400
-X-Google-Smtp-Source: AIpwx4+cKEOa98v+d1y3jj5UUy/OWP60AyasWurkZ/Rqh62tIft/d77oVDKvqL4wSrvYQvWIo8aCLQ==
+        Sun, 25 Mar 2018 21:56:18 -0400
+X-Google-Smtp-Source: AG47ELucSa3+i8wOtaUAiAntikMQkawlWGodnBaAAbzxpForrw3upRc9o/myUSFQIE7FInwH15LfdA==
 From: Junio C Hamano <gitster@pobox.com>
-To: "brian m. carlson" <sandals@crustytoothpaste.net>
+To: Eric Sunshine <sunshine@sunshineco.us>
 Cc: =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>,
-        git@vger.kernel.org,
+        Git List <git@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 2/2] send-email: supply a --send-delay=1 by default
 References: <20180325182803.30036-1-avarab@gmail.com>
         <20180325182803.30036-3-avarab@gmail.com>
-        <20180325210132.GE74743@genre.crustytoothpaste.net>
-Date: Sun, 25 Mar 2018 18:48:35 -0700
-In-Reply-To: <20180325210132.GE74743@genre.crustytoothpaste.net> (brian
-        m. carlson's message of "Sun, 25 Mar 2018 21:01:32 +0000")
-Message-ID: <xmqqpo3rehe4.fsf@gitster-ct.c.googlers.com>
+        <CAPig+cQ6EK=Q00panZECVvWt3pJyS9acC1n4mgogMmk5J4hO8g@mail.gmail.com>
+Date: Sun, 25 Mar 2018 18:56:15 -0700
+In-Reply-To: <CAPig+cQ6EK=Q00panZECVvWt3pJyS9acC1n4mgogMmk5J4hO8g@mail.gmail.com>
+        (Eric Sunshine's message of "Sun, 25 Mar 2018 20:11:24 -0400")
+Message-ID: <xmqqlgefeh1c.fsf@gitster-ct.c.googlers.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2.50 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -28,19 +28,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"brian m. carlson" <sandals@crustytoothpaste.net> writes:
+Eric Sunshine <sunshine@sunshineco.com> writes:
 
-> I'm not sure that this is going to have the effect you want it to have.
-> Let me give an example to demonstrate why.
-> ...
-> In short, I don't think this is going to be especially helpful because
-> it won't change the status quo for a lot of senders.  You'd have to
-> insert some significant delay in order to get the effect you desire, and
-> even then things could still be delivered out of order.
+> A minor point: Are you sure that it's git-format-patch that's being
+> careful about arranging Date: to display in the desired order, and not
+> git-send-email? Looking at old patches I still have hanging around
+> which were created with git-format-patch, I see the Date: headers are
+> wildly out of order, presumably because the date is taken from
+> Author-Date: and the patches were heavily rebased.
 
-Thanks for explaining it clearly.
+send-email uses the current time as the timestamp it lets MTA to see
+(and for a N-patch series, the first patch gets current time minus
+N, and later patches get newer timestamps with 1 second increment).
 
-In the past on this list those who do not get the store-and-forward
-nature of e-mail transport have brought this up a few times, but
-this approach fundamentally do not work, at least for the purpose of
-forcing ordering of messages at the receiving end.
+The Date: field in the input file to the command has nothing to
+participate in this process; sending a series that has patches that
+have been shuffled with "rebase -i" would still give older timestamp
+to the earlier message while sending the series out.
+
+That is sufficient for any MUA that is capable of sorting the
+messages in the sender's timestamp order; even though there is no
+way to force the actual order in which an MTA on the receiving end
+sees the messages, it is not necessary and it would not help X-<.
