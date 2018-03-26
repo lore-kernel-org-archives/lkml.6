@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeCZP3l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 11:29:41 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:52036 "EHLO
+        id S1752322AbeCZPai (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 11:30:38 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:52068 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751132AbeCZP3k (ORCPT
+        with ESMTP id S1752259AbeCZPag (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 11:29:40 -0400
-Date: Mon, 26 Mar 2018 11:29:36 -0400 (EDT)
-Message-Id: <20180326.112936.1452797374585013536.davem@davemloft.net>
-To: hayashi.kunihiko@socionext.com
-Cc: netdev@vger.kernel.org, robh+dt@kernel.org, andrew@lunn.ch,
-        f.fainelli@gmail.com, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        yamada.masahiro@socionext.com, masami.hiramatsu@linaro.org,
-        jaswinder.singh@linaro.org
-Subject: Re: [PATCH 0/2] net: ethernet: ave: add UniPhier PXs3 support
+        Mon, 26 Mar 2018 11:30:36 -0400
+Date: Mon, 26 Mar 2018 11:30:32 -0400 (EDT)
+Message-Id: <20180326.113032.2154480977869905145.davem@davemloft.net>
+To: madalin.bucur@nxp.com
+Cc: geert.uytterhoeven@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fsl/fman: remove unnecessary set_dma_ops() call and
+ HAS_DMA dependency
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <1521808237-3623-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1521808237-3623-1-git-send-email-hayashi.kunihiko@socionext.com>
+In-Reply-To: <20180323145225.9130-1-madalin.bucur@nxp.com>
+References: <20180323145225.9130-1-madalin.bucur@nxp.com>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
@@ -27,9 +25,14 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Date: Fri, 23 Mar 2018 21:30:35 +0900
+From: Madalin Bucur <madalin.bucur@nxp.com>
+Date: Fri, 23 Mar 2018 09:52:25 -0500
 
-> Add ethernet controller support on UniPhier PXs3 SoC.
+> The platform device is no longer used for DMA mapping so the
+> (questionable) setting of the DMA ops done here is no longer
+> needed. Removing it together with the HAS_DMA dependency that
+> it required.
+> 
+> Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
 
-Series applied to net-next, thank you.
+Applied to net-next, thanks.
