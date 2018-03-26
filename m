@@ -1,115 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752040AbeCZLjk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 07:39:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39806 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751890AbeCZLji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 07:39:38 -0400
-Date: Mon, 26 Mar 2018 12:39:33 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: "Ji.Zhang" <ji.zhang@mediatek.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>, Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Michael Weiser <michael.weiser@gmx.de>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Xie XiuQi <xiexiuqi@huawei.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        wsd_upstream@mediatek.com, shadanji@163.com
-Subject: Re: [PATCH] arm64: avoid race condition issue in dump_backtrace
-Message-ID: <20180326113932.2i6qp3776jtmcqk4@lakrids.cambridge.arm.com>
-References: <1521687960-3744-1-git-send-email-ji.zhang@mediatek.com>
- <20180322055929.z25brvwlmdighz66@salmiak>
- <1521711329.26617.31.camel@mtksdccf07>
+        id S1751214AbeCZLsR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 07:48:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41483 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750984AbeCZLsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 07:48:16 -0400
+Date: Mon, 26 Mar 2018 13:46:45 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Paul Kocialkowski <contact@paulk.fr>,
+        Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/7] ARM: dts: sun7i: Add pinmux settings for LCD0 RGB888
+ output.
+Message-ID: <20180326114645.lxvw5twhfzwfsswz@flea>
+References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <1521662593-25468-4-git-send-email-giulio.benetti@micronovasrl.com>
+ <1521986953.5301.4.camel@paulk.fr>
+ <20180326100114.fa7vjw342ad6vrb6@flea>
+ <e3e51afb-bb32-7f2f-877e-b6c74d71ab06@micronovasrl.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nmuan7bpy7aqwqnc"
 Content-Disposition: inline
-In-Reply-To: <1521711329.26617.31.camel@mtksdccf07>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <e3e51afb-bb32-7f2f-877e-b6c74d71ab06@micronovasrl.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 05:35:29PM +0800, Ji.Zhang wrote:
-> On Thu, 2018-03-22 at 05:59 +0000, Mark Rutland wrote:
-> > On Thu, Mar 22, 2018 at 11:06:00AM +0800, Ji Zhang wrote:
-> > > When we dump the backtrace of some specific task, there is a potential race
-> > > condition due to the task may be running on other cores if SMP enabled.
-> > > That is because for current implementation, if the task is not the current
-> > > task, we will get the registers used for unwind from cpu_context saved in
-> > > thread_info, which is the snapshot before context switch, but if the task
-> > > is running on other cores, the registers and the content of stack are
-> > > changed.
-> > > This may cause that we get the wrong backtrace or incomplete backtrace or
-> > > even crash the kernel.
-> > 
-> > When do we call dump_backtrace() on a running task that is not current?
-> > 
-> > AFAICT, we don't do that in the arm64-specific callers of dump_backtrace(), and
-> > this would have to be some caller of show_stack() in generic code.
-> Yes, show_stack() can make caller specify a task and dump its backtrace.
-> For example, SysRq-T (echo t > /proc/sysrq-trigger) will use this to
-> dump the backtrace of specific tasks.
 
-Ok. I see that this eventually calls show_state_filter(0), where we call
-sched_show_task() for every task.
+--nmuan7bpy7aqwqnc
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > We pin the task's stack via try_get_task_stack(), so this cannot be unmapped
-> > while we walk it. In unwind_frame() we check that the frame record falls
-> > entirely within the task's stack. So AFAICT, we cannot crash the kernel here,
-> > though the backtrace may be misleading (and we could potentially get stuck in
-> > an infinite loop).
-> You are right, I have checked the code and it seems that the check for
-> fp in unwind_frame() is strong enough to handle the case which stack
-> being changed due to task running. And as you mentioned, if
-> unfortunately fp is point to the address of itself, the unwind will be
-> an infinite loop, but it is a very small probability event, so we can
-> ignore this, is that right?
+On Mon, Mar 26, 2018 at 01:27:05PM +0200, Giulio Benetti wrote:
+> Hi,
+>=20
+> Il 26/03/2018 12:01, Maxime Ripard ha scritto:
+> > Hi,
+> >=20
+> > On Sun, Mar 25, 2018 at 04:09:13PM +0200, Paul Kocialkowski wrote:
+> > > Le mercredi 21 mars 2018 =E0 21:03 +0100, Giulio Benetti a =E9crit :
+> > > > The A20 supports RGB888 with H/V sync from LCD0. Add a pinmux setti=
+ng
+> > > > for the needed pins.
+> > > >=20
+> > > > Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> > > > ---
+> > > >   arch/arm/boot/dts/sun7i-a20.dtsi | 8 ++++++++
+> > > >   1 file changed, 8 insertions(+)
+> > > >=20
+> > > > diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi
+> > > > b/arch/arm/boot/dts/sun7i-a20.dtsi
+> > > > index efb5607..bfe6728 100644
+> > > > --- a/arch/arm/boot/dts/sun7i-a20.dtsi
+> > > > +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+> > > > @@ -922,6 +922,14 @@
+> > > >   				pins =3D "PI20", "PI21";
+> > > >   				function =3D "uart7";
+> > > >   			};
+> > > > +
+> > > > +			lcd0_rgb888_pins: lcd0-rgb888-pins {
+> > >=20
+> > > It would be more consistent with other pins definitions to have
+> > > underscores in both names and to indicate the index, such as:
+> > > lcd0_rgb888_pins: lcd0_rgb888_pins@0 {
+> >=20
+> > Both your suggestions will generate DTC warnings, and we'd like to get
+> > rid of them eventually :)
+> >=20
+> > > This way, other set of pins for LCD (PH0-PH27) can be declared as @1
+> > > when they are needed in the future.
+> >=20
+> > A better idea would be to call it lcd0-rgb888-pd-pins, and introduce
+> > the ph variant when it's done.
+>=20
+> As I know, only PD is muxed with LCD0.
+> And PH is for LCD1 only.
+>=20
+> And LCD0 seems to come out only from PD port according to datasheet,
+> this is why I didn't put @0 after lcd0-rgb888-pins.
+>=20
+> So I don't think it makes sense to handle pins in the way Paul suggests.
+>=20
+> What do you all think?
+y
+That seems sensible in this case, yes.
 
-I think that it would be preferable to try to avoid the inifinite loop
-case. We could hit that by accident if we're tracing a live task.
+Maxime
 
-It's a little tricky to ensure that we don't loop, since we can have
-traces that span several stacks, e.g. overflow -> irq -> task, so we
-need to know where the last frame was, and we need to defnie a strict
-order for stack nesting.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-> > > To avoid this case, do not dump the backtrace of the tasks which are
-> > > running on other cores.
-> > > This patch cannot solve the issue completely but can shrink the window of
-> > > race condition.
-> > 
-> > > @@ -113,6 +113,9 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
-> > >  	if (tsk == current) {
-> > >  		frame.fp = (unsigned long)__builtin_frame_address(0);
-> > >  		frame.pc = (unsigned long)dump_backtrace;
-> > > +	else if (tsk->state == TASK_RUNNING) {
-> > > +		pr_notice("Do not dump other running tasks\n");
-> > > +		return;
-> > 
-> > As you note, if we can race with the task being scheduled, this doesn't help.
-> > 
-> > Can we rule this out at a higher level?
-> > Thanks,
-> > Mark.
-> Actually, according to my previous understanding, the low level function
-> should be transparent to callers and should provide the right result and
-> handle some unexpected cases, which means that if the result may be
-> misleading, we should drop it. That is why I bypass all TASK_RUNNING
-> tasks. I am not sure if this understanding is reasonable for this case.
+--nmuan7bpy7aqwqnc
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Given that this can change under our feet, I think this only provides a
-false sense of security and complicates the code.
+-----BEGIN PGP SIGNATURE-----
 
-> And as you mentioned that rule this out at a higher level, is there any
-> suggestions, handle this in the caller of show_stack()?
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq43aUACgkQ0rTAlCFN
+r3Q4OA//fyGcKzs88JAjhcgSMW8Etvgnu+u6zQXlRaqXNkCT5+tdwaseextkdKuu
++TxmCwdzYRKxemRKQDLWa9xTszOMLQs89AshL9kG5DfVtdiJ/tQUyOOJCHUEm7W8
+EpSNb9pGEpZHq/AEFQv591ESYehaC5OZQ362cNua+/jR4R/EKOlNUFkwywfVuhkt
+nAhpUC2DjLJRN8A3VzVOm3uNUzp/OcTjHmjm7DdyzXZ7uNGwT6Xbo7ikthUYQxnm
+EKbUmUYx5/mHvBgLh3MM9NRhLCxc69ARDqXVTsQ8usyK68TXgW2lW0VwsWivlzY9
+BgUwHyLFNUlZabblpSdiA3SVD5FO3QiJ+o2HQztENhIEKcdGAWCK4h2UdnSkC7sF
+3mmUir0ZfCMt3Wkl6kZTwbq/RleGJD311NxIEvXzBC1QciuES9V/d+MhvvM1b449
+Jpy3kLr/sWfckG3J5wJzDbrY5N/wsci8gjpQTAmx5ZM1i3lV0shu1xC4WCsaCpN0
+xisYvVLx6+PJKyXZG7ClR+s2oEiMyh/eCZr6zQUhOgnEE5fCeWkJY64j+87hiih5
+dMNV2Kz+mhsCP/juizjfwrC+wiO81/+5VDh1iMI5FQM5LNpRSF6Ewka3/zO/EdFE
+LLMlIJkmw0PQ69zumEH2kxpI5tvwjR3fJat+SGHSxBhk57xYoJQ=
+=gjNK
+-----END PGP SIGNATURE-----
 
-Unfortunately, it doesn't look like we can do this in general given
-cases like sysrq-t.
-
-Thanks,
-Mark.
+--nmuan7bpy7aqwqnc--
