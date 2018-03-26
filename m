@@ -1,83 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751657AbeCZDol (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 23:44:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45516 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750960AbeCZDoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 23:44:39 -0400
-Subject: Re: [RFC PATCH V2 0/8] Packed ring for vhost
-To: mst@redhat.com, virtualization@lists.linux-foundation.org
-Cc: kvm@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tiwei Bie <tiwei.bie@intel.com>,
-        Jens Freimann <jfreimann@redhat.com>, Wei Xu <wexu@redhat.com>
-References: <1522035533-11786-1-git-send-email-jasowang@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <1529f62d-dc16-d279-2ebf-85a6d2029ebe@redhat.com>
-Date: Mon, 26 Mar 2018 11:44:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751756AbeCZDqB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 23:46:01 -0400
+Received: from ozlabs.org ([103.22.144.67]:60931 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750960AbeCZDqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 23:46:00 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 26 Mar 2018 14:45:12 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
+Message-ID: <20180326144512.74706ad6@canb.auug.org.au>
+In-Reply-To: <20180322173722.78d012c5@canb.auug.org.au>
+References: <20180322173722.78d012c5@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <1522035533-11786-1-git-send-email-jasowang@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/y6xsWNGkUj0Qy.0ksgwbGCe"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cc Jens, Tiwei and Wei
+--Sig_/y6xsWNGkUj0Qy.0ksgwbGCe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
+Hi all,
 
+On Thu, 22 Mar 2018 17:37:22 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the drm tree got conflicts in several amdgpu
+> files because there are a set of (mostly identical) patches that appear
+> Linus' tree and the drm tree.  In each case I just used the version fo
+> the file from the drm tree.
+>=20
+> You should do a test merge between your tree and Linus' tree and see what
+> you want to do about the resolution (either do the back merge (I think
+> with v4.16-rc6), or provide Linus with branch that has the merge done).
+> Its a bit of a mess :-(
 
-On 2018年03月26日 11:38, Jason Wang wrote:
-> Hi all:
->
-> This RFC implement packed ring layout. The code were tested with pmd
-> implement by Jens at
-> http://dpdk.org/ml/archives/dev/2018-January/089417.html. Minor change
-> was needed for pmd codes to kick virtqueue since it assumes a busy
-> polling backend.
->
-> Test were done between localhost and guest. Testpmd (rxonly) in guest
-> reports 2.4Mpps. Testpmd (txonly) repots about 2.1Mpps.
->
-> Notes: The event suppression /indirect descriptor support is complied
->         test only because of lacked driver support.
->
-> Changes from V1:
->
-> - Refactor vhost used elem code to avoid open coding on used elem
-> - Event suppression support (compile test only).
-> - Indirect descriptor support (compile test only).
-> - Zerocopy support.
-> - vIOMMU support.
-> - SCSI/VSOCK support (compile test only).
-> - Fix several bugs
->
-> For simplicity, I don't implement batching or other optimizations.
->
-> Please review.
->
-> Thanks
->
-> Jason Wang (8):
->    vhost: move get_rx_bufs to vhost.c
->    vhost: hide used ring layout from device
->    vhost: do not use vring_used_elem
->    vhost_net: do not explicitly manipulate vhost_used_elem
->    vhost: vhost_put_user() can accept metadata type
->    virtio: introduce packed ring defines
->    vhost: packed ring support
->    vhost: event suppression for packed ring
->
->   drivers/vhost/net.c                | 138 ++-----
->   drivers/vhost/scsi.c               |  62 +--
->   drivers/vhost/vhost.c              | 818 ++++++++++++++++++++++++++++++++++---
->   drivers/vhost/vhost.h              |  46 ++-
->   drivers/vhost/vsock.c              |  42 +-
->   include/uapi/linux/virtio_config.h |   9 +
->   include/uapi/linux/virtio_ring.h   |  32 ++
->   7 files changed, 921 insertions(+), 226 deletions(-)
->
+I got a few more of these today.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/y6xsWNGkUj0Qy.0ksgwbGCe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4bMgACgkQAVBC80lX
+0GwQ8Af9H1GFH4QTihz/dTbHjqJPdgqiKTSmxJbfyS24jqwaflvJanDjc3Pdpj3D
+/WG+gzng9qn58tjSZU3yqsC+usPXEanwviU2nTGPQuOegEhVN88nOo9Wf7UANYtW
+GweXQJQigGqCPIvUQhehYXEWJ2J9VRM9jKQIdsb1ceHQzOorIK65iMZEaufSy4yB
+jhwY8gpZ0ASz74eUwP/ao6ZL7c/2GrOGv+Q8/XxK5auZn9v3cjTfDIi6MIJxpBt1
+2eT+Au5IiaVcnQ4sM41wxqzsgT1N1b73WfVzu9U9gOd2F4OqqJkHasRTQlk96lzG
+EFv8tN5FSkx7/qapsYV7c9E19GNu2A==
+=376y
+-----END PGP SIGNATURE-----
+
+--Sig_/y6xsWNGkUj0Qy.0ksgwbGCe--
