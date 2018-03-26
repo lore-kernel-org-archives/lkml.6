@@ -1,133 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeCZRRD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 13:17:03 -0400
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:40707 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752695AbeCZRQk (ORCPT
+        id S1752306AbeCZR1G (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 13:27:06 -0400
+Received: from mail-ot0-f171.google.com ([74.125.82.171]:40030 "EHLO
+        mail-ot0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeCZR1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 13:16:40 -0400
-X-Google-Smtp-Source: AIpwx4+er9V/n2cvHeOdqV1x+NueJLwnc0rvcTphJnP+/1XqI//u6Pm8A2fduZT59LTKVGdu+tB3JsqxV1ZPQ6SSGW8=
+        Mon, 26 Mar 2018 13:27:04 -0400
+X-Google-Smtp-Source: AIpwx49XdQFdUkSkGI1SHMeV5+dUCTRb/ZG8k/Ub2JMeY0Xh0DMxniJ8Omy2hWddw99cBvqmjLci1w==
 MIME-Version: 1.0
-In-Reply-To: <20180324131131.blg3eqsfjc6issp2@esperanza>
-References: <20180321224301.142879-1-shakeelb@google.com> <20180324131131.blg3eqsfjc6issp2@esperanza>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Mon, 26 Mar 2018 10:16:37 -0700
-Message-ID: <CALvZod7=LDppfsXihxuwivVhpzT0eRh5REbUe4codni0TTCaWw@mail.gmail.com>
-Subject: Re: [PATCH] mm, slab: eagerly delete inactive offlined SLABs
-To: Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAFqH_51zqxXZeEXDSry9aBwwj4Z7SRzxfKw5Ffzh-2A1UQG2Pw@mail.gmail.com>
+References: <20170927213527.31416-1-shawnn@chromium.org> <20171129121123.7zg63mjy7pufokg5@dell>
+ <CAFqH_51zqxXZeEXDSry9aBwwj4Z7SRzxfKw5Ffzh-2A1UQG2Pw@mail.gmail.com>
+From: Alexandru M Stan <amstan@chromium.org>
+Date: Mon, 26 Mar 2018 10:26:41 -0700
+X-Gmail-Original-Message-ID: <CAHNYxRyDDJRuoU67bjJ+Osvx9GauSPkwCsRZbknwVOY=rb6SEA@mail.gmail.com>
+Message-ID: <CAHNYxRyDDJRuoU67bjJ+Osvx9GauSPkwCsRZbknwVOY=rb6SEA@mail.gmail.com>
+Subject: Re: [PATCH] mfd: cros ec: spi: Fix "in progress" error signaling
+To: Enric Balletbo Serra <eballetbo@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Shawn Nematbakhsh <shawnn@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, jonathanh@nvidia.com,
+        Brian Norris <briannorris@chromium.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Doug Anderson <dianders@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2QHRDgS022304
 
-+Tejun, Johannes
+Hello Enric
 
-Hi Vladimir,
-
-On Sat, Mar 24, 2018 at 6:11 AM, Vladimir Davydov
-<vdavydov.dev@gmail.com> wrote:
-> Hello Shakeel,
+On Mon, Mar 26, 2018 at 9:48 AM, Enric Balletbo Serra
+<eballetbo@gmail.com> wrote:
+> Dear all,
 >
-> The patch makes sense to me, but I have a concern about synchronization
-> of cache destruction vs concurrent kmem_cache_free. Please, see my
-> comments inline.
+> Cc'ing some more chromium folks.
 >
-> On Wed, Mar 21, 2018 at 03:43:01PM -0700, Shakeel Butt wrote:
->> With kmem cgroup support, high memcgs churn can leave behind a lot of
->> empty kmem_caches. Usually such kmem_caches will be destroyed when the
->> corresponding memcg gets released but the memcg release can be
->> arbitrarily delayed. These empty kmem_caches wastes cache_reaper's time.
->> So, the reaper should destroy such empty offlined kmem_caches.
->
->> diff --git a/mm/slab.c b/mm/slab.c
->> index 66f2db98f026..9c174a799ffb 100644
->> --- a/mm/slab.c
->> +++ b/mm/slab.c
->> @@ -4004,6 +4004,16 @@ static void drain_array(struct kmem_cache *cachep, struct kmem_cache_node *n,
->>       slabs_destroy(cachep, &list);
->>  }
+> 2017-11-29 13:11 GMT+01:00 Lee Jones <lee.jones@linaro.org>:
+>> On Wed, 27 Sep 2017, Shawn Nematbakhsh wrote:
 >>
->> +static bool is_slab_active(struct kmem_cache *cachep)
->> +{
->> +     int node;
->> +     struct kmem_cache_node *n;
->> +
->> +     for_each_kmem_cache_node(cachep, node, n)
->> +             if (READ_ONCE(n->total_slabs) - n->free_slabs)
+>>> For host commands that take a long time to process, cros ec can return
+>>> early by signaling a EC_RES_IN_PROGRESS result. The host must then poll
+>>> status with EC_CMD_GET_COMMS_STATUS until completion of the command.
+>>>
+>>> None of the above applies when data link errors are encountered. When
+>>> errors such as EC_SPI_PAST_END are encountered during command
+>>> transmission, it usually means the command was not received by the EC.
+>>> Treating such errors as if they were 'EC_RES_IN_PROGRESS' results is
+>>> almost always the wrong decision, and can result in host commands
+>>> silently being lost.
+>>>
+>>> Reported-and-tested-by: Jon Hunter <jonathanh@nvidia.com>
+>>> Signed-off-by: Shawn Nematbakhsh <shawnn@chromium.org>
+>>> ---
+>>>  drivers/mfd/cros_ec_spi.c | 52 ++++++++++++++++++++++-------------------------
+>>>  1 file changed, 24 insertions(+), 28 deletions(-)
+>>
+>> Applied, thanks.
+>>
 >
-> Why READ_ONCE total_slabs, but not free_slabs?
+> This patch is a bit old and is already applied but I would like to
+> discuss an issue that Tomeu found playing with kernelci and a Veyron
+> Jaq attached to our lab.
 >
-> Anyway, AFAIU there's no guarantee that this CPU sees the two fields
-> updated in the same order as they were actually updated on another CPU.
-> For example, suppose total_slabs is 2 and free_slabs is 1, and another
-> CPU is freeing a slab page concurrently from kmem_cache_free, i.e.
-> subtracting 1 from both total_slabs and free_slabs. Then this CPU might
-> see a transient state, when total_slabs is already updated (set to 1),
-> but free_slabs is not (still equals 1), and decide that it's safe to
-> destroy this slab cache while in fact it isn't.
+> Seems that after this patch, the veyron jaq spits out lots of spi
+> tranfer error messages. See full log here [1]
 >
-> Such a race will probably not result in any serious problems, because
-> shutdown_cache() checks that the cache is empty and does nothing if it
-> isn't, but still it looks suspicious and at least deserves a comment.
-> To eliminate the race, we should check total_slabs vs free_slabs with
-> kmem_cache_node->list_lock held. Alternatively, I think we could just
-> check if total_slabs is 0 - sooner or later cache_reap() will release
-> all empty slabs anyway.
+>  cros-ec-spi spi0.0: spi transfer failed: -121
+>  cros-ec-spi spi0.0: Command xfer error (err:-121)
+>  cros-ec-i2c-tunnel ff110000.spi:ec@0:i2c-tunnel: Error transferring
+> EC i2c message -121
 >
-
-Checking total_slabs is 0 seems much simpler, I will test that.
-
->> +                     return true;
->> +     return false;
->> +}
+> The issue is random, not always happens, but when happens makes
+> cros-ec unusable. Reproduce the issue is easier if CONFIG_SMP is not
+> set.
 >
->> @@ -4061,6 +4071,10 @@ static void cache_reap(struct work_struct *w)
->>                               5 * searchp->num - 1) / (5 * searchp->num));
->>                       STATS_ADD_REAPED(searchp, freed);
->>               }
->> +
->> +             /* Eagerly delete inactive kmem_cache of an offlined memcg. */
->> +             if (!is_memcg_online(searchp) && !is_slab_active(searchp))
+> What happens is that the master starts the transmission and the
+> cros-ec returns an spi error event (EC_SPI_RX_BAD_DATA  - data is
+> 0xfb). The difference between after and before the patch is that now
+> the cros-ec does not recover, whereas without this patch after some
+> tries it succeeds (note that before the patch the affected code
+> returned -EAGAIN whereas now returns -EREMOTEIO)
 >
-> I don't think we need to define is_memcg_online in generic code.
-> I would merge is_memcg_online and is_slab_active, and call the
-> resulting function cache_is_active.
+> I think that reverting this patch is NOT the solution, but I don't
+> have enough knowledge yet to understand why the cros-ec fails. I need
+> to look at the cros-ec firmware to understand better what is
+> happening, but meanwhile, thoughts? clues?
 >
+> An important note is that I did not reproduce the issue on a Veyron
+> Minnie, even with CONFIG_SMP disabled.
+>
+> [1] https://lava.collabora.co.uk/scheduler/job/1085493#L905
+>
+> Best regards,
+>   Enric
+>
+>> --
+>> Lee Jones
+>> Linaro STMicroelectronics Landing Team Lead
+>> Linaro.org │ Open source software for ARM SoCs
+>> Follow Linaro: Facebook | Twitter | Blog
 
-Ack.
+Would it be possible for you to run "ectool version" on both your
+machines? Based on the code the EC is running we might have some hints
+on what the differences are.
 
->> +                     shutdown_cache(searchp);
->>  next:
->>               cond_resched();
->>       }
+You can find both ectool and the code the ec runs on
+https://chromium.googlesource.com/chromiumos/platform/ec/+/firmware-veyron-6588.B.
+Though I would use ectool from the master branch.
 
-
-Currently I am holding off this patch as Greg Thelen has pointed out
-(offline) a race condition this patch will introduce between
-memcg_kmem_get_cache and the cache reaper. The memcg of the cache
-returned by memcg_kmem_get_cache() can get offline while the
-allocation is happening on that cache (allocation can take long time
-due to reclaim or memory pressure). The reaper will see that the memcg
-of this cache is offlined and let's say at the moment s->total_slabs
-is 0, the reaper will delete the cache while parallel allocation is
-going on.
-
-I was thinking of adding an API to force a memcg to be online (or
-rather delay the call to css_offline), something like
-css_tryget_stay_online()/css_put_online() and use it in
-memcg_kmem_get_cache() and memcg_kmem_put_cache(). However Tejun has
-advised to not go through that route, more specifically not to tie
-on/offling a css with accounting artifacts.
-
-I am still exploring more solutions.
-
-thanks,
-Shakeel
+One thing I suspect is different is that veyron_minnie regularly polls
+an accelerometer, depending on the userspace you're running it's
+possible it unwedged itself with a few accelerometer requests.
