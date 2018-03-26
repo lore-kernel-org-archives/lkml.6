@@ -1,57 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752006AbeCZK44 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 06:56:56 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39458 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751090AbeCZK4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 06:56:55 -0400
-Date: Mon, 26 Mar 2018 11:57:05 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH for-4.17 1/2] arm64: Remove smp_mb() from
- arch_spin_is_locked()
-Message-ID: <20180326105705.GA6579@arm.com>
-References: <1522060641-6986-1-git-send-email-andrea.parri@amarulasolutions.com>
+        id S1752042AbeCZK5D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 06:57:03 -0400
+Received: from mga02.intel.com ([134.134.136.20]:45284 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751090AbeCZK5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 06:57:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
+   d="scan'208";a="214895909"
+Date: Mon, 26 Mar 2018 16:21:56 +0530
+From: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+To: hpa@zytor.com
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Anshuman Gupta <anshuman.gupta@intel.com>, glx@linutronix.de,
+        x86@kernel.org, mingo@redhat.com, rjw@rjwysocki.net,
+        andriy.shevchenko@linux.intel.com, alan@linux.intel.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] x86: i8237: Register based on FADT legacy boot flag
+Message-ID: <20180326105155.GA25340@raj-desk2.iind.intel.com>
+References: <alpine.DEB.2.21.1803191152450.2010@nanos.tec.linutronix.de>
+ <1521714118-31282-1-git-send-email-anshuman.gupta@intel.com>
+ <alpine.DEB.2.21.1803251348190.1481@nanos.tec.linutronix.de>
+ <20180326054833.GA25173@raj-desk2.iind.intel.com>
+ <alpine.DEB.2.21.1803261110430.1585@nanos.tec.linutronix.de>
+ <8A68406D-B05E-4953-89D1-D2AB49904644@zytor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522060641-6986-1-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <8A68406D-B05E-4953-89D1-D2AB49904644@zytor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 12:37:21PM +0200, Andrea Parri wrote:
-> Commit 38b850a73034f ("arm64: spinlock: order spin_{is_locked,unlock_wait}
-> against local locks") added an smp_mb() to arch_spin_is_locked(), in order
-> "to ensure that the lock value is always loaded after any other locks have
-> been taken by the current CPU", and reported one example (the "insane case"
-> in ipc/sem.c) relying on such guarantee.
+On Mon, Mar 26, 2018 at 03:34:44AM -0700, hpa@zytor.com wrote:
+> On March 26, 2018 2:11:51 AM PDT, Thomas Gleixner <tglx@linutronix.de> wrote:
+> >On Mon, 26 Mar 2018, Rajneesh Bhardwaj wrote:
+> >
+> >> On Sun, Mar 25, 2018 at 01:50:40PM +0200, Thomas Gleixner wrote:
+> >> > On Thu, 22 Mar 2018, Anshuman Gupta wrote:
+> >> > 
+> >> > > From: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+> >> > > 
+> >> > > >From Skylake onwards, the platform controller hub (Sunrisepoint
+> >PCH) does
+> >> > > not support legacy DMA operations to IO ports 81h-83h, 87h,
+> >89h-8Bh, 8Fh.
+> >> > > Currently this driver registers as syscore ops and its resume
+> >function is
+> >> > > called on every resume from S3. On Skylake and Kabylake, this
+> >causes a
+> >> > > resume delay of around 100ms due to port IO operations, which is
+> >a problem.
+> >> > > 
+> >> > > This change allows to load the driver only when the platform bios
+> >> > > explicitly supports such devices or has a cut-off date earlier
+> >than 2017.
+> >> > 
+> >> > Please explain WHY 2017 is the cut-off date. I still have no clue
+> >how that
+> >> > is decided aside of being a random number.
+> >> 
+> >> Hello Thomas,
+> >> 
+> >> We tested on few Intel platforms such as Skylake, Kabylake,
+> >Geminilake etc
+> >> and realized that the BIOS always sets the FADT flag to be true
+> >though the
+> >> device may not be physically present on the SoC. This is a BIOS bug.
+> >To keep
+> >> the impact minimum, we decided to add a cut-off date since we are not
+> >aware
+> >> of any BIOS (other than the coreboot link provided in the commit msg)
+> >that
+> >> properly sets this field. SoCs released after Skylake will not have
+> >this DMA
+> >> device on the PCH. So, because of these two reasons, we decided to
+> >add a
+> >> cut-off date as 2017.
+> >> 
+> >> Please let us know if you feel strongly about it and we can change it
+> >or
+> >> remove it if you feel so.
+> >
+> >I don't feel strongly about the cut off itself, but I want a reasonable
+> >explanation in the changelog or code comment because half a year from
+> >now
+> >nobody remembers ....
+> >
+> >Thanks,
+> >
+> >	tglx
 > 
-> It is however understood (and not documented) that spin_is_locked() is not
-> required to ensure such an ordering guarantee, guarantee that is currently
-> _not_ provided by all implementations/architectures, and that callers rely-
-> ing on such ordering should instead insert suitable memory barriers before
-> acting on the result of spin_is_locked().
-> 
-> Following a recent auditing[1] of the callsites of {,raw_}spin_is_locked()
-> revealing that none of these callers are relying on the ordering guarantee
-> anymore, this commit removes the leading smp_mb() from this primitive thus
-> effectively reverting 38b850a73034f.
-> 
-> [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
+> Can we probe safely for this device?
 
-What is patch 2/2 in this series? I couldn't find it in the archive.
+Hi Peter - Apparently No, that's why we are trying all these indirect means to
+determine the presence of the DMA device. As you might have noticed, this
+driver registers as syscore ops and not on the basis of a ACPI object or
+HWID or anything else.
 
-Assuming that patch doesn't do it, please can you remove the comment
-about spin_is_locked from mutex_is_locked?
+> -- 
+> Sent from my Android device with K-9 Mail. Please excuse my brevity.
 
-Also -- does this mean we can kill the #ifndef queued_spin_is_locked
-guards in asm-generic/qspinlock.h?
-
-Will
+-- 
+Best Regards,
+Rajneesh
