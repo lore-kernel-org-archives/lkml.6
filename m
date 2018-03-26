@@ -1,49 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752704AbeCZR7D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 13:59:03 -0400
-Received: from osg.samsung.com ([64.30.133.232]:39850 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751908AbeCZR7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 13:59:02 -0400
-Subject: Re: [PATCH 1/9] x86, pkeys: do not special case protection key 0
-To: Dave Hansen <dave.hansen@intel.com>, Shuah Khan <shuah@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, stable@kernel.org, linuxram@us.ibm.com,
-        tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
-        akpm@linux-foundation.org, Shuah Khan <shuahkh@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
- <20180326172722.8CC08307@viggo.jf.intel.com>
- <9c2de5f6-d9e2-3647-7aa8-86102e9fa6c3@kernel.org>
- <b54257c2-138c-7ac9-8176-0dc4868093ef@intel.com>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Message-ID: <19a54db9-b0bd-5661-de2a-c5ee76e733d9@osg.samsung.com>
-Date: Mon, 26 Mar 2018 11:58:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752638AbeCZSET (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 14:04:19 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:34150 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751692AbeCZSER (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 14:04:17 -0400
+X-Google-Smtp-Source: AG47ELtd9AS9zKpfcYcPVE5uGZIZhCW1PN8mNI+u60GIjC5cnXtodJxES3nt5jEMVLYNEsTfYPsMr4IPdT+fqZCwVeA=
 MIME-Version: 1.0
-In-Reply-To: <b54257c2-138c-7ac9-8176-0dc4868093ef@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <91363263-1ab8-5513-23a3-bbcea802d788@citrix.com>
+References: <20180320195658.17498-1-mudongliangabcd@gmail.com> <91363263-1ab8-5513-23a3-bbcea802d788@citrix.com>
+From: =?UTF-8?B?5oWV5Yas5Lqu?= <mudongliangabcd@gmail.com>
+Date: Mon, 26 Mar 2018 14:03:45 -0400
+Message-ID: <CAD-N9QV0NCfcickCB-paV0Nvqzso4NRgxKDtWSWqEwZ8bMxytA@mail.gmail.com>
+Subject: Re: [PATCH] fix one dead link in ia64/xen.txt
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, yamada.masahiro@socionext.com,
+        Sergei Trofimovich <slyfox@gentoo.org>, tony.luck@intel.com,
+        =?UTF-8?Q?Bj=C3=B8rn_Forsman?= <bjorn.forsman@gmail.com>,
+        linux-doc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/26/2018 11:53 AM, Dave Hansen wrote:
-> On 03/26/2018 10:47 AM, Shuah Khan wrote:
+On Tue, Mar 20, 2018 at 4:17 PM, Andrew Cooper
+<andrew.cooper3@citrix.com> wrote:
+> On 20/03/18 19:56, Dongliang Mu wrote:
+>> Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
+>> ---
+>>  Documentation/ia64/xen.txt | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->> Also what happens "pkey_free() pkey-0" - can you elaborate more on that
->> "silliness consequences"
-> 
-> It's just what happens if you free any other pkey that is in use: it
-> might get reallocated later.  The most likely scenario is that you will
-> get pkey-0 back from pkey_alloc(), you will set an access-disable or
-> write-disable bit in PKRU for it, and your next stack access will SIGSEGV.
-> 
+>> diff --git a/Documentation/ia64/xen.txt b/Documentation/ia64/xen.txt
+>> index a12c74ce2773..464d4c29b8b5 100644
+>> --- a/Documentation/ia64/xen.txt
+>> +++ b/Documentation/ia64/xen.txt
+>> @@ -26,8 +26,8 @@ Getting and Building Xen and Dom0
+>>      DomainU OS  : RHEL5
+>>
+>>   1. Download source
+>> -    # hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable.hg
+>> -    # cd xen-unstable.hg
+>> +    # hg clone http://xenbits.xensource.com/ext/ia64/xen-unstable
+>> +    # cd xen-unstable
+>>      # hg clone http://xenbits.xensource.com/ext/ia64/linux-2.6.18-xen.hg
+>>
+>>   2. # make world
+>
+> The last commit in that repository is almost 9 years old, and IA64
+> support was dropped from Xen mainline6 years ago.
+>
+> http://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=570c311ca2c7a1131570cdfc77e977bc7a9bf4c0
+>
+> There are a number of other dead links in this doc, and those which
+> aren't dead refer to Linux 2.6.x.  I'd just remove the entire file,
+> rather than pretend that any of this still might work.  (If by some
+> miracle it does still function, its 10 years behind on security fixes...)
+>
 
-Thanks. This will good information to include in the commit log.
+If the situation is like that, I agree to delete this file.
 
--- Shuah
+> ~Andrew
