@@ -1,67 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751335AbeCZJMG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:12:06 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45078 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751013AbeCZJMF (ORCPT
+        id S1751964AbeCZJMa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:12:30 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51830 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751083AbeCZJMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:12:05 -0400
-Date: Mon, 26 Mar 2018 11:11:51 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-cc: Anshuman Gupta <anshuman.gupta@intel.com>, glx@linutronix.de,
-        x86@kernel.org, mingo@redhat.com, hpa@zytor.com, rjw@rjwysocki.net,
-        andriy.shevchenko@linux.intel.com, alan@linux.intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] x86: i8237: Register based on FADT legacy boot flag
-In-Reply-To: <20180326054833.GA25173@raj-desk2.iind.intel.com>
-Message-ID: <alpine.DEB.2.21.1803261110430.1585@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1803191152450.2010@nanos.tec.linutronix.de> <1521714118-31282-1-git-send-email-anshuman.gupta@intel.com> <alpine.DEB.2.21.1803251348190.1481@nanos.tec.linutronix.de> <20180326054833.GA25173@raj-desk2.iind.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 26 Mar 2018 05:12:06 -0400
+X-Google-Smtp-Source: AG47ELviSHY8m4AZyMPRo8uCrRsyYocubEwzFLC/LY2yaKYz4L4IljgtQVkmw7tbMTBIXRzzCA4SRNnGq4LjNnq6bfk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180312164530.215524-1-djkurtz@chromium.org>
+References: <20180312164530.215524-1-djkurtz@chromium.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Mar 2018 11:12:04 +0200
+Message-ID: <CACRpkdaXzf=2nap2oqU0z_sTQ7XaFJGBnuk0UBE7FfNpT8mAFA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl/amd: poll InterruptEnable bits in enable_irq
+To: Daniel Kurtz <djkurtz@chromium.org>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        Nehal Shah <Nehal-bakulchandra.Shah@amd.com>,
+        Ken Xue <Ken.Xue@amd.com>
+Cc: adurbin@chromium.org,
+        "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Mar 2018, Rajneesh Bhardwaj wrote:
+On Mon, Mar 12, 2018 at 5:45 PM, Daniel Kurtz <djkurtz@chromium.org> wrote:
 
-> On Sun, Mar 25, 2018 at 01:50:40PM +0200, Thomas Gleixner wrote:
-> > On Thu, 22 Mar 2018, Anshuman Gupta wrote:
-> > 
-> > > From: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-> > > 
-> > > >From Skylake onwards, the platform controller hub (Sunrisepoint PCH) does
-> > > not support legacy DMA operations to IO ports 81h-83h, 87h, 89h-8Bh, 8Fh.
-> > > Currently this driver registers as syscore ops and its resume function is
-> > > called on every resume from S3. On Skylake and Kabylake, this causes a
-> > > resume delay of around 100ms due to port IO operations, which is a problem.
-> > > 
-> > > This change allows to load the driver only when the platform bios
-> > > explicitly supports such devices or has a cut-off date earlier than 2017.
-> > 
-> > Please explain WHY 2017 is the cut-off date. I still have no clue how that
-> > is decided aside of being a random number.
-> 
-> Hello Thomas,
-> 
-> We tested on few Intel platforms such as Skylake, Kabylake, Geminilake etc
-> and realized that the BIOS always sets the FADT flag to be true though the
-> device may not be physically present on the SoC. This is a BIOS bug. To keep
-> the impact minimum, we decided to add a cut-off date since we are not aware
-> of any BIOS (other than the coreboot link provided in the commit msg) that
-> properly sets this field. SoCs released after Skylake will not have this DMA
-> device on the PCH. So, because of these two reasons, we decided to add a
-> cut-off date as 2017.
-> 
-> Please let us know if you feel strongly about it and we can change it or
-> remove it if you feel so.
+> In certain cases interrupt enablement will be delayed relative to when
+> the InterruptEnable bits are written.  One example of this is when
+> a GPIO's "debounce" logice is first enabled.  After enabling debounce,
+> there is a 900 us "warm up" period during which InterruptEnable[0]
+> (bit 11) will read as 0 despite being written 1.  During this time
+> InterruptSts will not be updated, nor will interrupts be delivered, even
+> if the GPIO's interrupt configuration has been written to the register.
+>
+> To work around this delay, poll the InterruptEnable bits after setting
+> them to ensure interrupts have truly been enabled in hardware before
+> returning from the irq_enable handler.
+>
+> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 
-I don't feel strongly about the cut off itself, but I want a reasonable
-explanation in the changelog or code comment because half a year from now
-nobody remembers ....
+Patch applied.
 
-Thanks,
+I see the AMD people were not on CC so adding them here so they can
+say if there is any problem with the approach.
 
-	tglx
+Daniel: maybe you should consider listing yourself as comaintainer of this
+driver?
+
+Yours,
+Linus Walleij
