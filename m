@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751912AbeCZABh (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 20:01:37 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:52314 "EHLO
+        id S1752042AbeCZACG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 20:02:06 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:42689 "EHLO
         mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbeCZABD (ORCPT
+        with ESMTP id S1750981AbeCZABD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 25 Mar 2018 20:01:03 -0400
-X-Google-Smtp-Source: AIpwx4+U3yTN2NsN9dgMB5ZBMa1mHHbQzOhHmURaID0ja+B3ybUuoImjJa6Y8rUqN1KjcolKVVJ4tGN/9QKoZvI9vvpQAMQLtLHn
+X-Google-Smtp-Source: AG47ELtAaS9ik+7SjPVWVsnFC53vJwEpzglduE/U/eiN+bJRPZWOQwn2f+KCOpRXpYo3KC3EOSWcG6bXOFGxSPH8B1k2A4TAO8+N
 MIME-Version: 1.0
-Date: Sun, 25 Mar 2018 17:01:03 -0700
+Date: Sun, 25 Mar 2018 17:01:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113fe6d043b2a605684578f4@google.com>
-Subject: possible deadlock in handle_rx
-From: syzbot <syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com>
-To: jasowang@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mst@redhat.com, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        virtualization@lists.linux-foundation.org
+Message-ID: <001a113f9bb83e4d560568457853@google.com>
+Subject: BUG: unable to handle kernel paging request in smc_ib_remember_port_attr
+From: syzbot <syzbot+5cd61039dc9b8bfa6e47@syzkaller.appspotmail.com>
+To: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, ubraun@linux.vnet.ibm.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -27,80 +26,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello,
 
 syzbot hit the following crash on upstream commit
-cb6416592bc2a8b731dabcec0d63cda270764fc6 (Sun Mar 25 17:45:10 2018 +0000)
-Merge tag 'dmaengine-fix-4.16-rc7' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/slave-dma
+bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
+Merge tag 'pinctrl-v4.16-3' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=7f073540b1384a614e09
+https://syzkaller.appspot.com/bug?extid=5cd61039dc9b8bfa6e47
 
-So far this crash happened 4 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6506789075943424
+So far this crash happened 5 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4566822275776512
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5716250550337536
+https://syzkaller.appspot.com/x/repro.syz?id=5414431521505280
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5142038655795200
+https://syzkaller.appspot.com/x/log.txt?id=5642358322364416
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com
+Reported-by: syzbot+5cd61039dc9b8bfa6e47@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-
-============================================
-WARNING: possible recursive locking detected
-4.16.0-rc6+ #366 Not tainted
---------------------------------------------
-vhost-4248/4760 is trying to acquire lock:
-  (&vq->mutex){+.+.}, at: [<000000003482bddc>] vhost_net_rx_peek_head_len  
-drivers/vhost/net.c:633 [inline]
-  (&vq->mutex){+.+.}, at: [<000000003482bddc>] handle_rx+0xeb1/0x19c0  
-drivers/vhost/net.c:784
-
-but task is already holding lock:
-  (&vq->mutex){+.+.}, at: [<000000004de72f44>] handle_rx+0x1f5/0x19c0  
-drivers/vhost/net.c:766
-
-other info that might help us debug this:
-  Possible unsafe locking scenario:
-
-        CPU0
-        ----
-   lock(&vq->mutex);
-   lock(&vq->mutex);
-
-  *** DEADLOCK ***
-
-  May be due to missing lock nesting notation
-
-1 lock held by vhost-4248/4760:
-  #0:  (&vq->mutex){+.+.}, at: [<000000004de72f44>] handle_rx+0x1f5/0x19c0  
-drivers/vhost/net.c:766
-
-stack backtrace:
-CPU: 0 PID: 4760 Comm: vhost-4248 Not tainted 4.16.0-rc6+ #366
+BUG: unable to handle kernel paging request at fffffc0000000000
+IP: bytes_is_nonzero mm/kasan/kasan.c:166 [inline]
+IP: memory_is_nonzero mm/kasan/kasan.c:184 [inline]
+IP: memory_is_poisoned_n mm/kasan/kasan.c:210 [inline]
+IP: memory_is_poisoned mm/kasan/kasan.c:241 [inline]
+IP: check_memory_region_inline mm/kasan/kasan.c:257 [inline]
+IP: check_memory_region+0x83/0x190 mm/kasan/kasan.c:267
+PGD 0 P4D 0
+Oops: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4138 Comm: syzkaller407129 Not tainted 4.16.0-rc6+ #1
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+RIP: 0010:bytes_is_nonzero mm/kasan/kasan.c:166 [inline]
+RIP: 0010:memory_is_nonzero mm/kasan/kasan.c:184 [inline]
+RIP: 0010:memory_is_poisoned_n mm/kasan/kasan.c:210 [inline]
+RIP: 0010:memory_is_poisoned mm/kasan/kasan.c:241 [inline]
+RIP: 0010:check_memory_region_inline mm/kasan/kasan.c:257 [inline]
+RIP: 0010:check_memory_region+0x83/0x190 mm/kasan/kasan.c:267
+RSP: 0018:ffff8801b8c472e0 EFLAGS: 00010282
+RAX: fffffc0000000000 RBX: 0000000000000017 RCX: ffffffff85a53701
+RDX: 0000000000000001 RSI: 0000000000000040 RDI: ffffffffffffffd8
+RBP: ffff8801b8c472f0 R08: fffffc0000000001 R09: dffffc0000000003
+R10: e000000000000008 R11: dffffc0000000002 R12: dffffc0000000003
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffffffffffffd8
+FS:  0000000000a75880(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: fffffc0000000000 CR3: 00000001ceb8a001 CR4: 00000000001606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_deadlock_bug kernel/locking/lockdep.c:1761 [inline]
-  check_deadlock kernel/locking/lockdep.c:1805 [inline]
-  validate_chain kernel/locking/lockdep.c:2401 [inline]
-  __lock_acquire+0xe8f/0x3e00 kernel/locking/lockdep.c:3431
-  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-  __mutex_lock_common kernel/locking/mutex.c:756 [inline]
-  __mutex_lock+0x16f/0x1a80 kernel/locking/mutex.c:893
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
-  vhost_net_rx_peek_head_len drivers/vhost/net.c:633 [inline]
-  handle_rx+0xeb1/0x19c0 drivers/vhost/net.c:784
-  handle_rx_net+0x19/0x20 drivers/vhost/net.c:910
-  vhost_worker+0x268/0x470 drivers/vhost/vhost.c:361
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
+  memset+0x23/0x40 mm/kasan/kasan.c:285
+  memset include/linux/string.h:330 [inline]
+  smc_ib_remember_port_attr+0x91/0x340 net/smc/smc_ib.c:419
+  smc_pnet_add+0xb43/0xde0 net/smc/smc_pnet.c:354
+  genl_family_rcv_msg+0x7b7/0xfb0 net/netlink/genetlink.c:599
+  genl_rcv_msg+0xb2/0x140 net/netlink/genetlink.c:624
+  netlink_rcv_skb+0x14b/0x380 net/netlink/af_netlink.c:2444
+  genl_rcv+0x28/0x40 net/netlink/genetlink.c:635
+  netlink_unicast_kernel net/netlink/af_netlink.c:1308 [inline]
+  netlink_unicast+0x4c4/0x6b0 net/netlink/af_netlink.c:1334
+  netlink_sendmsg+0xa4a/0xe60 net/netlink/af_netlink.c:1897
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg+0xca/0x110 net/socket.c:640
+  ___sys_sendmsg+0x767/0x8b0 net/socket.c:2046
+  __sys_sendmsg+0xe5/0x210 net/socket.c:2080
+  SYSC_sendmsg net/socket.c:2091 [inline]
+  SyS_sendmsg+0x2d/0x50 net/socket.c:2087
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x43fda9
+RSP: 002b:00007ffd35aa5268 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fda9
+RDX: 0000000000040004 RSI: 0000000020a87fc8 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004016d0
+R13: 0000000000401760 R14: 0000000000000000 R15: 0000000000000000
+Code: fa 10 7f 3d 4d 85 d2 74 33 41 80 39 00 75 21 48 b8 01 00 00 00 00 fc  
+ff df 4d 01 d1 49 01 c0 4d 39 c1 4c 89 c0 74 15 49 83 c0 01 <80> 38 00 74  
+ef 48 85 c0 49 89 c0 0f 85 89 00 00 00 5b 41 5c 5d
+RIP: bytes_is_nonzero mm/kasan/kasan.c:166 [inline] RSP: ffff8801b8c472e0
+RIP: memory_is_nonzero mm/kasan/kasan.c:184 [inline] RSP: ffff8801b8c472e0
+RIP: memory_is_poisoned_n mm/kasan/kasan.c:210 [inline] RSP:  
+ffff8801b8c472e0
+RIP: memory_is_poisoned mm/kasan/kasan.c:241 [inline] RSP: ffff8801b8c472e0
+RIP: check_memory_region_inline mm/kasan/kasan.c:257 [inline] RSP:  
+ffff8801b8c472e0
+RIP: check_memory_region+0x83/0x190 mm/kasan/kasan.c:267 RSP:  
+ffff8801b8c472e0
+CR2: fffffc0000000000
+---[ end trace 327b8c6e0903b0d7 ]---
 
 
 ---
