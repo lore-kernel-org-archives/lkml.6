@@ -1,103 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752050AbeCZN2v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:28:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38002 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751981AbeCZN2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:28:50 -0400
-Date: Mon, 26 Mar 2018 15:28:46 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, borntraeger@de.ibm.com, pasic@linux.vnet.ibm.com,
-        pmorel@linux.vnet.ibm.com
-Subject: Re: [PATCH 2/4] vfio: ccw: refactor and improve
- pfn_array_alloc_pin()
-Message-ID: <20180326152846.2ef1ae07.cohuck@redhat.com>
-In-Reply-To: <20180321020822.86255-3-bjsdjshi@linux.vnet.ibm.com>
-References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
-        <20180321020822.86255-3-bjsdjshi@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1752120AbeCZNaC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 09:30:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45557 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeCZNaA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 09:30:00 -0400
+Date: Mon, 26 Mar 2018 15:29:57 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: syzbot <syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com>
+cc: LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH] alarmtimer: Init nanosleep alarm timer on stack
+Message-ID: <alpine.DEB.2.21.1803261528270.1585@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018 03:08:20 +0100
-Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
+syszbot reported the following debugobjects splat:
 
-> This refactors pfn_array_alloc_pin() and also improves it by adding
-> defensive code in error handling so that calling pfn_array_unpin_free()
-> after error return won't lead to problem. This mains does:
-> 1. Merge pfn_array_pin() into pfn_array_alloc_pin(), since there is no
->    other user of pfn_array_pin(). As a result, also remove kernel-doc
->    for pfn_array_pin() and add kernel-doc for pfn_array_alloc_pin().
-> 2. For a vfio_pin_pages() failure, set pa->pa_nr to zero to indicate
->    zero pages were pinned.
-> 3. Set pa->pa_iova_pfn to NULL right after it was freed.
-> 
-> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-> ---
->  drivers/s390/cio/vfio_ccw_cp.c | 84 ++++++++++++++++++------------------------
->  1 file changed, 36 insertions(+), 48 deletions(-)
-> 
-> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-> index 2be114db02f9..3abc9770910a 100644
-> --- a/drivers/s390/cio/vfio_ccw_cp.c
-> +++ b/drivers/s390/cio/vfio_ccw_cp.c
-> @@ -46,65 +46,32 @@ struct ccwchain {
->  };
->  
->  /*
-> - * pfn_array_pin() - pin user pages in memory
-> + * pfn_array_alloc_pin() - alloc memory for PFNs, then pin user pages in memory
->   * @pa: pfn_array on which to perform the operation
->   * @mdev: the mediated device to perform pin/unpin operations
-> + * @iova: target guest physical address
-> + * @len: number of bytes that should be pinned from @iova
->   *
-> - * Attempt to pin user pages in memory.
-> + * Attempt to allocate memory for PFNs, and pin user pages in memory.
->   *
->   * Usage of pfn_array:
-> - * @pa->pa_iova     starting guest physical I/O address. Assigned by caller.
-> + * @pa->pa_iova     starting guest physical I/O address. Assigned by callee.
->   * @pa->pa_iova_pfn array that stores PFNs of the pages need to pin. Allocated
-> - *                  by caller.
-> + *                  by callee.
->   * @pa->pa_pfn      array that receives PFNs of the pages pinned. Allocated by
-> - *                  caller.
-> - * @pa->pa_nr       number of pages from @pa->pa_iova to pin. Assigned by
-> - *                  caller.
-> - *                  number of pages pinned. Assigned by callee.
-> + *                  callee.
-> + * @pa->pa_nr       initiated as 0 by caller.
+ ODEBUG: object is on stack, but not annotated
+ WARNING: CPU: 0 PID: 4185 at lib/debugobjects.c:328
 
-s/initiated/initialized/
+ RIP: 0010:debug_object_is_on_stack lib/debugobjects.c:327 [inline]
+ debug_object_init+0x17/0x20 lib/debugobjects.c:391
+ debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
+ debug_init kernel/time/hrtimer.c:458 [inline]
+ hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
+ alarm_init kernel/time/alarmtimer.c:339 [inline]
+ alarm_timer_nsleep+0x164/0x4d0 kernel/time/alarmtimer.c:787
+ SYSC_clock_nanosleep kernel/time/posix-timers.c:1226 [inline]
+ SyS_clock_nanosleep+0x235/0x330 kernel/time/posix-timers.c:1204
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-but see below
+This happens because the hrtimer for the alarm nanosleep is on stack, but
+the code does not use the proper debug objects initialization.
 
-> + *                  number of pages pinned from @pa->pa_iova. Assigned by callee.
+Split out the code for the allocated use cases and invoke
+hrtimer_init_on_stack() for the nanosleep related functions.
 
-So, basically everything is filled by pfn_array_alloc_pin()? Should we
-expect a clean struct pfn_array handed in by the caller, then (not just
-pa_nr == 0)?
+Reported-by: syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: syzkaller-bugs@googlegroups.com
+---
+ kernel/time/alarmtimer.c |   34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
-Would it make sense to describe the contents of the struct pfn_array
-fields at the struct's definition instead? You could then shorten the
-description here to "we expect pa_nr == 0, any field in this structure
-will be filled in by this function".
-
-
->   *
->   * Returns:
->   *   Number of pages pinned on success.
-> - *   If @pa->pa_nr is 0 or negative, returns 0.
-> + *   If @pa->pa_nr is not 0 initially, returns -EINVAL.
->   *   If no pages were pinned, returns -errno.
->   */
-
-The change itself looks good to me.
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -326,6 +326,17 @@ static int alarmtimer_resume(struct devi
+ }
+ #endif
+ 
++static void
++__alarm_init(struct alarm *alarm, enum alarmtimer_type type,
++	     enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
++{
++	timerqueue_init(&alarm->node);
++	alarm->timer.function = alarmtimer_fired;
++	alarm->function = function;
++	alarm->type = type;
++	alarm->state = ALARMTIMER_STATE_INACTIVE;
++}
++
+ /**
+  * alarm_init - Initialize an alarm structure
+  * @alarm: ptr to alarm to be initialized
+@@ -335,16 +346,21 @@ static int alarmtimer_resume(struct devi
+ void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
+ 		enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
+ {
+-	timerqueue_init(&alarm->node);
+ 	hrtimer_init(&alarm->timer, alarm_bases[type].base_clockid,
+-			HRTIMER_MODE_ABS);
+-	alarm->timer.function = alarmtimer_fired;
+-	alarm->function = function;
+-	alarm->type = type;
+-	alarm->state = ALARMTIMER_STATE_INACTIVE;
++		     HRTIMER_MODE_ABS);
++	__alarm_init(alarm, type, function);
+ }
+ EXPORT_SYMBOL_GPL(alarm_init);
+ 
++static void
++alarm_init_on_stack(struct alarm *alarm, enum alarmtimer_type type,
++		    enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
++{
++	hrtimer_init_on_stack(&alarm->timer, alarm_bases[type].base_clockid,
++			      HRTIMER_MODE_ABS);
++	__alarm_init(alarm, type, function);
++}
++
+ /**
+  * alarm_start - Sets an absolute alarm to fire
+  * @alarm: ptr to alarm to set
+@@ -719,6 +735,8 @@ static int alarmtimer_do_nsleep(struct a
+ 
+ 	__set_current_state(TASK_RUNNING);
+ 
++	destroy_hrtimer_on_stack(&alarm.timer);
++
+ 	if (!alarm->data)
+ 		return 0;
+ 
+@@ -752,7 +770,7 @@ static long __sched alarm_timer_nsleep_r
+ 	ktime_t exp = restart->nanosleep.expires;
+ 	struct alarm alarm;
+ 
+-	alarm_init(&alarm, type, alarmtimer_nsleep_wakeup);
++	alarm_init_on_stack(&alarm, type, alarmtimer_nsleep_wakeup);
+ 
+ 	return alarmtimer_do_nsleep(&alarm, exp, type);
+ }
+@@ -784,7 +802,7 @@ static int alarm_timer_nsleep(const cloc
+ 	if (!capable(CAP_WAKE_ALARM))
+ 		return -EPERM;
+ 
+-	alarm_init(&alarm, type, alarmtimer_nsleep_wakeup);
++	alarm_init_on_stack(&alarm, type, alarmtimer_nsleep_wakeup);
+ 
+ 	exp = timespec64_to_ktime(*tsreq);
+ 	/* Convert (if necessary) to absolute time */
