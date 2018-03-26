@@ -1,260 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752523AbeCZONx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:13:53 -0400
-Received: from foss.arm.com ([217.140.101.70]:41120 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752478AbeCZONr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:13:47 -0400
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, dave.martin@arm.com, will.deacon@arm.com,
-        catalin.marinas@arm.com, marc.zyngier@arm.com, mark.rutland@arm.com,
-        ckadabi@codeaurora.org, shankerd@codeaurora.org,
-        ard.biesheuvel@linaro.org, jnair@caviumnetworks.com,
-        robin.murphy@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v5 14/22] arm64: capabilities: Add support for features enabled early
-Date: Mon, 26 Mar 2018 15:12:41 +0100
-Message-Id: <1522073569-29174-15-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522073569-29174-1-git-send-email-suzuki.poulose@arm.com>
-References: <1522073569-29174-1-git-send-email-suzuki.poulose@arm.com>
+        id S1752715AbeCZOQn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:16:43 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41235 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752036AbeCZOQl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:16:41 -0400
+Date: Mon, 26 Mar 2018 16:16:38 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
+ omap4-droid4: add soundcard
+Message-ID: <20180326141638.GB1450@amd>
+References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
+ <20180322204804.GA26871@amd>
+ <20180322234832.o24ut5ahon46mdu4@earth.universe>
+ <20180323100930.GA21644@amd>
+ <20180323103006.alymgb3ywftb4gek@earth.universe>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
+Content-Disposition: inline
+In-Reply-To: <20180323103006.alymgb3ywftb4gek@earth.universe>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel detects and uses some of the features based on the boot
-CPU and expects that all the following CPUs conform to it. e.g,
-with VHE and the boot CPU running at EL2, the kernel decides to
-keep the kernel running at EL2. If another CPU is brought up without
-this capability, we use custom hooks (via check_early_cpu_features())
-to handle it. To handle such capabilities add support for detecting
-and enabling capabilities based on the boot CPU.
 
-A bit is added to indicate if the capability should be detected
-early on the boot CPU. The infrastructure then ensures that such
-capabilities are probed and "enabled" early on in the boot CPU
-and, enabled on the subsequent CPUs.
+--nVMJ2NtxeReIH9PS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- arch/arm64/include/asm/cpufeature.h | 48 +++++++++++++++++++++++++------
- arch/arm64/kernel/cpufeature.c      | 57 ++++++++++++++++++++++++++++---------
- 2 files changed, 83 insertions(+), 22 deletions(-)
+Hi!
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index 4f05025..2f5edef 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -108,7 +108,7 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  *    value of a field in CPU ID feature register or checking the cpu
-  *    model. The capability provides a call back ( @matches() ) to
-  *    perform the check. Scope defines how the checks should be performed.
-- *    There are two cases:
-+ *    There are three cases:
-  *
-  *     a) SCOPE_LOCAL_CPU: check all the CPUs and "detect" if at least one
-  *        matches. This implies, we have to run the check on all the
-@@ -121,6 +121,11 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  *        capability relies on a field in one of the CPU ID feature
-  *        registers, we use the sanitised value of the register from the
-  *        CPU feature infrastructure to make the decision.
-+ *		Or
-+ *     c) SCOPE_BOOT_CPU: Check only on the primary boot CPU to detect the
-+ *        feature. This category is for features that are "finalised"
-+ *        (or used) by the kernel very early even before the SMP cpus
-+ *        are brought up.
-  *
-  *    The process of detection is usually denoted by "update" capability
-  *    state in the code.
-@@ -140,6 +145,11 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  *    CPUs are treated "late CPUs" for capabilities determined by the boot
-  *    CPU.
-  *
-+ *    At the moment there are two passes of finalising the capabilities.
-+ *      a) Boot CPU scope capabilities - Finalised by primary boot CPU via
-+ *         setup_boot_cpu_capabilities().
-+ *      b) Everything except (a) - Run via setup_system_capabilities().
-+ *
-  * 3) Verification: When a CPU is brought online (e.g, by user or by the
-  *    kernel), the kernel should make sure that it is safe to use the CPU,
-  *    by verifying that the CPU is compliant with the state of the
-@@ -148,12 +158,21 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  *	secondary_start_kernel()-> check_local_cpu_capabilities()
-  *
-  *    As explained in (2) above, capabilities could be finalised at
-- *    different points in the execution. Each CPU is verified against the
-- *    "finalised" capabilities and if there is a conflict, the kernel takes
-- *    an action, based on the severity (e.g, a CPU could be prevented from
-- *    booting or cause a kernel panic). The CPU is allowed to "affect" the
-- *    state of the capability, if it has not been finalised already.
-- *    See section 5 for more details on conflicts.
-+ *    different points in the execution. Each newly booted CPU is verified
-+ *    against the capabilities that have been finalised by the time it
-+ *    boots.
-+ *
-+ *	a) SCOPE_BOOT_CPU : All CPUs are verified against the capability
-+ *	except for the primary boot CPU.
-+ *
-+ *	b) SCOPE_LOCAL_CPU, SCOPE_SYSTEM: All CPUs hotplugged on by the
-+ *	user after the kernel boot are verified against the capability.
-+ *
-+ *    If there is a conflict, the kernel takes an action, based on the
-+ *    severity (e.g, a CPU could be prevented from booting or cause a
-+ *    kernel panic). The CPU is allowed to "affect" the state of the
-+ *    capability, if it has not been finalised already. See section 5
-+ *    for more details on conflicts.
-  *
-  * 4) Action: As mentioned in (2), the kernel can take an action for each
-  *    detected capability, on all CPUs on the system. Appropriate actions
-@@ -202,15 +221,26 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
-  */
- 
- 
--/* Decide how the capability is detected. On a local CPU vs System wide */
-+/*
-+ * Decide how the capability is detected.
-+ * On any local CPU vs System wide vs the primary boot CPU
-+ */
- #define ARM64_CPUCAP_SCOPE_LOCAL_CPU		((u16)BIT(0))
- #define ARM64_CPUCAP_SCOPE_SYSTEM		((u16)BIT(1))
-+/*
-+ * The capabilitiy is detected on the Boot CPU and is used by kernel
-+ * during early boot. i.e, the capability should be "detected" and
-+ * "enabled" as early as possibly on all booting CPUs.
-+ */
-+#define ARM64_CPUCAP_SCOPE_BOOT_CPU		((u16)BIT(2))
- #define ARM64_CPUCAP_SCOPE_MASK			\
- 	(ARM64_CPUCAP_SCOPE_SYSTEM	|	\
--	 ARM64_CPUCAP_SCOPE_LOCAL_CPU)
-+	 ARM64_CPUCAP_SCOPE_LOCAL_CPU	|	\
-+	 ARM64_CPUCAP_SCOPE_BOOT_CPU)
- 
- #define SCOPE_SYSTEM				ARM64_CPUCAP_SCOPE_SYSTEM
- #define SCOPE_LOCAL_CPU				ARM64_CPUCAP_SCOPE_LOCAL_CPU
-+#define SCOPE_BOOT_CPU				ARM64_CPUCAP_SCOPE_BOOT_CPU
- #define SCOPE_ALL				ARM64_CPUCAP_SCOPE_MASK
- 
- /*
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index cae3dce..b2903d5 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -510,7 +510,7 @@ static void __init init_cpu_ftr_reg(u32 sys_reg, u64 new)
+Do you have any ideas what needs to be done for voice calls support? I
+can talk to the modem and start a call.
+
+Then something like this (untested!) is certainly needed. Probably
+more...
+
+Thanks,
+									Pavel
+
+diff --git a/sound/soc/codecs/cpcap.c b/sound/soc/codecs/cpcap.c
+index aedb267..7646f68 100644
+--- a/sound/soc/codecs/cpcap.c
++++ b/sound/soc/codecs/cpcap.c
+@@ -1280,6 +1280,60 @@ static int cpcap_voice_hw_params(struct snd_pcm_subs=
+tream *substream,
+ 	return 0;
  }
- 
- extern const struct arm64_cpu_capabilities arm64_errata[];
--static void update_cpu_capabilities(u16 scope_mask);
-+static void __init setup_boot_cpu_capabilities(void);
- 
- void __init init_cpu_features(struct cpuinfo_arm64 *info)
- {
-@@ -556,10 +556,10 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
- 	}
- 
- 	/*
--	 * Run the errata work around and local feature checks on the
--	 * boot CPU, once we have initialised the cpu feature infrastructure.
-+	 * Detect and enable early CPU capabilities based on the boot CPU,
-+	 * after we have initialised the CPU feature infrastructure.
- 	 */
--	update_cpu_capabilities(SCOPE_LOCAL_CPU);
-+	setup_boot_cpu_capabilities();
- }
- 
- static void update_cpu_ftr_reg(struct arm64_ftr_reg *reg, u64 new)
-@@ -1311,13 +1311,24 @@ __enable_cpu_capabilities(const struct arm64_cpu_capabilities *caps,
- 
- 		if (caps->cpu_enable) {
- 			/*
--			 * Use stop_machine() as it schedules the work allowing
--			 * us to modify PSTATE, instead of on_each_cpu() which
--			 * uses an IPI, giving us a PSTATE that disappears when
--			 * we return.
-+			 * Capabilities with SCOPE_BOOT_CPU scope are finalised
-+			 * before any secondary CPU boots. Thus, each secondary
-+			 * will enable the capability as appropriate via
-+			 * check_local_cpu_capabilities(). The only exception is
-+			 * the boot CPU, for which the capability must be
-+			 * enabled here. This approach avoids costly
-+			 * stop_machine() calls for this case.
-+			 *
-+			 * Otherwise, use stop_machine() as it schedules the
-+			 * work allowing us to modify PSTATE, instead of
-+			 * on_each_cpu() which uses an IPI, giving us a PSTATE
-+			 * that disappears when we return.
- 			 */
--			stop_machine(__enable_cpu_capability, (void *)caps,
--				     cpu_online_mask);
-+			if (scope_mask & SCOPE_BOOT_CPU)
-+				caps->cpu_enable(caps);
-+			else
-+				stop_machine(__enable_cpu_capability,
-+					     (void *)caps, cpu_online_mask);
- 		}
- 	}
- }
-@@ -1400,6 +1411,12 @@ static void check_early_cpu_features(void)
- {
- 	verify_cpu_run_el();
- 	verify_cpu_asid_bits();
-+	/*
-+	 * Early features are used by the kernel already. If there
-+	 * is a conflict, we cannot proceed further.
-+	 */
-+	if (!verify_local_cpu_caps(SCOPE_BOOT_CPU))
-+		cpu_panic_kernel();
- }
- 
- static void
-@@ -1442,7 +1459,12 @@ static void verify_sve_features(void)
-  */
- static void verify_local_cpu_capabilities(void)
- {
--	if (!verify_local_cpu_caps(SCOPE_ALL))
-+	/*
-+	 * The capabilities with SCOPE_BOOT_CPU are checked from
-+	 * check_early_cpu_features(), as they need to be verified
-+	 * on all secondary CPUs.
-+	 */
-+	if (!verify_local_cpu_caps(SCOPE_ALL & ~SCOPE_BOOT_CPU))
- 		cpu_die_early();
- 
- 	verify_local_elf_hwcaps(arm64_elf_hwcaps);
-@@ -1474,6 +1496,14 @@ void check_local_cpu_capabilities(void)
- 		verify_local_cpu_capabilities();
- }
- 
-+static void __init setup_boot_cpu_capabilities(void)
+=20
++static int cpcap_incall_hw_params(struct snd_pcm_substream *substream,
++				 struct snd_pcm_hw_params *params,
++				 struct snd_soc_dai *dai)
 +{
-+	/* Detect capabilities with either SCOPE_BOOT_CPU or SCOPE_LOCAL_CPU */
-+	update_cpu_capabilities(SCOPE_BOOT_CPU | SCOPE_LOCAL_CPU);
-+	/* Enable the SCOPE_BOOT_CPU capabilities alone right away */
-+	enable_cpu_capabilities(SCOPE_BOOT_CPU);
++	struct snd_soc_codec *codec =3D dai->codec;
++	struct device *dev =3D codec->dev;
++	struct cpcap_audio *cpcap =3D snd_soc_codec_get_drvdata(codec);
++	static const u16 reg_cdi =3D CPCAP_REG_CDI;
++	int rate =3D params_rate(params);
++	int channels =3D params_channels(params);
++	int direction =3D substream->stream;
++	u16 val, mask;
++	int err;
++
++	dev_dbg(dev, "Incall setup HW params: rate=3D%d, direction=3D%d, chan=3D%=
+d",
++		rate, direction, channels);
++
++	/* codec, 1 in original code is CPCAP_REG_CC
++	   codec, 2 is CPCAP_REG_CDI
++	   codec, 5 is CPCAP_REG_TXI */
++
++	if (/* cpcap->codec_strm_cnt =3D=3D */ 1) {
++		/*
++		if (pdata->voice_type !=3D VOICE_TYPE_QC)
++			printk("FIXME: Only MDM6600 support is implemented here.\n");
++		*/
++
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_CDI, 0xffff, 0xAE02);
++		if (err) printk("cpcap error %d\n", __LINE__);
++
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_CC, 0xffff, 0x6120);
++		if (err) printk("cpcap error %d\n", __LINE__);
++
++		err =3D cpcap_set_samprate(cpcap, CPCAP_DAI_VOICE, rate);
++		printk("Configured stream\n");
++	}
++
++	/* (direction =3D=3D SNDRV_PCM_STREAM_CAPTURE) ?? */
++	if (substream->stream) { /* up link */
++		unsigned int set =3D  CPCAP_BIT_AUDIHPF_1 | CPCAP_BIT_AUDIHPF_0;
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_CC, set, set);
++		if (err) printk("cpcap error %d\n", __LINE__);
++
++		set =3D CPCAP_BIT_MB_ON1L | CPCAP_BIT_MB_ON1R;
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_TXI, set, set);
++	} else { /* down link */
++		unsigned int set =3D  CPCAP_BIT_AUDOHPF_1 | CPCAP_BIT_AUDOHPF_0;
++		err =3D regmap_update_bits(cpcap->regmap, CPCAP_REG_CC, set, set);
++		if (err) printk("cpcap error %d\n", __LINE__);
++	}
++
++	return err;
 +}
 +
- DEFINE_STATIC_KEY_FALSE(arm64_const_caps_ready);
- EXPORT_SYMBOL(arm64_const_caps_ready);
- 
-@@ -1495,10 +1525,11 @@ static void __init setup_system_capabilities(void)
- 	/*
- 	 * We have finalised the system-wide safe feature
- 	 * registers, finalise the capabilities that depend
--	 * on it. Also enable all the available capabilities.
-+	 * on it. Also enable all the available capabilities,
-+	 * that are not enabled already.
- 	 */
- 	update_cpu_capabilities(SCOPE_SYSTEM);
--	enable_cpu_capabilities(SCOPE_ALL);
-+	enable_cpu_capabilities(SCOPE_ALL & ~SCOPE_BOOT_CPU);
- }
- 
- void __init setup_cpu_features(void)
--- 
-2.7.4
+ static int cpcap_voice_set_dai_sysclk(struct snd_soc_dai *codec_dai, int c=
+lk_id,
+ 				      unsigned int freq, int dir)
+ {
+@@ -1394,6 +1448,14 @@ static const struct snd_soc_dai_ops cpcap_dai_voice_=
+ops =3D {
+ 	.digital_mute	=3D cpcap_voice_set_mute,
+ };
+=20
++static const struct snd_soc_dai_ops cpcap_dai_incall_ops =3D {
++	/* FIXME */
++	.hw_params	=3D cpcap_incall_hw_params,
++	.set_sysclk	=3D cpcap_voice_set_dai_sysclk,
++	.set_fmt	=3D cpcap_voice_set_dai_fmt,
++	.digital_mute	=3D cpcap_voice_set_mute,
++};
++
+ static struct snd_soc_dai_driver cpcap_dai[] =3D {
+ {
+ 	.id =3D 0,
+@@ -1426,6 +1488,26 @@ static struct snd_soc_dai_driver cpcap_dai[] =3D {
+ 	},
+ 	.ops =3D &cpcap_dai_voice_ops,
+ },
++{
++	.id =3D 2,
++	.name =3D "cpcap in-call",
++	.playback =3D {
++		.stream_name =3D "InCall DL",
++		.channels_min =3D 1,
++		.channels_max =3D 2,
++		.rates =3D SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000,
++		.formats =3D SNDRV_PCM_FMTBIT_S16_LE,
++	},
++	.capture =3D {
++		.stream_name =3D "Capture",
++		.channels_min =3D 1,
++		.channels_max =3D 2,
++		.rates =3D SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000,
++		.formats =3D SNDRV_PCM_FMTBIT_S16_LE,
++	},
++	.ops =3D &cpcap_dai_incall_ops,
++},
++/* FIXME: this misses bt-call, cpcap bt, BPvoice, FM */
+ };
+=20
+ static int cpcap_dai_mux(struct cpcap_audio *cpcap, bool swap_dai_configur=
+ation)
+
+
+
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--nVMJ2NtxeReIH9PS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlq5AMYACgkQMOfwapXb+vLk1QCfaPPp7awZ3duJtvTBMiP2AJvO
+Fw8AnRvnuNKcbngbLVzUqgbFrQMx6ITd
+=oK5w
+-----END PGP SIGNATURE-----
+
+--nVMJ2NtxeReIH9PS--
