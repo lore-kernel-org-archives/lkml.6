@@ -1,41 +1,45 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AG47ELv6UB7rjH2mdjPl5Ti5nyAtSeRfZ1vb1pu5/RcGC4L9Oy5oipqKe9ze3tu45RvojkZqnMfn
-ARC-Seal: i=1; a=rsa-sha256; t=1522085999; cv=none;
+Return-Path: <darrick.wong@oracle.com>
+X-Google-Smtp-Source: AG47ELuPEoB/xHeLvRi5U1RxYxAwo+0vnTol9PSWZ1TH5kmygdu9iOHCGNntPpwHy7gS4jeH6ZAo
+ARC-Seal: i=1; a=rsa-sha256; t=1522046919; cv=none;
         d=google.com; s=arc-20160816;
-        b=cV3OyCXp9wG+7HA8KnMaeeG8D08BXOuHs+5FnCb/BOW4DBkZD75BO6y8QKFMUCc33U
-         j7gMUcFVzeL7kBBuYceqsH/sU0hf7SrmsYcgJzLivnfc3ZC730kiWkKGIzftkeXS+hNo
-         WfgsOV/DiHksffwkRTkrzAjveeMFgBnA6Ios76eRsBCJN/1lqTCvwA8WoX1EsF3ObWDD
-         u+pdhfjeFeclDFQ6dTbtW7f8Zx8dK+ZuKXmYz74mKNayNR2fHFZok/ee3MKLnqC6a+63
-         A3suC1J8B6MBvFVWbsfu01kDAss//rlAZyNEhSjWcctj0p3IVlNl0bp7VgQVJUh6HR7d
-         6hTg==
+        b=W73ip0WBhUtDB02/L9wXl99kcI+y/wUWvvCfgcvJxU2fu4f0CUOjOgsGeVI076ImVZ
+         bLve1A6j73rYY03YN4ubZSDiBKVEuJxYCpPrVcbF7oWMkbewqp/3SDXU1z/oAB3+mvF0
+         dbm9+OOw9gCqXT2pmAxy9y/9SWP++ssafnJlHof7tn5CuRReI44AZOnOjKRX0mjoTBwF
+         zpzJvBcKZHgZ2cMRTFGQGwQVC/sPtD0BEL0Q3FTvGkC+ySi3UVTPtsVRuzt41zJCHZnF
+         6RlNYjJkTCyAaLhJ0NRiiz7FnSj7ILLhJPNSo/Ve3ISVbVF0tvjlhO1fdA1p+JtgCYrt
+         ToHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=i6M1EZ1aX6KqPqDyfzgEsxvNRyQ7SZ5EqpzJ0VHZdvY=;
-        b=jM1dGzn7fhAo+lObET9I4yWiFAwMK2UwsbB8Taux2eoOY8U7761wUqXChHD9kfaOHN
-         tRiHCMK90qoiS/pMOUR6/0i7+nf6YaM90LManmtdatzDk0uCvuW8CVidNn5AsFTZLj8Q
-         v8XT+d1WDAL/z3Idq3LIoQ8ZVNZptZxjfEG1RNMwmpGeWp7Z1C2STmsCsG7Jew1m21lc
-         J992Fm+FGQwGB++ScA4JmUa1khOYAhYfCJpK5fe9KX1YeIDaptTukGXZ+9Gm/eG5uSXo
-         ZfTeHD/ipcx2W5uKxkN81ox2b6qL3kOR5YE73EvHEiIzSNfVkBJgWb/fxfGG4O+amEap
-         JF8A==
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=avZtNWep19ddQJTmjaCIz2jjwsmWwUtsv1fFxseMOBo=;
+        b=D+ekgm9lP96AoHLlRN5RS1PKRh3lyyiadj8V9ljik1b9uHuArZlSMKYJ5aUcxETL41
+         hujSBkUK4tOHVZrjAvAKZl7LKYry2AJGokywlyysq0aMOmIXkyxluD6Ihemt20sz0Qcn
+         IdpDibDR3f/P9ALU95GA3Z48Q5oHEv7kA5/SNC1bNdhDmnxo+pExY+tqSn9v6t98xEqU
+         Lzs2d5EFy4H8YcUZd0iZlZgP6xGbP9bZaHyUtztA3ozJqUhwvvrG8TfSnCL/7uWiYCmC
+         mZfta2xgUQ6zcGZP7RmMi3sqhaeYkxXWBYflmtlZhCcLKACLLFK5BKcnMPSkhrKzYIH7
+         RwOQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=W0XtpVvw;
+       spf=pass (google.com: domain of darrick.wong@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=darrick.wong@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
-Date: Mon, 26 Mar 2018 17:39:56 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=W0XtpVvw;
+       spf=pass (google.com: domain of darrick.wong@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=darrick.wong@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+Date: Sun, 25 Mar 2018 23:48:19 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
 To: Sasha Levin <Alexander.Levin@microsoft.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, xfs <linux-xfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Julia Lawall <julia.lawall@lip6.fr>,
-	Josh Triplett <josh@joshtriplett.org>, Takashi Iwai <tiwai@suse.de>,
-	Michal Hocko <mhocko@kernel.org>, Joerg Roedel <joro@8bytes.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, xfs <linux-xfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Josh Triplett <josh@joshtriplett.org>, Takashi Iwai <tiwai@suse.de>,
+        Michal Hocko <mhocko@kernel.org>, Joerg Roedel <joro@8bytes.org>
 Subject: Re: [PATCH] xfs: always free inline data before resetting inode fork
  during ifree
-Message-ID: <20180326173956.GD9190@wotan.suse.de>
+Message-ID: <20180326064819.GS4818@magnolia>
 References: <20171123060137.GL2135@magnolia>
  <20180323013037.GA9190@wotan.suse.de>
  <20180323034145.GH4818@magnolia>
@@ -49,11 +53,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20180326045241.GA3394@sasha-vm>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8843 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=9 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803260064
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1595753768288631831?=
-X-GMAIL-MSGID: =?utf-8?q?1596022848247068052?=
+X-GMAIL-MSGID: =?utf-8?q?1595981870598804582?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -142,37 +151,11 @@ On Mon, Mar 26, 2018 at 04:54:59AM +0000, Sasha Levin wrote:
 > 
 > It won't go beyond build testing.
 
-This is one area where we can improve things.
+No further regression testing ==> please blacklist XFS.
 
-Perhaps the typical use case for the kernel for looking for stable fixes is to
-groom for good candidate fixes using some heuristics, test compile and if there
-is no issue merge. It would be not so different than a human using their own
-experience of some sort using a pattern to do the same. However the big
-difference for filesystems is we *need* proper testing.
+We will continue our current practices w.r.t. stable.
 
-The issue with filesystems is the consequence of a bug are much more severe
-than just a panic. Any corner case issue can really be much more critical than
-just crashing a system. Ruining your filesystem is simply unforgivable,
-specially if all that was missing was a proper regression test, and we already
-have infrastructure for it.
-
-The good news is that we have proper a proper testing suite to help out, and as
-per my inspection 0-day already embraces a few tests. We can do a bit more here
-for expanding on these... but also use a baseline for testing proposed XFS stable
-fixes. For now I suggest a bit of manual work and I can volunteer to lead this
-on, with a transparent mechanism to enable other folks to reproduce similar
-testing in an easy way. I had in mind a mechanism to automate this long term,
-and I started working on something, so I can use that to start this effort,
-and publish what I have soon.
-
-But that would not be enough, we need proper testing and careful oversight. I
-can volunteer to review the patches manually (any others?) and if any questions
-come up bring them up and check / verify with others.
-
-The new autoselection truly is state of the art and we'd be silly to not
-address corner cases for subsystems to help take advantage of the candidate
-patches it provides. My inspection so far revealed only one possible issue
-fix, that is not bad at all.
+--D
 
 > >I did receive the AUTOSEL tagged patches a few days ago, but I couldn't
 > >figure out what automated regression testing, if any, had been done; or
@@ -187,25 +170,10 @@ fix, that is not bad at all.
 > 
 >  2. If no objections were received, Greg would add it to his queue and
 >  you'd get another mail about that.
-
-Is there a temporary tree with all the patches already merged by any chance?
-That would help with testing the queue of candidate fixes.
-
+> 
 >  3. A few more days later, Greg would release that stable tree and you'd
 >  get another mail.
-
-What I propose is for XFS we add a few more steps:
-
-1a. Ensure the fixes are in a temporary tree
-1b. Add me to the list of reviewers
-1c. I'll run some tests against it compared to a baseline which would be
-    pre-established
-1d. While the tests are running do a manual inspection of the patches
-1e. Only if patches produce no regressions with the established baseline and get
-    a Reviewed-by by at least one developer do we publish to stable
-
-I can work on establishing the baseline with the community next.
-
+> 
 > >for being behind the times, but I'd gotten accustomed xfs patches only
 > >ending up in the stable kernels because we'd deliberately put them
 > >there. :)
@@ -217,29 +185,20 @@ I can work on establishing the baseline with the community next.
 > way, but the i915 case was slightly different as their development
 > process was very quirky and testing was complex, so they asked to just
 > keep doing their own selection for stable.
-
-filesystems are the same -- the issue is the risk of an issue is much more
-severe.
-
+> 
 > However, looking at stable history, it seems that no patch from fs/xfs/
 > was proposed for stable for about half a year now, which is something
 > that the autoselection project is trying to help with.
-
-Indeed. I have addressed the stable question on XFS in person with at the small
-BoF at Vault last year, and with other folks later. The current process may
-work for some... but I think we can do better and it just requires volunteers,
-and I think using the auto-selection process to come up with *candidates* is a
-great opportunity, specially in light of the patches I have seen so far already
-merged.
-
-My testing of them also proved no regressions (modulo I skipped the one I
-pointed out on this thread.
-
+> 
 > A different flow I'm working on for this is to send an email as a reply
 > to the original patch submission to lkml if the patch is selected by the
 > network, including details about which trees it was applied to and build
 > results. I think it might work better for subsystems such as xfs.
-
-We need testing. Without testing this cannot fly.
-
-  Luis
+> 
+> 
+> --
+> Thanks,
+> Sasha--
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
