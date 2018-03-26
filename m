@@ -1,96 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752258AbeCZPHP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 11:07:15 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38795 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeCZPHM (ORCPT
+        id S1752257AbeCZPKZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 11:10:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54312 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751171AbeCZPKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 11:07:12 -0400
-X-Google-Smtp-Source: AG47ELvACDI4Nu+VL0JapSIvtHYfJtcT+MiuXXkSk0N/lsWNMmUHNs85JoyLeaGZJJKXS3sjXAu+NQ==
-Date: Mon, 26 Mar 2018 16:07:08 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Jingoo Han <jingoohan1@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v6 2/5] dt-bindings: pwm-backlight: add PWM delay
- proprieties.
-Message-ID: <20180326150708.jvjewhmk3j5a6vu7@holly.lan>
-References: <20180326095213.18362-1-enric.balletbo@collabora.com>
- <20180326095213.18362-2-enric.balletbo@collabora.com>
+        Mon, 26 Mar 2018 11:10:23 -0400
+From: Colin King <colin.king@canonical.com>
+To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] RDMA/hns: ensure for-loop actually iterates and free's buffers
+Date: Mon, 26 Mar 2018 16:10:18 +0100
+Message-Id: <20180326151018.21066-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326095213.18362-2-enric.balletbo@collabora.com>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 11:52:10AM +0200, Enric Balletbo i Serra wrote:
-> Hardware needs a delay between setting an initial (non-zero) PWM and
-> enabling the backlight using GPIO. The post-pwm-on-delay-ms specifies
-> this delay in milli seconds. Hardware also needs a delay between disabing
-> the backlight using GPIO and setting PWM value to 0. The pwm-off-delay-ms
-> is this delay in milli seconds.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> Acked-by: Thierry Reding <thierry.reding@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+The current for-loop zeros variable i and only loops once, hence
+not all the buffers are free'd.  Fix this by setting i correctly.
 
-> ---
-> Based on the original Huang Lin <hl@rock-chips.com> work.
-> Changes since v5:
->  - Add Acked-by: Thierry Reding <thierry.reding@gmail.com>
->  - CC DT mainling list (for some reason dropped at some point, my
->    fault)
-> Changes since v4:
->  - Rebase on top of mainline.
-> Changes since v3:
->  - Replace us for ms.
->  - Add Acked-by: Pavel Machek <pavel@ucw.cz>
-> Changes since v2:
->  - Use separate properties (Rob Herring)
-> Changes since v1:
->  - As suggested by Daniel Thompson
->    - Do not assume power-on delay and power-off delay will be the same
-> ---
->  Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> index 764db86d441a..310810906613 100644
-> --- a/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> +++ b/Documentation/devicetree/bindings/leds/backlight/pwm-backlight.txt
-> @@ -17,6 +17,10 @@ Optional properties:
->                 "pwms" property (see PWM binding[0])
->    - enable-gpios: contains a single GPIO specifier for the GPIO which enables
->                    and disables the backlight (see GPIO binding[1])
-> +  - post-pwm-on-delay-ms: Delay in ms between setting an initial (non-zero) PWM
-> +                          and enabling the backlight using GPIO.
-> +  - pwm-off-delay-ms: Delay in ms between disabling the backlight using GPIO
-> +                      and setting PWM value to 0.
->  
->  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
->  [1]: Documentation/devicetree/bindings/gpio/gpio.txt
-> @@ -32,4 +36,6 @@ Example:
->  
->  		power-supply = <&vdd_bl_reg>;
->  		enable-gpios = <&gpio 58 0>;
-> +		post-pwm-on-delay-ms = <10>;
-> +		pwm-off-delay-ms = <10>;
->  	};
-> -- 
-> 2.16.2
-> 
+Detected by CoverityScan, CID#1463415 ("Operands don't affect result")
+
+Fixes: a5073d6054f7 ("RDMA/hns: Add eq support of hip08")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 684c2d1a0ed0..8b84ab7800d8 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -4391,7 +4391,7 @@ static int hns_roce_mhop_alloc_eq(struct hns_roce_dev *hr_dev,
+ 	eq->l0_dma = 0;
+ 
+ 	if (mhop_num == 1)
+-		for (i -= i; i >= 0; i--)
++		for (i -= 1; i >= 0; i--)
+ 			dma_free_coherent(dev, buf_chk_sz, eq->buf[i],
+ 					  eq->buf_dma[i]);
+ 	else if (mhop_num == 2) {
+-- 
+2.15.1
