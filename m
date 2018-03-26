@@ -1,112 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751241AbeCZJEb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:04:31 -0400
-Received: from galahad.ideasonboard.com ([185.26.127.97]:41920 "EHLO
-        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750864AbeCZJE3 (ORCPT
+        id S1751824AbeCZJF2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:05:28 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:52007 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751091AbeCZJF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:04:29 -0400
-Subject: Re: [PATCH v6] ARM: dts: wheat: Fix ADV7513 address usage
-To: Simon Horman <horms@verge.net.au>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>
-References: <1521754240-10470-1-git-send-email-kieran.bingham+renesas@ideasonboard.com>
- <20180323085140.g3golwdtpezo7fhi@verge.net.au>
- <a771042b-f63a-d00f-73a1-91a7e6089fe4@ideasonboard.com>
- <20180326083143.r6jz6csckd4ljnpu@verge.net.au>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <d2c5d935-da1f-038b-a0e6-ce390273e21a@ideasonboard.com>
-Date: Mon, 26 Mar 2018 10:04:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        Mon, 26 Mar 2018 05:05:26 -0400
+X-Google-Smtp-Source: AIpwx48BLuo9UodtjM6UErlUaHsZRWGYCnfTwKpVGGz4h85cN2D7vamtfyRqhypfKmhtkR80p5G2z/mYLodBatgb2xA=
 MIME-Version: 1.0
-In-Reply-To: <20180326083143.r6jz6csckd4ljnpu@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180322123500.2379-1-alexandre.belloni@bootlin.com>
+References: <20180322123500.2379-1-alexandre.belloni@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Mar 2018 11:05:25 +0200
+Message-ID: <CACRpkdbEWdo6UNL2HSzvvszQZjYnyYTOuWQzkmqSw=CvpGYhOw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: ocelot: fix gpio direction
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Simon,
+On Thu, Mar 22, 2018 at 1:35 PM, Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
 
-On 26/03/18 09:31, Simon Horman wrote:
-> On Fri, Mar 23, 2018 at 09:16:13PM +0000, Kieran Bingham wrote:
->> Hi Simon,
->>
->> On 23/03/18 08:51, Simon Horman wrote:
->>> On Thu, Mar 22, 2018 at 09:30:40PM +0000, Kieran Bingham wrote:
->>>> The r8a7792 Wheat board has two ADV7513 devices sharing a single I2C
->>>> bus, however in low power mode the ADV7513 will reset it's slave maps to
->>>> use the hardware defined default addresses.
->>>>
->>>> The ADV7511 driver was adapted to allow the two devices to be registered
->>>> correctly - but it did not take into account the fault whereby the
->>>> devices reset the addresses.
->>>>
->>>> This results in an address conflict between the device using the default
->>>> addresses, and the other device if it is in low-power-mode.
->>>>
->>>> Repair this issue by moving both devices away from the default address
->>>> definitions.
->>>
->>> Hi Kierean,
->>>
->>> as this is a fix
->>> a) Does it warrant a fixes tag?
->>>    Fixes: f6eea82a87db ("ARM: dts: wheat: add DU support")
->>> b) Does it warrant being posted as a fix for v4.16;
->>> c) or v4.17?
->>
->> Tricky one, yes it could but this DTS fix, will only actually 'fix' the issue if
->> the corresponding driver updates to allow secondary addresses to be parsed are
->> also backported.
->>
->> It should be safe to back port the dts fix without the driver updates, but the
->> addresses specified by this patch will simply be ignored.
-> 
-> In that case I think its safe to add the fixes tag and take the DTS patch
-> via the renesas tree. Perhaps applying it for v4.18 and allowing automatic
-> backporting to take its course is the cleanest option.
-> 
->> Thus if this is marked with the fixes tag the corresponding patch "drm: adv7511:
->> Add support for i2c_new_secondary_device" should also be marked.
->>
->> It looks like that patch has yet to be picked up by the DRM subsystem, so how
->> about I bundle both of these two patches together in a repost along with the
->> fixes tag.
->>
->> In fact, I don't think the ADV7511 dt-bindings update has made any progress
->> either. (dt-bindings: adv7511: Extend bindings to allow specifying slave map
->> addresses). The media tree variants for the adv7604 have already been picked up
->> by Mauro I believe though.
->>
->> I presume it would be acceptable for this dts patch (or rather all three patches
->> mentioned) to get integrated through the DRM tree ?
-> 
-> Unless there is a strong reason I would prefer the dts patch to go via
-> my tree. The reason is to avoid merge conflicts bubbling up to Linus,
-> which really is something best avoided.
+> Bits have to be cleared in DEVCPU_GCB:GPIO:GPIO_OE for input and set for
+> output. ocelot_gpio_set_direction() got it wrong and this went unnoticed
+> when the driver was reworked.
+>
+> Reported-by: Gregory Clement <gregory.clement@bootlin.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-That's perfectly fine with me.
+Patch applied.
 
-Feel free to add:
-
-Fixes: f6eea82a87db ("ARM: dts: wheat: add DU support")
-
-as you suggested when you apply, or alternatively let me know if you need a repost.
-
-Regards
---
-Kieran
+Yours,
+Linus Walleij
