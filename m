@@ -1,175 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752392AbeCZXM2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 19:12:28 -0400
-Received: from ozlabs.org ([103.22.144.67]:49967 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751866AbeCZXM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 19:12:26 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 27 Mar 2018 10:11:25 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>
-Subject: linux-next: manual merge of the powerpc tree with the powerpc-fixes
- tree
-Message-ID: <20180327101125.145e4dc5@canb.auug.org.au>
+        id S1752201AbeCZX0i (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 19:26:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51174 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751824AbeCZX0g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 19:26:36 -0400
+Date: Mon, 26 Mar 2018 16:26:34 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
+        linux-nilfs@vger.kernel.org
+Subject: Re: [PATCH v9 00/61] XArray v9
+Message-ID: <20180326232634.GA10054@bombadil.infradead.org>
+References: <20180313132639.17387-1-willy@infradead.org>
+ <20180326153648.27f53e9a1398812203745257@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WD67ZlZokXL67XNA7GOI/8M"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180326153648.27f53e9a1398812203745257@linux-foundation.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/WD67ZlZokXL67XNA7GOI/8M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 26, 2018 at 03:36:48PM -0700, Andrew Morton wrote:
+> I looked at this from a for-4.17 POV and ran out of nerve at "[PATCH v9
+> 09/61] xarray: Replace exceptional entries".  It's awfully late.
 
-Hi all,
+I did post v7 five weeks ago ... it wasn't late at the time.
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+> "[PATCH v9 08/61] page cache: Use xa_lock" looks sufficiently
+> mechanical to be if-it-compiles-it-works, although perhaps that
+> shouldn't be in 4.17 either.  Mainly because it commits us to merging
+> the rest of XArray and there hasn't been a ton of review and test
+> activity.
 
-  arch/powerpc/include/asm/cputable.h
-  arch/powerpc/kernel/dt_cpu_ftrs.c
+I think we should commit to that.  The API has had a pretty thorough
+review, and nobody's stepped up to say "Hey, no, I prefer the old API,
+I don't want to see it change".  Merging patch 8 would move us a good
+chunk of the way towards getting the IDA in a position where it can
+be converted.  Patch 9 would get us even further, but I'm willing to
+respin in order to build on just patch 8.
 
-between commit:
+> It looks like btrfs has changed in -next:
+> 
+> --- a/fs/btrfs/inode.c~page-cache-use-xa_lock-fix
+> +++ a/fs/btrfs/inode.c
+> @@ -7445,7 +7445,7 @@ out:
+>  
+>  bool btrfs_page_exists_in_range(struct inode *inode, loff_t start, loff_t end)
+>  {
+> -	struct radix_tree_root *root = &inode->i_mapping->page_tree;
+> +	struct radix_tree_root *root = &inode->i_mapping->i_pages;
+>  	bool found = false;
+>  	void **pagep = NULL;
+>  	struct page *page = NULL;
 
-  a5d4b5891c2f ("powerpc/mm: Fixup tlbie vs store ordering issue on POWER9")
-
-from the powerpc-fixes tree and commits:
-
-  9bbf0b576d32 ("powerpc: Free up CPU feature bits on 64-bit machines")
-  b5af4f279323 ("powerpc: Add CPU feature bits for TM bug workarounds on PO=
-WER9 v2.2")
-
-from the powerpc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/powerpc/include/asm/cputable.h
-index 2e2bacbdf6ed,ecee84dea7e7..000000000000
---- a/arch/powerpc/include/asm/cputable.h
-+++ b/arch/powerpc/include/asm/cputable.h
-@@@ -174,38 -181,40 +181,41 @@@ static inline void cpu_feature_keys_ini
-  #define LONG_ASM_CONST(x)		0
-  #endif
- =20
-- #define CPU_FTR_HVMODE			LONG_ASM_CONST(0x0000000100000000)
-- #define CPU_FTR_ARCH_201		LONG_ASM_CONST(0x0000000200000000)
-- #define CPU_FTR_ARCH_206		LONG_ASM_CONST(0x0000000400000000)
-- #define CPU_FTR_ARCH_207S		LONG_ASM_CONST(0x0000000800000000)
-- #define CPU_FTR_ARCH_300		LONG_ASM_CONST(0x0000001000000000)
-- #define CPU_FTR_MMCRA			LONG_ASM_CONST(0x0000002000000000)
-- #define CPU_FTR_CTRL			LONG_ASM_CONST(0x0000004000000000)
-- #define CPU_FTR_SMT			LONG_ASM_CONST(0x0000008000000000)
-- #define CPU_FTR_PAUSE_ZERO		LONG_ASM_CONST(0x0000010000000000)
-- #define CPU_FTR_PURR			LONG_ASM_CONST(0x0000020000000000)
-- #define CPU_FTR_CELL_TB_BUG		LONG_ASM_CONST(0x0000040000000000)
-- #define CPU_FTR_SPURR			LONG_ASM_CONST(0x0000080000000000)
-- #define CPU_FTR_DSCR			LONG_ASM_CONST(0x0000100000000000)
-- #define CPU_FTR_VSX			LONG_ASM_CONST(0x0000200000000000)
-- #define CPU_FTR_SAO			LONG_ASM_CONST(0x0000400000000000)
-- #define CPU_FTR_CP_USE_DCBTZ		LONG_ASM_CONST(0x0000800000000000)
-- #define CPU_FTR_UNALIGNED_LD_STD	LONG_ASM_CONST(0x0001000000000000)
-- #define CPU_FTR_ASYM_SMT		LONG_ASM_CONST(0x0002000000000000)
-- #define CPU_FTR_STCX_CHECKS_ADDRESS	LONG_ASM_CONST(0x0004000000000000)
-- #define CPU_FTR_POPCNTB			LONG_ASM_CONST(0x0008000000000000)
-- #define CPU_FTR_POPCNTD			LONG_ASM_CONST(0x0010000000000000)
-- #define CPU_FTR_PKEY			LONG_ASM_CONST(0x0020000000000000)
-- #define CPU_FTR_VMX_COPY		LONG_ASM_CONST(0x0040000000000000)
-- #define CPU_FTR_TM			LONG_ASM_CONST(0x0080000000000000)
-- #define CPU_FTR_CFAR			LONG_ASM_CONST(0x0100000000000000)
-- #define	CPU_FTR_HAS_PPR			LONG_ASM_CONST(0x0200000000000000)
-- #define CPU_FTR_DAWR			LONG_ASM_CONST(0x0400000000000000)
-- #define CPU_FTR_DABRX			LONG_ASM_CONST(0x0800000000000000)
-- #define CPU_FTR_PMAO_BUG		LONG_ASM_CONST(0x1000000000000000)
-- #define CPU_FTR_P9_TLBIE_BUG		LONG_ASM_CONST(0x2000000000000000)
-- #define CPU_FTR_POWER9_DD1		LONG_ASM_CONST(0x4000000000000000)
-- #define CPU_FTR_POWER9_DD2_1		LONG_ASM_CONST(0x8000000000000000)
-+ #define CPU_FTR_REAL_LE			LONG_ASM_CONST(0x0000000000001000)
-+ #define CPU_FTR_HVMODE			LONG_ASM_CONST(0x0000000000002000)
-+ #define CPU_FTR_ARCH_201		LONG_ASM_CONST(0x0000000000004000)
-+ #define CPU_FTR_ARCH_206		LONG_ASM_CONST(0x0000000000008000)
-+ #define CPU_FTR_ARCH_207S		LONG_ASM_CONST(0x0000000000010000)
-+ #define CPU_FTR_ARCH_300		LONG_ASM_CONST(0x0000000000020000)
-+ #define CPU_FTR_MMCRA			LONG_ASM_CONST(0x0000000000040000)
-+ #define CPU_FTR_CTRL			LONG_ASM_CONST(0x0000000000080000)
-+ #define CPU_FTR_SMT			LONG_ASM_CONST(0x0000000000100000)
-+ #define CPU_FTR_PAUSE_ZERO		LONG_ASM_CONST(0x0000000000200000)
-+ #define CPU_FTR_PURR			LONG_ASM_CONST(0x0000000000400000)
-+ #define CPU_FTR_CELL_TB_BUG		LONG_ASM_CONST(0x0000000000800000)
-+ #define CPU_FTR_SPURR			LONG_ASM_CONST(0x0000000001000000)
-+ #define CPU_FTR_DSCR			LONG_ASM_CONST(0x0000000002000000)
-+ #define CPU_FTR_VSX			LONG_ASM_CONST(0x0000000004000000)
-+ #define CPU_FTR_SAO			LONG_ASM_CONST(0x0000000008000000)
-+ #define CPU_FTR_CP_USE_DCBTZ		LONG_ASM_CONST(0x0000000010000000)
-+ #define CPU_FTR_UNALIGNED_LD_STD	LONG_ASM_CONST(0x0000000020000000)
-+ #define CPU_FTR_ASYM_SMT		LONG_ASM_CONST(0x0000000040000000)
-+ #define CPU_FTR_STCX_CHECKS_ADDRESS	LONG_ASM_CONST(0x0000000080000000)
-+ #define CPU_FTR_POPCNTB			LONG_ASM_CONST(0x0000000100000000)
-+ #define CPU_FTR_POPCNTD			LONG_ASM_CONST(0x0000000200000000)
-+ #define CPU_FTR_PKEY			LONG_ASM_CONST(0x0000000400000000)
-+ #define CPU_FTR_VMX_COPY		LONG_ASM_CONST(0x0000000800000000)
-+ #define CPU_FTR_TM			LONG_ASM_CONST(0x0000001000000000)
-+ #define CPU_FTR_CFAR			LONG_ASM_CONST(0x0000002000000000)
-+ #define	CPU_FTR_HAS_PPR			LONG_ASM_CONST(0x0000004000000000)
-+ #define CPU_FTR_DAWR			LONG_ASM_CONST(0x0000008000000000)
-+ #define CPU_FTR_DABRX			LONG_ASM_CONST(0x0000010000000000)
-+ #define CPU_FTR_PMAO_BUG		LONG_ASM_CONST(0x0000020000000000)
-+ #define CPU_FTR_POWER9_DD1		LONG_ASM_CONST(0x0000040000000000)
-+ #define CPU_FTR_POWER9_DD2_1		LONG_ASM_CONST(0x0000080000000000)
-+ #define CPU_FTR_P9_TM_HV_ASSIST		LONG_ASM_CONST(0x0000100000000000)
-+ #define CPU_FTR_P9_TM_XER_SO_BUG	LONG_ASM_CONST(0x0000200000000000)
-++#define CPU_FTR_P9_TLBIE_BUG		LONG_ASM_CONST(0x0000400000000000)
- =20
-  #ifndef __ASSEMBLY__
- =20
-diff --cc arch/powerpc/kernel/dt_cpu_ftrs.c
-index 8ca5d5b74618,0a0c601c6ade..000000000000
---- a/arch/powerpc/kernel/dt_cpu_ftrs.c
-+++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
-@@@ -709,9 -710,9 +710,12 @@@ static __init void cpufeatures_cpu_quir
-  		cur_cpu_spec->cpu_features |=3D CPU_FTR_POWER9_DD1;
-  	else if ((version & 0xffffefff) =3D=3D 0x004e0201)
-  		cur_cpu_spec->cpu_features |=3D CPU_FTR_POWER9_DD2_1;
-+ 	else if ((version & 0xffffefff) =3D=3D 0x004e0202)
-+ 		cur_cpu_spec->cpu_features |=3D CPU_FTR_P9_TM_HV_ASSIST |
-+ 			CPU_FTR_P9_TM_XER_SO_BUG;
- +
- +	if ((version & 0xffff0000) =3D=3D 0x004e0000)
- +		cur_cpu_spec->cpu_features |=3D CPU_FTR_P9_TLBIE_BUG;
-  }
- =20
-  static void __init cpufeatures_setup_finished(void)
-
---Sig_/WD67ZlZokXL67XNA7GOI/8M
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5fh0ACgkQAVBC80lX
-0GxWPggAmZPYs85ShmegxV2eibDw7nAqp0d4Itu1A8+iBeFZwKnVHPXFo7rVQaxD
-SOwQrhaF82LF6GZIdBHeDRJsnurIzTMyWMsaMxQmRFhJwpGDLpA2yeL4uWxiA6FQ
-OoFxFsR162ToLjIsKxDu7meu+I2EJ/OjSHGW+uDv62q3fKizwNdtjGn7weoDZ+Nt
-Aop61npnDca8x3lneyhJ1jKatP5q/tzbIEEwxVfd1nHHMmL4+Wxpp3iKQSzc+Zeo
-R55CgZJ9d1wUOXSP9LZLpsqsrNxH6TGDHHelHCK6PK2MiPKu1EHyBk35RfkKQiA1
-RsYVEL8B4FV0HLqXuJu3GHPYuNShmA==
-=GXzT
------END PGP SIGNATURE-----
-
---Sig_/WD67ZlZokXL67XNA7GOI/8M--
+btrfs_page_exists_in_range() has been deleted -- David Sterba merged the
+patch v8-0006-btrfs-Use-filemap_range_has_page.patch ... which was dropped
+from v9 of the patchset, so I'm not sure what you're actually looking at?
