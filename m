@@ -1,110 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeCZTKs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 15:10:48 -0400
-Received: from mail.efficios.com ([167.114.142.138]:41502 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751776AbeCZTKr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 15:10:47 -0400
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [RFC PATCH] tracepoint: Provide tracepoint_kernel_find_by_name
-Date: Mon, 26 Mar 2018 15:10:31 -0400
-Message-Id: <20180326191031.14939-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.11.0
+        id S1752125AbeCZTLa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 15:11:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43846 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750983AbeCZTL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 15:11:29 -0400
+From: Waiman Long <longman@redhat.com>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
+Subject: [PATCH] locking/rwsem: Add DEBUG_RWSEMS to look for lock/unlock mismatches
+Date: Mon, 26 Mar 2018 15:11:05 -0400
+Message-Id: <1522091465-18102-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide an API allowing eBPF to lookup core kernel tracepoints by name.
+For a rwsem, locking can either be exclusive or shared. The corresponding
+exclusive or shared unlock must be used. Otherwise, the protected data
+structures may get corrupted or the lock may be in an inconsistent state.
 
-Given that a lookup by name explicitly requires tracepoint definitions
-to be unique for a given name (no duplicate keys), include a
-WARN_ON_ONCE() check that only a single match is encountered at runtime.
-This should always be the case, given that a DEFINE_TRACE emits a
-__tracepoint_##name symbol, which would cause a link-time error if more
-than one instance is found. Nevertheless, check this at runtime with
-WARN_ON_ONCE() to stay on the safe side.
+In order to detect such anomaly, a new configuration option DEBUG_RWSEMS
+is added which can be enabled to look for such mismatches and print
+warnings that that happens.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Alexei Starovoitov <ast@kernel.org>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- include/linux/tracepoint.h |  1 +
- kernel/tracepoint.c        | 35 +++++++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ kernel/locking/rwsem.c | 4 ++++
+ kernel/locking/rwsem.h | 8 +++++++-
+ lib/Kconfig.debug      | 7 +++++++
+ 3 files changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index c94f466d57ef..1b4ae64b7c6a 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -43,6 +43,7 @@ tracepoint_probe_unregister(struct tracepoint *tp, void *probe, void *data);
- extern void
- for_each_kernel_tracepoint(void (*fct)(struct tracepoint *tp, void *priv),
- 		void *priv);
-+extern struct tracepoint *tracepoint_kernel_find_by_name(const char *name);
- 
- #ifdef CONFIG_MODULES
- struct tp_module {
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 671b13457387..0a59f988055a 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -60,6 +60,11 @@ struct tp_probes {
- 	struct tracepoint_func probes[0];
- };
- 
-+struct tp_find_args {
-+	const char *name;
-+	struct tracepoint *tp;
-+};
-+
- static inline void *allocate_probes(int count)
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index f549c55..58a0c12 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -117,6 +117,7 @@ int down_write_trylock(struct rw_semaphore *sem)
+ void up_read(struct rw_semaphore *sem)
  {
- 	struct tp_probes *p  = kmalloc(count * sizeof(struct tracepoint_func)
-@@ -528,6 +533,36 @@ void for_each_kernel_tracepoint(void (*fct)(struct tracepoint *tp, void *priv),
+ 	rwsem_release(&sem->dep_map, 1, _RET_IP_);
++	DEBUG_RWSEMS_WARN_ON(sem->owner != RWSEM_READER_OWNED);
+ 
+ 	__up_read(sem);
  }
- EXPORT_SYMBOL_GPL(for_each_kernel_tracepoint);
+@@ -129,6 +130,7 @@ void up_read(struct rw_semaphore *sem)
+ void up_write(struct rw_semaphore *sem)
+ {
+ 	rwsem_release(&sem->dep_map, 1, _RET_IP_);
++	DEBUG_RWSEMS_WARN_ON(sem->owner != current);
  
-+static void find_tp(struct tracepoint *tp, void *priv)
-+{
-+	struct tp_find_args *args = priv;
-+
-+	if (!strcmp(tp->name, args->name)) {
-+		WARN_ON_ONCE(args->tp);
-+		args->tp = tp;
-+	}
-+}
-+
-+/**
-+ * tracepoint_kernel_find_by_name - lookup a core kernel tracepoint by name
-+ * @name: tracepoint name
-+ *
-+ * Returns the tracepoint structure associated with the name received as
-+ * parameter, or NULL if not found. Lookup is only performed throughout
-+ * core kernel tracepoints.
-+ */
-+struct tracepoint *tracepoint_kernel_find_by_name(const char *name)
-+{
-+	struct tp_find_args args = {
-+		.name = name,
-+		.tp = NULL,
-+	};
-+
-+	for_each_tracepoint_range(__start___tracepoints_ptrs,
-+		__stop___tracepoints_ptrs, find_tp, &args);
-+	return args.tp;
-+}
-+
- #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+ 	rwsem_clear_owner(sem);
+ 	__up_write(sem);
+@@ -142,6 +144,7 @@ void up_write(struct rw_semaphore *sem)
+ void downgrade_write(struct rw_semaphore *sem)
+ {
+ 	lock_downgrade(&sem->dep_map, _RET_IP_);
++	DEBUG_RWSEMS_WARN_ON(sem->owner != current);
  
- /* NB: reg/unreg are called while guarded with the tracepoints_mutex */
+ 	rwsem_set_reader_owned(sem);
+ 	__downgrade_write(sem);
+@@ -211,6 +214,7 @@ int __sched down_write_killable_nested(struct rw_semaphore *sem, int subclass)
+ 
+ void up_read_non_owner(struct rw_semaphore *sem)
+ {
++	DEBUG_RWSEMS_WARN_ON(RWSEM_WRITER_OWNED(sem->owner));
+ 	__up_read(sem);
+ }
+ 
+diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
+index a883b8f..563a7bc 100644
+--- a/kernel/locking/rwsem.h
++++ b/kernel/locking/rwsem.h
+@@ -16,6 +16,12 @@
+  */
+ #define RWSEM_READER_OWNED	((struct task_struct *)1UL)
+ 
++#ifdef CONFIG_DEBUG_RWSEMS
++#define DEBUG_RWSEMS_WARN_ON(c)	DEBUG_LOCKS_WARN_ON(c)
++#else
++#define DEBUG_RWSEMS_WARN_ON(c)
++#endif
++
+ #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
+ /*
+  * All writes to owner are protected by WRITE_ONCE() to make sure that
+@@ -41,7 +47,7 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
+ 	 * do a write to the rwsem cacheline when it is really necessary
+ 	 * to minimize cacheline contention.
+ 	 */
+-	if (sem->owner != RWSEM_READER_OWNED)
++	if (READ_ONCE(sem->owner) != RWSEM_READER_OWNED)
+ 		WRITE_ONCE(sem->owner, RWSEM_READER_OWNED);
+ }
+ 
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 64155e3..0958192 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1075,6 +1075,13 @@ config DEBUG_WW_MUTEX_SLOWPATH
+ 	 even a debug kernel.  If you are a driver writer, enable it.  If
+ 	 you are a distro, do not.
+ 
++config DEBUG_RWSEMS
++	bool "RW Semaphore debugging: basic checks"
++	depends on DEBUG_KERNEL && RWSEM_SPIN_ON_OWNER
++	help
++	  This feature allows mismatched rw semaphore locks and unlocks
++	  to be detected and reported.
++
+ config DEBUG_LOCK_ALLOC
+ 	bool "Lock debugging: detect incorrect freeing of live locks"
+ 	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
 -- 
-2.11.0
+1.8.3.1
