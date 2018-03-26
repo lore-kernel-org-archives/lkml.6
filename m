@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752486AbeCZONr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:13:47 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41110 "EHLO
+        id S1752547AbeCZON4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:13:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41160 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752462AbeCZONo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:13:44 -0400
+        id S1752478AbeCZONy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:13:54 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, dave.martin@arm.com, will.deacon@arm.com,
@@ -13,9 +13,9 @@ Cc: linux-kernel@vger.kernel.org, dave.martin@arm.com, will.deacon@arm.com,
         ckadabi@codeaurora.org, shankerd@codeaurora.org,
         ard.biesheuvel@linaro.org, jnair@caviumnetworks.com,
         robin.murphy@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v5 13/22] arm64: capabilities: Restrict KPTI detection to boot-time CPUs
-Date: Mon, 26 Mar 2018 15:12:40 +0100
-Message-Id: <1522073569-29174-14-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v5 17/22] arm64: Add helpers for checking CPU MIDR against a range
+Date: Mon, 26 Mar 2018 15:12:44 +0100
+Message-Id: <1522073569-29174-18-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522073569-29174-1-git-send-email-suzuki.poulose@arm.com>
 References: <1522073569-29174-1-git-send-email-suzuki.poulose@arm.com>
@@ -23,86 +23,133 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KPTI is treated as a system wide feature and is only detected if all
-the CPUs in the sysetm needs the defense, unless it is forced via kernel
-command line. This leaves a system with a mix of CPUs with and without
-the defense vulnerable. Also, if a late CPU needs KPTI but KPTI was not
-activated at boot time, the CPU is currently allowed to boot, which is a
-potential security vulnerability.
-This patch ensures that the KPTI is turned on if at least one CPU detects
-the capability (i.e, change scope to SCOPE_LOCAL_CPU). Also rejetcs a late
-CPU, if it requires the defense, when the system hasn't enabled it,
+Add helpers for checking if the given CPU midr falls in a range
+of variants/revisions for a given model.
 
 Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Reviewed-by: Dave Martin <dave.martin@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/cpufeature.h |  9 +++++++++
- arch/arm64/kernel/cpufeature.c      | 16 +++++++++++-----
- 2 files changed, 20 insertions(+), 5 deletions(-)
+ arch/arm64/include/asm/cpufeature.h |  4 ++--
+ arch/arm64/include/asm/cputype.h    | 30 ++++++++++++++++++++++++++++++
+ arch/arm64/kernel/cpu_errata.c      | 16 +++++-----------
+ 3 files changed, 37 insertions(+), 13 deletions(-)
 
 diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index effb1c0..4f05025 100644
+index 6a12804..cd24587 100644
 --- a/arch/arm64/include/asm/cpufeature.h
 +++ b/arch/arm64/include/asm/cpufeature.h
-@@ -248,6 +248,15 @@ extern struct arm64_ftr_reg arm64_ftr_reg_ctrel0;
- 	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU	|	\
- 	 ARM64_CPUCAP_PERMITTED_FOR_LATE_CPU)
+@@ -10,6 +10,7 @@
+ #define __ASM_CPUFEATURE_H
  
-+/*
-+ * CPU feature detected at boot time, on one or more CPUs. A late CPU
-+ * is not allowed to have the capability when the system doesn't have it.
-+ * It is Ok for a late CPU to miss the feature.
+ #include <asm/cpucaps.h>
++#include <asm/cputype.h>
+ #include <asm/fpsimd.h>
+ #include <asm/hwcap.h>
+ #include <asm/sigcontext.h>
+@@ -306,8 +307,7 @@ struct arm64_cpu_capabilities {
+ 	void (*cpu_enable)(const struct arm64_cpu_capabilities *cap);
+ 	union {
+ 		struct {	/* To be used for erratum handling only */
+-			u32 midr_model;
+-			u32 midr_range_min, midr_range_max;
++			struct midr_range midr_range;
+ 			const struct arm64_midr_revidr {
+ 				u32 midr_rv;		/* revision/variant */
+ 				u32 revidr_mask;
+diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+index 350c76a..bf6cfda 100644
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@ -118,6 +118,36 @@
+ #define read_cpuid(reg)			read_sysreg_s(SYS_ ## reg)
+ 
+ /*
++ * Represent a range of MIDR values for a given CPU model and a
++ * range of variant/revision values.
++ *
++ * @model	- CPU model as defined by MIDR_CPU_MODEL
++ * @rv_min	- Minimum value for the revision/variant as defined by
++ *		  MIDR_CPU_VAR_REV
++ * @rv_max	- Maximum value for the variant/revision for the range.
 + */
-+#define ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE	\
-+	(ARM64_CPUCAP_SCOPE_LOCAL_CPU		|	\
-+	 ARM64_CPUCAP_OPTIONAL_FOR_LATE_CPU)
++struct midr_range {
++	u32 model;
++	u32 rv_min;
++	u32 rv_max;
++};
 +
- struct arm64_cpu_capabilities {
- 	const char *desc;
- 	u16 capability;
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index a80ca94..cae3dce 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -880,10 +880,9 @@ static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
- static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
++#define MIDR_RANGE(m, v_min, r_min, v_max, r_max)		\
++	{							\
++		.model = m,					\
++		.rv_min = MIDR_CPU_VAR_REV(v_min, r_min),	\
++		.rv_max = MIDR_CPU_VAR_REV(v_max, r_max),	\
++	}
++
++#define MIDR_ALL_VERSIONS(m) MIDR_RANGE(m, 0, 0, 0xf, 0xf)
++
++static inline bool is_midr_in_range(u32 midr, struct midr_range const *range)
++{
++	return MIDR_IS_CPU_MODEL_RANGE(midr, range->model,
++				 range->rv_min, range->rv_max);
++}
++
++/*
+  * The CPU ID never changes at run time, so we might as well tell the
+  * compiler that it's constant.  Use this function to read the CPU ID
+  * rather than directly reading processor_id or read_cpuid() directly.
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index 9ea1495..3c0bb6c 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -28,9 +28,7 @@ is_affected_midr_range(const struct arm64_cpu_capabilities *entry, int scope)
+ 	u32 midr = read_cpuid_id(), revidr;
  
- static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
--				int __unused)
-+				int scope)
- {
- 	char const *str = "command line option";
--	u64 pfr0 = read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1);
+ 	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
+-	if (!MIDR_IS_CPU_MODEL_RANGE(midr, entry->midr_model,
+-				     entry->midr_range_min,
+-				     entry->midr_range_max))
++	if (!is_midr_in_range(midr, &entry->midr_range))
+ 		return false;
  
- 	/*
- 	 * For reasons that aren't entirely clear, enabling KPTI on Cavium
-@@ -914,8 +913,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
- 	}
+ 	midr &= MIDR_REVISION_MASK | MIDR_VARIANT_MASK;
+@@ -53,7 +51,7 @@ is_kryo_midr(const struct arm64_cpu_capabilities *entry, int scope)
+ 	model &= MIDR_IMPLEMENTOR_MASK | (0xf00 << MIDR_PARTNUM_SHIFT) |
+ 		 MIDR_ARCHITECTURE_MASK;
  
- 	/* Defer to CPU feature registers */
--	return !cpuid_feature_extract_unsigned_field(pfr0,
--						     ID_AA64PFR0_CSV3_SHIFT);
-+	return !has_cpuid_feature(entry, scope);
+-	return model == entry->midr_model;
++	return model == entry->midr_range.model;
  }
  
- static void
-@@ -1062,7 +1060,15 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 	{
- 		.desc = "Kernel page table isolation (KPTI)",
- 		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
--		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.type = ARM64_CPUCAP_BOOT_RESTRICTED_CPU_LOCAL_FEATURE,
-+		/*
-+		 * The ID feature fields below are used to indicate that
-+		 * the CPU doesn't need KPTI. See unmap_kernel_at_el0 for
-+		 * more details.
-+		 */
-+		.sys_reg = SYS_ID_AA64PFR0_EL1,
-+		.field_pos = ID_AA64PFR0_CSV3_SHIFT,
-+		.min_field_value = 1,
- 		.matches = unmap_kernel_at_el0,
- 		.cpu_enable = kpti_install_ng_mappings,
+ static bool
+@@ -239,15 +237,11 @@ qcom_enable_link_stack_sanitization(const struct arm64_cpu_capabilities *entry)
+ 
+ #define CAP_MIDR_RANGE(model, v_min, r_min, v_max, r_max)	\
+ 	.matches = is_affected_midr_range,			\
+-	.midr_model = model,					\
+-	.midr_range_min = MIDR_CPU_VAR_REV(v_min, r_min),	\
+-	.midr_range_max = MIDR_CPU_VAR_REV(v_max, r_max)
++	.midr_range = MIDR_RANGE(model, v_min, r_min, v_max, r_max)
+ 
+ #define CAP_MIDR_ALL_VERSIONS(model)					\
+ 	.matches = is_affected_midr_range,				\
+-	.midr_model = model,						\
+-	.midr_range_min = MIDR_CPU_VAR_REV(0, 0),			\
+-	.midr_range_max = (MIDR_VARIANT_MASK | MIDR_REVISION_MASK)
++	.midr_range = MIDR_ALL_VERSIONS(model)
+ 
+ #define MIDR_FIXED(rev, revidr_mask) \
+ 	.fixed_revs = (struct arm64_midr_revidr[]){{ (rev), (revidr_mask) }, {}}
+@@ -390,7 +384,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 		.desc = "Qualcomm Technologies Kryo erratum 1003",
+ 		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
+ 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+-		.midr_model = MIDR_QCOM_KRYO,
++		.midr_range.model = MIDR_QCOM_KRYO,
+ 		.matches = is_kryo_midr,
  	},
+ #endif
 -- 
 2.7.4
