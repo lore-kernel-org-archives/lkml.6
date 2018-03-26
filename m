@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752042AbeCZACG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 20:02:06 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:42689 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbeCZABD (ORCPT
+        id S1752106AbeCZACL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 20:02:11 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:40517 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750960AbeCZABD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 25 Mar 2018 20:01:03 -0400
-X-Google-Smtp-Source: AG47ELtAaS9ik+7SjPVWVsnFC53vJwEpzglduE/U/eiN+bJRPZWOQwn2f+KCOpRXpYo3KC3EOSWcG6bXOFGxSPH8B1k2A4TAO8+N
+X-Google-Smtp-Source: AG47ELtar3ujEp5/Fzzh6VsgKrYcdzy5LqIOYmEtw7UKbSygqcah9hZ6JflhKy8W/vzUEktZvnzxl6tnYgm6ffRXHpenwqy35puf
 MIME-Version: 1.0
 Date: Sun, 25 Mar 2018 17:01:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113f9bb83e4d560568457853@google.com>
-Subject: BUG: unable to handle kernel paging request in smc_ib_remember_port_attr
-From: syzbot <syzbot+5cd61039dc9b8bfa6e47@syzkaller.appspotmail.com>
-To: davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, ubraun@linux.vnet.ibm.com
+Message-ID: <089e08281e6c3b28c4056845781f@google.com>
+Subject: general protection fault in tipc_sk_fill_sock_diag
+From: syzbot <syzbot+326e587eff1074657718@syzkaller.appspotmail.com>
+To: davem@davemloft.net, jon.maloy@ericsson.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
+        ying.xue@windriver.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -25,102 +26,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot hit the following crash on upstream commit
-bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
-Merge tag 'pinctrl-v4.16-3' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+syzbot hit the following crash on net-next commit
+94cb5492409219ee3f9468616dd58af314029f76 (Fri Mar 23 18:31:30 2018 +0000)
+net/sched: act_vlan: declare push_vid with host byte order
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=5cd61039dc9b8bfa6e47
+https://syzkaller.appspot.com/bug?extid=326e587eff1074657718
 
-So far this crash happened 5 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4566822275776512
+So far this crash happened 8 times on net-next.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5316828523921408
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5414431521505280
+https://syzkaller.appspot.com/x/repro.syz?id=5398288350052352
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5642358322364416
+https://syzkaller.appspot.com/x/log.txt?id=5097949340106752
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
+https://syzkaller.appspot.com/x/.config?id=2445237949826843652
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5cd61039dc9b8bfa6e47@syzkaller.appspotmail.com
+Reported-by: syzbot+326e587eff1074657718@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-BUG: unable to handle kernel paging request at fffffc0000000000
-IP: bytes_is_nonzero mm/kasan/kasan.c:166 [inline]
-IP: memory_is_nonzero mm/kasan/kasan.c:184 [inline]
-IP: memory_is_poisoned_n mm/kasan/kasan.c:210 [inline]
-IP: memory_is_poisoned mm/kasan/kasan.c:241 [inline]
-IP: check_memory_region_inline mm/kasan/kasan.c:257 [inline]
-IP: check_memory_region+0x83/0x190 mm/kasan/kasan.c:267
-PGD 0 P4D 0
-Oops: 0000 [#1] SMP KASAN
+audit: type=1400 audit(1522009585.022:6): avc:  denied  { map } for   
+pid=4261 comm="bash" path="/bin/bash" dev="sda1" ino=1457  
+scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+tcontext=system_u:object_r:file_t:s0 tclass=file permissive=1
+audit: type=1400 audit(1522009597.461:7): avc:  denied  { map } for   
+pid=4277 comm="syzkaller549428" path="/root/syzkaller549428900" dev="sda1"  
+ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
 Dumping ftrace buffer:
     (ftrace buffer empty)
 Modules linked in:
-CPU: 0 PID: 4138 Comm: syzkaller407129 Not tainted 4.16.0-rc6+ #1
+CPU: 0 PID: 4277 Comm: syzkaller549428 Not tainted 4.16.0-rc6+ #280
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:bytes_is_nonzero mm/kasan/kasan.c:166 [inline]
-RIP: 0010:memory_is_nonzero mm/kasan/kasan.c:184 [inline]
-RIP: 0010:memory_is_poisoned_n mm/kasan/kasan.c:210 [inline]
-RIP: 0010:memory_is_poisoned mm/kasan/kasan.c:241 [inline]
-RIP: 0010:check_memory_region_inline mm/kasan/kasan.c:257 [inline]
-RIP: 0010:check_memory_region+0x83/0x190 mm/kasan/kasan.c:267
-RSP: 0018:ffff8801b8c472e0 EFLAGS: 00010282
-RAX: fffffc0000000000 RBX: 0000000000000017 RCX: ffffffff85a53701
-RDX: 0000000000000001 RSI: 0000000000000040 RDI: ffffffffffffffd8
-RBP: ffff8801b8c472f0 R08: fffffc0000000001 R09: dffffc0000000003
-R10: e000000000000008 R11: dffffc0000000002 R12: dffffc0000000003
-R13: 0000000000000000 R14: 0000000000000000 R15: ffffffffffffffd8
-FS:  0000000000a75880(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
+RIP: 0010:sk_user_ns include/net/sock.h:748 [inline]
+RIP: 0010:tipc_sk_fill_sock_diag+0x42d/0xc00 net/tipc/socket.c:3282
+RSP: 0018:ffff8801b017eff0 EFLAGS: 00010206
+RAX: 0000000000000000 RBX: 1ffff1003602fe04 RCX: 000000000000002b
+RDX: dffffc0000000000 RSI: 1ffff10035d4b577 RDI: 0000000000000158
+RBP: ffff8801b017f2a8 R08: 1ffff1003602fdbf R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801d1637740
+R13: ffff8801b0d50d40 R14: ffff8801b017f280 R15: 0000000000000000
+FS:  00000000014a6880(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffffc0000000000 CR3: 00000001ceb8a001 CR4: 00000000001606f0
+CR2: 0000000020005000 CR3: 00000001b01b3005 CR4: 00000000001606f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  memset+0x23/0x40 mm/kasan/kasan.c:285
-  memset include/linux/string.h:330 [inline]
-  smc_ib_remember_port_attr+0x91/0x340 net/smc/smc_ib.c:419
-  smc_pnet_add+0xb43/0xde0 net/smc/smc_pnet.c:354
-  genl_family_rcv_msg+0x7b7/0xfb0 net/netlink/genetlink.c:599
-  genl_rcv_msg+0xb2/0x140 net/netlink/genetlink.c:624
+  __tipc_add_sock_diag+0x20e/0x330 net/tipc/diag.c:62
+  tipc_nl_sk_walk+0x565/0xb60 net/tipc/socket.c:3240
+  tipc_diag_dump+0x24/0x30 net/tipc/diag.c:73
+  netlink_dump+0x492/0xcf0 net/netlink/af_netlink.c:2222
+  __netlink_dump_start+0x4ec/0x710 net/netlink/af_netlink.c:2319
+  netlink_dump_start include/linux/netlink.h:214 [inline]
+  tipc_sock_diag_handler_dump+0x206/0x2c0 net/tipc/diag.c:89
+  __sock_diag_cmd net/core/sock_diag.c:230 [inline]
+  sock_diag_rcv_msg+0x204/0x360 net/core/sock_diag.c:261
   netlink_rcv_skb+0x14b/0x380 net/netlink/af_netlink.c:2444
-  genl_rcv+0x28/0x40 net/netlink/genetlink.c:635
+  sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:272
   netlink_unicast_kernel net/netlink/af_netlink.c:1308 [inline]
   netlink_unicast+0x4c4/0x6b0 net/netlink/af_netlink.c:1334
   netlink_sendmsg+0xa4a/0xe60 net/netlink/af_netlink.c:1897
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg+0xca/0x110 net/socket.c:640
-  ___sys_sendmsg+0x767/0x8b0 net/socket.c:2046
-  __sys_sendmsg+0xe5/0x210 net/socket.c:2080
-  SYSC_sendmsg net/socket.c:2091 [inline]
-  SyS_sendmsg+0x2d/0x50 net/socket.c:2087
+  sock_sendmsg_nosec net/socket.c:629 [inline]
+  sock_sendmsg+0xca/0x110 net/socket.c:639
+  ___sys_sendmsg+0x767/0x8b0 net/socket.c:2047
+  __sys_sendmsg+0xe5/0x210 net/socket.c:2081
+  SYSC_sendmsg net/socket.c:2092 [inline]
+  SyS_sendmsg+0x2d/0x50 net/socket.c:2088
   do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x43fda9
-RSP: 002b:00007ffd35aa5268 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fda9
-RDX: 0000000000040004 RSI: 0000000020a87fc8 RDI: 0000000000000003
+RIP: 0033:0x43fde9
+RSP: 002b:00007ffc6f197198 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fde9
+RDX: 0000000000000000 RSI: 0000000020005000 RDI: 0000000000000003
 RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004016d0
-R13: 0000000000401760 R14: 0000000000000000 R15: 0000000000000000
-Code: fa 10 7f 3d 4d 85 d2 74 33 41 80 39 00 75 21 48 b8 01 00 00 00 00 fc  
-ff df 4d 01 d1 49 01 c0 4d 39 c1 4c 89 c0 74 15 49 83 c0 01 <80> 38 00 74  
-ef 48 85 c0 49 89 c0 0f 85 89 00 00 00 5b 41 5c 5d
-RIP: bytes_is_nonzero mm/kasan/kasan.c:166 [inline] RSP: ffff8801b8c472e0
-RIP: memory_is_nonzero mm/kasan/kasan.c:184 [inline] RSP: ffff8801b8c472e0
-RIP: memory_is_poisoned_n mm/kasan/kasan.c:210 [inline] RSP:  
-ffff8801b8c472e0
-RIP: memory_is_poisoned mm/kasan/kasan.c:241 [inline] RSP: ffff8801b8c472e0
-RIP: check_memory_region_inline mm/kasan/kasan.c:257 [inline] RSP:  
-ffff8801b8c472e0
-RIP: check_memory_region+0x83/0x190 mm/kasan/kasan.c:267 RSP:  
-ffff8801b8c472e0
-CR2: fffffc0000000000
----[ end trace 327b8c6e0903b0d7 ]---
+R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401710
+R13: 00000000004017a0 R14: 0000000000000000 R15: 0000000000000000
+Code: f9 48 c1 e9 03 80 3c 11 00 0f 85 b5 07 00 00 4d 8b 7f 18 48 ba 00 00  
+00 00 00 fc ff df 49 8d bf 58 01 00 00 48 89 f9 48 c1 e9 03 <80> 3c 11 00  
+0f 85 2b 07 00 00 4d 8b bf 58 01 00 00 48 ba 00 00
+RIP: sk_user_ns include/net/sock.h:748 [inline] RSP: ffff8801b017eff0
+RIP: tipc_sk_fill_sock_diag+0x42d/0xc00 net/tipc/socket.c:3282 RSP:  
+ffff8801b017eff0
+---[ end trace ae417c2a60a8b333 ]---
 
 
 ---
