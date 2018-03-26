@@ -1,31 +1,32 @@
 Return-Path: <tomeu.vizoso@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1521711632; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522054861; cv=none;
         d=google.com; s=arc-20160816;
-        b=jQj3WtE4o+Yh3dJFtAUVTxZtI6z9HK2b4Gd+tZmA3WrGoAw8WGIZfQkz/btjgT8wIF
-         8UXuHnV+lUaqK599afiGXDWiHAYUHKWvVH0vJDwIGKW7D+ONM31YQaHGqtIWx/GS9SKq
-         FOtUBySadWddiqkvnnITuHOqoCDnlR6XveF1IkXesJJU+po7756jcqEMWx0O4MuA/BfE
-         XHpyWeOnNhDbwjoztqISH+bKvVisR7fzTcxU8gGqrHEEtQdXoc4ICOYvG2lqqkPh6f0p
-         9ZUPcc4zuX+E4w6iQry7oQAgdFKsPlspqCaROTLWWUjHUm+hE53vnMTsr9lxykSq1iWP
-         4gqQ==
+        b=RxRux/iXXVhCqLiqdu+dMWBDdp/ioRAmz4In/lTWiN+kYq/hSomv7bNwMzrWl9jbZK
+         RCLkeTeKuTCfzYQrbY8z9I0ya6bL/61uGAhcezsnCjkOIVs6U4DZXWX8u+zreLtNVpla
+         ssdzgv6CZ/5lHCqeNWUqu2pLaPk20jCCcbaZB2VTCIGj7BiBCJDrRrNFv+RcJMdT1fzk
+         3m0Di3Sa3B6d891V6c4doTfNtEXbnTmliFDRFX+O8GNEki0Tz/7PmC7nR7U1/Iidl0L1
+         ZgDk1QtGcPrrxkDlXhzaaIt/pQC4FS8BGTIaDHJQiyFN0IC8nsKEM6VmvWbIIba0OPQu
+         nJXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:sender:dkim-signature
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:sender:dkim-signature
          :arc-authentication-results;
-        bh=KFtokh40tYC4iXpDYYuuJY+bIiHjZ9En/cL9bX+B9Ho=;
-        b=qMN5F364sgE9Yl9hHjtBU/pdH1Av7VyAEF5ZlZYJJYO5d69xCM/fIHYkFZhLQFBXmF
-         GA805rXjVtMWx3lcRu3pR4L1YF02ddfvU92ZM8ocnsMykX+QN4M9Mx2ZQnkTvm9fAjEA
-         qY6URqEADrtG5OahzeojQRmZr0I0bgGo1mXl618VhIn+3SzgfPCCguo5k+XdG2fy/6gK
-         KVVotq3PCY9qewg7Hmu2CrDiYMactEEgGE0vud2LLGAgns2psUyU+xF0J/OOINXWJvUL
-         rEO/6km6kRSHYKy0c6Y6VfC0Yi0UlaT9q6hK+qlAr4L4jKcyjlHJKxOMt+26fhEJFz84
-         R3gw==
+        bh=dpCuwO5ic8sr998ujF8XA9u7muRq892WvSDtnUohuGE=;
+        b=n6QDY1dM38lQEY1ImuE3QgnpUdyZfDXmRnoy9Fq3Sy4TIVPoLTYtfqNOrhe1yVVthp
+         WRHFNWkmjbX+vOtPSPNEBZcH/yYqzsLDtFlPAGmb3MO7UgC66UCYKeebSuP5fEHi8Nr3
+         3curcSZa3I6pbCqAwmvdksvdXrxGkH56W5cxzss9X5tgvg75Dwb21ipanscltUqrk5Qp
+         HSk+5XBzEsErDdwRKv2BB98bwzzwgiHIhOnwN2LSxr/Il9KXAwKFGwFVFVQnjJX/CVkb
+         kjKGdrD3Kfn5QvsM+oQRrw6mS59o737h/FDyHdBrbpg7HRABnQPILZPNSehhWaX2X2rs
+         5zng==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WyQoGwwG;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jr4BwuHe;
        spf=pass (google.com: domain of tomeu.vizoso@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tomeu.vizoso@gmail.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=collabora.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=WyQoGwwG;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=jr4BwuHe;
        spf=pass (google.com: domain of tomeu.vizoso@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=tomeu.vizoso@gmail.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=collabora.com
-X-Google-Smtp-Source: AG47ELvtHGzOOI4ezvLGDZTk08VDBaumu8G2fqwCfEdCfjgpiulUwosbjS1EJE/75A9D+frki3LCGg==
+X-Google-Smtp-Source: AG47ELu80CFQLjeU3iVZlU/U8b5mn7lSvilKySVa2dNc0z6EMwTgUrNKkxdO2TlACuJUJLriYHQo1A==
 Sender: Tomeu Vizoso <tomeu.vizoso@gmail.com>
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 To: linux-kernel@vger.kernel.org
@@ -36,13 +37,18 @@ Cc: Felipe Balbi <felipe.balbi@linux.intel.com>,
 	Minas Harutyunyan <hminas@synopsys.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-usb@vger.kernel.org
-Subject: [PATCH] usb: dwc2: dwc2_vbus_supply_init: fix error check
-Date: Thu, 22 Mar 2018 10:39:43 +0100
-Message-Id: <20180322093943.49717-1-tomeu.vizoso@collabora.com>
+Subject: [PATCH v4] usb: dwc2: dwc2_vbus_supply_init: fix error check
+Date: Mon, 26 Mar 2018 11:00:01 +0200
+Message-Id: <20180326090001.57627-1-tomeu.vizoso@collabora.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180322093943.49717-1-tomeu.vizoso@collabora.com>
+References: <20180322093943.49717-1-tomeu.vizoso@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595630296773142922?=
-X-GMAIL-MSGID: =?utf-8?q?1595630296773142922?=
+X-GMAIL-MSGID: =?utf-8?q?1595990198497073082?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,26 +62,35 @@ other errors. Also propagate the error from _dwc2_hcd_start.
 Fixes: 531ef5ebea96 ("usb: dwc2: add support for host mode external vbus supply")
 Cc: Amelie Delaunay <amelie.delaunay@st.com>
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+
+---
+
+v2: Only overwrite the error in the pointer after checking it (Heiko
+    Stübner <heiko@sntech.de>)
+v3: Remove hunks that shouldn't be in this patch
+v4: Don't overwrite the error code before returning it (kbuild test
+    robot <lkp@intel.com>)
 ---
  drivers/usb/dwc2/hcd.c | 13 ++++++++-----
  1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
-index dcfda5eb4cac..4ae211f65e85 100644
+index 190f95964000..c51b73b3e048 100644
 --- a/drivers/usb/dwc2/hcd.c
 +++ b/drivers/usb/dwc2/hcd.c
-@@ -359,8 +359,13 @@ static void dwc2_gusbcfg_init(struct dwc2_hsotg *hsotg)
+@@ -358,9 +358,14 @@ static void dwc2_gusbcfg_init(struct dwc2_hsotg *hsotg)
+ 
  static int dwc2_vbus_supply_init(struct dwc2_hsotg *hsotg)
  {
++	int ret;
++
  	hsotg->vbus_supply = devm_regulator_get_optional(hsotg->dev, "vbus");
 -	if (IS_ERR(hsotg->vbus_supply))
 -		return 0;
 +	if (IS_ERR(hsotg->vbus_supply)) {
++		ret = PTR_ERR(hsotg->vbus_supply);
 +		hsotg->vbus_supply = NULL;
-+		if (PTR_ERR(hsotg->vbus_supply) == -ENODEV)
-+			return 0;
-+		else
-+			return PTR_ERR(hsotg->vbus_supply);
++		return ret == -ENODEV ? 0 : ret;
 +	}
  
  	return regulator_enable(hsotg->vbus_supply);
