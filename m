@@ -1,57 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751032AbeCZFSw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 01:18:52 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37835 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750755AbeCZFSv (ORCPT
+        id S1751160AbeCZFUG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 01:20:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38318 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeCZFUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 01:18:51 -0400
-X-Google-Smtp-Source: AG47ELvf8/gO/zzRDbReKPXthC1hysY/o64/luh2CXOMFTQHOYgLw2sI75Uscb8W/uVBzWJhbFx1aQ==
-Date: Mon, 26 Mar 2018 14:18:45 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: bugzilla-daemon@bugzilla.kernel.org
-Cc: Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        bugzilla-daemon@bugzilla.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, wen.yang99@zte.com.cn,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [Bug 199003] console stalled, cause Hard LOCKUP.
-Message-ID: <20180326051845.GB7779@jagdpanzerIV>
-References: <bug-199003-14532@https.bugzilla.kernel.org/>
- <bug-199003-14532-DgJdGAHEOE@https.bugzilla.kernel.org/>
+        Mon, 26 Mar 2018 01:20:02 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83F71601EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
+Subject: Re: [PATCH v2 1/4] clk: qcom: Clear hardware clock control bit of RCG
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1520493495-3084-1-git-send-email-anischal@codeaurora.org>
+ <1520493495-3084-2-git-send-email-anischal@codeaurora.org>
+ <152150012178.254778.7302484360542115877@swboyd.mtv.corp.google.com>
+From: "Nischal, Amit" <anischal@codeaurora.org>
+Message-ID: <6d59cd6b-0075-3be7-d890-e6a330f2e781@codeaurora.org>
+Date: Mon, 26 Mar 2018 10:49:47 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bug-199003-14532-DgJdGAHEOE@https.bugzilla.kernel.org/>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <152150012178.254778.7302484360542115877@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc-ing the kernel list and printk people.
-
-Wen Yang, any chance we can switch to email? Bugzilla is not very handful.
 
 
-On (03/26/18 02:40), bugzilla-daemon@bugzilla.kernel.org wrote:
-> https://bugzilla.kernel.org/show_bug.cgi?id=199003
-> 
-> --- Comment #11 from Wen Yang (wen.yang99@zte.com.cn) ---
-> Hello Steven,
-> 
-> +module_param_named(synchronous, printk_sync, bool, S_IRUGO);
-> +MODULE_PARM_DESC(synchronous, "make printing to console synchronous");
-> 
-> It's depend on this kernel parameter(printk.synchronous), but this parameter is
-> readonly.
-> So we must change grub files, and alse need to restart the server for changes
-> to take effect.
-> If we can configure it dynamically, it will be more useful.
+On 3/20/2018 4:25 AM, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-03-07 23:18:12)
+>> For upcoming targets like sdm845, POR value of the hardware clock control
+>> bit is set for most of root clocks which needs to be cleared for software
+>> to be able to control. For older targets like MSM8996, this bit is reserved
+>> bit and having POR value as 0 so this patch will work for the older targets
+>> too. So update the configuration mask to take care of the same to clear
+>> hardware clock control bit.
+>>
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> ---
+>>   drivers/clk/qcom/clk-rcg2.c | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>> index bbeaf9c..e63db10 100644
+>> --- a/drivers/clk/qcom/clk-rcg2.c
+>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>> @@ -1,5 +1,5 @@
+>>   /*
+>> - * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2013, 2018, The Linux Foundation. All rights reserved.
+> It would be nice if lawyers over there could avoid forcing copyright
+> date updates when less than half the file changes.
 
-So you are testing printk_kthread now, right? May I ask why?
-Did Steven's patch help?
+Thanks for the review.
+I will address the above in the next patch series.
 
-	-ss
+>
+>>    *
+>>    * This software is licensed under the terms of the GNU General Public
+>>    * License version 2, as published by the Free Software Foundation, and
+>> @@ -42,6 +42,7 @@
+>>   #define CFG_MODE_SHIFT         12
+>>   #define CFG_MODE_MASK          (0x3 << CFG_MODE_SHIFT)
+>>   #define CFG_MODE_DUAL_EDGE     (0x2 << CFG_MODE_SHIFT)
+>> +#define CFG_HW_CLK_CTRL_MASK   BIT(20)
+>>
+>>   #define M_REG                  0x8
+>>   #define N_REG                  0xc
+>> @@ -276,7 +277,7 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+>>          }
+>>
+>>          mask = BIT(rcg->hid_width) - 1;
+>> -       mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK;
+>> +       mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+>>          cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+>>          cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+>>          if (rcg->mnd_width && f->n && (f->m != f->n))
+> Is there going to be a future patch to update the RCGs to indicate they
+> support hardware control or not?
+
+As of now, there will not be any patch to update the RCGs to support HW control.
