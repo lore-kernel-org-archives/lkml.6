@@ -1,85 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751684AbeCZLMP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 07:12:15 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6693 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751042AbeCZLMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 07:12:13 -0400
-Date: Mon, 26 Mar 2018 12:11:38 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Logan Gunthorpe <logang@deltatee.com>
-CC: Sinan Kaya <okaya@codeaurora.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
-        <linux-rdma@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
-        <linux-block@vger.kernel.org>, Stephen Bates <sbates@raithlin.com>,
-        "Christoph Hellwig" <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Eric Wehage <Eric.Wehage@huawei.com>
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-Message-ID: <20180326121138.00005e30@huawei.com>
-In-Reply-To: <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
-        <20180312193525.2855-2-logang@deltatee.com>
-        <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
-        <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; i686-w64-mingw32)
+        id S1751134AbeCZLPH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 07:15:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40566 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750864AbeCZLPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 07:15:06 -0400
+Date: Mon, 26 Mar 2018 13:14:54 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagannadh.teki@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 0/7] drm/sun4i: Allwinner MIPI-DSI support
+Message-ID: <20180326111454.jqq5dchw27iqhxhe@flea>
+References: <cover.14d017af44a2140bea674731b60a0dd7f992f5f6.1520344489.git-series.maxime.ripard@bootlin.com>
+ <CAD6G_RSfiPC2qPjFFukqx6ihzS=_qBOdsP1KnWTP8BJ9Zsekew@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="o44d22k5nptwpobw"
+Content-Disposition: inline
+In-Reply-To: <CAD6G_RSfiPC2qPjFFukqx6ihzS=_qBOdsP1KnWTP8BJ9Zsekew@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018 10:43:55 -0600
-Logan Gunthorpe <logang@deltatee.com> wrote:
 
-> On 12/03/18 09:28 PM, Sinan Kaya wrote:
-> > On 3/12/2018 3:35 PM, Logan Gunthorpe wrote:
-> > Regarding the switch business, It is amazing how much trouble you went into
-> > limit this functionality into very specific hardware.
-> > 
-> > I thought that we reached to an agreement that code would not impose
-> > any limits on what user wants.
-> > 
-> > What happened to all the emails we exchanged?  
-> 
-> It turns out that root ports that support P2P are far less common than 
-> anyone thought. So it will likely have to be a white list.
+--o44d22k5nptwpobw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This came as a bit of a surprise to our PCIe architect.
+Hi,
 
-His follow up was whether it was worth raising an ECR for the PCIe spec
-to add a capability bit to allow this to be discovered.  This might
-long term avoid the need to maintain the white list for new devices.
+On Fri, Mar 23, 2018 at 10:36:35PM +0530, Jagan Teki wrote:
+> Hi Maxime,
+>=20
+> On Tue, Mar 6, 2018 at 7:25 PM, Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> > Hi,
+> >
+> > Here is an preliminary version of the MIPI-DSI support for the Allwinner
+> > SoCs.
+> >
+> > This controller can be found on a number of recent SoCs, such as the
+> > A31, A33 or the A64.
+> >
+> > Given the sparse documentation, there's a number of obscure areas, but
+> > the current implementation has been tested with a 4-lanes DSI panel on
+> > an A33.
+> >
+> > The support is a bit rough around the edges at the time, and some artif=
+acts
+> > are still shown on the screen for some reasons. Wider testing with
+> > different display will hopefully nail those down.
+> >
+> > Let me know what you think,
+> > Maxime
+> >
+> > Changes from v2:
+> >   - Added a ports node under the DSI node
+> >   - Changed the huarui panel driver to an ili9881c driver
+> >   - Changed the panel vendor to bananapi
+> >   - Made the init table static in the panel driver
+> >   - Dropped the huarui vendor patch for the DT doc.
+> >
+> > Changes from v1:
+> >   - Rebased on 4.16-rc1
+> >   - Constified a few function arguments and structures
+> >   - Reworked the DT binding example a bit
+> >   - Reworked the panel driver to check for DSI return codes, and use DCS
+> >     helpers when possible
+> >
+> > Maxime Ripard (7):
+> >   drm/sun4i: tcon: Add TRI finish interrupt for vblank
+> >   dt-bindings: display: Add Allwinner MIPI-DSI bindings
+> >   drm/sun4i: Add Allwinner A31 MIPI-DSI controller support
+> >   dt-bindings: panel: Add the Ilitek ILI9881c panel documentation
+> >   drm/panel: Add Ilitek ILI9881c panel driver
+> >   arm: dts: sun8i: a33: Add the DSI-related nodes
+> >   [DO NOT MERGE] arm: dts: sun8i: bpi-m2m: Add DSI display
+>=20
+> Any dependencies for this series on linux-next? it is not applying direct=
+ly.
 
-So is it worth having a long term solution for making this discoverable?
+Last time I rebased on top of 4.16-rc4, there was no dependency but
+the regmap patch found in the v2 that got merged. I haven't tried
+rebasing on next though.
 
-Jonathan
+Maxime
 
-> Nobody else 
-> seems keen on allowing the user to enable this on hardware that doesn't 
-> work. The easiest solution is still limiting it to using a switch. From 
-> there, if someone wants to start creating a white-list then that's 
-> probably the way forward to support root ports.
-> 
-> And there's also the ACS problem which means if you want to use P2P on 
-> the root ports you'll have to disable ACS on the entire system. (Or 
-> preferably, the IOMMU groups need to get more sophisticated to allow for 
-> dynamic changes).
-> 
-> Additionally, once you allow for root ports you may find the IOMMU 
-> getting in the way.
-> 
-> So there are great deal more issues to sort out if you don't restrict to 
-> devices behind switches.
-> 
-> Logan
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--o44d22k5nptwpobw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq41i0ACgkQ0rTAlCFN
+r3Qe3w//ehSw4WAyVFs7pxvHWVrPtuTJ5YQ3ItSyDPnZaZsK/zUH4AJJj8MBGnju
+ydxiBCV8bfpbl1hqeqAcfqVA0VZXhFqspZvNUoX7BnObzqh3s77LqMSn+/Glldgr
+nTjXc9hbVA1zoQuXd8NyIzdSjTPzGLAZ81KXx/XdjqyuUJrNEGuo8FTRlNZJ/Cx6
+v8qg3cQFlz7ENulgzcL1ikHrF2IACn+HlaWLohQ8whXrHAnwW5gEea6wTREFzKuj
+gKBlF8ZkcaL8QDJ5L55AnEwfmv1CnWxbrY/5NfsggB1D/zmFTIXUn6zYKWRxIxof
+6tytgi1xx6d36aLNfRXrE73aVFHxFFW1EL1ORmndDyaORb8Xs+oFWpGR5R8++aRx
+64x8zGEnPnhbLYm0BDiHF4LW+xx49WD3FHS83Ay0iHtM+A+51CkqFz/wUYTm/ZHZ
+XA3kmdCfAiBcg72RK6VHp3iyGKUWph7Puq96vrpwzRd+PkR5p6GtnPsTkSgWqULQ
+d99CwtzixIwYuWGRF96M+MGQmSbK5eZzCLnIoyd21g6AOxBzaL08MooNvh1SeLKj
+Dc9i0ZtWdIElZyqsCyT6/WIDFyOn6fgxtJ1MUyHNxf+O3UzRXIY/bv5GIaHPsoRA
++NHn3euWojWi/wSBKw9yLAmDdB/MbdFH3PyKfZj9QYXoZRTfVU0=
+=GVvI
+-----END PGP SIGNATURE-----
+
+--o44d22k5nptwpobw--
