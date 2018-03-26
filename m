@@ -1,109 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751730AbeCZJUi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:20:38 -0400
-Received: from mga18.intel.com ([134.134.136.126]:55258 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750955AbeCZJUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:20:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
-   d="scan'208";a="186024703"
-Subject: [PATCH v3 1/3] perf/core: store context switch out type into Perf
- trace
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <0b5dcf43-cfd4-b64e-3d0d-6aa743ff4d4a@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <2f5b6bf3-0321-ec79-8d24-ba1eb536758f@linux.intel.com>
-Date: Mon, 26 Mar 2018 12:20:32 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751903AbeCZJVp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:21:45 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:12374 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750984AbeCZJVo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 05:21:44 -0400
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Kevin Hilman <khilman@baylibre.com>
+CC: Xingyu Chen <xingyu.chen@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh+dt@kernel.org>,
+        Carlo Caione <carlo@caione.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH] ARM64: dts: meson-axg: add saradc support
+Date: Mon, 26 Mar 2018 17:21:17 +0800
+Message-ID: <20180326092117.208416-1-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <0b5dcf43-cfd4-b64e-3d0d-6aa743ff4d4a@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.235]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Xingyu Chen <xingyu.chen@amlogic.com>
 
-Store thread context-switch-out event type into Perf trace as a part of 
-PERF_RECORD_SWITCH[_CPU_WIDE] records.
+Add the DT info for SAR ADC of the Amlogic's Meson-AXG SoC.
 
-Introduced types of switch-out events assumed to be 
-a) preempt: task->state == TASK_RUNNING and b) !preempt;
+Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 
-New !preempt event type is encoded using new 
-PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit extending 
-existing PERF_RECORD_MISC_SWITCH_OUT bit of switch out event:
-
-    misc &= PERF_RECORD_MISC_SWITCH_OUT | PERF_RECORD_MISC_SWITCH_OUT_PREEMPT
-	
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- include/uapi/linux/perf_event.h       | 4 ++++
- kernel/events/core.c                  | 4 +++-
- tools/include/uapi/linux/perf_event.h | 4 ++++
- 3 files changed, 11 insertions(+), 1 deletion(-)
+Hi Kevin:
 
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 912b85b52344..cd6ad7e13824 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -655,6 +655,10 @@ struct perf_event_mmap_page {
-  * perf_event_attr::precise_ip.
-  */
- #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
-+/*
-+ * Indicates that thread was preempted in TASK_RUNNING state
-+ */
-+#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
- /*
-  * Reserve the last bit to indicate some extended misc field
-  */
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 74a6e8f12a3c..0d39192215bc 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7556,6 +7556,8 @@ static void perf_event_switch(struct task_struct *task,
- 			      struct task_struct *next_prev, bool sched_in)
- {
- 	struct perf_switch_event switch_event;
-+	__u16 switch_type = sched_in ? 0 : PERF_RECORD_MISC_SWITCH_OUT |
-+		(task->state == TASK_RUNNING ? PERF_RECORD_MISC_SWITCH_OUT_PREEMPT : 0);
- 
- 	/* N.B. caller checks nr_switch_events != 0 */
- 
-@@ -7565,7 +7567,7 @@ static void perf_event_switch(struct task_struct *task,
- 		.event_id	= {
- 			.header = {
- 				/* .type */
--				.misc = sched_in ? 0 : PERF_RECORD_MISC_SWITCH_OUT,
-+				.misc = switch_type,
- 				/* .size */
- 			},
- 			/* .next_prev_pid */
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 912b85b52344..cd6ad7e13824 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -655,6 +655,10 @@ struct perf_event_mmap_page {
-  * perf_event_attr::precise_ip.
-  */
- #define PERF_RECORD_MISC_EXACT_IP		(1 << 14)
-+/*
-+ * Indicates that thread was preempted in TASK_RUNNING state
-+ */
-+#define PERF_RECORD_MISC_SWITCH_OUT_PREEMPT	(1 << 14)
- /*
-  * Reserve the last bit to indicate some extended misc field
-  */
+  Please note, the saradc driver in Meson-AXG platfrom actually
+depend on the AO clock driver [0] & saradc patch itself [1].
+  And I've rebased this patch on top of your v4.17/dt64 branch
+
+[0] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
+[1] https://lkml.kernel.org/r/20180326084629.100070-1-yixun.lan@amlogic.com
+
+Yixun
+---
+ arch/arm64/boot/dts/amlogic/meson-axg-s400.dts |  5 +++++
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi     | 21 +++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+index 57eedced5a51..bbb88debbc04 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+@@ -47,3 +47,8 @@
+ 	pinctrl-0 = <&i2c1_z_pins>;
+ 	pinctrl-names = "default";
+ };
++
++&saradc {
++	status = "okay";
++	vref-supply = <&vddio_ao18>;
++};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index 40ca49fb94a6..105884efc033 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -818,6 +818,27 @@
+ 				interrupts = <GIC_SPI 196 IRQ_TYPE_EDGE_RISING>;
+ 				status = "disabled";
+ 			};
++
++			saradc: adc@9000 {
++				compatible = "amlogic,meson-axg-saradc",
++					"amlogic,meson-saradc";
++				reg = <0x0 0x9000 0x0 0x38>;
++				#io-channel-cells = <1>;
++				interrupts = <GIC_SPI 73 IRQ_TYPE_EDGE_RISING>;
++				clocks = <&xtal>,
++					<&clkc_AO CLKID_AO_SAR_ADC>,
++					<&clkc_AO CLKID_AO_SAR_ADC_CLK>,
++					<&clkc_AO CLKID_AO_SAR_ADC_SEL>;
++				clock-names = "clkin", "core", "adc_clk", "adc_sel";
++				status = "disabled";
++			};
+ 		};
+ 	};
++
++	vddio_ao18: regulator-vddio_ao18 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_AO18";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++	};
+ };
+-- 
+2.15.1
