@@ -1,59 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751109AbeCZAL2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 20:11:28 -0400
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:36981 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750960AbeCZAL0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 20:11:26 -0400
-X-Google-Smtp-Source: AG47ELvyAcjoJm4aR+531CrNxnW67JuomWnR+XoMMVeCMj1vUDrGB7LRnlEe/BFMG6AvlhUzsYUTqWbYl1XpDBQf7LQ=
+        id S1751091AbeCZAi1 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 20:38:27 -0400
+Received: from mga06.intel.com ([134.134.136.31]:6982 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750832AbeCZAi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 20:38:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,362,1517904000";
+   d="scan'208";a="40544373"
+Subject: Re: [PATCH 0/3] iommu/vt-d: Global PASID name space
+To: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>
+References: <1521081501-30119-1-git-send-email-baolu.lu@linux.intel.com>
+Cc: ashok.raj@intel.com, sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
+        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+From: Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <5AB840FD.8020600@linux.intel.com>
+Date: Mon, 26 Mar 2018 08:38:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <20180325182803.30036-3-avarab@gmail.com>
-References: <20180325182803.30036-1-avarab@gmail.com> <20180325182803.30036-3-avarab@gmail.com>
-From: Eric Sunshine <sunshine@sunshineco.us>
-Date: Sun, 25 Mar 2018 20:11:24 -0400
-X-Google-Sender-Auth: l9iQk9vDwO21Uy8Os4ZJ6lUjogQ
-Message-ID: <CAPig+cQ6EK=Q00panZECVvWt3pJyS9acC1n4mgogMmk5J4hO8g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] send-email: supply a --send-delay=1 by default
-To: =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>
-Cc: Git List <git@vger.kernel.org>, Junio C Hamano <gitster@pobox.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1521081501-30119-1-git-send-email-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2Q0BqcM030082
 
-On Sun, Mar 25, 2018 at 2:28 PM, Ævar Arnfjörð Bjarmason
-<avarab@gmail.com> wrote:
-> The earlier change to add this option described the problem this
-> option is trying to solve.
+Hi Joerg,
+
+A gentle ping. :-)
+
+Any comments on this patch set?
+
+Best regards,
+Lu Baolu
+
+On 03/15/2018 10:38 AM, Lu Baolu wrote:
+> Hi,
 >
-> This turns it on by default with a value of 1 second, which'll
-> hopefully solve it, and if not user reports as well as the
-> X-Mailer-Send-Delay header should help debug it.
-> [...]
-> Signed-off-by: Ævar Arnfjörð Bjarmason <avarab@gmail.com>
-> ---
-> diff --git a/Documentation/config.txt b/Documentation/config.txt
-> @@ -3070,7 +3070,18 @@ sendemail.smtpReloginDelay::
->  sendemail.smtpSendDelay::
->         Seconds wait in between message sending before sending another
-> -       message. Set it to 0 to impose no extra delay, defaults to 0.
-> +       message. Set it to 0 to impose no extra delay, defaults to 1
-> +       to wait 1 second.
-> ++
-> +The reason for imposing a default delay is because certain popular
-> +E-Mail clients such as Google's GMail completely ignore the "Date"
-> +header, which format-patch is careful to set such that the patches
-> +will be displayed in order, and instead sort by the time the E-mail
-> +was received.
-
-A minor point: Are you sure that it's git-format-patch that's being
-careful about arranging Date: to display in the desired order, and not
-git-send-email? Looking at old patches I still have hanging around
-which were created with git-format-patch, I see the Date: headers are
-wildly out of order, presumably because the date is taken from
-Author-Date: and the patches were heavily rebased.
+> This patch series is trying to change the scope of PASID management
+> used in Intel IOMMU driver from per IOMMU to driver global. This is
+> required for some cases where current per-IOMMU PASID name space
+> doesn't work. For an example, one application (associated with one
+> PASID) might talk to two physical devices simultaneously where two
+> devices could reside behind two different IOMMU units.
+>
+> Best regards,
+> Lu Baolu
+>
+> Lu Baolu (3):
+>   iommu/vt-d: Global PASID name space
+>   iommu/vt-d: Decouple idr bond pointer from svm
+>   iommu/vt-d: Use global PASID for SVM usage
+>
+>  drivers/iommu/intel-iommu.c | 64 +++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/iommu/intel-svm.c   | 34 +++++++++++++-----------
+>  include/linux/intel-iommu.h |  7 ++++-
+>  3 files changed, 89 insertions(+), 16 deletions(-)
+>
