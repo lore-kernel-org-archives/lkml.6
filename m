@@ -1,434 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeCZKNR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 06:13:17 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:59074 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751024AbeCZKMr (ORCPT
+        id S1751714AbeCZKSt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 06:18:49 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:38830 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751010AbeCZKSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 06:12:47 -0400
-From: Tomer Maimon <tmaimon77@gmail.com>
-To: arnd@arndb.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, avifishman70@gmail.com,
-        brendanhiggins@google.com, venture@google.com, joel@jms.id.au
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v1 1/1] arm: dts: modify Nuvoton NPCM750 device tree
-Date: Mon, 26 Mar 2018 13:11:53 +0300
-Message-Id: <1522059113-20418-2-git-send-email-tmaimon77@gmail.com>
-X-Mailer: git-send-email 1.8.3.4
-In-Reply-To: <1522059113-20418-1-git-send-email-tmaimon77@gmail.com>
-References: <1522059113-20418-1-git-send-email-tmaimon77@gmail.com>
+        Mon, 26 Mar 2018 06:18:48 -0400
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: peterz@infradead.org, mingo@redhat.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Borislav Petkov <bp@suse.de>, David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@suse.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] lockdep: Show address of "struct lockdep_map" at print_lock().
+Date: Mon, 26 Mar 2018 19:18:33 +0900
+Message-Id: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a common device tree for all Nuvoton NPCM7xx BMCs and
-include it in NPCM750 (Poleg) device tree.
+Currently, print_lock() is printing hlock->acquire_ip field in both
+"[<%px>]" and "%pS" format. But "[<%px>]" is little useful nowadays, for
+we use scripts/faddr2line which receives "%pS" for finding the location
+in the source code.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Since "struct lockdep_map" is embedded into lock objects, we can know
+which instance of a lock object is acquired using hlock->instance field.
+This will help finding which threads are causing a lock contention when
+e.g. the OOM reaper failed to acquire an OOM victim's mmap_sem for read.
+
+Thus, this patch replaces "[<%px>]" for printing hlock->acquire_ip field
+with "[%px]" for printing hlock->instance field.
+
+----------------------------------------
+[  561.490202] Out of memory: Kill process 58945 (anacron) score 0 or sacrifice child
+[  561.494119] Killed process 58945 (anacron) total-vm:123220kB, anon-rss:232kB, file-rss:4kB, shmem-rss:0kB
+(...snipped...)
+[  562.208348] Out of memory: Kill process 636 (atd) score 0 or sacrifice child
+[  562.212077] Killed process 636 (atd) total-vm:25868kB, anon-rss:204kB, file-rss:0kB, shmem-rss:0kB
+(...snipped...)
+[  562.944890] Out of memory: Kill process 971 (agetty) score 0 or sacrifice child
+[  562.948586] Killed process 971 (agetty) total-vm:110056kB, anon-rss:124kB, file-rss:4kB, shmem-rss:0kB
+(...snipped...)
+[  563.599714] Out of memory: Kill process 116521 (a.out) score 0 or sacrifice child
+[  563.603599] Killed process 118444 (a.out) total-vm:4176kB, anon-rss:88kB, file-rss:0kB, shmem-rss:0kB
+[  564.664223] oom_reaper: unable to reap pid:118444 (a.out)
+[  564.667311]
+[  564.667311] Showing all locks held in the system:
+(...snipped...)
+[  564.731611] 1 lock held by kswapd0/76:
+[  564.734415]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
+(...snipped...)
+[  564.864860] 1 lock held by atd/636:
+[  564.868524]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: unlink_file_vma+0x28/0x50
+[  564.874354] 1 lock held by agetty/971:
+[  564.878085]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: unlink_file_vma+0x28/0x50
+(...snipped...)
+[  564.977497] 1 lock held by anacron/58945:
+[  564.981365]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: unlink_file_vma+0x28/0x50
+(...snipped...)
+[  569.866283] 3 locks held by a.out/118444:
+[  569.869992]  #0: [ffffa3b4df1c0c88] (&mm->mmap_sem){++++}, at: copy_process.part.40+0x1090/0x1fa0
+[  569.876392]  #1: [ffffa3b4dfeaae48] (&mm->mmap_sem/1){+.+.}, at: copy_process.part.40+0x10b9/0x1fa0
+[  569.882393]  #2: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: copy_process.part.40+0x12ad/0x1fa0
+(...snipped...)
+[  581.237572] 3 locks held by a.out/121276:
+[  581.241318]  #0: [ffffa3b40cd071c8] (&mm->mmap_sem){++++}, at: copy_process.part.40+0x1090/0x1fa0
+[  581.247326]  #1: [ffffa3b465bb44c8] (&mm->mmap_sem/1){+.+.}, at: copy_process.part.40+0x10b9/0x1fa0
+[  581.253370]  #2: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
+(...snipped...)
+[  589.357139] 1 lock held by a.out/122960:
+[  589.363224]  #0: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
+(...snipped...)
+[  594.255168] 3 locks held by a.out/124002:
+[  594.258956]  #0: [ffffa3b42fead008] (&mm->mmap_sem){++++}, at: copy_process.part.40+0x1090/0x1fa0
+[  594.265047]  #1: [ffffa3b4e7b52308] (&mm->mmap_sem/1){+.+.}, at: copy_process.part.40+0x10b9/0x1fa0
+[  594.271051]  #2: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: copy_process.part.40+0x12ad/0x1fa0
+(...snipped...)
+[  594.286952] 3 locks held by a.out/124004:
+[  594.290884]  #0: [ffffa3b42feac4c8] (&mm->mmap_sem){++++}, at: copy_process.part.40+0x1090/0x1fa0
+[  594.296956]  #1: [ffffa3b3db86db48] (&mm->mmap_sem/1){+.+.}, at: copy_process.part.40+0x10b9/0x1fa0
+[  594.303139]  #2: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
+(...snipped...)
+[  604.765878] 2 locks held by a.out/126388:
+[  604.769899]  #0: [ffffa3b3c70cb988] (&mm->mmap_sem){++++}, at: __do_page_fault+0x16f/0x4d0
+[  604.775890]  #1: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
+(...snipped...)
+[  614.240787] 2 locks held by a.out/128585:
+[  614.244655]  #0: [ffffa3b461e1a308] (&mm->mmap_sem){++++}, at: __do_page_fault+0x16f/0x4d0
+[  614.250489]  #1: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
+(...snipped...)
+[  628.863629] 2 locks held by a.out/1165:
+[  628.867533]  #0: [ffffa3b438472e48] (&mm->mmap_sem){++++}, at: __do_page_fault+0x16f/0x4d0
+[  628.873570]  #1: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
+----------------------------------------
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
 ---
- arch/arm/boot/dts/Makefile                    |   2 +-
- arch/arm/boot/dts/nuvoton-common-npcm7xx.dtsi | 187 ++++++++++++++++++++++++++
- arch/arm/boot/dts/nuvoton-npcm750-evb.dts     |   6 +-
- arch/arm/boot/dts/nuvoton-npcm750.dtsi        | 131 +-----------------
- 4 files changed, 198 insertions(+), 128 deletions(-)
- create mode 100644 arch/arm/boot/dts/nuvoton-common-npcm7xx.dtsi
+ kernel/locking/lockdep.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index c945d4670ea3..aaf9e30bce78 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -307,7 +307,7 @@ dtb-$(CONFIG_ARCH_LPC18XX) += \
- dtb-$(CONFIG_ARCH_LPC32XX) += \
- 	lpc3250-ea3250.dtb \
- 	lpc3250-phy3250.dtb
--dtb-$(CONFIG_ARCH_NPCM750) += \
-+dtb-$(CONFIG_ARCH_NPCM7XX) += \
- 	nuvoton-npcm750-evb.dtb
- dtb-$(CONFIG_MACH_MESON6) += \
- 	meson6-atv1200.dtb
-diff --git a/arch/arm/boot/dts/nuvoton-common-npcm7xx.dtsi b/arch/arm/boot/dts/nuvoton-common-npcm7xx.dtsi
-new file mode 100644
-index 000000000000..d2d0761295a4
---- /dev/null
-+++ b/arch/arm/boot/dts/nuvoton-common-npcm7xx.dtsi
-@@ -0,0 +1,187 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018 Nuvoton Technology tomer.maimon@nuvoton.com
-+// Copyright 2018 Google, Inc.
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&gic>;
-+
-+	/* external reference clock */
-+	clk_refclk: clk_refclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <25000000>;
-+		clock-output-names = "refclk";
-+	};
-+
-+	/* external reference clock for cpu. float in normal operation */
-+	clk_sysbypck: clk_sysbypck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <800000000>;
-+		clock-output-names = "sysbypck";
-+	};
-+
-+	/* external reference clock for MC. float in normal operation */
-+	clk_mcbypck: clk_mcbypck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <800000000>;
-+		clock-output-names = "mcbypck";
-+	};
-+
-+	 /* external clock signal rg1refck, supplied by the phy */
-+	clk_rg1refck: clk_rg1refck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <125000000>;
-+		clock-output-names = "clk_rg1refck";
-+	};
-+
-+	 /* external clock signal rg2refck, supplied by the phy */
-+	clk_rg2refck: clk_rg2refck {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <125000000>;
-+		clock-output-names = "clk_rg2refck";
-+	};
-+
-+	clk_xin: clk_xin {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <50000000>;
-+		clock-output-names = "clk_xin";
-+	};
-+
-+	soc {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		ranges = <0x0 0xf0000000 0x00900000>;
-+
-+		gcr: gcr@800000 {
-+			compatible = "nuvoton,npcm750-gcr", "syscon",
-+				"simple-mfd";
-+			reg = <0x800000 0x1000>;
-+		};
-+
-+		scu: scu@3fe000 {
-+			compatible = "arm,cortex-a9-scu";
-+			reg = <0x3fe000 0x1000>;
-+		};
-+
-+		l2: cache-controller@3fc000 {
-+			compatible = "arm,pl310-cache";
-+			reg = <0x3fc000 0x1000>;
-+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			cache-unified;
-+			cache-level = <2>;
-+			clocks = <&clk 10>;
-+			arm,shared-override;
-+		};
-+
-+		gic: interrupt-controller@3ff000 {
-+			compatible = "arm,cortex-a9-gic";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			reg = <0x3ff000 0x1000>,
-+				<0x3fe100 0x100>;
-+		};
-+	};
-+
-+	ahb {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		clk: clock-controller@f0801000 {
-+			compatible = "nuvoton,npcm750-clk", "syscon";
-+			#clock-cells = <1>;
-+			clock-controller;
-+			reg = <0xf0801000 0x1000>;
-+			clock-names = "refclk", "sysbypck", "mcbypck";
-+			clocks = <&clk_refclk>, <&clk_sysbypck>, <&clk_mcbypck>;
-+		};
-+
-+		apb {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			compatible = "simple-bus";
-+			interrupt-parent = <&gic>;
-+			ranges = <0x0 0xf0000000 0x00300000>;
-+
-+			timer0: timer@8000 {
-+				compatible = "nuvoton,npcm750-timer";
-+				interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x8000 0x50>;
-+				clocks = <&clk 5>;
-+			};
-+
-+			watchdog0: watchdog@801C {
-+				compatible = "nuvoton,npcm750-wdt";
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x801C 0x4>;
-+				status = "disabled";
-+				clocks = <&clk 5>;
-+			};
-+
-+			watchdog1: watchdog@901C {
-+				compatible = "nuvoton,npcm750-wdt";
-+				interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0x901C 0x4>;
-+				status = "disabled";
-+				clocks = <&clk 5>;
-+			};
-+
-+			watchdog2: watchdog@a01C {
-+				compatible = "nuvoton,npcm750-wdt";
-+				interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+				reg = <0xa01C 0x4>;
-+				status = "disabled";
-+				clocks = <&clk 5>;
-+			};
-+
-+			serial0: serial@1000 {
-+				compatible = "nuvoton,npcm750-uart";
-+				reg = <0x1000 0x1000>;
-+				clocks = <&clk 6>;
-+				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			serial1: serial@2000 {
-+				compatible = "nuvoton,npcm750-uart";
-+				reg = <0x2000 0x1000>;
-+				clocks = <&clk 6>;
-+				interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			serial2: serial@3000 {
-+				compatible = "nuvoton,npcm750-uart";
-+				reg = <0x3000 0x1000>;
-+				clocks = <&clk 6>;
-+				interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+
-+			serial3: serial@4000 {
-+				compatible = "nuvoton,npcm750-uart";
-+				reg = <0x4000 0x1000>;
-+				clocks = <&clk 6>;
-+				interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				status = "disabled";
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm/boot/dts/nuvoton-npcm750-evb.dts b/arch/arm/boot/dts/nuvoton-npcm750-evb.dts
-index cabde3d5be8a..15f744f1beea 100644
---- a/arch/arm/boot/dts/nuvoton-npcm750-evb.dts
-+++ b/arch/arm/boot/dts/nuvoton-npcm750-evb.dts
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--// Copyright (c) 2018 Nuvoton Technology corporation.
-+// Copyright (c) 2018 Nuvoton Technology tomer.maimon@nuvoton.com
- // Copyright 2018 Google, Inc.
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 12a2805..7835233 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -556,9 +556,9 @@ static void print_lock(struct held_lock *hlock)
+ 		return;
+ 	}
  
- /dts-v1/;
-@@ -18,6 +18,10 @@
- 	};
- };
++	printk(KERN_CONT "[%px]", hlock->instance);
+ 	print_lock_name(lock_classes + class_idx - 1);
+-	printk(KERN_CONT ", at: [<%px>] %pS\n",
+-		(void *)hlock->acquire_ip, (void *)hlock->acquire_ip);
++	printk(KERN_CONT ", at: %pS\n", (void *)hlock->acquire_ip);
+ }
  
-+&watchdog1 {
-+	status = "okay";
-+};
-+
- &serial0 {
- 	status = "okay";
- };
-diff --git a/arch/arm/boot/dts/nuvoton-npcm750.dtsi b/arch/arm/boot/dts/nuvoton-npcm750.dtsi
-index 839e45cfd695..6ac340533587 100644
---- a/arch/arm/boot/dts/nuvoton-npcm750.dtsi
-+++ b/arch/arm/boot/dts/nuvoton-npcm750.dtsi
-@@ -1,8 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
--// Copyright (c) 2018 Nuvoton Technology corporation.
-+// Copyright (c) 2018 Nuvoton Technology tomer.maimon@nuvoton.com
- // Copyright 2018 Google, Inc.
- 
--#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include "nuvoton-common-npcm7xx.dtsi"
- 
- / {
- 	#address-cells = <1>;
-@@ -17,7 +17,7 @@
- 		cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
--			clocks = <&clk 10>;
-+			clocks = <&clk 0>;
- 			clock-names = "clk_cpu";
- 			reg = <0>;
- 			next-level-cache = <&l2>;
-@@ -26,140 +26,19 @@
- 		cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
--			clocks = <&clk 10>;
-+			clocks = <&clk 0>;
- 			clock-names = "clk_cpu";
- 			reg = <1>;
- 			next-level-cache = <&l2>;
- 		};
- 	};
--
--	/* external clock signal rg1refck, supplied by the phy */
--	clk-rg1refck {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <125000000>;
--	};
--
--	/* external clock signal rg2refck, supplied by the phy */
--	clk-rg2refck {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <125000000>;
--	};
--
--	clk-xin {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <50000000>;
--	};
--
- 	soc {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		compatible = "simple-bus";
--		interrupt-parent = <&gic>;
--		ranges = <0x0 0xf0000000 0x00900000>;
--
--		gcr: gcr@800000 {
--			compatible = "nuvoton,npcm750-gcr", "syscon",
--				"simple-mfd";
--			reg = <0x800000 0x1000>;
--		};
--
--		scu: scu@3fe000 {
--			compatible = "arm,cortex-a9-scu";
--			reg = <0x3fe000 0x1000>;
--		};
--
--		l2: cache-controller@3fc000 {
--			compatible = "arm,pl310-cache";
--			reg = <0x3fc000 0x1000>;
--			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
--			cache-unified;
--			cache-level = <2>;
--			clocks = <&clk 22>;
--			arm,shared-override;
--		};
--
--		gic: interrupt-controller@3ff000 {
--			compatible = "arm,cortex-a9-gic";
--			interrupt-controller;
--			#interrupt-cells = <3>;
--			reg = <0x3ff000 0x1000>,
--			    <0x3fe100 0x100>;
--		};
--
- 		timer@3fe600 {
- 			compatible = "arm,cortex-a9-twd-timer";
- 			reg = <0x3fe600 0x20>;
- 			interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
- 						  IRQ_TYPE_LEVEL_HIGH)>;
--			clocks = <&clk 15>;
--		};
--	};
--
--	ahb {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		compatible = "simple-bus";
--		interrupt-parent = <&gic>;
--		ranges;
--
--		clk: clock-controller@f0801000 {
--			compatible = "nuvoton,npcm750-clk";
--			#clock-cells = <1>;
--			reg = <0xf0801000 0x1000>;
--		};
--
--		apb {
--			#address-cells = <1>;
--			#size-cells = <1>;
--			compatible = "simple-bus";
--			interrupt-parent = <&gic>;
--			ranges = <0x0 0xf0000000 0x00300000>;
--
--			timer0: timer@8000 {
--				compatible = "nuvoton,npcm750-timer";
--				interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
--				reg = <0x8000 0x1000>;
--				clocks = <&clk 15>;
--			};
--
--			serial0: serial@1000 {
--				compatible = "ns16550a";
--				reg = <0x1000 0x1000>;
--				clocks = <&clk 14>;
--				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
--				reg-shift = <2>;
--				status = "disabled";
--			};
--
--			serial1: serial@2000 {
--				compatible = "ns16550a";
--				reg = <0x2000 0x1000>;
--				clocks = <&clk 14>;
--				interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
--				reg-shift = <2>;
--				status = "disabled";
--			};
--
--			serial2: serial@3000 {
--				compatible = "ns16550a";
--				reg = <0x3000 0x1000>;
--				clocks = <&clk 14>;
--				interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
--				reg-shift = <2>;
--				status = "disabled";
--			};
--
--			serial3: serial@4000 {
--				compatible = "ns16550a";
--				reg = <0x4000 0x1000>;
--				clocks = <&clk 14>;
--				interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
--				reg-shift = <2>;
--				status = "disabled";
--			};
-+			clocks = <&clk 5>;
- 		};
- 	};
- };
+ static void lockdep_print_held_locks(struct task_struct *curr)
 -- 
-2.14.1
+1.8.3.1
