@@ -1,75 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752190AbeCZTVg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 15:21:36 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34265 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbeCZTVf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 15:21:35 -0400
-X-Google-Smtp-Source: AG47ELsEUkGL1EvZprD59NIuTYK5IPLEKJZLFZyHUYvulaXVBsdeXTfd00K84nAf8HDHfgZB0sfy8g==
-Date: Mon, 26 Mar 2018 22:21:32 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>, adobriyan@gmail.com,
-        mhocko@kernel.org, mguzik@redhat.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-Message-ID: <20180326192132.GE2236@uranus>
-References: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180326183725.GB27373@bombadil.infradead.org>
+        id S1751776AbeCZTgS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 15:36:18 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:36996 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751124AbeCZTgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 15:36:17 -0400
+Date: Mon, 26 Mar 2018 21:35:26 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tony.luck@intel.com, x86@kernel.org
+Subject: Re: [PATCH 2/2] x86/MCE: Always save MCA_{ADDR,MISC,SYND} register
+ contents
+Message-ID: <20180326193526.GK25548@pd.tnic>
+References: <20180326191526.64314-1-Yazen.Ghannam@amd.com>
+ <20180326191526.64314-2-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180326183725.GB27373@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180326191526.64314-2-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 11:37:25AM -0700, Matthew Wilcox wrote:
-> On Tue, Mar 27, 2018 at 02:20:39AM +0800, Yang Shi wrote:
-> > +++ b/kernel/sys.c
-> > @@ -1959,7 +1959,7 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
-> >  			return error;
-> >  	}
-> >  
-> > -	down_write(&mm->mmap_sem);
-> > +	down_read(&mm->mmap_sem);
-> >  
-> >  	/*
-> >  	 * We don't validate if these members are pointing to
-> > @@ -1980,10 +1980,13 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
-> >  	mm->start_brk	= prctl_map.start_brk;
-> >  	mm->brk		= prctl_map.brk;
-> >  	mm->start_stack	= prctl_map.start_stack;
-> > +
-> > +	spin_lock(&mm->arg_lock);
-> >  	mm->arg_start	= prctl_map.arg_start;
-> >  	mm->arg_end	= prctl_map.arg_end;
-> >  	mm->env_start	= prctl_map.env_start;
-> >  	mm->env_end	= prctl_map.env_end;
-> > +	spin_unlock(&mm->arg_lock);
-> >  
-> >  	/*
-> >  	 * Note this update of @saved_auxv is lockless thus
+On Mon, Mar 26, 2018 at 02:15:26PM -0500, Yazen Ghannam wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
 > 
-> I see the argument for the change to a write lock was because of a BUG
-> validating arg_start and arg_end, but more generally, we are updating these
-> values, so a write-lock is probably a good idea, and this is a very rare
-> operation to do, so we don't care about making this more parallel.  I would
-> not make this change (but if other more knowledgable people in this area
-> disagree with me, I will withdraw my objection to this part).
+> The Intel SDM and AMD APM both state that the contents of the MCA_ADDR
+> register should be saved if MCA_STATUS[ADDRV] is set. The same applies
+> to MCA_MISC and MCA_SYND (on SMCA systems) and their respective valid
+> bits.
+> 
+> However, the Fam17h Processor Programming Reference states
+> "Error handlers should save the values in MCA_ADDR, MCA_MISC0, and
+> MCA_SYND even if MCA_STATUS[AddrV], MCA_STATUS[MiscV], and
+> MCA_STATUS[SyndV] are zero."
 
-Say we've two syscalls running prctl_set_mm_map in parallel, and imagine
-one have @start_brk = 20 @brk = 10 and second caller has @start_brk = 30
-and @brk = 20. Since now the call is guarded by _read_ the both calls
-unlocked and due to OO engine it may happen then when both finish
-we have @start_brk = 30 and @brk = 10. In turn "write" semaphore
-has been take to have consistent data on exit, either you have [20;10]
-or [30;20] assigned not something mixed.
+Well, then you can't remove valid bit checks for older families. This
+sounds like F17h only.
 
-That said I think using read-lock here would be a bug.
+If so, it better be abstracted away cleanly and not changing the generic
+code.
 
-	Cyrill
+> 
+> This is to ensure that all MCA state information is collected even if
+> software cannot act upon it (because the valid bits are cleared).
+> 
+> So always save the auxiliary MCA register contents even if the valid
+> bits are cleared. This should not affect error processing because
+> software should still check the valid bits before using the register
+> contents for error processing.
+> 
+> Also, print MCA_{ADDR,MISC,SYND} even if their valid bits are not set.
+> Printing from EDAC/mce_amd is included here since we want to do this on
+> AMD systems.
+> 
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+>  arch/x86/kernel/cpu/mcheck/mce.c     | 23 +++++++----------------
+>  arch/x86/kernel/cpu/mcheck/mce_amd.c | 10 +++-------
+>  drivers/edac/mce_amd.c               | 10 +++-------
+>  3 files changed, 13 insertions(+), 30 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+> index 42cf2880d0ed..a556e1cadfbc 100644
+> --- a/arch/x86/kernel/cpu/mcheck/mce.c
+> +++ b/arch/x86/kernel/cpu/mcheck/mce.c
+> @@ -248,19 +248,14 @@ static void __print_mce(struct mce *m)
+>  	}
+>  
+>  	pr_emerg(HW_ERR "TSC %llx ", m->tsc);
+> -	if (m->addr)
+> -		pr_cont("ADDR %llx ", m->addr);
+> -	if (m->misc)
+> -		pr_cont("MISC %llx ", m->misc);
+> +	pr_cont("ADDR %016llx ", m->addr);
+> +	pr_cont("MISC %016llx\n", m->misc);
+
+You simply can't do this - this is generic code, not AMD only.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
