@@ -1,53 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeCZPKZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 11:10:25 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54312 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751171AbeCZPKX (ORCPT
+        id S1752173AbeCZPLs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 11:11:48 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36298 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751868AbeCZPLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 11:10:23 -0400
-From: Colin King <colin.king@canonical.com>
-To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/hns: ensure for-loop actually iterates and free's buffers
-Date: Mon, 26 Mar 2018 16:10:18 +0100
-Message-Id: <20180326151018.21066-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Mon, 26 Mar 2018 11:11:47 -0400
+X-Google-Smtp-Source: AG47ELunVUdx7n7ymzURqwDUMmpJtu2TByT22PCAUaxKf6IlqDBjZA5c21kYsOkhXy6hDjX1miEmdH8Z8PnC+iaPBzw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <8f76538a-27a4-745e-3d28-db3be06e9715@codesourcery.com>
+References: <cover.1521399976.git.ren_guo@c-sky.com> <CAK8P3a3KwvNpYUXG-CqfF7V0GQ3sv_CoPmajq_+06aqkLiUFXw@mail.gmail.com>
+ <8f76538a-27a4-745e-3d28-db3be06e9715@codesourcery.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 26 Mar 2018 17:11:45 +0200
+X-Google-Sender-Auth: 4XwHrGUfmPyOZMjpY7rXlPbZ6rY
+Message-ID: <CAK8P3a23ZXCUyWab8VtfB=Cctw=6WwOyNv0ASQXtGPapL43T8w@mail.gmail.com>
+Subject: Re: [gnu-csky] [PATCH 00/19] C-SKY(csky) Linux Kernel Port
+To: Sandra Loosemore <sandra@codesourcery.com>
+Cc: Guo Ren <ren_guo@c-sky.com>, linux-arch <linux-arch@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        c-sky_gcc_upstream@c-sky.com, wbx@uclibc-ng.org,
+        thomas.petazzoni@bootlin.com, gnu-csky@mentor.com,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Mar 26, 2018 at 5:06 PM, Sandra Loosemore
+<sandra@codesourcery.com> wrote:
+> On 03/26/2018 07:30 AM, Arnd Bergmann wrote:
+>>
+>>
+>> Another interesting question is the status of your toolchain support. I
+>> see your
+>> github account contains binutils and gcc repositories, but they are not
+>> upstream
+>> yet. Are you working on getting those included in the respective upstream
+>> projects already?
+>
+>
+> We at Mentor Graphics are working on preparing the abiv2 binutils and gcc
+> support for upstream submission.  The existing gcc back end for abiv1 is
+> actually completely separate from the abiv2 back end and probably eventually
+> needs to be merged with it, but first things first.
 
-The current for-loop zeros variable i and only loops once, hence
-not all the buffers are free'd.  Fix this by setting i correctly.
+Ok, very good. Being able to build abiv2 is probably sufficient for testing
+the kernel in a meaningful way, and if you are working on getting that
+upstream, I trust that it will happen quick enough. I can always provide
+toolchain binaries on kernel.org based a prerelease version like I did
+for openrisc, which makes it accessible to other kernel developers doing
+cross-arch changes.
 
-Detected by CoverityScan, CID#1463415 ("Operands don't affect result")
-
-Fixes: a5073d6054f7 ("RDMA/hns: Add eq support of hip08")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 684c2d1a0ed0..8b84ab7800d8 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -4391,7 +4391,7 @@ static int hns_roce_mhop_alloc_eq(struct hns_roce_dev *hr_dev,
- 	eq->l0_dma = 0;
- 
- 	if (mhop_num == 1)
--		for (i -= i; i >= 0; i--)
-+		for (i -= 1; i >= 0; i--)
- 			dma_free_coherent(dev, buf_chk_sz, eq->buf[i],
- 					  eq->buf_dma[i]);
- 	else if (mhop_num == 2) {
--- 
-2.15.1
+      Arnd
