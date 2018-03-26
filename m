@@ -1,94 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752165AbeCZOgd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:36:33 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36927 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbeCZOgb (ORCPT
+        id S1752186AbeCZOhe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:37:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51048 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751677AbeCZOhc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:36:31 -0400
-Message-ID: <1522074988.1196.1.camel@pengutronix.de>
-Subject: Re: [RFC] Per file OOM badness
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Michal Hocko <mhocko@kernel.org>,
-        Michel =?ISO-8859-1?Q?D=E4nzer?= <michel@daenzer.net>
-Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        Christian.Koenig@amd.com, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org, Roman Gushchin <guro@fb.com>
-Date: Mon, 26 Mar 2018 16:36:28 +0200
-In-Reply-To: <20180130102855.GY21609@dhcp22.suse.cz>
-References: <20180118170006.GG6584@dhcp22.suse.cz>
-         <20180123152659.GA21817@castle.DHCP.thefacebook.com>
-         <20180123153631.GR1526@dhcp22.suse.cz>
-         <ccac4870-ced3-f169-17df-2ab5da468bf0@daenzer.net>
-         <20180124092847.GI1526@dhcp22.suse.cz>
-         <583f328e-ff46-c6a4-8548-064259995766@daenzer.net>
-         <20180124110141.GA28465@dhcp22.suse.cz>
-         <36b49523-792d-45f9-8617-32b6d9d77418@daenzer.net>
-         <20180124115059.GC28465@dhcp22.suse.cz>
-         <60e18da8-4d6e-dec9-7aef-ff003605d513@daenzer.net>
-         <20180130102855.GY21609@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 26 Mar 2018 10:37:32 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 26 Mar 2018 22:37:31 +0800
+From: yuankuiz@codeaurora.org
+To: Tejun Heo <tj@kernel.org>
+Cc: cgroups@vger.kernel.org, lizefan@huawei.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, pkondeti@codeaurora.org,
+        cgroups-owner@vger.kernel.org
+Subject: Re: [PATCH]cgroup: __cpuset_node_allowed return bool
+In-Reply-To: <20180326142527.GJ2149215@devbig577.frc2.facebook.com>
+References: <d2f9fe6096235032f445ab88e562560f@codeaurora.org>
+ <0fee75e4a1b12f5fca30e04306a95788@codeaurora.org>
+ <20180326141212.GI2149215@devbig577.frc2.facebook.com>
+ <3540bc7869927f54c409b697c743938a@codeaurora.org>
+ <20180326142527.GJ2149215@devbig577.frc2.facebook.com>
+Message-ID: <ea271bc26e293c232c6ea7772607c7fc@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Hi Tejun,
 
-Am Dienstag, den 30.01.2018, 11:28 +0100 schrieb Michal Hocko:
-> On Tue 30-01-18 10:29:10, Michel Dänzer wrote:
-> > On 2018-01-24 12:50 PM, Michal Hocko wrote:
-> > > On Wed 24-01-18 12:23:10, Michel Dänzer wrote:
-> > > > On 2018-01-24 12:01 PM, Michal Hocko wrote:
-> > > > > On Wed 24-01-18 11:27:15, Michel Dänzer wrote:
-> > > 
-> > > [...]
-> > > > > > 2. If the OOM killer kills a process which is sharing BOs
-> > > > > > with another
-> > > > > > process, this should result in the other process dropping
-> > > > > > its references
-> > > > > > to the BOs as well, at which point the memory is released.
-> > > > > 
-> > > > > OK. How exactly are those BOs mapped to the userspace?
-> > > > 
-> > > > I'm not sure what you're asking. Userspace mostly uses a GEM
-> > > > handle to
-> > > > refer to a BO. There can also be userspace CPU mappings of the
-> > > > BO's
-> > > > memory, but userspace doesn't need CPU mappings for all BOs and
-> > > > only
-> > > > creates them as needed.
-> > > 
-> > > OK, I guess you have to bear with me some more. This whole stack
-> > > is a
-> > > complete uknonwn. I am mostly after finding a boundary where you
-> > > can
-> > > charge the allocated memory to the process so that the oom killer
-> > > can
-> > > consider it. Is there anything like that? Except for the proposed
-> > > file
-> > > handle hack?
-> > 
-> > How about the other way around: what APIs can we use to charge /
-> > "uncharge" memory to a process? If we have those, we can experiment
-> > with
-> > different places to call them.
+     inline.
+
+On 2018-03-26 10:25 PM, Tejun Heo wrote:
+> On Mon, Mar 26, 2018 at 10:20:43PM +0800, yuankuiz@codeaurora.org 
+> wrote:
+>>  1) return int type variable in bool function:
+>>  bool enabled()
+>>  {
+>>  	int ret = 1;
+>>  	return ret;
+>>  }
+> ...
+>>  2)
+>>  bool enabled()
+>>  {
+>>  	bool ret = 1;
+>>  	return ret;
+>>  }
+> ...
+>>  so the #1) style function can generate significant instructions
+>> than the #2).
 > 
-> add_mm_counter() and I would add a new counter e.g. MM_KERNEL_PAGES.
+> That is a problem for the compiler, not the code.
+> 
+>>  While, this is happened only when "-On" is not used with *-gcc
+>> together. Though, it is oftern there, it is best to provide this
+>> with decoupling of which option is used for optimization.
+> 
+> We don't want to dictate minute coding styles to avoid things which
+> are trivially optimized by compilers.
+[ZJ] Optimized by compiler is observed only. Such as it is not so big 
+difference in x86-arch.
 
-So is anyone still working on this? This is hurting us bad enough that
-I don't want to keep this topic rotting for another year.
-
-If no one is currently working on this I would volunteer to give the
-simple "just account private, non-shared buffers in process RSS" a
-spin.
-
-Regards,
-Lucas
+> 
+> Thanks.
