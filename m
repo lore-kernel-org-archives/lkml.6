@@ -1,200 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751380AbeCZNQg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:16:36 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39796 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750955AbeCZNQd (ORCPT
+        id S1751752AbeCZNTN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 09:19:13 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36040 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751132AbeCZNTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:16:33 -0400
-X-Google-Smtp-Source: AG47ELvuhVQTw4P2/GgFSSl3bxoD51aKF8y3AH946gxbM96zrdEA32ddlhC5wm7KcADXEg6y/rN53glVYrFLGiUu4vs=
+        Mon, 26 Mar 2018 09:19:11 -0400
+X-Google-Smtp-Source: AIpwx494k0INDSJl5ajNHinGrQ4y/GHvMidypFtn37wa2NDKYWOWvRmGY67gbhdO5FZsfNZUDctSUA==
+Date: Mon, 26 Mar 2018 14:19:07 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Aniruddha Banerjee <aniruddhab@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>, Vipin Kumar <vipink@nvidia.com>
+Subject: Re: [RFC PATCH] irqchip: arm-gic: take gic_lock when updating irq
+ type
+Message-ID: <20180326131907.3m3sfwxvyzuli2ps@holly.lan>
+References: <c20f41d47ed9444b9050bc1f609d4bbe@bgmail101.nvidia.com>
+ <77ac9d88-e99e-c507-66b2-cc14f06ce192@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <8a9c9b588cdfdf8b25ca9d449bf5c862d329c1d8.1521399976.git.ren_guo@c-sky.com>
-References: <cover.1521399976.git.ren_guo@c-sky.com> <8a9c9b588cdfdf8b25ca9d449bf5c862d329c1d8.1521399976.git.ren_guo@c-sky.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 26 Mar 2018 15:16:31 +0200
-X-Google-Sender-Auth: W5HQGYOEZV62gd587MHNpaQKiD0
-Message-ID: <CAK8P3a3L-zO3K5qcmBPChhSqh+E6WtNRFV1cJRbksGZ74uaEAQ@mail.gmail.com>
-Subject: Re: [PATCH 17/19] csky: defconfig
-To: Guo Ren <ren_guo@c-sky.com>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77ac9d88-e99e-c507-66b2-cc14f06ce192@arm.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 18, 2018 at 8:51 PM, Guo Ren <ren_guo@c-sky.com> wrote:
-> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-> ---
->  arch/csky/configs/gx66xx_defconfig     | 549 +++++++++++++++++++++++++++++++++
->  arch/csky/configs/qemu_ck807_defconfig | 541 ++++++++++++++++++++++++++++++++
->  2 files changed, 1090 insertions(+)
->  create mode 100644 arch/csky/configs/gx66xx_defconfig
->  create mode 100644 arch/csky/configs/qemu_ck807_defconfig
+On Thu, Mar 22, 2018 at 12:19:15PM +0000, Marc Zyngier wrote:
+> On 22/03/18 10:28, Aniruddha Banerjee wrote:
+> [a PGP-encrypted email]
+> 
+> Given that you're cc-ing various mailing lists, please resend this email
+> unencrypted.
 
-These look a lot longer than they should be, they contain many symbols
-that I suspenc
-are not needed or useful for you.
+I am very puzzled about what is going on here. I could read the 
+original mail fine and I was not in To: or Cc:. It also seems to
+have made it through to the archives OK.
 
-> diff --git a/arch/csky/configs/gx66xx_defconfig b/arch/csky/configs/gx66xx_defconfig
-> new file mode 100644
-> index 0000000..7f2a987
-> --- /dev/null
-> +++ b/arch/csky/configs/gx66xx_defconfig
-> @@ -0,0 +1,549 @@
-> +# CONFIG_LOCALVERSION_AUTO is not set
-> +CONFIG_DEFAULT_HOSTNAME="github.com/c-sky"
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1645375.html
+https://www.spinics.net/lists/linux-tegra/msg32829.html
 
-This is not a well-formed hostname
 
-> +# CONFIG_SWAP is not set
-> +CONFIG_SYSVIPC=y
-> +CONFIG_POSIX_MQUEUE=y
-> +# CONFIG_FHANDLE is not set
-> +CONFIG_USELIB=y
-> +CONFIG_AUDIT=y
-> +CONFIG_IRQ_DOMAIN_DEBUG=y
-> +CONFIG_NO_HZ_IDLE=y
-> +CONFIG_HIGH_RES_TIMERS=y
-> +CONFIG_BSD_PROCESS_ACCT=y
-> +CONFIG_BSD_PROCESS_ACCT_V3=y
-> +CONFIG_RELAY=y
-> +CONFIG_SYSCTL_SYSCALL=y
-> +CONFIG_KALLSYMS_ALL=y
-> +# CONFIG_AIO is not set
-
-Disabling swap, fhandle or AIO seems odd, those are commonly
-used symbols.
-
-> +CONFIG_USERFAULTFD=y
-> +CONFIG_EMBEDDED=y
-
-CONFIG_EMBEDDED should generally not be selected, it's only for
-very unusual configurations that need to disable symbols that are
-normally required.
-
-> +# CONFIG_PERF_EVENTS is not set
-> +# CONFIG_SLUB_DEBUG is not set
-> +# CONFIG_COMPAT_BRK is not set
-> +CONFIG_PROFILING=y
-> +CONFIG_OPROFILE=y
-
-oprofile can go now, since you said you'd remove the code.
-
-> +CONFIG_MODULES=y
-> +CONFIG_MODULE_UNLOAD=y
-
-> +CONFIG_BLK_DEV_BSGLIB=y
-> +CONFIG_BLK_DEV_INTEGRITY=y
-> +CONFIG_PARTITION_ADVANCED=y
-> +CONFIG_ACORN_PARTITION=y
-> +CONFIG_ACORN_PARTITION_ICS=y
-> +CONFIG_ACORN_PARTITION_RISCIX=y
-> +CONFIG_AIX_PARTITION=y
-> +CONFIG_OSF_PARTITION=y
-> +CONFIG_AMIGA_PARTITION=y
-> +CONFIG_ATARI_PARTITION=y
-> +CONFIG_MAC_PARTITION=y
-> +CONFIG_BSD_DISKLABEL=y
-> +CONFIG_MINIX_SUBPARTITION=y
-> +CONFIG_SOLARIS_X86_PARTITION=y
-> +CONFIG_UNIXWARE_DISKLABEL=y
-> +CONFIG_LDM_PARTITION=y
-> +CONFIG_SGI_PARTITION=y
-> +CONFIG_ULTRIX_PARTITION=y
-> +CONFIG_SUN_PARTITION=y
-> +CONFIG_KARMA_PARTITION=y
-> +CONFIG_SYSV68_PARTITION=y
-
-These block device configuration options all seem misplaced
-here, it's extremely unlikely that you need them.
-
-> +CONFIG_CMDLINE_PARTITION=y
-> +CONFIG_DEFAULT_DEADLINE=y
-> +CONFIG_FB_NATIONALCHIP=y
-> +CONFIG_RAM_BASE=0x10000000
-> +# CONFIG_SUSPEND is not set
-> +# CONFIG_COMPACTION is not set
-> +CONFIG_NET=y
-> +CONFIG_PACKET=y
-> +CONFIG_UNIX=y
-> +CONFIG_INET=y
-> +CONFIG_IP_MULTICAST=y
-> +CONFIG_IP_PNP=y
-> +CONFIG_IP_PNP_DHCP=y
-> +CONFIG_IP_PNP_BOOTP=y
-> +CONFIG_IP_PNP_RARP=y
-> +# CONFIG_IPV6 is not set
-> +CONFIG_CFG80211=y
-> +CONFIG_CFG80211_DEBUGFS=y
-> +CONFIG_CFG80211_WEXT=y
-
-I would guess you want IPV6 but not WEXT here.
-
-> +CONFIG_MAC80211=y
-> +CONFIG_MAC80211_DEBUGFS=y
-> +CONFIG_RFKILL=y
-> +CONFIG_RFKILL_INPUT=y
-> +CONFIG_RFKILL_GPIO=y
-> +CONFIG_DEVTMPFS=y
-> +CONFIG_DEVTMPFS_MOUNT=y
-> +# CONFIG_STANDALONE is not set
-
-No need to turn this off, it might just get in the way of build
-testing.
-
-> +CONFIG_KEYBOARD_ADP5588=m
-> +CONFIG_KEYBOARD_ADP5589=m
-> +CONFIG_KEYBOARD_QT1070=m
-> +CONFIG_KEYBOARD_QT2160=m
-> +CONFIG_KEYBOARD_LKKBD=m
-
-There are many input devices listed here, most of which you almost
-certainly won't need.
-
-> +CONFIG_IPMI_HANDLER=y
-> +CONFIG_IPMI_DEVICE_INTERFACE=m
-> +CONFIG_IPMI_SI=m
-> +CONFIG_IPMI_WATCHDOG=m
-> +CONFIG_IPMI_POWEROFF=m
-
-Are you sure you have IPMI hardware?
-
-> +CONFIG_FB=y
-> +CONFIG_FB_TILEBLITTING=y
-> +CONFIG_FB_SIMPLE=y
-> +CONFIG_BACKLIGHT_LCD_SUPPORT=y
-> +# CONFIG_LCD_CLASS_DEVICE is not set
-> +# CONFIG_BACKLIGHT_CLASS_DEVICE is not set
-> +# CONFIG_VGA_CONSOLE is not set
-> +CONFIG_FRAMEBUFFER_CONSOLE=y
-> +CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
-> +CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
-> +CONFIG_LOGO=y
-> +# CONFIG_LOGO_LINUX_MONO is not set
-> +# CONFIG_LOGO_LINUX_VGA16 is not set
-
-For new platforms, using the DRM subsystem is the recommend
-way to do graphics, it mostly replaces the framebuffer subsystem
-here.
-
-> +CONFIG_STE_MODEM_RPROC=m
-
-I think this is no longer there.
-
-> +CONFIG_EXT2_FS=y
-> +CONFIG_EXT2_FS_XATTR=y
-> +CONFIG_EXT2_FS_POSIX_ACL=y
-> +CONFIG_EXT2_FS_SECURITY=y
-> +CONFIG_EXT3_FS=y
-> +CONFIG_EXT3_FS_POSIX_ACL=y
-> +CONFIG_EXT3_FS_SECURITY=y
-
-Better use EXT4 for the defconfig instead.
-
-        Arnd
+Daniel.
