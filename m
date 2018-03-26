@@ -1,55 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751750AbeCZIKc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:10:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56672 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750864AbeCZIKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:10:30 -0400
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Jason Wang <jasowang@redhat.com>
-Subject: [PATCH net] vhost_net: add missing lock nesting notation
-Date: Mon, 26 Mar 2018 16:10:23 +0800
-Message-Id: <1522051823-5166-1-git-send-email-jasowang@redhat.com>
+        id S1752035AbeCZIKr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:10:47 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:55558 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751935AbeCZIKo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 04:10:44 -0400
+X-Google-Smtp-Source: AIpwx4/tDix7H7SFI4ewjl9fSuLNBu7W8sa2+GG9+qq4R2Kkuk2b1iS0i8MQ8kl01b3mBlrHGSAy0rpj69SzDxb4HLo=
+MIME-Version: 1.0
+In-Reply-To: <1699105253cb33680bb27ca61e6fc9fb0bd2aaf8.1521723192.git.vilhelm.gray@gmail.com>
+References: <cover.1521723192.git.vilhelm.gray@gmail.com> <1699105253cb33680bb27ca61e6fc9fb0bd2aaf8.1521723192.git.vilhelm.gray@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Mar 2018 10:10:43 +0200
+Message-ID: <CACRpkdbkX8iW0T1cDKmiMK=zXtQ=DULx7-KW5_jAwWZszS+coQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] gpio: 104-idio-16: Implement get_multiple callback
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We try to hold TX virtqueue mutex in vhost_net_rx_peek_head_len()
-after RX virtqueue mutex is held in handle_rx(). This requires an
-appropriate lock nesting notation to calm down deadlock detector.
+On Thu, Mar 22, 2018 at 1:59 PM, William Breathitt Gray
+<vilhelm.gray@gmail.com> wrote:
 
-Fixes: 0308813724606 ("vhost_net: basic polling support")
-Reported-by: syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> The ACCES I/O 104-IDIO-16 series of devices provides 16
+> optically-isolated digital inputs accessed via two 8-bit ports. Since
+> eight input lines are acquired on a single port input read, the
+> 104-IDIO-16 GPIO driver may improve multiple input reads by utilizing a
+> get_multiple callback. This patch implements the
+> idio_16_gpio_get_multiple function which serves as the respective
+> get_multiple callback.
+>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 8139bc7..12bcfba 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -630,7 +630,7 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk)
- 
- 	if (!len && vq->busyloop_timeout) {
- 		/* Both tx vq and rx socket were polled here */
--		mutex_lock(&vq->mutex);
-+		mutex_lock_nested(&vq->mutex, 1);
- 		vhost_disable_notify(&net->dev, vq);
- 
- 		preempt_disable();
-@@ -763,7 +763,7 @@ static void handle_rx(struct vhost_net *net)
- 	struct iov_iter fixup;
- 	__virtio16 num_buffers;
- 
--	mutex_lock(&vq->mutex);
-+	mutex_lock_nested(&vq->mutex, 0);
- 	sock = vq->private_data;
- 	if (!sock)
- 		goto out;
--- 
-2.7.4
+Patch applied.
+
+Yours,
+Linus Walleij
