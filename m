@@ -1,54 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752249AbeCZIT3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:19:29 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:51335 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751776AbeCZISc (ORCPT
+        id S1752273AbeCZIUX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:20:23 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54859 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750940AbeCZIUV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:18:32 -0400
-From: Yixun Lan <yixun.lan@amlogic.com>
-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] clk: meson: drop CLK_SET_RATE_PARENT flag
-Date: Mon, 26 Mar 2018 16:18:07 +0800
-Message-ID: <20180326081809.49493-2-yixun.lan@amlogic.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180326081809.49493-1-yixun.lan@amlogic.com>
-References: <20180326081809.49493-1-yixun.lan@amlogic.com>
+        Mon, 26 Mar 2018 04:20:21 -0400
+Subject: Re: [PATCH v2 4/6] i2c: i2c-stm32: Add generic DMA API
+To: Wolfram Sang <wsa@the-dreams.de>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
+ <1521650940-11651-5-git-send-email-pierre-yves.mordret@st.com>
+ <20180324225138.d5yipagxiouoyqtl@ninjato>
+From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+Message-ID: <43b6d8d7-37e6-1fe8-6a53-0202ab25cfb1@st.com>
+Date: Mon, 26 Mar 2018 10:20:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.20.235]
+In-Reply-To: <20180324225138.d5yipagxiouoyqtl@ninjato>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-26_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clk81 is not expected to be changed, so drop this flag.
+Thanks for the heads-up !
+My driver supports DMA, but hardly used in the system.
 
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
----
- drivers/clk/meson/gxbb-aoclk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But it's worth to mentioned it.
 
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 0f089cbce594..e7bc04d3e24f 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -70,7 +70,7 @@ static struct clk_regmap _name##_ao = {					\
- 		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
--		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-+		.flags = CLK_IGNORE_UNUSED,				\
- 	},								\
- }
- 
--- 
-2.15.1
+On 03/24/2018 11:51 PM, Wolfram Sang wrote:
+> On Wed, Mar 21, 2018 at 05:48:58PM +0100, Pierre-Yves MORDRET wrote:
+>> This patch adds a generic DMA API to implement DMA support for i2c-stm32fx
+>> drivers
+>>
+>> Signed-off-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
+>> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+> 
+> In case you haven't read it so far, there is a new document about I2C &
+> DMA -> Documentation/i2c/DMA-considerations
+> 
+> Just so you know...
+> 
