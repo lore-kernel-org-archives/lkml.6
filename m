@@ -1,46 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751071AbeCZJrv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:47:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46686 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750972AbeCZJrs (ORCPT
+        id S1751398AbeCZJw0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:52:26 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34270 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750864AbeCZJwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:47:48 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 26 Mar 2018 15:17:46 +0530
-From: sricharan@codeaurora.org
-To: Craig Tatlor <ctatlor97@gmail.com>
-Cc: robh@kernel.org, viresh.kumar@linaro.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, sboyd@codeaurora.org, linux@armlinux.org.uk,
-        andy.gross@linaro.org, david.brown@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux@arm.linux.org.uk
-Subject: Re: [v9,04/15] clk: qcom: Add HFPLL driver
-In-Reply-To: <20180325193341.27845-1-ctatlor97@gmail.com>
-References: <520347148-27852-5-git-send-email-sricharan@codeaurora.org>
- <20180325193341.27845-1-ctatlor97@gmail.com>
-Message-ID: <0132a9e1371c7e690d174cb4d65bc951@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Mon, 26 Mar 2018 05:52:23 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, kernel@collabora.com
+Subject: [PATCH v6 1/5] pwm-backlight: enable/disable the PWM before/after LCD enable toggle.
+Date: Mon, 26 Mar 2018 11:52:09 +0200
+Message-Id: <20180326095213.18362-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-03-26 01:03, Craig Tatlor wrote:
-> This doesn't seem to work correctly with the higher clocks on 8974pro,
-> specifically 2150400000 hz or above, maybe its something to do with
-> being bigger than an unsigned long.
-> 
-> When i try to set any higher frequency it jumps down to 300mhz.
+Before this patch the enable signal was set before the PWM signal and
+vice-versa on power off. This sequence is wrong, at least, it is on
+the different panels datasheets that I checked, so I inverted the sequence
+to follow the specs.
 
+For reference the following panels have the mentioned sequence:
+  - N133HSE-EA1 (Innolux)
+  - N116BGE (Innolux)
+  - N156BGE-L21 (Innolux)
+  - B101EAN0 (Auo)
+  - B101AW03 (Auo)
+  - LTN101NT05 (Samsung)
+  - CLAA101WA01A (Chunghwa)
 
-  Thanks for testing this series. Not sure i got dropped from the list.
-  So i will check on this and come back.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
+---
+Changes since v5:
+ - Add Acked-by: Thierry Reding <thierry.reding@gmail.com>
+Changes since v4:
+ - Rebase on top of mainline.
+ - Add the acks from Daniel Thompson and Jingoo Han.
+Changes since v3:
+ - List the part numbers for the panel checked (Daniel Thompson)
+Changes since v2:
+ - Add this as a separate patch (Thierry Reding)
+Changes since v1:
+ - None
+---
+ drivers/video/backlight/pwm_bl.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Regards,
-  Sricharan
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 1c2289ddd555..698ec68bcdc9 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -54,10 +54,11 @@ static void pwm_backlight_power_on(struct pwm_bl_data *pb, int brightness)
+ 	if (err < 0)
+ 		dev_err(pb->dev, "failed to enable power supply\n");
+ 
++	pwm_enable(pb->pwm);
++
+ 	if (pb->enable_gpio)
+ 		gpiod_set_value_cansleep(pb->enable_gpio, 1);
+ 
+-	pwm_enable(pb->pwm);
+ 	pb->enabled = true;
+ }
+ 
+@@ -66,12 +67,12 @@ static void pwm_backlight_power_off(struct pwm_bl_data *pb)
+ 	if (!pb->enabled)
+ 		return;
+ 
+-	pwm_config(pb->pwm, 0, pb->period);
+-	pwm_disable(pb->pwm);
+-
+ 	if (pb->enable_gpio)
+ 		gpiod_set_value_cansleep(pb->enable_gpio, 0);
+ 
++	pwm_config(pb->pwm, 0, pb->period);
++	pwm_disable(pb->pwm);
++
+ 	regulator_disable(pb->power_supply);
+ 	pb->enabled = false;
+ }
+-- 
+2.16.2
