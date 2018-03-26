@@ -1,99 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752031AbeCZWNP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:13:15 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:51781 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751160AbeCZWNO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:13:14 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0T-8lX2z_1522102378;
-Subject: Re: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, gorcunov@gmail.com
-Cc: willy@infradead.org, adobriyan@gmail.com, mhocko@kernel.org,
-        mguzik@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180326183725.GB27373@bombadil.infradead.org>
- <20180326192132.GE2236@uranus>
- <0bfa8943-a2fe-b0ab-99a2-347094a2bcec@i-love.sakura.ne.jp>
- <20180326212944.GF2236@uranus>
- <201803270700.IJB35465.HJQFSFMVLFOtOO@I-love.SAKURA.ne.jp>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <ceaa72ee-a63a-983b-d040-387886f5599c@linux.alibaba.com>
-Date: Mon, 26 Mar 2018 18:12:55 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
+        id S1752096AbeCZWTL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:19:11 -0400
+Received: from mga18.intel.com ([134.134.136.126]:31002 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751160AbeCZWTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 18:19:10 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,365,1517904000";
+   d="scan'208";a="38328288"
+Date: Mon, 26 Mar 2018 15:19:48 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Luck@alison-desk.jf.intel.com, Tim Chen <tim.c.chen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86,sched: allow topologies where NUMA nodes share an
+ LLC
+Message-ID: <20180326221948.GA17814@alison-desk.jf.intel.com>
+References: <20180322204922.GA2337@alison-desk.jf.intel.com>
+ <20180322233027.bh6dp5vdcb4rdvqe@agluck-desk>
 MIME-Version: 1.0
-In-Reply-To: <201803270700.IJB35465.HJQFSFMVLFOtOO@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180322233027.bh6dp5vdcb4rdvqe@agluck-desk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Mar 22, 2018 at 04:30:29PM -0700, Luck, Tony wrote:
+> On Thu, Mar 22, 2018 at 01:49:22PM -0700, Alison Schofield wrote:
+> > +	if (!topology_same_node(c, o) &&
+> > +	    (c->x86_vendor == X86_VENDOR_INTEL &&
+> > +	     c->x86_model == INTEL_FAM6_SKYLAKE_X)) {
+> 
+> Maybe make life easier in the future to add more models
+> to the list by using x86_match_cpu() here?
+> 
+> -Tony
 
+Tony - 
+ Am I on the right track below?
 
-On 3/26/18 6:00 PM, Tetsuo Handa wrote:
-> Cyrill Gorcunov wrote:
->> On Tue, Mar 27, 2018 at 06:10:09AM +0900, Tetsuo Handa wrote:
->>> On 2018/03/27 4:21, Cyrill Gorcunov wrote:
->>>> That said I think using read-lock here would be a bug.
->>> If I understand correctly, the caller can't set both fields atomically, for
->>> prctl() does not receive both fields at one call.
->>>
->>>    prctl(PR_SET_MM, PR_SET_MM_ARG_START xor PR_SET_MM_ARG_END xor PR_SET_MM_ENV_START xor PR_SET_MM_ENV_END, new value, 0, 0);
->>>
->> True, but the key moment is that two/three/four system calls can
->> run simultaneously. And while previously they are ordered by "write",
->> with read lock they are completely unordered and this is really
->> worries me.
-> Yes, we need exclusive lock when updating these fields.
->
->>              To be fair I would prefer to drop this old per-field
->> interface completely. This per-field interface was rather an ugly
->> solution from my side.
-> But this is userspace visible API and thus we cannot change.
->
->>> Then, I wonder whether reading arg_start|end and env_start|end atomically makes
->>> sense. Just retry reading if arg_start > env_end or env_start > env_end is fine?
->> Tetsuo, let me re-read this code tomorrow, maybe I miss something obvious.
->>
-> You are not missing my point. What I thought is
->
-> +retry:
-> -	down_read(&mm->mmap_sem);
->   	arg_start = mm->arg_start;
->   	arg_end = mm->arg_end;
->   	env_start = mm->env_start;
->   	env_end = mm->env_end;
-> -	up_read(&mm->mmap_sem);
->   
-> -	BUG_ON(arg_start > arg_end);
-> -	BUG_ON(env_start > env_end);
-> +	if (unlikely(arg_start > arg_end || env_start > env_end)) {
-> +		cond_resched();
-> +		goto retry;
+Define like this:
+static const __initconst struct x86_cpu_id snc_cpu[] = {
+	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_SKYLAKE_X },
+	{}
+};
 
-Can't it trap into dead loop if the condition is always false?
+Use like this:
+if (!topology_same_node(c, o) && x86_match_cpu(snc_cpu)) {
 
-> +	}
->
-> for reading these fields.
->
-> By the way, /proc/pid/ readers are serving as a canary who tells something
-> mm_mmap related problem is happening. On the other hand, it is sad that
-> such canary cannot be terminated by signal due to use of unkillable waits.
-> I wish we can use killable waits.
-
-I already proposed patches (https://lkml.org/lkml/2018/2/26/1197) to do 
-this a few weeks ago. In the review, akpm suggested mitigate the 
-mmap_sem contention instead of using killable version workaround. Then 
-the preliminary unmaping by section patches 
-(https://lkml.org/lkml/2018/3/20/786) were proposed. In the discussion, 
-we decided to eliminate the mmap_sem abuse, this is where the patch came 
-from.
-
-Yang
+Thanks,
+alisons
