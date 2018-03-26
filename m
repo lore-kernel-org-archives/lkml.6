@@ -1,45 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752334AbeCZP7I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 11:59:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751249AbeCZP7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 11:59:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2EA62172B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 26 Mar 2018 11:59:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: joe.korty@concurrent-rt.com
-Cc: Julia Cartwright <julia@ni.com>, <bigeasy@linutronix.de>,
-        <mingo@redhat.com>, <tglx@linutronix.de>,
-        <linux-rt-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RT] Defer migrate_enable migration while task state !=
- TASK_RUNNING
-Message-ID: <20180326115904.492a3bad@gandalf.local.home>
-In-Reply-To: <20180326155451.GA16545@zipoli.concurrent-rt.com>
-References: <20180323150959.GA16131@zipoli.concurrent-rt.com>
-        <20180323165921.GG10942@jcartwri.amer.corp.natinst.com>
-        <20180323172131.GA2670@zipoli.concurrent-rt.com>
-        <20180326113515.720e7fb3@gandalf.local.home>
-        <20180326155451.GA16545@zipoli.concurrent-rt.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752192AbeCZQGJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 12:06:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37414 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeCZQGI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 12:06:08 -0400
+Date: Mon, 26 Mar 2018 18:05:49 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Borislav Petkov <bp@suse.de>, David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@suse.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] lockdep: Show address of "struct lockdep_map" at
+ print_lock().
+Message-ID: <20180326160549.GL4043@hirez.programming.kicks-ass.net>
+References: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Mar 2018 11:54:51 -0400
-joe.korty@concurrent-rt.com wrote:
+On Mon, Mar 26, 2018 at 07:18:33PM +0900, Tetsuo Handa wrote:
+> [  628.863629] 2 locks held by a.out/1165:
+> [  628.867533]  #0: [ffffa3b438472e48] (&mm->mmap_sem){++++}, at: __do_page_fault+0x16f/0x4d0
+> [  628.873570]  #1: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
 
-> Oh well.  Makes me wonder why might_sleep is testing for
-> !TASK_RUNNABLE though.
+Maybe change the string a little, because from the above it's not at all
+effident that the [] thing is the lock instance.
 
-Because might_sleep() is used when the function might call schedule()
-directly. And schedule() *will* change the task state to TASK_RUNNING.
-might_sleep() has nothing to do with preemption.
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index 12a2805..7835233 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -556,9 +556,9 @@ static void print_lock(struct held_lock *hlock)
+>  		return;
+>  	}
+>  
+> +	printk(KERN_CONT "[%px]", hlock->instance);
 
--- Steve
+And yeah, what Michal said, that wants to be %p, we're fine with the
+thing being hashed, all we want to do is equivalience, which can be done
+with hashed pinters too.
+
+>  	print_lock_name(lock_classes + class_idx - 1);
+> -	printk(KERN_CONT ", at: [<%px>] %pS\n",
+> -		(void *)hlock->acquire_ip, (void *)hlock->acquire_ip);
+> +	printk(KERN_CONT ", at: %pS\n", (void *)hlock->acquire_ip);
+>  }
+
+Otherwise no real objection to the patch.
