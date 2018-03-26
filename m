@@ -1,17 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752233AbeC0BvQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 21:51:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38945 "EHLO mx2.suse.de"
+        id S1752283AbeC0BvX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 21:51:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38963 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752031AbeC0BvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 21:51:15 -0400
+        id S1752236AbeC0BvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 21:51:20 -0400
 From: NeilBrown <neilb@suse.com>
 To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>
 Date: Tue, 27 Mar 2018 10:33:04 +1100
-Subject: [PATCH 0/6] rhashtable: assorted fixes and enhancements
+Subject: [PATCH 1/6] rhashtable: improve documentation for
+ rhashtable_walk_peek()
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <152210688405.11435.13010923693146415942.stgit@noble>
+Message-ID: <152210718418.11435.11573013181393548255.stgit@noble>
+In-Reply-To: <152210688405.11435.13010923693146415942.stgit@noble>
+References: <152210688405.11435.13010923693146415942.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -20,40 +23,63 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
- I'm hoping to use rhashtable in lustre, to replace the resizeable
- hashtable implementation in libcfs.
- While working through the conversion I found some minor bugs in the
- rhashtable code and documentation, and some areas where enhancements
- could make rhashtable a better fit for lustre.
+The documentation for rhashtable_walk_peek() wrong.  It claims to
+return the *next* entry, whereas it in fact returns the *previous*
+entry.
+However if no entries have yet been returned - or if the iterator
+was reset due to a resize event, then rhashtable_walk_peek()
+*does* return the next entry, but also advances the iterator.
 
- Following 6 patches are the result.  Please review.
+I suspect that this interface should be discarded and the one user
+should be changed to not require it.  Possibly this patch should be
+seen as a first step in that conversation.
 
- It would help me if I could get an Ack for these patches, and could
- then submit them through the drivers/staging tree together with the
- lustre changes that make use to rhashtable.  The first 2 are mostly
- just fixes to comments and can go in through the netdev tree if you
- prefer - the last 4 are needed for lustre to work
- correctly/optimally.
+This patch mostly corrects the documentation, but does make a
+small code change so that the documentation can be correct without
+listing too many special cases.  I don't think the one user will
+be affected by the code change.
 
-Thanks,
-NeilBrown
-
-
+Signed-off-by: NeilBrown <neilb@suse.com>
 ---
+ lib/rhashtable.c |   17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-NeilBrown (6):
-      rhashtable: improve documentation for rhashtable_walk_peek()
-      rhashtable: remove outdated comments about grow_decision etc
-      rhashtable: reset iter when rhashtable_walk_start sees new table
-      rhashtable: allow a walk of the hash table without missing objects.
-      rhashtable: support guaranteed successful insertion.
-      rhashtable: allow element counting to be disabled.
-
-
- include/linux/rhashtable.h |   89 ++++++++++++++++++++++++++++----------
- lib/rhashtable.c           |  102 +++++++++++++++++++++++++++++++-------------
- 2 files changed, 136 insertions(+), 55 deletions(-)
-
---
-Signature
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 3825c30aaa36..24a57ca494cb 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -853,13 +853,17 @@ void *rhashtable_walk_next(struct rhashtable_iter *iter)
+ EXPORT_SYMBOL_GPL(rhashtable_walk_next);
+ 
+ /**
+- * rhashtable_walk_peek - Return the next object but don't advance the iterator
++ * rhashtable_walk_peek - Return the previously returned object without advancing the iterator
+  * @iter:	Hash table iterator
+  *
+- * Returns the next object or NULL when the end of the table is reached.
++ * Returns the last object returned, or NULL if no object has yet been returned.
++ * If the previously returned object has since been removed, then some other arbitrary
++ * object maybe returned, or possibly NULL will be returned.  In that case, the
++ * iterator might be advanced.
+  *
+  * Returns -EAGAIN if resize event occurred.  Note that the iterator
+- * will rewind back to the beginning and you may continue to use it.
++ * will rewind back to the beginning and rhashtable_walk_next() should be
++ * used to get the next object.
+  */
+ void *rhashtable_walk_peek(struct rhashtable_iter *iter)
+ {
+@@ -880,7 +884,12 @@ void *rhashtable_walk_peek(struct rhashtable_iter *iter)
+ 		 * the table hasn't changed.
+ 		 */
+ 		iter->skip--;
+-	}
++	} else
++		/* ->skip is only zero after rhashtable_walk_start()
++		 * or when the iterator is reset.  In this case there
++		 * is no previous object to return.
++		 */
++		return NULL;
+ 
+ 	return __rhashtable_walk_find_next(iter);
+ }
