@@ -1,81 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752004AbeCZVRS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 17:17:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39428 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751614AbeCZVRR (ORCPT
+        id S1752130AbeCZVR0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 17:17:26 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:43214 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751692AbeCZVRU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:17:17 -0400
-From: Eddie James <eajames@linux.vnet.ibm.com>
-To: linux-watchdog@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux@roeck-us.net,
-        wim@linux-watchdog.org, joel@jms.id.au, openbmc@lists.ozlabs.org,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH] aspeed: watchdog: Add status function
-Date: Mon, 26 Mar 2018 16:17:08 -0500
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 18032621-0056-0000-0000-000004332A0A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008749; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01008834; UDB=6.00513863; IPR=6.00788116;
- MB=3.00020256; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-26 21:17:13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032621-0057-0000-0000-0000087535E9
-Message-Id: <1522099028-20347-1-git-send-email-eajames@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-26_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803260214
+        Mon, 26 Mar 2018 17:17:20 -0400
+Subject: Re: [PATCH v4 5/8] remoteproc: da8xx: add the missing retval check
+ for clk_enable()
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
+ <20180323130455.11470-6-brgl@bgdev.pl>
+From: Suman Anna <s-anna@ti.com>
+Message-ID: <ceca8cdd-055a-58ef-80fa-988a6ab5fcdf@ti.com>
+Date: Mon, 26 Mar 2018 16:15:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180323130455.11470-6-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Populate the status watchdog operation to return the "timeout status"
-register of the ASPEED watchdog.
+On 03/23/2018 08:04 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The davinci platform is being switched to using the common clock
+> framework, where clk_enable() can fail. Add the return value check.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
----
- drivers/watchdog/aspeed_wdt.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+This patch can be applied agnostic of the CCF change as well.
+I had been using "remoteproc/davinci: ..." on the patch subject for all
+davinci remoteproc patches. So prefer to maintain the same.
 
-diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
-index a5b8eb2..d6dd5c9 100644
---- a/drivers/watchdog/aspeed_wdt.c
-+++ b/drivers/watchdog/aspeed_wdt.c
-@@ -55,6 +55,7 @@ struct aspeed_wdt_config {
- #define   WDT_CTRL_WDT_INTR		BIT(2)
- #define   WDT_CTRL_RESET_SYSTEM		BIT(1)
- #define   WDT_CTRL_ENABLE		BIT(0)
-+#define WDT_TIMEOUT_STATUS	0x10
- 
- /*
-  * WDT_RESET_WIDTH controls the characteristics of the external pulse (if
-@@ -138,6 +139,13 @@ static int aspeed_wdt_ping(struct watchdog_device *wdd)
- 	return 0;
- }
- 
-+static unsigned int aspeed_wdt_status(struct watchdog_device *wdd)
-+{
-+	struct aspeed_wdt *wdt = to_aspeed_wdt(wdd);
-+
-+	return readl(wdt->base + WDT_TIMEOUT_STATUS);
-+}
-+
- static int aspeed_wdt_set_timeout(struct watchdog_device *wdd,
- 				  unsigned int timeout)
- {
-@@ -171,6 +179,7 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
- 	.start		= aspeed_wdt_start,
- 	.stop		= aspeed_wdt_stop,
- 	.ping		= aspeed_wdt_ping,
-+	.status		= aspeed_wdt_status,
- 	.set_timeout	= aspeed_wdt_set_timeout,
- 	.restart	= aspeed_wdt_restart,
- 	.owner		= THIS_MODULE,
--- 
-1.8.3.1
+With that,
+Acked-by: Suman Anna <s-anna@ti.com>
+
+regards
+Suman
+
+> ---
+>  drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+> index bf3b9034c319..2b24291337b7 100644
+> --- a/drivers/remoteproc/da8xx_remoteproc.c
+> +++ b/drivers/remoteproc/da8xx_remoteproc.c
+> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>  	struct device *dev = rproc->dev.parent;
+>  	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
+>  	struct clk *dsp_clk = drproc->dsp_clk;
+> +	int ret;
+>  
+>  	/* hw requires the start (boot) address be on 1KB boundary */
+>  	if (rproc->bootaddr & 0x3ff) {
+> @@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
+>  
+>  	writel(rproc->bootaddr, drproc->bootreg);
+>  
+> -	clk_enable(dsp_clk);
+> +	ret = clk_enable(dsp_clk);
+> +	if (ret) {
+> +		dev_err(dev, "clk_enable() failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+>  	davinci_clk_reset_deassert(dsp_clk);
+>  
+>  	return 0;
+> 
