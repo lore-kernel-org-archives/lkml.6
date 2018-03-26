@@ -1,126 +1,501 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751134AbeCZLPH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 07:15:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40566 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750864AbeCZLPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 07:15:06 -0400
-Date: Mon, 26 Mar 2018 13:14:54 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagannadh.teki@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 0/7] drm/sun4i: Allwinner MIPI-DSI support
-Message-ID: <20180326111454.jqq5dchw27iqhxhe@flea>
-References: <cover.14d017af44a2140bea674731b60a0dd7f992f5f6.1520344489.git-series.maxime.ripard@bootlin.com>
- <CAD6G_RSfiPC2qPjFFukqx6ihzS=_qBOdsP1KnWTP8BJ9Zsekew@mail.gmail.com>
+        id S1751220AbeCZLRB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 07:17:01 -0400
+Received: from mail-ve1eur01on0135.outbound.protection.outlook.com ([104.47.1.135]:6383
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751010AbeCZLQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 07:16:59 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+Subject: Re: [PATCH RFC] xfs, memcg: Call xfs_fs_nr_cached_objects() only in
+ case of global reclaim
+To: Dave Chinner <david@fromorbit.com>
+Cc: Michal Hocko <mhocko@kernel.org>, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+References: <20180316213910.GF7000@dastard>
+ <18a031f3-2136-4ef9-6ede-05f5b835661c@virtuozzo.com>
+ <20180320001827.GB1150@dastard>
+ <ec116ce6-c22b-66e1-0e01-55f895997c7d@virtuozzo.com>
+ <20180320143452.GT18129@dastard>
+ <5eb88165-c108-5989-3cb5-1f260cec5e53@virtuozzo.com>
+ <20180322050152.GA18129@dastard>
+ <3320c962-35c5-c5ed-2a9f-0acb2b875579@virtuozzo.com>
+ <20180322234613.GD18129@dastard>
+ <c1fc50fe-25e7-a92a-a2a8-3e40e7de9b0a@virtuozzo.com>
+ <20180326023709.GK18129@dastard>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <d7c95f86-d883-45c4-ac20-fa56e7f39a54@virtuozzo.com>
+Date: Mon, 26 Mar 2018 14:16:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="o44d22k5nptwpobw"
-Content-Disposition: inline
-In-Reply-To: <CAD6G_RSfiPC2qPjFFukqx6ihzS=_qBOdsP1KnWTP8BJ9Zsekew@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180326023709.GK18129@dastard>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: HE1P195CA0013.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::23)
+ To VI1PR0801MB1343.eurprd08.prod.outlook.com (2603:10a6:800:3b::7)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4f436a64-21fd-415b-c437-08d5930b14c5
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0801MB1343;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1343;3:QjvCSvD7CEoQFAF0WqeA4q8qwKwHJnUFOYOImRxypkAk84ANivlag07s2ISIMrBDF5JXdUWqyYDQgA+q3HXh8csmQ09kC8Ot6joHHEb5GAoJwM+aHmodJcQ5+7u7DTbZfJ0vyzsFBlsUL6iJ6xEL+23UnljyPWgbtFkICaxnHxHM2cNKyDY1xQ32NMcXB00m3/mQVsdwE5kF5+bmcN+5u90JdSnXPurnFY7FizLGJOiA3fkUNbXN9bpbdMPvWiqS;25:cBuGDVzC9yzUeBm92Gjpovrh71go/9ftdgrGvMuyk1JuvtmxY20HKhpjhkIR2b9V2DmR9MDVCL4e/RK1QkTpLG0WBFIHts6tGVv5nF4a/7z4Yl4wXATZusj4kWjr2Wa6Y2o9wVrhgNEMKkeUStNBX7ycfl0U80T40GYnj+W/T0ffj7Ns5Rthpd2FtZUZ6dmLokqDFyCKUICfWRHakmLr5O/RvenmPEOE6mjhQeqiBTaTbbTRF6KIbQJIB/tz2haXQU1wLrW4XbFSjStE7yTrR2rm+HXfMWzyY6Mx0zv72Oi1eGEFGIQM5uA2jARmhfonArZTEP6R90E0qwxpYYR2uA==;31:g5GvkqJYiI1Y159W1mloApRVnN31L9S+MWnkkL7m8COZ/t01a6XeCMQt7LAt+fxqKcMNoqqKV29xtiPAy3VdsXN6u8rVyLkHwgJZEjI2TlhGmF6UFtkEslwObbdi6MNSIJBuOBL5eIzj1TqMBLXDP2DffUPv7NKqMWREgtWSlqpPjQWCtrs8s+44CY5AUD9L9LZ+Mv2iwt016ifyr3HaUfcr7Ft9fOdXFCWJNlewJu0=
+X-MS-TrafficTypeDiagnostic: VI1PR0801MB1343:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1343;20:duR5mnhwsZfoeGJUsrVxHr5uF7FbIfcpnhjDIVjS8e2oDrH+KkgWAJSKRRUTuZulVLblFlfHGrl9bYQiR4ADQaH4H2M3uBwNjpUJ6gfTsDPSCPcrpUTIrEiofTaCLNq6xIu//C5Cx1FEEpQKggwPO2jbVbva/RgG9W+Ds6vopGNkbcJ+/ZHJW5TeRd3c6jAOLURU5GtDpQyfKsB861qJMV+qNAKExb9ldrBHAHyNoaXAgBbhO21gizW8uqkeH9nlV8ncVVrJHiZ1rJvETRqDdfHUS1VMc8Tgq+p+BJ21tG0rPRWNnbKnKz5++K+gTSN18dbUpqnevx0tcPfWhN0kawOC15utLSDMTaKnOwsdlu6ewWqBGla6B//if0RfMMVxrPZWb+MQFVY9SMxN9OgMU6vBJ8dANouab1tAasU4e5qiZspi1Xg/gCMk70Lr18AWIK/KcOMnvGFiij3AUlbD+dwjRRn9hvHL51mstuRqlRnU5dlxspCw1VDZSEvPDk7M;4:GIrUJKvKrVKiTmZmrwuvBLWTi6HdH3u8DNnQatMbRfjee95AXmljtrv+uDKxQjP1lJcAivC1gWUwrYdJ54ExOQdsdZGUQXJNwv/ISqx/Qxc4ZAiDjDZB4ohE82Ckhc+/XyVYByZzX1ISzzeB+S/f3mv7uWOYh2Qn7nHRjiZRB/+ink4ZLaYqPrykyVqASJGqLh+NvaaWPFEE6/l0u4PFPRfGoq7/1xkolOgYb657z5aRtPM2fC1ncdoG7ZtV6gJRh75RUdCR4kzadD8h+WA5CdrWQTfxs0zEjwUaCEdG2GIPkuExc/Tvgu6/Y9kKJRvR40owe8n+rvXaOdUtHso+2vel1aoytzCrljvzFmjQN68=
+X-Microsoft-Antispam-PRVS: <VI1PR0801MB13436E4EE09842C9C9271D18CDAD0@VI1PR0801MB1343.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(20558992708506)(17755550239193);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:VI1PR0801MB1343;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0801MB1343;
+X-Forefront-PRVS: 06237E4555
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39840400004)(376002)(346002)(39380400002)(396003)(366004)(199004)(189003)(76176011)(86362001)(52116002)(65806001)(65826007)(31696002)(66066001)(65956001)(81166006)(81156014)(316002)(8936002)(59450400001)(97736004)(31686004)(6116002)(3846002)(229853002)(8676002)(68736007)(23676004)(16576012)(2486003)(52146003)(106356001)(55236004)(93886005)(5660300001)(77096007)(386003)(53546011)(186003)(26005)(6486002)(64126003)(7736002)(58126008)(16526019)(5890100001)(6246003)(36756003)(4326008)(6306002)(446003)(956004)(25786009)(2616005)(11346002)(305945005)(6916009)(53936002)(230700001)(50466002)(2906002)(966005)(105586002)(478600001)(47776003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0801MB1343;H:[172.16.25.196];FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4MDFNQjEzNDM7MjM6amd3YTE4bHRTMTdOVVEvQWo5b0pHbS9o?=
+ =?utf-8?B?blhEb3lxejRCSStSN3g1ZEZleHdZc01oc3J1c3QrdERlZjkyVUlHaE5EUC8x?=
+ =?utf-8?B?NUtVeUlyTGlTZmhMRjFqSXptUytPZ1RVWDNEaDlkVjMwM2RZc3RsWW5Ia1NL?=
+ =?utf-8?B?dnlmeU5BUW4rTThrT2FVR21tWG5OTldVK25MaTBEdklQYU1SR09SU1pzeURu?=
+ =?utf-8?B?MU9TY2svLzM5a3NrL2dJdGVLdENyaTZLSWMvUmV6M2RRT3p0a1MwSDQ3aVpm?=
+ =?utf-8?B?SWlIcWw5TVNLV2RaOTl2VXBCKy9ESkJSb3ZZL3JpNGh4bklvYWd6bHorVTY1?=
+ =?utf-8?B?eUZjWjNMLzlHRE14c01qT2Z4bkxLb0tsdFNFNVJnQlprZGg3MFYrbnk0cVE3?=
+ =?utf-8?B?VElHMExkS1B4eXJVRzNaY0dTOC83OGlOTk9wekZ2VS9NVXViaWc5MnMydVlY?=
+ =?utf-8?B?Q0p1M0FvdUFqNytDK1p5WmwwQU1NZmNRamwrcFRuZ1lqSkZVa2lSZDREODBV?=
+ =?utf-8?B?dDh3RGprMDlmdjBuaThJYjZtTmxiMkFIMkhTTmFFNkRHWkNKUk5SRHQySnkv?=
+ =?utf-8?B?dHBqeW45WFJIbWtWdkJZK20zQjEySWpVNVlTU3NCcFBPZGNMV0xwNWJxZXRE?=
+ =?utf-8?B?alJSRDJ2Sm5jZ0tpQTdHdnBaMTM3U0pCbFE0eGVPUGRwOGpRODBHZzZGN29z?=
+ =?utf-8?B?UFhLMmowbWRLRisyaEtPMWtJNVVZV1ovTXNia0taNmpuVndHWXFzZjR3akVZ?=
+ =?utf-8?B?azRMOFZ4c21jWXdPU0preEJ5Mk9yWDBJallNNlJsL3RmK2h1cmJVaGI1TFBN?=
+ =?utf-8?B?Y3BjZFdrWnZ5dGltNXhRemlVM0JValRrVnNJenNNbktOL1N0bTZWb0g2bDZN?=
+ =?utf-8?B?YXZzZHFncms2MFlzRitxZEhPdnJxOHVLcXdoRFZCWDNVc2VkYTh4a1J6eUNS?=
+ =?utf-8?B?WHZhS1RKWWVGR2hZRnJITnhFN0FhZS84NXJtZ0NTYWMvM0p1QlR5ak8vaUhx?=
+ =?utf-8?B?Mm55YjBqL2drbGpZN29ZYlR1Qm9odUVBcEhlaUxEMHovOGNBdVphRnhyMkRC?=
+ =?utf-8?B?OU12enJMRURDcURjTnFvaVZHcmNqaDhxYWFQTy92c2JERXpjTkVWN252ZHMx?=
+ =?utf-8?B?cFN3OVJsenpad256MmxUUWRQdHBVa01IOCtFUU9Wd3k5UitBaXF6SHF1enMw?=
+ =?utf-8?B?c0trcU8yU01NaDVWQS9qR25rQ2M1Z0VYRGxxNXBGeS9FZG43bUVEMm5RWEgz?=
+ =?utf-8?B?dWYwNTU4NDR6OVJrUUFVZXdIL01kZUcycnhwTVBuVVdXVnZNYzM5dkptQzB4?=
+ =?utf-8?B?TUxUaGh6aDh5enBoZEtKMFRiK1ZKRmpOOTBQUzNEL0RxL1pJTzBGSmhlYlUv?=
+ =?utf-8?B?aWh0eGpyS0lSVEZNYnovcjVrYy9ZWXVpSWNxT3FWczhiMXZoaWo2WEtqSk9u?=
+ =?utf-8?B?d3ZURTFuSWovUjA4V29McjJBbDQxcmpRQU5reDJZdXpwMU9YdkJXY0NhR3Nk?=
+ =?utf-8?B?eTIyeCtPRDEyL29RaWJLVXhER1hlNWd4TWNRQytiN09EY21nbFp6YlpZVHpy?=
+ =?utf-8?B?TUdFR3psKzF4cmZpTkM0MzlsT09QUldrT3gwTGk0NVhQdTBveUovczQrdGln?=
+ =?utf-8?B?Mnpvbmx5U1pLQkV2dUh3U1pyc1UxZHJVS1lXMDNHWmVkTzhkNk1OQ1NLdWFE?=
+ =?utf-8?B?WHNhTlV4ZURBTjh5SExWZVBPZ1RkanhYZFoxU2NhTEI3a3cxVS92aHhVZU1s?=
+ =?utf-8?B?ZEdUbHdKckxQbFRRZ3JPRFZJYnVPWHVHZW4yWG9qdnliTWN6K2kzbGJadnhr?=
+ =?utf-8?B?QU5xVUpuS1FJZ3lNWHhxd2JNM2dSYUd2MGhTMEYreEpORXk3R1pmbUpFekp6?=
+ =?utf-8?B?eVp1ZlJsWUhIWEM2VDU0cHlIRHZZOHBTVjFQMEJ0VDNqbGlHRktOTERMZ25a?=
+ =?utf-8?B?TzRpUVFzNmZNM1EzdG9aTnNpby9pd2djMzVac1R4MHA4ZWQrQjdGUm1naFhL?=
+ =?utf-8?B?MUtxbDZDdFNDaWREaFpJMmlINXYwODhRNjVJNUF3PT0=?=
+X-Microsoft-Antispam-Message-Info: XgN2+ITB+qEtlG8l8lIrRYa2gxDqfLUIhmwv3XRwrn8AXti7/PaODexY6FabxoaCpthMEDhH4NDMwLhIvMJoUUK1hn0huv0cpstpEpks6Rfg8khaOPpU7Aa0Stbswdb6Jntiv23XmPh6gAiBtHC8jO0LK6Mz83kwn5yYphvcn561GjYQQdoqALsm/11It11c
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1343;6:3K34lyE68X613FMGNR95HuL7seAQx3mAnl7GoOJFuXlqTouI/E09wZUtbBPZJhz5zg8VI1PIVTVMIgHU8v2Z5NJWmsYVJ49QVOocGM5fPfMiwvsMLAbeacsbwwnfEu/gBvv1gOVve/gFCGzUk4abA0nSlHNt62PC9/FlFi8er2S9oGbzZbFp7jWB3Kie49WK7MM6LW6IO3R5GnorKw35a4wqqwXu/N7KMOPFVh+YElu0IMHz90thEiQ82Bn/pchyghbLAqXQvbzIvWDJ92zx024d5bC+0Dnlb22fKRIlPRw3qpvfMr/1tzFmyw+SeAaYim9LXaF9xPaIIpZuFb9AWKeANFbyaKD/avCb7D41PveREtlC/C+Ud85+X6gNefQli1mLmGR/LCWIo1AQml+duz7qNhf2F+v8U3W3uBFLWy6cqjAg0POEdlf3Axk0DOAmHOi6JmLaLcpCFLU10DhqKQ==;5:5Ha+Y9/UmsIN2d4vuMSLospUlcj3YY7kqgmruFmTYATryzwdFnD0oADBr/jFk6lI/IEze9lltMMh70PWT/hS+GuA458+aWap9EGfGfqCtGHGnO4L6SVPcWgWcVbI5VJAQKoGgU61i3uP5sRQ7L14Q32dxQJJI3CT2ZBsBNEISUI=;24:QrCIx74E0S2fgGm4kvZ2PSDe93otBCnxW7W9t9/1H6oz1qyOSKcypZOBJcjP0nYlBs+E6tU5JIS11wsEaV997itqsB5zW1nFEIYkE6dlVdk=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1343;7:AdNlNNKku/58vhEnChiq/M7+cvIGn6IUcGIg1Y1pAkmdBIVQGuxZtA/PZQssYF+VSQaDfpLBSzkoCuzTmnQuSe7/xhu20caNHzhuI1Fwo3sDSj2VmHaofiXvLLu+k1ywLzoLjT13+35lGRefDpD4abEBbNZUq5wI0GlmyC2u9KRqCw7bx1iVZR2lR2BDiK9dpqgSV1zljhSr8xJNUz0lfT8XhE+jbE0x+xFgzaXykb7wEVtPGrbcyePR2SJdlIY2;20:DSs0OeSSeBggkZ1pql68w6z+YFXM4Zj5TSE+20l+SkS1V5JqT+lclB4vHBHhAJaKXKU1Y+Sl0USXD9H3Abk9X6uVaGyi0Jair5KbHXh0+8FeX7M9DcQm5ak2GT7DEuNI/XKRPVROvLIoBb0Y/70l5BBKKyaEY9BCwF0+t2+ezpU=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2018 11:16:53.9752 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f436a64-21fd-415b-c437-08d5930b14c5
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1343
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26.03.2018 05:37, Dave Chinner wrote:
+> On Fri, Mar 23, 2018 at 03:39:53PM +0300, Kirill Tkhai wrote:
+>> On 23.03.2018 02:46, Dave Chinner wrote:
+>>> On Thu, Mar 22, 2018 at 07:52:37PM +0300, Kirill Tkhai wrote:
+>>>> Here is the problem I'm solving: https://lkml.org/lkml/2018/3/21/365.
+>>>
+>>> Oh, finally you tell me what the problem is that you're trying to
+>>> solve. I *asked this several times* and got no response. Thank you
+>>> for wasting so much of my time.
+>>>
+>>>> Current shrinker is not scalable. Then there are many memcg and mounts,
+>>>> the time of iteration shrink_slab() in case of global reclaim can
+>>>> take much time. There is times of shrink_slab() by the link. A node
+>>>> with 200 containers may waste 4 seconds on global reclaim just to
+>>>> iterate over all shrinkers for all cgroups, call shrinker::count_objects()
+>>>> and receive 0 zero objects.
+>>>
+>>> So, your problem is the way the memcgs were tacked onto the side
+>>> of the list_lru infrastructure and are iterated, which has basically
+>>> nothing to do with the way the low level XFS inode shrinker behaves.
+>>>
+>>> /me looks at the patches
+>>>
+>>> /me shudders at the thought of external "cache has freeable items"
+>>> control for the shrinking of vfs caches.
+>>>
+>>> Biggest problem I see with this is the scope for coherency bugs ini
+>>> the "memcg shrinker has freeable items" tracking. If that happens,
+>>> there's no way of getting that memcg to run it's shrinker ever
+>>> again. That seems very, very fragile and likely to be an endless
+>>> source of OOM bugs. The whole point of the shrinker polling
+>>> infrastructure is that it is not susceptible to this sort of bug.
+>>>
+>>> Really, the problem is that there's no separate list of memcg aware
+>>> shrinkers, so every registered shrinker has to be iterated just to
+>>> find the one shrinker that is memcg aware.
+>>
+>> I don't think the logic is difficult. There are generic rules,
+>> and the only task is to teach them memcg-aware shrinkers. Currently,
+>> they are only super block and workingsets shrinkers, and both of
+>> them are based on generic list_lru infrastructure. Shrinker-related
+>> bit is also cleared in generic code (shrink_slab()) only, and
+>> the algorhythm doesn't allow to clear it without double check.
+>> The only principle modification I'm thinking about is we should
+>> clear the bit only when the shrinker is called with maximum
+>> parameters: priority and GFP.
+> 
+> Lots of "simple logic" combined together makes for a complex mass of
+> difficult to understand and debug code.
+> 
+> And, really, you're not suffering from a memcg problem - you're
+> suffering from a "there are thousands of shrinkers" scalability
+> issue because superblocks have per-superblock shrinker contexts and
+> you have thousands of mounted filesystems.
 
---o44d22k5nptwpobw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, but it's the way of how the containers are arranged. There are several
+FS_USERNS_MOUNT tagged filesystems in kernel, and these filesystems are tagged
+this flag, because they are safe and widely used in containers. It's impossible
+to unite all of them as the only partition.
 
-Hi,
+Also, separate ext4/xfs/etc partitions may be useful for some systems. You just
+can't know all the workloads, people use it.
 
-On Fri, Mar 23, 2018 at 10:36:35PM +0530, Jagan Teki wrote:
-> Hi Maxime,
->=20
-> On Tue, Mar 6, 2018 at 7:25 PM, Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> > Hi,
-> >
-> > Here is an preliminary version of the MIPI-DSI support for the Allwinner
-> > SoCs.
-> >
-> > This controller can be found on a number of recent SoCs, such as the
-> > A31, A33 or the A64.
-> >
-> > Given the sparse documentation, there's a number of obscure areas, but
-> > the current implementation has been tested with a 4-lanes DSI panel on
-> > an A33.
-> >
-> > The support is a bit rough around the edges at the time, and some artif=
-acts
-> > are still shown on the screen for some reasons. Wider testing with
-> > different display will hopefully nail those down.
-> >
-> > Let me know what you think,
-> > Maxime
-> >
-> > Changes from v2:
-> >   - Added a ports node under the DSI node
-> >   - Changed the huarui panel driver to an ili9881c driver
-> >   - Changed the panel vendor to bananapi
-> >   - Made the init table static in the panel driver
-> >   - Dropped the huarui vendor patch for the DT doc.
-> >
-> > Changes from v1:
-> >   - Rebased on 4.16-rc1
-> >   - Constified a few function arguments and structures
-> >   - Reworked the DT binding example a bit
-> >   - Reworked the panel driver to check for DSI return codes, and use DCS
-> >     helpers when possible
-> >
-> > Maxime Ripard (7):
-> >   drm/sun4i: tcon: Add TRI finish interrupt for vblank
-> >   dt-bindings: display: Add Allwinner MIPI-DSI bindings
-> >   drm/sun4i: Add Allwinner A31 MIPI-DSI controller support
-> >   dt-bindings: panel: Add the Ilitek ILI9881c panel documentation
-> >   drm/panel: Add Ilitek ILI9881c panel driver
-> >   arm: dts: sun8i: a33: Add the DSI-related nodes
-> >   [DO NOT MERGE] arm: dts: sun8i: bpi-m2m: Add DSI display
->=20
-> Any dependencies for this series on linux-next? it is not applying direct=
-ly.
+>> There are a lot of performance improving synchronizations in kernel,
+>> and they had been refused, the kernel would have remained in the age
+>> of big kernel lock.
+> 
+> That's false equivalence and hyperbole. The shrinkers are not
+> limiting what every Linux user can do with their hardware. It's not
+> a fundamental architectural limitation.  These sorts of arguments
+> are not convincing - this is the second time I've told you this, so
+> please stick to technical arguments and drop the dramatic
+> "anti-progress" conspiracy theory bullshit.
 
-Last time I rebased on top of 4.16-rc4, there was no dependency but
-the regmap patch found in the v2 that got merged. I haven't tried
-rebasing on next though.
+Your view is limited by XFS, but the fact you don't use this doesn't
+mean nobody is need such functionality. 
+ 
+>>> So why not just do the simple thing which is create a separate
+>>> "memcg-aware" shrinker list (i.e. create shrinker_list_memcg
+>>> alongside shrinker_list) and only iterate the shrinker_list_memcg
+>>> when a memcg is passed to shrink_slab()?
+>>>
+>>> That means we'll only run 2 shrinkers per memcg at most (sueprblock
+>>> and working set) per memcg reclaim call. That's a simple 10-20 line
+>>> change, not a whole mess of new code and issues...
+>>
+>> It was the first optimization, which came to my head, by there is no
+>> almost a performance profit, since memcg-aware shrinkers still be called
+>> per every memcg, and they are the biggest part of shrinkers in the system.
+> 
+> Sure, but a polling algorithm is not a fundamental performance
+> limitation.
+> 
+> The problem here is that the memcg infrastructure has caused an
+> exponential explosion in shrinker scanning.
 
-Maxime
+Yeah, so this is the reason I seeking for the solution.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>>>> Can't we call shrink of shared objects only for top memcg? Something like
+>>>> this:
+>>>
+>>> What's a "shared object", and how is it any different to a normal
+>>> slab cache object?
+>>
+>> Sorry, it's erratum. I'm speaking about cached objects. I mean something like
+>> the below. The patch makes cached objects be cleared outside the memcg iteration
+>> cycle (it has not sense to call them for every memcg since cached object logic
+>> just ignores memcg).
+> 
+> The cached flag seems like a hack to me. It does nothing to address
+> the number of shrinker callout calls (it actually increases them!),
+> just tries to hack around something you want a specific shrinker to
+> avoid doing.
 
---o44d22k5nptwpobw
-Content-Type: application/pgp-signature; name="signature.asc"
+This is a prototype, and this is not difficult to teach the code to differ
+shrinkers which need such the call, and the rest of them, and to implement
+some generic way for that.
 
------BEGIN PGP SIGNATURE-----
+Since shrinkers will call nr_cached_objects() and free_cached_objects()
+only for top memcg of reclaim, it will decrease the number of calls
+for every system, which has more that 1 memcg. I.e., almost for everyone.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq41i0ACgkQ0rTAlCFN
-r3Qe3w//ehSw4WAyVFs7pxvHWVrPtuTJ5YQ3ItSyDPnZaZsK/zUH4AJJj8MBGnju
-ydxiBCV8bfpbl1hqeqAcfqVA0VZXhFqspZvNUoX7BnObzqh3s77LqMSn+/Glldgr
-nTjXc9hbVA1zoQuXd8NyIzdSjTPzGLAZ81KXx/XdjqyuUJrNEGuo8FTRlNZJ/Cx6
-v8qg3cQFlz7ENulgzcL1ikHrF2IACn+HlaWLohQ8whXrHAnwW5gEea6wTREFzKuj
-gKBlF8ZkcaL8QDJ5L55AnEwfmv1CnWxbrY/5NfsggB1D/zmFTIXUn6zYKWRxIxof
-6tytgi1xx6d36aLNfRXrE73aVFHxFFW1EL1ORmndDyaORb8Xs+oFWpGR5R8++aRx
-64x8zGEnPnhbLYm0BDiHF4LW+xx49WD3FHS83Ay0iHtM+A+51CkqFz/wUYTm/ZHZ
-XA3kmdCfAiBcg72RK6VHp3iyGKUWph7Puq96vrpwzRd+PkR5p6GtnPsTkSgWqULQ
-d99CwtzixIwYuWGRF96M+MGQmSbK5eZzCLnIoyd21g6AOxBzaL08MooNvh1SeLKj
-Dc9i0ZtWdIElZyqsCyT6/WIDFyOn6fgxtJ1MUyHNxf+O3UzRXIY/bv5GIaHPsoRA
-+NHn3euWojWi/wSBKw9yLAmDdB/MbdFH3PyKfZj9QYXoZRTfVU0=
-=GVvI
------END PGP SIGNATURE-----
+> I've asked *repeatedly* for a description of the actual workload
+> problems the XFS shrinker behaviour is causing you. In the absence
+> of any workload description, I'm simply going to NACK any changes
+> that try to work around this behaviour. The rest of this reply is
+> about shrinker infrastructure and (the lack of) memcg integration.
 
---o44d22k5nptwpobw--
+I've already pointed the problem. And the patchset I referred needs some
+preparations around nr_cached_objects() and free_cached_objects()
+to differ really populated memcg shrinkers and not.
+
+Fortunately, this problem ends on the level of generic fs shrinker,
+and it doesn't touch specific-fs level. So, I have no patches for
+XFS and its shrinkers.
+
+I just reported xfs guys there is a problem, they may be interested in.
+But since nobody deploys many containers on XFS, and nobody is interested,
+this discussion really has no sense.
+
+>> --- a/mm/vmscan.c
+>> +++ b/mm/vmscan.c
+>> @@ -482,6 +482,33 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+>>  	return freed;
+>>  }
+>>  
+>> +static void shrink_cached_slab(gfp_t gfp_mask, int nid, int priority)
+>> +{
+>> +	struct shrinker *shrinker;
+>> +
+>> +	if (!down_read_trylock(&shrinker_rwsem))
+>> +		return;
+>> +
+>> +	list_for_each_entry(shrinker, &shrinker_list, list) {
+>> +		struct shrink_control sc = {
+>> +			.gfp_mask = gfp_mask,
+>> +			.nid = nid,
+>> +			.cached = 1,
+>> +		};
+>> +
+>> +		if (!(shrinker->flags & SHRINKER_MEMCG_AWARE))
+>> +			continue;
+>> +		if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+>> +			sc.nid = 0;
+>> +		if (rwsem_is_contended(&shrinker_rwsem))
+>> +			break;
+>> +
+>> +		do_shrink_slab(&sc, shrinker, priority);
+>> +	}
+>> +
+>> +	up_read(&shrinker_rwsem);
+> 
+> Ok, so this shrinks /only/ non-memcg slabs. It's identical to
+> calling shrink_slab() with a null memcg. We already do this in all
+> the relevant memory reclaim paths when necessary....
+
+No, it's not so. We call shrink_slab() with null memcg to iterate
+!memcg-aware shrinkers only. While the new function is used to
+shrink cached objects of memcg-aware shrinkers. There is a difference.
+
+>> +}
+>> +
+>>  void drop_slab_node(int nid)
+>>  {
+>>  	unsigned long freed;
+>> @@ -493,6 +520,8 @@ void drop_slab_node(int nid)
+>>  		do {
+>>  			freed += shrink_slab(GFP_KERNEL, nid, memcg, 0);
+>>  		} while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
+>> +
+>> +		shrink_cached_slab(GFP_KERNEL, nid, 0);
+>>  	} while (freed > 10);
+> 
+> ... like here, where the inner loop always calls shrink_slab() with
+> a NULL memcg as it's first iteration. So your addition here is
+> basically a no-op - we've already run non-memcg cache reclaim by the
+> time your addition to run non-memcg cache reclaim is called. And
+> here:
+
+As I pointed below, shrink_cached_slab() works with memcg-aware shrinkers.
+
+>> @@ -2573,6 +2602,8 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+>>  			shrink_slab(sc->gfp_mask, pgdat->node_id, NULL,
+>>  				    sc->priority);
+>>  
+>> +		shrink_cached_slab(sc->gfp_mask, pgdat->node_id, sc->priority);
+>> +
+> 
+> You're adding unconditional global slab cache reclaim to a path that
+> already does this but only in the calling contexts where it global
+> slab reclaim is actually necessary. Doing unconditional global slab
+> reclaim here will cause regressions.
+
+It's not a global reclaim. We only shrink cached objects there.
+The flag ".cached = 1" in the functions indicates the shrinkers,
+what they have to shrink.
+
+> So, let's address the number of shrinker callouts from
+> drop_caches(). You're original example from here:
+> 
+> https://lkml.org/lkml/2018/3/21/365
+> 
+> | In case of global reclaim, a task has to iterate all over the memcgs
+> | and to call all the memcg-aware shrinkers for all of them. This means,
+> | the task has to visit 200 * 10 = 2000 shrinkers for every memcg,
+> | and since there are 2000 memcgs, the total calls of do_shrink_slab()
+> | are 2000 * 2000 = 4000000.
+> 
+> The loop is:
+> 
+> drop_slab()
+>   for_each_online_node(nid)
+>     drop_slab_node(nid);
+>       for each memcg including NULL
+>         shrink_slab(nid, memcg)
+> 
+> With 200 containers w/ 10 mounts X 10 memcgs each. That means we
+> have 2000 mounts and hence 2000 memcg aware superblock shrinkers.
+> we have 2000 memcgs, so each superblock has 2000 memcgs attached to
+> it. And then we have N nodes in the machine.
+> 
+> So drop_slab() will call drop_slab_node() N times, and drop_slab
+> node will iterate all the memcgs until there's no more to free.
+> Each memcg with then iterate all shrinkers to find the memcg aware
+> shrinkers, then do work.  IOWs, we actually have a minimum scan of N
+> * 2000 * 2000 calls to shrink_slab(), not just 2000 * 2000.
+> 
+> The thing is, memcg shrinker contexts are not NUMA aware. They use
+> the list array that was implemented for memory nodes and instead use
+> it for a memcg list array, indexed by memcg ID rather than node ID.
+> IOWs, memcgs are not numa aware, so they do not need to be called
+> for every single node in the system. Only shrinkers in a global
+> context (i.e. no memcg) that are NUMA aware need to be called for
+> every node.
+> 
+> The patchset you posted implemented that mapping by adding a bitmap
+> of memcg-internal shrinker dirty state and a global array that
+> points directly to the struct shrinker that the bitmap index is
+> associated with. This externalises the dirty tracking into the memcg
+> code, which as I've already said I don't like.
+> 
+> The real problem here is that the shrinker itself is supposed to
+> keep context specific call-to-call information. In the case of
+> NUMA-aware shrinkers, that's kept in the shrinker->nr_deferred[nid]
+> array.  That's dynamically allocated for numa aware shrinkers, but
+> all memcg's that are called for the given shrinker all smash their
+> state into shrinker->nr_deferred[nid] - they don't have their own
+> nr_deferred state.
+>
+> This actually screws up the nr_deferred state for global reclaim,
+> and causes unexpected unfairness to memcg reclaim. i.e. Global,
+> non-memcg reclaim can defer pressure to all memcgs that shrinker is
+> called on for that node because the nr_deferred count is shared
+> based on nid. That means work we defer from one call to a memcg on
+> nid=0 will be applied to the next memcg recalim call on nid=0,
+> regardless of what it is. And if that first shrinker is then called
+> next on nid=1, it won't get it's nr_deferred from it's last call on
+> nid=0, it will get whatever is currently stored on nid=1.
+> 
+> IOWs, the memcg shrinker infrastructure itself violates the
+> principles of memcg isolation and fairness by completely screwing up
+> the call-to-call deferred work counts for individual memcgs and
+> global shrinker reclaim.
+
+Yes, it may be a problem, and I've already seen that. But since
+I've never meet the real bug reports about that, and nobody complained
+on that, I prioritized the problem with scalability is the first.
+
+> If you're interested in fairness and memcg
+> isolation in reclaim, then this is the first problem you need to
+> solve.
+> 
+> IMO, What we should be doing here is something like this:
+> 
+> drop_slab()
+> {
+>   do {
+>     freed = shrink_slab_memcg()
+>     freed += shrink_slab_numa()
+>     freed += shrink_slab_simple()
+>   } while (freed < 10)
+> }
+> 
+> i.e. we set up a distinct separation of shrinker roles according to
+> the contexts in which they are called. e.g.
+
+Drop slab is just and interface for /proc. It may be useful to measure
+the performance (what I actually do in the patchset), but this interface
+is not frequently used in real life.
+
+shrink_node() is the real-life reclaim hero.
+
+> 
+> shrink_slab_memcg()
+> {
+>   for_each_memcg(memcg)
+>     for_each_shrinker(&memcg_shrinker_list) {
+>       nr_deferred = shrinker_get_memcg_deferred(shrinker, memcg)
+>       do_shrink_slab(shrinker, 0, memcg, &nr_deferred))
+>       shrinker_store_memcg_deferred(shrinker, memcg, nr_deferred)
+>     }
+> }
+> 
+> shrink_slab_numa()
+> {
+>   for_each_online_node(nid)
+>     for_each_shrinker(&numa_shrinker_list) {
+>       nr_deferred = shrinker_get_node_deferred(shrinker, nid)
+>       do_shrink_slab(shrinker, nid, NULL, &nr_deferred)
+>       shrinker_store_node_deferred(shrinker, nid, nr_deferred)
+>     }
+> }
+> 
+> shrink_slab_simple()
+> {
+>     for_each_shrinker(&simple_shrinker_list) {
+>       nr_deferred = shrinker_get_node_deferred(shrinker, 0)
+>       do_shrink_slab(shrinker, 0, NULL, &nr_deferred)
+>       shrinker_store_node_deferred(shrinker, 0, nr_deferred)
+>     }
+> }
+> 
+> [ Note: This implies a shrinker can be on multiple lists. That's
+> fine, we can already do concurrent calls into a shrinker from
+> different reclaim contexts. But in doing this, the "iterate shrinker
+> list to find memcg aware shrinkers" goes aware. Similarly with the
+> basic shrinkers - we stop hitting them for every node we scan in
+> global reclaim and hence putting lots more pressure on them because
+> they are being treated as "one cache per node" instead of a single
+> cache. ]
+> 
+> The simple and numa cases can share nr_deferred[0] as they currently
+> do because a shrinker will only ever be one or the other, but we
+> still need shrink_slab_memcg() to have per-memcg nr_deferred values
+> because simple shrinkers can still be MEMCG_AWARE.
+> 
+> This makes it simpler to see the different calling contexts of
+> shrinkers, and easier for the calling code to call the correct
+> shrinker context with the correct state.  It also makes it easier to
+> pull memcg-awareness into the struct shrinker.
+> 
+> Further, it allows us to solve the dirty/clean shrinker skip
+> optimisations in a generic manner, because that can now be stored on
+> a per-node or per-memcg basis inside the struct shrinker. It's
+> available to all shrinkers, rather than being just a memcg-specific
+> optimisation, and it's easy to implement as part of a shrinker list
+> walk (i.e. for_each_dirty_shrinker()).
+
+nr_defered has a sense as a problem, but this is another problem, and
+its solution doesn't help the problem I'm solving and see in real worloads
+(these are just two different problems).
+
+Implementing of shrink_slab_numa() will help /proc/sys/vm/drop_caches
+only, which is mostly a debug tool. Not used in real life.
+
+While separating memcg and !memcg -aware shrinkers I've already done
+in the patchset.
+ 
+> We can also add simple wrappers like super_mark_shrinker_dirty(sb)
+> when we add an item to the LRU in the appropriate places to do the
+> work of activating the shrinker.
+
+Yeah, we may do that, if this improves readability for a user. The name
+sounds good for me too.
+ 
+> This seems much more appropriate to me, because it fixes the problem
+> of scanning/polling too many shrinkers at the shrinker state/context
+> level. That makes it generic and not memcg specific so helps
+> non-memcg system/workloads, too. It also fixes existing call-to-call
+> shrinker state problems that memcg reclaim currently causes and so
+> there's multiple levels of win here. Once this is all sorted out,
+> then we can deal with the subsystem shrinker behaviour knowing it
+> doesn't have to work around imbalance and fairness problems in the
+> infrastructure....
+
+Currently, all memcg-aware shrinkers are numa-aware too. So, separating
+them won't help. While, I've already separated memcg-aware and !memcg-aware
+in the patchset.
+
+Kirill
