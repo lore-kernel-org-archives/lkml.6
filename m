@@ -1,82 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeCZGo4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 02:44:56 -0400
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:58913 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751864AbeCZGox (ORCPT
+        id S1752021AbeCZGuB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 02:50:01 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38676 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751355AbeCZGt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 02:44:53 -0400
-Subject: Re: [RFC] new SYSCALL_DEFINE/COMPAT_SYSCALL_DEFINE wrappers
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
-        linux-mips <linux-mips@linux-mips.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <20180318161056.5377-1-linux@dominikbrodowski.net>
- <20180318161056.5377-5-linux@dominikbrodowski.net>
- <20180318174014.GR30522@ZenIV.linux.org.uk>
- <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
- <20180318181848.GU30522@ZenIV.linux.org.uk>
- <20180319042300.GW30522@ZenIV.linux.org.uk>
- <20180319092920.tbh2xwkruegshzqe@gmail.com>
- <20180319232342.GX30522@ZenIV.linux.org.uk>
- <20180322001532.GA18399@ZenIV.linux.org.uk>
- <20180326004017.GA2211@ZenIV.linux.org.uk>
- <20180326034750.GN30522@ZenIV.linux.org.uk>
- <CA+55aFw8VGnVgaWHVFP-LChMNaoANOwT18jJEWzSCRLFeRGcmA@mail.gmail.com>
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <428751c8-6920-096b-8694-a3f1b8990bdf@physik.fu-berlin.de>
-Date: Mon, 26 Mar 2018 15:44:18 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CA+55aFw8VGnVgaWHVFP-LChMNaoANOwT18jJEWzSCRLFeRGcmA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: 118.241.248.194
+        Mon, 26 Mar 2018 02:49:59 -0400
+X-Google-Smtp-Source: AG47ELtIY6YpYgVMIR8hYQjZ9ILyt9nJPPClnSqiSioXGbBc1rEJCRmTFP++vRa020jy5awOqPGFsQ==
+From: Minchan Kim <minchan@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, Minchan Kim <minchan@kernel.org>
+Subject: [PATCH 1/2] zram: correct flag name of ZRAM_ACCESS
+Date: Mon, 26 Mar 2018 15:49:50 +0900
+Message-Id: <20180326064951.123940-1-minchan@kernel.org>
+X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus!
+ZRAM_ACCESS is meant to lock a slot of zram so correct the name.
 
-On 03/26/2018 03:15 PM, Linus Torvalds wrote:
-> Secretly, I was hoping to kill x32, because it's not being used afaik.
-FWIW, we are maintaining an x32 port in Debian and there are some people
-actually using it [1]. There is one build instance running on VMWare that
-I am hosting [2] and around 10800 out of 12900 source packages build fine
-on x32 (12900 being the number for x86_64).
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ drivers/block/zram/zram_drv.c | 4 ++--
+ drivers/block/zram/zram_drv.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-The port is mostly stable but the fact that it's a 32-bit target with a
-64-bit kernel API often blows up in people's faces because they don't
-expect things like a 64-bit time_t on a 32-bit system.
-
-The port also has some issues with software unaware of the x32 and builds
-fail when they just test for __x86_64__ but not for __ILP32__, but overall
-it's usable and stable and has some performance advantages over x86_64.
-
-Adrian
-
-> [1] http://debian-x32.org/
-> [2] https://buildd.debian.org/status/architecture.php?a=x32&suite=sid
-
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 0f3fadd71230..4feb983ec9a3 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -755,12 +755,12 @@ static DEVICE_ATTR_RO(debug_stat);
+ 
+ static void zram_slot_lock(struct zram *zram, u32 index)
+ {
+-	bit_spin_lock(ZRAM_ACCESS, &zram->table[index].value);
++	bit_spin_lock(ZRAM_LOCK, &zram->table[index].value);
+ }
+ 
+ static void zram_slot_unlock(struct zram *zram, u32 index)
+ {
+-	bit_spin_unlock(ZRAM_ACCESS, &zram->table[index].value);
++	bit_spin_unlock(ZRAM_LOCK, &zram->table[index].value);
+ }
+ 
+ static void zram_meta_free(struct zram *zram, u64 disksize)
+diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
+index d71c8000a964..baecba5d56a5 100644
+--- a/drivers/block/zram/zram_drv.h
++++ b/drivers/block/zram/zram_drv.h
+@@ -46,7 +46,7 @@
+ enum zram_pageflags {
+ 	/* Page consists the same element */
+ 	ZRAM_SAME = ZRAM_FLAG_SHIFT,
+-	ZRAM_ACCESS,	/* page is now accessed */
++	ZRAM_LOCK,	/* zram slot is locked */
+ 	ZRAM_WB,	/* page is stored on backing_device */
+ 
+ 	__NR_ZRAM_PAGEFLAGS,
 -- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+2.17.0.rc0.231.g781580f067-goog
