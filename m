@@ -1,61 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752258AbeC2Ra1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 29 Mar 2018 13:30:27 -0400
-Received: from mx-rz-3.rrze.uni-erlangen.de ([131.188.11.22]:36605 "EHLO
-        mx-rz-3.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751182AbeC2Ra0 (ORCPT
+        id S1752125AbeC2RfK convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 29 Mar 2018 13:35:10 -0400
+Received: from mx36-out25.antispamcloud.com ([209.126.121.73]:47882 "EHLO
+        mx36-out25.antispamcloud.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751082AbeC2RfI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Mar 2018 13:30:26 -0400
-Authentication-Results: mx-rz-3.rrze.uni-erlangen.de; dkim=none
-        reason="no signature"; dkim-adsp=none (unprotected policy);
-        dkim-atps=neutral
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 204.85.191.31
-Date: Thu, 29 Mar 2018 19:30:02 +0200
-From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-To: Scott Bauer <scott.bauer@intel.com>
-Cc: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/11] block: sed-opal: ioctl for writing to shadow mbr
-Message-ID: <20180329173002.5mmhnl4urj4wovyo@studium.uni-erlangen.de>
-References: <cover.1520946114.git.jonas.rabenstein@studium.uni-erlangen.de>
- <cover.1521482295.git.jonas.rabenstein@studium.uni-erlangen.de>
- <9f94be9c32887aacdcba75bd6a3902d0350eb987.1521482296.git.jonas.rabenstein@studium.uni-erlangen.de>
- <20180319195224.GA3380@lst.de>
- <20180320093604.qge2sdnc5jrud6kg@studium.uni-erlangen.de>
- <20180320220907.zdzf7baag6haaonm@sbauer-Z170X-UD5>
- <20180321014321.xlkcyvcyr6j3usix@studium.uni-erlangen.de>
+        Thu, 29 Mar 2018 13:35:08 -0400
+Subject: Re: [PATCH] of_net: Implement of_get_nvmem_mac_address helper
+From: Mike Looijmans <mike.looijmans@topic.nl>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Florian Fainelli <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <robh+dt@kernel.org>, <frowand.list@gmail.com>
+References: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl>
+ <20180323151101.GB24361@lunn.ch>
+ <b68d4540-b15d-ec31-05a8-e1a4632bb5ee@topic.nl>
+ <886c94ef-e2c8-2afa-307d-1924c74c6dc0@gmail.com>
+ <cb12ea29-a7b0-cf66-7f5a-c09d36f443f0@topic.nl>
+ <20180324185324.GG31941@lunn.ch>
+ <d2dfee96-cd30-fa16-6c83-b55773e3aa91@topic.nl>
+Organization: TOPIC
+Message-ID: <3d719f25-fced-e934-04c0-b821807ac69b@topic.nl>
+Date: Mon, 26 Mar 2018 08:54:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180321014321.xlkcyvcyr6j3usix@studium.uni-erlangen.de>
+In-Reply-To: <d2dfee96-cd30-fa16-6c83-b55773e3aa91@topic.nl>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [192.168.80.121]
+X-EXCLAIMER-MD-CONFIG: 9833cda7-5b21-4d34-9a38-8d025ddc3664
+X-EXCLAIMER-MD-BIFURCATION-INSTANCE: 0
+X-Originating-IP: 37.74.225.130
+X-AntiSpamCloud-Domain: topic.nl
+X-AntiSpamCloud-Username: 37.74.225.128/28
+Authentication-Results: antispamcloud.com; auth=pass smtp.auth=37.74.225.128/28@topic.nl
+X-AntiSpamCloud-Outgoing-Class: ham
+X-AntiSpamCloud-Outgoing-Evidence: SB/global_tokens (0.00494305211016)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5sLa5xvgso75BLxN0ws4nDd602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO/C4OCl0Kbbt+9XCk4a8P9Do6bv9uXA7RnxGsANLrqSdK6yZps+LN9ymaUFPGNmD5xF+
+ +YkUu9Tbr+VjAWgfmEvgnytKz5DAISeFyRxXzhLXxkHXgTSJC2+q+O2n2sPwh4KDh5z/EnyT4j3I
+ gEq02tJJ1yCwixdbtKHzt3mNQSRJvVhLZgdxmDQ7cIZB7VUvbozTmBMwOvLZtmaGjZ8dL90diyBR
+ oIf0Il4z8QdQKXMNWfA8YBtNuM75L7DyT0/lS+eoFNOUZh/dSfLtiPRL5aImpiaXshAUGr287VWd
+ k0Mxg8CBO1Snvm6qXHQp7O9kdbjwO0yeZFV1d//ut4bI1Lhz4UuEee9x9b4ll3Y/llQTWCEWK4MJ
+ jQR0Pz5bwy7RNp196BWWwnqth/mDG0UytXilIs0ttKbf3XFoG+46FpMiQJtR4QxWMOifmt9LOcQX
+ 1afTF2zzHOUj1s00F3rRRprij+9G/7d5MDq+6sd/vjq9CgncP+OvP+isXZUr+1RZeaNJa3F8c06f
+ uQ0QpMkrp1CBhp6T+J6jJzHlv+Uzoe0HOqw59LUzlXJicKiPCbtp3rfA7PB4TLvALLgvlz9CFnU1
+ FbJeDLLxromwh8BCwKxll4R0equGbXKeYbboZORQXcIDzcKcwQNyxDThuFIOpesTX5D0NHhhtAZG
+ f9IIVVIxTXdwUerr2rMiAujZBN/w9K0jiD6XqsJZtjQxlyCdsey2BlG+49QSeBk9dKuHUTlqbxe7
+ qoxNVYKc813bVtw5b/UYgfEXu9pU3207T/fvtt/psaFZvKpJM5HHp2Vqrh4Rs8swb5MfSXu8Q5rq
+ aHvbrDj5lPgyit3h5S5P6zik8IeLBDMrD7q/cJogwbqzsuokBagVbS9OA+jV9+0g+n5apbnwgWiU
+ UeSI3arJtWqwRmBUoXAOl772tkAFRI6aswDWobZRBdjGWv5J5vcmVrPGubZwEg30hSVcKe3IMceu
+ LhngAsfYlmsS+1hzBW/nf5fxJpVgArtFgu5yCkj2FWgQAHWPzEwiS0YBH1anZZn1+QStUm2HWAMH
+ aWlcx1u8Bzu2IRFsicyJMEhQFtD8PLoinrm3KJRZf61/tkXkJJaiQwE3/U1j3iZNrWFmBliNp9xi
+ MS+4ayUpOtEhdxekWDmK9g==
+X-Report-Abuse-To: spam@quarantine2.antispamcloud.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Wed, Mar 21, 2018 at 02:43:21AM +0100, Jonas Rabenstein wrote:
-> On Tue, Mar 20, 2018 at 04:09:08PM -0600, Scott Bauer wrote:
-> > On Tue, Mar 20, 2018 at 10:36:04AM +0100, Jonas Rabenstein wrote:
-> > > On Mon, Mar 19, 2018 at 08:52:24PM +0100, Christoph Hellwig wrote:
-> > > > On Mon, Mar 19, 2018 at 07:36:50PM +0100, Jonas Rabenstein wrote:
-> > > > I hate doing this as an ioctls.  Can we make this a sysfs binary file
-> > > > so that people can use dd or cat to write the shadow mbr?
-> > > I already thought about providing a sysfs interface for all that instead
-> > > of using ioctls. But as I am pretty new to kernel programming I do not
-> > > have all the required insight. Especially, as writing the mbr requires
-> > > the sed-opal password I am unsure how a clean sysfs interface to provide
-> > > the password together with a simple dd would look like.
-Just wanted to ask, how to proceed with those patches/what I should do.
-Using sysfs instead of an ioctl is probably easier to use from userspace
-_if_ there is a good way to provide the password - which I do not know
-of :(
-If nobody else could think of a solution, shall writes to the shadow mbr
-remain unsupported?
+﻿On 25-03-18 10:17, Mike Looijmans wrote:
+> On 24-03-18 19:53, Andrew Lunn wrote:
+>>> A quick survey for the of_get_mac_address users learns that most of them do
+>>> a memcpy (or similar) right after it, so for these drivers the
+>>> "of_get_nvmem_mac_address" style signature that performs the memcpy (or
+>>> better, ether_addr_copy) is a better fit, e.g.:
+>>>
+>>> int of_get_mac_address(struct device_node *np, void *addr)
+>>
+>> Hi Mike
+>>
+>> This is a nicer solution, but it is quite a lot of work, there are a
+>> lot of users. Maybe Coccinelle can help?
+> 
+> About 58 of them, yeah. And this looked like such a simple thing when I 
+> started it...
+> https://elixir.bootlin.com/linux/v4.16-rc6/ident/of_get_mac_address
+> I have no experience with Coccinelle though.
+> 
 
-I'ld really appreciate feedback and possible solutions,
- Jonas
+I'll at least post a v2 patch with what we've discussed so far.
+
+Another thing that just occurred to me is that the nvmem interface would also 
+allow a MAC address to be written to NV storage. Haven't looked at that path, 
+but it would be nice to be able to permanently program the MAC address using 
+standard interfaces.
+
+
+Kind regards,
+
+Mike Looijmans
+System Expert
+
+TOPIC Products
+Materiaalweg 4, NL-5681 RJ Best
+Postbus 440, NL-5680 AK Best
+Telefoon: +31 (0) 499 33 69 79
+E-mail: mike.looijmans@topicproducts.com
+Website: www.topicproducts.com
+
+Please consider the environment before printing this e-mail
