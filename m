@@ -1,193 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752042AbeCZM3v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 08:29:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57644 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751141AbeCZM3t (ORCPT
+        id S1751614AbeCZMbq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 08:31:46 -0400
+Received: from mail7.hitachi.co.jp ([133.145.228.42]:57925 "EHLO
+        mail7.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751024AbeCZMbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 08:29:49 -0400
-Subject: Re: [PATCH v6 12/12] ima: Write modsig to the measurement list
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Date: Mon, 26 Mar 2018 08:29:37 -0400
-In-Reply-To: <20180316203837.10174-13-bauerman@linux.vnet.ibm.com>
-References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
-         <20180316203837.10174-13-bauerman@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 26 Mar 2018 08:31:44 -0400
+From: =?utf-8?B?5LqA5LqV5LuB5b+XIC8gS0FNRUnvvIxISVRPU0hJ?=
+        <hitoshi.kamei.xm@hitachi.com>
+To: Ilya Dryomov <idryomov@gmail.com>
+CC: Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        "sage@redhat.com" <sage@redhat.com>,
+        "elder@kernel.org" <elder@kernel.org>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: Re: Re: [PATCH 1/2] rbd: RBD_DEV_FLAG_THICK rbd_dev_flags
+ bit
+Thread-Topic: [!!]Re: Re: [PATCH 1/2] rbd: RBD_DEV_FLAG_THICK rbd_dev_flags
+ bit
+Thread-Index: AQHTwonEUhXsyCvpRUulPb6EV3xvyKPc+DOAgAV87eA=
+Date: Mon, 26 Mar 2018 12:31:14 +0000
+Deferred-Delivery: Mon, 26 Mar 2018 12:30:55 +0000
+Message-ID: <C8603108370B1949BF3CC7742DDE5D35B8B42988@GSJPTKYDCEMBX32.service.hitachi.net>
+References: <5AAFA682.2080901@hitachi.com> <5AB0E4F3.8090108@easystack.cn>
+ <C8603108370B1949BF3CC7742DDE5D35B8B39FD9@GSjpTKYDCembx31.service.hitachi.net>
+ <CAOi1vP8eLcc6u-XhpSu33+3eDygy3Mp+_tJXT7ygdwsnUs-RmQ@mail.gmail.com>
+ <CAOi1vP_7La=nCs71wG3=HbYLaxM3uBFytv8pjGJLuR_uuB0GLg@mail.gmail.com>
+In-Reply-To: <CAOi1vP_7La=nCs71wG3=HbYLaxM3uBFytv8pjGJLuR_uuB0GLg@mail.gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.232.29.202]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 X-TM-AS-GCONF: 00
-x-cbid: 18032612-0020-0000-0000-000004096024
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032612-0021-0000-0000-0000429D8F29
-Message-Id: <1522067377.3541.47.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-26_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803260136
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2QCVn12029648
 
-On Fri, 2018-03-16 at 17:38 -0300, Thiago Jung Bauermann wrote:
-> Define new "d-sig" template field which holds the digest that is expected
-> to match the one contained in the modsig.
-> 
-> Also add modsig support to the "sig" template field, allowing the the
-> contents of the modsig to be included in the measurement list.
+Hi Ilya,
 
-Although including the appended signature in the template data doesn't
-make sense on its own, as the file digest (without the appended
-signature) is needed to validate the appended signature, defining a
-new template field and its usage should be independent of other
-changes.
+I think your patch fully completes our purpose and I confirmed
+that the kernel with the patch could work well by testing in my environment.
 
-Mimi
+I added the notrim option to rbd map command in accordance with
+your kernel rbd driver patch, and I pushed the patch to GitHub
+(https://github.com/hitoshikamei/ceph/tree/rbdmap-notrim).
 
-> 
-> Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-> ---
->  Documentation/security/IMA-templates.rst  |  5 ++++
->  security/integrity/ima/ima_template.c     |  4 ++-
->  security/integrity/ima/ima_template_lib.c | 47 +++++++++++++++++++++++++++++--
->  security/integrity/ima/ima_template_lib.h |  2 ++
->  4 files changed, 55 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
-> index 2cd0e273cc9a..f2a0f4225857 100644
-> --- a/Documentation/security/IMA-templates.rst
-> +++ b/Documentation/security/IMA-templates.rst
-> @@ -68,6 +68,11 @@ descriptors by adding their identifier to the format string
->   - 'd-ng': the digest of the event, calculated with an arbitrary hash
->     algorithm (field format: [<hash algo>:]digest, where the digest
->     prefix is shown only if the hash algorithm is not SHA1 or MD5);
-> + - 'd-sig': the digest of the event for files that have an appended modsig. This
-> +   field is calculated without including the modsig and thus will differ from
-> +   the total digest of the file, but it is what should match the digest
-> +   contained in the modsig (if it doesn't, the signature is invalid). It is
-> +   shown in the same format as 'd-ng';
->   - 'n-ng': the name of the event, without size limitations;
->   - 'sig': the file signature.
-> 
-> diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-> index 30db39b23804..36fc32f538b5 100644
-> --- a/security/integrity/ima/ima_template.c
-> +++ b/security/integrity/ima/ima_template.c
-> @@ -43,8 +43,10 @@ static struct ima_template_field supported_fields[] = {
->  	 .field_show = ima_show_template_string},
->  	{.field_id = "sig", .field_init = ima_eventsig_init,
->  	 .field_show = ima_show_template_sig},
-> +	{.field_id = "d-sig", .field_init = ima_eventdigest_sig_init,
-> +	 .field_show = ima_show_template_digest_ng},
->  };
-> -#define MAX_TEMPLATE_NAME_LEN 15
-> +#define MAX_TEMPLATE_NAME_LEN 24
-> 
->  static struct ima_template_desc *ima_template;
->  static struct ima_template_desc *lookup_template_desc(const char *name);
-> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-> index afb52a90e532..1dca082cce43 100644
-> --- a/security/integrity/ima/ima_template_lib.c
-> +++ b/security/integrity/ima/ima_template_lib.c
-> @@ -220,7 +220,8 @@ int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
->  	return 0;
->  }
-> 
-> -static int ima_eventdigest_init_common(u8 *digest, u32 digestsize, u8 hash_algo,
-> +static int ima_eventdigest_init_common(const u8 *digest, u32 digestsize,
-> +				       u8 hash_algo,
->  				       struct ima_field_data *field_data)
->  {
->  	/*
-> @@ -323,6 +324,35 @@ int ima_eventdigest_ng_init(struct ima_event_data *event_data,
->  					   hash_algo, field_data);
->  }
-> 
-> +/*
-> + * This function writes the digest of the file which is expected to match the
-> + * digest contained in the file's embedded signature.
-> + */
-> +int ima_eventdigest_sig_init(struct ima_event_data *event_data,
-> +			     struct ima_field_data *field_data)
-> +{
-> +	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
-> +	enum hash_algo hash_algo = HASH_ALGO_SHA1;
-> +	const u8 *cur_digest = NULL;
-> +	u8 cur_digestsize = 0;
-> +	int ret;
-> +
-> +	if (!xattr_value || xattr_value->type != IMA_MODSIG)
-> +		return 0;
-> +
-> +	if (event_data->violation)	/* recording a violation. */
-> +		goto out;
-> +
-> +	ret = ima_get_modsig_hash(xattr_value, &hash_algo, &cur_digest,
-> +				  &cur_digestsize);
-> +	if (ret)
-> +		return ret;
-> +
-> + out:
-> +	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
-> +					   hash_algo, field_data);
-> +}
-> +
->  static int ima_eventname_init_common(struct ima_event_data *event_data,
->  				     struct ima_field_data *field_data,
->  				     bool size_limit)
-> @@ -379,10 +409,23 @@ int ima_eventsig_init(struct ima_event_data *event_data,
->  		      struct ima_field_data *field_data)
->  {
->  	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
-> +	int xattr_len = event_data->xattr_len;
-> 
->  	if (!is_ima_sig(xattr_value))
->  		return 0;
-> 
-> -	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
-> +	/*
-> +	 * The xattr_value for IMA_MODSIG is a runtime structure containing
-> +	 * pointers. Get its raw data instead.
-> +	 */
-> +	if (xattr_value->type == IMA_MODSIG) {
-> +		int rc;
-> +
-> +		rc = ima_modsig_serialize_data(&xattr_value, &xattr_len);
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	return ima_write_template_field_data(xattr_value, xattr_len,
->  					     DATA_FMT_HEX, field_data);
->  }
-> diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
-> index 6a3d8b831deb..3cd353e83f73 100644
-> --- a/security/integrity/ima/ima_template_lib.h
-> +++ b/security/integrity/ima/ima_template_lib.h
-> @@ -38,6 +38,8 @@ int ima_eventname_init(struct ima_event_data *event_data,
->  		       struct ima_field_data *field_data);
->  int ima_eventdigest_ng_init(struct ima_event_data *event_data,
->  			    struct ima_field_data *field_data);
-> +int ima_eventdigest_sig_init(struct ima_event_data *event_data,
-> +			     struct ima_field_data *field_data);
->  int ima_eventname_ng_init(struct ima_event_data *event_data,
->  			  struct ima_field_data *field_data);
->  int ima_eventsig_init(struct ima_event_data *event_data,
-> 
+So, could you please merge your patch to the kernel? If your patch is merged,
+then my patch can work, so I will send the Pull Request.
+
+Regards,
+
+-- 
+Hitoshi Kamei
