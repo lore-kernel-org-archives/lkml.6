@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752663AbeCZRDo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 13:03:44 -0400
+        id S1752684AbeCZRDu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 13:03:50 -0400
 Received: from mail-db5eur01on0061.outbound.protection.outlook.com ([104.47.2.61]:57120
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752606AbeCZRDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 13:03:41 -0400
+        id S1752606AbeCZRDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 13:03:46 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Ayan.Halder@arm.com;
 From: Ayan Kumar Halder <ayan.halder@arm.com>
@@ -14,9 +14,9 @@ To: ayan.halder@arm.com, liviu.dudau@arm.com, brian.starkey@arm.com,
         malidp@foss.arm.com, airlied@linux.ie, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
 Cc: nd@arm.com
-Subject: [PATCH 2/8] drm/arm/malidp: Modified the prototype of malidp_se_irq_fini
-Date: Mon, 26 Mar 2018 18:03:14 +0100
-Message-Id: <1522083800-30100-3-git-send-email-ayan.halder@arm.com>
+Subject: [PATCH 4/8] drm/arm/malidp: Split malidp_se_irq_init
+Date: Mon, 26 Mar 2018 18:03:16 +0100
+Message-Id: <1522083800-30100-5-git-send-email-ayan.halder@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522083800-30100-1-git-send-email-ayan.halder@arm.com>
 References: <1522083800-30100-1-git-send-email-ayan.halder@arm.com>
@@ -28,46 +28,46 @@ X-ClientProxiedBy: VI1PR0502CA0018.eurprd05.prod.outlook.com
  (2603:10a6:209:45::13)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: e6d9c0d9-d864-45a6-5d62-08d5933b855d
+X-MS-Office365-Filtering-Correlation-Id: 91c44057-ec63-44b4-9ef2-08d5933b8847
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB3032;
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3032;3:+UXzGxo5m5HJxg0h1NyW0lk84n70gPbBHLkBjKrg2voHa6F44GymXYp7jhxhmufUrRwGngNA2cuqon3r4tB83Rbp6Itp1IGjlv9387Mfy9P0rV5acOoK8nRfeJKx2wUHAzK/qFxxSoB22t3cRzWJRqjAzfUbqvQRIS7joEurYjRoAHugIhoSw0QHQ0VmYqq3DgUYzsLOp3LRT6T/fKMBtSciEQes2Oes1G+ueVexvbKQWvY+iomGiDXwrv/2Xx6v;25:MZPCbmE1mPhzRrZaMxNd5bGBBfeZ3mu/dPdpm7t6j94AlMGuSy7fFA6c0FbQmLjZ+zhY8YsDKjJNdMz/KLeqFXbo1rZcdrC/uchv1rLM2RMLxJIH4ToN29GFmRge1IL5MOOVHIcCBpYmGlycPuxExjjzZGCtzzN/xIc/Wi77NrClyxMImGmQy9FdKbQIik3tbM0xbRTc0HCguhWID8Kr1hnW4ljEgtFj6EfbPr/cT7JhJjqXJvuamMxWXZnShabK3V1CS8EyWdlTs0DWyMDh/yZxxMKEmCcteyKjp70IiCL5eJtHjLyqNsqqUo0ZIKfOW4kyvk2O1RcgMFEJGPqMAw==;31:i+WHPEYy+bUsRahuk9gGGSAyfUBysqSkAjtWG+oE/buEsXyIaViCMuELKf6Vu1/fGZM5qrjepXdELJfToPlC+i/xxnbkBef8BdcSKfKCKcOHn0sfzwwPNRY2sf5s6iui0MvjY5i525FiMxi00y6if+HzngTohNNaS03UUM6CHMBURSIV3n7uoY/ldH5LotUu/+IFvCe76B2Ruy1puYhJKjbwh5vIESFR7I6H0sbjkkY=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3032;3:xmaS+M923Hy3aeTH1AhhLK2FneMMnNPjNe+8jw3SkV6Ocf1qqByIbCgthDxh6NYLHPbC/kwbgTxU5DAIJRg1xxV+LWQisEpgbKWLc8SnAPzxB8sbw3ejtwH2DIdWFbweaOgVr25z12c7VpReaQVKHQJpGIQ6nTWuy1yDIyp39BdRW6SyZqh7t51rokaOtv9jYQVK4aEvAA+d0bjzEWqLTg60CoVi/ZS3E8fWkaYMuTmREhFaeQFXmaog03ZC9LF7;25:8CEc/7yFVGoVPxO4OO6h2WWty86Os1L9jc/WHUmruIxg/h7iYR7GTweHuME7d1c3tPdZ2bhGDlG4bnz0t7uFoCyLnXuBT906FZ7fxTkicV+wfoLqTOD+P+AUVxT6SGFiStiPdFW2iBGPkOYtUZ5IzAtzvM6iWmE9+4aKo9yv8gELC6ZpS7KFZGEUdw08ON6Ie7iXlKJJ9XBhpAiM54M1C/kGaglxBXFVDgZc94aJz7kNGOXk69s2YUqCOvdpzSsVfha8dFxoYPm5sDtPzLxCeU2aeK++lFnpNpjEhpXDiK9SwQwfzuhTuYR3jAnt1/yR7M3SxHM1/oRZpNQ4CbiWBg==;31:5DpxD+lPXm6wS5e90bDXmkAzKuNA7wK0RaLpgwoNzESmeUxYXmBXDKkLJ1exdG5v0ip169twg5ytsx4akZRmGzZJn444dZEwQ0TFo/+3qmpF8wbOe7+yB+Y4oo46hKxrjnF1+ZfwMEvDuk8TFDqLD/xiR1ToPPyTLhFOyE48eSo2MkviHPYTyy6sHVZ/WXttdm1O+8iDBEXvTX6cR8n4igU4r1I+YAdLk2uSZ9CmpEU=
 X-MS-TrafficTypeDiagnostic: AM6PR08MB3032:
 NoDisclaimer: True
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3032;20:a2j5Td9JtGsnhz7SGwc6qiEWdYnXHjdN4sER5JLqTckCdqU2tHW5373Aqx7NRRx+DT5+VmJ6bGMKD49xy66mfveq7549ChdN72wdD4i9Tr3N2soEe2fS5Uej5fTM7ReM4CKIZ6UReHTFncYKQWKrKYZcUDnZ2FBxMlZlaPA4O10=;4:/kR3bsL1HTQ0eLDO/Ht1+DnV1qYXMoqbiqQLbUDAseKflYZ/caVfmJIKXFw70u8dtFQKoTDvyG4U/KehLkOEPBXizIL+0AGt8NfOeQogd3cV7gjgudMidi95g0uX6e2aMUjyHo3f2WuPTusJmLSg6oMnH8AvbV90dvQUeAqQ88R9C8qjtQcGCyxg7BwQgtES5+2pCxWEUC8BcseSEKRZXuifjhf1nXX9Os3bUGer4V/v9IVDf94FA+QdtCjSUis992Gjc/4VbZJlozFth4+oMjB/1rX6k4TDty/Gocodgd/QSU4X3t7JrqQxfmjAKmFd
-X-Microsoft-Antispam-PRVS: <AM6PR08MB30329475CE05912685DB7E01E4AD0@AM6PR08MB3032.eurprd08.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3032;20:TwHf8CASLYHljGSgjRyMJvjkD0k0Y36pmAyfiQx0/3CcXwjW6g+UKzTQht15TqaIMhkpuccc6lcS4yIo/yqf0Qjq3E3om4BJM5svXqNp8eFXeZ6vJWcGHFXufRIl5xWeJW6FiQEt28+dK7B1OamBlXR7uYUAzk0nM01OBm/IFSU=;4:4ccGg+Ic3XmHibNn/9o6/B62HiYCYb5YmQx0WXPLLv9HLCthWt0z8C3vjCdW81J5XKpK6HgJtLdH8YRv6hBBEygcnI00evMnnEfFm+xjImFeiU8178KmzxH/Mks0o5AWg3RalY2dCr2naoFlYnuGdJpoL3/lHNLegkHPFgEPj9FhIIirKK//Ik3lZ/ddR7RvuRUIVouM1N8Jk1Ygo3mHeZphNsvaFXi4a6x2kTygaxjVBorBR+sVOy1BpBbYn8yRnG2fnsGauRiZ90yyyeATycqWLd339llvONuhvlvRZ267ZsUTQVqHBjo+cBsio9Cb
+X-Microsoft-Antispam-PRVS: <AM6PR08MB30329B9AB11A8818E7322C14E4AD0@AM6PR08MB3032.eurprd08.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:AM6PR08MB3032;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3032;
 X-Forefront-PRVS: 06237E4555
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(39380400002)(396003)(346002)(376002)(199004)(189003)(76176011)(305945005)(26005)(8936002)(446003)(86362001)(575784001)(478600001)(11346002)(6486002)(16526019)(51416003)(72206003)(7696005)(7736002)(53936002)(4326008)(486005)(486005)(25786009)(105586002)(47776003)(66066001)(68736007)(97736004)(316002)(6666003)(2906002)(106356001)(16586007)(2616005)(3846002)(52116002)(6116002)(5660300001)(8676002)(36756003)(50226002)(81166006)(50466002)(956004)(81156014)(48376002)(386003)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB3032;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR08MB3032;23:I1Jt/w5iil00vcgHbNGUgb+5cyAi6yZ9n1HxmOmJn?=
- =?us-ascii?Q?+wWUvz9hkxfeHzYckAvM2lyAQEP+q5sDt36NJGts3+pFcsMuUGaZjrsTyoyB?=
- =?us-ascii?Q?gQc2fTOIxOm1cp/lVfHXKm1iTDMGIQ/1h3T8q2eJ3iQ5uCpPMaQaFrDcBfWp?=
- =?us-ascii?Q?8jpiI2xaHPylkUKEBGtksWBVbl903sWmyJ8LqT9l8fAFrEEuj37Xy2oqN5bI?=
- =?us-ascii?Q?lhdJS7qFCmPtBuV60s+KMAPRuhdCLhBJyDE08cMB1GSuUoqJgYlIHCllmVVr?=
- =?us-ascii?Q?Sx5J0+GlMNRyMFinaaUfockVuQxW5Od9nV32jQKdPo93xBFFoxV/mwqKZjXk?=
- =?us-ascii?Q?XZqcG4bpu/cHoKD+tXOpkB5egYEwvAl9MtV2u00dkH2xyLyY6VGAhgB42wxz?=
- =?us-ascii?Q?YZNrBRsFbT7byoFtE8X1NDngXv9/Ouz5Kve3TUbZ+HAbP0dDdgRlGqAS2Prb?=
- =?us-ascii?Q?0lVE60+8RYWSDJC1igjKyZlIq1EPQx3uw7gsG+wCcVdnZztDUGGm+onS3JcY?=
- =?us-ascii?Q?2tdlPCswdXOL0rlkh7szi2MJjolnL4hpROFd0HbycbYczOJ27IkYhrVjlyaA?=
- =?us-ascii?Q?4XEmSV3mzgF9hhMKYOoov23fiPqjzZYTKygjrnrFO6IqRIxy6SFRtQWeD9l5?=
- =?us-ascii?Q?FdGDKoXzSL071fMkJqXoUqeNPtTYHqErnTsCPuk2ofuUuOiskKydpHCE4I/k?=
- =?us-ascii?Q?2pe5yDNe9BVSPrXoxGZ0AXf5LyMD4HPreCzsMukG74LqBWteuoMWksROU+hw?=
- =?us-ascii?Q?sqjLklG0EIomeGhmvf1uo006XFVVQznRJ9bFTHGAw5E2N8gvgbNe3Uex76SO?=
- =?us-ascii?Q?BECUzFeOcdHBNBudKIto8b+yyzjxjuhHgKsSae14zGuiIlbMSz+psAbkZtQL?=
- =?us-ascii?Q?N75NqF0Bb/ZI9EYsLMkn7pk+v0+MSoZQi/XFypfx0dtsZ5o+3I2I03CiyvWh?=
- =?us-ascii?Q?UJhgAnwnAdXteEzY4UG4V6kbmbjJgdtzS1yxI5A8rHru4YFVEbIslK3OKSm6?=
- =?us-ascii?Q?0gNAWbD7cNsRMbgs7sZLfpjOAxRz7/5K1Br73A2yot6hzLhAqy0NWmSrqsJp?=
- =?us-ascii?Q?zW7d7xRwYGLvt8CRydT8Yf4ef1x3I77RiUAqz+NqGvHwqioPq3r7zV86qVWV?=
- =?us-ascii?Q?8UqHzh3Xe2Hruv4xf6P/NHxpkxTImUpyYbBTEDSIy7TY66N2Vflqh8rs1oXh?=
- =?us-ascii?Q?aTJ6xW0Uz0L91Q=3D?=
-X-Microsoft-Antispam-Message-Info: oWP9AgWcY93N/hz9SqzTGrdu/1cvhmRtRgvVsOimW/S2nnlxjx7GHS+ThCJJHQkGUF/NUS0oq61/zVw9SR9xJmb1qKfKKtGHmHpNeFP6zdATXJQVq2yDdHBikHfq3AurDDL2lPt9tePw0Thgmkst8EpiayWKIv9bV+4CME4P1/M1LZMW1N0yZqpUjrOuYbVj
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3032;6:K7zyoGTxAtpwe+CeqURAG/rxAYr/NJvtnruNJ2Qo9vi4jDdaSDvRuRNpGX9kGhFo1L/psXa01bPrhGplltAJqF/A+ktSjv5sllKx8wMY8apPvi23J+0SxjJw0BNtmRnfaSXRoJtqqz3Vj8oDZzrmAU0SPQoEB6lbdlDz1/Iwiiur5QE0mqEfyn1mWJfX+VQmMATNTDPsx3cBxQUUwWDMJ0dL+bH3jW0qDjf1BIi70lA33fekAoy2wrO86k6trrxPo5JAmRZhweatx4fuuj4RnzeNqpbNsO0dWJzc/+NwgMxWa8dkaXup+v8stiJXO++7IchupVnefmlfZXEFLadHHmutNCED3eU4MxFJyZVTapkOIvA9nJpnRYFtlIqmC4L2rUgd6KKQlINrLoW1sOU1r8qLgsnRhU6HrtGR/z8BN0cS1HFl4Vp0Kl6W8evNqmCzDg2esyTie7VyoohkjRXmgA==;5:bHjAN7xWHkcu5siL6aL2INtgYCf9o9dQGW49SJ7Mtxw2hKv/Sby8j/RYaEB7bCWQ+05Nge7iQpMHaVIUOhPo97nUNTQUlTp6VutVDR6t4CFIPS4ws9LVLFAoF49zKZycLSPgWpHz6rCnlKLoFwBTXNO9vOiAFot1criqHJuvtHE=;24:qYZ5Jo059BKrrvH3+bi/RcZz2G6tNbtkgtTtX5A8E9k0mOSo79zchU0FHqjfifzIF0NfdOMhLtdJiQ6LKmc5b3bek1v062LKnrWYnSWmoMo=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(39380400002)(396003)(346002)(376002)(199004)(189003)(76176011)(305945005)(26005)(8936002)(446003)(86362001)(478600001)(11346002)(6486002)(16526019)(51416003)(72206003)(7696005)(7736002)(53936002)(4326008)(486005)(486005)(25786009)(105586002)(47776003)(66066001)(68736007)(97736004)(316002)(6666003)(2906002)(106356001)(16586007)(2616005)(3846002)(52116002)(6116002)(5660300001)(8676002)(36756003)(50226002)(81166006)(50466002)(956004)(59450400001)(81156014)(48376002)(386003)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB3032;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR08MB3032;23:1qMet4xu04DXwCyk2ktR9Hu1C401ec4X6Y7k5lkEZ?=
+ =?us-ascii?Q?DHuMFvKoA7oz+hWCUEojBGJbaDT7U7zOKCkUCApdIjmnNML1ZOTrseQogJHS?=
+ =?us-ascii?Q?OHbpiaLysdO8GthxKN5M9xQpMQCywW1NucttFkzdcnurN+sHwDYEoyXaGzqX?=
+ =?us-ascii?Q?27M9tiABNa2656Uoc0ehkpXwRmxhM6PJqP4CSzNQ04AuO4qwKfJRIiw95+pk?=
+ =?us-ascii?Q?gAeYibUwyTU02vcTPNsmdE+QBdnmb3wr2GAg7cn09N6SW31K0qP+sOborPrR?=
+ =?us-ascii?Q?AoEB/wkvaHzmcUshdbwu1bNWpXrOWbwdxuLsV+OSIExjSfp/uRcyiXPdiWP4?=
+ =?us-ascii?Q?6fpBddJ7grg1LL99OPvau/9vUEj8fqA9AyLRlIwBaY2W2eXLuVY2P0wmocg7?=
+ =?us-ascii?Q?w/F/tXTyU5WYJr7Dwu1muf0mL/QELiE5PiUxXixzbgTsSgB84l7jzUtmYzxg?=
+ =?us-ascii?Q?k3J5nKPPtKyGoLY+DAwDbTqbVs0F7pJX6UzKoHDfaq4SArAD0DQwpRFhu88f?=
+ =?us-ascii?Q?Uf7kSgKWiclrsBC9SeeC9DEQlh7h4hzLLBn/M37Zh5QZlp8S2lAW/yeFsj4X?=
+ =?us-ascii?Q?7xWqbI/7EeNxb806J7tv0Rwr/hInram6YlLn3KXlJOcilJvNaljwayifyZpP?=
+ =?us-ascii?Q?WSEeX3jBx/puSho8DN5U7lq3ykmvh1F4+S828cqcmop/SCQjSRA2ClAFhTg2?=
+ =?us-ascii?Q?5VpsjAFFgzQ0Ut+S5H9BNlgLxfk2KWuCh50Fnjs09ZBh7y366UcdFqjSKYy+?=
+ =?us-ascii?Q?iC0+RDdGd/m+Nh0iHejIByzRcWh+mROVKO9b7iPlQXTovBT42kDWyqeTq2GL?=
+ =?us-ascii?Q?G5BTbsDSgdDw2RnLphmKMu8LngdKNRF5jmftBpIjCneUbUwq+gFAteQI1n+M?=
+ =?us-ascii?Q?eq+ECk+rL4WY9HhDNeuBco6aDhdX6SsjQrDPT+KR0RiJwpg53hA/ElEGl8XZ?=
+ =?us-ascii?Q?lXRzvkdy8t3pLNc2EtdPv29Vpm8Dxxoqihr8xFIQJa/azjcAnfDLBpNzXQ2E?=
+ =?us-ascii?Q?4TnE5F0om9WX6q4ZogwwsvZ5NjnjZpxbnHsSllnhETIZty1fqv4MSlPdXOse?=
+ =?us-ascii?Q?rw2FPQjIFp/QE4lM6DRL/gmvG1oYaSNVPpTlI3NHcu3k9faBItl8mb0CAkGW?=
+ =?us-ascii?Q?LTY1IzpbNMb5F0kuyPbxWhD2VUdBm4LdoVL2xUCN7DSXE5FmJfTjynKFX2dq?=
+ =?us-ascii?Q?hTiYVISCTw6VZM=3D?=
+X-Microsoft-Antispam-Message-Info: wRDdumNoF8PCvy1LrZI/BmbrakCWX5TUR7TVd3w3N6M8Fssypzuq1SEIEDSCtq/FH4UkGM43oIbgZmsSodcjjSmgARePu3KIM4K7W+cJxB01GNkV6G8iDq0csdvqP1LfX3tW7rweCwDM60qZWrJ4b1NOgX8zn7EUfsI074Uphh0iZFsjnmVLNgbsu7KijEtB
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3032;6:82+g2ufQO+S6LjJZhBZI8O//pmjFAfPn9Hq2MUKgu+mNzscmswEqDQRbKdNfrAlhbEZHv+8ex1uADi39iKRqD0Yf3lv2Acw/QQK8gPpOL1uTSg11v95UMGPrktta0/5YNSgWh3NNsH/WFijef7zx9Po9PMA5CTiIBcFK5zsx+odANcvRHaEbISuvA6gLHw3MJudMZplYTEu0IK5xgITaGgN1EFkr59tEY0G4Hy7hcHpyUxIAAGso9EgsIv3u4+XcG9rSyh4olMPsHJuMukx1sBdIEz7wLkyy2ie8aP0G5iePO0L6D2ifYriDJVzRMj/SteZ8yUA8osnRyYKL+06BvoUGPwHmTf9kReCE/eAAItPrWnAIxxZzircKItLcDnhL2La+C92k/vevv/FjtqPmoAcRRcRMePD1hi7F0QzR2l5Gg/OirDyJQt84N0JqNeavLdM4/vHAJXd69Eikx0P7RQ==;5:xZMgSv1YmFkLNrVEenNfWECVgHoiF/K2oMbdjBFsER+5lL67Pa04qVDIr0RX83vQ5O2jJ/+tdh8vhLv4d2lGo32xTSfcXxTui3pqjDsqnDfpHwNt4gRkABzxAlSRE6SREg/HAEwb26sQ+vatlH1dftgpteY0mpA/FfSfsOKQIOI=;24:5prXWRBsrPulezAWs2WS08/pJMn70YGZ+xPPX8/wjZ8uvYEpq0yjuRwAxZRc0LE6CC40ElyTSBkt+dbnkAelE8xdMpGWNF95tLiZNixGd6k=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3032;7:9ZjteaAd5r6s7BV0gUZXDlM4X2TEmMJAA6jjcJVMukNEuaVMWP0lcMFseKM7QzdDWrDzhgJaEfEn/Rxb//LZXl6cUYCbpSt13Jm1aG6X6XNhwrLYf2K4x6VgC/9yc3b5Ri9M+HcMnrMKeOOVRdzNRRw0n0O7PZK5nOozXJSwN10dlgGw5uwTOq8Jor9ymhnYrn6eSWPbojMO80jTuGw4CLJ8+EqcgajZuLeRemzORSlUSEYH50E9motFrwoKOdst
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3032;7:XlHlrn4lSbFMrH0jOplCx/q/QBUuhAV5UdwkhrFgPUJjiAUhJTJPfbOjcgBr1MxMTNOCk+zQHrmifUJy3OC2lnLioGu3VrXY/xUSAO9UCV7aIZGyPh8xX/Q3fXTr3aNZ6kXGZRfXYGLsFyu97vtD9iIhL9jwQZXBtHFCGnn8ftRm8BuTuEqiNTbk7kQL/w5qn5GfTno/gdCzoDuq19t3TtsuSnlpp50FJXdDa82+MHn5PcsybpH9gbbqC/GQNhTO
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2018 17:03:38.6072 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6d9c0d9-d864-45a6-5d62-08d5933b855d
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2018 17:03:43.4979 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91c44057-ec63-44b4-9ef2-08d5933b8847
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3032
@@ -75,72 +75,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'struct drm_device' is being replaced with 'struct malidp_hw_device'
-as the function argument.The reason being the dependency of
-malidp_se_irq_fini on 'struct drm_device' needs to be removed so as to
-enable it to call from functions which receives 'struct malidp_hw_device'
-as argument. Furthermore, there is no way to retrieve 'struct drm_device'
-from 'struct malidp_hw_device'
+Extract the hardware initialisation part from malidp_se_irq_init() into the
+malidp_se_irq_hw_init() which will be later invoked from
+malidpxxx_enable_memwrite() when it needs to re-enable the interrupts.
 
-Change-Id: Iab7ac99917f0faf739aee97b00e1758ad1ae787b
 Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+Change-Id: Ibb26e86b38141993539307705695e3f6a9e32caa
 ---
- drivers/gpu/drm/arm/malidp_drv.c | 4 ++--
- drivers/gpu/drm/arm/malidp_hw.c  | 5 +----
- drivers/gpu/drm/arm/malidp_hw.h  | 2 +-
- 3 files changed, 4 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/arm/malidp_hw.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index ed38ba9..f7a8beb 100644
---- a/drivers/gpu/drm/arm/malidp_drv.c
-+++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -653,7 +653,7 @@ static int malidp_bind(struct device *dev)
- fbdev_fail:
- 	pm_runtime_get_sync(dev);
- vblank_fail:
--	malidp_se_irq_fini(drm);
-+	malidp_se_irq_fini(hwdev);
- 	malidp_de_irq_fini(hwdev);
- 	drm->irq_enabled = false;
- irq_init_fail:
-@@ -690,7 +690,7 @@ static void malidp_unbind(struct device *dev)
- 	drm_kms_helper_poll_fini(drm);
- 	pm_runtime_get_sync(dev);
- 	drm_crtc_vblank_off(&malidp->crtc);
--	malidp_se_irq_fini(drm);
-+	malidp_se_irq_fini(hwdev);
- 	malidp_de_irq_fini(hwdev);
- 	drm->irq_enabled = false;
- 	component_unbind_all(dev, drm);
 diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index b13dfac..8fb02f3 100644
+index 3e73370..f5633bc 100644
 --- a/drivers/gpu/drm/arm/malidp_hw.c
 +++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -970,11 +970,8 @@ int malidp_se_irq_init(struct drm_device *drm, int irq)
+@@ -163,6 +163,7 @@ static const u16 dp500_se_scaling_coeffs[][SE_N_SCALING_COEFFS] = {
+ };
+ 
+ #define MALIDP_DE_DEFAULT_PREFETCH_START	5
++static void malidp_se_irq_hw_init(struct malidp_hw_device *hwdev);
+ 
+ static int malidp500_query_hw(struct malidp_hw_device *hwdev)
+ {
+@@ -952,6 +953,16 @@ static irqreturn_t malidp_se_irq(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
++static void malidp_se_irq_hw_init(struct malidp_hw_device *hwdev)
++{
++	/* ensure interrupts are disabled */
++	malidp_hw_disable_irq(hwdev, MALIDP_SE_BLOCK, 0xffffffff);
++	malidp_hw_clear_irq(hwdev, MALIDP_SE_BLOCK, 0xffffffff);
++
++	malidp_hw_enable_irq(hwdev, MALIDP_SE_BLOCK,
++			     hwdev->hw->map.se_irq_map.irq_mask);
++}
++
+ static irqreturn_t malidp_se_irq_thread_handler(int irq, void *arg)
+ {
+ 	return IRQ_HANDLED;
+@@ -975,8 +986,7 @@ int malidp_se_irq_init(struct drm_device *drm, int irq)
+ 		return ret;
+ 	}
+ 
+-	malidp_hw_enable_irq(hwdev, MALIDP_SE_BLOCK,
+-			     hwdev->hw->map.se_irq_map.irq_mask);
++	malidp_se_irq_hw_init(hwdev);
+ 
  	return 0;
  }
- 
--void malidp_se_irq_fini(struct drm_device *drm)
-+void malidp_se_irq_fini(struct malidp_hw_device *hwdev)
- {
--	struct malidp_drm *malidp = drm->dev_private;
--	struct malidp_hw_device *hwdev = malidp->dev;
--
- 	malidp_hw_disable_irq(hwdev, MALIDP_SE_BLOCK,
- 			      hwdev->hw->map.se_irq_map.irq_mask);
- }
-diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-index 6e2a2f6..6607aba 100644
---- a/drivers/gpu/drm/arm/malidp_hw.h
-+++ b/drivers/gpu/drm/arm/malidp_hw.h
-@@ -299,7 +299,7 @@ static inline void malidp_hw_enable_irq(struct malidp_hw_device *hwdev,
- int malidp_de_irq_init(struct drm_device *drm, int irq);
- void malidp_de_irq_fini(struct malidp_hw_device *hwdev);
- int malidp_se_irq_init(struct drm_device *drm, int irq);
--void malidp_se_irq_fini(struct drm_device *drm);
-+void malidp_se_irq_fini(struct malidp_hw_device *hwdev);
- 
- u8 malidp_hw_get_format_id(const struct malidp_hw_regmap *map,
- 			   u8 layer_id, u32 format);
 -- 
 2.7.4
