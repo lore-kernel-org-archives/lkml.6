@@ -1,221 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751913AbeCZN7I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:59:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34276 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751730AbeCZN7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:59:05 -0400
-Date: Mon, 26 Mar 2018 15:59:02 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, borntraeger@de.ibm.com, pasic@linux.vnet.ibm.com,
-        pmorel@linux.vnet.ibm.com
-Subject: Re: [PATCH 4/4] vfio: ccw: add traceponits for interesting error
- paths
-Message-ID: <20180326155902.12bed785.cohuck@redhat.com>
-In-Reply-To: <20180321020822.86255-5-bjsdjshi@linux.vnet.ibm.com>
-References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
-        <20180321020822.86255-5-bjsdjshi@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1751907AbeCZOBW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:01:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750983AbeCZOBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:01:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EEB2217D6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Mon, 26 Mar 2018 09:01:18 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>,
+        Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Eric Wehage <Eric.Wehage@huawei.com>
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+Message-ID: <20180326140118.GA221690@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <20180326121138.00005e30@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180326121138.00005e30@huawei.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018 03:08:22 +0100
-Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
-
-> From: Halil Pasic <pasic@linux.vnet.ibm.com>
+On Mon, Mar 26, 2018 at 12:11:38PM +0100, Jonathan Cameron wrote:
+> On Tue, 13 Mar 2018 10:43:55 -0600
+> Logan Gunthorpe <logang@deltatee.com> wrote:
+> > It turns out that root ports that support P2P are far less common than 
+> > anyone thought. So it will likely have to be a white list.
 > 
-> Add some tracepoints so we can inspect what is not working as is should.
-
-Tracepoints are certainly helpful (we can add more later).
-
+> This came as a bit of a surprise to our PCIe architect.
 > 
-> Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
-> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-> ---
->  drivers/s390/cio/Makefile         |  1 +
->  drivers/s390/cio/vfio_ccw_fsm.c   | 13 ++++++
->  drivers/s390/cio/vfio_ccw_trace.h | 86 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 100 insertions(+)
->  create mode 100644 drivers/s390/cio/vfio_ccw_trace.h
+> His follow up was whether it was worth raising an ECR for the PCIe spec
+> to add a capability bit to allow this to be discovered.  This might
+> long term avoid the need to maintain the white list for new devices.
 > 
-> diff --git a/drivers/s390/cio/Makefile b/drivers/s390/cio/Makefile
-> index a070ef0efe65..f230516abb96 100644
-> --- a/drivers/s390/cio/Makefile
-> +++ b/drivers/s390/cio/Makefile
-> @@ -5,6 +5,7 @@
->  
->  # The following is required for define_trace.h to find ./trace.h
->  CFLAGS_trace.o := -I$(src)
-> +CFLAGS_vfio_ccw_fsm.o := -I$(src)
->  
->  obj-y += airq.o blacklist.o chsc.o cio.o css.o chp.o idset.o isc.o \
->  	fcx.o itcw.o crw.o ccwreq.o trace.o ioasm.o
-> diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
-> index c30420c517b1..7ed27f90d741 100644
-> --- a/drivers/s390/cio/vfio_ccw_fsm.c
-> +++ b/drivers/s390/cio/vfio_ccw_fsm.c
-> @@ -13,6 +13,9 @@
->  #include "ioasm.h"
->  #include "vfio_ccw_private.h"
->  
-> +#define CREATE_TRACE_POINTS
-> +#include "vfio_ccw_trace.h"
-> +
->  static int fsm_io_helper(struct vfio_ccw_private *private)
->  {
->  	struct subchannel *sch;
-> @@ -105,6 +108,10 @@ static void fsm_disabled_irq(struct vfio_ccw_private *private,
->  	 */
->  	cio_disable_subchannel(sch);
->  }
-> +inline struct subchannel_id get_schid(struct vfio_ccw_private *p)
-> +{
-> +	return p->sch->schid;
-> +}
->  
->  /*
->   * Deal with the ccw command request from the userspace.
-> @@ -131,6 +138,8 @@ static void fsm_io_request(struct vfio_ccw_private *private,
->  
->  		io_region->ret_code = cp_prefetch(&private->cp);
->  		if (io_region->ret_code) {
-> +			trace_vfio_ccw_cp_prefetch_failed(get_schid(private),
-> +							  io_region->ret_code);
->  			cp_free(&private->cp);
->  			goto err_out;
->  		}
-> @@ -138,6 +147,8 @@ static void fsm_io_request(struct vfio_ccw_private *private,
->  		/* Start channel program and wait for I/O interrupt. */
->  		io_region->ret_code = fsm_io_helper(private);
->  		if (io_region->ret_code) {
-> +			trace_vfio_ccw_ssch_failed(get_schid(private),
-> +						   io_region->ret_code);
->  			cp_free(&private->cp);
->  			goto err_out;
->  		}
-> @@ -145,10 +156,12 @@ static void fsm_io_request(struct vfio_ccw_private *private,
->  	} else if (scsw->cmd.fctl & SCSW_FCTL_HALT_FUNC) {
->  		/* XXX: Handle halt. */
->  		io_region->ret_code = -EOPNOTSUPP;
-> +		trace_vfio_ccw_halt(get_schid(private));
->  		goto err_out;
->  	} else if (scsw->cmd.fctl & SCSW_FCTL_CLEAR_FUNC) {
->  		/* XXX: Handle clear. */
->  		io_region->ret_code = -EOPNOTSUPP;
-> +		trace_vfio_ccw_clear(get_schid(private));
->  		goto err_out;
+> So is it worth having a long term solution for making this discoverable?
 
-Hmmm.... perhaps better to just trace the function (start/halt/clear)
-in any case?
-
->  	}
->  
-> diff --git a/drivers/s390/cio/vfio_ccw_trace.h b/drivers/s390/cio/vfio_ccw_trace.h
-> new file mode 100644
-> index 000000000000..edd3321cd919
-> --- /dev/null
-> +++ b/drivers/s390/cio/vfio_ccw_trace.h
-> @@ -0,0 +1,86 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + * Tracepoints for vfio_ccw driver
-> + *
-> + * Copyright IBM Corp. 2018
-> + *
-> + * Author(s): Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-> + *            Halil Pasic <pasic@linux.vnet.ibm.com>
-> + */
-> +
-> +
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM vfio_ccw
-> +
-> +#if !defined(_VFIO_CCW_TRACE_) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _VFIO_CCW_TRACE_
-> +
-> +#include <linux/tracepoint.h>
-> +
-> +TRACE_EVENT(vfio_ccw_cp_prefetch_failed,
-> +	TP_PROTO(struct subchannel_id schid, int errno),
-> +	TP_ARGS(schid, errno),
-> +
-> +	TP_STRUCT__entry(
-> +		__field_struct(struct subchannel_id, schid)
-> +		__field(int, errno)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->schid = schid;
-> +		__entry->errno = errno;
-> +	),
-> +
-> +	TP_printk("(schid 0.%x.%04X) translation failed (errno: %d)",
-> +		__entry->schid.ssid, __entry->schid.sch_no, __entry->errno)
-> +);
-> +
-> +TRACE_EVENT(vfio_ccw_ssch_failed,
-> +	TP_PROTO(struct subchannel_id schid, int errno),
-> +	TP_ARGS(schid, errno),
-> +
-> +	TP_STRUCT__entry(
-> +		__field_struct(struct subchannel_id, schid)
-> +		__field(int, errno)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->schid = schid;
-> +		__entry->errno = errno;
-> +	),
-> +
-> +	TP_printk("(schid 0.%x.%04X) ssch failed (errno: %d)",
-> +		__entry->schid.ssid, __entry->schid.sch_no, __entry->errno)
-> +);
-> +
-> +DECLARE_EVENT_CLASS(vfio_ccw_notsupp,
-> +	TP_PROTO(struct subchannel_id schid),
-> +	TP_ARGS(schid),
-> +
-> +	TP_STRUCT__entry(
-> +		__field_struct(struct subchannel_id, schid)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->schid = schid;
-> +	),
-> +
-> +	TP_printk("(schid 0.%x.%04X) request not supported",
-> +		__entry->schid.ssid, __entry->schid.sch_no)
-> +);
-
-Especially as I don't plan to leave this unsupported for too long :)
-
-Just tracing the function is useful now and will stay useful in the
-future.
-
-Another idea: Trace the fsm state transitions. Probably something for
-an additional patch.
-
-
-> +
-> +DEFINE_EVENT(vfio_ccw_notsupp, vfio_ccw_clear,
-> +        TP_PROTO(struct subchannel_id schid), TP_ARGS(schid));
-> +
-> +DEFINE_EVENT(vfio_ccw_notsupp, vfio_ccw_halt,
-> +	TP_PROTO(struct subchannel_id schid), TP_ARGS(schid));
-> +
-> +#endif /* _VFIO_CCW_TRACE_ */
-> +
-> +/* This part must be outside protection */
-> +
-> +#undef TRACE_INCLUDE_PATH
-> +#define TRACE_INCLUDE_PATH .
-> +#undef TRACE_INCLUDE_FILE
-> +#define TRACE_INCLUDE_FILE vfio_ccw_trace
-> +
-> +#include <trace/define_trace.h>
+It was surprising to me that there's no architected way to discover
+this.  It seems like such an obvious thing that I guess I assumed the
+omission was intentional, i.e., maybe there's something that makes it
+impractical, but it would be worth at least asking somebody in the
+SIG.  It seems like for root ports in the same root complex, at least,
+there could be a bit somewhere in the root port or the RCRB (which
+Linux doesn't support yet).
