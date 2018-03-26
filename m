@@ -1,128 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752489AbeCZQpR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 12:45:17 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51725 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752306AbeCZQpP (ORCPT
+        id S1752288AbeCZQsJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 12:48:09 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:38343 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751380AbeCZQsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 12:45:15 -0400
-X-Google-Smtp-Source: AIpwx4+HiNCnyWXnkG232r+2/XjrJA7rjC6gOzvuh2jiUciTeh3gxvEz0w/Uf/uNbwlDcc5wrleEcA==
-Subject: Re: [PATCH v5 2/3] dt-bindings: net: bluetooth: Add
- qualcomm-bluetooth
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>, linux-kernel@vger.kernel.org
-References: <20180320032331.29865-1-thierry.escande@linaro.org>
- <20180320032331.29865-3-thierry.escande@linaro.org>
- <FAC61078-6298-47A7-A51C-73D72BEF6E4A@holtmann.org>
-From: Thierry Escande <thierry.escande@linaro.org>
-Message-ID: <a1105b78-c871-df4a-c277-355d20d79d87@linaro.org>
-Date: Mon, 26 Mar 2018 18:45:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 26 Mar 2018 12:48:07 -0400
+X-Google-Smtp-Source: AG47ELvLMk9GVIcSMfVqqpP1pdNgQF93ReYV65/TN8WtJIV6ZkoL+/xRVNTV/F+kfo0aRUa5auMXl52TX4IMxjy35HI=
 MIME-Version: 1.0
-In-Reply-To: <FAC61078-6298-47A7-A51C-73D72BEF6E4A@holtmann.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20171129121123.7zg63mjy7pufokg5@dell>
+References: <20170927213527.31416-1-shawnn@chromium.org> <20171129121123.7zg63mjy7pufokg5@dell>
+From: Enric Balletbo Serra <eballetbo@gmail.com>
+Date: Mon, 26 Mar 2018 18:48:06 +0200
+Message-ID: <CAFqH_51zqxXZeEXDSry9aBwwj4Z7SRzxfKw5Ffzh-2A1UQG2Pw@mail.gmail.com>
+Subject: Re: [PATCH] mfd: cros ec: spi: Fix "in progress" error signaling
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Shawn Nematbakhsh <shawnn@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, jonathanh@nvidia.com,
+        Brian Norris <briannorris@chromium.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Alexandru M Stan <amstan@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2QGmFxq015714
 
-Hi Marcel,
+Dear all,
 
-On 20/03/2018 16:58, Marcel Holtmann wrote:
-> Hi Thierry,
-> 
->> Add binding document for serial bluetooth chips using Qualcomm protocol.
+Cc'ing some more chromium folks.
+
+2017-11-29 13:11 GMT+01:00 Lee Jones <lee.jones@linaro.org>:
+> On Wed, 27 Sep 2017, Shawn Nematbakhsh wrote:
+>
+>> For host commands that take a long time to process, cros ec can return
+>> early by signaling a EC_RES_IN_PROGRESS result. The host must then poll
+>> status with EC_CMD_GET_COMMS_STATUS until completion of the command.
 >>
->> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+>> None of the above applies when data link errors are encountered. When
+>> errors such as EC_SPI_PAST_END are encountered during command
+>> transmission, it usually means the command was not received by the EC.
+>> Treating such errors as if they were 'EC_RES_IN_PROGRESS' results is
+>> almost always the wrong decision, and can result in host commands
+>> silently being lost.
+>>
+>> Reported-and-tested-by: Jon Hunter <jonathanh@nvidia.com>
+>> Signed-off-by: Shawn Nematbakhsh <shawnn@chromium.org>
 >> ---
->>
->> v5:
->> - Rename 'bt-disable-n' gpio as 'enable'
->>
->> v4:
->> - Move bt-disable-n-gpios to required properties section
->> - Add clocks and pinctrl-0 as required properties
->>
->> v3: no change
->> v2: no change
->>
->> .../devicetree/bindings/net/qualcomm-bluetooth.txt | 34 ++++++++++++++++++++++
->> 1 file changed, 34 insertions(+)
->> create mode 100644 Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
->>
->> diff --git a/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
->> new file mode 100644
->> index 000000000000..bbc2973634b2
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
->> @@ -0,0 +1,34 @@
->> +Qualcomm Bluetooth Chips
->> +---------------------
->> +
->> +This documents the binding structure and common properties for serial
->> +attached Qualcomm devices.
->> +
->> +Serial attached Qualcomm devices shall be a child node of the host UART
->> +device the slave device is attached to.
->> +
->> +Required properties:
->> + - compatible: should contain one of the following:
->> +   * "qcom,qca6174-bt"
->> + - enable-gpios: gpio specifier used to enable chip
->> + - pinctrl-0: pin phandle for bt_en gpio
->> + - clocks: clock phandle for SUSCLK_32KHZ
-> 
-> if I compare this with broadcom-bluetooth.txt or ti-bluetooth.txt then besides compatible, everything else is optional. The nokia-bluetooth.txt has everything required, but that is also a really specific platform.
-> 
-> Can we be less restrictive for a QCA general purpose chip?
-Ok. To me, at least the enable gpio seems required.
+>>  drivers/mfd/cros_ec_spi.c | 52 ++++++++++++++++++++++-------------------------
+>>  1 file changed, 24 insertions(+), 28 deletions(-)
+>
+> Applied, thanks.
+>
 
-> 
->> +
->> +Example:
->> +
->> +serial@7570000 {
->> +	pinctrl-names = "default", "sleep";
->> +	pinctrl-0 = <&blsp1_uart1_default>;
->> +	pinctrl-1 = <&blsp1_uart1_sleep>;
->> +
->> +	bluetooth {
->> +		compatible = "qcom,qca6174-bt";
->> +
->> +		enable-gpios = <&pm8994_gpios 19 GPIO_ACTIVE_HIGH>;
->> +
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&bt_en_pin_a>;
-> 
-> This one I do not understand and you might want to shed some light into why this is done that way.
-Sure. It reclaims this gpio pin for this device. Will add it to the 
-documentation.
+This patch is a bit old and is already applied but I would like to
+discuss an issue that Tomeu found playing with kernelci and a Veyron
+Jaq attached to our lab.
 
-> 
->> +
->> +		clocks = <&divclk4>;
-> 
-> No clock-names?
-No need for a name as there is only one clk obtained by passing a NULL 
-id to devm_gpiod_get().
+Seems that after this patch, the veyron jaq spits out lots of spi
+tranfer error messages. See full log here [1]
 
-Regards,
-Thierry
+ cros-ec-spi spi0.0: spi transfer failed: -121
+ cros-ec-spi spi0.0: Command xfer error (err:-121)
+ cros-ec-i2c-tunnel ff110000.spi:ec@0:i2c-tunnel: Error transferring
+EC i2c message -121
 
-> 
-> Regards
-> 
-> Marcel
-> 
+The issue is random, not always happens, but when happens makes
+cros-ec unusable. Reproduce the issue is easier if CONFIG_SMP is not
+set.
+
+What happens is that the master starts the transmission and the
+cros-ec returns an spi error event (EC_SPI_RX_BAD_DATA  - data is
+0xfb). The difference between after and before the patch is that now
+the cros-ec does not recover, whereas without this patch after some
+tries it succeeds (note that before the patch the affected code
+returned -EAGAIN whereas now returns -EREMOTEIO)
+
+I think that reverting this patch is NOT the solution, but I don't
+have enough knowledge yet to understand why the cros-ec fails. I need
+to look at the cros-ec firmware to understand better what is
+happening, but meanwhile, thoughts? clues?
+
+An important note is that I did not reproduce the issue on a Veyron
+Minnie, even with CONFIG_SMP disabled.
+
+[1] https://lava.collabora.co.uk/scheduler/job/1085493#L905
+
+Best regards,
+  Enric
+
+> --
+> Lee Jones
+> Linaro STMicroelectronics Landing Team Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
