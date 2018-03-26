@@ -1,53 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeCZVov (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 17:44:51 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33239 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751076AbeCZVou (ORCPT
+        id S1752157AbeCZVqD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 17:46:03 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39413 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751134AbeCZVqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:44:50 -0400
-X-Google-Smtp-Source: AG47ELvO6PwINRUDNKd/sqAQnCPGdTxHG5iaWhJgwpUelx88fvOY2/NQKlOTQRPsu7LTjoLEWOorlg==
-Date: Mon, 26 Mar 2018 14:44:48 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 21/24] perf tools: Add support for the SPF perf
- event
-In-Reply-To: <1520963994-28477-22-git-send-email-ldufour@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1803261443560.255554@chino.kir.corp.google.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-22-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 26 Mar 2018 17:46:02 -0400
+X-Google-Smtp-Source: AG47ELspAAuPSzSe5F19iQ87fRCdeRAcu7OrWKXhO1zek/K/pBYeEkSGAWiKbnm4DGgCVYpyF00dgkN2FVcv2GMNRmI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <d5a326b6c284f7389301b265716dc58fda492c98.1521358552.git.arvind.yadav.cs@gmail.com>
+References: <d5a326b6c284f7389301b265716dc58fda492c98.1521358552.git.arvind.yadav.cs@gmail.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 26 Mar 2018 15:46:00 -0600
+Message-ID: <CANLsYkymOF2oG7TmKbRTakYKw0ECN_DXfkX5b8WjmS0Lz0sfig@mail.gmail.com>
+Subject: Re: [PATCH] coresight: use put_device() instead of kfree()
+To: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Mar 2018, Laurent Dufour wrote:
+drivers/hwtracing/coresight/coresight.c
+On 18 March 2018 at 01:38, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
+> Never directly free @dev after calling device_register(), even
+> if it returned an error. Always use put_device() to give up the
+> reference initialized.
+>
+> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> ---
+>  drivers/hwtracing/coresight/coresight.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+> index 389c4ba..132dfbc 100644
+> --- a/drivers/hwtracing/coresight/coresight.c
+> +++ b/drivers/hwtracing/coresight/coresight.c
+> @@ -1026,8 +1026,10 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
+>         dev_set_name(&csdev->dev, "%s", desc->pdata->name);
+>
+>         ret = device_register(&csdev->dev);
+> -       if (ret)
+> -               goto err_device_register;
+> +       if (ret) {
+> +               put_device(&csdev->dev);
+> +               goto err_kzalloc_csdev;
+> +       }
+>
+>         mutex_lock(&coresight_mutex);
+>
+> @@ -1038,8 +1040,6 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
+>
+>         return csdev;
+>
+> -err_device_register:
+> -       kfree(conns);
 
-> Add support for the new speculative faults event.
-> 
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Apologies for the late reply, I was travelling.
 
-Acked-by: David Rientjes <rientjes@google.com>
+I suggest to simply replace kfree() with put_device() in order to
+concentrate the error handling code in the same area and make sure
+that memory allocated for @conns and @refcnts is freed.
 
-Aside: should there be a new spec_flt field for struct task_struct that 
-complements maj_flt and min_flt and be exported through /proc/pid/stat?
+Thanks,
+Mathieu
+
+>  err_kzalloc_conns:
+>         kfree(refcnts);
+>  err_kzalloc_refcnts:
+> --
+> 2.7.4
+>
