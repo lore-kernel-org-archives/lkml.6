@@ -1,108 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752138AbeCZXbc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 19:31:32 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:50993 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751160AbeCZXbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 19:31:31 -0400
-Date: Tue, 27 Mar 2018 07:31:18 +0800
-In-Reply-To: <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
-References: <20180316175354.21437-1-icenowy@aosc.io> <20180320184646.dynqv6qubzabroe4@flea> <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io> <2866474.lRHIcLtROC@jernej-laptop> <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io> <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] Re: [PATCH 2/7] dt-bindings: add binding for the Allwinner A64 DE2 bus
-To: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>
-CC: devicetree@vger.kernel.org, jernej.skrabec@siol.net,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <9A6A8961-D45C-4033-962E-83CCE8F01651@aosc.io>
+        id S1752238AbeCZXcF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 19:32:05 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:36602 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751739AbeCZXcD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 19:32:03 -0400
+X-Google-Smtp-Source: AG47ELvpkDPjG/B21sdxwD8NdkPml3HGIpe7HoY9LWsnbHL5gj/WS6nBVTae39qNi1qs/baw9xi+8A==
+From: Ram Pai <linuxram@us.ibm.com>
+To: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
+        aneesh.kumar@linux.vnet.ibm.com, bsingharora@gmail.com,
+        hbabu@us.ibm.com, mhocko@kernel.org, bauerman@linux.vnet.ibm.com,
+        linuxram@us.ibm.com, fweimer@redhat.com, msuchanek@suse.com,
+        tglx@linutronix.de, shuah@kernel.org
+Subject: [PATCH] powerpc, pkey: make protection key 0 less special
+Date: Mon, 26 Mar 2018 16:31:41 -0700
+Message-Id: <1522107101-16083-1-git-send-email-linuxram@us.ibm.com>
+X-Mailer: git-send-email 1.7.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Applications need the ability to associate an address-range with some
+key and latter revert to its initial default key. Pkey-0 comes close to
+providing this function but falls short, because the current
+implementation disallows applications to explicitly associate pkey-0 to
+the address range.
 
+Lets make pkey-0 less special and treat it almost like any other key.
+Thus it can be explicitly associated with any address range, and can be
+freed. This gives the application more flexibility and power.  The
+ability to free pkey-0 must be used responsibily, since pkey-0 is
+associated with almost all address-range by default.
 
-于 2018年3月27日 GMT+08:00 上午6:22:58, Rob Herring <robh@kernel.org> 写到:
->On Thu, Mar 22, 2018 at 02:08:43PM +0800, Icenowy Zheng wrote:
->> 
->> 
->> 于 2018年3月22日 GMT+08:00 上午1:13:42, "Jernej Škrabec"
-><jernej.skrabec@siol.net> 写到:
->> >Hi all,
->> >
->> >Dne sreda, 21. marec 2018 ob 03:18:13 CET je Icenowy Zheng
->napisal(a):
->> >> 于 2018年3月21日 GMT+08:00 上午2:46:46, Maxime Ripard
->> ><maxime.ripard@bootlin.com> 
->> >写到:
->> >> >On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
->> >> >> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64
->> >SoC
->> >> >
->> >> >to
->> >> >
->> >> >> be claimed, otherwise the whole DE2 space is inaccessible.
->> >> >> 
->> >> >> Add a device tree binding of the DE2 part as a sub-bus.
->> >> >
->> >> >Where did you get the info that it was a bus?
->> >> 
->> >> There's no direct evidence, just some guess.
->> >> 
->> >> The DE2 is a whole part that is just allocated a memory
->> >> space at the user manual, and the SRAM controls the
->> >> access to all modules in the DE2.
->> >> 
->> >> So it might be a bus.
->> >> 
->> >> Implement it as a bus is a clear representation on A64.
->> >
->> >Since there is already syscon for same mmio region, we migh as well
->use
->> >it 
->> >when loading ccu-sun8i-de2 driver on A64.
->> >
->> >Other options, like SRAM driver or bus driver, might better
->represent
->> >HW, but 
->> 
->> I think the device tree should properly represent the HW,
->> it's a basic requirment.
->> 
->> >then we would have two DT nodes covering same mmio region, which I
->> >think is 
->> >not really acceptable.
->> 
->> It's acceptable, and DE2 is not the only user of SRAM controller so
->far.
->
->No, it's not acceptable. Don't create overlapping mmio regions in DT.
+Even with this change pkey-0 continues to be slightly more special
+from the following point of view.
+(a) it is implicitly allocated.
+(b) it is the default key assigned to any address-range.
 
-Then should the SRAM controller driver be configured to take the syscon?
+Tested on powerpc.
 
->
->> 
->> VE will also need a SRAM region to be claimed.
->> 
->> >
->> >Any suggestions?
->> >
->> >BTW, H6 has same design in this regard.
->> >
->> >Best regards,
->> >Jernej
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree"
->in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+cc: Thomas Gleixner <tglx@linutronix.de>
+cc: Dave Hansen <dave.hansen@intel.com>
+cc: Michael Ellermen <mpe@ellerman.id.au>
+cc: Ingo Molnar <mingo@kernel.org>
+cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+---
+ arch/powerpc/include/asm/pkeys.h | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
+index 0409c80..9c7d3bd 100644
+--- a/arch/powerpc/include/asm/pkeys.h
++++ b/arch/powerpc/include/asm/pkeys.h
+@@ -101,10 +101,18 @@ static inline u16 pte_to_pkey_bits(u64 pteflags)
+ 
+ static inline bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
+ {
+-	/* A reserved key is never considered as 'explicitly allocated' */
+-	return ((pkey < arch_max_pkey()) &&
+-		!__mm_pkey_is_reserved(pkey) &&
+-		__mm_pkey_is_allocated(mm, pkey));
++	/* pkey 0 is allocated by default. */
++	if (!pkey)
++		return true;
++
++	if (pkey < 0 || pkey >= arch_max_pkey())
++		return false;
++
++	/* Reserved keys are never allocated. */
++	if (__mm_pkey_is_reserved(pkey))
++		return false;
++
++	return __mm_pkey_is_allocated(mm, pkey);
+ }
+ 
+ extern void __arch_activate_pkey(int pkey);
+@@ -200,6 +208,14 @@ static inline int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ {
+ 	if (static_branch_likely(&pkey_disabled))
+ 		return -EINVAL;
++
++	/*
++	 * userspace is discouraged from changing permissions of
++	 * pkey-0. powerpc hardware does not support it anyway.
++	 */
++	if (!pkey)
++		return init_val ? -EINVAL : 0;
++
+ 	return __arch_set_user_pkey_access(tsk, pkey, init_val);
+ }
+ 
+-- 
+1.8.3.1
