@@ -1,39 +1,37 @@
 Return-Path: <geert.uytterhoeven@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522064154; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522059447; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q/XN9vcSifZEI8RCloDhquSrqLElvR34JF3CXoQTr7FfmmgQWPbWgYvZmIjSV4kkUE
-         EwuwOIOtRam7hHoErl+Op9VZzUC7eDi9LHK955m+g6y1Hbvn1QmzfSsiZO84TO8Tmx1I
-         OqlsImHa15jvmlfNZIxaBfcmmrUTcye46FbQBjSNrdByXv75LnIhIg2+VdKztA79DAnA
-         9gR2EG4bXXHMe3a2Lc/NcVK9s61b3p6LJdiNqGQmFOHxx/L4vWuAlx2GVfmmczRMzran
-         UiagXsFxYq/4T8k/I37zFmvW2cmEI1pUr3LJzIWyBnaOuWC6pO2RI17nDDHNHgb52od4
-         5Vvw==
+        b=W1R6vdmaJZaFzy3xM+NKErLfU8MIKcQaP+Ibe+kq0KPDXUmxJNVRAe7kPCyxkjl7GK
+         m6Gy/Jkt8zLCVqTuIn6+DnKX0kt0rS5BwG6cRqxwtNwo7TfgXyy3lx2rj9Dm00uaiUR0
+         r+yqh+yw5O1qP9vmlWMFpVnqfE28CaSN+0kXpgCthOgBPvaWdZDl7FbSpe4eWcRMTfdq
+         Bok82MYIod+4G1a46U91yz3JvHS2NJd0e5+dmMzT+swf7wfGg4Zm0vXgHjhrXy9Yokb0
+         z8ZaQ5DiQW8ootff7IXjw3dkZ48CZP4AaNRhIMGbAmM5/Bgn61VoBYMHd/72NLoeJ46W
+         L0jg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=v8GShf95lIyZmSlxKnaNrhtQzlN7re/MNslzHk+2rFs=;
-        b=HAukHXm0Hpu7q8oNPiOrn42tFC5YjK/5EItmBVwMTpdZ1PoZYn+ZJq6lmGnPIckYWx
-         lqL/7J9s95O63IpDA7SMU+vkuW3hAxyM331SA2Z07XQyvl+nag6iRW2eQK5ZiAeHedcS
-         3zU0e+DUf1dUNX60sN5scrcI9v8Ntg5nUxLu/7Q7NJ4EH6Sh2YcGCDgyb5YstAyb/ji8
-         rQ6LVfy57nJ8julVlhZP2+KuIrleYxnZpj2AYNnbcsEdW3XbCuX/eqvhjgrFrX5xrhy5
-         /9QUDaOtmUBsDwhd9JdErLJjhv9SQ5ZDC5pkEE/q9akelflnVusqPgvBWDfp68NtzetY
-         R1vQ==
+        bh=ZKqOul/kec4iDidMaORhkR9f2Fbr1JLdFyV1peJH0Rk=;
+        b=q4mE4QP0+lAFEuDBMHaxAYARa6KFKj9eC/GTxO5JJh+5VguDI8VAOn+IJ9CkfWy8X6
+         ltDzBEtMliTzoAwI8t5/M9VnAR2il32akWtr4uAYidADL9M3SZ0Y+pk9G9bk3SWaykI+
+         q1JCvc7pCKkCmW6HAPmDOlgsFABmRcTTWFzI5SqZ5XsYoUWh2yjj2/C+Uj+QHa9V1neJ
+         0ro4AxOAEKd1A39TuxLzMqag4/zzhhEOlf9+0/kTldvvfOfaTx0mRnemN7DqGkDclOhw
+         s2ayQykM/+gqWAunwLNEr1eqhYWJEEqfsdsAa5glpiIghB/3/dAnv3iG8gOThwxzSJ7e
+         zuUw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=E/8fWj7y;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Zpmzi/7E;
        spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=E/8fWj7y;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Zpmzi/7E;
        spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
-X-Google-Smtp-Source: AG47ELu9NubfToUboXrzk6Djcrby/dxCGlYx5DL6qUIrxgat2mxtQ6S1y21Yd9HVanlFe40ayPVOOJVOo83u25cBBgo=
+X-Google-Smtp-Source: AG47ELv90GETGiEYYbz4QQf7sHWr+l9S37k9WB/BaAQy2Alu1NxNgd3TDtryaDvpQ5MQgWDQSgWlLMxT+IDOOegCAi8=
 MIME-Version: 1.0
 Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180326132526.1634946e@bbrezillon>
-References: <20180323110020.19080-1-boris.brezillon@bootlin.com>
- <20180323110020.19080-12-boris.brezillon@bootlin.com> <CAMuHMdX3TLmaN14gM4fTgzXwy1dgsMxCFBs_3wCFWM8rX=+8vA@mail.gmail.com>
- <20180326132526.1634946e@bbrezillon>
+In-Reply-To: <20180323110020.19080-12-boris.brezillon@bootlin.com>
+References: <20180323110020.19080-1-boris.brezillon@bootlin.com> <20180323110020.19080-12-boris.brezillon@bootlin.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Mar 2018 13:35:53 +0200
-X-Google-Sender-Auth: VDRmG6Gx97o6jUwHOELIMIJfY_4
-Message-ID: <CAMuHMdWXb+eSTG28eKRzfP3mq=KLXikOt94MGNaS+MYeiVdr3w@mail.gmail.com>
+Date: Mon, 26 Mar 2018 12:17:26 +0200
+X-Google-Sender-Auth: ju2M0xymCiqy35mqHjEvEgkJzKc
+Message-ID: <CAMuHMdUH3iB6ngF-0Zkij-oNN-Oms=EwXgoceLp06xbdcq1S=w@mail.gmail.com>
 Subject: Re: [PATCH v3 11/11] dt-bindings: gpio: Add bindings for Cadence I3C
  gpio expander
 To: Boris Brezillon <boris.brezillon@bootlin.com>
@@ -55,44 +53,67 @@ Cc: Wolfram Sang <wsa@the-dreams.de>, Linux I2C <linux-i2c@vger.kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1595725936015625601?=
-X-GMAIL-MSGID: =?utf-8?q?1595999942730185370?=
+X-GMAIL-MSGID: =?utf-8?q?1595995007642961454?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Hi Boris,
 
-On Mon, Mar 26, 2018 at 1:25 PM, Boris Brezillon
+On Fri, Mar 23, 2018 at 12:00 PM, Boris Brezillon
 <boris.brezillon@bootlin.com> wrote:
-> On Mon, 26 Mar 2018 12:12:54 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Fri, Mar 23, 2018 at 12:00 PM, Boris Brezillon
->> <boris.brezillon@bootlin.com> wrote:
->> > Document the Cadence I3C gpio expander bindings.
->> >
->> > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
->>
->> Thanks for your patch!
->>
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
->>
->> > +- #interrupt-cells : Should be 2.  The first cell is the GPIO number.
->> > +  The second cell bits[3:0] is used to specify trigger type and level flags:
->> > +      1 = low-to-high edge triggered.
->> > +      2 = high-to-low edge triggered.
->> > +      3 = triggered on both edges.
->> > +      4 = active high level-sensitive.
->> > +      8 = active low level-sensitive.
->>
->> These are identical to the values in <dt-bindings/interrupt-controller/irq.h>.
->> Perhaps you can refer to those definitions?
+> Document the Cadence I3C gpio expander bindings.
 >
-> Well, I'm not sure this is allowed since DT bindings docs are
-> supposed to be OS-agnostic and macros defined in
-> <dt-bindings/interrupt-controller/irq.h> are, AFAIK, only available to
-> Linux.
+> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-If they're under include/dt-bindings/, they're part of the DT bindings.
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
+> @@ -0,0 +1,38 @@
+> +* Cadence I3C GPIO expander
+> +
+> +The Cadence I3C GPIO expander provides 8 GPIOs controllable over I3C.
+> +This GPIOs can be configured in output or input mode and if they are in input
+> +mode they can generate IBIs (In Band Interrupts).
+> +
+> +Required properties for GPIO node:
+> +- reg : 3 cells encoding the I3C static address (none in our case) and the I3C
+> +       Provisional ID. See Documentation/devicetree/bindings/i3c/i3c.txt for
+> +       more details.
+> +       Should be <0x0 0x392 0x0>.
+
+No compatible value?
+
+> +- gpio-controller : Marks the device node as a gpio controller.
+> +- #gpio-cells : Should be two. The first cell is the pin number and
+> +  the second cell is used to specify the gpio polarity:
+> +      0 = active high
+> +      1 = active low
+> +- interrupt-controller: Marks the device node as an interrupt controller.
+> +- #interrupt-cells : Should be 2.  The first cell is the GPIO number.
+> +  The second cell bits[3:0] is used to specify trigger type and level flags:
+> +      1 = low-to-high edge triggered.
+> +      2 = high-to-low edge triggered.
+> +      3 = triggered on both edges.
+> +      4 = active high level-sensitive.
+> +      8 = active low level-sensitive.
+> +
+> +Example:
+> +
+> +       i3c-master@xxx {
+> +               ...
+> +               i3c_gpio_expander: gpio@0,1c9,0 {
+
+gpio@0,392,0?
+
+> +                       reg = <0 0x392 0x0>;
+> +                       gpio-controller;
+> +                       #gpio-cells = <2>;
+> +                       interrupt-controller;
+> +                       #interrupt-cells = <2>;
+> +               };
+> +               ...
+> +       };
 
 Gr{oetje,eeting}s,
 
