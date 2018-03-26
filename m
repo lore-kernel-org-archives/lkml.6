@@ -1,57 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752322AbeCZO0V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:26:21 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41676 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752116AbeCZO0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:26:20 -0400
-Subject: Re: [RFC PATCH] irqchip: arm-gic: take gic_lock when updating irq
- type
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Aniruddha Banerjee <aniruddhab@nvidia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>, Vipin Kumar <vipink@nvidia.com>
-References: <c20f41d47ed9444b9050bc1f609d4bbe@bgmail101.nvidia.com>
- <77ac9d88-e99e-c507-66b2-cc14f06ce192@arm.com>
- <20180326131907.3m3sfwxvyzuli2ps@holly.lan>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <9acdc1bc-5a8b-4996-4986-9c3fddb2f8b7@arm.com>
-Date: Mon, 26 Mar 2018 15:26:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752254AbeCZO2Z convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:28:25 -0400
+Received: from mail-io0-f172.google.com ([209.85.223.172]:46208 "EHLO
+        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbeCZO2X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:28:23 -0400
+X-Google-Smtp-Source: AG47ELvYE5GzeN/XyiEZBYixOBsZ/yrxK0GG/2DfewtDZP4bj6Kwo5Oane7t9ajKNk2khNKpmUJOrQ==
 MIME-Version: 1.0
-In-Reply-To: <20180326131907.3m3sfwxvyzuli2ps@holly.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <5edad360-d05d-1bb8-c1f2-925138784fef@iki.fi>
+References: <5edad360-d05d-1bb8-c1f2-925138784fef@iki.fi>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 26 Mar 2018 22:22:45 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64j5KHS5164V3naBwjJs0U3CE0nQBPBEvQBjSt=0s=nTQ@mail.gmail.com>
+Message-ID: <CAGb2v64j5KHS5164V3naBwjJs0U3CE0nQBPBEvQBjSt=0s=nTQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] Preferring cursor plane over overlay plane
+To: =?UTF-8?B?Sm9vbmFzIEt5bG3DpGzDpA==?= <joonas.kylmala@iki.fi>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/03/18 14:19, Daniel Thompson wrote:
-> On Thu, Mar 22, 2018 at 12:19:15PM +0000, Marc Zyngier wrote:
->> On 22/03/18 10:28, Aniruddha Banerjee wrote:
->> [a PGP-encrypted email]
->>
->> Given that you're cc-ing various mailing lists, please resend this email
->> unencrypted.
-> 
-> I am very puzzled about what is going on here. I could read the 
-> original mail fine and I was not in To: or Cc:. It also seems to
-> have made it through to the archives OK.
-> 
-> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1645375.html
-> https://www.spinics.net/lists/linux-tegra/msg32829.html
+On Mon, Mar 26, 2018 at 10:14 PM, Joonas Kylmälä <joonas.kylmala@iki.fi> wrote:
+> Hi DRM subsystem developers,
+>
+> I ran into this patch where overlay plane was switched to cursor plane
+> because there was no proper cursor plane available on the display
+> hardware: <https://lkml.org/lkml/2018/3/17/120>. Can we discuss whether
+> to have a policy of using a normal plane for cursor plane in case a
+> dedicated HW cursor plane is missing?
+>
+> Daniel Vetter suggests that it might be fine to use normal plane for
+> cursor plane because how to use the plane would be only "a hint to
+> userspace" (see the email linked).
+>
+> My motivation for having this discussion is that the newer Allwinner
+> SoCs don't have dedicated HW cursor plane and the sun4i DRM driver
+> currently uses the extra planes as overlay planes which makes moving the
+> cursor on Xfce4 DE a terrible experience. To have better cursor moving
+> experience one overlay plane would need to be sacrificed.
 
-It looks like any email I getting from nvidia is encrypted. The message
-on the list is in clear text, but not the one I received, hence my
-(admittedly premature) rant.
+If you look at the development history, we've never supported cursor planes.
+At the beginning we supported one main plane and one overlay plane. That was
+it. The Display Engine 1.0 does have support for an extra hardware cursor,
+but we haven't done the work to support it yet. I don't know about the
+Display Engine 2.0 though.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+ChenYu
+
+> Also, I probably missed some recipients for this email so please forward
+> it to the recipients you think might be interested about this.
+>
+> Best regards,
+> Joonas
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
