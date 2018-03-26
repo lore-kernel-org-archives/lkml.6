@@ -1,35 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751866AbeCZNwl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:52:41 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:46136 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751674AbeCZNwj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:52:39 -0400
-X-Google-Smtp-Source: AG47ELsmi/0VIWRYwUCJOIvScMylhGX69T3P95GZiNiO28iya/+P1m1bJyug0kfLDsGrLTWV4cm9830iiljq958/uCw=
+        id S1751913AbeCZN7I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 09:59:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34276 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751730AbeCZN7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 09:59:05 -0400
+Date: Mon, 26 Mar 2018 15:59:02 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, borntraeger@de.ibm.com, pasic@linux.vnet.ibm.com,
+        pmorel@linux.vnet.ibm.com
+Subject: Re: [PATCH 4/4] vfio: ccw: add traceponits for interesting error
+ paths
+Message-ID: <20180326155902.12bed785.cohuck@redhat.com>
+In-Reply-To: <20180321020822.86255-5-bjsdjshi@linux.vnet.ibm.com>
+References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
+        <20180321020822.86255-5-bjsdjshi@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <1521637856-26463-1-git-send-email-gxt@pku.edu.cn>
-References: <1521637856-26463-1-git-send-email-gxt@pku.edu.cn>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 26 Mar 2018 15:52:38 +0200
-X-Google-Sender-Auth: AiMlbl_dgSKrIPD_xrbY5UOLOnc
-Message-ID: <CAK8P3a04kcT8KzRMw98xqnkc45s-dAG5FQNN1=AkmoTT=Z9ExA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: UNICORE32: Change email account
-To: Guan Xuetao <gxt@pku.edu.cn>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 2:10 PM, Guan Xuetao <gxt@pku.edu.cn> wrote:
-> Change email account for unicore32 arch and pkunity soc drivers
-> Since old email server mprc.pku.edu.cn was blocked in recent years
->
-> Signed-off-by: Guan Xuetao <gxt@pku.edu.cn>
-> Cc: Arnd Bergmann <arnd@arndb.de>
+On Wed, 21 Mar 2018 03:08:22 +0100
+Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
 
-Applied to my asm-generic tree, thanks!
+> From: Halil Pasic <pasic@linux.vnet.ibm.com>
+> 
+> Add some tracepoints so we can inspect what is not working as is should.
 
-       Arnd
+Tracepoints are certainly helpful (we can add more later).
+
+> 
+> Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+> ---
+>  drivers/s390/cio/Makefile         |  1 +
+>  drivers/s390/cio/vfio_ccw_fsm.c   | 13 ++++++
+>  drivers/s390/cio/vfio_ccw_trace.h | 86 +++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 100 insertions(+)
+>  create mode 100644 drivers/s390/cio/vfio_ccw_trace.h
+> 
+> diff --git a/drivers/s390/cio/Makefile b/drivers/s390/cio/Makefile
+> index a070ef0efe65..f230516abb96 100644
+> --- a/drivers/s390/cio/Makefile
+> +++ b/drivers/s390/cio/Makefile
+> @@ -5,6 +5,7 @@
+>  
+>  # The following is required for define_trace.h to find ./trace.h
+>  CFLAGS_trace.o := -I$(src)
+> +CFLAGS_vfio_ccw_fsm.o := -I$(src)
+>  
+>  obj-y += airq.o blacklist.o chsc.o cio.o css.o chp.o idset.o isc.o \
+>  	fcx.o itcw.o crw.o ccwreq.o trace.o ioasm.o
+> diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
+> index c30420c517b1..7ed27f90d741 100644
+> --- a/drivers/s390/cio/vfio_ccw_fsm.c
+> +++ b/drivers/s390/cio/vfio_ccw_fsm.c
+> @@ -13,6 +13,9 @@
+>  #include "ioasm.h"
+>  #include "vfio_ccw_private.h"
+>  
+> +#define CREATE_TRACE_POINTS
+> +#include "vfio_ccw_trace.h"
+> +
+>  static int fsm_io_helper(struct vfio_ccw_private *private)
+>  {
+>  	struct subchannel *sch;
+> @@ -105,6 +108,10 @@ static void fsm_disabled_irq(struct vfio_ccw_private *private,
+>  	 */
+>  	cio_disable_subchannel(sch);
+>  }
+> +inline struct subchannel_id get_schid(struct vfio_ccw_private *p)
+> +{
+> +	return p->sch->schid;
+> +}
+>  
+>  /*
+>   * Deal with the ccw command request from the userspace.
+> @@ -131,6 +138,8 @@ static void fsm_io_request(struct vfio_ccw_private *private,
+>  
+>  		io_region->ret_code = cp_prefetch(&private->cp);
+>  		if (io_region->ret_code) {
+> +			trace_vfio_ccw_cp_prefetch_failed(get_schid(private),
+> +							  io_region->ret_code);
+>  			cp_free(&private->cp);
+>  			goto err_out;
+>  		}
+> @@ -138,6 +147,8 @@ static void fsm_io_request(struct vfio_ccw_private *private,
+>  		/* Start channel program and wait for I/O interrupt. */
+>  		io_region->ret_code = fsm_io_helper(private);
+>  		if (io_region->ret_code) {
+> +			trace_vfio_ccw_ssch_failed(get_schid(private),
+> +						   io_region->ret_code);
+>  			cp_free(&private->cp);
+>  			goto err_out;
+>  		}
+> @@ -145,10 +156,12 @@ static void fsm_io_request(struct vfio_ccw_private *private,
+>  	} else if (scsw->cmd.fctl & SCSW_FCTL_HALT_FUNC) {
+>  		/* XXX: Handle halt. */
+>  		io_region->ret_code = -EOPNOTSUPP;
+> +		trace_vfio_ccw_halt(get_schid(private));
+>  		goto err_out;
+>  	} else if (scsw->cmd.fctl & SCSW_FCTL_CLEAR_FUNC) {
+>  		/* XXX: Handle clear. */
+>  		io_region->ret_code = -EOPNOTSUPP;
+> +		trace_vfio_ccw_clear(get_schid(private));
+>  		goto err_out;
+
+Hmmm.... perhaps better to just trace the function (start/halt/clear)
+in any case?
+
+>  	}
+>  
+> diff --git a/drivers/s390/cio/vfio_ccw_trace.h b/drivers/s390/cio/vfio_ccw_trace.h
+> new file mode 100644
+> index 000000000000..edd3321cd919
+> --- /dev/null
+> +++ b/drivers/s390/cio/vfio_ccw_trace.h
+> @@ -0,0 +1,86 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + * Tracepoints for vfio_ccw driver
+> + *
+> + * Copyright IBM Corp. 2018
+> + *
+> + * Author(s): Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+> + *            Halil Pasic <pasic@linux.vnet.ibm.com>
+> + */
+> +
+> +
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM vfio_ccw
+> +
+> +#if !defined(_VFIO_CCW_TRACE_) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _VFIO_CCW_TRACE_
+> +
+> +#include <linux/tracepoint.h>
+> +
+> +TRACE_EVENT(vfio_ccw_cp_prefetch_failed,
+> +	TP_PROTO(struct subchannel_id schid, int errno),
+> +	TP_ARGS(schid, errno),
+> +
+> +	TP_STRUCT__entry(
+> +		__field_struct(struct subchannel_id, schid)
+> +		__field(int, errno)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->schid = schid;
+> +		__entry->errno = errno;
+> +	),
+> +
+> +	TP_printk("(schid 0.%x.%04X) translation failed (errno: %d)",
+> +		__entry->schid.ssid, __entry->schid.sch_no, __entry->errno)
+> +);
+> +
+> +TRACE_EVENT(vfio_ccw_ssch_failed,
+> +	TP_PROTO(struct subchannel_id schid, int errno),
+> +	TP_ARGS(schid, errno),
+> +
+> +	TP_STRUCT__entry(
+> +		__field_struct(struct subchannel_id, schid)
+> +		__field(int, errno)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->schid = schid;
+> +		__entry->errno = errno;
+> +	),
+> +
+> +	TP_printk("(schid 0.%x.%04X) ssch failed (errno: %d)",
+> +		__entry->schid.ssid, __entry->schid.sch_no, __entry->errno)
+> +);
+> +
+> +DECLARE_EVENT_CLASS(vfio_ccw_notsupp,
+> +	TP_PROTO(struct subchannel_id schid),
+> +	TP_ARGS(schid),
+> +
+> +	TP_STRUCT__entry(
+> +		__field_struct(struct subchannel_id, schid)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->schid = schid;
+> +	),
+> +
+> +	TP_printk("(schid 0.%x.%04X) request not supported",
+> +		__entry->schid.ssid, __entry->schid.sch_no)
+> +);
+
+Especially as I don't plan to leave this unsupported for too long :)
+
+Just tracing the function is useful now and will stay useful in the
+future.
+
+Another idea: Trace the fsm state transitions. Probably something for
+an additional patch.
+
+
+> +
+> +DEFINE_EVENT(vfio_ccw_notsupp, vfio_ccw_clear,
+> +        TP_PROTO(struct subchannel_id schid), TP_ARGS(schid));
+> +
+> +DEFINE_EVENT(vfio_ccw_notsupp, vfio_ccw_halt,
+> +	TP_PROTO(struct subchannel_id schid), TP_ARGS(schid));
+> +
+> +#endif /* _VFIO_CCW_TRACE_ */
+> +
+> +/* This part must be outside protection */
+> +
+> +#undef TRACE_INCLUDE_PATH
+> +#define TRACE_INCLUDE_PATH .
+> +#undef TRACE_INCLUDE_FILE
+> +#define TRACE_INCLUDE_FILE vfio_ccw_trace
+> +
+> +#include <trace/define_trace.h>
