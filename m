@@ -1,20 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeCZIOB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:14:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35456 "EHLO mx2.suse.de"
+        id S1752113AbeCZIPP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:15:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35624 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751071AbeCZIOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:14:00 -0400
-Date: Mon, 26 Mar 2018 10:13:56 +0200
+        id S1750940AbeCZIPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 04:15:14 -0400
+Date: Mon, 26 Mar 2018 10:15:12 +0200
 From: Michal Hocko <mhocko@kernel.org>
-To: jglisse@redhat.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: jglisse@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         David Rientjes <rientjes@google.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Paolo Bonzini <pbonzini@redhat.com>,
         Leon Romanovsky <leonro@mellanox.com>,
         Artemy Kovalyov <artemyko@mellanox.com>,
         Evgeny Baskakov <ebaskakov@nvidia.com>,
@@ -28,41 +26,62 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Ashutosh Dixit <ashutosh.dixit@intel.com>,
         Dimitri Sivanich <sivanich@sgi.com>
 Subject: Re: [RFC PATCH 0/3] mmu_notifier contextual information
-Message-ID: <20180326081356.GA5652@dhcp22.suse.cz>
+Message-ID: <20180326081512.GB5652@dhcp22.suse.cz>
 References: <20180323171748.20359-1-jglisse@redhat.com>
+ <e22988c5-2d58-45bb-e2f7-c7ca7bdb9e49@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180323171748.20359-1-jglisse@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e22988c5-2d58-45bb-e2f7-c7ca7bdb9e49@amd.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I haven't read through the whole thread, I just wanted to clarify the
-OOM aspect.
-On Fri 23-03-18 13:17:45, jglisse@redhat.com wrote:
-[...]
-> OOM is also an interesting case, recently a patchset was added to
-> avoid OOM on a mm if a blocking mmu_notifier listener have been
-> registered [1].
+On Fri 23-03-18 19:34:04, Christian König wrote:
+> Am 23.03.2018 um 18:17 schrieb jglisse@redhat.com:
+> > From: Jérôme Glisse <jglisse@redhat.com>
+> > 
+> > This patchset are the improvements to mmu_notifier i wish to discuss
+> > at next LSF/MM. I am sending now to give time to people to look at
+> > them and think about them.
+> > 
+> > git://people.freedesktop.org/~glisse/linux mmu-notifier-rfc
+> > https://cgit.freedesktop.org/~glisse/linux/log/?h=mmu-notifier-rfc
+> > 
+> > First patch just use a struct for invalidate_range_start/end arguments
+> > this make the other 2 patches easier and smaller.
+> > 
+> > The idea is to provide more information to mmu_notifier listener on
+> > the context of each invalidation. When a range is invalidated this
+> > can be for various reasons (munmap, protection change, OOM, ...). If
+> > listener can distinguish between those it can take better action.
+> > 
+> > For instance if device driver allocate structure to track a range of
+> > virtual address prior to this patch it always have to assume that it
+> > has to free those on each mmu_notifieir callback (having to assume it
+> > is a munmap) and reallocate those latter when the device try to do
+> > something with that range again.
+> > 
+> > OOM is also an interesting case, recently a patchset was added to
+> > avoid OOM on a mm if a blocking mmu_notifier listener have been
+> > registered [1]. This can be improve by adding a new OOM event type and
+> > having listener take special path on those. All mmu_notifier i know
+> > can easily have a special path for OOM that do not block (beside
+> > taking a short lived, across driver, spinlock). If mmu_notifier usage
+> > grows (from a point of view of more process using devices that rely on
+> > them) then we should also make sure OOM can do its bidding.
+> 
+> +1 for better handling that.
+> 
+> The fact that the OOM killer now avoids processes which might sleep during
+> their MM destruction gave me a few sleepless night recently.
 
-This is not quite right. We only skip oom _reaper_ (aka async oom victim
-address space tear down). We still do allow such a task to be selected
-as an OOM victim and killed. So the worst case that we might kill
-another task if the current victim is not able to make a forward
-progress on its own.
+I have tried to clarify this [1] but could you be more specific about
+the issue you were seeing?
 
-> This can be improve by adding a new OOM event type and
-> having listener take special path on those. All mmu_notifier i know
-> can easily have a special path for OOM that do not block (beside
-> taking a short lived, across driver, spinlock). If mmu_notifier usage
-> grows (from a point of view of more process using devices that rely on
-> them) then we should also make sure OOM can do its bidding.
-
-If we can distinguish the OOM path and enforce no locks or indirect
-dependencies on the memory allocation the the situation would improve
-for sure.
+[1] http://lkml.kernel.org/r/20180326081356.GA5652@dhcp22.suse.cz
 -- 
 Michal Hocko
 SUSE Labs
