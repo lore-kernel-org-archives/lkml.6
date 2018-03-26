@@ -1,67 +1,80 @@
-Return-Path: <kernel-hardening-return-12664-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AG47ELsiRprlCc6eZjUoDtCa11Jim+vY1/P6V+YmQx59kc9UlQ0waxeGjSg2+cXm09QUyj5zubz4
-ARC-Seal: i=1; a=rsa-sha256; t=1521215822; cv=none;
+Return-Path: <kernel-hardening-return-12741-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+m9bAp79RbqWdFSsHgz2zKLZS1VyZVUndp9xJFAp92FHuOIMjBr1VKngGteIvYJkNFwQQN
+ARC-Seal: i=1; a=rsa-sha256; t=1522103958; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ki93pl6ZGoL0Dd9/XdVoHAAPHaoDsKG+jaRjObaiOUeGMd2j5GvX0xMNKqTJUaz1q4
-         MOtgn/Nl/Q4bYDMm60OAHxXi8PjDMEq9Hk7GprcIwP2AcwPdOXLJsKVS/VevN5Yr5iE6
-         pIVFP6ATLKEnqTELUblVuse558xcNAU0/D+4cFinZGbXURE4Ra5GHKGPySbDDRjLRu23
-         qsD+sKLhwldevhN2aNvB8vCmFpb159ZsPdDA3dw1nReMkrqR2Qktt9xhlHUnrenG3YHs
-         6SdXtDb4lboqoRJ9KX+eygbpPRJj+nDYOaXNsFMDfZgTw0X8x+aU0/VuZxInPtsO7XPB
-         j9qw==
+        b=NC8qa9zsZtx8GvK5ut6vU8F/+PGVtMiv5F9CI75a+9sJzjDXYbOGCEWbGveE4dASxQ
+         khKVdJj7PIn+Fklq6mKjZ0PQ+RRLMnXBP84kTKxqh31+CRmgf15Zx6R21+5OBVMYbJG1
+         /V10YBJts/U0BFDv8IhVsPqOqDiYKaUbz0R9HFJqKyPGmgc2tEVK5WVfgYxQlmBtgr7L
+         L09W6YAT2BuF/b/gcSdzaCpCmjUcB9KFzADEE44TFHvmRSM3p8Tj0hmir1hPaL8lIv03
+         wiq8mEICBfz2P9wHDWwOM3aNexnRR1jcQumfZ7swpjpR8fdsrUm+2k4cMnTmlfwQhYcS
+         NOtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:delivered-to:list-id
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
          :list-subscribe:list-unsubscribe:list-help:list-post:precedence
          :mailing-list:arc-authentication-results;
-        bh=FqdoCP46nWxwm/WxROyUWYk9fnPucxmmGKExljT0/fM=;
-        b=VpC9K5GUEL+RIgWS+A4ylaVM79ayq9hkQWjBQzZVFU/3iOZKAFC6mpNxTsVibx4TYk
-         yW4IPFE9HZa3gPuOwH8lspE0M1YsEHhav4/PRM+IuYsSheX0owYO4oKiBcXLkWGdht0W
-         UPYE8i1Bu9TUB289mnPkan3/K1Ig85q+cWTCFwtxFmG/TuZjCLBZGtciOmTyndeuDPIc
-         Od+CmJO+Mt6lbTLtfdvSk6NPXaQEDnfxi4/ky9fkWAnB2TIVWzE1AnHwBtgKt+zHDnUU
-         se9QIT1X9OUKd+ENDxvqTRyfAw8cF2Qa8M6mElUu0OZaN0WZDWAnxibdpjjw0NwsVA4N
-         zbIA==
+        bh=6/X+W8pbHgOlH5x84kmi2lqQF0CHEo2jqz5FPOz0JQw=;
+        b=Nf9ct8xFWnfz6Kpx3zdKZf1kKcuvavw4erSBinVQIu9E92NhY4rNWT9wfPpvPd31QA
+         0jGtnTbWKv8RZ+IuWwJGhok4tZ+nfRWy9fzpf193H0gQX+dwbsHgCtY2lgCCRXTjeOrS
+         nvWejwEh0kKDyFzwgYEFLzdklY5Qslr7eZ2M6tgGsXEG0QNGfZE4glcHpndjflDOHhI/
+         ei9Qard5HzhpaP9/Nj6/yqjW3bVZRZhJdFaO1eE0VX53kITf/ZQw1wGqbeaizIR2GGTy
+         FFp0/+XYLsV9NLEj5L5P/3KdL9thuqRXeOeERk5CDTOf4OvvRKRn6jiHvWyQsYqT8Hk1
+         /MSQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12664-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12664-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=VpbgFWui;
+       dkim=pass header.i=@chromium.org header.s=google header.b=TcLFggfP;
+       spf=pass (google.com: domain of kernel-hardening-return-12741-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12741-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12664-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12664-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=VpbgFWui;
+       dkim=pass header.i=@chromium.org header.s=google header.b=TcLFggfP;
+       spf=pass (google.com: domain of kernel-hardening-return-12741-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12741-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Fri, 16 Mar 2018 23:56:32 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Kees Cook <keescook@chromium.org>
-Cc: Tudor Ambarus <tudor.ambarus@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org, kernel-hardening@lists.openwall.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] crypto/ecc: Remove stack VLA usage
-Message-ID: <20180316155632.GI7095@gondor.apana.org.au>
-References: <20180308215702.GA9902@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308215702.GA9902@beast>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Sender: keescook@google.com
+In-Reply-To: <20180316155632.GI7095@gondor.apana.org.au>
+References: <20180308215702.GA9902@beast> <20180316155632.GI7095@gondor.apana.org.au>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 26 Mar 2018 15:38:59 -0700
+X-Google-Sender-Auth: P8aZvoy1aONEE7RMVQ8kf6kW4yM
+Message-ID: <CAGXu5jKJ-05xb8x7A4dZmFQm10z5g9x1LhFbC1nzLT7kdVVbGg@mail.gmail.com>
+Subject: Re: [PATCH v2] crypto/ecc: Remove stack VLA usage
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Tudor Ambarus <tudor.ambarus@microchip.com>, "David S. Miller" <davem@davemloft.net>,
+	linux-crypto <linux-crypto@vger.kernel.org>,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594317666211482580?=
-X-GMAIL-MSGID: =?utf-8?q?1595110402479339571?=
+X-GMAIL-MSGID: =?utf-8?q?1596041680471953970?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Mar 08, 2018 at 01:57:02PM -0800, Kees Cook wrote:
-> On the quest to remove all VLAs from the kernel[1], this switches to
-> a pair of kmalloc regions instead of using the stack. This also moves
-> the get_random_bytes() after all allocations (and drops the needless
-> "nbytes" variable).
-> 
-> [1] https://lkml.org/lkml/2018/3/7/621
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Fri, Mar 16, 2018 at 8:56 AM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Thu, Mar 08, 2018 at 01:57:02PM -0800, Kees Cook wrote:
+>> On the quest to remove all VLAs from the kernel[1], this switches to
+>> a pair of kmalloc regions instead of using the stack. This also moves
+>> the get_random_bytes() after all allocations (and drops the needless
+>> "nbytes" variable).
+>>
+>> [1] https://lkml.org/lkml/2018/3/7/621
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>
+> Patch applied.  Thanks.
 
-Patch applied.  Thanks.
+Hi, sorry for the noise on this one: I messed up looking at the ecc
+code (I confused myself into thinking there was only a single instance
+of the problem). The applied patch is both incomplete and inefficient.
+I have a much simpler solution, and I'll send that with a revert...
+
+-Kees
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Kees Cook
+Pixel Security
