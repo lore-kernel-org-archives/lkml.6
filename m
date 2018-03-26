@@ -1,100 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752487AbeCZPbW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 11:31:22 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:47168 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752109AbeCZPbU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 11:31:20 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T-8AJAS_1522078265;
-Subject: Re: [PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: adobriyan@gmail.com, mhocko@kernel.org, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1521851771-108673-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180324043044.GA22733@bombadil.infradead.org>
- <aed7f679-a32f-d8d7-eb59-ec05fc49a70e@linux.alibaba.com>
- <a766b98b-80b4-5f1b-9588-dd1c5506cbdc@i-love.sakura.ne.jp>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <579be4ee-58d0-1ffd-6b73-0202c7b28f08@linux.alibaba.com>
-Date: Mon, 26 Mar 2018 11:31:03 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
+        id S1752223AbeCZPdJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 11:33:09 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:42235 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751865AbeCZPdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 11:33:08 -0400
+Date: Mon, 26 Mar 2018 17:32:57 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: sean.wang@mediatek.com
+Cc: davem@davemloft.net, f.fainelli@gmail.com,
+        vivien.didelot@savoirfairelinux.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net 1/2] net: dsa: mt7530: remove redundant MODULE_ALIAS
+ entries
+Message-ID: <20180326153257.GB3014@lunn.ch>
+References: <2497321afc9156f7954e813721f60a0a95c03bd2.1522057659.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <a766b98b-80b4-5f1b-9588-dd1c5506cbdc@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2497321afc9156f7954e813721f60a0a95c03bd2.1522057659.git.sean.wang@mediatek.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Mar 26, 2018 at 06:07:09PM +0800, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
+> 
+> MODULE_ALIAS exports information to allow the module to be auto-loaded at
+> boot for the drivers registered using legacy platform registration.
+> 
+> However, currently the driver is always used by DT-only platform,
+> MODULE_ALIAS is redundant and should be removed properly.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
 
+For this, and the second patch:
 
-On 3/26/18 10:49 AM, Tetsuo Handa wrote:
-> On 2018/03/24 9:36, Yang Shi wrote:
->> And, the mmap_sem contention may cause unexpected issue like below:
->>
->> INFO: task ps:14018 blocked for more than 120 seconds.
->>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->> message.
->>   ps              D    0 14018      1 0x00000004
->>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>   Call Trace:
->>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>    [<ffffffff817159e6>] schedule+0x36/0x80
->>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>    [<ffffffff81717db0>] down_read+0x20/0x40
->>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
->>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->>    [<ffffffff81242266>] vfs_read+0x96/0x130
->>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
->>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
-> Yes, but
->
->> Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
->> for them to mitigate the abuse of mmap_sem.
->>
->> So, introduce a new rwlock in mm_struct to protect the concurrent access
->> to arg_start|end and env_start|end.
-> does arg_lock really help?
->
-> I wonder whether per "struct mm_struct" granularity is needed if arg_lock
-> protects only a few atomic reads. A global lock would be sufficient.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-However, a global lock might be hard to know what it is used for, and 
-might be abused again.
-
-And, it may introduce unexpected contention for parallel reading for /proc
-
->
-> Also, even if we succeeded to avoid mmap_sem contention at that location,
-> won't we after all get mmap_sem contention messages a bit later, for
-> access_remote_vm() holds mmap_sem which would lead to traces like above
-> if mmap_sem is already contended?
-
-Yes, definitely, this patch is aimed to remove the abuse to mmap_sem. 
-The mmap_sem contention will be addressed separately.
-
-Yang
-
->
->> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->> Cc: Alexey Dobriyan <adobriyan@gmail.com>
->> Cc: Michal Hocko <mhocko@kernel.org>
->> ---
->>   fs/proc/base.c           | 8 ++++----
->>   include/linux/mm_types.h | 2 ++
->>   kernel/fork.c            | 1 +
->>   kernel/sys.c             | 6 ++++++
->>   mm/init-mm.c             | 1 +
->>   5 files changed, 14 insertions(+), 4 deletions(-)
+    Andrew
