@@ -1,75 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752549AbeCZWpw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:45:52 -0400
-Received: from mga14.intel.com ([192.55.52.115]:11199 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752510AbeCZWpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:45:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,365,1517904000";
-   d="scan'208";a="27757351"
-Date: Mon, 26 Mar 2018 15:45:46 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Luck@alison-desk.jf.intel.com, Tim Chen <tim.c.chen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Rientjes <rientjes@google.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86,sched: allow topologies where NUMA nodes share an
- LLC
-Message-ID: <20180326224546.yu5lkk7t22zxfikj@agluck-desk>
-References: <20180322204922.GA2337@alison-desk.jf.intel.com>
- <20180322233027.bh6dp5vdcb4rdvqe@agluck-desk>
- <20180326221948.GA17814@alison-desk.jf.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326221948.GA17814@alison-desk.jf.intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S1752568AbeCZWqS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:46:18 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:46006 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752157AbeCZWqQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 18:46:16 -0400
+X-Google-Smtp-Source: AG47ELsLy+zno8P2jtcxyI39p0LGE2HujYENipOtNwtsrDmMIMVaRbJR3vYNeOh2DIozg1T+r+2erA==
+From: Wei Yang <richard.weiyang@gmail.com>
+To: vgoyal@redhat.com, thomas.lendacky@amd.com, bp@suse.de
+Cc: linux-kernel@vger.kernel.org, Wei Yang <richard.weiyang@gmail.com>
+Subject: [PATCH] kernel/resource: refine find_next_iomem_res() a little
+Date: Tue, 27 Mar 2018 06:46:06 +0800
+Message-Id: <20180326224606.79666-1-richard.weiyang@gmail.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 03:19:48PM -0700, Alison Schofield wrote:
-> On Thu, Mar 22, 2018 at 04:30:29PM -0700, Luck, Tony wrote:
-> > On Thu, Mar 22, 2018 at 01:49:22PM -0700, Alison Schofield wrote:
-> > > +	if (!topology_same_node(c, o) &&
-> > > +	    (c->x86_vendor == X86_VENDOR_INTEL &&
-> > > +	     c->x86_model == INTEL_FAM6_SKYLAKE_X)) {
-> > 
-> > Maybe make life easier in the future to add more models
-> > to the list by using x86_match_cpu() here?
-> > 
-> > -Tony
-> 
-> Tony - 
->  Am I on the right track below?
-> 
-> Define like this:
-> static const __initconst struct x86_cpu_id snc_cpu[] = {
-> 	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_SKYLAKE_X },
-> 	{}
-> };
-> 
-> Use like this:
-> if (!topology_same_node(c, o) && x86_match_cpu(snc_cpu)) {
+This patch does several refine for find_next_iomem_res()
 
-Alison,
+  * use first_level_children_only directly
+  * remove some local variables
+  * use resrouce_clip()
 
-Exactly right.  You can decide how much of the comment
-that was before the "if (!topology_same_node(c, o) ..."
-can be moved to before the definition of snc_cpu[]. I'm
-too lazy to go back to the original patch to read it, but
-I suspect most/all of it would be better descibing the
-data structure than cluttering up the code that uses it.
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+---
+ kernel/resource.c | 40 +++++++++++++++-------------------------
+ 1 file changed, 15 insertions(+), 25 deletions(-)
 
--Tony
+diff --git a/kernel/resource.c b/kernel/resource.c
+index e270b5048988..769109f20fb7 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -351,6 +351,15 @@ int release_resource(struct resource *old)
+ 
+ EXPORT_SYMBOL(release_resource);
+ 
++static void resource_clip(struct resource *res, resource_size_t min,
++			  resource_size_t max)
++{
++	if (res->start < min)
++		res->start = min;
++	if (res->end > max)
++		res->end = max;
++}
++
+ /*
+  * Finds the lowest iomem resource existing within [res->start.res->end).
+  * The caller must specify res->start, res->end, res->flags, and optionally
+@@ -361,31 +370,24 @@ EXPORT_SYMBOL(release_resource);
+ static int find_next_iomem_res(struct resource *res, unsigned long desc,
+ 			       bool first_level_children_only)
+ {
+-	resource_size_t start, end;
+ 	struct resource *p;
+-	bool sibling_only = false;
+ 
+ 	BUG_ON(!res);
+-
+-	start = res->start;
+-	end = res->end;
+-	BUG_ON(start >= end);
+-
+-	if (first_level_children_only)
+-		sibling_only = true;
++	BUG_ON(res->start >= res->end);
+ 
+ 	read_lock(&resource_lock);
+ 
+-	for (p = iomem_resource.child; p; p = next_resource(p, sibling_only)) {
++	for (p = iomem_resource.child; p;
++		p = next_resource(p, first_level_children_only)) {
+ 		if ((p->flags & res->flags) != res->flags)
+ 			continue;
+ 		if ((desc != IORES_DESC_NONE) && (desc != p->desc))
+ 			continue;
+-		if (p->start > end) {
++		if (p->start > res->end) {
+ 			p = NULL;
+ 			break;
+ 		}
+-		if ((p->end >= start) && (p->start < end))
++		if ((p->end >= res->start) && (p->start < res->end))
+ 			break;
+ 	}
+ 
+@@ -393,10 +395,7 @@ static int find_next_iomem_res(struct resource *res, unsigned long desc,
+ 	if (!p)
+ 		return -1;
+ 	/* copy data */
+-	if (res->start < p->start)
+-		res->start = p->start;
+-	if (res->end > p->end)
+-		res->end = p->end;
++	resource_clip(res, p->start, p->end);
+ 	res->flags = p->flags;
+ 	res->desc = p->desc;
+ 	return 0;
+@@ -600,15 +599,6 @@ static resource_size_t simple_align_resource(void *data,
+ 	return avail->start;
+ }
+ 
+-static void resource_clip(struct resource *res, resource_size_t min,
+-			  resource_size_t max)
+-{
+-	if (res->start < min)
+-		res->start = min;
+-	if (res->end > max)
+-		res->end = max;
+-}
+-
+ /*
+  * Find empty slot in the resource tree with the given range and
+  * alignment constraints
+-- 
+2.15.1
