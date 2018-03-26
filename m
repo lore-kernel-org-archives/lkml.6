@@ -1,127 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751713AbeCZH5D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 03:57:03 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39430 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751091AbeCZH5A (ORCPT
+        id S1751866AbeCZH6O (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 03:58:14 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51029 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750864AbeCZH6N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 03:57:00 -0400
-Subject: Re: [PATCH v2 1/6] i2c: i2c-stm32f7: Add 10-bit address support
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1521650940-11651-1-git-send-email-pierre-yves.mordret@st.com>
- <1521650940-11651-2-git-send-email-pierre-yves.mordret@st.com>
- <20180324224332.apsixpklrgtelak7@ninjato>
-From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <fd463a3d-354c-d4e9-16a8-2829ccc04adc@st.com>
-Date: Mon, 26 Mar 2018 09:56:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 26 Mar 2018 03:58:13 -0400
+Date: Mon, 26 Mar 2018 00:57:46 -0700
+From: tip-bot for David Rientjes <tipbot@zytor.com>
+Message-ID: <tip-e25283bf83bd97a61007ab383695f4872e2eb43f@git.kernel.org>
+Cc: jgross@suse.com, mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        rientjes@google.com, linux-kernel@vger.kernel.org
+Reply-To: jgross@suse.com, hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        rientjes@google.com, linux-kernel@vger.kernel.org
+In-Reply-To: <alpine.DEB.2.20.1803251403540.80485@chino.kir.corp.google.com>
+References: <alpine.DEB.2.20.1803251403540.80485@chino.kir.corp.google.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/apic] x86/apic: Finish removing unused callbacks
+Git-Commit-ID: e25283bf83bd97a61007ab383695f4872e2eb43f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180324224332.apsixpklrgtelak7@ninjato>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-26_04:,,
- signatures=0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  e25283bf83bd97a61007ab383695f4872e2eb43f
+Gitweb:     https://git.kernel.org/tip/e25283bf83bd97a61007ab383695f4872e2eb43f
+Author:     David Rientjes <rientjes@google.com>
+AuthorDate: Sun, 25 Mar 2018 14:04:30 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 26 Mar 2018 08:49:38 +0200
 
+x86/apic: Finish removing unused callbacks
 
-On 03/24/2018 11:43 PM, Wolfram Sang wrote:
-> On Wed, Mar 21, 2018 at 05:48:55PM +0100, Pierre-Yves MORDRET wrote:
->> This patch adds support for 10-bit device address for STM32F7 I2C
->>
->> Signed-off-by: M'boumba Cedric Madianga <cedric.madianga@gmail.com>
->> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-> 
-> Out of curiosity: how did you test this patch? I never managed to find a
-> 10-bit client (except for an SoC with 10-bit slave mode).
+The ->cpu_mask_to_apicid() and ->vector_allocation_domain() callbacks are
+now unused, so remove them.
 
-I don't have a 10-bit device either. For testing 10-bit I'm using 2 I2C
-instances from the SoC, one in master mode and the other in slave mode.
+Signed-off-by: David Rientjes <rientjes@google.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: baab1e84b112 ("x86/apic: Remove unused callbacks")
+Link: http://lkml.kernel.org/r/alpine.DEB.2.20.1803251403540.80485@chino.kir.corp.google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/apic.h | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-> 
->> ---
->>   Version history:
->>      v1:
->>         * Initial
->>      v2:
->> ---
->> ---
->>  drivers/i2c/busses/i2c-stm32f7.c | 22 +++++++++++++++++-----
->>  1 file changed, 17 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
->> index f273e28..ae0d15c 100644
->> --- a/drivers/i2c/busses/i2c-stm32f7.c
->> +++ b/drivers/i2c/busses/i2c-stm32f7.c
->> @@ -65,7 +65,12 @@
->>  #define STM32F7_I2C_CR2_NACK			BIT(15)
->>  #define STM32F7_I2C_CR2_STOP			BIT(14)
->>  #define STM32F7_I2C_CR2_START			BIT(13)
->> +#define STM32F7_I2C_CR2_HEAD10R			BIT(12)
->> +#define STM32F7_I2C_CR2_ADD10			BIT(11)
->>  #define STM32F7_I2C_CR2_RD_WRN			BIT(10)
->> +#define STM32F7_I2C_CR2_SADD10_MASK		GENMASK(9, 0)
->> +#define STM32F7_I2C_CR2_SADD10(n)		(((n) & \
->> +						STM32F7_I2C_CR2_SADD10_MASK))
->>  #define STM32F7_I2C_CR2_SADD7_MASK		GENMASK(7, 1)
->>  #define STM32F7_I2C_CR2_SADD7(n)		(((n) & 0x7f) << 1)
->>  
->> @@ -176,14 +181,14 @@ struct stm32f7_i2c_timings {
->>  
->>  /**
->>   * struct stm32f7_i2c_msg - client specific data
->> - * @addr: 8-bit slave addr, including r/w bit
->> + * @addr: 8-bit or 10-bit slave addr, including r/w bit
->>   * @count: number of bytes to be transferred
->>   * @buf: data buffer
->>   * @result: result of the transfer
->>   * @stop: last I2C msg to be sent, i.e. STOP to be generated
->>   */
->>  struct stm32f7_i2c_msg {
->> -	u8 addr;
->> +	u16 addr;
->>  	u32 count;
->>  	u8 *buf;
->>  	int result;
->> @@ -629,8 +634,15 @@ static void stm32f7_i2c_xfer_msg(struct stm32f7_i2c_dev *i2c_dev,
->>  		cr2 |= STM32F7_I2C_CR2_RD_WRN;
->>  
->>  	/* Set slave address */
->> -	cr2 &= ~STM32F7_I2C_CR2_SADD7_MASK;
->> -	cr2 |= STM32F7_I2C_CR2_SADD7(f7_msg->addr);
->> +	cr2 &= ~(STM32F7_I2C_CR2_HEAD10R | STM32F7_I2C_CR2_ADD10);
->> +	if (msg->flags & I2C_M_TEN) {
->> +		cr2 &= ~STM32F7_I2C_CR2_SADD10_MASK;
->> +		cr2 |= STM32F7_I2C_CR2_SADD10(f7_msg->addr);
->> +		cr2 |= STM32F7_I2C_CR2_ADD10;
->> +	} else {
->> +		cr2 &= ~STM32F7_I2C_CR2_SADD7_MASK;
->> +		cr2 |= STM32F7_I2C_CR2_SADD7(f7_msg->addr);
->> +	}
->>  
->>  	/* Set nb bytes to transfer and reload if needed */
->>  	cr2 &= ~(STM32F7_I2C_CR2_NBYTES_MASK | STM32F7_I2C_CR2_RELOAD);
->> @@ -798,7 +810,7 @@ static int stm32f7_i2c_xfer(struct i2c_adapter *i2c_adap,
->>  
->>  static u32 stm32f7_i2c_func(struct i2c_adapter *adap)
->>  {
->> -	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
->> +	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR;
->>  }
->>  
->>  static struct i2c_algorithm stm32f7_i2c_algo = {
->> -- 
->> 2.7.4
->>
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index c6a32019ff54..40a3d3642f3a 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -304,12 +304,6 @@ struct apic {
+ 	u32	irq_delivery_mode;
+ 	u32	irq_dest_mode;
+ 
+-	/* Functions and data related to vector allocation */
+-	void	(*vector_allocation_domain)(int cpu, struct cpumask *retmask,
+-					    const struct cpumask *mask);
+-	int	(*cpu_mask_to_apicid)(const struct cpumask *cpumask,
+-				      struct irq_data *irqdata,
+-				      unsigned int *apicid);
+ 	u32	(*calc_dest_apicid)(unsigned int cpu);
+ 
+ 	/* ICR related functions */
+@@ -499,17 +493,7 @@ extern void default_setup_apic_routing(void);
+ extern u32 apic_default_calc_apicid(unsigned int cpu);
+ extern u32 apic_flat_calc_apicid(unsigned int cpu);
+ 
+-extern int flat_cpu_mask_to_apicid(const struct cpumask *cpumask,
+-				   struct irq_data *irqdata,
+-				   unsigned int *apicid);
+-extern int default_cpu_mask_to_apicid(const struct cpumask *cpumask,
+-				      struct irq_data *irqdata,
+-				      unsigned int *apicid);
+ extern bool default_check_apicid_used(physid_mask_t *map, int apicid);
+-extern void flat_vector_allocation_domain(int cpu, struct cpumask *retmask,
+-				   const struct cpumask *mask);
+-extern void default_vector_allocation_domain(int cpu, struct cpumask *retmask,
+-				      const struct cpumask *mask);
+ extern void default_ioapic_phys_id_map(physid_mask_t *phys_map, physid_mask_t *retmap);
+ extern int default_cpu_present_to_apicid(int mps_cpu);
+ extern int default_check_phys_apicid_present(int phys_apicid);
