@@ -1,108 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752696AbeCZRsy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 13:48:54 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33064 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752627AbeCZRsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 13:48:52 -0400
-Date: Mon, 26 Mar 2018 19:48:00 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        id S1752735AbeCZRtF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 13:49:05 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:39148 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752647AbeCZRsx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 13:48:53 -0400
+Subject: Re: [PATCH 1/9] x86, pkeys: do not special case protection key 0
+To: Dave Hansen <dave.hansen@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/10] x86/microcode/AMD: Check microcode container
- file size before accessing it
-Message-ID: <20180326174759.GD28372@pd.tnic>
-References: <cover.1521150415.git.mail@maciej.szmigiero.name>
- <e0376cb1-3eb0-9d37-9097-558f8469e42a@maciej.szmigiero.name>
+Cc: linux-mm@kvack.org, stable@kernel.org, linuxram@us.ibm.com,
+        tglx@linutronix.de, dave.hansen@intel.com, mpe@ellerman.id.au,
+        mingo@kernel.org, akpm@linux-foundation.org,
+        Shuah Khan <shuahkh@osg.samsung.com>, Shuah Khan <shuah@kernel.org>
+References: <20180326172721.D5B2CBB4@viggo.jf.intel.com>
+ <20180326172722.8CC08307@viggo.jf.intel.com>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <9c2de5f6-d9e2-3647-7aa8-86102e9fa6c3@kernel.org>
+Date: Mon, 26 Mar 2018 11:47:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180326172722.8CC08307@viggo.jf.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e0376cb1-3eb0-9d37-9097-558f8469e42a@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 12:08:24AM +0100, Maciej S. Szmigiero wrote:
-> The early loader parse_container() function should check whether the
-> microcode container file is actually large enough to contain the patch of
-> an indicated size, just like the late loader does.
+On 03/26/2018 11:27 AM, Dave Hansen wrote:
+> From: Dave Hansen <dave.hansen@linux.intel.com>
 > 
-> Also, the request_microcode_amd() function should check whether the
-> container file is actually large enough to contain the header magic value.
+> mm_pkey_is_allocated() treats pkey 0 as unallocated.  That is
+> inconsistent with the manpages, and also inconsistent with
+> mm->context.pkey_allocation_map.  Stop special casing it and only
+> disallow values that are actually bad (< 0).
 > 
-> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+> The end-user visible effect of this is that you can now use
+> mprotect_pkey() to set pkey=0.
+> 
+> This is a bit nicer than what Ram proposed because it is simpler
+> and removes special-casing for pkey 0.  On the other hand, it does
+> allow applciations to pkey_free() pkey-0, but that's just a silly
+
+applications - typo.
+
+> thing to do, so we are not going to protect against it.
+
+If you plan to compare proposals, it would be nicer to include the
+details of what Ram proposed as well in the commit log or link to the
+discussion.
+
+Also what happens "pkey_free() pkey-0" - can you elaborate more on that
+"silliness consequences"
+
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Fixes: 58ab9a088dda ("x86/pkeys: Check against max pkey to avoid overflows")
+> Cc: stable@kernel.org
+> Cc: Ram Pai <linuxram@us.ibm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Michael Ellermen <mpe@ellerman.id.au>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>p
+> Cc: Shuah Khan <shuah@kernel.org>
 > ---
->  arch/x86/kernel/cpu/microcode/amd.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
 > 
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index 4d2116d08754..dc5ed4971879 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -125,6 +125,9 @@ static size_t parse_container(u8 *ucode, size_t size, struct cont_desc *desc)
->  		struct microcode_amd *mc;
->  		u32 patch_size;
+>  b/arch/x86/include/asm/mmu_context.h |    2 +-
+>  b/arch/x86/include/asm/pkeys.h       |    6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff -puN arch/x86/include/asm/mmu_context.h~x86-pkey-0-default-allocated arch/x86/include/asm/mmu_context.h
+> --- a/arch/x86/include/asm/mmu_context.h~x86-pkey-0-default-allocated	2018-03-26 10:22:33.742170197 -0700
+> +++ b/arch/x86/include/asm/mmu_context.h	2018-03-26 10:22:33.747170197 -0700
+> @@ -192,7 +192,7 @@ static inline int init_new_context(struc
 >  
-> +		if (size < SECTION_HDR_SIZE)
-> +			break;
-> +
->  		hdr = (u32 *)buf;
->  
->  		if (hdr[0] != UCODE_UCODE_TYPE)
-> @@ -139,6 +142,10 @@ static size_t parse_container(u8 *ucode, size_t size, struct cont_desc *desc)
->  		buf  += SECTION_HDR_SIZE;
->  		size -= SECTION_HDR_SIZE;
->  
-> +		if (size < sizeof(*mc) ||
-> +		    size < patch_size)
-> +			break;
+>  #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+>  	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
+> -		/* pkey 0 is the default and always allocated */
+> +		/* pkey 0 is the default and allocated implicitly */
+>  		mm->context.pkey_allocation_map = 0x1;
+>  		/* -1 means unallocated or invalid */
+>  		mm->context.execute_only_pkey = -1;
+> diff -puN arch/x86/include/asm/pkeys.h~x86-pkey-0-default-allocated arch/x86/include/asm/pkeys.h
+> --- a/arch/x86/include/asm/pkeys.h~x86-pkey-0-default-allocated	2018-03-26 10:22:33.744170197 -0700
+> +++ b/arch/x86/include/asm/pkeys.h	2018-03-26 10:22:33.747170197 -0700
+> @@ -49,10 +49,10 @@ bool mm_pkey_is_allocated(struct mm_stru
+>  {
+>  	/*
+>  	 * "Allocated" pkeys are those that have been returned
+> -	 * from pkey_alloc().  pkey 0 is special, and never
+> -	 * returned from pkey_alloc().
+> +	 * from pkey_alloc() or pkey 0 which is allocated
+> +	 * implicitly when the mm is created.
+>  	 */
+> -	if (pkey <= 0)
+> +	if (pkey < 0)
+>  		return false;
+>  	if (pkey >= arch_max_pkey())
+>  		return false;
+> _
+> 
 
-If you're going to do this here, then call verify_patch_size() but move
-the pr_err("patch size mismatch\n") outside of the function because
-printk doesn't work that early.
-
-> +
->  		mc = (struct microcode_amd *)buf;
->  		if (eq_id == mc->hdr.processor_rev_id) {
->  			desc->psize = patch_size;
-> @@ -794,6 +801,10 @@ static enum ucode_state request_microcode_amd(int cpu, struct device *device,
->  	}
->  
->  	ret = UCODE_ERROR;
-> +	if (fw->size < sizeof(u32)) {
-> +		pr_err("microcode container far too short\n");
-> +		goto fw_release;
-> +	}
-
-Instead of doing that here, do the SECTION_HDR_SIZE check above here
-directly.
-
-In general, the code is getting interspersed with a lot of checks and
-thus becoming unreadable. So instead of doing that, I'd suggest you add
-functions doing that checking separately:
-
-verify_container()
-verify_equivalence_table()
-verify_patch()
-
-and you call those functions in both paths, first when you get a
-container, you do verify_container(), then you verify the equivalence
-table and then you verify each patch one after the other. And so on.
-
-The early path will not printk because it is too early but you can state
-that with a "bool early" argument to those functions.
-
-This way you'll pull all that checking before the code looks at the
-binary data and the paths will remain unencumbered by the checking code.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+thanks,
+-- Shuah
