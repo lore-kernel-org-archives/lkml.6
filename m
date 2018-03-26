@@ -1,95 +1,165 @@
-Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AIpwx48omN/uLPeFdzV3fdAAUrU6gHJnhv1h8E9hm9tTD2eVCX2O+6ZHAm5TXgeIS9DL7T0epPZo
-ARC-Seal: i=1; a=rsa-sha256; t=1522055933; cv=none;
-        d=google.com; s=arc-20160816;
-        b=UJosMD+JRBqs/m/LDUASVBW8rcORxoYyuc8qKPzIMifou+RDODClPsXGwvCG7kTWNz
-         IffZiYAlBsBNa3+FfRfIT7g4Vxhdpf7WSHLoSD4sYRzXSaQ55B6E6/iTjDCma7PKy3zG
-         Yq/3g9Jlc9/hFN+uWvPbwxiRF29BwzsE2a/2JBXAx2h3iXK8RZjXUZSpjme2DW/Bnxlv
-         J8p4OfVCr55DcT2O2DvZ86dVrFrNNBrrOC4+muws/pwQD3kJeKhPP+rXfadflwccv4gY
-         UKP4uaiJMQUD5tHGiEnLgxK0hO5ZIXUQJDmUVwhAWMYHGsSHYXZKyBsqFUsqRcux6iqD
-         aYvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=2/hF4uvcrhoYS0oCMXZTWCUDx0g51K+RnEBR1pdDJC0=;
-        b=Tr8hvPukJs8pBK2QarlgDlSb4zrPWV3Yn18yEAGWplFpBZLS+xPnzxELaHgCo0Zs+b
-         6QpdiL0TOobREt4O6on6Y1BUR7wuRXF0W7gOt6IOyxMIQotUoNO8vZzInjGeswmwzDG6
-         cr9JT980NxoHKXpxsSK8O9at4b2f5jGVvBOqMA+wNQKeYYOFy1U77nmyQogoiAOGtREW
-         94tZ9HnAjyZdGnxXA2OKAnLRdRJc15nXr4IdOOVOGgNQI7t9J6gEjHQ7LWmO5JNXrPxa
-         uaulPJ/r40xhHSMHgW687E42ql2gyhdcyYo5hneAe+4BsNGbodB4aHaL4xDD4wOAodZk
-         ShZA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
-From: Quytelda Kahja <quytelda@tamalin.org>
-To: lkp@intel.com,
-	gregkh@linuxfoundation.org
-Cc: kbuild-all@01.org,
-	johannes@sipsolutions.net,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH] staging: rtl8723bs: Remove duplicate #defines.
-Date: Mon, 26 Mar 2018 02:18:30 -0700
-Message-Id: <20180326091830.30132-1-quytelda@tamalin.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <CAFLvi237jR_tTQMXBNqCO=NQFOEFiJQkDBMxb_AxgBEqQDYQEw@mail.gmail.com>
-References: <CAFLvi237jR_tTQMXBNqCO=NQFOEFiJQkDBMxb_AxgBEqQDYQEw@mail.gmail.com>
-X-Provags-ID: V03:K0:9azq8aBpn/8VhhbTTnQnjeV/m7bF0b8fyJo91zik8TUESvpbtr7
- HghvSWH7YrSr1ILqTl+BTn+I81uwlVuiJzmz9zewr2gKPxy96uuSzZJ0SsyBhT86xzfECa0
- isU7T+yluNhvVUEIty7GCkXglcnoNxJ5z0YUdgaK0dqQb3vVlNI9WUCmltueMjXYAJiNrFP
- Y2BTb0i3FlEDJgb3k1mKQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:46R1lUJ83x4=:KS2Ix9WRkPcmFJGUJkvEjS
- PB+pABQ+Ucv8LPCVtfUQO/X9rTOi9vDRVpgvccFs+vd7mODa6HStV2+wO1WvrdoN5PGL+CSER
- 0xncg0uEGn9wKZfIrw2aksxdDuPO92S6MU13KuGlmJiyxsd8DVXiyrnx0yFMYFMmVP6f91zUv
- /aK4q3nHqZye7lEHmOuIIMq0HuUN5EdkFHdMfyySZmFcDyjqb4yla1CTbqF0j9AsBGU1OaMci
- 3g4UEJQ4LoaWn8jA7kaosnDVAldcuXNrj/C48hNkIPFCpgVcoPENHLiM3KIPVqajdeQ3C0Cb6
- SNVGk6OMA3SHlTRDhqPOoEsidFnBViygmnE34cyNhZBBX97sOxkipt1SZO6A/vlCrKZgMlu5X
- CmJ79uvCaLRw2wDddz62wTjxMv0G8wycnwWV40vGmp6upROF4ySwz65b7+OyCEEtcL/lWfvaK
- MCg8W8cpUBHBJCuLI8u/uAFFw5XuMzsDxx4nw5vYGIp1asOEtsKkm2tSSTdUKzYzsN3J1cSBX
- h3gSxNHK2VOw4MH2pz8IyvXrDHvI2gDviDD8nZdmi60iq3dQgmQscmkM3QMpJK/E+ADByGLjz
- ypFGNND+sx5YYBx54K7vX8s6gJ1HxWI5J5b7Tbo6uwS07776szXrH80Yz6sQoGl+3AUoajU42
- E6wS6aPMib5EL4V9RTYv/JYKBq9Ey+ZqBBh2fCGEU0BckeMyzsvCUiil2zpZ7fwPCKD6QPUn9
- 2o71bLJdS0Z3Pov3vCeG71+EtBFhy+sZe3CmSA==
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1857324-1522093302-2-10779748207512317311
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_MED -2.3,
+  SPF_PASS -0.001, LANGUAGES endasv, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='fr', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
+    t=1522093301; b=Xc7eTFqd9tmq3H4mQZkEX5tLu54vslt/FJcz3TCwjmSEiRn
+    p0xd/1pnL8Mmadzi3UEeMq4/lIsUBxb30WtODNjUeUWM8cHbozn0E7DhL3rGHtH4
+    yLpOLnXapTIxPHSkr8OITUA0XxRTIcJOlPWOMnMRzKM2MK9X1gdvaxT88bVOCcm9
+    fehdqGMrnRhtlEkYi2nopeJVOkJyaD40oeA3txvsr6zKRFpoEOuYnoJp8c97U3pg
+    14FS4SwkG/Nc2ezxmeHuIZ4eZD4IYM1sy7NTc6oYlbzDCw83N08Wl4oD/RQXjJ9P
+    4L96v+5xcj8L6NH/+c1nYjTg2RzpkDJcEIdXliQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=arctest; t=1522093301; bh=A
+    TofWMGds2z+ZH+iHokYRY9DmMwt0ZPHFV3badZZ4I4=; b=CuF9hEL3zZX+UmNm9
+    p3opurrPPMKe+ynjjKdrCtJBKNaq5rKJTVFo1nkgt28tJW0hc5sW8yDg8PMwr2xg
+    jBzxd2KqFOpI1oBXPzwMgODKPCJVAxylHmMMOuRQolaCQANlKXteFYDGQEyHdv7h
+    VryFveqA8hO6dTASLX8SlwKuMlJJcp7jvZne2izznqEnYWtOHhMHufq0Q4YLTdOP
+    B5oEsij5svq4gB2JCwbdlocUJEQDwl/mRsuCA1LOs5fHy4MFfKZYNDXxXSD08d1X
+    UCJmRR6SwXtrDLPT4FQDbELoZeHpvJtrry96oMrdEwoL4fcdQoI9wvYUfemDYoUz
+    zWszw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lip6.fr;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lip6.fr header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lip6.fr;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=lip6.fr header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHgDKdM1kdXbbPC4vr5FaxfHICUZ3HQ1v3k45VYEbwH+eAn7b+QOPblshlcPgfDz8ER+5X9AM6lVNTtTvOPN1I10u6h3s6MWRPK/kjqPi9fySTrVeaHY
+    NoQoGhSyoQ4cKCCVYe7dWiPUrUS5OTR19NngsoU6ngGr2kMpvEnEnO7AwbRAFLEQb1PT7InhJLC8wsqC6uv+DXP/cTQUeThcH1PDC0cbdUiGaiMoLurcIIHI
+    9+Nw+y1O8WHESa7OnFSsew==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=v2DPQv5-lfwA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8 a=DfNHnWVPAAAA:8
+    a=VwQbUJbxAAAA:8 a=DDOyTI_5AAAA:8 a=ll9BbRn1J-IGHmDfoLIA:9 a=CjuIK1q_8ugA:10
+    a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22 a=_BcfOz0m4U4ohdxiHPKc:22
+    cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-IronPort-AV: E=Sophos;i="5.48,365,1517871600"; d="scan'208";a="320051576"
+Date: Mon, 26 Mar 2018 21:41:30 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Colin Ian King <colin.king@canonical.com>
+Subject: [PATCH] staging: wilc1000: fix memdup.cocci warnings
+Message-ID: <alpine.DEB.2.20.1803262138530.2423@hadrien>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ganesh Krishna <ganesh.krishna@microchip.com>, kbuild-all@01.org,
+ Aditya Shankar <aditya.shankar@microchip.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595991322054206590?=
-X-GMAIL-MSGID: =?utf-8?q?1595991322054206590?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The modified file includes 'linux/ieee80211.h', but redefines many
-constants that already exist in the header.  This will create a conflict
-if the values are ever changed in the kernel.
+From: Fengguang Wu <fengguang.wu@intel.com>
 
-Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
+drivers/staging/wilc1000/host_interface.c:946:32-39: WARNING opportunity for kmemdup
+drivers/staging/wilc1000/host_interface.c:970:30-37: WARNING opportunity for kmemdup
+
+ Use kmemdup rather than duplicating its implementation
+
+Generated by: scripts/coccinelle/api/memdup.cocci
+
+Fixes: aaea2164bdff ("staging: wilc1000: check for kmalloc allocation failures")
+CC: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/staging/rtl8723bs/include/ieee80211.h | 12 ------------
- 1 file changed, 12 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/include/ieee80211.h b/drivers/staging/rtl8723bs/include/ieee80211.h
-index 73ce63770c3c..a2402495f447 100644
---- a/drivers/staging/rtl8723bs/include/ieee80211.h
-+++ b/drivers/staging/rtl8723bs/include/ieee80211.h
-@@ -435,19 +435,7 @@ struct ieee80211_snap_hdr {
- #define WLAN_GET_SEQ_SEQ(seq)  ((seq) & RTW_IEEE80211_SCTL_SEQ)
- 
- /* Authentication algorithms */
--#define WLAN_AUTH_OPEN 0
--#define WLAN_AUTH_SHARED_KEY 1
--
--#define WLAN_AUTH_CHALLENGE_LEN 128
--
- #define WLAN_CAPABILITY_BSS (1<<0)
--#define WLAN_CAPABILITY_IBSS (1<<1)
--#define WLAN_CAPABILITY_CF_POLLABLE (1<<2)
--#define WLAN_CAPABILITY_CF_POLL_REQUEST (1<<3)
--#define WLAN_CAPABILITY_PRIVACY (1<<4)
--#define WLAN_CAPABILITY_SHORT_PREAMBLE (1<<5)
--#define WLAN_CAPABILITY_PBCC (1<<6)
--#define WLAN_CAPABILITY_CHANNEL_AGILITY (1<<7)
- #define WLAN_CAPABILITY_SHORT_SLOT (1<<10)
- 
- /* Status codes */
--- 
-2.16.2
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+staging-next
+head:   12a0148711a440f5b7111f95a34dfce88cdb47d6
+commit: aaea2164bdff39697d0f1ec69dcae62632e37974 [400/412] staging:
+wilc1000: check for kmalloc allocation failures
+
+In the first hunk, should 6 be ETH_ALEN?
+
+ host_interface.c |   10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -943,12 +943,12 @@ static s32 handle_connect(struct wilc_vi
+ 	}
+
+ 	if (conn_attr->bssid) {
+-		hif_drv->usr_conn_req.bssid = kmalloc(6, GFP_KERNEL);
++		hif_drv->usr_conn_req.bssid = kmemdup(conn_attr->bssid, 6,
++						      GFP_KERNEL);
+ 		if (!hif_drv->usr_conn_req.bssid) {
+ 			result = -ENOMEM;
+ 			goto error;
+ 		}
+-		memcpy(hif_drv->usr_conn_req.bssid, conn_attr->bssid, 6);
+ 	}
+
+ 	hif_drv->usr_conn_req.ssid_len = conn_attr->ssid_len;
+@@ -967,15 +967,13 @@ static s32 handle_connect(struct wilc_vi
+
+ 	hif_drv->usr_conn_req.ies_len = conn_attr->ies_len;
+ 	if (conn_attr->ies) {
+-		hif_drv->usr_conn_req.ies = kmalloc(conn_attr->ies_len,
++		hif_drv->usr_conn_req.ies = kmemdup(conn_attr->ies,
++						    conn_attr->ies_len,
+ 						    GFP_KERNEL);
+ 		if (!hif_drv->usr_conn_req.ies) {
+ 			result = -ENOMEM;
+ 			goto error;
+ 		}
+-		memcpy(hif_drv->usr_conn_req.ies,
+-		       conn_attr->ies,
+-		       conn_attr->ies_len);
+ 	}
+
+ 	hif_drv->usr_conn_req.security = conn_attr->security;
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
