@@ -1,110 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751752AbeCZOOs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:14:48 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46528 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751866AbeCZOOp (ORCPT
+        id S1751865AbeCZOOC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:14:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53028 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752171AbeCZON6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:14:45 -0400
-X-Google-Smtp-Source: AIpwx4+GdwwP9pRhkcpwx3I6pOAze/gDzN03tQvlu6j4cGN2pXdjXeHoUDbR4o79Fd+WgUpes/qLnQ==
-Date: Mon, 26 Mar 2018 16:14:36 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH for-4.17 1/2] arm64: Remove smp_mb() from
- arch_spin_is_locked()
-Message-ID: <20180326141436.GA11739@andrea>
-References: <1522060641-6986-1-git-send-email-andrea.parri@amarulasolutions.com>
- <20180326105705.GA6579@arm.com>
+        Mon, 26 Mar 2018 10:13:58 -0400
+From: Colin King <colin.king@canonical.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
+        Rex Zhu <Rex.Zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
+        Tom St Denis <tom.stdenis@amd.com>, Huang Rui <ray.huang@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amd/pp: fix logical or'ing of garbage in result by initializing result to zero
+Date: Mon, 26 Mar 2018 15:13:54 +0100
+Message-Id: <20180326141354.31247-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326105705.GA6579@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 11:57:05AM +0100, Will Deacon wrote:
-> On Mon, Mar 26, 2018 at 12:37:21PM +0200, Andrea Parri wrote:
-> > Commit 38b850a73034f ("arm64: spinlock: order spin_{is_locked,unlock_wait}
-> > against local locks") added an smp_mb() to arch_spin_is_locked(), in order
-> > "to ensure that the lock value is always loaded after any other locks have
-> > been taken by the current CPU", and reported one example (the "insane case"
-> > in ipc/sem.c) relying on such guarantee.
-> > 
-> > It is however understood (and not documented) that spin_is_locked() is not
-> > required to ensure such an ordering guarantee, guarantee that is currently
-> > _not_ provided by all implementations/architectures, and that callers rely-
-> > ing on such ordering should instead insert suitable memory barriers before
-> > acting on the result of spin_is_locked().
-> > 
-> > Following a recent auditing[1] of the callsites of {,raw_}spin_is_locked()
-> > revealing that none of these callers are relying on the ordering guarantee
-> > anymore, this commit removes the leading smp_mb() from this primitive thus
-> > effectively reverting 38b850a73034f.
-> > 
-> > [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
-> 
-> What is patch 2/2 in this series? I couldn't find it in the archive.
+From: Colin Ian King <colin.king@canonical.com>
 
-2/2 is this change for powerpc:
+Currently result is not initialized, so it contains a garbage value and
+this is or'd with data from vega10_program_didt_config_registers() which
+can end up with a non-zero value when the result should be zero.  Fix
+this by ensuring result is initialized to zero.
 
-  https://marc.info/?l=linux-kernel&m=152206068707522&w=2
+Detected by CoverityScan, CID#1466088 ("Uninitialized scalar variable")
 
-> 
-> Assuming that patch doesn't do it, please can you remove the comment
-> about spin_is_locked from mutex_is_locked?
-
-I ended up with the patch below but I suspect that it's not what you had
-in mind; please let me know if you'd like me to add it into this series.
-
-
-> 
-> Also -- does this mean we can kill the #ifndef queued_spin_is_locked
-> guards in asm-generic/qspinlock.h?
-
-I don't see why arch may want to override that definition (maybe lack of
-imagination?); please let me know if you'd like to see the #ifndef gone.
-
-  Andrea
-
+Fixes: 9b7b8154cdb8 ("drm/amd/powerplay: added didt support for vega10")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
->From 1b77a9a70823620f1c98e43453edf5707d02074e Mon Sep 17 00:00:00 2001
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-Date: Mon, 26 Mar 2018 15:03:58 +0200
-Subject: [PATCH] mutex: Remove the comment about spin_is_locked() from
- mutex_is_locked()
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Still true/valid, but not particularly useful [IMO].
-
-Suggested-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
----
- include/linux/mutex.h | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index cb3bbed4e6339..9921822c51585 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -147,9 +147,6 @@ extern void __mutex_init(struct mutex *lock, const char *name,
-  */
- static inline bool mutex_is_locked(struct mutex *lock)
- {
--	/*
--	 * XXX think about spin_is_locked
--	 */
- 	return __mutex_owner(lock) != NULL;
- }
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
+index b1f74c7f0943..49822ea3ddd5 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_powertune.c
+@@ -1091,7 +1091,7 @@ static int vega10_disable_se_edc_config(struct pp_hwmgr *hwmgr)
  
+ static int vega10_enable_psm_gc_edc_config(struct pp_hwmgr *hwmgr)
+ {
+-	int result;
++	int result = 0;
+ 	uint32_t num_se = 0;
+ 	uint32_t count, data;
+ 	struct amdgpu_device *adev = hwmgr->adev;
 -- 
-2.7.4
-
-
-> 
-> Will
+2.15.1
