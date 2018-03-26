@@ -1,43 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752031AbeCZUKs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 16:10:48 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:38318 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750983AbeCZUKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 16:10:46 -0400
-Date: Mon, 26 Mar 2018 22:09:55 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 2/2] x86/MCE: Always save MCA_{ADDR,MISC,SYND} register
- contents
-Message-ID: <20180326200955.GG28372@pd.tnic>
-References: <20180326191526.64314-1-Yazen.Ghannam@amd.com>
- <20180326191526.64314-2-Yazen.Ghannam@amd.com>
- <20180326193526.GK25548@pd.tnic>
- <DM5PR12MB1916CB8536B257923AC76CA7F8AD0@DM5PR12MB1916.namprd12.prod.outlook.com>
+        id S1751776AbeCZUNC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 16:13:02 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:41031 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751076AbeCZUNA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 16:13:00 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
+        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>
+Subject: [net-next PATCH 4/5] Revert "net: netcp: remove dead code from the driver"
+Date: Mon, 26 Mar 2018 16:15:11 -0400
+Message-ID: <1522095312-23249-5-git-send-email-m-karicheri2@ti.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
+References: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <DM5PR12MB1916CB8536B257923AC76CA7F8AD0@DM5PR12MB1916.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 08:05:37PM +0000, Ghannam, Yazen wrote:
-> Sure, I can do that. But I didn't think it was necessary because it doesn't hurt
-> to read the registers whether or not the valid bits are set.
+As the probe sequence is not guaranteed contrary to the assumption
+of the commit 2d8e276a9030, same has to be reverted.
 
-No, this needs to be AMD-specific because it will confuse people using
-Intel machines.
+commit 2d8e276a9030 ("net: netcp: remove dead code from the driver")
 
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/netcp_core.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+index f5a7eb2..9c51b25 100644
+--- a/drivers/net/ethernet/ti/netcp_core.c
++++ b/drivers/net/ethernet/ti/netcp_core.c
+@@ -2155,6 +2155,7 @@ static int netcp_probe(struct platform_device *pdev)
+ 	struct device_node *child, *interfaces;
+ 	struct netcp_device *netcp_device;
+ 	struct device *dev = &pdev->dev;
++	struct netcp_module *module;
+ 	int ret;
+ 
+ 	if (!node) {
+@@ -2203,6 +2204,14 @@ static int netcp_probe(struct platform_device *pdev)
+ 	/* Add the device instance to the list */
+ 	list_add_tail(&netcp_device->device_list, &netcp_devices);
+ 
++	/* Probe & attach any modules already registered */
++	mutex_lock(&netcp_modules_lock);
++	for_each_netcp_module(module) {
++		ret = netcp_module_probe(netcp_device, module);
++		if (ret < 0)
++			dev_err(dev, "module(%s) probe failed\n", module->name);
++	}
++	mutex_unlock(&netcp_modules_lock);
+ 	return 0;
+ 
+ probe_quit_interface:
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+1.9.1
