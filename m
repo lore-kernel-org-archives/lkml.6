@@ -1,60 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751806AbeCZMmy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 08:42:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47106 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751099AbeCZMmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 08:42:53 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc: x86@kernel.org, kvm@vger.kernel.org,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        Bandan Das <bsd@redhat.com>, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v6 0/7] Enlightened VMCS support for KVM on Hyper-V
-References: <20180320140211.7600-1-vkuznets@redhat.com>
-Date: Mon, 26 Mar 2018 14:42:46 +0200
-In-Reply-To: <20180320140211.7600-1-vkuznets@redhat.com> (Vitaly Kuznetsov's
-        message of "Tue, 20 Mar 2018 15:02:04 +0100")
-Message-ID: <87muyv2ek9.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1752004AbeCZMnv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 08:43:51 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:63711 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751024AbeCZMnu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 08:43:50 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8BIT
+To: Ben Skeggs <bskeggs@redhat.com>,
+        "Arushi Singhal" <arushisinghal19971997@gmail.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <CABDvA=nFq6nPMyhB3C87XxVkxXwy23NQVES2Na_TVB6VreKrrQ@mail.gmail.com>
+Cc: "David Airlie" <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        "dri-devel" <dri-devel@lists.freedesktop.org>,
+        "nouveau" <nouveau@lists.freedesktop.org>, daniel.vetter@intel.com
+References: <1522000893-5331-1-git-send-email-arushisinghal19971997@gmail.com>
+ <1522000893-5331-3-git-send-email-arushisinghal19971997@gmail.com>
+ <CABDvA=nFq6nPMyhB3C87XxVkxXwy23NQVES2Na_TVB6VreKrrQ@mail.gmail.com>
+Message-ID: <152206821005.4115.12768359647232399397@mail.alporthouse.com>
+User-Agent: alot/0.3.6
+Subject: Re: [PATCH v2 2/2] gpu: drm: nouveau: Use list_{next/prev}_entry instead of
+ list_entry
+Date: Mon, 26 Mar 2018 13:43:30 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vitaly Kuznetsov <vkuznets@redhat.com> writes:
+Quoting Ben Skeggs (2018-03-26 13:34:54)
+> On Mon, Mar 26, 2018 at 4:01 AM, Arushi Singhal
+> <arushisinghal19971997@gmail.com> wrote:
+> > It's better to use list_entry instead of list_{next/prev}_entry
+> > as it makes the code more clear to read.
+> > This patch replace list_entry with list_{next/prev}_entry.
+> >
+> > Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+> Acked-by: Ben Skeggs <bskeggs@redhat.com>
+> 
+> > ---
+> >  drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
+> > index e4c8d31..81c3567 100644
+> > --- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
+> > +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/base.c
+> > @@ -134,7 +134,7 @@ nvkm_cstate_find_best(struct nvkm_clk *clk, struct nvkm_pstate *pstate,
+> >                                nvkm_volt_map(volt, volt->max2_id, clk->temp));
+> >
+> >         for (cstate = start; &cstate->head != &pstate->list;
+> > -            cstate = list_entry(cstate->head.prev, typeof(*cstate), head)) {
+> > +            cstate = list_prev_entry(cstate, head)) {
 
-> Changes since v5:
-> - Fix a couple of issues reported by kbuild test robot, both in
->   PATCH7 (hope Radim's Reviewed-by: stands).
->
-> When running nested KVM on Hyper-V it's possible to use so called
-> 'Enlightened VMCS' and do normal memory reads/writes instead of
-> doing VMWRITE/VMREAD instructions. In addition, clean field mask
-> provides a huge room for optimization on L0's side.
->
-> Tight CPUID loop test shows significant speedup (E5-2667 v4 @ 3.20GHz):
->   Before: 18890 cycles
->   After: 8304 cycles
->
+This loop could be written as:
 
-Paolo, Radim,
+	cstate = start; /* cstate looks redundant here, just use start? */
+	list_for_each_entry_from_reverse(cstate, &pstate->list, head)
 
-with Thomas' ACK on the series:
-https://www.spinics.net/lists/kvm/msg166309.html
-
-is there anything else needed for it to get merged (hoping for 4.17)?
-
-Thanks,
-
--- 
-  Vitaly
+> >                 if (nvkm_cstate_valid(clk, cstate, max_volt, clk->temp))
+> >                         break;
+> >         }
+> > --
+> > 2.7.4
