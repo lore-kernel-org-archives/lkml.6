@@ -1,20 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752201AbeCZVWD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 17:22:03 -0400
-Received: from smtp2.provo.novell.com ([137.65.250.81]:49268 "EHLO
+        id S1752236AbeCZVWJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 17:22:09 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:43900 "EHLO
         smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751805AbeCZVWB (ORCPT
+        with ESMTP id S1752206AbeCZVWH (ORCPT
         <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Mon, 26 Mar 2018 17:22:01 -0400
+        Mon, 26 Mar 2018 17:22:07 -0400
 From: Davidlohr Bueso <dave@stgolabs.net>
 To: peterz@infradead.org, mingo@kernel.org, akpm@linux-foundation.org
 Cc: linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
         Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 1/6] drivers/i2c: Update i2c_trace_msg static key to modern api
-Date: Mon, 26 Mar 2018 14:09:24 -0700
-Message-Id: <20180326210929.5244-2-dave@stgolabs.net>
+Subject: [PATCH 3/6] sched/core: Update preempt_notifier_key to modern api
+Date: Mon, 26 Mar 2018 14:09:26 -0700
+Message-Id: <20180326210929.5244-4-dave@stgolabs.net>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180326210929.5244-1-dave@stgolabs.net>
 References: <20180326210929.5244-1-dave@stgolabs.net>
@@ -27,65 +26,62 @@ No changes in refcount semantics -- key init is false; replace
 static_key_slow_inc|dec   with   static_branch_inc|dec
 static_key_false          with   static_branch_unlikely
 
-Added a '_key' suffix to i2c_trace_msg, for better self
-documentation.
-
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 ---
- drivers/i2c/i2c-core-base.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ kernel/sched/core.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 16a3b73375a6..bfcff2a6f0a3 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -69,18 +69,18 @@ static DEFINE_IDR(i2c_adapter_idr);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 757d5a251ca4..bf9e773007e8 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2462,17 +2462,17 @@ void wake_up_new_task(struct task_struct *p)
  
- static int i2c_detect(struct i2c_adapter *adapter, struct i2c_driver *driver);
+ #ifdef CONFIG_PREEMPT_NOTIFIERS
  
--static struct static_key i2c_trace_msg = STATIC_KEY_INIT_FALSE;
-+static DEFINE_STATIC_KEY_FALSE(i2c_trace_msg_key);
- static bool is_registered;
+-static struct static_key preempt_notifier_key = STATIC_KEY_INIT_FALSE;
++static DEFINE_STATIC_KEY_FALSE(preempt_notifier_key);
  
- int i2c_transfer_trace_reg(void)
+ void preempt_notifier_inc(void)
  {
--	static_key_slow_inc(&i2c_trace_msg);
-+	static_branch_inc(&i2c_trace_msg_key);
- 	return 0;
+-	static_key_slow_inc(&preempt_notifier_key);
++	static_branch_inc(&preempt_notifier_key);
+ }
+ EXPORT_SYMBOL_GPL(preempt_notifier_inc);
+ 
+ void preempt_notifier_dec(void)
+ {
+-	static_key_slow_dec(&preempt_notifier_key);
++	static_branch_dec(&preempt_notifier_key);
+ }
+ EXPORT_SYMBOL_GPL(preempt_notifier_dec);
+ 
+@@ -2482,7 +2482,7 @@ EXPORT_SYMBOL_GPL(preempt_notifier_dec);
+  */
+ void preempt_notifier_register(struct preempt_notifier *notifier)
+ {
+-	if (!static_key_false(&preempt_notifier_key))
++	if (!static_branch_unlikely(&preempt_notifier_key))
+ 		WARN(1, "registering preempt_notifier while notifiers disabled\n");
+ 
+ 	hlist_add_head(&notifier->link, &current->preempt_notifiers);
+@@ -2511,7 +2511,7 @@ static void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
+ 
+ static __always_inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
+ {
+-	if (static_key_false(&preempt_notifier_key))
++	if (static_branch_unlikely(&preempt_notifier_key))
+ 		__fire_sched_in_preempt_notifiers(curr);
  }
  
- void i2c_transfer_trace_unreg(void)
+@@ -2529,7 +2529,7 @@ static __always_inline void
+ fire_sched_out_preempt_notifiers(struct task_struct *curr,
+ 				 struct task_struct *next)
  {
--	static_key_slow_dec(&i2c_trace_msg);
-+	static_branch_dec(&i2c_trace_msg_key);
+-	if (static_key_false(&preempt_notifier_key))
++	if (static_branch_unlikely(&preempt_notifier_key))
+ 		__fire_sched_out_preempt_notifiers(curr, next);
  }
  
- const struct i2c_device_id *i2c_match_id(const struct i2c_device_id *id,
-@@ -1848,11 +1848,12 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
- 		return -EOPNOTSUPP;
- 
--	/* i2c_trace_msg gets enabled when tracepoint i2c_transfer gets
-+	/*
-+	 * i2c_trace_msg_key gets enabled when tracepoint i2c_transfer gets
- 	 * enabled.  This is an efficient way of keeping the for-loop from
- 	 * being executed when not needed.
- 	 */
--	if (static_key_false(&i2c_trace_msg)) {
-+	if (static_branch_unlikely(&i2c_trace_msg_key)) {
- 		int i;
- 		for (i = 0; i < num; i++)
- 			if (msgs[i].flags & I2C_M_RD)
-@@ -1871,7 +1872,7 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 			break;
- 	}
- 
--	if (static_key_false(&i2c_trace_msg)) {
-+	if (static_branch_unlikely(&i2c_trace_msg_key)) {
- 		int i;
- 		for (i = 0; i < ret; i++)
- 			if (msgs[i].flags & I2C_M_RD)
 -- 
 2.13.6
