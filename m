@@ -1,98 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeCZSTQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 14:19:16 -0400
-Received: from mail-sn1nam01on0078.outbound.protection.outlook.com ([104.47.32.78]:18272
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751964AbeCZSTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 14:19:14 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=mkelly@xevo.com;
-From: Martin Kelly <mkelly@xevo.com>
-To: linux-kernel@vger.kernel.org
-Cc: Stefani Seibold <stefani@seibold.net>,
-        Andrew Morton <akpm@linux-foundation.org>, trivial@kernel.org,
-        Martin Kelly <mkelly@xevo.com>
-Subject: [PATCH] kfifo: fix inaccurate comment
-Date: Mon, 26 Mar 2018 11:18:23 -0700
-Message-Id: <20180326181823.5536-1-mkelly@xevo.com>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [65.122.179.226]
-X-ClientProxiedBy: MWHPR19CA0060.namprd19.prod.outlook.com
- (2603:10b6:300:94::22) To SN6PR0102MB3422.prod.exchangelabs.com
- (2603:10b6:805:3::11)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 533ff541-8303-46db-7589-08d5934613d5
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN6PR0102MB3422;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR0102MB3422;3:VbrD4caUT7/6oM8xiN5tdMkdfIXRq0qivVgPRTA1XStr+5RbPaw/OlhUB/xo/mMCrklNwbrvi/pn1AKBrXfuEZjnf2ahz3W+4M1Nfh1nuadwdoxRzleGbNLLW+jW17V4mse8WmxVMV++azGhudXdi92SbaDm9Rce6J7PwR3l7EFjaveRF5IYNDsJwitRVW46VP8qm/Z9uvDrZhP3pKK3e9j/Jy8byXGTtvEllwPMllERIQgYzA9yyZQ1npExRcS5;25:XQWNKFdlcH46gHN6KZkyNfMgi6gs1xq8muNZMiRk2hGtl9j3QjOZBHkNJQ2nzfTmn3MRPd0/2T7TwbuKjvYtd48KR3YKvYbqxxoDVSNWUMeuUxwEQ3LB8Li9BdZNhlaE+h7HcgKuFNex+2YcpqnnI0/w/k5eXbwEFDNbMxSCVjvNEjwX0bFQ2xiaznsZcXcZgWhHrVEqc4KF8DkNDahfO49h6xXu6JrHd/hGfPKf7q1+y1b4xtowd0xLpFVfW9Pb4Ah/BmqpAb5VDs2CJK/eeOoeGQdKyqFFsYpl01PbUbrVM8nr0asRQoTQlZj/SKzjJBf1kdbArwxXT8fsCotubg==;31:GhI20zGfexBkz1BtH0BN5ElGS0v+wv1UuUEmXylAlYVtrqBssad+hqOjZ/pUfbEIbDAq82LXRmtmFDUGRiMDcu8lMT+rj/wSj0fjKsu6PM1Ega1t4EXugMIMnvPDroPPGKzz7YDAUdTciE+piA6XaUOrbCv/pEEcwhikAm8zpZwh4u0lZn7fQQlI6eDkTHJEaLdaT3dC4Mqzh2v4sYP4y2x/fP7BNFeznHP6h28oBzI=
-X-MS-TrafficTypeDiagnostic: SN6PR0102MB3422:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR0102MB3422;20:1mpwF4ycuOOKGT2MxRY6MUp0ksXr44sPAKjBwH3NbQjm4TqVDhfvLGxzkkz5s7qD19bB3ZpMzKx4fE9Xw+CXTfarW4SHdeFvxzRPTwfdNZeaNOI1hsCWjnLS69uFbt0btcxPlYz0byk+TvFxxyspnqRnq5QV+RiVvDR8Qcghe3cFMK+cNnOBrviZRE3DFFo+QLAIthWifl1R3cOlTSEQSSzTCk0NzAEsOOmnE8Rf+qFRVVGmGJalwn9MvwyU6mh3kati59mRGx8Ms/PqIomx0hbEkREKqthuJ53LxtOM0fKnG+UQfC+0pa5mmzOLJQI0Oi1m09llBAUTOZqSEEm0N56lKVEAFFr9abBsWAQiH5zEfuzQllECFCvM7MhjZFJA6f5UfuYX1ku57g/jl+NZBcDa7rKGoFt1F1CguBJOGi143b+a9BjkTW4V7xa+Uf1IG+Az1xf7TJYY43WF+zwgQvaOsFRoaAZVzjRGaQbPE4ktiShp5fiew3UvJiURtJDQ;4:YF/CZ1ZMOXV5RPZmr1r71JcTH3LWZIINddWR0RwoI3eccN+SNfZwcAEimNC9auHH0Xtr5WO70cGz29WVzn7ALdOwFxO5OH0XB6FRIca/G0K+RPy9Oh01Qsjf0BFC1pvoD3g52rhAnC7WO8KZrtVzP37z0OuRXDfHflf08o73hz50s/QFCvvYyUrRuHAsjrAKstm6mdOWiyWRxuz4iOpSyAmv5VCNA9cGToZDduPV4VrL0OncCuOp2dD+LkaBqcvuMbXHbP6eBdyTzdtP/8Ijmw==
-X-Microsoft-Antispam-PRVS: <SN6PR0102MB342279889BEF836ED91AD2DEABAD0@SN6PR0102MB3422.prod.exchangelabs.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:SN6PR0102MB3422;BCL:0;PCL:0;RULEID:;SRVR:SN6PR0102MB3422;
-X-Forefront-PRVS: 06237E4555
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(39840400004)(376002)(39380400002)(366004)(396003)(189003)(199004)(105586002)(8936002)(6116002)(478600001)(3846002)(2351001)(186003)(6666003)(26005)(2616005)(386003)(53936002)(16526019)(2361001)(36756003)(956004)(51416003)(59450400001)(476003)(2906002)(52116002)(1857600001)(50226002)(7696005)(1076002)(68736007)(6916009)(575784001)(86362001)(5660300001)(7736002)(66066001)(47776003)(50466002)(16586007)(48376002)(305945005)(316002)(81156014)(81166006)(97736004)(6486002)(54906003)(107886003)(25786009)(8676002)(4326008)(106356001)(486005)(486005);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR0102MB3422;H:columbia.corp.xevo.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR0102MB3422;23:dMgrXcUn/Q+eK80kGLIoQcplNlSiEK4PkEhZePR?=
- =?us-ascii?Q?94Dnz0l37n//aKsJ25DjPTpHD6Sik858+WQUflh4B4e48eVw1ZVVDbB7lwe9?=
- =?us-ascii?Q?vzrSfYg1h4tDsgMZzwtE9gT+2j7nD1JxtIqnaywnYnGMTwmBV9ze9CTNPP4Y?=
- =?us-ascii?Q?1gq0ANJqWaoItz1EN7mT5e5EkvgUYRA8GgjugckpuYvh9oLkVQf/+c0UgZyr?=
- =?us-ascii?Q?T7zbovhnxAqrm8jQPuikhwu+F8JDUqEsFHk+m+/PrlfN7r7pvcI+fgY1uT3H?=
- =?us-ascii?Q?Ra1Prhsno4VwObTi/6KIlHx8gQAURZKBAIgGzCU8CTXWHYjSwHsA7BMGlGVN?=
- =?us-ascii?Q?Ut9hA0w5aIVJBb+dIe0TZ/sy3mKkZoKBu0iJWc7Wfk4xB15TSbKTqtQ2pxAO?=
- =?us-ascii?Q?GjThn/9wMEM1ulbBuZGNBYVSOkK3ImFZlntwAsFMKJFMnEUFekDyI/W3b9bc?=
- =?us-ascii?Q?pbCEsmQ79JumVKouk3Fslz38FL2sf3aBrzJTwVQ9mbCglWIBze4IuK6PHJ84?=
- =?us-ascii?Q?WqFk/82dMASu3fQpkk9aqdbl17YTFtf9S4neLIBZLYrHsgTUUhllPMGoAtQ8?=
- =?us-ascii?Q?6vYGMNsI3ZsV8A+mHtX19d6CTSEM0XhKFN2Tf1wr9ZUZwsyaoM+a7/Ol5dkC?=
- =?us-ascii?Q?WqfA3+/Ypc7GaRkVYD/XrBt00sxFsqTkivTkDEmSnhvK5afClSu9dPOhu8e0?=
- =?us-ascii?Q?Elkq7qnzqGpVORUBeo7xLsqBP0Y7TebmxvjBigBegLkxVEcfzDlH/KnawLGn?=
- =?us-ascii?Q?hAtBo2ts6aEHc6acR6KNVlbg4AjtvUJVXIXVjugRGyB2/+I13O2MG9xjtold?=
- =?us-ascii?Q?nLqGiz7CE+lmHc57eij92RSHGnbSt67HOI7Zugq+dc0d+uoZgzmXzPeGddEo?=
- =?us-ascii?Q?mRkspQCPCYAaTceXCSs4dGGXjEtdWK3siBbtLWwkBZIOx1ei3rWOVNsKOfnM?=
- =?us-ascii?Q?KVfHxQ5GEZ0V5w0ZWuw8f9T4E3kREqTgrgGy2BG75GEIJ+GLM/O88KbirnEP?=
- =?us-ascii?Q?E/H0RSRIES8wWglRjl6qM9gpurcRuAUf+Z5+EgtMjAGlWMD3Q70UCtEudJqE?=
- =?us-ascii?Q?nTy1r8SbN69+k8+GmAdsksKwF/8jRC9Ft71qsrWUyiZGzEg9/dlAqFTBB/fM?=
- =?us-ascii?Q?TEcny96MfdeYw9GcDPno7PnCiU2Ltv5BdeoO4hDHQsp47mMPI7oksmHaWoZt?=
- =?us-ascii?Q?fbY4fWgWF3cD4K/HYXYxymz7l/jLQCMHscu+3QqvLTeCmETyzqsu4+V9CkBH?=
- =?us-ascii?Q?RF7rLwo8Euk7IyI/u/gjL4jK42fxuOfoB4/OBVVMYNviHyyngPTSDQDbFOEZ?=
- =?us-ascii?Q?ouw=3D=3D?=
-X-Microsoft-Antispam-Message-Info: UiHgN4Hp0lY4pZjucYjnAbD0ubwp0RXfBvHOpyszYSWOdFnPMil4rwe2J90qC0PSOIkXK7LboP9DJ1iMrqhyDXYmHu+q6oslRCJ50rmc+XuAGohxFIgMoCgG18KYGPOZBb5LCkzJsHeON45zcWeGTNBC4BVwCEu8b3cQgKkXFKBn9VrOkbLbP9wzc8ep5vSe
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR0102MB3422;6:XZZKgPyq8n/oLVVRasQ3DGBa4cU/yL2Mh+c06BQ4dhrX8DIJTTrVY2IH2XXMzDxEdq6p7EvOJrStnTB+dQhr+wGvRi7hKBSLnomW6XYS42jnhLXN158rc/+dya0itFoSI4i5Jf+gOU6UpC6okbXFjpn8A8oxWVcuuHP/7LASSeOdjCh7vIta4IMmAWCfks0UsY97FCqch832kMZ3VO7dyZvYHkjePa1rHQUfK1MRI6thV5K8U/VXYAN+waNoXrssXkzt5LVvBREILNYDy5MoyB/SXuuIfKTiW5gaIakrM74h7RCbZhC0b/GBOecfmVvPHYeqJNJxQw2Y3pDgV2WSjFJuuDcojIpGQ64W5UJVHnJTG1ea6chGBbc8hMGdQXi3IANPic47tBMhKUv7DIHwdn2J4yFw5NyVdaFAffDIUBCx5ZgljfQ4F8JjDsr1wk18ancIC3VDDmK8pbJuuEgzTg==;5:m0CtkGyLZ4B03MXjfLeMlQoi0uCBZX6UWIimRE9/ZYT1KllWBa+VVRkjrAn12YVaT1FbWlLs34ZI5PtNZuMZjJtq78+1LcK1Hb3wThOAGBCAvzAskU5v4A97RzuPjUUT7zcuUq1WyrEwrqYQSvcY0VOReBmfCm2PO67tSuNB+jo=;24:Ew0IXWfNZfHgHe1z/Mmbwwjrr/D9jPIypy125kZMYfkUkeU8z0LVccJG4DS4f87z3T3FwJbYqZYv/4COfKr0Y+5a3S/iEe3s+UFu+nPBlOg=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR0102MB3422;7:voe29Kj+oXkyCsq65OVyctz2LNgkbiH1hs3WkYAPbKY47CL6rKLdDcpHfWReOQ61JBCWAAVEvb3Pg7eQvgLtJKiFurFRvasZ++rV2KN/i35c6VElgY0j73aQe07FzGMwYf+NdxEYA7p4uxdizBITsY3i9OC8dvrHNIdZ+SxkXBx9R+5JMerDBTQHDEOxDqAsShTGrYN4FUtjNghtIl/dP6gTI0aJLRBOOFKVJMq+KuYdYR/zOOoqpj/TIvgIqoi5
-X-OriginatorOrg: xevo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2018 18:19:12.8637 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 533ff541-8303-46db-7589-08d5934613d5
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e0a7ca1f-2458-4cd6-a7c7-d733c07495ab
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR0102MB3422
+        id S1752677AbeCZSVH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 14:21:07 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:41065 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751964AbeCZSVG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 14:21:06 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0T-8AaYa_1522088439;
+From: Yang Shi <yang.shi@linux.alibaba.com>
+To: adobriyan@gmail.com, mhocko@kernel.org, willy@infradead.org,
+        mguzik@redhat.com, gorcunov@openvz.org, akpm@linux-foundation.org
+Cc: yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and env_start|end in mm_struct
+Date: Tue, 27 Mar 2018 02:20:39 +0800
+Message-Id: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment in __kfifo_alloc says we round down, but we actually round
-up, so correct it.
+mmap_sem is on the hot path of kernel, and it very contended, but it is
+abused too. It is used to protect arg_start|end and evn_start|end when
+reading /proc/$PID/cmdline and /proc/$PID/environ, but it doesn't make
+sense since those proc files just expect to read 4 values atomically and
+not related to VM, they could be set to arbitrary values by C/R.
 
-Signed-off-by: Martin Kelly <mkelly@xevo.com>
+And, the mmap_sem contention may cause unexpected issue like below:
+
+INFO: task ps:14018 blocked for more than 120 seconds.
+       Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+message.
+ ps              D    0 14018      1 0x00000004
+  ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+  ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+  00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+ Call Trace:
+  [<ffffffff817154d0>] ? __schedule+0x250/0x730
+  [<ffffffff817159e6>] schedule+0x36/0x80
+  [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+  [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+  [<ffffffff81717db0>] down_read+0x20/0x40
+  [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+  [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+  [<ffffffff81241d87>] __vfs_read+0x37/0x150
+  [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+  [<ffffffff81242266>] vfs_read+0x96/0x130
+  [<ffffffff812437b5>] SyS_read+0x55/0xc0
+  [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+
+Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
+for them to mitigate the abuse of mmap_sem.
+
+So, introduce a new spinlock in mm_struct to protect the concurrent access
+to arg_start|end and env_start|end.
+
+And, commit ddf1d398e517e660207e2c807f76a90df543a217 ("prctl: take mmap
+sem for writing to protect against others") changed down_read to
+down_write to avoid write race condition in prctl_set_mm(). Since we
+already have dedicated lock to protect them, it is safe to change back
+to down_read.
+
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Mateusz Guzik <mguzik@redhat.com>
+Cc: Cyrill Gorcunov <gorcunov@openvz.org>
 ---
- lib/kfifo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1 --> v2:
+* Use spinlock instead of rwlock per Mattew's suggestion
+* Replace down_write to down_read in prctl_set_mm (see commit log for details)
 
-diff --git a/lib/kfifo.c b/lib/kfifo.c
-index 90ba1eb1df06..b0f757bf7213 100644
---- a/lib/kfifo.c
-+++ b/lib/kfifo.c
-@@ -39,7 +39,7 @@ int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
- 		size_t esize, gfp_t gfp_mask)
- {
+ fs/proc/base.c           |  8 ++++----
+ include/linux/mm_types.h |  2 ++
+ kernel/fork.c            |  1 +
+ kernel/sys.c             | 14 ++++++++++----
+ mm/init-mm.c             |  1 +
+ 5 files changed, 18 insertions(+), 8 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 9298324..e0282b6 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -242,12 +242,12 @@ static ssize_t proc_pid_cmdline_read(struct file *file, char __user *buf,
+ 		goto out_mmput;
+ 	}
+ 
+-	down_read(&mm->mmap_sem);
++	spin_lock(&mm->arg_lock);
+ 	arg_start = mm->arg_start;
+ 	arg_end = mm->arg_end;
+ 	env_start = mm->env_start;
+ 	env_end = mm->env_end;
+-	up_read(&mm->mmap_sem);
++	spin_unlock(&mm->arg_lock);
+ 
+ 	BUG_ON(arg_start > arg_end);
+ 	BUG_ON(env_start > env_end);
+@@ -929,10 +929,10 @@ static ssize_t environ_read(struct file *file, char __user *buf,
+ 	if (!mmget_not_zero(mm))
+ 		goto free;
+ 
+-	down_read(&mm->mmap_sem);
++	spin_lock(&mm->arg_lock);
+ 	env_start = mm->env_start;
+ 	env_end = mm->env_end;
+-	up_read(&mm->mmap_sem);
++	spin_unlock(&mm->arg_lock);
+ 
+ 	while (count > 0) {
+ 		size_t this_len, max_len;
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index fd1af6b..3be4588 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -413,6 +413,8 @@ struct mm_struct {
+ 	unsigned long def_flags;
+ 	unsigned long start_code, end_code, start_data, end_data;
+ 	unsigned long start_brk, brk, start_stack;
++
++	spinlock_t arg_lock; /* protect concurrent access to arg_* and env_* */
+ 	unsigned long arg_start, arg_end, env_start, env_end;
+ 
+ 	unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
+diff --git a/kernel/fork.c b/kernel/fork.c
+index e5d9d40..6540ae7 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -898,6 +898,7 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
+ 	mm->pinned_vm = 0;
+ 	memset(&mm->rss_stat, 0, sizeof(mm->rss_stat));
+ 	spin_lock_init(&mm->page_table_lock);
++	spin_lock_init(&mm->arg_lock);
+ 	mm_init_cpumask(mm);
+ 	mm_init_aio(mm);
+ 	mm_init_owner(mm, p);
+diff --git a/kernel/sys.c b/kernel/sys.c
+index f2289de..17bddd2 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1959,7 +1959,7 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+ 			return error;
+ 	}
+ 
+-	down_write(&mm->mmap_sem);
++	down_read(&mm->mmap_sem);
+ 
  	/*
--	 * round down to the next power of 2, since our 'let the indices
-+	 * round up to the next power of 2, since our 'let the indices
- 	 * wrap' technique works only in this case.
- 	 */
- 	size = roundup_pow_of_two(size);
+ 	 * We don't validate if these members are pointing to
+@@ -1980,10 +1980,13 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+ 	mm->start_brk	= prctl_map.start_brk;
+ 	mm->brk		= prctl_map.brk;
+ 	mm->start_stack	= prctl_map.start_stack;
++
++	spin_lock(&mm->arg_lock);
+ 	mm->arg_start	= prctl_map.arg_start;
+ 	mm->arg_end	= prctl_map.arg_end;
+ 	mm->env_start	= prctl_map.env_start;
+ 	mm->env_end	= prctl_map.env_end;
++	spin_unlock(&mm->arg_lock);
+ 
+ 	/*
+ 	 * Note this update of @saved_auxv is lockless thus
+@@ -1996,7 +1999,7 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+ 	if (prctl_map.auxv_size)
+ 		memcpy(mm->saved_auxv, user_auxv, sizeof(user_auxv));
+ 
+-	up_write(&mm->mmap_sem);
++	up_read(&mm->mmap_sem);
+ 	return 0;
+ }
+ #endif /* CONFIG_CHECKPOINT_RESTORE */
+@@ -2063,7 +2066,7 @@ static int prctl_set_mm(int opt, unsigned long addr,
+ 
+ 	error = -EINVAL;
+ 
+-	down_write(&mm->mmap_sem);
++	down_read(&mm->mmap_sem);
+ 	vma = find_vma(mm, addr);
+ 
+ 	prctl_map.start_code	= mm->start_code;
+@@ -2149,14 +2152,17 @@ static int prctl_set_mm(int opt, unsigned long addr,
+ 	mm->start_brk	= prctl_map.start_brk;
+ 	mm->brk		= prctl_map.brk;
+ 	mm->start_stack	= prctl_map.start_stack;
++
++	spin_lock(&mm->arg_lock);
+ 	mm->arg_start	= prctl_map.arg_start;
+ 	mm->arg_end	= prctl_map.arg_end;
+ 	mm->env_start	= prctl_map.env_start;
+ 	mm->env_end	= prctl_map.env_end;
++	spin_unlock(&mm->arg_lock);
+ 
+ 	error = 0;
+ out:
+-	up_write(&mm->mmap_sem);
++	up_read(&mm->mmap_sem);
+ 	return error;
+ }
+ 
+diff --git a/mm/init-mm.c b/mm/init-mm.c
+index f94d5d1..66cce4c 100644
+--- a/mm/init-mm.c
++++ b/mm/init-mm.c
+@@ -23,6 +23,7 @@ struct mm_struct init_mm = {
+ 	.mmap_sem	= __RWSEM_INITIALIZER(init_mm.mmap_sem),
+ 	.page_table_lock =  __SPIN_LOCK_UNLOCKED(init_mm.page_table_lock),
+ 	.mmlist		= LIST_HEAD_INIT(init_mm.mmlist),
++	.arg_lock	= __SPIN_LOCK_UNLOCKED(init_mm.arg_lock),
+ 	.user_ns	= &init_user_ns,
+ 	INIT_MM_CONTEXT(init_mm)
+ };
 -- 
-2.11.0
+1.8.3.1
