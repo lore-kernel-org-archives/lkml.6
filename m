@@ -1,180 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeCZM1v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 08:27:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59532 "EHLO mx1.redhat.com"
+        id S1752016AbeCZM2p (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 08:28:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35034 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751099AbeCZM1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 08:27:50 -0400
-Subject: Re: [PATCH] KVM: X86: Fix the decoding of segment overrides in 64bit
- mode
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1521707651-9375-1-git-send-email-wanpengli@tencent.com>
- <aadc47c3-9d5f-b4d5-92d3-cb888a29563c@redhat.com>
- <49454fe4-16e2-4d8b-7ad5-9e488afc786e@citrix.com>
- <d1126eb9-7203-7044-f72b-174cac6607ab@redhat.com>
- <e9db6804-4881-be93-f570-e9631dbccac8@citrix.com>
- <9bd82cb0-d88f-4891-a111-3704802e1d4e@redhat.com>
- <CANRm+CwmJQCFZ7oe1_YatqoOXzzEU+SP9Z5qR6zU_ybd_DoGQQ@mail.gmail.com>
- <94bbfac5-2022-ab92-0b9a-1c3cd2275054@citrix.com>
- <CANRm+CwsFX7rVkPvENRM20D84zotonxFFJMSq98icS4BQm7o2Q@mail.gmail.com>
- <46ef9359-a87c-224c-53e0-c948b79314a8@redhat.com>
- <CANRm+Czgy0V1E3DsGMd=frSby-6fAEXzvjkVrOE-7kBF4T8dtA@mail.gmail.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <c7aaac16-77d8-3054-0b9a-a0094ec69425@redhat.com>
-Date: Mon, 26 Mar 2018 14:27:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751141AbeCZM2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 08:28:44 -0400
+Date: Mon, 26 Mar 2018 14:28:39 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
+        Halil Pasic <pasic@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        borntraeger@de.ibm.com
+Subject: Re: [PATCH 1/4] vfio: ccw: fix cleanup if cp_prefetch fails
+Message-ID: <20180326142839.23bfc4f6.cohuck@redhat.com>
+In-Reply-To: <54fd02cd-bd0b-889b-c40f-f9a32aa25d77@linux.vnet.ibm.com>
+References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
+        <20180321020822.86255-2-bjsdjshi@linux.vnet.ibm.com>
+        <682d8b1c-5aca-7015-043b-a3f1446bf378@linux.vnet.ibm.com>
+        <20180322022248.GB12194@bjsdjshi@linux.vnet.ibm.com>
+        <54fd02cd-bd0b-889b-c40f-f9a32aa25d77@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <CANRm+Czgy0V1E3DsGMd=frSby-6fAEXzvjkVrOE-7kBF4T8dtA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/03/2018 14:25, Wanpeng Li wrote:
-> 2018-03-23 23:04 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
->> On 23/03/2018 15:27, Wanpeng Li wrote:
->>> 2018-03-22 21:53 GMT+08:00 Andrew Cooper <andrew.cooper3@citrix.com>:
->>>> On 22/03/18 13:39, Wanpeng Li wrote:
->>>>> 2018-03-22 20:38 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
->>>>>> On 22/03/2018 12:04, Andrew Cooper wrote:
->>>>>>> We've got a Force Emulation Prefix (ud2a; .ascii "xen") for doing
->>>>>>> magic.  Originally, this was used for PV guests to explicitly request an
->>>>>>> emulated CPUID, but I extended it to HVM guests for "emulate the next
->>>>>>> instruction", after we had some guest user => guest kernel privilege
->>>>>>> escalations because of incorrect emulation.
->>>>>> Wanpeng, why don't you add it behind a new kvm module parameter? :)
->>>>> Great point! I will have a try. Thanks Paolo and Andrew. :)
->>>>
->>>> Using the force emulation prefix requires intercepting #UD, which is in
->>>> general a BadThing(tm) for security.  Therefore, we have a build time
->>>
->>> Yeah, however kvm intercepts and emulates #UD by default, should we
->>> add a new kvm module parameter to enable it and disable by default?
->>
->> No, the module parameter should only be about the force-emulation prefix.
-> 
-> How about something like this? (Add EmulateOnUD to cpuid, the testcase
-> will use it)
+On Thu, 22 Mar 2018 10:37:36 +0100
+Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
 
-I think you don't need either EmulateOnUD or EMULTYPE_TRAP_UD (the
-latter only when fep=1 of course).  Otherwise yes.
+> On 22/03/2018 03:22, Dong Jia Shi wrote:
+> > * Halil Pasic <pasic@linux.vnet.ibm.com> [2018-03-21 13:49:54 +0100]:
+> >  
+> >>
+> >> On 03/21/2018 03:08 AM, Dong Jia Shi wrote:  
+> >>> From: Halil Pasic <pasic@linux.vnet.ibm.com>
+> >>>
+> >>> If the translation of a channel program fails, we may end up attempting
+> >>> to clean up (free, unpin) stuff that never got translated (and allocated,
+> >>> pinned) in the first place.
+> >>>
+> >>> By adjusting the lengths of the chains accordingly (so the element that
+> >>> failed, and all subsequent elements are excluded) cleanup activities
+> >>> based on false assumptions can be avoided.
+> >>>
+> >>> Let's make sure cp_free works properly after cp_prefetch returns with an
+> >>> error by setting ch_len to 0 for the ccw chains those are not prefetched.  
+> >> This sentence used to be:
+> >>
+> >> Let's make sure cp_free works properly after cp_prefetch returns with an
+> >> error.
+> >>
+> >> @Dong Jia
+> >> I find the 'by setting ch_len to 0 for the ccw chains those are not prefetched'
+> >> you added for clarification (I guess) somewhat problematic.
+> >> The chain in which the translation failure occurred
+> >> +	chain->ch_len = idx;  
+> > I made a mistake. When rewording the message, I missed this part...
+> > Sorry for the problem!
+> >  
+> >> is shortened so that only the translated elements (ccws) are going to
+> >> get cleaned up (on a per element basis) by cp_free. This may or may
+> >> not be the first ccw. Subsequent chains are shortened to 0 as there
+> >> no translation took place.
+> >>
+> >> So as a result of this change only properly translated ccws are going
+> >> to get (re)visited by cp_free as only those may have resources bound
+> >> to them which need to be released.
+> >>
+> >> I'm not against improving the commit message. But this ain't
+> >> an improvement to me.  
+> > You are right. How about:
+> > Let's make sure cp_free works properly after cp_prefetch returns with an
+> > error by setting ch_len of a ccw chain to the number of the translated
+> > ccws on that chain.  
+> 
+> By the way, since you will propose a new version,
+> you have a long description of the cp_prefetch function in the code.
+> I think you should modify it according to the changes and describe how and
+> why the ch_len field of each chain is used and changed by this function.
+> 
+> Something like:
+> 
+> "
+> For each chain composing the channel program:
+> On entry ch_len hold the count of CCW to be translated.
 
-Paolo
+s/hold/holds/ ?
 
+> On exit ch_len is adjusted to the count of successfully translated CCW.
 > 
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index dd88158..80da5c6 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -4772,7 +4772,7 @@ static const struct opcode twobyte_table[256] = {
->      X16(D(ByteOp | DstMem | SrcNone | ModRM| Mov)),
->      /* 0xA0 - 0xA7 */
->      I(Stack | Src2FS, em_push_sreg), I(Stack | Src2FS, em_pop_sreg),
-> -    II(ImplicitOps, em_cpuid, cpuid),
-> +    II(EmulateOnUD | ImplicitOps, em_cpuid, cpuid),
->      F(DstMem | SrcReg | ModRM | BitOp | NoWrite, em_bt),
->      F(DstMem | SrcReg | Src2ImmByte | ModRM, em_shld),
->      F(DstMem | SrcReg | Src2CL | ModRM, em_shld), N, N,
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 9bc05f5..1825b45 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -108,6 +108,9 @@ module_param_named(enable_shadow_vmcs,
-> enable_shadow_vmcs, bool, S_IRUGO);
->  static bool __read_mostly nested = 0;
->  module_param(nested, bool, S_IRUGO);
+> This allows cp_free to find in ch_len the count of CCW to free in a chain.
+> "
 > 
-> +static bool __read_mostly fep = 0;
-> +module_param(fep, bool, S_IRUGO);
-> +
->  static u64 __read_mostly host_xss;
+> Could also be inside the commit message.
 > 
->  static bool __read_mostly enable_pml = 1;
-> @@ -6215,6 +6218,27 @@ static int handle_machine_check(struct kvm_vcpu *vcpu)
->      return 1;
->  }
-> 
-> +static int handle_ud(struct kvm_vcpu *vcpu)
-> +{
-> +    enum emulation_result er;
-> +
-> +    if (fep) {
-> +        char sig[5]; /* ud2; .ascii "kvm" */
-> +        struct x86_exception e;
-> +
-> +        kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
-> +                kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e);
-> +        if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0)
-> +            kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
-> +    }
-> +    er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
-> +    if (er == EMULATE_USER_EXIT)
-> +        return 0;
-> +    if (er != EMULATE_DONE)
-> +        kvm_queue_exception(vcpu, UD_VECTOR);
-> +    return 1;
-> +}
-> +
->  static int handle_exception(struct kvm_vcpu *vcpu)
->  {
->      struct vcpu_vmx *vmx = to_vmx(vcpu);
-> @@ -6233,14 +6257,8 @@ static int handle_exception(struct kvm_vcpu *vcpu)
->      if (is_nmi(intr_info))
->          return 1;  /* already handled by vmx_vcpu_run() */
-> 
-> -    if (is_invalid_opcode(intr_info)) {
-> -        er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
-> -        if (er == EMULATE_USER_EXIT)
-> -            return 0;
-> -        if (er != EMULATE_DONE)
-> -            kvm_queue_exception(vcpu, UD_VECTOR);
-> -        return 1;
-> -    }
-> +    if (is_invalid_opcode(intr_info))
-> +        return handle_ud(vcpu);
-> 
->      error_code = 0;
->      if (intr_info & INTR_INFO_DELIVER_CODE_MASK)
+> Pierre
 > 
 > 
-> The testcase:
-> 
-> #include <stdio.h>
-> #include <string.h>
-> 
-> #define HYPERVISOR_INFO 0x40000000
-> 
-> #define CPUID(idx, eax, ebx, ecx, edx)\
->     asm volatile (\
->     "test %1,%1;jz 1f; ud2a; .ascii \"kvm\"; 1: cpuid" \
->     :"=b" (*ebx), "=a" (*eax),"=c" (*ecx), "=d" (*edx)\
->         :"0"(idx) );
-> 
-> void main()
-> {
->         unsigned int eax,ebx,ecx,edx;
->         char string[13];
-> 
->         CPUID(HYPERVISOR_INFO, &eax, &ebx, &ecx, &edx);
->         *(unsigned int *)(string+0) = ebx;
->         *(unsigned int *)(string+4) = ecx;
->         *(unsigned int *)(string+8) = edx;
-> 
->         string[12] = 0;
->         if (strncmp(string, "KVMKVMKVM\0\0\0",12) == 0) {
->                 printf("kvm guest\n");
->         } else
->           printf("bare hardware\n");
-> 
-> }
-> 
-> Regards,
-> Wanpeng Li
+> >  
+> >>> Acked-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+> >>> Reviewed-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+> >>> Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+> >>> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+> >>> ---
+> >>>   drivers/s390/cio/vfio_ccw_cp.c | 9 ++++++++-
+> >>>   1 file changed, 8 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+> >>> index d9a2fffd034b..2be114db02f9 100644
+> >>> --- a/drivers/s390/cio/vfio_ccw_cp.c
+> >>> +++ b/drivers/s390/cio/vfio_ccw_cp.c
+> >>> @@ -749,11 +749,18 @@ int cp_prefetch(struct channel_program *cp)
+> >>>   		for (idx = 0; idx < len; idx++) {
+> >>>   			ret = ccwchain_fetch_one(chain, idx, cp);
+> >>>   			if (ret)
+> >>> -				return ret;
+> >>> +				goto out_err;
+> >>>   		}
+> >>>   	}
+> >>>
+> >>>   	return 0;
+> >>> +out_err:
+> >>> +	/* Only cleanup the chain elements that where actually translated. */
+
+s/where/were/
+
+> >>> +	chain->ch_len = idx;
+> >>> +	list_for_each_entry_continue(chain, &cp->ccwchain_list, next) {
+> >>> +		chain->ch_len = 0;
+> >>> +	}
+> >>> +	return ret;
+> >>>   }
+> >>>
+> >>>   /**
+> >>>  
 > 
