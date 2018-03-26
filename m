@@ -1,231 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752517AbeCZXDe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 19:03:34 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:40635 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752168AbeCZXDd (ORCPT
+        id S1752356AbeCZXFT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 19:05:19 -0400
+Received: from smtprelay0014.hostedemail.com ([216.40.44.14]:34029 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752035AbeCZXFS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 19:03:33 -0400
-X-Google-Smtp-Source: AG47ELuE3KqALBRMm7EiaG0fSN3NgxYwdEOgk6UJo0zzAWJZq+15ztEcfP9YG4pkNo+th1mTF7mfWQ==
-Date: Mon, 26 Mar 2018 16:03:30 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] crypto: ecc: Remove stack VLA usage
-Message-ID: <20180326230330.GA27127@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Mon, 26 Mar 2018 19:05:18 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2525:2559:2563:2682:2685:2691:2828:2859:2917:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6742:8985:9025:10004:10400:10848:11658:11914:12043:12679:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21326:21451:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: skin28_4b1c3eef5eb1e
+X-Filterd-Recvd-Size: 1725
+Message-ID: <1522105514.12357.38.camel@perches.com>
+Subject: Re: [PATCH] mm: Use octal not symbolic permissions
+From: Joe Perches <joe@perches.com>
+To: David Rientjes <rientjes@google.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Hugh Dickins <hughd@google.com>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Minchan Kim <minchan@kernel.org>, Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Seth Jennings <sjenning@redhat.com>, Dan Streetman <ddstreet@ieee.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Date: Mon, 26 Mar 2018 16:05:14 -0700
+In-Reply-To: <alpine.DEB.2.20.1803261535460.93873@chino.kir.corp.google.com>
+References: <2e032ef111eebcd4c5952bae86763b541d373469.1522102887.git.joe@perches.com>
+         <alpine.DEB.2.20.1803261535460.93873@chino.kir.corp.google.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the quest to remove all VLAs from the kernel[1], this avoids VLAs
-by just using the maximum allocation size (4 bytes) for stack arrays.
-All the VLAs in ecc were either 3 or 4 bytes (or a multiple), so just
-make it 4 bytes all the time. Initialization routines are adjusted to
-check that ndigits does not end up larger than the arrays.
+On Mon, 2018-03-26 at 15:36 -0700, David Rientjes wrote:
+> extending some of these lines to be >80 characters also improves 
+> the readability imo.
 
-[1] https://lkml.org/lkml/2018/3/7/621
+Right.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-This expects 14de52112ee70ca289fa77bf2d9cbc79fd2c811f to be reverted.
----
- crypto/ecc.c  | 47 ++++++++++++++++++++++++-----------------------
- crypto/ecc.h  |  4 +++-
- crypto/ecdh.c |  4 ++--
- 3 files changed, 29 insertions(+), 26 deletions(-)
+I have no personal objection to very occasionally using
+line lengths < ~100 chars instead of 80.
 
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index 18f32f2a5e1c..815541309a95 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -515,7 +515,7 @@ static void vli_mmod_fast_256(u64 *result, const u64 *product,
- static bool vli_mmod_fast(u64 *result, u64 *product,
- 			  const u64 *curve_prime, unsigned int ndigits)
- {
--	u64 tmp[2 * ndigits];
-+	u64 tmp[2 * ECC_MAX_DIGITS];
- 
- 	switch (ndigits) {
- 	case 3:
-@@ -536,7 +536,7 @@ static bool vli_mmod_fast(u64 *result, u64 *product,
- static void vli_mod_mult_fast(u64 *result, const u64 *left, const u64 *right,
- 			      const u64 *curve_prime, unsigned int ndigits)
- {
--	u64 product[2 * ndigits];
-+	u64 product[2 * ECC_MAX_DIGITS];
- 
- 	vli_mult(product, left, right, ndigits);
- 	vli_mmod_fast(result, product, curve_prime, ndigits);
-@@ -546,7 +546,7 @@ static void vli_mod_mult_fast(u64 *result, const u64 *left, const u64 *right,
- static void vli_mod_square_fast(u64 *result, const u64 *left,
- 				const u64 *curve_prime, unsigned int ndigits)
- {
--	u64 product[2 * ndigits];
-+	u64 product[2 * ECC_MAX_DIGITS];
- 
- 	vli_square(product, left, ndigits);
- 	vli_mmod_fast(result, product, curve_prime, ndigits);
-@@ -560,8 +560,8 @@ static void vli_mod_square_fast(u64 *result, const u64 *left,
- static void vli_mod_inv(u64 *result, const u64 *input, const u64 *mod,
- 			unsigned int ndigits)
- {
--	u64 a[ndigits], b[ndigits];
--	u64 u[ndigits], v[ndigits];
-+	u64 a[ECC_MAX_DIGITS], b[ECC_MAX_DIGITS];
-+	u64 u[ECC_MAX_DIGITS], v[ECC_MAX_DIGITS];
- 	u64 carry;
- 	int cmp_result;
- 
-@@ -649,8 +649,8 @@ static void ecc_point_double_jacobian(u64 *x1, u64 *y1, u64 *z1,
- 				      u64 *curve_prime, unsigned int ndigits)
- {
- 	/* t1 = x, t2 = y, t3 = z */
--	u64 t4[ndigits];
--	u64 t5[ndigits];
-+	u64 t4[ECC_MAX_DIGITS];
-+	u64 t5[ECC_MAX_DIGITS];
- 
- 	if (vli_is_zero(z1, ndigits))
- 		return;
-@@ -711,7 +711,7 @@ static void ecc_point_double_jacobian(u64 *x1, u64 *y1, u64 *z1,
- static void apply_z(u64 *x1, u64 *y1, u64 *z, u64 *curve_prime,
- 		    unsigned int ndigits)
- {
--	u64 t1[ndigits];
-+	u64 t1[ECC_MAX_DIGITS];
- 
- 	vli_mod_square_fast(t1, z, curve_prime, ndigits);    /* z^2 */
- 	vli_mod_mult_fast(x1, x1, t1, curve_prime, ndigits); /* x1 * z^2 */
-@@ -724,7 +724,7 @@ static void xycz_initial_double(u64 *x1, u64 *y1, u64 *x2, u64 *y2,
- 				u64 *p_initial_z, u64 *curve_prime,
- 				unsigned int ndigits)
- {
--	u64 z[ndigits];
-+	u64 z[ECC_MAX_DIGITS];
- 
- 	vli_set(x2, x1, ndigits);
- 	vli_set(y2, y1, ndigits);
-@@ -750,7 +750,7 @@ static void xycz_add(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
- 		     unsigned int ndigits)
- {
- 	/* t1 = X1, t2 = Y1, t3 = X2, t4 = Y2 */
--	u64 t5[ndigits];
-+	u64 t5[ECC_MAX_DIGITS];
- 
- 	/* t5 = x2 - x1 */
- 	vli_mod_sub(t5, x2, x1, curve_prime, ndigits);
-@@ -791,9 +791,9 @@ static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
- 		       unsigned int ndigits)
- {
- 	/* t1 = X1, t2 = Y1, t3 = X2, t4 = Y2 */
--	u64 t5[ndigits];
--	u64 t6[ndigits];
--	u64 t7[ndigits];
-+	u64 t5[ECC_MAX_DIGITS];
-+	u64 t6[ECC_MAX_DIGITS];
-+	u64 t7[ECC_MAX_DIGITS];
- 
- 	/* t5 = x2 - x1 */
- 	vli_mod_sub(t5, x2, x1, curve_prime, ndigits);
-@@ -846,9 +846,9 @@ static void ecc_point_mult(struct ecc_point *result,
- 			   unsigned int ndigits)
- {
- 	/* R0 and R1 */
--	u64 rx[2][ndigits];
--	u64 ry[2][ndigits];
--	u64 z[ndigits];
-+	u64 rx[2][ECC_MAX_DIGITS];
-+	u64 ry[2][ECC_MAX_DIGITS];
-+	u64 z[ECC_MAX_DIGITS];
- 	int i, nb;
- 	int num_bits = vli_num_bits(scalar, ndigits);
- 
-@@ -943,13 +943,13 @@ int ecc_is_key_valid(unsigned int curve_id, unsigned int ndigits,
- int ecc_gen_privkey(unsigned int curve_id, unsigned int ndigits, u64 *privkey)
- {
- 	const struct ecc_curve *curve = ecc_get_curve(curve_id);
--	u64 priv[ndigits];
-+	u64 priv[ECC_MAX_DIGITS];
- 	unsigned int nbytes = ndigits << ECC_DIGITS_TO_BYTES_SHIFT;
- 	unsigned int nbits = vli_num_bits(curve->n, ndigits);
- 	int err;
- 
- 	/* Check that N is included in Table 1 of FIPS 186-4, section 6.1.1 */
--	if (nbits < 160)
-+	if (nbits < 160 || ndigits > ARRAY_SIZE(priv))
- 		return -EINVAL;
- 
- 	/*
-@@ -988,10 +988,10 @@ int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
- {
- 	int ret = 0;
- 	struct ecc_point *pk;
--	u64 priv[ndigits];
-+	u64 priv[ECC_MAX_DIGITS];
- 	const struct ecc_curve *curve = ecc_get_curve(curve_id);
- 
--	if (!private_key || !curve) {
-+	if (!private_key || !curve || ndigits > ARRAY_SIZE(priv)) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -1025,12 +1025,13 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
- {
- 	int ret = 0;
- 	struct ecc_point *product, *pk;
--	u64 priv[ndigits];
--	u64 rand_z[ndigits];
-+	u64 priv[ECC_MAX_DIGITS];
-+	u64 rand_z[ECC_MAX_DIGITS];
- 	unsigned int nbytes;
- 	const struct ecc_curve *curve = ecc_get_curve(curve_id);
- 
--	if (!private_key || !public_key || !curve) {
-+	if (!private_key || !public_key || !curve ||
-+	    ndigits > ARRAY_SIZE(priv) || ndigits > ARRAY_SIZE(rand_z)) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
-diff --git a/crypto/ecc.h b/crypto/ecc.h
-index e4fd4492c765..f75a86baa3bd 100644
---- a/crypto/ecc.h
-+++ b/crypto/ecc.h
-@@ -26,7 +26,9 @@
- #ifndef _CRYPTO_ECC_H
- #define _CRYPTO_ECC_H
- 
--#define ECC_MAX_DIGITS	4 /* 256 */
-+#define ECC_CURVE_NIST_P192_DIGITS  3
-+#define ECC_CURVE_NIST_P256_DIGITS  4
-+#define ECC_MAX_DIGITS              ECC_CURVE_NIST_P256_DIGITS
- 
- #define ECC_DIGITS_TO_BYTES_SHIFT 3
- 
-diff --git a/crypto/ecdh.c b/crypto/ecdh.c
-index 3aca0933ec44..3f91ef13c8c6 100644
---- a/crypto/ecdh.c
-+++ b/crypto/ecdh.c
-@@ -30,8 +30,8 @@ static inline struct ecdh_ctx *ecdh_get_ctx(struct crypto_kpp *tfm)
- static unsigned int ecdh_supported_curve(unsigned int curve_id)
- {
- 	switch (curve_id) {
--	case ECC_CURVE_NIST_P192: return 3;
--	case ECC_CURVE_NIST_P256: return 4;
-+	case ECC_CURVE_NIST_P192: return ECC_CURVE_NIST_P192_DIGITS;
-+	case ECC_CURVE_NIST_P256: return ECC_CURVE_NIST_P256_DIGITS;
- 	default: return 0;
- 	}
- }
--- 
-2.7.4
+AFAIK: neither does Linus.
 
+https://lkml.org/lkml/2016/12/15/749
 
--- 
-Kees Cook
-Pixel Security
+Beyond that, I believe it's too much left-right eyeball
+movement for quick and easy reading comprehension.
