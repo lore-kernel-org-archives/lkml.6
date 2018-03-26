@@ -1,76 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeCZNr7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:47:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39716 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751109AbeCZNr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:47:57 -0400
-Date: Mon, 26 Mar 2018 15:47:53 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, borntraeger@de.ibm.com, pasic@linux.vnet.ibm.com,
-        pmorel@linux.vnet.ibm.com
-Subject: Re: [PATCH 3/4] vfio: ccw: set ccw->cda to NULL defensively
-Message-ID: <20180326154753.327503ba.cohuck@redhat.com>
-In-Reply-To: <20180321020822.86255-4-bjsdjshi@linux.vnet.ibm.com>
-References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
-        <20180321020822.86255-4-bjsdjshi@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1751748AbeCZNvJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 09:51:09 -0400
+Received: from mga12.intel.com ([192.55.52.136]:51032 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751099AbeCZNvI (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 09:51:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
+   d="scan'208";a="214741739"
+Subject: Re: [PATCH v1 2/3] perf version: Print the status of compiled-in
+ libraries
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
+ <1522080424-12912-3-git-send-email-yao.jin@linux.intel.com>
+ <20180326093925.GI6207@krava>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <84893905-7512-0757-c13c-152a9d051f92@linux.intel.com>
+Date: Mon, 26 Mar 2018 21:51:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180326093925.GI6207@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Mar 2018 03:08:21 +0100
-Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
 
-> Let's avoid free on ccw->cda that points to a guest address
-> or a already freed memory area by setting it to NULL if memory
-> allocation didn't happen or failed.
 
-Does not hurt, I guess.
-
+On 3/26/2018 5:39 PM, Jiri Olsa wrote:
+> On Tue, Mar 27, 2018 at 12:07:03AM +0800, Jin Yao wrote:
+>> This patch checks the values passed by CFLAGS (-DXXX) and then
+>> print the status of libraries.
+>>
+>> For example, if HAVE_DWARF_SUPPORT is defined, that means the
+>> library "dwarf" is compiled-in. The patch will print the status
+>> "on" for this library.
+>>
+>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+>> ---
+>>   tools/perf/builtin-version.c | 125 +++++++++++++++++++++++++++++++++++++++++++
+>>   tools/perf/builtin.h         |   1 +
+>>   2 files changed, 126 insertions(+)
+>>
+>> diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
+>> index 37019c5..90a0a7f 100644
+>> --- a/tools/perf/builtin-version.c
+>> +++ b/tools/perf/builtin-version.c
+>> @@ -9,3 +9,128 @@ int cmd_version(int argc __maybe_unused, const char **argv __maybe_unused)
+>>   	printf("perf version %s\n", perf_version_string);
+>>   	return 0;
+>>   }
+>> +
+>> +static void status_print(const char *name, const char *status)
+>> +{
+>> +	printf("%22s: [ %3s ]\n", name, status);
+>> +}
+>> +
+>> +static void library_status(void)
+>> +{
+>> +#ifdef HAVE_DWARF_SUPPORT
+>> +	status_print("dwarf", "on");
+>> +#else
+>> +	status_print("dwarf", "off");
+>> +#endif
 > 
-> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-> ---
->  drivers/s390/cio/vfio_ccw_cp.c | 28 +++++++++++++++++++---------
->  1 file changed, 19 insertions(+), 9 deletions(-)
+> could this and all those below be in some generic macro?
 > 
-> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-> index 3abc9770910a..5958c35ab343 100644
-> --- a/drivers/s390/cio/vfio_ccw_cp.c
-> +++ b/drivers/s390/cio/vfio_ccw_cp.c
-> @@ -491,7 +491,7 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
->  	struct ccw1 *ccw;
->  	struct pfn_array_table *pat;
->  	unsigned long *idaws;
-> -	int idaw_nr;
-> +	int idaw_nr, ret;
->  
->  	ccw = chain->ch_ccw + idx;
->  
-> @@ -511,18 +511,20 @@ static int ccwchain_fetch_direct(struct ccwchain *chain,
->  	 * needed when translating a direct ccw to a idal ccw.
->  	 */
->  	pat = chain->ch_pat + idx;
-> -	if (pfn_array_table_init(pat, 1))
-> -		return -ENOMEM;
-> -	idaw_nr = pfn_array_alloc_pin(pat->pat_pa, cp->mdev,
-> +	ret = pfn_array_table_init(pat, 1);
-> +	if (ret)
-> +		goto out_init;
-> +
-> +	idaw_nr = ret = pfn_array_alloc_pin(pat->pat_pa, cp->mdev,
+> #define STATUS(__d, __m)		\
+> #ifdef __d 				\
+> 	status_print(#__m, "on");	\
+> #else					\
+> 	status_print(#__m, "OFF");	\
+> #endif
+> 
+> STATUS(HAVE_DWARF_SUPPORT, dwarf)
+> 
+> 
+> also please print the 'OFF' and use colors as in the build message
+> 
 
-Ugh, I don't like setting both at the same time... only set idaw_nr for
-ret > 0? (personal preference)
+Fine, thanks. I will update the code.
 
->  				      ccw->cda, ccw->count);
-> -	if (idaw_nr < 0)
-> -		return idaw_nr;
-> +	if (ret < 0)
-> +		goto out_init;
+>> +
+>> +#ifdef HAVE_DWARF_GETLOCATIONS
+>> +	status_print("dwarf_getlocations", "on");
+>> +#else
+>> +	status_print("dwarf_getlocations", "off");
+>> +#endif
+>> +
+>> +#ifdef NO_GLIBC
+>> +	status_print("glibc", "off");
+>> +#else
+>> +	status_print("glibc", "on");
+>> +#endif
+>> +
+>> +#ifdef HAVE_GTK2_SUPPORT
+>> +	status_print("gtk2", "on");
+>> +#else
+>> +	status_print("gtk2", "off");
+>> +#endif
+>> +
+> 
+> SNIP
+> 
+>> +}
+>> +
+>> +int cmd_version2(int argc, const char **argv)
+>> +{
+>> +	cmd_version(argc, argv);
+>> +	library_status();
+>> +	return 0;
+>> +}
+>> diff --git a/tools/perf/builtin.h b/tools/perf/builtin.h
+>> index 05745f3..c7508ee 100644
+>> --- a/tools/perf/builtin.h
+>> +++ b/tools/perf/builtin.h
+>> @@ -29,6 +29,7 @@ int cmd_timechart(int argc, const char **argv);
+>>   int cmd_top(int argc, const char **argv);
+>>   int cmd_script(int argc, const char **argv);
+>>   int cmd_version(int argc, const char **argv);
+>> +int cmd_version2(int argc, const char **argv);
+> 
+> please don't add new command for this, handle this in cmd_version
+>
+
+Yeah, I know that, adding a new command is not a good idea.
+
+But how can I pass a new parameter to cmd_version to indicate it's the 
+-vv case? Use argv[1]? But looks not good since argc is 1.
+
+Any idea about that?
+
+Thanks
+Jin Yao
+
+> thanks,
+> jirka
+> 
