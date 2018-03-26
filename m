@@ -1,76 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752743AbeCZSsw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 14:48:52 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42050 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752626AbeCZSsu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 14:48:50 -0400
-Subject: Re: [PATCH 2/3] Ktest: use dodie for critical falures
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, dhaval.giani@oracle.com
-References: <1513380011-15274-1-git-send-email-tianyang.chen@oracle.com>
- <1513380011-15274-3-git-send-email-tianyang.chen@oracle.com>
- <20180321111608.31c712a2@gandalf.local.home>
-From: Tim Tianyang Chen <tianyang.chen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <e8b6101e-1358-21b4-8cf1-87d7908bc952@oracle.com>
-Date: Mon, 26 Mar 2018 11:48:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752703AbeCZS5l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 14:57:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750983AbeCZS5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 14:57:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693672177B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 26 Mar 2018 14:57:35 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Yury Norov <ynorov@caviumnetworks.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Chris Metcalf <cmetcalf@mellanox.com>,
+        Christopher Lameter <cl@linux.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] smp: introduce kick_active_cpus_sync()
+Message-ID: <20180326145735.57ba306b@gandalf.local.home>
+In-Reply-To: <20180326085313.GA4016@andrea>
+References: <20180325175004.28162-1-ynorov@caviumnetworks.com>
+        <20180325175004.28162-3-ynorov@caviumnetworks.com>
+        <20180326085313.GA4016@andrea>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180321111608.31c712a2@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8844 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=490
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803260185
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the review Steve! One quick comment inline:
+On Mon, 26 Mar 2018 10:53:13 +0200
+Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
 
-On 03/21/2018 08:16 AM, Steven Rostedt wrote:
-> On Fri, 15 Dec 2017 15:20:10 -0800
-> Tim Tianyang Chen <tianyang.chen@oracle.com> wrote:
->
->> Users should get emails when the script dies because of a critical failure. Critical
->> failures are defined as any errors that could abnormally terminate the script.
->>
->> In order to add email support, this patch converts all die() to dodie() except:
->>   * when '-v' is used as an option to get the version of the script.
->>   * in Sig-Int handeler because it's not a fatal error to cancel the script.
->>   * errors happen during parsing config
-> I would say you don't need it for parsing the config either. It doesn't
-> make sense, as you wouldn't have the mailto defined yet.
->
-Maybe it's the way I worded it. This patch coverts all die() to dodie() 
-_except_ these situations. So it doesn't send emails on config errors, 
-which is what you said here.
->> @@ -4132,7 +4132,7 @@ if ($#ARGV == 0) {
->>   if (! -f $ktest_config) {
->>       $newconfig = 1;
->>       get_test_case;
->> -    open(OUT, ">$ktest_config") or die "Can not create $ktest_config";
->> +    open(OUT, ">$ktest_config") or dodie "Can not create $ktest_config";
-> Here, no config was specified, and so no configs either.
->
->
->>       print OUT << "EOF"
->>   # Generated by ktest.pl
->>   #
->> @@ -4167,7 +4167,7 @@ if (defined($opt{"LOG_FILE"})) {
->>   my @new_configs = keys %entered_configs;
->>   if ($#new_configs >= 0) {
->>       print "\nAppending entered in configs to $ktest_config\n";
->> -    open(OUT, ">>$ktest_config") or die "Can not append to $ktest_config";
->> +    open(OUT, ">>$ktest_config") or dodie "Can not append to $ktest_config";
-> Here too.
-Right, I missed these two. I will send out v3 shortly.
+> > --- a/kernel/smp.c
+> > +++ b/kernel/smp.c
+> > @@ -724,6 +724,30 @@ void kick_all_cpus_sync(void)
+> >  }
+> >  EXPORT_SYMBOL_GPL(kick_all_cpus_sync);
+> >  
+> > +/**
+> > + * kick_active_cpus_sync - Force CPUs that are not in extended
+> > + * quiescent state (idle or nohz_full userspace) sync by sending
+> > + * IPI. Extended quiescent state CPUs will sync at the exit of
+> > + * that state.
+> > + */
+> > +void kick_active_cpus_sync(void)
+> > +{
+> > +	int cpu;
+> > +	struct cpumask kernel_cpus;
+> > +
+> > +	smp_mb();  
+> 
+> (A general remark only:)
+> 
+> checkpatch.pl should have warned about the fact that this barrier is
+> missing an accompanying comment (which accesses are being "ordered",
+> what is the pairing barrier, etc.).
 
-Tim
+He could have simply copied the comment above the smp_mb() for
+kick_all_cpus_sync():
+
+	/* Make sure the change is visible before we kick the cpus */
+
+The kick itself is pretty much a synchronization primitive.
+
+That is, you make some changes and then you need all CPUs to see it,
+and you call: kick_active_cpus_synch(), which is the barrier to make
+sure you previous changes are seen on all CPUS before you proceed
+further. Note, the matching barrier is implicit in the IPI itself.
+
+-- Steve
+
+
+> 
+> Moreover if, as your reply above suggested, your patch is relying on
+> "implicit barriers" (something I would not recommend) then even more
+> so you should comment on these requirements.
+> 
+> This could: (a) force you to reason about the memory ordering stuff,
+> (b) easy the task of reviewing and adopting your patch, (c) easy the
+> task of preserving those requirements (as implementations changes).
+> 
+>   Andrea
+> 
+> 
+> > +
+> > +	cpumask_clear(&kernel_cpus);
+> > +	preempt_disable();
+> > +	for_each_online_cpu(cpu) {
+> > +		if (!rcu_eqs_special_set(cpu))
+> > +			cpumask_set_cpu(cpu, &kernel_cpus);
+> > +	}
+> > +	smp_call_function_many(&kernel_cpus, do_nothing, NULL, 1);
+> > +	preempt_enable();
+> > +}
+> > +EXPORT_SYMBOL_GPL(kick_active_cpus_sync);
+> > +
+> >  /**
+> >   * wake_up_all_idle_cpus - break all cpus out of idle
+> >   * wake_up_all_idle_cpus try to break all cpus which is in idle state even
+> > diff --git a/mm/slab.c b/mm/slab.c
+> > index 324446621b3e..678d5dbd6f46 100644
+> > --- a/mm/slab.c
+> > +++ b/mm/slab.c
+> > @@ -3856,7 +3856,7 @@ static int __do_tune_cpucache(struct kmem_cache *cachep, int limit,
+> >  	 * cpus, so skip the IPIs.
+> >  	 */
+> >  	if (prev)
+> > -		kick_all_cpus_sync();
+> > +		kick_active_cpus_sync();
+> >  
+> >  	check_irq_on();
+> >  	cachep->batchcount = batchcount;
+> > -- 
+> > 2.14.1
+> >   
