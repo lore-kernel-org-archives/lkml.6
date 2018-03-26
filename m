@@ -1,119 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751739AbeCZUb5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 16:31:57 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51095 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751109AbeCZUb4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 16:31:56 -0400
-Date: Mon, 26 Mar 2018 22:31:54 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Lee Jones <lee.jones@linaro.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: omap4-droid4: voice call support was Re: [PATCHv5,5/5] ARM: dts:
- omap4-droid4: add soundcard
-Message-ID: <20180326203154.GA9334@amd>
-References: <20180223200254.25685-6-sebastian.reichel@collabora.co.uk>
- <20180322204804.GA26871@amd>
- <20180322234832.o24ut5ahon46mdu4@earth.universe>
- <20180323100930.GA21644@amd>
- <20180323103006.alymgb3ywftb4gek@earth.universe>
- <20180326141638.GB1450@amd>
- <20180326155828.ttnduivadob4iqmd@earth.universe>
+        id S1751776AbeCZUma (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 16:42:30 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:56632 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750983AbeCZUm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 16:42:28 -0400
+To: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sinan Kaya <okaya@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Eric Wehage <Eric.Wehage@huawei.com>
+References: <20180312193525.2855-1-logang@deltatee.com>
+ <20180312193525.2855-2-logang@deltatee.com>
+ <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
+ <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
+ <20180326121138.00005e30@huawei.com> <20180326164129.GF15530@mellanox.com>
+ <6ead7f19-c0e5-5584-2518-1e1889a007e4@deltatee.com>
+ <20180326193502.GI15530@mellanox.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <45fcaa2d-214c-f0a9-94d4-b26692b9a5f3@deltatee.com>
+Date: Mon, 26 Mar 2018 14:42:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
-Content-Disposition: inline
-In-Reply-To: <20180326155828.ttnduivadob4iqmd@earth.universe>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180326193502.GI15530@mellanox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: Eric.Wehage@huawei.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, okaya@codeaurora.org, Jonathan.Cameron@huawei.com, jgg@mellanox.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---3V7upXqbjpZ4EhLz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On 26/03/18 01:35 PM, Jason Gunthorpe wrote:
+> I think this is another case of the HW can do it but the SW support is
+> missing. IOMMU configuration and maybe firmware too, for instance.
 
-> On Mon, Mar 26, 2018 at 04:16:38PM +0200, Pavel Machek wrote:
-> > Do you have any ideas what needs to be done for voice calls
-> > support?
->=20
-> Sure.
+Nope, not sure how you can make this leap. We've been specifically told
+that peer-to-peer PCIe DMA is not supported on P9. We've also been told
+there is a very limited (ie. store only), low performance mode designed
+for poking mailboxes but it is disabled by default and must be enable
+with some kind of special firmware calls.
 
-:-).
-
-> > I can talk to the modem and start a call.
->=20
-> Doing an AT query is the easy part :)
-
-Well, yes. Doing it right (ofono, etc) is not that easy.
-
-> > Then something like this (untested!) is certainly needed.
-> > Probably more...
->=20
-> I intentionally left this part out. The CPCAP codec has two DAIs
-> and not 3+. The code you just added is a hack from Motorola. Their
-> driver is full of hacks and it's obvious its author(s) did not
-> fully understand the ASoC APIs.
-
-Ok.
-
-> My understanding is, that we only need to replace the audio-graph-card
-> driver to something more complex. The VOICE DAI needs to be configured
-> differently based on the use case:
->=20
-> call:
-> 	* mode=3Di2s
-> 	* freq=3D26000000
-> 	* samprate=3D16000 or samprate=3D8000
-
-Ok, lets ignore bluetooth for now. There is "normal" mode, and then
-there's "call" mode, right? Where's "normal" mode configured?
-
-Could we simply always configure the VOICE DAI in the call mode? Yes,
-it would limit samplerates to 8 or 16k, but .. that's not too
-important limitation for voice codec...?
-
-> "audio-graph-card" is not capable of doing this. I was planning to
-> try "audio-graph-scu-card" in combination with adding codecs for the
-> modem and BT to DT. If that does not work we need a Droid 4 specific
-> soundcard driver.
->=20
-> Either way "audio-graph-card" is not the correct driver for D4. I
-> added it nevertheless, since it gets audio working for now and there
-> is no risk of DT breakage. Old *.dtb will continue to work with the
-> "audio-graph-card" even after we switch to something else.
-
-Well, you'll still cause regressions when you change the dts, as
-people will have wrong .config for new dts.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---3V7upXqbjpZ4EhLz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlq5WLoACgkQMOfwapXb+vLhUgCdH06JqVN5ITPivIsW8Zb/RK53
-QFQAn2jIaSk5wuOSV70BAWIfItf3k3G3
-=tVRF
------END PGP SIGNATURE-----
-
---3V7upXqbjpZ4EhLz--
+Logan
