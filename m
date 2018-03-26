@@ -1,96 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751138AbeCZJHK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:07:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53782 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750955AbeCZJHJ (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:07:09 -0400
-Date: Mon, 26 Mar 2018 11:07:04 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>, acme@kernel.org, jolsa@kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v1 0/3] Support perf -vv
-Message-ID: <20180326090704.GH6207@krava>
-References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
- <20180326090031.GN13724@tassilo.jf.intel.com>
+        id S1751134AbeCZJLZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:11:25 -0400
+Received: from mga11.intel.com ([192.55.52.93]:49796 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750864AbeCZJLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 05:11:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
+   d="scan'208";a="186022827"
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/3] perf/core: expose thread context switch out event type
+ to user space
+Message-ID: <0b5dcf43-cfd4-b64e-3d0d-6aa743ff4d4a@linux.intel.com>
+Date: Mon, 26 Mar 2018 12:10:52 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326090031.GN13724@tassilo.jf.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 02:00:31AM -0700, Andi Kleen wrote:
-> On Tue, Mar 27, 2018 at 12:07:01AM +0800, Jin Yao wrote:
-> > We keep having bug reports that when users build perf on their own,
-> > but they don't install some needed libraries such as libelf,
-> > libbfd/libibery.
-> > 
-> > The perf can build, but it is missing important functionality. And
-> > users may complain that perf has issue or bug. 
-> > 
-> > This patch-set support 'perf -vv' which will print the compiled-in
-> > status of libraries. Once users think perf missing some functionality,
-> > it should be very easy for them to check the libraries status.
-> 
-> I don't think this solves the problem. How should the user know
-> that they need to run perf -vv. Also normal users don't know
-> that libelf is needed for symbols for example.
-> 
-> We need a warning that is visible together with the symbols
-> and that clearly describes the problem.
 
-IIRC we decided to go *with* the message in the perf report
-or other affected command that would suggest to run 'perf -vv'
-for more details
+Implementation of exposing context-switch-out type event as a part 
+of PERF_RECORD_SWITCH[_CPU_WIDE] record.
 
-jirka
+Introduced types of events assumed to be:
 
-> 
-> -Andi
-> 
-> > 
-> > For example:
-> > 
-> > $ ./perf -vv
-> > perf version 4.13.rc5.g9b7a81b
-> >                  dwarf: [  on ]
-> >     dwarf_getlocations: [  on ]
-> >                  glibc: [  on ]
-> >                   gtk2: [  on ]
-> >               libaudit: [ off ]
-> >                 libbfd: [  on ]
-> >                 libelf: [  on ]
-> >                libnuma: [  on ]
-> > numa_num_possible_cpus: [  on ]
-> >                libperl: [  on ]
-> >              libpython: [  on ]
-> >               libslang: [  on ]
-> >              libcrypto: [  on ]
-> >              libunwind: [  on ]
-> >     libdw-dwarf-unwind: [  on ]
-> >                   zlib: [  on ]
-> >                   lzma: [  on ]
-> >              get_cpuid: [  on ]
-> >                    bpf: [  on ]
-> > 
-> > Jin Yao (3):
-> >   perf config: Add -DNO_GLIBC to CFLAGS
-> >   perf version: Print the status of compiled-in libraries
-> >   perf: Support perf -vv
-> > 
-> >  tools/perf/Makefile.config   |   2 +
-> >  tools/perf/builtin-version.c | 125 +++++++++++++++++++++++++++++++++++++++++++
-> >  tools/perf/builtin.h         |   1 +
-> >  tools/perf/perf.c            |   6 +++
-> >  4 files changed, 134 insertions(+)
-> > 
-> > -- 
-> > 2.7.4
-> > 
+a) preempt: when task->state == TASK_RUNNING, encoding is implemented using
+   new PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit
+   event_header->misc &= 
+	PERF_RECORD_MISC_SWITCH_OUT|PERF_RECORD_MISC_SWITCH_OUT_PREEMPT
+
+b) !preempt: encoding is implemented the only PERF_RECORD_MISC_SWITCH_OUT bit
+   event_header->misc &= PERF_RECORD_MISC_SWITCH_OUT
+
+Perf tool report and script commands output has been extended to decode 
+new PREEMPT bit and the updated output looks like in the examples below.
+
+The documentation has been updated to mention PREEMPT switch out events 
+and its decoding symbols in perf script output.
+
+The changes have been manually tested on Fedora 27 with the patched kernel:
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+
+tools/perf/perf report -D -i perf.data | grep _SWITCH
+
+0 768361415226 0x27f076 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     8/8    
+4 768362216813 0x28f45e [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
+4 768362217824 0x28f486 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
+0 768362414027 0x27f0ce [0x28]: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:     8/8    
+0 768362414367 0x27f0f6 [0x28]: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
+
+perf script --show-switch-events -F +misc -I -i perf.data:
+
+          hdparm  4073 [004] U       762.198265:     380194 cycles:ppp:      7faf727f5a23 strchr (/usr/lib64/ld-2.26.so)
+          hdparm  4073 [004] K       762.198366:     441572 cycles:ppp:  ffffffffb9218435 alloc_set_pte (/lib/modules/4.16.0-rc6+/build/vmlinux)
+          hdparm  4073 [004] S       762.198391: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
+         swapper     0 [004]         762.198392: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:  4073/4073 
+         swapper     0 [004] Sp      762.198477: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  4073/4073 
+          hdparm  4073 [004]         762.198478: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
+         swapper     0 [007] K       762.198514:    2303073 cycles:ppp:  ffffffffb98b0c66 intel_idle (/lib/modules/4.16.0-rc6+/build/vmlinux)
+         swapper     0 [007] Sp      762.198561: PERF_RECORD_SWITCH_CPU_WIDE OUT preempt  next pid/tid:  1134/1134 
+  kworker/u16:18  1134 [007]         762.198562: PERF_RECORD_SWITCH_CPU_WIDE IN           prev pid/tid:     0/0    
+  kworker/u16:18  1134 [007] S       762.198567: PERF_RECORD_SWITCH_CPU_WIDE OUT          next pid/tid:     0/0    
+
+---
+ Alexey Budankov (3):
+	perf/core: store context switch out type into Perf trace
+	perf report: extend raw dump (-D) out with switch out event type
+	perf script: extend misc field decoding with switch out event type
+
+ include/uapi/linux/perf_event.h          |  4 ++++
+ kernel/events/core.c                     |  4 +++-
+ tools/include/uapi/linux/perf_event.h    |  4 ++++
+ tools/perf/Documentation/perf-script.txt | 17 +++++++++--------
+ tools/perf/builtin-script.c              |  5 ++++-
+ tools/perf/util/event.c                  |  4 +++-
+ 6 files changed, 27 insertions(+), 11 deletions(-)
