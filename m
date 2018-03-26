@@ -1,56 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeC0BvA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 21:51:00 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40555 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751714AbeC0Bu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 21:50:59 -0400
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>
-CC: <linux-kernel@vger.kernel.org>, <v9fs-developer@lists.sourceforge.net>,
-        Greg Kurz <groug@kaod.org>
-From: jiangyiwen <jiangyiwen@huawei.com>
-Subject: [V9fs-developer] [PATCH] fs/9p: don't set SB_NOATIME by default
-Message-ID: <5AB9A377.6080906@huawei.com>
-Date: Tue, 27 Mar 2018 09:50:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1752233AbeC0BvQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 21:51:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38945 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752031AbeC0BvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 21:51:15 -0400
+From: NeilBrown <neilb@suse.com>
+To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>
+Date: Tue, 27 Mar 2018 10:33:04 +1100
+Subject: [PATCH 0/6] rhashtable: assorted fixes and enhancements
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <152210688405.11435.13010923693146415942.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-User use some syscall, for example mmap(v9fs_file_mmap), it will not
-update atime even if user's mnt_flags without MNT_NOATIME, because
-v9fs default set SB_NOATIME in v9fs_set_super.
+Hi,
+ I'm hoping to use rhashtable in lustre, to replace the resizeable
+ hashtable implementation in libcfs.
+ While working through the conversion I found some minor bugs in the
+ rhashtable code and documentation, and some areas where enhancements
+ could make rhashtable a better fit for lustre.
 
-For supporting access time is updated when user mount with relatime,
-we should not set SB_NOATIME by default.
+ Following 6 patches are the result.  Please review.
 
-Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Reviewed-by: Greg Kurz <groug@kaod.org>
+ It would help me if I could get an Ack for these patches, and could
+ then submit them through the drivers/staging tree together with the
+ lustre changes that make use to rhashtable.  The first 2 are mostly
+ just fixes to comments and can go in through the netdev tree if you
+ prefer - the last 4 are needed for lustre to work
+ correctly/optimally.
+
+Thanks,
+NeilBrown
+
+
 ---
- fs/9p/vfs_super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
-index af03c2a..48ce504 100644
---- a/fs/9p/vfs_super.c
-+++ b/fs/9p/vfs_super.c
-@@ -94,7 +94,7 @@ static int v9fs_set_super(struct super_block *s, void *data)
- 	if (v9ses->cache)
- 		sb->s_bdi->ra_pages = (VM_MAX_READAHEAD * 1024)/PAGE_SIZE;
+NeilBrown (6):
+      rhashtable: improve documentation for rhashtable_walk_peek()
+      rhashtable: remove outdated comments about grow_decision etc
+      rhashtable: reset iter when rhashtable_walk_start sees new table
+      rhashtable: allow a walk of the hash table without missing objects.
+      rhashtable: support guaranteed successful insertion.
+      rhashtable: allow element counting to be disabled.
 
--	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC | SB_NOATIME;
-+	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC;
- 	if (!v9ses->cache)
- 		sb->s_flags |= SB_SYNCHRONOUS;
 
--- 
-1.8.3.1
+ include/linux/rhashtable.h |   89 ++++++++++++++++++++++++++++----------
+ lib/rhashtable.c           |  102 +++++++++++++++++++++++++++++++-------------
+ 2 files changed, 136 insertions(+), 55 deletions(-)
+
+--
+Signature
