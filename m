@@ -1,75 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751489AbeCZKiC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 06:38:02 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38790 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751076AbeCZKiB (ORCPT
+        id S1751752AbeCZKiG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 06:38:06 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55259 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751076AbeCZKiE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 06:38:01 -0400
-X-Google-Smtp-Source: AG47ELsdG80W4cHTiX6wG30ULZmPhf8iaDj+Eb2ilIWvqbHDe1SEKHyPuQWZFB89hbZTf71nN4j4xw==
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH for-4.17 2/2] powerpc: Remove smp_mb() from arch_spin_is_locked()
-Date: Mon, 26 Mar 2018 12:37:47 +0200
-Message-Id: <1522060667-7034-1-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 26 Mar 2018 06:38:04 -0400
+Date: Mon, 26 Mar 2018 03:37:55 -0700
+From: tip-bot for Alexey Dobriyan <tipbot@zytor.com>
+Message-ID: <tip-668120ab7ee4db67618ec75a0ebc93eae6c70034@git.kernel.org>
+Cc: hpa@zytor.com, tglx@linutronix.de, adobriyan@gmail.com,
+        linux-kernel@vger.kernel.org, bp@suse.de, mingo@kernel.org
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, adobriyan@gmail.com,
+        tglx@linutronix.de, mingo@kernel.org, bp@suse.de
+In-Reply-To: <20180114120504.GA11368@avx2>
+References: <20180114120504.GA11368@avx2>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/asm] x86/alternatives: Fixup alternative_call_2
+Git-Commit-ID: 668120ab7ee4db67618ec75a0ebc93eae6c70034
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 51d7d5205d338 ("powerpc: Add smp_mb() to arch_spin_is_locked()")
-added an smp_mb() to arch_spin_is_locked(), in order to ensure that
+Commit-ID:  668120ab7ee4db67618ec75a0ebc93eae6c70034
+Gitweb:     https://git.kernel.org/tip/668120ab7ee4db67618ec75a0ebc93eae6c70034
+Author:     Alexey Dobriyan <adobriyan@gmail.com>
+AuthorDate: Sun, 14 Jan 2018 15:05:04 +0300
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Mon, 26 Mar 2018 12:32:40 +0200
 
-	Thread 0			Thread 1
+x86/alternatives: Fixup alternative_call_2
 
-	spin_lock(A);			spin_lock(B);
-	r0 = spin_is_locked(B)		r1 = spin_is_locked(A);
+The following pattern fails to compile while the same pattern
+with alternative_call() does:
 
-never ends up with r0 = r1 = 0, and reported one example (in ipc/sem.c)
-relying on such guarantee.
+	if (...)
+		alternative_call_2(...);
+	else
+		alternative_call_2(...);
 
-It's however understood (and undocumented) that spin_is_locked() is not
-required to ensure such ordering guarantee, guarantee that is currently
-_not_ provided by all implementations/arch, and that callers relying on
-such ordering should instead use suitable memory barriers before acting
-on the result of spin_is_locked().
+as it expands into
 
-Following a recent auditing[1] of the callers of {,raw_}spin_is_locked()
-revealing that none of them are relying on this guarantee anymore, this
-commit removes the leading smp_mb() from the primitive thus effectively
-reverting 51d7d5205d338.
+	if (...)
+	{
+	};	<===
+	else
+	{
+	};
 
-[1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/20180114120504.GA11368@avx2
 
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- arch/powerpc/include/asm/spinlock.h | 1 -
- 1 file changed, 1 deletion(-)
+ arch/x86/include/asm/alternative.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
-index b9ebc3085fb79..ecc141e3f1a73 100644
---- a/arch/powerpc/include/asm/spinlock.h
-+++ b/arch/powerpc/include/asm/spinlock.h
-@@ -67,7 +67,6 @@ static __always_inline int arch_spin_value_unlocked(arch_spinlock_t lock)
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index cf5961ca8677..4cd6a3b71824 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -218,13 +218,11 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  */
+ #define alternative_call_2(oldfunc, newfunc1, feature1, newfunc2, feature2,   \
+ 			   output, input...)				      \
+-{									      \
+ 	asm volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
+ 		"call %P[new2]", feature2)				      \
+ 		: output, ASM_CALL_CONSTRAINT				      \
+ 		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
+-		  [new2] "i" (newfunc2), ## input);			      \
+-}
++		  [new2] "i" (newfunc2), ## input)
  
- static inline int arch_spin_is_locked(arch_spinlock_t *lock)
- {
--	smp_mb();
- 	return !arch_spin_value_unlocked(*lock);
- }
- 
--- 
-2.7.4
+ /*
+  * use this macro(s) if you need more than one output parameter
