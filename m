@@ -1,206 +1,136 @@
 Return-Path: <hejianet@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522230595; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522033418; cv=none;
         d=google.com; s=arc-20160816;
-        b=hQ0i9RCk83r96ALbWMXk9jy+z4IcbQaa6n6ky0iqvCjBq1OWdyQCk5axHLHPVexsao
-         4ZThV/fpuGm8bxMMH0PgpHMzEvnByEJ69Dputu6+oy8oEhfV1HxqKYLsRf1uUUcusnDs
-         xwV0WxTjCCPgLZSChWVkwaXGBde/G+pZNntyhWc+BtQBQMayFuEvJfSaIjpUgd9HaT5i
-         SI2rfK+aqhj0ct3XF70oOHW1ZEImI5dIqAVvDJBYoC7cOeJtf/0jVjnSztEY7ytSdEDy
-         0TRqkXBpQKfEecNqrTHH0X5LBqhwB0cKJo0hAaqnfpRp3SqM14YdAioKTrB+edl9yCrv
-         flmA==
+        b=wC5eLTS0q53uBwOIIp/BMtFUMHZR+6AKzkscPoRLYTAdUNuieQtQzzl35Gl+mi93A2
+         ebaEdEgReADTVnWQ2v2dlXPPHDPWjgv7UBdY8v0c0bi2JV++iletWnwVQsuHKcrcJmyq
+         scThTFJSPMeNBc29hEAARYRnw6vjZy7FCxS7gusg6L9/Psl3P0PDz1K02ud0qccDNxpQ
+         EFuvJyKUI+A9gnXs7F6xidBPXm8D9PsZ6buRBcp3W/yUhEeg29D93H4M2ttOsqK8Xjnk
+         e8ZOCBrOFbPWygF/dV2BPbuzxE0f9DY1gu5hiir843ddanEWDme3ENgBAPEp9UrfPHzD
+         N/pQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:dkim-signature
-         :arc-authentication-results;
-        bh=j7Y3xcQgvmc9G654bkP/H+kwAvFLH4w8H3Lc9BK/PX0=;
-        b=bL2Q8rB+IXzRcaRjp9OZlEL4HuJx/kA2oCZUkm8UEDU3e6m526F09z6WZ9cY7bPoww
-         mTxoENMvOAVE5VEYlBGS+7APrI82M5f1PeawAqTUpjY6WxWCE/iFyapvPAgkH3S+XWvG
-         7VpqigVD24tiS0CoUhOvQewlvu8bSbLjM5ZOmca8qFRqsoG0ZUGxR5/JMhs2LKazaJkZ
-         Z8jcj9niXwaRPumH7/GG3q+sDQ4uFAYXQFsb+REzOlEpv9i9y5zj0ij6j9X/aC1GTefy
-         85j4BqBRa28EEc6aRQUPdZidNTiWPzjbHMdwF+iie1VAKMnX3mRb2pnwALklFwhzqcg4
-         EZ0g==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=CgVDV6TnbNT0G6IPq/hrv4xR6TOYvoiXvBonAgQwMio=;
+        b=IINXZNX1GRJkFtiEylNGFcJPNqviMXaGYPmxeBTihE8Br2P9tWP/pz04X9+HIEdG0A
+         L+dYNlTNj7xeL+ouNkmuJf71Ksd/zLuKhCSL4wHYaNa6DFnG+bUnIrjmqS/aera5ut+7
+         fzEj99uM9B+WsgcnVAmebHe1CCJQdoUlvRa6Kx3mmiqDRBuVwzlOc90mvaHUIu7tirxY
+         tGrmO3UwJ+KLJmiLpBfsxleEPR6FYKrSUMLpOPURIHguKS1pUIrYWz1xRvgdT/wy2yvp
+         3yy76JzVFR0hONMrAIjdEy4YKCN4YnEe3RVIuWQ5rADNJcc9weI7KPbu6hgMK97CrGKN
+         YHyQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Y9oKlhAg;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ievLv0Uf;
        spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Y9oKlhAg;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ievLv0Uf;
        spf=pass (google.com: domain of hejianet@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hejianet@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx48fQS7lGWQZgWXyiydpjuc+LPGxHV5vg5iQGWfLPnmLROmrONyyNztG3XmGLMGSy1oylnNf+A==
-Subject: Re: [PATCH v3 1/5] mm: page_alloc: remain memblock_next_valid_pfn()
- when CONFIG_HAVE_ARCH_PFN_VALID is enable
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Michal Hocko
- <mhocko@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Mel Gorman <mgorman@suse.de>, Will Deacon <will.deacon@arm.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Pavel Tatashin
- <pasha.tatashin@oracle.com>, Daniel Jordan <daniel.m.jordan@oracle.com>,
- AKASHI Takahiro <takahiro.akashi@linaro.org>,
- Gioh Kim <gi-oh.kim@profitbricks.com>,
- Steven Sistare <steven.sistare@oracle.com>, Daniel Vacek <neelx@redhat.com>,
- Eugeniu Rosca <erosca@de.adit-jv.com>, Vlastimil Babka <vbabka@suse.cz>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
- x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
- Petr Tesarik <ptesarik@suse.com>, YASUAKI ISHIMATSU
- <yasu.isimatu@gmail.com>, Andrey Ryabinin <aryabinin@virtuozzo.com>,
- Nikolay Borisov <nborisov@suse.com>, Jia He <jia.he@hxt-semitech.com>
-References: <1522033340-6575-1-git-send-email-hejianet@gmail.com>
- <1522033340-6575-2-git-send-email-hejianet@gmail.com>
- <20180328091800.GB97260@WeideMacBook-Pro.local>
+X-Google-Smtp-Source: AG47ELumu+HtlaqnLKaOfuAL2ImNiTcLQpPzOY1XjmjnO+jVr/LPbbm9yEJGk4YQK1fBsahwMxLmDw==
 From: Jia He <hejianet@gmail.com>
-Message-ID: <f8e7eaca-e9f1-0ed1-a9f9-1dff81b13814@gmail.com>
-Date: Wed, 28 Mar 2018 17:49:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180328091800.GB97260@WeideMacBook-Pro.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will.deacon@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Gioh Kim <gi-oh.kim@profitbricks.com>,
+	Steven Sistare <steven.sistare@oracle.com>,
+	Daniel Vacek <neelx@redhat.com>,
+	Eugeniu Rosca <erosca@de.adit-jv.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	James Morse <james.morse@arm.com>,
+	Steve Capper <steve.capper@arm.com>,
+	x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Kemi Wang <kemi.wang@intel.com>,
+	Petr Tesarik <ptesarik@suse.com>,
+	YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Nikolay Borisov <nborisov@suse.com>,
+	Jia He <hejianet@gmail.com>,
+	Jia He <jia.he@hxt-semitech.com>
+Subject: [PATCH v3 4/5] arm64: introduce pfn_valid_region()
+Date: Sun, 25 Mar 2018 20:02:18 -0700
+Message-Id: <1522033340-6575-5-git-send-email-hejianet@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522033340-6575-1-git-send-email-hejianet@gmail.com>
+References: <1522033340-6575-1-git-send-email-hejianet@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595967673442117233?=
-X-GMAIL-MSGID: =?utf-8?q?1596174468531527249?=
+X-GMAIL-THRID: =?utf-8?q?1595967713881202535?=
+X-GMAIL-MSGID: =?utf-8?q?1595967713881202535?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+This is the preparation for further optimizing in early_pfn_valid
+on arm64.
 
+Signed-off-by: Jia He <jia.he@hxt-semitech.com>
+---
+ arch/arm64/include/asm/page.h |  3 ++-
+ arch/arm64/mm/init.c          | 25 ++++++++++++++++++++++++-
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
-On 3/28/2018 5:18 PM, Wei Yang Wrote:
-> Oops, I should reply this thread. Forget about the reply on another thread.
->
-> On Sun, Mar 25, 2018 at 08:02:15PM -0700, Jia He wrote:
->> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
->> where possible") optimized the loop in memmap_init_zone(). But it causes
->> possible panic bug. So Daniel Vacek reverted it later.
->>
-> Why this has a bug? Do you have some link about it?
->
-> If the audience could know the potential risk, it would be helpful to review
-> the code and decide whether to take it back.
-Hi Wei
-Paul firstly submit a commit b92df1de5 to improve the loop in 
-memmap_init_zone.
-And Daniel tried to fix a bug_on panic issue on X86 in commit 
-864b75f9d6b because
-there is evidence that this bug_on was caused by b92df1de5 [1].
-
-But things didn't get better, 864b75f9d6b caused booting hang issue on 
-arm{64} [2]
-So maintainer decided to reverted both b92df1de5 and 864b75f9d6b
-
-[1] https://patchwork.kernel.org/patch/10251145/
-[2] https://lkml.org/lkml/2018/3/14/469
->
->> But memblock_next_valid_pfn is valid when CONFIG_HAVE_ARCH_PFN_VALID is
->> enable. And as verified by Eugeniu Rosca, arm can benifit from this
->> commit. So remain the memblock_next_valid_pfn.
->>
->> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
->> ---
->> include/linux/memblock.h |  4 ++++
->> mm/memblock.c            | 29 +++++++++++++++++++++++++++++
->> mm/page_alloc.c          | 11 ++++++++++-
->> 3 files changed, 43 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
->> index 0257aee..efbbe4b 100644
->> --- a/include/linux/memblock.h
->> +++ b/include/linux/memblock.h
->> @@ -203,6 +203,10 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
->> 	     i >= 0; __next_mem_pfn_range(&i, nid, p_start, p_end, p_nid))
->> #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
->>
->> +#ifdef CONFIG_HAVE_ARCH_PFN_VALID
->> +unsigned long memblock_next_valid_pfn(unsigned long pfn);
->> +#endif
->> +
->> /**
->>   * for_each_free_mem_range - iterate through free memblock areas
->>   * @i: u64 used as loop variable
->> diff --git a/mm/memblock.c b/mm/memblock.c
->> index ba7c878..bea5a9c 100644
->> --- a/mm/memblock.c
->> +++ b/mm/memblock.c
->> @@ -1102,6 +1102,35 @@ void __init_memblock __next_mem_pfn_range(int *idx, int nid,
->> 		*out_nid = r->nid;
->> }
->>
->> +#ifdef CONFIG_HAVE_ARCH_PFN_VALID
->> +unsigned long __init_memblock memblock_next_valid_pfn(unsigned long pfn)
->> +{
->> +	struct memblock_type *type = &memblock.memory;
->> +	unsigned int right = type->cnt;
->> +	unsigned int mid, left = 0;
->> +	phys_addr_t addr = PFN_PHYS(++pfn);
->> +
->> +	do {
->> +		mid = (right + left) / 2;
->> +
->> +		if (addr < type->regions[mid].base)
->> +			right = mid;
->> +		else if (addr >= (type->regions[mid].base +
->> +				  type->regions[mid].size))
->> +			left = mid + 1;
->> +		else {
->> +			/* addr is within the region, so pfn is valid */
->> +			return pfn;
->> +		}
->> +	} while (left < right);
->> +
->> +	if (right == type->cnt)
->> +		return -1UL;
->> +	else
->> +		return PHYS_PFN(type->regions[right].base);
->> +}
->> +#endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
->> +
->> /**
->>   * memblock_set_node - set node ID on memblock regions
->>   * @base: base of area to set node ID for
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index c19f5ac..2a967f7 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -5483,8 +5483,17 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->> 		if (context != MEMMAP_EARLY)
->> 			goto not_early;
->>
->> -		if (!early_pfn_valid(pfn))
->> +		if (!early_pfn_valid(pfn)) {
->> +#if (defined CONFIG_HAVE_MEMBLOCK) && (defined CONFIG_HAVE_ARCH_PFN_VALID)
-> In commit b92df1de5d28, it use CONFIG_HAVE_MEMBLOCK_NODE_MAP.
->
-> Not get the point of your change.
-Please get more information about the reason why using 
-CONFIG_HAVE_MEMBLOCK in
-d49d47e mm: page_alloc: skip over regions of invalid pfns on UMA
-
-And this commit is dependent on b92df1de, so it is also reverted.
-
-Cheers,
-Jia
->
->> +			/*
->> +			 * Skip to the pfn preceding the next valid one (or
->> +			 * end_pfn), such that we hit a valid pfn (or end_pfn)
->> +			 * on our next iteration of the loop.
->> +			 */
->> +			pfn = memblock_next_valid_pfn(pfn) - 1;
->> +#endif
->> 			continue;
->> +		}
->> 		if (!early_pfn_in_nid(pfn, nid))
->> 			continue;
->> 		if (!update_defer_init(pgdat, pfn, end_pfn, &nr_initialised))
->> -- 
->> 2.7.4
-
+diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
+index 60d02c8..da2cba3 100644
+--- a/arch/arm64/include/asm/page.h
++++ b/arch/arm64/include/asm/page.h
+@@ -38,7 +38,8 @@ extern void clear_page(void *to);
+ typedef struct page *pgtable_t;
+ 
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+-extern int pfn_valid(unsigned long);
++extern int pfn_valid(unsigned long pfn);
++extern int pfn_valid_region(unsigned long pfn, int *last_idx);
+ #endif
+ 
+ #include <asm/memory.h>
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 00e7b90..06433d5 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -290,7 +290,30 @@ int pfn_valid(unsigned long pfn)
+ 	return memblock_is_map_memory(pfn << PAGE_SHIFT);
+ }
+ EXPORT_SYMBOL(pfn_valid);
+-#endif
++
++int pfn_valid_region(unsigned long pfn, int *last_idx)
++{
++	unsigned long start_pfn, end_pfn;
++	struct memblock_type *type = &memblock.memory;
++
++	if (*last_idx != -1) {
++		start_pfn = PFN_DOWN(type->regions[*last_idx].base);
++		end_pfn= PFN_DOWN(type->regions[*last_idx].base +
++					type->regions[*last_idx].size);
++
++		if (pfn >= start_pfn && pfn < end_pfn)
++			return !memblock_is_nomap(
++				&memblock.memory.regions[*last_idx]);
++	}
++
++	*last_idx = memblock_search_pfn_regions(pfn);
++	if (*last_idx == -1)
++		return false;
++
++	return !memblock_is_nomap(&memblock.memory.regions[*last_idx]);
++}
++EXPORT_SYMBOL(pfn_valid_region);
++#endif /*CONFIG_HAVE_ARCH_PFN_VALID*/
+ 
+ #ifndef CONFIG_SPARSEMEM
+ static void __init arm64_memory_present(void)
 -- 
-Cheers,
-Jia
+2.7.4
