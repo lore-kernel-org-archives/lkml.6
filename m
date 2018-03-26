@@ -1,93 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752154AbeCZWAE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:00:04 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:44463 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751739AbeCZWAD (ORCPT
+        id S1752213AbeCZWAR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:00:17 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:40543 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751739AbeCZWAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:00:03 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T-8hMkn_1522101590;
-Subject: Re: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-To: Cyrill Gorcunov <gorcunov@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: adobriyan@gmail.com, mhocko@kernel.org, mguzik@redhat.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180326183725.GB27373@bombadil.infradead.org>
- <20180326192132.GE2236@uranus>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <aef52c2a-4b75-f8a7-2083-f53f42bddab8@linux.alibaba.com>
-Date: Mon, 26 Mar 2018 17:59:49 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.2.1
+        Mon, 26 Mar 2018 18:00:16 -0400
+X-Google-Smtp-Source: AG47ELvO6DylWzfeMB/deE/MeGdeQu6gU8SNcJQ7kljVzqs2nmoBqsHd7Q4LrNTw6rcV7SlUmpEapg==
+Subject: Re: [PATCH] aspeed: watchdog: Add status function
+To: Eddie James <eajames@linux.vnet.ibm.com>,
+        linux-watchdog@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, wim@linux-watchdog.org, joel@jms.id.au,
+        openbmc@lists.ozlabs.org
+References: <1522099028-20347-1-git-send-email-eajames@linux.vnet.ibm.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <eeaa2de8-937d-4371-1b32-931b3221f6ce@roeck-us.net>
+Date: Mon, 26 Mar 2018 15:00:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180326192132.GE2236@uranus>
+In-Reply-To: <1522099028-20347-1-git-send-email-eajames@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/26/2018 02:17 PM, Eddie James wrote:
+> Populate the status watchdog operation to return the "timeout status"
+> register of the ASPEED watchdog.
+> 
+> Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
+> ---
+>   drivers/watchdog/aspeed_wdt.c | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+> index a5b8eb2..d6dd5c9 100644
+> --- a/drivers/watchdog/aspeed_wdt.c
+> +++ b/drivers/watchdog/aspeed_wdt.c
+> @@ -55,6 +55,7 @@ struct aspeed_wdt_config {
+>   #define   WDT_CTRL_WDT_INTR		BIT(2)
+>   #define   WDT_CTRL_RESET_SYSTEM		BIT(1)
+>   #define   WDT_CTRL_ENABLE		BIT(0)
+> +#define WDT_TIMEOUT_STATUS	0x10
+>   
+>   /*
+>    * WDT_RESET_WIDTH controls the characteristics of the external pulse (if
+> @@ -138,6 +139,13 @@ static int aspeed_wdt_ping(struct watchdog_device *wdd)
+>   	return 0;
+>   }
+>   
+> +static unsigned int aspeed_wdt_status(struct watchdog_device *wdd)
+> +{
+> +	struct aspeed_wdt *wdt = to_aspeed_wdt(wdd);
+> +
+> +	return readl(wdt->base + WDT_TIMEOUT_STATUS);
+> +}
 
+Does the register report WDIOF_* status flags/bits as defined in the API ?
+This seems more than unlikely.
 
-On 3/26/18 3:21 PM, Cyrill Gorcunov wrote:
-> On Mon, Mar 26, 2018 at 11:37:25AM -0700, Matthew Wilcox wrote:
->> On Tue, Mar 27, 2018 at 02:20:39AM +0800, Yang Shi wrote:
->>> +++ b/kernel/sys.c
->>> @@ -1959,7 +1959,7 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
->>>   			return error;
->>>   	}
->>>   
->>> -	down_write(&mm->mmap_sem);
->>> +	down_read(&mm->mmap_sem);
->>>   
->>>   	/*
->>>   	 * We don't validate if these members are pointing to
->>> @@ -1980,10 +1980,13 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
->>>   	mm->start_brk	= prctl_map.start_brk;
->>>   	mm->brk		= prctl_map.brk;
->>>   	mm->start_stack	= prctl_map.start_stack;
->>> +
->>> +	spin_lock(&mm->arg_lock);
->>>   	mm->arg_start	= prctl_map.arg_start;
->>>   	mm->arg_end	= prctl_map.arg_end;
->>>   	mm->env_start	= prctl_map.env_start;
->>>   	mm->env_end	= prctl_map.env_end;
->>> +	spin_unlock(&mm->arg_lock);
->>>   
->>>   	/*
->>>   	 * Note this update of @saved_auxv is lockless thus
->> I see the argument for the change to a write lock was because of a BUG
->> validating arg_start and arg_end, but more generally, we are updating these
->> values, so a write-lock is probably a good idea, and this is a very rare
->> operation to do, so we don't care about making this more parallel.  I would
->> not make this change (but if other more knowledgable people in this area
->> disagree with me, I will withdraw my objection to this part).
-> Say we've two syscalls running prctl_set_mm_map in parallel, and imagine
-> one have @start_brk = 20 @brk = 10 and second caller has @start_brk = 30
-> and @brk = 20. Since now the call is guarded by _read_ the both calls
-> unlocked and due to OO engine it may happen then when both finish
-> we have @start_brk = 30 and @brk = 10. In turn "write" semaphore
-> has been take to have consistent data on exit, either you have [20;10]
-> or [30;20] assigned not something mixed.
->
-> That said I think using read-lock here would be a bug.
+Guenter
 
-Yes it sounds so. However, it was down_read before 
-ddf1d398e517e660207e2c807f76a90df543a217 ("prctl: take mmap sem for 
-writing to protect against others"). And, that commit is for fixing the 
-concurrent writing to arg_* and env_*. I just checked that commit, but 
-omitted the brk part. The potential issue mentioned by you should exist 
-before that commit, but might be just not discovered or very rare to hit.
-
-I will change it back to down_write.
-
-Thanks,
-Yang
-
->
-> 	Cyrill
+> +
+>   static int aspeed_wdt_set_timeout(struct watchdog_device *wdd,
+>   				  unsigned int timeout)
+>   {
+> @@ -171,6 +179,7 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
+>   	.start		= aspeed_wdt_start,
+>   	.stop		= aspeed_wdt_stop,
+>   	.ping		= aspeed_wdt_ping,
+> +	.status		= aspeed_wdt_status,
+>   	.set_timeout	= aspeed_wdt_set_timeout,
+>   	.restart	= aspeed_wdt_restart,
+>   	.owner		= THIS_MODULE,
+> 
