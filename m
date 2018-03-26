@@ -1,194 +1,235 @@
-Return-Path: <cpandya@codeaurora.org>
-X-Google-Smtp-Source: AIpwx49NfNiyMwGHGJ74caTcW2KXJDYZeeIyGomEhTI1ML+U0wNHk/OwJ7xlc006/mHCrDqjnEMK
-ARC-Seal: i=1; a=rsa-sha256; t=1522234753; cv=none;
+Return-Path: <colin.king@canonical.com>
+X-Google-Smtp-Source: AIpwx4/LJ3dHpottMlRCNPTkCazzcPYl9gLM6BJjp6i5L7/Up6KOL9YypCaZOMuCsyUdvBxXyDhl
+ARC-Seal: i=1; a=rsa-sha256; t=1522084590; cv=none;
         d=google.com; s=arc-20160816;
-        b=tjV/3JZ5guXI7iLRZdvt+jKbFEBozly0rtE8sbdRMpS+zA8DMNvL6VGC4eAu0Nc9YK
-         hJOWY04PcIGMs6ld/GoP/6qypqTbOHoeC7P5tHr9tQdX2e6emQ7uSpbg4J4WfiwDAsDC
-         WF0+RBPyHx5MJ+J8fMYVvAKzx/+MpH4a8IWAI7NifCNcEkQigbr+uEW2pZ3za3I472Iq
-         JaSH/Riar3jS1paYXp/sAQ2tGfDApy7Cl1MKJ1wYeCnsL9E3BCRxp/YKDh3RpRH2Dfwx
-         ymqBCYgIAP1ANvUNccqMsxWUpCsj8CqBXk1yV1A6TVJBFWhwJu4mrDPBGAFIWPzOvCM2
-         Ek5A==
+        b=mQ/mhUQcUMYALlY3ZS8jhwirTOYhbB+AWXLJfE7iQt1tr2Pz/+uTqTKNeFQJfnTvFW
+         Lzm3obppeEkoLHsWohlK4APVXp+xTkAHsyfxNrekJ2+Qv9/Img8FBtyjYV+qnSbdRJwK
+         6aLgYRBw0Af/pwkM05zkB/fuBQzAvh9evlUctbJEI098dL3Gw+i+ZfByPTBhMgvOYUf4
+         z3BudEJlTTKMSsyqRl50cXco/QkdKquSGVfHJGYZN+Z3U30vHUit4pi0VZEy+Ook4hfC
+         6xVtMqwcsIv+7Ynan4DnhxLgbmaitPPbz7nWqIaosKdV3BdgT9IQw1H0xNsGaEyTTEuT
+         ktlw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=hx4H7wq4q4e3JvHj2JaxRCEKBspvmyxI7rE6wzLPefA=;
-        b=nHfNQfM3s8rGyogijV2Nolw1EtMwUjVW8EooJ290DNRO7wngKnEl1BQHsoLpN25or7
-         VrBezwneVfidKyoMbLQAdpkm1f+W13/KIgM1mC++58Ce6+L3t1OUuCoX0Gh6Xk6Vjvq/
-         husPAFyhP0H6gaJo3tNpCP4zcPdGJFz6lKbAE57oLmBXR1Kp2vftzkYRMZ9fCqdXbEkv
-         JXZnF9Uu52FznO7Zn2CgQGEdggwphg+Ykp8x52qpgwmBO5/dcFlheBwwqS0/pKn+vZGq
-         i2Ea3sTLuk8QuSa7lrId9NwA99PcIzc5TA0PpTb6eejkzGB1kCFIeUyYd/dKBxJ/fSE/
-         B72w==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:arc-authentication-results;
+        bh=2cQmFKqhaLp2q5pBFAELrDsmN9GyY/PDFeTp7JsGYN0=;
+        b=W8/q7UR0rnjNPdEkqtm4waHh4KjXfXZT7VT604wiSc/JBvfFHI5iOZJpzncRWApTn9
+         ZuMDJ9WJvxVksk4fWL3UZoVMSuD4UEXtamusvEWOeAdssoHMA5I++WMjKWVNp37uR7wK
+         t48VVyBQEht4tlL9GLrmPYRE7ntG8CvUrT0pc0iE/WTLljWzYa5V3tNjS6NeZ3XYv9xK
+         WxzhaGzgLf879OlsqBMSEAjxNZRqKM46mZ2VqfywO2iEvqXCXxvBgeSYDiKxVAeHfX38
+         IyTPyYbI3UE8nKseBC7E+/RpvPN5lVK9hH6g+8kegLQ/+Q3R+MVc4kr/ENl7Qx/st1Of
+         TTEg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=QU7dS1fe;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=fSOxHb29;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
+       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=QU7dS1fe;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=fSOxHb29;
-       spf=pass (google.com: domain of cpandya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=cpandya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CA8E760591
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-From: Chintan Pandya <cpandya@codeaurora.org>
-To: catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	mark.rutland@arm.com,
-	toshi.kani@hpe.com
-Cc: arnd@arndb.de,
-	ard.biesheuvel@linaro.org,
-	marc.zyngier@arm.com,
-	james.morse@arm.com,
-	kristina.martsenko@arm.com,
-	takahiro.akashi@linaro.org,
-	gregkh@linuxfoundation.org,
-	tglx@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v6 1/4] ioremap: Update pgtable free interfaces with addr
-Date: Wed, 28 Mar 2018 16:28:48 +0530
-Message-Id: <1522234731-27397-2-git-send-email-cpandya@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522234731-27397-1-git-send-email-cpandya@codeaurora.org>
-References: <1522234731-27397-1-git-send-email-cpandya@codeaurora.org>
+       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+From: Colin King <colin.king@canonical.com>
+To: Aditya Shankar <aditya.shankar@microchip.com>,
+	Ganesh Krishna <ganesh.krishna@microchip.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-wireless@vger.kernel.org,
+	devel@driverdev.osuosl.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: wilc1000: replace kmalloc + memcpy with kmemdup
+Date: Mon, 26 Mar 2018 18:16:29 +0100
+Message-Id: <20180326171629.28700-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596178829267210512?=
-X-GMAIL-MSGID: =?utf-8?q?1596178829267210512?=
+X-GMAIL-THRID: =?utf-8?q?1596021371817996393?=
+X-GMAIL-MSGID: =?utf-8?q?1596021371817996393?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch ("mm/vmalloc: Add interfaces to free unmapped
-page table") adds following 2 interfaces to free the page
-table in case we implement huge mapping.
+From: Colin Ian King <colin.king@canonical.com>
 
-pud_free_pmd_page() and pmd_free_pte_page()
+Replace several allocation and memcpys with kmemdup and add in some
+missing memory allocation failure checks.  Also fix an incorrect 
+-EFAULT return with -ENOMEM.
 
-Some architectures (like arm64) needs to do proper TLB
-maintanance after updating pagetable entry even in map.
-Why ? Read this,
-https://patchwork.kernel.org/patch/10134581/
-
-Pass 'addr' in these interfaces so that proper TLB ops
-can be performed.
-
-Signed-off-by: Chintan Pandya <cpandya@codeaurora.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
+ drivers/staging/wilc1000/host_interface.c | 75 +++++++++++++++++++------------
+ 1 file changed, 46 insertions(+), 29 deletions(-)
 
->From V4->V6:
- - No change
-
- arch/arm64/mm/mmu.c           | 4 ++--
- arch/x86/mm/pgtable.c         | 6 ++++--
- include/asm-generic/pgtable.h | 8 ++++----
- lib/ioremap.c                 | 4 ++--
- 4 files changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 2dbb2c9..da98828 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -973,12 +973,12 @@ int pmd_clear_huge(pmd_t *pmdp)
- 	return 1;
- }
+diff --git a/drivers/staging/wilc1000/host_interface.c b/drivers/staging/wilc1000/host_interface.c
+index 9b9b86654958..8fd367f87fa5 100644
+--- a/drivers/staging/wilc1000/host_interface.c
++++ b/drivers/staging/wilc1000/host_interface.c
+@@ -797,6 +797,10 @@ static s32 handle_scan(struct wilc_vif *vif, struct scan_attr *scan_info)
+ 	for (i = 0; i < hidden_net->n_ssids; i++)
+ 		valuesize += ((hidden_net->net_info[i].ssid_len) + 1);
+ 	hdn_ntwk_wid_val = kmalloc(valuesize + 1, GFP_KERNEL);
++	if (!hdn_ntwk_wid_val) {
++		result = -ENOMEM;
++		goto error;
++	}
+ 	wid_list[index].val = hdn_ntwk_wid_val;
+ 	if (wid_list[index].val) {
+ 		buffer = wid_list[index].val;
+@@ -943,39 +947,35 @@ static s32 handle_connect(struct wilc_vif *vif,
+ 	}
  
--int pud_free_pmd_page(pud_t *pud)
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	return pud_none(*pud);
- }
- 
--int pmd_free_pte_page(pmd_t *pmd)
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	return pmd_none(*pmd);
- }
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 34cda7e..f640ba3 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -706,11 +706,12 @@ int pmd_clear_huge(pmd_t *pmd)
- /**
-  * pud_free_pmd_page - Clear pud entry and free pmd page.
-  * @pud: Pointer to a PUD.
-+ * @addr: Virtual address associated with pud.
-  *
-  * Context: The pud range has been unmaped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-  */
--int pud_free_pmd_page(pud_t *pud)
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	pmd_t *pmd;
- 	int i;
-@@ -733,11 +734,12 @@ int pud_free_pmd_page(pud_t *pud)
- /**
-  * pmd_free_pte_page - Clear pmd entry and free pte page.
-  * @pmd: Pointer to a PMD.
-+ * @addr: Virtual address associated with pmd.
-  *
-  * Context: The pmd range has been unmaped and TLB purged.
-  * Return: 1 if clearing the entry succeeded. 0 otherwise.
-  */
--int pmd_free_pte_page(pmd_t *pmd)
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	pte_t *pte;
- 
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index bfbb44a..e6310f4 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -983,8 +983,8 @@ static inline int p4d_clear_huge(p4d_t *p4d)
- int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot);
- int pud_clear_huge(pud_t *pud);
- int pmd_clear_huge(pmd_t *pmd);
--int pud_free_pmd_page(pud_t *pud);
--int pmd_free_pte_page(pmd_t *pmd);
-+int pud_free_pmd_page(pud_t *pud, unsigned long addr);
-+int pmd_free_pte_page(pmd_t *pmd, unsigned long addr);
- #else	/* !CONFIG_HAVE_ARCH_HUGE_VMAP */
- static inline int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
- {
-@@ -1010,11 +1010,11 @@ static inline int pmd_clear_huge(pmd_t *pmd)
- {
- 	return 0;
- }
--static inline int pud_free_pmd_page(pud_t *pud)
-+static inline int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	return 0;
- }
--static inline int pmd_free_pte_page(pmd_t *pmd)
-+static inline int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- {
- 	return 0;
- }
-diff --git a/lib/ioremap.c b/lib/ioremap.c
-index 54e5bba..517f585 100644
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -92,7 +92,7 @@ static inline int ioremap_pmd_range(pud_t *pud, unsigned long addr,
- 		if (ioremap_pmd_enabled() &&
- 		    ((next - addr) == PMD_SIZE) &&
- 		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
--		    pmd_free_pte_page(pmd)) {
-+		    pmd_free_pte_page(pmd, addr)) {
- 			if (pmd_set_huge(pmd, phys_addr + addr, prot))
- 				continue;
+ 	if (conn_attr->bssid) {
+-		hif_drv->usr_conn_req.bssid = kmalloc(6, GFP_KERNEL);
++		hif_drv->usr_conn_req.bssid = kmemdup(conn_attr->bssid, 6,
++						      GFP_KERNEL);
+ 		if (!hif_drv->usr_conn_req.bssid) {
+ 			result = -ENOMEM;
+ 			goto error;
  		}
-@@ -119,7 +119,7 @@ static inline int ioremap_pud_range(p4d_t *p4d, unsigned long addr,
- 		if (ioremap_pud_enabled() &&
- 		    ((next - addr) == PUD_SIZE) &&
- 		    IS_ALIGNED(phys_addr + addr, PUD_SIZE) &&
--		    pud_free_pmd_page(pud)) {
-+		    pud_free_pmd_page(pud, addr)) {
- 			if (pud_set_huge(pud, phys_addr + addr, prot))
- 				continue;
+-		memcpy(hif_drv->usr_conn_req.bssid, conn_attr->bssid, 6);
+ 	}
+ 
+ 	hif_drv->usr_conn_req.ssid_len = conn_attr->ssid_len;
+ 	if (conn_attr->ssid) {
+-		hif_drv->usr_conn_req.ssid = kmalloc(conn_attr->ssid_len + 1,
++		hif_drv->usr_conn_req.ssid = kmemdup(conn_attr->ssid,
++						     conn_attr->ssid_len + 1,
+ 						     GFP_KERNEL);
+ 		if (!hif_drv->usr_conn_req.ssid) {
+ 			result = -ENOMEM;
+ 			goto error;
  		}
+-		memcpy(hif_drv->usr_conn_req.ssid,
+-		       conn_attr->ssid,
+-		       conn_attr->ssid_len);
+ 		hif_drv->usr_conn_req.ssid[conn_attr->ssid_len] = '\0';
+ 	}
+ 
+ 	hif_drv->usr_conn_req.ies_len = conn_attr->ies_len;
+ 	if (conn_attr->ies) {
+-		hif_drv->usr_conn_req.ies = kmalloc(conn_attr->ies_len,
++		hif_drv->usr_conn_req.ies = kmemdup(conn_attr->ies,
++						    conn_attr->ies_len,
+ 						    GFP_KERNEL);
+ 		if (!hif_drv->usr_conn_req.ies) {
+ 			result = -ENOMEM;
+ 			goto error;
+ 		}
+-		memcpy(hif_drv->usr_conn_req.ies,
+-		       conn_attr->ies,
+-		       conn_attr->ies_len);
+ 	}
+ 
+ 	hif_drv->usr_conn_req.security = conn_attr->security;
+@@ -1009,9 +1009,12 @@ static s32 handle_connect(struct wilc_vif *vif,
+ 
+ 	if (memcmp("DIRECT-", conn_attr->ssid, 7)) {
+ 		info_element_size = hif_drv->usr_conn_req.ies_len;
+-		info_element = kmalloc(info_element_size, GFP_KERNEL);
+-		memcpy(info_element, hif_drv->usr_conn_req.ies,
+-		       info_element_size);
++		info_element = kmemdup(hif_drv->usr_conn_req.ies,
++				       info_element_size, GFP_KERNEL);
++		if (!info_element) {
++			result = -ENOMEM;
++			goto error;
++		}
+ 	}
+ 	wid_list[wid_cnt].id = (u16)WID_11I_MODE;
+ 	wid_list[wid_cnt].type = WID_CHAR;
+@@ -1039,9 +1042,13 @@ static s32 handle_connect(struct wilc_vif *vif,
+ 	if (memcmp("DIRECT-", conn_attr->ssid, 7)) {
+ 		join_req_size = wid_list[wid_cnt].size;
+ 		join_req = kmalloc(join_req_size, GFP_KERNEL);
++		if (!join_req) {
++			result = -ENOMEM;
++			goto error;
++		}
+ 	}
+ 	if (!wid_list[wid_cnt].val) {
+-		result = -EFAULT;
++		result = -ENOMEM;
+ 		goto error;
+ 	}
+ 
+@@ -1166,11 +1173,13 @@ static s32 handle_connect(struct wilc_vif *vif,
+ 
+ 			if (conn_attr->ies) {
+ 				conn_info.req_ies_len = conn_attr->ies_len;
+-				conn_info.req_ies = kmalloc(conn_attr->ies_len,
++				conn_info.req_ies = kmemdup(conn_attr->ies,
++							    conn_attr->ies_len,
+ 							    GFP_KERNEL);
+-				memcpy(conn_info.req_ies,
+-				       conn_attr->ies,
+-				       conn_attr->ies_len);
++				if (!conn_info.req_ies) {
++					result = -ENOMEM;
++					goto error_free;
++				}
+ 			}
+ 
+ 			conn_attr->result(CONN_DISCONN_EVENT_CONN_RESP,
+@@ -1187,6 +1196,7 @@ static s32 handle_connect(struct wilc_vif *vif,
+ 		}
+ 	}
+ 
++error_free:
+ 	kfree(conn_attr->bssid);
+ 	conn_attr->bssid = NULL;
+ 
+@@ -1227,10 +1237,9 @@ static s32 handle_connect_timeout(struct wilc_vif *vif)
+ 
+ 		if (hif_drv->usr_conn_req.ies) {
+ 			info.req_ies_len = hif_drv->usr_conn_req.ies_len;
+-			info.req_ies = kmalloc(hif_drv->usr_conn_req.ies_len, GFP_KERNEL);
+-			memcpy(info.req_ies,
+-			       hif_drv->usr_conn_req.ies,
+-			       hif_drv->usr_conn_req.ies_len);
++			info.req_ies = kmemdup(hif_drv->usr_conn_req.ies,
++					       hif_drv->usr_conn_req.ies_len,
++					       GFP_KERNEL);
+ 		}
+ 
+ 		hif_drv->usr_conn_req.conn_result(CONN_DISCONN_EVENT_CONN_RESP,
+@@ -1421,9 +1430,11 @@ static s32 handle_rcvd_gnrl_async_info(struct wilc_vif *vif,
+ 
+ 						if (conn_info.status == SUCCESSFUL_STATUSCODE && connect_resp_info->ies) {
+ 							conn_info.resp_ies_len = connect_resp_info->ies_len;
+-							conn_info.resp_ies = kmalloc(connect_resp_info->ies_len, GFP_KERNEL);
+-							memcpy(conn_info.resp_ies, connect_resp_info->ies,
+-							       connect_resp_info->ies_len);
++							conn_info.resp_ies = kmemdup(connect_resp_info->ies,
++										     connect_resp_info->ies_len,
++										     GFP_KERNEL);
++							if (!conn_info.resp_ies)
++								return -ENOMEM;
+ 						}
+ 
+ 						if (connect_resp_info) {
+@@ -3524,8 +3535,11 @@ void wilc_network_info_received(struct wilc *wilc, u8 *buffer, u32 length)
+ 	msg.vif = vif;
+ 
+ 	msg.body.net_info.len = length;
+-	msg.body.net_info.buffer = kmalloc(length, GFP_KERNEL);
+-	memcpy(msg.body.net_info.buffer, buffer, length);
++	msg.body.net_info.buffer = kmemdup(buffer, length, GFP_KERNEL);
++	if (!msg.body.net_info.buffer) {
++		netdev_err(vif->ndev, "message buffer allocation failed\n");
++		return;
++	}
+ 
+ 	result = wilc_enqueue_cmd(&msg);
+ 	if (result)
+@@ -3571,8 +3585,11 @@ void wilc_gnrl_async_info_received(struct wilc *wilc, u8 *buffer, u32 length)
+ 	msg.vif = vif;
+ 
+ 	msg.body.async_info.len = length;
+-	msg.body.async_info.buffer = kmalloc(length, GFP_KERNEL);
+-	memcpy(msg.body.async_info.buffer, buffer, length);
++	msg.body.async_info.buffer = kmemdup(buffer, length, GFP_KERNEL);
++	if (!msg.body.async_info.buffer) {
++		netdev_err(vif->ndev, "message buffer allocation failed\n");
++		return;
++	}
+ 
+ 	result = wilc_enqueue_cmd(&msg);
+ 	if (result)
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation
-Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
-Collaborative Project
+2.15.1
