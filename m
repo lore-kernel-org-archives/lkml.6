@@ -1,441 +1,871 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751827AbeCZMSw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 08:18:52 -0400
-Received: from mail-eopbgr00089.outbound.protection.outlook.com ([40.107.0.89]:40064
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751076AbeCZMSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 08:18:49 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=vicentiu.galanopulo@nxp.com;
-From: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, davem@davemloft.net,
-        marcel@holtmann.org, devicetree@vger.kernel.org
-Cc: madalin.bucur@nxp.com, alexandru.marginean@nxp.com
-Subject: [RFC PATCH v3] net: phy: Added dev-addr device tree binding and MDIO enablement of non-standard register addr space
-Date: Mon, 26 Mar 2018 07:18:25 -0500
-Message-Id: <20180326121825.13476-1-vicentiu.galanopulo@nxp.com>
-X-Mailer: git-send-email 2.8.3
-Reply-to: vicentiu.galanopulo@nxp.com
+        id S1751765AbeCZMUp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 08:20:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48958 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751076AbeCZMUn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 08:20:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 56C5160558
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=nbasu@codeaurora.org
+Subject: Re: [PATCH v2 2/2] drivers: soc: Add LLCC driver
+To: Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Cc: linux-arm@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org, kyan@codeaurora.org, ckadabi@codeaurora.org
+References: <1521941356-12361-1-git-send-email-rishabhb@codeaurora.org>
+ <1521941356-12361-3-git-send-email-rishabhb@codeaurora.org>
+From: Nabarun Basu <nbasu@codeaurora.org>
+Message-ID: <cf70f65c-3410-a274-df98-8d69f3f836fc@codeaurora.org>
+Date: Mon, 26 Mar 2018 17:50:09 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.88.168.1]
-X-ClientProxiedBy: CY4PR03CA0090.namprd03.prod.outlook.com
- (2603:10b6:910:4d::31) To AM6PR0402MB3573.eurprd04.prod.outlook.com
- (2603:10a6:209:8::10)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 74ef9253-10d9-491a-04b6-08d59313b918
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3573;
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR0402MB3573;3:fLl2RgaWIyOjt8clMUnypDrF64fDN8deXPmRtE1epV7LgzIVIQTIG3he6NBhhhq2ARoIdLX8mVTiFmPo9oOdynNTJIG9DWhp3M8HTKlhhnkL9rhyTsRjA/lWuRLpySe5kNTwBQUfyqENt4gdxwgpyjnPx68Y54lGVDSAINagDdbRIGrL6rtNe6El9teUUOrJxYvM7c192kjRZijHlmLw+PVkBGgANJ1mPqzK/P5qwMNu0XUfXrJ0L3WMEACvQB13;25:rqIHge1E7QFNcmYWNFFKKb7EiDYh4dya79xt/jcpJmFdu1ZOjkA/Dn6CPXzRW0fBecgX2yQrINpSRmXOcFnH292gkhcZtHIAKOLwT7ey+HVs6iTf/U4nH+f1ttrcgrezxFEgJnJOBpHqizNzduzRc25nMOgyTYwHm3e1ajlC0nVf3sixtEt3gHvjQm6zJEi8vlu9xQjHorxOMW+ffBzuUV2HhyoRpcbbaTDcjEeIFjG8VEVR/snE22Co1F7Hyb/AcAyoKf+fcngVulpO7uQhoV7UxMkOLCZuOSFa3G7frX8r2d1B+RUGJ571aDH9urmFdEGoX5oSLi+xggo0Fs5XMA==;31:t7PPd9feTKpeP5Ua9e6CuCfw/oTmAA+NuPidqvWKHQEo1zxAZtUfbFP2NXwR7zL5xGOd7IxrsPViIp9At9sZ+GvrvGlGdMYR2uiQrqrxWM4KWhpNrWOGcWy/I/kEAEoQGaCcSWlPgiAxfPSjn6CELLr2gD6bIZI/V6//DR2E5awaFKBSQBCNiN3FHXp+z94vUjO1F2fXfN1gTfSOqf8v2mPAYBl476K0DYUGlQzFDng=
-X-MS-TrafficTypeDiagnostic: AM6PR0402MB3573:
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR0402MB3573;20:Sw7wOeCoAV+fts4onnIXUoNdGQWqombvepPb1Ln5NA386qAwr/h5LUWElHDFQvDsy/YLuU+y8poTsZ8hsZ828fR4TT215ipbTSyjHhAa/6+LAcXx28sm/pxjcqvrOvj/YY/hIs9VrDpSxCPzij5wMohJCI63UjmVER/KyKD5EBM5tNwOxSPPHx3PSE5CWhwxsDG0phmpZt/vFpqow7wzc7iSMelj0dWa3E/88dLJeGfMPQlSyuYwqYf77MKub4MLXcTMqBskya9Vt5T19POeIo0Oi4Q13HgtDKQlrMSo0FR+3KN8AmrOq8nr71YTIiomPO9AqOuJMyXLyQ62g1qKjOybSllQpoSZYLEH15hOfz/FNxqmpvBCzQ1vb2xBDvUjOluJgNiT8ivwdNez1zQhpL7ePJZKcpGjQxeDu7rlLCvxLanp6dgzi7KNjtHfcA5kItypPsvixZqOetf1bHJ4+pz8JL439DFlUOlqnOP2+yzkK9naZ/oWMhwCYPDdJmqP;4:Y6tpvP6v3ggCBLk3rKfpw4L/ZYAQ3Tc2zBf5485P/ULkpcsZ6QISZyqe/HZUNajUmhw0MKySnQPCDkNkW7yZat6/7krQtVofz25vME9EtnH0A+wvHctByD0JISw+OjGwafBmhLHnRioKqWnyMsp8qCQv0GQjrIZDvU66qNhN7VXELIPhk6RJjio01JXIP/3+Owiijc7aumfdyauBNPz+iU84HdTT6EeITBNLplmnwOJcxTQiwyOBCS7bWZ5K8dKFO8sMt49ekNfRrzsCTjdLG2HZIDra/CJxuJ83WtinqiU2+wJuaFE1omcJdrA1IfOy
-X-Microsoft-Antispam-PRVS: <AM6PR0402MB3573ED57813BBBE49F9F3BCEEEAD0@AM6PR0402MB3573.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:AM6PR0402MB3573;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3573;
-X-Forefront-PRVS: 06237E4555
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(346002)(39860400002)(39380400002)(376002)(366004)(199004)(189003)(50944005)(68736007)(575784001)(2906002)(7736002)(478600001)(1076002)(305945005)(5660300001)(386003)(6506007)(4326008)(16586007)(25786009)(36756003)(316002)(3450700001)(50226002)(97736004)(8936002)(86362001)(81156014)(81166006)(8676002)(52116002)(43066004)(47776003)(51416003)(2616005)(956004)(106356001)(50466002)(48376002)(59450400001)(105586002)(6512007)(6116002)(3846002)(66066001)(53936002)(186003)(16526019)(6486002)(26005)(6666003)(217873001)(309714004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3573;H:rhuath.am.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR0402MB3573;23:FOeBlmxQ4Fa3ITIC/xr2fPhe6eZYNOSMKciSZdl?=
- =?us-ascii?Q?fJkErbbiPkK2HLdvIfA7OSlAm24EdZIoIbyp0XmVhgGZ7g9xUU+fU4ebda1j?=
- =?us-ascii?Q?Xu5eeMc7zBozijYBjZ5WCitwAdXWA9u2FksBYnMbDilIqxMfP/hrB3VY/CIg?=
- =?us-ascii?Q?nKVBlXoaJXBRv0f99FDKnad6zCZzi3IM884UCM3/Iscw1gznobfclChcZWCA?=
- =?us-ascii?Q?IjBAAc3R5GQxJcWxhdSOA7Cnto+PUmE4i8wAs1BFAfh4meOECu2XqVoLJ17O?=
- =?us-ascii?Q?DAWmk/shBBh7yx4nE9HF2AoYU6DlYArjUULa70fzagw/tl326amUo3LRF8mA?=
- =?us-ascii?Q?ZtSCo7ypiy1sxX284POZqjJIPZxD7Zk6XwA8Gs0eGq2SHvN5WeF1066IKhbX?=
- =?us-ascii?Q?yUwaXtuDwKx+P/2NbFKGZw06+zPuAjJW72gSZb8TwvB/B+L67TuBc/SuYGTU?=
- =?us-ascii?Q?jm/9jHVtIc2RkENewSUgvWDajmSSjaWE3t9ZnuF67dedfcrpTshyRR42H16I?=
- =?us-ascii?Q?EdhPq9c5uFHT13oCZ6ITvfEsrzfD/kyA+xouxmmWfasBiruNIHMAFh46ojsn?=
- =?us-ascii?Q?Fy0NOmGgZoauM/+nemzm81E3RCun8NgQPf+AQsfrjefSC8EmrTLcvCX1rtsG?=
- =?us-ascii?Q?R4biTWuvNrIzs1C7xb2HfsfflSVvNe6jNY/LJGGdqH0oQZX7WH6iTQ8LdyX/?=
- =?us-ascii?Q?tyHTmJY0DG14SyE+R0h1GWyh/xGpUjec74ZZx5G2coFaM0p6YDlUgvADqtEv?=
- =?us-ascii?Q?FQC4UHr7Ge7IwAQCyXK45/N7Q28QmMtis0/DrregACpXfJrYMtu1TvCFlVLm?=
- =?us-ascii?Q?YCsA2ymyRUgW4Oz8sdqxV/RFaZn0pvKJ3k1qr1eXfK6p7+3q4nh5FQioLJDg?=
- =?us-ascii?Q?fgBaPSSJI55dFZ43uacO1kVv+EL58Sic7BIVpPByU+vdX94rYIMn3CKOIAJo?=
- =?us-ascii?Q?3nBnZpiqC3Lrlj+WMNZ1V1qfBQ4YNtt5Wt155xIytYw6lfKiy4c3jk2VUoTO?=
- =?us-ascii?Q?szxyPHb+w5XS3XQzwdpZVuhwit9WTzyIKIjQOJT+qVqPVFLivfeCwaluT20T?=
- =?us-ascii?Q?WGw2cie22o2bT/urBZ41aNY0doXYVBDojj59bQLuamGrnebe6u7R6zAqAEj1?=
- =?us-ascii?Q?JuzYRTlLEIiZRhJ7CLWY25SkQt7Ph8uWX084gx1WGBFlXrnJS2jVeEBrDy5t?=
- =?us-ascii?Q?bAIH6PQ4/r+pHkXBoTMNiJxks/1NqYWHFKl5o7dsYNASrHH/CRRIX3QbOLso?=
- =?us-ascii?Q?HtRATo1ZiQg1rCmg3klI=3D?=
-X-Microsoft-Antispam-Message-Info: GP71hRaoJVBEwZOPU55lsJzl6nE/O8rr3dY2rJFX6SDT+IE+3bqqmNmZ2fd3bs/7gKahHLHIzyS6sWUNG0h7bLCoPZVYLClL7QWjGNHhYa56L6IHLDbZgEuowQg/RGB8zdNlIEZdMu1udWrI8ETDFKJPvSiRoWpDITvLSB/vubt0U1eReqjPtwkRHmiZWwHo
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR0402MB3573;6:BddVQCah+dlpL0nE48qHHEgXHsb3tXxtv5N99fYmZtxmoczPFWh8I/UWlBD5Mfs5UbhIFat7VgnzHvkIexENzkSLwXNlwIzHuACnVDX3dpRopv0zqkmQGhimqhtNvEtxAcKHxNOSvdXsrXs/JVZKU2UeRibZ7VTrRuVd/4feL0io/NTNBfpD8dqYkBmFBPuzLCxojG0v55ODwAZChcnkMdrGy4GL63i4Ap1hZJCIiSAnioBbbRMvl30TqhYzZ6hkDmxmURsmL7UxQOvVm/e7AP0lbkcv12710zT9w9jfuylrvw0Q/RnLvT4/hx49+jIfBiMValHWo+oE8wDwDM7HvW/8t0MEQBAerB2IzY626iQGvdGDjplBHonhTyOK/NdHQ4qtb86jh+dN/xBhFuPgyjtfjIlNN9xtXWSEzeGmQza2qw/1CX87QPU3+vBY3dHjwGOiPYvyHl8sEeaun2UFIw==;5:Ffq5iz2R16idBr1LgWcGyyiTRBegt7wqETp77zFTIkepl1FEC5e6eUgTwaMlTb2fbOKB2NimWclwHhPrl/YERc+vEM2gskL0XA49jKbfvKRAiSk+QINSvJXlKAd/oxkn2czwdRbgS0/bhEg2uwbF0VIvtzUUmCAEwggeecbugn0=;24:1gb3V5+30/HvYTW6XRw11wIDpcoBpHdDH1PXm5sQchHF5IfqprhsmHWHcr/nGxXEuubIb113AtucNwqxjQqYew35bDzgbSebSa+Ce6segfI=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR0402MB3573;7:O/Kt+XHxOlW3G45J2nmnxVG01UpCF6jGriHi5ZibE2iCXOKGo0iUwh/TrJc6etf3i/gktUTzK1zwhg/LmQT2XVcOIpicX4C5Lgeb0NvWvIfXCYRUCpFCiboHLus4mGxuAVocJG01j5CRzZPuDymqfl7puVeYqtAD0Z6mgtQTTDf9tvi4ygl4YfMdzxR09nURkUiP7XZyaON0nSPV7X+N/p3dHtFOTQaEPOW9nD/zlEFf934YWMNV60t56moUQH4S
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2018 12:18:44.4469
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74ef9253-10d9-491a-04b6-08d59313b918
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3573
+In-Reply-To: <1521941356-12361-3-git-send-email-rishabhb@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling the discovery on the MDIO bus
-of the INPHI PHY which has a vendor specific
-address space for accessing the C45 MDIO registers
+1) llcc-core.c file is missing, leading to failure in kernel compilation.
+2) The Patch is also having some trailing whitespace errors.
 
-A search of the dev-addr property is done in
-of_mdiobus_register. If the property is found in
-the PHY node, of_mdiobus_register_vend_spec_phy()
-is called. This is a wrapper function for
-of_mdiobus_register_phy() which finds the device
-in package based on dev-addr and fills devices_addrs:
-devices_addrs is a new field added to phy_c45_device_ids.
-This new field will store the dev-addr property on the same
-index where the device in package has been found.
-of_mdiobus_register_phy() signature call has been changed
-and struct phy_c45_device_ids *c45_ids was added.
-If c45_ids is not NULL, get_vend_spec_addr_phy_device() is
-called and c45_ids are propagated all the way to
-get_phy_c45_ids().
 
-Having dev-addr stored in devices_addrs, in get_phy_c45_ids(),
-when probing the identifiers, dev-addr can be extracted from
-devices_addrs and probed if devices_addrs[current_identifier]
-is not 0.
+On 3/25/2018 6:59 AM, Rishabh Bhatnagar wrote:
+> LLCC (Last Level Cache Controller) provides additional cache memory
+> in the system. LLCC is partitioned into muliple slices and each
+> slice getting its own priority, size, ID and other config parameters.
+> LLCC driver programs these parameters for each slice. Clients that
+> are assigned to use LLCC need to get information such size & ID of the
+>   slice they get and activate or deactivate the slice as needed. LLCC driver
+> provides API interfaces for the clients to perform these operations.
+>
+> Change-Id: I93c5f3225d0a917f0d6c64c7588a4e64e33a59ed
+> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+> ---
+>   drivers/soc/qcom/Kconfig           |  16 ++
+>   drivers/soc/qcom/Makefile          |   2 +
+>   drivers/soc/qcom/llcc-sdm845.c     | 120 ++++++++++
+>   drivers/soc/qcom/llcc-slice.c      | 454 +++++++++++++++++++++++++++++++++++++
+>   include/linux/soc/qcom/llcc-qcom.h | 178 +++++++++++++++
+>   5 files changed, 770 insertions(+)
+>   create mode 100644 drivers/soc/qcom/llcc-sdm845.c
+>   create mode 100644 drivers/soc/qcom/llcc-slice.c
+>   create mode 100644 include/linux/soc/qcom/llcc-qcom.h
+>
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index e050eb8..28237fc 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -21,6 +21,22 @@ config QCOM_GSBI
+>             functions for connecting the underlying serial UART, SPI, and I2C
+>             devices to the output pins.
+>   
+> +config QCOM_LLCC
+> +	tristate "Qualcomm Technologies, Inc. LLCC driver"
+> +	depends on ARCH_QCOM
+> +	help
+> +	  Qualcomm Technologies, Inc. platform specific LLCC driver for Last
+> +	  Level Cache. This provides interfaces to client's that use the LLCC.
+> +	  Say yes here to enable LLCC slice driver.
+> +
+> +config QCOM_SDM845_LLCC
+> +	tristate "Qualcomm Technologies, Inc. SDM845 LLCC driver"
+> +	depends on QCOM_LLCC
+> +	help
+> +	  Say yes here to enable the LLCC driver for SDM845. This is provides
+> +	  data required to configure LLCC so that clients can start using the
+> +	  LLCC slices.
+> +
+>   config QCOM_MDT_LOADER
+>   	tristate
+>   	select QCOM_SCM
+> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+> index dcebf28..234560f 100644
+> --- a/drivers/soc/qcom/Makefile
+> +++ b/drivers/soc/qcom/Makefile
+> @@ -12,3 +12,5 @@ obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
+>   obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
+>   obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
+>   obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
+> +obj-$(CONFIG_QCOM_LLCC) += llcc-core.o llcc-slice.o
+> +obj-$(CONFIG_QCOM_SDM845_LLCC) += llcc-sdm845.o
+> diff --git a/drivers/soc/qcom/llcc-sdm845.c b/drivers/soc/qcom/llcc-sdm845.c
+> new file mode 100644
+> index 0000000..cd431d9
+> --- /dev/null
+> +++ b/drivers/soc/qcom/llcc-sdm845.c
+> @@ -0,0 +1,120 @@
+> +/* Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/soc/qcom/llcc-qcom.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +
+> +
+> +/*
+> + * SCT entry contains of the following parameters
+> + * name: Name of the client's use case for which the llcc slice is used
+> + * uid: Unique id for the client's use case
+> + * slice_id: llcc slice id for each client
+> + * max_cap: The maximum capacity of the cache slice provided in KB
+> + * priority: Priority of the client used to select victim line for replacement
+> + * fixed_size: Determine of the slice has a fixed capacity
+> + * bonus_ways: Bonus ways to be used by any slice, bonus way is used only if
+> + *             it't not a reserved way.
+> + * res_ways: Reserved ways for the cache slice, the reserved ways cannot be
+> + *          used by any other client than the one its assigned to.
+> + * cache_mode: Each slice operates as a cache, this controls the mode of the
+> + *             slice normal or TCM
+> + * probe_target_ways: Determines what ways to probe for access hit. When
+> + *                    configured to 1 only bonus and reseved ways are probed.
+> + *                    when configured to 0 all ways in llcc are probed.
+> + * dis_cap_alloc: Disable capacity based allocation for a client
+> + * retain_on_pc: If this bit is set and client has maitained active vote
+> + *               then the ways assigned to this client are not flushed on power
+> + *               collapse.
+> + * activate_on_init: Activate the slice immidiately after the SCT is programmed
+> + */
+> +#define SCT_ENTRY(n, uid, sid, mc, p, fs, bway, rway, cmod, ptw, dca, rp, a) \
+> +	{					\
+> +		.name = n,			\
+> +		.usecase_id = uid,		\
+> +		.slice_id = sid,		\
+> +		.max_cap = mc,			\
+> +		.priority = p,			\
+> +		.fixed_size = fs,		\
+> +		.bonus_ways = bway,		\
+> +		.res_ways = rway,		\
+> +		.cache_mode = cmod,		\
+> +		.probe_target_ways = ptw,	\
+> +		.dis_cap_alloc = dca,		\
+> +		.retain_on_pc = rp,		\
+> +		.activate_on_init = a,		\
+> +	}
+> +
+> +
+> +static struct llcc_slice_config sdm845_data[] =  {
+> +	SCT_ENTRY("cpuss",       1, 1, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1, 1, 1),
+> +	SCT_ENTRY("vidsc0",      2, 2, 512, 2, 1, 0x0,  0x0F0, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("vidsc1",      3, 3, 512, 2, 1, 0x0,  0x0F0, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("rotator",     4, 4, 563, 2, 1, 0x0,  0x00e, 2, 0, 1, 1, 0),
+> +	SCT_ENTRY("voice",       5, 5, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("audio",       6, 6, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("modemhp_grow", 7, 7, 1024, 2, 0, 0x0FC, 0xF00, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("modem",       8, 8, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("compute",     10, 10, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("gpuhtw",      11, 11, 512, 1, 1, 0xC,  0x0, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("gpu",         12, 12, 2304, 1, 0, 0xFF0, 0x2, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("mmuhwt",      13, 13, 256, 2, 0, 0x0,  0x1, 0, 0, 1, 0, 1),
+> +	SCT_ENTRY("compute_dma", 15, 15, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("display",     16, 16, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("videofw",     17, 17, 2816, 1, 0, 0xFFC, 0x2, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("modemhp_fix", 20, 20, 1024, 2, 1, 0x0,  0xF00, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("modem_paging", 21, 21, 1024, 0, 1, 0x1e, 0x0, 0, 0, 1, 1, 0),
+> +	SCT_ENTRY("audiohw",     22, 22, 1024, 1, 1, 0xFFC, 0x2, 0, 0, 1, 1, 0),
+> +};
+> +
+> +
+> +static int sdm845_qcom_llcc_probe(struct platform_device *pdev)
+> +{
+> +	return qcom_llcc_probe(pdev, sdm845_data,ARRAY_SIZE(sdm845_data));
+> +}
+> +
+> +static const struct of_device_id sdm845_qcom_llcc_of_match[] = {
+> +	{ .compatible = "qcom,sdm845-llcc", },
+> +	{ },
+> +};
+> +
+> +static struct platform_driver sdm845_qcom_llcc_driver = {
+> +	.driver = {
+> +		.name = "sdm845-llcc",
+> +		.owner = THIS_MODULE,
+> +		.of_match_table = sdm845_qcom_llcc_of_match,
+> +	},
+> +	.probe = sdm845_qcom_llcc_probe,
+> +	.remove = qcom_llcc_remove,
+> +};
+> +
+> +static int __init sdm845_init_qcom_llcc_init(void)
+> +{
+> +	return platform_driver_register(&sdm845_qcom_llcc_driver);
+> +}
+> +module_init(sdm845_init_qcom_llcc_init);
+> +
+> +static void __exit sdm845_exit_qcom_llcc_exit(void)
+> +{
+> +	platform_driver_unregister(&sdm845_qcom_llcc_driver);
+> +}
+> +module_exit(sdm845_exit_qcom_llcc_exit);
+> +
+> +MODULE_DESCRIPTION("QTI sdm845 LLCC driver");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/soc/qcom/llcc-slice.c b/drivers/soc/qcom/llcc-slice.c
+> new file mode 100644
+> index 0000000..6e86770
+> --- /dev/null
+> +++ b/drivers/soc/qcom/llcc-slice.c
+> @@ -0,0 +1,454 @@
+> +/* Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#define pr_fmt(fmt)  "%s:" fmt, __func__
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/device.h>
+> +#include <linux/delay.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/mutex.h>
+> +#include <linux/bitmap.h>
+> +#include <linux/bitops.h>
+> +#include <linux/slab.h>
+> +#include <linux/io.h>
+> +#include <linux/err.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+> +#include <linux/soc/qcom/llcc-qcom.h>
+> +
+> +#define ACTIVATE                      0x1
+> +#define DEACTIVATE                    0x2
+> +#define ACT_CTRL_OPCODE_ACTIVATE      0x1
+> +#define ACT_CTRL_OPCODE_DEACTIVATE    0x2
+> +#define ACT_CTRL_ACT_TRIG             0x1
+> +#define ACT_CTRL_OPCODE_SHIFT         0x1
+> +#define ATTR1_PROBE_TARGET_WAYS_SHIFT 0x2
+> +#define ATTR1_FIXED_SIZE_SHIFT        0x3
+> +#define ATTR1_PRIORITY_SHIFT          0x4
+> +#define ATTR1_MAX_CAP_SHIFT           0x10
+> +#define ATTR0_RES_WAYS_MASK           0x00000fff
+> +#define ATR0_BONUS_WAYS_MASK          0x0fff0000
+> +#define ATR0_BONUS_WAYS_SHIFT         0x10
+> +#define LLCC_STATUS_READ_DELAY 100
+> +
+> +#define CACHE_LINE_SIZE_SHIFT 6
+> +
+> +#define LLCC_COMMON_STATUS0		0x0003000C
+> +#define LLCC_LB_CNT_MASK		0xf0000000
+> +#define LLCC_LB_CNT_SHIFT		28
+> +
+> +#define MAX_CAP_TO_BYTES(n) (n * 1024)
+> +#define LLCC_TRP_ACT_CTRLn(n) (n * 0x1000)
+> +#define LLCC_TRP_STATUSn(n)   (4 + n * 0x1000)
+> +#define LLCC_TRP_ATTR0_CFGn(n) (0x21000 + 0x8 * n)
+> +#define LLCC_TRP_ATTR1_CFGn(n) (0x21004 + 0x8 * n)
+> +
+> +
+> +
+> +static const struct regmap_config llcc_regmap_config = {
+> +        .reg_bits = 32,
+> +        .reg_stride = 4,
+> +        .val_bits = 32,
+> +        .fast_io = true,
+> +};
+> +
+> +
+> +/* Get the slice entry by index */
+> +static struct llcc_slice_desc *llcc_slice_get_entry(struct device *dev, int n)
+> +{
+> +	struct of_phandle_args phargs;
+> +	struct llcc_drv_data *drv;
+> +	const struct llcc_slice_config *llcc_data_ptr;
+> +	struct llcc_slice_desc *desc;
+> +	struct platform_device *pdev;
+> +	u32 sz, count;
+> +
+> +	if (of_parse_phandle_with_args(dev->of_node, "cache-slices",
+> +				       "#cache-cells", n, &phargs)) {
+> +		pr_err("can't parse \"cache-slices\" property\n");
+> +		return ERR_PTR(-ENODEV);
+> +	}
+> +
+> +	pdev = of_find_device_by_node(phargs.np);
+> +	if (!pdev) {
+> +		pr_err("Cannot find platform device from phandle\n");
+> +		return ERR_PTR(-ENODEV);
+> +	}
+> +
+> +	drv = platform_get_drvdata(pdev);
+> +	if (!drv) {
+> +		pr_err("cannot find platform driver data\n");
+> +		return ERR_PTR(-EFAULT);
+> +	}
+> +
+> +	llcc_data_ptr = drv->slice_data;
+> +	sz = drv->llcc_config_data_sz;
+> +	count = 0;
+> +
+> +	while (llcc_data_ptr && count < sz) {
+> +		if (llcc_data_ptr->usecase_id == phargs.args[0])
+> +			break;
+> +		llcc_data_ptr++;
+> +		count++;
+> +	}
+> +
+> +	if (llcc_data_ptr == NULL || count == sz) {
+> +		pr_err("can't find %d usecase id\n", phargs.args[0]);
+> +		return ERR_PTR(-ENODEV);
+> +	}
+> +
+> +	desc = kzalloc(sizeof(struct llcc_slice_desc), GFP_KERNEL);
+> +	if (!desc)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	desc->llcc_slice_id = llcc_data_ptr->slice_id;
+> +	desc->llcc_slice_size = llcc_data_ptr->max_cap;
+> +	desc->dev = &pdev->dev;
+> +
+> +	return desc;
+> +}
+> +
+> +/**
+> + * llcc_slice_getd - get llcc slice descriptor
+> + * @dev: Device pointer of the client
+> + * @name: Name of the use case
+> + *
+> + * A pointer to llcc slice descriptor will be returned on success and
+> + * and error pointer is returned on failure
+> + */
+> +struct llcc_slice_desc *llcc_slice_getd(struct device *dev, const char *name)
+> +{
+> +	struct device_node *np = dev->of_node;
+> +	int index = 0;
+> +	const char *slice_name;
+> +	struct property *prop;
+> +
+> +	if (!np) {
+> +		dev_err(dev, "%s() currently only supports DT\n", __func__);
+> +		return ERR_PTR(-ENOENT);
+> +	}
+> +
+> +	if (!of_get_property(np, "cache-slice-names", NULL)) {
+> +		dev_err(dev,
+> +			"%s() requires a \"cache-slice-names\" property\n",
+> +			__func__);
+> +		return ERR_PTR(-ENOENT);
+> +	}
+> +
+> +	of_property_for_each_string(np, "cache-slice-names", prop, slice_name) {
+> +		if (!strcmp(name, slice_name))
+> +			break;
+> +		index++;
+> +	}
+> +
+> +	return llcc_slice_get_entry(dev, index);
+> +}
+> +EXPORT_SYMBOL(llcc_slice_getd);
+> +
+> +/**
+> + * llcc_slice_putd - llcc slice descritpor
+> + * @desc: Pointer to llcc slice descriptor
+> + */
+> +void llcc_slice_putd(struct llcc_slice_desc *desc)
+> +{
+> +	kfree(desc);
+> +}
+> +EXPORT_SYMBOL(llcc_slice_putd);
+> +
+> +static int llcc_update_act_ctrl(struct llcc_drv_data *drv, u32 sid,
+> +				u32 act_ctrl_reg_val, u32 status)
+> +{
+> +	u32 act_ctrl_reg;
+> +	u32 status_reg;
+> +	u32 slice_status;
+> +	unsigned long timeout;
+> +
+> +	act_ctrl_reg = drv->b_off + LLCC_TRP_ACT_CTRLn(sid);
+> +	status_reg = drv->b_off + LLCC_TRP_STATUSn(sid);
+> +
+> +	regmap_write(drv->llcc_map, act_ctrl_reg, act_ctrl_reg_val);
+> +
+> +	/* Make sure the activate trigger is applied before clearing it */
+> +	mb();
+> +
+> +	/* Clear the ACTIVE trigger */
+> +	act_ctrl_reg_val &= ~ACT_CTRL_ACT_TRIG;
+> +	regmap_write(drv->llcc_map, act_ctrl_reg, act_ctrl_reg_val);
+> +
+> +	timeout = jiffies + usecs_to_jiffies(LLCC_STATUS_READ_DELAY);
+> +	while (time_before(jiffies, timeout)) {
+> +		regmap_read(drv->llcc_map, status_reg, &slice_status);
+> +		if (!(slice_status & status))
+> +			return 0;
+> +	}
+> +
+> +	return -ETIMEDOUT;
+> +}
+> +
+> +/**
+> + * llcc_slice_activate - Activate the llcc slice
+> + * @desc: Pointer to llcc slice descriptor
+> + *
+> + * A value zero will be returned on success and a negative errno will
+> + * be returned in error cases
+> + */
+> +int llcc_slice_activate(struct llcc_slice_desc *desc)
+> +{
+> +	int rc = -EINVAL;
+> +	u32 act_ctrl_val;
+> +	struct llcc_drv_data *drv;
+> +
+> +	if (desc == NULL)
+> +		return rc;
+> +
+> +	drv = dev_get_drvdata(desc->dev);
+> +	if (!drv)
+> +		return rc;
+> +
+> +	mutex_lock(&drv->slice_mutex);
+> +	if (test_bit(desc->llcc_slice_id, drv->llcc_slice_map)) {
+> +		mutex_unlock(&drv->slice_mutex);
+> +		return 0;
+> +	}
+> +
+> +	act_ctrl_val = ACT_CTRL_OPCODE_ACTIVATE << ACT_CTRL_OPCODE_SHIFT;
+> +	act_ctrl_val |= ACT_CTRL_ACT_TRIG;
+> +
+> +	rc = llcc_update_act_ctrl(drv, desc->llcc_slice_id, act_ctrl_val,
+> +				  DEACTIVATE);
+> +
+> +	__set_bit(desc->llcc_slice_id, drv->llcc_slice_map);
+> +	mutex_unlock(&drv->slice_mutex);
+> +
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL(llcc_slice_activate);
+> +
+> +/**
+> + * llcc_slice_deactivate - Deactivate the llcc slice
+> + * @desc: Pointer to llcc slice descriptor
+> + *
+> + * A value zero will be returned on success and a negative errno will
+> + * be returned in error cases
+> + */
+> +int llcc_slice_deactivate(struct llcc_slice_desc *desc)
+> +{
+> +	u32 act_ctrl_val;
+> +	int rc = -EINVAL;
+> +	struct llcc_drv_data *drv;
+> +
+> +	if (desc == NULL)
+> +		return rc;
+> +
+> +	drv = dev_get_drvdata(desc->dev);
+> +	if (!drv)
+> +		return rc;
+> +
+> +	mutex_lock(&drv->slice_mutex);
+> +	if (!test_bit(desc->llcc_slice_id, drv->llcc_slice_map)) {
+> +		mutex_unlock(&drv->slice_mutex);
+> +		return 0;
+> +	}
+> +	act_ctrl_val = ACT_CTRL_OPCODE_DEACTIVATE << ACT_CTRL_OPCODE_SHIFT;
+> +	act_ctrl_val |= ACT_CTRL_ACT_TRIG;
+> +
+> +	rc = llcc_update_act_ctrl(drv, desc->llcc_slice_id, act_ctrl_val,
+> +				  ACTIVATE);
+> +
+> +	__clear_bit(desc->llcc_slice_id, drv->llcc_slice_map);
+> +	mutex_unlock(&drv->slice_mutex);
+> +
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL(llcc_slice_deactivate);
+> +
+> +/**
+> + * llcc_get_slice_id - return the slice id
+> + * @desc: Pointer to llcc slice descriptor
+> + *
+> + * A positive value will be returned on success and a negative errno will
+> + * be returned on error
+> + */
+> +int llcc_get_slice_id(struct llcc_slice_desc *desc)
+> +{
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	return desc->llcc_slice_id;
+> +}
+> +EXPORT_SYMBOL(llcc_get_slice_id);
+> +
+> +/**
+> + * llcc_get_slice_size - return the slice id
+> + * @desc: Pointer to llcc slice descriptor
+> + *
+> + * A positive value will be returned on success and zero will returned on
+> + * error
+> + */
+> +size_t llcc_get_slice_size(struct llcc_slice_desc *desc)
+> +{
+> +	if (!desc)
+> +		return 0;
+> +
+> +	return desc->llcc_slice_size;
+> +}
+> +EXPORT_SYMBOL(llcc_get_slice_size);
+> +
+> +static void qcom_llcc_cfg_program(struct platform_device *pdev)
+> +{
+> +	int i;
+> +	u32 attr1_cfg;
+> +	u32 attr0_cfg;
+> +	u32 attr1_val;
+> +	u32 attr0_val;
+> +	u32 max_cap_cacheline;
+> +	u32 sz;
+> +	const struct llcc_slice_config *llcc_table;
+> +	struct llcc_slice_desc desc;
+> +        struct llcc_drv_data *drv = platform_get_drvdata(pdev);
+> +	u32 b_off = drv->b_off;
+> +
+> +	sz = drv->llcc_config_data_sz;
+> +	llcc_table = drv->slice_data;
+> +
+> +	for (i = 0; i < sz; i++) {
+> +		attr1_cfg = b_off + LLCC_TRP_ATTR1_CFGn(llcc_table[i].slice_id);
+> +		attr0_cfg = b_off + LLCC_TRP_ATTR0_CFGn(llcc_table[i].slice_id);
+> +
+> +		attr1_val = llcc_table[i].cache_mode;
+> +		attr1_val |= (llcc_table[i].probe_target_ways <<
+> +				ATTR1_PROBE_TARGET_WAYS_SHIFT);
+> +		attr1_val |= (llcc_table[i].fixed_size <<
+> +				ATTR1_FIXED_SIZE_SHIFT);
+> +		attr1_val |= (llcc_table[i].priority << ATTR1_PRIORITY_SHIFT);
+> +
+> +		max_cap_cacheline = MAX_CAP_TO_BYTES(llcc_table[i].max_cap);
+> +
+> +		/* LLCC instances can vary for each target.
+> +		 * The SW writes to broadcast register which gets propagated
+> +		 * to each llcc instace (llcc0,.. llccN).
+> +		 * Since the size of the memory is divided equally amongst the
+> +		 * llcc instances, we need to configure the max cap accordingly.
+> +		 */
+> +		max_cap_cacheline = (max_cap_cacheline / drv->num_banks);
+> +		max_cap_cacheline >>= CACHE_LINE_SIZE_SHIFT;
+> +		attr1_val |= (max_cap_cacheline << ATTR1_MAX_CAP_SHIFT);
+> +
+> +		attr0_val = llcc_table[i].res_ways & ATTR0_RES_WAYS_MASK;
+> +		attr0_val |= llcc_table[i].bonus_ways << ATR0_BONUS_WAYS_SHIFT;
+> +
+> +		regmap_write(drv->llcc_map, attr1_cfg, attr1_val);
+> +		regmap_write(drv->llcc_map, attr0_cfg, attr0_val);
+> +
+> +		/* Make sure that the SCT is programmed before activating */
+> +		mb();
+> +
+> +		if (llcc_table[i].activate_on_init) {
+> +			desc.llcc_slice_id = llcc_table[i].slice_id;
+> +			desc.dev = &pdev->dev;
+> +			if (llcc_slice_activate(&desc)) {
+> +				pr_err("activate slice id: %d timed out\n",
+> +						desc.llcc_slice_id);
+> +			}
+> +		}
+> +	}
+> +}
+> +
+> +int qcom_llcc_probe(struct platform_device *pdev,
+> +		      const struct llcc_slice_config *llcc_cfg, u32 sz)
+> +{
+> +	int rc = 0;
+> +	u32 num_banks = 0;
+> +	struct device *dev = &pdev->dev;
+> +	static struct llcc_drv_data *drv_data;
+> +	struct resource *res;
+> +	void __iomem *base;
+> +	
+> +	drv_data = devm_kzalloc(dev, sizeof(*drv_data), GFP_KERNEL);
+> +	if (!drv_data)
+> +		return PTR_ERR(drv_data);
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);	
+> +	base = devm_ioremap_resource(&pdev->dev, res);
+> +    if (IS_ERR(base)) {
+> +    	dev_err(&pdev->dev,"Cannot find the resource in device\n");
+> +    	return PTR_ERR(base);
+> +    }
+> +
+> +    drv_data->llcc_map = devm_regmap_init_mmio(dev, base, &llcc_regmap_config);
+> +    if (IS_ERR(drv_data->llcc_map)) {
+> +        dev_err(&pdev->dev,"Cannot init the regmap for llcc\n");
+> +        return PTR_ERR(drv_data->llcc_map);
+> +    }
+> +
+> +	regmap_read(drv_data->llcc_map, LLCC_COMMON_STATUS0,
+> +		    &num_banks);
+> +
+> +	num_banks &= LLCC_LB_CNT_MASK;
+> +	num_banks >>= LLCC_LB_CNT_SHIFT;
+> +	drv_data->num_banks = num_banks;
+> +
+> +	rc = of_property_read_u32(pdev->dev.of_node, "max-slices",
+> +				  &drv_data->max_slices);
+> +	if (rc) {
+> +		dev_err(&pdev->dev, "Invalid max-slices dt entry\n");
+> +		devm_kfree(&pdev->dev, drv_data);
+> +		return rc;
+> +	}
+> +	drv_data->offsets = devm_kzalloc(dev, num_banks*sizeof(u32), GFP_KERNEL);
+> +	if (!drv_data->offsets) {
+> +		devm_kfree(&pdev->dev, drv_data);
+> +        return PTR_ERR(drv_data->offsets);
+> +	}
+> +	
+> +	drv_data->offsets[0] = 0x0;
+> +	drv_data->offsets[1] = 0x80000;
+> +	drv_data->offsets[2] = 0x100000;
+> +	drv_data->offsets[3] = 0x180000;
+> +	drv_data->b_off = 0x200000;
+> +
+> +	drv_data->llcc_slice_map = kcalloc(BITS_TO_LONGS(drv_data->max_slices),
+> +				   sizeof(unsigned long), GFP_KERNEL);
+> +
+> +	if (!drv_data->llcc_slice_map) {
+> +		devm_kfree(&pdev->dev, drv_data);
+> +		return PTR_ERR(drv_data->llcc_slice_map);
+> +	}
+> +
+> +	bitmap_zero(drv_data->llcc_slice_map, drv_data->max_slices);
+> +	drv_data->slice_data = llcc_cfg;
+> +	drv_data->llcc_config_data_sz = sz;
+> +	mutex_init(&drv_data->slice_mutex);
+> +	platform_set_drvdata(pdev, drv_data);
+> +
+> +	qcom_llcc_cfg_program(pdev);
+> +
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL(qcom_llcc_probe);
+> +
+> +int qcom_llcc_remove(struct platform_device *pdev)
+> +{
+> +	static struct llcc_drv_data *drv_data;
+> +
+> +	drv_data = platform_get_drvdata(pdev);
+> +
+> +	mutex_destroy(&drv_data->slice_mutex);
+> +	kfree(drv_data->llcc_slice_map);
+> +	devm_kfree(&pdev->dev, drv_data);
+> +	platform_set_drvdata(pdev, NULL);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(qcom_llcc_remove);
+> diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
+> new file mode 100644
+> index 0000000..c408a8d
+> --- /dev/null
+> +++ b/include/linux/soc/qcom/llcc-qcom.h
+> @@ -0,0 +1,178 @@
+> +/* Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef __LLCC_QCOM__
+> +#define __LLCC_QCOM__
+> +
+> +/**
+> + * llcc_slice_desc - Cache slice descriptor
+> + * @llcc_slice_id: llcc slice id
+> + * @llcc_slice_size: Size allocated for the llcc slice
+> + * @dev: pointer to llcc device
+> + */
+> +struct llcc_slice_desc {
+> +	int llcc_slice_id;
+> +	size_t llcc_slice_size;
+> +	struct device *dev;
+> +};
+> +
+> +/**
+> + * llcc_slice_config - Data associated with the llcc slice
+> + * @name: name of the use case associated with the llcc slice
+> + * @usecase_id: usecase id for which the llcc slice is used
+> + * @slice_id: llcc slice id assigned to each slice
+> + * @max_cap: maximum capacity of the llcc slice
+> + * @priority: priority of the llcc slice
+> + * @fixed_size: whether the llcc slice can grow beyond its size
+> + * @bonus_ways: bonus ways associated with llcc slice
+> + * @res_ways: reserved ways associated with llcc slice
+> + * @cache_mode: mode of the llcce slice
+> + * @probe_target_ways: Probe only reserved and bonus ways on a cache miss
+> + * @dis_cap_alloc: Disable capacity based allocation
+> + * @retain_on_pc: Retain through power collapse
+> + * @activate_on_init: activate the slice on init
+> + */
+> +struct llcc_slice_config {
+> +	const char *name;
+> +	int usecase_id;
+> +	int slice_id;
+> +	u32 max_cap;
+> +	u32 priority;
+> +	bool fixed_size;
+> +	u32 bonus_ways;
+> +	u32 res_ways;
+> +	u32 cache_mode;
+> +	u32 probe_target_ways;
+> +	bool dis_cap_alloc;
+> +	bool retain_on_pc;
+> +	u32 activate_on_init;
+> +};
+> +
+> +/**
+> + * llcc_drv_data - Data associated with the llcc driver
+> + * @llcc_map: regmap associated with the llcc device
+> + * @slice_data: pointer to the data structure associated with slice
+> + * @slice_mutex: mutex associated with each slice
+> + * @llcc_config_data_sz: size of the config data table
+> + * @max_slices: max slices as read from device tree
+> + * @b_off: Offset of the broadcast bank
+> + * @num_banks: Number of llcc banks
+> + * @llcc_slice_map: Bit map to track the active slice ids
+> + * @offsets: Pointer to the bank offsets array
+> + */
+> +
+> +struct llcc_drv_data {
+> +        struct regmap *llcc_map;
+> +        const struct llcc_slice_config *slice_data;
+> +        struct mutex slice_mutex;
+> +        u32 llcc_config_data_sz;
+> +        u32 max_slices;
+> +        u32 b_off;
+> +        u32 num_banks;
+> +        unsigned long *llcc_slice_map;
+> +        u32 *offsets;
+> +};
+> +
+> +
+> +#ifdef CONFIG_QCOM_LLCC
+> +/**
+> + * llcc_slice_getd - get llcc slice descriptor
+> + * @dev: Device pointer of the client
+> + * @name: Name of the use case
+> + */
+> +struct llcc_slice_desc *llcc_slice_getd(struct device *dev, const char *name);
+> +
+> +/**
+> + * llcc_slice_putd - llcc slice descritpor
+> + * @desc: Pointer to llcc slice descriptor
+> + */
+> +void llcc_slice_putd(struct llcc_slice_desc *desc);
+> +
+> +/**
+> + * llcc_get_slice_id - get slice id
+> + * @desc: Pointer to llcc slice descriptor
+> + */
+> +int llcc_get_slice_id(struct llcc_slice_desc *desc);
+> +
+> +/**
+> + * llcc_get_slice_size - llcc slice size
+> + * @desc: Pointer to llcc slice descriptor
+> + */
+> +size_t llcc_get_slice_size(struct llcc_slice_desc *desc);
+> +
+> +/**
+> + * llcc_slice_activate - Activate the llcc slice
+> + * @desc: Pointer to llcc slice descriptor
+> + */
+> +int llcc_slice_activate(struct llcc_slice_desc *desc);
+> +
+> +/**
+> + * llcc_slice_deactivate - Deactivate the llcc slice
+> + * @desc: Pointer to llcc slice descriptor
+> + */
+> +int llcc_slice_deactivate(struct llcc_slice_desc *desc);
+> +
+> +/**
+> + * qcom_llcc_probe - program the sct table
+> + * @pdev: platform device pointer
+> + * @table: soc sct table
+> + */
+> +int qcom_llcc_probe(struct platform_device *pdev,
+> +		      const struct llcc_slice_config *table, u32 sz);
+> +/**
+> + * qcom_llcc_remove - clean up llcc driver
+> + * @pdev: platform driver pointer
+> + */
+> +int qcom_llcc_remove(struct platform_device *pdev);
+> +#else
+> +static inline struct llcc_slice_desc *llcc_slice_getd(struct device *dev,
+> +			const char *name)
+> +{
+> +	return NULL;
+> +}
+> +
+> +static inline void llcc_slice_putd(struct llcc_slice_desc *desc)
+> +{
+> +
+> +};
+> +
+> +static inline int llcc_get_slice_id(struct llcc_slice_desc *desc)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +static inline size_t llcc_get_slice_size(struct llcc_slice_desc *desc)
+> +{
+> +	return 0;
+> +}
+> +static inline int llcc_slice_activate(struct llcc_slice_desc *desc)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +static inline int llcc_slice_deactivate(struct llcc_slice_desc *desc)
+> +{
+> +	return -EINVAL;
+> +}
+> +static inline int qcom_llcc_probe(struct platform_device *pdev,
+> +		      const struct llcc_slice_config *table, u32 sz)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +static inline int qcom_llcc_remove(struct platform_device *pdev)
+> +{
+> +	return -ENODEV;
+> +}
+> +#endif
+> +
+> +#endif
 
-This should probably be in a separate patch but I
-found it in the context of enabling the discovery of
-the INPHI PHY:  num_ids in get_phy_c45_ids,
-has the value 8 (ARRAY_SIZE(c45_ids->device_ids)),
-but the u32 *devs can store 32 devices in the bitfield.
-If a device is stored in *devs, in bits 32 to 9, it
-will not be found. This is the reason for changing
-in phy.h, the size of device_ids array
-
-Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
----
- Documentation/devicetree/bindings/net/phy.txt |   6 ++
- drivers/net/phy/phy_device.c                  |  49 ++++++++++-
- drivers/of/of_mdio.c                          | 113 +++++++++++++++++++++++++-
- include/linux/phy.h                           |  16 +++-
- 4 files changed, 176 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/net/phy.txt b/Documentation/devicetree/bindings/net/phy.txt
-index d2169a5..82692e2 100644
---- a/Documentation/devicetree/bindings/net/phy.txt
-+++ b/Documentation/devicetree/bindings/net/phy.txt
-@@ -61,6 +61,11 @@ Optional Properties:
- - reset-deassert-us: Delay after the reset was deasserted in microseconds.
-   If this property is missing the delay will be skipped.
- 
-+- dev-addr: If set, it indicates the device address of the PHY to be used
-+  when accessing the C45 PHY registers over MDIO. It is used for vendor specific
-+  register space addresses that do no conform to standard address for the MDIO
-+  registers (e.g. MMD30)
-+
- Example:
- 
- ethernet-phy@0 {
-@@ -72,4 +77,5 @@ ethernet-phy@0 {
- 	reset-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
- 	reset-assert-us = <1000>;
- 	reset-deassert-us = <2000>;
-+	dev-addr = <0x1e>;
- };
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index b285323..3cbae4b 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -457,7 +457,7 @@ static int get_phy_c45_devs_in_pkg(struct mii_bus *bus, int addr, int dev_addr,
- static int get_phy_c45_ids(struct mii_bus *bus, int addr, u32 *phy_id,
- 			   struct phy_c45_device_ids *c45_ids) {
- 	int phy_reg;
--	int i, reg_addr;
-+	int i, reg_addr, dev_addr;
- 	const int num_ids = ARRAY_SIZE(c45_ids->device_ids);
- 	u32 *devs = &c45_ids->devices_in_package;
- 
-@@ -493,13 +493,23 @@ static int get_phy_c45_ids(struct mii_bus *bus, int addr, u32 *phy_id,
- 		if (!(c45_ids->devices_in_package & (1 << i)))
- 			continue;
- 
--		reg_addr = MII_ADDR_C45 | i << 16 | MII_PHYSID1;
-+		/* if c45_ids->devices_addrs for the current id is not 0,
-+		 * then dev-addr was defined in the PHY device tree node,
-+		 * and the PHY has been seen as a valid device, and added
-+		 * in the package. In this case we can use the
-+		 * dev-addr(c45_ids->devices_addrs[i]) to do the MDIO
-+		 * reading of the PHY ID.
-+		 */
-+		dev_addr = !!c45_ids->devices_addrs[i] ?
-+					c45_ids->devices_addrs[i] : i;
-+
-+		reg_addr = MII_ADDR_C45 | dev_addr << 16 | MII_PHYSID1;
- 		phy_reg = mdiobus_read(bus, addr, reg_addr);
- 		if (phy_reg < 0)
- 			return -EIO;
- 		c45_ids->device_ids[i] = (phy_reg & 0xffff) << 16;
- 
--		reg_addr = MII_ADDR_C45 | i << 16 | MII_PHYSID2;
-+		reg_addr = MII_ADDR_C45 | dev_addr << 16 | MII_PHYSID2;
- 		phy_reg = mdiobus_read(bus, addr, reg_addr);
- 		if (phy_reg < 0)
- 			return -EIO;
-@@ -551,6 +561,39 @@ static int get_phy_id(struct mii_bus *bus, int addr, u32 *phy_id,
- }
- 
- /**
-+ * get_vend_spec_addr_phy_device - reads the specified PHY device
-+ *				   and returns its @phy_device struct
-+ * @bus: the target MII bus
-+ * @addr: PHY address on the MII bus
-+ * @is_c45: If true the PHY uses the 802.3 clause 45 protocol
-+ * @c45_ids: Query the c45_ids to see if a PHY with a vendor specific
-+ *           register address space was defined in the PHY device tree
-+ *           node by adding the "dev-addr" property to the node.
-+ *           Store the c45 ID information about the rest of the PHYs
-+ *           found PHYs on the MDIO bus during probing.
-+ *
-+ * Description: Reads the ID registers of the PHY at @addr on the
-+ *   @bus, then allocates and returns the phy_device to represent it.
-+ */
-+struct phy_device *get_vend_spec_addr_phy_device(struct mii_bus *bus,
-+						 int addr, bool is_c45,
-+						 struct phy_c45_device_ids *c45_ids)
-+{
-+	u32 phy_id = 0;
-+	int r;
-+
-+	r = get_phy_id(bus, addr, &phy_id, is_c45, c45_ids);
-+	if (r)
-+		return ERR_PTR(r);
-+
-+	/* If the phy_id is mostly Fs, there is no device there */
-+	if ((phy_id & 0x1fffffff) == 0x1fffffff)
-+		return ERR_PTR(-ENODEV);
-+
-+	return phy_device_create(bus, addr, phy_id, is_c45, c45_ids);
-+}
-+
-+/**
-  * get_phy_device - reads the specified PHY device and returns its @phy_device
-  *		    struct
-  * @bus: the target MII bus
-diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
-index 8c0c927..52e8bfb 100644
---- a/drivers/of/of_mdio.c
-+++ b/drivers/of/of_mdio.c
-@@ -45,7 +45,8 @@ static int of_get_phy_id(struct device_node *device, u32 *phy_id)
- }
- 
- static int of_mdiobus_register_phy(struct mii_bus *mdio,
--				    struct device_node *child, u32 addr)
-+				   struct device_node *child, u32 addr,
-+				   struct phy_c45_device_ids *c45_ids)
- {
- 	struct phy_device *phy;
- 	bool is_c45;
-@@ -58,7 +59,12 @@ static int of_mdiobus_register_phy(struct mii_bus *mdio,
- 	if (!is_c45 && !of_get_phy_id(child, &phy_id))
- 		phy = phy_device_create(mdio, addr, phy_id, 0, NULL);
- 	else
--		phy = get_phy_device(mdio, addr, is_c45);
-+		if (c45_ids)
-+			phy = get_vend_spec_addr_phy_device(mdio,
-+							    addr, is_c45,
-+							    c45_ids);
-+		else
-+			phy = get_phy_device(mdio, addr, is_c45);
- 	if (IS_ERR(phy))
- 		return PTR_ERR(phy);
- 
-@@ -190,6 +196,72 @@ static bool of_mdiobus_child_is_phy(struct device_node *child)
- 	return false;
- }
- 
-+static void of_fill_c45_devices_addrs(u32 dev_addr,
-+				      struct phy_c45_device_ids *c45_ids)
-+{
-+	int i;
-+	const int num_ids = ARRAY_SIZE(c45_ids->device_ids);
-+
-+	/* Search through all Device Identifiers
-+	 * and set dev_addr in c45_ids->devices_addrs,
-+	 * if the device bit is set in
-+	 * c45_ids->devices_in_package
-+	 */
-+	for (i = 1; i < num_ids; i++) {
-+		if (!(c45_ids->devices_in_package & (1 << i)))
-+			continue;
-+
-+		c45_ids->devices_addrs[i] = dev_addr;
-+	}
-+}
-+
-+static int of_find_devaddr_in_pkg(struct mii_bus *bus, u32 addr, u32 dev_addr,
-+				  struct phy_c45_device_ids *c45_ids)
-+{
-+	u32 *devs = &c45_ids->devices_in_package;
-+	int phy_reg, reg_addr;
-+
-+	reg_addr = MII_ADDR_C45 | dev_addr << 16 | MDIO_DEVS2;
-+	phy_reg = mdiobus_read(bus, addr, reg_addr);
-+	if (phy_reg < 0)
-+		return -EIO;
-+
-+	*devs = (phy_reg & 0xffff) << 16;
-+
-+	reg_addr = MII_ADDR_C45 | dev_addr << 16 | MDIO_DEVS1;
-+	phy_reg = mdiobus_read(bus, addr, reg_addr);
-+	if (phy_reg < 0)
-+		return -EIO;
-+
-+	*devs |= (phy_reg & 0xffff);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Finds the device in package and populates the c45_ids
-+ * if any device is found at dev_addr address. After this
-+ * the PHY is registered
-+ */
-+static int of_mdiobus_register_vend_spec_phy(struct mii_bus *mdio,
-+					     struct device_node *child,
-+					     u32 addr, u32 dev_addr)
-+{
-+	struct phy_c45_device_ids c45_ids = {0};
-+	int dev_err = 0;
-+
-+	if (!dev_addr)
-+		goto register_phy;
-+
-+	dev_err = of_find_devaddr_in_pkg(mdio, addr, dev_addr, &c45_ids);
-+
-+	if (!dev_err)
-+		of_fill_c45_devices_addrs(dev_addr, &c45_ids);
-+
-+register_phy:
-+	return of_mdiobus_register_phy(mdio, child, addr, &c45_ids);
-+}
-+
- /**
-  * of_mdiobus_register - Register mii_bus and create PHYs from the device tree
-  * @mdio: pointer to mii_bus structure
-@@ -202,7 +274,10 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
- {
- 	struct device_node *child;
- 	bool scanphys = false;
-+	bool dev_addr_found = true;
- 	int addr, rc;
-+	int dev_addr = 0;
-+	int ret;
- 
- 	/* Do not continue if the node is disabled */
- 	if (!of_device_is_available(np))
-@@ -226,6 +301,14 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
- 
- 	/* Loop over the child nodes and register a phy_device for each phy */
- 	for_each_available_child_of_node(np, child) {
-+		/* Check if dev-addr is set in the PHY node */
-+		ret = of_property_read_u32(child, "dev-addr", &dev_addr);
-+
-+		if (ret < 0) {
-+			/* either not set or invalid */
-+			dev_addr_found = false;
-+		}
-+
- 		addr = of_mdio_parse_addr(&mdio->dev, child);
- 		if (addr < 0) {
- 			scanphys = true;
-@@ -233,7 +316,14 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
- 		}
- 
- 		if (of_mdiobus_child_is_phy(child))
--			rc = of_mdiobus_register_phy(mdio, child, addr);
-+			if (dev_addr_found)
-+				rc = of_mdiobus_register_vend_spec_phy(mdio,
-+								       child,
-+								       addr,
-+								       dev_addr);
-+			else
-+				rc = of_mdiobus_register_phy(mdio, child,
-+							     addr, NULL);
- 		else
- 			rc = of_mdiobus_register_device(mdio, child, addr);
- 
-@@ -248,8 +338,16 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
- 	if (!scanphys)
- 		return 0;
- 
-+	/* reset device found variable */
-+	dev_addr_found = true;
-+
- 	/* auto scan for PHYs with empty reg property */
- 	for_each_available_child_of_node(np, child) {
-+		/* Check if dev-addr is set in the PHY node,
-+		 * for PHYs which don't have reg property set
-+		 */
-+		ret = of_property_read_u32(child, "dev-addr", &dev_addr);
-+
- 		/* Skip PHYs with reg property set */
- 		if (of_find_property(child, "reg", NULL))
- 			continue;
-@@ -264,7 +362,14 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
- 				 child->name, addr);
- 
- 			if (of_mdiobus_child_is_phy(child)) {
--				rc = of_mdiobus_register_phy(mdio, child, addr);
-+				if (dev_addr_found)
-+					rc = of_mdiobus_register_vend_spec_phy(mdio,
-+									       child,
-+									       addr,
-+									       dev_addr);
-+				else
-+					rc = of_mdiobus_register_phy(mdio, child,
-+								     addr, NULL);
- 				if (rc && rc != -ENODEV)
- 					goto unregister;
- 			}
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 5a9b175..f665945 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -357,10 +357,13 @@ enum phy_state {
-  * struct phy_c45_device_ids - 802.3-c45 Device Identifiers
-  * @devices_in_package: Bit vector of devices present.
-  * @device_ids: The device identifer for each present device.
-+ * @devices_addrs: The devices addresses from the device tree
-+ *		   for each present device.
-  */
- struct phy_c45_device_ids {
- 	u32 devices_in_package;
--	u32 device_ids[8];
-+	u32 device_ids[32];
-+	u32 devices_addrs[32];
- };
- 
- /* phy_device: An instance of a PHY
-@@ -904,6 +907,9 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
- 				     struct phy_c45_device_ids *c45_ids);
- #if IS_ENABLED(CONFIG_PHYLIB)
- struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45);
-+struct phy_device *get_vend_spec_addr_phy_device(struct mii_bus *bus, int addr,
-+						 bool is_c45,
-+						 struct phy_c45_device_ids *c45_ids);
- int phy_device_register(struct phy_device *phy);
- void phy_device_free(struct phy_device *phydev);
- #else
-@@ -913,6 +919,14 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
- 	return NULL;
- }
- 
-+static inline
-+struct phy_device *get_vend_spec_addr_phy_device(struct mii_bus *bus, int addr,
-+						 bool is_c45,
-+						 struct phy_c45_device_ids *c45_ids)
-+{
-+	return NULL;
-+}
-+
- static inline int phy_device_register(struct phy_device *phy)
- {
- 	return 0;
 -- 
-2.7.4
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
