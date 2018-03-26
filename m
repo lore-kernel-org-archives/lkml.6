@@ -1,59 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751938AbeCZNnT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:43:19 -0400
-Received: from mga11.intel.com ([192.55.52.93]:60240 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751752AbeCZNnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:43:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
-   d="scan'208";a="214936743"
-From: kan.liang@linux.intel.com
-To: acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc: jolsa@kernel.org, namhyung@kernel.org, wangnan0@huawei.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf mmap: Fix accessing unmapped mmap in perf_mmap__read_done()
-Date: Mon, 26 Mar 2018 09:42:09 -0400
-Message-Id: <1522071729-16776-1-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.4.11
+        id S1751890AbeCZNqs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 09:46:48 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:19758 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeCZNqr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 09:46:47 -0400
+Date: Mon, 26 Mar 2018 19:15:40 +0530
+From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "stephen@networkplumber.org" <stephen@networkplumber.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Ganesh GR <ganeshgr@chelsio.com>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        Indranil Choudhury <indranil@chelsio.com>
+Subject: Re: [PATCH net-next v2 0/2] kernel: add support to collect hardware
+ logs in crash recovery kernel
+Message-ID: <20180326134539.GA15852@chelsio.com>
+References: <cover.1521888444.git.rahul.lakkireddy@chelsio.com>
+ <87muyxlctn.fsf@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87muyxlctn.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Saturday, March 03/24/18, 2018 at 20:50:52 +0530, Eric W. Biederman wrote:
+> 
+> Rahul Lakkireddy <rahul.lakkireddy@chelsio.com> writes:
+> 
+> > On production servers running variety of workloads over time, kernel
+> > panic can happen sporadically after days or even months. It is
+> > important to collect as much debug logs as possible to root cause
+> > and fix the problem, that may not be easy to reproduce. Snapshot of
+> > underlying hardware/firmware state (like register dump, firmware
+> > logs, adapter memory, etc.), at the time of kernel panic will be very
+> > helpful while debugging the culprit device driver.
+> >
+> > This series of patches add new generic framework that enable device
+> > drivers to collect device specific snapshot of the hardware/firmware
+> > state of the underlying device in the crash recovery kernel. In crash
+> > recovery kernel, the collected logs are exposed via /sys/kernel/crashdd/
+> > directory, which is copied by user space scripts for post-analysis.
+> >
+> > A kernel module crashdd is newly added. In crash recovery kernel,
+> > crashdd exposes /sys/kernel/crashdd/ directory containing device
+> > specific hardware/firmware logs.
+> 
+> Have you looked at instead of adding a sysfs file adding the dumps
+> as additional elf notes in /proc/vmcore?
+> 
 
-There is segmentation fault when running perf trace. For example,
-  [root@jouet e]# perf trace -e *chdir -o /tmp/bla perf report
-  --ignore-vmlinux -i ../perf.data
+I see the crash recovery kernel's memory is not present in any of the
+the PT_LOAD headers.  So, makedumpfile is not collecting the dumps
+that are in crash recovery kernel's memory.
 
-The perf_mmap__consume() could unmap the mmap. It needs to check the
-refcnt in perf_mmap__read_done().
+Also, are you suggesting exporting the dumps themselves as PT_NOTE
+instead?  I'll look into doing it this way.
 
-Fixes: ee023de05f35 ("perf mmap: Introduce perf_mmap__read_done()")
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- tools/perf/util/mmap.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> That should allow existing tools to capture your extended dump
+> information with no code changes, and it will allow having a single file
+> core dump for storing the information.
+> 
+> Both of which should mean something that will integrate better into
+> existing flows.
+> 
+> The interface logic of the driver should be essentially the same.
+> 
+> 
+> Also have you tested this and seen how well your current logic captures
+> the device information?
+> 
 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 38ca3ff..f6cfc52 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -317,5 +317,11 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
-  */
- void perf_mmap__read_done(struct perf_mmap *map)
- {
-+	/*
-+	 * Check if event was unmapped due to a POLLHUP/POLLERR.
-+	 */
-+	if (!refcount_read(&map->refcnt))
-+		return;
-+
- 	map->prev = perf_mmap__read_head(map);
- }
--- 
-2.4.11
+Yes, the hardware snapshot is pretty close to the state during kernel
+panic.  It is better than risking not being able to collect anything
+at all during kernel panic.
+
+Thanks,
+Rahul
