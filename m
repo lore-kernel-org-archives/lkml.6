@@ -1,162 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752269AbeCZWW4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:22:56 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39558 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752125AbeCZWWx (ORCPT
+        id S1752370AbeCZWXE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:23:04 -0400
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:35354 "EHLO
+        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752297AbeCZWXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:22:53 -0400
-X-Google-Smtp-Source: AG47ELsCvRn9CSeZgeYQQf+V4Xu3N7RxqWpszX4Ui5fSgTVfTQaacKvwHA9LR5jwit6vbDn0wK7qiQ==
-Date: Mon, 26 Mar 2018 17:22:49 -0500
+        Mon, 26 Mar 2018 18:23:01 -0400
+X-Google-Smtp-Source: AG47ELtvYw//tQWvYIoZH9D/e2s+ByJoOvmG52h/mzqOofpjJcP2thfnYnZpjtb5uD8v/+Zg0HEHkg==
+Date: Mon, 26 Mar 2018 17:22:58 -0500
 From: Rob Herring <robh@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, airlied@linux.ie, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] dt-bindings: display: bridge: Document
- THC63LVD1024 LVDS decoder
-Message-ID: <20180326222249.tvjiutyd4amlibpa@rob-hp-laptop>
-References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
- <1521213399-31947-2-git-send-email-jacopo+renesas@jmondi.org>
- <4060923.7DxT9ae38L@avalon>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: jernej.skrabec@siol.net, linux-sunxi@googlegroups.com,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH 2/7] dt-bindings: add binding for the
+ Allwinner A64 DE2 bus
+Message-ID: <20180326222258.uxpgj4bk4pg56b7o@rob-hp-laptop>
+References: <20180316175354.21437-1-icenowy@aosc.io>
+ <20180320184646.dynqv6qubzabroe4@flea>
+ <AAC74653-C6EB-4BE3-BB19-210687C1E158@aosc.io>
+ <2866474.lRHIcLtROC@jernej-laptop>
+ <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4060923.7DxT9ae38L@avalon>
+In-Reply-To: <9520BDDE-BFE3-4220-B48D-01A00CFA94DE@aosc.io>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 20, 2018 at 02:43:33PM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
+On Thu, Mar 22, 2018 at 02:08:43PM +0800, Icenowy Zheng wrote:
 > 
-> (CC'ing Rob)
 > 
-> Thank you for the patch.
+> 于 2018年3月22日 GMT+08:00 上午1:13:42, "Jernej Škrabec" <jernej.skrabec@siol.net> 写到:
+> >Hi all,
+> >
+> >Dne sreda, 21. marec 2018 ob 03:18:13 CET je Icenowy Zheng napisal(a):
+> >> 于 2018年3月21日 GMT+08:00 上午2:46:46, Maxime Ripard
+> ><maxime.ripard@bootlin.com> 
+> >写到:
+> >> >On Sat, Mar 17, 2018 at 01:53:49AM +0800, Icenowy Zheng wrote:
+> >> >> All the sub-blocks of Allwinner A64 DE2 needs the SRAM C on A64
+> >SoC
+> >> >
+> >> >to
+> >> >
+> >> >> be claimed, otherwise the whole DE2 space is inaccessible.
+> >> >> 
+> >> >> Add a device tree binding of the DE2 part as a sub-bus.
+> >> >
+> >> >Where did you get the info that it was a bus?
+> >> 
+> >> There's no direct evidence, just some guess.
+> >> 
+> >> The DE2 is a whole part that is just allocated a memory
+> >> space at the user manual, and the SRAM controls the
+> >> access to all modules in the DE2.
+> >> 
+> >> So it might be a bus.
+> >> 
+> >> Implement it as a bus is a clear representation on A64.
+> >
+> >Since there is already syscon for same mmio region, we migh as well use
+> >it 
+> >when loading ccu-sun8i-de2 driver on A64.
+> >
+> >Other options, like SRAM driver or bus driver, might better represent
+> >HW, but 
 > 
-> On Friday, 16 March 2018 17:16:37 EET Jacopo Mondi wrote:
-> > Document Thine THC63LVD1024 LVDS decoder device tree bindings.
-> > 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> > Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >  .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 +++++++++++++++++++
-> >  1 file changed, 66 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> > b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> > new file mode 100644
-> > index 0000000..8225c6a
-> > --- /dev/null
-> > +++
-> > b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> > @@ -0,0 +1,66 @@
-> > +Thine Electronics THC63LVD1024 LVDS decoder
-> > +-------------------------------------------
-> > +
-> > +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS
-> > streams
-> > +to parallel data outputs. The chip supports single/dual input/output modes,
-> > +handling up to two two input LVDS stream and up to two digital CMOS/TTL
-> > outputs.
-> > +
-> > +Single or dual operation modes, output data mapping and DDR output modes
-> > are
-> > +configured through input signals and the chip does not expose any control
-> > bus.
-> > +
-> > +Required properties:
-> > +- compatible: Shall be "thine,thc63lvd1024"
-> > +
-> > +Optional properties:
-> > +- vcc-supply: Power supply for TTL output and digital circuitry
-> > +- cvcc-supply: Power supply for TTL CLOCKOUT signal
-> > +- lvcc-supply: Power supply for LVDS inputs
-> > +- pvcc-supply: Power supply for PLL circuitry
+> I think the device tree should properly represent the HW,
+> it's a basic requirment.
 > 
-> As explained in a comment to one of the previous versions of this series, I'm 
-> tempted to make vcc-supply mandatory and drop the three other power supplies 
-> for now, as I believe there's very little chance they will be connected to 
-> separately controllable regulators (all supplies use the same voltage). In the 
-> very unlikely event that this occurs in design we need to support in the 
-> future, the cvcc, lvcc and pvcc supplies can be added later as optional 
-> without breaking backward compatibility.
+> >then we would have two DT nodes covering same mmio region, which I
+> >think is 
+> >not really acceptable.
+> 
+> It's acceptable, and DE2 is not the only user of SRAM controller so far.
 
-I'm okay with that.
+No, it's not acceptable. Don't create overlapping mmio regions in DT.
 
-> Apart from that,
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> VE will also need a SRAM region to be claimed.
 > 
-> > +- pdwn-gpios: Power down GPIO signal. Active low
-
-powerdown-gpios is the semi-standard name.
-
-> > +- oe-gpios: Output enable GPIO signal. Active high
-> > +
-> > +The THC63LVD1024 video port connections are modeled according
-> > +to OF graph bindings specified by
-> > Documentation/devicetree/bindings/graph.txt
-> > +
-> > +Required video port nodes:
-> > +- Port@0: First LVDS input port
-> > +- Port@2: First digital CMOS/TTL parallel output
-
-s/Port/port/
-
-> > +
-> > +Optional video port nodes:
-> > +- Port@1: Second LVDS input port
-> > +- Port@3: Second digital CMOS/TTL parallel output
-> > +
-> > +Example:
-> > +--------
-> > +
-> > +	thc63lvd1024: lvds-decoder {
-> > +		compatible = "thine,thc63lvd1024";
-> > +
-> > +		vcc-supply = <&reg_lvds_vcc>;
-> > +		lvcc-supply = <&reg_lvds_lvcc>;
-> > +
-> > +		pdwn-gpio = <&gpio4 15 GPIO_ACTIVE_LOW>;
-> > +
-> > +		ports {
-> > +			#address-cells = <1>;
-> > +			#size-cells = <0>;
-> > +
-> > +			port@0 {
-> > +				reg = <0>;
-> > +
-> > +				lvds_dec_in_0: endpoint {
-> > +					remote-endpoint = <&lvds_out>;
-> > +				};
-> > +			};
-> > +
-> > +			port@2{
-> > +				reg = <2>;
-> > +
-> > +				lvds_dec_out_2: endpoint {
-> > +					remote-endpoint = <&adv7511_in>;
-> > +				};
-> > +
-> > +			};
-> > +
-> > +		};
-> > +	};
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
+> >
+> >Any suggestions?
+> >
+> >BTW, H6 has same design in this regard.
+> >
+> >Best regards,
+> >Jernej
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
