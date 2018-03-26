@@ -1,118 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeCZTRi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 15:17:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33556 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751157AbeCZTRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 15:17:37 -0400
-From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: [PATCH v2] locking/rwsem: Add DEBUG_RWSEMS to look for lock/unlock mismatches
-Date: Mon, 26 Mar 2018 15:17:28 -0400
-Message-Id: <1522091848-18426-1-git-send-email-longman@redhat.com>
+        id S1751220AbeCZTbr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 15:31:47 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:36766 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750983AbeCZTbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 15:31:46 -0400
+Date: Mon, 26 Mar 2018 21:30:52 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tony.luck@intel.com, x86@kernel.org
+Subject: Re: [PATCH 1/2] Revert "x86/mce/AMD: Collect error info even if
+ valid bits are not set"
+Message-ID: <20180326193052.GJ25548@pd.tnic>
+References: <20180326191526.64314-1-Yazen.Ghannam@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180326191526.64314-1-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For a rwsem, locking can either be exclusive or shared. The corresponding
-exclusive or shared unlock must be used. Otherwise, the protected data
-structures may get corrupted or the lock may be in an inconsistent state.
+On Mon, Mar 26, 2018 at 02:15:25PM -0500, Yazen Ghannam wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> This reverts commit 4b1e84276a6172980c5bf39aa091ba13e90d6dad.
+> 
+> Software uses the valid bits to decide if the values can be used for
+> further processing or other actions. So setting the valid bits will have
+> software act on values that it shouldn't be acting on.
+> 
+> The recommendation to save all the register values does not mean that
+> the values are always valid.
 
-In order to detect such anomaly, a new configuration option DEBUG_RWSEMS
-is added which can be enabled to look for such mismatches and print
-warnings that that happens.
+So what does that
 
-Signed-off-by: Waiman Long <longman@redhat.com>
+"Error handlers should save the values in MCA_ADDR, MCA_MISC0,
+and MCA_SYND even if MCA_STATUS[AddrV], MCA_STATUS[MiscV], and
+MCA_STATUS[SyndV] are zero."
 
- v2: - Fix typo
+*actually* mean then?
 
----
- kernel/locking/rwsem.c | 4 ++++
- kernel/locking/rwsem.h | 8 +++++++-
- lib/Kconfig.debug      | 7 +++++++
- 3 files changed, 18 insertions(+), 1 deletion(-)
+It is still in the PPR.
 
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index f549c55..30465a2 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -117,6 +117,7 @@ int down_write_trylock(struct rw_semaphore *sem)
- void up_read(struct rw_semaphore *sem)
- {
- 	rwsem_release(&sem->dep_map, 1, _RET_IP_);
-+	DEBUG_RWSEMS_WARN_ON(sem->owner != RWSEM_READER_OWNED);
- 
- 	__up_read(sem);
- }
-@@ -129,6 +130,7 @@ void up_read(struct rw_semaphore *sem)
- void up_write(struct rw_semaphore *sem)
- {
- 	rwsem_release(&sem->dep_map, 1, _RET_IP_);
-+	DEBUG_RWSEMS_WARN_ON(sem->owner != current);
- 
- 	rwsem_clear_owner(sem);
- 	__up_write(sem);
-@@ -142,6 +144,7 @@ void up_write(struct rw_semaphore *sem)
- void downgrade_write(struct rw_semaphore *sem)
- {
- 	lock_downgrade(&sem->dep_map, _RET_IP_);
-+	DEBUG_RWSEMS_WARN_ON(sem->owner != current);
- 
- 	rwsem_set_reader_owned(sem);
- 	__downgrade_write(sem);
-@@ -211,6 +214,7 @@ int __sched down_write_killable_nested(struct rw_semaphore *sem, int subclass)
- 
- void up_read_non_owner(struct rw_semaphore *sem)
- {
-+	DEBUG_RWSEMS_WARN_ON(sem->owner != RWSEM_READER_OWNED);
- 	__up_read(sem);
- }
- 
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index a883b8f..563a7bc 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -16,6 +16,12 @@
-  */
- #define RWSEM_READER_OWNED	((struct task_struct *)1UL)
- 
-+#ifdef CONFIG_DEBUG_RWSEMS
-+#define DEBUG_RWSEMS_WARN_ON(c)	DEBUG_LOCKS_WARN_ON(c)
-+#else
-+#define DEBUG_RWSEMS_WARN_ON(c)
-+#endif
-+
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- /*
-  * All writes to owner are protected by WRITE_ONCE() to make sure that
-@@ -41,7 +47,7 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
- 	 * do a write to the rwsem cacheline when it is really necessary
- 	 * to minimize cacheline contention.
- 	 */
--	if (sem->owner != RWSEM_READER_OWNED)
-+	if (READ_ONCE(sem->owner) != RWSEM_READER_OWNED)
- 		WRITE_ONCE(sem->owner, RWSEM_READER_OWNED);
- }
- 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 64155e3..0958192 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1075,6 +1075,13 @@ config DEBUG_WW_MUTEX_SLOWPATH
- 	 even a debug kernel.  If you are a driver writer, enable it.  If
- 	 you are a distro, do not.
- 
-+config DEBUG_RWSEMS
-+	bool "RW Semaphore debugging: basic checks"
-+	depends on DEBUG_KERNEL && RWSEM_SPIN_ON_OWNER
-+	help
-+	  This feature allows mismatched rw semaphore locks and unlocks
-+	  to be detected and reported.
-+
- config DEBUG_LOCK_ALLOC
- 	bool "Lock debugging: detect incorrect freeing of live locks"
- 	depends on DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
 -- 
-1.8.3.1
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
