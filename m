@@ -1,208 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeCZIBK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:01:10 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55299 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeCZIBH (ORCPT
+        id S1752082AbeCZIBU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:01:20 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:39637 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeCZIBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:01:07 -0400
-X-Google-Smtp-Source: AIpwx4/33R4kZwsiMy2+kNv7dbbr+J3LUkz8ZkwTL3J5zryHwRMb4NjnZiE+odV5KHOdH/QIxjoF0g==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] block, bfq: keep peak_rate estimation within range
- 1..2^32-1
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <E810B04D-CEC3-4D98-A52A-08509E7CE417@linaro.org>
-Date: Mon, 26 Mar 2018 10:01:03 +0200
-Cc: linux-block <linux-block@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "'Paolo Valente' via bfq-iosched"
-        <bfq-iosched@googlegroups.com>,
-        Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Message-Id: <17F0A3D1-29A6-4688-96F3-6776AF1DB7A4@linaro.org>
-References: <152025413365.161046.7757556276366364549.stgit@buzz>
- <FE5352B7-CAFC-466C-BA07-F1B7427AA309@linaro.org>
- <ff761610-4a37-f239-a491-cf2a04c44574@yandex-team.ru>
- <E9AC28A6-848D-420F-8DAB-8B1FC709BA38@linaro.org>
- <38320074-d1e6-96bc-e832-e535efc07e81@yandex-team.ru>
- <E810B04D-CEC3-4D98-A52A-08509E7CE417@linaro.org>
-To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Mon, 26 Mar 2018 04:01:18 -0400
+X-Google-Smtp-Source: AIpwx4+NCICotxWgHIbYXaWlqZivjZgOJsTDSeohP5omnyljSsxxDRMoyO2arM+aP3MBDSvnaBmrt3v1IHnb9DuSYJ4=
+MIME-Version: 1.0
+X-Originating-IP: [80.15.154.113]
+In-Reply-To: <20180323135944.54bb75c1@t450s.home>
+References: <20180323175929.15319-1-a.rigo@virtualopensystems.com> <20180323135944.54bb75c1@t450s.home>
+From: Alvise Rigo <a.rigo@virtualopensystems.com>
+Date: Mon, 26 Mar 2018 10:01:01 +0200
+Message-ID: <CAH47eN3XvOxoqaht2_7sSXfrh+OWJQ=osx8_DRazBK_RA3M=aw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: vfio-platform: Update sub-maintainers
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: kvm@vger.kernel.org, Auger Eric <eric.auger@redhat.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2Q81G6I014505
 
+On Fri, Mar 23, 2018 at 8:59 PM, Alex Williamson
+<alex.williamson@redhat.com> wrote:
+> On Fri, 23 Mar 2018 18:59:29 +0100
+> Alvise Rigo <a.rigo@virtualopensystems.com> wrote:
+>
+>> Update the sub-maintainer entry as Baptiste has moved.
+>>
+>> Add me and Eric Auger as sub-maintainers of the VFIO plaform driver.
+>>
+>> Signed-off-by: Alvise Rigo <a.rigo@virtualopensystems.com>
+>> ---
+>>  MAINTAINERS | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 73c0cdabf755..9619c41c2316 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -14688,7 +14688,8 @@ F:    include/linux/mdev.h
+>>  F:   samples/vfio-mdev/
+>>
+>>  VFIO PLATFORM DRIVER
+>> -M:   Baptiste Reynal <b.reynal@virtualopensystems.com>
+>> +M:   Alvise Rigo <a.rigo@virtualopensystems.com>
+>> +M:   Eric Auger <eric.auger@redhat.com>
+>>  L:   kvm@vger.kernel.org
+>>  S:   Maintained
+>>  F:   drivers/vfio/platform/
+>
+> Hi Alvise,
+>
+> Thanks for updating this file, I haven't heard from Baptiste for a long
+> time and I already look to Eric as the de-facto sub-maintainer of vfio
+> platform.  However, I don't have any experience with your reviews, nor
+> do I see any commits in vfio platform or elsewhere in the kernel
+> attributed to you.  I certainly welcome you on as a designated reviewer
+> (ie. R:), but I would probably only consider Eric to be the
+> sub-maintainer at this point.  Any objection, Eric?  Thanks,
 
+Hello Alex,
 
-> Il giorno 21 mar 2018, alle ore 00:49, Paolo Valente <paolo.valente@linaro.org> ha scritto:
-> 
-> 
-> 
->> Il giorno 20 mar 2018, alle ore 15:41, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
->> 
->> On 20.03.2018 06:00, Paolo Valente wrote:
->>>> Il giorno 19 mar 2018, alle ore 14:28, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
->>>> 
->>>> On 19.03.2018 09:03, Paolo Valente wrote:
->>>>>> Il giorno 05 mar 2018, alle ore 04:48, Konstantin Khlebnikov <khlebnikov@yandex-team.ru> ha scritto:
->>>>>> 
->>>>>> Rate should never overflow or become zero because it is used as divider.
->>>>>> This patch accumulates it with saturation.
->>>>>> 
->>>>>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
->>>>>> ---
->>>>>> block/bfq-iosched.c |    8 +++++---
->>>>>> 1 file changed, 5 insertions(+), 3 deletions(-)
->>>>>> 
->>>>>> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
->>>>>> index aeca22d91101..a236c8d541b5 100644
->>>>>> --- a/block/bfq-iosched.c
->>>>>> +++ b/block/bfq-iosched.c
->>>>>> @@ -2546,7 +2546,8 @@ static void bfq_reset_rate_computation(struct bfq_data *bfqd,
->>>>>> 
->>>>>> static void bfq_update_rate_reset(struct bfq_data *bfqd, struct request *rq)
->>>>>> {
->>>>>> -	u32 rate, weight, divisor;
->>>>>> +	u32 weight, divisor;
->>>>>> +	u64 rate;
->>>>>> 
->>>>>> 	/*
->>>>>> 	 * For the convergence property to hold (see comments on
->>>>>> @@ -2634,9 +2635,10 @@ static void bfq_update_rate_reset(struct bfq_data *bfqd, struct request *rq)
->>>>>> 	 */
->>>>>> 	bfqd->peak_rate *= divisor-1;
->>>>>> 	bfqd->peak_rate /= divisor;
->>>>>> -	rate /= divisor; /* smoothing constant alpha = 1/divisor */
->>>>>> +	do_div(rate, divisor);	/* smoothing constant alpha = 1/divisor */
->>>>>> 
->>>>>> -	bfqd->peak_rate += rate;
->>>>>> +	/* rate should never overlow or become zero */
->>>>> It is bfqd->peak_rate that is used as a divider, and bfqd->peak_rate doesn't risk to be zero even if the variable 'rate' is zero here.
->>>>> So I guess the reason why you consider the possibility that bfqd->peak_rate becomes zero is because of an overflow when summing 'rate'. But, according to my calculations, this should be impossible with devices with sensible speeds.
->>>>> These are the reasons why I decided I could make it with a 32-bit variable, without any additional clamping. Did I make any mistake in my evaluation?
->>>> 
->>>> According to Murphy's law this is inevitable..
->>>> 
->>> Yep.  Actually Murphy has been even clement this time, by making the
->>> failure occur to a kernel expert :)
->>>> I've seen couple division by zero crashes in bfq_wr_duration.
->>>> Unfortunately logs weren't recorded.
->>>> 
->>>>> Anyway, even if I made some mistake about the maximum possible value of the device rate, and the latter may be too high for bfqd->peak_rate to contain it, then I guess the right solution would not be to clamp the actual rate to U32_MAX, but to move bfqd->peak_rate to 64 bits. Or am I missing something else?
->>>>>>> +	bfqd->peak_rate = clamp_t(u64, rate + bfqd->peak_rate, 1, U32_MAX);
->>>> 
->>>> 32-bit should be enough and better for division.
->>>> My patch makes sure it never overflows/underflows.
->>>> That's cheaper than full 64-bit/64-bit division.
->>>> Anyway 64-bit speed could overflow too. =)
->>>> 
->>> I see your point.  Still, if the mistake is not in sizing, then you
->>> bumped into some odd bug.  In this respect, I don't like much the idea
->>> of sweeping the dust under the carpet.  So, let me ask you for a
->>> little bit more help.  With your patch applied, and thus with no risk
->>> of crashes, what about adding, right before your clamp_t, something
->>> like:
->>> if (!bfqd->peak_rate)
->>> 	pr_crit(<dump of all the variables involved in updating bfqd->peak_rate>);
->>> Once the failure shows up (Murphy permitting), we might have hints to
->>> the bug causing it.
->>> Apart from that, I have no problem with patches that make bfq more
->>> robust, even in a sort of black-box way.
->> 
->> This rate estimator is already works as a black-box with smoothing and
->> low-pass filter inside.
-> 
-> Actually, it is just what you say: a low-pass filter, which works by
-> deflating two non-null quantities (the previous and the current rate
-> rate), by and adding these quantities to each other (to get the new
-> estimated rate).  In addition to being larger than 0, both quantities
-> are much lower than U32_MAX, so this computation should never yield
-> zero because of an overflow. 
-> 
-> Even some occasional zeros read for the sampled rate (because of the
-> suspicion you express below), cannot lead to a null estimated rate.
-> In fact, this is a low-pass filter, meant to cut off occasional
-> spurious values.
-> 
-> I'm insisting on this part, just because, maybe, you say that it "acts
-> as a black-box" because there is something more, which I'm overlooking
-> here, and maybe the bug is exactly in the part I'm overlooking.  But,
-> if this is not the case, I'll just stop now for this point.
-> 
->> It has limitations thus this is ok to declare
->> range of expected\sane results.
->> 
-> 
-> Correct, but if the odd value you cut off is a random value that
-> follows from a bug (and I see no other possibility, in view of the
-> above arguments), then the result may still be completely wrong.  For
-> example:
-> - the device may have a rate of, say, 200 MB/s
-> - the computation of the new estimated rate yields 0
-> - you limit this result to ~0 MB/s but >0 MB/s; this avoids division
-> errors, but still leaves you with a completely wrong rate, and a
-> consequently inconsistent behavior of the scheduler
-> 
->> It would be nice to show estimated rate in sysfs to let user
->> diagnose whenever it is wrong for a long period of time.
-> 
-> Absolutely.  This is actually already shown indirectly, through the
-> budget_max parameter, which is the number of sectors served at peak
-> rate during slice_sync.
-> 
->> Printing message all the time even ratelimited is a wrong idea.
->> If this should never happens - WARN_ONCE is more than enough.
->> 
-> 
-> I'm sorry, I was totally unclear here.  My proposal for you is:
-> since this failure does occur in your system, please add, temporarily, the
-> printing of all involved values *all the times*, so that you can track down
-> the bug, and fix the actual problem leading to this division by zero.
-> 
-> What do you think?
-> 
->> I suspect crashes might be caused by bumpy timer which was affected by smi/nmi from mce.
-> 
-> Yep.  The problem is that, for the estimated rate to go to zero, a
-> null value must be sampled for several consecutive times.
-> 
->> I'll try to find evidence.
-> 
-> Getting to the bottom of this would be really great.
-> 
-> Looking forward to your findings,
+Go on as you suggest, I don't have any objection.
 
-I guess no news yet.  Anyway, your bug report has pushed me to think
-over the representation of the rate.  And I may have found a problem,
-which might be the cause of the zeros you have seen.
+Best regards,
+alvise
 
-With a little math, it comes out that, for a sampled rate below about
-5 KB/s, 0 is stored in the variable 'rate'.  The reason is that such
-low values cannot be represented with the maximum precision currently
-available in BFQ for rates.  So, if these very low values are sampled
-for a few consecutive times, then the estimated peak rate may actually
-become zero.
-
-In the system in which you have seen null estimated rates, may the
-virtual or physical storage device be occasionally so slow?
-
-Thanks,
-Paolo
-
-
-
-> Paolo
-> 
->> 
->>> Thanks a lot,
->>> Paolo
->>>> 
->>>>>> 	update_thr_responsiveness_params(bfqd);
->>>>>> 
->>>>>> reset_computation:
+>
+> Alex
