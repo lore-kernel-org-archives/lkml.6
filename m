@@ -1,59 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752090AbeCZVFd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 17:05:33 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41055 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbeCZVFa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:05:30 -0400
-X-Google-Smtp-Source: AIpwx49g4b+Rw3akloMQWWk+MGQOBt0m1ESe/o2Rvt3VTb8xnG8W29E3Cfj7roeJjKNakDRmvqCa4g==
-Date: Mon, 26 Mar 2018 14:05:27 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>
-Subject: Re: linux-next: Tree for Mar 22 (thermal)
-Message-ID: <20180326210524.GB1899@localhost.localdomain>
-References: <20180322193847.63181403@canb.auug.org.au>
- <5449db25-c11e-68a1-532c-044689794aad@infradead.org>
+        id S1752186AbeCZVGP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 17:06:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752004AbeCZVFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 17:05:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 695DB21773
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 26 Mar 2018 17:05:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC PATCH] tracepoint: Provide tracepoint_kernel_find_by_name
+Message-ID: <20180326170529.214b7e6e@gandalf.local.home>
+In-Reply-To: <20180326204834.npkr26bdf5aprwnv@ast-mbp.dhcp.thefacebook.com>
+References: <20180326191031.14939-1-mathieu.desnoyers@efficios.com>
+        <20180326204834.npkr26bdf5aprwnv@ast-mbp.dhcp.thefacebook.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5449db25-c11e-68a1-532c-044689794aad@infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rui,
-
-On Thu, Mar 22, 2018 at 10:36:38AM -0700, Randy Dunlap wrote:
-> On 03/22/2018 01:38 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20180321:
-> > 
-> > The vfs tree still had its build failure for which I reverted a commit.
-> > 
-> 
-> on i386:
-> 
-> ERROR: "nsec_to_clock_t" [drivers/thermal/thermal_sys.ko] undefined!
-> 
-> so in drivers/thermal/thermal_sysfs.c, please add:
-> 
-> #include <linux/jiffies.h>
-> 
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-
-Are you taking care of this?
+On Mon, 26 Mar 2018 13:48:36 -0700
+Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
 
 > 
-> thanks,
-> -- 
-> ~Randy
+> Mathieu, that's not enough.
+> Commit log is also wrong.
+> It needs to state that something like this is needed only because
+> changing for_each_tracepoint_range() semantics will break lttng.
+> I'll post a follow up patch shortly.
+
+No it does not. This is needed because I find it cleaner. If you don't
+want to pull this into your patch set. I'll pull it into mine.
+
+-- Steve
