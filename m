@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752627AbeCZVZb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 17:25:31 -0400
-Received: from mail-eopbgr10108.outbound.protection.outlook.com ([40.107.1.108]:20836
+        id S1752640AbeCZVZk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 17:25:40 -0400
+Received: from mail-eopbgr10110.outbound.protection.outlook.com ([40.107.1.110]:43744
         "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752171AbeCZVZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 17:25:26 -0400
+        id S1752259AbeCZVZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 17:25:34 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se;
 From: Peter Rosin <peda@axentia.se>
@@ -24,9 +24,9 @@ Cc: Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
         Sean Paul <seanpaul@chromium.org>, Jacopo Mondi <jacopo@jmondi.org>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 2/5] drm: bridge: add API to query the expected input formats of bridges
-Date: Mon, 26 Mar 2018 23:24:44 +0200
-Message-Id: <20180326212447.7380-3-peda@axentia.se>
+Subject: [PATCH v2 3/5] drm: of: add display bus-format parser
+Date: Mon, 26 Mar 2018 23:24:45 +0200
+Message-Id: <20180326212447.7380-4-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180326212447.7380-1-peda@axentia.se>
 References: <20180326212447.7380-1-peda@axentia.se>
@@ -36,48 +36,48 @@ X-Originating-IP: [85.226.244.23]
 X-ClientProxiedBy: HE1P195CA0017.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::27)
  To AM4PR0202MB2769.eurprd02.prod.outlook.com (2603:10a6:200:8c::19)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1e7ea886-a999-4418-c223-08d593601602
+X-MS-Office365-Filtering-Correlation-Id: 06a87ddc-6808-4af2-31d6-08d593601b1f
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM4PR0202MB2769;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;3:5LzGw73Iea5zgyiaW82itqKbkGfdX4C7tzhqHOZqCz1NdXufBXh7Ex1Ry5p5H+a8ayaCe0Mda7aOf7epcsACIFJ5nB2cBkkjhac+CEu3F2xUQ1Fv0gUUUH6fIDbl1WeiZiou0DQafxwmiltoxQ8pAcb6G5bmQJcj2k+iFGF8tb7XGkY0oX7SittMOESQVQff5dIaDg35X+QJSXcuzXSYPFF9pyztZVmR2VVpOPwd5PAkBnD+F6KWDa5rOxOzTXyK;25:7rd1xAQdkgPpHArMOrw4komC/8MGT78ZtpahWPdoJl8ESH+pizn7gJ2WYGwWFjC37gUmmrg/YEhU0p06oy7XzDPeXDEJaWEw4Xj9i5uqfu6hmdyR/JOs15DkrrvoGICvHBr4Oh04UHcEICOPtdWeQKW+tbUilReQuCfp2WDNQnMXtuXsyfXUGhOjkx2Tv/WhdmHpkFJfuYEh1ryCAQML29FRD59SXz+dv2mc+OZTyqNNBDYe7S9qnNfNHHv8LSO7htsKNKd32ubKKvKDJpaKy3U2mPLx3+ion7EdAoIZMSjkgt8uGEMcc1dAR9PBsNrxpO38p2Rcu3kqf3YeI/4miQ==;31:lFBDwqVWQASrVsHqrieJ5RI6oP4KkvA+1/KanNdcfyGGOg7ls+X8534ZM+/0i6zCvwC0FIjWQfhriXu7bQbuk5aoxagmh5Ty+81S7X8Kl4DEjzSXmXLd1c1o+pOadKwHPf7GIsSPYQSGWSX6OXEsqp2/2lsZXmdAXnoeyBZp5g3UFy6z4BdKYjYvgzeWEN3WqxCRThq3m2J9Q2ibRQkPjpaQXzgAZP6JiWgVPcJpZEQ=
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;3:mqYa0O8ypyAtXFEyM3I8I0EG6gVHvfKHOZGNeKJNewJazMbWOgcKFqDQLH1tpG67XqWOHZvGhTblmWNpPvkULfK0zgAeFBijpOtbett5mAf09YsUqXgz19q7LKyveQb6HgZ01kToBTwfcWGky0oD8ruX9qM7T8HlHOdSa4mH4cG2JCyDpb+aDu5dzgEqACXJ5Tsy5eKyjQfzgDBd7opP0AacB/3k7BAFjN98LXQPq3CEFPYBL4svEkpdR3sqRNDN;25:ch+/lCFwh18i4qaVHqbqeGo7PCIqbXq8Eizf78tn76R5ln3ue1zR0JAFTH2mIDbqBwgu702OMcBm9Z2Nk6dIZbllleYBJtsW65NiRDnJfEEDgoUffIR9khoKKKrPGMKftLwz+or83YGWUapIJtfs+aSm5UQDRWBDxelHcL/0CnPm0Vk/VuM6aHKDykWBSCZwaxrZRhZiXeWWLexydEWl+VFivRVX13fjk2pf3rb7VxWybLTdNWdXsnb6wIdHZb0h8OTefNDMO3MwHVWFMf5yp9JavuOg6MY2yCXKMt46mkR66gBQCatNT9lCyobfWG49vlc/CLz+YcGP6A3K7PgtAQ==;31:LTulc+uDbzFQI0ABirUvUqvGn4UUiZHz0knOo9LmvcQVl+Qm5Tdyr3ks5ZHc5yFikWjzuAr2TPnLbqijZ+pvuEtqCKp2ZLyWkNj8KBiBmncjiXkUpoyvV53y6++x/izf0lGYpf2fISRaimlUcYMZ/F2g9aPfcC8vvJGi/DQj7F1eY0Q+oZgy+J2fNO08wmgxeKUER9dIfBy7ORFSa9BvBlidcC7TAgTMNBF3SllI5Vo=
 X-MS-TrafficTypeDiagnostic: AM4PR0202MB2769:
-X-Microsoft-Antispam-PRVS: <AM4PR0202MB276928B0AE27BD29CF8ECB7EBCAD0@AM4PR0202MB2769.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(20558992708506);
+X-Microsoft-Antispam-PRVS: <AM4PR0202MB2769A9FAFB9D9E93FC9927AEBCAD0@AM4PR0202MB2769.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231221)(944501327)(52105095)(6041310)(20161123562045)(2016111802025)(20161123560045)(20161123564045)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:AM4PR0202MB2769;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0202MB2769;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;4:WL8ZLOXHZuVreE7FTp7jEwJQPHkKwrL5jmog5uvpUbZs7EgghVppCF7s7eww0Jtf19eqgZIeiuGYbkZ2ePG1lY3jPUXB8pAur8Fej3lAY0pQpxUjwj0ykOQkfIhhfecbFA0EjfCOPVzRybR1dXfsyrwF0QeD44bFJVR/TmnlYoiXfAGqKRdOk/aa2Ivon1u2yq8ihQt7QFWuRhW0GQqB9HZ25/mLy0ToSyyzoO26aGclYGKb6NGOJBNITsjB+07SBf60ozbIqwb3fheSvA16q0XIw3rPuYmG7uaHy7mLoUnat+O2oPMbsJVk7yuW3ErL
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;4:dpZbh/t58qWtxC9RLR51lgITRAvyWRx0rToBltwY0UrrJ+7z0b5C0p4qs4KdUCgDCt96fEnQuJadgOZ9EMnvKr6ULWXjc3DpwRR9Fec8kYDcVd12aF8PTCgpQZN596XMb4LXYMV3ukryaO2keqCUyyYgHnWrwXN7Mdt+gh/A9/yNttza5f5oWIvYKWGnILR0AGK6mmGp3qIWQa4uNjP4fj80muCRkxH5j3EPRKhwRYWxeSevNsZ6ZB+0vw0gmpvi4OyUUQXy+frVPOcYcqvF8A==
 X-Forefront-PRVS: 06237E4555
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39830400003)(366004)(39380400002)(396003)(199004)(189003)(446003)(2351001)(316002)(16526019)(186003)(54906003)(16586007)(11346002)(2361001)(97736004)(105586002)(6486002)(53936002)(956004)(6512007)(2906002)(2616005)(1076002)(68736007)(66066001)(51416003)(76176011)(48376002)(486005)(486005)(52116002)(6666003)(5660300001)(106356001)(86362001)(6916009)(575784001)(50466002)(47776003)(478600001)(386003)(305945005)(8676002)(25786009)(26005)(74482002)(6506007)(7736002)(6116002)(36756003)(7416002)(4326008)(3846002)(81166006)(81156014)(8936002)(476003)(50226002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0202MB2769;H:orc.pedanet;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0202MB2769;23:9IXOTqzgJIK78C6wlzGx4l1yV7J/yu+4E+ph9Da?=
- =?us-ascii?Q?rqdooS8TNeHt24cZPwawUJtc0Xd/veXrjEWEr9qI+1VvnQGOENBx6eOw2sSp?=
- =?us-ascii?Q?OOWH6J4W/+8rqNecOW8bMeFzSwC4fQbMJyiHPykhf8HNPCGqc7jKmwXbTYVQ?=
- =?us-ascii?Q?Nv7B8D1cciL56Efnl1Y+Qku77ZR6cLaB0kHVPfR9tmy+Pv23GyfSmBhkGC5+?=
- =?us-ascii?Q?tRftTouiIcEotlpopmaltIAntaXx4aVKAaBMiN3hb/UxsgAcD0OKEgXoV9vb?=
- =?us-ascii?Q?UnvZj79o46NaRcwSo6wSkqkAterZUcuOOnIcKsq+t4EGqISf6PKyca/Yxn40?=
- =?us-ascii?Q?e53mdfcIOt6xN8tl5hBX2BJkxRKeXtvC2wW3GrU5m0uAJ0huKcrDeWResypL?=
- =?us-ascii?Q?eo7fAoEGjsu46qsqGvVcdZCieYw83bxBdhxm3SFlUIqj1sDdbB2/ZYQWM9NH?=
- =?us-ascii?Q?E1egLjlCdY9yPXNKHYVhfs2iQhYiaJIe0ZAo/mJFEqp0XP7Uy2WoO7phznft?=
- =?us-ascii?Q?cJELLTeD59zTerTLthjFF7tNr1Q4X/6tYA6sza5VOgZ+JoKcCCderXLtqg0o?=
- =?us-ascii?Q?AZNVXJhr8O3CE9zq7TiijrV8nuB45KnyKFZNj3TZ1lMh2KIgO3CDL7tnuXOt?=
- =?us-ascii?Q?tnaiTGzvmYveLijvD3EkO+eAQcpNYgG8x4pzhcZr8dgiDdOzPt+VR6v4s5gT?=
- =?us-ascii?Q?6gJsEGOgy2ux+feyXdpj/PX/Yi1LngnAQtuxelO0sUV6h3wYxfrQWHjN8hh3?=
- =?us-ascii?Q?Yx8mlyAeqHsgpoCpyxe06W+qb37ydeWN9u5Qc3lbOMX1Q8GjgAwouytDC2vM?=
- =?us-ascii?Q?zt88Z2EvdMqQocj7l61bgzL5C8b11delCE67RP/NliTuk0x1VPn8LIjc01pm?=
- =?us-ascii?Q?yoXr7wHccmyQxsC9zYEUlVs4DFaAFlDVNtBqRXcctw3IUQQaxtcAlGWzfHfU?=
- =?us-ascii?Q?LcWyvRRkAAB2zRRiUs4SqjQBBla4WLqCUD/PdwDNSta/u4Wz4atAvT0v0V4x?=
- =?us-ascii?Q?C4SrsdDbvNBVGDE/Ryg7dlxJeuTFPUruzqWka2/rClrxfgc9sDYFkh3K5XkR?=
- =?us-ascii?Q?LDaQmjPCRRgK2GC67G0fnBx2lmkhwDVpi+Oy1UJWRR0TKT/P27v1Wcnce+/5?=
- =?us-ascii?Q?hb8Ls3JUayQP/+239/srjXvdcfQ4ObG5VbRNP07x5xxGhgdOo9VlSlZijQRh?=
- =?us-ascii?Q?n7OEAl2kLkMneGWIM0VHBBjRKUWe6vyqS/7DhWi8zLlHfCYJe9FYfXsAs1Pu?=
- =?us-ascii?Q?AHZAQfPQoQQFyi/AR4Lxl7koOufhJWi5KoHFaksFF6jVkoV3Bot/+fJypQS5?=
- =?us-ascii?Q?jBpuUciJOKVScW55w5qED2DYYJr/TeEf4RYBWl81id35JolMqA4T5cTSZaWl?=
- =?us-ascii?Q?Ght/uKQ=3D=3D?=
-X-Microsoft-Antispam-Message-Info: aOBHXoQJDaOilIk1y2xbSwGiG08UJ0Fd5f7gxDM7Hu+vOXHabAlpWFnNlYdNOiSOpeTy9UOc8ZpOWOx9eldV6QXPy/TpgbZJaT+O88j7WKvuWtWccQb9ggWfjIeUDidCdYz5Nk5rQemcLUlneLpo1FMCrwHH16JLxn6af+bbnQbNdhHfFMcQl+TUn24+gzPl
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;6:yBouxZNaTuXdwz5wAwAcJ8ZBXSrk9K2jof1sH+VpPoEEKPqAs/VW5zxjdwhIW7/42ppqrObPpKYVFXBb4LnsbpPoW8ZN/KI1Swhvw+T0biUoHdMSPYbq1J14qIre9SCfACRoljhfhlgSeyLg5xrPw1kqMYwsBHu2/q7Lo44XoYvJA936f5E6W0rViywdumloWpFjCwluYShMHLLdwRQgHIoPR5nZ52jPihGTQtyT+Y3N8873Yv3bnkXnuL0y4OZYbIZHud/vGpTJjnMk0DvzGeKYhLBlningPAwUxU14t8hQq8XLfvZxkEEnscID0SmnOpj34i3W2kSvri2xwX5FB/YXedLWS/3TPilXxY/Zg9rma6nzh269B/p+URsnlpqkgObT4wdOgiyKotmJnDn2/3LjmSanD4RdbgwSFeEBnn4BKisS2dCI2akyJH7Xtopr6PstRXjscj9yCZz8/dblaQ==;5:KwATvsvvt/R9r9ks+WCHV8ffovTqvwFgxkqq0N3pq4mXqKmKSqAWgBrmg48fHGeT6bJRRuzGTMEh14qgiPLD7tLohEyDmJ8T6s0rcA4VYePA6GJ99KA0TtWofEYT11CPzT/S/rqUCjklKeWYYSzZ4Smc14LFY1WP+aCu1Y6VFR4=;24:JC3QK8LDYnWq2+6r2NOJSjp2ZrGgCbNANskXgm170wxag6fmVreOIEhrpA295um2ywujmI2xgyQyU2A2Zsehk7lFpMsbT7O8mUWYQAhDLuU=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39830400003)(366004)(39380400002)(396003)(199004)(189003)(446003)(2351001)(316002)(16526019)(186003)(54906003)(16586007)(11346002)(2361001)(97736004)(105586002)(6486002)(53936002)(956004)(6512007)(2906002)(2616005)(1076002)(68736007)(66066001)(51416003)(76176011)(48376002)(486005)(486005)(52116002)(6666003)(5660300001)(106356001)(86362001)(6916009)(50466002)(47776003)(478600001)(386003)(305945005)(8676002)(25786009)(26005)(74482002)(6506007)(7736002)(6116002)(36756003)(7416002)(4326008)(3846002)(81166006)(59450400001)(81156014)(8936002)(476003)(50226002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0202MB2769;H:orc.pedanet;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0202MB2769;23:LpCLQCQz8QxirxCAGfTUlYvv+m3nQnju0ZupejK?=
+ =?us-ascii?Q?ii5DlVo8WU5WjrAqOF4iv1VGRjY7toqRUN5a1SNUhoOql0AgbDdmxKqoGVxT?=
+ =?us-ascii?Q?wgl7o2kKxKstaQeCP2QKuwsJ+IXUI3XJjvY4IkUeicr8FDmA22VMkjQj8Nk+?=
+ =?us-ascii?Q?/icrZJNflKtHAV9bB+K7lqYK7mIFoZzRGRfMH/hLvO3sEkGxzAHU6B82pfSA?=
+ =?us-ascii?Q?QeZFLVJ7vKgkNpD0FU8ggJ42A6Yf7i92PBUMMiuPT43JZkWgnEIYjIjvq5is?=
+ =?us-ascii?Q?yWEhgn7d4J07C+HZW8dYsRL06WHOHWLCYdSNOk4h3pYOMhO65aMwk+Jnmjzn?=
+ =?us-ascii?Q?C4lpfpWn1go2d5mVkAPtWutgOlHh863NgpIQ9dr/Kg69lKLDdpiV21vwd1WP?=
+ =?us-ascii?Q?DKXEdSMJjslLgX2EHuYzFu/rjc6OMhTQhtmWN1oebI6A+AP3lZ6UcieFyEyc?=
+ =?us-ascii?Q?lnAIVEtGi31I/HTaa95mEbFgIkMuxivBu9Lh9puUMhRG/NxNm7Hq0RogCqjN?=
+ =?us-ascii?Q?7quJQjiTTIMesm4LIRr1o4givHUNCz675MdBy2BPkudduzVDSf/qB2S4gFz0?=
+ =?us-ascii?Q?0U0dp8zg1rTfWfakVBQBgUc+owXHd9RMai+o+gIAWh5p/U1hi+LzaRyQgszq?=
+ =?us-ascii?Q?AbJNphb3n/Y1bSXGTN9nwQVKWu9NWZIeG9T5Z9SKlW/SbkjD2Fv/s1bycUWq?=
+ =?us-ascii?Q?/TeaF8Jxzs6BfdLIyKIcxfgiLzlaix/KSTphEcTQ+pfwRr9r+fGEkAatBSYx?=
+ =?us-ascii?Q?vVbPBVyw28RGtGIwFuq09aQysQ96YrtktcZQEd6/uBk33DSY2K97/ui1187l?=
+ =?us-ascii?Q?SnCGgLyTDpQvAJM9cdRx1xN1X+Jxo+0LuGnYJ36QuczyzNfqzToYEI6WzLdR?=
+ =?us-ascii?Q?12C1X8ZjB+O7KJ78edjgNlneZIiCKO5VED88VNEaHuxL+03Xe42wPC0uicUl?=
+ =?us-ascii?Q?1FyEjXgYYcdYFT+GddYHogG9lmRYSpuTVd5I1y5ufhQnfCPer6Oh6a/epfy8?=
+ =?us-ascii?Q?Ksg9u7BcEshYEXlCrJg2xU20amXzCk5PoJMhjdQDpdDrVxSpFaMlngvYIX1c?=
+ =?us-ascii?Q?GHnzGWmRjGqqkamJmDZ4hKub2KM31qQ1qb31mVOs/EFJjkpRzIL0/OaBEMM2?=
+ =?us-ascii?Q?PdK4UoeMnRggmM7BF24WC0FwQJ1PNtYI3MlUbXGrzxjR5TKDQHLAczFeMEkx?=
+ =?us-ascii?Q?1/c5grbHixRoQylHVd9Ws1MwIzAPTOPLelwZpQ2rPUTCbCIOO2HmjqjIiqyY?=
+ =?us-ascii?Q?R89Yj5VlkO827xi/3LGxihNoS1KzIKUtMie+iFY9xAfDyAxCY4E/GYJz4HE5?=
+ =?us-ascii?Q?X1YyszafJKyAcKkbvvih4/wHXg7Cyk2r+1mQxLYqNGFHYlMBPEp1Ay1Rnowa?=
+ =?us-ascii?Q?rZII7sw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: 1L7V3NvmnnpOFUNkRyHlOb4bVrGvgL+aW/hUyj1CIODcGgdb8uxn9mQMBtGBQonVL5rs4aGOk+fbbIERspmOSR+cC6rbAECMfejtJVHsyhzK3VPaUI/rmHhH63xX10LoEmT9kikbT88KG1oTCWNKJolmXU8mDq2uMkIHI7039/B27UMwbodgBNcJKWg+Qzf9
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;6:6R+F4ox5wpJC08cXL/rcWuX4JzLeAD9sBPul7akzhRtYYZghRkrg988pclTfPsuKKYYLTu5a9xxKI0j1SiblU6zK6gCw8oOGAxKWflUNUCVEfDS+bOJ9aswinkdM2zRuwO/Q/rnanrIfj9/1Frg2YPywInTLLHYt37QqzAnXsYlv1NDlfi51Bav6zCntaFmAXyI7G0uzWwPcuJ69Wlxgh4y8yCul3+/H7nHKQK9CZRssaFizU6/ChvwQu/zRngs6dK29bGwm8s/BwHJkDDEhI34YcuYO447LoKV1A2apX4tZ74DLV42R7HfWNJb5qgscnreVNpn1VHbH2NzRfoA7Cps3aQ/La3RmQmZHla3lFWPOMqlZ9JpyqvKg0pXwTrI/laegoQwgAD29wBBM6CXmJOVkmHkcKvCqhRWt8Su3DBl+mmlN3Du42Pl2UDAxjq2iPe80wi0RfXYU57E+eJjOIA==;5:WaIDcdPIGOSrU4sv5v6hV7MDAhA66qQRr0XnZhZ3JY55Pm2VUFd0EP7SZxe1ut3lUe1NMUVpT5tIoEcTjSqXgcz9JKMgFSaLS+3bHY/HVaOP78fBSH4OK+jHjVGZFmZOMaJ5NV6aZ701MoU5nzKnipb9ea18vVTi2auKn3WFJn8=;24:6jfGEPPxSB+HA/AXU9BOsqplDtxz3373WJPzXm4aAsBauC4+WoB6MgJklHQYJDxkfk43fsMRSeILbKUcYcj04gxkSDt2iEdnCZxuAVuvo+E=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;7:MSWrGeSio0LF5Zpl8yprA2w/+Oje45zE9G37YVNAhrWm8ke4UnikPKE2OpR0ItnGoYJgd4YURFAujZsFw2pttDTCYyiMpSS6uxO2BjEpnyi4EnEpwtSokft9PRJYJD0bxUe3MZ+0M/FHDNv7/ExVCWliyiWOxJnMiMAEoXZ+gGSTV2RDzWXO/y3QRJ/m6LX14Hxeg2NI/Rimhb5Yr3mtIhdwwp0dzEMJbnsHc74f/iyZvk776xD8mM4D08FwRPWF
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;7:Y9JZdr9Bdt2CpQW/Rqstf5CZr0bmXDzHdfm3VbxFo6uWJhEyeAH86v7q59/FNoo5ERcRk/8q0CLdhUUofq4/7pokcMffHh6FlDmKnnZCk9YbZGFRrp+GeG31DV8rsHIjCOkFym7LYqf6uMQ55cq03Pm8PILp1bxShERUV1ec6oJO4IhM+z8bji3a86vuSUkqPHg7DehBT0hrpOGwI6Johhe5NAgXP2wXZ05ZD9ipaVvTthd31lDG7cjyYe17rBBw
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2018 21:25:22.7517 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e7ea886-a999-4418-c223-08d593601602
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2018 21:25:31.3287 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06a87ddc-6808-4af2-31d6-08d593601b1f
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0202MB2769
@@ -85,94 +85,150 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bridges may affect the required bus output format of the encoder, in
-which case it may be wrong to use the output format of the panel or
-connector as is. Add infrastructure to address this problem.
+Add a common API to parse display bus format strings into fourcc codes.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/gpu/drm/drm_bridge.c | 32 ++++++++++++++++++++++++++++++++
- include/drm/drm_bridge.h     | 18 ++++++++++++++++++
- 2 files changed, 50 insertions(+)
+ .../devicetree/bindings/display/bus-format.txt     | 35 +++++++++++++
+ drivers/gpu/drm/drm_of.c                           | 59 ++++++++++++++++++++++
+ include/drm/drm_of.h                               |  9 ++++
+ 3 files changed, 103 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bus-format.txt
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 1638bfe9627c..f85e61b7416e 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -348,6 +348,38 @@ void drm_bridge_enable(struct drm_bridge *bridge)
+diff --git a/Documentation/devicetree/bindings/display/bus-format.txt b/Documentation/devicetree/bindings/display/bus-format.txt
+new file mode 100644
+index 000000000000..590e6c73f3dc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bus-format.txt
+@@ -0,0 +1,35 @@
++Bus formats in the display pipe
++===============================
++
++Various encoders in display controllers output the pixels in different
++formats. Circuits handling display connectors and hardwired panels also
++expect pixel input in various formats. We call these formats bus formats.
++
++Some bus formats are:
++
++Parallel
++--------
++
++rgb888
++	8 parallel lines for red, green and blue respectively. There are
++	also lines for the pixel-clock, horizontal-sync, vertical-sync
++	and data-enable.
++
++rgb666
++	Same as rgb888, but with 6 lines per color.
++
++rgb565
++	Same as rgb888, but with 6 green lines and 5 red and blue lines.
++
++rgb444
++	Same as rgb888, but with 4 lines per color.
++
++
++LVDS
++----
++
++jeida-18
++jeida-24
++vesa-24
++	These are LVDS bus formats, see the data-mapping property in
++	panel/panel-lvds.txt for a description of these bus formats.
+diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+index 4c191c050e7d..5f65471225bb 100644
+--- a/drivers/gpu/drm/drm_of.c
++++ b/drivers/gpu/drm/drm_of.c
+@@ -262,3 +262,62 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 	return ret;
  }
- EXPORT_SYMBOL(drm_bridge_enable);
- 
-+/**
-+ * drm_bridge_input_formats - get the expected bus input format of the bridge
-+ * @bridge: bridge control structure
-+ * @bus_formats: where to store a pointer to the bus input formats
+ EXPORT_SYMBOL_GPL(drm_of_find_panel_or_bridge);
++
++/*
++ * drm_of_bus_formats - parse list of bus format strings into drm fourcc
++ * @np: device tree node containing bus format property
++ * @propname: name of bus format property
++ * @bus_formats: array of parsed fourcc codes
 + *
-+ * Calls the &drm_bridge_funcs.input_formats op for the frist bridge in the
-+ * chain that has registered this op.
++ * On success, @bus_formats points to a location where the actual drm
++ * fourcc codes are.
++ * WARNING: The caller is responsible for freeing this memory with kfree.
 + *
-+ * Note that the bridge passed should normally be the bridge closest to the
-+ * encoder, but possibly the bridge closest to an intermediate bridge in
-+ * convoluted cases.
-+ *
-+ * RETURNS:
-+ * The number of bus input formats the bridge accepts. Zero means that
-+ * the chain of bridges are not converting the bus format and that the
-+ * format of the drm_connector should be used.
++ * Returns the number of parsed bus format entries, or one of the standard
++ * error codes on failure.
 + */
-+int drm_bridge_input_formats(struct drm_bridge *bridge,
-+			     const u32 **bus_formats)
++int drm_of_bus_formats(const struct device_node *np, const char *propname,
++		       u32 **bus_formats)
 +{
-+	int ret = 0;
++	int num_bus_formats = of_property_count_strings(np, propname);
++	const char *fmt;
++	int ret;
++	int i;
 +
-+	if (!bridge)
-+		return 0;
++	if (num_bus_formats <= 0)
++		return num_bus_formats;
 +
-+	if (bridge->funcs->input_formats)
-+		ret = bridge->funcs->input_formats(bridge, bus_formats);
++	*bus_formats = kmalloc(num_bus_formats * sizeof(**bus_formats),
++			       GFP_KERNEL);
++	if (!*bus_formats)
++		return -ENOMEM;
 +
-+	return ret ?: drm_bridge_input_formats(bridge->next, bus_formats);
++	for (i = 0; i < num_bus_formats; ++i) {
++		ret = of_property_read_string_index(np, propname, i, &fmt);
++		if (ret < 0)
++			return ret;
++
++		if (!strcmp(fmt, "rgb444")) {
++			*bus_formats[i] = MEDIA_BUS_FMT_RGB444_1X12;
++		} else if (!strcmp(fmt, "rgb565")) {
++			*bus_formats[i] = MEDIA_BUS_FMT_RGB565_1X16;
++		} else if (!strcmp(fmt, "rgb666")) {
++			*bus_formats[i] = MEDIA_BUS_FMT_RGB666_1X18;
++		} else if (!strcmp(fmt, "rgb888")) {
++			*bus_formats[i] = MEDIA_BUS_FMT_RGB888_1X24;
++		} else if (!strcmp(fmt, "jeida-18")) {
++			*bus_formats[i] = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG;
++		} else if (!strcmp(fmt, "jeida-24")) {
++			*bus_formats[i] = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
++		} else if (!strcmp(fmt, "vesa-24")) {
++			*bus_formats[i] = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
++		} else {
++			kfree(*bus_formats);
++			*bus_formats = NULL;
++			return -EINVAL;
++		}
++	}
++
++	return num_bus_formats;
 +}
-+EXPORT_SYMBOL(drm_bridge_input_formats);
++EXPORT_SYMBOL_GPL(drm_of_bus_formats);
+diff --git a/include/drm/drm_of.h b/include/drm/drm_of.h
+index b93c239afb60..ccacddc03a2e 100644
+--- a/include/drm/drm_of.h
++++ b/include/drm/drm_of.h
+@@ -33,6 +33,8 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
+ 				int port, int endpoint,
+ 				struct drm_panel **panel,
+ 				struct drm_bridge **bridge);
++int drm_of_bus_formats(const struct device_node *np, const char *propname,
++		       u32 **bus_formats);
+ #else
+ static inline uint32_t drm_of_find_possible_crtcs(struct drm_device *dev,
+ 						  struct device_node *port)
+@@ -69,6 +71,13 @@ static inline int drm_of_find_panel_or_bridge(const struct device_node *np,
+ {
+ 	return -EINVAL;
+ }
 +
- #ifdef CONFIG_OF
- /**
-  * of_drm_find_bridge - find the bridge corresponding to the device node in
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index 682d01ba920c..ae8d3c4af0b8 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -220,6 +220,22 @@ struct drm_bridge_funcs {
- 	 * The enable callback is optional.
- 	 */
- 	void (*enable)(struct drm_bridge *bridge);
-+
-+	/**
-+	 * @input_formats:
-+	 *
-+	 * The callback reports the expected bus input formats of the bridge.
-+	 *
-+	 * The @input_formats callback is optional. The bridge is assumed to
-+	 * not convert the bus format if the callback is not installed.
-+	 *
-+	 * RETURNS:
-+	 *
-+	 * Zero if the bridge does not convert the bus format, otherwise the
-+	 * number of bus input formats returned in &bus_formats.
-+	 */
-+	int (*input_formats)(struct drm_bridge *bridge,
-+			     const u32 **bus_formats);
- };
++static inline int drm_of_bus_formats(const struct device_node *np,
++				     const char *propname,
++				     u32 **bus_formats)
++{
++	return -EINVAL;
++}
+ #endif
  
- /**
-@@ -263,6 +279,8 @@ void drm_bridge_mode_set(struct drm_bridge *bridge,
- 			struct drm_display_mode *adjusted_mode);
- void drm_bridge_pre_enable(struct drm_bridge *bridge);
- void drm_bridge_enable(struct drm_bridge *bridge);
-+int drm_bridge_input_formats(struct drm_bridge *bridge,
-+			     const u32 **bus_formats);
- 
- #ifdef CONFIG_DRM_PANEL_BRIDGE
- struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
+ /*
 -- 
 2.11.0
