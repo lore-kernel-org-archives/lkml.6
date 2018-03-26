@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752204AbeCZUOO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 16:14:14 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:21690 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751249AbeCZUNC (ORCPT
+        id S1752168AbeCZUOM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 16:14:12 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:36056 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751840AbeCZUNC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Mar 2018 16:13:02 -0400
 From: Murali Karicheri <m-karicheri2@ti.com>
@@ -12,9 +12,9 @@ To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
         <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [net-next PATCH 3/5] net: netcp: ethss enhancements to support 2u cpsw h/w on K2G SoC
-Date: Mon, 26 Mar 2018 16:15:10 -0400
-Message-ID: <1522095312-23249-4-git-send-email-m-karicheri2@ti.com>
+Subject: [net-next PATCH 1/5] soc: ti: K2G: enhancement to support QMSS in NSS
+Date: Mon, 26 Mar 2018 16:15:08 -0400
+Message-ID: <1522095312-23249-2-git-send-email-m-karicheri2@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
 References: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
@@ -25,254 +25,238 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-K2G SoC uses 2u cpsw h/w. It uses RGMII instead of SGMII to interface with
-Phy. This patch enhances the driver to check RGMII status instead of SGMII
-status for link state determination. Also map all of the vlan priorities
-to zero as the packet DMA is enabled to receive only flow id 0 which maps
-to priority zero.
-
-Additionally, When a phy with rgmii interface requires internal delay, the
-same is set in the phy driver. To support such phy devices, add a phy-mode
-handling code in the driver using of_get_phy_mode() and pass the obtained
-phy mode to of_phy_connect()
+Navigator Subsystem (NSS) available on K2G SoC has a cut down
+version of QMSS with less number of queues, internal linking ram
+with lesser number of buffers etc.  It doesn't have status and
+explicit push register space as in QMSS available on other K2 SoCs.
+So define reg indices specific to QMSS on K2G. This patch introduces
+"keystone-navigator-qmss-l" compatibility to identify QMSS on
+K2G NSS (QMSS Lite) and to customize the dts handling code. Per
+Device manual, descriptors with index less than or equal to
+regions0_size is in region 0 in the case of QMSS where as for
+QMSS Lite, descriptors with index less than regions0_size is in
+region 0. So update the size accordingly in the regions0_size bits
+of the linking ram size 0 register.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: Wingman Kwok <w-kwok2@ti.com>
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
 ---
- drivers/net/ethernet/ti/netcp.h       |  3 ++
- drivers/net/ethernet/ti/netcp_ethss.c | 75 ++++++++++++++++++++++++++++++-----
- 2 files changed, 67 insertions(+), 11 deletions(-)
+ .../bindings/soc/ti/keystone-navigator-qmss.txt    |  7 ++
+ drivers/soc/ti/knav_qmss.h                         |  6 ++
+ drivers/soc/ti/knav_qmss_queue.c                   | 90 ++++++++++++++++------
+ 3 files changed, 81 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/netcp.h b/drivers/net/ethernet/ti/netcp.h
-index 8900a6f..3e3193c 100644
---- a/drivers/net/ethernet/ti/netcp.h
-+++ b/drivers/net/ethernet/ti/netcp.h
-@@ -33,6 +33,9 @@
- #define SGMII_LINK_MAC_MAC_FORCED	2
- #define SGMII_LINK_MAC_FIBER		3
- #define SGMII_LINK_MAC_PHY_NO_MDIO	4
-+#define RGMII_LINK_MAC_PHY		5
-+#define RGMII_LINK_MAC_MAC_FORCED	6
-+#define RGMII_LINK_MAC_PHY_NO_MDIO	7
- #define XGMII_LINK_MAC_PHY		10
- #define XGMII_LINK_MAC_MAC_FORCED	11
+diff --git a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
+index 77cd42c..1b0878a 100644
+--- a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
++++ b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
+@@ -18,6 +18,7 @@ pool management.
  
-diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 56dbc0b..df163ec 100644
---- a/drivers/net/ethernet/ti/netcp_ethss.c
-+++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -21,6 +21,7 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of_mdio.h>
-+#include <linux/of_net.h>
- #include <linux/of_address.h>
- #include <linux/if_vlan.h>
- #include <linux/ptp_classify.h>
-@@ -166,6 +167,9 @@
- #define	GBE_RXHOOK_ORDER			0
- #define GBE_DEFAULT_ALE_AGEOUT			30
- #define SLAVE_LINK_IS_XGMII(s) ((s)->link_interface >= XGMII_LINK_MAC_PHY)
-+#define SLAVE_LINK_IS_RGMII(s) \
-+	(((s)->link_interface >= RGMII_LINK_MAC_PHY) && \
-+	 ((s)->link_interface <= RGMII_LINK_MAC_PHY_NO_MDIO))
- #define NETCP_LINK_STATE_INVALID		-1
- 
- #define GBE_SET_REG_OFS(p, rb, rn) p->rb##_ofs.rn = \
-@@ -549,6 +553,7 @@ struct gbe_ss_regs {
- struct gbe_ss_regs_ofs {
- 	u16	id_ver;
- 	u16	control;
-+	u16	rgmii_status; /* 2U */
+ Required properties:
+ - compatible	: Must be "ti,keystone-navigator-qmss";
++		: Must be "ti,keystone-navigator-qmss-l" for NSS Lite
+ - clocks	: phandle to the reference clock for this device.
+ - queue-range	: <start number> total range of queue numbers for the device.
+ - linkram0	: <address size> for internal link ram, where size is the total
+@@ -39,6 +40,12 @@ Required properties:
+ 			  - Descriptor memory setup region.
+ 			  - Queue Management/Queue Proxy region for queue Push.
+ 			  - Queue Management/Queue Proxy region for queue Pop.
++
++For NSS lite, following QMSS reg indexes are used in that order
++			  - Queue Peek region.
++			  - Queue configuration region.
++			  - Queue Management/Queue Proxy region for queue Push/Pop.
++
+ - queue-pools	: child node classifying the queue ranges into pools.
+ 		  Queue ranges are grouped into 3 type of pools:
+ 		  - qpend	    : pool of qpend(interruptible) queues
+diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
+index 905b974..5fa1ce6 100644
+--- a/drivers/soc/ti/knav_qmss.h
++++ b/drivers/soc/ti/knav_qmss.h
+@@ -292,6 +292,11 @@ struct knav_queue {
+ 	struct list_head		list;
  };
  
- struct gbe_switch_regs {
-@@ -591,6 +596,7 @@ struct gbe_port_regs {
- struct gbe_port_regs_ofs {
- 	u16	port_vlan;
- 	u16	tx_pri_map;
-+	u16     rx_pri_map;
- 	u16	sa_lo;
- 	u16	sa_hi;
- 	u16	ts_ctl;
-@@ -695,6 +701,7 @@ struct gbe_slave {
- 	u32				link_interface;
- 	u32				mac_control;
- 	u8				phy_port_t;
-+	struct device_node		*node;
- 	struct device_node		*phy_node;
- 	struct ts_ctl                   ts_ctl;
- 	struct list_head		slave_list;
-@@ -2091,8 +2098,9 @@ static void netcp_ethss_link_state_action(struct gbe_priv *gbe_dev,
- 				     ALE_PORT_STATE_FORWARD);
- 
- 		if (ndev && slave->open &&
--		    slave->link_interface != SGMII_LINK_MAC_PHY &&
--		    slave->link_interface != XGMII_LINK_MAC_PHY)
-+		    ((slave->link_interface != SGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != RGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != XGMII_LINK_MAC_PHY)))
- 			netif_carrier_on(ndev);
- 	} else {
- 		writel(mac_control, GBE_REG_ADDR(slave, emac_regs,
-@@ -2101,8 +2109,9 @@ static void netcp_ethss_link_state_action(struct gbe_priv *gbe_dev,
- 				     ALE_PORT_STATE,
- 				     ALE_PORT_STATE_DISABLE);
- 		if (ndev &&
--		    slave->link_interface != SGMII_LINK_MAC_PHY &&
--		    slave->link_interface != XGMII_LINK_MAC_PHY)
-+		    ((slave->link_interface != SGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != RGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != XGMII_LINK_MAC_PHY)))
- 			netif_carrier_off(ndev);
- 	}
- 
-@@ -2115,23 +2124,39 @@ static bool gbe_phy_link_status(struct gbe_slave *slave)
- 	 return !slave->phy || slave->phy->link;
- }
- 
-+#define RGMII_REG_STATUS_LINK	BIT(0)
++enum qmss_version {
++	QMSS,
++	QMSS_LITE,
++};
 +
-+static void netcp_2u_rgmii_get_port_link(struct gbe_priv *gbe_dev, bool *status)
-+{
-+	u32 val = 0;
-+
-+	val = readl(GBE_REG_ADDR(gbe_dev, ss_regs, rgmii_status));
-+	*status = false;
-+	if ((val & RGMII_REG_STATUS_LINK) != 0)
-+		*status = true;
-+}
-+
- static void netcp_ethss_update_link_state(struct gbe_priv *gbe_dev,
- 					  struct gbe_slave *slave,
- 					  struct net_device *ndev)
- {
--	int sp = slave->slave_num;
--	int phy_link_state, sgmii_link_state = 1, link_state;
-+	bool sw_link_state = true, phy_link_state;
-+	int sp = slave->slave_num, link_state;
+ struct knav_device {
+ 	struct device				*dev;
+ 	unsigned				base_id;
+@@ -305,6 +310,7 @@ struct knav_device {
+ 	struct list_head			pools;
+ 	struct list_head			pdsps;
+ 	struct list_head			qmgrs;
++	enum qmss_version			version;
+ };
  
- 	if (!slave->open)
- 		return;
+ struct knav_range_ops {
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index 77d6b5c..5b2c4e9 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -42,6 +42,15 @@
+ #define KNAV_QUEUE_PUSH_REG_INDEX	4
+ #define KNAV_QUEUE_POP_REG_INDEX	5
  
- 	if (!SLAVE_LINK_IS_XGMII(slave)) {
--		sgmii_link_state =
-+		if (SLAVE_LINK_IS_RGMII(slave))
-+			netcp_2u_rgmii_get_port_link(gbe_dev,
-+						     &sw_link_state);
++/* Queue manager register indices in DTS for QMSS in NSS lite.
++ * There are no status and vbusm push registers on this version
++ * QMSS. Push registers are same as pop, So all indices above 1
++ * are to be re-defined
++ */
++#define KNAV_L_QUEUE_CONFIG_REG_INDEX	1
++#define KNAV_L_QUEUE_REGION_REG_INDEX	2
++#define KNAV_L_QUEUE_PUSH_REG_INDEX	3
++
+ /* PDSP register indices in DTS */
+ #define KNAV_QUEUE_PDSP_IRAM_REG_INDEX	0
+ #define KNAV_QUEUE_PDSP_REGS_REG_INDEX	1
+@@ -1169,8 +1178,12 @@ static int knav_queue_setup_link_ram(struct knav_device *kdev)
+ 		dev_dbg(kdev->dev, "linkram0: dma:%pad, virt:%p, size:%x\n",
+ 			&block->dma, block->virt, block->size);
+ 		writel_relaxed((u32)block->dma, &qmgr->reg_config->link_ram_base0);
+-		writel_relaxed(block->size, &qmgr->reg_config->link_ram_size0);
+-
++		if (kdev->version == QMSS_LITE)
++			writel_relaxed(block->size,
++				       &qmgr->reg_config->link_ram_size0);
 +		else
-+			sw_link_state =
- 			netcp_sgmii_get_port_link(SGMII_BASE(gbe_dev, sp), sp);
- 	}
- 
- 	phy_link_state = gbe_phy_link_status(slave);
--	link_state = phy_link_state & sgmii_link_state;
-+	link_state = phy_link_state & sw_link_state;
- 
- 	if (atomic_xchg(&slave->link_state, link_state) != link_state)
- 		netcp_ethss_link_state_action(gbe_dev, ndev, slave,
-@@ -2271,11 +2296,19 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
- 
- 	void (*hndlr)(struct net_device *) = gbe_adjust_link;
- 
--	gbe_sgmii_config(priv, slave);
-+	if ((priv->ss_version == GBE_SS_VERSION_14) || IS_SS_ID_NU(priv))
-+		gbe_sgmii_config(priv, slave);
- 	gbe_port_reset(slave);
- 	gbe_sgmii_rtreset(priv, slave, false);
- 	gbe_port_config(priv, slave, priv->rx_packet_max);
- 	gbe_set_slave_mac(slave, gbe_intf);
-+	/* For NU & 2U switch, map the vlan priorities to zero
-+	 * as we only configure to use priority 0
-+	 */
-+	if (IS_SS_ID_MU(priv))
-+		writel(HOST_TX_PRI_MAP_DEFAULT,
-+		       GBE_REG_ADDR(slave, port_regs, rx_pri_map));
++			writel_relaxed(block->size - 1,
++				       &qmgr->reg_config->link_ram_size0);
+ 		block++;
+ 		if (!block->size)
+ 			continue;
+@@ -1387,42 +1400,64 @@ static int knav_queue_init_qmgrs(struct knav_device *kdev,
+ 		qmgr->reg_peek =
+ 			knav_queue_map_reg(kdev, child,
+ 					   KNAV_QUEUE_PEEK_REG_INDEX);
+-		qmgr->reg_status =
+-			knav_queue_map_reg(kdev, child,
+-					   KNAV_QUEUE_STATUS_REG_INDEX);
 +
- 	/* enable forwarding */
- 	cpsw_ale_control_set(priv->ale, slave->port_num,
- 			     ALE_PORT_STATE, ALE_PORT_STATE_FORWARD);
-@@ -2286,6 +2319,15 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
- 		has_phy = true;
- 		phy_mode = PHY_INTERFACE_MODE_SGMII;
- 		slave->phy_port_t = PORT_MII;
-+	} else if (slave->link_interface == RGMII_LINK_MAC_PHY) {
-+		has_phy = true;
-+		phy_mode = of_get_phy_mode(slave->node);
-+		/* if phy-mode is not present, default to
-+		 * PHY_INTERFACE_MODE_RGMII
-+		 */
-+		if (phy_mode < 0)
-+			phy_mode = PHY_INTERFACE_MODE_RGMII;
-+		slave->phy_port_t = PORT_MII;
- 	} else if (slave->link_interface == XGMII_LINK_MAC_PHY) {
- 		has_phy = true;
- 		phy_mode = PHY_INTERFACE_MODE_NA;
-@@ -2911,8 +2953,10 @@ static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
- 		slave->link_interface = SGMII_LINK_MAC_PHY;
- 	}
++		if (kdev->version == QMSS) {
++			qmgr->reg_status =
++				knav_queue_map_reg(kdev, child,
++						   KNAV_QUEUE_STATUS_REG_INDEX);
++		}
++
+ 		qmgr->reg_config =
+ 			knav_queue_map_reg(kdev, child,
++					   (kdev->version == QMSS_LITE) ?
++					   KNAV_L_QUEUE_CONFIG_REG_INDEX :
+ 					   KNAV_QUEUE_CONFIG_REG_INDEX);
+ 		qmgr->reg_region =
+ 			knav_queue_map_reg(kdev, child,
++					   (kdev->version == QMSS_LITE) ?
++					   KNAV_L_QUEUE_REGION_REG_INDEX :
+ 					   KNAV_QUEUE_REGION_REG_INDEX);
++
+ 		qmgr->reg_push =
+ 			knav_queue_map_reg(kdev, child,
+-					   KNAV_QUEUE_PUSH_REG_INDEX);
+-		qmgr->reg_pop =
+-			knav_queue_map_reg(kdev, child,
+-					   KNAV_QUEUE_POP_REG_INDEX);
++					   (kdev->version == QMSS_LITE) ?
++					    KNAV_L_QUEUE_PUSH_REG_INDEX :
++					    KNAV_QUEUE_PUSH_REG_INDEX);
++
++		if (kdev->version == QMSS) {
++			qmgr->reg_pop =
++				knav_queue_map_reg(kdev, child,
++						   KNAV_QUEUE_POP_REG_INDEX);
++		}
  
-+	slave->node = node;
- 	slave->open = false;
- 	if ((slave->link_interface == SGMII_LINK_MAC_PHY) ||
-+	    (slave->link_interface == RGMII_LINK_MAC_PHY) ||
- 	    (slave->link_interface == XGMII_LINK_MAC_PHY))
- 		slave->phy_node = of_parse_phandle(node, "phy-handle", 0);
- 	slave->port_num = gbe_get_slave_port(gbe_dev, slave->slave_num);
-@@ -2976,6 +3020,7 @@ static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
- 		/* Initialize  slave port register offsets */
- 		GBENU_SET_REG_OFS(slave, port_regs, port_vlan);
- 		GBENU_SET_REG_OFS(slave, port_regs, tx_pri_map);
-+		GBENU_SET_REG_OFS(slave, port_regs, rx_pri_map);
- 		GBENU_SET_REG_OFS(slave, port_regs, sa_lo);
- 		GBENU_SET_REG_OFS(slave, port_regs, sa_hi);
- 		GBENU_SET_REG_OFS(slave, port_regs, ts_ctl);
-@@ -3039,7 +3084,9 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
+-		if (IS_ERR(qmgr->reg_peek) || IS_ERR(qmgr->reg_status) ||
++		if (IS_ERR(qmgr->reg_peek) ||
++		    ((kdev->version == QMSS) &&
++		    (IS_ERR(qmgr->reg_status) || IS_ERR(qmgr->reg_pop))) ||
+ 		    IS_ERR(qmgr->reg_config) || IS_ERR(qmgr->reg_region) ||
+-		    IS_ERR(qmgr->reg_push) || IS_ERR(qmgr->reg_pop)) {
++		    IS_ERR(qmgr->reg_push)) {
+ 			dev_err(dev, "failed to map qmgr regs\n");
++			if (kdev->version == QMSS) {
++				if (!IS_ERR(qmgr->reg_status))
++					devm_iounmap(dev, qmgr->reg_status);
++				if (!IS_ERR(qmgr->reg_pop))
++					devm_iounmap(dev, qmgr->reg_pop);
++			}
+ 			if (!IS_ERR(qmgr->reg_peek))
+ 				devm_iounmap(dev, qmgr->reg_peek);
+-			if (!IS_ERR(qmgr->reg_status))
+-				devm_iounmap(dev, qmgr->reg_status);
+ 			if (!IS_ERR(qmgr->reg_config))
+ 				devm_iounmap(dev, qmgr->reg_config);
+ 			if (!IS_ERR(qmgr->reg_region))
+ 				devm_iounmap(dev, qmgr->reg_region);
+ 			if (!IS_ERR(qmgr->reg_push))
+ 				devm_iounmap(dev, qmgr->reg_push);
+-			if (!IS_ERR(qmgr->reg_pop))
+-				devm_iounmap(dev, qmgr->reg_pop);
+ 			devm_kfree(dev, qmgr);
  			continue;
  		}
  
--		gbe_sgmii_config(gbe_dev, slave);
-+		if ((gbe_dev->ss_version == GBE_SS_VERSION_14) ||
-+		    IS_SS_ID_NU(gbe_dev))
-+			gbe_sgmii_config(gbe_dev, slave);
- 		gbe_port_reset(slave);
- 		gbe_port_config(gbe_dev, slave, gbe_dev->rx_packet_max);
- 		list_add_tail(&slave->slave_list, &gbe_dev->secondary_slaves);
-@@ -3073,6 +3120,9 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
- 	if (slave->link_interface == SGMII_LINK_MAC_PHY) {
- 		phy_mode = PHY_INTERFACE_MODE_SGMII;
- 		slave->phy_port_t = PORT_MII;
-+	} else if (slave->link_interface == RGMII_LINK_MAC_PHY) {
-+		phy_mode = PHY_INTERFACE_MODE_RGMII;
-+		slave->phy_port_t = PORT_MII;
- 	} else {
- 		phy_mode = PHY_INTERFACE_MODE_NA;
- 		slave->phy_port_t = PORT_FIBRE;
-@@ -3080,6 +3130,7 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
++		/* Use same push register for pop as well */
++		if (kdev->version == QMSS_LITE)
++			qmgr->reg_pop = qmgr->reg_push;
++
+ 		list_add_tail(&qmgr->list, &kdev->qmgrs);
+ 		dev_info(dev, "added qmgr start queue %d, num of queues %d, reg_peek %p, reg_status %p, reg_config %p, reg_region %p, reg_push %p, reg_pop %p\n",
+ 			 qmgr->start_queue, qmgr->num_queues,
+@@ -1681,10 +1716,24 @@ static int knav_queue_init_queues(struct knav_device *kdev)
+ 	return 0;
+ }
  
- 	for_each_sec_slave(slave, gbe_dev) {
- 		if ((slave->link_interface != SGMII_LINK_MAC_PHY) &&
-+		    (slave->link_interface != RGMII_LINK_MAC_PHY) &&
- 		    (slave->link_interface != XGMII_LINK_MAC_PHY))
- 			continue;
- 		slave->phy =
-@@ -3355,7 +3406,7 @@ static int set_gbenu_ethss_priv(struct gbe_priv *gbe_dev,
- 	gbe_dev->num_stats_mods = gbe_dev->max_num_ports;
- 	gbe_dev->et_stats = gbenu_et_stats;
++/* Match table for of_platform binding */
++static const struct of_device_id keystone_qmss_of_match[] = {
++	{
++		.compatible = "ti,keystone-navigator-qmss",
++	},
++	{
++		.compatible = "ti,keystone-navigator-qmss-l",
++		.data	= (void *)QMSS_LITE,
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
++
+ static int knav_queue_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct device_node *qmgrs, *queue_pools, *regions, *pdsps;
++	const struct of_device_id *match;
+ 	struct device *dev = &pdev->dev;
+ 	u32 temp[2];
+ 	int ret;
+@@ -1700,6 +1749,10 @@ static int knav_queue_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
  
--	if (IS_SS_ID_NU(gbe_dev))
-+	if (IS_SS_ID_MU(gbe_dev))
- 		gbe_dev->num_et_stats = GBENU_ET_STATS_HOST_SIZE +
- 			(gbe_dev->max_num_slaves * GBENU_ET_STATS_PORT_SIZE);
- 	else
-@@ -3419,6 +3470,8 @@ static int set_gbenu_ethss_priv(struct gbe_priv *gbe_dev,
++	match = of_match_device(of_match_ptr(keystone_qmss_of_match), dev);
++	if (match && match->data)
++		kdev->version = QMSS_LITE;
++
+ 	platform_set_drvdata(pdev, kdev);
+ 	kdev->dev = dev;
+ 	INIT_LIST_HEAD(&kdev->queue_ranges);
+@@ -1815,13 +1868,6 @@ static int knav_queue_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
- 	/* Subsystem registers */
- 	GBENU_SET_REG_OFS(gbe_dev, ss_regs, id_ver);
-+	/* ok to set for MU, but used by 2U only */
-+	GBENU_SET_REG_OFS(gbe_dev, ss_regs, rgmii_status);
- 
- 	/* Switch module registers */
- 	GBENU_SET_REG_OFS(gbe_dev, switch_regs, id_ver);
+-/* Match table for of_platform binding */
+-static struct of_device_id keystone_qmss_of_match[] = {
+-	{ .compatible = "ti,keystone-navigator-qmss", },
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
+-
+ static struct platform_driver keystone_qmss_driver = {
+ 	.probe		= knav_queue_probe,
+ 	.remove		= knav_queue_remove,
 -- 
 1.9.1
