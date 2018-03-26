@@ -1,106 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752439AbeCZWpF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:45:05 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38538 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752299AbeCZWpC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:45:02 -0400
-X-Google-Smtp-Source: AG47ELv1i2UCP8aRXiZ/BbzEtbAIy5rL2rZ0MkY76Wzaw02zcupoJhe5bKHeK4v7icW/7JDuvLMc1Q==
-Subject: Re: [RFC PATCH v2] net: phy: Added device tree binding for dev-addr
- and dev-addr code check-up
-To: vicentiu.galanopulo@nxp.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        davem@davemloft.net, marcel@holtmann.org, devicetree@vger.kernel.org
-Cc: madalin.bucur@nxp.com, alexandru.marginean@nxp.com
-References: <20180323150522.9603-1-vicentiu.galanopulo@nxp.com>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <5726f7e4-49eb-e87e-8548-82fac6aa0452@gmail.com>
-Date: Mon, 26 Mar 2018 15:44:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752549AbeCZWpw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:45:52 -0400
+Received: from mga14.intel.com ([192.55.52.115]:11199 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752510AbeCZWpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 18:45:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,365,1517904000";
+   d="scan'208";a="27757351"
+Date: Mon, 26 Mar 2018 15:45:46 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Luck@alison-desk.jf.intel.com, Tim Chen <tim.c.chen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@linux.intel.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>, brice.goglin@gmail.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86,sched: allow topologies where NUMA nodes share an
+ LLC
+Message-ID: <20180326224546.yu5lkk7t22zxfikj@agluck-desk>
+References: <20180322204922.GA2337@alison-desk.jf.intel.com>
+ <20180322233027.bh6dp5vdcb4rdvqe@agluck-desk>
+ <20180326221948.GA17814@alison-desk.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180323150522.9603-1-vicentiu.galanopulo@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180326221948.GA17814@alison-desk.jf.intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/23/2018 08:05 AM, Vicentiu Galanopulo wrote:
-> Reason for this patch is that the Inphi PHY has a
-> vendor specific address space for accessing the
-> C45 MDIO registers - starting from 0x1e.
+On Mon, Mar 26, 2018 at 03:19:48PM -0700, Alison Schofield wrote:
+> On Thu, Mar 22, 2018 at 04:30:29PM -0700, Luck, Tony wrote:
+> > On Thu, Mar 22, 2018 at 01:49:22PM -0700, Alison Schofield wrote:
+> > > +	if (!topology_same_node(c, o) &&
+> > > +	    (c->x86_vendor == X86_VENDOR_INTEL &&
+> > > +	     c->x86_model == INTEL_FAM6_SKYLAKE_X)) {
+> > 
+> > Maybe make life easier in the future to add more models
+> > to the list by using x86_match_cpu() here?
+> > 
+> > -Tony
 > 
-> A search of the dev-addr property is done in of_mdiobus_register.
-> If the property is found in the PHY node,
-> of_mdiobus_register_static_phy is called. This is a
-> wrapper function for of_mdiobus_register_phy which finds the
-> device in package based on dev-addr and fills devices_addrs:
-> devices_addrs is a new field added to phy_c45_device_ids.
-> This new field will store the dev-addr property on the same
-> index where the device in package has been found.
-> In order to have dev-addr in get_phy_c45_ids(), mdio_c45_ids is
-> passed from of_mdio.c to phy_device.c as an external variable.
-> In get_phy_device a copy of the mdio_c45_ids is done over the
-> local c45_ids (wich are empty). After the copying, the c45_ids
-> will also contain the static device found from dev-addr.
-> Having dev-addr stored in devices_addrs, in get_phy_c45_ids(),
-> when probing the identifiers, dev-addr can be extracted from
-> devices_addrs and probed if devices_addrs[current_identifier]
-> is not 0.
-> This way changing the kernel API is avoided completely.
+> Tony - 
+>  Am I on the right track below?
 > 
-> As a plus to this patch, num_ids in get_phy_c45_ids,
-> has the value 8 (ARRAY_SIZE(c45_ids->device_ids)),
-> but the u32 *devs can store 32 devices in the bitfield.
-> If a device is stored in *devs, in bits 32 to 9, it
-> will not be found. This is the reason for changing
-> in phy.h, the size of device_ids array.
+> Define like this:
+> static const __initconst struct x86_cpu_id snc_cpu[] = {
+> 	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_SKYLAKE_X },
+> 	{}
+> };
 > 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
-> ---
+> Use like this:
+> if (!topology_same_node(c, o) && x86_match_cpu(snc_cpu)) {
 
-Correct me if I am completely misunderstanding  the problem, but have
-you considered doing the following:
+Alison,
 
-- if all you need to is to replace instances of loops that do:
+Exactly right.  You can decide how much of the comment
+that was before the "if (!topology_same_node(c, o) ..."
+can be moved to before the definition of snc_cpu[]. I'm
+too lazy to go back to the original patch to read it, but
+I suspect most/all of it would be better descibing the
+data structure than cluttering up the code that uses it.
 
-        if (phydev->is_c45) {
-                for (i = 1; i < num_ids; i++) {
-                        if (!(phydev->c45_ids.devices_in_package & (1 <<
-i)))
-                                continue;
-
-with one that starts at dev-addr, as specified by Device Tree, then I
-suspect there is an easier way to do what you want rather than your
-fairly intrusive patch to do that:
-
-- patch of_mdiobus_register_phy() to lookup both the c45 compatible
-string as well as fetch the "dev-addr" property
-
-- provide a PHY Device Tree node that has its OUI as a compatible string
-(see of_get_phy_id() for details), or if it has a specified 'dev-addr'
-property, use that in lieu of the default get_phy_device() logic
-
-- pass both to phy_device_create() and eventually introduce a helper
-function that lets you populate the c45_ids structure
-
-Then for each function that does the loop above, as long as you have a
-phydev reference, you can have phydev->dev_addr = 0x1e be where to start
-from, if it is 0, then start at 1 (like it currently is). If you don't
-have a phy device reference, which would be get_phy_c45_ids() then just
-make sure you don't call that function :)
-
->  struct phy_c45_device_ids {
->  	u32 devices_in_package;
-> -	u32 device_ids[8];
-> +	u32 device_ids[32];
-> +	u32 devices_addrs[32];
->  };
-
-This looks like a fix in itself, so it is worth a separate patch.
--- 
-Florian
+-Tony
