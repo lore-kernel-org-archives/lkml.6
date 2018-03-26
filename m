@@ -1,62 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeCZKEh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 06:04:37 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:20159 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751071AbeCZKEZ (ORCPT
+        id S1752035AbeCZKE7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 06:04:59 -0400
+Received: from wildebeest.demon.nl ([212.238.236.112]:47990 "EHLO
+        gnu.wildebeest.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751249AbeCZKE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 06:04:25 -0400
-X-UUID: e720366ca234434fbf68dd34edcc934e-20180326
-From: <sean.wang@mediatek.com>
-To: <broonie@kernel.org>, <matthias.bgg@gmail.com>
-CC: <linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Sean Wang" <sean.wang@mediatek.com>
-Subject: [PATCH] spi: mediatek: remove redundant MODULE_ALIAS entries
-Date: Mon, 26 Mar 2018 18:04:18 +0800
-Message-ID: <58fc8553bdc3cbad8d107a905947b7e4d9c12b92.1522054975.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Mon, 26 Mar 2018 06:04:57 -0400
+Date: Mon, 26 Mar 2018 11:58:55 +0200
+From: Mark Wielaard <mjw@fedoraproject.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Laura Abbott <labbott@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>
+Subject: Re: [RFC PATCH 0/3] Salted build ids via linker sections
+Message-ID: <20180326095855.GA9061@wildebeest.org>
+References: <20180321014635.29113-1-labbott@redhat.com>
+ <CAK7LNAQTf_tVvks==_wGsEeNs6Bpdcfy9k39fpzneFvVZGAOiA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23742.005
-X-TM-AS-Result: No-3.769900-8.000000-10
-X-TMASE-MatchedRID: yFGXaP8bkQPLqx3pQDUvTo0JVVcEm48nXs5nqGvDCfOl4EP+dy+wBGEj
-        04n4UkciNMW1025grLlEOP/MktCQ9nEjLiYgp5vhA9lly13c/gFbAoaK+wS4ja8MnjK6iRZzibJ
-        4Yfrb4eO2b29ZkF3sdYAy6p60ZV62JW+71yEen6Zq8/xv2Um1avoLR4+zsDTt7MdlhN8HX5WZqs
-        ykLeZQC9lrACbYXTTwqu+4EpwD4CNu42alSwtnTPdaeMU4LFi1hLDU5mp+K67zIalbmr5WnklBb
-        N2LfAdb2KDyozzpUrLaQLtLC8aUqEPBvsmCWGHWUWQ7Bol0IqC+I8SpxyUS3MC+ksT6a9fy
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--3.769900-8.000000
-X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23742.005
-X-TMASE-POSTMAN: 2-d;
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQTf_tVvks==_wGsEeNs6Bpdcfy9k39fpzneFvVZGAOiA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Flag: NO
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+Hi,
 
-MODULE_ALIAS exports information to allow the module to be auto-loaded at
-boot for the drivers registered using legacy platform registration.
+On Mon, Mar 26, 2018 at 04:48:11PM +0900, Masahiro Yamada wrote:
+> 2018-03-21 10:46 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+> > In Fedora, the debug information is packaged separately (foo-debuginfo) and
+> > can be installed separately. There's been a long standing issue where only one
+> > version of a debuginfo info package can be installed at a time. Mark Wielaard
+> > made an effort for Fedora 27 to allow parallel installation of debuginfo (see
+> > https://fedoraproject.org/wiki/Changes/ParallelInstallableDebuginfo for
+> > more details)
+> 
+> Is this a kernel-specific problem?
+> 
+> IIUC, the URL above is discussing packages in general.
+> 
+> Any executable from slightly different versions
+> could result in identical ELF.
+> If so, will you tweak link process of every package
+> that needs parallel installation?
 
-However, currently the driver is always used by DT-only platform,
-MODULE_ALIAS is redundant and should be removed properly.
+For almost any package it isn't necessary to tweak the link process
+because the build-id can be tweaked if necessary at any stage of the
+package process (the most convenient is during debuginfo splitting,
+because the debuginfo contains almost all the information of the
+build environment). The kernel vdso build is a bit special because it
+embeds the executable also inside the kernel image (so it shows up at
+runtime again not from the file system, but by being inserted into the
+process by the kernel), where packaging tools cannot easily find it.
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/spi/spi-mt65xx.c | 1 -
- 1 file changed, 1 deletion(-)
+Cheers,
 
-diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
-index 86bf456..9fdc2e5 100644
---- a/drivers/spi/spi-mt65xx.c
-+++ b/drivers/spi/spi-mt65xx.c
-@@ -856,4 +856,3 @@ module_platform_driver(mtk_spi_driver);
- MODULE_DESCRIPTION("MTK SPI Controller driver");
- MODULE_AUTHOR("Leilk Liu <leilk.liu@mediatek.com>");
- MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:mtk-spi");
--- 
-2.7.4
+Mark
