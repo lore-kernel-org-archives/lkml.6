@@ -1,100 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeCZN1l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 09:27:41 -0400
-Received: from mail-yb0-f179.google.com ([209.85.213.179]:35017 "EHLO
-        mail-yb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750955AbeCZN1j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 09:27:39 -0400
-X-Google-Smtp-Source: AG47ELtXElXc32z1OTqFMdUeVc3mojbJ+msGb1pr6RgVOi4HHzId9rpQ9ad3rlFl4DbAJkGIjVBhfQ==
-Date: Mon, 26 Mar 2018 09:27:32 -0400
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/7] Implement get_multiple for ACCES and PC/104
- drivers
-Message-ID: <20180326132732.GA8889@sophia>
-References: <cover.1521723192.git.vilhelm.gray@gmail.com>
- <CACRpkdaGO_ThdgDWGrBygO8o=EoKahZj+-NpRfZCOx49GWd87g@mail.gmail.com>
+        id S1752050AbeCZN2v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 09:28:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38002 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751981AbeCZN2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 09:28:50 -0400
+Date: Mon, 26 Mar 2018 15:28:46 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, borntraeger@de.ibm.com, pasic@linux.vnet.ibm.com,
+        pmorel@linux.vnet.ibm.com
+Subject: Re: [PATCH 2/4] vfio: ccw: refactor and improve
+ pfn_array_alloc_pin()
+Message-ID: <20180326152846.2ef1ae07.cohuck@redhat.com>
+In-Reply-To: <20180321020822.86255-3-bjsdjshi@linux.vnet.ibm.com>
+References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
+        <20180321020822.86255-3-bjsdjshi@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaGO_ThdgDWGrBygO8o=EoKahZj+-NpRfZCOx49GWd87g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 10:31:41AM +0200, Linus Walleij wrote:
->On Thu, Mar 22, 2018 at 1:59 PM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->
->> Changes in v4:
->
->I applied the v4 patch set so we get some rotation in linux-next before
->the merge window.
->
->If reviewers still find smallish issues they can certainly be fixed in follow-up
->patches.
->
->> This patchset implements get_multiple callbacks for the PC104 GPIO
->> drivers as well as the PCI-IDIO-16 and PCIe-IDIO-24 GPIO drivers. These
->> devices all acquire the multiple input lines with a single read, so
->> utilizing the get_multiple callback can provide improvement for those
->> users who regularly access multiple input lines.
->
->Did you use the userspace chardev for some interesting experiments
->with your set-ups?
->
->I tend to think of your applications as pretty interesting for industry
->peers, and a good proof-of-concept for the userspace API.
+On Wed, 21 Mar 2018 03:08:20 +0100
+Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
 
-I use these PC104 drivers in several semi-realtime critical
-applications, so latency has always been a big concern for me. The
-switch from sysfs file I/O to chardev ioctl had a great improvement in
-the reduction of latency, which I was very happy to utilize.
+> This refactors pfn_array_alloc_pin() and also improves it by adding
+> defensive code in error handling so that calling pfn_array_unpin_free()
+> after error return won't lead to problem. This mains does:
+> 1. Merge pfn_array_pin() into pfn_array_alloc_pin(), since there is no
+>    other user of pfn_array_pin(). As a result, also remove kernel-doc
+>    for pfn_array_pin() and add kernel-doc for pfn_array_alloc_pin().
+> 2. For a vfio_pin_pages() failure, set pa->pa_nr to zero to indicate
+>    zero pages were pinned.
+> 3. Set pa->pa_iova_pfn to NULL right after it was freed.
+> 
+> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+> ---
+>  drivers/s390/cio/vfio_ccw_cp.c | 84 ++++++++++++++++++------------------------
+>  1 file changed, 36 insertions(+), 48 deletions(-)
+> 
+> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+> index 2be114db02f9..3abc9770910a 100644
+> --- a/drivers/s390/cio/vfio_ccw_cp.c
+> +++ b/drivers/s390/cio/vfio_ccw_cp.c
+> @@ -46,65 +46,32 @@ struct ccwchain {
+>  };
+>  
+>  /*
+> - * pfn_array_pin() - pin user pages in memory
+> + * pfn_array_alloc_pin() - alloc memory for PFNs, then pin user pages in memory
+>   * @pa: pfn_array on which to perform the operation
+>   * @mdev: the mediated device to perform pin/unpin operations
+> + * @iova: target guest physical address
+> + * @len: number of bytes that should be pinned from @iova
+>   *
+> - * Attempt to pin user pages in memory.
+> + * Attempt to allocate memory for PFNs, and pin user pages in memory.
+>   *
+>   * Usage of pfn_array:
+> - * @pa->pa_iova     starting guest physical I/O address. Assigned by caller.
+> + * @pa->pa_iova     starting guest physical I/O address. Assigned by callee.
+>   * @pa->pa_iova_pfn array that stores PFNs of the pages need to pin. Allocated
+> - *                  by caller.
+> + *                  by callee.
+>   * @pa->pa_pfn      array that receives PFNs of the pages pinned. Allocated by
+> - *                  caller.
+> - * @pa->pa_nr       number of pages from @pa->pa_iova to pin. Assigned by
+> - *                  caller.
+> - *                  number of pages pinned. Assigned by callee.
+> + *                  callee.
+> + * @pa->pa_nr       initiated as 0 by caller.
 
-Since the next big point of latency in my systems have been port I/O,
-taking advantage of the get_multiple/set_multiple functionality is my
-next goal in optimization. I have a new system coming out soon that uses
-the 104-IDI-48 for input -- it'll be interesting to see the performance
-improvements of acquiring the entire input port at a time, rather than
-every GPIO line individually.
+s/initiated/initialized/
 
->
->> While developing this patchset I noticed many of these devices make use
->> of Intel 8255 compatible interfaces for their I/O. I may write a generic
->> 8255 GPIO driver in the future to reduce some of the redundant code I
->> see pop among the drivers for these devices.
->
->Oh!
->This guy?
->https://en.wikipedia.org/wiki/Intel_8255
->
->Yeah that makes all kind of sense. We are living with the legacy
->of the first PCs every day when it comes own to EISA & friends...
+but see below
 
-That's the one! I see this interface a lot in the GPIO devices I handle.
-It's very popular, which I believe is a testament to the popularity of
-the IBM PC.
+> + *                  number of pages pinned from @pa->pa_iova. Assigned by callee.
 
-Nowadays, most devices I encounter implement this interface in an FPGA,
-but I do occasionally come across the actual Intel 82C55 chip, such as
-on the 104-DIO-48E; it's fascinating to see this physical chip still
-popping up on circuit boards from time to time.
+So, basically everything is filled by pfn_array_alloc_pin()? Should we
+expect a clean struct pfn_array handed in by the caller, then (not just
+pa_nr == 0)?
 
-I would like to make a generic driver for this interface that will allow
-it to be used both in the port I/O and memory I/O drivers out there.
-Since I don't want to introduce too many changes in a single patchset
-I've postponed it for now to get get_multiple support merged in for
-these drivers, but I'll hopefully have something like a gpio-i8255
-driver submitted soon enough.
+Would it make sense to describe the contents of the struct pfn_array
+fields at the struct's definition instead? You could then shorten the
+description here to "we expect pa_nr == 0, any field in this structure
+will be filled in by this function".
 
-William Breathitt Gray
 
->
->Yours,
->Linus Walleij
+>   *
+>   * Returns:
+>   *   Number of pages pinned on success.
+> - *   If @pa->pa_nr is 0 or negative, returns 0.
+> + *   If @pa->pa_nr is not 0 initially, returns -EINVAL.
+>   *   If no pages were pinned, returns -errno.
+>   */
+
+The change itself looks good to me.
