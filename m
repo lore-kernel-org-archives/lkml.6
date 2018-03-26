@@ -1,172 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751489AbeCZIxZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:53:25 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40087 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750955AbeCZIxX (ORCPT
+        id S1751398AbeCZI4M (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:56:12 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50906 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751109AbeCZI4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:53:23 -0400
-X-Google-Smtp-Source: AIpwx49rMkgdufW/nShluIW1iwkzGfhCz49AYMWUgRybbmUNyhyA/Fy1/prTRQ9WpYj4DcnmOpKmGA==
-Date: Mon, 26 Mar 2018 10:53:13 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Yury Norov <ynorov@caviumnetworks.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Chris Metcalf <cmetcalf@mellanox.com>,
-        Christopher Lameter <cl@linux.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] smp: introduce kick_active_cpus_sync()
-Message-ID: <20180326085313.GA4016@andrea>
-References: <20180325175004.28162-1-ynorov@caviumnetworks.com>
- <20180325175004.28162-3-ynorov@caviumnetworks.com>
+        Mon, 26 Mar 2018 04:56:09 -0400
+X-Google-Smtp-Source: AG47ELvYPvSCx4EdBkNhLMPF6h9wfSLgrMlxrnmpfBsuaZSVjilUcC7lBZHjGhJIuH8LqV1tyieypmYlacFERVLArAg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180325175004.28162-3-ynorov@caviumnetworks.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1521687523-1604-4-git-send-email-zhiyong.tao@mediatek.com>
+References: <1521687523-1604-1-git-send-email-zhiyong.tao@mediatek.com> <1521687523-1604-4-git-send-email-zhiyong.tao@mediatek.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 26 Mar 2018 10:56:08 +0200
+Message-ID: <CACRpkdaOOMMYvHde7D7QgMWK5gGc88TwxC_O+4ogD+rV_MMtfA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] pinctrl: add mt2712 pinctrl driver
+To: Zhiyong Tao <zhiyong.tao@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>, srv_heupstream@mediatek.com,
+        Liguo Zhang <liguo.zhang@mediatek.com>,
+        "Joe.C" <yingjoe.chen@mediatek.com>, hongkun.cao@mediatek.com,
+        Biao Huang <biao.huang@mediatek.com>, YT Shen <yt.shen@mediatek.com>,
+        Hongzhou Yang <hongzhou.yang@mediatek.com>,
+        Erin Lo <erin.lo@mediatek.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support"
+        <linux-mediatek@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yury,
+On Thu, Mar 22, 2018 at 3:58 AM, Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
 
-On Sun, Mar 25, 2018 at 08:50:04PM +0300, Yury Norov wrote:
-> kick_all_cpus_sync() forces all CPUs to sync caches by sending broadcast IPI.
-> If CPU is in extended quiescent state (idle task or nohz_full userspace), this
-> work may be done at the exit of this state. Delaying synchronization helps to
-> save power if CPU is in idle state and decrease latency for real-time tasks.
-> 
-> This patch introduces kick_active_cpus_sync() and uses it in mm/slab and arm64
-> code to delay syncronization.
-> 
-> For task isolation (https://lkml.org/lkml/2017/11/3/589), IPI to the CPU running
-> isolated task would be fatal, as it breaks isolation. The approach with delaying
-> of synchronization work helps to maintain isolated state.
-> 
-> I've tested it with test from task isolation series on ThunderX2 for more than
-> 10 hours (10k giga-ticks) without breaking isolation.
-> 
-> Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
-> ---
->  arch/arm64/kernel/insn.c |  2 +-
->  include/linux/smp.h      |  2 ++
->  kernel/smp.c             | 24 ++++++++++++++++++++++++
->  mm/slab.c                |  2 +-
->  4 files changed, 28 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/insn.c b/arch/arm64/kernel/insn.c
-> index 2718a77da165..9d7c492e920e 100644
-> --- a/arch/arm64/kernel/insn.c
-> +++ b/arch/arm64/kernel/insn.c
-> @@ -291,7 +291,7 @@ int __kprobes aarch64_insn_patch_text(void *addrs[], u32 insns[], int cnt)
->  			 * synchronization.
->  			 */
->  			ret = aarch64_insn_patch_text_nosync(addrs[0], insns[0]);
-> -			kick_all_cpus_sync();
-> +			kick_active_cpus_sync();
->  			return ret;
->  		}
->  	}
-> diff --git a/include/linux/smp.h b/include/linux/smp.h
-> index 9fb239e12b82..27215e22240d 100644
-> --- a/include/linux/smp.h
-> +++ b/include/linux/smp.h
-> @@ -105,6 +105,7 @@ int smp_call_function_any(const struct cpumask *mask,
->  			  smp_call_func_t func, void *info, int wait);
->  
->  void kick_all_cpus_sync(void);
-> +void kick_active_cpus_sync(void);
->  void wake_up_all_idle_cpus(void);
->  
->  /*
-> @@ -161,6 +162,7 @@ smp_call_function_any(const struct cpumask *mask, smp_call_func_t func,
->  }
->  
->  static inline void kick_all_cpus_sync(void) {  }
-> +static inline void kick_active_cpus_sync(void) {  }
->  static inline void wake_up_all_idle_cpus(void) {  }
->  
->  #ifdef CONFIG_UP_LATE_INIT
-> diff --git a/kernel/smp.c b/kernel/smp.c
-> index 084c8b3a2681..0358d6673850 100644
-> --- a/kernel/smp.c
-> +++ b/kernel/smp.c
-> @@ -724,6 +724,30 @@ void kick_all_cpus_sync(void)
->  }
->  EXPORT_SYMBOL_GPL(kick_all_cpus_sync);
->  
-> +/**
-> + * kick_active_cpus_sync - Force CPUs that are not in extended
-> + * quiescent state (idle or nohz_full userspace) sync by sending
-> + * IPI. Extended quiescent state CPUs will sync at the exit of
-> + * that state.
-> + */
-> +void kick_active_cpus_sync(void)
-> +{
-> +	int cpu;
-> +	struct cpumask kernel_cpus;
-> +
-> +	smp_mb();
+> The commit includes mt2712 pinctrl driver.
+>
+> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
 
-(A general remark only:)
+Patch applied for v4.17 stripping the whitespace error and adding Sean's ACK.
 
-checkpatch.pl should have warned about the fact that this barrier is
-missing an accompanying comment (which accesses are being "ordered",
-what is the pairing barrier, etc.).
-
-Moreover if, as your reply above suggested, your patch is relying on
-"implicit barriers" (something I would not recommend) then even more
-so you should comment on these requirements.
-
-This could: (a) force you to reason about the memory ordering stuff,
-(b) easy the task of reviewing and adopting your patch, (c) easy the
-task of preserving those requirements (as implementations changes).
-
-  Andrea
-
-
-> +
-> +	cpumask_clear(&kernel_cpus);
-> +	preempt_disable();
-> +	for_each_online_cpu(cpu) {
-> +		if (!rcu_eqs_special_set(cpu))
-> +			cpumask_set_cpu(cpu, &kernel_cpus);
-> +	}
-> +	smp_call_function_many(&kernel_cpus, do_nothing, NULL, 1);
-> +	preempt_enable();
-> +}
-> +EXPORT_SYMBOL_GPL(kick_active_cpus_sync);
-> +
->  /**
->   * wake_up_all_idle_cpus - break all cpus out of idle
->   * wake_up_all_idle_cpus try to break all cpus which is in idle state even
-> diff --git a/mm/slab.c b/mm/slab.c
-> index 324446621b3e..678d5dbd6f46 100644
-> --- a/mm/slab.c
-> +++ b/mm/slab.c
-> @@ -3856,7 +3856,7 @@ static int __do_tune_cpucache(struct kmem_cache *cachep, int limit,
->  	 * cpus, so skip the IPIs.
->  	 */
->  	if (prev)
-> -		kick_all_cpus_sync();
-> +		kick_active_cpus_sync();
->  
->  	check_irq_on();
->  	cachep->batchcount = batchcount;
-> -- 
-> 2.14.1
-> 
+Yours,
+Linus Walleij
