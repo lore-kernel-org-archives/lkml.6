@@ -1,111 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751713AbeCZDsB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 23:48:01 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38104 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750960AbeCZDr7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 23:47:59 -0400
-Date: Mon, 26 Mar 2018 04:47:50 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
-        linux-mips <linux-mips@linux-mips.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [RFC] new SYSCALL_DEFINE/COMPAT_SYSCALL_DEFINE wrappers
-Message-ID: <20180326034750.GN30522@ZenIV.linux.org.uk>
-References: <20180318161056.5377-1-linux@dominikbrodowski.net>
- <20180318161056.5377-5-linux@dominikbrodowski.net>
- <20180318174014.GR30522@ZenIV.linux.org.uk>
- <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
- <20180318181848.GU30522@ZenIV.linux.org.uk>
- <20180319042300.GW30522@ZenIV.linux.org.uk>
- <20180319092920.tbh2xwkruegshzqe@gmail.com>
- <20180319232342.GX30522@ZenIV.linux.org.uk>
- <20180322001532.GA18399@ZenIV.linux.org.uk>
- <20180326004017.GA2211@ZenIV.linux.org.uk>
+        id S1751907AbeCZDsM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 23:48:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47012 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751011AbeCZDsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 23:48:10 -0400
+Subject: Re: possible deadlock in handle_rx
+To: syzbot <syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com>,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        virtualization@lists.linux-foundation.org
+References: <001a113fe6d043b2a605684578f4@google.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <b68023f4-f917-d229-6d2d-e10f35a99062@redhat.com>
+Date: Mon, 26 Mar 2018 11:48:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326004017.GA2211@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <001a113fe6d043b2a605684578f4@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 01:40:17AM +0100, Al Viro wrote:
 
-> Kinda-sorta part:
-> 	* asmlinkage_protect is taken out for now, so m68k has problems.
-> 	* syscalls that run out of 6 slots barf violently.  For mips it's
-> wrong (there we have 8 slots); for stuff like arm and ppc it's right, but
-> it means that things like e.g. compat sync_file_range() should not even
-> be compiled on those.  __ARCH_WANT_SYS_SYNC_FILE_RANGE, presumably...
-> In any case, we *can't* do pt_regs-based wrappers for those syscalls on
-> such architectures, so ifdefs around those puppies are probably the right
-> thing to do.
-> 	* s390 macrology in compat_wrapper.c not even touched; it needs
-> a trivial update to keep working (__MAP callbacks take an extra argument,
-> unused for those users).
-> 	* sys_... and compat_sys_... aliases are unchanged; if we kill
-> direct callers, we can trivially rename SyS##name and compat_SyS##name
-> to sys##name and compat_sys##name and get rid of aliases.
 
-	* mips n32 and x86 x32 can become an extra source of headache.
-That actually applies to any plans of passing struct pt_regs *.  As it
-is, e.g. syscall 515 on amd64 is compat_sys_readv().  Dispatched via
-this:
-        /*
-         * NB: Native and x32 syscalls are dispatched from the same
-         * table.  The only functional difference is the x32 bit in
-         * regs->orig_ax, which changes the behavior of some syscalls.
-         */
-        if (likely((nr & __SYSCALL_MASK) < NR_syscalls)) {
-                nr = array_index_nospec(nr & __SYSCALL_MASK, NR_syscalls);
-                regs->ax = sys_call_table[nr](
-                        regs->di, regs->si, regs->dx,
-                        regs->r10, regs->r8, regs->r9);
-        }
-Now, syscall 145 via 32bit call is *also* compat_sys_readv(), dispatched
-via
-                nr = array_index_nospec(nr, IA32_NR_syscalls);
-                /*
-                 * It's possible that a 32-bit syscall implementation
-                 * takes a 64-bit parameter but nonetheless assumes that
-                 * the high bits are zero.  Make sure we zero-extend all
-                 * of the args.
-                 */
-                regs->ax = ia32_sys_call_table[nr](
-                        (unsigned int)regs->bx, (unsigned int)regs->cx,
-                        (unsigned int)regs->dx, (unsigned int)regs->si,
-                        (unsigned int)regs->di, (unsigned int)regs->bp);
-Right now it works - we call the same function, passing it arguments picked
-from different set of registers (di/si/dx in x32 case, bx/cx/dx in i386 one).
-But if we switch to passing struct pt_regs * and have the wrapper fetch
-regs->{bx,cx,dx}, we have a problem.  It won't work for both entry points.
+On 2018年03月26日 08:01, syzbot wrote:
+> Hello,
+>
+> syzbot hit the following crash on upstream commit
+> cb6416592bc2a8b731dabcec0d63cda270764fc6 (Sun Mar 25 17:45:10 2018 +0000)
+> Merge tag 'dmaengine-fix-4.16-rc7' of 
+> git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/slave-dma
+> syzbot dashboard link: 
+> https://syzkaller.appspot.com/bug?extid=7f073540b1384a614e09
+>
+> So far this crash happened 4 times on upstream.
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6506789075943424
+> syzkaller reproducer: 
+> https://syzkaller.appspot.com/x/repro.syz?id=5716250550337536
+> Raw console output: 
+> https://syzkaller.appspot.com/x/log.txt?id=5142038655795200
+> Kernel config: 
+> https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
+> compiler: gcc (GCC) 7.1.1 20170620
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the 
+> commit:
+> Reported-by: syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for 
+> details.
+> If you forward the report, please keep this part and the footer.
+>
+>
+> ============================================
+> WARNING: possible recursive locking detected
+> 4.16.0-rc6+ #366 Not tainted
+> --------------------------------------------
+> vhost-4248/4760 is trying to acquire lock:
+>  (&vq->mutex){+.+.}, at: [<000000003482bddc>] 
+> vhost_net_rx_peek_head_len drivers/vhost/net.c:633 [inline]
+>  (&vq->mutex){+.+.}, at: [<000000003482bddc>] handle_rx+0xeb1/0x19c0 
+> drivers/vhost/net.c:784
+>
+> but task is already holding lock:
+>  (&vq->mutex){+.+.}, at: [<000000004de72f44>] handle_rx+0x1f5/0x19c0 
+> drivers/vhost/net.c:766
+>
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+>
+>        CPU0
+>        ----
+>   lock(&vq->mutex);
+>   lock(&vq->mutex);
+>
+>  *** DEADLOCK ***
+>
+>  May be due to missing lock nesting notation
 
-IMO it's a good reason to have dispatcher(s) handle extraction from pt_regs
-and let the wrapper deal with the resulting 6 u64 or 6 u32, normalizing
-them and arranging them into arguments expected by syscall body.
+Yes, it's a missing of nesting notation.
 
-Linus, Dominik - how do you plan dealing with that fun?  Regardless of the
-way we generate the glue, the issue remains.  We can't get the same
-struct pt_regs *-taking function for both; we either need to produce
-a separate chunk of glue for each compat_sys_... involved (either making
-COMPAT_SYSCALL_DEFINE generate both, or having duplicate X32_SYSCALL_DEFINE
-for each of those COMPAT_SYSCALL_DEFINE - with identical body, at that)
-or we need to have the registers-to-slots mapping done in dispatcher...
+Will post a patch soon.
+
+Thanks
