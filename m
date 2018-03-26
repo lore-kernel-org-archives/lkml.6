@@ -1,114 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751134AbeCZJld (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:41:33 -0400
-Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:4538 "EHLO
-        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750923AbeCZJla (ORCPT
+        id S1751090AbeCZJn3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:43:29 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45167 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeCZJn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:41:30 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FMAAACv7hamGKa6EReGgEBAQEBAgEBA?=
- =?us-ascii?q?QEIAQEBAYQUfigKg1KIAI0NgXSBEWCGAItxggYLhQUCGoNiITQYAQIBAQEBAQE?=
- =?us-ascii?q?CAQIQAQEBAQEICwsGKC+COCKCTAEBAQMBIxE6CwUHBAIBCBEEAQEBAgIjAwICA?=
- =?us-ascii?q?h8lAQgIAgQOBQiEbgMNCKptgiCHBA2BLIIagQiGUIIUgQyDB4JRggYjECMSgjW?=
- =?us-ascii?q?CVAOXES4IizWCdIxBiU6GKIElHIILcE+CQ4IvjiFvjxKBFwEB?=
-X-IPAS-Result: =?us-ascii?q?A2FMAAACv7hamGKa6EReGgEBAQEBAgEBAQEIAQEBAYQUfig?=
- =?us-ascii?q?Kg1KIAI0NgXSBEWCGAItxggYLhQUCGoNiITQYAQIBAQEBAQECAQIQAQEBAQEIC?=
- =?us-ascii?q?wsGKC+COCKCTAEBAQMBIxE6CwUHBAIBCBEEAQEBAgIjAwICAh8lAQgIAgQOBQi?=
- =?us-ascii?q?EbgMNCKptgiCHBA2BLIIagQiGUIIUgQyDB4JRggYjECMSgjWCVAOXES4IizWCd?=
- =?us-ascii?q?IxBiU6GKIElHIILcE+CQ4IvjiFvjxKBFwEB?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.172
-X-IronPort-AV: E=Sophos;i="5.48,364,1517896800";
-   d="scan'208";a="1233485735"
-X-DLP: DLP_GlobalPCIDSS
-To: <rafael@kernel.org>
-CC: <rjw@rjwysocki.net>, <linux-acpi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] power/hibernate: Make passing hibernate offsets more
- friendly
-Thread-Topic: [PATCH] power/hibernate: Make passing hibernate offsets more
- friendly
-Thread-Index: AQHTtTlzOfQoTpcIxEKofswkwTKJn6PXvo+AgAp6BpCAAH0CAP//rPTQ
-Date: Mon, 26 Mar 2018 09:41:27 +0000
-Message-ID: <72e8709fe8824411a713ef36cd2463ad@ausx13mpc120.AMER.DELL.COM>
-References: <1520333620-22342-1-git-send-email-mario.limonciello@dell.com>
- <1854392.I8WPNng6r5@aspire.rjw.lan>
- <b3e9a7ad5dfc4348a8b017110e8ba032@ausx13mpc120.AMER.DELL.COM>
- <CAJZ5v0iwpp5oPGYhrL3X=bMOueByup=UF_ChOTkhjTU5PJc3Cg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iwpp5oPGYhrL3X=bMOueByup=UF_ChOTkhjTU5PJc3Cg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
+        Mon, 26 Mar 2018 05:43:28 -0400
+Date: Mon, 26 Mar 2018 11:43:27 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+cc: linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] genirq: Pass desc to __irq_free instead of irq number
+In-Reply-To: <20180325221213.ub5vurux7dqdkldd@pengutronix.de>
+Message-ID: <alpine.DEB.2.21.1803261141230.1585@nanos.tec.linutronix.de>
+References: <20180319105202.9794-1-u.kleine-koenig@pengutronix.de> <20180325221213.ub5vurux7dqdkldd@pengutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323329-882585705-1522057407=:1585"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2Q9fciA018794
 
-> -----Original Message-----
-> From: rjwysocki@gmail.com [mailto:rjwysocki@gmail.com] On Behalf Of Rafael J.
-> Wysocki
-> Sent: Monday, March 26, 2018 4:38 AM
-> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>; ACPI Devel Maling List <linux-
-> acpi@vger.kernel.org>; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH] power/hibernate: Make passing hibernate offsets more friendly
-> 
-> On Mon, Mar 26, 2018 at 9:17 AM,  <Mario.Limonciello@dell.com> wrote:
-> >> -----Original Message-----
-> >> From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
-> >> Sent: Monday, March 19, 2018 5:11 AM
-> >> To: Limonciello, Mario <Mario_Limonciello@Dell.com>
-> >> Cc: linux-acpi@vger.kernel.org; LKML <linux-kernel@vger.kernel.org>
-> >> Subject: Re: [PATCH] power/hibernate: Make passing hibernate offsets more
-> friendly
-> >>
-> >> On Tuesday, March 6, 2018 11:53:40 AM CET Mario Limonciello wrote:
-> >> > Currently the only way to specify a hibernate offset for a
-> >> > swap file is on the kernel command line.
-> >> >
-> >> > Add a new /sys/power/disk_offset that lets userspace
-> >> > specify the offset and disk to use when initiating a hibernate
-> >> > cycle.
-> >> >
-> >> > Also split up the parsing routine to re-use the same code
-> >> > for the /sys/power/resume and /sys/power/disk_offset parsing.
-> >> >
-> >> > Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> >>
-> >> Well, IMO /sys/power/resume and /sys/power/disk_offset would be confusingly
-> >> similar after this patch.
-> >
-> > Yeah they do function pretty similarly.
-> >
-> >>
-> >> I wonder if adding a resume_offset sysfs attr to simply allow the value of
-> >> resume offset alone to be passed to the kernel at run time (in addition to
-> >> the command line) would work?
-> >>
-> >> Thanks!
-> >
-> > I guess what's your expected flow for how the disk gets selected though?  Should
-> > the kernel be "guessing" which disk to use?
-> >
-> > Or should userspace be setting offset via /sys/power/resume_offset followed by
-> > disk in /sys/power/resume (which will show an error in syslog about no partition
-> > found)
-> >
-> > If the latter,
-> 
-> Yes, the latter.
-> 
-> > then I'd like to also modify the behavior to downgrade that missing
-> > hibernate partition to debug instead too.
-> 
-> That's OK.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-OK thanks, I'll adjust per your recommendations.
+--8323329-882585705-1522057407=:1585
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
+
+On Mon, 26 Mar 2018, Uwe Kleine-König wrote:
+> 
+> On Mon, Mar 19, 2018 at 11:52:02AM +0100, Uwe Kleine-König wrote:
+> > Given that irq_to_desc() is a radix_tree_lookup and the reverse
+> > operation is only a pointer dereference and that all callers of
+> > __free_irq already have the desc, pass the desc instead of the irq
+> > number.
+> > 
+> > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> > ---
+> > Hello,
+> > 
+> > this is a micro optimisation I noticed while looking at the irq code.
+> 
+> This made it into next as 83ac4ca943affce56a2c408ddb2f5232f478fb11 and
+> ba63053f018721a0ad60b083e21a15e324a4a8c4. Is it right that it is there
+> twice?
+
+No. It's only one instance.
+
+> And in the Author line the - in my name is missing. Would be great if
+> that could be fixed up.
+
+Sorry, I'm surely not rebasing that branch just to add a missing dash.
+
+Thanks,
+
+	tglx
+--8323329-882585705-1522057407=:1585--
