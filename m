@@ -1,141 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752016AbeCZM2p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 08:28:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35034 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751141AbeCZM2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 08:28:44 -0400
-Date: Mon, 26 Mar 2018 14:28:39 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Cc: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
-        Halil Pasic <pasic@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        borntraeger@de.ibm.com
-Subject: Re: [PATCH 1/4] vfio: ccw: fix cleanup if cp_prefetch fails
-Message-ID: <20180326142839.23bfc4f6.cohuck@redhat.com>
-In-Reply-To: <54fd02cd-bd0b-889b-c40f-f9a32aa25d77@linux.vnet.ibm.com>
-References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
-        <20180321020822.86255-2-bjsdjshi@linux.vnet.ibm.com>
-        <682d8b1c-5aca-7015-043b-a3f1446bf378@linux.vnet.ibm.com>
-        <20180322022248.GB12194@bjsdjshi@linux.vnet.ibm.com>
-        <54fd02cd-bd0b-889b-c40f-f9a32aa25d77@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1752042AbeCZM3v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 08:29:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57644 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751141AbeCZM3t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 08:29:49 -0400
+Subject: Re: [PATCH v6 12/12] ima: Write modsig to the measurement list
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
+Date: Mon, 26 Mar 2018 08:29:37 -0400
+In-Reply-To: <20180316203837.10174-13-bauerman@linux.vnet.ibm.com>
+References: <20180316203837.10174-1-bauerman@linux.vnet.ibm.com>
+         <20180316203837.10174-13-bauerman@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18032612-0020-0000-0000-000004096024
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032612-0021-0000-0000-0000429D8F29
+Message-Id: <1522067377.3541.47.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-26_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803260136
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Mar 2018 10:37:36 +0100
-Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
+On Fri, 2018-03-16 at 17:38 -0300, Thiago Jung Bauermann wrote:
+> Define new "d-sig" template field which holds the digest that is expected
+> to match the one contained in the modsig.
+> 
+> Also add modsig support to the "sig" template field, allowing the the
+> contents of the modsig to be included in the measurement list.
 
-> On 22/03/2018 03:22, Dong Jia Shi wrote:
-> > * Halil Pasic <pasic@linux.vnet.ibm.com> [2018-03-21 13:49:54 +0100]:
-> >  
-> >>
-> >> On 03/21/2018 03:08 AM, Dong Jia Shi wrote:  
-> >>> From: Halil Pasic <pasic@linux.vnet.ibm.com>
-> >>>
-> >>> If the translation of a channel program fails, we may end up attempting
-> >>> to clean up (free, unpin) stuff that never got translated (and allocated,
-> >>> pinned) in the first place.
-> >>>
-> >>> By adjusting the lengths of the chains accordingly (so the element that
-> >>> failed, and all subsequent elements are excluded) cleanup activities
-> >>> based on false assumptions can be avoided.
-> >>>
-> >>> Let's make sure cp_free works properly after cp_prefetch returns with an
-> >>> error by setting ch_len to 0 for the ccw chains those are not prefetched.  
-> >> This sentence used to be:
-> >>
-> >> Let's make sure cp_free works properly after cp_prefetch returns with an
-> >> error.
-> >>
-> >> @Dong Jia
-> >> I find the 'by setting ch_len to 0 for the ccw chains those are not prefetched'
-> >> you added for clarification (I guess) somewhat problematic.
-> >> The chain in which the translation failure occurred
-> >> +	chain->ch_len = idx;  
-> > I made a mistake. When rewording the message, I missed this part...
-> > Sorry for the problem!
-> >  
-> >> is shortened so that only the translated elements (ccws) are going to
-> >> get cleaned up (on a per element basis) by cp_free. This may or may
-> >> not be the first ccw. Subsequent chains are shortened to 0 as there
-> >> no translation took place.
-> >>
-> >> So as a result of this change only properly translated ccws are going
-> >> to get (re)visited by cp_free as only those may have resources bound
-> >> to them which need to be released.
-> >>
-> >> I'm not against improving the commit message. But this ain't
-> >> an improvement to me.  
-> > You are right. How about:
-> > Let's make sure cp_free works properly after cp_prefetch returns with an
-> > error by setting ch_len of a ccw chain to the number of the translated
-> > ccws on that chain.  
-> 
-> By the way, since you will propose a new version,
-> you have a long description of the cp_prefetch function in the code.
-> I think you should modify it according to the changes and describe how and
-> why the ch_len field of each chain is used and changed by this function.
-> 
-> Something like:
-> 
-> "
-> For each chain composing the channel program:
-> On entry ch_len hold the count of CCW to be translated.
+Although including the appended signature in the template data doesn't
+make sense on its own, as the file digest (without the appended
+signature) is needed to validate the appended signature, defining a
+new template field and its usage should be independent of other
+changes.
 
-s/hold/holds/ ?
+Mimi
 
-> On exit ch_len is adjusted to the count of successfully translated CCW.
 > 
-> This allows cp_free to find in ch_len the count of CCW to free in a chain.
-> "
+> Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+> ---
+>  Documentation/security/IMA-templates.rst  |  5 ++++
+>  security/integrity/ima/ima_template.c     |  4 ++-
+>  security/integrity/ima/ima_template_lib.c | 47 +++++++++++++++++++++++++++++--
+>  security/integrity/ima/ima_template_lib.h |  2 ++
+>  4 files changed, 55 insertions(+), 3 deletions(-)
 > 
-> Could also be inside the commit message.
+> diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
+> index 2cd0e273cc9a..f2a0f4225857 100644
+> --- a/Documentation/security/IMA-templates.rst
+> +++ b/Documentation/security/IMA-templates.rst
+> @@ -68,6 +68,11 @@ descriptors by adding their identifier to the format string
+>   - 'd-ng': the digest of the event, calculated with an arbitrary hash
+>     algorithm (field format: [<hash algo>:]digest, where the digest
+>     prefix is shown only if the hash algorithm is not SHA1 or MD5);
+> + - 'd-sig': the digest of the event for files that have an appended modsig. This
+> +   field is calculated without including the modsig and thus will differ from
+> +   the total digest of the file, but it is what should match the digest
+> +   contained in the modsig (if it doesn't, the signature is invalid). It is
+> +   shown in the same format as 'd-ng';
+>   - 'n-ng': the name of the event, without size limitations;
+>   - 'sig': the file signature.
 > 
-> Pierre
+> diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+> index 30db39b23804..36fc32f538b5 100644
+> --- a/security/integrity/ima/ima_template.c
+> +++ b/security/integrity/ima/ima_template.c
+> @@ -43,8 +43,10 @@ static struct ima_template_field supported_fields[] = {
+>  	 .field_show = ima_show_template_string},
+>  	{.field_id = "sig", .field_init = ima_eventsig_init,
+>  	 .field_show = ima_show_template_sig},
+> +	{.field_id = "d-sig", .field_init = ima_eventdigest_sig_init,
+> +	 .field_show = ima_show_template_digest_ng},
+>  };
+> -#define MAX_TEMPLATE_NAME_LEN 15
+> +#define MAX_TEMPLATE_NAME_LEN 24
 > 
+>  static struct ima_template_desc *ima_template;
+>  static struct ima_template_desc *lookup_template_desc(const char *name);
+> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+> index afb52a90e532..1dca082cce43 100644
+> --- a/security/integrity/ima/ima_template_lib.c
+> +++ b/security/integrity/ima/ima_template_lib.c
+> @@ -220,7 +220,8 @@ int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
+>  	return 0;
+>  }
 > 
-> >  
-> >>> Acked-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
-> >>> Reviewed-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-> >>> Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
-> >>> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-> >>> ---
-> >>>   drivers/s390/cio/vfio_ccw_cp.c | 9 ++++++++-
-> >>>   1 file changed, 8 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-> >>> index d9a2fffd034b..2be114db02f9 100644
-> >>> --- a/drivers/s390/cio/vfio_ccw_cp.c
-> >>> +++ b/drivers/s390/cio/vfio_ccw_cp.c
-> >>> @@ -749,11 +749,18 @@ int cp_prefetch(struct channel_program *cp)
-> >>>   		for (idx = 0; idx < len; idx++) {
-> >>>   			ret = ccwchain_fetch_one(chain, idx, cp);
-> >>>   			if (ret)
-> >>> -				return ret;
-> >>> +				goto out_err;
-> >>>   		}
-> >>>   	}
-> >>>
-> >>>   	return 0;
-> >>> +out_err:
-> >>> +	/* Only cleanup the chain elements that where actually translated. */
-
-s/where/were/
-
-> >>> +	chain->ch_len = idx;
-> >>> +	list_for_each_entry_continue(chain, &cp->ccwchain_list, next) {
-> >>> +		chain->ch_len = 0;
-> >>> +	}
-> >>> +	return ret;
-> >>>   }
-> >>>
-> >>>   /**
-> >>>  
+> -static int ima_eventdigest_init_common(u8 *digest, u32 digestsize, u8 hash_algo,
+> +static int ima_eventdigest_init_common(const u8 *digest, u32 digestsize,
+> +				       u8 hash_algo,
+>  				       struct ima_field_data *field_data)
+>  {
+>  	/*
+> @@ -323,6 +324,35 @@ int ima_eventdigest_ng_init(struct ima_event_data *event_data,
+>  					   hash_algo, field_data);
+>  }
+> 
+> +/*
+> + * This function writes the digest of the file which is expected to match the
+> + * digest contained in the file's embedded signature.
+> + */
+> +int ima_eventdigest_sig_init(struct ima_event_data *event_data,
+> +			     struct ima_field_data *field_data)
+> +{
+> +	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
+> +	enum hash_algo hash_algo = HASH_ALGO_SHA1;
+> +	const u8 *cur_digest = NULL;
+> +	u8 cur_digestsize = 0;
+> +	int ret;
+> +
+> +	if (!xattr_value || xattr_value->type != IMA_MODSIG)
+> +		return 0;
+> +
+> +	if (event_data->violation)	/* recording a violation. */
+> +		goto out;
+> +
+> +	ret = ima_get_modsig_hash(xattr_value, &hash_algo, &cur_digest,
+> +				  &cur_digestsize);
+> +	if (ret)
+> +		return ret;
+> +
+> + out:
+> +	return ima_eventdigest_init_common(cur_digest, cur_digestsize,
+> +					   hash_algo, field_data);
+> +}
+> +
+>  static int ima_eventname_init_common(struct ima_event_data *event_data,
+>  				     struct ima_field_data *field_data,
+>  				     bool size_limit)
+> @@ -379,10 +409,23 @@ int ima_eventsig_init(struct ima_event_data *event_data,
+>  		      struct ima_field_data *field_data)
+>  {
+>  	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
+> +	int xattr_len = event_data->xattr_len;
+> 
+>  	if (!is_ima_sig(xattr_value))
+>  		return 0;
+> 
+> -	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
+> +	/*
+> +	 * The xattr_value for IMA_MODSIG is a runtime structure containing
+> +	 * pointers. Get its raw data instead.
+> +	 */
+> +	if (xattr_value->type == IMA_MODSIG) {
+> +		int rc;
+> +
+> +		rc = ima_modsig_serialize_data(&xattr_value, &xattr_len);
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	return ima_write_template_field_data(xattr_value, xattr_len,
+>  					     DATA_FMT_HEX, field_data);
+>  }
+> diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
+> index 6a3d8b831deb..3cd353e83f73 100644
+> --- a/security/integrity/ima/ima_template_lib.h
+> +++ b/security/integrity/ima/ima_template_lib.h
+> @@ -38,6 +38,8 @@ int ima_eventname_init(struct ima_event_data *event_data,
+>  		       struct ima_field_data *field_data);
+>  int ima_eventdigest_ng_init(struct ima_event_data *event_data,
+>  			    struct ima_field_data *field_data);
+> +int ima_eventdigest_sig_init(struct ima_event_data *event_data,
+> +			     struct ima_field_data *field_data);
+>  int ima_eventname_ng_init(struct ima_event_data *event_data,
+>  			  struct ima_field_data *field_data);
+>  int ima_eventsig_init(struct ima_event_data *event_data,
 > 
