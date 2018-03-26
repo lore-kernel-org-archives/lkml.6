@@ -1,61 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751090AbeCZJn3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:43:29 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:45167 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeCZJn2 (ORCPT
+        id S1751686AbeCZJnj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:43:39 -0400
+Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:45499 "EHLO
+        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750923AbeCZJng (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:43:28 -0400
-Date: Mon, 26 Mar 2018 11:43:27 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-cc: linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] genirq: Pass desc to __irq_free instead of irq number
-In-Reply-To: <20180325221213.ub5vurux7dqdkldd@pengutronix.de>
-Message-ID: <alpine.DEB.2.21.1803261141230.1585@nanos.tec.linutronix.de>
-References: <20180319105202.9794-1-u.kleine-koenig@pengutronix.de> <20180325221213.ub5vurux7dqdkldd@pengutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 26 Mar 2018 05:43:36 -0400
+Date: Mon, 26 Mar 2018 10:43:34 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Rik van Riel <riel@surriel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] sched/numa: Avoid trapping faults and attempting migration
+ of file-backed dirty pages
+Message-ID: <20180326094334.zserdec62gwmmfqf@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-882585705-1522057407=:1585"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+change_pte_range is called from task work context to mark PTEs for receiving
+NUMA faulting hints. If the marked pages are dirty then migration may fail.
+Some filesystems cannot migrate dirty pages without blocking so are skipped
+in MIGRATE_ASYNC mode which just wastes CPU. Even when they can, it can
+be a waste of cycles when the pages are shared forcing higher scan rates.
+This patch avoids marking shared dirty pages for hinting faults but also
+will skip a migration if the page was dirtied after the scanner updated
+a clean page.
 
---8323329-882585705-1522057407=:1585
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+This is most noticable running the NASA Parallel Benchmark when backed by
+btrfs, the default root filesystem for some distributions, but also noticable
+when using XFS.
 
-On Mon, 26 Mar 2018, Uwe Kleine-König wrote:
-> 
-> On Mon, Mar 19, 2018 at 11:52:02AM +0100, Uwe Kleine-König wrote:
-> > Given that irq_to_desc() is a radix_tree_lookup and the reverse
-> > operation is only a pointer dereference and that all callers of
-> > __free_irq already have the desc, pass the desc instead of the irq
-> > number.
-> > 
-> > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> > ---
-> > Hello,
-> > 
-> > this is a micro optimisation I noticed while looking at the irq code.
-> 
-> This made it into next as 83ac4ca943affce56a2c408ddb2f5232f478fb11 and
-> ba63053f018721a0ad60b083e21a15e324a4a8c4. Is it right that it is there
-> twice?
+The following are results from a 4-socket machine running a 4.16-rc4 kernel
+with some scheduler patches that are pending for the next merge window.
 
-No. It's only one instance.
+                      4.16.0-rc4             4.16.0-rc4
+               schedtip-20180309          nodirty-v1
+Time cg.D      459.07 (   0.00%)      444.21 (   3.24%)
+Time ep.D       76.96 (   0.00%)       77.69 (  -0.95%)
+Time is.D       25.55 (   0.00%)       27.85 (  -9.00%)
+Time lu.D      601.58 (   0.00%)      596.87 (   0.78%)
+Time mg.D      107.73 (   0.00%)      108.22 (  -0.45%)
 
-> And in the Author line the - in my name is missing. Would be great if
-> that could be fixed up.
+is.D regresses slightly in terms of absolute time but note that that
+particular load varies quite a bit from run to run. The more relevant
+observation is the total system CPU usage.
 
-Sorry, I'm surely not rebasing that branch just to add a missing dash.
+          4.16.0-rc4  4.16.0-rc4
+        schedtip-20180309 nodirty-v1
+User        71471.91    70627.04
+System      11078.96     8256.13
+Elapsed       661.66      632.74
 
-Thanks,
+That is a substantial drop in system CPU usage and overall the workload
+completes faster. The NUMA balancing statistics are also interesting
 
-	tglx
---8323329-882585705-1522057407=:1585--
+NUMA base PTE updates        111407972   139848884
+NUMA huge PMD updates           206506      264869
+NUMA page range updates      217139044   275461812
+NUMA hint faults               4300924     3719784
+NUMA hint local faults         3012539     3416618
+NUMA hint local percent             70          91
+NUMA pages migrated            1517487     1358420
+
+While more PTEs are scanned due to changes in what faults are gathered,
+it's clear that a far higher percentage of faults are local as the bulk
+of the remote hits were dirty pages that, in this case with btrfs, had
+no chance of migrating.
+
+The following is a comparison when using XFS as that is a more realistic
+filesystem choice for a data partition
+
+                      4.16.0-rc4             4.16.0-rc4
+               schedtip-20180309          nodirty-v1r47
+Time cg.D      485.28 (   0.00%)      442.62 (   8.79%)
+Time ep.D       77.68 (   0.00%)       77.54 (   0.18%)
+Time is.D       26.44 (   0.00%)       24.79 (   6.24%)
+Time lu.D      597.46 (   0.00%)      597.11 (   0.06%)
+Time mg.D      142.65 (   0.00%)      105.83 (  25.81%)
+
+That is a reasonable gain on two relatively long-lived workloads. While
+not presented, there is also a substantial drop in system CPu usage and
+the NUMA balancing stats show similar improvements in locality as btrfs did.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 1e5525a25691..d26832f0723b 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1955,6 +1955,13 @@ int migrate_misplaced_page(struct page *page, struct vm_area_struct *vma,
+ 	    (vma->vm_flags & VM_EXEC))
+ 		goto out;
+ 
++	/*
++	 * Also do not migrate dirty pages as not all filesystems can move
++	 * dirty pages in MIGRATE_ASYNC mode which is a waste of cycles.
++	 */
++	if (page_is_file_cache(page) && PageDirty(page))
++		goto out;
++
+ 	/*
+ 	 * Rate-limit the amount of data that is being migrated to a node.
+ 	 * Optimal placement is no good if the memory bus is saturated and
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index e3309fcf586b..3cfd095e2bb0 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -27,6 +27,7 @@
+ #include <linux/pkeys.h>
+ #include <linux/ksm.h>
+ #include <linux/uaccess.h>
++#include <linux/mm_inline.h>
+ #include <asm/pgtable.h>
+ #include <asm/cacheflush.h>
+ #include <asm/mmu_context.h>
+@@ -89,6 +90,14 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 				    page_mapcount(page) != 1)
+ 					continue;
+ 
++				/*
++				 * While migration can move some dirty pages,
++				 * it cannot move them all from MIGRATE_ASYNC
++				 * context.
++				 */
++				if (page_is_file_cache(page) && PageDirty(page))
++					continue;
++
+ 				/* Avoid TLB flush if possible */
+ 				if (pte_protnone(oldpte))
+ 					continue;
