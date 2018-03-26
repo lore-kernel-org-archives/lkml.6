@@ -1,171 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeCZSMG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 14:12:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59428 "EHLO mx1.redhat.com"
+        id S1752647AbeCZSTQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 14:19:16 -0400
+Received: from mail-sn1nam01on0078.outbound.protection.outlook.com ([104.47.32.78]:18272
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751964AbeCZSMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 14:12:05 -0400
-Subject: Re: [PATCH v10 00/10] livepatch: Atomic replace feature
-To: Petr Mladek <pmladek@suse.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>, Jason Baron <jbaron@akamai.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <2f94c399-fe72-58f9-bd63-b08c46bb47b3@redhat.com>
- <1520881024-29386-1-git-send-email-joe.lawrence@redhat.com>
- <20180326105610.fzjfotkaljbuoa57@pathway.suse.cz>
-From: Joe Lawrence <joe.lawrence@redhat.com>
-Organization: Red Hat
-Message-ID: <6b1c58e4-9dc3-36bd-1fb6-e136605d0c66@redhat.com>
-Date: Mon, 26 Mar 2018 14:12:03 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1751964AbeCZSTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 14:19:14 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=mkelly@xevo.com;
+From: Martin Kelly <mkelly@xevo.com>
+To: linux-kernel@vger.kernel.org
+Cc: Stefani Seibold <stefani@seibold.net>,
+        Andrew Morton <akpm@linux-foundation.org>, trivial@kernel.org,
+        Martin Kelly <mkelly@xevo.com>
+Subject: [PATCH] kfifo: fix inaccurate comment
+Date: Mon, 26 Mar 2018 11:18:23 -0700
+Message-Id: <20180326181823.5536-1-mkelly@xevo.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <20180326105610.fzjfotkaljbuoa57@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [65.122.179.226]
+X-ClientProxiedBy: MWHPR19CA0060.namprd19.prod.outlook.com
+ (2603:10b6:300:94::22) To SN6PR0102MB3422.prod.exchangelabs.com
+ (2603:10b6:805:3::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 533ff541-8303-46db-7589-08d5934613d5
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN6PR0102MB3422;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR0102MB3422;3:VbrD4caUT7/6oM8xiN5tdMkdfIXRq0qivVgPRTA1XStr+5RbPaw/OlhUB/xo/mMCrklNwbrvi/pn1AKBrXfuEZjnf2ahz3W+4M1Nfh1nuadwdoxRzleGbNLLW+jW17V4mse8WmxVMV++azGhudXdi92SbaDm9Rce6J7PwR3l7EFjaveRF5IYNDsJwitRVW46VP8qm/Z9uvDrZhP3pKK3e9j/Jy8byXGTtvEllwPMllERIQgYzA9yyZQ1npExRcS5;25:XQWNKFdlcH46gHN6KZkyNfMgi6gs1xq8muNZMiRk2hGtl9j3QjOZBHkNJQ2nzfTmn3MRPd0/2T7TwbuKjvYtd48KR3YKvYbqxxoDVSNWUMeuUxwEQ3LB8Li9BdZNhlaE+h7HcgKuFNex+2YcpqnnI0/w/k5eXbwEFDNbMxSCVjvNEjwX0bFQ2xiaznsZcXcZgWhHrVEqc4KF8DkNDahfO49h6xXu6JrHd/hGfPKf7q1+y1b4xtowd0xLpFVfW9Pb4Ah/BmqpAb5VDs2CJK/eeOoeGQdKyqFFsYpl01PbUbrVM8nr0asRQoTQlZj/SKzjJBf1kdbArwxXT8fsCotubg==;31:GhI20zGfexBkz1BtH0BN5ElGS0v+wv1UuUEmXylAlYVtrqBssad+hqOjZ/pUfbEIbDAq82LXRmtmFDUGRiMDcu8lMT+rj/wSj0fjKsu6PM1Ega1t4EXugMIMnvPDroPPGKzz7YDAUdTciE+piA6XaUOrbCv/pEEcwhikAm8zpZwh4u0lZn7fQQlI6eDkTHJEaLdaT3dC4Mqzh2v4sYP4y2x/fP7BNFeznHP6h28oBzI=
+X-MS-TrafficTypeDiagnostic: SN6PR0102MB3422:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR0102MB3422;20:1mpwF4ycuOOKGT2MxRY6MUp0ksXr44sPAKjBwH3NbQjm4TqVDhfvLGxzkkz5s7qD19bB3ZpMzKx4fE9Xw+CXTfarW4SHdeFvxzRPTwfdNZeaNOI1hsCWjnLS69uFbt0btcxPlYz0byk+TvFxxyspnqRnq5QV+RiVvDR8Qcghe3cFMK+cNnOBrviZRE3DFFo+QLAIthWifl1R3cOlTSEQSSzTCk0NzAEsOOmnE8Rf+qFRVVGmGJalwn9MvwyU6mh3kati59mRGx8Ms/PqIomx0hbEkREKqthuJ53LxtOM0fKnG+UQfC+0pa5mmzOLJQI0Oi1m09llBAUTOZqSEEm0N56lKVEAFFr9abBsWAQiH5zEfuzQllECFCvM7MhjZFJA6f5UfuYX1ku57g/jl+NZBcDa7rKGoFt1F1CguBJOGi143b+a9BjkTW4V7xa+Uf1IG+Az1xf7TJYY43WF+zwgQvaOsFRoaAZVzjRGaQbPE4ktiShp5fiew3UvJiURtJDQ;4:YF/CZ1ZMOXV5RPZmr1r71JcTH3LWZIINddWR0RwoI3eccN+SNfZwcAEimNC9auHH0Xtr5WO70cGz29WVzn7ALdOwFxO5OH0XB6FRIca/G0K+RPy9Oh01Qsjf0BFC1pvoD3g52rhAnC7WO8KZrtVzP37z0OuRXDfHflf08o73hz50s/QFCvvYyUrRuHAsjrAKstm6mdOWiyWRxuz4iOpSyAmv5VCNA9cGToZDduPV4VrL0OncCuOp2dD+LkaBqcvuMbXHbP6eBdyTzdtP/8Ijmw==
+X-Microsoft-Antispam-PRVS: <SN6PR0102MB342279889BEF836ED91AD2DEABAD0@SN6PR0102MB3422.prod.exchangelabs.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:SN6PR0102MB3422;BCL:0;PCL:0;RULEID:;SRVR:SN6PR0102MB3422;
+X-Forefront-PRVS: 06237E4555
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(39840400004)(376002)(39380400002)(366004)(396003)(189003)(199004)(105586002)(8936002)(6116002)(478600001)(3846002)(2351001)(186003)(6666003)(26005)(2616005)(386003)(53936002)(16526019)(2361001)(36756003)(956004)(51416003)(59450400001)(476003)(2906002)(52116002)(1857600001)(50226002)(7696005)(1076002)(68736007)(6916009)(575784001)(86362001)(5660300001)(7736002)(66066001)(47776003)(50466002)(16586007)(48376002)(305945005)(316002)(81156014)(81166006)(97736004)(6486002)(54906003)(107886003)(25786009)(8676002)(4326008)(106356001)(486005)(486005);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR0102MB3422;H:columbia.corp.xevo.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR0102MB3422;23:dMgrXcUn/Q+eK80kGLIoQcplNlSiEK4PkEhZePR?=
+ =?us-ascii?Q?94Dnz0l37n//aKsJ25DjPTpHD6Sik858+WQUflh4B4e48eVw1ZVVDbB7lwe9?=
+ =?us-ascii?Q?vzrSfYg1h4tDsgMZzwtE9gT+2j7nD1JxtIqnaywnYnGMTwmBV9ze9CTNPP4Y?=
+ =?us-ascii?Q?1gq0ANJqWaoItz1EN7mT5e5EkvgUYRA8GgjugckpuYvh9oLkVQf/+c0UgZyr?=
+ =?us-ascii?Q?T7zbovhnxAqrm8jQPuikhwu+F8JDUqEsFHk+m+/PrlfN7r7pvcI+fgY1uT3H?=
+ =?us-ascii?Q?Ra1Prhsno4VwObTi/6KIlHx8gQAURZKBAIgGzCU8CTXWHYjSwHsA7BMGlGVN?=
+ =?us-ascii?Q?Ut9hA0w5aIVJBb+dIe0TZ/sy3mKkZoKBu0iJWc7Wfk4xB15TSbKTqtQ2pxAO?=
+ =?us-ascii?Q?GjThn/9wMEM1ulbBuZGNBYVSOkK3ImFZlntwAsFMKJFMnEUFekDyI/W3b9bc?=
+ =?us-ascii?Q?pbCEsmQ79JumVKouk3Fslz38FL2sf3aBrzJTwVQ9mbCglWIBze4IuK6PHJ84?=
+ =?us-ascii?Q?WqFk/82dMASu3fQpkk9aqdbl17YTFtf9S4neLIBZLYrHsgTUUhllPMGoAtQ8?=
+ =?us-ascii?Q?6vYGMNsI3ZsV8A+mHtX19d6CTSEM0XhKFN2Tf1wr9ZUZwsyaoM+a7/Ol5dkC?=
+ =?us-ascii?Q?WqfA3+/Ypc7GaRkVYD/XrBt00sxFsqTkivTkDEmSnhvK5afClSu9dPOhu8e0?=
+ =?us-ascii?Q?Elkq7qnzqGpVORUBeo7xLsqBP0Y7TebmxvjBigBegLkxVEcfzDlH/KnawLGn?=
+ =?us-ascii?Q?hAtBo2ts6aEHc6acR6KNVlbg4AjtvUJVXIXVjugRGyB2/+I13O2MG9xjtold?=
+ =?us-ascii?Q?nLqGiz7CE+lmHc57eij92RSHGnbSt67HOI7Zugq+dc0d+uoZgzmXzPeGddEo?=
+ =?us-ascii?Q?mRkspQCPCYAaTceXCSs4dGGXjEtdWK3siBbtLWwkBZIOx1ei3rWOVNsKOfnM?=
+ =?us-ascii?Q?KVfHxQ5GEZ0V5w0ZWuw8f9T4E3kREqTgrgGy2BG75GEIJ+GLM/O88KbirnEP?=
+ =?us-ascii?Q?E/H0RSRIES8wWglRjl6qM9gpurcRuAUf+Z5+EgtMjAGlWMD3Q70UCtEudJqE?=
+ =?us-ascii?Q?nTy1r8SbN69+k8+GmAdsksKwF/8jRC9Ft71qsrWUyiZGzEg9/dlAqFTBB/fM?=
+ =?us-ascii?Q?TEcny96MfdeYw9GcDPno7PnCiU2Ltv5BdeoO4hDHQsp47mMPI7oksmHaWoZt?=
+ =?us-ascii?Q?fbY4fWgWF3cD4K/HYXYxymz7l/jLQCMHscu+3QqvLTeCmETyzqsu4+V9CkBH?=
+ =?us-ascii?Q?RF7rLwo8Euk7IyI/u/gjL4jK42fxuOfoB4/OBVVMYNviHyyngPTSDQDbFOEZ?=
+ =?us-ascii?Q?ouw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: UiHgN4Hp0lY4pZjucYjnAbD0ubwp0RXfBvHOpyszYSWOdFnPMil4rwe2J90qC0PSOIkXK7LboP9DJ1iMrqhyDXYmHu+q6oslRCJ50rmc+XuAGohxFIgMoCgG18KYGPOZBb5LCkzJsHeON45zcWeGTNBC4BVwCEu8b3cQgKkXFKBn9VrOkbLbP9wzc8ep5vSe
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR0102MB3422;6:XZZKgPyq8n/oLVVRasQ3DGBa4cU/yL2Mh+c06BQ4dhrX8DIJTTrVY2IH2XXMzDxEdq6p7EvOJrStnTB+dQhr+wGvRi7hKBSLnomW6XYS42jnhLXN158rc/+dya0itFoSI4i5Jf+gOU6UpC6okbXFjpn8A8oxWVcuuHP/7LASSeOdjCh7vIta4IMmAWCfks0UsY97FCqch832kMZ3VO7dyZvYHkjePa1rHQUfK1MRI6thV5K8U/VXYAN+waNoXrssXkzt5LVvBREILNYDy5MoyB/SXuuIfKTiW5gaIakrM74h7RCbZhC0b/GBOecfmVvPHYeqJNJxQw2Y3pDgV2WSjFJuuDcojIpGQ64W5UJVHnJTG1ea6chGBbc8hMGdQXi3IANPic47tBMhKUv7DIHwdn2J4yFw5NyVdaFAffDIUBCx5ZgljfQ4F8JjDsr1wk18ancIC3VDDmK8pbJuuEgzTg==;5:m0CtkGyLZ4B03MXjfLeMlQoi0uCBZX6UWIimRE9/ZYT1KllWBa+VVRkjrAn12YVaT1FbWlLs34ZI5PtNZuMZjJtq78+1LcK1Hb3wThOAGBCAvzAskU5v4A97RzuPjUUT7zcuUq1WyrEwrqYQSvcY0VOReBmfCm2PO67tSuNB+jo=;24:Ew0IXWfNZfHgHe1z/Mmbwwjrr/D9jPIypy125kZMYfkUkeU8z0LVccJG4DS4f87z3T3FwJbYqZYv/4COfKr0Y+5a3S/iEe3s+UFu+nPBlOg=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR0102MB3422;7:voe29Kj+oXkyCsq65OVyctz2LNgkbiH1hs3WkYAPbKY47CL6rKLdDcpHfWReOQ61JBCWAAVEvb3Pg7eQvgLtJKiFurFRvasZ++rV2KN/i35c6VElgY0j73aQe07FzGMwYf+NdxEYA7p4uxdizBITsY3i9OC8dvrHNIdZ+SxkXBx9R+5JMerDBTQHDEOxDqAsShTGrYN4FUtjNghtIl/dP6gTI0aJLRBOOFKVJMq+KuYdYR/zOOoqpj/TIvgIqoi5
+X-OriginatorOrg: xevo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2018 18:19:12.8637 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 533ff541-8303-46db-7589-08d5934613d5
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e0a7ca1f-2458-4cd6-a7c7-d733c07495ab
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR0102MB3422
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/26/2018 06:56 AM, Petr Mladek wrote:
-> On Mon 2018-03-12 14:57:04, Joe Lawrence wrote:
->> Hi Petr,
->>
->> These are the callback tests that I hacked up into a livepatch
->> kselftest.  (Basically I copied a bunch of the sample modules and
->> verified the expected dmesg output as I had listed in in the
->> Documentation/livepatch/callbacks.txt file.)  The script is still a
->> little rough and maybe this isn't the direction we want to go for proper
->> kselftests, but perhaps it saves you some time/sanity for verifying this
->> patchset.
-> 
-> 
-> 
->> Hope this helps,
->>
->> -- Joe
->>
->> -- >8 -- >8 -- >8 -- >8 --
->>
->> >From 0364430c53e12e21923bed20cb651374b4cf9ba9 Mon Sep 17 00:00:00 2001
->> From: Joe Lawrence <joe.lawrence@redhat.com>
->> Date: Tue, 6 Mar 2018 17:32:25 -0500
->> Subject: WIP - livepatch kselftest
->>
->> CONFIG_TEST_LIVEPATCH=m
->> % make -C tools/testing/selftests TARGETS=livepatch run_tests
->>
->> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
->> ---
->>  lib/Kconfig.debug                                |  11 +
->>  lib/Makefile                                     |   9 +
->>  lib/test_klp_callbacks_busy.c                    |  58 ++
->>  lib/test_klp_callbacks_demo.c                    | 205 +++++++
->>  lib/test_klp_callbacks_demo2.c                   | 149 +++++
->>  lib/test_klp_callbacks_mod.c                     |  39 ++
-> 
-> I would suggest to put it into lib/livepatch/ subdirectory. I hope
-> that we will add more tests in the long term.
+The comment in __kfifo_alloc says we round down, but we actually round
+up, so correct it.
 
-Good idea, we should encourage more tests in a livepatch/ subdir and not
-clutter up the lib/ directory.
+Signed-off-by: Martin Kelly <mkelly@xevo.com>
+---
+ lib/kfifo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> diff --git a/tools/testing/selftests/livepatch/livepatch-test b/tools/testing/selftests/livepatch/livepatch-test
->> new file mode 100755
->> index 000000000000..798317bf69f6
->> --- /dev/null
->> +++ b/tools/testing/selftests/livepatch/livepatch-test
-> 
-> s/livepatch-test/livepatch-test.sh/  ?
-> 
-> It seems to be common to add .sh suffix for bash script names.
-
-I'll rename with the suffix.
-
->> @@ -0,0 +1,658 @@
->> +#!/bin/bash
->> +# SPDX-License-Identifier: GPL-2.0
->> +# Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
->> +
->> +MAX_RETRIES=30
->> +RETRY_INTERVAL=2	# seconds
->> +BETWEEN_TESTS=20	# seconds
-> 
-> These 20 seconds kept me in a tense (waiting for the final result)
-> for a very long time ;-) Is there any particular reason for such
-> a long delay?
-
-It certainly builds suspense :)
-
-> I wonder if we need a delay at all or if let's say 2 seconds might
-> be enough.
-
-I removed the delays completely and the tests ran successfully.   What
-might be better than a between test delay would be some kind of
-initial-condition verification, ie, make sure that the test starts/ends
-with none of the livepatch test modules loaded.
-
-For the test cases which load multiple livepatches, is there an easy way
-to determine the patch stack order from userspace?  I think that would
-be helpful when trying to remove all of them.
-
->> +echo -n "TEST1 ... "
->> +dmesg -C
->> +
->> +load_mod $MOD_TARGET
->> +load_mod $MOD_LIVEPATCH
->> +wait_for_transition $MOD_LIVEPATCH
->> +disable_lp $MOD_LIVEPATCH
->> +unload_mod $MOD_LIVEPATCH
->> +unload_mod $MOD_TARGET
->> +
->> +check_result "% modprobe $MOD_TARGET
->> +$MOD_TARGET: livepatch_callbacks_mod_init
->> +% modprobe $MOD_LIVEPATCH
->> +livepatch: enabling patch '$MOD_LIVEPATCH'
->> +livepatch: '$MOD_LIVEPATCH': initializing patching transition
->> +$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
->> +$MOD_LIVEPATCH: pre_patch_callback: vmlinux
->> +livepatch: '$MOD_LIVEPATCH': starting patching transition
->> +livepatch: '$MOD_LIVEPATCH': completing patching transition
->> +$MOD_LIVEPATCH: post_patch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
->> +$MOD_LIVEPATCH: post_patch_callback: vmlinux
->> +livepatch: '$MOD_LIVEPATCH': patching complete
->> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
->> +livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
->> +$MOD_LIVEPATCH: pre_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
->> +$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
->> +livepatch: '$MOD_LIVEPATCH': starting unpatching transition
->> +livepatch: '$MOD_LIVEPATCH': completing unpatching transition
->> +$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
->> +$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
->> +livepatch: '$MOD_LIVEPATCH': unpatching complete
->> +% rmmod $MOD_LIVEPATCH
->> +% rmmod $MOD_TARGET
->> +$MOD_TARGET: livepatch_callbacks_mod_exit"
-> 
-> I was a bit surprised when seeing this way of checking results.
-> But on the other hand, it looks pretty effective, especially for
-> the callbacks. And the 3rd look, any patched function might write
-> something into the log when called.
-
-This was a quickly scripted version of what I was manually verifying
-with the sample example livepatches.  I don't know if it will scale, but
-it was pretty easy to add tests this way.
-
-I wonder though if better dmesg filters will be required as the
-livepatch core adds more debug msgs?
-
-> I like it. Let's see how it works in the long term. But I am rather
-> positive.
-> 
-> Thanks a lot for working on it.
-
-Thanks for taking a look and running the tests.  I'll make some of your
-suggested changes and send it up for a proper review soon.
-
--- Joe
+diff --git a/lib/kfifo.c b/lib/kfifo.c
+index 90ba1eb1df06..b0f757bf7213 100644
+--- a/lib/kfifo.c
++++ b/lib/kfifo.c
+@@ -39,7 +39,7 @@ int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
+ 		size_t esize, gfp_t gfp_mask)
+ {
+ 	/*
+-	 * round down to the next power of 2, since our 'let the indices
++	 * round up to the next power of 2, since our 'let the indices
+ 	 * wrap' technique works only in this case.
+ 	 */
+ 	size = roundup_pow_of_two(size);
+-- 
+2.11.0
