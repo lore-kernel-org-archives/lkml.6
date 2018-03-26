@@ -1,102 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeCZWjv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 18:39:51 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38174 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752360AbeCZWjq (ORCPT
+        id S1752257AbeCZWlw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 18:41:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56754 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752065AbeCZWlv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 18:39:46 -0400
-X-Google-Smtp-Source: AG47ELu4LCG84YqZqXGqX+vCSn8ZK7hY1izbsklajKitSBAyZTrsaqXJop7vc3HadaVV0lRKcvuXuQ==
-Date: Mon, 26 Mar 2018 15:39:43 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Jonas <mark.jonas@de.bosch.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, hs@denx.de,
-        Zhu Yi <yi.zhu5@cn.bosch.com>
-Subject: Re: [PATCH] Input: add bu21029 touch driver
-Message-ID: <20180326223943.GC204225@dtor-ws>
-References: <1521651874-15379-1-git-send-email-mark.jonas@de.bosch.com>
- <20180326222426.wbdjlyfy7yyan7fc@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326222426.wbdjlyfy7yyan7fc@rob-hp-laptop>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 26 Mar 2018 18:41:51 -0400
+Date: Mon, 26 Mar 2018 15:41:49 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Joe Perches <joe@perches.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Hugh Dickins <hughd@google.com>, Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Seth Jennings <sjenning@redhat.com>, Dan Streetman <ddstreet@ieee.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: Use octal not symbolic permissions
+Message-Id: <20180326154149.4045ec03645d6983de6f11b3@linux-foundation.org>
+In-Reply-To: <2e032ef111eebcd4c5952bae86763b541d373469.1522102887.git.joe@perches.com>
+References: <2e032ef111eebcd4c5952bae86763b541d373469.1522102887.git.joe@perches.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 05:24:26PM -0500, Rob Herring wrote:
-> On Wed, Mar 21, 2018 at 06:04:34PM +0100, Mark Jonas wrote:
-> > From: Zhu Yi <yi.zhu5@cn.bosch.com>
-> > 
-> > Add the ROHM BU21029 resistive touch panel controller
-> > support with i2c interface.
-> > 
-> > Signed-off-by: Zhu Yi <yi.zhu5@cn.bosch.com>
-> > Signed-off-by: Mark Jonas <mark.jonas@de.bosch.com>
-> > Reviewed-by: Heiko Schocher <hs@denx.de>
-> > ---
-> >  .../bindings/input/touchscreen/bu21029.txt         |  30 ++
-> >  drivers/input/touchscreen/Kconfig                  |  12 +
-> >  drivers/input/touchscreen/Makefile                 |   1 +
-> >  drivers/input/touchscreen/bu21029_ts.c             | 456 +++++++++++++++++++++
-> >  4 files changed, 499 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/bu21029.txt
-> >  create mode 100644 drivers/input/touchscreen/bu21029_ts.c
-> > 
-> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/bu21029.txt b/Documentation/devicetree/bindings/input/touchscreen/bu21029.txt
-> > new file mode 100644
-> > index 0000000..7b61602
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/input/touchscreen/bu21029.txt
-> > @@ -0,0 +1,30 @@
-> > +* Rohm BU21029 Touch Screen Controller
-> > +
-> > +Required properties:
-> > + - compatible              : must be "rohm,bu21029"
-> > + - reg                     : i2c device address of the chip
-> 
-> What the valid value(s)?
-> 
-> > + - interrupt-parent        : the phandle for the gpio controller
-> > + - interrupts              : (gpio) interrupt to which the chip is connected
-> > + - reset-gpios             : gpio pin to reset the chip
-> 
-> Active high or low?
-> 
-> > + - rohm,x-plate-ohms       : x-plate resistance in ohms
-> 
-> IIRC, we have a standard touchscreen property for this?
+On Mon, 26 Mar 2018 15:22:32 -0700 Joe Perches <joe@perches.com> wrote:
 
-I do not think so: it is specific for resistive touchscreens, whereas
-"standard" touchscreen properties are technology-independent ones (size,
-rotation, etc).
-
+> mm/*.c files use symbolic and octal styles for permissions.
 > 
-> > +
-> > +Optional properties:
-> > + - touchscreen-max-pressure: maximum pressure value
-> > +
-> > +Example:
-> > +
-> > +	&i2c1 {
-> > +		/* ... */
-> > +
-> > +		bu21029: bu21029@40 {
-> > +			compatible = "rohm,bu21029";
-> > +			reg = <0x40>;
-> > +			interrupt-parent = <&gpio1>;
-> > +			interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-> > +			reset-gpios = <&gpio6 16 GPIO_ACTIVE_LOW>;
-> > +			rohm,x-plate-ohms = <600>;
-> > +			touchscreen-max-pressure = <4095>;
-> > +		};
-> > +
-> > +		/* ... */
-> > +	};
+> Using octal and not symbolic permissions is preferred by many as more
+> readable.
+> 
+> https://lkml.org/lkml/2016/8/2/1945
+> 
+> Prefer the direct use of octal for permissions.
 
--- 
-Dmitry
+Thanks.  I'll park this until after -rc1 because the
+benefit-to-potential-for-whoopsies ratio is rather low.
