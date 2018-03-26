@@ -1,111 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751686AbeCZAz5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 20:55:57 -0400
-Received: from smtprelay0004.hostedemail.com ([216.40.44.4]:45315 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751010AbeCZAzx (ORCPT
+        id S1751208AbeCZBGA (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 21:06:00 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:38447 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750838AbeCZBF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 20:55:53 -0400
-X-Session-Marker: 7368656140736865616C6576792E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,shea@shealevy.com,:::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:871:960:966:973:988:989:1000:1260:1313:1314:1345:1359:1437:1516:1518:1534:1541:1575:1711:1730:1747:1777:1792:2194:2196:2199:2200:2393:2553:2559:2562:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3871:3872:3873:3874:4321:4362:4385:5007:6119:6261:6506:6742:6747:7281:7903:7909:9040:10004:10848:11026:11232:11473:11658:11914:12114:12296:12438:12555:12663:12740:12895:12986:14096:14180:14181:14721:14877:21060:21080:21451:21611:21627:30054:30070:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:ff,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: part39_6d2e95795a318
-X-Filterd-Recvd-Size: 3672
-From: Shea Levy <shea@shealevy.com>
-To: Palmer Dabbelt <palmer@sifive.com>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp, linux-m68k@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org,
-        user-mode-linux-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2 02/16] riscv: Use INITRAMFS_GENERIC_UNLOAD.
-In-Reply-To: <mhng-5691a509-dedf-4092-bd6d-020a81512c15@palmer-si-x1c4>
-References: <mhng-5691a509-dedf-4092-bd6d-020a81512c15@palmer-si-x1c4>
-Date: Sun, 25 Mar 2018 20:55:48 -0400
-Message-ID: <87o9jbu02z.fsf@xps13.shealevy.com>
+        Sun, 25 Mar 2018 21:05:58 -0400
+X-Google-Smtp-Source: AG47ELs+q89IlBmY5JggDkeiBF1kQy2YQHCt8zKlMyE8xdFgSq8nCpsa6S+JVx49c0a7/AsWsXSYCq4/nQNqqV/aDG0=
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20180314013256epcms1p47a97f32cdcb5a7eaa9303dc4b2cb0ea9@epcms1p4>
+References: <CGME20180314013256epcms1p47a97f32cdcb5a7eaa9303dc4b2cb0ea9@epcms1p4>
+ <20180314013256epcms1p47a97f32cdcb5a7eaa9303dc4b2cb0ea9@epcms1p4>
+From: Joel Stanley <joel@jms.id.au>
+Date: Mon, 26 Mar 2018 11:35:37 +1030
+X-Google-Sender-Auth: XYPfeUcbwGxnu86_jxSuxmALOVY
+Message-ID: <CACPK8Xfqv1Noa3ychYTd5bAPCRzRvhCtQ5xEEN_rY5vHtwdk3A@mail.gmail.com>
+Subject: Re: [PATCH v2] arm: ubsan: select ARCH_HAS_UBSAN_SANITIZE_ALL
+To: jinb.park@samsung.com
+Cc: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Hi Palmer,
-
-Palmer Dabbelt <palmer@sifive.com> writes:
-
-> On Sun, 25 Mar 2018 15:18:39 PDT (-0700), shea@shealevy.com wrote:
->> Signed-off-by: Shea Levy <shea@shealevy.com>
->> ---
->>  arch/riscv/Kconfig   | 1 +
->>  arch/riscv/mm/init.c | 6 ------
->>  2 files changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index c22ebe08e902..ab1b4cee84fc 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -37,6 +37,7 @@ config RISCV
->>  	select THREAD_INFO_IN_TASK
->>  	select RISCV_TIMER
->>  	select GENERIC_IRQ_MULTI_HANDLER
->> +	select INITRAMFS_GENERIC_UNLOAD
->>
->>  config MMU
->>  	def_bool y
->> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
->> index c77df8142be2..36f83fe8a726 100644
->> --- a/arch/riscv/mm/init.c
->> +++ b/arch/riscv/mm/init.c
->> @@ -62,9 +62,3 @@ void free_initmem(void)
->>  {
->>  	free_initmem_default(0);
->>  }
->> -
->> -#ifdef CONFIG_BLK_DEV_INITRD
->> -void free_initrd_mem(unsigned long start, unsigned long end)
->> -{
->> -}
->> -#endif /* CONFIG_BLK_DEV_INITRD */
+On 14 March 2018 at 12:02, Jinbum Park <jinb.park@samsung.com> wrote:
+> To enable UBSAN on arm, ARCH_HAS_UBSAN_SANITIZE_ALL is needed to be selected.
 >
-> I haven't looked through the rest of the patch set, but this is a pretty=
-=20
-> trivial change so feel free to add a=20
+> Basic test has passed on Raspberry Pi2, Raspbian jessi lite with
+> CONFIG_UBSAN_SANITIZE_ALL, CONFIG_UBSAN_NULL.
 >
-> Reviewed-By: Palmer Dabbelt <palmer@sifive.com>
+> Used compiler is gcc 5.5.0 in [2] (2017.10).
 >
-> if you'd like.  If you'd like it merged through my tree then just say=20
-> something!
+> It would be a resend patch for [1] from Seung-Woo Kim.
+> There was some problems when [1] submitted before.
+>
+>   P1) show -Warray-bounds that is not seen without UBSAN
+>   P2) too large stack size in crypto/serpent_generic.c
+>   P3) link error of ____ilog2_NaN, __aeabi_uldivmod
+>
+> I've tried to build locally with allmodconfig to ensure that above errors are fixed.
+> The result is that P2), P3) have fixed, but P1) appears at diffent location.
+> But, Since gcc closed P1) issue as won't fix [3],
+> and It can be a helpful warning to user, we don't have to worry about P1).
+>
+> build-environment that I used is as belows.
+>
+>   - config: arm allmodconfig
+>   - compiler: gcc 5.5.0 in [2] (2017.10)
+>   - ubsan flag: UBSAN, UBSAN_SANITIZE_ALL, UBSAN_ALIGNMENT, UBSAN_NULL
+>   - linux version: linux/arm 4.16.0-rc4
+>   - CONFIG_FRAME_WARN: 1024 (default value)
+>
+> [1] https://patchwork.kernel.org/patch/9189575/
+> [2] https://releases.linaro.org/components/toolchain/binaries/latest-5/arm-linux-gnueabi/
+> [3] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=78678
+>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Jinbum Park <jinb.park@samsung.com>
+> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-I'm not sure how these cross-cutting changes go, if you can take the
-series through your tree that'd be great!
+Tested-by: Joel Stanley <joel@jms.id.au>
 
-Thanks,
-Shea
+I built for an ARMv5 (aspeed_g5_defconfig) and booted on an ast2500.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+FYI, it found a couple of issues in ASPEED specific code!
 
------BEGIN PGP SIGNATURE-----
+ https://github.com/openbmc/linux/issues/144
+ https://github.com/openbmc/linux/issues/145
 
-iQIzBAEBCAAdFiEE6ESKvwKkwnxgMLnaXAvWlX2G/icFAlq4RRQACgkQXAvWlX2G
-/idVvw//eVifwGjCVA7W+miXNnrCgZRDqcXBSsy5+RJM0TcRiPp6DHk/yebLED8j
-i3/bd9OxMb6FyO2no4XZMZcsCrBPyeXZkwlbU0qhhc4DI/cNicmOUZro8Aj22Zmh
-MFmOPbShBJG95BW7OfbCbVwAMxJXzGqzVoIHFE6xN4ZkOYvFytX9R/rruZJORHgO
-3+sZBR2g2QG6y7KdXz3yoaRg00neNL8u6kOnDifPDBLBKo/8GI4J1nuycLGt4U3x
-/adDOQx6/jTpC22B8AnC1cLS1O9ws/k3aDLgtpaLyPoFvyMp6WbAoSJYZZlVKXE6
-/iqreLOaLVy67NPtldqJbcIgOCCZcOKuEhwlMtXNFQXBcC5FOmtI+Ske9MBKJsxJ
-dzbS8JTliRn858IJR52cTSo+jaeM7dTqwjYw2lpl8CZsdVOxwyh6ytIAP3h8LYBJ
-IyJrSbeDLkfWnQRcyTQBfR2ZHeTb2CDw40+VPMYm8EpRyQoI1oUkwKuPhaiUpcRz
-OSJpw7bHo3Nnj+V7PR4+7avRIpZSMoPtPHUcWxKkQURS/3HyMsE49Vzz6Ozz91jK
-GVb3D2dM/QDTDA5qY3r9bzJcgbmnKKdaqT9ybKyhjhs3AZJ1HjFhPhBqFgjcOSL/
-VXjOvwvokD+HXOJOHW/CAOnF85kFwysKxYUBoj38xxrx4rjT1W8=
-=L1b7
------END PGP SIGNATURE-----
---=-=-=--
+Cheers,
+
+Joel
