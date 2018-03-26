@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751241AbeCZABF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 20:01:05 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:58915 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750838AbeCZABD (ORCPT
+        id S1751732AbeCZABS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 20:01:18 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:34537 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751109AbeCZABE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 20:01:03 -0400
-X-Google-Smtp-Source: AG47ELtxOf2r8tmqZbh6W0DIlc40jR287tt+zLHQYFwjuFm2NCAH8xOG9b9few4wrdYt+ZmyNPQkB/8uoXHPo1RmfqLgGY1gJWNS
+        Sun, 25 Mar 2018 20:01:04 -0400
+X-Google-Smtp-Source: AIpwx4/rX+b7rxlQo1ErGJ3BfMxJ4HAWaj8R04MaPTadz5NjkawdVTKkK7iOWJj6u1mEK0aerEXD35tJEUDNA3g7E+ZA6lVH3mrE
 MIME-Version: 1.0
-Date: Sun, 25 Mar 2018 17:01:02 -0700
+Date: Sun, 25 Mar 2018 17:01:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a11421a58380f3705684578be@google.com>
-Subject: WARNING in __debug_object_init
-From: syzbot <syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
+Message-ID: <001a1141551246502d056845782e@google.com>
+Subject: KASAN: use-after-free Read in __list_del_entry_valid (4)
+From: syzbot <syzbot+29ee8f76017ce6cf03da@syzkaller.appspotmail.com>
+To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
+        jgg@ziepe.ca, leonro@mellanox.com, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, markb@mellanox.com, monis@mellanox.com,
+        parav@mellanox.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -29,234 +31,135 @@ bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
 Merge tag 'pinctrl-v4.16-3' of  
 git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=a3e0726462b2e346a31d
+https://syzkaller.appspot.com/bug?extid=29ee8f76017ce6cf03da
 
-So far this crash happened 25 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6402021133385728
+So far this crash happened 2 times on upstream.
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4906265889210368
+https://syzkaller.appspot.com/x/repro.syz?id=5803165253369856
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6718429092380672
+https://syzkaller.appspot.com/x/log.txt?id=5801459614482432
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
 compiler: gcc (GCC) 7.1.1 20170620
+user-space arch: i386
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com
+Reported-by: syzbot+29ee8f76017ce6cf03da@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-ODEBUG: object is on stack, but not annotated
-WARNING: CPU: 0 PID: 4185 at lib/debugobjects.c:328  
-debug_object_is_on_stack lib/debugobjects.c:327 [inline]
-WARNING: CPU: 0 PID: 4185 at lib/debugobjects.c:328  
-__debug_object_init+0x60a/0x1040 lib/debugobjects.c:354
-Kernel panic - not syncing: panic_on_warn set ...
+audit: type=1400 audit(1521923673.824:8): avc:  denied  { map } for   
+pid=4229 comm="syz-execprog" path="/root/syzkaller-shm086223256" dev="sda1"  
+ino=16482 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+tcontext=unconfined_u:object_r:file_t:s0 tclass=file permissive=1
+IPVS: ftp: loaded support on port[0] = 21
+==================================================================
+BUG: KASAN: use-after-free in __list_del_entry_valid+0x144/0x150  
+lib/list_debug.c:54
+Read of size 8 at addr ffff8801afaf33e0 by task syz-executor0/4703
 
-CPU: 0 PID: 4185 Comm: syzkaller382398 Not tainted 4.16.0-rc6+ #1
+CPU: 0 PID: 4703 Comm: syz-executor0 Not tainted 4.16.0-rc6+ #275
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x194/0x24d lib/dump_stack.c:53
-  panic+0x1e4/0x41c kernel/panic.c:183
-  __warn+0x1dc/0x200 kernel/panic.c:547
-  report_bug+0x1f4/0x2b0 lib/bug.c:186
-  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
-  fixup_bug arch/x86/kernel/traps.c:247 [inline]
-  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-RIP: 0010:debug_object_is_on_stack lib/debugobjects.c:327 [inline]
-RIP: 0010:__debug_object_init+0x60a/0x1040 lib/debugobjects.c:354
-RSP: 0018:ffff8801b8aff968 EFLAGS: 00010082
-RAX: 000000000000002d RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 000000000000002d RSI: 1ffff1003715fee2 RDI: ffffed003715ff21
-RBP: ffff8801b8affb40 R08: 0000000000000000 R09: 1ffff1003715fe89
-R10: ffff8801b8aff820 R11: ffffffff86f39cb8 R12: ffff8801c8daa0c0
-R13: ffff8801b8affca0 R14: ffff8801c0c65310 R15: ffff8801c0c65320
-  debug_object_init+0x17/0x20 lib/debugobjects.c:391
-  debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
-  debug_init kernel/time/hrtimer.c:458 [inline]
-  hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
-  alarm_init kernel/time/alarmtimer.c:339 [inline]
-  alarm_timer_nsleep+0x164/0x4d0 kernel/time/alarmtimer.c:787
-  SYSC_clock_nanosleep kernel/time/posix-timers.c:1226 [inline]
-  SyS_clock_nanosleep+0x235/0x330 kernel/time/posix-timers.c:1204
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x43fc99
-RSP: 002b:00007ffc5da49b88 EFLAGS: 00000207 ORIG_RAX: 00000000000000e6
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fc99
-RDX: 000000002084fff0 RSI: 0000000000000000 RDI: 0000000000000009
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 0000000020fd9000 R11: 0000000000000207 R12: 00000000004015c0
-R13: 0000000000401650 R14: 0000000000000000 R15: 0000000000000000
+  print_address_description+0x73/0x250 mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report+0x23c/0x360 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __list_del_entry_valid+0x144/0x150 lib/list_debug.c:54
+  __list_del_entry include/linux/list.h:117 [inline]
+  list_del include/linux/list.h:125 [inline]
+  cma_cancel_listens drivers/infiniband/core/cma.c:1569 [inline]
+  cma_cancel_operation+0x455/0xd60 drivers/infiniband/core/cma.c:1597
+  rdma_destroy_id+0xff/0xda0 drivers/infiniband/core/cma.c:1661
+  ucma_close+0x100/0x2f0 drivers/infiniband/core/ucma.c:1728
+  __fput+0x327/0x7e0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x199/0x270 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+  do_group_exit+0x149/0x400 kernel/exit.c:968
+  get_signal+0x73a/0x16d0 kernel/signal.c:2469
+  do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
+  exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_32_irqs_on arch/x86/entry/common.c:336 [inline]
+  do_fast_syscall_32+0xbe6/0xf9f arch/x86/entry/common.c:392
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f03c99
+RSP: 002b:00000000f7ede10c EFLAGS: 00000296 ORIG_RAX: 00000000000000f0
+RAX: fffffffffffffe00 RBX: 000000000813af98 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.16.0-rc6+ #1 Not tainted
-------------------------------------------------------
-syzkaller382398/4185 is trying to acquire lock:
-  ((console_sem).lock){..-.}, at: [<000000006804a99b>]  
-down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+Allocated by task 4703:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+  kmem_cache_alloc_trace+0x136/0x740 mm/slab.c:3607
+  kmalloc include/linux/slab.h:512 [inline]
+  kzalloc include/linux/slab.h:701 [inline]
+  rdma_create_id+0xd0/0x630 drivers/infiniband/core/cma.c:787
+  ucma_create_id+0x35f/0x920 drivers/infiniband/core/ucma.c:480
+  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
+  __vfs_write+0xef/0x970 fs/read_write.c:480
+  vfs_write+0x189/0x510 fs/read_write.c:544
+  SYSC_write fs/read_write.c:589 [inline]
+  SyS_write+0xef/0x220 fs/read_write.c:581
+  do_syscall_32_irqs_on arch/x86/entry/common.c:330 [inline]
+  do_fast_syscall_32+0x3ec/0xf9f arch/x86/entry/common.c:392
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
 
-but task is already holding lock:
-  (&obj_hash[i].lock){-.-.}, at: [<000000004f13d83a>]  
-__debug_object_init+0x109/0x1040 lib/debugobjects.c:343
+Freed by task 4703:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+  __cache_free mm/slab.c:3485 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3800
+  rdma_destroy_id+0x821/0xda0 drivers/infiniband/core/cma.c:1691
+  ucma_close+0x100/0x2f0 drivers/infiniband/core/ucma.c:1728
+  __fput+0x327/0x7e0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x199/0x270 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
+  do_group_exit+0x149/0x400 kernel/exit.c:968
+  get_signal+0x73a/0x16d0 kernel/signal.c:2469
+  do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
+  exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_32_irqs_on arch/x86/entry/common.c:336 [inline]
+  do_fast_syscall_32+0xbe6/0xf9f arch/x86/entry/common.c:392
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
 
-which lock already depends on the new lock.
+The buggy address belongs to the object at ffff8801afaf3200
+  which belongs to the cache kmalloc-1024 of size 1024
+The buggy address is located 480 bytes inside of
+  1024-byte region [ffff8801afaf3200, ffff8801afaf3600)
+The buggy address belongs to the page:
+page:ffffea0006bebc80 count:1 mapcount:0 mapping:ffff8801afaf2000 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801afaf2000 0000000000000000 0000000100000007
+raw: ffffea0007272f20 ffffea0006bc6520 ffff8801dac00ac0 0000000000000000
+page dumped because: kasan: bad access detected
 
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&obj_hash[i].lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        __debug_object_init+0x109/0x1040 lib/debugobjects.c:343
-        debug_object_init+0x17/0x20 lib/debugobjects.c:391
-        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
-        debug_init kernel/time/hrtimer.c:458 [inline]
-        hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
-        init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1060
-        __sched_fork+0x2bb/0xb60 kernel/sched/core.c:2189
-        init_idle+0x75/0x820 kernel/sched/core.c:5352
-        sched_init+0xb19/0xc43 kernel/sched/core.c:6049
-        start_kernel+0x452/0x819 init/main.c:586
-        x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:378
-        x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:359
-        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:239
-
--> #2 (&rq->lock){-.-.}:
-        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-        _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
-        rq_lock kernel/sched/sched.h:1760 [inline]
-        task_fork_fair+0x7a/0x690 kernel/sched/fair.c:9471
-        sched_fork+0x450/0xc10 kernel/sched/core.c:2405
-        copy_process.part.38+0x1758/0x4b60 kernel/fork.c:1763
-        copy_process kernel/fork.c:1606 [inline]
-        _do_fork+0x1f7/0xf70 kernel/fork.c:2087
-        kernel_thread+0x34/0x40 kernel/fork.c:2146
-        rest_init+0x22/0xf0 init/main.c:403
-        start_kernel+0x7f1/0x819 init/main.c:717
-        x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:378
-        x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:359
-        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:239
-
--> #1 (&p->pi_lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        try_to_wake_up+0xbc/0x15f0 kernel/sched/core.c:1989
-        wake_up_process+0x10/0x20 kernel/sched/core.c:2152
-        __up.isra.0+0x1cc/0x2c0 kernel/locking/semaphore.c:262
-        up+0x13b/0x1d0 kernel/locking/semaphore.c:187
-        __up_console_sem+0xb2/0x1a0 kernel/printk/printk.c:242
-        console_unlock+0x5af/0xfb0 kernel/printk/printk.c:2417
-        do_con_write+0x106e/0x1f70 drivers/tty/vt/vt.c:2433
-        con_write+0x25/0xb0 drivers/tty/vt/vt.c:2782
-        process_output_block drivers/tty/n_tty.c:579 [inline]
-        n_tty_write+0x5ef/0xec0 drivers/tty/n_tty.c:2308
-        do_tty_write drivers/tty/tty_io.c:958 [inline]
-        tty_write+0x3fa/0x840 drivers/tty/tty_io.c:1042
-        __vfs_write+0xef/0x970 fs/read_write.c:480
-        vfs_write+0x189/0x510 fs/read_write.c:544
-        SYSC_write fs/read_write.c:589 [inline]
-        SyS_write+0xef/0x220 fs/read_write.c:581
-        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
--> #0 ((console_sem).lock){..-.}:
-        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-        __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
-        console_trylock+0x15/0x70 kernel/printk/printk.c:2229
-        console_trylock_spinning kernel/printk/printk.c:1643 [inline]
-        vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
-        vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
-        printk+0xaa/0xca kernel/printk/printk.c:1980
-        debug_object_is_on_stack lib/debugobjects.c:325 [inline]
-        __debug_object_init+0x5cc/0x1040 lib/debugobjects.c:354
-        debug_object_init+0x17/0x20 lib/debugobjects.c:391
-        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
-        debug_init kernel/time/hrtimer.c:458 [inline]
-        hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
-        alarm_init kernel/time/alarmtimer.c:339 [inline]
-        alarm_timer_nsleep+0x164/0x4d0 kernel/time/alarmtimer.c:787
-        SYSC_clock_nanosleep kernel/time/posix-timers.c:1226 [inline]
-        SyS_clock_nanosleep+0x235/0x330 kernel/time/posix-timers.c:1204
-        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-other info that might help us debug this:
-
-Chain exists of:
-   (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&obj_hash[i].lock);
-                                lock(&rq->lock);
-                                lock(&obj_hash[i].lock);
-   lock((console_sem).lock);
-
-  *** DEADLOCK ***
-
-1 lock held by syzkaller382398/4185:
-  #0:  (&obj_hash[i].lock){-.-.}, at: [<000000004f13d83a>]  
-__debug_object_init+0x109/0x1040 lib/debugobjects.c:343
-
-stack backtrace:
-CPU: 0 PID: 4185 Comm: syzkaller382398 Not tainted 4.16.0-rc6+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_circular_bug.isra.38+0x2cd/0x2dc kernel/locking/lockdep.c:1223
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2417 [inline]
-  __lock_acquire+0x30a8/0x3e00 kernel/locking/lockdep.c:3431
-  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-  __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
-  console_trylock+0x15/0x70 kernel/printk/printk.c:2229
-  console_trylock_spinning kernel/printk/printk.c:1643 [inline]
-  vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
-  vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
-  vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
-  printk+0xaa/0xca kernel/printk/printk.c:1980
-  debug_object_is_on_stack lib/debugobjects.c:325 [inline]
-  __debug_object_init+0x5cc/0x1040 lib/debugobjects.c:354
-  debug_object_init+0x17/0x20 lib/debugobjects.c:391
-  debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
-  debug_init kernel/time/hrtimer.c:458 [inline]
-  hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
-  alarm_init kernel/time/alarmtimer.c:339 [inline]
-  alarm_timer_nsleep+0x164/0x4d0 kernel/time/alarmtimer.c:787
-  SYSC_clock_nanosleep kernel/time/posix-timers.c:1226 [inline]
-  SyS_clock_nanosleep+0x235/0x330 kernel/time/posix-timers.c:1204
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x43fc99
-RSP: 002b:00007ffc5da49b88 EFLAGS: 00000207 ORIG_RAX: 00000000000000e6
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fc99
-RDX: 000000002084fff0 RSI: 0000000000000000 RDI: 0000000000000009
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 0000000020fd9000 R11: 0000000000000207 R12: 00000000004015c0
-R13: 0000000000401650 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Memory state around the buggy address:
+  ffff8801afaf3280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801afaf3300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801afaf3380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                        ^
+  ffff8801afaf3400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801afaf3480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
