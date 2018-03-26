@@ -1,45 +1,281 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751042AbeCYX4K (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 19:56:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37428 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750838AbeCYX4H (ORCPT
+        id S1751241AbeCZABF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 20:01:05 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:58915 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750838AbeCZABD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 19:56:07 -0400
-Date: Sun, 25 Mar 2018 16:56:03 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH 3/4] mm: Add free()
-Message-ID: <20180325235603.GA18737@bombadil.infradead.org>
-References: <20180322195819.24271-1-willy@infradead.org>
- <20180322195819.24271-4-willy@infradead.org>
- <6fd1bba1-e60c-e5b3-58be-52e991cda74f@virtuozzo.com>
- <20180323151421.GC5624@bombadil.infradead.org>
+        Sun, 25 Mar 2018 20:01:03 -0400
+X-Google-Smtp-Source: AG47ELtxOf2r8tmqZbh6W0DIlc40jR287tt+zLHQYFwjuFm2NCAH8xOG9b9few4wrdYt+ZmyNPQkB/8uoXHPo1RmfqLgGY1gJWNS
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180323151421.GC5624@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Date: Sun, 25 Mar 2018 17:01:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <001a11421a58380f3705684578be@google.com>
+Subject: WARNING in __debug_object_init
+From: syzbot <syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 08:14:21AM -0700, Matthew Wilcox wrote:
-> On Fri, Mar 23, 2018 at 04:33:24PM +0300, Kirill Tkhai wrote:
-> > > +	page = virt_to_head_page(ptr);
-> > > +	if (likely(PageSlab(page)))
-> > > +		return kmem_cache_free(page->slab_cache, (void *)ptr);
-> > 
-> > It seems slab_cache is not generic for all types of slabs. SLOB does not care about it:
-> 
-> Oof.  I was sure I checked that.  You're quite right that it doesn't ...
-> this should fix that problem:
+Hello,
 
-This patch was complete rubbish.  The point of SLOB is that it mixes
-sizes within the same page, and doesn't store the size when allocating
-from a slab.  So there is no way to tell.  I'm going to think about this
-some more.
+syzbot hit the following crash on upstream commit
+bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
+Merge tag 'pinctrl-v4.16-3' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=a3e0726462b2e346a31d
+
+So far this crash happened 25 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6402021133385728
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=4906265889210368
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6718429092380672
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
+compiler: gcc (GCC) 7.1.1 20170620
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a3e0726462b2e346a31d@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+ODEBUG: object is on stack, but not annotated
+WARNING: CPU: 0 PID: 4185 at lib/debugobjects.c:328  
+debug_object_is_on_stack lib/debugobjects.c:327 [inline]
+WARNING: CPU: 0 PID: 4185 at lib/debugobjects.c:328  
+__debug_object_init+0x60a/0x1040 lib/debugobjects.c:354
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 4185 Comm: syzkaller382398 Not tainted 4.16.0-rc6+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:debug_object_is_on_stack lib/debugobjects.c:327 [inline]
+RIP: 0010:__debug_object_init+0x60a/0x1040 lib/debugobjects.c:354
+RSP: 0018:ffff8801b8aff968 EFLAGS: 00010082
+RAX: 000000000000002d RBX: 0000000000000001 RCX: 0000000000000000
+RDX: 000000000000002d RSI: 1ffff1003715fee2 RDI: ffffed003715ff21
+RBP: ffff8801b8affb40 R08: 0000000000000000 R09: 1ffff1003715fe89
+R10: ffff8801b8aff820 R11: ffffffff86f39cb8 R12: ffff8801c8daa0c0
+R13: ffff8801b8affca0 R14: ffff8801c0c65310 R15: ffff8801c0c65320
+  debug_object_init+0x17/0x20 lib/debugobjects.c:391
+  debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
+  debug_init kernel/time/hrtimer.c:458 [inline]
+  hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
+  alarm_init kernel/time/alarmtimer.c:339 [inline]
+  alarm_timer_nsleep+0x164/0x4d0 kernel/time/alarmtimer.c:787
+  SYSC_clock_nanosleep kernel/time/posix-timers.c:1226 [inline]
+  SyS_clock_nanosleep+0x235/0x330 kernel/time/posix-timers.c:1204
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x43fc99
+RSP: 002b:00007ffc5da49b88 EFLAGS: 00000207 ORIG_RAX: 00000000000000e6
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fc99
+RDX: 000000002084fff0 RSI: 0000000000000000 RDI: 0000000000000009
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 0000000020fd9000 R11: 0000000000000207 R12: 00000000004015c0
+R13: 0000000000401650 R14: 0000000000000000 R15: 0000000000000000
+
+======================================================
+WARNING: possible circular locking dependency detected
+4.16.0-rc6+ #1 Not tainted
+------------------------------------------------------
+syzkaller382398/4185 is trying to acquire lock:
+  ((console_sem).lock){..-.}, at: [<000000006804a99b>]  
+down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+
+but task is already holding lock:
+  (&obj_hash[i].lock){-.-.}, at: [<000000004f13d83a>]  
+__debug_object_init+0x109/0x1040 lib/debugobjects.c:343
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&obj_hash[i].lock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        __debug_object_init+0x109/0x1040 lib/debugobjects.c:343
+        debug_object_init+0x17/0x20 lib/debugobjects.c:391
+        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
+        debug_init kernel/time/hrtimer.c:458 [inline]
+        hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
+        init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1060
+        __sched_fork+0x2bb/0xb60 kernel/sched/core.c:2189
+        init_idle+0x75/0x820 kernel/sched/core.c:5352
+        sched_init+0xb19/0xc43 kernel/sched/core.c:6049
+        start_kernel+0x452/0x819 init/main.c:586
+        x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:378
+        x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:359
+        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:239
+
+-> #2 (&rq->lock){-.-.}:
+        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+        _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
+        rq_lock kernel/sched/sched.h:1760 [inline]
+        task_fork_fair+0x7a/0x690 kernel/sched/fair.c:9471
+        sched_fork+0x450/0xc10 kernel/sched/core.c:2405
+        copy_process.part.38+0x1758/0x4b60 kernel/fork.c:1763
+        copy_process kernel/fork.c:1606 [inline]
+        _do_fork+0x1f7/0xf70 kernel/fork.c:2087
+        kernel_thread+0x34/0x40 kernel/fork.c:2146
+        rest_init+0x22/0xf0 init/main.c:403
+        start_kernel+0x7f1/0x819 init/main.c:717
+        x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:378
+        x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:359
+        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:239
+
+-> #1 (&p->pi_lock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        try_to_wake_up+0xbc/0x15f0 kernel/sched/core.c:1989
+        wake_up_process+0x10/0x20 kernel/sched/core.c:2152
+        __up.isra.0+0x1cc/0x2c0 kernel/locking/semaphore.c:262
+        up+0x13b/0x1d0 kernel/locking/semaphore.c:187
+        __up_console_sem+0xb2/0x1a0 kernel/printk/printk.c:242
+        console_unlock+0x5af/0xfb0 kernel/printk/printk.c:2417
+        do_con_write+0x106e/0x1f70 drivers/tty/vt/vt.c:2433
+        con_write+0x25/0xb0 drivers/tty/vt/vt.c:2782
+        process_output_block drivers/tty/n_tty.c:579 [inline]
+        n_tty_write+0x5ef/0xec0 drivers/tty/n_tty.c:2308
+        do_tty_write drivers/tty/tty_io.c:958 [inline]
+        tty_write+0x3fa/0x840 drivers/tty/tty_io.c:1042
+        __vfs_write+0xef/0x970 fs/read_write.c:480
+        vfs_write+0x189/0x510 fs/read_write.c:544
+        SYSC_write fs/read_write.c:589 [inline]
+        SyS_write+0xef/0x220 fs/read_write.c:581
+        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+        entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+-> #0 ((console_sem).lock){..-.}:
+        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+        __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
+        console_trylock+0x15/0x70 kernel/printk/printk.c:2229
+        console_trylock_spinning kernel/printk/printk.c:1643 [inline]
+        vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
+        vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
+        printk+0xaa/0xca kernel/printk/printk.c:1980
+        debug_object_is_on_stack lib/debugobjects.c:325 [inline]
+        __debug_object_init+0x5cc/0x1040 lib/debugobjects.c:354
+        debug_object_init+0x17/0x20 lib/debugobjects.c:391
+        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
+        debug_init kernel/time/hrtimer.c:458 [inline]
+        hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
+        alarm_init kernel/time/alarmtimer.c:339 [inline]
+        alarm_timer_nsleep+0x164/0x4d0 kernel/time/alarmtimer.c:787
+        SYSC_clock_nanosleep kernel/time/posix-timers.c:1226 [inline]
+        SyS_clock_nanosleep+0x235/0x330 kernel/time/posix-timers.c:1204
+        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+        entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+other info that might help us debug this:
+
+Chain exists of:
+   (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&obj_hash[i].lock);
+                                lock(&rq->lock);
+                                lock(&obj_hash[i].lock);
+   lock((console_sem).lock);
+
+  *** DEADLOCK ***
+
+1 lock held by syzkaller382398/4185:
+  #0:  (&obj_hash[i].lock){-.-.}, at: [<000000004f13d83a>]  
+__debug_object_init+0x109/0x1040 lib/debugobjects.c:343
+
+stack backtrace:
+CPU: 0 PID: 4185 Comm: syzkaller382398 Not tainted 4.16.0-rc6+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  print_circular_bug.isra.38+0x2cd/0x2dc kernel/locking/lockdep.c:1223
+  check_prev_add kernel/locking/lockdep.c:1863 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+  validate_chain kernel/locking/lockdep.c:2417 [inline]
+  __lock_acquire+0x30a8/0x3e00 kernel/locking/lockdep.c:3431
+  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+  __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
+  console_trylock+0x15/0x70 kernel/printk/printk.c:2229
+  console_trylock_spinning kernel/printk/printk.c:1643 [inline]
+  vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
+  vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
+  printk+0xaa/0xca kernel/printk/printk.c:1980
+  debug_object_is_on_stack lib/debugobjects.c:325 [inline]
+  __debug_object_init+0x5cc/0x1040 lib/debugobjects.c:354
+  debug_object_init+0x17/0x20 lib/debugobjects.c:391
+  debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
+  debug_init kernel/time/hrtimer.c:458 [inline]
+  hrtimer_init+0x8c/0x410 kernel/time/hrtimer.c:1259
+  alarm_init kernel/time/alarmtimer.c:339 [inline]
+  alarm_timer_nsleep+0x164/0x4d0 kernel/time/alarmtimer.c:787
+  SYSC_clock_nanosleep kernel/time/posix-timers.c:1226 [inline]
+  SyS_clock_nanosleep+0x235/0x330 kernel/time/posix-timers.c:1204
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x43fc99
+RSP: 002b:00007ffc5da49b88 EFLAGS: 00000207 ORIG_RAX: 00000000000000e6
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fc99
+RDX: 000000002084fff0 RSI: 0000000000000000 RDI: 0000000000000009
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 0000000020fd9000 R11: 0000000000000207 R12: 00000000004015c0
+R13: 0000000000401650 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
