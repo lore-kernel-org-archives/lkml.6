@@ -1,92 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751865AbeCZJAu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 05:00:50 -0400
-Received: from mga05.intel.com ([192.55.52.43]:30881 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750989AbeCZJAt (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:00:49 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
-   d="scan'208";a="28846344"
-Date: Mon, 26 Mar 2018 02:00:31 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Jin Yao <yao.jin@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH v1 0/3] Support perf -vv
-Message-ID: <20180326090031.GN13724@tassilo.jf.intel.com>
-References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751335AbeCZJCD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 05:02:03 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46655 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeCZJCC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 05:02:02 -0400
+Message-ID: <1522054917.5851.2.camel@pengutronix.de>
+Subject: Re: [RFC 2/2] reset: reset-zynqmp: Adding support for Xilinx zynqmp
+ reset controller.
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: chinnikishore369@gmail.com, michal.simek@xilinx.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Nava kishore Manne <navam@xilinx.com>
+Date: Mon, 26 Mar 2018 11:01:57 +0200
+In-Reply-To: <20180324191100.18363-2-chinnikishore369@gmail.com>
+References: <20180324191100.18363-1-chinnikishore369@gmail.com>
+         <20180324191100.18363-2-chinnikishore369@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 12:07:01AM +0800, Jin Yao wrote:
-> We keep having bug reports that when users build perf on their own,
-> but they don't install some needed libraries such as libelf,
-> libbfd/libibery.
-> 
-> The perf can build, but it is missing important functionality. And
-> users may complain that perf has issue or bug. 
-> 
-> This patch-set support 'perf -vv' which will print the compiled-in
-> status of libraries. Once users think perf missing some functionality,
-> it should be very easy for them to check the libraries status.
+Hi,
 
-I don't think this solves the problem. How should the user know
-that they need to run perf -vv. Also normal users don't know
-that libelf is needed for symbols for example.
+On Sun, 2018-03-25 at 00:41 +0530, chinnikishore369@gmail.com wrote:
+> From: Nava kishore Manne <navam@xilinx.com>
+> 
+> Add a reset controller driver for Xilinx Zynq UltraScale+ MPSoC.
+> The zynqmp reset-controller has the ability to reset lines
+> connected to different blocks and peripheral in the Soc.
+> 
+> Signed-off-by: Nava kishore Manne <navam@xilinx.com>
 
-We need a warning that is visible together with the symbols
-and that clearly describes the problem.
+Thank you for the patch, this driver looks mostly fine to me.
+I just have a few nitpicks below:
 
--Andi
+> ---
+>   drivers/reset/Makefile       |   1 +
+>  drivers/reset/reset-zynqmp.c | 106 +++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 107 insertions(+)
+>  create mode 100644 drivers/reset/reset-zynqmp.c
+> 
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 132c24f5ddb5..4e1a94acf83f 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -20,4 +20,5 @@ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+>  obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+>  obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
+>  obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
+> +obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
+> 
+> diff --git a/drivers/reset/reset-zynqmp.c b/drivers/reset/reset-zynqmp.c
+> new file mode 100644
+> index 000000000000..c8510fa93ad9
+> --- /dev/null
+> +++ b/drivers/reset/reset-zynqmp.c
+> @@ -0,0 +1,106 @@
+[...]
+> +#include <linux/firmware/xilinx/zynqmp/firmware.h>
+> +
+> +#define ZYNQMP_NR_RESETS (ZYNQMP_PM_RESET_END - ZYNQMP_PM_RESET_START - 2)
+> +#define ZYNQMP_RESET_ID (ZYNQMP_PM_RESET_START + 1)
+> +
+> +static const struct zynqmp_eemi_ops *eemi_ops;
 
-> 
-> For example:
-> 
-> $ ./perf -vv
-> perf version 4.13.rc5.g9b7a81b
->                  dwarf: [  on ]
->     dwarf_getlocations: [  on ]
->                  glibc: [  on ]
->                   gtk2: [  on ]
->               libaudit: [ off ]
->                 libbfd: [  on ]
->                 libelf: [  on ]
->                libnuma: [  on ]
-> numa_num_possible_cpus: [  on ]
->                libperl: [  on ]
->              libpython: [  on ]
->               libslang: [  on ]
->              libcrypto: [  on ]
->              libunwind: [  on ]
->     libdw-dwarf-unwind: [  on ]
->                   zlib: [  on ]
->                   lzma: [  on ]
->              get_cpuid: [  on ]
->                    bpf: [  on ]
-> 
-> Jin Yao (3):
->   perf config: Add -DNO_GLIBC to CFLAGS
->   perf version: Print the status of compiled-in libraries
->   perf: Support perf -vv
-> 
->  tools/perf/Makefile.config   |   2 +
->  tools/perf/builtin-version.c | 125 +++++++++++++++++++++++++++++++++++++++++++
->  tools/perf/builtin.h         |   1 +
->  tools/perf/perf.c            |   6 +++
->  4 files changed, 134 insertions(+)
-> 
-> -- 
-> 2.7.4
-> 
+This seems to depend on some other patches for the EEMI API support.
+Could you point them out to me? I'd just like to see whether the
+ZYNQMP_PM_RESET_* defines agree with the zynqmp-reset.txt DT docs.
+
+> +struct zynqmp_reset {
+> +	struct reset_controller_dev rcdev;
+> +};
+> +
+> +static int zynqmp_reset_assert(struct reset_controller_dev *rcdev,
+> +				unsigned long id)
+
+This is not a hard requirement, but it would be nice if you could align
+with the open parentheses such that checkpatch.pl --strict doesn't warn.
+Same for the others below.
+
+> +{
+> +	return eemi_ops->reset_assert(ZYNQMP_RESET_ID + id,
+> +						PM_RESET_ACTION_ASSERT);
+> +}
+> +
+> +static int zynqmp_reset_deassert(struct reset_controller_dev *rcdev,
+> +				unsigned long id)
+> +{
+> +	return eemi_ops->reset_assert(ZYNQMP_RESET_ID + id,
+> +						PM_RESET_ACTION_RELEASE);
+> +}
+> +
+> +static int zynqmp_reset_status(struct reset_controller_dev *rcdev,
+> +				unsigned long id)
+> +{
+> +	int val;
+> +
+> +	eemi_ops->reset_get_status(ZYNQMP_RESET_ID + id, &val);
+
+Can reset_get_status return an error? If so, please propagate it.
+
+> +	return val;
+> +}
+> +
+> +static int zynqmp_reset_reset(struct reset_controller_dev *rcdev,
+> +				unsigned long id)
+> +{
+> +	return eemi_ops->reset_assert(ZYNQMP_RESET_ID + id,
+> +						PM_RESET_ACTION_PULSE);
+> +}
+> +
+> +static struct reset_control_ops zynqmp_reset_ops = {
+> +	.reset = zynqmp_reset_reset,
+> +	.assert = zynqmp_reset_assert,
+> +	.deassert = zynqmp_reset_deassert,
+> +	.status = zynqmp_reset_status,
+> +};
+> +
+> +static int zynqmp_reset_probe(struct platform_device *pdev)
+> +{
+> +	struct zynqmp_reset *zynqmp_reset;
+> +	int ret;
+> +
+> +	zynqmp_reset = devm_kzalloc(&pdev->dev,
+> +				sizeof(*zynqmp_reset), GFP_KERNEL);
+> +	if (!zynqmp_reset)
+> +		return -ENOMEM;
+> +
+> +	eemi_ops = zynqmp_pm_get_eemi_ops();
+
+Not sure if this can ever happen, but if there are two xlnx,zynqmp-reset 
+in the DT by accident, the probing the second would presumably return an
+error here, thereby overwriting eemi_ops for the first one.
+Perhaps it is safer to either use a local variable and only assign on
+success, or better: move eemi_ops into the zynqmp_reset structure.
+
+> +	if (!eemi_ops)
+> +		return -ENXIO;
+> +
+> +	platform_set_drvdata(pdev, zynqmp_reset);
+> +
+> +	zynqmp_reset->rcdev.ops = &zynqmp_reset_ops;
+> +	zynqmp_reset->rcdev.owner = THIS_MODULE;
+> +	zynqmp_reset->rcdev.of_node = pdev->dev.of_node;
+> +	zynqmp_reset->rcdev.of_reset_n_cells = 1;
+
+This line is not needed. If of_xlate is not set, the core will use
+of_reset_simple_xlate and set of_reset_n_cells to 1.
+
+> +	zynqmp_reset->rcdev.nr_resets = ZYNQMP_NR_RESETS;
+> +
+> +	ret = reset_controller_register(&zynqmp_reset->rcdev);
+> +	if (!ret)
+> +		dev_info(&pdev->dev, "Xilinx zynqmp reset driver probed\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id zynqmp_reset_dt_ids[] = {
+> +	{ .compatible = "xlnx,zynqmp-reset", },
+> +	{ },
+> +};
+> +
+> +static struct platform_driver zynqmp_reset_driver = {
+> +	.probe	= zynqmp_reset_probe,
+> +	.driver = {
+> +		.name		= KBUILD_MODNAME,
+> +		.of_match_table	= zynqmp_reset_dt_ids,
+> +	},
+> +};
+> +
+> +static int __init zynqmp_reset_init(void)
+> +{
+> +	return platform_driver_register(&zynqmp_reset_driver);
+> +}
+> +
+> +arch_initcall(zynqmp_reset_init);
+
+regards
+Philipp
