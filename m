@@ -1,104 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752055AbeCZOJh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:09:37 -0400
-Received: from mga17.intel.com ([192.55.52.151]:54092 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751024AbeCZOJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:09:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
-   d="scan'208";a="36905996"
-From: thor.thayer@linux.intel.com
-To: cyrille.pitchen@wedev4u.fr, marek.vasut@gmail.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
-        richard@nod.at
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        thor.thayer@linux.intel.com
-Subject: [PATCHv2] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
-Date: Mon, 26 Mar 2018 09:12:17 -0500
-Message-Id: <1522073537-27386-1-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1752133AbeCZOKx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:10:53 -0400
+Received: from mail-oi0-f44.google.com ([209.85.218.44]:39091 "EHLO
+        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751840AbeCZOKv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:10:51 -0400
+X-Google-Smtp-Source: AIpwx4/Gqc75E7pEw3GjNIhuXRa3bYFpz1BRb3A9g21euQZzkJO/7CCfq9cRVOp5tIWgqugxtONZGi6E70r7K+ieWEA=
+MIME-Version: 1.0
+In-Reply-To: <20180326002732.qks4cp7qq2xzysnx@linux-n805>
+References: <1521951444-5087-1-git-send-email-wanpengli@tencent.com> <20180326002732.qks4cp7qq2xzysnx@linux-n805>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Mon, 26 Mar 2018 22:10:50 +0800
+Message-ID: <CANRm+CxaDNcVdySSH7O3ikyhbmpO9ZVGRx9GxL2gi28s9RoqVQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] KVM: X86: Fix setup the virt_spin_lock_key before
+ static key get initialized
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Radim Kr??m???" <rkrcmar@redhat.com>,
+        Davidlohr Bueso <dbueso@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+2018-03-26 8:27 GMT+08:00 Davidlohr Bueso <dave@stgolabs.net>:
+> On Sat, 24 Mar 2018, Wanpeng Li wrote:
+>
+>> Note: Peterz pointed out in the IRC we have to audit all the architectures
+>> that
+>> implement smp_prepare_boot_cpu() to see what they depend on if we want to
+>> move
+>> jump_label_init() before smp_prepare_boot_cpu(). So what this patch does
+>> is
+>> similar to the issue which handled in xen ca5d376e.
+>
+>
+> After some auditing, the jump_label_init() being moved before
+> smp_prepare_boot_cpu()
+> seems fine, however, bulky mechanisms to update text segments conflict with
+> early smp
+> bootup stages, such as this patch. So, while the disabling
 
-The current Cadence QSPI driver caused a kernel panic when loading
-a Root Filesystem from QSPI. The problem was caused by reading more
-bytes than needed because the QSPI operated on 4 bytes at a time.
-<snip>
-[    7.947754] spi_nor_read[1048]:from 0x037cad74, len 1 [bfe07fff]
-[    7.956247] cqspi_read[910]:offset 0x58502516, buffer=bfe07fff
-[    7.956247]
-[    7.966046] Unable to handle kernel paging request at virtual
-address bfe08002
-[    7.973239] pgd = eebfc000
-[    7.975931] [bfe08002] *pgd=2fffb811, *pte=00000000, *ppte=00000000
-</snip>
-Notice above how only 1 byte needed to be read but by reading 4 bytes
-into the end of a mapped page, an unrecoverable page fault occurred.
+I didn't see any issue when testing this patch, could you elaborate
+what's the bulky mechanism and how it conflicts with early smp bootup
+stages? In addition, do you mean the xen fix is also not suitable?
 
-This patch uses a temporary buffer to hold the 4 bytes read and then
-copies only the bytes required into the buffer. A min() function is
-used to limit the length to prevent buffer overflows.
-
-Request testing of this patch on other platforms. This was tested
-on the Intel Arria10 SoCFPGA DevKit.
-
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
-v2  Changes to only write dangling bytes at end of transfer since
-      previous patch may have multiple dangling byte transfers.
-    Remove write patch since no errors reported and write timeout
-      needs more investigation.
----
- drivers/mtd/spi-nor/cadence-quadspi.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index 4b8e9183489a..5872f31eaa60 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -501,7 +501,9 @@ static int cqspi_indirect_read_execute(struct spi_nor *nor, u8 *rxbuf,
- 	void __iomem *reg_base = cqspi->iobase;
- 	void __iomem *ahb_base = cqspi->ahb_base;
- 	unsigned int remaining = n_rx;
-+	unsigned int mod_bytes = n_rx % 4;
- 	unsigned int bytes_to_read = 0;
-+	u8 *rxbuf_end = rxbuf + n_rx;
- 	int ret = 0;
- 
- 	writel(from_addr, reg_base + CQSPI_REG_INDIRECTRDSTARTADDR);
-@@ -530,11 +532,24 @@ static int cqspi_indirect_read_execute(struct spi_nor *nor, u8 *rxbuf,
- 		}
- 
- 		while (bytes_to_read != 0) {
-+			unsigned int word_remain = round_down(remaining, 4);
-+
- 			bytes_to_read *= cqspi->fifo_width;
- 			bytes_to_read = bytes_to_read > remaining ?
- 					remaining : bytes_to_read;
--			ioread32_rep(ahb_base, rxbuf,
--				     DIV_ROUND_UP(bytes_to_read, 4));
-+			bytes_to_read = round_down(bytes_to_read, 4);
-+			/* Read 4 byte word chunks then single bytes */
-+			if (bytes_to_read) {
-+				ioread32_rep(ahb_base, rxbuf,
-+					     (bytes_to_read / 4));
-+			} else if (!word_remain && mod_bytes) {
-+				unsigned int temp = ioread32(ahb_base);
-+
-+				bytes_to_read = mod_bytes;
-+				memcpy(rxbuf, &temp, min((unsigned int)
-+							 (rxbuf_end - rxbuf),
-+							 bytes_to_read));
-+			}
- 			rxbuf += bytes_to_read;
- 			remaining -= bytes_to_read;
- 			bytes_to_read = cqspi_get_rd_sram_level(cqspi);
--- 
-2.7.4
+Regards,
+Wanpeng Li
