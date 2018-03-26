@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752004AbeCZABj (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 20:01:39 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:45428 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751032AbeCZABD (ORCPT
+        id S1751912AbeCZABh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 20:01:37 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:52314 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751042AbeCZABD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 25 Mar 2018 20:01:03 -0400
-X-Google-Smtp-Source: AG47ELtqWJ4Cd7W9vHpyidnxyHBApkDOf5gBho5T1kJfXtzITL1Rhag6a98JtIUFn2S9nNzuVQR+LFPjMCme+mqvKvRu1jbavEyX
+X-Google-Smtp-Source: AIpwx4+U3yTN2NsN9dgMB5ZBMa1mHHbQzOhHmURaID0ja+B3ybUuoImjJa6Y8rUqN1KjcolKVVJ4tGN/9QKoZvI9vvpQAMQLtLHn
 MIME-Version: 1.0
 Date: Sun, 25 Mar 2018 17:01:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <089e0825fc78410eaa056845781e@google.com>
-Subject: KASAN: use-after-free Read in __list_add_valid (5)
-From: syzbot <syzbot+db1c219466daac1083df@syzkaller.appspotmail.com>
-To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
-        jgg@ziepe.ca, leonro@mellanox.com, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, markb@mellanox.com, monis@mellanox.com,
-        parav@mellanox.com, syzkaller-bugs@googlegroups.com
+Message-ID: <001a113fe6d043b2a605684578f4@google.com>
+Subject: possible deadlock in handle_rx
+From: syzbot <syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com>
+To: jasowang@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mst@redhat.com, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        virtualization@lists.linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -27,131 +27,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello,
 
 syzbot hit the following crash on upstream commit
-bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
-Merge tag 'pinctrl-v4.16-3' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+cb6416592bc2a8b731dabcec0d63cda270764fc6 (Sun Mar 25 17:45:10 2018 +0000)
+Merge tag 'dmaengine-fix-4.16-rc7' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/slave-dma
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=db1c219466daac1083df
+https://syzkaller.appspot.com/bug?extid=7f073540b1384a614e09
 
 So far this crash happened 4 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5164223906709504
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6506789075943424
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5357898477600768
+https://syzkaller.appspot.com/x/repro.syz?id=5716250550337536
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5549124782915584
+https://syzkaller.appspot.com/x/log.txt?id=5142038655795200
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+db1c219466daac1083df@syzkaller.appspotmail.com
+Reported-by: syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-==================================================================
-BUG: KASAN: use-after-free in __list_add_valid+0xc6/0xd0 lib/list_debug.c:26
-IPVS: ftp: loaded support on port[0] = 21
-Read of size 8 at addr ffff8801ca8adcd8 by task syzkaller401155/4288
 
-CPU: 0 PID: 4288 Comm: syzkaller401155 Not tainted 4.16.0-rc6+ #365
+============================================
+WARNING: possible recursive locking detected
+4.16.0-rc6+ #366 Not tainted
+--------------------------------------------
+vhost-4248/4760 is trying to acquire lock:
+  (&vq->mutex){+.+.}, at: [<000000003482bddc>] vhost_net_rx_peek_head_len  
+drivers/vhost/net.c:633 [inline]
+  (&vq->mutex){+.+.}, at: [<000000003482bddc>] handle_rx+0xeb1/0x19c0  
+drivers/vhost/net.c:784
+
+but task is already holding lock:
+  (&vq->mutex){+.+.}, at: [<000000004de72f44>] handle_rx+0x1f5/0x19c0  
+drivers/vhost/net.c:766
+
+other info that might help us debug this:
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(&vq->mutex);
+   lock(&vq->mutex);
+
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+1 lock held by vhost-4248/4760:
+  #0:  (&vq->mutex){+.+.}, at: [<000000004de72f44>] handle_rx+0x1f5/0x19c0  
+drivers/vhost/net.c:766
+
+stack backtrace:
+CPU: 0 PID: 4760 Comm: vhost-4248 Not tainted 4.16.0-rc6+ #366
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x194/0x24d lib/dump_stack.c:53
-  print_address_description+0x73/0x250 mm/kasan/report.c:256
-IPVS: ftp: loaded support on port[0] = 21
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __list_add_valid+0xc6/0xd0 lib/list_debug.c:26
-  __list_add include/linux/list.h:60 [inline]
-  list_add_tail include/linux/list.h:93 [inline]
-  cma_listen_on_all drivers/infiniband/core/cma.c:2309 [inline]
-  rdma_listen+0x581/0x8e0 drivers/infiniband/core/cma.c:3333
-  ucma_listen+0x172/0x1f0 drivers/infiniband/core/ucma.c:1074
-  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
-IPVS: ftp: loaded support on port[0] = 21
-  __vfs_write+0xef/0x970 fs/read_write.c:480
-IPVS: ftp: loaded support on port[0] = 21
-  vfs_write+0x189/0x510 fs/read_write.c:544
-  SYSC_write fs/read_write.c:589 [inline]
-  SyS_write+0xef/0x220 fs/read_write.c:581
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-IPVS: ftp: loaded support on port[0] = 21
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x44a9e9
-RSP: 002b:00007f94303f3da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000006e29fc RCX: 000000000044a9e9
-RDX: 0000000000000010 RSI: 0000000020000000 RDI: 0000000000000004
-RBP: 00000000006e29f8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 2f646e6162696e69
-R13: 666e692f7665642f R14: 7073642f7665642f R15: 0000000000000009
-
-Allocated by task 4284:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
-  kmem_cache_alloc_trace+0x136/0x740 mm/slab.c:3607
-  kmalloc include/linux/slab.h:512 [inline]
-  kzalloc include/linux/slab.h:701 [inline]
-  rdma_create_id+0xd0/0x630 drivers/infiniband/core/cma.c:787
-  ucma_create_id+0x35f/0x920 drivers/infiniband/core/ucma.c:480
-  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
-  __vfs_write+0xef/0x970 fs/read_write.c:480
-  vfs_write+0x189/0x510 fs/read_write.c:544
-  SYSC_write fs/read_write.c:589 [inline]
-  SyS_write+0xef/0x220 fs/read_write.c:581
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Freed by task 4284:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
-  __cache_free mm/slab.c:3485 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3800
-  rdma_destroy_id+0x821/0xda0 drivers/infiniband/core/cma.c:1691
-  ucma_close+0x100/0x2f0 drivers/infiniband/core/ucma.c:1728
-  __fput+0x327/0x7e0 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x199/0x270 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x9bb/0x1ad0 kernel/exit.c:865
-  do_group_exit+0x149/0x400 kernel/exit.c:968
-  get_signal+0x73a/0x16d0 kernel/signal.c:2469
-  do_signal+0x90/0x1e90 arch/x86/kernel/signal.c:809
-  exit_to_usermode_loop+0x258/0x2f0 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ec/0x940 arch/x86/entry/common.c:292
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-The buggy address belongs to the object at ffff8801ca8adb00
-  which belongs to the cache kmalloc-1024 of size 1024
-The buggy address is located 472 bytes inside of
-  1024-byte region [ffff8801ca8adb00, ffff8801ca8adf00)
-The buggy address belongs to the page:
-page:ffffea00072a2b00 count:1 mapcount:0 mapping:ffff8801ca8ac000 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801ca8ac000 0000000000000000 0000000100000007
-raw: ffffea00072969a0 ffffea00072c5d20 ffff8801dac00ac0 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801ca8adb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801ca8adc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801ca8adc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                     ^
-  ffff8801ca8add00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801ca8add80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+  print_deadlock_bug kernel/locking/lockdep.c:1761 [inline]
+  check_deadlock kernel/locking/lockdep.c:1805 [inline]
+  validate_chain kernel/locking/lockdep.c:2401 [inline]
+  __lock_acquire+0xe8f/0x3e00 kernel/locking/lockdep.c:3431
+  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
+  __mutex_lock_common kernel/locking/mutex.c:756 [inline]
+  __mutex_lock+0x16f/0x1a80 kernel/locking/mutex.c:893
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
+  vhost_net_rx_peek_head_len drivers/vhost/net.c:633 [inline]
+  handle_rx+0xeb1/0x19c0 drivers/vhost/net.c:784
+  handle_rx_net+0x19/0x20 drivers/vhost/net.c:910
+  vhost_worker+0x268/0x470 drivers/vhost/vhost.c:361
+  kthread+0x33c/0x400 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
 
 
 ---
