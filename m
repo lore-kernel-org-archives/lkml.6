@@ -1,105 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751752AbeCZKBU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 06:01:20 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39147 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751050AbeCZKBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 06:01:16 -0400
-Date: Mon, 26 Mar 2018 12:01:14 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Paul Kocialkowski <contact@paulk.fr>
-Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/7] ARM: dts: sun7i: Add pinmux settings for LCD0 RGB888
- output.
-Message-ID: <20180326100114.fa7vjw342ad6vrb6@flea>
-References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
- <1521662593-25468-4-git-send-email-giulio.benetti@micronovasrl.com>
- <1521986953.5301.4.camel@paulk.fr>
+        id S1751938AbeCZKCK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 06:02:10 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58235 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750989AbeCZKCJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 06:02:09 -0400
+X-UUID: f3cffa3287b94c5296223148f5bf1d34-20180326
+From: <sean.wang@mediatek.com>
+To: <thierry.reding@gmail.com>, <matthias.bgg@gmail.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Sean Wang" <sean.wang@mediatek.com>
+Subject: [PATCH] pwm: mediatek: remove redundant MODULE_ALIAS entries
+Date: Mon, 26 Mar 2018 18:02:01 +0800
+Message-ID: <0fbf589c69bc584c46c683ee7fa38d80e04624f6.1522055092.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kvyug2bhn367ymkd"
-Content-Disposition: inline
-In-Reply-To: <1521986953.5301.4.camel@paulk.fr>
-User-Agent: NeoMutt/20180223
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23742.005
+X-TM-AS-Result: No-4.382700-8.000000-10
+X-TMASE-MatchedRID: Ei0WBMmFdJjLqx3pQDUvTo0JVVcEm48nXs5nqGvDCfOl4EP+dy+wBGEj
+        04n4UkciNMW1025grLlEOP/MktCQ9nEjLiYgp5vhA9lly13c/gHt/okBLaEo+N7qoZLm7F0iNuG
+        E1/yHeZvi8zVgXoAltmHJPdY2OmlS0C1sQRfQzEHEQdG7H66TyJ8TMnmE+d0Z6dRKarUMrrQVWq
+        yRlT7aUh6Kc65eHchzWn1zmUDUtcFlToWyw+n6G2alIygMo8bkPCAEq6enCrMu5B6q6cMXbX0++
+        BlWaS2/k3UkV5Qp4wSI45Rd9ORJwFlJvEhEss3fvN+d4ahMo5NWXGvUUmKP2w==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.382700-8.000000
+X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23742.005
+X-TMASE-POSTMAN: 2-d;
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Sean Wang <sean.wang@mediatek.com>
 
---kvyug2bhn367ymkd
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+MODULE_ALIAS exports information to allow the module to be auto-loaded at
+boot for the drivers registered using legacy platform registration.
 
-Hi,
+However, currently the driver is always used by DT-only platform,
+MODULE_ALIAS is redundant and should be removed properly.
 
-On Sun, Mar 25, 2018 at 04:09:13PM +0200, Paul Kocialkowski wrote:
-> Le mercredi 21 mars 2018 =E0 21:03 +0100, Giulio Benetti a =E9crit :
-> > The A20 supports RGB888 with H/V sync from LCD0. Add a pinmux setting
-> > for the needed pins.
-> >=20
-> > Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> > ---
-> >  arch/arm/boot/dts/sun7i-a20.dtsi | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >=20
-> > diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi
-> > b/arch/arm/boot/dts/sun7i-a20.dtsi
-> > index efb5607..bfe6728 100644
-> > --- a/arch/arm/boot/dts/sun7i-a20.dtsi
-> > +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-> > @@ -922,6 +922,14 @@
-> >  				pins =3D "PI20", "PI21";
-> >  				function =3D "uart7";
-> >  			};
-> > +
-> > +			lcd0_rgb888_pins: lcd0-rgb888-pins {
->=20
-> It would be more consistent with other pins definitions to have
-> underscores in both names and to indicate the index, such as:
-> lcd0_rgb888_pins: lcd0_rgb888_pins@0 {
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ drivers/pwm/pwm-mediatek.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Both your suggestions will generate DTC warnings, and we'd like to get
-rid of them eventually :)
-
-> This way, other set of pins for LCD (PH0-PH27) can be declared as @1
-> when they are needed in the future.
-
-A better idea would be to call it lcd0-rgb888-pd-pins, and introduce
-the ph variant when it's done.
-
-Maxime
-
-
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---kvyug2bhn367ymkd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlq4xOkACgkQ0rTAlCFN
-r3QwMQ/+KtpVlKKnNuCBTlk+QQBWB9RbdhcRiowimtbvNrdC76o1Euhug/HUHSky
-IMa98Ip9Y6qXKD11OPws+sCIUitYz3CrQ6wjgXFmt0Ez5c555tbW3Pppx5Z6Xes/
-OMPxenqwvrLUVnip14V5twoDR/uUmidR6fN4V8KY7/QBU6o2z4XvkCVfjkomkuF7
-PxVBCUS7ZQgN6fLES5pDh9U3u4k7L8m0XO6hZiLjLERNO2YzkD9oNM9I2A5yi8T9
-F4yoh93JTVBAn6X8mz9LRyd3+1CK9q0UbZIeXPoZ29lzc3hP8kwd9j91r2Evjx0P
-SBdeXnAhZdwhmTntub0x3dBC1sVRwj2Mip44roxccpgyVjWDJfHn7fqcyIBQhkW+
-lbrqq2tC9PeljoGe5JiBnHE7zk47xXj7m2K0KRe2/HVUDjJmIHMvdqbM2q5j9sA+
-iVItxjgSTZCQhVqS1yqMHsIqupsG4IId3YqkoYHHVSqXi21nXLqy2SklWnkQplPy
-/tY7n208rqD9gGbVIk/G2GCRgslsqUimYvtlvJg9ryKMOLn53NeZbpNxMCFXbg1R
-1zWMOYUOEMK5unpZrl8cEtV55sGxrFzFoqALf53DPesckaQR3PS2Ohl87vhDNAqY
-rtNQijtgNZmBatSgUjJEuZ8of9YHqyGaZVTnAi6TRtO+/OLZNCo=
-=FPMJ
------END PGP SIGNATURE-----
-
---kvyug2bhn367ymkd--
+diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+index 98b0a93..328c1247 100644
+--- a/drivers/pwm/pwm-mediatek.c
++++ b/drivers/pwm/pwm-mediatek.c
+@@ -305,5 +305,4 @@ static struct platform_driver mtk_pwm_driver = {
+ module_platform_driver(mtk_pwm_driver);
+ 
+ MODULE_AUTHOR("John Crispin <blogic@openwrt.org>");
+-MODULE_ALIAS("platform:mtk-pwm");
+ MODULE_LICENSE("GPL");
+-- 
+2.7.4
