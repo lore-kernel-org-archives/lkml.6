@@ -1,93 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751981AbeCZIRk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 04:17:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37760 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750923AbeCZIRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 04:17:39 -0400
-Subject: Re: [PATCH 2/3] drivers/irqchip: update supports_deactivate static
- key to modern api
-To: Davidlohr Bueso <dave@stgolabs.net>, peterz@infradead.org,
-        akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, Davidlohr Bueso <dbueso@suse.de>
-References: <20180325191056.24598-1-dave@stgolabs.net>
- <20180325191056.24598-3-dave@stgolabs.net>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <671202a1-4080-0104-abd8-4718c53dd61e@arm.com>
-Date: Mon, 26 Mar 2018 09:17:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752179AbeCZISh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 04:18:37 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:51335 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751076AbeCZISf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 04:18:35 -0400
+From: Yixun Lan <yixun.lan@amlogic.com>
+To: Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH 3/3] ARM64: dts: meson: fix clock source of the pclk for UART_AO
+Date: Mon, 26 Mar 2018 16:18:09 +0800
+Message-ID: <20180326081809.49493-4-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180326081809.49493-1-yixun.lan@amlogic.com>
+References: <20180326081809.49493-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-In-Reply-To: <20180325191056.24598-3-dave@stgolabs.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.235]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Davidlohr,
+>From the hardware perspective, the clk81 is the parent of
+the UART_AO clocks. So it make more sense to mark
+the CLKID_AO_UART1/2 as the pclk.
 
-On 25/03/18 20:10, Davidlohr Bueso wrote:
-> Minor changes in semantics -- key init is true; replace
-> 
-> static_key_slow_dec       with   static_branch_disable
-> static_key_true           with   static_branch_likely
-> 
-> The first is because we never actually do any couterpart incs,
-> thus there is really no reference counting semantics going on.
-> Use the more proper static_branch_disable() construct.
-> 
-> Also added a '_key' suffix to supports_deactivate, for better
-> self documentation.
-> 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-> ---
->  drivers/irqchip/irq-gic-v3.c | 20 ++++++++++----------
->  drivers/irqchip/irq-gic.c    | 22 +++++++++++-----------
->  2 files changed, 21 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index 56c8de84a72b..f32b1814278b 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -61,7 +61,7 @@ struct gic_chip_data {
->  };
->  
->  static struct gic_chip_data gic_data __read_mostly;
-> -static struct static_key supports_deactivate = STATIC_KEY_INIT_TRUE;
-> +DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
+Previous we had flag=CLK_IGNORE_UNUSED in AO clock driver.
+This will make kernel leave clock as it is while bootloader
+set the clock on.
 
-When you combine this...
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-[...]
-
-> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-> index ac2e62d613d1..9b7630cee56c 100644
-> --- a/drivers/irqchip/irq-gic.c
-> +++ b/drivers/irqchip/irq-gic.c
-> @@ -121,7 +121,7 @@ static DEFINE_RAW_SPINLOCK(cpu_map_lock);
->  #define NR_GIC_CPU_IF 8
->  static u8 gic_cpu_map[NR_GIC_CPU_IF] __read_mostly;
->  
-> -static struct static_key supports_deactivate = STATIC_KEY_INIT_TRUE;
-> +DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
-
-...with that, bad things happen:
-
-drivers/irqchip/irq-gic-v3.o:(.data+0x278): multiple definition of `supports_deactivate_key'
-drivers/irqchip/irq-gic.o:(.data+0x18): first defined here
-Makefile:1032: recipe for target 'vmlinux' failed
-make: *** [vmlinux] Error 1
-
-Thanks,
-
-	M.
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index 48584d5a329b..e538e2448bb5 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -533,7 +533,7 @@
+ 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+ 				reg = <0x0 0x3000 0x0 0x18>;
+ 				interrupts = <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>;
+-				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
+ 				clock-names = "xtal", "pclk", "baud";
+ 				status = "disabled";
+ 			};
+@@ -542,7 +542,7 @@
+ 				compatible = "amlogic,meson-gx-uart", "amlogic,meson-ao-uart";
+ 				reg = <0x0 0x4000 0x0 0x18>;
+ 				interrupts = <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>;
+-				clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++				clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
+ 				clock-names = "xtal", "pclk", "baud";
+ 				status = "disabled";
+ 			};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+index 3290a4dc3522..a458ea50c2ef 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+@@ -783,12 +783,12 @@
+ };
+ 
+ &uart_AO {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
+ 	clock-names = "xtal", "pclk", "baud";
+ };
+ 
+ &uart_AO_B {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
+ 	clock-names = "xtal", "pclk", "baud";
+ };
+ 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+index 4f355f17eed6..474f4f9630e4 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
+@@ -733,12 +733,12 @@
+ };
+ 
+ &uart_AO {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART1>, <&xtal>;
+ 	clock-names = "xtal", "pclk", "baud";
+ };
+ 
+ &uart_AO_B {
+-	clocks = <&xtal>, <&clkc CLKID_CLK81>, <&xtal>;
++	clocks = <&xtal>, <&clkc_AO CLKID_AO_UART2>, <&xtal>;
+ 	clock-names = "xtal", "pclk", "baud";
+ };
+ 
 -- 
-Jazz is not dead. It just smells funny...
+2.15.1
