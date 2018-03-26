@@ -1,133 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752053AbeCZU26 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 16:28:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45456 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751157AbeCZU2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 16:28:55 -0400
-Subject: Re: [PATCH v6 2/2] cpuset: Add cpuset.sched_load_balance to v2
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, efault@gmx.de, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>
-References: <1521649309-26690-1-git-send-email-longman@redhat.com>
- <1521649309-26690-3-git-send-email-longman@redhat.com>
- <20180322084120.GE7231@localhost.localdomain>
- <e754e128-0a93-800e-e71b-2c8dc316ba8a@redhat.com>
- <20180323075952.GA4763@localhost.localdomain>
- <a8860a42-31b5-4620-7b23-b7515ee11d7d@redhat.com>
- <20180326124711.GE5942@localhost.localdomain>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <bf79b45e-7716-65af-03ca-7112dc367371@redhat.com>
-Date: Mon, 26 Mar 2018 16:28:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180326124711.GE5942@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+        id S1752106AbeCZU3B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 16:29:01 -0400
+Received: from smtprelay0232.hostedemail.com ([216.40.44.232]:54904 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751157AbeCZU27 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 16:28:59 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1373:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3653:3865:3866:3867:3868:3870:3871:3872:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:5007:6119:7903:8985:9025:10004:10400:10848:11657:11658:11914:12043:12295:12760:12895:13069:13311:13357:13439:14181:14394:14659:14721:21080:21433:21627:30051:30054,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:33,LUA_SUMMARY:none
+X-HE-Tag: mint13_1412dd4c45f3d
+X-Filterd-Recvd-Size: 1969
+Message-ID: <1522096136.12357.21.camel@perches.com>
+Subject: [PATCH script] hwmon: Use octal not symbolic permissions
+From: Joe Perches <joe@perches.com>
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        patches@opensource.cirrus.com
+Date: Mon, 26 Mar 2018 13:28:56 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/26/2018 08:47 AM, Juri Lelli wrote:
-> On 23/03/18 14:44, Waiman Long wrote:
->> On 03/23/2018 03:59 AM, Juri Lelli wrote:
-> [...]
->
->>> OK, thanks for confirming. Can you tell again however why do you think
->>> we need to remove sched_load_balance from root level? Won't we end up
->>> having tasks put on isolated sets?
->> The root cgroup is special that it owns all the resources in the system.
->> We generally don't want restriction be put on the root cgroup. A child
->> cgroup has to be created to have constraints put on it. In fact, most of
->> the controller files don't show up in the v2 cgroup root at all.
->>
->> An isolated cgroup has to be put under root, e.g.
->>
->>       Root
->>      /    \
->> isolated  balanced
->>
->>> Also, I guess children groups with more than one CPU will need to be
->>> able to load balance across their CPUs, no matter what their parent
->>> group does?
->> The purpose of an isolated cpuset is to have a dedicated set of CPUs to
->> be used by a certain application that makes its own scheduling decision
->> by placing tasks explicitly on specific CPUs. It just doesn't make sense
->> to have a CPU in an isolated cpuset to participated in load balancing in
->> another cpuset. If one want load balancing in a child cpuset, the parent
->> cpuset should have load balancing turned on as well.
-> Isolated with CPUs overlapping some other cpuset makes little sense, I
-> agree. What I have in mind however is an isolated set of CPUs that don't
-> overlap with any other cpuset (as your balanced set above). In this case
-> I think it makes sense to let the sys admin decide if "automatic" load
-> balancing has to be performed (by the scheduler) or no load balacing at
-> all has to take place?
->
-> Further extending your example:
->
->              Root [0-3]
-> 	     /        \
->         group1 [0-1] group2[2-3]
->
-> Why should we prevent load balancing to be disabled at root level (so
-> that for example tasks still residing in root group are not freely
-> migrated around, potentially disturbing both sub-groups)?
->
-> Then one can decide that group1 is a "userspace managed" group (no load
-> balancing takes place) and group2 is balanced by the scheduler.
->
-> And this is not DEADLINE specific, IMHO.
->
->> As I look into the code, it seems like root domain is probably somewhat
->> associated with cpu_exclusive only. Whether sched_load_balance is set
->> doesn't really matter.  I will need to look further on the conditions
->> where a new root domain is created.
-> I checked again myself (sched domains code is always a maze :) and I
-> believe that sched_load_balance flag indeed controls domains (sched and
-> root) creation and configuration . Changing the flag triggers potential
-> rebuild and separed sched/root domains are generated if subgroups have
-> non overlapping cpumasks.  cpu_exclusive only enforces this latter
-> condition.
+drivers/hwmon is the most frequent user of symbolic permissions
+like S_IRUGO in the kernel tree.
 
-Right, I ran some tests and figured out that to have root_domain in the
-child cgroup level, we do need to disable load balancing at the root
-cgroup level and enabling it in child cgroups that are mutually disjoint
-in their cpu lists. The cpu_exclusive flag isn't really needed.
+$ git grep -w -P "S_[A-Z]{5,5}" | \
+  cut -f1 -d: | cut -f1-2 -d"/" | sed -r 's/[A-Za-z0-9_-]+\.[ch]$//' | \
+  sort | uniq -c | sort -rn | head
+   3862 drivers/hwmon
+    814 drivers/scsi
+    763 drivers/net
+    242 drivers/infiniband
+    184 drivers/staging
+    181 drivers/usb
+    158 fs/proc
+    150 fs/xfs
+    148 fs/
+    142 drivers/misc
 
-I am not against doing that at the root cgroup, but it is kind of weird
-in term of semantics. If we disable load balancing in the root cgroup,
-but enabling it at child cgroups, what does that mean to the processes
-that are still in the root cgroup?
+But using octal and not symbolic permissions is preferred by many
+as it can be more readable.
 
-The sched_load_balance flag isn't something that is passed to the
-scheduler. It only only affects the CPU topology of the system. So I
-suspect that a process in the root cgroup will be load balanced among
-the CPUs in the one of the child cgroups. That doesn't look right unless
-we enforce that no process can be in the root cgroup in this case.
+https://lkml.org/lkml/2016/8/2/1945
 
-Real cpu isolation will then require that we disable load balancing at
-root, and enable load balancing in child cgroups that only contain CPUs
-outside of the isolated CPU list. Again, it is still possible that some
-tasks in the root cgroup, if present, may be using some of the isolated
-CPUs.
+Rather than converting these piecemeal, perhaps just do them all
+at once via a trivial script like the below:
 
-Maybe we can have a different root level flag, say,
-sched_partition_domain that is equivalent to !sched_load_balnace.
-However, I am still not sure if we should enforce that no task should be
-in the root cgroup when the flag is set.
+$ git grep -w -P --name-only "S_[A-Z]{5,5}" drivers/hwmon | \
+  xargs ./scripts/checkpatch.pl -f --types=symbolic_perms --fix-inplace
+$ git grep -w -P --name-only "S_[A-Z]{5,5}" drivers/hwmon | \
+  xargs ./scripts/checkpatch.pl -f --types=symbolic_perms --fix-inplace
 
-Tejun and Peter, what are your thoughts on this?
+It's run twice because checkpatch only does 1 conversion per line
+and there are some multiple instance lines.
 
-Cheers,
-Longman
-
- 
+This currently results in a 669 KB patch which is too large
+to post but can be easily generated when appropriate.
