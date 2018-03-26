@@ -1,62 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeCZO0I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 10:26:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751750AbeCZO0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 10:26:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 114652172B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 26 Mar 2018 11:26:04 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: kan.liang@linux.intel.com
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        namhyung@kernel.org, wangnan0@huawei.com
-Subject: Re: [PATCH] perf mmap: Fix accessing unmapped mmap in
- perf_mmap__read_done()
-Message-ID: <20180326142604.GE18897@kernel.org>
-References: <1522071729-16776-1-git-send-email-kan.liang@linux.intel.com>
+        id S1752322AbeCZO0V (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 10:26:21 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41676 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752116AbeCZO0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 10:26:20 -0400
+Subject: Re: [RFC PATCH] irqchip: arm-gic: take gic_lock when updating irq
+ type
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Aniruddha Banerjee <aniruddhab@nvidia.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Stephen Warren <swarren@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>, Vipin Kumar <vipink@nvidia.com>
+References: <c20f41d47ed9444b9050bc1f609d4bbe@bgmail101.nvidia.com>
+ <77ac9d88-e99e-c507-66b2-cc14f06ce192@arm.com>
+ <20180326131907.3m3sfwxvyzuli2ps@holly.lan>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <9acdc1bc-5a8b-4996-4986-9c3fddb2f8b7@arm.com>
+Date: Mon, 26 Mar 2018 15:26:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522071729-16776-1-git-send-email-kan.liang@linux.intel.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180326131907.3m3sfwxvyzuli2ps@holly.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Mar 26, 2018 at 09:42:09AM -0400, kan.liang@linux.intel.com escreveu:
-> From: Kan Liang <kan.liang@linux.intel.com>
+On 26/03/18 14:19, Daniel Thompson wrote:
+> On Thu, Mar 22, 2018 at 12:19:15PM +0000, Marc Zyngier wrote:
+>> On 22/03/18 10:28, Aniruddha Banerjee wrote:
+>> [a PGP-encrypted email]
+>>
+>> Given that you're cc-ing various mailing lists, please resend this email
+>> unencrypted.
 > 
-> There is segmentation fault when running perf trace. For example,
->   [root@jouet e]# perf trace -e *chdir -o /tmp/bla perf report
->   --ignore-vmlinux -i ../perf.data
+> I am very puzzled about what is going on here. I could read the 
+> original mail fine and I was not in To: or Cc:. It also seems to
+> have made it through to the archives OK.
 > 
-> The perf_mmap__consume() could unmap the mmap. It needs to check the
-> refcnt in perf_mmap__read_done().
-> 
-> Fixes: ee023de05f35 ("perf mmap: Introduce perf_mmap__read_done()")
-> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1645375.html
+> https://www.spinics.net/lists/linux-tegra/msg32829.html
 
-Seems insuficient:
+It looks like any email I getting from nvidia is encrypted. The message
+on the list is in clear text, but not the one I received, hence my
+(admittedly premature) rant.
 
-[root@jouet ~]# perf trace -e *chdir -o /tmp/bla perf report --ignore-vmlinux
-perf: Segmentation fault
-Obtained 9 stack frames.
-perf(sighandler_dump_stack+0x3e) [0x4fe31e]
-/lib64/libc.so.6(+0x346df) [0x7fc0c3ced6df]
-perf(perf_mmap__read_init+0x26) [0x4ccd06]
-perf(cmd_trace+0x1bf6) [0x47bb76]
-perf() [0x4a824e]
-perf() [0x4a8550]
-perf(main+0x331) [0x42bef1]
-/lib64/libc.so.6(__libc_start_main+0xe9) [0x7fc0c3cd9f29]
-perf(_start+0x29) [0x42c319]
-Segmentation fault (core dumped)
-[root@jouet ~]#
-
-- Arnaldo
+	M.
+-- 
+Jazz is not dead. It just smells funny...
