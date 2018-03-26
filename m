@@ -1,89 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeCZDsM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 23:48:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47012 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751011AbeCZDsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 23:48:10 -0400
-Subject: Re: possible deadlock in handle_rx
-To: syzbot <syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com>,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        virtualization@lists.linux-foundation.org
-References: <001a113fe6d043b2a605684578f4@google.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <b68023f4-f917-d229-6d2d-e10f35a99062@redhat.com>
-Date: Mon, 26 Mar 2018 11:48:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1750904AbeCZEHy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 00:07:54 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:38741 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750713AbeCZEHw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 00:07:52 -0400
+X-UUID: 3ef8356837a84ec982a10f41a722de32-20180326
+Message-ID: <1522037265.18424.14.camel@mtkswgap22>
+Subject: Re: [PATCH v1 09/16] rtc: mediatek: convert to use device managed
+ functions
+From: Sean Wang <sean.wang@mediatek.com>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <sre@kernel.org>,
+        <lee.jones@linaro.org>, <a.zummo@towertech.it>,
+        <eddie.huang@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-rtc@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Mon, 26 Mar 2018 12:07:45 +0800
+In-Reply-To: <20180323105017.GI3417@piout.net>
+References: <cover.1521794176.git.sean.wang@mediatek.com>
+         <fbfb1852838820c198d55bc74940a74f1d0b53ed.1521794177.git.sean.wang@mediatek.com>
+         <20180323105017.GI3417@piout.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-In-Reply-To: <001a113fe6d043b2a605684578f4@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-TM-AS-Product-Ver: SMEX-12.5.0.5042-8.2.9001-23742.001
+X-TM-AS-Result: No-16.411000-8.000000-10
+X-TMASE-MatchedRID: y/2oPz6gbvgOwH4pD14DsPHkpkyUphL9+Vb3woyMZbue9toQ6h6LExRE
+        XZwhDuFxsDSpqyZY4zQkFyQegp0Snp7oe7OF0U2WEhGH3CRdKUXSde/CNbaZJSAWlErg1VlPjmK
+        ERq7fTSFOJB5wP1oqhFJaDhgFzZsBqH7dGVt6/4nKl4yJoI+fG9O4VcbrqWuqTUobVis5Bb+wV7
+        nfUWvsNMrqJH3Kw4BA118ZC33GdOuny6BdO4dlIWA/V00XWjDtwx0jRRxcQfNtPXRTHBlYsEBIC
+        Rren7xC4ImvYyRqEBzl2rMeR1tlaPGU4m5A0eV9ngIgpj8eDcC063Wh9WVqgtZE3xJMmmXc+gtH
+        j7OwNO0CpgETeT0ynA==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--16.411000-8.000000
+X-TMASE-Version: SMEX-12.5.0.5042-8.2.9001-23742.001
+X-TMASE-POSTMAN: 2-d;
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2018-03-23 at 11:50 +0100, Alexandre Belloni wrote:
+> On 23/03/2018 at 17:15:06 +0800, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > Use device managed operation to simplify error handling, reduce source
+> > code size, and reduce the likelyhood of bugs, and remove our removal
+> > callback which contains anything already done by device managed functions.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> >  drivers/rtc/rtc-mt6397.c | 31 ++++++++-----------------------
+> >  1 file changed, 8 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
+> > index cefb83b..bfc5d6f 100644
+> > --- a/drivers/rtc/rtc-mt6397.c
+> > +++ b/drivers/rtc/rtc-mt6397.c
+> > @@ -14,6 +14,7 @@
+> >  
+> >  #include <linux/delay.h>
+> >  #include <linux/init.h>
+> > +#include <linux/interrupt.h>
+> >  #include <linux/module.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/rtc.h>
+> > @@ -328,10 +329,10 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+> >  
+> >  	platform_set_drvdata(pdev, rtc);
+> >  
+> > -	ret = request_threaded_irq(rtc->irq, NULL,
+> > -				   mtk_rtc_irq_handler_thread,
+> > -				   IRQF_ONESHOT | IRQF_TRIGGER_HIGH,
+> > -				   "mt6397-rtc", rtc);
+> > +	ret = devm_request_threaded_irq(&pdev->dev, rtc->irq, NULL,
+> > +					mtk_rtc_irq_handler_thread,
+> > +					IRQF_ONESHOT | IRQF_TRIGGER_HIGH,
+> > +					"mt6397-rtc", rtc);
+> >  	if (ret) {
+> >  		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
+> >  			rtc->irq, ret);
+> > @@ -340,30 +341,15 @@ static int mtk_rtc_probe(struct platform_device *pdev)
+> >  
+> >  	device_init_wakeup(&pdev->dev, 1);
+> >  
+> > -	rtc->rtc_dev = rtc_device_register("mt6397-rtc", &pdev->dev,
+> > -					   &mtk_rtc_ops, THIS_MODULE);
+> > +	rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, "mt6397-rtc",
+> > +						&mtk_rtc_ops, THIS_MODULE);
+> 
+> You should probably switch to devm_rtc_allocate_device() and
+> rtc_register_device instead of devm_rtc_device_register.
+> 
+
+Just would like to know something details
+
+It seems you just encourage me to switch into the new registration
+method and currently devm_rtc_device_register I used for the driver
+shouldn't cause any harm. right?
+
+> >  	if (IS_ERR(rtc->rtc_dev)) {
+> >  		dev_err(&pdev->dev, "register rtc device failed\n");
+> >  		ret = PTR_ERR(rtc->rtc_dev);
+> > -		goto out_free_irq;
+> > +		return ret;
+> 
+> ret doesn't seem necessary anymore here.
 
 
-On 2018年03月26日 08:01, syzbot wrote:
-> Hello,
->
-> syzbot hit the following crash on upstream commit
-> cb6416592bc2a8b731dabcec0d63cda270764fc6 (Sun Mar 25 17:45:10 2018 +0000)
-> Merge tag 'dmaengine-fix-4.16-rc7' of 
-> git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/slave-dma
-> syzbot dashboard link: 
-> https://syzkaller.appspot.com/bug?extid=7f073540b1384a614e09
->
-> So far this crash happened 4 times on upstream.
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6506789075943424
-> syzkaller reproducer: 
-> https://syzkaller.appspot.com/x/repro.syz?id=5716250550337536
-> Raw console output: 
-> https://syzkaller.appspot.com/x/log.txt?id=5142038655795200
-> Kernel config: 
-> https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
-> compiler: gcc (GCC) 7.1.1 20170620
->
-> IMPORTANT: if you fix the bug, please add the following tag to the 
-> commit:
-> Reported-by: syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for 
-> details.
-> If you forward the report, please keep this part and the footer.
->
->
-> ============================================
-> WARNING: possible recursive locking detected
-> 4.16.0-rc6+ #366 Not tainted
-> --------------------------------------------
-> vhost-4248/4760 is trying to acquire lock:
->  (&vq->mutex){+.+.}, at: [<000000003482bddc>] 
-> vhost_net_rx_peek_head_len drivers/vhost/net.c:633 [inline]
->  (&vq->mutex){+.+.}, at: [<000000003482bddc>] handle_rx+0xeb1/0x19c0 
-> drivers/vhost/net.c:784
->
-> but task is already holding lock:
->  (&vq->mutex){+.+.}, at: [<000000004de72f44>] handle_rx+0x1f5/0x19c0 
-> drivers/vhost/net.c:766
->
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
->
->        CPU0
->        ----
->   lock(&vq->mutex);
->   lock(&vq->mutex);
->
->  *** DEADLOCK ***
->
->  May be due to missing lock nesting notation
+okay, it'll be removed
 
-Yes, it's a missing of nesting notation.
-
-Will post a patch soon.
-
-Thanks
+> 
+> 
