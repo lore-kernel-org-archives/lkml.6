@@ -1,57 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeCZQGJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 12:06:09 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37414 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751099AbeCZQGI (ORCPT
+        id S1752454AbeCZQIU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 12:08:20 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:52628 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752123AbeCZQIR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 12:06:08 -0400
-Date: Mon, 26 Mar 2018 18:05:49 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Borislav Petkov <bp@suse.de>, David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@suse.com>, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] lockdep: Show address of "struct lockdep_map" at
- print_lock().
-Message-ID: <20180326160549.GL4043@hirez.programming.kicks-ass.net>
-References: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522059513-5461-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Mon, 26 Mar 2018 12:08:17 -0400
+Date: Mon, 26 Mar 2018 12:08:10 -0400 (EDT)
+Message-Id: <20180326.120810.1260005438500317092.davem@davemloft.net>
+To: joe@perches.com
+Cc: jreuter@yaina.de, ralf@linux-mips.org, stephen@networkplumber.org,
+        socketcan@hartkopp.net, mkl@pengutronix.de, idryomov@gmail.com,
+        zyan@redhat.com, sage@redhat.com, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, pablo@netfilter.org, kadlec@blackhole.kfki.hu,
+        fw@strlen.de, afaerber@suse.de, jchapman@katalix.com,
+        johannes@sipsolutions.net, dhowells@redhat.com, vyasevich@gmail.com,
+        nhorman@tuxdriver.com, trond.myklebust@primarydata.com,
+        anna.schumaker@netapp.com, bfields@fieldses.org, jlayton@kernel.org,
+        andrew.hendry@gmail.com, steffen.klassert@secunet.com,
+        herbert@gondor.apana.org.au, marcel@holtmann.org,
+        johan.hedberg@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hams@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, bridge@lists.linux-foundation.org,
+        linux-can@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-decnet-user@lists.sourceforge.net,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        linux-arm-kernel@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-sctp@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-x25@vger.kernel.org
+Subject: Re: [PATCH 3/4] net: Use octal not symbolic permissions
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <738a74ff57f993d6b8f249425673413672d3fe70.1521845242.git.joe@perches.com>
+References: <cover.1521845235.git.joe@perches.com>
+        <738a74ff57f993d6b8f249425673413672d3fe70.1521845242.git.joe@perches.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 07:18:33PM +0900, Tetsuo Handa wrote:
-> [  628.863629] 2 locks held by a.out/1165:
-> [  628.867533]  #0: [ffffa3b438472e48] (&mm->mmap_sem){++++}, at: __do_page_fault+0x16f/0x4d0
-> [  628.873570]  #1: [ffffa3b4f2c52ac0] (&mapping->i_mmap_rwsem){++++}, at: rmap_walk_file+0x1d9/0x2a0
 
-Maybe change the string a little, because from the above it's not at all
-effident that the [] thing is the lock instance.
-
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index 12a2805..7835233 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -556,9 +556,9 @@ static void print_lock(struct held_lock *hlock)
->  		return;
->  	}
->  
-> +	printk(KERN_CONT "[%px]", hlock->instance);
-
-And yeah, what Michal said, that wants to be %p, we're fine with the
-thing being hashed, all we want to do is equivalience, which can be done
-with hashed pinters too.
-
->  	print_lock_name(lock_classes + class_idx - 1);
-> -	printk(KERN_CONT ", at: [<%px>] %pS\n",
-> -		(void *)hlock->acquire_ip, (void *)hlock->acquire_ip);
-> +	printk(KERN_CONT ", at: %pS\n", (void *)hlock->acquire_ip);
->  }
-
-Otherwise no real objection to the patch.
+Applied.
