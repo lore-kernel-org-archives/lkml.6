@@ -1,262 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeCZUOM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 16:14:12 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:36056 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751840AbeCZUNC (ORCPT
+        id S1751732AbeCZUR1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 16:17:27 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50894 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750983AbeCZUR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 16:13:02 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
-        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [net-next PATCH 1/5] soc: ti: K2G: enhancement to support QMSS in NSS
-Date: Mon, 26 Mar 2018 16:15:08 -0400
-Message-ID: <1522095312-23249-2-git-send-email-m-karicheri2@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
-References: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 26 Mar 2018 16:17:26 -0400
+From: Tim Tianyang Chen <tianyang.chen@oracle.com>
+To: rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org, dhaval.giani@oracle.com
+Subject: [PATCH v3 2/4] Ktest: add SigInt handling
+Date: Mon, 26 Mar 2018 13:08:02 -0700
+Message-Id: <1522094884-22718-3-git-send-email-tianyang.chen@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1522094884-22718-1-git-send-email-tianyang.chen@oracle.com>
+References: <1522094884-22718-1-git-send-email-tianyang.chen@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8844 signatures=668695
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=504
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1803260203
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Navigator Subsystem (NSS) available on K2G SoC has a cut down
-version of QMSS with less number of queues, internal linking ram
-with lesser number of buffers etc.  It doesn't have status and
-explicit push register space as in QMSS available on other K2 SoCs.
-So define reg indices specific to QMSS on K2G. This patch introduces
-"keystone-navigator-qmss-l" compatibility to identify QMSS on
-K2G NSS (QMSS Lite) and to customize the dts handling code. Per
-Device manual, descriptors with index less than or equal to
-regions0_size is in region 0 in the case of QMSS where as for
-QMSS Lite, descriptors with index less than regions0_size is in
-region 0. So update the size accordingly in the regions0_size bits
-of the linking ram size 0 register.
+User can cancel tests and specify handler's behavior using option
+'EMAIL_WHEN_CANCELED'.
 
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Suggested-by: Dhaval Giani <dhaval.giani@oracle.com>
+Signed-off-by: Tim Tianyang Chen <tianyang.chen@oracle.com>
 ---
- .../bindings/soc/ti/keystone-navigator-qmss.txt    |  7 ++
- drivers/soc/ti/knav_qmss.h                         |  6 ++
- drivers/soc/ti/knav_qmss_queue.c                   | 90 ++++++++++++++++------
- 3 files changed, 81 insertions(+), 22 deletions(-)
+ ktest.pl | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
-index 77cd42c..1b0878a 100644
---- a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
-+++ b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
-@@ -18,6 +18,7 @@ pool management.
- 
- Required properties:
- - compatible	: Must be "ti,keystone-navigator-qmss";
-+		: Must be "ti,keystone-navigator-qmss-l" for NSS Lite
- - clocks	: phandle to the reference clock for this device.
- - queue-range	: <start number> total range of queue numbers for the device.
- - linkram0	: <address size> for internal link ram, where size is the total
-@@ -39,6 +40,12 @@ Required properties:
- 			  - Descriptor memory setup region.
- 			  - Queue Management/Queue Proxy region for queue Push.
- 			  - Queue Management/Queue Proxy region for queue Pop.
-+
-+For NSS lite, following QMSS reg indexes are used in that order
-+			  - Queue Peek region.
-+			  - Queue configuration region.
-+			  - Queue Management/Queue Proxy region for queue Push/Pop.
-+
- - queue-pools	: child node classifying the queue ranges into pools.
- 		  Queue ranges are grouped into 3 type of pools:
- 		  - qpend	    : pool of qpend(interruptible) queues
-diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
-index 905b974..5fa1ce6 100644
---- a/drivers/soc/ti/knav_qmss.h
-+++ b/drivers/soc/ti/knav_qmss.h
-@@ -292,6 +292,11 @@ struct knav_queue {
- 	struct list_head		list;
- };
- 
-+enum qmss_version {
-+	QMSS,
-+	QMSS_LITE,
-+};
-+
- struct knav_device {
- 	struct device				*dev;
- 	unsigned				base_id;
-@@ -305,6 +310,7 @@ struct knav_device {
- 	struct list_head			pools;
- 	struct list_head			pdsps;
- 	struct list_head			qmgrs;
-+	enum qmss_version			version;
- };
- 
- struct knav_range_ops {
-diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 77d6b5c..5b2c4e9 100644
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -42,6 +42,15 @@
- #define KNAV_QUEUE_PUSH_REG_INDEX	4
- #define KNAV_QUEUE_POP_REG_INDEX	5
- 
-+/* Queue manager register indices in DTS for QMSS in NSS lite.
-+ * There are no status and vbusm push registers on this version
-+ * QMSS. Push registers are same as pop, So all indices above 1
-+ * are to be re-defined
-+ */
-+#define KNAV_L_QUEUE_CONFIG_REG_INDEX	1
-+#define KNAV_L_QUEUE_REGION_REG_INDEX	2
-+#define KNAV_L_QUEUE_PUSH_REG_INDEX	3
-+
- /* PDSP register indices in DTS */
- #define KNAV_QUEUE_PDSP_IRAM_REG_INDEX	0
- #define KNAV_QUEUE_PDSP_REGS_REG_INDEX	1
-@@ -1169,8 +1178,12 @@ static int knav_queue_setup_link_ram(struct knav_device *kdev)
- 		dev_dbg(kdev->dev, "linkram0: dma:%pad, virt:%p, size:%x\n",
- 			&block->dma, block->virt, block->size);
- 		writel_relaxed((u32)block->dma, &qmgr->reg_config->link_ram_base0);
--		writel_relaxed(block->size, &qmgr->reg_config->link_ram_size0);
--
-+		if (kdev->version == QMSS_LITE)
-+			writel_relaxed(block->size,
-+				       &qmgr->reg_config->link_ram_size0);
-+		else
-+			writel_relaxed(block->size - 1,
-+				       &qmgr->reg_config->link_ram_size0);
- 		block++;
- 		if (!block->size)
- 			continue;
-@@ -1387,42 +1400,64 @@ static int knav_queue_init_qmgrs(struct knav_device *kdev,
- 		qmgr->reg_peek =
- 			knav_queue_map_reg(kdev, child,
- 					   KNAV_QUEUE_PEEK_REG_INDEX);
--		qmgr->reg_status =
--			knav_queue_map_reg(kdev, child,
--					   KNAV_QUEUE_STATUS_REG_INDEX);
-+
-+		if (kdev->version == QMSS) {
-+			qmgr->reg_status =
-+				knav_queue_map_reg(kdev, child,
-+						   KNAV_QUEUE_STATUS_REG_INDEX);
-+		}
-+
- 		qmgr->reg_config =
- 			knav_queue_map_reg(kdev, child,
-+					   (kdev->version == QMSS_LITE) ?
-+					   KNAV_L_QUEUE_CONFIG_REG_INDEX :
- 					   KNAV_QUEUE_CONFIG_REG_INDEX);
- 		qmgr->reg_region =
- 			knav_queue_map_reg(kdev, child,
-+					   (kdev->version == QMSS_LITE) ?
-+					   KNAV_L_QUEUE_REGION_REG_INDEX :
- 					   KNAV_QUEUE_REGION_REG_INDEX);
-+
- 		qmgr->reg_push =
- 			knav_queue_map_reg(kdev, child,
--					   KNAV_QUEUE_PUSH_REG_INDEX);
--		qmgr->reg_pop =
--			knav_queue_map_reg(kdev, child,
--					   KNAV_QUEUE_POP_REG_INDEX);
-+					   (kdev->version == QMSS_LITE) ?
-+					    KNAV_L_QUEUE_PUSH_REG_INDEX :
-+					    KNAV_QUEUE_PUSH_REG_INDEX);
-+
-+		if (kdev->version == QMSS) {
-+			qmgr->reg_pop =
-+				knav_queue_map_reg(kdev, child,
-+						   KNAV_QUEUE_POP_REG_INDEX);
-+		}
- 
--		if (IS_ERR(qmgr->reg_peek) || IS_ERR(qmgr->reg_status) ||
-+		if (IS_ERR(qmgr->reg_peek) ||
-+		    ((kdev->version == QMSS) &&
-+		    (IS_ERR(qmgr->reg_status) || IS_ERR(qmgr->reg_pop))) ||
- 		    IS_ERR(qmgr->reg_config) || IS_ERR(qmgr->reg_region) ||
--		    IS_ERR(qmgr->reg_push) || IS_ERR(qmgr->reg_pop)) {
-+		    IS_ERR(qmgr->reg_push)) {
- 			dev_err(dev, "failed to map qmgr regs\n");
-+			if (kdev->version == QMSS) {
-+				if (!IS_ERR(qmgr->reg_status))
-+					devm_iounmap(dev, qmgr->reg_status);
-+				if (!IS_ERR(qmgr->reg_pop))
-+					devm_iounmap(dev, qmgr->reg_pop);
-+			}
- 			if (!IS_ERR(qmgr->reg_peek))
- 				devm_iounmap(dev, qmgr->reg_peek);
--			if (!IS_ERR(qmgr->reg_status))
--				devm_iounmap(dev, qmgr->reg_status);
- 			if (!IS_ERR(qmgr->reg_config))
- 				devm_iounmap(dev, qmgr->reg_config);
- 			if (!IS_ERR(qmgr->reg_region))
- 				devm_iounmap(dev, qmgr->reg_region);
- 			if (!IS_ERR(qmgr->reg_push))
- 				devm_iounmap(dev, qmgr->reg_push);
--			if (!IS_ERR(qmgr->reg_pop))
--				devm_iounmap(dev, qmgr->reg_pop);
- 			devm_kfree(dev, qmgr);
- 			continue;
- 		}
- 
-+		/* Use same push register for pop as well */
-+		if (kdev->version == QMSS_LITE)
-+			qmgr->reg_pop = qmgr->reg_push;
-+
- 		list_add_tail(&qmgr->list, &kdev->qmgrs);
- 		dev_info(dev, "added qmgr start queue %d, num of queues %d, reg_peek %p, reg_status %p, reg_config %p, reg_region %p, reg_push %p, reg_pop %p\n",
- 			 qmgr->start_queue, qmgr->num_queues,
-@@ -1681,10 +1716,24 @@ static int knav_queue_init_queues(struct knav_device *kdev)
- 	return 0;
+diff --git a/ktest.pl b/ktest.pl
+index 9469783bc6c1..8be12ee27d34 100755
+--- a/ktest.pl
++++ b/ktest.pl
+@@ -4269,6 +4269,16 @@ sub send_email {
+     }
  }
  
-+/* Match table for of_platform binding */
-+static const struct of_device_id keystone_qmss_of_match[] = {
-+	{
-+		.compatible = "ti,keystone-navigator-qmss",
-+	},
-+	{
-+		.compatible = "ti,keystone-navigator-qmss-l",
-+		.data	= (void *)QMSS_LITE,
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
++sub cancel_test {
++    if ($email_when_canceled) {
++        send_email("KTEST: Your [$test_type] test was cancelled",
++                "Your test started at $script_start_time was cancelled: sig int");
++    }
++    die "\nCaught Sig Int, test interrupted: $!\n"
++}
 +
- static int knav_queue_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
- 	struct device_node *qmgrs, *queue_pools, *regions, *pdsps;
-+	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
- 	u32 temp[2];
- 	int ret;
-@@ -1700,6 +1749,10 @@ static int knav_queue_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	match = of_match_device(of_match_ptr(keystone_qmss_of_match), dev);
-+	if (match && match->data)
-+		kdev->version = QMSS_LITE;
++$SIG{INT} = qw(cancel_test);
 +
- 	platform_set_drvdata(pdev, kdev);
- 	kdev->dev = dev;
- 	INIT_LIST_HEAD(&kdev->queue_ranges);
-@@ -1815,13 +1868,6 @@ static int knav_queue_remove(struct platform_device *pdev)
- 	return 0;
- }
+ # First we need to do is the builds
+ for (my $i = 1; $i <= $opt{"NUM_TESTS"}; $i++) {
  
--/* Match table for of_platform binding */
--static struct of_device_id keystone_qmss_of_match[] = {
--	{ .compatible = "ti,keystone-navigator-qmss", },
--	{},
--};
--MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
--
- static struct platform_driver keystone_qmss_driver = {
- 	.probe		= knav_queue_probe,
- 	.remove		= knav_queue_remove,
 -- 
-1.9.1
+2.15.1
