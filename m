@@ -1,66 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751976AbeCZDCr (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 25 Mar 2018 23:02:47 -0400
-Received: from mga07.intel.com ([134.134.136.100]:19598 "EHLO mga07.intel.com"
+        id S1751827AbeCZDZn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 25 Mar 2018 23:25:43 -0400
+Received: from mga02.intel.com ([134.134.136.20]:15734 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750981AbeCZDCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Mar 2018 23:02:46 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1750994AbeCZDZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Mar 2018 23:25:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,363,1517904000";
-   d="scan'208";a="45249143"
-Date: Mon, 26 Mar 2018 11:03:45 +0800
-From: Aaron Lu <aaron.lu@intel.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Huang Ying <ying.huang@intel.com>, Dave Hansen <dave.hansen@intel.com>,
-        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH v4 2/3] mm/free_pcppages_bulk: do not hold lock when
- picking pages to free
-Message-ID: <20180326030344.GA30075@intel.com>
-References: <20180301062845.26038-1-aaron.lu@intel.com>
- <20180301062845.26038-3-aaron.lu@intel.com>
- <9cad642d-9fe5-b2c3-456c-279065c32337@suse.cz>
- <20180313033453.GB13782@intel.com>
- <20180322151719.GA28468@bombadil.infradead.org>
+   d="scan'208";a="42130183"
+From: "Wang, Wei W" <wei.w.wang@intel.com>
+To: "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC: "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "huangzhichao@huawei.com" <huangzhichao@huawei.com>
+Subject: RE: [PATCH v29 3/4] mm/page_poison: expose page_poisoning_enabled
+ to kernel modules
+Thread-Topic: [PATCH v29 3/4] mm/page_poison: expose page_poisoning_enabled
+ to kernel modules
+Thread-Index: AQHTxK5iK61oAF7ciky/ImA628viDaPh1G9A
+Date: Mon, 26 Mar 2018 03:24:00 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F739485741@shsmsx102.ccr.corp.intel.com>
+References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>
+ <1522031994-7246-4-git-send-email-wei.w.wang@intel.com>
+In-Reply-To: <1522031994-7246-4-git-send-email-wei.w.wang@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjU5ZjdiODUtZmVlMS00Y2EyLWI2OWQtMjlhMGZkZjYwZmZhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6ImZOdk52YVR5SllKc25kbUJDUys4VytNaEJmOU5PXC82ZVVwVXVabDVIS3BjPSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180322151719.GA28468@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 22, 2018 at 08:17:19AM -0700, Matthew Wilcox wrote:
-> On Tue, Mar 13, 2018 at 11:34:53AM +0800, Aaron Lu wrote:
-> > I wish there is a data structure that has the flexibility of list while
-> > at the same time we can locate the Nth element in the list without the
-> > need to iterate. That's what I'm looking for when developing clustered
-> > allocation for order 0 pages. In the end, I had to use another place to
-> > record where the Nth element is. I hope to send out v2 of that RFC
-> > series soon but I'm still collecting data for it. I would appreciate if
-> > people could take a look then :-)
+On Monday, March 26, 2018 10:40 AM, Wang, Wei W wrote:
+> Subject: [PATCH v29 3/4] mm/page_poison: expose page_poisoning_enabled
+> to kernel modules
 > 
-> Sorry, I missed this.  There is such a data structure -- the IDR, or
-> possibly a bare radix tree, or we can build a better data structure on
-> top of the radix tree (I talked about one called the XQueue a while ago).
+> In some usages, e.g. virtio-balloon, a kernel module needs to know if page
+> poisoning is in use. This patch exposes the page_poisoning_enabled function
+> to kernel modules.
 > 
-> The IDR will automatically grow to whatever needed size, it stores
-> pointers, you can find out quickly where the last allocated index is,
-> you can remove from the middle of the array.  Disadvantage is that it
-> requires memory allocation to store the array of pointers, *but* it
-> can always hold at least one entry.  So if you have no memory, you can
-> always return the one element in your IDR to the free pool and allocate
-> from that page.
+> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>  mm/page_poison.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/mm/page_poison.c b/mm/page_poison.c index e83fd44..762b472
+> 100644
+> --- a/mm/page_poison.c
+> +++ b/mm/page_poison.c
+> @@ -17,6 +17,11 @@ static int early_page_poison_param(char *buf)  }
+> early_param("page_poison", early_page_poison_param);
+> 
+> +/**
+> + * page_poisoning_enabled - check if page poisoning is enabled
+> + *
+> + * Return true if page poisoning is enabled, or false if not.
+> + */
+>  bool page_poisoning_enabled(void)
+>  {
+>  	/*
+> @@ -29,6 +34,7 @@ bool page_poisoning_enabled(void)
+> 
+> 	(!IS_ENABLED(CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC) &&
+>  		debug_pagealloc_enabled()));
+>  }
+> +EXPORT_SYMBOL_GPL(page_poisoning_enabled);
+> 
+>  static void poison_page(struct page *page)  {
+> --
+> 2.7.4
 
-Thanks for the pointer, will take a look later.
-Currently I'm focusing on finding real workloads that have zone lock
-contention issue.
+
+Could we get a review of this patch? We've reviewed other parts, and this one seems to be the last part of this feature. Thanks.
+
+Best,
+Wei
