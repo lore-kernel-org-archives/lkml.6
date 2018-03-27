@@ -1,73 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752695AbeC0SHM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 14:07:12 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:13032 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752675AbeC0Q3e (ORCPT
+        id S1752470AbeC0SLg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 14:11:36 -0400
+Received: from mail-qk0-f179.google.com ([209.85.220.179]:36342 "EHLO
+        mail-qk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750948AbeC0SLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 12:29:34 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
-        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: [net-next PATCH v2 00/10] Add support for netcp driver on K2G SoC
-Date: Tue, 27 Mar 2018 12:31:39 -0400
-Message-ID: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
-X-Mailer: git-send-email 1.9.1
+        Tue, 27 Mar 2018 14:11:34 -0400
+X-Google-Smtp-Source: AIpwx49jQg+ku7ghwS9Np8xVfbtjtJpMiw+f/GMUDVyltVoVEG5PJsSGVtOvPalkFECtZZeQKuUeX49+nr4nvHGSJac=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1522170774.2593.9.camel@synopsys.com>
+References: <1522170774.2593.9.camel@synopsys.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 27 Mar 2018 21:11:32 +0300
+Message-ID: <CAHp75VeZSsdR1=ZhOM6jseYCP3m0GyE=8EjJUxWosze9BBw9rQ@mail.gmail.com>
+Subject: Re: dma-mapping: clearing GFP_ZERO flag caused crashes of Ethernet on
+ arc/hsdk board.
+To: Evgeniy Didin <Evgeniy.Didin@synopsys.com>
+Cc: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "hch@lst.de" <hch@lst.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>,
+        "geert@linux-m68k.org" <geert@linux-m68k.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-K2G SoC is another variant of Keystone family of SoCs. This patch
-series add support for NetCP driver on this SoC. The QMSS found on
-K2G SoC is a cut down version of the QMSS found on other keystone
-devices with less number of queues, internal link ram etc. The patch
-series has 2 patch sets that goes into the drivers/soc and the
-rest has to be applied to net sub system. Please review and merge
-if this looks good.
+On Tue, Mar 27, 2018 at 8:12 PM, Evgeniy Didin
+<Evgeniy.Didin@synopsys.com> wrote:
+> Hello,
+>
+> After commit  57bf5a8963f8 ("dma-mapping: clear harmful GFP_* flags in common code")  we noticed problems with Ethernet controller on one of our platforms (namely ARC HSDK).
+> I
+> n particular we see that removal of __GFP_ZERO flag in function dma_alloc_attrs() was the culprit because in our implementation of arc_dma_alloc() we only allocate zeroed pages if
+> that flag is explicitly set by the caller. Now with unconditional removal of that flag in dma_alloc_attrs() we allocate non-zeroed pages and that seem to cause problems.
+>
+> From
+> mentioned commit message I may conclude that architectural code is supposed to always allocate zeroed pages but I cannot find any requirement of that in kernel's documentation.
+> Coul
+> d you please point me to that requirement if that exists at all, then we'll implement a fix in our arch code like that:
 
-Thanks
+Can you elaborate what driver is in use?
+stmmac with dwmac-anarion?
 
-The boot logs on K2G ICE board (tftp boot over Ethernet)
-is at https://pastebin.ubuntu.com/p/VQTv3c2XBS/
+If so, this driver (w/o anarion parts, which I believe doesn't have
+anything to do with this) is widely used on other platforms.
+We have to see a lot of reports, though only one so far?
 
-The boot logs on K2G GP board (tftp boot over Ethernet)
-is at https://pastebin.ubuntu.com/p/6Vh55DW8vT/
+The logical question is why?
 
-This series applies to net-next master branch.
+Another question why caller can't ask for zero pages explicitly?
 
-Change history:
-  v2 - Addressed following comments on initial version
-       - split patch 3/5 to multiple patches from Andrew Lunn
+P.S. Current kernel code shows only 3 use cases of GFP_ZERO. It seems
+arm64 has something similar in mind.
 
-Murali Karicheri (10):
-  soc: ti: K2G: enhancement to support QMSS in NSS
-  soc: ti: K2G: provide APIs to support driver probe deferral
-  net: netcp: ethss: make call to gbe_sgmii_config() conditional
-  net: netcp: ethss: add support for handling sgmii link interface
-  net: netcp: ethss: use rgmii link status for 2u cpsw hardware
-  net: netcp: ethss: map vlan priorities to zero flow
-  net: netcp: ethss: re-use stats handling code for 2u hardware
-  net: netcp: ethss: use of_get_phy_mode() to support different RGMII
-    modes
-  Revert "net: netcp: remove dead code from the driver"
-  net: netcp: support probe deferral
+> --------------------->8---------------------
+> diff --git
+> a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
+> index 1dcc404b5aec..c92e518413aa 100644
+> --- a/arch/arc/mm/dma.c
+> +++ b/arch/arc/mm/dma.c
+> @@ -30,7 +30,7 @@ static void *arc_dma_alloc(struct
+> device *dev, size_t size,
+>       void *kvaddr;
+>       int need_coh = 1, need_kvaddr = 0;
+>
+> -       page = alloc_pages(gfp, order);
+> +       page = alloc_pages(gfp | __GFP_ZERO, order);
+>
+> if (!page)
+>               return NULL;
+> --------------------->8---------------------
+>
+> Best regards,
+> Evgeniy Didin
 
- .../bindings/soc/ti/keystone-navigator-qmss.txt    |  7 ++
- drivers/net/ethernet/ti/netcp.h                    |  2 +
- drivers/net/ethernet/ti/netcp_core.c               | 13 +++
- drivers/net/ethernet/ti/netcp_ethss.c              | 75 ++++++++++++++---
- drivers/soc/ti/knav_dma.c                          |  8 ++
- drivers/soc/ti/knav_qmss.h                         |  6 ++
- drivers/soc/ti/knav_qmss_queue.c                   | 98 +++++++++++++++++-----
- include/linux/soc/ti/knav_dma.h                    | 12 +++
- include/linux/soc/ti/knav_qmss.h                   |  1 +
- 9 files changed, 189 insertions(+), 33 deletions(-)
+
 
 -- 
-1.9.1
+With Best Regards,
+Andy Shevchenko
