@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-23226-1522169096-2-9044337127394700683
+X-Cyrus-Session-Id: sloti22d1t05-23226-1522169078-2-1313921018238587348
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522169096; b=ufc7YFSVpK3h7LRmcn4/Oq/42DpMNbNI3RZ7hIJh7gl9lFc
-    ceEh9YSWfDPOH+k+kPXoGf3pc7kgf7arj6C//nQ3lo46F1U3gdIOpvsCrz3cFhLv
-    8ns3hup70/QilcaVpOw38zxF+MVu0FuDoNiubUP4FvV6BfJIL+AC/zBj7v8pftHd
-    ygYd+33aVoNsvhC4V1h22syRQJkbfGKDrjvxxpm6R+TQdT3VHzI4Ol9aPwfT9wrQ
-    lenHual9hjYPRq+loWG8dNdw/o2p2nlRK8fM/7fS86KshoSS8ZyVDc0+YybsH+8m
-    MX3CyjK4FyLVVZ9afrkZpcSLiDow60aqx8/fKTQ==
+    t=1522169077; b=u2y0bn8BMsKpVq7dsIanRxZCflbkSqS6HTpbKrTuggUKAhx
+    wJ1tJ5orEHZm4vq0Z6oXWIwyj3wSoBRFpWq5rlL3sUZBeKTnwvXAWDj/lTQ1aNFK
+    mAvH7dZ7IQfww1MV8fMmHu2T6iOcESZrUsIlj7QbDmec+KAD3ESeKPf/74oTGr2w
+    dvmVP0uFObpvLfOFcdamXMrfQd178mQSIcLMzCXfVO7WFz6Ao7jF6iAcs9/VtK+I
+    wItDvqgRME4YM8frpsKKPI2h5rIOBoEuEJmO8PQQADZBW3yoqi6slqPULk/0ZZ0P
+    eRwttNlfNFLVJfbqluQFFdgrzQ2ppnUg0IretUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522169096; bh=5pGi++857pjJKW0wzjJc978IX+
-    aGJvoEe5ZH8pqXVbs=; b=X0l9r6xT9YSA9+/sCGLz00p+Trs+yO4rsPJjlpwkEo
-    6MnMqF9mywBehlzgYDTVXjD9rcFzIITihCWWM80FeNEnMnPx3XZbfyvyAo1JDuxT
-    iTMuFu0RS6Fg8QdtyTru09sMoIW+aNYvyOKc0Co57cc2vuEfFKQMvIpsNHmdfpDc
-    XL4zp3DqxCfO4fgvy6EcRR/qmnU7ndYShK+G9uVVgstPl/LVmfiG51g0QI3NE9Xv
-    Y5XTIM+1+r/xmgRlJrH+uofaoCYZB5B7NCkqpwk2M9yYnsB6aiffVO24k8NxFilq
-    VbxN8+ojP2advbQgZUgSNGxTfU9+i9dpq7YcvzL27Kxg==
+    :list-id; s=arctest; t=1522169077; bh=5YL5NPZG5jK8ejElntm4yZW2Yp
+    imnax/dfJuu4Nj0ro=; b=f7T1lUbs4/T+IqJxGmnMce8X69xGFQaGMVhbPpy3eL
+    AkjY2q3QPVF3tWUHQmwtk5SVRcpJIiupUt0M3/3MQ1hZRN6hE9K6w6X4USb7BvbM
+    5J/cy9UIweNLxnF1NRhAQEO+LcXFyw8WrDz/udTfLsgmi3t+OZv5DppLwQ3UkWoz
+    j0i/Wsl2EX2/ypdFD20CQalddW05UbKPGf513AqBHaWXs+AnOqo2sce74nQkXpyP
+    6ihlStVFpXQWOQfXiehSnZu4OW1rOr6mB1Y82281xxVEgYyKC4T7pwiHwob0l4CB
+    vbtdemQqJr+U/DFhFVckgMXbnLl1IwVry9agam9INb3w==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNk6hBaRPSAXgEU66pxrc6rEUjnChhUbr8A6M7V84JMO9FHlIGkKxv/7KlSoI9O1k0FWkOEQrXE6U3OUdIJ4REG+sBZqBbAG9msUZyQfhCgllt0W4Amx
-    ySl/HhNO0TEblFExMpsEMLvxBORXlHpcaRDoxM3aaXfcBme1QzOYlo/1M60XEud6A8Rdpp8kEQwTPmqHmHkOYKaBcQsGFSFEup/mOPN0nLH94b7FD7FRdegf
+X-CM-Envelope: MS4wfB2IOrXEt5zBcHeEck0bcNAB+hvQek/bANatfKeFlYOjEBYNMHI8F+l4voeaE+JxnIxlxUMlNWcbb9tFWQx9NC2cpw2YNrXyTbfgJDTCev8hGzE0xlk8
+    841Xtm/4USqyjZ84uXeLIwWtuG/N3uqBo/LfB0sxTX/hWSN0TVz+k1N24DF2MoyvIeU3NJRodxM0MO4JklYWfbMU9rQxGM3z/EGy0eUyuFT929ezZ0M+JeM2
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=nTPwkA1SAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=hs5qnzdQf2hmqSGAq_AA:9
-    a=QEXdDO2ut3YA:10 a=Her_73y7XSQQkpQYGz2D:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=8S9q_luQAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=IgS8zTJaMza7Z8jP0TkA:9
+    a=QEXdDO2ut3YA:10 a=cvfBolwEH3e1gB6IFv0f:22 a=AjGcO6oz07-iQ99wixmX:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755662AbeC0Qof (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 12:44:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49564 "EHLO
+        id S1751752AbeC0Qnc (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:43:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49544 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751066AbeC0Qnc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:43:32 -0400
+        with ESMTP id S1751219AbeC0Qn3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:43:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Andri Yngvason <andri.yngvason@marel.com>,
+        stable@vger.kernel.org, Marek Vasut <marex@denx.de>,
+        Heiko Schocher <hs@denx.de>, Markus Marb <markus@marb.org>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.15 079/105] can: cc770: Fix stalls on rt-linux, remove redundant IRQ ack
-Date: Tue, 27 Mar 2018 18:27:59 +0200
-Message-Id: <20180327162802.926434251@linuxfoundation.org>
+Subject: [PATCH 4.15 078/105] can: ifi: Check core revision upon probe
+Date: Tue, 27 Mar 2018 18:27:58 +0200
+Message-Id: <20180327162802.708932607@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -93,51 +93,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andri Yngvason <andri.yngvason@marel.com>
+From: Marek Vasut <marex@denx.de>
 
-commit f4353daf4905c0099fd25fa742e2ffd4a4bab26a upstream.
+commit 591d65d5b15496af8d05e252bc1da611c66c0b79 upstream.
 
-This has been reported to cause stalls on rt-linux.
+Older versions of the core are not compatible with the driver due
+to various intrusive fixes of the core. Read out the VER register,
+check the core revision bitfield and verify if the core in use is
+new enough (rev 2.1 or newer) to work correctly with this driver.
 
-Suggested-by: Richard Weinberger <richard@nod.at>
-Tested-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Andri Yngvason <andri.yngvason@marel.com>
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Heiko Schocher <hs@denx.de>
+Cc: Markus Marb <markus@marb.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>
 Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/cc770/cc770.c |   15 ---------------
- 1 file changed, 15 deletions(-)
+ drivers/net/can/ifi_canfd/ifi_canfd.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/net/can/cc770/cc770.c
-+++ b/drivers/net/can/cc770/cc770.c
-@@ -447,15 +447,6 @@ static netdev_tx_t cc770_start_xmit(stru
+--- a/drivers/net/can/ifi_canfd/ifi_canfd.c
++++ b/drivers/net/can/ifi_canfd/ifi_canfd.c
+@@ -144,6 +144,8 @@
+ #define IFI_CANFD_SYSCLOCK			0x50
  
- 	stats->tx_bytes += dlc;
+ #define IFI_CANFD_VER				0x54
++#define IFI_CANFD_VER_REV_MASK			0xff
++#define IFI_CANFD_VER_REV_MIN_SUPPORTED		0x15
  
--
--	/*
--	 * HM: We had some cases of repeated IRQs so make sure the
--	 * INT is acknowledged I know it's already further up, but
--	 * doing again fixed the issue
--	 */
--	cc770_write_reg(priv, msgobj[mo].ctrl0,
--			MSGVAL_UNC | TXIE_UNC | RXIE_UNC | INTPND_RES);
--
- 	return NETDEV_TX_OK;
- }
+ #define IFI_CANFD_IP_ID				0x58
+ #define IFI_CANFD_IP_ID_VALUE			0xD073CAFD
+@@ -943,7 +945,7 @@ static int ifi_canfd_plat_probe(struct p
+ 	struct resource *res;
+ 	void __iomem *addr;
+ 	int irq, ret;
+-	u32 id;
++	u32 id, rev;
  
-@@ -684,12 +675,6 @@ static void cc770_tx_interrupt(struct ne
- 	/* Nothing more to send, switch off interrupts */
- 	cc770_write_reg(priv, msgobj[mo].ctrl0,
- 			MSGVAL_RES | TXIE_RES | RXIE_RES | INTPND_RES);
--	/*
--	 * We had some cases of repeated IRQ so make sure the
--	 * INT is acknowledged
--	 */
--	cc770_write_reg(priv, msgobj[mo].ctrl0,
--			MSGVAL_UNC | TXIE_UNC | RXIE_UNC | INTPND_RES);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	addr = devm_ioremap_resource(dev, res);
+@@ -957,6 +959,13 @@ static int ifi_canfd_plat_probe(struct p
+ 		return -EINVAL;
+ 	}
  
- 	stats->tx_packets++;
- 	can_get_echo_skb(dev, 0);
++	rev = readl(addr + IFI_CANFD_VER) & IFI_CANFD_VER_REV_MASK;
++	if (rev < IFI_CANFD_VER_REV_MIN_SUPPORTED) {
++		dev_err(dev, "This block is too old (rev %i), minimum supported is rev %i\n",
++			rev, IFI_CANFD_VER_REV_MIN_SUPPORTED);
++		return -EINVAL;
++	}
++
+ 	ndev = alloc_candev(sizeof(*priv), 1);
+ 	if (!ndev)
+ 		return -ENOMEM;
