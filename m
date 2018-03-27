@@ -1,44 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeC0NAZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:00:25 -0400
-Received: from mout01.posteo.de ([185.67.36.65]:34665 "EHLO mout01.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751964AbeC0NAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:00:23 -0400
-From: Martin Kepplinger <martink@posteo.de>
-To: corbet@lwn.net
-Cc: mchehab@kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Kepplinger <martink@posteo.de>
-Subject: [PATCH] Documentation/process: update FUSE project website
-Date: Tue, 27 Mar 2018 14:59:50 +0200
-Message-Id: <20180327125950.717-1-martink@posteo.de>
-X-Mailer: git-send-email 2.14.2
+        id S1752348AbeC0NCH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:02:07 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:51043 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752234AbeC0NCF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:02:05 -0400
+X-Google-Smtp-Source: AIpwx4/9XPWl1WJlNxXmW7NpV0jzF1ZB+Q0T6GKUEhV90gZj/iVsAElnRbyppcr+WC7AhPK6KVzTQBApst533i5SoS8=
+MIME-Version: 1.0
+In-Reply-To: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
+References: <49f6922ba342cf69bfd2a787d0c2a93b4df2c429.1520664883.git.hns@goldelico.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 27 Mar 2018 15:02:03 +0200
+Message-ID: <CACRpkdYfk7P0+Ysy43HboBe0Z66vO3COXRgUGaZ7Y9sSDh+yxA@mail.gmail.com>
+Subject: Re: [PATCH] drivers: gpio: pca953x: add compatibility for pcal6524
+ and pcal9555a
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        kernel@pyra-handheld.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the old project site, https://sourceforge.net/projects/fuse/
-the project has moved to https://github.com/libfuse/ so we update the
-link to point to the latest libfuse release.
+On Sat, Mar 10, 2018 at 12:00 PM, H. Nikolaus Schaller
+<hns@goldelico.com> wrote:
 
-Signed-off-by: Martin Kepplinger <martink@posteo.de>
----
- Documentation/process/changes.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The Pyra-Handheld originally used the tca6424 but recently we have
+> replaced it by the pin and package compatible pcal6524. So let's
+> add this to the bindings and the driver.
+>
+> And while we are at it, the pcal9555a does not have a compatible entry
+> either but is already supported by the device id table.
+>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index 4f19a9725f76..ddc029734b25 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -430,7 +430,7 @@ udev
- FUSE
- ----
- 
--- <http://sourceforge.net/projects/fuse>
-+- <https://github.com/libfuse/libfuse/releases>
- 
- mcelog
- ------
--- 
-2.14.2
+Patch applied with Rob's review tag.
+
+If there are any further concerns from the discussion with Andy,
+please follow up with additional patches if need be, thanks!
+
+Yours,
+Linus Walleij
