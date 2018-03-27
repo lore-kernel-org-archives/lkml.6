@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48bEsTplyESKCUYABPyolUzcV4ecCdft1G+4GVbPmpMX2HJI9oc9vttuyeOE89kAmNS6Cth
-ARC-Seal: i=1; a=rsa-sha256; t=1522168755; cv=none;
+X-Google-Smtp-Source: AIpwx4+NRDmeQSd1GOEfyzQ0s06njaDtkMSS/sgMoiQJDp0pr7tD6hW8E5VNwbm97MEb0wLis3Ft
+ARC-Seal: i=1; a=rsa-sha256; t=1522168752; cv=none;
         d=google.com; s=arc-20160816;
-        b=yhYrx+cfCQvBz5hIM/Z6h16PZPVetYs9GFnEly+7LU5GqK4ATO4xkjRhxlW6AgfNVP
-         RqQoB23BEwNgN452QeJ0hjiF1oRGHdfeseq27+dOvKutWLCVJLicnbnAhxPXuOkKeQjf
-         6IQuNCrW1X551Br1zjIgsB/nPvWuwc6J3+s+SdjyoxMvi74rrsWp5r0LLPt/akxCPyX2
-         tSMzzSVNkn6LsSvRynYrLW+gVfLatZFPs6smO2q9t+cIfQGJW85aASgI5TQrSWDf79Ov
-         Y8/ffCKXejBw63jjxzG/u5dEK+ePiO1bPU8nDvc1dkzX11QrK241ufo5XgLQm8ZByApw
-         YSlQ==
+        b=kPqCCpwGRt4hda8cLQmtk6GvFNyGqPjwXbt2ZbtviVODKnuUNmxSpIvxvU1fYueX16
+         Sq8Lw0u4JIe+KL1phIPuGDf8lWmMHRZ3Hzm4gHDeDc8Z5XjlG0jd0aVam2e8GJisJ4Jh
+         RKvtPjoPZfo+w1BBA5GZjTIzM2M+vIu0o7vfWz8hLGyxsrj5MiFotl2pvwgauh+VLik0
+         zCrJFmORbNBO7yuQbeoZnHHSE4T1RdTVJ4flQmqq50Ja1Z1Nykdl37DiVKzSNkeaxSRq
+         Zxg+Zqkkw9qjyBofXh+DNp0nNDh/UCGupQb4Tg+KR1N8LS7Uz37tJKzHxBIdSUo79NRF
+         SAYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wtrbOzXzt9wxnf8OHlfPoi9Idcg4lLD8yNb/rdrSkK4=;
-        b=RgwGVQN6UOGNiwAY9B2eSCVOFAdHEhiDfqW+eWFNbqZ0E17cZTW6hJ1YhtO3zm5c1x
-         Qv1qrqAkOo38Qwydzxh3HQ4bX/o8heWsHUtucgM1dlX7pWT3a5rSFoKrxKmoNjPPuB/n
-         OOLCFy+v0CK+0BRetAnWWwD4EMN+jtJFOsV2ONa64bLwGEJ3YluNYLuvEPeqXNNKa3Lw
-         ldvMfz6cD01OGKto8/9wZSg+UnHF05auDKroRN9RURM6B990IixVcif/Xkpox6XF3CeW
-         BQ7vYIZGUJwTzD6lxJpm+QoYJycgfAYx2V6hsVxCS+Uneu+6cJBx2Qxg6+0IHY+e10gm
-         P4YQ==
+        bh=UJL27qKu/yTmlzuGw9kpk4HMb+y89uKQs7g0F0vO+8o=;
+        b=HA773a0F6ktN7ZqzM7b/+r4m1Qh/YAYsu02ryjv71M6rnsVR3WsrvklcBSYuhA7XAp
+         ZcsXTYkSxrR8sSL0IZJAmiRY7hxZqfW6Ofbd3+Q1+n6UweVzJLyzunhh8uCwiX2APJc+
+         5dHzZz09zAbhg6WxzYv1VewAQz+BxYCmuMqPVCfz9dEYHx9IoxQ27dGi2C/A3Zkpj32t
+         MoHbhQe2fs+wnfGkiSCpDcAlaomId06M5dZTmDhRAa1sMK4MV18+VZop2EfS4brbbtu6
+         0BYT9ve78tIjLAhThoDRST9ugi5PUzaFP/H9HFFr+jFoaNwGX/XPL63e6g6V7S5S3hF1
+         0+lQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jaehoon Chung <jh80.chung@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.15 020/105] mmc: dw_mmc: exynos: fix the suspend/resume issue for exynos5433
-Date: Tue, 27 Mar 2018 18:27:00 +0200
-Message-Id: <20180327162758.695430167@linuxfoundation.org>
+	NeilBrown <neil@brown.name>,
+	Matt Redfearn <matt.redfearn@mips.com>,
+	John Crispin <john@phrozen.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org,
+	James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.15 002/105] MIPS: ralink: Fix booting on MT7621
+Date: Tue, 27 Mar 2018 18:26:42 +0200
+Message-Id: <20180327162757.916740121@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109460522217445?=
-X-GMAIL-MSGID: =?utf-8?q?1596109624808388753?=
+X-GMAIL-THRID: =?utf-8?q?1596109314915316713?=
+X-GMAIL-MSGID: =?utf-8?q?1596109622303534013?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,40 +53,100 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jaehoon Chung <jh80.chung@samsung.com>
+From: NeilBrown <neil@brown.name>
 
-commit e22842dd64bf86753d3f2b6ea474d73fc1e6ca24 upstream.
+commit a63d706ea719190a79a6c769e898f70680044d3e upstream.
 
-Before enabling the clock, dwmmc exynos driver is trying to access the
-register. Then the kernel panic can be occurred.
+Since commit 3af5a67c86a3 ("MIPS: Fix early CM probing") the MT7621 has
+not been able to boot.
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+This commit caused mips_cm_probe() to be called before
+mt7621.c::proc_soc_init().
+
+prom_soc_init() has a comment explaining that mips_cm_probe() "wipes out
+the bootloader config" and means that configuration registers are no
+longer available. It has some code to re-enable this config.
+
+Before this re-enable code is run, the sysc register cannot be read, so
+when SYSC_REG_CHIP_NAME0 is read, a garbage value is returned and
+panic() is called.
+
+If we move the config-repair code to the top of prom_soc_init(), the
+registers can be read and boot can proceed.
+
+Very occasionally, the first register read after the reconfiguration
+returns garbage, so add a call to __sync().
+
+Fixes: 3af5a67c86a3 ("MIPS: Fix early CM probing")
+Signed-off-by: NeilBrown <neil@brown.name>
+Reviewed-by: Matt Redfearn <matt.redfearn@mips.com>
+Cc: John Crispin <john@phrozen.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 4.5+
+Patchwork: https://patchwork.linux-mips.org/patch/18859/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/dw_mmc-exynos.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/mips/ralink/mt7621.c |   42 ++++++++++++++++++++++--------------------
+ 1 file changed, 22 insertions(+), 20 deletions(-)
 
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -165,9 +165,15 @@ static void dw_mci_exynos_set_clksel_tim
- static int dw_mci_exynos_runtime_resume(struct device *dev)
- {
- 	struct dw_mci *host = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = dw_mci_runtime_resume(dev);
-+	if (ret)
-+		return ret;
+--- a/arch/mips/ralink/mt7621.c
++++ b/arch/mips/ralink/mt7621.c
+@@ -170,6 +170,28 @@ void prom_soc_init(struct ralink_soc_inf
+ 	u32 n1;
+ 	u32 rev;
  
- 	dw_mci_exynos_config_smu(host);
--	return dw_mci_runtime_resume(dev);
++	/* Early detection of CMP support */
++	mips_cm_probe();
++	mips_cpc_probe();
 +
-+	return ret;
- }
++	if (mips_cps_numiocu(0)) {
++		/*
++		 * mips_cm_probe() wipes out bootloader
++		 * config for CM regions and we have to configure them
++		 * again. This SoC cannot talk to pamlbus devices
++		 * witout proper iocu region set up.
++		 *
++		 * FIXME: it would be better to do this with values
++		 * from DT, but we need this very early because
++		 * without this we cannot talk to pretty much anything
++		 * including serial.
++		 */
++		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
++		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
++				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
++		__sync();
++	}
++
+ 	n0 = __raw_readl(sysc + SYSC_REG_CHIP_NAME0);
+ 	n1 = __raw_readl(sysc + SYSC_REG_CHIP_NAME1);
  
- /**
+@@ -194,26 +216,6 @@ void prom_soc_init(struct ralink_soc_inf
+ 
+ 	rt2880_pinmux_data = mt7621_pinmux_data;
+ 
+-	/* Early detection of CMP support */
+-	mips_cm_probe();
+-	mips_cpc_probe();
+-
+-	if (mips_cps_numiocu(0)) {
+-		/*
+-		 * mips_cm_probe() wipes out bootloader
+-		 * config for CM regions and we have to configure them
+-		 * again. This SoC cannot talk to pamlbus devices
+-		 * witout proper iocu region set up.
+-		 *
+-		 * FIXME: it would be better to do this with values
+-		 * from DT, but we need this very early because
+-		 * without this we cannot talk to pretty much anything
+-		 * including serial.
+-		 */
+-		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
+-		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
+-				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
+-	}
+ 
+ 	if (!register_cps_smp_ops())
+ 		return;
