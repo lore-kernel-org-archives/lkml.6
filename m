@@ -1,108 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751152AbeC0KrX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 06:47:23 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:55000 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750881AbeC0KrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 06:47:22 -0400
-From: Alexander Dahl <ada@thorsis.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-Date: Tue, 27 Mar 2018 12:41:08 +0200
-Message-ID: <9761072.pX2B0LJlSJ@ada>
-In-Reply-To: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751997AbeC0Krt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 06:47:49 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:32969 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751205AbeC0Krq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 06:47:46 -0400
+X-Google-Smtp-Source: AG47ELtIWhKGw96ZjfdYCLrs/qlAVP1lBHo9/wILO1J8mHsbvtq1auhYw2EALM2SEv1CeFhmTB372A==
+Subject: Re: [PATCH v6 0/6] Add MediaTek PMIC keys support
+To: Lee Jones <lee.jones@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Sean Wang <sean.wang@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Mark Rutland <mark.rutland@arm.com>, a.zummo@towertech.it,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        jcsing.lee@samsung.com, linux-kernel@vger.kernel.org, krzk@kernel.org,
+        javier@osg.samsung.com, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        eddie.huang@mediatek.com, Chen.Zhong@mediatek.com,
+        beomho.seo@samsung.com, linux-rtc@vger.kernel.org
+References: <1508937364-30054-1-git-send-email-chen.zhong@mediatek.com>
+ <808b2029da224ab687fb0553cbc1c68e@mtkmbs08n1.mediatek.inc>
+ <1521685073.28226.10.camel@mtkswgap22> <20180323185418.GD255819@dtor-ws>
+ <20180327080507.pgil6pw2mn4y2f4d@dell>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <3ece050c-7573-ef4e-2c89-61645a243a33@gmail.com>
+Date: Tue, 27 Mar 2018 12:47:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180327080507.pgil6pw2mn4y2f4d@dell>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2RAlUSn002527
 
-Hello Alexandre,
 
-Am Freitag, 23. Februar 2018, 18:15:52 CEST schrieb Alexandre Belloni:
->  - using the PIT doesn't work well with preempt-rt because its interrupt is
->    shared (in particular with the UART and their interrupt flags are
->    incompatible)
 
-This is actually quite annoying when using the UART as a serial console, 
-producing garbage when you type too fast. That's why I tested this patch 
-series (on top of v4.16-rc7). Target is a at91sam9g20 based board, quite close 
-to, but not actually an at91sam9g20-ek.
+On 03/27/2018 10:05 AM, Lee Jones wrote:
+> On Fri, 23 Mar 2018, Dmitry Torokhov wrote:
+>> On Thu, Mar 22, 2018 at 10:17:53AM +0800, Sean Wang wrote:
+>>> Hi, Dmitry and Lee
+>>>
+>>> The series seems not being got merged. Are they good enough to be ready
+>>> into the your tree?
+>>>
+>>> Recently I've tested the series with focusing on pwrkey event generated
+>>> through interrupt when push and release the key on bpi-r2 board and then
+>>> finally it's working fine. but for homekey it cannot be found on the
+>>> board and thus I cannot have more tests more about it.
+>>>
+>>> Tested-by: Sean Wang <sean.wang@mediatek.com>
+>>
+>> You have my Ack on the input patch; I expect it go through Lee's tree as
+>> there are some dependencies on mfd core piece.
+> 
+> Are you happy for me to merge the Input dt-bindings without your Ack?
+> 
 
-First test was with the previous kernel config updated by oldconfig, so 
-basically still using the PIT:
+They got both Acked in v5, but the commit message was not updated:
+https://patchwork.kernel.org/patch/9973721/
+https://patchwork.kernel.org/patch/9973723/
 
-  +CONFIG_ATMEL_CLOCKSOURCE_PIT=y
-
-On the serial console with v4.16 and the patch set without switching to the 
-new options, I see this on boot (no surprise, this is what it also prints with 
-v4.9):
-
-  clocksource: pit: mask: 0xfffffff max_cycles: 0xfffffff, max_idle_ns: 
-14468723050 ns
-  …
-  clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 
-19112604462750000 ns
-  …
-  clocksource: tcb_clksrc: mask: 0xffffffff max_cycles: 0xffffffff, 
-max_idle_ns: 115749784805 ns
-  …
-  clocksource: Switched to clocksource tcb_clksrc
-
-Interrupts here:
-
-  $ cat /proc/interrupts 
-             CPU0       
-   16:       4802  atmel-aic   1 Level     at91_tick, rtc0, ttyS0
-   19:      24041  atmel-aic  19 Level     tc_clkevt
-   26:        124  atmel-aic  21 Level     eth0
-   28:          1      GPIO  11 Edge      reset
-  Err:          0
-
-Second test with tcb block added to dts like in 
-32ce250b0af3b6971fc746445fce87861a9f5628 and with changed kernel config 
-according to defconfig changes in patch 5 and 6:
-
-  +# CONFIG_ATMEL_CLOCKSOURCE_PIT is not set
-  +CONFIG_ATMEL_CLOCKSOURCE_TCB=y
-  -CONFIG_ATMEL_TCLIB=y
-  -CONFIG_ATMEL_TCB_CLKSRC=y
-  -CONFIG_ATMEL_TCB_CLKSRC_BLOCK=0
-  +# CONFIG_ATMEL_TCLIB is not set
-  -CONFIG_ATMEL_PIT=y
-  +CONFIG_ATMEL_ARM_TCB_CLKSRC=y
-  -CONFIG_PWM_ATMEL_TCB=m
-
-The output on the serial console contains this:
-
-  clocksource: timer@fffa0000:0,1: mask: 0xffffffff max_cycles: 0xffffffff, 
-max_idle_ns: 115749784805 ns
-  …
-  clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 
-19112604462750000 ns
-  …
-  clocksource: Switched to clocksource timer@fffa0000:0,1
-
-Interrupts here:
-
-  $ cat /proc/interrupts 
-             CPU0       
-   17:    5727291  atmel-aic  19 Level     timer@fffa0000:2
-   18:       5523  atmel-aic   1 Level     rtc0, ttyS0
-   26:       5031  atmel-aic  21 Level     eth0
-   28:          1      GPIO  11 Edge      reset
-  Err:          0
-
-So, the board boots and runs like usual. I don't know if that qualifies for a 
-Tested-by? Hope that helps.
-
-Greets
-Alex
+Regards,
+Matthias
