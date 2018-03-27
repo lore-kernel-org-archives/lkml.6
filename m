@@ -1,117 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752303AbeC0Gwg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:52:36 -0400
-Received: from de-out1.bosch-org.com ([139.15.230.186]:34406 "EHLO
-        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752035AbeC0Gwe (ORCPT
+        id S1752629AbeC0Gwo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:52:44 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:33982 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752609AbeC0Gwk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:52:34 -0400
-X-AuditID: 0a3aad12-eddff70000016568-4f-5ab9ea2f0f9a
-From: "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
-To: Rob Herring <robh@kernel.org>
-CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hs@denx.de" <hs@denx.de>,
-        "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>,
-        "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
-Subject: Re: [PATCH] Input: add bu21029 touch driver
-Thread-Topic: [PATCH] Input: add bu21029 touch driver
-Thread-Index: AdPFmBvcuWcHIO+GQ4GRxNEfUInxQQ==
-Date: Tue, 27 Mar 2018 06:52:31 +0000
-Message-ID: <bf2aff8ab685473c836012bbed96c693@de.bosch.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.19.142.147]
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 27 Mar 2018 02:52:40 -0400
+X-Google-Smtp-Source: AG47ELvG0GHwFpR3Gt2daP0WG4IebjFfZH8UVK5JAIi+xKX6fl4dSiR45dwYSQPFxjJPdSsjUPjXzg==
+Date: Mon, 26 Mar 2018 23:52:38 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Ingo Molnar <mingo@kernel.org>
+cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, bp@suse.de
+Subject: Re: [PATCH 0/2] x86/CPU/AMD: Add support for Extended Topology
+ Enumeration
+In-Reply-To: <20180327064806.dy5updhu7grlct3q@gmail.com>
+Message-ID: <alpine.DEB.2.20.1803262351340.261728@chino.kir.corp.google.com>
+References: <1522051559-23415-1-git-send-email-suravee.suthikulpanit@amd.com> <20180327064806.dy5updhu7grlct3q@gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA22Tf0wbZRjHeXvt9SgcHu06HruhaXUuc/JzxTTDKFFZamKi/yzGJmYrctIG
-        2mKvkMFmXHBjP8S5DTHQYQWBJiIGbMYojI3RYbbOKEHY1prRkQgIRbShWB1D6h0Ha//wn8vz
-        fr/P53me97k7ApNeIhSE0WyjrWZ9mQqXCCV7v03PyAr267KvX8nRfDnyk0hz/as5pHHfu49p
-        /EsRkWZ8oBnXdNwdE2iig25xgVjb5ehCWof9plDbb58Ua12dp3Bt2PXEmyKd5IViusxYSVuz
-        XjwoMbR2zGPlH1GHbgw78KNoMek0SiSAUsPSnQh+GkkIKdUoAE93RMgfBhHMRIfF/GERQXC0
-        fsO5hsDvmMA5Hqf2wgnnD2Iu3kIp4WHt5yIuCaMuYHDMeVXAGTK2yXGfHeeT8qDuWp2IjzPh
-        4tQX67CQ2gHH7QPr+SSVD45AaF1HVDr09IxiXIxRaeCa/VvED05B+yCvAyWH+V/XWJ1gYyU0
-        N77Mp2eCr+EznI93g7N1AePLp4K3aVp4FsntcVXtcYg9DrHHIS1I2InkjDG70qR+Xp2baS2i
-        mersnMx3LSYX4t+e1I0+7ijyIIpAqmQyabpfJxXpK5kqkwflEQKVnKx+kpVSiizFVQY9Yzhg
-        rSijGZWCRAkJCVLZI5mpKDIZGcZoMXsQEJhqC1nawXJksb6qmrZaeMyDthFCVRpZV3xEJ6VK
-        9Da6lKbLaeumm08QKiBDcyyYaqVL6EPvGctsm7Yqne+5Nd6JbysgEj1oD5HM9n59nuvNlOtN
-        jLFkA3+cx6Wbagy9hd4g1hqnajEicoV7+uYWajGp0Gwx04o0MomrRXGUocL8aBrFdnL3XdaQ
-        xxmxikHkQ+w+ZWQvd5dk9oeJzQGkW9b8tjR1Q4xBue0sQ9UQ4KixwpB/HEH32iIGv/zTI4Km
-        lhAOt6e+T4TVsFMC9vFIMgxdOJ8CK00Nj8Gx35Yo+N1rl8LPS6syaGwbAgi3zisgWvO1Euq/
-        G1dC+BPHDmifDDwDvtngTjjfFtoJE55PM2D5rxsZ0NM3zX5Is51ZsHw5rIYzgRkNPJiZyofl
-        U9GXYKR78lW4POUvhFBgoTDI7ljA7vhSjZvbsU1v+58db6ixyymOoiPZF/NWugrnxu6fNURL
-        /Z4E3bkm4z3H06PoOddK7i3DH92LZ1qCwadIWcHB6Or+h72H04hXDhR4b97WnXTtMgoN+wa0
-        20jFh7L338oY2N7bNqztSxrxqsujr+2Z2OU9t3LY2TCmSQl8885JdfoHV7f+u5/JOzFb31f7
-        p+rH0J1R5QOVkDHoc57FrIz+P0B+XGHJBAAA
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2R6qhch009605
 
-Hello Rob,
+On Tue, 27 Mar 2018, Ingo Molnar wrote:
 
-> > +* Rohm BU21029 Touch Screen Controller
-> > +
-> > +Required properties:
-> > + - compatible              : must be "rohm,bu21029"
-> > + - reg                     : i2c device address of the chip
+> > Linux currently provides function detect_extended_topology()
+> > for parsing CPUID Fn0xB and derive CPU topology information.
+> > Therefore, also call this function in AMD code path.
+> > 
+> > Thanks,
+> > Suravee
+> > 
+> > Suravee Suthikulpanit (2):
+> >   x86/CPU: Modify detect_extended_topology() to return result
+> >   x86/CPU/AMD: Derive CPU topology from CPUID Fn0xB when available
+> > 
+> >  arch/x86/include/asm/processor.h |  2 +-
+> >  arch/x86/kernel/cpu/amd.c        | 16 ++++++++++++----
+> >  arch/x86/kernel/cpu/topology.c   |  8 ++++----
+> >  3 files changed, 17 insertions(+), 9 deletions(-)
 > 
-> What the valid value(s)?
-
-The chip itself can be wired to 0x40 or 0x41. The driver can work with
-any valid I2C address.
-
-Is this what you are looking for?
-
-- reg                     : i2c device address of the chip (0x40 or 0x41)
-
-> > + - interrupt-parent        : the phandle for the gpio controller
-> > + - interrupts              : (gpio) interrupt to which the chip is connected
-> > + - reset-gpios             : gpio pin to reset the chip
+> Which tree is this again? The second patch does not apply to -linus or -tip.
 > 
-> Active high or low?
 
-The chip itself needs an active low reset. But depending on whether
-there is an inverter between the touch screen controller and the CPU or
-not, the CPU's GPIO might need to be active high or active low. This
-shall be configured by the polarity given in the device tree. The
-driver uses this information to drive the reset appropriately.
+I was wondering the exact same thing today when this came across.  I found 
+it's based on Suravee's other patch series posted today entitled "x86/CPU: 
+Update AMD Last-Level-Cache Information".
 
-Are you looking for documenting the required polarity of the touch
-controller itself?
-
-- reset-gpios             : gpio pin to reset the chip (active low)
-
-> > +Example:
-> > +
-> > +	&i2c1 {
-> > +		/* ... */
-> > +
-> > +		bu21029: bu21029@40 {
-> > +			compatible = "rohm,bu21029";
-> > +			reg = <0x40>;
-> > +			interrupt-parent = <&gpio1>;
-> > +			interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-> > +			reset-gpios = <&gpio6 16 GPIO_ACTIVE_LOW>;
-> > +			rohm,x-plate-ohms = <600>;
-> > +			touchscreen-max-pressure = <4095>;
-> > +		};
-> > +
-> > +		/* ... */
-> > +	};
-
-Greetings,
-Mark Jonas
-
-Building Technologies, Panel Software Fire (BT-FIR/ENG1) 
-Bosch Sicherheitssysteme GmbH | Postfach 11 11 | 85626 Grasbrunn | GERMANY | www.boschsecurity.com
-
-Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart HRB 23118 
-Aufsichtsratsvorsitzender: Stefan Hartung; Geschäftsführung: Gert van Iperen, Andreas Bartz, Thomas Quante, Bernhard Schuster
+https://marc.info/?l=linux-kernel&m=152204614503522
+1522046116-22578-1-git-send-email-suravee.suthikulpanit@amd.com
