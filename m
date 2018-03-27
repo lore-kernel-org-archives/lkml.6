@@ -1,52 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751674AbeC0INF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:13:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47302 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750937AbeC0INC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:13:02 -0400
-Date: Tue, 27 Mar 2018 10:12:54 +0200 (CEST)
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
-X-X-Sender: sebott@schleppi
-To: Christoph Hellwig <hch@lst.de>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-cc: linux-kernel@vger.kernel.org
-Subject: dma_zalloc_coherent broken with
- 57bf5a8963f80fb3828c46c3e3a5b2dd790e09a7
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
- =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
- =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
- =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
- =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
- =?ISO-8859-15?Q?94=22?=
+        id S1751196AbeC0IPy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:15:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60785 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751072AbeC0IPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:15:50 -0400
+Date: Tue, 27 Mar 2018 10:15:46 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Li RongQing <lirongqing@baidu.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH] mm/list_lru: replace spinlock with RCU in
+ __list_lru_count_one
+Message-ID: <20180327081546.GZ5652@dhcp22.suse.cz>
+References: <1522137544-27496-1-git-send-email-lirongqing@baidu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-TM-AS-GCONF: 00
-x-cbid: 18032708-0044-0000-0000-00000540439F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032708-0045-0000-0000-0000287F5DA7
-Message-Id: <alpine.LFD.2.21.1803270944490.1726@schleppi>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-27_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803270084
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522137544-27496-1-git-send-email-lirongqing@baidu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+[CC Dave]
 
-commit 57bf5a8963f80fb3828c46c3e3a5b2dd790e09a7 broke usage of dma
-allocations specifying __GFP_ZERO by silently removing that flag.
+On Tue 27-03-18 15:59:04, Li RongQing wrote:
+> when reclaim memory, shink_slab will take lots of time even if
+> no memory is reclaimed, since list_lru_count_one called by it
+> needs to take a spinlock
+>
+> try to optimize it by replacing spinlock with RCU in
+> __list_lru_count_one
 
-Why should "the memory returned [] always be zeroed."?
+Isn't the RCU overkill here? Why cannot we simply do an optimistic
+lockless check for nr_items? It would be racy but does it actually
+matter? We should be able to tolerate occasional 0 to non-zero and vice
+versa transitions AFAICS.
 
-Regards,
-Sebastian
+> 
+>     $dd if=aaa  of=bbb  bs=1k count=3886080
+>     $rm -f bbb
+>     $time echo 100000000 >/cgroup/memory/test/memory.limit_in_bytes
+> 
+> Before: 0m0.415s ===> after: 0m0.395s
+> 
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+>  include/linux/list_lru.h |  2 ++
+>  mm/list_lru.c            | 69 ++++++++++++++++++++++++++++++++++--------------
+>  2 files changed, 51 insertions(+), 20 deletions(-)
+> 
+> diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
+> index bb8129a3474d..ae472538038e 100644
+> --- a/include/linux/list_lru.h
+> +++ b/include/linux/list_lru.h
+> @@ -29,6 +29,7 @@ struct list_lru_one {
+>  	struct list_head	list;
+>  	/* may become negative during memcg reparenting */
+>  	long			nr_items;
+> +	struct rcu_head		rcu;
+>  };
+>  
+>  struct list_lru_memcg {
+> @@ -46,6 +47,7 @@ struct list_lru_node {
+>  	struct list_lru_memcg	*memcg_lrus;
+>  #endif
+>  	long nr_items;
+> +	struct rcu_head		rcu;
+>  } ____cacheline_aligned_in_smp;
+>  
+>  struct list_lru {
+> diff --git a/mm/list_lru.c b/mm/list_lru.c
+> index fd41e969ede5..4c58ed861729 100644
+> --- a/mm/list_lru.c
+> +++ b/mm/list_lru.c
+> @@ -52,13 +52,13 @@ static inline bool list_lru_memcg_aware(struct list_lru *lru)
+>  static inline struct list_lru_one *
+>  list_lru_from_memcg_idx(struct list_lru_node *nlru, int idx)
+>  {
+> -	/*
+> -	 * The lock protects the array of per cgroup lists from relocation
+> -	 * (see memcg_update_list_lru_node).
+> -	 */
+> -	lockdep_assert_held(&nlru->lock);
+> -	if (nlru->memcg_lrus && idx >= 0)
+> -		return nlru->memcg_lrus->lru[idx];
+> +	struct list_lru_memcg *tmp;
+> +
+> +	WARN_ON_ONCE(!rcu_read_lock_held());
+> +
+> +	tmp = rcu_dereference(nlru->memcg_lrus);
+> +	if (tmp && idx >= 0)
+> +		return rcu_dereference(tmp->lru[idx]);
+>  
+>  	return &nlru->lru;
+>  }
+> @@ -113,14 +113,17 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
+>  	struct list_lru_one *l;
+>  
+>  	spin_lock(&nlru->lock);
+> +	rcu_read_lock();
+>  	if (list_empty(item)) {
+>  		l = list_lru_from_kmem(nlru, item);
+>  		list_add_tail(item, &l->list);
+>  		l->nr_items++;
+>  		nlru->nr_items++;
+> +		rcu_read_unlock();
+>  		spin_unlock(&nlru->lock);
+>  		return true;
+>  	}
+> +	rcu_read_unlock();
+>  	spin_unlock(&nlru->lock);
+>  	return false;
+>  }
+> @@ -133,14 +136,17 @@ bool list_lru_del(struct list_lru *lru, struct list_head *item)
+>  	struct list_lru_one *l;
+>  
+>  	spin_lock(&nlru->lock);
+> +	rcu_read_lock();
+>  	if (!list_empty(item)) {
+>  		l = list_lru_from_kmem(nlru, item);
+>  		list_del_init(item);
+>  		l->nr_items--;
+>  		nlru->nr_items--;
+> +		rcu_read_unlock();
+>  		spin_unlock(&nlru->lock);
+>  		return true;
+>  	}
+> +	rcu_read_unlock();
+>  	spin_unlock(&nlru->lock);
+>  	return false;
+>  }
+> @@ -166,12 +172,13 @@ static unsigned long __list_lru_count_one(struct list_lru *lru,
+>  {
+>  	struct list_lru_node *nlru = &lru->node[nid];
+>  	struct list_lru_one *l;
+> -	unsigned long count;
+> +	unsigned long count = 0;
+>  
+> -	spin_lock(&nlru->lock);
+> +	rcu_read_lock();
+>  	l = list_lru_from_memcg_idx(nlru, memcg_idx);
+> -	count = l->nr_items;
+> -	spin_unlock(&nlru->lock);
+> +	if (l)
+> +		count = l->nr_items;
+> +	rcu_read_unlock();
+>  
+>  	return count;
+>  }
+> @@ -204,6 +211,7 @@ __list_lru_walk_one(struct list_lru *lru, int nid, int memcg_idx,
+>  	unsigned long isolated = 0;
+>  
+>  	spin_lock(&nlru->lock);
+> +	rcu_read_lock();
+>  	l = list_lru_from_memcg_idx(nlru, memcg_idx);
+>  restart:
+>  	list_for_each_safe(item, n, &l->list) {
+> @@ -250,6 +258,7 @@ __list_lru_walk_one(struct list_lru *lru, int nid, int memcg_idx,
+>  		}
+>  	}
+>  
+> +	rcu_read_unlock();
+>  	spin_unlock(&nlru->lock);
+>  	return isolated;
+>  }
+> @@ -296,9 +305,14 @@ static void __memcg_destroy_list_lru_node(struct list_lru_memcg *memcg_lrus,
+>  					  int begin, int end)
+>  {
+>  	int i;
+> +	struct list_lru_one *tmp;
+>  
+> -	for (i = begin; i < end; i++)
+> -		kfree(memcg_lrus->lru[i]);
+> +	for (i = begin; i < end; i++) {
+> +		tmp = memcg_lrus->lru[i];
+> +		rcu_assign_pointer(memcg_lrus->lru[i], NULL);
+> +		if (tmp)
+> +			kfree_rcu(tmp, rcu);
+> +	}
+>  }
+>  
+>  static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+> @@ -314,7 +328,7 @@ static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+>  			goto fail;
+>  
+>  		init_one_lru(l);
+> -		memcg_lrus->lru[i] = l;
+> +		rcu_assign_pointer(memcg_lrus->lru[i], l);
+>  	}
+>  	return 0;
+>  fail:
+> @@ -325,25 +339,37 @@ static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+>  static int memcg_init_list_lru_node(struct list_lru_node *nlru)
+>  {
+>  	int size = memcg_nr_cache_ids;
+> +	struct list_lru_memcg *tmp;
+>  
+> -	nlru->memcg_lrus = kvmalloc(size * sizeof(void *), GFP_KERNEL);
+> -	if (!nlru->memcg_lrus)
+> +	tmp = kvmalloc(size * sizeof(void *), GFP_KERNEL);
+> +	if (!tmp)
+>  		return -ENOMEM;
+>  
+> -	if (__memcg_init_list_lru_node(nlru->memcg_lrus, 0, size)) {
+> -		kvfree(nlru->memcg_lrus);
+> +	if (__memcg_init_list_lru_node(tmp, 0, size)) {
+> +		kvfree(tmp);
+>  		return -ENOMEM;
+>  	}
+>  
+> +	rcu_assign_pointer(nlru->memcg_lrus, tmp);
+> +
+>  	return 0;
+>  }
+>  
+> -static void memcg_destroy_list_lru_node(struct list_lru_node *nlru)
+> +static void memcg_destroy_list_lru_node_rcu(struct rcu_head *rcu)
+>  {
+> +	struct list_lru_node *nlru;
+> +
+> +	nlru = container_of(rcu, struct list_lru_node, rcu);
+> +
+>  	__memcg_destroy_list_lru_node(nlru->memcg_lrus, 0, memcg_nr_cache_ids);
+>  	kvfree(nlru->memcg_lrus);
+>  }
+>  
+> +static void memcg_destroy_list_lru_node(struct list_lru_node *nlru)
+> +{
+> +	call_rcu(&nlru->rcu, memcg_destroy_list_lru_node_rcu);
+> +}
+> +
+>  static int memcg_update_list_lru_node(struct list_lru_node *nlru,
+>  				      int old_size, int new_size)
+>  {
+> @@ -371,9 +397,10 @@ static int memcg_update_list_lru_node(struct list_lru_node *nlru,
+>  	 * we have to use IRQ-safe primitives here to avoid deadlock.
+>  	 */
+>  	spin_lock_irq(&nlru->lock);
+> -	nlru->memcg_lrus = new;
+> +	rcu_assign_pointer(nlru->memcg_lrus, new);
+>  	spin_unlock_irq(&nlru->lock);
+>  
+> +	synchronize_rcu();
+>  	kvfree(old);
+>  	return 0;
+>  }
+> @@ -487,6 +514,7 @@ static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
+>  	 * we have to use IRQ-safe primitives here to avoid deadlock.
+>  	 */
+>  	spin_lock_irq(&nlru->lock);
+> +	rcu_read_lock();
+>  
+>  	src = list_lru_from_memcg_idx(nlru, src_idx);
+>  	dst = list_lru_from_memcg_idx(nlru, dst_idx);
+> @@ -495,6 +523,7 @@ static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
+>  	dst->nr_items += src->nr_items;
+>  	src->nr_items = 0;
+>  
+> +	rcu_read_unlock();
+>  	spin_unlock_irq(&nlru->lock);
+>  }
+>  
+> -- 
+> 2.11.0
+
+-- 
+Michal Hocko
+SUSE Labs
