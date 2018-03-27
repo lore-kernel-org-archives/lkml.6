@@ -1,108 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752065AbeC0VSV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:18:21 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:38708 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750965AbeC0VSU (ORCPT
+        id S1752096AbeC0VTd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:19:33 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:44073 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751008AbeC0VTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:18:20 -0400
-X-Google-Smtp-Source: AIpwx4/lwAwnG8zehqHITmA0ZVgcCkwD1yAt/W2PdUnb4pPdFKIb65kThgLcbw6s+kCgIXtcP+/BnQ==
-Date: Tue, 27 Mar 2018 14:18:17 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
-        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 06/24] mm: make pte_unmap_same compatible with SPF
-In-Reply-To: <1520963994-28477-7-git-send-email-ldufour@linux.vnet.ibm.com>
-Message-ID: <alpine.DEB.2.20.1803271417510.31115@chino.kir.corp.google.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-7-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Tue, 27 Mar 2018 17:19:31 -0400
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>,
+        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "Evgeniy.Didin@synopsys.com" <Evgeniy.Didin@synopsys.com>,
+        "geert@linux-m68k.org" <geert@linux-m68k.org>
+Subject: Re: dma-mapping: clearing GFP_ZERO flag caused crashes of Ethernet
+ on arc/hsdk board.
+Thread-Topic: dma-mapping: clearing GFP_ZERO flag caused crashes of Ethernet
+ on arc/hsdk board.
+Thread-Index: AQHTxe7Y86AnIPeLoEWcNLwKgl2z76PkQKwAgAA0dwA=
+Date: Tue, 27 Mar 2018 21:19:19 +0000
+Message-ID: <1522185558.6917.7.camel@synopsys.com>
+References: <1522170774.2593.9.camel@synopsys.com>
+         <CAHp75VeZSsdR1=ZhOM6jseYCP3m0GyE=8EjJUxWosze9BBw9rQ@mail.gmail.com>
+In-Reply-To: <CAHp75VeZSsdR1=ZhOM6jseYCP3m0GyE=8EjJUxWosze9BBw9rQ@mail.gmail.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.225.15.87]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <64D7FDC862E9D24C95389F44BE802964@internal.synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2RLJdhw005946
 
-On Tue, 13 Mar 2018, Laurent Dufour wrote:
+Hi Andy,
 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 2f3e98edc94a..b6432a261e63 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1199,6 +1199,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
->  #define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
->  					 * and needs fsync() to complete (for
->  					 * synchronous page faults in DAX) */
-> +#define VM_FAULT_PTNOTSAME 0x4000	/* Page table entries have changed */
->  
->  #define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
->  			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 21b1212a0892..4bc7b0bdcb40 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2309,21 +2309,29 @@ static bool pte_map_lock(struct vm_fault *vmf)
->   * parts, do_swap_page must check under lock before unmapping the pte and
->   * proceeding (but do_wp_page is only called after already making such a check;
->   * and do_anonymous_page can safely check later on).
-> + *
-> + * pte_unmap_same() returns:
-> + *	0			if the PTE are the same
-> + *	VM_FAULT_PTNOTSAME	if the PTE are different
-> + *	VM_FAULT_RETRY		if the VMA has changed in our back during
-> + *				a speculative page fault handling.
->   */
-> -static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
-> -				pte_t *page_table, pte_t orig_pte)
-> +static inline int pte_unmap_same(struct vm_fault *vmf)
->  {
-> -	int same = 1;
-> +	int ret = 0;
-> +
->  #if defined(CONFIG_SMP) || defined(CONFIG_PREEMPT)
->  	if (sizeof(pte_t) > sizeof(unsigned long)) {
-> -		spinlock_t *ptl = pte_lockptr(mm, pmd);
-> -		spin_lock(ptl);
-> -		same = pte_same(*page_table, orig_pte);
-> -		spin_unlock(ptl);
-> +		if (pte_spinlock(vmf)) {
-> +			if (!pte_same(*vmf->pte, vmf->orig_pte))
-> +				ret = VM_FAULT_PTNOTSAME;
-> +			spin_unlock(vmf->ptl);
-> +		} else
-> +			ret = VM_FAULT_RETRY;
->  	}
->  #endif
-> -	pte_unmap(page_table);
-> -	return same;
-> +	pte_unmap(vmf->pte);
-> +	return ret;
->  }
->  
->  static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
-> @@ -2913,7 +2921,8 @@ int do_swap_page(struct vm_fault *vmf)
->  	int exclusive = 0;
->  	int ret = 0;
+On Tue, 2018-03-27 at 21:11 +0300, Andy Shevchenko wrote:
+> On Tue, Mar 27, 2018 at 8:12 PM, Evgeniy Didin
+> <Evgeniy.Didin@synopsys.com> wrote:
+> > Hello,
+> > 
+> > After commit  57bf5a8963f8 ("dma-mapping: clear harmful GFP_* flags in common code")  we noticed problems with Ethernet controller on one of our
+> > platforms (namely ARC HSDK).
+> > I
+> > n particular we see that removal of __GFP_ZERO flag in function dma_alloc_attrs() was the culprit because in our implementation of arc_dma_alloc()
+> > we only allocate zeroed pages if
+> > that flag is explicitly set by the caller. Now with unconditional removal of that flag in dma_alloc_attrs() we allocate non-zeroed pages and that
+> > seem to cause problems.
+> > 
+> > From
+> > mentioned commit message I may conclude that architectural code is supposed to always allocate zeroed pages but I cannot find any requirement of
+> > that in kernel's documentation.
+> > Coul
+> > d you please point me to that requirement if that exists at all, then we'll implement a fix in our arch code like that:
+> 
+> Can you elaborate what driver is in use?
+> stmmac with dwmac-anarion?
 
-Initialization is now unneeded.
+It is indeed DW GMAC (AKA STMMAC) with built-in DMA.
 
-Otherwise:
+> If so, this driver (w/o anarion parts, which I believe doesn't have
+> anything to do with this) is widely used on other platforms.
+> We have to see a lot of reports, though only one so far?
+> 
+> The logical question is why?
 
-Acked-by: David Rientjes <rientjes@google.com>
+1. See that's another platform with ARC core so maybe in case of ARM
+   DMA allocator already zeroes pages regardless provided flags -
+   personally I didn't check that.
+
+2. Even on HSDK we saw that only on attempt to run "iperf", even DHCP
+   client works perfectly fine on that same platform so maybe others
+   just don't see problems yet.
+
+3. Who knows if RCs are being tested on other platforms with
+   networking so maybe similar reports will start to appear once
+   4.16 gets released.
+
+-Alexey
