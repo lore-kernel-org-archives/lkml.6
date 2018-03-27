@@ -1,89 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752699AbeC0NQM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:16:12 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54986 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752447AbeC0NQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:16:07 -0400
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, cdall@kernel.org, marc.zyngier@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
-        peter.maydell@linaro.org, kristina.martsenko@arm.com,
-        mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: [PATCH v2 02/17] virtio: pci-legacy: Validate queue pfn
-Date: Tue, 27 Mar 2018 14:15:12 +0100
-Message-Id: <1522156531-28348-3-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+        id S1752775AbeC0NX7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:23:59 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:60740 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752702AbeC0NQO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:16:14 -0400
+Message-ID: <1522156568.3050.19.camel@sipsolutions.net>
+Subject: Re: [PATCH 1/3] ieee80211: Replace bit shifts with the BIT() macro
+ for WLAN_CAPABILITY_*.
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Quytelda Kahja <quytelda@tamalin.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 27 Mar 2018 15:16:08 +0200
+In-Reply-To: <CAFLvi20sgO4aKTLYutvwUr5aN9TLaqLWVghC9Y9MrKZvcixAYA@mail.gmail.com>
+References: <20180324041027.6498-1-quytelda@tamalin.org>
+         <e31eb13b-598b-e7c7-607b-c98664818563@lwfinger.net>
+         <CAFLvi20sgO4aKTLYutvwUr5aN9TLaqLWVghC9Y9MrKZvcixAYA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Legacy PCI over virtio uses a 32bit PFN for the queue. If the
-queue pfn is too large to fit in 32bits, which we could hit on
-arm64 systems with 52bit physical addresses (even with 64K page
-size), we simply miss out a proper link to the other side of
-the queue.
+On Sat, 2018-03-24 at 16:02 -0700, Quytelda Kahja wrote:
+> The "document" refers to the file in which the changes were made
+> ('include/linux/ieee80211.h').
 
-Add a check to validate the PFN, rather than silently breaking
-the devices.
+You're the first person ever to do that, to my knowledge :)
 
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <cdall@kernel.org>
-Cc: Peter Maydel <peter.maydell@linaro.org>
-Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/virtio/virtio_pci_legacy.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+Either way, I don't really want to merge this since it would break
+staging, and I don't want to merge a staging fix either... so you'd have
+to get that sorted out first.
 
-diff --git a/drivers/virtio/virtio_pci_legacy.c b/drivers/virtio/virtio_pci_legacy.c
-index 2780886..4b84a75 100644
---- a/drivers/virtio/virtio_pci_legacy.c
-+++ b/drivers/virtio/virtio_pci_legacy.c
-@@ -122,6 +122,7 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
- 	struct virtqueue *vq;
- 	u16 num;
- 	int err;
-+	u64 q_pfn;
- 
- 	/* Select the queue we're interested in */
- 	iowrite16(index, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_SEL);
-@@ -141,9 +142,15 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
- 	if (!vq)
- 		return ERR_PTR(-ENOMEM);
- 
-+	q_pfn = virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT;
-+	if (q_pfn >> 32) {
-+		dev_err(&vp_dev->pci_dev->dev, "virtio-pci queue PFN too large\n");
-+		err = -ENOMEM;
-+		goto out_del_vq;
-+	}
-+
- 	/* activate the queue */
--	iowrite32(virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT,
--		  vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
-+	iowrite32((u32)q_pfn, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
- 
- 	vq->priv = (void __force *)vp_dev->ioaddr + VIRTIO_PCI_QUEUE_NOTIFY;
- 
-@@ -160,6 +167,7 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
- 
- out_deactivate:
- 	iowrite32(0, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
-+out_del_vq:
- 	vring_del_virtqueue(vq);
- 	return ERR_PTR(err);
- }
--- 
-2.7.4
+johannes
