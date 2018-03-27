@@ -1,509 +1,274 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AG47ELtLcejJ7/LRbDeltJHpVr/7FrXxf0j8GwrggfswYz7/5ixo/ZGp7s8fPRWcIRRA0brycPA6
+X-Google-Smtp-Source: AIpwx49sitE7I3nNEmQrK4v5PNYmqcHYBkg2N1/nbk/+OTHdUyXYASfRsKwgqgkcWieFhKow0Woj
 ARC-Seal: i=1; a=rsa-sha256; t=1522140100; cv=none;
         d=google.com; s=arc-20160816;
-        b=zwlX/y7wGZWpDcZtr/X2Y9kBcD4yD4uVAdOO5ZorcJFaCgZd5QrbFOw7PEKR4iI6jU
-         L3T/u0XFJ1lhUUqmwem0PKXYX5ZaBx3nxLXUXxBXCxEMkDw9rlOgh5ceiyJwtrTu1KjL
-         1Krl2HVDlAdKPeDah6WJ70nDzO/kpR3IIhKJYdGEpbFipC8E+IVXl2cR2K7lIy3cntqJ
-         VX4hURJ9sHUDOeXAEu4ETM9VgeC4juJWNI4xLRW54GQCacCbTWgJ+ArkExgxQk+T83AC
-         Px1f3nR/isOY4xYOzE5Uy5wKs5wv73PzVYiAn6iSyCusCwrfPgjD/WxpgNxEx6Q2v7l8
-         fCIQ==
+        b=tab7gVAexUKEf3jiNS9awOUNO2DF5ZXBq5HmqxmgGdi9lfnLKZctbtO+VNkGvwbmYJ
+         drsvLUD8oTk7gtWruhuQmM+uRwHvM8zMaUNa8XYOZeFMVgszRzvenj3YKnHm/l5rvNIH
+         QTEUgkPyqByFPU/KAErrbHEg/kmhIxKhhB2QRmLom3wT3NozCOQQ+ki+/nW6vXOUsdd7
+         aTm0xvxrVVxrpibg+LcyFvsFHmURVgUjQwMiiTpqQ0/AIKVambpegzAXgraDNrH2K/+W
+         aHmS3aat1s/bO/6AHnKiHH9g65A5bYOLydGSBO0ly4U7cBbJ922Th0mh7qJCiDYX3/db
+         fo+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=gQsTmV/wzxNo1f34YP6Hsd9m+6qcPwN8tGWoS6OzqPE=;
-        b=0LwMF/4G9C+WZwiPnWcrDoWsRYotZFNQPckjviDf2FKLcbHRFMHkDp/HxaehCv7GJi
-         KvRuPaNruRG4VL0bfw4nGnfq0HIj16VdDNQtTzBY4YOnzIiWbZEaHYANQNLBn7r/mRLG
-         hYpnpxll486zLqkDVdnVJMwI0Weo2lmdABRBlyStFk7ThWhjMo8Em2pxaXaTAbzggOrg
-         V9paf9Kya+qnGdQi5wEd4P/EWopHb0gb7X5mZvnjgreEKiuR/273lUwRWCvPqguLCCky
-         vyPEqRqY78WpQ8A0jyfZpcOBsL6U9wiMfn6S165gDL6DolkjAwlfJtVus1A6kQH0VNtX
-         hzCg==
+        bh=eJkb1DIC/xOdqfBGsB61WWVI4JHn30tVSkQAdDGx2ug=;
+        b=0hki5cL/svpF2m36UFODhMVCmH0kz/pIAzH3d5fUuVmqAXYF6Qy6prGTVI7kt4iWpk
+         ayjVHK8Pbe05d5EgMOQz6aejXxCtYX4D5z5lRSE3q9dHip5kp6u1hiRds3RMKsFnecwz
+         uvnASOTcKURmV/9fmnyLqKdTj0lYuKIsxR4qs0iuRmGESKXGLdVC9ztmO05LW5d3qJwt
+         7V+E8P0R3gv9XwTKjsQ98CIXhh5stjPLparRkJsR8AzzC5nbuI3DruAy+V5OPo+gayoQ
+         bAECJwPRL6iqcqJXOPv3tDm5w1Kx5tru3MEd2Up0243Gv8raNtkRYvOj2Z+OQY7jl4XS
+         tclg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
+       spf=neutral (google.com: 74.208.4.196 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 22/23] staging: rtl8723bs: Rework 'struct _ODM_Phy_Status_Info_' coding style.
-Date: Tue, 27 Mar 2018 01:41:14 -0700
-Message-Id: <20180327084115.16129-22-quytelda@tamalin.org>
+Subject: [PATCH 23/23] staging: rtl8723bs: Remove unecessary newlines from 'odm.h'.
+Date: Tue, 27 Mar 2018 01:41:15 -0700
+Message-Id: <20180327084115.16129-23-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327084115.16129-1-quytelda@tamalin.org>
 References: <CAFLvi237jR_tTQMXBNqCO=NQFOEFiJQkDBMxb_AxgBEqQDYQEw@mail.gmail.com>
  <20180327084115.16129-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:8jdEaFX9nS6OxMgu4XtBva6Vz244FtixJ/sl6Cp+hVn5RlFuiV2
- T8SWnMfycoqKxquDShthgHHUEdt/HqDYPku537hmXubH1DPz0cYKgEe7yqOm/inL9e8xpU/
- nOU2/7UYwiJHfwbG4hY9+OiHNPMBLqpyZGve6+2/rl/oULn7TMJWa8/dZRq2Ch5OJMWrOVQ
- NBcGKO9WjSTFmZ9fMiTvg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:vE3Ni9I79Ps=:PuT5ofWd3H0QJB8p5tvJ2Y
- hyaoTXhQ+BCOKMeLYtn/V16ptKxW8bNbCN5Kk01uxXMf7zENt8Efq0eZkIRZffHAdGx4XwBpI
- /IFLWYenoMLKWSE/wG1QTYE2j8WOVjni4VP0pLymwp6muCsWxxCosVFgGx5sEZnFgs/pxgf8U
- OsYd/Pud6gFHu0zb9iwB3UUcG2gvbDDNYqM33ztzz4g8Syf9anPPwvQGjxkxUPfVJV45O7qdj
- EQEmDif/1CecQh6/uBoMsnIJWUcsGRlgGZpbtly+JOPGxLHrCmtbR9i3ldC6MPCxqaf249VWq
- n94knHiTd09Hm22D5cW/b/OrKKmjnmaSlZZC1fLGvl8qxTtZICvz5OavYe2KoIhakj4ydD/Eb
- yJINbnlfYy8zT/Vjs9En+Zh1a26ELYxkRuRL9FEaaIPS411e6h10kkSA6vb58nwFNioyEMvsZ
- fWzvp3z7qQsOkb8CBcVjQfLCt0k9KQlqs0mrnJ5qHV7Ny5gxd0DbglaiM2lmTpM+96ATFcN8P
- 4qqSndlg5+rE/eAU1LjYAg39RHDOe92lA1cn9jpCCcmfH3WfY1AFYUOb0vRwzYx3Br/hf5YbB
- I1tvUxXaLigDGQ57AwKCntrpjbcC+SVGKEtG+y9tK1MZPSkA5VshP6YBaMnbLKQMDpiA55Jui
- eSMum9wU4N4PCY2hGeu08/SKLaaEcpnOGg8PEa/7+HlO9vQjLfvBVooQV+bQpouCf9vFKg/OE
- GXE4BxjnPuaKiOiNPNvNaGcCqjRVocg/r4+vmg==
+X-Provags-ID: V03:K0:TkWKrynEusxOIbc4oiMQ7KdWeJmQn4WXO9ESJD0g39RcFo0m9R5
+ qZG4AHpFCj7/in4+yqUYtc7Rijr+PVOM/QOjOz4/EGbMee8FHdvemJT8nxwJsr9dzX/LSNM
+ aufDN5a8zWk5Ij1DhwroPAOR0vu5dvFDU9PkM2wgBPGgvf2tkOPfwRD5NBO8ahVM0+DGxZY
+ zRpPW5uG/hh23acVXm+Gg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:bMBBooU4mqI=:6fq+696XmfmdHhcwqD7Cp/
+ Aqr+uikOJVq6R2riIL1lWavUlz0mYGN3eIpulr4cHuQWQFt/i6ebK85pz0j0pmJb1RI/7brsI
+ srmT0MkYgzxjzTbYGBjeYDcLWKbsetmjm6jG5t3YVu2qEZe2Skey8JD6R+n3qSplo9TrSRg7N
+ hA6QO36Z8toaUyRxnWN+CwyaZntKajL6DFRRhOBGaHozOSQ5K6xmq5rxswrq86tpFEcgx6WJK
+ MkJSeReiRnCFEFYEHnInonZ9qzkwt9+vA7QTShctGGHF9VdbkA+koVDfzfF6GqFq+8lqWkD6a
+ Ug91Ye7Ey3MJ7jO8G6osEQNZgux8POor27JTH1iswBHAypJgN+XWi8MzLyYK/C/ZhYV2DvVfW
+ ceUqH0Xoc7jal6EoH4rqmMuuQjYTS6F5D2GOwyVlLyonkXflnbcdJXuf1GAw+kzvLCIrv1uDz
+ I8i7PlXI9rU27xlnoMDOrW2k4A8h/lroqFdGugGL/uWu0HNmmiMPJu/FYvVOLvA8YB2xTaWMo
+ tVzx0oTNoHDjiJlgmr7wdxs+wnAp5DDz5E1M3j9HIglcYyRBPt2cvaRc4D9KpgHrc6MOwm4WA
+ x+fhmIpcJP82zdAhVUFxTawqIvQZOIz2ABASaV/aTQ/VyuhnjXvUq3dY5qlTxWgta7zUmGdo4
+ KojZkiVKVEbRt4sSldO9mz5LMFjzL8qMm4yIBR4DNlgbMYkE7OsXE5s2yEoY5iRM6tdXSw89+
+ U8wt2e71uYR2+REgvERhRqYjn3XInGvJc/yzKg==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596079577812010129?=
-X-GMAIL-MSGID: =?utf-8?q?1596079577812010129?=
+X-GMAIL-THRID: =?utf-8?q?1596079578465092839?=
+X-GMAIL-MSGID: =?utf-8?q?1596079578465092839?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Change the typedef'd 'struct _ODM_Phy_Status_Info_' into
-'struct odm_phy_info' and change the members to snake case in
-order to meet the coding style guidelines.
-Members:
-* u8 RxPWDBAll            -> rx_pwd_ba11
-* u8 SignalQuality        -> signal_quality
-* s8 RxMIMOSignalQuality  -> rx_mimo_signal_quality
-* u8 RxMIMOEVMdbm         -> rx_mimo_evm_dbm
-* u8 RxMIMOSignalStrength -> rx_mimo_signal_strength
-* u16 Cfo_short           -> cfo_short
-* u16 Cfo_tail            -> cfo_tail
-* s8 RxPower              -> rx_power
-* s8 RecvSignalPower      -> recv_signal_power
-* u8 BTRxRSSIPercentage   -> bt_rx_rssi_percentage
-* u8 SignalStrength       -> signal_strength
-* s8 RxPwr                -> rx_pwr
-* u8 RxSNR                -> rx_snr
-* u8 BandWidth            => band_width
-* u8 btCoexPwrAdjust      -> bt_coex_pwr_adjust
+Remove duplicate newlines and newlines before closing braces.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/rtl8723bs/hal/hal_com.c        | 10 +--
- drivers/staging/rtl8723bs/hal/odm.h            | 49 +++++++------
- drivers/staging/rtl8723bs/hal/odm_HWConfig.c   | 98 +++++++++++++-------------
- drivers/staging/rtl8723bs/hal/odm_HWConfig.h   |  2 +-
- drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c |  3 +-
- drivers/staging/rtl8723bs/include/rtw_mlme.h   |  2 +-
- drivers/staging/rtl8723bs/include/rtw_recv.h   | 10 +--
- 7 files changed, 90 insertions(+), 84 deletions(-)
+ drivers/staging/rtl8723bs/hal/odm.h | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
-index dec887a5b338..1cef1d77977c 100644
---- a/drivers/staging/rtl8723bs/hal/hal_com.c
-+++ b/drivers/staging/rtl8723bs/hal/hal_com.c
-@@ -1680,18 +1680,18 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
- 	struct hal_com_data *pHalData =  GET_HAL_DATA(padapter);
- 	struct rx_pkt_attrib *pattrib = &prframe->u.hdr.attrib;
- 
--	PODM_PHY_INFO_T pPhyInfo  = (PODM_PHY_INFO_T)(&pattrib->phy_info);
-+	struct odm_phy_info *pPhyInfo  = (PODM_PHY_INFO_T)(&pattrib->phy_info);
- 	struct rx_raw_rssi *psample_pkt_rssi = &padapter->recvpriv.raw_rssi_info;
- 
- 	psample_pkt_rssi->data_rate = pattrib->data_rate;
- 	isCCKrate = pattrib->data_rate <= DESC_RATE11M;
- 
--	psample_pkt_rssi->pwdball = pPhyInfo->RxPWDBAll;
--	psample_pkt_rssi->pwr_all = pPhyInfo->RecvSignalPower;
-+	psample_pkt_rssi->pwdball = pPhyInfo->rx_pwd_ba11;
-+	psample_pkt_rssi->pwr_all = pPhyInfo->recv_signal_power;
- 
- 	for (rf_path = 0; rf_path < pHalData->NumTotalRFPath; rf_path++) {
--		psample_pkt_rssi->mimo_singal_strength[rf_path] = pPhyInfo->RxMIMOSignalStrength[rf_path];
--		psample_pkt_rssi->mimo_singal_quality[rf_path] = pPhyInfo->RxMIMOSignalQuality[rf_path];
-+		psample_pkt_rssi->mimo_singal_strength[rf_path] = pPhyInfo->rx_mimo_signal_strength[rf_path];
-+		psample_pkt_rssi->mimo_singal_quality[rf_path] = pPhyInfo->rx_mimo_signal_quality[rf_path];
- 		if (!isCCKrate) {
- 			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->RxPwr[rf_path];
- 			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->RxSNR[rf_path];
 diff --git a/drivers/staging/rtl8723bs/hal/odm.h b/drivers/staging/rtl8723bs/hal/odm.h
-index 7c13a9314a22..175c77b11bf9 100644
+index 175c77b11bf9..1037b88e8f08 100644
 --- a/drivers/staging/rtl8723bs/hal/odm.h
 +++ b/drivers/staging/rtl8723bs/hal/odm.h
-@@ -233,33 +233,38 @@ typedef struct _ODM_RATE_ADAPTIVE {
+@@ -17,7 +17,6 @@
+ #ifndef	__HALDMOUTSRC_H__
+ #define __HALDMOUTSRC_H__
+ 
+-
+ #include "odm_EdcaTurboCheck.h"
+ #include "odm_DIG.h"
+ #include "odm_PathDiv.h"
+@@ -32,7 +31,6 @@
+ #define	TRAFFIC_HIGH	1
+ #define	NONE			0
+ 
+-
+ /* 3 Tx Power Tracking */
+ /* 3 ============================================================ */
+ #define		DPK_DELTA_MAPPING_NUM	13
+@@ -81,7 +79,6 @@
+ #define		AUX_ANT		2		/* AntB or Ant Aux */
+ #define		MAX_ANT		3		/*  3 for AP using */
+ 
+-
+ /* Antenna Diversity Type */
+ #define	SW_ANTDIV	0
+ #define	HW_ANTDIV	1
+@@ -200,7 +197,6 @@ typedef struct _ODM_RATE_ADAPTIVE {
+ 
+ } ODM_RATE_ADAPTIVE, *PODM_RATE_ADAPTIVE;
+ 
+-
+ #define IQK_MAC_REG_NUM		4
+ #define IQK_ADDA_REG_NUM		16
+ #define IQK_BB_REG_NUM_MAX	10
+@@ -229,7 +225,6 @@ typedef struct _ODM_RATE_ADAPTIVE {
+ #define MAX_PATH_NUM_8814A		4
+ #define MAX_PATH_NUM_8822B		2
+ 
+-
  #define IQK_THRESHOLD			8
  #define DPK_THRESHOLD			4
  
--typedef struct _ODM_Phy_Status_Info_ {
--	/*  */
--	/*  Be care, if you want to add any element please insert between */
--	/*  RxPWDBAll & SignalStrength. */
--	/*  */
--	u8 RxPWDBAll;
-+struct odm_phy_info {
-+	/*
-+	 *  Be care, if you want to add any element, please insert it between
-+	 *  rx_pwd_ball and signal_strength.
-+	 */
-+	u8 rx_pwd_ba11;
+@@ -266,7 +261,6 @@ struct odm_phy_info {
+ 	u8 bt_coex_pwr_adjust;
+ };
  
--	u8 SignalQuality;			/*  in 0-100 index. */
--	s8 RxMIMOSignalQuality[4];	/* per-path's EVM */
--	u8 RxMIMOEVMdbm[4];		/* per-path's EVM dbm */
-+	u8 signal_quality;             /* in 0-100 index. */
-+	s8 rx_mimo_signal_quality[4];  /* per-path's EVM */
-+	u8 rx_mimo_evm_dbm[4];         /* per-path's EVM dbm */
- 
--	u8 RxMIMOSignalStrength[4];/*  in 0~100 index */
-+	u8 rx_mimo_signal_strength[4]; /* in 0~100 index */
- 
--	u16 Cfo_short[4];			/*  per-path's Cfo_short */
--	u16 Cfo_tail[4];			/*  per-path's Cfo_tail */
-+	u16 cfo_short[4];              /* per-path's Cfo_short */
-+	u16 cfo_tail[4];               /* per-path's Cfo_tail */
- 
--	s8 RxPower;				/*  in dBm Translate from PWdB */
--	s8 RecvSignalPower;		/*  Real power in dBm for this packet, no beautification and aggregation. Keep this raw info to be used for the other procedures. */
--	u8 BTRxRSSIPercentage;
--	u8 SignalStrength;			/*  in 0-100 index. */
-+	s8 rx_power;                   /* in dBm Translate from PWdB */
- 
--	s8 RxPwr[4];				/* per-path's pwdb */
-+	/*
-+	 * Real power in dBm for this packet, no beautification and
-+	 * aggregation. Keep this raw info to be used for the other procedures.
-+	 */
-+	s8 recv_signal_power;
-+	u8 bt_rx_rssi_percentage;
-+	u8 signal_strength;	       /* in 0-100 index. */
- 
--	u8 RxSNR[4];				/* per-path's SNR */
--	u8 BandWidth;
--	u8 btCoexPwrAdjust;
--} ODM_PHY_INFO_T, *PODM_PHY_INFO_T;
-+	s8 rx_pwr[4];                  /* per-path's pwdb */
-+
-+	u8 rx_snr[4];                  /* per-path's SNR */
-+	u8 band_width;
-+	u8 bt_coex_pwr_adjust;
-+};
- 
- 
+-
  struct odm_packet_info {
-@@ -1415,7 +1420,7 @@ bool ODM_RAStateCheck(
- void ODM_SwAntDivChkPerPktRssi(
- 	PDM_ODM_T pDM_Odm,
- 	u8 StationID,
--	PODM_PHY_INFO_T pPhyInfo
-+	struct odm_phy_info *pPhyInfo
- );
+ 	u8 data_rate;
+ 	u8 station_id;
+@@ -275,7 +269,6 @@ struct odm_packet_info {
+ 	bool is_beacon;
+ };
  
- u32 ODM_Get_Rate_Bitmap(
-diff --git a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
-index b3f4c237e903..9e161f080c57 100644
---- a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
-+++ b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
-@@ -91,7 +91,7 @@ static u8 odm_EVMdbToPercentage(s8 Value)
+-
+ typedef struct _ODM_Phy_Dbg_Info_ {
+ 	/* ODM Write, debug info */
+ 	s8 RxSNRdB[4];
+@@ -288,12 +281,10 @@ typedef struct _ODM_Phy_Dbg_Info_ {
  
- static void odm_RxPhyStatus92CSeries_Parsing(
- 	PDM_ODM_T pDM_Odm,
--	PODM_PHY_INFO_T pPhyInfo,
-+	struct odm_phy_info *pPhyInfo,
- 	u8 *pPhyStatus,
- 	struct odm_packet_info *pPktinfo
- )
-@@ -107,8 +107,8 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 	PPHY_STATUS_RPT_8192CD_T pPhyStaRpt = (PPHY_STATUS_RPT_8192CD_T)pPhyStatus;
+ } ODM_PHY_DBG_INFO_T;
  
- 	isCCKrate = pPktinfo->data_rate <= DESC_RATE11M;
--	pPhyInfo->RxMIMOSignalQuality[ODM_RF_PATH_A] = -1;
--	pPhyInfo->RxMIMOSignalQuality[ODM_RF_PATH_B] = -1;
-+	pPhyInfo->rx_mimo_signal_quality[ODM_RF_PATH_A] = -1;
-+	pPhyInfo->rx_mimo_signal_quality[ODM_RF_PATH_B] = -1;
+-
+ typedef struct _ODM_Mac_Status_Info_ {
+ 	u8 test;
+ } ODM_MAC_INFO;
  
+-
+ typedef enum tag_Dynamic_ODM_Support_Ability_Type {
+ 	/*  BB Team */
+ 	ODM_DIG				= 0x00000001,
+@@ -372,7 +363,6 @@ typedef enum _ODM_Common_Info_Definition {
+ 	ODM_CMNINFO_SMART_CONCURRENT,
+ 	/* HOOK BEFORE REG INIT----------- */
  
- 	if (isCCKrate) {
-@@ -137,9 +137,9 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 		if (PWDB_ALL > 100)
- 			PWDB_ALL = 100;
+-
+ 	/*  Dynamic value: */
+ /*  POINTER REFERENCE----------- */
+ 	ODM_CMNINFO_MAC_PHY_MODE,	/*  ODM_MAC_PHY_MODE_E */
+@@ -430,8 +420,6 @@ typedef enum _ODM_Common_Info_Definition {
+ 	ODM_CMNINFO_MAC_STATUS,
  
--		pPhyInfo->RxPWDBAll = PWDB_ALL;
--		pPhyInfo->BTRxRSSIPercentage = PWDB_ALL;
--		pPhyInfo->RecvSignalPower = rx_pwr_all;
-+		pPhyInfo->rx_pwd_ba11 = PWDB_ALL;
-+		pPhyInfo->bt_rx_rssi_percentage = PWDB_ALL;
-+		pPhyInfo->recv_signal_power = rx_pwr_all;
- 		/*  */
- 		/*  (3) Get Signal Quality (EVM) */
- 		/*  */
-@@ -147,7 +147,7 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 		{
- 			u8 SQ, SQ_rpt;
+ 	ODM_CMNINFO_MAX,
+-
+-
+ } ODM_CMNINFO_E;
  
--			if (pPhyInfo->RxPWDBAll > 40 && !pDM_Odm->bInHctTest)
-+			if (pPhyInfo->rx_pwd_ba11 > 40 && !pDM_Odm->bInHctTest)
- 				SQ = 100;
- 			else {
- 				SQ_rpt = pPhyStaRpt->cck_sig_qual_ofdm_pwdb_all;
-@@ -162,9 +162,9 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 			}
+ /*  2011/10/20 MH Define ODM support ability.  ODM_CMNINFO_ABILITY */
+@@ -512,7 +500,6 @@ typedef enum tag_ODM_RF_Path_Bit_Definition {
+ 	ODM_RF_RX_D	=	BIT7,
+ } ODM_RF_PATH_E;
  
- 			/* DbgPrint("cck SQ = %d\n", SQ); */
--			pPhyInfo->SignalQuality = SQ;
--			pPhyInfo->RxMIMOSignalQuality[ODM_RF_PATH_A] = SQ;
--			pPhyInfo->RxMIMOSignalQuality[ODM_RF_PATH_B] = -1;
-+			pPhyInfo->signal_quality = SQ;
-+			pPhyInfo->rx_mimo_signal_quality[ODM_RF_PATH_A] = SQ;
-+			pPhyInfo->rx_mimo_signal_quality[ODM_RF_PATH_B] = -1;
- 		}
- 	} else { /* is OFDM rate */
- 		pDM_Odm->PhyDbgInfo.NumQryPhyStatusOFDM++;
-@@ -183,17 +183,17 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 			rx_pwr[i] = ((pPhyStaRpt->path_agc[i].gain&0x3F)*2) - 110;
+-
+ typedef enum tag_ODM_RF_Type_Definition {
+ 	ODM_1T1R	=	0,
+ 	ODM_1T2R	=	1,
+@@ -524,7 +511,6 @@ typedef enum tag_ODM_RF_Type_Definition {
+ 	ODM_4T4R	=	7,
+ } ODM_RF_TYPE_E;
  
- 
--			pPhyInfo->RxPwr[i] = rx_pwr[i];
-+			pPhyInfo->rx_pwr[i] = rx_pwr[i];
- 
- 			/* Translate DBM to percentage. */
- 			RSSI = odm_QueryRxPwrPercentage(rx_pwr[i]);
- 			total_rssi += RSSI;
- 			/* RT_DISP(FRX, RX_PHY_SS, ("RF-%d RXPWR =%x RSSI =%d\n", i, rx_pwr[i], RSSI)); */
- 
--			pPhyInfo->RxMIMOSignalStrength[i] = (u8) RSSI;
-+			pPhyInfo->rx_mimo_signal_strength[i] = (u8) RSSI;
- 
- 			/* Get Rx snr value in DB */
--			pPhyInfo->RxSNR[i] = pDM_Odm->PhyDbgInfo.RxSNRdB[i] = (s32)(pPhyStaRpt->path_rxsnr[i]/2);
-+			pPhyInfo->rx_snr[i] = pDM_Odm->PhyDbgInfo.RxSNRdB[i] = (s32)(pPhyStaRpt->path_rxsnr[i]/2);
- 		}
- 
- 
-@@ -205,11 +205,11 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 		PWDB_ALL_BT = PWDB_ALL = odm_QueryRxPwrPercentage(rx_pwr_all);
- 		/* RT_DISP(FRX, RX_PHY_SS, ("PWDB_ALL =%d\n", PWDB_ALL)); */
- 
--		pPhyInfo->RxPWDBAll = PWDB_ALL;
--		/* ODM_RT_TRACE(pDM_Odm, ODM_COMP_RSSI_MONITOR, ODM_DBG_LOUD, ("ODM OFDM RSSI =%d\n", pPhyInfo->RxPWDBAll)); */
--		pPhyInfo->BTRxRSSIPercentage = PWDB_ALL_BT;
--		pPhyInfo->RxPower = rx_pwr_all;
--		pPhyInfo->RecvSignalPower = rx_pwr_all;
-+		pPhyInfo->rx_pwd_ba11 = PWDB_ALL;
-+		/* ODM_RT_TRACE(pDM_Odm, ODM_COMP_RSSI_MONITOR, ODM_DBG_LOUD, ("ODM OFDM RSSI =%d\n", pPhyInfo->rx_pwd_ba11)); */
-+		pPhyInfo->bt_rx_rssi_percentage = PWDB_ALL_BT;
-+		pPhyInfo->rx_power = rx_pwr_all;
-+		pPhyInfo->recv_signal_power = rx_pwr_all;
- 
- 		{/* pMgntInfo->CustomerID != RT_CID_819x_Lenovo */
- 			/*  */
-@@ -232,9 +232,9 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- 				/* if (pPktinfo->bPacketMatchBSSID) */
- 				{
- 					if (i == ODM_RF_PATH_A) /*  Fill value in RFD, Get the first spatial stream only */
--						pPhyInfo->SignalQuality = (u8)(EVM & 0xff);
-+						pPhyInfo->signal_quality = (u8)(EVM & 0xff);
- 
--					pPhyInfo->RxMIMOSignalQuality[i] = (u8)(EVM & 0xff);
-+					pPhyInfo->rx_mimo_signal_quality[i] = (u8)(EVM & 0xff);
- 				}
- 			}
- 		}
-@@ -249,25 +249,25 @@ static void odm_RxPhyStatus92CSeries_Parsing(
- #ifdef CONFIG_SKIP_SIGNAL_SCALE_MAPPING
- 		pPhyInfo->SignalStrength = (u8)PWDB_ALL;
- #else
--		pPhyInfo->SignalStrength = (u8)(odm_SignalScaleMapping(pDM_Odm, PWDB_ALL));/* PWDB_ALL; */
-+		pPhyInfo->signal_strength = (u8)(odm_SignalScaleMapping(pDM_Odm, PWDB_ALL));/* PWDB_ALL; */
- #endif
- 	} else {
- 		if (rf_rx_num != 0) {
- #ifdef CONFIG_SKIP_SIGNAL_SCALE_MAPPING
- 			total_rssi /= rf_rx_num;
--			pPhyInfo->SignalStrength = (u8)total_rssi;
-+			pPhyInfo->signal_strength = (u8)total_rssi;
- #else
--			pPhyInfo->SignalStrength = (u8)(odm_SignalScaleMapping(pDM_Odm, total_rssi /= rf_rx_num));
-+			pPhyInfo->signal_strength = (u8)(odm_SignalScaleMapping(pDM_Odm, total_rssi /= rf_rx_num));
- #endif
- 		}
- 	}
- 
--	/* DbgPrint("isCCKrate = %d, pPhyInfo->RxPWDBAll = %d, pPhyStaRpt->cck_agc_rpt_ofdm_cfosho_a = 0x%x\n", */
--		/* isCCKrate, pPhyInfo->RxPWDBAll, pPhyStaRpt->cck_agc_rpt_ofdm_cfosho_a); */
-+	/* DbgPrint("isCCKrate = %d, pPhyInfo->rx_pwd_ba11 = %d, pPhyStaRpt->cck_agc_rpt_ofdm_cfosho_a = 0x%x\n", */
-+		/* isCCKrate, pPhyInfo->rx_pwd_ba11, pPhyStaRpt->cck_agc_rpt_ofdm_cfosho_a); */
- }
- 
- static void odm_Process_RSSIForDM(
--	PDM_ODM_T pDM_Odm, PODM_PHY_INFO_T pPhyInfo, struct odm_packet_info *pPktinfo
-+	PDM_ODM_T pDM_Odm, struct odm_phy_info *pPhyInfo, struct odm_packet_info *pPktinfo
- )
- {
- 
-@@ -310,25 +310,25 @@ static void odm_Process_RSSIForDM(
- 	if (pPktinfo->to_self || pPktinfo->is_beacon) {
- 
- 		if (!isCCKrate) { /* ofdm rate */
--			if (pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_B] == 0) {
--				RSSI_Ave = pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_A];
--				pDM_Odm->RSSI_A = pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_A];
-+			if (pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_B] == 0) {
-+				RSSI_Ave = pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_A];
-+				pDM_Odm->RSSI_A = pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_A];
- 				pDM_Odm->RSSI_B = 0;
- 			} else {
--				/* DbgPrint("pRfd->Status.RxMIMOSignalStrength[0] = %d, pRfd->Status.RxMIMOSignalStrength[1] = %d\n", */
--					/* pRfd->Status.RxMIMOSignalStrength[0], pRfd->Status.RxMIMOSignalStrength[1]); */
--				pDM_Odm->RSSI_A =  pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_A];
--				pDM_Odm->RSSI_B = pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_B];
-+				/* DbgPrint("pRfd->Status.rx_mimo_signal_strength[0] = %d, pRfd->Status.rx_mimo_signal_strength[1] = %d\n", */
-+					/* pRfd->Status.rx_mimo_signal_strength[0], pRfd->Status.rx_mimo_signal_strength[1]); */
-+				pDM_Odm->RSSI_A =  pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_A];
-+				pDM_Odm->RSSI_B = pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_B];
- 
- 				if (
--					pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_A] >
--					pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_B]
-+					pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_A] >
-+					pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_B]
- 				) {
--					RSSI_max = pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_A];
--					RSSI_min = pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_B];
-+					RSSI_max = pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_A];
-+					RSSI_min = pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_B];
- 				} else {
--					RSSI_max = pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_B];
--					RSSI_min = pPhyInfo->RxMIMOSignalStrength[ODM_RF_PATH_A];
-+					RSSI_max = pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_B];
-+					RSSI_min = pPhyInfo->rx_mimo_signal_strength[ODM_RF_PATH_A];
- 				}
- 
- 				if ((RSSI_max-RSSI_min) < 3)
-@@ -343,9 +343,9 @@ static void odm_Process_RSSIForDM(
- 
- 			/* 1 Process OFDM RSSI */
- 			if (UndecoratedSmoothedOFDM <= 0)	/*  initialize */
--				UndecoratedSmoothedOFDM = pPhyInfo->RxPWDBAll;
-+				UndecoratedSmoothedOFDM = pPhyInfo->rx_pwd_ba11;
- 			else {
--				if (pPhyInfo->RxPWDBAll > (u32)UndecoratedSmoothedOFDM) {
-+				if (pPhyInfo->rx_pwd_ba11 > (u32)UndecoratedSmoothedOFDM) {
- 					UndecoratedSmoothedOFDM =
- 							((UndecoratedSmoothedOFDM*(Rx_Smooth_Factor-1)) +
- 							RSSI_Ave)/Rx_Smooth_Factor;
-@@ -360,23 +360,23 @@ static void odm_Process_RSSIForDM(
- 			pEntry->rssi_stat.PacketMap = (pEntry->rssi_stat.PacketMap<<1) | BIT0;
- 
- 		} else {
--			RSSI_Ave = pPhyInfo->RxPWDBAll;
--			pDM_Odm->RSSI_A = (u8) pPhyInfo->RxPWDBAll;
-+			RSSI_Ave = pPhyInfo->rx_pwd_ba11;
-+			pDM_Odm->RSSI_A = (u8) pPhyInfo->rx_pwd_ba11;
- 			pDM_Odm->RSSI_B = 0;
- 
- 			/* 1 Process CCK RSSI */
- 			if (UndecoratedSmoothedCCK <= 0)	/*  initialize */
--				UndecoratedSmoothedCCK = pPhyInfo->RxPWDBAll;
-+				UndecoratedSmoothedCCK = pPhyInfo->rx_pwd_ba11;
- 			else {
--				if (pPhyInfo->RxPWDBAll > (u32)UndecoratedSmoothedCCK) {
-+				if (pPhyInfo->rx_pwd_ba11 > (u32)UndecoratedSmoothedCCK) {
- 					UndecoratedSmoothedCCK =
- 							((UndecoratedSmoothedCCK*(Rx_Smooth_Factor-1)) +
--							pPhyInfo->RxPWDBAll)/Rx_Smooth_Factor;
-+							pPhyInfo->rx_pwd_ba11)/Rx_Smooth_Factor;
- 					UndecoratedSmoothedCCK = UndecoratedSmoothedCCK + 1;
- 				} else {
- 					UndecoratedSmoothedCCK =
- 							((UndecoratedSmoothedCCK*(Rx_Smooth_Factor-1)) +
--							pPhyInfo->RxPWDBAll)/Rx_Smooth_Factor;
-+							pPhyInfo->rx_pwd_ba11)/Rx_Smooth_Factor;
- 				}
- 			}
- 			pEntry->rssi_stat.PacketMap = pEntry->rssi_stat.PacketMap<<1;
-@@ -422,7 +422,7 @@ static void odm_Process_RSSIForDM(
+-
  /*  */
- static void ODM_PhyStatusQuery_92CSeries(
- 	PDM_ODM_T pDM_Odm,
--	PODM_PHY_INFO_T pPhyInfo,
-+	struct odm_phy_info *pPhyInfo,
- 	u8 *pPhyStatus,
- 	struct odm_packet_info *pPktinfo
- )
-@@ -436,7 +436,7 @@ static void ODM_PhyStatusQuery_92CSeries(
+ /*  ODM Dynamic common info value definition */
+ /*  */
+@@ -541,7 +527,6 @@ typedef enum tag_ODM_MAC_PHY_Mode_Definition {
+ 	ODM_DMDP	= 2,
+ } ODM_MAC_PHY_MODE_E;
  
- void ODM_PhyStatusQuery(
- 	PDM_ODM_T pDM_Odm,
--	PODM_PHY_INFO_T pPhyInfo,
-+	struct odm_phy_info *pPhyInfo,
- 	u8 *pPhyStatus,
- 	struct odm_packet_info *pPktinfo
- )
-diff --git a/drivers/staging/rtl8723bs/hal/odm_HWConfig.h b/drivers/staging/rtl8723bs/hal/odm_HWConfig.h
-index ff0373eba495..fdb4f8579ff9 100644
---- a/drivers/staging/rtl8723bs/hal/odm_HWConfig.h
-+++ b/drivers/staging/rtl8723bs/hal/odm_HWConfig.h
-@@ -131,7 +131,7 @@ typedef struct _Phy_Status_Rpt_8812 {
+-
+ typedef enum tag_BT_Coexist_Definition {
+ 	ODM_BT_BUSY		= 1,
+ 	ODM_BT_ON		= 2,
+@@ -610,7 +595,6 @@ typedef enum tag_Bandwidth_Definition {
+ 	ODM_BW10M		= 4,
+ } ODM_BW_E;
  
- void ODM_PhyStatusQuery(
- 	PDM_ODM_T pDM_Odm,
--	PODM_PHY_INFO_T pPhyInfo,
-+	struct odm_phy_info *pPhyInfo,
- 	u8 *pPhyStatus,
- 	struct odm_packet_info *pPktinfo
- );
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-index 6280a2e21dc2..5d5cd4d01156 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-@@ -90,7 +90,8 @@ static void update_recvframe_phyinfo(union recv_frame *precvframe,
- 	struct adapter *padapter = precvframe->u.hdr.adapter;
- 	struct rx_pkt_attrib *pattrib = &precvframe->u.hdr.attrib;
- 	struct hal_com_data *p_hal_data = GET_HAL_DATA(padapter);
--	PODM_PHY_INFO_T p_phy_info = (PODM_PHY_INFO_T)(&pattrib->phy_info);
-+	struct odm_phy_info *p_phy_info =
-+		(struct odm_phy_info *)(&pattrib->phy_info);
+-
+ /*  ODM_CMNINFO_BOARD_TYPE */
+ /*  For non-AC-series IC , ODM_BOARD_5G_EXT_PA and ODM_BOARD_5G_EXT_LNA are ignored */
+ /*  For AC-series IC, external PA & LNA can be indivisuallly added on 2.4G and/or 5G */
+@@ -664,7 +648,6 @@ typedef enum tag_CCA_Path {
+ 	ODM_CCA_1R_B		= 2,
+ } ODM_CCA_PATH_E;
  
- 	u8 *wlanhdr;
- 	u8 *my_bssid;
-diff --git a/drivers/staging/rtl8723bs/include/rtw_mlme.h b/drivers/staging/rtl8723bs/include/rtw_mlme.h
-index 00b3d92c9f51..2e4f12b54929 100644
---- a/drivers/staging/rtl8723bs/include/rtw_mlme.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_mlme.h
-@@ -299,7 +299,7 @@ struct wifidirect_info{
+-
+ typedef struct _ODM_RA_Info_ {
+ 	u8 RateID;
+ 	u32 RateMask;
+@@ -703,7 +686,6 @@ typedef struct _IQK_MATRIX_REGS_SETTING {
+ 	bool bBWIqkResultSaved[3];
+ } IQK_MATRIX_REGS_SETTING, *PIQK_MATRIX_REGS_SETTING;
  
- struct tdls_ss_record{	/* signal strength record */
- 	u8 macaddr[ETH_ALEN];
--	u8 RxPWDBAll;
-+	u8 rx_pwd_ba11;
- 	u8 is_tdls_sta;	/*  true: direct link sta, false: else */
- };
+-
+ /* Remove PATHDIV_PARA struct to odm_PathDiv.h */
  
-diff --git a/drivers/staging/rtl8723bs/include/rtw_recv.h b/drivers/staging/rtl8723bs/include/rtw_recv.h
-index 71039ca79e4b..d4986f5685c5 100644
---- a/drivers/staging/rtl8723bs/include/rtw_recv.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_recv.h
-@@ -99,20 +99,20 @@ struct signal_stat {
- };
+ typedef struct ODM_RF_Calibration_Structure {
+@@ -739,7 +721,6 @@ typedef struct ODM_RF_Calibration_Structure {
+ 	u8 bRfPiEnable;
+ 	u32 TXPowerTrackingCallbackCnt; /* cosa add for debug */
  
- struct phy_info {
--	u8 RxPWDBAll;
-+	u8 rx_pwd_ba11;
+-
+ 	/*  Tx power Tracking ------------------------- */
+ 	u8 bCCKinCH14;
+ 	u8 CCK_index;
+@@ -794,7 +775,6 @@ typedef struct ODM_RF_Calibration_Structure {
+ 	u32 TxIQC_8723B[2][3][2]; /*  { {S1: 0xc94, 0xc80, 0xc4c} , {S0: 0xc9c, 0xc88, 0xc4c}} */
+ 	u32 RxIQC_8723B[2][2][2]; /*  { {S1: 0xc14, 0xca0} ,           {S0: 0xc14, 0xca0}} */
  
- 	u8 SignalQuality;	 /*  in 0-100 index. */
--	s8		RxMIMOSignalQuality[4];	/* per-path's EVM */
-+	s8		rx_mimo_signal_quality[4];	/* per-path's EVM */
- 	u8 RxMIMOEVMdbm[4];		/* per-path's EVM dbm */
+-
+ 	/* for APK */
+ 	u32 APKoutput[2][2]; /* path A/B; output1_1a/output1_2a */
+ 	u8 bAPKdone;
+@@ -842,7 +822,6 @@ typedef struct _FAST_ANTENNA_TRAINNING_ {
+ 	u32 OFDM_counter_main;
+ 	u32 OFDM_counter_aux;
  
--	u8 RxMIMOSignalStrength[4];/*  in 0~100 index */
-+	u8 rx_mimo_signal_strength[4];/*  in 0~100 index */
+-
+ 	u32 CCK_CtrlFrame_Cnt_main;
+ 	u32 CCK_CtrlFrame_Cnt_aux;
+ 	u32 OFDM_CtrlFrame_Cnt_main;
+@@ -878,13 +857,11 @@ typedef struct _ODM_PATH_DIVERSITY_ {
+ 	u32 PathB_Cnt[ODM_ASSOCIATE_ENTRY_NUM];
+ } PATHDIV_T, *pPATHDIV_T;
  
- 	u16 	Cfo_short[4];			/*  per-path's Cfo_short */
- 	u16 	Cfo_tail[4];			/*  per-path's Cfo_tail */
+-
+ typedef enum _BASEBAND_CONFIG_PHY_REG_PG_VALUE_TYPE{
+ 	PHY_REG_PG_RELATIVE_VALUE = 0,
+ 	PHY_REG_PG_EXACT_VALUE = 1
+ } PHY_REG_PG_TYPE;
  
- 	s8		RxPower; /*  in dBm Translate from PWdB */
- 	s8		RecvSignalPower;/*  Real power in dBm for this packet, no beautification and aggregation. Keep this raw info to be used for the other procedures. */
--	u8 BTRxRSSIPercentage;
-+	u8 bt_rx_rssi_percentage;
- 	u8 SignalStrength; /*  in 0-100 index. */
+-
+ /*  */
+ /*  Antenna detection information from single tone mechanism, added by Roger, 2012.11.27. */
+ /*  */
+@@ -936,7 +913,6 @@ typedef  struct DM_Out_Source_Dynamic_Mechanism_Structure {
+ 	/* bool			bSlaveOfDMSP; */
+ /* REMOVED COMMON INFO---------- */
  
- 	s8		RxPwr[4];				/* per-path's pwdb */
-@@ -187,7 +187,7 @@ struct rx_pkt_attrib	{
- 	u8 signal_qual;
- 	s8	rx_mimo_signal_qual[2];
- 	u8 signal_strength;
--	u32 RxPWDBAll;
-+	u32 rx_pwd_ba11;
- 	s32	RecvSignalPower;
- */
- 	struct phy_info phy_info;
+-
+ /* 1  COMMON INFORMATION */
+ 
+ 	/*  */
+@@ -1108,7 +1084,6 @@ typedef  struct DM_Out_Source_Dynamic_Mechanism_Structure {
+ 	u8 Adaptivity_IGI_upper;
+ 	u8 NHM_cnt_0;
+ 
+-
+ 	ODM_NOISE_MONITOR noise_level;/* ODM_MAX_CHANNEL_NUM]; */
+ 	/*  */
+ 	/* 2 Define STA info. */
+@@ -1370,7 +1345,6 @@ typedef enum tag_SW_Antenna_Switch_Definition {
+ 	Antenna_MAX = 3,
+ } DM_SWAS_E;
+ 
+-
+ /*  Maximal number of antenna detection mechanism needs to perform, added by Roger, 2011.12.28. */
+ #define	MAX_ANTENNA_DETECTION_CNT	10
+ 
+@@ -1403,7 +1377,6 @@ extern  u32 TxScalingTable_Jaguar[TXSCALE_TABLE_SIZE];
+ 
+ void ODM_SetAntenna(PDM_ODM_T pDM_Odm, u8 Antenna);
+ 
+-
+ /* Remove BB power saving by Yuchen */
+ 
+ #define dm_CheckTXPowerTracking ODM_TXPowerTrackingCheck
 -- 
 2.16.3
