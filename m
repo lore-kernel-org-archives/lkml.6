@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48QwTtfA6TCLjoJZ9LUSisceYWwJiXce1qRysJVLZhXRYYv7m6dGr3dFFC7ctzDhummZBDo
-ARC-Seal: i=1; a=rsa-sha256; t=1522168649; cv=none;
+X-Google-Smtp-Source: AIpwx4957sJ9alkPn4OqsOm6AV1ymSfdIGtAyKl7kzX3aHhmlDAb2323TZjm7yBHl6Kfk9xf9Jh7
+ARC-Seal: i=1; a=rsa-sha256; t=1522168646; cv=none;
         d=google.com; s=arc-20160816;
-        b=AwB5wZVBFj7MJDZP1tDtXE76kjF6qTO/IgShrn1QjKWF/y2hXIn1Sp+14EHpVPDU5P
-         GkvXxRGxH3A8Vqxuu7cQ9ejZ7dljINvUdXE7l2C6MUSDUkH8+Z6X5wQ8mtrlQPR+Wvi1
-         NqqW1zaVRd/f225imfnfbWTRLjsDQHDKRFF1VX3M2CKxqpC+1ItUY57h1MuT9DZ/vHjs
-         xN+v18K5NpB2DnM0Zh/djBw+7nMCaPQ9IMPFlQ99C5ShQPlnpafcgebV66Q7pErF3MD6
-         wZYy4bg0Q1/Una57ClNi3H9hjHPh8TTNjYrGntJTcJe9RSO81EDiXlatxFIa1OwXKupe
-         hS/Q==
+        b=PTJB0gg0vT91RtyNBPCon0Y5GFJYXBHFEKNYHor7tP49AmDuyemBurTqSjTGyCOGLc
+         b+1vGi8J4EpNhPcA1lmDcaj429mIbiCmObz0k+N2FHr8aOU65R6k5dn3vMgAbkOm9Ppa
+         m+l3lyhAtVMwaR1WNgg7oC7F89dLhR7OXlXep+NQGZ202iTEapU/LQtStpiUnkg2T6v1
+         HoaFb+oVQuxSdqSLSeKTr0M3bTqM2qtqut6ovhyma7m0yfPYnsRrpHpfOBrBQ+tPpinL
+         p0NZyCZ4/5enE9Epi8N1nbLy07rsR1WTXzq8r/ZsrZcpKPj939MauV+gHezMhmPW5J4/
+         iKNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WJG1GfcNy12ssLz5gp0/0+gwKhVB7RtlQ7/wIc/P3+4=;
-        b=L1wfSKRX2ybh+5pZ2nFDE9BoTiJUwWOsFi/do+XjqcZKttWn9f1I23a7deGlIHrC4t
-         mhGbgfkrZ/TmOhDy55h9/wUi+nGuGDR7l3+Pu5W0QqnzE8ChM37ArjHdx1scQ5A0CmyV
-         1zC4Z70J64Oe4r+e/hJ8aAjFAfW5wJTv+19lzHL9PWNR0yQX/R9qMiP+fBXMP5jBRew+
-         L5ZjCqCS9k9yK2zmPW4WFOJ9CNhgGy1lextfBqFYYe5g2PC0gMjeDsZQKWpGxVe3jj6o
-         JA9swGtzojJCtHGjMSfHZxoJ9SpRlrgqouvI55zvh06zA5Kg9rVvepFn1PPo+SEh+/fs
-         Oqvg==
+        bh=tbnF4iUm2syYaw/IgRCr/gtrCeglyjrgUnAZBtNYmB4=;
+        b=kh62fE0ycSt4U+U8iiN+/017Le77yysN+nh8QtW7o2tleNI0E2FRzs1Fprjk8w/hxl
+         saACIDbHcjWQ5lRnbWFkZABikc1vxULS7+j03dL6xTt34ZRIh+iZKRNu7X0jaB/IoHEH
+         0ILn4r0hBwoigcTYGy+cVkKFrChnm2S4Qfy6iiGBXSFDunOfxCsx6nm7ONJZPXjArAmx
+         wznDoc5DVyR1ANMILijLAF+C70shnEOnkUCp0r0Ic0TtcpIhBkEQUqtsDQXBi+7cmyXk
+         CBP2yu4VME6ysiD6GI2cJf4mlwJEGP2Z2Bq/Rd0ZwHQ5HD62yYfFGSEWhQR4WH7ET4Sk
+         SDsw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 083/101] kvm/x86: fix icebp instruction handling
-Date: Tue, 27 Mar 2018 18:27:55 +0200
-Message-Id: <20180327162755.171122162@linuxfoundation.org>
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	David Woodhouse <dwmw@amazon.co.uk>
+Subject: [PATCH 4.14 082/101] posix-timers: Protect posix clock array access against speculation
+Date: Tue, 27 Mar 2018 18:27:54 +0200
+Message-Id: <20180327162755.088982907@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109082772350684?=
-X-GMAIL-MSGID: =?utf-8?q?1596109513900642659?=
+X-GMAIL-THRID: =?utf-8?q?1596109511321861911?=
+X-GMAIL-MSGID: =?utf-8?q?1596109511321861911?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,82 +53,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 32d43cd391bacb5f0814c2624399a5dad3501d09 upstream.
+commit 19b558db12f9f4e45a22012bae7b4783e62224da upstream.
 
-The undocumented 'icebp' instruction (aka 'int1') works pretty much like
-'int3' in the absense of in-circuit probing equipment (except,
-obviously, that it raises #DB instead of raising #BP), and is used by
-some validation test-suites as such.
+The clockid argument of clockid_to_kclock() comes straight from user space
+via various syscalls and is used as index into the posix_clocks array.
 
-But Andy Lutomirski noticed that his test suite acted differently in kvm
-than on bare hardware.
+Protect it against spectre v1 array out of bounds speculation. Remove the
+redundant check for !posix_clock[id] as this is another source for
+speculation and does not provide any advantage over the return
+posix_clock[id] path which returns NULL in that case anyway.
 
-The reason is that kvm used an inexact test for the icebp instruction:
-it just assumed that an all-zero VM exit qualification value meant that
-the VM exit was due to icebp.
-
-That is not unlike the guess that do_debug() does for the actual
-exception handling case, but it's purely a heuristic, not an absolute
-rule.  do_debug() does it because it wants to ascribe _some_ reasons to
-the #DB that happened, and an empty %dr6 value means that 'icebp' is the
-most likely casue and we have no better information.
-
-But kvm can just do it right, because unlike the do_debug() case, kvm
-actually sees the real reason for the #DB in the VM-exit interruption
-information field.
-
-So instead of relying on an inexact heuristic, just use the actual VM
-exit information that says "it was 'icebp'".
-
-Right now the 'icebp' instruction isn't technically documented by Intel,
-but that will hopefully change.  The special "privileged software
-exception" information _is_ actually mentioned in the Intel SDM, even
-though the cause of it isn't enumerated.
-
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Tested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1802151718320.1296@nanos.tec.linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/vmx.h |    1 +
- arch/x86/kvm/vmx.c         |    9 ++++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ kernel/time/posix-timers.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -352,6 +352,7 @@ enum vmcs_field {
- #define INTR_TYPE_NMI_INTR		(2 << 8) /* NMI */
- #define INTR_TYPE_HARD_EXCEPTION	(3 << 8) /* processor exception */
- #define INTR_TYPE_SOFT_INTR             (4 << 8) /* software interrupt */
-+#define INTR_TYPE_PRIV_SW_EXCEPTION	(5 << 8) /* ICE breakpoint - undocumented */
- #define INTR_TYPE_SOFT_EXCEPTION	(6 << 8) /* software exception */
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -50,6 +50,7 @@
+ #include <linux/export.h>
+ #include <linux/hashtable.h>
+ #include <linux/compat.h>
++#include <linux/nospec.h>
  
- /* GUEST_INTERRUPTIBILITY_INFO flags. */
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -1071,6 +1071,13 @@ static inline bool is_machine_check(u32
- 		(INTR_TYPE_HARD_EXCEPTION | MC_VECTOR | INTR_INFO_VALID_MASK);
- }
+ #include "timekeeping.h"
+ #include "posix-timers.h"
+@@ -1346,11 +1347,15 @@ static const struct k_clock * const posi
  
-+/* Undocumented: icebp/int1 */
-+static inline bool is_icebp(u32 intr_info)
-+{
-+	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VALID_MASK))
-+		== (INTR_TYPE_PRIV_SW_EXCEPTION | INTR_INFO_VALID_MASK);
-+}
-+
- static inline bool cpu_has_vmx_msr_bitmap(void)
+ static const struct k_clock *clockid_to_kclock(const clockid_t id)
  {
- 	return vmcs_config.cpu_based_exec_ctrl & CPU_BASED_USE_MSR_BITMAPS;
-@@ -6169,7 +6176,7 @@ static int handle_exception(struct kvm_v
- 		      (KVM_GUESTDBG_SINGLESTEP | KVM_GUESTDBG_USE_HW_BP))) {
- 			vcpu->arch.dr6 &= ~15;
- 			vcpu->arch.dr6 |= dr6 | DR6_RTM;
--			if (!(dr6 & ~DR6_RESERVED)) /* icebp */
-+			if (is_icebp(intr_info))
- 				skip_emulated_instruction(vcpu);
+-	if (id < 0)
++	clockid_t idx = id;
++
++	if (id < 0) {
+ 		return (id & CLOCKFD_MASK) == CLOCKFD ?
+ 			&clock_posix_dynamic : &clock_posix_cpu;
++	}
  
- 			kvm_queue_exception(vcpu, DB_VECTOR);
+-	if (id >= ARRAY_SIZE(posix_clocks) || !posix_clocks[id])
++	if (id >= ARRAY_SIZE(posix_clocks))
+ 		return NULL;
+-	return posix_clocks[id];
++
++	return posix_clocks[array_index_nospec(idx, ARRAY_SIZE(posix_clocks))];
+ }
