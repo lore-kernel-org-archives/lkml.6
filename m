@@ -1,217 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752779AbeC0P6r (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 11:58:47 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50949 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751486AbeC0P6p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 11:58:45 -0400
-Subject: Re: [PATCH] ecryptfs: Restore support for both encrypted and
- unencrypted file names
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
-From: Tyler Hicks <tyhicks@canonical.com>
-Message-ID: <740f5325-331d-d38c-e9d4-5f81b95a6872@canonical.com>
-Date: Tue, 27 Mar 2018 10:58:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752640AbeC0QAD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 12:00:03 -0400
+Received: from mail-by2nam01on0055.outbound.protection.outlook.com ([104.47.34.55]:20736
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751179AbeC0QAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 12:00:01 -0400
+From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
+        Borislav Petkov <bp@alien8.de>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: RE: [PATCH 1/2] Revert "x86/mce/AMD: Collect error info even if valid
+ bits are not set"
+Thread-Topic: [PATCH 1/2] Revert "x86/mce/AMD: Collect error info even if
+ valid bits are not set"
+Thread-Index: AQHTxTbYl0Ocyw67K0ebLpEvWOkqDaPi53kAgAAAvNCAAAmPAIABK29QgAAfYjA=
+Date: Tue, 27 Mar 2018 15:59:37 +0000
+Message-ID: <DM5PR12MB19162C0D9FF144D311ADC22FF8AC0@DM5PR12MB1916.namprd12.prod.outlook.com>
+References: <20180326191526.64314-1-Yazen.Ghannam@amd.com>
+ <20180326193052.GJ25548@pd.tnic>
+ <DM5PR12MB191603A2AACAE6F7F923C6F3F8AD0@DM5PR12MB1916.namprd12.prod.outlook.com>
+ <20180326200742.GF28372@pd.tnic>
+ <DM5PR12MB191601AF532C84190049AD04F8AC0@DM5PR12MB1916.namprd12.prod.outlook.com>
+In-Reply-To: <DM5PR12MB191601AF532C84190049AD04F8AC0@DM5PR12MB1916.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2601:345:301:c593:3414:3059:320b:d027]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB2567;7:G1qlRT9UxtvdlIzkMm/oJ/HNdpTO6AH1DjqXRpECUWIjCyi2WqeP1XI6pwF0qWFeyEfvj9uGJUZ0vRGHbuaH6EXpAmmNtYPyDYLTAwUmJ1wdzIssiXcG3bPZErEJIZ0zP9yBvGRrIVRywM1I1U+aBL2jO6OORdJNcgQKlDDEBf+Bwo7LKtu4GXRF19+QgLCZDWeaTXTYb3SiQuJHzjspKLB4sNjXkPZMgZR/glDcCcn0lIiMsXja+uG6wJZGhg3G;20:mPbwn73t1C62SkbxyITgtXQ11E/4lVNvFcChiGTKVN5kLF12GlCczYQj47tb9cRe0jPlyJ95mUIBkxkM3SWZZfpBl1EfE72eKxlpHVBMTkWWfLjuVK5xgXL+/Anpz86dJd225c/LqFyco+yKSUhiaJsiF/cA4TCrlUoN/mNRxSS+ZBJucxjmbLeuqUxDjhFnR4zukReNhBcVsK/sENslkTwHu3OlRAiVmRbEN3R3FoJV9vDMmGogFAMSeeczaAXz
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39380400002)(396003)(39860400002)(366004)(376002)(346002)(13464003)(199004)(189003)(53936002)(11346002)(53546011)(6246003)(8936002)(3660700001)(3280700002)(14454004)(59450400001)(81156014)(6506007)(68736007)(8676002)(478600001)(486005)(86362001)(9686003)(486005)(97736004)(5660300001)(74316002)(55016002)(76176011)(2906002)(106356001)(7696005)(93886005)(446003)(229853002)(2900100001)(6436002)(54906003)(99286004)(110136005)(316002)(105586002)(5250100002)(2940100002)(102836004)(7736002)(72206003)(6116002)(4326008)(81166006)(476003)(25786009)(33656002)(46003)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2567;H:DM5PR12MB1916.namprd12.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;A:1;MX:1;LANG:en;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7fc51e04-dc4a-4eee-70bf-08d593fbbe3b
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB2567;
+x-ms-traffictypediagnostic: DM5PR12MB2567:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Yazen.Ghannam@amd.com;
+x-microsoft-antispam-prvs: <DM5PR12MB2567D3EE7756958183B07723F8AC0@DM5PR12MB2567.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR12MB2567;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2567;
+x-forefront-prvs: 0624A2429E
+x-microsoft-antispam-message-info: ZMF0L5BZw9bhl3JQ6f4/6QY7A0tYy88HfmMYjVgDIHToCTE6BTsshe8x9X0pyVTrwGdMcHfFgsmqdvLQAnjQQSLUZUBLoKf6PSIKa+jnLFspnDwsq4L1PeudzIru5fyUT02VNIAFP7TkG64h3fsJc+12Gqp7jG0d2KN6SWCRnBl1DynmF+X1c7tjmE3qZ/GrB8AbBKNpe3d4Mx3mq4vXO/AjTIxSCFZAtR/hFVQdywB58FIfZ9HOi+UqmuAnQZ8uIVZUQEeqbf4/T2Od5wGBuEnYZv5SatQJsA5IOPA91AWzJ8yCKdUvFnG6zSPaseuNWY5bAK7eWDZkl+17vClE9A==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="0JegKyQimqVLbKcaquGF74aKtqi3Bug6b"
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fc51e04-dc4a-4eee-70bf-08d593fbbe3b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2018 15:59:37.8715
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2567
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2RG08HL022212
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---0JegKyQimqVLbKcaquGF74aKtqi3Bug6b
-Content-Type: multipart/mixed; boundary="J4TwfQrY3h5PXBnaksoblkFkkskmDQ4UC";
- protected-headers="v1"
-From: Tyler Hicks <tyhicks@canonical.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Al Viro <viro@zeniv.linux.org.uk>
-Message-ID: <740f5325-331d-d38c-e9d4-5f81b95a6872@canonical.com>
-Subject: Re: [PATCH] ecryptfs: Restore support for both encrypted and
- unencrypted file names
-References: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
-In-Reply-To: <1518561368-8324-1-git-send-email-linux@roeck-us.net>
+> -----Original Message-----
+> From: linux-edac-owner@vger.kernel.org <linux-edac-
+> owner@vger.kernel.org> On Behalf Of Ghannam, Yazen
+> Sent: Tuesday, March 27, 2018 10:02 AM
+> To: Borislav Petkov <bp@alien8.de>
+> Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org;
+> tony.luck@intel.com; x86@kernel.org
+> Subject: RE: [PATCH 1/2] Revert "x86/mce/AMD: Collect error info even if
+> valid bits are not set"
+> 
+> > -----Original Message-----
+> > From: Borislav Petkov <bp@alien8.de>
+> > Sent: Monday, March 26, 2018 4:08 PM
+> > To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
+> > Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > tony.luck@intel.com; x86@kernel.org
+> > Subject: Re: [PATCH 1/2] Revert "x86/mce/AMD: Collect error info even if
+> > valid bits are not set"
+> >
+> > On Mon, Mar 26, 2018 at 07:58:51PM +0000, Ghannam, Yazen wrote:
+> > > So at a minimum, we should always save and report as much as we can.
+> >
+> > Only on Zen or all AMD families?
+> >
+> 
+> I'll confirm with the HW folks. I understand it as a change in philosophy
+> rather than a change in hardware.
+> 
 
---J4TwfQrY3h5PXBnaksoblkFkkskmDQ4UC
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+So this recommendation could apply to all families, but it's okay if we just
+apply this behavior to SMCA systems. That way we don't need to worry
+about changing things on legacy systems.
 
-Hello Guenter
+I'll write a new patch that abstracts the register reads and applies the
+different behaviors.
 
-On 02/13/2018 04:36 PM, Guenter Roeck wrote:
-> Commit 88ae4ab9802e ("ecryptfs_lookup(): try either only encrypted or
-> plaintext name") was supposed to fix a situation where two files with
-> the same name and same inode could be created in ecryptfs. One of those=
+In any case, this patch should be reverted since faking the valid bits will
+cause the downstream code in the notifier blocks to process errors they
+shouldn't.
 
-> files had an encrypted file name, the other file name was unencrypted.
-
-That's correct. Al was concerned about possible deadlocks with aliased
-dentries and I thought it would be best to only support encrypted and
-unencrypted but not both.
-
->=20
-> After commit 88ae4ab9802e, having a mix of encrypted and unencrypted fi=
-le
-> names is no longer supposed to be possible. However, that is not the ca=
-se.
-> The only difference is that it is now even easier to create a situation=
-
-> where two files with the same name coexist (one encrypted and the other=
-
-> not encrypted). In practice, this looks like the following (files
-> created with v4.14.12).
->=20
-> ecryptfs mounted with file name encryption enabled:
->=20
-> $ ls -li
-> total 48
-> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
-> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
-> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
-> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
-> $ grep . *
-> myfile:encrypted
-> myfile:encrypted
-> myfile2:encrypted
-> myfile2:encrypted
->=20
-> $ ls -li
-> total 48
-> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36
-> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njb=
-cIPoApxk7-E--
-> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02
-> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCt=
-J70cm911yZ---
-> 5252817 -rw-rw-r-- 1 groeck groeck 12 Jan 20 12:52 myfile
-> 5252827 -rw-rw-r-- 1 groeck groeck 12 Jan 20 15:37 myfile2
->=20
-> $ grep . *
-> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVun.BU8Zu5-njb=
-cIPoApxk7-E--:encrypted
-> ECRYPTFS_FNEK_ENCRYPTED.FWbF9U6H6L6ekEZYGWnkfR4wMiyeTVoCeVunt0fda7t9YCt=
-J70cm911yZ---:encrypted
-> myfile:unencrypted
-> myfile2:unencrypted
->=20
-> Creating a file with file name encryption disabled and remounting with
-> file name encryption enabled results in the following.
->=20
-> $ ls -li
-> ls: cannot access 'myfile3': No such file or directory
-> total 48
-> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
-> 5252822 -rw-rw-r-- 1 groeck groeck 10 Jan 20 13:02 myfile
-> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
-> 5252824 -rw-rw-r-- 1 groeck groeck 10 Jan 20 15:36 myfile2
->       ? -????????? ? ?      ?       ?            ? myfile3
->=20
-> Prior to commit 88ae4ab9802e, the file system had to be mounted with
-> encrypted file names first to create a file, then the same had to be
-> repeated after mounting with unencrypted file names. Now the duplicate
-> files can be created both ways (unencrypted _or_ encrypted first).
->=20
-> The only real difference is that it is no longer possible to have a
-> _working_ combination of encrypted and unencrypted file names. In other=
-
-> words, commit 88ae4ab9802e results in reduced functionality with no
-> benefit whatsoever.
->=20
-> Restore ability to have a mix of unencrypted and encrypted files.
-> This effectively reverts commit 88ae4ab9802e, but the code is now
-> better readable since it avoids a number of goto statements.
-
-I'd like for us to correctly fix 88ae4ab9802e rather than try to support
-both filename types under a single mount since that's complex and there
-are unknown corner cases to consider. I think this can be done by not
-copying up the lower filename when an error is encountered in
-ecryptfs_decode_and_decrypt_filename(). If filename encryption is
-enabled, it should only return decrypted filenames or an error if it
-isn't possible to decrypt the lower filename.
-
-Tyler
-
->=20
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  fs/ecryptfs/inode.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->=20
-> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-> index 847904aa63a9..14a5c096ead6 100644
-> --- a/fs/ecryptfs/inode.c
-> +++ b/fs/ecryptfs/inode.c
-> @@ -392,11 +392,11 @@ static struct dentry *ecryptfs_lookup(struct inod=
-e *ecryptfs_dir_inode,
->  	int rc =3D 0;
-> =20
->  	lower_dir_dentry =3D ecryptfs_dentry_to_lower(ecryptfs_dentry->d_pare=
-nt);
-> -
-> +	lower_dentry =3D lookup_one_len_unlocked(name, lower_dir_dentry, len)=
-;
->  	mount_crypt_stat =3D &ecryptfs_superblock_to_private(
->  				ecryptfs_dentry->d_sb)->mount_crypt_stat;
-> -	if (mount_crypt_stat
-> -	    && (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES))=
- {
-> +	if (IS_ERR(lower_dentry) &&
-> +	    (mount_crypt_stat->flags & ECRYPTFS_GLOBAL_ENCRYPT_FILENAMES)) {
->  		rc =3D ecryptfs_encrypt_and_encode_filename(
->  			&encrypted_and_encoded_name, &len,
->  			mount_crypt_stat, name, len);
-> @@ -405,10 +405,10 @@ static struct dentry *ecryptfs_lookup(struct inod=
-e *ecryptfs_dir_inode,
->  			       "filename; rc =3D [%d]\n", __func__, rc);
->  			return ERR_PTR(rc);
->  		}
-> -		name =3D encrypted_and_encoded_name;
-> +		lower_dentry =3D lookup_one_len_unlocked(
-> +			encrypted_and_encoded_name, lower_dir_dentry, len);
->  	}
-> =20
-> -	lower_dentry =3D lookup_one_len_unlocked(name, lower_dir_dentry, len)=
-;
->  	if (IS_ERR(lower_dentry)) {
->  		ecryptfs_printk(KERN_DEBUG, "%s: lookup_one_len() returned "
->  				"[%ld] on lower_dentry =3D [%s]\n", __func__,
->=20
-
-
-
---J4TwfQrY3h5PXBnaksoblkFkkskmDQ4UC--
-
---0JegKyQimqVLbKcaquGF74aKtqi3Bug6b
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEPgU+cN5AsTrekT5+1pIAPaoCxwoFAlq6ai8ACgkQ1pIAPaoC
-xwpGmg//b/W9IPF2C8LlpiWM6iNmjyyTzWIHtcBxwOkEXgYd+PAAlSgbHvwDoWQt
-4/OqLPcdg2UME/m+qDzhguv3GNjD2VjXgMIV+TCk6qm5m98kWqBlEymOGd2nDBxQ
-efOu1NUGDkJg8h4fheSLs49raShoqmAp9y4gyfslDIhWeiqxz1Ux5USUmXvJ5mrz
-hyZMM3vQvlldhSuYi4C9JAmobnsKGzmq3JT8SlbnFevzQSnEF1MjvFpTZ51d69mx
-GJLrALQSIRiK6CbQqonae9zSPne2gw2K2vNyn5+dHisGLX9jgbcQdzw0hEq+Jv8C
-5DdnONXaVdpbUHHlfur6oH1nVqim1eNMvJBKo4F0t7ULYpc7CDljN1Xsc/x3O+bs
-B2glnW8iyvMdGTlFUETxI6n2Y1wvb7FLmrnmANOEEEgDfno4o2fdex7vqRz52I00
-CeH/E/DtGCwL+OY4RSlm2joLqiFa48KBFya0Z35Zl/niX2AOEaK6Rf2YIOyBl/hq
-GHqhrkT0My0r/oyQwuvjXeXz7V4hn+qylOmD/RGaflG9EKIHkZihUqi9aU4O6tY4
-wdPy+iXc2o4GZR4NuwZbdXElSk22VkIFiMzj3DqFCbsHSiWim726EIjmA4skAcdv
-WX2+RRP/dF/cFjsc6MzSFJJrD3ZJlMUtnRuE1Kt+8hug6YvqiY8=
-=8T34
------END PGP SIGNATURE-----
-
---0JegKyQimqVLbKcaquGF74aKtqi3Bug6b--
+Thanks,
+Yazen
