@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-133548-1522172494-2-6303606049813036993
+X-Cyrus-Session-Id: sloti22d1t05-133288-1522172477-2-10252103592556972407
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522172493; b=kFbMQH5MxSClf9S53gktF1XGcQl0AzvKBx2Ac3qVZ1AxoyE
-    0l2TchMSZ5/S1vZN8BWzKMqtlCfRIU01yi7llYoZMjz4ddcEJD8Y3BKGDF/Drs/C
-    lDd8R637aPNpyFtafmBPtfSrc2/rEORaUVrFw93oGYnhtRav+scgQ3CNvbd7HQEI
-    MCKPd06VpHMZyQ+4G0S+pLO48bbnpnRkGXlLg6ICwreTFf3AHjMsekY9txGVz5ow
-    /bkqUQ1EMwmXVGyDCVbELo16ik+HVF+wakffijfHIUU8c5XX21+mePu+dovAAgtX
-    hRP82zLNKrtC1eBKHeW85jOIsAH02fnVdz4/l+Q==
+    t=1522172476; b=rLCINWAnB4dkcfuuAUTnOvqH/Q2mieR6AUReyixpnuU6BSI
+    q5j1of/1c2jP5cURKgoQLeQ9uy4kQ0eOzPmdaG2pCnU9AC2X1xY2vkDh/G6cX6f9
+    9L+jKZo/PScxhY/PrxuOKmnIf/X8f3mKtmadz2xef453k4HoThhtkSoXop3WXJd7
+    oDEs0acoeq53IlSRYvz8aYn5lS0BVAtdq3t/jdVCaewN6V/zeyFzQr705Vp4iMyw
+    rvw1H1HaiYw5g+Jnz/HQi883BbehekG4bGWhrZN8inqtU0nM7NO0tOQO1OggHM0i
+    fPKy0gEkJio0PCjjBtPSXHZ4un0AAjjqxfkgclQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522172493; bh=jxopGOv3CfJLD34Uhlt9wM6qZN
-    aRetKY8+e8+IJ82/w=; b=rKSq+Jq993zdgNBVKtG8qXb0rLXUiXw5hIGE668ItY
-    QiuFm/Pbd9anTGKUlaLpoiWMC07PZMV+l3Sw0vl4FAmxmbh8/DuH2PO/5EvpHTOc
-    pPr4FZiTeXv7STohGwOXGMSSYbtUx0aMO05+WxJN2XPkSnbx/vrCNBO3KYDeiprK
-    thC701cn+WlB58t7OFD7Ay1qdWZho3kTQ68Yi0ArpFAQTD8t9xazhkn4S/W4DVwF
-    gvX8N5TkqR8rZbZ31q066UXh1d9BjLLTYi/L6BXuFKYIM6jWJRMzgn5hGEGG5h/O
-    SvF+DW+IT+TX4CzI1MCNVcuYxIklDodEpKyEVRreibOw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1522172476; bh=wCTTHZor2osvjCegWZr5rf6GZa
+    y9riyctHlM7JmNdwY=; b=gOhsKiT2EZG7/HeVM9hyLnS3QtsDJiMg9hhejTpQs3
+    N6yHTUqgvIU5L2XRuHa8pej/V3kvtrU/ihyYYfrI6PnYSI40ouvZYQiOXesTJKad
+    KsH3G5H17mA1an3iyQyp71S6yxaTqNXtebagUSj/sX2W34MY8gnjNDn+RQDwJMLe
+    tcftavwmQqSHWzt5WP8ZsrG+Yvxd/nN/G3BOPAJjVugpf643NFsPwad6zhZJldCF
+    0KBE6joCyG9fP/4Kx79GjEuG7DalaG3kSDKTswrNGCotSVgehPhZTJ9DwB/mXpBS
+    Nk6MCsHfGj8ryqxgs6vtjOdBmerVq5PQPiiUWZQsodrw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,29 +51,30 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEsq2mcsrIiWg2JvGoPmMOnmqBiUF+Wv3eIaGILBUFW5aNlUdyTn3elSbozsYSvW0d9BRHXL9K8vB83aDbx6g7w6fvMgkfl18Z7I16s5MRTR5pPmTbtq
-    eoNUp5IwJ1UwQ2VwuEg9eVMtdEN/rpWk13juEMEejPy7YshhjCfI7eIbGy+42gNDHqd4jEPtwfwGuewkkUSPlDfRxTNf+afj4V9tWtDj+raEthQMuUrwOaTc
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHdF9HPlGbj6Y/tHfyEWsYKJ7gZofB7E/RPAqXLhRgm0wI3sfM94TKosW0yXDLcRz9GAJKL1mHutZHZZyvvSxOWwzxgTRegYWOBAk35rw7ff7ber64l9
+    +k68KLT3aG0qDENNVL4WARx6ywAIW3Zl2Gh4DWMyH8KgULl+3jmYbGbbc3WshN6IKXYWP0bJ2OqNet44Z3yTqNEQGBcmnMBtmUoGLQP0CNM4QT1nJHr8DdrG
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=VwQbUJbxAAAA:8 a=DfNHnWVPAAAA:8 a=ag1SF4gXAAAA:8 a=ZOyOa5k0IZLutefqA4YA:9
-    a=22AN8RtJdsEif1uG:21 a=qpj-8RqjrLBITV5f:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=rjTVMONInIDnV1a_A2c_:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=n9Sqmae0AAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=faaN5MpH8Yv26IJOdYYA:9
+    a=QEXdDO2ut3YA:10 a=UmAUUZEt6-oIqEbegvw9:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753528AbeC0Qd6 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 12:33:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44126 "EHLO
+        id S1754127AbeC0QeC (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:34:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44138 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754107AbeC0Qd5 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:33:57 -0400
+        with ESMTP id S1754120AbeC0QeA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:34:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 012/101] ALSA: hda - Force polling mode on CFL for fixing codec communication
-Date: Tue, 27 Mar 2018 18:26:44 +0200
-Message-Id: <20180327162750.746050409@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 013/101] ALSA: hda/realtek - Fix speaker no sound after system resume
+Date: Tue, 27 Mar 2018 18:26:45 +0200
+Message-Id: <20180327162750.799407678@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -91,52 +92,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Kailang Yang <kailang@realtek.com>
 
-commit a8d7bde23e7130686b76624b099f3e22dd38aef7 upstream.
+commit 88d42b2b45d7208cc872c2c9dec0b1ae6c6008d7 upstream.
 
-We've observed too long probe time with Coffee Lake (CFL) machines,
-and the likely cause is some communication problem between the
-HD-audio controller and the codec chips.  While the controller expects
-an IRQ wakeup for each codec response, it seems sometimes missing, and
-it takes one second for the controller driver to time out and read the
-response in the polling mode.
+It will have a chance speaker no sound after system resume.
+To toggle NID 0x53 index 0x2 bit 15 will solve this issue.
+This usage will also suitable with ALC256.
 
-Although we aren't sure about the real culprit yet, in this patch, we
-put a workaround by forcing the polling mode as default for CFL
-machines; the polling mode itself isn't too heavy, and much better
-than other workarounds initially suggested (e.g. disabling
-power-save), at least.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199007
-Fixes: e79b0006c45c ("ALSA: hda - Add Coffelake PCI ID")
-Reported-and-tested-by: Hui Wang <hui.wang@canonical.com>
+Fixes: 4a219ef8f370 ("ALSA: hda/realtek - Add ALC256 HP depop function")
+Signed-off-by: Kailang Yang <kailang@realtek.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_intel.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ sound/pci/hda/patch_realtek.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -375,6 +375,7 @@ enum {
- 					((pci)->device == 0x160c))
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -3107,6 +3107,8 @@ static void alc256_init(struct hda_codec
  
- #define IS_BXT(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0x5a98)
-+#define IS_CFL(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0xa348)
+ 	alc_update_coef_idx(codec, 0x46, 3 << 12, 0);
+ 	alc_update_coefex_idx(codec, 0x57, 0x04, 0x0007, 0x4); /* Hight power */
++	alc_update_coefex_idx(codec, 0x53, 0x02, 0x8000, 1 << 15); /* Clear bit */
++	alc_update_coefex_idx(codec, 0x53, 0x02, 0x8000, 0 << 15);
+ }
  
- static char *driver_short_names[] = {
- 	[AZX_DRIVER_ICH] = "HDA Intel",
-@@ -1744,6 +1745,10 @@ static int azx_create(struct snd_card *c
- 	else
- 		chip->bdl_pos_adj = bdl_pos_adj[dev];
- 
-+	/* Workaround for a communication error on CFL (bko#199007) */
-+	if (IS_CFL(pci))
-+		chip->polling_mode = 1;
-+
- 	err = azx_bus_init(chip, model[dev], &pci_hda_io_ops);
- 	if (err < 0) {
- 		kfree(hda);
+ static void alc256_shutup(struct hda_codec *codec)
+@@ -7004,6 +7006,8 @@ static int patch_alc269(struct hda_codec
+ 		break;
+ 	case 0x10ec0257:
+ 		spec->codec_variant = ALC269_TYPE_ALC257;
++		spec->shutup = alc256_shutup;
++		spec->init_hook = alc256_init;
+ 		spec->gen.mixer_nid = 0;
+ 		break;
+ 	case 0x10ec0215:
