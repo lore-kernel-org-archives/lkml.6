@@ -1,146 +1,108 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AG47ELs4ClhxHk74/5agOrrmtb9Xt37wN0ejklGOLztvdo+nsReQ74I47RZzs3KYYrmQNYM/7hwb
-ARC-Seal: i=1; a=rsa-sha256; t=1522056839; cv=none;
+X-Google-Smtp-Source: AG47ELtKdXqT03pQApQuDFPHNep7BZwcUGO/4hvePWqn5FQUV2EcWQAuGQ2E+XgBtyybRG67ykk8
+ARC-Seal: i=1; a=rsa-sha256; t=1522141948; cv=none;
         d=google.com; s=arc-20160816;
-        b=NgmbMxEpMiBizIzrdAIBw+T2rm4Obiz2KOiT7znYSia6U7c7HLWwIbVUbHV9Bkh92u
-         fa8y21y0LlfgxkHRkUS64eBef/mtpRZvaPebyqZVQPcAUFrYTQ/bEM+rMEIbVp2IXs/B
-         CDQX3e2474d6MmJXsPDjF3U8Q7uAeQ4pEstQ6Pyu5Khfo7CFoWF/0YcuDY/L/sXhG0g6
-         3Q2r6FB5nngM4Dh4tFd7iEPpOcxCREeNlyQgdBeZC8e6UGAhEMejXRYn6em3kwc0AwWH
-         LBhPTYy81QKrPFoCseKlwpGsi6ZDbHzMAHrImmaGYEHKJtCVm7NcfjFLY8/EZlCV8Vl0
-         Pv1Q==
+        b=fie2HVefm7FHE9QzVeSfr8cJi3Ny++2fyHOpwoIQfZIU89Opd6wBiMRcYmsR+p4qIf
+         H5nHPOyJE/tb8s91TlGkfLBHzWc3jy24fDlNEIYLeztQThljxI039KnhaB6V9XkqESew
+         FaeFqtPiWWndgOrmMZhYeggmCdi3jwCt6U1SFHKkDq9H7MSrnbZm+5CsI8uZnF3ZrTM/
+         REsbYYsaZ9P/JQBAIHfvKPOdKYmZjdYswtHWYCf7zEpzecxtWc+FkDtguU0jI6gh2vYa
+         FEJe1uTv1z4RhQ/1H9naelHxDHG2tXQ0N16z6EMOzzBzkMibnedBPWMRrXIzP/TK8Be4
+         tzmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=WOxbaoN+7cC96I1++eLbmKbUdBXDgCRDJulouqhqv/Q=;
-        b=d97NKsmZkG8D8YC5hF+5F23vxl+KKBP6rL+jJUmBF0uDglkbUG+rKnHaal4KQvHKmg
-         K/P9FbpWlsg2SR6IyTO5zQNDVqu+OV9stlGXbe8iFyQHJaP3qnq1RLsMHx/tJbtoyNZw
-         1XV4ruAI0zG1y1HR04AVgNOkiGow4eBrgbK5KMkYeJnKaDRDTKTONCTyFraRMpinarMQ
-         NIEeAhOOB668THdWJN+HuP7sj+Zo5GkWKSk8AgLJjx/NAwF7NtM7dQiIpBgVHWSzvO3c
-         LdEBkF6D3fkIQJxB+UtlYeD0TXUJbz5oSvNrhPONSzkEunmBn30yJFdie/JjFkDfWCML
-         3G5Q==
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=n1E2iQqUzC7l7vk3IHwHR06ipuE/kD0ltokfNaJUYPE=;
+        b=aCMkkZ0kwFd9G2m6PBL1CwOT31DLhkvdxpP/MKx0J7Zr5ww/3dPCSMgl8jOkknA113
+         X9rMGRpDIhX0IzSkjJMS7OHu4uzKFLlyKrq7ggMQr0fIoAt0e+h+xJsdVs/bUPmBZNlY
+         pu2FmotmyAd1GprpcUn5etwt6br4QZ1A1DU1gmzSsxXDTRG8NQR2DPMj1Cic8wWzbsEh
+         bJJM2+36gCgvdIGE1v/yTL02iYoVd+HFy0VkrCy2euYPNLECTScSlvK88XAGe9RGfRCg
+         ZjKn0Kibe0pGT2ocYA9Ow1JMMkH0EcL1wS5dotBpQ01gv2iSqxhdejuyWH4AuAQlvxLY
+         C7vA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=b/z0B05O;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       dkim=neutral (body hash did not verify) header.i=@gmail.com header.s=20161025 header.b=b/z0B05O;
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751374AbeCZJdS (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Mon, 26 Mar 2018 05:33:18 -0400
-Received: from mga17.intel.com ([192.55.52.151]:43803 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751087AbeCZJdN (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Mon, 26 Mar 2018 05:33:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,364,1517904000";
-   d="scan'208";a="36851568"
-From: changbin.du@intel.com
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Changbin Du <changbin.du@intel.com>
-Subject: [PATCH 1/4] selftests/Makefile: append a slash to env variable OUTPUT
-Date: Mon, 26 Mar 2018 17:23:25 +0800
-Message-Id: <1522056208-4004-2-git-send-email-changbin.du@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522056208-4004-1-git-send-email-changbin.du@intel.com>
-References: <1522056208-4004-1-git-send-email-changbin.du@intel.com>
+        id S1752090AbeC0JJp (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Tue, 27 Mar 2018 05:09:45 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:44433 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752218AbeC0JJm (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Tue, 27 Mar 2018 05:09:42 -0400
+From: Ram Pai <linuxram@us.ibm.com>
+To: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
+        linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de
+Subject: [PATCH v13 0/3] mm, x86, powerpc: Enhancements to Memory Protection Keys.
+Date: Tue, 27 Mar 2018 02:09:25 -0700
+Message-Id: <1522141768-25485-1-git-send-email-linuxram@us.ibm.com>
+X-Mailer: git-send-email 1.7.1
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595992271774759248?=
-X-GMAIL-MSGID: =?utf-8?q?1595992271774759248?=
+X-GMAIL-THRID: =?utf-8?q?1596081515219894583?=
+X-GMAIL-MSGID: =?utf-8?q?1596081515219894583?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Changbin Du <changbin.du@intel.com>
+This patch series provides arch-neutral enhancements to
+enable memory-keys on new architecutes, and the corresponding
+changes in x86 and powerpc specific code to support that.
 
-The tools/build/Makefile.build use 'OUTPUT' variable as below example:
-objprefix    := $(subst ./,,$(OUTPUT)$(dir)/)
+a) Provides ability to support upto 32 keys.  PowerPC
+	can handle 32 keys and hence needs this.
 
-So it requires the 'OUTPUT' already has a slash at the end.
+b) Arch-neutral code; and not the arch-specific code,
+   determines the format of the string, that displays the key
+   for each vma in smaps.
 
-This patch can kill below odd paths:
-make[3]: Entering directory '/home/changbin/work/linux/tools/gpio'
-  CC       /home/changbin/work/linux/tools/testing/selftests/gpiolsgpio.o
-  CC       /home/changbin/work/linux/tools/testing/selftests/gpiogpio-utils.o
-  LD       /home/changbin/work/linux/tools/testing/selftests/gpiolsgpio-in.o
+History:
+-------
+version v13:
+	(1) fixed a git bisect error. :(
 
-A correct path should be:
-/home/changbin/work/linux/tools/testing/selftests/gpio/lsgpio.o
+version v12:
+	(1) fixed compilation errors seen with various x86
+		configs.
+version v11:
+	(1) code that displays key in smaps is not any more
+		defined under CONFIG_ARCH_HAS_PKEYS.
+       	    - Comment by Eric W. Biederman and Michal Hocko
+	(2) merged two patches that implemented (1).
+		- comment by Michal Hocko
 
-Signed-off-by: Changbin Du <changbin.du@intel.com>
----
- tools/testing/selftests/Makefile | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+version prior to v11:
+	(1) used one additional bit from VM_HIGH_ARCH_*
+       		to support 32 keys.
+	    - Suggestion by Dave Hansen.
+	(2) powerpc specific changes to support memory keys.
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 7442dfb..7916aa2 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -71,31 +71,31 @@ all:
- 	@for TARGET in $(TARGETS); do		\
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
- 		mkdir $$BUILD_TARGET  -p;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET;\
- 	done;
- 
- run_tests: all
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET run_tests;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET run_tests;\
- 	done;
- 
- hotplug:
- 	@for TARGET in $(TARGETS_HOTPLUG); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET;\
- 	done;
- 
- run_hotplug: hotplug
- 	@for TARGET in $(TARGETS_HOTPLUG); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET run_full_test;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET run_full_test;\
- 	done;
- 
- clean_hotplug:
- 	@for TARGET in $(TARGETS_HOTPLUG); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET clean;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET clean;\
- 	done;
- 
- run_pstore_crash:
-@@ -111,7 +111,7 @@ ifdef INSTALL_PATH
- 	mkdir -p $(INSTALL_PATH)
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET INSTALL_PATH=$(INSTALL_PATH)/$$TARGET install; \
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET INSTALL_PATH=$(INSTALL_PATH)/$$TARGET install; \
- 	done;
- 
- 	@# Ask all targets to emit their test scripts
-@@ -131,7 +131,7 @@ ifdef INSTALL_PATH
- 		echo "echo ; echo Running tests in $$TARGET" >> $(ALL_SCRIPT); \
- 		echo "echo ========================================" >> $(ALL_SCRIPT); \
- 		echo "cd $$TARGET" >> $(ALL_SCRIPT); \
--		make -s --no-print-directory OUTPUT=$$BUILD_TARGET -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
-+		make -s --no-print-directory OUTPUT=$$BUILD_TARGET/ -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
- 		echo "cd \$$ROOT" >> $(ALL_SCRIPT); \
- 	done;
- 
-@@ -143,7 +143,7 @@ endif
- clean:
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET clean;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET clean;\
- 	done;
- 
- .PHONY: all run_tests hotplug run_hotplug clean_hotplug run_pstore_crash install clean
--- 
-2.7.4
+
+Ram Pai (3):
+  mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS
+    is enabled
+  mm, powerpc, x86: introduce an additional vma bit for powerpc pkey
+  mm, x86, powerpc: display pkey in smaps only if arch supports pkeys
+
+ arch/powerpc/include/asm/mmu_context.h |    5 -----
+ arch/powerpc/include/asm/pkeys.h       |    2 ++
+ arch/x86/include/asm/mmu_context.h     |    5 -----
+ arch/x86/include/asm/pkeys.h           |    1 +
+ arch/x86/kernel/fpu/xstate.c           |    5 +++++
+ arch/x86/kernel/setup.c                |    8 --------
+ fs/proc/task_mmu.c                     |   15 ++++++++-------
+ include/linux/mm.h                     |   12 +++++++-----
+ include/linux/pkeys.h                  |    7 ++++++-
+ 9 files changed, 29 insertions(+), 31 deletions(-)
 
