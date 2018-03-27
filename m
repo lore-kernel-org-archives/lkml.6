@@ -1,71 +1,123 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522207761; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AG47ELuBk0eNc2goBCw/ku2niXJz9lJyGarDdhVM+rJTVNlNYrQt8ssOmamyviSyyw085diD0KrR
+ARC-Seal: i=1; a=rsa-sha256; t=1522128618; cv=none;
         d=google.com; s=arc-20160816;
-        b=QXbqfx93dgPw3a6NL+UAZ/q0db74FsFy3McAXZ7Fr4cKQjybB4b9Fs3RqFDN2tzO4p
-         1OFKREwtA7Gc4vwYodFCkS96Y1LzMqvm4nKGNSlapg6Gt21aTQf2f4C7fkvZUb5ZqR+G
-         wo9GvObiEfbOV094ewkr+N8TE+ru32+FgqVenNll1eHqxFCj/t9k23Uv2wTwDNlIPaYi
-         kLyQSOF84WTV7epVpTx+eDUXk7xaQh88q+cU/6+LXjDBd7Ey/JDhl6go1U6+T2jLDaV1
-         +ClAzq960GK9SR/zI/eNGFl2/B9CIfLtFB4faiBULqD19opZ2Rf8ZN+HL1hygyLzZTcb
-         PRHg==
+        b=0J55kZgIU72w3DMztI4O21nRm6X8nJqblmJnke3pesB08DvossxPYkFy/8ox76c0eK
+         CNJnjrfT8SH/7lDy95YU2BXBapphU1hmz2Eq9aqn68t/74epsoSH7xMh7mf03K2B4uNG
+         tOG3qNmF1REvJEHp/ouPHX100ERem75X8rUT1m1ju7Ib1LjlBeHSr+47GJN+7SXm9nmD
+         mY1831NOXGPBBXT6TN2iAWwi8jZsP3PgZ3izF8/AI45UYY17P1S1qekSkw/7pumsW7u9
+         SGrWbXZ+0xACdONWiP3vVMIE3of2ycpWp9+vSKue62E2wGdqiWXIqW16bbRgHOITUEqv
+         NkjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=hjwZV2swZPm+ViBmzhY+m7r/cEb+TudZ0G37TryRsvQ=;
-        b=c2t9BdaRjEcSAdYB8BRbJ2HM1uOaI48qLTNQP2NSroc3tpeOCeH66GfN4vPsfwP7TR
-         044fiZ+rGrzWztSJH4ml5xgij7sFtPFPkwfvQZvHbFiVzcvHucxYhOvt245hWukdNtX7
-         rAo0bWyTHRwd0Rv751IVpwS6N1MpqpiFsK7S/IYeE7oSpmeC2k4i+mBtPNK9Ydz+AOJ/
-         AUpo5XylsTuT8DywLjn1Yczgg+GVROP8DPOQORSb4D99mdnbE8Hs8lX9OPYCLLHmgi/F
-         dGhVhPqUJopMd/btA19WoriDgkbHD3tyyGJjpxvUVgitbYeKz5MoZrvIFd5x+Oiu/9WX
-         pPmA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=RGk+aT9ZGpkRkDLDSt7yEl22MZ2hquI+ZQNQeH0HzbI=;
+        b=p9n3p3SMb8ZYpY/cCor5jpp0eO7BQAduLaRal+yAQWVJQsn++cwEEqx9TRVe+1yc4v
+         VEMd7Yd3D9LrjiI4vPDNctQBEzQnIkSlJfD7l5eOVAj9msO6yjZa248im++tGfkBv+K1
+         qaZFUxCt0T1JbavuChLYGJ5nlxCDT7PEF4ioFaf9jheEjH4Fg/HjoUK2zp4eYdeFPtOn
+         UsITO7FEhlOB3XlRvz+w2Mf+5Yh6UyWa5foIhi4ukcBPP2HkKTHEEIR34SGZUKTRk8/1
+         qr49XmSWsr7PSd1w8Ba3txC/EREapGKTs5EdMB6Vl+Ailtga/HXhMxdXul2gvKzSTNuy
+         8uyg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=h9n0UhU7;
-       dkim=pass header.i=@chromium.org header.s=google header.b=e52guedu;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=RICW6Nmi;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=h9n0UhU7;
-       dkim=pass header.i=@chromium.org header.s=google header.b=e52guedu;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AIpwx49CIj53aJRCt5L9hWUirED1zdQ4JccjkDM4LL3ZDHE31IT2pLgrWpOFPp5dQqYRt7wDFquzDvqTk+eK7bTF7Lk=
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <1522128575-5326-4-git-send-email-yamada.masahiro@socionext.com>
-References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com> <1522128575-5326-4-git-send-email-yamada.masahiro@socionext.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 27 Mar 2018 20:29:20 -0700
-X-Google-Sender-Auth: bXnyO5pJPaL0WnBPDzx8DvG3HlM
-Message-ID: <CAGXu5jL+4mboiU1xfW4Q=bpB8KmGXHCZEVavRVKL0hKJ1_06fg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/21] kconfig: move and rename sym_expand_string_value()
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-	Ulf Magnusson <ulfalizer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=RICW6Nmi;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2R5TaLl011947
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 02/21] kbuild: remove CONFIG_CROSS_COMPILE support
+Date: Tue, 27 Mar 2018 14:29:16 +0900
+Message-Id: <1522128575-5326-3-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596067537753773827?=
-X-GMAIL-MSGID: =?utf-8?q?1596150525790642070?=
+X-GMAIL-THRID: =?utf-8?q?1596067537535425960?=
+X-GMAIL-MSGID: =?utf-8?q?1596067537535425960?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 26, 2018 at 10:29 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> This helper expands symbols contained in a string.  I am about to
-> change it to expand environments instead of symbols.  Also, I will
-> add function expansion later.
->
-> Rename it to expand_string_value(), and move it to util.c, which is
-> a more suitable place.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Kbuild provides a couple of ways to specify CROSS_COMPILE:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+[1] Command line
+[2] Environment
+[3] arch/*/Makefile (only some architectures)
+[4] CONFIG_CROSS_COMPILE
 
--Kees
+[4] is problematic for the compiler capability tests in Kconfig.
+CONFIG_CROSS_COMPILE allows users to change the compiler prefix from
+'make menuconfig', etc.  It means, the compiler options would have
+to be all re-calculated everytime CONFIG_CROSS_COMPILE is changed.
 
+To avoid complexity and performance issues, I'd like to evaluate
+the shell commands statically, i.e. only parsing Kconfig files.
+
+I guess the majority is [1] or [2].  Currently, there are only
+4 defconfig files that specify CONFIG_CROSS_COMPILE.
+  arch/arm/configs/lpc18xx_defconfig
+  arch/hexagon/configs/comet_defconfig
+  arch/openrisc/configs/or1ksim_defconfig
+  arch/openrisc/configs/simple_smp_defconfig
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v2: None
+
+ Makefile     | 3 ---
+ init/Kconfig | 9 ---------
+ 2 files changed, 12 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index c55cf95..5c395ed 100644
+--- a/Makefile
++++ b/Makefile
+@@ -316,12 +316,9 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
+ # CROSS_COMPILE can be set on the command line
+ # make CROSS_COMPILE=ia64-linux-
+ # Alternatively CROSS_COMPILE can be set in the environment.
+-# A third alternative is to store a setting in .config so that plain
+-# "make" in the configured kernel build directory always uses that.
+ # Default value for CROSS_COMPILE is not to prefix executables
+ # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
+ ARCH		?= $(SUBARCH)
+-CROSS_COMPILE	?= $(CONFIG_CROSS_COMPILE:"%"=%)
+ 
+ # Architecture as present in compile.h
+ UTS_MACHINE 	:= $(ARCH)
+diff --git a/init/Kconfig b/init/Kconfig
+index e37f4b2..df18492 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -54,15 +54,6 @@ config INIT_ENV_ARG_LIMIT
+ 	  Maximum of each of the number of arguments and environment
+ 	  variables passed to init from the kernel command line.
+ 
+-
+-config CROSS_COMPILE
+-	string "Cross-compiler tool prefix"
+-	help
+-	  Same as running 'make CROSS_COMPILE=prefix-' but stored for
+-	  default make runs in this kernel build directory.  You don't
+-	  need to set this unless you want the configured kernel build
+-	  directory to select the cross-compiler automatically.
+-
+ config COMPILE_TEST
+ 	bool "Compile also drivers which will not load"
+ 	depends on !UML
 -- 
-Kees Cook
-Pixel Security
+2.7.4
