@@ -1,40 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeC0NX7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:23:59 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:60740 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752702AbeC0NQO (ORCPT
+        id S1752870AbeC0NYV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:24:21 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46036 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752702AbeC0NYR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:16:14 -0400
-Message-ID: <1522156568.3050.19.camel@sipsolutions.net>
-Subject: Re: [PATCH 1/3] ieee80211: Replace bit shifts with the BIT() macro
- for WLAN_CAPABILITY_*.
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Quytelda Kahja <quytelda@tamalin.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 27 Mar 2018 15:16:08 +0200
-In-Reply-To: <CAFLvi20sgO4aKTLYutvwUr5aN9TLaqLWVghC9Y9MrKZvcixAYA@mail.gmail.com>
-References: <20180324041027.6498-1-quytelda@tamalin.org>
-         <e31eb13b-598b-e7c7-607b-c98664818563@lwfinger.net>
-         <CAFLvi20sgO4aKTLYutvwUr5aN9TLaqLWVghC9Y9MrKZvcixAYA@mail.gmail.com>
+        Tue, 27 Mar 2018 09:24:17 -0400
+X-Google-Smtp-Source: AG47ELvwr8tnFQmfGSUpsSC+tMndhe1XKJlvcuw5s7jvKSOzL8h6lATBQs77I6TGkru2vvWKC33oVPhNQXb9USmiai8=
+MIME-Version: 1.0
+In-Reply-To: <152166234504.91116.14942145962035607739@swboyd.mtv.corp.google.com>
+References: <20180321165848.89751-1-swboyd@chromium.org> <20180321165848.89751-3-swboyd@chromium.org>
+ <1521655150.23017.79.camel@linux.intel.com> <152166234504.91116.14942145962035607739@swboyd.mtv.corp.google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 27 Mar 2018 15:24:16 +0200
+Message-ID: <CACRpkdbg40yaKVbo-b6UKAYfGpT2ZLDdXaPKgEn-4zGL4mKuag@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] gpiolib: Support 'gpio-reserved-ranges' property
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, Timur Tabi <timur@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Grant Likely <grant.likely@secretlab.ca>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-03-24 at 16:02 -0700, Quytelda Kahja wrote:
-> The "document" refers to the file in which the changes were made
-> ('include/linux/ieee80211.h').
+On Wed, Mar 21, 2018 at 8:59 PM, Stephen Boyd <swboyd@chromium.org> wrote:
+> Quoting Andy Shevchenko (2018-03-21 10:59:10)
+>> On Wed, 2018-03-21 at 09:58 -0700, Stephen Boyd wrote:
+>> > From: Stephen Boyd <sboyd@codeaurora.org>
+>> >
+>> > Some qcom platforms make some GPIOs or pins unavailable for use by
+>> > non-secure operating systems, and thus reading or writing the
+>> > registers
+>> > for those pins will cause access control issues. Add support for a DT
+>> > property to describe the set of GPIOs that are available for use so
+>> > that
+>> > higher level OSes are able to know what pins to avoid reading/writing.
+>> > Non-DT platforms can add support by directly updating the
+>> > chip->valid_mask.
+>>
+>> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+>> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>>
+>> Hmm...
+>
+> Don't look closely! :P
 
-You're the first person ever to do that, to my knowledge :)
+Same physical person acting on behalf of two different legal
+entities right? Seems OK to me.
 
-Either way, I don't really want to merge this since it would break
-staging, and I don't want to merge a staging fix either... so you'd have
-to get that sorted out first.
-
-johannes
+Yours,
+Linus Walleij
