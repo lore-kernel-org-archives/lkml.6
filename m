@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751196AbeC0HrO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 03:47:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48927 "EHLO
+        id S1751732AbeC0Hr1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 03:47:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60415 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750873AbeC0HrN (ORCPT
+        with ESMTP id S1750873AbeC0HrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 03:47:13 -0400
-Date: Tue, 27 Mar 2018 00:46:29 -0700
+        Tue, 27 Mar 2018 03:47:24 -0400
+Date: Tue, 27 Mar 2018 00:47:01 -0700
 From: tip-bot for Davidlohr Bueso <tipbot@zytor.com>
-Message-ID: <tip-b720342849fe685310fca01748a32730a6eca5aa@git.kernel.org>
-Cc: mingo@kernel.org, dave@stgolabs.net, peterz@infradead.org,
-        dbueso@suse.de, torvalds@linux-foundation.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: dbueso@suse.de, tglx@linutronix.de, torvalds@linux-foundation.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        dave@stgolabs.net, peterz@infradead.org
-In-Reply-To: <20180326210929.5244-4-dave@stgolabs.net>
-References: <20180326210929.5244-4-dave@stgolabs.net>
+Message-ID: <tip-631fe154edb0a37308d0116a0f9b7bba9dca6218@git.kernel.org>
+Cc: tglx@linutronix.de, dbueso@suse.de, hpa@zytor.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, dave@stgolabs.net
+Reply-To: mingo@kernel.org, torvalds@linux-foundation.org, hpa@zytor.com,
+        peterz@infradead.org, dave@stgolabs.net, linux-kernel@vger.kernel.org,
+        dbueso@suse.de, tglx@linutronix.de
+In-Reply-To: <20180326210929.5244-5-dave@stgolabs.net>
+References: <20180326210929.5244-5-dave@stgolabs.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/core: Update preempt_notifier_key to modern
- API
-Git-Commit-ID: b720342849fe685310fca01748a32730a6eca5aa
+Subject: [tip:perf/core] perf/x86: Update rdpmc_always_available static key
+ to the modern API
+Git-Commit-ID: 631fe154edb0a37308d0116a0f9b7bba9dca6218
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,20 +34,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b720342849fe685310fca01748a32730a6eca5aa
-Gitweb:     https://git.kernel.org/tip/b720342849fe685310fca01748a32730a6eca5aa
+Commit-ID:  631fe154edb0a37308d0116a0f9b7bba9dca6218
+Gitweb:     https://git.kernel.org/tip/631fe154edb0a37308d0116a0f9b7bba9dca6218
 Author:     Davidlohr Bueso <dave@stgolabs.net>
-AuthorDate: Mon, 26 Mar 2018 14:09:26 -0700
+AuthorDate: Mon, 26 Mar 2018 14:09:27 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 27 Mar 2018 07:51:45 +0200
+CommitDate: Tue, 27 Mar 2018 07:53:00 +0200
 
-sched/core: Update preempt_notifier_key to modern API
+perf/x86: Update rdpmc_always_available static key to the modern API
 
-No changes in refcount semantics, use DEFINE_STATIC_KEY_FALSE()
+No changes in refcount semantics -- use DEFINE_STATIC_KEY_FALSE()
 for initialization and replace:
 
   static_key_slow_inc|dec()   =>   static_branch_inc|dec()
   static_key_false()          =>   static_branch_unlikely()
+
+Added a '_key' suffix to rdpmc_always_available, for better self-documentation.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 Cc: Davidlohr Bueso <dave@stgolabs.net>
@@ -55,61 +57,54 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: akpm@linux-foundation.org
-Link: http://lkml.kernel.org/r/20180326210929.5244-4-dave@stgolabs.net
+Link: http://lkml.kernel.org/r/20180326210929.5244-5-dave@stgolabs.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/events/core.c             | 6 +++---
+ arch/x86/include/asm/mmu_context.h | 5 +++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b249adbf2a48..de440456f15c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2462,17 +2462,17 @@ void wake_up_new_task(struct task_struct *p)
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 4823695c459f..a6006e7bb729 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -48,7 +48,7 @@ DEFINE_PER_CPU(struct cpu_hw_events, cpu_hw_events) = {
+ 	.enabled = 1,
+ };
  
- #ifdef CONFIG_PREEMPT_NOTIFIERS
+-struct static_key rdpmc_always_available = STATIC_KEY_INIT_FALSE;
++DEFINE_STATIC_KEY_FALSE(rdpmc_always_available_key);
  
--static struct static_key preempt_notifier_key = STATIC_KEY_INIT_FALSE;
-+static DEFINE_STATIC_KEY_FALSE(preempt_notifier_key);
+ u64 __read_mostly hw_cache_event_ids
+ 				[PERF_COUNT_HW_CACHE_MAX]
+@@ -2206,9 +2206,9 @@ static ssize_t set_attr_rdpmc(struct device *cdev,
+ 		 * but only root can trigger it, so it's okay.
+ 		 */
+ 		if (val == 2)
+-			static_key_slow_inc(&rdpmc_always_available);
++			static_branch_inc(&rdpmc_always_available_key);
+ 		else
+-			static_key_slow_dec(&rdpmc_always_available);
++			static_branch_dec(&rdpmc_always_available_key);
+ 		on_each_cpu(refresh_pce, NULL, 1);
+ 	}
  
- void preempt_notifier_inc(void)
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 1de72ce514cd..57e3785d0d26 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -24,11 +24,12 @@ static inline void paravirt_activate_mm(struct mm_struct *prev,
+ #endif	/* !CONFIG_PARAVIRT */
+ 
+ #ifdef CONFIG_PERF_EVENTS
+-extern struct static_key rdpmc_always_available;
++
++DECLARE_STATIC_KEY_FALSE(rdpmc_always_available_key);
+ 
+ static inline void load_mm_cr4(struct mm_struct *mm)
  {
--	static_key_slow_inc(&preempt_notifier_key);
-+	static_branch_inc(&preempt_notifier_key);
- }
- EXPORT_SYMBOL_GPL(preempt_notifier_inc);
- 
- void preempt_notifier_dec(void)
- {
--	static_key_slow_dec(&preempt_notifier_key);
-+	static_branch_dec(&preempt_notifier_key);
- }
- EXPORT_SYMBOL_GPL(preempt_notifier_dec);
- 
-@@ -2482,7 +2482,7 @@ EXPORT_SYMBOL_GPL(preempt_notifier_dec);
-  */
- void preempt_notifier_register(struct preempt_notifier *notifier)
- {
--	if (!static_key_false(&preempt_notifier_key))
-+	if (!static_branch_unlikely(&preempt_notifier_key))
- 		WARN(1, "registering preempt_notifier while notifiers disabled\n");
- 
- 	hlist_add_head(&notifier->link, &current->preempt_notifiers);
-@@ -2511,7 +2511,7 @@ static void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
- 
- static __always_inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
- {
--	if (static_key_false(&preempt_notifier_key))
-+	if (static_branch_unlikely(&preempt_notifier_key))
- 		__fire_sched_in_preempt_notifiers(curr);
- }
- 
-@@ -2529,7 +2529,7 @@ static __always_inline void
- fire_sched_out_preempt_notifiers(struct task_struct *curr,
- 				 struct task_struct *next)
- {
--	if (static_key_false(&preempt_notifier_key))
-+	if (static_branch_unlikely(&preempt_notifier_key))
- 		__fire_sched_out_preempt_notifiers(curr, next);
- }
- 
+-	if (static_key_false(&rdpmc_always_available) ||
++	if (static_branch_unlikely(&rdpmc_always_available_key) ||
+ 	    atomic_read(&mm->context.perf_rdpmc_allowed))
+ 		cr4_set_bits(X86_CR4_PCE);
+ 	else
