@@ -1,127 +1,118 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-601012-1522188131-2-17265993359941720132
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='comi', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522188131; b=Jxo0NVL3L+OCwFIKnxdMMr5os/TNnhiIf+VrKFqF3Z1rMqQ
-    t/PkcRSL7pSnrCH1DTDZ+dg/HJHmUFkXo/hU2ECmYOqcYWERmrSxS3QKdjuZ1OTw
-    LOYZ1NDKVkPD3igqob9owKUtMUyQrcGQQK2KFqrI+scigKEdl2qdQd2lQ8pBk1Q9
-    i9iNmRaX6XDA2+RiPEH9q8etsOBKes7uVrO8HK1+uXI8e6WVzw/+KDoLqdFIK9Ca
-    zjeruutvI4vU+n7blgMuflVuTwzZIWGiXBH6MwZJWCZeCDJxco1ztps6enic10vk
-    wiSUIzgvjb12EXbuyuGsQ4/dDeso+fo2qGAhTTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:reply-to:sender:list-id; s=arctest; t=
-    1522188131; bh=wJDP5a0aY7Dw5MoFKJeDtXf3PlpXbjjcjD+u0hPaMlk=; b=g
-    sTU8gQnabHrbJA9ZhTykiOj5wSgevQKeJ+/rV+yXVabJrhOdnH0/0SmVlZsOTUAf
-    /CPV2r9YMcnv0P0Go4+6bLucNOm8TQq0W5AbjqrfcQO0xrtaRjFE4eOmJYkkABP4
-    r6LH1TiUDOw4zmgsPc5Z6tD/33yspN0P/YjNcvn+1XYXue9tFLYapzEg7CSLP0m2
-    mtuZfgvO9D4jujNCFhQ6tybuOSt1V5FEupKhEI9/+q4IjTfZZK+JJKQgOuVsTUGv
-    DiW2ui0+66+R+KavSi32K9p1h9kXhS35++MZBUufp6YjDfA9e1dwTTSPVcKynFIy
-    6DQybF5xtdrWxRBVn8iAw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=permerror (from header invalid) header.from=linuxonhyperv.comi;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxonhyperv.comi header.mx.error=NXDOMAIN header.a.error=NXDOMAIN header.aaaa.error=NXDOMAIN header.result=fail header_org.domain=comi header_org.mx.error=NXDOMAIN header_org.a.error=NXDOMAIN header_org.aaaa.error=NXDOMAIN header_org.result=fail header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=permerror (from header invalid) header.from=linuxonhyperv.comi;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxonhyperv.comi header.mx.error=NXDOMAIN header.a.error=NXDOMAIN header.aaaa.error=NXDOMAIN header.result=fail header_org.domain=comi header_org.mx.error=NXDOMAIN header_org.a.error=NXDOMAIN header_org.aaaa.error=NXDOMAIN header_org.result=fail header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFITznaYM6Ja+5+sx5jYhWbZebTp5oCvdo8QCaBMMVsuGd85r3m2IZ5JlHk2eGa4lPu+jOC90dkMGSoVd2vtPAPLtj64raRkPCQG8qTfedhe3D8lTQG7
-    lgiG19AoMFPnuVsyj3SUaEIBLqe2oL1v2ATJDQhd+9P57q6W9wdml6CQgWDEyCSQ9XrqquvYd3ULpHKFh6nn1xLC+5ei+zdE9FgTueOcDd2MppL2XepGuMof
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wmH2h71lHiwA:10 a=v2DPQv5-lfwA:10
-    a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=GkTYVVm25eQ9X94RZzEA:9
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeC0WCI (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 18:02:08 -0400
-Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:51174
-        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751874AbeC0WCH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 18:02:07 -0400
-x-originating-ip: 107.180.71.197
-From: kys@linuxonhyperv.comi
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
-        vkuznets@redhat.com, jasowang@redhat.com,
-        leann.ogasawara@canonical.com, marcelo.cerri@canonical.com,
-        sthemmin@microsoft.com
-Cc: Dexuan Cui <decui@microsoft.com>, stable@vger.kernel.org,
-        "K . Y . Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 2/4] Drivers: hv: vmbus: do not mark HV_PCIE as perf_device
-Date: Tue, 27 Mar 2018 15:01:02 -0700
-Message-Id: <20180327220104.19700-2-kys@linuxonhyperv.comi>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180327220104.19700-1-kys@linuxonhyperv.comi>
-References: <20180327215859.19624-1-kys@linuxonhyperv.com>
- <20180327220104.19700-1-kys@linuxonhyperv.comi>
-Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfABmXR7Rk+vCv4NXGkmCKpUssJxtEkQ0Yoc7ijs4GTxJUbbd3qbXoBelXaMZqadpCX3eqgtNIDb6XUqZyPpBe3Q3+q78/oMciN8lUi97ij+42Um8MF22
- Xe5k5lWBGpNPmf2a3uul7DbcEBhrOuG2rPNHM/v3f3ZhBVDD7qlkeUIp73J8wJKmqWxV3J5tnlWGu4u63vl3/ybFPf38FdbGALWdrO0+N6Y7Vtk390d/YrNZ
- guWfQ5N9sifwhHpFAYUg32/djc9sAfFocFY0KSP5FR72VB3j7GMm2iVQl5C6QYyLwhQuG3pS8vS/PCCQL/ddB1F6+eLwCy92cjx7NuqHuKhHs4/F3RcUs9wK
- u2I7ihG840mpgH+uNCI8vfvP/PcbQHn7Khd87qfp4TtHIDJ7Sj1MZ5yI/IyCKHtkKdsnVueYc5FpoBb1z+AMPdzbqceOCRNdN6LHlZAGOq8MOBw/X9HFEsHn
- 2AY+VKerxELzRuZmBcGdKmm18XY9BluGjDnEGzvOq0/zDzxrG82f35wqu2aw7WtVrx63HwK9IknXXeYjEQpK2OqNZ2q6abkQ5JI6cmWCcq1qvg1q8aWkvzYP
- 4BfpYcANdz6GE6s7KRCUmgqRmRcU8JY3GGA8HnDptT+qVA==
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <kernel-hardening-return-12745-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELu5aBLpqRvdncGBoHQVUG4ECZ0dUKELd4UhDC8SlORBhB9+4BEuLCjeqnU2QYCchNY4K5sp
+ARC-Seal: i=1; a=rsa-sha256; t=1522115786; cv=none;
+        d=google.com; s=arc-20160816;
+        b=AvhYtH6yHb18kg2XQVdSEhksAc6s7u5T1o9OqoyzEJSyUXz70wy7HoAdvvXiZ7yFqU
+         6e6VxP05/g2CsMOJMqPKXtGtb+R8puB+S0w6/GrqfAcLesByw1nBI0Kg0jOhc/TvKPWO
+         IE4LEZMH6ZtKnfPepnGs1BjAU1D2zeZFNEYmCtExHjMPDMC7y8b71d8xMxNIHV++vcOD
+         QFMOlt4mATQmA6HdhQW7d+1zn5K96WdO0EikO9MPijKOeCDav0xew3TAv8GTMTGalXyW
+         VDhd3/lKUmaBJpT2Wd5t/XzmkP3DjuJ/ritx2t479UZ8+Bc+xKbbxMPlbkndXD7pE7pZ
+         hRhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:subject:cc:to:from:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=8fA3U4MusqQItlxYQ8S3f+8kWLQAiQdGHvLh57zuolk=;
+        b=cowPum9UJDCnvbo3HQIW0eK/PWaojP4lfGEByCAmQJ4sXmbFL4uL/NdI2c6aYdMk/r
+         gBA09ma6R58Sod3HXllbC0iZ9KdR7tpE1PZRhoQcyr9f2fpp0ND9AOG1D64+7l5A4H7v
+         7UxwmtbxYl3CA26wfdX+/xkyztMOk8Hh3B5fzuzbrjfRqvoKcgITM7cGSz9RbPqfDKF6
+         ZuuATnQIV2gsVFUm/ZsCXgUjfOTJCB5xpRNyiqcCOxz0OP0AEBCfGj9SqJJYe0EJj5/N
+         SOaZTrmdwLASwcUapQbYQYyMRBl+ehaKSfFAWs2WUAY8pKwGFn4TR2n61p0xxkk6cOmV
+         WmXw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12745-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12745-gregkh=linuxfoundation.org@lists.openwall.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of kernel-hardening-return-12745-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12745-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Igor Stoppa <igor.stoppa@huawei.com>
+To: <willy@infradead.org>, <keescook@chromium.org>, <mhocko@kernel.org>
+CC: <david@fromorbit.com>, <rppt@linux.vnet.ibm.com>, <labbott@redhat.com>,
+	<linux-security-module@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-hardening@lists.openwall.com>,
+	<igor.stoppa@gmail.com>, Igor Stoppa <igor.stoppa@huawei.com>
+Subject: [RFC PATCH v20 0/6] mm: security: ro protection for dynamic data
+Date: Tue, 27 Mar 2018 04:55:18 +0300
+Message-ID: <20180327015524.14318-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.122.225.51]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1596054083470028884?=
+X-GMAIL-MSGID: =?utf-8?q?1596054083470028884?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dexuan Cui <decui@microsoft.com>
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-The pci-hyperv driver's channel callback hv_pci_onchannelcallback() is not
-really a hot path, so we don't need to mark it as a perf_device, meaning
-with this patch all HV_PCIE channels' target_cpu will be CPU0.
+The memory is managed in pools: when a memory pool is protected, all the
+memory that is currently part of it, will become R/O.
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: stable@vger.kernel.org
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
----
- drivers/hv/channel_mgmt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+A R/O pool can be expanded (adding more protectable memory).
+It can also be destroyed, to recover its memory, but it cannot be
+turned back into R/W mode.
 
-diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-index c6d9d19bc04e..ecc2bd275a73 100644
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -71,7 +71,7 @@ static const struct vmbus_device vmbus_devs[] = {
- 	/* PCIE */
- 	{ .dev_type = HV_PCIE,
- 	  HV_PCIE_GUID,
--	  .perf_device = true,
-+	  .perf_device = false,
- 	},
- 
- 	/* Synthetic Frame Buffer */
+This is intentional. This feature is meant for data that doesn't need
+further modifications after initialization.
+
+However the data might need to be released, for example as part of module
+unloading. The pool, therefore, can be destroyed.
+
+An example is provided, in the form of self-testing.
+
+Changes since v19:
+
+[http://www.openwall.com/lists/kernel-hardening/2018/03/13/68]
+
+* dropped genalloc as allocator
+* first attempt at rewriting pmalloc, as discussed with Matthew Wilcox:
+  [http://www.openwall.com/lists/kernel-hardening/2018/03/14/20]
+* removed free function from the API
+* removed distinction between protected and unprotected pools: a pool can
+  contain both protectec and unprotected areas.
+* removed gpf parameter, as it didn't seem too useful (or not?)
+* added option to specify alignment of allocations
+* added parameter for specifying size of a refill
+* removed option to pre-allocate memory for a pool (is it a bad idea?)
+* changed vmap_area to allow chaining them, for tracking them in a pool
+* made public the previously private find_vmap_area function
+
+Igor Stoppa (6):
+  struct page: add field for vm_struct
+  vmalloc: rename llist field in vmap_area
+  Protectable Memory
+  Pmalloc selftest
+  lkdtm: crash on overwriting protected pmalloc var
+  Documentation for Pmalloc
+
+ Documentation/core-api/index.rst   |   1 +
+ Documentation/core-api/pmalloc.rst | 101 ++++++++++++
+ drivers/misc/lkdtm.h               |   1 +
+ drivers/misc/lkdtm_core.c          |   3 +
+ drivers/misc/lkdtm_perms.c         |  28 ++++
+ include/linux/mm_types.h           |   1 +
+ include/linux/pmalloc.h            | 281 ++++++++++++++++++++++++++++++++
+ include/linux/test_pmalloc.h       |  24 +++
+ include/linux/vmalloc.h            |   5 +-
+ init/main.c                        |   2 +
+ mm/Kconfig                         |  16 ++
+ mm/Makefile                        |   2 +
+ mm/pmalloc.c                       | 321 +++++++++++++++++++++++++++++++++++++
+ mm/test_pmalloc.c                  | 136 ++++++++++++++++
+ mm/usercopy.c                      |  33 ++++
+ mm/vmalloc.c                       |  10 +-
+ 16 files changed, 960 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/core-api/pmalloc.rst
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 include/linux/test_pmalloc.h
+ create mode 100644 mm/pmalloc.c
+ create mode 100644 mm/test_pmalloc.c
+
 -- 
-2.15.1
+2.14.1
