@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522169873; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1522169872; cv=none;
         d=google.com; s=arc-20160816;
-        b=vkQuOt4rF/trkbXlW0T1UtLa/6OaQAo4f5kgiQoSWmrg80ygEg3Sv2qTwGn4PSWe0M
-         4RfwtV59w9qQ7pY925BStVix81HUVSDpqWSKFknkKidlvDkY+2+iqIyfAyOs3BFwQ0F1
-         CvLHPHp5MjxopANfYp8KUPzevuT8U60q0xYgf8L9l8Bzx2fJAGx9HhaHcX4Kh8o27TH0
-         7hgxK3mn7XYxydv6DksH8uoia9fR1AXMAVPoSxm2zgQH6qr6ybWuyKiuL7Et+VycvPdx
-         qeodNrtSw6YVce2ZMQthLPp3NDDlQw65QJy1i7ckS0cLGiDR3hvvEhp+kauKOPOQqiwc
-         IWXw==
+        b=dT3eanY81FgDPWo64hUS/Vg2JEx7DxeKIabZlWl22gjCoOobsboWsLQI3htc+ck6TN
+         fXO6PMjbaIPPJHGGAZ8a4Z1oC3CBYT0ukY1Rf4n6PjDlwzW2P1wqDDV1dNip0kaxbu3k
+         lOARFXqYjIYB43PH9OoGkXUo2jeXRc84C4Dj9LlJs0dfoyUgOlgZAS3Q4nuc0cQFculK
+         +w34OOizzNwghr+cblnCAmpkSilSnJC9qoEGunBC0Hrqxt5ALXsFD3BmjNP7WKNqr/zB
+         4R6k3O3geB4YA8pZYSJtS20pyR48kEKJIb78n8lYN2m3XBa7TnlN4eIE98Mf7ZXgff3k
+         fHfQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=cacUgNErAiacdTm28Hw85KMBEjc9e53EfkZQ5WfCyjc=;
-        b=zxOUobFXFrDWqX5VCecnvcqhrSX7HNYUoVcPcTZDYSNF+eADgZmTBPIxs6PketUEAA
-         YMjx80oihv6Jl5t5P3xMAV4V3WxdNBs4jdlGNxSh1Q1t+NtEs1WkRIBTACYJyyyKayEV
-         qbOT8MsWhYpPLEYJxLZ0N4ZaBzQqWfauifGPsCzFs1W8hql3AvwIioEf74lRYoThXVbq
-         tIYXJ0OwRmFHLCNVRrfqNj2ipf1vosbPcS3ZJ1a+vD+hUgbVefRgdCxFCMaMpoM8SH9s
-         2W9pJBh58isdXpRx0QNCo6RRC0oOCcz5BF1KjamT+8gvf5a4Yurf7KIezuKTRacHAMMf
-         6lXA==
+        bh=PQDvPwpCCj++tEzmkEClg/xNExzGMoMf+mTY7ONA9sM=;
+        b=qSOc0OH5sN7gMvAZHZbOALBg754qN1bBm3u3cvau3/FhV2ZgBb2KcClE0lbvJkQpuf
+         /ty1Z0U97UzJaToe1olo10Nl12RGe1i1FoK8RMj3D/XSEFoQVT6vzBU/HR3uYtOQ6rZz
+         4Ol/bLem8MCNtKANt5uobCe+FQSbSBGWM+NknOH85PBrySkc1DZlaw9nsmuc3VeRqwzg
+         FRR/g2vJ1bLYGbNyvYdxnsrA/cjbYCxj/NmfKep1CeQYygLFQkymL3Quj+QLbzSlVDeT
+         W7++dSSTDjWhsLu6TOe7hb9pW6IA5jiaHtfSFlD44x8gLROLM2FDkB3Z6PqsnkNQvww8
+         2y+g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=TEg6GMmY;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=ADn0rmiu;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=TEg6GMmY;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=ADn0rmiu;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx48/QtGfl4IRtqr4mAXPt9oSOb47MZa+Ey39W0BnqqXfqnZ7EpSWaMB+jlXhxDcmsxCAtafe2w==
+X-Google-Smtp-Source: AIpwx4/r7QqaBNv+zh63HY6pUE+6nXfgV70QA44S2r+rRUeb7OeXVCpu+eEC5+uPaXYYZWHThL86gA==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
@@ -58,89 +58,61 @@ Cc: Dmitry Vyukov <dvyukov@google.com>,
 	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
 	Jacob Bramley <Jacob.Bramley@arm.com>,
 	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
-Subject: [RFC PATCH v2 4/6] mm, arm64: untag user addresses in mm/gup.c
-Date: Tue, 27 Mar 2018 18:57:40 +0200
-Message-Id: <e5892d12e3faef27da4e71be5b3d31a5e8958370.1522169685.git.andreyknvl@google.com>
+Subject: [RFC PATCH v2 3/6] arm64: untag user addresses in copy_from_user and others
+Date: Tue, 27 Mar 2018 18:57:39 +0200
+Message-Id: <22d41e0e1439ed0d13b2a2ca4b7c8317131f7ea9.1522169685.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.rc0.231.g781580f067-goog
 In-Reply-To: <cover.1522169685.git.andreyknvl@google.com>
 References: <cover.1522169685.git.andreyknvl@google.com>
 In-Reply-To: <cover.1522169685.git.andreyknvl@google.com>
 References: <cover.1522169685.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596110797384518600?=
-X-GMAIL-MSGID: =?utf-8?q?1596110797384518600?=
+X-GMAIL-THRID: =?utf-8?q?1596110796097198401?=
+X-GMAIL-MSGID: =?utf-8?q?1596110796097198401?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-mm/gup.c provides a kernel interface that accepts user addresses and
-manipulates user pages directly (for example get_user_pages, that is used
-by the futex syscall). Here we also need to handle the case of tagged user
-pointers.
+copy_from_user (and a few other similar functions) are used to copy data
+from user memory into the kernel memory or vice versa. Since a user can
+provided a tagged pointer to one of the syscalls that use copy_from_user,
+we need to correctly handle such pointers.
 
-Untag addresses passed to this interface.
+Do this by untagging user pointers in access_ok and in __uaccess_mask_ptr.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/gup.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/include/asm/uaccess.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 6afae32571ca..9c4afcf50dfa 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -386,6 +386,8 @@ struct page *follow_page_mask(struct vm_area_struct *vma,
- 	struct page *page;
- 	struct mm_struct *mm = vma->vm_mm;
+diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+index 2d6451cbaa86..24a221678fe3 100644
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -105,7 +105,8 @@ static inline unsigned long __range_ok(const void __user *addr, unsigned long si
+ #define untagged_addr(addr)		\
+ 	((__typeof__(addr))sign_extend64((__u64)(addr), 55))
  
-+	address = untagged_addr(address);
+-#define access_ok(type, addr, size)	__range_ok(addr, size)
++#define access_ok(type, addr, size)	\
++	__range_ok(untagged_addr(addr), size)
+ #define user_addr_max			get_fs
+ 
+ #define _ASM_EXTABLE(from, to)						\
+@@ -238,12 +239,15 @@ static inline void uaccess_enable_not_uao(void)
+ /*
+  * Sanitise a uaccess pointer such that it becomes NULL if above the
+  * current addr_limit.
++ * Also untag user pointers that have the top byte tag set.
+  */
+ #define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
+ static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+ {
+ 	void __user *safe_ptr;
+ 
++	ptr = untagged_addr(ptr);
 +
- 	*page_mask = 0;
- 
- 	/* make this handle hugepd */
-@@ -647,6 +649,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 	if (!nr_pages)
- 		return 0;
- 
-+	start = untagged_addr(start);
-+
- 	VM_BUG_ON(!!pages != !!(gup_flags & FOLL_GET));
- 
- 	/*
-@@ -801,6 +805,8 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
- 	struct vm_area_struct *vma;
- 	int ret, major = 0;
- 
-+	address = untagged_addr(address);
-+
- 	if (unlocked)
- 		fault_flags |= FAULT_FLAG_ALLOW_RETRY;
- 
-@@ -854,6 +860,8 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
- 	long ret, pages_done;
- 	bool lock_dropped;
- 
-+	start = untagged_addr(start);
-+
- 	if (locked) {
- 		/* if VM_FAULT_RETRY can be returned, vmas become invalid */
- 		BUG_ON(vmas);
-@@ -1749,6 +1757,8 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 	unsigned long flags;
- 	int nr = 0;
- 
-+	start = untagged_addr(start);
-+
- 	start &= PAGE_MASK;
- 	addr = start;
- 	len = (unsigned long) nr_pages << PAGE_SHIFT;
-@@ -1801,6 +1811,8 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
- 	unsigned long addr, len, end;
- 	int nr = 0, ret = 0;
- 
-+	start = untagged_addr(start);
-+
- 	start &= PAGE_MASK;
- 	addr = start;
- 	len = (unsigned long) nr_pages << PAGE_SHIFT;
+ 	asm volatile(
+ 	"	bics	xzr, %1, %2\n"
+ 	"	csel	%0, %1, xzr, eq\n"
 -- 
 2.17.0.rc0.231.g781580f067-goog
