@@ -1,191 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752001AbeC0V1w convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:27:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34782 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751058AbeC0V1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:27:51 -0400
-From: <yael.chemla@foss.arm.com>
-To: "'Mike Snitzer'" <snitzer@redhat.com>
-Cc: "'Alasdair Kergon'" <agk@redhat.com>, <dm-devel@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <ofir.drang@gmail.com>,
-        "'Yael Chemla'" <yael.chemla@arm.com>,
-        "'Eric Biggers'" <ebiggers3@gmail.com>
-References: <1522003290-27243-1-git-send-email-yael.chemla@foss.arm.com> <1522003290-27243-2-git-send-email-yael.chemla@foss.arm.com> <20180327010633.GB23487@redhat.com> <001201d3c5a9$529b4a10$f7d1de30$@foss.arm.com> <20180327131636.GA26832@redhat.com>
-In-Reply-To: <20180327131636.GA26832@redhat.com>
-Subject: RE: [PATCH 2/2] md: dm-verity: allow parallel processing of bio blocks
-Date: Wed, 28 Mar 2018 00:27:45 +0300
-Message-ID: <003001d3c612$756b3eb0$6041bc10$@foss.arm.com>
+        id S1752116AbeC0V2G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:28:06 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:39809 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751067AbeC0V2E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:28:04 -0400
+X-Google-Smtp-Source: AIpwx4/9IS7AnSZ0/pe7DxnTwqEp/Gcsu/QleifKq3wZREk9YXVkAmoGw3doykWL/h//pLUc8m76rA==
+Date: Tue, 27 Mar 2018 23:28:01 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: SF Markus Elfring <elfring@users.sourceforge.net>
+Cc: linux-pwm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pwm-puv3: Delete an error message for a failed memory
+ allocation in pwm_probe()
+Message-ID: <20180327212800.GB28058@mithrandir>
+References: <93e81e95-01e0-1493-5b4a-92f36f998dac@users.sourceforge.net>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-il
-Thread-Index: AQFItUMWMAamikjrHplfXoGQQvWTaQKnGKjBAn9tYqgBP94Q3AKhss3KpLJeF4A=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
+Content-Disposition: inline
+In-Reply-To: <93e81e95-01e0-1493-5b4a-92f36f998dac@users.sourceforge.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--8P1HSweYDcXXzwPJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> -----Original Message-----
-> From: Mike Snitzer <snitzer@redhat.com>
-> Sent: Tuesday, 27 March 2018 16:17
-> To: yael.chemla@foss.arm.com
-> Cc: 'Alasdair Kergon' <agk@redhat.com>; dm-devel@redhat.com; linux-
-> kernel@vger.kernel.org; ofir.drang@gmail.com; 'Yael Chemla'
-> <yael.chemla@arm.com>; 'Eric Biggers' <ebiggers3@gmail.com>
-> Subject: Re: [PATCH 2/2] md: dm-verity: allow parallel processing of bio blocks
-> 
-> On Tue, Mar 27 2018 at  4:55am -0400,
-> yael.chemla@foss.arm.com <yael.chemla@foss.arm.com> wrote:
-> 
-> > Hi Mike
-> > I need to rewrite these patches according to issues you and Eric Biggers
-> mentioned.
-> > please drop this v1 patch.
-> 
-> They've been dropped.  BUT please do note that the patches I pushed to
-> linux-dm.git were rebased ontop of the 'check_at_most_once' patch.
+On Fri, Dec 15, 2017 at 06:33:49PM +0100, SF Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 15 Dec 2017 18:29:49 +0100
+>=20
+> Omit an extra message for a memory allocation failure in this function.
+>=20
+> This issue was detected by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/pwm/pwm-puv3.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-Thank you so much for many style, formatting and other issues fixes and also for
-integration of 'check_at_most_once' patch, it saved me several review iterations.
+Applied, thanks.
 
-> 
-> I never did get an answer about how the sg array is free'd in certain error
-> paths (see "FIXME:" in the 2nd patch).
-> 
+Thierry
 
-Regarding free of sg in two error paths, you were correct.
-I fixed it by placing several error labels to differentiate each handling.
-I also noted that reqdata_arr[b].req was not released properly, this is also fixed.
-following is a diff of my fix based on your modifications.
-(I can send it in a patch format, but it doesn't include a fix for Eric Biggers comments)
+--8P1HSweYDcXXzwPJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-@@ -573,10 +573,9 @@ static void verity_verify_io(struct dm_verity_io *io)
-                        verity_bv_skip_block(v, io, &io->iter);
-                        continue;
-                }
--
-                reqdata_arr[b].req = ahash_request_alloc(v->tfm, GFP_NOIO);
-                if (unlikely(reqdata_arr[b].req == NULL))
--                       goto err_memfree;
-+                       goto err_mem_req;
-                ahash_request_set_tfm(reqdata_arr[b].req, v->tfm);
- 
-                /* +1 for the salt buffer */
-@@ -586,7 +585,7 @@ static void verity_verify_io(struct dm_verity_io *io)
-                                   GFP_NOIO);
-                if (!sg) {
-                        DMERR_LIMIT("%s: kmalloc_array failed", __func__);
--                       goto err_memfree;
-+                       goto err_mem_sg;
-                }
-                sg_init_table(sg, num_of_buffs);
-                // FIXME: if we 'err_memfree' (or continue;) below how does this sg get kfree()'d?
-@@ -595,7 +594,7 @@ static void verity_verify_io(struct dm_verity_io *io)
-                                          reqdata_arr[b].want_digest,
-                                          &reqdata_arr[b].fec_io, &is_zero);
-                if (unlikely(r < 0))
--                       goto err_memfree;
-+                       goto err_mem;
- 
-                if (is_zero) {
-                        /*
-@@ -605,7 +604,7 @@ static void verity_verify_io(struct dm_verity_io *io)
-                        r = verity_for_bv_block(v, io, &io->iter,
-                                                verity_bv_zero);
-                        if (unlikely(r < 0))
--                               goto err_memfree;
-+                               goto err_mem;
-                        verity_cb_complete(iodata, r);
-                        continue;
-                }
-@@ -644,7 +643,11 @@ static void verity_verify_io(struct dm_verity_io *io)
-        }
-        return;
- 
--err_memfree:
-+err_mem:
-+       kfree(sg);
-+err_mem_sg:
-+       ahash_request_free(reqdata_arr[b].req);
-+err_mem_req:
-        /*
-         * reduce expected requests by the number of unsent
-         * requests, -1 accounting for the current block
-        atomic_sub(blocks - b - 1, &iodata->expected_reqs);
-        verity_cb_complete(iodata, -EIO);
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6t2AACgkQ3SOs138+
+s6HBJA/9EEEWSz0ll4MuRhBseuY0eeF6Y4jEa4hWORg3Cq51w0rpIgwm7ma6f3pD
+PP3/lt285NUloke/CwEsLoSvajFfOGAh/ejDTOAFaC2cJI1HNOYOFuP//ULSymbv
+x054kIVqU8/TDy0tvl/LCJIIh33z4I5AEnibkagRNuyWd3Z4qWz5XpRxlRK85l0r
+iZFG+xram3u71sFaDr2U+FBI620SVSzzPeusW7yn0S3ngJ3AyFbdGEUfjj3dtxYC
+pixvjAAWMxBjy4oNCa9es8+WXCGOVqOkhkBvT1SIVwLQMbP5Mh5NkYIsvb8I9/Xj
+agAYuAhjvgPwYTXp9KFw3MG99jqQgrKPR7igiMtlnoAFGLieQCYUFXx/D9zNOTQX
+Vh8puizdORcRH2I91pFygVsSJ3eEZ0uMROlT9GddWR6T62TNjCOJlyJoFQss3BfT
+z8zti0JtDY10U+acApjCCy/HyT7p0ZpBVwzv3JNL5zA4OH0ZXbZ6JsRL9PDhcXdl
+M+pFVKOgx6KR3mMm1THOhsLk1rjy/eizIaSVoJFQOD0l4TWigOmgwpkNTCsVbg9G
+/r2Rw3Zzo+l+pW/qOw2hRyAAKy6Xw59uwXxuHML8XhY4MBMtq3+Cxif7b6zPYDvp
+26E1Ha9kOtel4T8DQcVpnOzeNurkqnF6hlzFvfaAIxwcGL2Mdrc=
+=GraV
+-----END PGP SIGNATURE-----
 
-> Also, I fixed some issues I saw in error paths, and lots of formatting.
-> 
-> I'll be pretty frustrated if you submit v2 that is blind to the kinds of changes I
-> made.
-> 
-
-I took your modifications and working upon it. 
-
-> I'll send you a private copy of the patches just so you have them for your
-> reference.
-> 
-> Thanks,
-> Mike
-> 
-> 
-> > -----Original Message-----
-> > From: Mike Snitzer <snitzer@redhat.com>
-> > Sent: Tuesday, 27 March 2018 4:07
-> > To: Yael Chemla <yael.chemla@foss.arm.com>
-> > Cc: Alasdair Kergon <agk@redhat.com>; dm-devel@redhat.com;
-> > linux-kernel@vger.kernel.org; ofir.drang@gmail.com; Yael Chemla
-> > <yael.chemla@arm.com>
-> > Subject: Re: [PATCH 2/2] md: dm-verity: allow parallel processing of
-> > bio blocks
-> >
-> > On Sun, Mar 25 2018 at  2:41pm -0400,
-> > Yael Chemla <yael.chemla@foss.arm.com> wrote:
-> >
-> > >  Allow parallel processing of bio blocks by moving to async.
-> > > completion  handling. This allows for better resource utilization of
-> > > both HW and  software based hash tfm and therefore better
-> > > performance in many cases,  depending on the specific tfm in use.
-> > >
-> > >  Tested on ARM32 (zynq board) and ARM64 (Juno board).
-> > >  Time of cat command was measured on a filesystem with various file sizes.
-> > >  12% performance improvement when HW based hash was used (ccree
-> driver).
-> > >  SW based hash showed less than 1% improvement.
-> > >  CPU utilization when HW based hash was used presented 10% less
-> > > context  switch, 4% less cycles and 7% less instructions. No
-> > > difference in  CPU utilization noticed with SW based hash.
-> > >
-> > > Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
-> >
-> > This one had various issues.  I've fixed most of what I saw and staged in
-> linux-next (purely for build test coverage purposes).  I may drop this patch if
-> others disagree with it (or my sg deallocation in the error path question isn't
-> answered).
-> >
-> > I've staged the changes here (and in linux-next via 'for-next'):
-> > https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm
-> > .git/log/?h=dm-4.17
-> >
-> > I switched all the new GFP_KERNEL uses to GFP_NOIO.  The fact that you're
-> doing allocations at all (per IO) is bad enough.  Using GFP_KERNEL is a serious
-> liability (risk of deadlock if dm-verity were to be used for something like..
-> swap.. weird setup but possible).
-> >
-> > But the gfp flags aside, the need for additional memory and the expectation
-> of scalable async parallel IO is potentially at odds with changes like this (that I
-> just staged, and had to rebase your 2 patches ontop of):
-> > https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm
-> > .git/commit/?h=dm-4.17&id=a89f6a2cfec86fba7a115642ff082cb4e9450ea6
-> >
-> > So I'm particulalry interested to hear from google folks to understand if they
-> are OK with your proposed verity async crypto API use.
-> >
-> > Mike
-> >
+--8P1HSweYDcXXzwPJ--
