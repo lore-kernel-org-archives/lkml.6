@@ -1,95 +1,108 @@
-Return-Path: <will.deacon@arm.com>
-X-Google-Smtp-Source: AIpwx4+HN0FPwaj9hcA5rd0/Ki73arstDdUaNGvzIxry10Pc16BKXG/I4Rttpp/ezoS9T4MusaIB
-ARC-Seal: i=1; a=rsa-sha256; t=1522171686; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AG47ELuiu3oIYYcGqCLksSo4aOTe/Q/1iIB+UF+XtG1Sm7ceCCLejSYNZqD2ESDQr45goc12FwZW
+ARC-Seal: i=1; a=rsa-sha256; t=1522128625; cv=none;
         d=google.com; s=arc-20160816;
-        b=rL5wxc60c8iFoMhppaj6nPZ0Fwgsd5TwHno55n2J614e4iiO9UblA82jBt3RoQe5/7
-         b8AMGr3mhJjRaNs4xCgtupJLHtMpVQO069TB5hNj9th4vM5IYLIHzGvumMcjIst8LLSO
-         TqCZc+MBOv/iD2MRYUKRhHv92jkNPCttHihnWGawwBO8aQJHo1twnWZdAREdPAsOETlO
-         n3z7cIQep+HQdaPeavm+LjdcdkYtwPIYsfoXaIcRM0FNZIRE47XkoOvwJRBk679ctqUz
-         2wRclAAjxXz33XN5r1yjF/UKXOz2YKoutRJRyohP4wE9iDIeXdLbXRjCtyWhiVcfB1/B
-         lX+A==
+        b=Qleoi0Actmaae/mSjXJb0/2VOB5EQTIVJm32gi3KWJ7iliJ1D4+ZgdDc7524e2O0ZO
+         kIYTqN+uMZeXnkz0pkFlhVqUAWRA/FAZbv3oZtyU1eVknZb0+0Vu/XYmufjbi6f3oFre
+         PYJnWt6XUtsJZz7R6bi3sk3K/gPRk3RKxq9Rbl4iQC5WunZMzhR3DviOryt3ReeXyoDj
+         on5e9zHK1v17f4Gn/qY3OadL80vMg19ocjoNTFLRA8wXTkoS4/+TV/LBTqrGA7zAKz08
+         Tv4cyzgyzh8/N1R/9ZJ17X2U6WHB+uwuhJ12RVca66esg/3M+cLMNBMPcZOvxOrebU6W
+         vrTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=uZL1J/f9s4hDejb95/GXjDEhnaKFLJPfnMhI2VgM61A=;
-        b=FgPWahoL4yuz4kEW/9wT8HSJaLJB4kbGGKJOZq4ztPnzbTdYlkYb0xTJ4+1wc5FYMF
-         6u21A3oH3Hk3oma4hhLoWs20VP9ssObnTYaGwlk9LE9IXCiGBX/W6RZeMGEPy5EJZZ+b
-         l1E5Nf/fWsm5Ou7gnvDEKP38SGrJo7o4LgLRSpRpRZrM7dn7RuX97nK9hi19LP+OsPU9
-         Y3atGRF+9x1WbqJb4DUm3TrAtGmpaJETpWgeZF1AumFtLDTdnUilJMIgQuKXEir28X4T
-         l+NjfZCsc2jEzTF5lPE1/i87AKbGWaTWGsQNApPC4Mo20vZkrPsaWFOFYK5vD+slItoJ
-         EeqA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=4pG48S2UlrsOT3ejNrzGZWeQQuZhLyLMFh52VdRj5G0=;
+        b=I8ShA7dotl5Brx433H+3NY05EA3cZbHotAucbrgOFjNZpPmSfnwnsQ0/7iRlitBLD1
+         +hgoJCcd7FHjLyxol6Lh4UFH7pLitG5uPxABQBfxD5dOwvtQy0rGag7j93fapTzdSKsJ
+         Fn6uSGfW2xXznZurwIzhOwZaVace0hyWp6sfsYk3u7ZMTLGSrhVSykYGdC3q5AKaPWN/
+         7yZcljxeBnYH5kbjAElwYBJ7a2HbEVTmbyjr/wXhp1YdZdq1Wa8KgoISblosLG5NpK6x
+         bUvOFGm3xwZA7QtKrzebwRPKd9eYfp4uGF8C9rBeRWKQZfCyCK2YYSbYxEokll/t2+Z7
+         GC9w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of will.deacon@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=will.deacon@arm.com
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=rcvuR9M/;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of will.deacon@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=will.deacon@arm.com
-Date: Tue, 27 Mar 2018 18:28:15 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
-	Kees Cook <keescook@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>,
-	Nicolas Pitre <nico@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 21/21] arm64: move GCC version check for
- ARCH_SUPPORTS_INT128 to Kconfig
-Message-ID: <20180327172815.GH18435@arm.com>
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=rcvuR9M/;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2R5TaM1011947
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 16/21] kcov: imply GCC_PLUGINS and GCC_PLUGIN_SANCOV instead of select'ing them
+Date: Tue, 27 Mar 2018 14:29:30 +0900
+Message-Id: <1522128575-5326-17-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
- <1522128575-5326-22-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522128575-5326-22-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596067581246942212?=
-X-GMAIL-MSGID: =?utf-8?q?1596112697986331487?=
+X-GMAIL-THRID: =?utf-8?q?1596067544988572436?=
+X-GMAIL-MSGID: =?utf-8?q?1596067544988572436?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 27, 2018 at 02:29:35PM +0900, Masahiro Yamada wrote:
-> This becomes much neater in Kconfig.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> Changes in v2:
->   - Newly added
-> 
->  arch/arm64/Kconfig  | 1 +
->  arch/arm64/Makefile | 2 --
->  2 files changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 7381eeb..0c97f40 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -43,6 +43,7 @@ config ARM64
->  	select ARCH_USE_QUEUED_RWLOCKS
->  	select ARCH_SUPPORTS_MEMORY_FAILURE
->  	select ARCH_SUPPORTS_ATOMIC_RMW
-> +	select ARCH_SUPPORTS_INT128 if GCC_VERSION >= 50000
->  	select ARCH_SUPPORTS_NUMA_BALANCING
->  	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
->  	select ARCH_WANT_FRAME_POINTERS
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index b481b4a..7318165 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -57,8 +57,6 @@ KBUILD_AFLAGS	+= $(lseinstr) $(brokengasinst)
->  KBUILD_CFLAGS	+= $(call cc-option,-mabi=lp64)
->  KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
->  
-> -KBUILD_CFLAGS	+= $(call cc-ifversion, -ge, 0500, -DCONFIG_ARCH_SUPPORTS_INT128)
-> -
+As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
+used with care - it forces a lower limit of another symbol, ignoring
+the dependency.  In this case, KCOV can select GCC_PLUGINS even if
+'depends on HAVE_GCC_PLUGINS' is unmet.
 
-If this does what it claims to do, then I agree that it's much cleaner!
+'imply' is modest enough to observe the dependency, and this makes
+sense.  If you enable KCOV, you will probably want to enable
+GCC_PLUGIN_SANCOV, but it should not break the dependency.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+I also remove unneeded code, I just happened to notice.
 
-Will
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+  - Drop depends on GCC_VERSION
+
+---
+
+Changes in v2: None
+
+ lib/Kconfig.debug | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 5be22e4..8243c9d 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -743,8 +743,8 @@ config KCOV
+ 	bool "Code coverage for fuzzing"
+ 	depends on ARCH_HAS_KCOV
+ 	select DEBUG_FS
+-	select GCC_PLUGINS if !COMPILE_TEST
+-	select GCC_PLUGIN_SANCOV if !COMPILE_TEST
++	imply GCC_PLUGINS
++	imply GCC_PLUGIN_SANCOV
+ 	help
+ 	  KCOV exposes kernel code coverage information in a form suitable
+ 	  for coverage-guided fuzzing (randomized testing).
+@@ -758,7 +758,6 @@ config KCOV
+ config KCOV_ENABLE_COMPARISONS
+ 	bool "Enable comparison operands collection by KCOV"
+ 	depends on KCOV
+-	default n
+ 	help
+ 	  KCOV also exposes operands of every comparison in the instrumented
+ 	  code along with operand sizes and PCs of the comparison instructions.
+@@ -768,7 +767,7 @@ config KCOV_ENABLE_COMPARISONS
+ config KCOV_INSTRUMENT_ALL
+ 	bool "Instrument all code by default"
+ 	depends on KCOV
+-	default y if KCOV
++	default y
+ 	help
+ 	  If you are doing generic system call fuzzing (like e.g. syzkaller),
+ 	  then you will want to instrument the whole kernel and you should
+-- 
+2.7.4
