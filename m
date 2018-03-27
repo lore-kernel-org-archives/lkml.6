@@ -1,165 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752305AbeC0Wse (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 18:48:34 -0400
-Received: from mail-wr0-f176.google.com ([209.85.128.176]:37761 "EHLO
-        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752001AbeC0Wsc (ORCPT
+        id S1752282AbeC0Wuk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 18:50:40 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:37599 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751874AbeC0Wuh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 18:48:32 -0400
-X-Google-Smtp-Source: AIpwx48aVUxpHcVpFX5uOnoRFAEWEvL+FKVznd/PP7DMyTsHsPLxLcjvSH+YbHaihhWxAQK9+oYdrYJ+K8oui0S0suA=
+        Tue, 27 Mar 2018 18:50:37 -0400
+X-Google-Smtp-Source: AIpwx49fKvgywpP37RA/CiIz/oT1HfMcBa1O/u+41Fe8XEgCfIINAbBF4tMdIxNLctHcs5ZVcFucSg==
+Subject: Re: [PATCH v3 1/2] of_net: Implement of_get_nvmem_mac_address helper
+To: Mike Looijmans <mike.looijmans@topic.nl>, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        andrew@lunn.ch, robh+dt@kernel.org, frowand.list@gmail.com
+References: <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
+ <1522144346-32367-2-git-send-email-mike.looijmans@topic.nl>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <8623d20b-5a01-b2bd-39f2-900177f96595@gmail.com>
+Date: Tue, 27 Mar 2018 15:50:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-References: <5abac4eb.VlEjF4GlZAlHJzXX%fengguang.wu@intel.com>
-In-Reply-To: <5abac4eb.VlEjF4GlZAlHJzXX%fengguang.wu@intel.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 27 Mar 2018 22:48:19 +0000
-Message-ID: <CANn89iJyiouNoExFE5E0TzVtvwjSGR_5NqLkK3CBSphsQYGshg@mail.gmail.com>
-Subject: Re: 07cde313b2 ("x86/msr: Allow rdmsr_safe_on_cpu() to schedule"):
- BUG: kernel hang in boot stage
-To: kbuild test robot <fengguang.wu@intel.com>
-Cc: LKP <lkp@01.org>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, wfg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1522144346-32367-2-git-send-email-mike.looijmans@topic.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 3:26 PM kernel test robot <fengguang.wu@intel.com>
-wrote:
-
-> Greetings,
-
-> 0day kernel testing robot got the below dmesg and the first bad commit is
-
-> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cleanups
-
-> commit 07cde313b2d21f728cec2836db7cdb55476f7a26
-> Author:     Eric Dumazet <edumazet@google.com>
-> AuthorDate: Fri Mar 23 14:58:17 2018 -0700
-> Commit:     Thomas Gleixner <tglx@linutronix.de>
-> CommitDate: Tue Mar 27 12:01:47 2018 +0200
-
->      x86/msr: Allow rdmsr_safe_on_cpu() to schedule
-
->      High latencies can be observed caused by a daemon periodically reading
->      various MSR on all cpus. On KASAN enabled kernels ~10ms latencies can
-be
->      observed simply reading one MSR. Even without KASAN, sending an IPI
-to a
->      CPU, which is in a deep sleep state or in a long hard IRQ disabled
-section,
->      waiting for the answer can consume hundreds of microseconds.
-
->      All usage sites are in preemptible context, convert
-rdmsr_safe_on_cpu() to
->      use a completion instead of busy polling.
-
->      Overall daemon cpu usage was reduced by 35 %, and latencies caused by
->      msr_read() disappeared.
-
->      Signed-off-by: Eric Dumazet <edumazet@google.com>
->      Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->      Acked-by: Ingo Molnar <mingo@kernel.org>
->      Cc: Hugh Dickins <hughd@google.com>
->      Cc: Borislav Petkov <bp@alien8.de>
->      Cc: Eric Dumazet <eric.dumazet@gmail.com>
->      Link:
-https://lkml.kernel.org/r/20180323215818.127774-1-edumazet@google.com
-
-> 13cc36d76b  x86/rtc: Stop using deprecated functions
-> 07cde313b2  x86/msr: Allow rdmsr_safe_on_cpu() to schedule
-> 67bbd7a8d6  x86/cpuid: Allow cpuid_read() to schedule
-> 990d052537  Merge branch 'x86/mm'
-
-+-------------------------------+------------+------------+------------+------------+
-> |                               | 13cc36d76b | 07cde313b2 | 67bbd7a8d6 |
-990d052537 |
-
-+-------------------------------+------------+------------+------------+------------+
-> | boot_successes                | 33         | 4          | 2          |
-4          |
-> | boot_failures                 | 0          | 11         | 15         |
-11         |
-> | BUG:kernel_hang_in_boot_stage | 0          | 11         | 13         |
-11         |
-> | BUG:kernel_in_stage           | 0          | 0          | 2          |
-            |
-
-+-------------------------------+------------+------------+------------+------------+
-
-> [   14.950320] fmc_trivial: probe of fake-design-for-testing-f001 failed
-with error -95
-> [   14.953048] fmc fake-design-for-testing-f001: Driver has no ID:
-matches all
-> [   14.955084] fmc_write_eeprom fake-design-for-testing-f001:
-fmc_write_eeprom: no busid passed, refusing all cards
-> [   14.958301] fmc fake-design-for-testing-f001: Driver has no ID:
-matches all
-> [   14.960428] fmc_chardev fake-design-for-testing-f001: Created misc
-device "fake-design-for-testing-f001"
-> BUG: kernel hang in boot stage
-
-
->                                                            # HH:MM RESULT
-GOOD BAD GOOD_BUT_DIRTY DIRTY_NOT_BAD
-> git bisect start c98e6b78ee92a4c5662febce64591980d77bd6c6
-3eb2ce825ea1ad89d20f7a3b5780df850e4be274 --
-> git bisect  bad 110c6c42e12d406bf2e5c15e71023ed2e91cb17d  # 01:31  B
-  0    11   24   0  Merge
-'linux-review/Alex-Williamson/MAINTAINERS-vfio-platform-Update-sub-maintainer/20180327-143800'
-into devel-spot-201803272204
-> git bisect good ec45958cf484f5c9310df39d9f85dd43c22ae799  # 01:47  G
-11     0    2   2  Merge 'slave-dma/next' into devel-spot-201803272204
-> git bisect good 7103b9adcdc2a848c54f3afa4ab7730f420f3fe0  # 02:18  G
-11     0    1   1  Merge
-'linux-review/Emmanuel-Grumbach/mac80211-don-t-WARN-on-bad-WMM-parameters-from-buggy-APs/20180327-180036'
-into devel-spot-201803272204
-> git bisect  bad ccf31c36bad5be0c7fbd4ce6e82b4410a7478da9  # 02:41  B
-  0    11   25   0  Merge 'wireless-drivers-next/master' into
-devel-spot-201803272204
-> git bisect  bad 2105e74ef7120fa7b12d5c571763c0f6d06a75e9  # 03:02  B
-  0     9   22   0  Merge 'pza/reset/next' into devel-spot-201803272204
-> git bisect  bad 9a76dd69d30110dcecf0716dc961c93349da942b  # 03:22  B
-  0     4   19   1  Merge
-'linux-review/Vijendar-Mukunda/ASoC-dwc-I2S-Controller-instance-param-added/20180327-175125'
-into devel-spot-201803272204
-> git bisect  bad ed6c6d580da3d088d4c3cb449e1bf3fbb4a6d66a  # 03:44  B
-  0     5   19   0  Merge 'tip/x86/cleanups' into devel-spot-201803272204
-> git bisect good 16d1cb0bc43642a4d934631a73c5210ad2499e2f  # 04:08  G
-11     0    0   0  x86/dumpstack: Unify show_regs()
-> git bisect  bad 07cde313b2d21f728cec2836db7cdb55476f7a26  # 04:26  B
-  0     5   19   0  x86/msr: Allow rdmsr_safe_on_cpu() to schedule
-> git bisect good 13cc36d76bc4f5a9801ae32630bc8240ba0cc522  # 04:46  G
-11     0    0   0  x86/rtc: Stop using deprecated functions
-> # first bad commit: [07cde313b2d21f728cec2836db7cdb55476f7a26] x86/msr:
-Allow rdmsr_safe_on_cpu() to schedule
-> git bisect good 13cc36d76bc4f5a9801ae32630bc8240ba0cc522  # 04:51  G
-31     0    2   2  x86/rtc: Stop using deprecated functions
-> # extra tests with debug options
-> git bisect  bad 07cde313b2d21f728cec2836db7cdb55476f7a26  # 05:14  B
-  0     1   16   2  x86/msr: Allow rdmsr_safe_on_cpu() to schedule
-> # extra tests on HEAD of linux-devel/devel-spot-201803272204
-> git bisect  bad c98e6b78ee92a4c5662febce64591980d77bd6c6  # 05:19  B
-  0    27   50   4  0day head guard for 'devel-spot-201803272204'
-> # extra tests on tree/branch tip/x86/cleanups
-> git bisect  bad 67bbd7a8d6bcdc44cc27105ae8c374e9176ceaf1  # 05:47  B
-  0     7   23   2  x86/cpuid: Allow cpuid_read() to schedule
-> # extra tests with first bad commit reverted
-> git bisect good c885db74ec7feacddf4cce667615504892b756c8  # 06:05  G
-11     0    1   1  Revert "x86/msr: Allow rdmsr_safe_on_cpu() to schedule"
-> # extra tests on tree/branch tip/master
-> git bisect  bad 990d0525372f3f3bb5abcc527c8bb56a030c2b29  # 06:25  B
-  0    11   25   0  Merge branch 'x86/mm'
-
+On 03/27/2018 02:52 AM, Mike Looijmans wrote:
+> It's common practice to store MAC addresses for network interfaces into
+> nvmem devices. However the code to actually do this in the kernel lacks,
+> so this patch adds of_get_nvmem_mac_address() for drivers to obtain the
+> address from an nvmem cell provider.
+> 
+> This is particulary useful on devices where the ethernet interface cannot
+> be configured by the bootloader, for example because it's in an FPGA.
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology
-Center
-> https://lists.01.org/pipermail/lkp                          Intel
-Corporation
+>  Documentation/devicetree/bindings/net/ethernet.txt |  2 ++
+>  drivers/of/of_net.c                                | 40 ++++++++++++++++++++++
+>  include/linux/of_net.h                             |  6 ++++
+>  3 files changed, 48 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/ethernet.txt b/Documentation/devicetree/bindings/net/ethernet.txt
+> index 2974e63..cfc376b 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet.txt
+> +++ b/Documentation/devicetree/bindings/net/ethernet.txt
+> @@ -10,6 +10,8 @@ Documentation/devicetree/bindings/phy/phy-bindings.txt.
+>    the boot program; should be used in cases where the MAC address assigned to
+>    the device by the boot program is different from the "local-mac-address"
+>    property;
+> +- nvmem-cells: phandle, reference to an nvmem node for the MAC address;
+> +- nvmem-cell-names: string, should be "mac-address" if nvmem is to be used;
+>  - max-speed: number, specifies maximum speed in Mbit/s supported by the device;
+>  - max-frame-size: number, maximum transfer unit (IEEE defined MTU), rather than
+>    the maximum frame size (there's contradiction in the Devicetree
+> diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
+> index d820f3e..1c5d372 100644
+> --- a/drivers/of/of_net.c
+> +++ b/drivers/of/of_net.c
+> @@ -7,6 +7,7 @@
+>   */
+>  #include <linux/etherdevice.h>
+>  #include <linux/kernel.h>
+> +#include <linux/nvmem-consumer.h>
+>  #include <linux/of_net.h>
+>  #include <linux/phy.h>
+>  #include <linux/export.h>
+> @@ -80,3 +81,42 @@ const void *of_get_mac_address(struct device_node *np)
+>  	return of_get_mac_addr(np, "address");
+>  }
+>  EXPORT_SYMBOL(of_get_mac_address);
+> +
+> +/**
+> + * Obtain the MAC address from an nvmem provider named 'mac-address' through
+> + * device tree.
+> + * On success, copies the new address into memory pointed to by addr and
+> + * returns 0. Returns a negative error code otherwise.
+> + * @np:		Device tree node containing the nvmem-cells phandle
+> + * @addr:	Pointer to receive the MAC address using ether_addr_copy()
+> + */
+> +int of_get_nvmem_mac_address(struct device_node *np, void *addr)
+> +{
+> +	struct nvmem_cell *cell;
+> +	const void *mac;
+> +	size_t len;
+> +	int ret;
+> +
+> +	cell = of_nvmem_cell_get(np, "mac-address");
+> +	if (IS_ERR(cell))
+> +		return PTR_ERR(cell);
+> +
+> +	mac = nvmem_cell_read(cell, &len);
+> +
+> +	nvmem_cell_put(cell);
+> +
+> +	if (IS_ERR(mac))
+> +		return PTR_ERR(mac);
+> +
+> +	if (len < 6 || !is_valid_ether_addr(mac)) {
+> +		ret = -EINVAL;
 
-Thanks for the report.
+Just one nit here, can you use ETH_ALEN instead of 6? With that fixed:
 
-Presumably the issue is that __rdmsr_safe_on_cpu() is also called from
-rdmsrl_safe_on_cpu()
-
-So we need to initialize the completion properly from this call site.
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
