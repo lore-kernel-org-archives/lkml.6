@@ -1,75 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754106AbeC0QyT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 12:54:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:59756 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752179AbeC0QyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 12:54:13 -0400
-Date: Tue, 27 Mar 2018 17:54:23 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH for-4.17 1/2] arm64: Remove smp_mb() from
- arch_spin_is_locked()
-Message-ID: <20180327165423.GF18435@arm.com>
-References: <1522060641-6986-1-git-send-email-andrea.parri@amarulasolutions.com>
- <20180326105705.GA6579@arm.com>
- <20180326141436.GA11739@andrea>
+        id S1754178AbeC0Q4G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 12:56:06 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45281 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752109AbeC0Q4B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 12:56:01 -0400
+X-Google-Smtp-Source: AIpwx4/dHBaOCC8bevTRNZ2NrI+eYzcFW4GKc7R7DA3Pabzvv99UMVYxWrnfsn81LmkYSeIRnRJRwg==
+Date: Tue, 27 Mar 2018 09:56:12 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, absahu@codeaurora.org, marc.zyngier@arm.com,
+        richardcochran@gmail.com
+Subject: Re: [PATCH v5 02/13] ARM: dts: ipq4019: Add a default chosen node
+Message-ID: <20180327165612.GF1403@tuxbook-pro>
+References: <1521800336-19266-1-git-send-email-sricharan@codeaurora.org>
+ <1521800336-19266-3-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180326141436.GA11739@andrea>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1521800336-19266-3-git-send-email-sricharan@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrea,
+On Fri 23 Mar 03:18 PDT 2018, Sricharan R wrote:
 
-On Mon, Mar 26, 2018 at 04:14:36PM +0200, Andrea Parri wrote:
-> On Mon, Mar 26, 2018 at 11:57:05AM +0100, Will Deacon wrote:
-> > On Mon, Mar 26, 2018 at 12:37:21PM +0200, Andrea Parri wrote:
-> > > Commit 38b850a73034f ("arm64: spinlock: order spin_{is_locked,unlock_wait}
-> > > against local locks") added an smp_mb() to arch_spin_is_locked(), in order
-> > > "to ensure that the lock value is always loaded after any other locks have
-> > > been taken by the current CPU", and reported one example (the "insane case"
-> > > in ipc/sem.c) relying on such guarantee.
-> > > 
-> > > It is however understood (and not documented) that spin_is_locked() is not
-> > > required to ensure such an ordering guarantee, guarantee that is currently
-> > > _not_ provided by all implementations/architectures, and that callers rely-
-> > > ing on such ordering should instead insert suitable memory barriers before
-> > > acting on the result of spin_is_locked().
-> > > 
-> > > Following a recent auditing[1] of the callsites of {,raw_}spin_is_locked()
-> > > revealing that none of these callers are relying on the ordering guarantee
-> > > anymore, this commit removes the leading smp_mb() from this primitive thus
-> > > effectively reverting 38b850a73034f.
-> > > 
-> > > [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
-> > 
-> > What is patch 2/2 in this series? I couldn't find it in the archive.
+> Add a 'chosen' node to select the serial console.
+> This is needed when bootloaders do not pass the
+> 'console=' bootargs.
 > 
-> 2/2 is this change for powerpc:
+
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> ---
+>  arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi | 8 ++++++++
+>  arch/arm/boot/dts/qcom-ipq4019.dtsi           | 2 +-
+>  2 files changed, 9 insertions(+), 1 deletion(-)
 > 
->   https://marc.info/?l=linux-kernel&m=152206068707522&w=2
+> diff --git a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+> index e413b21e..ef8d8c8 100644
+> --- a/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+> +++ b/arch/arm/boot/dts/qcom-ipq4019-ap.dk01.1.dtsi
+> @@ -20,6 +20,14 @@
+>  	model = "Qualcomm Technologies, Inc. IPQ4019/AP-DK01.1";
+>  	compatible = "qcom,ipq4019";
+>  
+> +	aliases {
+> +		serial0 = &blsp1_uart1;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+>  	soc {
+>  		rng@22000 {
+>  			status = "ok";
+> diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> index 10d112a..ea9202a 100644
+> --- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> +++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> @@ -256,7 +256,7 @@
+>                          regulator;
+>                  };
+>  
+> -		serial@78af000 {
+> +		blsp1_uart1: serial@78af000 {
+>  			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+>  			reg = <0x78af000 0x200>;
+>  			interrupts = <0 107 0>;
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
 > 
-> > 
-> > Assuming that patch doesn't do it, please can you remove the comment
-> > about spin_is_locked from mutex_is_locked?
-> 
-> I ended up with the patch below but I suspect that it's not what you had
-> in mind; please let me know if you'd like me to add it into this series.
-
-That's exactly what I meant! I think you can remove the #ifndef
-queued_spin_is_locked in the same patch. If you do that:
-
-Acked-by: Will Deacon <will.deacon@arm.com>
-
-for the arm64 patch and the mythical core patch we've been discussing.
-
-Will
