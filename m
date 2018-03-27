@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49Ryk6KqUii4cvwCcLLzoZzoPln8HUsDhki98F0uclWslGw9FBqm4z52MGLBEhL5TXAMIdA
-ARC-Seal: i=1; a=rsa-sha256; t=1522168679; cv=none;
+X-Google-Smtp-Source: AIpwx49cvPGeiBrj2tQvIDiCe4CzTTXgHoZwMlyiHXs7nXqQZjKe5uEJzbmb6ANwKAn5nx8OD5jc
+ARC-Seal: i=1; a=rsa-sha256; t=1522168676; cv=none;
         d=google.com; s=arc-20160816;
-        b=ww0nzU6tcd+a15HkW0dNcf+A0xYQ59KRIJNRQBhPjAUYBj7EYEGzdLj2AOOkd4L8wM
-         xSRVEGZXk5vAj/z8SEndQNIxC/ofcAJnJEu7pu2cO3dAfQT55yRabPffvy5v6gMedmKB
-         YNRYbg6bEMuzi99pxQwTQ0vsFdMt0sDfVdWsL7Nzk8hLTL/2AnkpgOphajipeo/4y6Rr
-         EiDZl1ZgViB09680cYxJpMQXqhSv9BiVN/GjmPmbvrT/d4W73jOEAB0tLZVfWbBUROgt
-         RLJfxv4laM24oL2iKNdmUAMkjJwCyLvoB6PRXJk8t6Or6hh6aiwymYCR+ap7oBgslAeq
-         qcow==
+        b=caVQypB/Iu9qEBeiuo2SFWJd/dMXzNGte4VCfqoPa5TVa+xTJKbKu3IL/I3fhOQ+vs
+         ydiRsmjPqqLuYaTwDY6CgUvrxg6tPIZKe1jJiAHO6l3qTIUj/CF4HDfWOz2WBtV1S7Kx
+         Xr4RshBT/f8XwtqzXqWuYXzKRDSX3DVFz3HM3eeon3rVcieizEMHv/iZlehqQ5VguTpd
+         3Mv5oJnS7qgt6yl+sMs55vmZivANcqw6heDlu+d60ucoKkEpLJlPRsoS9U6PgyqGQvOb
+         LVzengFyd4itbACIkmvHHRi+ykYgUV5Q/SuoH5KcGrqPCYagnJEFRhgz4JxxsOJkImVH
+         INSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sS82UDfQSs+CUISp7xfsDqFGfmzWzDXSFlWuaZSLsDc=;
-        b=xkltOulXWqaYt5tvb2WX3rjrJ6urI4QZQMvpceTXVVTylOyQYXK9SUVir8Qsyk+Vhd
-         c1C3GTsarPv/L/74a8+YofPrH7TbEl3SEd+sWd0asEczqNzTfzKhudFrUb45tkhgr8T/
-         uAqBwKrxCKJq8XUAMdMvXKDcmpXHEX/N27b9MiYZoZNh/isLVeV5bq6YXzKVuQEgKEQB
-         wyRaEUBnLyU048HWZ/etwXjRQS5N36gMNkBRNdxfmmokzUOirMNsqIAc2W/heD6zF57M
-         oCHBTAWRepPauBR7ZpG2USG4pnx84+cZB6CbVLXPXDvvAfMJmq/9rizD737xC2PV0F//
-         EtFQ==
+        bh=jGwLanNFB2Z5QKqGzj5uFrTSWGyukd3LbvFkyD+4tEs=;
+        b=VyAJ0Bn2PLmbjzyMj682LP+C8ICo68/zOkxq3VjYLE333DR5KT5lmERwjYiKZ56Mz5
+         /zsJZcZqBji9aQq05WWkD2zFBvPUP1WFkeFaUMDKrbdtOSzeVPZs8QqtDYKJ1y0m54Ly
+         KLimwgQfVhTpgWsVmP3m53ozOqJUTykajRQ2yQlmaQyA4G0ER+RgSoTUzlJw7j9xl4BC
+         BUESieZwzK+TpGqpfW5G3eIz7372/ACE67NfQRk8m1p0kGYPqjcRqy7e+jIoNfXDb7oP
+         Hy2SVqKLcdIDemKfPBiwF3Q8lW99wf526cN9zHkFLJKnZN6vhB6Zp3kTw39+yTxZgKF/
+         3EVg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+	Gregor Boirie <gregor.boirie@parrot.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 093/101] iio: imu: st_lsm6dsx: fix endianness in st_lsm6dsx_read_oneshot()
-Date: Tue, 27 Mar 2018 18:28:05 +0200
-Message-Id: <20180327162755.726085555@linuxfoundation.org>
+Subject: [PATCH 4.14 092/101] iio: ABI: Fix name of timestamp sysfs file
+Date: Tue, 27 Mar 2018 18:28:04 +0200
+Message-Id: <20180327162755.674564278@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109545391866602?=
-X-GMAIL-MSGID: =?utf-8?q?1596109545391866602?=
+X-GMAIL-THRID: =?utf-8?q?1596109227407003787?=
+X-GMAIL-MSGID: =?utf-8?q?1596109542691481780?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,30 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-commit 7b9ebe428266fb7e0a6d769bb3ff3fcb6044b15e upstream.
+commit b9a3589332c2a25fb7edad25a26fcaada3209126 upstream.
 
-Apply le16_to_cpu() to data read from the sensor in order to take into
-account architecture endianness
+The name of the file is "current_timetamp_clock" not
+"timestamp_clock".
 
-Fixes: 290a6ce11d93 (iio: imu: add support to lsm6dsx driver)
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Fixes: bc2b7dab629a ("iio:core: timestamping clock selection support")
+Cc: Gregor Boirie <gregor.boirie@parrot.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c |    2 +-
+ Documentation/ABI/testing/sysfs-bus-iio |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-@@ -392,7 +392,7 @@ static int st_lsm6dsx_read_oneshot(struc
+--- a/Documentation/ABI/testing/sysfs-bus-iio
++++ b/Documentation/ABI/testing/sysfs-bus-iio
+@@ -32,7 +32,7 @@ Description:
+ 		Description of the physical chip / device for device X.
+ 		Typically a part number.
  
- 	st_lsm6dsx_sensor_disable(sensor);
- 
--	*val = (s16)data;
-+	*val = (s16)le16_to_cpu(data);
- 
- 	return IIO_VAL_INT;
- }
+-What:		/sys/bus/iio/devices/iio:deviceX/timestamp_clock
++What:		/sys/bus/iio/devices/iio:deviceX/current_timestamp_clock
+ KernelVersion:	4.5
+ Contact:	linux-iio@vger.kernel.org
+ Description:
