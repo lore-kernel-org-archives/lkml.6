@@ -1,67 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752077AbeC0Dnz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 23:43:55 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33454 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751489AbeC0Dnx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 23:43:53 -0400
-X-Google-Smtp-Source: AG47ELtByIibsxcDBbBDMxnqGTpptmAeMfzXcoj8SqokVEGE+aOmkVvrbVVH3h9WHCeqoXX02p6LDg==
-Date: Tue, 27 Mar 2018 11:43:44 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, edubezval@gmail.com,
-        kevin.wangtao@linaro.org, vincent.guittot@linaro.org,
-        amit.kachhap@gmail.com, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH V2 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-Message-ID: <20180327034344.GC21693@leoy-ThinkPad-X240s>
-References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
- <1519226968-19821-7-git-send-email-daniel.lezcano@linaro.org>
- <20180223073432.GF26947@vireshk-i7>
- <faaf027c-e01c-6801-9a0c-ab7e0ba669a1@linaro.org>
+        id S1752125AbeC0DoT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 23:44:19 -0400
+Received: from ozlabs.org ([103.22.144.67]:33477 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751489AbeC0DoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 23:44:17 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 27 Mar 2018 14:43:25 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>, Jiri Kosina <jikos@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lihao Liang <lianglihao@huawei.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: linux-next: manual merge of the tip tree with the trivial tree
+Message-ID: <20180327144325.545af4fd@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <faaf027c-e01c-6801-9a0c-ab7e0ba669a1@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gEMDPZB2slrjFZBKx/kNh9L"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 23, 2018 at 12:28:51PM +0100, Daniel Lezcano wrote:
-> On 23/02/2018 08:34, Viresh Kumar wrote:
-> > On 21-02-18, 16:29, Daniel Lezcano wrote:
+--Sig_/gEMDPZB2slrjFZBKx/kNh9L
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> [ ... ]
-> 
-> >> +static s64 cpuidle_cooling_runtime(struct cpuidle_cooling_device *idle_cdev)
-> >> +{
-> >> +	s64 next_wakeup;
-> >> +	int state = idle_cdev->state;
-> >> +
-> >> +	/*
-> >> +	 * The function must never be called when there is no
-> >> +	 * mitigation because:
-> >> +	 * - that does not make sense
-> >> +	 * - we end up with a division by zero
-> >> +	 */
-> >> +	BUG_ON(!state);
-> > 
-> > As there is no locking in place, we can surely hit this case. What if
-> > the state changed to 0 right before this routine was called ?
-> > 
-> > I would suggest we should just return 0 in that case and get away with
-> > the BUG_ON().
+Hi all,
 
-Here if 'state' equals to 0 and we return 0, then the return value will
-be same with when 'state' = 100; this lets the return value confused.
+Today's linux-next merge of the tip tree got a conflict in:
 
-I think for 'state' = 0, should we return -1 so indicate the hrtimer
-will not be set for this case?
+  kernel/cpu.c
 
-Thanks,
-Leo Yan
+between commit:
+
+  ccd8c1c5926a ("CPU: Fix comment in cpuhp_bp_states[]")
+
+from the trivial tree and commit:
+
+  17a2f1ced028 ("cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states")
+
+from the tip tree.
+
+I fixed it up (the latter removed the comment updated by the former, so
+I just did that) and can carry the fix as necessary. This is now fixed
+as far as linux-next is concerned, but any non trivial conflicts should
+be mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+Jiri, you could drop (or revert) the commit in your tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gEMDPZB2slrjFZBKx/kNh9L
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5vd0ACgkQAVBC80lX
+0Gy1HQf/fkP9YYpXqNUpBPR4KyRGTH7wakPC+odyOs6Rg/5STR4DE2iOA9fCIMBK
+pktOQdFRFAq2bHWof3PeAqoamFhqXKaCxN0jBgx8minEJG1Us5muM6I/IXeZydht
+K2dL8BLSmWXoC8ybuUZBHgveIP1f4a6Dm+UrWjepSli+IPvMCYbHCGk3BWSyULOd
+Ws5pHhxDsyQX3pqvWW3/zRAWVHtrY3LW/ruiZPfKY924xABRMKkjWMTQzmrnERIs
+XBQv1tb3J9et84HlxWKutAVg43Ye8uuKtjvkMihZtvXbM+FdJdNNqbABop8h3lpq
+MYf9CQJ1tqk9hKUWY+UJW7Z22isVXQ==
+=ozXD
+-----END PGP SIGNATURE-----
+
+--Sig_/gEMDPZB2slrjFZBKx/kNh9L--
