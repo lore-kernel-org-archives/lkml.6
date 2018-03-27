@@ -1,269 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeC0KKO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 06:10:14 -0400
-Received: from relay0.mail.gandi.net ([217.70.178.220]:53109 "EHLO
-        relay0-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751859AbeC0KKN (ORCPT
+        id S1752190AbeC0KKk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 06:10:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42141 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750978AbeC0KKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 06:10:13 -0400
-X-Originating-IP: 2.224.242.101
-Date: Tue, 27 Mar 2018 12:10:08 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Rob Herring <robh@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        architt@codeaurora.org, airlied@linux.ie, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] dt-bindings: display: bridge: Document
- THC63LVD1024 LVDS decoder
-Message-ID: <20180327101008.GM27746@w540>
-References: <4060923.7DxT9ae38L@avalon>
- <20180326222249.tvjiutyd4amlibpa@rob-hp-laptop>
- <CGME20180327061536epcas5p40faf6caf0d9825e6c33cd3e6ba9d8378@epcas5p4.samsung.com>
- <a1b0e678-38b8-dd29-b441-e2a09b565105@mentor.com>
- <1dd27170-153c-90f6-e13f-949ba7d0d4a9@samsung.com>
- <20180327073332.GI27746@w540>
- <70826dc1-d9ea-dc98-f591-c80f1904806a@cogentembedded.com>
- <b7d0e35e-3077-feba-dded-9b8f8422367b@mentor.com>
- <20180327085748.GK27746@w540>
- <871a3805-b20c-3f48-406c-145461837388@mentor.com>
+        Tue, 27 Mar 2018 06:10:38 -0400
+Date: Tue, 27 Mar 2018 03:10:05 -0700
+From: tip-bot for Eric Dumazet <tipbot@zytor.com>
+Message-ID: <tip-07cde313b2d21f728cec2836db7cdb55476f7a26@git.kernel.org>
+Cc: mingo@kernel.org, bp@alien8.de, eric.dumazet@gmail.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        edumazet@google.com, hughd@google.com
+Reply-To: bp@alien8.de, mingo@kernel.org, eric.dumazet@gmail.com,
+        hughd@google.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        edumazet@google.com, tglx@linutronix.de
+In-Reply-To: <20180323215818.127774-1-edumazet@google.com>
+References: <20180323215818.127774-1-edumazet@google.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/msr: Allow rdmsr_safe_on_cpu() to schedule
+Git-Commit-ID: 07cde313b2d21f728cec2836db7cdb55476f7a26
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Qz2CZ664xQdCRdPu"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <871a3805-b20c-3f48-406c-145461837388@mentor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  07cde313b2d21f728cec2836db7cdb55476f7a26
+Gitweb:     https://git.kernel.org/tip/07cde313b2d21f728cec2836db7cdb55476f7a26
+Author:     Eric Dumazet <edumazet@google.com>
+AuthorDate: Fri, 23 Mar 2018 14:58:17 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 27 Mar 2018 12:01:47 +0200
 
---Qz2CZ664xQdCRdPu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+x86/msr: Allow rdmsr_safe_on_cpu() to schedule
 
-Hi Vladimir,
+High latencies can be observed caused by a daemon periodically reading
+various MSR on all cpus. On KASAN enabled kernels ~10ms latencies can be
+observed simply reading one MSR. Even without KASAN, sending an IPI to a
+CPU, which is in a deep sleep state or in a long hard IRQ disabled section,
+waiting for the answer can consume hundreds of microseconds.
 
-On Tue, Mar 27, 2018 at 12:37:31PM +0300, Vladimir Zapolskiy wrote:
-> Hi Jacopo,
->
-> On 03/27/2018 11:57 AM, jacopo mondi wrote:
-> > Hi Vladimir,
-> >
-> > On Tue, Mar 27, 2018 at 11:30:29AM +0300, Vladimir Zapolskiy wrote:
-> >> Hi Sergei,
-> >>
-> >> On 03/27/2018 11:27 AM, Sergei Shtylyov wrote:
-> >>> Hello!
-> >>>
-> >>> On 3/27/2018 10:33 AM, jacopo mondi wrote:
-> >>> [...]
-> >>>>>>>>> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
-> >>>>>>>>>
-> >>>>>>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >>>>>>>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> >>>>>>>>> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ra=
-gnatech.se>
-> >>>>>>>>> ---
-> >>>>>>>>>   .../bindings/display/bridge/thine,thc63lvd1024.txt | 66 +++++=
-++++++++++++++
-> >>>>>>>>>   1 file changed, 66 insertions(+)
-> >>>>>>>>>   create mode 100644
-> >>>>>>>>> Documentation/devicetree/bindings/display/bridge/thine,thc63lvd=
-1024.txt
-> >>>>>>>>>
-> >>>>>>>>> diff --git
-> >>>>>>>>> a/Documentation/devicetree/bindings/display/bridge/thine,thc63l=
-vd1024.txt
-> >>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63l=
-vd1024.txt
-> >>>>>>>>> new file mode 100644
-> >>>>>>>>> index 0000000..8225c6a
-> >>>>>>>>> --- /dev/null
-> >>>>>>>>> +++
-> >>>>>>>>> b/Documentation/devicetree/bindings/display/bridge/thine,thc63l=
-vd1024.txt
-> >>>>>>>>> @@ -0,0 +1,66 @@
-> >>>>>>>>> +Thine Electronics THC63LVD1024 LVDS decoder
-> >>>>>>>>> +-------------------------------------------
-> >>>>>>>>> +
-> >>>>>>>>> +The THC63LVD1024 is a dual link LVDS receiver designed to conv=
-ert LVDS
-> >>>>>>>>> streams
-> >>>>>>>>> +to parallel data outputs. The chip supports single/dual input/=
-output modes,
-> >>>>>>>>> +handling up to two two input LVDS stream and up to two digital=
- CMOS/TTL
-> >>>>>>>>> outputs.
-> >>>>>>>>> +
-> >>>>>>>>> +Single or dual operation modes, output data mapping and DDR ou=
-tput modes
-> >>>>>>>>> are
-> >>>>>>>>> +configured through input signals and the chip does not expose =
-any control
-> >>>>>>>>> bus.
-> >>>>>>>>> +
-> >>>>>>>>> +Required properties:
-> >>>>>>>>> +- compatible: Shall be "thine,thc63lvd1024"
-> >>>>>>>>> +
-> >>>>>>>>> +Optional properties:
-> >>>>>>>>> +- vcc-supply: Power supply for TTL output and digital circuitry
-> >>>>>>>>> +- cvcc-supply: Power supply for TTL CLOCKOUT signal
-> >>>>>>>>> +- lvcc-supply: Power supply for LVDS inputs
-> >>>>>>>>> +- pvcc-supply: Power supply for PLL circuitry
-> >>>>>>>> As explained in a comment to one of the previous versions of thi=
-s series, I'm
-> >>>>>>>> tempted to make vcc-supply mandatory and drop the three other po=
-wer supplies
-> >>>>>>>> for now, as I believe there's very little chance they will be co=
-nnected to
-> >>>>>>>> separately controllable regulators (all supplies use the same vo=
-ltage). In the
-> >>>>>>>> very unlikely event that this occurs in design we need to suppor=
-t in the
-> >>>>>>>> future, the cvcc, lvcc and pvcc supplies can be added later as o=
-ptional
-> >>>>>>>> without breaking backward compatibility.
-> >>>>>>> I'm okay with that.
-> >>>>>>>
-> >>>>>>>> Apart from that,
-> >>>>>>>>
-> >>>>>>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>>>>>>
-> >>>>>>>>> +- pdwn-gpios: Power down GPIO signal. Active low
-> >>>>>>> powerdown-gpios is the semi-standard name.
-> >>>>>>>
-> >>>>>> right, I've also noticed it. If possible please avoid shortenings =
-in
-> >>>>>> property names.
-> >>>>>
-> >>>>> It is not shortening, it just follow pin name from decoder's datash=
-eet.
-> >>>>>
-> >>>>>>
-> >>>>>>>>> +- oe-gpios: Output enable GPIO signal. Active high
-> >>>>>>>>> +
-> >>>>>> And this one is also a not ever met property name, please consider=
- to
-> >>>>>> rename it to 'enable-gpios', for instance display panels define it.
-> >>>>>
-> >>>>>
-> >>>>> Again, it follows datasheet naming scheme. Has something changed in=
- DT
-> >>>>> conventions?
-> >>>>
-> >>>> Seconded. My understanding is that the property name should reflect
-> >>>> what reported in the the chip manual. For THC63LVD1024 the enable and
-> >>>> power down pins are named 'OE' and 'PDWN' respectively.
-> >>>
-> >>>     But don't we need the vendor prefix in the prop names then, like
-> >>> "renesas,oe-gpios" then?
-> >>>
-> >>
-> >> Seconded, with a correction to "thine,oe-gpios".
-> >>
-> >
-> > mmm, okay then...
-> >
-> > A grep for that semi-standard properties names in Documentation/
-> > returns only usage examples and no actual definitions, so I assume this
-> > is why they are semi-standard.
->
-> Here we have to be specific about a particular property, let it be 'oe-gp=
-ios'
-> vs. 'enable-gpios' and let's collect some statistics:
->
-> % grep -Hr oe-gpios Documentation/devicetree/bindings/* | wc -l
-> 0
->
-> $ grep -Hr enable-gpios Documentation/devicetree/bindings/* | wc -l
-> 86
->
-> While 'thine,oe-gpios' would be correct, I see no reason to introduce a v=
-endor
-> specific property to define a pin with a common and well understood purpo=
-se.
->
-> If you go forward with the vendor specific prefix, apparently you can set=
- the name
-> to 'thine,oe-gpio' (single) or even to 'thine,oe', or does the datasheet =
-names
-> the pin as "OE GPIO" or "OE connected to a GPIO"? I guess no.
->
+All usage sites are in preemptible context, convert rdmsr_safe_on_cpu() to
+use a completion instead of busy polling.
 
-Let me clarify I don't want to push for a vendor specific name or
-similar, I'm fine with using 'semi-standard' names, I'm just confused
-by the 'semi-standard' definition. I guess from your examples, the
-usage count makes a difference here.
+Overall daemon cpu usage was reduced by 35 %, and latencies caused by
+msr_read() disappeared.
 
-> Standards do not define '-gpios' suffix, but partially the description is=
- found
-> in Documentation/bindings/gpio/gpio.txt, still it is not a section in any
-> standard as far as I know.
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Link: https://lkml.kernel.org/r/20180323215818.127774-1-edumazet@google.com
 
->
-> > Seems like there is some tribal knowledge involved in defining what
-> > is semi-standard and what's not, or are those properties documented som=
-ewhere?
-> >
->
-> The point is that there is no formal standard which describes every IP,
-> every IC and every single their property, some device node names and prop=
-erty
-> names are recommended in ePAPR and Devicetree Specification though.
->
-> Think of a confusion if 'rst-gpios' (have you seen any ICs with an RST pi=
-n?) and
-> 'reset-gpios' are different. Same applies to 'pdwn-gpios' vs. 'powerdown-=
-gpios'.
+---
+ arch/x86/lib/msr-smp.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-I see all your points and I agree with most of them. Anyway, if the
-chip manual describes a pin as 'RST' I would not find it confusing to
-have a 'rst-gpio' defined in bindings :)
-
-Let me be a bit pesky here: what if a chip defines a reset GPIO, which
-is definitely a reset, but names it, say "XYZ" ? Would you prefer to
-see it defined as "reset-gpios" for consistency with other bindings,
-or "xyz-gpios" for consistency with documentation?
-
-Thanks
-   j
->
-> >> If vendor agnostic properties are supposed to be used, then please fol=
-low
-> >> the referenced by Rob semi-standard notations.
->
-> --
-> With best wishes,
-> Vladimir
-
---Qz2CZ664xQdCRdPu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJauhiAAAoJEHI0Bo8WoVY86+8QAL0/Vfrk1XKEhgJF77qfiW1A
-Th9XqKh0hooywgaL2x7a0edahAj/AGE5carW2xMYvP6MEgQ/DCRTBH6QkJkHYO0U
-3/XlZnwzyYbybOvn6zVdxyfPnjJDMR5+ALYvTSfIvjFa4xYCd4cZS5Ewdgpro33W
-z3eg8Cd+ASBsp6rxYMj7ee+305rG3H7uYafEMq/C8kIunrBra+zqvpLt8nSfrcNc
-XdMRsm65bGvEfqotyaKRVuS1b/IRqm/PJR2nlHDfwku0NtnFl4Hhn8rbjDvhKVGX
-M2Gi/bBE18JxdLGdCPrie4UKzio9b6GrbNpHCELYtJgCqwPHv4NQAg5mwfWgldGv
-VJ5l1zigC/h+nwaHDHUiIz+j5Ip7R1/0DLOc727s3Dt1hHsFAVUBmP7Tmh4FDy8x
-oKpsWy8qAZYl5njL9YxEgCSaBidumhGUy+Bm1ygJV6CJVltCmy/AnE7fP3vY9Gnd
-hthiEJIdhoXbm4FOccZ3FkJHvJyRrfrymjA5S1i465/fOc4fS9XYZWUrPGNhlTxu
-ABPwf6qwCUmKaWqfhG8TqFC1+ShKXsLlBIwhdfjU1NZkJpxlYjIMLor7NKA5+Odb
-ExNHqMwnB+37H4DSd4XOlZblEH341eD1vSJ2pXiLoE5FWCgGngCIVOIXl+bUqVbo
-0/3w8sy53G+mT2iBV23W
-=Ftfk
------END PGP SIGNATURE-----
-
---Qz2CZ664xQdCRdPu--
+diff --git a/arch/x86/lib/msr-smp.c b/arch/x86/lib/msr-smp.c
+index 693cce0be82d..761ba062afda 100644
+--- a/arch/x86/lib/msr-smp.c
++++ b/arch/x86/lib/msr-smp.c
+@@ -2,6 +2,7 @@
+ #include <linux/export.h>
+ #include <linux/preempt.h>
+ #include <linux/smp.h>
++#include <linux/completion.h>
+ #include <asm/msr.h>
+ 
+ static void __rdmsr_on_cpu(void *info)
+@@ -143,13 +144,19 @@ void wrmsr_on_cpus(const struct cpumask *mask, u32 msr_no, struct msr *msrs)
+ }
+ EXPORT_SYMBOL(wrmsr_on_cpus);
+ 
++struct msr_info_completion {
++	struct msr_info		msr;
++	struct completion	done;
++};
++
+ /* These "safe" variants are slower and should be used when the target MSR
+    may not actually exist. */
+ static void __rdmsr_safe_on_cpu(void *info)
+ {
+-	struct msr_info *rv = info;
++	struct msr_info_completion *rv = info;
+ 
+-	rv->err = rdmsr_safe(rv->msr_no, &rv->reg.l, &rv->reg.h);
++	rv->msr.err = rdmsr_safe(rv->msr.msr_no, &rv->msr.reg.l, &rv->msr.reg.h);
++	complete(&rv->done);
+ }
+ 
+ static void __wrmsr_safe_on_cpu(void *info)
+@@ -161,17 +168,26 @@ static void __wrmsr_safe_on_cpu(void *info)
+ 
+ int rdmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 *l, u32 *h)
+ {
++	struct msr_info_completion rv;
++	call_single_data_t csd = {
++		.func	= __rdmsr_safe_on_cpu,
++		.info	= &rv,
++	};
+ 	int err;
+-	struct msr_info rv;
+ 
+ 	memset(&rv, 0, sizeof(rv));
++	init_completion(&rv.done);
++	rv.msr.msr_no = msr_no;
+ 
+-	rv.msr_no = msr_no;
+-	err = smp_call_function_single(cpu, __rdmsr_safe_on_cpu, &rv, 1);
+-	*l = rv.reg.l;
+-	*h = rv.reg.h;
++	err = smp_call_function_single_async(cpu, &csd);
++	if (!err) {
++		wait_for_completion(&rv.done);
++		err = rv.msr.err;
++	}
++	*l = rv.msr.reg.l;
++	*h = rv.msr.reg.h;
+ 
+-	return err ? err : rv.err;
++	return err;
+ }
+ EXPORT_SYMBOL(rdmsr_safe_on_cpu);
+ 
