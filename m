@@ -1,95 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752065AbeC0Jfs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:35:48 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53075 "EHLO
+        id S1752124AbeC0Jgy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:36:54 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:52278 "EHLO
         mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751001AbeC0Jfq (ORCPT
+        with ESMTP id S1750970AbeC0Jgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:35:46 -0400
-X-Google-Smtp-Source: AG47ELtaOT98XDnq7I8e6B8PCyCwHM8DarvCOPEa73JUCU/fvoU/jpNpuDmTXfG5XpxXS1CocDa6aQ==
-Subject: Re: [PATCH V2 0/7] CPU cooling device new strategies
-To: Leo Yan <leo.yan@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>, kevin.wangtao@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
-        rui.zhang@intel.com, linux-pm@vger.kernel.org
-References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
- <20180307170923.GA6543@localhost.localdomain>
- <1c07a155-d8e8-480f-937a-6022cda15d0b@linaro.org>
- <20180308120352.mko2b775ppquverb@oak.lan>
- <20180326143046.GA18782@leoy-ThinkPad-X240s>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a3ec7322-f48c-911d-bce0-3696666b6f0d@linaro.org>
-Date: Tue, 27 Mar 2018 11:35:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Mar 2018 05:36:52 -0400
+X-Google-Smtp-Source: AG47ELuxjT1tmonSUS6+8vRcl8SuxAKC/D+DJl5PbuDo2mpfI7x+PO7r6+iWkPicAIKIWNLwwvx4Xg==
+Date: Tue, 27 Mar 2018 11:36:48 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Eric Dumazet <edumazet@google.com>, Borislav Petkov <bp@alien8.de>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, Hugh Dickins <hughd@google.com>,
+        a.p.zijlstra@chello.nl
+Subject: Re: [PATCH v3 1/2] x86, msr: allow rdmsr_safe_on_cpu() to schedule
+Message-ID: <20180327093648.iba7rzvviolyjgmt@gmail.com>
+References: <20180323215818.127774-1-edumazet@google.com>
+ <20180324080946.3db4xdkl5i6jx2rc@gmail.com>
+ <336355a3-c11d-44fc-0642-671670980ac0@gmail.com>
+ <20180325141242.GC21878@pd.tnic>
+ <20180326064042.c6xod5n24kqttdiw@gmail.com>
+ <CANn89iKy_jVpBvAebJFm1UKVKfG=p+R4B1tXmC4waeK7YzZh2g@mail.gmail.com>
+ <alpine.DEB.2.21.1803261621430.1585@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20180326143046.GA18782@leoy-ThinkPad-X240s>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1803261621430.1585@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/03/2018 16:30, Leo Yan wrote:
-> On Thu, Mar 08, 2018 at 12:03:52PM +0000, Daniel Thompson wrote:
->> On Wed, Mar 07, 2018 at 07:57:17PM +0100, Daniel Lezcano wrote:
->>>>> The preliminary benchmarks show the following changes:
->>>>>
->>>>> On the hikey6220, dhrystone shows a throughtput increase of 40% for an
->>>>> increase of the latency of 16% while sysbench shows a latency increase
->>>>> of 5%.
->>>>
->>>> I don't follow these numbers. Throughput increase while injecting idle?
->>>> compared to what? percentages of what? Please be more specific to better
->>>> describer your work..
->>>
->>> The dhrystone throughput is based on the virtual timer, when we are
->>> running, it is at max opp, so the throughput increases. But regarding
->>> the real time, it takes obviously more time to achieve as we are
->>> artificially inserting idle cycles. With the cpufreq governor, we run at
->>> a lower opp, so the throughput is less for dhrystone but it takes less
->>> time to achieve.
->>>
->>> Percentages are comparing cpufreq vs cpuidle cooling devices. I will
->>> take care of presenting the results in a more clear way in the next version.
->>
->> I think we should also note that the current hikey settings for cpufreq
->> are very badly tuned for this platform. It has a single temp threshold
->> and it jumps from max freq to min freq.
->>
->> IIRC Leo's work on Hikey thermals correctly it would be much better if 
->> it used the power-allocator thermal governor or if if copied some of 
->> the Samsung 32-bit platform by configuring the step governor with a 
->> graduated with a slightly lower threshold that moves two stops back in 
->> the OPP table (which is still fairly high clock speed... but it
->> thermally sustainable).
+
+* Thomas Gleixner <tglx@linutronix.de> wrote:
+
+> On Mon, 26 Mar 2018, Eric Dumazet wrote:
+> > On Sun, Mar 25, 2018 at 11:40 PM Ingo Molnar <mingo@kernel.org> wrote:
+> > > If performance matters then the relevant MSR events should be added and
+> > > gsysd
+> > > should be updated to support MSR events.
+> > >
+> > 
+> > Thanks for the hints Ingo. I have forwarded them.
+> > 
+> > I am pretty sure gsysd was designed and written years before perf even
+> > existed,
+> > so I am not sure all this will ever be implemented.
+> > 
+> > I guess I will apply the kernel patches locally for the time being.
 > 
-> I think Daniel L. is working on this patch set with 'power-allocator'
-> governor, and the parameters 'sustainable-power = <3326>' and
-> 'dynamic-power-coefficient = <311>' are profiling value on Hikey
-> platform.  Now we only consider dynamic power and skip static leakage
-> for 'power-allocator' governor.  And all these parameters are merged
-> into Linux mainline kernel.
-> 
-> Daniel L. could correct me if I misunderstand the testing conditions.
+> I'm still considering to merge them because there is no real reason not to
+> do so. The interfaces exist and are used. Reducing their impact is
+> certainly worthwhile.
 
-Well, the first iteration is without the powerallocator governor API. It
-was tested with the step-wise governor only. But you are right by saying
-it will use the dynamic-power-coefficient and sustainable-power and will
-implement the power allocator version of the API. I'm working on the
-power allocator version for the idle injection + OPP change as we need
-to compute the capacity equivalence between the idle-injection cycles +
-OPP and the lower OPP in order to change the OPP for optimized power /
-performance trade-off.
+Ok, that's a good point, and the patches themselves are sane:
 
+  Acked-by: Ingo Molnar <mingo@kernel.org>
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Thanks,
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+	Ingo
