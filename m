@@ -1,129 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751205AbeC0LI3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 07:08:29 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:57675 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751026AbeC0LI1 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 27 Mar 2018 07:08:27 -0400
-Date: Tue, 27 Mar 2018 19:08:14 +0800
-From: joeyli <jlee@suse.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jiri Slaby <jslaby@suse.cz>, David Howells <dhowells@redhat.com>,
-        keyrings@vger.kernel.org, matthew.garrett@nebula.com,
-        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9] KEYS: Blacklisting & UEFI database load
-Message-ID: <20180327110814.GC5669@linux-l9pv.suse>
-References: <147931984418.16460.6639993676886095760.stgit@warthog.procyon.org.uk>
- <6eabbb43-295e-9ba0-c0d9-120f48aa0e1d@suse.cz>
- <1520428682.10396.445.camel@linux.vnet.ibm.com>
- <1520436517.5558.2.camel@HansenPartnership.com>
- <20180311032022.GA31059@linux-l9pv.suse>
- <1521468723.3503.171.camel@linux.vnet.ibm.com>
+        id S1751964AbeC0LJj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 07:09:39 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42132 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750993AbeC0LJi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 07:09:38 -0400
+X-Google-Smtp-Source: AG47ELucup3v7bbnHc4E6KZl/4MCaNyVho+HR8urYW10tK9J8aRb1ztDZta3QwAMtdgLjyv369n1UU7NVC+kRVrsWkc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1521468723.3503.171.camel@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [212.51.149.109]
+In-Reply-To: <20180327095907.GA18146@arm.com>
+References: <1522083800-30100-1-git-send-email-ayan.halder@arm.com>
+ <1522083800-30100-9-git-send-email-ayan.halder@arm.com> <20180327082903.GS14155@phenom.ffwll.local>
+ <20180327095907.GA18146@arm.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Tue, 27 Mar 2018 13:09:36 +0200
+X-Google-Sender-Auth: AjIlq8idPFcPnHcfIqp-9r1u43E
+Message-ID: <CAKMK7uF8mmLOBQtwfQgkdpPHfoy7yM9UApWgc9YiEudoP5WEyw@mail.gmail.com>
+Subject: Re: [PATCH 8/8] drm/arm/malidp: Added the late system pm functions
+To: Ayan Halder <ayan.halder@arm.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Mali DP Maintainers <malidp@foss.arm.com>,
+        Dave Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2RB9igj002620
 
-Hi Mimi,
+On Tue, Mar 27, 2018 at 11:59 AM, Ayan Halder <ayan.halder@arm.com> wrote:
+> On Tue, Mar 27, 2018 at 10:29:03AM +0200, Daniel Vetter wrote:
+>> On Mon, Mar 26, 2018 at 06:03:20PM +0100, Ayan Kumar Halder wrote:
+>> > malidp_pm_suspend_late checks if the runtime status is not suspended
+>> > and if so, invokes malidp_runtime_pm_suspend which disables the
+>> > display engine/core interrupts and the clocks. It sets the runtime status
+>> > as suspended. Subsequently, malidp_pm_resume_early will invoke
+>> > malidp_runtime_pm_resume which enables the clocks and the interrupts
+>> > (previously disabled) and sets the runtime status as active.
+>> >
+>> > Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+>> > Change-Id: I5f8c3d28f076314a1c9da2a46760a9c37039ccda
+>>
+>> Why exactly do you need late/early hooks? If you have dependencies with
+>> other devices, pls consider adding device_links instead. This here
+>> shouldn't be necessary.
+>> -Daniel
+> We need to late/early hooks to disable malidp interrupts and the
+> clocks.
 
-On Mon, Mar 19, 2018 at 10:12:03AM -0400, Mimi Zohar wrote:
-> On Sun, 2018-03-11 at 11:20 +0800, joeyli wrote:
-> > On Wed, Mar 07, 2018 at 07:28:37AM -0800, James Bottomley wrote:
-> > > On Wed, 2018-03-07 at 08:18 -0500, Mimi Zohar wrote:
-> > > > On Tue, 2018-03-06 at 15:05 +0100, Jiri Slaby wrote:
-> > > > > what's the status of this please? Distributors (I checked SUSE,
-> > > > > RedHat and Ubuntu) have to carry these patches and every of them
-> > > > > have to forward-port the patches to new kernels. So are you going
-> > > > > to resend the PR to have this merged?
-> > > [...]
-> > > > Just because I trust the platform keys prior to booting the kernel,
-> > > > doesn't mean that I *want* to trust those keys once booted.  There
-> > > > are, however, places where we need access to those keys to verify a
-> > > > signature (eg. kexec kernel image).
-> > > 
-> > > Which is essentially the reason I always give when these patches come
-> > > back
-> > >
-> > 
-> > Josh Boyer's "MODSIGN: Allow the "db" UEFI variable to be suppressed"
-> > patch checks MokIgnoreDB variable to ignore db:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=keys-uefi&id=7c395b30a33a617c5cc2cdd419300af71277b79a
-> > 
-> > I think that we can consider to use MokAllowDB. Which means that kernel
-> > ignores DB by default.
-> 
-> Not all systems have a shim layer.  This design is really x86
-> specific.  Allowing shim keys, but ignoring DB, does not address those
-> systems.
->
+Yes, but why this ordering constraint? Why can't you just disable the
+interrupts/clocks in the normal suspend code. I see that the patch
+does this, I want to understand why it does it.
+-Daniel
 
-Actually shim is EFI specific but not x86 specific. I agree with you that
-not all system has shim. But at least shim provides a way to interact with
-user to detect the physical accessing.
+>> > ---
+>> >  drivers/gpu/drm/arm/malidp_drv.c | 17 +++++++++++++++++
+>> >  1 file changed, 17 insertions(+)
+>> >
+>> > diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+>> > index bd44a6d..f6124d8 100644
+>> > --- a/drivers/gpu/drm/arm/malidp_drv.c
+>> > +++ b/drivers/gpu/drm/arm/malidp_drv.c
+>> > @@ -766,8 +766,25 @@ static int __maybe_unused malidp_pm_resume(struct device *dev)
+>> >     return 0;
+>> >  }
+>> >
+>> > +static int __maybe_unused malidp_pm_suspend_late(struct device *dev)
+>> > +{
+>> > +   if (!pm_runtime_status_suspended(dev)) {
+>> > +           malidp_runtime_pm_suspend(dev);
+>> > +           pm_runtime_set_suspended(dev);
+>> > +   }
+>> > +   return 0;
+>> > +}
+>> > +
+>> > +static int __maybe_unused malidp_pm_resume_early(struct device *dev)
+>> > +{
+>> > +   malidp_runtime_pm_resume(dev);
+>> > +   pm_runtime_set_active(dev);
+>> > +   return 0;
+>> > +}
+>> > +
+>> >  static const struct dev_pm_ops malidp_pm_ops = {
+>> >     SET_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend, malidp_pm_resume) \
+>> > +   SET_LATE_SYSTEM_SLEEP_PM_OPS(malidp_pm_suspend_late, malidp_pm_resume_early) \
+>> >     SET_RUNTIME_PM_OPS(malidp_runtime_pm_suspend, malidp_runtime_pm_resume, NULL)
+>> >  };
+>> >
+>> > --
+>> > 2.7.4
+>> >
+>> > _______________________________________________
+>> > dri-devel mailing list
+>> > dri-devel@lists.freedesktop.org
+>> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>
+>> --
+>> Daniel Vetter
+>> Software Engineer, Intel Corporation
+>> http://blog.ffwll.ch
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-For the system doesn't have shim, kernel can provide a boot option for user
-to trust the keys in DB. But it also means that the boot option can be
-enabled without physical accessing.
- 
-> > > > Nayna Jain's "certs: define a trusted platform keyring" patch set
-> > > > introduces a new, separate keyring for these platform keys.
-> > > 
-> > > Perhaps, to break the deadlock, we should ask Jiří what the reason is
-> > > the distros want these keys to be trusted.  Apart from the Microsoft
-> > > key, it will also give you an OEM key in your trusted keyring.  Is it
-> > > something to do with OEM supplied modules?
-> > >
-> > 
-> > As I remember that some manufacturers uses certificate in db to
-> > sign their kernel module. We need to discuss with them for switching
-> > to mok. Currently I do not know all use cases for using db.
-> > 
-> > There have some benefits for using db:
-> > 
-> >  - User does not need to deal with shim-mokmanager to enroll mok.
-> >    Target machine doesn't need to reboot and user doesn't need to
-> >    face to mokmanager UI.  
-> 
-> The reason for trusting enrolled shim keys is because it requires
-> physical presence.  (I kind of remember hearing that this changed.
->  There is some method of accepting enrolled keys that does not require
-> physical presence.)
->
 
-Could you please provide more detail for those methods? Thanks!
- 
-> >  - The db is a authenticated variable, it's still secure when secure
-> >    boot is disabled.
-> >    The db is a authenticated variable that it can only be modified
-> >    by manufacturer's key. Kernel can trust it when secure boot
-> >    is disabled. It's useful for we do not need to taint kernel
-> >    for loading a manufacturer's kernel module even secure boot is
-> >    disabled.
-> > 
-> >  - Do not need to worry about the space of NVRAM and the EFI firmware
-> >    implementation for writing a boot time variable.
-> >   
-> > But I also agree that we should not trust all keys (like Microsoft key)
-> > in db by default.
-> 
-> Between requiring a shim layer and relying on physical presence, I'm
-> not convinced this is the best solution.  Do we really want to support
-> different methods for different architectures?
->
 
-It's not the best solution because it relies on other layers. But it's
-currently the only solution for general EFI firmware. Or you have other
-solution can be used for all architectures?
-
-Thanks a lot!
-Joey Lee 
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
