@@ -1,77 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751973AbeC0V3j (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:29:39 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:56038 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750966AbeC0V3h (ORCPT
+        id S1751964AbeC0VbB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:31:01 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42800 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750966AbeC0Va7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:29:37 -0400
-X-Google-Smtp-Source: AIpwx4+TRQhJNbGnC0dDZSKCRQ8fDf7IIFIYn7yD6mLfrX8xYVB6dB6TIDa4+wlbvmisoYbowo8+Fw==
-Date: Tue, 27 Mar 2018 23:29:34 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: SF Markus Elfring <elfring@users.sourceforge.net>
-Cc: linux-pwm@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] pwm: atmel-tcb: Delete an error message for a failed
- memory allocation in atmel_tcb_pwm_probe()
-Message-ID: <20180327212933.GC28058@mithrandir>
-References: <8274c498-1d1b-2ece-365c-98ded714a53c@users.sourceforge.net>
+        Tue, 27 Mar 2018 17:30:59 -0400
+X-Google-Smtp-Source: AIpwx4+RdWJ5kFkTm8tWXlVdm+GFm3YCRC8wWc6JO6rkQaywbjQygER9ggjtiY5o68BeuVITAk46Qw==
+Date: Tue, 27 Mar 2018 14:30:57 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 07/24] mm: VMA sequence count
+In-Reply-To: <1520963994-28477-8-git-send-email-ldufour@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1803271429230.36401@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-8-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UPT3ojh+0CqEDtpF"
-Content-Disposition: inline
-In-Reply-To: <8274c498-1d1b-2ece-365c-98ded714a53c@users.sourceforge.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 13 Mar 2018, Laurent Dufour wrote:
 
---UPT3ojh+0CqEDtpF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index faf85699f1a1..5898255d0aeb 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -558,6 +558,10 @@ void __vma_link_rb(struct mm_struct *mm, struct vm_area_struct *vma,
+>  	else
+>  		mm->highest_vm_end = vm_end_gap(vma);
+>  
+> +#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+> +	seqcount_init(&vma->vm_sequence);
+> +#endif
+> +
+>  	/*
+>  	 * vma->vm_prev wasn't known when we followed the rbtree to find the
+>  	 * correct insertion point for that vma. As a result, we could not
+> @@ -692,6 +696,30 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+>  	long adjust_next = 0;
+>  	int remove_next = 0;
+>  
+> +	/*
+> +	 * Why using vm_raw_write*() functions here to avoid lockdep's warning ?
+> +	 *
+> +	 * Locked is complaining about a theoretical lock dependency, involving
+> +	 * 3 locks:
+> +	 *   mapping->i_mmap_rwsem --> vma->vm_sequence --> fs_reclaim
+> +	 *
+> +	 * Here are the major path leading to this dependency :
+> +	 *  1. __vma_adjust() mmap_sem  -> vm_sequence -> i_mmap_rwsem
+> +	 *  2. move_vmap() mmap_sem -> vm_sequence -> fs_reclaim
+> +	 *  3. __alloc_pages_nodemask() fs_reclaim -> i_mmap_rwsem
+> +	 *  4. unmap_mapping_range() i_mmap_rwsem -> vm_sequence
+> +	 *
+> +	 * So there is no way to solve this easily, especially because in
+> +	 * unmap_mapping_range() the i_mmap_rwsem is grab while the impacted
+> +	 * VMAs are not yet known.
+> +	 * However, the way the vm_seq is used is guarantying that we will
+> +	 * never block on it since we just check for its value and never wait
+> +	 * for it to move, see vma_has_changed() and handle_speculative_fault().
+> +	 */
+> +	vm_raw_write_begin(vma);
+> +	if (next)
+> +		vm_raw_write_begin(next);
+> +
+>  	if (next && !insert) {
+>  		struct vm_area_struct *exporter = NULL, *importer = NULL;
+>  
 
-On Fri, Dec 15, 2017 at 07:00:46PM +0100, SF Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 15 Dec 2017 18:55:11 +0100
->=20
-> Omit an extra message for a memory allocation failure in this function.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/pwm/pwm-atmel-tcb.c | 1 -
->  1 file changed, 1 deletion(-)
+Eek, what about later on:
 
-Applied, thanks.
+		/*
+		 * Easily overlooked: when mprotect shifts the boundary,
+		 * make sure the expanding vma has anon_vma set if the
+		 * shrinking vma had, to cover any anon pages imported.
+		 */
+		if (exporter && exporter->anon_vma && !importer->anon_vma) {
+			int error;
 
-Thierry
+			importer->anon_vma = exporter->anon_vma;
+			error = anon_vma_clone(importer, exporter);
+			if (error)
+				return error;
+		}
 
---UPT3ojh+0CqEDtpF
-Content-Type: application/pgp-signature; name="signature.asc"
+This needs
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6t70ACgkQ3SOs138+
-s6EYthAAqpm2v1uDdRs/8YnXECLx3IcjduNSPvg0BXG9jzfNC2tdNZJhlrt0z5Y4
-HpHPnZlf6xJVAtNA3S8bXesKffSViEGGTCxrNNBSYRCdeBy9n/Ud7AOf3omNv8Bm
-Gy/sjIezzrcHcCc1foamaeJt1c0nevpkzn3/Oxe60yhsrffhgpTno4S8tDPpmwEi
-lCZ5QeQmSDvv8/GYLCzIEzS2PczCu5JFuEQcdC6VYUw/V14QltK64m+Hic9M9oaw
-r7AiruTbGxFHq1A82DVxlyC1QIhBTBsu8ulSUBCp3dNHNSIMOF34rRyy1LEH9EtK
-6e8Jx6zrHBZtshtR3GYo8YchYcnZ0NLfDxaUAXO2xWoHgnr2llcU3MN4DdAEO4dB
-3tXfNkl9HzFF92RmYnlSJTAIcVHSRgdNHqYLBDySN+XIAvmdLbTT+6xxc+8B3JsF
-IzednF9QDQg88jDxmFYe9kRMC5azmdxv9tsbEvulw43a6PUZjREprhaKENhLVaaf
-CMpv65VQog5FnfVg0MXhF+gnKfw7T0Y2Ld8lJ1Y9Is3T66CmfzO13dN7zhIOJwZI
-yu4N6Xal7YtngHxH3jjEhCLlxG2d17Xtxj9k83bMz9j7EgjBBKSL5iMPOa7OxIyV
-rX7sCmWSV4AoRw2rFq2ML/FIuWumx0KFS8eaVYZKRl9RIi9ToXA=
-=U3k1
------END PGP SIGNATURE-----
-
---UPT3ojh+0CqEDtpF--
+if (error) {
+	if (next && next != vma)
+		vm_raw_write_end(next);
+	vm_raw_write_end(vma);
+	return error;
+}
