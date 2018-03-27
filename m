@@ -1,68 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752273AbeC0XTo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 19:19:44 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46644 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751913AbeC0XTn (ORCPT
+        id S1752620AbeC0XUN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 19:20:13 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:38171 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752552AbeC0XUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 19:19:43 -0400
-X-Google-Smtp-Source: AIpwx48QWttSlW9OiliWgYSQYtBNpHoVeO4RG3njSftEbXOD6EdGE+4Q0Idcu/AAxeWPF2haZ9x5AA==
-Date: Wed, 28 Mar 2018 01:19:40 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH] pwm: sysfs: use put_device() instead of kfree()
-Message-ID: <20180327231939.GC4097@mithrandir>
-References: <416c89ec3cff87e842a0ff148df13bed35a44c46.1520502811.git.arvind.yadav.cs@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Y5rl02BVI9TCfPar"
-Content-Disposition: inline
-In-Reply-To: <416c89ec3cff87e842a0ff148df13bed35a44c46.1520502811.git.arvind.yadav.cs@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 27 Mar 2018 19:20:10 -0400
+X-Google-Smtp-Source: AIpwx49X3a/YxyDK0VyFloOm+POB2QWxwd+bstTpTIgoQwqSvle1+0VLbFJblxzhFJUN9NRwn8F3eQ==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Abhishek Shah <abhishek.shah@broadcom.com>,
+        Florian Westphal <fw@strlen.de>,
+        linux-kernel@vger.kernel.org (open list),
+        bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH net-next 1/2] net: bgmac: Use interface name to request interrupt
+Date: Tue, 27 Mar 2018 16:20:01 -0700
+Message-Id: <20180327232002.29399-2-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180327232002.29399-1-f.fainelli@gmail.com>
+References: <20180327232002.29399-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When the system contains several BGMAC adapters, it is nice to be able
+to tell which one is which by looking at /proc/interrupts. Use the
+network device name as a name to request_irq() with.
 
---Y5rl02BVI9TCfPar
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/ethernet/broadcom/bgmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Mar 08, 2018 at 03:27:37PM +0530, Arvind Yadav wrote:
-> Never directly free @dev after calling device_register(), even
-> if it returned an error! Always use put_device() to give up the
-> reference initialized.
->=20
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-> ---
->  drivers/pwm/sysfs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-
-Applied, thanks.
-
-Thierry
-
---Y5rl02BVI9TCfPar
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq60YoACgkQ3SOs138+
-s6HFxhAAk8Nln8GGhahf69otsHcHtigBEMI/pk9R1j+Tlf1fFkuPYKWsFykX7Zog
-+1Vz0VxnSjwj1d63VT3hdxRvCJ6B8jmE6mvPEG7XsUPDst2PwMhOVo6G7dmkTHNf
-33mHH+7QNikGPa4K9MaAlRuhuUIaaEQRhq+614dIx+xuXU3BXef7b18e8rWSUgSh
-EN5+WVULbHtfQCBkClqpa9mgwfIJ/eXPe9PNM7Erq9GuAISz6l5ekzEaQvAMpGez
-O9rGMAgG1TPhTKR0if3ZjVfwfinl5MfKlPqk+TRx2hDFnqKjwZgBjQ3IpSPjLfEG
-G3Azty8Vv4mHONczDWcg4TFKV1A6niJvBh6R7xeaPTx52DPKXbMZbQW289Hrdbic
-WyWP+EXL/cUKmNDNCjJCCeTmEPajLOrPus9bA7kGJSU8ZidssOXLE+uC5xon0Nnm
-EUia1aAuC1unqMv7DRBWSfrKG65yR+50G8C0h/9zTwHOwU1X89WHpq+JGguAk6Yd
-c68JdofbCJamRleIPF8aLRpy43V73yOqZojEvf4VykUx3wL3zrw00kgq7+F1f4Sa
-fxMluge6lnfbWQ5TpNC2PtrkDbPVJHYaNUIRi8rBYpsN/BzjWSoCIbeF3f7extRp
-E3q4lPa7LnEC+3fFG49KB/AjdnFI04sGg3f5S7wM3s7pBDUAYzg=
-=+scC
------END PGP SIGNATURE-----
-
---Y5rl02BVI9TCfPar--
+diff --git a/drivers/net/ethernet/broadcom/bgmac.c b/drivers/net/ethernet/broadcom/bgmac.c
+index 8eef9fb6b1fe..46d7b8068425 100644
+--- a/drivers/net/ethernet/broadcom/bgmac.c
++++ b/drivers/net/ethernet/broadcom/bgmac.c
+@@ -1190,7 +1190,7 @@ static int bgmac_open(struct net_device *net_dev)
+ 	bgmac_chip_init(bgmac);
+ 
+ 	err = request_irq(bgmac->irq, bgmac_interrupt, IRQF_SHARED,
+-			  KBUILD_MODNAME, net_dev);
++			  net_dev->name, net_dev);
+ 	if (err < 0) {
+ 		dev_err(bgmac->dev, "IRQ request error: %d!\n", err);
+ 		bgmac_dma_cleanup(bgmac);
+-- 
+2.14.1
