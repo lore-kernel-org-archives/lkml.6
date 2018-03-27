@@ -1,123 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752066AbeC0La1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 07:30:27 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:52933 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751120AbeC0LaZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 07:30:25 -0400
-X-Google-Smtp-Source: AG47ELs08R8A+L6PUgEbxTDFxvP87xVG3wAJGMhTuK2GivGA8JPBBu8F5CFs1s6ZuAr7vWCWX/N9cg==
-Subject: Re: [PATCH v3 0/6] clocksource: rework Atmel TCB timer driver
-To: Alexander Dahl <ada@thorsis.com>, linux-arm-kernel@lists.infradead.org
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180223171558.7037-1-alexandre.belloni@bootlin.com>
- <9761072.pX2B0LJlSJ@ada>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <989df8a3-462a-c645-87f1-9f956e1b22c9@linaro.org>
-Date: Tue, 27 Mar 2018 13:30:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752154AbeC0Lao (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 07:30:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751120AbeC0Lam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 07:30:42 -0400
+Date: Tue, 27 Mar 2018 13:30:34 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Cc: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, freude@de.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+Subject: Re: [PATCH v3 03/14] KVM: s390: CPU model support for AP
+ virtualization
+Message-ID: <20180327133034.1562ad88.cohuck@redhat.com>
+In-Reply-To: <327f20bc-741d-ac0a-8e3f-929e8ad73159@linux.vnet.ibm.com>
+References: <1521051954-25715-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1521051954-25715-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <20180327125911.5c7ecf34.cohuck@redhat.com>
+        <327f20bc-741d-ac0a-8e3f-929e8ad73159@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <9761072.pX2B0LJlSJ@ada>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/03/2018 12:41, Alexander Dahl wrote:
-> Hello Alexandre,
-> 
-> Am Freitag, 23. Februar 2018, 18:15:52 CEST schrieb Alexandre Belloni:
->>  - using the PIT doesn't work well with preempt-rt because its interrupt is
->>    shared (in particular with the UART and their interrupt flags are
->>    incompatible)
-> 
-> This is actually quite annoying when using the UART as a serial console, 
-> producing garbage when you type too fast. That's why I tested this patch 
-> series (on top of v4.16-rc7). Target is a at91sam9g20 based board, quite close 
-> to, but not actually an at91sam9g20-ek.
-> 
-> First test was with the previous kernel config updated by oldconfig, so 
-> basically still using the PIT:
-> 
->   +CONFIG_ATMEL_CLOCKSOURCE_PIT=y
-> 
-> On the serial console with v4.16 and the patch set without switching to the 
-> new options, I see this on boot (no surprise, this is what it also prints with 
-> v4.9):
-> 
->   clocksource: pit: mask: 0xfffffff max_cycles: 0xfffffff, max_idle_ns: 
-> 14468723050 ns
->   …
->   clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 
-> 19112604462750000 ns
->   …
->   clocksource: tcb_clksrc: mask: 0xffffffff max_cycles: 0xffffffff, 
-> max_idle_ns: 115749784805 ns
->   …
->   clocksource: Switched to clocksource tcb_clksrc
-> 
-> Interrupts here:
-> 
->   $ cat /proc/interrupts 
->              CPU0       
->    16:       4802  atmel-aic   1 Level     at91_tick, rtc0, ttyS0
->    19:      24041  atmel-aic  19 Level     tc_clkevt
->    26:        124  atmel-aic  21 Level     eth0
->    28:          1      GPIO  11 Edge      reset
->   Err:          0
-> 
-> Second test with tcb block added to dts like in 
-> 32ce250b0af3b6971fc746445fce87861a9f5628 and with changed kernel config 
-> according to defconfig changes in patch 5 and 6:
-> 
->   +# CONFIG_ATMEL_CLOCKSOURCE_PIT is not set
->   +CONFIG_ATMEL_CLOCKSOURCE_TCB=y
->   -CONFIG_ATMEL_TCLIB=y
->   -CONFIG_ATMEL_TCB_CLKSRC=y
->   -CONFIG_ATMEL_TCB_CLKSRC_BLOCK=0
->   +# CONFIG_ATMEL_TCLIB is not set
->   -CONFIG_ATMEL_PIT=y
->   +CONFIG_ATMEL_ARM_TCB_CLKSRC=y
->   -CONFIG_PWM_ATMEL_TCB=m
-> 
-> The output on the serial console contains this:
-> 
->   clocksource: timer@fffa0000:0,1: mask: 0xffffffff max_cycles: 0xffffffff, 
-> max_idle_ns: 115749784805 ns
->   …
->   clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 
-> 19112604462750000 ns
->   …
->   clocksource: Switched to clocksource timer@fffa0000:0,1
-> 
-> Interrupts here:
-> 
->   $ cat /proc/interrupts 
->              CPU0       
->    17:    5727291  atmel-aic  19 Level     timer@fffa0000:2
->    18:       5523  atmel-aic   1 Level     rtc0, ttyS0
->    26:       5031  atmel-aic  21 Level     eth0
->    28:          1      GPIO  11 Edge      reset
->   Err:          0
-> 
-> So, the board boots and runs like usual. I don't know if that qualifies for a 
-> Tested-by? Hope that helps.
+On Tue, 27 Mar 2018 13:22:56 +0200
+Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
 
-Can you can give a rough amount for the irq rate on the timer ?
+> On 27/03/2018 12:59, Cornelia Huck wrote:
+> > On Wed, 14 Mar 2018 14:25:43 -0400
+> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+> >  
+> >> Introduces a new CPU model feature and two CPU model
+> >> facilities to support AP virtualization for KVM guests.
+> >>
+> >> CPU model feature:
+> >>
+> >> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+> >> AP instructions are available on the guest. This
+> >> feature will be enabled by the kernel only if the AP
+> >> instructions are installed on the linux host. This feature
+> >> must be specifically turned on for the KVM guest from
+> >> userspace to use the VFIO AP device driver for guest
+> >> access to AP devices.
+> >>
+> >> CPU model facilities:
+> >>
+> >> 1. AP Query Configuration Information (QCI) facility is installed.
+> >>
+> >>     This is indicated by setting facilities bit 12 for
+> >>     the guest. The kernel will not enable this facility
+> >>     for the guest if it is not set on the host. This facility
+> >>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+> >>     feature is not installed.
+> >>
+> >> 2. AP Facilities Test facility (APFT) is installed.
+> >>
+> >>     This is indicated by setting facilities bit 15 for
+> >>     the guest. The kernel will not enable this facility for
+> >>     the guest if it is not set on the host. This facility
+> >>     must not be set by userspace if the KVM_S390_VM_CPU_FEAT_AP
+> >>     feature is not installed.
+> >>
+> >> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> >> Reviewed-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+> >> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> >> ---
+> >>   arch/s390/include/asm/kvm_host.h |    1 +
+> >>   arch/s390/include/uapi/asm/kvm.h |    1 +
+> >>   arch/s390/kvm/kvm-s390.c         |    4 ++++
+> >>   arch/s390/tools/gen_facilities.c |    2 ++
+> >>   4 files changed, 8 insertions(+), 0 deletions(-)
+> >>
+> >> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> >> index c47731d..a60c45b 100644
+> >> --- a/arch/s390/kvm/kvm-s390.c
+> >> +++ b/arch/s390/kvm/kvm-s390.c
+> >> @@ -350,6 +350,10 @@ static void kvm_s390_cpu_feat_init(void)
+> >>   
+> >>   	if (MACHINE_HAS_ESOP)
+> >>   		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+> >> +
+> >> +	if (ap_instructions_installed()) /* AP instructions installed on host */
+> >> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);  
+> > That's another dependency of the base kvm-s390 module on zcrypt, which
+> > I don't like at all.  
+> 
+> In fact there is a tricky thing about zcrypt it is that even it is 
+> configured a a module
+> CONFIG_ZCRYPT=M, the AP BUS is built statically with the kernel.
+> See drivers/s390/crypto/Makefile
+> "
+> ap-objs := ap_bus.o ap_card.o ap_queue.o
+> obj-$(subst m,y,$(CONFIG_ZCRYPT)) += ap.o
+> "
+> ugly isn't it?
 
+Yeah, I found it... interesting the first time I saw it.
 
+> 
+> >
+> > There are two possibilities here:
+> > - Exposing the features makes sense even if no zcrypt driver is active
+> >    in the host. Then, ap_instructions_installed() needs to be moved into
+> >    always-built code (see my comments for the interface in patch 1).  
+> 
+> This is what we need for future enhancement I think.
 
+OK, so that function needs to go into whatever place the interface used
+in patch 1 goes to as well.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> 
+> > - Exposing the features makes sense only if we actually want to make
+> >    vfio-ap available. Then we should provide the proper check in the
+> >    vfio-ap parts (which depends on zcrypt) and stub it out if vfio-ap is
+> >    not configured.
+> >  
+> >> +
+> >>   	/*
+> >>   	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+> >>   	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).  
+> 
+> 
