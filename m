@@ -1,68 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752945AbeC0QLX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 12:11:23 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34853 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752766AbeC0QLV (ORCPT
+        id S1751195AbeC0QSt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 12:18:49 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38825 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbeC0QSs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 12:11:21 -0400
-X-Google-Smtp-Source: AIpwx489oDplS50YGTOFlA+6+TAd3n7so8OmwOJLOGFr9TULassfumgY0QD0XmvODJQVgxLNbuF28w==
-From: Maksims Matjakubovs <maksims.matjakubovs@gmail.com>
-To: broonie@kernel.org
-Cc: maxime.ripard@bootlin.com, wens@csie.org, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Maksims Matjakubovs <maksims.matjakubovs@gmail.com>
-Subject: [PATCH] Allwinner SPI sun6i : add dual mode support.
-Date: Tue, 27 Mar 2018 19:11:02 +0300
-Message-Id: <1522167062-4079-1-git-send-email-maksims.matjakubovs@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 27 Mar 2018 12:18:48 -0400
+X-Google-Smtp-Source: AG47ELvXZWuraUGMvGyvBfG6JGlSdlLMP2JIBscZcF0e/OuogDQNtKxdGo3sRYFBDAJhXjv2IIImQA==
+Date: Tue, 27 Mar 2018 09:18:47 -0700 (PDT)
+X-Google-Original-Date: Tue, 27 Mar 2018 09:18:43 PDT (-0700)
+Subject: Re: [tip:irq/core 12/13] drivers/irqchip/irq-vic.c:295:2: error: implicit declaration of function 'set_handle_irq'; did you mean 'vic_handle_irq'?
+In-Reply-To: <alpine.DEB.2.21.1803271734170.1964@nanos.tec.linutronix.de>
+CC: Arnd Bergmann <arnd@arndb.de>, fengguang.wu@intel.com,
+        kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com
+From: Palmer Dabbelt <palmer@sifive.com>
+To: tglx@linutronix.de
+Message-ID: <mhng-b8f6e13a-d514-4af3-936e-22dd9ab9a546@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added Dual mode half duplex Rx and Tx support to Allwinner sun6i/sun8i SPI driver.
-Main changes is related to SUN6I_BURST_CTL_CNT_REG register.
-SPI transmit is in Dual mode if STC (Master Single Mode Transmit Counter) is 0 and DRM (Master Dual Mode RX Enable) is not set.
-SPI receive is in Dual mode if DRM (Master Dual Mode RX Enable) is set.
-Tested on Allwinner V3s (sun8i) CPU.
+On Tue, 27 Mar 2018 08:38:29 PDT (-0700), tglx@linutronix.de wrote:
+> On Tue, 27 Mar 2018, Palmer Dabbelt wrote:
+>> On Mon, 26 Mar 2018 22:27:36 PDT (-0700), tglx@linutronix.de wrote:
+>> >
+>> > The commits in tip right now are:
+>> >
+>> >   cc6c98485f8e ("RISC-V: Move to the new GENERIC_IRQ_MULTI_HANDLER handler")
+>> >   caacdbf4aa56 ("genirq: Add CONFIG_GENERIC_IRQ_MULTI_HANDLER")
+>> >
+>> > I surely can revert them, but I don't see how they would break arm or
+>> > anything else.
+>>
+>> If GENERIC_IRQ_MULTI_HANDLER is set via randconfig then set_handle_irq() is
+>> pulled in from the generic code, which conflicts with the definitions in arm,
+>> arm64, and openrisc.  The RISC-V commit depends on the genirq one.
+>
+> Two ways to fix that:
+>
+>  - Rename set_handle_irq() in tip:irq/core and then convert the rest of the
+>    tree over. A few more files touched, but nothing harmful
+>
+>  - Make GENERIC_IRQ_MULTI_HANDLER depend on !IRQ_MULTI_HANDLER. That should
+>    cure it as well
 
-Signed-off-by: Maksims Matjakubovs <maksims.matjakubovs@gmail.com>
----
- drivers/spi/spi-sun6i.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
-index 8533f4e..2da52ed 100644
---- a/drivers/spi/spi-sun6i.c
-+++ b/drivers/spi/spi-sun6i.c
-@@ -84,6 +84,7 @@
- 
- #define SUN6I_BURST_CTL_CNT_REG		0x38
- #define SUN6I_BURST_CTL_CNT_STC(cnt)		((cnt) & SUN6I_MAX_XFER_SIZE)
-+#define SUN6I_BURST_CTL_CNT_DRM		BIT(28)
- 
- #define SUN6I_TXDATA_REG		0x200
- #define SUN6I_RXDATA_REG		0x300
-@@ -312,6 +313,8 @@ static int sun6i_spi_transfer_one(struct spi_master *master,
- 	sun6i_spi_write(sspi, SUN6I_BURST_CNT_REG, SUN6I_BURST_CNT(tfr->len));
- 	sun6i_spi_write(sspi, SUN6I_XMIT_CNT_REG, SUN6I_XMIT_CNT(tx_len));
- 	sun6i_spi_write(sspi, SUN6I_BURST_CTL_CNT_REG,
-+			(tfr->tx_nbits == SPI_NBITS_DUAL) ? 0 :
-+			(tfr->rx_nbits == SPI_NBITS_DUAL) ? SUN6I_BURST_CTL_CNT_DRM :
- 			SUN6I_BURST_CTL_CNT_STC(tx_len));
- 
- 	/* Fill the TX FIFO */
-@@ -480,7 +483,8 @@ static int sun6i_spi_probe(struct platform_device *pdev)
- 	master->set_cs = sun6i_spi_set_cs;
- 	master->transfer_one = sun6i_spi_transfer_one;
- 	master->num_chipselect = 4;
--	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST;
-+	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH | SPI_LSB_FIRST |
-+				SPI_RX_DUAL | SPI_TX_DUAL;
- 	master->bits_per_word_mask = SPI_BPW_MASK(8);
- 	master->dev.of_node = pdev->dev.of_node;
- 	master->auto_runtime_pm = true;
--- 
-2.7.4
+I have a patch set that does the second one, but it's done in a manner that 
+assumes the partial patch set got merged.  Let me just send it out...
