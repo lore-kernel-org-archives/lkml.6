@@ -1,134 +1,85 @@
-Return-Path: <rrajk@nvidia.com>
-X-Google-Smtp-Source: AG47ELu/4R+QgcBgvFQhUryGowN0SLPBolnh+GYoOdYS0T8C1+LIh2o11pnRlaw1zWJcRoKZ7Nxe
-ARC-Seal: i=1; a=rsa-sha256; t=1521607251; cv=none;
+Return-Path: <sebastian.reichel@collabora.co.uk>
+X-Google-Smtp-Source: AIpwx4+z8E6ez1NFFMLxyF0vQZB34vCiObEcgBxdRUjwZdHIGUxxQ0D58DYGTCH/IURurovd3mgp
+ARC-Seal: i=1; a=rsa-sha256; t=1522158783; cv=none;
         d=google.com; s=arc-20160816;
-        b=BO8qDY3CXXx52P0ifvwCw53qDkrmifL3xWmF1LqtuwNZUN6o7tiIw+ShBUO3vJYonb
-         autWIzI0M1N7RVurYIiXAzgSVpthTiK7vMKVWTizg70pYVTweLmEwF2QlE0gM9MAu6Oi
-         gV3je5b8LIZm5+aJLZaB/nOSTePV6iL1rbQ+0UkiG+O9VgogJG6incYnYyq5LP8BghXn
-         yNd4jn90SH09QIkNo85VplIc9f45Q4fSShaiXY1v1WNnzkuy0oxa7axORB406yhIHx1b
-         ZYltzIU76wRq9TfRmD0Rsb/budZuCYzDTJJ69yOxVuhnxf3gduetBdJ995p6//Ee450Y
-         gWRQ==
+        b=jFKPqaGEU6je1TZSp+HFvSUo5jsLlGv//gFRL9U9wNMRg/VZr3fjIJ9YO8h0gue0jp
+         3ZCCSfYUIlrmLgqrwXFns+JTlAoKrSa7JA6KMv4LLqotBPDHo0LLDgxu+L8cSAvZjq+f
+         E8Ge8vjZHnyYYp0PQriqHMxF2MYiJ+z21DvL6RVDHeqtKt1cBt7clcBgfHj+vQx66c/a
+         j+j97N5FktygwV8zGqvtI1vO+nowLRLJ3tZhMcIMcBWGhJrqqBOBX7G/ATNaz2INKC4X
+         J5JCXoO8SW6D5vkFQPZn+FCCFmJhxdz3OFLxPOTdV4pHlafANwETfrPIhMVZ6f1Mk34a
+         sPwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:arc-authentication-results;
-        bh=ZJ9UkHPQWCh7rvQRwEwtiwH5JMOQuAQuSx32xVnaqsA=;
-        b=s7I7ZBJG2p3SzR+t0pHCgyYJpiW1LVB1RoW1iNaZl+P+QCiS4KEhOrKVixhYAWC/6H
-         4FWKSvi9CRAIzkkJvasR7fNGuAzp8MC59mpcvDzUkZx9xSm61SS4RaaNngnz6b4scmVi
-         IKkJ9NqJjVEAyON2HWl8zZQ6TTPykbOZXg7gsy4QPqNHzEQkId18Hnr0GNDUj2EsiGlt
-         v3uQuZjCZLsf/8VMXOmaL0mUeVJDik4bcWUvo8LvL5UYPgBpk6vMCu3BYJtkGY70Ubed
-         iur9lwaZIF95RTAsgRzeSbIDSLskaxjr0vSUVkWxRKWeQY8V/rax5O4whjCfoL6C1kZa
-         B6iw==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=N/X4Q6tJiDrqU85DQBpmj/bkWQbN2R+9pabCufHUqtw=;
+        b=ihk7Lc9WqmG/qGf1d+YAyo5/+5hMJEp3AcWLTF+Q10dGHCnea1W/yYfmAo36lV/13D
+         OjymafY7f7USEzfGShji55d6Q9iyGvkGQX+nU3IdIuD+7bv2xWsbjPthZ1CTs3ABlCW+
+         KNDZ3zp05VhwFGzQHnCYULXVMv0dacpdVM1oTiwbDptexl/5I4eg+5icSCOAaHvG0e4B
+         7kJTA6nsMZJhEZvFJMWfJM95jQrkJbEj/acR95lspdCIn415FbpGfQogk/mPfIlQrotu
+         VPGixOop+jihXf3yYcbLL5egSW57QeFW8i3QD2Rb+ksRcUeoCVL3/B90zomfqwFoWhaW
+         YjkA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 46.235.227.227 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=collabora.co.uk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of rrajk@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=rrajk@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
-X-PGP-Universal: processed;
-	by hqpgpgate102.nvidia.com on Tue, 20 Mar 2018 21:40:46 -0700
-From: Rajkumar Rampelli <rrajk@nvidia.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <jdelvare@suse.com>, <linux@roeck-us.net>,
-	<corbet@lwn.net>, <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-	<kstewart@linuxfoundation.org>, <gregkh@linuxfoundation.org>,
-	<pombredanne@nexb.com>, <mmaddireddy@nvidia.com>, <mperttunen@nvidia.com>,
-	<arnd@arndb.de>, <timur@codeaurora.org>, <andy.gross@linaro.org>,
-	<xuwei5@hisilicon.com>, <elder@linaro.org>, <heiko@sntech.de>,
-	<krzk@kernel.org>, <ard.biesheuvel@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <ldewangan@nvidia.com>,
-	<rrajk@nvidia.com>
-Subject: [PATCH V2 1/9] pwm: core: Add support for PWM HW driver with pwm capture only
-Date: Wed, 21 Mar 2018 10:10:36 +0530
-Message-ID: <1521607244-29734-2-git-send-email-rrajk@nvidia.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
-References: <1521607244-29734-1-git-send-email-rrajk@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 46.235.227.227 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=collabora.co.uk
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nandor Han <nandor.han@ge.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	kernel@collabora.com
+Subject: [PATCHv2 0/3] GE Healthcare PPD firmware upgrade driver for ACHC
+Date: Tue, 27 Mar 2018 15:52:56 +0200
+Message-Id: <20180327135259.30890-1-sebastian.reichel@collabora.co.uk>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1595520845385709681?=
-X-GMAIL-MSGID: =?utf-8?q?1595520845385709681?=
+X-GMAIL-THRID: =?utf-8?q?1596099168711275767?=
+X-GMAIL-MSGID: =?utf-8?q?1596099168711275767?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add support for pwm HW driver which has only capture functionality.
-This helps to implement the PWM based Tachometer driver which reads
-the PWM output signals from electronic fans.
+Hi,
 
-PWM Tachometer captures the period and duty cycle of the PWM signal
+The PPD has a secondary processor from NXP, which can be programmed
+from the main system. It is connected to the main processor by having
+it's EzPort interface connected to the SPI bus.
 
-Add conditional checks for callabacks enable(), disable(), config()
-to check if they are supported by the client driver or not. Skip these
-callbacks if they are not supported.
+This adds a generic driver to handle firmware flashing via NXP EzPort
+and adds a custom compatible for the instance found in GE's device.
+The reset gpio is only requested during flashing, since it is also
+used for resetting other devices. A better solution for the shared
+reset gpio is required at some point, but this does neither affect
+the userspace interface, nor the DT interface and should not block
+upstreaming this driver.
 
-Signed-off-by: Rajkumar Rampelli <rrajk@nvidia.com>
----
+Changes since PATCHv1:
+ * split DT binding update into its own patch
+ * add sysfs attribute documentation
+ * fix problem reported by kbuild test robot
 
-V2: Added if conditional checks for pwm callbacks since drivers may
-    implements only pwm capture functionality.
+-- Sebastian
 
- drivers/pwm/core.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+Sebastian Reichel (3):
+  dt-bindings: misc: achc: Make ezport distinguishable
+  misc: ezport-firmware: new driver
+  ARM: dts: imx53: PPD: Update ACHC programming interface
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 1581f6a..f70fe68 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -246,6 +246,10 @@ static bool pwm_ops_check(const struct pwm_ops *ops)
- 	if (ops->apply)
- 		return true;
- 
-+	/* driver supports capture operation */
-+	if (ops->capture)
-+		return true;
-+
- 	return false;
- }
- 
-@@ -495,7 +499,8 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state)
- 			 * ->apply().
- 			 */
- 			if (pwm->state.enabled) {
--				pwm->chip->ops->disable(pwm->chip, pwm);
-+				if (pwm->chip->ops->disable)
-+					pwm->chip->ops->disable(pwm->chip, pwm);
- 				pwm->state.enabled = false;
- 			}
- 
-@@ -509,22 +514,26 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state)
- 
- 		if (state->period != pwm->state.period ||
- 		    state->duty_cycle != pwm->state.duty_cycle) {
--			err = pwm->chip->ops->config(pwm->chip, pwm,
-+			if (pwm->chip->ops->config) {
-+				err = pwm->chip->ops->config(pwm->chip, pwm,
- 						     state->duty_cycle,
- 						     state->period);
--			if (err)
--				return err;
-+				if (err)
-+					return err;
-+			}
- 
- 			pwm->state.duty_cycle = state->duty_cycle;
- 			pwm->state.period = state->period;
- 		}
- 
- 		if (state->enabled != pwm->state.enabled) {
--			if (state->enabled) {
-+			if (state->enabled && pwm->chip->ops->enable) {
- 				err = pwm->chip->ops->enable(pwm->chip, pwm);
- 				if (err)
- 					return err;
--			} else {
-+			}
-+
-+			if (!state->enabled && pwm->chip->ops->disable) {
- 				pwm->chip->ops->disable(pwm->chip, pwm);
- 			}
- 
+ Documentation/ABI/testing/sysfs-bus-spi-ezport-fw  |  23 +
+ Documentation/devicetree/bindings/misc/ge-achc.txt |  19 +-
+ arch/arm/boot/dts/imx53-ppd.dts                    |   5 +-
+ drivers/misc/Kconfig                               |   9 +
+ drivers/misc/Makefile                              |   1 +
+ drivers/misc/ezport-firmware.c                     | 491 +++++++++++++++++++++
+ 6 files changed, 543 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-spi-ezport-fw
+ create mode 100644 drivers/misc/ezport-firmware.c
+
 -- 
-2.1.4
+2.16.2
