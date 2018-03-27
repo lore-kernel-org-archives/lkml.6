@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+FTK9A/CPMquRjba5YhIaSIBKXe5fdKT0xx9xenzyQovhUfKWW3tL5CZE/7CxDBF/hoSLR
-ARC-Seal: i=1; a=rsa-sha256; t=1522168579; cv=none;
+X-Google-Smtp-Source: AIpwx4+mIrF7Dz5wf9W2XHqXQ0syhlpdYRJm/nRuog3la1bDLkos/0LtjS1UV6P8ViC0JcsfGGST
+ARC-Seal: i=1; a=rsa-sha256; t=1522168576; cv=none;
         d=google.com; s=arc-20160816;
-        b=Qrf9B5Yg/5Jbbct3whabl4aGwVep+NrQOrY1G+g5m5nXdoUI3P9JRhazEjlFop82bx
-         KFN0MRURAa76OnEMQ7xQyuASg4sIkX7gqyy3PV4GYIxNLc6b0ryLb0O6ZLv/KhOZmljh
-         EDQOONLIVQVTNQWfaMENqd6ysynq33EIANypYX9reSKKF3SeLPWNE8B+WuehtJ7SKGfe
-         bjWDUHiOV04mzM8Q/MC95LDHarzwh5Bw5u6svUvvI6vdD90eThm9vIPN5iIVldMn0l86
-         EcI94yWKJHYcUei/unWx2A13szIETG9KTTLRKwMZoZC4mT4DU81JT4R8vVxwGKav30dU
-         x2xQ==
+        b=AJmJDZYyvg8aOUfgiqKr83miJ7UDAbo8NPs/o8y0ov6niQ59soteI74mcoUm6Iverc
+         Jmo+NMvOrf1o/IbLrQCINDMKrU8Yv92fIR+Aclxc3PJDPsiycwUfbYPFvOzAIFJVPp+V
+         oo8CItRVAL5MEjb6IVMIKSskhdFa26UpeEuW81qdHn6j9jx2kBB9SRa2Vj7S6EPRtyVS
+         z039H4bMbWT5VsWynXI3eRRKhSm5jTkHoOTv7Y1JFvuBaW05TYx741RL0vHpU9l/pp1P
+         TilXhrMHtFkrbmxj13vxSvANxd3DNIewQ/0TYE6R4eTPywOV6SsgsXGqa51hML5CAHOC
+         8UBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bcID1+X8XEwLC2XunbDJkTBVUjHV9zjawlXUHN96UpQ=;
-        b=C3vBeZ/m7/3bCXPai2le5DJVcvstzFez19pn5JFIaRQFeo5/X3E9ANBjj6LzxSwx94
-         2bu7CtguaZX+9Thd+rR0lsoa8LfYed1rKAiQYBo29ALJvEfodLkv5YiZkak6en2nGwpp
-         dEj0Xujpnkgk+ZoVspgu2+r+rPtCYfjET6E4zhZomHfDWjIxITLC8hveQEZ8St6F/yNq
-         GW5p6hrxNwhiW0eD0G06Lf4KVG5lK8iEGRFVBn3JdXc+9Zt3LyyyJ+78WY17QsUSrJ3I
-         BUzh5aYXS5pnYUM7B7I1ZXiGev0dEZyUPnvLhNnVtxHAM8v00wS+jjbqiJdHaL1TpN+H
-         HTFg==
+        bh=zPXcZQm7bUc5WSWGJjvgNiEoaiIGtElcj42CZzdAtUQ=;
+        b=FyYblmtlYJnxOwGdtExcsduxgk2XhArL1gwJjjm9HysvZylcTavhlkabHpbqDIMKrR
+         xMNTXtBHnn9Rqo2U7LjZeNWmnjR6NoLks2PYUB0HjO1wQ1watHA98sQJaNe+u52z++lL
+         4h6lVPomUXA36ZHKqau5lYDUFqdOH899NyyvYuq26eie10V+ruKzmD1qCF3uFMZ290Wi
+         hbhp0EDTJoEBrFgwnrsYGwGxjsGHklvh6JJLon6IJboygtJcdG8f9ZMb1SqAElXVVBGM
+         EGHqZy9/iQNe6n6SUFzIzwNFR3yUFG466BKVVxjpj3DHb2VEVqXNMtYWa/2oIjZK/OyO
+         Kh9Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Dave Jones <davej@codemonkey.org.uk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nick Piggin <npiggin@gmail.com>,
-	Ingo Molnar <mingo@elte.hu>,
-	Nikolay Borisov <nborisov@suse.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 024/101] lockdep: fix fs_reclaim warning
-Date: Tue, 27 Mar 2018 18:26:56 +0200
-Message-Id: <20180327162751.466921085@linuxfoundation.org>
+	Eyal Itkin <eyalit@checkpoint.com>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.14 057/101] drm: udl: Properly check framebuffer mmap offsets
+Date: Tue, 27 Mar 2018 18:27:29 +0200
+Message-Id: <20180327162753.489597499@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -47,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109440855505175?=
-X-GMAIL-MSGID: =?utf-8?q?1596109440855505175?=
+X-GMAIL-THRID: =?utf-8?q?1596109000301718631?=
+X-GMAIL-MSGID: =?utf-8?q?1596109436760822787?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,137 +49,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 2e517d681632326ed98399cb4dd99519efe3e32c upstream.
+commit 3b82a4db8eaccce735dffd50b4d4e1578099b8e8 upstream.
 
-Dave Jones reported fs_reclaim lockdep warnings.
+The memmap options sent to the udl framebuffer driver were not being
+checked for all sets of possible crazy values.  Fix this up by properly
+bounding the allowed values.
 
-  ============================================
-  WARNING: possible recursive locking detected
-  4.15.0-rc9-backup-debug+ #1 Not tainted
-  --------------------------------------------
-  sshd/24800 is trying to acquire lock:
-   (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
-
-  but task is already holding lock:
-   (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
-
-  other info that might help us debug this:
-   Possible unsafe locking scenario:
-
-         CPU0
-         ----
-    lock(fs_reclaim);
-    lock(fs_reclaim);
-
-   *** DEADLOCK ***
-
-   May be due to missing lock nesting notation
-
-  2 locks held by sshd/24800:
-   #0:  (sk_lock-AF_INET6){+.+.}, at: [<000000001a069652>] tcp_sendmsg+0x19/0x40
-   #1:  (fs_reclaim){+.+.}, at: [<0000000084f438c2>] fs_reclaim_acquire.part.102+0x5/0x30
-
-  stack backtrace:
-  CPU: 3 PID: 24800 Comm: sshd Not tainted 4.15.0-rc9-backup-debug+ #1
-  Call Trace:
-   dump_stack+0xbc/0x13f
-   __lock_acquire+0xa09/0x2040
-   lock_acquire+0x12e/0x350
-   fs_reclaim_acquire.part.102+0x29/0x30
-   kmem_cache_alloc+0x3d/0x2c0
-   alloc_extent_state+0xa7/0x410
-   __clear_extent_bit+0x3ea/0x570
-   try_release_extent_mapping+0x21a/0x260
-   __btrfs_releasepage+0xb0/0x1c0
-   btrfs_releasepage+0x161/0x170
-   try_to_release_page+0x162/0x1c0
-   shrink_page_list+0x1d5a/0x2fb0
-   shrink_inactive_list+0x451/0x940
-   shrink_node_memcg.constprop.88+0x4c9/0x5e0
-   shrink_node+0x12d/0x260
-   try_to_free_pages+0x418/0xaf0
-   __alloc_pages_slowpath+0x976/0x1790
-   __alloc_pages_nodemask+0x52c/0x5c0
-   new_slab+0x374/0x3f0
-   ___slab_alloc.constprop.81+0x47e/0x5a0
-   __slab_alloc.constprop.80+0x32/0x60
-   __kmalloc_track_caller+0x267/0x310
-   __kmalloc_reserve.isra.40+0x29/0x80
-   __alloc_skb+0xee/0x390
-   sk_stream_alloc_skb+0xb8/0x340
-   tcp_sendmsg_locked+0x8e6/0x1d30
-   tcp_sendmsg+0x27/0x40
-   inet_sendmsg+0xd0/0x310
-   sock_write_iter+0x17a/0x240
-   __vfs_write+0x2ab/0x380
-   vfs_write+0xfb/0x260
-   SyS_write+0xb6/0x140
-   do_syscall_64+0x1e5/0xc05
-   entry_SYSCALL64_slow_path+0x25/0x25
-
-This warning is caused by commit d92a8cfcb37e ("locking/lockdep:
-Rework FS_RECLAIM annotation") which replaced the use of
-lockdep_{set,clear}_current_reclaim_state() in __perform_reclaim()
-and lockdep_trace_alloc() in slab_pre_alloc_hook() with
-fs_reclaim_acquire()/ fs_reclaim_release().
-
-Since __kmalloc_reserve() from __alloc_skb() adds __GFP_NOMEMALLOC |
-__GFP_NOWARN to gfp_mask, and all reclaim path simply propagates
-__GFP_NOMEMALLOC, fs_reclaim_acquire() in slab_pre_alloc_hook() is
-trying to grab the 'fake' lock again when __perform_reclaim() already
-grabbed the 'fake' lock.
-
-The
-
-  /* this guy won't enter reclaim */
-  if ((current->flags & PF_MEMALLOC) && !(gfp_mask & __GFP_NOMEMALLOC))
-          return false;
-
-test which causes slab_pre_alloc_hook() to try to grab the 'fake' lock
-was added by commit cf40bd16fdad ("lockdep: annotate reclaim context
-(__GFP_NOFS)").  But that test is outdated because PF_MEMALLOC thread
-won't enter reclaim regardless of __GFP_NOMEMALLOC after commit
-341ce06f69ab ("page allocator: calculate the alloc_flags for allocation
-only once") added the PF_MEMALLOC safeguard (
-
-  /* Avoid recursion of direct reclaim */
-  if (p->flags & PF_MEMALLOC)
-          goto nopage;
-
-in __alloc_pages_slowpath()).
-
-Thus, let's fix outdated test by removing __GFP_NOMEMALLOC test and
-allow __need_fs_reclaim() to return false.
-
-Link: http://lkml.kernel.org/r/201802280650.FJC73911.FOSOMLJVFFQtHO@I-love.SAKURA.ne.jp
-Fixes: d92a8cfcb37ecd13 ("locking/lockdep: Rework FS_RECLAIM annotation")
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: Dave Jones <davej@codemonkey.org.uk>
-Tested-by: Dave Jones <davej@codemonkey.org.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Nick Piggin <npiggin@gmail.com>
-Cc: Ingo Molnar <mingo@elte.hu>
-Cc: Nikolay Borisov <nborisov@suse.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: <stable@vger.kernel.org>	[4.14+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Eyal Itkin <eyalit@checkpoint.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180321154553.GA18454@kroah.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/page_alloc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/udl/udl_fb.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3532,7 +3532,7 @@ static bool __need_fs_reclaim(gfp_t gfp_
- 		return false;
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -159,10 +159,15 @@ static int udl_fb_mmap(struct fb_info *i
+ {
+ 	unsigned long start = vma->vm_start;
+ 	unsigned long size = vma->vm_end - vma->vm_start;
+-	unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
++	unsigned long offset;
+ 	unsigned long page, pos;
  
- 	/* this guy won't enter reclaim */
--	if ((current->flags & PF_MEMALLOC) && !(gfp_mask & __GFP_NOMEMALLOC))
-+	if (current->flags & PF_MEMALLOC)
- 		return false;
+-	if (offset + size > info->fix.smem_len)
++	if (vma->vm_pgoff > (~0UL >> PAGE_SHIFT))
++		return -EINVAL;
++
++	offset = vma->vm_pgoff << PAGE_SHIFT;
++
++	if (offset > info->fix.smem_len || size > info->fix.smem_len - offset)
+ 		return -EINVAL;
  
- 	/* We're only interested __GFP_FS allocations for now */
+ 	pos = (unsigned long)info->fix.smem_start + offset;
