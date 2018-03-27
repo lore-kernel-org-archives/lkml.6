@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/LbTnfvikbxyhE+u+F/TLx5FDhRaPeAHW7E7xc7jTUd81Y1pADMbLRmVIzqllBKxJ+9mg0
-ARC-Seal: i=1; a=rsa-sha256; t=1522168875; cv=none;
+X-Google-Smtp-Source: AIpwx4/xAhKnw75BJhufW6C/eO470Wffh0G6qJd4lKK2dzRuFNHrD5bd5POrIkQEoRjaSa0n85GP
+ARC-Seal: i=1; a=rsa-sha256; t=1522168872; cv=none;
         d=google.com; s=arc-20160816;
-        b=BgqC+y8wtYwaonKH/SGc6ocM3K2v9zf6m6C94huMcU+UcEpO8+qZSHrPxFAPimKdoy
-         ADmwNtyF/Ix0GaBxo0CajncAGSVVwwTq+cyL8g3fPoo8Bl4XUQ9hqogfJQp2QtLB8XhP
-         R3a4aMVn6zx2FLtm2SFri7mT1IEth3HeAB6VkpxWU8bDVtzCgHOadcUOvLBD8CK2WLFs
-         Z+vVHwFC3VmMy7SX3lew8jV5MBCz5F9c4cZ2mYJQEaw//hMT4sXdnJ+8ZoikDMFHslnF
-         BE0ucjKTz7ezyRiVNXpbeUJTqe5V0lEddxxs6yKdjecgirQjzMRXWnGx7hVMrd790NK2
-         mapw==
+        b=eGBAQOa/hrdF0Uvs3LPc8cPWe5yC6lezCBVC1W95R17YxAxN75F6i5DahS/Gx2sRGv
+         TOXPORebd9I12aiFfzHRUaab/IKDFrUoXrgDU0j2ldoBaYFy6LiVuVRV5N/Wm8gzbYuJ
+         Xf5XOnDkJnUJgRBRGeEcjToop6gZ/hPWkAg/7Rf6nMW0AyvJR839rnL5mo+gYXA0zwXe
+         3G2USkyIjCV1H4/uh+B824MNSvU6AHvzGlcrUn3pdyyqqIL5uInq+hjQeaqH158OsflG
+         15BZYrFNeNgcjC7swu/kc2f1Jnrblse92IQlX2AYHahQsw/PbRcq9oQJIJLRKX1X6zLn
+         riQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NJwtfjVcBeeCosBjP7eg+Ezk2dMSpT99P0XvyueRQio=;
-        b=f3Lx1xN4xFxhILFm8fT+LcF77MNoV2WQ/BOPDY1ZoGZqA1V/UEYC/SLtcAj7Cyyj2p
-         Z3OcW6eMsj3kmu5A0B+DAcgk79aszLoU1x+C5SSvNZw9qRvviROhK6/lCM6TCdS9NFza
-         b9grjpBLp6+fuXaejKU1TT41hdmXG+F6UuzM5ylsgtqAicbrnnYbJ3Zz34iKNcPwNYia
-         H943SPcRGfFdxeo16xO9KRzNaWs95RNW+fvYqQpOAwpXTA0/sqwhTMS66IcAJOPwyLnb
-         qeKeKMApqyiDqNWKYVlMwjE9K3shE4x76cWm5qYn+vZP5ogX4jYr9K2f5UXhTaku/pHB
-         5bAQ==
+        bh=MGwVI+qEbDRS+A3svFrbscDWxFCJSpFCm1VG2NZhBwI=;
+        b=IJaLYpkj2F0BQOQjZ48bilw2GjLbSMjkzA8kuccfdvxLldadWIJleWKUuibb4Ad5gk
+         Y4CHjbLCP0M9aBM7ANX14VO5BlcoehX0vAzVbfbYACAIYbUJXXQk5gmzrbVB0u8JGOIV
+         oVO6/jSoRR3n1IGnP3WHRIuuZh/J0d7Qnz1MkqdSi5eVGcn0weBKdSCl8c+3vfnXUwFG
+         7I2bcQ2+69SAbHxUUYYh1Ebgr98C7J4eW2eMKZ95AioO70r9/Bgsdk5AWlS1NMXfqQjh
+         BPO9CE2vN8glYlXYOyufMtlk42iyT+2QEyHCaSHC3BXQvgFohLpJxR+eADkma/rUTNLy
+         0ODg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jessica Yu <jeyu@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Leon Yu <chianglungyu@gmail.com>
-Subject: [PATCH 4.15 063/105] module: propagate error in modules_open()
-Date: Tue, 27 Mar 2018 18:27:43 +0200
-Message-Id: <20180327162801.512350533@linuxfoundation.org>
+	Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Shakeel Butt <shakeelb@google.com>,
+	Michal Hocko <mhocko@suse.cz>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.15 062/105] mm/vmscan: wake up flushers for legacy cgroups too
+Date: Tue, 27 Mar 2018 18:27:42 +0200
+Message-Id: <20180327162801.438845896@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -41,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109750447975140?=
-X-GMAIL-MSGID: =?utf-8?q?1596109750447975140?=
+X-GMAIL-THRID: =?utf-8?q?1596109568190515678?=
+X-GMAIL-MSGID: =?utf-8?q?1596109747623101741?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,45 +55,114 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Yu <chianglungyu@gmail.com>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-commit 3f553b308bb004eb730da8e00a28150c157c7724 upstream.
+commit 1c610d5f93c709df56787f50b3576704ac271826 upstream.
 
-otherwise kernel can oops later in seq_release() due to dereferencing null
-file->private_data which is only set if seq_open() succeeds.
+Commit 726d061fbd36 ("mm: vmscan: kick flushers when we encounter dirty
+pages on the LRU") added flusher invocation to shrink_inactive_list()
+when many dirty pages on the LRU are encountered.
 
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-IP: seq_release+0xc/0x30
-Call Trace:
- close_pdeo+0x37/0xd0
- proc_reg_release+0x5d/0x60
- __fput+0x9d/0x1d0
- ____fput+0x9/0x10
- task_work_run+0x75/0x90
- do_exit+0x252/0xa00
- do_group_exit+0x36/0xb0
- SyS_exit_group+0xf/0x10
+However, shrink_inactive_list() doesn't wake up flushers for legacy
+cgroup reclaim, so the next commit bbef938429f5 ("mm: vmscan: remove old
+flusher wakeup from direct reclaim path") removed the only source of
+flusher's wake up in legacy mem cgroup reclaim path.
 
-Fixes: 516fb7f2e73d ("/proc/module: use the same logic as /proc/kallsyms for address exposure")
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: stable@vger.kernel.org # 4.15+
-Signed-off-by: Leon Yu <chianglungyu@gmail.com>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+This leads to premature OOM if there is too many dirty pages in cgroup:
+    # mkdir /sys/fs/cgroup/memory/test
+    # echo $$ > /sys/fs/cgroup/memory/test/tasks
+    # echo 50M > /sys/fs/cgroup/memory/test/memory.limit_in_bytes
+    # dd if=/dev/zero of=tmp_file bs=1M count=100
+    Killed
+
+    dd invoked oom-killer: gfp_mask=0x14000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=0
+
+    Call Trace:
+     dump_stack+0x46/0x65
+     dump_header+0x6b/0x2ac
+     oom_kill_process+0x21c/0x4a0
+     out_of_memory+0x2a5/0x4b0
+     mem_cgroup_out_of_memory+0x3b/0x60
+     mem_cgroup_oom_synchronize+0x2ed/0x330
+     pagefault_out_of_memory+0x24/0x54
+     __do_page_fault+0x521/0x540
+     page_fault+0x45/0x50
+
+    Task in /test killed as a result of limit of /test
+    memory: usage 51200kB, limit 51200kB, failcnt 73
+    memory+swap: usage 51200kB, limit 9007199254740988kB, failcnt 0
+    kmem: usage 296kB, limit 9007199254740988kB, failcnt 0
+    Memory cgroup stats for /test: cache:49632KB rss:1056KB rss_huge:0KB shmem:0KB
+            mapped_file:0KB dirty:49500KB writeback:0KB swap:0KB inactive_anon:0KB
+	    active_anon:1168KB inactive_file:24760KB active_file:24960KB unevictable:0KB
+    Memory cgroup out of memory: Kill process 3861 (bash) score 88 or sacrifice child
+    Killed process 3876 (dd) total-vm:8484kB, anon-rss:1052kB, file-rss:1720kB, shmem-rss:0kB
+    oom_reaper: reaped process 3876 (dd), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+
+Wake up flushers in legacy cgroup reclaim too.
+
+Link: http://lkml.kernel.org/r/20180315164553.17856-1-aryabinin@virtuozzo.com
+Fixes: bbef938429f5 ("mm: vmscan: remove old flusher wakeup from direct reclaim path")
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Tested-by: Shakeel Butt <shakeelb@google.com>
+Acked-by: Michal Hocko <mhocko@suse.cz>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/module.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/vmscan.c |   31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -4223,7 +4223,7 @@ static int modules_open(struct inode *in
- 		m->private = kallsyms_show_value() ? NULL : (void *)8ul;
- 	}
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1847,6 +1847,20 @@ shrink_inactive_list(unsigned long nr_to
+ 		set_bit(PGDAT_WRITEBACK, &pgdat->flags);
  
--	return 0;
-+	return err;
- }
+ 	/*
++	 * If dirty pages are scanned that are not queued for IO, it
++	 * implies that flushers are not doing their job. This can
++	 * happen when memory pressure pushes dirty pages to the end of
++	 * the LRU before the dirty limits are breached and the dirty
++	 * data has expired. It can also happen when the proportion of
++	 * dirty pages grows not through writes but through memory
++	 * pressure reclaiming all the clean cache. And in some cases,
++	 * the flushers simply cannot keep up with the allocation
++	 * rate. Nudge the flusher threads in case they are asleep.
++	 */
++	if (stat.nr_unqueued_dirty == nr_taken)
++		wakeup_flusher_threads(WB_REASON_VMSCAN);
++
++	/*
+ 	 * Legacy memcg will stall in page writeback so avoid forcibly
+ 	 * stalling here.
+ 	 */
+@@ -1858,22 +1872,9 @@ shrink_inactive_list(unsigned long nr_to
+ 		if (stat.nr_dirty && stat.nr_dirty == stat.nr_congested)
+ 			set_bit(PGDAT_CONGESTED, &pgdat->flags);
  
- static const struct file_operations proc_modules_operations = {
+-		/*
+-		 * If dirty pages are scanned that are not queued for IO, it
+-		 * implies that flushers are not doing their job. This can
+-		 * happen when memory pressure pushes dirty pages to the end of
+-		 * the LRU before the dirty limits are breached and the dirty
+-		 * data has expired. It can also happen when the proportion of
+-		 * dirty pages grows not through writes but through memory
+-		 * pressure reclaiming all the clean cache. And in some cases,
+-		 * the flushers simply cannot keep up with the allocation
+-		 * rate. Nudge the flusher threads in case they are asleep, but
+-		 * also allow kswapd to start writing pages during reclaim.
+-		 */
+-		if (stat.nr_unqueued_dirty == nr_taken) {
+-			wakeup_flusher_threads(WB_REASON_VMSCAN);
++		/* Allow kswapd to start writing pages during reclaim. */
++		if (stat.nr_unqueued_dirty == nr_taken)
+ 			set_bit(PGDAT_DIRTY, &pgdat->flags);
+-		}
+ 
+ 		/*
+ 		 * If kswapd scans pages marked marked for immediate
