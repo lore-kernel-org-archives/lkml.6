@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753032AbeC0NT0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:19:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:55182 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752875AbeC0NQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:16:48 -0400
+        id S1752860AbeC0NQn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:16:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55142 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752120AbeC0NQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:16:39 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
@@ -14,70 +14,127 @@ Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
         pbonzini@redhat.com, rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
         peter.maydell@linaro.org, kristina.martsenko@arm.com,
         mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 16/17] kvm: arm64: Add support for handling 52bit IPA
-Date: Tue, 27 Mar 2018 14:15:26 +0100
-Message-Id: <1522156531-28348-17-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v2 13/17] kvm: arm/arm64: Allow tuning the physical address size for VM
+Date: Tue, 27 Mar 2018 14:15:23 +0100
+Message-Id: <1522156531-28348-14-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
 References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for handling the 52bit IPA. 52bit IPA
-support needs changes to the following :
-
- 1) Page-table entries - We use kernel page table helpers for setting
- up the stage2. Hence we don't explicit changes here
-
- 2) VTTBR:BADDR - This is already supported with :
-   commit 529c4b05a3cb2f324aa ("arm64: handle 52-bit addresses in TTBR")
-
- 3) VGIC support for 52bit: Supported with a patch in this series.
-
-That leaves us with the handling for PAR and HPAR. This patch adds
-support for handling the 52bit addresses in PAR and HPFAR,
-which are used while handling the permission faults in stage1.
+Allow specifying the physical address size for a new VM via
+the kvm_type argument for KVM_CREATE_VM ioctl. This allows
+us to finalise the stage2 page table format as early as possible
+and hence perform the right checks on the memory slots without
+complication. The size is encoded as Log2(PA_Siz) in the bits[7:0]
+of the type field and can encode more information in the future if
+required.
 
 Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Kristina Martsenko <kristina.martsenko@arm.com>
 Cc: Christoffer Dall <cdall@kernel.org>
+Cc: Peter Maydel <peter.maydell@linaro.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/kvm_arm.h | 7 +++++++
- arch/arm64/kvm/hyp/switch.c      | 2 +-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ arch/arm/include/asm/kvm_mmu.h   |  2 ++
+ arch/arm64/include/asm/kvm_mmu.h |  2 ++
+ include/uapi/linux/kvm.h         | 10 ++++++++++
+ virt/kvm/arm/arm.c               | 24 ++++++++++++++++++++++--
+ 4 files changed, 36 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index 2b278dc..e48852c 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -302,6 +302,13 @@
- 
- /* Hyp Prefetch Fault Address Register (HPFAR/HDFAR) */
- #define HPFAR_MASK	(~UL(0xf))
-+/*
-+ * We have
-+ *	PAR	[PA_Shift - 1	: 12] = PA	[PA_Shift - 1 : 12]
-+ *	HPFAR	[PA_Shift - 9	: 4]  = FIPA	[PA_Shift - 1 : 12]
-+ */
-+#define PAR_TO_HPFAR(par)		\
-+	(((par) & GENMASK_ULL(PHYS_MASK_SHIFT - 1, 12)) >> 8)
- 
- #define kvm_arm_exception_type	\
- 	{0, "IRQ" }, 		\
-diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-index 794da55..b785853 100644
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -241,7 +241,7 @@ static bool __hyp_text __translate_far_to_hpfar(u64 far, u64 *hpfar)
- 		return false; /* Translation failed, back to guest */
- 
- 	/* Convert PAR to HPFAR format */
--	*hpfar = ((tmp >> 12) & ((1UL << 36) - 1)) << 4;
-+	*hpfar = PAR_TO_HPFAR(tmp);
- 	return true;
+diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+index 50896da..3f13827 100644
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@ -323,6 +323,8 @@ static inline u32 kvm_get_ipa_limit(void)
+ 	return KVM_PHYS_SHIFT;
  }
  
++static inline void kvm_config_stage2(struct kvm *kvm, u32 ipa_shift) {}
++
+ #endif	/* !__ASSEMBLY__ */
+ 
+ #endif /* __ARM_KVM_MMU_H__ */
+diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+index a4c8c00..bb458bf 100644
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -416,5 +416,7 @@ static inline u32 kvm_get_ipa_limit(void)
+ 	return KVM_PHYS_SHIFT;
+ }
+ 
++static inline void kvm_config_stage2(struct kvm *kvm, u32 ipa_shift) {}
++
+ #endif /* __ASSEMBLY__ */
+ #endif /* __ARM64_KVM_MMU_H__ */
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index b737ee1..67b09b0 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -740,6 +740,16 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_S390_SIE_PAGE_OFFSET 1
+ 
+ /*
++ * On arm/arm64, machine type can be used to request the physical
++ * address size for the VM. Bits [7-0] have been reserved for the
++ * PA size shift (i.e, log2(PA-Size)). For backward compatibility,
++ * value 0 implies the default IPA size, which is 40bits.
++ */
++#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK	0xff
++#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)		\
++	((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
++
++/*
+  * ioctls for /dev/kvm fds:
+  */
+ #define KVM_GET_API_VERSION       _IO(KVMIO,   0x00)
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index 53bb05c..13eb66f 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -110,6 +110,25 @@ void kvm_arch_check_processor_compat(void *rtn)
+ }
+ 
+ 
++static int kvm_arch_config_vm(struct kvm *kvm, unsigned long type)
++{
++	u32 ipa_shift = (u32)type & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK;
++
++	/*
++	 * Make sure the size, if specified, is within the range of
++	 * default size and supported maximum limit.
++	 */
++	if (ipa_shift) {
++		if (ipa_shift < KVM_PHYS_SHIFT || ipa_shift > kvm_ipa_limit)
++			return -EINVAL;
++	} else {
++		ipa_shift = KVM_PHYS_SHIFT;
++	}
++
++	kvm_config_stage2(kvm, ipa_shift);
++	return 0;
++}
++
+ /**
+  * kvm_arch_init_vm - initializes a VM data structure
+  * @kvm:	pointer to the KVM struct
+@@ -118,8 +137,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ {
+ 	int ret, cpu;
+ 
+-	if (type)
+-		return -EINVAL;
++	ret = kvm_arch_config_vm(kvm, type);
++	if (ret)
++		return ret;
+ 
+ 	kvm->arch.last_vcpu_ran = alloc_percpu(typeof(*kvm->arch.last_vcpu_ran));
+ 	if (!kvm->arch.last_vcpu_ran)
 -- 
 2.7.4
