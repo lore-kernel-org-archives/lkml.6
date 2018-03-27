@@ -1,68 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752197AbeC0CDo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 22:03:44 -0400
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:53424 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751824AbeC0CDm (ORCPT
+        id S1752281AbeC0CE1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 22:04:27 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:45005 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752209AbeC0CEZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 22:03:42 -0400
-X-Google-Smtp-Source: AIpwx48EAGnqT5ER2nkbZh3EepDowTZxY8a/Db0hM7JO9ZETUhStK0X/WjygKz2aPfJ0Q0TQmMoyKA==
-Date: Tue, 27 Mar 2018 10:03:31 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org,
-        vincent.guittot@linaro.org, amit.kachhap@gmail.com,
-        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
-        rui.zhang@intel.com, daniel.thompson@linaro.org,
-        linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH V2 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-Message-ID: <20180327020331.GA21693@leoy-ThinkPad-X240s>
-References: <1519226968-19821-1-git-send-email-daniel.lezcano@linaro.org>
- <1519226968-19821-7-git-send-email-daniel.lezcano@linaro.org>
+        Mon, 26 Mar 2018 22:04:25 -0400
+X-Google-Smtp-Source: AG47ELvuS6fSwOsQ5yuGIU7QEsAqPP2GkZAkLKZX8k9sAWMc9OkGN527Tcm62PeiEhRchntFLPLeiw==
+Subject: Re: [PATCH] cpufreq: ti-cpufreq: Fix couple of minor issues in
+ probe()
+To: Suman Anna <s-anna@ti.com>, Viresh Kumar <viresh.kumar@linaro.org>
+References: <20180326215244.26304-1-s-anna@ti.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dave Gerlach <d-gerlach@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Zumeng Chen <zumeng.chen@gmail.com>
+Message-ID: <5bbd266a-ddc6-296a-dcea-58dc8da6062a@gmail.com>
+Date: Tue, 27 Mar 2018 10:10:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519226968-19821-7-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180326215244.26304-1-s-anna@ti.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On 03/27/2018 05:52 AM, Suman Anna wrote:
+> Commit 05829d9431df ("cpufreq: ti-cpufreq: kfree opp_data when
+> failure") has fixed a memory leak in the failure path, however
+> kmemleak still keeps reporting a leak even on successful probes.
+> This is a false-positive and is mostly a result of the opp_data
+> variable not being stored anywhere in the probe function. The
+> patch also returned a positive value on the get_cpu_device()
+> failure instead of a negative value.
+>
+> unreferenced object 0xecae4d80 (size 64):
+>    comm "swapper/0", pid 1, jiffies 4294937673 (age 154.420s)
+>    hex dump (first 32 bytes):
+>      10 40 d9 ee 74 b7 db ee 00 24 ac ec 20 a3 ea c0  .@..t....$.. ...
+>      00 26 ac ec 00 00 00 00 00 00 00 00 00 00 00 00  .&..............
+>    backtrace:
+>      [<ec080d62>] platform_drv_probe+0x50/0xac
+>      [<cbde8566>] driver_probe_device+0x24c/0x330
+>      [<a5818eb4>] bus_for_each_drv+0x54/0xb8
+>      [<2c6f7021>] __device_attach+0xcc/0x13c
+>      [<a04478a2>] bus_probe_device+0x88/0x90
+>      [<b322c963>] device_add+0x38c/0x5b4
+>      [<6f1af99b>] platform_device_add+0x100/0x220
+>      [<cef42bca>] platform_device_register_full+0xf0/0x104
+>      [<4d492439>] ti_cpufreq_init+0x44/0x6c
+>      [<81222e89>] do_one_initcall+0x48/0x190
+>      [<3bebf42a>] kernel_init_freeable+0x1f4/0x2b8
+>      [<230ad7df>] kernel_init+0x8/0x110
+>      [<43a165c3>] ret_from_fork+0x14/0x20
+>      [<  (null)>]   (null)
+>      [<87288797>] 0xffffffff
+>
+> Fix both issues by replacing the previous logic by using the devres
+> managed API for allocating the opp_data variable, and simplifying
+> the get_cpu_device() failure return path.
+>
+> Fixes: 05829d9431df ("cpufreq: ti-cpufreq: kfree opp_data when failure")
+> Cc: Zumeng Chen <zumeng.chen@gmail.com>
 
-On Wed, Feb 21, 2018 at 04:29:27PM +0100, Daniel Lezcano wrote:
-> The cpu idle cooling driver performs synchronized idle injection across all
-> cpus belonging to the same cluster and offers a new method to cool down a SoC.
-> 
-> Each cluster has its own idle cooling device, each core has its own idle
-> injection thread, each idle injection thread uses play_idle to enter idle.  In
-> order to reach the deepest idle state, each cooling device has the idle
-> injection threads synchronized together.
-> 
-> It has some similarity with the intel power clamp driver but it is actually
-> designed to work on the ARM architecture via the DT with a mathematical proof
-> with the power model which comes with the Documentation.
-> 
-> The idle injection cycle is fixed while the running cycle is variable. That
-> allows to have control on the device reactivity for the user experience. At
-> the mitigation point the idle threads are unparked, they play idle the
-> specified amount of time and they schedule themselves. The last thread sets
-> the next idle injection deadline and when the timer expires it wakes up all
-> the threads which in turn play idle again. Meanwhile the running cycle is
-> changed by set_cur_state.  When the mitigation ends, the threads are parked.
-> The algorithm is self adaptive, so there is no need to handle hotplugging.
+Acked, I'm aware of the false-postive one, this is good to fix both one, 
+thanks~
 
-The idle injection threads are RT threads (FIFO) and I saw in
-play_idle() set/clear flag PF_IDLE for it.  Will these idle injection
-threads utilization be accounted into RT utilization?
-
-If idle injection threads utilization is accounted as RT tasks
-utilization, will this impact CPUFreq governor 'schedutil' for OPP
-selection?
-
-[...]
-
-Thanks,
-Leo Yan
+Cheers,
+Zumeng
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> ---
+>   drivers/cpufreq/ti-cpufreq.c | 7 ++-----
+>   1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+> index a099b7bf74cd..7d353a21935b 100644
+> --- a/drivers/cpufreq/ti-cpufreq.c
+> +++ b/drivers/cpufreq/ti-cpufreq.c
+> @@ -217,7 +217,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
+>   	if (!match)
+>   		return -ENODEV;
+>   
+> -	opp_data = kzalloc(sizeof(*opp_data), GFP_KERNEL);
+> +	opp_data = devm_kzalloc(&pdev->dev, sizeof(*opp_data), GFP_KERNEL);
+>   	if (!opp_data)
+>   		return -ENOMEM;
+>   
+> @@ -226,8 +226,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
+>   	opp_data->cpu_dev = get_cpu_device(0);
+>   	if (!opp_data->cpu_dev) {
+>   		pr_err("%s: Failed to get device for CPU0\n", __func__);
+> -		ret = ENODEV;
+> -		goto free_opp_data;
+> +		return -ENODEV;
+>   	}
+>   
+>   	opp_data->opp_node = dev_pm_opp_of_get_opp_desc_node(opp_data->cpu_dev);
+> @@ -285,8 +284,6 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
+>   
+>   fail_put_node:
+>   	of_node_put(opp_data->opp_node);
+> -free_opp_data:
+> -	kfree(opp_data);
+>   
+>   	return ret;
+>   }
