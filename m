@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49N1cIdyIuPYVArn5Gvz3UmkbKs7ycRq6QJVHuPnysl/k4NeIlpTP786vUEyiZpzQzgduYq
-ARC-Seal: i=1; a=rsa-sha256; t=1522168481; cv=none;
+X-Google-Smtp-Source: AIpwx4/RKDp4aaqDw+YNSnOBybdH42JYysYMDdpjnibWdgyEN6n7uSJQHpAuhIFCyzdWWfquFdwI
+ARC-Seal: i=1; a=rsa-sha256; t=1522168478; cv=none;
         d=google.com; s=arc-20160816;
-        b=l34q+1Qceagfe6zz1thXw2AdA4W8dVgAwPQH7DH76IeEPVvoir5m8FJlS2e1LCpnuA
-         3Msq40VP50L+1vIMVEzaSV/e8XdMcuykhEwu44PiTw86KZTzsLQmn4xkhpCeeguSkEPN
-         cblFzwIa6LvLBlXR+eHRZ8kdpBfHQPcNcwL1D4IoSMaYjFJ4meDfSu6ifXsTsNScvPdH
-         s41elcTNKIdNCNM5PT6gqo482YgIzhCRlJeindtkr+UPBtdhvfb15N1AqPlgC73TuZsA
-         cHm+wR5jiScaQpqlPRYys9TOgI3TEekxpAvsDH98a4sgIgp1duF9UgUdrljtBF+j2o+J
-         FLeg==
+        b=mfPj9O8ArcC4JdL6G2WYamrLVTRZEEmJl0Y8rqJFfSJQRc/vSjt0z9S33epZSaL6AM
+         jw4+fM9lzhyTSx2lpV/HuLL3zmfkbJEWAbiQj+/efkGKvZilQeLyP0EphWaypHxnPFtF
+         hlUQzA3haSBaE6/PgWIuMn/78/aCKmlbnHDPxxWU8vrD9YpK9w5ZA3mCxkRqfvlMsY13
+         WTWZ6bUN8HNIMcDZIaTCj5M9/12pLi5suBTZda5q5Fx0J92d4OTqjmTUztFV1A5dY9Kl
+         pi9RUhTSyQ0IiZHrZZ7pg0CY8Kq3mILWt43OKKW/O8oKK3h3Towv0lOxMQ9s2jbpsPEr
+         n+yQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=a/9Hr6LLR1JRpgij0FgeEbZsa43cNy8PC8+yzhfHtbM=;
-        b=Ezy56w+Cb9/0bxG1cHKmqQAoqALeGQ1qn/louJ6eks7ph91270ilRRwONtzknr5jZT
-         B4sha2ixYXPMy37Ekmpx2YAr37Aa2aUjX9BPv3GCF6AtRdfNllInpCRCEUYyymToFnE0
-         BNTxp24ECoB8yfDz79OA/2cTdyrrJjH134T0K8gOv+k/KJqtAwrLFr7+KZ5dpadWn8Oi
-         izDl4TvnVZHJH/1SA1uuudSdsadEg0B4MWTVSfYuk16kQdX15k9lpfOfaCrnffkvIoJb
-         3EtcIiBwgSK3L8ZS5yPyezQWs1ysHdnr96op8xgKW8lv6U4HXorSoPyRxtNSP3/FKGVt
-         u+Ug==
+        bh=QXtHyYuJEyXtc50t6lheLPuY5tk/rAY+icavo5ej5m0=;
+        b=i6paRmcjLIf9G6PZQDlVhe3cLaJ9nv5vtge6vfQ8qmyxunFkQciNs7DchmIDAQXTSP
+         7Eu5f1QfZhXCgxD+Bj1MRsSwkfw7IZfHgIsSZDQew7Yy02ClCUAQREbuRGmO0t9p4eZN
+         DHfoUfrVse8N5BRrYLnFZcHkjmIbxXdbaObtrXkUbjRXt+JRqFcuc3cKFlU8ByJkrjaJ
+         z/ZWXLAbyv4bzm4XJzB4+IQ591g6xBMCvb1I57WAqxLor3ljrPc+0O3jWPfHldVQa+Y5
+         qog1qWm7M7wffS6KloxkYhqhLMBuHG3L1THzt55FXRqtRta0qCMtzqpVLujbTRnuPKCJ
+         BOvw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kirill Marinushkin <k.marinushkin@gmail.com>,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 009/101] ALSA: usb-audio: Fix parsing descriptor of UAC2 processing unit
-Date: Tue, 27 Mar 2018 18:26:41 +0200
-Message-Id: <20180327162750.586090865@linuxfoundation.org>
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Stable@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 008/101] iio: adc: meson-saradc: unlock on error in meson_sar_adc_lock()
+Date: Tue, 27 Mar 2018 18:26:40 +0200
+Message-Id: <20180327162750.547377222@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108963127558507?=
-X-GMAIL-MSGID: =?utf-8?q?1596109337628686307?=
+X-GMAIL-THRID: =?utf-8?q?1596109334162552316?=
+X-GMAIL-MSGID: =?utf-8?q?1596109334162552316?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +50,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit a6618f4aedb2b60932d766bd82ae7ce866e842aa upstream.
+commit 3c3e4b3a708a9d6451052e348981f37d2b3e92b0 upstream.
 
-Currently, the offsets in the UAC2 processing unit descriptor are
-calculated incorrectly. It causes an issue when connecting the device which
-provides such a feature:
+The meson_sar_adc_lock() function is not supposed to hold the
+"indio_dev->mlock" on the error path.
 
-~~~~
-[84126.724420] usb 1-1.3.1: invalid Processing Unit descriptor (id 18)
-~~~~
-
-After this patch is applied, the UAC2 processing unit inits w/o this error.
-
-Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 3adbf3427330 ("iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/usb/audio.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/iio/adc/meson_saradc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/uapi/linux/usb/audio.h
-+++ b/include/uapi/linux/usb/audio.h
-@@ -370,7 +370,7 @@ static inline __u8 uac_processing_unit_b
- {
- 	return (protocol == UAC_VERSION_1) ?
- 		desc->baSourceID[desc->bNrInPins + 4] :
--		desc->baSourceID[desc->bNrInPins + 6];
-+		2; /* in UAC2, this value is constant */
- }
+--- a/drivers/iio/adc/meson_saradc.c
++++ b/drivers/iio/adc/meson_saradc.c
+@@ -462,8 +462,10 @@ static int meson_sar_adc_lock(struct iio
+ 			regmap_read(priv->regmap, MESON_SAR_ADC_DELAY, &val);
+ 		} while (val & MESON_SAR_ADC_DELAY_BL30_BUSY && timeout--);
  
- static inline __u8 *uac_processing_unit_bmControls(struct uac_processing_unit_descriptor *desc,
-@@ -378,7 +378,7 @@ static inline __u8 *uac_processing_unit_
- {
- 	return (protocol == UAC_VERSION_1) ?
- 		&desc->baSourceID[desc->bNrInPins + 5] :
--		&desc->baSourceID[desc->bNrInPins + 7];
-+		&desc->baSourceID[desc->bNrInPins + 6];
- }
+-		if (timeout < 0)
++		if (timeout < 0) {
++			mutex_unlock(&indio_dev->mlock);
+ 			return -ETIMEDOUT;
++		}
+ 	}
  
- static inline __u8 uac_processing_unit_iProcessing(struct uac_processing_unit_descriptor *desc,
+ 	return 0;
