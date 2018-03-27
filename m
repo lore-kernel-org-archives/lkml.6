@@ -1,104 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeC0WvH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 18:51:07 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:36560 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeC0WvF (ORCPT
+        id S1752277AbeC0Wwu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 18:52:50 -0400
+Received: from mail-ua0-f169.google.com ([209.85.217.169]:40494 "EHLO
+        mail-ua0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752128AbeC0Wwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 18:51:05 -0400
-X-Google-Smtp-Source: AIpwx4/xEQtN8sGIbCnFw4eTyBvZRPph8k8jQQ6Mz1/hhLrZpbWiCDVyK00CrWpoFfCSwDm0OYHz/g==
-Date: Wed, 28 Mar 2018 00:51:02 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc: alexandre.torgue@st.com, benjamin.gaignard@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        mcoquelin.stm32@gmail.com, benjamin.gaignard@st.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 0/8] Add support for PWM input capture on STM32
-Message-ID: <20180327225101.GJ28163@mithrandir>
-References: <1518602679-3064-1-git-send-email-fabrice.gasnier@st.com>
+        Tue, 27 Mar 2018 18:52:47 -0400
+X-Google-Smtp-Source: AIpwx4+rG5Hj/wSH0zKYnIxDtFQDlYZUoePM8tPbMttKTTgZueB/pTWonA4EaB8LHSMRQKxxO6URSWR0sEfi7Dvhrvc=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ofZMSlrAVk9bLeVm"
-Content-Disposition: inline
-In-Reply-To: <1518602679-3064-1-git-send-email-fabrice.gasnier@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1521785487-29866-7-git-send-email-mgautam@codeaurora.org>
+References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org> <1521785487-29866-7-git-send-email-mgautam@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 27 Mar 2018 15:52:44 -0700
+X-Google-Sender-Auth: OXDnL3bqRLJb-Z0BnswufliTALo
+Message-ID: <CAD=FV=WjQk420k8CxeXHuxHMPHd6ZEJ+zkR2iT_Fpw8conD+pg@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] phy: qcom-qusb2: Add QUSB2 PHYs support for sdm845
+To: Manu Gautam <mgautam@codeaurora.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---ofZMSlrAVk9bLeVm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 22, 2018 at 11:11 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
+> There are two QUSB2 PHYs present on sdm845. Update PHY
+> registers programming for both the PHYs related to
+> electrical parameters to improve eye diagram.
 
-On Wed, Feb 14, 2018 at 11:04:31AM +0100, Fabrice Gasnier wrote:
-> This series adds support for capture to stm32-pwm driver.
-> Capture is based on DMAs.
-> - First two patches are precursor patches
-> - Subsequent two patches add support for requesting DMAs to MFD core
-> - Next three patches add support for capture to stm32-pwm driver
-> - This has been tested on stm32429i-eval board.
->=20
-> ---
-> Resend v2:
-> - Add collected Acks
->=20
-> Changes in v2:
-> - Abstract DMA handling from child driver: move it to MFD core
-> - Rework pwm capture routines to adopt this change
-> - Comment on optional dma support, beautify DMAs probe
->=20
-> Fabrice Gasnier (8):
->   pwm: stm32: fix, remove unused struct device
->   pwm: stm32: protect common prescaler for all channels
->   dt-bindings: mfd: stm32-timers: add support for dmas
->   mfd: stm32-timers: add support for dmas
->   pwm: stm32: add capture support
->   pwm: stm32: improve capture by tuning counter prescaler
->   pwm: stm32: use input prescaler to improve period capture
->   ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
->=20
->  .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
->  arch/arm/boot/dts/stm32429i-eval.dts               |   3 +
->  drivers/mfd/stm32-timers.c                         | 215 +++++++++++++++-
->  drivers/pwm/pwm-stm32.c                            | 276 +++++++++++++++=
-+++++-
->  include/linux/mfd/stm32-timers.h                   |  39 +++
->  5 files changed, 547 insertions(+), 6 deletions(-)
+This tuning difference is truly associated with the SoC itself?  Are
+you sure?  Are the two different PHYs in the SoC somehow using
+different silicon processes?  ...or is one close to another IP block
+that is noisy?  ...or something else to account for this difference?
 
-I can't apply patches 1-2 and 5-6 since they depend on patches 3-4 for
-which I'd need an Acked-by: from Lee if I'm to pick them up. Same goes
-for patch 7.
+It seems more likely that this tuning difference is associated with
+the board.  If you're _certain_ this is really due to internal SoC
+differences you'll have to come up with some darn good evidence to
+convince me...
 
-By the looks of it there are minor conflicts with the MFD tree, but no
-major ones. Perhaps it'd be better for Lee to pick up 3-4 for v4.17-rc1
-and ack patch 7, then I can take the rest after v4.17-rc1?
 
-Thierry
+If the tuning is truly associated with the board then:
 
---ofZMSlrAVk9bLeVm
-Content-Type: application/pgp-signature; name="signature.asc"
+1. You should have a single device tree compatible string.  IMHO it
+should contain the name of the SoC in it, so "qcom,sdm845-qusb2-phy".
+It's generally OK to name something in Linux using the name of the
+first thing that happened to support it in Linux (even if later
+processors use the exact same component).  Leaving it as just
+"qcom,qusb2-v2-phy" is OK with me too if that's what everyone wants.
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlq6ytIACgkQ3SOs138+
-s6Fr9g/+KQ2WA9ip9DbgL8elChIvKtWOVCS3lcsNMKOS6GpIQkwMoIFKZyImNd1x
-sONlawlZ1mtgMX6MCbtUY/FUR2KZlRcPRWAyNp+c/Ya+XcrYIrVpM8OHvIeENcsB
-iImDC5Kroio77hku6KeYtl+oyKDgcQYOgDYGWCDyfvia33/zd66FkvTL8tDzAVQj
-8xOn6f6sqKs8qm/YCIXZvD1kJZS32xLN8Cxi33B4IbqOA8lUs0i07ZR9ugHuMdAP
-gElgw9The25eEFoM58J3oZTe55aE6RfI/6Ur2v8KVUOVLKU6XPVIupiV/j2C9iWX
-icWhZoissyVw9uexTnFYAA91U+w7Yp3B9ZmRY0jK0CXMY6Zf4vpjTDyBlWRFF3ja
-d++ud0V+pBHelAipOvEX5myzmR5mUs/nTLmRjWGwSe0poR/VYeLcASm59BZ45zzd
-AcXBtlEze8JAGP8e8NLKW30XkxvS6AoynCLDTuJeghq8frH11Ltq7SjF42PAj1wt
-rleLcsW2S6TXMxubS7zrG85AOM6RwZglpk5+4rTLKJv1Vaf2u+eElefPj8fMMuBT
-GMyjgDPA0zmxxt4ywnmJoHP7RFeJXuGAq4co6ZGTlZYSvpOWs+iCq0E4nHN5euW8
-LBRM0ucagBCbA9AizX41eYJZfkhnsz/kYhcKi2oDqM9SCgFhN0E=
-=MQsM
------END PGP SIGNATURE-----
+2. You should figure out how to describe the needed board-to-board
+tuning in device tree.
 
---ofZMSlrAVk9bLeVm--
+The only two differences you have right now are:
+
+QUSB2PHY_IMP_CTRL1: 0 => 0x8
+QUSB2PHY_PORT_TUNE1: 0x30 => 0x48
+
+I'm not sure I found all the correct documentation for the PHY (the
+docs I have say that "TUNE1" bit 3 is "reserved") so I can't come up
+with all of these for you.  But I think I found the difference
+accounting for the upper nybble of TUNE1 changing from 0x3 to 0x4.
+For this, I think you'd want a device tree property like:
+
+qcom,hstx_trim_mv
+
+...and the values of that property would be the values from 800 to 950
+in 8 steps, or [800, 821, 842, 864, 885, 907, 928, 950].
+
+You'd want to do similar things for the other differences.
+
+You don't need to encode every possible difference right now.  When
+you come up with something that needs to be different you add a new
+optional device tree property (defaulting to whatever the driver used
+to do) to describe your new property.
+
+
+-Doug
