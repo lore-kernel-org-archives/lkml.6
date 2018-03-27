@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-133288-1522172565-2-15712999713288215539
+X-Cyrus-Session-Id: sloti22d1t05-133548-1522172547-2-14626244452905113654
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522172564; b=gW4oYfLRueiR5a5i+jK2jCG+P3YcspiwpzaX+ICvpOj/jrR
-    bJmFJ6Q48CyaKIHczXV48LrZi10tgIfpaSsSq3iVo5/fE6UC4oW3GxGEuDCcuGvb
-    HpOBOXL77yUU4MfXh5tbgq+4G+Q0EKblXEr13HJP3wt9xdXxbUreLNRfDWTUfukz
-    KJYgZUwSxEmQQ5E34NInNZufECYs5oVThrzRKamZABGAj7nZODdZcvu889gH7ns2
-    drj5hMP3HQnbKoX9AIK0oFbKKcjqFzSutiymg+GT++2hTFISL2UNfZy7zKIzF9Jq
-    PI8GLaZcpx69mi14woztMVDfEnyd3k+5X/kqFmA==
+    t=1522172546; b=ANMqowAjfZHfR5Ut3lwtrB79mmMjwL4QdKheWJvPcns6ghI
+    xJDrwe1rCOW0u28WufaDd0k4MK0MAMTnfz48eQezMnV8vIE4rlK/mJniCfgmU94L
+    vQY1JDsQEuCusAMZyUW4dWJMsGUlgCBNlVnQYqwb7m9GEDqgY1Fm7km6xV80QrPY
+    Zp5+LlvRrgq3lcje9jAwHj9JVqAfZCJ6jode8ZyvryGqW9KOI/+aYSh7zpw5vTai
+    0EaZ9WB2UtqwT9sMdfu0OObTvNhtapfOEDl6WbdXu2Zzxl2LSnuX6xJ/cusFu9wd
+    n5RwsEwEzkESvDfNQ/x9anFB0cpzg3HoPppeGDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522172564; bh=+qjv+ACRAvyxpugN60O9cqJTB+
-    GPm+OlBV9AnrCO/uo=; b=Lju0FLZ/DZ2gHXY2zz/gp5PakxmHyyVIRsJzw3MDqg
-    U9MAfyUh5+YCeC0p5CZsoshWoLd8nP0qLLGOqZDBkXh4ygcakYA9gxOOZBF5Y7Yz
-    Y631qU9Ht2ap5rfLoUfzEGNwZz9SnfT9cGS0dS6zYzjk17NRov4EUN059sNZZ01g
-    Wudonag3NfDBYnbpFWmJoGzXSNMyZ3DCF9OC35WevjAHuGFh10O9L/zWZ2Zd4ewS
-    VLwa/Bx3zSE8NeCX/LARaCxUvjXOncV5JAnq7vPnmXjg0MYhLtCbBEZd1aW4Ay92
-    4OOtVYpXE3LgHttkin/f6s+McdOT3PFr/B9YGF+6lyiA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1522172546; bh=a2BUiMoJl6Qt/QZIAFJcLhQPLS
+    j9YogvMwFtw//134M=; b=JTflF0NrrXZbtnUTJ4zpPnjRksddjSVkd6DsXd43KQ
+    KCujCAGJJ+8nJJXyPKxcx0KHbqrvY1qJbUu8wrM+bDhG1YksKyG9hsV6PahJpnS+
+    GWPrFktG6Q7y+Pvs2w4z/a1mT6Fn5gy/8ClqJ5CyLylvdxQ+OjX5KRlh2ABn1enP
+    CauB18DeScHqf3xzzypaiCOS0pPYtZC/Z6MFRrv+Zywc7TOStMtsZYkdf8gfkQzz
+    DmVR27seno+32jr55Q57JuWi3s6J9BB2zmwXm9osU7UyHnIbDAku8m9o4dzUS7oX
+    lEyW+pNdivfGlWCGUEFsBIoyfWzBHHnBggxwG3dX6AIQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,36 +51,33 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEGgdcRxpbQHigV1aF1IDWXqiRbYCwad2ZdNUdxDUKLGwoSmD3YwPZAdvwHrOFS7AT8a+pnJz+l2lXY0dqFtNbVbE5Bma6TmHM/NXNbNbAiIiCY0YRin
-    Fu+PUWLZw+KWoFQJwPpBZScwE/30hc2TUO4HCKlGP+fXnDjyoZ5iu5EB3+Zbhv8HTZid4G061Pd84ERzcYebCATNNMn7duQbeEhJ+Sc71ApdB3yiNVVcgoTw
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJo6bSQTrn/hyyMjHRIqYijVog+sL6/l83ps9bu3sm3Vv2csHfwXJjOoCQ3bXEsEB1rOmqSltRAHMsly4yEGkeOTICFwMOvB8hTEdeK5fdx61SfpfAUQ
+    N+ZRYeUmqd4Myx7JVNOKZsgUsCpLuRmpltPt6IZlhkVHhhqY/V8pykRNYXsBAqPi6OzNlvF4fmsSoBn075MKhsy7kIoLTCj1sn+etbur70y/s9eItiLRznrR
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=Vxy2kpnnAAAA:8 a=WPyIoOwQAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
-    a=_qIf10yoEbF6jXucxO8A:9 a=QEXdDO2ut3YA:10 a=mQL3ssppXrSh16SuiSjD:22
-    a=S-HzPIwwDS8t1QcwSuWs:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=mkCXhCCKOUKQdph7VtgA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751493AbeC0Rmb (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 13:42:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44068 "EHLO
+        id S1754082AbeC0Qdy (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:33:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754040AbeC0Qdt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:33:49 -0400
+        with ESMTP id S1751249AbeC0Qdv (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:33:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neil@brown.name>,
-        John Crispin <john@phrozen.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 001/101] MIPS: ralink: Remove ralink_halt()
-Date: Tue, 27 Mar 2018 18:26:33 +0200
-Message-Id: <20180327162750.092111711@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 010/101] ALSA: aloop: Sync stale timer before release
+Date: Tue, 27 Mar 2018 18:26:42 +0200
+Message-Id: <20180327162750.635567497@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
@@ -93,53 +90,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neil@brown.name>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 891731f6a5dbe508d12443175a7e166a2fba616a upstream.
+commit 67a01afaf3d34893cf7d2ea19b34555d6abb7cb0 upstream.
 
-ralink_halt() does nothing that machine_halt() doesn't already do, so it
-adds no value.
+The aloop driver tries to stop the pending timer via timer_del() in
+the trigger callback and in the close callback.  The former is
+correct, as it's an atomic operation, while the latter expects that
+the timer gets really removed and proceeds the resource releases after
+that.  But timer_del() doesn't synchronize, hence the running timer
+may still access the released resources.
 
-It actually causes incorrect behaviour due to the "unreachable()" at the
-end. This tells the compiler that the end of the function will never be
-reached, which isn't true. The compiler responds by not adding a
-'return' instruction, so control simply moves on to whatever bytes come
-afterwards in memory. In my tested, that was the ralink_restart()
-function. This means that an attempt to 'halt' the machine would
-actually cause a reboot.
+A similar situation can be also seen in the prepare callback after
+trigger(STOP) where the prepare tries to re-initialize the things
+while a timer is still running.
 
-So remove ralink_halt() so that a 'halt' really does halt.
+The problems like the above are seen indirectly in some syzkaller
+reports (although it's not 100% clear whether this is the only cause,
+as the race condition is quite narrow and not always easy to
+trigger).
 
-Fixes: c06e836ada59 ("MIPS: ralink: adds reset code")
-Signed-off-by: NeilBrown <neil@brown.name>
-Cc: John Crispin <john@phrozen.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.9+
-Patchwork: https://patchwork.linux-mips.org/patch/18851/
-Signed-off-by: James Hogan <jhogan@kernel.org>
+For addressing these issues, this patch adds the explicit alls of
+timer_del_sync() in some places, so that the pending timer is properly
+killed / synced.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/ralink/reset.c |    7 -------
- 1 file changed, 7 deletions(-)
+ sound/drivers/aloop.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/arch/mips/ralink/reset.c
-+++ b/arch/mips/ralink/reset.c
-@@ -96,16 +96,9 @@ static void ralink_restart(char *command
- 	unreachable();
+--- a/sound/drivers/aloop.c
++++ b/sound/drivers/aloop.c
+@@ -192,6 +192,11 @@ static inline void loopback_timer_stop(s
+ 	dpcm->timer.expires = 0;
  }
  
--static void ralink_halt(void)
--{
--	local_irq_disable();
--	unreachable();
--}
--
- static int __init mips_reboot_setup(void)
- {
- 	_machine_restart = ralink_restart;
--	_machine_halt = ralink_halt;
++static inline void loopback_timer_stop_sync(struct loopback_pcm *dpcm)
++{
++	del_timer_sync(&dpcm->timer);
++}
++
+ #define CABLE_VALID_PLAYBACK	(1 << SNDRV_PCM_STREAM_PLAYBACK)
+ #define CABLE_VALID_CAPTURE	(1 << SNDRV_PCM_STREAM_CAPTURE)
+ #define CABLE_VALID_BOTH	(CABLE_VALID_PLAYBACK|CABLE_VALID_CAPTURE)
+@@ -326,6 +331,8 @@ static int loopback_prepare(struct snd_p
+ 	struct loopback_cable *cable = dpcm->cable;
+ 	int bps, salign;
  
- 	return 0;
- }
++	loopback_timer_stop_sync(dpcm);
++
+ 	salign = (snd_pcm_format_width(runtime->format) *
+ 						runtime->channels) / 8;
+ 	bps = salign * runtime->rate;
+@@ -745,7 +752,7 @@ static int loopback_close(struct snd_pcm
+ 	struct loopback *loopback = substream->private_data;
+ 	struct loopback_pcm *dpcm = substream->runtime->private_data;
+ 
+-	loopback_timer_stop(dpcm);
++	loopback_timer_stop_sync(dpcm);
+ 	mutex_lock(&loopback->cable_lock);
+ 	free_cable(substream);
+ 	mutex_unlock(&loopback->cable_lock);
