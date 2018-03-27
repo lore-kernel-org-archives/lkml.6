@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/0b0ja+bzeUUzovgoiMlnHxNbCylfmDyCOrPpVrA1f5TiEG9ZDla5H75Z/sOGRnTh10IyS
-ARC-Seal: i=1; a=rsa-sha256; t=1522168701; cv=none;
+X-Google-Smtp-Source: AIpwx4+g5zWzKXrtp56UPrprWNVna1dG4TJgcdKRSdBkh3uCwr9JR7cX66s+G5vrpFnSUCLX5UvX
+ARC-Seal: i=1; a=rsa-sha256; t=1522168698; cv=none;
         d=google.com; s=arc-20160816;
-        b=bs/NYEp/kC4r6zaTc4/SFVqRS6frz6h8gk2wl2P/7svifTa7FEC9iClCAhZERzu6kW
-         OsvaU8SHsxYJTwpxS+g+6liUU92lLnvcKRXH9poD2B/KaQbYklSmMx/NtJOzRdAEQMvk
-         oRq+DJunlMlTLXGpYYgzPQIjMV4mYjrOLxA0UNDPMeTRlBhq4mifRn7I2/Ro8Niqns9/
-         cC4pQc1qXEzRi3Qpc8YrQYLsYxZYvrLVVqXQK5Pe0XSmtUln+rMAKXZffnGOKpA/P87Z
-         2evivTcW/2sulr3RuacuPRf7QIyBC3YgdXsfs35UrLc0CVYfKxd4y8EEaHcJG6Y+orRz
-         3U1Q==
+        b=que61nwbpVNOeQK0n4/yaM89Bo7hJQ5fxP0KzAuNYTM3zta/c0astZkhdd+UP9NsQ2
+         CJU5x+Gb87hf9D8Oyl4YNigIveNL67brO/Om06z054iXBFmAmygV9pLQfyU3c+xhrddj
+         kkrdD2Vm1+mmFLFynFsKmyxu0J1HSBtWPXxpBgm5UXh+iA2EEi+RUYqxFCS0EJPDOP9w
+         5bGxCX7NMMjsksqqNkOrwTwex2QjRCpx7IT08Eo4eFZaBVQNFdEzImPqclsOagf2v+2b
+         hTpfwvuD1EmYGPd6XZkZ/Nwk4dIgUJf/LaaujbGJa+gYZ0Vq8XKEsR8N3tXok8dCWSn0
+         B1Fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZYrlZSqDFZK2fGNbYYuzxYp1fB6i5TzmmWKb5MG2iHA=;
-        b=Hxuy3bd1vB6WKkoj+8rFQEpL6tl8F0BJ57yjo7oguWr6WBt3yEtMqLSq3zzGRdyOsu
-         azVyi4aSGripqXRqLhildqLO4XCM8HvrxH8kxIvQ/7ttTlfWPY/WGlNbWwDdVWWdTHQw
-         5VE1SlzQZHRzzqHcGMRglAeEMdRZpY1vGkdMLVRcdPjHE3B1FXM/1uTJCWzTYt543Epq
-         fjc4194OHz/C1R9+pxxO1BLqnvTibBj5gIV9wLaeph4uXFNlvlhGVcaqb7CU2E7SAjrI
-         CnFWThIVXoT5xgsJMW9k9KT6wUEh/6QqpEvsrBAUUYd8adqSfKWo9G6ec9GDu4VuMvOL
-         RfGg==
+        bh=KuOq4+X6VmB/CshTVEW7qvHngP1Bygzt0aJPt2SbDqs=;
+        b=yj/MIdW7dw5Gg0JR8AB78Aq+kqoPMjBjypG795FplcqwxueJMQys92+Tk09r9LVOUG
+         fiDKEXe6MM7anfpmyMopPn6j9tolyAewGXtxgkhvNywUbaRw4zwGg4bFn35x/uaty/Qr
+         XIke6f7c4DHCIx2SbdETvTK4QblAaDZ1APdKkZ7xuDqerSlkdhej6JqQ2L1z0z08TUJg
+         mHLqaOzhoDJnB4jVhxTwph9l3z44GrDH7mXmMZPdnsD0o3kbBYMjqwyrvdZjtxAtgzw9
+         q9WJvMy9in8h1OSe3nl13a0vssOJzY6P2C2UmQVxS+LTAokU1stxDsf6JiJaxXnAsg6c
+         4eoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Shakeel Butt <shakeelb@google.com>,
-	Michal Hocko <mhocko@suse.cz>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 058/101] mm/vmscan: wake up flushers for legacy cgroups too
-Date: Tue, 27 Mar 2018 18:27:30 +0200
-Message-Id: <20180327162753.545466903@linuxfoundation.org>
+	Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+	Jagdish Gediya <jagdish.gediya@nxp.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.14 067/101] mtd: nand: fsl_ifc: Fix eccstat array overflow for IFC ver >= 2.0.0
+Date: Tue, 27 Mar 2018 18:27:39 +0200
+Message-Id: <20180327162754.143057893@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -46,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109568190515678?=
-X-GMAIL-MSGID: =?utf-8?q?1596109568190515678?=
+X-GMAIL-THRID: =?utf-8?q?1596109199046549260?=
+X-GMAIL-MSGID: =?utf-8?q?1596109565409686646?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,114 +50,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Jagdish Gediya <jagdish.gediya@nxp.com>
 
-commit 1c610d5f93c709df56787f50b3576704ac271826 upstream.
+commit 843c3a59997f18060848b8632607dd04781b52d1 upstream.
 
-Commit 726d061fbd36 ("mm: vmscan: kick flushers when we encounter dirty
-pages on the LRU") added flusher invocation to shrink_inactive_list()
-when many dirty pages on the LRU are encountered.
+Number of ECC status registers i.e. (ECCSTATx) has been increased in IFC
+version 2.0.0 due to increase in SRAM size. This is causing eccstat
+array to over flow.
 
-However, shrink_inactive_list() doesn't wake up flushers for legacy
-cgroup reclaim, so the next commit bbef938429f5 ("mm: vmscan: remove old
-flusher wakeup from direct reclaim path") removed the only source of
-flusher's wake up in legacy mem cgroup reclaim path.
+So, replace eccstat array with u32 variable to make it fail-safe and
+independent of number of ECC status registers or SRAM size.
 
-This leads to premature OOM if there is too many dirty pages in cgroup:
-    # mkdir /sys/fs/cgroup/memory/test
-    # echo $$ > /sys/fs/cgroup/memory/test/tasks
-    # echo 50M > /sys/fs/cgroup/memory/test/memory.limit_in_bytes
-    # dd if=/dev/zero of=tmp_file bs=1M count=100
-    Killed
-
-    dd invoked oom-killer: gfp_mask=0x14000c0(GFP_KERNEL), nodemask=(null), order=0, oom_score_adj=0
-
-    Call Trace:
-     dump_stack+0x46/0x65
-     dump_header+0x6b/0x2ac
-     oom_kill_process+0x21c/0x4a0
-     out_of_memory+0x2a5/0x4b0
-     mem_cgroup_out_of_memory+0x3b/0x60
-     mem_cgroup_oom_synchronize+0x2ed/0x330
-     pagefault_out_of_memory+0x24/0x54
-     __do_page_fault+0x521/0x540
-     page_fault+0x45/0x50
-
-    Task in /test killed as a result of limit of /test
-    memory: usage 51200kB, limit 51200kB, failcnt 73
-    memory+swap: usage 51200kB, limit 9007199254740988kB, failcnt 0
-    kmem: usage 296kB, limit 9007199254740988kB, failcnt 0
-    Memory cgroup stats for /test: cache:49632KB rss:1056KB rss_huge:0KB shmem:0KB
-            mapped_file:0KB dirty:49500KB writeback:0KB swap:0KB inactive_anon:0KB
-	    active_anon:1168KB inactive_file:24760KB active_file:24960KB unevictable:0KB
-    Memory cgroup out of memory: Kill process 3861 (bash) score 88 or sacrifice child
-    Killed process 3876 (dd) total-vm:8484kB, anon-rss:1052kB, file-rss:1720kB, shmem-rss:0kB
-    oom_reaper: reaped process 3876 (dd), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-
-Wake up flushers in legacy cgroup reclaim too.
-
-Link: http://lkml.kernel.org/r/20180315164553.17856-1-aryabinin@virtuozzo.com
-Fixes: bbef938429f5 ("mm: vmscan: remove old flusher wakeup from direct reclaim path")
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Tested-by: Shakeel Butt <shakeelb@google.com>
-Acked-by: Michal Hocko <mhocko@suse.cz>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: bccb06c353af ("mtd: nand: ifc: update bufnum mask for ver >= 2.0.0")
+Cc: stable@vger.kernel.org # 3.18+
+Signed-off-by: Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>
+Signed-off-by: Jagdish Gediya <jagdish.gediya@nxp.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/vmscan.c |   31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+ drivers/mtd/nand/fsl_ifc_nand.c |   23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1847,6 +1847,20 @@ shrink_inactive_list(unsigned long nr_to
- 		set_bit(PGDAT_WRITEBACK, &pgdat->flags);
+--- a/drivers/mtd/nand/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/fsl_ifc_nand.c
+@@ -173,14 +173,9 @@ static void set_addr(struct mtd_info *mt
  
- 	/*
-+	 * If dirty pages are scanned that are not queued for IO, it
-+	 * implies that flushers are not doing their job. This can
-+	 * happen when memory pressure pushes dirty pages to the end of
-+	 * the LRU before the dirty limits are breached and the dirty
-+	 * data has expired. It can also happen when the proportion of
-+	 * dirty pages grows not through writes but through memory
-+	 * pressure reclaiming all the clean cache. And in some cases,
-+	 * the flushers simply cannot keep up with the allocation
-+	 * rate. Nudge the flusher threads in case they are asleep.
-+	 */
-+	if (stat.nr_unqueued_dirty == nr_taken)
-+		wakeup_flusher_threads(0, WB_REASON_VMSCAN);
+ /* returns nonzero if entire page is blank */
+ static int check_read_ecc(struct mtd_info *mtd, struct fsl_ifc_ctrl *ctrl,
+-			  u32 *eccstat, unsigned int bufnum)
++			  u32 eccstat, unsigned int bufnum)
+ {
+-	u32 reg = eccstat[bufnum / 4];
+-	int errors;
+-
+-	errors = (reg >> ((3 - bufnum % 4) * 8)) & 15;
+-
+-	return errors;
++	return  (eccstat >> ((3 - bufnum % 4) * 8)) & 15;
+ }
+ 
+ /*
+@@ -193,7 +188,7 @@ static void fsl_ifc_run_command(struct m
+ 	struct fsl_ifc_ctrl *ctrl = priv->ctrl;
+ 	struct fsl_ifc_nand_ctrl *nctrl = ifc_nand_ctrl;
+ 	struct fsl_ifc_runtime __iomem *ifc = ctrl->rregs;
+-	u32 eccstat[4];
++	u32 eccstat;
+ 	int i;
+ 
+ 	/* set the chip select for NAND Transaction */
+@@ -228,8 +223,8 @@ static void fsl_ifc_run_command(struct m
+ 	if (nctrl->eccread) {
+ 		int errors;
+ 		int bufnum = nctrl->page & priv->bufnum_mask;
+-		int sector = bufnum * chip->ecc.steps;
+-		int sector_end = sector + chip->ecc.steps - 1;
++		int sector_start = bufnum * chip->ecc.steps;
++		int sector_end = sector_start + chip->ecc.steps - 1;
+ 		__be32 *eccstat_regs;
+ 
+ 		if (ctrl->version >= FSL_IFC_VERSION_2_0_0)
+@@ -237,10 +232,12 @@ static void fsl_ifc_run_command(struct m
+ 		else
+ 			eccstat_regs = ifc->ifc_nand.v1_nand_eccstat;
+ 
+-		for (i = sector / 4; i <= sector_end / 4; i++)
+-			eccstat[i] = ifc_in32(&eccstat_regs[i]);
++		eccstat = ifc_in32(&eccstat_regs[sector_start / 4]);
 +
-+	/*
- 	 * Legacy memcg will stall in page writeback so avoid forcibly
- 	 * stalling here.
- 	 */
-@@ -1858,22 +1872,9 @@ shrink_inactive_list(unsigned long nr_to
- 		if (stat.nr_dirty && stat.nr_dirty == stat.nr_congested)
- 			set_bit(PGDAT_CONGESTED, &pgdat->flags);
++		for (i = sector_start; i <= sector_end; i++) {
++			if (i != sector_start && !(i % 4))
++				eccstat = ifc_in32(&eccstat_regs[i / 4]);
  
--		/*
--		 * If dirty pages are scanned that are not queued for IO, it
--		 * implies that flushers are not doing their job. This can
--		 * happen when memory pressure pushes dirty pages to the end of
--		 * the LRU before the dirty limits are breached and the dirty
--		 * data has expired. It can also happen when the proportion of
--		 * dirty pages grows not through writes but through memory
--		 * pressure reclaiming all the clean cache. And in some cases,
--		 * the flushers simply cannot keep up with the allocation
--		 * rate. Nudge the flusher threads in case they are asleep, but
--		 * also allow kswapd to start writing pages during reclaim.
--		 */
--		if (stat.nr_unqueued_dirty == nr_taken) {
--			wakeup_flusher_threads(0, WB_REASON_VMSCAN);
-+		/* Allow kswapd to start writing pages during reclaim. */
-+		if (stat.nr_unqueued_dirty == nr_taken)
- 			set_bit(PGDAT_DIRTY, &pgdat->flags);
--		}
+-		for (i = sector; i <= sector_end; i++) {
+ 			errors = check_read_ecc(mtd, ctrl, eccstat, i);
  
- 		/*
- 		 * If kswapd scans pages marked marked for immediate
+ 			if (errors == 15) {
