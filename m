@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48gJVnjfu5sOoyTfTDmIzRbb/NlrIoQd1MkiEkfP50013rxsfSscnD+imI5CjtwPJK33RTB
-ARC-Seal: i=1; a=rsa-sha256; t=1522168415; cv=none;
+X-Google-Smtp-Source: AIpwx4805cXxm2tL45KpRS8QJnImjUrzkfcRBaJBSq5yZzlVHVBa26jYktETvfQAXyJFNp/d+CJE
+ARC-Seal: i=1; a=rsa-sha256; t=1522168412; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y5rMQYDtNhAM7mmXSqmjNxMGPdNXmiCamcVF0VlvgJ1dZmUxGoP+EtH/C0yjvnAZQL
-         PNImgBkZkwYlO53TfENS7DaEUDx8Y2ph+unsVCBenhjcHVNu/evscCDcV30+Z/Qcq091
-         vEUPnWN6rgxa3bhO2A8HfmgYxuadsrWHv9eYFrfa3pI9Rc5mwFwISwJXACLn0XA4cldS
-         1dX2bbzXx8Lr1Oae7Rse5bJtWwEZMtH5/jAJFZ+XM49SNVqNThGO86kLW3l6T0mDyWcF
-         wafZP4EcuPN3qeTTnNBNLMqscMGJWJSRNenXT8YJFPAorXaeqsb0vUUb0sjml4w/P2pY
-         bwyg==
+        b=FofRu1N8HzJ8AcgNeU9rvu0KZLCpda+yMMIE4YamNPTEjsVRApObEG7nLeF/+GJnNu
+         BfK4EXHgBwT7vsoD7PdE/pt49pNOPV1MwanAd+svygHsSqiiN443+ZjRi/f8nG+SXkWe
+         5bmnx3Vnrp7LukUm4xSN419DWW3woj1+tXG4f7AoUGlVgKk0Gmsm8wJ2v4TaE1iYVoyL
+         f8WUyeRiP2ZDVlKxN4cxB/ujuCjPH7d/Tn9ddJY2RF0APDL9Xq17ZEUJv7hpNkytoeiw
+         k2/19JJmWCcONOMauIIX6ovFE32S28qTL4xIbIAnUU2k7fHvlZXeO8kKMaWzIMF0HPLR
+         zx2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=h4fsSj6CFu/Sm3WDtea7X9YwuOX5baAMXkW58iPwMSY=;
-        b=SDfFoFGKeKcJj+Sq9SRiqlmvELtKJ8cOhbLke3xfV4aCXe4FEQwjDtbqPa5Z6PU7cN
-         HWy6Mc2OoismjDiiUa15UcOspQ3LqW09XDHVmImNQ4BNenzTFKOcG8+e8mbn0L2fU2Ck
-         eKn4c7wSbETbxhpodqk5qHYbL9ZdeTu52Pg7lhut8F0Vzcqhj4nqVhQzIYzpduxWhkwD
-         QlfDaKru0vA7aBW0HmLo8lcUBGi7KxdB64U1vv7lR8hihP65HrHoB4/opl+T38lNjpbD
-         LtVhACv0geLL3k5NDTGuyNJuaxZ+GTjF92/u/xQhb9IRzl8cvsbMQGmnWCm5lDanELz0
-         dZ7w==
+        bh=dzVmKpvh7MVK3QfvpXMD7f+o8SehUNRV4AypIuCcY9I=;
+        b=NhQxr4uaoJRainfaxyxE+YjDcAYBGb7ruQjNLRUdh61w5M1xZ+CC7qbj/P2JRjnD+P
+         vbxvRTIL8eqEV7/OfZOpihOnyc5LzGxmHhG9UUdTh49wZvpBWnuNTYm1QelXB2OKY3xW
+         lTIGh29fnE0QodugQ+pgwxfNnDsl6Ty92MQOkVfQqLNihzymq9UDbTIJnAnhY71eQn8h
+         8BBN9vtMIDsSzWm4W7v9ro1Q+skBvWqc0f2BSgZtl5INikVkWW7auNlUvXHW+6M/Pg5m
+         2sKh7QuEpDHKq1j4TJxebbTNFNlnMn9xI7oNHaHIMHDye3QyXxZ7/jHC5LjevwE/7g8G
+         jUdA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>,
-	Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [PATCH 4.9 64/67] selftests: x86: sysret_ss_attrs doesnt build on a PIE build
-Date: Tue, 27 Mar 2018 18:27:56 +0200
-Message-Id: <20180327162731.207896067@linuxfoundation.org>
+	Jagdish Gediya <jagdish.gediya@nxp.com>,
+	Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.9 39/67] mtd: nand: fsl_ifc: Fix nand waitfunc return value
+Date: Tue, 27 Mar 2018 18:27:31 +0200
+Message-Id: <20180327162729.151278230@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109267899820070?=
-X-GMAIL-MSGID: =?utf-8?q?1596109267899820070?=
+X-GMAIL-THRID: =?utf-8?q?1596109017538454485?=
+X-GMAIL-MSGID: =?utf-8?q?1596109265365225418?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,45 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shuah Khan <shuahkh@osg.samsung.com>
+From: Jagdish Gediya <jagdish.gediya@nxp.com>
 
-commit 3346a6a4e5ba8c040360f753b26938cec31a4bdc upstream.
+commit fa8e6d58c5bc260f4369c6699683d69695daed0a upstream.
 
-sysret_ss_attrs fails to compile leading x86 test run to fail on systems
-configured to build using PIE by default. Add -no-pie fix it.
+As per the IFC hardware manual, Most significant 2 bytes in
+nand_fsr register are the outcome of NAND READ STATUS command.
 
-Relocation might still fail if relocated above 4G. For now this change
-fixes the build and runs x86 tests.
+So status value need to be shifted and aligned as per the nand
+framework requirement.
 
-tools/testing/selftests/x86$ make
-gcc -m64 -o .../tools/testing/selftests/x86/single_step_syscall_64 -O2
--g -std=gnu99 -pthread -Wall  single_step_syscall.c -lrt -ldl
-gcc -m64 -o .../tools/testing/selftests/x86/sysret_ss_attrs_64 -O2 -g
--std=gnu99 -pthread -Wall  sysret_ss_attrs.c thunks.S -lrt -ldl
-/usr/bin/ld: /tmp/ccS6pvIh.o: relocation R_X86_64_32S against `.text'
-can not be used when making a shared object; recompile with -fPIC
-/usr/bin/ld: final link failed: Nonrepresentable section on output
-collect2: error: ld returned 1 exit status
-Makefile:49: recipe for target
-'.../tools/testing/selftests/x86/sysret_ss_attrs_64' failed
-make: *** [.../tools/testing/selftests/x86/sysret_ss_attrs_64] Error 1
-
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+Fixes: 82771882d960 ("NAND Machine support for Integrated Flash Controller")
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Jagdish Gediya <jagdish.gediya@nxp.com>
+Reviewed-by: Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/nand/fsl_ifc_nand.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -17,7 +17,7 @@ TARGETS_C_64BIT_ALL := $(TARGETS_C_BOTHB
- BINARIES_32 := $(TARGETS_C_32BIT_ALL:%=%_32)
- BINARIES_64 := $(TARGETS_C_64BIT_ALL:%=%_64)
+--- a/drivers/mtd/nand/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/fsl_ifc_nand.c
+@@ -656,6 +656,7 @@ static int fsl_ifc_wait(struct mtd_info
+ 	struct fsl_ifc_ctrl *ctrl = priv->ctrl;
+ 	struct fsl_ifc_runtime __iomem *ifc = ctrl->rregs;
+ 	u32 nand_fsr;
++	int status;
  
--CFLAGS := -O2 -g -std=gnu99 -pthread -Wall
-+CFLAGS := -O2 -g -std=gnu99 -pthread -Wall -no-pie
+ 	/* Use READ_STATUS command, but wait for the device to be ready */
+ 	ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
+@@ -670,12 +671,12 @@ static int fsl_ifc_wait(struct mtd_info
+ 	fsl_ifc_run_command(mtd);
  
- UNAME_M := $(shell uname -m)
- CAN_BUILD_I386 := $(shell ./check_cc.sh $(CC) trivial_32bit_program.c -m32)
+ 	nand_fsr = ifc_in32(&ifc->ifc_nand.nand_fsr);
+-
++	status = nand_fsr >> 24;
+ 	/*
+ 	 * The chip always seems to report that it is
+ 	 * write-protected, even when it is not.
+ 	 */
+-	return nand_fsr | NAND_STATUS_WP;
++	return status | NAND_STATUS_WP;
+ }
+ 
+ static int fsl_ifc_read_page(struct mtd_info *mtd, struct nand_chip *chip,
