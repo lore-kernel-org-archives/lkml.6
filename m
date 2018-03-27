@@ -1,23 +1,23 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AG47ELtPQxp4YVbjCv68w0P+TfVcnC9S9KEyA/tJSCzJPLt9BXw/dpPsG41n1g6sVtkp8vn6Lzoy
+X-Google-Smtp-Source: AIpwx49G30Ge6O5rwd1Hk3dv9o6r5JFJFzsay+//3dhbxfJgDNALglyOzXWKak4doRYrIPQivfqJ
 ARC-Seal: i=1; a=rsa-sha256; t=1522140087; cv=none;
         d=google.com; s=arc-20160816;
-        b=aD5eR9LGDy+ybNbtzC0qJ92pF9uNnqz2el3yn8KLjyJdLq8IBQPO6qBm3swCJAk/Yp
-         Ym1fH+HbpVjkXPhzVsIL6yYEHKqz7gDibxQmw7Qb1hE0lJboXdSgmEEjknpJKdnxvWRr
-         w0eTYqKnQNNb72EEJdpBfyP8/jxgdzh9JtjYV7XsWxBTGzRsHAmvNNobqhiJ3XdV5Uue
-         sKfFC53SMEKQWTwY1hHsTocnQkgAx0PmD587SbLyRKwm4O1PrI8N0fDuGjq5Q4LWL73l
-         1/isqdvdRChsHW6wbWYHZesbsLkHVsFmP0icJuzpsf5SAsN2sBwme90lZ/Lg3q4ENekQ
-         rvRA==
+        b=tg+LsCtp4YiPNXAZKUPD+8iXDLHVzhmVRGXOkPMFEvFe+sMEGt49y2uQQKY1RahooJ
+         TzOJCvJKOTx/CmnIwU4Wemn0StftbrlGp1RxfwagZ8MyEJ4r39rZwpMRSjfG1WXYVCou
+         uEfmWLrmwJzp43dKCzQpFf6b7nBJ9lvZ9jhx0NYNCQWTCVrAayX66LSijGjEK7Bv9rz/
+         xAhAZjHCXTBZwj8+uuyccXBYiw/EnBcSuxdmhSQy7tviTgMTN35D76w9XxeAZv88N00X
+         b1xjPg2tV9fsUtGqtb52Mgasl/xGtp6nLGsz3VZCzyFds7GnbkSHtY3Msir9x+DWtgH1
+         PxTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=G6nzfQdQK6frkswrdMyaO/MaCn2mZAZRfKiK5KIUW3o=;
-        b=qe8+oUf3YQ1YIHzxFW5SG8DbhKPv8lXxPlUYSa6prhXuTLw7/WuFsjI922W2rcFz4G
-         upnc4l8LVaWzdhvDb8QoEieEFHk849OXNKYSSHdH+SXedSNbVXGnwZ+44cSHtm/OVnMu
-         PeaOrqejn4cBOCycAnCBmjSFDdZEcvpUUKUZIU/6E9Y+WKaRO7tPbTzFbX596muz8JqU
-         4m6hsrF7OnmyLNHcRpn8EN3DaGAd8JEBz1v2kcrwtstMWQ1hue9YwtwumHQ4ZwzrUZBX
-         SCjLeP8589k7w57LIMCC6TxFa5iuhVcyB9hbnbgJKiNdOS9E/VKKaiqf7IejIeOWQ9sU
-         j6Dw==
+        bh=XmqSNm/1c7G1dW4Z5e90bcDkYgDuY/j11hTuwmSfViw=;
+        b=NadtePqCKwwaFdg3wmMG5I+mQwkXVsrlXGGPstF7K3wt3Tg5ediPIOJg//e/KYyi7K
+         ka6on793UTyOWXVhg1nEW09MpGeJkhIRihJSlSmtrvwtjzjDomUWIxW3mGBpG/w7YnmN
+         h/ESYew0ZpFVe3gLcJ0SIUDTwoTQDSYOegNxHF2NwG+QXHgyKNaVP5T3k9TW8DqvvD3u
+         zr65+RmUnKgyF23vLeHtbrODLDbtMB7WvcrIzoA7rpJ1+phMelwnUOHPzLy8MSBV3C30
+         39JQt397ZxgvBLuu8SGu1SJNEqCoF93LpqYDOFSSx5UiexUcSnnm+PqdBcq+ksOFOGL4
+         iJDA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 74.208.4.197 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
@@ -26,124 +26,126 @@ From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 02/23] staging: rtl8723bs: Remove #defines shadowing enums in 'linux/ieee80211.h'
-Date: Tue, 27 Mar 2018 01:40:54 -0700
-Message-Id: <20180327084115.16129-2-quytelda@tamalin.org>
+Subject: [PATCH 03/23] staging: rtl8723bs: Replace RTW_IEEE80211_FCTL_* with IEEE80211_FCTL_*.
+Date: Tue, 27 Mar 2018 01:40:55 -0700
+Message-Id: <20180327084115.16129-3-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327084115.16129-1-quytelda@tamalin.org>
 References: <CAFLvi237jR_tTQMXBNqCO=NQFOEFiJQkDBMxb_AxgBEqQDYQEw@mail.gmail.com>
  <20180327084115.16129-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:3Zj/OSiumqQb14e1OuFg52pZPU9JW8p+ptGqerewQY2kFmotbjk
- qz2KJAAaRTEYrTX8PjWL2GQoL2rieJY5zR9ONuNBNEZ1Rs3IMY+0EahJp50Ow5ynmeSLidv
- K5K1mY6QPnVPPz8pS8Gt+u5XiLs0GIJiRvzp3Fy8xyYxRmDgh4jbGUbRTsZ3sDzLihEEx3N
- 32wQsdttC56mL7ecI2WHw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:bOB2AXP9lWs=:avBpv3wda+bQdbV6Py+qI3
- rFT3oOobiMKBnzDRAXz5dEG+BXyjcMZjsLaikk0u8uCAhpIIO98LURgW891GviYaW+u/lQmMk
- 03YnnY9MzBkaUcL5ZCb47NQc6JwmboxNBnyCdSj3fqaqmm5MICNd/Yw2gn0DdJt2XZtW8egYB
- AZzxDCH/qYd48F3VGUUdVwnzzFrLSOFMsW35p3HJsn5QiHdcrJfrlxy9g4YUi6qCtQIvlmgX2
- Hlp/d15MWElz52vf2c9Zwo5pQ+0pRTckOpgkwIXjYGL4IfY8hXn4Tuv5XYPBZXPXPPKLfyO9A
- q//5WPDjrYHXdq/fXnmYcMrLvQvD2vJR6j4OMtGKoeq7BqH/eyz3EeSzixZ3p9aa06IX3JkN9
- 6AkdKkS33sp+eQ8ThL9ZaD0P2yZ205lAdp6uZXJVc2wVzFo815wHoMfK5NDHRhqz3vzSASH0w
- KQqGOPqf5+FDgX9gEhg1y5OHxrQ/aJWEjLZhzC+dy5rUsoFDPXfB9r8JS+qjJdDT4lViSE7S/
- ACUsROygAXumhJmvacE+jHHbl3z95z36nF9Is5/mu2cPLRjTYiOOFWaKCzBjDBJVctS32jh1J
- PER2fPh+foSr4o19NbcbmR8faGhlLbkcKXGTHy4MrCqam9C5JdQzHYMDQvyCryf7f4za2rJV1
- /edWcyHvIPqkE5K9zEjALmZl4OE7OhmAcn86HdswZI2VKadWUEwO62xPi19U4ivmYbD44gdt8
- pGa4snFwTPCRsKvrFGVnfkwsP9lL4tX8LnsF8w==
+X-Provags-ID: V03:K0:B4/4d/bxkD2lNTVzPM71DeXcuAnFfoiU21rcQwKok3v+ly/gucB
+ yJy0XjmU6C69MpvhGX5JW0tKOBI6dJd30ti0MImKUJ7RYiVR28e5wzO9KK6JGR0KUlPM2H/
+ LIbdi2U7nWIXyfrhVay+LZFN0CaSV9aDOD0BdVcBQaIHJ0xpSwMWGdM8ElKjkZxUhb425Qr
+ FHix7+zpJzYUQRr4j5DOg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:iXFI7Q7iEjE=:0FMerEutENaBdhGrc4Bev0
+ S6h5v3IERf04Y2J2iAVBv8m4BDiau4OzhxHq9mcSceJEZQUwcQApYdNF6sPN90+R/3cNbH+1n
+ y+WfW4ycYn5xNMleWeCnZ2a4H8B4VqL7pSX3SX9ivKnvJI+Zr0VxR16lTqVd+cNmLKjvOuxy6
+ 7/xNhpkq3YRBd6WWAogG5Kzp1uEF3GJGxUF+k3mb6LVAMovZF15+j2KwDLwBlnr49KLlsOTpN
+ 4rguSrJN6LEdsTdqPL0L3Kd3NOLH723wBViPYwNcgcS/0huR3VaZEZDuoguw8rkdUv0IH7EMi
+ HS1lXYYXRe6xuwrp4oxq2qMVAE4ahSsBhoteQn1maqOf//NFlvWm7aW0UOl5udBA5bIee14pH
+ Yo9IXvn7Q2vb9T+kZZne8HPeUJ6SeaC9ZyDdXwadH0D2Q2XJoq8wPhgPfO/9AH6xICjCprHGt
+ aJde2yaonW+StK6y92jQPNnF+ZuuEtNRYa6luupyimeXLcJP3+ad+bp7ejPHlmwm7KYkXhICc
+ Aj3PkVOr2AbhYnZrgrxayzd/G1k3suGbD3bQh7XlLgi4q1SJfippF+WXbYQpY+MDqttFQL9Gw
+ R5As5ik9Y8puoMaNMVzfAhD7GBT8ELLrv2culghgi/hS7ly+CgUG1Un6T3B7DUi2vu+EO8vqy
+ JuhWbJT9tkJimr0hlIUekyS8jknsBKEwWbAbyd4D/BR8eLKyTNyw8ZHNgcEI9sb9Ox/vzb2SG
+ le/vOHlGDCjhhBr0Zx/5Cbbte0VCNeNKkI1XxQ==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596079564050223473?=
-X-GMAIL-MSGID: =?utf-8?q?1596079564050223473?=
+X-GMAIL-THRID: =?utf-8?q?1596079565102497485?=
+X-GMAIL-MSGID: =?utf-8?q?1596079565102497485?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The modified file includes 'linux/ieee80211.h', but #define's many
-constants that shadow enum members in the header.  This will create a
-conflict if the values are ever changed in the kernel.  Remove these
+This driver defines the constants RTW_IEEE80211_FCTL_* for frame
+control constants, but all these values are already defined in
+'linux/ieee80211.h' as IEEE80211_FCTL_*.  Remove the locally defined
+constants, and substitute the kernel constants.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/rtl8723bs/include/ieee80211.h | 56 ---------------------------
- 1 file changed, 56 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_ieee80211.c    |  2 +-
+ drivers/staging/rtl8723bs/include/ieee80211.h     | 18 ++----------------
+ drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c |  6 +++---
+ 3 files changed, 6 insertions(+), 20 deletions(-)
 
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+index 9167900b5f7d..22c219e8a75f 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+@@ -1380,7 +1380,7 @@ int rtw_action_frame_parse(const u8 *frame, u32 frame_len, u8 *category, u8 *act
+ 
+ 	fc = le16_to_cpu(((struct ieee80211_hdr_3addr *)frame)->frame_control);
+ 
+-	if ((fc & (RTW_IEEE80211_FCTL_FTYPE|RTW_IEEE80211_FCTL_STYPE))
++	if ((fc & (IEEE80211_FCTL_FTYPE|IEEE80211_FCTL_STYPE))
+ 		!= (RTW_IEEE80211_FTYPE_MGMT|RTW_IEEE80211_STYPE_ACTION)
+ 	) {
+ 		return false;
 diff --git a/drivers/staging/rtl8723bs/include/ieee80211.h b/drivers/staging/rtl8723bs/include/ieee80211.h
-index a2402495f447..c76466567ecb 100644
+index c76466567ecb..746ac7cf3ccd 100644
 --- a/drivers/staging/rtl8723bs/include/ieee80211.h
 +++ b/drivers/staging/rtl8723bs/include/ieee80211.h
-@@ -438,76 +438,20 @@ struct ieee80211_snap_hdr {
- #define WLAN_CAPABILITY_BSS (1<<0)
- #define WLAN_CAPABILITY_SHORT_SLOT (1<<10)
+@@ -324,20 +324,6 @@ enum eap_type {
+ #define MIN_FRAG_THRESHOLD     256U
+ #define	MAX_FRAG_THRESHOLD     2346U
  
--/* Status codes */
--#define WLAN_STATUS_SUCCESS 0
--#define WLAN_STATUS_UNSPECIFIED_FAILURE 1
--#define WLAN_STATUS_CAPS_UNSUPPORTED 10
--#define WLAN_STATUS_REASSOC_NO_ASSOC 11
--#define WLAN_STATUS_ASSOC_DENIED_UNSPEC 12
--#define WLAN_STATUS_NOT_SUPPORTED_AUTH_ALG 13
--#define WLAN_STATUS_UNKNOWN_AUTH_TRANSACTION 14
--#define WLAN_STATUS_CHALLENGE_FAIL 15
--#define WLAN_STATUS_AUTH_TIMEOUT 16
--#define WLAN_STATUS_AP_UNABLE_TO_HANDLE_NEW_STA 17
--#define WLAN_STATUS_ASSOC_DENIED_RATES 18
- /* 802.11b */
- #define WLAN_STATUS_ASSOC_DENIED_NOSHORT 19
--#define WLAN_STATUS_ASSOC_DENIED_NOPBCC 20
--#define WLAN_STATUS_ASSOC_DENIED_NOAGILITY 21
+-/* Frame control field constants */
+-#define RTW_IEEE80211_FCTL_VERS		0x0003
+-#define RTW_IEEE80211_FCTL_FTYPE		0x000c
+-#define RTW_IEEE80211_FCTL_STYPE		0x00f0
+-#define RTW_IEEE80211_FCTL_TODS		0x0100
+-#define RTW_IEEE80211_FCTL_FROMDS	0x0200
+-#define RTW_IEEE80211_FCTL_MOREFRAGS	0x0400
+-#define RTW_IEEE80211_FCTL_RETRY		0x0800
+-#define RTW_IEEE80211_FCTL_PM		0x1000
+-#define RTW_IEEE80211_FCTL_MOREDATA	0x2000
+-#define RTW_IEEE80211_FCTL_PROTECTED	0x4000
+-#define RTW_IEEE80211_FCTL_ORDER		0x8000
+-#define RTW_IEEE80211_FCTL_CTL_EXT	0x0f00
+-
+ #define RTW_IEEE80211_FTYPE_MGMT		0x0000
+ #define RTW_IEEE80211_FTYPE_CTL		0x0004
+ #define RTW_IEEE80211_FTYPE_DATA		0x0008
+@@ -426,8 +412,8 @@ struct ieee80211_snap_hdr {
  
- /* Reason codes */
--#define WLAN_REASON_UNSPECIFIED 1
--#define WLAN_REASON_PREV_AUTH_NOT_VALID 2
--#define WLAN_REASON_DEAUTH_LEAVING 3
--#define WLAN_REASON_DISASSOC_DUE_TO_INACTIVITY 4
--#define WLAN_REASON_DISASSOC_AP_BUSY 5
--#define WLAN_REASON_CLASS2_FRAME_FROM_NONAUTH_STA 6
--#define WLAN_REASON_CLASS3_FRAME_FROM_NONASSOC_STA 7
--#define WLAN_REASON_DISASSOC_STA_HAS_LEFT 8
--#define WLAN_REASON_STA_REQ_ASSOC_WITHOUT_AUTH 9
- #define WLAN_REASON_ACTIVE_ROAM 65533
- #define WLAN_REASON_JOIN_WRONG_CHANNEL       65534
- #define WLAN_REASON_EXPIRATION_CHK 65535
+ #define SNAP_SIZE sizeof(struct ieee80211_snap_hdr)
  
--/* Information Element IDs */
--#define WLAN_EID_SSID 0
--#define WLAN_EID_SUPP_RATES 1
--#define WLAN_EID_FH_PARAMS 2
--#define WLAN_EID_DS_PARAMS 3
--#define WLAN_EID_CF_PARAMS 4
--#define WLAN_EID_TIM 5
--#define WLAN_EID_IBSS_PARAMS 6
--#define WLAN_EID_CHALLENGE 16
--/* EIDs defined by IEEE 802.11h - START */
--#define WLAN_EID_PWR_CONSTRAINT 32
--#define WLAN_EID_PWR_CAPABILITY 33
--#define WLAN_EID_TPC_REQUEST 34
--#define WLAN_EID_TPC_REPORT 35
--#define WLAN_EID_SUPPORTED_CHANNELS 36
--#define WLAN_EID_CHANNEL_SWITCH 37
--#define WLAN_EID_MEASURE_REQUEST 38
--#define WLAN_EID_MEASURE_REPORT 39
--#define WLAN_EID_QUITE 40
--#define WLAN_EID_IBSS_DFS 41
- /* EIDs defined by IEEE 802.11h - END */
--#define WLAN_EID_ERP_INFO 42
- #define WLAN_EID_HT_CAP 45
--#define WLAN_EID_RSN 48
--#define WLAN_EID_EXT_SUPP_RATES 50
--#define WLAN_EID_MOBILITY_DOMAIN 54
--#define WLAN_EID_FAST_BSS_TRANSITION 55
--#define WLAN_EID_TIMEOUT_INTERVAL 56
--#define WLAN_EID_RIC_DATA 57
--#define WLAN_EID_HT_OPERATION 61
--#define WLAN_EID_SECONDARY_CHANNEL_OFFSET 62
- #define WLAN_EID_20_40_BSS_COEXISTENCE 72
- #define WLAN_EID_20_40_BSS_INTOLERANT 73
- #define WLAN_EID_OVERLAPPING_BSS_SCAN_PARAMS 74
--#define WLAN_EID_MMIE 76
--#define WLAN_EID_VENDOR_SPECIFIC 221
- #define WLAN_EID_GENERIC (WLAN_EID_VENDOR_SPECIFIC)
--#define WLAN_EID_VHT_CAPABILITY 191
--#define WLAN_EID_VHT_OPERATION 192
- #define WLAN_EID_VHT_OP_MODE_NOTIFY 199
+-#define WLAN_FC_GET_TYPE(fc) ((fc) & RTW_IEEE80211_FCTL_FTYPE)
+-#define WLAN_FC_GET_STYPE(fc) ((fc) & RTW_IEEE80211_FCTL_STYPE)
++#define WLAN_FC_GET_TYPE(fc) ((fc) & IEEE80211_FCTL_FTYPE)
++#define WLAN_FC_GET_STYPE(fc) ((fc) & IEEE80211_FCTL_STYPE)
  
- #define IEEE80211_MGMT_HDR_LEN 24
+ #define WLAN_QC_GET_TID(qc) ((qc) & 0x0f)
+ 
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+index 75a4b230ae6e..a955b94614d0 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+@@ -2517,7 +2517,7 @@ static int rtw_cfg80211_monitor_if_xmit_entry(struct sk_buff *skb, struct net_de
+ 	dot11_hdr = (struct ieee80211_hdr *)skb->data;
+ 	frame_control = le16_to_cpu(dot11_hdr->frame_control);
+ 	/* Check if the QoS bit is set */
+-	if ((frame_control & RTW_IEEE80211_FCTL_FTYPE) == RTW_IEEE80211_FTYPE_DATA) {
++	if ((frame_control & IEEE80211_FCTL_FTYPE) == RTW_IEEE80211_FTYPE_DATA) {
+ 		/* Check if this ia a Wireless Distribution System (WDS) frame
+ 		 * which has 4 MAC addresses
+ 		 */
+@@ -2545,7 +2545,7 @@ static int rtw_cfg80211_monitor_if_xmit_entry(struct sk_buff *skb, struct net_de
+ 		return ret;
+ 
+ 	}
+-	else if ((frame_control & (RTW_IEEE80211_FCTL_FTYPE|RTW_IEEE80211_FCTL_STYPE))
++	else if ((frame_control & (IEEE80211_FCTL_FTYPE|IEEE80211_FCTL_STYPE))
+ 		== (RTW_IEEE80211_FTYPE_MGMT|RTW_IEEE80211_STYPE_ACTION)
+ 	)
+ 	{
+@@ -2607,7 +2607,7 @@ static int rtw_cfg80211_monitor_if_xmit_entry(struct sk_buff *skb, struct net_de
+ 	}
+ 	else
+ 	{
+-		DBG_8192C("frame_control = 0x%x\n", frame_control & (RTW_IEEE80211_FCTL_FTYPE|RTW_IEEE80211_FCTL_STYPE));
++		DBG_8192C("frame_control = 0x%x\n", frame_control & (IEEE80211_FCTL_FTYPE|IEEE80211_FCTL_STYPE));
+ 	}
+ 
+ 
 -- 
 2.16.3
