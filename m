@@ -1,86 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752232AbeC0LfL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 07:35:11 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:57442 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750937AbeC0LfJ (ORCPT
+        id S1752267AbeC0Lfp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 07:35:45 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:39072 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbeC0Lfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 07:35:09 -0400
-Date: Tue, 27 Mar 2018 12:34:53 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rich Felker <dalias@libc.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        linux-omap@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        James Hogan <james.hogan@mips.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: Regression with arm in next with stack protector
-Message-ID: <20180327113453.GC10990@n2100.armlinux.org.uk>
-References: <20180323181452.GJ5799@atomide.com>
- <20180327090409.GA10990@n2100.armlinux.org.uk>
+        Tue, 27 Mar 2018 07:35:43 -0400
+X-Google-Smtp-Source: AIpwx49d5qJB0TwX1qK5K7A2yCdAfv4a7ZpVutoqdIJb1ZXVAnKmXV5OqEJjpwVqDVlPbX3oWO2m+lVIp8AsotTjQQc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327090409.GA10990@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180314051137.6091-1-suzuki.katsuhiro@socionext.com>
+References: <20180314051137.6091-1-suzuki.katsuhiro@socionext.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 27 Mar 2018 13:35:42 +0200
+Message-ID: <CACRpkdYY5BdXRxjf1dG7-YOVHRuArFFG-fNnidyHuXc_B7j8NA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: uniphier: add PXs2 Audio in/out pin-mux settings
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 10:04:10AM +0100, Russell King - ARM Linux wrote:
-> On Fri, Mar 23, 2018 at 11:14:53AM -0700, Tony Lindgren wrote:
-> > Hi,
-> > 
-> > Looks like commit 5638790dadae ("zboot: fix stack protector in
-> > compressed boot phase") breaks booting on arm.
-> > 
-> > This is all I get from the bootloader on omap3:
-> > 
-> > Starting kernel ...
-> > 
-> > data abort
-> > pc : [<810002d0>]          lr : [<100110a8>]
-> > reloc pc : [<9d6002d0>]    lr : [<2c6110a8>]
-> > sp : 81467c18  ip : 81466bf0     fp : 81466bf0
-> > r10: 80fc2c40  r9 : 81000258     r8 : 86fec000
-> > r7 : ffffffff  r6 : 81466bf8     r5 : 00000000  r4 : 80008000
-> > r3 : 81466c14  r2 : 81466c18     r1 : 000a0dff  r0 : 00466bf8
-> > Flags: nZCv  IRQs off  FIQs off  Mode SVC_32
-> > Resetting CPU ...
-> > 
-> > resetting ...
-> 
-> The reason for this is the following code that was introduced by the
-> referenced patch:
-> 
-> +               ldr     r0, =__stack_chk_guard
-> +               ldr     r1, =0x000a0dff
-> +               str     r1, [r0]
-> 
-> This uses the absolute address of __stack_chk_guard in the decompressor,
-> which is a self-relocatable image.  As with all constructs like the
-> above, this absolute address doesn't get fixed up, and so it ends up
-> pointing at invalid memory (in this case 0x466bf8) vs RAM at 0x80000000,
-> and the decompressor looks to be around 0x81000000.
-> 
-> Such constructs can not be used in the decompressor for exactly this
-> reason - they need to use PC-relative addressing instead just like
-> everything else does in head.S.
+On Wed, Mar 14, 2018 at 6:11 AM, Katsuhiro Suzuki
+<suzuki.katsuhiro@socionext.com> wrote:
 
-Is there any reason we can't do this in misc.c:
+> The UniPhier PXs2 SoC audio core use following 25 pins:
+>   ain1    : 2ch I2S input : AI1ADCCK, AI1BCK, AI1D0, AI1LRCK
+>   ain2    : 8ch I2S input : AI2ADCCK, AI2BCK, AI2D[0-3], AI2LRCK
+>   ainiec1 : S/PDIF input  : XIRQ17 (for AO1IEC)
+>   aout2   : 8ch I2S output: AO2BCK, AO2D0, AO2DACCK, AO2LRCK
+>                             PORT226, 227, 230 (for AO2D[1-3])
+>   aout3   : 2ch I2S output: AO3BCK, AO3DMIX, AO3DACCK, AO3LRCK
+>   aoutiec1: S/PDIF output : PORT132(for AO1IEC)
+>   aoutiec2: S/PDIF output : AO2IEC
+>
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
 
-const unsigned int __stack_chk_guard = 0x000a0dff;
+Patch applied with Masahiro's ACK!
 
-?  That would save having runtime code to set that value up, and after
-all, it is constant.  Arguments about it potentially ending up at a
-fixed offset into the image need not be said - that's already the case
-with placing it in the early assembly code, and as has been established,
-it needs to be initialised prior to any C code being called.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Yours,
+Linus Walleij
