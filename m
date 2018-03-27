@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49rKWto1wtGFAJAAqMPYcJiGjhJdyj6SpbPB4enK+3CVtDDul7/c/p3DqACID1j8QjDfsks
-ARC-Seal: i=1; a=rsa-sha256; t=1522168636; cv=none;
+X-Google-Smtp-Source: AIpwx4/t4PYXrXqsXXyjIBZCbPOi7ysskHyOjYdyA6RpWANWS0HUJQd5sZWIvXUXqGGJSNDc8/aC
+ARC-Seal: i=1; a=rsa-sha256; t=1522168633; cv=none;
         d=google.com; s=arc-20160816;
-        b=oFA4pp9gm5DDbkVRImIUktxLRx9JlzqThBBFv1PbgQDHzC0cL8jmC0IxZxnGDcjiot
-         finniAE40MRw2CV7b5qpZWX+bnoaBfH7dSM1W1SsRJLKEGVCtGU6B9RZsQvFln3zQqQn
-         8yIrhSsdykJtwaL3+mDvX0DG+Vc4in3TIPnISwf/MrwLQwJ5XFoGVMS3oDGC3S+L5qYo
-         bFEKm63ugMAXlsHTXzd8TWPxmskYSF7vpxU9nIFS63BeomP7BRxE7VXf6OxCjn6Afi9y
-         ZUOenUbAq1j7vna8zbhuwDlz+dfIL5C49n1JVNWMqbP4Rd8A19ouIOS095ktRq+vz2nM
-         l2mQ==
+        b=Iw2fy6W9LEmQSJLhuEckxvsHwzPuD++kHtwBU/G448Z/BQqHtVrZrj+U/ERtblc3UC
+         9u+Rt/6q7X9tEhVJcxbXZ0Y1hKUmE7IPT6r/o0GI2xE+n5iBgS8F4o8r9eygKE+LfcRq
+         13iH9v5D2DxQxV9rdr3q/QegkQ4MZajJi2838nmLv4K+uT+QtIgfOXSaNycR/LjRdG8k
+         a6f9pD+vnD1Nw3SB9mY5L2K3CrIMrnH9/cgKQ54WNrytndGSKdDmz5tGUoU6/3e407o8
+         rT+EQVYLAr5VphYc4vuoV1A3dcILjIHHo+ppr1mnHzsZ0NMjl81386F4FiZ4f9QWPfaC
+         vDnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3v9OBasN6i6ky+Gx/0155PEEwGRK0/uaz0O18JPXNlQ=;
-        b=GoDbvrqDF1GRVF3sSpoMY8c3XbhHxqh6TM4NQQPYmTSm6kyvNV/0t6kKx6CRmdXwKs
-         EWaEBKIJKyOFzqS7cuJrCJmVlcWjcdghklkgjN6XClcmEtqHTtISaXQMjyLhCbks1/gI
-         gMdfx0QSJf5AYibTwNwhRxO4jw1edGTc5uQ+jH3GESBRzrIJngWgrvmvjXHP4kzKFOQy
-         mFULPp8C4rAzpNTDA6G8QnL02GGRAWUULbsSfJto0t3C/zL2If4kkgcAigecY99TR497
-         sxWBEvCrF2NHkomm84zMWzMO9T7rG3kn54R/26lkDjjLG1d/CCr2dtJqoujMO/oDk2kU
-         r3GA==
+        bh=3SVFXDrX1cX2x4qakPL3TbfpZ8oiRO24KWfpY4gTZ+0=;
+        b=0+n3eJMgbP16hmusgFLCBJ9HHIJjKu5+lgaSnccHE/AR/IgYQub3CimPQuGLotl9wX
+         Pg6I//lYs7GZlE89ADQaFtgBwxODgzn10HDnf+qcUYtyUwBDFaS678ZGJeceEKep2WPO
+         k/bM/E5Vw5WDPnEmc3knaA4y86Txgfc3kaJgpETtoETvB27OlAsp0nXG9Iz399IYd0xL
+         bEOAVNi/37B7PPQah5FtWFrA8qQVG5veluGLsx4c9HnZiR/pecO4NI9mtjm5/tCk53LX
+         8rIGTkK1uoPbuVobUib4ISb80JCld2cF3VcMGEby+8dnunreZ/7Q/qXGWoHFZoKbAsLv
+         Q7lA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 078/101] x86/entry/64: Dont use IST entry for #BP stack
-Date: Tue, 27 Mar 2018 18:27:50 +0200
-Message-Id: <20180327162754.869276053@linuxfoundation.org>
+	Takashi Iwai <tiwai@suse.de>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 060/101] ACPI / watchdog: Fix off-by-one error at resource assignment
+Date: Tue, 27 Mar 2018 18:27:32 +0200
+Message-Id: <20180327162753.678058048@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109065580803384?=
-X-GMAIL-MSGID: =?utf-8?q?1596109499934387718?=
+X-GMAIL-THRID: =?utf-8?q?1596109157701548644?=
+X-GMAIL-MSGID: =?utf-8?q?1596109497093837852?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,97 +51,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit d8ba61ba58c88d5207c1ba2f7d9a2280e7d03be9 upstream.
+commit b1abf6fc49829d89660c961fafe3f90f3d843c55 upstream.
 
-There's nothing IST-worthy about #BP/int3.  We don't allow kprobes
-in the small handful of places in the kernel that run at CPL0 with
-an invalid stack, and 32-bit kernels have used normal interrupt
-gates for #BP forever.
+The resource allocation in WDAT watchdog has off-one-by error, it sets
+one byte more than the actual end address.  This may eventually lead
+to unexpected resource conflicts.
 
-Furthermore, we don't allow kprobes in places that have usergs while
-in kernel mode, so "paranoid" is also unnecessary.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
+Fixes: 058dfc767008 (ACPI / watchdog: Add support for WDAT hardware watchdog)
+Cc: 4.9+ <stable@vger.kernel.org> # 4.9+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_64.S |    2 +-
- arch/x86/kernel/idt.c     |    2 --
- arch/x86/kernel/traps.c   |   15 ++++++++-------
- 3 files changed, 9 insertions(+), 10 deletions(-)
+ drivers/acpi/acpi_watchdog.c |    4 ++--
+ drivers/watchdog/wdat_wdt.c  |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1091,7 +1091,7 @@ apicinterrupt3 HYPERVISOR_CALLBACK_VECTO
- #endif /* CONFIG_HYPERV */
+--- a/drivers/acpi/acpi_watchdog.c
++++ b/drivers/acpi/acpi_watchdog.c
+@@ -74,10 +74,10 @@ void __init acpi_watchdog_init(void)
+ 		res.start = gas->address;
+ 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
+ 			res.flags = IORESOURCE_MEM;
+-			res.end = res.start + ALIGN(gas->access_width, 4);
++			res.end = res.start + ALIGN(gas->access_width, 4) - 1;
+ 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
+ 			res.flags = IORESOURCE_IO;
+-			res.end = res.start + gas->access_width;
++			res.end = res.start + gas->access_width - 1;
+ 		} else {
+ 			pr_warn("Unsupported address space: %u\n",
+ 				gas->space_id);
+--- a/drivers/watchdog/wdat_wdt.c
++++ b/drivers/watchdog/wdat_wdt.c
+@@ -392,7 +392,7 @@ static int wdat_wdt_probe(struct platfor
  
- idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
--idtentry int3			do_int3			has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
-+idtentry int3			do_int3			has_error_code=0
- idtentry stack_segment		do_stack_segment	has_error_code=1
- 
- #ifdef CONFIG_XEN
---- a/arch/x86/kernel/idt.c
-+++ b/arch/x86/kernel/idt.c
-@@ -160,7 +160,6 @@ static const __initconst struct idt_data
-  */
- static const __initconst struct idt_data dbg_idts[] = {
- 	INTG(X86_TRAP_DB,	debug),
--	INTG(X86_TRAP_BP,	int3),
- };
- #endif
- 
-@@ -183,7 +182,6 @@ gate_desc debug_idt_table[IDT_ENTRIES] _
- static const __initconst struct idt_data ist_idts[] = {
- 	ISTG(X86_TRAP_DB,	debug,		DEBUG_STACK),
- 	ISTG(X86_TRAP_NMI,	nmi,		NMI_STACK),
--	SISTG(X86_TRAP_BP,	int3,		DEBUG_STACK),
- 	ISTG(X86_TRAP_DF,	double_fault,	DOUBLEFAULT_STACK),
- #ifdef CONFIG_X86_MCE
- 	ISTG(X86_TRAP_MC,	&machine_check,	MCE_STACK),
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -571,7 +571,6 @@ do_general_protection(struct pt_regs *re
- }
- NOKPROBE_SYMBOL(do_general_protection);
- 
--/* May run on IST stack. */
- dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
- {
- #ifdef CONFIG_DYNAMIC_FTRACE
-@@ -586,6 +585,13 @@ dotraplinkage void notrace do_int3(struc
- 	if (poke_int3_handler(regs))
- 		return;
- 
-+	/*
-+	 * Use ist_enter despite the fact that we don't use an IST stack.
-+	 * We can be called from a kprobe in non-CONTEXT_KERNEL kernel
-+	 * mode or even during context tracking state changes.
-+	 *
-+	 * This means that we can't schedule.  That's okay.
-+	 */
- 	ist_enter(regs);
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
- #ifdef CONFIG_KGDB_LOW_LEVEL_TRAP
-@@ -603,15 +609,10 @@ dotraplinkage void notrace do_int3(struc
- 			SIGTRAP) == NOTIFY_STOP)
- 		goto exit;
- 
--	/*
--	 * Let others (NMI) know that the debug stack is in use
--	 * as we may switch to the interrupt stack.
--	 */
--	debug_stack_usage_inc();
- 	cond_local_irq_enable(regs);
- 	do_trap(X86_TRAP_BP, SIGTRAP, "int3", regs, error_code, NULL);
- 	cond_local_irq_disable(regs);
--	debug_stack_usage_dec();
-+
- exit:
- 	ist_exit(regs);
- }
+ 		memset(&r, 0, sizeof(r));
+ 		r.start = gas->address;
+-		r.end = r.start + gas->access_width;
++		r.end = r.start + gas->access_width - 1;
+ 		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY) {
+ 			r.flags = IORESOURCE_MEM;
+ 		} else if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
