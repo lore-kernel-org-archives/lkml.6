@@ -1,62 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752545AbeC0JV4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:21:56 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40926 "EHLO
+        id S1752233AbeC0JUo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:20:44 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37447 "EHLO
         mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752517AbeC0JVw (ORCPT
+        with ESMTP id S1751106AbeC0JUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:21:52 -0400
-X-Google-Smtp-Source: AG47ELuKIV8eAIfsCBlP+VycVvvYDdJWaYtKCbLfYcRUpoHWve5wUeqlZJJ8uCyLOKfiT/D/sU4oOQ==
-Message-ID: <1522142509.2632.42.camel@baylibre.com>
-Subject: Re: [PATCH 0/3] clk: meson: drop unnecessary AO clock flags
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Rob Herring <robh@kernel.org>,
+        Tue, 27 Mar 2018 05:20:38 -0400
+X-Google-Smtp-Source: AG47ELu/MqSDlQgqLuH+DAFOBHJ3eFUdlcOryA+SuUvX74zOlpkacXxmWzLjsCrJbp4v3kc2pJxUfQ==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Tue, 27 Mar 2018 11:21:49 +0200
-In-Reply-To: <20180326081809.49493-1-yixun.lan@amlogic.com>
-References: <20180326081809.49493-1-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v3 1/8] ARM: davinci: dts: make psc0 a reset provider
+Date: Tue, 27 Mar 2018 11:20:24 +0200
+Message-Id: <20180327092031.11251-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180327092031.11251-1-brgl@bgdev.pl>
+References: <20180327092031.11251-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-03-26 at 16:18 +0800, Yixun Lan wrote:
->   This first two patches will drop unnecessary flags for
-> the AO clock driver.
->   The third DTS patch is a follow-up fix for the second patch,
-> and I've tested them on P200, P212, Q200, S400 boards.
-> 
->  Note: this patch series was made on top of patch [0]
-> 
-> [0] https://lkml.kernel.org/r/20180323143816.200573-1-yixun.lan@amlogic.com
-> 
-> Yixun Lan (3):
->   clk: meson: drop CLK_SET_RATE_PARENT flag
->   clk: meson: drop CLK_IGNORE_UNUSED flag
->   ARM64: dts: meson: fix clock source of the pclk for UART_AO
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Please add patch 1 and 2 to the next version of your clkc_ao series
+The psc driver registers with the reset framework as a provider. Add
+the #reset-cells property to the psc0 node.
 
-Patch 3 should sent independently to Kevin, with note warning about the
-different dependencies (see comment in patch 3)
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/boot/dts/da850.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi  | 4 ++--
->  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 4 ++--
->  arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 4 ++--
->  drivers/clk/meson/axg-aoclk.c               | 1 -
->  drivers/clk/meson/gxbb-aoclk.c              | 1 -
->  5 files changed, 6 insertions(+), 8 deletions(-)
-> 
+diff --git a/arch/arm/boot/dts/da850.dtsi b/arch/arm/boot/dts/da850.dtsi
+index a3b9a99b43ca..dad64dbf1f23 100644
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -123,6 +123,7 @@
+ 			compatible = "ti,da850-psc0";
+ 			reg = <0x10000 0x1000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			clocks = <&pll0_sysclk 1>, <&pll0_sysclk 2>,
+ 				 <&pll0_sysclk 4>, <&pll0_sysclk 6>,
+-- 
+2.16.1
