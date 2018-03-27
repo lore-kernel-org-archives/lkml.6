@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/HGORLdza7FHFAwTZVpukcYqPK7OBFWxkezoEJ0TCG3XmPWhoF2c82uN8AVdM/iOsi3hSX
-ARC-Seal: i=1; a=rsa-sha256; t=1522168523; cv=none;
+X-Google-Smtp-Source: AIpwx4/Qf3GeL9s0/mv0TS+VMGnInbEyWtfAaS8WeeiPNOFIOwgQoLsRtCkjW5OflbaxkShgrnYv
+ARC-Seal: i=1; a=rsa-sha256; t=1522168520; cv=none;
         d=google.com; s=arc-20160816;
-        b=VVxAyh/fm3Rk+2VsLFm3WL0PP+arHfZ1Eh7LYTQy0bNug85Y99IPIoZ8/jng2ybLN6
-         PPHDcdF4hzOcqLgv1lDH+7NJwCnEbedh8ZzBJSkQurof0tMeLOsDbAXAChDoJ8h09ACV
-         78k8RxtAU3uwlLKOOgxIBCdfQFO27vyZm07vqu7nnlnzbh58rnkQOZfbZqZ4AEfeP+2D
-         ulAs73SP8+Jg9rv7N+MmyCUyNigGGbUPhrw5qwMs6f7UNlckp1J4VRgw8SnQYa/idI0t
-         r86tIWW1ZmiG/IQ0413nTQs8Njty4jPiiJigrQhknrZQNy2FLA2hYnQc5BLzOVEwmvY+
-         aP8Q==
+        b=xXUCIAPP3rusWIYz9fY/1YxammdT8HuWkC9fsWB0Nk9bl9TNp8o/M8oLckjAIRAvOJ
+         h5ZpzRLfIj8FZvuyOUhPdu3yNmliBTBfqKpUqCQxi+XiF8gEIkc9BelN8WMI/KKazHgP
+         dQL94qHdE/MDKe9ivLyf+MIvusLWFPjOtoIfVMo58vpNrjQfzNzjBH4gNAVDgLKJ+ISd
+         XCyv3dY2kWollbV+Q+dpG70T8dH6MwAKwVRq165AdkDH49u/RL5DbFSygDAfIrT8ZqA4
+         4dypGsPzAy1zPjc8Ic2v8w9fYa/2vib72YyJdNx1leoM3SegBM+vH5rEPIAl/cmsRHWc
+         g1Tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JNBFyufYydAx5v4Gk/hx/gzVqkZ9w8rAIC5rAI0e9y0=;
-        b=JbFz7epWzG7DL1lkt04SJ9Ys2HxDn0tngpAc1EmBotlVfk4qFBsThaaHHb52nRMum3
-         ZkN2yA0PFeARB3X1JKuDxXxaRtWvjB2YRgP/NdKlPFjoyWFP6cjzsgsP+RX/lT1+I2xY
-         yCyxg2KYfSXy7wo79GtE9cMV5YEr4JpqM3GfZidXouSAlfn9tiu5wQcc6cfoiL6878Nz
-         nSnMRA4kmRznmmyE6+wLeOGuq7wwMsqofvd+p4t7ov2pcQhNrQ2VL95LtIpbjnftmnuf
-         P2AHj0CUNW3or5V1yIDF6EelmQC+xWxjHDdcZI5ZgQsDudI5EllVUGwUX3gjZZjLCIOv
-         6iCw==
+        bh=ftuw+dyomU26zSFy+z3d0MGxeAweaESeZ2dvYzl+M4I=;
+        b=cH5pKowfBXuXxZZDUwua0ib3tAI8M9OAZc4r0r7jReGXhl/GMzEzFXGjXE7wyXSLDK
+         kY5RbZy+Ob8OGuKPke6H4UqgPqMyMRnazi6YMcjmEtbBwM7p/HS0oJcEslgPMbsTU1/n
+         UrIUEU15a+UQLwu1u1ddZeIQsRm9mPt9EX84rm5srm02g8hTjy9GEjIrFPgvmWPimwrT
+         xLnuRlYdRAfhBXL6gBU7S1lnMoyZk9ce2cBfifoJNpPu2BMCU0qWEBl9HSRag4Xc+kbx
+         uoy/N68KfMpEWmp3qi0jDdlZqa30d9p6xQN4uzGUYJCpEz+fVpVbu7pGPaN0sNPvkNVe
+         i2EQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Hans de Goede <hdegoede@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.14 040/101] libata: Apply NOLPM quirk to Crucial M500 480 and 960GB SSDs
-Date: Tue, 27 Mar 2018 18:27:12 +0200
-Message-Id: <20180327162752.483842274@linuxfoundation.org>
+Subject: [PATCH 4.14 022/101] PCI: Add function 1 DMA alias quirk for Highpoint RocketRAID 644L
+Date: Tue, 27 Mar 2018 18:26:54 +0200
+Message-Id: <20180327162751.346137250@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108979990321198?=
-X-GMAIL-MSGID: =?utf-8?q?1596109381707463059?=
+X-GMAIL-THRID: =?utf-8?q?1596109005834621477?=
+X-GMAIL-MSGID: =?utf-8?q?1596109377810391859?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,47 +52,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans de Goede <hdegoede@redhat.com>
 
-commit 62ac3f7305470e3f52f159de448bc1a771717e88 upstream.
+commit 1903be8222b7c278ca897c129ce477c1dd6403a8 upstream.
 
-There have been reports of the Crucial M500 480GB model not working
-with LPM set to min_power / med_power_with_dipm level.
+The Highpoint RocketRAID 644L uses a Marvel 88SE9235 controller, as with
+other Marvel controllers this needs a function 1 DMA alias quirk.
 
-It has not been tested with medium_power, but that typically has no
-measurable power-savings.
-
-Note the reporters Crucial_CT480M500SSD3 has a firmware version of MU03
-and there is a MU05 update available, but that update does not mention any
-LPM fixes in its changelog, so the quirk matches all firmware versions.
-
-In my experience the LPM problems with (older) Crucial SSDs seem to be
-limited to higher capacity versions of the SSDs (different firmware?),
-so this commit adds a NOLPM quirk for the 480 and 960GB versions of the
-M500, to avoid LPM causing issues with these SSDs.
+Note the RocketRAID 642L uses the same Marvel 88SE9235 controller and
+already is listed with a function 1 DMA alias quirk.
 
 Cc: stable@vger.kernel.org
-Reported-and-tested-by: Martin Steigerwald <martin@lichtvoll.de>
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1534106
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/pci/quirks.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4528,6 +4528,14 @@ static const struct ata_blacklist_entry
- 						ATA_HORKAGE_ZERO_AFTER_TRIM |
- 						ATA_HORKAGE_NOLPM, },
- 
-+	/* 480GB+ M500 SSDs have both queued TRIM and LPM issues */
-+	{ "Crucial_CT480M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
-+						ATA_HORKAGE_ZERO_AFTER_TRIM |
-+						ATA_HORKAGE_NOLPM, },
-+	{ "Crucial_CT960M500*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
-+						ATA_HORKAGE_ZERO_AFTER_TRIM |
-+						ATA_HORKAGE_NOLPM, },
-+
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3899,6 +3899,8 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_M
+ 			 quirk_dma_func1_alias);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_TTI, 0x0642,
+ 			 quirk_dma_func1_alias);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_TTI, 0x0645,
++			 quirk_dma_func1_alias);
+ /* https://bugs.gentoo.org/show_bug.cgi?id=497630 */
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_JMICRON,
+ 			 PCI_DEVICE_ID_JMICRON_JMB388_ESD,
