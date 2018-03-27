@@ -1,44 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeC0LhL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 07:37:11 -0400
-Received: from mail-it0-f48.google.com ([209.85.214.48]:36472 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751152AbeC0LhJ (ORCPT
+        id S1752146AbeC0Lho (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 07:37:44 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34856 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbeC0Lhn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 07:37:09 -0400
-X-Google-Smtp-Source: AIpwx49WrR4C2WDSc4drzXkWYcGd5VddthQhppvsS4RN7ogUKJAWEQHUSFskUA6A12t3Dp1nI1vaT3yb7hzt35pjxAk=
+        Tue, 27 Mar 2018 07:37:43 -0400
+Date: Tue, 27 Mar 2018 19:27:38 +0800
+From: Mark Brown <broonie@kernel.org>
+To: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Message-ID: <20180327112738.GA29239@sirena.org.uk>
+References: <20180321133040.6754c372@canb.auug.org.au>
+ <20180321024556.GX2186@sirena.org.uk>
+ <3bc6e9ca-b1d9-3458-6399-758be07fd7f3@amd.com>
+ <20180322013817.GY2186@sirena.org.uk>
+ <3d47f2cb-0a73-98a7-bb3a-f40baf00123b@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20180314063535.13303-1-suzuki.katsuhiro@socionext.com>
-References: <20180314063535.13303-1-suzuki.katsuhiro@socionext.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Mar 2018 13:37:08 +0200
-Message-ID: <CACRpkdYDJkk8eJuGPAXO7fpvGZ4KbjSf43difeEGTV9KzJcmvg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: uniphier: divide I2S and S/PDIF audio out
- pin-mux group
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+Content-Disposition: inline
+In-Reply-To: <3d47f2cb-0a73-98a7-bb3a-f40baf00123b@amd.com>
+X-Cookie: Serenity through viciousness.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 14, 2018 at 7:35 AM, Katsuhiro Suzuki
-<suzuki.katsuhiro@socionext.com> wrote:
 
-> This patch divides large pin-mux group 'aio' of UniPhier LD11/LD20
-> to 2 groups as following:
->   aout1   : 8ch I2S output: AO1DACCK, AO1BCK, AO1LRCK, AO1D[0-2]
->   aoutiec1: S/PDIF output : AO1IEC, AO1ARC
->
-> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+--G4iJoqBmSsgzjUCe
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch applied with Masahiro's ACK!
+On Thu, Mar 22, 2018 at 11:24:43AM +0530, Mukunda,Vijendar wrote:
+> On Thursday 22 March 2018 07:08 AM, Mark Brown wrote:
 
-Yours,
-Linus Walleij
+> > You need to mention dependencies between patches when publishing and I
+> > don't seem to have a copy of that patch, according to the list archives
+> > Alex asked you to make some chnages to it.
+
+> =A0=A0 Changes suggested by Alex already implemented and posted .
+> =A0=A0 Current patch (https://patchwork.kernel.org/patch/10298281/ ) is
+> =A0=A0 dependent on below patch.
+
+> =A0=A0 https://patchwork.kernel.org/patch/10296597/
+
+I'm working offline so these links aren't doing anything useful for me,
+sorry.
+
+> =A0=A0 We will publish patch dependencies while sending patches.
+
+Please.
+
+--G4iJoqBmSsgzjUCe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlq6KqoACgkQJNaLcl1U
+h9Br/wf/exHUVXi7lUJ3wD96w9SKGEWKII1Y/07TDLuCTiWBPrrCLU77xLo0ivMD
+jzEm+jV7FfRDmuET5DCtMVPMf3OcSTGJyhAXMlvlJL+ajZLZB2jAMY960kpjfXz7
+TTNMGGYRp+TqnuKoONi1RV9fSleWMvAfmbwMDxcLZa9kAgHnrof8k+pt5mEVHVeS
+AlnBl329IIjFG1J6FVeZM7P4Fe6PFvyY+Y1UPd2xOyuwi/HIfjvgjFp8y/aSHwAc
+JGU3TdG6REmmhagU079BGfHMkVUrng2MaDsdd7NrdyF+A0nsV5KeF2dqDOeu0hNF
+1rVIUtSb+YF5zS/yK3ip3J4Dj7XoBQ==
+=HAxy
+-----END PGP SIGNATURE-----
+
+--G4iJoqBmSsgzjUCe--
