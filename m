@@ -1,110 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeC0CE1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 22:04:27 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45005 "EHLO
+        id S1752349AbeC0CFo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 22:05:44 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34084 "EHLO
         mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752209AbeC0CEZ (ORCPT
+        with ESMTP id S1752040AbeC0CFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 22:04:25 -0400
-X-Google-Smtp-Source: AG47ELvuS6fSwOsQ5yuGIU7QEsAqPP2GkZAkLKZX8k9sAWMc9OkGN527Tcm62PeiEhRchntFLPLeiw==
-Subject: Re: [PATCH] cpufreq: ti-cpufreq: Fix couple of minor issues in
- probe()
-To: Suman Anna <s-anna@ti.com>, Viresh Kumar <viresh.kumar@linaro.org>
-References: <20180326215244.26304-1-s-anna@ti.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dave Gerlach <d-gerlach@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Zumeng Chen <zumeng.chen@gmail.com>
-Message-ID: <5bbd266a-ddc6-296a-dcea-58dc8da6062a@gmail.com>
-Date: Tue, 27 Mar 2018 10:10:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Mon, 26 Mar 2018 22:05:43 -0400
+X-Google-Smtp-Source: AG47ELuwiUxl5q/NILMWopKZIQB9W8aSm1FGfz64I5K4/3VXQbfKhZYEghrxIh2epcJOxVoz8JTZ/w==
+Date: Tue, 27 Mar 2018 11:05:35 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: ndrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] zram: idle memory tracking
+Message-ID: <20180327020535.GB41148@rodete-desktop-imager.corp.google.com>
+References: <20180326064951.123940-1-minchan@kernel.org>
+ <20180326064951.123940-2-minchan@kernel.org>
+ <20180327004911.GA467@jagdpanzerIV>
+ <20180327010347.GA41148@rodete-desktop-imager.corp.google.com>
+ <20180327011327.GE467@jagdpanzerIV>
+ <20180327014734.GG467@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <20180326215244.26304-1-s-anna@ti.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180327014734.GG467@jagdpanzerIV>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/27/2018 05:52 AM, Suman Anna wrote:
-> Commit 05829d9431df ("cpufreq: ti-cpufreq: kfree opp_data when
-> failure") has fixed a memory leak in the failure path, however
-> kmemleak still keeps reporting a leak even on successful probes.
-> This is a false-positive and is mostly a result of the opp_data
-> variable not being stored anywhere in the probe function. The
-> patch also returned a positive value on the get_cpu_device()
-> failure instead of a negative value.
->
-> unreferenced object 0xecae4d80 (size 64):
->    comm "swapper/0", pid 1, jiffies 4294937673 (age 154.420s)
->    hex dump (first 32 bytes):
->      10 40 d9 ee 74 b7 db ee 00 24 ac ec 20 a3 ea c0  .@..t....$.. ...
->      00 26 ac ec 00 00 00 00 00 00 00 00 00 00 00 00  .&..............
->    backtrace:
->      [<ec080d62>] platform_drv_probe+0x50/0xac
->      [<cbde8566>] driver_probe_device+0x24c/0x330
->      [<a5818eb4>] bus_for_each_drv+0x54/0xb8
->      [<2c6f7021>] __device_attach+0xcc/0x13c
->      [<a04478a2>] bus_probe_device+0x88/0x90
->      [<b322c963>] device_add+0x38c/0x5b4
->      [<6f1af99b>] platform_device_add+0x100/0x220
->      [<cef42bca>] platform_device_register_full+0xf0/0x104
->      [<4d492439>] ti_cpufreq_init+0x44/0x6c
->      [<81222e89>] do_one_initcall+0x48/0x190
->      [<3bebf42a>] kernel_init_freeable+0x1f4/0x2b8
->      [<230ad7df>] kernel_init+0x8/0x110
->      [<43a165c3>] ret_from_fork+0x14/0x20
->      [<  (null)>]   (null)
->      [<87288797>] 0xffffffff
->
-> Fix both issues by replacing the previous logic by using the devres
-> managed API for allocating the opp_data variable, and simplifying
-> the get_cpu_device() failure return path.
->
-> Fixes: 05829d9431df ("cpufreq: ti-cpufreq: kfree opp_data when failure")
-> Cc: Zumeng Chen <zumeng.chen@gmail.com>
+On Tue, Mar 27, 2018 at 10:47:34AM +0900, Sergey Senozhatsky wrote:
+> On (03/27/18 10:13), Sergey Senozhatsky wrote:
+> > On (03/27/18 10:03), Minchan Kim wrote:
+> > > On Tue, Mar 27, 2018 at 09:49:11AM +0900, Sergey Senozhatsky wrote:
+> > > > On (03/26/18 15:49), Minchan Kim wrote:
+> > > > > zRam as swap is useful for small memory device. However, swap means
+> > > > > those pages on zram are mostly cold pages due to VM's LRU algorithm.
+> > > > > Especially, once init data for application are touched for launching,
+> > > > > they tend to be not accessed any more and finally swapped out.
+> > > > > zRAM can store such cold pages as compressed form but it's pointless
+> > > > > to keep in memory. Better idea is app developers free them directly
+> > > > > rather than remaining them on heap.
+> > > > > 
+> > > > > This patch tell us last accesss time of each block of zram via
+> > > > > "cat /sys/kernel/debug/zram/zram0/access_time".
+> > > > > 
+> > > > > The output is as follows,
+> > > > > 
+> > > > > 276 1250
+> > > > > 277 1800
+> > > > > ..  ..
+> > > > > ..  ..
+> > > > 
+> > > > So can we just use CONFIG_IDLE_PAGE_TRACKING + CONFIG_PAGE_OWNER?
+> > > 
+> > > The goal is not mapped memory tracking but one swapped out.
+> > > Can we do it by above two combination?
+> > 
+> > Ah, you are right. page_idle tracks only pages which are on LRU lists.
+> 
+> Can a universal (not specific to zram) idle swapped out page tracking
+> be of interest to MM people? With the exactly same motivation. Some
+> swaps use nfs, for instance, so idle swap pages tracking can be helpful
+> not only in embedded domain.
 
-Acked, I'm aware of the false-postive one, this is good to fix both one, 
-thanks~
+If somebody outside of embedded has an interest in, sometime, he could.
+However, I doubt because swap is really hard part to get review because
+many people on current MM seem to not care. I guess they don't use swap
+heavily compared to old. That's why swap code is really horrible these days. :/
 
-Cheers,
-Zumeng
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> ---
->   drivers/cpufreq/ti-cpufreq.c | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-> index a099b7bf74cd..7d353a21935b 100644
-> --- a/drivers/cpufreq/ti-cpufreq.c
-> +++ b/drivers/cpufreq/ti-cpufreq.c
-> @@ -217,7 +217,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->   	if (!match)
->   		return -ENODEV;
->   
-> -	opp_data = kzalloc(sizeof(*opp_data), GFP_KERNEL);
-> +	opp_data = devm_kzalloc(&pdev->dev, sizeof(*opp_data), GFP_KERNEL);
->   	if (!opp_data)
->   		return -ENOMEM;
->   
-> @@ -226,8 +226,7 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->   	opp_data->cpu_dev = get_cpu_device(0);
->   	if (!opp_data->cpu_dev) {
->   		pr_err("%s: Failed to get device for CPU0\n", __func__);
-> -		ret = ENODEV;
-> -		goto free_opp_data;
-> +		return -ENODEV;
->   	}
->   
->   	opp_data->opp_node = dev_pm_opp_of_get_opp_desc_node(opp_data->cpu_dev);
-> @@ -285,8 +284,6 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->   
->   fail_put_node:
->   	of_node_put(opp_data->opp_node);
-> -free_opp_data:
-> -	kfree(opp_data);
->   
->   	return ret;
->   }
+Anyway, I don't want to be stuck because zram has more own attributes
+generic cannot cover.
