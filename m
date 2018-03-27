@@ -1,210 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752106AbeC0GYh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:24:37 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:37687 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752035AbeC0GYf (ORCPT
+        id S1752154AbeC0G1Y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:27:24 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38596 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751192AbeC0G1X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:24:35 -0400
-Subject: Re: [PATCH v6 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, <architt@codeaurora.org>,
-        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
-        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
-        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
- <1521213399-31947-3-git-send-email-jacopo+renesas@jmondi.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-renesas-soc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <30381869-9bc8-b6aa-a37a-598d9c8f280d@mentor.com>
-Date: Tue, 27 Mar 2018 09:24:28 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Tue, 27 Mar 2018 02:27:23 -0400
+X-Google-Smtp-Source: AG47ELvx8w3mk/CI0BosUmYeV1nP5+Yjg7ZDaLdetzTKsarILGzMt9IPRGSZGt9Y5snRQqP5TKqZWQ==
+Date: Mon, 26 Mar 2018 23:27:21 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+cc: Laura Abbott <labbott@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [patch] x86/mm/32: Remove unused node_memmap_size_bytes
+Message-ID: <alpine.DEB.2.20.1803262325540.256524@chino.kir.corp.google.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <1521213399-31947-3-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+node_memmap_size_bytes() has been unused since the 3.9 kernel, so remove
+it.
 
-On 03/16/2018 05:16 PM, Jacopo Mondi wrote:
-> Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
-> output converter.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/gpu/drm/bridge/Kconfig        |   6 +
->  drivers/gpu/drm/bridge/Makefile       |   1 +
->  drivers/gpu/drm/bridge/thc63lvd1024.c | 255 ++++++++++++++++++++++++++++++++++
->  3 files changed, 262 insertions(+)
->  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
-> 
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index 3b99d5a..5815a20 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -92,6 +92,12 @@ config DRM_SII9234
->  	  It is an I2C driver, that detects connection of MHL bridge
->  	  and starts encapsulation of HDMI signal.
->  
-> +config DRM_THINE_THC63LVD1024
-> +	tristate "Thine THC63LVD1024 LVDS decoder bridge"
-> +	depends on OF
-> +	---help---
-> +	  Thine THC63LVD1024 LVDS/parallel converter driver.
-> +
->  config DRM_TOSHIBA_TC358767
->  	tristate "Toshiba TC358767 eDP bridge"
->  	depends on OF
-> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-> index 373eb28..fd90b16 100644
-> --- a/drivers/gpu/drm/bridge/Makefile
-> +++ b/drivers/gpu/drm/bridge/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
->  obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
->  obj-$(CONFIG_DRM_SII902X) += sii902x.o
->  obj-$(CONFIG_DRM_SII9234) += sii9234.o
-> +obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
->  obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
->  obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
->  obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
-> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> new file mode 100644
-> index 0000000..02a54c2
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> @@ -0,0 +1,255 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * THC63LVD1024 LVDS to parallel data DRM bridge driver.
-> + *
-> + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-> + */
-> +
-> +#include <drm/drmP.h>
-> +#include <drm/drm_bridge.h>
-> +#include <drm/drm_panel.h>
-> +
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/of_graph.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +enum {
-> +	THC63_LVDS_IN0,
-> +	THC63_LVDS_IN1,
-> +	THC63_DIGITAL_OUT0,
-> +	THC63_DIGITAL_OUT1,
-> +};
-> +
-> +static const char * const thc63_reg_names[] = {
-> +	"vcc", "lvcc", "pvcc", "cvcc",
-> +};
-> +
-> +struct thc63_dev {
-> +	struct device *dev;
-> +
-> +	struct regulator *vccs[ARRAY_SIZE(thc63_reg_names)];
-> +
-> +	struct gpio_desc *pdwn;
-> +	struct gpio_desc *oe;
-> +
-> +	struct drm_bridge bridge;
-> +	struct drm_bridge *next;
-> +};
-> +
-> +static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
-> +{
-> +	return container_of(bridge, struct thc63_dev, bridge);
-> +}
-> +
-> +static int thc63_attach(struct drm_bridge *bridge)
-> +{
-> +	struct thc63_dev *thc63 = to_thc63(bridge);
-> +
-> +	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
-> +}
-> +
-> +static void thc63_enable(struct drm_bridge *bridge)
-> +{
-> +	struct thc63_dev *thc63 = to_thc63(bridge);
-> +	struct regulator *vcc;
-> +	int i;
+Fixes: f03574f2d5b2 ("x86-32, mm: Rip out x86_32 NUMA remapping code")
+Signed-off-by: David Rientjes <rientjes@google.com>
+---
+ arch/x86/Kconfig       |  4 ----
+ arch/x86/mm/numa_32.c  | 11 -----------
+ include/linux/mmzone.h |  5 -----
+ mm/sparse.c            | 22 ----------------------
+ 4 files changed, 42 deletions(-)
 
-unsigned int i;
-
-> +
-> +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
-> +		vcc = thc63->vccs[i];
-> +		if (!vcc)
-> +			continue;
-> +
-> +		if (regulator_enable(vcc))
-> +			goto error_vcc_enable;
-> +	}
-> +
-> +	if (thc63->pdwn)
-> +		gpiod_set_value(thc63->pdwn, 0);
-> +
-> +	if (thc63->oe)
-> +		gpiod_set_value(thc63->oe, 1);
-> +
-> +	return;
-> +
-> +error_vcc_enable:
-> +	dev_err(thc63->dev, "Failed to enable regulator %s\n",
-> +		thc63_reg_names[i]);
-> +
-> +	for (i = i - 1; i >= 0; i--) {
-> +		vcc = thc63->vccs[i];
-> +		if (!vcc)
-> +			continue;
-> +
-> +		regulator_disable(vcc);
-> +	}
-> +}
-> +
-> +static void thc63_disable(struct drm_bridge *bridge)
-> +{
-> +	struct thc63_dev *thc63 = to_thc63(bridge);
-> +	struct regulator *vcc;
-> +	int i;
-> +
-> +	if (thc63->oe)
-> +		gpiod_set_value(thc63->oe, 0);
-> +
-> +	if (thc63->pdwn)
-> +		gpiod_set_value(thc63->pdwn, 1);
-> +
-> +	for (i = ARRAY_SIZE(thc63->vccs) - 1; i >= 0; i--) {
-> +		vcc = thc63->vccs[i];
-> +		if (!vcc)
-> +			continue;
-> +
-> +		if (regulator_disable(vcc))
-> +			dev_dbg(thc63->dev,
-> +				"Failed to disable regulator %s\n",
-> +				thc63_reg_names[i]);
-> +	}
-> +}
-> +
-> +struct drm_bridge_funcs thc63_bridge_func = {
-
-Apparently you missed all my comments from v2 review.
-
-If you like to avoid non-NULL function pointers to the void, please 
-use static const storage qualifier.
-
---
-With best wishes,
-Vladimir
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1598,10 +1598,6 @@ config ARCH_HAVE_MEMORY_PRESENT
+ 	def_bool y
+ 	depends on X86_32 && DISCONTIGMEM
+ 
+-config NEED_NODE_MEMMAP_SIZE
+-	def_bool y
+-	depends on X86_32 && (DISCONTIGMEM || SPARSEMEM)
+-
+ config ARCH_FLATMEM_ENABLE
+ 	def_bool y
+ 	depends on X86_32 && !NUMA
+diff --git a/arch/x86/mm/numa_32.c b/arch/x86/mm/numa_32.c
+--- a/arch/x86/mm/numa_32.c
++++ b/arch/x86/mm/numa_32.c
+@@ -60,17 +60,6 @@ void memory_present(int nid, unsigned long start, unsigned long end)
+ 	}
+ 	printk(KERN_CONT "\n");
+ }
+-
+-unsigned long node_memmap_size_bytes(int nid, unsigned long start_pfn,
+-					      unsigned long end_pfn)
+-{
+-	unsigned long nr_pages = end_pfn - start_pfn;
+-
+-	if (!nr_pages)
+-		return 0;
+-
+-	return (nr_pages + 1) * sizeof(struct page);
+-}
+ #endif
+ 
+ extern unsigned long highend_pfn, highstart_pfn;
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -819,10 +819,6 @@ int local_memory_node(int node_id);
+ static inline int local_memory_node(int node_id) { return node_id; };
+ #endif
+ 
+-#ifdef CONFIG_NEED_NODE_MEMMAP_SIZE
+-unsigned long __init node_memmap_size_bytes(int, unsigned long, unsigned long);
+-#endif
+-
+ /*
+  * zone_idx() returns 0 for the ZONE_DMA zone, 1 for the ZONE_NORMAL zone, etc.
+  */
+@@ -1292,7 +1288,6 @@ struct mminit_pfnnid_cache {
+ #endif
+ 
+ void memory_present(int nid, unsigned long start, unsigned long end);
+-unsigned long __init node_memmap_size_bytes(int, unsigned long, unsigned long);
+ 
+ /*
+  * If it is possible to have holes within a MAX_ORDER_NR_PAGES, then we
+diff --git a/mm/sparse.c b/mm/sparse.c
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -242,28 +242,6 @@ void __init memory_present(int nid, unsigned long start, unsigned long end)
+ 	}
+ }
+ 
+-/*
+- * Only used by the i386 NUMA architecures, but relatively
+- * generic code.
+- */
+-unsigned long __init node_memmap_size_bytes(int nid, unsigned long start_pfn,
+-						     unsigned long end_pfn)
+-{
+-	unsigned long pfn;
+-	unsigned long nr_pages = 0;
+-
+-	mminit_validate_memmodel_limits(&start_pfn, &end_pfn);
+-	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+-		if (nid != early_pfn_to_nid(pfn))
+-			continue;
+-
+-		if (pfn_present(pfn))
+-			nr_pages += PAGES_PER_SECTION;
+-	}
+-
+-	return nr_pages * sizeof(struct page);
+-}
+-
+ /*
+  * Subtle, we encode the real pfn into the mem_map such that
+  * the identity pfn - section_mem_map will return the actual
