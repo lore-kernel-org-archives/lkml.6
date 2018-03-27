@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752649AbeC0Mgi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 08:36:38 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:53948 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752069AbeC0Me4 (ORCPT
+        id S1752254AbeC0Mez (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 08:34:55 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:42664 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752069AbeC0Mex (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 08:34:56 -0400
+        Tue, 27 Mar 2018 08:34:53 -0400
 X-IronPort-AV: E=Sophos;i="5.48,367,1517900400";
-   d="scan'208";a="13309093"
+   d="scan'208";a="10562901"
 From: Eugen Hristev <eugen.hristev@microchip.com>
 To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
         <alexandre.belloni@bootlin.com>,
@@ -17,109 +17,108 @@ To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
         <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
         <dmitry.torokhov@gmail.com>
 CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v2 05/10] iio: adc: at91-sama5d2_adc: fix channel configuration for differential channels
-Date: Tue, 27 Mar 2018 15:32:38 +0300
-Message-ID: <1522153963-1121-6-git-send-email-eugen.hristev@microchip.com>
+Subject: [PATCH v2 00/10]  Add support for SAMA5D2 touchscreen
+Date: Tue, 27 Mar 2018 15:32:33 +0300
+Message-ID: <1522153963-1121-1-git-send-email-eugen.hristev@microchip.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522153963-1121-1-git-send-email-eugen.hristev@microchip.com>
-References: <1522153963-1121-1-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When iterating through the channels, the index in the array is not the
-scan index. Added an xlate function to translate to the proper index.
-This will be used also for devicetree channel xlate
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
----
- drivers/iio/adc/at91-sama5d2_adc.c | 41 ++++++++++++++++++++++++++++++++++----
- 1 file changed, 37 insertions(+), 4 deletions(-)
+Hello,
 
-diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-index 4eff835..8729d65 100644
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -333,6 +333,27 @@ static const struct iio_chan_spec at91_adc_channels[] = {
- 				+ AT91_SAMA5D2_DIFF_CHAN_CNT + 1),
- };
- 
-+static int at91_adc_chan_xlate(struct iio_dev *indio_dev, int chan)
-+{
-+	int i;
-+
-+	for (i = 0; i < indio_dev->num_channels; i++) {
-+		if (indio_dev->channels[i].scan_index == chan)
-+			return i;
-+	}
-+	return -EINVAL;
-+}
-+
-+static inline struct iio_chan_spec const *
-+at91_adc_chan_get(struct iio_dev *indio_dev, int chan)
-+{
-+	int index = at91_adc_chan_xlate(indio_dev, chan);
-+
-+	if (index < 0)
-+		return NULL;
-+	return indio_dev->channels + index;
-+}
-+
- static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
- {
- 	struct iio_dev *indio = iio_trigger_get_drvdata(trig);
-@@ -350,8 +371,10 @@ static int at91_adc_configure_trigger(struct iio_trigger *trig, bool state)
- 	at91_adc_writel(st, AT91_SAMA5D2_TRGR, status);
- 
- 	for_each_set_bit(bit, indio->active_scan_mask, indio->num_channels) {
--		struct iio_chan_spec const *chan = indio->channels + bit;
-+		struct iio_chan_spec const *chan = at91_adc_chan_get(indio, bit);
- 
-+		if (!chan)
-+			continue;
- 		if (state) {
- 			at91_adc_writel(st, AT91_SAMA5D2_CHER,
- 					BIT(chan->channel));
-@@ -448,7 +471,11 @@ static int at91_adc_dma_start(struct iio_dev *indio_dev)
- 
- 	for_each_set_bit(bit, indio_dev->active_scan_mask,
- 			 indio_dev->num_channels) {
--		struct iio_chan_spec const *chan = indio_dev->channels + bit;
-+		struct iio_chan_spec const *chan =
-+					 at91_adc_chan_get(indio_dev, bit);
-+
-+		if (!chan)
-+			continue;
- 
- 		st->dma_st.rx_buf_sz += chan->scan_type.storagebits / 8;
- 	}
-@@ -526,8 +553,11 @@ static int at91_adc_buffer_predisable(struct iio_dev *indio_dev)
- 	 */
- 	for_each_set_bit(bit, indio_dev->active_scan_mask,
- 			 indio_dev->num_channels) {
--		struct iio_chan_spec const *chan = indio_dev->channels + bit;
-+		struct iio_chan_spec const *chan =
-+					at91_adc_chan_get(indio_dev, bit);
- 
-+		if (!chan)
-+			continue;
- 		if (st->dma_st.dma_chan)
- 			at91_adc_readl(st, chan->address);
- 	}
-@@ -587,8 +617,11 @@ static void at91_adc_trigger_handler_nodma(struct iio_dev *indio_dev,
- 
- 	for_each_set_bit(bit, indio_dev->active_scan_mask,
- 			 indio_dev->num_channels) {
--		struct iio_chan_spec const *chan = indio_dev->channels + bit;
-+		struct iio_chan_spec const *chan =
-+					at91_adc_chan_get(indio_dev, bit);
- 
-+		if (!chan)
-+			continue;
- 		st->buffer[i] = at91_adc_readl(st, chan->address);
- 		i++;
- 	}
+This patch series is a rework of my previous series named:
+[PATCH 00/14] iio: triggers: add consumer support
+
+In few words, this is the implementation of splitting the functionality
+of the IP block ADC device in SAMA5D2 SoC from ADC with touchscreen
+support. In order to avoid having a MFD device, two separate
+drivers that would work on same register base and split the IRQ,etc,
+as advised on the mailing list, I created a consumer driver for the
+channels, that will connect to the ADC as described in the device tree.
+
+I have collected feedback from everyone and here is the result:
+I have added a new generic resistive touchscreen driver, which acts
+as a iio consumer for the given channels and will create an input
+device and report the events. It uses a callback buffer to register
+to the IIO device and waits for data to be pushed.
+Inside the IIO device, I have kept a similar approach with the first version
+of the series, except that now the driver can take multiple buffers, and
+will configure the touchscreen part of the hardware device if the specific
+channels are requested.
+
+The SAMA5D2 ADC driver registers three new channels: two for the
+position on the X and Y axis, and one for the touch pressure.
+When channels are requested, it will check if the touchscreen channel mask
+includes the requested channels (it is possible that the consumer driver
+will not request pressure for example). If it's the case, it will work
+in touchscreen mode, and will refuse to do usual analog-digital conversion,
+because we have a single trigger and the touchscreen needs it.
+When the scan mask will include only old channels, the driver will function
+in the same way as before. If the scan mask somehow is a mix of the two (the
+masks intersect), the driver will refuse to work whatsoever (cannot have both
+in the same time).
+The driver allows reading raw data for the new channels, if claim direct
+mode works: no touchscreen driver requested anything. The new channels can
+act like the old ones. However, when requesting these channels, the usual
+trigger will not work and will not be enabled. The touchscreen channels
+require special trigger and irq configuration: pen detect, no pen detect
+and a periodic trigger to sample the touchscreen position and pressure.
+If the user attempts to use another trigger while there is a buffer
+that already requested the touchscreen channels (thus the trigger), the
+driver will refuse to comply.
+
+In order to have defines for the channel numbers, I added a bindings include
+file that goes on a separate commit :
+dt-bindings: iio: adc: at91-sama5d2_adc: add channel specific consumer info
+This should go in the same tree with the following commits :
+  ARM: dts: at91: sama5d2: add channel cells for ADC device
+  ARM: dts: at91: sama5d2: Add resistive touch device
+
+as build will break because these commits depend on the binding one
+which creates the included header file.
+
+After the discussions earlier this year on the mailing list, I hope this
+rework of the patches is much better and fulfills all the requirements
+for this implementation.
+
+Eugen Hristev (10):
+  MAINTAINERS: add generic resistive touchscreen adc
+  iio: Add channel for Position Relative
+  dt-bindings: input: touchscreen: touch_adc: create bindings
+  iio: inkern: add module put/get on iio dev module when requesting
+    channels
+  iio: adc: at91-sama5d2_adc: fix channel configuration for differential
+    channels
+  iio: adc: at91-sama5d2_adc: add support for position and pressure
+    channels
+  input: touchscreen: touch_adc: add generic resistive ADC touchscreen
+  dt-bindings: iio: adc: at91-sama5d2_adc: add channel specific consumer
+    info
+  ARM: dts: at91: sama5d2: add channel cells for ADC device
+  ARM: dts: at91: sama5d2: Add resistive touch device
+
+ Documentation/ABI/testing/sysfs-bus-iio            |  12 +
+ .../bindings/iio/adc/at91-sama5d2_adc.txt          |   9 +
+ .../bindings/input/touchscreen/touch_adc.txt       |  33 ++
+ MAINTAINERS                                        |   6 +
+ arch/arm/boot/dts/sama5d2.dtsi                     |  12 +
+ drivers/iio/adc/at91-sama5d2_adc.c                 | 491 ++++++++++++++++++++-
+ drivers/iio/industrialio-core.c                    |   1 +
+ drivers/iio/inkern.c                               |   8 +-
+ drivers/input/touchscreen/Kconfig                  |  13 +
+ drivers/input/touchscreen/Makefile                 |   1 +
+ drivers/input/touchscreen/touch_adc.c              | 199 +++++++++
+ include/dt-bindings/iio/adc/at91-sama5d2_adc.h     |  16 +
+ include/uapi/linux/iio/types.h                     |   1 +
+ tools/iio/iio_event_monitor.c                      |   2 +
+ 14 files changed, 791 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/touch_adc.txt
+ create mode 100644 drivers/input/touchscreen/touch_adc.c
+ create mode 100644 include/dt-bindings/iio/adc/at91-sama5d2_adc.h
+
 -- 
 2.7.4
