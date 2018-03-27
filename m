@@ -1,103 +1,96 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/C/Kibo3WDCJadcnRwXAIeNR0h+fARG6uVdyc7UR693cnUdQQRCTrg6FvvOMxllW/jtLPX
-ARC-Seal: i=1; a=rsa-sha256; t=1522168241; cv=none;
+Return-Path: <mka@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1522194991; cv=none;
         d=google.com; s=arc-20160816;
-        b=WWkRQ75e5btxGH+C+XhazbHki/Wr15TXS372UfHd0dSgPiAKabs9znLv3suoVnNOxE
-         QTYUVlxJoJy7x+XSPPf6oBH33aGe56HRLplxozY/f4Cw4TlPzipZAON1XTMOjym9V41T
-         XYM7UxppleFnrRHfG6Ye67pseXm5sA5hnAHGT01YTwE44eyaWiqsn0iFi6JG0mRAyfoq
-         pOklf1m2tE8IEbCbJ7r0Ge6QmUvOc/ZHVN8HF6Ss75SKwdPfOaEj4xcgaZcU4X2KeNvm
-         2cbJUNOi4scWDzgpNXaeKRXXBGcf/LbLepEqovBLIN/iCoWNosKhmsO5AhbkUre90Q9G
-         jWUA==
+        b=ujni8ROU8EJ37S29B0A+P6pYTRFurp+rIyjhdcSxeEFvh5I2fRdLC+Y7WiefDUmeJu
+         q1cBAPQmBRZXb2zszPsrPZuEOQ0iMNK7RLdgOlZsVZYW520BkM01NXCYfnJq41LT3edQ
+         XJ5l/E+YwF/g5/4oNWQKV2+ojC9FhrLxNfw2qMUYUZs2D288wSKhB5ktkJwMZ487E4M8
+         C3af3Fzf2XW7UwaZJDTojdwATV1gGQc8Da0e6YzJ+5K7S3hQaGhgAEqou2FYFKgUv2/2
+         8dfqYf3KcY54rXTy/D2IjkLelkQNun0E7qrh4lNjdGX8dlFVwViw58dDwkOPsEO6gqGm
+         FYhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=B74ZiqjuX21f3PidCt9szp9Mgj8vKIsDIFgI/6biZVg=;
-        b=UKegMD0MJlbnMv+gcBWTDEErbUJZiAclJTq5mNKCFR6cON0Iy5F9ZtLmrmNX0xD2fP
-         rIShnKVfbubq8wY52GZYszyDIfE6MWI5GRAy3CqgkpvdBJih1CKGjAJsFR91xAMo21D1
-         fkv2+Z/T29cJ4A8skoNZk2Z4s9c0r8wz/BDGgy9V5WJw8cBEmT1SS7dISYp/Xtmtg+Ik
-         gvOCUVpPEl6TlPSmENiYiXGM4VeJV72Dj5TjJCcyA7Qahz2k+QwCRMebCKBf68L2ya+g
-         NcTV6AHpg2BBOn7XowXQPW1Egts912+ZY00Ajysm0owNjRTaVGUgsr7/Glpseg8YacY7
-         Ivcg==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=EW3ra5+VVNrs8dMl9/hFvv0c7Pod61Q0Om6FjrQVFJA=;
+        b=m3CApl+OgPdDEm2hdj4sR9fHe1NFJ9FlWUH6VIMVoWqDGnzR/7QUeuQAGy5Xe+O+Hw
+         cibLWEAO+9zJ03wy7IHfJ+gEGrA0+7BzbKcGshLXURQDbbO5YS37gL1YqQ3egfc1k1Dz
+         zFjXGahFPDumaX70d+S/ILtworI7YWUVgX4nk4x6iVRLCfI82uHcmeY7BNhFiTAYcUvk
+         k1FULWElrrcYwMKXi8Czx6u8VdiQo4aPzmh+0OMzZn/UE1I9Kd11JeXU2qpgQ/rCoEqz
+         D9MXgxISDIX571xFbzK2P7wKqlPRKhHVwT5NNI2jtXo3DkcRqv3r2FRSmKnfOQmmZMdf
+         VTTg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+       spf=pass (google.com: domain of mka@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mka@google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	NeilBrown <neil@brown.name>,
-	John Crispin <john@phrozen.org>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	linux-mips@linux-mips.org,
-	James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.9 01/67] MIPS: ralink: Remove ralink_halt()
-Date: Tue, 27 Mar 2018 18:26:53 +0200
-Message-Id: <20180327162726.776788856@linuxfoundation.org>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
-References: <20180327162726.702411083@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+       spf=pass (google.com: domain of mka@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mka@google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AIpwx49Cmj4a7X2L37YRocnirq5p2riZ3KIlm50bj2pMTZiNY6XTsaV0ZssNcu2d1ir4Z9C1gzROeA==
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Manoj Gupta <manojgupta@chromium.org>,
+	Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] debugfs: Check return value of debugfs_real_fops() for NULL
+Date: Tue, 27 Mar 2018 16:55:53 -0700
+Message-Id: <20180327235553.210165-1-mka@chromium.org>
+X-Mailer: git-send-email 2.17.0.rc1.321.gba9d0f2565-goog
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108957348876087?=
-X-GMAIL-MSGID: =?utf-8?q?1596109086080254666?=
+X-GMAIL-THRID: =?utf-8?q?1596137136019067169?=
+X-GMAIL-MSGID: =?utf-8?q?1596137136019067169?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+debugfs_real_fops() returns a NULL pointer when it is invoked without a
+prior call to debugfs_file_get(). In code paths including this call it
+is not strictly necessary to check the return value of
+debugfs_real_fops(). However clang inlines debugfs_real_fops(), detects
+the invalid dereferencing of the NULL pointer and drops the code path.
+This leads to a bunch of objtool warnings when building with clang and
+CONFIG_UNWINDER_ORC=y:
 
-------------------
+  fs/debugfs/file.o: warning: objtool: full_proxy_llseek() falls through to next function full_proxy_read()
+  fs/debugfs/file.o: warning: objtool: full_proxy_read() falls through to next function full_proxy_write()
+  fs/debugfs/file.o: warning: objtool: full_proxy_write() falls through to next function full_proxy_poll()
+  fs/debugfs/file.o: warning: objtool: full_proxy_poll() falls through to next function full_proxy_unlocked_ioctl()
+  fs/debugfs/file.o: warning: objtool: full_proxy_unlocked_ioctl() falls through to next function fops_u8_open()
 
-From: NeilBrown <neil@brown.name>
+Check the pointer returned by debugfs_real_fops() in all code paths to
+make clang and objtool happy.
 
-commit 891731f6a5dbe508d12443175a7e166a2fba616a upstream.
-
-ralink_halt() does nothing that machine_halt() doesn't already do, so it
-adds no value.
-
-It actually causes incorrect behaviour due to the "unreachable()" at the
-end. This tells the compiler that the end of the function will never be
-reached, which isn't true. The compiler responds by not adding a
-'return' instruction, so control simply moves on to whatever bytes come
-afterwards in memory. In my tested, that was the ralink_restart()
-function. This means that an attempt to 'halt' the machine would
-actually cause a reboot.
-
-So remove ralink_halt() so that a 'halt' really does halt.
-
-Fixes: c06e836ada59 ("MIPS: ralink: adds reset code")
-Signed-off-by: NeilBrown <neil@brown.name>
-Cc: John Crispin <john@phrozen.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 3.9+
-Patchwork: https://patchwork.linux-mips.org/patch/18851/
-Signed-off-by: James Hogan <jhogan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Debugged-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Debugged-by: Manoj Gupta <manojgupta@chromium.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- arch/mips/ralink/reset.c |    7 -------
- 1 file changed, 7 deletions(-)
+ fs/debugfs/file.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/arch/mips/ralink/reset.c
-+++ b/arch/mips/ralink/reset.c
-@@ -96,16 +96,9 @@ static void ralink_restart(char *command
- 	unreachable();
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index cd12e6576b48..427e185ecc8f 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -183,7 +183,8 @@ static ret_type full_proxy_ ## name(proto)				\
+ 	if (unlikely(r))						\
+ 		return r;						\
+ 	real_fops = debugfs_real_fops(filp);				\
+-	r = real_fops->name(args);					\
++	if (real_fops)							\
++		r = real_fops->name(args);				\
+ 	debugfs_file_put(dentry);					\
+ 	return r;							\
  }
+@@ -217,7 +218,14 @@ static unsigned int full_proxy_poll(struct file *filp,
+ 		return POLLHUP;
  
--static void ralink_halt(void)
--{
--	local_irq_disable();
--	unreachable();
--}
--
- static int __init mips_reboot_setup(void)
- {
- 	_machine_restart = ralink_restart;
--	_machine_halt = ralink_halt;
- 
- 	return 0;
+ 	real_fops = debugfs_real_fops(filp);
++	if (!real_fops) {
++		r = -ENXIO;
++		goto out;
++	}
++
+ 	r = real_fops->poll(filp, wait);
++
++out:
+ 	debugfs_file_put(dentry);
+ 	return r;
  }
+-- 
+2.17.0.rc1.321.gba9d0f2565-goog
