@@ -1,55 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751152AbeC0FTJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 01:19:09 -0400
-Received: from smtprelay0014.hostedemail.com ([216.40.44.14]:44504 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751088AbeC0FTH (ORCPT
+        id S1751060AbeC0F00 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 01:26:26 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:59350 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbeC0F0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 01:19:07 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1373:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3653:3865:3866:3867:3870:3874:4321:5007:10004:10400:10848:11026:11658:11914:12043:12438:12555:12663:12760:13069:13161:13229:13311:13357:13439:14181:14394:14659:14721:21080:21221:21324:21627:30054:30070,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: fuel04_89c9a7b1a8e34
-X-Filterd-Recvd-Size: 1568
-Message-ID: <1522127944.12357.49.camel@perches.com>
-Subject: [PATCH] checkpatch: Test SYMBOLIC_PERMS multiple times per line
-From: Joe Perches <joe@perches.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Whitcroft <apw@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Mon, 26 Mar 2018 22:19:04 -0700
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
+        Tue, 27 Mar 2018 01:26:23 -0400
+Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
+ reset framework
+To: Suman Anna <s-anna@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+CC: David Lechner <david@lechnology.com>,
+        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        devicetree <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20180323130455.11470-1-brgl@bgdev.pl>
+ <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
+ <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
+ <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
+ <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
+ <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
+ <0683b11c-fefa-5fc7-793e-1a662a5f0480@ti.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <44218403-5e7f-dd12-6d01-a52987fc4cc8@ti.com>
+Date: Tue, 27 Mar 2018 10:54:54 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <0683b11c-fefa-5fc7-793e-1a662a5f0480@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are occasions where symbolic perms are used in a ternary like
+Hi Suman,
 
-		return (channel == 0) ? S_IRUGO | S_IWUSR : S_IRUGO;
+On Tuesday 27 March 2018 06:12 AM, Suman Anna wrote:
+> I tried booting your tree [3] on the OMAPL138-LCDK board. I am using
+> NFS, and I am unable to get to the console. I don't have any issues
+> booting latest -next branch (next-20180326) which only has the reset and
+> clock driver related changes.
+> 
+> Here's the log towards the end of the boot..
+> ---
+> pinctrl-single 1c14120.pinmux: 160 pins, size 80
+> Serial: 8250/16550 driver, 3 ports, IRQ sharing disabled
+> console [ttyS2] disabled
+> 1d0d000.serial: ttyS2 at MMIO 0x1d0d000 (irq = 61, base_baud = 8250000)
+> is a TI DA8xx/66AK2x
+> console [ttyS2] enabled
+> brd: module loaded
+> libphy: Fixed MDIO Bus: probed
+> davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
+> davinci_mdio 1e24000.mdio: no live phy, scanning all
+> davinci_mdio: probe of 1e24000.mdio failed with error -5
+> i2c /dev entries driver
+> <nothing after this>
 
-The current test will find the first use "S_IRUGO | S_IWUSR" but not
-the second use "S_IRUGO" on the same line.
+This is because of a bug in bootloader PLL configuration which got
+uncovered only with CCF conversion. The bootloader that comes
+pre-flashed with the board or the latest U-Boot master should work fine.
 
-Improve the test to look for all instances on a line.
+Here is the log with latest U-Boot master:
+https://pastebin.ubuntu.com/p/HkwY9g4YDc/
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- scripts/checkpatch.pl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 5fe361e1ed5e..d2464002bb40 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6429,7 +6429,7 @@ sub process {
- 		}
- 
- # check for uses of S_<PERMS> that could be octal for readability
--		if ($line =~ /\b($multi_mode_perms_string_search)\b/) {
-+		while ($line =~ m{\b($multi_mode_perms_string_search)\b}g) {
- 			my $oval = $1;
- 			my $octal = perms_to_octal($oval);
- 			if (WARN("SYMBOLIC_PERMS",
+Thanks,
+Sekhar
