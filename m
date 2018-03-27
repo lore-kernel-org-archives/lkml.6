@@ -1,16 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752470AbeC0NCr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:02:47 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:33503 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751371AbeC0NCp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:02:45 -0400
-X-Originating-IP: 2.224.242.101
-Date: Tue, 27 Mar 2018 15:02:31 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Peter Rosin <peda@axentia.se>
+        id S1752380AbeC0NEy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:04:54 -0400
+Received: from mail-ve1eur01on0127.outbound.protection.outlook.com ([104.47.1.127]:37024
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752169AbeC0NEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:04:51 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+Subject: Re: [PATCH v2 2/5] drm: bridge: add API to query the expected input
+ formats of bridges
+To: jacopo mondi <jacopo@jmondi.org>
 Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Boris Brezillon <boris.brezillon@free-electrons.com>,
@@ -23,298 +24,101 @@ Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
         Gustavo Padovan <gustavo@padovan.org>,
         Sean Paul <seanpaul@chromium.org>, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/5] drm: bridge: add API to query the expected input
- formats of bridges
-Message-ID: <20180327130231.GO27746@w540>
 References: <20180326212447.7380-1-peda@axentia.se>
- <20180326212447.7380-3-peda@axentia.se>
- <20180327094743.GL27746@w540>
- <fcc47402-d758-4062-0565-f5977b85b206@axentia.se>
+ <20180326212447.7380-3-peda@axentia.se> <20180327094743.GL27746@w540>
+From: Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <f35fb82a-d098-475c-4daf-cc2800a70c91@axentia.se>
+Date: Tue, 27 Mar 2018 15:04:42 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="UTZ8bGhNySVQ9LYl"
-Content-Disposition: inline
-In-Reply-To: <fcc47402-d758-4062-0565-f5977b85b206@axentia.se>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180327094743.GL27746@w540>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: AM0PR0202CA0023.eurprd02.prod.outlook.com
+ (2603:10a6:208:1::36) To HE1PR0202MB2778.eurprd02.prod.outlook.com
+ (2603:10a6:3:e8::20)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 397ad042-700e-4df2-818a-08d593e35131
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:HE1PR0202MB2778;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2778;3:VONSWt2xbFraIkayK5uW1rVTdqMFTyV/kBIe77iLsda7YmnniNn2qaeYPDxJqTLIbtIhj/ee+L6Qp6ktK/60HI0EObigAL/Am9rMC8VeVg1DLYXnJdWFyCLqWw4WDM2mFU2NNMTHLFmZv6MCBdUArKOCSpGUU2orIwLkU8jUzwNoyDgVu0AeB4qHely0w+2VHZvSGlC7DJKyW/0BDKp4Y8TlydBrKPkkwg8TWcu/9xZJolfdYHDhJSJRsHgISCm7;25:rWASq/xZKDxFW/ffx35Dq2WUcBpSMXURq8dSh66Ma/gyv6Mmpb8pULnzCK11DQohP6d+ZZf92KnOJWZ4qbSxilVEyxi4gD+g38hLEcIE/7F0vfvIKRvYhnXiNvabFCz2rkKlhofhv6BnqO6HhK+YqFMhzGz7pDyeDR8jdjlZ7Ycklck+x/tgIWDYhQTmsOGmObbSQprdt9JA2vpNPWYrCNxYydih+DDA9h9TxI2cF4hHScsKb6+0l9CnyoJJlnneDWctmOwySnF0FyCyNbMdHc3egadrLHQz1qI+wyTWCz0C1nqsk2/6YrjdryAqeRv7ktH16mG0dED5Z12eA83jAA==;31:+CiDRAPNkF0NpOfpcYHxHzcCq+vKOmO6Awb6hepTsHO8lfxQLhiKcTwWkwWM9ytgabzfWc1ujPAvGAdMwzuLGYJw0lbPCQTNQ4+FxEMDH1dH4QzVd0ly+DPuUZ/wgcZojK8kzXU+qJBrNEtiAdSryac4SADF2j+my1Qf4KB5jk+sRJBKCktlB+oYsR5ot+CbedrFQkL50OVVeiClYERHCa2bKDnE7D7DU8OLoHpzkrc=
+X-MS-TrafficTypeDiagnostic: HE1PR0202MB2778:
+X-Microsoft-Antispam-PRVS: <HE1PR0202MB2778A991908972822EB60E45BCAC0@HE1PR0202MB2778.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(3002001)(93006095)(93001095)(10201501046)(6041310)(20161123562045)(2016111802025)(20161123558120)(20161123564045)(20161123560045)(6043046)(6072148)(201708071742011);SRVR:HE1PR0202MB2778;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0202MB2778;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2778;4:hfCQLAYU+NZRlKFncOmOC0pdyjp51fr37rubvIRzD0hlRESUfepnhWfDB+15Dph4JzwbMX5p5S5W7hUfE2rx5fhwAPoxB23KSgDYYS2bLukp0LguC8s0OZQ1f6TY+yi1MI2xjhZ3QfcV4uf8zZtYDP6U5qwz2dn4a9vojF2ocsp0t5K+omfjTc0HJWBqLNJWoYmn/JuDuzI75zLNTazIK7nY5zUnL+64ZnsnbIxEUuB9w9Tjqik+QY/bKtu2i4rOhfnmwgIJJt7pspVizO3Uvw==
+X-Forefront-PRVS: 0624A2429E
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39380400002)(376002)(39830400003)(396003)(346002)(366004)(377424004)(189003)(199004)(4326008)(105586002)(54906003)(316002)(25786009)(47776003)(230700001)(64126003)(8676002)(58126008)(11346002)(86362001)(956004)(2616005)(486005)(486005)(117156002)(68736007)(3260700006)(8936002)(6916009)(5660300001)(106356001)(81156014)(36756003)(446003)(7416002)(81166006)(6666003)(50466002)(6116002)(478600001)(386003)(16576012)(53546011)(65826007)(76176011)(16526019)(3846002)(26005)(186003)(31686004)(77096007)(97736004)(305945005)(74482002)(66066001)(65806001)(6486002)(229853002)(53936002)(2486003)(31696002)(476003)(6246003)(7736002)(2906002)(23676004)(52146003)(36916002)(52116002)(65956001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2778;H:[192.168.13.3];FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjAyMDJNQjI3Nzg7MjM6NjY4bjJiTndYc3l3NkdEYTZZVGI2eXpX?=
+ =?utf-8?B?TWFjNGhWOHAyb2JRdVhSSnl4aTBGOUZDM3g4R1NHMUxtWDlMbTcwNHhSZVNV?=
+ =?utf-8?B?ZkU4Snd3MDRzN2lLR1ZwdXBHdE9JMUMrb2NNSTQzNmR3RllUWDROVlh4aGJS?=
+ =?utf-8?B?MlBMVG1MVHF3d28yTWh5dnQ0SEhiT0xyWkFFNmJ6NnFSVEZEbEpscUNZVThQ?=
+ =?utf-8?B?T0IxTjNDdXVvNWx3ZGt0djRWb2J1K1ZsVUZlbEVHTUNQVDAvY0hvbEJObkoz?=
+ =?utf-8?B?Uk44MHkvYnZKbm5SRzVkRk1pYnltU0ZybVVqcGpFbkhWelJiSTEyTElCS2M0?=
+ =?utf-8?B?cHFIZnc5ZTZKR2k2VHQ3SjRjdDRVekJacDlEcXV2cTR2RnkvY0FGWUVPdEEx?=
+ =?utf-8?B?cHB2Y1kzUmtTUm9lZlhicmFVZzJJOGZrN2s0K201MVp1MEZadmlNd0JKV0tY?=
+ =?utf-8?B?ejR4YXJqYURPOUZCeU4raVFvYnRzd1JHbzArOWJGQWRzcUhhdG1welZHc09F?=
+ =?utf-8?B?ZWRRTEp6RWl0elNSQ3dCelRVQjFiWWZyckdUbjVDR09QdmpBRisvUVhYdmta?=
+ =?utf-8?B?K1lId1JGMDJpNWpodERnUHg0RUJIaVUxVFBnRFc3cUhmcEFGaUQ1WldOQUk0?=
+ =?utf-8?B?VjREV1lRWDR3YWcvaUE0ZU1qRUFyTlJ6ZDNKZTZTL3UwUUZPMkpjMnJXR0ps?=
+ =?utf-8?B?V3psSzR6Z3hEZXBvUkMyekowT05ubmljQTJxL0hzbUtiM3ZWU0NNSk9jYzMy?=
+ =?utf-8?B?N0w2bi9qMFd3ajcwOGk2NURMMXJyYUMwRE9RKy9FZTRCdTA4Nm9FMG9Qc2Vo?=
+ =?utf-8?B?STBMNHZVQ3BwZXJMRURQVFNWdTVFM0lTSEwyTmJGZ25NbUNkL1U0OUZWcWlh?=
+ =?utf-8?B?MFFXM2xZL1JVM1BrU2tGSzFpOG5SLzROMnBpK05vOFA5ZzNFL1NVd21WVjc0?=
+ =?utf-8?B?Rzd2Vzd0MDJwZSt3RzkvM2N0UXNoclVicmI3RVp2akYzN1dxWDVxWThFTi8z?=
+ =?utf-8?B?OUdKbjhEUytDTUs4UFVubkpsSGZKeXYrazEwS1RuT0taUjJMM0YrRGJtc1VE?=
+ =?utf-8?B?NkdnMWRRWDNUdzZ5ZzdtSlAyQ2pvZS9nU0hId1gxaUpBaHQwaGVQb3ZvaUFP?=
+ =?utf-8?B?aFF4TzVOSm5Vc3RqRHdqUXNNMHh6eFdMMUNrcmdvNFhXSTgvTTI2TnBtQUNk?=
+ =?utf-8?B?bjkydjJEK25xOW5BYmtsbUtXYnFBT1Q4NzBaNE9UWmdQdDk4WWR1ek54ZlAz?=
+ =?utf-8?B?czgxUkUxS1A3SDlNNlpTWnFIdE5IWnE4aWlURHhFT3UwdTBwS3NNTUozRE85?=
+ =?utf-8?B?WStLcG0wYWI4Y08xRDRKb2d4a0d6UnR4dmZvRFBQcHpURDVoeG9aS1RvVW5p?=
+ =?utf-8?B?Mm1oMDg5VUxDQ1VnSEdqdWdIVGxIS2EvUWZoZnc2MzVtK0pnUld5TkkvSTF5?=
+ =?utf-8?B?Y2Y0R29xQWFsZ1ZGQWVKVDJIdGVIVG4yeVdFMFNTLzZQOXdCSCtiNWk3VHhV?=
+ =?utf-8?B?U3VaZnNkVngyUWMrcTBFMWdHLy9ybk5WTGZ2RTR3S1EzNi9zS0NKdjhWd0Nv?=
+ =?utf-8?B?VEFCandJVXljalpZa2N3OVFtdEM5RFRuUXBPMW94c2tHMnkzekdQTlB2OThh?=
+ =?utf-8?B?eUxHZEd1ZEFKSGQwZm9NdjFtb0tvUGtlWW91Z1g3Tzc5ZFJsc0pNZWwvNTRB?=
+ =?utf-8?B?MXc5MVZEYTJSMkdPN1VKaStYam4rV0p1eldFc0d0bkNoTnlCYkhBUHNiK1Rx?=
+ =?utf-8?B?eFFZWmxHUGZsMi8ySUY5MkROTCtBTkRJWmVhR0RFakhqZWY1Tk9YdVhDeHAy?=
+ =?utf-8?B?UVVuMVNGaGllek5vaDFKazRpRzVMSW9Ucks4SUhQWFQ0WS9mSjgySmtBNE9h?=
+ =?utf-8?B?TnZPTkZBY05JQTdVMXltcnlCVFFvcDgyVHV4TDdnUkJnZGtVRGhGb1FhcWk2?=
+ =?utf-8?B?T05IcXNjdStDWG9QVysyak9xQiszUXp5Tnhmb3lqMEc4NWVHOEtISWhCbk1x?=
+ =?utf-8?B?Nit5bWR6MUZtKzNCRnBjakpFaUFzUk91ZFpvT2twYjJHNVhyU0JGZXhUVnY0?=
+ =?utf-8?B?QVgrOFVtbWdPakpndWE3OUdUSmxFTEw5dStETUxvRVhBSCtDR0p1am5nTVdn?=
+ =?utf-8?Q?7B08+hKu4bWx7pB6Akg1jcaDGxEQr5Bq98PR5vyefDUiT/?=
+X-Microsoft-Antispam-Message-Info: r6ddiXaDJT/JEyJ1RiPu6269XAdr7RzrMTg7k9S7J0zUzls7B2nY/Qpc2+Zn/a8CF7XLQ5pD/59ftCGMheGjembEhYb2cdbV9/QYstJrM1AsedMk9PbEWui08YT2ylExId5FdYex9PJQ+McyKihb3talofw2cWpd7Wvv1lj+gLx2dMnAmnxtnfb4q2rgu85M
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2778;6:qpSJryCsdNssrFMHkqhF0ExCmmOGN/JBfgTxu5uHKmAK1W4BF6F0vNvSebwmZWSdXgh+PoVC4xl7rlR8g4Gj/OOuK9sz6VhOAfsa6X/RjXLzqaWNx90oc56CsDC8qdKxYEkRCKdSG0BwjtQjwhimvUhi9oUx45qlbU640WHF4861G/har8vBZLwz8ozOSMGdLl3gt1xD5LRMYQdHo9303CYSBP7Kd4Fln+vruiyAkADeYoS0jglne2t3GoklnE8Z2nlutevlShMvr9HoVpBJU919p9ciN+yh+CVhrn6bvkz8hq1sucldmRy/AHlh5ekdvOWclci3ZbHpHnq3nWw69fW1ldJ4a1JQz7skeztqGvFS90XnHeW2W22dNrReq8h/hs0L4PDarazWXQoo6y1RG4rx9+L+Rvj/+45NvX1jIzIRCdPbM0kb1IyRJpyO4cCSMSp2fJi4EjA1yk+vOQurTw==;5:/+EJuTjSZJu7/D6Xd+d1aVl9L5pJNF1BzxzBmWC7Q6A41dWlvQDGBrd4STG9Xvcqm96L+iG9xccuODVHT32ktBYAFwAZ5+pTWxzKoUDznftPM1qBj2Z78Dxl8t/HQl+CX0Mn7nzyHYy/QoGNiIPlVrCB7NRwXK3/09g0wLNfbDA=;24:DT4KH1A6cVbiVk3GiBvy8jqMiAtPwONDUC8dd9mMeaCQNsATQXXhh83YRXaW6aitx2lWFVEfOm+bcxGHxkLUNHg6Wpj1sUtESnaJsvPOvNk=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2778;7:Tn0bi1rAUqWXbTeaRXTN+Sh0yzoBuYyy5OJeGePAvBi9cWNAMW+6r59Zh3zq53UgPMId7zBrncs0xRDDcKvvcwjwHQGjuqn5YI6DGZGm6kFDuhXUk0R7r/A/enuzIZgEiaDTfpvSMTni6w6FKcCUop+av8/ula6ogOv3FzY3etnKMDNYnLpSs571xhOEWL/zRdV/yPJA1IGaYI6uYGp76iLjT0EaVGA5vaxnYClgHrPsZ7vr3i++AQVRH2gjFjmY
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2018 13:04:45.9976 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 397ad042-700e-4df2-818a-08d593e35131
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0202MB2778
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-03-27 11:47, jacopo mondi wrote:
+>> + * RETURNS:
+>> + * The number of bus input formats the bridge accepts. Zero means that
+>> + * the chain of bridges are not converting the bus format and that the
+>> + * format of the drm_connector should be used.
+> 
+> How do we get to the connector format from a bridge that has maybe
+> other components in between in the pipeline?
 
---UTZ8bGhNySVQ9LYl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Forgot to write something here in my previous reply, sorry...
 
-Hi Peter,
+The chain of bridges do not end with the connector in the in-kernel
+representation, IIUC. So, I think it is up to the caller to find the
+format desired by the connector. See patch [5/5] for an example.
 
-On Tue, Mar 27, 2018 at 02:12:42PM +0200, Peter Rosin wrote:
-> Hi Jacopo,
->
-> Thanks for the feedback!
->
-> On 2018-03-27 11:47, jacopo mondi wrote:
-> > Hi Peter,
-> >    thanks for the patches
-> >
-> > On Mon, Mar 26, 2018 at 11:24:44PM +0200, Peter Rosin wrote:
-> >> Bridges may affect the required bus output format of the encoder, in
-> >> which case it may be wrong to use the output format of the panel or
-> >> connector as is. Add infrastructure to address this problem.
-> >
-> > Bridges not only affect the format expected by the connector at the
-> > end of the display pipeline, they may perform encoding/decoding
-> > between protocols and their accepted input formats may be unrelated to
-> > the connector at the end of the pipeline as there may an arbitrary
-> > number of bridges in between.
-> >
-> > Eg.
-> >
-> > ENCODER                                                CONNECTOR
-> >   |                                                         |
-> > |DU LVDS| ->lvds-> |THC63| ->rgb-> |ADV7511| ->hdmi-> |HDMI connector|
-> >
-> > The fact that THC63 wants a specific LVDS input format is unrelated to
-> > the format required by the HDMI connector at the end of the pipeline.
-> >
-> > I would just state here that bridges need a way to report their
-> > accepted media bus formats, and this patch extends the DRM Bridge APIs
-> > to implement that.
->
-> Yes, I can add some words, but I would like to clear up the naming
-> before re-spinning.
->
-> >>
-> >> Signed-off-by: Peter Rosin <peda@axentia.se>
-> >> ---
-> >>  drivers/gpu/drm/drm_bridge.c | 32 ++++++++++++++++++++++++++++++++
-> >>  include/drm/drm_bridge.h     | 18 ++++++++++++++++++
-> >>  2 files changed, 50 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-> >> index 1638bfe9627c..f85e61b7416e 100644
-> >> --- a/drivers/gpu/drm/drm_bridge.c
-> >> +++ b/drivers/gpu/drm/drm_bridge.c
-> >> @@ -348,6 +348,38 @@ void drm_bridge_enable(struct drm_bridge *bridge)
-> >>  }
-> >>  EXPORT_SYMBOL(drm_bridge_enable);
-> >>
-> >> +/**
-> >> + * drm_bridge_input_formats - get the expected bus input format of the bridge
-> >
-> > I may be biased by the V4L2 APIs, but this seems to me very much like
-> > similar to g_fmt/s_fmt callbacks we have there. Bridges have an input and
->
-> g_fmt/s_fmt says nothing to me. Graphics format? Source Format? I have
-> no idea if those guesses are even close? So, that seems like poor naming
-> to me. The only reason I see to go that way is for the sake of consistency.
->
+Maybe the connector should be passed in as an argument?
 
-Sorry, I wasn't clear here.
-
-To me this operation seems like a "get format" and I see space for
-future implementation of "set format" operations  and also
-"enum_formats" to implement format negotiation between bridges...
-
-
-> > an output formats, and that calls for something that takes that into
-> > account, as well as they may have different input ports with different
-> > accepted formats but I would for now simplify this to just 'g_fmt()'
->
-> You mean rename the function to drm_bridge_g_fmt(), right?
-
-Yeah, something like "drm_bridge_get_format(next_bridge)"
-
->
-> As indicated above, I'm not that fond of it, but don't really care
-> either. Maintainers?
->
-
-I do not care much about the name too ofc, I think the real meat is
-below...
-
-> >> + * @bridge: bridge control structure
-> >> + * @bus_formats: where to store a pointer to the bus input formats
-> >> + *
-> >> + * Calls the &drm_bridge_funcs.input_formats op for the frist bridge in the
-> >> + * chain that has registered this op.
-> >
-> > I'm not sure passing the call down the pipeline is desirable. Each
-> > component should make sure its output format is accepted as the next
-> > bridge input format, passing the call to the next bridge is not
-> > different that getting to the connector at the end of the pipeline and
-> > return to the initial caller its supported format. Do you agree with this?
->
-> Not passing down the call does one of two things. Either all bridges have
-> to implement the call or all users have to walk the pipeline "manually".
-> I don't like either or those options, so I still think it is good to
-> pass the call down the pipeline.
->
-> *time passes*
->
-> Oh, you do not think it is useful for the bridge to have a callback but
-> still report "no format change", and that the call down to pipeline
-> should only happen for bridges that have not implemented the op. But I
-> do think that is useful, see below.
->
-> >> + *
-> >> + * Note that the bridge passed should normally be the bridge closest to the
-> >> + * encoder, but possibly the bridge closest to an intermediate bridge in
-> >> + * convoluted cases.
-> >> + *
-> >
-> > As I see this, any bridge in the arbitrary long pipeline should call
-> > this operation on next bridge if it supports different output formats.
-> > Ie. I would not name here the encoder nor refer to the bridge position
-> > in the pipeline.
->
-> Ok, I can change that, it just seemed like a convoluted case to me.
-> I mean, if this was a real issue and complicated pipelines were
-> common, something along the lines of this patch series would be
-> available already. Right? I guess not, but how the &#/%# have people
-> been coping?
->
-> >> + * RETURNS:
-> >> + * The number of bus input formats the bridge accepts. Zero means that
-> >> + * the chain of bridges are not converting the bus format and that the
-> >> + * format of the drm_connector should be used.
-> >
-> > How do we get to the connector format from a bridge that has maybe
-> > other components in between in the pipeline?
-> >
-> > If a bridge do not report any supported format, it won't implement
-> > this callback and things will work as they work today.
->
-> Unless the bridge optionally changes the format. If the bridge has no
-> way to say "no format change" even with the callback in place, it
-> has to juggle different ops structs, which seems like a big hammer.
-> So, I'm in favor of calling down the pipeline in two cases. A) when
-> a bridge does not implement the op and B) when the op returns zero.
->
-
-Why do you think the bridge format conversion plays a role here?
-
-Maybe here's where I lost you, possibly because of my limited
-knowledge of the DRM realm and its actual use cases.
-
-As I see it, this new API allows two bridges to synchronize on which
-image format or LVDS mode 'bridge' should output to 'next_bridge'
-input.
-
-The "mode_set" callback walks all element of the display pipeline,
-and when one component has to select which image format or LVDS mode
-to output to its next kin, if the next one is a panel it inspects the
-display_info field, it it's a bridge it uses this new API to get the
-format it accepts.
-
-If the next bridge does not implement this callback, things work as they
-do today (in our specific use case, by chance :)
-
-> Maintainers?
->
-
-Yes, let's scale to more knowledgeable people than me, as I gave my
-opinion already but it is based on the single use case I know for
-real.
-
-Thanks
-   j
-
-
-> >> + */
-> >> +int drm_bridge_input_formats(struct drm_bridge *bridge,
-> >> +			     const u32 **bus_formats)
-> >> +{
-> >> +	int ret = 0;
-> >> +
-> >> +	if (!bridge)
-> >> +		return 0;
-> >> +
-> >> +	if (bridge->funcs->input_formats)
-> >> +		ret = bridge->funcs->input_formats(bridge, bus_formats);
-> >> +
-> >> +	return ret ?: drm_bridge_input_formats(bridge->next, bus_formats);
-> >
-> > See my comment on the call propagation down in the pipeline.
-> >
-> >> +}
-> >> +EXPORT_SYMBOL(drm_bridge_input_formats);
-> >> +
-> >>  #ifdef CONFIG_OF
-> >>  /**
-> >>   * of_drm_find_bridge - find the bridge corresponding to the device node in
-> >> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> >> index 682d01ba920c..ae8d3c4af0b8 100644
-> >> --- a/include/drm/drm_bridge.h
-> >> +++ b/include/drm/drm_bridge.h
-> >> @@ -220,6 +220,22 @@ struct drm_bridge_funcs {
-> >>  	 * The enable callback is optional.
-> >>  	 */
-> >>  	void (*enable)(struct drm_bridge *bridge);
-> >> +
-> >> +	/**
-> >> +	 * @input_formats:
-> >> +	 *
-> >> +	 * The callback reports the expected bus input formats of the bridge.
-> >> +	 *
-> >> +	 * The @input_formats callback is optional. The bridge is assumed to
-> >> +	 * not convert the bus format if the callback is not installed.
-> >> +	 *
-> >> +	 * RETURNS:
-> >> +	 *
-> >> +	 * Zero if the bridge does not convert the bus format, otherwise the
-> >> +	 * number of bus input formats returned in &bus_formats.
-> >> +	 */
-> >> +	int (*input_formats)(struct drm_bridge *bridge,
-> >> +			     const u32 **bus_formats);
-> >
-> > Consider g_fmt() here as well, or a function name that captures that we want
-> > to know the supported format (and possibly configure it as well one
-> > day, if ever possible).
->
-> The naming here should obviously follow the naming of the exported function.
->
-> Cheers,
-> Peter
->
-> > Thanks
-> >    j
-> >
-> >>  };
-> >>
-> >>  /**
-> >> @@ -263,6 +279,8 @@ void drm_bridge_mode_set(struct drm_bridge *bridge,
-> >>  			struct drm_display_mode *adjusted_mode);
-> >>  void drm_bridge_pre_enable(struct drm_bridge *bridge);
-> >>  void drm_bridge_enable(struct drm_bridge *bridge);
-> >> +int drm_bridge_input_formats(struct drm_bridge *bridge,
-> >> +			     const u32 **bus_formats);
-> >>
-> >>  #ifdef CONFIG_DRM_PANEL_BRIDGE
-> >>  struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
-> >> --
-> >> 2.11.0
-> >>
->
-
---UTZ8bGhNySVQ9LYl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJaukDnAAoJEHI0Bo8WoVY8GIsQAIbYIegMNNzAp3+sWdlz8Hum
-n+EIkwqj3AVVLdYL4MjX2pbKOcieoVA2nzxR/iYuBkOqN7KfH/zA/48Qb6EtrWm6
-cbWB2E/bWcQiDTUw974XhwFY7zgXuRr6WhlVfCA2bWWQck2/0lZLnGmjc5/hBj0d
-VK013PHZchN3TXSmQbUyUkggNNqoTcKcjFs/hgRfNTaTSnyHc5n1S5BZYquzqHNF
-fIybH/Z6CVbQaQMITndGnVAFDVDDXcuYWz20DZKtoA+1aA/xAz3Udt1E2S4jEVZ3
-2Zp8Vxgr4tRA3K7z6a87R2mawZTetYLNwFnrfk7dBGdVexLta3WcwQ8OhbZmAKOp
-IU2KQZv5qeYpOW8ZI0v8g5iXIZAu7NhFao2/wLA9krtvo6cv8E+m3eBlUdUA1Ppq
-P8IdCQOAysCSyizqebsZ8Z7AP/8TZNNT1qq7Ei242CvwJmx5A1Yok2kFAfHpvw0/
-QBtlosSS0bnMwSx7WTRHsyr7GOb7SJkEzA0bI3OzhMSgMResuIkvdtZp/6sZ9XcE
-hwFUWnMWyfLWto/1Turzg2gk9FimHAs2SWQqbSKtIKlyYLpUO1GYGR7qQjE3JXVj
-c2sn2SF9l87KGMG1tUIMGEddXtqh8rZc0veZGd+5C5B/DdgqN4sM5Z1LGKxaqbyr
-9dILVWtdqtHmxzxiU6DL
-=VaWH
------END PGP SIGNATURE-----
-
---UTZ8bGhNySVQ9LYl--
+Cheers,
+Peter
