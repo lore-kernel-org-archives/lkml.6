@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/q5VmdAef7R8LFAtgzrnr+SivsQFFbwFrm1i+G/4FnMmeXVrbxbg6Ss05dFYJIgSCZzaoP
-ARC-Seal: i=1; a=rsa-sha256; t=1522168382; cv=none;
+X-Google-Smtp-Source: AIpwx4/k8WFLj8oZw1tht26EQAzC+7k4kq2JKbAlz9PQSOfidjnnIriZZc/wmAi250gQZUV8HdTe
+ARC-Seal: i=1; a=rsa-sha256; t=1522168379; cv=none;
         d=google.com; s=arc-20160816;
-        b=HjEcSilZThJSCfztiL40QmxNxyIm6KCVO0kfVZ5hIToUpBA/EE2ERgV9LziH/Zxs2p
-         8iqLM2w05v1SsCIz3obYjbGb9HkgLSpiE+n+ZJx2s3Zw353dLkUHnAc7MNU5TSMGsi0C
-         iSBGLL/54at+uYLznfdfxt3jNhXmVPL+aUAaUsfqTLw/PwxAQnHeetZ0m1cV6MfaJ40h
-         htrrHJ5EHkTXa3/HrOxytPtexYsi0To4iWvZpdl8tO2es6mbz+ydgz99QGIqsuVjr0Hc
-         tnNdur4afzE7KBZielHZpwq5617kEld9oPf7wxCK9gvtVV/YLzENM7Oz3bguM4u8PSDc
-         pIGQ==
+        b=Ub2KE3KJHQQpxJ75ZJaGcOQ9GcDKBAqk+I4Oh7jP+ZNygyRR5AXqEUfgGaWgU3w/g9
+         Mf3eaHaLrbuCoXmmY4hect2u7hNFK+9X0Xoiprf0oXq2C1E8Kx3YmeUTbIbWfLLjbTGu
+         vkp5k7ULRHfNr4FkYcA2c/9VUxgsN5RMdYcrBKaD1ZTD1ktbKkpJ4k/eZKrMRaofzi7c
+         ejxO1r5aiG5Acb8gASE3rmG1aVlD8XTj4JWGBwrA9jQYQsyWXbW0ZLBxODi1UW16OotO
+         RDFMeRHunbuk8YN5k/DDr2/pgzdJ6DdXq4kdXWUw+tmejl0ryXzyjbb/GqXcOKwdLQwq
+         3+9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dNI2wgrMRyS5kKdCvRFagt9OIYYjdarg/U6zLVbXF10=;
-        b=bU3bpSzovCuSta1M99JTsB2FIO3BcrcFPOy0IYRmifIpDItLS+d5yNNYMfEtaTJ7d4
-         b7ANAZE0CEjzGJfPPWzG2x+YwQzMqX+cc3j2BEZ9S5ty54bSxNkx16Y/KUfd1BzlMPhR
-         sR5kzQr05gCWBTSs4645NzudVRAGdOp9iIte6QqwTkkB/TgVkcfODHtW5uYCbwxdkPue
-         9MzPHjCPBOHUdOzbNJym8uDm8uTusHV6F5SspZcdHJipP50iPGZNQfVjU+S2nv0HKf3/
-         jCOpnfj+NiEhy24FkhLdU6lv8x1/ohSKLhdL5JzrIghOuazs8mHrFuPyLsPNOaXEW4QA
-         E7VQ==
+        bh=2V7QZ5XPKvRbwo4Eko4VuwgZ6/iqhlLXMt8ZRqisprU=;
+        b=d7faL8zVpoBLsJ2lNblqt5R/ER3jAazCtoXaDZnNCqIPwtOUhRcC3l6j54XdN/h1Z2
+         mcdHgY+HbUosDIfZHfAjuzBs0uenBPuzVrRYm5kaJvveCc1ez4iJQXq3WccvO3ugbdfU
+         1CJ6yFaM3whITF4hzseb8iXsM4GhiY26SUUWagvAV12uLUhXI6BPOLPJMZBkJPVsDVwZ
+         /JaOGYHmSWDYt97XHXqfV3G5sKbuaKNsHEn1/Qj4UU1WDlpgCPKduVTuCF7RRz9ziLCq
+         fy9B5zaItPvcOZEVb2VwUB3uc7DrWEDiyu0imZugTf6Dw3mYhCgQuBYD+wEG8tZ5Z1h3
+         HWwQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peng Tao <bergwolf@gmail.com>,
-	Oleg Drokin <oleg.drokin@intel.com>,
-	James Simmons <jsimmons@infradead.org>,
-	Nadav Amit <namit@vmware.com>,
-	Andreas Dilger <andreas.dilger@intel.com>
-Subject: [PATCH 4.9 59/67] staging: lustre: ptlrpc: kfree used instead of kvfree
-Date: Tue, 27 Mar 2018 18:27:51 +0200
-Message-Id: <20180327162730.846541999@linuxfoundation.org>
+	Jagdish Gediya <jagdish.gediya@nxp.com>,
+	Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.9 41/67] mtd: nand: fsl_ifc: Read ECCSTAT0 and ECCSTAT1 registers for IFC 2.0
+Date: Tue, 27 Mar 2018 18:27:33 +0200
+Message-Id: <20180327162729.280789939@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109071523353050?=
-X-GMAIL-MSGID: =?utf-8?q?1596109233559406083?=
+X-GMAIL-THRID: =?utf-8?q?1596109230678306438?=
+X-GMAIL-MSGID: =?utf-8?q?1596109230678306438?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,38 +50,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Jagdish Gediya <jagdish.gediya@nxp.com>
 
-commit c3eec59659cf25916647d2178c541302bb4822ad upstream.
+commit 6b00c35138b404be98b85f4a703be594cbed501c upstream.
 
-rq_reqbuf is allocated using kvmalloc() but released in one occasion
-using kfree() instead of kvfree().
+Due to missing information in Hardware manual, current
+implementation doesn't read ECCSTAT0 and ECCSTAT1 registers
+for IFC 2.0.
 
-The issue was found using grep based on a similar bug.
+Add support to read ECCSTAT0 and ECCSTAT1 registers during
+ecccheck for IFC 2.0.
 
-Fixes: d7e09d0397e8 ("add Lustre file system client support")
-Fixes: ee0ec1946ec2 ("lustre: ptlrpc: Replace uses of OBD_{ALLOC,FREE}_LARGE")
-
-Cc: Peng Tao <bergwolf@gmail.com>
-Cc: Oleg Drokin <oleg.drokin@intel.com>
-Cc: James Simmons <jsimmons@infradead.org>
-
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Andreas Dilger <andreas.dilger@intel.com>
+Fixes: 656441478ed5 ("mtd: nand: ifc: Fix location of eccstat registers for IFC V1.0")
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Jagdish Gediya <jagdish.gediya@nxp.com>
+Reviewed-by: Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/lustre/lustre/ptlrpc/sec.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/nand/fsl_ifc_nand.c |    6 +-----
+ include/linux/fsl_ifc.h         |    6 +-----
+ 2 files changed, 2 insertions(+), 10 deletions(-)
 
---- a/drivers/staging/lustre/lustre/ptlrpc/sec.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/sec.c
-@@ -838,7 +838,7 @@ void sptlrpc_request_out_callback(struct
- 	if (req->rq_pool || !req->rq_reqbuf)
- 		return;
+--- a/drivers/mtd/nand/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/fsl_ifc_nand.c
+@@ -255,11 +255,7 @@ static void fsl_ifc_run_command(struct m
+ 		int sector_end = sector_start + chip->ecc.steps - 1;
+ 		__be32 *eccstat_regs;
  
--	kfree(req->rq_reqbuf);
-+	kvfree(req->rq_reqbuf);
- 	req->rq_reqbuf = NULL;
- 	req->rq_reqbuf_len = 0;
- }
+-		if (ctrl->version >= FSL_IFC_VERSION_2_0_0)
+-			eccstat_regs = ifc->ifc_nand.v2_nand_eccstat;
+-		else
+-			eccstat_regs = ifc->ifc_nand.v1_nand_eccstat;
+-
++		eccstat_regs = ifc->ifc_nand.nand_eccstat;
+ 		eccstat = ifc_in32(&eccstat_regs[sector_start / 4]);
+ 
+ 		for (i = sector_start; i <= sector_end; i++) {
+--- a/include/linux/fsl_ifc.h
++++ b/include/linux/fsl_ifc.h
+@@ -734,11 +734,7 @@ struct fsl_ifc_nand {
+ 	u32 res19[0x10];
+ 	__be32 nand_fsr;
+ 	u32 res20;
+-	/* The V1 nand_eccstat is actually 4 words that overlaps the
+-	 * V2 nand_eccstat.
+-	 */
+-	__be32 v1_nand_eccstat[2];
+-	__be32 v2_nand_eccstat[6];
++	__be32 nand_eccstat[8];
+ 	u32 res21[0x1c];
+ 	__be32 nanndcr;
+ 	u32 res22[0x2];
