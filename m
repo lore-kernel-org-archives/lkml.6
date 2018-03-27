@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-133288-1522172405-2-9310378674825174856
+X-Cyrus-Session-Id: sloti22d1t05-133288-1522172389-2-15459516487468852811
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522172404; b=ciYbQA+jIaVVE44JyHgDCa+4u2GkfTdnQ6qPTzBSbl1fNCV
-    1uiqsBALbH63G7rJb78rsAvsrMjMSmExVfu4TgkowiHkZ1xTCP0CGttKo/EVKgDu
-    Kildfeif/9SvuQU/eSM8XQS9VRSG6SayRqhiKlovYy0ELHo2gzB9Bw1PRBWNZJ81
-    7tBPxQqG/R6UsD5t4fZM4GNd6e2qVTAP80JempI87QXDaFJWL7+CQfFswH8WtPm8
-    qMaNjNgLSTPZLNPbTX1z2Ygh5PAlMRUShVs03YBbq4sh5T+sns8pl8urKizQukdG
-    26yiIQvuZwV+26giwdJxqtyu78Hfe2X5/KDhhbA==
+    t=1522172389; b=BHkxHVB3mEykwssJbJr8dZ2qkF0ZgxtMHkna3Wn/SEUcPRX
+    X3jnbzCDdmTgAjNNfeAwzKqeyttScCHGK+CaYnEdoK6mrtdAQCUO79CxxoazBtlH
+    fBSADGBoXDSfRdswf+FYrn6UMVy1f2JLyErajQC6PPDAmG5K3Sh+19YK+6WZh2iP
+    n/Th1pk8NMDwckefZ769R/Hqvn80shELCINZRAoEToW6WFwDcjTgF774mVhhCQBN
+    IJcCHPLU4+xkDm8uGTCKSK6buNeTkAhVk/lIuiFLDOnLUGl24D1lzJuCH+RKROm6
+    79J84tocgpfQ4oPGP5bjkc+HoXiMbjzPBGYhtHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522172404; bh=zLB1pe7uTOG8xY1yemv3EXuA1z
-    q3wslZMy63eR4xCvI=; b=hV43mBsYZrZQ9ZXjoTtg8JbgbNGGxhHfQn8nKf5DkF
-    dl8HLrx/ID5Zi8AL922Vp4x/iR5Fo4gyKZ9tMrg2zCbigQeGKhCbqpjHB/BMhC6u
-    GJ8hHGuRScaqwUJXPjRP/Hq23DrAUVpQebjabYqNTE3CyGJAl0EUgnz6PLg7uDFC
-    N15vIAEVoKaB/mHzPE5KzpEALoLp4ln6R7DbfHC3hsQ9quH7BgpsGN23HbkUcgpx
-    jDD8b7AqVjsqpjKw+Yo5SqF0FMdP6YXT5HI9tg1/FB9okSP3PrAjVPIcjL6mSmrB
-    O8UtMrwoNsmjkk0evljCqBvYxalHDZtip+X2dkJsdFPw==
+    :list-id; s=arctest; t=1522172389; bh=Bw3tvjJSqenHMNcAL/O6pab7HY
+    PGe+zGwL+vsSkWpnM=; b=NRfmmYCttDRljM0pigXgq/mCpK3biWJhZIwsJdedlC
+    WjZpxSHQF6kJqxouGyhtKFpD2GPzdaHEw/+iRzV2iadWuHFCj3P8UzHwfjSw5KFJ
+    w4MNaVTrPhCTJ4VDUFA7VznaMuRCw254QWb1wd8mI/n5cnWP62Qj44dPSeMWAL4V
+    ybQH+4OfbL6q7cXU3jK5W3FavdgVfzWqPYvfAu5Rr9RDt0l+4GTodsbN2Jez+teO
+    BI4BueTuQ0P+bJCLE2sXPkxL+Nm7IKrl8eUCE6LsL1UAUV7E180UziEB6I0QMlrR
+    Ipit1FQCoyF+m1Labl+OQsWdmbXLJea4EjeL4w1gpFjQ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,35 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIPVG29/5KC3mc0BAG38H7qPdEeyQLAEPlLanBEQCns5dEnXP5wqD1GMIoJCOmnt0PNcJn4oxebAZWJrhF69EIDLFg/79kmmdxPWQA5nIftVYQzTETh4
-    zEI+OWKc9rBNHN4Hej+3tpPqnRlcWJnOJsWAuGbeOqUotmeuj3X+03bJAh2ZG4B24BX9H8wVgI6K7JRjIE9GZVd2lbPOD5BX+IQAU6fT/FNwjWW8i0aRpNsY
+X-CM-Envelope: MS4wfDQ+TnVuJSZmUrkBgr8/41I+ag6+uwO+EW90ABNoFcwxM+km8NLMRM4MeWGSvQLP52bpCAhKWZ1Cooh/luSKUkQzICQP/G9uM47Gmu205/sJS2YgzTaL
+    5L5+fbzj9mNyMvYkvD/aLRXi6gVo31APtwdYWmcZC6iA0FzlqSvQOix+Y8ykmAXIKwKWwNEWuf+istlMlZx7fjCAZQtvAC+6BnBpqiegolmWqnSzug82N1HG
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=gPJu0pBYAAAA:8 a=Vxy2kpnnAAAA:8 a=WPyIoOwQAAAA:8 a=VwQbUJbxAAAA:8
-    a=ag1SF4gXAAAA:8 a=aPybxlVnr8FfNYOFDaoA:9 a=QEXdDO2ut3YA:10
-    a=AlIIF0cMT2hfDT4axODj:22 a=mQL3ssppXrSh16SuiSjD:22 a=S-HzPIwwDS8t1QcwSuWs:22
+    a=mK_AVkanAAAA:8 a=WPyIoOwQAAAA:8 a=Vxy2kpnnAAAA:8 a=VwQbUJbxAAAA:8
+    a=ag1SF4gXAAAA:8 a=nMMflWAxvouxslZPM44A:9 a=QEXdDO2ut3YA:10
+    a=3gWm3jAn84ENXaBijsEo:22 a=S-HzPIwwDS8t1QcwSuWs:22 a=mQL3ssppXrSh16SuiSjD:22
     a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754044AbeC0Rjs (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 13:39:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44336 "EHLO
+        id S1754219AbeC0Qe0 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:34:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44354 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754207AbeC0QeT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:34:19 -0400
+        with ESMTP id S1753712AbeC0QeW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:34:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neil@brown.name>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        John Crispin <john@phrozen.org>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Mathias Kresin <dev@kresin.me>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        John Crispin <john@phrozen.org>, linux-mips@linux-mips.org,
         James Hogan <jhogan@kernel.org>
-Subject: [PATCH 4.14 002/101] MIPS: ralink: Fix booting on MT7621
-Date: Tue, 27 Mar 2018 18:26:34 +0200
-Message-Id: <20180327162750.137919079@linuxfoundation.org>
+Subject: [PATCH 4.14 003/101] MIPS: lantiq: Fix Danube USB clock
+Date: Tue, 27 Mar 2018 18:26:35 +0200
+Message-Id: <20180327162750.205847720@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -96,100 +97,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neil@brown.name>
+From: Mathias Kresin <dev@kresin.me>
 
-commit a63d706ea719190a79a6c769e898f70680044d3e upstream.
+commit 214cbc14734958fe533916fdb4194f5983ad4bc4 upstream.
 
-Since commit 3af5a67c86a3 ("MIPS: Fix early CM probing") the MT7621 has
-not been able to boot.
+On Danube the USB0 controller registers are at 1e101000 and the USB0 PHY
+register is at 1f203018 similar to all other lantiq SoCs. Activate the
+USB controller gating clock thorough the USB controller driver and not
+the PHY.
 
-This commit caused mips_cm_probe() to be called before
-mt7621.c::proc_soc_init().
+This fixes a problem introduced in a previous commit.
 
-prom_soc_init() has a comment explaining that mips_cm_probe() "wipes out
-the bootloader config" and means that configuration registers are no
-longer available. It has some code to re-enable this config.
-
-Before this re-enable code is run, the sysc register cannot be read, so
-when SYSC_REG_CHIP_NAME0 is read, a garbage value is returned and
-panic() is called.
-
-If we move the config-repair code to the top of prom_soc_init(), the
-registers can be read and boot can proceed.
-
-Very occasionally, the first register read after the reconfiguration
-returns garbage, so add a call to __sync().
-
-Fixes: 3af5a67c86a3 ("MIPS: Fix early CM probing")
-Signed-off-by: NeilBrown <neil@brown.name>
-Reviewed-by: Matt Redfearn <matt.redfearn@mips.com>
-Cc: John Crispin <john@phrozen.org>
+Fixes: dea54fbad332 ("phy: Add an USB PHY driver for the Lantiq SoCs using the RCU module")
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: John Crispin <john@phrozen.org>
 Cc: linux-mips@linux-mips.org
-Cc: <stable@vger.kernel.org> # 4.5+
-Patchwork: https://patchwork.linux-mips.org/patch/18859/
+Cc: <stable@vger.kernel.org> # 4.14+
+Patchwork: https://patchwork.linux-mips.org/patch/18816/
 Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/ralink/mt7621.c |   42 ++++++++++++++++++++++--------------------
- 1 file changed, 22 insertions(+), 20 deletions(-)
+ arch/mips/lantiq/xway/sysctrl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/ralink/mt7621.c
-+++ b/arch/mips/ralink/mt7621.c
-@@ -170,6 +170,28 @@ void prom_soc_init(struct ralink_soc_inf
- 	u32 n1;
- 	u32 rev;
- 
-+	/* Early detection of CMP support */
-+	mips_cm_probe();
-+	mips_cpc_probe();
-+
-+	if (mips_cps_numiocu(0)) {
-+		/*
-+		 * mips_cm_probe() wipes out bootloader
-+		 * config for CM regions and we have to configure them
-+		 * again. This SoC cannot talk to pamlbus devices
-+		 * witout proper iocu region set up.
-+		 *
-+		 * FIXME: it would be better to do this with values
-+		 * from DT, but we need this very early because
-+		 * without this we cannot talk to pretty much anything
-+		 * including serial.
-+		 */
-+		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
-+		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
-+				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
-+		__sync();
-+	}
-+
- 	n0 = __raw_readl(sysc + SYSC_REG_CHIP_NAME0);
- 	n1 = __raw_readl(sysc + SYSC_REG_CHIP_NAME1);
- 
-@@ -194,26 +216,6 @@ void prom_soc_init(struct ralink_soc_inf
- 
- 	rt2880_pinmux_data = mt7621_pinmux_data;
- 
--	/* Early detection of CMP support */
--	mips_cm_probe();
--	mips_cpc_probe();
--
--	if (mips_cps_numiocu(0)) {
--		/*
--		 * mips_cm_probe() wipes out bootloader
--		 * config for CM regions and we have to configure them
--		 * again. This SoC cannot talk to pamlbus devices
--		 * witout proper iocu region set up.
--		 *
--		 * FIXME: it would be better to do this with values
--		 * from DT, but we need this very early because
--		 * without this we cannot talk to pretty much anything
--		 * including serial.
--		 */
--		write_gcr_reg0_base(MT7621_PALMBUS_BASE);
--		write_gcr_reg0_mask(~MT7621_PALMBUS_SIZE |
--				    CM_GCR_REGn_MASK_CMTGT_IOCU0);
--	}
- 
- 	if (!register_cps_smp_ops())
- 		return;
+--- a/arch/mips/lantiq/xway/sysctrl.c
++++ b/arch/mips/lantiq/xway/sysctrl.c
+@@ -562,7 +562,7 @@ void __init ltq_soc_init(void)
+ 	} else {
+ 		clkdev_add_static(ltq_danube_cpu_hz(), ltq_danube_fpi_hz(),
+ 				ltq_danube_fpi_hz(), ltq_danube_pp32_hz());
+-		clkdev_add_pmu("1f203018.usb2-phy", "ctrl", 1, 0, PMU_USB0);
++		clkdev_add_pmu("1e101000.usb", "otg", 1, 0, PMU_USB0);
+ 		clkdev_add_pmu("1f203018.usb2-phy", "phy", 1, 0, PMU_USB0_P);
+ 		clkdev_add_pmu("1e103000.sdio", NULL, 1, 0, PMU_SDIO);
+ 		clkdev_add_pmu("1e103100.deu", NULL, 1, 0, PMU_DEU);
