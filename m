@@ -1,64 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752161AbeC0VUD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:20:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42856 "EHLO mail.kernel.org"
+        id S1752189AbeC0VUm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:20:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:55579 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751088AbeC0VUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:20:01 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD777217D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-X-Google-Smtp-Source: AIpwx4+wJKLipe9J6cKZnwv5On9LZu73IR0tOxGAdE4kGCUyoLw/FsKnDI9PLjWKmvxX95S95/Jmy1UYxzxF8966rSQ=
+        id S1750965AbeC0VUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:20:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,368,1517904000";
+   d="scan'208";a="41784472"
+Date: Wed, 28 Mar 2018 05:15:58 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [RFC PATCH] KVM: X86: force_emulation_prefix can be static
+Message-ID: <20180327211558.GA74075@lkp-sb05>
+References: <1522141616-9825-3-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAtXAHeo_CGLqUPF=QfXojX2ZM0OJJ79PvrK6pmgn190zs0dLA@mail.gmail.com>
-References: <20180327195957.3878-1-atull@kernel.org> <20180327195957.3878-3-atull@kernel.org>
- <CAAtXAHeo_CGLqUPF=QfXojX2ZM0OJJ79PvrK6pmgn190zs0dLA@mail.gmail.com>
-From: Alan Tull <atull@kernel.org>
-Date: Tue, 27 Mar 2018 16:19:19 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRhzq+twBJQyJL5HJ7hxpt_ZDa0GQP6qq4JKMd3siT_bA@mail.gmail.com>
-Message-ID: <CANk1AXRhzq+twBJQyJL5HJ7hxpt_ZDa0GQP6qq4JKMd3siT_bA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3 2/4] fpga: manager: don't use drvdata in common
- fpga code
-To: Moritz Fischer <moritz.fischer@ettus.com>
-Cc: Anatolij Gustschin <agust@denx.de>,
-        Matthew Gerlach <matthew.gerlach@linux.intel.com>,
-        Joel Holdsworth <joel@airwebreathe.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Joshua Clayton <stillcompiling@gmail.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fpga@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522141616-9825-3-git-send-email-wanpengli@tencent.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 3:11 PM, Moritz Fischer
-<moritz.fischer@ettus.com> wrote:
-> On Tue, Mar 27, 2018 at 12:59 PM, Alan Tull <atull@kernel.org> wrote:
->> Change fpga_mgr_register to not set or use drvdata.
->>
->> Change the register/unregister function parameters to take the mgr
->> struct:
->> * int fpga_mgr_register(struct fpga_manager *mgr);
->> * void fpga_mgr_unregister(struct fpga_manager *mgr);
->>
->> Change the drivers that call fpga_mgr_register to alloc the struct
->> fpga_manager (using devm_kzalloc) and partly fill it, adding name,
->> ops, parent device, and priv.
->>
->> The rationale is that setting drvdata is fine for DT based devices
->> that will have one manager, bridge, or region per platform device.
->> However PCIe based devices may have multiple FPGA mgr/bridge/regions
->> under one PCIe device.  Without these changes, the PCIe solution has
->> to create an extra device for each child mgr/bridge/region to hold
->> drvdata.
->>
->> Signed-off-by: Alan Tull <atull@kernel.org>
->> Reported-by: Jiuyue Ma <majiuyue@huawei.com>
-> Acked-by: Moritz Fischer <mdf@kernel.org>
 
-Thanks Moritz!
+Fixes: 9e028a15a849 ("KVM: X86: Add Force Emulation Prefix for "emulate the next instruction"")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+---
+ x86.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alan
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 17bb968..44f1e72 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -146,7 +146,7 @@ bool __read_mostly enable_vmware_backdoor = false;
+ module_param(enable_vmware_backdoor, bool, S_IRUGO);
+ EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
+ 
+-bool __read_mostly force_emulation_prefix = false;
++static bool __read_mostly force_emulation_prefix = false;
+ module_param(force_emulation_prefix, bool, S_IRUGO);
+ 
+ #define KVM_NR_SHARED_MSRS 16
