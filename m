@@ -1,76 +1,124 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1522236338; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AG47ELspAvN0bqRFmoMsdxIvUvzQ4RA1V1D65UZugHPr3J5BXyTUe7Tt1tMEy2Wn2WyuaSwPi0ar
+ARC-Seal: i=1; a=rsa-sha256; t=1522128625; cv=none;
         d=google.com; s=arc-20160816;
-        b=RM1SZ0ufYvXdCK+QkLOGUaR1qUbLgqaF7GAl6uCwz0pNLfY7abl4VBQXeTCfKPEmjp
-         REWs/0suJt0Tcgb/zmpFsQAuMir3sreSjbRr+hTum3ZoMwI8625YqWLBK4KMAuu0TV0h
-         h5fsEtNv94E6Qd2bh+acbn8je9SU4rFibKSf9OksA7zmbUUvlXYxfpEJgHGoP9cLDqyY
-         vwtjmF7ly5/0CY95ssDS+NO3QJWQ4VZIvUS6LlinyZeKUDdpxpxYxqmmvPTIESGovdTW
-         X3r6Fsd1zAfh5+JpzCx6ODEG9356aPBg7o/p/LgKE6htcRxCOf3NpyHD1gNfjuRw/MXg
-         5Jzg==
+        b=hVlgiQzEbrG4MQKuA1FDlvL05SKzi/1i6VF2LhgxURaE2qkwr58zqX28oZY3E9yvK4
+         LKaUPGHamGlMA11MhDeMDpZR7FUPovCjCjkbhPE55dCTlvK0tEl2ppOhyByV4+2UyAoJ
+         VUbIkPk2bA0O22dXtinimOd3rWc9u6+wxS8qVA4g3UNSSugE52fVfYcUm3HFCQntNg9N
+         A/YShlw1biSdC9mkCzQoNY5vLS46O42NbYkqO63nj9rv1mdpkK2NOTSCCsJSY56G7+3+
+         D+cG0vWNc5awdqTFLuvQGyhHPJiMEigBeajacZ4tmR74CXDYuUeRGE78uro4Qz9cVFU1
+         E53A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=6CgAIPry5K9Az1AdGf3WrsA5F27J7xCc7ru8FozndyM=;
-        b=vm7TrJ0XevC4TnAr2qiL85FPhE8dVF7B7Vydyld7uix3X6FN6zEtm4bZ4Fvr+0LIWs
-         f8aMctNCtgcAdWdwdZDnVKCnQj01DKT046F2eMFlzSbIoLcF9g6ZQvqtrSn3e0XTWysH
-         ABbaLNY8e55Q5+a3dL7F7g0ptmfXA2y8+MmgtQb4Ei/kbQ0jSyq2v6RM6TEnuGJ/fD5+
-         kObU3CrvaZzccME0I7ytqI0qIxwUteNdDV5y7qSzepjAb5VPbrWQZclO7lQjVh9fgZ5R
-         qMLbY4KSCVP5b1slmm3fEefheowgzSl3Vc0oOs3GpZ/4u3+7+oqtbsfYCdg49HHi03z6
-         DWUQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-filter:arc-authentication-results;
+        bh=RYqC1QRkceoAm9+CHevbEu7OH/qqF2FDZaEeQkX7ooA=;
+        b=TB0CmpF9UmMXeiBV6xfpwpyLjKW1C1sbABtveqPeTtBFX6iekugOVq3KR6nYPsBqqh
+         q9dVJ8BEYgWaWWKja0gkzjFG93aCOD6v7wOezbby1db5Y1zMIT5LTHhtQB+KZuOdyGll
+         OEL8TdiHZAesxDelTekalQByxl27z+auaXuYyfOCA5hwGdsw3IWol2ZHsSlBpcvI0dDj
+         CiHe1QjRt06oRF1nZkJzsgKFOCVFpBEl3gOqvDwK7VLjt2Rk1ghmy+IgnfEwPKH5r2kv
+         NeR3BQEJQ/nZ22CqXrkvXoxuOdxiOYv9Lihoq9uyV8L9Rjd+tNkSpt5nFwTsdVBAWeVI
+         cI6A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Mn5qqHzM;
-       dkim=pass header.i=@chromium.org header.s=google header.b=aZSzu1SA;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=qfBbq9xZ;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=Mn5qqHzM;
-       dkim=pass header.i=@chromium.org header.s=google header.b=aZSzu1SA;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AIpwx49RQSvZzYMdW64meTjkbe/2ya50DxkyYnEW1biIJuUv/pbxzTIy68ZLKLDRQY3UivCfuacICoJqjry9F7igc6M=
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <1522128575-5326-17-git-send-email-yamada.masahiro@socionext.com>
-References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com> <1522128575-5326-17-git-send-email-yamada.masahiro@socionext.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 28 Mar 2018 04:25:37 -0700
-X-Google-Sender-Auth: V91EQtoyFm7i6-0MVMhfHxtNw28
-Message-ID: <CAGXu5j+YCwPjd9ha2hP26Wjho8q4vVA6kzvOjGUROVJxffGekQ@mail.gmail.com>
-Subject: Re: [PATCH v2 16/21] kcov: imply GCC_PLUGINS and GCC_PLUGIN_SANCOV
- instead of select'ing them
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-	Ulf Magnusson <ulfalizer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=qfBbq9xZ;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.76 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2R5TaLx011947
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Nicolas Pitre <nico@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 14/21] kconfig: add CC_IS_CLANG and CLANG_VERSION
+Date: Tue, 27 Mar 2018 14:29:28 +0900
+Message-Id: <1522128575-5326-15-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596067544988572436?=
-X-GMAIL-MSGID: =?utf-8?q?1596180491453525736?=
+X-GMAIL-THRID: =?utf-8?q?1596067545333051904?=
+X-GMAIL-MSGID: =?utf-8?q?1596067545333051904?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Mar 26, 2018 at 10:29 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> As Documentation/kbuild/kconfig-language.txt notes, 'select' should be
-> used with care - it forces a lower limit of another symbol, ignoring
-> the dependency.  In this case, KCOV can select GCC_PLUGINS even if
-> 'depends on HAVE_GCC_PLUGINS' is unmet.
->
-> 'imply' is modest enough to observe the dependency, and this makes
-> sense.  If you enable KCOV, you will probably want to enable
-> GCC_PLUGIN_SANCOV, but it should not break the dependency.
->
-> I also remove unneeded code, I just happened to notice.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+This will be useful to describe the clang version dependency.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
--Kees
+Changes in v2: None
 
+ init/Kconfig             |  7 +++++++
+ scripts/clang-version.sh | 24 +++++++++++-------------
+ 2 files changed, 18 insertions(+), 13 deletions(-)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index 923cab5..5998034 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -22,6 +22,13 @@ config GCC_VERSION
+ 	default $(shell $srctree/scripts/gcc-version.sh -p $CC | sed 's/^0*//') if CC_IS_GCC
+ 	default 0
+ 
++config CC_IS_CLANG
++	def_bool $(success $CC --version | grep -q clang)
++
++config CLANG_VERSION
++	int
++	default $(shell $srctree/scripts/clang-version.sh $CC)
++
+ config CONSTRUCTORS
+ 	bool
+ 	depends on !UML
+diff --git a/scripts/clang-version.sh b/scripts/clang-version.sh
+index 9780efa..d8002d2 100755
+--- a/scripts/clang-version.sh
++++ b/scripts/clang-version.sh
+@@ -10,24 +10,22 @@
+ # clang-5.0.1 etc.
+ #
+ 
+-if [ "$1" = "-p" ] ; then
+-	with_patchlevel=1;
+-	shift;
+-fi
+-
+ compiler="$*"
+ 
+ if [ ${#compiler} -eq 0 ]; then
+-	echo "Error: No compiler specified."
+-	printf "Usage:\n\t$0 <clang-command>\n"
++	echo "Error: No compiler specified." >&2
++	printf "Usage:\n\t$0 <clang-command>\n" >&2
++	echo 0
++	exit 1
++fi
++
++if !( $compiler --version | grep -q clang) ; then
++	echo "This is not clang." >&2
++	echo 0
+ 	exit 1
+ fi
+ 
+ MAJOR=$(echo __clang_major__ | $compiler -E -x c - | tail -n 1)
+ MINOR=$(echo __clang_minor__ | $compiler -E -x c - | tail -n 1)
+-if [ "x$with_patchlevel" != "x" ] ; then
+-	PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
+-	printf "%02d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
+-else
+-	printf "%02d%02d\\n" $MAJOR $MINOR
+-fi
++PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
++printf "%d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
 -- 
-Kees Cook
-Pixel Security
+2.7.4
