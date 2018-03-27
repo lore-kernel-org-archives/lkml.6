@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49xP8/3wN9/3ub3QLKFKGXTzEy5BOctRBdcie9wiPdXB39V575TOCWeY4L4+5EgkthS/rXT
-ARC-Seal: i=1; a=rsa-sha256; t=1522168928; cv=none;
+X-Google-Smtp-Source: AIpwx48M3l54g/EfFG8ZsFjCv1rMCZ4Bgewlev4Yh/0snOuZmMWUXXg4nmdEBRjRObMEnAkRqlHU
+ARC-Seal: i=1; a=rsa-sha256; t=1522168925; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZNL39fdld+CrIkSbwmpBHLde5YY4IUxE8yySWtgWQBaKlYcwwRNxdSC84eCmXvMh4+
-         fpKTYIUunz2gJ0y7iGlhQerd+hzwEHeS4/umIq8KQDpf2oqx38yrMcb6rNZLMMGjVIIJ
-         Zu43xSIbFmRnYluO1FTU/oH3yHA7+PKLKh5kPs0IjeQ2tdzRU9a0wSF26M5CeKNon0R/
-         K9CKaqmBb7Y4qr8Ic1ynnvCsquNo9kr5cOJDiHqxeEFajrw8MYTpcu/9jda2Zz3KAswU
-         +kkjscWuEUwfHljB9CcIyTsrPrg/SNuE13kT4Ew19gV2WF+An2aYIfAP6yhC7k0Lpfl6
-         Lc2Q==
+        b=VC4yENEAY9kYBDXFwxvEx70QoPAvmxcXjTb1weM2ogiaYF3eS6TBOT4tXDjxdIp/Le
+         WFk/wT0HtoH8pLSQofzN86U3epwHJLWZOpBcnt8AwiAo6nmJsxiiEgHGgS3eAEtw7ID7
+         /O/8ADqKpxOwwgojyfHoDmu+SYkzkuL18VhUZGTfurByBc+LtlC/ylOtocciB4dqGDs9
+         21LP3zMnym3laPeiARkatSlxcE2qvYZUtlS6ijMK0pvo8FiQVSQZUromQnfFIgUqQZ/t
+         HKhTtgeCLFxh4MQCQ7p+/4d9d1LIyTMJ7qguHWss4jRkx0rJQ8fDwAlr0BncoMIshdNd
+         W4hw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XGfvYn3FMQBROmQa0/xHoZprINvgmBNcBVp+54Qe2nA=;
-        b=ati3u6NKzihxxYjvF/BZHSK9HMDtPCs8EqRnCbyTtkp3CTvHks7MUxR4Zx6Yq8tmPC
-         Z1BsdDKyqFJzQuw8r8L7WrmRJE1F5cF8JbBG7Qaj/vr1n+ylXvcPEDP3KzvEbh/3YKpX
-         5rKgABP7pXJ2Oj3pQPs6+UF02awwm0z5EvQE+9qKLsFcVWHduOqk3hFr9r8YN46zKoHE
-         CjKYC7hVkRh+srZbGgJCR3pf9Yx1hJrxhwpOQR5W9S9ggZtVlZKt3iQL0ESFrlSazp0U
-         /aC979mGIEFR2zGzKsH36PlBu7BRS9pW/W6hgfsfHNQAAzAv9Wpoofl/QLCjyz8qLH/q
-         w4eQ==
+        bh=AYgwGhos/HhMRwiVglsW7xamwJRYQXYWSOK6sUuxhT0=;
+        b=OQHPSGqkjdVD2R36G9N0jv68s1JeIuLGhF5YKxHkgwv+4dO9+54f8eMMDU08BYTNnX
+         yDeGbcXGuwDRJuTGb5r4U18jHXEPr2l/nX75kRCSGw5DtDXjAyoYWproyZGdSn1mLR53
+         Bm41KXenbKuv5tdJAFxqopy1pBsQwLCvJlFWJNiHEYvlROxw939wNF4o9PLRzeFXJb+J
+         YmpxzPNgYTRPqTS5hADjZPfCbiBaPV+7IqTu7yNc126hF+m/kYRGI8kV2wTv0+RCMO1C
+         IT4OYIpeiUgWHhVoBrG/1GX6C18SnVsMM0YNYrck5MLWFjUMSBYf3e1XTgrIrKSQIMsb
+         Npng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.15 083/105] x86/entry/64: Dont use IST entry for #BP stack
-Date: Tue, 27 Mar 2018 18:28:03 +0200
-Message-Id: <20180327162803.396185242@linuxfoundation.org>
+	James Holderness <j4_james@hotmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.15 082/105] tty: vt: fix up tabstops properly
+Date: Tue, 27 Mar 2018 18:28:02 +0200
+Message-Id: <20180327162803.352968439@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109065580803384?=
-X-GMAIL-MSGID: =?utf-8?q?1596109806142627102?=
+X-GMAIL-THRID: =?utf-8?q?1596109032191105201?=
+X-GMAIL-MSGID: =?utf-8?q?1596109803252183313?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,97 +49,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit d8ba61ba58c88d5207c1ba2f7d9a2280e7d03be9 upstream.
+commit f1869a890cdedb92a3fab969db5d0fd982850273 upstream.
 
-There's nothing IST-worthy about #BP/int3.  We don't allow kprobes
-in the small handful of places in the kernel that run at CPL0 with
-an invalid stack, and 32-bit kernels have used normal interrupt
-gates for #BP forever.
+Tabs on a console with long lines do not wrap properly, so correctly
+account for the line length when computing the tab placement location.
 
-Furthermore, we don't allow kprobes in places that have usergs while
-in kernel mode, so "paranoid" is also unnecessary.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Reported-by: James Holderness <j4_james@hotmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/entry/entry_64.S |    2 +-
- arch/x86/kernel/idt.c     |    2 --
- arch/x86/kernel/traps.c   |   15 ++++++++-------
- 3 files changed, 9 insertions(+), 10 deletions(-)
+ drivers/tty/vt/vt.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1097,7 +1097,7 @@ apicinterrupt3 HYPERVISOR_CALLBACK_VECTO
- #endif /* CONFIG_HYPERV */
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -1727,7 +1727,7 @@ static void reset_terminal(struct vc_dat
+ 	default_attr(vc);
+ 	update_attr(vc);
  
- idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
--idtentry int3			do_int3			has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
-+idtentry int3			do_int3			has_error_code=0
- idtentry stack_segment		do_stack_segment	has_error_code=1
- 
- #ifdef CONFIG_XEN
---- a/arch/x86/kernel/idt.c
-+++ b/arch/x86/kernel/idt.c
-@@ -160,7 +160,6 @@ static const __initconst struct idt_data
-  */
- static const __initconst struct idt_data dbg_idts[] = {
- 	INTG(X86_TRAP_DB,	debug),
--	INTG(X86_TRAP_BP,	int3),
- };
- #endif
- 
-@@ -183,7 +182,6 @@ gate_desc debug_idt_table[IDT_ENTRIES] _
- static const __initconst struct idt_data ist_idts[] = {
- 	ISTG(X86_TRAP_DB,	debug,		DEBUG_STACK),
- 	ISTG(X86_TRAP_NMI,	nmi,		NMI_STACK),
--	SISTG(X86_TRAP_BP,	int3,		DEBUG_STACK),
- 	ISTG(X86_TRAP_DF,	double_fault,	DOUBLEFAULT_STACK),
- #ifdef CONFIG_X86_MCE
- 	ISTG(X86_TRAP_MC,	&machine_check,	MCE_STACK),
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -577,7 +577,6 @@ do_general_protection(struct pt_regs *re
- }
- NOKPROBE_SYMBOL(do_general_protection);
- 
--/* May run on IST stack. */
- dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
- {
- #ifdef CONFIG_DYNAMIC_FTRACE
-@@ -592,6 +591,13 @@ dotraplinkage void notrace do_int3(struc
- 	if (poke_int3_handler(regs))
- 		return;
- 
-+	/*
-+	 * Use ist_enter despite the fact that we don't use an IST stack.
-+	 * We can be called from a kprobe in non-CONTEXT_KERNEL kernel
-+	 * mode or even during context tracking state changes.
-+	 *
-+	 * This means that we can't schedule.  That's okay.
-+	 */
- 	ist_enter(regs);
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
- #ifdef CONFIG_KGDB_LOW_LEVEL_TRAP
-@@ -609,15 +615,10 @@ dotraplinkage void notrace do_int3(struc
- 			SIGTRAP) == NOTIFY_STOP)
- 		goto exit;
- 
--	/*
--	 * Let others (NMI) know that the debug stack is in use
--	 * as we may switch to the interrupt stack.
--	 */
--	debug_stack_usage_inc();
- 	cond_local_irq_enable(regs);
- 	do_trap(X86_TRAP_BP, SIGTRAP, "int3", regs, error_code, NULL);
- 	cond_local_irq_disable(regs);
--	debug_stack_usage_dec();
-+
- exit:
- 	ist_exit(regs);
- }
+-	vc->vc_tab_stop[0]	= 0x01010100;
++	vc->vc_tab_stop[0]	=
+ 	vc->vc_tab_stop[1]	=
+ 	vc->vc_tab_stop[2]	=
+ 	vc->vc_tab_stop[3]	=
+@@ -1771,7 +1771,7 @@ static void do_con_trol(struct tty_struc
+ 		vc->vc_pos -= (vc->vc_x << 1);
+ 		while (vc->vc_x < vc->vc_cols - 1) {
+ 			vc->vc_x++;
+-			if (vc->vc_tab_stop[vc->vc_x >> 5] & (1 << (vc->vc_x & 31)))
++			if (vc->vc_tab_stop[7 & (vc->vc_x >> 5)] & (1 << (vc->vc_x & 31)))
+ 				break;
+ 		}
+ 		vc->vc_pos += (vc->vc_x << 1);
+@@ -1831,7 +1831,7 @@ static void do_con_trol(struct tty_struc
+ 			lf(vc);
+ 			return;
+ 		case 'H':
+-			vc->vc_tab_stop[vc->vc_x >> 5] |= (1 << (vc->vc_x & 31));
++			vc->vc_tab_stop[7 & (vc->vc_x >> 5)] |= (1 << (vc->vc_x & 31));
+ 			return;
+ 		case 'Z':
+ 			respond_ID(tty);
+@@ -2024,7 +2024,7 @@ static void do_con_trol(struct tty_struc
+ 			return;
+ 		case 'g':
+ 			if (!vc->vc_par[0])
+-				vc->vc_tab_stop[vc->vc_x >> 5] &= ~(1 << (vc->vc_x & 31));
++				vc->vc_tab_stop[7 & (vc->vc_x >> 5)] &= ~(1 << (vc->vc_x & 31));
+ 			else if (vc->vc_par[0] == 3) {
+ 				vc->vc_tab_stop[0] =
+ 					vc->vc_tab_stop[1] =
