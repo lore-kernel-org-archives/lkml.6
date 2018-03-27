@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48M3l54g/EfFG8ZsFjCv1rMCZ4Bgewlev4Yh/0snOuZmMWUXXg4nmdEBRjRObMEnAkRqlHU
-ARC-Seal: i=1; a=rsa-sha256; t=1522168925; cv=none;
+X-Google-Smtp-Source: AIpwx49qwpWrGl4R/RKfU3l9BjhXHgB4ejdE5qsteL7PB6KmR0iFqjRxraBvnzZDmJ9xWqH70cen
+ARC-Seal: i=1; a=rsa-sha256; t=1522168922; cv=none;
         d=google.com; s=arc-20160816;
-        b=VC4yENEAY9kYBDXFwxvEx70QoPAvmxcXjTb1weM2ogiaYF3eS6TBOT4tXDjxdIp/Le
-         WFk/wT0HtoH8pLSQofzN86U3epwHJLWZOpBcnt8AwiAo6nmJsxiiEgHGgS3eAEtw7ID7
-         /O/8ADqKpxOwwgojyfHoDmu+SYkzkuL18VhUZGTfurByBc+LtlC/ylOtocciB4dqGDs9
-         21LP3zMnym3laPeiARkatSlxcE2qvYZUtlS6ijMK0pvo8FiQVSQZUromQnfFIgUqQZ/t
-         HKhTtgeCLFxh4MQCQ7p+/4d9d1LIyTMJ7qguHWss4jRkx0rJQ8fDwAlr0BncoMIshdNd
-         W4hw==
+        b=uK9m4G4RLTg+r2suG3lfSrKk0WmhOqnc61zeWYQBpFknPlp7VH1Wa/naty8sUV3qsu
+         xIv5tVqliCm16DLhSoO79jxlB0FJwOyJyQ5cRmqmOXx8l8NUUdpOzJ+LCycJL+NhJPij
+         TGhvi9tCI4b4q6pxj2eBjkstwvlpKqsUauL09vWran3tHBkbkJ7YIBzaiOgnz4X4DWKn
+         G8n9LTaorSwqJuFcQKWafHtbdWnX4dw9PjR+AAUF3ghn6Zz4TSw5Fg9/oQzWdHlVtA8O
+         9hEQc6oSED+Uu6tgzh6iUqYzfIWjZtGTkvY+Uq7P+biMADKw7uFcWAr6euQStxFvC4Vp
+         0Kcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AYgwGhos/HhMRwiVglsW7xamwJRYQXYWSOK6sUuxhT0=;
-        b=OQHPSGqkjdVD2R36G9N0jv68s1JeIuLGhF5YKxHkgwv+4dO9+54f8eMMDU08BYTNnX
-         yDeGbcXGuwDRJuTGb5r4U18jHXEPr2l/nX75kRCSGw5DtDXjAyoYWproyZGdSn1mLR53
-         Bm41KXenbKuv5tdJAFxqopy1pBsQwLCvJlFWJNiHEYvlROxw939wNF4o9PLRzeFXJb+J
-         YmpxzPNgYTRPqTS5hADjZPfCbiBaPV+7IqTu7yNc126hF+m/kYRGI8kV2wTv0+RCMO1C
-         IT4OYIpeiUgWHhVoBrG/1GX6C18SnVsMM0YNYrck5MLWFjUMSBYf3e1XTgrIrKSQIMsb
-         Npng==
+        bh=BdvJ8kfOktANeU3E23TEjwvbXTjKfI5QLc67m55AzkI=;
+        b=dIbR96wHDL3ZEsLk3L2Kjmt87ZTb+gs1SSaOUjvTxMSH727RTr12UPK+fHbSGYQR0J
+         56MNQDKe4+96snxcnL8pQcD9RGwRUlGPEyRFFZE7P9d5H/YgDwX/wGjzyZ4j1pN9ekru
+         tejyYntRGKXTwn/sNMPfKw4FAcC2OqZNO7UxB5xKPv7IWfWJ2cT8pugpCRyYoghjjBVA
+         8h1S3F+WeN5f0e/q9oCyp19tonMF5No/5X3RQLspRvy2CSjVwJ2P3VG0IicI13IBF9ba
+         KfJVefq0ByM5YEawdALI2pqcZYRQ6alOSrt33oHqDbseHzDXUMFcWEk3XtQs/0KEBui0
+         /NpA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Holderness <j4_james@hotmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 082/105] tty: vt: fix up tabstops properly
-Date: Tue, 27 Mar 2018 18:28:02 +0200
-Message-Id: <20180327162803.352968439@linuxfoundation.org>
+	Jagdish Gediya <jagdish.gediya@nxp.com>,
+	Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.15 073/105] mtd: nand: fsl_ifc: Read ECCSTAT0 and ECCSTAT1 registers for IFC 2.0
+Date: Tue, 27 Mar 2018 18:27:53 +0200
+Message-Id: <20180327162802.457045203@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109032191105201?=
-X-GMAIL-MSGID: =?utf-8?q?1596109803252183313?=
+X-GMAIL-THRID: =?utf-8?q?1596109230678306438?=
+X-GMAIL-MSGID: =?utf-8?q?1596109799838866673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,58 +50,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Jagdish Gediya <jagdish.gediya@nxp.com>
 
-commit f1869a890cdedb92a3fab969db5d0fd982850273 upstream.
+commit 6b00c35138b404be98b85f4a703be594cbed501c upstream.
 
-Tabs on a console with long lines do not wrap properly, so correctly
-account for the line length when computing the tab placement location.
+Due to missing information in Hardware manual, current
+implementation doesn't read ECCSTAT0 and ECCSTAT1 registers
+for IFC 2.0.
 
-Reported-by: James Holderness <j4_james@hotmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Add support to read ECCSTAT0 and ECCSTAT1 registers during
+ecccheck for IFC 2.0.
+
+Fixes: 656441478ed5 ("mtd: nand: ifc: Fix location of eccstat registers for IFC V1.0")
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Jagdish Gediya <jagdish.gediya@nxp.com>
+Reviewed-by: Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mtd/nand/fsl_ifc_nand.c |    6 +-----
+ include/linux/fsl_ifc.h         |    6 +-----
+ 2 files changed, 2 insertions(+), 10 deletions(-)
 
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1727,7 +1727,7 @@ static void reset_terminal(struct vc_dat
- 	default_attr(vc);
- 	update_attr(vc);
+--- a/drivers/mtd/nand/fsl_ifc_nand.c
++++ b/drivers/mtd/nand/fsl_ifc_nand.c
+@@ -227,11 +227,7 @@ static void fsl_ifc_run_command(struct m
+ 		int sector_end = sector_start + chip->ecc.steps - 1;
+ 		__be32 *eccstat_regs;
  
--	vc->vc_tab_stop[0]	= 0x01010100;
-+	vc->vc_tab_stop[0]	=
- 	vc->vc_tab_stop[1]	=
- 	vc->vc_tab_stop[2]	=
- 	vc->vc_tab_stop[3]	=
-@@ -1771,7 +1771,7 @@ static void do_con_trol(struct tty_struc
- 		vc->vc_pos -= (vc->vc_x << 1);
- 		while (vc->vc_x < vc->vc_cols - 1) {
- 			vc->vc_x++;
--			if (vc->vc_tab_stop[vc->vc_x >> 5] & (1 << (vc->vc_x & 31)))
-+			if (vc->vc_tab_stop[7 & (vc->vc_x >> 5)] & (1 << (vc->vc_x & 31)))
- 				break;
- 		}
- 		vc->vc_pos += (vc->vc_x << 1);
-@@ -1831,7 +1831,7 @@ static void do_con_trol(struct tty_struc
- 			lf(vc);
- 			return;
- 		case 'H':
--			vc->vc_tab_stop[vc->vc_x >> 5] |= (1 << (vc->vc_x & 31));
-+			vc->vc_tab_stop[7 & (vc->vc_x >> 5)] |= (1 << (vc->vc_x & 31));
- 			return;
- 		case 'Z':
- 			respond_ID(tty);
-@@ -2024,7 +2024,7 @@ static void do_con_trol(struct tty_struc
- 			return;
- 		case 'g':
- 			if (!vc->vc_par[0])
--				vc->vc_tab_stop[vc->vc_x >> 5] &= ~(1 << (vc->vc_x & 31));
-+				vc->vc_tab_stop[7 & (vc->vc_x >> 5)] &= ~(1 << (vc->vc_x & 31));
- 			else if (vc->vc_par[0] == 3) {
- 				vc->vc_tab_stop[0] =
- 					vc->vc_tab_stop[1] =
+-		if (ctrl->version >= FSL_IFC_VERSION_2_0_0)
+-			eccstat_regs = ifc->ifc_nand.v2_nand_eccstat;
+-		else
+-			eccstat_regs = ifc->ifc_nand.v1_nand_eccstat;
+-
++		eccstat_regs = ifc->ifc_nand.nand_eccstat;
+ 		eccstat = ifc_in32(&eccstat_regs[sector_start / 4]);
+ 
+ 		for (i = sector_start; i <= sector_end; i++) {
+--- a/include/linux/fsl_ifc.h
++++ b/include/linux/fsl_ifc.h
+@@ -734,11 +734,7 @@ struct fsl_ifc_nand {
+ 	u32 res19[0x10];
+ 	__be32 nand_fsr;
+ 	u32 res20;
+-	/* The V1 nand_eccstat is actually 4 words that overlaps the
+-	 * V2 nand_eccstat.
+-	 */
+-	__be32 v1_nand_eccstat[2];
+-	__be32 v2_nand_eccstat[6];
++	__be32 nand_eccstat[8];
+ 	u32 res21[0x1c];
+ 	__be32 nanndcr;
+ 	u32 res22[0x2];
