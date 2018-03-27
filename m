@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4881L4mSsTsLWb2MUbYmUwUnfio8V6ew91yhhF1JF8qC2S63v90UiQVU9t/BFDPvA4mYs7K
-ARC-Seal: i=1; a=rsa-sha256; t=1522168962; cv=none;
+X-Google-Smtp-Source: AIpwx48AsEPl164KpeJlbBFg4++qtQ6gJjpDIqyS+fNgXM4QVtuKYj3P1bD7KK62GbhSrCwgis5o
+ARC-Seal: i=1; a=rsa-sha256; t=1522168959; cv=none;
         d=google.com; s=arc-20160816;
-        b=Thh9QPsuO5mIeBs4ciVIoQZ9Q0vypw5IeXoyaPUwebaylMbWiFsc7AlrYi+/lMZc6h
-         18J7cJJ+bgpDKx65y7D6OgTb/RjszO24TSoyYPVtVu2KGJah+lDXDfs6HzqerXtn4NcP
-         7gyufFUTm3ns+fHhMFzs0N2ZUrV3Gevwu8zZox2BlpSn/HVyaSheET0fmJihlMcx0eFW
-         Vy7cEhykbAC1R6zWcs+3HPXud6rmSyOH53HzKm4Zs2+4fkHrKJWY1RxAdmreL9Hf+URW
-         7flR6Ur4jKoY2S/JhfSU6Bc1b86Q679twNW0O565cmhlFlIiKXw5+rOeBjL9CliYNu6m
-         bTfA==
+        b=mdvXjWhw/14xhSKrs2SQ0pC2YmXMAR8vGMku8sIJYXHQkly9pXt643Shs6vghra+EQ
+         qn8sEzGA1KrEdc99awS8D9iDXA5XDi1hPUC+/0ttrs8zLlcUtA2kQXCT8hGLU79ArIqb
+         hrxwPdibrjFYnKC9e/twXk7k1isGvrPZ+EXSQ7SiJRk+xHCcxZ06GTbpoeN6MkNdNk2J
+         EhDaASlctkXEpnqmMQXSOHEsz8vd4I46VWcL0lRYsBE5izLvvz7VapWeY7NXOhlRPi/C
+         NCu4otqitjx6wZ8dR9AWXV8bxzbJzxu9P6V++Ntqf7102hN9tp1BtPQDLRJO4MOXdW0Z
+         NHyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=82BjhwDMFh1Lj6m4oG+ZsSWpTsb6nWMQqrINCcV8zPs=;
-        b=SVXr1l5ZWqSGb3uTayhDjoL/pDaRCL0IkgOCpzeYX0DJc9jHMioRgFt40WjkM2uo+6
-         KzOMnK3vWjtXr9GYcOLDn2JMX3jVnqdfDf935gJRM5ehb/P0FPC8l3NIQ+CrZF0tkvHq
-         FYmt3BTOPXf4Bg5XvrEKxs7oB6eCqe2sHUGiXQspTZyCLuBOjdfTpNKCootTmi/A52fh
-         xcVi7cNqVhgZRmPppaTZ7lXbWVw7msUEhArBzHpTMarpSBWA1iCQEg66P8GmWn7cMEkV
-         cEaKsD4kQZGdyYWD3Y0ZyBAp4SDpHGrh7mdgzp0ZzYtCwO4HElxezyQvOSaX1ZZT63+N
-         MbkA==
+        bh=Ncau9VQK40pah4lFkj+NcP+srnWRLEtEEDTiPWAD/8g=;
+        b=dGAEhxVbjKdK3Ojj79MkPWDD0puf5kQKA8l4g5QBLHmOsigxCnXdo8XAMm3Rl6CJad
+         P4J14ghnQ9YdIN++fAwJ3U5dXapaZGhJDSDCBpbxzQgeZyIp2urc/6wcNgO87oDyIGEE
+         77hkRrYvwbykpVEPhq4Qqewbdd2t42XVEyXxpgPpFlh0t7QlSw5X5BBKJi+U4kYzux9M
+         ompKhjorj2L9sM6yxw3AQVfU5/jqWm9onmi+z3OP/2OkgtITHdIoxKlaEJdm2aANu1Pd
+         /I46MADS/QL+BtJVoDYpo+ZbibFr2mvMm/mQv2/qyikHN8zisR7hL1cy9ds6lu0CH+BJ
+         YXHg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vince Weaver <vincent.weaver@maine.edu>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 093/105] perf/x86/intel/uncore: Fix Skylake UPI event format
-Date: Tue, 27 Mar 2018 18:28:13 +0200
-Message-Id: <20180327162803.788380884@linuxfoundation.org>
+	Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.15 092/105] hwmon: (k10temp) Add temperature offset for Ryzen 1900X
+Date: Tue, 27 Mar 2018 18:28:12 +0200
+Message-Id: <20180327162803.751729515@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -48,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109216126566522?=
-X-GMAIL-MSGID: =?utf-8?q?1596109842441580019?=
+X-GMAIL-THRID: =?utf-8?q?1596109839284439815?=
+X-GMAIL-MSGID: =?utf-8?q?1596109839284439815?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,39 +48,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 317660940fd9dddd3201c2f92e25c27902c753fa upstream.
+commit 6509614fdd2d05c6926d50901a45d5dfb852b715 upstream.
 
-There is no event extension (bit 21) for SKX UPI, so
-use 'event' instead of 'event_ext'.
+Like the other CPUs from the same series, the 1900X has a
+temperature offset of 27 degrees C.
 
-Reported-by: Stephane Eranian <eranian@google.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: cd34cd97b7b4 ("perf/x86/intel/uncore: Add Skylake server uncore support")
-Link: http://lkml.kernel.org/r/1520004150-4855-1-git-send-email-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/intel/uncore_snbep.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/k10temp.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3606,7 +3606,7 @@ static struct intel_uncore_type skx_unco
- };
- 
- static struct attribute *skx_upi_uncore_formats_attr[] = {
--	&format_attr_event_ext.attr,
-+	&format_attr_event.attr,
- 	&format_attr_umask_ext.attr,
- 	&format_attr_edge.attr,
- 	&format_attr_inv.attr,
+--- a/drivers/hwmon/k10temp.c
++++ b/drivers/hwmon/k10temp.c
+@@ -86,6 +86,7 @@ static const struct tctl_offset tctl_off
+ 	{ 0x17, "AMD Ryzen 7 1800X", 20000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1950X", 27000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1920X", 27000 },
++	{ 0x17, "AMD Ryzen Threadripper 1900X", 27000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1950", 10000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1920", 10000 },
+ 	{ 0x17, "AMD Ryzen Threadripper 1910", 10000 },
