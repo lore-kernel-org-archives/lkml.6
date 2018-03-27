@@ -1,76 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752066AbeC0Hsh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 03:48:37 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41420 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751106AbeC0HsY (ORCPT
+        id S1752118AbeC0Hsz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 03:48:55 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53769 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbeC0Hsy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 03:48:24 -0400
-X-Google-Smtp-Source: AG47ELswcoktx3Dsx7Cwr25lbmh2ixhrKi+T6LU2MAtnRYkvRKlpT/nBT8vUm2qCHVfuEhpRMbx1sn6SlAahQCQZg+c=
+        Tue, 27 Mar 2018 03:48:54 -0400
+Date: Tue, 27 Mar 2018 00:48:31 -0700
+From: tip-bot for David Rientjes <tipbot@zytor.com>
+Message-ID: <tip-fc5d1073cae299de4517755a910df4f12a6a438f@git.kernel.org>
+Cc: tglx@linutronix.de, torvalds@linux-foundation.org, rientjes@google.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        dave.hansen@linux.intel.com, hpa@zytor.com, labbott@redhat.com,
+        mingo@kernel.org
+Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org,
+        rientjes@google.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+        hpa@zytor.com, labbott@redhat.com, mingo@kernel.org
+In-Reply-To: <alpine.DEB.2.20.1803262325540.256524@chino.kir.corp.google.com>
+References: <alpine.DEB.2.20.1803262325540.256524@chino.kir.corp.google.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm/32: Remove unused node_memmap_size_bytes() &
+ CONFIG_NEED_NODE_MEMMAP_SIZE logic
+Git-Commit-ID: fc5d1073cae299de4517755a910df4f12a6a438f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180327022128.GB10185@guoren>
-References: <cover.1521399976.git.ren_guo@c-sky.com> <8a9c9b588cdfdf8b25ca9d449bf5c862d329c1d8.1521399976.git.ren_guo@c-sky.com>
- <CAK8P3a3L-zO3K5qcmBPChhSqh+E6WtNRFV1cJRbksGZ74uaEAQ@mail.gmail.com> <20180327022128.GB10185@guoren>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 27 Mar 2018 09:48:23 +0200
-X-Google-Sender-Auth: GrwDczeY1_dx1iC1RUNHg6-uwfs
-Message-ID: <CAK8P3a2CD4nEDzMZxtn1QQJA3oQeX=-4v17AxhpTuUqk8boVhg@mail.gmail.com>
-Subject: Re: [PATCH 17/19] csky: defconfig
-To: Guo Ren <ren_guo@c-sky.com>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 4:21 AM, Guo Ren <ren_guo@c-sky.com> wrote:
-> On Mon, Mar 26, 2018 at 03:16:31PM +0200, Arnd Bergmann wrote:
+Commit-ID:  fc5d1073cae299de4517755a910df4f12a6a438f
+Gitweb:     https://git.kernel.org/tip/fc5d1073cae299de4517755a910df4f12a6a438f
+Author:     David Rientjes <rientjes@google.com>
+AuthorDate: Mon, 26 Mar 2018 23:27:21 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 27 Mar 2018 08:45:02 +0200
 
->> > +CONFIG_CFG80211=y
->> > +CONFIG_CFG80211_DEBUGFS=y
->> > +CONFIG_CFG80211_WEXT=y
->>
->> I would guess you want IPV6 but not WEXT here.
-> Gx6605s devlepment board support usb-wifi.
-> Perhaps WEXT is needed by iwconfig or iwlist? So I just enable it.
-> However, I'll consider to remove it.
+x86/mm/32: Remove unused node_memmap_size_bytes() & CONFIG_NEED_NODE_MEMMAP_SIZE logic
 
-I think it's only for backwards compatibility with old versions of
-those tools. There are some older drivers that use WEXT as the
-native interface, but CFG80211 based drivers have a netlink
-interface.
+node_memmap_size_bytes() has been unused since the v3.9 kernel, so remove it.
 
->> > +CONFIG_FB=y
->> > +CONFIG_FB_TILEBLITTING=y
->> > +CONFIG_FB_SIMPLE=y
->> > +CONFIG_BACKLIGHT_LCD_SUPPORT=y
->> > +# CONFIG_LCD_CLASS_DEVICE is not set
->> > +# CONFIG_BACKLIGHT_CLASS_DEVICE is not set
->> > +# CONFIG_VGA_CONSOLE is not set
->> > +CONFIG_FRAMEBUFFER_CONSOLE=y
->> > +CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
->> > +CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
->> > +CONFIG_LOGO=y
->> > +# CONFIG_LOGO_LINUX_MONO is not set
->> > +# CONFIG_LOGO_LINUX_VGA16 is not set
->>
->> For new platforms, using the DRM subsystem is the recommend
->> way to do graphics, it mostly replaces the framebuffer subsystem
->> here.
-> These used by:
-> https://github.com/c-sky/addons-linux/tree/master/addons/drivers/video/fbdev/nationalchip
->
-> I'll consider the DRM subsystem.
+Signed-off-by: David Rientjes <rientjes@google.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Fixes: f03574f2d5b2 ("x86-32, mm: Rip out x86_32 NUMA remapping code")
+Link: http://lkml.kernel.org/r/alpine.DEB.2.20.1803262325540.256524@chino.kir.corp.google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/Kconfig       |  4 ----
+ arch/x86/mm/numa_32.c  | 11 -----------
+ include/linux/mmzone.h |  5 -----
+ mm/sparse.c            | 22 ----------------------
+ 4 files changed, 42 deletions(-)
 
-It used to be rather hard to write a new DRM driver, but that has
-improved a lot recently. You might be able to fit your driver into
-drivers/gpu/drm/tinydrm/, or maybe do something a bit more complex
-like drivers/gpu/drm/pl111/ or drivers/gpu/drm/stm/.
-
-       Arnd
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 18233e459bff..739aff253d17 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1608,10 +1608,6 @@ config ARCH_HAVE_MEMORY_PRESENT
+ 	def_bool y
+ 	depends on X86_32 && DISCONTIGMEM
+ 
+-config NEED_NODE_MEMMAP_SIZE
+-	def_bool y
+-	depends on X86_32 && (DISCONTIGMEM || SPARSEMEM)
+-
+ config ARCH_FLATMEM_ENABLE
+ 	def_bool y
+ 	depends on X86_32 && !NUMA
+diff --git a/arch/x86/mm/numa_32.c b/arch/x86/mm/numa_32.c
+index aca6295350f3..e8a4a09e20f1 100644
+--- a/arch/x86/mm/numa_32.c
++++ b/arch/x86/mm/numa_32.c
+@@ -60,17 +60,6 @@ void memory_present(int nid, unsigned long start, unsigned long end)
+ 	}
+ 	printk(KERN_CONT "\n");
+ }
+-
+-unsigned long node_memmap_size_bytes(int nid, unsigned long start_pfn,
+-					      unsigned long end_pfn)
+-{
+-	unsigned long nr_pages = end_pfn - start_pfn;
+-
+-	if (!nr_pages)
+-		return 0;
+-
+-	return (nr_pages + 1) * sizeof(struct page);
+-}
+ #endif
+ 
+ extern unsigned long highend_pfn, highstart_pfn;
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 7522a6987595..a2db4576e499 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -816,10 +816,6 @@ int local_memory_node(int node_id);
+ static inline int local_memory_node(int node_id) { return node_id; };
+ #endif
+ 
+-#ifdef CONFIG_NEED_NODE_MEMMAP_SIZE
+-unsigned long __init node_memmap_size_bytes(int, unsigned long, unsigned long);
+-#endif
+-
+ /*
+  * zone_idx() returns 0 for the ZONE_DMA zone, 1 for the ZONE_NORMAL zone, etc.
+  */
+@@ -1289,7 +1285,6 @@ struct mminit_pfnnid_cache {
+ #endif
+ 
+ void memory_present(int nid, unsigned long start, unsigned long end);
+-unsigned long __init node_memmap_size_bytes(int, unsigned long, unsigned long);
+ 
+ /*
+  * If it is possible to have holes within a MAX_ORDER_NR_PAGES, then we
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 7af5e7a92528..79b26f98d793 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -235,28 +235,6 @@ void __init memory_present(int nid, unsigned long start, unsigned long end)
+ 	}
+ }
+ 
+-/*
+- * Only used by the i386 NUMA architecures, but relatively
+- * generic code.
+- */
+-unsigned long __init node_memmap_size_bytes(int nid, unsigned long start_pfn,
+-						     unsigned long end_pfn)
+-{
+-	unsigned long pfn;
+-	unsigned long nr_pages = 0;
+-
+-	mminit_validate_memmodel_limits(&start_pfn, &end_pfn);
+-	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+-		if (nid != early_pfn_to_nid(pfn))
+-			continue;
+-
+-		if (pfn_present(pfn))
+-			nr_pages += PAGES_PER_SECTION;
+-	}
+-
+-	return nr_pages * sizeof(struct page);
+-}
+-
+ /*
+  * Subtle, we encode the real pfn into the mem_map such that
+  * the identity pfn - section_mem_map will return the actual
