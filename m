@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49qwpWrGl4R/RKfU3l9BjhXHgB4ejdE5qsteL7PB6KmR0iFqjRxraBvnzZDmJ9xWqH70cen
-ARC-Seal: i=1; a=rsa-sha256; t=1522168922; cv=none;
+X-Google-Smtp-Source: AIpwx48eHXcw6iKaMsNVaFY1GNRllAwB+Kq9UHF0FZLg9Mb9CXfeZHnG6J7s/2wve6vn3mbRN/zp
+ARC-Seal: i=1; a=rsa-sha256; t=1522168919; cv=none;
         d=google.com; s=arc-20160816;
-        b=uK9m4G4RLTg+r2suG3lfSrKk0WmhOqnc61zeWYQBpFknPlp7VH1Wa/naty8sUV3qsu
-         xIv5tVqliCm16DLhSoO79jxlB0FJwOyJyQ5cRmqmOXx8l8NUUdpOzJ+LCycJL+NhJPij
-         TGhvi9tCI4b4q6pxj2eBjkstwvlpKqsUauL09vWran3tHBkbkJ7YIBzaiOgnz4X4DWKn
-         G8n9LTaorSwqJuFcQKWafHtbdWnX4dw9PjR+AAUF3ghn6Zz4TSw5Fg9/oQzWdHlVtA8O
-         9hEQc6oSED+Uu6tgzh6iUqYzfIWjZtGTkvY+Uq7P+biMADKw7uFcWAr6euQStxFvC4Vp
-         0Kcw==
+        b=ME2oq2ixwDAL7NNloA7L3e2uQpHfcuAUwdbccpTywFRtmVh7PXflC0jjNUbYXp2d0+
+         JN19oqj5CoRgN+QcSBsic9V37a0UZOXzMI5kSRWGPkvULWPq/Tk1cibr7rAYRfkYRh14
+         bwCnvp30tHhMfrsrncN2yNN9zWO5Qb8ZGkv67ydT6LQA/IJ5vNzL9OIbxgPe3Nm8y3Ps
+         vEV+ljwjm2cKh4N+0EJIn9i3CllWFEJS527F3YZ+JR2EVQF3+HsPLkaU7aYerVn0c7Cf
+         pJ/q0qBG8ll2iT1nQ3fv6apg/hEZ69u8DsBAL9S0JZAPbQB0RV5P475G8LdB+k3hmwrL
+         XX5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BdvJ8kfOktANeU3E23TEjwvbXTjKfI5QLc67m55AzkI=;
-        b=dIbR96wHDL3ZEsLk3L2Kjmt87ZTb+gs1SSaOUjvTxMSH727RTr12UPK+fHbSGYQR0J
-         56MNQDKe4+96snxcnL8pQcD9RGwRUlGPEyRFFZE7P9d5H/YgDwX/wGjzyZ4j1pN9ekru
-         tejyYntRGKXTwn/sNMPfKw4FAcC2OqZNO7UxB5xKPv7IWfWJ2cT8pugpCRyYoghjjBVA
-         8h1S3F+WeN5f0e/q9oCyp19tonMF5No/5X3RQLspRvy2CSjVwJ2P3VG0IicI13IBF9ba
-         KfJVefq0ByM5YEawdALI2pqcZYRQ6alOSrt33oHqDbseHzDXUMFcWEk3XtQs/0KEBui0
-         /NpA==
+        bh=wpS64qIxKVH8UdzeCrXxiMb0y3cJ14KAwJCUjqrw6DM=;
+        b=yOcdcr2ittSlPc49q8qCLfc6sGYymzEzHeXEV5dCjZyeed7I3+j+2RKloLZVMI3FM3
+         pzSYjcNHe/6hYKnRLxEKW2JZ36qd3lxNpFQc8jCWDIImmGlCyCu6960kP8j6LN4Fc8fW
+         plMUbW3d/tis2zCMvyMJEkHs0lvo+8nOaEUDkuoYRll6DwYSXm3zOHtOjY5TaG4P0pRg
+         unaYoKzj4cJpEH1I7Fv8wjNEfNUhj17otO2/X7Tg3F1+YXQzwaTenGD8NJDnTQXitCNA
+         E7nfMz0K67ttSGNibD4VMPfpBFR6m6UZx1GqlnglqoW+DFS6N5f7mjfx34xX9OE5+85C
+         EUhg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jagdish Gediya <jagdish.gediya@nxp.com>,
-	Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.15 073/105] mtd: nand: fsl_ifc: Read ECCSTAT0 and ECCSTAT1 registers for IFC 2.0
-Date: Tue, 27 Mar 2018 18:27:53 +0200
-Message-Id: <20180327162802.457045203@linuxfoundation.org>
+	syzbot+1ff6f9fcc3c35f1c72a95e26528c8e7e3276e4da@syzkaller.appspotmail.com,
+	Eric Biggers <ebiggers@google.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.15 034/105] libata: fix length validation of ATAPI-relayed SCSI commands
+Date: Tue, 27 Mar 2018 18:27:14 +0200
+Message-Id: <20180327162759.438327189@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109230678306438?=
-X-GMAIL-MSGID: =?utf-8?q?1596109799838866673?=
+X-GMAIL-THRID: =?utf-8?q?1596109044007210332?=
+X-GMAIL-MSGID: =?utf-8?q?1596109796531570445?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,56 +50,100 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jagdish Gediya <jagdish.gediya@nxp.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 6b00c35138b404be98b85f4a703be594cbed501c upstream.
+commit 058f58e235cbe03e923b30ea7c49995a46a8725f upstream.
 
-Due to missing information in Hardware manual, current
-implementation doesn't read ECCSTAT0 and ECCSTAT1 registers
-for IFC 2.0.
+syzkaller reported a crash in ata_bmdma_fill_sg() when writing to
+/dev/sg1.  The immediate cause was that the ATA command's scatterlist
+was not DMA-mapped, which causes 'pi - 1' to underflow, resulting in a
+write to 'qc->ap->bmdma_prd[0xffffffff]'.
 
-Add support to read ECCSTAT0 and ECCSTAT1 registers during
-ecccheck for IFC 2.0.
+Strangely though, the flag ATA_QCFLAG_DMAMAP was set in qc->flags.  The
+root cause is that when __ata_scsi_queuecmd() is preparing to relay a
+SCSI command to an ATAPI device, it doesn't correctly validate the CDB
+length before copying it into the 16-byte buffer 'cdb' in 'struct
+ata_queued_cmd'.  Namely, it validates the fixed CDB length expected
+based on the SCSI opcode but not the actual CDB length, which can be
+larger due to the use of the SG_NEXT_CMD_LEN ioctl.  Since 'flags' is
+the next member in ata_queued_cmd, a buffer overflow corrupts it.
 
-Fixes: 656441478ed5 ("mtd: nand: ifc: Fix location of eccstat registers for IFC V1.0")
-Cc: stable@vger.kernel.org # v3.18+
-Signed-off-by: Jagdish Gediya <jagdish.gediya@nxp.com>
-Reviewed-by: Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fix it by requiring that the actual CDB length be <= 16 (ATAPI_CDB_LEN).
+
+[Really it seems the length should be required to be <= dev->cdb_len,
+but the current behavior seems to have been intentionally introduced by
+commit 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands
+in 16-byte CDBs") to work around a userspace bug in mplayer.  Probably
+the workaround is no longer needed (mplayer was fixed in 2007), but
+continuing to allow lengths to up 16 appears harmless for now.]
+
+Here's a reproducer that works in QEMU when /dev/sg1 refers to the
+CD-ROM drive that qemu-system-x86_64 creates by default:
+
+    #include <fcntl.h>
+    #include <sys/ioctl.h>
+    #include <unistd.h>
+
+    #define SG_NEXT_CMD_LEN 0x2283
+
+    int main()
+    {
+	    char buf[53] = { [36] = 0x7e, [52] = 0x02 };
+	    int fd = open("/dev/sg1", O_RDWR);
+	    ioctl(fd, SG_NEXT_CMD_LEN, &(int){ 17 });
+	    write(fd, buf, sizeof(buf));
+    }
+
+The crash was:
+
+    BUG: unable to handle kernel paging request at ffff8cb97db37ffc
+    IP: ata_bmdma_fill_sg drivers/ata/libata-sff.c:2623 [inline]
+    IP: ata_bmdma_qc_prep+0xa4/0xc0 drivers/ata/libata-sff.c:2727
+    PGD fb6c067 P4D fb6c067 PUD 0
+    Oops: 0002 [#1] SMP
+    CPU: 1 PID: 150 Comm: syz_ata_bmdma_q Not tainted 4.15.0-next-20180202 #99
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
+    [...]
+    Call Trace:
+     ata_qc_issue+0x100/0x1d0 drivers/ata/libata-core.c:5421
+     ata_scsi_translate+0xc9/0x1a0 drivers/ata/libata-scsi.c:2024
+     __ata_scsi_queuecmd drivers/ata/libata-scsi.c:4326 [inline]
+     ata_scsi_queuecmd+0x8c/0x210 drivers/ata/libata-scsi.c:4375
+     scsi_dispatch_cmd+0xa2/0xe0 drivers/scsi/scsi_lib.c:1727
+     scsi_request_fn+0x24c/0x530 drivers/scsi/scsi_lib.c:1865
+     __blk_run_queue_uncond block/blk-core.c:412 [inline]
+     __blk_run_queue+0x3a/0x60 block/blk-core.c:432
+     blk_execute_rq_nowait+0x93/0xc0 block/blk-exec.c:78
+     sg_common_write.isra.7+0x272/0x5a0 drivers/scsi/sg.c:806
+     sg_write+0x1ef/0x340 drivers/scsi/sg.c:677
+     __vfs_write+0x31/0x160 fs/read_write.c:480
+     vfs_write+0xa7/0x160 fs/read_write.c:544
+     SYSC_write fs/read_write.c:589 [inline]
+     SyS_write+0x4d/0xc0 fs/read_write.c:581
+     do_syscall_64+0x5e/0x110 arch/x86/entry/common.c:287
+     entry_SYSCALL_64_after_hwframe+0x21/0x86
+
+Fixes: 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands in 16-byte CDBs")
+Reported-by: syzbot+1ff6f9fcc3c35f1c72a95e26528c8e7e3276e4da@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org> # v2.6.24+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/fsl_ifc_nand.c |    6 +-----
- include/linux/fsl_ifc.h         |    6 +-----
- 2 files changed, 2 insertions(+), 10 deletions(-)
+ drivers/ata/libata-scsi.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/nand/fsl_ifc_nand.c
-+++ b/drivers/mtd/nand/fsl_ifc_nand.c
-@@ -227,11 +227,7 @@ static void fsl_ifc_run_command(struct m
- 		int sector_end = sector_start + chip->ecc.steps - 1;
- 		__be32 *eccstat_regs;
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -4309,7 +4309,9 @@ static inline int __ata_scsi_queuecmd(st
+ 		if (likely((scsi_op != ATA_16) || !atapi_passthru16)) {
+ 			/* relay SCSI command to ATAPI device */
+ 			int len = COMMAND_SIZE(scsi_op);
+-			if (unlikely(len > scmd->cmd_len || len > dev->cdb_len))
++			if (unlikely(len > scmd->cmd_len ||
++				     len > dev->cdb_len ||
++				     scmd->cmd_len > ATAPI_CDB_LEN))
+ 				goto bad_cdb_len;
  
--		if (ctrl->version >= FSL_IFC_VERSION_2_0_0)
--			eccstat_regs = ifc->ifc_nand.v2_nand_eccstat;
--		else
--			eccstat_regs = ifc->ifc_nand.v1_nand_eccstat;
--
-+		eccstat_regs = ifc->ifc_nand.nand_eccstat;
- 		eccstat = ifc_in32(&eccstat_regs[sector_start / 4]);
- 
- 		for (i = sector_start; i <= sector_end; i++) {
---- a/include/linux/fsl_ifc.h
-+++ b/include/linux/fsl_ifc.h
-@@ -734,11 +734,7 @@ struct fsl_ifc_nand {
- 	u32 res19[0x10];
- 	__be32 nand_fsr;
- 	u32 res20;
--	/* The V1 nand_eccstat is actually 4 words that overlaps the
--	 * V2 nand_eccstat.
--	 */
--	__be32 v1_nand_eccstat[2];
--	__be32 v2_nand_eccstat[6];
-+	__be32 nand_eccstat[8];
- 	u32 res21[0x1c];
- 	__be32 nanndcr;
- 	u32 res22[0x2];
+ 			xlat_func = atapi_xlat;
