@@ -1,94 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752653AbeC0Gwu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:52:50 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:40235 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752635AbeC0Gws (ORCPT
+        id S1751046AbeC0Gyo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:54:44 -0400
+Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:22292 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750881AbeC0Gyn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:52:48 -0400
-X-Google-Smtp-Source: AG47ELvId/laZPqOugZJ+5+oMG3vKX6zLrc27DDzr2Jud1DhvAch1TzPO7tyGOiHuDdav1jchn1DShu1TtT0GQnRHhQ=
+        Tue, 27 Mar 2018 02:54:43 -0400
+X-ME-Helo: [192.168.8.29]
+X-ME-Auth: ZXJpYy52YWxldHRlNkB3YW5hZG9vLmZy
+X-ME-Date: Tue, 27 Mar 2018 08:54:40 +0200
+X-ME-IP: 86.214.204.162
+Reply-To: eric.valette@free.fr
+Subject: Re: Periodic Null pointer access with 4.14.29-30 (while using
+ minidlna) in sendfile system call
+References: <87f4360e-d118-651f-0724-c7f79a5d885b@free.fr>
+ <2f7dab1f-82b2-2f8a-52b1-24a5e73d45d0@free.fr>
+To: LKML <linux-kernel@vger.kernel.org>
+From: Eric Valette <eric.valette@free.fr>
+Organization: HOME
+Message-ID: <346ede96-04a6-feed-ce5b-a05814f8277e@free.fr>
+Date: Tue, 27 Mar 2018 08:54:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:58.0) Gecko/20100101
+ Thunderbird/58.0
 MIME-Version: 1.0
-X-Originating-IP: [217.140.96.140]
-In-Reply-To: <20180327010633.GB23487@redhat.com>
-References: <1522003290-27243-1-git-send-email-yael.chemla@foss.arm.com>
- <1522003290-27243-2-git-send-email-yael.chemla@foss.arm.com> <20180327010633.GB23487@redhat.com>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Tue, 27 Mar 2018 09:52:46 +0300
-Message-ID: <CAOtvUMfArPgAmbmBW672nq2QuS8mJgkepwF9O+7R-G7KeLtRsA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] md: dm-verity: allow parallel processing of bio blocks
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Yael Chemla <yael.chemla@foss.arm.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        ofir.drang@gmail.com, Yael Chemla <yael.chemla@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2f7dab1f-82b2-2f8a-52b1-24a5e73d45d0@free.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 4:06 AM, Mike Snitzer <snitzer@redhat.com> wrote:
-> On Sun, Mar 25 2018 at  2:41pm -0400,
-> Yael Chemla <yael.chemla@foss.arm.com> wrote:
->
->>  Allow parallel processing of bio blocks by moving to async. completion
->>  handling. This allows for better resource utilization of both HW and
->>  software based hash tfm and therefore better performance in many cases,
->>  depending on the specific tfm in use.
->>
->>  Tested on ARM32 (zynq board) and ARM64 (Juno board).
->>  Time of cat command was measured on a filesystem with various file sizes.
->>  12% performance improvement when HW based hash was used (ccree driver).
->>  SW based hash showed less than 1% improvement.
->>  CPU utilization when HW based hash was used presented 10% less context
->>  switch, 4% less cycles and 7% less instructions. No difference in
->>  CPU utilization noticed with SW based hash.
->>
->> Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
->
-> This one had various issues.  I've fixed most of what I saw and staged
-> in linux-next (purely for build test coverage purposes).  I may drop
-> this patch if others disagree with it (or my sg deallocation in the
-> error path question isn't answered).
->
-> I've staged the changes here (and in linux-next via 'for-next'):
-> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/log/?h=dm-4.17
->
-> I switched all the new GFP_KERNEL uses to GFP_NOIO.  The fact that
-> you're doing allocations at all (per IO) is bad enough.  Using
-> GFP_KERNEL is a serious liability (risk of deadlock if dm-verity were to
-> be used for something like.. swap.. weird setup but possible).
-
-Out of my curiosity, since I thought whether or not this should use
-GFP_NOIO during my review
-but than answered to myself "Nah, dm-verity is read only, can't swap
-to that" - how does one
-use a read only DM-Verity to host swap partition/file? :-)
+On 3/25/18 11:39 PM, Eric Valette wrote:
+> On 3/25/18 11:07 PM, Eric Valette wrote:
+>> Since a few kernels I get this error when streaming video to TV via 
+>> minidlna:
+> 
+> Checked it started with at least 4.14.25. My older kern.log.2.gz file 
+> says before first march I did not get this error. But I removed older 
+> kernels from my /boot directory.
+> 
+> I usually update kernel regularly as they appear but sometime I have a 
+> week or two delay. If this helps bisecting.
 
 
->
-> But the gfp flags aside, the need for additional memory and the
-> expectation of scalable async parallel IO is potentially at odds with
-> changes like this (that I just staged, and had to rebase your 2 patches
-> ontop of):
-> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-4.17&id=a89f6a2cfec86fba7a115642ff082cb4e9450ea6
->
-> So I'm particulalry interested to hear from google folks to understand
-> if they are OK with your proposed verity async crypto API use.
+Opened bug 199211 in bugzilla. Other user have confirmed it and even 
+proposed a possible explanation.
 
-If by "scalable async parallel IO" you mean crypto HW than for what
-it's worth, my experience is that makers of devices with is less
-powerful CPUs
-are the ones that tend to add them, so they stands to benefit  the
-most of this change.
-
-Gilad
-
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+-- eric
