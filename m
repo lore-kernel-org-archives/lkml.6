@@ -1,214 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752971AbeC0N0q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:26:46 -0400
-Received: from mga01.intel.com ([192.55.52.88]:4404 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752796AbeC0N0o (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:26:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,367,1517904000";
-   d="scan'208";a="41629814"
-Subject: Re: [PATCH v1 2/3] perf version: Print the status of compiled-in
- libraries
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
- <1522080424-12912-3-git-send-email-yao.jin@linux.intel.com>
- <20180326093925.GI6207@krava>
- <84893905-7512-0757-c13c-152a9d051f92@linux.intel.com>
- <20180327123803.GF3102@krava>
-From: "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <1f03bf56-4baa-e79e-84fe-17e9632fd09d@linux.intel.com>
-Date: Tue, 27 Mar 2018 21:26:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752687AbeC0N17 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:27:59 -0400
+Received: from mail.efficios.com ([167.114.142.138]:43596 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752540AbeC0N16 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:27:58 -0400
+Date: Tue, 27 Mar 2018 09:27:56 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: joel opensrc <joel.opensrc@gmail.com>
+Cc: rostedt <rostedt@goodmis.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Message-ID: <213641788.1071.1522157276112.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CAEi0qN=zSWqH0U0pTg-c31vk+xXFbddzSniJG6sudjuaMk9kVQ@mail.gmail.com>
+References: <20180326191031.14939-1-mathieu.desnoyers@efficios.com> <CAEi0qN=zSWqH0U0pTg-c31vk+xXFbddzSniJG6sudjuaMk9kVQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] tracepoint: Provide tracepoint_kernel_find_by_name
 MIME-Version: 1.0
-In-Reply-To: <20180327123803.GF3102@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.7_GA_1964 (ZimbraWebClient - FF52 (Linux)/8.8.7_GA_1964)
+Thread-Topic: tracepoint: Provide tracepoint_kernel_find_by_name
+Thread-Index: 78HM63lIG9uPPNkA19YHCcJKCELHUw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+----- On Mar 26, 2018, at 9:35 PM, joel opensrc joel.opensrc@gmail.com wrote:
 
+> Hi Mathieu,
 
-On 3/27/2018 8:38 PM, Jiri Olsa wrote:
-> On Mon, Mar 26, 2018 at 09:51:03PM +0800, Jin, Yao wrote:
->>
->>
->> On 3/26/2018 5:39 PM, Jiri Olsa wrote:
->>> On Tue, Mar 27, 2018 at 12:07:03AM +0800, Jin Yao wrote:
->>>> This patch checks the values passed by CFLAGS (-DXXX) and then
->>>> print the status of libraries.
->>>>
->>>> For example, if HAVE_DWARF_SUPPORT is defined, that means the
->>>> library "dwarf" is compiled-in. The patch will print the status
->>>> "on" for this library.
->>>>
->>>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
->>>> ---
->>>>    tools/perf/builtin-version.c | 125 +++++++++++++++++++++++++++++++++++++++++++
->>>>    tools/perf/builtin.h         |   1 +
->>>>    2 files changed, 126 insertions(+)
->>>>
->>>> diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
->>>> index 37019c5..90a0a7f 100644
->>>> --- a/tools/perf/builtin-version.c
->>>> +++ b/tools/perf/builtin-version.c
->>>> @@ -9,3 +9,128 @@ int cmd_version(int argc __maybe_unused, const char **argv __maybe_unused)
->>>>    	printf("perf version %s\n", perf_version_string);
->>>>    	return 0;
->>>>    }
->>>> +
->>>> +static void status_print(const char *name, const char *status)
->>>> +{
->>>> +	printf("%22s: [ %3s ]\n", name, status);
->>>> +}
->>>> +
->>>> +static void library_status(void)
->>>> +{
->>>> +#ifdef HAVE_DWARF_SUPPORT
->>>> +	status_print("dwarf", "on");
->>>> +#else
->>>> +	status_print("dwarf", "off");
->>>> +#endif
->>>
->>> could this and all those below be in some generic macro?
->>>
->>> #define STATUS(__d, __m)		\
->>> #ifdef __d 				\
->>> 	status_print(#__m, "on");	\
->>> #else					\
->>> 	status_print(#__m, "OFF");	\
->>> #endif
->>>
->>> STATUS(HAVE_DWARF_SUPPORT, dwarf)
->>>
->>>
->>> also please print the 'OFF' and use colors as in the build message
->>>
->>
->> Fine, thanks. I will update the code.
->>
->>>> +
->>>> +#ifdef HAVE_DWARF_GETLOCATIONS
->>>> +	status_print("dwarf_getlocations", "on");
->>>> +#else
->>>> +	status_print("dwarf_getlocations", "off");
->>>> +#endif
->>>> +
->>>> +#ifdef NO_GLIBC
->>>> +	status_print("glibc", "off");
->>>> +#else
->>>> +	status_print("glibc", "on");
->>>> +#endif
->>>> +
->>>> +#ifdef HAVE_GTK2_SUPPORT
->>>> +	status_print("gtk2", "on");
->>>> +#else
->>>> +	status_print("gtk2", "off");
->>>> +#endif
->>>> +
->>>
->>> SNIP
->>>
->>>> +}
->>>> +
->>>> +int cmd_version2(int argc, const char **argv)
->>>> +{
->>>> +	cmd_version(argc, argv);
->>>> +	library_status();
->>>> +	return 0;
->>>> +}
->>>> diff --git a/tools/perf/builtin.h b/tools/perf/builtin.h
->>>> index 05745f3..c7508ee 100644
->>>> --- a/tools/perf/builtin.h
->>>> +++ b/tools/perf/builtin.h
->>>> @@ -29,6 +29,7 @@ int cmd_timechart(int argc, const char **argv);
->>>>    int cmd_top(int argc, const char **argv);
->>>>    int cmd_script(int argc, const char **argv);
->>>>    int cmd_version(int argc, const char **argv);
->>>> +int cmd_version2(int argc, const char **argv);
->>>
->>> please don't add new command for this, handle this in cmd_version
->>>
->>
->> Yeah, I know that, adding a new command is not a good idea.
->>
->> But how can I pass a new parameter to cmd_version to indicate it's the -vv
->> case? Use argv[1]? But looks not good since argc is 1.
->>
->> Any idea about that?
+Hi Joel,
+
 > 
-> I guess the based would be to have 'perf version -v', where
-> in cmd_version you'd call standard option processing..
+> On Mon, Mar 26, 2018 at 12:10 PM, Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>> Provide an API allowing eBPF to lookup core kernel tracepoints by name.
+>>
+>> Given that a lookup by name explicitly requires tracepoint definitions
+>> to be unique for a given name (no duplicate keys), include a
+>> WARN_ON_ONCE() check that only a single match is encountered at runtime.
+>> This should always be the case, given that a DEFINE_TRACE emits a
+>> __tracepoint_##name symbol, which would cause a link-time error if more
+>> than one instance is found. Nevertheless, check this at runtime with
+>> WARN_ON_ONCE() to stay on the safe side.
+>>
+>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>> CC: Steven Rostedt <rostedt@goodmis.org>
+>> CC: Alexei Starovoitov <ast@kernel.org>
+>> CC: Peter Zijlstra <peterz@infradead.org>
+>> CC: Ingo Molnar <mingo@kernel.org>
+>> ---
+>>  include/linux/tracepoint.h |  1 +
+>>  kernel/tracepoint.c        | 35 +++++++++++++++++++++++++++++++++++
+>>  2 files changed, 36 insertions(+)
+>>
+>> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+>> index c94f466d57ef..1b4ae64b7c6a 100644
+>> --- a/include/linux/tracepoint.h
+>> +++ b/include/linux/tracepoint.h
+>> @@ -43,6 +43,7 @@ tracepoint_probe_unregister(struct tracepoint *tp, void
+>> *probe, void *data);
+>>  extern void
+>>  for_each_kernel_tracepoint(void (*fct)(struct tracepoint *tp, void *priv),
+>>                 void *priv);
+>> +extern struct tracepoint *tracepoint_kernel_find_by_name(const char *name);
+>>
+>>  #ifdef CONFIG_MODULES
+>>  struct tp_module {
+>> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+>> index 671b13457387..0a59f988055a 100644
+>> --- a/kernel/tracepoint.c
+>> +++ b/kernel/tracepoint.c
+>> @@ -60,6 +60,11 @@ struct tp_probes {
+>>         struct tracepoint_func probes[0];
+>>  };
+>>
+>> +struct tp_find_args {
+>> +       const char *name;
+>> +       struct tracepoint *tp;
+>> +};
+>> +
+>>  static inline void *allocate_probes(int count)
+>>  {
+>>         struct tp_probes *p  = kmalloc(count * sizeof(struct tracepoint_func)
+>> @@ -528,6 +533,36 @@ void for_each_kernel_tracepoint(void (*fct)(struct
+>> tracepoint *tp, void *priv),
+>>  }
+>>  EXPORT_SYMBOL_GPL(for_each_kernel_tracepoint);
+>>
+>> +static void find_tp(struct tracepoint *tp, void *priv)
+>> +{
+>> +       struct tp_find_args *args = priv;
+>> +
+>> +       if (!strcmp(tp->name, args->name)) {
+>> +               WARN_ON_ONCE(args->tp);
+>> +               args->tp = tp;
 > 
-> the 'perf -vv' shortcut could for example be done through
-> some global var like in attached patch... untested
+> I think this runtime check is not needed if it really can't happen
+> (linker verifies that already as you mentioned) although I'm not
+> opposed if you still want to keep it, because there's no way to break
+> out of the outer loop anyway so I guess your call..
+
+We can change the outer loop and break from it if needed, that's not
+an issue.
+
+> I would just do:
 > 
-> jirka
+> if (args->tp)
+>    return;
 > 
+> if find_tp already found the tracepoint.
 > 
-> ---
-> diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
-> index 37019c5d675f..1fe458792cc1 100644
-> --- a/tools/perf/builtin-version.c
-> +++ b/tools/perf/builtin-version.c
-> @@ -4,6 +4,8 @@
->   #include <linux/compiler.h>
->   #include <stdio.h>
->   
-> +int version_verbose;
+> Tried to also create a duplicate tracepoint and I get:
+>  CC      init/version.o
+>  AR      init/built-in.o
+>  AR      built-in.o
+>  LD      vmlinux.o
+> block/blk-core.o:(__tracepoints+0x440): multiple definition of
+> `__tracepoint_sched_switch'
+> kernel/sched/core.o:(__tracepoints+0x440): first defined here
+> Makefile:1032: recipe for target 'vmlinux' failed
+> make: *** [vmlinux] Error 1
+
+Yeah, as I state in my changelog, I'm very well aware that the linker
+is able to catch those. This was the purpose of emitting a
+__tracepoint_##name symbol in the tracepoint definition macro. This
+WARN_ON_ONCE() is a redundant check for an invariant that we expect
+is provided by the linker. Given that it's not a fast path, I would
+prefer to keep this redundant check in place, given that an average
+factor 2 speedup on a slow path should really not be something we
+need to optimize for. IMHO, for slow paths, robustness is more important
+than speed (unless the slow path becomes so slow that it really affects
+the user).
+
+I envision that a way to break this invariant would be to compile a
+kernel object with gcc -fvisibility=hidden or such. I admit this is
+particular scenario is really far fetched, but it illustrates why I
+prefer to keep an extra safety net at runtime for linker-based
+validations when possible.
+
+If a faster tracepoint lookup function is needed, we should consider
+perfect hashing algorithms done post-build, but so far nobody has
+complained about speed of this lookup operation. Anyhow a factor 2 in
+the speed of this lookup should really not matter, right ?
+
+Thanks,
+
+Mathieu
+
+> 
+> For this senseless diff:
+> diff --git a/include/trace/events/block.h b/include/trace/events/block.h
+> index 81b43f5bdf23..2b855c05197d 100644
+> --- a/include/trace/events/block.h
+> +++ b/include/trace/events/block.h
+> @@ -49,6 +49,13 @@ DEFINE_EVENT(block_buffer, block_touch_buffer,
+>        TP_ARGS(bh)
+> );
+> 
+> +DEFINE_EVENT(block_buffer, sched_switch,
 > +
->   int cmd_version(int argc __maybe_unused, const char **argv __maybe_unused)
->   {
->   	printf("perf version %s\n", perf_version_string);
-> diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-> index 1b3fc8ec0fa2..a5c95c6c0de7 100644
-> --- a/tools/perf/perf.c
-> +++ b/tools/perf/perf.c
-> @@ -185,7 +185,14 @@ static int handle_options(const char ***argv, int *argc, int *envchanged)
->   			break;
->   		}
->   
-> -		if (!strcmp(cmd, "-v")) {
-> +		if (strstarts(cmd, "-v")) {
-> +			int i;
+> +       TP_PROTO(struct buffer_head *bh),
 > +
-> +			for (i = 2; cmd[i]; i++) {
-> +				if (cmd[i] == 'v')
-> +					version_verbose++;
-> +			}
+> +       TP_ARGS(bh)
+> +);
 > +
->   			(*argv)[0] = "--version";
->   			break;
->   		}
-> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-> index 8fec1abd0f1f..9c45ba179635 100644
-> --- a/tools/perf/perf.h
-> +++ b/tools/perf/perf.h
-> @@ -13,6 +13,8 @@ void test_attr__init(void);
->   void test_attr__open(struct perf_event_attr *attr, pid_t pid, int cpu,
->   		     int fd, int group_fd, unsigned long flags);
->   
-> +extern int version_verbose;
-> +
->   #define HAVE_ATTR_TEST
->   #include "perf-sys.h"
->   
+> /**
+>  * block_dirty_buffer - mark a buffer dirty
+>  * @bh: buffer_head being dirtied
 > 
+> 
+> thanks,
+> 
+> - Joel
 
-Using global variable, hmm, that's fine, looks no better way. :)
-
-I will follow Ingo's suggestion. Use 'perf -v --build-options' and map 
-it to 'perf -vv'.
-
-Thanks
-Jin Yao
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
