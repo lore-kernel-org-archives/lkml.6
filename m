@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48g92jJwwhEDQFbUkqsN5e4BDvPqNzh2jBeg1wJuvd1bPkZWiEnQlCN20sxenzAu+WL6Bwf
-ARC-Seal: i=1; a=rsa-sha256; t=1522168219; cv=none;
+X-Google-Smtp-Source: AIpwx48cGuMLpHAK7HLfuKrfxvUEYoG8dMIPhpFTCc7V0Aw5A6GTuMnI1Hrn8iVE9xf/mvNzqcr2
+ARC-Seal: i=1; a=rsa-sha256; t=1522168216; cv=none;
         d=google.com; s=arc-20160816;
-        b=jWIiv9pfnct7rzlO2MNWubjLfDW6kFEY7rQCsfRL+/yYxurF6/Ct4wQgVqgeTCj0oB
-         j+BmQZ4flhi9u9S+4f+lzQihapbXex1ID9gjB2IYu2kT3lFOXc1ZK+8G3mU8UCgzYjXO
-         a6xW9mX9A3ol+X5433+jUNkRQEENznZh4OpvVSslSGqCmWJytlJO6/nu1MX/ll+pL4fz
-         CYopWPxDSFbKprV7yI6jaYYDsflSfkODxdp0DNyBg88BR6nZGyUHrxPiB8llkMy+K6Pc
-         PEad8MihNK4D7Eydb/pjuOGEl2W6Luv2yDeu+RjWKkB4dKUhP7hil6rkvIV0wMYxXeNG
-         7hQA==
+        b=ERXra7o3xnIpHSLWlNoDP7fosBF9hwAHOJqXiGQNbegDuuvSXUWqlvHiY0xIrpdzPW
+         CzGOtyxlY9t5UBOkh/7J52ADkgiXzzXLvP46W2r80rADez6/pAV9wc07ggAbiE0BfgFr
+         g9bSgaAip42O0ttl7xQJii4AqnR7XsOaJKw8jHI/7B323wr/978L69PCzz9Lejg9i3ls
+         FgTfcpla/GUhUZLwBUNcvICdxKUkbqps4U7uZBjgAu0plicY//oetuwF8+Ie94qwXwgv
+         y7jfR79S0aDTedYzsgs7zpqqKmbV4qfcPz0Cz3qDy9KKlZHjnRo1gdm4ztfIrwbz9Ckw
+         lx5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Iz9O12fqpPgwA8bwKL2MjZ/fNGBq+G/paIE043/BoLY=;
-        b=qZn0Yq90zNgdJYAkmwRbasD0qklc7xuH/XRCe4YAq2pi76gXJqbPFQCqnFCiHJBPpg
-         kq/Ts8xJiUXS9Ilyw1meI1OIUIcCJGfdHJj+V/7y+Bfyxbgj+ZO+GB+bi1z2m8P2bHfi
-         IiiXsY9lIm1kZ3g7ZMsmXeCjJybSOr171PPpqcRk1CxA9iqhRjOYjadDApBUSh0CgbBo
-         tOP4R2jbkX5uwfk6+z4NNRo+kmJC6RY/emCCr3l7DrV9nTFMzIhHODKD/3JOnREH8blQ
-         O268+ydzPB87ThsZNsgYvGXddgPHTSk24/SZDUig+QJlhrTStae0M+Yot7dCYd/dOwI/
-         HDaA==
+        bh=oGCXsyz6tlTFBC3JUFNOSzZsCqA/QNQ041bpstTSZNY=;
+        b=brbQ0L/Pra3pZA3E5khNOAwUwUzviHLaW0tBLX78TW2EDpTI8bh21fFpIycwcvk65a
+         vzQaO2RHVoFNKgrKt2Mu44YBhtOtYsm+myZi/jhkp4ldEacAwryFFwA9irk3bow/6ec0
+         zLrbLKtfemcLE4s7teuN35hPftc+R4nxkDsA5ZU6NLZJJXFqCaBdYMBt4VbnpAbhPu1+
+         BYdmAnI32Z9m+JocZwf2+kTZCKnEwJnBT73/yWHiTJHEAq2kTZqMQRItAGHJzsYZurBY
+         YgvBwD1iuMXb7DtMKzb8ZDFEzHcg4Z3sOWByySxznpIsF5MQZQnfMpPtKAreSeY6izsA
+         Hgjg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -37,9 +37,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 37/43] x86/boot/64: Verify alignment of the LOAD segment
-Date: Tue, 27 Mar 2018 18:27:41 +0200
-Message-Id: <20180327162718.493958167@linuxfoundation.org>
+Subject: [PATCH 4.4 36/43] x86/build/64: Force the linker to use 2MB page size
+Date: Tue, 27 Mar 2018 18:27:40 +0200
+Message-Id: <20180327162718.436018102@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -49,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109062756307676?=
-X-GMAIL-MSGID: =?utf-8?q?1596109062756307676?=
+X-GMAIL-THRID: =?utf-8?q?1596109060047546231?=
+X-GMAIL-MSGID: =?utf-8?q?1596109060047546231?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,10 +60,16 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: H.J. Lu <hjl.tools@gmail.com>
 
-commit c55b8550fa57ba4f5e507be406ff9fc2845713e8 upstream.
+commit e3d03598e8ae7d195af5d3d049596dec336f569f upstream.
 
-Since the x86-64 kernel must be aligned to 2MB, refuse to boot the
-kernel if the alignment of the LOAD segment isn't a multiple of 2MB.
+Binutils 2.31 will enable -z separate-code by default for x86 to avoid
+mixing code pages with data to improve cache performance as well as
+security.  To reduce x86-64 executable and shared object sizes, the
+maximum page size is reduced from 2MB to 4KB.  But x86-64 kernel must
+be aligned to 2MB.  Pass -z max-page-size=0x200000 to linker to force
+2MB page size regardless of the default page size used by linker.
+
+Tested with Linux kernel 4.15.6 on x86-64.
 
 Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
 Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
@@ -75,24 +81,29 @@ Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/CAMe9rOrR7xSJgUfiCoZLuqWUwymRxXPoGBW38%2BpN%3D9g%2ByKNhZw@mail.gmail.com
+Link: http://lkml.kernel.org/r/CAMe9rOp4_%3D_8twdpTyAP2DhONOCeaTOsniJLoppzhoNptL8xzA@mail.gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/boot/compressed/misc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/Makefile |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -366,6 +366,10 @@ static void parse_elf(void *output)
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -179,6 +179,15 @@ KBUILD_CFLAGS += $(cfi) $(cfi-sigframe)
  
- 		switch (phdr->p_type) {
- 		case PT_LOAD:
-+#ifdef CONFIG_X86_64
-+			if ((phdr->p_align % 0x200000) != 0)
-+				error("Alignment of LOAD segment isn't multiple of 2MB");
-+#endif
- #ifdef CONFIG_RELOCATABLE
- 			dest = output;
- 			dest += (phdr->p_paddr - LOAD_PHYSICAL_ADDR);
+ LDFLAGS := -m elf_$(UTS_MACHINE)
+ 
++#
++# The 64-bit kernel must be aligned to 2MB.  Pass -z max-page-size=0x200000 to
++# the linker to force 2MB page size regardless of the default page size used
++# by the linker.
++#
++ifdef CONFIG_X86_64
++LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
++endif
++
+ # Speed up the build
+ KBUILD_CFLAGS += -pipe
+ # Workaround for a gcc prelease that unfortunately was shipped in a suse release
