@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49dfytKSWhEI1dV4kaVHmnUwjaCMLAjtaZOewF/qZTh/eFcDhFNU47NeVg4eSmvZND4L0cP
-ARC-Seal: i=1; a=rsa-sha256; t=1522168539; cv=none;
+X-Google-Smtp-Source: AIpwx48/x1e/5v3r3apyGVGt+QHipxxcAiUdS4m9mPgewmflQW/MDl46s2NdKVkw7I1F9WD2YodE
+ARC-Seal: i=1; a=rsa-sha256; t=1522168536; cv=none;
         d=google.com; s=arc-20160816;
-        b=gWB7oLGYIscwIMpULMw8AqzUfcBfLHu915J9FfFi4YCN84tLa4Sx7tyitpo7vecUsB
-         pCR7/tnF6LAesj5mMiRea8VS1jOo50Wf/v5RsQlU3vf/8WQ1I2sO2OiraP/AclJK4MPf
-         DWIgpcdzTrFHCyzW/mGInXXtTUAt14te2rEnAvlmIPv8v3dDvzbEc3TsM+Zlw1/JpPKL
-         DicNSY/VkaZQ+LNHchyI1CYdDvrLC6B1nojQ+d1fddVKMS6U1xyA4g69YQ0cr99AQ+e0
-         y+v+y2WZSJWg+iJobfzQhZA6qyojhgXQidC3pdYUV0JdXOq0XbKkqXO+e8rCaRm699Qm
-         LtNQ==
+        b=J94bi+oqWMS26LXWXSmQobwBCPHTTFPJLKsiZHIfM6tePhuz7tSXm3wertky+HlCVq
+         onmkWiA+Ow4sedxzG4aNQuWcyAh5ryiqv1z87KaZMXdYwR2kMTtuH5JrzLO0Ay+/1K0J
+         DMxolObGGBEGjGDYwamNx6ZoOcjIdTsAelVNM5Gi7tICcJXWyomOADAOWpi4izN2j6gA
+         RHDz2Hdr5LgqV5jCLd6ptShzsfR75eaFA74y4iAH+bo+Ky/3q0hMmeBGlJlasQnHKeCE
+         gGZJ3Uo36KMGwUH5jj4nU1aLG90JkvHO6z8U0p+QSQ/s7fHXVk6HII95HQ5Tf3Nw/2a+
+         d0cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GF1c9DapeVpEA8jkSNp6UYtIGa3dXxP3k7W4imVC9bA=;
-        b=TRC8VzVAnPwwV2VbCYucyueVqx9XjTi4zQzxQt7sM1Ze+lwtr3gAVm/X+MUoHVmhYv
-         47z8s7HCpf/WVLnWncuQlagi/0/RSjmAkBKrRFOVNbW3UjbuegqLlPEr06v/awX3YV3+
-         HIQtU+pfCKxSBV4QB60qWLS+pfYktLC/ssqVRTwpKwvyTBR1vpovRT0ww2onK0Da2bAY
-         o9ij2uJo9BtdsF0SWwvquqztSUe6nka33WXEtG3tpGXRg9Gmps/rxIJ4cZyfUf20Lmz/
-         B+/IgHECmKwuvs4qeDVrBD04wDgcYVSYti8YHkglA/Dy2txpehlPpDJYXoEojXEwZHC0
-         hk0g==
+        bh=9uslRh0lG6/X8ceyZ7zJWnTHmGCbxtjaP4Qry1IIJyQ=;
+        b=vURdSyxHh9/8DZc7Hne5qScagsli4vfdeJrQHdhOILYtbbC1931LV2lR20VJcFC+qH
+         zgweFjYUDSl7dZWzW+HZM8pEiD0UDDecKbERGSRY8FBKvyD6L0IN2qpLoheu6GfsZwBX
+         0DQ8ctwi19BS4fnsKEd0x9qdT8Z+7DTNSNFc30MMwKxDXkfDhdhApirw5No7nzkw5+U/
+         dq59vHiqQbe8/fexcltlah1PlQQlKTsNZb2wrp/42i6WZHevpclpiL6ozhbsWs/i25oS
+         YOm/M6PI5e/Q0bgWTCfY4bSF1AIQ3t0ginDKWwdlnP7yyLHOoeyZzWssnjoHcglxL7er
+         ZI7g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Mike Kravetz <mike.kravetz@oracle.com>,
+	Nic Losby <blurbdust@gmail.com>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Yisheng Xie <xieyisheng1@huawei.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 046/101] h8300: remove extraneous __BIG_ENDIAN definition
-Date: Tue, 27 Mar 2018 18:27:18 +0200
-Message-Id: <20180327162752.860590355@linuxfoundation.org>
+Subject: [PATCH 4.14 045/101] hugetlbfs: check for pgoff value overflow
+Date: Tue, 27 Mar 2018 18:27:17 +0200
+Message-Id: <20180327162752.800920336@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -42,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109399130674322?=
-X-GMAIL-MSGID: =?utf-8?q?1596109399130674322?=
+X-GMAIL-THRID: =?utf-8?q?1596109395911378895?=
+X-GMAIL-MSGID: =?utf-8?q?1596109395911378895?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,42 +54,117 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-commit 1705f7c534163594f8b05e060cb49fbea86ca70b upstream.
+commit 63489f8e821144000e0bdca7e65a8d1cc23a7ee7 upstream.
 
-A bugfix I did earlier caused a build regression on h8300, which defines
-the __BIG_ENDIAN macro in a slightly different way than the generic
-code:
+A vma with vm_pgoff large enough to overflow a loff_t type when
+converted to a byte offset can be passed via the remap_file_pages system
+call.  The hugetlbfs mmap routine uses the byte offset to calculate
+reservations and file size.
 
-  arch/h8300/include/asm/byteorder.h:5:0: warning: "__BIG_ENDIAN" redefined
+A sequence such as:
 
-We don't need to define it here, as the same macro is already provided
-by the linux/byteorder/big_endian.h, and that version does not conflict.
+  mmap(0x20a00000, 0x600000, 0, 0x66033, -1, 0);
+  remap_file_pages(0x20a00000, 0x600000, 0, 0x20000000000000, 0);
 
-While this is a v4.16 regression, my earlier patch also got backported
-to the 4.14 and 4.15 stable kernels, so we need the fixup there as well.
+will result in the following when task exits/file closed,
 
-Link: http://lkml.kernel.org/r/20180313120752.2645129-1-arnd@arndb.de
-Fixes: 101110f6271c ("Kbuild: always define endianess in kconfig.h")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+  kernel BUG at mm/hugetlb.c:749!
+  Call Trace:
+    hugetlbfs_evict_inode+0x2f/0x40
+    evict+0xcb/0x190
+    __dentry_kill+0xcb/0x150
+    __fput+0x164/0x1e0
+    task_work_run+0x84/0xa0
+    exit_to_usermode_loop+0x7d/0x80
+    do_syscall_64+0x18b/0x190
+    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+The overflowed pgoff value causes hugetlbfs to try to set up a mapping
+with a negative range (end < start) that leaves invalid state which
+causes the BUG.
+
+The previous overflow fix to this code was incomplete and did not take
+the remap_file_pages system call into account.
+
+[mike.kravetz@oracle.com: v3]
+  Link: http://lkml.kernel.org/r/20180309002726.7248-1-mike.kravetz@oracle.com
+[akpm@linux-foundation.org: include mmdebug.h]
+[akpm@linux-foundation.org: fix -ve left shift count on sh]
+Link: http://lkml.kernel.org/r/20180308210502.15952-1-mike.kravetz@oracle.com
+Fixes: 045c7a3f53d9 ("hugetlbfs: fix offset overflow in hugetlbfs mmap")
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Reported-by: Nic Losby <blurbdust@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Yisheng Xie <xieyisheng1@huawei.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/h8300/include/asm/byteorder.h |    1 -
- 1 file changed, 1 deletion(-)
+ fs/hugetlbfs/inode.c |   17 ++++++++++++++---
+ mm/hugetlb.c         |    7 +++++++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
---- a/arch/h8300/include/asm/byteorder.h
-+++ b/arch/h8300/include/asm/byteorder.h
-@@ -2,7 +2,6 @@
- #ifndef __H8300_BYTEORDER_H__
- #define __H8300_BYTEORDER_H__
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -118,6 +118,16 @@ static void huge_pagevec_release(struct
+ 	pagevec_reinit(pvec);
+ }
  
--#define __BIG_ENDIAN __ORDER_BIG_ENDIAN__
- #include <linux/byteorder/big_endian.h>
++/*
++ * Mask used when checking the page offset value passed in via system
++ * calls.  This value will be converted to a loff_t which is signed.
++ * Therefore, we want to check the upper PAGE_SHIFT + 1 bits of the
++ * value.  The extra bit (- 1 in the shift value) is to take the sign
++ * bit into account.
++ */
++#define PGOFF_LOFFT_MAX \
++	(((1UL << (PAGE_SHIFT + 1)) - 1) <<  (BITS_PER_LONG - (PAGE_SHIFT + 1)))
++
+ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+ {
+ 	struct inode *inode = file_inode(file);
+@@ -137,12 +147,13 @@ static int hugetlbfs_file_mmap(struct fi
+ 	vma->vm_ops = &hugetlb_vm_ops;
  
- #endif
+ 	/*
+-	 * Offset passed to mmap (before page shift) could have been
+-	 * negative when represented as a (l)off_t.
++	 * page based offset in vm_pgoff could be sufficiently large to
++	 * overflow a (l)off_t when converted to byte offset.
+ 	 */
+-	if (((loff_t)vma->vm_pgoff << PAGE_SHIFT) < 0)
++	if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
+ 		return -EINVAL;
+ 
++	/* must be huge page aligned */
+ 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
+ 		return -EINVAL;
+ 
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -18,6 +18,7 @@
+ #include <linux/bootmem.h>
+ #include <linux/sysfs.h>
+ #include <linux/slab.h>
++#include <linux/mmdebug.h>
+ #include <linux/sched/signal.h>
+ #include <linux/rmap.h>
+ #include <linux/string_helpers.h>
+@@ -4344,6 +4345,12 @@ int hugetlb_reserve_pages(struct inode *
+ 	struct resv_map *resv_map;
+ 	long gbl_reserve;
+ 
++	/* This should never happen */
++	if (from > to) {
++		VM_WARN(1, "%s called with a negative range\n", __func__);
++		return -EINVAL;
++	}
++
+ 	/*
+ 	 * Only apply hugepage reservation if asked. At fault time, an
+ 	 * attempt will be made for VM_NORESERVE to allocate a page
