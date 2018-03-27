@@ -1,50 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751207AbeC0ITr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:19:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37034 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750937AbeC0ITp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:19:45 -0400
-Subject: Re: [PATCH 2/2] KVM: VMX: Add Force Emulation Prefix for "emulate the
- next instruction"
-To: Liran Alon <liran.alon@oracle.com>, kernellwp@gmail.com
-Cc: rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
-        andrew.cooper3@citrix.com, kvm@vger.kernel.org
-References: <76d08635-59da-4399-bc35-f99a00236725@default>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <0500b892-03a8-4c39-3d92-2c909ae473cb@redhat.com>
-Date: Tue, 27 Mar 2018 10:19:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751824AbeC0IV1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:21:27 -0400
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:34835 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750917AbeC0IVZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:21:25 -0400
+X-Google-Smtp-Source: AG47ELvE0E8xSHJC25lujHdRm9kGzHb1PQogLCNScqqH80iZMIb9aTFwvOML1y9Ml1yN5lKDA2X9zasijoU+Ad5Utfk=
 MIME-Version: 1.0
-In-Reply-To: <76d08635-59da-4399-bc35-f99a00236725@default>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <alpine.LFD.2.21.1803270944490.1726@schleppi>
+References: <alpine.LFD.2.21.1803270944490.1726@schleppi>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 27 Mar 2018 10:21:24 +0200
+X-Google-Sender-Auth: _TEWqBwS_CK4hAjZIFl8xE3xSqU
+Message-ID: <CAMuHMdX_aTqi=8FmBR07K6-C=ycCrPQ+dT=ujXzNTcekdXB5ag@mail.gmail.com>
+Subject: Re: dma_zalloc_coherent broken with 57bf5a8963f80fb3828c46c3e3a5b2dd790e09a7
+To: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/03/2018 09:52, Liran Alon wrote:
->> +static bool __read_mostly fep = 0;
->> +module_param(fep, bool, S_IRUGO);
-> I think this module parameter should have a better name...
-> Why not "emulation_prefix" or "enable_emulation_prefix"?
-> This short names just confuse the average user.
-> It makes him think it is some kind of Intel VT-x technology
-> that he isn't aware of :P
+Hi Sebastian,
 
-Agreed.
+On Tue, Mar 27, 2018 at 10:12 AM, Sebastian Ott
+<sebott@linux.vnet.ibm.com> wrote:
+> commit 57bf5a8963f80fb3828c46c3e3a5b2dd790e09a7 broke usage of dma
+> allocations specifying __GFP_ZERO by silently removing that flag.
 
-> In addition, I think this module parameter should be in kvm module
-> (not kvm_intel) and you should add similar logic to kvm_amd module (SVM)
+How did it break? The flag is now always added.
 
-If you can move handle_ud to x86.c, then it makes sense to have the
-module parameter in the kvm module.  I haven't checked.
+> Why should "the memory returned [] always be zeroed."?
 
-Otherwise you would have to EXPORT_SYMBOL_GPL the variable; in the end
-it's just a debugging tool, so it'd be simpler to just add it separately
-to kvm_intel and kvm_amd.
+To avoid leaking information.
 
-Paolo
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
