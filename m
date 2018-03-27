@@ -1,55 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753153AbeC0OFO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 10:05:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56788 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751136AbeC0OFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:05:10 -0400
-Date: Tue, 27 Mar 2018 09:05:07 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Andi Kleen <ak@linux.intel.com>,
-        Maxim Kuvyrkov <maxim.kuvyrkov@linaro.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Milian Wolff <milian.wolff@kdab.com>
-Subject: Re: [PATCH] perf tools: Add a dso_size option to perf report --sort
-Message-Id: <20180327090507.622cba7cac16a7e812170067@arm.com>
-In-Reply-To: <20180327112702.GQ13724@tassilo.jf.intel.com>
-References: <20180327060956.1c01ebe67a2a941bb4468c6f@arm.com>
-        <20180327112702.GQ13724@tassilo.jf.intel.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752829AbeC0OFq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 10:05:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44494 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752995AbeC0OEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 10:04:47 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [RFC v2 10/12] KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+Date: Tue, 27 Mar 2018 16:04:14 +0200
+Message-Id: <1522159456-10419-11-git-send-email-eric.auger@redhat.com>
+In-Reply-To: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
+References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018 04:27:02 -0700
-Andi Kleen <ak@linux.intel.com> wrote:
+This new attribute allows the userspace to set the base address
+of a reditributor region, relaxing the constraint of having all
+consecutive redistibutor frames contiguous.
 
-> On Tue, Mar 27, 2018 at 06:09:56AM -0500, Kim Phillips wrote:
-> > Add DSO size to perf report/top sort output list.
-> > 
-> > This includes adding a map__size fn to map.h, which is
-> > approximately equal to the DSO data file_size:
-> 
-> What's the point of knowing the size?  
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+---
+ arch/arm/include/uapi/asm/kvm.h   | 7 ++++---
+ arch/arm64/include/uapi/asm/kvm.h | 7 ++++---
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-I think it's just an extra convenience over symbol_size (added in
-commit 7768f8dada66d6  "perf tools: Allow sorting by symbol size") for
-tools developers' aggregation statistics.
-
-> Most of the DSO may not be faulted in. If anything the working
-> set would be more interesting. This would need more changes
-> though.
-
-Indeed.  Maxim?
-
-Kim
+diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
+index 6edd177..ce67f1d 100644
+--- a/arch/arm/include/uapi/asm/kvm.h
++++ b/arch/arm/include/uapi/asm/kvm.h
+@@ -88,9 +88,10 @@ struct kvm_regs {
+ #define KVM_VGIC_V2_CPU_SIZE		0x2000
+ 
+ /* Supported VGICv3 address types  */
+-#define KVM_VGIC_V3_ADDR_TYPE_DIST	2
+-#define KVM_VGIC_V3_ADDR_TYPE_REDIST	3
+-#define KVM_VGIC_ITS_ADDR_TYPE		4
++#define KVM_VGIC_V3_ADDR_TYPE_DIST		2
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST		3
++#define KVM_VGIC_ITS_ADDR_TYPE			4
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION	5
+ 
+ #define KVM_VGIC_V3_DIST_SIZE		SZ_64K
+ #define KVM_VGIC_V3_REDIST_SIZE		(2 * SZ_64K)
+diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
+index 9abbf30..ef8ad3b 100644
+--- a/arch/arm64/include/uapi/asm/kvm.h
++++ b/arch/arm64/include/uapi/asm/kvm.h
+@@ -88,9 +88,10 @@ struct kvm_regs {
+ #define KVM_VGIC_V2_CPU_SIZE		0x2000
+ 
+ /* Supported VGICv3 address types  */
+-#define KVM_VGIC_V3_ADDR_TYPE_DIST	2
+-#define KVM_VGIC_V3_ADDR_TYPE_REDIST	3
+-#define KVM_VGIC_ITS_ADDR_TYPE		4
++#define KVM_VGIC_V3_ADDR_TYPE_DIST		2
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST		3
++#define KVM_VGIC_ITS_ADDR_TYPE			4
++#define KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION	5
+ 
+ #define KVM_VGIC_V3_DIST_SIZE		SZ_64K
+ #define KVM_VGIC_V3_REDIST_SIZE		(2 * SZ_64K)
+-- 
+2.5.5
