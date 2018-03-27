@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49xLT7K8myG49WzGVHDuaxR27ne2MeKXRUGhj0Eq+NtZIW9nnU82weJ0zbyEoA5CGq3oYRx
-ARC-Seal: i=1; a=rsa-sha256; t=1522168315; cv=none;
+X-Google-Smtp-Source: AIpwx48qhSTmN/Pj9eCCXb0IjI9gcxfW3pKf8sqCcx3Odc0NTwKaGHzaJ9RWyozpMU7V5aIjkq5R
+ARC-Seal: i=1; a=rsa-sha256; t=1522168312; cv=none;
         d=google.com; s=arc-20160816;
-        b=qYcfX5yIMg97WDgdibfmo3gfmcN3+jJVVlBMLE7AZjbO6CGi58NjuKtONJwWO5o7Gg
-         cAAJ62Xkip8El71riofws+wBucZ3TtBoYjiVskZRFI0zO+CFr1F5aPYCqdoStBmdAgse
-         mI1R4Dy7Jgii3Sp1rgpOlYIOodH6kVjV1lZcmADcq+H9Ur6tN+znxZv08EWGZH1R5gCg
-         BFfIO4ofl2Q/53Qk+frpR8ZM5uonVu9MVqtBewfu73K4Tz6yLWPDpNgLetrywXwiUoOA
-         HiCe97B9tJIfXQYUeKBZu5tHzVRcewxmNYnkhCOXNFrC++YJFms1rM6NtNrLA2h9uYv4
-         fqjA==
+        b=mLjMywlK8pzn8+zsBlVkTNKa7/FEQeRBP4JDWHD0ceZwHzDYmiKyOR5I19GU6ua2TL
+         DUk+T5d8ygYb4Q86kJj7lmVu0QmaxrO9AZGBzzw0/P2rsLBcydNO42lfVTXZdJsNX4rD
+         VzWxF9wdZwm2VpaJP6p0bQ0B4LT4UPb+CMBa/nkWBBeIioMSnESA/raWpDOta2dLruE+
+         Wl0QRc4+z+7xVPtLMpAUpdf1gGtnoQQIJN+bkpQ5JNgJvE0Unu3KnzqcAY4nQijcDgdw
+         Ztphyc397TPip/8Xjp+vWNTTYViJy3ScLfq1XI6aXWcCIXpN28vLBrUJrXjfIOeIDOIZ
+         STZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VzgNppc62vdL6044+AYs4fLIczRaMeiHF8M7rSD5aKg=;
-        b=TdZYRjUT98nKHdqyOX4OKeSfADC/KV0elefXO8wxryxYmRWUfyOa3a0H3lKj+dGV3+
-         SLJRRTmYz56jfAOA7e9s/DFuj4PzUZ3eoPWP0wjsoLcjJ/0+CTJivutkNOrWz7+iculb
-         JgdqEbns048PXGFwDVSsGPNgbqynk23Sq5nBPiNuiHT5JnwaGxXML3LbzQYxxtpvgztE
-         PUxCku/Bys88w45wq7mlOOh5MSV+hoWIAJVHCR5Zv7v+Xm2EW2warT4OgOgT8CkA1k9v
-         GrCqqv0gbkppo2w9kqv54wzaIOyNBKRm3Wn/x7wk+ASYFSSgBVQ8eOnEtnZIg+3E8VvV
-         L+Yg==
+        bh=EBVsHoIHHpp7BuLzPvMZIWXwDgQIu+TkJq1BjwbAgpc=;
+        b=mUAs8HB2WydO9JPsAHBdkXrLhB6EvHDTlakfZRx/rv71Qk9qJFzPN0Vh+StYONozPL
+         QXWYUjkR2PQCna6VfP/Cs+Q4EOlv6AoKkgnxucheIkZhk/HaAcmgf3pEdo9GHLDCNCU5
+         vcpo0WWf3/WSZlSED9v+MCaKTrlQrG+wrTRmfxH55IkNNNooI5/0j3f8th4S+fyUQpWD
+         Vdgbw5MvuYmdUclQ177ab5Vyc+2d1lfPqdYp7ds4CJPaUa88nt+VejaO5uIXAKA9wnyc
+         os3oL4SQ5oO3+DCEl3Y4z09pkNowtL9U/Ue1BO0QK6DCUGKMW+4Hfu1t1V/rAdst7ny9
+         qJDg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Hante Meuleman <hante.meuleman@broadcom.com>,
-	Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-	Franky Lin <franky.lin@broadcom.com>,
-	Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.9 35/67] brcmfmac: fix P2P_DEVICE ethernet address generation
-Date: Tue, 27 Mar 2018 18:27:27 +0200
-Message-Id: <20180327162728.938843300@linuxfoundation.org>
+	Dariusz Dokupil <dariusz.dokupil@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.9 34/67] libnvdimm, {btt, blk}: do integrity setup before add_disk()
+Date: Tue, 27 Mar 2018 18:27:26 +0200
+Message-Id: <20180327162728.876868121@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109009231297608?=
-X-GMAIL-MSGID: =?utf-8?q?1596109163412207955?=
+X-GMAIL-THRID: =?utf-8?q?1596109160718224747?=
+X-GMAIL-MSGID: =?utf-8?q?1596109160718224747?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,68 +50,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+From: Vishal Verma <vishal.l.verma@intel.com>
 
-commit 455f3e76cfc0d893585a5f358b9ddbe9c1e1e53b upstream.
+commit 3ffb0ba9b567a8efb9a04ed3d1ec15ff333ada22 upstream.
 
-The firmware has a requirement that the P2P_DEVICE address should
-be different from the address of the primary interface. When not
-specified by user-space, the driver generates the MAC address for
-the P2P_DEVICE interface using the MAC address of the primary
-interface and setting the locally administered bit. However, the MAC
-address of the primary interface may already have that bit set causing
-the creation of the P2P_DEVICE interface to fail with -EBUSY. Fix this
-by using a random address instead to determine the P2P_DEVICE address.
+Prior to 25520d55cdb6 ("block: Inline blk_integrity in struct gendisk")
+we needed to temporarily add a zero-capacity disk before registering for
+blk-integrity. But adding a zero-capacity disk caused the partition
+table scanning to bail early, and this resulted in partitions not coming
+up after a probe of the BTT or blk namespaces.
 
-Cc: stable@vger.kernel.org # 3.10.y
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
-Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Reviewed-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+We can now register for integrity before the disk has been added, and
+this fixes the rescan problems.
+
+Fixes: 25520d55cdb6 ("block: Inline blk_integrity in struct gendisk")
+Reported-by: Dariusz Dokupil <dariusz.dokupil@intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c |   24 +++++++----------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ drivers/nvdimm/blk.c |    3 +--
+ drivers/nvdimm/btt.c |    3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/p2p.c
-@@ -462,25 +462,23 @@ static int brcmf_p2p_set_firmware(struct
-  * @dev_addr: optional device address.
-  *
-  * P2P needs mac addresses for P2P device and interface. If no device
-- * address it specified, these are derived from the primary net device, ie.
-- * the permanent ethernet address of the device.
-+ * address it specified, these are derived from a random ethernet
-+ * address.
-  */
- static void brcmf_p2p_generate_bss_mac(struct brcmf_p2p_info *p2p, u8 *dev_addr)
- {
--	struct brcmf_if *pri_ifp = p2p->bss_idx[P2PAPI_BSSCFG_PRIMARY].vif->ifp;
--	bool local_admin = false;
-+	bool random_addr = false;
+--- a/drivers/nvdimm/blk.c
++++ b/drivers/nvdimm/blk.c
+@@ -286,8 +286,6 @@ static int nsblk_attach_disk(struct nd_n
+ 	disk->queue		= q;
+ 	disk->flags		= GENHD_FL_EXT_DEVT;
+ 	nvdimm_namespace_disk_name(&nsblk->common, disk->disk_name);
+-	set_capacity(disk, 0);
+-	device_add_disk(dev, disk);
  
--	if (!dev_addr || is_zero_ether_addr(dev_addr)) {
--		dev_addr = pri_ifp->mac_addr;
--		local_admin = true;
--	}
-+	if (!dev_addr || is_zero_ether_addr(dev_addr))
-+		random_addr = true;
+ 	if (devm_add_action_or_reset(dev, nd_blk_release_disk, disk))
+ 		return -ENOMEM;
+@@ -300,6 +298,7 @@ static int nsblk_attach_disk(struct nd_n
+ 	}
  
--	/* Generate the P2P Device Address.  This consists of the device's
--	 * primary MAC address with the locally administered bit set.
-+	/* Generate the P2P Device Address obtaining a random ethernet
-+	 * address with the locally administered bit set.
- 	 */
--	memcpy(p2p->dev_addr, dev_addr, ETH_ALEN);
--	if (local_admin)
--		p2p->dev_addr[0] |= 0x02;
-+	if (random_addr)
-+		eth_random_addr(p2p->dev_addr);
-+	else
-+		memcpy(p2p->dev_addr, dev_addr, ETH_ALEN);
+ 	set_capacity(disk, available_disk_size >> SECTOR_SHIFT);
++	device_add_disk(dev, disk);
+ 	revalidate_disk(disk);
+ 	return 0;
+ }
+--- a/drivers/nvdimm/btt.c
++++ b/drivers/nvdimm/btt.c
+@@ -1392,8 +1392,6 @@ static int btt_blk_init(struct btt *btt)
+ 	queue_flag_set_unlocked(QUEUE_FLAG_NONROT, btt->btt_queue);
+ 	btt->btt_queue->queuedata = btt;
  
- 	/* Generate the P2P Interface Address.  If the discovery and connection
- 	 * BSSCFGs need to simultaneously co-exist, then this address must be
+-	set_capacity(btt->btt_disk, 0);
+-	device_add_disk(&btt->nd_btt->dev, btt->btt_disk);
+ 	if (btt_meta_size(btt)) {
+ 		int rc = nd_integrity_init(btt->btt_disk, btt_meta_size(btt));
+ 
+@@ -1405,6 +1403,7 @@ static int btt_blk_init(struct btt *btt)
+ 		}
+ 	}
+ 	set_capacity(btt->btt_disk, btt->nlba * btt->sector_size >> 9);
++	device_add_disk(&btt->nd_btt->dev, btt->btt_disk);
+ 	btt->nd_btt->size = btt->nlba * (u64)btt->sector_size;
+ 	revalidate_disk(btt->btt_disk);
+ 
