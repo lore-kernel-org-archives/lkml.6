@@ -1,60 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751067AbeC0Hii (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 03:38:38 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:39052 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750873AbeC0Hih (ORCPT
+        id S1751713AbeC0HjA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 03:39:00 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:33090 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751070AbeC0Hi7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 03:38:37 -0400
-X-Google-Smtp-Source: AG47ELtlIRMU2dmRgzYMJsu+7H9y5/LuOgbqaF6Q9+hcY4UorOb8ZamRLJKHs9Fc81/H2lGLNx3CIQ==
-Date: Tue, 27 Mar 2018 10:38:34 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, willy@infradead.org,
-        adobriyan@gmail.com, mhocko@kernel.org, mguzik@redhat.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-Message-ID: <20180327073834.GI2236@uranus>
-References: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180326183725.GB27373@bombadil.infradead.org>
- <20180326192132.GE2236@uranus>
- <0bfa8943-a2fe-b0ab-99a2-347094a2bcec@i-love.sakura.ne.jp>
- <20180326212944.GF2236@uranus>
- <201803270700.IJB35465.HJQFSFMVLFOtOO@I-love.SAKURA.ne.jp>
- <ceaa72ee-a63a-983b-d040-387886f5599c@linux.alibaba.com>
+        Tue, 27 Mar 2018 03:38:59 -0400
+X-Google-Smtp-Source: AG47ELuUfBxhiHG1EmgDN1IffJPDNC9s8NHaT+H5F0H3JcoJU2DFlBSz4DrXyhEWZvEUQziPRri+5ESsevxgEK7pexs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ceaa72ee-a63a-983b-d040-387886f5599c@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180327023927.GA11454@guoren>
+References: <cover.1521399976.git.ren_guo@c-sky.com> <c15b1fce07d0a19616026dfb927bfcbd88102b12.1521399976.git.ren_guo@c-sky.com>
+ <CAK8P3a1rzS+MmubYqTE-8H89QnULcGbKth=eWTA5mJ5VLRNL0Q@mail.gmail.com>
+ <20180320131342.GA31542@guoren> <CAK8P3a3pat6wQ+9gbf_wtp6+dur_h=Zp1896rogZHnehVnqVNA@mail.gmail.com>
+ <20180321124137.GA21320@guoren> <CAK8P3a06MVAT35ZbG=gRkR1EDVdWPoT3bhwL+9fZSkmTHaDVBw@mail.gmail.com>
+ <20180327023927.GA11454@guoren>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 27 Mar 2018 09:38:56 +0200
+X-Google-Sender-Auth: DmLscn8qQyoyyn5d4b5lK9T7QNc
+Message-ID: <CAK8P3a3A+BEmBnGCSiRdoaiqSJjhC5zaZebcq2GPVaLJatBk8Q@mail.gmail.com>
+Subject: Re: [PATCH 15/19] csky: Build infrastructure
+To: Guo Ren <ren_guo@c-sky.com>
+Cc: linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 06:12:55PM -0400, Yang Shi wrote:
-> > +	if (unlikely(arg_start > arg_end || env_start > env_end)) {
-> > +		cond_resched();
-> > +		goto retry;
-> 
-> Can't it trap into dead loop if the condition is always false?
+On Tue, Mar 27, 2018 at 4:39 AM, Guo Ren <ren_guo@c-sky.com> wrote:
+> On Mon, Mar 26, 2018 at 03:00:00PM +0200, Arnd Bergmann wrote:
+>> Ok, I understand the part about ck610 being incompatible, but I'm
+>> still not sure about the 8xx ones: Do you mean it's impossible to
+>> have one kernel that runs across all of them for some other reason,
+>> or is it something you haven't allowed because you see no use for it?
+>
+> Sorry, Csky gcc need "-mcpu=ck807" or "-mcpu=ck810" or "-mcpu=ck860" to
+> determine the back-end policy. So I must seperate them with different vmlinux.
 
-Yes, unfortunately it can.
+Usually the way gcc handles this, either each CPU is a strict superset
+of another
+one, so you just need to specify the one with the smallest instruction set,
+or you have an option like -mcpu=generic that produces the common subset.
 
-> > +	}
-> > 
-> > for reading these fields.
-> > 
-> > By the way, /proc/pid/ readers are serving as a canary who tells something
-> > mm_mmap related problem is happening. On the other hand, it is sad that
-> > such canary cannot be terminated by signal due to use of unkillable waits.
-> > I wish we can use killable waits.
-> 
-> I already proposed patches (https://lkml.org/lkml/2018/2/26/1197) to do this
-> a few weeks ago. In the review, akpm suggested mitigate the mmap_sem
-> contention instead of using killable version workaround. Then the
-> preliminary unmaping by section patches
-> (https://lkml.org/lkml/2018/3/20/786) were proposed. In the discussion, we
-> decided to eliminate the mmap_sem abuse, this is where the patch came from.
+>> This is basically the same question as above: For c610, using the fixed
+>> value is sufficient, because it's incompatible with the others. But if you want
+>> to run the same kernel on both ck810 and ck860, then it needs some form
+>> of runtime detection.
+> Sorry, currently no runtime detection.
+> But I agree with you that one vmlinux for all cpus is a good design for compat.
+>
+>> On other architectures, the L1_CACHE_BYTES constant is the maximum
+>> possible cache line size, and the cache flush function uses the actual size
+> The same with above, we don't detect cpus on runtime. So we just make it
+> simple here.
+
+Ok, fair enough. It's something that can always be added later, as long as
+we keep this in mind early on.
+
+       Arnd
