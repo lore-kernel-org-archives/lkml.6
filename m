@@ -1,666 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeC0OTt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 10:19:49 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35940 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750898AbeC0OTq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:19:46 -0400
-Message-ID: <1522160373.4539.9.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 4.16-rc7
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date: Tue, 27 Mar 2018 07:19:33 -0700
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1752180AbeC0OT7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 10:19:59 -0400
+Received: from mail-eopbgr10047.outbound.protection.outlook.com ([40.107.1.47]:25408
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750898AbeC0OT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 10:19:56 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com;
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Peter Chen <peter.chen@freescale.com>,
+        Irina Tirdea <irina.tirdea@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        Anson Huang <anson.huang@nxp.com>, Anson Huang <b20788@freescale.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx7d: Correct ahb clk parent select
+Date: Tue, 27 Mar 2018 17:19:34 +0300
+Message-Id: <1522160374-31894-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [95.76.156.53]
+X-ClientProxiedBy: VI1PR0901CA0087.eurprd09.prod.outlook.com
+ (2603:10a6:800:7e::13) To DB5PR04MB2136.eurprd04.prod.outlook.com
+ (2a01:111:e400:c582::13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 82dea8bb-9e8c-4a61-8849-08d593edcd73
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB2136;
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB2136;3:/LlW9wbyn3SszycdN84W7lucVz8xvSJXzdwFZujVBbm4ywZZ2VMNeoriEN5VEufINE+CKLeU4Si/+FZSCK9Hwo0/HxW3KAX4f99TAkPNKLakKmRJ/ENpazXTzyJRxIl+koW64kIdNrHysaRT8miugZlHt2n6UvtwRud1/016MQbPeKCEHxw7OGNeeki+sFLgjoLcqNgGiBbupEenvO7owsovXKSNX9mPCwAmH6w+Cqyb7aRtyS8dOHHX9f8+OQtR;25:Fv8BeaY0ve85Po2ynVH+4A8Gg9BPK+31gIGHpTo/LoeEHjPEXYS+yhMgu3WhnyXoWdWI1MT7DlGLpTeWBtKT4BRgnaRTR2vGgLEjH720VnmkFrzdgKyno2KYDBeJv7r+85j07UEUzzkcf9NkaC0cLsSKp8zIl5oYzIi0NpdebvEbEbiC8RQDfCJcrwkqAMnB/P9nkkn5VrNQCEYpYP+2bN2D8Gy2PiTb/SpCWWZE11jkHnXG2EVO8fVjjP6KmN5GlIfQUQUAEU6QDSYcyECEGYbRYkhzjSvrOswh6pEHbj5uilGaVF+0fzdn/nWKW/1+Atx0IJ4gScYUsLiKMpuD0Q==;31:VoV7v5gA1kK0Cw0bHWOGFrnzteVn9cIZlTaT5gymqIumzTeQCpl1nEKUSo0D9wyyYtwhuh0457jMAGNcgQKQ5VmC1z/8D3eRvc3cAUbiVtJKVrMXuSqkRdgn/f4jQ4zh95h3dQe19ODXKtjjD70JGq5l/Wn0i/jA9x5GifdMY41NnAl4vxJnxAaWY3IxDl2dA9ynl3gq5uL+QlqDAXcHfsM+l7xET36Wm1/3XRxh2lw=
+X-MS-TrafficTypeDiagnostic: DB5PR04MB2136:
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB2136;20:W/7inJ9P6FO0VEY+hV91mKW9B03KBqvQQgSJwFro3fnJ7lOiU86PligQEyZszcXz0sNuO3z6HDPpXUzxQLvQAqit3nKa+6QYGC+U7o7+9mE93PXwPBcGSQNwu4qDyDXcbKjtoBzdC5BglcfT8QJOf/0uQ8CgePrHEO2kbVg4QfzBlPxQxEU/Gq8gE5UsWGlRSS0tZ/4nPEPOCKCHMNSccvDpaQy6Ix9GRHKLONcrapsUj3GaAv6HuQtm1d+bsNaYQG69Ev/Mc69TyObzNQcFPo491WLmxX9+JaNSKC26PZLTPAopJmEhyw62Yiz8X+bC/cbE/4JjaiKkH4e8DVabJ7jeOtQFNjONtkW7bzB0X/Wr/059cJ+IiREdPPC7qrtZ/8kZ8wV8oNIY8soId2HAfLCV5yUGGCwSgg4kJ0MFc0iJ7srWRYqheIjYkNa6sUuqGwE1aDUWBkPV0HERzQdm69IjvSrmsa3x3IPklXLiF304PWAjpXN4KIOYHKvjVmuq;4:7dxBzJ1pPdgswO816Re67+3fu56bd+Jg1XhGUYoyT5KQNjf6sEsQmEyN0/B48R/+iwBevsWLSCa3SugnyDhqgUX/IJFbjjKrY6InfjQOzsn8elifG3A5vXYyQX4mZEIATe4X4jI3bEJcMAlLugLJ1hQ93Pi2VmG030YTd/CipZRZHr+lL4rvO4+Hb6PIscVtR+Lfd06a2oprDlcZZ9U2qXULrOghq1MWW1GgksPTOqKWg7H0DGVOjFRO1LWmIikM/uPPWyj2CnxQSkvuUA96yy2TjIOFsxNyj7MBpEHV0y4uL6uP+IKdDBI0L92AsVkVv/XApUHDwRAotyRr3qLHr1W+LKU83K4jNi7t1a/s2wA=
+X-Microsoft-Antispam-PRVS: <DB5PR04MB2136E93D24A52DAA2F6FFAA9F6AC0@DB5PR04MB2136.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(101931422205132);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:DB5PR04MB2136;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB2136;
+X-Forefront-PRVS: 0624A2429E
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(39860400002)(366004)(376002)(346002)(396003)(189003)(199004)(2616005)(305945005)(478600001)(6486002)(316002)(68736007)(47776003)(53936002)(956004)(8936002)(2906002)(7736002)(16586007)(6116002)(476003)(1857600001)(6666003)(25786009)(3846002)(106356001)(110136005)(6636002)(54906003)(86362001)(48376002)(6506007)(6512007)(50226002)(52116002)(97736004)(16526019)(386003)(186003)(66066001)(59450400001)(105586002)(50466002)(51416003)(8676002)(26005)(4326008)(36756003)(5660300001)(81156014)(81166006)(486005)(486005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB2136;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB5PR04MB2136;23:cG+7+Ks2rr/dRU/bkp6zOCc8zxuIclYBWb1nAHCkH?=
+ =?us-ascii?Q?77+4CJXubog+UnE4Ge8LlK+/PLnrR0RoWLt+Z74H0FRPdUZzndmp30zAE7HD?=
+ =?us-ascii?Q?iSqiDNPOglJkPRniZD1ETTbKuUfluP6OI6lqLuaasgg0E60A+fBN4YpC1BEX?=
+ =?us-ascii?Q?6BU3jRdeluP6L0GWYoTi1aCmlzGDkxiB/mBTChOae56Yep1vSrpyzmxeEMG7?=
+ =?us-ascii?Q?yBrcXi1/v+X2uHSdyykIdnwcavCdFByFsVs0HHLkcyFyGgDxi+vPQzvw3D6b?=
+ =?us-ascii?Q?WtFzP4Nje5V4haviwqIhsYLj96RtqPluWti3TEVubK4Db+NTVUsBaZRpCpoD?=
+ =?us-ascii?Q?Tl9pBtRO3oX10wxnnYRSToYcxsdNHX7hrZPNBbx7StusOZavdv9e8zmFRjSm?=
+ =?us-ascii?Q?Vit9rvhtG06sH7jJuTtM4eU66C4wjTmNyKzd0Gb7Ci2ownmXi7acqqoRB9gw?=
+ =?us-ascii?Q?wZRRpwi7EnftWUnG7AEOlbckPMPor/NMnKfXXa9YJZnOjSWz/qxmzJnciqCO?=
+ =?us-ascii?Q?DnBzhQmXztmilJ4HmrGruJRPyuSsNSszNkGRfZeHbi5+ESi0cQAC9vIt2hhS?=
+ =?us-ascii?Q?2/qWtJmN1M+8KjiuhuvvhLKj9hW4wzRnCDRd6gSU/ABxl/tnCbVXU9cUym97?=
+ =?us-ascii?Q?4JRmNSlACSdF0q/MH/YzJxG7BF+shyzvc5RiExoHRO6O7mFdVB+77qbir9Q5?=
+ =?us-ascii?Q?I6zwqSbI+wAd8anFKFXAb+/j5l0inr8VZWcoTUwyEokDGR6umMFrOOKiOz1V?=
+ =?us-ascii?Q?DIPYIvuvdiVzJGq8eoRorWX1vAg+afD18Xq/DcdypP4GjelzlsynHbtaXeKx?=
+ =?us-ascii?Q?2w6FwjHJUkrdANdZlP2ZniUZ/D5rWO4T3g1Qa7CPYiR+C1JLL9Xuq3m0SFd2?=
+ =?us-ascii?Q?VmyMa3bvT3El9FjlSp4HOgM+SFox4xdD4U5rsyZ4gOHQQuK12e5nuHMBS01W?=
+ =?us-ascii?Q?xlbLDBrAyyQ7QnYQxhXRZbbmXvfj8Y286VLpVxgGFmG/A+hgj3wdse1dd8xq?=
+ =?us-ascii?Q?h7QcODATlMcVvMtl1tYRoqWPuejl1VCCB3RLSPVUHyX0Io+6e/ivWFYnYvGP?=
+ =?us-ascii?Q?vdkyDp/kk0AK3WsMi+Z9aRjisaGYDuPDNJJ1xPDaG/AZjJ7UlUf+Xb6khU+A?=
+ =?us-ascii?Q?CWCvAtF8NvbfR9e+GQmky8KJ51AATfu7ggXvEmHCnERXu/QJFbI6ujfAJMKp?=
+ =?us-ascii?Q?3boNTyxWv9W6TW9FXR4F6uZVPScoveFEPS1M83GGMc0Z158N6Qk/YkYcQ=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: kC+PJCIivFyF1ln46VYk1XP54zTr02+/X63zsETgN9s6rhpTLHjjU7JKlohr+8COgH5n8hrJ4ARSrg1Y0dxyn8nbgoZ/byzHsbLCBQ1FjORDNSGNpxTtoiX50ZNzwGE9X2uzWZEYl6lHtLmghyTl7+n1zvORxHt1n1OAOV0XZK1Mg+6M/Zv8cDl0FjOyr1Cb
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB2136;6:j9muzyv85Ne2HznY3hlc4btE2gU78WtmUGd5hUYdcvCAkdkb//eQqZKPijGjzSBLfuSAGzWIo4ksmFD8wlzJ4Kedwn/j9LvKbBF5bFxLFOc8SmAgybXdA/rR52RPgK0HCWOJJtFCzxhhl8FYJic/csp/4yBdRMsfYT5o8FikiN9KZ10TYOLhibNKDEYSrJiB+D3NddLsAPmWZeQaT+dX2wdwMkYSSijAEEM/RD5A3s9fR8DtrCXgTezwNC+K2EFe2RBtms6uOU0WVGEd7qJ+WNh5xQhrJr7OYMZnvQvBY7NNkZLNsM7t8UQ9Ga7tQXGC3iEw5M+2ohB2KJHLPEjDzqP9gfYQIemgdJfETFj2WBNSQzrepQRdSyWxz5Hg4JfKkKPThWCYzwR+o2hjdTGfj/waYfjr7HA9dkaMwsobVnBWdF8FSPjivieraHS9RcWo5xAOvhaFGhcD29iqIR7IgQ==;5:V/BPX2klaW552t4NBzDprHjGDnsowVJ8ljAHYERdiE6EwHlJNv2ejVFQhj3copW1ia3FKKYrbeaAVJOBUIanP9CcHFYai9/gpfb4G7hx+A8z/fi8ogdDMmckaoefL1+uj0j/d9gRHgMwVVO0Adkw335L1tEDhurXBExyiSYDpD8=;24:LVyHc6EdSSAhpmjqLjiDYckpB+F7zqjbs8lmjFh8qHoASXbSIy8IMUNEzPHd6aMoFJN3YA2WQYfB9sRS1UFdij87QtwHhla+cjX4HIVhJ6A=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB5PR04MB2136;7:HWFmqr07NUKquSnQ2tk+vx2MR99plfas99gw+B7gfg5wfymR7qRYSTATymB/7nuZnMogty0C+LaoIY6M5n2QkNXgITtHK/Zr9dwOjf6kcREAaYVlOjUkbErHDkkYcH1fuUmlabNQHgiuApDHD5VBEUhxjuzASNTCFPf6rUTGijTLHEZuEKenrgFi6XwLbmdCSpQvBQlUPBmmXL5Hhx/DBHo5nO50C9mkduiePkrbWILer+9qqNMlPslKxgB00Efr
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2018 14:19:49.1538
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82dea8bb-9e8c-4a61-8849-08d593edcd73
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB2136
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two driver fixes (ibmvfc, iscsi_tcp) and a USB fix for devices that
-give the wrong return to Read Capacity and cause a huge log spew.  The
-remaining 5 patches all try to fix commit 84676c1f21e8ff5
-"genirq/affinity: assign vectors to all possible CPUs") which broke the
-non-mq I/O path.
+From: Anson Huang <b20788@freescale.com>
 
-The patch is available here:
+Design team change the ahb's clk parent options but
+did NOT update the DOC accordingly in time, so the
+AHB/IPG's clk rate in clk tree is incorrect, AHB is
+67.5MHz and IPG is 33.75MHz, but using scope to
+monitor them, they are actually 135MHz and 67.5MHz,
+update the clk parent option to make clk tree info
+correct.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-
-The short changelog is:
-
-Brian King (1):
-      scsi: ibmvfc: Avoid unnecessary port relogin
-
-Jianchao Wang (1):
-      scsi: iscsi_tcp: set BDI_CAP_STABLE_WRITES when data digest enabled
-
-Martin K. Petersen (1):
-      scsi: sd: Remember that READ CAPACITY(16) succeeded
-
-Ming Lei (5):
-      scsi: virtio_scsi: unify scsi_host_template
-      scsi: virtio_scsi: fix IO hang caused by automatic irq vector affinity
-      scsi: core: introduce force_blk_mq
-      scsi: megaraid_sas: fix selection of reply queue
-      scsi: hpsa: fix selection of reply queue
-
-And the diffstat:
-
- drivers/scsi/hosts.c                        |   1 +
- drivers/scsi/hpsa.c                         |  73 ++++++++++++----
- drivers/scsi/hpsa.h                         |   1 +
- drivers/scsi/ibmvscsi/ibmvfc.c              |   6 +-
- drivers/scsi/iscsi_tcp.c                    |   8 ++
- drivers/scsi/megaraid/megaraid_sas.h        |   1 +
- drivers/scsi/megaraid/megaraid_sas_base.c   |  39 ++++++++-
- drivers/scsi/megaraid/megaraid_sas_fusion.c |  12 +--
- drivers/scsi/sd.c                           |   2 +
- drivers/scsi/virtio_scsi.c                  | 129 ++++------------------------
- include/scsi/scsi_host.h                    |   3 +
- 11 files changed, 128 insertions(+), 147 deletions(-)
-
-With full diff below.
-
-James
-
+Signed-off-by: Anson Huang <b20788@freescale.com>
+Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
+ drivers/clk/imx/clk-imx7d.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
-index dd9464920456..ef22b275d050 100644
---- a/drivers/scsi/hosts.c
-+++ b/drivers/scsi/hosts.c
-@@ -474,6 +474,7 @@ struct Scsi_Host *scsi_host_alloc(struct scsi_host_template *sht, int privsize)
- 		shost->dma_boundary = 0xffffffff;
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index 89bfa75..4d020dd 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -74,7 +74,7 @@ static const char *nand_usdhc_bus_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
  
- 	shost->use_blk_mq = scsi_use_blk_mq;
-+	shost->use_blk_mq = scsi_use_blk_mq || shost->hostt->force_blk_mq;
+ static const char *ahb_channel_sel[] = { "osc", "pll_sys_pfd2_270m_clk",
+ 	"pll_dram_533m_clk", "pll_sys_pfd0_392m_clk",
+-	"pll_enet_125m_clk", "pll_usb_main_clk", "pll_audio_post_div",
++	"pll_enet_250m_clk", "pll_usb_main_clk", "pll_audio_post_div",
+ 	"pll_video_post_div", };
  
- 	device_initialize(&shost->shost_gendev);
- 	dev_set_name(&shost->shost_gendev, "host%d", shost->host_no);
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index 87b260e403ec..31423b6dc26d 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -1045,11 +1045,7 @@ static void set_performant_mode(struct ctlr_info *h, struct CommandList *c,
- 		c->busaddr |= 1 | (h->blockFetchTable[c->Header.SGList] << 1);
- 		if (unlikely(!h->msix_vectors))
- 			return;
--		if (likely(reply_queue == DEFAULT_REPLY_QUEUE))
--			c->Header.ReplyQueue =
--				raw_smp_processor_id() % h->nreply_queues;
--		else
--			c->Header.ReplyQueue = reply_queue % h->nreply_queues;
-+		c->Header.ReplyQueue = reply_queue;
- 	}
- }
- 
-@@ -1063,10 +1059,7 @@ static void set_ioaccel1_performant_mode(struct ctlr_info *h,
- 	 * Tell the controller to post the reply to the queue for this
- 	 * processor.  This seems to give the best I/O throughput.
- 	 */
--	if (likely(reply_queue == DEFAULT_REPLY_QUEUE))
--		cp->ReplyQueue = smp_processor_id() % h->nreply_queues;
--	else
--		cp->ReplyQueue = reply_queue % h->nreply_queues;
-+	cp->ReplyQueue = reply_queue;
- 	/*
- 	 * Set the bits in the address sent down to include:
- 	 *  - performant mode bit (bit 0)
-@@ -1087,10 +1080,7 @@ static void set_ioaccel2_tmf_performant_mode(struct ctlr_info *h,
- 	/* Tell the controller to post the reply to the queue for this
- 	 * processor.  This seems to give the best I/O throughput.
- 	 */
--	if (likely(reply_queue == DEFAULT_REPLY_QUEUE))
--		cp->reply_queue = smp_processor_id() % h->nreply_queues;
--	else
--		cp->reply_queue = reply_queue % h->nreply_queues;
-+	cp->reply_queue = reply_queue;
- 	/* Set the bits in the address sent down to include:
- 	 *  - performant mode bit not used in ioaccel mode 2
- 	 *  - pull count (bits 0-3)
-@@ -1109,10 +1099,7 @@ static void set_ioaccel2_performant_mode(struct ctlr_info *h,
- 	 * Tell the controller to post the reply to the queue for this
- 	 * processor.  This seems to give the best I/O throughput.
- 	 */
--	if (likely(reply_queue == DEFAULT_REPLY_QUEUE))
--		cp->reply_queue = smp_processor_id() % h->nreply_queues;
--	else
--		cp->reply_queue = reply_queue % h->nreply_queues;
-+	cp->reply_queue = reply_queue;
- 	/*
- 	 * Set the bits in the address sent down to include:
- 	 *  - performant mode bit not used in ioaccel mode 2
-@@ -1157,6 +1144,8 @@ static void __enqueue_cmd_and_start_io(struct ctlr_info *h,
- {
- 	dial_down_lockup_detection_during_fw_flash(h, c);
- 	atomic_inc(&h->commands_outstanding);
-+
-+	reply_queue = h->reply_map[raw_smp_processor_id()];
- 	switch (c->cmd_type) {
- 	case CMD_IOACCEL1:
- 		set_ioaccel1_performant_mode(h, c, reply_queue);
-@@ -7376,6 +7365,26 @@ static void hpsa_disable_interrupt_mode(struct ctlr_info *h)
- 	h->msix_vectors = 0;
- }
- 
-+static void hpsa_setup_reply_map(struct ctlr_info *h)
-+{
-+	const struct cpumask *mask;
-+	unsigned int queue, cpu;
-+
-+	for (queue = 0; queue < h->msix_vectors; queue++) {
-+		mask = pci_irq_get_affinity(h->pdev, queue);
-+		if (!mask)
-+			goto fallback;
-+
-+		for_each_cpu(cpu, mask)
-+			h->reply_map[cpu] = queue;
-+	}
-+	return;
-+
-+fallback:
-+	for_each_possible_cpu(cpu)
-+		h->reply_map[cpu] = 0;
-+}
-+
- /* If MSI/MSI-X is supported by the kernel we will try to enable it on
-  * controllers that are capable. If not, we use legacy INTx mode.
-  */
-@@ -7771,6 +7780,10 @@ static int hpsa_pci_init(struct ctlr_info *h)
- 	err = hpsa_interrupt_mode(h);
- 	if (err)
- 		goto clean1;
-+
-+	/* setup mapping between CPU and reply queue */
-+	hpsa_setup_reply_map(h);
-+
- 	err = hpsa_pci_find_memory_BAR(h->pdev, &h->paddr);
- 	if (err)
- 		goto clean2;	/* intmode+region, pci */
-@@ -8480,6 +8493,28 @@ static struct workqueue_struct *hpsa_create_controller_wq(struct ctlr_info *h,
- 	return wq;
- }
- 
-+static void hpda_free_ctlr_info(struct ctlr_info *h)
-+{
-+	kfree(h->reply_map);
-+	kfree(h);
-+}
-+
-+static struct ctlr_info *hpda_alloc_ctlr_info(void)
-+{
-+	struct ctlr_info *h;
-+
-+	h = kzalloc(sizeof(*h), GFP_KERNEL);
-+	if (!h)
-+		return NULL;
-+
-+	h->reply_map = kzalloc(sizeof(*h->reply_map) * nr_cpu_ids, GFP_KERNEL);
-+	if (!h->reply_map) {
-+		kfree(h);
-+		return NULL;
-+	}
-+	return h;
-+}
-+
- static int hpsa_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	int dac, rc;
-@@ -8517,7 +8552,7 @@ static int hpsa_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	 * the driver.  See comments in hpsa.h for more info.
- 	 */
- 	BUILD_BUG_ON(sizeof(struct CommandList) % COMMANDLIST_ALIGNMENT);
--	h = kzalloc(sizeof(*h), GFP_KERNEL);
-+	h = hpda_alloc_ctlr_info();
- 	if (!h) {
- 		dev_err(&pdev->dev, "Failed to allocate controller head\n");
- 		return -ENOMEM;
-@@ -8916,7 +8951,7 @@ static void hpsa_remove_one(struct pci_dev *pdev)
- 	h->lockup_detected = NULL;			/* init_one 2 */
- 	/* (void) pci_disable_pcie_error_reporting(pdev); */	/* init_one 1 */
- 
--	kfree(h);					/* init_one 1 */
-+	hpda_free_ctlr_info(h);				/* init_one 1 */
- }
- 
- static int hpsa_suspend(__attribute__((unused)) struct pci_dev *pdev,
-diff --git a/drivers/scsi/hpsa.h b/drivers/scsi/hpsa.h
-index 018f980a701c..fb9f5e7f8209 100644
---- a/drivers/scsi/hpsa.h
-+++ b/drivers/scsi/hpsa.h
-@@ -158,6 +158,7 @@ struct bmic_controller_parameters {
- #pragma pack()
- 
- struct ctlr_info {
-+	unsigned int *reply_map;
- 	int	ctlr;
- 	char	devname[8];
- 	char    *product_name;
-diff --git a/drivers/scsi/ibmvscsi/ibmvfc.c b/drivers/scsi/ibmvscsi/ibmvfc.c
-index b1b1d3a3b173..daefe8172b04 100644
---- a/drivers/scsi/ibmvscsi/ibmvfc.c
-+++ b/drivers/scsi/ibmvscsi/ibmvfc.c
-@@ -3579,11 +3579,9 @@ static void ibmvfc_tgt_implicit_logout(struct ibmvfc_target *tgt)
- static int ibmvfc_adisc_needs_plogi(struct ibmvfc_passthru_mad *mad,
- 				    struct ibmvfc_target *tgt)
- {
--	if (memcmp(&mad->fc_iu.response[2], &tgt->ids.port_name,
--		   sizeof(tgt->ids.port_name)))
-+	if (wwn_to_u64((u8 *)&mad->fc_iu.response[2]) != tgt->ids.port_name)
- 		return 1;
--	if (memcmp(&mad->fc_iu.response[4], &tgt->ids.node_name,
--		   sizeof(tgt->ids.node_name)))
-+	if (wwn_to_u64((u8 *)&mad->fc_iu.response[4]) != tgt->ids.node_name)
- 		return 1;
- 	if (be32_to_cpu(mad->fc_iu.response[6]) != tgt->scsi_id)
- 		return 1;
-diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
-index 6198559abbd8..dd66c11399a2 100644
---- a/drivers/scsi/iscsi_tcp.c
-+++ b/drivers/scsi/iscsi_tcp.c
-@@ -37,6 +37,7 @@
- #include <linux/kfifo.h>
- #include <linux/scatterlist.h>
- #include <linux/module.h>
-+#include <linux/backing-dev.h>
- #include <net/tcp.h>
- #include <scsi/scsi_cmnd.h>
- #include <scsi/scsi_device.h>
-@@ -954,6 +955,13 @@ static int iscsi_sw_tcp_slave_alloc(struct scsi_device *sdev)
- 
- static int iscsi_sw_tcp_slave_configure(struct scsi_device *sdev)
- {
-+	struct iscsi_sw_tcp_host *tcp_sw_host = iscsi_host_priv(sdev->host);
-+	struct iscsi_session *session = tcp_sw_host->session;
-+	struct iscsi_conn *conn = session->leadconn;
-+
-+	if (conn->datadgst_en)
-+		sdev->request_queue->backing_dev_info->capabilities
-+			|= BDI_CAP_STABLE_WRITES;
- 	blk_queue_bounce_limit(sdev->request_queue, BLK_BOUNCE_ANY);
- 	blk_queue_dma_alignment(sdev->request_queue, 0);
- 	return 0;
-diff --git a/drivers/scsi/megaraid/megaraid_sas.h b/drivers/scsi/megaraid/megaraid_sas.h
-index ba6503f37756..27fab8235ea5 100644
---- a/drivers/scsi/megaraid/megaraid_sas.h
-+++ b/drivers/scsi/megaraid/megaraid_sas.h
-@@ -2128,6 +2128,7 @@ enum MR_PD_TYPE {
- 
- struct megasas_instance {
- 
-+	unsigned int *reply_map;
- 	__le32 *producer;
- 	dma_addr_t producer_h;
- 	__le32 *consumer;
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 0f1d88f272be..7b2bed5ab04c 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -5165,6 +5165,26 @@ megasas_setup_jbod_map(struct megasas_instance *instance)
- 		instance->use_seqnum_jbod_fp = false;
- }
- 
-+static void megasas_setup_reply_map(struct megasas_instance *instance)
-+{
-+	const struct cpumask *mask;
-+	unsigned int queue, cpu;
-+
-+	for (queue = 0; queue < instance->msix_vectors; queue++) {
-+		mask = pci_irq_get_affinity(instance->pdev, queue);
-+		if (!mask)
-+			goto fallback;
-+
-+		for_each_cpu(cpu, mask)
-+			instance->reply_map[cpu] = queue;
-+	}
-+	return;
-+
-+fallback:
-+	for_each_possible_cpu(cpu)
-+		instance->reply_map[cpu] = cpu % instance->msix_vectors;
-+}
-+
- /**
-  * megasas_init_fw -	Initializes the FW
-  * @instance:		Adapter soft state
-@@ -5343,6 +5363,8 @@ static int megasas_init_fw(struct megasas_instance *instance)
- 			goto fail_setup_irqs;
- 	}
- 
-+	megasas_setup_reply_map(instance);
-+
- 	dev_info(&instance->pdev->dev,
- 		"firmware supports msix\t: (%d)", fw_msix_count);
- 	dev_info(&instance->pdev->dev,
-@@ -6123,20 +6145,29 @@ static inline int megasas_alloc_mfi_ctrl_mem(struct megasas_instance *instance)
-  */
- static int megasas_alloc_ctrl_mem(struct megasas_instance *instance)
- {
-+	instance->reply_map = kzalloc(sizeof(unsigned int) * nr_cpu_ids,
-+				      GFP_KERNEL);
-+	if (!instance->reply_map)
-+		return -ENOMEM;
-+
- 	switch (instance->adapter_type) {
- 	case MFI_SERIES:
- 		if (megasas_alloc_mfi_ctrl_mem(instance))
--			return -ENOMEM;
-+			goto fail;
- 		break;
- 	case VENTURA_SERIES:
- 	case THUNDERBOLT_SERIES:
- 	case INVADER_SERIES:
- 		if (megasas_alloc_fusion_context(instance))
--			return -ENOMEM;
-+			goto fail;
- 		break;
- 	}
- 
- 	return 0;
-+ fail:
-+	kfree(instance->reply_map);
-+	instance->reply_map = NULL;
-+	return -ENOMEM;
- }
- 
- /*
-@@ -6148,6 +6179,7 @@ static int megasas_alloc_ctrl_mem(struct megasas_instance *instance)
-  */
- static inline void megasas_free_ctrl_mem(struct megasas_instance *instance)
- {
-+	kfree(instance->reply_map);
- 	if (instance->adapter_type == MFI_SERIES) {
- 		if (instance->producer)
- 			pci_free_consistent(instance->pdev, sizeof(u32),
-@@ -6540,7 +6572,6 @@ static int megasas_probe_one(struct pci_dev *pdev,
- 		pci_free_irq_vectors(instance->pdev);
- fail_init_mfi:
- 	scsi_host_put(host);
--
- fail_alloc_instance:
- 	pci_disable_device(pdev);
- 
-@@ -6746,6 +6777,8 @@ megasas_resume(struct pci_dev *pdev)
- 	if (rval < 0)
- 		goto fail_reenable_msix;
- 
-+	megasas_setup_reply_map(instance);
-+
- 	if (instance->adapter_type != MFI_SERIES) {
- 		megasas_reset_reply_desc(instance);
- 		if (megasas_ioc_init_fusion(instance)) {
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-index dc8e850fbfd2..5ec3b74e8aed 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -2641,11 +2641,8 @@ megasas_build_ldio_fusion(struct megasas_instance *instance,
- 			fp_possible = (io_info.fpOkForIo > 0) ? true : false;
- 	}
- 
--	/* Use raw_smp_processor_id() for now until cmd->request->cpu is CPU
--	   id by default, not CPU group id, otherwise all MSI-X queues won't
--	   be utilized */
--	cmd->request_desc->SCSIIO.MSIxIndex = instance->msix_vectors ?
--		raw_smp_processor_id() % instance->msix_vectors : 0;
-+	cmd->request_desc->SCSIIO.MSIxIndex =
-+		instance->reply_map[raw_smp_processor_id()];
- 
- 	praid_context = &io_request->RaidContext;
- 
-@@ -2971,10 +2968,9 @@ megasas_build_syspd_fusion(struct megasas_instance *instance,
- 	}
- 
- 	cmd->request_desc->SCSIIO.DevHandle = io_request->DevHandle;
--	cmd->request_desc->SCSIIO.MSIxIndex =
--		instance->msix_vectors ?
--		(raw_smp_processor_id() % instance->msix_vectors) : 0;
- 
-+	cmd->request_desc->SCSIIO.MSIxIndex =
-+		instance->reply_map[raw_smp_processor_id()];
- 
- 	if (!fp_possible) {
- 		/* system pd firmware path */
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 3b45f7fc5620..13ec1b5ef75c 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -2513,6 +2513,8 @@ sd_read_capacity(struct scsi_disk *sdkp, unsigned char *buffer)
- 				sector_size = old_sector_size;
- 				goto got_data;
- 			}
-+			/* Remember that READ CAPACITY(16) succeeded */
-+			sdp->try_rc_10_first = 0;
- 		}
- 	}
- 
-diff --git a/drivers/scsi/virtio_scsi.c b/drivers/scsi/virtio_scsi.c
-index 7c28e8d4955a..45d04631888a 100644
---- a/drivers/scsi/virtio_scsi.c
-+++ b/drivers/scsi/virtio_scsi.c
-@@ -91,9 +91,6 @@ struct virtio_scsi_vq {
- struct virtio_scsi_target_state {
- 	seqcount_t tgt_seq;
- 
--	/* Count of outstanding requests. */
--	atomic_t reqs;
--
- 	/* Currently active virtqueue for requests sent to this target. */
- 	struct virtio_scsi_vq *req_vq;
- };
-@@ -152,8 +149,6 @@ static void virtscsi_complete_cmd(struct virtio_scsi *vscsi, void *buf)
- 	struct virtio_scsi_cmd *cmd = buf;
- 	struct scsi_cmnd *sc = cmd->sc;
- 	struct virtio_scsi_cmd_resp *resp = &cmd->resp.cmd;
--	struct virtio_scsi_target_state *tgt =
--				scsi_target(sc->device)->hostdata;
- 
- 	dev_dbg(&sc->device->sdev_gendev,
- 		"cmd %p response %u status %#02x sense_len %u\n",
-@@ -210,8 +205,6 @@ static void virtscsi_complete_cmd(struct virtio_scsi *vscsi, void *buf)
- 	}
- 
- 	sc->scsi_done(sc);
--
--	atomic_dec(&tgt->reqs);
- }
- 
- static void virtscsi_vq_done(struct virtio_scsi *vscsi,
-@@ -529,11 +522,20 @@ static void virtio_scsi_init_hdr_pi(struct virtio_device *vdev,
- }
- #endif
- 
--static int virtscsi_queuecommand(struct virtio_scsi *vscsi,
--				 struct virtio_scsi_vq *req_vq,
-+static struct virtio_scsi_vq *virtscsi_pick_vq_mq(struct virtio_scsi *vscsi,
-+						  struct scsi_cmnd *sc)
-+{
-+	u32 tag = blk_mq_unique_tag(sc->request);
-+	u16 hwq = blk_mq_unique_tag_to_hwq(tag);
-+
-+	return &vscsi->req_vqs[hwq];
-+}
-+
-+static int virtscsi_queuecommand(struct Scsi_Host *shost,
- 				 struct scsi_cmnd *sc)
- {
--	struct Scsi_Host *shost = virtio_scsi_host(vscsi->vdev);
-+	struct virtio_scsi *vscsi = shost_priv(shost);
-+	struct virtio_scsi_vq *req_vq = virtscsi_pick_vq_mq(vscsi, sc);
- 	struct virtio_scsi_cmd *cmd = scsi_cmd_priv(sc);
- 	unsigned long flags;
- 	int req_size;
-@@ -576,79 +578,6 @@ static int virtscsi_queuecommand(struct virtio_scsi *vscsi,
- 	return 0;
- }
- 
--static int virtscsi_queuecommand_single(struct Scsi_Host *sh,
--					struct scsi_cmnd *sc)
--{
--	struct virtio_scsi *vscsi = shost_priv(sh);
--	struct virtio_scsi_target_state *tgt =
--				scsi_target(sc->device)->hostdata;
--
--	atomic_inc(&tgt->reqs);
--	return virtscsi_queuecommand(vscsi, &vscsi->req_vqs[0], sc);
--}
--
--static struct virtio_scsi_vq *virtscsi_pick_vq_mq(struct virtio_scsi *vscsi,
--						  struct scsi_cmnd *sc)
--{
--	u32 tag = blk_mq_unique_tag(sc->request);
--	u16 hwq = blk_mq_unique_tag_to_hwq(tag);
--
--	return &vscsi->req_vqs[hwq];
--}
--
--static struct virtio_scsi_vq *virtscsi_pick_vq(struct virtio_scsi *vscsi,
--					       struct virtio_scsi_target_state *tgt)
--{
--	struct virtio_scsi_vq *vq;
--	unsigned long flags;
--	u32 queue_num;
--
--	local_irq_save(flags);
--	if (atomic_inc_return(&tgt->reqs) > 1) {
--		unsigned long seq;
--
--		do {
--			seq = read_seqcount_begin(&tgt->tgt_seq);
--			vq = tgt->req_vq;
--		} while (read_seqcount_retry(&tgt->tgt_seq, seq));
--	} else {
--		/* no writes can be concurrent because of atomic_t */
--		write_seqcount_begin(&tgt->tgt_seq);
--
--		/* keep previous req_vq if a reader just arrived */
--		if (unlikely(atomic_read(&tgt->reqs) > 1)) {
--			vq = tgt->req_vq;
--			goto unlock;
--		}
--
--		queue_num = smp_processor_id();
--		while (unlikely(queue_num >= vscsi->num_queues))
--			queue_num -= vscsi->num_queues;
--		tgt->req_vq = vq = &vscsi->req_vqs[queue_num];
-- unlock:
--		write_seqcount_end(&tgt->tgt_seq);
--	}
--	local_irq_restore(flags);
--
--	return vq;
--}
--
--static int virtscsi_queuecommand_multi(struct Scsi_Host *sh,
--				       struct scsi_cmnd *sc)
--{
--	struct virtio_scsi *vscsi = shost_priv(sh);
--	struct virtio_scsi_target_state *tgt =
--				scsi_target(sc->device)->hostdata;
--	struct virtio_scsi_vq *req_vq;
--
--	if (shost_use_blk_mq(sh))
--		req_vq = virtscsi_pick_vq_mq(vscsi, sc);
--	else
--		req_vq = virtscsi_pick_vq(vscsi, tgt);
--
--	return virtscsi_queuecommand(vscsi, req_vq, sc);
--}
--
- static int virtscsi_tmf(struct virtio_scsi *vscsi, struct virtio_scsi_cmd *cmd)
- {
- 	DECLARE_COMPLETION_ONSTACK(comp);
-@@ -775,7 +704,6 @@ static int virtscsi_target_alloc(struct scsi_target *starget)
- 		return -ENOMEM;
- 
- 	seqcount_init(&tgt->tgt_seq);
--	atomic_set(&tgt->reqs, 0);
- 	tgt->req_vq = &vscsi->req_vqs[0];
- 
- 	starget->hostdata = tgt;
-@@ -805,33 +733,13 @@ static enum blk_eh_timer_return virtscsi_eh_timed_out(struct scsi_cmnd *scmnd)
- 	return BLK_EH_RESET_TIMER;
- }
- 
--static struct scsi_host_template virtscsi_host_template_single = {
--	.module = THIS_MODULE,
--	.name = "Virtio SCSI HBA",
--	.proc_name = "virtio_scsi",
--	.this_id = -1,
--	.cmd_size = sizeof(struct virtio_scsi_cmd),
--	.queuecommand = virtscsi_queuecommand_single,
--	.change_queue_depth = virtscsi_change_queue_depth,
--	.eh_abort_handler = virtscsi_abort,
--	.eh_device_reset_handler = virtscsi_device_reset,
--	.eh_timed_out = virtscsi_eh_timed_out,
--	.slave_alloc = virtscsi_device_alloc,
--
--	.dma_boundary = UINT_MAX,
--	.use_clustering = ENABLE_CLUSTERING,
--	.target_alloc = virtscsi_target_alloc,
--	.target_destroy = virtscsi_target_destroy,
--	.track_queue_depth = 1,
--};
--
--static struct scsi_host_template virtscsi_host_template_multi = {
-+static struct scsi_host_template virtscsi_host_template = {
- 	.module = THIS_MODULE,
- 	.name = "Virtio SCSI HBA",
- 	.proc_name = "virtio_scsi",
- 	.this_id = -1,
- 	.cmd_size = sizeof(struct virtio_scsi_cmd),
--	.queuecommand = virtscsi_queuecommand_multi,
-+	.queuecommand = virtscsi_queuecommand,
- 	.change_queue_depth = virtscsi_change_queue_depth,
- 	.eh_abort_handler = virtscsi_abort,
- 	.eh_device_reset_handler = virtscsi_device_reset,
-@@ -844,6 +752,7 @@ static struct scsi_host_template virtscsi_host_template_multi = {
- 	.target_destroy = virtscsi_target_destroy,
- 	.map_queues = virtscsi_map_queues,
- 	.track_queue_depth = 1,
-+	.force_blk_mq = 1,
- };
- 
- #define virtscsi_config_get(vdev, fld) \
-@@ -936,7 +845,6 @@ static int virtscsi_probe(struct virtio_device *vdev)
- 	u32 sg_elems, num_targets;
- 	u32 cmd_per_lun;
- 	u32 num_queues;
--	struct scsi_host_template *hostt;
- 
- 	if (!vdev->config->get) {
- 		dev_err(&vdev->dev, "%s failure: config access disabled\n",
-@@ -949,12 +857,7 @@ static int virtscsi_probe(struct virtio_device *vdev)
- 
- 	num_targets = virtscsi_config_get(vdev, max_target) + 1;
- 
--	if (num_queues == 1)
--		hostt = &virtscsi_host_template_single;
--	else
--		hostt = &virtscsi_host_template_multi;
--
--	shost = scsi_host_alloc(hostt,
-+	shost = scsi_host_alloc(&virtscsi_host_template,
- 		sizeof(*vscsi) + sizeof(vscsi->req_vqs[0]) * num_queues);
- 	if (!shost)
- 		return -ENOMEM;
-diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
-index a8b7bf879ced..9c1e4bad6581 100644
---- a/include/scsi/scsi_host.h
-+++ b/include/scsi/scsi_host.h
-@@ -452,6 +452,9 @@ struct scsi_host_template {
- 	/* True if the controller does not support WRITE SAME */
- 	unsigned no_write_same:1;
- 
-+	/* True if the low-level driver supports blk-mq only */
-+	unsigned force_blk_mq:1;
-+
- 	/*
- 	 * Countdown for host blocking with no commands outstanding.
- 	 */
+ static const char *dram_phym_sel[] = { "pll_dram_main_clk",
+-- 
+2.7.4
