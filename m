@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48OBCL1hQf3s7VTiKtXiIvtiXga+wZJY9BWmggdbW3LbTlBPVNhl76KvxuPTeE+KkxuPZed
-ARC-Seal: i=1; a=rsa-sha256; t=1522168638; cv=none;
+X-Google-Smtp-Source: AIpwx49rKWto1wtGFAJAAqMPYcJiGjhJdyj6SpbPB4enK+3CVtDDul7/c/p3DqACID1j8QjDfsks
+ARC-Seal: i=1; a=rsa-sha256; t=1522168636; cv=none;
         d=google.com; s=arc-20160816;
-        b=utUmc+MYnFEojSjk0SIxI3voaZ9bCarNmAOV2UYwE5miZaMshiDGO8fyD+m21XD9fA
-         12ISF30ys2DJPa5DtOlkHAT2Pu32JjtkM/TOCT0hhoc5LFKLrOyJ6UrglEr2aix0kcJt
-         Bai2oUQF7hgSADWNho2xp7hY0850qEE+gA96u5RS0Ij+hggUNeB4umo6glEO0xmG1gt1
-         c9kggmGgnsC/StqIRLoae/6PHCyQvKl2YA8bTo7cuFvrn/0WV4YrmFS4zglZKUqOixla
-         G4rREUXwp5cs2rmbzTEA6b8AGJ8DvAd6emm1MTvrbR377AhX6xQzLVIM+D7pUaT6zoOz
-         ZVmw==
+        b=oFA4pp9gm5DDbkVRImIUktxLRx9JlzqThBBFv1PbgQDHzC0cL8jmC0IxZxnGDcjiot
+         finniAE40MRw2CV7b5qpZWX+bnoaBfH7dSM1W1SsRJLKEGVCtGU6B9RZsQvFln3zQqQn
+         8yIrhSsdykJtwaL3+mDvX0DG+Vc4in3TIPnISwf/MrwLQwJ5XFoGVMS3oDGC3S+L5qYo
+         bFEKm63ugMAXlsHTXzd8TWPxmskYSF7vpxU9nIFS63BeomP7BRxE7VXf6OxCjn6Afi9y
+         ZUOenUbAq1j7vna8zbhuwDlz+dfIL5C49n1JVNWMqbP4Rd8A19ouIOS095ktRq+vz2nM
+         l2mQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=tkz6yq3C99ruSh8RN814PLCOZhdUnedZVo7uieiN9UA=;
-        b=L28XEINAHUW9La2m7GVXuMOOojfNbD/bz5IAhJzII9N3W2ZxbnqICH3lZqH3zSwZiO
-         zfEZxzr/Pm4YpcROx1FMBboWtGz/C3lv5ZeHbEyfOy7GNWwMScVRB5n3QvDB1+3Josai
-         Hc9UZ/GqWoSX5boVk5ThRd+66PMqtG7lyqmK1bcgzydsc9I8uP3FyQ/yZyEqWVv7dwgE
-         Fo137EYaawmuQSJ/gXj4da2a7HOh/Vu9MeGHxyuEyKlXe6OGu/IQTEKC34+tHP9nV3dE
-         mGn8JqoCInOifRHph7eyi/ORrjBZKKSSyf7oMC8RL5nmeZrH/3dlYxnZyqrP6nO8SwXs
-         R+nw==
+        bh=3v9OBasN6i6ky+Gx/0155PEEwGRK0/uaz0O18JPXNlQ=;
+        b=GoDbvrqDF1GRVF3sSpoMY8c3XbhHxqh6TM4NQQPYmTSm6kyvNV/0t6kKx6CRmdXwKs
+         EWaEBKIJKyOFzqS7cuJrCJmVlcWjcdghklkgjN6XClcmEtqHTtISaXQMjyLhCbks1/gI
+         gMdfx0QSJf5AYibTwNwhRxO4jw1edGTc5uQ+jH3GESBRzrIJngWgrvmvjXHP4kzKFOQy
+         mFULPp8C4rAzpNTDA6G8QnL02GGRAWUULbsSfJto0t3C/zL2If4kkgcAigecY99TR497
+         sxWBEvCrF2NHkomm84zMWzMO9T7rG3kn54R/26lkDjjLG1d/CCr2dtJqoujMO/oDk2kU
+         r3GA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,15 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Andy Lutomirski <luto@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kselftest@vger.kernel.org,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 079/101] selftests/x86/ptrace_syscall: Fix for yet more glibc interference
-Date: Tue, 27 Mar 2018 18:27:51 +0200
-Message-Id: <20180327162754.925376966@linuxfoundation.org>
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.14 078/101] x86/entry/64: Dont use IST entry for #BP stack
+Date: Tue, 27 Mar 2018 18:27:50 +0200
+Message-Id: <20180327162754.869276053@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109202615623395?=
-X-GMAIL-MSGID: =?utf-8?q?1596109502779613372?=
+X-GMAIL-THRID: =?utf-8?q?1596109065580803384?=
+X-GMAIL-MSGID: =?utf-8?q?1596109499934387718?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,52 +52,95 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andy Lutomirski <luto@kernel.org>
 
-commit 4b0b37d4cc54b21a6ecad7271cbc850555869c62 upstream.
+commit d8ba61ba58c88d5207c1ba2f7d9a2280e7d03be9 upstream.
 
-glibc keeps getting cleverer, and my version now turns raise() into
-more than one syscall.  Since the test relies on ptrace seeing an
-exact set of syscalls, this breaks the test.  Replace raise(SIGSTOP)
-with syscall(SYS_tgkill, ...) to force glibc to get out of our way.
+There's nothing IST-worthy about #BP/int3.  We don't allow kprobes
+in the small handful of places in the kernel that run at CPL0 with
+an invalid stack, and 32-bit kernels have used normal interrupt
+gates for #BP forever.
+
+Furthermore, we don't allow kprobes in places that have usergs while
+in kernel mode, so "paranoid" is also unnecessary.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kselftest@vger.kernel.org
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/bc80338b453afa187bc5f895bd8e2c8d6e264da2.1521300271.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/ptrace_syscall.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/entry/entry_64.S |    2 +-
+ arch/x86/kernel/idt.c     |    2 --
+ arch/x86/kernel/traps.c   |   15 ++++++++-------
+ 3 files changed, 9 insertions(+), 10 deletions(-)
 
---- a/tools/testing/selftests/x86/ptrace_syscall.c
-+++ b/tools/testing/selftests/x86/ptrace_syscall.c
-@@ -183,8 +183,10 @@ static void test_ptrace_syscall_restart(
- 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
- 			err(1, "PTRACE_TRACEME");
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1091,7 +1091,7 @@ apicinterrupt3 HYPERVISOR_CALLBACK_VECTO
+ #endif /* CONFIG_HYPERV */
  
-+		pid_t pid = getpid(), tid = syscall(SYS_gettid);
+ idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+-idtentry int3			do_int3			has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
++idtentry int3			do_int3			has_error_code=0
+ idtentry stack_segment		do_stack_segment	has_error_code=1
+ 
+ #ifdef CONFIG_XEN
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -160,7 +160,6 @@ static const __initconst struct idt_data
+  */
+ static const __initconst struct idt_data dbg_idts[] = {
+ 	INTG(X86_TRAP_DB,	debug),
+-	INTG(X86_TRAP_BP,	int3),
+ };
+ #endif
+ 
+@@ -183,7 +182,6 @@ gate_desc debug_idt_table[IDT_ENTRIES] _
+ static const __initconst struct idt_data ist_idts[] = {
+ 	ISTG(X86_TRAP_DB,	debug,		DEBUG_STACK),
+ 	ISTG(X86_TRAP_NMI,	nmi,		NMI_STACK),
+-	SISTG(X86_TRAP_BP,	int3,		DEBUG_STACK),
+ 	ISTG(X86_TRAP_DF,	double_fault,	DOUBLEFAULT_STACK),
+ #ifdef CONFIG_X86_MCE
+ 	ISTG(X86_TRAP_MC,	&machine_check,	MCE_STACK),
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -571,7 +571,6 @@ do_general_protection(struct pt_regs *re
+ }
+ NOKPROBE_SYMBOL(do_general_protection);
+ 
+-/* May run on IST stack. */
+ dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
+ {
+ #ifdef CONFIG_DYNAMIC_FTRACE
+@@ -586,6 +585,13 @@ dotraplinkage void notrace do_int3(struc
+ 	if (poke_int3_handler(regs))
+ 		return;
+ 
++	/*
++	 * Use ist_enter despite the fact that we don't use an IST stack.
++	 * We can be called from a kprobe in non-CONTEXT_KERNEL kernel
++	 * mode or even during context tracking state changes.
++	 *
++	 * This means that we can't schedule.  That's okay.
++	 */
+ 	ist_enter(regs);
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+ #ifdef CONFIG_KGDB_LOW_LEVEL_TRAP
+@@ -603,15 +609,10 @@ dotraplinkage void notrace do_int3(struc
+ 			SIGTRAP) == NOTIFY_STOP)
+ 		goto exit;
+ 
+-	/*
+-	 * Let others (NMI) know that the debug stack is in use
+-	 * as we may switch to the interrupt stack.
+-	 */
+-	debug_stack_usage_inc();
+ 	cond_local_irq_enable(regs);
+ 	do_trap(X86_TRAP_BP, SIGTRAP, "int3", regs, error_code, NULL);
+ 	cond_local_irq_disable(regs);
+-	debug_stack_usage_dec();
 +
- 		printf("\tChild will make one syscall\n");
--		raise(SIGSTOP);
-+		syscall(SYS_tgkill, pid, tid, SIGSTOP);
- 
- 		syscall(SYS_gettid, 10, 11, 12, 13, 14, 15);
- 		_exit(0);
-@@ -301,9 +303,11 @@ static void test_restart_under_ptrace(vo
- 		if (ptrace(PTRACE_TRACEME, 0, 0, 0) != 0)
- 			err(1, "PTRACE_TRACEME");
- 
-+		pid_t pid = getpid(), tid = syscall(SYS_gettid);
-+
- 		printf("\tChild will take a nap until signaled\n");
- 		setsigign(SIGUSR1, SA_RESTART);
--		raise(SIGSTOP);
-+		syscall(SYS_tgkill, pid, tid, SIGSTOP);
- 
- 		syscall(SYS_pause, 0, 0, 0, 0, 0, 0);
- 		_exit(0);
+ exit:
+ 	ist_exit(regs);
+ }
