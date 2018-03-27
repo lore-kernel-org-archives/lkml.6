@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4170472-1522167675-5-4146840905687704768
+X-Cyrus-Session-Id: sloti22d1t05-4170472-1522167675-2-11267028772469090365
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522167672; b=gitJkz6qHZMS9bmffdBaTtVDn1m2KY8BXUZ1LQnD3AgaLar
-    3dvElyYA9kQpEvlRauMoJrIWIWjfoGVVNK14aGO1Yx9scYduAFd3R9zTGjGEbg0L
-    +vYnv1os/ypfdgFzfDZzZSDi77Sq+yXBeaoQ/k2A+9qeOo62tvGtbmMl5W67/gZ4
-    ZxKScfIo91LrybSny8QL+xeXlx1tW29FarMrvCkBdQts3nrFzS6uFtv43hFkNfY1
-    F7w4vj/IVibU2bj+1QOjsEL7livML0h46ysuKktodjZiFS9edfQIAdNd8e10gQh/
-    IcFXL8s6hEpCJlZV2AklykVVZcH3F7PskrUDy+g==
+    t=1522167673; b=tx8/ljDUg1Xpin1CjTihgloAAVxRKXUvA0uTREhasun9Rku
+    CJtFa8vMKJlAcFztSqDlMlSWIOW9a2wCnm7+iJfWm2cVGVYOa8SknJmSheRXehVC
+    b1Svmyw/A00fJip+uPZnShcF0wCYNYzqOzwbVUeGD37w7w9g9inLqAVXeXEw+mIm
+    Hsg9wtcPbsptVyDKdnfl71zCCqntxHA26k2z/E0BME50QvYZdjTBKCqNqIQKYw6t
+    1VOIfhzUCumiCdKXzWdmb/A0i0zpcocc5FkszJMK1GfRu5qBuuziY9WMZtn5U6pF
+    HjFJHxMYomQ7bmRIMW9t6EHJTscTf5Zff8GhqUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=arctest; t=1522167672;
-    bh=9bWIcR+T7Ajow68HrPj87pXHGRM+vleWkG5tqV4B4Vk=; b=PRK4Y5yyxSwG
-    KVTLuMDeXN/brPyJcFZi5luAw6sDc9eDBb2OC6MchW3i+oYTqy5rWkaVb+mSYl0x
-    nu3u2kLrW3ThYfYHz/xQUQvEW9IffbLMEQ0YQTJMwQCiWJYUZnSsjMn2W4IJ6jWx
-    tb/GAYomtfDsrihi3bJ9/tupoFir6zxmtZKsvp1TGfdT3RFFqVRsupbyECzrWSSm
-    mU88gfVR/BRpnpqa99g6X0N6P/ed+9anfEYGHUaZVzldvLdiR0jY6omJx/UKtLrz
-    TTiFzEjsPX7aewFHRLrbW2oPaIO1+BXhIQ5H4YkJJ8HQ1+P6JOB/0QssBuIZVASO
-    xza+zyxGEw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=arctest; t=1522167673;
+    bh=b70pFQUVKc/bhX1EIJFGDknKBWm1fqIePoK6Ry5JHYc=; b=R2rAr868Uj2v
+    iEunluuaa5aPiAkC4mly5zz33ARYZ0zbvQH2WVj50TI/Hip6s4hrV2aKcMaZ7mvc
+    VKPtto0uWPJqWqC/pNQUvJNOzxnvG92CZk9ON9shbS2qb0ETnkY8V6XqJ5sfwrHU
+    yxvdetWa1RxwE4g6X0GaYhHrZxiQhQZIVbQkT8ZNozphDbsp3davUlgfqQHXQ6yS
+    XNqZ5S/XqjRVwLvL1+AanUUi3qS2bKMcmKyjJz6mHAEnORbD7U7rvKty3c1fZ36G
+    yVVRn8405oxFVk9QqmfFFOLso58JjRnrYZ2bunvtW7XWDX1fsXnA4mHpkUQaW9IG
+    Nax5PaRPpQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
@@ -51,15 +51,15 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIHn77UifRCe2vcIHZ2NZhM+HHjngvpsNGE0QnKRNVj3fkv0itYhBbzIRMfQI3F2tuSh8b9tUSRNUK4wKInhcemBnJwEEEbnZy57p6y/cuBJiGB81+dU
-    ZREh9cfi97sipm99XvBMAdPuW7grftuKpJoNsbcPLYE1gLl42LUk5OWv816XhQOQOrq/gHwppTY++nVELn6ibExpZS/sn6q6dcYDl0TwVDilMAm8hdXq+aVJ
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMX9AJOmtEhnt9rF/oQ3SNpqamWArTVjBTYYsl4l3gCJgygXjVzg+ydKVlM175CvDRx8PTTa/5WNyg0Jfoid7MArskvkQrAUTU2rOTzaR9dkJcFuJIeI
+    zOcv4ZhxxH6I9mzvPaQ5DdHL241RdwK1jZwAcnHfEaPxJXZ/NpPKZwQLvXbGtxpLFU7ViSVS956TJS/b8btUeaJXz8SyNXSxrJ9Gf1JSYa6WaFIO1EEpm6sF
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=v2DPQv5-lfwA:10 a=7d_E57ReAAAA:8
     a=VnNF1IyMAAAA:8 a=JfrnYn6hAAAA:8 a=1XWaLZrsAAAA:8 a=SOq6UgPBAAAA:8
     a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8 a=20KFwNOVAAAA:8
     a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8 a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8
     a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
-    a=K9fvYg9zRn_gSVpeIkAA:9 a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22
+    a=PcGdOUl1GkNCjaGyiRMA:9 a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22
     a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22
     a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22
     a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22
@@ -67,11 +67,11 @@ X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752278AbeC0QVJ (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 12:21:09 -0400
-Received: from mail.efficios.com ([167.114.142.138]:53980 "EHLO
+        id S1752553AbeC0QVK (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:21:10 -0400
+Received: from mail.efficios.com ([167.114.142.138]:53982 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752552AbeC0QVB (ORCPT
+        with ESMTP id S1752548AbeC0QVB (ORCPT
         <rfc822;linux-api@vger.kernel.org>); Tue, 27 Mar 2018 12:21:01 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
@@ -95,9 +95,9 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.17 09/21] sched: Implement push_task_to_cpu (v2)
-Date: Tue, 27 Mar 2018 12:05:30 -0400
-Message-Id: <20180327160542.28457-10-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.17 11/21] x86: Wire up cpu_opv system call
+Date: Tue, 27 Mar 2018 12:05:32 -0400
+Message-Id: <20180327160542.28457-12-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180327160542.28457-1-mathieu.desnoyers@efficios.com>
 References: <20180327160542.28457-1-mathieu.desnoyers@efficios.com>
@@ -106,20 +106,6 @@ X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
-
-Implement push_task_to_cpu(), which moves the task received as argument
-to the destination cpu's runqueue. It only does so if the CPU is within
-the CPU allowed mask of the task and if the CPU is active. If the CPU is
-not part of the allowed mask, -EINVAL is returned. If the CPU is not
-active, -EBUSY is returned.
-
-It does not change the CPU allowed mask, and can therefore be used
-within applications which rely on owning the sched_setaffinity() state.
-
-It does not pin the task to the destination CPU, which means that the
-scheduler may choose to move the task away from that CPU before the
-task executes. Code invoking push_task_to_cpu() must be prepared to
-retry in that case.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -144,88 +130,32 @@ CC: Will Deacon <will.deacon@arm.com>
 CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-api@vger.kernel.org
-
 ---
-Change since v1:
-- Return -EBUSY if CPU is not active.
----
- kernel/sched/core.c  | 42 ++++++++++++++++++++++++++++++++++++++++++
- kernel/sched/sched.h |  9 +++++++++
- 2 files changed, 51 insertions(+)
+ arch/x86/entry/syscalls/syscall_32.tbl | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 771caa7e95c6..ef7f5eb5d56e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1062,6 +1062,48 @@ void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
- 		set_curr_task(rq, p);
- }
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index b76cbd25854f..5772b343f7d5 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -392,3 +392,4 @@
+ 383	i386	statx			sys_statx
+ 384	i386	arch_prctl		sys_arch_prctl			compat_sys_arch_prctl
+ 385	i386	rseq			sys_rseq
++386	i386	cpu_opv			sys_cpu_opv
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 3ad03495bbb9..ab5d1f9f9396 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -340,6 +340,7 @@
+ 331	common	pkey_free		sys_pkey_free
+ 332	common	statx			sys_statx
+ 333	common	rseq			sys_rseq
++334	common	cpu_opv			sys_cpu_opv
  
-+int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu)
-+{
-+	struct rq_flags rf;
-+	struct rq *rq;
-+	int ret = 0;
-+
-+	rq = task_rq_lock(p, &rf);
-+	update_rq_clock(rq);
-+
-+	if (!cpumask_test_cpu(dest_cpu, &p->cpus_allowed)) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (!cpumask_test_cpu(dest_cpu, cpu_active_mask)) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	if (task_cpu(p) == dest_cpu)
-+		goto out;
-+
-+	if (task_running(rq, p) || p->state == TASK_WAKING) {
-+		struct migration_arg arg = { p, dest_cpu };
-+		/* Need help from migration thread: drop lock and wait. */
-+		task_rq_unlock(rq, p, &rf);
-+		stop_one_cpu(cpu_of(rq), migration_cpu_stop, &arg);
-+		tlb_migrate_finish(p->mm);
-+		return 0;
-+	} else if (task_on_rq_queued(p)) {
-+		/*
-+		 * OK, since we're going to drop the lock immediately
-+		 * afterwards anyway.
-+		 */
-+		rq = move_queued_task(rq, &rf, p, dest_cpu);
-+	}
-+out:
-+	task_rq_unlock(rq, p, &rf);
-+
-+	return ret;
-+}
-+
- /*
-  * Change a given task's CPU affinity. Migrate the thread to a
-  * proper CPU and schedule it away if the CPU it's executing on
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 66b070444a7e..4aaf70d54afc 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1252,6 +1252,15 @@ static inline void __set_task_cpu(struct task_struct *p, unsigned int cpu)
- 	rseq_migrate(p);
- }
- 
-+#ifdef CONFIG_SMP
-+int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu);
-+#else
-+static inline int push_task_to_cpu(struct task_struct *p, unsigned int dest_cpu)
-+{
-+	return 0;
-+}
-+#endif
-+
- /*
-  * Tunables that become constants when CONFIG_SCHED_DEBUG is off:
-  */
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
 -- 
 2.11.0
 
