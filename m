@@ -1,92 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752563AbeC0P24 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 11:28:56 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52679 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751120AbeC0P2z (ORCPT
+        id S1752582AbeC0Paz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 11:30:55 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:45674 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752088AbeC0Pay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 11:28:55 -0400
-X-Google-Smtp-Source: AG47ELtf0mUfMhi/TiMHKnyOEUJj/8IWhozYFZGK/SjZwuXuxmfZgTeBl27PopiZeUGe/cO0kVS3OCsWZ5yEkZ8k6O8=
+        Tue, 27 Mar 2018 11:30:54 -0400
+Date: Tue, 27 Mar 2018 23:30:38 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: NeilBrown <neilb@suse.com>
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tom Herbert <tom@quantonium.net>
+Subject: Re: [PATCH 1/6] rhashtable: improve documentation for
+ rhashtable_walk_peek()
+Message-ID: <20180327153038.GA13868@gondor.apana.org.au>
+References: <152210688405.11435.13010923693146415942.stgit@noble>
+ <152210718418.11435.11573013181393548255.stgit@noble>
 MIME-Version: 1.0
-In-Reply-To: <213641788.1071.1522157276112.JavaMail.zimbra@efficios.com>
-References: <20180326191031.14939-1-mathieu.desnoyers@efficios.com>
- <CAEi0qN=zSWqH0U0pTg-c31vk+xXFbddzSniJG6sudjuaMk9kVQ@mail.gmail.com> <213641788.1071.1522157276112.JavaMail.zimbra@efficios.com>
-From: "Joel Fernandes (Google)" <joel.opensrc@gmail.com>
-Date: Tue, 27 Mar 2018 08:28:53 -0700
-Message-ID: <CAEi0qNmn9p_PjAA49yZ_0AybN_3sbAPpbb1ngyiacAxLM79=6A@mail.gmail.com>
-Subject: Re: [RFC PATCH] tracepoint: Provide tracepoint_kernel_find_by_name
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: rostedt <rostedt@goodmis.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152210718418.11435.11573013181393548255.stgit@noble>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 6:27 AM, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
-<snip>
->>> +static void find_tp(struct tracepoint *tp, void *priv)
->>> +{
->>> +       struct tp_find_args *args = priv;
->>> +
->>> +       if (!strcmp(tp->name, args->name)) {
->>> +               WARN_ON_ONCE(args->tp);
->>> +               args->tp = tp;
->>
->> I think this runtime check is not needed if it really can't happen
->> (linker verifies that already as you mentioned) although I'm not
->> opposed if you still want to keep it, because there's no way to break
->> out of the outer loop anyway so I guess your call..
->
-> We can change the outer loop and break from it if needed, that's not
-> an issue.
->
->> I would just do:
->>
->> if (args->tp)
->>    return;
->>
->> if find_tp already found the tracepoint.
->>
->> Tried to also create a duplicate tracepoint and I get:
->>  CC      init/version.o
->>  AR      init/built-in.o
->>  AR      built-in.o
->>  LD      vmlinux.o
->> block/blk-core.o:(__tracepoints+0x440): multiple definition of
->> `__tracepoint_sched_switch'
->> kernel/sched/core.o:(__tracepoints+0x440): first defined here
->> Makefile:1032: recipe for target 'vmlinux' failed
->> make: *** [vmlinux] Error 1
->
-> Yeah, as I state in my changelog, I'm very well aware that the linker
-> is able to catch those. This was the purpose of emitting a
-> __tracepoint_##name symbol in the tracepoint definition macro. This
-> WARN_ON_ONCE() is a redundant check for an invariant that we expect
-> is provided by the linker. Given that it's not a fast path, I would
-> prefer to keep this redundant check in place, given that an average
-> factor 2 speedup on a slow path should really not be something we
-> need to optimize for. IMHO, for slow paths, robustness is more important
-> than speed (unless the slow path becomes so slow that it really affects
-> the user).
->
-> I envision that a way to break this invariant would be to compile a
-> kernel object with gcc -fvisibility=hidden or such. I admit this is
-> particular scenario is really far fetched, but it illustrates why I
-> prefer to keep an extra safety net at runtime for linker-based
-> validations when possible.
->
-> If a faster tracepoint lookup function is needed, we should consider
-> perfect hashing algorithms done post-build, but so far nobody has
-> complained about speed of this lookup operation. Anyhow a factor 2 in
-> the speed of this lookup should really not matter, right ?
+On Tue, Mar 27, 2018 at 10:33:04AM +1100, NeilBrown wrote:
+> The documentation for rhashtable_walk_peek() wrong.  It claims to
+> return the *next* entry, whereas it in fact returns the *previous*
+> entry.
+> However if no entries have yet been returned - or if the iterator
+> was reset due to a resize event, then rhashtable_walk_peek()
+> *does* return the next entry, but also advances the iterator.
+> 
+> I suspect that this interface should be discarded and the one user
+> should be changed to not require it.  Possibly this patch should be
+> seen as a first step in that conversation.
+> 
+> This patch mostly corrects the documentation, but does make a
+> small code change so that the documentation can be correct without
+> listing too many special cases.  I don't think the one user will
+> be affected by the code change.
+> 
+> Signed-off-by: NeilBrown <neilb@suse.com>
 
-Yes, I agree with all the great reasons. So lets do it your way then.
+We should cc Tom Herbert too since he wrote this code.
 
-thanks,
+> ---
+>  lib/rhashtable.c |   17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+> 
+> diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+> index 3825c30aaa36..24a57ca494cb 100644
+> --- a/lib/rhashtable.c
+> +++ b/lib/rhashtable.c
+> @@ -853,13 +853,17 @@ void *rhashtable_walk_next(struct rhashtable_iter *iter)
+>  EXPORT_SYMBOL_GPL(rhashtable_walk_next);
+>  
+>  /**
+> - * rhashtable_walk_peek - Return the next object but don't advance the iterator
+> + * rhashtable_walk_peek - Return the previously returned object without advancing the iterator
+>   * @iter:	Hash table iterator
+>   *
+> - * Returns the next object or NULL when the end of the table is reached.
+> + * Returns the last object returned, or NULL if no object has yet been returned.
+> + * If the previously returned object has since been removed, then some other arbitrary
+> + * object maybe returned, or possibly NULL will be returned.  In that case, the
+> + * iterator might be advanced.
+>   *
+>   * Returns -EAGAIN if resize event occurred.  Note that the iterator
+> - * will rewind back to the beginning and you may continue to use it.
+> + * will rewind back to the beginning and rhashtable_walk_next() should be
+> + * used to get the next object.
+>   */
+>  void *rhashtable_walk_peek(struct rhashtable_iter *iter)
+>  {
+> @@ -880,7 +884,12 @@ void *rhashtable_walk_peek(struct rhashtable_iter *iter)
+>  		 * the table hasn't changed.
+>  		 */
+>  		iter->skip--;
+> -	}
+> +	} else
+> +		/* ->skip is only zero after rhashtable_walk_start()
+> +		 * or when the iterator is reset.  In this case there
+> +		 * is no previous object to return.
+> +		 */
+> +		return NULL;
+>  
+>  	return __rhashtable_walk_find_next(iter);
+>  }
+> 
+> 
 
-- Joel
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
