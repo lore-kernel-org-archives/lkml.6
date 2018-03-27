@@ -1,202 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752839AbeC0NQh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:16:37 -0400
-Received: from foss.arm.com ([217.140.101.70]:55118 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752120AbeC0NQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:16:34 -0400
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org, cdall@kernel.org, marc.zyngier@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
-        peter.maydell@linaro.org, kristina.martsenko@arm.com,
-        mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 11/17] kvm: arm64: Configure VTCR per VM
-Date: Tue, 27 Mar 2018 14:15:21 +0100
-Message-Id: <1522156531-28348-12-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+        id S1752873AbeC0NQp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:16:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42216 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752841AbeC0NQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:16:40 -0400
+Date: Tue, 27 Mar 2018 09:16:37 -0400
+From: Mike Snitzer <snitzer@redhat.com>
+To: yael.chemla@foss.arm.com
+Cc: "'Alasdair Kergon'" <agk@redhat.com>, dm-devel@redhat.com,
+        linux-kernel@vger.kernel.org, ofir.drang@gmail.com,
+        "'Yael Chemla'" <yael.chemla@arm.com>,
+        "'Eric Biggers'" <ebiggers3@gmail.com>
+Subject: Re: [PATCH 2/2] md: dm-verity: allow parallel processing of bio
+ blocks
+Message-ID: <20180327131636.GA26832@redhat.com>
+References: <1522003290-27243-1-git-send-email-yael.chemla@foss.arm.com>
+ <1522003290-27243-2-git-send-email-yael.chemla@foss.arm.com>
+ <20180327010633.GB23487@redhat.com>
+ <001201d3c5a9$529b4a10$f7d1de30$@foss.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <001201d3c5a9$529b4a10$f7d1de30$@foss.arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We set VTCR_EL2 very early during the stage2 init and don't
-touch it ever. This is fine as we had a fixed IPA size. This
-patch changes the behavior to set the VTCR for a given VM,
-depending on its stage2 table. The common configuration for
-VTCR is still performed during the early init as we have to
-retain the hardware access flag update bits (VTCR_EL2_HA)
-per CPU (as they are only set for the CPUs which are capabile).
-The bits defining the number of levels in the page table (SL0)
-and and the size of the Input address to the translation (T0SZ)
-are programmed for each VM upon entry to the guest.
+On Tue, Mar 27 2018 at  4:55am -0400,
+yael.chemla@foss.arm.com <yael.chemla@foss.arm.com> wrote:
 
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <cdall@kernel.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- arch/arm64/include/asm/kvm_arm.h  | 16 ++++++----------
- arch/arm64/include/asm/kvm_asm.h  |  2 +-
- arch/arm64/include/asm/kvm_host.h |  8 +++++---
- arch/arm64/kvm/hyp/s2-setup.c     | 16 +---------------
- arch/arm64/kvm/hyp/switch.c       |  6 ++++++
- 5 files changed, 19 insertions(+), 29 deletions(-)
+> Hi Mike
+> I need to rewrite these patches according to issues you and Eric Biggers mentioned.
+> please drop this v1 patch.
 
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index 176551c..2b278dc 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -117,9 +117,7 @@
- #define VTCR_EL2_IRGN0_WBWA	TCR_IRGN0_WBWA
- #define VTCR_EL2_SL0_SHIFT	6
- #define VTCR_EL2_SL0_MASK	(3 << VTCR_EL2_SL0_SHIFT)
--#define VTCR_EL2_SL0_LVL1	(1 << VTCR_EL2_SL0_SHIFT)
- #define VTCR_EL2_T0SZ_MASK	0x3f
--#define VTCR_EL2_T0SZ_40B	24
- #define VTCR_EL2_VS_SHIFT	19
- #define VTCR_EL2_VS_8BIT	(0 << VTCR_EL2_VS_SHIFT)
- #define VTCR_EL2_VS_16BIT	(1 << VTCR_EL2_VS_SHIFT)
-@@ -141,38 +139,36 @@
-  * D4-23 and D4-25 in ARM DDI 0487A.b.
-  */
- 
--#define VTCR_EL2_T0SZ_IPA	VTCR_EL2_T0SZ_40B
- #define VTCR_EL2_COMMON_BITS	(VTCR_EL2_SH0_INNER | VTCR_EL2_ORGN0_WBWA | \
- 				 VTCR_EL2_IRGN0_WBWA | VTCR_EL2_RES1)
-+#define VTCR_EL2_PRIVATE_MASK	(VTCR_EL2_SL0_MASK | VTCR_EL2_T0SZ_MASK)
- 
- #ifdef CONFIG_ARM64_64K_PAGES
- /*
-  * Stage2 translation configuration:
-  * 64kB pages (TG0 = 1)
-- * 2 level page tables (SL = 1)
-  */
--#define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_64K | VTCR_EL2_SL0_LVL1)
-+#define VTCR_EL2_TGRAN			VTCR_EL2_TG0_64K
- #define VTCR_EL2_TGRAN_SL0_BASE		3UL
- 
- #elif defined(CONFIG_ARM64_16K_PAGES)
- /*
-  * Stage2 translation configuration:
-  * 16kB pages (TG0 = 2)
-- * 2 level page tables (SL = 1)
-  */
--#define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_16K | VTCR_EL2_SL0_LVL1)
-+#define VTCR_EL2_TGRAN			VTCR_EL2_TG0_16K
- #define VTCR_EL2_TGRAN_SL0_BASE		3UL
- #else	/* 4K */
- /*
-  * Stage2 translation configuration:
-  * 4kB pages (TG0 = 0)
-- * 3 level page tables (SL = 1)
-  */
--#define VTCR_EL2_TGRAN_FLAGS		(VTCR_EL2_TG0_4K | VTCR_EL2_SL0_LVL1)
-+#define VTCR_EL2_TGRAN			VTCR_EL2_TG0_4K
- #define VTCR_EL2_TGRAN_SL0_BASE		2UL
- #endif
- 
--#define VTCR_EL2_FLAGS			(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN_FLAGS)
-+#define VTCR_EL2_FLAGS		(VTCR_EL2_COMMON_BITS | VTCR_EL2_TGRAN)
-+
- /*
-  * VTCR_EL2:SL0 indicates the entry level for Stage2 translation.
-  * Interestingly, it depends on the page size.
-diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-index 24961b7..977f945 100644
---- a/arch/arm64/include/asm/kvm_asm.h
-+++ b/arch/arm64/include/asm/kvm_asm.h
-@@ -66,7 +66,7 @@ extern void __vgic_v3_init_lrs(void);
- 
- extern u32 __kvm_get_mdcr_el2(void);
- 
--extern u32 __init_stage2_translation(void);
-+extern void __init_stage2_translation(void);
- 
- extern void __qcom_hyp_sanitize_btac_predictors(void);
- 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 596f8e4..9f3c8b8 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -392,10 +392,12 @@ int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
- 
- static inline void __cpu_init_stage2(void)
- {
--	u32 parange = kvm_call_hyp(__init_stage2_translation);
-+	u32 ps;
- 
--	WARN_ONCE(parange < 40,
--		  "PARange is %d bits, unsupported configuration!", parange);
-+	kvm_call_hyp(__init_stage2_translation);
-+	ps = id_aa64mmfr0_parange_to_phys_shift(read_sysreg(id_aa64mmfr0_el1));
-+	WARN_ONCE(ps < 40,
-+		  "PARange is %d bits, unsupported configuration!", ps);
- }
- 
- /*
-diff --git a/arch/arm64/kvm/hyp/s2-setup.c b/arch/arm64/kvm/hyp/s2-setup.c
-index b1129c8..5c26ad4b 100644
---- a/arch/arm64/kvm/hyp/s2-setup.c
-+++ b/arch/arm64/kvm/hyp/s2-setup.c
-@@ -19,13 +19,11 @@
- #include <asm/kvm_arm.h>
- #include <asm/kvm_asm.h>
- #include <asm/kvm_hyp.h>
--#include <asm/cpufeature.h>
- 
--u32 __hyp_text __init_stage2_translation(void)
-+void __hyp_text __init_stage2_translation(void)
- {
- 	u64 val = VTCR_EL2_FLAGS;
- 	u64 parange;
--	u32 phys_shift;
- 	u64 tmp;
- 
- 	/*
-@@ -38,16 +36,6 @@ u32 __hyp_text __init_stage2_translation(void)
- 		parange = ID_AA64MMFR0_PARANGE_MAX;
- 	val |= parange << 16;
- 
--	/* Compute the actual PARange... */
--	phys_shift = id_aa64mmfr0_parange_to_phys_shift(parange);
--
--	/*
--	 * ... and clamp it to 40 bits, unless we have some braindead
--	 * HW that implements less than that. In all cases, we'll
--	 * return that value for the rest of the kernel to decide what
--	 * to do.
--	 */
--	val |= 64 - (phys_shift > 40 ? 40 : phys_shift);
- 
- 	/*
- 	 * Check the availability of Hardware Access Flag / Dirty Bit
-@@ -67,6 +55,4 @@ u32 __hyp_text __init_stage2_translation(void)
- 			VTCR_EL2_VS_8BIT;
- 
- 	write_sysreg(val, vtcr_el2);
--
--	return phys_shift;
- }
-diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-index 870f4b1..5ccd3ae 100644
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -164,6 +164,12 @@ static void __hyp_text __deactivate_traps(struct kvm_vcpu *vcpu)
- static void __hyp_text __activate_vm(struct kvm_vcpu *vcpu)
- {
- 	struct kvm *kvm = kern_hyp_va(vcpu->kvm);
-+	u64 vtcr = read_sysreg(vtcr_el2);
-+
-+	vtcr &= ~VTCR_EL2_PRIVATE_MASK;
-+	vtcr |= VTCR_EL2_SL0(kvm_stage2_levels(kvm)) |
-+		VTCR_EL2_T0SZ(kvm_phys_shift(kvm));
-+	write_sysreg(vtcr, vtcr_el2);
- 	write_sysreg(kvm->arch.vttbr, vttbr_el2);
- }
- 
--- 
-2.7.4
+They've been dropped.  BUT please do note that the patches I pushed to
+linux-dm.git were rebased ontop of the 'check_at_most_once' patch.
+
+I never did get an answer about how the sg array is free'd in certain
+error paths (see "FIXME:" in the 2nd patch).
+
+Also, I fixed some issues I saw in error paths, and lots of formatting.
+
+I'll be pretty frustrated if you submit v2 that is blind to the kinds of
+changes I made.
+
+I'll send you a private copy of the patches just so you have them for
+your reference.
+
+Thanks,
+Mike
+
+
+> -----Original Message-----
+> From: Mike Snitzer <snitzer@redhat.com> 
+> Sent: Tuesday, 27 March 2018 4:07
+> To: Yael Chemla <yael.chemla@foss.arm.com>
+> Cc: Alasdair Kergon <agk@redhat.com>; dm-devel@redhat.com; linux-kernel@vger.kernel.org; ofir.drang@gmail.com; Yael Chemla <yael.chemla@arm.com>
+> Subject: Re: [PATCH 2/2] md: dm-verity: allow parallel processing of bio blocks
+> 
+> On Sun, Mar 25 2018 at  2:41pm -0400,
+> Yael Chemla <yael.chemla@foss.arm.com> wrote:
+> 
+> >  Allow parallel processing of bio blocks by moving to async. 
+> > completion  handling. This allows for better resource utilization of 
+> > both HW and  software based hash tfm and therefore better performance 
+> > in many cases,  depending on the specific tfm in use.
+> >  
+> >  Tested on ARM32 (zynq board) and ARM64 (Juno board).
+> >  Time of cat command was measured on a filesystem with various file sizes.
+> >  12% performance improvement when HW based hash was used (ccree driver).
+> >  SW based hash showed less than 1% improvement.
+> >  CPU utilization when HW based hash was used presented 10% less 
+> > context  switch, 4% less cycles and 7% less instructions. No 
+> > difference in  CPU utilization noticed with SW based hash.
+> >  
+> > Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
+> 
+> This one had various issues.  I've fixed most of what I saw and staged in linux-next (purely for build test coverage purposes).  I may drop this patch if others disagree with it (or my sg deallocation in the error path question isn't answered).
+> 
+> I've staged the changes here (and in linux-next via 'for-next'):
+> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/log/?h=dm-4.17
+> 
+> I switched all the new GFP_KERNEL uses to GFP_NOIO.  The fact that you're doing allocations at all (per IO) is bad enough.  Using GFP_KERNEL is a serious liability (risk of deadlock if dm-verity were to be used for something like.. swap.. weird setup but possible).
+> 
+> But the gfp flags aside, the need for additional memory and the expectation of scalable async parallel IO is potentially at odds with changes like this (that I just staged, and had to rebase your 2 patches ontop of):
+> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-4.17&id=a89f6a2cfec86fba7a115642ff082cb4e9450ea6
+> 
+> So I'm particulalry interested to hear from google folks to understand if they are OK with your proposed verity async crypto API use.
+> 
+> Mike
+> 
