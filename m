@@ -1,47 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeC0VIH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:08:07 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38398 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeC0VIF (ORCPT
+        id S1752082AbeC0VJi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:09:38 -0400
+Received: from mail-oi0-f46.google.com ([209.85.218.46]:39235 "EHLO
+        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751088AbeC0VJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:08:05 -0400
-X-Google-Smtp-Source: AIpwx4/J7Sf7MtH6YWVwYKb/IprQYRtv9ay6bg0a5jMeivP+kM+Uv2FoXx5tlIxLj8tVzzxrwJPPZQ==
-Date: Tue, 27 Mar 2018 15:08:03 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/hns: ensure for-loop actually iterates and free's
- buffers
-Message-ID: <20180327210803.GA26189@ziepe.ca>
-References: <20180326151018.21066-1-colin.king@canonical.com>
+        Tue, 27 Mar 2018 17:09:36 -0400
+X-Google-Smtp-Source: AIpwx4+lPPvpYZnlL/GOPOIAp8EJI/RRPMoLmWf41JWGG+XhUPh5wDLtSpvVINAIUoQhY8oy7ZqxdwabXZaLfpAKYV4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326151018.21066-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1522173764.6308.68.camel@surriel.com>
+References: <4137867.C4jYrWdt8n@aspire.rjw.lan> <20180314120450.GT4043@hirez.programming.kicks-ass.net>
+ <1521736338.6308.24.camel@surriel.com> <CAJZ5v0ikayycQs1m2rTa8WRLZ5sQ5q2SQVZkDuuy6GOE=dJFQQ@mail.gmail.com>
+ <1522173764.6308.68.camel@surriel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 27 Mar 2018 23:09:35 +0200
+X-Google-Sender-Auth: -4pG_MyAtkZVchbtzU2-Om1Nj-M
+Message-ID: <CAJZ5v0ggZfDkO8hR5iwCcyHvMzxe5R0_T3jYyOGmTuHMC2N-9Q@mail.gmail.com>
+Subject: Re: [PATCH v2] cpuidle: poll_state: Add time limit to poll_idle()
+To: Rik van Riel <riel@surriel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 04:10:18PM +0100, Colin Ian King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The current for-loop zeros variable i and only loops once, hence
-> not all the buffers are free'd.  Fix this by setting i correctly.
-> 
-> Detected by CoverityScan, CID#1463415 ("Operands don't affect result")
-> 
-> Fixes: a5073d6054f7 ("RDMA/hns: Add eq support of hip08")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Yixian Liu <liuyixian@huawei.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Mar 27, 2018 at 8:02 PM, Rik van Riel <riel@surriel.com> wrote:
+> On Tue, 2018-03-27 at 18:42 +0200, Rafael J. Wysocki wrote:
+>> On Thu, Mar 22, 2018 at 5:32 PM, Rik van Riel <riel@surriel.com>
+>> wrote:
+>> > On Wed, 2018-03-14 at 13:04 +0100, Peter Zijlstra wrote:
+>> >
+>> > > On x86 we don't have to use that time_check_counter thing,
+>> > > sched_clock()
+>> > > is really cheap, not sure if it makes sense on other platforms.
+>> >
+>> > Are you sure? I saw a 5-10% increase in CPU use,
+>> > for a constant query rate to a memcache style
+>> > workload, with v3 of this patch.
+>>
+>> I think I know what's going on.
+>
+> I ran my tests wrong, and the script never propagated
+> errors back to me. Sigh.
 
-Applied to for-rc, thanks
+Again, no worries. :-)
 
-Jason
+> However, the poll_idle() that reads the TSC at a
+> reduced rate seems to perform better than the one
+> that reads the TSC every time it goes around the
+> loop.
+
+OK
+
+> The size of the idle loop seems to make a slight
+> difference, too. Having just one cpu_relax() in
+> the entire loop seems to be better than having
+> them all over the place.
+
+OK
+
+Thanks for the above observations, they match my understanding of
+what's happening.
+
+I'll resend the patch to read the TSC at a reduced rate with a proper
+changelog and I'll tentatively add it to my pm-cpuidle branch.
+
+Thanks!
