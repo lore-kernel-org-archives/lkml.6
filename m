@@ -1,60 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753033AbeC0NRb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:17:31 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:42518 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752289AbeC0NR2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:17:28 -0400
-Date: Tue, 27 Mar 2018 16:07:52 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Takashi Iwai <tiwai@suse.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] ALSA: pcm: potential uninitialized return values
-Message-ID: <20180327130752.GA31841@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8844 signatures=668695
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=758
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1803270133
+        id S1752937AbeC0NQ7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:16:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:55218 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752893AbeC0NQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:16:56 -0400
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        kvm@vger.kernel.org, cdall@kernel.org, marc.zyngier@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, catalin.marinas@arm.com,
+        pbonzini@redhat.com, rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
+        peter.maydell@linaro.org, kristina.martsenko@arm.com,
+        mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [kvmtool PATCH 19/17] kvmtool: arm64: Add support for guest physical address size
+Date: Tue, 27 Mar 2018 14:15:29 +0100
+Message-Id: <1522156531-28348-20-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Smatch complains that "tmp" can be uninitialized if we do a zero size
-write.
+Add an option to specify the physical address size used by this
+VM.
 
-Fixes: 02a5d6925cd3 ("ALSA: pcm: Avoid potential races between OSS ioctls and read/write")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+ arm/aarch64/include/kvm/kvm-config-arch.h | 5 ++++-
+ arm/include/arm-common/kvm-config-arch.h  | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/sound/core/oss/pcm_oss.c b/sound/core/oss/pcm_oss.c
-index a9082f219561..40852c595453 100644
---- a/sound/core/oss/pcm_oss.c
-+++ b/sound/core/oss/pcm_oss.c
-@@ -1364,7 +1364,7 @@ static ssize_t snd_pcm_oss_write2(struct snd_pcm_substream *substream, const cha
- static ssize_t snd_pcm_oss_write1(struct snd_pcm_substream *substream, const char __user *buf, size_t bytes)
- {
- 	size_t xfer = 0;
--	ssize_t tmp;
-+	ssize_t tmp = 0;
- 	struct snd_pcm_runtime *runtime = substream->runtime;
+diff --git a/arm/aarch64/include/kvm/kvm-config-arch.h b/arm/aarch64/include/kvm/kvm-config-arch.h
+index 04be43d..c4bb207 100644
+--- a/arm/aarch64/include/kvm/kvm-config-arch.h
++++ b/arm/aarch64/include/kvm/kvm-config-arch.h
+@@ -8,7 +8,10 @@
+ 			"Create PMUv3 device"),				\
+ 	OPT_U64('\0', "kaslr-seed", &(cfg)->kaslr_seed,			\
+ 			"Specify random seed for Kernel Address Space "	\
+-			"Layout Randomization (KASLR)"),
++			"Layout Randomization (KASLR)"),		\
++	OPT_UINTEGER('\0', "phys-shift", &(cfg)->phys_shift,		\
++			"Specify maximum physical address size (not "	\
++			"the amount of memory)"),
  
- 	if (atomic_read(&substream->mmap_count))
-@@ -1474,7 +1474,7 @@ static ssize_t snd_pcm_oss_read2(struct snd_pcm_substream *substream, char *buf,
- static ssize_t snd_pcm_oss_read1(struct snd_pcm_substream *substream, char __user *buf, size_t bytes)
- {
- 	size_t xfer = 0;
--	ssize_t tmp;
-+	ssize_t tmp = 0;
- 	struct snd_pcm_runtime *runtime = substream->runtime;
+ #include "arm-common/kvm-config-arch.h"
  
- 	if (atomic_read(&substream->mmap_count))
+diff --git a/arm/include/arm-common/kvm-config-arch.h b/arm/include/arm-common/kvm-config-arch.h
+index 6a196f1..d841b0b 100644
+--- a/arm/include/arm-common/kvm-config-arch.h
++++ b/arm/include/arm-common/kvm-config-arch.h
+@@ -11,6 +11,7 @@ struct kvm_config_arch {
+ 	bool		has_pmuv3;
+ 	u64		kaslr_seed;
+ 	enum irqchip_type irqchip;
++	unsigned int	phys_shift;
+ };
+ 
+ int irqchip_parser(const struct option *opt, const char *arg, int unset);
+-- 
+1.9.1
