@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49/bTHfN/QIKxp0qoHqd9g6jIvKCKYvn6BXzbV7fuYPdaY81rq1L3tRrwVLyfVZOUDD8t1Q
-ARC-Seal: i=1; a=rsa-sha256; t=1522168789; cv=none;
+X-Google-Smtp-Source: AIpwx4/jsDqSpumHspy9/k/UpLr1+8SHMNczHYYnFLw1o93B6xp6JHtST44i+N2Ikine9N2DGdAD
+ARC-Seal: i=1; a=rsa-sha256; t=1522168786; cv=none;
         d=google.com; s=arc-20160816;
-        b=AMfWbrPJy8qXTAPwH8uJHbICDLKgonOXihrE+2A8rlab9g4TLYSZuY0UgRTGXw05Jz
-         sPK8DTmEbAgT/7JQo9fI3iR5iS3dQqlHrrG/vDLz9fjM8NqAHy5cCphZH2RJHY1BceQR
-         JNKWppIZpG/zCyjUrdG5j6a0eBKMActGH1/JoOrzRGk1OB3BGavfqZfydlHKPgxIdx52
-         9L/EMFtyU+m0kdA/YynMDm8KgOu/e0zvl9fNZDOvGX/ouV7nEepiYJ7nafSJLWdMIdM7
-         c/CC3oGzMJXed+RpNyD3Lrd8XfEEN1zYkdYCTzrkWla0Gwq/MkUZtOqy9ekIocgim+2G
-         1lcg==
+        b=Y5aRiI4dbiFgOdGoVLPlF8gldkfxmLkooKyrJjcPQ2JkPEZ7Ja2V5IWjQ5b8YdDuL/
+         4Wl/11O1ZKumyDmWTOrbtlBFctN5ZFeqGX8iT1v88LB5SAoWG2zBj8ArQgAavJhvabaC
+         Fjgv79tQKRHph1gzwAbyj5xkE7rVq9OkIsIofmxSue7YbEdEI2mpAimZA/u38BjqJUhn
+         rfUC0RYrcCOZpPrWkPogFiZ6HkZ/UkpSyERpQC59XBtbrCehK6PxCdq/kH9LmjR/0XFq
+         LUC1XRjEfysyx13dk1dUmF9UQCMCp9SALL5SEj4CiU0XAExD9k4fkluHWxHACM80eeT/
+         Qa8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pkDl/0JYxyCThWH33XILU4ZrlS9lXvm70lv/Cz66pT4=;
-        b=Ubj/k9eW/ESI0xlfF/hQs0Tc3bVX+nJeH39rLdsoe7uj46sDDNX1x5gLbx3IgA6f/H
-         I3zStteXUH5ZfGMW+N5fCtQ0Bp6fU31r7wUJOHP9iZPqRQUcwZtY/NfY6+drek8eeuqj
-         E3IxQH04Hp1AEGd+TagPgQXgidzk6r+LqNKwlDdwXR+de7jwSQiaPP9aeuK7g1uhTczQ
-         FqA2upYhaPUvtvu+zQTV2xCqgj7n8Bef8D5hCD2ade+kFSTotba5GGKrbeqrcOi17WKh
-         BizgYbA8iF0DknXq9mmuv65eTHZMg3Z2HUOK7BudjaiIGK2AEj74LtfxtVjn20lj93KG
-         kIug==
+        bh=ZNBfVafltIA56y1vk2CuOp5dzL8+tWjF0rB3+h7oTrs=;
+        b=Ih339MnyUgkpTyIVoZZEey8dHpLhCUYhMqsY5srQSZ/ncLwFGWFCG4/g9J4m87UtK0
+         GGsvk+9/lULmqB6bIYEIAAOpEaaSOzYOiitCV8mDVRKqv0hMepNAfIGhAbDDjHy7AStD
+         NnJrgVI+BlMmOtnDoRa2NIZQjPRq2NrSHh526Z6jWw8gLSh/xUmL1u+I6faKk6NbCPS1
+         tF30/fybPLcwLL6LseuQDQP5LyXQnSfz+RSadgoisaFM8GoN10WYslZXrgKKO9LRyBPy
+         KfGbKWX1+Mki//fGB4XWK6b93+9Gi714zAiApT/q51VKHwGK3kWLyqCkCgPvW8Vw65H3
+         Qnsw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Brian Norris <briannorris@chromium.org>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Kevin Fenzi <kevin@scrye.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.15 031/105] Bluetooth: btusb: Remove Yoga 920 from the btusb_needs_reset_resume_table
-Date: Tue, 27 Mar 2018 18:27:11 +0200
-Message-Id: <20180327162759.272790558@linuxfoundation.org>
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.15 030/105] pinctrl: samsung: Validate alias coming from DT
+Date: Tue, 27 Mar 2018 18:27:10 +0200
+Message-Id: <20180327162759.197152725@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109351480551547?=
-X-GMAIL-MSGID: =?utf-8?q?1596109660482796077?=
+X-GMAIL-THRID: =?utf-8?q?1596109347815970643?=
+X-GMAIL-MSGID: =?utf-8?q?1596109657756912903?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,55 +52,508 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit f0e8c61110c2c85903b136ba070daf643a8b6842 upstream.
+commit 93b0beae721b3344923b4b8317e9d83b542f4ca6 upstream.
 
-Commit 1fdb92697469 ("Bluetooth: btusb: Use DMI matching for QCA
-reset_resume quirking"), added the Lenovo Yoga 920 to the
-btusb_needs_reset_resume_table.
+Driver uses alias from Device Tree as an index of pin controller data
+array.  In case of a wrong DTB or an out-of-tree DTB, the alias could be
+outside of this data array leading to out-of-bounds access.
 
-Testing has shown that this is a false positive and the problems where
-caused by issues with the initial fix: commit fd865802c66b ("Bluetooth:
-btusb: fix QCA Rome suspend/resume"), which has already been reverted.
+Depending on binary and memory layout, this could be handled properly
+(showing error like "samsung-pinctrl 3860000.pinctrl: driver data not
+available") or could lead to exceptions.
 
-So the QCA Rome BT in the Yoga 920 does not need a reset-resume quirk at
-all and this commit removes it from the btusb_needs_reset_resume_table.
-
-Note that after this commit the btusb_needs_reset_resume_table is now
-empty. It is kept around on purpose, since this whole series of commits
-started for a reason and there are actually broken platforms around,
-which need to be added to it.
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1514836
-Fixes: 1fdb92697469 ("Bluetooth: btusb: Use DMI matching for QCA ...")
-Cc: stable@vger.kernel.org
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Kevin Fenzi <kevin@scrye.com>
-Suggested-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 30574f0db1b1 ("pinctrl: add samsung pinctrl and gpiolib driver")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btusb.c |    7 -------
- 1 file changed, 7 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c   |   56 +++++++++++++++++++---
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c |   14 ++++-
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c      |   28 +++++++++--
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c      |    7 ++
+ drivers/pinctrl/samsung/pinctrl-samsung.c      |   61 +++++++++++++++----------
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |   40 ++++++++++------
+ 6 files changed, 154 insertions(+), 52 deletions(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -382,13 +382,6 @@ static const struct usb_device_id blackl
-  * the module itself. So we use a DMI list to match known broken platforms.
-  */
- static const struct dmi_system_id btusb_needs_reset_resume_table[] = {
--	{
--		/* Lenovo Yoga 920 (QCA Rome device 0cf3:e300) */
--		.matches = {
--			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo YOGA 920"),
--		},
--	},
- 	{}
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+@@ -129,7 +129,7 @@ static const struct samsung_pin_bank_dat
+ 	EXYNOS_PIN_BANK_EINTW(8, 0xc60, "gph3", 0x0c),
  };
  
+-const struct samsung_pin_ctrl s5pv210_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl s5pv210_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= s5pv210_pin_bank,
+@@ -142,6 +142,11 @@ const struct samsung_pin_ctrl s5pv210_pi
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data s5pv210_of_data __initconst = {
++	.ctrl		= s5pv210_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(s5pv210_pin_ctrl),
++};
++
+ /* Pad retention control code for accessing PMU regmap */
+ static atomic_t exynos_shared_retention_refcnt;
+ 
+@@ -204,7 +209,7 @@ static const struct samsung_retention_da
+  * Samsung pinctrl driver data for Exynos3250 SoC. Exynos3250 SoC includes
+  * two gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos3250_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl exynos3250_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos3250_pin_banks0,
+@@ -225,6 +230,11 @@ const struct samsung_pin_ctrl exynos3250
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data exynos3250_of_data __initconst = {
++	.ctrl		= exynos3250_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(exynos3250_pin_ctrl),
++};
++
+ /* pin banks of exynos4210 pin-controller 0 */
+ static const struct samsung_pin_bank_data exynos4210_pin_banks0[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+@@ -308,7 +318,7 @@ static const struct samsung_retention_da
+  * Samsung pinctrl driver data for Exynos4210 SoC. Exynos4210 SoC includes
+  * three gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos4210_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl exynos4210_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos4210_pin_banks0,
+@@ -334,6 +344,11 @@ const struct samsung_pin_ctrl exynos4210
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data exynos4210_of_data __initconst = {
++	.ctrl		= exynos4210_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(exynos4210_pin_ctrl),
++};
++
+ /* pin banks of exynos4x12 pin-controller 0 */
+ static const struct samsung_pin_bank_data exynos4x12_pin_banks0[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+@@ -396,7 +411,7 @@ static const struct samsung_pin_bank_dat
+  * Samsung pinctrl driver data for Exynos4x12 SoC. Exynos4x12 SoC includes
+  * four gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos4x12_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl exynos4x12_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos4x12_pin_banks0,
+@@ -432,6 +447,11 @@ const struct samsung_pin_ctrl exynos4x12
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data exynos4x12_of_data __initconst = {
++	.ctrl		= exynos4x12_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(exynos4x12_pin_ctrl),
++};
++
+ /* pin banks of exynos5250 pin-controller 0 */
+ static const struct samsung_pin_bank_data exynos5250_pin_banks0[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+@@ -492,7 +512,7 @@ static const struct samsung_pin_bank_dat
+  * Samsung pinctrl driver data for Exynos5250 SoC. Exynos5250 SoC includes
+  * four gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos5250_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl exynos5250_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos5250_pin_banks0,
+@@ -528,6 +548,11 @@ const struct samsung_pin_ctrl exynos5250
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data exynos5250_of_data __initconst = {
++	.ctrl		= exynos5250_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(exynos5250_pin_ctrl),
++};
++
+ /* pin banks of exynos5260 pin-controller 0 */
+ static const struct samsung_pin_bank_data exynos5260_pin_banks0[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpa0", 0x00),
+@@ -572,7 +597,7 @@ static const struct samsung_pin_bank_dat
+  * Samsung pinctrl driver data for Exynos5260 SoC. Exynos5260 SoC includes
+  * three gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos5260_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl exynos5260_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos5260_pin_banks0,
+@@ -592,6 +617,11 @@ const struct samsung_pin_ctrl exynos5260
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data exynos5260_of_data __initconst = {
++	.ctrl		= exynos5260_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(exynos5260_pin_ctrl),
++};
++
+ /* pin banks of exynos5410 pin-controller 0 */
+ static const struct samsung_pin_bank_data exynos5410_pin_banks0[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+@@ -662,7 +692,7 @@ static const struct samsung_pin_bank_dat
+  * Samsung pinctrl driver data for Exynos5410 SoC. Exynos5410 SoC includes
+  * four gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos5410_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl exynos5410_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos5410_pin_banks0,
+@@ -695,6 +725,11 @@ const struct samsung_pin_ctrl exynos5410
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data exynos5410_of_data __initconst = {
++	.ctrl		= exynos5410_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(exynos5410_pin_ctrl),
++};
++
+ /* pin banks of exynos5420 pin-controller 0 */
+ static const struct samsung_pin_bank_data exynos5420_pin_banks0[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpy7", 0x00),
+@@ -779,7 +814,7 @@ static const struct samsung_retention_da
+  * Samsung pinctrl driver data for Exynos5420 SoC. Exynos5420 SoC includes
+  * four gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos5420_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl exynos5420_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos5420_pin_banks0,
+@@ -813,3 +848,8 @@ const struct samsung_pin_ctrl exynos5420
+ 		.retention_data	= &exynos4_audio_retention_data,
+ 	},
+ };
++
++const struct samsung_pinctrl_of_match_data exynos5420_of_data __initconst = {
++	.ctrl		= exynos5420_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(exynos5420_pin_ctrl),
++};
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+@@ -180,7 +180,7 @@ static const struct samsung_retention_da
+  * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
+  * ten gpio/pin-mux/pinconfig controllers.
+  */
+-const struct samsung_pin_ctrl exynos5433_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl exynos5433_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos5433_pin_banks0,
+@@ -265,6 +265,11 @@ const struct samsung_pin_ctrl exynos5433
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data exynos5433_of_data __initconst = {
++	.ctrl		= exynos5433_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(exynos5433_pin_ctrl),
++};
++
+ /* pin banks of exynos7 pin-controller - ALIVE */
+ static const struct samsung_pin_bank_data exynos7_pin_banks0[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
+@@ -344,7 +349,7 @@ static const struct samsung_pin_bank_dat
+ 	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
+ };
+ 
+-const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 Alive data */
+ 		.pin_banks	= exynos7_pin_banks0,
+@@ -397,3 +402,8 @@ const struct samsung_pin_ctrl exynos7_pi
+ 		.eint_gpio_init = exynos_eint_gpio_init,
+ 	},
+ };
++
++const struct samsung_pinctrl_of_match_data exynos7_of_data __initconst = {
++	.ctrl		= exynos7_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(exynos7_pin_ctrl),
++};
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -570,7 +570,7 @@ static const struct samsung_pin_bank_dat
+ 	PIN_BANK_2BIT(13, 0x080, "gpj"),
+ };
+ 
+-const struct samsung_pin_ctrl s3c2412_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl s3c2412_pin_ctrl[] __initconst = {
+ 	{
+ 		.pin_banks	= s3c2412_pin_banks,
+ 		.nr_banks	= ARRAY_SIZE(s3c2412_pin_banks),
+@@ -578,6 +578,11 @@ const struct samsung_pin_ctrl s3c2412_pi
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data s3c2412_of_data __initconst = {
++	.ctrl		= s3c2412_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(s3c2412_pin_ctrl),
++};
++
+ static const struct samsung_pin_bank_data s3c2416_pin_banks[] __initconst = {
+ 	PIN_BANK_A(27, 0x000, "gpa"),
+ 	PIN_BANK_2BIT(11, 0x010, "gpb"),
+@@ -592,7 +597,7 @@ static const struct samsung_pin_bank_dat
+ 	PIN_BANK_2BIT(2, 0x100, "gpm"),
+ };
+ 
+-const struct samsung_pin_ctrl s3c2416_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl s3c2416_pin_ctrl[] __initconst = {
+ 	{
+ 		.pin_banks	= s3c2416_pin_banks,
+ 		.nr_banks	= ARRAY_SIZE(s3c2416_pin_banks),
+@@ -600,6 +605,11 @@ const struct samsung_pin_ctrl s3c2416_pi
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data s3c2416_of_data __initconst = {
++	.ctrl		= s3c2416_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(s3c2416_pin_ctrl),
++};
++
+ static const struct samsung_pin_bank_data s3c2440_pin_banks[] __initconst = {
+ 	PIN_BANK_A(25, 0x000, "gpa"),
+ 	PIN_BANK_2BIT(11, 0x010, "gpb"),
+@@ -612,7 +622,7 @@ static const struct samsung_pin_bank_dat
+ 	PIN_BANK_2BIT(13, 0x0d0, "gpj"),
+ };
+ 
+-const struct samsung_pin_ctrl s3c2440_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl s3c2440_pin_ctrl[] __initconst = {
+ 	{
+ 		.pin_banks	= s3c2440_pin_banks,
+ 		.nr_banks	= ARRAY_SIZE(s3c2440_pin_banks),
+@@ -620,6 +630,11 @@ const struct samsung_pin_ctrl s3c2440_pi
+ 	},
+ };
+ 
++const struct samsung_pinctrl_of_match_data s3c2440_of_data __initconst = {
++	.ctrl		= s3c2440_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(s3c2440_pin_ctrl),
++};
++
+ static const struct samsung_pin_bank_data s3c2450_pin_banks[] __initconst = {
+ 	PIN_BANK_A(28, 0x000, "gpa"),
+ 	PIN_BANK_2BIT(11, 0x010, "gpb"),
+@@ -635,10 +650,15 @@ static const struct samsung_pin_bank_dat
+ 	PIN_BANK_2BIT(2, 0x100, "gpm"),
+ };
+ 
+-const struct samsung_pin_ctrl s3c2450_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl s3c2450_pin_ctrl[] __initconst = {
+ 	{
+ 		.pin_banks	= s3c2450_pin_banks,
+ 		.nr_banks	= ARRAY_SIZE(s3c2450_pin_banks),
+ 		.eint_wkup_init = s3c24xx_eint_init,
+ 	},
+ };
++
++const struct samsung_pinctrl_of_match_data s3c2450_of_data __initconst = {
++	.ctrl		= s3c2450_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(s3c2450_pin_ctrl),
++};
+--- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+@@ -794,7 +794,7 @@ static const struct samsung_pin_bank_dat
+  * Samsung pinctrl driver data for S3C64xx SoC. S3C64xx SoC includes
+  * one gpio/pin-mux/pinconfig controller.
+  */
+-const struct samsung_pin_ctrl s3c64xx_pin_ctrl[] __initconst = {
++static const struct samsung_pin_ctrl s3c64xx_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 1 data */
+ 		.pin_banks	= s3c64xx_pin_banks0,
+@@ -803,3 +803,8 @@ const struct samsung_pin_ctrl s3c64xx_pi
+ 		.eint_wkup_init = s3c64xx_eint_eint0_init,
+ 	},
+ };
++
++const struct samsung_pinctrl_of_match_data s3c64xx_of_data __initconst = {
++	.ctrl		= s3c64xx_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(s3c64xx_pin_ctrl),
++};
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -947,12 +947,33 @@ static int samsung_gpiolib_register(stru
+ 	return 0;
+ }
+ 
++static const struct samsung_pin_ctrl *
++samsung_pinctrl_get_soc_data_for_of_alias(struct platform_device *pdev)
++{
++	struct device_node *node = pdev->dev.of_node;
++	const struct samsung_pinctrl_of_match_data *of_data;
++	int id;
++
++	id = of_alias_get_id(node, "pinctrl");
++	if (id < 0) {
++		dev_err(&pdev->dev, "failed to get alias id\n");
++		return NULL;
++	}
++
++	of_data = of_device_get_match_data(&pdev->dev);
++	if (id >= of_data->num_ctrl) {
++		dev_err(&pdev->dev, "invalid alias id %d\n", id);
++		return NULL;
++	}
++
++	return &(of_data->ctrl[id]);
++}
++
+ /* retrieve the soc specific data */
+ static const struct samsung_pin_ctrl *
+ samsung_pinctrl_get_soc_data(struct samsung_pinctrl_drv_data *d,
+ 			     struct platform_device *pdev)
+ {
+-	int id;
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct device_node *np;
+ 	const struct samsung_pin_bank_data *bdata;
+@@ -962,13 +983,9 @@ samsung_pinctrl_get_soc_data(struct sams
+ 	void __iomem *virt_base[SAMSUNG_PINCTRL_NUM_RESOURCES];
+ 	unsigned int i;
+ 
+-	id = of_alias_get_id(node, "pinctrl");
+-	if (id < 0) {
+-		dev_err(&pdev->dev, "failed to get alias id\n");
++	ctrl = samsung_pinctrl_get_soc_data_for_of_alias(pdev);
++	if (!ctrl)
+ 		return ERR_PTR(-ENOENT);
+-	}
+-	ctrl = of_device_get_match_data(&pdev->dev);
+-	ctrl += id;
+ 
+ 	d->suspend = ctrl->suspend;
+ 	d->resume = ctrl->resume;
+@@ -1193,41 +1210,41 @@ static int __maybe_unused samsung_pinctr
+ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ #ifdef CONFIG_PINCTRL_EXYNOS_ARM
+ 	{ .compatible = "samsung,exynos3250-pinctrl",
+-		.data = exynos3250_pin_ctrl },
++		.data = &exynos3250_of_data },
+ 	{ .compatible = "samsung,exynos4210-pinctrl",
+-		.data = exynos4210_pin_ctrl },
++		.data = &exynos4210_of_data },
+ 	{ .compatible = "samsung,exynos4x12-pinctrl",
+-		.data = exynos4x12_pin_ctrl },
++		.data = &exynos4x12_of_data },
+ 	{ .compatible = "samsung,exynos5250-pinctrl",
+-		.data = exynos5250_pin_ctrl },
++		.data = &exynos5250_of_data },
+ 	{ .compatible = "samsung,exynos5260-pinctrl",
+-		.data = exynos5260_pin_ctrl },
++		.data = &exynos5260_of_data },
+ 	{ .compatible = "samsung,exynos5410-pinctrl",
+-		.data = exynos5410_pin_ctrl },
++		.data = &exynos5410_of_data },
+ 	{ .compatible = "samsung,exynos5420-pinctrl",
+-		.data = exynos5420_pin_ctrl },
++		.data = &exynos5420_of_data },
+ 	{ .compatible = "samsung,s5pv210-pinctrl",
+-		.data = s5pv210_pin_ctrl },
++		.data = &s5pv210_of_data },
+ #endif
+ #ifdef CONFIG_PINCTRL_EXYNOS_ARM64
+ 	{ .compatible = "samsung,exynos5433-pinctrl",
+-		.data = exynos5433_pin_ctrl },
++		.data = &exynos5433_of_data },
+ 	{ .compatible = "samsung,exynos7-pinctrl",
+-		.data = exynos7_pin_ctrl },
++		.data = &exynos7_of_data },
+ #endif
+ #ifdef CONFIG_PINCTRL_S3C64XX
+ 	{ .compatible = "samsung,s3c64xx-pinctrl",
+-		.data = s3c64xx_pin_ctrl },
++		.data = &s3c64xx_of_data },
+ #endif
+ #ifdef CONFIG_PINCTRL_S3C24XX
+ 	{ .compatible = "samsung,s3c2412-pinctrl",
+-		.data = s3c2412_pin_ctrl },
++		.data = &s3c2412_of_data },
+ 	{ .compatible = "samsung,s3c2416-pinctrl",
+-		.data = s3c2416_pin_ctrl },
++		.data = &s3c2416_of_data },
+ 	{ .compatible = "samsung,s3c2440-pinctrl",
+-		.data = s3c2440_pin_ctrl },
++		.data = &s3c2440_of_data },
+ 	{ .compatible = "samsung,s3c2450-pinctrl",
+-		.data = s3c2450_pin_ctrl },
++		.data = &s3c2450_of_data },
+ #endif
+ 	{},
+ };
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -286,6 +286,16 @@ struct samsung_pinctrl_drv_data {
+ };
+ 
+ /**
++ * struct samsung_pinctrl_of_match_data: OF match device specific configuration data.
++ * @ctrl: array of pin controller data.
++ * @num_ctrl: size of array @ctrl.
++ */
++struct samsung_pinctrl_of_match_data {
++	const struct samsung_pin_ctrl	*ctrl;
++	unsigned int			num_ctrl;
++};
++
++/**
+  * struct samsung_pin_group: represent group of pins of a pinmux function.
+  * @name: name of the pin group, used to lookup the group.
+  * @pins: the pins included in this group.
+@@ -313,20 +323,20 @@ struct samsung_pmx_func {
+ };
+ 
+ /* list of all exported SoC specific data */
+-extern const struct samsung_pin_ctrl exynos3250_pin_ctrl[];
+-extern const struct samsung_pin_ctrl exynos4210_pin_ctrl[];
+-extern const struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
+-extern const struct samsung_pin_ctrl exynos5250_pin_ctrl[];
+-extern const struct samsung_pin_ctrl exynos5260_pin_ctrl[];
+-extern const struct samsung_pin_ctrl exynos5410_pin_ctrl[];
+-extern const struct samsung_pin_ctrl exynos5420_pin_ctrl[];
+-extern const struct samsung_pin_ctrl exynos5433_pin_ctrl[];
+-extern const struct samsung_pin_ctrl exynos7_pin_ctrl[];
+-extern const struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
+-extern const struct samsung_pin_ctrl s3c2412_pin_ctrl[];
+-extern const struct samsung_pin_ctrl s3c2416_pin_ctrl[];
+-extern const struct samsung_pin_ctrl s3c2440_pin_ctrl[];
+-extern const struct samsung_pin_ctrl s3c2450_pin_ctrl[];
+-extern const struct samsung_pin_ctrl s5pv210_pin_ctrl[];
++extern const struct samsung_pinctrl_of_match_data exynos3250_of_data;
++extern const struct samsung_pinctrl_of_match_data exynos4210_of_data;
++extern const struct samsung_pinctrl_of_match_data exynos4x12_of_data;
++extern const struct samsung_pinctrl_of_match_data exynos5250_of_data;
++extern const struct samsung_pinctrl_of_match_data exynos5260_of_data;
++extern const struct samsung_pinctrl_of_match_data exynos5410_of_data;
++extern const struct samsung_pinctrl_of_match_data exynos5420_of_data;
++extern const struct samsung_pinctrl_of_match_data exynos5433_of_data;
++extern const struct samsung_pinctrl_of_match_data exynos7_of_data;
++extern const struct samsung_pinctrl_of_match_data s3c64xx_of_data;
++extern const struct samsung_pinctrl_of_match_data s3c2412_of_data;
++extern const struct samsung_pinctrl_of_match_data s3c2416_of_data;
++extern const struct samsung_pinctrl_of_match_data s3c2440_of_data;
++extern const struct samsung_pinctrl_of_match_data s3c2450_of_data;
++extern const struct samsung_pinctrl_of_match_data s5pv210_of_data;
+ 
+ #endif /* __PINCTRL_SAMSUNG_H */
