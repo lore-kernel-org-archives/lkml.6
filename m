@@ -1,91 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752258AbeC0WAo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 18:00:44 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:58450 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751020AbeC0WAm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 18:00:42 -0400
-Message-ID: <1522188032.6308.69.camel@surriel.com>
-Subject: Re: [PATCH] cpuidle: poll_state: Avoid invoking local_clock() too
- often
-From: Rik van Riel <riel@surriel.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
-        Doug Smythies <dsmythies@telus.net>,
-        Aubrey Li <aubrey.li@linux.intel.com>,
-        Mike Galbraith <mgalbraith@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Tue, 27 Mar 2018 18:00:32 -0400
-In-Reply-To: <2095821.OCbkRpinqI@aspire.rjw.lan>
-References: <2095821.OCbkRpinqI@aspire.rjw.lan>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-XJsuFMo3JHh7LT5idPsA"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        id S1752286AbeC0WDa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 18:03:30 -0400
+Received: from ozlabs.org ([103.22.144.67]:38655 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751890AbeC0WD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 18:03:28 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 28 Mar 2018 09:02:22 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        James Hogan <jhogan@kernel.org>
+Subject: linux-next: manual merge of the asm-generic tree with the kbuild
+ tree
+Message-ID: <20180328090222.0f3c34da@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//QhUNAk4SqR+7IFcMV3udDS"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---=-XJsuFMo3JHh7LT5idPsA
-Content-Type: text/plain; charset="UTF-8"
+--Sig_//QhUNAk4SqR+7IFcMV3udDS
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2018-03-27 at 23:58 +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->=20
-> Rik reports that he sees an increase in CPU use in one benchmark
-> due to commit 612f1a22f067 "cpuidle: poll_state: Add time limit to
-> poll_idle()" that caused poll_idle() to call local_clock() in every
-> iteration of the loop.  Utilization increase generally means more
-> non-idle time with respect to total CPU time (on the average) which
-> implies reduced CPU frequency.
->=20
-> Doug reports that limiting the rate of local_clock() invocations
-> in there causes much less power to be drawn during a CPU-intensive
-> parallel workload (with idle states 1 and 2 disabled to enforce more
-> state 0 residency).
->=20
-> These two reports together suggest that executing local_clock() on
-> multiple CPUs in parallel at a high rate may cause chips to get hot
-> and trigger thermal/power limits on them to kick in, so reduce the
-> rate of local_clock() invocations in poll_idle() to avoid that issue.
->=20
-> Fixes: 612f1a22f067 "cpuidle: poll_state: Add time limit to
-> poll_idle()"
-> Reported-by: Rik van Riel <riel@surriel.com>
-> Reported-by: Doug Smythies <dsmythies@telus.net>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi all,
 
-Thanks Rafael!
+Today's linux-next merge of the asm-generic tree got a conflict in:
 
-Tested-by: Rik van Riel <riel@surriel.com>
-Reviewed-by: Rik van Riel <riel@surriel.com>
+  arch/metag/boot/dts/Makefile
+
+between commit:
+
+  b985b71d295f ("kbuild: mark $(targets) as .SECONDARY and remove .PRECIOUS=
+ markers")
+
+from the kbuild tree and commit:
+
+  bb6fb6dfcc17 ("metag: Remove arch/metag/")
+
+from the asm-generic tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
-All Rights Reversed.
---=-XJsuFMo3JHh7LT5idPsA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Cheers,
+Stephen Rothwell
+
+--Sig_//QhUNAk4SqR+7IFcMV3udDS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlq6vwAACgkQznnekoTE
-3oMnNQf/S5PPW9YhHCQoQxSic+HG8bYUz4NH5Drdcl4fOGtDJX3mMUXnmhcE/0hO
-Lkiq50x/nlO85fNKDF4xSQQ8ZIeO2KDKe0aGi8MXrrjJ2vfwtS/O9A8NObpZSKXL
-pnzTek52GXi9vIenV+asBNl8HtDW/3mSPf5i17YtZ+57IoXlNInKYN4LSfW6JJWq
-yg/I5QG6dJapU9OXr3vGAw1hIL61hJAxmMuDASu6rnhouhQlMCFuPFwR8lGwCIJD
-EHK3ZIW43C9OjnorhfGBPik3eRIu7qbrmrFJA5VyLWEHcTE0RMaX2vsRLH5ZjUcl
-o13gbrkidSBG7kL5g62rPRQaXoWlPg==
-=2kTS
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq6v24ACgkQAVBC80lX
+0Gw/VQf/TNvKlcI+j0uJ/vEMgGzy7j0oc462k0SmWQPs5vhPrFcGl5Dwk/mrAReg
+XXK1xbI3Yxg1DvmrJquXh9g8z/U2PkJNgZ0C0MG5Kki/T7ZKyqgaOvH/QrgcHB1h
+GN7VClrG25fDh6/u03shkMx5yccFmagzzLHi+Y5Ir7XCw/4hVy8EpWshaxdel6ze
+2pziRnkqTp0ZU+ZQhMura10pKQZvshPTllY+euugHB//l7Ia2oCDJzPP8aZpO6Xi
+psiMpLZrZmt9CPg0VhoRvfs/h3lJg43guY4TApqPys0xld0c3NOGmAmBTXFLv8mr
+f47vlVaSKHmVKFUx/ly8KK7dMsv0Aw==
+=4lXp
 -----END PGP SIGNATURE-----
 
---=-XJsuFMo3JHh7LT5idPsA--
+--Sig_//QhUNAk4SqR+7IFcMV3udDS--
