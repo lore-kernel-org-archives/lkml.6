@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48tQBi4k1ynjQtCE9aVfne9OAdoxgcyLXbNC/eQ2kBz9rq6CaCU/+ru3dDJcjjCTE/pU/2H
-ARC-Seal: i=1; a=rsa-sha256; t=1522168668; cv=none;
+X-Google-Smtp-Source: AIpwx4+aEDTneOg6++1cJDI2y+uCV4m3xJVyQwJnAi9F+mC3jNDys6pW2ailbWOJbFdIxXCTFEJA
+ARC-Seal: i=1; a=rsa-sha256; t=1522168666; cv=none;
         d=google.com; s=arc-20160816;
-        b=EUmywhLrW9ZyGUM/bqpykIX623CDoAlicP8WHImoOnZy1GDKClcNqqFRKJTBbqFa1A
-         kgxu4hoZpT3M32cJgn+I8zxEMUu1QM77/qcl6ToriM1KgoZMRioo7Dh32H3DFRpq3HAp
-         DeDHm8w/54ayCExRj439wKWp/dF5Ej6lTTaN5AakpOgw/0LtGTA6TDgH2LY7nn6gZHsB
-         5W9CWsZqyffMQ4o3BpO+Y/lBFRcdKbAT8NKwKjQBR0q2F+48Bfx4WNEqx3EqT9QL/L1h
-         4VQvP2pR5LrBA19EU5jJCe6nkLCPwYejF71sIR/5qk0/aCIgkXUts3fbG+X/eJ8Hm/c8
-         A+jg==
+        b=jWZmkzyump/Jeoqct1ZI2Xt9+ZZAza7Jopi8P7FjLqDSO+nREu44t5lfZND6sjnYvA
+         uCDE9nbajUIwC1r66bXDrZCPZL6LZO1aTZ4+dJdeEvIX5Sq6uK3E1Uz3l4YDnL+Cc/pQ
+         074YAqMp0UEUANVUhfmBTho0cb7/S7txN67NjK7gGE+SGUUGhhuDHVZ/s7PPSsAb015a
+         kZLmBUUJo/8IVbtKfhKV/dbz5g5gFoMqrZDtGqhdOgpf7KQzotZtMh4Ilo3UwsT5CQGW
+         ORbJvJmN2U3eDgfHahqPHFZ2n9vr7i6FcLh5v2CpWADQ3YhUstoVEYF/enzaFQQG4Sks
+         DWSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZYMw6Y3KWPa4DMofcKPawXHP5szninevGMzJ0XpE0tU=;
-        b=GoeX74ScZPTbC91WYGiGQzPWyhUBF1BL6Srot78zMb0KBB0Jl8+9aObAPbnaZgNdWE
-         7p/pA816PPb2qCgyzvUYS0bzee0hUh1oBRWlViB/3DhCTYMdw0v9N4AO4VzwuIKfI+DV
-         riLNty22tFoaanJiqT6TirWpFxcLpSHL+anXpl+8hK+W+eRFBzyeUkHeQE8X2D/GBgFg
-         MPDGDd1weOXZVhX6Kk8YDoZBcXoRo4fPW5Sxte61SXd2hhI//B7/o6et41mM44kGFvny
-         o5H+GBXZwoBlMtsrGnOAkLSjUagt9Y29zhWDb5QX6QZ1H2CoNBDgaSzmNB+LutaptyZz
-         MmoA==
+        bh=9tmUA6hXdGJlHls7+cvdgpgp3M93ihV+Xbdb4+y3mXk=;
+        b=JHRod/NRkdi74kNB6k1L7LPaIjTAYr/XsqWaRjMYbprSTixeOBbbFDR66IgMNZpigo
+         dsYuLWxk+XNIdyOkJbR20y8Vmw6rf1o9ft2u8WmRmArZoUT4DWCl9lnD5fDo6Gc0a+jZ
+         yL/0WQGVw6hM2KPWX7sSTbRailH3IY494lfEG5IS9D/yEdAYyAS0GTzl72GCpOcQYQ5m
+         N7rUKPiYDvzMpVxzDac7BJhgKouTVfzDHfTbl5j2mATNkxvGJAZ15vQ2Wv0mk8gL5u0O
+         x2peelnz/4r9jVNRkKNJ23z5uUepCSGPKpGa6DZtXifIid15fsf8ipcek9ztQYlPRxKk
+         FknA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ephraim Park <ephiepark@fb.com>,
-	Song Liu <songliubraving@fb.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	jolsa@redhat.com,
-	kernel-team@fb.com,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Stephane Eranian <eranian@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vince Weaver <vincent.weaver@maine.edu>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 089/101] perf/core: Fix ctx_event_type in ctx_resched()
-Date: Tue, 27 Mar 2018 18:28:01 +0200
-Message-Id: <20180327162755.502643123@linuxfoundation.org>
+	Ilya Pronin <ipronin@twitter.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.14 088/101] perf stat: Fix CVS output format for non-supported counters
+Date: Tue, 27 Mar 2018 18:28:00 +0200
+Message-Id: <20180327162755.455552312@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -50,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109534205598912?=
-X-GMAIL-MSGID: =?utf-8?q?1596109534205598912?=
+X-GMAIL-THRID: =?utf-8?q?1596109219348833077?=
+X-GMAIL-MSGID: =?utf-8?q?1596109531055126555?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,68 +52,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Song Liu <songliubraving@fb.com>
+From: Ilya Pronin <ipronin@twitter.com>
 
-commit bd903afeb504db5655a45bb4cf86f38be5b1bf62 upstream.
+commit 40c21898ba5372c14ef71717040529794a91ccc2 upstream.
 
-In ctx_resched(), EVENT_FLEXIBLE should be sched_out when EVENT_PINNED is
-added. However, ctx_resched() calculates ctx_event_type before checking
-this condition. As a result, pinned events will NOT get higher priority
-than flexible events.
+When printing stats in CSV mode, 'perf stat' appends extra separators
+when a counter is not supported:
 
-The following shows this issue on an Intel CPU (where ref-cycles can
-only use one hardware counter).
+<not supported>,,L1-dcache-store-misses,mesos/bd442f34-2b4a-47df-b966-9b281f9f56fc,0,100.00,,,,
 
-  1. First start:
-       perf stat -C 0 -e ref-cycles  -I 1000
-  2. Then, in the second console, run:
-       perf stat -C 0 -e ref-cycles:D -I 1000
+Which causes a failure when parsing fields. The numbers of separators
+should be the same for each line, no matter if the counter is or not
+supported.
 
-The second perf uses pinned events, which is expected to have higher
-priority. However, because it failed in ctx_resched(). It is never
-run.
-
-This patch fixes this by calculating ctx_event_type after re-evaluating
-event_type.
-
-Reported-by: Ephraim Park <ephiepark@fb.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <jolsa@redhat.com>
-Cc: <kernel-team@fb.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: 487f05e18aa4 ("perf/core: Optimize event rescheduling on active contexts")
-Link: http://lkml.kernel.org/r/20180306055504.3283731-1-songliubraving@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ilya Pronin <ipronin@twitter.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Link: http://lkml.kernel.org/r/20180306064353.31930-1-xiyou.wangcong@gmail.com
+Fixes: 92a61f6412d3 ("perf stat: Implement CSV metrics output")
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/events/core.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/builtin-stat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2322,7 +2322,7 @@ static void ctx_resched(struct perf_cpu_
- 			struct perf_event_context *task_ctx,
- 			enum event_type_t event_type)
- {
--	enum event_type_t ctx_event_type = event_type & EVENT_ALL;
-+	enum event_type_t ctx_event_type;
- 	bool cpu_event = !!(event_type & EVENT_CPU);
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -922,7 +922,7 @@ static void print_metric_csv(void *ctx,
+ 	char buf[64], *vals, *ends;
  
- 	/*
-@@ -2332,6 +2332,8 @@ static void ctx_resched(struct perf_cpu_
- 	if (event_type & EVENT_PINNED)
- 		event_type |= EVENT_FLEXIBLE;
- 
-+	ctx_event_type = event_type & EVENT_ALL;
-+
- 	perf_pmu_disable(cpuctx->ctx.pmu);
- 	if (task_ctx)
- 		task_ctx_sched_out(cpuctx, task_ctx, event_type);
+ 	if (unit == NULL || fmt == NULL) {
+-		fprintf(out, "%s%s%s%s", csv_sep, csv_sep, csv_sep, csv_sep);
++		fprintf(out, "%s%s", csv_sep, csv_sep);
+ 		return;
+ 	}
+ 	snprintf(buf, sizeof(buf), fmt, val);
