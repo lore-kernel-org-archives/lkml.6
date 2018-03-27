@@ -1,81 +1,45 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-23226-1522168430-2-17619302209997980446
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522168429; b=cBgK3kiprMp1Pg/54kmeu8rCpzaKaXIGzHcHiy6qb8KJ1aL
-    WGvocNJZd+Vd5MtdksJ+ShnSSQrjAUCCBKMZZPZXUXLjlhyobBmizaWGXY/1C80r
-    Ew0mduEzIRXTs7DdDQp2eAkJ1ASnCN24kg4qKgTVCECuF8hdmQy0RGOe5YYsZODh
-    tGw2NXPiUWAuVmtc4p3rqmjNyiNHWgZkzxq2d8Swn6i3Lt8QiWC50/g7kRiJ+duA
-    7RQyOS56uZ8xWHET42AsEcts2mrkUVe9qmRzoXs7C6M7Zklwk6mnbz3JaBb0RLpd
-    Ie770uySfZW99+VEewgpeZE0UIxr4s/jtWYXy4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522168429; bh=sZkWULfHA4ywDnP/F9MpbecjlT
-    ZAV2kBr/XOO/GBRy4=; b=jJ60JBC+QBqE/rVeLJr35mVt9etsYwhcnkUrMLIApy
-    xFxzz5+hfXJPhMjdcuR2LNsnNBcJ3+iPZDXjN7qiUS4jSrHG6uluzrLfxCFtfuBi
-    LVdk82PqYDTNzTmakTwno1zTiZtKG2YpHZ5K1BLbEPwglQYnVEE23XXUHiXnHx1k
-    Z7U07q5V175BvyonPCGjTqu3M1y2VTgQlGjQbCGYFo5QiUBAbqUD4Eg6cZz+ikdc
-    9KleFLJ1sd9/bhiQRelqmek0spCPVVcQV9CGwDZJFp+3p3ZiKmyDkpczp/0QFpyL
-    jH4Zlxwm519IVnFvWlLu+pUukxM5/LecD/n15HbGXL2w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCSCMpkEeOEy+rJwiOm8ttdu7PnGwX4jyRH6Db/Wty0Z6db1kM10H5+FDlu8wIK58rBFRys02c6gFIHnlo35+mzr5m6g1LCxqEpIUdvaJU7mZnfDOfwR
-    gW/hEUON+DNaUB480HMwTd7xl8DIkhCnJhj796Ski3TWSWf2DJ8k8x3cvZ2QVS+G99qtf6M+GEHabfZvz0NNdXnPIGzrRGM/Y7Mq3D8FaElvP8GDKt9ybIpx
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=hWMQpYRtAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=ag1SF4gXAAAA:8
-    a=DtNzOG49FyenMnN10bwA:9 a=QEXdDO2ut3YA:10 a=KCsI-UfzjElwHeZNREa_:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750898AbeC0Qdr (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 12:33:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44012 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754040AbeC0Qdn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:33:43 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49arN7P/5D3Y0e3MpenCIk0TaMeKqeKYbOsFrSY1eGArWaeJ7+owjLVRpIDnIDnF6rnFaKu
+ARC-Seal: i=1; a=rsa-sha256; t=1522168426; cv=none;
+        d=google.com; s=arc-20160816;
+        b=O1JFLQh1JL4DzHSTi652QaXAkRxdSmghjJuNKH73UHt6l7A1lciX9njHGwfjYXKjY+
+         Av51st3y3mmOxTMBh0ENk9BMTO2oAqY6un1R5YoGUAPXM/4WAAxCkiJy1m+vL9uf1rzX
+         47HfK0nFOD4hnSHtaiZth4/phTSxyd9d5MF1iundG0FZ4H0e+T01rca8+bytDX5t0kJm
+         FiTrwKa4qpjqONAV5Vrn0l8cKnjsIO6F0GQNol7TJblIm6FuNAWgic0+RORu1L5+FCaN
+         cBeJveVyd7/9QxvpsPL3w6dUMo1EuZJszPRdAEMEwfa1xnFr8DTabJA/jQpqKJGOUkgt
+         cXQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=FOQAZ+rFyCHYHbphgi6WWyXHQuDFNY3A/e93f5idgWE=;
+        b=m9MTrRf6xJu49tva1KfR2KTKyHm/lhI1lqNCR5iubRxftICu6eIbsBPGInFsh+YIXL
+         +xsX6ujebp6BXSRMg4vafdoH7vRlC9DM8wY2elwpI4JRWtZW0ellhmGKRDN38qWZXV3J
+         T/aji0ucfciVw3FXEP8YS2kb+wAJVv0o/IjpQ1MHMa1vstOD8o6KDca0+iGRmyvz2i5f
+         e942RFmNd4on5YSzFOyXjEbvnW5p/3lG8sq1UKTA2il0PaYhrd5cCIeQXv2iZ26mnVUw
+         e6RAV5t7Y7v3P/LjQDkukN8x8IajU9qyTSMMfT83+chmuy1f/LMc/9aOyjHFvi0V3HEh
+         blaA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Eric Dumazet <edumazet@google.com>
-Subject: [PATCH 4.9 67/67] bpf, x64: increase number of passes
-Date: Tue, 27 Mar 2018 18:27:59 +0200
-Message-Id: <20180327162731.491730496@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andy Lutomirski <luto@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 63/67] x86/pkeys/selftests: Rename si_pkey to siginfo_pkey
+Date: Tue, 27 Mar 2018 18:27:55 +0200
+Message-Id: <20180327162731.138946120@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
@@ -83,9 +47,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1596109279559846402?=
+X-GMAIL-MSGID: =?utf-8?q?1596109279559846402?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -93,52 +58,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 6007b080d2e2adb7af22bf29165f0594ea12b34c upstream.
+commit 91c49c2deb96ffc3c461eaae70219d89224076b7 upstream.
 
-In Cilium some of the main programs we run today are hitting 9 passes
-on x64's JIT compiler, and we've had cases already where we surpassed
-the limit where the JIT then punts the program to the interpreter
-instead, leading to insertion failures due to CONFIG_BPF_JIT_ALWAYS_ON
-or insertion failures due to the prog array owner being JITed but the
-program to insert not (both must have the same JITed/non-JITed property).
+'si_pkey' is now #defined to be the name of the new siginfo field that
+protection keys uses.  Rename it not to conflict.
 
-One concrete case the program image shrunk from 12,767 bytes down to
-10,288 bytes where the image converged after 16 steps. I've measured
-that this took 340us in the JIT until it converges on my i7-6600U. Thus,
-increase the original limit we had from day one where the JIT covered
-cBPF only back then before we run into the case (as similar with the
-complexity limit) where we trip over this and hit program rejections.
-Also add a cond_resched() into the compilation loop, the JIT process
-runs without any locks and may sleep anyway.
-
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20171111001231.DFFC8285@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/net/bpf_jit_comp.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/testing/selftests/x86/protection_keys.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -1135,7 +1135,7 @@ struct bpf_prog *bpf_int_jit_compile(str
- 	 * may converge on the last pass. In such case do one more
- 	 * pass to emit the final image
- 	 */
--	for (pass = 0; pass < 10 || image; pass++) {
-+	for (pass = 0; pass < 20 || image; pass++) {
- 		proglen = do_jit(prog, addrs, image, oldproglen, &ctx);
- 		if (proglen <= 0) {
- 			image = NULL;
-@@ -1162,6 +1162,7 @@ struct bpf_prog *bpf_int_jit_compile(str
- 			}
- 		}
- 		oldproglen = proglen;
-+		cond_resched();
- 	}
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -249,7 +249,7 @@ void signal_handler(int signum, siginfo_
+ 	unsigned long ip;
+ 	char *fpregs;
+ 	u32 *pkru_ptr;
+-	u64 si_pkey;
++	u64 siginfo_pkey;
+ 	u32 *si_pkey_ptr;
+ 	int pkru_offset;
+ 	fpregset_t fpregset;
+@@ -291,9 +291,9 @@ void signal_handler(int signum, siginfo_
+ 	si_pkey_ptr = (u32 *)(((u8 *)si) + si_pkey_offset);
+ 	dprintf1("si_pkey_ptr: %p\n", si_pkey_ptr);
+ 	dump_mem(si_pkey_ptr - 8, 24);
+-	si_pkey = *si_pkey_ptr;
+-	pkey_assert(si_pkey < NR_PKEYS);
+-	last_si_pkey = si_pkey;
++	siginfo_pkey = *si_pkey_ptr;
++	pkey_assert(siginfo_pkey < NR_PKEYS);
++	last_si_pkey = siginfo_pkey;
  
- 	if (bpf_jit_enable > 1)
+ 	if ((si->si_code == SEGV_MAPERR) ||
+ 	    (si->si_code == SEGV_ACCERR) ||
+@@ -305,7 +305,7 @@ void signal_handler(int signum, siginfo_
+ 	dprintf1("signal pkru from xsave: %08x\n", *pkru_ptr);
+ 	/* need __rdpkru() version so we do not do shadow_pkru checking */
+ 	dprintf1("signal pkru from  pkru: %08x\n", __rdpkru());
+-	dprintf1("si_pkey from siginfo: %jx\n", si_pkey);
++	dprintf1("pkey from siginfo: %jx\n", siginfo_pkey);
+ 	*(u64 *)pkru_ptr = 0x00000000;
+ 	dprintf1("WARNING: set PRKU=0 to allow faulting instruction to continue\n");
+ 	pkru_faults++;
