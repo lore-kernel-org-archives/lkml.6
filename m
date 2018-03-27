@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-195729-1522174264-2-12395929588044161275
+X-Cyrus-Session-Id: sloti22d1t05-196919-1522174247-2-1467636588803325595
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522174264; b=btQc3rb7EJCanTpHO7IQs0ejQFrnlVn17tQtkWvCBte0n88
-    KDVsQXgrBm7XIVHxTqijgQB3kzp9ng38Sj9HVJVT0v4u+ndYsJi8CMns0R5I3lZF
-    RBMPRbjJ5bJIcBEabZPf7Ee3kW5f4xHeSz+iwty9dCRNHYynzhOmX4jaljyHbnw4
-    lGjdPLZz8rzo0uqvBoyrAsW9Oqp8mewgnIhS5AzOdUaE0gSKdih2L4tgLlaVEZhD
-    k+V663a9BeVZmI0dO9cPch+VY2AN8Tk8F5Fl61TgZJRqPvDp544O/GW1t1CISOse
-    BTtRqZwsszqz9k1RHSQwcEdxhZTai6+ERgOcWUw==
+    t=1522174245; b=I07I1qOfM5dgnvlDV8XGFy2rOsGA1Q8Z3AhWxWhnYTfcC+V
+    BuU4j5PHe0zkxI9aUoD9X6zWHwEY22xGutiOwp8adS9SEzIQHpMAnnyZ47J1MPwR
+    pMQ8WPLiCKTzJ2Wj5FWkaXBtQObrfBebDJMleIflQN/Ne23GZpJYgelT4Zjy+fNH
+    CsUUhQFHn97+W/IL9cIHpLVA0rGAmBStX1KUu5EPPydHrOOfsqV4tAxJhf2lZp7G
+    ByJfkPOQz2QMeVB5yLSqKUjVZQzeyPxhgKl2JJ3Bf9JpXnDOMMmZ+zkxk2U+EWBe
+    NOSuraD03shtWlY6hPAV/lCl+vMGFNGjFd8SWhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522174264; bh=yoz920NDlS2VHNQYWTOboxGluI
-    MSEysA6fnVr40PUJc=; b=oqlew/9dzxxNqf5tnfXxlpTL5kCAB0Nc1T4ZoibU/X
-    /8K85RQPlxZNERs1QgaMIUpwSIwdHPNhvencCzWv6dwYb1gsCKwt8jA5K8ayAgQz
-    +lMzmeG/WgbFsTPZ9OEZKaE+KtqCnb350SsN9G7JeLS7xKHBlTRqziUnmZxDTMSO
-    eXTD5/ascUYekeGJyW8kp5X6XTAqdKxQ+6EHbo5PuDxBZrUkcsMQtg9Vwgv1DlEY
-    7wzG35gj8/kyHNWwUrKZ2aubCDVFEm4/bpW4gzPZl6cJLAFUWRqbuPKC68C6bvZA
-    5xIBt2WJACtke7X27BtFxsr35VONPJLqiydXX4ID3XuA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1522174245; bh=ohxNuN9eWibl22URVdCOZUeTQX
+    tG8kwobBINL46jlwc=; b=cOYmdEsrdts5AEVqO4/PIm+K/+X3YWfWJ/UMSZt5w/
+    x564k05N6+NY6NvgXqHpxsny8LPWzCEE2Hm7Ra46IxwpoFpMoNJS8q9kjwqXI/6T
+    DitXE4jQtiLKnB/MFdJTcYq1VQTvpqikqmUGQ4NWFVpQ/erJ1Xfnr3N0HiugBB72
+    Z8InDtWyNuyv5iHq8+iMY08CNap2aZKqj1EaVIsncLJ8Tt+yh7bfupRzOZrHWktK
+    S3CZv/wPkILcnryib61HCWYXn/7+fqfVO2ioWN63V1lizF1gTXjJb2FTp2cMwUPI
+    k0a8pPedxUDsplfZrpm9ko1bZJ6GGGORBzYe5GQT3HOg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,28 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOQpgwk4w9wgYBvQhcZ2q22IEzQkn7sEvOxRU7Z5OJqzSy1JYvxnnmeZwHaoVVTToejOTzaaJaQJpDcl/+usX930apLr0uikxQdyGh1QC2qk+gVKnO8+
-    4LYVay9O/0/Lfvlc6tQVRb+uxePvvKaaGUmZ6DsZFisf+tBahF3FFC+r7RMnvL41iUPmLphLtb0IJo0JKpM3cMx8DRtRyBtGaUQMUyCAOq72BvT3e57HOrSp
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJYYZ5TNIIhGx5nJOiBbj9Tp23ar6+nD4vqK2TMO24hDzqJJRj4nTxp3KYUS0sABwBsyEEr0LY660Uf+mrjE8okv7Qz7VT06+5q64FTrZjC8kXQkfPUc
+    iut/yF8Ir+fPi5aivR3xflDlsF0AeVB/Ly/tjTziLnueCNKNhorgWBOj8CG0t4w1S7f34d3m6K5YKbcEYlil+EUreXmyNpZozZhmcUnsJaGzmPxc2pQIIoCl
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=Buo6U9zYcnrzya0507EA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=mkCXhCCKOUKQdph7VtgA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeC0SKw (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 14:10:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40936 "EHLO
+        id S1751932AbeC0Q2s (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 12:28:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40958 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbeC0Q2o (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:28:44 -0400
+        with ESMTP id S1751241AbeC0Q2r (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:28:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kirill Marinushkin <k.marinushkin@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 03/43] ALSA: usb-audio: Fix parsing descriptor of UAC2 processing unit
-Date: Tue, 27 Mar 2018 18:27:07 +0200
-Message-Id: <20180327162716.590782270@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 04/43] ALSA: aloop: Sync stale timer before release
+Date: Tue, 27 Mar 2018 18:27:08 +0200
+Message-Id: <20180327162716.638981112@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -92,47 +90,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kirill Marinushkin <k.marinushkin@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit a6618f4aedb2b60932d766bd82ae7ce866e842aa upstream.
+commit 67a01afaf3d34893cf7d2ea19b34555d6abb7cb0 upstream.
 
-Currently, the offsets in the UAC2 processing unit descriptor are
-calculated incorrectly. It causes an issue when connecting the device which
-provides such a feature:
+The aloop driver tries to stop the pending timer via timer_del() in
+the trigger callback and in the close callback.  The former is
+correct, as it's an atomic operation, while the latter expects that
+the timer gets really removed and proceeds the resource releases after
+that.  But timer_del() doesn't synchronize, hence the running timer
+may still access the released resources.
 
-~~~~
-[84126.724420] usb 1-1.3.1: invalid Processing Unit descriptor (id 18)
-~~~~
+A similar situation can be also seen in the prepare callback after
+trigger(STOP) where the prepare tries to re-initialize the things
+while a timer is still running.
 
-After this patch is applied, the UAC2 processing unit inits w/o this error.
+The problems like the above are seen indirectly in some syzkaller
+reports (although it's not 100% clear whether this is the only cause,
+as the race condition is quite narrow and not always easy to
+trigger).
 
-Fixes: 23caaf19b11e ("ALSA: usb-mixer: Add support for Audio Class v2.0")
-Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+For addressing these issues, this patch adds the explicit alls of
+timer_del_sync() in some places, so that the pending timer is properly
+killed / synced.
+
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/usb/audio.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/drivers/aloop.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/include/uapi/linux/usb/audio.h
-+++ b/include/uapi/linux/usb/audio.h
-@@ -369,7 +369,7 @@ static inline __u8 uac_processing_unit_b
- {
- 	return (protocol == UAC_VERSION_1) ?
- 		desc->baSourceID[desc->bNrInPins + 4] :
--		desc->baSourceID[desc->bNrInPins + 6];
-+		2; /* in UAC2, this value is constant */
+--- a/sound/drivers/aloop.c
++++ b/sound/drivers/aloop.c
+@@ -192,6 +192,11 @@ static inline void loopback_timer_stop(s
+ 	dpcm->timer.expires = 0;
  }
  
- static inline __u8 *uac_processing_unit_bmControls(struct uac_processing_unit_descriptor *desc,
-@@ -377,7 +377,7 @@ static inline __u8 *uac_processing_unit_
- {
- 	return (protocol == UAC_VERSION_1) ?
- 		&desc->baSourceID[desc->bNrInPins + 5] :
--		&desc->baSourceID[desc->bNrInPins + 7];
-+		&desc->baSourceID[desc->bNrInPins + 6];
- }
++static inline void loopback_timer_stop_sync(struct loopback_pcm *dpcm)
++{
++	del_timer_sync(&dpcm->timer);
++}
++
+ #define CABLE_VALID_PLAYBACK	(1 << SNDRV_PCM_STREAM_PLAYBACK)
+ #define CABLE_VALID_CAPTURE	(1 << SNDRV_PCM_STREAM_CAPTURE)
+ #define CABLE_VALID_BOTH	(CABLE_VALID_PLAYBACK|CABLE_VALID_CAPTURE)
+@@ -326,6 +331,8 @@ static int loopback_prepare(struct snd_p
+ 	struct loopback_cable *cable = dpcm->cable;
+ 	int bps, salign;
  
- static inline __u8 uac_processing_unit_iProcessing(struct uac_processing_unit_descriptor *desc,
++	loopback_timer_stop_sync(dpcm);
++
+ 	salign = (snd_pcm_format_width(runtime->format) *
+ 						runtime->channels) / 8;
+ 	bps = salign * runtime->rate;
+@@ -745,7 +752,7 @@ static int loopback_close(struct snd_pcm
+ 	struct loopback *loopback = substream->private_data;
+ 	struct loopback_pcm *dpcm = substream->runtime->private_data;
+ 
+-	loopback_timer_stop(dpcm);
++	loopback_timer_stop_sync(dpcm);
+ 	mutex_lock(&loopback->cable_lock);
+ 	free_cable(substream);
+ 	mutex_unlock(&loopback->cable_lock);
