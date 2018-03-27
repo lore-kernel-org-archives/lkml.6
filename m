@@ -1,56 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752266AbeC0Ivs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:51:48 -0400
-Received: from mail-qt0-f174.google.com ([209.85.216.174]:38678 "EHLO
-        mail-qt0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750917AbeC0Ivq (ORCPT
+        id S1752257AbeC0Ixn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:53:43 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47328 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751192AbeC0Ixk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:51:46 -0400
-X-Google-Smtp-Source: AG47ELv9ZUTwX8lrjvka2CDAuCPb3nUDKVFaw10c59PuaPvc8Ly6/7alB2SbzRlxkEN1B0u3d4wTWeaXXH+CulVCRnI=
+        Tue, 27 Mar 2018 04:53:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09A4D601EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <alpine.LFD.2.21.1803271037410.1726@schleppi>
-References: <alpine.LFD.2.21.1803270944490.1726@schleppi> <CAMuHMdX_aTqi=8FmBR07K6-C=ycCrPQ+dT=ujXzNTcekdXB5ag@mail.gmail.com>
- <alpine.LFD.2.21.1803271037410.1726@schleppi>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 27 Mar 2018 10:51:45 +0200
-X-Google-Sender-Auth: UFCMjJnhujdbFk6tGRNySzDadbY
-Message-ID: <CAMuHMdWidUxYNBVcDn7WxYb9V2bOnh_jwSuT2gYJ=-w1GnEoRg@mail.gmail.com>
-Subject: Re: dma_zalloc_coherent broken with 57bf5a8963f80fb3828c46c3e3a5b2dd790e09a7
-To: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [next] rsi: remove redundant duplicate assignment of buffer_size
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180314141239.8321-1-colin.king@canonical.com>
+References: <20180314141239.8321-1-colin.king@canonical.com>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Amitkumar Karwar <amit.karwar@redpinesignals.com>,
+        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180327085340.1059260251@smtp.codeaurora.org>
+Date: Tue, 27 Mar 2018 08:53:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian,
+Colin Ian King <colin.king@canonical.com> wrote:
 
-On Tue, Mar 27, 2018 at 10:41 AM, Sebastian Ott
-<sebott@linux.vnet.ibm.com> wrote:
-> On Tue, 27 Mar 2018, Geert Uytterhoeven wrote:
->> On Tue, Mar 27, 2018 at 10:12 AM, Sebastian Ott
->> <sebott@linux.vnet.ibm.com> wrote:
->> > commit 57bf5a8963f80fb3828c46c3e3a5b2dd790e09a7 broke usage of dma
->> > allocations specifying __GFP_ZERO by silently removing that flag.
->>
->> How did it break? The flag is now always added.
->
-> +       flag &= ~(__GFP_DMA | __GFP_DMA32 | __GFP_HIGHMEM | __GFP_ZERO);
->
-> I read that as a removal. But maybe I need more coffee..
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Variable buffer_size is re-assigned the same value, this duplicated
+> assignment is redundant and can be removed.
+> 
+> Cleans up clang warning:
+> drivers/net/wireless/rsi/rsi_91x_usb.c:140:4: warning: Value stored
+> to 'buffer_size' is never read
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Sorry, you're right.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Gr{oetje,eeting}s,
-
-                        Geert
+a31f9314114c rsi: remove redundant duplicate assignment of buffer_size
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+https://patchwork.kernel.org/patch/10282247/
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
