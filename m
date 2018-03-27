@@ -1,73 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752040AbeC0JAz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:00:55 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55263 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751054AbeC0JAw (ORCPT
+        id S1752087AbeC0JDx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:03:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53762 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751114AbeC0JDk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:00:52 -0400
-X-Google-Smtp-Source: AG47ELuV/BDDljo0mx/OEJSL9nm7UtjcZLb67WSZ/mndmKQGEUUYOBLwL//HlQOG1cAr5nLDpXLPjw==
-Message-ID: <1522141249.2632.25.camel@baylibre.com>
-Subject: Re: [PATCH v2 7/7] ARM64: dts: meson-axg: add an 32K alt aoclk
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Tue, 27 Mar 2018 11:00:49 +0200
-In-Reply-To: <20180323143816.200573-8-yixun.lan@amlogic.com>
-References: <20180323143816.200573-1-yixun.lan@amlogic.com>
-         <20180323143816.200573-8-yixun.lan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        Tue, 27 Mar 2018 05:03:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 54015602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+Subject: Re: rtlwifi: rtl8821ae: fix spelling mistake: "Aboslute" -> "Absolute"
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180319104054.32564-1-colin.king@canonical.com>
+References: <20180319104054.32564-1-colin.king@canonical.com>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, Tsang-Shian Lin <thlin@realtek.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180327090339.7DB3060588@smtp.codeaurora.org>
+Date: Tue, 27 Mar 2018 09:03:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-23 at 22:38 +0800, Yixun Lan wrote:
-> The ao_clk81 in AO domain have two clock source,
-> one from a 32K alt crystal we name it as ao_alt_clk,
-> another is the clk81 signal from EE domain.
+Colin Ian King <colin.king@canonical.com> wrote:
+
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Trivial fix to spelling mistake in RT_TRACE message text.
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> index b3d394f5d95a..48584d5a329b 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> @@ -109,6 +109,13 @@
->  		#clock-cells = <0>;
->  	};
->  
-> +	ao_alt_xtal: ao_alt_xtal-clk {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <32000000>;
-> +		clock-output-names = "ao_alt_xtal";
-> +		#clock-cells = <0>;
-> +	};
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Acked-by: Larry Finger <Larry.Finger@lwfinger.net?
 
-In DT, we seem to be using 'ao' and 'AO' to designate the Always On domain.
-Maybe we should be try be consistent about this.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Anyway, this patch looks good but does not need to be part of the clkc_ao
-series, it could go in independently.
+e153292ae4d1 rtlwifi: rtl8821ae: fix spelling mistake: "Aboslute" -> "Absolute"
 
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+-- 
+https://patchwork.kernel.org/patch/10292111/
 
-> +
->  	soc {
->  		compatible = "simple-bus";
->  		#address-cells = <2>;
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
