@@ -1,50 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755165AbeC0RKx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 13:10:53 -0400
-Received: from foss.arm.com ([217.140.101.70]:60126 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753138AbeC0RKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 13:10:50 -0400
-Subject: Re: [RFC v2 01/12] KVM: arm/arm64: Set dist->spis to NULL after kfree
-To: Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
-        peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
- <1522159456-10419-2-git-send-email-eric.auger@redhat.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <26bb42a7-d946-e52c-68e6-eaeaae325983@arm.com>
-Date: Tue, 27 Mar 2018 18:10:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1755385AbeC0RLx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 13:11:53 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36648 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbeC0RLu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 13:11:50 -0400
+X-Google-Smtp-Source: AIpwx4/dIFFNf4CeJ/+1Mms5SpUA57NRJvb34Ym3DjDtEJkTGsnKDGhIx1KwOdBJ9Zp6SWqXQyzWxg==
+Date: Tue, 27 Mar 2018 18:43:43 +0200
+From: Anders Roxell <anders.roxell@linaro.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: [PATCH 1/2] x86: Force asm-goto
+Message-ID: <20180327164343.GA4002@localhost.localdomain>
+References: <20180319154124.337947038@infradead.org>
+ <20180319154717.652679334@infradead.org>
+ <alpine.DEB.2.21.1803192055410.1520@nanos.tec.linutronix.de>
+ <20180319201327.GJ4043@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <1522159456-10419-2-git-send-email-eric.auger@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20180319201327.GJ4043@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/03/18 15:04, Eric Auger wrote:
-> in case kvm_vgic_map_resources() fails, typically if the vgic
-> distributor is not defined, __kvm_vgic_destroy will be called
-> several times. Indeed kvm_vgic_map_resources() is called on
-> first vcpu run. As a result dist->spis is freeed more than once
-> and on the second time it causes a "kernel BUG at mm/slub.c:3912!"
+On 2018-03-19 21:13, Peter Zijlstra wrote:
+> On Mon, Mar 19, 2018 at 08:57:48PM +0100, Thomas Gleixner wrote:
+> > On Mon, 19 Mar 2018, Peter Zijlstra wrote:
+> > 
+> > > We want to start using asm-goto to guarantee the absence of dynamic
+> > > branches (and thus speculation).
+> > > 
+> > > A primary prerequisite for this is of course that the compiler
+> > > supports asm-goto. This effecively lifts the minimum GCC version to
+> > > build an x86 kernel to gcc-4.5.
+> > > 
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > ---
+> > >  Makefile          |   13 +++++++------
+> > >  arch/x86/Makefile |    4 ++++
+> > >  2 files changed, 11 insertions(+), 6 deletions(-)
+> > > 
+> > > --- a/Makefile
+> > > +++ b/Makefile
+> > > @@ -494,6 +494,13 @@ RETPOLINE_CFLAGS_CLANG := -mretpoline-ex
+> > >  RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
+> > >  export RETPOLINE_CFLAGS
+> > >  
+> > > +# check for 'asm goto'
+> > > +ifeq ($(shell $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
+> > 
+> > Why are you not using the shell-cached version which you remove further
+> > down?
 > 
-> Set dist->spis to NULL to avoid the crash.
+> Bah, I'm an idiot. I fixed that up at least two times, but clearly I
+> forgot to check that again before sending.
 > 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> ---
+> Subject: x86: Force asm-goto
+> From: Peter Zijlstra <peterz@infradead.org>
+> Date: Wed Jan 17 11:42:07 CET 2018
+> 
+> We want to start using asm-goto to guarantee the absence of dynamic
+> branches (and thus speculation).
+> 
+> A primary prerequisite for this is of course that the compiler
+> supports asm-goto. This effecively lifts the minimum GCC version to
+> build an x86 kernel to gcc-4.5.
 
-Fixes: ad275b8bb1e6 ("KVM: arm/arm64: vgic-new: vgic_init: implement
-vgic_init")
+With this patch applied I'm not able to do "make kernelversion" without
+any toolchain to get the kernel version, I was able to do that before.
 
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Cheers,
+Anders
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  Makefile          |   13 +++++++------
+>  arch/x86/Makefile |    4 ++++
+>  2 files changed, 11 insertions(+), 6 deletions(-)
+> 
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -494,6 +494,13 @@ RETPOLINE_CFLAGS_CLANG := -mretpoline-ex
+>  RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
+>  export RETPOLINE_CFLAGS
+>  
+> +# check for 'asm goto'
+> +ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
+> +  CC_HAVE_ASM_GOTO := 1
+> +  KBUILD_CFLAGS += -DCC_HAVE_ASM_GOTO
+> +  KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
+> +endif
+> +
+>  ifeq ($(config-targets),1)
+>  # ===========================================================================
+>  # *config targets only - make sure prerequisites are updated, and descend
+> @@ -658,12 +665,6 @@ KBUILD_CFLAGS += $(call cc-ifversion, -l
+>  # Tell gcc to never replace conditional load with a non-conditional one
+>  KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
+>  
+> -# check for 'asm goto'
+> -ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
+> -	KBUILD_CFLAGS += -DCC_HAVE_ASM_GOTO
+> -	KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
+> -endif
+> -
+>  include scripts/Makefile.kcov
+>  include scripts/Makefile.gcc-plugins
+>  
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -181,6 +181,10 @@ ifdef CONFIG_FUNCTION_GRAPH_TRACER
+>    endif
+>  endif
+>  
+> +ifndef CC_HAVE_ASM_GOTO
+> +  $(error Compiler lacks asm-goto support.)
+> +endif
+> +
+>  #
+>  # Jump labels need '-maccumulate-outgoing-args' for gcc < 4.5.2 to prevent a
+>  # GCC bug (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=46226).  There's no way
