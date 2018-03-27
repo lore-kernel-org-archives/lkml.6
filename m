@@ -1,39 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752665AbeC0NOD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:14:03 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37010 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752503AbeC0NOC (ORCPT
+        id S1752492AbeC0NPc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:15:32 -0400
+Received: from mail-it0-f49.google.com ([209.85.214.49]:38304 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752135AbeC0NPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:14:02 -0400
-X-Google-Smtp-Source: AIpwx48Ouci7b6Z7npI8mNorYR20Y2T4V9GYphKHOeheLzIWWMqYzzM4BXXZFv5c0uPYt50pV1mHdV+j6neCUZPHlLc=
+        Tue, 27 Mar 2018 09:15:30 -0400
+X-Google-Smtp-Source: AG47ELuIw0pg+HitbD2bDiccGvnkqGkkU++fM9GJBPwyq6oVvjoucLHlOwM1RaZ3CXWthIJPX2rv8mG42EjUdx2EPNU=
 MIME-Version: 1.0
-In-Reply-To: <20180304124551.22565-1-brgl@bgdev.pl>
-References: <20180304124551.22565-1-brgl@bgdev.pl>
+In-Reply-To: <1521447194-26514-1-git-send-email-hayashi.kunihiko@socionext.com>
+References: <1521447194-26514-1-git-send-email-hayashi.kunihiko@socionext.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 27 Mar 2018 15:14:01 +0200
-Message-ID: <CACRpkdZyjKJXfqKkiqWAmYoqLW5i28HTaRRsx_a1jk076cJdmg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mockup: fix a potential crash when creating debugfs entries
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Date: Tue, 27 Mar 2018 15:15:28 +0200
+Message-ID: <CACRpkdatq6B7Of1DZAq0RcwcHxf6Qy1HcMaCC=3Wb_ogYsYfvw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: uniphier: add UART hardware flow control pin-mux settings
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 4, 2018 at 1:45 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Mon, Mar 19, 2018 at 9:13 AM, Kunihiko Hayashi
+<hayashi.kunihiko@socionext.com> wrote:
 
-> If we failed to create the top debugfs directory, we must not try to
-> create the child nodes. We currently only check if gpio_mockup_dbg_dir
-> is not NULL, but it can also contain an errno if debugfs is disabled
-> in build options. Use IS_ERR_OR_NULL() instead.
+> UniPhier SoCs have the following pins for hardware flow control of UART:
+>   XRTS, XCTS
+> and for modem control of UART:
+>   XDTR, XDSR, XDCD, XRI
 >
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> The port number with the flow control is SoC-dependent.
+>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-Patch applied.
+Patch applied with Masahiro's ACK!
 
 Yours,
 Linus Walleij
