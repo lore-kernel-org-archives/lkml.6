@@ -1,94 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeC0Ca4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 22:30:56 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35943 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752186AbeC0Caz (ORCPT
+        id S1752486AbeC0Chw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 22:37:52 -0400
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:37904 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752177AbeC0Chu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 22:30:55 -0400
-X-Google-Smtp-Source: AG47ELust5ozn6cbwpUILryUYOZ7YJKxiCGPuwoIYXgRnbrFzgci3UFHzQUm8wrGVUfccyOY9U1f7A==
-Subject: Re: [PATCH] coresight: use put_device() instead of kfree()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <d5a326b6c284f7389301b265716dc58fda492c98.1521358552.git.arvind.yadav.cs@gmail.com>
- <CANLsYkymOF2oG7TmKbRTakYKw0ECN_DXfkX5b8WjmS0Lz0sfig@mail.gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-From: arvindY <arvind.yadav.cs@gmail.com>
-Message-ID: <5AB9ACDA.9090207@gmail.com>
-Date: Tue, 27 Mar 2018 08:00:50 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Mon, 26 Mar 2018 22:37:50 -0400
+Subject: Re: [RFC] new SYSCALL_DEFINE/COMPAT_SYSCALL_DEFINE wrappers
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Ingo Molnar <mingo@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jslaby@suse.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <20180318161056.5377-1-linux@dominikbrodowski.net>
+ <20180318161056.5377-5-linux@dominikbrodowski.net>
+ <20180318174014.GR30522@ZenIV.linux.org.uk>
+ <CA+55aFwuZCpAZRpsTGiUmG065ZHHpj+03_NeWiy-OGkMGw7e3g@mail.gmail.com>
+ <20180318181848.GU30522@ZenIV.linux.org.uk>
+ <20180319042300.GW30522@ZenIV.linux.org.uk>
+ <20180319092920.tbh2xwkruegshzqe@gmail.com>
+ <20180319232342.GX30522@ZenIV.linux.org.uk>
+ <20180322001532.GA18399@ZenIV.linux.org.uk>
+ <20180326004017.GA2211@ZenIV.linux.org.uk>
+ <20180326034750.GN30522@ZenIV.linux.org.uk>
+ <CA+55aFw8VGnVgaWHVFP-LChMNaoANOwT18jJEWzSCRLFeRGcmA@mail.gmail.com>
+ <428751c8-6920-096b-8694-a3f1b8990bdf@physik.fu-berlin.de>
+ <CA+55aFwp-T-WFN95j7u5nn2BExxviJCx1-RgD3Mnu1AN_GYD3w@mail.gmail.com>
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <8a8ee344-fb19-3ed9-f7dc-db63f703e6d3@physik.fu-berlin.de>
+Date: Tue, 27 Mar 2018 11:37:26 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CANLsYkymOF2oG7TmKbRTakYKw0ECN_DXfkX5b8WjmS0Lz0sfig@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CA+55aFwp-T-WFN95j7u5nn2BExxviJCx1-RgD3Mnu1AN_GYD3w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: 121.86.247.13
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/27/2018 10:03 AM, Linus Torvalds wrote:
+> Hmm. Do you have a few statically built binaries that could be tested
+> without installing a whole distribution? Something real and meaningful
+> enough that it actually exercised a few real system calls, but not
+> something that needs to bring in 50 different shared libraries?
+> 
+> Something in /sbin, perhaps, that is still runnable by a regular user
+> and doesn't require some distro-specific /etc layout etc, so that it
+> would work even if you don't run Debian at all? Maybe some shell
+> binary or something?
 
+What about a tarball with a minimal Debian x32 chroot? Then you can
+install interesting packages you would like to test yourself.
 
-On Tuesday 27 March 2018 03:16 AM, Mathieu Poirier wrote:
-> drivers/hwtracing/coresight/coresight.c
-> On 18 March 2018 at 01:38, Arvind Yadav <arvind.yadav.cs@gmail.com> wrote:
->> Never directly free @dev after calling device_register(), even
->> if it returned an error. Always use put_device() to give up the
->> reference initialized.
->>
->> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
->> ---
->>   drivers/hwtracing/coresight/coresight.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
->> index 389c4ba..132dfbc 100644
->> --- a/drivers/hwtracing/coresight/coresight.c
->> +++ b/drivers/hwtracing/coresight/coresight.c
->> @@ -1026,8 +1026,10 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
->>          dev_set_name(&csdev->dev, "%s", desc->pdata->name);
->>
->>          ret = device_register(&csdev->dev);
->> -       if (ret)
->> -               goto err_device_register;
->> +       if (ret) {
->> +               put_device(&csdev->dev);
->> +               goto err_kzalloc_csdev;
->> +       }
->>
->>          mutex_lock(&coresight_mutex);
->>
->> @@ -1038,8 +1040,6 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
->>
->>          return csdev;
->>
->> -err_device_register:
->> -       kfree(conns);
-> Apologies for the late reply, I was travelling.
->
-> I suggest to simply replace kfree() with put_device() in order to
-> concentrate the error handling code in the same area and make sure
-> that memory allocated for @conns and @refcnts is freed.
->
-> Thanks,
-> Mathieu
+Adrian
 
-If you will see the comment for device_register(drivers/base/core.c)
-there is mentioned that 'NOTE: _Never_ directly free @dev
-after calling this function, even if it returned an error!
-Always use put_device() to give up the reference initialized
-in this function instead.
-Here  put_device() will decrement the last reference and then
-free the memory by calling dev->release.  Internally
-put_device() -> kobject_put() -> kobject_cleanup() which is
-responsible to call 'dev -> release' and also free other kobject
-resources. we should always avoid kfree() if device_register()
-returned an error. Otherwise it'll not do clean up of other
-kobject resources.
-
-~arvind
->>   err_kzalloc_conns:
->>          kfree(refcnts);
->>   err_kzalloc_refcnts:
->> --
->> 2.7.4
->>
+-- 
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
