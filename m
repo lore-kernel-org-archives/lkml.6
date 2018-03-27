@@ -1,96 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750948AbeC0FHS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 01:07:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38416 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750836AbeC0FHQ (ORCPT
+        id S1751073AbeC0FJn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 01:09:43 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:37584 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750836AbeC0FJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 01:07:16 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F53860588
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-Subject: Re: [PATCH v3 1/6] phy: qcom-qmp: Enable pipe_clk before checking
- USB3 PHY_STATUS
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Varadarajan Narayanan <varada@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>, anischal@codeaurora.org
-References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org>
- <1521785487-29866-2-git-send-email-mgautam@codeaurora.org>
- <CAD=FV=V7xDh6fvG12xOV9=WwTDLiuQxdWFr7Bq6wjPJ5gShrVA@mail.gmail.com>
-From: Manu Gautam <mgautam@codeaurora.org>
-Message-ID: <8724ae37-5d71-4d5f-f750-da0cb8838f47@codeaurora.org>
-Date: Tue, 27 Mar 2018 10:37:08 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Mar 2018 01:09:41 -0400
+X-Google-Smtp-Source: AG47ELsgoAUqbUszISqfpsS65D/HCEH+0PX2e1aZqgs79J4sXGOiOSzSMj/RXOOnjMY9leK35d5QREP7jp5X+vi7nW4=
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=V7xDh6fvG12xOV9=WwTDLiuQxdWFr7Bq6wjPJ5gShrVA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <20180327044020.GB16974@char.us.oracle.com>
+References: <1522116735-4861-1-git-send-email-wanpengli@tencent.com>
+ <1522116735-4861-3-git-send-email-wanpengli@tencent.com> <20180327044020.GB16974@char.us.oracle.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Tue, 27 Mar 2018 13:09:40 +0800
+Message-ID: <CANRm+CzxLA1qOVaUCy_hCUMkVJDMxy7yD0ZmNG1Xm77mvg1wgw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] KVM: VMX: Add Force Emulation Prefix for "emulate the
+ next instruction"
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2R59lNQ005784
 
-Hi Doug,
-
-
-On 3/27/2018 9:56 AM, Doug Anderson wrote:
-> Manu
->
-> On Thu, Mar 22, 2018 at 11:11 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
->> QMP PHY for USB mode requires pipe_clk for calibration and PLL lock
->> to take place. This clock is output from PHY to GCC clock_ctl and then
->> fed back to QMP PHY and is available from PHY only after PHY is reset
->> and initialized, hence it can't be enabled too early in initialization
->> sequence.
+2018-03-27 12:40 GMT+08:00 Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>:
+> On Mon, Mar 26, 2018 at 07:12:15PM -0700, Wanpeng Li wrote:
+>> From: Wanpeng Li <wanpengli@tencent.com>
 >>
->> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+>> This patch introduces a Force Emulation Prefix (ud2a; .ascii "kvm") for
+>> "emulate the next instruction", the codes will be executed by emulator
+>> instead of processor, for testing purposes.
+>
+> Can you expand a bit ? Why do you want this in KVM in the first place?
+> Should this be controlled by a boolean parameter?
+>>
+>> A testcase here:
+>>
+>> #include <stdio.h>
+>> #include <string.h>
+>>
+>> #define HYPERVISOR_INFO 0x40000000
+>>
+>> #define CPUID(idx, eax, ebx, ecx, edx)\
+>>     asm volatile (\
+>>     "ud2a; .ascii \"kvm\"; 1: cpuid" \
+>>     :"=b" (*ebx), "=a" (*eax),"=c" (*ecx), "=d" (*edx)\
+>>         :"0"(idx) );
+>>
+>> void main()
+>> {
+>>       unsigned int eax,ebx,ecx,edx;
+>>       char string[13];
+>>
+>>       CPUID(HYPERVISOR_INFO, &eax, &ebx, &ecx, &edx);
+>>       *(unsigned int *)(string+0) = ebx;
+>>       *(unsigned int *)(string+4) = ecx;
+>>       *(unsigned int *)(string+8) = edx;
+>>
+>>       string[12] = 0;
+>>       if (strncmp(string, "KVMKVMKVM\0\0\0",12) == 0)
+>>               printf("kvm guest\n");
+>>       else
+>>               printf("bare hardware\n");
+>> }
+>>
+>> Suggested-by: Andrew Cooper <andrew.cooper3@citrix.com>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 >> ---
->>  drivers/phy/qualcomm/phy-qcom-qmp.c | 33 ++++++++++++++++++++++++++++++++-
->>  1 file changed, 32 insertions(+), 1 deletion(-)
-> So it's now new with this patch, but it's more obvious with this
-> patch.  It seems like "UFS/PCIE" is kinda broken w/ respect to how it
-> controls its clock.  Specifically:
+>>  arch/x86/kvm/vmx.c | 18 +++++++++++++++++-
+>>  1 file changed, 17 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>> index 0f99833..90abed8 100644
+>> --- a/arch/x86/kvm/vmx.c
+>> +++ b/arch/x86/kvm/vmx.c
+>> @@ -108,6 +108,9 @@ module_param_named(enable_shadow_vmcs, enable_shadow_vmcs, bool, S_IRUGO);
+>>  static bool __read_mostly nested = 0;
+>>  module_param(nested, bool, S_IRUGO);
+>>
+>> +static bool __read_mostly fep = 0;
+>> +module_param(fep, bool, S_IRUGO);
+>> +
+>>  static u64 __read_mostly host_xss;
+>>
+>>  static bool __read_mostly enable_pml = 1;
+>> @@ -6218,8 +6221,21 @@ static int handle_machine_check(struct kvm_vcpu *vcpu)
+>>  static int handle_ud(struct kvm_vcpu *vcpu)
+>>  {
+>>       enum emulation_result er;
+>> +     int emulation_type = EMULTYPE_TRAP_UD;
+>> +
+>> +     if (fep) {
+>> +             char sig[5]; /* ud2; .ascii "kvm" */
+>> +             struct x86_exception e;
 >
-> * If you init the PHY but don't power it on, then you "exit" the PHY:
-> you'll disable/unprepare "pipe_clk" even though you never
-> prepare/enabled it.
->
-> * If you init the PHY, power it on, power it off, power it on, and
-> exit the PHY: you'll leave the clock prepared one extra time.
->
-> Specifically I'd expect: for UFS/PCIE the disable/unprepare should be
-> symmetric with the enable/prepare and should be in "power off", not in
-> exit.
->
-> ...or did I miss something?
->
->
-> Interestingly, your patch fixes this problem for USB3 (where init/exit
-> are now symmetric), but leaves the problem there for UFS/PCIE.
->
+> Don't you want to do = { };
+> to memset it?
 
-Thanks for review.
-One of the reason why pipe_clk is disabled as part of phy_exit is that
-halt_check from clk_disable reports error if called after PHY has been
-powered down or phy_exit.
-I believe that warning should be ignored in qcom gcc-clock driver
-(for applicable platforms) by using BRANCH_HALT_DELAY as halt_check
-for pipe_clk and performing clk_disable from power_off for UFS/PCIE.
+sig buffer will be filled by insns which are fetched from guest
+memory, so I think not memset is fine.
 
-I can implement that as separate patch once dependent gcc driver
-patch(es) gets in. Would that be ok?
-
--Manu
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Wanpeng Li
