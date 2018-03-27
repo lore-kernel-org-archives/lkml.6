@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/8ndTqYj14jmro0eovXpMnI2WExnIRCZXoKv/kiNZDWW3pkJiLQ2dvFaFZ8bGOS5IZaszW
-ARC-Seal: i=1; a=rsa-sha256; t=1522168877; cv=none;
+X-Google-Smtp-Source: AIpwx4/LbTnfvikbxyhE+u+F/TLx5FDhRaPeAHW7E7xc7jTUd81Y1pADMbLRmVIzqllBKxJ+9mg0
+ARC-Seal: i=1; a=rsa-sha256; t=1522168875; cv=none;
         d=google.com; s=arc-20160816;
-        b=snxleInRlCFnq2uWs/r+KrJaC6+LZmVccNEagJsI93YScb1te58oSN63OVS4d2ygdl
-         XEyAJ3kfL6G4mQQZPdAQPZTAH/H7yk/w3/Xdp8892qd1a91rEzqBa8BJCbRduBdYj70H
-         IkajKijws5iwmdY13y7tOsZrPU2cCFJC7xVU7w+giqxDXv8yoTpA7zTyJKp3Fcr8rYgT
-         jrdOEGx7M6o6BK1hbA04ZKHZkqXZBrU0Cbg/zI9GV6j8shvmqy+hr9eWgY0HeHblkuVd
-         VJnktY++XtR0q+eWgf0vcGVUDxqykVoEb138xjnlj1Ra87o4m845j/qOmopvBboPLyc+
-         SmHQ==
+        b=BgqC+y8wtYwaonKH/SGc6ocM3K2v9zf6m6C94huMcU+UcEpO8+qZSHrPxFAPimKdoy
+         ADmwNtyF/Ix0GaBxo0CajncAGSVVwwTq+cyL8g3fPoo8Bl4XUQ9hqogfJQp2QtLB8XhP
+         R3a4aMVn6zx2FLtm2SFri7mT1IEth3HeAB6VkpxWU8bDVtzCgHOadcUOvLBD8CK2WLFs
+         Z+vVHwFC3VmMy7SX3lew8jV5MBCz5F9c4cZ2mYJQEaw//hMT4sXdnJ+8ZoikDMFHslnF
+         BE0ucjKTz7ezyRiVNXpbeUJTqe5V0lEddxxs6yKdjecgirQjzMRXWnGx7hVMrd790NK2
+         mapw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KXtbgBoSQgogbGvDncABzTiRq9kD1LGMdKQmrTvKvSs=;
-        b=r93IGnfYLHbCEw9Nh6P4F4qlBzfIsQ34JNyUb8kuDzgHLZQG/+FHvl4UO91P2cq4vL
-         3VAVIGxctVpa15IZhvXkDY+KZhET64kzPzDed/JFM8/2MvUG/Ui3FfbGoPC+1DseytLn
-         u+gz4MuFbhyw8qWtsWmAy2phZDyoX7ttx642dshmSBJBJOaahG/ySKez0XsZF/n76wOG
-         HAJklzX1pahnxORso699rQIVpAEQCNGkO58qORvWFq9IK0/n+AdlRU1BZZsDRJO+0XVV
-         8t9KCzyt6agdvRzObW08xLmkfzM7czDrVes/lXypfGKSw+rwVVJlfG7nZsi00diHei3s
-         xv3g==
+        bh=NJwtfjVcBeeCosBjP7eg+Ezk2dMSpT99P0XvyueRQio=;
+        b=f3Lx1xN4xFxhILFm8fT+LcF77MNoV2WQ/BOPDY1ZoGZqA1V/UEYC/SLtcAj7Cyyj2p
+         Z3OcW6eMsj3kmu5A0B+DAcgk79aszLoU1x+C5SSvNZw9qRvviROhK6/lCM6TCdS9NFza
+         b9grjpBLp6+fuXaejKU1TT41hdmXG+F6UuzM5ylsgtqAicbrnnYbJ3Zz34iKNcPwNYia
+         H943SPcRGfFdxeo16xO9KRzNaWs95RNW+fvYqQpOAwpXTA0/sqwhTMS66IcAJOPwyLnb
+         qeKeKMApqyiDqNWKYVlMwjE9K3shE4x76cWm5qYn+vZP5ogX4jYr9K2f5UXhTaku/pHB
+         5bAQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.15 037/105] libata: Apply NOLPM quirk to Crucial MX100 512GB SSDs
-Date: Tue, 27 Mar 2018 18:27:17 +0200
-Message-Id: <20180327162759.595067510@linuxfoundation.org>
+	Jessica Yu <jeyu@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Leon Yu <chianglungyu@gmail.com>
+Subject: [PATCH 4.15 063/105] module: propagate error in modules_open()
+Date: Tue, 27 Mar 2018 18:27:43 +0200
+Message-Id: <20180327162801.512350533@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109050829353966?=
-X-GMAIL-MSGID: =?utf-8?q?1596109753404642454?=
+X-GMAIL-THRID: =?utf-8?q?1596109750447975140?=
+X-GMAIL-MSGID: =?utf-8?q?1596109750447975140?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Leon Yu <chianglungyu@gmail.com>
 
-commit 9c7be59fc519af9081c46c48f06f2b8fadf55ad8 upstream.
+commit 3f553b308bb004eb730da8e00a28150c157c7724 upstream.
 
-Various people have reported the Crucial MX100 512GB model not working
-with LPM set to min_power. I've now received a report that it also does
-not work with the new med_power_with_dipm level.
+otherwise kernel can oops later in seq_release() due to dereferencing null
+file->private_data which is only set if seq_open() succeeds.
 
-It does work with medium_power, but that has no measurable power-savings
-and given the amount of people being bitten by the other levels not
-working, this commit just disables LPM altogether.
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+IP: seq_release+0xc/0x30
+Call Trace:
+ close_pdeo+0x37/0xd0
+ proc_reg_release+0x5d/0x60
+ __fput+0x9d/0x1d0
+ ____fput+0x9/0x10
+ task_work_run+0x75/0x90
+ do_exit+0x252/0xa00
+ do_group_exit+0x36/0xb0
+ SyS_exit_group+0xf/0x10
 
-Note all reporters of this have either the 512GB model (max capacity), or
-are not specifying their SSD's size. So for now this quirk assumes this is
-a problem with the 512GB model only.
-
-Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=89261
-Buglink: https://github.com/linrunner/TLP/issues/84
-Cc: stable@vger.kernel.org
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 516fb7f2e73d ("/proc/module: use the same logic as /proc/kallsyms for address exposure")
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org # 4.15+
+Signed-off-by: Leon Yu <chianglungyu@gmail.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/module.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4530,6 +4530,11 @@ static const struct ata_blacklist_entry
- 	{ "PIONEER DVD-RW  DVR-212D",	NULL,	ATA_HORKAGE_NOSETXFER },
- 	{ "PIONEER DVD-RW  DVR-216D",	NULL,	ATA_HORKAGE_NOSETXFER },
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -4223,7 +4223,7 @@ static int modules_open(struct inode *in
+ 		m->private = kallsyms_show_value() ? NULL : (void *)8ul;
+ 	}
  
-+	/* The 512GB version of the MX100 has both queued TRIM and LPM issues */
-+	{ "Crucial_CT512MX100*",	NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
-+						ATA_HORKAGE_ZERO_AFTER_TRIM |
-+						ATA_HORKAGE_NOLPM, },
-+
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
+-	return 0;
++	return err;
+ }
+ 
+ static const struct file_operations proc_modules_operations = {
