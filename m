@@ -1,161 +1,145 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-753294-1522191424-3-15466974425829226331
+X-Cyrus-Session-Id: sloti22d1t05-133288-1522172565-2-15712999713288215539
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
   RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522191423; b=RXdUpdgENovF8FVXMEWJ1AqshcEXGgl/w0O/wbJbagBsDZr
-    JUCTUa+kM1AzE0LtRhOE/8ukI8b1FVJYmts3gumKCzYDPpDl/VC6mk/ZsPzaDsb/
-    Oa/jOv1LmYYV3Fco/5O2HwKN6yvdJIYLhEle+878/9D/+Fs/JFoVUgZYGL2xcZtb
-    Kcrj13XJNfmaIwF8VzsM+17fLvMORjivI1BxUc1fPAhy93vSoiOitBZokHHmvDUK
-    2nZWMVzhRSPAeDvi55dj7wo+CAZImsz4jT1WdgUe/jZSs1vP/7D9tCd8bwavAS0X
-    nSHmRhQNEJRoKzBqqxkRCM/o+lUuU6JVxjy3/sw==
+    t=1522172564; b=gW4oYfLRueiR5a5i+jK2jCG+P3YcspiwpzaX+ICvpOj/jrR
+    bJmFJ6Q48CyaKIHczXV48LrZi10tgIfpaSsSq3iVo5/fE6UC4oW3GxGEuDCcuGvb
+    HpOBOXL77yUU4MfXh5tbgq+4G+Q0EKblXEr13HJP3wt9xdXxbUreLNRfDWTUfukz
+    KJYgZUwSxEmQQ5E34NInNZufECYs5oVThrzRKamZABGAj7nZODdZcvu889gH7ns2
+    drj5hMP3HQnbKoX9AIK0oFbKKcjqFzSutiymg+GT++2hTFISL2UNfZy7zKIzF9Jq
+    PI8GLaZcpx69mi14woztMVDfEnyd3k+5X/kqFmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=arctest; t=
-    1522191423; bh=gB2t+S7Cv/P8nHz4hA++mBjNZQ6pqLu9n/2bYha0rmU=; b=j
-    1nEcfDEylrSJgG0eJM+k9JP+Ak8CQwRIZTdFj1+iEA1imxqTKy50Ay2Y1tRu52Ig
-    Tfi/A+LqwiGuqPd9AYK1a5MpbPvlH3qXDjWUa0vDe5zFyRw/9fz+QjsIyoxMeod/
-    dher2z+xrPfhLQc+j0gZ6oQMCcazV0BTwNCCrjUUBjv/5dQgUIQg6BuLy9YoPIjh
-    aOsCWjiq+v8ccDWXec96OEgLUk6AUcu3RhLvUYn8VDQJxPN9leKnw28M9SUC5s4b
-    reS2Zv8yD+WIo7lttj32LFEBYUG+1n/tjZhZLvivqqdTBF1bdIkJYXokZwTFdPxY
-    YO5B+65wja8Zw4gnDEb8g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=arctest; t=1522172564; bh=+qjv+ACRAvyxpugN60O9cqJTB+
+    GPm+OlBV9AnrCO/uo=; b=Lju0FLZ/DZ2gHXY2zz/gp5PakxmHyyVIRsJzw3MDqg
+    U9MAfyUh5+YCeC0p5CZsoshWoLd8nP0qLLGOqZDBkXh4ygcakYA9gxOOZBF5Y7Yz
+    Y631qU9Ht2ap5rfLoUfzEGNwZz9SnfT9cGS0dS6zYzjk17NRov4EUN059sNZZ01g
+    Wudonag3NfDBYnbpFWmJoGzXSNMyZ3DCF9OC35WevjAHuGFh10O9L/zWZ2Zd4ewS
+    VLwa/Bx3zSE8NeCX/LARaCxUvjXOncV5JAnq7vPnmXjg0MYhLtCbBEZd1aW4Ay92
+    4OOtVYpXE3LgHttkin/f6s+McdOT3PFr/B9YGF+6lyiA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBJP/fsPlqXfg+R0taEhl8q8kzMNlbk++EtcC9g+rMCwe8dlEB1ADL6xxHewsaKRPC0ahau/7v3RUvc7OvCPLEovjw4b9JtvxDx1j9je5gZ/C2GQmqs1
-    yenR+/nYkj5bAgzkmQb0MlTqxDvMQB68iushPIyO35uYTWWuCxHjMGMRxXuJhRoo2GuxRYqNsPJ80Tkbl9fOvNoTfLtsrDe6LPSDtkMl6+noYg39CoPvGtWw
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=lOsWcqUcs_UA:10
-    a=v2DPQv5-lfwA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfEGgdcRxpbQHigV1aF1IDWXqiRbYCwad2ZdNUdxDUKLGwoSmD3YwPZAdvwHrOFS7AT8a+pnJz+l2lXY0dqFtNbVbE5Bma6TmHM/NXNbNbAiIiCY0YRin
+    Fu+PUWLZw+KWoFQJwPpBZScwE/30hc2TUO4HCKlGP+fXnDjyoZ5iu5EB3+Zbhv8HTZid4G061Pd84ERzcYebCATNNMn7duQbeEhJ+Sc71ApdB3yiNVVcgoTw
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
+    a=Vxy2kpnnAAAA:8 a=WPyIoOwQAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
+    a=_qIf10yoEbF6jXucxO8A:9 a=QEXdDO2ut3YA:10 a=mQL3ssppXrSh16SuiSjD:22
+    a=S-HzPIwwDS8t1QcwSuWs:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752088AbeC0W47 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 18:56:59 -0400
-Received: from osg.samsung.com ([64.30.133.232]:60075 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751913AbeC0W46 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 27 Mar 2018 18:56:58 -0400
-Subject: Re: [PATCH 4.14 000/101] 4.14.31-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180327162749.993880276@linuxfoundation.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuahkh@osg.samsung.com; keydata=
- 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
-Message-ID: <75a62733-0ede-9dcb-926d-1a13fccc47bc@osg.samsung.com>
-Date: Tue, 27 Mar 2018 16:56:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
+        id S1751493AbeC0Rmb (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 13:42:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44068 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754040AbeC0Qdt (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:33:49 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, NeilBrown <neil@brown.name>,
+        John Crispin <john@phrozen.org>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.14 001/101] MIPS: ralink: Remove ralink_halt()
+Date: Tue, 27 Mar 2018 18:26:33 +0200
+Message-Id: <20180327162750.092111711@linuxfoundation.org>
+X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180327162749.993880276@linuxfoundation.org>
+User-Agent: quilt/0.65
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 03/27/2018 10:26 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.31 release.
-> There are 101 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Mar 29 16:27:21 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.31-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Compiled and booted on my test system. No dmesg regressions.
+------------------
 
-thanks,
--- Shuah
+From: NeilBrown <neil@brown.name>
+
+commit 891731f6a5dbe508d12443175a7e166a2fba616a upstream.
+
+ralink_halt() does nothing that machine_halt() doesn't already do, so it
+adds no value.
+
+It actually causes incorrect behaviour due to the "unreachable()" at the
+end. This tells the compiler that the end of the function will never be
+reached, which isn't true. The compiler responds by not adding a
+'return' instruction, so control simply moves on to whatever bytes come
+afterwards in memory. In my tested, that was the ralink_restart()
+function. This means that an attempt to 'halt' the machine would
+actually cause a reboot.
+
+So remove ralink_halt() so that a 'halt' really does halt.
+
+Fixes: c06e836ada59 ("MIPS: ralink: adds reset code")
+Signed-off-by: NeilBrown <neil@brown.name>
+Cc: John Crispin <john@phrozen.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.9+
+Patchwork: https://patchwork.linux-mips.org/patch/18851/
+Signed-off-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/mips/ralink/reset.c |    7 -------
+ 1 file changed, 7 deletions(-)
+
+--- a/arch/mips/ralink/reset.c
++++ b/arch/mips/ralink/reset.c
+@@ -96,16 +96,9 @@ static void ralink_restart(char *command
+ 	unreachable();
+ }
+ 
+-static void ralink_halt(void)
+-{
+-	local_irq_disable();
+-	unreachable();
+-}
+-
+ static int __init mips_reboot_setup(void)
+ {
+ 	_machine_restart = ralink_restart;
+-	_machine_halt = ralink_halt;
+ 
+ 	return 0;
+ }
