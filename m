@@ -1,99 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeC0Jaf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:30:35 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:44377 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751241AbeC0Jad (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:30:33 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w2R9U31D007315
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: linux-mmc@vger.kernel.org
-Cc: Piotr Sroka <piotrs@cadence.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH] mmc: sdhci-cadence: send tune request twice to work around errata
-Date: Tue, 27 Mar 2018 18:29:53 +0900
-Message-Id: <1522142993-25654-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        id S1752188AbeC0JbB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:31:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43559 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751241AbeC0JbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 05:31:00 -0400
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Christoph Hellwig <hch@lst.de>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>
+Cc: Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        marting@netapp.com, Johannes Thumshirn <jthumshirn@suse.de>
+Subject: [PATCH] nvme: don't send keep-alives to the discovery controller
+Date: Tue, 27 Mar 2018 11:28:48 +0200
+Message-Id: <20180327092848.10404-1-jthumshirn@suse.de>
+X-Mailer: git-send-email 2.16.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cadence sent out an errata report to their customers of this IP.
-This errata is not so severe, but the tune request should be sent
-twice to avoid the potential issue.
+NVMe over Fabrics 1.0 Section 5.2 "Discovery Controller Properties and
+Command Support" Figure 31 "Discovery Controller – Admin Commands"
+explicitly listst all commands but "Get Log Page" and "Identify" as
+reserved, but NetApp report the Linux host is sending Keep Alive
+commands to the discovery controller, which is a violation of the
+Spec.
 
-Quote from the report:
+We're already checking for discovery controllers when configuring the
+keep alive timeout but when creating a discovery controller we're not
+hard wiring the keep alive timeout to 0 and thus remain on
+NVME_DEFAULT_KATO for the discovery controller.
 
-Problem Summary
----------------
-The IP6116 SD/eMMC PHY design has a timing issue on receive data path.
-This issue may lead to an incorrect values of read/write pointers of
-the synchronization FIFO. Such a situation can happen at the SDR104
-and HS200 tuning procedure when the PHY is requested to change a phase
-of sampling clock when moving to the next tuning iteration.
+This can be easily remproduced when issuing a direct connect to the
+discovery susbsystem using:
+'nvme connect [...] --nqn=nqn.2014-08.org.nvmexpress.discovery'
 
-Workarounds
------------
-The following are valid workarounds to resolve the issue:
-
-1. In eMMC mode, software sends tune request twice instead of once at
-   each iteration. This means that the clock phase is not changed on
-   the second request so there is no potential for clock instability.
-2. In SD mode, software must not use the hardware tuning and instead
-   perform an almost identical procedure to eMMC, using the HRS34 Tune
-   Force register.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Fixes: 07bfcd09a288 ("nvme-fabrics: add a generic NVMe over Fabrics library")
+Reported-by: Martin George <marting@netapp.com>
 ---
+ drivers/nvme/host/fabrics.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- drivers/mmc/host/sdhci-cadence.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-index 0f589e2..bc30d16 100644
---- a/drivers/mmc/host/sdhci-cadence.c
-+++ b/drivers/mmc/host/sdhci-cadence.c
-@@ -253,6 +253,7 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
- 	struct sdhci_cdns_priv *priv = sdhci_cdns_priv(host);
- 	void __iomem *reg = priv->hrs_addr + SDHCI_CDNS_HRS06;
- 	u32 tmp;
-+	int i, ret;
- 
- 	if (WARN_ON(!FIELD_FIT(SDHCI_CDNS_HRS06_TUNE, val)))
- 		return -EINVAL;
-@@ -260,11 +261,24 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
- 	tmp = readl(reg);
- 	tmp &= ~SDHCI_CDNS_HRS06_TUNE;
- 	tmp |= FIELD_PREP(SDHCI_CDNS_HRS06_TUNE, val);
--	tmp |= SDHCI_CDNS_HRS06_TUNE_UP;
--	writel(tmp, reg);
- 
--	return readl_poll_timeout(reg, tmp, !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
--				  0, 1);
-+	/*
-+	 * Workaround for IP errata:
-+	 * The IP6116 SD/eMMC PHY design has a timing issue on receive data
-+	 * path. Send tune request twice.
-+	 */
-+	for (i = 0; i < 2; i++) {
-+		tmp |= SDHCI_CDNS_HRS06_TUNE_UP;
-+		writel(tmp, reg);
-+
-+		ret = readl_poll_timeout(reg, tmp,
-+					 !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
-+					 0, 1);
-+
-+		return ret;
-+	}
-+
-+	return 0;
- }
- 
- static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)
+diff --git a/drivers/nvme/host/fabrics.c b/drivers/nvme/host/fabrics.c
+index 8f0f34d06d46..3583f9492a45 100644
+--- a/drivers/nvme/host/fabrics.c
++++ b/drivers/nvme/host/fabrics.c
+@@ -608,8 +608,10 @@ static int nvmf_parse_options(struct nvmf_ctrl_options *opts,
+ 			opts->discovery_nqn =
+ 				!(strcmp(opts->subsysnqn,
+ 					 NVME_DISC_SUBSYS_NAME));
+-			if (opts->discovery_nqn)
++			if (opts->discovery_nqn) {
++				opts->kato = 0;
+ 				opts->nr_io_queues = 0;
++			}
+ 			break;
+ 		case NVMF_OPT_TRADDR:
+ 			p = match_strdup(args);
 -- 
-2.7.4
+2.12.3
