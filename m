@@ -1,159 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751752AbeC0IkV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:40:21 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:39844 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751001AbeC0IkO (ORCPT
+        id S1752040AbeC0Iku (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:40:50 -0400
+Received: from mail-wr0-f169.google.com ([209.85.128.169]:34260 "EHLO
+        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750917AbeC0Ikr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:40:14 -0400
-X-Google-Smtp-Source: AG47ELvsdF997RaEC9L8NzxVP7/SL7XbpTQ21Sf/VrZ7ah9W6fb/lEZHBIERJWJQGNfg1GHG3MybLb0UMZfcaBikNKE=
-MIME-Version: 1.0
-In-Reply-To: <20180324211020.Horde.kEO4b3mHPV88FKM0OiRT0Q1@messagerie.si.c-s.fr>
-References: <20180322202007.23088-1-malat@debian.org> <20180322202007.23088-15-malat@debian.org>
- <97df68d1-d4fe-bf8e-7852-9b418eec042f@c-s.fr> <CA+7wUsxVW1a2yvyhYv=YFNV1VEQCcro5JDN1RewghVaHDq5znw@mail.gmail.com>
- <20180324211020.Horde.kEO4b3mHPV88FKM0OiRT0Q1@messagerie.si.c-s.fr>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Tue, 27 Mar 2018 10:39:52 +0200
-X-Google-Sender-Auth: Xca4T_qCj-mRFwJLMzU5TwJGpsY
-Message-ID: <CA+7wUszsJUJJeb+xhzjGr8YxDt-BYruBwda7Dq-nFfyt0sU0ew@mail.gmail.com>
-Subject: Re: [PATCH 14/19] powerpc/altivec: Add missing prototypes for altivec
-To: LEROY Christophe <christophe.leroy@c-s.fr>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Paul Mackerras <paulus@samba.org>, kvm-ppc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
+        Tue, 27 Mar 2018 04:40:47 -0400
+X-Google-Smtp-Source: AG47ELvOoCtyW0XhLl6NhIao3/qD7EAMcOJNyacXCG3+ElIQEN2XXrT0q+dmqy9a0HXlyjAG3+mqQw==
+Message-ID: <1522140044.2632.19.camel@baylibre.com>
+Subject: Re: [PATCH v2 1/7] clk: meson: drop meson_aoclk_gate_regmap_ops
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 27 Mar 2018 10:40:44 +0200
+In-Reply-To: <20180323143816.200573-2-yixun.lan@amlogic.com>
+References: <20180323143816.200573-1-yixun.lan@amlogic.com>
+         <20180323143816.200573-2-yixun.lan@amlogic.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2R8eT5J023865
 
-Christophe,
+On Fri, 2018-03-23 at 22:38 +0800, Yixun Lan wrote:
+> let's remove the unused meson_aoclk_gate_regmap_ops
+> 
+> Fixes: 1f932d99710d ("clk: meson: remove superseded aoclk_gate_regmap")
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
 
-On Sat, Mar 24, 2018 at 9:10 PM, LEROY Christophe
-<christophe.leroy@c-s.fr> wrote:
-> Mathieu Malaterre <malat@debian.org> a écrit :
->
->
->> On Fri, Mar 23, 2018 at 1:19 PM, christophe leroy
->> <christophe.leroy@c-s.fr> wrote:
->>>
->>>
->>>
->>> Le 22/03/2018 à 21:20, Mathieu Malaterre a écrit :
->>>>
->>>>
->>>> Some functions prototypes were missing for the non-altivec code. Add the
->>>> missing prototypes directly in xor_vmx, fix warnings treated as errors
->>>> with
->>>> W=1:
->>>>
->>>>    arch/powerpc/lib/xor_vmx_glue.c:18:6: error: no previous prototype
->>>> for
->>>> ‘xor_altivec_2’ [-Werror=missing-prototypes]
->>>>    arch/powerpc/lib/xor_vmx_glue.c:29:6: error: no previous prototype
->>>> for
->>>> ‘xor_altivec_3’ [-Werror=missing-prototypes]
->>>>    arch/powerpc/lib/xor_vmx_glue.c:40:6: error: no previous prototype
->>>> for
->>>> ‘xor_altivec_4’ [-Werror=missing-prototypes]
->>>>    arch/powerpc/lib/xor_vmx_glue.c:52:6: error: no previous prototype
->>>> for
->>>> ‘xor_altivec_5’ [-Werror=missing-prototypes]
->>>>
->>>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
->>>> ---
->>>>   arch/powerpc/lib/xor_vmx.h | 14 ++++++++++++++
->>>>   1 file changed, 14 insertions(+)
->>>>
->>>> diff --git a/arch/powerpc/lib/xor_vmx.h b/arch/powerpc/lib/xor_vmx.h
->>>> index 5c2b0839b179..2173e3c84151 100644
->>>> --- a/arch/powerpc/lib/xor_vmx.h
->>>> +++ b/arch/powerpc/lib/xor_vmx.h
->>>> @@ -19,3 +19,17 @@ void __xor_altivec_4(unsigned long bytes, unsigned
->>>> long
->>>> *v1_in,
->>>>   void __xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
->>>>                              unsigned long *v2_in, unsigned long *v3_in,
->>>>                              unsigned long *v4_in, unsigned long
->>>> *v5_in);
->>>> +
->>>> +void xor_altivec_2(unsigned long bytes, unsigned long *v1_in,
->>>> +                            unsigned long *v2_in);
->>>> +
->>>
->>>
->>>
->>> Only used in one place, should be static instead of adding it in a .h
->>>
->>> Same for the other ones.
->>
->>
->> $ git grep xor_altivec_2
->> [...]
->> arch/powerpc/lib/xor_vmx_glue.c:EXPORT_SYMBOL(xor_altivec_2);
->>
->> Are you sure I can change this function to static ?
->
->
-> Yes you are right.  But in fact those fonctions are already defined in
-> asm/xor. h
-> So you just need to add the missing #include
-
-I originally tried it, but this leads to:
-
-  CC      arch/powerpc/lib/xor_vmx_glue.o
-In file included from arch/powerpc/lib/xor_vmx_glue.c:16:0:
-./arch/powerpc/include/asm/xor.h:39:15: error: variable
-‘xor_block_altivec’ has initializer but incomplete type
- static struct xor_block_template xor_block_altivec = {
-               ^~~~~~~~~~~~~~~~~~
-./arch/powerpc/include/asm/xor.h:40:2: error: unknown field ‘name’
-specified in initializer
-  .name = "altivec",
-  ^
-[...]
-
-The file <asm/xor.h> (powerpc) is pretty much expected to be included
-after <include/linux/raid/xor.h>.
-
-I did not want to tweak <asm/xor.h> to test for #ifdef _XOR_H just before
-
-#ifdef _XOR_H
-static struct xor_block_template xor_block_altivec = {
-[...]
-
-since this seems like a hack to me.
-
-Is this ok to test for #ifdef _XOR_H in <arch/powerpc/include/asm/xor.h> ?
-
-> Christophe
->
->
->>
->>> Christophe
->>>
->>>
->>>> +void xor_altivec_3(unsigned long bytes, unsigned long *v1_in,
->>>> +                            unsigned long *v2_in, unsigned long
->>>> *v3_in);
->>>> +
->>>> +void xor_altivec_4(unsigned long bytes, unsigned long *v1_in,
->>>> +                            unsigned long *v2_in, unsigned long *v3_in,
->>>> +                            unsigned long *v4_in);
->>>> +
->>>> +void xor_altivec_5(unsigned long bytes, unsigned long *v1_in,
->>>> +                            unsigned long *v2_in, unsigned long *v3_in,
->>>> +                            unsigned long *v4_in, unsigned long
->>>> *v5_in);
->>>>
->>>
->>> ---
->>> L'absence de virus dans ce courrier électronique a été vérifiée par le
->>> logiciel antivirus Avast.
->>> https://www.avast.com/antivirus
->>>
->
->
+Applied, Thx
