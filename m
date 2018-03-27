@@ -1,128 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752362AbeC0JKE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:10:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:51266 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752325AbeC0JKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:10:00 -0400
-From: <yael.chemla@foss.arm.com>
-To: "'Milan Broz'" <gmazyland@gmail.com>,
-        "'Eric Biggers'" <ebiggers3@gmail.com>,
-        "'Mike Snitzer'" <snitzer@redhat.com>
-Cc: "'Alasdair Kergon'" <agk@redhat.com>, <dm-devel@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <ofir.drang@gmail.com>,
-        "'Yael Chemla'" <yael.chemla@arm.com>, <linux-crypto@vger.kernel.org>,
-        <gilad@benyossef.com>
-References: <1522003290-27243-1-git-send-email-yael.chemla@foss.arm.com> <1522003290-27243-2-git-send-email-yael.chemla@foss.arm.com> <20180327065519.GA745@sol.localdomain> <24539e45-a018-f1e9-feb0-ea7a315e8284@gmail.com>
-In-Reply-To: <24539e45-a018-f1e9-feb0-ea7a315e8284@gmail.com>
-Subject: RE: [dm-devel] [PATCH 2/2] md: dm-verity: allow parallel processing of bio blocks
-Date: Tue, 27 Mar 2018 12:09:54 +0300
-Message-ID: <001701d3c5ab$621e9fd0$265bdf70$@foss.arm.com>
+        id S1752397AbeC0JKS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:10:18 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39196 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752331AbeC0JKB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 05:10:01 -0400
+X-Google-Smtp-Source: AG47ELu52q0h4TGSnPU3MoGm5nn0MAVpeQK4iIYnZa+3zNhyZcj9nkODDCuA3GFiMpylCBUGt1stycKXe5WOcrz3pKg=
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-il
-Thread-Index: AQFItUMWMAamikjrHplfXoGQQvWTaQKnGKjBApP/jaMCRtZUPqS92Ntw
+In-Reply-To: <76d08635-59da-4399-bc35-f99a00236725@default>
+References: <76d08635-59da-4399-bc35-f99a00236725@default>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Tue, 27 Mar 2018 17:09:59 +0800
+Message-ID: <CANRm+CwLU0rHoAEfoGbWPb2xPF7RLQgytFoSr4WVRopRjR_SOQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] KVM: VMX: Add Force Emulation Prefix for "emulate the
+ next instruction"
+To: Liran Alon <liran.alon@oracle.com>
+Cc: Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Cooper <andrew.cooper3@citrix.com>, kvm <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2R9Adpl027564
 
-Hi Milan,
-I will run veritysetup test on next version of these patches and contact you about verity-compat-test testsuits.
-Thank you,
-Yael
+2018-03-27 15:52 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
+>
+> ----- kernellwp@gmail.com wrote:
+>
+>> From: Wanpeng Li <wanpengli@tencent.com>
+>>
+>> This patch introduces a Force Emulation Prefix (ud2a; .ascii "kvm")
+>> for
+>> "emulate the next instruction", the codes will be executed by emulator
+>>
+>> instead of processor, for testing purposes.
+>
+> I think this should be better explained in commit message.
+> We should explain that there is no easy way to force KVM to run an
+> instruction through the emulator (by design as that will expose the
+> x86 emulator as a significant attack-surface).
+> However, we do wish to expose the x86 emulator in case we are testing it
+> (e.g. via kvm-unit-tests). Therefore, this patch adds a "force emulation prefix"
+> that is designed to raise #UD which KVM will trap and it's #UD exit-handler will
+> match "force emulation prefix" to run instruction after prefix by the x86 emulator.
+> To not expose the x86 emulator by default, we add a module parameter that should be
+> off by default.
 
------Original Message-----
-From: Milan Broz <gmazyland@gmail.com> 
-Sent: Tuesday, 27 March 2018 11:05
-To: Eric Biggers <ebiggers3@gmail.com>; Yael Chemla <yael.chemla@foss.arm.com>; Mike Snitzer <snitzer@redhat.com>
-Cc: Alasdair Kergon <agk@redhat.com>; dm-devel@redhat.com; linux-kernel@vger.kernel.org; ofir.drang@gmail.com; Yael Chemla <yael.chemla@arm.com>; linux-crypto@vger.kernel.org; gilad@benyossef.com
-Subject: Re: [dm-devel] [PATCH 2/2] md: dm-verity: allow parallel processing of bio blocks
+This commit message looks good, I'm too lazy to write a new one, will
+reference. :)
 
-Mike and others,
+Regards,
+Wanpeng Li
 
-did anyone even try to run veritysetup tests?
-
-We have verity-compat-test in our testsuite, is has even basic FEC tests included.
-
-We just added userspace verification of FEC RS codes to compare if kernel behaves the same.
-
-I tried to apply three last dm-verity patches from your tree to Linus mainline.
-
-It does even pass the *first* line of the test script and blocks the kernel forever...
-(Running on 32bit Intel VM.)
-
-*NACK* to the last two dm-verity patches.
-
-(The "validate hashes once" is ok, despite I really do not like this approach...)
-
-And comments from Eric are very valid as well, I think all this need to be fixed before it can go to mainline.
-
-Thanks,
-Milan
-
-On 03/27/2018 08:55 AM, Eric Biggers wrote:
-> [+Cc linux-crypto]
-> 
-> Hi Yael,
-> 
-> On Sun, Mar 25, 2018 at 07:41:30PM +0100, Yael Chemla wrote:
->>  Allow parallel processing of bio blocks by moving to async. 
->> completion  handling. This allows for better resource utilization of 
->> both HW and  software based hash tfm and therefore better performance 
->> in many cases,  depending on the specific tfm in use.
->>  
->>  Tested on ARM32 (zynq board) and ARM64 (Juno board).
->>  Time of cat command was measured on a filesystem with various file sizes.
->>  12% performance improvement when HW based hash was used (ccree driver).
->>  SW based hash showed less than 1% improvement.
->>  CPU utilization when HW based hash was used presented 10% less 
->> context  switch, 4% less cycles and 7% less instructions. No 
->> difference in  CPU utilization noticed with SW based hash.
->>  
->> Signed-off-by: Yael Chemla <yael.chemla@foss.arm.com>
-> 
-> Okay, I definitely would like to see dm-verity better support hardware 
-> crypto accelerators, but these patches were painful to read.
-> 
-> There are lots of smaller bugs, but the high-level problem which you 
-> need to address first is that on every bio you are always allocating 
-> all the extra memory to hold a hash request and scatterlist for every 
-> data block.  This will not only hurt performance when the hashing is 
-> done in software (I'm skeptical that your performance numbers are 
-> representative of that case), but it will also fall apart under memory 
-> pressure.  We are trying to get low-end Android devices to start using 
-> dm-verity, and such devices often have only 1 GB or even only 512 MB 
-> of RAM, so memory allocations are at increased risk of failing.  In 
-> fact I'm pretty sure you didn't do any proper stress testing of these 
-> patches, since the first thing they do for every bio is try to 
-> allocate a physically contiguous array that is nearly as long as the 
-> full bio data itself (n_blocks * sizeof(struct dm_verity_req_data) = 
-> n_blocks * 3264, at least on a 64-bit platform, mostly due to the 'struct dm_verity_fec_io'), so potentially up to about 1 MB; that's going to fail a lot even on systems with gigabytes of RAM...
-> 
-> (You also need to verify that your new code is compatible with the 
-> forward error correction feature, with the "ignore_zero_blocks" 
-> option, and with the new "check_at_most_once" option.  From my reading 
-> of the code, all of those seemed broken; the dm_verity_fec_io 
-> structures, for example, weren't even being
-> initialized...)
-> 
-> I think you need to take a close look at how dm-crypt handles async 
-> crypto implementations, since it seems to do it properly without 
-> hurting the common case where the crypto happens synchronously.  What 
-> it does, is it reserves space in the per-bio data for a single cipher 
-> request.  Then, *only* if the cipher implementation actually processes 
-> the request asynchronously (as indicated by -EINPROGRESS being 
-> returned) is a new cipher request allocated dynamically, using a 
-> mempool (not kmalloc, which is prone to fail).  Note that unlike your 
-> patches it also properly handles the case where the hardware crypto 
-> queue is full, as indicated by the cipher implementation returning -EBUSY; in that case, dm-crypt waits to start another request until there is space in the queue.
-> 
-> I think it would be possible to adapt dm-crypt's solution to dm-verity.
-> 
-> Thanks,
-> 
-> Eric
+>
+>>
+>> A testcase here:
+>>
+>> #include <stdio.h>
+>> #include <string.h>
+>>
+>> #define HYPERVISOR_INFO 0x40000000
+>>
+>> #define CPUID(idx, eax, ebx, ecx, edx)\
+>>     asm volatile (\
+>>     "ud2a; .ascii \"kvm\"; 1: cpuid" \
+>>     :"=b" (*ebx), "=a" (*eax),"=c" (*ecx), "=d" (*edx)\
+>>         :"0"(idx) );
+>>
+>> void main()
+>> {
+>>       unsigned int eax,ebx,ecx,edx;
+>>       char string[13];
+>>
+>>       CPUID(HYPERVISOR_INFO, &eax, &ebx, &ecx, &edx);
+>>       *(unsigned int *)(string+0) = ebx;
+>>       *(unsigned int *)(string+4) = ecx;
+>>       *(unsigned int *)(string+8) = edx;
+>>
+>>       string[12] = 0;
+>>       if (strncmp(string, "KVMKVMKVM\0\0\0",12) == 0)
+>>               printf("kvm guest\n");
+>>       else
+>>               printf("bare hardware\n");
+>> }
+>>
+>> Suggested-by: Andrew Cooper <andrew.cooper3@citrix.com>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> ---
+>>  arch/x86/kvm/vmx.c | 18 +++++++++++++++++-
+>>  1 file changed, 17 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+>> index 0f99833..90abed8 100644
+>> --- a/arch/x86/kvm/vmx.c
+>> +++ b/arch/x86/kvm/vmx.c
+>> @@ -108,6 +108,9 @@ module_param_named(enable_shadow_vmcs,
+>> enable_shadow_vmcs, bool, S_IRUGO);
+>>  static bool __read_mostly nested = 0;
+>>  module_param(nested, bool, S_IRUGO);
+>>
+>> +static bool __read_mostly fep = 0;
+>> +module_param(fep, bool, S_IRUGO);
+>
+> I think this module parameter should have a better name...
+> Why not "emulation_prefix" or "enable_emulation_prefix"?
+> This short names just confuse the average user.
+> It makes him think it is some kind of Intel VT-x technology
+> that he isn't aware of :P
+>
+> In addition, I think this module parameter should be in kvm module
+> (not kvm_intel) and you should add similar logic to kvm_amd module (SVM)
+>
+>> +
+>>  static u64 __read_mostly host_xss;
+>>
+>>  static bool __read_mostly enable_pml = 1;
+>> @@ -6218,8 +6221,21 @@ static int handle_machine_check(struct kvm_vcpu
+>> *vcpu)
+>>  static int handle_ud(struct kvm_vcpu *vcpu)
+>>  {
+>>       enum emulation_result er;
+>> +     int emulation_type = EMULTYPE_TRAP_UD;
+>> +
+>> +     if (fep) {
+>> +             char sig[5]; /* ud2; .ascii "kvm" */
+>> +             struct x86_exception e;
+>> +
+>> +             kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
+>> +                             kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e);
+>> +             if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
+>> +                     emulation_type = 0;
+>> +                     kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
+>> +             }
+>> +     }
+>>
+>> -     er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
+>> +     er = emulate_instruction(vcpu, emulation_type);
+>>       if (er == EMULATE_USER_EXIT)
+>>               return 0;
+>>       if (er != EMULATE_DONE)
+>> --
+>> 2.7.4
