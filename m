@@ -1,59 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752069AbeC0JHC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:07:02 -0400
-Received: from mga12.intel.com ([192.55.52.136]:65448 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751073AbeC0JHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:07:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,366,1517904000";
-   d="scan'208";a="28765440"
-Date: Tue, 27 Mar 2018 02:06:42 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] perf stat: avoid 10ms limit for printing event counts
-Message-ID: <20180327090642.GP13724@tassilo.jf.intel.com>
-References: <8f27e33e-355a-e6f3-30d9-c0fc3ff46c4d@linux.intel.com>
+        id S1752016AbeC0JHx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:07:53 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36781 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750918AbeC0JHv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 05:07:51 -0400
+X-Google-Smtp-Source: AG47ELuM+XH9HtFuoReS/ccwvJz2Z36kOAv6Nxbuk46NaMJRW+pvkubZSk/LDpIVVB0UqoJq1bMloA==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: [PATCH v2 0/2] KVM: X86: Add Force Emulation Prefix for "emulate the next instruction"
+Date: Tue, 27 Mar 2018 02:06:54 -0700
+Message-Id: <1522141616-9825-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f27e33e-355a-e6f3-30d9-c0fc3ff46c4d@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> When running perf stat -I for monitoring e.g. PCIe uncore counters and 
-> at the same time profiling some I/O workload by perf record e.g. for 
-> cpu-cycles and context switches, it is then possible to build and 
-> observe good-enough consolidated CPU/OS/IO(Uncore) performance picture 
-> for that workload.
+There is no easy way to force KVM to run an instruction through the emulator 
+(by design as that will expose the x86 emulator as a significant attack-surface).
+However, we do wish to expose the x86 emulator in case we are testing it
+(e.g. via kvm-unit-tests). Therefore, this patch adds a "force emulation prefix"
+that is designed to raise #UD which KVM will trap and it's #UD exit-handler will
+match "force emulation prefix" to run instruction after prefix by the x86 emulator.
+To not expose the x86 emulator by default, we add a module parameter that should 
+be off by default.
 
-At some point I still hope we can make uncore measurements in 
-perf record work. Kan tried at some point to allow multiple
-PMUs in a group, but was not successfull. But perhaps we
-can sample them from a software event instead.
+A simple testcase here:
 
-> 
-> The warning on possible runtime overhead is still preserved, however 
-> it is only visible when specifying -v option.
+#include <stdio.h>
+#include <string.h>
+   
+#define HYPERVISOR_INFO 0x40000000
+   
+#define CPUID(idx, eax, ebx, ecx, edx) \
+    asm volatile ( \
+    "ud2a; .ascii \"kvm\"; cpuid" \
+    :"=b" (*ebx), "=a" (*eax), "=c" (*ecx), "=d" (*edx) \
+        :"0"(idx) );  
+   
+void main()  
+{  
+	unsigned int eax, ebx, ecx, edx;  
+	char string[13];  
+   
+	CPUID(HYPERVISOR_INFO, &eax, &ebx, &ecx, &edx);  
+	*(unsigned int *)(string + 0) = ebx;  
+	*(unsigned int *)(string + 4) = ecx;  
+	*(unsigned int *)(string + 8) = edx;  
+   
+	string[12] = 0;  
+	if (strncmp(string, "KVMKVMKVM\0\0\0", 12) == 0)
+		printf("kvm guest\n");  
+	else  
+		printf("bare hardware\n");  
+}
 
-I would print it unconditionally. Very few people use -v.
+v1 -> v2:
+ * update patch descriptions
+ * move handle_ud to x86.c, shared by vmx and svm
+ * the parameter is in kvm module 
+ * rename parameter to force_emulation_prefix
 
-BTW better of course would be to occasionally measure the perf stat 
-cpu time and only print the warning if it's above some percentage
-of a CPU. But that would be much more work.
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Liran Alon <liran.alon@oracle.com>
 
-Rest looks ok.
+Wanpeng Li (2):
+  KVM: X86: Introduce handle_ud()
+  KVM: X86: Add Force Emulation Prefix for "emulate the next instruction"
 
+ arch/x86/kvm/svm.c |  9 +--------
+ arch/x86/kvm/vmx.c | 10 ++--------
+ arch/x86/kvm/x86.c | 29 +++++++++++++++++++++++++++++
+ arch/x86/kvm/x86.h |  2 ++
+ 4 files changed, 34 insertions(+), 16 deletions(-)
 
--Andi
+-- 
+2.7.4
