@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-196919-1522173888-2-8563807247398328360
+X-Cyrus-Session-Id: sloti22d1t05-196919-1522173856-2-4340299269742642929
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, ME_NOAUTH 0.01,
-  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES endasv,
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='CN',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=arctest;
-    t=1522173887; b=UAq3dI6v/eqQFeSHkRZXWmh43KXuUKjtZcJnNl8iQ+K/nr0
-    nthMf2NHt5CsRF16r0Rb1HvIqpXtTU8UYLlOq7Wz4pO/hBgjb1ilulJZYs+huSTQ
-    l6gQ02Gx1KE6olniS3K3mFkrxJUbkvd8YGbmiV9NhTMYUdxwSHIPRxOoXTHqF7Mf
-    1aEUQVbhsecBIPou4TtJ4Gsimu3OGHJvSCr60CzTWtr1cHL0VwoqAb+4iHuIx4jZ
-    uqMea8xCwxvO9togJLEP2NVf7+V26fX9YKGhUzlbPvrD61C4aV/J/RfP9oD9Mecf
-    2mm0ZakAW+WkzvnwJiavfyPjnD7E3kjlbe1o+2Q==
+    t=1522173850; b=UoSXxH9EB08x5AwLxYG3PXewOxCfUWTTwHBncyLBfQPUKST
+    Wc7QHb4jBhRcJn9Y89tYokAoxRYXzxrD8gfG61sjd93pa4hHVVVpO/NwzSJu00Bo
+    UCu6DZX64t2/kvayB9Vguh7n2YtaFij4R3X2Bid93RX3A2NRca1q08uvyDMyVdvQ
+    T9Nm4hRHIjCRiE4d5QGjlmbnHLO/6gHmSHIqVzbbUaUoHEdk+kJezN6xl88jO14U
+    V122CXiaah+Paersn6GCwMps7hwyWXGij+po7R2NOcS1Dx0GmFBu1UJPOhcwpKBS
+    TSgT6etqWc3XtMNSdhK6n+JZQVY2KVqPWZ2XSZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=arctest; t=1522173887; bh=/n5NKa37Tq2XQLapCHoVEqizD9
-    cP9vIYX5bE1GTpcos=; b=P7ws9KK4HtT1OXjkJvPCwTs1Up6J3zMQMWG63LfJPo
-    Qg8+Z0aVMcianPC2S1N/h90lm3cnGNqVrLl2SMyqaVgiv83idL06XLbkyypQ1NfZ
-    NvdXn8hYL7c4BACHdwq6wNpoQlHZ2xyZ44XOkJ70zK/2S/KBd9x4ztkuoFymOU3t
-    Zu2h0Roen8bGokomE3qVxL/Lafd4OUv9uDrlakVR6coX0mlJwgWA9+FG9oRSk5Mk
-    r2upCspr3FmrRyNyafVRnX+Xc2XljGiCflIqcOeUCSuuAA2Q0W3jaFIe9X97lXtG
-    GiSnYlouzvEt8O2LDghKqPJXWE22OzNZCPBJOHx4w60A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=arctest; t=1522173850; bh=NVRbf7KP6juD3Tn4b8Yn+b5AhB
+    QIlf6wxHfWIc6yNFA=; b=knJUUoB8MkqpS67DsiNShtdjywDpxlxiswcaVakMVl
+    w66RBjLKdEv/Rrqnefjn1pirrMsq0FFC+ttHSuPaH1Dzweoroyu021jn7ZtMuhfu
+    ymC8frMf70gRlsvSgGSVyNQIQH7jrlCV3u5kvideX2pV7Rwj8gmOXMGjXMHrhRlH
+    9PpCk70+27ord3ic9+DXpMcojtQ6usZ276DVL7HIQjQDygLQq0NJQ3UJBsMACowX
+    kZOUigmvJCviYuYZp7QRHZqIsw9CH3DMmL13gMfZOEDP8rzfoNzorGORf/GNS9Us
+    zc6ArBgl6gJxHo+T6IYJNXCoouXi+dw3gSvihHGLl2XQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,30 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPUPCpmGnDDnG8Zh/yyFSyEfJ9hbP9PCYdw2iED0TKxrI5mBFU9N0bB1UTtGXd1tpxlBnufZ/EK6v7mEAlHdutsE94O2cYvtB5WVT6NexRpbKjbxhPad
-    xBaZsBKT+ROZs2XwBuhHHKmcBTuvXC97J2Qf4ho14VGfUxF2DBuap+Y3fI7Z6Yixio4YnE69pJckfCNlzSdPQgm4AQum/Z0mNtLTg6jCeeSXTvxcP9IYY78n
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOKiiWtLBVGuuzPKNUWHBzglbVV887e4fsNNjNJggS58zly8RO+T9XeKzwyQUynkRjlUdkjyC6YP7WSr46MATT86NaandM47H4NuWTiKhYRVOFAvq/6h
+    ZR0mwH4i192/AVUes7t1WLKJGJzJnaDQ3ZEy0M9Iyu9LS08FoHW2hfif0Go9H6AtkxYYlU5PbLPe/U96/Dm0FNUlxe0DL6KnYDEQzPvXegbowsUawkkbxAVq
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=v2DPQv5-lfwA:10
-    a=nTPwkA1SAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=k70z3KJa6u0epaJ5EroA:9
-    a=QEXdDO2ut3YA:10 a=HUqATDVKn4QA:10 a=Her_73y7XSQQkpQYGz2D:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Z4Rwk6OoAAAA:8 a=69EAbJreAAAA:8 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8
+    a=bnRgyvX07LPeTolkEFsA:9 a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751085AbeC0SEa (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 27 Mar 2018 14:04:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41484 "EHLO
+        id S1750937AbeC0SDv (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 27 Mar 2018 14:03:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41490 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752709AbeC0Q3r (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:29:47 -0400
+        with ESMTP id S1752788AbeC0Q3u (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 27 Mar 2018 12:29:50 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andri Yngvason <andri.yngvason@marel.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 33/43] can: cc770: Fix use after free in cc770_tx_interrupt()
-Date: Tue, 27 Mar 2018 18:27:37 +0200
-Message-Id: <20180327162718.269524359@linuxfoundation.org>
+        stable@vger.kernel.org, James Holderness <j4_james@hotmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 34/43] tty: vt: fix up tabstops properly
+Date: Tue, 27 Mar 2018 18:27:38 +0200
+Message-Id: <20180327162718.327885560@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -92,37 +92,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andri Yngvason <andri.yngvason@marel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 9ffd7503944ec7c0ef41c3245d1306c221aef2be upstream.
+commit f1869a890cdedb92a3fab969db5d0fd982850273 upstream.
 
-This fixes use after free introduced by the last cc770 patch.
+Tabs on a console with long lines do not wrap properly, so correctly
+account for the line length when computing the tab placement location.
 
-Signed-off-by: Andri Yngvason <andri.yngvason@marel.com>
-Fixes: 746201235b3f ("can: cc770: Fix queue stall & dropped RTR reply")
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Reported-by: James Holderness <j4_james@hotmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/cc770/cc770.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/tty/vt/vt.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/can/cc770/cc770.c
-+++ b/drivers/net/can/cc770/cc770.c
-@@ -706,13 +706,12 @@ static void cc770_tx_interrupt(struct ne
- 		return;
- 	}
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -1725,7 +1725,7 @@ static void reset_terminal(struct vc_dat
+ 	default_attr(vc);
+ 	update_attr(vc);
  
--	can_put_echo_skb(priv->tx_skb, dev, 0);
--	can_get_echo_skb(dev, 0);
--
- 	cf = (struct can_frame *)priv->tx_skb->data;
- 	stats->tx_bytes += cf->can_dlc;
- 	stats->tx_packets++;
- 
-+	can_put_echo_skb(priv->tx_skb, dev, 0);
-+	can_get_echo_skb(dev, 0);
- 	priv->tx_skb = NULL;
- 
- 	netif_wake_queue(dev);
+-	vc->vc_tab_stop[0]	= 0x01010100;
++	vc->vc_tab_stop[0]	=
+ 	vc->vc_tab_stop[1]	=
+ 	vc->vc_tab_stop[2]	=
+ 	vc->vc_tab_stop[3]	=
+@@ -1769,7 +1769,7 @@ static void do_con_trol(struct tty_struc
+ 		vc->vc_pos -= (vc->vc_x << 1);
+ 		while (vc->vc_x < vc->vc_cols - 1) {
+ 			vc->vc_x++;
+-			if (vc->vc_tab_stop[vc->vc_x >> 5] & (1 << (vc->vc_x & 31)))
++			if (vc->vc_tab_stop[7 & (vc->vc_x >> 5)] & (1 << (vc->vc_x & 31)))
+ 				break;
+ 		}
+ 		vc->vc_pos += (vc->vc_x << 1);
+@@ -1829,7 +1829,7 @@ static void do_con_trol(struct tty_struc
+ 			lf(vc);
+ 			return;
+ 		case 'H':
+-			vc->vc_tab_stop[vc->vc_x >> 5] |= (1 << (vc->vc_x & 31));
++			vc->vc_tab_stop[7 & (vc->vc_x >> 5)] |= (1 << (vc->vc_x & 31));
+ 			return;
+ 		case 'Z':
+ 			respond_ID(tty);
+@@ -2022,7 +2022,7 @@ static void do_con_trol(struct tty_struc
+ 			return;
+ 		case 'g':
+ 			if (!vc->vc_par[0])
+-				vc->vc_tab_stop[vc->vc_x >> 5] &= ~(1 << (vc->vc_x & 31));
++				vc->vc_tab_stop[7 & (vc->vc_x >> 5)] &= ~(1 << (vc->vc_x & 31));
+ 			else if (vc->vc_par[0] == 3) {
+ 				vc->vc_tab_stop[0] =
+ 					vc->vc_tab_stop[1] =
