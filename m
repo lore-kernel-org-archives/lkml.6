@@ -1,23 +1,23 @@
 Return-Path: <quytelda@tamalin.org>
-X-Google-Smtp-Source: AG47ELsISqfVzWOa/Aern3u71RsZRcyL88vPWaIqVVdjzo5EJrN3u84+9aSK/NrvDavfHdW8sTmg
-ARC-Seal: i=1; a=rsa-sha256; t=1522140091; cv=none;
+X-Google-Smtp-Source: AIpwx49V9J6BAP4/WEn3up+FvUakxHmzDHw1jOyOdhMFN+4G9snqJEdyV5nnNjnF6gDjiTTaRYtq
+ARC-Seal: i=1; a=rsa-sha256; t=1522140090; cv=none;
         d=google.com; s=arc-20160816;
-        b=yqnMGwPoN/hUF4gxlYbBRK27sdtJ54uUSU7sAOhNhtT1r6e6CYCdYoQyAPS5NmNbyZ
-         GjFzTO9jkepH4Vmi66PBAlr45z6Ao8ddvRqLZBLAPMmNVdXkbnwxVP62FvPo36TN69Cy
-         dCDZhAIUu/LiD/Jvwq1180T+Jpbm5ST1u21lQ7XQzZCKFZuPXNWflUs1jiFXqLYgV7UT
-         2DrGFGiHXUi2x0U0lAxCB3z/OkYOBXKd6BshEIcWn46ELra9iL0ar07PLq1D/H2N8ua/
-         9S/Kvxs259TAqeZ7dw3Xc+73LtaNkOYGMCiVUTsgck5x2cZM+ny3ipphZY3oUUAIBMia
-         b82Q==
+        b=pk5GnDMMVDjeOhC75+K1xFoXPJM8QIA0J3YSjQ/ZkxADESrczEi3tOTGuHOkUJZLIh
+         3U7byPNBoIyh3LUfIwVpP6ldXaQcdWTCfqKKVA29C2rI+Hh0z0dELj75WiswjIwkSbZ0
+         anCOvjdgseSGMJCAXaMIT1Zai0GcsN67FNdsBJ0QPAgg0J6/VN5CTskYL3dAQ73P6H6p
+         6lPz/05BCpw4RwWvssrCdxzyCsODzuWqxP3RWFaTJgqhs5TUPMkYsZZk8z6j+yYRF3zU
+         IdWE5pxL9H55UhHqioJya9sc9z04kY7tcGDgLJ6J00wYCYzUZGECQtfYoyaR6z0RtlDW
+         1wdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=55GG6gfGmw57DkSLpSc1PubNSVsOeYxYxYBSgoglMSw=;
-        b=YEFZ6paLWiSbP7Fd/tQwbgIxyWJnHW9k5xdkf6ptBjd3kCAJvUt594fOdInAtLeC3C
-         H5BPjmsn3xKL0rxBu3AITKSxBU+5sFiwVEBRQps0o9Wy+1N50csaJvH91o632zxduGOq
-         wvSxWHTY4yeLpbT9d4g0bnGvbNzyqZFo8MskkgB5YPw+CpOm42Ja776nNpTSkn+GGl6s
-         dFBJhl3R+ZNQ5Rq390cqsaIsjZb1JoFVdv9HaAKPfuK7PkLHDmN9COCeyL8d1fvSO6IB
-         cZZ3N5JV3ItS5E7Fa/w2CkxAWTftoURE5m8sWNCBJWHTXcsHvCP98U/6ftTPGjg7Bt+n
-         5tVw==
+        bh=AsRNyiHRyoMTjGDGDkBSNblwFVSq+5s7mCYINrMmGuo=;
+        b=f74oWB+++2OGKwU6NLCvE4C37R5dpjImw08XLsb9gtdwtF8TiXbuhFADpT0Iov+1b3
+         fjlrSMUYEpCea5sSqcMVp0qYZMRvKFlR7/e2itHoTODd8enlpDMhn/Lpg5MvMFi/N9Fa
+         EyPKKj5YZoAw107O7jqC1zms6m830GN/6uVg5ZGPlv/HaYGjb6scGqK9gC/f6aXPXwy9
+         aqauBIx3n9pX5x6cQOcTpunDyVFhNTSwXOmRyr4E+WO4nQyTpyKtzfR4iUqqKU0EkiQT
+         wihR04I2ec71sWrHv4z/q7D9iMWSJAvvf/bpBL2PaQejcSW80pxQTOpay04TS5gqA0id
+         chOA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 74.208.4.194 is neither permitted nor denied by best guess record for domain of quytelda@tamalin.org) smtp.mailfrom=quytelda@tamalin.org
 Authentication-Results: mx.google.com;
@@ -26,66 +26,114 @@ From: Quytelda Kahja <quytelda@tamalin.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 09/23] staging: rtl8723bs: Fix alignment in rtw_wx_set_auth().
-Date: Tue, 27 Mar 2018 01:41:01 -0700
-Message-Id: <20180327084115.16129-9-quytelda@tamalin.org>
+Subject: [PATCH 07/23] staging: rtl8723bs: Remove unecessary braces from switch statement.
+Date: Tue, 27 Mar 2018 01:40:59 -0700
+Message-Id: <20180327084115.16129-7-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327084115.16129-1-quytelda@tamalin.org>
 References: <CAFLvi237jR_tTQMXBNqCO=NQFOEFiJQkDBMxb_AxgBEqQDYQEw@mail.gmail.com>
  <20180327084115.16129-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K0:Sgd3PlXF4oQ75usKpgIJVJpqN4PHRRJlm800Gs6tIRGMb8Pq31p
- /q+/+Q63ICLXxivBIG0D5RZ7U5cgglx7d5Q7GGg2Hyky4x4ZERdhcZqYN/ywQd4qj4CzwRr
- sujhL9hLfO95kTWBkZcAPKC+o/8+2OgTOqw1fvTowG3xOhLk8eZi+ZBVw7btoy4Y62YX0oh
- Yt9CnhRkxhCYVu7lwwtyQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Xvkvmh5gRDI=:UZKRcKH3vFWH4lkSiHg/Kx
- OFtWJaWrTzxyURpAunHVQgDat7wQXrtiDLseEd01L3cCgHoiNdTgmqhQGyvInlUdC0gk/iGdW
- gb9zuFMftg3F0ebiRxlUaIdwqPS353jASoriW2XKwOFpqNTXCq8ZtvzgQTn5r3MyHgBG7byMK
- e1ay86KNKEUkiMIpL2nqYaHCCMdqxnnS6iuKBbIIOXvxy9ri5IYkLYPq9gsM5JDcofUslmVv7
- EqwD1rptDGAl7pGmgjEmce9IXEfwiELn5XGn+xK5jmtnJqzai68q6J2ZevQkRUDedSliLUGu+
- Pjvl5jZojBFK2+Jk4l29POGTfczigTeRjst+LacqGyBNAX+SobQsSK+rEFrZw/swUK6jm+zT+
- qMrgofY4L6/FjubF5pTw0OWbujjqprkxbwo2DLLogKWVkv8RgDZ6GbEbfZdrftarT+gTma/f4
- p0OPrSjW0of+roBoMZy2dzrJrZ6ba4mX6zwvWWlgMhdKmmGybJz00z6Ydka8O6seCVhyXBMM7
- uf2xbjqYbhqxqWbop3Ft6gaf9tdGu+cuciYGb6u5yRIbUqn62yY/uTKFUwFD6tIrsLWbKiDA/
- JruvN1G9GGZB9ka62UUZEIb0LOYtZGLBtjtJbtjotM4T4NtAUKtSssV1pdGHP23PfICzqgBR/
- e8+XJAlmVh14DGzI73mc22KC8MdSfE7NDfRQgYfBuRg+DmBgR53BrlEmqDq6bhsi9/zny6YCE
- bniRCKJM/0NcJA6FgYyps6uMi6JRuAPuBCsbmQ==
+X-Provags-ID: V03:K0:7TNfIfmgLs+ZgrW8y3lGRYoWB5nnvF9Y9WuM0667VGxE4MbjTAF
+ nn5BgdCxue3IhUWNdEM4nNYM7LYotcisf8lGN8P9gXd3lwPXIOzzPf5JJ3Jkiz40wtxiUZb
+ tlbWyvxzc7Zv3ViTnmt2qDpVqZrJMExtWwZ0yue5aryZ2bVRxB9J52SktBfwfGg/ly/yKTm
+ oHFUW2CCV2OB1aZylYR6w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:DycugQy4U30=:uFFFXB/sGz5k4Tk7ZPS4la
+ 6QNCJMgwzlBTpBy8pzdwTZq/dwSK8+KidRDgBvqM1J67YQzmoztdptEGfTBoZ7twwwY7GH8B9
+ KgWyCvAoQs9v2s1R9C2ZZWiU5+WtCoMvcXU0rwkTxD7fcsyinqC/FVIPQI9+xGdpTiPJdVFTy
+ hWpZxcj5EM6VcDIbSDW6RhKJd4xpzVO3TM9iraNnP5lY5DBRFJmDJTd+8HuMqazZDBaKFKq1p
+ gc3HXK0DgHxAXNHgUSqmMrXnJPtag53zjb4VpdiaQqkjOUTQNjsiTyw9N+cssa2CDgBGlVx6H
+ +TMlJvwP61R2dszFQOvjfE0zbTfRDSck/QyJzxGfB0TbjOcXSZzviBVTrvS02rSdOJxhDmVVA
+ pv+u+zDXuWef9TkApsE4+DqyeRMq3VTVgCFZDEFoIta+c3DRT5mv2AaOdO8JfnHsGcHJZa3MO
+ +jvnuLEVsvDvif/j79XFCCoHdNudF5KQM2bg6jc6di8Wo8vKbRzqAbMzKbLK2VkokrU/k7UQy
+ eHPZzWjjvrD2QSRiE49F0ZjYJZirfib+HjY10YIuENZ2/nnqXX9B7JAh71m/pKacf41bGjdpe
+ x8sr5R5eUlINOq7vSz4W7gieDz2WNMUnGnffVu/FgHtKaIYekpOBawO/LDfHjazV8imHmOE6s
+ fhPVKcD0eC6na/5vWk9B7rd+RIetBacnMRDRwCuuVolyJJbGXzbtN3f7f7/s2oiThcqSOK8nE
+ TGlxXO3YQbXcET8ggI4OCNtBSraJLpmiGRwVlw==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596079568855815893?=
-X-GMAIL-MSGID: =?utf-8?q?1596079568855815893?=
+X-GMAIL-THRID: =?utf-8?q?1596079567314747317?=
+X-GMAIL-MSGID: =?utf-8?q?1596079567314747317?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Realign the function parameters and comment blocks to match the kernel
-coding style.
+The switch statement in rtw_wx_set_auth() wraps individual cases in
+braces for no reason.  Remove those braces and unindent the code.
 
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 50 ++++++++++++--------------
+ 1 file changed, 23 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index 1cacd7fff052..32dcee9a1451 100644
+index 1b458074b7f9..3e78fc28a8eb 100644
 --- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
 +++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -2131,8 +2131,8 @@ static int rtw_wx_set_gen_ie(struct net_device *dev,
- }
+@@ -2151,7 +2151,6 @@ static int rtw_wx_set_auth(struct net_device *dev,
+ 		 */
+ 		break;
+ 	case IW_AUTH_TKIP_COUNTERMEASURES:
+-        {
+ 		if (param->value) {
+ 			/*  wpa_supplicant is enabling the tkip countermeasure. */
+ 			padapter->securitypriv.btkip_countermeasure = true;
+@@ -2160,36 +2159,33 @@ static int rtw_wx_set_auth(struct net_device *dev,
+ 			padapter->securitypriv.btkip_countermeasure = false;
+ 		}
+ 		break;
+-        }
+ 	case IW_AUTH_DROP_UNENCRYPTED:
+-		{
+-			/* HACK:
+-			 *
+-			 * wpa_supplicant calls set_wpa_enabled when the driver
+-			 * is loaded and unloaded, regardless of if WPA is being
+-			 * used.  No other calls are made which can be used to
+-			 * determine if encryption will be used or not prior to
+-			 * association being expected.  If encryption is not being
+-			 * used, drop_unencrypted is set to false, else true -- we
+-			 * can use this to determine if the CAP_PRIVACY_ON bit should
+-			 * be set.
+-			 */
+-
+-			if (padapter->securitypriv.ndisencryptstatus == Ndis802_11Encryption1Enabled) {
+-				break;/* it means init value, or using wep, ndisencryptstatus = Ndis802_11Encryption1Enabled, */
+-						/*  then it needn't reset it; */
+-			}
++		/* HACK:
++		 *
++		 * wpa_supplicant calls set_wpa_enabled when the driver
++		 * is loaded and unloaded, regardless of if WPA is being
++		 * used.  No other calls are made which can be used to
++		 * determine if encryption will be used or not prior to
++		 * association being expected.  If encryption is not being
++		 * used, drop_unencrypted is set to false, else true -- we
++		 * can use this to determine if the CAP_PRIVACY_ON bit should
++		 * be set.
++		 */
  
- static int rtw_wx_set_auth(struct net_device *dev,
--			     struct iw_request_info *info,
--			     union iwreq_data *wrqu, char *extra)
-+			   struct iw_request_info *info,
-+			   union iwreq_data *wrqu, char *extra)
- {
- 	struct adapter *padapter = (struct adapter *)rtw_netdev_priv(dev);
- 	struct iw_param *param = (struct iw_param*)&(wrqu->param);
-@@ -2189,7 +2189,7 @@ static int rtw_wx_set_auth(struct net_device *dev,
+-			if (param->value) {
+-				padapter->securitypriv.ndisencryptstatus = Ndis802_11EncryptionDisabled;
+-				padapter->securitypriv.dot11PrivacyAlgrthm = _NO_PRIVACY_;
+-				padapter->securitypriv.dot118021XGrpPrivacy = _NO_PRIVACY_;
+-				padapter->securitypriv.dot11AuthAlgrthm = dot11AuthAlgrthm_Open; /* open system */
+-				padapter->securitypriv.ndisauthtype =Ndis802_11AuthModeOpen;
+-			}
++		if (padapter->securitypriv.ndisencryptstatus == Ndis802_11Encryption1Enabled) {
++			break;/* it means init value, or using wep, ndisencryptstatus = Ndis802_11Encryption1Enabled, */
++			/*  then it needn't reset it; */
++		}
+ 
+-			break;
++		if (param->value) {
++			padapter->securitypriv.ndisencryptstatus = Ndis802_11EncryptionDisabled;
++			padapter->securitypriv.dot11PrivacyAlgrthm = _NO_PRIVACY_;
++			padapter->securitypriv.dot118021XGrpPrivacy = _NO_PRIVACY_;
++			padapter->securitypriv.dot11AuthAlgrthm = dot11AuthAlgrthm_Open; /* open system */
++			padapter->securitypriv.ndisauthtype =Ndis802_11AuthModeOpen;
+ 		}
++
++		break;
  	case IW_AUTH_80211_AUTH_ALG:
  		/*
  		 *  It's the starting point of a link layer connection using wpa_supplicant
--		*/
-+		 */
- 		if (check_fwstate(&padapter->mlmepriv, _FW_LINKED)) {
- 			LeaveAllPowerSaveMode(padapter);
- 			rtw_disassoc_cmd(padapter, 500, false);
 -- 
 2.16.3
