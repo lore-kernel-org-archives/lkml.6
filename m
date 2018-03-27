@@ -1,164 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752343AbeC0DFC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 23:05:02 -0400
-Received: from mga09.intel.com ([134.134.136.24]:30399 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751249AbeC0DFB (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 23:05:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,366,1517904000";
-   d="scan'208";a="29095442"
-Subject: Re: [PATCH v1 2/3] perf version: Print the status of compiled-in
- libraries
-From: "Jin, Yao" <yao.jin@linux.intel.com>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
- <1522080424-12912-3-git-send-email-yao.jin@linux.intel.com>
- <20180326093925.GI6207@krava>
- <84893905-7512-0757-c13c-152a9d051f92@linux.intel.com>
-Message-ID: <cdccc70e-a890-8500-5bd0-ac9d7a9820d8@linux.intel.com>
-Date: Tue, 27 Mar 2018 11:04:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <84893905-7512-0757-c13c-152a9d051f92@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752288AbeC0DWG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 23:22:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39258 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752218AbeC0DV6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 23:21:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1D53602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pelcan@codeaurora.org
+From: Philip Elcan <pelcan@codeaurora.org>
+To: linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org
+Cc: Thomas Speier <tspeier@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>
+Subject: [PATCH V2] arm64: tlbflush: avoid writing RES0 bits
+Date: Mon, 26 Mar 2018 23:21:17 -0400
+Message-Id: <1522120877-9136-1-git-send-email-pelcan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Several of the bits of the TLBI register operand are RES0 per the ARM
+ARM, so TLBI operations should avoid writing non-zero values to these
+bits.
 
+This patch adds a macro __TLBI_VADDR(addr, asid) that creates the
+operand register in the correct format and honors the RES0 bits.
 
-On 3/26/2018 9:51 PM, Jin, Yao wrote:
-> 
-> 
-> On 3/26/2018 5:39 PM, Jiri Olsa wrote:
->> On Tue, Mar 27, 2018 at 12:07:03AM +0800, Jin Yao wrote:
->>> This patch checks the values passed by CFLAGS (-DXXX) and then
->>> print the status of libraries.
->>>
->>> For example, if HAVE_DWARF_SUPPORT is defined, that means the
->>> library "dwarf" is compiled-in. The patch will print the status
->>> "on" for this library.
->>>
->>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
->>> ---
->>>   tools/perf/builtin-version.c | 125 
->>> +++++++++++++++++++++++++++++++++++++++++++
->>>   tools/perf/builtin.h         |   1 +
->>>   2 files changed, 126 insertions(+)
->>>
->>> diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
->>> index 37019c5..90a0a7f 100644
->>> --- a/tools/perf/builtin-version.c
->>> +++ b/tools/perf/builtin-version.c
->>> @@ -9,3 +9,128 @@ int cmd_version(int argc __maybe_unused, const char 
->>> **argv __maybe_unused)
->>>       printf("perf version %s\n", perf_version_string);
->>>       return 0;
->>>   }
->>> +
->>> +static void status_print(const char *name, const char *status)
->>> +{
->>> +    printf("%22s: [ %3s ]\n", name, status);
->>> +}
->>> +
->>> +static void library_status(void)
->>> +{
->>> +#ifdef HAVE_DWARF_SUPPORT
->>> +    status_print("dwarf", "on");
->>> +#else
->>> +    status_print("dwarf", "off");
->>> +#endif
->>
->> could this and all those below be in some generic macro?
->>
->> #define STATUS(__d, __m)        \
->> #ifdef __d                 \
->>     status_print(#__m, "on");    \
->> #else                    \
->>     status_print(#__m, "OFF");    \
->> #endif
->>
->> STATUS(HAVE_DWARF_SUPPORT, dwarf)
->>
->>
->> also please print the 'OFF' and use colors as in the build message
->>
-> 
-> Fine, thanks. I will update the code.
-> 
->>> +
->>> +#ifdef HAVE_DWARF_GETLOCATIONS
->>> +    status_print("dwarf_getlocations", "on");
->>> +#else
->>> +    status_print("dwarf_getlocations", "off");
->>> +#endif
->>> +
->>> +#ifdef NO_GLIBC
->>> +    status_print("glibc", "off");
->>> +#else
->>> +    status_print("glibc", "on");
->>> +#endif
->>> +
->>> +#ifdef HAVE_GTK2_SUPPORT
->>> +    status_print("gtk2", "on");
->>> +#else
->>> +    status_print("gtk2", "off");
->>> +#endif
->>> +
->>
->> SNIP
->>
->>> +}
->>> +
->>> +int cmd_version2(int argc, const char **argv)
->>> +{
->>> +    cmd_version(argc, argv);
->>> +    library_status();
->>> +    return 0;
->>> +}
->>> diff --git a/tools/perf/builtin.h b/tools/perf/builtin.h
->>> index 05745f3..c7508ee 100644
->>> --- a/tools/perf/builtin.h
->>> +++ b/tools/perf/builtin.h
->>> @@ -29,6 +29,7 @@ int cmd_timechart(int argc, const char **argv);
->>>   int cmd_top(int argc, const char **argv);
->>>   int cmd_script(int argc, const char **argv);
->>>   int cmd_version(int argc, const char **argv);
->>> +int cmd_version2(int argc, const char **argv);
->>
->> please don't add new command for this, handle this in cmd_version
->>
-> 
-> Yeah, I know that, adding a new command is not a good idea.
-> 
-> But how can I pass a new parameter to cmd_version to indicate it's the 
-> -vv case? Use argv[1]? But looks not good since argc is 1.
-> 
-> Any idea about that?
-> 
-> Thanks
-> Jin Yao
-> 
+Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
+---
+ arch/arm64/include/asm/tlbflush.h | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-Hi Jiri,
-
-Maybe could we just add the information to 'perf -v'? I mean we don't 
-need the 'perf -vv', directly add the information to 'perf -v'. Is it OK?
-
-Thanks
-Jin Yao
-
->> thanks,
->> jirka
->>
+diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+index 9e82dd7..b1205e9 100644
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -60,6 +60,15 @@
+ 		__tlbi(op, (arg) | USER_ASID_FLAG);				\
+ } while (0)
+ 
++/* This macro creates a properly formatted VA operand for the TLBI */
++#define __TLBI_VADDR(addr, asid)				\
++	({							\
++		unsigned long __ta = (addr) >> 12;		\
++		__ta &= GENMASK_ULL(43, 0);			\
++		__ta |= (unsigned long)(asid) << 48;		\
++		__ta;						\
++	})
++
+ /*
+  *	TLB Management
+  *	==============
+@@ -117,7 +126,7 @@ static inline void flush_tlb_all(void)
+ 
+ static inline void flush_tlb_mm(struct mm_struct *mm)
+ {
+-	unsigned long asid = ASID(mm) << 48;
++	unsigned long asid = __TLBI_VADDR(0, ASID(mm));
+ 
+ 	dsb(ishst);
+ 	__tlbi(aside1is, asid);
+@@ -128,7 +137,7 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
+ static inline void flush_tlb_page(struct vm_area_struct *vma,
+ 				  unsigned long uaddr)
+ {
+-	unsigned long addr = uaddr >> 12 | (ASID(vma->vm_mm) << 48);
++	unsigned long addr = __TLBI_VADDR(uaddr, ASID(vma->vm_mm));
+ 
+ 	dsb(ishst);
+ 	__tlbi(vale1is, addr);
+@@ -154,8 +163,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
+ 		return;
+ 	}
+ 
+-	start = asid | (start >> 12);
+-	end = asid | (end >> 12);
++	start = __TLBI_VADDR(start, asid);
++	end = __TLBI_VADDR(end, asid);
+ 
+ 	dsb(ishst);
+ 	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12)) {
+@@ -185,8 +194,8 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
+ 		return;
+ 	}
+ 
+-	start >>= 12;
+-	end >>= 12;
++	start = __TLBI_VADDR(start, 0);
++	end = __TLBI_VADDR(end, 0);
+ 
+ 	dsb(ishst);
+ 	for (addr = start; addr < end; addr += 1 << (PAGE_SHIFT - 12))
+@@ -202,7 +211,7 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
+ static inline void __flush_tlb_pgtable(struct mm_struct *mm,
+ 				       unsigned long uaddr)
+ {
+-	unsigned long addr = uaddr >> 12 | (ASID(mm) << 48);
++	unsigned long addr = __TLBI_VADDR(uaddr, ASID(mm));
+ 
+ 	__tlbi(vae1is, addr);
+ 	__tlbi_user(vae1is, addr);
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
