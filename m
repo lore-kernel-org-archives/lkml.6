@@ -1,87 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754597AbeC0RgF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 13:36:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:60818 "EHLO foss.arm.com"
+        id S1753761AbeC0Rmx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 13:42:53 -0400
+Received: from ozlabs.org ([103.22.144.67]:46015 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752060AbeC0RgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 13:36:03 -0400
-Date: Tue, 27 Mar 2018 18:36:13 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Shanker Donthineni <shankerd@codeaurora.org>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-        Philip Elcan <pelcan@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        Thomas Speier <tspeier@codeaurora.org>
-Subject: Re: [PATCH V2] arm64: tlbflush: avoid writing RES0 bits
-Message-ID: <20180327173613.GI18435@arm.com>
-References: <1522120877-9136-1-git-send-email-pelcan@codeaurora.org>
- <985a0edd-e388-dade-8824-30cc58a236f3@arm.com>
- <56b560a5-6e57-8e01-32ca-9d3c95ccd2e5@codeaurora.org>
+        id S1751073AbeC0Rmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 13:42:50 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 28 Mar 2018 04:41:40 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Petr Machata <petrm@mellanox.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stefano Brivio <sbrivio@redhat.com>
+Subject: Re: linux-next: manual merge of the ipsec tree with the net tree
+Message-ID: <20180328044140.18bab804@canb.auug.org.au>
+In-Reply-To: <wih7epx8u60.fsf@dev-r-vrt-156.mtr.labs.mlnx>
+References: <20180326091610.148fc62d@canb.auug.org.au>
+        <wih7epx8u60.fsf@dev-r-vrt-156.mtr.labs.mlnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <56b560a5-6e57-8e01-32ca-9d3c95ccd2e5@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/H2mH2IuD14TjPrI08+G8TUG"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shanker,
+--Sig_/H2mH2IuD14TjPrI08+G8TUG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 27, 2018 at 09:53:16AM -0500, Shanker Donthineni wrote:
-> On 03/27/2018 06:34 AM, Robin Murphy wrote:
-> > On 27/03/18 04:21, Philip Elcan wrote:
-> >> Several of the bits of the TLBI register operand are RES0 per the ARM
-> >> ARM, so TLBI operations should avoid writing non-zero values to these
-> >> bits.
-> >>
-> >> This patch adds a macro __TLBI_VADDR(addr, asid) that creates the
-> >> operand register in the correct format and honors the RES0 bits.
-> >>
-> >> Signed-off-by: Philip Elcan <pelcan@codeaurora.org>
-> >> ---
-> >>   arch/arm64/include/asm/tlbflush.h | 23 ++++++++++++++++-------
-> >>   1 file changed, 16 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> >> index 9e82dd7..b1205e9 100644
-> >> --- a/arch/arm64/include/asm/tlbflush.h
-> >> +++ b/arch/arm64/include/asm/tlbflush.h
-> >> @@ -60,6 +60,15 @@
-> >>           __tlbi(op, (arg) | USER_ASID_FLAG);                \
-> >>   } while (0)
-> >>   +/* This macro creates a properly formatted VA operand for the TLBI */
-> >> +#define __TLBI_VADDR(addr, asid)                \
-> >> +    ({                            \
-> >> +        unsigned long __ta = (addr) >> 12;        \
-> >> +        __ta &= GENMASK_ULL(43, 0);            \
-> >> +        __ta |= (unsigned long)(asid) << 48;        \
-> >> +        __ta;                        \
-> >> +    })
-> > 
-> > I'd be inclined to make this a static inline function rather than a
-> > macro, since it doesn't need to do any wacky type-dodging, but either
-> > way the overall change now looks appropriate;
-> > 
-> > Acked-by: Robin Murphy <robin.murphy@arm.com>
-> > 
-> 
-> Tested-by: Shanker Donthineni <shankerd@codeaurora.org>
+Hi Petr,
 
-[...]
+On Tue, 27 Mar 2018 17:33:43 +0300 Petr Machata <petrm@mellanox.com> wrote:
+>
+> Hi, this conflict needs to be resolved differently. Below I'm adding a
+> patch on top of linux-next. Squash or apply as you see fit.
+>=20
+> What's the right way to proceed from here? It looks to me like Stefano
+> or Steffen should take this into the ipsec tree (possibly just squash to
+> the clamping fix), as they'll hit this conflict the next time they
+> rebase on top of net...? Let me know what to do, please.
 
-> >> @@ -154,8 +163,8 @@ static inline void __flush_tlb_range(struct vm_area_struct *vma,
-> >>           return;
-> >>       }
-> >>   -    start = asid | (start >> 12);
-> >> -    end = asid | (end >> 12);
-> >> +    start = __TLBI_VADDR(start, asid);
-> >> +    end = __TLBI_VADDR(end, asid);
+I fixed up the resolution in linux-next to match your patch from
+today.  Dave will need to do this when he merges the ipsec tree into
+the net tree before sending it to Linus.
 
-Can you test this bit too, please? ;)
+--=20
+Cheers,
+Stephen Rothwell
 
-Will
+--Sig_/H2mH2IuD14TjPrI08+G8TUG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq6glQACgkQAVBC80lX
+0GxWuQf8DzBm0vcumNlIYygzeh1tTKOOcVxdVlC/f3Gdj6Dly7esxhW7xHN0PeCW
+wN02A7o/HJZlKceZMHiuJU6aZbQUA6MydZCutQEBPRhiqa2g0PWH5E6HC8JgjXct
+D1LMzqR99FEw1J//5GF3R7e4/lWqKuE9c2PVWg6d5kMMfr2scltB+9amSm4K1rVG
+s6bwycV9hGy4y+CHSFkjGp5n19DP+nGNw/hNxw96sv7hb5LLbily+W/djPqVqQgF
+9NEbSE1cYjG3yPdST3HFkUj90p2RQg9izqPqBTKNJfkUC7YKiQa6e/GAdDRh0FkY
+Sv9TM4pz7xJpjyBsA3lqy/GCi/ORZQ==
+=EXRF
+-----END PGP SIGNATURE-----
+
+--Sig_/H2mH2IuD14TjPrI08+G8TUG--
