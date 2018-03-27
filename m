@@ -1,101 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753004AbeC0N7C (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:59:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52298 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752590AbeC0N7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:59:00 -0400
-Date: Tue, 27 Mar 2018 16:58:59 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] vhost: correctly remove wait queue during poll
- failure
-Message-ID: <20180327165330-mutt-send-email-mst@kernel.org>
-References: <1522122442-30317-1-git-send-email-jasowang@redhat.com>
- <20180327092811.ikvssyxgb74nucb4@dhcp-10-175-199-170.vpn.oracle.com>
- <b1576bcf-652a-7c1a-9d77-db54931ab979@redhat.com>
+        id S1752871AbeC0N7q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:59:46 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40100 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752275AbeC0N7o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:59:44 -0400
+X-Google-Smtp-Source: AG47ELu+I95+8PH2q8QbyWqz4/W9U3S14SHSsN0s0SGwO9zuIMTSpJMwxAZohiTsvAXk7D27Wd79dQ==
+Date: Tue, 27 Mar 2018 06:59:43 -0700
+From: Eduardo Valentin <edubezval@gmail.com>
+To: Rui Zhang <rui.zhang@intel.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] Thermal SoC management updates for v4.17-rc1
+Message-ID: <20180327135942.GA11104@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b1576bcf-652a-7c1a-9d77-db54931ab979@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 05:43:14PM +0800, Jason Wang wrote:
-> 
-> 
-> On 2018年03月27日 17:28, Darren Kenny wrote:
-> > Hi Jason,
-> > 
-> > On Tue, Mar 27, 2018 at 11:47:22AM +0800, Jason Wang wrote:
-> > > We tried to remove vq poll from wait queue, but do not check whether
-> > > or not it was in a list before. This will lead double free. Fixing
-> > > this by checking poll->wqh to make sure it was in a list.
-> > 
-> > This text seems at odds with the code below, instead of checking
-> > poll-whq, you are removing that check...
-> > 
-> > Maybe the text needs rewording?
-> 
-> Yes, I admit it's bad, thanks for pointing out.
-> 
-> How about:
-> 
-> "Fixing this by switching to use vhost_poll_stop() which zeros poll->wqh
-> after removing poll from waitqueue to make sure it won't be freed twice."
-> 
-> Thanks
+Hello Rui,
 
-Let's be a bit more specific about the problem maybe?
+Please find thermal-soc changes for v4.17-rc1 as follows.
 
-when vhost's attempt to start polling a descriptor fails, we remove the
-poll->wqh entry from wait queue but do not clear it, so the following
-cleanup (e.g. on release) will attempt to remove it again.
+- New i.MX7 thermal sensor
+- Mediatek driver now supports MT7622 SoC
+- Fixes on exynos driver
+- Removal of min max cpu cooling dt property
 
-To fix, switch to vhost_poll_stop() which zeros poll->wqh
-after removing poll from waitqueue to make sure it won't be freed twice."
+Despite my local testing, this has been tested by kernelci bot:
+Full Boot Summary: https://kernelci.org/boot/all/job/evalenti/branch/for-kernelci/kernel/v4.16-rc1-16-g9db4c0feaf87/
+Full Build Summary: https://kernelci.org/build/evalenti/branch/for-kernelci/kernel/v4.16-rc1-16-g9db4c0feaf87/
 
+BR,
 
-the patch itself is fine though:
+Eduardo
 
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
+are available in the git repository at:
 
-> > 
-> > Thanks,
-> > 
-> > Darren.
-> > 
-> > > 
-> > > Reported-by: syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com
-> > > Fixes: 2b8b328b61c79 ("vhost_net: handle polling errors when setting
-> > > backend")
-> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > ---
-> > > drivers/vhost/vhost.c | 3 +--
-> > > 1 file changed, 1 insertion(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > > index 1b3e8d2d..5d5a9d9 100644
-> > > --- a/drivers/vhost/vhost.c
-> > > +++ b/drivers/vhost/vhost.c
-> > > @@ -212,8 +212,7 @@ int vhost_poll_start(struct vhost_poll *poll,
-> > > struct file *file)
-> > >     if (mask)
-> > >         vhost_poll_wakeup(&poll->wait, 0, 0, poll_to_key(mask));
-> > >     if (mask & EPOLLERR) {
-> > > -        if (poll->wqh)
-> > > -            remove_wait_queue(poll->wqh, &poll->wait);
-> > > +        vhost_poll_stop(poll);
-> > >         ret = -EINVAL;
-> > >     }
-> > > 
-> > > -- 
-> > > 2.7.4
-> > > 
+  git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal linus
+
+for you to fetch changes up to 2db48884bb51f2ad26b1b716297ceaab624a2e68:
+
+  dt-bindings: thermal: Remove "cooling-{min|max}-level" properties (2018-03-27 06:43:05 -0700)
+
+----------------------------------------------------------------
+Anson Huang (1):
+      thermal: imx: add i.MX7 thermal sensor support
+
+Bartlomiej Zolnierkiewicz (10):
+      thermal: exynos: remove unused "type" field from struct exynos_tmu_platform_data
+      thermal: exynos: remove parsing of samsung, tmu_default_temp_offset property
+      thermal: exynos: remove parsing of samsung, tmu_[first, second]_point_trim properties
+      thermal: exynos: remove parsing of samsung, tmu_noise_cancel_mode property
+      thermal: exynos: remove parsing of samsung, tmu[_min, _max]_efuse_value properties
+      thermal: exynos: remove parsing of samsung, tmu_reference_voltage property
+      thermal: exynos: remove parsing of samsung,tmu_gain property
+      thermal: exynos: remove parsing of samsung, tmu_cal_type property
+      thermal: exynos: remove separate exynos_tmu.h header file
+      dt-bindings: thermal: remove no longer needed samsung thermal properties
+
+Maciej Purski (1):
+      thermal: exynos: Read soc_type from match data
+
+Marek Szyprowski (2):
+      thermal: exynos: Reading temperature makes sense only when TMU is turned on
+      thermal: exynos: Propagate error value from tmu_read()
+
+Sean Wang (2):
+      dt-bindings: thermal: add binding for MT7622 SoC
+      thermal: mediatek: add support for MT7622 SoC
+
+Viresh Kumar (1):
+      dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
+
+ .../devicetree/bindings/thermal/exynos-thermal.txt |  23 +-
+ .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
+ .../bindings/thermal/mediatek-thermal.txt          |   1 +
+ .../devicetree/bindings/thermal/thermal.txt        |  16 +-
+ drivers/thermal/imx_thermal.c                      | 295 ++++++++++++++++-----
+ drivers/thermal/mtk_thermal.c                      |  35 +++
+ drivers/thermal/samsung/exynos_tmu.c               | 268 ++++++++++---------
+ drivers/thermal/samsung/exynos_tmu.h               |  75 ------
+ 8 files changed, 423 insertions(+), 299 deletions(-)
+ delete mode 100644 drivers/thermal/samsung/exynos_tmu.h
