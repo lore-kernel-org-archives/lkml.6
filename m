@@ -1,153 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752069AbeC0Anz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 20:43:55 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:47010 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751776AbeC0Anw (ORCPT
+        id S1752019AbeC0AtS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 20:49:18 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37700 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751776AbeC0AtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 20:43:52 -0400
-Subject: Re: [PATCH v4 0/8] ARM: davinci: complete the conversion to using the
- reset framework
-From: Suman Anna <s-anna@ti.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-CC: David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Sekhar Nori <nsekhar@ti.com>, devicetree <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20180323130455.11470-1-brgl@bgdev.pl>
- <152182378792.178046.3747112581117251857@swboyd.mtv.corp.google.com>
- <CAMRc=MfEebDk4D=t-ybRgbn+HaY7RUfOFCDAf9H8F3cZRchJmA@mail.gmail.com>
- <152182490783.178046.1191965992600877708@swboyd.mtv.corp.google.com>
- <CAMRc=MdmTAwPAAnL1+n+OXSycnyjuQ1hKmts158mPcgat1NUYQ@mail.gmail.com>
- <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
-Message-ID: <0683b11c-fefa-5fc7-793e-1a662a5f0480@ti.com>
-Date: Mon, 26 Mar 2018 19:42:34 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 26 Mar 2018 20:49:16 -0400
+X-Google-Smtp-Source: AIpwx49zYqY8nJqibupxcSrzIRLX38JwuO88j2Mj4yY1/iHmBIcPGthHlmlnTECI6F2E2sPHVS13Gw==
+Date: Tue, 27 Mar 2018 09:49:11 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] zram: idle memory tracking
+Message-ID: <20180327004911.GA467@jagdpanzerIV>
+References: <20180326064951.123940-1-minchan@kernel.org>
+ <20180326064951.123940-2-minchan@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c78817f9-02fd-0ded-609e-5014efdd4a77@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180326064951.123940-2-minchan@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart,
+On (03/26/18 15:49), Minchan Kim wrote:
+> zRam as swap is useful for small memory device. However, swap means
+> those pages on zram are mostly cold pages due to VM's LRU algorithm.
+> Especially, once init data for application are touched for launching,
+> they tend to be not accessed any more and finally swapped out.
+> zRAM can store such cold pages as compressed form but it's pointless
+> to keep in memory. Better idea is app developers free them directly
+> rather than remaining them on heap.
+> 
+> This patch tell us last accesss time of each block of zram via
+> "cat /sys/kernel/debug/zram/zram0/access_time".
+> 
+> The output is as follows,
+> 
+> 276 1250
+> 277 1800
+> ..  ..
+> ..  ..
 
-On 03/23/2018 07:30 PM, Suman Anna wrote:
-> Hi Bart,
-> 
-> On 03/23/2018 12:16 PM, Bartosz Golaszewski wrote:
->> 2018-03-23 18:08 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
->>> Quoting Bartosz Golaszewski (2018-03-23 09:55:47)
->>>> 2018-03-23 17:49 GMT+01:00 Stephen Boyd <sboyd@kernel.org>:
->>>>> Quoting Bartosz Golaszewski (2018-03-23 06:04:47)
->>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>>>
->>>>>> This series converts the only user of the handcoded, mach-specific reset
->>>>>> routines in the davinci platform to using the reset framework.
->>>>>>
->>>>>> Patch 1 modifies the way lookup entries are registered with the reset
->>>>>> framework.
->>>>>>
->>>>>> Patches 2-4 add necessary lookups/DT-properties.
->>>>>>
->>>>>> Patches 5-7 convert the davinci-rproc driver to the reset framework.
->>>>>>
->>>>>> Patch 8 removes now dead code.
->>>>>>
->>>>>> Philipp: it turned out that it's indeed better to use the reset
->>>>>> controller's device name for the entry lookup.
->>>>>>
->>>>>> Tested both in DT and legacy modes by booting the examples from
->>>>>> ti-ipc-rtos recipe in meta-ti.
->>>>>>
->>>>>> This series applies on top of David Lechner's common-clk-v9 branch[1]
->>>>>> with Philipp Zabel's reset/next branch[2] pulled in.
->>>>>>
->>>>>> It can be found in my github tree as well[3].
->>>>>>
->>>>>
->>>>> What's the merge strategy for the rest of the patches? I should apply
->>>>> the clk ones after the next -rc1?
->>>>
->>>> Or maybe Philipp can provide us with an immutable branch with the reset patches?
->>>>
->>>> The you could apply the driver patches and let Sekhar take all the
->>>> platform code?
->>>>
->>>
->>> Ok that could work too.
->>
->> Ohad, Bjorn can you ack the remoteproc patches? Are you OK with
->> Stephen taking them through the clock tree? Otherwise it would get
->> complicated since they depend on the first clk patch and the last clk
->> patch depends on them.
-> 
-> I will take a closer look and test on Mon. A quick glance of the
-> remoteproc changes seem to be fine. I will let Bjorn comment on the
-> patch flow.
-> 
-> The only reason I had to use the clock in the driver was for the reset
-> before, and hopefully this will allow me to actually switch to using
-> pm_runtime API like I do with the rest of the TI remoteproc drivers
-> (Keystone remoteproc driver also uses PSC for clock and reset but then
-> it goes through different set of drivers).
-> 
-> So, I see a mix of driver and dts patches in the series, are all the dts
-> patches coming through Sekhar?
+So can we just use CONFIG_IDLE_PAGE_TRACKING + CONFIG_PAGE_OWNER?
 
-I tried booting your tree [3] on the OMAPL138-LCDK board. I am using
-NFS, and I am unable to get to the console. I don't have any issues
-booting latest -next branch (next-20180326) which only has the reset and
-clock driver related changes.
-
-Here's the log towards the end of the boot..
----
-pinctrl-single 1c14120.pinmux: 160 pins, size 80
-Serial: 8250/16550 driver, 3 ports, IRQ sharing disabled
-console [ttyS2] disabled
-1d0d000.serial: ttyS2 at MMIO 0x1d0d000 (irq = 61, base_baud = 8250000)
-is a TI DA8xx/66AK2x
-console [ttyS2] enabled
-brd: module loaded
-libphy: Fixed MDIO Bus: probed
-davinci_mdio 1e24000.mdio: davinci mdio revision 1.5, bus freq 2200000
-davinci_mdio 1e24000.mdio: no live phy, scanning all
-davinci_mdio: probe of 1e24000.mdio failed with error -5
-i2c /dev entries driver
-<nothing after this>
-
-regards
-Suman
-
-> 
-> regards
-> Suman
-> 
->>
->> Thanks,
->> Bart
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-remoteproc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+	-ss
