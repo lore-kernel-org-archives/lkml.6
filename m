@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/XWpMcxyoPil9+rf2YdSDW+PPUA9Uxff3537jkjygK8+WjX3r7j4f5g5xvdOBkwxSZHVO0
-ARC-Seal: i=1; a=rsa-sha256; t=1522168542; cv=none;
+X-Google-Smtp-Source: AIpwx49dfytKSWhEI1dV4kaVHmnUwjaCMLAjtaZOewF/qZTh/eFcDhFNU47NeVg4eSmvZND4L0cP
+ARC-Seal: i=1; a=rsa-sha256; t=1522168539; cv=none;
         d=google.com; s=arc-20160816;
-        b=l5E5h+oICjz9sTo76p0t0zDuTBGNuKUSq5nl/sHJ7fhXq5j1HSPKoGu5AUkFXWzDpD
-         pcAkBTWcHR0eLB936d6zOw2mgpoeSJVp0b8KUpHNQjr5bXGCRmcZTmKPP+ghgJeBVLga
-         hF6zy5H3WRzw2zMjqGIQbQHqDvc9NUYEMeOZ6vOmXR5ppXVytfRta9aJn61mj0qNstmZ
-         epUCY72U+RufQzNVj5y3IThyXD7RqPGTgfrqW7nCyiNHnJVz1zB4LkxzzW1ewL7dw4K8
-         4UlxzjtI6KlZOuSdG2H3p3sRhUvcGdsdbNNJxuEpTvGahKqgVLdWT0yB6RogS7O1JOnA
-         nJUw==
+        b=gWB7oLGYIscwIMpULMw8AqzUfcBfLHu915J9FfFi4YCN84tLa4Sx7tyitpo7vecUsB
+         pCR7/tnF6LAesj5mMiRea8VS1jOo50Wf/v5RsQlU3vf/8WQ1I2sO2OiraP/AclJK4MPf
+         DWIgpcdzTrFHCyzW/mGInXXtTUAt14te2rEnAvlmIPv8v3dDvzbEc3TsM+Zlw1/JpPKL
+         DicNSY/VkaZQ+LNHchyI1CYdDvrLC6B1nojQ+d1fddVKMS6U1xyA4g69YQ0cr99AQ+e0
+         y+v+y2WZSJWg+iJobfzQhZA6qyojhgXQidC3pdYUV0JdXOq0XbKkqXO+e8rCaRm699Qm
+         LtNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=j94aMi0uL2HmcIlzWa64u5wYu62eMdcimVUOYFFHhpQ=;
-        b=vElZ7ZonNWPPljxNKJCTe3DbgJDgANiKbmUl+0VZbX0PKEDOEXWltuFqlnISwc740l
-         Wqm4BrqHRf77RZFZJh1xLJoaBbnA8DKCRwlSAaBr2ekDWFYm68y7p8ZWlHdOFV4rSgi2
-         m1s31TXsuwBPV1sSvovgLsbWJQ1yW/FUPoQfS6s6LCr+SVQ11jodCsYW/8MfXifibNRf
-         0ilKkIO3ckftoRgUpIhq2DkXFPSxBlcE4qeJwuGOnM5TW26xUavGvCpU6skUGtPYUyPw
-         nteiFwS6lDs5BasN6bhzCUxQtG8AvIyqIgbzvW0NKUW9NViHh3v5qOSbu6xEkX0CgS8p
-         mwbw==
+        bh=GF1c9DapeVpEA8jkSNp6UYtIGa3dXxP3k7W4imVC9bA=;
+        b=TRC8VzVAnPwwV2VbCYucyueVqx9XjTi4zQzxQt7sM1Ze+lwtr3gAVm/X+MUoHVmhYv
+         47z8s7HCpf/WVLnWncuQlagi/0/RSjmAkBKrRFOVNbW3UjbuegqLlPEr06v/awX3YV3+
+         HIQtU+pfCKxSBV4QB60qWLS+pfYktLC/ssqVRTwpKwvyTBR1vpovRT0ww2onK0Da2bAY
+         o9ij2uJo9BtdsF0SWwvquqztSUe6nka33WXEtG3tpGXRg9Gmps/rxIJ4cZyfUf20Lmz/
+         B+/IgHECmKwuvs4qeDVrBD04wDgcYVSYti8YHkglA/Dy2txpehlPpDJYXoEojXEwZHC0
+         hk0g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,24 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lei Li <lious.lilei@hisilicon.com>,
-	Toshi Kani <toshi.kani@hpe.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Wang Xuefeng <wxf.wang@hisilicon.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Borislav Petkov <bp@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Chintan Pandya <cpandya@codeaurora.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 047/101] mm/vmalloc: add interfaces to free unmapped page table
-Date: Tue, 27 Mar 2018 18:27:19 +0200
-Message-Id: <20180327162752.926350491@linuxfoundation.org>
+Subject: [PATCH 4.14 046/101] h8300: remove extraneous __BIG_ENDIAN definition
+Date: Tue, 27 Mar 2018 18:27:18 +0200
+Message-Id: <20180327162752.860590355@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -53,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596108989017657999?=
-X-GMAIL-MSGID: =?utf-8?q?1596109401316533534?=
+X-GMAIL-THRID: =?utf-8?q?1596109399130674322?=
+X-GMAIL-MSGID: =?utf-8?q?1596109399130674322?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -62,168 +51,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Toshi Kani <toshi.kani@hpe.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit b6bdb7517c3d3f41f20e5c2948d6bc3f8897394e upstream.
+commit 1705f7c534163594f8b05e060cb49fbea86ca70b upstream.
 
-On architectures with CONFIG_HAVE_ARCH_HUGE_VMAP set, ioremap() may
-create pud/pmd mappings.  A kernel panic was observed on arm64 systems
-with Cortex-A75 in the following steps as described by Hanjun Guo.
+A bugfix I did earlier caused a build regression on h8300, which defines
+the __BIG_ENDIAN macro in a slightly different way than the generic
+code:
 
- 1. ioremap a 4K size, valid page table will build,
- 2. iounmap it, pte0 will set to 0;
- 3. ioremap the same address with 2M size, pgd/pmd is unchanged,
-    then set the a new value for pmd;
- 4. pte0 is leaked;
- 5. CPU may meet exception because the old pmd is still in TLB,
-    which will lead to kernel panic.
+  arch/h8300/include/asm/byteorder.h:5:0: warning: "__BIG_ENDIAN" redefined
 
-This panic is not reproducible on x86.  INVLPG, called from iounmap,
-purges all levels of entries associated with purged address on x86.  x86
-still has memory leak.
+We don't need to define it here, as the same macro is already provided
+by the linux/byteorder/big_endian.h, and that version does not conflict.
 
-The patch changes the ioremap path to free unmapped page table(s) since
-doing so in the unmap path has the following issues:
+While this is a v4.16 regression, my earlier patch also got backported
+to the 4.14 and 4.15 stable kernels, so we need the fixup there as well.
 
- - The iounmap() path is shared with vunmap(). Since vmap() only
-   supports pte mappings, making vunmap() to free a pte page is an
-   overhead for regular vmap users as they do not need a pte page freed
-   up.
-
- - Checking if all entries in a pte page are cleared in the unmap path
-   is racy, and serializing this check is expensive.
-
- - The unmap path calls free_vmap_area_noflush() to do lazy TLB purges.
-   Clearing a pud/pmd entry before the lazy TLB purges needs extra TLB
-   purge.
-
-Add two interfaces, pud_free_pmd_page() and pmd_free_pte_page(), which
-clear a given pud/pmd entry and free up a page for the lower level
-entries.
-
-This patch implements their stub functions on x86 and arm64, which work
-as workaround.
-
-[akpm@linux-foundation.org: fix typo in pmd_free_pte_page() stub]
-Link: http://lkml.kernel.org/r/20180314180155.19492-2-toshi.kani@hpe.com
-Fixes: e61ce6ade404e ("mm: change ioremap to set up huge I/O mappings")
-Reported-by: Lei Li <lious.lilei@hisilicon.com>
-Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Wang Xuefeng <wxf.wang@hisilicon.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Chintan Pandya <cpandya@codeaurora.org>
+Link: http://lkml.kernel.org/r/20180313120752.2645129-1-arnd@arndb.de
+Fixes: 101110f6271c ("Kbuild: always define endianess in kconfig.h")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/mm/mmu.c           |   10 ++++++++++
- arch/x86/mm/pgtable.c         |   24 ++++++++++++++++++++++++
- include/asm-generic/pgtable.h |   10 ++++++++++
- lib/ioremap.c                 |    6 ++++--
- 4 files changed, 48 insertions(+), 2 deletions(-)
+ arch/h8300/include/asm/byteorder.h |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -937,3 +937,13 @@ int pmd_clear_huge(pmd_t *pmd)
- 	pmd_clear(pmd);
- 	return 1;
- }
-+
-+int pud_free_pmd_page(pud_t *pud)
-+{
-+	return pud_none(*pud);
-+}
-+
-+int pmd_free_pte_page(pmd_t *pmd)
-+{
-+	return pmd_none(*pmd);
-+}
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -702,4 +702,28 @@ int pmd_clear_huge(pmd_t *pmd)
+--- a/arch/h8300/include/asm/byteorder.h
++++ b/arch/h8300/include/asm/byteorder.h
+@@ -2,7 +2,6 @@
+ #ifndef __H8300_BYTEORDER_H__
+ #define __H8300_BYTEORDER_H__
  
- 	return 0;
- }
-+
-+/**
-+ * pud_free_pmd_page - Clear pud entry and free pmd page.
-+ * @pud: Pointer to a PUD.
-+ *
-+ * Context: The pud range has been unmaped and TLB purged.
-+ * Return: 1 if clearing the entry succeeded. 0 otherwise.
-+ */
-+int pud_free_pmd_page(pud_t *pud)
-+{
-+	return pud_none(*pud);
-+}
-+
-+/**
-+ * pmd_free_pte_page - Clear pmd entry and free pte page.
-+ * @pmd: Pointer to a PMD.
-+ *
-+ * Context: The pmd range has been unmaped and TLB purged.
-+ * Return: 1 if clearing the entry succeeded. 0 otherwise.
-+ */
-+int pmd_free_pte_page(pmd_t *pmd)
-+{
-+	return pmd_none(*pmd);
-+}
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -976,6 +976,8 @@ int pud_set_huge(pud_t *pud, phys_addr_t
- int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot);
- int pud_clear_huge(pud_t *pud);
- int pmd_clear_huge(pmd_t *pmd);
-+int pud_free_pmd_page(pud_t *pud);
-+int pmd_free_pte_page(pmd_t *pmd);
- #else	/* !CONFIG_HAVE_ARCH_HUGE_VMAP */
- static inline int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
- {
-@@ -1001,6 +1003,14 @@ static inline int pmd_clear_huge(pmd_t *
- {
- 	return 0;
- }
-+static inline int pud_free_pmd_page(pud_t *pud)
-+{
-+	return 0;
-+}
-+static inline int pmd_free_pte_page(pmd_t *pmd)
-+{
-+	return 0;
-+}
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
+-#define __BIG_ENDIAN __ORDER_BIG_ENDIAN__
+ #include <linux/byteorder/big_endian.h>
  
- #ifndef __HAVE_ARCH_FLUSH_PMD_TLB_RANGE
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -91,7 +91,8 @@ static inline int ioremap_pmd_range(pud_
- 
- 		if (ioremap_pmd_enabled() &&
- 		    ((next - addr) == PMD_SIZE) &&
--		    IS_ALIGNED(phys_addr + addr, PMD_SIZE)) {
-+		    IS_ALIGNED(phys_addr + addr, PMD_SIZE) &&
-+		    pmd_free_pte_page(pmd)) {
- 			if (pmd_set_huge(pmd, phys_addr + addr, prot))
- 				continue;
- 		}
-@@ -117,7 +118,8 @@ static inline int ioremap_pud_range(p4d_
- 
- 		if (ioremap_pud_enabled() &&
- 		    ((next - addr) == PUD_SIZE) &&
--		    IS_ALIGNED(phys_addr + addr, PUD_SIZE)) {
-+		    IS_ALIGNED(phys_addr + addr, PUD_SIZE) &&
-+		    pud_free_pmd_page(pud)) {
- 			if (pud_set_huge(pud, phys_addr + addr, prot))
- 				continue;
- 		}
+ #endif
