@@ -1,64 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752349AbeC0Cjm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 22:39:42 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:47610 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752027AbeC0Cjk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 22:39:40 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08084413|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=10;RT=10;SR=0;TI=SMTPD_---.BSY93rB_1522118369;
-Date: Tue, 27 Mar 2018 10:39:29 +0800
-From: Guo Ren <ren_guo@c-sky.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch <linux-arch@vger.kernel.org>,
+        id S1752568AbeC0CkQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 22:40:16 -0400
+Received: from ozlabs.org ([103.22.144.67]:51463 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752246AbeC0CkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Mar 2018 22:40:14 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 27 Mar 2018 13:39:23 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>, c-sky_gcc_upstream@c-sky.com,
-        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org
-Subject: Re: [PATCH 15/19] csky: Build infrastructure
-Message-ID: <20180327023927.GA11454@guoren>
-References: <cover.1521399976.git.ren_guo@c-sky.com>
- <c15b1fce07d0a19616026dfb927bfcbd88102b12.1521399976.git.ren_guo@c-sky.com>
- <CAK8P3a1rzS+MmubYqTE-8H89QnULcGbKth=eWTA5mJ5VLRNL0Q@mail.gmail.com>
- <20180320131342.GA31542@guoren>
- <CAK8P3a3pat6wQ+9gbf_wtp6+dur_h=Zp1896rogZHnehVnqVNA@mail.gmail.com>
- <20180321124137.GA21320@guoren>
- <CAK8P3a06MVAT35ZbG=gRkR1EDVdWPoT3bhwL+9fZSkmTHaDVBw@mail.gmail.com>
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Denis Semakin <d.semakin@omprussia.ru>
+Subject: linux-next: build failure after merge of the device-mapper tree
+Message-ID: <20180327133923.53b8954d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a06MVAT35ZbG=gRkR1EDVdWPoT3bhwL+9fZSkmTHaDVBw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/621_aMtf8JsobZ0xa4VbrsT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 03:00:00PM +0200, Arnd Bergmann wrote:
-> Ok, I understand the part about ck610 being incompatible, but I'm
-> still not sure about the 8xx ones: Do you mean it's impossible to
-> have one kernel that runs across all of them for some other reason,
-> or is it something you haven't allowed because you see no use for it?
-Sorry, Csky gcc need "-mcpu=ck807" or "-mcpu=ck810" or "-mcpu=ck860" to
-determine the back-end policy. So I must seperate them with different vmlinux.
+--Sig_/621_aMtf8JsobZ0xa4VbrsT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> This is basically the same question as above: For c610, using the fixed
-> value is sufficient, because it's incompatible with the others. But if you want
-> to run the same kernel on both ck810 and ck860, then it needs some form
-> of runtime detection.
-Sorry, currently no runtime detection.
-But I agree with you that one vmlinux for all cpus is a good design for compat.
+Hi all,
 
-> On other architectures, the L1_CACHE_BYTES constant is the maximum
-> possible cache line size, and the cache flush function uses the actual size
-The same with above, we don't detect cpus on runtime. So we just make it
-simple here.
+After merging the device-mapper tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-> Ok. Just make sure that the DT always has this information as well,
-> so this can be changed in the future when desired, without having to
-> make incompatible changes to the devicetree binary files.
-Ok
+/home/sfr/next/next/drivers/md/dm-table.c: In function 'dm_table_set_restri=
+ctions':
+/home/sfr/next/next/drivers/md/dm-table.c:1899:3: error: implicit declarati=
+on of function 'queue_flag_set_unlocked'; did you mean 'lookup_one_len_unlo=
+cked'? [-Werror=3Dimplicit-function-declaration]
+   queue_flag_set_unlocked(QUEUE_FLAG_SECERASE, q);
+   ^~~~~~~~~~~~~~~~~~~~~~~
 
-Best Regards
- Guo Ren
+Caused by commit
+
+  9723d9db1a84 ("dm: add support for secure erase forwarding")
+
+interacting with commit
+
+  8a0ac14b8da9 ("block: Move the queue_flag_*() functions from a public int=
+o a private header file")
+
+from the block tree.
+
+I have added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 27 Mar 2018 13:36:49 +1100
+Subject: [PATCH] dm: merge fix for queue_flag_set_unlocked to
+ blk_queue_flag_set API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/md/dm-table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index d5db9df7ea4b..0589a4da12bb 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1896,7 +1896,7 @@ void dm_table_set_restrictions(struct dm_table *t, st=
+ruct request_queue *q,
+ 		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+=20
+ 	if (dm_table_supports_secure_erase(t))
+-		queue_flag_set_unlocked(QUEUE_FLAG_SECERASE, q);
++		blk_queue_flag_set(QUEUE_FLAG_SECERASE, q);
+=20
+ 	if (dm_table_supports_flush(t, (1UL << QUEUE_FLAG_WC))) {
+ 		wc =3D true;
+--=20
+2.16.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/621_aMtf8JsobZ0xa4VbrsT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5rtsACgkQAVBC80lX
+0GxwCwf/XVi8A8EsALHwrXTc5gc9QxUo+yYPq66htfJHZNlPu/TG2z6uksFFs66N
+S2V2DC1iVZIeAxAv+6GEAFhA7SKkF/Z1ts95tEH7DKVRXB0V2RpfJhUEPWJLHlmI
+9sSC0gv1Di7FC28oJ6uG0UBW9XNLBiNJz54H6IrWfyIVc7pad0z/njrQiXreSsej
+TPIQkpbg/YjSFG0Ozs86r7svg2kH0CF0Y6M0TdTgT4JEeFjvXEvpWG9pYSxbDSqX
+154HpHG/FEyp2yZezq6jITdmhM3tI4d4U14S2625APnq1AIrkE7bXdTDX9+M00vV
+TjR3gT4MqoHDvyaAcMrhHV6EJsjQLQ==
+=A5rF
+-----END PGP SIGNATURE-----
+
+--Sig_/621_aMtf8JsobZ0xa4VbrsT--
