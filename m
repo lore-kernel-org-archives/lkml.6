@@ -1,67 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752188AbeC0V6B (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:58:01 -0400
-Received: from mail-ua0-f177.google.com ([209.85.217.177]:44363 "EHLO
-        mail-ua0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751167AbeC0V56 (ORCPT
+        id S1752227AbeC0V62 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:58:28 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:65513 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751901AbeC0V60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:57:58 -0400
-X-Google-Smtp-Source: AIpwx49CTsU9XD/C+/aEw9zO9DKEqMAHA+CprTIpVyPFnOpU77Oe7yOoPvnFf4iZnRlCOG2G65nKwG2TallVRkzBK7I=
+        Tue, 27 Mar 2018 17:58:26 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Ilsche <thomas.ilsche@tu-dresden.de>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        Aubrey Li <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] cpuidle: poll_state: Avoid invoking local_clock() too often
+Date: Tue, 27 Mar 2018 23:58:45 +0200
+Message-ID: <2095821.OCbkRpinqI@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <1521785487-29866-6-git-send-email-mgautam@codeaurora.org>
-References: <1521785487-29866-1-git-send-email-mgautam@codeaurora.org> <1521785487-29866-6-git-send-email-mgautam@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 27 Mar 2018 14:57:55 -0700
-X-Google-Sender-Auth: 41lKj8kyFwqMyvWtYo0A-hKdUmk
-Message-ID: <CAD=FV=U03Hijg5NPiY5=5JQJpobJnUNAkf361OOdNRLVc5joWQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] dt-bindings: phy-qcom-usb2: Update bindings for sdm845
-To: Manu Gautam <mgautam@codeaurora.org>, Rob Herring <robh+dt@kernel.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On Thu, Mar 22, 2018 at 11:11 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
-> Update compatible strings for USB2 PHYs on sdm845.
-> There are two QUSB2 PHYs present on sdm845. Few PHY registers
-> programming is different for these PHYs related to electrical
-> parameters, otherwise both are same.
->
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-> index 42c9742..b99a57f 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-> @@ -6,7 +6,9 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
->  Required properties:
->   - compatible: compatible list, contains
->                "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
-> -              "qcom,qusb2-v2-phy" for QUSB2 V2 PHY.
-> +              "qcom,qusb2-v2-phy" for QUSB2 V2 PHY,
-> +              "qcom,sdm845-qusb2-phy-1" for primary PHY on sdm845,
-> +              "qcom,sdm845-qusb2-phy-2" for secondary PHY on sdm845.
+Rik reports that he sees an increase in CPU use in one benchmark
+due to commit 612f1a22f067 "cpuidle: poll_state: Add time limit to
+poll_idle()" that caused poll_idle() to call local_clock() in every
+iteration of the loop.  Utilization increase generally means more
+non-idle time with respect to total CPU time (on the average) which
+implies reduced CPU frequency.
 
-Similar question to the one I posed on
-<https://patchwork.kernel.org/patch/10302761/> for the QMP PHY.  What
-is "qcom,qusb2-v2-phy"?  Is it some ideal abstract version of the PHY?
- Do we expect that anyone would actually use that compatible string?
+Doug reports that limiting the rate of local_clock() invocations
+in there causes much less power to be drawn during a CPU-intensive
+parallel workload (with idle states 1 and 2 disabled to enforce more
+state 0 residency).
 
-In this case in <https://patchwork.kernel.org/patch/10302755/> it
-looks as if you're using the same settings as
-"qcom,sdm845-qusb2-phy-2", so presumably "qcom,qusb2-v2-phy" should
-just be deleted.
+These two reports together suggest that executing local_clock() on
+multiple CPUs in parallel at a high rate may cause chips to get hot
+and trigger thermal/power limits on them to kick in, so reduce the
+rate of local_clock() invocations in poll_idle() to avoid that issue.
 
+Fixes: 612f1a22f067 "cpuidle: poll_state: Add time limit to poll_idle()"
+Reported-by: Rik van Riel <riel@surriel.com>
+Reported-by: Doug Smythies <dsmythies@telus.net>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
--Doug
+I've settled for POLL_IDLE_RELAX_COUNT = 200 after quite a bit of
+back-and-forth and a number of test runs.
+
+It may need to be refined going forward if somebody has a problem with
+the current one.
+
+---
+ drivers/cpuidle/poll_state.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+Index: linux-pm/drivers/cpuidle/poll_state.c
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/poll_state.c
++++ linux-pm/drivers/cpuidle/poll_state.c
+@@ -10,6 +10,7 @@
+ #include <linux/sched/idle.h>
+ 
+ #define POLL_IDLE_TIME_LIMIT	(TICK_NSEC / 16)
++#define POLL_IDLE_RELAX_COUNT	200
+ 
+ static int __cpuidle poll_idle(struct cpuidle_device *dev,
+ 			       struct cpuidle_driver *drv, int index)
+@@ -18,9 +19,14 @@ static int __cpuidle poll_idle(struct cp
+ 
+ 	local_irq_enable();
+ 	if (!current_set_polling_and_test()) {
++		unsigned int loop_count = 0;
++
+ 		while (!need_resched()) {
+ 			cpu_relax();
++			if (loop_count++ < POLL_IDLE_RELAX_COUNT)
++				continue;
+ 
++			loop_count = 0;
+ 			if (local_clock() - time_start > POLL_IDLE_TIME_LIMIT)
+ 				break;
+ 		}
