@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/k7u+CSUFbVwQq8DNa1CAZUzcaDWjVLlPziqJmGnjH6F1CPLMxGxi/v4Is608yC9GUmaW8
-ARC-Seal: i=1; a=rsa-sha256; t=1522168238; cv=none;
+X-Google-Smtp-Source: AIpwx49XULrGYcX0Y5y66QO6FGpSTrcKpYom9xQqW40+q5/+pnRGePHsGt4Vl3rdGLU3GEoEcb7g
+ARC-Seal: i=1; a=rsa-sha256; t=1522168235; cv=none;
         d=google.com; s=arc-20160816;
-        b=0kYx3D9iy6w816oimvLI64T9dv8ClOL8F69LbPhvCEV/MU7PH2hjwZMgNlVdIBisdV
-         4iai+66TrIFl5iPneZ3680Txfj7N3z/6hnDufDXrZD4QNiLcgMGrHlZZY8dqS5Pfx0X2
-         zn2s8MoFyVFHGV0JwvCADfJvvrjOcfhC8EfCCByi1aQ23E6V68+OI4RJ8JBUV21CVQsL
-         vM+PqJDazSeYr7tNWYj4Q6391Q2kIMrMmB3RnUoQbBZMLZlAjV2zGJBg5llGB9uDSfam
-         rzm6CPpGhoMTrDJoNHcXJTManIfWqzGbFPnzgwMu7HmujLT2xQxPnOHghZEAEJCr5sA/
-         ysGQ==
+        b=BLZBaSVLKl4NruCfwo+a9NeVgT6XrhuGJ+qPOTL47n7/9z1Xm2dH2VxgYtXSlDrI3O
+         MCfPLovi+KAX4P4u75r7r8atMAJkttsFxPtjhRIIwJqmd30RvFg1zTLJVuYmnvr8Hy6S
+         cWaWjOBzyOqU/0F7KD0BgUnlcGcl8v72tbk3jDlvezw3bGP2G3qxTB1MywcBWFwS9p0e
+         A4RGGLL5hzSGIZX9ZfDnsDFxsanVRJx3RGQgUMUsWq6uX+cLbUtU5IJStnPzB5DVNAl0
+         R9/4mi1Uj/NHtEY4niuIL9Hyw+tjR2Gjz1L3H01fPrr80X+eEFMzESsdY5pFNCSA6HO5
+         lYpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=J0RvS+0FGyXzWB3Wyv032ZQMjZt1shmwY9GmKxNcHls=;
-        b=mJPDNZx2WCQSPs+nXRyLFOPr+acxpy44bFME9Qwd8W5Va2WztN3XLFxvvVR1W8/eKq
-         LVeDWy8/AeQHzXihISCH6kVeoZZ5Pa0eFGW7uUi4OCX+DQC8zXL13D6bTgPkGQ4jUIST
-         xjNVMS4VNSvW8p+hji76K4N//cnGx63j7m+uBsI1JeC65hEn4hqxF8XRp9k2JG6eN4eg
-         t5lotPBy4o3Lt/TMV+FsY1bYuDhVb03SnlAhPPCJ2lFl0CH9vPc6FL4gSeu3eiwzTZDJ
-         1yaXyp+C3dTiGHMnDG9M+zl1kXyxeMs32JIDNpG3Y0Z80Tqkry1qs97KHuHUzMeXbxjP
-         J9zw==
+        bh=Y/rzNjvVKXMvGdkchoroqo6xHdc48QqlvGIPTsHErgg=;
+        b=zlRx0S2fJiINfmDm8gT7aMEIb+ixnu0pN+wUwVsYb0bzR3TmNvm8ocj3iuOgh+FhzC
+         WegT21uJpcOYuPLthfgszE1NPi4YyUeT2X8sdspXNSfJPF9JxjOzDOQCtQHyfbLP9EZg
+         E0cqFNXX+8pZxnDnsMXT88yenTjTqyPPNIOskWp2ShH88Xe31isCpVqEwmEYT2mA3QDo
+         rd57CltSXyRVV/PAtPXzHoHD9DakngfBHN9xgsmrhVuOi1yWSTxFBD1GK+SFKK9YfSEI
+         C3+OD5IGEWMc957dY9ph7WK1PkIF7d7816H5Z1ci5YXqXzbdYMQaxBSrjEdEkJH5P9ag
+         x30w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Lutomirski <luto@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 35/43] kvm/x86: fix icebp instruction handling
-Date: Tue, 27 Mar 2018 18:27:39 +0200
-Message-Id: <20180327162718.377784713@linuxfoundation.org>
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Eric Dumazet <edumazet@google.com>
+Subject: [PATCH 4.4 43/43] bpf, x64: increase number of passes
+Date: Tue, 27 Mar 2018 18:27:47 +0200
+Message-Id: <20180327162718.802115307@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162716.407986916@linuxfoundation.org>
 References: <20180327162716.407986916@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109082772350684?=
-X-GMAIL-MSGID: =?utf-8?q?1596109082772350684?=
+X-GMAIL-THRID: =?utf-8?q?1596109079875177032?=
+X-GMAIL-MSGID: =?utf-8?q?1596109079875177032?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,82 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 32d43cd391bacb5f0814c2624399a5dad3501d09 upstream.
+commit 6007b080d2e2adb7af22bf29165f0594ea12b34c upstream.
 
-The undocumented 'icebp' instruction (aka 'int1') works pretty much like
-'int3' in the absense of in-circuit probing equipment (except,
-obviously, that it raises #DB instead of raising #BP), and is used by
-some validation test-suites as such.
+In Cilium some of the main programs we run today are hitting 9 passes
+on x64's JIT compiler, and we've had cases already where we surpassed
+the limit where the JIT then punts the program to the interpreter
+instead, leading to insertion failures due to CONFIG_BPF_JIT_ALWAYS_ON
+or insertion failures due to the prog array owner being JITed but the
+program to insert not (both must have the same JITed/non-JITed property).
 
-But Andy Lutomirski noticed that his test suite acted differently in kvm
-than on bare hardware.
+One concrete case the program image shrunk from 12,767 bytes down to
+10,288 bytes where the image converged after 16 steps. I've measured
+that this took 340us in the JIT until it converges on my i7-6600U. Thus,
+increase the original limit we had from day one where the JIT covered
+cBPF only back then before we run into the case (as similar with the
+complexity limit) where we trip over this and hit program rejections.
+Also add a cond_resched() into the compilation loop, the JIT process
+runs without any locks and may sleep anyway.
 
-The reason is that kvm used an inexact test for the icebp instruction:
-it just assumed that an all-zero VM exit qualification value meant that
-the VM exit was due to icebp.
-
-That is not unlike the guess that do_debug() does for the actual
-exception handling case, but it's purely a heuristic, not an absolute
-rule.  do_debug() does it because it wants to ascribe _some_ reasons to
-the #DB that happened, and an empty %dr6 value means that 'icebp' is the
-most likely casue and we have no better information.
-
-But kvm can just do it right, because unlike the do_debug() case, kvm
-actually sees the real reason for the #DB in the VM-exit interruption
-information field.
-
-So instead of relying on an inexact heuristic, just use the actual VM
-exit information that says "it was 'icebp'".
-
-Right now the 'icebp' instruction isn't technically documented by Intel,
-but that will hopefully change.  The special "privileged software
-exception" information _is_ actually mentioned in the Intel SDM, even
-though the cause of it isn't enumerated.
-
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Tested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/vmx.h |    1 +
- arch/x86/kvm/vmx.c         |    9 ++++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ arch/x86/net/bpf_jit_comp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -310,6 +310,7 @@ enum vmcs_field {
- #define INTR_TYPE_NMI_INTR		(2 << 8) /* NMI */
- #define INTR_TYPE_HARD_EXCEPTION	(3 << 8) /* processor exception */
- #define INTR_TYPE_SOFT_INTR             (4 << 8) /* software interrupt */
-+#define INTR_TYPE_PRIV_SW_EXCEPTION	(5 << 8) /* ICE breakpoint - undocumented */
- #define INTR_TYPE_SOFT_EXCEPTION	(6 << 8) /* software exception */
+--- a/arch/x86/net/bpf_jit_comp.c
++++ b/arch/x86/net/bpf_jit_comp.c
+@@ -1077,7 +1077,7 @@ void bpf_int_jit_compile(struct bpf_prog
+ 	 * may converge on the last pass. In such case do one more
+ 	 * pass to emit the final image
+ 	 */
+-	for (pass = 0; pass < 10 || image; pass++) {
++	for (pass = 0; pass < 20 || image; pass++) {
+ 		proglen = do_jit(prog, addrs, image, oldproglen, &ctx);
+ 		if (proglen <= 0) {
+ 			image = NULL;
+@@ -1100,6 +1100,7 @@ void bpf_int_jit_compile(struct bpf_prog
+ 				goto out;
+ 		}
+ 		oldproglen = proglen;
++		cond_resched();
+ 	}
  
- /* GUEST_INTERRUPTIBILITY_INFO flags. */
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -1011,6 +1011,13 @@ static inline bool is_machine_check(u32
- 		(INTR_TYPE_HARD_EXCEPTION | MC_VECTOR | INTR_INFO_VALID_MASK);
- }
- 
-+/* Undocumented: icebp/int1 */
-+static inline bool is_icebp(u32 intr_info)
-+{
-+	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VALID_MASK))
-+		== (INTR_TYPE_PRIV_SW_EXCEPTION | INTR_INFO_VALID_MASK);
-+}
-+
- static inline bool cpu_has_vmx_msr_bitmap(void)
- {
- 	return vmcs_config.cpu_based_exec_ctrl & CPU_BASED_USE_MSR_BITMAPS;
-@@ -5333,7 +5340,7 @@ static int handle_exception(struct kvm_v
- 		      (KVM_GUESTDBG_SINGLESTEP | KVM_GUESTDBG_USE_HW_BP))) {
- 			vcpu->arch.dr6 &= ~15;
- 			vcpu->arch.dr6 |= dr6 | DR6_RTM;
--			if (!(dr6 & ~DR6_RESERVED)) /* icebp */
-+			if (is_icebp(intr_info))
- 				skip_emulated_instruction(vcpu);
- 
- 			kvm_queue_exception(vcpu, DB_VECTOR);
+ 	if (bpf_jit_enable > 1)
