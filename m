@@ -1,130 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751188AbeC0TNj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 15:13:39 -0400
-Received: from wp227.webpack.hosteurope.de ([80.237.132.234]:33720 "EHLO
-        wp227.webpack.hosteurope.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750948AbeC0TNg (ORCPT
+        id S1751167AbeC0TSl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 15:18:41 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:40642 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750873AbeC0TSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 15:13:36 -0400
-Subject: Linux 4.16: Reported regressions as of Tuesday, 2018-03-27 (Was:
- Linux 4.16-rc7)
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, Jonathan Corbet <corbet@lwn.net>
-References: <CA+55aFxpxHnWBeTXN+DKqwCMW_=T2cR8UxSBVk_6c8LL7Et5JQ@mail.gmail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Message-ID: <d1f5b976-f293-5767-9faf-c4f569f8ba55@leemhuis.info>
-Date: Tue, 27 Mar 2018 21:13:32 +0200
+        Tue, 27 Mar 2018 15:18:39 -0400
+Subject: Re: [net-next PATCH v2 03/10] net: netcp: ethss: make call to
+ gbe_sgmii_config() conditional
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
+        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>
+References: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
+ <1522168309-12338-4-git-send-email-m-karicheri2@ti.com>
+ <20180327171343.GN5862@lunn.ch>
+From: Murali Karicheri <m-karicheri2@ti.com>
+Organization: Texas Instruments
+Message-ID: <98f5d69b-5b2f-bf50-09ca-026b4c1ed15e@ti.com>
+Date: Tue, 27 Mar 2018 15:20:46 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFxpxHnWBeTXN+DKqwCMW_=T2cR8UxSBVk_6c8LL7Et5JQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1522178016;fd0987c5;
-X-HE-SMSGID: 1f0u2H-0007Sk-0Z
+In-Reply-To: <20180327171343.GN5862@lunn.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.03.2018 01:37, Linus Torvalds wrote:
-> […] Anyway. Go out and test. And let's hope next week is nice and calm and
-> I can release the final 4.16 next Sunday without any extra  rc's.
+On 03/27/2018 01:13 PM, Andrew Lunn wrote:
+> On Tue, Mar 27, 2018 at 12:31:42PM -0400, Murali Karicheri wrote:
+>> As a preparatory patch to add support for 2u cpsw hardware found on
+>> K2G SoC, make call to gbe_sgmii_config() conditional. This is required
+>> since 2u uses RGMII interface instead of SGMII and to allow for driver
+>> re-use.
+>>
+>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>> ---
+>>  drivers/net/ethernet/ti/netcp_ethss.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+>> index 56dbc0b..1dea891 100644
+>> --- a/drivers/net/ethernet/ti/netcp_ethss.c
+>> +++ b/drivers/net/ethernet/ti/netcp_ethss.c
+>> @@ -2271,7 +2271,8 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
+>>  
+>>  	void (*hndlr)(struct net_device *) = gbe_adjust_link;
+>>  
+>> -	gbe_sgmii_config(priv, slave);
+>> +	if ((priv->ss_version == GBE_SS_VERSION_14) || IS_SS_ID_NU(priv))
+>> +		gbe_sgmii_config(priv, slave);
 > 
->                Linus
+> Hi Murali
+> 
+> So you have:
+> 
+> #define IS_SS_ID_NU(d) \
+> 	(GBE_IDENT((d)->ss_version) == GBE_SS_ID_NU)
+> 
+> 
+> Does version 14 have a name? Could you add another IS_SS_ID_XX(d)
+> macro for it? That would make these statements more consistent.
+> 
+unfortunately not being the first version :)
 
-Hi! Find below my sixth regression report for Linux 4.16. It lists 7
-regressions I'm currently aware of. 2 were fixed since last weeks
-report; 2 are new.
+Probably we can add
 
-Are you aware of any other regressions that got introduced this
-development cycle? Then please let me know by mail (a simple bounce or
-forward to the sender of this email address is enough!). And please tell
-me if there is anything in the report that shouldn't be there.
+#define IS_SS_ID_VER_14(d) \
+	(GBE_IDENT((d)->ss_version) == GBE_SS_VERSION_14)
 
-Ciao, Thorsten
-
-== Current regressions ==
-
-Dell R640 does not boot due to SCSI/SATA failure
-- Status: Afaics still unfixed; lost track, ask reporter for an update
-on Monday morning, no reply yet
-- Cause:  https://git.kernel.org/torvalds/c/84676c1f21e8
-- Reported: 2018-02-22
-https://marc.info/?l=linux-kernel&m=151931128006031
-- Note: Issue understood and even (kind of accidentally) fixed by a
-patch series that was proposed for 4.17 (see links)
-- Last known developer activity: 2018-03-14
-https://marc.info/?l=linux-block&m=152102086831636&w=2
-- Other relevant links:
-https://marc.info/?l=linux-block&m=152051511802229&w=2
-https://marc.info/?l=linux-kernel&m=152026091325037
-
-Error updating SMART data during runtime and could not connect to lv
-- Status: Stalled afaics
-- Reported: 2018-03-11
-https://marc.info/?l=linux-kernel&m=152075643627082
-https://bugzilla.kernel.org/show_bug.cgi?id=199077
-- Note: Two issues discussed in that thread; only one is a regression
-(latency issues in the MU03 version of the firmware, triggered by
-polling SMART data, which causes lvmetad to timeout in some cases)
-- Last known developer activity: 2018-03-19
-https://marc.info/?l=linux-kernel&m=152145306610330
-- Other relevant links:
-https://marc.info/?l=linux-kernel&m=152146297613525
-https://marc.info/?l=linux-scsi&m=152095303312164&w=2
-
-15% longer running times on lvm2 test suite
-- Status: Stalled afaics
-- Cause:  https://git.kernel.org/torvalds/c/44c02a2c3dc5
-- Reported: 2018-03-11
-https://marc.info/?l=linux-kernel&m=152077333230274
-- Note: Seems the real problem is in the way the test scripts interact
-with the kernel
-- Last known developer activity: 2018-03-13
-https://marc.info/?l=linux-kernel&m=152097761921525
-
-AMDGPU Fury X random screen flicker on Linux kernel 4.16rc5
-- Status: might be stalled
-- Reported: 2018-03-13
-https://bugzilla.kernel.org/show_bug.cgi?id=199101
-
-ASUS XG-C100C 10G Network Adapter no longer working
-- Status: told reporter to bring it to netdev; looks like he needs help
-debugging
-- Reported: 2018-03-22
-https://bugzilla.kernel.org/show_bug.cgi?id=199177
-
-multi_v7_defconfig fails to boot on many OMAP systems
-- Status: quite new, but patch is being prepared
-- Cause:  https://git.kernel.org/torvalds/c/c083dc5f3738
-- Reported: 2018-03-23
-https://marc.info/?l=linux-clk&m=152198452423677&w=2
-- Last known developer activity: 2018-03-27
-https://marc.info/?l=linux-clk&m=152199237525182&w=2
+and replace all instances of (priv->ss_version == GBE_SS_VERSION_14) with
+	if (IS_SS_ID_VER_14(priv)) or equivalent. 
 
 
-== Waiting for clarification from reporter ==
-
-Interrupt storm after suspend causes one busy kworker
-- Status: Still waiting for data from reporter
-- Reported: 2018-02-25
-https://bugzilla.kernel.org/show_bug.cgi?id=198929
+> 	Andrew
+> 
 
 
-== Fixed since last report ==
-
-hci_bcm: Streamline runtime PM code change for 4.16 kernel breaks
-bluetooth on ASUS T100TA
-- Status: Fixed by https://git.kernel.org/torvalds/c/b09c61522c81
-- Cause:  https://git.kernel.org/torvalds/c/43fff7683468
-- Reported: 2018-03-01
-https://bugzilla.kernel.org/show_bug.cgi?id=198953
-
-sdhci-acpi not recognizing eMMC
-- Status: Fixed by https://git.kernel.org/torvalds/c/d58ac803cfbb
-- Cause:  https://git.kernel.org/torvalds/c/1b7ba57ecc86
-- Reported: 2018-03-13
-https://bugzilla.kernel.org/show_bug.cgi?id=199105
+-- 
+Murali Karicheri
+Linux Kernel, Keystone
