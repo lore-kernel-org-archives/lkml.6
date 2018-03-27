@@ -1,138 +1,112 @@
-Return-Path: <richard.gong@linux.intel.com>
-X-Google-Smtp-Source: AIpwx48DZzrtPvZpQ8JZ3cYeO2288cV3x6ZvlPkBT0LhyH1tHbxNPuouDVo62LQsozbOcyoKa7X5
-ARC-Seal: i=1; a=rsa-sha256; t=1522182204; cv=none;
+Return-Path: <kernel-hardening-return-12766-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AG47ELtjzyvz2SOdCKcAnBA8X41bkV4YGo45RTc4Uuq34dD90kZMGIanRWad1vpjCRv7AaGw6Mtw
+ARC-Seal: i=1; a=rsa-sha256; t=1522165118; cv=none;
         d=google.com; s=arc-20160816;
-        b=JZd0ffhq28Hlmz/qDb/BQbmaZW66JwdPXKqbbxjA8fZRtqipFSamr4+819obXYT7kB
-         5EfLZb3DVyHv18PliVMBfVB6A0yPX0r4zNfmi2c30FDOqaGDffF0+N2/bup6cOxcSGfF
-         4hNcbXY9Z78A8+DwvLvAqN1QrtAWpEWAm2dx/CEUjZf24Er2vVQT+P19xG6Nb32KtusE
-         p1YYLm1qq2pRpObSe5YdTk985qk92kqwW/oATSxY0iq6o24kOc+ibzFT9hG90x32j057
-         +cUVowL77SyXTLGiDUPOXEfnFXoP9X4ZRItd/0zojDNelOFDwzyKZWezDdJz9VoIrdns
-         yZVg==
+        b=uiTKcXdQpJZAnBNdTXSjzlRLi2J6w9AWJiGUERoSqQqSAzsevgOCGjmIIh+YQwB4YT
+         P4jx93wJ4i3wTWorAx3HW4O+pYshM/VwTJbG4oTZ4Gc2Joa4TjFyBjLFZSEWi/2BavUa
+         ZPEfXEjR7AB1SeS9H/aDCdgq24ipBeGpkQfgBOsfrIXRmiPGsPdu7k2EBMcNTfmQzU67
+         pNhvEulVWOsIXJkO/w2UudW4ts0+A6jFLyS4+7wxVFxw3tarFT6ZCstMA/eCu2k1JSQR
+         T3qi7ZxMNj35q6vSooDoSZco+ufLOikuCc/JpAervrVGEOqJWAxoviaQcYwiN0SOO5Gh
+         tdeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=8UYQ3ktNu4ImZHzzvFQXpV15TVNvl7GrekaiBuu6rno=;
-        b=zW4iHjQiSj8k91Ttmpn2/Dr3OgCtpXpJNuDwZVaAVtlHYtw71tLd5QT/nM0jMCRD5F
-         L3PKXLd3/EDwVwuKRYx8q1NQFGLzhSd3FF0q+RtJnfkASF29ENMR5rDRhv/q86MsNIs4
-         73nCO1dD5EZAEndq4o7MehZX7gTLqJ+n1lGyEwngDwt5kyUIkgud/BfbBFeg+hzdTGiO
-         x3Ar5e8RGbMds1T2EQpTjwfpF5mWDOcKbV6SnVm0RbQweypq6BHgnaNWOtkCvm9xv3yc
-         kP4m9b1G3GqDhQ1w4+InUyKnWdyINVvo0hU6RO1lrD4a/wOXPE7v0p/Z9Bp2Lj+63nbQ
-         s9xQ==
+        h=mime-version:message-id:date:subject:cc:to:from:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=oPq+COxaiYMwEjctFPcEkc0a9Du0nzCPWUhSYTXvpXQ=;
+        b=GK+Wul0497MxRkn6cmoTTk6OFSwJMF1Fk+ZIef7UbcqXk7OR32DEhMzyJpW43EC4JW
+         HyaBJHfS/S5RqrBIBVnetx6jbcV2vHLJa287mt1eIHESpsaNu60K6i5FPKmVetJ1tVL0
+         rMQ2N8D5tPVdO9yBGOtn8n5k8xzHmZwfh9O7Wb+DEcEd9rgvi8LVQViVXaH67S/P1FzD
+         bv0A+n8UP+cQb7hcIKEjCnl2mPPnzddbaOO3YCYSjvVlFQZey5c3zNmRyme774W2PlzA
+         NfSvVOpQDewmVdO10NW6bBX2nQvoZwUaBknc1c5cwpcilhFQ4Li0O5e5+9ANj4R9tP04
+         10Og==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of richard.gong@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=richard.gong@linux.intel.com
+       spf=pass (google.com: domain of kernel-hardening-return-12766-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12766-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of richard.gong@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=richard.gong@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,368,1517904000";
-   d="scan'208";a="215401308"
-From: richard.gong@linux.intel.com
-To: catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	dinguyen@kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	atull@kernel.org,
-	mdf@kernel.org,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-fpga@vger.kernel.org,
-	yves.vandervennet@linux.intel.com,
-	richard.gong@linux.intel.com,
-	richard.gong@intel.com
-Subject: [PATCHv3 1/7] dt-bindings, firmware: add Intel Stratix10 service layer binding
-Date: Tue, 27 Mar 2018 15:20:08 -0500
-Message-Id: <1522182014-7338-2-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522182014-7338-1-git-send-email-richard.gong@linux.intel.com>
-References: <1522182014-7338-1-git-send-email-richard.gong@linux.intel.com>
+       spf=pass (google.com: domain of kernel-hardening-return-12766-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12766-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Igor Stoppa <igor.stoppa@huawei.com>
+To: <willy@infradead.org>, <keescook@chromium.org>, <mhocko@kernel.org>
+CC: <david@fromorbit.com>, <rppt@linux.vnet.ibm.com>, <labbott@redhat.com>,
+	<linux-security-module@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-hardening@lists.openwall.com>,
+	<igor.stoppa@gmail.com>, Igor Stoppa <igor.stoppa@huawei.com>
+Subject: [RFC PATCH v21 0/6] mm: security: ro protection for dynamic data
+Date: Tue, 27 Mar 2018 18:37:36 +0300
+Message-ID: <20180327153742.17328-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.122.225.51]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596123727148714212?=
-X-GMAIL-MSGID: =?utf-8?q?1596123727148714212?=
+X-GMAIL-THRID: =?utf-8?q?1596105811324274585?=
+X-GMAIL-MSGID: =?utf-8?q?1596105811324274585?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Richard Gong <richard.gong@intel.com>
+This patch-set introduces the possibility of protecting memory that has
+been allocated dynamically.
 
-Add a device tree binding for the Intel Stratix10 service layer driver
+The memory is managed in pools: when a memory pool is protected, all the
+memory that is currently part of it, will become R/O.
 
-Signed-off-by: Richard Gong <richard.gong@intel.com>
-Signed-off-by: Alan Tull <atull@kernel.org>
----
-v2: Change to put service layer driver node under the firmware node
-    Change compatible to "intel, stratix10-svc"
-v3: No change
----
- .../bindings/firmware/intel,stratix10-svc.txt      | 57 ++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+A R/O pool can be expanded (adding more protectable memory).
+It can also be destroyed, to recover its memory, but it cannot be
+turned back into R/W mode.
 
-diff --git a/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
-new file mode 100644
-index 0000000..1fa6606
---- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
-@@ -0,0 +1,57 @@
-+Intel Service Layer Driver for Stratix10 SoC
-+============================================
-+Intel Stratix10 SoC is composed of a 64 bit quad-core ARM Cortex A53 hard
-+processor system (HPS) and Secure Device Manager (SDM). When the FPGA is
-+configured from HPS, there needs to be a way for HPS to notify SDM the
-+location and size of the configuration data. Then SDM will get the
-+configuration data from that location and perform the FPGA configuration.
-+
-+To meet the whole system security needs and support virtual machine requesting
-+communication with SDM, only the secure world of software (EL3, Exception
-+Layer 3) can interface with SDM. All software entities running on other
-+exception layers must channel through the EL3 software whenever it needs
-+service from SDM.
-+
-+Intel Stratix10 service layer driver, running at privileged exception level
-+(EL1, Exception Layer 1), interfaces with the service providers and provides
-+the services for FPGA configuration, QSPI, Crypto and warm reset. Service layer
-+driver also manages secure monitor call (SMC) to communicate with secure monitor
-+code running in EL3.
-+
-+Required properties:
-+-------------------
-+The svc node has the following mandatory properties, must be located under
-+the firmware node.
-+
-+- compatible: "intel,stratix10-svc"
-+- method: smc or hvc
-+        smc - Secure Monitor Call
-+        hvc - Hypervisor Call
-+- memory-region:
-+	phandle to the reserved memory node. See
-+	Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-+	for details
-+
-+Example:
-+-------
-+
-+	reserved-memory {
-+                #address-cells = <2>;
-+                #size-cells = <2>;
-+                ranges;
-+
-+                service_reserved: svcbuffer@0 {
-+                        compatible = "shared-dma-pool";
-+                        reg = <0x0 0x0 0x0 0x1000000>;
-+                        alignment = <0x1000>;
-+                        no-map;
-+                };
-+        };
-+
-+	firmware {
-+		svc {
-+			compatible = "intel,stratix10-svc";
-+			method = "smc";
-+			memory-region = <&service_reserved>;
-+		};
-+	};
+This is intentional. This feature is meant for data that doesn't need
+further modifications after initialization.
+
+However the data might need to be released, for example as part of module
+unloading. The pool, therefore, can be destroyed.
+
+An example is provided, in the form of self-testing.
+
+Changes since v20:
+
+[http://www.openwall.com/lists/kernel-hardening/2018/03/27/2]
+
+* removed the align_order parameter from allocation functions
+* improved documentation with more explanation
+* fixed lkdt test
+* reworked the destroy function, removing a possible race with
+  use-after-free code.
+
+
+Igor Stoppa (6):
+  struct page: add field for vm_struct
+  vmalloc: rename llist field in vmap_area
+  Protectable Memory
+  Pmalloc selftest
+  lkdtm: crash on overwriting protected pmalloc var
+  Documentation for Pmalloc
+
+ Documentation/core-api/index.rst   |   1 +
+ Documentation/core-api/pmalloc.rst | 107 +++++++++++++++
+ drivers/misc/lkdtm.h               |   1 +
+ drivers/misc/lkdtm_core.c          |   3 +
+ drivers/misc/lkdtm_perms.c         |  25 ++++
+ include/linux/mm_types.h           |   1 +
+ include/linux/pmalloc.h            | 166 +++++++++++++++++++++++
+ include/linux/test_pmalloc.h       |  24 ++++
+ include/linux/vmalloc.h            |   5 +-
+ init/main.c                        |   2 +
+ mm/Kconfig                         |  16 +++
+ mm/Makefile                        |   2 +
+ mm/pmalloc.c                       | 264 +++++++++++++++++++++++++++++++++++++
+ mm/test_pmalloc.c                  | 136 +++++++++++++++++++
+ mm/usercopy.c                      |  33 +++++
+ mm/vmalloc.c                       |  10 +-
+ 16 files changed, 791 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/core-api/pmalloc.rst
+ create mode 100644 include/linux/pmalloc.h
+ create mode 100644 include/linux/test_pmalloc.h
+ create mode 100644 mm/pmalloc.c
+ create mode 100644 mm/test_pmalloc.c
+
 -- 
-2.7.4
+2.14.1
