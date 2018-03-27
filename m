@@ -1,51 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752168AbeC0L5g (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 07:57:36 -0400
-Received: from mga18.intel.com ([134.134.136.126]:4490 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751137AbeC0L5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 07:57:34 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,367,1517904000";
-   d="scan'208";a="28800979"
-Date: Tue, 27 Mar 2018 17:31:46 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: sean.wang@mediatek.com
-Cc: dan.j.williams@intel.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/3] add support for Mediatek High-Speed DMA
- controller on MT7622 and MT7623 SoC
-Message-ID: <20180327120146.GI15443@localhost>
-References: <cover.1521098171.git.sean.wang@mediatek.com>
+        id S1752086AbeC0L7I (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 07:59:08 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:33626 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751187AbeC0L7F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 07:59:05 -0400
+X-Google-Smtp-Source: AG47ELvP8eTaWYglegDvyMv7anO6arFhDIKKvKCxYaJS51XPPHeFo2reJT33UlhWac1LniEmbgKx+/leYpiO9npMkQk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1521098171.git.sean.wang@mediatek.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
+References: <20180315224202.96668-1-dmitry.torokhov@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 27 Mar 2018 13:59:04 +0200
+Message-ID: <CACRpkdbCqYF-OsmsHFrY5H56oS=FepVFJRqvCM7yj9Ox4E6SEA@mail.gmail.com>
+Subject: Re: [RFC 0/4] gpio-backlight: remove platform data support
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, linux-fbdev@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-sh@vger.kernel.org, Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 03:40:34PM +0800, sean.wang@mediatek.com wrote:
-> From: Sean Wang <sean.wang@mediatek.com>
-> 
-> 
-> This patchset introduces support for MediaTek High-Speed DMA controller
-> (MTK-HSDMA) Currently, the driver is already tested successfully with
-> dmatest module on MT7622 and MT7623 SoC. 
-> 
-> MTK-HSDMA on MT7622/23 SoC has a single ring which is dedicated for
-> doing memory-to-memory transfer through ring-based descriptor management.
-> Even though there is only a single ring available inside HSDMA, the
-> driver is being extended to the support for multiple virtual channels
-> processing simultaneously by means of DMA_VIRTUAL_CHANNELS.
+On Thu, Mar 15, 2018 at 11:41 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-Applied all, thanks
+> This series attempts to remove platform data support from gpio_blackllist
+> driver
 
--- 
-~Vinod
+We really need a GPIO blacklist driver in the kernel, but for
+not let's fix backlight :D :D
+
+> and switch it over to generic device properties/GPIO tables.
+
+This series:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+> Please note that I do not have the hardware (do we even care about
+> ecovec24? I'd like to rip out platform data support from tsc2007 as
+> well, but ecovec24 is using custom pendown handler and GPIOs have
+> to be switched off from interrupt mode to GPIO and back in that
+> pendown handler, which is all quite messy. If we do not care about
+> this board I'd much rather removed that custom pendown).
+
+I am also struggling with refactoring of board files, all over the place.
+At least Arnd deleted the Blackfin stuff now, but the misc ARM board
+and MIPS stuff still give me the creeps sometimes.
+
+I guess if maintainers of the boards are not there to even ACK
+patches we can propose patches to simply delete them.
+
+Yours,
+Linus Walleij
