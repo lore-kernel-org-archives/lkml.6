@@ -1,47 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752180AbeC0Wnw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 18:43:52 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:44451 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751874AbeC0Wnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 18:43:50 -0400
-Date: Wed, 28 Mar 2018 00:43:48 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Mike Looijmans <mike.looijmans@topic.nl>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, f.fainelli@gmail.com, robh+dt@kernel.org,
-        frowand.list@gmail.com
-Subject: Re: [PATCH v3 0/2] of_net: Implement of_get_nvmem_mac_address helper
-Message-ID: <20180327224348.GA23320@lunn.ch>
-References: <1521815074-30424-1-git-send-email-mike.looijmans@topic.nl>
- <20180323151101.GB24361@lunn.ch>
- <1522046489-19652-1-git-send-email-mike.looijmans@topic.nl>
- <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
+        id S1752322AbeC0WoN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 18:44:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59088 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752204AbeC0WoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 18:44:11 -0400
+Subject: [PATCH net-next 0/6] rxrpc: Fixes
+From: David Howells <dhowells@redhat.com>
+To: netdev@vger.kernel.org
+Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 27 Mar 2018 23:44:05 +0100
+Message-ID: <152219064515.24098.9428175357244257284.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522144346-32367-1-git-send-email-mike.looijmans@topic.nl>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 11:52:24AM +0200, Mike Looijmans wrote:
-> Posted this as a small set now, with an (optional) second patch that shows
-> how the changes work and what I've used to test the code on a Topic Miami board.
-> 
-> v3: Add patch that implements mac in nvmem for the Cadence MACB controller
->     Remove the integrated of_get_mac_address call
-> 
-> v2: Use of_nvmem_cell_get to avoid needing the assiciated device
->     Use void* instead of char*
->     Add devicetree binding doc
 
-Hi Mike
+Here are six patches for AF_RXRPC:
 
-This looks good now, thanks.
+ (1) Fix the use of VERSION packets to keep firewall routes open.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+ (2) Fix the incorrect current time usage in a tracepoint.
 
-    Andrew
+ (3) Fix Tx ring annotation corruption.
+
+ (4) Fix accidental conversion of call-level abort into connection-level
+     abort.
+
+ (5) Fix calculation of resend time.
+
+ (6) Remove a couple of unused variables.
+
+The patches are tagged here:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+	rxrpc-fixes-20180327
+
+and can also be found on the following branch:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=rxrpc-fixes
+
+David
+---
+David Howells (4):
+      rxrpc: Fix firewall route keepalive
+      rxrpc: Fix a bit of time confusion
+      rxrpc: Fix Tx ring annotation after initial Tx failure
+      rxrpc: Don't treat call aborts as conn aborts
+
+Marc Dionne (1):
+      rxrpc: Fix resend event time calculation
+
+Sebastian Andrzej Siewior (1):
+      rxrpc: remove unused static variables
+
+
+ net/rxrpc/af_rxrpc.c    |    4 ++
+ net/rxrpc/ar-internal.h |   14 ++++++-
+ net/rxrpc/call_event.c  |    4 +-
+ net/rxrpc/conn_event.c  |    3 +
+ net/rxrpc/input.c       |   17 +++++---
+ net/rxrpc/net_ns.c      |   21 ++++++++++
+ net/rxrpc/output.c      |   59 ++++++++++++++++++++++++++++-
+ net/rxrpc/peer_event.c  |   96 +++++++++++++++++++++++++++++++++++++++++++++++
+ net/rxrpc/peer_object.c |    7 +++
+ net/rxrpc/rxkad.c       |    2 +
+ net/rxrpc/security.c    |    3 -
+ net/rxrpc/sendmsg.c     |    4 +-
+ 12 files changed, 218 insertions(+), 16 deletions(-)
