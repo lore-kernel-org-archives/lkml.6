@@ -1,66 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752904AbeC0ODU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 10:03:20 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:43648 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752663AbeC0ODS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:03:18 -0400
-Date: Tue, 27 Mar 2018 16:03:10 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Murali Karicheri <m-karicheri2@ti.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, ssantosh@kernel.org,
-        malat@debian.org, w-kwok2@ti.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        davem@davemloft.net, netdev@vger.kernel.org
-Subject: Re: [net-next PATCH 2/5] soc: ti: K2G: provide APIs to support
- driver probe deferral
-Message-ID: <20180327140310.GK5862@lunn.ch>
-References: <1522095312-23249-1-git-send-email-m-karicheri2@ti.com>
- <1522095312-23249-3-git-send-email-m-karicheri2@ti.com>
- <20180326204802.GC5862@lunn.ch>
- <4aeeda56-c68b-cb64-1314-a669f721ff20@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4aeeda56-c68b-cb64-1314-a669f721ff20@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1752315AbeC0OE0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 10:04:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35916 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750914AbeC0OEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 10:04:24 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [RFC v2 00/12] KVM: arm/arm64: Allow multiple GICv3 redistributor regions
+Date: Tue, 27 Mar 2018 16:04:04 +0200
+Message-Id: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Could you please elaborate? These knav dma and qmss drivers are
-> introduced to support packet DMA hardware available in Keystone
-> NetCP which couldn't be implemented using the DMA APIs available
-> at the time this driver was introduced. Another reason was that
-> the performance was really bad. We had an internal implementation
-> based on DMA API before which couldn't be upstreamed at that time
-> due to the reason that we were mis-using the API for this driver.
-> So we introduced these knav_dma driver to support NetCP. We don't
-> have any plan to re-write the driver at this time.
-> 
-> If your question is about EPROBE_DEFER being returned from an
-> existing knav_dma API and using the return code to achieve probe
-> defer instead of introducing these APIs, I can take a look into
-> that and respond. So please clarify.
- 
-Hi Murali
+At the moment the KVM VGICv3 only supports a single redistributor
+region (whose base address is set through the GICv3 kvm device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST). There,
+all the redistributors are laid out contiguously. The size of this
+single redistributor region is not set explicitly but instead
+induced at a late stage by the number of online vcpus.
 
-So if i understood you right, at the time these drivers were written,
-the linux DMA API did not do what you wanted. You could hack something
-together by using the API wrongly, but that could not be mainlined. So
-rather than fixing the DMA API to make it work for this hardware, you
-ignored it, and made up your own API? This API now has its own
-problems, it does not correctly handle ordering? So you are hacking
-your own API further.
+The GIC specification does not mandate all redistributors to be
+contiguous. Moreover DT and ACPI were specified so that multiple
+redistributors regions can be defined.
 
-Does the Linux DMA API correctly handle probing order issues? Has the
-Linux DMA API evolved so that it now does do what is needed by your
-hardware?
+The current interface brings a limitation on QEMU where ARM
+virt machine available GPA holes only allowed to assign a
+redistributor region fitting a max of 123 vcpus. Overcoming this
+limitation would force either to create a new machine or relocate
+the single rdist region or allow the allocation of multiple rdist
+regions.
 
-If this was an old hardware which is slowly going away, it would not
-be an issue. But it seems like there are new variants of the hardware
-being released. So maybe you should go back and re-write the DMA
-driver, rather than paper over the cracks?
+This series enables this last alternative. A new GICv3 KVM device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION allows
+to register individual redistributor regions whose size is defined
+explicitly. Those rdist regions then are filled by vcpu rdist frames
+according to the need. The vgic init and related base address checks
+are impacted.
 
-	Andrew
+Best Regards
+
+Eric
+
+Git: complete series available at
+https://github.com/eauger/linux/tree/4.16-rc7-rdist-regions-rfc-v2
+Previous version:
+https://github.com/eauger/linux/tree/v4.16-rc5-rdist-regions-rfc
+
+History:
+- Rework the uapi. Only bits [51:16] of the redist region are
+  exposed. Also a new flags field was introduced
+- Do not store the last bit in the vgic_cpu struct anymore
+- remove dist->spis check in 1st patch
+- add last patch to bump VGIC_V3_MAX_CPUS to 512
+- advertise the new attribute
+
+Eric Auger (12):
+  KVM: arm/arm64: Set dist->spis to NULL after kfree
+  KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Replace the single rdist region by a list
+  KVM: arm/arm64: Helper to locate free rdist index
+  KVM: arm/arm64: Revisit Redistributor TYPER last bit computation
+  KVM: arm/arm64: Helper to register a new redistributor region
+  KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
+  KVM: arm/arm64: Check vcpu redist base before registering an iodev
+  KVM: arm/arm64: Check all vcpu redistributors are set on map_resources
+  KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
+
+ Documentation/virtual/kvm/devices/arm-vgic-v3.txt |  18 ++++
+ arch/arm/include/uapi/asm/kvm.h                   |   7 +-
+ arch/arm64/include/uapi/asm/kvm.h                 |   7 +-
+ include/kvm/arm_vgic.h                            |  16 ++-
+ virt/kvm/arm/vgic/vgic-init.c                     |  20 +++-
+ virt/kvm/arm/vgic/vgic-kvm-device.c               |  53 +++++++++-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c                  | 116 +++++++++++++++++++---
+ virt/kvm/arm/vgic/vgic-v3.c                       |  87 ++++++++++++----
+ virt/kvm/arm/vgic/vgic.h                          |  34 ++++++-
+ 9 files changed, 308 insertions(+), 50 deletions(-)
+
+-- 
+2.5.5
