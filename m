@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+3kulHGnC6nUMgdY4rvXuSLLE12IEcrVddo/NNZiLRGQPqwTLMbOgUNDwd2ZXAjNbD2JGL
-ARC-Seal: i=1; a=rsa-sha256; t=1522168509; cv=none;
+X-Google-Smtp-Source: AIpwx4+s2rogd/603Uqgenoxkl/ZhtGJ9c5PVclsMgz9LL+UgpABHOjk55rXrGIXWW7OCgqMtVDx
+ARC-Seal: i=1; a=rsa-sha256; t=1522168506; cv=none;
         d=google.com; s=arc-20160816;
-        b=PuGaXYrUphoJJucakz0XvgGo6Eksnje8cORTgSOXOWrJi7OiQKeJa3sTf7b0CayRt+
-         Shi8FJ+Y9PsSWYg8p99WoJN6HZ5KIvD14JGB5yKhpj/PkbPFWWlaJDPhZMUKi3zmc18S
-         +I+REQGdNzI5ajAZRTv5U8J/vdmKeykn+14q9DBhwi58AIJl0lmhUAUTnF07/U/oxYI+
-         8YeChmFs6rcvBdjq43QhQ1jteESlM/LqFOZnMv/PLlbW6pDdt6TSN3T1jLAOHWS18NN6
-         4t3fZc8f62QjqxFmHiO34G3ZPpD9BxTTYd/2zd7VWSE+elP3npKN/IZcp0EjVLx6nBXC
-         waKA==
+        b=R0UcC+UkDdwoICz+LciEBfV6V+ffKs4Hd5EglivIQY47ZrZBkw1Ercl9bojPm3Dl6c
+         EH23T9y0Bl+bkRI7vsZVv/xYJ+ixAUfp/59OQttVnmmhJr1f9t6FdJr5XOoDp5aScFS5
+         wls+Q9EEo7QbE/0N+PWn2DihIcURvoJnrXIOGQolIJdxPnw+CTUDbw3KniTxUF+lkkHZ
+         C6UvH9fZoMezMr1ThVcBuAGiFB7G92bEzNQGu9QSWGIBA6piO0CjCxNdhMzBPRkfL2AR
+         4/LGUB+qu8sJOBcQlGhUwEd1oZ3mqfWXlakvqp6rBWIgdqTplCvAZDZYP04WoL/2t+6O
+         QOgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZrxYz/gUm33Gv7DZB7Jnw+cvqXPZGIDjK5tudDYeUnE=;
-        b=I2MHyVhxmcbRHF8HS0jfc//+GAKq3s9+Iq5JuvbJ2usWm/9G7f1ooD1ABtFImHwTGF
-         r8C9u5TkBz2QSKCeV5B6iZdZnrBm2ul//u2QDOqnb5/wQ4GA7KyAkmEvzRR3N69RQg6z
-         aX0FRw6H7QTx1Smc9gIWqtXPmQAzc756lJ2p3Gby7GkqUCy7vnufDxO5HG5fgiejlbYL
-         R/As+vTlFKf4B67zvuqgj7JdCyi2T/lh5QWYbFRZbR8mIE/TkGBiraQk56jsdCIGc796
-         zWx+AQEy5/GPeqS2dZXN2i67kkmUhCqwP1kEefBiPYOV2CtBLhIPEm+i4CkmMw+Wj6uj
-         xyIw==
+        bh=8akEMqmx1c7TUBq2lcFHdguNtfb6XFkQTjBVckdrDnI=;
+        b=DyM8gBABdRZRjhPoevrZ1stM0SNkJi1ZiT+Zs54IBkllcjxEoFcj1cDkX93j6melhs
+         ULLWgpfayoOUW1yaDqDn2PfKGOHuCZslnaSdZvijRQbRUY4gqfX1q8lQfLih/e2spbEe
+         dF1P2Kvd7e1DAc91KEHCB6ke7GzFDGb6Occ9ffNKYRHibYYdsAA4MsLErtL4mlR68AV3
+         rTd1Qz+ZNwTxBG2He6xIZzev6Z2N5JGBEyPMMx6iDZy0lKKPp+PkhizR/ucnbiBk+zNF
+         6gxt4+SvqgQ0qlvOOhvPJ1elLdczVNzraXFp4aBlXaJ7E5hzP5vQUYWI0KCopqPacoAv
+         IGfg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+2f69ca28df61bdfc77cd36af2e789850355a221e@syzkaller.appspotmail.com,
+	syzbot+f7b556d1766502a69d85071d2ff08bd87be53d0f@syzkaller.appspotmail.com,
 	Eric Biggers <ebiggers@google.com>,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.14 036/101] libata: dont try to pass through NCQ commands to non-NCQ devices
-Date: Tue, 27 Mar 2018 18:27:08 +0200
-Message-Id: <20180327162752.221720085@linuxfoundation.org>
+Subject: [PATCH 4.14 035/101] libata: remove WARN() for DMA or PIO command without data
+Date: Tue, 27 Mar 2018 18:27:07 +0200
+Message-Id: <20180327162752.149396434@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109179007553871?=
-X-GMAIL-MSGID: =?utf-8?q?1596109367399634547?=
+X-GMAIL-THRID: =?utf-8?q?1596109047910699948?=
+X-GMAIL-MSGID: =?utf-8?q?1596109363999411516?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,20 +52,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Biggers <ebiggers@google.com>
 
-commit 2c1ec6fda2d07044cda922ee25337cf5d4b429b3 upstream.
+commit 9173e5e80729c8434b8d27531527c5245f4a5594 upstream.
 
-syzkaller hit a WARN() in ata_bmdma_qc_issue() when writing to /dev/sg0.
-This happened because it issued an ATA pass-through command (ATA_16)
-where the protocol field indicated that NCQ should be used -- but the
-device did not support NCQ.
+syzkaller hit a WARN() in ata_qc_issue() when writing to /dev/sg0.  This
+happened because it issued a READ_6 command with no data buffer.
 
-We could just remove the WARN() from libata-sff.c, but the real problem
-seems to be that the SCSI -> ATA translation code passes through NCQ
-commands without verifying that the device actually supports NCQ.
+Just remove the WARN(), as it doesn't appear indicate a kernel bug.  The
+expected behavior is to fail the command, which the code does.
 
-Fix this by adding the appropriate check to ata_scsi_pass_thru().
-
-Here's reproducer that works in QEMU when /dev/sg0 refers to a disk of
+Here's a reproducer that works in QEMU when /dev/sg0 refers to a disk of
 the default type ("82371SB PIIX3 IDE"):
 
     #include <fcntl.h>
@@ -73,38 +68,31 @@ the default type ("82371SB PIIX3 IDE"):
 
     int main()
     {
-            char buf[53] = { 0 };
+            char buf[42] = { [36] = 0x8 /* READ_6 */ };
 
-	    buf[36] = 0x85;		/* ATA_16 */
-	    buf[37] = (12 << 1);	/* FPDMA */
-	    buf[38] = 0x1;		/* Has data */
-	    buf[51] = 0xC8;		/* ATA_CMD_READ */
             write(open("/dev/sg0", O_RDWR), buf, sizeof(buf));
     }
 
-Fixes: ee7fb331c3ac ("libata: add support for NCQ commands for SG interface")
-Reported-by: syzbot+2f69ca28df61bdfc77cd36af2e789850355a221e@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org> # v4.4+
+Fixes: f92a26365a72 ("libata: change ATA_QCFLAG_DMAMAP semantics")
+Reported-by: syzbot+f7b556d1766502a69d85071d2ff08bd87be53d0f@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org> # v2.6.25+
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-scsi.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/ata/libata-core.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -3315,6 +3315,12 @@ static unsigned int ata_scsi_pass_thru(s
- 		goto invalid_fld;
- 	}
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -5391,8 +5391,7 @@ void ata_qc_issue(struct ata_queued_cmd
+ 	 * We guarantee to LLDs that they will have at least one
+ 	 * non-zero sg if the command is a data command.
+ 	 */
+-	if (WARN_ON_ONCE(ata_is_data(prot) &&
+-			 (!qc->sg || !qc->n_elem || !qc->nbytes)))
++	if (ata_is_data(prot) && (!qc->sg || !qc->n_elem || !qc->nbytes))
+ 		goto sys_err;
  
-+	/* We may not issue NCQ commands to devices not supporting NCQ */
-+	if (ata_is_ncq(tf->protocol) && !ata_ncq_enabled(dev)) {
-+		fp = 1;
-+		goto invalid_fld;
-+	}
-+
- 	/* sanity check for pio multi commands */
- 	if ((cdb[1] & 0xe0) && !is_multi_taskfile(tf)) {
- 		fp = 1;
+ 	if (ata_is_dma(prot) || (ata_is_pio(prot) &&
