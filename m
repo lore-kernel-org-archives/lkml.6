@@ -1,89 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752309AbeC0KXQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 06:23:16 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39830 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752254AbeC0KXO (ORCPT
+        id S1752477AbeC0KZc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 06:25:32 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:38392 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752394AbeC0KZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 06:23:14 -0400
-X-Google-Smtp-Source: AG47ELsygEQe8ur66M5ZV2Ll6RfDXjxH7KZfOjLDG9EGNGSUwKGz9otfgRwJDsE2IhAJmdgnAZNh9Q==
-Subject: Re: [PATCH 4.14 000/109] 4.14.28-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Backlund <tmb@mageia.org>
-Cc: Kash Pande <kash@tripleback.net>, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuahkh@osg.samsung.com, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20180316152329.844663293@linuxfoundation.org>
- <7ec4a6aa-72cb-9fb6-5168-d1c4d49f1a6c@tripleback.net>
- <20180319182032.GA23774@roeck-us.net>
- <6b6fca54-9cd9-3c62-6c0f-b5e8477947ac@tripleback.net>
- <20180327062808.GC28908@kroah.com>
- <7e14038c-23c2-80b6-9c93-7843cbb5c36f@roeck-us.net>
- <286aa785-7de8-ddf6-5fdb-55312aaa9422@mageia.org>
- <20180327084537.GA20469@kroah.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <db9a9449-03f9-ee83-ea4d-e2e0bccd482f@roeck-us.net>
-Date: Tue, 27 Mar 2018 03:23:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 27 Mar 2018 06:25:31 -0400
+X-Google-Smtp-Source: AG47ELuY6a5EYiEdpEt7s5D6AaKqCKwLZpb9SzdJWOzoyFVcZW67QDv18As9AinHFlozOTqw9BWYbg==
+Date: Tue, 27 Mar 2018 12:25:21 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH for-4.17 2/2] powerpc: Remove smp_mb() from
+ arch_spin_is_locked()
+Message-ID: <20180327102521.GA7347@andrea>
+References: <1522060667-7034-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <1522109216.7364.30.camel@kernel.crashing.org>
 MIME-Version: 1.0
-In-Reply-To: <20180327084537.GA20469@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522109216.7364.30.camel@kernel.crashing.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/27/2018 01:45 AM, Greg Kroah-Hartman wrote:
-> On Tue, Mar 27, 2018 at 11:33:00AM +0300, Thomas Backlund wrote:
->> Den 27.03.2018 kl. 09:37, skrev Guenter Roeck:
->>> On 03/26/2018 11:28 PM, Greg Kroah-Hartman wrote:
->>>> On Mon, Mar 26, 2018 at 01:54:18PM -0400, Kash Pande wrote:
->>>>> On 2018-03-19 02:20 PM, Guenter Roeck wrote:
->>>>>> Ryzen and Threadripper are only supported in v4.15+.
->>>>>
->>>>>
->>>>> Nope, the offset for 1900X is not available in 4.15, I've had to
->>>>> manually patch all systems otherwise monitoring complains they
->>>>> idle at 53C.
->>>>
->>>> I don't understand, what patch are you talking about here?
->>>>
->>>
->>> 6509614fdd2d, but you'll also want aef17ca12719 if that isn't queued
->>> already.
->>>
->>> Guenter
->>>
->>
->> And if you ant it to work in 4.14 longterm, you want the series:
->>
->> 68546abf7a3a63f199e53d6dcaa7375df37a6aaa  hwmon: (k10temp) Move chip
->> specific code into probe function
->> 9af0a9aecdb945cd5513941ffdcbcc031009b402  hwmon: (k10temp) Add support for
->> family 17h
->> 1b50b776355fa6c6d7b3281a63c275d5c18d629d  hwmon: (k10temp) Add support for
->> temperature offsets
->> ab5ee24615f9dd8b0cd199403959f8b13309e7b1  hwmon: (k10temp) Correct model
->> name for Ryzen 1600X
->> 6509614fdd2d05c6926d50901a45d5dfb852b715  hwmon: (k10temp) Add temperature
->> offset for Ryzen 1900X
->> aef17ca1271948ee57cc39b2493d31110cc42625  hwmon: (k10temp) Only apply
->> temperature offset if result is positive
->>
->>
->> We have it in Mageia, and I've confirmed it works on a Ryzen 7 1700 and
->> ThreadRipper 1950X
+On Tue, Mar 27, 2018 at 11:06:56AM +1100, Benjamin Herrenschmidt wrote:
+> On Mon, 2018-03-26 at 12:37 +0200, Andrea Parri wrote:
+> > Commit 51d7d5205d338 ("powerpc: Add smp_mb() to arch_spin_is_locked()")
+> > added an smp_mb() to arch_spin_is_locked(), in order to ensure that
+> > 
+> > 	Thread 0			Thread 1
+> > 
+> > 	spin_lock(A);			spin_lock(B);
+> > 	r0 = spin_is_locked(B)		r1 = spin_is_locked(A);
+> > 
+> > never ends up with r0 = r1 = 0, and reported one example (in ipc/sem.c)
+> > relying on such guarantee.
+> > 
+> > It's however understood (and undocumented) that spin_is_locked() is not
+> > required to ensure such ordering guarantee,
 > 
-> I'd like an ack from the hwmon maintainer before adding all of those, as
-> it really feels like a "backport new hardware support" type of request
-> that is a bit bigger than a normal "add some new device ids and quirks".
-> 
-That is why I did not request it. It is ok with me if you are willing to
-accept it, though.
+> Shouldn't we start by documenting it ?
 
-Guenter
+I do sympathize with your concern about the documentation! ;) The patch in
+[1] was my (re)action to this concern; the sort of the patch is unclear to
+me by this time (and I'm not aware of other proposals in this respect).
+
+
+> 
+> >  guarantee that is currently
+> > _not_ provided by all implementations/arch, and that callers relying on
+> > such ordering should instead use suitable memory barriers before acting
+> > on the result of spin_is_locked().
+> > 
+> > Following a recent auditing[1] of the callers of {,raw_}spin_is_locked()
+> > revealing that none of them are relying on this guarantee anymore, this
+> > commit removes the leading smp_mb() from the primitive thus effectively
+> > reverting 51d7d5205d338.
+> 
+> I would rather wait until it is properly documented. Debugging that IPC
+> problem took a *LOT* of time and energy, I wouldn't want these issues
+> to come and bite us again.
+
+I understand. And I'm grateful for this debugging as well as for the (IMO)
+excellent account of it you provided in 51d7d5205d338.
+
+Said this ;) I cannot except myself from saying that I would probably have
+resisted that solution (adding an smp_mb() in my arch_spin_is_locked), and
+instead "blamed"/suggested that caller to fix his memory ordering...
+
+  Andrea
+
+
+> 
+> > [1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
+> > 
+> > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > Cc: Paul Mackerras <paulus@samba.org>
+> > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > ---
+> >  arch/powerpc/include/asm/spinlock.h | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
+> > index b9ebc3085fb79..ecc141e3f1a73 100644
+> > --- a/arch/powerpc/include/asm/spinlock.h
+> > +++ b/arch/powerpc/include/asm/spinlock.h
+> > @@ -67,7 +67,6 @@ static __always_inline int arch_spin_value_unlocked(arch_spinlock_t lock)
+> >  
+> >  static inline int arch_spin_is_locked(arch_spinlock_t *lock)
+> >  {
+> > -	smp_mb();
+> >  	return !arch_spin_value_unlocked(*lock);
+> >  }
+> >  
