@@ -1,146 +1,84 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4/p7W06fcZwgnJxUZxdZJjceVUq9KUioaabunSl48sMddfeyoXH7UQT5dbIfo9PG1YY6zFX
-ARC-Seal: i=1; a=rsa-sha256; t=1522120962; cv=none;
+X-Google-Smtp-Source: AIpwx48/cek29Nm6G+t9SX9h+zGBZgnGGy8zYJxjewjdRW29nVio4BT1hSvWKo5Vllv5bPuw9+GL
+ARC-Seal: i=1; a=rsa-sha256; t=1522185598; cv=none;
         d=google.com; s=arc-20160816;
-        b=AMgkkmYjs6r/puLo7/E6fxd7FM27HXKIcko7mp1hTovBwuvwbi4tcoo5CZhaincU36
-         4dE7S3KnYy0uz7I+w4Yju7ChqcVX7vymXpi7hLJpTcayWNH4G6IyLwQcdKAy7AmR/MTo
-         pYd/hNZiIUUeZDicl8GRCIeBajc57ICJonrSstcP/6pWB4x45p1WKm6KAY3YHFQnzyFx
-         TM8trgb6teWKHBsiRbIC0Fov6xXY8oKpsXEfG65/y8TUpVmLWzuMPhCb49VtvYp45dWc
-         dTfWrcJCXESPUQ39cJjhIA6NbbZMVIdEIbmEkaQdiGK4+HBaxUoJre39ZmnV6HWus1VM
-         MIUg==
+        b=KPK9X/NVFoXGyCKus/fWg3eWtwUu5BKEgsTmonildRImXqONhMmt6mF+Ea227E1ImL
+         g9b+VIRmSXLx1bWPLNCexhyN7Qw9yT0ZwaV6FAXMwryg1zapjfvABoI8TjqaupVMhVB8
+         J7LeCyNJR0Lo2G/J3GQp8+KfG8UW720/kHXYUmRK847z9qrmfFOwEme3ojiVs3PhsH5P
+         af0YEWZk4QJLRsALR1PzqPnIK7gJiwjGxyn/0zt/GOWlfsyCnswBuHGNzJNMwkMMfM/I
+         OliqM4E9rJLp7YLBMM6CyPViT7cS8raHRqKwlfqnhInIH8Y7EXmZpGROg+rrqAtw1HHg
+         cRHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=WOxbaoN+7cC96I1++eLbmKbUdBXDgCRDJulouqhqv/Q=;
-        b=taQT3gOnRQEVYnCUZ0N5eV077HRQ4jh1TpvP65I4OjJfXQKpWmoUK0z3tBeX7+7hyz
-         +Ah6g/VkfO+oO8SfD9KKK1peGkO2K0EyMzf7x9YSkP6GPEgig2PWaZS9neIdwX/kFRuO
-         hosy+5sjq2LYgQxa6p2wZU7nShLC/uTC0WCWWMaY42jYHBjNRwiRjIoEqxPMpd5J8FVZ
-         UCnoeuNHvG6QWGHhUcgct1aU5nI+jh4qE3AbjtcKlJ4KMn707MsBml3Gs9OcxFbVz1WJ
-         xZ50Q/a7myzcDo4Yi06KgEgUwXEdplsNjEEFDf0MtZdEG+jMf4CoG2DEbr7/+6DDWCSo
-         tb6A==
+        h=list-id:precedence:sender:content-transfer-encoding
+         :content-language:in-reply-to:mime-version:user-agent:date
+         :message-id:from:references:cc:to:subject:arc-authentication-results;
+        bh=A/1Y66dywFKVhFUDeW6HkpHqq01ayHOWuuwGBMJdBwM=;
+        b=x/kmoSXRALM//dzxEMBEbzdpHQHy53O3WQ5s9MzXJH6eBy84Td4NjfnhH2dIUVhb/V
+         P758gwavpDwaRb9RtORC5qkXzhXL/V0L0qP4DKswmgmzkQ34LSAsdSSmASq6fXm5RVzf
+         NsP1/ijNrBAOA6R/o9nIGvGp3NpSPCzwcYQcVL4OYRgc6eMpN04HHrTHsWut25YyWLpW
+         XYN/XA2eUu2cWoDnue123pnAHZT/zBWFRbg28/kIa4ZAI54cEDYB4NJqM/Dpwsa4+Kgg
+         qYGo5IOktMM9g4eMgsqqjYTqvEpUvJMSzApXA6arJ1jCM2U9+hvvlxoOi3g6OIkZozlU
+         1o8A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752031AbeC0DVT (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Mon, 26 Mar 2018 23:21:19 -0400
-Received: from mga02.intel.com ([134.134.136.20]:63675 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751489AbeC0DVR (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Mon, 26 Mar 2018 23:21:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,366,1517904000";
-   d="scan'208";a="215125677"
-From: changbin.du@intel.com
-To: shuah@kernel.org
+        id S1751150AbeC0VTq (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Tue, 27 Mar 2018 17:19:46 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:37533 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751008AbeC0VTp (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:19:45 -0400
+Subject: Re: [PATCH v2 1/4] selftests/Makefile: append a slash to env variable
+ OUTPUT
+To: changbin.du@intel.com
 Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v2 1/4] selftests/Makefile: append a slash to env variable OUTPUT
-Date: Tue, 27 Mar 2018 11:11:31 +0800
-Message-Id: <1522120294-24926-2-git-send-email-changbin.du@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522120294-24926-1-git-send-email-changbin.du@intel.com>
+        Shuah Khan <shuahkh@osg.samsung.com>,
+        Shuah Khan <shuah@kernel.org>
 References: <1522120294-24926-1-git-send-email-changbin.du@intel.com>
+ <1522120294-24926-2-git-send-email-changbin.du@intel.com>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <b473e652-0953-63ec-c4bf-5c9306dc4f67@kernel.org>
+Date: Tue, 27 Mar 2018 15:19:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1522120294-24926-2-git-send-email-changbin.du@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596059510890150071?=
-X-GMAIL-MSGID: =?utf-8?q?1596059510890150071?=
+X-GMAIL-MSGID: =?utf-8?q?1596127286575845007?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Changbin Du <changbin.du@intel.com>
+On 03/26/2018 09:11 PM, changbin.du@intel.com wrote:
+> From: Changbin Du <changbin.du@intel.com>
+> 
+> The tools/build/Makefile.build use 'OUTPUT' variable as below example:
+> objprefix    := $(subst ./,,$(OUTPUT)$(dir)/)
+> 
+> So it requires the 'OUTPUT' already has a slash at the end.
+> 
+> This patch can kill below odd paths:
+> make[3]: Entering directory '/home/changbin/work/linux/tools/gpio'
+>   CC       /home/changbin/work/linux/tools/testing/selftests/gpiolsgpio.o
+>   CC       /home/changbin/work/linux/tools/testing/selftests/gpiogpio-utils.o
+>   LD       /home/changbin/work/linux/tools/testing/selftests/gpiolsgpio-in.o
+> 
+> A correct path should be:
+> /home/changbin/work/linux/tools/testing/selftests/gpio/lsgpio.o
+> 
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
 
-The tools/build/Makefile.build use 'OUTPUT' variable as below example:
-objprefix    := $(subst ./,,$(OUTPUT)$(dir)/)
+Are you seeing this when you run "make kselftest" - if gpio is the
+only test compile that fails, it should be fixed in gpio/Makefile,
+not is the common Makefile.
 
-So it requires the 'OUTPUT' already has a slash at the end.
-
-This patch can kill below odd paths:
-make[3]: Entering directory '/home/changbin/work/linux/tools/gpio'
-  CC       /home/changbin/work/linux/tools/testing/selftests/gpiolsgpio.o
-  CC       /home/changbin/work/linux/tools/testing/selftests/gpiogpio-utils.o
-  LD       /home/changbin/work/linux/tools/testing/selftests/gpiolsgpio-in.o
-
-A correct path should be:
-/home/changbin/work/linux/tools/testing/selftests/gpio/lsgpio.o
-
-Signed-off-by: Changbin Du <changbin.du@intel.com>
----
- tools/testing/selftests/Makefile | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 7442dfb..7916aa2 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -71,31 +71,31 @@ all:
- 	@for TARGET in $(TARGETS); do		\
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
- 		mkdir $$BUILD_TARGET  -p;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET;\
- 	done;
- 
- run_tests: all
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET run_tests;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET run_tests;\
- 	done;
- 
- hotplug:
- 	@for TARGET in $(TARGETS_HOTPLUG); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET;\
- 	done;
- 
- run_hotplug: hotplug
- 	@for TARGET in $(TARGETS_HOTPLUG); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET run_full_test;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET run_full_test;\
- 	done;
- 
- clean_hotplug:
- 	@for TARGET in $(TARGETS_HOTPLUG); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET clean;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET clean;\
- 	done;
- 
- run_pstore_crash:
-@@ -111,7 +111,7 @@ ifdef INSTALL_PATH
- 	mkdir -p $(INSTALL_PATH)
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET INSTALL_PATH=$(INSTALL_PATH)/$$TARGET install; \
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET INSTALL_PATH=$(INSTALL_PATH)/$$TARGET install; \
- 	done;
- 
- 	@# Ask all targets to emit their test scripts
-@@ -131,7 +131,7 @@ ifdef INSTALL_PATH
- 		echo "echo ; echo Running tests in $$TARGET" >> $(ALL_SCRIPT); \
- 		echo "echo ========================================" >> $(ALL_SCRIPT); \
- 		echo "cd $$TARGET" >> $(ALL_SCRIPT); \
--		make -s --no-print-directory OUTPUT=$$BUILD_TARGET -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
-+		make -s --no-print-directory OUTPUT=$$BUILD_TARGET/ -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
- 		echo "cd \$$ROOT" >> $(ALL_SCRIPT); \
- 	done;
- 
-@@ -143,7 +143,7 @@ endif
- clean:
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET clean;\
-+		make OUTPUT=$$BUILD_TARGET/ -C $$TARGET clean;\
- 	done;
- 
- .PHONY: all run_tests hotplug run_hotplug clean_hotplug run_pstore_crash install clean
--- 
-2.7.4
-
+thanks,
+-- Shuah
