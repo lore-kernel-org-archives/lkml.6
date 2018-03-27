@@ -1,71 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752031AbeC0VQx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 17:16:53 -0400
-Received: from mga01.intel.com ([192.55.52.88]:34366 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750965AbeC0VQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 17:16:52 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,368,1517904000";
-   d="scan'208";a="211819629"
-Date: Wed, 28 Mar 2018 05:15:58 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH v2 2/2] KVM: X86: Add Force Emulation Prefix for "emulate
- the next instruction"
-Message-ID: <201803280558.NGUoaoTS%fengguang.wu@intel.com>
-References: <1522141616-9825-3-git-send-email-wanpengli@tencent.com>
+        id S1752065AbeC0VSV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 17:18:21 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:38708 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750965AbeC0VSU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 17:18:20 -0400
+X-Google-Smtp-Source: AIpwx4/lwAwnG8zehqHITmA0ZVgcCkwD1yAt/W2PdUnb4pPdFKIb65kThgLcbw6s+kCgIXtcP+/BnQ==
+Date: Tue, 27 Mar 2018 14:18:17 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v9 06/24] mm: make pte_unmap_same compatible with SPF
+In-Reply-To: <1520963994-28477-7-git-send-email-ldufour@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1803271417510.31115@chino.kir.corp.google.com>
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-7-git-send-email-ldufour@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522141616-9825-3-git-send-email-wanpengli@tencent.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wanpeng,
+On Tue, 13 Mar 2018, Laurent Dufour wrote:
 
-Thank you for the patch! Perhaps something to improve:
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 2f3e98edc94a..b6432a261e63 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1199,6 +1199,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
+>  #define VM_FAULT_NEEDDSYNC  0x2000	/* ->fault did not modify page tables
+>  					 * and needs fsync() to complete (for
+>  					 * synchronous page faults in DAX) */
+> +#define VM_FAULT_PTNOTSAME 0x4000	/* Page table entries have changed */
+>  
+>  #define VM_FAULT_ERROR	(VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
+>  			 VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 21b1212a0892..4bc7b0bdcb40 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2309,21 +2309,29 @@ static bool pte_map_lock(struct vm_fault *vmf)
+>   * parts, do_swap_page must check under lock before unmapping the pte and
+>   * proceeding (but do_wp_page is only called after already making such a check;
+>   * and do_anonymous_page can safely check later on).
+> + *
+> + * pte_unmap_same() returns:
+> + *	0			if the PTE are the same
+> + *	VM_FAULT_PTNOTSAME	if the PTE are different
+> + *	VM_FAULT_RETRY		if the VMA has changed in our back during
+> + *				a speculative page fault handling.
+>   */
+> -static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
+> -				pte_t *page_table, pte_t orig_pte)
+> +static inline int pte_unmap_same(struct vm_fault *vmf)
+>  {
+> -	int same = 1;
+> +	int ret = 0;
+> +
+>  #if defined(CONFIG_SMP) || defined(CONFIG_PREEMPT)
+>  	if (sizeof(pte_t) > sizeof(unsigned long)) {
+> -		spinlock_t *ptl = pte_lockptr(mm, pmd);
+> -		spin_lock(ptl);
+> -		same = pte_same(*page_table, orig_pte);
+> -		spin_unlock(ptl);
+> +		if (pte_spinlock(vmf)) {
+> +			if (!pte_same(*vmf->pte, vmf->orig_pte))
+> +				ret = VM_FAULT_PTNOTSAME;
+> +			spin_unlock(vmf->ptl);
+> +		} else
+> +			ret = VM_FAULT_RETRY;
+>  	}
+>  #endif
+> -	pte_unmap(page_table);
+> -	return same;
+> +	pte_unmap(vmf->pte);
+> +	return ret;
+>  }
+>  
+>  static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
+> @@ -2913,7 +2921,8 @@ int do_swap_page(struct vm_fault *vmf)
+>  	int exclusive = 0;
+>  	int ret = 0;
 
-[auto build test WARNING on kvm/linux-next]
-[also build test WARNING on next-20180327]
-[cannot apply to v4.16-rc7]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Initialization is now unneeded.
 
-url:    https://github.com/0day-ci/linux/commits/Wanpeng-Li/KVM-X86-Add-Force-Emulation-Prefix-for-emulate-the-next-instruction/20180328-025804
-base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git linux-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+Otherwise:
 
-
-sparse warnings: (new ones prefixed by >>)
-
->> arch/x86/kvm/x86.c:149:20: sparse: symbol 'force_emulation_prefix' was not declared. Should it be static?
-   arch/x86/kvm/x86.c:2196:38: sparse: incorrect type in argument 1 (different address spaces) @@    expected void const [noderef] <asn:1>*<noident> @@    got d const [noderef] <asn:1>*<noident> @@
-   arch/x86/kvm/x86.c:2196:38:    expected void const [noderef] <asn:1>*<noident>
-   arch/x86/kvm/x86.c:2196:38:    got unsigned char [usertype] *
-   arch/x86/kvm/x86.c:7911:5: sparse: symbol 'kvm_valid_sregs' was not declared. Should it be static?
-   arch/x86/kvm/x86.c:8786:16: sparse: incompatible types in comparison expression (different address spaces)
-   arch/x86/include/asm/paravirt.h:783:9: sparse: context imbalance in 'vcpu_enter_guest' - unexpected unlock
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Acked-by: David Rientjes <rientjes@google.com>
