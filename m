@@ -1,74 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752349AbeC0CFo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 26 Mar 2018 22:05:44 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34084 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752040AbeC0CFn (ORCPT
+        id S1752399AbeC0CGT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 26 Mar 2018 22:06:19 -0400
+Received: from smtprelay0155.hostedemail.com ([216.40.44.155]:58463 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752128AbeC0CGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Mar 2018 22:05:43 -0400
-X-Google-Smtp-Source: AG47ELuwiUxl5q/NILMWopKZIQB9W8aSm1FGfz64I5K4/3VXQbfKhZYEghrxIh2epcJOxVoz8JTZ/w==
-Date: Tue, 27 Mar 2018 11:05:35 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: ndrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] zram: idle memory tracking
-Message-ID: <20180327020535.GB41148@rodete-desktop-imager.corp.google.com>
-References: <20180326064951.123940-1-minchan@kernel.org>
- <20180326064951.123940-2-minchan@kernel.org>
- <20180327004911.GA467@jagdpanzerIV>
- <20180327010347.GA41148@rodete-desktop-imager.corp.google.com>
- <20180327011327.GE467@jagdpanzerIV>
- <20180327014734.GG467@jagdpanzerIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180327014734.GG467@jagdpanzerIV>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 26 Mar 2018 22:06:18 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 10,1,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:965:988:989:1260:1277:1311:1313:1314:1345:1359:1373:1437:1515:1516:1518:1534:1538:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:2911:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:4321:4390:4425:5007:7903:8531:10007:10400:10848:11232:11658:11914:12663:12740:12760:12895:13069:13311:13357:13439:14659:21080:21212:21324:21326:21627:21740:30054:30070:30091,0,RBL:172.58.35.125:@perches.com:.lbl8.mailshell.net-62.8.0.190 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:1:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: frame62_36beb6614473e
+X-Filterd-Recvd-Size: 2018
+Message-ID: <1522116373.12357.42.camel@perches.com>
+Subject: Re: [PATCH 1/2] Move kfree_call_rcu() to slab_common.c
+From: Joe Perches <joe@perches.com>
+To: Rao Shoaib <rao.shoaib@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+        brouer@redhat.com, linux-mm@kvack.org
+Date: Mon, 26 Mar 2018 19:06:13 -0700
+In-Reply-To: <1e8c4382-b97f-659a-59fa-07c71efad970@oracle.com>
+References: <1514923898-2495-1-git-send-email-rao.shoaib@oracle.com>
+         <20180102222341.GB20405@bombadil.infradead.org>
+         <3be609d4-800e-a89e-f885-7e0f5d288862@oracle.com>
+         <20180104013807.GA31392@tardis>
+         <be1abd24-56c8-45bc-fecc-3f0c5b978678@oracle.com>
+         <64ca3929-4044-9393-a6ca-70c0a2589a35@oracle.com>
+         <20180104214658.GA20740@bombadil.infradead.org>
+         <3e4ea0b9-686f-7e36-d80c-8577401517e2@oracle.com>
+         <20180104231307.GA794@bombadil.infradead.org>
+         <20180104234732.GM9671@linux.vnet.ibm.com>
+         <20180105000707.GA22237@bombadil.infradead.org>
+         <1515134773.21222.13.camel@perches.com>
+         <1e8c4382-b97f-659a-59fa-07c71efad970@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 10:47:34AM +0900, Sergey Senozhatsky wrote:
-> On (03/27/18 10:13), Sergey Senozhatsky wrote:
-> > On (03/27/18 10:03), Minchan Kim wrote:
-> > > On Tue, Mar 27, 2018 at 09:49:11AM +0900, Sergey Senozhatsky wrote:
-> > > > On (03/26/18 15:49), Minchan Kim wrote:
-> > > > > zRam as swap is useful for small memory device. However, swap means
-> > > > > those pages on zram are mostly cold pages due to VM's LRU algorithm.
-> > > > > Especially, once init data for application are touched for launching,
-> > > > > they tend to be not accessed any more and finally swapped out.
-> > > > > zRAM can store such cold pages as compressed form but it's pointless
-> > > > > to keep in memory. Better idea is app developers free them directly
-> > > > > rather than remaining them on heap.
-> > > > > 
-> > > > > This patch tell us last accesss time of each block of zram via
-> > > > > "cat /sys/kernel/debug/zram/zram0/access_time".
-> > > > > 
-> > > > > The output is as follows,
-> > > > > 
-> > > > > 276 1250
-> > > > > 277 1800
-> > > > > ..  ..
-> > > > > ..  ..
-> > > > 
-> > > > So can we just use CONFIG_IDLE_PAGE_TRACKING + CONFIG_PAGE_OWNER?
-> > > 
-> > > The goal is not mapped memory tracking but one swapped out.
-> > > Can we do it by above two combination?
-> > 
-> > Ah, you are right. page_idle tracks only pages which are on LRU lists.
+On Mon, 2018-03-26 at 18:56 -0700, Rao Shoaib wrote:
+> Folks,
 > 
-> Can a universal (not specific to zram) idle swapped out page tracking
-> be of interest to MM people? With the exactly same motivation. Some
-> swaps use nfs, for instance, so idle swap pages tracking can be helpful
-> not only in embedded domain.
+> Is anyone working on resolving the check patch issue as I am waiting to 
+> resubmit my patch. Will it be fine if I submitted the patch with the 
+> original macro as the check is in-correct.
 
-If somebody outside of embedded has an interest in, sometime, he could.
-However, I doubt because swap is really hard part to get review because
-many people on current MM seem to not care. I guess they don't use swap
-heavily compared to old. That's why swap code is really horrible these days. :/
+Yes.  Of course.  Anytime a person knows better,
+checkpatch output should be ignored.
 
-Anyway, I don't want to be stuck because zram has more own attributes
-generic cannot cover.
+> I do not speak perl but I can do the process work. If folks think Joe's 
+> fix is fine I can submit it and perhaps someone can review it ?
+
+I think it's fine too ;)
+Submit away...
