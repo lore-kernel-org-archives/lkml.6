@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48B4liit1nGUXi1MQWQOh/X6jQG/def4YefJJCEqcgGFclV2b5Bn9tSAd8tZn4H+vw0vuzO
-ARC-Seal: i=1; a=rsa-sha256; t=1522168243; cv=none;
+X-Google-Smtp-Source: AIpwx4/C/Kibo3WDCJadcnRwXAIeNR0h+fARG6uVdyc7UR693cnUdQQRCTrg6FvvOMxllW/jtLPX
+ARC-Seal: i=1; a=rsa-sha256; t=1522168241; cv=none;
         d=google.com; s=arc-20160816;
-        b=kgkBmQI6aG95lkoxMSdkfdLR1vrC7V3iSJMulNlhmZukc0W/6/ZPX3EMtN/BoJPqwF
-         tqKDwY2iM4jokUd4Vmr8CyZcfx2YQ3KgulGRbJJvDr5wY1uPUPydQB+7AUi5PU8XA1aA
-         i2lh23NI49ZhMtqEfHemVISnd7D1tFDqPneSL10/3W59W6dRFN4gieU6aZT/edWRWXzn
-         IHjv9cHS7pSqgv6Nof7XIswOriNBq9Q0OhJTbN6Z6IfEMB8C97y+f8TENMA1gVuhVuKm
-         J+k6b2pMWqaq2goWNN/ggX9zbc5a5MJ6ypeDFw5zNTI9KBM6X2GiVtFHb9sPlZ4z5f8R
-         d8GQ==
+        b=WWkRQ75e5btxGH+C+XhazbHki/Wr15TXS372UfHd0dSgPiAKabs9znLv3suoVnNOxE
+         QTYUVlxJoJy7x+XSPPf6oBH33aGe56HRLplxozY/f4Cw4TlPzipZAON1XTMOjym9V41T
+         XYM7UxppleFnrRHfG6Ye67pseXm5sA5hnAHGT01YTwE44eyaWiqsn0iFi6JG0mRAyfoq
+         pOklf1m2tE8IEbCbJ7r0Ge6QmUvOc/ZHVN8HF6Ss75SKwdPfOaEj4xcgaZcU4X2KeNvm
+         2cbJUNOi4scWDzgpNXaeKRXXBGcf/LbLepEqovBLIN/iCoWNosKhmsO5AhbkUre90Q9G
+         jWUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cX6KD/9Jpj3M1vZKYc7lFdyz6zSzQSa728ABF6JM6eE=;
-        b=q7c/zJxpfbYSrk02/wkCT5rU3KocvJjCL4vpnjFqWSYP/89wSTBkXGie6GpECtoNwM
-         nY66kE7clY7sPks1AdVfB/JhDUneb2JgoukpS/bVKgvt7BqF27qzl+Y3C1r9+QgTMQK3
-         cMQ9yINtD7okWpryT2j3GS9+qQjfYVYuyYc5IVqTO7p0HT/FHAOTonNkUqQ8cUpQnVKx
-         59KCbFQACVRE8qOgoNYYROHQgB2o1WsILdGqz1DC726NxXPERY1W+VfY4EJi2AZwjdSH
-         BRXUV1xWbO8XZx89m6MM2riB2+KM6jEVzTMsqCKAL6QltUAHZHhIlGuTLyzouMuLOhe1
-         Qheg==
+        bh=B74ZiqjuX21f3PidCt9szp9Mgj8vKIsDIFgI/6biZVg=;
+        b=UKegMD0MJlbnMv+gcBWTDEErbUJZiAclJTq5mNKCFR6cON0Iy5F9ZtLmrmNX0xD2fP
+         rIShnKVfbubq8wY52GZYszyDIfE6MWI5GRAy3CqgkpvdBJih1CKGjAJsFR91xAMo21D1
+         fkv2+Z/T29cJ4A8skoNZk2Z4s9c0r8wz/BDGgy9V5WJw8cBEmT1SS7dISYp/Xtmtg+Ik
+         gvOCUVpPEl6TlPSmENiYiXGM4VeJV72Dj5TjJCcyA7Qahz2k+QwCRMebCKBf68L2ya+g
+         NcTV6AHpg2BBOn7XowXQPW1Egts912+ZY00Ajysm0owNjRTaVGUgsr7/Glpseg8YacY7
+         Ivcg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,23 +26,24 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@bootlin.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.9 10/67] clk: bcm2835: Fix ana->maskX definitions
-Date: Tue, 27 Mar 2018 18:27:02 +0200
-Message-Id: <20180327162727.253246272@linuxfoundation.org>
+	NeilBrown <neil@brown.name>,
+	John Crispin <john@phrozen.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	linux-mips@linux-mips.org,
+	James Hogan <jhogan@kernel.org>
+Subject: [PATCH 4.9 01/67] MIPS: ralink: Remove ralink_halt()
+Date: Tue, 27 Mar 2018 18:26:53 +0200
+Message-Id: <20180327162726.776788856@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162726.702411083@linuxfoundation.org>
 References: <20180327162726.702411083@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109088454985754?=
-X-GMAIL-MSGID: =?utf-8?q?1596109088454985754?=
+X-GMAIL-THRID: =?utf-8?q?1596108957348876087?=
+X-GMAIL-MSGID: =?utf-8?q?1596109086080254666?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,50 +51,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: NeilBrown <neil@brown.name>
 
-commit 49012d1bf5f78782d398adb984a080a88ba42965 upstream.
+commit 891731f6a5dbe508d12443175a7e166a2fba616a upstream.
 
-ana->maskX values are already '~'-ed in bcm2835_pll_set_rate(). Remove
-the '~' in the definition to fix ANA setup.
+ralink_halt() does nothing that machine_halt() doesn't already do, so it
+adds no value.
 
-Note that this commit fixes a long standing bug preventing one from
-using an HDMI display if it's plugged after the FW has booted Linux.
-This is because PLLH is used by the HDMI encoder to generate the pixel
-clock.
+It actually causes incorrect behaviour due to the "unreachable()" at the
+end. This tells the compiler that the end of the function will never be
+reached, which isn't true. The compiler responds by not adding a
+'return' instruction, so control simply moves on to whatever bytes come
+afterwards in memory. In my tested, that was the ralink_restart()
+function. This means that an attempt to 'halt' the machine would
+actually cause a reboot.
 
-Fixes: 41691b8862e2 ("clk: bcm2835: Add support for programming the audio domain clocks")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+So remove ralink_halt() so that a 'halt' really does halt.
+
+Fixes: c06e836ada59 ("MIPS: ralink: adds reset code")
+Signed-off-by: NeilBrown <neil@brown.name>
+Cc: John Crispin <john@phrozen.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: <stable@vger.kernel.org> # 3.9+
+Patchwork: https://patchwork.linux-mips.org/patch/18851/
+Signed-off-by: James Hogan <jhogan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/bcm/clk-bcm2835.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/mips/ralink/reset.c |    7 -------
+ 1 file changed, 7 deletions(-)
 
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -401,17 +401,17 @@ struct bcm2835_pll_ana_bits {
- static const struct bcm2835_pll_ana_bits bcm2835_ana_default = {
- 	.mask0 = 0,
- 	.set0 = 0,
--	.mask1 = (u32)~(A2W_PLL_KI_MASK | A2W_PLL_KP_MASK),
-+	.mask1 = A2W_PLL_KI_MASK | A2W_PLL_KP_MASK,
- 	.set1 = (2 << A2W_PLL_KI_SHIFT) | (8 << A2W_PLL_KP_SHIFT),
--	.mask3 = (u32)~A2W_PLL_KA_MASK,
-+	.mask3 = A2W_PLL_KA_MASK,
- 	.set3 = (2 << A2W_PLL_KA_SHIFT),
- 	.fb_prediv_mask = BIT(14),
- };
+--- a/arch/mips/ralink/reset.c
++++ b/arch/mips/ralink/reset.c
+@@ -96,16 +96,9 @@ static void ralink_restart(char *command
+ 	unreachable();
+ }
  
- static const struct bcm2835_pll_ana_bits bcm2835_ana_pllh = {
--	.mask0 = (u32)~(A2W_PLLH_KA_MASK | A2W_PLLH_KI_LOW_MASK),
-+	.mask0 = A2W_PLLH_KA_MASK | A2W_PLLH_KI_LOW_MASK,
- 	.set0 = (2 << A2W_PLLH_KA_SHIFT) | (2 << A2W_PLLH_KI_LOW_SHIFT),
--	.mask1 = (u32)~(A2W_PLLH_KI_HIGH_MASK | A2W_PLLH_KP_MASK),
-+	.mask1 = A2W_PLLH_KI_HIGH_MASK | A2W_PLLH_KP_MASK,
- 	.set1 = (6 << A2W_PLLH_KP_SHIFT),
- 	.mask3 = 0,
- 	.set3 = 0,
+-static void ralink_halt(void)
+-{
+-	local_irq_disable();
+-	unreachable();
+-}
+-
+ static int __init mips_reboot_setup(void)
+ {
+ 	_machine_restart = ralink_restart;
+-	_machine_halt = ralink_halt;
+ 
+ 	return 0;
+ }
