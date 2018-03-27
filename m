@@ -1,53 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752727AbeC0Pik (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 11:38:40 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:48319 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752001AbeC0Pij (ORCPT
+        id S1752781AbeC0PjO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 11:39:14 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:35024 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752590AbeC0PjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 11:38:39 -0400
-Date: Tue, 27 Mar 2018 17:38:29 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Palmer Dabbelt <palmer@sifive.com>
-cc: Arnd Bergmann <arnd@arndb.de>, fengguang.wu@intel.com,
-        kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com
-Subject: Re: [tip:irq/core 12/13] drivers/irqchip/irq-vic.c:295:2: error:
- implicit declaration of function 'set_handle_irq'; did you mean
- 'vic_handle_irq'?
-In-Reply-To: <mhng-71f262e9-b9a8-4dd8-9657-955d76aab956@palmer-si-x1c4>
-Message-ID: <alpine.DEB.2.21.1803271734170.1964@nanos.tec.linutronix.de>
-References: <mhng-71f262e9-b9a8-4dd8-9657-955d76aab956@palmer-si-x1c4>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 27 Mar 2018 11:39:10 -0400
+X-IronPort-AV: E=Sophos;i="5.48,367,1517846400";
+   d="scan'208";a="74483667"
+Subject: Re: linux-next: build failure after merge of the device-mapper tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Denis Semakin <d.semakin@omprussia.ru>
+References: <20180327133923.53b8954d@canb.auug.org.au>
+From: Bart Van Assche <bart.vanassche@wdc.com>
+Message-ID: <9c4b1f71-157b-ffc9-a245-b1a967cc8bac@wdc.com>
+Date: Tue, 27 Mar 2018 08:39:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180327133923.53b8954d@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Mar 2018, Palmer Dabbelt wrote:
-> On Mon, 26 Mar 2018 22:27:36 PDT (-0700), tglx@linutronix.de wrote:
-> > 
-> > The commits in tip right now are:
-> > 
-> >   cc6c98485f8e ("RISC-V: Move to the new GENERIC_IRQ_MULTI_HANDLER handler")
-> >   caacdbf4aa56 ("genirq: Add CONFIG_GENERIC_IRQ_MULTI_HANDLER")
-> > 
-> > I surely can revert them, but I don't see how they would break arm or
-> > anything else.
+On 03/26/18 19:39, Stephen Rothwell wrote:
+> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+> index d5db9df7ea4b..0589a4da12bb 100644
+> --- a/drivers/md/dm-table.c
+> +++ b/drivers/md/dm-table.c
+> @@ -1896,7 +1896,7 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+>   		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+>   
+>   	if (dm_table_supports_secure_erase(t))
+> -		queue_flag_set_unlocked(QUEUE_FLAG_SECERASE, q);
+> +		blk_queue_flag_set(QUEUE_FLAG_SECERASE, q);
+>   
+>   	if (dm_table_supports_flush(t, (1UL << QUEUE_FLAG_WC))) {
+>   		wc = true;
 > 
-> If GENERIC_IRQ_MULTI_HANDLER is set via randconfig then set_handle_irq() is
-> pulled in from the generic code, which conflicts with the definitions in arm,
-> arm64, and openrisc.  The RISC-V commit depends on the genirq one.
 
-Two ways to fix that:
+The above patch looks fine to me. Thank you Stephen for having resolved 
+this merge conflict.
 
- - Rename set_handle_irq() in tip:irq/core and then convert the rest of the
-   tree over. A few more files touched, but nothing harmful
-
- - Make GENERIC_IRQ_MULTI_HANDLER depend on !IRQ_MULTI_HANDLER. That should
-   cure it as well
-
-Thanks,
-
-	tglx
+Bart.
