@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751590AbeC0GFP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 02:05:15 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:48337 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbeC0GFN (ORCPT
+        id S1751907AbeC0GFi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 02:05:38 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:44333 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750907AbeC0GFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 02:05:13 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w2R64rna004809
-X-Nifty-SrcIP: [209.85.217.169]
-X-Google-Smtp-Source: AG47ELvTwtMFqqiH9gwjy/BRnPqJEahva81bBPuiZAdh17jPTGyxIu9mx9WtlT6u491nkaAmW3KARXBAPK481+UEVKI=
+        Tue, 27 Mar 2018 02:05:36 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w2R65XPJ013054
+X-Nifty-SrcIP: [209.85.217.181]
+X-Google-Smtp-Source: AG47ELt2+8I2SP1wj4WhS6QezacNTs8vcql3veBgfbAOFKcBMcO15VaXecsDBNXnsq0/2IhgJYbyWN6jYStg+WxP1qw=
 MIME-Version: 1.0
-In-Reply-To: <1521810279-6282-6-git-send-email-yamada.masahiro@socionext.com>
-References: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com> <1521810279-6282-6-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1521810279-6282-7-git-send-email-yamada.masahiro@socionext.com>
+References: <1521810279-6282-1-git-send-email-yamada.masahiro@socionext.com> <1521810279-6282-7-git-send-email-yamada.masahiro@socionext.com>
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 27 Mar 2018 15:04:11 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATyCZ_NA0PdcA6NH3qLSUfS8088m20=1Z7pGexG=ATV=w@mail.gmail.com>
-Message-ID: <CAK7LNATyCZ_NA0PdcA6NH3qLSUfS8088m20=1Z7pGexG=ATV=w@mail.gmail.com>
-Subject: Re: [PATCH 06/10] .gitignore: move *-asn1.[ch] patterns to the
- top-level .gitignore
+Date: Tue, 27 Mar 2018 15:04:51 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATQfgMZJYRA7=8wpYRXCKO3xj2xxXgSAur6mf8ajFmQdQ@mail.gmail.com>
+Message-ID: <CAK7LNATQfgMZJYRA7=8wpYRXCKO3xj2xxXgSAur6mf8ajFmQdQ@mail.gmail.com>
+Subject: Re: [PATCH 07/10] kbuild: clean up *-asn1.[ch] patterns from
+ top-level Makefile
 To: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Cc: Sam Ravnborg <sam@ravnborg.org>,
         Michal Marek <michal.lkml@markovi.net>,
@@ -38,71 +38,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 No functional change, though.
 
-
 2018-03-23 22:04 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> These are common patterns where source files are parsed by the
-> asn1_compiler.
+> Clean up these patterns from the top Makefile to omit 'clean-files'
+> in each Makefile.
 >
 > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
 >
->  .gitignore                               | 5 +----
->  crypto/.gitignore                        | 1 -
->  crypto/asymmetric_keys/.gitignore        | 1 -
->  drivers/crypto/qat/qat_common/.gitignore | 1 -
->  4 files changed, 1 insertion(+), 7 deletions(-)
->  delete mode 100644 crypto/.gitignore
->  delete mode 100644 crypto/asymmetric_keys/.gitignore
->  delete mode 100644 drivers/crypto/qat/qat_common/.gitignore
+>  Makefile                        | 1 +
+>  crypto/Makefile                 | 2 --
+>  crypto/asymmetric_keys/Makefile | 7 -------
+>  net/ipv4/netfilter/Makefile     | 1 -
+>  4 files changed, 1 insertion(+), 10 deletions(-)
 >
-> diff --git a/.gitignore b/.gitignore
-> index 1e82be1..a7fef34 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -11,6 +11,7 @@
->  #
->  .*
->  *.a
-> +*-asn1.[ch]
->  *.bin
->  *.bz2
->  *.c.[012]*.*
-> @@ -130,7 +131,3 @@ all.config
+> diff --git a/Makefile b/Makefile
+> index 168432e..054f43a 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1614,6 +1614,7 @@ clean: $(clean-dirs)
+>                 -o -name '*.su'  \
+>                 -o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
+>                 -o -name '*.lex.c' -o -name '*.tab.[ch]' \
+> +               -o -name '*-asn1.[ch]' \
+>                 -o -name '*.symtypes' -o -name 'modules.order' \
+>                 -o -name modules.builtin -o -name '.tmp_*.o.*' \
+>                 -o -name .cache.mk \
+> diff --git a/crypto/Makefile b/crypto/Makefile
+> index cdbc03b..4eae4da 100644
+> --- a/crypto/Makefile
+> +++ b/crypto/Makefile
+> @@ -38,8 +38,6 @@ obj-$(CONFIG_CRYPTO_DH) += dh_generic.o
+>  $(obj)/rsapubkey-asn1.o: $(obj)/rsapubkey-asn1.c $(obj)/rsapubkey-asn1.h
+>  $(obj)/rsaprivkey-asn1.o: $(obj)/rsaprivkey-asn1.c $(obj)/rsaprivkey-asn1.h
+>  $(obj)/rsa_helper.o: $(obj)/rsapubkey-asn1.h $(obj)/rsaprivkey-asn1.h
+> -clean-files += rsapubkey-asn1.c rsapubkey-asn1.h
+> -clean-files += rsaprivkey-asn1.c rsaprivkey-asn1.h
 >
->  # Kdevelop4
->  *.kdev4
+>  rsa_generic-y := rsapubkey-asn1.o
+>  rsa_generic-y += rsaprivkey-asn1.o
+> diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+> index 4719aad..bd8ed09 100644
+> --- a/crypto/asymmetric_keys/Makefile
+> +++ b/crypto/asymmetric_keys/Makefile
+> @@ -29,9 +29,6 @@ $(obj)/x509_cert_parser.o: \
+>  $(obj)/x509-asn1.o: $(obj)/x509-asn1.c $(obj)/x509-asn1.h
+>  $(obj)/x509_akid-asn1.o: $(obj)/x509_akid-asn1.c $(obj)/x509_akid-asn1.h
+>
+> -clean-files    += x509-asn1.c x509-asn1.h
+> -clean-files    += x509_akid-asn1.c x509_akid-asn1.h
 > -
-> -#Automatically generated by ASN.1 compiler
-> -net/ipv4/netfilter/nf_nat_snmp_basic-asn1.c
-> -net/ipv4/netfilter/nf_nat_snmp_basic-asn1.h
-> diff --git a/crypto/.gitignore b/crypto/.gitignore
-> deleted file mode 100644
-> index ee328374..0000000
-> --- a/crypto/.gitignore
-> +++ /dev/null
-> @@ -1 +0,0 @@
-> -*-asn1.[ch]
-> diff --git a/crypto/asymmetric_keys/.gitignore b/crypto/asymmetric_keys/.gitignore
-> deleted file mode 100644
-> index ee328374..0000000
-> --- a/crypto/asymmetric_keys/.gitignore
-> +++ /dev/null
-> @@ -1 +0,0 @@
-> -*-asn1.[ch]
-> diff --git a/drivers/crypto/qat/qat_common/.gitignore b/drivers/crypto/qat/qat_common/.gitignore
-> deleted file mode 100644
-> index ee328374..0000000
-> --- a/drivers/crypto/qat/qat_common/.gitignore
-> +++ /dev/null
-> @@ -1 +0,0 @@
-> -*-asn1.[ch]
+>  #
+>  # PKCS#7 message handling
+>  #
+> @@ -45,8 +42,6 @@ pkcs7_message-y := \
+>  $(obj)/pkcs7_parser.o: $(obj)/pkcs7-asn1.h
+>  $(obj)/pkcs7-asn1.o: $(obj)/pkcs7-asn1.c $(obj)/pkcs7-asn1.h
+>
+> -clean-files    += pkcs7-asn1.c pkcs7-asn1.h
+> -
+>  #
+>  # PKCS#7 parser testing key
+>  #
+> @@ -66,5 +61,3 @@ verify_signed_pefile-y := \
+>
+>  $(obj)/mscode_parser.o: $(obj)/mscode-asn1.h $(obj)/mscode-asn1.h
+>  $(obj)/mscode-asn1.o: $(obj)/mscode-asn1.c $(obj)/mscode-asn1.h
+> -
+> -clean-files    += mscode-asn1.c mscode-asn1.h
+> diff --git a/net/ipv4/netfilter/Makefile b/net/ipv4/netfilter/Makefile
+> index 2dad20e..e5f5638 100644
+> --- a/net/ipv4/netfilter/Makefile
+> +++ b/net/ipv4/netfilter/Makefile
+> @@ -31,7 +31,6 @@ obj-$(CONFIG_NF_NAT_PPTP) += nf_nat_pptp.o
+>  nf_nat_snmp_basic-y := nf_nat_snmp_basic-asn1.o nf_nat_snmp_basic_main.o
+>  nf_nat_snmp_basic-y : nf_nat_snmp_basic-asn1.h nf_nat_snmp_basic-asn1.c
+>  obj-$(CONFIG_NF_NAT_SNMP_BASIC) += nf_nat_snmp_basic.o
+> -clean-files := nf_nat_snmp_basic-asn1.c nf_nat_snmp_basic-asn1.h
+>
+>  obj-$(CONFIG_NF_NAT_MASQUERADE_IPV4) += nf_nat_masquerade_ipv4.o
+>
 > --
 > 2.7.4
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
 
