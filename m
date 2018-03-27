@@ -1,45 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752090AbeC0JP5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:15:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51982 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751121AbeC0JP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:15:56 -0400
-Subject: Re: [PATCH 2/2] KVM: VMX: Add Force Emulation Prefix for "emulate the
- next instruction"
-To: Nikita Leshenko <nikita.leshchenko@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>
-Cc: kernellwp@gmail.com, rkrcmar@redhat.com, andrew.cooper3@citrix.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <d34c1d3c-324e-4645-9d48-09c94212aa5e@default>
- <95B06D42-EFDF-4750-AD03-98D6C78378D5@oracle.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <6d039f9d-99d9-fa4c-170b-6225bdba302a@redhat.com>
-Date: Tue, 27 Mar 2018 11:15:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752069AbeC0JSM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:18:12 -0400
+Received: from mail2.tencent.com ([163.177.67.195]:40551 "EHLO
+        mail2.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbeC0JSK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 05:18:10 -0400
+From: =?gb2312?B?aGFpYmluemhhbmco1cW6o7HzKQ==?= <haibinzhang@tencent.com>
+To: "mst@redhat.com" <mst@redhat.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] vhost-net: add time limitation for tx polling
+Thread-Topic: [PATCH] vhost-net: add time limitation for tx polling
+Thread-Index: AdPFq4I5xcTKhETOTeyd0/a3ZzrdNA==
+Date: Tue, 27 Mar 2018 09:12:27 +0000
+Message-ID: <88D661ADF6AFBF42B2AB88D8E7682B0901FC4059@EXMBX-SZMAIL011.tencent.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.19.90.75]
+Content-Type: text/plain; charset="gb2312"
 MIME-Version: 1.0
-In-Reply-To: <95B06D42-EFDF-4750-AD03-98D6C78378D5@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w2R9IN29027615
 
-On 27/03/2018 11:05, Nikita Leshenko wrote:
-> What you are essentially trying to do is create a PV interface to access
-> the x86 emulator.
-> Why not use a simple hypercall (VMCALL) to accomplish this instead of
-> inventing yet another PV method?
+handle_tx() will delay rx for a long time when busy tx polling udp packets
+with short length(ie: 1byte udp payload), because setting VHOST_NET_WEIGHT
+takes into account only sent-bytes but no time. It's not fair for handle_rx(),
+so needs to limit max time of tx polling.
 
-Because hypercalls force you to use %rax for the hypercall number.
+Signed-off-by: Haibin Zhang <haibinzhang@tencent.com>
+---
+ drivers/vhost/net.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Paolo
-
-> Something like “KVM_HC_EMULATE_NEXT_INSTRUCTION” in kvm_emulate_hypercall
-> should do the trick (however it needs to be placed before the check for
-> CPL>0 so that user mode code can test the emulator too).
-> 
-> Nikita
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index 8139bc70ad7d..dc9218a3a75b 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -473,6 +473,7 @@ static void handle_tx(struct vhost_net *net)
+ 	struct socket *sock;
+ 	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+ 	bool zcopy, zcopy_used;
++	unsigned long start = jiffies;
+ 
+ 	mutex_lock(&vq->mutex);
+ 	sock = vq->private_data;
+@@ -580,7 +581,7 @@ static void handle_tx(struct vhost_net *net)
+ 		else
+ 			vhost_zerocopy_signal_used(net, vq);
+ 		vhost_net_tx_packet(net);
+-		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
++		if (unlikely(total_len >= VHOST_NET_WEIGHT) || unlikely(jiffies - start >= 1)) {
+ 			vhost_poll_queue(&vq->poll);
+ 			break;
+ 		}
+-- 
+2.12.3
