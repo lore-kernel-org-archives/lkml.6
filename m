@@ -1,75 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751205AbeC0Fpp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 01:45:45 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:27371 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751068AbeC0Fpn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 01:45:43 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w2R5jMVX030223
-X-Nifty-SrcIP: [209.85.213.47]
-X-Google-Smtp-Source: AG47ELs4nj00x6QAqOZPB5JFg4R/6a8fA9UlTR7WOIvkGTqw8FFQZHP5AOTJ7EgHR6h3m/uGO6m92yC0dJmYA4Czk/I=
+        id S1750954AbeC0F7F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 01:59:05 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55339 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750742AbeC0F7D (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 01:59:03 -0400
+X-Google-Smtp-Source: AIpwx4/UCfvmL3NCn3kf6+55toS57COM7cVGwg8FnZF1HwHXJkySsbup2UUEsATpW7xMy0GVAHfVzQ==
+Date: Tue, 27 Mar 2018 07:58:59 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+Subject: Re: [PATCH v1 2/3] perf version: Print the status of compiled-in
+ libraries
+Message-ID: <20180327055859.s2tjsvgdwd7cdkf7@gmail.com>
+References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
+ <1522080424-12912-3-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180325223239.14778-1-linux@rasmusvillemoes.dk>
-References: <20180325223239.14778-1-linux@rasmusvillemoes.dk>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Tue, 27 Mar 2018 14:44:40 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQgwp=Q5n+auuYSPLE0FqeK+UGyrRukFY9Qx--PTkLduw@mail.gmail.com>
-Message-ID: <CAK7LNAQgwp=Q5n+auuYSPLE0FqeK+UGyrRukFY9Qx--PTkLduw@mail.gmail.com>
-Subject: Re: [PATCH] objtool: fix build with future Make
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522080424-12912-3-git-send-email-yao.jin@linux.intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w2R5jpcH016727
-
-2018-03-26 7:32 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
-> I tried building using a freshly built Make (4.2.1-69-g8a731d1), but the
-> objtool build broke with
->
-> orc_dump.c: In function ‘orc_dump’:
-> orc_dump.c:106:2: error: ‘elf_getshnum’ is deprecated [-Werror=deprecated-declarations]
->   if (elf_getshdrnum(elf, &nr_sections)) {
->
-> Turns out that with that new Make, the backslash was not removed, so cpp
-> didn't see a #include directive, grep found nothing, and
-> -DLIBELF_USE_DEPRECATED was wrongly put in CFLAGS.
->
-> Now, that new Make behaviour is documented in their NEWS file:
->
->   * WARNING: Backward-incompatibility!
->     Number signs (#) appearing inside a macro reference or function invocation
->     no longer introduce comments and should not be escaped with backslashes:
->     thus a call such as:
->       foo := $(shell echo '#')
->     is legal.  Previously the number sign needed to be escaped, for example:
->       foo := $(shell echo '\#')
->     Now this latter will resolve to "\#".  If you want to write makefiles
->     portable to both versions, assign the number sign to a variable:
->       C := \#
->       foo := $(shell echo '$C')
->     This was claimed to be fixed in 3.81, but wasn't, for some reason.
->     To detect this change search for 'nocomment' in the .FEATURES variable.
->
-> There are likely other places in the tree that will need fixing, so
-> cc-ing Kbuild, but with this at least a x86-64 defconfig builds.
->
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
-
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
 
+* Jin Yao <yao.jin@linux.intel.com> wrote:
 
+> +#ifdef HAVE_DWARF_SUPPORT
+> +#ifdef HAVE_DWARF_GETLOCATIONS
+> +#ifdef NO_GLIBC
+> +#ifdef HAVE_GTK2_SUPPORT
+> +#ifdef HAVE_LIBAUDIT_SUPPORT
+> +#ifdef HAVE_LIBBFD_SUPPORT
+> +#ifdef HAVE_LIBELF_SUPPORT
+> +#ifdef HAVE_LIBNUMA_SUPPORT
+> +#ifdef NO_LIBPERL
+> +#ifdef NO_LIBPYTHON
+> +#ifdef HAVE_SLANG_SUPPORT
+> +#ifdef HAVE_LIBCRYPTO_SUPPORT
+> +#ifdef HAVE_LIBUNWIND_SUPPORT
+> +#ifdef HAVE_DWARF_SUPPORT
+> +#ifdef HAVE_ZLIB_SUPPORT
+> +#ifdef HAVE_LZMA_SUPPORT
+> +#ifdef HAVE_AUXTRACE_SUPPORT
+> +#ifdef HAVE_LIBBPF_SUPPORT
 
--- 
-Best Regards
-Masahiro Yamada
+BTW., it would be nice at this point to fix those 3 outliers that have a negation 
+in their library support status macro:
+
+> +#ifdef NO_GLIBC
+> +#ifdef NO_LIBPERL
+> +#ifdef NO_LIBPYTHON
+
+... and invert them back to the HAVE_* side of the logic:
+
+> +#ifdef HAVE_GLIBC
+> +#ifdef HAVE_LIBPERL
+> +#ifdef HAVE_LIBPYTHON
+
+That should make all related code more consistent and more readable.
+
+Thanks,
+
+	Ingo
