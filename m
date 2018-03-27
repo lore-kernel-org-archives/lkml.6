@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48G3km2lOGs9ATQyVJFYfaK+aKiRUe9KQ5lvvKau0k2xe6M9jr4PH4SS9FYVf4ncUBJAYjs
-ARC-Seal: i=1; a=rsa-sha256; t=1522169006; cv=none;
+X-Google-Smtp-Source: AIpwx49HD7mHma6q8uo37HO6hJeOsIq/KTzXPDiLzcEpOWZivPPTp/I097U0L++aUijWWIoFJ1g9
+ARC-Seal: i=1; a=rsa-sha256; t=1522168999; cv=none;
         d=google.com; s=arc-20160816;
-        b=xJ/GW/zKTLCHWVPiSWz5jW9vRQp415ZAJ1Pv89Qv8rNxOwoUuugGeTxqyIc4juX3SB
-         3HBv8Re09SiL0LkaO/n6aX7CC43Hfbo6I377sK51tAW8Q8H6L2O7akHtO5BHf+OhOmQ8
-         XWjGONiS+yUurSXOq6FF5SEZC6/WCKaxHzDnLqDmfe71NhGDLCRVbaXYwUdwNodoOE1j
-         d+95ZOD74wl7Gfcnyrujmz0rx4Ct+KvtFMguXtbL5yNOaZSNcwK7Svdv7XKqrfDmC/vj
-         J8ZVEv1y6Hk4vaC5Ewxt2SmNx9eTbI6LJmPhWZ5Bc8Gzc95pv2bebNdRsz28nxhFy4Qp
-         m+Rw==
+        b=LXbbRWR/AXn+M72agdxA1Bmi9qDFtvACKSDmI8oda7tzKsAikC3CnhSrAgVvrVif/T
+         aGcT5EnkHooigyXH73+Bw3Putv8ZwYPV1DMqX5I3Sl72FHZ9QA6bOJvpgvbykxQmrec2
+         1N+bn1mpU5kT9XO06ZM9symHbsGt/KxOp5WNKF/1+4z6egtuz13dnSLLcS6j/f6PrxOD
+         vZ9Reh6mUARxUQrqDbjePezJz+pRl0YUwDl7TZWp23sa7Y1a7tjNcTvdza/UV2elqgN9
+         mgfSLi2YmQCi9uwzE8PojZCgHaEfbC6Bp/q8fXJUNnNCKEpPM25VTzEB9RIMk1hClExo
+         P/0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=32dKJm3r/wvh+U8McGRmMyzOYDpJXf11Sp4dwqRpXI0=;
-        b=0zPyKYwKowzSfM/Q1oHjcjn13kuTjdlCMjeuj/OspTjo9b2ngZe2Lp3Nsda/X6/iZP
-         c5RFD+oLmUGymUl27+PeXDueUSBT1we8NUKWgZMl6M081hD5919klp0/6QbwDvGj9p0B
-         7lXsZlk3vRd9IqqyJ0plewpHGaEiBnPg4MH6S5PpZoSTiFGqj+JS1s6ZPWmbW6looRY9
-         EpSXsyjPfz2IYQXYyDCj7AI1bH0kKaYPDYrI3ZXCiw0BulMkzP1wBdCQ4CL83tqTHIsA
-         6TWpzBvVtOgO5tiuwoWm5KFZPBH0MzJbInALLMaqEkKKTp49RxfUxvs9/AfRZD4KTwt3
-         Aq0g==
+        bh=pblzqvEv6I9XAkNZ2QGf9imguNx+ipBH8x2H/wANHn4=;
+        b=Lyq/HRedDU+Ou/wgEXa2jN/ReedOg4TRdMC9anz631h+WgmscyQXBifb/pkirV6eRD
+         fJBlXeXkdyMTAxgRl/CceVM/H4DSbm6/NsxrNt48I5SAQs0sWCcVwDRyVN8iicvA2NQT
+         2ydTD7k+8Dbry9uTdnrlxG6sU9KxoXgNtwqscJQlDNnwm9nANxbLpEa747n7tRvPt7vZ
+         ogsXYXrqQY7UObf6UpbGyXlAZBLPWV54VtPhx8H71FcH/PSweAAcyj2SKe1PMvmgY2CR
+         tYN68NmX2RA3v0vU+o9GbZrL9QsKx3fea22iNZk5ASugTg6l5SSpPsiBHxOzhIqLG42Z
+         X6uw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marek Vasut <marex@denx.de>,
-	Heiko Schocher <hs@denx.de>,
-	Markus Marb <markus@marb.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.15 077/105] can: ifi: Repair the error handling
-Date: Tue, 27 Mar 2018 18:27:57 +0200
-Message-Id: <20180327162802.657623121@linuxfoundation.org>
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Eric Dumazet <edumazet@google.com>
+Subject: [PATCH 4.15 105/105] bpf, x64: increase number of passes
+Date: Tue, 27 Mar 2018 18:28:25 +0200
+Message-Id: <20180327162804.286886754@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109248561588212?=
-X-GMAIL-MSGID: =?utf-8?q?1596109887748515324?=
+X-GMAIL-THRID: =?utf-8?q?1596109079875177032?=
+X-GMAIL-MSGID: =?utf-8?q?1596109881362267132?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,194 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marek Vasut <marex@denx.de>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit 880dd464b4304583c557c4e5f5ecebfd55d232b1 upstream.
+commit 6007b080d2e2adb7af22bf29165f0594ea12b34c upstream.
 
-The new version of the IFI CANFD core has significantly less complex
-error state indication logic. In particular, the warning/error state
-bits are no longer all over the place, but are all present in the
-STATUS register. Moreover, there is a new IRQ register bit indicating
-transition between error states (active/warning/passive/busoff).
+In Cilium some of the main programs we run today are hitting 9 passes
+on x64's JIT compiler, and we've had cases already where we surpassed
+the limit where the JIT then punts the program to the interpreter
+instead, leading to insertion failures due to CONFIG_BPF_JIT_ALWAYS_ON
+or insertion failures due to the prog array owner being JITed but the
+program to insert not (both must have the same JITed/non-JITed property).
 
-This patch makes use of this bit to weed out the obscure selective
-INTERRUPT register clearing, which was used to carry over the error
-state indication into the poll function. While at it, this patch
-fixes the handling of the ACTIVE state, since the hardware provides
-indication of the core being in ACTIVE state and that in turn fixes
-the state transition indication toward userspace. Finally, register
-reads in the poll function are moved to the matching subfunctions
-since those are also no longer needed in the poll function.
+One concrete case the program image shrunk from 12,767 bytes down to
+10,288 bytes where the image converged after 16 steps. I've measured
+that this took 340us in the JIT until it converges on my i7-6600U. Thus,
+increase the original limit we had from day one where the JIT covered
+cBPF only back then before we run into the case (as similar with the
+complexity limit) where we trip over this and hit program rejections.
+Also add a cond_resched() into the compilation loop, the JIT process
+runs without any locks and may sleep anyway.
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Heiko Schocher <hs@denx.de>
-Cc: Markus Marb <markus@marb.org>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/ifi_canfd/ifi_canfd.c |   64 +++++++++++++++++++---------------
- 1 file changed, 37 insertions(+), 27 deletions(-)
+ arch/x86/net/bpf_jit_comp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/can/ifi_canfd/ifi_canfd.c
-+++ b/drivers/net/can/ifi_canfd/ifi_canfd.c
-@@ -30,6 +30,7 @@
- #define IFI_CANFD_STCMD_ERROR_ACTIVE		BIT(2)
- #define IFI_CANFD_STCMD_ERROR_PASSIVE		BIT(3)
- #define IFI_CANFD_STCMD_BUSOFF			BIT(4)
-+#define IFI_CANFD_STCMD_ERROR_WARNING		BIT(5)
- #define IFI_CANFD_STCMD_BUSMONITOR		BIT(16)
- #define IFI_CANFD_STCMD_LOOPBACK		BIT(18)
- #define IFI_CANFD_STCMD_DISABLE_CANFD		BIT(24)
-@@ -52,7 +53,10 @@
- #define IFI_CANFD_TXSTCMD_OVERFLOW		BIT(13)
- 
- #define IFI_CANFD_INTERRUPT			0xc
-+#define IFI_CANFD_INTERRUPT_ERROR_BUSOFF	BIT(0)
- #define IFI_CANFD_INTERRUPT_ERROR_WARNING	BIT(1)
-+#define IFI_CANFD_INTERRUPT_ERROR_STATE_CHG	BIT(2)
-+#define IFI_CANFD_INTERRUPT_ERROR_REC_TEC_INC	BIT(3)
- #define IFI_CANFD_INTERRUPT_ERROR_COUNTER	BIT(10)
- #define IFI_CANFD_INTERRUPT_TXFIFO_EMPTY	BIT(16)
- #define IFI_CANFD_INTERRUPT_TXFIFO_REMOVE	BIT(22)
-@@ -61,6 +65,10 @@
- #define IFI_CANFD_INTERRUPT_SET_IRQ		((u32)BIT(31))
- 
- #define IFI_CANFD_IRQMASK			0x10
-+#define IFI_CANFD_IRQMASK_ERROR_BUSOFF		BIT(0)
-+#define IFI_CANFD_IRQMASK_ERROR_WARNING		BIT(1)
-+#define IFI_CANFD_IRQMASK_ERROR_STATE_CHG	BIT(2)
-+#define IFI_CANFD_IRQMASK_ERROR_REC_TEC_INC	BIT(3)
- #define IFI_CANFD_IRQMASK_SET_ERR		BIT(7)
- #define IFI_CANFD_IRQMASK_SET_TS		BIT(15)
- #define IFI_CANFD_IRQMASK_TXFIFO_EMPTY		BIT(16)
-@@ -220,7 +228,10 @@ static void ifi_canfd_irq_enable(struct
- 
- 	if (enable) {
- 		enirq = IFI_CANFD_IRQMASK_TXFIFO_EMPTY |
--			IFI_CANFD_IRQMASK_RXFIFO_NEMPTY;
-+			IFI_CANFD_IRQMASK_RXFIFO_NEMPTY |
-+			IFI_CANFD_IRQMASK_ERROR_STATE_CHG |
-+			IFI_CANFD_IRQMASK_ERROR_WARNING |
-+			IFI_CANFD_IRQMASK_ERROR_BUSOFF;
- 		if (priv->can.ctrlmode & CAN_CTRLMODE_BERR_REPORTING)
- 			enirq |= IFI_CANFD_INTERRUPT_ERROR_COUNTER;
+--- a/arch/x86/net/bpf_jit_comp.c
++++ b/arch/x86/net/bpf_jit_comp.c
+@@ -1156,7 +1156,7 @@ struct bpf_prog *bpf_int_jit_compile(str
+ 	 * may converge on the last pass. In such case do one more
+ 	 * pass to emit the final image
+ 	 */
+-	for (pass = 0; pass < 10 || image; pass++) {
++	for (pass = 0; pass < 20 || image; pass++) {
+ 		proglen = do_jit(prog, addrs, image, oldproglen, &ctx);
+ 		if (proglen <= 0) {
+ 			image = NULL;
+@@ -1183,6 +1183,7 @@ struct bpf_prog *bpf_int_jit_compile(str
+ 			}
+ 		}
+ 		oldproglen = proglen;
++		cond_resched();
  	}
-@@ -361,12 +372,13 @@ static int ifi_canfd_handle_lost_msg(str
- 	return 1;
- }
  
--static int ifi_canfd_handle_lec_err(struct net_device *ndev, const u32 errctr)
-+static int ifi_canfd_handle_lec_err(struct net_device *ndev)
- {
- 	struct ifi_canfd_priv *priv = netdev_priv(ndev);
- 	struct net_device_stats *stats = &ndev->stats;
- 	struct can_frame *cf;
- 	struct sk_buff *skb;
-+	u32 errctr = readl(priv->base + IFI_CANFD_ERROR_CTR);
- 	const u32 errmask = IFI_CANFD_ERROR_CTR_OVERLOAD_FIRST |
- 			    IFI_CANFD_ERROR_CTR_ACK_ERROR_FIRST |
- 			    IFI_CANFD_ERROR_CTR_BIT0_ERROR_FIRST |
-@@ -449,6 +461,11 @@ static int ifi_canfd_handle_state_change
- 
- 	switch (new_state) {
- 	case CAN_STATE_ERROR_ACTIVE:
-+		/* error active state */
-+		priv->can.can_stats.error_warning++;
-+		priv->can.state = CAN_STATE_ERROR_ACTIVE;
-+		break;
-+	case CAN_STATE_ERROR_WARNING:
- 		/* error warning state */
- 		priv->can.can_stats.error_warning++;
- 		priv->can.state = CAN_STATE_ERROR_WARNING;
-@@ -477,7 +494,7 @@ static int ifi_canfd_handle_state_change
- 	ifi_canfd_get_berr_counter(ndev, &bec);
- 
- 	switch (new_state) {
--	case CAN_STATE_ERROR_ACTIVE:
-+	case CAN_STATE_ERROR_WARNING:
- 		/* error warning state */
- 		cf->can_id |= CAN_ERR_CRTL;
- 		cf->data[1] = (bec.txerr > bec.rxerr) ?
-@@ -510,22 +527,21 @@ static int ifi_canfd_handle_state_change
- 	return 1;
- }
- 
--static int ifi_canfd_handle_state_errors(struct net_device *ndev, u32 stcmd)
-+static int ifi_canfd_handle_state_errors(struct net_device *ndev)
- {
- 	struct ifi_canfd_priv *priv = netdev_priv(ndev);
-+	u32 stcmd = readl(priv->base + IFI_CANFD_STCMD);
- 	int work_done = 0;
--	u32 isr;
- 
--	/*
--	 * The ErrWarn condition is a little special, since the bit is
--	 * located in the INTERRUPT register instead of STCMD register.
--	 */
--	isr = readl(priv->base + IFI_CANFD_INTERRUPT);
--	if ((isr & IFI_CANFD_INTERRUPT_ERROR_WARNING) &&
-+	if ((stcmd & IFI_CANFD_STCMD_ERROR_ACTIVE) &&
-+	    (priv->can.state != CAN_STATE_ERROR_ACTIVE)) {
-+		netdev_dbg(ndev, "Error, entered active state\n");
-+		work_done += ifi_canfd_handle_state_change(ndev,
-+						CAN_STATE_ERROR_ACTIVE);
-+	}
-+
-+	if ((stcmd & IFI_CANFD_STCMD_ERROR_WARNING) &&
- 	    (priv->can.state != CAN_STATE_ERROR_WARNING)) {
--		/* Clear the interrupt */
--		writel(IFI_CANFD_INTERRUPT_ERROR_WARNING,
--		       priv->base + IFI_CANFD_INTERRUPT);
- 		netdev_dbg(ndev, "Error, entered warning state\n");
- 		work_done += ifi_canfd_handle_state_change(ndev,
- 						CAN_STATE_ERROR_WARNING);
-@@ -552,18 +568,11 @@ static int ifi_canfd_poll(struct napi_st
- {
- 	struct net_device *ndev = napi->dev;
- 	struct ifi_canfd_priv *priv = netdev_priv(ndev);
--	const u32 stcmd_state_mask = IFI_CANFD_STCMD_ERROR_PASSIVE |
--				     IFI_CANFD_STCMD_BUSOFF;
--	int work_done = 0;
--
--	u32 stcmd = readl(priv->base + IFI_CANFD_STCMD);
- 	u32 rxstcmd = readl(priv->base + IFI_CANFD_RXSTCMD);
--	u32 errctr = readl(priv->base + IFI_CANFD_ERROR_CTR);
-+	int work_done = 0;
- 
- 	/* Handle bus state changes */
--	if ((stcmd & stcmd_state_mask) ||
--	    ((stcmd & IFI_CANFD_STCMD_ERROR_ACTIVE) == 0))
--		work_done += ifi_canfd_handle_state_errors(ndev, stcmd);
-+	work_done += ifi_canfd_handle_state_errors(ndev);
- 
- 	/* Handle lost messages on RX */
- 	if (rxstcmd & IFI_CANFD_RXSTCMD_OVERFLOW)
-@@ -571,7 +580,7 @@ static int ifi_canfd_poll(struct napi_st
- 
- 	/* Handle lec errors on the bus */
- 	if (priv->can.ctrlmode & CAN_CTRLMODE_BERR_REPORTING)
--		work_done += ifi_canfd_handle_lec_err(ndev, errctr);
-+		work_done += ifi_canfd_handle_lec_err(ndev);
- 
- 	/* Handle normal messages on RX */
- 	if (!(rxstcmd & IFI_CANFD_RXSTCMD_EMPTY))
-@@ -592,12 +601,13 @@ static irqreturn_t ifi_canfd_isr(int irq
- 	struct net_device_stats *stats = &ndev->stats;
- 	const u32 rx_irq_mask = IFI_CANFD_INTERRUPT_RXFIFO_NEMPTY |
- 				IFI_CANFD_INTERRUPT_RXFIFO_NEMPTY_PER |
-+				IFI_CANFD_INTERRUPT_ERROR_COUNTER |
-+				IFI_CANFD_INTERRUPT_ERROR_STATE_CHG |
- 				IFI_CANFD_INTERRUPT_ERROR_WARNING |
--				IFI_CANFD_INTERRUPT_ERROR_COUNTER;
-+				IFI_CANFD_INTERRUPT_ERROR_BUSOFF;
- 	const u32 tx_irq_mask = IFI_CANFD_INTERRUPT_TXFIFO_EMPTY |
- 				IFI_CANFD_INTERRUPT_TXFIFO_REMOVE;
--	const u32 clr_irq_mask = ~((u32)(IFI_CANFD_INTERRUPT_SET_IRQ |
--					 IFI_CANFD_INTERRUPT_ERROR_WARNING));
-+	const u32 clr_irq_mask = ~((u32)IFI_CANFD_INTERRUPT_SET_IRQ);
- 	u32 isr;
- 
- 	isr = readl(priv->base + IFI_CANFD_INTERRUPT);
+ 	if (bpf_jit_enable > 1)
