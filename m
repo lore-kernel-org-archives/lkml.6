@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752914AbeC0NQz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 09:16:55 -0400
-Received: from foss.arm.com ([217.140.101.70]:55194 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752892AbeC0NQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 09:16:51 -0400
+        id S1752960AbeC0NRD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 09:17:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55246 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752938AbeC0NQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 09:16:59 -0400
 From: Suzuki K Poulose <suzuki.poulose@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
@@ -14,9 +14,9 @@ Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
         pbonzini@redhat.com, rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
         peter.maydell@linaro.org, kristina.martsenko@arm.com,
         mark.rutland@arm.com, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 17/17] kvm: arm64: Allow IPA size supported by the system
-Date: Tue, 27 Mar 2018 14:15:27 +0100
-Message-Id: <1522156531-28348-18-git-send-email-suzuki.poulose@arm.com>
+Subject: [kvmtool PATCH 20/17] kvmtool: arm64: Switch memory layout
+Date: Tue, 27 Mar 2018 14:15:30 +0100
+Message-Id: <1522156531-28348-21-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
 References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
@@ -24,66 +24,106 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So far we have restricted the IPA size of the VM to the default
-value (40bits). Now that we can manage the IPA size per VM and
-support dynamic stage2 page tables, allow VMs to bigger IPA.
-This is done by setting the IPA limit to the one supported by
-the hardware and kernel. This patch also moves the check for
-the default IPA size support to kvm_get_ipa_limit().
+If the guest wants to use a larger physical address space place
+the RAM at upper half of the address space. Otherwise, it uses the
+default layout.
 
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <cdall@kernel.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/kvm_host.h |  5 -----
- arch/arm64/include/asm/kvm_mmu.h  | 18 +++++++++++++++++-
- 2 files changed, 17 insertions(+), 6 deletions(-)
+ arm/aarch32/include/kvm/kvm-arch.h |  1 +
+ arm/aarch64/include/kvm/kvm-arch.h | 15 ++++++++++++---
+ arm/include/arm-common/kvm-arch.h  | 11 ++++++-----
+ arm/kvm.c                          |  2 +-
+ 4 files changed, 20 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 7b0af32..ec61e08 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -402,12 +402,7 @@ int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
+diff --git a/arm/aarch32/include/kvm/kvm-arch.h b/arm/aarch32/include/kvm/kvm-arch.h
+index cd31e72..2d62aab 100644
+--- a/arm/aarch32/include/kvm/kvm-arch.h
++++ b/arm/aarch32/include/kvm/kvm-arch.h
+@@ -4,6 +4,7 @@
+ #define ARM_KERN_OFFSET(...)	0x8000
  
- static inline void __cpu_init_stage2(void)
- {
--	u32 ps;
+ #define ARM_MAX_MEMORY(...)	ARM_LOMAP_MAX_MEMORY
++#define ARM_MEMORY_AREA(...)	ARM32_MEMORY_AREA
+ 
+ #include "arm-common/kvm-arch.h"
+ 
+diff --git a/arm/aarch64/include/kvm/kvm-arch.h b/arm/aarch64/include/kvm/kvm-arch.h
+index 9de623a..bad35b9 100644
+--- a/arm/aarch64/include/kvm/kvm-arch.h
++++ b/arm/aarch64/include/kvm/kvm-arch.h
+@@ -1,14 +1,23 @@
+ #ifndef KVM__KVM_ARCH_H
+ #define KVM__KVM_ARCH_H
+ 
++#include "arm-common/kvm-arch.h"
++
++#define ARM64_MEMORY_AREA(phys_shift)	(1UL << (phys_shift - 1))
++#define ARM64_MAX_MEMORY(phys_shift)	\
++	((1ULL << (phys_shift)) - ARM64_MEMORY_AREA(phys_shift))
++
++#define ARM_MEMORY_AREA(kvm)	((kvm)->cfg.arch.aarch32_guest ?	\
++				 ARM32_MEMORY_AREA		:	\
++				 ARM64_MEMORY_AREA(kvm->cfg.arch.phys_shift))
++
+ #define ARM_KERN_OFFSET(kvm)	((kvm)->cfg.arch.aarch32_guest	?	\
+ 				0x8000				:	\
+ 				0x80000)
+ 
+ #define ARM_MAX_MEMORY(kvm)	((kvm)->cfg.arch.aarch32_guest	?	\
+-				ARM_LOMAP_MAX_MEMORY		:	\
+-				ARM_HIMAP_MAX_MEMORY)
++				ARM32_MAX_MEMORY		:	\
++				ARM64_MAX_MEMORY(kvm->cfg.arch.phys_shift))
+ 
+-#include "arm-common/kvm-arch.h"
+ 
+ #endif /* KVM__KVM_ARCH_H */
+diff --git a/arm/include/arm-common/kvm-arch.h b/arm/include/arm-common/kvm-arch.h
+index c83c45f..ca7ab0f 100644
+--- a/arm/include/arm-common/kvm-arch.h
++++ b/arm/include/arm-common/kvm-arch.h
+@@ -6,14 +6,15 @@
+ #include <linux/types.h>
+ 
+ #include "arm-common/gic.h"
 -
- 	kvm_call_hyp(__init_stage2_translation);
--	ps = id_aa64mmfr0_parange_to_phys_shift(read_sysreg(id_aa64mmfr0_el1));
--	WARN_ONCE(ps < 40,
--		  "PARange is %d bits, unsupported configuration!", ps);
- }
+ #define ARM_IOPORT_AREA		_AC(0x0000000000000000, UL)
+ #define ARM_MMIO_AREA		_AC(0x0000000000010000, UL)
+ #define ARM_AXI_AREA		_AC(0x0000000040000000, UL)
+-#define ARM_MEMORY_AREA		_AC(0x0000000080000000, UL)
  
- /*
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index e86d7f4..6c5f0be 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -414,7 +414,23 @@ static inline u64 kvm_vttbr_baddr_mask(struct kvm *kvm)
+-#define ARM_LOMAP_MAX_MEMORY	((1ULL << 32) - ARM_MEMORY_AREA)
+-#define ARM_HIMAP_MAX_MEMORY	((1ULL << 40) - ARM_MEMORY_AREA)
++#define ARM32_MEMORY_AREA	_AC(0x0000000080000000, UL)
++#define ARM32_MAX_MEMORY	((1ULL << 32) - ARM32_MEMORY_AREA)
++
++#define ARM_IOMEM_AREA_END	ARM32_MEMORY_AREA
++
  
- static inline u32 kvm_get_ipa_limit(void)
- {
--	return KVM_PHYS_SHIFT;
-+	unsigned int ipa_max, parange;
-+
-+	parange = read_sanitised_ftr_reg(SYS_ID_AA64MMFR0_EL1) & 0x7;
-+	ipa_max = id_aa64mmfr0_parange_to_phys_shift(parange);
-+
-+	/* Raise the limit to the default size for backward compatibility */
-+	if (ipa_max < KVM_PHYS_SHIFT) {
-+		WARN_ONCE(1,
-+			  "PARange is %d bits, unsupported configuration!",
-+			  ipa_max);
-+		ipa_max = KVM_PHYS_SHIFT;
-+	}
-+
-+	/* Clamp it to the size supported by the kernel */
-+	ipa_max = (ipa_max > PHYS_MASK_SHIFT) ? PHYS_MASK_SHIFT : ipa_max;
-+
-+	return ipa_max;
- }
+ #define ARM_GIC_DIST_BASE	(ARM_AXI_AREA - ARM_GIC_DIST_SIZE)
+ #define ARM_GIC_CPUI_BASE	(ARM_GIC_DIST_BASE - ARM_GIC_CPUI_SIZE)
+@@ -24,7 +25,7 @@
+ #define ARM_IOPORT_SIZE		(ARM_MMIO_AREA - ARM_IOPORT_AREA)
+ #define ARM_VIRTIO_MMIO_SIZE	(ARM_AXI_AREA - (ARM_MMIO_AREA + ARM_GIC_SIZE))
+ #define ARM_PCI_CFG_SIZE	(1ULL << 24)
+-#define ARM_PCI_MMIO_SIZE	(ARM_MEMORY_AREA - \
++#define ARM_PCI_MMIO_SIZE	(ARM_IOMEM_AREA_END - \
+ 				(ARM_AXI_AREA + ARM_PCI_CFG_SIZE))
  
- static inline void kvm_config_stage2(struct kvm *kvm, u8 ipa_shift)
+ #define KVM_IOPORT_AREA		ARM_IOPORT_AREA
+diff --git a/arm/kvm.c b/arm/kvm.c
+index 2ab436e..5701d41 100644
+--- a/arm/kvm.c
++++ b/arm/kvm.c
+@@ -30,7 +30,7 @@ void kvm__init_ram(struct kvm *kvm)
+ 	u64 phys_start, phys_size;
+ 	void *host_mem;
+ 
+-	phys_start	= ARM_MEMORY_AREA;
++	phys_start	= ARM_MEMORY_AREA(kvm);
+ 	phys_size	= kvm->ram_size;
+ 	host_mem	= kvm->ram_start;
+ 
 -- 
-2.7.4
+1.9.1
