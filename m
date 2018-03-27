@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/xzUAXstRCLtgrnSykhfbn60mntncti+wvKmdW+LpQPrX1bqmOfuuPO8/YWITquK4wobow
-ARC-Seal: i=1; a=rsa-sha256; t=1522168825; cv=none;
+X-Google-Smtp-Source: AIpwx49kRvczxIw13JKjsxpCMPec6rzOz8NT3fpVDh9dpHVuDbMbxA2XbBUr9F2kRq9zrSty9tnp
+ARC-Seal: i=1; a=rsa-sha256; t=1522168820; cv=none;
         d=google.com; s=arc-20160816;
-        b=LZ1R3YDuVFPOyVPufHncCiOhN7B8gpcymU8m2YbyqqIqpWHICjcP21vzxmq+c2rn/K
-         2CfmM/3IcOrdGQvAW6bPe5J3HM0VM+V270HuFRwqhqeIUct+0aKtZCqDoW+5W91DhyEN
-         OV1tb+kdBSrHXfPRF0cLS7h00EFsYuvKoUhLOiGtlG0Dm20Z7S7l7nrIF3iy/UJdWFKa
-         VJx+O+fR5nMXMOqikrB8P6MHae5CryfHYgAhVB1Qou62oxWP/iWKbAI1aDJbRNMDFCxh
-         OB6aAo7+YDrkXe3EWxijBMz/Us7KEFNBzZE3fOwJUvcDBQMRmC1aWyEHmB1WZlN7lujl
-         jiiw==
+        b=NSyuWTsKSCr1tYr688szKtvpyFL+14p67M1HCC1HI4i8Lr0/mSmKpq8lUxdCNshnVD
+         UMF/IuEALhbtNUpYlnTCG/Jspr/OoqGQpW9fUo2oIk8SQFnPsknUtSjGZiGs0qNgMs/W
+         voqbfB2ONFWkpm9Jfr5QJ7SvEzwkn+mCwVc+pYUthG5zacxrOXBnWSYX+gm4OWtnlUic
+         08q+kbkCBgp9ugCXy7XeuXCUzzQofkresllNbzaCb1N9ftfq8ZVhDC0OvbsiM0WJFxUS
+         20Bnwki8+fHXLuB/kZjCn+TvNIEktOSL5lQdJkSlHy3RISrZl7/nLCCq5eNqCXgXfNdZ
+         k3rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jmzQDgfr8yZuR3/IVajZhxUa8t99K7MzheVrfHI2K9s=;
-        b=NFBlMofH3TauJ5N2n1f4prn6SATZPmObGQ7VSV71zj0V6JGMtoNFyUnE8Lg7auz0Dy
-         p82Tf8udeM/6Dmy6mbkVYWuDLUqvtdDZAjOf8BtqI470ypIShY9mwsYbrOnYfaVKmO2c
-         9nxWEfKjCsX+uob/UOFwV8CSzjw/wLzgN8r1FsECuMkds4f+QDXIN8Axg7jIA3XQHjPS
-         TZHhywoMSIlqxpGMQErg06H7VEXQIZ07YOO0jq6wer2pgpwUrHhLNqsViaRZVwk/f6xe
-         iaQIvoc+PkbBTqRN/ktcGPB5CviVaQsPUqJ6Z3A6FoKo+8JcMCqocm7UeQyTJPImPOUb
-         d6uQ==
+        bh=xuwFfDzxbg8QO+nTnZd4D7c1AGqKk19/WM5EWSFl0rY=;
+        b=TwEkwnO34tN7+niDSuQNgUqPrcMOUwrDtD9ZyBk89CBxo3BBM+5weUtCijFEr/f/6B
+         1jSuBT/ZHP1GiOkibad6rOMrFq0bjWRuzPRfDI4jd8fyl4ugd4YQJD18Del4z9LBrwIP
+         Saz8FrDUKSqhz27EVruZTIYwWl10fG+i8eNBTztoZ6qYmFJKlDZXrxGrXUTYADfEBkt7
+         iUuAlDIbzLr+ztGEgWw/oQzpTUiX+h6L/l64WjQpQvWFTtQAQzcRu+jcl+0T0egvSXll
+         4rcbBU1D+9Sn6hejv0ytV4lo59j7FBOQ5daYfgY3keFnPzr6QtYGDb5Q5uQ2Qp12tRVi
+         u9pA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans Verkuil <hans.verkuil@cisco.com>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.15 046/105] media: tegra-cec: reset rx_buf_cnt when start bit detected
-Date: Tue, 27 Mar 2018 18:27:26 +0200
-Message-Id: <20180327162800.115680053@linuxfoundation.org>
+	"Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.15 044/105] cgroup: fix rule checking for threaded mode switching
+Date: Tue, 27 Mar 2018 18:27:24 +0200
+Message-Id: <20180327162759.956869678@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162757.813009222@linuxfoundation.org>
 References: <20180327162757.813009222@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109698598114628?=
-X-GMAIL-MSGID: =?utf-8?q?1596109698598114628?=
+X-GMAIL-THRID: =?utf-8?q?1596109390159171631?=
+X-GMAIL-MSGID: =?utf-8?q?1596109692685918447?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,60 +49,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Tejun Heo <tj@kernel.org>
 
-commit e113d65ae417ae6d9be229649b81d404c47ade79 upstream.
+commit d1897c9538edafd4ae6bbd03cc075962ddde2c21 upstream.
 
-If a start bit is detected, then reset the receive buffer counter to 0.
+A domain cgroup isn't allowed to be turned threaded if its subtree is
+populated or domain controllers are enabled.  cgroup_enable_threaded()
+depended on cgroup_can_be_thread_root() test to enforce this rule.  A
+parent which has populated domain descendants or have domain
+controllers enabled can't become a thread root, so the above rules are
+enforced automatically.
 
-This ensures that no stale data is in the buffer if a message is
-broken off midstream due to e.g. a Low Drive condition and then
-retransmitted.
+However, for the root cgroup which can host mixed domain and threaded
+children, cgroup_can_be_thread_root() doesn't check any of those
+conditions and thus first level cgroups ends up escaping those rules.
 
-The only Rx interrupts we need to listen to are RX_REGISTER_FULL (i.e.
-a valid byte was received) and RX_START_BIT_DETECTED (i.e. a new
-message starts and we need to reset the counter).
+This patch fixes the bug by adding explicit checks for those rules in
+cgroup_enable_threaded().
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: <stable@vger.kernel.org>      # for v4.15 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Reported-by: Michael Kerrisk (man-pages) <mtk.manpages@gmail.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 8cfd8147df67 ("cgroup: implement cgroup v2 thread support")
+Cc: stable@vger.kernel.org # v4.14+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/tegra-cec/tegra_cec.c |   17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ kernel/cgroup/cgroup.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/media/platform/tegra-cec/tegra_cec.c
-+++ b/drivers/media/platform/tegra-cec/tegra_cec.c
-@@ -172,16 +172,13 @@ static irqreturn_t tegra_cec_irq_handler
- 		}
- 	}
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -3183,6 +3183,16 @@ static int cgroup_enable_threaded(struct
+ 	if (cgroup_is_threaded(cgrp))
+ 		return 0;
  
--	if (status & (TEGRA_CEC_INT_STAT_RX_REGISTER_OVERRUN |
--		      TEGRA_CEC_INT_STAT_RX_BUS_ANOMALY_DETECTED |
--		      TEGRA_CEC_INT_STAT_RX_START_BIT_DETECTED |
--		      TEGRA_CEC_INT_STAT_RX_BUS_ERROR_DETECTED)) {
-+	if (status & TEGRA_CEC_INT_STAT_RX_START_BIT_DETECTED) {
- 		cec_write(cec, TEGRA_CEC_INT_STAT,
--			  (TEGRA_CEC_INT_STAT_RX_REGISTER_OVERRUN |
--			   TEGRA_CEC_INT_STAT_RX_BUS_ANOMALY_DETECTED |
--			   TEGRA_CEC_INT_STAT_RX_START_BIT_DETECTED |
--			   TEGRA_CEC_INT_STAT_RX_BUS_ERROR_DETECTED));
--	} else if (status & TEGRA_CEC_INT_STAT_RX_REGISTER_FULL) {
-+			  TEGRA_CEC_INT_STAT_RX_START_BIT_DETECTED);
-+		cec->rx_done = false;
-+		cec->rx_buf_cnt = 0;
-+	}
-+	if (status & TEGRA_CEC_INT_STAT_RX_REGISTER_FULL) {
- 		u32 v;
- 
- 		cec_write(cec, TEGRA_CEC_INT_STAT,
-@@ -255,7 +252,7 @@ static int tegra_cec_adap_enable(struct
- 		  TEGRA_CEC_INT_MASK_TX_BUS_ANOMALY_DETECTED |
- 		  TEGRA_CEC_INT_MASK_TX_FRAME_TRANSMITTED |
- 		  TEGRA_CEC_INT_MASK_RX_REGISTER_FULL |
--		  TEGRA_CEC_INT_MASK_RX_REGISTER_OVERRUN);
-+		  TEGRA_CEC_INT_MASK_RX_START_BIT_DETECTED);
- 
- 	cec_write(cec, TEGRA_CEC_HW_CONTROL, TEGRA_CEC_HWCTRL_TX_RX_MODE);
- 	return 0;
++	/*
++	 * If @cgroup is populated or has domain controllers enabled, it
++	 * can't be switched.  While the below cgroup_can_be_thread_root()
++	 * test can catch the same conditions, that's only when @parent is
++	 * not mixable, so let's check it explicitly.
++	 */
++	if (cgroup_is_populated(cgrp) ||
++	    cgrp->subtree_control & ~cgrp_dfl_threaded_ss_mask)
++		return -EOPNOTSUPP;
++
+ 	/* we're joining the parent's domain, ensure its validity */
+ 	if (!cgroup_is_valid_domain(dom_cgrp) ||
+ 	    !cgroup_can_be_thread_root(dom_cgrp))
