@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/qXFUJH6u8fvbT0paFMtx9rhktgKbherb/En0UnXE/8ZyINSwqbt2KJTyxqlOav8O/Jvnd
-ARC-Seal: i=1; a=rsa-sha256; t=1522168503; cv=none;
+X-Google-Smtp-Source: AIpwx489vCOTpusQQEuvXs1W21iPIEmBLXevkWC1EMG5Qtc3DxV1cG4nRkIVkYe7NAbb2AKVLuzX
+ARC-Seal: i=1; a=rsa-sha256; t=1522168501; cv=none;
         d=google.com; s=arc-20160816;
-        b=XklozQGd9VrG4cnK1+0JteINm0XGPrdXaNa/zyTl6U2wWf3D6J8dspJLdVH8I/HE7Q
-         i9UlgL6EH6jmvcNZDIwhB5wdEtOMeeFxjc05/dOJ7U+xtE18OSauAcpsKei1lAEpbt1O
-         wYQq9JOREsS7ZN1DLMY+mgM7P/Du8GbGhN43Dhr2x733eeJ7SimCy616qldxBhQ27ZB1
-         b/ouvLX1PhPo2pVOyngUcOyOmTx3s3jKt6/SungKNhtBCty/wTX3z2jQQu+rMudjS5Xd
-         7+Bdmu2PRanqvWczwv4oDovPG8fgvo7xFqe/jmN/jQV5Y1Hbntg2cWhV30a1MsDUasjZ
-         +ddQ==
+        b=Hrvou1zYslQIvtXhVwxVMlJBTCRI60Q3WqktemO4JooGviSMDReakbM5KQ+e4PgBOQ
+         8EVVEplryPt1faHGJD4ULFGshBAmvSdMa2tvGLtQHxKZ4Gfo45bBAyRp9bpViLWnGXGO
+         PEhcuJnthVSf/bvh9gzwK44XVgEikN6Dt7q9fpiZhU/9WTy5SWOri4P/Ob5QO0xlPfKl
+         k5VYym2FyqStPAoXriEm229IuALzy3cB6Se3tcSgiGhO6RdlyU4U2k5EGMevQOyE2Jv6
+         ZORT8ItH5tMVDbfcoR0Su/2zj8+/VpOB5ar0SDD3uGuPP4jCUzOFA9FjfcDUmleyFbhm
+         ZCHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NWSrMLyMrQc581oYLXg6xvTwYRiJBZ4BbU2cwV3o7UE=;
-        b=jY11JA43t5vYZ1kMIY1jL+6AiXb8fbHcX9k1Q/oaJNB9+dyq0vLzyQI9GcKbSEc8+V
-         NR5hMDpgEg7qL49rvScfbf+IDqXUiPR1pCtB51WQlQyq/kPlxsT0nDiJSC9A6gww4+x6
-         XeGI5o2yk0kTJU94xqWb/HmgrQC6G06VBoMsJShfn69CCLQdzZfZPkUn+JmiwcplqzX3
-         cXah5dJFGAVYE6xKd9syDjavpfXR2gCWil3Au1EHdhQfpbmBBlH+6rBaGfOF/fKcAImU
-         jFz2p2k1dexJQ+unHg8TJUB130F60h2ZGLOTRlKUADbnhYTPwUMqOldYXm2Y8TdIEL2k
-         EKLg==
+        bh=ojdnCvC4axYBKGsM3y7gue5iM9/Bj/IJ+RhjPdsllsQ=;
+        b=nN3VdYVHpZMOVosXP2Si7JxzaBXpHtKn1Za2hZ+wQSDa1uvii1RxAC1PzmPTtpD2ct
+         XbRu8yA2MhPJ0tSMLdR4ySwlz1vw3LHbNkRKaM6uzkFthbdLVDsSK6lNc59Fwhq2EF3J
+         FPXau/97tadz7bL+pSWxlU0z/cjDG5K9YOaES8ZUcA8bmuFkH4tW6jW3gEW+wYXyTs7r
+         rzGlS4p0+q4UPijIBrtF3q2CCFL+hY57A0SjLSn6KZeZl0mbc4eTehKwfuQxzC+1X9SK
+         PIEnsi30ZBe2IWB85CD2a3svCz2vEulmPDRwfkTXknxpoYaxnrAde9CvPh/BBv0IAOop
+         REDg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+1ff6f9fcc3c35f1c72a95e26528c8e7e3276e4da@syzkaller.appspotmail.com,
-	Eric Biggers <ebiggers@google.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.14 034/101] libata: fix length validation of ATAPI-relayed SCSI commands
-Date: Tue, 27 Mar 2018 18:27:06 +0200
-Message-Id: <20180327162752.092401198@linuxfoundation.org>
+	Ivan Levshin <ivan.levshin@microfocus.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.14 033/101] Bluetooth: btusb: Fix quirk for Atheros 1525/QCA6174
+Date: Tue, 27 Mar 2018 18:27:05 +0200
+Message-Id: <20180327162752.018175018@linuxfoundation.org>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180327162749.993880276@linuxfoundation.org>
 References: <20180327162749.993880276@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1596109044007210332?=
-X-GMAIL-MSGID: =?utf-8?q?1596109360561817238?=
+X-GMAIL-THRID: =?utf-8?q?1596109041135098917?=
+X-GMAIL-MSGID: =?utf-8?q?1596109358009923505?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,100 +50,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 058f58e235cbe03e923b30ea7c49995a46a8725f upstream.
+commit f44cb4b19ed40b655c2d422c9021ab2c2625adb6 upstream.
 
-syzkaller reported a crash in ata_bmdma_fill_sg() when writing to
-/dev/sg1.  The immediate cause was that the ATA command's scatterlist
-was not DMA-mapped, which causes 'pi - 1' to underflow, resulting in a
-write to 'qc->ap->bmdma_prd[0xffffffff]'.
+The Atheros 1525/QCA6174 BT doesn't seem working properly on the
+recent kernels, as it tries to load a wrong firmware
+ar3k/AthrBT_0x00000200.dfu and it fails.
 
-Strangely though, the flag ATA_QCFLAG_DMAMAP was set in qc->flags.  The
-root cause is that when __ata_scsi_queuecmd() is preparing to relay a
-SCSI command to an ATAPI device, it doesn't correctly validate the CDB
-length before copying it into the 16-byte buffer 'cdb' in 'struct
-ata_queued_cmd'.  Namely, it validates the fixed CDB length expected
-based on the SCSI opcode but not the actual CDB length, which can be
-larger due to the use of the SG_NEXT_CMD_LEN ioctl.  Since 'flags' is
-the next member in ata_queued_cmd, a buffer overflow corrupts it.
+This seems to have been a problem for some time, and the known
+workaround is to apply BTUSB_QCA_ROM quirk instead of BTUSB_ATH3012.
 
-Fix it by requiring that the actual CDB length be <= 16 (ATAPI_CDB_LEN).
+The device in question is:
 
-[Really it seems the length should be required to be <= dev->cdb_len,
-but the current behavior seems to have been intentionally introduced by
-commit 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands
-in 16-byte CDBs") to work around a userspace bug in mplayer.  Probably
-the workaround is no longer needed (mplayer was fixed in 2007), but
-continuing to allow lengths to up 16 appears harmless for now.]
+T: Bus=01 Lev=01 Prnt=01 Port=09 Cnt=03 Dev#=  4 Spd=12   MxCh= 0
+D: Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P: Vendor=0cf3 ProdID=3004 Rev= 0.01
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E: Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E: Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I: If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I: If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I: If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I: If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I: If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E: Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E: Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-Here's a reproducer that works in QEMU when /dev/sg1 refers to the
-CD-ROM drive that qemu-system-x86_64 creates by default:
-
-    #include <fcntl.h>
-    #include <sys/ioctl.h>
-    #include <unistd.h>
-
-    #define SG_NEXT_CMD_LEN 0x2283
-
-    int main()
-    {
-	    char buf[53] = { [36] = 0x7e, [52] = 0x02 };
-	    int fd = open("/dev/sg1", O_RDWR);
-	    ioctl(fd, SG_NEXT_CMD_LEN, &(int){ 17 });
-	    write(fd, buf, sizeof(buf));
-    }
-
-The crash was:
-
-    BUG: unable to handle kernel paging request at ffff8cb97db37ffc
-    IP: ata_bmdma_fill_sg drivers/ata/libata-sff.c:2623 [inline]
-    IP: ata_bmdma_qc_prep+0xa4/0xc0 drivers/ata/libata-sff.c:2727
-    PGD fb6c067 P4D fb6c067 PUD 0
-    Oops: 0002 [#1] SMP
-    CPU: 1 PID: 150 Comm: syz_ata_bmdma_q Not tainted 4.15.0-next-20180202 #99
-    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-    [...]
-    Call Trace:
-     ata_qc_issue+0x100/0x1d0 drivers/ata/libata-core.c:5421
-     ata_scsi_translate+0xc9/0x1a0 drivers/ata/libata-scsi.c:2024
-     __ata_scsi_queuecmd drivers/ata/libata-scsi.c:4326 [inline]
-     ata_scsi_queuecmd+0x8c/0x210 drivers/ata/libata-scsi.c:4375
-     scsi_dispatch_cmd+0xa2/0xe0 drivers/scsi/scsi_lib.c:1727
-     scsi_request_fn+0x24c/0x530 drivers/scsi/scsi_lib.c:1865
-     __blk_run_queue_uncond block/blk-core.c:412 [inline]
-     __blk_run_queue+0x3a/0x60 block/blk-core.c:432
-     blk_execute_rq_nowait+0x93/0xc0 block/blk-exec.c:78
-     sg_common_write.isra.7+0x272/0x5a0 drivers/scsi/sg.c:806
-     sg_write+0x1ef/0x340 drivers/scsi/sg.c:677
-     __vfs_write+0x31/0x160 fs/read_write.c:480
-     vfs_write+0xa7/0x160 fs/read_write.c:544
-     SYSC_write fs/read_write.c:589 [inline]
-     SyS_write+0x4d/0xc0 fs/read_write.c:581
-     do_syscall_64+0x5e/0x110 arch/x86/entry/common.c:287
-     entry_SYSCALL_64_after_hwframe+0x21/0x86
-
-Fixes: 607126c2a21c ("libata-scsi: be tolerant of 12-byte ATAPI commands in 16-byte CDBs")
-Reported-by: syzbot+1ff6f9fcc3c35f1c72a95e26528c8e7e3276e4da@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org> # v2.6.24+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Bugzilla: http://bugzilla.opensuse.org/show_bug.cgi?id=1082504
+Reported-by: Ivan Levshin <ivan.levshin@microfocus.com>
+Tested-by: Ivan Levshin <ivan.levshin@microfocus.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-scsi.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -4308,7 +4308,9 @@ static inline int __ata_scsi_queuecmd(st
- 		if (likely((scsi_op != ATA_16) || !atapi_passthru16)) {
- 			/* relay SCSI command to ATAPI device */
- 			int len = COMMAND_SIZE(scsi_op);
--			if (unlikely(len > scmd->cmd_len || len > dev->cdb_len))
-+			if (unlikely(len > scmd->cmd_len ||
-+				     len > dev->cdb_len ||
-+				     scmd->cmd_len > ATAPI_CDB_LEN))
- 				goto bad_cdb_len;
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -235,7 +235,6 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x0930, 0x0227), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0b05, 0x17d0), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x0036), .driver_info = BTUSB_ATH3012 },
+-	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x3008), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x311d), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x311e), .driver_info = BTUSB_ATH3012 },
+@@ -268,6 +267,7 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x0489, 0xe03c), .driver_info = BTUSB_ATH3012 },
  
- 			xlat_func = atapi_xlat;
+ 	/* QCA ROME chipset */
++	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0cf3, 0xe007), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0cf3, 0xe009), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0cf3, 0xe300), .driver_info = BTUSB_QCA_ROME },
