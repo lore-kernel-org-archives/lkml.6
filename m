@@ -1,85 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeC0Irc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:47:32 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42355 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751020AbeC0Ir0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:47:26 -0400
-Date: Tue, 27 Mar 2018 09:47:01 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Logan Gunthorpe <logang@deltatee.com>
-CC: Bjorn Helgaas <helgaas@kernel.org>, Sinan Kaya <okaya@codeaurora.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-nvme@lists.infradead.org>, <linux-rdma@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-block@vger.kernel.org>,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        "Alex Williamson" <alex.williamson@redhat.com>,
-        Eric Wehage <Eric.Wehage@huawei.com>
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-Message-ID: <20180327094701.0000300d@huawei.com>
-In-Reply-To: <c717eb06-1e83-f0f3-4d6c-15531aa808e0@deltatee.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
-        <20180312193525.2855-2-logang@deltatee.com>
-        <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
-        <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
-        <20180326121138.00005e30@huawei.com>
-        <20180326140118.GA221690@bhelgaas-glaptop.roam.corp.google.com>
-        <c717eb06-1e83-f0f3-4d6c-15531aa808e0@deltatee.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; i686-w64-mingw32)
+        id S1751120AbeC0Isb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:48:31 -0400
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:55569 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750917AbeC0IsY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:48:24 -0400
+X-Google-Smtp-Source: AG47ELvylVuTcsk1t9A8Gta7HKrruKp9LbIBoTfPKT9jjxZqOHQG2Ikzcfs8UYVgOhj8EQNzu7PIZg==
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1522140259.1110.43.camel@bootlin.com>
+References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
+ <20180321152904.22411-3-paul.kocialkowski@bootlin.com> <20180323095529.5nptn5achjt3esog@flea>
+ <1522137643.1110.4.camel@bootlin.com> <20180327081731.he3lhnvqffuimsi5@flea> <1522140259.1110.43.camel@bootlin.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 27 Mar 2018 16:48:01 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67bykhv6oTO0dQTyUOcB0CZZUPHg06F8K0oN5C_PH3E7A@mail.gmail.com>
+Message-ID: <CAGb2v67bykhv6oTO0dQTyUOcB0CZZUPHg06F8K0oN5C_PH3E7A@mail.gmail.com>
+Subject: Re: [PATCH 02/10] drm/sun4i: Disable YUV channel when using the
+ frontend and set interlace
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Mar 2018 09:46:24 -0600
-Logan Gunthorpe <logang@deltatee.com> wrote:
+On Tue, Mar 27, 2018 at 4:44 PM, Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+> Hi,
+>
+> On Tue, 2018-03-27 at 10:17 +0200, Maxime Ripard wrote:
+>> On Tue, Mar 27, 2018 at 10:00:43AM +0200, Paul Kocialkowski wrote:
+>> > Hi,
+>> >
+>> > On Fri, 2018-03-23 at 10:55 +0100, Maxime Ripard wrote:
+>> > > On Wed, Mar 21, 2018 at 04:28:56PM +0100, Paul Kocialkowski wrote:
+>> > > > The YUV channel was only disabled in
+>> > > > sun4i_backend_update_layer_formats,
+>> > > > which is not called when the frontend is selected.
+>> > > >
+>> > > > Thus, creating a layer with a YUV format handled by the backend
+>> > > > and
+>> > > > then
+>> > > > switching to a format that requires the frontend would keep the
+>> > > > YUV
+>> > > > channel enabled for the layer.
+>> > > >
+>> > > > This explicitly disables the YUV channel for the layer when
+>> > > > using
+>> > > > the
+>> > > > frontend as well. It also sets the relevant interlace bit, which
+>> > > > was
+>> > > > missing in the frontend path as well.
+>> > >
+>> > > This should be part of a separate patch. Usually, if you write "it
+>> > > also does..." at the end of your commit log, it's a pretty good
+>> > > indication that it should be another patch :)
+>> >
+>> > I must say, I figured that this part was missing in the frontend
+>> > path by
+>> > chance and couldn't really test the feature, so I'm also tempted to
+>> > drop
+>> > it altogether. What do you think?
+>>
+>> If you haven't been able to test it, then yeah, don't submit it.
+>
+> Alright, noted.
+>
+>> > Also, is interlacing actually used on any of the video outputs we
+>> > support? Perhaps RGB?
+>>
+>> Composite would be a better guess :)
+>
+> Oh and I was wondering what CVBS was about. Now I know!
+> It seems that we don't support it for now apparently, anyway.
 
-> On 26/03/18 08:01 AM, Bjorn Helgaas wrote:
-> > On Mon, Mar 26, 2018 at 12:11:38PM +0100, Jonathan Cameron wrote:  
-> >> On Tue, 13 Mar 2018 10:43:55 -0600
-> >> Logan Gunthorpe <logang@deltatee.com> wrote:  
-> >>> It turns out that root ports that support P2P are far less common than 
-> >>> anyone thought. So it will likely have to be a white list.  
-> >>
-> >> This came as a bit of a surprise to our PCIe architect.
-> >>
-> >> His follow up was whether it was worth raising an ECR for the PCIe spec
-> >> to add a capability bit to allow this to be discovered.  This might
-> >> long term avoid the need to maintain the white list for new devices.
-> >>
-> >> So is it worth having a long term solution for making this discoverable?  
-> > 
-> > It was surprising to me that there's no architected way to discover
-> > this.  It seems like such an obvious thing that I guess I assumed the
-> > omission was intentional, i.e., maybe there's something that makes it
-> > impractical, but it would be worth at least asking somebody in the
-> > SIG.  It seems like for root ports in the same root complex, at least,
-> > there could be a bit somewhere in the root port or the RCRB (which
-> > Linux doesn't support yet).  
-> 
-> Yes, I agree. It would be a good long term solution to have this bit in
-> the spec. That would avoid us needing to create a white list for new
-> hardware. However, I expect it would be years before we can rely on it
-> so someone may yet implement that white list.
-> 
-> Logan
+You could also try adding interlaced modes to HDMI.
 
-I'll see if I can get our PCI SIG people to follow this through and see if
-it is just an omission or as Bjorn suggested, there is some reason we
-aren't thinking of that makes it hard.
-
-Agreed that it is a somewhat tangential question to what to do with current
-hardware, but let's get the ball rolling if possible.
-
-Jonathan
+ChenYu
