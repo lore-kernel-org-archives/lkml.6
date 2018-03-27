@@ -1,84 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeC0Mex (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 08:34:53 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:53948 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751349AbeC0Mev (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 08:34:51 -0400
-X-IronPort-AV: E=Sophos;i="5.48,367,1517900400";
-   d="scan'208";a="13309089"
-From: Eugen Hristev <eugen.hristev@microchip.com>
-To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>
-CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v2 03/10] dt-bindings: input: touchscreen: touch_adc: create bindings
-Date: Tue, 27 Mar 2018 15:32:36 +0300
-Message-ID: <1522153963-1121-4-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522153963-1121-1-git-send-email-eugen.hristev@microchip.com>
-References: <1522153963-1121-1-git-send-email-eugen.hristev@microchip.com>
+        id S1752348AbeC0MiH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 08:38:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45602 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751120AbeC0MiG (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 08:38:06 -0400
+Date: Tue, 27 Mar 2018 14:38:03 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: "Jin, Yao" <yao.jin@linux.intel.com>
+Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
+        yao.jin@intel.com
+Subject: Re: [PATCH v1 2/3] perf version: Print the status of compiled-in
+ libraries
+Message-ID: <20180327123803.GF3102@krava>
+References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
+ <1522080424-12912-3-git-send-email-yao.jin@linux.intel.com>
+ <20180326093925.GI6207@krava>
+ <84893905-7512-0757-c13c-152a9d051f92@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84893905-7512-0757-c13c-152a9d051f92@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added bindings for generic resistive touchscreen ADC.
+On Mon, Mar 26, 2018 at 09:51:03PM +0800, Jin, Yao wrote:
+> 
+> 
+> On 3/26/2018 5:39 PM, Jiri Olsa wrote:
+> > On Tue, Mar 27, 2018 at 12:07:03AM +0800, Jin Yao wrote:
+> > > This patch checks the values passed by CFLAGS (-DXXX) and then
+> > > print the status of libraries.
+> > > 
+> > > For example, if HAVE_DWARF_SUPPORT is defined, that means the
+> > > library "dwarf" is compiled-in. The patch will print the status
+> > > "on" for this library.
+> > > 
+> > > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> > > ---
+> > >   tools/perf/builtin-version.c | 125 +++++++++++++++++++++++++++++++++++++++++++
+> > >   tools/perf/builtin.h         |   1 +
+> > >   2 files changed, 126 insertions(+)
+> > > 
+> > > diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
+> > > index 37019c5..90a0a7f 100644
+> > > --- a/tools/perf/builtin-version.c
+> > > +++ b/tools/perf/builtin-version.c
+> > > @@ -9,3 +9,128 @@ int cmd_version(int argc __maybe_unused, const char **argv __maybe_unused)
+> > >   	printf("perf version %s\n", perf_version_string);
+> > >   	return 0;
+> > >   }
+> > > +
+> > > +static void status_print(const char *name, const char *status)
+> > > +{
+> > > +	printf("%22s: [ %3s ]\n", name, status);
+> > > +}
+> > > +
+> > > +static void library_status(void)
+> > > +{
+> > > +#ifdef HAVE_DWARF_SUPPORT
+> > > +	status_print("dwarf", "on");
+> > > +#else
+> > > +	status_print("dwarf", "off");
+> > > +#endif
+> > 
+> > could this and all those below be in some generic macro?
+> > 
+> > #define STATUS(__d, __m)		\
+> > #ifdef __d 				\
+> > 	status_print(#__m, "on");	\
+> > #else					\
+> > 	status_print(#__m, "OFF");	\
+> > #endif
+> > 
+> > STATUS(HAVE_DWARF_SUPPORT, dwarf)
+> > 
+> > 
+> > also please print the 'OFF' and use colors as in the build message
+> > 
+> 
+> Fine, thanks. I will update the code.
+> 
+> > > +
+> > > +#ifdef HAVE_DWARF_GETLOCATIONS
+> > > +	status_print("dwarf_getlocations", "on");
+> > > +#else
+> > > +	status_print("dwarf_getlocations", "off");
+> > > +#endif
+> > > +
+> > > +#ifdef NO_GLIBC
+> > > +	status_print("glibc", "off");
+> > > +#else
+> > > +	status_print("glibc", "on");
+> > > +#endif
+> > > +
+> > > +#ifdef HAVE_GTK2_SUPPORT
+> > > +	status_print("gtk2", "on");
+> > > +#else
+> > > +	status_print("gtk2", "off");
+> > > +#endif
+> > > +
+> > 
+> > SNIP
+> > 
+> > > +}
+> > > +
+> > > +int cmd_version2(int argc, const char **argv)
+> > > +{
+> > > +	cmd_version(argc, argv);
+> > > +	library_status();
+> > > +	return 0;
+> > > +}
+> > > diff --git a/tools/perf/builtin.h b/tools/perf/builtin.h
+> > > index 05745f3..c7508ee 100644
+> > > --- a/tools/perf/builtin.h
+> > > +++ b/tools/perf/builtin.h
+> > > @@ -29,6 +29,7 @@ int cmd_timechart(int argc, const char **argv);
+> > >   int cmd_top(int argc, const char **argv);
+> > >   int cmd_script(int argc, const char **argv);
+> > >   int cmd_version(int argc, const char **argv);
+> > > +int cmd_version2(int argc, const char **argv);
+> > 
+> > please don't add new command for this, handle this in cmd_version
+> > 
+> 
+> Yeah, I know that, adding a new command is not a good idea.
+> 
+> But how can I pass a new parameter to cmd_version to indicate it's the -vv
+> case? Use argv[1]? But looks not good since argc is 1.
+> 
+> Any idea about that?
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+I guess the based would be to have 'perf version -v', where
+in cmd_version you'd call standard option processing..
+
+the 'perf -vv' shortcut could for example be done through
+some global var like in attached patch... untested
+
+jirka
+
+
 ---
-Changes in v2:
- - modified bindings to have a generic resistive touchscreen adc driver
-instead of specific architecture one.
-
- .../bindings/input/touchscreen/touch_adc.txt       | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/touch_adc.txt
-
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/touch_adc.txt b/Documentation/devicetree/bindings/input/touchscreen/touch_adc.txt
-new file mode 100644
-index 0000000..27abcdc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/touchscreen/touch_adc.txt
-@@ -0,0 +1,33 @@
-+Generic resistive touchscreen ADC
+diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
+index 37019c5d675f..1fe458792cc1 100644
+--- a/tools/perf/builtin-version.c
++++ b/tools/perf/builtin-version.c
+@@ -4,6 +4,8 @@
+ #include <linux/compiler.h>
+ #include <stdio.h>
+ 
++int version_verbose;
 +
-+Required properties:
+ int cmd_version(int argc __maybe_unused, const char **argv __maybe_unused)
+ {
+ 	printf("perf version %s\n", perf_version_string);
+diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+index 1b3fc8ec0fa2..a5c95c6c0de7 100644
+--- a/tools/perf/perf.c
++++ b/tools/perf/perf.c
+@@ -185,7 +185,14 @@ static int handle_options(const char ***argv, int *argc, int *envchanged)
+ 			break;
+ 		}
+ 
+-		if (!strcmp(cmd, "-v")) {
++		if (strstarts(cmd, "-v")) {
++			int i;
 +
-+ - compatible: must be "generic-resistive-adc-touch"
-+The device must be connected to an IIO device that provides channels for
-+position measurement and optional pressure.
-+Refer to ../iio/iio-bindings.txt for details
-+ - iio-channels: must have at least two channels connected to an IIO device.
-+These should correspond to the channels exposed by the IIO device and should
-+have the right index as the IIO device registers them. These channels
-+represent the relative position on the "x" and "y" axes.
-+ - iio-channel-names: must have all the channels' names. Mandatory channels
-+are "x" and "y".
++			for (i = 2; cmd[i]; i++) {
++				if (cmd[i] == 'v')
++					version_verbose++;
++			}
 +
-+Optional properties:
-+ - iio-channels: The third channel named "pressure" is optional and can be
-+used if the IIO device also measures pressure besides position.
-+If this channel is missing, pressure will be ignored and the touchscreen
-+will only report position.
-+ - iio-channel-names: optional channel named "pressure".
-+ - generic-resistive-adc-touch,pressure-threshold: a pressure threshold for
-+the touchscreen, if we are using the "pressure" channel as well.
-+Represented by an integer value.
+ 			(*argv)[0] = "--version";
+ 			break;
+ 		}
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 8fec1abd0f1f..9c45ba179635 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -13,6 +13,8 @@ void test_attr__init(void);
+ void test_attr__open(struct perf_event_attr *attr, pid_t pid, int cpu,
+ 		     int fd, int group_fd, unsigned long flags);
+ 
++extern int version_verbose;
 +
-+Example:
-+
-+	resistive_touch: resistive_touch {
-+		compatible = "generic-resistive-adc-touch";
-+		generic-resistive-adc-touch,pressure-threshold = <10000>;
-+		io-channels = <&adc 24>, <&adc 25>, <&adc 26>;
-+		io-channel-names = "x", "y", "pressure";
-+	};
--- 
-2.7.4
+ #define HAVE_ATTR_TEST
+ #include "perf-sys.h"
+ 
