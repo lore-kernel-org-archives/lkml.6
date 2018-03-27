@@ -1,216 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751072AbeC0Hae (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 03:30:34 -0400
-Received: from relay0.mail.gandi.net ([217.70.178.220]:33543 "EHLO
-        relay0-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750873AbeC0Had (ORCPT
+        id S1751033AbeC0HcR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 03:32:17 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:45279 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbeC0HcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 03:30:33 -0400
-X-Originating-IP: 2.224.242.101
-Date: Tue, 27 Mar 2018 09:30:27 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
-        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] drm: bridge: Add thc63lvd1024 LVDS decoder driver
-Message-ID: <20180327073027.GH27746@w540>
-References: <1521213399-31947-1-git-send-email-jacopo+renesas@jmondi.org>
- <1521213399-31947-3-git-send-email-jacopo+renesas@jmondi.org>
- <30381869-9bc8-b6aa-a37a-598d9c8f280d@mentor.com>
+        Tue, 27 Mar 2018 03:32:15 -0400
+X-Google-Smtp-Source: AIpwx48i0BP1Qkq+VVc8UwIiXqgS9RopOp7ROWCr/e7th1WN54QGcDMtbsh8zHnA6/tLfP2LSQxoGw==
+Date: Tue, 27 Mar 2018 10:32:12 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: Matthew Wilcox <willy@infradead.org>, adobriyan@gmail.com,
+        mhocko@kernel.org, mguzik@redhat.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+Message-ID: <20180327073212.GG2236@uranus>
+References: <1522088439-105930-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180326183725.GB27373@bombadil.infradead.org>
+ <20180326192132.GE2236@uranus>
+ <aef52c2a-4b75-f8a7-2083-f53f42bddab8@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <30381869-9bc8-b6aa-a37a-598d9c8f280d@mentor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <aef52c2a-4b75-f8a7-2083-f53f42bddab8@linux.alibaba.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Vladimir,
+On Mon, Mar 26, 2018 at 05:59:49PM -0400, Yang Shi wrote:
+> > Say we've two syscalls running prctl_set_mm_map in parallel, and imagine
+> > one have @start_brk = 20 @brk = 10 and second caller has @start_brk = 30
+> > and @brk = 20. Since now the call is guarded by _read_ the both calls
+> > unlocked and due to OO engine it may happen then when both finish
+> > we have @start_brk = 30 and @brk = 10. In turn "write" semaphore
+> > has been take to have consistent data on exit, either you have [20;10]
+> > or [30;20] assigned not something mixed.
+> > 
+> > That said I think using read-lock here would be a bug.
+> 
+> Yes it sounds so. However, it was down_read before
+> ddf1d398e517e660207e2c807f76a90df543a217 ("prctl: take mmap sem for writing
+> to protect against others"). And, that commit is for fixing the concurrent
+> writing to arg_* and env_*. I just checked that commit, but omitted the brk
+> part. The potential issue mentioned by you should exist before that commit,
+> but might be just not discovered or very rare to hit.
+> 
+> I will change it back to down_write.
 
-On Tue, Mar 27, 2018 at 09:24:28AM +0300, Vladimir Zapolskiy wrote:
-> Hi Jacopo,
->
-> On 03/16/2018 05:16 PM, Jacopo Mondi wrote:
-> > Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
-> > output converter.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >  drivers/gpu/drm/bridge/Kconfig        |   6 +
-> >  drivers/gpu/drm/bridge/Makefile       |   1 +
-> >  drivers/gpu/drm/bridge/thc63lvd1024.c | 255 ++++++++++++++++++++++++++++++++++
-> >  3 files changed, 262 insertions(+)
-> >  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
-> >
-> > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> > index 3b99d5a..5815a20 100644
-> > --- a/drivers/gpu/drm/bridge/Kconfig
-> > +++ b/drivers/gpu/drm/bridge/Kconfig
-> > @@ -92,6 +92,12 @@ config DRM_SII9234
-> >  	  It is an I2C driver, that detects connection of MHL bridge
-> >  	  and starts encapsulation of HDMI signal.
-> >
-> > +config DRM_THINE_THC63LVD1024
-> > +	tristate "Thine THC63LVD1024 LVDS decoder bridge"
-> > +	depends on OF
-> > +	---help---
-> > +	  Thine THC63LVD1024 LVDS/parallel converter driver.
-> > +
-> >  config DRM_TOSHIBA_TC358767
-> >  	tristate "Toshiba TC358767 eDP bridge"
-> >  	depends on OF
-> > diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-> > index 373eb28..fd90b16 100644
-> > --- a/drivers/gpu/drm/bridge/Makefile
-> > +++ b/drivers/gpu/drm/bridge/Makefile
-> > @@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
-> >  obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
-> >  obj-$(CONFIG_DRM_SII902X) += sii902x.o
-> >  obj-$(CONFIG_DRM_SII9234) += sii9234.o
-> > +obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
-> >  obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
-> >  obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
-> >  obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
-> > diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> > new file mode 100644
-> > index 0000000..02a54c2
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> > @@ -0,0 +1,255 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * THC63LVD1024 LVDS to parallel data DRM bridge driver.
-> > + *
-> > + * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > + */
-> > +
-> > +#include <drm/drmP.h>
-> > +#include <drm/drm_bridge.h>
-> > +#include <drm/drm_panel.h>
-> > +
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/of_graph.h>
-> > +#include <linux/regulator/consumer.h>
-> > +
-> > +enum {
-> > +	THC63_LVDS_IN0,
-> > +	THC63_LVDS_IN1,
-> > +	THC63_DIGITAL_OUT0,
-> > +	THC63_DIGITAL_OUT1,
-> > +};
-> > +
-> > +static const char * const thc63_reg_names[] = {
-> > +	"vcc", "lvcc", "pvcc", "cvcc",
-> > +};
-> > +
-> > +struct thc63_dev {
-> > +	struct device *dev;
-> > +
-> > +	struct regulator *vccs[ARRAY_SIZE(thc63_reg_names)];
-> > +
-> > +	struct gpio_desc *pdwn;
-> > +	struct gpio_desc *oe;
-> > +
-> > +	struct drm_bridge bridge;
-> > +	struct drm_bridge *next;
-> > +};
-> > +
-> > +static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
-> > +{
-> > +	return container_of(bridge, struct thc63_dev, bridge);
-> > +}
-> > +
-> > +static int thc63_attach(struct drm_bridge *bridge)
-> > +{
-> > +	struct thc63_dev *thc63 = to_thc63(bridge);
-> > +
-> > +	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
-> > +}
-> > +
-> > +static void thc63_enable(struct drm_bridge *bridge)
-> > +{
-> > +	struct thc63_dev *thc63 = to_thc63(bridge);
-> > +	struct regulator *vcc;
-> > +	int i;
->
-> unsigned int i;
->
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(thc63->vccs); i++) {
-> > +		vcc = thc63->vccs[i];
-> > +		if (!vcc)
-> > +			continue;
-> > +
-> > +		if (regulator_enable(vcc))
-> > +			goto error_vcc_enable;
-> > +	}
-> > +
-> > +	if (thc63->pdwn)
-> > +		gpiod_set_value(thc63->pdwn, 0);
-> > +
-> > +	if (thc63->oe)
-> > +		gpiod_set_value(thc63->oe, 1);
-> > +
-> > +	return;
-> > +
-> > +error_vcc_enable:
-> > +	dev_err(thc63->dev, "Failed to enable regulator %s\n",
-> > +		thc63_reg_names[i]);
-> > +
-> > +	for (i = i - 1; i >= 0; i--) {
-> > +		vcc = thc63->vccs[i];
-> > +		if (!vcc)
-> > +			continue;
-> > +
-> > +		regulator_disable(vcc);
-> > +	}
-> > +}
-> > +
-> > +static void thc63_disable(struct drm_bridge *bridge)
-> > +{
-> > +	struct thc63_dev *thc63 = to_thc63(bridge);
-> > +	struct regulator *vcc;
-> > +	int i;
-> > +
-> > +	if (thc63->oe)
-> > +		gpiod_set_value(thc63->oe, 0);
-> > +
-> > +	if (thc63->pdwn)
-> > +		gpiod_set_value(thc63->pdwn, 1);
-> > +
-> > +	for (i = ARRAY_SIZE(thc63->vccs) - 1; i >= 0; i--) {
-> > +		vcc = thc63->vccs[i];
-> > +		if (!vcc)
-> > +			continue;
-> > +
-> > +		if (regulator_disable(vcc))
-> > +			dev_dbg(thc63->dev,
-> > +				"Failed to disable regulator %s\n",
-> > +				thc63_reg_names[i]);
-> > +	}
-> > +}
-> > +
-> > +struct drm_bridge_funcs thc63_bridge_func = {
->
-> Apparently you missed all my comments from v2 review.
->
-I did not :)
-v6 was already out when you commented on v2..
-
-> If you like to avoid non-NULL function pointers to the void, please
-> use static const storage qualifier.
->
-> --
-> With best wishes,
-> Vladimir
+down_read before was a bug ;) And it was not discovered earlier simply
+because not that many users of this interface exist, namely only criu
+as far as I know by now.
