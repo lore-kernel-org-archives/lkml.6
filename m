@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752159AbeC0OLn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 10:11:43 -0400
-Received: from mail-eopbgr20074.outbound.protection.outlook.com ([40.107.2.74]:15094
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        id S1751890AbeC0OQS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 10:16:18 -0400
+Received: from mail-db5eur01on0059.outbound.protection.outlook.com ([104.47.2.59]:4070
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751092AbeC0OLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 10:11:40 -0400
+        id S1750898AbeC0OQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 10:16:16 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com;
 From: Abel Vesa <abel.vesa@nxp.com>
@@ -17,112 +17,102 @@ To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
         Irina Tirdea <irina.tirdea@nxp.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-imx@nxp.com,
-        Anson Huang <anson.huang@nxp.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] clk: imx7d: Add USB clock information
-Date: Tue, 27 Mar 2018 17:11:20 +0300
-Message-Id: <1522159880-16694-1-git-send-email-abel.vesa@nxp.com>
+        Anson Huang <anson.huang@nxp.com>, Anson Huang <b20788@freescale.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx7d: Correct dram pll type
+Date: Tue, 27 Mar 2018 17:15:59 +0300
+Message-Id: <1522160159-25250-1-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [95.76.156.53]
-X-ClientProxiedBy: HE1PR0502CA0012.eurprd05.prod.outlook.com
- (2603:10a6:3:e3::22) To AM4PR04MB2130.eurprd04.prod.outlook.com
- (2603:10a6:200:12::10)
+X-ClientProxiedBy: AM3PR05CA0113.eurprd05.prod.outlook.com
+ (2603:10a6:207:2::15) To HE1PR04MB2137.eurprd04.prod.outlook.com
+ (2a01:111:e400:7b73::9)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 6e58fb0c-3232-4a6a-cfae-08d593eca795
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM4PR04MB2130;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR04MB2130;3:GgGw1dn6OAjTZ77olKRyd5fY01z8/xnzS7RUVMCRoOfX+WNcNdzUQ+JlpyBbfo2HzCSJTzb+4wDQhtURyPEiUhOoGzkLw58TvNRfnGNNoU3h9EVGukGBziyfOUPCE3/Hir3HGi6eP1zofO3ywI/dGVu7fJ+4KK/dYZL0BJG9Pok/NuOcdGt3e8PGOjz9L0aQn1H8FUDZZb8aZ5+Fuf55z++CjnAIwW0/gqwY85g8oFiT6tSaFZJCte24J/d5cg/1;25:76aEWP7VqOtXmvo1b+cmxvW4dBu4U0BtPiv68NKReIM9MdmX3bwGEs/K5TgDYQFacDjyZ4AthjFX7icBrm30MQI25xgH6AtpGYRah53BW4ERuzomevbYC2hvPU188LxJ5iFd77Y9wIUZj2br87lIzDpJqjIMOU3AXGcZLXFYc/aGs1KPd2XfoiDlU4N2vl4v9/y54+PEccmJkzHzZVWHvN9eWIqk2ylOZc/IoUOGf0/CNMOMcBkUSEzZa4H/0ObD4vuwtt7dIKRXudEH+UvonGQtXPz1CW2PyfOQqBk2tjqvQQLla1gNGHZOs4NcJa3U73u2WcHwD36Q82R7kk5ogw==;31:S/0JaeyTK8unJdSQi0PXDyT6ze/LhM0h5ufMueyDM0IOaReqJlw4ecgJRH41Wi6susSnD+0hHcJxgraLkj11eGfjj9o+jhOza1rCzZBBwHqm84sNzOvhpbOhNBkcTjuzbaCajx/45iCCqXaKMMyxQD8FQtHnH1BH3GKDumH0K6w6UECQaYrC9lkbr0uISSZqTNvKKvZ6c1CtA+a0AEHWvdxha1FDiZY8YoqH/uCLxnw=
-X-MS-TrafficTypeDiagnostic: AM4PR04MB2130:
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR04MB2130;20:gp8l0WwhJvB6VP6GPMZZJSgy+ShKANAE7P8HTqwKRvNQKECgas7fi0E2zUEU8DMhzMpZ5j0opF2iFeo8BhQiQrDWkJ1M5SE2/ustdbq6C6uM2S4Nyh9GAuepCN8A6ZMdV/9GSU9vBWYVlQYOuP8nzM9c3kI5QTCJKNe8CnUdIXP1a7KLAjIWvjjo6ST9h7Jbs86151mh3jEIv9P2qAIfWra9EBReUZlwWynE8Or0kt/zedmMM4tbm5pegDaNPIw1q7E+NfcaLu8u+2uQ2BvlQsDTDdh0P+uiSkKRcEj8/VdcVyr/WgLE9BD9ep+/K0NiAyThcE+aeFD1ludZ5HeA32KgeQiJA8TOWE6h4D9AAj/zJNNpiTGhJthT/M6oHcnIGZ+EilP4gCUop4sGcyKFR4CgnIETt4cMcibxdldda7oUAHBU6nKuarb3W74WfrPq7unrBEXYIw9T1GUdDOgYORymP+XjSwrfxKPOra5tSIXcqJ+rcSOXwwAJxvhTTqtc;4:vKrrEAxqMu/jmPySo7JM4aVj62X0kQxoncIe/ELbB+M/O9spxjptgQ9Jr7+std6LAhFxQyG27HxrVp0kTuF4ZejtGOjjMmBH76M0kySrSevx45g9qGAs1Rx7ub3yuS/KaF8jmYzCHN+lfuhexi1ZEbkIOiUXFIjVqZgfZHFZ1spYdRb+lwfv9UNph9wRrTKK6QmNVd8dkf61MOqj0MY7PpUtnxBcD+X1G/lzIgiAHTgcagV/vmSxlo77BpX0B0y70ryKJfAmLnsrxypbOdNnzK8H7SFItP68NGHoElNpcir/UUoYVHjum69YgoAgoMdjDSJE9ip2Dqqm+92lQNgvHRTcw0u/ZUuIuIQCjPQcWHg=
-X-Microsoft-Antispam-PRVS: <AM4PR04MB21309D5276664BC0A476DC94F6AC0@AM4PR04MB2130.eurprd04.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: fc17f38d-5b63-4e6b-ff5e-08d593ed49ab
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB2137;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB2137;3:wcdMkHTt67xHBtSjLdMNi1CRgT+nb/mNkV6zBr24cRjLVYnpXlm3OUOzc1HNtn7i+9VhRmAusetN70PulL1ccX6mXboHqmME3e7zPnTR8++Ljja5rlwaQO8HBVptgrFS+7NhP4OTrwk7RzcACJZzWnPKizUZ8NFeBQ6ayoLSV2ODvdFAEkSiLd5D6rVLMwOxa6IAoLS6mk6PIOnpd7w3NdXFDYY459izXTRIU2c15XAHr7VjJRkIFH/hhEvXpjs7;25:Vis43/pB0mSvoI2CU5SjBGem5xJq8VY8wS3L7gxxrqquuYtURdHkJYepdD9sXV6ufXAhUGG+u74xq68w7EGUJbh15/qfuRNxiqaA5HXc46dM6owv/nSCFYeGkC2RDSYRju6BB7MhhrOdGit7HEDFgVngo+Z6aJ706POpAftxQPu4ckrhXBcrIEAfSqaqgKFNV7sX8XAWtD9zZ9TIi21ia7+kHVIzPTvlh6pUJKjMMVglOMtawk5fby+YtHi4ac8hPRsDwTa5tnxk2qO9NKbAfS2vhrvdZbFbj6XskycT1J6BJ50BfAHDUkrJng9ONicJs7+OpRCbC2wE22+eqQIlvw==;31:unTZMwdlawbZWLOL86Y0xeLew64pMMq+wDbJzNUEHDawoBYJDvfgrWqcva/DunbcaGEWyjZA+dOsmQPfNu5LLWUbFlz2jJAUKKHcARholKo33C+0DsXzBJuI/rgIZbG7XW0dxZy+anZf0nTpX4EBlZ2FsvQL4jwe4QQqVkHzp78M2gJUv/GotIb/ISmlXGbcMpHkPRia3jIeYm90IovLbzddEPhtKEbciAOLlnjxzpI=
+X-MS-TrafficTypeDiagnostic: HE1PR04MB2137:
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB2137;20:lgK901VFd4PINlPJkkdIaiojJU11mMWkvhGN6m8NabyMuEnFbUT7h7FrP3wksmkYMiTM74CuNJ1f41ytHlUvvnk3YfBPinkw4PFt7BQId/UhQB2a/GUbVQzxTUXN8BXOaCIJhZ+KHFYzqOfa+8tI6S4er1Dt8XGPmYUAwEqpuBZ33wQmwu8+qu+O1MC6ZWAY+NQt1yuB6nNgZkI6K6vWo8+LxDvgZaw/K/AckJd26rMqhfog0SYGO8AIQutZWj8WFjbE6W4DNCFScAL16MwhB5UuUJPgJuXDLKe1679/eaHSuRxY3Ho0ZkZu45dsMbO/S8ct3KeJXBj282YwFRTKh3zstEsZh779Eyr4URqbehFDJaIaW3k+1eDW/adJJallFFsaDVupLZRJrLHDWMRrGsn9LIOs3JadzSxMXdY9IOl7HZOpVP6mI6faMrja/JL3wnMS+ZL3OMUrzUUCw/fcOFV97DYKvIAQrttAe54oPD2tk/rRn7TdnZlrUEPQO8t9;4:+TLd2osLa4uF0BgmGwb0+l7ncX5ftZBmKB4M249zGd/j+JLeY3A0/sDt0HehAN0PwD0prdcXCm84uuqWTsAf7fvompe5thLuXUyjeryccuTV1zlmQGrtdahVYOXCNW3zX7Kotpf0Wx2gSsRNsWNGmC82siQDbDa4uYsWEV73FmIPhdQCZ4EQfTXoP/pspuoEJq/yKGIwgJxGDAKRFKfgC6hgglht8ACfu/NyD8+94JsjC+v+ttNZLJVUtRI4vGb82sDFSx5mDn/+G19Q5hfJVW+iloDuTk/uEtqZrvUwl+C7cJMc+CUa3Sm8YrTXetCr/Wu3AR1Y8alVQbeqpwJsXyz3ljedveWUjzVnNDTAUUE=
+X-Microsoft-Antispam-PRVS: <HE1PR04MB2137897AA7988EB1602EBE61F6AC0@HE1PR04MB2137.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(101931422205132);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:AM4PR04MB2130;BCL:0;PCL:0;RULEID:;SRVR:AM4PR04MB2130;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:HE1PR04MB2137;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB2137;
 X-Forefront-PRVS: 0624A2429E
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(376002)(39860400002)(39380400002)(189003)(199004)(86362001)(6116002)(3846002)(305945005)(7736002)(6512007)(81166006)(2906002)(81156014)(8676002)(8936002)(5660300001)(476003)(16586007)(53936002)(66066001)(50226002)(68736007)(105586002)(36756003)(47776003)(316002)(106356001)(110136005)(25786009)(6506007)(386003)(6636002)(6666003)(26005)(59450400001)(6486002)(4326008)(52116002)(478600001)(48376002)(51416003)(50466002)(54906003)(956004)(186003)(16526019)(1857600001)(2616005)(97736004)(486005)(486005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR04MB2130;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR04MB2130;23:WofRHJ57HHGOWSQKyQ2f0C+kplD2qJJ3sS4ep/316?=
- =?us-ascii?Q?al12Y6IfCBon2u1YkirbTGsnW870Jvi6ohZsSo6vJc9pyHUBd13w1dqSjfZh?=
- =?us-ascii?Q?HUMSXo/m1iSy14VBaIc53JznkwwCJBEvKqc70pkDsl/vDwiIfpijiSvUdWit?=
- =?us-ascii?Q?ICoyVmABKv+lL9mHxXd5IN4NIS4UN1ewWWQSRzMx1p6NpqNZ63QgfRpgVdP5?=
- =?us-ascii?Q?KvXZgI+2mHqA2mw7Bq1yhZxkFnsPspvMb8WV1mjdFqO1soK2ILiGS8EdA1EQ?=
- =?us-ascii?Q?KXr2nK0iJWh6WMIx5ATd068GbJJUqN4nA7/xkVpvuNhuQlrgwqIRdl7lHIFl?=
- =?us-ascii?Q?RpINrkW30PC0S+ICiAGTuQyCocp9Dr+26ja4O3ApcMkw6QgUBlnXVek1O8Cb?=
- =?us-ascii?Q?jZ7/FrYSMIXFYdr2sPfnq7IYKZV4ChVdtpbwypTVVh6q8x7vYy3jSBE3uE5f?=
- =?us-ascii?Q?mpQzzWMGNh/t90PjhmKCClkhlV7rGJH1rhpV81kz1C+AzltpTI/rzFReRnLO?=
- =?us-ascii?Q?e+VR+kpZL4/NP1r/9R0X9dhdjmzqvfbEMmTuRjjOijSWdmOsJBkKizctyEcF?=
- =?us-ascii?Q?g9RcOVFKThcSjyKYFHX0rbSLAiNQNMZ8QObPPReqz3QocIWuNy8mDwZOgIe3?=
- =?us-ascii?Q?RFB9TNoVyrlZ/zMy1g1JmStr5t4O+Qg5K2Vcwnwz5LtkppV8SasGX3tBjyYt?=
- =?us-ascii?Q?3dwXOvrn8jZU6Nl3jPbcx233XHXyx4AhgUh1kCFmB0Zb+dU+jEVrAj2i71Up?=
- =?us-ascii?Q?3pBt169aYoP9cIvKce2gpC9gAI+srmVbC4YdHXh4ulOLBHRHZb6ZKA74OHx3?=
- =?us-ascii?Q?dex5Ng56E39v58CFTxdcUBNvrk0pRWEcMbVfa+dsVPYzfCQezNp4WdaNfn7G?=
- =?us-ascii?Q?9t9RzvdhREGeK0FmjUfAm8XUOoDw9473mu1hiZplOm6TF4Px+b+6xZqAmCR4?=
- =?us-ascii?Q?cjooYj1Ey5NzJw9O6J/JSDKUqpC9ZKk0ja5TS5uOgwBZJXNT3YomzSh82dmd?=
- =?us-ascii?Q?tnTh4gVVSRRKF8LWwb7dvNPHyqdX6WyCzFZMCu4OZ4oQxg3aejALOOi51lJa?=
- =?us-ascii?Q?cF7sSkz6gn9RnKrIdQNszUKNPX1nWvKrEYAnRqFGtFyglpXcEfFBBhkbYtsw?=
- =?us-ascii?Q?sDrZT10oPr88asDraHN6wTw2KdtS5JZO8AG2BGlHWsAtMzpwRiqCjoGIsxlY?=
- =?us-ascii?Q?XuMoUp22XSy9NzJ428mmGr1fG22ycqyz55nxC2unJomjO50JYDtBiK5pQ=3D?=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(39380400002)(366004)(346002)(39860400002)(189003)(199004)(26005)(50226002)(105586002)(81156014)(8676002)(6512007)(81166006)(68736007)(52116002)(25786009)(305945005)(36756003)(2906002)(51416003)(476003)(5660300001)(54906003)(6486002)(97736004)(3846002)(16526019)(6636002)(4326008)(110136005)(59450400001)(53936002)(478600001)(48376002)(386003)(6116002)(316002)(186003)(66066001)(8936002)(16586007)(1857600001)(6666003)(6506007)(956004)(50466002)(2616005)(7736002)(47776003)(486005)(86362001)(106356001)(486005);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB2137;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;LANG:en;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB2137;23:VGKu9rXqveseVC1k/MowXnuqL3Q+WKBbXHhaI9xnj?=
+ =?us-ascii?Q?RxZO3ECDVeCqkRPm+3p0dHSJyygwYNJiu9EWNGEXO7MBovVBkyh13gDPZUph?=
+ =?us-ascii?Q?5E6/7ETzMj9W1F6bGlgnDGxBahGE4Tf1JeclPWspXqG7GekeOE+onkDry8nR?=
+ =?us-ascii?Q?i+mUj2GzrgFO5O1nmQbyuqazdmnACLCh6hgLNO+KTXP4QrrHaYZbhTbsLRw6?=
+ =?us-ascii?Q?MKpBIui6SePiJNPtzpvRdcvud89hxKLfUqlLvgB96o3wofoLV1Uc1EsRv+Ty?=
+ =?us-ascii?Q?Rlk8y+itaui9I5WvQVDKulA+ZRMxEP/EA+M2hpj2qd2oB19nlwKXB/ZbQkwd?=
+ =?us-ascii?Q?x1trRnynhbzvMWzJP6xlAA4B4Kss2i9cqQKPM6WYtY31l3e/WTTIOuHZ5NOh?=
+ =?us-ascii?Q?4y0UQOc8wRhIRNyf6d49TvTZhW82Mu7trfVwcw3zQAZps+EQmhOQqdo0aJaR?=
+ =?us-ascii?Q?aCaNKgDJXHE3TlyBMjKVOM3UOLKlIO508QpQakKYJlhXFHq9V4D/C1UjhN6n?=
+ =?us-ascii?Q?+hzhHWfw7InpjOkBFDxNGo2deYzhMOp/m6ZSgU2EIlAaxldko/dVxV6dFEOC?=
+ =?us-ascii?Q?xnYeXgCn2wBR6t5heA73K1gc90mmqwZvaqyMzYju3rYsSoP9kpqWY2dwUSS0?=
+ =?us-ascii?Q?nz7lBMl5uXfJmrxQAPR50pm3PPw8ZvxD+m/iI5Cu77J8XA5v2PfEEXsq9xFf?=
+ =?us-ascii?Q?GdW/PM/wgCn3xZz5wGG/rU9OFMz9aWIBCerh/2UUpJN3rAGv6/o3ZzEBVvcr?=
+ =?us-ascii?Q?l7FObK2HQcwJ5VzCA4aeTX1T6OPzYaib07MAWTq+g/+gnzEyfmAlqlhEvrLC?=
+ =?us-ascii?Q?ETFeUoNCQCxTBDbQ9dCw6EaKkpbo7NbVNgcjTgAoiRoznISr+rruUCsUfvSO?=
+ =?us-ascii?Q?KbeGi5dqvJMglga9WlHuBvwAxBfAwMLWNXd3eDjwD2KINdgEFKmmyDtP7HBB?=
+ =?us-ascii?Q?YvA15vtrGIFbyqMf8BRUncPqeRsEV8gVweH65Qx2pc/+vqlK3mUavqNIfi4j?=
+ =?us-ascii?Q?rEbQat/1l4oYqR+IGkNmHzEheRMyIv+EPasySeaCZqQJ+0K18nyBmuC6px+B?=
+ =?us-ascii?Q?CgstZAqCwfwPSfNA1xkCaExUYe7h41LZYwa23vZ/Fbcrsau0KOV+U8gaHEAK?=
+ =?us-ascii?Q?6RYQ1Pnp7Qt1F+EsF+ZfJd0EshtV7KKIzdF3MFc82C3fQLVOGwqkjmigz5Ib?=
+ =?us-ascii?Q?qyjJdszuonjnHulA0xf9AtF+4mf2bsem1eTDk9oeL+Rf18vxD0le9+0QQ=3D?=
  =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: qRycs8w5EV/kFFCZVCVJvNeBQKIVculSyRltLSl2W3/TrCFyGBS8munzg2IBBzeaQ+cpveW642NEtTkeCzN+cyxYik3zERHYjWqfQtb2UdZkcS/WB2EJWuamg8cqEWSCxokHaNuR300pzbnH7xR2zBAcsIOOzvYAQ1bkjoFm7Qc8l/Bwo9Vg5FKDGeyg6GxJ
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR04MB2130;6:HsAiZqTo2djwcF0xcldc5maoWxfuzzI1LB6YMTi90pT9O99VvJvdff/1zNPA/TAt6iuFvhL0S+DSdZ1GcXSH1g9JYxXDTh3b/3UTEwNspgp2xFbHSBIi1+AULTVsk+SbO99FDd6LNzcdXAmWprUM4Mm0i1vGUa8QdMNb32Sv9el2QggEXiyHOnfkegIs5wqf37wlpjt3AZzQl96/aiPlLeFYOYRd93NPkQ+0sjKKthzZ6f4HLLVkhk8VFC7LgZRPVs0l0JGYH4ZdyGPT27LXj/Ez57BG0DApEuK2qG8/a5eopFR3wv5ks01/k3MfT4eNjLScHJ34hiLhHYow2jysHgYjWwOZHPy194uPYywlxquO8r3bZ7q12khr9Fmh7vNEnoALGScM3VIWdaY08EVs135Ot863lua4tncbyFosWaRB7TZ+0sBobgnhoNW3REFZfimxfHTnFjxY8ZZ2BqNp2A==;5:gjkyqTHPhQoJk1AhTgTiSoeXRizHDFVSSYLXej5k6xh0kpIZXVWdXjMUHKRRtEkcS4onP6twqAiICXwyiojBov95d26+XKOXbLw79AThti/j/LB7Kj100X6HwzbTugAlenFgQcrOkhQenkqCcz5l8cBEJKHuqBN3GsNihv9JEHE=;24:JPusiU7+1OvEqeAROVxsVcne5vqap3vb+E2hNri7HLGeLfr/VrMdNA1W6qygLhoBmShtDzMhuruDVYiB0+mWHdCHK2ha3itcIcKTy8Lwgr8=
+X-Microsoft-Antispam-Message-Info: KXsixoJALjWMDPkrOHAh10LePkEPxpACJ8VYxp9CJQKBTRVRYSDeBVjoE13ntrk9pf0HqtQAAMjf355+iYhPS15WsNj9y4B3Xjc1fmW7JEPVjVN1bvwM42F4xGEv9XZcPRi6ojvlf6Er2ZSnrCBxh84c2z3Pgemdg36fOnyCWl7gOuW5GPVupsR6+CdGZNaE
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB2137;6:uj1T7KU8Sx1Z2kgYhvBLLlkn+lzVtNj0YuFKmygsI3kULbmECp2DUVA7LvqTqeRpwHhGncUQxpy1g1d1yl7NPaIzfHoBfP9XfB6vs6CsxGB92SxKywQI1veOsHN5BEsJDUX0BhWImnKWBnlqBS7d4QwwS/GV9aRwCOce7Kg+lWSo9oaqJllt3wZyjAZ+v2lrO5wDkpcoROpizbhSV8sw82QgcqMST5UXgk6KQ/rCjRxF/iEccjgtCYtsUUfNpxOxzb/4CQHGQI3zYfFW3OeXqrOVE3hkVCPLgt2C2DoiAL1ZlpcuMi5Q0yKuC6+8H3kGUR1Xi1qyIWhskazN6Zm6bMKkUR0nXNMA6RNS2b93eW6cv6AuP9GiCSImCLSPAaMaT3d6VOV4aYG1ab4+2dEnZulNieqjdDIdsO6U81V+yDL1og6nF9NlaW8SVYWb10WiA9z822pgqVs76IUdBZxswA==;5:xVq4UUDKU9W0ktTFMt5r272UJCvkHzuEDz/bRA94k42dnYZPhUwQSH8AnBT251u1InkD4cLT7oj2sifPyoYYsd08tcDFV9Cr0vYAToog9AvNAB6Bii/YqsB60bQlws2+w2Ssfq/EHP5ffXnWoWoNyNMBdTZlG5sjn2NUgBuu1ME=;24:7pM2aWKwmF2O2afDa+8ryxcrhi6ipentKGSGFiCtOCEe8JvPR1eam0aQ20fpsj5K25ZHvrW9MjMz8USKlzSTbjh2EIx5MmoivHdBoPnivHA=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR04MB2130;7:R9DMmN2D+64jjSBeulvemAAuaqUDxZ4TJ21eMidojVJIqBVx+wR5dyntdL9RJe9lC22KIFtnDKWtTwfFRYVrv2Egklu9ZviDO+Xpo8exieGuMIdTU5AH+zJTPRDC6w5Nvn0WlQ5zrds3mRihPadi+dS1H8JODDWtIuRdgxSQuXOWlCbokl4Z9WUTP7Hz2ZQbADBXoAWbqPOW8ZMlJvlbpc2Vc+oX7U3Euvk6zHAikUyeq4oKV2m/apwkbnFNhctA
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB2137;7:R3BFhXA1AazI5ylWpxiwSUx8VGIo3Qzt2UU9lPaEkGvonwXg2gukqzD0YijPT7xKR6t/a5Jh0p0cX2/JO22RgKeJn03AbK2mCNitSxL4fFrZE+WT6AjuDtwygb8Nadh/4mcxDN3RjGkmAH2Si8xQTJhyMUgkZEvQHsoXWU6gSskge0ktRfcvFV2h94pZWr/Po2bMCzEgZ7m+rC0Zb6JPRz28OA9Vj61CO2SH8SgXdeOCqw5VHX0b4FyQgL0lvbN9
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2018 14:11:36.1282
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2018 14:16:08.0177
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e58fb0c-3232-4a6a-cfae-08d593eca795
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc17f38d-5b63-4e6b-ff5e-08d593ed49ab
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR04MB2130
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB2137
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Chen <peter.chen@freescale.com>
+From: Anson Huang <b20788@freescale.com>
 
-Add USB clock information, the pll_usb_main_clk is USB_PLL at CCM
-which is the output of USBOTG2 PHY.
+DRAM PLL is a audio/video type PLL, need to correct
+it to get correct ops of PLL.
 
-Signed-off-by: Peter Chen <peter.chen@freescale.com>
+There is a test_div placed before DRAM PLL's gate, so
+add this test div clk.
+
+Signed-off-by: Anson Huang <b20788@freescale.com>
 Signed-off-by: Irina Tirdea <irina.tirdea@nxp.com>
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- drivers/clk/imx/clk-imx7d.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx7d.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 89bfa75..39d110b 100644
+index 89bfa75..45c83b6 100644
 --- a/drivers/clk/imx/clk-imx7d.c
 +++ b/drivers/clk/imx/clk-imx7d.c
-@@ -801,7 +801,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_OCOTP_CLK] = imx_clk_gate4("ocotp_clk", "ipg_root_clk", base + 0x4230, 0);
- 	clks[IMX7D_SNVS_CLK] = imx_clk_gate4("snvs_clk", "ipg_root_clk", base + 0x4250, 0);
- 	clks[IMX7D_CAAM_CLK] = imx_clk_gate4("caam_clk", "ipg_root_clk", base + 0x4240, 0);
--	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4420, 0);
-+	clks[IMX7D_USB_HSIC_ROOT_CLK] = imx_clk_gate4("usb_hsic_root_clk", "usb_hsic_post_div", base + 0x4690, 0);
- 	clks[IMX7D_SDMA_CORE_CLK] = imx_clk_gate4("sdma_root_clk", "ahb_root_clk", base + 0x4480, 0);
- 	clks[IMX7D_PCIE_CTRL_ROOT_CLK] = imx_clk_gate4("pcie_ctrl_root_clk", "pcie_ctrl_post_div", base + 0x4600, 0);
- 	clks[IMX7D_PCIE_PHY_ROOT_CLK] = imx_clk_gate4("pcie_phy_root_clk", "pcie_phy_post_div", base + 0x4600, 0);
-@@ -867,6 +867,9 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	clks[IMX7D_CSI_MCLK_ROOT_CLK] = imx_clk_gate4("csi_mclk_root_clk", "csi_mclk_post_div", base + 0x4490, 0);
- 	clks[IMX7D_AUDIO_MCLK_ROOT_CLK] = imx_clk_gate4("audio_mclk_root_clk", "audio_mclk_post_div", base + 0x4790, 0);
- 	clks[IMX7D_WRCLK_ROOT_CLK] = imx_clk_gate4("wrclk_root_clk", "wrclk_post_div", base + 0x47a0, 0);
-+	clks[IMX7D_USB_CTRL_CLK] = imx_clk_gate4("usb_ctrl_clk", "ahb_root_clk", base + 0x4680, 0);
-+	clks[IMX7D_USB_PHY1_CLK] = imx_clk_gate4("usb_phy1_clk", "pll_usb1_main_clk", base + 0x46a0, 0);
-+	clks[IMX7D_USB_PHY2_CLK] = imx_clk_gate4("usb_phy2_clk", "pll_usb_main_clk", base + 0x46b0, 0);
- 	clks[IMX7D_ADC_ROOT_CLK] = imx_clk_gate4("adc_root_clk", "ipg_root_clk", base + 0x4200, 0);
+@@ -441,11 +441,13 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	clk_set_parent(clks[IMX7D_PLL_VIDEO_MAIN_BYPASS], clks[IMX7D_PLL_VIDEO_MAIN]);
  
- 	clks[IMX7D_GPT_3M_CLK] = imx_clk_fixed_factor("gpt_3m", "osc", 1, 8);
-@@ -892,6 +895,10 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	/* set uart module clock's parent clock source that must be great then 80MHz */
- 	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+ 	clks[IMX7D_PLL_ARM_MAIN_CLK] = imx_clk_gate("pll_arm_main_clk", "pll_arm_main_bypass", base + 0x60, 13);
+-	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_main_bypass", base + 0x70, 13);
++	clks[IMX7D_PLL_DRAM_MAIN_CLK] = imx_clk_gate("pll_dram_main_clk", "pll_dram_test_div", base + 0x70, 13);
+ 	clks[IMX7D_PLL_SYS_MAIN_CLK] = imx_clk_gate("pll_sys_main_clk", "pll_sys_main_bypass", base + 0xb0, 13);
+ 	clks[IMX7D_PLL_AUDIO_MAIN_CLK] = imx_clk_gate("pll_audio_main_clk", "pll_audio_main_bypass", base + 0xf0, 13);
+ 	clks[IMX7D_PLL_VIDEO_MAIN_CLK] = imx_clk_gate("pll_video_main_clk", "pll_video_main_bypass", base + 0x130, 13);
  
-+	/* Set clock rate for USBPHY, the USB_PLL at CCM is from USBOTG2 */
-+	clks[IMX7D_USB1_MAIN_480M_CLK] = imx_clk_fixed_factor("pll_usb1_main_clk", "osc", 20, 1);
-+	clks[IMX7D_USB_MAIN_480M_CLK] = imx_clk_fixed_factor("pll_usb_main_clk", "osc", 20, 1);
-+
- 	imx_register_uart_clocks(uart_clks);
- 
- }
++	clks[IMX7D_PLL_DRAM_TEST_DIV]  = clk_register_divider_table(NULL, "pll_dram_test_div", "pll_dram_main_bypass",
++				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0x70, 21, 2, 0, test_div_table, &imx_ccm_lock);
+ 	clks[IMX7D_PLL_AUDIO_TEST_DIV]  = clk_register_divider_table(NULL, "pll_audio_test_div", "pll_audio_main_clk",
+ 				CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE, base + 0xf0, 19, 2, 0, test_div_table, &imx_ccm_lock);
+ 	clks[IMX7D_PLL_AUDIO_POST_DIV] = clk_register_divider_table(NULL, "pll_audio_post_div", "pll_audio_test_div",
 -- 
 2.7.4
