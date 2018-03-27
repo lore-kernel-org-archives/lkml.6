@@ -1,86 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754599AbeC0RSc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 13:18:32 -0400
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:47454 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753371AbeC0RS1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754341AbeC0RSa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 13:18:30 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:44101 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753455AbeC0RS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 27 Mar 2018 13:18:27 -0400
-From: Yan Markman <ymarkman@marvell.com>
-To: David Miller <davem@davemloft.net>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "antoine.tenart@bootlin.com" <antoine.tenart@bootlin.com>,
-        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        "mw@semihalf.com" <mw@semihalf.com>
-Subject: RE: [EXT] Re: [PATCH net-next] net: mvpp2: Use relaxed I/O in data
- path
-Thread-Topic: [EXT] Re: [PATCH net-next] net: mvpp2: Use relaxed I/O in data
- path
-Thread-Index: AQHTxe9Y+h9P4lgD90qvFtrscB3ykaPkUxXQ
-Date: Tue, 27 Mar 2018 17:18:16 +0000
-Message-ID: <75eee7d671594c0ea95bfb9f055b4714@IL-EXCH01.marvell.com>
-References: <20180327144905.23499-1-maxime.chevallier@bootlin.com>
- <20180327.131624.64497520832369981.davem@davemloft.net>
-In-Reply-To: <20180327.131624.64497520832369981.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.5.102.207]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Date: Tue, 27 Mar 2018 19:18:17 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Murali Karicheri <m-karicheri2@ti.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, ssantosh@kernel.org,
+        malat@debian.org, w-kwok2@ti.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        davem@davemloft.net, netdev@vger.kernel.org
+Subject: Re: [net-next PATCH v2 03/10] net: netcp: ethss: make call to
+ gbe_sgmii_config() conditional
+Message-ID: <20180327171817.GO5862@lunn.ch>
+References: <1522168309-12338-1-git-send-email-m-karicheri2@ti.com>
+ <1522168309-12338-4-git-send-email-m-karicheri2@ti.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-27_06:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=900 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1711220000 definitions=main-1803270174
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522168309-12338-4-git-send-email-m-karicheri2@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks David
-We are aware and it is working properly
-Yan Markman
-
-
------Original Message-----
-From: David Miller [mailto:davem@davemloft.net] 
-Sent: Tuesday, March 27, 2018 8:16 PM
-To: maxime.chevallier@bootlin.com
-Cc: Yan Markman <ymarkman@marvell.com>; netdev@vger.kernel.org; linux-kernel@vger.kernel.org; antoine.tenart@bootlin.com; thomas.petazzoni@bootlin.com; gregory.clement@bootlin.com; miquel.raynal@bootlin.com; Nadav Haklai <nadavh@marvell.com>; Stefan Chulski <stefanc@marvell.com>; mw@semihalf.com
-Subject: [EXT] Re: [PATCH net-next] net: mvpp2: Use relaxed I/O in data path
-
-External Email
-
-----------------------------------------------------------------------
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Date: Tue, 27 Mar 2018 16:49:05 +0200
-
-> From: Yan Markman <ymarkman@marvell.com>
+On Tue, Mar 27, 2018 at 12:31:42PM -0400, Murali Karicheri wrote:
+> As a preparatory patch to add support for 2u cpsw hardware found on
+> K2G SoC, make call to gbe_sgmii_config() conditional. This is required
+> since 2u uses RGMII interface instead of SGMII and to allow for driver
+> re-use.
 > 
-> Use relaxed I/O on the hot path. This achieves significant performance 
-> improvements. On a 10G link, this makes a basic iperf TCP test go from 
-> an average of 4.5 Gbits/sec to about 9.40 Gbits/sec.
-> 
-> Signed-off-by: Yan Markman <ymarkman@marvell.com>
-> [Maxime: Commit message, cosmetic changes]
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
 > ---
-> David, this patch should not conflict with other the pending PPv2 
-> series I sent earlier ("[PATCH net-next 0/2] net: mvpp2: Remove 
-> unnecessary dynamic allocs")
+>  drivers/net/ethernet/ti/netcp_ethss.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+> index 56dbc0b..1dea891 100644
+> --- a/drivers/net/ethernet/ti/netcp_ethss.c
+> +++ b/drivers/net/ethernet/ti/netcp_ethss.c
+> @@ -2271,7 +2271,8 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
+>  
+>  	void (*hndlr)(struct net_device *) = gbe_adjust_link;
+>  
+> -	gbe_sgmii_config(priv, slave);
+> +	if ((priv->ss_version == GBE_SS_VERSION_14) || IS_SS_ID_NU(priv))
+> +		gbe_sgmii_config(priv, slave);
 
-Applied, but it is up to you to make sure the correct barriers are in place such that undesirable memory and IOMEM operation reordering does not occur.
+Or maybe:
 
-Said another way, you get to keep the pieces if this breaks things :-)
+   if (slave->phy_node == PHY_INTERFACE_MODE_SGMII)
+   	gbe_sgmii_config(priv, slave);
+
+	Andrew
