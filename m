@@ -1,122 +1,287 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752165AbeC0JIQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 05:08:16 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:36646 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750978AbeC0JH5 (ORCPT
+        id S1752188AbeC0JIr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 05:08:47 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35025 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751246AbeC0JIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 05:07:57 -0400
-X-Google-Smtp-Source: AG47ELvBYw1YFmUQ0nlm9i3OXGig/s07ioh/GPoKqtEPBS/mW55oyLa8FI0zyPtHej07fdWcYym9AA==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH v2 2/2] KVM: X86: Add Force Emulation Prefix for "emulate the next instruction"
-Date: Tue, 27 Mar 2018 02:06:56 -0700
-Message-Id: <1522141616-9825-3-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522141616-9825-1-git-send-email-wanpengli@tencent.com>
-References: <1522141616-9825-1-git-send-email-wanpengli@tencent.com>
+        Tue, 27 Mar 2018 05:08:45 -0400
+X-Google-Smtp-Source: AG47ELuG3d7yUkrLky65Re5wMasObkY20lMyZ622fAt7EMKklkKkvvEcm9PEYjF7+lmGt/vFUlC8/Q==
+Date: Tue, 27 Mar 2018 12:08:41 +0300
+From: Vladimir Davydov <vdavydov.dev@gmail.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Li RongQing <lirongqing@baidu.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>
+Subject: Re: [PATCH] mm/list_lru: replace spinlock with RCU in
+ __list_lru_count_one
+Message-ID: <20180327090841.ujscbnb54cepencf@esperanza>
+References: <1522137544-27496-1-git-send-email-lirongqing@baidu.com>
+ <20180327081546.GZ5652@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180327081546.GZ5652@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+[Cc Kirill]
 
-There is no easy way to force KVM to run an instruction through the emulator 
-(by design as that will expose the x86 emulator as a significant attack-surface).
-However, we do wish to expose the x86 emulator in case we are testing it
-(e.g. via kvm-unit-tests). Therefore, this patch adds a "force emulation prefix"
-that is designed to raise #UD which KVM will trap and it's #UD exit-handler will
-match "force emulation prefix" to run instruction after prefix by the x86 emulator.
-To not expose the x86 emulator by default, we add a module parameter that should 
-be off by default.
+AFAIU this has already been fixed in exactly the same fashion by Kirill
+(mmotm commit 8e7d1201ec71 "mm: make counting of list_lru_one::nr_items
+lockless"). Kirill is working on further optimizations right now, see
 
-A simple testcase here:
+  https://lkml.kernel.org/r/152163840790.21546.980703278415599202.stgit@localhost.localdomain
 
-#include <stdio.h>
-#include <string.h>
-   
-#define HYPERVISOR_INFO 0x40000000
-   
-#define CPUID(idx, eax, ebx, ecx, edx) \
-    asm volatile (\
-    "ud2a; .ascii \"kvm\"; cpuid" \
-    :"=b" (*ebx), "=a" (*eax), "=c" (*ecx), "=d" (*edx) \
-        :"0"(idx) );  
-   
-void main()  
-{  
-	unsigned int eax, ebx, ecx, edx;  
-	char string[13];  
-   
-	CPUID(HYPERVISOR_INFO, &eax, &ebx, &ecx, &edx);  
-	*(unsigned int *)(string + 0) = ebx;  
-	*(unsigned int *)(string + 4) = ecx;  
-	*(unsigned int *)(string + 8) = edx;  
-   
-	string[12] = 0;  
-	if (strncmp(string, "KVMKVMKVM\0\0\0", 12) == 0)
-		printf("kvm guest\n");  
-	else  
-		printf("bare hardware\n");  
-}
-
-Suggested-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kvm/x86.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index e3a60ab..40e2f78 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -146,6 +146,9 @@ bool __read_mostly enable_vmware_backdoor = false;
- module_param(enable_vmware_backdoor, bool, S_IRUGO);
- EXPORT_SYMBOL_GPL(enable_vmware_backdoor);
- 
-+bool __read_mostly force_emulation_prefix = false;
-+module_param(force_emulation_prefix, bool, S_IRUGO);
-+
- #define KVM_NR_SHARED_MSRS 16
- 
- struct kvm_shared_msrs_global {
-@@ -4843,8 +4846,21 @@ EXPORT_SYMBOL_GPL(kvm_write_guest_virt_system);
- int handle_ud(struct kvm_vcpu *vcpu)
- {
- 	enum emulation_result er;
-+	int emulation_type = EMULTYPE_TRAP_UD;
-+
-+	if (force_emulation_prefix) {
-+		char sig[5]; /* ud2; .ascii "kvm" */
-+		struct x86_exception e;
-+
-+		kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
-+				kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e);
-+		if (memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
-+			emulation_type = 0;
-+			kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
-+		}
-+	}
- 
--	er = emulate_instruction(vcpu, EMULTYPE_TRAP_UD);
-+	er = emulate_instruction(vcpu, emulation_type);
- 	if (er == EMULATE_USER_EXIT)
- 		return 0;
- 	if (er != EMULATE_DONE)
--- 
-2.7.4
+On Tue, Mar 27, 2018 at 10:15:46AM +0200, Michal Hocko wrote:
+> [CC Dave]
+> 
+> On Tue 27-03-18 15:59:04, Li RongQing wrote:
+> > when reclaim memory, shink_slab will take lots of time even if
+> > no memory is reclaimed, since list_lru_count_one called by it
+> > needs to take a spinlock
+> >
+> > try to optimize it by replacing spinlock with RCU in
+> > __list_lru_count_one
+> 
+> Isn't the RCU overkill here? Why cannot we simply do an optimistic
+> lockless check for nr_items? It would be racy but does it actually
+> matter? We should be able to tolerate occasional 0 to non-zero and vice
+> versa transitions AFAICS.
+> 
+> > 
+> >     $dd if=aaa  of=bbb  bs=1k count=3886080
+> >     $rm -f bbb
+> >     $time echo 100000000 >/cgroup/memory/test/memory.limit_in_bytes
+> > 
+> > Before: 0m0.415s ===> after: 0m0.395s
+> > 
+> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> > ---
+> >  include/linux/list_lru.h |  2 ++
+> >  mm/list_lru.c            | 69 ++++++++++++++++++++++++++++++++++--------------
+> >  2 files changed, 51 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
+> > index bb8129a3474d..ae472538038e 100644
+> > --- a/include/linux/list_lru.h
+> > +++ b/include/linux/list_lru.h
+> > @@ -29,6 +29,7 @@ struct list_lru_one {
+> >  	struct list_head	list;
+> >  	/* may become negative during memcg reparenting */
+> >  	long			nr_items;
+> > +	struct rcu_head		rcu;
+> >  };
+> >  
+> >  struct list_lru_memcg {
+> > @@ -46,6 +47,7 @@ struct list_lru_node {
+> >  	struct list_lru_memcg	*memcg_lrus;
+> >  #endif
+> >  	long nr_items;
+> > +	struct rcu_head		rcu;
+> >  } ____cacheline_aligned_in_smp;
+> >  
+> >  struct list_lru {
+> > diff --git a/mm/list_lru.c b/mm/list_lru.c
+> > index fd41e969ede5..4c58ed861729 100644
+> > --- a/mm/list_lru.c
+> > +++ b/mm/list_lru.c
+> > @@ -52,13 +52,13 @@ static inline bool list_lru_memcg_aware(struct list_lru *lru)
+> >  static inline struct list_lru_one *
+> >  list_lru_from_memcg_idx(struct list_lru_node *nlru, int idx)
+> >  {
+> > -	/*
+> > -	 * The lock protects the array of per cgroup lists from relocation
+> > -	 * (see memcg_update_list_lru_node).
+> > -	 */
+> > -	lockdep_assert_held(&nlru->lock);
+> > -	if (nlru->memcg_lrus && idx >= 0)
+> > -		return nlru->memcg_lrus->lru[idx];
+> > +	struct list_lru_memcg *tmp;
+> > +
+> > +	WARN_ON_ONCE(!rcu_read_lock_held());
+> > +
+> > +	tmp = rcu_dereference(nlru->memcg_lrus);
+> > +	if (tmp && idx >= 0)
+> > +		return rcu_dereference(tmp->lru[idx]);
+> >  
+> >  	return &nlru->lru;
+> >  }
+> > @@ -113,14 +113,17 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
+> >  	struct list_lru_one *l;
+> >  
+> >  	spin_lock(&nlru->lock);
+> > +	rcu_read_lock();
+> >  	if (list_empty(item)) {
+> >  		l = list_lru_from_kmem(nlru, item);
+> >  		list_add_tail(item, &l->list);
+> >  		l->nr_items++;
+> >  		nlru->nr_items++;
+> > +		rcu_read_unlock();
+> >  		spin_unlock(&nlru->lock);
+> >  		return true;
+> >  	}
+> > +	rcu_read_unlock();
+> >  	spin_unlock(&nlru->lock);
+> >  	return false;
+> >  }
+> > @@ -133,14 +136,17 @@ bool list_lru_del(struct list_lru *lru, struct list_head *item)
+> >  	struct list_lru_one *l;
+> >  
+> >  	spin_lock(&nlru->lock);
+> > +	rcu_read_lock();
+> >  	if (!list_empty(item)) {
+> >  		l = list_lru_from_kmem(nlru, item);
+> >  		list_del_init(item);
+> >  		l->nr_items--;
+> >  		nlru->nr_items--;
+> > +		rcu_read_unlock();
+> >  		spin_unlock(&nlru->lock);
+> >  		return true;
+> >  	}
+> > +	rcu_read_unlock();
+> >  	spin_unlock(&nlru->lock);
+> >  	return false;
+> >  }
+> > @@ -166,12 +172,13 @@ static unsigned long __list_lru_count_one(struct list_lru *lru,
+> >  {
+> >  	struct list_lru_node *nlru = &lru->node[nid];
+> >  	struct list_lru_one *l;
+> > -	unsigned long count;
+> > +	unsigned long count = 0;
+> >  
+> > -	spin_lock(&nlru->lock);
+> > +	rcu_read_lock();
+> >  	l = list_lru_from_memcg_idx(nlru, memcg_idx);
+> > -	count = l->nr_items;
+> > -	spin_unlock(&nlru->lock);
+> > +	if (l)
+> > +		count = l->nr_items;
+> > +	rcu_read_unlock();
+> >  
+> >  	return count;
+> >  }
+> > @@ -204,6 +211,7 @@ __list_lru_walk_one(struct list_lru *lru, int nid, int memcg_idx,
+> >  	unsigned long isolated = 0;
+> >  
+> >  	spin_lock(&nlru->lock);
+> > +	rcu_read_lock();
+> >  	l = list_lru_from_memcg_idx(nlru, memcg_idx);
+> >  restart:
+> >  	list_for_each_safe(item, n, &l->list) {
+> > @@ -250,6 +258,7 @@ __list_lru_walk_one(struct list_lru *lru, int nid, int memcg_idx,
+> >  		}
+> >  	}
+> >  
+> > +	rcu_read_unlock();
+> >  	spin_unlock(&nlru->lock);
+> >  	return isolated;
+> >  }
+> > @@ -296,9 +305,14 @@ static void __memcg_destroy_list_lru_node(struct list_lru_memcg *memcg_lrus,
+> >  					  int begin, int end)
+> >  {
+> >  	int i;
+> > +	struct list_lru_one *tmp;
+> >  
+> > -	for (i = begin; i < end; i++)
+> > -		kfree(memcg_lrus->lru[i]);
+> > +	for (i = begin; i < end; i++) {
+> > +		tmp = memcg_lrus->lru[i];
+> > +		rcu_assign_pointer(memcg_lrus->lru[i], NULL);
+> > +		if (tmp)
+> > +			kfree_rcu(tmp, rcu);
+> > +	}
+> >  }
+> >  
+> >  static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+> > @@ -314,7 +328,7 @@ static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+> >  			goto fail;
+> >  
+> >  		init_one_lru(l);
+> > -		memcg_lrus->lru[i] = l;
+> > +		rcu_assign_pointer(memcg_lrus->lru[i], l);
+> >  	}
+> >  	return 0;
+> >  fail:
+> > @@ -325,25 +339,37 @@ static int __memcg_init_list_lru_node(struct list_lru_memcg *memcg_lrus,
+> >  static int memcg_init_list_lru_node(struct list_lru_node *nlru)
+> >  {
+> >  	int size = memcg_nr_cache_ids;
+> > +	struct list_lru_memcg *tmp;
+> >  
+> > -	nlru->memcg_lrus = kvmalloc(size * sizeof(void *), GFP_KERNEL);
+> > -	if (!nlru->memcg_lrus)
+> > +	tmp = kvmalloc(size * sizeof(void *), GFP_KERNEL);
+> > +	if (!tmp)
+> >  		return -ENOMEM;
+> >  
+> > -	if (__memcg_init_list_lru_node(nlru->memcg_lrus, 0, size)) {
+> > -		kvfree(nlru->memcg_lrus);
+> > +	if (__memcg_init_list_lru_node(tmp, 0, size)) {
+> > +		kvfree(tmp);
+> >  		return -ENOMEM;
+> >  	}
+> >  
+> > +	rcu_assign_pointer(nlru->memcg_lrus, tmp);
+> > +
+> >  	return 0;
+> >  }
+> >  
+> > -static void memcg_destroy_list_lru_node(struct list_lru_node *nlru)
+> > +static void memcg_destroy_list_lru_node_rcu(struct rcu_head *rcu)
+> >  {
+> > +	struct list_lru_node *nlru;
+> > +
+> > +	nlru = container_of(rcu, struct list_lru_node, rcu);
+> > +
+> >  	__memcg_destroy_list_lru_node(nlru->memcg_lrus, 0, memcg_nr_cache_ids);
+> >  	kvfree(nlru->memcg_lrus);
+> >  }
+> >  
+> > +static void memcg_destroy_list_lru_node(struct list_lru_node *nlru)
+> > +{
+> > +	call_rcu(&nlru->rcu, memcg_destroy_list_lru_node_rcu);
+> > +}
+> > +
+> >  static int memcg_update_list_lru_node(struct list_lru_node *nlru,
+> >  				      int old_size, int new_size)
+> >  {
+> > @@ -371,9 +397,10 @@ static int memcg_update_list_lru_node(struct list_lru_node *nlru,
+> >  	 * we have to use IRQ-safe primitives here to avoid deadlock.
+> >  	 */
+> >  	spin_lock_irq(&nlru->lock);
+> > -	nlru->memcg_lrus = new;
+> > +	rcu_assign_pointer(nlru->memcg_lrus, new);
+> >  	spin_unlock_irq(&nlru->lock);
+> >  
+> > +	synchronize_rcu();
+> >  	kvfree(old);
+> >  	return 0;
+> >  }
+> > @@ -487,6 +514,7 @@ static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
+> >  	 * we have to use IRQ-safe primitives here to avoid deadlock.
+> >  	 */
+> >  	spin_lock_irq(&nlru->lock);
+> > +	rcu_read_lock();
+> >  
+> >  	src = list_lru_from_memcg_idx(nlru, src_idx);
+> >  	dst = list_lru_from_memcg_idx(nlru, dst_idx);
+> > @@ -495,6 +523,7 @@ static void memcg_drain_list_lru_node(struct list_lru_node *nlru,
+> >  	dst->nr_items += src->nr_items;
+> >  	src->nr_items = 0;
+> >  
+> > +	rcu_read_unlock();
+> >  	spin_unlock_irq(&nlru->lock);
+> >  }
+> >  
+> > -- 
+> > 2.11.0
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
+> 
