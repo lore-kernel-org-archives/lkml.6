@@ -1,194 +1,437 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752348AbeC0MiH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 08:38:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45602 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751120AbeC0MiG (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 08:38:06 -0400
-Date: Tue, 27 Mar 2018 14:38:03 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: "Jin, Yao" <yao.jin@linux.intel.com>
-Cc: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-Subject: Re: [PATCH v1 2/3] perf version: Print the status of compiled-in
- libraries
-Message-ID: <20180327123803.GF3102@krava>
-References: <1522080424-12912-1-git-send-email-yao.jin@linux.intel.com>
- <1522080424-12912-3-git-send-email-yao.jin@linux.intel.com>
- <20180326093925.GI6207@krava>
- <84893905-7512-0757-c13c-152a9d051f92@linux.intel.com>
+        id S1752236AbeC0Mjq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 08:39:46 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41080 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751241AbeC0Mjn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 08:39:43 -0400
+X-Google-Smtp-Source: AG47ELtSY+EiJSDQt58uvavb9bjf9LRurYnmiRuT3Y1Nl004b5iNaD8HutQHcal9yntLKJwkDbGkiw==
+References: <20180313113311.8617-1-rui.silva@linaro.org> <20180313113311.8617-3-rui.silva@linaro.org> <20180324105748.nwrw2grdqq2hrjlh@valkosipuli.retiisi.org.uk>
+User-agent: mu4e 1.0; emacs 25.3.1
+From: Rui Miguel Silva <rui.silva@linaro.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Rui Miguel Silva <rui.silva@linaro.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hverkuil@xs4all.nl,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ryan Harkin <ryan.harkin@linaro.org>
+Subject: Re: [PATCH v3 2/2] media: ov2680: Add Omnivision OV2680 sensor driver
+In-reply-to: <20180324105748.nwrw2grdqq2hrjlh@valkosipuli.retiisi.org.uk>
+Date: Tue, 27 Mar 2018 13:39:40 +0100
+Message-ID: <m3efk5r8tv.fsf@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84893905-7512-0757-c13c-152a9d051f92@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 09:51:03PM +0800, Jin, Yao wrote:
-> 
-> 
-> On 3/26/2018 5:39 PM, Jiri Olsa wrote:
-> > On Tue, Mar 27, 2018 at 12:07:03AM +0800, Jin Yao wrote:
-> > > This patch checks the values passed by CFLAGS (-DXXX) and then
-> > > print the status of libraries.
-> > > 
-> > > For example, if HAVE_DWARF_SUPPORT is defined, that means the
-> > > library "dwarf" is compiled-in. The patch will print the status
-> > > "on" for this library.
-> > > 
-> > > Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-> > > ---
-> > >   tools/perf/builtin-version.c | 125 +++++++++++++++++++++++++++++++++++++++++++
-> > >   tools/perf/builtin.h         |   1 +
-> > >   2 files changed, 126 insertions(+)
-> > > 
-> > > diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
-> > > index 37019c5..90a0a7f 100644
-> > > --- a/tools/perf/builtin-version.c
-> > > +++ b/tools/perf/builtin-version.c
-> > > @@ -9,3 +9,128 @@ int cmd_version(int argc __maybe_unused, const char **argv __maybe_unused)
-> > >   	printf("perf version %s\n", perf_version_string);
-> > >   	return 0;
-> > >   }
-> > > +
-> > > +static void status_print(const char *name, const char *status)
-> > > +{
-> > > +	printf("%22s: [ %3s ]\n", name, status);
-> > > +}
-> > > +
-> > > +static void library_status(void)
-> > > +{
-> > > +#ifdef HAVE_DWARF_SUPPORT
-> > > +	status_print("dwarf", "on");
-> > > +#else
-> > > +	status_print("dwarf", "off");
-> > > +#endif
-> > 
-> > could this and all those below be in some generic macro?
-> > 
-> > #define STATUS(__d, __m)		\
-> > #ifdef __d 				\
-> > 	status_print(#__m, "on");	\
-> > #else					\
-> > 	status_print(#__m, "OFF");	\
-> > #endif
-> > 
-> > STATUS(HAVE_DWARF_SUPPORT, dwarf)
-> > 
-> > 
-> > also please print the 'OFF' and use colors as in the build message
-> > 
-> 
-> Fine, thanks. I will update the code.
-> 
-> > > +
-> > > +#ifdef HAVE_DWARF_GETLOCATIONS
-> > > +	status_print("dwarf_getlocations", "on");
-> > > +#else
-> > > +	status_print("dwarf_getlocations", "off");
-> > > +#endif
-> > > +
-> > > +#ifdef NO_GLIBC
-> > > +	status_print("glibc", "off");
-> > > +#else
-> > > +	status_print("glibc", "on");
-> > > +#endif
-> > > +
-> > > +#ifdef HAVE_GTK2_SUPPORT
-> > > +	status_print("gtk2", "on");
-> > > +#else
-> > > +	status_print("gtk2", "off");
-> > > +#endif
-> > > +
-> > 
-> > SNIP
-> > 
-> > > +}
-> > > +
-> > > +int cmd_version2(int argc, const char **argv)
-> > > +{
-> > > +	cmd_version(argc, argv);
-> > > +	library_status();
-> > > +	return 0;
-> > > +}
-> > > diff --git a/tools/perf/builtin.h b/tools/perf/builtin.h
-> > > index 05745f3..c7508ee 100644
-> > > --- a/tools/perf/builtin.h
-> > > +++ b/tools/perf/builtin.h
-> > > @@ -29,6 +29,7 @@ int cmd_timechart(int argc, const char **argv);
-> > >   int cmd_top(int argc, const char **argv);
-> > >   int cmd_script(int argc, const char **argv);
-> > >   int cmd_version(int argc, const char **argv);
-> > > +int cmd_version2(int argc, const char **argv);
-> > 
-> > please don't add new command for this, handle this in cmd_version
-> > 
-> 
-> Yeah, I know that, adding a new command is not a good idea.
-> 
-> But how can I pass a new parameter to cmd_version to indicate it's the -vv
-> case? Use argv[1]? But looks not good since argc is 1.
-> 
-> Any idea about that?
+Hi Sakari,
+On Sat 24 Mar 2018 at 10:57, Sakari Ailus wrote:
+> Hi Rui,
+>
+> I wanted to go through the code the last time and I'd have a few 
+> review
+> comments below...
 
-I guess the based would be to have 'perf version -v', where
-in cmd_version you'd call standard option processing..
+Thanks for the review.
 
-the 'perf -vv' shortcut could for example be done through
-some global var like in attached patch... untested
+>
+> On Tue, Mar 13, 2018 at 11:33:11AM +0000, Rui Miguel Silva 
+> wrote:
+> ...
+>> +static int ov2680_gain_set(struct ov2680_dev *sensor, bool 
+>> auto_gain)
+>> +{
+>> +	struct ov2680_ctrls *ctrls = &sensor->ctrls;
+>> +	u32 gain;
+>> +	int ret;
+>> +
+>> +	ret = ov2680_mod_reg(sensor, OV2680_REG_R_MANUAL, BIT(1),
+>> +			     auto_gain ? 0 : BIT(1));
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if (auto_gain || !ctrls->gain->is_new)
+>> +		return 0;
+>> +
+>> +	gain = ctrls->gain->val;
+>> +
+>> +	ret = ov2680_write_reg16(sensor, OV2680_REG_GAIN_PK, 
+>> gain);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int ov2680_gain_get(struct ov2680_dev *sensor)
+>> +{
+>> +	u32 gain;
+>> +	int ret;
+>> +
+>> +	ret = ov2680_read_reg16(sensor, OV2680_REG_GAIN_PK, 
+>> &gain);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return gain;
+>> +}
+>> +
+>> +static int ov2680_auto_gain_enable(struct ov2680_dev *sensor)
+>> +{
+>> +	return ov2680_gain_set(sensor, true);
+>> +}
+>> +
+>> +static int ov2680_auto_gain_disable(struct ov2680_dev *sensor)
+>> +{
+>> +	return ov2680_gain_set(sensor, false);
+>> +}
+>> +
+>> +static int ov2680_exposure_set(struct ov2680_dev *sensor, bool 
+>> auto_exp)
+>> +{
+>> +	struct ov2680_ctrls *ctrls = &sensor->ctrls;
+>> +	u32 exp;
+>> +	int ret;
+>> +
+>> +	ret = ov2680_mod_reg(sensor, OV2680_REG_R_MANUAL, BIT(0),
+>> +			     auto_exp ? 0 : BIT(0));
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	if (auto_exp || !ctrls->exposure->is_new)
+>> +		return 0;
+>> +
+>> +	exp = (u32)ctrls->exposure->val;
+>> +	exp <<= 4;
+>> +
+>> +	return ov2680_write_reg24(sensor, 
+>> OV2680_REG_EXPOSURE_PK_HIGH, exp);
+>> +}
+>> +
+>> +static int ov2680_exposure_get(struct ov2680_dev *sensor)
+>> +{
+>> +	int ret;
+>> +	u32 exp;
+>> +
+>> +	ret = ov2680_read_reg24(sensor, 
+>> OV2680_REG_EXPOSURE_PK_HIGH, &exp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return exp >> 4;
+>> +}
+>> +
+>> +static int ov2680_auto_exposure_enable(struct ov2680_dev 
+>> *sensor)
+>> +{
+>> +	return ov2680_exposure_set(sensor, true);
+>> +}
+>> +
+>> +static int ov2680_auto_exposure_disable(struct ov2680_dev 
+>> *sensor)
+>> +{
+>> +	return ov2680_exposure_set(sensor, false);
+>> +}
+>
+> I still think you could call the function actually doing the 
+> work, and pass
+> the bool parameter. That'd be much clearer. Please see the 
+> comments below,
+> too; they're related. Same for gain.
 
-jirka
+Ok, no problem, will change that in v4.
 
+>
+> ...
+>
+>> +static int ov2680_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+>> +{
+>> +	struct v4l2_subdev *sd = ctrl_to_sd(ctrl);
+>> +	struct ov2680_dev *sensor = to_ov2680_dev(sd);
+>> +	int val;
+>> +
+>> +	if (!sensor->is_enabled)
+>> +		return 0;
+>> +
+>> +	switch (ctrl->id) {
+>> +	case V4L2_CID_AUTOGAIN:
+>> +		if (!ctrl->val)
+>> +			return 0;
+>> +		val = ov2680_gain_get(sensor);
+>> +		if (val < 0)
+>> +			return val;
+>> +		sensor->ctrls.gain->val = val;
+>> +		break;
+>> +	case V4L2_CID_EXPOSURE_AUTO:
+>
+> I reckon the purpose of implementing volatile controls here 
+> would be to
+> provide the exposure and gain values to the user. But the 
+> controls here are
+> the ones enabling or disabling the automatic behaviour, not the 
+> value of
+> those settings themselves.
+>
+>> +		if (ctrl->val == V4L2_EXPOSURE_MANUAL)
+>> +			return 0;
+>> +		val = ov2680_exposure_get(sensor);
+>> +		if (val < 0)
+>> +			return val;
+>> +		sensor->ctrls.exposure->val = val;
+>> +		break;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int ov2680_s_ctrl(struct v4l2_ctrl *ctrl)
+>> +{
+>> +	struct v4l2_subdev *sd = ctrl_to_sd(ctrl);
+>> +	struct ov2680_dev *sensor = to_ov2680_dev(sd);
+>> +
+>> +	if (!sensor->is_enabled)
+>> +		return 0;
+>> +
+>> +	switch (ctrl->id) {
+>> +	case V4L2_CID_AUTOGAIN:
+>> +		return ov2680_gain_set(sensor, !!ctrl->val);
+>> +	case V4L2_CID_EXPOSURE_AUTO:
+>> +		return ov2680_exposure_set(sensor, !!ctrl->val);
+>
+> With this, you can enable or disable automatic exposure and 
+> gain, but you
+> cannot manually set the values. Are such controls useful?
+>
+> Unless I'm mistaken, exposure or gain are not settable, so you 
+> should make
+> them read-only controls. Or better, allow setting them if 
+> automatic control
+> is disabled.
+
+Yeah, I could definitely change the values of exposure and gain 
+also,
+but that may came how the ctrl group work internally. But I will 
+change
+and add them.
+
+>
+>> +	case V4L2_CID_VFLIP:
+>> +		if (sensor->is_streaming)
+>> +			return -EBUSY;
+>> +		if (ctrl->val)
+>> +			return ov2680_vflip_enable(sensor);
+>> +		else
+>> +			return ov2680_vflip_disable(sensor);
+>> +	case V4L2_CID_HFLIP:
+>> +		if (ctrl->val)
+>> +			return ov2680_hflip_enable(sensor);
+>> +		else
+>> +			return ov2680_hflip_disable(sensor);
+>> +	case V4L2_CID_TEST_PATTERN:
+>> +		return ov2680_test_pattern_set(sensor, ctrl->val);
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +static const struct v4l2_ctrl_ops ov2680_ctrl_ops = {
+>> +	.g_volatile_ctrl = ov2680_g_volatile_ctrl,
+>> +	.s_ctrl = ov2680_s_ctrl,
+>> +};
+>> +
+>> +static const struct v4l2_subdev_core_ops ov2680_core_ops = {
+>> +	.s_power = ov2680_s_power,
+>> +};
+>> +
+>> +static const struct v4l2_subdev_video_ops ov2680_video_ops = {
+>> +	.g_frame_interval	= ov2680_s_g_frame_interval,
+>> +	.s_frame_interval	= ov2680_s_g_frame_interval,
+>> +	.s_stream		= ov2680_s_stream,
+>> +};
+>> +
+>> +static const struct v4l2_subdev_pad_ops ov2680_pad_ops = {
+>> +	.enum_mbus_code		= ov2680_enum_mbus_code,
+>> +	.get_fmt		= ov2680_get_fmt,
+>> +	.set_fmt		= ov2680_set_fmt,
+>> +	.enum_frame_size	= ov2680_enum_frame_size,
+>> +	.enum_frame_interval	= ov2680_enum_frame_interval,
+>> +};
+>> +
+>> +static const struct v4l2_subdev_ops ov2680_subdev_ops = {
+>> +	.core	= &ov2680_core_ops,
+>> +	.video	= &ov2680_video_ops,
+>> +	.pad	= &ov2680_pad_ops,
+>> +};
+>> +
+>> +static int ov2680_mode_init(struct ov2680_dev *sensor)
+>> +{
+>> +	const struct ov2680_mode_info *init_mode;
+>> +
+>> +	/* set initial mode */
+>> +	sensor->fmt.code = MEDIA_BUS_FMT_SBGGR10_1X10;
+>> +	sensor->fmt.width = 800;
+>> +	sensor->fmt.height = 600;
+>> +	sensor->fmt.field = V4L2_FIELD_NONE;
+>> +	sensor->fmt.colorspace = V4L2_COLORSPACE_SRGB;
+>> +
+>> +	sensor->frame_interval.denominator = OV2680_FRAME_RATE;
+>> +	sensor->frame_interval.numerator = 1;
+>> +
+>> +	init_mode = &ov2680_mode_init_data;
+>> +
+>> +	sensor->current_mode = init_mode;
+>> +
+>> +	sensor->mode_pending_changes = true;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int ov2680_v4l2_init(struct ov2680_dev *sensor)
+>> +{
+>> +	const struct v4l2_ctrl_ops *ops = &ov2680_ctrl_ops;
+>> +	struct ov2680_ctrls *ctrls = &sensor->ctrls;
+>> +	struct v4l2_ctrl_handler *hdl = &ctrls->handler;
+>> +	int ret = 0;
+>> +
+>> +	v4l2_i2c_subdev_init(&sensor->sd, sensor->i2c_client,
+>> +			     &ov2680_subdev_ops);
+>> +
+>> +	sensor->sd.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+>> +	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
+>> +	sensor->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+>> +
+>> +	ret = media_entity_pads_init(&sensor->sd.entity, 1, 
+>> &sensor->pad);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	v4l2_ctrl_handler_init(hdl, 32);
+>
+> You have only 7 controls.
+
+Yes, good catch.
+
+>
+>> +
+>> +	hdl->lock = &sensor->lock;
+>> +
+>> +	ctrls->vflip = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_VFLIP, 
+>> 0, 1, 1, 0);
+>> +	ctrls->hflip = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_HFLIP, 
+>> 0, 1, 1, 0);
+>> +
+>> +	ctrls->test_pattern = v4l2_ctrl_new_std_menu_items(hdl,
+>> +					&ov2680_ctrl_ops,
+>> +					V4L2_CID_TEST_PATTERN,
+>> + 
+>> ARRAY_SIZE(test_pattern_menu) - 1,
+>> +					0, 0, test_pattern_menu);
+>> +
+>> +	ctrls->auto_exp = v4l2_ctrl_new_std_menu(hdl, ops,
+>> + 
+>> V4L2_CID_EXPOSURE_AUTO,
+>> + 
+>> V4L2_EXPOSURE_MANUAL, 0,
+>> + 
+>> V4L2_EXPOSURE_AUTO);
+>> +
+>> +	ctrls->exposure = v4l2_ctrl_new_std(hdl, ops, 
+>> V4L2_CID_EXPOSURE,
+>> +					    0, 32767, 1, 0);
+>> +
+>> +	ctrls->auto_gain = v4l2_ctrl_new_std(hdl, ops, 
+>> V4L2_CID_AUTOGAIN,
+>> +					     0, 1, 1, 1);
+>> +	ctrls->gain = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_GAIN, 
+>> 0, 2047, 1, 0);
+>> +
+>> +	if (hdl->error) {
+>> +		ret = hdl->error;
+>> +		goto cleanup_entity;
+>> +	}
+>> +
+>> +	ctrls->gain->flags |= V4L2_CTRL_FLAG_VOLATILE;
+>> +	ctrls->exposure->flags |= V4L2_CTRL_FLAG_VOLATILE;
+>> +
+>> +	v4l2_ctrl_auto_cluster(2, &ctrls->auto_gain, 0, true);
+>> +	v4l2_ctrl_auto_cluster(2, &ctrls->auto_exp, 1, true);
+>> +
+>> +	sensor->sd.ctrl_handler = hdl;
+>> +
+>> +	ret = v4l2_async_register_subdev(&sensor->sd);
+>> +	if (ret < 0)
+>> +		goto cleanup_entity;
+>> +
+>> +	return 0;
+>> +
+>> +cleanup_entity:
+>> +	media_entity_cleanup(&sensor->sd.entity);
+>> +	v4l2_ctrl_handler_free(hdl);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int ov2680_check_id(struct ov2680_dev *sensor)
+>> +{
+>> +	struct device *dev = ov2680_to_dev(sensor);
+>> +	u32 chip_id;
+>> +	int ret;
+>> +
+>> +	ov2680_power_on(sensor);
+>> +
+>> +	ret = ov2680_read_reg16(sensor, OV2680_REG_CHIP_ID_HIGH, 
+>> &chip_id);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "failed to read chip id high\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	if (chip_id != OV2680_CHIP_ID) {
+>> +		dev_err(dev, "chip id: 0x%04x does not match 
+>> expected 0x%04x\n",
+>> +			chip_id, OV2680_CHIP_ID);
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int ov2860_parse_dt(struct ov2680_dev *sensor)
+>> +{
+>> +	struct device *dev = ov2680_to_dev(sensor);
+>> +	int ret;
+>> +
+>> +	sensor->pwdn_gpio = devm_gpiod_get_optional(dev, 
+>> "powerdown",
+>> + 
+>> GPIOD_OUT_HIGH);
+>> +	ret = PTR_ERR_OR_ZERO(sensor->pwdn_gpio);
+>> +	if (ret < 0) {
+>> +		dev_dbg(dev, "error while getting powerdown gpio: 
+>> %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	sensor->xvclk = devm_clk_get(dev, "xvclk");
+>> +	if (IS_ERR(sensor->xvclk)) {
+>> +		dev_err(dev, "xvclk clock missing or invalid\n");
+>> +		return PTR_ERR(sensor->xvclk);
+>> +	}
+>> +
+>> +	sensor->xvclk_freq = clk_get_rate(sensor->xvclk);
+>> +	if (sensor->xvclk_freq < OV2680_XVCLK_MIN ||
+>> +	    sensor->xvclk_freq > OV2680_XVCLK_MAX) {
+>
+> What's the frequency the register configuration requires? I 
+> think you
+> should check the exact frequency here, rather than a wide range. 
+> The
+> register lists would need to be adapted for other frequencies.
+
+Makes sense, will change also in v4  that will go shortly.
 
 ---
-diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
-index 37019c5d675f..1fe458792cc1 100644
---- a/tools/perf/builtin-version.c
-+++ b/tools/perf/builtin-version.c
-@@ -4,6 +4,8 @@
- #include <linux/compiler.h>
- #include <stdio.h>
- 
-+int version_verbose;
-+
- int cmd_version(int argc __maybe_unused, const char **argv __maybe_unused)
- {
- 	printf("perf version %s\n", perf_version_string);
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index 1b3fc8ec0fa2..a5c95c6c0de7 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -185,7 +185,14 @@ static int handle_options(const char ***argv, int *argc, int *envchanged)
- 			break;
- 		}
- 
--		if (!strcmp(cmd, "-v")) {
-+		if (strstarts(cmd, "-v")) {
-+			int i;
-+
-+			for (i = 2; cmd[i]; i++) {
-+				if (cmd[i] == 'v')
-+					version_verbose++;
-+			}
-+
- 			(*argv)[0] = "--version";
- 			break;
- 		}
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 8fec1abd0f1f..9c45ba179635 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -13,6 +13,8 @@ void test_attr__init(void);
- void test_attr__open(struct perf_event_attr *attr, pid_t pid, int cpu,
- 		     int fd, int group_fd, unsigned long flags);
- 
-+extern int version_verbose;
-+
- #define HAVE_ATTR_TEST
- #include "perf-sys.h"
- 
+Cheers,
+	Rui
