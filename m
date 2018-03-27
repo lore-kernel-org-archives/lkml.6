@@ -1,116 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752553AbeC0PCL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 11:02:11 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55337 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752001AbeC0PCI (ORCPT
+        id S1752571AbeC0PGv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 11:06:51 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37612 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752526AbeC0PGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 11:02:08 -0400
-Date: Tue, 27 Mar 2018 08:02:52 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        okaya@codeaurora.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] docs/memory-barriers.txt: Fix broken DMA vs MMIO
- ordering example
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1522156287-15169-1-git-send-email-will.deacon@arm.com>
+        Tue, 27 Mar 2018 11:06:49 -0400
+X-Google-Smtp-Source: AG47ELt/YKaDibIrMoO16P3dC4k197vN+XVfsw7+BCtsJhB6/3643Mro75gGLlWzL5q08bkQhl/Brw==
+Date: Tue, 27 Mar 2018 10:06:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: daniel.lezcano@linaro.org, tglx@linutronix.de, mark.rutland@arm.com,
+        aisheng.dong@nxp.com, Linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] clocksource/drivers/imx-tpm: correct some registers
+ operation flow
+Message-ID: <20180327150647.l3qyrngxehpdwm7e@rob-hp-laptop>
+References: <1522050461-19043-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522156287-15169-1-git-send-email-will.deacon@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18032715-0008-0000-0000-000002EBA2DE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008753; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000255; SDB=6.01009189; UDB=6.00514075; IPR=6.00788471;
- MB=3.00020270; MTD=3.00000008; XFM=3.00000015; UTC=2018-03-27 15:02:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18032715-0009-0000-0000-000038B2368E
-Message-Id: <20180327150252.GN3675@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-27_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1803270152
+In-Reply-To: <1522050461-19043-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 27, 2018 at 02:11:27PM +0100, Will Deacon wrote:
-> The section of memory-barriers.txt that describes the dma_Xmb() barriers
-> has an incorrect example claiming that a wmb() is required after writing
-> to coherent memory in order for those writes to be visible to a device
-> before a subsequent MMIO access using writel() can reach the device.
+On Mon, Mar 26, 2018 at 03:47:40PM +0800, Anson Huang wrote:
+> According to i.MX7ULP reference manual, TPM_SC_CPWMS can ONLY be
+> written when counter is disabled, TPM_SC_TOF is write-1-clear,
+> TPM_C0SC_CHF is also write-1-clear, correct these registers
+> initialization flow;
 > 
-> In fact, this ordering guarantee is provided (at significant cost on some
-> architectures such as arm and power) by writel, so the wmb() is not
-> necessary. writel_relaxed exists for cases where this ordering is not
-> required.
+> Replace incorret clock name igp with ipg.
+
+incorrect
+
+This looks like an unrelated change.
+
 > 
-> Fix the example and update the text to make this clearer.
-> 
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Reported-by: Sinan Kaya <okaya@codeaurora.org>
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
-
-Good catch, queued on my lkmm branch, thank you!
-
-							Thanx, Paul
-
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
->  Documentation/memory-barriers.txt | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
+>  Documentation/devicetree/bindings/timer/nxp,tpm-timer.txt |  2 +-
+
+Though you have the same typo, this should be a separate change from the 
+driver.
+
+>  drivers/clocksource/timer-imx-tpm.c                       | 10 ++++++++--
+>  2 files changed, 9 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-> index a863009849a3..3247547d1c36 100644
-> --- a/Documentation/memory-barriers.txt
-> +++ b/Documentation/memory-barriers.txt
-> @@ -1909,9 +1909,6 @@ There are some more advanced barrier functions:
->  		/* assign ownership */
->  		desc->status = DEVICE_OWN;
-> 
-> -		/* force memory to sync before notifying device via MMIO */
-> -		wmb();
-> -
->  		/* notify device of new descriptors */
->  		writel(DESC_NOTIFY, doorbell);
+> diff --git a/Documentation/devicetree/bindings/timer/nxp,tpm-timer.txt b/Documentation/devicetree/bindings/timer/nxp,tpm-timer.txt
+> index b4aa7dd..f82087b 100644
+> --- a/Documentation/devicetree/bindings/timer/nxp,tpm-timer.txt
+> +++ b/Documentation/devicetree/bindings/timer/nxp,tpm-timer.txt
+> @@ -15,7 +15,7 @@ Required properties:
+>  - interrupts :	Should be the clock event device interrupt.
+>  - clocks :	The clocks provided by the SoC to drive the timer, must contain
+>  		an entry for each entry in clock-names.
+> -- clock-names : Must include the following entries: "igp" and "per".
+> +- clock-names : Must include the following entries: "ipg" and "per".
+>  
+>  Example:
+>  tpm5: tpm@40260000 {
+> diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
+> index 21bffdc..7403e49 100644
+> --- a/drivers/clocksource/timer-imx-tpm.c
+> +++ b/drivers/clocksource/timer-imx-tpm.c
+> @@ -20,6 +20,7 @@
+>  #define TPM_SC				0x10
+>  #define TPM_SC_CMOD_INC_PER_CNT		(0x1 << 3)
+>  #define TPM_SC_CMOD_DIV_DEFAULT		0x3
+> +#define TPM_SC_TOF_MASK			(0x1 << 7)
+>  #define TPM_CNT				0x14
+>  #define TPM_MOD				0x18
+>  #define TPM_STATUS			0x1c
+> @@ -29,6 +30,7 @@
+>  #define TPM_C0SC_MODE_SHIFT		2
+>  #define TPM_C0SC_MODE_MASK		0x3c
+>  #define TPM_C0SC_MODE_SW_COMPARE	0x4
+> +#define TPM_C0SC_CHF_MASK		(0x1 << 7)
+>  #define TPM_C0V				0x24
+>  
+>  static void __iomem *timer_base;
+> @@ -179,7 +181,7 @@ static int __init tpm_timer_init(struct device_node *np)
+>  	ipg = of_clk_get_by_name(np, "ipg");
+>  	per = of_clk_get_by_name(np, "per");
+>  	if (IS_ERR(ipg) || IS_ERR(per)) {
+> -		pr_err("tpm: failed to get igp or per clk\n");
+> +		pr_err("tpm: failed to get ipg or per clk\n");
+>  		ret = -ENODEV;
+>  		goto err_clk_get;
 >  	}
-> @@ -1919,11 +1916,15 @@ There are some more advanced barrier functions:
->       The dma_rmb() allows us guarantee the device has released ownership
->       before we read the data from the descriptor, and the dma_wmb() allows
->       us to guarantee the data is written to the descriptor before the device
-> -     can see it now has ownership.  The wmb() is needed to guarantee that the
-> -     cache coherent memory writes have completed before attempting a write to
-> -     the cache incoherent MMIO region.
-> -
-> -     See Documentation/DMA-API.txt for more information on consistent memory.
-> +     can see it now has ownership.  Note that, when using writel(), a prior
-> +     wmb() is not needed to guarantee that the cache coherent memory writes
-> +     have completed before writing to the MMIO region.  The cheaper
-> +     writel_relaxed() does not provide this guarantee and must not be used
-> +     here.
-> +
-> +     See the subsection "Kernel I/O barrier effects" for more information on
-> +     relaxed I/O accessors and the Documentation/DMA-API.txt file for more
-> +     information on consistent memory.
-> 
-> 
->  MMIO WRITE BARRIER
+> @@ -205,9 +207,13 @@ static int __init tpm_timer_init(struct device_node *np)
+>  	 * 4) Channel0 disabled
+>  	 * 5) DMA transfers disabled
+>  	 */
+> +	/* make sure counter is disabled */
+>  	writel(0, timer_base + TPM_SC);
+> +	/* TOF is W1C */
+> +	writel(TPM_SC_TOF_MASK, timer_base + TPM_SC);
+>  	writel(0, timer_base + TPM_CNT);
+> -	writel(0, timer_base + TPM_C0SC);
+> +	/* CHF is W1C */
+> +	writel(TPM_C0SC_CHF_MASK, timer_base + TPM_C0SC);
+>  
+>  	/* increase per cnt, div 8 by default */
+>  	writel(TPM_SC_CMOD_INC_PER_CNT | TPM_SC_CMOD_DIV_DEFAULT,
 > -- 
-> 2.1.4
+> 2.7.4
 > 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
