@@ -1,145 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751890AbeC0IWk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 04:22:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33839 "EHLO mx2.suse.de"
+        id S1751114AbeC0IZY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 04:25:24 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37133 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751025AbeC0IWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 04:22:38 -0400
-Date: Tue, 27 Mar 2018 10:22:35 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>, Jason Baron <jbaron@akamai.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 00/10] livepatch: Atomic replace feature
-Message-ID: <20180327082235.eyujcqkcp4ccvkpk@pathway.suse.cz>
-References: <2f94c399-fe72-58f9-bd63-b08c46bb47b3@redhat.com>
- <1520881024-29386-1-git-send-email-joe.lawrence@redhat.com>
- <20180326105610.fzjfotkaljbuoa57@pathway.suse.cz>
- <6b1c58e4-9dc3-36bd-1fb6-e136605d0c66@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6b1c58e4-9dc3-36bd-1fb6-e136605d0c66@redhat.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1751001AbeC0IZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Mar 2018 04:25:22 -0400
+Message-ID: <1522139057.1110.24.camel@bootlin.com>
+Subject: Re: [PATCH 05/10] drm/sun4i: Explicitly list and check formats
+ supported by the frontend
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>, Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>
+Date: Tue, 27 Mar 2018 10:24:17 +0200
+In-Reply-To: <20180323100659.vojpyt7eazioevdj@flea>
+References: <20180321152904.22411-1-paul.kocialkowski@bootlin.com>
+         <20180321152904.22411-6-paul.kocialkowski@bootlin.com>
+         <20180323100659.vojpyt7eazioevdj@flea>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-7bcErZJfZH02xpdLfTT9"
+X-Mailer: Evolution 3.26.5 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-03-26 14:12:03, Joe Lawrence wrote:
-> On 03/26/2018 06:56 AM, Petr Mladek wrote:
-> > On Mon 2018-03-12 14:57:04, Joe Lawrence wrote:
-> >> diff --git a/tools/testing/selftests/livepatch/livepatch-test b/tools/testing/selftests/livepatch/livepatch-test
-> >> new file mode 100755
-> >> index 000000000000..798317bf69f6
-> >> --- /dev/null
-> >> +++ b/tools/testing/selftests/livepatch/livepatch-test
-> >> @@ -0,0 +1,658 @@
-> >> +#!/bin/bash
-> >> +# SPDX-License-Identifier: GPL-2.0
-> >> +# Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
-> >> +
-> >> +MAX_RETRIES=30
-> >> +RETRY_INTERVAL=2	# seconds
-> >> +BETWEEN_TESTS=20	# seconds
-> > 
-> > These 20 seconds kept me in a tense (waiting for the final result)
-> > for a very long time ;-) Is there any particular reason for such
-> > a long delay?
-> 
-> It certainly builds suspense :)
-> 
-> > I wonder if we need a delay at all or if let's say 2 seconds might
-> > be enough.
-> 
-> I removed the delays completely and the tests ran successfully.   What
-> might be better than a between test delay would be some kind of
-> initial-condition verification, ie, make sure that the test starts/ends
-> with none of the livepatch test modules loaded.
 
-We could check is /sys/kernel/livepatch directory is empty.
+--=-7bcErZJfZH02xpdLfTT9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Also we could run modinfo on all modules printed by lsmod
-and check for the livepatch flag.
+Hi,
 
+On Fri, 2018-03-23 at 11:06 +0100, Maxime Ripard wrote:
+> On Wed, Mar 21, 2018 at 04:28:59PM +0100, Paul Kocialkowski wrote:
+> > In order to check whether the frontend supports a specific format,
+> > an
+> > explicit list and a related helper are introduced.
+> >=20
+> > They are then used to determine whether the frontend can actually
+> > support
+> > the requested format when it was selected to be used.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun4i_backend.c  |  5 ++++
+> >  drivers/gpu/drm/sun4i/sun4i_frontend.c | 44
+> > ++++++++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/sun4i/sun4i_frontend.h |  1 +
+> >  3 files changed, 50 insertions(+)
+> >=20
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > index 7703ba989743..1fad0714c70e 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> > @@ -532,6 +532,11 @@ static int sun4i_backend_atomic_check(struct
+> > sunxi_engine *engine,
+> >  		struct drm_format_name_buf format_name;
+> > =20
+> >  		if (sun4i_backend_plane_uses_frontend(plane_state))
+> > {
+> > +			if (!sun4i_frontend_format_is_supported(fb-
+> > >format->format)) {
+> > +				DRM_DEBUG_DRIVER("Frontend plane
+> > check failed\n");
+> > +				return -EINVAL;
+> > +			}
+> > +
+>=20
+> So you're checking if the frontend doesn't support it and if the
+> backend doesn't support it. Who supports it then? :)
 
-> For the test cases which load multiple livepatches, is there an easy way
-> to determine the patch stack order from userspace?  I think that would
-> be helpful when trying to remove all of them.
+That's the case case where the format is not supported by either of the
+hardware blocks. For instance, requesting ARGB with tiling will fail,
+although ARGB without tiling will work. It seems that modetest assumes
+that modifiers only apply to YUV (in which case there are no unsupported
+cases), but I think userspace might still request RGB+tiling
+combinations. I don't currently see a way to report to which format the
+tiling applies (thus we have to expect that it can come with any of the
+supported formats).
 
-I am not aware about any easy way. Only the following hacks come
-to my mind:
+> Like I was saying, this should be moved to the previous patch, within
+> sun4i_backend_plane_uses_frontend.
 
-One possibility would be to use the creation time of the directories
-under /sys/kernel/livepatch.
+If we get both tests (no backend support and frontend support) into one
+function, we cannot detect that the format is actually unsupported and
+return an error in the atomic check.
 
-Or I wonder if the output from lsmod is sorted by the order in which
-the modules were loaded.
+> > +static const uint32_t sun4i_frontend_formats[] =3D {
+> > +	/* RGB */
+> > +	DRM_FORMAT_XRGB8888,
+> > +	DRM_FORMAT_BGRX8888,
+> > +	/* YUV444 */
+> > +	DRM_FORMAT_YUV444,
+> > +	DRM_FORMAT_YVU444,
+> > +	/* YUV422 */
+> > +	DRM_FORMAT_YUYV,
+> > +	DRM_FORMAT_YVYU,
+> > +	DRM_FORMAT_UYVY,
+> > +	DRM_FORMAT_VYUY,
+> > +	DRM_FORMAT_NV16,
+> > +	DRM_FORMAT_NV61,
+> > +	DRM_FORMAT_YUV422,
+> > +	DRM_FORMAT_YVU422,
+> > +	/* YUV420 */
+> > +	DRM_FORMAT_NV12,
+> > +	DRM_FORMAT_NV21,
+> > +	DRM_FORMAT_YUV420,
+> > +	DRM_FORMAT_YVU420,
+> > +	/* YUV411 */
+> > +	DRM_FORMAT_YUV411,
+> > +	DRM_FORMAT_YVU411,
+> > +};
+>=20
+> I think this list should reflect what the driver currently supports,
+> not what the hardware supports.
 
+This list is not indended to reflect what the driver supports, but only
+what the backend can support (to correctly select whether a
+format/modifier couple should go to the frontend or backend)!
 
-> >> +echo -n "TEST1 ... "
-> >> +dmesg -C
-> >> +
-> >> +load_mod $MOD_TARGET
-> >> +load_mod $MOD_LIVEPATCH
-> >> +wait_for_transition $MOD_LIVEPATCH
-> >> +disable_lp $MOD_LIVEPATCH
-> >> +unload_mod $MOD_LIVEPATCH
-> >> +unload_mod $MOD_TARGET
-> >> +
-> >> +check_result "% modprobe $MOD_TARGET
-> >> +$MOD_TARGET: livepatch_callbacks_mod_init
-> >> +% modprobe $MOD_LIVEPATCH
-> >> +livepatch: enabling patch '$MOD_LIVEPATCH'
-> >> +livepatch: '$MOD_LIVEPATCH': initializing patching transition
-> >> +$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
-> >> +$MOD_LIVEPATCH: pre_patch_callback: vmlinux
-> >> +livepatch: '$MOD_LIVEPATCH': starting patching transition
-> >> +livepatch: '$MOD_LIVEPATCH': completing patching transition
-> >> +$MOD_LIVEPATCH: post_patch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
-> >> +$MOD_LIVEPATCH: post_patch_callback: vmlinux
-> >> +livepatch: '$MOD_LIVEPATCH': patching complete
-> >> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
-> >> +livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
-> >> +$MOD_LIVEPATCH: pre_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
-> >> +$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
-> >> +livepatch: '$MOD_LIVEPATCH': starting unpatching transition
-> >> +livepatch: '$MOD_LIVEPATCH': completing unpatching transition
-> >> +$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
-> >> +$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
-> >> +livepatch: '$MOD_LIVEPATCH': unpatching complete
-> >> +% rmmod $MOD_LIVEPATCH
-> >> +% rmmod $MOD_TARGET
-> >> +$MOD_TARGET: livepatch_callbacks_mod_exit"
-> > 
-> > I was a bit surprised when seeing this way of checking results.
-> > But on the other hand, it looks pretty effective, especially for
-> > the callbacks. And the 3rd look, any patched function might write
-> > something into the log when called.
-> 
-> This was a quickly scripted version of what I was manually verifying
-> with the sample example livepatches.  I don't know if it will scale, but
-> it was pretty easy to add tests this way.
-> 
-> I wonder though if better dmesg filters will be required as the
-> livepatch core adds more debug msgs?
+The complete list that is reported to userspace for global driver
+support is sun4i_layer_formats in sun4i_layer.c.
 
-Let's see. Most of the messages seem to be from the test modules
-itself, so it should not be that bad.
+Cheers,
 
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-7bcErZJfZH02xpdLfTT9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> > I like it. Let's see how it works in the long term. But I am rather
-> > positive.
-> > 
-> > Thanks a lot for working on it.
-> 
-> Thanks for taking a look and running the tests.  I'll make some of your
-> suggested changes and send it up for a proper review soon.
+-----BEGIN PGP SIGNATURE-----
 
-Great.
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlq5/7EACgkQ3cLmz3+f
+v9G2cQf+K/MtPvMYYtQnAsTI0qX+WQ3GTGebUCdsU7VipBhuW8TPUTGRzAiuV7+T
+le0wz5L7gQ8Yk+Og9zGN9RbNBJ26YcITtBjp27uiSJL3Lwb4W7VHDWWw/HYkf8JP
+oad02Hmmn67S5esGhwemJlh25W2XubJKIJQAPBz4xtPo4ODVEw2ecYB6qd4HJTPF
+V/On/9M7qwVM6CMbFybMJ0zn+/qbZGyDLYh7eTPk1ZQgubK3M0VqEdYRqf5Shtpm
+12WqoXjn4QWn9+/P0W6I/SA5icFVWdDBmwVE9vQHAHrY4Bl/x+FvkUoVmLb0zHup
+rfMPx/vwTsjyMSL3dxLWkQjXM3pxaw==
+=kBmk
+-----END PGP SIGNATURE-----
 
-Best Regards,
-Petr
+--=-7bcErZJfZH02xpdLfTT9--
