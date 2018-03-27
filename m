@@ -1,45 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754078AbeC0RE5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 27 Mar 2018 13:04:57 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:43418 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753523AbeC0REp (ORCPT
+        id S1754297AbeC0RFA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 27 Mar 2018 13:05:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39352 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753523AbeC0RE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Mar 2018 13:04:45 -0400
-Date: Tue, 27 Mar 2018 13:04:29 -0400 (EDT)
-Message-Id: <20180327.130429.1060831999612495885.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, darren.kenny@oracle.com
-Subject: Re: [PATCH net V2] vhost: correctly remove wait queue during poll
- failure
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1522155052-13347-1-git-send-email-jasowang@redhat.com>
-References: <1522155052-13347-1-git-send-email-jasowang@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Tue, 27 Mar 2018 13:04:58 -0400
+Date: Tue, 27 Mar 2018 19:04:51 +0200 (CEST)
+From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+X-X-Sender: sebott@schleppi
+To: Christoph Hellwig <hch@lst.de>
+cc: Jesper Nilsson <jesper.nilsson@axis.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: dma_zalloc_coherent broken with
+ 57bf5a8963f80fb3828c46c3e3a5b2dd790e09a7
+In-Reply-To: <20180327164505.GA10522@lst.de>
+References: <alpine.LFD.2.21.1803270944490.1726@schleppi> <20180327143341.GA4968@lst.de> <alpine.LFD.2.21.1803271717580.26440@schleppi> <20180327164505.GA10522@lst.de>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+Organization: =?ISO-8859-15?Q?=22IBM_Deutschland_Research_&_Development_GmbH?=
+ =?ISO-8859-15?Q?_=2F_Vorsitzende_des_Aufsichtsrats=3A_Martina?=
+ =?ISO-8859-15?Q?_Koederitz_Gesch=E4ftsf=FChrung=3A_Dirk_Wittkopp?=
+ =?ISO-8859-15?Q?_Sitz_der_Gesellschaft=3A_B=F6blingen_=2F_Reg?=
+ =?ISO-8859-15?Q?istergericht=3A_Amtsgericht_Stuttgart=2C_HRB_2432?=
+ =?ISO-8859-15?Q?94=22?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-TM-AS-GCONF: 00
+x-cbid: 18032717-0008-0000-0000-000004E2E07C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18032717-0009-0000-0000-00001E761BF4
+Message-Id: <alpine.LFD.2.21.1803271900390.18934@schleppi>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,, definitions=2018-03-27_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1803270171
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 27 Mar 2018 20:50:52 +0800
-
-> We tried to remove vq poll from wait queue, but do not check whether
-> or not it was in a list before. This will lead double free. Fixing
-> this by switching to use vhost_poll_stop() which zeros poll->wqh after
-> removing poll from waitqueue to make sure it won't be freed twice.
+On Tue, 27 Mar 2018, Christoph Hellwig wrote:
+> On Tue, Mar 27, 2018 at 05:24:10PM +0200, Sebastian Ott wrote:
+> > What do you mean by current implementations? Arch specific code? At least
+> > on s390 we don't do that. dma-mapping.h doesn't do it either.
 > 
-> Cc: Darren Kenny <darren.kenny@oracle.com>
-> Reported-by: syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com
-> Fixes: 2b8b328b61c79 ("vhost_net: handle polling errors when setting backend")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
-> Changes from V1:
-> - tweak the commit log for to match the code
+> The arch implementations should do it.  Seems like s390 and potentially
+> a few others don't.  I'm a little slow due to a cast on one arm, but I'll
+> do an audit and will fix up anything I'll find.
 
-Applied and queued up for -stable, thank you.
+What was wrong with the old behavior (let the caller decide - the same
+as with memory allocations)? We have interfaces like dma_zalloc_coherent,
+which explicitely set __GFP_ZERO. We have callers of dma_alloc followed by
+a manually memset..
+
+Sebastian
